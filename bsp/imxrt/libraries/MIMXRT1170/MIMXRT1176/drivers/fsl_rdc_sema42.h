@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 NXP
+ * Copyright 2017-2020, 2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -22,7 +22,7 @@
 /*! @name Driver version */
 /*@{*/
 /*! @brief RDC_SEMA42 driver version */
-#define FSL_RDC_SEMA42_DRIVER_VERSION (MAKE_VERSION(2, 0, 3))
+#define FSL_RDC_SEMA42_DRIVER_VERSION (MAKE_VERSION(2, 0, 4))
 /*@}*/
 
 /*! @brief The number to reset all RDC_SEMA42 gates. */

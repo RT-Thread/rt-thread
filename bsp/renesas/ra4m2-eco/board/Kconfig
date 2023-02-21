@@ -1,0 +1,229 @@
+menu "Hardware Drivers Config"
+
+    config SOC_R7FA4M2AD
+        bool
+        select SOC_SERIES_R7FA4M2
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        default y
+
+    menu "Onboard Peripheral Drivers"
+
+    endmenu
+
+    menu "On-chip Peripheral Drivers"
+
+        source "../libraries/HAL_Drivers/Kconfig"
+
+        menuconfig BSP_USING_UART
+            bool "Enable UART"
+            default y
+            select RT_USING_SERIAL
+            select RT_USING_SERIAL_V2
+            if BSP_USING_UART
+
+                menuconfig BSP_USING_UART0
+                    bool "Enable UART0"
+                    default n
+                    if BSP_USING_UART0
+                        config BSP_UART0_RX_USING_DMA
+                            bool "Enable UART0 RX DMA"
+                            depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART0_TX_USING_DMA
+                            bool "Enable UART0 TX DMA"
+                            depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART0_RX_BUFSIZE
+                            int "Set UART0 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART0_TX_BUFSIZE
+                            int "Set UART0 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+
+                menuconfig BSP_USING_UART1
+                    bool "Enable UART1"
+                    default n
+                    if BSP_USING_UART1
+                        config BSP_UART1_RX_USING_DMA
+                            bool "Enable UART1 RX DMA"
+                            depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART1_TX_USING_DMA
+                            bool "Enable UART1 TX DMA"
+                            depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART1_RX_BUFSIZE
+                            int "Set UART1 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART1_TX_BUFSIZE
+                            int "Set UART1 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+
+                menuconfig BSP_USING_UART2
+                    bool "Enable UART2"
+                    default n
+                    if BSP_USING_UART2
+                        config BSP_UART2_RX_USING_DMA
+                            bool "Enable UART2 RX DMA"
+                            depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART2_TX_USING_DMA
+                            bool "Enable UART2 TX DMA"
+                            depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART2_RX_BUFSIZE
+                            int "Set UART2 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART2_TX_BUFSIZE
+                            int "Set UART2 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+
+                menuconfig BSP_USING_UART3
+                    bool "Enable UART3"
+                    default n
+                    if BSP_USING_UART3
+                        config BSP_UART3_RX_USING_DMA
+                            bool "Enable UART3 RX DMA"
+                            depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART3_TX_USING_DMA
+                            bool "Enable UART3 TX DMA"
+                            depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART3_RX_BUFSIZE
+                            int "Set UART3 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART3_TX_BUFSIZE
+                            int "Set UART3 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+
+                menuconfig BSP_USING_UART4
+                    bool "Enable UART4"
+                    default n
+                    if BSP_USING_UART4
+                        config BSP_UART4_RX_USING_DMA
+                            bool "Enable UART4 RX DMA"
+                            depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART4_TX_USING_DMA
+                            bool "Enable UART4 TX DMA"
+                            depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART4_RX_BUFSIZE
+                            int "Set UART4 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART4_TX_BUFSIZE
+                            int "Set UART4 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+
+                menuconfig BSP_USING_UART9
+                    bool "Enable UART9"
+                    default n
+                    if BSP_USING_UART9
+                        config BSP_UART9_RX_USING_DMA
+                            bool "Enable UART9 RX DMA"
+                            depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART9_TX_USING_DMA
+                            bool "Enable UART9 TX DMA"
+                            depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART9_RX_BUFSIZE
+                            int "Set UART9 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART9_TX_BUFSIZE
+                            int "Set UART9 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+            endif
+
+    menuconfig BSP_USING_SPI
+            bool "Enable SPI"
+            default n
+            select RT_USING_SPI
+            if BSP_USING_SPI
+                config BSP_SPI_USING_DTC_DMA
+                    bool "Enable SPI DTC transfers data without using the CPU."
+                    default n
+
+                config BSP_USING_SPI0
+                    bool "Enable SPI0 BUS"
+                    default n
+
+                config BSP_USING_SPI1
+                    bool "Enable SPI1 BUS"
+                    default n
+
+                config BSP_USING_SCI_SPI0
+                    bool "Enable SCI SPI0 BUS"
+                    default n
+                config BSP_USING_SCI_SPI1
+                    bool "Enable SCI SPI1 BUS"
+                    default n
+                config BSP_USING_SCI_SPI2
+                    bool "Enable SCI SPI2 BUS"
+                    default n
+                config BSP_USING_SCI_SPI3
+                    bool "Enable SCI SPI3 BUS"
+                    default n
+                config BSP_USING_SCI_SPI4
+                    bool "Enable SCI SPI4 BUS"
+                    default n
+                config BSP_USING_SCI_SPI9
+                    bool "Enable SCI SPI9 BUS"
+                    default n
+
+            endif
+    endmenu
+    menu "Board extended module Drivers"
+
+    endmenu
+endmenu

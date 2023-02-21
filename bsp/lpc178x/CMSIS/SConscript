@@ -3,17 +3,17 @@ Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
-src	= Glob('*.c')
+src = Glob('*.c')
 src = ['CM3/CoreSupport/core_cm3.c', 'CM3/DeviceSupport/NXP/LPC177x_8x/system_LPC177x_8x.c']
 CPPPATH = [cwd + '/CM3/CoreSupport', cwd + '/CM3/DeviceSupport/NXP/LPC177x_8x/']
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
-	src += ['CM3/DeviceSupport/NXP/LPC177x_8x/startup/gcc/startup_LPC177x_8x.s']
+    src += ['CM3/DeviceSupport/NXP/LPC177x_8x/startup/gcc/startup_LPC177x_8x.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-	src += ['CM3/DeviceSupport/NXP/LPC177x_8x/startup/arm/startup_LPC177x_8x.s']
+    src += ['CM3/DeviceSupport/NXP/LPC177x_8x/startup/arm/startup_LPC177x_8x.s']
 elif rtconfig.PLATFORM in ['iccarm']:
-	src += ['CM3/DeviceSupport/NXP/LPC177x_8x/startup/iar/startup_LPC177x_8x.s']
+    src += ['CM3/DeviceSupport/NXP/LPC177x_8x/startup/iar/startup_LPC177x_8x.s']
 
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)
 

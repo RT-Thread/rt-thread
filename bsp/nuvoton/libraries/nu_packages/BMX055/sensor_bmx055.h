@@ -13,7 +13,8 @@
 #ifndef __SENSOR_BMX055_H__
 #define __SENSOR_BMX055_H__
 
-#include "sensor.h"
+#include "rtdevice.h"
+
 #include "bma2x2.h"
 #include "bmm050.h"
 #include "bmg160.h"

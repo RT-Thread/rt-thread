@@ -7,7 +7,7 @@
 /* --------------------------------------------------------------------------*/
 /*                                                                           */
 /* Copyright 1997-2016 Freescale Semiconductor, Inc.                         */
-/* Copyright 2016-2019 NXP                                                   */
+/* Copyright 2016-2021 NXP                                                   */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* SPDX-License-Identifier: BSD-3-Clause                                     */
@@ -87,7 +87,7 @@ __Vectors:
     .long   Reserved59_IRQHandler  /* Reserved interrupt */
     .long   Reserved60_IRQHandler  /* Reserved interrupt */
     .long   Reserved61_IRQHandler  /* Reserved interrupt */
-    .long   USB1_UTMI_IRQHandler  /* USB1_UTMI */
+    .long   USB1_PHY_IRQHandler  /* USB1_PHY */
     .long   USB1_IRQHandler  /* USB1 interrupt */
     .long   USB1_NEEDCLK_IRQHandler  /* USB1 activity */
     .long   SEC_HYPERVISOR_CALL_IRQHandler  /* SEC_HYPERVISOR_CALL interrupt */
@@ -114,6 +114,15 @@ __Vectors:
     .weak    Reset_Handler
     .type    Reset_Handler, %function
 Reset_Handler:
+    cpsid   i               /* Mask interrupts */
+    .equ    VTOR, 0xE000ED08
+    ldr     r0, =VTOR
+    ldr     r1, =__Vectors
+    str     r1, [r0]
+    ldr     r2, [r1]
+    msr     msp, r2
+    ldr     R0, =__StackLimit
+    msr     msplim, R0
 #ifndef __NO_SYSTEM_INIT
     ldr   r0,=SystemInit
     blx   r0
@@ -199,7 +208,7 @@ Reset_Handler:
 #else
     ldr   r0,=__libc_init_array
     blx   r0
-    ldr   r0,=entry
+    ldr   r0,=main
     bx    r0
 #endif
     .pool
@@ -674,12 +683,12 @@ Reserved61_IRQHandler:
 
     .align 1
     .thumb_func
-    .weak USB1_UTMI_IRQHandler
-    .type USB1_UTMI_IRQHandler, %function
-USB1_UTMI_IRQHandler:
-    ldr   r0,=USB1_UTMI_DriverIRQHandler
+    .weak USB1_PHY_IRQHandler
+    .type USB1_PHY_IRQHandler, %function
+USB1_PHY_IRQHandler:
+    ldr   r0,=USB1_PHY_DriverIRQHandler
     bx    r0
-    .size USB1_UTMI_IRQHandler, . - USB1_UTMI_IRQHandler
+    .size USB1_PHY_IRQHandler, . - USB1_PHY_IRQHandler
 
     .align 1
     .thumb_func
@@ -857,7 +866,7 @@ FLEXCOMM8_IRQHandler:
                 def_irq_handler     Reserved59_DriverIRQHandler
                 def_irq_handler     Reserved60_DriverIRQHandler
                 def_irq_handler     Reserved61_DriverIRQHandler
-                def_irq_handler     USB1_UTMI_DriverIRQHandler
+                def_irq_handler     USB1_PHY_DriverIRQHandler
                 def_irq_handler     USB1_DriverIRQHandler
                 def_irq_handler     USB1_NEEDCLK_DriverIRQHandler
                 def_irq_handler     SEC_HYPERVISOR_CALL_DriverIRQHandler

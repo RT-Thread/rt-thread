@@ -540,7 +540,7 @@ typedef enum _clock_ip_name
     kCLOCK_Can3S = (7U << 8U) | CCM_CCGR7_CG4_SHIFT,    /*!< CCGR7, CG4   */
     kCLOCK_Aips_lite = (7U << 8U) | CCM_CCGR7_CG5_SHIFT,/*!< CCGR7, CG5   */
     kCLOCK_Flexio3 = (7U << 8U) | CCM_CCGR7_CG6_SHIFT,  /*!< CCGR7, CG6   */
-    
+
 } clock_ip_name_t;
 
 /*! @brief OSC 24M sorce select */

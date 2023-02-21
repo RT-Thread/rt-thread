@@ -27,7 +27,7 @@
 #if defined(BSP_USING_GIC) && defined(BSP_USING_GICV3)
 
 #include <gicv3.h>
-#include <cpuport.h>
+#include <cp15.h>
 
 #include <board.h>
 
@@ -479,7 +479,7 @@ rt_uint64_t arm_gic_get_irq_status(rt_uint64_t index, int irq)
 }
 
 #ifdef RT_USING_SMP
-void arm_gic_send_affinity_sgi(rt_uint64_t index, int irq, rt_uint64_t cpu_masks[], rt_uint64_t routing_mode)
+void arm_gic_send_affinity_sgi(rt_uint64_t index, int irq, rt_uint32_t cpu_masks[], rt_uint64_t routing_mode)
 {
     const int cpu_mask_cpu_max_nr = sizeof(cpu_masks[0]) * 8;
     rt_uint64_t int_id = (irq & 0xf) << 24;
@@ -731,8 +731,21 @@ int arm_gic_redist_init(rt_uint64_t index, rt_uint64_t redist_base)
 {
     int i;
     int cpu_id = rt_hw_cpu_id();
+    static int master_cpu_id = -1;
 
     RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    if (master_cpu_id < 0)
+    {
+        master_cpu_id = cpu_id;
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, &master_cpu_id, sizeof(master_cpu_id));
+    }
+
+    if (!_gic_table[index].redist_hw_base[master_cpu_id])
+    {
+        _gic_table[index].redist_hw_base[master_cpu_id] = redist_base;
+    }
+    redist_base = _gic_table[index].redist_hw_base[master_cpu_id];
 
     redist_base += cpu_id * (2 << 16);
     _gic_table[index].redist_hw_base[cpu_id] = redist_base;

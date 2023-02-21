@@ -1,0 +1,26 @@
+menu "CIR Devices"
+
+config DRIVERS_CIR
+    bool "enable CIR driver"
+        default y
+
+menu "CIR option features"
+
+config DRIVERS_CIR_DEBUG
+    bool "support CIR debug"
+    select DRIVERS_CIR
+    default n
+
+config DRIVERS_CIR_TEST
+    bool "CIR test case"
+    select DRIVERS_CIR
+    default n
+
+config HAL_TEST_CIR
+    bool "CIR TEST CASE"
+    depends on DRIVERS_CIR
+    default n
+
+endmenu
+
+endmenu

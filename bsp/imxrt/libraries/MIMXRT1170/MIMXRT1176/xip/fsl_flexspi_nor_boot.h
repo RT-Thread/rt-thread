@@ -9,13 +9,15 @@
 #define __FLEXSPI_NOR_BOOT_H__
 
 #include <stdint.h>
-#include "board.h"
 #include "fsl_common.h"
+#ifndef BOARD_FLASH_SIZE
+#include "board.h"
+#endif
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief XIP_DEVICE driver version 2.0.4. */
-#define FSL_XIP_DEVICE_DRIVER_VERSION (MAKE_VERSION(2, 0, 4))
+/*! @brief XIP_DEVICE driver version 2.0.5. */
+#define FSL_XIP_DEVICE_DRIVER_VERSION (MAKE_VERSION(2, 0, 5))
 /*@}*/
 
 /*************************************

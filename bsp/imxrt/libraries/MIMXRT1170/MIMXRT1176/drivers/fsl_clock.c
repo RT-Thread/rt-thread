@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 - 2021 NXP
+ * Copyright 2019-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -122,11 +122,11 @@ void CLOCK_InitArmPll(const clock_arm_pll_config_t *config)
 
     uint32_t reg;
 
-    if (((ANADIG_PLL->ARM_PLL_CTRL & (ANADIG_PLL_ARM_PLL_CTRL_POWERUP_MASK)) != 0UL) &&
-        ((ANADIG_PLL->ARM_PLL_CTRL & (ANADIG_PLL_ARM_PLL_CTRL_DIV_SELECT(config->loopDivider))) ==
-         (ANADIG_PLL_ARM_PLL_CTRL_DIV_SELECT(config->loopDivider))) &&
-        ((ANADIG_PLL->ARM_PLL_CTRL & (ANADIG_PLL_ARM_PLL_CTRL_POST_DIV_SEL(config->postDivider))) ==
-         (ANADIG_PLL_ARM_PLL_CTRL_POST_DIV_SEL(config->postDivider))))
+    if (((ANADIG_PLL->ARM_PLL_CTRL & ANADIG_PLL_ARM_PLL_CTRL_POWERUP_MASK) != 0UL) &&
+        ((ANADIG_PLL->ARM_PLL_CTRL & ANADIG_PLL_ARM_PLL_CTRL_DIV_SELECT_MASK) ==
+         ANADIG_PLL_ARM_PLL_CTRL_DIV_SELECT(config->loopDivider)) &&
+        ((ANADIG_PLL->ARM_PLL_CTRL & ANADIG_PLL_ARM_PLL_CTRL_POST_DIV_SEL_MASK) ==
+         ANADIG_PLL_ARM_PLL_CTRL_POST_DIV_SEL(config->postDivider)))
     {
         /* no need to reconfigure the PLL if all the configuration is the same */
         if ((ANADIG_PLL->ARM_PLL_CTRL & ANADIG_PLL_ARM_PLL_CTRL_ENABLE_CLK_MASK) == 0UL)

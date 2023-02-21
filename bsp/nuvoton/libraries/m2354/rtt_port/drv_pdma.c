@@ -69,7 +69,7 @@ static void nu_pdma_channel_disable(int i32ChannID);
 static void nu_pdma_channel_reset(int i32ChannID);
 static rt_err_t nu_pdma_timeout_set(int i32ChannID, int i32Timeout_us);
 static void nu_pdma_periph_ctrl_fill(int i32ChannID, int i32CtlPoolIdx);
-static rt_size_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int count, nu_pdma_memctrl_t eMemCtl);
+static rt_ssize_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int count, nu_pdma_memctrl_t eMemCtl);
 static void nu_pdma_memfun_cb(void *pvUserData, uint32_t u32Events);
 static void nu_pdma_memfun_actor_init(void);
 static int nu_pdma_memfun_employ(void);
@@ -234,8 +234,11 @@ static void nu_pdma_init(void)
 
     /* Initialize token pool. */
     rt_memset(&nu_pdma_sgtbl_token[0], 0xff, sizeof(nu_pdma_sgtbl_token));
-    latest = NU_PDMA_SGTBL_POOL_SIZE / 32;
-    nu_pdma_sgtbl_token[latest] ^= ~((1 << (NU_PDMA_SGTBL_POOL_SIZE % 32)) - 1) ;
+    if (NU_PDMA_SGTBL_POOL_SIZE % 32)
+    {
+        latest = (NU_PDMA_SGTBL_POOL_SIZE) / 32;
+        nu_pdma_sgtbl_token[latest] ^= ~((1 << (NU_PDMA_SGTBL_POOL_SIZE % 32)) - 1) ;
+    }
 
     nu_pdma_inited = 1;
 }
@@ -945,7 +948,7 @@ static int nu_pdma_memfun_employ(void)
     return idx;
 }
 
-static rt_size_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int u32TransferCnt, nu_pdma_memctrl_t eMemCtl)
+static rt_ssize_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int u32TransferCnt, nu_pdma_memctrl_t eMemCtl)
 {
     nu_pdma_memfun_actor_t psMemFunActor = NULL;
     int idx;

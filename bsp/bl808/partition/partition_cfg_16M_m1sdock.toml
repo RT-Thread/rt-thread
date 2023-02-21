@@ -1,0 +1,85 @@
+[pt_table]
+#partition table is 4K in size
+address0 = 0xE000
+address1 = 0xF000
+# If version is 2, It will use dynamic mode.
+version = 2
+
+[[pt_entry]]
+type = 16
+name = "Boot2"
+device = 0
+address0 = 0
+size0 = 0xE000
+address1 = 0
+size1 = 0
+# compressed image must set len,normal image can left it to 0
+len = 0
+# If header is 1, it will add the header.
+header = 1
+
+[[pt_entry]]
+type = 0
+name = "FW"
+device = 0
+address0 = 0x10000
+size0 = 0xF0000
+address1 = 0
+size1 = 0
+# compressed image must set len,normal image can left it to 0
+len = 0
+# If header is 1, it will add the header.
+header = 1
+
+[[pt_entry]]
+type = 2
+name = "D0FW"
+device = 0
+address0 = 0x100000
+size0 = 0x200000
+address1 = 0
+size1 = 0
+# compressed image must set len,normal image can left it to 0
+len = 0
+# If header is 1, it will add the header.
+header = 1
+
+[[pt_entry]]
+type = 5
+name = "media"
+device = 0
+address0 = 0x300000
+size0 = 0xC00000
+address1 = 0
+size1 = 0
+# compressed image must set len,normal image can left it to 0
+len = 0
+# If header is 1, it will add the header.
+header = 1
+
+[[pt_entry]]
+type = 11
+name = "unused"
+device = 0
+address0 = 0xF00000
+size0 = 0x100000
+address1 = 0
+size1 = 0
+# compressed image must set len,normal image can left it to 0
+len = 0
+# If header is 1, it will add the header.
+header = 1
+
+[[pt_entry]]
+type = 8
+# It shows Dts in DevCube 
+name = "factory"
+device = 0
+address0 = 0x910000
+size0 = 0
+address1 = 0
+size1 = 0
+# compressed image must set len,normal image can left it to 0
+len = 0
+# If header is 1, it will add the header.
+header = 1

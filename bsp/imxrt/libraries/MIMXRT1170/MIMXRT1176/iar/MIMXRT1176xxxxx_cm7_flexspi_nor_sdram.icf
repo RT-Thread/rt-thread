@@ -6,14 +6,14 @@
 **
 **     Compiler:            IAR ANSI C/C++ Compiler for ARM
 **     Reference manual:    IMXRT1170RM, Rev 1, 02/2021
-**     Version:             rev. 1.0, 2020-12-29
-**     Build:               b210709
+**     Version:             rev. 1.1, 2022-04-02
+**     Build:               b220402
 **
 **     Abstract:
 **         Linker file for the IAR ANSI C/C++ Compiler for ARM
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2021 NXP
+**     Copyright 2016-2022 NXP
 **     All rights reserved.
 **
 **     SPDX-License-Identifier: BSD-3-Clause
@@ -58,6 +58,7 @@ define exported symbol m_boot_hdr_conf_start = 0x30000400;
 define symbol m_boot_hdr_ivt_start           = 0x30001000;
 define symbol m_boot_hdr_boot_data_start     = 0x30001020;
 define symbol m_boot_hdr_dcd_data_start      = 0x30001030;
+define symbol m_boot_hdr_xmcd_data_start      = 0x30001040;
 
 /* Sizes */
 if (isdefinedsymbol(__stack_size__)) {
@@ -102,8 +103,9 @@ place at address mem: m_boot_hdr_conf_start { section .boot_hdr.conf };
 place at address mem: m_boot_hdr_ivt_start { section .boot_hdr.ivt };
 place at address mem: m_boot_hdr_boot_data_start { readonly section .boot_hdr.boot_data };
 place at address mem: m_boot_hdr_dcd_data_start { readonly section .boot_hdr.dcd_data };
+place at address mem: m_boot_hdr_xmcd_data_start { readonly section .boot_hdr.xmcd_data };
 
-keep{ section .boot_hdr.conf, section .boot_hdr.ivt, section .boot_hdr.boot_data, section .boot_hdr.dcd_data };
+keep{ section .boot_hdr.conf, section .boot_hdr.ivt, section .boot_hdr.boot_data, section .boot_hdr.dcd_data, section .boot_hdr.xmcd_data};
 
 place in TEXT_region                        { readonly };
 place in DATA3_region                       { block RW };

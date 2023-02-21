@@ -70,8 +70,8 @@ void DVP_Init( DVP_InitType* DVP_InitStruct)
 
     /*---------------------------- DVP CTRL Configuration -----------------------*/
     tmpregister  = 0;
-    tmpregister |=  DVP_InitStruct->LineCapture   | DVP_InitStruct->ByteCapture 
-                  | DVP_InitStruct->DataInvert    | DVP_InitStruct->PixelClkPolarity 
+    tmpregister |=  DVP_InitStruct->LineCapture   | DVP_InitStruct->ByteCapture
+                  | DVP_InitStruct->DataInvert    | DVP_InitStruct->PixelClkPolarity
                   | DVP_InitStruct->VsyncPolarity | DVP_InitStruct->HsyncPolarity
                   | DVP_InitStruct->CaptureMode   | DVP_InitStruct->FifoWatermark;
     DVP->CTRL = tmpregister;
@@ -79,7 +79,7 @@ void DVP_Init( DVP_InitType* DVP_InitStruct)
     /*---------------------------- DVP WST Configuration -----------------------*/
     if (DVP_InitStruct->RowStart)
         DVP_InitStruct->RowStart--;
-    
+
     if (DVP_InitStruct->ColumnStart)
         DVP_InitStruct->ColumnStart--;
 
@@ -162,5 +162,5 @@ void DVP_ResetFifo(void)
 
     DVP->CTRL |= DVP_FIFO_SOFT_RESET;
 
-    while(DVP->CTRL & DVP_FIFO_SOFT_RESET);    
+    while (DVP->CTRL & DVP_FIFO_SOFT_RESET);
 }

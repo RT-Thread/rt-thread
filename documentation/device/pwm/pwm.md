@@ -8,7 +8,7 @@ PWM (Pulse Width Modulation) is a method of digitally encoding the level of an a
 
 Above is a simple schematic diagram of PWM. Assuming that the timer works in a up-counter mode. When the count value is less than the threshold, it outputs a level state, such as a high level. When the count value is greater than the threshold, it outputs the opposite, such as a low level.  When the count value reaches the maximum value, the counter recounts from 0 and returns to the original level state. The ratio of the high-level duration (pulse width) to the cycle time is the duty cycle, ranging from 0 to 100%. The high level of the above picture is just half of the cycle time, so the duty cycle is 50%.
 
-One of the common PWM control scenarios is to adjust the brightness of the light or screen. The brightness can be adjusted according to the duty cycle. The PWM adjusts the brightness not continuously, but constantly lights up and turns off the screen. When the light is turned on and off fast enough, the naked eye will always think that it is always bright. In the process of on and off, the longer the light is off, the lower the brightness of the screen to the naked eye. The longer the light is on, the less time is spent and the screen will be brighter.
+One of the common PWM control scenarios is to adjust the brightness of a light or screen. The brightness can be adjusted through changing the duty cycle. The PWM does not adjust the light continuously, rather it constantly turns the screen on and off. When the light is turned on and off fast enough, the naked eye will always think that it is always bright. In the process of switching it on and off, the longer the light is off, the lower the brightness of the screen to the naked eye. Conversely, the longer the light is on, the brighter the screen will appear.
 
 ![PWM Brightness Adjustment](figures/pwm-l.png)
 
@@ -162,14 +162,14 @@ rt_pwm_disable(pwm_dev,PWM_DEV_CHANNEL);
 
 ## FinSH Command
 
-To set the period and duty cycle of a channel of a PWM device, use the command `pwm_set pwm1 1 500000 5000`. The first parameter is the command, the second parameter is the PWM device name, the third parameter is the PWM channel, and the fourth parameter is  PWM period(ns), the fifth parameter is the pulse width (ns).
+To set the period and duty cycle of a channel of a PWM device, use the command `pwm_set pwm1 1 500000 5000`. The first parameter is the command, the second parameter is the PWM device name, the third parameter is the PWM channel, and the fourth parameter is PWM period (ns), the fifth parameter is the pulse width (ns).
 
 ```c
 msh />pwm_set pwm1 1 500000 5000
 msh />
 ```
 
-To enable a channel of the PWM device, use the command`pwm_enable pwm1 1`. The first parameter is the command, the second parameter is the PWM device name, and the third parameter is the PWM channel.
+To enable a channel of the PWM device, use the command `pwm_enable pwm1 1`. The first parameter is the command, the second parameter is the PWM device name, and the third parameter is the PWM channel.
 
 ```c
 msh />pwm_enable pwm1 1

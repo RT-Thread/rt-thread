@@ -10,13 +10,13 @@ NXP/LPC407x_8x_177x_8x/Source/Templates/system_LPC407x_8x_177x_8x.c
 CPPPATH = [cwd + '/NXP/LPC407x_8x_177x_8x/Include', cwd + '/../CMSIS/Include']
 CPPDEFINES = ['CORE_M4']
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
-	src += ['NXP/LPC407x_8x_177x_8x/Source/Templates/GCC/startup_LPC407x_8x_177x_8x.s']
+    src += ['NXP/LPC407x_8x_177x_8x/Source/Templates/GCC/startup_LPC407x_8x_177x_8x.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-	src += ['NXP/LPC407x_8x_177x_8x/Source/Templates/ARM/startup_LPC407x_8x_177x_8x.s']
+    src += ['NXP/LPC407x_8x_177x_8x/Source/Templates/ARM/startup_LPC407x_8x_177x_8x.s']
 elif rtconfig.PLATFORM in ['iccarm']:
-	src += ['NXP/LPC407x_8x_177x_8x/Source/Templates/IAR/startup_LPC407x_8x_177x_8x.s']
+    src += ['NXP/LPC407x_8x_177x_8x/Source/Templates/IAR/startup_LPC407x_8x_177x_8x.s']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 

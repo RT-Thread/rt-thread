@@ -11,17 +11,55 @@ config BSP_USING_4MFLASH
 
 config SOC_MIMXRT1062DVL6A
     bool
-    select SOC_MIMXRT1062_SERIES
+    select SOC_IMXRT1060_SERIES
     select BSP_USING_4MFLASH
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
-    
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
+
+    menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_NETDEV
+        select RT_USING_LWIP
+        default n
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
+            select RT_USING_PHY
+            bool "Enable ethernet phy"
+            default y
+
+        if BSP_USING_PHY
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1060EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_KSZ8081_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+                config PHY_RESET_KSZ8081_PORT
+                    int "indicate port of reset"
+                    default 1
+
+                config PHY_RESET_KSZ8081_PIN
+                    int "indicate pin of reset"
+                    default 9
+
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+        endif
+    endif
 
     menuconfig BSP_USING_LCD
         bool "Enable LCD"
@@ -78,7 +116,7 @@ menu "Onboard Peripheral Drivers"
         if BSP_USING_TOUCHPAD
             choice
                 prompt "Select panel"
-                default DEMO_PANEL_RK043FN02H
+                default DEMO_PANEL_RK043FN66HS
 
                 config DEMO_PANEL_RK043FN02H
                     bool "RK043FN02H-CT"
@@ -101,17 +139,27 @@ menu "Onboard Peripheral Drivers"
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
             select PKG_USING_LV_MUSIC_DEMO
-            default n
-
-        config BSP_USING_LVGL_SQUARELINE
-            bool "Support LVGL SuqareLine Studio"
-            default n
+            default y
 
         config BSP_USING_NXP_GUIGUIDER
             bool "Support NXP GUI Guider"
             select PKG_USING_GUI_GUIDER_DEMO
             default n
     endif
+
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS_DEVFS
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select BSP_USING_SDIO
+                select RT_USING_DFS_ELMFAT
+                default n
+        endif
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -120,6 +168,40 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_SDIO
+            config CODE_STORED_ON_SDCARD
+                bool "Enable Code STORED On SDCARD"
+                default n
+                help 
+                    "SD CARD work as boot devive"				
+        endif
+
+    config BSP_USING_USB
+        bool "Enable USB"
+        select RT_USING_USB_HOST
+        default n
+		
+        if BSP_USING_USB
+        config BSP_USB0_HOST
+            bool "Enable USB0"
+            default n
+
+        config BSP_USB1_HOST
+            bool "Enable USB1"
+            default n	
+        endif
 
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
@@ -179,7 +261,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_CACHE
         bool "Enable CACHE"
         default n
-      
+
 endmenu
 
 menu "Board extended module Drivers"

@@ -1,0 +1,24 @@
+menu "AW Sound Compenents"
+
+config COMPONENTS_AW_ALSA_LIB
+    bool "Allwinner alsa library"
+    depends on DRIVERS_SOUND
+    default n
+    help
+      This is library package for aw-alsa, only used for Allwinner FreeRTOS.
+
+config COMPONENTS_AW_ALSA_UTILS
+    bool "Allwinner alsa utilities"
+    depends on COMPONENTS_AW_ALSA_LIB
+    default n
+    help
+      This is package for aw-alsa-lib utilities, only used for Allwinner Tina RTOS.
+
+config BUILTIN_WAV_FILE
+    bool "builtin wav file"
+    depends on COMPONENTS_AW_ALSA_UTILS
+    default y
+    help
+      Say Y to use builtin wav file.
+
+endmenu

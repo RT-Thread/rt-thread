@@ -70,7 +70,7 @@ struct rt_link_session *rt_link_get_scb(void)
     return rt_link_scb;
 }
 
-static rt_int16_t rt_link_check_seq(rt_uint8_t new, rt_uint8_t used)
+static rt_uint8_t rt_link_check_seq(rt_uint8_t new, rt_uint8_t used)
 {
     rt_int16_t compare_seq = 0;
     compare_seq = new - used;
@@ -78,7 +78,7 @@ static rt_int16_t rt_link_check_seq(rt_uint8_t new, rt_uint8_t used)
     {
         compare_seq = compare_seq + 256;
     }
-    return compare_seq;
+    return (rt_uint8_t)compare_seq;
 }
 
 static int rt_link_frame_init(struct rt_link_frame *frame, rt_uint8_t config)
@@ -157,7 +157,7 @@ static rt_err_t rt_link_frame_extend_config(struct rt_link_frame *frame, rt_link
     return RT_EOK;
 }
 
-static int rt_link_command_frame_send(rt_uint8_t serv, rt_uint8_t sequence, rt_link_frame_attr_e attribute, rt_uint16_t parameter)
+static int rt_link_command_frame_send(rt_uint16_t serv, rt_uint8_t sequence, rt_link_frame_attr_e attribute, rt_uint16_t parameter)
 {
     struct rt_link_frame command_frame = {0};
     rt_uint8_t data[sizeof(command_frame.head) + sizeof(command_frame.extend)] = {0};
@@ -182,7 +182,7 @@ static int rt_link_command_frame_send(rt_uint8_t serv, rt_uint8_t sequence, rt_l
 static void rt_link_service_send_finish(rt_link_err_e err)
 {
     struct rt_link_frame *frame = RT_NULL;
-    rt_uint8_t service = RT_LINK_SERVICE_MAX;
+    rt_uint16_t service = RT_LINK_SERVICE_MAX;
     void *buffer = RT_NULL;
     rt_slist_t *tem_list = rt_slist_first(&rt_link_scb->tx_data_slist);
     if (tem_list == RT_NULL)
@@ -208,7 +208,7 @@ static void rt_link_service_send_finish(rt_link_err_e err)
     }
 }
 
-static rt_size_t frame_send(struct rt_link_frame *frame)
+static rt_ssize_t frame_send(struct rt_link_frame *frame)
 {
     rt_size_t length = 0;
     rt_uint8_t *data = RT_NULL;
@@ -416,7 +416,7 @@ static rt_err_t rt_link_confirm_handle(struct rt_link_frame *receive_frame)
 }
 
 /* serv type rt_link_service_e */
-static void rt_link_recv_finish(rt_uint8_t serv, void *data, rt_size_t size)
+static void rt_link_recv_finish(rt_uint16_t serv, void *data, rt_size_t size)
 {
     if (rt_link_scb->service[serv] == RT_NULL)
     {
@@ -570,7 +570,7 @@ static rt_err_t rt_link_handshake_handle(struct rt_link_frame *receive_frame)
     /* sync requester tx seq, responder rx seq = requester tx seq */
     rt_link_scb->rx_record.rx_seq = receive_frame->head.sequence;
     /* sync requester rx seq, responder tx seq = requester rx seq */
-    rt_link_scb->tx_seq = receive_frame->extend.parameter;
+    rt_link_scb->tx_seq = (rt_uint8_t)receive_frame->extend.parameter;
 
     if (rt_link_scb->service[receive_frame->head.service] != RT_NULL)
     {
@@ -1042,11 +1042,11 @@ rt_size_t rt_link_send(struct rt_link_service *service, const void *data, rt_siz
     service->err = RT_LINK_EOK;
     if (size % RT_LINK_MAX_DATA_LENGTH == 0)
     {
-        total = size / RT_LINK_MAX_DATA_LENGTH;
+        total = (rt_uint8_t)(size / RT_LINK_MAX_DATA_LENGTH);
     }
     else
     {
-        total = size / RT_LINK_MAX_DATA_LENGTH + 1;
+        total = (rt_uint8_t)(size / RT_LINK_MAX_DATA_LENGTH + 1);
     }
 
     if (total > RT_LINK_FRAMES_MAX)
@@ -1079,7 +1079,7 @@ rt_size_t rt_link_send(struct rt_link_service *service, const void *data, rt_siz
             send_frame->attribute = RT_LINK_LONG_DATA_FRAME;
             if (offset + RT_LINK_MAX_DATA_LENGTH > size)
             {
-                send_frame->data_len = size - offset;
+                send_frame->data_len = (rt_uint16_t)(size - offset);
             }
             else
             {
@@ -1087,12 +1087,12 @@ rt_size_t rt_link_send(struct rt_link_service *service, const void *data, rt_siz
                 offset += RT_LINK_MAX_DATA_LENGTH;
             }
 
-            rt_link_frame_extend_config(send_frame, RT_LINK_LONG_DATA_FRAME, size);
+            rt_link_frame_extend_config(send_frame, RT_LINK_LONG_DATA_FRAME, (rt_uint16_t)size);
         }
         else
         {
             send_frame->attribute = RT_LINK_SHORT_DATA_FRAME;
-            send_frame->data_len = size;
+            send_frame->data_len = (rt_uint16_t)size;
         }
 
         /* append the frame on the tail of list */

@@ -3,19 +3,19 @@ menu "Hardware Drivers"
 config BSP_USING_QSPIFLASH
     bool
     default y
-	
+
 config SOC_IMXRT1021DAG5A
-    bool 
+    bool
     select SOC_MIMXRT1020_SERIES
-	select RT_USING_COMPONENTS_INIT
+    select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-	select SOC_IMXRT1020_SERIES
+    select SOC_IMXRT1020_SERIES
     default y
 
 
 menu "On-chip Peripheral Drivers"
 
-	config BSP_USING_DMA
+    config BSP_USING_DMA
         bool "Enable DMA"
         default n
 
@@ -23,7 +23,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-		
+
     menuconfig BSP_USING_CAN
         bool "Enable CAN"
         select RT_USING_CAN
@@ -39,7 +39,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART"
         select RT_USING_SERIAL
         default y
-        
+
         if BSP_USING_LPUART
             config BSP_USING_LPUART1
                 bool "Enable LPUART1"
@@ -69,19 +69,19 @@ menu "On-chip Peripheral Drivers"
                         int "Set LPUART1 TX DMA channel (0-32)"
                         default 1
         endif
-	menuconfig BSP_USING_HWTIMER
-			bool "Enable GPT"
-			default n
-			select RT_USING_HWTIMER
-			if BSP_USING_TIM
-				config BSP_USING_HWTIMER1
-					bool "Enable GPT1"
-					default n
+    menuconfig BSP_USING_HWTIMER
+            bool "Enable GPT"
+            default n
+            select RT_USING_HWTIMER
+            if BSP_USING_TIM
+                config BSP_USING_HWTIMER1
+                    bool "Enable GPT1"
+                    default n
 
-				config BSP_USING_HWTIMER2
-					bool "Enable GPT2"
-					default n
-			endif
+                config BSP_USING_HWTIMER2
+                    bool "Enable GPT2"
+                    default n
+            endif
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
@@ -138,7 +138,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
-        endif		
+        endif
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -147,47 +147,47 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Onboard Peripheral Drivers"
-	config BSP_USING_RGB
-			bool "Enable RGB LED (PWM1_CH3A, PWM4_CH0A and PWM4_CH1A)"
-			select BSP_USING_PWM1
-			select BSP_USING_PWM4
-			select BSP_USING_PWM1_CH3
-			select BSP_USING_PWM4_CH0
-			select BSP_USING_PWM4_CH1
-			default n
+    config BSP_USING_RGB
+            bool "Enable RGB LED (PWM1_CH3A, PWM4_CH0A and PWM4_CH1A)"
+            select BSP_USING_PWM1
+            select BSP_USING_PWM4
+            select BSP_USING_PWM1_CH3
+            select BSP_USING_PWM4_CH0
+            select BSP_USING_PWM4_CH1
+            default n
 
-		config BSP_USING_MPU6050
-			bool "Enable MPU6050 (I2C1:J11 --> SCL; K11 --> SDA)"
-			select BSP_USING_I2C1
-			select PKG_USING_MPU6XXX
-			default n
+        config BSP_USING_MPU6050
+            bool "Enable MPU6050 (I2C1:J11 --> SCL; K11 --> SDA)"
+            select BSP_USING_I2C1
+            select PKG_USING_MPU6XXX
+            default n
 
-		menuconfig BSP_USING_AP3216C
-			bool "Enable AP3216C (I2C1:J11 --> SCL; K11 --> SDA)"
-			select BSP_USING_I2C1
-			select PKG_USING_AP3216C
-			default n
-			if BSP_USING_AP3216C
-				config AP3216C_USING_HW_INT
-				bool "Enable interrupt"
-				default n
-			endif
+        menuconfig BSP_USING_AP3216C
+            bool "Enable AP3216C (I2C1:J11 --> SCL; K11 --> SDA)"
+            select BSP_USING_I2C1
+            select PKG_USING_AP3216C
+            default n
+            if BSP_USING_AP3216C
+                config AP3216C_USING_HW_INT
+                bool "Enable interrupt"
+                default n
+            endif
 
-		config BSP_USING_EEPROM
-			bool "Enable I2C EEPROM (I2C1:J11 --> SCL; K11 --> SDA)"
-			select BSP_USING_I2C1
-			select  PKG_USING_AT24CXX
-			default n
+        config BSP_USING_EEPROM
+            bool "Enable I2C EEPROM (I2C1:J11 --> SCL; K11 --> SDA)"
+            select BSP_USING_I2C1
+            select  PKG_USING_AT24CXX
+            default n
 
-		config BSP_USING_RS232
-			bool "Enable RS232"
-			select BSP_USING_LPUART2
-			default n
+        config BSP_USING_RS232
+            bool "Enable RS232"
+            select BSP_USING_LPUART2
+            default n
 
-		config BSP_USING_RS485
-			bool "Enable RS485"
-			select BSP_USING_LPUART5
-			default n
+        config BSP_USING_RS485
+            bool "Enable RS485"
+            select BSP_USING_LPUART5
+            default n
 
 endmenu
 

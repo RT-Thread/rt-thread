@@ -8,12 +8,9 @@ group = []
 CPPPATH = []
 
 if rtconfig.PLATFORM in ['iccarm']:
-    print("\nThe current project does not support iar build\n")
+    print("\nThe current project does not support IAR build\n")
     Return('group')
-elif rtconfig.PLATFORM in ['gcc']:
-    src = Glob('*.c')
-    CPPPATH = [cwd, ]
-elif rtconfig.PLATFORM == 'armclang':
+elif rtconfig.PLATFORM in ['gcc', 'armclang']:
     if GetOption('target') != 'mdk5':
         src = Glob('*.c')
         CPPPATH = [cwd, ]

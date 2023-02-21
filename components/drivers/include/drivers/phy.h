@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-10-14     wangqiang    the first version
+ * 2022-08-17     xjy198903    add 1000M definition
  */
 
 #ifndef __PHY_H__
@@ -21,6 +22,7 @@ extern "C"
 /* Defines the PHY link speed. This is align with the speed for MAC. */
 #define PHY_SPEED_10M   0U     /* PHY 10M speed. */
 #define PHY_SPEED_100M  1U     /* PHY 100M speed. */
+#define PHY_SPEED_1000M 2U     /* PHY 1000M speed. */
 
 /* Defines the PHY link duplex. */
 #define PHY_HALF_DUPLEX 0U     /* PHY half duplex. */

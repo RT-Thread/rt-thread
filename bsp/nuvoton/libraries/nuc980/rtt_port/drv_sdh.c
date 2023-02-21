@@ -117,7 +117,7 @@ typedef struct nu_sdh *nu_sdh_t;
 static rt_err_t nu_sdh_init(rt_device_t dev);
 static rt_err_t nu_sdh_open(rt_device_t dev, rt_uint16_t oflag);
 static rt_err_t nu_sdh_close(rt_device_t dev);
-static rt_size_t nu_sdh_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t blk_nb);
+static rt_ssize_t nu_sdh_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t blk_nb);
 static rt_err_t nu_sdh_control(rt_device_t dev, int cmd, void *args);
 static int rt_hw_sdh_init(void);
 
@@ -251,7 +251,7 @@ static rt_err_t nu_sdh_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t nu_sdh_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t blk_nb)
+static rt_ssize_t nu_sdh_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t blk_nb)
 {
     rt_err_t result = RT_ERROR;
     rt_uint32_t ret = 0;
@@ -317,7 +317,7 @@ exit_nu_sdh_read:
     return 0;
 }
 
-static rt_size_t nu_sdh_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t blk_nb)
+static rt_ssize_t nu_sdh_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t blk_nb)
 {
     rt_err_t result = RT_ERROR;
     rt_uint32_t ret = 0;

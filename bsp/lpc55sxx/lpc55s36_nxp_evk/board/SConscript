@@ -1,0 +1,16 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+MCUX_Config/board/clock_config.c
+MCUX_Config/board/pin_mux.c
+""")
+
+CPPPATH = [cwd,cwd + '/MCUX_Config/board']
+CPPDEFINES = ['DEBUG']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')

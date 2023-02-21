@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 NXP
+ * Copyright 2018-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -21,83 +21,83 @@
  ******************************************************************************/
 void PQ_TransformCFFT(POWERQUAD_Type *base, uint32_t length, void *pData, void *pResult)
 {
-    assert(pData);
-    assert(pResult);
+    assert(NULL != pData);
+    assert(NULL != pResult);
 
-    base->OUTBASE = (int32_t)pResult;
-    base->INABASE = (int32_t)pData;
+    base->OUTBASE = (uint32_t)(uint32_t *)pResult;
+    base->INABASE = (uint32_t)(uint32_t *)pData;
     base->LENGTH  = length;
-    base->CONTROL = (CP_FFT << 4) | PQ_TRANS_CFFT;
+    base->CONTROL = (CP_FFT << 4U) | PQ_TRANS_CFFT;
 }
 
 void PQ_TransformRFFT(POWERQUAD_Type *base, uint32_t length, void *pData, void *pResult)
 {
-    assert(pData);
-    assert(pResult);
+    assert(NULL != pData);
+    assert(NULL != pResult);
 
     /* Set 0's for imaginary inputs as not be reading them in by the machine */
-    base->GPREG[1]  = 0;
-    base->GPREG[3]  = 0;
-    base->GPREG[5]  = 0;
-    base->GPREG[7]  = 0;
-    base->GPREG[9]  = 0;
-    base->GPREG[11] = 0;
-    base->GPREG[13] = 0;
-    base->GPREG[15] = 0;
-    base->OUTBASE   = (int32_t)pResult;
-    base->INABASE   = (int32_t)pData;
+    base->GPREG[1]  = 0U;
+    base->GPREG[3]  = 0U;
+    base->GPREG[5]  = 0U;
+    base->GPREG[7]  = 0U;
+    base->GPREG[9]  = 0U;
+    base->GPREG[11] = 0U;
+    base->GPREG[13] = 0U;
+    base->GPREG[15] = 0U;
+    base->OUTBASE   = (uint32_t)(uint32_t *)pResult;
+    base->INABASE   = (uint32_t)(uint32_t *)pData;
     base->LENGTH    = length;
-    base->CONTROL   = (CP_FFT << 4) | PQ_TRANS_RFFT;
+    base->CONTROL   = (CP_FFT << 4U) | PQ_TRANS_RFFT;
 }
 
 void PQ_TransformIFFT(POWERQUAD_Type *base, uint32_t length, void *pData, void *pResult)
 {
-    assert(pData);
-    assert(pResult);
+    assert(NULL != pData);
+    assert(NULL != pResult);
 
-    base->OUTBASE = (int32_t)pResult;
-    base->INABASE = (int32_t)pData;
+    base->OUTBASE = (uint32_t)(uint32_t *)pResult;
+    base->INABASE = (uint32_t)(uint32_t *)pData;
     base->LENGTH  = length;
-    base->CONTROL = (CP_FFT << 4) | PQ_TRANS_IFFT;
+    base->CONTROL = (CP_FFT << 4U) | PQ_TRANS_IFFT;
 }
 
 void PQ_TransformCDCT(POWERQUAD_Type *base, uint32_t length, void *pData, void *pResult)
 {
-    assert(pData);
-    assert(pResult);
+    assert(NULL != pData);
+    assert(NULL != pResult);
 
-    base->OUTBASE = (int32_t)pResult;
-    base->INABASE = (int32_t)pData;
+    base->OUTBASE = (uint32_t)(uint32_t *)pResult;
+    base->INABASE = (uint32_t)(uint32_t *)pData;
     base->LENGTH  = length;
-    base->CONTROL = (CP_FFT << 4) | PQ_TRANS_CDCT;
+    base->CONTROL = (CP_FFT << 4U) | PQ_TRANS_CDCT;
 }
 
 void PQ_TransformRDCT(POWERQUAD_Type *base, uint32_t length, void *pData, void *pResult)
 {
-    assert(pData);
-    assert(pResult);
+    assert(NULL != pData);
+    assert(NULL != pResult);
 
-    base->GPREG[1]  = 0;
-    base->GPREG[3]  = 0;
-    base->GPREG[5]  = 0;
-    base->GPREG[7]  = 0;
-    base->GPREG[9]  = 0;
-    base->GPREG[11] = 0;
-    base->GPREG[13] = 0;
-    base->GPREG[15] = 0;
-    base->OUTBASE   = (int32_t)pResult;
-    base->INABASE   = (int32_t)pData;
+    base->GPREG[1]  = 0U;
+    base->GPREG[3]  = 0U;
+    base->GPREG[5]  = 0U;
+    base->GPREG[7]  = 0U;
+    base->GPREG[9]  = 0U;
+    base->GPREG[11] = 0U;
+    base->GPREG[13] = 0U;
+    base->GPREG[15] = 0U;
+    base->OUTBASE   = (uint32_t)(uint32_t *)pResult;
+    base->INABASE   = (uint32_t)(uint32_t *)pData;
     base->LENGTH    = length;
-    base->CONTROL   = (CP_FFT << 4) | PQ_TRANS_RDCT;
+    base->CONTROL   = (CP_FFT << 4U) | PQ_TRANS_RDCT;
 }
 
 void PQ_TransformIDCT(POWERQUAD_Type *base, uint32_t length, void *pData, void *pResult)
 {
-    assert(pData);
-    assert(pResult);
+    assert(NULL != pData);
+    assert(NULL != pResult);
 
-    base->OUTBASE = (int32_t)pResult;
-    base->INABASE = (int32_t)pData;
+    base->OUTBASE = (uint32_t)(uint32_t *)pResult;
+    base->INABASE = (uint32_t)(uint32_t *)pData;
     base->LENGTH  = length;
-    base->CONTROL = (CP_FFT << 4) | PQ_TRANS_IDCT;
+    base->CONTROL = (CP_FFT << 4U) | PQ_TRANS_IDCT;
 }

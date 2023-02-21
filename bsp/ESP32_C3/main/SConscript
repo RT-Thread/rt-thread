@@ -1,0 +1,11 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+CPPPATH = []
+
+group = DefineGroup('Main', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

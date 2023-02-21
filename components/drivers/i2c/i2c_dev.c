@@ -20,7 +20,7 @@
 #endif
 #include <rtdbg.h>
 
-static rt_size_t i2c_bus_device_read(rt_device_t dev,
+static rt_ssize_t i2c_bus_device_read(rt_device_t dev,
                                      rt_off_t    pos,
                                      void       *buffer,
                                      rt_size_t   count)
@@ -40,7 +40,7 @@ static rt_size_t i2c_bus_device_read(rt_device_t dev,
     return rt_i2c_master_recv(bus, addr, flags, (rt_uint8_t *)buffer, count);
 }
 
-static rt_size_t i2c_bus_device_write(rt_device_t dev,
+static rt_ssize_t i2c_bus_device_write(rt_device_t dev,
                                       rt_off_t    pos,
                                       const void *buffer,
                                       rt_size_t   count)

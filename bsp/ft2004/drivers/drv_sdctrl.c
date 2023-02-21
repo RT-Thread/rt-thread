@@ -45,7 +45,7 @@ typedef struct
 
 ft_sdctrl_class_t sdctrl_class;
 
-ALIGN(SDCTR_ALIGN_LEN)
+rt_align(SDCTR_ALIGN_LEN)
 static rt_uint8_t cache_buf[SDCTR_BUFF_SIZE];
 
 static void rthw_sdctrl_send_command(ft_sdctrl_class_t *class_p, struct mmcsd_pkg *pkg);

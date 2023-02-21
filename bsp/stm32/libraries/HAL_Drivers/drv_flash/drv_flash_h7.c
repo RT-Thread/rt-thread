@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -158,27 +158,35 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
 
     rt_uint32_t addr_bank1 = 0;
     rt_uint32_t size_bank1 = 0;
+#ifdef FLASH_BANK_2
     rt_uint32_t addr_bank2 = 0;
     rt_uint32_t size_bank2 = 0;
+#endif
 
     if((addr + size) < FLASH_BANK2_BASE)
     {
         addr_bank1 = addr;
         size_bank1 = size;
+#ifdef FLASH_BANK_2
         size_bank2 = 0;
+#endif
     }
     else if(addr >= FLASH_BANK2_BASE)
     {
         size_bank1 = 0;
+#ifdef FLASH_BANK_2
         addr_bank2 = addr;
         size_bank2 = size;
+#endif
     }
     else
     {
         addr_bank1 = addr;
         size_bank1 = FLASH_BANK2_BASE - addr_bank1;
+#ifdef FLASH_BANK_2
         addr_bank2 = FLASH_BANK2_BASE;
         size_bank2 = addr + size - FLASH_BANK2_BASE;
+#endif
     }
 
     /*Variable used for Erase procedure*/
@@ -201,6 +209,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
         }
     }
 
+#ifdef FLASH_BANK_2
     if(size_bank2)
     {
         EraseInitStruct.Sector    = (addr_bank2 - FLASH_BANK2_BASE) / FLASH_SECTOR_SIZE;
@@ -212,6 +221,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
             goto __exit;
         }
     }
+#endif
 
 __exit:
 

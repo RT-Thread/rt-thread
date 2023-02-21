@@ -14,10 +14,10 @@
 
 #if defined(NU_PKG_USING_SPINAND) && defined(RT_USING_MTD_NAND)
 
-#define LOG_TAG                 "drv_spinand"
-#define DBG_ENABLE
-#define DBG_SECTION_NAME        LOG_TAG
-#define DBG_LEVEL               DBG_INFO
+#define LOG_TAG           "drv_spinand"
+#undef  DBG_ENABLE
+#define DBG_SECTION_NAME  LOG_TAG
+#define DBG_LEVEL         LOG_LVL_INFO
 #define DBG_COLOR
 #include <rtdbg.h>
 
@@ -30,8 +30,8 @@ rt_size_t nu_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qsp
     rt_err_t result;
     struct rt_spi_message *index;
 
-    RT_ASSERT(device != RT_NULL);
-    RT_ASSERT(message != RT_NULL);
+    RT_ASSERT(device);
+    RT_ASSERT(message);
 
     result = rt_mutex_take(&(device->parent.bus->lock), RT_WAITING_FOREVER);
     if (result != RT_EOK)
@@ -142,27 +142,12 @@ rt_err_t nu_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_si
 
 static void spinand_dump_buffer(int page, rt_uint8_t *buf, int len, const char *title)
 {
-    if ((DBG_LEVEL) >= DBG_LOG)
+    if (!buf || len == 0)
     {
-        int i;
-
-        if (!buf)
-        {
-            return;
-        }
-
-        /* Just print 64-bytes.*/
-        len = (len < 64) ? len : 64;
-
-        LOG_I("[%s-Page-%d]", title, page);
-
-        for (i = 0; i < len; i ++)
-        {
-            rt_kprintf("%02X ", buf[i]);
-            if (i % 32 == 31) rt_kprintf("\n");
-        }
-        rt_kprintf("\n");
+        return;
     }
+    LOG_D("%s-->", title);
+    LOG_HEX("spinand", 16, (void *)buf, len);
 }
 
 static rt_err_t spinand_read_id(struct rt_mtd_nand_device *device)
@@ -178,6 +163,8 @@ static rt_err_t spinand_read_id(struct rt_mtd_nand_device *device)
     result = rt_mutex_release(SPINAND_FLASH_LOCK);
     RT_ASSERT(result == RT_EOK);
 
+    LOG_I("JEDEC ID of the SPI NAND is [%08X]", id);
+
     return (id != 0x0) ? RT_EOK : -RT_ERROR;
 }
 
@@ -192,7 +179,7 @@ static rt_err_t spinand_read_page(struct rt_mtd_nand_device *device,
 
     LOG_D("[R-%d]data: 0x%08x %d, spare: 0x%08x, %d", page, data, data_len, spare, spare_len);
 
-    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device);
 
     if (page / device->pages_per_block > device->block_end)
     {
@@ -228,9 +215,6 @@ exit_spinand_read_page:
 
     rt_mutex_release(SPINAND_FLASH_LOCK);
 
-    spinand_dump_buffer(page, data, data_len, "Read Data");
-    spinand_dump_buffer(page, spare, spare_len, "Read Spare");
-
     return result;
 }
 
@@ -245,16 +229,13 @@ static rt_err_t spinand_write_page(struct rt_mtd_nand_device *device,
 
     LOG_D("[W-%d]data: 0x%08x %d, spare: 0x%08x, %d", page, data, data_len, spare, spare_len);
 
-    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device);
 
     if (page / device->pages_per_block > device->block_end)
     {
         LOG_E("[EIO] write page:%d", page);
         return -RT_MTD_EIO;
     }
-
-    spinand_dump_buffer(page, (uint8_t *)data, data_len, "WRITE DATA");
-    spinand_dump_buffer(page, (uint8_t *)spare, spare_len, "WRITE SPARE");
 
     result = rt_mutex_take(SPINAND_FLASH_LOCK, RT_WAITING_FOREVER);
     RT_ASSERT(result == RT_EOK);
@@ -294,7 +275,7 @@ static rt_err_t spinand_move_page(struct rt_mtd_nand_device *device, rt_off_t sr
     rt_err_t result = RT_EOK ;
     uint8_t u8WECmd;
 
-    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device);
 
     if ((src_page / device->pages_per_block > device->block_end) ||
             (dst_page / device->pages_per_block > device->block_end))
@@ -337,7 +318,7 @@ static rt_err_t spinand_erase_block_force(struct rt_mtd_nand_device *device, rt_
     rt_err_t result = RT_EOK ;
     uint32_t page;
 
-    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device);
 
     if (block > device->block_end)
     {
@@ -370,7 +351,7 @@ static rt_err_t spinand_erase_block(struct rt_mtd_nand_device *device, rt_uint32
     rt_err_t result = RT_EOK ;
     uint32_t page;
 
-    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device);
 
     if (block > device->block_end)
     {
@@ -414,7 +395,7 @@ static rt_err_t spinand_check_block(struct rt_mtd_nand_device *device, rt_uint32
     uint32_t page = 0;
     uint8_t isbad = 0;
 
-    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device);
 
     if (block > device->block_end)
     {
@@ -442,7 +423,7 @@ static rt_err_t spinand_mark_badblock(struct rt_mtd_nand_device *device, rt_uint
     rt_err_t result = RT_EOK ;
     uint32_t page = 0;
 
-    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device);
 
     if (block > device->block_end)
     {
@@ -615,6 +596,9 @@ static int nread(int argc, char **argv)
     if (spinand_read_page(device, page, &data_ptr[0], SPINAND_FLASH_PAGE_SIZE, &spare[0], SPINAND_FLASH_OOB_SIZE) != RT_EOK)
         goto exit_nread;
 
+    spinand_dump_buffer(page, data_ptr, SPINAND_FLASH_PAGE_SIZE, "Data");
+    spinand_dump_buffer(page, spare, SPINAND_FLASH_OOB_SIZE, "Spare");
+
     LOG_I("Partion:%d page-%d", partition, page);
 
     ret = 0;
@@ -664,6 +648,9 @@ static int nwrite(int argc, char **argv)
         data_ptr[i] = i / 5 - i;
 
     page = page + device->block_start * device->pages_per_block;
+
+    spinand_dump_buffer(page, (uint8_t *)data_ptr, SPINAND_FLASH_PAGE_SIZE, "Data");
+
     spinand_write_page(device, page, &data_ptr[0], SPINAND_FLASH_PAGE_SIZE, NULL, 0);
 
     LOG_I("Wrote data into %d in partition-index %d.", page, partition);
@@ -870,6 +857,96 @@ static int nid(int argc, char **argv)
     spinand_read_id(RT_NULL);
     return 0;
 }
+
+#if defined(SOC_SERIES_MA35D1)
+/*
+   This function just help you find a valid window for transmission over SPI bus.
+*/
+#include "drv_spi.h"
+
+static int find_valid_window(const char *pcDevName)
+{
+    rt_device_t psRtDev;
+    nu_spi_t psNuSpiBus;
+    int i, j, k;
+
+    psRtDev = rt_device_find(pcDevName);
+    if (!psRtDev || (psRtDev->type != RT_Device_Class_SPIDevice))
+    {
+        LOG_E("Usage %s: %s <spi device name>.\n", __func__, __func__);
+        return -1;
+    }
+
+    psNuSpiBus = (nu_spi_t)((struct rt_spi_device *)psRtDev)->bus;
+
+    for (k = 0 ; k < spinand_supported_flash_size(); k++)
+    {
+        rt_uint32_t u32JedecId = spinand_info_get(k)->u32JEDECID;
+        rt_uint32_t id = 0;
+
+        LOG_I("Probe JEDEC[%08X] on %s bus.", u32JedecId, psNuSpiBus->name);
+
+        rt_kprintf("   ");
+        for (i = 0; i < 8; i++) // Pin driving
+            rt_kprintf("%d ", i);
+        rt_kprintf("\n");
+
+        for (j = 0; j < 0xC; j++) // Master RX delay cycle
+        {
+            rt_kprintf("%X: ", j);
+            for (i = 0; i < 8; i++) // Pin driving
+            {
+                SPI_SET_MRXPHASE(psNuSpiBus->spi_base, j);
+                GPIO_SetDrivingCtl(PD, (BIT0 | BIT1 | BIT2 | BIT3 | BIT4 | BIT5), i);
+
+                spinand_jedecid_get((struct rt_qspi_device *)psRtDev, &id);
+
+                if (id == u32JedecId)
+                {
+                    rt_kprintf("O ");
+                }
+                else
+                {
+                    rt_kprintf("X ");
+                }
+            }
+            rt_kprintf("\n");
+        }
+        rt_kprintf("\n");
+
+    } //for (k = 0 ; k < SPINAND_LIST_ELEMENT_NUM; k++)
+
+    return 0;
+}
+
+static int nprobe(int argc, char **argv)
+{
+    if (argc != 2)
+    {
+        LOG_E("Usage %s: %s <spi device name>.\n", __func__, __func__);
+        return -1;
+    }
+
+    find_valid_window(argv[1]);
+
+    return 0;
+}
+
+static int nprobe_auto(int argc, char **argv)
+{
+    int count = 0;
+
+    while (count++ < 100)
+        find_valid_window("qspi01");
+
+    return 0;
+}
+
+#ifdef FINSH_USING_MSH
+    MSH_CMD_EXPORT(nprobe_auto, auto nprobe);
+    MSH_CMD_EXPORT(nprobe, check valid window);
+#endif
+#endif
 
 static int nlist(int argc, char **argv)
 {

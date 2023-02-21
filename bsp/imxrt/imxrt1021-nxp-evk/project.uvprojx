@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>XIP_BOOT_HEADER_ENABLE=1, SKIP_SYSCLK_INIT, CPU_MIMXRT1021DAG5A, __FPU_PRESENT=1, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, STD=C99, ENDIANNESS, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, XIP_BOOT_HEADER_ENABLE=1, SKIP_SYSCLK_INIT, CPU_MIMXRT1021DAG5A, __PERF_COUNT_PLATFORM_SPECIFIC_HEADER__=&lt;rtthread.h&gt;, RT_USING_LIBC, __FPU_PRESENT=1, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __perf_counter_printf__=rt_kprintf, STD=C99, ENDIANNESS, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1020\CMSIS\Include;..\libraries\MIMXRT1020\MIMXRT1021;..\libraries\MIMXRT1020\MIMXRT1021\drivers;..\libraries\peripherals;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\usb\usbdevice;xip</IncludePath>
+              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1020\CMSIS\Include;..\libraries\MIMXRT1020\MIMXRT1021;..\libraries\MIMXRT1020\MIMXRT1021\drivers;packages\perf_counter-latest;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\usb\usbdevice;xip</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -404,16 +404,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>stdlib.c</FileName>
+              <FileName>cctype.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\stdlib.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>time.c</FileName>
+              <FileName>cstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -755,9 +783,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_file.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -765,6 +793,13 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -880,23 +915,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_common.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>fsl_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_clock.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -920,21 +948,45 @@
               <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\system_MIMXRT1021.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>fsl_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1020\MIMXRT1021\drivers\fsl_common.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>perf_counter</GroupName>
+          <Files>
+            <File>
+              <FileName>perf_os_patch_rt_thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\perf_counter-latest\os\perf_os_patch_rt_thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>perf_counter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\perf_counter-latest\perf_counter.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>rt_usbd</GroupName>
           <Files>
             <File>
-              <FileName>mstorage.c</FileName>
+              <FileName>usbdevice_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</FilePath>
+              <FilePath>..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>usbdevice_core.c</FileName>
+              <FileName>mstorage.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</FilePath>
+              <FilePath>..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -956,16 +1008,16 @@
           <GroupName>xip</GroupName>
           <Files>
             <File>
-              <FileName>fsl_flexspi_nor_flash.c</FileName>
+              <FileName>fsl_flexspi_nor_boot.c</FileName>
               <FileType>1</FileType>
-              <FilePath>xip\fsl_flexspi_nor_flash.c</FilePath>
+              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>fsl_flexspi_nor_boot.c</FileName>
+              <FileName>fsl_flexspi_nor_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
+              <FilePath>xip\fsl_flexspi_nor_flash.c</FilePath>
             </File>
           </Files>
         </Group>

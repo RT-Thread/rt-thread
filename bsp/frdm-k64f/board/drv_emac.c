@@ -52,10 +52,10 @@ struct emac_device
     /* inherit from Ethernet device */
     struct eth_device parent;
 
-    ALIGN(64) enet_rx_bd_struct_t RxBuffDescrip[ENET_RX_RING_LEN];
-    ALIGN(64) enet_tx_bd_struct_t TxBuffDescrip[ENET_TX_RING_LEN];
-    ALIGN(64) uint8_t RxDataBuff[ENET_RX_RING_LEN * ENET_ALIGN(ENET_RXBUFF_SIZE)];
-    ALIGN(64) uint8_t TxDataBuff[ENET_TX_RING_LEN * ENET_ALIGN(ENET_TXBUFF_SIZE)];
+    rt_align(64) enet_rx_bd_struct_t RxBuffDescrip[ENET_RX_RING_LEN];
+    rt_align(64) enet_tx_bd_struct_t TxBuffDescrip[ENET_TX_RING_LEN];
+    rt_align(64) uint8_t RxDataBuff[ENET_RX_RING_LEN * ENET_ALIGN(ENET_RXBUFF_SIZE)];
+    rt_align(64) uint8_t TxDataBuff[ENET_TX_RING_LEN * ENET_ALIGN(ENET_TXBUFF_SIZE)];
 
     enet_handle_t enet_handle;
     rt_uint8_t  dev_addr[MAX_ADDR_LEN];         /* MAC address  */
@@ -229,16 +229,14 @@ static rt_err_t k64_emac_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t k64_emac_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t k64_emac_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-    rt_set_errno(-RT_ENOSYS);
-    return 0;
+    return -RT_ENOSYS;
 }
 
-static rt_size_t k64_emac_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t k64_emac_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-    rt_set_errno(-RT_ENOSYS);
-    return 0;
+    return -RT_ENOSYS;
 }
 
 static rt_err_t k64_emac_control(rt_device_t dev, int cmd, void *args)

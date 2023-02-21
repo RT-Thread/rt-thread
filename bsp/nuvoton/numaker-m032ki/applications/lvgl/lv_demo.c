@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,16 +17,15 @@ void lv_user_gui_init(void)
 #if LV_USE_DEMO_BENCHMARK
     extern void lv_demo_benchmark(void);
     lv_demo_benchmark();
-#endif
 
-#if LV_USE_DEMO_WIDGETS
+#elif LV_USE_DEMO_WIDGETS
     extern void lv_demo_widgets(void);
     lv_demo_widgets();
-#endif
 
-#if LV_USE_DEMO_MUSIC || LV_USE_DEMO_RTT_MUSIC
+#elif (LV_USE_DEMO_MUSIC || LV_USE_DEMO_RTT_MUSIC)
     extern void lv_demo_music(void);
     lv_demo_music();
+
 #endif
 
 }

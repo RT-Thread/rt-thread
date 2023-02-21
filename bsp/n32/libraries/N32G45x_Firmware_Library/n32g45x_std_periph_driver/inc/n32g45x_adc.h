@@ -46,8 +46,8 @@ extern "C" {
  * @{
  */
 #define VREF1P2_CTRL  (*(uint32_t*)(0x40001800+0x20))
-#define _EnVref1p2()  do{VREF1P2_CTRL|=(1<<10);}while(0);
-#define _DisVref1p2() do{VREF1P2_CTRL&=~(1<<10);}while(0);
+#define _EnVref1p2()  do{VREF1P2_CTRL|=(1<<10);}while (0);
+#define _DisVref1p2() do{VREF1P2_CTRL&=~(1<<10);}while (0);
 /** @addtogroup ADC
  * @{
  */
@@ -528,7 +528,7 @@ typedef struct
 /**
  * @}
  */
- 
+
 #define ADC_CLOCK_PLL           ((uint32_t)ADC_CTRL3_CKMOD_MSK)
 #define ADC_CLOCK_AHB           ((uint32_t)(~ADC_CTRL3_CKMOD_MSK))
 
@@ -539,7 +539,7 @@ typedef struct
 /**
  * @}
  */
- 
+
 typedef enum
 {
     ADC_CTRL3_CKMOD_AHB = 0,
@@ -550,7 +550,7 @@ typedef enum
     ADC_CTRL3_RES_12BIT  = 3,
     ADC_CTRL3_RES_10BIT  = 2,
     ADC_CTRL3_RES_8BIT   = 1,
-    ADC_CTRL3_RES_6BIT   = 0,   
+    ADC_CTRL3_RES_6BIT   = 0,
 } ADC_CTRL3_RES;
 typedef struct
 {

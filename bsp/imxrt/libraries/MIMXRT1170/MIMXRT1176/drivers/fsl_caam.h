@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -30,9 +30,9 @@ enum
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief CAAM driver version. Version 2.1.5.
+/*! @brief CAAM driver version. Version 2.1.6.
  *
- * Current version: 2.1.4
+ * Current version: 2.1.6
  *
  * Change log:
  * - Version 2.0.0
@@ -58,8 +58,10 @@ enum
  * - Version 2.1.5
  *   - Support EXTENDED data size for all AES, HASH and RNG operations.
  *   - Support multiple De-Initialization/Initialization of CAAM driver within one POR event.
+ * - Version 2.1.6
+ *   - Improve DCACHE handling. Requires CAAM used and cached memory set in write-trough mode.
  */
-#define FSL_CAAM_DRIVER_VERSION (MAKE_VERSION(2, 1, 5))
+#define FSL_CAAM_DRIVER_VERSION (MAKE_VERSION(2, 1, 6))
 /*@}*/
 
 /*! @brief CAAM callback function. */
@@ -1305,7 +1307,7 @@ status_t CAAM_RNG_Reseed(CAAM_Type *base,
 status_t CAAM_RNG_GetRandomData(CAAM_Type *base,
                                 caam_handle_t *handle,
                                 caam_rng_state_handle_t stateHandle,
-                                void *data,
+                                uint8_t *data,
                                 size_t dataSize,
                                 caam_rng_random_type_t dataType,
                                 caam_rng_generic256_t additionalEntropy);

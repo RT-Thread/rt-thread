@@ -7,7 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 200
@@ -25,7 +25,9 @@
 
 #define RT_USING_SEMAPHORE
 #define RT_USING_MUTEX
+#define RT_USING_EVENT
 #define RT_USING_MAILBOX
+#define RT_USING_MESSAGEQUEUE
 
 /* Memory Management */
 
@@ -48,7 +50,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_STACK_SIZE 1024
 #define RT_MAIN_THREAD_PRIORITY 10
 #define RT_USING_MSH
 #define RT_USING_FINSH
@@ -70,10 +72,7 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_HWTIMER
 #define RT_USING_PIN
-#define RT_USING_SPI
-#define RT_USING_WDT
 
 /* Using USB */
 
@@ -158,6 +157,9 @@
 /* peripheral libraries and drivers */
 
 
+/* Kendryte SDK */
+
+
 /* AI packages */
 
 
@@ -170,6 +172,15 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 #define SOC_FAMILY_CH56X
 #define SOC_SERIES_CH569
 
@@ -181,11 +192,6 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_TIMER
-#define BSP_USING_TMR0
-#define BSP_USING_TMR1
-#define BSP_USING_SPI
-#define BSP_USING_SPI0
 
 /* Onboard Peripheral Drivers */
 

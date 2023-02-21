@@ -38,10 +38,10 @@ struct rt_i2c_bus_device;
 
 struct rt_i2c_bus_device_ops
 {
-    rt_size_t (*master_xfer)(struct rt_i2c_bus_device *bus,
+    rt_ssize_t (*master_xfer)(struct rt_i2c_bus_device *bus,
                              struct rt_i2c_msg msgs[],
                              rt_uint32_t num);
-    rt_size_t (*slave_xfer)(struct rt_i2c_bus_device *bus,
+    rt_ssize_t (*slave_xfer)(struct rt_i2c_bus_device *bus,
                             struct rt_i2c_msg msgs[],
                             rt_uint32_t num);
     rt_err_t (*i2c_bus_control)(struct rt_i2c_bus_device *bus,

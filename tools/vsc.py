@@ -29,7 +29,6 @@ import os
 import json
 import utils
 import rtconfig
-import rtconfig
 from utils import _make_path_relative
 
 

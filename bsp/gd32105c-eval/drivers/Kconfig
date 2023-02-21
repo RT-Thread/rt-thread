@@ -44,7 +44,7 @@ menu "On-chip Peripheral Drivers"
     config RT_USING_SPI1
         bool "Using SPI1"
         select RT_USING_SPI
-        default n 
+        default n
 
     config RT_USING_SPI2
         bool "Using SPI2"
@@ -59,7 +59,7 @@ menu "On-chip Peripheral Drivers"
     config RT_USING_I2C1
         bool "Using I2C1"
         select RT_USING_I2C
-        default n 
+        default n
 endmenu
 
 menu "Board extended module Drivers"

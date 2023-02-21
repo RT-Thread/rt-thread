@@ -21,8 +21,6 @@ if rtconfig.CROSS_TOOL == 'msvc':
         '_CRT_NO_TIME_T',
         # disable deprecation of unsafe functions, such as strncpy
         '_CRT_SECURE_NO_WARNINGS',
-        # RT_VESRION conflicts in winuser.h
-        'NORESOURCE',
         # lean and mean for Windows.h, exclude winsock.h when include Windows.h
         # avoid conlicts between sys/select.h, time.h, and winsock.h
         # such as fd_set related, struct timeval...

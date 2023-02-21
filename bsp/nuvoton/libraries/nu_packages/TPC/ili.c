@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -383,7 +383,7 @@ static void ili_touch_down(void *buf, int8_t id, int16_t x, int16_t y, int16_t w
 
 static int8_t pre_id[ILI_MAX_TOUCH];
 static rt_uint8_t pre_touch = 0;
-static rt_size_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
+static rt_ssize_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
 
@@ -615,11 +615,11 @@ int rt_hw_ili_tpc_init(const char *name, struct rt_touch_config *cfg)
         goto exit_rt_hw_ili_tpc_init;
     }
 
-    rt_memset(&pre_x[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_y[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_w[0], 0xff, ILI_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&s_tp_dowm[0], 0, ILI_MAX_TOUCH * sizeof(int16_t));
-    rt_memset(&pre_id[0], 0xff,  ILI_MAX_TOUCH * sizeof(int8_t));
+    rt_memset(&pre_x[0], 0xff, ILI_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_y[0], 0xff, ILI_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&pre_w[0], 0xff, ILI_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&s_tp_dowm[0], 0, ILI_MAX_TOUCH * sizeof(rt_uint8_t));
+    rt_memset(&pre_id[0], 0xff,  ILI_MAX_TOUCH * sizeof(rt_uint8_t));
 
     /* register touch device */
     rt_memcpy(&touch_device->config, cfg, sizeof(struct rt_touch_config));

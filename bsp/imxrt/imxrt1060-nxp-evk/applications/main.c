@@ -14,7 +14,7 @@
 #include "core_cm7.h"
 
 /* defined the LED pin: GPIO1_IO9 */
-#define LED0_PIN               GET_PIN(1, 8)
+#define LED0_PIN               GET_PIN(1, 9)
 
 int main(void)
 {

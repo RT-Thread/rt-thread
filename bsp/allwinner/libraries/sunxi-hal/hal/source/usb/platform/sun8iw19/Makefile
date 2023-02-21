@@ -1,0 +1,1 @@
+obj-y += usb_sun8iw19.o

@@ -1,7 +1,7 @@
 ;*******************************************************************************
 ;  (c) Copyright 2015 Microsemi SoC Products Group. All rights reserved.
 ;  SmartFusion2 scatter file for relocating code to external RAM.
-; 
+;
 ;  SVN $Revision: 7419 $
 ;  SVN $Date: 2015-05-15 16:50:21 +0100 (Fri, 15 May 2015) $
 ;
@@ -23,7 +23,7 @@
 ; * --DDR3-------DevKit-----------0xA0000000------0xAFFFFFFF-----512MB--16--MT41K256M8DA---050------------------------
 ;
 ;  Example linker scripts use lowest practicl values so will work accross dev kits
-;  eNVM=256KB  eRAM=64KB  External memory = 64MB  
+;  eNVM=256KB  eRAM=64KB  External memory = 64MB
 
 FLASH_LOAD 0x60000000 0x40000
 {
@@ -36,23 +36,23 @@ FLASH_LOAD 0x60000000 0x40000
         system_m2sxxx.o
         sys_config.o
         low_level_init.o
-	sys_config_SERDESIF_?.o
-	mscc_post_hw_cfg_init.o			
-    	ecc_error_handler.o		
+    sys_config_SERDESIF_?.o
+    mscc_post_hw_cfg_init.o
+        ecc_error_handler.o
     }
-    ;   MDDR_RAM 0xA0000000 0x4000000  	
+    ;   MDDR_RAM 0xA0000000 0x4000000
     ;   -MDDR is mapped to address space from 0 on startup
     ;   This allows the use of cache which is restriced to this area.
     ;   Code is copied to RAM_EXEC space on startup by boot code.
-    RAM_EXEC 0x00000000 0x00040000	
+    RAM_EXEC 0x00000000 0x00040000
     {
         .ANY (+RO)
     }
     ;   Heap size is defined in startup_m2sxxx.s
-    ;   Heap will be added after RW data in ER_RW unless explicitly 
+    ;   Heap will be added after RW data in ER_RW unless explicitly
     ;   allocated a meemory region in .sct file
     ;   Stack size is defined in startup_m2sxxx.s
-    ;   Stack will be added after heap in ER_RW unless explicitly 
+    ;   Stack will be added after heap in ER_RW unless explicitly
     ;   allocated a memory region in .sct file as is the case below
     STACKS 0x20000000 UNINIT
     {

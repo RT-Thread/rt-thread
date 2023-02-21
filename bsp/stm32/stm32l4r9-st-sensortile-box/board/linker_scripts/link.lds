@@ -88,7 +88,7 @@ SECTIONS
         _edata = . ;
     } >RAM2
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
@@ -111,7 +111,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > RAM2
     __bss_end = .;

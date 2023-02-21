@@ -4,6 +4,10 @@ config RT_USING_DEVICE_IPC
     bool "Using device drivers IPC"
     default y
 
+config RT_UNAMED_PIPE_NUMBER
+    int "The number of unamed pipe"
+    default 64
+
 if RT_USING_DEVICE_IPC
     config RT_USING_SYSTEM_WORKQUEUE
         bool "Using system default workqueue"
@@ -77,6 +81,17 @@ menuconfig RT_USING_SERIAL
         endif
     endif
 
+config RT_USING_TTY
+    bool "Using TTY SYSTEM"
+    depends on RT_USING_SMART
+    default y
+
+if RT_USING_TTY
+    config RT_TTY_DEBUG
+        bool "Using TTY DEBUG"
+        default n
+endif
+
 config RT_USING_CAN
     bool "Using CAN device drivers"
     default n
@@ -84,6 +99,9 @@ config RT_USING_CAN
 if RT_USING_CAN
     config RT_CAN_USING_HDR
         bool "Enable CAN hardware filter"
+        default n
+    config RT_CAN_USING_CANFD
+        bool "Enable CANFD support"
         default n
 endif
 
@@ -115,6 +133,15 @@ if RT_USING_CPUTIME
         default y
         depends on ARCH_ARM_CORTEX_M0 || ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
         select PKG_USING_PERF_COUNTER
+    config RT_USING_CPUTIME_RISCV
+        bool "Use rdtime instructions for CPU time"
+        default y
+        depends on ARCH_RISCV64
+        help
+            Some RISCV64 MCU Use rdtime instructions read CPU time.
+    config CPUTIME_TIMER_FREQ
+        int "CPUTIME timer freq"
+        default 0
 endif
 
 config RT_USING_I2C
@@ -152,7 +179,19 @@ config RT_USING_ADC
 config RT_USING_DAC
     bool "Using DAC device drivers"
     default n
-    
+
+config RT_USING_NULL
+    bool "Using NULL device drivers"
+    default n
+
+config RT_USING_ZERO
+    bool "Using ZERO device drivers"
+    default n
+
+config RT_USING_RANDOM
+    bool "Using RANDOM device drivers"
+    default n
+
 config RT_USING_PWM
     bool "Using PWM device drivers"
     default n
@@ -209,6 +248,19 @@ config RT_USING_PM
                 int "PM standby mode threashold time"
                 default 100
         endif
+    endif
+
+config RT_USING_FDT
+    bool "Using fdt interface for device drivers"
+    default n
+    if RT_USING_FDT
+        config RT_USING_FDTLIB
+            bool "Using fdt lib for device drivers"
+            default y
+        config FDT_USING_DEBUG
+            bool "Using fdt debug function "
+            default n
+
     endif
 
 config RT_USING_RTC
@@ -293,7 +345,7 @@ config RT_USING_SPI
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
-                
+
                 config RT_SFUD_USING_QSPI
                 bool "Using QSPI mode support"
                 select RT_USING_QSPI
@@ -329,7 +381,7 @@ config RT_USING_WDT
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
-    
+
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
             int "Replay memory pool block size"
@@ -352,6 +404,7 @@ config RT_USING_SENSOR
 if RT_USING_SENSOR
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
+        select PKG_USING_RT_VSNPRINTF_FULL
         default y
 endif
 
@@ -363,6 +416,10 @@ config RT_USING_TOUCH
         bool "touch irq use pin irq"
         default n
     endif
+
+config RT_USING_LCD
+    bool "Using LCD graphic drivers"
+    default n
 
 menuconfig RT_USING_HWCRYPTO
         bool "Using Hardware Crypto drivers"
@@ -544,6 +601,11 @@ if RT_USING_INPUT_CAPTURE
         default 100
 endif
 
+config RT_USING_DEV_BUS
+    bool "Using Device Bus device drivers"
+    default y if RT_USING_SMART
+    default n if !RT_USING_SMART
+
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"
     default n
@@ -695,6 +757,50 @@ menuconfig RT_USING_WIFI
         endif
     endif
 
+menuconfig RT_USING_VIRTIO
+    bool "Using VirtIO device drivers"
+    default n
+
+    if RT_USING_VIRTIO
+        choice
+            prompt "VirtIO Version"
+            default RT_USING_VIRTIO10
+
+            config RT_USING_VIRTIO10
+                bool "VirtIO v1.0"
+        endchoice
+
+        config RT_USING_VIRTIO_MMIO_ALIGN
+            bool "Using VirtIO MMIO alignment"
+            default y
+
+        config RT_USING_VIRTIO_BLK
+            bool "Using VirtIO BLK"
+            default y
+
+        config RT_USING_VIRTIO_NET
+            bool "Using VirtIO NET"
+            default y
+
+        menuconfig RT_USING_VIRTIO_CONSOLE
+            bool "Using VirtIO Console"
+            default y
+
+            if RT_USING_VIRTIO_CONSOLE
+                config RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR
+                    int "Max number of port in VirtIO Console"
+                    default 4
+            endif
+
+        config RT_USING_VIRTIO_GPU
+            bool "Using VirtIO GPU"
+            default y
+
+        config RT_USING_VIRTIO_INPUT
+            bool "Using VirtIO Input"
+            default y
+    endif
+
 menu "Using USB"
     config RT_USING_USB
         bool
@@ -711,16 +817,19 @@ menu "Using USB"
                 default n
                 if RT_USBH_MSTORAGE
                     config UDISK_MOUNTPOINT
-                    string "Udisk mount dir"
-                    default "/"
+                        string "Udisk mount dir"
+                        default "/"
                 endif
             config RT_USBH_HID
                 bool "Enable HID Drivers"
                 default n
                 if RT_USBH_HID
                     config RT_USBH_HID_MOUSE
-                    bool "Enable HID mouse protocol"
-                    default n
+                        bool "Enable HID mouse protocol"
+                        default n
+                    config RT_USBH_HID_KEYBOARD
+                        bool "Enable HID keyboard protocol"
+                        default n
                 endif
         endif
     config RT_USING_USB_DEVICE

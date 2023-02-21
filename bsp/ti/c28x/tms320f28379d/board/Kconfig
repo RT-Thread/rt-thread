@@ -1,0 +1,1090 @@
+menu "Hardware Drivers Config"
+
+menu "Onboard Peripheral Drivers"
+endmenu
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_FLASH
+        bool "Using FLASH as CMD, default RAM"
+        default n
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+    menuconfig BSP_USING_XINT
+        bool "Enable external interrupt"
+        default n
+        if BSP_USING_XINT
+            menuconfig BSP_USING_XINT1
+                bool "Enable XINT1"
+                if BSP_USING_XINT1
+                    config BSP_XINT1_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+                if !BSP_USING_XINT1
+                    config BSP_XINT1_PIN
+                        int
+                        default -1
+                endif
+            menuconfig BSP_USING_XINT2
+                bool "Enable XINT2"
+                if BSP_USING_XINT2
+                    config BSP_XINT2_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+                if !BSP_USING_XINT2
+                    config BSP_XINT2_PIN
+                        int
+                        default -1
+                endif
+            menuconfig BSP_USING_XINT3
+                bool "Enable XINT3"
+                if BSP_USING_XINT3
+                    config BSP_XINT3_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+                if !BSP_USING_XINT3
+                    config BSP_XINT3_PIN
+                        int
+                        default -1
+                endif
+            menuconfig BSP_USING_XINT4
+                bool "Enable XINT4"
+                if BSP_USING_XINT4
+                    config BSP_XINT4_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+                if !BSP_USING_XINT4
+                    config BSP_XINT4_PIN
+                        int
+                        default -1
+                endif
+                if !BSP_USING_XINT5
+                    config BSP_XINT5_PIN
+                        int
+                        default -1
+                endif
+            menuconfig BSP_USING_XINT5
+                bool "Enable XINT5"
+                if BSP_USING_XINT5
+                    config BSP_XINT5_PIN
+                        int "Interrupt pin"
+                        range 0 168
+                        default 0
+                endif
+        endif
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+        endif
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM1
+                bool "Enable ePWM1"
+                default y
+                if BSP_USING_PWM1
+                    menu "Basic settings for PWM1"
+                        config BSP_PWM1_INIT_PERIOD
+                            int "Initial period for PWM1(ns)"
+                            default 10000
+                        config BSP_PWM1_INIT_PULSE
+                            int "Initial pulse for PWM1(ns)"
+                            default 1000
+                    endmenu
+                    menu "Advanced Settings for PWM1"
+                        menuconfig BSP_PWM1_PHASE_ENABLE
+                            bool "Enable phase"
+                            default n
+                            if BSP_PWM1_PHASE_ENABLE
+                                choice
+                                    prompt "Select master or slave"
+                                    default BSP_PWM1_MASTER
+                                    config BSP_PWM1_MASTER
+                                        bool "Master"
+                                    config BSP_PWM1_SLAVE
+                                        bool "Slave"
+                                endchoice
+                                if BSP_PWM1_MASTER
+                                    config BSP_PWM1_PHASE
+                                        int
+                                        default 0
+                                endif
+                                if BSP_PWM1_SLAVE
+                                    config BSP_PWM1_PHASE
+                                        int "Phase, 0~360"
+                                        range 0 360
+                                        default 0
+                                        help
+                                            the phase for PWM1 module
+                                endif
+                            endif
+
+                        menuconfig BSP_PWM1_IT_ENABLE
+                            bool "Enable interrupt service"
+                            default n
+                            if BSP_PWM1_IT_ENABLE
+                                choice
+                                    prompt "Select interrupt time"
+                                    default BSP_PWM1_INTSEL_ET_CTR_ZERO
+                                    config BSP_PWM1_INTSEL_ET_DCAEVT1SOC
+                                        bool "DCAEVT1SOC"
+                                    config BSP_PWM1_INTSEL_ET_CTR_ZERO
+                                        bool "ctr == zero"
+                                    config BSP_PWM1_INTSEL_ET_CTR_PRD
+                                        bool "ctr == prd"
+                                    config BSP_PWM1_INTSEL_ET_CTR_PRDZERO
+                                        bool "ctr == prd or ctr == zero"
+                                    config BSP_PWM1_INTSEL_ET_CTRU_CMPA
+                                        bool "ctr == compa when counting up"
+                                    config BSP_PWM1_INTSEL_ET_CTRD_CMPA
+                                        bool "ctr == compa when counting down"
+                                    config BSP_PWM1_INTSEL_ET_CTRU_CMPB
+                                        bool "ctr == compb when counting up"
+                                    config BSP_PWM1_INTSEL_ET_CTRD_CMPB
+                                        bool "ctr == compb when counting down"
+                                endchoice
+
+                                config BSP_PWM1_INTSEL
+                                    int
+                                    default 0 if BSP_PWM1_INTSEL_ET_DCAEVT1SOC
+                                    default 1 if BSP_PWM1_INTSEL_ET_CTR_ZERO
+                                    default 2 if BSP_PWM1_INTSEL_ET_CTR_PRD
+                                    default 3 if BSP_PWM1_INTSEL_ET_CTR_PRDZERO
+                                    default 4 if BSP_PWM1_INTSEL_ET_CTRU_CMPA
+                                    default 5 if BSP_PWM1_INTSEL_ET_CTRD_CMPA
+                                    default 6 if BSP_PWM1_INTSEL_ET_CTRU_CMPB
+                                    default 7 if BSP_PWM1_INTSEL_ET_CTRD_CMPB
+                                choice
+                                    prompt "Interrupt generation time"
+                                    default BSP_PWM1_INT_ET_1ST
+                                    config BSP_PWM1_INT_ET_DISABLE
+                                        bool "disable PWM interrupt"
+                                    config BSP_PWM1_INT_ET_1ST
+                                        bool "generate interrupt at the first time"
+                                    config BSP_PWM1_INT_ET_2ND
+                                        bool "generate interrupt at the second time"
+                                    config BSP_PWM1_INT_ET_3RD
+                                        bool "generate interrupt at the third time"
+                                endchoice
+                                config BSP_PWM1_INTPRD
+                                    int
+                                    default 0 if BSP_PWM1_INT_ET_DISABLE
+                                    default 1 if BSP_PWM1_INT_ET_1ST
+                                    default 2 if BSP_PWM1_INT_ET_2ND
+                                    default 3 if BSP_PWM1_INT_ET_3RD
+                            endif
+                        choice
+                            prompt "HSP Clock division"
+                            default BSP_PWM1_HSPCLKDIV1
+                            config BSP_PWM1_HSPCLKDIV1
+                                bool "Clock Divided by 1"
+                            config BSP_PWM1_HSPCLKDIV2
+                                bool "Clock Divided by 2"
+                            config BSP_PWM1_HSPCLKDIV4
+                                bool "Clock Divided by 4"
+                        endchoice
+                        config BSP_PWM1_HSPCLKDIV
+                            int
+                            default 0 if BSP_PWM1_HSPCLKDIV1
+                            default 1 if BSP_PWM1_HSPCLKDIV2
+                            default 2 if BSP_PWM1_HSPCLKDIV4
+                        choice
+                            prompt "Clock division"
+                            default BSP_PWM1_CLKDIV1
+                            config BSP_PWM1_CLKDIV1
+                                bool "Clock Divided by 1"
+                            config BSP_PWM1_CLKDIV2
+                                bool "Clock Divided by 2"
+                            config BSP_PWM1_CLKDIV4
+                                bool "Clock Divided by 4"
+                        endchoice
+                        config BSP_PWM1_CLKDIV
+                            int
+                            default 0 if BSP_PWM1_CLKDIV1
+                            default 1 if BSP_PWM1_CLKDIV2
+                            default 2 if BSP_PWM1_CLKDIV4
+                        choice
+                            default BSP_PWM1_CTR_MODE_UPDOWN
+                            prompt "Select counter mode"
+                            config BSP_PWM1_CTR_MODE_UPDOWN
+                                bool "Up-down mode"
+                            config BSP_PWM1_CTR_MODE_UP
+                                bool "Up mode"
+                            config BSP_PWM1_CTR_MODE_DOWN
+                                bool "Down mode"
+                            config BSP_PWM1_CTR_FREEZE
+                                bool "Freezing Counter"
+                        endchoice
+                        config BSP_PWM1_CTRMODE
+                            int
+                            default 0 if BSP_PWM1_CTR_MODE_UP
+                            default 1 if BSP_PWM1_CTR_MODE_DOWN
+                            default 2 if BSP_PWM1_CTR_MODE_UPDOWN
+                            default 3 if BSP_PWM1_CTR_FREEZE
+                        choice
+                            prompt "Register load mode"
+                            config BSP_PWM1_CC_CTR_ZERO
+                                bool "Load when counter == 0"
+                            config BSP_PWM1_CC_CTR_PRD
+                                bool "Load when counter == prd"
+                            config BSP_PWM1_CC_CTR_ZERO_PRD
+                                bool "load when counter ==0 or counter == prd"
+                            config BSP_PWM1_CC_LD_DISABLE
+                                bool "disable load"
+                        endchoice
+
+                        config BSP_PWM1_LOADAMODE
+                            int
+                            default 0 if BSP_PWM1_CC_CTR_ZERO
+                            default 1 if BSP_PWM1_CC_CTR_PRD
+                            default 2 if BSP_PWM1_CC_CTR_ZERO_PRD
+                            default 3 if BSP_PWM1_CC_LD_DISABLE
+
+                        config BSP_PWM1_DB
+                            int "Dead time(ns)"
+                            default 100
+                            range 0 100000
+                        menuconfig BSP_PWM1_ADC_TRIGGER
+                            bool "Enable ADC trigger from PWM1"
+                            if BSP_PWM1_ADC_TRIGGER
+                                choice
+                                    prompt "Select soc triggering time"
+                                    default BSP_PWM1_SOCASEL_ET_CTR_ZERO
+                                    config BSP_PWM1_SOCASEL_ET_DCAEVT1SOC
+                                        bool "DCAEVT1SOC"
+                                    config BSP_PWM1_SOCASEL_ET_CTR_ZERO
+                                        bool "ctr == zero"
+                                    config BSP_PWM1_SOCASEL_ET_CTR_PRD
+                                        bool "ctr == prd"
+                                    config BSP_PWM1_SOCASEL_ET_CTR_PRDZERO
+                                        bool "ctr == prd or ctr == zero"
+                                    config BSP_PWM1_SOCASEL_ET_CTRU_CMPA
+                                        bool "ctr == compa when counting up"
+                                    config BSP_PWM1_SOCASEL_ET_CTRD_CMPA
+                                        bool "ctr == compa when counting down"
+                                    config BSP_PWM1_SOCASEL_ET_CTRU_CMPB
+                                        bool "ctr == compb when counting up"
+                                    config BSP_PWM1_SOCASEL_ET_CTRD_CMPB
+                                        bool "ctr == compb when counting down"
+                                endchoice
+
+                                config BSP_PWM1_SOCASEL
+                                    int
+                                    default 0 if BSP_PWM1_SOCASEL_ET_DCAEVT1SOC
+                                    default 1 if BSP_PWM1_SOCASEL_ET_CTR_ZERO
+                                    default 2 if BSP_PWM1_SOCASEL_ET_CTR_PRD
+                                    default 3 if BSP_PWM1_SOCASEL_ET_CTR_PRDZERO
+                                    default 4 if BSP_PWM1_SOCASEL_ET_CTRU_CMPA
+                                    default 5 if BSP_PWM1_SOCASEL_ET_CTRD_CMPA
+                                    default 6 if BSP_PWM1_SOCASEL_ET_CTRU_CMPB
+                                    default 7 if BSP_PWM1_SOCASEL_ET_CTRD_CMPB
+                                choice
+                                    prompt "SOCA generation time"
+                                    default BSP_PWM1_SOCA_ET_1ST
+                                    config BSP_PWM1_SOCA_ET_DISABLE
+                                        bool "disable soc generation"
+                                    config BSP_PWM1_SOCA_ET_1ST
+                                        bool "generate soc at the first time"
+                                    config BSP_PWM1_SOCA_ET_2ND
+                                        bool "generate soc at the second time"
+                                    config BSP_PWM1_SOCA_ET_3RD
+                                        bool "generate soc at the third time"
+                                endchoice
+                                config BSP_PWM1_SOCAPRD
+                                    int
+                                    default 0 if BSP_PWM1_SOCA_ET_DISABLE
+                                    default 1 if BSP_PWM1_SOCA_ET_1ST
+                                    default 2 if BSP_PWM1_SOCA_ET_2ND
+                                    default 3 if BSP_PWM1_SOCA_ET_3RD
+                            endif
+                    endmenu
+                endif
+            menuconfig BSP_USING_PWM2
+                bool "Enable ePWM2"
+                default n
+                if BSP_USING_PWM2
+                    menu "Basic settings for PWM2"
+                        config BSP_PWM2_INIT_PERIOD
+                            int "Initial period for PWM2(ns)"
+                            default 10000
+                        config BSP_PWM2_INIT_PULSE
+                            int "Initial pulse for PWM2(ns)"
+                            default 1000
+                    endmenu
+                    menu "Advanced Settings for PWM2"
+                        menuconfig BSP_PWM2_PHASE_ENABLE
+                            bool "Enable phase"
+                            default n
+                            if BSP_PWM2_PHASE_ENABLE
+                                choice
+                                    prompt "Select master or slave"
+                                    default BSP_PWM2_SLAVE
+                                    config BSP_PWM2_MASTER
+                                        bool "Master"
+                                    config BSP_PWM2_SLAVE
+                                        bool "Slave"
+                                endchoice
+                                if BSP_PWM2_MASTER
+                                    config BSP_PWM2_PHASE
+                                        int
+                                        default 0
+                                endif
+                                if BSP_PWM2_SLAVE
+                                    config BSP_PWM2_PHASE
+                                        int "Phase, 0~360"
+                                        range 0 360
+                                        default 0
+                                        help
+                                            the phase for PWM2 module
+                                endif
+                            endif
+
+                        menuconfig BSP_PWM2_IT_ENABLE
+                            bool "Enable interrupt service"
+                            default n
+                            if BSP_PWM2_IT_ENABLE
+                                choice
+                                    prompt "Select interrupt time"
+                                    default BSP_PWM2_INTSEL_ET_CTR_ZERO
+                                    config BSP_PWM2_INTSEL_ET_DCAEVT1SOC
+                                        bool "DCAEVT1SOC"
+                                    config BSP_PWM2_INTSEL_ET_CTR_ZERO
+                                        bool "ctr == zero"
+                                    config BSP_PWM2_INTSEL_ET_CTR_PRD
+                                        bool "ctr == prd"
+                                    config BSP_PWM2_INTSEL_ET_CTR_PRDZERO
+                                        bool "ctr == prd or ctr == zero"
+                                    config BSP_PWM2_INTSEL_ET_CTRU_CMPA
+                                        bool "ctr == compa when counting up"
+                                    config BSP_PWM2_INTSEL_ET_CTRD_CMPA
+                                        bool "ctr == compa when counting down"
+                                    config BSP_PWM2_INTSEL_ET_CTRU_CMPB
+                                        bool "ctr == compb when counting up"
+                                    config BSP_PWM2_INTSEL_ET_CTRD_CMPB
+                                        bool "ctr == compb when counting down"
+                                endchoice
+
+                                config BSP_PWM2_INTSEL
+                                    int
+                                    default 0 if BSP_PWM2_INTSEL_ET_DCAEVT1SOC
+                                    default 1 if BSP_PWM2_INTSEL_ET_CTR_ZERO
+                                    default 2 if BSP_PWM2_INTSEL_ET_CTR_PRD
+                                    default 3 if BSP_PWM2_INTSEL_ET_CTR_PRDZERO
+                                    default 4 if BSP_PWM2_INTSEL_ET_CTRU_CMPA
+                                    default 5 if BSP_PWM2_INTSEL_ET_CTRD_CMPA
+                                    default 6 if BSP_PWM2_INTSEL_ET_CTRU_CMPB
+                                    default 7 if BSP_PWM2_INTSEL_ET_CTRD_CMPB
+                                choice
+                                    prompt "Interrupt generation time"
+                                    default BSP_PWM2_INT_ET_1ST
+                                    config BSP_PWM2_INT_ET_DISABLE
+                                        bool "disable PWM interrupt"
+                                    config BSP_PWM2_INT_ET_1ST
+                                        bool "generate interrupt at the first time"
+                                    config BSP_PWM2_INT_ET_2ND
+                                        bool "generate interrupt at the second time"
+                                    config BSP_PWM2_INT_ET_3RD
+                                        bool "generate interrupt at the third time"
+                                endchoice
+                                config BSP_PWM2_INTPRD
+                                    int
+                                    default 0 if BSP_PWM2_INT_ET_DISABLE
+                                    default 1 if BSP_PWM2_INT_ET_1ST
+                                    default 2 if BSP_PWM2_INT_ET_2ND
+                                    default 3 if BSP_PWM2_INT_ET_3RD
+                            endif
+                        choice
+                            prompt "HSP Clock division"
+                            default BSP_PWM2_HSPCLKDIV1
+                            config BSP_PWM2_HSPCLKDIV1
+                                bool "Clock Divided by 1"
+                            config BSP_PWM2_HSPCLKDIV2
+                                bool "Clock Divided by 2"
+                            config BSP_PWM2_HSPCLKDIV4
+                                bool "Clock Divided by 4"
+                        endchoice
+                        config BSP_PWM2_HSPCLKDIV
+                            int
+                            default 0 if BSP_PWM2_HSPCLKDIV1
+                            default 1 if BSP_PWM2_HSPCLKDIV2
+                            default 2 if BSP_PWM2_HSPCLKDIV4
+                        choice
+                            prompt "Clock division"
+                            default BSP_PWM2_CLKDIV1
+                            config BSP_PWM2_CLKDIV1
+                                bool "Clock Divided by 1"
+                            config BSP_PWM2_CLKDIV2
+                                bool "Clock Divided by 2"
+                            config BSP_PWM2_CLKDIV4
+                                bool "Clock Divided by 4"
+                        endchoice
+                        config BSP_PWM2_CLKDIV
+                            int
+                            default 0 if BSP_PWM2_CLKDIV1
+                            default 1 if BSP_PWM2_CLKDIV2
+                            default 2 if BSP_PWM2_CLKDIV4
+                        choice
+                            default BSP_PWM2_CTR_MODE_UPDOWN
+                            prompt "Select counter mode"
+                            config BSP_PWM2_CTR_MODE_UPDOWN
+                                bool "Up-down mode"
+                            config BSP_PWM2_CTR_MODE_UP
+                                bool "Up mode"
+                            config BSP_PWM2_CTR_MODE_DOWN
+                                bool "Down mode"
+                            config BSP_PWM2_CTR_FREEZE
+                                bool "Freezing Counter"
+                        endchoice
+                        config BSP_PWM2_CTRMODE
+                            int
+                            default 0 if BSP_PWM2_CTR_MODE_UP
+                            default 1 if BSP_PWM2_CTR_MODE_DOWN
+                            default 2 if BSP_PWM2_CTR_MODE_UPDOWN
+                            default 3 if BSP_PWM2_CTR_FREEZE
+                        choice
+                            prompt "Register load mode"
+                            config BSP_PWM2_CC_CTR_ZERO
+                                bool "Load when counter == 0"
+                            config BSP_PWM2_CC_CTR_PRD
+                                bool "Load when counter == prd"
+                            config BSP_PWM2_CC_CTR_ZERO_PRD
+                                bool "load when counter ==0 or counter == prd"
+                            config BSP_PWM2_CC_LD_DISABLE
+                                bool "disable load"
+                        endchoice
+
+                        config BSP_PWM2_LOADAMODE
+                            int
+                            default 0 if BSP_PWM2_CC_CTR_ZERO
+                            default 1 if BSP_PWM2_CC_CTR_PRD
+                            default 2 if BSP_PWM2_CC_CTR_ZERO_PRD
+                            default 3 if BSP_PWM2_CC_LD_DISABLE
+
+                        config BSP_PWM2_DB
+                            int "Dead time(ns)"
+                            default 100
+                            range 0 100000
+                        menuconfig BSP_PWM2_ADC_TRIGGER
+                            bool "Enable ADC trigger from PWM2"
+                            if BSP_PWM2_ADC_TRIGGER
+                                choice
+                                    prompt "Select soc triggering time"
+                                    default BSP_PWM2_SOCASEL_ET_CTR_ZERO
+                                    config BSP_PWM2_SOCASEL_ET_DCAEVT1SOC
+                                        bool "DCAEVT1SOC"
+                                    config BSP_PWM2_SOCASEL_ET_CTR_ZERO
+                                        bool "ctr == zero"
+                                    config BSP_PWM2_SOCASEL_ET_CTR_PRD
+                                        bool "ctr == prd"
+                                    config BSP_PWM2_SOCASEL_ET_CTR_PRDZERO
+                                        bool "ctr == prd or ctr == zero"
+                                    config BSP_PWM2_SOCASEL_ET_CTRU_CMPA
+                                        bool "ctr == compa when counting up"
+                                    config BSP_PWM2_SOCASEL_ET_CTRD_CMPA
+                                        bool "ctr == compa when counting down"
+                                    config BSP_PWM2_SOCASEL_ET_CTRU_CMPB
+                                        bool "ctr == compb when counting up"
+                                    config BSP_PWM2_SOCASEL_ET_CTRD_CMPB
+                                        bool "ctr == compb when counting down"
+                                endchoice
+
+                                config BSP_PWM2_SOCASEL
+                                    int
+                                    default 0 if BSP_PWM2_SOCASEL_ET_DCAEVT1SOC
+                                    default 1 if BSP_PWM2_SOCASEL_ET_CTR_ZERO
+                                    default 2 if BSP_PWM2_SOCASEL_ET_CTR_PRD
+                                    default 3 if BSP_PWM2_SOCASEL_ET_CTR_PRDZERO
+                                    default 4 if BSP_PWM2_SOCASEL_ET_CTRU_CMPA
+                                    default 5 if BSP_PWM2_SOCASEL_ET_CTRD_CMPA
+                                    default 6 if BSP_PWM2_SOCASEL_ET_CTRU_CMPB
+                                    default 7 if BSP_PWM2_SOCASEL_ET_CTRD_CMPB
+                                choice
+                                    prompt "SOCA generation time"
+                                    default BSP_PWM2_SOCA_ET_1ST
+                                    config BSP_PWM2_SOCA_ET_DISABLE
+                                        bool "disable soc generation"
+                                    config BSP_PWM2_SOCA_ET_1ST
+                                        bool "generate soc at the first time"
+                                    config BSP_PWM2_SOCA_ET_2ND
+                                        bool "generate soc at the second time"
+                                    config BSP_PWM2_SOCA_ET_3RD
+                                        bool "generate soc at the third time"
+                                endchoice
+                                config BSP_PWM2_SOCAPRD
+                                    int
+                                    default 0 if BSP_PWM2_SOCA_ET_DISABLE
+                                    default 1 if BSP_PWM2_SOCA_ET_1ST
+                                    default 2 if BSP_PWM2_SOCA_ET_2ND
+                                    default 3 if BSP_PWM2_SOCA_ET_3RD
+                            endif
+                    endmenu
+                endif
+            menuconfig BSP_USING_PWM3
+                bool "Enable ePWM3"
+                default n
+                if BSP_USING_PWM3
+                    menu "Basic settings for PWM3"
+                        config BSP_PWM3_INIT_PERIOD
+                            int "Initial period for PWM3(ns)"
+                            default 10000
+                        config BSP_PWM3_INIT_PULSE
+                            int "Initial pulse for PWM3(ns)"
+                            default 1000
+                    endmenu
+                    menu "Advanced Settings for PWM3"
+                        menuconfig BSP_PWM3_PHASE_ENABLE
+                            bool "Enable phase"
+                            default n
+                            if BSP_PWM3_PHASE_ENABLE
+                                choice
+                                    prompt "Select master or slave"
+                                    default BSP_PWM3_SLAVE
+                                    config BSP_PWM3_MASTER
+                                        bool "Master"
+                                    config BSP_PWM3_SLAVE
+                                        bool "Slave"
+                                endchoice
+                                if BSP_PWM3_MASTER
+                                    config BSP_PWM3_PHASE
+                                        int
+                                        default 0
+                                endif
+                                if BSP_PWM3_SLAVE
+                                    config BSP_PWM3_PHASE
+                                        int "Phase, 0~360"
+                                        range 0 360
+                                        default 0
+                                        help
+                                            the phase for PWM3 module
+                                endif
+                            endif
+
+                        menuconfig BSP_PWM3_IT_ENABLE
+                            bool "Enable interrupt service"
+                            default n
+                            if BSP_PWM3_IT_ENABLE
+                                choice
+                                    prompt "Select interrupt time"
+                                    default BSP_PWM3_INTSEL_ET_CTR_ZERO
+                                    config BSP_PWM3_INTSEL_ET_DCAEVT1SOC
+                                        bool "DCAEVT1SOC"
+                                    config BSP_PWM3_INTSEL_ET_CTR_ZERO
+                                        bool "ctr == zero"
+                                    config BSP_PWM3_INTSEL_ET_CTR_PRD
+                                        bool "ctr == prd"
+                                    config BSP_PWM3_INTSEL_ET_CTR_PRDZERO
+                                        bool "ctr == prd or ctr == zero"
+                                    config BSP_PWM3_INTSEL_ET_CTRU_CMPA
+                                        bool "ctr == compa when counting up"
+                                    config BSP_PWM3_INTSEL_ET_CTRD_CMPA
+                                        bool "ctr == compa when counting down"
+                                    config BSP_PWM3_INTSEL_ET_CTRU_CMPB
+                                        bool "ctr == compb when counting up"
+                                    config BSP_PWM3_INTSEL_ET_CTRD_CMPB
+                                        bool "ctr == compb when counting down"
+                                endchoice
+
+                                config BSP_PWM3_INTSEL
+                                    int
+                                    default 0 if BSP_PWM3_INTSEL_ET_DCAEVT1SOC
+                                    default 1 if BSP_PWM3_INTSEL_ET_CTR_ZERO
+                                    default 2 if BSP_PWM3_INTSEL_ET_CTR_PRD
+                                    default 3 if BSP_PWM3_INTSEL_ET_CTR_PRDZERO
+                                    default 4 if BSP_PWM3_INTSEL_ET_CTRU_CMPA
+                                    default 5 if BSP_PWM3_INTSEL_ET_CTRD_CMPA
+                                    default 6 if BSP_PWM3_INTSEL_ET_CTRU_CMPB
+                                    default 7 if BSP_PWM3_INTSEL_ET_CTRD_CMPB
+                                choice
+                                    prompt "Interrupt generation time"
+                                    default BSP_PWM3_INT_ET_1ST
+                                    config BSP_PWM3_INT_ET_DISABLE
+                                        bool "disable PWM interrupt"
+                                    config BSP_PWM3_INT_ET_1ST
+                                        bool "generate interrupt at the first time"
+                                    config BSP_PWM3_INT_ET_2ND
+                                        bool "generate interrupt at the second time"
+                                    config BSP_PWM3_INT_ET_3RD
+                                        bool "generate interrupt at the third time"
+                                endchoice
+                                config BSP_PWM3_INTPRD
+                                    int
+                                    default 0 if BSP_PWM3_INT_ET_DISABLE
+                                    default 1 if BSP_PWM3_INT_ET_1ST
+                                    default 2 if BSP_PWM3_INT_ET_2ND
+                                    default 3 if BSP_PWM3_INT_ET_3RD
+                            endif
+                        choice
+                            prompt "HSP Clock division"
+                            default BSP_PWM3_HSPCLKDIV1
+                            config BSP_PWM3_HSPCLKDIV1
+                                bool "Clock Divided by 1"
+                            config BSP_PWM3_HSPCLKDIV2
+                                bool "Clock Divided by 2"
+                            config BSP_PWM3_HSPCLKDIV4
+                                bool "Clock Divided by 4"
+                        endchoice
+                        config BSP_PWM3_HSPCLKDIV
+                            int
+                            default 0 if BSP_PWM3_HSPCLKDIV1
+                            default 1 if BSP_PWM3_HSPCLKDIV2
+                            default 2 if BSP_PWM3_HSPCLKDIV4
+                        choice
+                            prompt "Clock division"
+                            default BSP_PWM3_CLKDIV1
+                            config BSP_PWM3_CLKDIV1
+                                bool "Clock Divided by 1"
+                            config BSP_PWM3_CLKDIV2
+                                bool "Clock Divided by 2"
+                            config BSP_PWM3_CLKDIV4
+                                bool "Clock Divided by 4"
+                        endchoice
+                        config BSP_PWM3_CLKDIV
+                            int
+                            default 0 if BSP_PWM3_CLKDIV1
+                            default 1 if BSP_PWM3_CLKDIV2
+                            default 2 if BSP_PWM3_CLKDIV4
+                        choice
+                            default BSP_PWM3_CTR_MODE_UPDOWN
+                            prompt "Select counter mode"
+                            config BSP_PWM3_CTR_MODE_UPDOWN
+                                bool "Up-down mode"
+                            config BSP_PWM3_CTR_MODE_UP
+                                bool "Up mode"
+                            config BSP_PWM3_CTR_MODE_DOWN
+                                bool "Down mode"
+                            config BSP_PWM3_CTR_FREEZE
+                                bool "Freezing Counter"
+                        endchoice
+                        config BSP_PWM3_CTRMODE
+                            int
+                            default 0 if BSP_PWM3_CTR_MODE_UP
+                            default 1 if BSP_PWM3_CTR_MODE_DOWN
+                            default 2 if BSP_PWM3_CTR_MODE_UPDOWN
+                            default 3 if BSP_PWM3_CTR_FREEZE
+                        choice
+                            prompt "Register load mode"
+                            config BSP_PWM3_CC_CTR_ZERO
+                                bool "Load when counter == 0"
+                            config BSP_PWM3_CC_CTR_PRD
+                                bool "Load when counter == prd"
+                            config BSP_PWM3_CC_CTR_ZERO_PRD
+                                bool "load when counter ==0 or counter == prd"
+                            config BSP_PWM3_CC_LD_DISABLE
+                                bool "disable load"
+                        endchoice
+
+                        config BSP_PWM3_LOADAMODE
+                            int
+                            default 0 if BSP_PWM3_CC_CTR_ZERO
+                            default 1 if BSP_PWM3_CC_CTR_PRD
+                            default 2 if BSP_PWM3_CC_CTR_ZERO_PRD
+                            default 3 if BSP_PWM3_CC_LD_DISABLE
+
+                        config BSP_PWM3_DB
+                            int "Dead time(ns)"
+                            default 100
+                            range 0 100000
+                        menuconfig BSP_PWM3_ADC_TRIGGER
+                            bool "Enable ADC trigger from PWM3"
+                            if BSP_PWM3_ADC_TRIGGER
+                                choice
+                                    prompt "Select soc triggering time"
+                                    default BSP_PWM3_SOCASEL_ET_CTR_ZERO
+                                    config BSP_PWM3_SOCASEL_ET_DCAEVT1SOC
+                                        bool "DCAEVT1SOC"
+                                    config BSP_PWM3_SOCASEL_ET_CTR_ZERO
+                                        bool "ctr == zero"
+                                    config BSP_PWM3_SOCASEL_ET_CTR_PRD
+                                        bool "ctr == prd"
+                                    config BSP_PWM3_SOCASEL_ET_CTR_PRDZERO
+                                        bool "ctr == prd or ctr == zero"
+                                    config BSP_PWM3_SOCASEL_ET_CTRU_CMPA
+                                        bool "ctr == compa when counting up"
+                                    config BSP_PWM3_SOCASEL_ET_CTRD_CMPA
+                                        bool "ctr == compa when counting down"
+                                    config BSP_PWM3_SOCASEL_ET_CTRU_CMPB
+                                        bool "ctr == compb when counting up"
+                                    config BSP_PWM3_SOCASEL_ET_CTRD_CMPB
+                                        bool "ctr == compb when counting down"
+                                endchoice
+
+                                config BSP_PWM3_SOCASEL
+                                    int
+                                    default 0 if BSP_PWM3_SOCASEL_ET_DCAEVT1SOC
+                                    default 1 if BSP_PWM3_SOCASEL_ET_CTR_ZERO
+                                    default 2 if BSP_PWM3_SOCASEL_ET_CTR_PRD
+                                    default 3 if BSP_PWM3_SOCASEL_ET_CTR_PRDZERO
+                                    default 4 if BSP_PWM3_SOCASEL_ET_CTRU_CMPA
+                                    default 5 if BSP_PWM3_SOCASEL_ET_CTRD_CMPA
+                                    default 6 if BSP_PWM3_SOCASEL_ET_CTRU_CMPB
+                                    default 7 if BSP_PWM3_SOCASEL_ET_CTRD_CMPB
+                                choice
+                                    prompt "SOCA generation time"
+                                    default BSP_PWM3_SOCA_ET_1ST
+                                    config BSP_PWM3_SOCA_ET_DISABLE
+                                        bool "disable soc generation"
+                                    config BSP_PWM3_SOCA_ET_1ST
+                                        bool "generate soc at the first time"
+                                    config BSP_PWM3_SOCA_ET_2ND
+                                        bool "generate soc at the second time"
+                                    config BSP_PWM3_SOCA_ET_3RD
+                                        bool "generate soc at the third time"
+                                endchoice
+                                config BSP_PWM3_SOCAPRD
+                                    int
+                                    default 0 if BSP_PWM3_SOCA_ET_DISABLE
+                                    default 1 if BSP_PWM3_SOCA_ET_1ST
+                                    default 2 if BSP_PWM3_SOCA_ET_2ND
+                                    default 3 if BSP_PWM3_SOCA_ET_3RD
+                            endif
+                    endmenu
+                endif
+            menuconfig BSP_USING_PWM4
+                bool "Enable ePWM4"
+                default n
+                if BSP_USING_PWM4
+                    menu "Basic settings for PWM4"
+                        config BSP_PWM4_INIT_PERIOD
+                            int "Initial period for PWM4(ns)"
+                            default 10000
+                        config BSP_PWM4_INIT_PULSE
+                            int "Initial pulse for PWM4(ns)"
+                            default 1000
+                    endmenu
+                    menu "Advanced Settings for PWM4"
+                        menuconfig BSP_PWM4_PHASE_ENABLE
+                            bool "Enable phase"
+                            default n
+                            if BSP_PWM4_PHASE_ENABLE
+                                choice
+                                    prompt "Select master or slave"
+                                    default BSP_PWM4_SLAVE
+                                    config BSP_PWM4_MASTER
+                                        bool "Master"
+                                    config BSP_PWM4_SLAVE
+                                        bool "Slave"
+                                endchoice
+                                if BSP_PWM4_MASTER
+                                    config BSP_PWM4_PHASE
+                                        int
+                                        default 0
+                                endif
+                                if BSP_PWM4_SLAVE
+                                    config BSP_PWM4_PHASE
+                                        int "Phase, 0~360"
+                                        range 0 360
+                                        default 0
+                                        help
+                                            the phase for PWM4 module
+                                endif
+                            endif
+
+                        menuconfig BSP_PWM4_IT_ENABLE
+                            bool "Enable interrupt service"
+                            default n
+                            if BSP_PWM4_IT_ENABLE
+                                choice
+                                    prompt "Select interrupt time"
+                                    default BSP_PWM4_INTSEL_ET_CTR_ZERO
+                                    config BSP_PWM4_INTSEL_ET_DCAEVT1SOC
+                                        bool "DCAEVT1SOC"
+                                    config BSP_PWM4_INTSEL_ET_CTR_ZERO
+                                        bool "ctr == zero"
+                                    config BSP_PWM4_INTSEL_ET_CTR_PRD
+                                        bool "ctr == prd"
+                                    config BSP_PWM4_INTSEL_ET_CTR_PRDZERO
+                                        bool "ctr == prd or ctr == zero"
+                                    config BSP_PWM4_INTSEL_ET_CTRU_CMPA
+                                        bool "ctr == compa when counting up"
+                                    config BSP_PWM4_INTSEL_ET_CTRD_CMPA
+                                        bool "ctr == compa when counting down"
+                                    config BSP_PWM4_INTSEL_ET_CTRU_CMPB
+                                        bool "ctr == compb when counting up"
+                                    config BSP_PWM4_INTSEL_ET_CTRD_CMPB
+                                        bool "ctr == compb when counting down"
+                                endchoice
+
+                                config BSP_PWM4_INTSEL
+                                    int
+                                    default 0 if BSP_PWM4_INTSEL_ET_DCAEVT1SOC
+                                    default 1 if BSP_PWM4_INTSEL_ET_CTR_ZERO
+                                    default 2 if BSP_PWM4_INTSEL_ET_CTR_PRD
+                                    default 3 if BSP_PWM4_INTSEL_ET_CTR_PRDZERO
+                                    default 4 if BSP_PWM4_INTSEL_ET_CTRU_CMPA
+                                    default 5 if BSP_PWM4_INTSEL_ET_CTRD_CMPA
+                                    default 6 if BSP_PWM4_INTSEL_ET_CTRU_CMPB
+                                    default 7 if BSP_PWM4_INTSEL_ET_CTRD_CMPB
+                                choice
+                                    prompt "Interrupt generation time"
+                                    default BSP_PWM4_INT_ET_1ST
+                                    config BSP_PWM4_INT_ET_DISABLE
+                                        bool "disable PWM interrupt"
+                                    config BSP_PWM4_INT_ET_1ST
+                                        bool "generate interrupt at the first time"
+                                    config BSP_PWM4_INT_ET_2ND
+                                        bool "generate interrupt at the second time"
+                                    config BSP_PWM4_INT_ET_3RD
+                                        bool "generate interrupt at the third time"
+                                endchoice
+                                config BSP_PWM4_INTPRD
+                                    int
+                                    default 0 if BSP_PWM4_INT_ET_DISABLE
+                                    default 1 if BSP_PWM4_INT_ET_1ST
+                                    default 2 if BSP_PWM4_INT_ET_2ND
+                                    default 3 if BSP_PWM4_INT_ET_3RD
+                            endif
+                        choice
+                            prompt "HSP Clock division"
+                            default BSP_PWM4_HSPCLKDIV1
+                            config BSP_PWM4_HSPCLKDIV1
+                                bool "Clock Divided by 1"
+                            config BSP_PWM4_HSPCLKDIV2
+                                bool "Clock Divided by 2"
+                            config BSP_PWM4_HSPCLKDIV4
+                                bool "Clock Divided by 4"
+                        endchoice
+                        config BSP_PWM4_HSPCLKDIV
+                            int
+                            default 0 if BSP_PWM4_HSPCLKDIV1
+                            default 1 if BSP_PWM4_HSPCLKDIV2
+                            default 2 if BSP_PWM4_HSPCLKDIV4
+                        choice
+                            prompt "Clock division"
+                            default BSP_PWM4_CLKDIV1
+                            config BSP_PWM4_CLKDIV1
+                                bool "Clock Divided by 1"
+                            config BSP_PWM4_CLKDIV2
+                                bool "Clock Divided by 2"
+                            config BSP_PWM4_CLKDIV4
+                                bool "Clock Divided by 4"
+                        endchoice
+                        config BSP_PWM4_CLKDIV
+                            int
+                            default 0 if BSP_PWM4_CLKDIV1
+                            default 1 if BSP_PWM4_CLKDIV2
+                            default 2 if BSP_PWM4_CLKDIV4
+                        choice
+                            default BSP_PWM4_CTR_MODE_UPDOWN
+                            prompt "Select counter mode"
+                            config BSP_PWM4_CTR_MODE_UPDOWN
+                                bool "Up-down mode"
+                            config BSP_PWM4_CTR_MODE_UP
+                                bool "Up mode"
+                            config BSP_PWM4_CTR_MODE_DOWN
+                                bool "Down mode"
+                            config BSP_PWM4_CTR_FREEZE
+                                bool "Freezing Counter"
+                        endchoice
+                        config BSP_PWM4_CTRMODE
+                            int
+                            default 0 if BSP_PWM4_CTR_MODE_UP
+                            default 1 if BSP_PWM4_CTR_MODE_DOWN
+                            default 2 if BSP_PWM4_CTR_MODE_UPDOWN
+                            default 3 if BSP_PWM4_CTR_FREEZE
+                        choice
+                            prompt "Register load mode"
+                            config BSP_PWM4_CC_CTR_ZERO
+                                bool "Load when counter == 0"
+                            config BSP_PWM4_CC_CTR_PRD
+                                bool "Load when counter == prd"
+                            config BSP_PWM4_CC_CTR_ZERO_PRD
+                                bool "load when counter ==0 or counter == prd"
+                            config BSP_PWM4_CC_LD_DISABLE
+                                bool "disable load"
+                        endchoice
+
+                        config BSP_PWM4_LOADAMODE
+                            int
+                            default 0 if BSP_PWM4_CC_CTR_ZERO
+                            default 1 if BSP_PWM4_CC_CTR_PRD
+                            default 2 if BSP_PWM4_CC_CTR_ZERO_PRD
+                            default 3 if BSP_PWM4_CC_LD_DISABLE
+
+                        config BSP_PWM4_DB
+                            int "Dead time(ns)"
+                            default 100
+                            range 0 100000
+                        menuconfig BSP_PWM4_ADC_TRIGGER
+                            bool "Enable ADC trigger from PWM4"
+                            if BSP_PWM4_ADC_TRIGGER
+                                choice
+                                    prompt "Select soc triggering time"
+                                    default BSP_PWM4_SOCASEL_ET_CTR_ZERO
+                                    config BSP_PWM4_SOCASEL_ET_DCAEVT1SOC
+                                        bool "DCAEVT1SOC"
+                                    config BSP_PWM4_SOCASEL_ET_CTR_ZERO
+                                        bool "ctr == zero"
+                                    config BSP_PWM4_SOCASEL_ET_CTR_PRD
+                                        bool "ctr == prd"
+                                    config BSP_PWM4_SOCASEL_ET_CTR_PRDZERO
+                                        bool "ctr == prd or ctr == zero"
+                                    config BSP_PWM4_SOCASEL_ET_CTRU_CMPA
+                                        bool "ctr == compa when counting up"
+                                    config BSP_PWM4_SOCASEL_ET_CTRD_CMPA
+                                        bool "ctr == compa when counting down"
+                                    config BSP_PWM4_SOCASEL_ET_CTRU_CMPB
+                                        bool "ctr == compb when counting up"
+                                    config BSP_PWM4_SOCASEL_ET_CTRD_CMPB
+                                        bool "ctr == compb when counting down"
+                                endchoice
+
+                                config BSP_PWM4_SOCASEL
+                                    int
+                                    default 0 if BSP_PWM4_SOCASEL_ET_DCAEVT1SOC
+                                    default 1 if BSP_PWM4_SOCASEL_ET_CTR_ZERO
+                                    default 2 if BSP_PWM4_SOCASEL_ET_CTR_PRD
+                                    default 3 if BSP_PWM4_SOCASEL_ET_CTR_PRDZERO
+                                    default 4 if BSP_PWM4_SOCASEL_ET_CTRU_CMPA
+                                    default 5 if BSP_PWM4_SOCASEL_ET_CTRD_CMPA
+                                    default 6 if BSP_PWM4_SOCASEL_ET_CTRU_CMPB
+                                    default 7 if BSP_PWM4_SOCASEL_ET_CTRD_CMPB
+                                choice
+                                    prompt "SOCA generation time"
+                                    default BSP_PWM4_SOCA_ET_1ST
+                                    config BSP_PWM4_SOCA_ET_DISABLE
+                                        bool "disable soc generation"
+                                    config BSP_PWM4_SOCA_ET_1ST
+                                        bool "generate soc at the first time"
+                                    config BSP_PWM4_SOCA_ET_2ND
+                                        bool "generate soc at the second time"
+                                    config BSP_PWM4_SOCA_ET_3RD
+                                        bool "generate soc at the third time"
+                                endchoice
+                                config BSP_PWM4_SOCAPRD
+                                    int
+                                    default 0 if BSP_PWM4_SOCA_ET_DISABLE
+                                    default 1 if BSP_PWM4_SOCA_ET_1ST
+                                    default 2 if BSP_PWM4_SOCA_ET_2ND
+                                    default 3 if BSP_PWM4_SOCA_ET_3RD
+                            endif
+                    endmenu
+                endif
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            menuconfig BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+                if BSP_USING_ADC1
+                    choice
+                        prompt "Select resolution"
+                        default BSP_ADC_USING_12BIT
+
+                        config BSP_ADC_USING_12BIT
+                            bool "ADC Using 12 bit resolution"
+
+                        config BSP_ADC_USING_16BIT
+                            bool "ADC Using 16 bit resolution"
+                    endchoice
+                endif
+            menuconfig BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+                if BSP_USING_ADC2
+                    choice
+                        prompt "Select resolution"
+                        default BSP_ADC_USING_12BIT
+
+                        config BSP_ADC_USING_12BIT
+                            bool "ADC Using 12 bit resolution"
+
+                        config BSP_ADC_USING_16BIT
+                            bool "ADC Using 16 bit resolution"
+                    endchoice
+                endif
+            menuconfig BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+                if BSP_USING_ADC3
+                    choice
+                        prompt "Select resolution"
+                        default BSP_ADC_USING_12BIT
+
+                        config BSP_ADC_USING_12BIT
+                            bool "ADC Using 12 bit resolution"
+
+                        config BSP_ADC_USING_16BIT
+                            bool "ADC Using 16 bit resolution"
+                    endchoice
+                endif
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "using CAN1"
+                default n
+        endif
+
+    config BSP_USING_USBD
+        bool "Enable USB device"
+        select RT_USING_USB_DEVICE
+        default n
+        if BSP_USING_USBD
+            config BSP_USB_CONNECT_PIN
+                int "USB connect pin"
+                default 67
+
+            config BSP_USB_PULL_UP_STATUS
+                int "USB PULL UP STATUS"
+                default 0
+        endif
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

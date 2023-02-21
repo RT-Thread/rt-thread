@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -166,7 +166,7 @@ static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
 
     return RT_EOK;
 }
-RT_WEAK int uart_putc_hook(rt_uint8_t *ch)
+rt_weak int uart_putc_hook(rt_uint8_t *ch)
 {
     return -1;
 }
@@ -192,7 +192,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
     return rtn;
 }
 
-RT_WEAK int uart_getc_hook(rt_uint8_t *ch)
+rt_weak int uart_getc_hook(rt_uint8_t *ch)
 {
     return -1;
 };

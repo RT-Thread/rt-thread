@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,10 +11,23 @@
 #define __CH56X_UART_H__
 
 #include "soc.h"
+#include "ch56x_gpio.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define UART_RXD0_ALT       GET_PIN(A, 5)
+#define UART_TXD0_ALT       GET_PIN(A, 6)
+
+#define UART_RXD0_PIN       GET_PIN(B, 5)
+#define UART_TXD0_PIN       GET_PIN(B, 6)
+#define UART_RXD1_PIN       GET_PIN(A, 7)
+#define UART_TXD1_PIN       GET_PIN(A, 8)
+#define UART_RXD2_PIN       GET_PIN(A, 2)
+#define UART_TXD2_PIN       GET_PIN(A, 3)
+#define UART_RXD3_PIN       GET_PIN(B, 3)
+#define UART_TXD3_PIN       GET_PIN(B, 4)
 
 #ifndef UART_FIFO_SIZE
 #define UART_FIFO_SIZE      8

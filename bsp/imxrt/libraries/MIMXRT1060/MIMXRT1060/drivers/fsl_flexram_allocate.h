@@ -64,7 +64,7 @@ extern "C" {
  * is needed.
  * @param config allocate configuration.
  * @retval kStatus_InvalidArgument the argument is invalid
- * 		   kStatus_Success allocate success
+ *         kStatus_Success allocate success
  */
 status_t FLEXRAM_AllocateRam(flexram_allocate_ram_t *config);
 

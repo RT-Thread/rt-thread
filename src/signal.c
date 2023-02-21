@@ -56,6 +56,7 @@ static void _signal_entry(void *parameter)
     {
         struct rt_cpu* pcpu = rt_cpu_self();
 
+        RT_ASSERT(pcpu->current_thread->cpus_lock_nest > 0);
         pcpu->current_thread->cpus_lock_nest--;
         if (pcpu->current_thread->cpus_lock_nest == 0)
         {
@@ -102,10 +103,14 @@ static void _signal_deliver(rt_thread_t tid)
         return;
     }
 
-    if ((tid->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    if ((tid->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         /* resume thread to handle signal */
+#ifdef RT_USING_SMART
+        rt_thread_wakeup(tid);
+#else
         rt_thread_resume(tid);
+#endif
         /* add signal state */
         tid->stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
 
@@ -197,7 +202,7 @@ void *rt_signal_check(void* context)
 
             rt_hw_interrupt_enable(level);
             sig_context = rt_hw_stack_init((void *)_signal_entry, context,
-                    (void *)(context - 32), RT_NULL);
+                    (void*)((char*)context - 32), RT_NULL);
             return sig_context;
         }
     }
@@ -350,7 +355,7 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     }
 
     /* suspend self thread */
-    rt_thread_suspend(tid);
+    rt_thread_suspend_with_flag(tid, RT_UNINTERRUPTIBLE);
     /* set thread stat as waiting for signal */
     tid->stat |= RT_THREAD_STAT_SIGNAL_WAIT;
 

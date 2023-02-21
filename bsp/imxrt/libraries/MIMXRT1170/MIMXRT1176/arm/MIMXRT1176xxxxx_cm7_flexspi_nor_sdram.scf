@@ -7,14 +7,14 @@
 **
 **     Compiler:            Keil ARM C/C++ Compiler
 **     Reference manual:    IMXRT1170RM, Rev 1, 02/2021
-**     Version:             rev. 1.0, 2020-12-29
-**     Build:               b210709
+**     Version:             rev. 1.1, 2022-04-02
+**     Build:               b220402
 **
 **     Abstract:
 **         Linker file for the Keil ARM C/C++ Compiler
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2021 NXP
+**     Copyright 2016-2022 NXP
 **     All rights reserved.
 **
 **     SPDX-License-Identifier: BSD-3-Clause
@@ -35,7 +35,16 @@
 #define m_flash_config_size            0x00000C00
 
 #define m_ivt_start                    0x30001000
-#define m_ivt_size                     0x00001000
+#define m_ivt_size                     0x00000020
+
+#define m_boot_data_start              0x30001020
+#define m_boot_data_size               0x00000010
+
+#define m_dcd_data_start               0x30001030
+#define m_dcd_data_size                0x000006E8
+
+#define m_xmcd_data_start              0x30001040
+#define m_xmcd_data_size               0x00000204
 
 #define m_interrupts_start             0x30002000
 #define m_interrupts_size              0x00000400
@@ -82,9 +91,21 @@ LR_m_text m_flash_config_start m_text_start+m_text_size-m_flash_config_start {  
 
   RW_m_ivt_text m_ivt_start FIXED m_ivt_size { ; load address = execution address
     * (.boot_hdr.ivt, +FIRST)
-    * (.boot_hdr.boot_data)
-    * (.boot_hdr.dcd_data)
   }
+
+  RW_m_boot_data_text m_boot_data_start FIXED m_boot_data_size { ; load address = execution address
+    * (.boot_hdr.boot_data, +FIRST)
+  }
+
+#if defined(XIP_BOOT_HEADER_DCD_ENABLE) && (XIP_BOOT_HEADER_DCD_ENABLE == 1)
+  RW_m_dcd_data_text m_dcd_data_start FIXED m_dcd_data_size { ; load address = execution address
+    * (.boot_hdr.dcd_data, +FIRST)
+  }
+#elif defined(XIP_BOOT_HEADER_XMCD_ENABLE) && (XIP_BOOT_HEADER_XMCD_ENABLE == 1)
+  RW_m_xmcd_data_text m_xmcd_data_start FIXED m_xmcd_data_size { ; load address = execution address
+    * (.boot_hdr.xmcd_data, +FIRST)
+  }
+#endif
 #else
 LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start {   ; load region size_region
 #endif

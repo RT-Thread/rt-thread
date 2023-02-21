@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 NXP
+ * Copyright 2020-2021 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -26,8 +26,8 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief NIC301 driver version 2.0.0. */
-#define FSL_NIC301_DRIVER_VERSION (MAKE_VERSION(2U, 0U, 0U))
+/*! @brief NIC301 driver version 2.0.1. */
+#define FSL_NIC301_DRIVER_VERSION (MAKE_VERSION(2U, 0U, 1U))
 /*@}*/
 
 #define GPV0_BASE (0x41000000UL)
@@ -180,7 +180,7 @@ extern "C" {
  */
 static inline void NIC_SetReadQos(nic_reg_t base, nic_qos_t value)
 {
-    *(volatile uint32_t *)(base + NIC_READ_QOS_OFFSET) = (value & NIC_QOS_MASK);
+    *(volatile uint32_t *)(base) = (value & NIC_QOS_MASK);
     __DSB();
 }
 
@@ -192,7 +192,7 @@ static inline void NIC_SetReadQos(nic_reg_t base, nic_qos_t value)
  */
 static inline nic_qos_t NIC_GetReadQos(nic_reg_t base)
 {
-    return (nic_qos_t)((*(volatile uint32_t *)(base + NIC_READ_QOS_OFFSET)) & NIC_QOS_MASK);
+    return (nic_qos_t)((*(volatile uint32_t *)(base)) & NIC_QOS_MASK);
 }
 
 /*!
@@ -203,7 +203,7 @@ static inline nic_qos_t NIC_GetReadQos(nic_reg_t base)
  */
 static void inline NIC_SetWriteQos(nic_reg_t base, nic_qos_t value)
 {
-    *(volatile uint32_t *)(base + NIC_WRITE_QOS_OFFSET) = (value & NIC_QOS_MASK);
+    *(volatile uint32_t *)(base) = (value & NIC_QOS_MASK);
     __DSB();
 }
 
@@ -215,7 +215,7 @@ static void inline NIC_SetWriteQos(nic_reg_t base, nic_qos_t value)
  */
 static inline nic_qos_t NIC_GetWriteQos(nic_reg_t base)
 {
-    return (nic_qos_t)((*(volatile uint32_t *)(base + NIC_WRITE_QOS_OFFSET)) & NIC_QOS_MASK);
+    return (nic_qos_t)((*(volatile uint32_t *)(base)) & NIC_QOS_MASK);
 }
 
 /*!
@@ -226,7 +226,7 @@ static inline nic_qos_t NIC_GetWriteQos(nic_reg_t base)
  */
 static inline void NIC_SetFnModAhb(nic_reg_t base, nic_fn_mod_ahb_t v)
 {
-    *(volatile uint32_t *)(base + NIC_FN_MOD_AHB_OFFSET) = v;
+    *(volatile uint32_t *)(base) = v;
     __DSB();
 }
 
@@ -238,7 +238,7 @@ static inline void NIC_SetFnModAhb(nic_reg_t base, nic_fn_mod_ahb_t v)
  */
 static inline nic_fn_mod_ahb_t NIC_GetFnModAhb(nic_reg_t base)
 {
-    return (nic_fn_mod_ahb_t)((*(volatile uint32_t *)(base + NIC_FN_MOD_AHB_OFFSET)) & NIC_FN_MOD_AHB_MASK);
+    return (nic_fn_mod_ahb_t)((*(volatile uint32_t *)(base)) & NIC_FN_MOD_AHB_MASK);
 }
 
 /*!
@@ -249,7 +249,7 @@ static inline nic_fn_mod_ahb_t NIC_GetFnModAhb(nic_reg_t base)
  */
 static inline void NIC_SetWrTideMark(nic_reg_t base, uint8_t value)
 {
-    *(volatile uint32_t *)(base + NIC_WR_TIDEMARK_OFFSET) = (value & NIC_WR_TIDEMARK_MASK);
+    *(volatile uint32_t *)(base) = (value & NIC_WR_TIDEMARK_MASK);
     __DSB();
 }
 
@@ -261,7 +261,7 @@ static inline void NIC_SetWrTideMark(nic_reg_t base, uint8_t value)
  */
 static inline uint8_t NIC_GetWrTideMark(nic_reg_t base)
 {
-    return (uint8_t)((*(volatile uint32_t *)(base + NIC_WR_TIDEMARK_OFFSET)) & NIC_WR_TIDEMARK_MASK);
+    return (uint8_t)((*(volatile uint32_t *)(base)) & NIC_WR_TIDEMARK_MASK);
 }
 
 /*!
@@ -272,7 +272,7 @@ static inline uint8_t NIC_GetWrTideMark(nic_reg_t base)
  */
 static inline void NIC_SetFnMod(nic_reg_t base, nic_fn_mod_t value)
 {
-    *(volatile uint32_t *)(base + NIC_FN_MOD_OFFSET) = value;
+    *(volatile uint32_t *)(base) = value;
     __DSB();
 }
 
@@ -284,7 +284,7 @@ static inline void NIC_SetFnMod(nic_reg_t base, nic_fn_mod_t value)
  */
 static inline nic_fn_mod_t NIC_GetFnMod(nic_reg_t base)
 {
-    return (nic_fn_mod_t)((*(volatile uint32_t *)(base + NIC_FN_MOD_OFFSET)) & NIC_FN_MOD_MASK);
+    return (nic_fn_mod_t)((*(volatile uint32_t *)(base)) & NIC_FN_MOD_MASK);
 }
 
 #if defined(__cplusplus)

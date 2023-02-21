@@ -135,15 +135,24 @@ if RT_USING_DFS
 
     config RT_USING_DFS_DEVFS
         bool "Using devfs for device objects"
-        default n
+        default y
 
     config RT_USING_DFS_ROMFS
         bool "Enable ReadOnly file system on flash"
         default n
 
+    config RT_USING_DFS_CROMFS
+        bool "Enable ReadOnly compressed file system on flash"
+        default n
+        # select PKG_USING_ZLIB
+
     config RT_USING_DFS_RAMFS
         bool "Enable RAM file system"
         select RT_USING_MEMHEAP
+        default n
+
+    config RT_USING_DFS_TMPFS
+        bool "Enable TMP file system"
         default n
 
     config RT_USING_DFS_NFS

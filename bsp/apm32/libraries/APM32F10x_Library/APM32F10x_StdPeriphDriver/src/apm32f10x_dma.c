@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the DMA firmware functions
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,15 +25,16 @@
 
 #include "apm32f10x_dma.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
 /** @addtogroup DMA_Driver DMA Driver
+  * @brief DMA driver modules
   @{
 */
 
-/** @addtogroup DMA_Fuctions Fuctions
+/** @defgroup DMA_Functions Functions
   @{
 */
 
@@ -46,7 +47,7 @@
  *
  * @note      DMA2 Channel only for APM32 High density devices.
  */
-void DMA_Reset(DMA_Channel_T *channel)
+void DMA_Reset(DMA_Channel_T* channel)
 {
     channel->CHCFG_B.CHEN = BIT_RESET;
     channel->CHCFG = 0;
@@ -115,7 +116,7 @@ void DMA_Reset(DMA_Channel_T *channel)
  *
  * @note      DMA2 Channel only for APM32 High density devices.
  */
-void DMA_Config(DMA_Channel_T *channel, DMA_Config_T *dmaConfig)
+void DMA_Config(DMA_Channel_T* channel, DMA_Config_T* dmaConfig)
 {
     channel->CHCFG_B.DIRCFG = dmaConfig->dir;
     channel->CHCFG_B.CIRMODE = dmaConfig->loopMode;
@@ -138,7 +139,7 @@ void DMA_Config(DMA_Channel_T *channel, DMA_Config_T *dmaConfig)
  *
  * @retval    None
  */
-void DMA_ConfigStructInit(DMA_Config_T *dmaConfig)
+void DMA_ConfigStructInit(DMA_Config_T* dmaConfig)
 {
     dmaConfig->peripheralBaseAddr = 0;
     dmaConfig->memoryBaseAddr = 0;
@@ -162,7 +163,7 @@ void DMA_ConfigStructInit(DMA_Config_T *dmaConfig)
  *
  * @note      DMA2 Channel only for APM32 High density devices.
  */
-void DMA_Enable(DMA_Channel_T *channel)
+void DMA_Enable(DMA_Channel_T* channel)
 {
     channel->CHCFG_B.CHEN = ENABLE;
 }
@@ -176,7 +177,7 @@ void DMA_Enable(DMA_Channel_T *channel)
  *
  * @note      DMA2 Channel only for APM32 High density devices.
  */
-void DMA_Disable(DMA_Channel_T *channel)
+void DMA_Disable(DMA_Channel_T* channel)
 {
     channel->CHCFG_B.CHEN = DISABLE;
 }
@@ -192,7 +193,7 @@ void DMA_Disable(DMA_Channel_T *channel)
  *
  * @note      DMA2 Channel only for APM32 High density devices.
  */
-void DMA_ConfigDataNumber(DMA_Channel_T *channel, uint16_t dataNumber)
+void DMA_ConfigDataNumber(DMA_Channel_T* channel, uint16_t dataNumber)
 {
     channel->CHNDATA = dataNumber;
 }
@@ -206,7 +207,7 @@ void DMA_ConfigDataNumber(DMA_Channel_T *channel, uint16_t dataNumber)
  *
  * @note      DMA2 Channel only for APM32 High density devices.
  */
-uint16_t DMA_ReadDataNumber(DMA_Channel_T *channel)
+uint16_t DMA_ReadDataNumber(DMA_Channel_T* channel)
 {
     return channel->CHNDATA;
 }
@@ -226,7 +227,7 @@ uint16_t DMA_ReadDataNumber(DMA_Channel_T *channel)
  *
  * @note      DMA2 Channel only for APM32 High density devices.
  */
-void DMA_EnableInterrupt(DMA_Channel_T *channel, uint32_t interrupt)
+void DMA_EnableInterrupt(DMA_Channel_T* channel, uint32_t interrupt)
 {
     channel->CHCFG |= interrupt;
 }
@@ -246,7 +247,7 @@ void DMA_EnableInterrupt(DMA_Channel_T *channel, uint32_t interrupt)
  *
  * @note      DMA2 Channel only for APM32 High density devices.
  */
-void DMA_DisableInterrupt(DMA_Channel_T *channel, uint32_t interrupt)
+void DMA_DisableInterrupt(DMA_Channel_T* channel, uint32_t interrupt)
 {
     channel->CHCFG &= ~interrupt;
 }
@@ -491,6 +492,7 @@ uint8_t DMA_ReadIntFlag(DMA_INT_FLAG_T flag)
         }
     }
 }
+
 /*!
  * @brief     Clears the specified DMA Channel's interrupts.
  *
@@ -562,6 +564,6 @@ void DMA_ClearIntFlag(uint32_t flag)
     }
 }
 
-/**@} end of group DMA_Fuctions*/
+/**@} end of group DMA_Functions*/
 /**@} end of group DMA_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group APM32F10x_StdPeriphDriver */

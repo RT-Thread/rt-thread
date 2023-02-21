@@ -47,13 +47,13 @@ elif GetDepend('SOC_NRF51822') == True:
 	define += ['NRF51822_XXAA']
 	src += ['./mdk/system_nrf51.c']
 	
-	if rtconfig.PLATFORM == 'armcc':
+	if rtconfig.PLATFORM in ['armcc']:
 		src += ['./mdk/arm_startup_nrf51.s']
 		
-	if rtconfig.PLATFORM == 'gcc':
+	if rtconfig.PLATFORM in ['gcc']:
 		src += ['./mdk/gcc_startup_nrf51.S']
 		
-	if rtconfig.PLATFORM == 'iccarm':
+	if rtconfig.PLATFORM in ['iccarm']:
 		D_SRC += ['./mdk/iar_startup_nrf51.s']
 ```
 

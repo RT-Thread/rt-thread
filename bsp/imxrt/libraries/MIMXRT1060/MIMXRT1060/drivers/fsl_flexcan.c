@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright 2016-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -96,10 +96,10 @@
 
 /* Define the range of memory that needs to be initialized when the device has memory error detection feature. */
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_MEMORY_ERROR_CONTROL) && FSL_FEATURE_FLEXCAN_HAS_MEMORY_ERROR_CONTROL)
-#define CAN_INIT_RXFIR         ((uint32_t)base + 0x4Cu)
-#define CAN_INIT_MEMORY_BASE_1 (uint32_t *)((uint32_t)base + (uint32_t)FSL_FEATURE_FLEXCAN_INIT_MEMORY_BASE_1)
+#define CAN_INIT_RXFIR         ((uintptr_t)base + 0x4Cu)
+#define CAN_INIT_MEMORY_BASE_1 (uint32_t *)((uintptr_t)base + (uintptr_t)FSL_FEATURE_FLEXCAN_INIT_MEMORY_BASE_1)
 #define CAN_INIT_MEMORY_SIZE_1 FSL_FEATURE_FLEXCAN_INIT_MEMORY_SIZE_1
-#define CAN_INIT_MEMORY_BASE_2 (uint32_t *)((uint32_t)base + (uint32_t)FSL_FEATURE_FLEXCAN_INIT_MEMORY_BASE_2)
+#define CAN_INIT_MEMORY_BASE_2 (uint32_t *)((uintptr_t)base + (uintptr_t)FSL_FEATURE_FLEXCAN_INIT_MEMORY_BASE_2)
 #define CAN_INIT_MEMORY_SIZE_2 FSL_FEATURE_FLEXCAN_INIT_MEMORY_SIZE_2
 #endif
 
@@ -364,6 +364,23 @@ static flexcan_isr_t s_flexcanIsr = (flexcan_isr_t)DefaultISR;
 #else
 static flexcan_isr_t s_flexcanIsr;
 #endif
+
+/*******************************************************************************
+ * Implementation of 32-bit memset
+ ******************************************************************************/
+
+static void flexcan_memset(void *s, uint32_t c, size_t n)
+{
+    size_t m;
+    uint32_t *ptr = s;
+
+    m = n / sizeof(*ptr);
+
+    while ((m--) != (size_t)0)
+    {
+        *ptr++ = c;
+    }
+}
 
 /*******************************************************************************
  * Code
@@ -733,8 +750,8 @@ static void FLEXCAN_Reset(CAN_Type *base)
     /* Do memory initialization for all FlexCAN RAM in order to have the parity bits in memory properly
        updated. */
     *(volatile uint32_t *)CAN_INIT_RXFIR = 0x0U;
-    (void)memset((void *)CAN_INIT_MEMORY_BASE_1, 0, CAN_INIT_MEMORY_SIZE_1);
-    (void)memset((void *)CAN_INIT_MEMORY_BASE_2, 0, CAN_INIT_MEMORY_SIZE_2);
+    flexcan_memset(CAN_INIT_MEMORY_BASE_1, 0, CAN_INIT_MEMORY_SIZE_1);
+    flexcan_memset(CAN_INIT_MEMORY_BASE_2, 0, CAN_INIT_MEMORY_SIZE_2);
     /* Disable unrestricted write access to FlexCAN memory. */
     base->CTRL2 &= ~CAN_CTRL2_WRMFRZ_MASK;
 
@@ -742,7 +759,7 @@ static void FLEXCAN_Reset(CAN_Type *base)
     FLEXCAN_ClearStatusFlags(base, (uint64_t)kFLEXCAN_AllMemoryErrorFlag);
 #else
     /* Only need clean all Message Buffer memory. */
-    (void)memset((void *)&base->MB[0], 0, sizeof(base->MB));
+    flexcan_memset((void *)&base->MB[0], 0, sizeof(base->MB));
 #endif
 
     /* Clean all individual Rx Mask of Message Buffers. */
@@ -818,7 +835,7 @@ static void FLEXCAN_SetBitRate(CAN_Type *base,
     }
 
     /* Update actual timing characteristic. */
-    FLEXCAN_SetTimingConfig(base, (const flexcan_timing_config_t *)(uint32_t)&timingConfig);
+    FLEXCAN_SetTimingConfig(base, (const flexcan_timing_config_t *)(uintptr_t)&timingConfig);
 }
 
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE) && FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE)
@@ -869,7 +886,7 @@ static void FLEXCAN_SetFDBitRate(CAN_Type *base,
     }
 
     /* Update actual timing characteristic. */
-    FLEXCAN_SetFDTimingConfig(base, (const flexcan_timing_config_t *)(uint32_t)&timingConfig);
+    FLEXCAN_SetFDTimingConfig(base, (const flexcan_timing_config_t *)(uintptr_t)&timingConfig);
 }
 #endif
 
@@ -2692,17 +2709,12 @@ void FLEXCAN_GetMemoryErrorReportStatus(CAN_Type *base, flexcan_memory_error_rep
  */
 static void FLEXCAN_ERRATA_6032(CAN_Type *base, volatile uint32_t *mbCSAddr)
 {
-    uint32_t dbg_temp      = 0U;
-    uint32_t u32TempCS     = 0U;
-    uint32_t u32Timeout    = DELAY_BUSIDLE;
-    uint32_t u32TempIMASK1 = base->IMASK1;
-/*after backup all interruption, disable ALL interruption*/
-#if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
-    uint32_t u32TempIMASK2 = base->IMASK2;
-    base->IMASK2           = 0;
-#endif
-    base->IMASK1 = 0;
-    dbg_temp     = (uint32_t)(base->DBG1);
+    uint32_t dbg_temp   = 0U;
+    uint32_t u32TempCS  = 0U;
+    uint32_t u32Timeout = DELAY_BUSIDLE;
+    /*disable ALL interrupts to prevent any context switching*/
+    uint32_t irqMask = DisableGlobalIRQ();
+    dbg_temp         = (uint32_t)(base->DBG1);
     switch (dbg_temp & CAN_DBG1_CFSM_MASK)
     {
         case RXINTERMISSION:
@@ -2743,10 +2755,7 @@ static void FLEXCAN_ERRATA_6032(CAN_Type *base, volatile uint32_t *mbCSAddr)
         *mbCSAddr = u32TempCS;
     }
     /*restore interruption*/
-    base->IMASK1 = u32TempIMASK1;
-#if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
-    base->IMASK2 = u32TempIMASK2;
-#endif
+    EnableGlobalIRQ(irqMask);
 }
 #endif
 
@@ -2776,12 +2785,12 @@ status_t FLEXCAN_WriteTxMb(CAN_Type *base, uint8_t mbIdx, const flexcan_frame_t 
     uint32_t cs_temp = 0;
     status_t status;
 
-#if (defined(FSL_FEATURE_FLEXCAN_HAS_ERRATA_6032) && FSL_FEATURE_FLEXCAN_HAS_ERRATA_6032)
-    FLEXCAN_ERRATA_6032(base, &(base->MB[mbIdx].CS));
-#endif
     /* Check if Message Buffer is available. */
     if (CAN_CS_CODE(kFLEXCAN_TxMbDataOrRemote) != (base->MB[mbIdx].CS & CAN_CS_CODE_MASK))
     {
+#if (defined(FSL_FEATURE_FLEXCAN_HAS_ERRATA_6032) && FSL_FEATURE_FLEXCAN_HAS_ERRATA_6032)
+        FLEXCAN_ERRATA_6032(base, &(base->MB[mbIdx].CS));
+#endif
         /* Inactive Tx Message Buffer. */
         base->MB[mbIdx].CS = (base->MB[mbIdx].CS & ~CAN_CS_CODE_MASK) | CAN_CS_CODE(kFLEXCAN_TxMbInactive);
 
@@ -2862,14 +2871,13 @@ status_t FLEXCAN_WriteFDTxMb(CAN_Type *base, uint8_t mbIdx, const flexcan_fd_fra
     volatile uint32_t *mbAddr = &(base->MB[0].CS);
     uint32_t offset           = FLEXCAN_GetFDMailboxOffset(base, mbIdx);
 
-#if (defined(FSL_FEATURE_FLEXCAN_HAS_ERRATA_6032) && FSL_FEATURE_FLEXCAN_HAS_ERRATA_6032)
-    FLEXCAN_ERRATA_6032(base, &(mbAddr[offset]));
-#endif
-
     can_cs = mbAddr[offset];
     /* Check if Message Buffer is available. */
     if (CAN_CS_CODE(kFLEXCAN_TxMbDataOrRemote) != (can_cs & CAN_CS_CODE_MASK))
     {
+#if (defined(FSL_FEATURE_FLEXCAN_HAS_ERRATA_6032) && FSL_FEATURE_FLEXCAN_HAS_ERRATA_6032)
+        FLEXCAN_ERRATA_6032(base, &(mbAddr[offset]));
+#endif
         /* Inactive Tx Message Buffer and Fill Message ID field. */
         mbAddr[offset]      = (can_cs & ~CAN_CS_CODE_MASK) | CAN_CS_CODE(kFLEXCAN_TxMbInactive);
         mbAddr[offset + 1U] = pTxFrame->id;
@@ -3226,7 +3234,7 @@ status_t FLEXCAN_TransferSendBlocking(CAN_Type *base, uint8_t mbIdx, flexcan_fra
     status_t status;
 
     /* Write Tx Message Buffer to initiate a data sending. */
-    if (kStatus_Success == FLEXCAN_WriteTxMb(base, mbIdx, (const flexcan_frame_t *)(uint32_t)pTxFrame))
+    if (kStatus_Success == FLEXCAN_WriteTxMb(base, mbIdx, (const flexcan_frame_t *)(uintptr_t)pTxFrame))
     {
 /* Wait until CAN Message send out. */
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
@@ -3311,7 +3319,7 @@ status_t FLEXCAN_TransferFDSendBlocking(CAN_Type *base, uint8_t mbIdx, flexcan_f
     status_t status;
 
     /* Write Tx Message Buffer to initiate a data sending. */
-    if (kStatus_Success == FLEXCAN_WriteFDTxMb(base, mbIdx, (const flexcan_fd_frame_t *)(uint32_t)pTxFrame))
+    if (kStatus_Success == FLEXCAN_WriteFDTxMb(base, mbIdx, (const flexcan_fd_frame_t *)(uintptr_t)pTxFrame))
     {
 /* Wait until CAN Message send out. */
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
@@ -3563,7 +3571,7 @@ status_t FLEXCAN_TransferSendNonBlocking(CAN_Type *base, flexcan_handle_t *handl
         }
 
         if (kStatus_Success ==
-            FLEXCAN_WriteTxMb(base, pMbXfer->mbIdx, (const flexcan_frame_t *)(uint32_t)pMbXfer->frame))
+            FLEXCAN_WriteTxMb(base, pMbXfer->mbIdx, (const flexcan_frame_t *)(uintptr_t)pMbXfer->frame))
         {
 /* Enable Message Buffer Interrupt. */
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
@@ -3680,7 +3688,7 @@ status_t FLEXCAN_TransferFDSendNonBlocking(CAN_Type *base, flexcan_handle_t *han
         }
 
         if (kStatus_Success ==
-            FLEXCAN_WriteFDTxMb(base, pMbXfer->mbIdx, (const flexcan_fd_frame_t *)(uint32_t)pMbXfer->framefd))
+            FLEXCAN_WriteFDTxMb(base, pMbXfer->mbIdx, (const flexcan_fd_frame_t *)(uintptr_t)pMbXfer->framefd))
         {
 /* Enable Message Buffer Interrupt. */
 #if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)

@@ -11,7 +11,7 @@ Env 工具下敲入 menuconfig 命令，或者 RT-Thread Studio IDE 下选择 RT
 ```Kconfig
 Hardware Drivers Config --->
     Onboard Peripheral Drivers --->
-        [*] Support Arduino
+        [*] Compatible with Arduino Ecosystem (RTduino)
 ```
 
 ## 2 Arduino引脚排布
@@ -20,20 +20,22 @@ Hardware Drivers Config --->
 
 ### 2.1 Arduino引脚排布统览
 
+更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
+
 | Arduino引脚编号           | STM32引脚编号 | 5V容忍    | 备注                                           |
 | --------------------- | --------- | ------- | -------------------------------------------- |
-| 0 (D0)                | --        |         | 该引脚在UNO板中为串口RX引脚，不可当做普通IO                    |
-| 1 (D1)                | --        |         | 该引脚在UNO板中为串口TX引脚，不可当做普通IO                    |
+| 0 (D0)                | PA10      | 是       | Serial-Rx，被RT-Thread的UART设备框架uart1接管         |
+| 1 (D1)                | PA9       | 是       | Serial-Tx，被RT-Thread的UART设备框架uart1接管         |
 | 2 (D2)                | PB9       | 是       | 普通IO                                         |
-| 3 (D3)                | PD15      | 是       | PWM（定时器4发生）                                  |
+| 3 (D3)                | PD15      | 是       | PWM4-CH4，默认被RT-Thread的PWM设备框架pwm4接管          |
 | 4 (D4)                | PA8       | 是       | 普通IO                                         |
 | 5 (D5)                | PD14      | 是       | 普通IO                                         |
-| 6 (D6)                | PB11      | 是       | PWM（定时器2发生）                                  |
+| 6 (D6)                | PB11      | 是       | PWM2-CH4，默认被RT-Thread的PWM设备框架pwm2接管          |
 | 7 (D7)                | PB14      | 是       | 普通IO                                         |
 | 8 (D8)                | PB12      | 是       | 普通IO                                         |
-| 9 (D9)                | PD12      | 是       | PWM（定时器4发生）                                  |
-| 10 (D10)              | PB10      | 是       | PWM（定时器2发生）                                  |
-| 11 (D11)              | PB8       | 是       | PWM（定时器4发生）                                  |
+| 9 (D9)                | PD12      | 是       | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管          |
+| 10 (D10)              | PB10      | 是       | PWM2-CH3，默认被RT-Thread的PWM设备框架pwm2接管          |
+| 11 (D11)              | PB8       | 是       | PWM4-CH3，默认被RT-Thread的PWM设备框架pwm4接管          |
 | 12 (D12)              | PB15      | 是       | 普通IO                                         |
 | 13 (D13)              | PB13      | 是       | 普通IO                                         |
 | 14 (D14)              | PA1       | 是       | 振动电机-A                                       |
@@ -43,30 +45,30 @@ Hardware Drivers Config --->
 | 18 (D18)              | PD9       | 是       | KEY1                                         |
 | 19 (D19)              | PD8       | 是       | KEY2                                         |
 | 20 (D20)              | PC13      | 是       | KEY-WKUP                                     |
-| 21 (D21)              | PE7       | 是       | 红色LED                                        |
-| 22 (D22, LED_BUILTIN) | PE8       | 是       | 绿色LED，Arduino默认LED                           |
-| 23 (D23)              | PE9       | 是       | 蓝色LED，具有PWM功能（定时器1发生）                        |
+| 21 (D21)              | PE7       | 是       | 用户红色LED                                      |
+| 22 (D22, LED_BUILTIN) | PE8       | 是       | 用户绿色LED                                      |
+| 23 (D23)              | PE9       | 是       | 用户蓝色LED，PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管  |
 | 24 (D24)              | PB0       | 3.6V容忍  | 红外发送                                         |
 | 25 (D25)              | PB1       | 是       | 红外接收                                         |
-| 26 (D26)              | PD7       | 是       | LCD 片选 CS                                    |
-| 27 (D27)              | PB6       | 是       | LCD 复位 RESET                                 |
-| 28 (D28)              | PB4       | 是       | LCD D/C 数据命令选择                               |
-| 29 (D29)              | PB7       | 是       | LCD 背光电源                                     |
-| 30 (D30)              | PD4       | 是       | 无线模块 CE                                      |
-| 31 (D31)              | PD3       | 是       | 无线模块 中断                                      |
-| 32 (D32)              | PD5       | 是       | 无线模块 片选 CS                                   |
-| A0                    | PC2       | 是（但不建议） | ADC                                          |
-| A1                    | PC4       | 是（但不建议） | ADC                                          |
-| A2                    | --        |         | 芯片内部参考电压 ADC                                 |
-| A3                    | --        |         | 芯片内部温度 ADC                                   |
-| DAC0                  | PA4       | 3.6V容忍  | 真模拟输出 DAC                                    |
-| --                    | PC7       | 是       | I2C1-SDA，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
-| --                    | PC6       | 是       | I2C1-SCL，被RT-Thread的I2C设备框架i2c1总线接管，不可当做普通IO |
+| 26 (D26)              | PD4       | 是       | 无线模块 CE                                      |
+| 27 (D27)              | PD3       | 是       | 无线模块 中断                                      |
+| 28 (D28, SS)          | PD5       | 是       | 无线模块 片选 CS                                   |
+| 29 (D29)              | PB13      |         | SPI2-SCK，默认被RT-Thread的SPI设备框架spi2总线接管        |
+| 30 (D30)              | PB14      |         | SPI2-MISO，默认被RT-Thread的SPI设备框架spi2总线接管       |
+| 31 (D31)              | PB15      |         | SPI2-MOSI，默认被RT-Thread的SPI设备框架spi2总线接管       |
+| 32 (D32)              | PC7       | 是       | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1总线接管        |
+| 33 (D33)              | PC6       | 是       | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管        |
+| 34 (D34)              | PA2       |         | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管      |
+| 35 (D35)              | PA3       |         | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管      |
+| A0                    | PC2       | 是（但不建议） | ADC1-CH3，默认被RT-Thread的ADC设备框架adc1接管          |
+| A1                    | PC4       | 是（但不建议） | ADC1-CH13，默认被RT-Thread的ADC设备框架adc1接管         |
+| A2                    | --        |         | 芯片内部参考电压 ADC1-CH0，默认被RT-Thread的ADC设备框架adc1接管 |
+| A3                    | --        |         | 芯片内部温度 ADC1-CH17，默认被RT-Thread的ADC设备框架adc1接管  |
+| DAC0                  | PA4       | 3.6V容忍  | 真模拟输出 DAC1-CH1，默认被RT-Thread的DAC设备框架dac1接管    |
 
 > 注意：
 > 
 > 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
-> 2. USART1是潘多拉板的默认串口，理论应对接到了Arduino引脚编号的D0和D1，但是其实际用于串口通信，因此不允许当做普通IO来使用和操作。
 
 ### 2.2 板载排针的Arduino引脚排布
 
@@ -99,7 +101,9 @@ Hardware Drivers Config --->
 | 红外发射              | 24 (D24)              | PB0       |
 | 红外接收              | 25 (D25)              | PB1       |
 
-## 3 I2C总线
+## 3 通信
+
+### 3.1 I2C总线
 
 潘多拉Arduino支持三条I2C总线，分别是：i2c1、i2c3 和 i2c4。你可以通过`pins_arduino.h`文件中的 `RTDUINO_DEFAULT_IIC_BUS_NAME` 宏来设定Arduino的I2C总线，**默认为 i2c4 总线**。其中：
 
@@ -109,13 +113,28 @@ Hardware Drivers Config --->
 
 I2C的引脚都是被RT-Thread I2C设备框架接管的，不需要直接操控这两个引脚，直接引用`#include <Wire.h>`（Arduino官方I2C头文件）即可使用。
 
-## 4 SPI总线
+### 3.2 SPI总线
 
-潘多拉板的Arduino SPI总线是spi2总线，位置为板上左上角的`WIRELESS`插槽。 `SCK`、`MISO`、`MOSI`引脚是被RT-Thread SPI设备框架接管的，不需要直接操控这3个引脚，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。按照Arduino的编程标准，用户需要自行控制片选信号。
+潘多拉板的Arduino SPI总线是spi2总线，位置为板上左上角的`WIRELESS`插槽。 `SCK`、`MISO`、`MOSI`引脚是被RT-Thread SPI设备框架接管的，不需要直接操控这3个引脚，直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。按照Arduino的编程标准，用户需要自行控制片选信号，默认为 `SS`, 即 `D28`。
 
-## 5 特殊功能说明
+### 3.3 串口
 
-### 5.1 芯片内部ADC通道
+默认支持通过 `Serial.` 方法调用 `uart1` 串口设备；通过 `Serial2.` 方法调用 `uart2` 串口设备。详见[例程](https://github.com/RTduino/RTduino/blob/master/examples/Basic/helloworld.cpp)。
+
+### 3.4 USB虚拟串口
+
+支持USB虚拟串口，如果需要使用，可以手动使能。详见[例程](https://github.com/RTduino/RTduino/tree/master/examples/USBSerial)。
+
+```Kconfig
+RT-Thread online packages --->
+    Arduino libraries --->
+        [*] RTduino: Arduino Ecological Compatibility Layer
+            [*] Enable USB Serial
+```
+
+## 4 特殊功能说明
+
+### 4.1 芯片内部ADC通道
 
 本BSP适配了STM32的两个芯片内部ADC通道，可以通过 analogRead 函数来分别获取如下功能：
 
@@ -124,7 +143,7 @@ I2C的引脚都是被RT-Thread I2C设备框架接管的，不需要直接操控�
 | 芯片内部参考电压 ADC | A2          | --        |
 | 芯片内部温度 ADC   | A3          | --        |
 
-### 5.2 真模拟输出功能 (True Analog Output)
+### 4.2 真模拟输出功能 (True Analog Output)
 
 Arduino的 analogWrite 函数虽为模拟写，但是实际输出的是PWM数字信号，并非真正的模拟信号。这是由于Arduino早期使用的AVR单片机并不支持DAC的功能，因此这个习惯就被保留了下来。但是随着Arduino支持芯片的丰富，部分高级芯片已经内建了DAC（例如Arduino官方板MKR、Zero等），因此Arduino的 analogWrite 函数后续也支持了真模拟输出功能。
 
@@ -135,5 +154,5 @@ Arduino的 analogWrite 函数虽为模拟写，但是实际输出的是PWM数字
 在潘多拉板上，使用PA4来当做真模拟输出功能引脚，使用方法为：
 
 ```c
-analogWrite(DAC0, 1024); // STM32的DAC分辨率为12位，因此第二个参数范围可以为0-4095
+analogWrite(DAC0, 128);
 ```

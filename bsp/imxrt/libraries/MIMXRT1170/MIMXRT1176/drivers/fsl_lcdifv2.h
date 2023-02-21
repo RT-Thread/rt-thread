@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 NXP
+ * Copyright 2019-2022 NXP
  * All rights reserved.
  *
  *
@@ -27,7 +27,7 @@
 /*! @name Driver version */
 /*@{*/
 /*! @brief LCDIF v2 driver version */
-#define FSL_LCDIFV2_DRIVER_VERSION (MAKE_VERSION(2, 2, 3))
+#define FSL_LCDIFV2_DRIVER_VERSION (MAKE_VERSION(2, 3, 1))
 /*@}*/
 
 #if defined(FSL_FEATURE_LCDIFV2_LAYER_COUNT) && (!defined(LCDIFV2_LAYER_COUNT))
@@ -603,6 +603,45 @@ void LCDIFV2_SetCscMode(LCDIFV2_Type *base, uint8_t layerIndex, lcdifv2_csc_mode
 status_t LCDIFV2_GetPorterDuffConfig(lcdifv2_pd_blend_mode_t mode,
                                      lcdifv2_pd_layer_t layer,
                                      lcdifv2_blend_config_t *config);
+
+/* @} */
+
+/*!
+ * @name Misc
+ * @{
+ */
+
+/*!
+ * @brief Get the global alpha values for multiple layer blend.
+ *
+ * This function calculates the global alpha value for each layer based on the
+ * desired blended alpha.
+ *
+ * When all layers use the global alpha, the relationship of blended alpha
+ * and global alpha of each layer is:
+ *
+ * Layer 7: ba7 = ga7
+ * Layer 6: ba6 = ga6 * (1-ga7)
+ * Layer 5: ba5 = ga5 * (1-ga6) * (1-ga7)
+ * Layer 4: ba4 = ga4 * (1-ga5) * (1-ga6) * (1-ga7)
+ * Layer 3: ba3 = ga3 * (1-ga4) * (1-ga5) * (1-ga6) * (1-ga7)
+ * Layer 2: ba2 = ga2 * (1-ga3) * (1-ga4) * (1-ga5) * (1-ga6) * (1-ga7)
+ * Layer 1: ba1 = ga1 * (1-ga2) * (1-ga3) * (1-ga4) * (1-ga5) * (1-ga6) * (1-ga7)
+ * Layer 0: ba0 =   1 * (1-ga1) * (1-ga2) * (1-ga3) * (1-ga4) * (1-ga5) * (1-ga6) * (1-ga7)
+ *
+ * Here baN is the blended alpha of layer N, gaN is the global alpha configured to layer N.
+ *
+ * This function calculates the global alpha based on the blended alpha. The @p blendedAlpha and
+ * @p globalAlpha are all arrays of size @p layerCount. The first layer is a background layer,
+ * so blendedAlpha[0] is useless, globalAlpha[0] is always 255.
+ *
+ * @param[in] blendedAlpha The desired blended alpha value, alpha range 0~255.
+ * @param[out] globalAlpha Calculated global alpha set to each layer register.
+ * @param[in] layerCount Total layer count.
+ * @retval kStatus_Success Get successfully.
+ * @retval kStatus_InvalidArgument The argument is invalid.
+ */
+status_t LCDIFV2_GetMultiLayerGlobalAlpha(const uint8_t blendedAlpha[], uint8_t globalAlpha[], uint8_t layerCount);
 
 /* @} */
 

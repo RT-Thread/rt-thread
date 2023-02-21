@@ -25,7 +25,7 @@ def GenerateCFiles(env,project):
     AS = os.path.join(rtconfig.EXEC_PATH, rtconfig.AS).replace('\\', "/")
     AR = os.path.join(rtconfig.EXEC_PATH, rtconfig.AR).replace('\\', "/")
     LINK = os.path.join(rtconfig.EXEC_PATH, rtconfig.LINK).replace('\\', "/")
-    if rtconfig.PLATFORM == 'gcc':
+    if rtconfig.PLATFORM in ['gcc']:
         SIZE = os.path.join(rtconfig.EXEC_PATH, rtconfig.SIZE).replace('\\', "/")
         OBJDUMP = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJDUMP).replace('\\', "/")
         OBJCOPY = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJCPY).replace('\\', "/")
@@ -47,7 +47,7 @@ def GenerateCFiles(env,project):
         AS += ".exe"
         AR += ".exe"
         LINK += ".exe"
-        if rtconfig.PLATFORM == 'gcc':
+        if rtconfig.PLATFORM in ['gcc']:
             SIZE += ".exe"
             OBJDUMP += ".exe"
             OBJCOPY += ".exe"
@@ -78,7 +78,7 @@ def GenerateCFiles(env,project):
             cm_file.write("SET(CMAKE_CXX_FLAGS \""+ CXXFLAGS + "\")\n")
             cm_file.write("SET(CMAKE_CXX_COMPILER_WORKS TRUE)\n\n")
 
-        if rtconfig.PLATFORM == 'gcc':
+        if rtconfig.PLATFORM in ['gcc']:
             cm_file.write("SET(CMAKE_OBJCOPY \""+ OBJCOPY + "\")\n")
             cm_file.write("SET(CMAKE_SIZE \""+ SIZE + "\")\n\n")
         elif rtconfig.PLATFORM in ['armcc', 'armclang']:
@@ -86,7 +86,7 @@ def GenerateCFiles(env,project):
 
         LINKER_FLAGS = ''
         LINKER_LIBS = ''
-        if rtconfig.PLATFORM == 'gcc':
+        if rtconfig.PLATFORM in ['gcc']:
             LINKER_FLAGS += '-T'
         elif rtconfig.PLATFORM in ['armcc', 'armclang']:
             LINKER_FLAGS += '--scatter'
@@ -126,7 +126,7 @@ def GenerateCFiles(env,project):
                 cm_file.write( "\t" + path.replace("\\", "/") + "\n" )
         cm_file.write(")\n\n")
 
-        if rtconfig.PLATFORM == 'gcc':
+        if rtconfig.PLATFORM in ['gcc']:
             cm_file.write("LINK_DIRECTORIES(\n")
             for group in project:
                 if 'LIBPATH' in group.keys():

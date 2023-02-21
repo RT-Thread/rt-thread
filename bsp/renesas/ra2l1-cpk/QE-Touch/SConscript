@@ -1,0 +1,24 @@
+import glob
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = []
+
+file = glob.glob('*.tifcfg')
+if len(file):
+    if rtconfig.PLATFORM in ['iccarm']:
+        print("\nThe current project does not support IAR build\n")
+        Return('group')
+    elif rtconfig.PLATFORM in ['gcc', 'armclang']:
+        src += ['qe_touch_config.c']
+        src += ['qe_sample_rtthread.c']
+        CPPPATH = [cwd]
+
+    CPPDEFINES = ['QE_TOUCH_CONFIGURATION']
+    group = DefineGroup('QE-Touch', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

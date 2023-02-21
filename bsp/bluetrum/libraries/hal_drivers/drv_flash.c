@@ -137,4 +137,4 @@ int fal_ops_test(void)
 MSH_CMD_EXPORT(fal_ops_test, "fal_ops_test");
 
 #endif
-#endif
+#endif/* BSP_USING_ON_CHIP_FLASH */

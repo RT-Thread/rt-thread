@@ -54,7 +54,7 @@ static rt_err_t SCL_H(struct rt_i2c_bit_ops *ops)
     {
         if ((rt_tick_get() - start) > ops->timeout)
             return -RT_ETIMEOUT;
-        rt_thread_delay((ops->timeout + 1) >> 1);
+        i2c_delay(ops);
     }
 #ifdef RT_I2C_BITOPS_DEBUG
     if (rt_tick_get() != start)
@@ -186,7 +186,7 @@ static rt_int32_t i2c_readb(struct rt_i2c_bus_device *bus)
     return data;
 }
 
-static rt_size_t i2c_send_bytes(struct rt_i2c_bus_device *bus,
+static rt_ssize_t i2c_send_bytes(struct rt_i2c_bus_device *bus,
                                 struct rt_i2c_msg        *msg)
 {
     rt_int32_t ret;
@@ -240,7 +240,7 @@ static rt_err_t i2c_send_ack_or_nack(struct rt_i2c_bus_device *bus, int ack)
     return RT_EOK;
 }
 
-static rt_size_t i2c_recv_bytes(struct rt_i2c_bus_device *bus,
+static rt_ssize_t i2c_recv_bytes(struct rt_i2c_bus_device *bus,
                                 struct rt_i2c_msg        *msg)
 {
     rt_int32_t val;
@@ -366,13 +366,14 @@ static rt_err_t i2c_bit_send_address(struct rt_i2c_bus_device *bus,
     return RT_EOK;
 }
 
-static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
                               struct rt_i2c_msg         msgs[],
                               rt_uint32_t               num)
 {
     struct rt_i2c_msg *msg;
     struct rt_i2c_bit_ops *ops = (struct rt_i2c_bit_ops *)bus->priv;
-    rt_int32_t i, ret;
+    rt_int32_t ret;
+    rt_uint32_t i;
     rt_uint16_t ignore_nack;
 
     if (num == 0) return 0;

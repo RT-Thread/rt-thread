@@ -13,7 +13,7 @@ path = []
 #common lib define
 CPPDEFINES += [rtconfig.DEVICE_TYPE, 'DEBUG']
 
-#CMSIS/Include/ common/ common2/service/delay 
+#CMSIS/Include/ common/ common2/service/delay
 path += [cwd + '/CMSIS/Include/']
 path += [cwd + '/common/utils/', cwd + '/common/utils/interrupt/']
 path += [cwd + '/common/boards/']
@@ -27,23 +27,23 @@ path += [cwd + '/sam0/utils/header_files']
 
 #sam0/utils/cmsis/
 if rtconfig.DEVICE_SERIES == 'SAMD20':
-	#D20
-	path += [cwd + '/sam0/', cwd + '/sam0/utils/cmsis/samd20/include/']
-	path += [cwd + '/sam0/utils/cmsis/samd20/source/']
-	src	+= Glob('./sam0/utils/cmsis/samd20/source/*.c')
-	if rtconfig.PLATFORM in ['gcc']:
-		src += Glob('./sam0/utils/cmsis/samd20/source/gcc/*.s')
-	elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-		src += Glob('./sam0/utils/cmsis/samd20/source/arm/*.s')
+    #D20
+    path += [cwd + '/sam0/', cwd + '/sam0/utils/cmsis/samd20/include/']
+    path += [cwd + '/sam0/utils/cmsis/samd20/source/']
+    src += Glob('./sam0/utils/cmsis/samd20/source/*.c')
+    if rtconfig.PLATFORM in ['gcc']:
+        src += Glob('./sam0/utils/cmsis/samd20/source/gcc/*.s')
+    elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+        src += Glob('./sam0/utils/cmsis/samd20/source/arm/*.s')
 elif rtconfig.DEVICE_SERIES == 'SAMD21':
-	#D21
-	path += [cwd + '/sam0/utils/cmsis/samd21/include/']
-	path += [cwd + '/sam0/utils/cmsis/samd21/source/']
-	src	+= Glob('./sam0/utils/cmsis/samd21/source/*.c')
-	if rtconfig.PLATFORM in ['gcc']:
-		src += Glob('./sam0/utils/cmsis/samd21/source/gcc/*.s')
-	elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-		src += Glob('./sam0/utils/cmsis/samd21/source/arm/*.s')
+    #D21
+    path += [cwd + '/sam0/utils/cmsis/samd21/include/']
+    path += [cwd + '/sam0/utils/cmsis/samd21/source/']
+    src += Glob('./sam0/utils/cmsis/samd21/source/*.c')
+    if rtconfig.PLATFORM in ['gcc']:
+        src += Glob('./sam0/utils/cmsis/samd21/source/gcc/*.s')
+    elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+        src += Glob('./sam0/utils/cmsis/samd21/source/arm/*.s')
 
 #sam0/drivers/system
 path += [cwd + '/sam0/drivers/system/']
@@ -56,19 +56,19 @@ path += [cwd + '/sam0/drivers/system/clock']
 path += [cwd + '/sam0/drivers/system/interrupt/']
 src += Glob('./sam0/drivers/system/interrupt/*.c')
 if rtconfig.DEVICE_SERIES == 'SAMD20':
-	path += [cwd + '/sam0/drivers/system/interrupt/system_interrupt_samd20/']
+    path += [cwd + '/sam0/drivers/system/interrupt/system_interrupt_samd20/']
 elif rtconfig.DEVICE_SERIES == 'SAMD21':
-	path += [cwd + '/sam0/drivers/system/interrupt/system_interrupt_samd21/']
+    path += [cwd + '/sam0/drivers/system/interrupt/system_interrupt_samd21/']
 
 #sam0/drivers/system/clock
 if rtconfig.DEVICE_SERIES == 'SAMD20':
-	path += [cwd + '/sam0/drivers/system/clock/clock_samd20']
-	#path += [cwd + '/sam0/drivers/system/clock/clock_samd20/module_config']
-	src += Glob('./sam0/drivers/system/clock/clock_samd20/*.c')
+    path += [cwd + '/sam0/drivers/system/clock/clock_samd20']
+    #path += [cwd + '/sam0/drivers/system/clock/clock_samd20/module_config']
+    src += Glob('./sam0/drivers/system/clock/clock_samd20/*.c')
 elif rtconfig.DEVICE_SERIES == 'SAMD21':
-	#path += [cwd + '/sam0/drivers/system/clock/clock_samd21_r21_da_ha1/module_config']
-	path += [cwd + '/sam0/drivers/system/clock/clock_samd21_r21_da_ha1']
-	src += Glob('./sam0/drivers/system/clock/clock_samd21_r21_da_ha1/*.c')
+    #path += [cwd + '/sam0/drivers/system/clock/clock_samd21_r21_da_ha1/module_config']
+    path += [cwd + '/sam0/drivers/system/clock/clock_samd21_r21_da_ha1']
+    src += Glob('./sam0/drivers/system/clock/clock_samd21_r21_da_ha1/*.c')
 
 #sam0/drivers/sercom
 path += [cwd + '/sam0/drivers/sercom', cwd + '/sam0/drivers/sercom/usart']

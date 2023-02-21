@@ -20,6 +20,7 @@ source "$PKGS_DIR/Kconfig"
 
 config SOC_ZYNQMP_R5
     bool
+    select RT_USING_CACHE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

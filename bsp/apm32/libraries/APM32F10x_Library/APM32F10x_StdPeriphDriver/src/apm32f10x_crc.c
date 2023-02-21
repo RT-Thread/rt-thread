@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the CRC firmware functions
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,15 +25,16 @@
 
 #include "apm32f10x_crc.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
 /** @addtogroup CRC_Driver CRC Driver
+  * @brief CRC driver modules
   @{
 */
 
-/** @addtogroup CRC_Fuctions Fuctions
+/** @defgroup CRC_Functions Functions
   @{
 */
 
@@ -73,7 +74,7 @@ uint32_t CRC_CalculateCRC(uint32_t data)
  *
  * @retval    A 32-bit CRC value
  */
-uint32_t CRC_CalculateBlockCRC(uint32_t *buf, uint32_t bufLen)
+uint32_t CRC_CalculateBlockCRC(uint32_t* buf, uint32_t bufLen)
 {
     while (bufLen--)
     {
@@ -119,6 +120,6 @@ uint8_t CRC_ReadIDRegister(void)
     return (CRC->INDATA);
 }
 
-/**@} end of group CRC_Fuctions*/
+/**@} end of group CRC_Functions*/
 /**@} end of group CRC_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group APM32F10x_StdPeriphDriver */

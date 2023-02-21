@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -69,18 +69,19 @@ void rt_hw_cpu_dcache_ops(int ops, void* addr, int size)
 {
     rt_uint32_t startAddr = (rt_uint32_t)addr & (rt_uint32_t)~(L1CACHE_LINESIZE_BYTE - 1);
     rt_uint32_t size_byte = size + (rt_uint32_t)addr - startAddr;
+    rt_uint32_t clean_invalid = RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE;
 
-    if (ops & (RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE))
+    if ((ops & clean_invalid) == clean_invalid)
     {
-        SCB_CleanInvalidateDCache_by_Addr((uint32_t *)startAddr, size_byte);
+        SCB_CleanInvalidateDCache_by_Addr((rt_uint32_t *)startAddr, size_byte);
     }
     else if (ops & RT_HW_CACHE_FLUSH)
     {
-        SCB_CleanDCache_by_Addr((uint32_t *)startAddr, size_byte);
+        SCB_CleanDCache_by_Addr((rt_uint32_t *)startAddr, size_byte);
     }
     else if (ops & RT_HW_CACHE_INVALIDATE)
     {
-        SCB_InvalidateDCache_by_Addr((uint32_t *)startAddr, size_byte);
+        SCB_InvalidateDCache_by_Addr((rt_uint32_t *)startAddr, size_byte);
     }
     else
     {

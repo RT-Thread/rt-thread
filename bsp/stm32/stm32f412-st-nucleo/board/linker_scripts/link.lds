@@ -47,6 +47,14 @@ SECTIONS
         __rt_init_end = .;
 
         . = ALIGN(4);
+
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+
         _etext = .;
     } > ROM = 0
 
@@ -78,7 +86,7 @@ SECTIONS
         _edata = . ;
     } >RAM
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
@@ -101,7 +109,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > RAM
     __bss_end = .;

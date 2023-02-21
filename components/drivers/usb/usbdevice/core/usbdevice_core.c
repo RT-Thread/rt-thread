@@ -19,8 +19,8 @@
 
 static rt_list_t device_list;
 
-static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
-static rt_size_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
+static rt_ssize_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
+static rt_ssize_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
 static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep);
 rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep);
 
@@ -962,7 +962,7 @@ static rt_err_t _stop_notify(udevice_t device)
     return RT_EOK;
 }
 
-static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size)
+static rt_ssize_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size)
 {
     rt_uint16_t maxpacket;
 
@@ -988,7 +988,7 @@ static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_s
     return size;
 }
 
-static rt_size_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffer, rt_size_t size)
+static rt_ssize_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffer, rt_size_t size)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->dcd != RT_NULL);
@@ -2225,7 +2225,7 @@ rt_err_t rt_usbd_event_signal(struct udev_msg* msg)
 }
 
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t usb_thread_stack[RT_USBD_THREAD_STACK_SZ];
 static struct rt_thread usb_thread;
 #define USBD_MQ_MSG_SZ  32

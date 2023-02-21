@@ -20,26 +20,20 @@
 #define FSA506_ADDR_CMD  0x0
 #define FSA506_ADDR_DATA 0x0
 
-#if defined(FSA506_EBI_16BIT)
-    #define fsa506_reg_write(RegAddr)   (*((volatile uint16_t *)(s_u32AccessBase+(FSA506_ADDR_CMD))) = (RegAddr))
-    #define fsa506_read_data()            (*((volatile uint16_t *)(s_u32AccessBase+(FSA506_ADDR_DATA))))
-    #define fsa506_write_data(Data)     (*((volatile uint16_t *)(s_u32AccessBase+(FSA506_ADDR_DATA))) = (Data))
-#else
-    #define fsa506_reg_write(RegAddr)   (*((volatile uint8_t *)(s_u32AccessBase+(FSA506_ADDR_CMD))) = (RegAddr))
-    #define fsa506_read_data()            (*((volatile uint8_t *)(s_u32AccessBase+(FSA506_ADDR_DATA))))
-    #define fsa506_write_data(Data)     (*((volatile uint8_t *)(s_u32AccessBase+(FSA506_ADDR_DATA))) = (Data))
-#endif
+#define fsa506_write_cmd(Cmd)     (*((volatile uint16_t *)(s_u32AccessBase+(FSA506_ADDR_CMD))) = (Cmd))
+#define fsa506_write_data(Data)   (*((volatile uint16_t *)(s_u32AccessBase+(FSA506_ADDR_DATA))) = (Data))
+#define fsa506_read_data()        (*((volatile uint16_t *)(s_u32AccessBase+(FSA506_ADDR_DATA))))
 
 static rt_uint32_t s_u32AccessBase = 0;
 
-void fsa506_send_cmd(rt_uint8_t cmd)
+void fsa506_send_cmd(rt_uint16_t cmd)
 {
     CLR_RS;
-    fsa506_reg_write(cmd);
+    fsa506_write_cmd(cmd);
     SET_RS;
 }
 
-void fsa506_send_cmd_parameter(rt_uint8_t data)
+void fsa506_send_cmd_parameter(rt_uint16_t data)
 {
     fsa506_write_data(data);
 }
@@ -47,35 +41,26 @@ void fsa506_send_cmd_parameter(rt_uint8_t data)
 void fsa506_send_cmd_done(void)
 {
     CLR_RS;
-    fsa506_reg_write(0x80);
+    fsa506_write_cmd(0x80);
     SET_RS;
 }
 
-void fsa506_write_reg(rt_uint8_t cmd, rt_uint8_t data)
+void fsa506_write_reg(rt_uint16_t reg, rt_uint16_t data)
 {
-    fsa506_send_cmd(cmd);
-    fsa506_send_cmd_parameter(data);
+    fsa506_send_cmd(reg & 0xFF);
+    fsa506_send_cmd_parameter(data & 0xFF);
     fsa506_send_cmd_done();
 }
 
 void fsa506_send_pixel_data(rt_uint16_t color)
 {
-#if 1
-    // for LV_COLOR_16_SWAP
-    //BGR, B is high byte
-    fsa506_write_data(color & 0xffu);
-    fsa506_write_data((color >> 8) & 0xffu);
-#else
-    //RGB, R is high byte
-    fsa506_write_data((color >> 8) & 0xffu);
-    fsa506_write_data(color & 0xffu);
-#endif
+    fsa506_write_data(color);
 }
 
 void fsa506_send_pixels(rt_uint16_t *pixels, int len)
 {
     int count = len / sizeof(rt_uint16_t);
-    if (count < 512)
+    if (count < 1024)
     {
         // CPU feed
         int i = 0;
@@ -88,8 +73,7 @@ void fsa506_send_pixels(rt_uint16_t *pixels, int len)
     else
     {
         // PDMA-M2M feed
-        // Must enable LV_COLOR_16_SWAP definition in LVGL.
-        nu_pdma_mempush((void *)(s_u32AccessBase + (FSA506_ADDR_DATA)), (void *)pixels, 8, len);
+        nu_pdma_mempush((void *)(s_u32AccessBase + (FSA506_ADDR_DATA)), (void *)pixels, 16, count);
     }
 }
 

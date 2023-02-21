@@ -1,10 +1,10 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
+import os
 
 src = Glob('*.c')
+cwd = GetCurrentDir()
 
-CPPPATH = [RTT_ROOT + '/include']
+inc = [os.path.join(cwd, '..', 'include')]
 
 if GetDepend('RT_USING_SMALL_MEM') == False:
     SrcRemove(src, ['mem.c'])
@@ -27,8 +27,9 @@ if GetDepend('RT_USING_DEVICE') == False:
 if GetDepend('RT_USING_SMP') == False:
     SrcRemove(src, ['cpu.c'])
 
-CPPDEFINES = ['__RTTHREAD__']
+if GetDepend('RT_USING_DM') == False:
+    SrcRemove(src, ['driver.c'])
 
-group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Kernel', src, depend = [''], CPPPATH = inc, CPPDEFINES = ['__RTTHREAD__'])
 
 Return('group')

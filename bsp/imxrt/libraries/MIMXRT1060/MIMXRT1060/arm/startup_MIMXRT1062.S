@@ -2,13 +2,13 @@
 /*  @file:    startup_MIMXRT1062.s                                           */
 /*  @purpose: CMSIS Cortex-M7 Core Device Startup File                       */
 /*            MIMXRT1062                                                     */
-/*  @version: 1.2                                                            */
-/*  @date:    2019-4-29                                                      */
-/*  @build:   b210419                                                        */
+/*  @version: 1.4                                                            */
+/*  @date:    2022-3-25                                                      */
+/*  @build:   b220425                                                        */
 /* ------------------------------------------------------------------------- */
 /*                                                                           */
 /* Copyright 1997-2016 Freescale Semiconductor, Inc.                         */
-/* Copyright 2016-2021 NXP                                                   */
+/* Copyright 2016-2022 NXP                                                   */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* SPDX-License-Identifier: BSD-3-Clause                                     */
@@ -112,7 +112,7 @@ __Vectors:
     .long   ADC2_IRQHandler                                 /* ADC2 interrupt*/
     .long   DCDC_IRQHandler                                 /* DCDC interrupt*/
     .long   Reserved86_IRQHandler                           /* Reserved interrupt*/
-    .long   Reserved87_IRQHandler                           /* Reserved interrupt*/
+    .long   GPIO10_Combined_0_31_IRQHandler                 /* Combined interrupt indication for GPIO10 signal 0 throughout 31*/
     .long   GPIO1_INT0_IRQHandler                           /* Active HIGH Interrupt from INT0 from GPIO*/
     .long   GPIO1_INT1_IRQHandler                           /* Active HIGH Interrupt from INT1 from GPIO*/
     .long   GPIO1_INT2_IRQHandler                           /* Active HIGH Interrupt from INT2 from GPIO*/
@@ -150,7 +150,7 @@ __Vectors:
     .long   PWM1_FAULT_IRQHandler                           /* PWM1 fault or reload error interrupt*/
     .long   FLEXSPI2_IRQHandler                             /* FlexSPI2 interrupt*/
     .long   FLEXSPI_IRQHandler                              /* FlexSPI0 interrupt*/
-    .long   SEMC_IRQHandler                                 /* Reserved interrupt*/
+    .long   SEMC_IRQHandler                                 /* SEMC interrupt*/
     .long   USDHC1_IRQHandler                               /* USDHC1 interrupt*/
     .long   USDHC2_IRQHandler                               /* USDHC2 interrupt*/
     .long   USB_OTG2_IRQHandler                             /* USBO2 USB OTG2*/
@@ -301,11 +301,11 @@ Reset_Handler:
     str     r1, [r0]
     ldr     r2, [r1]
     msr     msp, r2
-    ldr   r0,=SystemInit
-    blx   r0
+    ldr     r0,=SystemInit
+    blx     r0
     cpsie   i               /* Unmask interrupts */
-    ldr   r0,=__main
-    bx    r0
+    ldr     r0,=__main
+    bx      r0
 
     .pool
     .size Reset_Handler, . - Reset_Handler
@@ -916,7 +916,7 @@ FLEXIO3_IRQHandler:
     def_irq_handler    ADC2_IRQHandler
     def_irq_handler    DCDC_IRQHandler
     def_irq_handler    Reserved86_IRQHandler
-    def_irq_handler    Reserved87_IRQHandler
+    def_irq_handler    GPIO10_Combined_0_31_IRQHandler
     def_irq_handler    GPIO1_INT0_IRQHandler
     def_irq_handler    GPIO1_INT1_IRQHandler
     def_irq_handler    GPIO1_INT2_IRQHandler

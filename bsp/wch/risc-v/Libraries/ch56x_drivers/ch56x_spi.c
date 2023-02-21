@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -164,10 +164,24 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     return RT_EOK;
 }
 
-static rt_uint32_t _spi_xfer_1(struct rt_spi_device *device, struct rt_spi_message *message)
+/**
+ * @brief   Transfer SPI data for single message.
+ *          Message traversing is done by rt_spi_message().
+ *
+ * @param   device is pointer to the rt_spi_device device.
+ *
+ * @param   message is a link list for data/control information,
+ *          only the first entry is processed.
+ *          Note: ch56x can't do SPI send & recv at the same time.
+ *
+ * @return  `message->length1 if successful, 0 otherwise.
+ */
+static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     struct spi_bus *spi_bus = (struct spi_bus *)device->bus;
     volatile struct spi_registers *sxreg = spi_bus->reg_base;
+
+    union _spi_ctrl_mod ctrl_mod;
 
     uint8_t *data;
     uint32_t size;
@@ -179,21 +193,27 @@ static rt_uint32_t _spi_xfer_1(struct rt_spi_device *device, struct rt_spi_messa
     if (size == 0 || size > 4095)
         return 0;
 
+    ctrl_mod.reg = sxreg->CTRL_MOD.reg | RB_SPI_ALL_CLEAR;
+
     /* ch56x can't do SPI send & recv at the same time */
     if (message->send_buf && !message->recv_buf)
     {
         data = (uint8_t *)message->send_buf;
-        sxreg->CTRL_MOD.fifo_dir = SPI_FIFO_DIR_OUTPUT;
+        ctrl_mod.fifo_dir = SPI_FIFO_DIR_OUTPUT;
     }
     else if (!message->send_buf && message->recv_buf)
     {
         data = (uint8_t *)message->recv_buf;
-        sxreg->CTRL_MOD.fifo_dir = SPI_FIFO_DIR_INPUT;
+        ctrl_mod.fifo_dir = SPI_FIFO_DIR_INPUT;
     }
     else
     {
         return 0;
     }
+
+    sxreg->CTRL_MOD.reg = ctrl_mod.reg;
+    ctrl_mod.all_clear = 0;
+    sxreg->CTRL_MOD.reg = ctrl_mod.reg;
 
     /* set MISO pin direction to match xfer if shared SI/SO pin */
     if (device->config.mode & RT_SPI_3WIRE)
@@ -202,7 +222,7 @@ static rt_uint32_t _spi_xfer_1(struct rt_spi_device *device, struct rt_spi_messa
         rt_pin_mode(spi_bus->miso_pin, mode);
     }
 
-    cs_pin = (rt_base_t)device->user_data;
+    cs_pin = (rt_base_t)device->parent.user_data;
     cs_high = device->config.mode & RT_SPI_CS_HIGH;
 
     if (message->cs_take)
@@ -236,6 +256,8 @@ static rt_uint32_t _spi_xfer_1(struct rt_spi_device *device, struct rt_spi_messa
 
     /* wait for transfer done */
     while (sxreg->TOTAL_COUNT > 0);
+    /* disable DMA, anyway */
+    sxreg->CTRL_CFG.dma_enable = 0;
 
     /* non-DMA recv => read data from FIFO */
     if (size > 0)
@@ -257,26 +279,6 @@ static rt_uint32_t _spi_xfer_1(struct rt_spi_device *device, struct rt_spi_messa
     }
 
     return message->length;
-}
-
-static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
-{
-    uint32_t total_xsize = 0;
-    uint32_t xsize;
-
-    RT_ASSERT(device != NULL);
-    RT_ASSERT(message != NULL);
-
-    while (message != RT_NULL)
-    {
-        xsize = _spi_xfer_1(device, message);
-        if (xsize != message->length)
-            return 0;
-        total_xsize += xsize;
-        message = message->next;
-    }
-
-    return total_xsize;
 }
 
 static const struct rt_spi_ops spi_ops =

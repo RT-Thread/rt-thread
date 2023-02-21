@@ -10,7 +10,7 @@ src = Glob('MK64F12/*.c')
 
 src += ['system_MK64F12.c']
 
-#add for startup script 
+#add for startup script
 if rtconfig.PLATFORM in ['gcc']:
      src = src + ['TOOLCHAIN_GCC_ARM/startup_MK64F12.S']
      src = src + ['TOOLCHAIN_GCC_ARM/startup.c']

@@ -20,7 +20,7 @@
     #ifdef RT_USING_SERIAL_V2
         #include <drv_usart_v2.h>
     #else
-        #include <drv_usart.h>
+	#error "Serial-v1 has been obsoleted, and please select serial-v2 as the default option"
     #endif
 #endif
 
@@ -109,7 +109,7 @@ void rt_hw_us_delay(rt_uint32_t us)
 /**
  * This function will initial STM32 board.
  */
-RT_WEAK void rt_hw_board_init()
+rt_weak void rt_hw_board_init()
 {
 
     rt_hw_systick_init();

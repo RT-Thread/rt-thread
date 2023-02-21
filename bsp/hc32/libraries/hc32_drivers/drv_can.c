@@ -124,13 +124,13 @@ static rt_uint32_t _get_can_work_mode(rt_uint32_t mode)
     case RT_CAN_MODE_NORMAL:
         work_mode = CAN_WORK_MD_NORMAL;
         break;
-    case RT_CAN_MODE_LISEN:
+    case RT_CAN_MODE_LISTEN:
         work_mode = CAN_WORK_MD_SILENT;
         break;
     case RT_CAN_MODE_LOOPBACK:
         work_mode = CAN_WORK_MD_ELB;
         break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
+    case RT_CAN_MODE_LOOPBACKANLISTEN:
         work_mode = CAN_WORK_MD_ELB_SILENT;
         break;
     default:
@@ -172,22 +172,22 @@ static uint16_t _get_filter_idx(struct rt_can_filter_config *filter_cfg)
 
     for (int i = 0; i < filter_cfg->count; i++)
     {
-        if (filter_cfg->items[i].hdr != -1)
+        if (filter_cfg->items[i].hdr_bank != -1)
         {
-            u16FilterSelected |= 1 << filter_cfg->items[i].hdr;
+            u16FilterSelected |= 1 << filter_cfg->items[i].hdr_bank;
         }
     }
 
     for (int i = 0; i < filter_cfg->count; i++)
     {
-        if (filter_cfg->items[i].hdr == -1)
+        if (filter_cfg->items[i].hdr_bank == -1)
         {
             for (int j = 0; j < FILTER_COUNT; j++)
             {
                 if ((u16FilterSelected & 1 << j) == 0)
                 {
-                    filter_cfg->items[i].hdr = j;
-                    u16FilterSelected |= 1 << filter_cfg->items[i].hdr;
+                    filter_cfg->items[i].hdr_bank = j;
+                    u16FilterSelected |= 1 << filter_cfg->items[i].hdr_bank;
                     break;
                 }
             }
@@ -298,9 +298,9 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISEN &&
+                argval != RT_CAN_MODE_LISTEN &&
                 argval != RT_CAN_MODE_LOOPBACK &&
-                argval != RT_CAN_MODE_LOOPBACKANLISEN)
+                argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return -RT_ERROR;
         }
@@ -435,8 +435,8 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     }
     /* get len */
     pmsg->len = ll_rx_frame.DLC;
-    /* get hdr */
-    pmsg->hdr = 0;
+    /* get hdr_index */
+    pmsg->hdr_index = 0;
     rt_memcpy(pmsg->data, &ll_rx_frame.au8Data, ll_rx_frame.DLC);
 
     return RT_EOK;

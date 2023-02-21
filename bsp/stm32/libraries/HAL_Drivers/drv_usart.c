@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -170,7 +170,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
 
 #ifdef RT_SERIAL_USING_DMA
     if (!(serial->parent.open_flag & RT_DEVICE_OFLAG_OPEN)) {
-        uart->dma_rx.last_index = 0;
+        uart->dma_rx.remaining_cnt = cfg->bufsz;
     }
 #endif
 
@@ -341,7 +341,7 @@ static int stm32_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
@@ -367,6 +367,53 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
     return 0;
 }
 
+#ifdef RT_SERIAL_USING_DMA
+static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
+{
+    struct stm32_uart *uart;
+    rt_base_t level;
+    rt_size_t recv_len, counter;
+
+    RT_ASSERT(serial != RT_NULL);
+    uart = rt_container_of(serial, struct stm32_uart, serial);
+
+    level = rt_hw_interrupt_disable();
+    recv_len = 0;
+    counter = __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
+
+    switch (isr_flag)
+    {
+    case UART_RX_DMA_IT_IDLE_FLAG:
+        if (counter <= uart->dma_rx.remaining_cnt)
+            recv_len = uart->dma_rx.remaining_cnt - counter;
+        else
+            recv_len = serial->config.bufsz + uart->dma_rx.remaining_cnt - counter;
+        break;
+
+    case UART_RX_DMA_IT_HT_FLAG:
+        if (counter < uart->dma_rx.remaining_cnt)
+            recv_len = uart->dma_rx.remaining_cnt - counter;
+        break;
+
+    case UART_RX_DMA_IT_TC_FLAG:
+        if(counter >= uart->dma_rx.remaining_cnt)
+            recv_len = serial->config.bufsz + uart->dma_rx.remaining_cnt - counter;
+
+    default:
+        break;
+    }
+
+    if (recv_len)
+    {
+        uart->dma_rx.remaining_cnt = counter;
+        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
+    }
+    rt_hw_interrupt_enable(level);
+
+}
+
+#endif
+
 /**
  * Uart common interrupt process. This need add to uart ISR.
  *
@@ -375,10 +422,6 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
 static void uart_isr(struct rt_serial_device *serial)
 {
     struct stm32_uart *uart;
-#ifdef RT_SERIAL_USING_DMA
-    rt_size_t recv_total_index, recv_len;
-    rt_base_t level;
-#endif
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
@@ -393,16 +436,7 @@ static void uart_isr(struct rt_serial_device *serial)
     else if ((uart->uart_dma_flag) && (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE) != RESET)
              && (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_IDLE) != RESET))
     {
-        level = rt_hw_interrupt_disable();
-        recv_total_index = serial->config.bufsz - __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
-        recv_len = recv_total_index - uart->dma_rx.last_index;
-        uart->dma_rx.last_index = recv_total_index;
-        rt_hw_interrupt_enable(level);
-
-        if (recv_len)
-        {
-            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
-        }
+        dma_recv_isr(serial, UART_RX_DMA_IT_IDLE_FLAG);
         __HAL_UART_CLEAR_IDLEFLAG(&uart->handle);
     }
     else if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) &&
@@ -457,50 +491,12 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TXE);
         }
-        if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
-        }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_RXNE);
         }
     }
 }
-
-#ifdef RT_SERIAL_USING_DMA
-static void dma_isr(struct rt_serial_device *serial)
-{
-    struct stm32_uart *uart;
-    rt_size_t recv_total_index, recv_len;
-    rt_base_t level;
-
-    RT_ASSERT(serial != RT_NULL);
-    uart = rt_container_of(serial, struct stm32_uart, serial);
-
-    if ((__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_TC) != RESET) ||
-            (__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_HT) != RESET))
-    {
-        level = rt_hw_interrupt_disable();
-        recv_total_index = serial->config.bufsz - __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
-        if (recv_total_index == 0)
-        {
-            recv_len = serial->config.bufsz - uart->dma_rx.last_index;
-        }
-        else
-        {
-            recv_len = recv_total_index - uart->dma_rx.last_index;
-        }
-        uart->dma_rx.last_index = recv_total_index;
-        rt_hw_interrupt_enable(level);
-
-        if (recv_len)
-        {
-            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
-        }
-    }
-}
-#endif
 
 #if defined(BSP_USING_UART1)
 void USART1_IRQHandler(void)
@@ -1092,7 +1088,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     struct stm32_uart *uart;
     RT_ASSERT(huart != NULL);
     uart = (struct stm32_uart *)huart;
-    dma_isr(&uart->serial);
+    dma_recv_isr(&uart->serial, UART_RX_DMA_IT_TC_FLAG);
 }
 
 /**
@@ -1107,7 +1103,7 @@ void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
     struct stm32_uart *uart;
     RT_ASSERT(huart != NULL);
     uart = (struct stm32_uart *)huart;
-    dma_isr(&uart->serial);
+    dma_recv_isr(&uart->serial, UART_RX_DMA_IT_HT_FLAG);
 }
 
 static void _dma_tx_complete(struct rt_serial_device *serial)

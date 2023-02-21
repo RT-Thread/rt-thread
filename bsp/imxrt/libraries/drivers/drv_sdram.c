@@ -13,24 +13,36 @@
 #include "fsl_semc.h"
 #include "drv_sdram.h"
 
-#define DRV_DEBUG
-#define LOG_TAG             "drv.sdram"
-#include <drv_log.h>
+//#define DBG_COLOR
+//#define DRV_DEBUG
+//#define LOG_TAG             "drv.sdram"
+//#include <drv_log.h>
 
-#ifdef RT_USING_MEMHEAP_AS_HEAP
+#define DBG_ENABLE
+#define DBG_SECTION_NAME "[drv.sdram]"
+#define DBG_COLOR
+#define DBG_LEVEL DBG_INFO
+#include <rtdbg.h>
+
+#ifdef RT_USING_MEMHEAP
 static struct rt_memheap system_heap;
 #endif
 
-int rt_hw_sdram_Init(void)
+int rt_hw_sdram_init(void)
 {
     int result = RT_EOK;
     semc_config_t config;
     semc_sdram_config_t sdramconfig;
+
+#if defined(SOC_IMXRT1170_SERIES)
+    rt_uint32_t clockFrq = CLOCK_GetRootClockFreq(kCLOCK_Root_Semc);
+#else
     rt_uint32_t clockFrq = CLOCK_GetFreq(kCLOCK_SemcClk);
+#endif
 
     /* Initializes the MAC configure structure to zero. */
-    memset(&config, 0, sizeof(semc_config_t));
-    memset(&sdramconfig, 0, sizeof(semc_sdram_config_t));
+    rt_memset(&config, 0, sizeof(semc_config_t));
+    rt_memset(&sdramconfig, 0, sizeof(semc_sdram_config_t));
 
     /* Initialize SEMC. */
     SEMC_GetDefaultConfig(&config);
@@ -66,10 +78,10 @@ int rt_hw_sdram_Init(void)
     }
     else
     {
-        LOG_D("sdram init success, mapped at 0x%X, size is %d Kbytes.", SDRAM_BANK_ADDR, SDRAM_SIZE);
-#ifdef RT_USING_MEMHEAP_AS_HEAP
+        LOG_I("sdram init success, mapped at 0x%X, size is %d Kbytes.", SDRAM_BANK_ADDR, SDRAM_SIZE);
+#ifdef RT_USING_MEMHEAP
     /*
-     * If RT_USING_MEMHEAP_AS_HEAP is enabled, SDRAM is initialized to the heap.
+     * If RT_USING_MEMHEAP is enabled, SDRAM is initialized to the heap.
      * The heap start address is (base + half size), and the size is (half size - 2M).
      * The reasons are:
      *      1. Reserve the half space for SDRAM link case
@@ -82,9 +94,9 @@ int rt_hw_sdram_Init(void)
 
     return result;
 }
-INIT_BOARD_EXPORT(rt_hw_sdram_Init);
+INIT_PREV_EXPORT(rt_hw_sdram_init);
 
-#ifdef DRV_DEBUG
+#ifdef DBG_ENABLE
 #ifdef FINSH_USING_MSH
 
 #define SEMC_DATALEN                (0x1000U)
@@ -92,14 +104,14 @@ rt_uint32_t sdram_writeBuffer[SEMC_DATALEN];
 rt_uint32_t sdram_readBuffer[SEMC_DATALEN];
 
 /* read write 32bit test */
-void sdram_test(void)
+static void sdram_test(void)
 {
     rt_uint32_t index;
     rt_uint32_t datalen = SEMC_DATALEN;
     rt_uint32_t *sdram = (rt_uint32_t *)SDRAM_BANK_ADDR; /* SDRAM start address. */
     bool result = true;
 
-    LOG_D("\r\n SEMC SDRAM Memory 32 bit Write Start, Start Address 0x%x, Data Length %d !\r\n", sdram, datalen);
+    LOG_D("SEMC SDRAM Memory 32 bit Write Start, Start Address 0x%x, Data Length %d !", sdram, datalen);
     /* Prepare data and write to SDRAM. */
     for (index = 0; index < datalen; index++)
     {
@@ -107,14 +119,14 @@ void sdram_test(void)
         sdram[index] = sdram_writeBuffer[index];
     }
 
-    LOG_D("\r\n SEMC SDRAM Read 32 bit Data Start, Start Address 0x%x, Data Length %d !\r\n", sdram, datalen);
+    LOG_D("SEMC SDRAM Read 32 bit Data Start, Start Address 0x%x, Data Length %d !", sdram, datalen);
     /* Read data from the SDRAM. */
     for (index = 0; index < datalen; index++)
     {
         sdram_readBuffer[index] = sdram[index];
     }
 
-    LOG_D("\r\n SEMC SDRAM 32 bit Data Write and Read Compare Start!\r\n");
+    LOG_I("SEMC SDRAM 32 bit Data Write and Read Compare Start!");
     /* Compare the two buffers. */
     while (datalen--)
     {
@@ -127,11 +139,11 @@ void sdram_test(void)
 
     if (!result)
     {
-        LOG_E("\r\n SEMC SDRAM 32 bit Data Write and Read Compare Failed!\r\n");
+        LOG_E("SEMC SDRAM 32 bit Data Write and Read Compare Failed!");
     }
     else
     {
-        LOG_D("\r\n SEMC SDRAM 32 bit Data Write and Read Compare Succeed!\r\n");
+        LOG_I("SEMC SDRAM 32 bit Data Write and Read Compare Succeed!");
     }
 }
 MSH_CMD_EXPORT(sdram_test, sdram test)

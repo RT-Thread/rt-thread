@@ -147,7 +147,7 @@ rt_base_t rt_hw_cpu_dcache_status()
  * reset cpu by dog's time-out
  *
  */
-RT_WEAK void rt_hw_cpu_reset()
+rt_weak void rt_hw_cpu_reset()
 {
 
     rt_kprintf("Restarting system...\n");
@@ -162,7 +162,7 @@ RT_WEAK void rt_hw_cpu_reset()
  *  shutdown CPU
  *
  */
-RT_WEAK void rt_hw_cpu_shutdown()
+rt_weak void rt_hw_cpu_shutdown()
 {
     rt_base_t level;
     rt_kprintf("shutdown...\n");

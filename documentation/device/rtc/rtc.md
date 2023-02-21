@@ -4,7 +4,7 @@
 
 The RTC (Real-Time Clock) provides accurate real-time clock time, which can be used to generate information such as year, month, day, hour, minute, and second. At present, most real-time clock chips use a higher precision crystal oscillator as a clock source. In order to work when the main power supply is powered down, some clock chips will be powered by a battery to keep the time information valid.
 
-The RT-Thread RTC device provides the basic services for the operating system's time system. In the face of more and more IoT scenarios, RTC has become the standard configuration of the product, and even in the secure transmission process such as SSL, RTC has become an indispensable part.
+The RT-Thread RTC device provides the basic services for the operating system's time system. RTCs find many uses in IoT scenarios, and even in secure transmission processes such as SSL, RTC has become an indispensable part.
 
 
 ## Access RTC Devices
@@ -119,7 +119,7 @@ RT-Thread online packages →
              [*]   Enable NTP(Network Time Protocol) client
 ```
 
-After the NTP is turned on, the RTC's automatic synchronization function will be automatically turned on, and the synchronization period and the delay time of the first synchronization can also be set:
+After NTP is turned on, the RTC's automatic synchronization function will be automatically turned on, and the synchronization period and the delay time of the first synchronization can also be set:
 
 ```c
 RT-Thread Components →

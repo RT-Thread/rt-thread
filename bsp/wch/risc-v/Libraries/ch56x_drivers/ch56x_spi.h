@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -179,9 +179,6 @@ union _spi_int_flag
  * 0x14  R32_SPIx_DMA_NOW:    SPI DMA current address
  * 0x18  R32_SPIx_DMA_BEG:    SPI DMA start address
  * 0x1c  R32_SPIx_DMA_END:    SPI DMA end address
- *
- * CAVEAT: gcc (as of 8.2.0) tends to read 32-bit word for bit field test.
- * Be careful for those with side effect for read (e.g. RBR, IIR).
  */
 struct spi_registers
 {

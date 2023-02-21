@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,6 +16,7 @@
 #else
     #include <drivers/serial.h>
 #endif
+#include <drivers/pin.h>
 #include "ch56x_sys.h"
 #include "ch56x_uart.h"
 #include "isr_sp.h"
@@ -25,11 +26,17 @@
     #error "Please define at least one UARTx"
 #endif
 
+/* Type of irqn/rxd_pin/txd_pin are per uart driver perspective
+ * to save some space, still compatible to RT api call, anyway.
+*/
 struct serial_device
 {
     struct rt_serial_device parent;
     volatile struct uart_registers *reg_base;
-    irq_number_t irqn;
+    uint8_t irqn;
+    uint8_t resv;
+    uint8_t rxd_pin;
+    uint8_t txd_pin;
     char *name;
 };
 
@@ -38,6 +45,13 @@ static struct serial_device serial_device_0 =
 {
     .reg_base = (struct uart_registers *)UART0_REG_BASE,
     .irqn = UART0_IRQn,
+#ifndef BSP_USING_UART0_PIN_ALT
+    .rxd_pin = UART_RXD0_PIN,
+    .txd_pin = UART_TXD0_PIN,
+#else
+    .rxd_pin = UART_RXD0_ALT,
+    .txd_pin = UART_TXD0_ALT,
+#endif
     .name = "uart0",
 };
 #endif
@@ -47,6 +61,8 @@ static struct serial_device serial_device_1 =
 {
     .reg_base = (struct uart_registers *)UART1_REG_BASE,
     .irqn = UART1_IRQn,
+    .rxd_pin = UART_RXD1_PIN,
+    .txd_pin = UART_TXD1_PIN,
     .name = "uart1",
 };
 #endif
@@ -56,6 +72,8 @@ static struct serial_device serial_device_2 =
 {
     .reg_base = (struct uart_registers *)UART2_REG_BASE,
     .irqn = UART2_IRQn,
+    .rxd_pin = UART_RXD2_PIN,
+    .txd_pin = UART_TXD2_PIN,
     .name = "uart2",
 };
 #endif
@@ -65,6 +83,8 @@ static struct serial_device serial_device_3 =
 {
     .reg_base = (struct uart_registers *)UART3_REG_BASE,
     .irqn = UART3_IRQn,
+    .rxd_pin = UART_RXD3_PIN,
+    .txd_pin = UART_TXD3_PIN,
     .name = "uart3",
 };
 #endif
@@ -233,14 +253,15 @@ int rt_hw_uart_init(void)
     devices[n++] = &serial_device_0;
 #endif
 
-    /* IMPORTANT: pin mode should be set properly @ board init */
-
     while (--n >= 0)
     {
         uint32_t flag;
         struct serial_device *serial = devices[n];
         serial->parent.ops = &uart_ops;
         serial->parent.config = config;
+
+        rt_pin_mode(serial->txd_pin, PIN_MODE_OUTPUT);
+        rt_pin_mode(serial->rxd_pin, PIN_MODE_INPUT_PULLUP);
 
         sys_clk_off_by_irqn(serial->irqn, SYS_SLP_CLK_ON);
 

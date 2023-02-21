@@ -1,8 +1,9 @@
+#include "rtconfig.h"
 menu "RT-Thread Kernel"
 
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
-    range 2 32
+    range 1 64
     default 8
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
@@ -16,6 +17,22 @@ config RT_USING_ARCH_DATA_TYPE
         BSP can define these basic data types in ARCH_CPU level.
 
         Please re-define these data types in rtconfig_project.h file.
+
+config RT_USING_SMART
+    bool "Enable RT-Thread Smart (microkernel on kernel/userland)"
+    default n
+    select RT_USING_LWP
+    select RT_USING_DFS
+    select RT_USING_LIBC
+    select RT_USING_POSIX_CLOCKTIME
+    select RT_USING_TTY
+    select RT_USING_NULL
+    select RT_USING_ZERO
+    select RT_USING_RANDOM
+    select RT_USING_RTC
+    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
+    help
+        RT-Thread Smart is a microkernel based operating system on RT-Thread.
 
 config RT_USING_SMP
     bool "Enable SMP(Symmetric multiprocessing)"
@@ -35,7 +52,7 @@ config RT_CPUS_NR
 
 config RT_ALIGN_SIZE
     int "Alignment size for CPU architecture data access"
-    default 4
+    default 8
     help
         Alignment size for CPU architecture data access
 
@@ -286,6 +303,16 @@ endmenu
 
 menu "Memory Management"
 
+    config RT_PAGE_MAX_ORDER
+        int "Max order of pages allocatable by page allocator"
+        default 11
+        help
+            For example, A value of 11 means the maximum chunk of contiguous memory
+            allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
+            Large memory requirement can consume all system resource, and should
+            consider reserved memory instead to enhance system endurance.
+            Max order should at least satisfied usage by huge page.
+
     config RT_USING_MEMPOOL
         bool "Using memory pool"
         default y
@@ -324,7 +351,7 @@ menu "Memory Management"
                         Speed priority mode.
                         As long as the memory block size meets the requirements, the search ends immediately.
 
-                config RT_MEMHEAP_BSET_MODE
+                config RT_MEMHEAP_BEST_MODE
                     bool "best mode"
                     help
                         Best size first.
@@ -407,6 +434,21 @@ menu "Kernel Device Object"
         bool "Using ops for each device object"
         default n
 
+    config RT_USING_DM
+        bool "Enable device driver model with device tree"
+        default n
+        help
+            Enable device driver model with device tree (FDT). It will use more memory
+            to parse and support device tree feature.
+
+    config RT_USING_DM_FDT
+        bool "Enablie builtin libfdt"
+        depends on RT_USING_DM
+        default y
+        help
+            libfdt - Flat Device Tree manipulation. If your code already contains the
+            libfdt, you can cancel this built-in libfdt to avoid link issue.
+
     config RT_USING_INTERRUPT_INFO
         bool "Enable additional interrupt trace information"
         default n
@@ -431,7 +473,7 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x40101
+    default 0x50000
     help
         RT-Thread version number
 

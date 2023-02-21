@@ -81,14 +81,14 @@ SECTIONS
     . = ALIGN(4);
   } > m_flash_config
 
-  ivt_begin= ORIGIN(m_flash_config) + LENGTH(m_flash_config);
+  ivt_begin = ORIGIN(m_flash_config) + LENGTH(m_flash_config);
 
   .ivt : AT(ivt_begin)
   {
     . = ALIGN(4);
-	KEEP(* (.boot_hdr.ivt))           /* ivt section */
-	KEEP(* (.boot_hdr.boot_data))     /* boot section */
-	KEEP(* (.boot_hdr.dcd_data))      /* dcd section */
+    KEEP(* (.boot_hdr.ivt))           /* ivt section */
+    KEEP(* (.boot_hdr.boot_data))     /* boot section */
+    KEEP(* (.boot_hdr.dcd_data))      /* dcd section */
     . = ALIGN(4);
   } > m_ivt
 
@@ -278,7 +278,7 @@ SECTIONS
     stack_end = .;
     __StackTop = .;
   } > m_data
-  
+
   .RTT_HEAP :
   {
     heap_start = .;

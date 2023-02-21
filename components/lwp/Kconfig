@@ -1,8 +1,67 @@
-config RT_USING_LWP
-    bool "LWP: light-weight process"
-    select RT_USING_POSIX_FS
-    select RT_USING_POSIX_SELECT
-    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A
-    default n
+menuconfig RT_USING_LWP
+    bool "light-weight process"
+    depends on RT_USING_SMART
+    default y
     help
         The lwP is a light weight process running in user mode.
+
+if RT_USING_LWP
+    config RT_LWP_MAX_NR
+        int "The max number of light-weight process"
+        default 30
+
+    config LWP_TASK_STACK_SIZE
+        int "The lwp thread kernel stack size"
+        default 16384
+
+    config RT_CH_MSG_MAX_NR
+        int "The maximum number of channel messages"
+        default 1024
+
+    config LWP_CONSOLE_INPUT_BUFFER_SIZE
+        int "The input buffer size of lwp console device"
+        default 1024
+
+    config LWP_TID_MAX_NR
+        int "The maximum number of lwp thread id"
+        default 64
+
+    config LWP_ENABLE_ASID
+        bool "The switch of ASID feature"
+        depends on ARCH_ARM_CORTEX_A
+        default y
+
+    if ARCH_MM_MMU
+        config RT_LWP_SHM_MAX_NR
+            int "The maximum number of shared memory"
+            default 64
+    endif
+
+    if ARCH_MM_MPU
+        config RT_LWP_MPU_MAX_NR
+            int "The maximum number of mpu region"
+            default 2
+
+        config RT_LWP_USING_SHM
+            bool "Enable shared memory"
+            default y
+    endif
+
+    config LWP_UNIX98_PTY
+        bool "The unix98 PTY support"
+        default n
+
+    if LWP_UNIX98_PTY
+        config LWP_PTY_INPUT_BFSZ
+            int "The unix98 PTY input buffer size"
+            default 1024
+
+        config LWP_PTY_PTS_SIZE
+            int "The unix98 PTY device max num"
+            default 3
+
+        config LWP_PTY_USING_DEBUG
+            bool "The unix98 PTY debug output"
+            default n
+    endif
+endif

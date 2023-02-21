@@ -62,7 +62,7 @@ static rt_err_t _close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_size_t outsz = 0;
     struct rt_vbus_dev *vdev = dev->user_data;
@@ -126,7 +126,7 @@ static rt_size_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t si
     }
 }
 
-static rt_size_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_err_t err;
     struct rt_vbus_dev *vdev = dev->user_data;

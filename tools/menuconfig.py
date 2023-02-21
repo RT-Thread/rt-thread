@@ -249,8 +249,8 @@ def menuconfig(RTT_ROOT):
 
     touch_env()
     env_dir = get_env_dir()
-
-    os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
+    if isinstance(env_dir, str):
+        os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
     fn_old = '.config.old'
@@ -282,8 +282,8 @@ def guiconfig(RTT_ROOT):
         touch_env()
 
     env_dir = get_env_dir()
-
-    os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
+    if isinstance(env_dir, str):
+        os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
     fn_old = '.config.old'
@@ -316,8 +316,8 @@ def guiconfig_silent(RTT_ROOT):
         touch_env()
 
     env_dir = get_env_dir()
-
-    os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
+    if isinstance(env_dir, str):
+        os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
 

@@ -87,7 +87,7 @@
 /** @addtogroup COMP_Private_Functions
  * @{
  */
-#define SetBitMsk(reg, bit, msk) ((reg) = ((reg) & ~(msk) | (bit)))
+#define SetBitMsk(reg, bit, msk) ((reg) = (((reg) & ~(msk)) | (bit)))
 #define ClrBit(reg, bit)         ((reg) &= ~(bit))
 #define SetBit(reg, bit)         ((reg) |= (bit))
 #define GetBit(reg, bit)         ((reg) & (bit))

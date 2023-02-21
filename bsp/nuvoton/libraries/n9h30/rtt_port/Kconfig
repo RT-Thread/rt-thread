@@ -12,6 +12,7 @@ config SOC_SERIES_N9H30
 
     config BSP_USING_MMU
         bool "Enable MMU"
+        select ARCH_ARM_MMU
         default y
 
     config BSP_USING_GPIO

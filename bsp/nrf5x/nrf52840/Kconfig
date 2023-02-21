@@ -14,9 +14,8 @@ config PKGS_DIR
     string
     option env="PKGS_ROOT"
     default "packages"
-    
-source "board/Kconfig"
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-
+source "board/Kconfig"
 

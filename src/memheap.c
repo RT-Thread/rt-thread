@@ -38,7 +38,7 @@
 #define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 #define MEMITEM(ptr)            (struct rt_memheap_item*)((rt_uint8_t*)ptr - RT_MEMHEAP_SIZE)
 
-static void _remove_next_ptr(struct rt_memheap_item *next_ptr)
+static void _remove_next_ptr(volatile struct rt_memheap_item *next_ptr)
 {
     /* Fix the crash problem after opening Oz optimization on ac6  */
     /* Fix IAR compiler warning  */
@@ -392,7 +392,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     if (newsize > oldsize)
     {
         void *new_ptr;
-        struct rt_memheap_item *next_ptr;
+        volatile struct rt_memheap_item *next_ptr;
 
         if (heap->locked == RT_FALSE)
         {
@@ -690,7 +690,7 @@ void rt_memheap_free(void *ptr)
     if (insert_header)
     {
         struct rt_memheap_item *n = heap->free_list->next_free;;
-#if defined(RT_MEMHEAP_BSET_MODE)
+#if defined(RT_MEMHEAP_BEST_MODE)
         rt_size_t blk_size = MEMITEM_SIZE(header_ptr);
         for (;n != heap->free_list; n = n->next_free)
         {
@@ -980,6 +980,8 @@ int memheaptrace(int argc, char *argv[])
                 rt_kprintf("%5d", block_size);
             else if (block_size < 1024 * 1024)
                 rt_kprintf("%4dK", block_size / 1024);
+            else if (block_size < 1024 * 1024 * 100)
+                rt_kprintf("%2d.%dM", block_size / (1024 * 1024),  (block_size % (1024 * 1024) * 10) / (1024 * 1024));
             else
                 rt_kprintf("%4dM", block_size / (1024 * 1024));
             /* dump thread name */

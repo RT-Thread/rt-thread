@@ -638,12 +638,12 @@ __exit:
 }
 INIT_COMPONENT_EXPORT(at_server_init);
 
-RT_WEAK void at_port_reset(void)
+rt_weak void at_port_reset(void)
 {
     LOG_E("The reset for AT server is not implement.");
 }
 
-RT_WEAK void at_port_factory_reset(void)
+rt_weak void at_port_factory_reset(void)
 {
     LOG_E("The factory reset for AT server is not implement.");
 }

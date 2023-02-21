@@ -17,9 +17,9 @@ if GetDepend('BSP_USING_4MFLASH'):
     else:
         LINKFLAGS = ''
 
-    group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS) 
-    Return('group') 
+    group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
+    Return('group')
 
-if GetDepend('BSP_USING_QSPIFLASH'): 
+if GetDepend('BSP_USING_QSPIFLASH'):
     group = []
-    Return('group') 
+    Return('group')

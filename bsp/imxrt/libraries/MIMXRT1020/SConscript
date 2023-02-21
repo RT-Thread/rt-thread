@@ -10,9 +10,9 @@ src = Split('''
             MIMXRT1021/drivers/fsl_cache.c
             ''')
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += ['MIMXRT1021/gcc/startup_MIMXRT1021.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['MIMXRT1021/arm/startup_MIMXRT1021.s']
 elif rtconfig.PLATFORM in ['iccarm']:
     src += ['MIMXRT1021/iar/startup_MIMXRT1021.s']

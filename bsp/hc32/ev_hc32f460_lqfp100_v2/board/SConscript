@@ -18,11 +18,11 @@ path += [cwd + '/config']
 
 startup_path_prefix = SDK_LIB
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix + '/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/GCC/startup_hc32f460.S']
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/ARM/startup_hc32f460.s']
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/startup_hc32f460.s']
 
 CPPDEFINES = ['HC32F460']

@@ -44,10 +44,10 @@ typedef struct ve_iterator ve_iterator_t;
 /* exporter's export command */
 #if defined(__ARMCC_VERSION) || defined(__IAR_SYSTEMS_ICC__)
 #define VAR_EXPORT(module, identi, value)                                       \
-    const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
-    const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
-    RT_USED const struct ve_exporter _vexp_##module##identi                     \
-    RT_SECTION("1."#module".VarExpTab."#identi) =                               \
+    const char _vexp_##identi##_module[] rt_section(".rodata.vexp") = #module;  \
+    const char _vexp_##identi##_identi[] rt_section(".rodata.vexp") = #identi;  \
+    rt_used const struct ve_exporter _vexp_##module##identi                     \
+    rt_section("1."#module".VarExpTab."#identi) =                               \
     {                                                                           \
         _vexp_##identi##_module,                                                \
         _vexp_##identi##_identi,                                                \
@@ -55,10 +55,10 @@ typedef struct ve_iterator ve_iterator_t;
     }
 #elif defined(__GNUC__)
 #define VAR_EXPORT(module, identi, value)                                       \
-    const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
-    const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
-    RT_USED const struct ve_exporter _vexp_##module##identi                     \
-    RT_SECTION(#module".VarExpTab."#identi) =                                   \
+    const char _vexp_##identi##_module[] rt_section(".rodata.vexp") = #module;  \
+    const char _vexp_##identi##_identi[] rt_section(".rodata.vexp") = #identi;  \
+    rt_used const struct ve_exporter _vexp_##module##identi                     \
+    rt_section(#module".VarExpTab."#identi) =                                   \
     {                                                                           \
         _vexp_##identi##_module,                                                \
         _vexp_##identi##_identi,                                                \
@@ -67,10 +67,10 @@ typedef struct ve_iterator ve_iterator_t;
 #elif defined(_MSC_VER)
 #pragma section("VarExpTab$f",read)
 #define VAR_EXPORT(module, identi, value)                                       \
-    const char _vexp_##identi##_module[] RT_SECTION(".rodata.vexp") = #module;  \
-    const char _vexp_##identi##_identi[] RT_SECTION(".rodata.vexp") = #identi;  \
+    const char _vexp_##identi##_module[] rt_section(".rodata.vexp") = #module;  \
+    const char _vexp_##identi##_identi[] rt_section(".rodata.vexp") = #identi;  \
     __declspec(allocate("VarExpTab$f"))                                         \
-    RT_USED const struct ve_exporter _vexp_##module##identi =                   \
+    rt_used const struct ve_exporter _vexp_##module##identi =                   \
     {                                                                           \
         _vexp_##identi##_module,                                                \
         _vexp_##identi##_identi,                                                \

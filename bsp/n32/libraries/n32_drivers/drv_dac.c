@@ -1,50 +1,30 @@
-/*****************************************************************************
- * Copyright (c) 2019, Nations Technologies Inc.
+/*
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
- * All rights reserved.
- * ****************************************************************************
+ * SPDX-License-Identifier: Apache-2.0
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the disclaimer below.
- *
- * Nations' name may not be used to endorse or promote products derived from
- * this software without specific prior written permission.
- *
- * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY NATIONS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
- * DISCLAIMED. IN NO EVENT SHALL NATIONS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
- * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ****************************************************************************/
-
-/**
- * @file drv_dac.c
- * @author Nations
- * @version v1.0.0
- *
- * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
+ * Change Logs:
+ * Date           Author       Notes
+ * 2022-10-19     Nations      first version
  */
 
 #include <rtdbg.h>
 #include "drv_dac.h"
-#include "board.h"
 
 #ifdef RT_USING_DAC
 
-#if defined(BSP_USING_DAC1) || defined(BSP_USING_DAC2)
-    /* this driver can be disabled at menuconfig -> Hardware Drivers Config -> On-chip Peripheral Drivers -> Enable DAC */
-
+#if defined(BSP_USING_DAC) || defined(BSP_USING_DAC1) || defined(BSP_USING_DAC2)
 
 static struct n32_dac_config dac_config[] =
 {
+#if defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+#ifdef BSP_USING_DAC
+    {
+        "dac",
+    },
+#endif
+#endif
+
 #ifdef BSP_USING_DAC1
     {
         "dac1",
@@ -69,19 +49,35 @@ static void n32_dac_init(struct n32_dac_config *config)
 
     /* DAC Periph clock enable */
     RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_DAC, ENABLE);
+
     /* DAC channel Configuration */
     DAC_InitStructure.Trigger          = DAC_TRG_SOFTWARE;
     DAC_InitStructure.WaveGen          = DAC_WAVEGEN_NOISE;
     DAC_InitStructure.LfsrUnMaskTriAmp = DAC_UNMASK_LFSRBIT0;
     DAC_InitStructure.BufferOutput     = DAC_BUFFOUTPUT_ENABLE;
+
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     DAC_Init(config->dac_periph, &DAC_InitStructure);
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+    DAC_Init(&DAC_InitStructure);
+
+    /* Enable DAC */
+    DAC_Enable(ENABLE);
+
+    /* Set DAC Channel DR12CH register */
+    DAC_SetChData(DAC_ALIGN_R_12BIT, 4094);
+#endif
 }
 
 static rt_err_t n32_dac_enabled(struct rt_dac_device *device, rt_uint32_t channel)
 {
     RT_ASSERT(device != RT_NULL);
 
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     DAC_Enable(channel, ENABLE);
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+    DAC_Enable(ENABLE);
+#endif
 
     return RT_EOK;
 }
@@ -90,7 +86,12 @@ static rt_err_t n32_dac_disabled(struct rt_dac_device *device, rt_uint32_t chann
 {
     RT_ASSERT(device != RT_NULL);
 
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     DAC_Enable(channel, DISABLE);
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+    DAC_Enable(DISABLE);
+#endif
+
     return RT_EOK;
 }
 
@@ -101,13 +102,18 @@ static rt_err_t n32_set_dac_value(struct rt_dac_device *device, rt_uint32_t chan
     rt_uint16_t set_value = 0;
     set_value = (rt_uint16_t)*value;
 
-    if(set_value > 4096)
+#if defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+    /* Start DAC Channel conversion by software */
+    DAC_SoftTrgEnable(ENABLE);
+#endif
+    if (set_value > 4096)
     {
         set_value = 4096;
     }
 
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     /* Start DAC Channel conversion by software */
-    if(channel == DAC_CHANNEL_1)
+    if (channel == DAC_CHANNEL_1)
     {
         DAC_SetCh1Data(DAC_ALIGN_R_12BIT, set_value);
         DAC_SoftTrgEnable(DAC_CHANNEL_1, ENABLE);
@@ -117,7 +123,9 @@ static rt_err_t n32_set_dac_value(struct rt_dac_device *device, rt_uint32_t chan
         DAC_SetCh2Data(DAC_ALIGN_R_12BIT, set_value);
         DAC_SoftTrgEnable(DAC_CHANNEL_2, ENABLE);
     }
-
+#elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+    DAC_SetChData(DAC_ALIGN_R_12BIT, set_value);
+#endif
     return RT_EOK;
 }
 
@@ -131,6 +139,8 @@ static const struct rt_dac_ops n32_dac_ops =
 
 int rt_hw_dac_init(void)
 {
+    GPIO_InitType GPIO_InitStructure;
+
     int result = RT_EOK;
     /* save dac name */
     char name_buf[5] = {'d', 'a', 'c', '0', 0};
@@ -139,36 +149,67 @@ int rt_hw_dac_init(void)
     for (i = 0; i < sizeof(dac_config) / sizeof(dac_config[0]); i++)
     {
         /* dac init */
-        name_buf[3] = '0';
         dac_obj[i].config = &dac_config[i];
-#if defined(BSP_USING_DAC1)
+
+#if defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+#if defined(BSP_USING_DAC)
+        name_buf[3] = '\0';
+
+        /* Enable GPIO clock */
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+
+        GPIO_InitStruct(&GPIO_InitStructure);
+
+        /* Config DAC chennel */
+        GPIO_InitStructure.Pin       = GPIO_PIN_4;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Input;
+        GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
+#endif
+#endif
+
+#ifdef BSP_USING_DAC1
         if (dac_obj[i].config->dac_periph == DAC_CHANNEL_1)
         {
             name_buf[3] = '1';
+
+            RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+
+            GPIO_InitStruct(&GPIO_InitStructure);
+            /* Configure PA4 DAC1 */
+            GPIO_InitStructure.Pin        = GPIO_PIN_4;
+            GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AIN;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
         }
-        GPIOInit(GPIOA, GPIO_Mode_AIN, GPIO_Speed_50MHz, GPIO_PIN_4);
+
 #endif
-#if defined(BSP_USING_DAC2)
+
+#ifdef BSP_USING_DAC2
         if (dac_obj[i].config->dac_periph == DAC_CHANNEL_2)
         {
             name_buf[3] = '2';
+
+            RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
+
+            GPIO_InitStruct(&GPIO_InitStructure);
+            /* Configure PA5 DAC1 */
+            GPIO_InitStructure.Pin        = GPIO_PIN_5;
+            GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AIN;
+            GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+            GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
         }
-        GPIOInit(GPIOA, GPIO_Mode_AIN, GPIO_Speed_50MHz, GPIO_PIN_5);
 #endif
 
         /* register dac device */
-        for (i = 0; i < sizeof(dac_obj) / sizeof(dac_obj[0]); i++)
+        n32_dac_init(&dac_config[i]);
+        if (rt_hw_dac_register(&dac_obj[i].dac_device, name_buf, &n32_dac_ops, &dac_obj[i].config->dac_periph) == RT_EOK)
         {
-            n32_dac_init(&dac_config[i]);
-            if (rt_hw_dac_register(&dac_obj[i].dac_device, name_buf, &n32_dac_ops, &dac_obj[i].config->dac_periph) == RT_EOK)
-            {
-                LOG_D("%s init success", name_buf);
-            }
-            else
-            {
-                LOG_E("%s register failed", name_buf);
-                result = -RT_ERROR;
-            }
+            LOG_D("%s init success", name_buf);
+        }
+        else
+        {
+            LOG_E("%s register failed", name_buf);
+            result = -RT_ERROR;
         }
     }
 

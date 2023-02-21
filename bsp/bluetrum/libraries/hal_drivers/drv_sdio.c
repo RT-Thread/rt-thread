@@ -47,7 +47,7 @@ struct rthw_sdio
     struct sdio_pkg *pkg;
 };
 
-ALIGN(SDIO_ALIGN_LEN)
+rt_align(SDIO_ALIGN_LEN)
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 
 static rt_uint8_t sd_baud = 119;
@@ -496,7 +496,7 @@ static rt_int32_t rthw_sd_detect(struct rt_mmcsd_host *host)
   * @param  host  rt_mmcsd_host
   * @retval None
   */
-RT_SECTION(".irq.sdio")
+rt_section(".irq.sdio")
 void rthw_sdio_irq_process(struct rt_mmcsd_host *host)
 {
     int complete = 0;
@@ -617,7 +617,7 @@ static rt_err_t _dma_rxconfig(rt_uint32_t *dst, int Size)
     return RT_EOK;
 }
 
-RT_SECTION(".irq.sdio")
+rt_section(".irq.sdio")
 void sdio_isr(int vector, void *param)
 {
     /* enter interrupt */

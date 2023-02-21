@@ -7,17 +7,17 @@ if GetDepend('BSP_USING_QSPIFLASH'):
     src = Glob('*.c')
     CPPPATH = [cwd]
 
-    if rtconfig.CROSS_TOOL == 'keil':
+    if rtconfig.PLATFORM in ['armcc', 'armclang']:
         LINKFLAGS  = '--keep=*(.boot_hdr.ivt)'
         LINKFLAGS += '--keep=*(.boot_hdr.boot_data)'
         LINKFLAGS += '--keep=*(.boot_hdr.dcd_data)'
         LINKFLAGS += '--keep=*(.boot_hdr.conf)'
     else:
-        LINKFLAGS = '' 
+        LINKFLAGS = ''
 
-    group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS) 
-    Return('group') 
+    group = DefineGroup('xip', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
+    Return('group')
 
-if GetDepend('BSP_USING_HYPERFLASH'): 
+if GetDepend('BSP_USING_HYPERFLASH'):
     group = []
-    Return('group') 
+    Return('group')

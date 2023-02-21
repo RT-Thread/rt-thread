@@ -22,7 +22,7 @@
 
 /*! @name Driver version */
 /*@{*/
-#define FSL_GPT_DRIVER_VERSION (MAKE_VERSION(2, 0, 3))
+#define FSL_GPT_DRIVER_VERSION (MAKE_VERSION(2, 0, 4))
 /*@}*/
 
 /*!

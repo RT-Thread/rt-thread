@@ -134,7 +134,7 @@ rt_err_t ra_can_control(struct rt_can_device *can_dev, int cmd, void *arg)
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISEN &&
+                argval != RT_CAN_MODE_LISTEN &&
                 argval != RT_CAN_MODE_LOOPBACK)
         {
             return -RT_ERROR;
@@ -147,7 +147,7 @@ rt_err_t ra_can_control(struct rt_can_device *can_dev, int cmd, void *arg)
             {
             case RT_CAN_MODE_NORMAL:
                 mode_to_set = CAN_TEST_MODE_DISABLED;
-            case RT_CAN_MODE_LISEN:
+            case RT_CAN_MODE_LISTEN:
                 mode_to_set = CAN_TEST_MODE_LISTEN;
             case RT_CAN_MODE_LOOPBACK:
                 mode_to_set = CAN_TEST_MODE_LOOPBACK_INTERNAL;
@@ -212,7 +212,7 @@ int ra_can_recvmsg(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
     msg_rt->rsv = RT_NULL;
     msg_rt->len = msg_ra->data_length_code;
     msg_rt->priv = boxno;
-    msg_rt->hdr = RT_NULL;
+    msg_rt->hdr_index = RT_NULL;
     memcpy(msg_rt->data, msg_ra->data, msg_ra->data_length_code);
     return sizeof(struct rt_can_msg);
 }

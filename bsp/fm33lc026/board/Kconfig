@@ -34,11 +34,11 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default y
-            
+
         endif
         endmenu
 endmenu
 
-   
+
 
 

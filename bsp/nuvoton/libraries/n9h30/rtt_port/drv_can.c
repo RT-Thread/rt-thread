@@ -256,13 +256,13 @@ static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure
         CAN_EnterTestMode(base, CAN_TEST_BASIC_Msk);
 #endif
         break;
-    case RT_CAN_MODE_LISEN:
+    case RT_CAN_MODE_LISTEN:
         CAN_EnterTestMode(base, CAN_TEST_BASIC_Msk | CAN_TEST_SILENT_Msk);
         break;
     case RT_CAN_MODE_LOOPBACK:
         CAN_EnterTestMode(base, CAN_TEST_BASIC_Msk | CAN_TEST_LBACK_Msk);
         break;
-    case RT_CAN_MODE_LOOPBACKANLISEN:
+    case RT_CAN_MODE_LOOPBACKANLISTEN:
         CAN_EnterTestMode(base, CAN_TEST_BASIC_Msk | CAN_TEST_SILENT_Msk | CAN_TEST_LBACK_Msk);
         break;
     default:
@@ -309,7 +309,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
             /*set the filter message object*/
             if (filter_cfg->items[i].mode == 1)
             {
-                if (CAN_SetRxMsgObjAndMsk(psNuCAN->base, MSG(filter_cfg->items[i].hdr + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask, FALSE) == FALSE)
+                if (CAN_SetRxMsgObjAndMsk(psNuCAN->base, MSG(filter_cfg->items[i].hdr_bank + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask, FALSE) == FALSE)
                 {
                     return -(RT_ERROR);
                 }
@@ -317,7 +317,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
             else
             {
                 /*set the filter message object*/
-                if (CAN_SetRxMsgAndMsk(psNuCAN->base, MSG(filter_cfg->items[i].hdr + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask) == FALSE)
+                if (CAN_SetRxMsgAndMsk(psNuCAN->base, MSG(filter_cfg->items[i].hdr_bank + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask) == FALSE)
                 {
                     return -(RT_ERROR);
                 }
@@ -328,9 +328,9 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 
     case RT_CAN_CMD_SET_MODE:
         if ((argval == RT_CAN_MODE_NORMAL) ||
-                (argval == RT_CAN_MODE_LISEN) ||
+                (argval == RT_CAN_MODE_LISTEN) ||
                 (argval == RT_CAN_MODE_LOOPBACK) ||
-                (argval == RT_CAN_MODE_LOOPBACKANLISEN))
+                (argval == RT_CAN_MODE_LOOPBACKANLISTEN))
         {
             if (argval != can->config.mode)
             {
@@ -507,8 +507,8 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
 
 #ifdef RT_CAN_USING_HDR
     /* Hardware filter messages are valid */
-    pmsg->hdr = boxno - RX_MSG_ID_INDEX;
-    can->hdr[pmsg->hdr].connected = 1;
+    pmsg->hdr_index = boxno - RX_MSG_ID_INDEX;
+    can->hdr[pmsg->hdr_index].connected = 1;
 #endif
 
     pmsg->ide = (tMsg.IdType == CAN_STD_ID) ? RT_CAN_STDID : RT_CAN_EXTID;

@@ -98,7 +98,7 @@ void GetUCID(uint8_t *UCIDbuf)
     uint8_t num = 0;
     uint32_t* ucid_addr = (uint32_t*)0;
     uint32_t temp = 0;
-    
+
     if (0xFFFFFFFF == *(uint32_t*)(0x1FFFF260))
     {
         ucid_addr = (uint32_t*)UCID_BASE;
@@ -107,10 +107,10 @@ void GetUCID(uint8_t *UCIDbuf)
     {
         ucid_addr = (uint32_t*)(0x1FFFF260);
     }
-    
+
     for (num = 0; num < UCID_LENGTH;)
     {
-        temp = *(__IO uint32_t*)(ucid_addr++); 
+        temp = *(__IO uint32_t*)(ucid_addr++);
         UCIDbuf[num++] = (temp & 0xFF);
         UCIDbuf[num++] = (temp & 0xFF00) >> 8;
         UCIDbuf[num++] = (temp & 0xFF0000) >> 16;
@@ -128,7 +128,7 @@ void GetUID(uint8_t *UIDbuf)
     uint8_t num = 0;
     uint32_t* uid_addr = (uint32_t*)0;
     uint32_t temp = 0;
-    
+
     if (0xFFFFFFFF == *(uint32_t*)(0x1FFFF270))
     {
         uid_addr = (uint32_t*)UID_BASE;
@@ -137,7 +137,7 @@ void GetUID(uint8_t *UIDbuf)
     {
         uid_addr = (uint32_t*)(0x1FFFF270);
     }
-        
+
     for (num = 0; num < UID_LENGTH;)
     {
         temp = *(__IO uint32_t*)(uid_addr++);
@@ -158,11 +158,11 @@ void GetDBGMCU_ID(uint8_t *DBGMCU_IDbuf)
     uint8_t num = 0;
     uint32_t* dbgid_addr = (uint32_t*)0;
     uint32_t temp = 0;
-    
+
     dbgid_addr = (uint32_t*)DBGMCU_ID_BASE;
     for (num = 0; num < DBGMCU_ID_LENGTH;)
     {
-        temp = *(__IO uint32_t*)(dbgid_addr++); 
+        temp = *(__IO uint32_t*)(dbgid_addr++);
         DBGMCU_IDbuf[num++] = (temp & 0xFF);
         DBGMCU_IDbuf[num++] = (temp & 0xFF00) >> 8;
         DBGMCU_IDbuf[num++] = (temp & 0xFF0000) >> 16;

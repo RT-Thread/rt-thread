@@ -20,13 +20,18 @@ void __rt_libc_exit(int status)
 
     if (self != RT_NULL)
     {
+        LOG_W("thread:%s exit:%d!", self->name, status);
 #ifdef RT_USING_PTHREADS
-        extern void pthread_exit(void *value);
-        pthread_exit((void *)status);
-#else
-        LOG_E("thread:%s exit:%d!", self->name, status);
-        rt_thread_control(self, RT_THREAD_CTRL_CLOSE, RT_NULL);
+        if(self->pthread_data != RT_NULL)
+        {
+            extern void pthread_exit(void *value);
+            pthread_exit((void *)status);
+        }
+        else
 #endif
+        {
+            rt_thread_control(self, RT_THREAD_CTRL_CLOSE, RT_NULL);
+        }
     }
 }
 
@@ -79,9 +84,9 @@ char *ltoa(long value, char *string, int radix)
         i = v % radix;
         v = v / radix;
         if (i < 10)
-            *tp++ = i+'0';
+            *tp++ = (char)(i+'0');
         else
-            *tp++ = i + 'a' - 10;
+            *tp++ = (char)(i + 'a' - 10);
     }
 
     sp = string;
@@ -124,9 +129,9 @@ char *ultoa(unsigned long value, char *string, int radix)
         i = v % radix;
         v = v / radix;
         if (i < 10)
-            *tp++ = i+'0';
+            *tp++ = (char)(i+'0');
         else
-            *tp++ = i + 'a' - 10;
+            *tp++ = (char)(i + 'a' - 10);
     }
 
     sp = string;

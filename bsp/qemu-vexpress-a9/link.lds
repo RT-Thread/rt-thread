@@ -47,9 +47,12 @@ SECTIONS
     } =0
     __text_end = .;
 
-    __exidx_start = .;
-    .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
-    __exidx_end = .;
+    .ARM.exidx   :
+    {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
+    }
 
     __rodata_start = .;
     .rodata   : { *(.rodata) *(.rodata.*) }
@@ -68,8 +71,8 @@ SECTIONS
     .dtors :
     {
         PROVIDE(__dtors_start__ = .);
-        KEEP(*(SORT(.dtors.*)))
-        KEEP(*(.dtors))
+        KEEP(*(SORT(.fini_array.*)))
+        KEEP(*(.fini_array))
         PROVIDE(__dtors_end__ = .);
     }
 
@@ -82,7 +85,7 @@ SECTIONS
     }
     __data_end = .;
 
-    . = ALIGN(8);
+    . = ALIGN(4);
     __bss_start = .;
     .bss       :
     {

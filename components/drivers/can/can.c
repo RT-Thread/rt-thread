@@ -65,7 +65,7 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
         /* disable interrupt */
         level = rt_hw_interrupt_disable();
 #ifdef RT_CAN_USING_HDR
-        hdr = data->hdr;
+        hdr = data->hdr_index;
 
         if (hdr >= 0 && can->hdr && hdr < can->config.maxhdr && !rt_list_isempty(&can->hdr[hdr].list))
         {
@@ -158,10 +158,10 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         {
             /* send failed. */
             level = rt_hw_interrupt_disable();
-            rt_list_insert_after(&tx_fifo->freelist, &tx_tosnd->list);
+            rt_list_insert_before(&tx_fifo->freelist, &tx_tosnd->list);
             rt_hw_interrupt_enable(level);
             rt_sem_release(&(tx_fifo->sem));
-            continue;
+            goto err_ret;
         }
 
         can->status.sndchange = 1;
@@ -189,6 +189,7 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         }
         else
         {
+err_ret:
             level = rt_hw_interrupt_disable();
             can->status.dropedsndpkg++;
             rt_hw_interrupt_enable(level);
@@ -437,7 +438,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_can_read(struct rt_device *dev,
+static rt_ssize_t rt_can_read(struct rt_device *dev,
                              rt_off_t          pos,
                              void             *buffer,
                              rt_size_t         size)
@@ -457,7 +458,7 @@ static rt_size_t rt_can_read(struct rt_device *dev,
     return 0;
 }
 
-static rt_size_t rt_can_write(struct rt_device *dev,
+static rt_ssize_t rt_can_write(struct rt_device *dev,
                               rt_off_t          pos,
                               const void       *buffer,
                               rt_size_t         size)
@@ -580,7 +581,7 @@ static rt_err_t rt_can_control(struct rt_device *dev,
         {
             while (count)
             {
-                if (pitem->hdr >= can->config.maxhdr || pitem->hdr < 0)
+                if (pitem->hdr_bank >= can->config.maxhdr || pitem->hdr_bank < 0)
                 {
                     count--;
                     pitem++;
@@ -588,15 +589,15 @@ static rt_err_t rt_can_control(struct rt_device *dev,
                 }
 
                 level = rt_hw_interrupt_disable();
-                if (!can->hdr[pitem->hdr].connected)
+                if (!can->hdr[pitem->hdr_bank].connected)
                 {
                     rt_hw_interrupt_enable(level);
-                    rt_memcpy(&can->hdr[pitem->hdr].filter, pitem,
+                    rt_memcpy(&can->hdr[pitem->hdr_bank].filter, pitem,
                               sizeof(struct rt_can_filter_item));
                     level = rt_hw_interrupt_disable();
-                    can->hdr[pitem->hdr].connected = 1;
-                    can->hdr[pitem->hdr].msgs = 0;
-                    rt_list_init(&can->hdr[pitem->hdr].list);
+                    can->hdr[pitem->hdr_bank].connected = 1;
+                    can->hdr[pitem->hdr_bank].msgs = 0;
+                    rt_list_init(&can->hdr[pitem->hdr_bank].list);
                 }
                 rt_hw_interrupt_enable(level);
 
@@ -608,7 +609,7 @@ static rt_err_t rt_can_control(struct rt_device *dev,
         {
             while (count)
             {
-                if (pitem->hdr >= can->config.maxhdr || pitem->hdr < 0)
+                if (pitem->hdr_bank >= can->config.maxhdr || pitem->hdr_bank < 0)
                 {
                     count--;
                     pitem++;
@@ -616,16 +617,16 @@ static rt_err_t rt_can_control(struct rt_device *dev,
                 }
                 level = rt_hw_interrupt_disable();
 
-                if (can->hdr[pitem->hdr].connected)
+                if (can->hdr[pitem->hdr_bank].connected)
                 {
-                    can->hdr[pitem->hdr].connected = 0;
-                    can->hdr[pitem->hdr].msgs = 0;
-                    if (!rt_list_isempty(&can->hdr[pitem->hdr].list))
+                    can->hdr[pitem->hdr_bank].connected = 0;
+                    can->hdr[pitem->hdr_bank].msgs = 0;
+                    if (!rt_list_isempty(&can->hdr[pitem->hdr_bank].list))
                     {
-                        rt_list_remove(can->hdr[pitem->hdr].list.next);
+                        rt_list_remove(can->hdr[pitem->hdr_bank].list.next);
                     }
                     rt_hw_interrupt_enable(level);
-                    rt_memset(&can->hdr[pitem->hdr].filter, 0,
+                    rt_memset(&can->hdr[pitem->hdr_bank].filter, 0,
                               sizeof(struct rt_can_filter_item));
                 }
                 else
@@ -828,7 +829,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
             level = rt_hw_interrupt_disable();
             rt_list_insert_before(&rx_fifo->uselist, &listmsg->list);
 #ifdef RT_CAN_USING_HDR
-            hdr = tmpmsg.hdr;
+            hdr = tmpmsg.hdr_index;
             if (can->hdr != RT_NULL)
             {
                 RT_ASSERT(hdr < can->config.maxhdr && hdr >= 0);
@@ -924,7 +925,7 @@ int cmd_canstat(int argc, void **argv)
             rt_kprintf(" Can't find can device %s\n", argv[1]);
             return -1;
         }
-        rt_kprintf(" Finded can device: %s...", argv[1]);
+        rt_kprintf(" Found can device: %s...", argv[1]);
 
         rt_device_control(candev, RT_CAN_CMD_GET_STATUS, &status);
         rt_kprintf("\n Receive...error..count: %010ld. Send.....error....count: %010ld.",
@@ -954,9 +955,9 @@ int cmd_canstat(int argc, void **argv)
             rt_kprintf("%s.", ErrCode[3]);
             break;
         }
-        rt_kprintf("\n Total.receive.packages: %010ld. Droped.receive.packages: %010ld.",
+        rt_kprintf("\n Total.receive.packages: %010ld. Dropped.receive.packages: %010ld.",
                    status.rcvpkg, status.dropedrcvpkg);
-        rt_kprintf("\n Total..send...packages: %010ld. Droped...send..packages: %010ld.\n",
+        rt_kprintf("\n Total..send...packages: %010ld. Dropped...send..packages: %010ld.\n",
                    status.sndpkg + status.dropedsndpkg, status.dropedsndpkg);
     }
     else

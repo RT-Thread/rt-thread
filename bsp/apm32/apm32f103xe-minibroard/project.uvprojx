@@ -10,13 +10,13 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>APM32F103ZE</Device>
           <Vendor>Geehy</Vendor>
-          <PackID>Geehy.APM32F1xx_DFP.1.0.7</PackID>
+          <PackID>Geehy.APM32F1xx_DFP.1.0.9</PackID>
           <PackURL>https://www.geehy.com/uploads/tool/</PackURL>
           <Cpu>IRAM(0x20000000,0x00020000) IROM(0x08000000,0x00080000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -52,9 +52,9 @@
           <OutputName>rtthread</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>0</BrowseInformation>
+          <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\build\keil\List\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -185,6 +185,7 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>0</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -336,9 +337,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>__STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC, APM32F10X_HD</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, APM32F10X_HD</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\Drivers;..\libraries\Drivers\config;..\..\..\components\dfs\include;..\..\..\components\finsh;.;..\..\..\include;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;..\libraries\APM32F10x_Library\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;..\libraries\APM32F10x_Library\CMSIS\Include;..\libraries\Drivers;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\stdio;applications;..\..\..\components\dfs\include;..\libraries\Drivers\config;..\..\..\components\drivers\include;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -351,7 +352,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -437,11 +438,6 @@
         <Group>
           <GroupName>CPU</GroupName>
           <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>

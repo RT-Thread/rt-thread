@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -101,12 +101,15 @@ void sys_slp_clk_off0(uint8_t bits, int off)
     uint8_t u8v;
 
     u8v = sys->SLP_CLK_OFF0.reg;
-    u8v = off ? (u8v | bits) : (u8v & ~bits);
-    level = rt_hw_interrupt_disable();
-    sys_safe_access_enter(sys);
-    sys->SLP_CLK_OFF0.reg = u8v;
-    sys_safe_access_leave(sys);
-    rt_hw_interrupt_enable(level);
+    if ((u8v & bits) != (off ? bits : 0))
+    {
+        u8v = off ? (u8v | bits) : (u8v & ~bits);
+        level = rt_hw_interrupt_disable();
+        sys_safe_access_enter(sys);
+        sys->SLP_CLK_OFF0.reg = u8v;
+        sys_safe_access_leave(sys);
+        rt_hw_interrupt_enable(level);
+    }
 }
 
 /**
@@ -123,12 +126,15 @@ void sys_slp_clk_off1(uint8_t bits, int off)
     uint8_t u8v;
 
     u8v = sys->SLP_CLK_OFF1.reg;
-    u8v = off ? (u8v | bits) : (u8v & ~bits);
-    level = rt_hw_interrupt_disable();
-    sys_safe_access_enter(sys);
-    sys->SLP_CLK_OFF1.reg = u8v;
-    sys_safe_access_leave(sys);
-    rt_hw_interrupt_enable(level);
+    if ((u8v & bits) != (off ? bits : 0))
+    {
+        u8v = off ? (u8v | bits) : (u8v & ~bits);
+        level = rt_hw_interrupt_disable();
+        sys_safe_access_enter(sys);
+        sys->SLP_CLK_OFF1.reg = u8v;
+        sys_safe_access_leave(sys);
+        rt_hw_interrupt_enable(level);
+    }
 }
 
 /**
@@ -171,12 +177,15 @@ int sys_clk_off_by_irqn(uint8_t irqn, int off)
             volatile uint8_t *cxreg = (void *)sys;
             rt_base_t level;
             u8v = cxreg[offset];
-            u8v = off ? (u8v | bitpos) : (u8v & ~bitpos);
-            level = rt_hw_interrupt_disable();
-            sys_safe_access_enter(sys);
-            cxreg[offset] = u8v;
-            sys_safe_access_leave(sys);
-            rt_hw_interrupt_enable(level);
+            if ((u8v & bitpos) != (off ? bitpos : 0))
+            {
+                u8v = off ? (u8v | bitpos) : (u8v & ~bitpos);
+                level = rt_hw_interrupt_disable();
+                sys_safe_access_enter(sys);
+                cxreg[offset] = u8v;
+                sys_safe_access_leave(sys);
+                rt_hw_interrupt_enable(level);
+            }
         }
     }
 

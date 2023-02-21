@@ -20,7 +20,7 @@
 #define EMAC_PHY_100MBIT    2
 
 #define MAX_ADDR_LEN 6
-static rt_uint32_t ETH_RAM_BASE[4 * 1024] RT_SECTION("ETH_RAM");
+static rt_uint32_t ETH_RAM_BASE[4 * 1024] rt_section("ETH_RAM");
 
 /* EMAC variables located in 16K Ethernet SRAM */
 #define RX_DESC_BASE         (uint32_t)&ETH_RAM_BASE[0]
@@ -355,13 +355,13 @@ static rt_err_t lpc_emac_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t lpc_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t lpc_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t lpc_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t lpc_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;

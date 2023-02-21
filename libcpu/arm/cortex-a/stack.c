@@ -9,11 +9,11 @@
  * 2011-10-05     Bernard      add thumb mode
  */
 #include <rtthread.h>
+#include <cpuport.h>
 #include <board.h>
-#include <armv7.h>
 
 /**
- * @addtogroup AM33xx
+ * @addtogroup ARM Cortex-A
  */
 /*@{*/
 
@@ -56,7 +56,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     else
         *(--stk) = SVCMODE;                 /* arm mode   */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     *(--stk) = 0;       /* user lr */
     *(--stk) = 0;       /* user sp*/
 #endif

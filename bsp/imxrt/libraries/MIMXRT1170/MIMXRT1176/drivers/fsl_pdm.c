@@ -138,7 +138,7 @@ static status_t PDM_ValidateSrcClockRate(uint32_t channelMask,
                                          uint8_t osr,
                                          uint32_t regDiv)
 {
-    uint32_t enabledChannel = 0U, i = 0U, factor = 0U;
+    uint32_t enabledChannel = 0U, i = 0U, factor = 0U, k = 0U;
 
     for (i = 0U; i < (uint32_t)FSL_FEATURE_PDM_CHANNEL_NUM; i++)
     {
@@ -148,16 +148,45 @@ static status_t PDM_ValidateSrcClockRate(uint32_t channelMask,
         }
     }
 
-    if (qualityMode <= kPDM_QualityModeLow)
+    switch (qualityMode)
     {
-        factor = 125U;
-    }
-    else
-    {
-        factor = 19U;
+        case kPDM_QualityModeMedium:
+            factor = FSL_FEATURE_PDM_HIGH_QUALITY_CLKDIV_FACTOR;
+            k      = 2U;
+            break;
+
+        case kPDM_QualityModeHigh:
+            factor = FSL_FEATURE_PDM_HIGH_QUALITY_CLKDIV_FACTOR;
+            k      = 1U;
+            break;
+
+        case kPDM_QualityModeLow:
+            factor = FSL_FEATURE_PDM_HIGH_QUALITY_CLKDIV_FACTOR;
+            k      = 4U;
+            break;
+
+        case kPDM_QualityModeVeryLow0:
+            factor = FSL_FEATURE_PDM_VERY_LOW_QUALITY_CLKDIV_FACTOR;
+            k      = 2U;
+            break;
+
+        case kPDM_QualityModeVeryLow1:
+            factor = FSL_FEATURE_PDM_VERY_LOW_QUALITY_CLKDIV_FACTOR;
+            k      = 4U;
+            break;
+
+        case kPDM_QualityModeVeryLow2:
+            factor = FSL_FEATURE_PDM_VERY_LOW_QUALITY_CLKDIV_FACTOR;
+            k      = 8U;
+            break;
+
+        default:
+            assert(false);
+            break;
     }
 
-    if (regDiv < ((10U + factor * enabledChannel) / (8U * osr)))
+    /* validate the minimum clock divider */
+    if (((regDiv * k) / 2U) < (((10U + factor * enabledChannel) / (8U * osr)) * k / 2U))
     {
         return kStatus_Fail;
     }
@@ -187,43 +216,10 @@ status_t PDM_SetSampleRateConfig(PDM_Type *base, uint32_t sourceClock_HZ, uint32
     uint32_t pdmClockRate       = 0U;
     uint32_t enabledChannelMask = base->CTRL_1 & (uint32_t)kPDM_EnableChannelAll, regDiv = 0U;
 
-    switch (qualityMode)
-    {
-        case kPDM_QualityModeHigh:
-            osr          = 16U - osr;
-            pdmClockRate = sampleRate_HZ * osr * 8U;
-            break;
-
-        case kPDM_QualityModeMedium:
-            osr          = 16U - osr;
-            pdmClockRate = sampleRate_HZ * osr * 4U;
-            break;
-
-        case kPDM_QualityModeLow:
-            osr          = 16U - osr;
-            pdmClockRate = sampleRate_HZ * osr * 2U;
-            break;
-
-        case kPDM_QualityModeVeryLow0:
-            osr          = 16U - osr;
-            pdmClockRate = sampleRate_HZ * osr * 4U;
-            break;
-
-        case kPDM_QualityModeVeryLow1:
-            osr          = 16U - osr;
-            pdmClockRate = sampleRate_HZ * osr * 2U;
-            break;
-        case kPDM_QualityModeVeryLow2:
-            osr          = 16U - osr;
-            pdmClockRate = sampleRate_HZ * osr;
-            break;
-        default:
-            assert(false);
-            break;
-    }
-
     /* get divider */
-    regDiv = sourceClock_HZ / pdmClockRate;
+    osr          = 16U - osr;
+    pdmClockRate = sampleRate_HZ * osr * 8U;
+    regDiv       = sourceClock_HZ / pdmClockRate;
 
     if (regDiv > PDM_CTRL_2_CLKDIV_MASK)
     {
@@ -390,12 +386,6 @@ void PDM_SetChannelConfig(PDM_Type *base, uint32_t channel, const pdm_channel_co
 
     uint32_t dcCtrl = 0U;
 
-#if defined(FSL_FEATURE_PDM_HAS_RANGE_CTRL) && FSL_FEATURE_PDM_HAS_RANGE_CTRL
-    uint32_t outCtrl = base->RANGE_CTRL;
-#else
-    uint32_t outCtrl = base->OUT_CTRL;
-#endif
-
 #if (defined(FSL_FEATURE_PDM_HAS_DC_OUT_CTRL) && (FSL_FEATURE_PDM_HAS_DC_OUT_CTRL))
     dcCtrl = base->DC_OUT_CTRL;
     /* configure gain and cut off freq */
@@ -412,21 +402,43 @@ void PDM_SetChannelConfig(PDM_Type *base, uint32_t channel, const pdm_channel_co
     base->DC_CTRL = dcCtrl;
 #endif
 
+    PDM_SetChannelGain(base, channel, config->gain);
+
+    /* enable channel */
+    base->CTRL_1 |= 1UL << channel;
+}
+
+/*!
+ * brief Set the PDM channel gain.
+ *
+ * Please note for different quality mode, the valid gain value is different, reference RM for detail.
+ * param base PDM base pointer.
+ * param channel PDM channel index.
+ * param gain channel gain, the register gain value range is 0 - 15.
+ */
+void PDM_SetChannelGain(PDM_Type *base, uint32_t channel, pdm_df_output_gain_t gain)
+{
+    assert(channel <= (uint32_t)FSL_FEATURE_PDM_CHANNEL_NUM);
+
+#if defined(FSL_FEATURE_PDM_HAS_RANGE_CTRL) && FSL_FEATURE_PDM_HAS_RANGE_CTRL
+    uint32_t outCtrl = base->RANGE_CTRL;
+#else
+    uint32_t outCtrl = base->OUT_CTRL;
+#endif
+
 #if defined(FSL_FEATURE_PDM_HAS_RANGE_CTRL) && FSL_FEATURE_PDM_HAS_RANGE_CTRL
     outCtrl &= ~((uint32_t)PDM_RANGE_CTRL_RANGEADJ0_MASK << (channel << 2U));
 #else
     outCtrl &= ~((uint32_t)PDM_OUT_CTRL_OUTGAIN0_MASK << (channel << 2U));
 #endif
 
-    outCtrl |= (uint32_t)config->gain << (channel << 2U);
+    outCtrl |= (uint32_t)gain << (channel << 2U);
 
 #if defined(FSL_FEATURE_PDM_HAS_RANGE_CTRL) && FSL_FEATURE_PDM_HAS_RANGE_CTRL
     base->RANGE_CTRL = outCtrl;
 #else
     base->OUT_CTRL = outCtrl;
 #endif
-    /* enable channel */
-    base->CTRL_1 |= 1UL << channel;
 }
 
 /*!
@@ -858,7 +870,7 @@ void PDM_EnableHwvadInterruptCallback(PDM_Type *base, pdm_hwvad_callback_t vadCa
 
     if (enable)
     {
-        PDM_EnableHwvadInterrupts(base, kPDM_HwvadErrorInterruptEnable | kPDM_HwvadInterruptEnable);
+        PDM_EnableHwvadInterrupts(base, (uint32_t)kPDM_HwvadErrorInterruptEnable | (uint32_t)kPDM_HwvadInterruptEnable);
         NVIC_ClearPendingIRQ(PDM_HWVAD_EVENT_IRQn);
         (void)EnableIRQ(PDM_HWVAD_EVENT_IRQn);
 #if !(defined FSL_FEATURE_PDM_HAS_NO_INDEPENDENT_ERROR_IRQ && FSL_FEATURE_PDM_HAS_NO_INDEPENDENT_ERROR_IRQ)
@@ -870,7 +882,8 @@ void PDM_EnableHwvadInterruptCallback(PDM_Type *base, pdm_hwvad_callback_t vadCa
     }
     else
     {
-        PDM_DisableHwvadInterrupts(base, kPDM_HwvadErrorInterruptEnable | kPDM_HwvadInterruptEnable);
+        PDM_DisableHwvadInterrupts(base,
+                                   (uint32_t)kPDM_HwvadErrorInterruptEnable | (uint32_t)kPDM_HwvadInterruptEnable);
         (void)DisableIRQ(PDM_HWVAD_EVENT_IRQn);
 #if !(defined FSL_FEATURE_PDM_HAS_NO_INDEPENDENT_ERROR_IRQ && FSL_FEATURE_PDM_HAS_NO_INDEPENDENT_ERROR_IRQ)
         (void)DisableIRQ(PDM_HWVAD_ERROR_IRQn);
@@ -893,11 +906,12 @@ void PDM_EVENT_DriverIRQHandler(void)
 #endif
 
 #if (defined PDM)
+void PDM_HWVAD_EVENT_DriverIRQHandler(void);
 void PDM_HWVAD_EVENT_DriverIRQHandler(void)
 {
-    if (PDM_GetHwvadInterruptStatusFlags(PDM) & kPDM_HwvadStatusVoiceDetectFlag)
+    if ((PDM_GetHwvadInterruptStatusFlags(PDM) & (uint32_t)kPDM_HwvadStatusVoiceDetectFlag) != 0U)
     {
-        PDM_ClearHwvadInterruptStatusFlags(PDM, kPDM_HwvadStatusVoiceDetectFlag);
+        PDM_ClearHwvadInterruptStatusFlags(PDM, (uint32_t)kPDM_HwvadStatusVoiceDetectFlag);
         if (s_pdm_hwvad_notification[0].callback != NULL)
         {
             s_pdm_hwvad_notification[0].callback(kStatus_PDM_HWVAD_VoiceDetected, s_pdm_hwvad_notification[0].userData);
@@ -906,7 +920,7 @@ void PDM_HWVAD_EVENT_DriverIRQHandler(void)
 #if (defined FSL_FEATURE_PDM_HAS_NO_INDEPENDENT_ERROR_IRQ && FSL_FEATURE_PDM_HAS_NO_INDEPENDENT_ERROR_IRQ)
     else
     {
-        PDM_ClearHwvadInterruptStatusFlags(PDM, kPDM_HwvadStatusInputSaturation);
+        PDM_ClearHwvadInterruptStatusFlags(PDM, (uint32_t)kPDM_HwvadStatusInputSaturation);
         if (s_pdm_hwvad_notification[0].callback != NULL)
         {
             s_pdm_hwvad_notification[0].callback(kStatus_PDM_HWVAD_Error, s_pdm_hwvad_notification[0].userData);
@@ -917,9 +931,10 @@ void PDM_HWVAD_EVENT_DriverIRQHandler(void)
 }
 
 #if !(defined FSL_FEATURE_PDM_HAS_NO_INDEPENDENT_ERROR_IRQ && FSL_FEATURE_PDM_HAS_NO_INDEPENDENT_ERROR_IRQ)
+void PDM_HWVAD_ERROR_DriverIRQHandler(void);
 void PDM_HWVAD_ERROR_DriverIRQHandler(void)
 {
-    PDM_ClearHwvadInterruptStatusFlags(PDM, kPDM_HwvadStatusInputSaturation);
+    PDM_ClearHwvadInterruptStatusFlags(PDM, (uint32_t)kPDM_HwvadStatusInputSaturation);
     if (s_pdm_hwvad_notification[0].callback != NULL)
     {
         s_pdm_hwvad_notification[0].callback(kStatus_PDM_HWVAD_Error, s_pdm_hwvad_notification[0].userData);

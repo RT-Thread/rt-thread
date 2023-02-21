@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "stpmic.h"
 #include "rtconfig.h"
+#include <drv_common.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

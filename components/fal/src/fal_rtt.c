@@ -15,6 +15,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <string.h>
+#include <stdlib.h>
 
 /* ========================== block device ======================== */
 struct fal_blk_device
@@ -74,7 +75,7 @@ static rt_err_t blk_dev_control(rt_device_t dev, rt_uint8_t cmd, void *args)
     return RT_EOK;
 }
 
-static rt_size_t blk_dev_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t blk_dev_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     int ret = 0;
     struct fal_blk_device *part = (struct fal_blk_device*) dev;
@@ -95,7 +96,7 @@ static rt_size_t blk_dev_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
     return ret;
 }
 
-static rt_size_t blk_dev_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t blk_dev_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     int ret = 0;
     struct fal_blk_device *part;
@@ -211,7 +212,7 @@ struct fal_mtd_nor_device
     const struct fal_partition     *fal_part;
 };
 
-static rt_size_t mtd_nor_dev_read(struct rt_mtd_nor_device* device, rt_off_t offset, rt_uint8_t* data, rt_uint32_t length)
+static rt_ssize_t mtd_nor_dev_read(struct rt_mtd_nor_device* device, rt_off_t offset, rt_uint8_t* data, rt_uint32_t length)
 {
     int ret = 0;
     struct fal_mtd_nor_device *part = (struct fal_mtd_nor_device*) device;
@@ -232,7 +233,7 @@ static rt_size_t mtd_nor_dev_read(struct rt_mtd_nor_device* device, rt_off_t off
     return ret;
 }
 
-static rt_size_t mtd_nor_dev_write(struct rt_mtd_nor_device* device, rt_off_t offset, const rt_uint8_t* data, rt_uint32_t length)
+static rt_ssize_t mtd_nor_dev_write(struct rt_mtd_nor_device* device, rt_off_t offset, const rt_uint8_t* data, rt_uint32_t length)
 {
     int ret = 0;
     struct fal_mtd_nor_device *part;
@@ -342,7 +343,7 @@ struct fal_char_device
 };
 
 /* RT-Thread device interface */
-static rt_size_t char_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t char_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     int ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) dev;
@@ -360,7 +361,7 @@ static rt_size_t char_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_s
     return ret;
 }
 
-static rt_size_t char_dev_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t char_dev_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     int ret = 0;
     struct fal_char_device *part;
@@ -397,13 +398,17 @@ const static struct rt_device_ops char_dev_ops =
 };
 #endif
 
-#ifdef RT_USING_POSIX
-#include <dfs_posix.h>
+#ifdef RT_USING_POSIX_DEVIO
+#include <dfs_file.h>
+#include <unistd.h>
+#include <stdio.h> /* rename() */
+#include <sys/stat.h>
+#include <sys/statfs.h> /* statfs() */
 
 /* RT-Thread device filesystem interface */
 static int char_dev_fopen(struct dfs_fd *fd)
 {
-    struct fal_char_device *part = (struct fal_char_device *) fd->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 
@@ -427,7 +432,7 @@ static int char_dev_fopen(struct dfs_fd *fd)
 static int char_dev_fread(struct dfs_fd *fd, void *buf, size_t count)
 {
     int ret = 0;
-    struct fal_char_device *part = (struct fal_char_device *) fd->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 
@@ -447,7 +452,7 @@ static int char_dev_fread(struct dfs_fd *fd, void *buf, size_t count)
 static int char_dev_fwrite(struct dfs_fd *fd, const void *buf, size_t count)
 {
     int ret = 0;
-    struct fal_char_device *part = (struct fal_char_device *) fd->data;
+    struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
     assert(part != RT_NULL);
 
@@ -476,7 +481,7 @@ static const struct dfs_file_ops char_dev_fops =
     RT_NULL, /* getdents */
     RT_NULL,
 };
-#endif /* defined(RT_USING_POSIX) */
+#endif /* defined(RT_USING_POSIX_DEVIO) */
 
 /**
  * create RT-Thread char device by specified partition
@@ -527,7 +532,7 @@ struct rt_device *fal_char_device_create(const char *parition_name)
         rt_device_register(RT_DEVICE(char_dev), fal_part->name, RT_DEVICE_FLAG_RDWR);
         log_i("The FAL char device (%s) created successfully", fal_part->name);
 
-#ifdef RT_USING_POSIX
+#ifdef RT_USING_POSIX_DEVIO
         /* set fops */
         char_dev->parent.fops = &char_dev_fops;
 #endif

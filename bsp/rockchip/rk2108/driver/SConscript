@@ -6,11 +6,11 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd, str(Dir('#'))]
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc']:
     src += Glob(RTT_ROOT + '/bsp/rockchip/common/drivers/drv_cache_gcc.S')
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += Glob(RTT_ROOT + '/bsp/rockchip/common/drivers/drv_cache_arm.s')
-elif rtconfig.CROSS_TOOL == 'iar':
+elif rtconfig.PLATFORM in ['iccarm']:
     src += Glob(RTT_ROOT + '/bsp/rockchip/common/drivers/drv_cache_iar.s')
 
 group = DefineGroup('driver', src, depend = [''], CPPPATH = CPPPATH)

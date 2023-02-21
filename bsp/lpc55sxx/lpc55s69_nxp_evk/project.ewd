@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>rtthread-lpc55s6x</name>
+        <name>rtthread</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -11,7 +11,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>30</version>
+                <version>32</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\NXP\LPC55S66_core0.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\NXP\LPC55S69_core0.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.32.1.18618</state>
+                    <state>9.30.1.50052</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -88,7 +88,7 @@
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.32.1.18618</state>
+                    <state>9.30.1.50052</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\NXP\FlashLPC5500.board</state>
+                    <state>$TOOLKIT_DIR$/config/flashloader/NXP/FlashLPC5500.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -183,14 +183,6 @@
                     <state>1</state>
                 </option>
                 <option>
-                    <name>OCMulticoreMaster</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>OCMulticorePort</name>
-                    <state>53461</state>
-                </option>
-                <option>
                     <name>OCMulticoreWorkspace</name>
                     <state></state>
                 </option>
@@ -216,6 +208,18 @@
                 </option>
                 <option>
                     <name>OCMulticoreNrOfCoresSlave</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>OCMulticoreAMPConfigType</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>OCMulticoreSessionFile</name>
+                    <state></state>
+                </option>
+                <option>
+                    <name>OCTpiuBaseOption</name>
                     <state>1</state>
                 </option>
             </data>
@@ -425,7 +429,7 @@
                 </option>
                 <option>
                     <name>OCProbeConfig</name>
-                    <state></state>
+                    <state>$TOOLKIT_DIR$/config/debugger/NXP/LPC55S69_cpu0.ProbeConfig</state>
                 </option>
                 <option>
                     <name>CMSISDAPProbeConfigRadio</name>
@@ -433,7 +437,7 @@
                 </option>
                 <option>
                     <name>CMSISDAPSelectedCPUBehaviour</name>
-                    <state>0</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>ICpuName</name>
@@ -494,7 +498,7 @@
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>8</version>
+                <version>9</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -536,7 +540,7 @@
                 </option>
                 <option>
                     <name>IjetInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IjetInterfaceCmdLine</name>
@@ -718,6 +722,58 @@
                     <name>CCIjetUsbSerialNoSelect</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>CatchV8ARReset</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8AREREL1NS</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8AREREL1S</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8AREREL2NS</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8AREREL3S</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8AREEL1NS</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8ARREL1NS</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8AREEL1S</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8ARREL1S</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8AREEL2NS</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8ARREL2NS</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8AREEL3S</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CatchV8ARREL3S</name>
+                    <state>0</state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -826,7 +882,7 @@
                 </option>
                 <option>
                     <name>CCJLinkInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCJLinkResetList</name>
@@ -924,7 +980,7 @@
             <name>LMIFTDI_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>2</version>
+                <version>3</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -945,10 +1001,23 @@
                 </option>
                 <option>
                     <name>CCLmiFtdiInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCLmiFtdiInterfaceCmdLine</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CCLmiftdiUsbSerialNo</name>
+                    <state></state>
+                </option>
+                <option>
+                    <name>CCLmiftdiUsbSerialNoSelect</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CCLmiftdiResetList</name>
+                    <version>0</version>
                     <state>0</state>
                 </option>
             </data>
@@ -1003,7 +1072,7 @@
             <name>STLINK_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>6</version>
+                <version>7</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -1012,7 +1081,7 @@
                 </option>
                 <option>
                     <name>CCSTLinkInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCSTLinkInterfaceCmdLine</name>
@@ -1029,7 +1098,7 @@
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCSwoClockEdit</name>
@@ -1118,8 +1187,8 @@
                 </option>
                 <option>
                     <name>CCSTLinkProbeList</name>
-                    <version>0</version>
-                    <state>1</state>
+                    <version>1</version>
+                    <state>0</state>
                 </option>
             </data>
         </settings>
@@ -1223,7 +1292,7 @@
             <name>XDS100_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>8</version>
+                <version>9</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -1397,6 +1466,10 @@
                     <name>OCXDSDigitalStatesConfigFile</name>
                     <state>1</state>
                 </option>
+                <option>
+                    <name>OCSelectedCoreName</name>
+                    <state>1</state>
+                </option>
             </data>
         </settings>
         <debuggerPlugins>
@@ -1417,10 +1490,6 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\HWRTOSplugin\HWRTOSplugin.ewplugin</file>
-                <loadFlag>0</loadFlag>
-            </plugin>
-            <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\Mbed\MbedArmPlugin.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
@@ -1437,19 +1506,15 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm9.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8BE.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm9BE.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\ThreadX\ThreadXArmPlugin.ENU.ewplugin</file>
-                <loadFlag>0</loadFlag>
-            </plugin>
-            <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\TI-RTOS\tirtosplugin.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
@@ -1463,10 +1528,6 @@
             <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-III\uCOS-III-KA-CSpy.ewplugin</file>
                 <loadFlag>0</loadFlag>
-            </plugin>
-            <plugin>
-                <file>$EW_DIR$\common\plugins\CodeCoverage\CodeCoverage.ENU.ewplugin</file>
-                <loadFlag>1</loadFlag>
             </plugin>
             <plugin>
                 <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>

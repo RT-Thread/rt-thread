@@ -17,7 +17,7 @@ CPPDEFINES = ['CPU_MIMXRT1064DVL6A', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK
 
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
     CPPDEFINES.append('__FPU_PRESENT=1')
-    
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
 Return('group')
