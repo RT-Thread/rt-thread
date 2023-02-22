@@ -509,13 +509,13 @@ rt_err_t rt_device_bind_driver(rt_device_t device, rt_driver_t driver, void *nod
     }
 
     device->drv = driver;
-#ifdef RT_USING_DEVICE_OPS    
+#ifdef RT_USING_DEVICE_OPS
     device->ops = driver->dev_ops;
-#endif    
+#endif
     device->dtb_node = node;
 
     return RT_EOK;
-} 
+}
 RTM_EXPORT(rt_device_bind_driver);
 
 /**

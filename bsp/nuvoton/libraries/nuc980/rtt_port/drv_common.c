@@ -13,7 +13,11 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include "board.h"
+#ifdef RT_USING_SERIAL_X
+#include "drv_uartX.h"
+#else
 #include "drv_uart.h"
+#endif
 #include "drv_sys.h"
 
 #if defined(BSP_USING_MMU)
