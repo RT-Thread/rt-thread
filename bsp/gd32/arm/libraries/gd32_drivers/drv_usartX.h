@@ -24,7 +24,7 @@ struct gd32_uart_config
 {
     const char *name;
     IRQn_Type irqn;
-    
+
     rcu_periph_enum per_clk;
     rcu_periph_enum tx_gpio_clk;
     rcu_periph_enum rx_gpio_clk;

@@ -835,7 +835,7 @@ int rt_hw_usart_init(void)
         /* register UART1 device */
         rt_hw_serial_register(&uarts[i].serial,
                               uarts[i].uart_config.name,
-                              RT_DEVICE_FLAG_RDWR | 
+                              RT_DEVICE_FLAG_RDWR |
                               RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX
 #ifdef RT_SERIAL_USING_DMA
                             | RT_DEVICE_FLAG_DMA_RX | RT_DEVICE_FLAG_DMA_TX
