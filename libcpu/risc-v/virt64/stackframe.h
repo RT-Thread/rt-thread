@@ -141,7 +141,7 @@
 
 /**
  * @brief Restore All General Registers, for interrupt handling
- * 
+ *
  */
 .macro RESTORE_ALL
 

@@ -58,7 +58,7 @@
 /**
  * The register `tp` always save/restore when context switch,
  * we call `lwp_user_setting_save` when syscall enter,
- * call `lwp_user_setting_restore` when syscall exit 
+ * call `lwp_user_setting_restore` when syscall exit
  * and modify context stack after `lwp_user_setting_restore` called
  * so that the `tp` can be the correct thread area value.
  */
