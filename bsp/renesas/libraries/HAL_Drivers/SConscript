@@ -12,6 +12,8 @@ src = Split("""
 if GetDepend(['BSP_USING_UART']):
     if GetDepend(['RT_USING_SERIAL_V2']):
         src += ['drv_usart_v2.c']
+    elif GetDepend(['RT_USING_SERIAL_X']):
+        src += ['drv_usartX.c']
     else:
         print("\nThe current project does not support serial-v1\n")
         Return('group')
