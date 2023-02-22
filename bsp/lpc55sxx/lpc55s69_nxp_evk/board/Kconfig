@@ -180,6 +180,18 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_PWM
+                config BSP_USING_CTIMER0_MAT3
+                    bool "Enable CIMER0 Match3 as PWM output"
+                    default y
+
+                config BSP_USING_CTIMER1_MAT0
+                    bool "Enable CIMER1 Match0 as PWM output"
+                    default y
+
+                config BSP_USING_CTIMER1_MAT3
+                    bool "Enable CIMER1 Match3 as PWM output"
+                    default y
+
                 config BSP_USING_CTIMER2_MAT0
                     bool "Enable CIMER2 Match0 as PWM output"
                     default y
@@ -190,6 +202,10 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_USING_CTIMER2_MAT2
                     bool "Enable CIMER2 Match2 as PWM output"
+                    default n
+
+                config BSP_USING_CTIMER3_MAT2
+                    bool "Enable CIMER3 Match2 as PWM output"
                     default n
             endif
 endmenu
@@ -214,6 +230,26 @@ menu "Onboard Peripheral Drivers"
                 string "the device name for 3-Axis Sensor"
                 default "i2c4"
         endif
+
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC0
+        select BSP_USING_PWM
+        select BSP_USING_CTIMER1_MAT0
+        select BSP_USING_CTIMER1_MAT3
+        select BSP_USING_CTIMER2_MAT0
+        select BSP_USING_CTIMER2_MAT1
+        select BSP_USING_CTIMER2_MAT2
+        select BSP_USING_CTIMER3_MAT2
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
 
 endmenu
 

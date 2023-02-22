@@ -68,7 +68,7 @@ static rt_err_t lpc_drv_pwm_get(struct rt_device_pwm *device, struct rt_pwm_conf
 
 #ifdef BSP_USING_CTIMER2
     /* get frequence */
-    pwmClock = CLOCK_GetFreq(kCLOCK_CTimer2) ;
+    pwmClock = CLOCK_GetFreq(kCLOCK_Timer2) ;
 #endif
 
     get_frequence = pwmClock / (base->MR[kCTIMER_Match_3] + 1);
@@ -110,7 +110,7 @@ static rt_err_t lpc_drv_pwm_set(struct rt_device_pwm *device, struct rt_pwm_conf
     {
         /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
         /* Calculate PWM period match value */
-        pwmPeriod = (( CLOCK_GetFreq(kCLOCK_CTimer2) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
+        pwmPeriod = (( CLOCK_GetFreq(kCLOCK_Timer2) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
 
         /* Calculate pulse width match value */
         if (DEFAULT_DUTY == 0)
@@ -175,7 +175,7 @@ int rt_hw_pwm_init(void)
 #ifdef BSP_USING_CTIMER2_MAT1
     /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
     /* Calculate PWM period match value */
-    pwmPeriod = (( CLOCK_GetFreq(kCLOCK_CTimer2) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
+    pwmPeriod = (( CLOCK_GetFreq(kCLOCK_Timer2) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
 
     /* Calculate pulse width match value */
     if (DEFAULT_DUTY == 0)
@@ -186,7 +186,7 @@ int rt_hw_pwm_init(void)
     {
         pulsePeriod = (pwmPeriod * (100 - DEFAULT_DUTY)) / 100;
     }
-    CTIMER_SetupPwmPeriod(CTIMER2, kCTIMER_Match_1 , pwmPeriod, pulsePeriod, false);
+    CTIMER_SetupPwmPeriod(CTIMER2, kCTIMER_Match_3 , kCTIMER_Match_1, pwmPeriod, pulsePeriod, false);
 #endif
 
     ret = rt_device_pwm_register(&pwm1_device, "pwm1", &lpc_drv_ops, CTIMER2);
