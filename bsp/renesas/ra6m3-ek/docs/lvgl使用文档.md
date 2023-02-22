@@ -6,9 +6,11 @@
 
 ![](picture/lvgl/00.png)
 
-在 `Hardware Drivers Config → On-chip Peripheral Drivers` 中使能 `Enable LVGL for LCD` 选项
+## RGB 屏使用配置
 
-![](picture/lvgl/01.png)
+在 `Hardware Drivers Config → On-chip Peripheral Drivers → Enable LVGL for LCD` 中使能 `Enable LVGL for LCD_RGB565` 选项
+
+![](picture/lvgl/12.png)
 
 接下来退出菜单界面，输入 `pkgs --update` 命令手动联网获取 lvgl 的软件包到 `packages` 文件夹下
 
@@ -18,7 +20,7 @@
 
 ![](picture/lvgl/03.png)
 
-## fsp 中配置 lcd 外设
+### fsp 中配置 GLCDC 外设
 
 点击 mdk 中的 `Tools->RA Smart Configurator` 进入 rasc 配置软件
 
@@ -48,6 +50,50 @@
 
 ![](picture/lvgl/10.png)
 
-退出 rasc 后，在 mdk 中进行编译，下载即可
+### 编译烧录
+
+退出 rasc 后，在 mdk 中进行编译，仿真下载即可
+
+![](picture/lvgl/11.png)
+
+## SPI(ILI9431) 屏使用配置
+
+在 `Hardware Drivers Config → On-chip Peripheral Drivers → Enable LVGL for LCD` 中使能 `Enable LVGL for LCD_ILI9431` 选项
+
+![](picture/lvgl/01.png)
+
+接下来退出菜单界面，输入 `pkgs --update` 命令手动联网获取 lvgl 的软件包到 `packages` 文件夹下
+
+![](picture/lvgl/02.png)
+
+接着在env 终端中输入 `scons --target=mdk5` 生成 mdk 工程
+
+![](picture/lvgl/03.png)
+
+### fsp 中配置 SPI 外设
+
+点击 mdk 中的 `Tools->RA Smart Configurator` 进入 rasc 配置软件
+
+![](picture/lvgl/04.png)
+
+点击 New Stack，选择 `Connectivity->SPI(r_spi)`，使能 SPI 外设
+
+![](picture/lvgl/13.png)
+
+在 `Callback` 中，设置中断回调函数，（默认使用SPI0）输入 ：`spi0_callback`
+
+![](picture/lvgl/14.png)
+
+接着我们配置 SPI 的引脚属性（默认使用SPI0），进入 Pins 界面按照下图进行配置：
+
+![](picture/lvgl/15.png)
+
+完成以上配置后，点击 `Generate Project Content` 生成配置相关代码
+
+![](picture/lvgl/16.png)
+
+### 编译烧录
+
+退出 rasc 后，在 mdk 中进行编译，仿真下载即可
 
 ![](picture/lvgl/11.png)
