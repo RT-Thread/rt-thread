@@ -277,6 +277,9 @@ static void handle_nested_trap_panic(
     rt_hw_cpu_shutdown();
 }
 
+#define IN_USER_SPACE (stval >= USER_VADDR_START && stval < USER_VADDR_TOP)
+#define PAGE_FAULT (id == EP_LOAD_PAGE_FAULT || id == EP_STORE_PAGE_FAULT)
+
 /* Trap entry */
 void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
@@ -302,39 +305,39 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     else if (SCAUSE_INTERRUPT & scause)
     {
         if(id < sizeof(Interrupt_Name) / sizeof(const char *))
-        {
-            msg = Interrupt_Name[id];
+            {
+                msg = Interrupt_Name[id];
+            }
+            else
+            {
+                msg = "Unknown Interrupt";
+            }
+        LOG_E("Unhandled Interrupt %ld:%s\n",id,msg);
         }
         else
         {
-            msg = "Unknown Interrupt";
-        }
-        LOG_E("Unhandled Interrupt %ld:%s\n",id,msg);
-    }
-    else
-    {
 #ifdef RT_USING_SMART
-        if (!(sp->sstatus & 0x100))
-        {
-            handle_user(scause, stval, sepc, sp);
-            // if handle_user() return here, jump to u mode then
+            if (!(sp->sstatus & 0x100) || (PAGE_FAULT && IN_USER_SPACE))
+            {
+                handle_user(scause, stval, sepc, sp);
+                // if handle_user() return here, jump to u mode then
             return ;
-        }
+            }
 #endif
 
-        // handle kernel exception:
-        rt_kprintf("Unhandled Exception %ld:%s\n", id, get_exception_msg(id));
-    }
+            // handle kernel exception:
+            rt_kprintf("Unhandled Exception %ld:%s\n", id, get_exception_msg(id));
+        }
 
-    rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
-    dump_regs(sp);
-    rt_kprintf("--------------Thread list--------------\n");
-    rt_kprintf("current thread: %s\n", rt_thread_self()->name);
+        rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
+        dump_regs(sp);
+        rt_kprintf("--------------Thread list--------------\n");
+        rt_kprintf("current thread: %s\n", rt_thread_self()->name);
 
-    extern struct rt_thread *rt_current_thread;
-    rt_kprintf("--------------Backtrace--------------\n");
-    rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
+        extern struct rt_thread *rt_current_thread;
+        rt_kprintf("--------------Backtrace--------------\n");
+        rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
 
-    while (1)
-        ;
+        while (1)
+            ;
 }

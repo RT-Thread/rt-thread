@@ -13,6 +13,10 @@
 #ifndef __STACKFRAME_H__
 #define __STACKFRAME_H__
 
+#define BYTES(idx)          ((idx) * REGBYTES)
+#define FRAME_OFF_SSTATUS   BYTES(2)
+#define FRAME_OFF_SP        BYTES(32)
+
 #include "cpuport.h"
 #include "encoding.h"
 
