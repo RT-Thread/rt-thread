@@ -125,6 +125,15 @@ user_do_signal:
     addi t0, sp, CTX_REG_NR * REGBYTES
     csrw sscratch, t0
 
+    LOAD t0, FRAME_OFF_SP(sp)
+    addi t1, t0, -CTX_REG_NR * REGBYTES
+    LOAD t2, (t0)
+    li t3, 0x1000
+1:
+    add t0, t0, t3
+    LOAD t2, (t0)
+    bgt t0, t1, 1b
+
     RESTORE_ALL
     SAVE_ALL
 
