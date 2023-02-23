@@ -50,7 +50,7 @@ if PLATFORM == 'gcc':
     CPATH   = ''
     LPATH   = ''
     LIBS = ['stdc++']
-    AFLAGS += ' -I. '
+    AFLAGS += ' -I. '+ ' -D"irq_entry=SW_handler" '
 
     if BUILD == 'debug':
         CFLAGS += ' -O2 -Os -ggdb'
