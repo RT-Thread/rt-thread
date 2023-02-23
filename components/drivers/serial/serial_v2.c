@@ -296,7 +296,7 @@ static rt_ssize_t rt_serial_update_write_index(struct rt_ringbuffer  *rb,
   * @param size Receive data buffer length.
   * @return Return the final length of data received.
   */
-rt_size_t _serial_poll_rx(struct rt_device          *dev,
+rt_ssize_t _serial_poll_rx(struct rt_device          *dev,
                                  rt_off_t            pos,
                                  void               *buffer,
                                  rt_size_t           size)
@@ -343,7 +343,7 @@ rt_size_t _serial_poll_rx(struct rt_device          *dev,
   * @param size Transmit data buffer length.
   * @return Return the final length of data received.
   */
-rt_size_t _serial_poll_tx(struct rt_device           *dev,
+rt_ssize_t _serial_poll_tx(struct rt_device           *dev,
                                  rt_off_t             pos,
                                  const void          *buffer,
                                  rt_size_t            size)
