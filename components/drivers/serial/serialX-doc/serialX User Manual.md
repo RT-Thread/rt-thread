@@ -14,31 +14,31 @@ RT-Thread 论坛上有几篇介绍和讲解 serialX 的文章，使用 serialX �
 ```
 struct rt_uart_ops
 {
-	// 配置外设寄存器设置默认波特率等；外设时钟配置、引脚功能复用（如果还没配置过）；启用外设等等
+    // 配置外设寄存器设置默认波特率等；外设时钟配置、引脚功能复用（如果还没配置过）；启用外设等等
     int (*init)(struct rt_serial_device *serial);
-	// 仅仅用于配置外设波特率、数据位数、停止位等等
+    // 仅仅用于配置外设波特率、数据位数、停止位等等
     rt_err_t (*configure)(struct rt_serial_device *serial, struct serial_configure *cfg);
     // 用于使能禁用中断，初始配置 DMA
     rt_err_t (*control)(struct rt_serial_device *serial, int cmd, void *arg);
-	// 串口外设“写数据寄存器”*为空*，把数据放入“写数据寄存器”。*不为空*，死等
+    // 串口外设“写数据寄存器”*为空*，把数据放入“写数据寄存器”。*不为空*，死等
     int (*putc)(struct rt_serial_device *serial, char c);
     // 串口外设“读数据寄存器”*不为空*，读出“读数据寄存器”的值。*为空*，返回 -1
     int (*getc)(struct rt_serial_device *serial);
 
-	// 启动发送，多数是使能串口外设“发送寄存器”*空*中断
+    // 启动发送，多数是使能串口外设“发送寄存器”*空*中断
     void (*start_tx)(struct rt_serial_device *serial);
-	// 结束发送，多数是禁止串口外设“发送寄存器”*空*中断
+    // 结束发送，多数是禁止串口外设“发送寄存器”*空*中断
     void (*stop_tx)(struct rt_serial_device *serial);
 
 #ifdef RT_SERIAL_USING_DMA
-	// 判断 DMA 是否在发送过程中，必须有效检测 DMA 是否在发送数据中，有些芯片有寄存器位标志，可以用标志位判断，如果没有，使用变量标志。
+    // 判断 DMA 是否在发送过程中，必须有效检测 DMA 是否在发送数据中，有些芯片有寄存器位标志，可以用标志位判断，如果没有，使用变量标志。
     rt_bool_t (*is_dma_txing)(struct rt_serial_device *serial);
     // 启动 DMA 发送，数据缓存首地址和数据长度由驱动框架提供。（最后置位 DMA tx 标志）
     void (*start_dma_tx)(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size);
     // 停止 DMA 发送，停用 DMA 发送，（最后复位 DMA tx 标志）
     void (*stop_dma_tx)(struct rt_serial_device *serial);
 #endif
-	// 使能串口外设中断，添加这个的初衷是减少全局中断开关操作。目前这部分代码已被注释并使用 rt_hw_interrupt_enable
+    // 使能串口外设中断，添加这个的初衷是减少全局中断开关操作。目前这部分代码已被注释并使用 rt_hw_interrupt_enable
     void (*enable_interrupt)(struct rt_serial_device *serial);
     // 禁用串口外设中断，添加这个的初衷是减少全局中断开关操作。目前这部分代码已被注释并使用 rt_hw_interrupt_disable
     void (*disable_interrupt)(struct rt_serial_device *serial);
@@ -82,20 +82,20 @@ struct rt_serial_device
     struct serial_configure   config;
     rt_uint32_t bufsz;          // 驱动层收发缓存容量大小
 
-    void *serial_rx;			// 串口接收缓存
-    void *serial_tx;			// 串口发送缓存
+    void *serial_rx;            // 串口接收缓存
+    void *serial_tx;            // 串口发送缓存
 
-#ifdef RT_SERIAL_USING_DMA							// 串口收发缓存和 DMA 使用的二级缓存分开
+#ifdef RT_SERIAL_USING_DMA                          // 串口收发缓存和 DMA 使用的二级缓存分开
     rt_size_t dma_idx_rx;
-    rt_uint8_t serial_dma_rx[RT_SERIAL_DMA_BUFSZ];	// DMA 接收缓存
-    rt_uint8_t serial_dma_tx[RT_SERIAL_DMA_BUFSZ];	// DMA 发送缓存
+    rt_uint8_t serial_dma_rx[RT_SERIAL_DMA_BUFSZ];  // DMA 接收缓存
+    rt_uint8_t serial_dma_tx[RT_SERIAL_DMA_BUFSZ];  // DMA 发送缓存
 #endif
 
-    cb_serial_tx _cb_tx;		// 写过程回调函数指针
-    cb_serial_rx _cb_rx;		// 读过程回调函数指针
+    cb_serial_tx _cb_tx;        // 写过程回调函数指针
+    cb_serial_rx _cb_rx;        // 读过程回调函数指针
 
-    struct rt_completion completion_tx;				// 发送完成
-    struct rt_completion completion_rx;				// 接收到新数据
+    struct rt_completion completion_tx;             // 发送完成
+    struct rt_completion completion_rx;             // 接收到新数据
 };
 typedef struct rt_serial_device rt_serial_t;
 ```
