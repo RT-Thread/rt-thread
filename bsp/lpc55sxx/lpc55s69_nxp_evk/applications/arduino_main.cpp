@@ -6,27 +6,20 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-22     ChuShicheng  first version
+ * 2023-02-23     Wangyuqiang  second version
  */
 
 #include <Arduino.h>
 
-int led = 37; /* LED pin */
-int brightness = 0;
-int fadeAmount = 5;
-
-void setup()
+void setup(void)
 {
-    /* Do not invoke pinMode for the PWM IO! */
+    /* put your setup code here, to run once: */
+    Serial.begin();
 }
 
-void loop()
+void loop(void)
 {
-    analogWrite(led, brightness);
-    brightness = brightness + fadeAmount;
-    if (brightness <= 0 || brightness >= 255)
-    {
-        fadeAmount = -fadeAmount;
-    }
-
-    delay(100);
+    /* put your main code here, to run repeatedly: */
+    Serial.println("Hello Arduino!");
+    delay(800);
 }
