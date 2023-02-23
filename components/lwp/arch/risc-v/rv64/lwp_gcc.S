@@ -121,18 +121,19 @@ arch_signal_quit:
  * routine in user stack
  */
 user_do_signal:
-    /** restore and backup kernel sp carefully to avoid leaking */
-    addi t0, sp, CTX_REG_NR * REGBYTES
-    csrw sscratch, t0
-
+    /* prefetch ustack to avoid corrupted status in RESTORE/STORE pair below */
     LOAD t0, FRAME_OFF_SP(sp)
     addi t1, t0, -CTX_REG_NR * REGBYTES
     LOAD t2, (t0)
-    li t3, 0x1000
+    li t3, -0x1000
 1:
     add t0, t0, t3
     LOAD t2, (t0)
     bgt t0, t1, 1b
+
+    /** restore and backup kernel sp carefully to avoid leaking */
+    addi t0, sp, CTX_REG_NR * REGBYTES
+    csrw sscratch, t0
 
     RESTORE_ALL
     SAVE_ALL
