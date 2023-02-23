@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-22     ChuShicheng  first version
- * 2023-02-23     Wangyuqiang  first version
+ * 2023-02-23     Wangyuqiang  second version
  */
 
 #ifndef Pins_Arduino_h
