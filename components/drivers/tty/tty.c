@@ -200,7 +200,7 @@ int __tty_check_change(struct tty_struct *tty, int sig)
 
     if (!tty_pgrp)
     {
-        LOG_D(tty, "sig=%d, tty->pgrp == -1!\n", sig);
+        LOG_D("sig=%d, tty->pgrp == -1!\n", sig);
     }
     return ret;
 }
