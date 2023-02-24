@@ -292,7 +292,8 @@ static int pts_register(struct tty_struct *ptm_drv, struct tty_struct *pts_drv, 
 extern struct termios tty_std_termios;
     pts_drv->init_termios = tty_std_termios;
     pts_drv->init_termios.c_cflag = B38400 | CS8 | CREAD;
-    pts_drv->init_termios.c_lflag |= ICANON;
+    pts_drv->init_termios.c_lflag |= ECHO | ICANON;
+    pts_drv->init_termios.c_oflag |= ONLCR;
     pts_drv->init_termios.__c_ispeed = 38400;
     pts_drv->init_termios.__c_ospeed = 38400;
 
