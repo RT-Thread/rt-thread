@@ -211,6 +211,12 @@ static int ptmx_open(struct dfs_fd *fd)
         ret = ld->ops->open(fd);
     }
 
+    rt_device_t device = (rt_device_t)fd->vnode->data;
+    if(fd->vnode->ref_count == 1)
+    {
+        ret = rt_device_open(device, fd->flags);
+    }
+
     return ret;
 }
 #ifdef RT_USING_DEVICE_OPS
