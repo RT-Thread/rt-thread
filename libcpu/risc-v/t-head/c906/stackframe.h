@@ -13,6 +13,10 @@
 #ifndef __STACKFRAME_H__
 #define __STACKFRAME_H__
 
+#define BYTES(idx)          ((idx) * REGBYTES)
+#define FRAME_OFF_SSTATUS   BYTES(2)
+#define FRAME_OFF_SP        BYTES(32)
+
 #include "cpuport.h"
 #include "encoding.h"
 
@@ -54,7 +58,7 @@
 /**
  * The register `tp` always save/restore when context switch,
  * we call `lwp_user_setting_save` when syscall enter,
- * call `lwp_user_setting_restore` when syscall exit 
+ * call `lwp_user_setting_restore` when syscall exit
  * and modify context stack after `lwp_user_setting_restore` called
  * so that the `tp` can be the correct thread area value.
  */

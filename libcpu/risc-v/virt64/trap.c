@@ -274,6 +274,9 @@ static void handle_nested_trap_panic(
     rt_hw_cpu_shutdown();
 }
 
+#define IN_USER_SPACE (stval >= USER_VADDR_START && stval < USER_VADDR_TOP)
+#define PAGE_FAULT (id == EP_LOAD_PAGE_FAULT || id == EP_STORE_PAGE_FAULT)
+
 /* Trap entry */
 void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
@@ -326,7 +329,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             }
 #endif /* ENABLE_VECTOR */
 #ifdef RT_USING_SMART
-            if (!(sp->sstatus & 0x100))
+            if (!(sp->sstatus & 0x100) || (PAGE_FAULT && IN_USER_SPACE))
             {
                 handle_user(scause, stval, sepc, sp);
                 // if handle_user() return here, jump to u mode then
