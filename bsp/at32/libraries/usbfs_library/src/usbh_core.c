@@ -539,8 +539,8 @@ usb_sts_type usbh_core_init(usbh_core_type *uhost,
 
   if(usbx == OTG1_GLOBAL)
   {
-  	/* set receive fifo size */
-  	usbx->grxfsiz = USBH_RX_FIFO_SIZE;
+    /* set receive fifo size */
+    usbx->grxfsiz = USBH_RX_FIFO_SIZE;
 
     /* set non-periodic transmit fifo start address and depth */
     usbx->gnptxfsiz_ept0tx_bit.nptxfstaddr = USBH_RX_FIFO_SIZE;
@@ -553,8 +553,8 @@ usb_sts_type usbh_core_init(usbh_core_type *uhost,
 #ifdef OTG2_GLOBAL
   if(usbx == OTG2_GLOBAL)
   {
-  	/* set receive fifo size */
-  	usbx->grxfsiz = USBH2_RX_FIFO_SIZE;
+    /* set receive fifo size */
+    usbx->grxfsiz = USBH2_RX_FIFO_SIZE;
 
     /* set non-periodic transmit fifo start address and depth */
     usbx->gnptxfsiz_ept0tx_bit.nptxfstaddr = USBH2_RX_FIFO_SIZE;

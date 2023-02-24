@@ -296,27 +296,27 @@ void at32_msp_usb_init(void *instance)
         case 48000000:
             crm_usb_clock_div_set(CRM_USB_DIV_1);
             break;
-    
+
         /* 72MHz */
         case 72000000:
             crm_usb_clock_div_set(CRM_USB_DIV_1_5);
             break;
-    
+
         /* 96MHz */
         case 96000000:
             crm_usb_clock_div_set(CRM_USB_DIV_2);
             break;
-    
+
         /* 120MHz */
         case 120000000:
             crm_usb_clock_div_set(CRM_USB_DIV_2_5);
             break;
-    
+
         /* 144MHz */
         case 144000000:
             crm_usb_clock_div_set(CRM_USB_DIV_3);
             break;
-    
+
         default:
             break;
     }
