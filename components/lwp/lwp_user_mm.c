@@ -560,9 +560,12 @@ int lwp_user_accessable(void *addr, size_t size)
             len = size;
         }
         tmp_addr = lwp_v2p(lwp, addr_start);
-        if (!tmp_addr)
+        if (tmp_addr == ARCH_MAP_FAILED)
         {
-            return 0;
+            if ((rt_ubase_t)addr_start >= USER_STACK_VSTART && (rt_ubase_t)addr_start < USER_STACK_VEND)
+                tmp_addr = *(void **)addr_start;
+            else
+                return 0;
         }
         addr_start = (void *)((char *)addr_start + len);
         size -= len;
@@ -596,7 +599,7 @@ size_t lwp_data_get(struct rt_lwp *lwp, void *dst, void *src, size_t size)
             len = size;
         }
         tmp_src = lwp_v2p(lwp, addr_start);
-        if (!tmp_src)
+        if (tmp_src == ARCH_MAP_FAILED)
         {
             break;
         }
@@ -636,7 +639,7 @@ size_t lwp_data_put(struct rt_lwp *lwp, void *dst, void *src, size_t size)
             len = size;
         }
         tmp_dst = lwp_v2p(lwp, addr_start);
-        if (!tmp_dst)
+        if (tmp_dst == ARCH_MAP_FAILED)
         {
             break;
         }
