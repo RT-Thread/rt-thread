@@ -337,6 +337,8 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
     /* current context checking */
     RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
 
+    rt_cputimer_init(&cputimer, "cputime_sleep", _cputime_sleep_timeout, thread, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
@@ -349,7 +351,6 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
     /* reset the timeout of thread timer and start it */
     if (err == RT_EOK)
     {
-        rt_cputimer_init(&cputimer, "cputime_sleep", _cputime_sleep_timeout, thread, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
         rt_cputimer_control(&cputimer, RT_TIMER_CTRL_SET_TIME, &tick);
         rt_cputimer_start(&cputimer);
 
@@ -359,7 +360,6 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
         thread->error = -RT_EINTR;
 
         rt_schedule();
-        rt_cputimer_detach(&cputimer);
         if (thread->error == -RT_ETIMEOUT)
             thread->error = RT_EOK;
     }
@@ -368,6 +368,7 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
         rt_hw_interrupt_enable(level);
     }
 
+    rt_cputimer_detach(&cputimer);
     return err;
 }
 
