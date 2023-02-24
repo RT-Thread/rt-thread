@@ -341,7 +341,7 @@ static rt_err_t stm32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     return RT_EOK;
 }
 
-static rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t stm32_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
