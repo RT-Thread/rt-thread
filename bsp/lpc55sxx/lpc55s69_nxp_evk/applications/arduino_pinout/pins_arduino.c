@@ -12,6 +12,7 @@
 #include <Arduino.h>
 #include <board.h>
 #include "pins_arduino.h"
+#include "drv_pin.h"
 
 /*
  * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
@@ -22,8 +23,8 @@
  */
 const pin_map_t pin_map_table[]=
 {
-    {D0, GET_PINS(1,24), "uart1"},      /* Serial2-RX */
-    {D1, GET_PINS(0,27), "uart1"},      /* Serial2-TX */
+    {D0, GET_PINS(1,24), "uart2"},      /* Serial2-RX */
+    {D1, GET_PINS(0,27), "uart2"},      /* Serial2-TX */
     {D2, GET_PINS(0,15)},
     {D3, GET_PINS(1,6)},
     {D4, GET_PINS(1,7), "pwm2", 2},     /* PWM */
