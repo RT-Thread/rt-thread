@@ -24,8 +24,8 @@ Hardware Drivers Config --->
 
 | Arduino引脚编号  | LPC55引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
-| 0 (D0) | P(1,24) | 是/否 | Serial2-RX，默认被RT-Thread的UART设备框架uart1接管 |
-| 1 (D1) | P(0,27) | 是/否 | Serial2-TX，默认被RT-Thread的UART设备框架uart1接管 |
+| 0 (D0) | P(1,24) | 是/否 | Serial2-RX，默认被RT-Thread的UART设备框架uart2接管 |
+| 1 (D1) | P(0,27) | 是/否 | Serial2-TX，默认被RT-Thread的UART设备框架uart2接管 |
 | 2 (D2) | P(0,15) | 是/否 |  |
 | 3 (D3) | P(1,6) | 是/否 |  |
 | 4 (D4) | P(1,7) | 是/否 | PWM2-CH2，默认被RT-Thread的PWM设备框架pwm2接管 |
