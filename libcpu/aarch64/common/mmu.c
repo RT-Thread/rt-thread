@@ -109,6 +109,10 @@ static void _kenrel_unmap_4K(unsigned long *lv0_tbl, void *v_addr)
             }
             rt_pages_free(cur_page, 0);
         }
+        else
+        {
+            break;
+        }
         level--;
     }
 
