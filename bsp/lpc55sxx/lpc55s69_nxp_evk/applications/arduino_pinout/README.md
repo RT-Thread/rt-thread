@@ -22,7 +22,7 @@ Hardware Drivers Config --->
 
 ![LPC55s69-nxp-evk-pinout2](LPC55s69-nxp-evk-pinout2.png)
 
-| Arduino引脚编号  | LPC引脚编号 | 5V容忍 | 备注  |
+| Arduino引脚编号  | LPC55引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
 | 0 (D0) | P(1,24) | 是/否 | Serial2-RX，默认被RT-Thread的UART设备框架uart2接管 |
 | 1 (D1) | P(0,27) | 是/否 | Serial2-TX，默认被RT-Thread的UART设备框架uart2接管 |
