@@ -275,7 +275,7 @@ static int tiocsctty(struct tty_struct *tty, int arg)
     if (current->leader &&
         (current->session == tty->session))
     {
-        return 0;        
+        return 0;
     }
 
     /*
@@ -284,7 +284,7 @@ static int tiocsctty(struct tty_struct *tty, int arg)
      */
     if (!current->leader || current->tty)
     {
-        return -EPERM;        
+        return -EPERM;
     }
 
     if (tty->session > 0)
