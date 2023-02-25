@@ -101,7 +101,7 @@ static int _lwp_shmget(size_t key, size_t size, int create)
     int id = -1;
     struct lwp_avl_struct *node_key = 0;
     struct lwp_avl_struct *node_pa = 0;
-    void *page_addr = 0, *page_addr_p = RT_NULL;
+    void *page_addr = 0;
     uint32_t bit = 0;
 
     /* try to locate the item with the key in the binary tree */
@@ -134,11 +134,10 @@ static int _lwp_shmget(size_t key, size_t size, int create)
         {
             goto err;
         }
-        page_addr_p = (void *)((char *)page_addr + PV_OFFSET);    /* physical address */
 
         /* initialize the shared memory structure */
         p = _shm_ary + id;
-        p->addr = (size_t)page_addr_p;
+        p->addr = (size_t)page_addr;
         p->size = (1UL << (bit + ARCH_PAGE_SHIFT));
         p->ref = 0;
         p->key = key;
@@ -236,7 +235,7 @@ static int _lwp_shmrm(int id)
         return 0;
     }
     bit = rt_page_bits(p->size);
-    rt_pages_free((void *)((char *)p->addr - PV_OFFSET), bit);
+    rt_pages_free((void *)p->addr, bit);
     lwp_avl_remove(node_key, &shm_tree_key);
     node_pa = node_key + 1;
     lwp_avl_remove(node_pa, &shm_tree_pa);
