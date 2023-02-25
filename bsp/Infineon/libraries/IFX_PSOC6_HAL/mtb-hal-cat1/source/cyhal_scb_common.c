@@ -51,7 +51,7 @@ CySCB_Type *const _CYHAL_SCB_BASE_ADDRESSES[_SCB_ARRAY_SIZE] =
 #endif
 #ifdef SCB3
     SCB3,
-#elif defined(CY_DEVICE_PSOC6A256K)
+#elif defined(CY_DEVICE_PSOC6A256K) || defined(CY8C624ALQI_S2D42)
     NULL, // Placeholder
 #endif
 #ifdef SCB4

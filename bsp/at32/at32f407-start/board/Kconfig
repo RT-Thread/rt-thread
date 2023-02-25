@@ -45,6 +45,11 @@ menu "On-chip Peripheral Drivers"
             endchoice
         endif
 
+    config BSP_USING_USBD
+        bool "Enable USB BUS"
+        select RT_USING_USB_DEVICE
+        default n
+
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
