@@ -153,7 +153,7 @@ int rt_hw_pwm_init(void)
 
 #ifdef BSP_USING_CTIMER2
 
-    static struct rt_device_pwm pwm1_device;
+    static struct rt_device_pwm pwm2_device;
     ctimer_config_t config;
     uint32_t pwmPeriod, pulsePeriod;
 
@@ -186,11 +186,11 @@ int rt_hw_pwm_init(void)
     CTIMER_SetupPwmPeriod(CTIMER2, kCTIMER_Match_3 , kCTIMER_Match_1, pwmPeriod, pulsePeriod, false);
 #endif
 
-    ret = rt_device_pwm_register(&pwm1_device, "pwm1", &lpc_drv_ops, CTIMER2);
+    ret = rt_device_pwm_register(&pwm2_device, "pwm2", &lpc_drv_ops, CTIMER2);
 
     if (ret != RT_EOK)
     {
-        LOG_E("%s register failed", "pwm1");
+        LOG_E("%s register failed", "pwm2");
     }
 
 #endif /* BSP_USING_CTIMER2 */
