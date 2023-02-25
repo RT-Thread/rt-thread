@@ -266,7 +266,6 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
-        select BSP_USING_STLINK_TO_USART
         select BSP_USING_UART2
         select BSP_USING_GPIO
         select BSP_USING_ADC
