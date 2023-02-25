@@ -970,6 +970,12 @@ void timer_id_unlock()
 struct timer_obj *timer_id_get(int timerid)
 {
     struct timer_obj *timer;
+
+    if ((rt_ubase_t)timerid < 0)
+    {
+        return NULL;
+    }
+
     timer_id_lock();
     if (_g_timerid[timerid] == NULL)
     {
