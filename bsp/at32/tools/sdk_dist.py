@@ -35,5 +35,7 @@ def dist_do_building(BSP_ROOT, dist_dir):
 
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'rt_drivers'), os.path.join(library_dir, 'rt_drivers'))
+    bsp_copy_files(os.path.join(library_path, 'usbd_library'), os.path.join(library_dir, 'usbd_library'))
+    bsp_copy_files(os.path.join(library_path, 'usbfs_library'), os.path.join(library_dir, 'usbfs_library'))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
     bsp_update_kconfig_library(dist_dir)
