@@ -1071,6 +1071,13 @@ RTM_EXPORT(timer_create);
 int timer_delete(timer_t timerid)
 {
     struct timer_obj *timer;
+
+    if ((rt_ubase_t)timerid < 0)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
     timer_id_lock();
     if (_g_timerid[(rt_ubase_t)timerid] == NULL)
     {
