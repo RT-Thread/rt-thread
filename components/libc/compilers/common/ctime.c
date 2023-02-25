@@ -967,11 +967,11 @@ void timer_id_unlock()
     rt_hw_spin_unlock(&_timer_id_lock);
 }
 
-struct timer_obj *timer_id_get(int timerid)
+struct timer_obj *timer_id_get(rt_ubase_t timerid)
 {
     struct timer_obj *timer;
 
-    if ((rt_ubase_t)timerid < 0)
+    if (timerid < 0 || timerid >= TIMER_ID_MAX)
     {
         return NULL;
     }
@@ -1077,23 +1077,26 @@ RTM_EXPORT(timer_create);
 int timer_delete(timer_t timerid)
 {
     struct timer_obj *timer;
+    rt_ubase_t ktimerid;
 
-    if ((rt_ubase_t)timerid < 0)
+    ktimerid = (rt_ubase_t)timerid;
+
+    if (ktimerid < 0 || ktimerid >= TIMER_ID_MAX)
     {
         rt_set_errno(EINVAL);
         return -1;
     }
 
     timer_id_lock();
-    if (_g_timerid[(rt_ubase_t)timerid] == NULL)
+    if (_g_timerid[ktimerid] == NULL)
     {
         timer_id_unlock();
         rt_set_errno(EINVAL);
         LOG_E("can not find timer!");
         return -1;
     }
-    timer = _g_timerid[(rt_ubase_t)timerid];
-    timer_id_put((rt_ubase_t)timerid);
+    timer = _g_timerid[ktimerid];
+    timer_id_put(ktimerid);
     timer_id_unlock();
     if (timer == RT_NULL)
     {
@@ -1145,8 +1148,10 @@ int timer_getoverrun(timer_t timerid)
  */
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
-    struct timer_obj *timer = timer_id_get((rt_ubase_t)timerid);
+    struct timer_obj *timer;
     rt_uint32_t seconds, nanoseconds;
+
+    timer = timer_id_get((rt_ubase_t)timerid);
 
     if (timer == NULL)
     {
