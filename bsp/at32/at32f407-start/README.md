@@ -51,6 +51,7 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | RTC       | 支持     |                            |
 | FLASH     | 支持     |                            |
 | EMAC      | 支持     |                            |
+| USB       | 支持     |                            |
 
 ### IO在板级支持包中的映射情况
 
@@ -102,6 +103,8 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PD9  | EMAC_RMII_RXD0    |
 | PD10 | EMAC_RMII_RXD1    |
 | PA1  | EMAC_RMII_REF_CLK |
+| PA11 | USB_DM            |
+| PA12 | USB_DP            |
 
 ## 使用说明
 
