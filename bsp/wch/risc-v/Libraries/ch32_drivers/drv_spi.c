@@ -358,9 +358,9 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return ch32_spi_init(spi_drv, configuration);
 }
 
-static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    rt_err_t state;
+    rt_err_t state = RT_EOK;
     rt_size_t message_length, already_send_length;
     rt_uint16_t send_length;
     rt_uint8_t *recv_buf;
@@ -438,7 +438,7 @@ static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message 
 
         if (state != RT_EOK)
         {
-             LOG_I("spi transfer error : %d", state);
+            LOG_I("spi transfer error : %d", state);
             message->length = 0;
         }
         else
@@ -454,6 +454,11 @@ static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message 
             GPIO_WriteBit(cs->GPIOx, cs->GPIO_Pin, Bit_RESET);
         else
             GPIO_WriteBit(cs->GPIOx, cs->GPIO_Pin, Bit_SET);
+    }
+
+    if(state != RT_EOK)
+    {
+        return -RT_ERROR;
     }
 
     return message->length;
