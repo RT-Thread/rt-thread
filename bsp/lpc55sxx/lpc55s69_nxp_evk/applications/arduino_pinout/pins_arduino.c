@@ -11,8 +11,8 @@
 
 #include <Arduino.h>
 #include <board.h>
+#include <drv_pin.h>
 #include "pins_arduino.h"
-#include "drv_pin.h"
 
 /*
  * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}

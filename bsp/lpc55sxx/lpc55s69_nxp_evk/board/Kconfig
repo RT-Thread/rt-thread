@@ -220,6 +220,10 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable CIMER1 Match0 as PWM output"
                     default y
 
+                config BSP_USING_CTIMER1_MAT3
+                    bool "Enable CIMER1 Match3 as PWM output"
+                    default n
+
                 config BSP_USING_CTIMER2_MAT0
                     bool "Enable CIMER2 Match0 as PWM output"
                     default y
