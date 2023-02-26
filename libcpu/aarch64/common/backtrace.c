@@ -60,7 +60,7 @@ int rt_backtrace(void)
 {
     unsigned long pc = (unsigned long)backtrace;
     unsigned long ra = (unsigned long)__builtin_return_address(0U);
-	unsigned long fr = (unsigned long)__builtin_frame_address(0U);
+    unsigned long fr = (unsigned long)__builtin_frame_address(0U);
 
     backtrace(pc, ra, fr);
     return 0;
