@@ -48,7 +48,7 @@ rt_inline void spi_delay2(struct rt_spi_bit_ops *ops)
 #define MISO_IN(ops)         DIR_MISO(ops, 1)
 #define MISO_OUT(ops)        DIR_MISO(ops, 0)
 
-rt_inline rt_size_t spi_xfer_4line_data8(struct rt_spi_bit_ops       *ops,
+rt_inline rt_ssize_t spi_xfer_4line_data8(struct rt_spi_bit_ops       *ops,
                                          struct rt_spi_configuration *config,
                                          const void                  *send_buf,
                                          void                        *recv_buf,
@@ -111,7 +111,7 @@ rt_inline rt_size_t spi_xfer_4line_data8(struct rt_spi_bit_ops       *ops,
     return length;
 }
 
-rt_inline rt_size_t spi_xfer_4line_data16(struct rt_spi_bit_ops       *ops,
+rt_inline rt_ssize_t spi_xfer_4line_data16(struct rt_spi_bit_ops       *ops,
                                           struct rt_spi_configuration *config,
                                           const void                  *send_buf,
                                           void                        *recv_buf,
@@ -174,7 +174,7 @@ rt_inline rt_size_t spi_xfer_4line_data16(struct rt_spi_bit_ops       *ops,
     return length;
 }
 
-rt_inline rt_size_t spi_xfer_3line_data8(struct rt_spi_bit_ops       *ops,
+rt_inline rt_ssize_t spi_xfer_3line_data8(struct rt_spi_bit_ops       *ops,
                                          struct rt_spi_configuration *config,
                                          const void                  *send_buf,
                                          void                        *recv_buf,
@@ -275,7 +275,7 @@ rt_inline rt_size_t spi_xfer_3line_data8(struct rt_spi_bit_ops       *ops,
     return length;
 }
 
-rt_inline rt_size_t spi_xfer_3line_data16(struct rt_spi_bit_ops       *ops,
+rt_inline rt_ssize_t spi_xfer_3line_data16(struct rt_spi_bit_ops       *ops,
                                           struct rt_spi_configuration *config,
                                           const void                  *send_buf,
                                           void                        *recv_buf,
