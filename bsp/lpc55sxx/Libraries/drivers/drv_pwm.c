@@ -68,7 +68,7 @@ static rt_err_t lpc_drv_pwm_get(struct rt_device_pwm *device, struct rt_pwm_conf
 
 #ifdef BSP_USING_CTIMER2
     /* get frequence */
-    pwmClock = CLOCK_GetFreq(kCLOCK_Timer2) ;
+    pwmClock = CLOCK_GetCTimerClkFreq(2U) ;
 #endif
 
     get_frequence = pwmClock / (base->MR[kCTIMER_Match_3] + 1);
@@ -110,17 +110,14 @@ static rt_err_t lpc_drv_pwm_set(struct rt_device_pwm *device, struct rt_pwm_conf
     {
         /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
         /* Calculate PWM period match value */
-        pwmPeriod = (( CLOCK_GetFreq(kCLOCK_Timer2) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
+        double tmp = configuration->period;
+        /* Target frequence. */
+        tmp = 1000000000/tmp;
+        pwmPeriod = (( CLOCK_GetCTimerClkFreq(2U) / (config.prescale + 1) ) / (uint32_t)tmp) - 1;
 
         /* Calculate pulse width match value */
-        if (DEFAULT_DUTY == 0)
-        {
-            pulsePeriod = pwmPeriod + 1;
-        }
-        else
-        {
-            pulsePeriod = (pwmPeriod * (100 - DEFAULT_DUTY)) / 100;
-        }
+        tmp = configuration->pulse;
+        pulsePeriod = (1.0 - tmp / configuration->period) * pwmPeriod;
         /* Match on channel 3 will define the PWM period */
         base->MR[kCTIMER_Match_3] = pwmPeriod;
         /* This will define the PWM pulse period */
@@ -175,7 +172,7 @@ int rt_hw_pwm_init(void)
 #ifdef BSP_USING_CTIMER2_MAT1
     /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
     /* Calculate PWM period match value */
-    pwmPeriod = (( CLOCK_GetFreq(kCLOCK_Timer2) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
+    pwmPeriod = (( CLOCK_GetCTimerClkFreq(2U) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
 
     /* Calculate pulse width match value */
     if (DEFAULT_DUTY == 0)
@@ -184,7 +181,7 @@ int rt_hw_pwm_init(void)
     }
     else
     {
-        pulsePeriod = (pwmPeriod * (100 - DEFAULT_DUTY)) / 100;
+        pulsePeriod = ((pwmPeriod + 1) * (100 - DEFAULT_DUTY)) / 100;
     }
     CTIMER_SetupPwmPeriod(CTIMER2, kCTIMER_Match_3 , kCTIMER_Match_1, pwmPeriod, pulsePeriod, false);
 #endif
