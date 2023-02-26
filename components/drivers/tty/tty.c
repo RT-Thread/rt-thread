@@ -200,7 +200,7 @@ int __tty_check_change(struct tty_struct *tty, int sig)
 
     if (!tty_pgrp)
     {
-        LOG_D(tty, "sig=%d, tty->pgrp == -1!\n", sig);
+        LOG_D("sig=%d, tty->pgrp == -1!\n", sig);
     }
     return ret;
 }
@@ -275,7 +275,7 @@ static int tiocsctty(struct tty_struct *tty, int arg)
     if (current->leader &&
         (current->session == tty->session))
     {
-        return 0;        
+        return 0;
     }
 
     /*
@@ -284,7 +284,7 @@ static int tiocsctty(struct tty_struct *tty, int arg)
      */
     if (!current->leader || current->tty)
     {
-        return -EPERM;        
+        return -EPERM;
     }
 
     if (tty->session > 0)

@@ -59,13 +59,13 @@ void rt_hw_backtrace(rt_uint32_t *ffp, rt_ubase_t sepc)
         }
 
         ra = fp - 1;
-        if (!_rt_kmem_v2p(ra) || *ra < vas || *ra > vae)
+        if (!rt_kmem_v2p(ra) || *ra < vas || *ra > vae)
             break;
 
         rt_kprintf(" %p", *ra - 0x04);
 
         fp = fp - 2;
-        if (!_rt_kmem_v2p(fp))
+        if (!rt_kmem_v2p(fp))
             break;
         fp = (rt_ubase_t *)(*fp);
         if (!fp)

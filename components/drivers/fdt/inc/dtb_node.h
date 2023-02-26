@@ -329,6 +329,7 @@ struct dtb_node *dtb_node_get_parent(const struct dtb_node *node);
 const char *dtb_node_get_name(const struct dtb_node *node);
 struct dtb_node *dtb_node_get_by_phandle(uint32_t phandle);
 int dtb_node_read_size(const struct dtb_node *node, const char *propname);
+int dtb_node_get_addr_and_size_by_index(const struct dtb_node *node, int index, size_t *addr, size_t *size);
 size_t dtb_node_get_addr_index(const struct dtb_node *node, int index);
 size_t dtb_node_get_addr(const struct dtb_node *node);
 int dtb_node_stringlist_search(const struct dtb_node *node, const char *property,

@@ -25,27 +25,27 @@ typedef union {
 
 rt_inline void rt_hw_isb(void)
 {
-    asm volatile ("isb":::"memory");
+    __asm__ volatile ("isb":::"memory");
 }
 
 rt_inline void rt_hw_dmb(void)
 {
-    asm volatile ("dmb ish":::"memory");
+    __asm__ volatile ("dmb ish":::"memory");
 }
 
 rt_inline void rt_hw_wmb(void)
 {
-    asm volatile ("dmb ishst":::"memory");
+    __asm__ volatile ("dmb ishst":::"memory");
 }
 
 rt_inline void rt_hw_rmb(void)
 {
-    asm volatile ("dmb ishld":::"memory");
+    __asm__ volatile ("dmb ishld":::"memory");
 }
 
 rt_inline void rt_hw_dsb(void)
 {
-    asm volatile ("dsb ish":::"memory");
+    __asm__ volatile ("dsb ish":::"memory");
 }
 
 #endif  /*CPUPORT_H__*/

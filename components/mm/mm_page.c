@@ -402,13 +402,18 @@ static rt_page_t (*pages_alloc_handler)(rt_uint32_t size_bits);
 
 void *rt_pages_alloc(rt_uint32_t size_bits)
 {
+    void *alloc_buf = RT_NULL;
     struct rt_page *p;
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
     p = pages_alloc_handler(size_bits);
     rt_hw_interrupt_enable(level);
-    return page_to_addr(p);
+    if (p)
+    {
+        alloc_buf = page_to_addr(p);
+    }
+    return alloc_buf;
 }
 
 int rt_pages_free(void *addr, rt_uint32_t size_bits)
@@ -452,7 +457,7 @@ void list_page(void)
         rt_kprintf("\n");
     }
     rt_hw_interrupt_enable(level);
-    rt_kprintf("free pages is 0x%08x\n", total);
+    rt_kprintf("free pages is 0x%08lx (%ld KB)\n", total, total * ARCH_PAGE_SIZE / 1024);
     rt_kprintf("-------------------------------\n");
 }
 MSH_CMD_EXPORT(list_page, show page info);

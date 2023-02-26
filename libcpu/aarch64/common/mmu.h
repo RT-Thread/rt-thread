@@ -97,19 +97,6 @@ static inline void *rt_hw_mmu_tbl_get()
     return (void *)(tbl & ((1ul << 48) - 2));
 }
 
-static inline void *_rt_kmem_v2p(void *vaddr)
-{
-    return rt_hw_mmu_v2p(&rt_kernel_space, vaddr);
-}
-
-static inline void *rt_kmem_v2p(void *vaddr)
-{
-    MM_PGTBL_LOCK(&rt_kernel_space);
-    void *paddr = _rt_kmem_v2p(vaddr);
-    MM_PGTBL_UNLOCK(&rt_kernel_space);
-    return paddr;
-}
-
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd);
 

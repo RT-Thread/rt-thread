@@ -114,13 +114,13 @@ static void _user_do_page_fault(struct rt_varea *varea,
 {
     struct rt_lwp_objs *lwp_objs;
     lwp_objs = rt_container_of(varea->mem_obj, struct rt_lwp_objs, mem_obj);
-    void *vaddr = ARCH_MAP_FAILED;
 
     if (lwp_objs->source)
     {
         void *paddr = rt_hw_mmu_v2p(lwp_objs->source, msg->vaddr);
         if (paddr != ARCH_MAP_FAILED)
         {
+            void *vaddr;
             vaddr = paddr - PV_OFFSET;
 
             if (!(varea->flag & MMF_TEXT))
@@ -176,22 +176,21 @@ static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace)
 static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size,
                            int text)
 {
-    void *va = RT_NULL;
+    void *va = map_va;
     int ret = 0;
     size_t flags = MMF_PREFETCH;
     if (text)
         flags |= MMF_TEXT;
 
     rt_mem_obj_t mem_obj = &lwp->lwp_obj->mem_obj;
-    va = map_va ? map_va : ARCH_MAP_FAILED;
 
     ret = rt_aspace_map(lwp->aspace, &va, map_size, MMU_MAP_U_RWCB, flags,
                         mem_obj, 0);
     if (ret != RT_EOK)
     {
         va = RT_NULL;
-        LOG_I("lwp_map_user: failed to map %lx with size %lx", map_va,
-              map_size);
+        LOG_I("lwp_map_user: failed to map %lx with size %lx with errno %d", map_va,
+              map_size, ret);
     }
 
     return va;
@@ -349,9 +348,6 @@ void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa,
     map_size += (offset + ARCH_PAGE_SIZE - 1);
     map_size &= ~ARCH_PAGE_MASK;
     map_pa = (void *)((size_t)map_pa & ~ARCH_PAGE_MASK);
-
-    if (map_va == RT_NULL)
-        map_va = ARCH_MAP_FAILED;
 
     struct rt_mm_va_hint hint = {.flags = MMF_MAP_FIXED,
                                  .limit_range_size = lwp->aspace->size,
@@ -564,9 +560,12 @@ int lwp_user_accessable(void *addr, size_t size)
             len = size;
         }
         tmp_addr = lwp_v2p(lwp, addr_start);
-        if (!tmp_addr)
+        if (tmp_addr == ARCH_MAP_FAILED)
         {
-            return 0;
+            if ((rt_ubase_t)addr_start >= USER_STACK_VSTART && (rt_ubase_t)addr_start < USER_STACK_VEND)
+                tmp_addr = *(void **)addr_start;
+            else
+                return 0;
         }
         addr_start = (void *)((char *)addr_start + len);
         size -= len;
@@ -600,7 +599,7 @@ size_t lwp_data_get(struct rt_lwp *lwp, void *dst, void *src, size_t size)
             len = size;
         }
         tmp_src = lwp_v2p(lwp, addr_start);
-        if (!tmp_src)
+        if (tmp_src == ARCH_MAP_FAILED)
         {
             break;
         }
@@ -640,7 +639,7 @@ size_t lwp_data_put(struct rt_lwp *lwp, void *dst, void *src, size_t size)
             len = size;
         }
         tmp_dst = lwp_v2p(lwp, addr_start);
-        if (!tmp_dst)
+        if (tmp_dst == ARCH_MAP_FAILED)
         {
             break;
         }

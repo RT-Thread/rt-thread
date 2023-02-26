@@ -467,6 +467,10 @@ void lwp_free(struct rt_lwp* lwp)
             }
         }
     }
+    else
+    {
+        level = rt_hw_interrupt_disable();
+    }
 
     /* for parent */
     {

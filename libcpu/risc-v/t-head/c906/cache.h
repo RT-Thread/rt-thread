@@ -63,6 +63,8 @@ ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_all_local(void)
     rt_hw_cpu_sync_i();
 }
 
+#define rt_hw_icache_invalidate_all rt_hw_cpu_icache_invalidate_all
+
 /**
  * ========================================
  * Multi-core cache maintainence operations

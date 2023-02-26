@@ -225,11 +225,17 @@ static int inet_getsockname(int socket, struct sockaddr *name, socklen_t *namele
 
 int inet_ioctlsocket(int socket, long cmd, void *arg)
 {
+    int flags;
+
     switch (cmd)
     {
     case F_GETFL:
     case F_SETFL:
-        return lwip_fcntl(socket, cmd, (int)(size_t)arg);
+        flags = (int)(size_t)arg;
+#ifdef O_LARGEFILE
+        flags &= ~O_LARGEFILE;
+#endif
+        return lwip_fcntl(socket, cmd, flags);
 
     default:
         return lwip_ioctl(socket, cmd, arg);

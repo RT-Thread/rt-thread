@@ -647,6 +647,169 @@ void eth_device_deinit(struct eth_device *dev)
     rt_free(netif);
 }
 
+#ifdef SAL_USING_AF_UNIX /* create loopback netdev */
+static err_t af_unix_eth_netif_device_init(struct netif *netif)
+{
+    struct eth_device *ethif;
+
+    ethif = (struct eth_device*)netif->state;
+    if (ethif != RT_NULL)
+    {
+        rt_device_t device;
+
+#ifdef RT_USING_NETDEV
+        /* network interface device register */
+        netdev_add(netif);
+#endif /* RT_USING_NETDEV */
+
+        /* get device object */
+        device = (rt_device_t) ethif;
+        if (rt_device_init(device) != RT_EOK)
+        {
+            return ERR_IF;
+        }
+        if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+        {
+            return ERR_IF;
+        }
+
+        /* copy device flags to netif flags */
+        netif->flags = (ethif->flags & 0xff);
+        netif->mtu = ETHERNET_MTU;
+
+        /* set output */
+        netif->output       = etharp_output;
+
+#if LWIP_IPV6
+        netif->output_ip6 = ethip6_output;
+        netif->ip6_autoconfig_enabled = 1;
+        netif_create_ip6_linklocal_address(netif, 1);
+
+#if LWIP_IPV6_MLD
+        netif->flags |= NETIF_FLAG_MLD6;
+
+        /*
+        * For hardware/netifs that implement MAC filtering.
+        * All-nodes link-local is handled by default, so we must let the hardware know
+        * to allow multicast packets in.
+        * Should set mld_mac_filter previously. */
+        if (netif->mld_mac_filter != NULL)
+        {
+            ip6_addr_t ip6_allnodes_ll;
+            ip6_addr_set_allnodes_linklocal(&ip6_allnodes_ll);
+            netif->mld_mac_filter(netif, &ip6_allnodes_ll, NETIF_ADD_MAC_FILTER);
+        }
+#endif /* LWIP_IPV6_MLD */
+
+#endif /* LWIP_IPV6 */
+
+        /* set default netif */
+        if (netif_default == RT_NULL)
+            netif_set_default(ethif->netif);
+
+        /* set interface up */
+        netif_set_up(ethif->netif);
+
+
+        if (ethif->flags & ETHIF_LINK_PHYUP)
+        {
+            /* set link_up for this netif */
+            netif_set_link_up(ethif->netif);
+        }
+
+#ifdef RT_USING_NETDEV
+        /* network interface device flags synchronize */
+        netdev_flags_sync(netif);
+#endif /* RT_USING_NETDEV */
+
+        return ERR_OK;
+    }
+
+    return ERR_IF;
+}
+
+/* Keep old drivers compatible in RT-Thread */
+rt_err_t af_unix_eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_uint16_t flags)
+{
+    struct netif* netif;
+#if LWIP_NETIF_HOSTNAME
+#define LWIP_HOSTNAME_LEN 16
+    char *hostname = RT_NULL;
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif) + LWIP_HOSTNAME_LEN);
+#else
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif));
+#endif
+    if (netif == RT_NULL)
+    {
+        rt_kprintf("malloc netif failed\n");
+        return -RT_ERROR;
+    }
+
+    /* set netif */
+    dev->netif = netif;
+    dev->flags = flags;
+    /* link changed status of device */
+    dev->link_changed = 0x00;
+    /* avoid send the same mail to mailbox */
+    dev->rx_notice = 0x00;
+    dev->parent.type = RT_Device_Class_NetIf;
+    /* register to RT-Thread device manager */
+    rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
+
+    /* set name */
+    netif->name[0] = name[0];
+    netif->name[1] = name[1];
+
+    /* set hw address to 6 */
+    netif->hwaddr_len   = 6;
+    /* maximum transfer unit */
+    netif->mtu          = ETHERNET_MTU;
+
+    /* set linkoutput */
+    netif->linkoutput   = ethernetif_linkoutput;
+
+    /* get hardware MAC address */
+    rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
+
+#if LWIP_NETIF_HOSTNAME
+    /* Initialize interface hostname */
+    hostname = (char *)netif + sizeof(struct netif);
+    rt_sprintf(hostname, "rtthread_%02x%02x", name[0], name[1]);
+    netif->hostname = hostname;
+#endif /* LWIP_NETIF_HOSTNAME */
+
+    /* if tcp thread has been started up, we add this netif to the system */
+    if (rt_thread_find("tcpip") != RT_NULL)
+    {
+#if LWIP_VERSION_MAJOR == 1U /* v1.x */
+        struct ip_addr ipaddr, netmask, gw;
+#else /* >= v2.x */
+        ip4_addr_t ipaddr, netmask, gw;
+#endif /* LWIP_VERSION_MAJOR == 1U */
+
+        ipaddr.addr = inet_addr("127.0.0.1");
+        gw.addr = inet_addr("255.0.0.0");
+        netmask.addr = inet_addr("127.0.0.1");
+
+        netifapi_netif_add(netif, &ipaddr, &netmask, &gw, dev, af_unix_eth_netif_device_init, tcpip_input);
+    }
+
+    return RT_EOK;
+}
+
+rt_err_t af_unix_eth_device_init(struct eth_device * dev, const char *name)
+{
+    rt_uint16_t flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
+
+#if LWIP_IGMP
+    /* IGMP support */
+    flags |= NETIF_FLAG_IGMP;
+#endif
+
+    return af_unix_eth_device_init_with_flag(dev, name, flags);
+}
+#endif /* SAL_USING_AF_UNIX */
+
 #ifndef LWIP_NO_RX_THREAD
 rt_err_t eth_device_ready(struct eth_device* dev)
 {

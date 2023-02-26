@@ -337,7 +337,7 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     if (aspace != &rt_kernel_space)
     {
         void *pgtbl = aspace->page_table;
-        pgtbl = _rt_kmem_v2p(pgtbl);
+        pgtbl = rt_kmem_v2p(pgtbl);
 
         rt_hw_mmu_switch(pgtbl);
 

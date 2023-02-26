@@ -18,8 +18,9 @@
 #include "encoding.h"
 #include "ext_context.h"
 
-#define BYTES(idx) ((idx) * REGBYTES)
-#define FRAME_OFF_SSTATUS BYTES(2)
+#define BYTES(idx)          ((idx) * REGBYTES)
+#define FRAME_OFF_SSTATUS   BYTES(2)
+#define FRAME_OFF_SP        BYTES(32)
 
 #ifdef __ASSEMBLY__
 
@@ -140,7 +141,7 @@
 
 /**
  * @brief Restore All General Registers, for interrupt handling
- * 
+ *
  */
 .macro RESTORE_ALL
 

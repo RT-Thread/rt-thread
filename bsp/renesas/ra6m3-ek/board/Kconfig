@@ -50,6 +50,20 @@ menu "Hardware Drivers Config"
                     endif
             endif
 
+        menuconfig BSP_USING_SPI
+            bool "Enable SPI BUS"
+            default n
+            select RT_USING_SPI
+            if BSP_USING_SPI 
+                config BSP_USING_SPI0
+                    bool "Enable SPI0 BUS"
+                    default n
+        
+                config BSP_USING_SPI1
+                    bool "Enable SPI1 BUS"
+                    default n
+            endif
+
         menuconfig BSP_USING_FS
             bool "Enable File System"
             select RT_USING_DFS
@@ -80,11 +94,27 @@ menu "Hardware Drivers Config"
         select BSP_USING_GPIO
         default n
 
-    config BSP_USING_LVGL
+    config BSP_USING_SPI_LCD
+        bool "Enable SPI LCD"
+        select BSP_USING_GPIO
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+        default n
+
+    menuconfig BSP_USING_LVGL
         bool "Enable LVGL for LCD"
-        select BSP_USING_LCD
         select PKG_USING_LVGL
         default n
+        if BSP_USING_LVGL      
+            config BSP_USING_LCD_ILI9431
+                bool "Enable LVGL for LCD_ILI9431"
+                select BSP_USING_SPI_LCD
+                default n
+            config BSP_USING_LCD_RGB
+                bool "Enable LVGL for LCD_RGB565"
+                select BSP_USING_LCD
+                default n
+        endif
 
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO

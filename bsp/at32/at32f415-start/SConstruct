@@ -52,6 +52,9 @@ rtconfig.BSP_LIBRARY_TYPE = at32_library
 # include libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, at32_library, 'SConscript')))
 
+# include usb libraries
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'usbfs_library', 'SConscript')))
+
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'rt_drivers', 'SConscript')))
 
