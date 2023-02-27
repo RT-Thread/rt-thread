@@ -51,7 +51,7 @@ rt_inline void pl061_write8(rt_ubase_t offset, rt_uint8_t value)
     HWREG8(pl061_gpio_base + offset) = value;
 }
 
-static void pl061_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static void pl061_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     int value;
     rt_uint8_t gpiodir;
@@ -101,17 +101,17 @@ static void pl061_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mo
 #endif
 }
 
-static void pl061_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void pl061_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     pl061_write8(BIT(pin + 2), !!value << pin);
 }
 
-static int pl061_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t pl061_pin_read(struct rt_device *device, rt_base_t pin)
 {
     return !!pl061_read8((BIT(pin + 2)));
 }
 
-static rt_err_t pl061_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t pl061_pin_attach_irq(struct rt_device *device, rt_base_t pin, rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_uint8_t gpiois, gpioibe, gpioiev;
     rt_uint8_t bit = BIT(mode);
@@ -199,7 +199,7 @@ static rt_err_t pl061_pin_attach_irq(struct rt_device *device, rt_int32_t pin, r
     return RT_EOK;
 }
 
-static rt_err_t pl061_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t pl061_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     if (pin < 0 || pin >= PL061_GPIO_NR)
     {
@@ -212,7 +212,7 @@ static rt_err_t pl061_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t pl061_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t pl061_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     rt_uint8_t mask = BIT(pin);
     rt_uint8_t gpioie;
