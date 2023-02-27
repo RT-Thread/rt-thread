@@ -35,11 +35,6 @@ struct lpc_spi
     SYSCON_RSTn_t spi_rst;
 };
 
-struct lpc_sw_spi_cs
-{
-    rt_uint32_t pin;
-};
-
 
 static uint32_t lpc_get_spi_freq(SPI_Type *base)
 {
@@ -48,56 +43,56 @@ static uint32_t lpc_get_spi_freq(SPI_Type *base)
 #if defined(BSP_USING_SPIBUS0)
     if(base == SPI0)
     {
-        freq = CLOCK_GetFreq(kCLOCK_Flexcomm0);
+        freq = CLOCK_GetFlexCommClkFreq(0);
     }
 #endif
 
 #if defined(BSP_USING_SPIBUS1)
     if(base == SPI1)
     {
-        freq = CLOCK_GetFreq(kCLOCK_Flexcomm1);
+        freq = CLOCK_GetFlexCommClkFreq(1);
     }
 #endif
 
 #if defined(BSP_USING_SPIBUS2)
     if(base == SPI2)
     {
-        freq = CLOCK_GetFreq(kCLOCK_Flexcomm2);
+        freq = CLOCK_GetFlexCommClkFreq(2);
     }
 #endif
 
 #if defined(BSP_USING_SPIBUS3)
     if(base == SPI3)
     {
-        freq = CLOCK_GetFreq(kCLOCK_Flexcomm3);
+        freq = CLOCK_GetFlexCommClkFreq(3);
     }
 #endif
 
 #if defined(BSP_USING_SPIBUS4)
     if(base == SPI4)
     {
-        freq = CLOCK_GetFreq(kCLOCK_Flexcomm4);
+        freq = CLOCK_GetFlexCommClkFreq(4);
     }
 #endif
 
 #if defined(BSP_USING_SPIBUS5)
     if(base == SPI5)
     {
-        freq = CLOCK_GetFreq(kCLOCK_Flexcomm5);
+        freq = CLOCK_GetFlexCommClkFreq(5);
     }
 #endif
 
 #if defined(BSP_USING_SPIBUS6)
     if(base == SPI6)
     {
-        freq = CLOCK_GetFreq(kCLOCK_Flexcomm6);
+        freq = CLOCK_GetFlexCommClkFreq(6);
     }
 #endif
 
 #if defined(BSP_USING_SPIBUS7)
     if(base == SPI7)
     {
-        freq = CLOCK_GetFreq(kCLOCK_Flexcomm7);
+        freq = CLOCK_GetFlexCommClkFreq(7);
     }
 #endif
 
@@ -105,7 +100,7 @@ static uint32_t lpc_get_spi_freq(SPI_Type *base)
 #if defined(BSP_USING_SPIBUS8)
     if(base == SPI8)
     {
-        freq = CLOCK_GetFreq(kCLOCK_HsLspi);
+        freq = CLOCK_GetHsLspiClkFreq();
     }
 #endif
 
@@ -191,14 +186,10 @@ rt_err_t lpc_spi_bus_attach_device(const char *bus_name, const char *device_name
     struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
 
-    struct lpc_sw_spi_cs *cs_pin = (struct lpc_sw_spi_cs *)rt_malloc(sizeof(struct lpc_sw_spi_cs));
-    RT_ASSERT(cs_pin != RT_NULL);
-
-    cs_pin->pin = pin;
     rt_pin_mode(pin, PIN_MODE_OUTPUT);
     rt_pin_write(pin, PIN_HIGH);
 
-    ret = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
+    ret = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, pin, NULL);
 
     return ret;
 }
@@ -228,11 +219,11 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
 
     struct lpc_spi *spi = (struct lpc_spi *)(device->bus->parent.user_data);
-    struct lpc_sw_spi_cs *cs = device->parent.user_data;
+    int cs_pin = device->cs_pin;
 
     if(message->cs_take)
     {
-        rt_pin_write(cs->pin, PIN_LOW);
+        rt_pin_write(cs_pin, PIN_LOW);
     }
 
     length = message->length;
@@ -261,7 +252,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     if(message->cs_release)
     {
-        rt_pin_write(cs->pin, PIN_HIGH);
+        rt_pin_write(cs_pin, PIN_HIGH);
     }
 
     return (message->length - length);

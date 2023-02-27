@@ -124,11 +124,11 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_SPI
-                config BSP_USING_SPI3
+                config BSP_USING_SPIBUS3
                     bool "Enable Flexcomm3 as SPI"
                     default n
 
-                config BSP_USING_SPI8
+                config BSP_USING_SPIBUS8
                     bool "Enable Flexcomm8 as High Speed SPI"
                     default y
             endif
