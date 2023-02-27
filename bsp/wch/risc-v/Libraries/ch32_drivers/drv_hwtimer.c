@@ -210,12 +210,12 @@ static rt_err_t ch32_hwtimer_start(struct rt_hwtimer_device *timer, rt_uint32_t 
     if (mode == HWTIMER_MODE_ONESHOT)
     {
         /* set timer to single mode */
-        tim->instance->CTLR1 &= (uint16_t) ~((uint16_t)TIM_OPM);
+        tim->instance->CTLR1 &= (rt_uint16_t) ~((rt_uint16_t)TIM_OPM);
         tim->instance->CTLR1 |= TIM_OPMode_Single;
     }
     else
     {
-        tim->instance->CTLR1 &= (uint16_t) ~((uint16_t)TIM_OPM);
+        tim->instance->CTLR1 &= (rt_uint16_t) ~((rt_uint16_t)TIM_OPM);
         tim->instance->CTLR1 |= TIM_OPMode_Repetitive;
     }
 
@@ -302,12 +302,12 @@ static rt_err_t ch32_hwtimer_control(struct rt_hwtimer_device *timer, rt_uint32_
         if (*(rt_hwtimer_mode_t *)args == HWTIMER_MODE_ONESHOT)
         {
             /* set timer to single mode */
-            tim->instance->CTLR1 &= (uint16_t) ~((uint16_t)TIM_OPM);
+            tim->instance->CTLR1 &= (rt_uint16_t) ~((rt_uint16_t)TIM_OPM);
             tim->instance->CTLR1 |= TIM_OPMode_Single;
         }
         else
         {
-            tim->instance->CTLR1 &= (uint16_t) ~((uint16_t)TIM_OPM);
+            tim->instance->CTLR1 &= (rt_uint16_t) ~((rt_uint16_t)TIM_OPM);
             tim->instance->CTLR1 |= TIM_OPMode_Repetitive;
         }
         break;
