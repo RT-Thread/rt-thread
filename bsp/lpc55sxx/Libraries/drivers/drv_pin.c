@@ -132,7 +132,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
 };
 
-static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void lpc_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
     int dir;
     uint32_t pin_cfg;
@@ -191,7 +191,7 @@ static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 }
 
 
-static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void lpc_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
 {
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
@@ -201,7 +201,7 @@ static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     GPIO_PinWrite(lpc_pin_map[pin].gpio, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin, value);
 }
 
-static int lpc_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t lpc_pin_read(struct rt_device *dev, rt_base_t pin)
 {
     int value;
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
@@ -259,8 +259,8 @@ void PIN_INT0_IRQHandler(void)
 }
 
 static rt_err_t lpc_pin_attach_irq(struct rt_device *device,
-                                   rt_int32_t pin,
-                                   rt_uint32_t mode,
+                                   rt_base_t pin,
+                                   rt_uint8_t mode,
                                    void (*hdr)(void *args),
                                    void *args)
 {
@@ -336,7 +336,7 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device,
     return RT_EOK;
 }
 
-static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     int i;
 
