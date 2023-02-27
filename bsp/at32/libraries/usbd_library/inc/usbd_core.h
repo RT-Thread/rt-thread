@@ -40,6 +40,8 @@ extern "C" {
   * @{
   */
 
+#ifdef BSP_USING_USBD
+
 /**
   * @brief usb device event
   */
@@ -164,6 +166,7 @@ void usbd_core_init(usbd_core_type *udev,
                     usb_reg_type *usb_reg,
                     uint8_t core_id);
 
+#endif
 
 /**
   * @}

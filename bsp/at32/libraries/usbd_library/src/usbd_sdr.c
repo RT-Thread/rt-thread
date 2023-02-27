@@ -33,6 +33,8 @@
   * @{
   */
 
+#ifdef BSP_USING_USBD
+
 static usb_sts_type usbd_get_descriptor(usbd_core_type *udev);
 static usb_sts_type usbd_set_address(usbd_core_type *udev);
 static usb_sts_type usbd_get_status(usbd_core_type *udev);
@@ -66,10 +68,10 @@ static usb_sts_type usbd_get_descriptor(usbd_core_type *udev)
   usb_sts_type ret = USB_OK;
   uint16_t len = 0;
   uint8_t desc_type = udev->setup.wValue >> 8;
-  usbd_desc_t *desc = NULL, usbd_desc =
+  usbd_desc_t *desc = RT_NULL, usbd_desc =
   {
     .length = 0xA,
-    .descriptor = NULL,
+    .descriptor = RT_NULL,
   };
 
   switch(desc_type)
@@ -108,7 +110,7 @@ static usb_sts_type usbd_get_descriptor(usbd_core_type *udev)
       return ret;
   }
 
-  if(desc != NULL)
+  if(desc != RT_NULL)
   {
     if((desc->length != 0) && (udev->setup.wLength != 0))
     {
@@ -522,6 +524,8 @@ usb_sts_type usbd_endpoint_request(usbd_core_type *udev)
   }
   return ret;
 }
+
+#endif
 
 /**
   * @}

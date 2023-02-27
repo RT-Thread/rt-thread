@@ -35,6 +35,8 @@
   * @{
   */
 
+#ifdef BSP_USING_USBD
+
 /**
   * @brief  usb core in transfer complete handler
   * @param  udev: to the structure of usbd_core_type
@@ -678,6 +680,8 @@ void usbd_core_init(usbd_core_type *udev,
   /*usb register config */
   usb_dev_init(udev->usb_reg);
 }
+
+#endif
 
 /**
   * @}

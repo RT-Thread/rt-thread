@@ -41,6 +41,8 @@ extern "C" {
   * @{
   */
 
+#ifdef USE_OTG_HOST_MODE
+
 usb_sts_type usbh_ctrl_send_setup(usbh_core_type *uhost, uint8_t *buffer, uint8_t hc_num);
 usb_sts_type usbh_ctrl_recv_data(usbh_core_type *uhost, uint8_t *buffer,
                             uint16_t length, uint16_t hc_num);
@@ -82,6 +84,8 @@ usb_sts_type usbh_set_interface(usbh_core_type *uhost, uint8_t ept_num, uint8_t 
 usb_sts_type usbh_set_feature(usbh_core_type *uhost, uint8_t feature, uint16_t index);
 usb_sts_type usbh_clear_dev_feature(usbh_core_type *uhost, uint8_t feature, uint16_t index);
 usb_sts_type usbh_clear_ept_feature(usbh_core_type *uhost, uint8_t ept_num, uint8_t hc_num);
+
+#endif
 
 /**
   * @}

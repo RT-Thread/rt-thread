@@ -26,6 +26,8 @@
 #include "usb_core.h"
 #include "usbh_ctrl.h"
 
+#ifdef USE_OTG_HOST_MODE
+
 /** @defgroup USBH_drivers_core
   * @brief usb host drivers core
   * @{
@@ -1105,7 +1107,7 @@ static void usbh_disconnect(usbh_core_type *uhost)
   }
 
   /* call class reset handler */
-  if(uhost->class_handler->reset_handler != NULL)
+  if(uhost->class_handler->reset_handler != RT_NULL)
   {
     uhost->class_handler->reset_handler(uhost);
   }
@@ -1220,3 +1222,4 @@ usb_sts_type usbh_loop_handler(usbh_core_type *uhost)
   * @}
   */
 
+#endif
