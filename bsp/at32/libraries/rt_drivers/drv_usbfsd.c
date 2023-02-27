@@ -10,14 +10,14 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "usbd_int.h"
 #include "drv_common.h"
+
+#if defined(BSP_USING_DEVICE_USBFS1) || defined(BSP_USING_DEVICE_USBFS2)
+#include "usbd_int.h"
 #include "drv_usbfs.h"
 #include "drv_config.h"
 
-#if defined(BSP_USING_DEVICE_USBFS1) || defined(BSP_USING_DEVICE_USBFS2)
-
-static struct at32_usbfs *p_usbfs_instance = NULL;
+static struct at32_usbfs *p_usbfs_instance = RT_NULL;
 static struct ep_id endpoint_pool[] =
 {
     {0x0,  USB_EP_ATTR_CONTROL,   USB_DIR_INOUT, 64, ID_ASSIGNED  },
@@ -196,7 +196,7 @@ static rt_size_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 
 static rt_err_t _ep0_send_status(void)
 {
-    usbd_ept_send(&p_usbfs_instance->p_otg_core->dev, 0x00, NULL, 0);
+    usbd_ept_send(&p_usbfs_instance->p_otg_core->dev, 0x00, RT_NULL, 0);
     return RT_EOK;
 }
 

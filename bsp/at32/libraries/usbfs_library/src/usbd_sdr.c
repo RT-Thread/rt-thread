@@ -23,20 +23,16 @@
   */
 #include "usbd_sdr.h"
 
-/** @addtogroup AT32F435_437_middlewares_usbd_drivers
-  * @{
-  */
-
 /** @defgroup USBD_drivers_standard_request
   * @brief usb device standard_request
   * @{
   */
 
-#ifdef USE_OTG_DEVICE_MODE
-
 /** @defgroup USBD_sdr_private_functions
   * @{
   */
+
+#ifdef USE_OTG_DEVICE_MODE
 
 static usb_sts_type usbd_get_descriptor(usbd_core_type *udev);
 static usb_sts_type usbd_set_address(usbd_core_type *udev);
@@ -70,7 +66,7 @@ static usb_sts_type usbd_get_descriptor(usbd_core_type *udev)
 {
   usb_sts_type ret = USB_OK;
   uint16_t len = 0;
-  usbd_desc_t *desc = NULL;
+  usbd_desc_t *desc = RT_NULL;
   uint8_t desc_type = udev->setup.wValue >> 8;
   switch(desc_type)
   {
@@ -120,7 +116,7 @@ static usb_sts_type usbd_get_descriptor(usbd_core_type *udev)
       return ret;
   }
 
-  if(desc != NULL)
+  if(desc != RT_NULL)
   {
     if((desc->length != 0) && (udev->setup.wLength != 0))
     {
@@ -520,16 +516,14 @@ usb_sts_type usbd_endpoint_request(usbd_core_type *udev)
   }
   return ret;
 }
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 #endif
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+

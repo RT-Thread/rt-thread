@@ -40,6 +40,9 @@ extern "C" {
 /** @defgroup USBD_int_exported_functions
   * @{
   */
+
+#ifdef BSP_USING_USBD
+
 void usbd_irq_handler(usbd_core_type *udev);
 void usbd_ept_loop_handler(usbd_core_type *udev);
 void usbd_eptn_handler(usbd_core_type *udev, usb_ept_number_type ept_num);
@@ -56,6 +59,8 @@ void usbd_sof_callback(usbd_core_type *udev);
 void usbd_data_out_stage_callback(usbd_core_type *udev, uint32_t ept_num);
 void usbd_connectCallback(usbd_core_type *udev);
 void usbd_disconnectCallback(usbd_core_type *udev);
+
+#endif
 
 /**
   * @}
