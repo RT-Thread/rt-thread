@@ -4,3 +4,5 @@
 
 dir_path:
 - core-v-mcu.c
+- crt0.S
+- vectors.S
