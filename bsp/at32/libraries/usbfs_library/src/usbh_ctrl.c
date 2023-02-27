@@ -25,6 +25,8 @@
 #include "usbh_core.h"
 #include "usb_std.h"
 
+#ifdef USE_OTG_HOST_MODE
+
 /** @defgroup USBH_drivers_control
   * @brief usb host drivers control
   * @{
@@ -956,3 +958,4 @@ usb_sts_type usbh_clear_ept_feature(usbh_core_type *uhost, uint8_t ept_num, uint
   * @}
   */
 
+#endif

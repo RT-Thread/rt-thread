@@ -33,8 +33,6 @@ extern "C" {
 /* includes ------------------------------------------------------------------*/
 #include "usb_core.h"
 
-#ifdef USE_OTG_DEVICE_MODE
-
 /** @addtogroup USBD_drivers_standard_request
   * @{
   */
@@ -43,10 +41,14 @@ extern "C" {
   * @{
   */
 
+#ifdef USE_OTG_DEVICE_MODE
+
 void usbd_setup_request_parse(usb_setup_type *setup, uint8_t *buf);
 usb_sts_type usbd_device_request(usbd_core_type *udev);
 usb_sts_type usbd_interface_request(usbd_core_type *udev);
 usb_sts_type usbd_endpoint_request(usbd_core_type *udev);
+
+#endif
 
 /**
   * @}
@@ -58,8 +60,6 @@ usb_sts_type usbd_endpoint_request(usbd_core_type *udev);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif

@@ -859,12 +859,12 @@ usb_sts_type usbd_core_init(usbd_core_type *udev,
 
 }
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
 #endif
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */

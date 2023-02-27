@@ -174,7 +174,6 @@ int rt_hw_i2c_init(void)
         lpc_obj[i].parent.ops = &i2c_ops;
         lpc_obj[i].sem = rt_sem_create("sem_i2c", 0, RT_IPC_FLAG_FIFO);
 
-        DMA_Init(lpc_obj[i].DMA);
         DMA_CreateHandle(&lpc_obj[i].dmaHandle, lpc_obj[i].DMA, lpc_obj[i].dma_chl);
         I2C_MasterTransferCreateHandleDMA(lpc_obj[i].I2C, &lpc_obj[i].i2c_mst_dma_handle, i2c_mst_dma_callback, &lpc_obj[i], &lpc_obj[i].dmaHandle);
 

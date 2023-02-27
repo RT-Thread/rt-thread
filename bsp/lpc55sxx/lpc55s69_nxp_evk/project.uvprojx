@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\libc\posix\ipc;board;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board\MCUX_Config\board;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\..\..\components\drivers\include;..\Libraries\drivers;..\..\..\components\dfs\include;..\..\..\components\libc\posix\io\poll;..\Libraries\drivers\config;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\finsh;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\libc\posix\io\stdio;..\..\..\components\utilities\libadt;applications;..\Libraries\CMSIS\Core\Include;..\Libraries\LPC55S6X\components\codec;.;..\..\..\components\libc\compilers\common\extension;..\Libraries\LPC55S6X\LPC55S6X;..\Libraries\LPC55S6X\LPC55S6X\drivers;..\..\..\components\drivers\include;..\..\..\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\ipc;board;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board\MCUX_Config\board;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\..\..\components\drivers\include;..\Libraries\drivers;..\..\..\components\dfs\include;..\..\..\components\libc\posix\io\poll;.;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\libc\compilers\common\extension;..\..\..\components\finsh;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\libc\posix\io\stdio;applications;..\Libraries\CMSIS\Core\Include;..\Libraries\LPC55S6X\components\codec;..\Libraries\drivers\config;..\..\..\components\drivers\spi;..\Libraries\LPC55S6X\LPC55S6X;..\Libraries\LPC55S6X\LPC55S6X\drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,16 +381,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>ADT</GroupName>
-          <Files>
-            <File>
-              <FileName>avl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\utilities\libadt\avl.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -574,6 +564,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
             </File>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -628,6 +628,11 @@
               <FileName>drv_sdif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_sdif.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\drivers\drv_spi.c</FilePath>
             </File>
             <File>
               <FileName>drv_uart.c</FileName>

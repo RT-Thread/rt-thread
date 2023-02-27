@@ -23,6 +23,8 @@
   */
 #include "usbh_int.h"
 
+#ifdef USE_OTG_HOST_MODE
+
 /** @defgroup USBH_drivers_interrupt
   * @brief usb host interrupt
   * @{
@@ -518,15 +520,15 @@ void usbh_port_handler(usbh_core_type *uhost)
   usb_host->hprt = prt_0;
 }
 
-__weak void usbh_connect_callback(usbh_core_type *uhost)
+rt_weak void usbh_connect_callback(usbh_core_type *uhost)
 {
 }
 
-__weak void usbh_disconnect_callback(usbh_core_type *uhost)
+rt_weak void usbh_disconnect_callback(usbh_core_type *uhost)
 {
 }
 
-__weak void usbd_notify_urbchange_callback(usbh_core_type *uhost, uint8_t chnum, urb_sts_type sts)
+rt_weak void usbd_notify_urbchange_callback(usbh_core_type *uhost, uint8_t chnum, urb_sts_type sts)
 {
 }
 
@@ -538,3 +540,4 @@ __weak void usbd_notify_urbchange_callback(usbh_core_type *uhost, uint8_t chnum,
   * @}
   */
 
+#endif

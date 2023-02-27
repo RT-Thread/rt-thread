@@ -55,3 +55,14 @@ void backtrace(unsigned long pc, unsigned long lr, unsigned long fp)
     walk_unwind(lr, fp);
     rt_kprintf("\n");
 }
+
+int rt_backtrace(void)
+{
+    unsigned long pc = (unsigned long)backtrace;
+    unsigned long ra = (unsigned long)__builtin_return_address(0U);
+    unsigned long fr = (unsigned long)__builtin_frame_address(0U);
+
+    backtrace(pc, ra, fr);
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(rt_backtrace, bt_test, backtrace test);
