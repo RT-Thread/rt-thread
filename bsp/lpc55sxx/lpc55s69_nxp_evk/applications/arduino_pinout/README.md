@@ -45,7 +45,7 @@ Hardware Drivers Config --->
 | 18 (A2) | -- | 是/否 |  |
 | 19 (A3) | P(1,31) | 是/否 |  |
 | 20 (A4) | P(0,13) | 是/否 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
-| 21 (A5) | P(1,14) | 是/否 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
+| 21 (A5) | P(0,14) | 是/否 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
 | 22 (A6) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 | 23 (A7) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 
