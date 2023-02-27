@@ -32,14 +32,14 @@ struct lpc_spi
     SPI_Type                    *SPIx;
     clock_attach_id_t           clock_attach_id;
     clock_ip_name_t             clock_name;
-    
+
     DMA_Type                    *DMAx;
     uint8_t                     tx_dma_chl;
     uint8_t                     rx_dma_chl;
     dma_handle_t                dma_tx_handle;
     dma_handle_t                dma_rx_handle;
     spi_dma_handle_t            spi_dma_handle;
-    
+
     rt_sem_t                    sem;
     char                        *device_name;
 };
@@ -53,11 +53,11 @@ static struct lpc_spi lpc_obj[] =
             .clock_attach_id = kMAIN_CLK_to_FLEXCOMM3,
             .clock_name = kCLOCK_FlexComm3,
             .device_name = "spi3",
-            
+
             .DMAx = DMA0,
             .tx_dma_chl = 9,
             .rx_dma_chl = 8,
-            
+
         },
 #endif
        #ifdef BSP_USING_SPI8
@@ -66,13 +66,13 @@ static struct lpc_spi lpc_obj[] =
             .clock_attach_id = kMAIN_CLK_to_HSLSPI,
             .clock_name = kCLOCK_Hs_Lspi,
             .device_name = "spi8",
-            
+
             .DMAx = DMA0,
             .tx_dma_chl = 3,
             .rx_dma_chl = 2,
-            
+
         },
-#endif 
+#endif
 };
 
 
@@ -91,7 +91,7 @@ static uint32_t lpc_get_spi_freq(SPI_Type *base)
     {
         freq = CLOCK_GetFlexCommClkFreq(kCLOCK_FlexComm3);
     }
-    
+
     if(base == SPI8)
     {
         freq = CLOCK_GetFlexCommClkFreq(kCLOCK_Hs_Lspi);
@@ -205,7 +205,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     {
         rt_pin_write(cs->pin, PIN_LOW);
     }
-    
+
     transfer.dataSize = message->length;
     transfer.rxData   = (uint8_t *)(message->recv_buf);
     transfer.txData   = (uint8_t *)(message->send_buf);
@@ -221,13 +221,13 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         uint32_t block, remain;
         block = message->length / DMA_MAX_TRANSFER_COUNT;
         remain = message->length % DMA_MAX_TRANSFER_COUNT;
-        
+
         for(i=0; i<block; i++)
         {
             transfer.dataSize = DMA_MAX_TRANSFER_COUNT;
             if(message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i*DMA_MAX_TRANSFER_COUNT);
             if(message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i*DMA_MAX_TRANSFER_COUNT);
-            
+
             SPI_MasterTransferDMA(spi->SPIx, &spi->spi_dma_handle, &transfer);
             rt_sem_take(spi->sem, RT_WAITING_FOREVER);
         }
@@ -237,12 +237,12 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             transfer.dataSize = remain;
             if(message->recv_buf) transfer.rxData   = (uint8_t *)(message->recv_buf + i*DMA_MAX_TRANSFER_COUNT);
             if(message->send_buf) transfer.txData   = (uint8_t *)(message->send_buf + i*DMA_MAX_TRANSFER_COUNT);
-            
+
             SPI_MasterTransferDMA(spi->SPIx, &spi->spi_dma_handle, &transfer);
             rt_sem_take(spi->sem, RT_WAITING_FOREVER);
         }
     }
-    
+
 
 
     if(message->cs_release)
@@ -272,7 +272,7 @@ int rt_hw_spi_init(void)
         CLOCK_AttachClk(lpc_obj[i].clock_attach_id);
         lpc_obj[i].parent.parent.user_data = &lpc_obj[i];
         lpc_obj[i].sem = rt_sem_create("sem_spi", 0, RT_IPC_FLAG_FIFO);
-        
+
         DMA_EnableChannel(lpc_obj[i].DMAx, lpc_obj[i].tx_dma_chl);
         DMA_EnableChannel(lpc_obj[i].DMAx, lpc_obj[i].rx_dma_chl);
         DMA_SetChannelPriority(lpc_obj[i].DMAx, lpc_obj[i].tx_dma_chl, kDMA_ChannelPriority3);
