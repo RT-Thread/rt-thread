@@ -106,7 +106,7 @@ static rt_uint32_t ch32_dac_get_channel(rt_uint32_t channel)
 
 static rt_err_t ch32_set_dac_value(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
-    uint32_t dac_channel;
+    rt_uint32_t dac_channel;
     DAC_HandleTypeDef *ch32_dac_handler;
 
     RT_ASSERT(device != RT_NULL);
