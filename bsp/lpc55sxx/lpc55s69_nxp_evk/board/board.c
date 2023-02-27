@@ -52,6 +52,9 @@ void rt_hw_board_init()
     GPIO_PortInit(GPIO, 0);
     GPIO_PortInit(GPIO, 1);
 
+    DMA_Init(DMA0);
+    DMA_Init(DMA1);
+    
     /* NVIC Configuration */
 #define NVIC_VTOR_MASK              0x3FFFFF80
 #ifdef  VECT_TAB_RAM

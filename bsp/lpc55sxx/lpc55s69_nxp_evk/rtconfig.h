@@ -113,6 +113,7 @@
 #define RT_MMCSD_STACK_SIZE 1024
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -249,6 +250,7 @@
 
 /* Other */
 
+
 /* Signal IO */
 
 
@@ -267,6 +269,9 @@
 #define BSP_USING_I2C
 #define BSP_USING_I2C4
 #define HW_I2C4_BAUDRATE_100kHZ
+#define BSP_USING_SPI
+#define BSP_USING_SPI3
+#define BSP_USING_SPI8
 #define BSP_USING_SDIO
 #define BSP_USING_RTC
 
