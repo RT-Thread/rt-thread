@@ -34,8 +34,6 @@ extern "C" {
 #include "usbd_core.h"
 #include "usb_core.h"
 
-#ifdef USE_OTG_DEVICE_MODE
-
 /** @addtogroup USBD_drivers_int
   * @{
   */
@@ -43,6 +41,8 @@ extern "C" {
 /** @defgroup USBD_interrupt_exported_types
   * @{
   */
+
+#ifdef USE_OTG_DEVICE_MODE
 
 void usbd_irq_handler(otg_core_type *udev);
 void usbd_ept_handler(usbd_core_type *udev);
@@ -68,6 +68,8 @@ void usbd_data_out_stage_callback(usbd_core_type *udev, uint32_t ept_num);
 void usbd_connectCallback(usbd_core_type *udev);
 void usbd_disconnectCallback(usbd_core_type *udev);
 
+#endif
+
 /**
   * @}
   */
@@ -78,8 +80,6 @@ void usbd_disconnectCallback(usbd_core_type *udev);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #endif

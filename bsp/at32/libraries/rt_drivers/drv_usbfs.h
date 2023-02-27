@@ -14,6 +14,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_common.h"
+
+#if defined(BSP_USING_HOST_USBFS1)   || defined(BSP_USING_HOST_USBFS2)  || \
+    defined(BSP_USING_DEVICE_USBFS1) || defined(BSP_USING_DEVICE_USBFS2)
 #include "usb_core.h"
 
 struct at32_usbfs {
@@ -22,7 +25,7 @@ struct at32_usbfs {
     otg_id_type id;
     IRQn_Type irqn;
 };
-
+#endif
 #endif /* __DRV_USBFS_H__ */
 
 /******************* end of file *******************/

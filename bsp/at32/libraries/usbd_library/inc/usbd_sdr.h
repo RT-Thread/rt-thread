@@ -41,11 +41,14 @@ extern "C" {
   * @{
   */
 
+#ifdef BSP_USING_USBD
+
 void usbd_setup_request_parse(usb_setup_type *setup, uint8_t *buf);
 usb_sts_type usbd_device_request(usbd_core_type *udev);
 usb_sts_type usbd_interface_request(usbd_core_type *udev);
 usb_sts_type usbd_endpoint_request(usbd_core_type *udev);
 
+#endif
 
 /**
   * @}

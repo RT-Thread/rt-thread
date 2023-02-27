@@ -42,6 +42,8 @@ extern "C" {
   * @{
   */
 
+#ifdef USE_OTG_HOST_MODE
+
 void usbh_irq_handler(otg_core_type *hdev);
 void usbh_hch_handler(usbh_core_type *uhost);
 void usbh_port_handler(usbh_core_type *uhost);
@@ -54,6 +56,8 @@ void usbh_sof_handler(usbh_core_type *uhost);
 void usbh_connect_callback(usbh_core_type *uhost);
 void usbh_disconnect_callback(usbh_core_type *uhost);
 void usbd_notify_urbchange_callback(usbh_core_type *uhost, uint8_t chnum, urb_sts_type sts);
+
+#endif
 
 /**
   * @}

@@ -521,40 +521,40 @@ void usbd_wakeup_handler(usbd_core_type *udev)
     udev->class_handler->event_handler(udev, USBD_WAKEUP_EVENT);
 }
 
-__weak void usbd_reset_callback(usbd_core_type *udev)
+RT_WEAK void usbd_reset_callback(usbd_core_type *udev)
 {
 }
 
-__weak void usbd_setup_phase_done_callback(usbd_core_type *udev)
+RT_WEAK void usbd_setup_phase_done_callback(usbd_core_type *udev)
 {
 }
 
-__weak void usbd_data_in_stage_callback(usbd_core_type *udev, uint32_t ept_num)
+RT_WEAK void usbd_data_in_stage_callback(usbd_core_type *udev, uint32_t ept_num)
 {
 }
 
-__weak void usbd_sof_callback(usbd_core_type *udev)
+RT_WEAK void usbd_sof_callback(usbd_core_type *udev)
 {
 }
 
-__weak void usbd_data_out_stage_callback(usbd_core_type *udev, uint32_t ept_num)
+RT_WEAK void usbd_data_out_stage_callback(usbd_core_type *udev, uint32_t ept_num)
 {
 }
 
-__weak void usbd_connectCallback(usbd_core_type *udev)
+RT_WEAK void usbd_connectCallback(usbd_core_type *udev)
 {
 }
 
-__weak void usbd_disconnectCallback(usbd_core_type *udev)
+RT_WEAK void usbd_disconnectCallback(usbd_core_type *udev)
 {
 }
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 #endif
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */

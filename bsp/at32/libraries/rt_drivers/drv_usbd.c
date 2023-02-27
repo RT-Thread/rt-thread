@@ -10,14 +10,14 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "usbd_int.h"
 #include "drv_common.h"
+
+#if defined(BSP_USING_USBD)
+#include "usbd_int.h"
 #include "drv_usbd.h"
 #include "drv_config.h"
 
-#if defined(BSP_USING_USBD)
-
-static struct at32_usbd *p_usbd_instance = NULL;
+static struct at32_usbd *p_usbd_instance = RT_NULL;
 static struct ep_id endpoint_pool[] =
 {
     {0x0,  USB_EP_ATTR_CONTROL,   USB_DIR_INOUT, 64, ID_ASSIGNED  },
