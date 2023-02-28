@@ -36,6 +36,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -46,8 +47,8 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x40101
+#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_VER_NUM 0x50000
 
 /* RT-Thread Components */
 
@@ -78,6 +79,7 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
@@ -167,9 +169,6 @@
 /* peripheral libraries and drivers */
 
 
-/* Kendryte SDK */
-
-
 /* AI packages */
 
 
@@ -183,19 +182,10 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
-
-
 /* Hardware Drivers Config */
 
 #define SOC_SERIES_GD32F4xx
-#define SOC_GD32450Z
+#define SOC_GD32470Z
 
 /* Onboard Peripheral Drivers */
 
