@@ -102,7 +102,7 @@ void get_mma8562(uint8_t data)
 
     rt_kprintf("*** MMA8562 X %d, Y %d, Z %d\r\n", (accel.x), (accel.y), (accel.z) );
 }
-FINSH_FUNCTION_EXPORT(get_mma8562, get mma8562. e.g: get_mma8562(0))
+MSH_CMD_EXPORT(get_mma8562, get mma8562. e.g: get_mma8562(0))
 #endif
 
 int mma8562_hw_init(void)

@@ -76,6 +76,32 @@ void BOARD_InitPins(void)
     /* Enables the clock for the I/O controller.: Enable Clock. */
     CLOCK_EnableClock(kCLOCK_Iocon);
 
+    IOCON->PIO[0][13] = ((IOCON->PIO[0][13] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                         /* Selects pin function.
+                          * : PORT013 (pin 71) is configured as FC1_RXD_SDA_MOSI_DATA. */
+                         | IOCON_PIO_FUNC(PIO0_13_FUNC_ALT5)
+
+                         /* Select Digital mode.
+                          * : Enable Digital mode.
+                          * Digital input is enabled. */
+                         | IOCON_PIO_DIGIMODE(PIO0_13_DIGIMODE_DIGITAL));
+
+    IOCON->PIO[0][14] = ((IOCON->PIO[0][14] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                         /* Selects pin function.
+                          * : PORT014 (pin 72) is configured as FC1_TXD_SCL_MISO_WS. */
+                         | IOCON_PIO_FUNC(PIO0_14_FUNC_ALT6)
+
+                         /* Select Digital mode.
+                          * : Enable Digital mode.
+                          * Digital input is enabled. */
+                         | IOCON_PIO_DIGIMODE(PIO0_14_DIGIMODE_DIGITAL));
+
     IOCON->PIO[0][17] = ((IOCON->PIO[0][17] &
                           /* Mask bits to zero which are setting */
                           (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
@@ -318,7 +344,6 @@ void BOARD_InitPins(void)
                         /* Select Digital mode.
                          * : Digital mode, digital input is enabled. */
                         | IOCON_PIO_DIGIMODE(PIO1_7_DIGIMODE_DIGITAL));
-
 
     /* I2C4 */
     IOCON_PinMuxSet(IOCON, 1U, 20, 5 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI);

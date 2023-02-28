@@ -21,6 +21,9 @@
 
 enum
 {
+#ifdef BSP_USING_I2C1
+    I2C1_INDEX,
+#endif
 #ifdef BSP_USING_I2C4
     I2C4_INDEX,
 #endif
@@ -48,6 +51,17 @@ struct lpc_i2c_bus
 
 struct lpc_i2c_bus lpc_obj[] =
 {
+#ifdef BSP_USING_I2C1
+        {
+            .I2C = I2C1,
+            .DMA = DMA0,
+            .dma_chl = 12,
+            .device_name = "i2c1",
+            .baud = 100000U,
+            .instance = 1U,
+            .i2c_clock_id = kFRO12M_to_FLEXCOMM1,
+        },
+#endif
 #ifdef BSP_USING_I2C4
         {
             .I2C = I2C4,
