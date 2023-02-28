@@ -338,12 +338,25 @@ void BOARD_InitPins(void)
                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
 
                         /* Selects pin function.
-                         * : PORT17 (pin 9) is configured as PIO1_7. */
-                        | IOCON_PIO_FUNC(PIO1_7_FUNC_ALT0)
+                         * : PORT17 (pin 9) is configured as CTIMER2_MAT2. */
+                        | IOCON_PIO_FUNC(PIO1_7_FUNC_ALT3)
 
                         /* Select Digital mode.
                          * : Digital mode, digital input is enabled. */
                         | IOCON_PIO_DIGIMODE(PIO1_7_DIGIMODE_DIGITAL));
+
+    IOCON->PIO[1][10] = ((IOCON->PIO[1][10] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                        /* Selects pin function.
+                         * : PORT110 (pin 40) is configured as CTIMER1_MAT0. */
+                        | IOCON_PIO_FUNC(PIO1_10_FUNC_ALT3)
+
+                        /* Select Digital mode.
+                         * : Enable Digital mode.
+                         * Digital input is enabled. */
+                        | IOCON_PIO_DIGIMODE(PIO1_10_DIGIMODE_DIGITAL));
 
     /* I2C4 */
     IOCON_PinMuxSet(IOCON, 1U, 20, 5 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI);
