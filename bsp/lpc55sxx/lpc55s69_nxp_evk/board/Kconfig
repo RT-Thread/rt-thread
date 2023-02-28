@@ -212,21 +212,13 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_PWM
-                config BSP_USING_CTIMER0_MAT3
-                    bool "Enable CIMER0 Match3 as PWM output"
-                    default y
-
                 config BSP_USING_CTIMER1_MAT0
                     bool "Enable CIMER1 Match0 as PWM output"
                     default y
 
-                config BSP_USING_CTIMER1_MAT3
-                    bool "Enable CIMER1 Match3 as PWM output"
-                    default n
-
                 config BSP_USING_CTIMER2_MAT0
                     bool "Enable CIMER2 Match0 as PWM output"
-                    default y
+                    default n
 
                 config BSP_USING_CTIMER2_MAT1
                     bool "Enable CIMER2 Match1 as PWM output"
@@ -272,11 +264,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC0
         select BSP_USING_PWM
         select BSP_USING_CTIMER1_MAT0
-        select BSP_USING_CTIMER1_MAT3
         select BSP_USING_CTIMER2_MAT0
         select BSP_USING_CTIMER2_MAT1
         select BSP_USING_CTIMER2_MAT2
-        select BSP_USING_CTIMER3_MAT2
         select BSP_USING_I2C
         select BSP_USING_I2C1
         imply RTDUINO_USING_SERVO
