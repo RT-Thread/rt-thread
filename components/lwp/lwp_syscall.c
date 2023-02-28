@@ -78,6 +78,13 @@
 #define GRND_RANDOM 0x0002
 #endif /*GRND_RANDOM */
 
+#ifndef RT_USING_POSIX_TIMER
+#error "No definition RT_USING_POSIX_TIMER"
+#endif
+#ifndef RT_USING_POSIX_CLOCK
+#error "No definition RT_USING_POSIX_CLOCK"
+#endif
+
 #define SET_ERRNO(no) rt_set_errno(-(no))
 #define GET_ERRNO() ((rt_get_errno() > 0) ? (-rt_get_errno()) : rt_get_errno())
 struct musl_sockaddr
