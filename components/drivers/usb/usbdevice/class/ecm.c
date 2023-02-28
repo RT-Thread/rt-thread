@@ -36,13 +36,13 @@ struct rt_ecm_eth
     rt_uint8_t              host_addr[MAX_ADDR_LEN];
     rt_uint8_t              dev_addr[MAX_ADDR_LEN];
 
-    ALIGN(4)
+    rt_align(4)
     rt_uint8_t              rx_pool[512];
-    ALIGN(4)
+    rt_align(4)
     rt_size_t               rx_size;
-    ALIGN(4)
+    rt_align(4)
     rt_size_t               rx_offset;
-    ALIGN(4)
+    rt_align(4)
     char                    rx_buffer[USB_ETH_MTU];
     char                    tx_buffer[USB_ETH_MTU];
 
@@ -51,7 +51,7 @@ struct rt_ecm_eth
 };
 typedef struct rt_ecm_eth * rt_ecm_eth_t;
 
-ALIGN(4)
+rt_align(4)
 static struct udevice_descriptor _dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     /* bLength */
@@ -71,7 +71,7 @@ static struct udevice_descriptor _dev_desc =
 };
 
 /* communcation interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct ucdc_eth_descriptor _comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -141,7 +141,7 @@ const static struct ucdc_eth_descriptor _comm_desc =
 };
 
 /* data interface descriptor */
-ALIGN(4)
+rt_align(4)
 const static struct ucdc_data_descriptor _data_desc =
 {
     /* interface descriptor */
@@ -176,7 +176,7 @@ const static struct ucdc_data_descriptor _data_desc =
     },
 };
 
-ALIGN(4)
+rt_align(4)
 const static char* _ustring[] =
 {
     "Language",                 /* LANGID */
@@ -187,7 +187,7 @@ const static char* _ustring[] =
     "Interface",                /* INTERFACE */
 };
 
-ALIGN(4)
+rt_align(4)
 //FS and HS needed
 static struct usb_qualifier_descriptor dev_qualifier =
 {
@@ -324,13 +324,13 @@ static rt_err_t rt_ecm_eth_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_ecm_eth_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t rt_ecm_eth_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t rt_ecm_eth_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t rt_ecm_eth_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;

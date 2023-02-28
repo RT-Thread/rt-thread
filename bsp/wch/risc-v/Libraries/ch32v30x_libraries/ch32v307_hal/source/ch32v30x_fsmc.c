@@ -249,7 +249,7 @@ void FSMC_NANDStructInit(FSMC_NANDInitTypeDef *FSMC_NANDInitStruct)
  *            FSMC_Bank1_NORSRAM2 - FSMC Bank1 NOR/SRAM2
  *            FSMC_Bank1_NORSRAM3 - FSMC Bank1 NOR/SRAM3
  *            FSMC_Bank1_NORSRAM4 - FSMC Bank1 NOR/SRAM4
- *          NewState£ºENABLE or DISABLE.
+ *          NewStateÂ£:ENABLE or DISABLE.
  *
  * @return  none
  */

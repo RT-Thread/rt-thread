@@ -1,0 +1,283 @@
+menu "General Drivers Configuration"
+
+choice
+    prompt "Choose Board"
+
+    default BSP_USING_M7
+
+    config BSP_USING_M7
+        bool "Persimmon M7 board"
+endchoice
+
+menu "General Purpose UARTs"
+
+menuconfig BSP_USING_UART0
+    bool "Enable UART0"
+    default y
+    if BSP_USING_UART0
+        choice
+            prompt "UART0 TX PIN"
+            default UART0_TX_USING_GPIOE2 if BOARD_allwinnerd1s
+            default UART0_TX_USING_GPIOB8 if BOARD_allwinnerd1
+
+            if BOARD_allwinnerd1
+            config UART0_TX_USING_GPIOB8
+                bool "GPIOB08"
+            endif
+            config UART0_TX_USING_GPIOE2
+                bool "GPIOE02"
+            config UART0_TX_USING_GPIOF2
+                bool "GPIOF02"
+        endchoice
+        choice
+            prompt "UART0 RX PIN"
+            default UART0_RX_USING_GPIOE3 if BOARD_allwinnerd1s
+            default UART0_RX_USING_GPIOB9 if BOARD_allwinnerd1
+
+            if BOARD_allwinnerd1
+            config UART0_RX_USING_GPIOB9
+                bool "GPIOB09"
+            endif
+            config UART0_RX_USING_GPIOE3
+                bool "GPIOE03"
+            config UART0_RX_USING_GPIOF4
+                bool "GPIOF04"
+        endchoice
+    endif
+
+menuconfig BSP_USING_UART1
+    bool "Enable UART1"
+    default n
+    if BSP_USING_UART1
+        choice
+            prompt "UART1 TX PIN"
+            config UART1_TX_USING_GPIOD21
+                bool "GPIOD21"
+            config UART1_TX_USING_GPIOE10
+                bool "GPIOE10"
+            config UART1_TX_USING_GPIOG6
+                bool "GPIOG06"
+            config UART1_TX_USING_GPIOG12
+                bool "GPIOG12"
+        endchoice
+        choice
+            prompt "UART1 RX PIN"
+            config UART1_RX_USING_GPIOD22
+                bool "GPIOD22"
+            config UART1_RX_USING_GPIOE11
+                bool "GPIOE11"
+            config UART1_RX_USING_GPIOG7
+                bool "GPIOG07"
+            config UART1_RX_USING_GPIOG13
+                bool "GPIOG13"
+        endchoice
+    endif
+
+menuconfig BSP_USING_UART2
+    bool "Enable UART2"
+    default n
+    if BSP_USING_UART2
+        choice
+            prompt "UART2 TX PIN"
+            config UART2_TX_USING_GPIOD1
+                bool "GPIOD01"
+            config UART2_TX_USING_GPIOE2
+                bool "GPIOE02"
+        endchoice
+        choice
+            prompt "UART2 RX PIN"
+            config UART2_RX_USING_GPIOD2
+                bool "GPIOD02"
+            config UART2_RX_USING_GPIOE3
+                bool "GPIOE03"
+        endchoice
+    endif
+
+menuconfig BSP_USING_UART3
+    bool "Enable UART3"
+    default n
+    if BSP_USING_UART3
+        choice
+            prompt "UART3 TX PIN"
+            config UART3_TX_USING_GPIOB6
+                bool "GPIOB06"
+            config UART3_TX_USING_GPIOC6
+                bool "GPIOC06"
+            config UART3_TX_USING_GPIOD10
+                bool "GPIOD10"
+            config UART3_TX_USING_GPIOE8
+                bool "GPIOE08"
+            config UART3_TX_USING_GPIOG0
+                bool "GPIOG00"
+            config UART3_TX_USING_GPIOG8
+                bool "GPIOG08"
+        endchoice
+        choice
+            prompt "UART3 RX PIN"
+            config UART3_RX_USING_GPIOB7
+                bool "GPIOB07"
+            config UART3_RX_USING_GPIOC7
+                bool "GPIOC07"
+            config UART3_RX_USING_GPIOD11
+                bool "GPIOD11"
+            config UART3_RX_USING_GPIOE9
+                bool "GPIOE09"
+            config UART3_RX_USING_GPIOG1
+                bool "GPIOG01"
+            config UART3_RX_USING_GPIOG9
+                bool "GPIOG09"
+        endchoice
+    endif
+
+menuconfig BSP_USING_UART4
+    bool "Enable UART4"
+    default n
+    if BSP_USING_UART4
+        choice
+            prompt "UART4 TX PIN"
+            config UART4_TX_USING_GPIOB2
+                bool "GPIOB02"
+            config UART4_TX_USING_GPIOD7
+                bool "GPIOD07"
+            config UART4_TX_USING_GPIOE4
+                bool "GPIOE04"
+            config UART4_TX_USING_GPIOG2
+                bool "GPIOG02"
+        endchoice
+        choice
+            prompt "UART4 RX PIN"
+            config UART4_RX_USING_GPIOB3
+                bool "GPIOB03"
+            config UART4_RX_USING_GPIOD8
+                bool "GPIOD08"
+            config UART4_RX_USING_GPIOE5
+                bool "GPIOE05"
+            config UART4_TX_USING_GPIOG3
+                bool "GPIOG03"
+        endchoice
+    endif
+
+menuconfig BSP_USING_UART5
+    bool "Enable UART5"
+    default n
+    if BSP_USING_UART5
+        choice
+            prompt "UART5 TX PIN"
+            config UART5_TX_USING_GPIOB4
+                bool "GPIOB04"
+            config UART5_TX_USING_GPIOD5
+                bool "GPIOD05"
+            config UART5_TX_USING_GPIOE6
+                bool "GPIOE06"
+            config UART5_TX_USING_GPIOG4
+                bool "GPIOG04"
+        endchoice
+        choice
+            prompt "UART5 RX PIN"
+            config UART5_RX_USING_GPIOB5
+                bool "GPIOB05"
+            config UART5_RX_USING_GPIOD6
+                bool "GPIOD06"
+            config UART5_RX_USING_GPIOE7
+                bool "GPIOE07"
+            config UART5_RX_USING_GPIOG5
+                bool "GPIOG05"
+        endchoice
+    endif
+
+endmenu
+
+config BSP_USING_WDT
+    bool "Enable WatchDog Timer"
+    select RT_USING_WDT
+    default n
+
+config BSP_USING_RTC
+    bool "Enable RTC driver"
+    select RT_USING_RTC
+    select BSP_USING_WDT
+    default n
+
+menuconfig BSP_USING_I2C
+    bool "Enable I2C driver"
+    select RT_USING_I2C
+    default n
+
+    if BSP_USING_I2C
+    config BSP_USING_I2C0
+        bool "Enable I2C0"
+        default n
+    config BSP_USING_I2C1
+        bool "Enable I2C1"
+        default n
+    config BSP_USING_I2C2
+        bool "Enable I2C2"
+        default n
+    config BSP_USING_I2C3
+        bool "Enable I2C3"
+        default n
+    endif
+
+menuconfig BSP_USING_TOUCH
+    bool "Enable TOUCH"
+    default n
+    select RT_USING_TOUCH
+    select RT_TOUCH_PIN_IRQ
+    select BSP_USING_I2C
+    select BSP_USING_I2C2
+    if BSP_USING_TOUCH
+    config TOUCH_I2C_NAME
+        string "touch i2c driver name"
+        default "i2c2"
+    endif
+
+menuconfig BSP_USING_SPI
+    bool "Enabel spi driver"
+    default n
+    select RT_USING_SPI
+    if BSP_USING_SPI
+    config BSP_USING_SPI0
+        bool "Enable SPI0"
+        default n
+    config BSP_USING_SPI1
+        bool "Enable SPI1"
+        default n
+    endif
+
+config BSP_USING_PWM
+    bool "Enable pwm driver"
+    default n
+    select RT_USING_PWM
+
+config BSP_USING_SDMMC
+    bool "Enable sdmmc driver"
+    default y
+
+config SD_CARD_CHECK
+    bool "Automatic detection of SD cards"
+    default y
+
+menuconfig BSP_USING_FS
+    bool "Enable File System"
+    select RT_USING_DFS
+    select BSP_USING_SDMMC
+    select RT_USING_FAL
+    select FAL_DEBUG_CONFIG
+    select FAL_PART_HAS_TABLE_CFG
+    default y
+
+menuconfig BSP_USING_LCD
+    bool "Enable LCD"
+    select BSP_USING_PWM
+    default n
+
+menu "Board extended module Drivers"
+    menuconfig BSP_USING_RW007
+        bool "Enable RW007"
+        default n
+        select PKG_USING_RW007
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+endmenu
+
+endmenu

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,18 +13,33 @@
 #include <rtdevice.h>
 
 #include "board.h"
+#include "mm_aspace.h"
 #include "tick.h"
 
 #include "drv_uart.h"
 #include "encoding.h"
 #include "stack.h"
-#include "riscv.h"
-#include "stack.h"
-#include "riscv_io.h"
-#include "plic.h"
-#include "interrupt.h"
-#ifdef CONFIG_RISCV_S_MODE
 #include "sbi.h"
+#include "riscv.h"
+#include "plic.h"
+#include "stack.h"
+
+#ifdef RT_USING_SMART
+#include "riscv_mmu.h"
+#include "mmu.h"
+#include "page.h"
+#include "lwp_arch.h"
+
+rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END};
+
+extern size_t MMUTable[];
+
+struct mem_desc platform_mem_desc[] = {
+    {KERNEL_VADDR_START, (rt_size_t)RT_HW_PAGE_END - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
+};
+
+#define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))
+
 #endif
 
 void primary_cpu_entry(void)
@@ -32,43 +47,65 @@ void primary_cpu_entry(void)
     extern void entry(void);
 
     /* disable global interrupt */
-    rt_memset(&__bss_start, 0x0, (rt_uint8_t*)&__bss_end - (rt_uint8_t*)&__bss_start);
-
     rt_hw_interrupt_disable();
+
     entry();
 }
 
+#define IOREMAP_SIZE (1ul << 30)
+
+#ifndef ARCH_KERNEL_IN_HIGH_VA
+#define IOREMAP_VEND USER_VADDR_START
+#else
+#define IOREMAP_VEND 0ul
+#endif
 
 void rt_hw_board_init(void)
 {
-    /* initalize interrupt */
-    rt_hw_interrupt_init();
-    /* initialize hardware interrupt */
-    rt_hw_uart_init();
+#ifdef RT_USING_SMART
+    /* init data structure */
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(IOREMAP_VEND - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, PV_OFFSET);
+
+    /* init page allocator */
+    rt_page_init(init_page_region);
+
+    /* setup region, and enable MMU */
+    rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, NUM_MEM_DESC);
+#endif
 
 #ifdef RT_USING_HEAP
     /* initialize memory system */
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
 
-#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    plic_init();
+
+    rt_hw_interrupt_init();
+
+    rt_hw_uart_init();
+
+#ifdef RT_USING_CONSOLE
     /* set console device */
-    rt_console_set_device("uart");
-#endif
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif /* RT_USING_CONSOLE */
 
     rt_hw_tick_init();
-    rt_kprintf("heap: [0x%08x - 0x%08x]\n", (rt_ubase_t) RT_HW_HEAP_BEGIN, (rt_ubase_t) RT_HW_HEAP_END);
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+
+#ifdef RT_USING_HEAP
+    rt_kprintf("heap: [0x%08x - 0x%08x]\n", (rt_ubase_t)RT_HW_HEAP_BEGIN, (rt_ubase_t)RT_HW_HEAP_END);
+#endif /* RT_USING_HEAP */
 }
 
-#ifdef CONFIG_RISCV_S_MODE
-static void cmd_shutdown(void)
+void rt_hw_cpu_reset(void)
 {
     sbi_shutdown();
-    while(1);
+
+    while (1)
+        ;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_shutdown, shutdown, shutdown qemu-virt64);
-#endif
+MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);
+

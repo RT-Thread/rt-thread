@@ -35,7 +35,7 @@
 /* finsh thread */
 #ifndef RT_USING_HEAP
     static struct rt_thread finsh_thread;
-    ALIGN(RT_ALIGN_SIZE)
+    rt_align(RT_ALIGN_SIZE)
     static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
     struct finsh_shell _shell;
 #endif
@@ -137,7 +137,7 @@ rt_uint32_t finsh_get_prompt_mode(void)
  *
  * The parameter 0 disable prompt mode, other values enable prompt mode.
  *
- * @param prompt the prompt mode
+ * @param prompt_mode the prompt mode
  */
 void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
 {

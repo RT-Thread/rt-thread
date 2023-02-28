@@ -130,7 +130,7 @@ typedef enum
 {
     eCANFD_NORMAL = 0,              /*!< None, Normal mode. */
 
-      /*
+    /*
     Support:
     (1) to receive data frames
     (2) to receive remote frames
@@ -139,34 +139,34 @@ typedef enum
     (1) data frames sending
     (2) remote frames sending
     (3) active error frames or overload frames sending
-      */
+    */
     eCANFD_RESTRICTED_OPERATION,    /*!< Receive external RX frame and always keep recessive state or send dominate bit on ACK bit on TX pin. */
 
-      /*
+    /*
     Support:
     (1) to receive valid data frames
     (2) to receive valid remote frames
     Not support:
     (1) transmission start
     (2) acknowledge to valid frames
-      */
+    */
     eCANFD_BUS_MONITOR,             /*!< Receive external RX frame and always keep recessive state on TX pin. */
 
-      /*
+    /*
     Support:
     (1) Loopback
     (2) Also send out frames
     Not support:
     (1) to receive external frame
-      */
+    */
     eCANFD_LOOPBACK_EXTERNAL,       /*!< Won't receive external RX frame. */
-      /*
+    /*
     Support:
     (1) Loopback
     Not support:
     (1) to receive external frame
     (2) transmission start
-      */
+    */
     eCANFD_LOOPBACK_INTERNAL        /*!< Won't receive external RX frame and always keep recessive state on TX pin */
 } E_CANFD_TEST_MODE;
 
@@ -458,7 +458,7 @@ int32_t CANFD_RunToNormal(CANFD_T *canfd, uint8_t u8Enable);
 void CANFD_GetDefaultConfig(CANFD_FD_T *psConfig, uint8_t u8OpMode);
 void CANFD_ClearStatusFlag(CANFD_T *canfd, uint32_t u32InterruptFlag);
 uint32_t CANFD_GetStatusFlag(CANFD_T *canfd, uint32_t u32IntTypeFlag);
-uint32_t CANFD_ReadReg(__I uint32_t* pu32RegAddr);
+uint32_t CANFD_ReadReg(__I uint32_t *pu32RegAddr);
 
 /*@}*/ /* end of group CANFD_EXPORTED_FUNCTIONS */
 

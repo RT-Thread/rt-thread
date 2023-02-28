@@ -43,7 +43,7 @@ static void touch_irq_callback(void *param)
 static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 {
 #ifdef RT_TOUCH_PIN_IRQ
-    if (touch->config.irq_pin.pin == RT_PIN_NONE)
+    if (touch->config.irq_pin.pin == PIN_IRQ_PIN_NONE)
     {
         return -RT_EINVAL;
     }
@@ -73,7 +73,7 @@ static rt_err_t rt_touch_irq_init(rt_touch_t touch)
 static void rt_touch_irq_enable(rt_touch_t touch)
 {
 #ifdef RT_TOUCH_PIN_IRQ
-    if (touch->config.irq_pin.pin != RT_PIN_NONE)
+    if (touch->config.irq_pin.pin != PIN_IRQ_PIN_NONE)
     {
         rt_pin_irq_enable(touch->config.irq_pin.pin, RT_TRUE);
     }
@@ -86,7 +86,7 @@ static void rt_touch_irq_enable(rt_touch_t touch)
 static void rt_touch_irq_disable(rt_touch_t touch)
 {
 #ifdef RT_TOUCH_PIN_IRQ
-    if (touch->config.irq_pin.pin != RT_PIN_NONE)
+    if (touch->config.irq_pin.pin != PIN_IRQ_PIN_NONE)
     {
         rt_pin_irq_enable(touch->config.irq_pin.pin, RT_FALSE);
     }
@@ -122,7 +122,7 @@ static rt_err_t rt_touch_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_touch_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t len)
+static rt_ssize_t rt_touch_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t len)
 {
     rt_touch_t touch;
     rt_size_t result = 0;
@@ -218,7 +218,7 @@ int rt_hw_touch_register(rt_touch_t touch,
                          rt_uint32_t              flag,
                          void                    *data)
 {
-    rt_int8_t result;
+    rt_err_t result;
     rt_device_t device;
     RT_ASSERT(touch != RT_NULL);
 

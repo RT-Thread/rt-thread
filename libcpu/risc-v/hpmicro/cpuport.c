@@ -77,7 +77,7 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
 }
 
 /** shutdown CPU */
-RT_WEAK void rt_hw_cpu_shutdown()
+rt_weak void rt_hw_cpu_shutdown()
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");

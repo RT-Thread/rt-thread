@@ -89,7 +89,7 @@ typedef struct
     uint32_t SSTE;
     uint32_t CFS;
     uint32_t SPI_FRF;
-    
+
     /*QSPI_CTRL1*/
     uint32_t NDF;
 
@@ -120,17 +120,12 @@ typedef struct
     /*QSPI_ENH_CTRL0*/
     uint32_t ENHANCED_TRANS_TYPE;
     uint32_t ENHANCED_ADDR_LEN;
-    uint32_t ENHANCED_MD_BIT_EN;
     uint32_t ENHANCED_INST_L;
     uint32_t ENHANCED_WAIT_CYCLES;
     uint32_t ENHANCED_SPI_DDR_EN;
     uint32_t ENHANCED_INST_DDR_EN;
-    uint32_t ENHANCED_XIP_DFS_HC;
-    uint32_t ENHANCED_XIP_INST_EN;
-    uint32_t ENHANCED_XIP_CT_EN;
-    uint32_t ENHANCED_XIP_MBL;
     uint32_t ENHANCED_CLK_STRETCH_EN;
-    
+
     /*QSPI_DDR_TXDE*/
     uint32_t TXDE;
 
@@ -142,7 +137,7 @@ typedef struct
 
     /*QSPI_XIP_WRAP_TOC*/
     uint32_t WTOC;
-    
+
     /*QSPI_XIP_CTRL*/
     uint32_t XIP_FRF;
     uint32_t XIP_TRANS_TYPE;
@@ -165,14 +160,14 @@ typedef struct
 #define QSPI_TIME_OUT_CNT           200
 
 #define IS_QSPI_SPI_FRF(SPI_FRF)                                                                                            \
-    (((SPI_FRF) == QSPI_CTRL0_SPI_FRF_STANDARD_FORMAT) || ((SPI_FRF) == QSPI_CTRL0_SPI_FRF_DUAL_FORMAT) || ((SPI_FRF) == QSPI_CTRL0_SPI_FRF_QUAD_FORMAT))  
+    (((SPI_FRF) == QSPI_CTRL0_SPI_FRF_STANDARD_FORMAT) || ((SPI_FRF) == QSPI_CTRL0_SPI_FRF_DUAL_FORMAT) || ((SPI_FRF) == QSPI_CTRL0_SPI_FRF_QUAD_FORMAT))
 
 #define IS_QSPI_CFS(CFS) ((((CFS) >= QSPI_CTRL0_CFS_2_BIT) && ((CFS) <= QSPI_CTRL0_CFS_16_BIT)) || ((CFS) == QSPI_CTRL0_CFS_1_BIT))
 
 #define IS_QSPI_SSTE(SSTE) (((SSTE) == QSPI_CTRL0_SSTE_EN) || ((SSTE) == 0))
 
 #define IS_QSPI_TMOD(TMOD)                                                                                            \
-    (((TMOD) == QSPI_CTRL0_TMOD_TX_AND_RX) || ((TMOD) == QSPI_CTRL0_TMOD_TX_ONLY) || ((TMOD) == QSPI_CTRL0_TMOD_RX_ONLY) || ((TMOD) == QSPI_CTRL0_TMOD_EEPROM_READ))  
+    (((TMOD) == QSPI_CTRL0_TMOD_TX_AND_RX) || ((TMOD) == QSPI_CTRL0_TMOD_TX_ONLY) || ((TMOD) == QSPI_CTRL0_TMOD_RX_ONLY) || ((TMOD) == QSPI_CTRL0_TMOD_EEPROM_READ))
 
 #define IS_QSPI_SCPOL(SCPOL) (((SCPOL) == QSPI_CTRL0_SCPOL_LOW) || ((SCPOL) == QSPI_CTRL0_SCPOL_HIGH))
 
@@ -213,16 +208,6 @@ typedef struct
 
 #define IS_QSPI_ENH_CLK_STRETCH_EN(ENH_CLK_STRETCH_EN) (((ENH_CLK_STRETCH_EN) == QSPI_ENH_CTRL0_CLK_STRETCH_EN) || ((ENH_CLK_STRETCH_EN) == 0))
 
-#define IS_QSPI_ENH_XIP_MBL(ENH_XIP_MBL)                                                                                            \
-    (((ENH_XIP_MBL) == QSPI_ENH_CTRL0_XIP_MBL_2_BIT) || ((ENH_XIP_MBL) == QSPI_ENH_CTRL0_XIP_MBL_4_BIT) ||      \
-    ((ENH_XIP_MBL) == QSPI_ENH_CTRL0_XIP_MBL_8_BIT)  || ((ENH_XIP_MBL) == QSPI_ENH_CTRL0_XIP_MBL_16_BIT))
-
-#define IS_QSPI_ENH_XIP_CT_EN(ENH_XIP_CT_EN) (((ENH_XIP_CT_EN) == QSPI_ENH_CTRL0_XIP_CT_EN) || ((ENH_XIP_CT_EN) == 0))
-
-#define IS_QSPI_ENH_XIP_INST_EN(ENH_XIP_INST_EN) (((ENH_XIP_INST_EN) == QSPI_ENH_CTRL0_XIP_INST_EN) || ((ENH_XIP_INST_EN) == 0))
-
-#define IS_QSPI_ENH_XIP_DFS_HC(ENH_XIP_DFS_HC) (((ENH_XIP_DFS_HC) == QSPI_ENH_CTRL0_XIP_DFS_HC) || ((ENH_XIP_DFS_HC) == 0))
-
 #define IS_QSPI_ENH_INST_DDR_EN(ENH_INST_DDR_EN) (((ENH_INST_DDR_EN) == QSPI_ENH_CTRL0_INST_DDR_EN) || ((ENH_INST_DDR_EN) == 0))
 
 #define IS_QSPI_ENH_SPI_DDR_EN(ENH_SPI_DDR_EN) (((ENH_SPI_DDR_EN) == QSPI_ENH_CTRL0_SPI_DDR_EN) || ((ENH_SPI_DDR_EN) == 0))
@@ -234,15 +219,13 @@ typedef struct
     (((ENH_INST_L) == QSPI_ENH_CTRL0_INST_L_0_LINE) || ((ENH_INST_L) == QSPI_ENH_CTRL0_INST_L_4_LINE) ||                                                    \
     ((ENH_INST_L) == QSPI_ENH_CTRL0_INST_L_8_LINE)  || ((ENH_INST_L) == QSPI_ENH_CTRL0_INST_L_16_LINE))
 
-#define IS_QSPI_ENH_MD_BIT_EN(ENH_MD_BIT_EN) (((ENH_MD_BIT_EN) == QSPI_ENH_CTRL0_MD_BIT_EN) || ((ENH_MD_BIT_EN) == 0))
-
 #define IS_QSPI_ENH_ADDR_LEN(ENH_ADDR_LEN) ((((ENH_ADDR_LEN) >= QSPI_ENH_CTRL0_ADDR_LEN_4_BIT) && ((ENH_ADDR_LEN) <= QSPI_ENH_CTRL0_ADDR_LEN_60_BIT)) || \
                                             ((ENH_ADDR_LEN) == 0))
 
 #define IS_QSPI_ENH_TRANS_TYPE(ENH_TRANS_TYPE) (((ENH_TRANS_TYPE) == QSPI_ENH_CTRL0_TRANS_TYPE_STANDARD) ||   \
                                         ((ENH_TRANS_TYPE) == QSPI_ENH_CTRL0_TRANS_TYPE_ADDRESS_BY_FRF)   ||   \
                                         ((ENH_TRANS_TYPE) == QSPI_ENH_CTRL0_TRANS_TYPE_ALL_BY_FRF))
-    
+
 
 #define IS_QSPI_DDR_TXDE(DDR_TXDE) (((DDR_TXDE) <= 0xFF))
 
@@ -257,7 +240,7 @@ typedef struct
 #define IS_QSPI_XIP_MBL(XIP_MBL)                                                                                            \
     (((XIP_MBL) == QSPI_XIP_CTRL_XIP_MBL_LEN_2_BIT) || ((XIP_MBL) == QSPI_XIP_CTRL_XIP_MBL_LEN_4_BIT) ||        \
     ((XIP_MBL) == QSPI_XIP_CTRL_XIP_MBL_LEN_8_BIT)  || ((XIP_MBL) == QSPI_XIP_CTRL_XIP_MBL_LEN_16_BIT))
-    
+
 #define IS_QSPI_XIP_CT_EN(XIP_CT_EN) (((XIP_CT_EN) == QSPI_XIP_CTRL_XIP_CT_EN) || ((XIP_CT_EN) == 0))
 
 #define IS_QSPI_XIP_INST_EN(XIP_INST_EN) (((XIP_INST_EN) == QSPI_XIP_CTRL_XIP_INST_EN) || ((XIP_INST_EN) == 0))
@@ -285,7 +268,7 @@ typedef struct
                                         ((XIP_TRANS_TYPE) == QSPI_XIP_CTRL_TRANS_TYPE_INSTRUCT_BY_XIP_FRF))
 
 #define IS_QSPI_XIP_FRF(XIP_FRF) (((XIP_FRF) == QSPI_XIP_CTRL_FRF_2_LINE) || ((XIP_FRF) == QSPI_XIP_CTRL_FRF_4_LINE) || ((XIP_FRF) == 0))
-    
+
 
 
 
@@ -297,7 +280,8 @@ void QSPI_XIP_Cmd(bool cmd);
 void QSPI_DeInit(void);
 void QspiInitConfig(QSPI_InitType* QSPI_InitStruct);
 void QSPI_GPIO(QSPI_NSS_PORT_SEL qspi_nss_port_sel, bool IO1_Input, bool IO3_Output);
-void QSPI_DMA_CTRL_Config(uint8_t TxRx,uint8_t TxDataLevel,uint8_t RxDataLevel);
+void QSPI_Tx_DMA_CTRL_Config(uint8_t Cmd,uint8_t TxDataLevel);
+void QSPI_Rx_DMA_CTRL_Config(uint8_t Cmd, uint8_t RxDataLevel);
 uint16_t QSPI_GetITStatus(uint16_t FLAG);
 void QSPI_ClearITFLAG(uint16_t FLAG);
 void QSPI_XIP_ClearITFLAG(uint16_t FLAG);
@@ -306,7 +290,6 @@ bool GetQspiTxDataBusyStatus(void);
 bool GetQspiTxDataEmptyStatus(void);
 bool GetQspiRxHaveDataStatus(void);
 bool GetQspiRxDataFullStatus(void);
-bool GetQspiTransmitErrorStatus(void);
 bool GetQspiDataConflictErrorStatus(void);
 void QspiSendWord(uint32_t SendData);
 uint32_t QspiReadWord(void);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -231,22 +231,22 @@ int rt_hw_lcd_init(void)
 INIT_DEVICE_EXPORT(rt_hw_lcd_init);
 
 
-RT_WEAK void stm32_mipi_lcd_init(void)
+rt_weak void stm32_mipi_lcd_init(void)
 {
     rt_kprintf("please Implementation function %s\n", __func__);
 }
 
-RT_WEAK void stm32_mipi_lcd_config(rt_uint32_t pixel_format)
+rt_weak void stm32_mipi_lcd_config(rt_uint32_t pixel_format)
 {
     rt_kprintf("please Implementation function %s\n", __func__);
 }
 
-RT_WEAK void stm32_mipi_display_on(void)
+rt_weak void stm32_mipi_display_on(void)
 {
     rt_kprintf("please Implementation function %s\n", __func__);
 }
 
-RT_WEAK void stm32_mipi_display_off(void)
+rt_weak void stm32_mipi_display_off(void)
 {
     rt_kprintf("please Implementation function %s\n", __func__);
 }

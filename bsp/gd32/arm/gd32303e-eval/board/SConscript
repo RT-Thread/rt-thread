@@ -21,7 +21,7 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += [startup_path_prefix + '/GD32F30x_Firmware_Library/CMSIS/GD/GD32F30x/Source/ARM/startup_gd32f30x_hd.s']
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/GD32F30x_Firmware_Library/CMSIS/GD/GD32F30x/Source/IAR/startup_gd32f30x_hd.s']
-    
+
 CPPDEFINES = ['GD32F30X_HD']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

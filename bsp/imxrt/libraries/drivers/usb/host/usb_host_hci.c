@@ -171,7 +171,7 @@ static usb_host_instance_t *USB_HostGetInstance(void)
     void *temp;
     OSA_SR_ALLOC();
     OSA_ENTER_CRITICAL();
-    for (; i < USB_HOST_CONFIG_MAX_HOST; i++)
+    for (; i < (uint8_t)USB_HOST_CONFIG_MAX_HOST; i++)
     {
         if (g_UsbHostInstance[i].occupied != 1U)
         {
@@ -182,7 +182,7 @@ static usb_host_instance_t *USB_HostGetInstance(void)
             }
             g_UsbHostInstance[i].occupied = 1;
             OSA_EXIT_CRITICAL();
-            for (index = 0; index < USB_HOST_CONFIG_MAX_TRANSFERS; ++index)
+            for (index = 0; index < (uint32_t)USB_HOST_CONFIG_MAX_TRANSFERS; ++index)
             {
                 temp                                                 = (void *)&(s_Setupbuffer[i][index][0]);
                 g_UsbHostInstance[i].transferList[index].setupPacket = (usb_setup_struct_t *)temp;
@@ -698,13 +698,10 @@ usb_status_t USB_HostHelperParseAlternateSetting(usb_host_interface_handle inter
     }
 
     /* parse configuration descriptor */
-    temp = (void *)((usb_host_interface_t *)interfaceHandle)->interfaceDesc;
-    ;
+    temp = (void *)((usb_host_interface_t *)interfaceHandle)->interfaceExtension;
     unionDes = (usb_descriptor_union_t *)temp; /* interface extend descriptor start */
-    endPosition =
-        (uint32_t)unionDes +
+    endPosition = (uint32_t)unionDes +
         ((usb_host_interface_t *)interfaceHandle)->interfaceExtensionLength; /* interface extend descriptor end */
-    unionDes = (usb_descriptor_union_t *)((uint32_t)unionDes + unionDes->common.bLength);
 
     /* search for the alternate setting interface descriptor */
     while ((uint32_t)unionDes < endPosition)

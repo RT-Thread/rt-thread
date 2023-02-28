@@ -36,7 +36,7 @@ struct gd32_i2c
 };
 
 #ifdef BSP_USING_I2C0
-#define I2C4_BUS_CONFIG                                  \
+#define I2C0_BUS_CONFIG                                  \
     {                                                    \
         .scl = BSP_I2C0_SCL_PIN,                         \
         .sda = BSP_I2C0_SDA_PIN,                         \

@@ -165,14 +165,14 @@ void EPWM1P2_IRQHandler(void)
 
 static void nu_epwmcap_isr(nu_epwmcap_t psNuEpwmCap)
 {
-        if (EPWM_GetCaptureIntFlag(psNuEpwmCap->base, psNuEpwmCap->u8Channel) != 0)
+    if (EPWM_GetCaptureIntFlag(psNuEpwmCap->base, psNuEpwmCap->u8Channel) != 0)
+    {
+        /* Calculate pulse width */
+        if (CalPulseWidth(psNuEpwmCap) == RT_EOK)
         {
-                /* Calculate pulse width */
-                if (CalPulseWidth(psNuEpwmCap) == RT_EOK)
-                {
-                        rt_hw_inputcapture_isr(&psNuEpwmCap->parent, psNuEpwmCap->input_data_level);
-                }
+            rt_hw_inputcapture_isr(&psNuEpwmCap->parent, psNuEpwmCap->input_data_level);
         }
+    }
 }
 
 static rt_err_t CalPulseWidth(nu_epwmcap_t psNuEpwmCap)

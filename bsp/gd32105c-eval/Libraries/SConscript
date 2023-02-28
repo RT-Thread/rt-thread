@@ -21,7 +21,7 @@ path = [
     cwd + '/CMSIS/GD/GD32F10x/Include',
     cwd + '/CMSIS',
     cwd + '/GD32F10x_standard_peripheral/Include',]
-    
+
 if GetDepend(['RT_USING_BSP_USB']):
     path += [cwd + '/GD32F10x_usbfs_driver/Include']
     src  += [cwd + '/GD32F10x_usbfs_driver/Source']

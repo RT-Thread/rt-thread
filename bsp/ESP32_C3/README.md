@@ -43,33 +43,69 @@ Each peripheral supporting condition for this BSP is as follows:
 | UART                     | Support         | Using LUATOS_ESP32C3 development board requires connecting serial port to USB chip UART0_TX and UART0_RX (such as CP2102) |
 | JTAG debug               | Support         | ESP32C3 usb-linked development boards can be debugged        |
 
-## Quick Start Guide
-
-1. Download ESP-IDF package
+## Install ESP-IDF
+ESP-IDF can be installed in two ways
+1. Use Env tool
+- Download the package
 ```
 pkgs --update
 ```
-2. Go to ESP-IDF package directory and install IDF tools. This command only needs to be run once after the package is downloaded for the first time.
+- Install IDF tools. If you are using Linux or MacOS, go to ESP-IDF package directory and install IDF tools by running
 ```
 cd packages/ESP-IDF-latest
 ./install.sh
-# Use install.bat in Windows environment
 ```
-3. Under the ESP-IDF package directory, export IDF environment variables. This commands need to be run every time when the BSP is built in a new terminal.
+If you are using Windows, open Command Prompt. Note that you cannot use any other terminals, such as the Env command line or PowerShell. Enter the BSP directory and run
+```
+install.bat
+```
+No matter what operating system you are using, this step only needs to be done once after the package is downloaded for the first time.
+- Under the ESP-IDF package directory, export IDF environment variables. This commands need to be run every time when the BSP is built in a new terminal.
+If you are using Linux or MacOS, run
 ```
 . export.sh
-# Use export.bat in Windows environment
 ```
-4. Configure RT-Thread under the BSP directory
+If you are using Windows, run
+```
+export.bat
+```
+Same as the previous step, you can only use Command Prompt.
+
+2. Apply patch to a local installation of ESP-IDF
+- Select the below option with `SCons --menuconfig`
+```
+Hardware Drivers Config
+    [*] Use local ESP-IDF installation
+```
+And deselect ESP-IDF package
+```
+RT-Thread online packages
+    peripheral libraries and drivers
+        [ ] ESP-IDF: Espressif IoT Development Framework
+```
+- Install FreeRTOS wrapper
+```
+pkgs --update
+```
+- Any convenient method to install ESP-IDF can be used, such as [VSCode plugin](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md). Make sure to install the master version of ESP-IDF.
+- Enter the local ESP-IDF directory and run the following commands
+```
+git checkout 5c1044d84d625219eafa18c24758d9f0e4006b2c
+# Replace rtt.patch with the actual directory of rtt.patch under the BSP directory
+git am rtt.patch
+```
+- After applying the patch, ESP-IDF FreeRTOS projects can be compiled as usual
+## Compile and Upload
+- Configure RT-Thread under the BSP directory
 ```
 scons --menuconfig
 ```
-5. Whenever RT-Thread configuration is changed with `scons --menuconfig`, a new `CMakeLists.txt` needs to be generated with the command below
+- Whenever RT-Thread configuration is changed with `scons --menuconfig`, a new `CMakeLists.txt` needs to be generated with the command below
 ```
 scons --target=esp-idf
 ```
-6. Use `idf.py` to compile and upload the program. Refer to [Espressif official documents](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project) for reference.
-7. Once the project is successfully downloaded, the system runs automatically, the red LED will blink in 1s on cycles.
+- If ESP-IDf is installed using Env, use `idf.py` to compile and upload the program. Refer to [Espressif official documents](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project) for reference. Note if you are using Windows, you can only use `idf.py` commands in Windows Command Prompt. Otherwise follow the appropriate steps depending on how ESP-IDF was installed, such as using [VSCode plugin](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md). 
+- Once the project is successfully downloaded, the system runs automatically, the red LED will blink in 1s on cycles.
 
 ## Notes
 

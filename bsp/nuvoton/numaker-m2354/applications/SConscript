@@ -1,21 +1,15 @@
-# RT-Thread building script for component
-
 from building import *
+import os
 
 cwd = GetCurrentDir()
-objs = []
-list = os.listdir(cwd)
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        objs = objs + SConscript(os.path.join(d, 'SConscript'))
-
-src = Glob('*.c') + Glob('*.cpp')
-CPPPATH = [cwd, str(Dir('#'))]
+src = Glob('*.c')
+CPPPATH = [cwd]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
-objs = objs + group
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
-Return('objs')
-
+Return('group')

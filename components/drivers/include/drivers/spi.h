@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <rtthread.h>
+#include <drivers/pin.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -99,7 +100,7 @@ struct rt_spi_bus
 struct rt_spi_ops
 {
     rt_err_t (*configure)(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
-    rt_uint32_t (*xfer)(struct rt_spi_device *device, struct rt_spi_message *message);
+    rt_ssize_t (*xfer)(struct rt_spi_device *device, struct rt_spi_message *message);
 };
 
 /**
@@ -111,6 +112,7 @@ struct rt_spi_device
     struct rt_spi_bus *bus;
 
     struct rt_spi_configuration config;
+    rt_base_t cs_pin;
     void   *user_data;
 };
 
@@ -175,6 +177,13 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
                                   const char           *bus_name,
                                   void                 *user_data);
 
+/* attach a device on SPI bus with CS pin */
+rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
+                                        const char           *name,
+                                        const char           *bus_name,
+                                        rt_base_t            cs_pin,
+                                        void                 *user_data);
+
 /**
  * This function takes SPI bus.
  *
@@ -228,8 +237,9 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
                                const void           *send_buf2,
                                rt_size_t             send_length2);
 
-rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
-                              rt_uint16_t           data);
+rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                           rt_uint16_t senddata,
+                           rt_uint16_t *recvdata);
 
 /**
  * This function transmits data to SPI device.
@@ -241,10 +251,10 @@ rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
  *
  * @return the actual length of transmitted.
  */
-rt_size_t rt_spi_transfer(struct rt_spi_device *device,
-                          const void           *send_buf,
-                          void                 *recv_buf,
-                          rt_size_t             length);
+rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
+                           const void           *send_buf,
+                           void                 *recv_buf,
+                           rt_size_t             length);
 
 /**
  * This function transfers a message list to the SPI device.

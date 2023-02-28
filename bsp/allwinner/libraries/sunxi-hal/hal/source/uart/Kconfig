@@ -1,0 +1,37 @@
+menu "UART Devices"
+
+config DRIVERS_UART
+    bool "enable uart driver"
+        default y
+
+config HAL_TEST_UART
+    bool "enable uart hal APIs test command"
+    depends on DRIVERS_UART
+        default n
+
+config SUNXI_UART_SUPPORT_POLL
+    bool "support poll APIs"
+    depends on DRIVERS_UART
+        default n
+
+config SUNXI_UART_REGISTER_UART0
+    bool "support uart0 device"
+    depends on DRIVERS_UART
+        default n
+
+config SUNXI_UART_REGISTER_UART1
+    bool "support uart1 device"
+    depends on DRIVERS_UART
+        default n
+
+config SUNXI_UART_REGISTER_UART2
+    bool "support uart2 device"
+    depends on DRIVERS_UART
+        default n
+
+config SUNXI_UART_REGISTER_UART3
+    bool "support uart3 device"
+    depends on DRIVERS_UART
+        default n
+
+endmenu

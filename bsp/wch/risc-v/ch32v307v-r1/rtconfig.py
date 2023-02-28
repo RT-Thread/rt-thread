@@ -1,6 +1,6 @@
 import os
 ARCH     = 'risc-v'
-CPU      = 'ch32v3'
+CPU      = 'ch32'
 # toolchains options
 CROSS_TOOL  = 'gcc'
 
@@ -47,8 +47,7 @@ if PLATFORM == 'gcc':
     LFLAGS = DEVICE
     LFLAGS += ' -Wl,--gc-sections,-cref,-Map=' + MAP_FILE
     LFLAGS += ' -T ' + LINK_FILE
-    LFLAGS += ' -Wl,-wrap=memset'
-
+    AFLAGS += ' -I.'
     CPATH = ''
     LPATH = ''
 
@@ -57,6 +56,8 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -g3'
     else:
         CFLAGS += ' -O2'
+
+    CXXFLAGS = CFLAGS
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + TARGET_NAME + '\n'
     POST_ACTION += SIZE + ' $TARGET\n'

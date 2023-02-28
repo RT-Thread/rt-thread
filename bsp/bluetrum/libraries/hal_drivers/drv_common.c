@@ -16,21 +16,21 @@ static rt_mq_t drv_mq = RT_NULL;
 void uart0_irq_process(void);
 void uart1_irq_process(void);
 
-RT_SECTION(".irq.uart")
+rt_section(".irq.uart")
 void uart0_irq_post(void)
 {
     rt_uint8_t mq_msg = MSG_UART0_IRQ;
     rt_mq_send(drv_mq, &mq_msg, 1);
 }
 
-RT_SECTION(".irq.uart")
+rt_section(".irq.uart")
 void uart1_irq_post(void)
 {
     rt_uint8_t mq_msg = MSG_UART1_IRQ;
     rt_mq_send(drv_mq, &mq_msg, 1);
 }
 
-RT_SECTION(".irq.uart")
+rt_section(".irq.uart")
 void uart2_irq_post(void)
 {
     rt_uint8_t mq_msg = MSG_UART2_IRQ;

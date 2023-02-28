@@ -14,6 +14,16 @@
 #include <dfs_private.h>
 #include <sys/errno.h>
 
+#ifdef RT_USING_SMART
+#include <lwp.h>
+#endif
+
+/**
+ * @addtogroup FsPosixApi
+ */
+
+/*@{*/
+
 /**
  * this function is a POSIX compliant version, which will open a file and
  * return a file descriptor according specified flags.
@@ -42,16 +52,12 @@ int open(const char *file, int flags, ...)
     if (result < 0)
     {
         /* release the ref-count of fd */
-        fd_put(d);
-        fd_put(d);
+        fd_release(fd);
 
         rt_set_errno(result);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return fd;
 }
@@ -94,7 +100,6 @@ int close(int fd)
     }
 
     result = dfs_file_close(d);
-    fd_put(d);
 
     if (result < 0)
     {
@@ -103,7 +108,7 @@ int close(int fd)
         return -1;
     }
 
-    fd_put(d);
+    fd_release(fd);
 
     return 0;
 }
@@ -141,14 +146,10 @@ ssize_t read(int fd, void *buf, size_t len)
     result = dfs_file_read(d, buf, len);
     if (result < 0)
     {
-        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return result;
 }
@@ -185,14 +186,10 @@ ssize_t write(int fd, const void *buf, size_t len)
     result = dfs_file_write(d, buf, len);
     if (result < 0)
     {
-        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return result;
 }
@@ -231,11 +228,10 @@ off_t lseek(int fd, off_t offset, int whence)
         break;
 
     case SEEK_END:
-        offset += d->size;
+        offset += d->vnode->size;
         break;
 
     default:
-        fd_put(d);
         rt_set_errno(-EINVAL);
 
         return -1;
@@ -243,7 +239,6 @@ off_t lseek(int fd, off_t offset, int whence)
 
     if (offset < 0)
     {
-        fd_put(d);
         rt_set_errno(-EINVAL);
 
         return -1;
@@ -251,14 +246,10 @@ off_t lseek(int fd, off_t offset, int whence)
     result = dfs_file_lseek(d, offset);
     if (result < 0)
     {
-        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return offset;
 }
@@ -367,16 +358,14 @@ int fstat(int fildes, struct stat *buf)
 
     buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
                    S_IWUSR | S_IWGRP | S_IWOTH;
-    if (d->type == FT_DIRECTORY)
+    if (d->vnode->type == FT_DIRECTORY)
     {
         buf->st_mode &= ~S_IFREG;
         buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
-    buf->st_size    = d->size;
+    buf->st_size    = d->vnode->size;
     buf->st_mtime   = 0;
-
-    fd_put(d);
 
     return RT_EOK;
 }
@@ -407,7 +396,6 @@ int fsync(int fildes)
 
     ret = dfs_file_flush(d);
 
-    fd_put(d);
     return ret;
 }
 RTM_EXPORT(fsync);
@@ -441,7 +429,6 @@ int fcntl(int fildes, int cmd, ...)
         va_end(ap);
 
         ret = dfs_file_ioctl(d, cmd, arg);
-        fd_put(d);
     }
     else ret = -EBADF;
 
@@ -506,7 +493,6 @@ int ftruncate(int fd, off_t length)
 
     if (length < 0)
     {
-        fd_put(d);
         rt_set_errno(-EINVAL);
 
         return -1;
@@ -514,14 +500,10 @@ int ftruncate(int fd, off_t length)
     result = dfs_file_ftruncate(d, length);
     if (result < 0)
     {
-        fd_put(d);
         rt_set_errno(result);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return 0;
 }
@@ -580,16 +562,14 @@ int mkdir(const char *path, mode_t mode)
 
     if (result < 0)
     {
-        fd_put(d);
-        fd_put(d);
+        fd_release(fd);
         rt_set_errno(result);
 
         return -1;
     }
 
     dfs_file_close(d);
-    fd_put(d);
-    fd_put(d);
+    fd_release(fd);
 
     return 0;
 }
@@ -651,7 +631,7 @@ DIR *opendir(const char *name)
         if (t == NULL)
         {
             dfs_file_close(d);
-            fd_put(d);
+            fd_release(fd);
         }
         else
         {
@@ -659,14 +639,12 @@ DIR *opendir(const char *name)
 
             t->fd = fd;
         }
-        fd_put(d);
 
         return t;
     }
 
     /* open failed */
-    fd_put(d);
-    fd_put(d);
+    fd_release(fd);
     rt_set_errno(result);
 
     return NULL;
@@ -709,7 +687,6 @@ struct dirent *readdir(DIR *d)
                                    sizeof(d->buf) - 1);
         if (result <= 0)
         {
-            fd_put(fd);
             rt_set_errno(result);
 
             return NULL;
@@ -718,8 +695,6 @@ struct dirent *readdir(DIR *d)
         d->num = result;
         d->cur = 0; /* current entry index */
     }
-
-    fd_put(fd);
 
     return (struct dirent *)(d->buf + d->cur);
 }
@@ -747,7 +722,6 @@ long telldir(DIR *d)
     }
 
     result = fd->pos - d->num + d->cur;
-    fd_put(fd);
 
     return result;
 }
@@ -760,7 +734,7 @@ RTM_EXPORT(telldir);
  * @param d the directory stream.
  * @param offset the offset in directory stream.
  */
-void seekdir(DIR *d, off_t offset)
+void seekdir(DIR *d, long offset)
 {
     struct dfs_fd *fd;
 
@@ -775,7 +749,6 @@ void seekdir(DIR *d, off_t offset)
     /* seek to the offset position of directory */
     if (dfs_file_lseek(fd, offset) >= 0)
         d->num = d->cur = 0;
-    fd_put(fd);
 }
 RTM_EXPORT(seekdir);
 
@@ -800,7 +773,6 @@ void rewinddir(DIR *d)
     /* seek to the beginning of directory */
     if (dfs_file_lseek(fd, 0) >= 0)
         d->num = d->cur = 0;
-    fd_put(fd);
 }
 RTM_EXPORT(rewinddir);
 
@@ -826,9 +798,8 @@ int closedir(DIR *d)
     }
 
     result = dfs_file_close(fd);
-    fd_put(fd);
+    fd_release(d->fd);
 
-    fd_put(fd);
     rt_free(d);
 
     if (result < 0)
@@ -859,7 +830,9 @@ int chdir(const char *path)
     if (path == NULL)
     {
         dfs_lock();
+#ifdef DFS_USING_WORKDIR
         rt_kprintf("%s\n", working_directory);
+#endif
         dfs_unlock();
 
         return 0;
@@ -893,9 +866,12 @@ int chdir(const char *path)
 
     /* close directory stream */
     closedir(d);
-
+#ifdef RT_USING_SMART
     /* copy full path to working directory */
-    strncpy(working_directory, fullpath, DFS_PATH_MAX);
+    lwp_setcwd(fullpath);
+#else
+    rt_strncpy(working_directory, fullpath, DFS_PATH_MAX);
+#endif
     /* release normalize directory path name */
     rt_free(fullpath);
 
@@ -928,6 +904,31 @@ int access(const char *path, int amode)
     /* ignore R_OK,W_OK,X_OK condition */
     return 0;
 }
+/**
+ * this function is a POSIX compliant version, which will set current
+ * working directory.
+ *
+ * @param buf the current directory.
+ *
+ * @return null.
+ */
+void setcwd(char *buf)
+{
+#ifdef DFS_USING_WORKDIR
+    dfs_lock();
+#ifdef RT_USING_SMART
+    lwp_setcwd(buf);
+#else
+    rt_strncpy(working_directory, buf, DFS_PATH_MAX);
+#endif
+    dfs_unlock();
+#else
+    rt_kprintf(NO_WORKING_DIR);
+#endif
+
+    return ;
+}
+RTM_EXPORT(setcwd);
 
 /**
  * this function is a POSIX compliant version, which will return current
@@ -941,8 +942,22 @@ int access(const char *path, int amode)
 char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
+    char *dir_buf = RT_NULL;
+
     dfs_lock();
-    strncpy(buf, working_directory, size);
+
+#ifdef RT_USING_SMART
+    dir_buf = lwp_getcwd();
+#else
+    dir_buf = &working_directory[0];
+#endif
+
+    /* copy to buf parameter */
+    if (buf)
+    {
+        rt_strncpy(buf, dir_buf, size);
+    }
+
     dfs_unlock();
 #else
     rt_kprintf(NO_WORKING_DIR);
@@ -951,3 +966,5 @@ char *getcwd(char *buf, size_t size)
     return buf;
 }
 RTM_EXPORT(getcwd);
+
+/* @} */

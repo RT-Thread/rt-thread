@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-03-08     shelton      first version
+ * 2022-12-05     shelton      uart2 pins change to pd5/pd6
  */
 
 #include <rtthread.h>
@@ -41,17 +42,18 @@ void at32_msp_usart_init(void *instance)
     if(USART2 == usart_x)
     {
         crm_periph_clock_enable(CRM_USART2_PERIPH_CLOCK, TRUE);
-        crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
+        crm_periph_clock_enable(CRM_GPIOD_PERIPH_CLOCK, TRUE);
 
         gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
         gpio_init_struct.gpio_out_type = GPIO_OUTPUT_PUSH_PULL;
         gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-        gpio_init_struct.gpio_pins = GPIO_PINS_2;
-        gpio_init(GPIOA, &gpio_init_struct);
+        gpio_init_struct.gpio_pins = GPIO_PINS_5;
+        gpio_init(GPIOD, &gpio_init_struct);
 
         gpio_init_struct.gpio_mode = GPIO_MODE_INPUT;
-        gpio_init_struct.gpio_pins = GPIO_PINS_3;
-        gpio_init(GPIOA, &gpio_init_struct);
+        gpio_init_struct.gpio_pins = GPIO_PINS_6;
+        gpio_init(GPIOD, &gpio_init_struct);
+        gpio_pin_remap_config(USART2_MUX, TRUE);
     }
 #endif
 #ifdef BSP_USING_UART3
@@ -356,3 +358,70 @@ void at32_msp_emac_init(void *instance)
     gpio_init(GPIOD, &gpio_init_struct);
 }
 #endif /* BSP_USING_EMAC */
+
+#ifdef BSP_USING_USBD
+void at32_msp_usb_init(void *instance)
+{
+    usb_clk48_s clk_s;
+
+    /* default usb clock source from hick */
+    clk_s = USB_CLK_HICK;
+
+    /* enable usb clock */
+    crm_periph_clock_enable(CRM_USB_PERIPH_CLOCK, TRUE);
+
+    if(clk_s == USB_CLK_HICK)
+    {
+        crm_usb_clock_source_select(CRM_USB_CLOCK_SOURCE_HICK);
+
+        /* enable the acc calibration ready interrupt */
+        crm_periph_clock_enable(CRM_ACC_PERIPH_CLOCK, TRUE);
+
+        /* update the c1\c2\c3 value */
+        acc_write_c1(7980);
+        acc_write_c2(8000);
+        acc_write_c3(8020);
+
+        /* open acc calibration */
+        acc_calibration_mode_enable(ACC_CAL_HICKTRIM, TRUE);
+    }
+    else
+    {
+        switch(system_core_clock)
+        {
+            /* 48MHz */
+            case 48000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_1);
+                break;
+            /* 72MHz */
+            case 72000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_1_5);
+                break;
+            /* 96MHz */
+            case 96000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_2);
+                break;
+            /* 120MHz */
+            case 120000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_2_5);
+                break;
+            /* 144MHz */
+            case 144000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_3);
+                break;
+            /* 168MHz */
+            case 168000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_3_5);
+                break;
+            /* 192MHz */
+            case 192000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_4);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+#endif /* BSP_USING_USBD */
+

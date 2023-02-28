@@ -1,16 +1,20 @@
 
 config SOC_ESPRESSIF
-    bool 
+    bool
 
 config SOC_ESP32_C3
     bool
     select SOC_ESPRESSIF
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select PKG_USING_ESP_IDF
+    select PKG_USING_ESP_IDF if BSP_USING_LOCAL_ESP_IDF = n
     default y
 
 menu "Hardware Drivers Config"
+
+config BSP_USING_LOCAL_ESP_IDF
+    bool "Use local ESP-IDF installation"
+    default n
 
 choice
     prompt "Select BSP board "
@@ -20,7 +24,7 @@ choice
         bool "LUATOS ESP32C3 board"
 
     config BSP_BOARD_HX_EXP32C3
-        bool "HONGXU ESP32C3 board"    
+        bool "HONGXU ESP32C3 board"
 endchoice
 
 menu "Onboard Peripheral Drivers"
@@ -53,9 +57,9 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-    
+
     config BSP_USING_UART
-		bool "Enable UART"
+        bool "Enable UART"
         select RT_USING_SERIAL
         select RT_USING_SERIAL_V1
         default y

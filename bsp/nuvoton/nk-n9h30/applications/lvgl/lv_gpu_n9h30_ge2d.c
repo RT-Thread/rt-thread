@@ -17,8 +17,6 @@
  *********************/
 #include <lvgl.h>
 
-#if LV_USE_GPU_N9H30_GE2D && LV_VERSION_CHECK(8, 2, 0)
-
 #include "lv_gpu_n9h30_ge2d.h"
 #include "nu_2d.h"
 #include "mmu.h"
@@ -119,7 +117,10 @@ void lv_draw_n9h30_ge2d_blend(lv_draw_ctx_t *draw_ctx, const lv_draw_sw_blend_ds
         }
     }
 
-    if (!done) lv_draw_sw_blend_basic(draw_ctx, dsc);
+    if (!done)
+    {
+        lv_draw_sw_blend_basic(draw_ctx, dsc);
+    }
 }
 
 static void lv_draw_n9h30_ge2d_blend_fill(lv_color_t *dest_buf, lv_coord_t dest_stride, const lv_area_t *fill_area,
@@ -130,7 +131,7 @@ static void lv_draw_n9h30_ge2d_blend_fill(lv_color_t *dest_buf, lv_coord_t dest_
 
     lv_color_t *start_buf = dest_buf - (fill_area->y1 * dest_stride) - fill_area->x1;
 
-    //rt_kprintf("[blend_fill %d %08x] %dx%d %d %d\n", lv_area_get_size(fill_area), dest_buf, fill_area_w, fill_area_h, fill_area->x1, fill_area->y1 );
+//    rt_kprintf("[blend_fill %d %08x] %dx%d %d %d\n", lv_area_get_size(fill_area), dest_buf, fill_area_w, fill_area_h, fill_area->x1, fill_area->y1 );
 
     if (IS_CACHEABLE_VRAM(dest_buf))
         mmu_clean_invalidated_dcache((uint32_t)dest_buf, sizeof(lv_color_t) * (dest_stride * fill_area_h + fill_area_w));
@@ -153,34 +154,51 @@ static void lv_draw_n9h30_ge2d_blend_fill(lv_color_t *dest_buf, lv_coord_t dest_
 static void lv_draw_n9h30_ge2d_blend_map(lv_color_t *dest_buf, const lv_area_t *dest_area, lv_coord_t dest_stride,
         const lv_color_t *src_buf, lv_coord_t src_stride, lv_opa_t opa)
 {
-    /*Simple copy*/
-    int32_t dest_x = dest_area->x1;
-    int32_t dest_y = dest_area->y1;
     int32_t dest_w = lv_area_get_width(dest_area);
     int32_t dest_h = lv_area_get_height(dest_area);
 
-    const lv_color_t *dest_start_buf = dest_buf - (dest_area->y1 * dest_stride) - dest_area->x1;
-
     //rt_kprintf("[blend_map %d %08x -> %08x] (x:%d y:%d, %dx%d) <stride src:%d dst:%d>\n", lv_area_get_size(dest_area), src_buf, dest_buf, dest_x, dest_y, dest_w, dest_h, src_stride, dest_stride);
 
-    // Enter GE2D ->
-    ge2dInit(sizeof(lv_color_t) * 8, dest_stride, dest_area->y2, (void *)dest_start_buf);
-
-    if (opa >= LV_OPA_MAX)
+    if (!IS_CACHEABLE_VRAM(dest_buf))
     {
-        ge2dBitblt_SetAlphaMode(0, 0, 0);
-        ge2dBitblt_SetDrawMode(0, 0, 0);
+        const lv_color_t *dest_start_buf = dest_buf - (dest_area->y1 * dest_stride) - dest_area->x1;
+        int32_t dest_x = dest_area->x1;
+        int32_t dest_y = dest_area->y1;
+
+        // Enter GE2D ->
+        ge2dInit(sizeof(lv_color_t) * 8, dest_stride, dest_area->y2, (void *)dest_start_buf);
+
+        if (opa >= LV_OPA_MAX)
+        {
+            ge2dBitblt_SetAlphaMode(0, 0, 0);
+            ge2dBitblt_SetDrawMode(0, 0, 0);
+        }
+        else
+        {
+            ge2dBitblt_SetAlphaMode(1, opa, opa);
+        }
+
+        if (IS_CACHEABLE_VRAM(src_buf))
+            mmu_clean_dcache((uint32_t)src_buf, sizeof(lv_color_t) * (src_stride * dest_h + dest_w));
+
+        ge2dSpriteBlt_Screen(dest_x, dest_y, dest_w, dest_h, (void *)src_buf);
+        // -> Leave GE2D
     }
     else
     {
-        ge2dBitblt_SetAlphaMode(1, opa, opa);
+        int32_t x, y;
+
+        /*Simple copy*/
+        for (y = 0; y < dest_h; y++)
+        {
+            for (x = 0; x < dest_w; x++)
+            {
+                dest_buf[x] = src_buf[x];
+            }
+            dest_buf += dest_stride;
+            src_buf += src_stride;
+        }
     }
-
-    // flush
-    mmu_clean_dcache((uint32_t)src_buf, sizeof(lv_color_t) * (src_stride * dest_h + dest_w));
-
-    ge2dSpriteBlt_Screen(dest_x, dest_y, dest_w, dest_h, (void *)src_buf);
-    // -> Leave GE2D
 }
 
 void lv_gpu_n9h30_ge2d_wait_cb(lv_draw_ctx_t *draw_ctx)
@@ -191,5 +209,3 @@ void lv_gpu_n9h30_ge2d_wait_cb(lv_draw_ctx_t *draw_ctx)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-
-#endif // #if (LV_USE_GPU_N9H30_GE2D && LV_VERSION_CHECK(8, 2, 0))

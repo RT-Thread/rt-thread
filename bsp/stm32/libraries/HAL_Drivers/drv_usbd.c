@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,12 +28,22 @@ static struct ep_id _ep_pool[] =
 #else
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
     {0x1,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-#endif
-    {0x2,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0x3,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
-#if !defined(SOC_SERIES_STM32F1)
     {0x3,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
+#endif
+    {0x4,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x4,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x5,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x5,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x6,  USB_EP_ATTR_INT,         USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x6,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x7,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x8,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x9,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
+#if !defined(SOC_SERIES_STM32F1)
+    {0x9,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
 #endif
     {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
 };
@@ -156,20 +166,20 @@ static rt_err_t _ep_disable(uep_t ep)
     return RT_EOK;
 }
 
-static rt_size_t _ep_read(rt_uint8_t address, void *buffer)
+static rt_ssize_t _ep_read(rt_uint8_t address, void *buffer)
 {
     rt_size_t size = 0;
     RT_ASSERT(buffer != RT_NULL);
     return size;
 }
 
-static rt_size_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     HAL_PCD_EP_Receive(&_stm_pcd, address, buffer, size);
     return size;
 }
 
-static rt_size_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     HAL_PCD_EP_Transmit(&_stm_pcd, address, buffer, size);
     return size;

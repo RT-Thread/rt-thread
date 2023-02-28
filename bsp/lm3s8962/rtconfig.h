@@ -6,7 +6,7 @@
 #define RT_NAME_MAX	8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE	8
 
 /* PRIORITY_MAX*/
 #define RT_THREAD_PRIORITY_MAX	32
@@ -77,7 +77,7 @@
 
 #define RT_USING_LIBC
 #define RT_USING_DFS
-#define RT_USING_POSIX
+#define RT_USING_POSIX_DEVIO
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS

@@ -33,7 +33,7 @@ choice
     bool "SOC_SAML10D14"
     help
         Refer to SAML10 DataSheet
-endchoice 
+endchoice
 endmenu
 
 menu "Onboard Peripheral Drivers"

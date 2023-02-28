@@ -75,7 +75,7 @@ static void nu_uspi_drain_rxfifo(USPI_T *uspi_base);
     static void nu_pdma_uspi_rx_cb_event(void *pvUserData, uint32_t u32EventFilter);
     static rt_err_t nu_pdma_uspi_rx_config(struct nu_uspi *uspi_bus, uint8_t *pu8Buf, int32_t i32RcvLen, uint8_t bytes_per_word);
     static rt_err_t nu_pdma_uspi_tx_config(struct nu_uspi *uspi_bus, const uint8_t *pu8Buf, int32_t i32SndLen, uint8_t bytes_per_word);
-    static rt_size_t nu_uspi_pdma_transmit(struct nu_uspi *uspi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word);
+    static rt_ssize_t nu_uspi_pdma_transmit(struct nu_uspi *uspi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word);
     static rt_err_t nu_hw_uspi_pdma_allocate(struct nu_uspi *uspi_bus);
 #endif
 /* Public functions -------------------------------------------------------------*/
@@ -362,7 +362,7 @@ exit_nu_pdma_uspi_tx_config:
 /**
  * USPI PDMA transfer
  **/
-static rt_size_t nu_uspi_pdma_transmit(struct nu_uspi *uspi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word)
+static rt_ssize_t nu_uspi_pdma_transmit(struct nu_uspi *uspi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word)
 {
     rt_err_t result = RT_EOK;
 

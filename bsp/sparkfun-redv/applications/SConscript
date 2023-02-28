@@ -3,10 +3,10 @@ Import('rtconfig')
 from building import *
 
 cwd     = os.path.join(str(Dir('#')), 'applications')
-src	= Glob('*.c')
+src = Glob('*.c')
 src.append('led/led.c')
 
-CPPPATH = [cwd, 
+CPPPATH = [cwd,
     str(Dir('#')),
     os.path.join(str(Dir('#')), 'freedom-e-sdk/bsp/env'),
     os.path.join(str(Dir('#')), 'freedom-e-sdk/bsp/env/freedom-e300-hifive1'),

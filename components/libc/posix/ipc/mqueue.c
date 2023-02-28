@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -85,7 +85,10 @@ int mq_setattr(mqd_t                 mqdes,
                const struct mq_attr *mqstat,
                struct mq_attr       *omqstat)
 {
-    rt_set_errno(-RT_ERROR);
+    if (mqstat == RT_NULL)
+        return mq_getattr(mqdes, omqstat);
+    else
+        rt_set_errno(-RT_ERROR);
 
     return -1;
 }
@@ -93,6 +96,7 @@ RTM_EXPORT(mq_setattr);
 
 int mq_getattr(mqd_t mqdes, struct mq_attr *mqstat)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     if ((mqdes == RT_NULL) || mqstat == RT_NULL)
     {
         rt_set_errno(EBADF);
@@ -120,12 +124,19 @@ mqd_t mq_open(const char *name, int oflag, ...)
     rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
 
     mqdes = RT_NULL;
-    if (oflag & O_CREAT)
+    /* find mqueue */
+    mqdes = posix_mq_find(name);
+    if (mqdes != RT_NULL)
+    {
+        mqdes->refcount ++; /* increase reference count */
+    }
+    else if (oflag & O_CREAT)
     {
         va_start(arg, oflag);
         mode = (mode_t)va_arg(arg, unsigned int);
         mode = mode;
         attr = (struct mq_attr *)va_arg(arg, struct mq_attr *);
+        attr = attr;
         va_end(arg);
 
         if (oflag & O_EXCL)
@@ -159,21 +170,12 @@ mqd_t mq_open(const char *name, int oflag, ...)
     }
     else
     {
-        /* find mqueue */
-        mqdes = posix_mq_find(name);
-        if (mqdes != RT_NULL)
-        {
-            mqdes->refcount ++; /* increase reference count */
-        }
-        else
-        {
-            rt_set_errno(ENOENT);
-            goto __return;
-        }
+        rt_set_errno(ENOENT);
+        goto __return;
     }
     rt_sem_release(&posix_mq_lock);
 
-    return mqdes;
+    return (mqd_t)((uintptr_t)mqdes >> 1);
 
 __return:
     /* release lock */
@@ -195,6 +197,7 @@ RTM_EXPORT(mq_open);
 
 ssize_t mq_receive(mqd_t mqdes, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     rt_err_t result;
 
     if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
@@ -215,6 +218,7 @@ RTM_EXPORT(mq_receive);
 
 int mq_send(mqd_t mqdes, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     rt_err_t result;
 
     if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
@@ -240,7 +244,8 @@ ssize_t mq_timedreceive(mqd_t                  mqdes,
                         unsigned              *msg_prio,
                         const struct timespec *abs_timeout)
 {
-    int tick;
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
+    int tick = 0;
     rt_err_t result;
 
     /* parameters check */
@@ -250,8 +255,8 @@ ssize_t mq_timedreceive(mqd_t                  mqdes,
 
         return -1;
     }
-
-    tick = rt_timespec_to_tick(abs_timeout);
+    if (abs_timeout != RT_NULL)
+        tick = rt_timespec_to_tick(abs_timeout);
 
     result = rt_mq_recv(mqdes->mq, msg_ptr, msg_len, tick);
     if (result == RT_EOK)
@@ -279,6 +284,7 @@ RTM_EXPORT(mq_timedsend);
 
 int mq_notify(mqd_t mqdes, const struct sigevent *notification)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     rt_set_errno(-RT_ERROR);
 
     return -1;
@@ -287,6 +293,7 @@ RTM_EXPORT(mq_notify);
 
 int mq_close(mqd_t mqdes)
 {
+    mqdes = (mqd_t)((uintptr_t)mqdes << 1);
     if (mqdes == RT_NULL)
     {
         rt_set_errno(EINVAL);

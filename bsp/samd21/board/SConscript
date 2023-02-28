@@ -3,7 +3,7 @@ Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
-src	= Glob('*.c')
+src = Glob('*.c')
 path = [cwd]
 
 #remove other no use files
@@ -11,9 +11,9 @@ path = [cwd]
 #SrcRemove(src, 'delay.c')
 
 if rtconfig.DEVICE_SERIES == 'SAMD20':
-	path += [cwd + '/../asflib_config', cwd + '/../asflib_config/clock_samd20']
+    path += [cwd + '/../asflib_config', cwd + '/../asflib_config/clock_samd20']
 elif rtconfig.DEVICE_SERIES == 'SAMD21':
-	path += [cwd + '/../asflib_config', cwd + '/../asflib_config/clock_samd21_r21_da_ha1']
+    path += [cwd + '/../asflib_config', cwd + '/../asflib_config/clock_samd21_r21_da_ha1']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

@@ -1,0 +1,42 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+cmsis/cm4/device_support/system_at32f425.c
+drivers/src/at32f425_acc.c
+drivers/src/at32f425_adc.c
+drivers/src/at32f425_can.c
+drivers/src/at32f425_crc.c
+drivers/src/at32f425_crm.c
+drivers/src/at32f425_debug.c
+drivers/src/at32f425_dma.c
+drivers/src/at32f425_ertc.c
+drivers/src/at32f425_exint.c
+drivers/src/at32f425_flash.c
+drivers/src/at32f425_gpio.c
+drivers/src/at32f425_i2c.c
+drivers/src/at32f425_misc.c
+drivers/src/at32f425_pwc.c
+drivers/src/at32f425_scfg.c
+drivers/src/at32f425_spi.c
+drivers/src/at32f425_tmr.c
+drivers/src/at32f425_usart.c
+drivers/src/at32f425_usb.c
+drivers/src/at32f425_wdt.c
+drivers/src/at32f425_wwdt.c
+""")
+
+path = [
+    cwd + '/cmsis/cm4/device_support',
+    cwd + '/cmsis/cm4/core_support',
+    cwd + '/drivers/inc',]
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

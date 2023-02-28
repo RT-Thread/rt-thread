@@ -53,6 +53,7 @@ AT32F437-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | FLASH     | 支持     |                            |
 | EMAC      | 支持     |                            |
 | SDRAM     | 支持     |                            |
+| USB       | 支持     |                            |
 
 ### IO在板级支持包中的映射情况
 
@@ -63,8 +64,8 @@ AT32F437-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PD15 | LED4              |
 | PA9  | USART1_TX         |
 | PA10 | USART1_RX         |
-| PA2  | USART2_TX         |
-| PA3  | USART2_RX         |
+| PD5  | USART2_TX         |
+| PD6  | USART2_RX         |
 | PB10 | USART3_TX         |
 | PB11 | USART3_RX         |
 | PA4  | SPI1_NSS          |
@@ -116,6 +117,10 @@ AT32F437-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PE10 | QSPI2_IO3         |
 | PG13 | QSPI2_SCK         |
 | PG8  | QSPI2_CS          |
+| PA11 | USB1_DM           |
+| PA12 | USB1_DP           |
+| PB14 | USB2_DM           |
+| PB15 | USB2_DP           |
 
 ## 使用说明
 

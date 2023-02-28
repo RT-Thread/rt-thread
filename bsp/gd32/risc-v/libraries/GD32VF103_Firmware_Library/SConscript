@@ -18,10 +18,10 @@ GD32VF103_standard_peripheral/Source/gd32vf103_rcu.c
 GD32VF103_standard_peripheral/Source/gd32vf103_exti.c
 GD32VF103_standard_peripheral/Source/gd32vf103_eclic.c
 ''')
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['GD32VF103_standard_peripheral/Source/gd32vf103_usart.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['GD32VF103_standard_peripheral/Source/gd32vf103_i2c.c']
 

@@ -2,7 +2,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 #ifndef _FSL_PMU_H_
@@ -108,10 +108,10 @@ extern "C" {
  */
 
 /*!
- * @brief Get PMU status flags. 
+ * @brief Get PMU status flags.
  *
  * @param base PMU peripheral base address.
- * @return PMU status flags.It indicate if regulator output of 1P1,3P0 and 2P5 is ok 
+ * @return PMU status flags.It indicate if regulator output of 1P1,3P0 and 2P5 is ok
  * and brownout output of 1P1,3P0 and 2P5 is detected.
  */
 uint32_t PMU_GetStatusFlags(PMU_Type *base);

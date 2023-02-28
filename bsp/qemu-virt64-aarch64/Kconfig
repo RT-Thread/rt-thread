@@ -22,8 +22,13 @@ config SOC_VIRT64_AARCH64
     bool
     select ARCH_ARMV8
     select ARCH_CPU_64BIT
+    select ARCH_ARM_MMU
+    select RT_USING_CACHE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_GIC
+    select BSP_USING_GIC
+    select ARCH_MM_MMU
     default y
 
-source "$BSP_DIR/driver/Kconfig"
+source "$BSP_DIR/drivers/Kconfig"

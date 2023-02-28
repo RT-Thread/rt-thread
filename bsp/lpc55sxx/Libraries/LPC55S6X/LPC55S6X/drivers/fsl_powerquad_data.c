@@ -1,11 +1,12 @@
 /*
- * Copyright 2018 NXP
+ * Copyright 2018-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <stdint.h>
+#include "fsl_powerquad_data.h"
 
 /* Component ID definition, used by tools. */
 #ifndef FSL_COMPONENT_ID

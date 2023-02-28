@@ -19,7 +19,7 @@
  * None
  * RETURNED VALUE: None
 -----------------------------------------------------------------------------*/
-RT_WEAK void rt_hw_cpu_shutdown(void)
+rt_weak void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 

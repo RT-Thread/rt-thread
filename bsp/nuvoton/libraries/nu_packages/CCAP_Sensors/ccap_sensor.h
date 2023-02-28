@@ -94,8 +94,8 @@ typedef ccap_sensor_dev *ccap_sensor_dev_t;
 
 rt_err_t ccap_sensor_i2c_write(struct rt_i2c_bus_device *i2cdev, rt_uint16_t addr, rt_uint8_t *puBuf, int i32BufLen);
 rt_err_t ccap_sensor_i2c_read(struct rt_i2c_bus_device *i2cdev, rt_uint16_t addr, rt_uint8_t *puWBuf, int i32WBufLen, rt_uint8_t *puRBuf, int i32RBufLen);
-rt_err_t nu_ccap_sensor_create(ccap_sensor_io *psIo, ccap_sensor_id evSensorId);
 rt_err_t ccap_sensor_register(struct rt_device *device, const char *name, void *user_data);
+rt_err_t nu_ccap_sensor_create(ccap_sensor_io *psIo, ccap_sensor_id evSensorId, const char *szName);
 ccap_sensor_dev_t nu_create_hm1055(ccap_sensor_io *psIo, const char *szName);
 ccap_sensor_dev_t nu_create_adv728x(ccap_sensor_io *psIo, const char *szName);
 

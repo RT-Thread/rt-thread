@@ -29,10 +29,10 @@ if GetDepend(['RT_USING_ADC']):
 
 if GetDepend(['RT_USING_CAN']):
     src += ['drv_can.c']
-	
+
 if GetDepend(['RT_USING_RTC']):
     src += ['drv_rtc.c']
-	
+
 if GetDepend(['RT_USING_WDT']):
     src += ['drv_wdt.c']
 

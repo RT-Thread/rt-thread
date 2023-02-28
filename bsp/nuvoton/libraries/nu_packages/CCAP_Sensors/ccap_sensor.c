@@ -333,26 +333,23 @@ rt_err_t ccap_sensor_register(struct rt_device *device, const char *name, void *
     return rt_device_register(device, name, RT_DEVICE_FLAG_RDONLY | RT_DEVICE_FLAG_STANDALONE);
 }
 
-rt_err_t nu_ccap_sensor_create(ccap_sensor_io *psIo, ccap_sensor_id evSensorId)
+rt_err_t nu_ccap_sensor_create(ccap_sensor_io *psIo, ccap_sensor_id evSensorId, const char *szName)
 {
     static int i32AllocatedSensorId = 0;
-    char szSensor[16];
     rt_err_t ret = -RT_ERROR;
     ccap_sensor_dev_t pdev = RT_NULL;
 
     RT_ASSERT(psIo);
     RT_ASSERT((evSensorId >= 0) && (evSensorId < evCCAPSNR_CNT));
 
-    rt_snprintf(szSensor, sizeof(szSensor), "sensor%d", i32AllocatedSensorId);
-
     switch (evSensorId)
     {
     case evCCAPSNR_HM1055:
-        pdev = nu_create_hm1055(psIo, szSensor);
+        pdev = nu_create_hm1055(psIo, szName);
         break;
 
     case evCCAPSNR_ADV728X:
-        pdev = nu_create_adv728x(psIo, szSensor);
+        pdev = nu_create_adv728x(psIo, szName);
         break;
 
     default:

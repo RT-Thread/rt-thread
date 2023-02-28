@@ -68,20 +68,20 @@ void hal_printf(const char *fmt, ...)
 }
 #endif
 
-RT_SECTION(".irq")
+rt_section(".irq")
 void os_interrupt_enter(void)
 {
     rt_interrupt_enter();
 }
 
-RT_SECTION(".irq")
+rt_section(".irq")
 void os_interrupt_leave(void)
 {
     rt_interrupt_leave();
 }
 
 typedef void (*isr_t)(void);
-RT_SECTION(".irq")
+rt_section(".irq")
 isr_t register_isr(int vector, isr_t isr)
 {
     char buf[8] = {0};
@@ -90,7 +90,7 @@ isr_t register_isr(int vector, isr_t isr)
     rt_hw_interrupt_install(vector, handle, RT_NULL, buf);
 }
 
-RT_SECTION(".irq.timer")
+rt_section(".irq.timer")
 void timer0_isr(int vector, void *param)
 {
     rt_interrupt_enter();
@@ -136,7 +136,7 @@ void hal_udelay(uint32_t nus)
  *
  * @param us microseconds.
  */
-RT_SECTION(".com_text")
+rt_section(".com_text")
 void rt_hw_us_delay(rt_uint32_t us)
 {
     rt_uint32_t ticks;
@@ -213,7 +213,7 @@ void rt_hw_board_init(void)
 #endif
 }
 
-RT_SECTION(".irq.cache")
+rt_section(".irq.cache")
 void cache_init(void)
 {
     os_cache_init();
@@ -221,7 +221,7 @@ void cache_init(void)
     rt_mutex_init(&mutex_cache, "cache_mutex", RT_IPC_FLAG_PRIO);
 }
 
-RT_SECTION(".irq.cache")
+rt_section(".irq.cache")
 void os_spiflash_lock(void)
 {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
@@ -230,7 +230,7 @@ void os_spiflash_lock(void)
     }
 }
 
-RT_SECTION(".irq.cache")
+rt_section(".irq.cache")
 void os_spiflash_unlock(void)
 {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
@@ -239,7 +239,7 @@ void os_spiflash_unlock(void)
     }
 }
 
-RT_SECTION(".irq.cache")
+rt_section(".irq.cache")
 void os_cache_lock(void)
 {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
@@ -248,7 +248,7 @@ void os_cache_lock(void)
     }
 }
 
-RT_SECTION(".irq.cache")
+rt_section(".irq.cache")
 void os_cache_unlock(void)
 {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0))
@@ -257,7 +257,7 @@ void os_cache_unlock(void)
     }
 }
 
-RT_SECTION(".irq.err.str")
+rt_section(".irq.err.str")
 static const char stack_info[] = "thread sp=0x%x name=%s";
 
 void rt_hw_console_output(const char *str)
@@ -271,7 +271,7 @@ void rt_hw_console_output(const char *str)
  * @note (IRQ in Flash: %x %x - %x %x\n, -, rt_interrupt_nest, PC, miss_addr)
  *       miss_addr: The address in map file minus 0x10000000
  */
-RT_SECTION(".irq.err")
+rt_section(".irq.err")
 void exception_isr(void)
 {
 #if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)

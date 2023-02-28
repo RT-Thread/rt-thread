@@ -30,7 +30,7 @@
                          LED_BASE,\
                          IORD_ALTERA_AVALON_PIO_DATA(LED_BASE) & ~(1<<n) )
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread_led1_stack[1024];
 struct rt_thread thread_led1;
 static void rt_thread_entry_led1(void* parameter)
@@ -56,7 +56,7 @@ static void rt_thread_entry_led1(void* parameter)
     }
 }
 
-ALIGN(RT_ALIGN_SIZE)
+rt_align(RT_ALIGN_SIZE)
 static char thread_led2_stack[1024];
 struct rt_thread thread_led2;
 void rt_thread_entry_led2(void* parameter)

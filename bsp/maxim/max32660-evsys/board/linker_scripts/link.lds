@@ -19,7 +19,7 @@ SECTIONS {
 
         /* C++ Exception handling */
         KEEP(*(.eh_frame*))
-        
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -36,7 +36,7 @@ SECTIONS {
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
-        
+
         . = ALIGN(4);
 
         PROVIDE(__ctors_start__ = .);
@@ -45,7 +45,7 @@ SECTIONS {
         PROVIDE(__ctors_end__ = .);
 
         . = ALIGN(4);
-        
+
         _etext = .;
     } > FLASH
 

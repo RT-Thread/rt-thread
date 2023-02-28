@@ -9,18 +9,18 @@ cpppath = [cwd + '/Include']
 libpath = [cwd + '/Library']
 
 if not GetDepend('BSP_USE_STDDRIVER_SOURCE'):
-	if rtconfig.PLATFORM in ['armcc', 'armclang']:
-		if GetOption('target') == 'mdk4' and os.path.isfile('./Library/libstddriver_keil4.lib'):
-			libs += ['libstddriver_keil4']
-		if GetOption('target') == 'mdk5' and os.path.isfile('./Library/libstddriver_keil.lib'):
-			libs += ['libstddriver_keil']
-	elif rtconfig.PLATFORM in ['gcc'] and os.path.isfile('./Library/libstddriver_gcc.a'):
-		libs += ['libstddriver_gcc']
+    if rtconfig.PLATFORM in ['armcc', 'armclang']:
+        if GetOption('target') == 'mdk4' and os.path.isfile('./Library/libstddriver_keil4.lib'):
+            libs += ['libstddriver_keil4']
+        if GetOption('target') == 'mdk5' and os.path.isfile('./Library/libstddriver_keil.lib'):
+            libs += ['libstddriver_keil']
+    elif rtconfig.PLATFORM in ['gcc'] and os.path.isfile('./Library/libstddriver_gcc.a'):
+        libs += ['libstddriver_gcc']
 
 if not libs:
-	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath)
+    group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath)
 else:
-	src = []
-	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
+    src = []
+    group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
 
 Return('group')

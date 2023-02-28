@@ -63,13 +63,13 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
-        
+
     config BSP_USING_AUDIO
         bool "Enable AUDIO (WM8978)"
         select BSP_USING_I2C1
         select RT_USING_AUDIO
         default n
-        
+
         if BSP_USING_AUDIO
             config BSP_USING_AUDIO_PLAY
             bool "Enable Audio Play"
@@ -79,8 +79,8 @@ menu "Onboard Peripheral Drivers"
             bool "Enable Audio Record"
             select BSP_USING_AUDIO_PLAY
             default n
-        endif        
-        
+        endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -112,16 +112,16 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
                 depends on !BSP_USING_ETH
-   
+
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
-                default n  
+                default n
         endif
 
     config BSP_USING_ON_CHIP_FLASH
@@ -150,7 +150,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -159,33 +159,33 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
                 default n
-                
+
             config BSP_USING_SPI5
                 bool "Enable SPI5 BUS"
-                default n        
+                default n
 
             config BSP_SPI5_TX_USING_DMA
                 bool "Enable SPI5 TX DMA"
                 depends on BSP_USING_SPI5
                 default n
-                
+
             config BSP_SPI5_RX_USING_DMA
                 bool "Enable SPI5 RX DMA"
                 depends on BSP_USING_SPI5
                 select BSP_SPI5_TX_USING_DMA
-                default n  
+                default n
         endif
 
     menuconfig BSP_USING_I2C1
@@ -296,7 +296,7 @@ menu "On-chip Peripheral Drivers"
         bool
         default n
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

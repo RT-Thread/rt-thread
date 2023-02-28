@@ -73,7 +73,7 @@ SECTIONS
         _edata = . ;
     } >DATA
 
-    .stack : 
+    .stack :
     {
         . = . + _system_stack_size;
         . = ALIGN(4);
@@ -94,7 +94,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > DATA
     __bss_end = .;

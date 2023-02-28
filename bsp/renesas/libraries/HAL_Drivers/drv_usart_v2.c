@@ -142,7 +142,7 @@ static void ra_uart_get_config(void)
     uart_obj[UART3_INDEX].uart_dma_flag = 0;
 
     uart_obj[UART3_INDEX].serial.config.rx_bufsz = BSP_UART3_RX_BUFSIZE;
-    uart_obj[UART3_INDEX].serial.config.tx_bufsz = BSP_UART0_TX_BUFSIZE;
+    uart_obj[UART3_INDEX].serial.config.tx_bufsz = BSP_UART3_TX_BUFSIZE;
 #endif
 
 #ifdef BSP_USING_UART4
@@ -151,6 +151,14 @@ static void ra_uart_get_config(void)
 
     uart_obj[UART4_INDEX].serial.config.rx_bufsz = BSP_UART4_RX_BUFSIZE;
     uart_obj[UART4_INDEX].serial.config.tx_bufsz = BSP_UART4_TX_BUFSIZE;
+#endif
+
+#ifdef BSP_USING_UART5
+    uart_obj[UART5_INDEX].serial.config = config;
+    uart_obj[UART5_INDEX].uart_dma_flag = 0;
+
+    uart_obj[UART5_INDEX].serial.config.rx_bufsz = BSP_UART5_RX_BUFSIZE;
+    uart_obj[UART5_INDEX].serial.config.tx_bufsz = BSP_UART5_TX_BUFSIZE;
 #endif
 
 #ifdef BSP_USING_UART6
@@ -236,7 +244,7 @@ static int ra_uart_getc(struct rt_serial_device *serial)
     return RT_EOK;
 }
 
-static rt_size_t ra_uart_transmit(struct rt_serial_device     *serial,
+static rt_ssize_t ra_uart_transmit(struct rt_serial_device     *serial,
                                   rt_uint8_t           *buf,
                                   rt_size_t             size,
                                   rt_uint32_t           tx_flag)

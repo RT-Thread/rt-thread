@@ -231,7 +231,7 @@ vector_irq:
     mrs     r1,  spsr         /* original mode */
     stmfd   r0!, {r1}
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     stmfd   r0, {r13, r14}^ /* usr_sp, usr_lr */
     sub   r0, #8
 #endif
@@ -299,7 +299,7 @@ rt_hw_context_switch_interrupt_do:
     stmfd   sp!, {r1-r4}    @ push old task's r0-r3
     stmfd   sp!, {r0}       @ push old task's cpsr
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     stmfd sp, {r13, r14}^  @push usr_sp, usr_lr
     sub sp, #8
 #endif
@@ -337,7 +337,7 @@ rt_hw_context_switch_interrupt_do:
 1:
 #endif
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     ldmfd sp, {r13, r14}^  @pop usr_sp, usr_lr
     add sp, #8
 #endif

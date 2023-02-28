@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the BAKPR firmware functions.
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,15 +26,16 @@
 #include "apm32f10x_bakpr.h"
 #include "apm32f10x_rcm.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
-/** @addtogroup BAKPR_Driver ADC Driver
+/** @addtogroup BAKPR_Driver BAKPR Driver
+  * @brief BAKPR driver modules
   @{
 */
 
-/** @addtogroup BAKPR_Fuctions Fuctions
+/** @defgroup BAKPR_Functions Functions
   @{
 */
 
@@ -177,7 +178,7 @@ void BAKPR_ConfigBackupRegister(BAKPR_DATA_T bakrData, uint16_t data)
     tmp = (uint32_t)BAKPR_BASE;
     tmp += bakrData;
 
-    *(__IOM uint32_t *) tmp = data;
+    *(__IOM uint32_t*) tmp = data;
 }
 
 /*!
@@ -195,7 +196,7 @@ uint16_t BAKPR_ReadBackupRegister(BAKPR_DATA_T bakrData)
     tmp = (uint32_t)BAKPR_BASE;
     tmp += bakrData;
 
-    return (*(__IOM uint32_t *) tmp);
+    return (*(__IOM uint32_t*) tmp);
 }
 
 /*!
@@ -246,6 +247,6 @@ void BAKPR_ClearIntFlag(void)
     BAKPR->CSTS_B.TICLR = BIT_SET;
 }
 
-/**@} end of group BAKPR_Fuctions*/
+/**@} end of group BAKPR_Functions*/
 /**@} end of group BAKPR_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group APM32F10x_StdPeriphDriver */

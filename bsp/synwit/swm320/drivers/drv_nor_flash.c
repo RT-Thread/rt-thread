@@ -30,7 +30,7 @@ static long swm_norflash_read_id(struct rt_mtd_nor_device *device)
     return 0xdeadbeef;
 }
 
-static rt_size_t swm_norflash_read(struct rt_mtd_nor_device *device,
+static rt_ssize_t swm_norflash_read(struct rt_mtd_nor_device *device,
                                    rt_off_t position,
                                    rt_uint8_t *data,
                                    rt_uint32_t size)
@@ -41,7 +41,7 @@ static rt_size_t swm_norflash_read(struct rt_mtd_nor_device *device,
     return size;
 }
 
-static rt_size_t swm_norflash_write(struct rt_mtd_nor_device *device,
+static rt_ssize_t swm_norflash_write(struct rt_mtd_nor_device *device,
                                     rt_off_t position,
                                     const rt_uint8_t *data,
                                     rt_uint32_t size)

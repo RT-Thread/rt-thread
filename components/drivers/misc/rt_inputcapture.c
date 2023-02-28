@@ -81,7 +81,7 @@ static rt_err_t rt_inputcapture_close(struct rt_device *dev)
     return ret;
 }
 
-static rt_size_t rt_inputcapture_read(struct rt_device *dev,
+static rt_ssize_t rt_inputcapture_read(struct rt_device *dev,
                                  rt_off_t          pos,
                                  void             *buffer,
                                  rt_size_t         size)

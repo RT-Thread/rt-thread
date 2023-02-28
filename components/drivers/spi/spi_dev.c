@@ -11,7 +11,7 @@
 #include <drivers/spi.h>
 
 /* SPI bus device interface, compatible with RT-Thread 0.3.x/1.0.x */
-static rt_size_t _spi_bus_device_read(rt_device_t dev,
+static rt_ssize_t _spi_bus_device_read(rt_device_t dev,
                                       rt_off_t    pos,
                                       void       *buffer,
                                       rt_size_t   size)
@@ -25,7 +25,7 @@ static rt_size_t _spi_bus_device_read(rt_device_t dev,
     return rt_spi_transfer(bus->owner, RT_NULL, buffer, size);
 }
 
-static rt_size_t _spi_bus_device_write(rt_device_t dev,
+static rt_ssize_t _spi_bus_device_write(rt_device_t dev,
                                        rt_off_t    pos,
                                        const void *buffer,
                                        rt_size_t   size)
@@ -77,7 +77,7 @@ rt_err_t rt_spi_bus_device_init(struct rt_spi_bus *bus, const char *name)
 }
 
 /* SPI Dev device interface, compatible with RT-Thread 0.3.x/1.0.x */
-static rt_size_t _spidev_device_read(rt_device_t dev,
+static rt_ssize_t _spidev_device_read(rt_device_t dev,
                                      rt_off_t    pos,
                                      void       *buffer,
                                      rt_size_t   size)
@@ -91,7 +91,7 @@ static rt_size_t _spidev_device_read(rt_device_t dev,
     return rt_spi_transfer(device, RT_NULL, buffer, size);
 }
 
-static rt_size_t _spidev_device_write(rt_device_t dev,
+static rt_ssize_t _spidev_device_write(rt_device_t dev,
                                       rt_off_t    pos,
                                       const void *buffer,
                                       rt_size_t   size)

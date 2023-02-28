@@ -51,14 +51,16 @@ void rt_hw_timer_isr(int vector, void *parameter)
     rt_tick_increase();
 }
 
+rt_uint8_t core_timer_flag;
+
 void rt_hw_timer_init(void)
 {
     rt_hw_interrupt_install(IRQ_ARM_TIMER, rt_hw_timer_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(IRQ_ARM_TIMER);
 #ifdef BSP_USING_CORETIMER
-    __ISB();
+    rt_hw_isb();
     timer_step = rt_hw_get_gtimer_frq();
-    __DSB();
+    rt_hw_dsb();
     timer_step /= RT_TICK_PER_SECOND;
 
     rt_hw_gtimer_enable();
@@ -97,8 +99,9 @@ void idle_wfi(void)
  */
 void rt_hw_board_init(void)
 {
-    rt_hw_init_mmu_table(platform_mem_desc, platform_mem_desc_size);
-    rt_hw_mmu_init();
+    extern void *MMUTable;
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
     /* initialize hardware interrupt */
     rt_hw_interrupt_init(); // in libcpu/interrupt.c. Set some data structures, no operation on device

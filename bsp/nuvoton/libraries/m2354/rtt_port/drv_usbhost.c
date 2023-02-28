@@ -21,6 +21,13 @@
 #include "usb.h"
 #include "usbh_lib.h"
 
+#define LOG_TAG    "drv.usbhost"
+#define DBG_ENABLE
+#define DBG_SECTION_NAME   LOG_TAG
+#define DBG_LEVEL   LOG_LVL_DBG
+#define DBG_COLOR
+#include <rtdbg.h>
+
 #if !defined(NU_USBHOST_HUB_POLLING_INTERVAL)
     #define NU_USBHOST_HUB_POLLING_INTERVAL    (100)
 #endif
@@ -60,6 +67,7 @@ typedef struct nu_port_dev
     UDEV_T *pUDev;
     EP_INFO_T *apsEPInfo[NU_MAX_USBH_PIPE];
     struct urequest asSetupReq[NU_MAX_USBH_PIPE];
+    uint32_t u32SentLength[NU_MAX_USBH_PIPE];
     struct rt_completion utr_completion;
     int port_num;
     rt_bool_t bEnumDone;
@@ -426,21 +434,29 @@ static int nu_int_xfer(
     int timeouts)
 {
     int ret;
-    int retry = 3;
 
-    while (retry > 0)
+    while (1)
     {
         ret = usbh_int_xfer(psUTR);
-        if (ret == 0)
+        if (ret < 0)
+            return ret;
+
+        if (rt_completion_wait(&(psPortDev->utr_completion), timeouts) != 0)
+        {
+            RT_DEBUG_LOG(RT_DEBUG_USB, ("Request %08x Timeout in %d ms!!\n", psUTR, timeouts));
+            usbh_quit_utr(psUTR);
+
+            rt_completion_init(&(psPortDev->utr_completion));
+            rt_thread_mdelay(1);
+        }
+        else
+        {
+
+            RT_DEBUG_LOG(RT_DEBUG_USB, ("Transferring done %08x\n", psUTR));
+            usbh_quit_utr(psUTR);
             break;
-
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_int_xfer ERROR: failed to submit interrupt request\n"));
-        rt_thread_delay((pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) > 0 ? (pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) : 1);
-        retry --;
+        }
     }
-
-    if (ret < 0)
-        return ret;
 
     return 0;
 }
@@ -451,30 +467,6 @@ static void xfer_done_cb(UTR_T *psUTR)
 
     //transfer done, signal utr_completion
     rt_completion_done(&(psPortDev->utr_completion));
-}
-
-static void int_xfer_done_cb(UTR_T *psUTR)
-{
-    upipe_t pipe = (upipe_t)psUTR->context;
-
-    if (psUTR->status != 0)
-    {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("Interrupt xfer failed %d\n", psUTR->status));
-        goto exit_int_xfer_done_cb;
-    }
-
-    if (pipe->callback != RT_NULL)
-    {
-        struct uhost_msg msg;
-        msg.type = USB_MSG_CALLBACK;
-        msg.content.cb.function = pipe->callback;
-        msg.content.cb.context = pipe;
-        rt_usbh_event_signal(&s_sUSBHDev.uhcd, &msg);
-    }
-
-exit_int_xfer_done_cb:
-
-    free_utr(psUTR);
 }
 
 static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int timeouts)
@@ -510,6 +502,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         {
             struct urequest *psSetup = (struct urequest *)buffer_nonch;
             RT_ASSERT(buffer_nonch != RT_NULL);
+            psPortCtrl->asHubPortDev->u32SentLength[pipe->pipe_index] = 0;
 
             /* Read data from USB device. */
             if (psSetup->request_type & USB_REQ_TYPE_DIR_IN)
@@ -531,10 +524,31 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             //token == USBH_PID_DATA
             if (buffer_nonch && ((pipe->ep.bEndpointAddress & USB_DIR_MASK) == USB_DIR_IN))
             {
+                struct urequest *psSetup = &psPortCtrl->asHubPortDev->asSetupReq[pipe->pipe_index];
+
                 /* Read data from USB device. */
                 //Trigger USBHostLib Ctril_Xfer
-                ret = nu_ctrl_xfer(psPortDev, &psPortCtrl->asHubPortDev->asSetupReq[pipe->pipe_index], buffer_nonch, timeouts);
-                if (ret != nbytes)
+                /*
+                * Workaround: HCD driver can readback all bytes of setup.wLength, but not support single packet transferring.
+                */
+                if (psPortCtrl->asHubPortDev->u32SentLength[pipe->pipe_index] == 0)
+                {
+                    ret = nu_ctrl_xfer(psPortDev, psSetup, buffer_nonch, timeouts);
+                    psPortCtrl->asHubPortDev->u32SentLength[pipe->pipe_index] = ret;
+                }
+                else
+                {
+                    if (psPortCtrl->asHubPortDev->u32SentLength[pipe->pipe_index] < nbytes)
+                    {
+                        ret = 0;
+                    }
+                    else
+                    {
+                        psPortCtrl->asHubPortDev->u32SentLength[pipe->pipe_index] -= nbytes;
+                        ret = nbytes;
+                    }
+                }
+                if (ret <= 0)
                     goto exit_nu_pipe_xfer;
             }
             else
@@ -579,9 +593,6 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         }
         else if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
         {
-            psUTR->func = int_xfer_done_cb;
-            psUTR->context = pipe;
-
             if (nu_int_xfer(pipe, psPortDev, psUTR, timeouts) < 0)
             {
                 RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: int transfer failed\n"));
@@ -591,7 +602,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             {
                 i32XferLen = nbytes;
             }
-            goto exit2_nu_pipe_xfer;
+            goto exit_nu_pipe_xfer;
         }
         else if (pipe->ep.bmAttributes == USB_EP_ATTR_ISOC)
         {
@@ -630,19 +641,16 @@ failreport_nu_pipe_xfer:
 
     i32XferLen = psUTR->xfer_len;
 
+exit_nu_pipe_xfer:
+
     //Call callback
     if (pipe->callback != RT_NULL)
     {
         pipe->callback(pipe);
     }
 
-exit_nu_pipe_xfer:
-
     if (psUTR)
         free_utr(psUTR);
-
-exit2_nu_pipe_xfer:
-
 
     NU_USBHOST_UNLOCK();
 
@@ -851,12 +859,19 @@ int nu_usbh_register(void)
     psUHCD->num_ports         = NU_MAX_USBH_PORT;
 
 #if !defined(BSP_USING_OTG)
-    SYS_UnlockReg();
+    {
+        uint32_t u32RegLockBackup;
 
-    /* Set OTG as USB Host role */
-    SYS->USBPHY = SYS_USBPHY_OTGPHYEN_Msk | SYS_USBPHY_SBO_Msk | (0x1 << SYS_USBPHY_USBROLE_Pos);
+        u32RegLockBackup = SYS_IsRegLocked();
+        if (u32RegLockBackup)
+            SYS_UnlockReg();
 
-    SYS_LockReg();
+        /* Set OTG as USB Host role */
+        SYS->USBPHY = SYS_USBPHY_OTGPHYEN_Msk | SYS_USBPHY_SBO_Msk | (0x1 << SYS_USBPHY_USBROLE_Pos);
+
+        if (u32RegLockBackup)
+            SYS_LockReg();
+    }
 #endif
 
 
@@ -875,6 +890,6 @@ int nu_usbh_register(void)
 
     return 0;
 }
-INIT_DEVICE_EXPORT(nu_usbh_register);
+INIT_APP_EXPORT(nu_usbh_register);
 
 #endif

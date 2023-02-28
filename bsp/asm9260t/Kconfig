@@ -19,24 +19,26 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config SOC_AT91SAM926
+    bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_CACHE
     default y
 
 config RT_USING_UART0
     bool "Using RT_USING_UART0"
-    default n    
-	
+    default n
+
 config RT_USING_UART3
     bool "Using RT_USING_UART3"
-    default y    
-	
+    default y
+
 config RT_USING_UART4
     bool "Using RT_USING_UART4"
-    default n    
-	
+    default n
+
 config RT_USING_LED
-	bool "Using RT_USING_LED"
-	default y
-	help
-		led blink demo
+    bool "Using RT_USING_LED"
+    default y
+    help
+        led blink demo

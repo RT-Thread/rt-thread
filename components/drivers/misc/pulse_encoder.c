@@ -55,7 +55,7 @@ static rt_err_t rt_pulse_encoder_close(struct rt_device *dev)
     }
 }
 
-static rt_size_t rt_pulse_encoder_read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_pulse_encoder_read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     struct rt_pulse_encoder_device *pulse_encoder;
 

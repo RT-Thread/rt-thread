@@ -42,6 +42,7 @@
 | FLASH              | 支持               |                |
 | PWM                | 支持               |                |
 | CAN                | 支持               |                |
+|  SEGGER_RTT        |  支持              |  打开默认segger_rtt为console |
 | 持续更新中...      |                    |                |
 | **外接外设** | **支持情况** | **备注** |
 | WiFi 模块     | 支持        |  [RW007 WiFi 网络模块](https://github.com/RT-Thread-packages/rw007)  |
@@ -172,6 +173,14 @@ void hal_entry(void)
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
 3. 输入`pkgs --update`命令更新软件包。
 4. 输入`scons --target=mdk5` 命令重新生成工程。
+
+**SEGGER_RTT使用**
+
+由于瑞萨RA6M4的串口使用需要使用USB转TTL工具，使用起来十分不方便，RT-Thread提供的[RTTHREAD_SEGGER_TOOL软件包](https://github.com/supperthomas/RTTHREAD_SEGGER_TOOL)可以将J-Link作为RT-Thread的console口来使用，用户在`RT-Thread Settings->硬件->板载设备驱动`下使能SEGGER-RTT即可,如下
+
+![jlink-rtt](docs/picture/jlink-rtt.png)
+
+选中之后就能使用J-Link作为RT-Thread的console来使用了！
 
 
 ## FAQ

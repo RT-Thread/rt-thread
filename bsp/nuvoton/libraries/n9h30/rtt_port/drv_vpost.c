@@ -70,9 +70,9 @@ static struct nu_vpost nu_fbdev[eVpost_Cnt] =
 #endif
 };
 
-RT_WEAK void nu_lcd_backlight_on(void) { }
+rt_weak void nu_lcd_backlight_on(void) { }
 
-RT_WEAK void nu_lcd_backlight_off(void) { }
+rt_weak void nu_lcd_backlight_off(void) { }
 static rt_err_t vpost_layer_open(rt_device_t dev, rt_uint16_t oflag)
 {
     nu_vpost_t psVpost = (nu_vpost_t)dev;
@@ -242,20 +242,20 @@ static rt_err_t vpost_layer_init(rt_device_t dev)
 
 static void nu_vpost_calculate_fps(void)
 {
-    #define DEF_PERIOD_SEC  10
-    static uint32_t u32LastTick=0;
-    static uint32_t u32VSyncBlank=0;
-    static uint32_t u32UnderRun=0;
+#define DEF_PERIOD_SEC  10
+    static uint32_t u32LastTick = 0;
+    static uint32_t u32VSyncBlank = 0;
+    static uint32_t u32UnderRun = 0;
     uint32_t u32CurrTick = rt_tick_get();
 
-    if ( (u32CurrTick-u32LastTick) > (DEF_PERIOD_SEC*RT_TICK_PER_SECOND) )
+    if ((u32CurrTick - u32LastTick) > (DEF_PERIOD_SEC * RT_TICK_PER_SECOND))
     {
-            rt_kprintf("VPOST: %d FPS, URPS: %d\n",
-                              (s_u32VSyncBlank-u32VSyncBlank)/DEF_PERIOD_SEC,
-                                (s_u32UnderRun-u32UnderRun)/DEF_PERIOD_SEC);
+        rt_kprintf("VPOST: %d FPS, URPS: %d\n",
+                   (s_u32VSyncBlank - u32VSyncBlank) / DEF_PERIOD_SEC,
+                   (s_u32UnderRun - u32UnderRun) / DEF_PERIOD_SEC);
         u32LastTick = u32CurrTick;
         u32VSyncBlank = s_u32VSyncBlank;
-              u32UnderRun = s_u32UnderRun;
+        u32UnderRun = s_u32UnderRun;
     }
 }
 

@@ -25,7 +25,7 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32WBxx_HAL/CMSIS/Device/ST/STM32WBxx/Source/Templates/iar/startup_stm32wb55xx_cm4.s']
 
-# You can select chips from the list above	
+# You can select chips from the list above
 CPPDEFINES = ['STM32WB55xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

@@ -9,7 +9,7 @@ src = Split("""
 
 """)
 
-# add for startup script 
+# add for startup script
 if rtconfig.PLATFORM in ['gcc']:
     src = src + ['gcc/' + 'startup_gcc.c']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:

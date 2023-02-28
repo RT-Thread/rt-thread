@@ -332,7 +332,7 @@ ccap_sensor_io sIo_sensor0 =
 
 int rt_hw_sensor0_port(void)
 {
-    return  nu_ccap_sensor_create(&sIo_sensor0, (ccap_sensor_id)BOARD_USING_SENSON0_ID);
+    return  nu_ccap_sensor_create(&sIo_sensor0, (ccap_sensor_id)BOARD_USING_SENSON0_ID, "sensor0");
 }
 INIT_COMPONENT_EXPORT(rt_hw_sensor0_port);
 
@@ -347,7 +347,7 @@ int rt_hw_nct7717u_port(void)
     struct rt_sensor_config cfg;
 
     cfg.intf.dev_name = "i2c2";
-    cfg.irq_pin.pin = RT_PIN_NONE;
+    cfg.irq_pin.pin = PIN_IRQ_PIN_NONE;
 
     return rt_hw_nct7717u_init("nct7717u", &cfg);
 }

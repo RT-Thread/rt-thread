@@ -119,7 +119,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
         thread->error = RT_EOK;
 
         /* suspend thread on the push list */
-        rt_thread_suspend(thread);
+        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
         rt_list_insert_before(&(queue->suspended_push_list), &(thread->tlist));
         /* start timer */
         if (timeout > 0)
@@ -237,7 +237,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
         thread->error = RT_EOK;
 
         /* suspend thread on the pop list */
-        rt_thread_suspend(thread);
+        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
         rt_list_insert_before(&(queue->suspended_pop_list), &(thread->tlist));
         /* start timer */
         if (timeout > 0)

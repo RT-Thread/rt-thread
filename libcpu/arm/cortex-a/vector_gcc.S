@@ -7,13 +7,19 @@
  * Date           Author       Notes
  * 2013-07-05     Bernard      the first version
  */
+ 
+#include "rtconfig.h"
 
 .section .vectors, "ax"
 .code 32
 
 .globl system_vectors
 system_vectors:
+#ifdef RT_USING_SMART
+    b _reset
+#else
     ldr pc, _vector_reset
+#endif
     ldr pc, _vector_undef
     ldr pc, _vector_swi
     ldr pc, _vector_pabt

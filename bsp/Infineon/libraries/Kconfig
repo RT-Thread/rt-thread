@@ -1,0 +1,7 @@
+config SOC_FAMILY_IFX
+    bool
+
+config SOC_SERIES_IFX_PSOC62
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_IFX

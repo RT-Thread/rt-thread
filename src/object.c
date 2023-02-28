@@ -23,6 +23,17 @@
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
 
+#ifdef RT_USING_SMART
+#include <lwp.h>
+#endif
+
+struct rt_custom_object
+{
+    struct rt_object parent;
+    rt_err_t (*destroy)(void *);
+    void *data;
+};
+
 /*
  * define object_info for the number of _object_container items.
  */
@@ -59,6 +70,12 @@ enum rt_object_info_type
 #endif
 #ifdef RT_USING_HEAP
     RT_Object_Info_Memory,                            /**< The object is a memory. */
+#endif
+#ifdef RT_USING_SMART
+    RT_Object_Info_Channel,                            /**< The object is a IPC channel */
+#endif
+#ifdef RT_USING_HEAP
+    RT_Object_Info_Custom,                             /**< The object is a custom object */
 #endif
     RT_Object_Info_Unknown,                            /**< The object is unknown. */
 };
@@ -111,6 +128,11 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
 #ifdef RT_USING_HEAP
     /* initialize object container - small memory */
     {RT_Object_Class_Memory, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Memory), sizeof(struct rt_memory)},
+#endif
+#ifdef RT_USING_SMART
+    /* initialize object container - module */
+    {RT_Object_Class_Channel, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Channel), sizeof(struct rt_channel)},
+    {RT_Object_Class_Custom, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Custom), sizeof(struct rt_custom_object)},
 #endif
 };
 
@@ -331,7 +353,9 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     rt_base_t level;
+#ifdef RT_DEBUG
     struct rt_list_node *node = RT_NULL;
+#endif
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -341,6 +365,7 @@ void rt_object_init(struct rt_object         *object,
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
 
+#ifdef RT_DEBUG
     /* check object type to avoid re-initialization */
 
     /* enter critical */
@@ -353,19 +378,20 @@ void rt_object_init(struct rt_object         *object,
         struct rt_object *obj;
 
         obj = rt_list_entry(node, struct rt_object, list);
-        if (obj) /* skip warning when disable debug */
-        {
-            RT_ASSERT(obj != object);
-        }
+        RT_ASSERT(obj != object);
     }
     /* leave critical */
     rt_exit_critical();
+#endif
 
     /* initialize object's parameters */
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
-    /* copy name */
-    rt_strncpy(object->name, name, RT_NAME_MAX);
+#if RT_NAME_MAX > 0
+    rt_strncpy(object->name, name, RT_NAME_MAX);  /* copy name */
+#else
+    object->name = name;
+#endif /* RT_NAME_MAX > 0 */
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
@@ -460,8 +486,11 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     /* set object flag */
     object->flag = 0;
 
-    /* copy name */
-    rt_strncpy(object->name, name, RT_NAME_MAX);
+#if RT_NAME_MAX > 0
+    rt_strncpy(object->name, name, RT_NAME_MAX); /* copy name */
+#else
+    object->name = name;
+#endif /* RT_NAME_MAX > 0 */
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
@@ -605,5 +634,60 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 
     return RT_NULL;
 }
+
+#ifdef RT_USING_HEAP
+/**
+ * This function will create a custom object
+ * container.
+ *
+ * @param name the specified name of object.
+ * @param data the custom data
+ * @param data_destroy the custom object destroy callback
+ *
+ * @return the found object or RT_NULL if there is no this object
+ * in object container.
+ *
+ * @note this function shall not be invoked in interrupt status.
+ */
+
+rt_object_t rt_custom_object_create(const char *name, void *data, rt_err_t (*data_destroy)(void *))
+{
+    struct rt_custom_object *cobj = RT_NULL;
+
+    cobj = (struct rt_custom_object *)rt_object_allocate(RT_Object_Class_Custom, name);
+    if (!cobj)
+    {
+        return RT_NULL;
+    }
+    cobj->destroy = data_destroy;
+    cobj->data = data;
+    return (struct rt_object *)cobj;
+}
+
+/**
+ * This function will destroy a custom object
+ * container.
+ *
+ * @param obj the specified name of object.
+ *
+ * @note this function shall not be invoked in interrupt status.
+ */
+rt_err_t rt_custom_object_destroy(rt_object_t obj)
+{
+    rt_err_t ret = -1;
+
+    struct rt_custom_object *cobj = (struct rt_custom_object *)obj;
+
+    if (obj && obj->type == RT_Object_Class_Custom)
+    {
+        if (cobj->destroy)
+        {
+            ret = cobj->destroy(cobj->data);
+        }
+        rt_object_delete(obj);
+    }
+    return ret;
+}
+#endif
 
 /**@}*/

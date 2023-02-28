@@ -3,9 +3,9 @@ import os
 env = Environment()
 env.AppendENVPath('PATH', os.environ['PATH'])
 env['CPPPATH'] = ['libs/parser', 'libs']
-env['CPPDEFINES'] = ['CURSES_LOC=\\"ncurses.h\\"', 'HAVE_CONFIG_H', 
-    'ROOTMENU=\\"Configuration\\"', 
-    'CONFIG_=\\"CONFIG_\\"', 
+env['CPPDEFINES'] = ['CURSES_LOC=\\"ncurses.h\\"', 'HAVE_CONFIG_H',
+    'ROOTMENU=\\"Configuration\\"',
+    'CONFIG_=\\"CONFIG_\\"',
     'KBUILD_NO_NLS',
     'GPERF_LEN_TYPE=unsigned int']
 env['LIBS'] = ['ncurses']

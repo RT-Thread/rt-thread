@@ -21,6 +21,9 @@ on:
       - '**/README.md'
       - '**/README_zh.md'
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,16 +33,43 @@ jobs:
       fail-fast: false
       matrix:
        legs:
+         - {RTT_BSP: "airm2m/air32f103", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "acm32/acm32f0x0-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "CME_M7", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apm32/apm32f103xe-minibroard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f407ig-minibroard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f072vb-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f107vc-evalboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f030r8-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f051r8-evalboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f091vc-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f103vb-miniboard", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "apm32/apm32f407zg-evalboard", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apollo2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
+        #  - {RTT_BSP: "ft2004", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at91/at91sam9g45", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at91/at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "cypress/psoc6-cy8cproto-4343w", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8ckit-062S2-43012", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8ckit-062-BLE", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8ckit-062s4", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8ckit-062-WIFI-BT", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-cy8cproto-062S3-4343W", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "Infineon/psoc6-evaluationkit-062S2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "ft32/ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g45xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g45xml-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g45xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g45xvl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32g4frml-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32l40xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32l43xml-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32l43xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32l436-evb", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "n32/n32wb45xl-evb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32103c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32105r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -47,6 +77,7 @@ jobs:
          - {RTT_BSP: "gd32/arm/gd32205r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32207i-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32303c-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32305r-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32307e-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32407v-start", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -91,8 +122,8 @@ jobs:
          - {RTT_BSP: "nrf5x/nrf52832", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52833", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "nrf5x/nrf52840", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf5340", RTT_TOOL_CHAIN: "sourcery-arm"}         
          - {RTT_BSP: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "qemu-vexpress-gemini", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "sam7x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f072-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f091-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -108,6 +139,7 @@ jobs:
          - {RTT_BSP: "stm32/stm32f103-hw100k-ibox", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f103-onenet-nbiot", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f103-yf-ufun", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "stm32/stm32f103-ys-f1pro", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f107-uc-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f207-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f302-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -120,7 +152,7 @@ jobs:
          - {RTT_BSP: "stm32/stm32f410-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f411-atk-nano", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f411-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "stm32/stm32f411-weact-MiniF4", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "stm32/stm32f411-weact-blackpill", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f412-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f413-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f427-robomaster-a", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -147,6 +179,7 @@ jobs:
          - {RTT_BSP: "stm32/stm32h747-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "stm32h750-armfly-h7-tool", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32h750-artpi", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "stm32/stm32h750-weact-ministm32h7xx", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l4r5-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l4r9-st-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32l4r9-st-sensortile-box", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -171,6 +204,8 @@ jobs:
         #  - {RTT_BSP: "stm32/stm32wl55-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "stm32/stm32wle5-yizhilian-lm401", RTT_TOOL_CHAIN: "sourcery-arm"}
         #  - {RTT_BSP: "stm32/stm32wle5-yizhilian-lm402", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "renesas/ra6m3-ek", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "renesas/ra6m4-cpk", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "wch/arm/ch32f103c8-core", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "wch/arm/ch32f203r-evt", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "synwit/swm320", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -183,6 +218,8 @@ jobs:
          - {RTT_BSP: "at32/at32f407-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f413-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f415-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at32/at32f421-start", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at32/at32f425-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f435-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at32/at32f437-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -213,7 +250,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libsdl-dev libncurses5-dev scons
+          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
           sudo python -m pip install --upgrade pip -qq
           pip install requests -qq
           git config --global http.postBuffer 524288000

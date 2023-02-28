@@ -45,7 +45,7 @@ struct rt_hw_sdio
     struct sdio_pkg *pkg;
 };
 
-ALIGN(SDIO_ALIGN_LEN)
+rt_align(SDIO_ALIGN_LEN)
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 
 static rt_uint32_t at32_sdio_clk_get(struct at32_sdio *hw_sdio)

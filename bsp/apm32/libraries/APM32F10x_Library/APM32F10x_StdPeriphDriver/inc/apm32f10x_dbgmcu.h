@@ -3,9 +3,9 @@
  *
  * @brief       This file contains all the functions prototypes for the DBUGMCU firmware library
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,16 +23,18 @@
  *  and limitations under the License.
  */
 
+/* Define to prevent recursive inclusion */
 #ifndef __APM32F10X_DBGMCU_H
 #define __APM32F10X_DBGMCU_H
 
-#ifdef __cplusplus
-  extern "C" {
-#endif
-
+/* Includes */
 #include "apm32f10x.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
@@ -40,10 +42,13 @@
   @{
 */
 
-/** @addtogroup DBGMCU_Enumerations Enumerations
+/** @defgroup DBGMCU_Enumerations Enumerations
   @{
 */
 
+/**
+ * @brief DBGMCU_STOP description
+ */
 enum
 {
     DBGMCU_SLEEP                = ((uint32_t)0x00000001),
@@ -77,7 +82,7 @@ enum
 /**@} end of group DBGMCU_Enumerations*/
 
 
-/** @addtogroup DBGMCU_Fuctions Fuctions
+/** @defgroup DBGMCU_Functions Functions
   @{
 */
 
@@ -86,9 +91,9 @@ uint32_t DBGMCU_ReadREVID(void);
 void DBGMCU_Enable(uint32_t periph);
 void DBGMCU_Disable(uint32_t periph);
 
-/**@} end of group DBGMCU_Fuctions*/
-/**@} end of group DBGMCU_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group DBGMCU_Functions*/
+/**@} end of group DBGMCU_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver */
 
 #ifdef __cplusplus
 }

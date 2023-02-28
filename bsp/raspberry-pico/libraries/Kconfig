@@ -5,7 +5,7 @@ config SOC_RP2040
     select SOC_SERIES_RP2040_PICO
     select RT_USING_COMPONENTS_INIT
     default y
-    
+
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_LVGL
@@ -20,6 +20,6 @@ menu "Onboard Peripheral Drivers"
             select PKG_USING_LV_MUSIC_DEMO
             default y
     endif
-endmenu         
+endmenu
 
-endmenu   
+endmenu

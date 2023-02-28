@@ -157,6 +157,14 @@ extern "C" {
 #include "drivers/touch.h"
 #endif
 
+#ifdef RT_USING_DEV_BUS
+#include "drivers/rt_dev_bus.h"
+#endif
+
+#ifdef RT_USING_LCD
+#include "drivers/lcd.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif

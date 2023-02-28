@@ -24,6 +24,12 @@ config BCM2836_SOC
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select ARCH_CPU_64BIT
+    select RT_USING_CACHE
+    select SOC_BCM283x
+    default y
+
+config SOC_BCM283x
+    bool
     default y
 
 source "driver/Kconfig"

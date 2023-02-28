@@ -18,7 +18,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable USBD as USB device"
         select RT_USING_USB_DEVICE
         select BSP_USING_USBD
-        default n 
+        default n
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
@@ -26,7 +26,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q16 spi2)"
-	select BSP_USING_SPI
+    select BSP_USING_SPI
         select BSP_USING_SPI2
         select RT_USING_SFUD
         select RT_SFUD_USING_SFDP
@@ -36,7 +36,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable potentiometer"
         select BSP_USING_ADC
         select BSP_USING_ADC1
-        default n 
+        default n
 
 endmenu
 
@@ -69,7 +69,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-                
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
@@ -77,8 +77,8 @@ menu "On-chip Peripheral Drivers"
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
-                default n  
-        endif    
+                default n
+        endif
 
     menuconfig BSP_USING_TIM
         bool "Enable timer"
@@ -116,7 +116,7 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
         endif
-	
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -130,7 +130,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 TX DMA"
                 depends on BSP_USING_SPI1
                 default n
-                        
+
             config BSP_SPI1_RX_USING_DMA
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
@@ -139,13 +139,13 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
-                default n  
-                        
+                default n
+
             config BSP_SPI2_TX_USING_DMA
                 bool "Enable SPI2 TX DMA"
                 depends on BSP_USING_SPI2
                 default n
-                        
+
             config BSP_SPI2_RX_USING_DMA
                 bool "Enable SPI2 RX DMA"
                 depends on BSP_USING_SPI2
@@ -182,7 +182,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n 
+        default n
 
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
@@ -205,9 +205,9 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-	
+
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

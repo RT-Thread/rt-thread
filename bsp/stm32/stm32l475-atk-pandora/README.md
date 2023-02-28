@@ -134,7 +134,7 @@ msh >
 
 ## 注意事项
 
-暂无
+关于ST-Link无法升级的问题请参考：https://github.com/armink/HackSTLinkUpgrade
 
 ## 联系人信息
 

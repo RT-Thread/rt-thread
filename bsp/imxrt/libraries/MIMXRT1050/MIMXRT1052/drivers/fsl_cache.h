@@ -2,7 +2,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 #ifndef _FSL_CACHE_H_
@@ -99,7 +99,7 @@ typedef struct _l2cache_config
 {
     /* ------------------------ l2 cachec basic settings ---------------------------- */
     l2cache_way_num_t wayNum;        /*!< The number of ways. */
-    l2cache_way_size  waySize;        /*!< The way size = Cache Ram size / wayNum. */ 
+    l2cache_way_size  waySize;        /*!< The way size = Cache Ram size / wayNum. */
     l2cache_replacement_t repacePolicy;/*!< Replacemnet policy. */
     /* ------------------------ tag/data ram latency settings ----------------------- */
     L2cache_latency_config_t *lateConfig; /*!< Tag/data latency configure. Set NUll if not required. */
@@ -109,7 +109,7 @@ typedef struct _l2cache_config
     /* ------------------------ Non-secure access settings -------------------------- */
     bool nsLockdownEnable;            /*!< None-secure lockdown enable. */
     /* ------------------------ other settings -------------------------------------- */
-    l2cache_writealloc_t  writeAlloc;/*!< Write allcoate force option. */     
+    l2cache_writealloc_t  writeAlloc;/*!< Write allcoate force option. */
 } l2cache_config_t;
 #endif  /* FSL_FEATURE_SOC_L2CACHEC_COUNT */
 /*******************************************************************************
@@ -157,7 +157,7 @@ static inline void L1CACHE_InvalidateICache(void)
  *
  * @param address  The start address of the memory to be invalidated.
  * @param size_byte  The memory size.
- * @note The start address and size_byte should be 32-byte(FSL_FEATURE_L1ICACHE_LINESIZE_BYTE) aligned. 
+ * @note The start address and size_byte should be 32-byte(FSL_FEATURE_L1ICACHE_LINESIZE_BYTE) aligned.
  * The startAddr here will be forced to align to L1 I-cache line size if
  * startAddr is not aligned. For the size_byte, application should make sure the
  * alignment or make sure the right operation order if the size_byte is not aligned.
@@ -214,7 +214,7 @@ static inline void L1CACHE_CleanInvalidateDCache(void)
  *
  * @param address  The start address of the memory to be invalidated.
  * @param size_byte  The memory size.
- * @note The start address and size_byte should be 32-byte(FSL_FEATURE_L1DCACHE_LINESIZE_BYTE) aligned. 
+ * @note The start address and size_byte should be 32-byte(FSL_FEATURE_L1DCACHE_LINESIZE_BYTE) aligned.
  * The startAddr here will be forced to align to L1 D-cache line size if
  * startAddr is not aligned. For the size_byte, application should make sure the
  * alignment or make sure the right operation order if the size_byte is not aligned.
@@ -280,7 +280,7 @@ void L2CACHE_Init(l2cache_config_t *config);
 /*!
  * @brief Gets an available default settings for the cache controller.
  *
- * This function initializes the cache controller configuration structure with default settings. 
+ * This function initializes the cache controller configuration structure with default settings.
  * The default values are:
  * @code
  *   config->waysNum = kL2CACHE_8ways;
@@ -290,7 +290,7 @@ void L2CACHE_Init(l2cache_config_t *config);
  *   config->istrPrefetchEnable = false;
  *   config->dataPrefetchEnable = false;
  *   config->nsLockdownEnable = false;
- *   config->writeAlloc = kL2CACHE_UseAwcache; 
+ *   config->writeAlloc = kL2CACHE_UseAwcache;
  * @endcode
  * @param config Pointer to the configuration structure.
  */

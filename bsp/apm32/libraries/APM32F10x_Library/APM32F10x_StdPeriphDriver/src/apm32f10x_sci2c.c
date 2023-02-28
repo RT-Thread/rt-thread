@@ -3,9 +3,9 @@
  *
  * @brief       This file contains all the functions for the SCI2C peripheral
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,26 +26,27 @@
 #include "apm32f10x_sci2c.h"
 #include "apm32f10x_rcm.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
 /** @addtogroup SCI2C_Driver SCI2C Driver
+  * @brief SCI2C driver modules
   @{
 */
 
-/** @addtogroup SCI2C_Fuctions Fuctions
+/** @defgroup SCI2C_Functions Functions
   @{
 */
 
 /*!
  * @brief       Set I2C peripheral registers to their default reset values
  *
- * @param       i2c: Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c: Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_Reset(SCI2C_T *i2c)
+void SCI2C_Reset(SCI2C_T* i2c)
 {
     if (i2c == I2C3)
     {
@@ -64,7 +65,7 @@ void SCI2C_Reset(SCI2C_T *i2c)
 }
 
 /*!
- * @brief       Config the I2C peripheral according to the specified parameters in the sci2cConfig
+ * @brief       Configures the I2C peripheral according to the specified parameters in the sci2cConfig
  *
  * @param       i2c: Select the the I2C peripheral.It can be I2C3 or I2C4
  *
@@ -72,7 +73,7 @@ void SCI2C_Reset(SCI2C_T *i2c)
  *
  * @retval      None
  */
-void SCI2C_Config(SCI2C_T *i2c, SCI2C_Config_T *sci2cConfig)
+void SCI2C_Config(SCI2C_T* i2c, SCI2C_Config_T* sci2cConfig)
 {
     i2c->SW = BIT_SET;
 
@@ -122,7 +123,7 @@ void SCI2C_Config(SCI2C_T *i2c, SCI2C_Config_T *sci2cConfig)
  *
  * @retval      None
  */
-void SCI2C_ConfigStructInit(SCI2C_Config_T *sci2cConfig)
+void SCI2C_ConfigStructInit(SCI2C_Config_T* sci2cConfig)
 {
     sci2cConfig->addrMode = SCI2C_ADDR_MODE_7BIT;
     sci2cConfig->slaveAddr = 0x55;
@@ -138,7 +139,7 @@ void SCI2C_ConfigStructInit(SCI2C_Config_T *sci2cConfig)
 /*!
  * @brief       Read specified flag
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       flag:   Specifies the flag to be checked
  *                      The parameter can be one of following values:
@@ -155,7 +156,7 @@ void SCI2C_ConfigStructInit(SCI2C_Config_T *sci2cConfig)
  *
  * @retval      The new state of flag (SET or RESET)
  */
-uint8_t SCI2C_ReadStatusFlag(SCI2C_T *i2c, SCI2C_FLAG_T flag)
+uint8_t SCI2C_ReadStatusFlag(SCI2C_T* i2c, SCI2C_FLAG_T flag)
 {
     uint8_t ret = RESET;
 
@@ -174,7 +175,7 @@ uint8_t SCI2C_ReadStatusFlag(SCI2C_T *i2c, SCI2C_FLAG_T flag)
 /*!
  * @brief       Read specified interrupt flag
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       flag:   Specifies the interrupt flag to be checked
  *                      The parameter can be one of following values:
@@ -195,7 +196,7 @@ uint8_t SCI2C_ReadStatusFlag(SCI2C_T *i2c, SCI2C_FLAG_T flag)
  *
  * @retval      The new state of flag (SET or RESET)
  */
-uint8_t SCI2C_ReadIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
+uint8_t SCI2C_ReadIntFlag(SCI2C_T* i2c, SCI2C_INT_T flag)
 {
     uint8_t ret = RESET;
 
@@ -207,7 +208,7 @@ uint8_t SCI2C_ReadIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
 /*!
  * @brief       Clear specified interrupt flag
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       flag:   Specifies the interrupt flag to be checked
  *                      The parameter can be one of following values:
@@ -224,7 +225,7 @@ uint8_t SCI2C_ReadIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
  *                      @arg SCI2C_INT_ALL:    All interrupt flag
  * @retval      The new state of flag (SET or RESET)
  */
-void SCI2C_ClearIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
+void SCI2C_ClearIntFlag(SCI2C_T* i2c, SCI2C_INT_T flag)
 {
     volatile uint32_t dummy = 0;
 
@@ -277,7 +278,7 @@ void SCI2C_ClearIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
 /*!
  * @brief       Read specified interrupt flag(Raw register)
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       flag:   Specifies the interrupt flag to be checked
  *                      The parameter can be one of following values:
@@ -298,7 +299,7 @@ void SCI2C_ClearIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
  *
  * @retval      The new state of flag (SET or RESET)
  */
-uint8_t SCI2C_ReadRawIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
+uint8_t SCI2C_ReadRawIntFlag(SCI2C_T* i2c, SCI2C_INT_T flag)
 {
     uint8_t ret = RESET;
 
@@ -310,7 +311,7 @@ uint8_t SCI2C_ReadRawIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
 /*!
  * @brief       Enable the specified interrupts
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       interrupt:  Specifies the interrupt sources
  *                          The parameter can be any combination of following values:
@@ -331,7 +332,7 @@ uint8_t SCI2C_ReadRawIntFlag(SCI2C_T *i2c, SCI2C_INT_T flag)
  *
  * @retval      None
  */
-void SCI2C_EnableInterrupt(SCI2C_T *i2c, uint16_t interrupt)
+void SCI2C_EnableInterrupt(SCI2C_T* i2c, uint16_t interrupt)
 {
     i2c->INTEN |= interrupt;
 }
@@ -339,7 +340,7 @@ void SCI2C_EnableInterrupt(SCI2C_T *i2c, uint16_t interrupt)
 /*!
  * @brief       Disable the specified interrupts
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       interrupt:  Specifies the interrupt sources
  *                          The parameter can be any combination of following values:
@@ -360,7 +361,7 @@ void SCI2C_EnableInterrupt(SCI2C_T *i2c, uint16_t interrupt)
  *
  * @retval      None
  */
-void SCI2C_DisableInterrupt(SCI2C_T *i2c, uint16_t interrupt)
+void SCI2C_DisableInterrupt(SCI2C_T* i2c, uint16_t interrupt)
 {
     i2c->INTEN &= ~interrupt;
 }
@@ -368,9 +369,9 @@ void SCI2C_DisableInterrupt(SCI2C_T *i2c, uint16_t interrupt)
 /*!
  * @brief       Enable stop detected only master in activity.
  *
- * @param       i2c:   Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:   Select the the I2C peripheral. It can be I2C3 or I2C4
  */
-void SCI2C_EnableStopDetectMasterActivity(SCI2C_T *i2c)
+void SCI2C_EnableStopDetectMasterActivity(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.DSMA = BIT_SET;
 }
@@ -378,9 +379,9 @@ void SCI2C_EnableStopDetectMasterActivity(SCI2C_T *i2c)
 /*!
  * @brief       Disable stop detected only master in activity.
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  */
-void SCI2C_DisableStopDetectMasterActivity(SCI2C_T *i2c)
+void SCI2C_DisableStopDetectMasterActivity(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.DSMA = BIT_RESET;
 }
@@ -388,9 +389,9 @@ void SCI2C_DisableStopDetectMasterActivity(SCI2C_T *i2c)
 /*!
  * @brief       Enable stop detected only address is matched in slave mode.
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  */
-void SCI2C_EnableStopDetectAddressed(SCI2C_T *i2c)
+void SCI2C_EnableStopDetectAddressed(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.DSA = BIT_SET;
 }
@@ -398,9 +399,9 @@ void SCI2C_EnableStopDetectAddressed(SCI2C_T *i2c)
 /*!
  * @brief       Disable stop detected only address is matched in slave mode.
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  */
-void SCI2C_DisableStopDetectAddressed(SCI2C_T *i2c)
+void SCI2C_DisableStopDetectAddressed(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.DSA = BIT_RESET;
 }
@@ -408,11 +409,11 @@ void SCI2C_DisableStopDetectAddressed(SCI2C_T *i2c)
 /*!
  * @brief       Enable restart
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_EnableRestart(SCI2C_T *i2c)
+void SCI2C_EnableRestart(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.RSTAEN = BIT_SET;
 }
@@ -420,19 +421,19 @@ void SCI2C_EnableRestart(SCI2C_T *i2c)
 /*!
  * @brief       Disable restart
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_DisableRestart(SCI2C_T *i2c)
+void SCI2C_DisableRestart(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.RSTAEN = BIT_RESET;
 }
 
 /*!
- * @brief       Config speed.
+ * @brief       Configures speed.
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       speed:  Specifies the speed.
  *                      @arg SCI2C_SPEED_STANDARD:  Standard speed.
@@ -441,15 +442,15 @@ void SCI2C_DisableRestart(SCI2C_T *i2c)
  *
  * @retval      None
  */
-void SCI2C_ConfigSpeed(SCI2C_T *i2c, SCI2C_SPEED_T speed)
+void SCI2C_ConfigSpeed(SCI2C_T* i2c, SCI2C_SPEED_T speed)
 {
     i2c->CTRL1_B.SPD = speed;
 }
 
 /*!
- * @brief       Config master address.
+ * @brief       Configures master address.
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       mode:   Specifies the address mode.
  *                      @arg SCI2C_ADDR_MODE_7BIT:      7-bit address mode.
@@ -459,7 +460,7 @@ void SCI2C_ConfigSpeed(SCI2C_T *i2c, SCI2C_SPEED_T speed)
  *
  * @retval      None
  */
-void SCI2C_ConfigMasterAddr(SCI2C_T *i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
+void SCI2C_ConfigMasterAddr(SCI2C_T* i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
 {
     i2c->TARADDR_B.MAM = mode;
     i2c->TARADDR_B.ADDR = addr;
@@ -467,7 +468,7 @@ void SCI2C_ConfigMasterAddr(SCI2C_T *i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
 
 
 /*!
- * @brief       Config slave address.
+ * @brief       Configures slave address.
  *
  * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
  *
@@ -479,7 +480,7 @@ void SCI2C_ConfigMasterAddr(SCI2C_T *i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
  *
  * @retval      None
  */
-void SCI2C_ConfigSlaveAddr(SCI2C_T *i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
+void SCI2C_ConfigSlaveAddr(SCI2C_T* i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
 {
     i2c->CTRL1_B.SAM = mode;
     i2c->SLAADDR = addr;
@@ -488,11 +489,11 @@ void SCI2C_ConfigSlaveAddr(SCI2C_T *i2c, SCI2C_ADDR_MODE_T mode, uint16_t addr)
 /*!
  * @brief       Enable master mode
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_EnableMasterMode(SCI2C_T *i2c)
+void SCI2C_EnableMasterMode(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.MST = BIT_SET;
 }
@@ -500,11 +501,11 @@ void SCI2C_EnableMasterMode(SCI2C_T *i2c)
 /*!
  * @brief       Disable master mode
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_DisableMasterMode(SCI2C_T *i2c)
+void SCI2C_DisableMasterMode(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.MST = BIT_RESET;
 }
@@ -512,11 +513,11 @@ void SCI2C_DisableMasterMode(SCI2C_T *i2c)
 /*!
  * @brief       Enable slave mode
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_EnableSlaveMode(SCI2C_T *i2c)
+void SCI2C_EnableSlaveMode(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.SLADIS = BIT_RESET;
 }
@@ -524,11 +525,11 @@ void SCI2C_EnableSlaveMode(SCI2C_T *i2c)
 /*!
  * @brief       Disable slave mode
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_DisableSlaveMode(SCI2C_T *i2c)
+void SCI2C_DisableSlaveMode(SCI2C_T* i2c)
 {
     i2c->CTRL1_B.SLADIS = BIT_SET;
 }
@@ -536,13 +537,13 @@ void SCI2C_DisableSlaveMode(SCI2C_T *i2c)
 /*!
  * @brief       Config master code
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       code:   Master code
  *
  * @retval      None
  */
-void SCI2C_ConfigMasterCode(SCI2C_T *i2c, uint8_t code)
+void SCI2C_ConfigMasterCode(SCI2C_T* i2c, uint8_t code)
 {
     i2c->HSMC = code;
 }
@@ -550,7 +551,7 @@ void SCI2C_ConfigMasterCode(SCI2C_T *i2c, uint8_t code)
 /*!
  * @brief       Config data direction
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       dir:    Data direction
  *                      @arg SCI2C_DATA_DIR_WRITE:  Write data
@@ -558,7 +559,7 @@ void SCI2C_ConfigMasterCode(SCI2C_T *i2c, uint8_t code)
  *
  * @retval      None
  */
-void SCI2C_ConfigDataDir(SCI2C_T *i2c, SCI2C_DATA_DIR_T dir)
+void SCI2C_ConfigDataDir(SCI2C_T* i2c, SCI2C_DATA_DIR_T dir)
 {
     i2c->DATA = (uint32_t)(dir << 8);
 }
@@ -566,13 +567,13 @@ void SCI2C_ConfigDataDir(SCI2C_T *i2c, SCI2C_DATA_DIR_T dir)
 /*!
  * @brief       Transmit data
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       data:   Data to be transmited
  *
  * @retval      None
  */
-void SCI2C_TxData(SCI2C_T *i2c, uint8_t data)
+void SCI2C_TxData(SCI2C_T* i2c, uint8_t data)
 {
     i2c->DATA_B.DATA = data;
 }
@@ -580,20 +581,20 @@ void SCI2C_TxData(SCI2C_T *i2c, uint8_t data)
 /*!
  * @brief       Returns the most recent received data
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      Received data
  *
  */
-uint8_t SCI2C_RxData(SCI2C_T *i2c)
+uint8_t SCI2C_RxData(SCI2C_T* i2c)
 {
     return (uint8_t)(i2c->DATA & 0XFF);
 }
 
 /*!
- * @brief       Config data register
+ * @brief       Configures data register
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       stop:       Enable or disable generate stop condition
  *
@@ -605,7 +606,7 @@ uint8_t SCI2C_RxData(SCI2C_T *i2c)
  *
  * @retval      None
  */
-void SCI2C_ConfigDataRegister(SCI2C_T *i2c, SCI2C_STOP_T stop, SCI2C_DATA_DIR_T dataDir, uint8_t data)
+void SCI2C_ConfigDataRegister(SCI2C_T* i2c, SCI2C_STOP_T stop, SCI2C_DATA_DIR_T dataDir, uint8_t data)
 {
     i2c->DATA = (uint32_t)((stop << 9) | (dataDir << 8) | data);
 }
@@ -613,11 +614,11 @@ void SCI2C_ConfigDataRegister(SCI2C_T *i2c, SCI2C_STOP_T stop, SCI2C_DATA_DIR_T 
 /*!
  * @brief       Read Rx FIFO data number
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-uint8_t SCI2C_ReadRxFifoDataCnt(SCI2C_T *i2c)
+uint8_t SCI2C_ReadRxFifoDataCnt(SCI2C_T* i2c)
 {
     return (uint8_t)i2c->RFL;
 }
@@ -625,39 +626,39 @@ uint8_t SCI2C_ReadRxFifoDataCnt(SCI2C_T *i2c)
 /*!
  * @brief       Read Tx FIFO data number
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-uint8_t SCI2C_ReadTxFifoDataCnt(SCI2C_T *i2c)
+uint8_t SCI2C_ReadTxFifoDataCnt(SCI2C_T* i2c)
 {
     return (uint8_t)i2c->TFL;
 }
 
 /*!
- * @brief       Config Rx FIFO threshold
+ * @brief       Configures Rx FIFO threshold
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       threshold:  FIFO threshold
  *
  * @retval      None
  */
-void SCI2C_ConfigRxFifoThreshold(SCI2C_T *i2c, uint8_t threshold)
+void SCI2C_ConfigRxFifoThreshold(SCI2C_T* i2c, uint8_t threshold)
 {
     i2c->RFT = threshold;
 }
 
 /*!
- * @brief       Config Tx FIFO threshold
+ * @brief       Configures Tx FIFO threshold
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       threshold:  FIFO threshold
  *
  * @retval      None
  */
-void SCI2C_ConfigTxFifoThreshold(SCI2C_T *i2c, uint8_t threshold)
+void SCI2C_ConfigTxFifoThreshold(SCI2C_T* i2c, uint8_t threshold)
 {
     i2c->TFT = threshold;
 }
@@ -665,12 +666,12 @@ void SCI2C_ConfigTxFifoThreshold(SCI2C_T *i2c, uint8_t threshold)
 /*!
  * @brief       Enable I2C peripheral
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
 
  */
-void SCI2C_Enable(SCI2C_T *i2c)
+void SCI2C_Enable(SCI2C_T* i2c)
 {
     i2c->CTRL2_B.I2CEN = BIT_SET;
 }
@@ -678,11 +679,11 @@ void SCI2C_Enable(SCI2C_T *i2c)
 /*!
  * @brief       Disable I2C peripheral
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_Disable(SCI2C_T *i2c)
+void SCI2C_Disable(SCI2C_T* i2c)
 {
     i2c->CTRL2_B.I2CEN = BIT_RESET;
 }
@@ -690,11 +691,11 @@ void SCI2C_Disable(SCI2C_T *i2c)
 /*!
  * @brief       Abort I2C transmit
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      None
  */
-void SCI2C_Abort(SCI2C_T *i2c)
+void SCI2C_Abort(SCI2C_T* i2c)
 {
     i2c->CTRL2_B.ABR = BIT_SET;
 }
@@ -702,21 +703,21 @@ void SCI2C_Abort(SCI2C_T *i2c)
 /*!
  * @brief       Tx command block
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       enable:     ENABLE or DISABLE
  *
  * @retval      None
  */
-void SCI2C_BlockTxCmd(SCI2C_T *i2c, uint8_t enable)
+void SCI2C_BlockTxCmd(SCI2C_T* i2c, uint8_t enable)
 {
     i2c->CTRL2_B.TCB = enable;
 }
 
 /*!
- * @brief       Config SCL high and low period
+ * @brief       Configures SCL high and low period
  *
- * @param       i2c:        Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:        Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       speed:      Specifies the speed.
  *                          @arg SCI2C_SPEED_STANDARD:  Standard speed.
@@ -729,7 +730,7 @@ void SCI2C_BlockTxCmd(SCI2C_T *i2c, uint8_t enable)
  *
  * @retval      None
  */
-void SCI2C_ConfigClkPeriod(SCI2C_T *i2c, SCI2C_SPEED_T speed, uint16_t highPeriod, uint16_t lowPeriod)
+void SCI2C_ConfigClkPeriod(SCI2C_T* i2c, SCI2C_SPEED_T speed, uint16_t highPeriod, uint16_t lowPeriod)
 {
     if (speed == SCI2C_SPEED_STANDARD)
     {
@@ -749,9 +750,9 @@ void SCI2C_ConfigClkPeriod(SCI2C_T *i2c, SCI2C_SPEED_T speed, uint16_t highPerio
 }
 
 /*!
- * @brief       Config SDA hold time length
+ * @brief       Configures SDA hold time length
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       txHold: Tx SDA hold time length
  *
@@ -759,22 +760,22 @@ void SCI2C_ConfigClkPeriod(SCI2C_T *i2c, SCI2C_SPEED_T speed, uint16_t highPerio
  *
  * @retval      None
  */
-void SCI2C_ConfigSDAHoldTime(SCI2C_T *i2c, uint16_t txHold, uint8_t rxHold)
+void SCI2C_ConfigSDAHoldTime(SCI2C_T* i2c, uint16_t txHold, uint8_t rxHold)
 {
     i2c->SDAHOLD_B.TXHOLD = txHold;
     i2c->SDAHOLD_B.RXHOLD = rxHold;
 }
 
 /*!
- * @brief       Config SDA delay time
+ * @brief       Configures SDA delay time
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       delay:  SDA delay time
  *
  * @retval      None
  */
-void SCI2C_ConfigSDADelayTime(SCI2C_T *i2c, uint8_t delay)
+void SCI2C_ConfigSDADelayTime(SCI2C_T* i2c, uint8_t delay)
 {
     i2c->SDADLY = delay;
 }
@@ -782,13 +783,13 @@ void SCI2C_ConfigSDADelayTime(SCI2C_T *i2c, uint8_t delay)
 /*!
  * @brief       Enable or disable generate gernal call ack
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       enable: SDA delay time
  *
  * @retval      None
  */
-void SCI2C_GernalCallAck(SCI2C_T *i2c, uint8_t enable)
+void SCI2C_GernalCallAck(SCI2C_T* i2c, uint8_t enable)
 {
     i2c->GCA = enable;
 }
@@ -796,13 +797,13 @@ void SCI2C_GernalCallAck(SCI2C_T *i2c, uint8_t enable)
 /*!
  * @brief       When received data no ack generated in slave mode.
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       enable: ENABLE or DISABLE
  *
  * @retval      None
  */
-void SCI2C_SlaveDataNackOnly(SCI2C_T *i2c, uint8_t enable)
+void SCI2C_SlaveDataNackOnly(SCI2C_T* i2c, uint8_t enable)
 {
     i2c->SDNO = enable;
 }
@@ -810,11 +811,11 @@ void SCI2C_SlaveDataNackOnly(SCI2C_T *i2c, uint8_t enable)
 /*!
  * @brief       Read Tx abort source
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @retval      Return Tx abort source
  */
-uint32_t SCI2C_ReadTxAbortSource(SCI2C_T *i2c)
+uint32_t SCI2C_ReadTxAbortSource(SCI2C_T* i2c)
 {
     return (uint32_t)i2c->TAS;
 }
@@ -822,7 +823,7 @@ uint32_t SCI2C_ReadTxAbortSource(SCI2C_T *i2c)
 /*!
  * @brief       Enable DMA
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       dma:    DMA requst source
  *                      @arg SCI2C_DMA_RX:  DMA RX channel
@@ -830,7 +831,7 @@ uint32_t SCI2C_ReadTxAbortSource(SCI2C_T *i2c)
  *
  * @retval      None
  */
-void SCI2C_EnableDMA(SCI2C_T *i2c, SCI2C_DMA_T dma)
+void SCI2C_EnableDMA(SCI2C_T* i2c, SCI2C_DMA_T dma)
 {
     i2c->DMACTRL |= dma;
 }
@@ -838,7 +839,7 @@ void SCI2C_EnableDMA(SCI2C_T *i2c, SCI2C_DMA_T dma)
 /*!
  * @brief       Disable DMA
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       dma:    DMA requst source
  *                      @arg SCI2C_DMA_RX:  DMA RX channel
@@ -846,43 +847,43 @@ void SCI2C_EnableDMA(SCI2C_T *i2c, SCI2C_DMA_T dma)
  *
  * @retval      None
  */
-void SCI2C_DisableDMA(SCI2C_T *i2c, SCI2C_DMA_T dma)
+void SCI2C_DisableDMA(SCI2C_T* i2c, SCI2C_DMA_T dma)
 {
     i2c->DMACTRL &= (uint32_t)~dma;
 }
 
 /*!
- * @brief       Config DMA Tx data level
+ * @brief       Configures DMA Tx data level
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       cnt:    DMA Tx data level
  *
  * @retval      None
  */
-void SCI2C_ConfigDMATxDataLevel(SCI2C_T *i2c, uint8_t cnt)
+void SCI2C_ConfigDMATxDataLevel(SCI2C_T* i2c, uint8_t cnt)
 {
     i2c->DTDL = cnt;
 }
 
 /*!
- * @brief       Config DMA Rx data level
+ * @brief       Configures DMA Rx data level
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       cnt:    DMA Rx data level
  *
  * @retval      None
  */
-void SCI2C_ConfigDMARxDataLevel(SCI2C_T *i2c, uint8_t cnt)
+void SCI2C_ConfigDMARxDataLevel(SCI2C_T* i2c, uint8_t cnt)
 {
     i2c->DRDL = cnt;
 }
 
 /*!
- * @brief       Config spike suppressio limit
+ * @brief       Configures spike suppressio limit
  *
- * @param       i2c:    Select the the I2C peripheral.It can be I2C3 or I2C4
+ * @param       i2c:    Select the the I2C peripheral. It can be I2C3 or I2C4
  *
  * @param       speed:  I2C speed mode
  *                      @arg SCI2C_SPEED_STANDARD:  Standard speed.
@@ -893,7 +894,7 @@ void SCI2C_ConfigDMARxDataLevel(SCI2C_T *i2c, uint8_t cnt)
  *
  * @retval      None
  */
-void SCI2C_ConfigSpikeSuppressionLimit(SCI2C_T *i2c, SCI2C_SPEED_T speed, uint8_t limit)
+void SCI2C_ConfigSpikeSuppressionLimit(SCI2C_T* i2c, SCI2C_SPEED_T speed, uint8_t limit)
 {
     if (speed == SCI2C_SPEED_HIGH)
     {
@@ -905,6 +906,6 @@ void SCI2C_ConfigSpikeSuppressionLimit(SCI2C_T *i2c, SCI2C_SPEED_T speed, uint8_
     }
 }
 
-/**@} end of group SCI2C_Fuctions*/
-/**@} end of group SCI2C_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group SCI2C_Functions */
+/**@} end of group SCI2C_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver */

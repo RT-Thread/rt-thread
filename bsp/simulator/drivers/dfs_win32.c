@@ -158,7 +158,7 @@ static int dfs_win32_open(struct dfs_fd *file)
         HANDLE handle;
         int len;
 
-        file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, file->path);
+        file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, file->vnode->path);
 
         if (oflag & O_CREAT)   /* create a dir*/
         {
@@ -196,7 +196,7 @@ static int dfs_win32_open(struct dfs_fd *file)
         wdirp->end += len;
         rt_strncpy(wdirp->curr, wdirp->finddata.name, len);
 
-        file->data = (void *)wdirp;
+        file->vnode->data = (void *)wdirp;
         rt_free(file_path);
         return 0;
     }
@@ -212,7 +212,7 @@ static int dfs_win32_open(struct dfs_fd *file)
     /* Creates a new file. The function fails if the file is already existing. */
     if (oflag & O_EXCL) mode |= O_EXCL;
 
-    file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, file->path);
+    file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, file->vnode->path);
     fd = _open(file_path, mode, 0x0100 | 0x0080); /* _S_IREAD | _S_IWRITE */
     rt_free(file_path);
 
@@ -223,11 +223,11 @@ static int dfs_win32_open(struct dfs_fd *file)
      * flush(), seek(), and will be free when calling close()*/
     file->data = (void *)fd;
     file->pos  = 0;
-    file->size = _lseek(fd, 0, SEEK_END);
+    file->vnode->size = _lseek(fd, 0, SEEK_END);
 
     if (oflag & O_APPEND)
     {
-        file->pos = file->size;
+        file->pos = file->vnode->size;
     }
     else
         _lseek(fd, 0, SEEK_SET);
@@ -243,7 +243,7 @@ static int dfs_win32_close(struct dfs_fd *file)
 {
     if (file->flags & O_DIRECTORY)
     {
-        WINDIR *wdirp = (WINDIR*)(file->data);
+        WINDIR *wdirp = (WINDIR*)(file->vnode->data);
         RT_ASSERT(wdirp != RT_NULL);
         if (_findclose((intptr_t)wdirp->handle) == 0) {
             free(wdirp->start); /* NOTE: here we don't use rt_free! */
@@ -307,9 +307,9 @@ static int dfs_win32_seek(struct dfs_fd *file,
     int result;
 
     /* set offset as current offset */
-    if (file->type == FT_DIRECTORY)
+    if (file->vnode->type == FT_DIRECTORY)
     {
-        WINDIR* wdirp = (WINDIR*)(file->data);
+        WINDIR* wdirp = (WINDIR*)(file->vnode->data);
         RT_ASSERT(wdirp != RT_NULL);
         wdirp->curr = wdirp->start + offset;
         return offset;
@@ -335,7 +335,7 @@ static int dfs_win32_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint3
     if (count / sizeof(struct dirent) != 1)
         return -EINVAL;
 
-    wdirp = (WINDIR*)(file->data);
+    wdirp = (WINDIR*)(file->vnode->data);
     RT_ASSERT(wdirp != RT_NULL);
     if (wdirp->curr == NULL) //no more entries in this directory
         return 0;
@@ -537,7 +537,7 @@ static rt_err_t nop_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t nop_read(rt_device_t dev,
+static rt_ssize_t nop_read(rt_device_t dev,
                           rt_off_t    pos,
                           void       *buffer,
                           rt_size_t   size)
@@ -545,7 +545,7 @@ static rt_size_t nop_read(rt_device_t dev,
     return size;
 }
 
-static rt_size_t nop_write(rt_device_t dev,
+static rt_ssize_t nop_write(rt_device_t dev,
                            rt_off_t    pos,
                            const void *buffer,
                            rt_size_t   size)

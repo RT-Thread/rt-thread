@@ -381,7 +381,7 @@ static void ili_touch_down(void *buf, int8_t id, int16_t x, int16_t y, int16_t w
     pre_w[id] = w;
 }
 
-static rt_size_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
+static rt_ssize_t ili_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
 

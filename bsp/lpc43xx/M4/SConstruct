@@ -51,5 +51,5 @@ if rtconfig.PLATFORM in ['gcc']:
         print('RM %s' % i)
         os.unlink(i)
 
-# do building 
+# do building
 DoBuilding(TARGET, objs)

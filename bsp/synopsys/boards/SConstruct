@@ -30,7 +30,7 @@ if not os.path.isdir(EMBARC_BSP_ROOT):
 
 SUPPORTED_BOARD_DIR = EMBARC_BSP_ROOT + '/board'
 SUPPORTED_BOARD = [d for d in os.listdir(SUPPORTED_BOARD_DIR) if os.path.isdir(os.path.join(SUPPORTED_BOARD_DIR,d))]
-print 'supported BOARD = ' + str(SUPPORTED_BOARD)
+print('supported BOARD = ' + str(SUPPORTED_BOARD))
 
 AddOption('--BOARD',
         dest = 'BOARD',
@@ -99,29 +99,29 @@ AddOption('--embarc_clean',
 if GetOption('BOARD'):
     board = GetOption('BOARD')
     if board not in SUPPORTED_BOARD:
-        print 'board %s not supported, available boards:' % board
-        print SUPPORTED_BOARD
+        print('board %s not supported, available boards:' % board)
+        print(SUPPORTED_BOARD)
         exit(0)
     else:
         BOARD = board
-        print 'get BOARD = [%s]' % board
+        print('get BOARD = [%s]' % board)
 
 if BOARD == 'emsdp':
     SUPPORTED_BD_VER = ['rev2']
 else:
     SUPPORTED_BD_VER_DIR = SUPPORTED_BOARD_DIR + '/' + BOARD + '/configs'
     SUPPORTED_BD_VER = [d for d in os.listdir(SUPPORTED_BD_VER_DIR) if os.path.isdir(os.path.join(SUPPORTED_BD_VER_DIR,d))]
-print 'supported BD_VER = ' + str(SUPPORTED_BD_VER)
+print('supported BD_VER = ' + str(SUPPORTED_BD_VER))
 
 if GetOption('BD_VER'):
     bd_ver = GetOption('BD_VER')
     if bd_ver not in SUPPORTED_BD_VER:
-        print 'bd_ver %s not supported, available bd_ver:' % bd_ver
-        print SUPPORTED_BD_VER
+        print('bd_ver %s not supported, available bd_ver:' % bd_ver)
+        print(SUPPORTED_BD_VER)
         exit(0)
     else:
         BD_VER = bd_ver
-        print 'get BD_VER = [%s]' % BD_VER
+        print('get BD_VER = [%s]' % BD_VER)
 
 if BOARD == 'emsdp':
     SUPPORTED_CORE_DIR = SUPPORTED_BOARD_DIR + '/' + BOARD + '/rev2/configs'
@@ -130,53 +130,53 @@ else:
     SUPPORTED_CORE_DIR = SUPPORTED_BD_VER_DIR + '/' + BD_VER + '/tcf'
     SUPPORTED_CORE = [os.path.splitext(d)[0] for d in os.listdir(SUPPORTED_CORE_DIR)]
 
-print 'supported CUR_CORE = ' + str(SUPPORTED_CORE)
+print('supported CUR_CORE = ' + str(SUPPORTED_CORE))
 
 if GetOption('CUR_CORE'):
     cur_core = GetOption('CUR_CORE')
     if cur_core not in SUPPORTED_CORE:
-        print 'cur_core %s not supported, available cur_core:' % cur_core
-        print SUPPORTED_CORE
+        print('cur_core %s not supported, available cur_core:' % cur_core)
+        print(SUPPORTED_CORE)
         exit(0)
     else:
         CUR_CORE = cur_core
-        print 'get CUR_CORE = [%s]' % CUR_CORE
+        print('get CUR_CORE = [%s]' % CUR_CORE)
 
 SUPPORTED_TOOLCHAIN = ['mw', 'gnu']
 
-print 'supported TOOLCHAIN = ' + str(SUPPORTED_TOOLCHAIN)
+print('supported TOOLCHAIN = ' + str(SUPPORTED_TOOLCHAIN))
 
 if GetOption('TOOLCHAIN'):
     toolchain = GetOption('TOOLCHAIN')
     if toolchain not in SUPPORTED_TOOLCHAIN:
-        print 'toolchain %s not supported, available toolchain:' % toolchain
-        print SUPPORTED_TOOLCHAIN
+        print('toolchain %s not supported, available toolchain:' % toolchain)
+        print(SUPPORTED_TOOLCHAIN)
         exit(0)
     else:
         TOOLCHAIN = toolchain
-        print 'get TOOLCHAIN = [%s]' % TOOLCHAIN
+        print('get TOOLCHAIN = [%s]' % TOOLCHAIN)
 
 SUPPORTED_OLEVEL = ['O0', 'O2', 'Os']
 
-print 'supported OLEVEL = ' + str(SUPPORTED_OLEVEL)
+print('supported OLEVEL = ' + str(SUPPORTED_OLEVEL))
 
 if GetOption('OLEVEL'):
     olevel = GetOption('OLEVEL')
     if olevel not in SUPPORTED_OLEVEL:
-        print 'olevel %s not supported, available olevel:' % toolchain
-        print SUPPORTED_OLEVEL
+        print('olevel %s not supported, available olevel:' % toolchain)
+        print(SUPPORTED_OLEVEL)
         exit(0)
     else:
         OLEVEL = olevel
-        print 'get OLEVEL = [%s]' % olevel
+        print('get OLEVEL = [%s]' % olevel)
 
 
 
 EMBARC_LIB_PATH = EMBARC_BSP_ROOT + '/obj_%s_%s/%s_%s'%(BOARD, BD_VER, TOOLCHAIN, CUR_CORE)
-# print 'EMBARC_LIB_PATH = %s'%EMBARC_LIB_PATH
+# print('EMBARC_LIB_PATH = %s'%EMBARC_LIB_PATH)
 
 TARGET = 'rtthread_snps_embarc.elf'
-# print 'TARGET = %s'%TARGET
+# print('TARGET = %s'%TARGET)
 
 # ip_ph_dir = EMBARC_BSP_ROOT + '/device/peripheral'
 # ip_ph_path = [os.path.join(ip_ph_dir,d) for d in os.listdir(ip_ph_dir) if os.path.isdir(os.path.join(ip_ph_dir,d))]
@@ -186,20 +186,20 @@ if BOARD == 'emsdp':
 else:
     board_inc_path = [EMBARC_BSP_ROOT + '/board/%s/configs/%s'%(BOARD, BD_VER)]
 
-# print 'board_inc_path = %s' % board_inc_path
-# print 'ip_dw_path = %s' % ip_dw_path
-# print 'ip_ss_path = %s' % ip_ss_path
-# print 'ip_ph_path = %s' % ip_ph_path
+# print('board_inc_path = %s' % board_inc_path)
+# print('ip_dw_path = %s' % ip_dw_path)
+# print('ip_ss_path = %s' % ip_ss_path)
+# print('ip_ph_path = %s' % ip_ph_path)
 
 EMBARC_CPPPATH = [  EMBARC_BSP_ROOT,
                     EMBARC_BSP_ROOT + '/include',
                     EMBARC_BSP_ROOT + '/board',
                     EMBARC_LIB_PATH + '/embARC_generated',
                  ] + board_inc_path
-#print "EMBARC_CPPPATH: %s"%EMBARC_CPPPATH
+#print("EMBARC_CPPPATH: %s"%EMBARC_CPPPATH)
 
 if TOOLCHAIN == 'mw':
-    EXEC_PATH 	= 'C:/ARC/MetaWare/arc/bin'
+    EXEC_PATH   = 'C:/ARC/MetaWare/arc/bin'
     MAKE = 'gmake'
     PREFIX = ''
     CC = 'ccac'
@@ -228,7 +228,7 @@ if TOOLCHAIN == 'mw':
     LFLAGS = ' -Hhostlink ' + OPT_ARG_FILE + ' -Hnocopyr -Hnosdata -Hnocrt -Hldopt=-Coutput=rtthread_snps_embarc.map -Hldopt=-Csections -Hldopt=-Ccrossfunc -Hldopt=-Csize -zstdout %s' % LINK_SCRIPT
 
 elif TOOLCHAIN == 'gnu':
-    EXEC_PATH 	= 'C:/arc_gnu/bin'
+    EXEC_PATH   = 'C:/arc_gnu/bin'
     MAKE = 'make'
     PREFIX = 'arc-elf32-'
     CC = PREFIX + 'gcc'
@@ -264,8 +264,8 @@ elif TOOLCHAIN == 'gnu':
     DBG_HW_FLAGS = ''' -ex "target remote | openocd --pipe %s" -ex "load" ''' % OPENOCD_OPTIONS
 
 else :
-    print 'TOOLCHAIN %s is not supported, available toolchain:' % TOOLCHAIN
-    print SUPPORTED_TOOLCHAIN
+    print('TOOLCHAIN %s is not supported, available toolchain:' % TOOLCHAIN)
+    print(SUPPORTED_TOOLCHAIN)
     exit(-1)
 
 env = Environment(ENV = os.environ, tools = ['mingw'],
@@ -286,7 +286,7 @@ embarc_make_cmd = ' %s -f options/options.mk BOARD=%s BD_VER=%s CUR_CORE=%s TOOL
 embarc_clean_cmd = ' %s -f options/options.mk distclean '%MAKE
 
 if GetOption('embarc_build'):
-    print 'os.system: ' + embarc_cd_cmd + ' && ' + embarc_make_cmd
+    print('os.system: ' + embarc_cd_cmd + ' && ' + embarc_make_cmd)
     os.system(embarc_cd_cmd + ' && ' + embarc_make_cmd)
     exit(0)
 
@@ -298,7 +298,7 @@ if GetOption('gdb'):
     if os.path.isfile(TARGET):
         os.system(DBG + DBG_HW_FLAGS + TARGET)
     else:
-        print TARGET + 'not exist, please build first!!'
+        print(TARGET + 'not exist, please build first!!')
     exit(0)
 
 if GetOption('mdb'):
@@ -310,7 +310,7 @@ if GetOption('mdb'):
         else:
             os.system('mdb -source_path=%s -nooptions -nogoifmain -toggle=include_local_symbols=1 -hard -digilent '%startup_path + rtconfig.TARGET)
     else:
-        print TARGET + 'not exist, please build first!!'
+        print(TARGET + 'not exist, please build first!!')
     exit(0)
 
 # os.system(embarc_cd_cmd + ' && ' + embarc_make_cmd)

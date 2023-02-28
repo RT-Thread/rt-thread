@@ -209,7 +209,7 @@ static int ab32_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static rt_size_t ab32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t ab32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     return -1;
 }
@@ -233,7 +233,7 @@ void uart2_irq_process(void)
 }
 #endif
 
-RT_SECTION(".irq.usart")
+rt_section(".irq.usart")
 static void uart_isr(int vector, void *param)
 {
     rt_interrupt_enter();
@@ -267,7 +267,7 @@ static void uart_isr(int vector, void *param)
 }
 
 #ifdef HUART_ENABLE
-RT_SECTION(".irq.huart")
+rt_section(".irq.huart")
 void huart_timer_isr(void)
 {
     huart_if_rx_ovflow();
@@ -279,7 +279,7 @@ void huart_timer_isr(void)
     uart1_irq_post();
 }
 #else
-RT_SECTION(".irq.huart")
+rt_section(".irq.huart")
 void huart_timer_isr(void)
 {
 }

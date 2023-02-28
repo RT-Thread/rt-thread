@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -361,13 +361,13 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
-                if (filter_cfg->items[i].hdr == -1)
+                if (filter_cfg->items[i].hdr_bank == -1)
                 {
                     drv_can->can_filter_init.Filter_Num = i;
                 }
                 else
                 {
-                    drv_can->can_filter_init.Filter_Num = filter_cfg->items[i].hdr;
+                    drv_can->can_filter_init.Filter_Num = filter_cfg->items[i].hdr_bank;
                 }
 
                 if (filter_cfg->items[i].mode == 0x00)
@@ -667,14 +667,14 @@ static int _can_recvmsg_rtmsg(CAN_Module* can_base, struct rt_can_msg *pmsg, uin
         pmsg->rtr = RT_CAN_RTR;
     }
 
-    /* get hdr */
+    /* get hdr_index */
     if (can_base == CAN1)
     {
-        pmsg->hdr = (RxMessage->FMI + 1) >> 1;
+        pmsg->hdr_index = (RxMessage->FMI + 1) >> 1;
     }
     else if (can_base == CAN2)
     {
-       pmsg->hdr = (RxMessage->FMI >> 1) + 14;
+       pmsg->hdr_index = (RxMessage->FMI >> 1) + 14;
     }
     /* Release the DATFIFO */
     /* Release FIFO0 */

@@ -3,9 +3,9 @@
  *
  * @brief       This file provides all the PMU firmware functions.
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -15,7 +15,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,18 +23,19 @@
  *  and limitations under the License.
  */
 
+/* Includes */
 #include "apm32f10x_pmu.h"
 #include "apm32f10x_rcm.h"
 
-/** @addtogroup Peripherals_Library Standard Peripheral Library
+/** @addtogroup APM32F10x_StdPeriphDriver
   @{
 */
 
-/** @addtogroup PMU_Driver  PMU Driver
+/** @addtogroup PMU_Driver PMU Driver
   @{
 */
 
-/** @addtogroup  PMU_Fuctions Fuctions
+/** @defgroup  PMU_Functions Functions
   @{
 */
 
@@ -102,7 +103,7 @@ void PMU_DisablePVD(void)
 /*!
  * @brief     Configure a voltage threshold detected by a power supply voltage detector (PVD).
  *
- * @param     levelÂ£Âºspecifies the PVD detection level
+ * @param     level£ºspecifies the PVD detection level
  *                   This parameter can be one of the following values:
  *                   @arg PMU_PVD_LEVEL_2V2 : Config PVD detection level to 2.2V
  *                   @arg PMU_PVD_LEVEL_2V3 : Config PVD detection level to 2.3V
@@ -118,9 +119,9 @@ void PMU_DisablePVD(void)
 void PMU_ConfigPVDLevel(PMU_PVD_LEVEL_T level)
 {
 
-    /** Clear PLS[7:5] bits */
+    /* Clear PLS[7:5] bits */
     PMU->CTRL_B.PLSEL = 0x0000;
-    /** Store the new value */
+    /* Store the new value */
     PMU->CTRL_B.PLSEL = level;
 }
 
@@ -165,26 +166,26 @@ void PMU_DisableWakeUpPin(void)
  */
 void PMU_EnterSTOPMode(PMU_REGULATOR_T regulator, PMU_STOP_ENTRY_T entry)
 {
-    /** Clear PDDSCFG and LPDSCFG bits */
+    /* Clear PDDSCFG and LPDSCFG bits */
     PMU->CTRL_B.PDDSCFG = 0x00;
     PMU->CTRL_B.LPDSCFG = 0x00;
-    /** Set LPDSCFG bit according to regulator value */
+    /* Set LPDSCFG bit according to regulator value */
     PMU->CTRL_B.LPDSCFG = regulator;
-    /** Set Cortex System Control Register */
+    /* Set Cortex System Control Register */
     SCB->SCR |= (uint32_t)0x04;
-    /** Select STOP mode entry*/
+    /* Select STOP mode entry*/
     if (entry == PMU_STOP_ENTRY_WFI)
     {
-        /** Request Wait For Interrupt */
+        /* Request Wait For Interrupt */
         __WFI();
     }
     else
     {
-        /** Request Wait For Event */
+        /* Request Wait For Event */
         __WFE();
     }
 
-    /** Reset SLEEPDEEP bit of Cortex System Control Register */
+    /* Reset SLEEPDEEP bit of Cortex System Control Register */
     SCB->SCR &= (uint32_t)~((uint32_t)0x04);
 }
 
@@ -197,16 +198,16 @@ void PMU_EnterSTOPMode(PMU_REGULATOR_T regulator, PMU_STOP_ENTRY_T entry)
  */
 void PMU_EnterSTANDBYMode(void)
 {
-    /** Clear Wake-up flag */
+    /* Clear Wake-up flag */
     PMU->CTRL_B.WUFLGCLR = BIT_SET;
-    /** Select STANDBY mode */
+    /* Select STANDBY mode */
     PMU->CTRL_B.PDDSCFG = BIT_SET;
-    /** Set Cortex System Control Register */
+    /* Set Cortex System Control Register */
     SCB->SCR |= (uint32_t)0x04;
 #if defined ( __CC_ARM   )
     __force_stores();
 #endif
-    /** Request Wait For Interrupt */
+    /* Request Wait For Interrupt */
     __WFI();
 
 }
@@ -214,7 +215,7 @@ void PMU_EnterSTANDBYMode(void)
 /*!
  * @brief     Read the specified PWR flag is set or not.
  *
- * @param     flagÂ£ÂºReads the status of specifies the flag.
+ * @param     flag£ºReads the status of specifies the flag.
  *                  This parameter can be one of the following values:
  *                    @arg PMU_FLAG_WUE : Wake Up flag
  *                    @arg PMU_FLAG_SB  : StandBy flag
@@ -244,7 +245,7 @@ uint8_t PMU_ReadStatusFlag(PMU_FLAG_T flag)
 /*!
  * @brief     Clears the PWR's pending flags.
  *
- * @param     flagÂ£ÂºClears the status of specifies the flag.
+ * @param     flag£ºClears the status of specifies the flag.
  *                  This parameter can be one of the following values:
  *                    @arg PMU_FLAG_WUE : Wake Up flag
  *                    @arg PMU_FLAG_SB  : StandBy flag
@@ -263,6 +264,6 @@ void PMU_ClearStatusFlag(PMU_FLAG_T flag)
     }
 }
 
-/**@} end of group PMU_Fuctions*/
-/**@} end of group PMU_Driver*/
-/**@} end of group Peripherals_Library*/
+/**@} end of group PMU_Functions*/
+/**@} end of group PMU_Driver */
+/**@} end of group APM32F10x_StdPeriphDriver*/

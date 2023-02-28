@@ -40,7 +40,7 @@ SECTIONS
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
-		
+
         /* section information for initial. */
         . = ALIGN(4);
         __rt_init_start = .;
@@ -89,7 +89,7 @@ SECTIONS
         _edata = . ;
     } >RAM1
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
@@ -112,7 +112,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
     } > RAM1
     __bss_end = .;

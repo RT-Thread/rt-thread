@@ -10,17 +10,22 @@
 
 #include <board.h>
 #include <rtthread.h>
+#include <rtdevice.h>
+#include <automac.h>
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
-#include <automac.h>
-#include "delay.h"
+
+#include "mmu.h"
+#include "drv_smc911x.h"
 
 #define MAX_ADDR_LEN                6
 #define SMC911X_EMAC_DEVICE(eth)    (struct eth_device_smc911x*)(eth)
 
-#include "drv_smc911x.h"
-
 #define DRIVERNAME "EMAC"
+
+#define DBG_LVL DBG_LOG
+#define DBG_TAG "EMAC"
+#include <rtdbg.h>
 
 struct eth_device_smc911x
 {
@@ -33,6 +38,7 @@ struct eth_device_smc911x
     uint32_t irqno;
 };
 static struct eth_device_smc911x _emac;
+
 
 #if defined (CONFIG_SMC911X_32_BIT)
 rt_inline uint32_t smc911x_reg_read(struct eth_device_smc911x *dev, uint32_t offset)
@@ -117,7 +123,7 @@ static int smc911x_detect_chip(struct eth_device_smc911x *dev)
     }
     else if (val != 0x87654321)
     {
-        rt_kprintf(DRIVERNAME ": Invalid chip endian 0x%08lx\n", val);
+        LOG_E("Invalid chip endian 0x%08lx\n", val);
         return -1;
     }
 
@@ -348,21 +354,12 @@ static rt_err_t smc911x_emac_init(rt_device_t dev)
     /* Turn on Tx + Rx */
     smc911x_enable(emac);
 
-#if 1
     /* Interrupt on every received packet */
     smc911x_reg_write(emac, LAN9118_FIFO_INT, 0x01 << 8);
     smc911x_reg_write(emac, LAN9118_INT_EN, LAN9118_INT_EN_RDFL_EN | LAN9118_INT_RSFL);
 
     /* enable interrupt */
     smc911x_reg_write(emac, LAN9118_IRQ_CFG, LAN9118_IRQ_CFG_IRQ_EN | LAN9118_IRQ_CFG_IRQ_POL | LAN9118_IRQ_CFG_IRQ_TYPE);
-#else
-
-    /* disable interrupt */
-    smc911x_reg_write(emac, LAN9118_INT_EN, 0);
-    value = smc911x_reg_read(emac, LAN9118_IRQ_CFG);
-    value &= ~LAN9118_IRQ_CFG_IRQ_EN;
-    smc911x_reg_write(emac, LAN9118_IRQ_CFG, value);
-#endif
 
     rt_hw_interrupt_install(emac->irqno, smc911x_isr, emac, "smc911x");
     rt_hw_interrupt_umask(emac->irqno);
@@ -433,7 +430,7 @@ rt_err_t smc911x_emac_tx(rt_device_t dev, struct pbuf *p)
 
     if (!status) return 0;
 
-    rt_kprintf(DRIVERNAME ": failed to send packet: %s%s%s%s%s\n",
+    LOG_E(DRIVERNAME ": failed to send packet: %s%s%s%s%s\n",
                status & LAN9118_TXS_LOC ? "LAN9118_TXS_LOC " : "",
                status & LAN9118_TXS_LCOL ? "LAN9118_TXS_LCOL " : "",
                status & LAN9118_TXS_ECOL ? "LAN9118_TXS_ECOL " : "",
@@ -501,7 +498,12 @@ const static struct rt_device_ops smc911x_emac_ops =
 
 int smc911x_emac_hw_init(void)
 {
+    rt_memset(&_emac, 0x0, sizeof(_emac));
+
     _emac.iobase = VEXPRESS_ETH_BASE;
+#ifdef RT_USING_SMART
+    _emac.iobase = (uint32_t)rt_ioremap((void*)VEXPRESS_ETH_BASE, 0x1000);
+#endif
     _emac.irqno  = IRQ_VEXPRESS_A9_ETH;
 
     if (smc911x_detect_chip(&_emac))

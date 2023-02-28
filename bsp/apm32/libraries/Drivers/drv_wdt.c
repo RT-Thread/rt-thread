@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
+ * 2022-12-26     luobeihai         add apm32F0 serie MCU support
  */
 
 #include <board.h>
@@ -33,7 +34,7 @@ typedef struct
 
 static apm32_wdt_t wdt_config;
 
-static rt_err_t _iwdt_init(rt_watchdog_t *wdt)
+static rt_err_t apm32_iwdt_init(rt_watchdog_t *wdt)
 {
     rt_uint32_t counter = 0;
 
@@ -54,7 +55,11 @@ static rt_err_t _iwdt_init(rt_watchdog_t *wdt)
           wdt_config.min_threshold,
           wdt_config.max_threshold);
 
+#if defined(SOC_SERIES_APM32F0)
+    while (IWDT_ReadStatusFlag(IWDT_FLAG_DIVU))
+#else
     while (IWDT_ReadStatusFlag(IWDT_FLAG_PSCU))
+#endif
     {
         if (++counter > DRV_WDT_TIME_OUT)
         {
@@ -62,8 +67,15 @@ static rt_err_t _iwdt_init(rt_watchdog_t *wdt)
             return -RT_ERROR;
         }
     }
+    
     IWDT_EnableWriteAccess();
+    
+#if defined(SOC_SERIES_APM32F0)
+    IWDT_ConfigDivider(IWDT_DIV_256);
+#else
     IWDT_ConfigDivider(IWDT_DIVIDER_256);
+#endif
+    
     IWDT_DisableWriteAccess();
 
     return RT_EOK;
@@ -76,7 +88,7 @@ static rt_err_t _iwdt_init(rt_watchdog_t *wdt)
  *
  * @return   RT_EOK indicates successful , other value indicates failed.
  */
-static rt_err_t _iwdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
+static rt_err_t apm32_iwdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
     volatile rt_uint32_t param, counter = 0;
 
@@ -125,15 +137,15 @@ static rt_err_t _iwdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     return RT_EOK;
 }
 
-static struct rt_watchdog_ops _wdt_ops =
+static struct rt_watchdog_ops apm32_wdt_ops =
 {
-    _iwdt_init,
-    _iwdt_control,
+    apm32_iwdt_init,
+    apm32_iwdt_control,
 };
 
 static int rt_hw_wdt_init(void)
 {
-    wdt_config.wdt.ops = &_wdt_ops;
+    wdt_config.wdt.ops = &apm32_wdt_ops;
     /* register watchdog device */
     if (rt_hw_watchdog_register(&wdt_config.wdt, "wdt", \
                                 RT_DEVICE_FLAG_DEACTIVATE, RT_NULL) != RT_EOK)
