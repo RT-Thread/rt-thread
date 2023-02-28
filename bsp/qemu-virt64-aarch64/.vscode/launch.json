@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug RT-Thread",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/rtthread.elf",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "miDebuggerServerAddress": "localhost:1234",
+            "serverLaunchTimeout": 2000,
+            "targetArchitecture": "ARM",
+            "setupCommands": [
+                {
+                    "text": "cd ${workspaceRoot}"
+                },
+                {
+                    "text": "file rtthread.elf"
+                }
+            ],
+            "customLaunchSetupCommands": [],
+            "launchCompleteCommand": "exec-run",
+            "osx": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "arm-none-eabi-gdb"
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "gdb-multiarch"
+            },
+            "windows": {
+                "MIMode": "gdb",
+                "miDebuggerPath": "arm-none-eabi-gdb.exe"
+            }
+        }
+    ]
+}
