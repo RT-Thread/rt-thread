@@ -4,7 +4,7 @@ config SOC_SERIES_GD32F4xx
     bool
     default y
 
-config SOC_GD32450Z
+config SOC_GD32470Z
     bool
     select SOC_SERIES_GD32F4xx
     select RT_USING_COMPONENTS_INIT
