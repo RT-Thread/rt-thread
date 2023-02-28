@@ -47,7 +47,7 @@ menu "On-chip Peripheral Drivers"
                     default n
                     if BSP_USING_UART1
                     choice
-                        prompt "Select UART2 badurate"
+                        prompt "Select UART1 badurate"
                         default HW_UART1_BAUDRATE_115200
 
                         config HW_UART1_BAUDRATE_9600
