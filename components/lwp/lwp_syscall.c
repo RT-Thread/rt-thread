@@ -1341,7 +1341,7 @@ rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, tim
     lwp_get_from_user(&timerid_k, (void *)timerid, sizeof(timerid_k));
 
     /* to protect unsafe implementation in current rt-smart toolchain */
-    RT_ASSERT(((struct ksigevent *)sevp)->sigev_tid == (rt_ubase_t)sevp_k.sigev_notify_function);
+    RT_ASSERT(((struct ksigevent *)sevp)->sigev_tid == *(int *)(&sevp_k.sigev_notify_function));
 
     ret = timer_create(clockid, &sevp_k, &timerid_k);
 
