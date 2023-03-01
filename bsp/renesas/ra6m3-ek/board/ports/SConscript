@@ -1,8 +1,12 @@
 import os
 from building import *
 
+src = []
 objs = []
 cwd  = GetCurrentDir()
+CPPPATH = [cwd]
+
+objs = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)
 for item in list:
