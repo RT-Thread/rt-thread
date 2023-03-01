@@ -1187,7 +1187,7 @@ enum rt_device_class_type
 /**
  * device control
  */
-#define RT_DEVICE_CTRL_BASE(Type)        (RT_Device_Class_##Type * 0x100)
+#define RT_DEVICE_CTRL_BASE(Type)        ((RT_Device_Class_##Type + 1) * 0x100)
 
 /**
  * special device commands

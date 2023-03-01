@@ -18,5 +18,6 @@ struct bt_frame
 };
 
 void backtrace(unsigned long pc, unsigned long lr, unsigned long fp);
+int rt_backtrace(void);
 
 #endif  /*__BACKTRACE_H__*/

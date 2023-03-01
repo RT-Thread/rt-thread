@@ -15,6 +15,10 @@
 
 #include <drivers/spi.h>
 
+#define DBG_TAG    "spi.core"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 extern rt_err_t rt_spi_bus_device_init(struct rt_spi_bus *bus, const char *name);
 extern rt_err_t rt_spidev_device_init(struct rt_spi_device *dev, const char *name);
 
@@ -95,6 +99,14 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
     device->config.mode       = cfg->mode & RT_SPI_MODE_MASK ;
     device->config.max_hz     = cfg->max_hz ;
 
+    if (device->cs_pin != PIN_NONE)
+    {
+        if (device->config.mode & RT_SPI_CS_HIGH)
+            rt_pin_write(device->cs_pin, PIN_LOW);
+        else
+            rt_pin_write(device->cs_pin, PIN_HIGH);
+    }
+
     if (device->bus != RT_NULL)
     {
         result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
@@ -140,7 +152,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
             else
             {
                 /* configure SPI bus failed */
-                result = -RT_EIO;
+                LOG_E("SPI device %s configuration failed", device->parent.parent.name);
                 goto __exit;
             }
         }
@@ -154,9 +166,9 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
         message.next       = RT_NULL;
 
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
 
@@ -169,9 +181,9 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
         message.next       = RT_NULL;
 
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
 
@@ -215,7 +227,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
             else
             {
                 /* configure SPI bus failed */
-                result = -RT_EIO;
+                LOG_E("SPI device %s configuration failed", device->parent.parent.name);
                 goto __exit;
             }
         }
@@ -229,9 +241,9 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
         message.next       = RT_NULL;
 
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
 
@@ -244,9 +256,9 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
         message.next       = RT_NULL;
 
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
-            result = -RT_EIO;
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
 
@@ -263,12 +275,12 @@ __exit:
     return result;
 }
 
-rt_size_t rt_spi_transfer(struct rt_spi_device *device,
-                          const void           *send_buf,
-                          void                 *recv_buf,
-                          rt_size_t             length)
+rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
+                           const void           *send_buf,
+                           void                 *recv_buf,
+                           rt_size_t             length)
 {
-    rt_err_t result;
+    rt_ssize_t result;
     struct rt_spi_message message;
 
     RT_ASSERT(device != RT_NULL);
@@ -289,8 +301,7 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
             else
             {
                 /* configure SPI bus failed */
-                rt_set_errno(-RT_EIO);
-                result = 0;
+                LOG_E("SPI device %s configuration failed", device->parent.parent.name);
                 goto __exit;
             }
         }
@@ -305,16 +316,15 @@ rt_size_t rt_spi_transfer(struct rt_spi_device *device,
 
         /* transfer message */
         result = device->bus->ops->xfer(device, &message);
-        if (result == 0)
+        if (result < 0)
         {
-            rt_set_errno(-RT_EIO);
+            LOG_E("SPI device %s transfer failed", device->parent.parent.name);
             goto __exit;
         }
     }
     else
     {
-        rt_set_errno(-RT_EIO);
-        return 0;
+        return -RT_EIO;
     }
 
 __exit:
@@ -323,27 +333,32 @@ __exit:
     return result;
 }
 
-rt_uint16_t rt_spi_sendrecv16(struct rt_spi_device *device,
-                              rt_uint16_t           data)
+rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                           rt_uint16_t senddata,
+                           rt_uint16_t *recvdata)
 {
-    rt_uint16_t value = 0;
+    rt_err_t result;
     rt_uint16_t tmp;
 
     if (device->config.mode & RT_SPI_MSB)
     {
-        tmp = ((data & 0xff00) >> 8) | ((data & 0x00ff) << 8);
-        data = tmp;
+        tmp = ((senddata & 0xff00) >> 8) | ((senddata & 0x00ff) << 8);
+        senddata = tmp;
     }
 
-    rt_spi_send_then_recv(device, &data, 2, &value, 2);
+    result = rt_spi_send_then_recv(device, &senddata, 2, recvdata, 2);
+    if(result != RT_EOK)
+    {
+        return result;
+    }
 
     if (device->config.mode & RT_SPI_MSB)
     {
-        tmp = ((value & 0xff00) >> 8) | ((value & 0x00ff) << 8);
-        value = tmp;
+        tmp = ((*recvdata & 0xff00) >> 8) | ((*recvdata & 0x00ff) << 8);
+        *recvdata = tmp;
     }
 
-    return value;
+    return result;
 }
 
 struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
@@ -362,13 +377,8 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
-        rt_set_errno(-RT_EBUSY);
-
         return index;
     }
-
-    /* reset errno */
-    rt_set_errno(RT_EOK);
 
     /* configure SPI bus */
     if (device->bus->owner != device)
@@ -383,7 +393,6 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
         else
         {
             /* configure SPI bus failed */
-            rt_set_errno(-RT_EIO);
             goto __exit;
         }
     }
@@ -393,9 +402,8 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
     {
         /* transmit SPI message */
         result = device->bus->ops->xfer(device, index);
-        if (result == 0)
+        if (result < 0)
         {
-            rt_set_errno(-RT_EIO);
             break;
         }
 
@@ -419,13 +427,8 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device)
     result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
-        rt_set_errno(-RT_EBUSY);
-
         return -RT_EBUSY;
     }
-
-    /* reset errno */
-    rt_set_errno(RT_EOK);
 
     /* configure SPI bus */
     if (device->bus->owner != device)
@@ -440,11 +443,9 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device)
         else
         {
             /* configure SPI bus failed */
-            rt_set_errno(-RT_EIO);
-            /* release lock */
             rt_mutex_release(&(device->bus->lock));
 
-            return -RT_EIO;
+            return result;
         }
     }
 
@@ -458,14 +459,12 @@ rt_err_t rt_spi_release_bus(struct rt_spi_device *device)
     RT_ASSERT(device->bus->owner == device);
 
     /* release lock */
-    rt_mutex_release(&(device->bus->lock));
-
-    return RT_EOK;
+    return rt_mutex_release(&(device->bus->lock));
 }
 
 rt_err_t rt_spi_take(struct rt_spi_device *device)
 {
-    rt_err_t result;
+    rt_ssize_t result;
     struct rt_spi_message message;
 
     RT_ASSERT(device != RT_NULL);
@@ -475,13 +474,17 @@ rt_err_t rt_spi_take(struct rt_spi_device *device)
     message.cs_take = 1;
 
     result = device->bus->ops->xfer(device, &message);
+    if(result < 0)
+    {
+        return (rt_err_t)result;
+    }
 
-    return result;
+    return RT_EOK;
 }
 
 rt_err_t rt_spi_release(struct rt_spi_device *device)
 {
-    rt_err_t result;
+    rt_ssize_t result;
     struct rt_spi_message message;
 
     RT_ASSERT(device != RT_NULL);
@@ -491,6 +494,10 @@ rt_err_t rt_spi_release(struct rt_spi_device *device)
     message.cs_release = 1;
 
     result = device->bus->ops->xfer(device, &message);
+    if(result < 0)
+    {
+        return (rt_err_t)result;
+    }
 
-    return result;
+    return RT_EOK;
 }

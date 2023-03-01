@@ -34,6 +34,11 @@ if RT_USING_SAL
             Enable BSD socket operated by file system API
             Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
 
+    config SAL_USING_AF_UNIX
+        bool "Enable support AF_UNIX socket"
+        default n
+        default y if RT_USING_SMART
+
     config SAL_SOCKETS_NUM
         int "the maximum number of sockets"
         depends on !SAL_USING_POSIX

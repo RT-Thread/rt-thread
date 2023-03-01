@@ -12,9 +12,9 @@ if os.getenv('RTT_CC'):
 if CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
     if platform.system().lower() == "windows":
-        EXEC_PATH 	= 'D:/NucleiStudio/toolchain/gcc/bin'
+        EXEC_PATH 	= r'/NucleiStudio/toolchain/gcc/bin'
     else:
-        EXEC_PATH 	= '~/NucleiStudio/toolchain/gcc/bin'
+        EXEC_PATH 	= r'~/NucleiStudio/toolchain/gcc/bin'
     if os.path.exists(EXEC_PATH) == False:
         print("Warning: Toolchain path %s doesn't exist, assume it is already in PATH" % EXEC_PATH)
         EXEC_PATH = '' # Don't set path if not exist
@@ -56,6 +56,7 @@ if PLATFORM == 'gcc':
     CPATH   = ''
     LPATH   = ''
     LIBS = ['stdc++']
+    AFLAGS += ' -D"irq_entry=SW_handler" '
 
     if BUILD == 'debug':
         CFLAGS += ' -O2 -ggdb'

@@ -50,6 +50,7 @@ AT32F415-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | WDT       | 支持     |                            |
 | RTC       | 支持     |                            |
 | FLASH     | 支持     |                            |
+| USB       | 支持     |                            |
 
 ### IO在板级支持包中的映射情况
 
@@ -92,6 +93,8 @@ AT32F415-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PC5  | ADC1_IN15      |
 | PB8  | CAN1_RX        |
 | PB9  | CAN1_TX        |
+| PA11 | USB_DM         |
+| PA12 | USB_DP         |
 
 ## 使用说明
 

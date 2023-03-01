@@ -202,6 +202,7 @@ SECTIONS
         PROVIDE(_susrstack = . );
         . = . + __stack_size;
         PROVIDE( _eusrstack = .);
+        PROVIDE( __rt_rvstack = . );
     } >RAM
 
 }

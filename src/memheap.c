@@ -18,6 +18,7 @@
  * 2013-07-11     Grissiom     fix the memory block splitting issue.
  * 2013-07-15     Grissiom     optimize rt_memheap_realloc
  * 2021-06-03     Flybreak     Fix the crash problem after opening Oz optimization on ac6.
+ * 2023-03-01     Bernard      Fix the alignment issue for minimal size
  */
 
 #include <rthw.h>
@@ -32,7 +33,7 @@
 #define RT_MEMHEAP_FREED        0x00
 
 #define RT_MEMHEAP_IS_USED(i)   ((i)->magic & RT_MEMHEAP_USED)
-#define RT_MEMHEAP_MINIALLOC    12
+#define RT_MEMHEAP_MINIALLOC    RT_ALIGN(12, RT_ALIGN_SIZE)
 
 #define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
 #define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)

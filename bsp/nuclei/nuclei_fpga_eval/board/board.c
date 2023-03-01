@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,6 +13,9 @@
 #include <rtdevice.h>
 #include "board.h"
 #include "cpuport.h"
+
+#define SYSTICK_TICK_CONST                      (SOC_TIMER_FREQ / RT_TICK_PER_SECOND)
+#define RT_KERNEL_INTERRUPT_LEVEL               1
 
 #ifdef RT_USING_SERIAL
     #include <drv_uart.h>
@@ -32,6 +35,45 @@ extern void *_heap_end;
  */
 extern void _init(void);
 
+rt_weak void rt_hw_ticksetup(void)
+{
+    uint64_t ticks = SYSTICK_TICK_CONST;
+
+    /* Make SWI and SysTick the lowest priority interrupts. */
+    /* Stop and clear the SysTimer. SysTimer as Non-Vector Interrupt */
+    SysTick_Config(ticks);
+    ECLIC_DisableIRQ(SysTimer_IRQn);
+    ECLIC_SetLevelIRQ(SysTimer_IRQn, RT_KERNEL_INTERRUPT_LEVEL);
+    ECLIC_SetShvIRQ(SysTimer_IRQn, ECLIC_NON_VECTOR_INTERRUPT);
+    ECLIC_EnableIRQ(SysTimer_IRQn);
+
+    /* Set SWI interrupt level to lowest level/priority, SysTimerSW as Vector Interrupt */
+    ECLIC_SetShvIRQ(SysTimerSW_IRQn, ECLIC_VECTOR_INTERRUPT);
+    ECLIC_SetLevelIRQ(SysTimerSW_IRQn, RT_KERNEL_INTERRUPT_LEVEL);
+    ECLIC_EnableIRQ(SysTimerSW_IRQn);
+}
+
+
+#define SysTick_Handler     eclic_mtip_handler
+
+/**
+ * @brief This is the timer interrupt service routine.
+ *
+ */
+void SysTick_Handler(void)
+{
+    /* Reload systimer */
+    SysTick_Reload(SYSTICK_TICK_CONST);
+
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    /* tick increase */
+    rt_tick_increase();
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
 /**
  * @brief Setup hardware board for rt-thread
  *
