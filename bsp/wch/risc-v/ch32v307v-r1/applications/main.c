@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "ch32v30x.h"
 
 /* defined the LED0 pin: PB5 */
 #define LED0_PIN              rt_pin_get("PB.5")

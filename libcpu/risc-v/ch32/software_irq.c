@@ -8,6 +8,7 @@
  * 2021-09-09     WCH        the first version
  * 2023-01-04     WangShun   Remove redundant files
  */
+#include "rtconfig.h"
 #if defined (SOC_RISCV_SERIES_CH32V1)
 #include "ch32v10x.h"
 #elif defined (SOC_RISCV_SERIES_CH32V2)
@@ -17,11 +18,7 @@
 #else
 #error "CH32 architecture doesn't support!"
 #endif
-
-/*
- * trigger soft interrupt
- */
-void sw_setpend(void)
+void rt_trigger_software_interrupt(void)
 {
     /*CH32V103 does not support systick software interrupt*/
 #if defined(SOC_RISCV_SERIES_CH32V1)
@@ -31,11 +28,10 @@ void sw_setpend(void)
 #endif
 }
 
-/*
- * clear soft interrupt
- */
-void sw_clearpend(void)
+void rt_hw_do_after_save_above(void)
 {
+    __asm volatile ("li t0,0x20" );
+    __asm volatile ("csrs 0x804, t0");
     /*CH32V103 does not support systick software interrupt*/
 #if defined(SOC_RISCV_SERIES_CH32V1)
     NVIC_ClearPendingIRQ(Software_IRQn);
@@ -43,27 +39,3 @@ void sw_clearpend(void)
     SysTick->CTLR &= ~(1 << 31);
 #endif
 }
-
-/*
- * disable interrupt and save mstatus
- */
-rt_weak rt_base_t rt_hw_interrupt_disable(void)
-{
-    rt_base_t value=0;
-#if defined(SOC_RISCV_SERIES_CH32V3)
-    asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x7800));
-#else
-    asm("csrrw %0, mstatus, %1":"=r"(value):"r"(0x1800));
-#endif
-    return value;
-}
-
-/*
- * enable interrupt and resume mstatus
- */
-rt_weak void rt_hw_interrupt_enable(rt_base_t level)
-{
-    asm("csrw mstatus, %0": :"r"(level));
-}
-
-

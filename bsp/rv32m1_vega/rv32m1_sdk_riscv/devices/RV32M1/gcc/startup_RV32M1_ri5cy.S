@@ -30,38 +30,38 @@
     .section .vectors, "ax"
     .option norvc;
 
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
-    jal x0, IRQ_Handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
+    jal x0, SW_handler
 
     // reset vector
     jal x0, Reset_Handler
@@ -97,6 +97,8 @@ Reset_Handler:
 
     # Enable global interrupt. */
     # csrsi mstatus, 8
+    la t0, __stack
+    csrw mscratch,t0
 
     jal entry
     ebreak
@@ -182,16 +184,16 @@ end_except:
     addi x2, x2, EXCEPTION_STACK_SIZE
     mret
 
-    .weak IRQ_Handler
-    .type IRQ_Handler, %function
-IRQ_Handler:
+    .weak SW_handler
+    .type SW_handler, %function
+SW_handler:
     addi x2, x2, -EXCEPTION_STACK_SIZE
     sw x1, 0x54(x2)
     jal x1, store_regs
     la x1, end_except
     csrr a0, mcause
     jal x0, SystemIrqHandler
-    .size IRQ_Handler, . - IRQ_Handler
+    .size SW_handler, . - SW_handler
 
     .macro define_exception_entry entry_name handler_name
     .weak \entry_name

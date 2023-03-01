@@ -100,11 +100,11 @@ __attribute__((weak)) void mchtmr_s_isr(void)
 }
 
 #ifndef CONFIG_FREERTOS
-void irq_handler_trap(void) __attribute__ ((section(".isr_vector"), interrupt("machine"), aligned(4)));
+void SW_handler(void) __attribute__ ((section(".isr_vector"), interrupt("machine"), aligned(4)));
 #else
-void irq_handler_trap(void) __attribute__ ((section(".isr_vector")));
+void SW_handler(void) __attribute__ ((section(".isr_vector")));
 #endif
-void irq_handler_trap(void)
+void SW_handler(void)
 {
     long mcause = read_csr(CSR_MCAUSE);
     long mepc = read_csr(CSR_MEPC);

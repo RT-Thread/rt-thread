@@ -11,7 +11,7 @@ if rtconfig.PLATFORM == 'gcc':
      src += Glob('*_gcc.S')
 
 CPPPATH = [cwd]
-ASFLAGS = ''
+ASFLAGS = ' -I ' + cwd
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 

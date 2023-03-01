@@ -13,7 +13,7 @@ if os.getenv('RTT_CC'):
 
 if CROSS_TOOL == 'gcc':
     PLATFORM  = 'gcc'
-    EXEC_PATH = 'D:/Software/Nuclei/gcc/bin'
+    EXEC_PATH = r'D:/Software/Nuclei/gcc/bin'
 else:
     print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
 
@@ -50,6 +50,7 @@ if PLATFORM == 'gcc':
     CPATH   = ''
     LPATH   = ''
     LIBS = ['stdc++']
+    AFLAGS += ' -I. '+ ' -D"irq_entry=SW_handler" '
 
     if BUILD == 'debug':
         CFLAGS += ' -O2 -Os -ggdb'
