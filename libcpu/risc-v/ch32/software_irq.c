@@ -30,6 +30,8 @@ void rt_trigger_software_interrupt(void)
 
 void rt_hw_do_after_save_above(void)
 {
+    __asm volatile ("li t0,0x20" );
+    __asm volatile ("csrs 0x804, t0");
     /*CH32V103 does not support systick software interrupt*/
 #if defined(SOC_RISCV_SERIES_CH32V1)
     NVIC_ClearPendingIRQ(Software_IRQn);
