@@ -342,6 +342,7 @@ SECTIONS
     __stack_bottom = .;
     . += __stack_size;
     __stack_top = .;
+    PROVIDE( __rt_rvstack = . );
     __freertos_irq_stack_top = .; /* sytem stack */
     stack = .;
   } > L2

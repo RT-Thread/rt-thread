@@ -5,17 +5,23 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-09-09     WCH        the first version
- * 2022-12-27     WangShun   Merge WCH series mcu port files
+ * 2023/01/17     WangShun    The first version
  */
- 
 #define __ASSEMBLY__
 #include "cpuport.h"
 
-.global SW_handler
-.align 2
+    .section .text.entry, "ax"
+#if defined(SOC_SERIES_GD32VF103V)
+    .align  6
+#else
+    .align  2
+#endif 
+    .global SW_handler
+
 SW_handler:
-    /* save all from thread context */
+	li   t0,    0x08
+	csrc mstatus, t0
+
 #ifdef ARCH_RISCV_FPU
     addi    sp, sp, -32 * FREGBYTES
     FSTORE  f0, 0 * FREGBYTES(sp)
@@ -51,21 +57,13 @@ SW_handler:
     FSTORE  f30, 30 * FREGBYTES(sp)
     FSTORE  f31, 31 * FREGBYTES(sp)
 #endif
-
+    /* save all from thread context */
     addi sp, sp, -32 * REGBYTES
     STORE x5,   5 * REGBYTES(sp)
-
-    /* saved MPIE */
- 	li    t0,   0x80
-    STORE t0,   2 * REGBYTES(sp)
-
-	/* Temporarily disable HPE  */
-#if defined (SOC_RISCV_SERIES_CH32V3)
-	li   t0,    0x20
-	csrs 0x804, t0
-#endif
-
     STORE x1,   1 * REGBYTES(sp)
+    /* Mandatory set the MPIE of mstatus */
+    li    t0,   0x80
+    STORE t0,   2 * REGBYTES(sp)
     STORE x4,   4 * REGBYTES(sp)
     STORE x6,   6 * REGBYTES(sp)
     STORE x7,   7 * REGBYTES(sp)
@@ -95,20 +93,23 @@ SW_handler:
     STORE x31, 31 * REGBYTES(sp)
 
     /* switch to interrupt stack */
-	csrrw sp,mscratch,sp
+    csrrw sp,mscratch,sp
+    /* interrupt handle */
     call  rt_interrupt_enter
-    /* clear interrupt */
-    jal   sw_clearpend
+    /* Do the work after saving the above */
+    jal   rt_hw_do_after_save_above
+
     call  rt_interrupt_leave
     /* switch to from thread stack */
-	csrrw sp,mscratch,sp
+    csrrw sp,mscratch,sp
 
-    /* if rt_thread_switch_interrupt_flag=1,then clear it  */
+    /* Determine whether to trigger scheduling at the interrupt function */
     la    s0, rt_thread_switch_interrupt_flag
     lw    s2, 0(s0)
     beqz  s2, 1f
+    /* clear the flag of rt_thread_switch_interrupt_flag */
     sw    zero, 0(s0)
-#1:
+
     csrr  a0, mepc
     STORE a0, 0 * REGBYTES(sp)
 
@@ -123,16 +124,14 @@ SW_handler:
     LOAD  a0,  0 * REGBYTES(sp)
     csrw  mepc, a0
 
-1:  LOAD  x1,   1 * REGBYTES(sp)
-#if defined (SOC_RISCV_SERIES_CH32V3)
-	li t0,0x7800
-	csrs mstatus, t0
-#else
-	li t0,0x1800
-	csrs mstatus, t0	
-#endif
-	LOAD t0, 2*REGBYTES(sp)
-	csrs mstatus, t0
+1:
+    LOAD  x1,   1 * REGBYTES(sp)
+
+    /* Set the mode after MRET */
+    li    t0, 0x1800
+    csrs  mstatus, t0
+    LOAD  t0,   2 * REGBYTES(sp)
+    csrs  mstatus, t0
 
     LOAD  x4,   4 * REGBYTES(sp)
     LOAD  x5,   5 * REGBYTES(sp)
@@ -162,9 +161,8 @@ SW_handler:
     LOAD  x29, 29 * REGBYTES(sp)
     LOAD  x30, 30 * REGBYTES(sp)
     LOAD  x31, 31 * REGBYTES(sp)
-    addi  sp, sp, 32 * REGBYTES
 
-    /* load float reg */
+    addi  sp, sp, 32 * REGBYTES
 #ifdef ARCH_RISCV_FPU
     FLOAD   f0, 0 * FREGBYTES(sp)
     FLOAD   f1, 1 * FREGBYTES(sp)
@@ -198,6 +196,7 @@ SW_handler:
     FLOAD   f29, 29 * FREGBYTES(sp)
     FLOAD   f30, 30 * FREGBYTES(sp)
     FLOAD   f31, 31 * FREGBYTES(sp)
+
     addi    sp, sp, 32 * FREGBYTES
 #endif
     mret

@@ -46,6 +46,9 @@ rt_hw_interrupt_enable:
  */
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
+    la t0, __rt_rvstack
+    csrw mscratch,t0
+
     LOAD sp, (a0)
 
 #ifdef RT_USING_SMP
@@ -214,9 +217,9 @@ rt_hw_context_switch_exit:
 
     LOAD x1,   1 * REGBYTES(sp)
 #ifdef ARCH_RISCV_FPU
-    li    t0, 0x00007800
+    li    t0, 0x7800
 #else
-    li    t0, 0x00001800
+    li    t0, 0x1800
 #endif
     csrw  mstatus, t0
     LOAD a0,   2 * REGBYTES(sp)

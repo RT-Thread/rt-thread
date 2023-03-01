@@ -64,9 +64,21 @@ export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 
 **注意**: 请确保Nuclei GCC和Nuclei OpenOCD的路径设置正确无误。
 
-1. 运行 ``pkgs --update``来下载最新的依赖的**Nuclei SDK**开发包
+1. 运行 ``pkgs --update``来下载最新的依赖的**Nuclei SDK**开发包,修改链接脚本。
+
+   ```c
+     .stack ORIGIN(RAM) + LENGTH(RAM) - __TOT_STACK_SIZE (NOLOAD) :
+     {
+   	...
+       PROVIDE( _sp = . );
+       PROVIDE( __rt_rvstack = . );//在链接脚本中补充该条语句
+     } >RAM AT>RAM
+   ```
+
 2. **可选**: 运行 ``menuconfig``来进行内核配置
+
 3. 运行 ``scons -c``清理之前的编译结果
+
 4. 运行 ``scons``来进行代码的编译
 
 ### 下载程序

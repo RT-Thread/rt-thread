@@ -52,7 +52,7 @@ _start:
 #endif
 
 #ifndef CONFIG_FREERTOS
-    #define HANDLER_TRAP irq_handler_trap
+    #define HANDLER_TRAP SW_handler
     #define HANDLER_S_TRAP irq_handler_s_trap
 #else
     #define HANDLER_TRAP freertos_risc_v_trap_handler

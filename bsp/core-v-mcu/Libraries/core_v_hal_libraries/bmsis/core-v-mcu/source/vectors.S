@@ -19,7 +19,7 @@
 * Date           Author       Notes
 * 2022-12-08     WangShun     Remove FreeRTOS related code and add RT-Thread code
 */
-.extern IRQ_Handler
+.extern SW_handler
 #ifdef PULP_FREERTOS_VECTORED_CONTEXT_SWITCH
 .extern	freertos_risc_v_ctxt_handler
 #endif
@@ -30,38 +30,38 @@
 .section .vectors, "ax"
 .option norvc
 vector_table:
-	j IRQ_Handler  // irq0
-	j IRQ_Handler
-	j IRQ_Handler
-	j IRQ_Handler  // irq3
-	j IRQ_Handler
-	j IRQ_Handler
-	j IRQ_Handler
-	j IRQ_Handler //ctxt_handler  // irq 7 mtime or timer
-	j IRQ_Handler
-	j IRQ_Handler
-	j IRQ_Handler // IRQ_Handler
-	j IRQ_Handler // irq 11 Machine (event Fifo)
-	j IRQ_Handler
-	j IRQ_Handler
-	j IRQ_Handler
-	j IRQ_Handler
-	j IRQ_Handler // IRQ16
-	j IRQ_Handler // IRQ17
-	j IRQ_Handler // IRQ18
-	j IRQ_Handler // IRQ19
-	j IRQ_Handler // IRQ20
-	j IRQ_Handler // IRQ21
-	j IRQ_Handler // IRQ22
-	j IRQ_Handler // IRQ23
-	j IRQ_Handler // IRQ24
-	j IRQ_Handler // IRQ25
-	j IRQ_Handler // IRQ26
-	j IRQ_Handler // IRQ27
-	j IRQ_Handler // IRQ28
-	j IRQ_Handler // IRQ29
-	j IRQ_Handler // IRQ30
-    j IRQ_Handler // IRQ30
+	j SW_handler  // irq0
+	j SW_handler
+	j SW_handler
+	j SW_handler  // irq3
+	j SW_handler
+	j SW_handler
+	j SW_handler
+	j SW_handler //ctxt_handler  // irq 7 mtime or timer
+	j SW_handler
+	j SW_handler
+	j SW_handler // SW_handler
+	j SW_handler // irq 11 Machine (event Fifo)
+	j SW_handler
+	j SW_handler
+	j SW_handler
+	j SW_handler
+	j SW_handler // IRQ16
+	j SW_handler // IRQ17
+	j SW_handler // IRQ18
+	j SW_handler // IRQ19
+	j SW_handler // IRQ20
+	j SW_handler // IRQ21
+	j SW_handler // IRQ22
+	j SW_handler // IRQ23
+	j SW_handler // IRQ24
+	j SW_handler // IRQ25
+	j SW_handler // IRQ26
+	j SW_handler // IRQ27
+	j SW_handler // IRQ28
+	j SW_handler // IRQ29
+	j SW_handler // IRQ30
+    j SW_handler // IRQ30
 
 /* this is fixed to 0x8000, used for PULP_SECURE=0. We redirect this entry to the
 new vector table (which is at mtvec) */
