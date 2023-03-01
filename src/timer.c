@@ -614,7 +614,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
         *(rt_tick_t *)arg =  timer->timeout_tick;
         break;
     case RT_TIMER_CTRL_GET_FUNC:
-        arg = (void *)timer->timeout_func;
+        *(void **)arg = timer->timeout_func;
         break;
 
     case RT_TIMER_CTRL_SET_FUNC:
