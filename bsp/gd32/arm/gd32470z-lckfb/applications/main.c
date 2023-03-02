@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <board.h>
 
-/* defined the LED1 pin: PD4 */
+/* defined the LED1 pin: PE4 */
 #define LED1_PIN GET_PIN(E, 3)
 
 int main(void)
