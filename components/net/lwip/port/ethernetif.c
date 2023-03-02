@@ -210,7 +210,7 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
 #if LWIP_VERSION_MAJOR == 1U /* v1.x */
     int recv_timeout = timeout * 1000UL / RT_TICK_PER_SECOND;
 #else /* >= v2.x */
-    struct timeval recv_timeout = { timeout / RT_TICK_PER_SECOND, timeout % RT_TICK_PER_SECOND };
+    struct timeval recv_timeout = { timeout / RT_TICK_PER_SECOND, timeout % RT_TICK_PER_SECOND * 1000 };
 #endif
     ip_addr_t target_addr;
     struct addrinfo hint, *res = RT_NULL;
