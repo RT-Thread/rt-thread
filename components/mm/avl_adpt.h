@@ -21,8 +21,11 @@
         ? rt_container_of(rt_container_of(pnode, struct _aspace_node, node),   \
                           struct rt_varea, node)                               \
         : 0
+
 #define ASPACE_VAREA_NEXT(pva) (VAREA_ENTRY(util_avl_next(&pva->node.node)))
 #define ASPACE_VAREA_FIRST(aspace) (VAREA_ENTRY(util_avl_first(&aspace->tree.tree)))
+#define ASPACE_VAREA_LAST(aspace) (VAREA_ENTRY(util_avl_last(&aspace->tree.tree)))
+#define ASPACE_VAREA_PREV(pva) (VAREA_ENTRY(util_avl_prev(&pva->node.node)))
 
 typedef struct _aspace_node
 {
