@@ -2,7 +2,7 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-path = [cwd + '/../CMSIS/Core/Include',cwd + '/components/codec', cwd + '/LPC55S6X', cwd + '/LPC55S6X/drivers', cwd + '/middleware/sdmmc/inc', cwd + '/middleware/sdmmc/port']
+path = [cwd + '/../drivers/CMSIS/Core/Include',cwd + '/components/codec', cwd + '/LPC55S6X', cwd + '/LPC55S6X/drivers', cwd + '/middleware/sdmmc/inc', cwd + '/middleware/sdmmc/port']
 src = Split('''
             LPC55S6X/system_LPC55S69_cm33_core0.c
             ''')
