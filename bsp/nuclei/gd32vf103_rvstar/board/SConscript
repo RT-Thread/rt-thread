@@ -3,7 +3,10 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
+src = Split('''
+board.c
+trap_gcc.S
+''')
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
