@@ -65,6 +65,24 @@ static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
         varea->mem_obj->on_varea_open(varea);
 }
 
+/* restore context modified by varea install */
+static inline void _varea_uninstall(rt_varea_t varea)
+{
+    rt_aspace_t aspace = varea->aspace;
+
+    if (varea->mem_obj && varea->mem_obj->on_varea_close)
+        varea->mem_obj->on_varea_close(varea);
+
+    rt_varea_free_pages(varea);
+
+    WR_LOCK(aspace);
+    _aspace_bst_remove(aspace, varea);
+    WR_UNLOCK(aspace);
+
+    rt_hw_mmu_unmap(aspace, varea->start, varea->size);
+    rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
+}
+
 int _init_lock(rt_aspace_t aspace)
 {
     MM_PGTBL_LOCK_INIT(aspace);
@@ -144,12 +162,18 @@ static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
     {
         /* TODO try to map with huge TLB, when flag & HUGEPAGE */
         rt_size_t pgsz = ARCH_PAGE_SIZE;
-        rt_hw_mmu_map(aspace, vaddr, phyaddr, pgsz, attr);
+        void *ret = rt_hw_mmu_map(aspace, vaddr, phyaddr, pgsz, attr);
+        if (ret == RT_NULL)
+        {
+            err = -RT_ERROR;
+            break;
+        }
         vaddr += pgsz;
         phyaddr += pgsz;
     }
 
-    rt_hw_tlb_invalidate_range(aspace, vaddr, length, ARCH_PAGE_SIZE);
+    if (err == RT_EOK)
+        rt_hw_tlb_invalidate_range(aspace, end - length, length, ARCH_PAGE_SIZE);
 
     return err;
 }
@@ -265,6 +289,7 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
 
     if (mem_obj->hint_free)
     {
+        /* mem object can control mapping range and so by modifing hint */
         mem_obj->hint_free(&hint);
     }
 
@@ -273,16 +298,26 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
 
     if (err == RT_EOK)
     {
+        /* fill in varea data */
         _varea_post_install(varea, aspace, attr, flags, mem_obj, offset);
 
         if (MMF_TEST_CNTL(flags, MMF_PREFETCH))
         {
+            /* do the MMU & TLB business */
             err = _do_prefetch(aspace, varea, varea->start, varea->size);
+            if (err)
+            {
+                /* restore data structure and MMU */
+                _varea_uninstall(varea);
+            }
         }
     }
 
     return err;
 }
+
+#define _IS_OVERFLOW(start, length) ((length) > (0ul - (uintptr_t)(start)))
+#define _IS_OVERSIZE(start, length, limit_s, limit_sz) (((length) + (rt_size_t)((start) - (limit_start))) > (limit_size))
 
 static inline int _not_in_range(void *start, rt_size_t length,
                                 void *limit_start, rt_size_t limit_size)
@@ -291,8 +326,8 @@ static inline int _not_in_range(void *start, rt_size_t length,
         LOG_D("%s: [%p : %p] [%p : %p]", __func__, start, length, limit_start, limit_size);
     /* assuming (base + length) will not overflow except (0) */
     return start != RT_NULL
-               ? ((length > (0ul - (uintptr_t)start)) || start < limit_start ||
-                  (length + (rt_size_t)(start - limit_start)) > limit_size)
+               ? (_IS_OVERFLOW(start, length) || start < limit_start ||
+                  _IS_OVERSIZE(start, length, limit_start, limit_size))
                : length > limit_size;
 }
 
@@ -334,6 +369,10 @@ int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length,
         if (varea)
         {
             err = _mm_aspace_map(aspace, varea, attr, flags, mem_obj, offset);
+            if (err != RT_EOK)
+            {
+                rt_free(varea);
+            }
         }
         else
         {
@@ -374,6 +413,7 @@ int rt_aspace_map_static(rt_aspace_t aspace, rt_varea_t varea, void **addr,
     {
         varea->size = length;
         varea->start = *addr;
+        flags |= MMF_STATIC_ALLOC;
         err = _mm_aspace_map(aspace, varea, attr, flags, mem_obj, offset);
     }
 
@@ -430,8 +470,7 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
 
             if (err != RT_EOK)
             {
-                _aspace_unmap(aspace, varea->start, varea->size);
-                rt_free(varea);
+                _varea_uninstall(varea);
             }
         }
     }
@@ -486,7 +525,7 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
     {
         varea->start = hint->prefer;
         varea->size = hint->map_size;
-        hint->flags |= MMF_MAP_FIXED;
+        hint->flags |= (MMF_MAP_FIXED | MMF_STATIC_ALLOC);
         LOG_D("%s: start %p size %p phy at %p", __func__, varea->start, varea->size, pa_off << MM_PAGE_SHIFT);
         err = _mm_aspace_map_phy(aspace, varea, hint, attr, pa_off, ret_va);
     }
@@ -502,21 +541,19 @@ void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
 {
     struct _mm_range range = {addr, addr + length - 1};
     rt_varea_t varea = _aspace_bst_search_overlap(aspace, range);
+
+    if (varea == RT_NULL)
+    {
+        LOG_I("%s: No such entry found at %p with %lx bytes\n", __func__, addr, length);
+    }
+
     while (varea)
     {
-        if (varea->mem_obj && varea->mem_obj->on_varea_close)
-            varea->mem_obj->on_varea_close(varea);
-
-        rt_varea_free_pages(varea);
-
-        WR_LOCK(aspace);
-        _aspace_bst_remove(aspace, varea);
-        WR_UNLOCK(aspace);
-
-        rt_hw_mmu_unmap(aspace, varea->start, varea->size);
-        rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
-
-        rt_free(varea);
+        _varea_uninstall(varea);
+        if (!(varea->flag & MMF_STATIC_ALLOC))
+        {
+            rt_free(varea);
+        }
         varea = _aspace_bst_search_overlap(aspace, range);
     }
 }
