@@ -14,8 +14,6 @@
 
 #include "avl.h"
 
-/* see https://github.com/polarvid/rtsmart-avl-test for the test and benchmark */
-
 #define HEIGHT_OF(node) ((node) ? (node)->height : 0)
 #define IS_RCHILD(node) (!((node) - ((node)->parent->avl_right)))
 #define IS_LCHILD(node) (!((node) - ((node)->parent->avl_left)))
