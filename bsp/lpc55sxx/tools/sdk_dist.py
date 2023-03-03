@@ -13,6 +13,8 @@ def dist_do_building(BSP_ROOT, dist_dir):
     library_dir  = os.path.join(dist_dir, 'Libraries')
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))
+    print("=> copy bsp CMSIS")
+    bsp_copy_files(os.path.join(library_path, 'CMSIS'), os.path.join(library_dir, 'CMSIS'))
     print("=> copy bsp library")
     bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE), os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
