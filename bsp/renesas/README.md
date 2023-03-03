@@ -8,7 +8,8 @@ RA 系列 BSP 目前支持情况如下表所示：
 | **RA6 系列**              |                          |
 | [ra6m4-cpk](ra6m4-cpk) | Renesas 官方 CPK-RA6M4 开发板 |
 | [ra6m4-iot](ra6m4-iot) | Renesas 官方 IOT-RA6M4 开发板 |
-| **RA2 系列**              |                          |
+| [ra6m3-ek](ra6m3-ek)   | Renesas 官方 RA6M3-EK 开发板  |
+| **RA2 系列**           |                               |
 | [ra2l1-cpk](ra2l1-cpk) | Renesas 官方 CPK-RA2L1 开发板 |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
