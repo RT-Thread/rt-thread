@@ -91,6 +91,7 @@ def GenerateCFiles(env):
                     path_list.append({'path':_make_path_relative(os.getcwd(), i)})
 
         json_obj = {}
+        path_list = sorted(path_list, key=lambda x: x["path"])
         json_obj['folders'] = path_list
         vsc_space_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
         vsc_space_file.close()    
