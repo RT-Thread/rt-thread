@@ -102,6 +102,10 @@ jobs:
          - {RTT_BSP: "lpc43xx/M4", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc176x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc55sxx/lpc55s69_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "lpc55sxx/lpc55s28_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "lpc55sxx/lpc55s06_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "lpc55sxx/lpc55s16_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "lpc55sxx/lpc55s36_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc178x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc408x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc1114", RTT_TOOL_CHAIN: "sourcery-arm"}
