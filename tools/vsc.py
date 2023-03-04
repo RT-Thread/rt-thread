@@ -32,6 +32,10 @@ import utils
 import rtconfig
 from utils import _make_path_relative
 
+def delete_repeatelist(data):
+    temp_dict = set([str(item) for item in data])
+    data = [eval(i) for i in temp_dict]
+    return data
 
 def GenerateCFiles(env):
     """
@@ -91,12 +95,15 @@ def GenerateCFiles(env):
                     path_list.append({'path':_make_path_relative(os.getcwd(), i)})
 
         json_obj = {}
+        path_list = delete_repeatelist(path_list)
         path_list = sorted(path_list, key=lambda x: x["path"])
+        target_path_list = []
+        for path in path_list:
+            if path['path'] != '.':
+                path['name'] = 'rtthread/' + '/'.join([p for p in path['path'].split('\\') if p != '..'])
         json_obj['folders'] = path_list
         vsc_space_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
         vsc_space_file.close()    
-
-
     return
 
 def GenerateVSCode(env):
