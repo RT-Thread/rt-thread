@@ -315,7 +315,7 @@
             <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
-            <OneElfS>0</OneElfS>
+            <OneElfS>1</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
@@ -336,7 +336,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, GD32F450, __RTTHREAD__</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, GD32F470, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\stdio;..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\finsh;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\gd32_drivers;board;..\..\..\..\libcpu\arm\common;..\libraries\GD32F4xx_Firmware_Library\CMSIS;applications;..\libraries\GD32F4xx_Firmware_Library\CMSIS\GD\GD32F4xx\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\include;.;..\..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
