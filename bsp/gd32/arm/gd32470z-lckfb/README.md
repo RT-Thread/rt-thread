@@ -4,7 +4,7 @@
 
 GD32470Z-LCKFB梁山派开发板是-立创推出的一款GD32F470系列的开发板，最高主频高达240M，该开发板具有丰富的板载资源，是基于GD32F470ZGT6的全国产化开源开发板，图片如下：
 
-![board](figures\board.png)
+![board](figures/board.png)
 
 > 2022年12月05号后立创·梁山派开发板主控从GD32F450ZGT6升级到了GD32F470ZGT6 两款芯片兼容主要差别GD32F450ZGT6主频200、SDRAM 256K，GD32F470ZGT6主频240、SDRAM 512K。
 
