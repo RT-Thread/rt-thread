@@ -3,32 +3,34 @@
     \brief   USB core driver which can operate in host and device mode
 
     \version 2020-08-01, V3.0.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.1.0, firmware for GD32F4xx
+    \version 2022-06-30, V3.2.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
@@ -39,15 +41,15 @@ OF SUCH DAMAGE.
 static void usb_core_reset (usb_core_regs *usb_regs);
 
 /*!
-    \brief      configure USB core basic
+    \brief      configure USB core basic 
     \param[in]  usb_basic: pointer to USB capabilities
     \param[in]  usb_regs: USB core registers
     \param[in]  usb_core: USB core
     \param[out] none
     \retval     operation status
 */
-usb_status usb_basic_init (usb_core_basic *usb_basic,
-                           usb_core_regs  *usb_regs,
+usb_status usb_basic_init (usb_core_basic *usb_basic, 
+                           usb_core_regs  *usb_regs, 
                            usb_core_enum   usb_core)
 {
     /* configure USB default transfer mode as FIFO mode */
@@ -77,6 +79,12 @@ usb_status usb_basic_init (usb_core_basic *usb_basic,
 #ifdef USB_HS_INTERNAL_DMA_ENABLED
         usb_basic->transfer_mode = USB_USE_DMA;
 #endif /* USB_HS_INTERNAL_DMA_ENABLED */
+
+#ifdef USB_HS_CORE
+        /* configure the SOF output and the low power support */
+        usb_basic->sof_enable = USBHS_SOF_OUTPUT;
+        usb_basic->low_power = USBHS_LOW_POWER;
+#endif /* USB_HS_CORE */
         break;
 
     case USB_CORE_ENUM_FS:
@@ -90,14 +98,17 @@ usb_status usb_basic_init (usb_core_basic *usb_basic,
 
         /* USBFS core use embedded physical layer */
         usb_basic->phy_itf = USB_EMBEDDED_PHY;
+
+#ifdef USB_FS_CORE
+        /* configure the SOF output and the low power support */
+        usb_basic->sof_enable = USBFS_SOF_OUTPUT;
+        usb_basic->low_power = USBFS_LOW_POWER;
+#endif /* USB_FS_CORE */
         break;
 
     default:
         return USB_FAIL;
     }
-
-    usb_basic->sof_enable = USB_SOF_OUTPUT;
-    usb_basic->low_power = USB_LOW_POWER;
 
     /* assign main registers address */
     *usb_regs = (usb_core_regs) {
@@ -131,7 +142,7 @@ usb_status usb_basic_init (usb_core_basic *usb_basic,
 }
 
 /*!
-    \brief      initializes the USB controller registers and
+    \brief      initializes the USB controller registers and 
                 prepares the core device mode or host mode operation
     \param[in]  usb_basic: pointer to USB capabilities
     \param[in]  usb_regs: pointer to USB core registers
@@ -195,7 +206,7 @@ usb_status usb_core_init (usb_core_basic usb_basic, usb_core_regs *usb_regs)
     usb_regs->gr->GINTF = 0xBFFFFFFFU;
 
     usb_regs->gr->GINTEN = GINTEN_WKUPIE | GINTEN_SPIE | \
-                                     GINTEN_OTGIE | GINTEN_SESIE | GINTEN_CIDPSCIE;
+                           GINTEN_OTGIE | GINTEN_SESIE | GINTEN_CIDPSCIE;
 
 #endif /* USE_OTG_MODE */
 
@@ -203,17 +214,17 @@ usb_status usb_core_init (usb_core_basic usb_basic, usb_core_regs *usb_regs)
 }
 
 /*!
-    \brief      write a packet into the TX FIFO associated with the endpoint
+    \brief      write a packet into the Tx FIFO associated with the endpoint
     \param[in]  usb_regs: pointer to USB core registers
     \param[in]  src_buf: pointer to source buffer
-    \param[in]  fifo_num: FIFO number which is in (0..3)
+    \param[in]  fifo_num: FIFO number which is in (0..3 or 0..5)
     \param[in]  byte_count: packet byte count
     \param[out] none
     \retval     operation status
 */
-usb_status usb_txfifo_write (usb_core_regs *usb_regs,
-                             uint8_t *src_buf,
-                             uint8_t  fifo_num,
+usb_status usb_txfifo_write (usb_core_regs *usb_regs, 
+                             uint8_t *src_buf, 
+                             uint8_t  fifo_num, 
                              uint16_t byte_count)
 {
     uint32_t word_count = (byte_count + 3U) / 4U;
@@ -253,9 +264,9 @@ void *usb_rxfifo_read (usb_core_regs *usb_regs, uint8_t *dest_buf, uint16_t byte
 }
 
 /*!
-    \brief      flush a TX FIFO or all TX FIFOs
+    \brief      flush a Tx FIFO or all Tx FIFOs
     \param[in]  usb_regs: pointer to USB core registers
-    \param[in]  fifo_num: FIFO number which is in (0..3)
+    \param[in]  fifo_num: FIFO number which is in (0..3 or 0..5)
     \param[out] none
     \retval     operation status
 */
@@ -263,7 +274,7 @@ usb_status usb_txfifo_flush (usb_core_regs *usb_regs, uint8_t fifo_num)
 {
     usb_regs->gr->GRSTCTL = ((uint32_t)fifo_num << 6U) | GRSTCTL_TXFF;
 
-    /* wait for TX FIFO flush bit is set */
+    /* wait for Tx FIFO flush bit is set */
     while (usb_regs->gr->GRSTCTL & GRSTCTL_TXFF) {
         /* no operation */
     }
@@ -284,7 +295,7 @@ usb_status usb_rxfifo_flush (usb_core_regs *usb_regs)
 {
     usb_regs->gr->GRSTCTL = GRSTCTL_RXFF;
 
-    /* wait for RX FIFO flush bit is set */
+    /* wait for Rx FIFO flush bit is set */
     while (usb_regs->gr->GRSTCTL & GRSTCTL_RXFF) {
         /* no operation */
     }
@@ -309,7 +320,7 @@ void usb_set_txfifo(usb_core_regs *usb_regs, uint8_t fifo, uint16_t size)
 
     tx_offset = usb_regs->gr->GRFLEN;
 
-    if (fifo == 0U) {
+    if(0U == fifo) {
         usb_regs->gr->DIEP0TFLEN_HNPTFLEN = ((uint32_t)size << 16) | tx_offset;
     } else {
         tx_offset += (usb_regs->gr->DIEP0TFLEN_HNPTFLEN) >> 16;

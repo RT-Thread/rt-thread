@@ -1,36 +1,36 @@
 /*!
-    \file    gd32f4xx_dma.c
+    \file    gd32f4xx_dma.h
     \brief   definitions for the DMA
-
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
@@ -40,70 +40,70 @@ OF SUCH DAMAGE.
 #include "gd32f4xx.h"
 
 /* DMA definitions */
-#define DMA0                              (DMA_BASE)                    /*!< DMA0 base address */
-#define DMA1                              (DMA_BASE + 0x0400U)          /*!< DMA1 base address */
+#define DMA0                              (DMA_BASE)                          /*!< DMA0 base address */
+#define DMA1                              (DMA_BASE + 0x00000400U)            /*!< DMA1 base address */
 
 /* registers definitions */
-#define DMA_INTF0(dmax)                    REG32((dmax) + 0x00U)        /*!< DMA interrupt flag register 0 */
-#define DMA_INTF1(dmax)                    REG32((dmax) + 0x04U)        /*!< DMA interrupt flag register 1 */
-#define DMA_INTC0(dmax)                    REG32((dmax) + 0x08U)        /*!< DMA interrupt flag clear register 0 */
-#define DMA_INTC1(dmax)                    REG32((dmax) + 0x0CU)        /*!< DMA interrupt flag clear register 1 */
+#define DMA_INTF0(dmax)                    REG32((dmax) + 0x00000000U)        /*!< DMA interrupt flag register 0 */
+#define DMA_INTF1(dmax)                    REG32((dmax) + 0x00000004U)        /*!< DMA interrupt flag register 1 */
+#define DMA_INTC0(dmax)                    REG32((dmax) + 0x00000008U)        /*!< DMA interrupt flag clear register 0 */
+#define DMA_INTC1(dmax)                    REG32((dmax) + 0x0000000CU)        /*!< DMA interrupt flag clear register 1 */
 
-#define DMA_CH0CTL(dmax)                   REG32((dmax) + 0x10U)        /*!< DMA channel 0 control register */
-#define DMA_CH0CNT(dmax)                   REG32((dmax) + 0x14U)        /*!< DMA channel 0 counter register */
-#define DMA_CH0PADDR(dmax)                 REG32((dmax) + 0x18U)        /*!< DMA channel 0 peripheral base address register */
-#define DMA_CH0M0ADDR(dmax)                REG32((dmax) + 0x1CU)        /*!< DMA channel 0 memory 0 base address register */
-#define DMA_CH0M1ADDR(dmax)                REG32((dmax) + 0x20U)        /*!< DMA channel 0 memory 1 base address register */
-#define DMA_CH0FCTL(dmax)                  REG32((dmax) + 0x24U)        /*!< DMA channel 0 FIFO control register */
+#define DMA_CH0CTL(dmax)                   REG32((dmax) + 0x00000010U)        /*!< DMA channel 0 control register */
+#define DMA_CH0CNT(dmax)                   REG32((dmax) + 0x00000014U)        /*!< DMA channel 0 counter register */
+#define DMA_CH0PADDR(dmax)                 REG32((dmax) + 0x00000018U)        /*!< DMA channel 0 peripheral base address register */
+#define DMA_CH0M0ADDR(dmax)                REG32((dmax) + 0x0000001CU)        /*!< DMA channel 0 memory 0 base address register */
+#define DMA_CH0M1ADDR(dmax)                REG32((dmax) + 0x00000020U)        /*!< DMA channel 0 memory 1 base address register */
+#define DMA_CH0FCTL(dmax)                  REG32((dmax) + 0x00000024U)        /*!< DMA channel 0 FIFO control register */
 
-#define DMA_CH1CTL(dmax)                   REG32((dmax) + 0x28U)        /*!< DMA channel 1 control register */
-#define DMA_CH1CNT(dmax)                   REG32((dmax) + 0x2CU)        /*!< DMA channel 1 counter register */
-#define DMA_CH1PADDR(dmax)                 REG32((dmax) + 0x30U)        /*!< DMA channel 1 peripheral base address register */
-#define DMA_CH1M0ADDR(dmax)                REG32((dmax) + 0x34U)        /*!< DMA channel 1 memory 0 base address register */
-#define DMA_CH1M1ADDR(dmax)                REG32((dmax) + 0x38U)        /*!< DMA channel 1 memory 1 base address register */
-#define DMA_CH1FCTL(dmax)                  REG32((dmax) + 0x3CU)        /*!< DMA channel 1 FIFO control register */
+#define DMA_CH1CTL(dmax)                   REG32((dmax) + 0x00000028U)        /*!< DMA channel 1 control register */
+#define DMA_CH1CNT(dmax)                   REG32((dmax) + 0x0000002CU)        /*!< DMA channel 1 counter register */
+#define DMA_CH1PADDR(dmax)                 REG32((dmax) + 0x00000030U)        /*!< DMA channel 1 peripheral base address register */
+#define DMA_CH1M0ADDR(dmax)                REG32((dmax) + 0x00000034U)        /*!< DMA channel 1 memory 0 base address register */
+#define DMA_CH1M1ADDR(dmax)                REG32((dmax) + 0x00000038U)        /*!< DMA channel 1 memory 1 base address register */
+#define DMA_CH1FCTL(dmax)                  REG32((dmax) + 0x0000003CU)        /*!< DMA channel 1 FIFO control register */
 
-#define DMA_CH2CTL(dmax)                   REG32((dmax) + 0x40U)        /*!< DMA channel 2 control register */
-#define DMA_CH2CNT(dmax)                   REG32((dmax) + 0x44U)        /*!< DMA channel 2 counter register */
-#define DMA_CH2PADDR(dmax)                 REG32((dmax) + 0x48U)        /*!< DMA channel 2 peripheral base address register */
-#define DMA_CH2M0ADDR(dmax)                REG32((dmax) + 0x4CU)        /*!< DMA channel 2 memory 0 base address register */
-#define DMA_CH2M1ADDR(dmax)                REG32((dmax) + 0x50U)        /*!< DMA channel 2 memory 1 base address register */
-#define DMA_CH2FCTL(dmax)                  REG32((dmax) + 0x54U)        /*!< DMA channel 2 FIFO control register */
+#define DMA_CH2CTL(dmax)                   REG32((dmax) + 0x00000040U)        /*!< DMA channel 2 control register */
+#define DMA_CH2CNT(dmax)                   REG32((dmax) + 0x00000044U)        /*!< DMA channel 2 counter register */
+#define DMA_CH2PADDR(dmax)                 REG32((dmax) + 0x00000048U)        /*!< DMA channel 2 peripheral base address register */
+#define DMA_CH2M0ADDR(dmax)                REG32((dmax) + 0x0000004CU)        /*!< DMA channel 2 memory 0 base address register */
+#define DMA_CH2M1ADDR(dmax)                REG32((dmax) + 0x00000050U)        /*!< DMA channel 2 memory 1 base address register */
+#define DMA_CH2FCTL(dmax)                  REG32((dmax) + 0x00000054U)        /*!< DMA channel 2 FIFO control register */
 
-#define DMA_CH3CTL(dmax)                   REG32((dmax) + 0x58U)        /*!< DMA channel 3 control register */
-#define DMA_CH3CNT(dmax)                   REG32((dmax) + 0x5CU)        /*!< DMA channel 3 counter register */
-#define DMA_CH3PADDR(dmax)                 REG32((dmax) + 0x60U)        /*!< DMA channel 3 peripheral base address register */
-#define DMA_CH3M0ADDR(dmax)                REG32((dmax) + 0x64U)        /*!< DMA channel 3 memory 0 base address register */
-#define DMA_CH3M1ADDR(dmax)                REG32((dmax) + 0x68U)        /*!< DMA channel 3 memory 1 base address register */
-#define DMA_CH3FCTL(dmax)                  REG32((dmax) + 0x6CU)        /*!< DMA channel 3 FIFO control register */
+#define DMA_CH3CTL(dmax)                   REG32((dmax) + 0x00000058U)        /*!< DMA channel 3 control register */
+#define DMA_CH3CNT(dmax)                   REG32((dmax) + 0x0000005CU)        /*!< DMA channel 3 counter register */
+#define DMA_CH3PADDR(dmax)                 REG32((dmax) + 0x00000060U)        /*!< DMA channel 3 peripheral base address register */
+#define DMA_CH3M0ADDR(dmax)                REG32((dmax) + 0x00000064U)        /*!< DMA channel 3 memory 0 base address register */
+#define DMA_CH3M1ADDR(dmax)                REG32((dmax) + 0x00000068U)        /*!< DMA channel 3 memory 1 base address register */
+#define DMA_CH3FCTL(dmax)                  REG32((dmax) + 0x0000006CU)        /*!< DMA channel 3 FIFO control register */
 
-#define DMA_CH4CTL(dmax)                   REG32((dmax) + 0x70U)        /*!< DMA channel 4 control register */
-#define DMA_CH4CNT(dmax)                   REG32((dmax) + 0x74U)        /*!< DMA channel 4 counter register */
-#define DMA_CH4PADDR(dmax)                 REG32((dmax) + 0x78U)        /*!< DMA channel 4 peripheral base address register */
-#define DMA_CH4M0ADDR(dmax)                REG32((dmax) + 0x7CU)        /*!< DMA channel 4 memory 0 base address register */
-#define DMA_CH4M1ADDR(dmax)                REG32((dmax) + 0x80U)        /*!< DMA channel 4 memory 1 base address register */
-#define DMA_CH4FCTL(dmax)                  REG32((dmax) + 0x84U)        /*!< DMA channel 4 FIFO control register */
+#define DMA_CH4CTL(dmax)                   REG32((dmax) + 0x00000070U)        /*!< DMA channel 4 control register */
+#define DMA_CH4CNT(dmax)                   REG32((dmax) + 0x00000074U)        /*!< DMA channel 4 counter register */
+#define DMA_CH4PADDR(dmax)                 REG32((dmax) + 0x00000078U)        /*!< DMA channel 4 peripheral base address register */
+#define DMA_CH4M0ADDR(dmax)                REG32((dmax) + 0x0000007CU)        /*!< DMA channel 4 memory 0 base address register */
+#define DMA_CH4M1ADDR(dmax)                REG32((dmax) + 0x00000080U)        /*!< DMA channel 4 memory 1 base address register */
+#define DMA_CH4FCTL(dmax)                  REG32((dmax) + 0x00000084U)        /*!< DMA channel 4 FIFO control register */
 
-#define DMA_CH5CTL(dmax)                   REG32((dmax) + 0x88U)        /*!< DMA channel 5 control register */
-#define DMA_CH5CNT(dmax)                   REG32((dmax) + 0x8CU)        /*!< DMA channel 5 counter register */
-#define DMA_CH5PADDR(dmax)                 REG32((dmax) + 0x90U)        /*!< DMA channel 5 peripheral base address register */
-#define DMA_CH5M0ADDR(dmax)                REG32((dmax) + 0x94U)        /*!< DMA channel 5 memory 0 base address register */
-#define DMA_CH5M1ADDR(dmax)                REG32((dmax) + 0x98U)        /*!< DMA channel 5 memory 1 base address register */
-#define DMA_CH5FCTL(dmax)                  REG32((dmax) + 0x9CU)        /*!< DMA channel 5 FIFO control register */
+#define DMA_CH5CTL(dmax)                   REG32((dmax) + 0x00000088U)        /*!< DMA channel 5 control register */
+#define DMA_CH5CNT(dmax)                   REG32((dmax) + 0x0000008CU)        /*!< DMA channel 5 counter register */
+#define DMA_CH5PADDR(dmax)                 REG32((dmax) + 0x00000090U)        /*!< DMA channel 5 peripheral base address register */
+#define DMA_CH5M0ADDR(dmax)                REG32((dmax) + 0x00000094U)        /*!< DMA channel 5 memory 0 base address register */
+#define DMA_CH5M1ADDR(dmax)                REG32((dmax) + 0x00000098U)        /*!< DMA channel 5 memory 1 base address register */
+#define DMA_CH5FCTL(dmax)                  REG32((dmax) + 0x0000009CU)        /*!< DMA channel 5 FIFO control register */
 
-#define DMA_CH6CTL(dmax)                   REG32((dmax) + 0xA0U)        /*!< DMA channel 6 control register */
-#define DMA_CH6CNT(dmax)                   REG32((dmax) + 0xA4U)        /*!< DMA channel 6 counter register */
-#define DMA_CH6PADDR(dmax)                 REG32((dmax) + 0xA8U)        /*!< DMA channel 6 peripheral base address register */
-#define DMA_CH6M0ADDR(dmax)                REG32((dmax) + 0xACU)        /*!< DMA channel 6 memory 0 base address register */
-#define DMA_CH6M1ADDR(dmax)                REG32((dmax) + 0xB0U)        /*!< DMA channel 6 memory 1 base address register */
-#define DMA_CH6FCTL(dmax)                  REG32((dmax) + 0xB4U)        /*!< DMA channel 6 FIFO control register */
+#define DMA_CH6CTL(dmax)                   REG32((dmax) + 0x000000A0U)        /*!< DMA channel 6 control register */
+#define DMA_CH6CNT(dmax)                   REG32((dmax) + 0x000000A4U)        /*!< DMA channel 6 counter register */
+#define DMA_CH6PADDR(dmax)                 REG32((dmax) + 0x000000A8U)        /*!< DMA channel 6 peripheral base address register */
+#define DMA_CH6M0ADDR(dmax)                REG32((dmax) + 0x000000ACU)        /*!< DMA channel 6 memory 0 base address register */
+#define DMA_CH6M1ADDR(dmax)                REG32((dmax) + 0x000000B0U)        /*!< DMA channel 6 memory 1 base address register */
+#define DMA_CH6FCTL(dmax)                  REG32((dmax) + 0x000000B4U)        /*!< DMA channel 6 FIFO control register */
 
-#define DMA_CH7CTL(dmax)                   REG32((dmax) + 0xB8U)        /*!< DMA channel 7 control register */
-#define DMA_CH7CNT(dmax)                   REG32((dmax) + 0xBCU)        /*!< DMA channel 7 counter register */
-#define DMA_CH7PADDR(dmax)                 REG32((dmax) + 0xC0U)        /*!< DMA channel 7 peripheral base address register */
-#define DMA_CH7M0ADDR(dmax)                REG32((dmax) + 0xC4U)        /*!< DMA channel 7 memory 0 base address register */
-#define DMA_CH7M1ADDR(dmax)                REG32((dmax) + 0xC8U)        /*!< DMA channel 7 memory 1 base address register */
-#define DMA_CH7FCTL(dmax)                  REG32((dmax) + 0xCCU)        /*!< DMA channel 7 FIFO control register */
+#define DMA_CH7CTL(dmax)                   REG32((dmax) + 0x000000B8U)        /*!< DMA channel 7 control register */
+#define DMA_CH7CNT(dmax)                   REG32((dmax) + 0x000000BCU)        /*!< DMA channel 7 counter register */
+#define DMA_CH7PADDR(dmax)                 REG32((dmax) + 0x000000C0U)        /*!< DMA channel 7 peripheral base address register */
+#define DMA_CH7M0ADDR(dmax)                REG32((dmax) + 0x000000C4U)        /*!< DMA channel 7 memory 0 base address register */
+#define DMA_CH7M1ADDR(dmax)                REG32((dmax) + 0x000000C8U)        /*!< DMA channel 7 memory 1 base address register */
+#define DMA_CH7FCTL(dmax)                  REG32((dmax) + 0x000000CCU)        /*!< DMA channel 7 FIFO control register */
 
 /* bits definitions */
 /* DMA_INTF */
@@ -161,7 +161,7 @@ OF SUCH DAMAGE.
 
 /* constants definitions */
 /* DMA channel select */
-typedef enum
+typedef enum 
 {
     DMA_CH0 = 0,                                    /*!< DMA Channel 0 */
     DMA_CH1,                                        /*!< DMA Channel 1 */
@@ -174,7 +174,7 @@ typedef enum
 } dma_channel_enum;
 
 /* DMA peripheral select */
-typedef enum
+typedef enum 
 {
     DMA_SUBPERI0 = 0,                               /*!< DMA Peripheral 0 */
     DMA_SUBPERI1,                                   /*!< DMA Peripheral 1 */
@@ -191,7 +191,7 @@ typedef struct
 {
     uint32_t periph_addr;                           /*!< peripheral base address */
     uint32_t periph_width;                          /*!< transfer data size of peripheral */
-    uint32_t periph_inc;                            /*!< peripheral increasing mode */
+    uint32_t periph_inc;                            /*!< peripheral increasing mode */  
 
     uint32_t memory0_addr;                          /*!< memory 0 base address */
     uint32_t memory_width;                          /*!< transfer data size of memory */
@@ -211,7 +211,7 @@ typedef struct
 typedef struct
 {
     uint32_t periph_addr;                           /*!< peripheral base address */
-    uint32_t periph_inc;                            /*!< peripheral increasing mode */
+    uint32_t periph_inc;                            /*!< peripheral increasing mode */  
 
     uint32_t memory0_addr;                          /*!< memory 0 base address */
     uint32_t memory_inc;                            /*!< memory increasing mode */
@@ -416,13 +416,13 @@ uint32_t dma_fifo_status_get(uint32_t dma_periph, dma_channel_enum channelx);
 FlagStatus dma_flag_get(uint32_t dma_periph, dma_channel_enum channelx, uint32_t flag);
 /* clear DMA a channel flag */
 void dma_flag_clear(uint32_t dma_periph, dma_channel_enum channelx, uint32_t flag);
-/* check DMA flag is set or not */
-FlagStatus dma_interrupt_flag_get(uint32_t dma_periph, dma_channel_enum channelx, uint32_t interrupt);
-/* clear DMA a channel flag */
-void dma_interrupt_flag_clear(uint32_t dma_periph, dma_channel_enum channelx, uint32_t interrupt);
 /* enable DMA interrupt */
 void dma_interrupt_enable(uint32_t dma_periph, dma_channel_enum channelx, uint32_t source);
 /* disable DMA interrupt */
 void dma_interrupt_disable(uint32_t dma_periph, dma_channel_enum channelx, uint32_t source);
+/* check DMA flag is set or not */
+FlagStatus dma_interrupt_flag_get(uint32_t dma_periph, dma_channel_enum channelx, uint32_t interrupt);
+/* clear DMA a channel flag */
+void dma_interrupt_flag_clear(uint32_t dma_periph, dma_channel_enum channelx, uint32_t interrupt);
 
 #endif /* GD32F4XX_DMA_H */

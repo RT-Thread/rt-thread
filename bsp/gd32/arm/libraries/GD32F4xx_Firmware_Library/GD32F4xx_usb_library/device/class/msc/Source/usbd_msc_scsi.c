@@ -3,41 +3,83 @@
     \brief   USB SCSI layer functions
 
     \version 2020-08-01, V3.0.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.1.0, firmware for GD32F4xx
+    \version 2022-06-30, V3.2.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
+
 #include "usbd_enum.h"
 #include "usbd_msc_bbb.h"
 #include "usbd_msc_scsi.h"
-#include "usbd_msc_data.h"
+
+/* USB mass storage page 0 inquiry data */
+const uint8_t msc_page00_inquiry_data[] = 
+{
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U,
+    (INQUIRY_PAGE00_LENGTH - 4U),
+    0x80U,
+    0x83U,
+};
+
+/* USB mass storage sense 6 data */
+const uint8_t msc_mode_sense6_data[] = 
+{
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U
+};
+
+/* USB mass storage sense 10 data */
+const uint8_t msc_mode_sense10_data[] = 
+{
+    0x00U,
+    0x06U,
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U,
+    0x00U
+};
 
 /* local function prototypes ('static') */
 static int8_t scsi_test_unit_ready      (usb_core_driver *udev, uint8_t lun, uint8_t *params);
+static int8_t scsi_mode_select6         (usb_core_driver *udev, uint8_t lun, uint8_t *params);
+static int8_t scsi_mode_select10        (usb_core_driver *udev, uint8_t lun, uint8_t *params);
 static int8_t scsi_inquiry              (usb_core_driver *udev, uint8_t lun, uint8_t *params);
 static int8_t scsi_read_format_capacity (usb_core_driver *udev, uint8_t lun, uint8_t *params);
 static int8_t scsi_read_capacity10      (usb_core_driver *udev, uint8_t lun, uint8_t *params);
@@ -96,7 +138,7 @@ int8_t scsi_process_cmd(usb_core_driver *udev, uint8_t lun, uint8_t *params)
         return scsi_read_capacity10 (udev, lun, params);
 
     case SCSI_READ10:
-        return scsi_read10 (udev, lun, params);
+        return scsi_read10 (udev, lun, params); 
 
     case SCSI_WRITE10:
         return scsi_write10 (udev, lun, params);
@@ -109,6 +151,12 @@ int8_t scsi_process_cmd(usb_core_driver *udev, uint8_t lun, uint8_t *params)
 
     case SCSI_READ_TOC_DATA:
         return scsi_toc_cmd_read (udev, lun, params);
+
+    case SCSI_MODE_SELECT6:
+        return scsi_mode_select6 (udev, lun, params);
+
+    case SCSI_MODE_SELECT10:
+        return scsi_mode_select10 (udev, lun, params);
 
     default:
         scsi_sense_code (udev, lun, ILLEGAL_REQUEST, INVALID_CDB);
@@ -130,7 +178,7 @@ void scsi_sense_code (usb_core_driver *udev, uint8_t lun, uint8_t skey, uint8_t 
     usbd_msc_handler *msc = (usbd_msc_handler *)udev->dev.class_data[USBD_MSC_INTERFACE];
 
     msc->scsi_sense[msc->scsi_sense_tail].SenseKey = skey;
-    msc->scsi_sense[msc->scsi_sense_tail].ASC = asc << 8U;
+    msc->scsi_sense[msc->scsi_sense_tail].ASC = asc;
     msc->scsi_sense_tail++;
 
     if (SENSE_LIST_DEEPTH == msc->scsi_sense_tail) {
@@ -163,9 +211,39 @@ static int8_t scsi_test_unit_ready (usb_core_driver *udev, uint8_t lun, uint8_t 
         return -1;
     }
 
-    if (1U == msc->scsi_disk_pop) {
-        usbd_disconnect (udev);
-    }
+    msc->bbb_datalen = 0U;
+
+    return 0;
+}
+
+/*!
+    \brief      process Inquiry command
+    \param[in]  udev: pointer to USB device instance
+    \param[in]  lun: logical unit number
+    \param[in]  params: command parameters
+    \param[out] none
+    \retval     status
+*/
+static int8_t scsi_mode_select6 (usb_core_driver *udev, uint8_t lun, uint8_t *params)
+{
+    usbd_msc_handler *msc = (usbd_msc_handler *)udev->dev.class_data[USBD_MSC_INTERFACE];
+
+    msc->bbb_datalen = 0U;
+
+    return 0;
+}
+
+/*!
+    \brief      process Inquiry command
+    \param[in]  udev: pointer to USB device instance
+    \param[in]  lun: logical unit number
+    \param[in]  params: command parameters
+    \param[out] none
+    \retval     status
+*/
+static int8_t scsi_mode_select10 (usb_core_driver *udev, uint8_t lun, uint8_t *params)
+{
+    usbd_msc_handler *msc = (usbd_msc_handler *)udev->dev.class_data[USBD_MSC_INTERFACE];
 
     msc->bbb_datalen = 0U;
 
@@ -347,8 +425,8 @@ static int8_t scsi_request_sense (usb_core_driver *udev, uint8_t lun, uint8_t *p
 
     if ((msc->scsi_sense_head != msc->scsi_sense_tail)) {
         msc->bbb_data[2] = msc->scsi_sense[msc->scsi_sense_head].SenseKey;
-        msc->bbb_data[12] = msc->scsi_sense[msc->scsi_sense_head].ASCQ;
-        msc->bbb_data[13] = msc->scsi_sense[msc->scsi_sense_head].ASC;
+        msc->bbb_data[12] = msc->scsi_sense[msc->scsi_sense_head].ASC;
+        msc->bbb_data[13] = msc->scsi_sense[msc->scsi_sense_head].ASCQ;
         msc->scsi_sense_head++;
 
         if (msc->scsi_sense_head == SENSE_LIST_DEEPTH) {
@@ -506,9 +584,9 @@ static int8_t scsi_write10 (usb_core_driver *udev, uint8_t lun, uint8_t *params)
         /* prepare endpoint to receive first data packet */
         msc->bbb_state = BBB_DATA_OUT;
 
-        usbd_ep_recev (udev,
-                       MSC_OUT_EP,
-                       msc->bbb_data,
+        usbd_ep_recev (udev, 
+                       MSC_OUT_EP, 
+                       msc->bbb_data, 
                        USB_MIN (msc->scsi_blk_len, MSC_MEDIA_PACKET_SIZE));
     } else { /* write process ongoing */
         return scsi_process_write (udev, lun);
@@ -580,12 +658,12 @@ static int8_t scsi_process_read (usb_core_driver *udev, uint8_t lun)
     uint32_t len = USB_MIN(msc->scsi_blk_len, MSC_MEDIA_PACKET_SIZE);
 
     if (usbd_mem_fops->mem_read(lun,
-                                msc->bbb_data,
-                                msc->scsi_blk_addr,
+                                msc->bbb_data, 
+                                msc->scsi_blk_addr, 
                                 (uint16_t)(len / msc->scsi_blk_size[lun])) < 0) {
         scsi_sense_code(udev, lun, HARDWARE_ERROR, UNRECOVERED_READ_ERROR);
 
-        return -1;
+        return -1; 
     }
 
     usbd_ep_send (udev, MSC_IN_EP, msc->bbb_data, len);
@@ -617,8 +695,8 @@ static int8_t scsi_process_write (usb_core_driver *udev, uint8_t lun)
     uint32_t len = USB_MIN(msc->scsi_blk_len, MSC_MEDIA_PACKET_SIZE);
 
     if (usbd_mem_fops->mem_write (lun,
-                                  msc->bbb_data,
-                                  msc->scsi_blk_addr,
+                                  msc->bbb_data, 
+                                  msc->scsi_blk_addr, 
                                   (uint16_t)(len / msc->scsi_blk_size[lun])) < 0) {
         scsi_sense_code(udev, lun, HARDWARE_ERROR, WRITE_FAULT);
 
@@ -635,9 +713,9 @@ static int8_t scsi_process_write (usb_core_driver *udev, uint8_t lun)
         msc_bbb_csw_send (udev, CSW_CMD_PASSED);
     } else {
         /* prepare endpoint to receive next packet */
-        usbd_ep_recev (udev,
-                       MSC_OUT_EP,
-                       msc->bbb_data,
+        usbd_ep_recev (udev, 
+                       MSC_OUT_EP, 
+                       msc->bbb_data, 
                        USB_MIN (msc->scsi_blk_len, MSC_MEDIA_PACKET_SIZE));
     }
 
