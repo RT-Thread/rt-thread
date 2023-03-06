@@ -82,11 +82,11 @@ jobs:
          - {RTT_BSP: "gd32/arm/gd32307e-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32407v-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32/arm/gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "gd32/arm/gd32470z-lckfb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"}
          - {RTT_BSP: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gd32470z-lckfb", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "imx6sx/cortex-a9", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "imxrt/imxrt1052-atk-commander", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "imxrt/imxrt1052-fire-pro", RTT_TOOL_CHAIN: "sourcery-arm"}
