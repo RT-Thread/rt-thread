@@ -37,6 +37,8 @@
 
 #define F_CPU          144000000L  /* CPU:144MHz */
 
+#define LED_BUILTIN    D8
+
 /* Serial1 : PA9-TX  PB0-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME      "uart1"
 
