@@ -13,16 +13,12 @@
 void setup(void)
  {
      /* put your setup code here, to run once: */
-    pinMode(8, OUTPUT);
-    Serial.begin();
-    Serial.println("Hello Arduino!");
+    pinMode(LED_BUILTIN, OUTPUT);
  }
 
 void loop(void)
 {
     /* put your main code here, to run repeatedly: */
-    digitalWrite(8, HIGH);
-    delay(500);
-    digitalWrite(8, LOW);
-    delay(500);
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+    delay(100);
 }
