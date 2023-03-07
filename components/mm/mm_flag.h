@@ -51,6 +51,8 @@ enum mm_flag_cntl
 
     MMF_TEXT = _DEF_FLAG(5),
 
+    MMF_STATIC_ALLOC = _DEF_FLAG(6),
+
     /**
      * @brief a non-locked memory can be swapped out when required, this is
      * reserved for future

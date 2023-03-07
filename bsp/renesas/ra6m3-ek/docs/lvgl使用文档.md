@@ -58,6 +58,12 @@
 
 ## SPI(ILI9431) 屏使用配置
 
+### 硬件连接
+
+硬件按照如下引脚进行连接：
+
+![](picture/lvgl/tft-pin.png)
+
 在 `Hardware Drivers Config → On-chip Peripheral Drivers → Enable LVGL for LCD` 中使能 `Enable LVGL for LCD_ILI9431` 选项
 
 ![](picture/lvgl/01.png)

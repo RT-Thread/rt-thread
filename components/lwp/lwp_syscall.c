@@ -18,6 +18,7 @@
 #include <board.h>
 #include <mm_aspace.h>
 #include <string.h>
+#include <stdint.h>
 
 #include <lwp.h>
 #ifdef ARCH_MM_MMU
@@ -77,6 +78,13 @@
 #ifndef GRND_RANDOM
 #define GRND_RANDOM 0x0002
 #endif /*GRND_RANDOM */
+
+#ifndef RT_USING_POSIX_TIMER
+#error "No definition RT_USING_POSIX_TIMER"
+#endif
+#ifndef RT_USING_POSIX_CLOCK
+#error "No definition RT_USING_POSIX_CLOCK"
+#endif
 
 #define SET_ERRNO(no) rt_set_errno(-(no))
 #define GET_ERRNO() ((rt_get_errno() > 0) ? (-rt_get_errno()) : rt_get_errno())
@@ -1305,12 +1313,22 @@ rt_err_t sys_rt_timer_control(rt_timer_t timer, int cmd, void *arg)
     return rt_timer_control(timer, cmd, arg);
 }
 
+/* MUSL compatible */
+struct ksigevent
+{
+    union sigval sigev_value;
+    int sigev_signo;
+    int sigev_notify;
+    int sigev_tid;
+};
+
 rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, timer_t *restrict timerid)
 {
     int ret = 0;
 #ifdef ARCH_MM_MMU
     struct sigevent sevp_k;
     timer_t timerid_k;
+    int utimer;
 
     if (sevp == NULL)
     {
@@ -1319,12 +1337,28 @@ rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, tim
         sevp = &sevp_k;
     }
     else
-        lwp_get_from_user(&sevp_k, (void *)sevp, sizeof sevp_k);
-    lwp_get_from_user(&timerid_k, (void *)timerid, sizeof timerid_k);
+    {
+        /* clear extra bytes if any */
+        if (sizeof(struct ksigevent) < sizeof(struct sigevent))
+            memset(&sevp_k, 0, sizeof(sevp_k));
+
+        /* musl passes `struct ksigevent` to kernel, we shoule only get size of that bytes */
+        lwp_get_from_user(&sevp_k, (void *)sevp, sizeof(struct ksigevent));
+    }
+    lwp_get_from_user(&timerid_k, (void *)timerid, sizeof(timerid_k));
+
+    /* to protect unsafe implementation in current rt-smart toolchain */
+    RT_ASSERT(((struct ksigevent *)sevp)->sigev_tid == *(int *)(&sevp_k.sigev_notify_function));
+
     ret = timer_create(clockid, &sevp_k, &timerid_k);
+
+    /* ID should not extend 32-bits size for libc */
+    RT_ASSERT((rt_ubase_t)timerid_k < UINT32_MAX);
+    utimer = (rt_ubase_t)timerid_k;
+
     if (ret != -RT_ERROR){
-        lwp_put_to_user(sevp, (void *)&sevp_k, sizeof sevp_k);
-        lwp_put_to_user(timerid, (void *)&timerid_k, sizeof timerid_k);
+        lwp_put_to_user(sevp, (void *)&sevp_k, sizeof(struct ksigevent));
+        lwp_put_to_user(timerid, (void *)&utimer, sizeof(utimer));
     }
 #else
     ret = timer_create(clockid, sevp, timerid);
@@ -1347,8 +1381,12 @@ rt_err_t sys_timer_settime(timer_t timerid, int flags,
     struct itimerspec new_value_k;
     struct itimerspec old_value_k;
 
-    lwp_get_from_user(&new_value_k, (void *)new_value, sizeof new_value_k);
-    lwp_get_from_user(&old_value_k, (void *)timerid, sizeof old_value_k);
+    if (!lwp_get_from_user(&new_value_k, (void *)new_value, sizeof(*new_value)) ||
+        (old_value && !lwp_get_from_user(&old_value_k, (void *)old_value, sizeof(*old_value))))
+    {
+        return -EFAULT;
+    }
+
     ret = timer_settime(timerid, flags, &new_value_k, &old_value_k);
     lwp_put_to_user(old_value, (void *)&old_value_k, sizeof old_value_k);
 

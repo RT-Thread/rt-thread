@@ -224,7 +224,7 @@ MARK_FUNC __SEGGER_init_done
 #endif
 
 #ifndef CONFIG_FREERTOS 
-    #define HANDLER_TRAP irq_handler_trap
+    #define HANDLER_TRAP SW_handler
 #else
     #define HANDLER_TRAP freertos_risc_v_trap_handler
 #endif

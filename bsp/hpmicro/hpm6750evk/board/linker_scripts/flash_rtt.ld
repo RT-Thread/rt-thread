@@ -247,6 +247,7 @@ SECTIONS
         . += STACK_SIZE;
         . = ALIGN(8);
         PROVIDE (_stack = .);
+        PROVIDE( __rt_rvstack = . );
         PROVIDE (_stack_in_dlm = .);
     } > AXI_SRAM
 

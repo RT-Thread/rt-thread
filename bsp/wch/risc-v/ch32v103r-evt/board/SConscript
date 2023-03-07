@@ -11,6 +11,7 @@ src = Split('''
 board.c
 debug.c
 ch32v10x_it.c
+software_irq.c
 ''')
 
 path =  [cwd]

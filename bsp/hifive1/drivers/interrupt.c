@@ -51,7 +51,7 @@ void rt_hw_interrupt_init(void)
 
     /*  config interrupt vector*/
     asm volatile(
-        "la t0, trap_entry\n"
+        "la t0, SW_handler\n"
         "csrw mtvec, t0"
     );
 

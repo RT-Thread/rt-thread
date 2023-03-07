@@ -128,6 +128,7 @@ SECTIONS
 
         . += __STACKSIZE__;
         __stack_cpu0 = .;
+        PROVIDE( __rt_rvstack = .);
 
         . += __STACKSIZE__;
         __stack_cpu1 = .;

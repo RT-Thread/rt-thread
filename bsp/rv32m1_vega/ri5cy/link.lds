@@ -115,6 +115,7 @@ SECTIONS
 
   /* Initializes stack on the end of block */
   PROVIDE(__stack = __StackTop);
+  PROVIDE( __rt_rvstack = .);
 
   /* Uninitialized data section */
   .bss :
