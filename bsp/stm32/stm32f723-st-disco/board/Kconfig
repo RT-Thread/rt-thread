@@ -1,0 +1,44 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32F723E
+    bool
+    select SOC_SERIES_STM32F7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_USB_TO_USART
+        bool "Enable USB TO USART (uart6)"
+        select BSP_USING_UART
+        select BSP_USING_UART6
+        default y
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default y
+        endif
+
+    source "../libraries/HAL_Drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

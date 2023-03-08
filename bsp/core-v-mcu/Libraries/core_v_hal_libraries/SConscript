@@ -20,6 +20,7 @@ core_v_hal/source/hal_timer_irq.c
 bmsis/core-v-mcu/source/core-v-mcu.c
 bmsis/core-v-mcu/source/crt0.S
 bmsis/core-v-mcu/source/vectors.S
+bmsis/core-v-mcu/source/trap_gcc.S
 core_v_udma_driver/source/udma_uart_driver.c
 core_v_udma_driver/source/udma_cam_driver.c
 core_v_udma_driver/source/udma_i2cm_driver.c

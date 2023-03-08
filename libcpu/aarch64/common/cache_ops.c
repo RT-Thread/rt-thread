@@ -12,9 +12,9 @@
 
 void __asm_invalidate_icache_all(void);
 void __asm_flush_dcache_all(void);
-void __asm_flush_dcache_range(unsigned long start, unsigned long end);
-void __asm_invalidate_dcache_range(unsigned long start, unsigned long end);
-void __asm_invalidate_icache_range(unsigned long start, unsigned long end);
+void __asm_flush_dcache_range(rt_size_t start, rt_size_t end);
+void __asm_invalidate_dcache_range(rt_size_t start, rt_size_t end);
+void __asm_invalidate_icache_range(rt_size_t start, rt_size_t end);
 void __asm_invalidate_dcache_all(void);
 void __asm_invalidate_icache_all(void);
 
@@ -28,24 +28,24 @@ rt_inline rt_uint32_t rt_cpu_dcache_line_size(void)
     return 0;
 }
 
-void rt_hw_cpu_icache_invalidate(void *addr, int size)
+void rt_hw_cpu_icache_invalidate(void *addr, rt_size_t size)
 {
-    __asm_invalidate_icache_range((unsigned long)addr, (unsigned long)addr + size);
+    __asm_invalidate_icache_range((rt_size_t)addr, (rt_size_t)addr + size);
 }
 
-void rt_hw_cpu_dcache_invalidate(void *addr, int size)
+void rt_hw_cpu_dcache_invalidate(void *addr, rt_size_t size)
 {
-    __asm_invalidate_dcache_range((unsigned long)addr, (unsigned long)addr + size);
+    __asm_invalidate_dcache_range((rt_size_t)addr, (rt_size_t)addr + size);
 }
 
-void rt_hw_cpu_dcache_clean(void *addr, int size)
+void rt_hw_cpu_dcache_clean(void *addr, rt_size_t size)
 {
-    __asm_flush_dcache_range((unsigned long)addr, (unsigned long)addr + size);
+    __asm_flush_dcache_range((rt_size_t)addr, (rt_size_t)addr + size);
 }
 
-void rt_hw_cpu_dcache_clean_and_invalidate(void *addr, int size)
+void rt_hw_cpu_dcache_clean_and_invalidate(void *addr, rt_size_t size)
 {
-    __asm_flush_dcache_range((unsigned long)addr, (unsigned long)addr + size);
+    __asm_flush_dcache_range((rt_size_t)addr, (rt_size_t)addr + size);
 }
 
 void rt_hw_cpu_icache_ops(int ops, void *addr, int size)

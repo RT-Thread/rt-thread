@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -134,10 +134,10 @@ static struct imxrt_i2c_bus lpi2c6 =
 
 #if (defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || defined(BSP_USING_I2C4) ||defined(BSP_USING_I2C5) || defined(BSP_USING_I2C6))
 
-static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num);
-static rt_size_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num);
 static rt_err_t imxrt_i2c_bus_control(struct rt_i2c_bus_device *bus,
@@ -249,7 +249,7 @@ static status_t LPI2C_MasterWaitForTxFifoAllEmpty(LPI2C_Type *base)
     return kStatus_Success;
 }
 
-static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {
@@ -365,7 +365,7 @@ static rt_size_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     return i;
 }
 
-static rt_size_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {

@@ -311,7 +311,7 @@ RTM_EXPORT(rt_device_close);
  *
  * @note the unit of size/pos is a block for block device.
  */
-rt_size_t rt_device_read(rt_device_t dev,
+rt_ssize_t rt_device_read(rt_device_t dev,
                          rt_off_t    pos,
                          void       *buffer,
                          rt_size_t   size)
@@ -354,7 +354,7 @@ RTM_EXPORT(rt_device_read);
  *
  * @note the unit of size/pos is a block for block device.
  */
-rt_size_t rt_device_write(rt_device_t dev,
+rt_ssize_t rt_device_write(rt_device_t dev,
                           rt_off_t    pos,
                           const void *buffer,
                           rt_size_t   size)

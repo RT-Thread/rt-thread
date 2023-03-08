@@ -25,12 +25,12 @@
 #include <tlb.h>
 
 #ifdef RT_USING_SMART
+#include <board.h>
 #include <ioremap.h>
 #include <lwp_user_mm.h>
 #endif
 
 #ifndef RT_USING_SMART
-#define PV_OFFSET 0
 #define USER_VADDR_START 0
 #endif
 
@@ -97,7 +97,7 @@ static rt_uint64_t _asid_check_switch(rt_aspace_t aspace)
 
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
-    uintptr_t page_table = (uintptr_t)_rt_kmem_v2p(aspace->page_table);
+    uintptr_t page_table = (uintptr_t)rt_kmem_v2p(aspace->page_table);
     current_mmu_table = aspace->page_table;
 
     rt_uint64_t asid = _asid_check_switch(aspace);
@@ -192,7 +192,9 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
     // TODO trying with HUGEPAGE here
     while (npages--)
     {
+        MM_PGTBL_LOCK(aspace);
         ret = _map_one_page(aspace, v_addr, p_addr, attr);
+        MM_PGTBL_UNLOCK(aspace);
         if (ret != 0)
         {
             /* error, undo map */
@@ -501,7 +503,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
  * otherwise is a failure and no report will be
  * returned.
  *
- * @param mmu_info
+ * @param aspace
  * @param mdesc
  * @param desc_nr
  */
@@ -532,6 +534,9 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                                     .map_size = mdesc->vaddr_end -
                                                 mdesc->vaddr_start + 1,
                                     .prefer = (void *)mdesc->vaddr_start};
+
+        if (mdesc->paddr_start == (rt_size_t)ARCH_MAP_FAILED)
+            mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
 
         rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);

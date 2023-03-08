@@ -13,35 +13,35 @@
 #include <drivers/pin.h>
 
 static struct rt_device_pin _hw_pin;
-static rt_size_t _pin_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _pin_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    struct rt_device_pin_status *status;
+    struct rt_device_pin_value *value;
     struct rt_device_pin *pin = (struct rt_device_pin *)dev;
 
     /* check parameters */
     RT_ASSERT(pin != RT_NULL);
 
-    status = (struct rt_device_pin_status *)buffer;
-    if (status == RT_NULL || size != sizeof(*status))
+    value = (struct rt_device_pin_value *)buffer;
+    if (value == RT_NULL || size != sizeof(*value))
         return 0;
 
-    status->status = pin->ops->pin_read(dev, status->pin);
+    value->value = pin->ops->pin_read(dev, value->pin);
     return size;
 }
 
-static rt_size_t _pin_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _pin_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    struct rt_device_pin_status *status;
+    struct rt_device_pin_value *value;
     struct rt_device_pin *pin = (struct rt_device_pin *)dev;
 
     /* check parameters */
     RT_ASSERT(pin != RT_NULL);
 
-    status = (struct rt_device_pin_status *)buffer;
-    if (status == RT_NULL || size != sizeof(*status))
+    value = (struct rt_device_pin_value *)buffer;
+    if (value == RT_NULL || size != sizeof(*value))
         return 0;
 
-    pin->ops->pin_write(dev, (rt_base_t)status->pin, (rt_base_t)status->status);
+    pin->ops->pin_write(dev, (rt_base_t)value->pin, (rt_base_t)value->value);
 
     return size;
 }
@@ -101,7 +101,7 @@ int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void 
     return 0;
 }
 
-rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
+rt_err_t rt_pin_attach_irq(rt_base_t pin, rt_uint8_t mode,
                            void (*hdr)(void *args), void *args)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
@@ -112,7 +112,7 @@ rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
     return -RT_ENOSYS;
 }
 
-rt_err_t rt_pin_detach_irq(rt_int32_t pin)
+rt_err_t rt_pin_detach_irq(rt_base_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     if (_hw_pin.ops->pin_detach_irq)
@@ -122,7 +122,7 @@ rt_err_t rt_pin_detach_irq(rt_int32_t pin)
     return -RT_ENOSYS;
 }
 
-rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
+rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint8_t enabled)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     if (_hw_pin.ops->pin_irq_enable)
@@ -133,25 +133,25 @@ rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
 }
 
 /* RT-Thread Hardware PIN APIs */
-void rt_pin_mode(rt_base_t pin, rt_base_t mode)
+void rt_pin_mode(rt_base_t pin, rt_uint8_t mode)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_mode(&_hw_pin.parent, pin, mode);
 }
 
-void rt_pin_write(rt_base_t pin, rt_base_t value)
+void rt_pin_write(rt_base_t pin, rt_uint8_t value)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_write(&_hw_pin.parent, pin, value);
 }
 
-int rt_pin_read(rt_base_t pin)
+rt_int8_t rt_pin_read(rt_base_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     return _hw_pin.ops->pin_read(&_hw_pin.parent, pin);
 }
 
-
+/* Get pin number by name, such as PA.0, P0.12 */
 rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
@@ -284,7 +284,7 @@ static void _pin_cmd_mode(int argc, char *argv[])
 static void _pin_cmd_read(int argc, char *argv[])
 {
     rt_base_t pin;
-    rt_base_t value;
+    rt_uint8_t value;
     if (argc < 3)
     {
         _pin_cmd_print_usage();
@@ -319,7 +319,7 @@ static void _pin_cmd_read(int argc, char *argv[])
 static void _pin_cmd_write(int argc, char *argv[])
 {
     rt_base_t pin;
-    rt_base_t value;
+    rt_uint8_t value;
     if (argc < 4)
     {
         _pin_cmd_print_usage();

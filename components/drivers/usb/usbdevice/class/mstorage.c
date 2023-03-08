@@ -44,7 +44,7 @@ typedef enum
     DIR_NONE,
 }CB_DIR;
 
-typedef rt_size_t (*cbw_handler)(ufunction_t func, ustorage_cbw_t cbw);
+typedef rt_ssize_t (*cbw_handler)(ufunction_t func, ustorage_cbw_t cbw);
 
 struct scsi_cmd
 {
@@ -168,17 +168,17 @@ const static char* _ustring[] =
     "Interface",
 };
 
-static rt_size_t _test_unit_ready(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _request_sense(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _inquiry_cmd(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _allow_removal(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _start_stop(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _mode_sense_6(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _read_capacities(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _read_capacity(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _read_10(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _write_10(ufunction_t func, ustorage_cbw_t cbw);
-static rt_size_t _verify_10(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _test_unit_ready(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _request_sense(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _inquiry_cmd(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _allow_removal(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _start_stop(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _mode_sense_6(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _read_capacities(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _read_capacity(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _read_10(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _write_10(ufunction_t func, ustorage_cbw_t cbw);
+static rt_ssize_t _verify_10(ufunction_t func, ustorage_cbw_t cbw);
 
 rt_align(4)
 static struct scsi_cmd cmd_data[] =
@@ -212,7 +212,7 @@ static void _send_status(ufunction_t func)
     data->status = STAT_CSW;
 }
 
-static rt_size_t _test_unit_ready(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _test_unit_ready(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
 
@@ -227,7 +227,7 @@ static rt_size_t _test_unit_ready(ufunction_t func, ustorage_cbw_t cbw)
     return 0;
 }
 
-static rt_size_t _allow_removal(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _allow_removal(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
 
@@ -251,7 +251,7 @@ static rt_size_t _allow_removal(ufunction_t func, ustorage_cbw_t cbw)
  * @return RT_EOK on successful.
  */
 
-static rt_size_t _inquiry_cmd(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _inquiry_cmd(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
     rt_uint8_t *buf;
@@ -290,7 +290,7 @@ static rt_size_t _inquiry_cmd(ufunction_t func, ustorage_cbw_t cbw)
  *
  * @return RT_EOK on successful.
  */
-static rt_size_t _request_sense(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _request_sense(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
     struct request_sense_data *buf;
@@ -333,7 +333,7 @@ static rt_size_t _request_sense(ufunction_t func, ustorage_cbw_t cbw)
  *
  * @return RT_EOK on successful.
  */
-static rt_size_t _mode_sense_6(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _mode_sense_6(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
     rt_uint8_t *buf;
@@ -369,7 +369,7 @@ static rt_size_t _mode_sense_6(ufunction_t func, ustorage_cbw_t cbw)
  *
  * @return RT_EOK on successful.
  */
-static rt_size_t _read_capacities(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _read_capacities(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
     rt_uint8_t *buf;
@@ -414,7 +414,7 @@ static rt_size_t _read_capacities(ufunction_t func, ustorage_cbw_t cbw)
  *
  * @return RT_EOK on successful.
  */
-static rt_size_t _read_capacity(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _read_capacity(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
 
@@ -459,7 +459,7 @@ static rt_size_t _read_capacity(ufunction_t func, ustorage_cbw_t cbw)
  *
  * @return RT_EOK on successful.
  */
-static rt_size_t _read_10(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _read_10(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
     rt_size_t size;
@@ -499,7 +499,7 @@ static rt_size_t _read_10(ufunction_t func, ustorage_cbw_t cbw)
  *
  * @return RT_EOK on successful.
  */
-static rt_size_t _write_10(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _write_10(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
 
@@ -536,7 +536,7 @@ static rt_size_t _write_10(ufunction_t func, ustorage_cbw_t cbw)
  *
  * @return RT_EOK on successful.
  */
-static rt_size_t _verify_10(ufunction_t func, ustorage_cbw_t cbw)
+static rt_ssize_t _verify_10(ufunction_t func, ustorage_cbw_t cbw)
 {
     struct mstorage *data;
 
@@ -551,7 +551,7 @@ static rt_size_t _verify_10(ufunction_t func, ustorage_cbw_t cbw)
     return 0;
 }
 
-static rt_size_t _start_stop(ufunction_t func,
+static rt_ssize_t _start_stop(ufunction_t func,
     ustorage_cbw_t cbw)
 {
     struct mstorage *data;
@@ -795,7 +795,7 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
     return RT_TRUE;
 }
 
-static rt_size_t _cbw_handler(ufunction_t func, struct scsi_cmd* cmd,
+static rt_ssize_t _cbw_handler(ufunction_t func, struct scsi_cmd* cmd,
     ustorage_cbw_t cbw)
 {
     struct mstorage *data;

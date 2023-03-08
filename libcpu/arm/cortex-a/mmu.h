@@ -112,19 +112,6 @@ void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr);
 void rt_hw_mmu_kernel_map_init(struct rt_aspace *aspace, size_t vaddr_start, size_t size);
 void *rt_hw_mmu_tbl_get();
 
-static inline void *_rt_kmem_v2p(void *vaddr)
-{
-    return rt_hw_mmu_v2p(&rt_kernel_space, vaddr);
-}
-
-static inline void *rt_kmem_v2p(void *vaddr)
-{
-    MM_PGTBL_LOCK(&rt_kernel_space);
-    void *paddr = _rt_kmem_v2p(vaddr);
-    MM_PGTBL_UNLOCK(&rt_kernel_space);
-    return paddr;
-}
-
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size, enum rt_mmu_cntl cmd);
 
 #endif

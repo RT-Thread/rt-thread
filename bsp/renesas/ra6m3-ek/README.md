@@ -1,8 +1,8 @@
-# 瑞萨 CPK-RA6M3 开发板 BSP 说明
+# 瑞萨 EK-RA6M3 开发板 BSP 说明
 
 ## 简介
 
-本文档为瑞萨 CPK-RA6M3 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
+本文档为瑞萨 EK-RA6M3 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
 
 主要内容如下：
 
@@ -35,19 +35,9 @@
 | :----------------- | :----------------- | :------------- |
 | UART               | 支持               | UART7 为默认日志输出端口 |
 | GPIO               | 支持               |                |
-| GPIO         | 支持         |                          |
-| IIC          | 支持         | 软件                     |
-| WDT          | 支持         |                          |
-| RTC          | 支持         |                          |
-| ADC          | 支持         |                          |
-| DAC          | 支持         |                          |
-| SPI          | 支持         |                          |
-| FLASH        | 支持         |                |
-| PWM          | 支持         |                |
 | LCD          | 支持         |                          |
-| G2D  | 支持 |                |
-| JPEG         | 支持         |                          |
 
+* 注意：仓库刚拉下来是最小系统，若需添加/使能其他外设需参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
 
 ## 使用说明
 
@@ -131,9 +121,9 @@ void hal_entry(void)
 需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp#document) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
 
 1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)，请使用 FSP 3.5.0 版本
-2. 下载安装完成后，需要添加 CPK-RA6M3 开发板的官方板级支持包
-> 打开[ CPK-RA6M3 开发板详情页](https://www.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ek-ra6m3-evaluation-kit-ra6m3-mcu-group#document)，在 **“下载”** 列表中找到  **”CPK-RA6M3板级支持包“** ，点击链接即可下载
-3. 如何将 **”CPK-RA6M3板级支持包“**添加到 FSP 中，请参考文档[如何导入板级支持包](https://www2.renesas.cn/document/ppt/1527171?language=zh&r=1527191)
+2. 下载安装完成后，需要添加 EK-RA6M3 开发板的官方板级支持包
+> 打开[ EK-RA6M3 开发板详情页](https://www.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ek-ra6m3-evaluation-kit-ra6m3-mcu-group#document)，在 **“下载”** 列表中找到  **” EK-RA6M3板级支持包“** ，点击链接即可下载
+3. 如何将 **”EK-RA6M3板级支持包“**添加到 FSP 中，请参考文档[如何导入板级支持包](https://www2.renesas.cn/document/ppt/1527171?language=zh&r=1527191)
 4. 请查看文档：[使用 FSP 配置外设驱动](../docs/RA系列使用FSP配置外设驱动.md)，在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
 
 **ENV 配置**
@@ -154,4 +144,4 @@ void hal_entry(void)
 
 ## 贡献代码
 
-如果您对 CPK-RA6M3 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
+如果您对  EK-RA6M3 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。

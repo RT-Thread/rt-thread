@@ -22,11 +22,8 @@
  *        - if 0, host ehci driver is disable.
  *        - if greater than 0, host ehci driver is enable.
  */
-#ifdef SOC_IMXRT1170_SERIES
 #define USB_HOST_CONFIG_EHCI (1U)
-#else
-#define USB_HOST_CONFIG_EHCI (2U)
-#endif
+
 /*!
  * @brief host ohci instance count, meantime it indicates ohci enable or disable.
  *        - if 0, host ohci driver is disable.
@@ -103,13 +100,10 @@
 #define USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE (0U)
 #endif
 /*! @brief if 1, enable usb compliance test codes; if 0, disable usb compliance test codes. */
-#ifdef SOC_IMXRT1170_SERIES
 #ifndef USB_HOST_CONFIG_COMPLIANCE_TEST
 #define USB_HOST_CONFIG_COMPLIANCE_TEST (0U)
 #endif
-#else
-#define USB_HOST_CONFIG_COMPLIANCE_TEST (0U)
-#endif
+
 /*! @brief if 1, class driver clear stall automatically; if 0, class driver don't clear stall. */
 #define USB_HOST_CONFIG_CLASS_AUTO_CLEAR_STALL (0U)
 
@@ -156,7 +150,7 @@
 
 /* OHCI configuration */
 #if ((defined USB_HOST_CONFIG_OHCI) && (USB_HOST_CONFIG_OHCI))
-#ifdef SOC_IMXRT1170_SERIES
+
 /*!
  * @brief ohci ED max count.
  */
@@ -166,17 +160,6 @@
  * @brief ohci GTD max count.
  */
 #define USB_HOST_CONFIG_OHCI_MAX_GTD (16U)
-#else
-/*!
- * @brief ohci ED max count.
- */
-#define USB_HOST_CONFIG_OHCI_MAX_ED (8U)
-
-/*!
- * @brief ohci GTD max count.
- */
-#define USB_HOST_CONFIG_OHCI_MAX_GTD (8U)
-#endif
 
 /*!
  * @brief ohci ITD max count.

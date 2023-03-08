@@ -381,7 +381,7 @@ static void _serial_check_buffer_size(void)
 }
 
 #if defined(RT_USING_POSIX_STDIO) || defined(RT_SERIAL_USING_DMA)
-static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
+static rt_ssize_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
 {
     struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
 
@@ -413,7 +413,7 @@ static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
  *
  * @return length
  */
-static rt_size_t rt_dma_calc_recved_len(struct rt_serial_device *serial)
+static rt_ssize_t rt_dma_calc_recved_len(struct rt_serial_device *serial)
 {
     return _serial_fifo_calc_recved_len(serial);
 }
@@ -850,7 +850,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_serial_read(struct rt_device *dev,
+static rt_ssize_t rt_serial_read(struct rt_device *dev,
                                 rt_off_t          pos,
                                 void             *buffer,
                                 rt_size_t         size)
@@ -876,7 +876,7 @@ static rt_size_t rt_serial_read(struct rt_device *dev,
     return _serial_poll_rx(serial, (rt_uint8_t *)buffer, size);
 }
 
-static rt_size_t rt_serial_write(struct rt_device *dev,
+static rt_ssize_t rt_serial_write(struct rt_device *dev,
                                  rt_off_t          pos,
                                  const void       *buffer,
                                  rt_size_t         size)

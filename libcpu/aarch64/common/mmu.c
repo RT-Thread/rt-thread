@@ -109,6 +109,10 @@ static void _kenrel_unmap_4K(unsigned long *lv0_tbl, void *v_addr)
             }
             rt_pages_free(cur_page, 0);
         }
+        else
+        {
+            break;
+        }
         level--;
     }
 
@@ -148,11 +152,9 @@ static int _kenrel_map_4K(unsigned long *lv0_tbl, void *vaddr, void *paddr,
                 goto err;
             }
             rt_memset((void *)page, 0, ARCH_PAGE_SIZE);
-            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)page,
-                                 ARCH_PAGE_SIZE);
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)page, ARCH_PAGE_SIZE);
             cur_lv_tbl[off] = (page + PV_OFFSET) | MMU_TYPE_TABLE;
-            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off,
-                                 sizeof(void *));
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cur_lv_tbl + off, sizeof(void *));
         }
         else
         {
@@ -197,13 +199,20 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
     // TODO trying with HUGEPAGE here
     while (npages--)
     {
+        MM_PGTBL_LOCK(aspace);
         ret = _kenrel_map_4K(aspace->page_table, v_addr, p_addr, attr);
+        MM_PGTBL_UNLOCK(aspace);
+
         if (ret != 0)
         {
+            /* other types of return value are taken as programming error */
+            RT_ASSERT(ret == MMU_MAP_ERROR_NOPAGE);
             /* error, undo map */
             while (unmap_va != v_addr)
             {
+                MM_PGTBL_LOCK(aspace);
                 _kenrel_unmap_4K(aspace->page_table, (void *)unmap_va);
+                MM_PGTBL_UNLOCK(aspace);
                 unmap_va += ARCH_PAGE_SIZE;
             }
             break;
@@ -232,7 +241,9 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
 
     while (npages--)
     {
+        MM_PGTBL_LOCK(aspace);
         _kenrel_unmap_4K(aspace->page_table, v_addr);
+        MM_PGTBL_UNLOCK(aspace);
         v_addr += ARCH_PAGE_SIZE;
     }
 }
@@ -242,7 +253,7 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     if (aspace != &rt_kernel_space)
     {
         void *pgtbl = aspace->page_table;
-        pgtbl = _rt_kmem_v2p(pgtbl);
+        pgtbl = rt_kmem_v2p(pgtbl);
         uintptr_t tcr;
 
         __asm__ volatile("msr ttbr0_el1, %0" ::"r"(pgtbl) : "memory");
@@ -309,8 +320,16 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                                                 mdesc->vaddr_start + 1,
                                     .prefer = (void *)mdesc->vaddr_start};
 
-        rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
+        if (mdesc->paddr_start == (rt_size_t)ARCH_MAP_FAILED)
+            mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
+        int retval;
+        retval = rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);
+        if (retval)
+        {
+            LOG_E("%s: map failed with code %d", retval);
+            RT_ASSERT(0);
+        }
         mdesc++;
     }
 
@@ -656,10 +675,14 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
     return err;
 }
 
-void rt_hw_mmu_setup_early(unsigned long *tbl0, unsigned long *tbl1,
+void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
                            unsigned long size, unsigned long pv_off)
 {
     int ret;
+
+    /* setup pv off */
+    rt_kmem_pvoff_set(pv_off);
+
     unsigned long va = KERNEL_VADDR_START;
     unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
     unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);

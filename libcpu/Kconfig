@@ -87,13 +87,6 @@ config KERNEL_VADDR_START
     default 0x80000000 if ARCH_RISCV
     depends on ARCH_MM_MMU
 
-config PV_OFFSET
-    hex "The offset of kernel physical address and virtural address"
-    default 0x1000040000000 if ARCH_ARMV8
-    default 0xa0000000      if ARCH_ARM
-    default 0x0             if ARCH_RISCV
-    depends on ARCH_MM_MMU
-
 config RT_IOREMAP_LATE
     bool "Support to create IO mapping in the kernel address space after system initlalization."
     default n
@@ -112,6 +105,7 @@ config ARCH_ARM_ARM11
 config ARCH_ARM_CORTEX_A
     bool
     select ARCH_ARM
+    select ARCH_ARM_MMU
     select RT_USING_CPU_FFS
 
     if ARCH_ARM_CORTEX_A

@@ -25,8 +25,8 @@ if PLATFORM == 'gcc':
     AFPFLAGS = ' '
     DEVICE   = ' -march=armv8-a -mtune=cortex-a53 -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing'
 
-    CXXFLAGS= DEVICE + CFPFLAGS + ' -Wall'
-    CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -Wno-cpp -std=gnu99'
+    CXXFLAGS= DEVICE + CFPFLAGS + ' -Wall -fdiagnostics-color=always'
+    CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -Wno-cpp -std=gnu99 -fdiagnostics-color=always'
     AFLAGS  = ' -c' + AFPFLAGS + ' -x assembler-with-cpp'
     LFLAGS  = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds' + ' -lsupc++ -lgcc -static'
     CPATH   = ''

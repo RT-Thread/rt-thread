@@ -32,14 +32,17 @@ jobs:
       fail-fast: false
       matrix:
        legs:
-         - {UTEST: "kernel/mem",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/mem.conf",     SD_FILE: "sd.bin"}
-         - {UTEST: "kernel/ipc",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/ipc.conf",     SD_FILE: "sd.bin"}
-         - {UTEST: "kernel/irq",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/irq.conf",     SD_FILE: "sd.bin"}
-         - {UTEST: "kernel/timer",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/timer.conf",   SD_FILE: "sd.bin"}
-         - {UTEST: "kernel/thread",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/thread.conf",  SD_FILE: "sd.bin"}
-         - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin"}
-         - {UTEST: "components/cpp11", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "cpp11/cpp11.conf",    SD_FILE: "sd.bin"}
-         - {UTEST: "kernel/mem/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/mem.conf",   SD_FILE: "None"}
+         - {UTEST: "kernel/mem",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/mem.conf",     SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "kernel/ipc",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/ipc.conf",     SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "kernel/irq",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/irq.conf",     SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "kernel/timer",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/timer.conf",   SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "kernel/thread",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/thread.conf",  SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "components/cpp11", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "cpp11/cpp11.conf",    SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "kernel/mem/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/mem.conf",   SD_FILE: "None", RUN: "yes"}
+         - {UTEST: "rtsmart/arm",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "sd.bin", RUN: "no"}
+         - {UTEST: "rtsmart/aarch64", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "sd.bin", RUN: "no"}
+         - {UTEST: "rtsmart/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv",   QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "None", RUN: "yes"}
     env:
       TEST_QEMU_ARCH: ${{ matrix.legs.QEMU_ARCH }}
       TEST_QEMU_MACHINE: ${{ matrix.legs.QEMU_MACHINE }}
@@ -56,7 +59,7 @@ jobs:
         sudo apt-get -yqq install scons qemu-system git
 
     - name: Install Arm ToolChains
-      if: ${{ matrix.legs.QEMU_ARCH == 'arm' && success() }}
+      if: ${{ matrix.legs.QEMU_ARCH == 'arm' && matrix.legs.UTEST != 'rtsmart/arm' && success() }}
       shell: bash
       run: |
         wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
@@ -64,13 +67,43 @@ jobs:
         /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
         echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
 
+    - name: Install Arm Musl ToolChains
+      if: ${{ matrix.legs.QEMU_ARCH == 'arm' && matrix.legs.UTEST == 'rtsmart/arm' && success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
+        sudo tar xjf arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2 -C /opt
+        /opt/arm-linux-musleabi_for_x86_64-pc-linux-gnu/bin/arm-linux-musleabi-gcc --version
+        echo "RTT_EXEC_PATH=/opt/arm-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+        echo "RTT_CC_PREFIX=arm-linux-musleabi-" >> $GITHUB_ENV
+
     - name: Install RISC-V ToolChains
-      if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && success() }}
+      if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && matrix.legs.UTEST != 'rtsmart/riscv64' && success() }}
       run: |
         wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
         sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
         /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
         echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+    - name: Install RISC-V Musl ToolChains
+      if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && matrix.legs.UTEST == 'rtsmart/riscv64' && success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2
+        sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
+        /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
+        echo "RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+        echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
+
+    - name: Install AARCH64 Musl ToolChains
+      if: ${{ matrix.legs.QEMU_ARCH == 'aarch64' && matrix.legs.UTEST == 'rtsmart/aarch64' && success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
+        sudo tar xjf aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2 -C /opt
+        /opt/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/aarch64-linux-musleabi-gcc --version
+        echo "RTT_EXEC_PATH=/opt/aarch64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+        echo "RTT_CC_PREFIX=aarch64-linux-musleabi-" >> $GITHUB_ENV
 
     - name: CPP11 Preprocessing Toolchain
       if: ${{ matrix.legs.QEMU_ARCH == 'arm' && matrix.legs.UTEST == 'components/cpp11' && success() }}
@@ -92,10 +125,10 @@ jobs:
         echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
         cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
         scons --pyconfig-silent -C $TEST_BSP_ROOT
-        scons -j$(nproc) -C $TEST_BSP_ROOT
+        scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 
-    - name: Start Test
-      if: ${{ success() }}
+    - name: Start run Test
+      if: ${{matrix.legs.RUN == 'yes' && success() }}
       run: |
         git clone https://github.com/armink/UtestRunner.git
         pushd $TEST_BSP_ROOT

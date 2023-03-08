@@ -73,14 +73,27 @@ export PATH=~/NucleiStudio/toolchain/gcc/bin:~/NucleiStudio/toolchain/openocd/bi
 
 **注意**: 请确保Nuclei GCC和Nuclei OpenOCD的路径设置正确无误。
 
-1. 运行 ``pkgs --update``来下载最新的依赖的**Nuclei SDK**开发包
+1. 运行 ``pkgs --update``来下载最新的依赖的**Nuclei SDK**开发包，修改链接脚本。
+
+   ```c
+     .stack ORIGIN(RAM) + LENGTH(RAM) - __TOT_STACK_SIZE (NOLOAD) :
+     {
+   	...
+       PROVIDE( _sp = . );
+       PROVIDE( __rt_rvstack = . );//在链接脚本中补充该条语句
+     } >RAM AT>RAM
+   ```
+
 2. **可选**: 运行 ``menuconfig``来进行内核配置
+
 3. 运行 ``scons -c``清理之前的编译结果
+
 4. 根据你当前评估的Nuclei RISC-V内核情况，修改 ``rtconfig.py``中的``NUCLEI_SDK_CORE``和``NUCLEI_SDK_DOWNLOAD``参数。
    - ``NUCLEI_SDK_CORE``可选的参数为[Supported Nuclei Cores](https://doc.nucleisys.com/nuclei_sdk/develop/buildsystem.html#core)
    - ``NUCLEI_SDK_DOWNLOAD``可选的参数为``ilm``,``flash``或者``flashxip``, 关于该选项的说明参见[Supported Download Modes](https://doc.nucleisys.com/nuclei_sdk/develop/buildsystem.html#download)
    - 假设你手头拿到的Nuclei评估处理器内核为N307(rv32imafc), 想程序运行模式为``flash``,
      则修改``NUCLEI_SDK_CORE``为``n307``, ``NUCLEI_SDK_DOWNLOAD``为``flash``.
+
 5. 修改完对应的``rtconfig.py``参数配置并保存后，运行 ``scons``来进行代码的编译
 
 ### 下载程序

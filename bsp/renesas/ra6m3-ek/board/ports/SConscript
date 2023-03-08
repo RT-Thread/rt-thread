@@ -1,22 +1,16 @@
-
+import os
 from building import *
-import rtconfig
-
-cwd     = GetCurrentDir()
 
 src = []
-
-if GetDepend(['BSP_USING_RW007']):
-    src += Glob('drv_rw007.c')
-
+objs = []
+cwd  = GetCurrentDir()
 CPPPATH = [cwd]
-LOCAL_CFLAGS = ''
 
-if rtconfig.PLATFORM in ['gcc', 'armclang']:
-    LOCAL_CFLAGS += ' -std=c99'
-elif rtconfig.PLATFORM in ['armcc']:
-    LOCAL_CFLAGS += ' --c99'
+objs = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
-group = DefineGroup('Drivers', src, depend = [], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        objs = objs + SConscript(os.path.join(item, 'SConscript'))
 
-Return('group')
+Return('objs')

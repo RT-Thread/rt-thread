@@ -55,7 +55,6 @@
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
 #define KERNEL_VADDR_START 0x40000000
-#define PV_OFFSET 0x0
 #define ARCH_RISCV
 #define ARCH_RISCV64
 
@@ -161,6 +160,7 @@
 
 /* Utilities */
 
+#define RT_USING_ADT
 
 /* RT-Thread Utestcases */
 

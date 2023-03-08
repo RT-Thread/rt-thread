@@ -721,7 +721,7 @@ static int _vcom_getc(struct rt_serial_device *serial)
     return result;
 }
 
-static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt_size_t size)
+static rt_ssize_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt_size_t size)
 {
     rt_base_t level;
     rt_size_t   put_len = 0;
@@ -751,7 +751,7 @@ static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt
     return size;
 }
 
-static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct ufunction *func;
     struct vcom *data;

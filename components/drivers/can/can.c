@@ -438,7 +438,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_can_read(struct rt_device *dev,
+static rt_ssize_t rt_can_read(struct rt_device *dev,
                              rt_off_t          pos,
                              void             *buffer,
                              rt_size_t         size)
@@ -458,7 +458,7 @@ static rt_size_t rt_can_read(struct rt_device *dev,
     return 0;
 }
 
-static rt_size_t rt_can_write(struct rt_device *dev,
+static rt_ssize_t rt_can_write(struct rt_device *dev,
                               rt_off_t          pos,
                               const void       *buffer,
                               rt_size_t         size)

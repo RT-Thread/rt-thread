@@ -354,7 +354,7 @@ static rt_err_t rt_usart_close(rt_device_t dev)
  * @return
  *  Number of read bytes
  ******************************************************************************/
-static rt_size_t rt_usart_read (
+static rt_ssize_t rt_usart_read (
     rt_device_t     dev,
     rt_off_t        pos,
     void            *buffer,
@@ -550,7 +550,7 @@ static rt_size_t rt_usart_read (
  * @return
  *   Number of written bytes
  ******************************************************************************/
-static rt_size_t rt_usart_write (
+static rt_ssize_t rt_usart_write (
     rt_device_t     dev,
     rt_off_t        pos,
     const void*     buffer,

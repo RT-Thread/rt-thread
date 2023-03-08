@@ -128,7 +128,7 @@
         </DebugOption>
         <Utilities>
           <Flash1>
-            <UseTargetDll>1</UseTargetDll>
+            <UseTargetDll>0</UseTargetDll>
             <UseExternalTool>1</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
@@ -137,7 +137,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -410,7 +410,7 @@
     <apis/>
     <components>
       <component Cclass="Flex Software" Cgroup="RA Configuration" Cvendor="Renesas" Cversion="1.0.0" condition="RA Device" generator="Renesas RA Smart Configurator">
-        <package name="RA_DFP" schemaVersion="1.7.2" url="https://www2.renesas.eu/Keil_MDK_Packs/" vendor="Renesas" version="3.8.0"/>
+        <package name="RA_DFP" schemaVersion="1.7.2" url="https://www2.renesas.eu/Keil_MDK_Packs/" vendor="Renesas" version="4.2.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>

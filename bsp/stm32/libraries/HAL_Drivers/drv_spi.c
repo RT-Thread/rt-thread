@@ -281,9 +281,9 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     return RT_EOK;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    HAL_StatusTypeDef state;
+    HAL_StatusTypeDef state = HAL_OK;;
     rt_size_t message_length, already_send_length;
     rt_uint16_t send_length;
     rt_uint8_t *recv_buf;
@@ -438,6 +438,10 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             rt_pin_write(device->cs_pin, PIN_HIGH);
     }
 
+    if(state != HAL_OK)
+    {
+        return -RT_ERROR;
+    }
     return message->length;
 }
 
@@ -580,15 +584,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
 
-    spi_device->cs_pin = cs_pin;
-    if(cs_pin != PIN_NONE)
-    {
-        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
-        rt_pin_write(cs_pin, PIN_HIGH);
-    }
-
-    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
-
+    result = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, cs_pin, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("%s attach to %s faild, %d\n", device_name, bus_name, result);

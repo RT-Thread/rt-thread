@@ -165,10 +165,6 @@
       <description>SCI UART</description>
       <originalPack>Renesas.RA.3.5.0.pack</originalPack>
     </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_ether_phy" variant="" vendor="Renesas" version="3.5.0">
-      <description>Ethernet PHY</description>
-      <originalPack>Renesas.RA.3.5.0.pack</originalPack>
-    </component>
   </raComponentSelection>
   <raElcConfiguration/>
   <raIcuConfiguration/>
@@ -207,27 +203,12 @@
       <property id="module.driver.uart.tei_ipl" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.uart.eri_ipl" value="board.icu.common.irq.priority12"/>
     </module>
-    <module id="module.driver.ether_phy_on_ether_phy.1137705372">
-      <property id="module.driver.ether_phy.name" value="g_ether_phy0"/>
-      <property id="module.driver.ether_phy.channel" value="module.driver.ether_phy.channel.0"/>
-      <property id="module.driver.ether_phy.phy_lsi_address" value="0"/>
-      <property id="module.driver.ether_phy.phy_reset_wait_time" value="0x00020000"/>
-      <property id="module.driver.ether_phy.mii_type" value="module.driver.mii_type.rmii"/>
-      <property id="module.driver.ether_phy.mii_bit_access_wait_time" value="8"/>
-      <property id="module.driver.ether_phy.flow_control" value="module.driver.ether_phy.flow_control.0"/>
-    </module>
     <context id="_hal.0">
       <stack module="module.driver.ioport_on_ioport.0"/>
       <stack module="module.driver.uart_on_sci_uart.136564520"/>
-      <stack module="module.driver.ether_phy_on_ether_phy.1137705372"/>
     </context>
     <config id="config.driver.ioport">
       <property id="config.driver.ioport.checking" value="config.driver.ioport.checking.system"/>
-    </config>
-    <config id="config.driver.ether_phy">
-      <property id="config.driver.ether_phy.param_checking_enable" value="config.driver.ether_phy.param_checking_enable.bsp"/>
-      <property id="config.driver.ether_phy.use_phy" value="config.driver.ether_phy.use_phy.default"/>
-      <property id="config.driver.ether_phy.use_reference_clock" value="config.driver.ether_phy.use_reference_clock.default"/>
     </config>
     <config id="config.driver.sci_uart">
       <property id="config.driver.sci_uart.param_checking_enable" value="config.driver.sci_uart.param_checking_enable.bsp"/>
@@ -243,18 +224,7 @@
       <configSetting altId="debug0.tdi.p110" configurationId="debug0.tdi"/>
       <configSetting altId="debug0.tdo.p109" configurationId="debug0.tdo"/>
       <configSetting altId="debug0.tms.p108" configurationId="debug0.tms"/>
-      <configSetting altId="etherc0.rmii.crs_dv.p705" configurationId="etherc0.rmii.crs_dv"/>
-      <configSetting altId="etherc0.rmii.mdc.p401" configurationId="etherc0.rmii.mdc"/>
-      <configSetting altId="etherc0.rmii.mdio.p402" configurationId="etherc0.rmii.mdio"/>
-      <configSetting altId="etherc0.rmii.mode.rmii.free" configurationId="etherc0.rmii.mode"/>
       <configSetting altId="etherc0.rmii.pairing.free" configurationId="etherc0.rmii.pairing"/>
-      <configSetting altId="etherc0.rmii.ref50ck.p701" configurationId="etherc0.rmii.ref50ck"/>
-      <configSetting altId="etherc0.rmii.rx_er.p704" configurationId="etherc0.rmii.rx_er"/>
-      <configSetting altId="etherc0.rmii.rxd0.p702" configurationId="etherc0.rmii.rxd0"/>
-      <configSetting altId="etherc0.rmii.rxd1.p703" configurationId="etherc0.rmii.rxd1"/>
-      <configSetting altId="etherc0.rmii.txd0.p700" configurationId="etherc0.rmii.txd0"/>
-      <configSetting altId="etherc0.rmii.txd1.p406" configurationId="etherc0.rmii.txd1"/>
-      <configSetting altId="etherc0.rmii.txd_en.p405" configurationId="etherc0.rmii.txd_en"/>
       <configSetting altId="p108.debug0.tms" configurationId="p108"/>
       <configSetting altId="p108.gpio_mode.gpio_mode_peripheral" configurationId="p108.gpio_mode"/>
       <configSetting altId="p109.debug0.tdo" configurationId="p109"/>
@@ -263,43 +233,13 @@
       <configSetting altId="p110.gpio_mode.gpio_mode_peripheral" configurationId="p110.gpio_mode"/>
       <configSetting altId="p300.debug0.tck" configurationId="p300"/>
       <configSetting altId="p300.gpio_mode.gpio_mode_peripheral" configurationId="p300.gpio_mode"/>
-      <configSetting altId="p401.etherc0.rmii.mdc" configurationId="p401"/>
-      <configSetting altId="p401.gpio_speed.gpio_speed_high" configurationId="p401.gpio_drivecapacity"/>
+      <configSetting altId="p401.sci7.txd" configurationId="p401"/>
       <configSetting altId="p401.gpio_mode.gpio_mode_peripheral" configurationId="p401.gpio_mode"/>
-      <configSetting altId="p402.etherc0.rmii.mdio" configurationId="p402"/>
-      <configSetting altId="p402.gpio_speed.gpio_speed_high" configurationId="p402.gpio_drivecapacity"/>
+      <configSetting altId="p402.sci7.rxd" configurationId="p402"/>
       <configSetting altId="p402.gpio_mode.gpio_mode_peripheral" configurationId="p402.gpio_mode"/>
-      <configSetting altId="p405.etherc0.rmii.txd_en" configurationId="p405"/>
-      <configSetting altId="p405.gpio_speed.gpio_speed_high" configurationId="p405.gpio_drivecapacity"/>
-      <configSetting altId="p405.gpio_mode.gpio_mode_peripheral" configurationId="p405.gpio_mode"/>
-      <configSetting altId="p406.etherc0.rmii.txd1" configurationId="p406"/>
-      <configSetting altId="p406.gpio_speed.gpio_speed_high" configurationId="p406.gpio_drivecapacity"/>
-      <configSetting altId="p406.gpio_mode.gpio_mode_peripheral" configurationId="p406.gpio_mode"/>
-      <configSetting altId="p613.sci7.txd" configurationId="p613"/>
-      <configSetting altId="p613.gpio_mode.gpio_mode_peripheral" configurationId="p613.gpio_mode"/>
-      <configSetting altId="p614.sci7.rxd" configurationId="p614"/>
-      <configSetting altId="p614.gpio_mode.gpio_mode_peripheral" configurationId="p614.gpio_mode"/>
-      <configSetting altId="p700.etherc0.rmii.txd0" configurationId="p700"/>
-      <configSetting altId="p700.gpio_speed.gpio_speed_high" configurationId="p700.gpio_drivecapacity"/>
-      <configSetting altId="p700.gpio_mode.gpio_mode_peripheral" configurationId="p700.gpio_mode"/>
-      <configSetting altId="p701.etherc0.rmii.ref50ck" configurationId="p701"/>
-      <configSetting altId="p701.gpio_speed.gpio_speed_high" configurationId="p701.gpio_drivecapacity"/>
-      <configSetting altId="p701.gpio_mode.gpio_mode_peripheral" configurationId="p701.gpio_mode"/>
-      <configSetting altId="p702.etherc0.rmii.rxd0" configurationId="p702"/>
-      <configSetting altId="p702.gpio_speed.gpio_speed_high" configurationId="p702.gpio_drivecapacity"/>
-      <configSetting altId="p702.gpio_mode.gpio_mode_peripheral" configurationId="p702.gpio_mode"/>
-      <configSetting altId="p703.etherc0.rmii.rxd1" configurationId="p703"/>
-      <configSetting altId="p703.gpio_speed.gpio_speed_high" configurationId="p703.gpio_drivecapacity"/>
-      <configSetting altId="p703.gpio_mode.gpio_mode_peripheral" configurationId="p703.gpio_mode"/>
-      <configSetting altId="p704.etherc0.rmii.rx_er" configurationId="p704"/>
-      <configSetting altId="p704.gpio_speed.gpio_speed_high" configurationId="p704.gpio_drivecapacity"/>
-      <configSetting altId="p704.gpio_mode.gpio_mode_peripheral" configurationId="p704.gpio_mode"/>
-      <configSetting altId="p705.etherc0.rmii.crs_dv" configurationId="p705"/>
-      <configSetting altId="p705.gpio_speed.gpio_speed_high" configurationId="p705.gpio_drivecapacity"/>
-      <configSetting altId="p705.gpio_mode.gpio_mode_peripheral" configurationId="p705.gpio_mode"/>
       <configSetting altId="sci7.mode.asynchronous.free" configurationId="sci7.mode"/>
-      <configSetting altId="sci7.rxd.p614" configurationId="sci7.rxd"/>
-      <configSetting altId="sci7.txd.p613" configurationId="sci7.txd"/>
+      <configSetting altId="sci7.rxd.p402" configurationId="sci7.rxd"/>
+      <configSetting altId="sci7.txd.p401" configurationId="sci7.txd"/>
     </pincfg>
   </raPinConfiguration>
 </raConfiguration>

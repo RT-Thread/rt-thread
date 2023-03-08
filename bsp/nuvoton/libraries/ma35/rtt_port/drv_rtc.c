@@ -55,8 +55,8 @@
 static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args);
 
 #if defined (NU_RTC_SUPPORT_IO_RW)
-    static rt_size_t nu_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    static rt_size_t nu_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    static rt_ssize_t nu_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    static rt_ssize_t nu_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 #endif
 
 static rt_err_t nu_rtc_is_date_valid(const time_t t);
@@ -169,7 +169,7 @@ INIT_BOARD_EXPORT(rt_hw_rtc_init);
 
 #if defined (NU_RTC_SUPPORT_IO_RW)
 /* Register rt-thread device.read() entry. */
-static rt_size_t nu_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t nu_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     (void) pos;
     nu_rtc_control(dev, RT_DEVICE_CTRL_RTC_GET_TIME, buffer);
@@ -181,7 +181,7 @@ static rt_size_t nu_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 
 #if defined (NU_RTC_SUPPORT_IO_RW)
 /* Register rt-thread device.write() entry. */
-static rt_size_t nu_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t nu_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     (void) pos;
     nu_rtc_control(dev, RT_DEVICE_CTRL_RTC_SET_TIME, (void *)buffer);

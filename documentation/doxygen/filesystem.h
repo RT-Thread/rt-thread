@@ -21,8 +21,8 @@
 
 /**
  * @addtogroup DFS
+ * @{
  */
-/*@{*/
 
 /**
  * @defgroup Fd File Descriptor
@@ -41,4 +41,4 @@
  * @defgroup FsPosixApi File POSIX API
  */
 
-/*@}*/
+/**@}*/

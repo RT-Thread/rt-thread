@@ -369,7 +369,7 @@ static int stm32_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static rt_size_t stm32_transmit(struct rt_serial_device     *serial,
+static rt_ssize_t stm32_transmit(struct rt_serial_device     *serial,
                                        rt_uint8_t           *buf,
                                        rt_size_t             size,
                                        rt_uint32_t           tx_flag)

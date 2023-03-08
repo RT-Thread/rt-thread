@@ -14,6 +14,4 @@
 
 #include <rtdevice.h>
 
-int rt_hw_pwm_init(void);
-
 #endif

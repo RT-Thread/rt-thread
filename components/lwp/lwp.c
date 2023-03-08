@@ -1097,6 +1097,8 @@ static void _lwp_thread_entry(void *parameter)
         icache_invalid_all();
     }
 
+    rt_hw_icache_invalidate_all();
+
 #ifdef ARCH_MM_MMU
     arch_start_umode(lwp->args, lwp->text_entry, (void *)USER_STACK_VEND, tid->stack_addr + tid->stack_size);
 #else

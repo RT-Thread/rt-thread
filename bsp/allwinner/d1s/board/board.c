@@ -44,8 +44,8 @@ rt_region_t init_page_region =
 extern volatile rt_size_t MMUTable[__SIZE(VPN2_BIT)] __attribute__((aligned(4 * 1024)));
 
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x4000000 - 1, KERNEL_VADDR_START + PV_OFFSET, NORMAL_MEM},
-    {0x1000, 0x3ffff000 - 1, 0x1000 + PV_OFFSET, DEVICE_MEM},
+    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x4000000 - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
+    {0x1000, 0x3ffff000 - 1, (rt_size_t)ARCH_MAP_FAILED, DEVICE_MEM},
 };
 
 #define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))

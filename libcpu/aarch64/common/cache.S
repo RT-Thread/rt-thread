@@ -193,8 +193,9 @@ __asm_invalidate_icache_range:
  */
 .globl __asm_invalidate_icache_all
 __asm_invalidate_icache_all:
-    ic    ialluis
-    isb    sy
+    dsb     sy
+    ic      ialluis
+    isb     sy
     ret
 
 .globl __asm_flush_l3_cache

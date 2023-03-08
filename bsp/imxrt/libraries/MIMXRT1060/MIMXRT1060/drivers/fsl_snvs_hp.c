@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
- * Copyright 2017-2019, 2021 NXP
+ * Copyright 2017-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -278,11 +278,7 @@ void SNVS_HP_RTC_Init(SNVS_Type *base, const snvs_hp_rtc_config_t *config)
 {
     assert(config != NULL);
 
-#if (!(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && \
-     defined(SNVS_HP_CLOCKS))
-    uint32_t instance = SNVS_HP_GetInstance(base);
-    CLOCK_EnableClock(s_snvsHpClock[instance]);
-#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    SNVS_HP_Init(base);
 
     base->HPCOMR |= SNVS_HPCOMR_NPSWA_EN_MASK;
 
@@ -304,11 +300,7 @@ void SNVS_HP_RTC_Deinit(SNVS_Type *base)
 {
     base->HPCR &= ~SNVS_HPCR_RTC_EN_MASK;
 
-#if (!(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && \
-     defined(SNVS_HP_CLOCKS))
-    uint32_t instance = SNVS_HP_GetInstance(base);
-    CLOCK_DisableClock(s_snvsHpClock[instance]);
-#endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
+    SNVS_HP_Deinit(base);
 }
 
 /*!

@@ -48,6 +48,35 @@ if GetDepend(['SOC_CY8C6245LQI_S3D72']):
     src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_03_68_qfn.c']
     src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
 
+if GetDepend(['SOC_CY8C624ALQI_S2D42']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_02.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_02_68_qfn.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
+if GetDepend(['SOC_CY8C6247BZI_D54']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_01.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_01_124_bga.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
+if GetDepend(['SOC_CY8C6347BZI_BLD53']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_01.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_01_116_bga_ble.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_ble_clk.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
+if GetDepend(['SOC_CY8C6244LQI_S4D92']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_04.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_04_68_qfn.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_ble_clk.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['retarget-io/cy_retarget_io.c']
     src += ['mtb-hal-cat1/source/cyhal_uart.c']
@@ -132,6 +161,30 @@ if GetDepend(['SOC_CY8C624ABZI_S2D44']):
     path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
 
 if GetDepend(['SOC_CY8C6245LQI_S3D72']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C624ALQI_S2D42']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C6247BZI_D54']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C6347BZI_BLD53']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C6244LQI_S4D92']):
     path += [cwd + '/psoc6cm0p']
     path += [cwd + '/capsense']
     path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']

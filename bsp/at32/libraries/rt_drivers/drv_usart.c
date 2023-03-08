@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-05-16     shelton      first version
  * 2022-11-10     shelton      support uart dma
+ * 2023-01-31     shelton      add support f421/f425
  */
 
 #include "drv_common.h"
@@ -311,6 +312,10 @@ static void at32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 
     dma_reset(dma_channel);
     dma_init(dma_channel, &dma_init_struct);
+#if defined (SOC_SERIES_AT32F425)
+    dma_flexible_config(dma_config->dma_x, dma_config->flex_channel, \
+                       (dma_flexible_request_type)dma_config->request_id);
+#endif
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
     dmamux_enable(dma_config->dma_x, TRUE);
     dmamux_init(dma_config->dmamux_channel, (dmamux_requst_id_sel_type)dma_config->request_id);
@@ -328,7 +333,7 @@ static void at32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     nvic_irq_enable(instance->irqn, 1, 0);
 }
 
-static rt_size_t at32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t at32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct at32_uart *instance;
     instance = (struct at32_uart *) serial->parent.user_data;
@@ -744,6 +749,73 @@ void UART8_TX_DMA_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART8_TX_USING_DMA) */
+#endif
+
+#if defined (SOC_SERIES_AT32F421)
+void UART1_TX_RX_DMA_IRQHandler(void)
+{
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_TX_USING_DMA)
+    UART1_TX_DMA_IRQHandler();
+#endif
+
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA)
+    UART1_RX_DMA_IRQHandler();
+#endif
+}
+
+void UART2_TX_RX_DMA_IRQHandler(void)
+{
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_TX_USING_DMA)
+    UART2_TX_DMA_IRQHandler();
+#endif
+
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_RX_USING_DMA)
+    UART2_RX_DMA_IRQHandler();
+#endif
+}
+#endif
+
+#if defined (SOC_SERIES_AT32F425)
+#if defined(BSP_USING_UART3) || defined(BSP_USING_UART4)
+void USART4_3_IRQHandler(void)
+{
+#if defined(BSP_USING_UART3)
+  USART3_IRQHandler();
+#endif
+#if defined(BSP_USING_UART4)
+  UART4_IRQHandler();
+#endif
+}
+#endif
+
+void UART1_TX_RX_DMA_IRQHandler(void)
+{
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_TX_USING_DMA)
+    UART1_TX_DMA_IRQHandler();
+#endif
+
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA)
+    UART1_RX_DMA_IRQHandler();
+#endif
+}
+
+void UART3_2_TX_RX_DMA_IRQHandler(void)
+{
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_TX_USING_DMA)
+    UART2_TX_DMA_IRQHandler();
+#endif
+
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_RX_USING_DMA)
+    UART2_RX_DMA_IRQHandler();
+#endif
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART3_TX_USING_DMA)
+    UART3_TX_DMA_IRQHandler();
+#endif
+
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART3_RX_USING_DMA)
+    UART3_RX_DMA_IRQHandler();
+#endif
+}
 #endif
 
 #if defined (RT_SERIAL_USING_DMA)

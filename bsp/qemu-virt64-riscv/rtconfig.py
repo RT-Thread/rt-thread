@@ -12,7 +12,6 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    #EXEC_PATH   = r'/home/lizhirui/workspace/riscv64-toolchains/bin'
     EXEC_PATH   = r'/opt/rtt_riscv64_musl/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
@@ -26,7 +25,6 @@ BUILD = 'debug'
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-elf-'
-    # PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-linux-musl-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -38,7 +36,7 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
 
     DEVICE  = ' -mcmodel=medany -march=rv64imafdc -mabi=lp64 '
-    CFLAGS  = DEVICE + '-ffreestanding -flax-vector-conversions -Wno-cpp -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields'
+    CFLAGS  = DEVICE + '-ffreestanding -flax-vector-conversions -Wno-cpp -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields -fdiagnostics-color=always'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__ '
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds' + ' -lsupc++ -lgcc -static'
     CPATH   = ''

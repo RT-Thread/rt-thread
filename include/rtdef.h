@@ -570,6 +570,8 @@ typedef struct rt_timer *rt_timer_t;
 /**
  * @addtogroup Signal
  */
+/**@{*/
+
 #ifdef RT_USING_SIGNALS
 #include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
@@ -779,7 +781,7 @@ struct rt_thread
     rt_uint8_t  number;
     rt_uint8_t  high_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-    rt_uint32_t number_mask;
+    rt_uint32_t number_mask;                            /**< priority number mask */
 
 #ifdef RT_USING_MUTEX
     /* object for IPC */
@@ -1185,7 +1187,7 @@ enum rt_device_class_type
 /**
  * device control
  */
-#define RT_DEVICE_CTRL_BASE(Type)        (RT_Device_Class_##Type * 0x100)
+#define RT_DEVICE_CTRL_BASE(Type)        ((RT_Device_Class_##Type + 1) * 0x100)
 
 /**
  * special device commands
@@ -1215,8 +1217,8 @@ struct rt_device_ops
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
     rt_err_t  (*close)  (rt_device_t dev);
-    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 };
 #endif /* RT_USING_DEVICE_OPS */
@@ -1259,8 +1261,8 @@ struct rt_device
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
     rt_err_t  (*close)  (rt_device_t dev);
-    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif /* RT_USING_DEVICE_OPS */
 
@@ -1288,8 +1290,8 @@ struct rt_driver
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
     rt_err_t  (*close)  (rt_device_t dev);
-    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif
     const struct filesystem_ops *fops;

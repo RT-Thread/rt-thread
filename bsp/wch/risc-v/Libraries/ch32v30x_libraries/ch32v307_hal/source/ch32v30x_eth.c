@@ -1432,7 +1432,7 @@ ITStatus ETH_GetDMAITStatus(uint32_t ETH_DMA_IT)
 /*********************************************************************
  * @fn      ETH_DMAClearITPendingBit
  *
- * @brief   Clears the ETHERNET’s DMA IT pending bit.
+ * @brief   Clears the ETHERNET's DMA IT pending bit.
  *
  * @param   ETH_DMA_IT - specifies the interrupt pending bit to clear.
  *            ETH_DMA_IT_NIS - Normal interrupt summary

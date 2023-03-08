@@ -11,7 +11,6 @@
  *                           add smp ipi init
  */
 
-#include "mm_aspace.h"
 #include <rthw.h>
 #include <rtthread.h>
 #include <mmu.h>
@@ -21,6 +20,7 @@
 #endif
 
 #include "board.h"
+#include <mm_aspace.h>
 #include <mm_page.h>
 #include <interrupt.h>
 
@@ -33,7 +33,7 @@
 
 #ifdef RT_USING_SMART
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x0fffffff, KERNEL_VADDR_START + PV_OFFSET, NORMAL_MEM}
+    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x0fffffff, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM}
 };
 #else
 

@@ -14,11 +14,11 @@ void setup(void)
 {
     /* put your setup code here, to run once: */
     Serial.begin();
+    Serial.println("Hello RTduino!");
 }
 
 void loop(void)
 {
     /* put your main code here, to run repeatedly: */
-    Serial.println("Hello Arduino!");
-    delay(800);
+    delay(1000);
 }

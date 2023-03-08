@@ -10,6 +10,7 @@ src = Split("""
     eth_phy_port.c
     fal_flash_port.c
     hpm_sgtl5000.c
+    trap_gcc.S
 """)
 
 CPPPATH = [cwd]

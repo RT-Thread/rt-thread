@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -189,7 +189,7 @@ const char *dtb_node_get_name(const struct dtb_node *node)
 
 }
 
-struct dtb_node *dtb_node_get_by_phandle(uint phandle)
+struct dtb_node *dtb_node_get_by_phandle(uint32_t phandle)
 {
     if (dtb_node_active())
         return dtb_node_find_node_by_phandle(phandle);
@@ -204,6 +204,43 @@ int dtb_node_read_size(const struct dtb_node *node, const char *propname)
         return prop->size;
 
     return -EINVAL;
+}
+
+int dtb_node_get_addr_and_size_by_index(const struct dtb_node *node, int index, size_t *addr, size_t *size)
+{
+    const uint32_t *prop;
+    int psize;
+    int onesize, na, ns;
+
+    na = dtb_node_n_addr_cells(node);
+	ns = dtb_node_n_size_cells(node);
+
+    prop = dtb_node_get_dtb_node_property_value(node, "reg", &psize);
+	if (prop == NULL)
+    {
+		return -1;
+    }
+
+	psize /= 4;
+	onesize = na + ns;
+
+    if (psize >= (index + 1) * onesize)
+    {
+        prop += index * onesize;
+
+        if (addr)
+        {
+            *addr = dtb_node_read_number(prop, na);
+        }
+        if (size)
+        {
+            *size = dtb_node_read_number(prop + na, ns);
+        }
+
+        return 0;
+    }
+
+    return -1;
 }
 
 size_t dtb_node_get_addr_index(const struct dtb_node *node, int index)
@@ -418,63 +455,63 @@ int dtb_node_set_enabled(const struct dtb_node *node, rt_bool_t value)
  */
 static struct dtb_node *dtb_node_irq_find_parent(struct dtb_node *child)
 {
-	struct dtb_node *p;
-	phandle parent;
+    struct dtb_node *p;
+    phandle parent;
 
-	if (!dtb_node_get(child))
-		return NULL;
-	do
+    if (!dtb_node_get(child))
+        return NULL;
+    do
     {
-		if (dtb_node_read_u32_array(child, "interrupt-parent", &parent, 1))
+        if (dtb_node_read_u32_array(child, "interrupt-parent", &parent, 1))
         {
-			p = dtb_node_get_parent(child);
-		}
+            p = dtb_node_get_parent(child);
+        }
         else
         {
-			p = dtb_node_get_by_phandle(parent);         
-		}
-		dtb_node_put(child);
-		child = p;
-	} while (p && dtb_node_get_property(p, "#interrupt-cells", NULL) == NULL);
+            p = dtb_node_get_by_phandle(parent);
+        }
+        dtb_node_put(child);
+        child = p;
+    } while (p && dtb_node_get_property(p, "#interrupt-cells", NULL) == NULL);
 
-	return p;
+    return p;
 }
 
 int dtb_node_irq_get(struct dtb_node *dev, int index)
 {
-	int rc = 0;
-	struct fdt_phandle_args out_irq;
+    int rc = 0;
+    struct fdt_phandle_args out_irq;
     struct dtb_node *p;
-	uint32_t intsize;
-	int res, i;
+    uint32_t intsize;
+    int res, i;
 
-	p = dtb_node_irq_find_parent(dev);
-	if (p == NULL)
-		return -EINVAL;
-	/* Get size of interrupt specifier */
-	if (dtb_node_read_u32_array(p, "#interrupt-cells", &intsize, 1))
+    p = dtb_node_irq_find_parent(dev);
+    if (p == NULL)
+        return -EINVAL;
+    /* Get size of interrupt specifier */
+    if (dtb_node_read_u32_array(p, "#interrupt-cells", &intsize, 1))
     {
-		res = -EINVAL;
-		goto out;
-	}
+        res = -EINVAL;
+        goto out;
+    }
 
-	debug(" path:%s, parent=%pOF, intsize=%d\n", p->path,p, intsize);
-    
-	/* Copy intspec into irq structure */
-	out_irq.np = p;
-	out_irq.args_count = intsize;
-	for (i = 0; i < intsize; i++)
+    debug(" path:%s, parent=%pOF, intsize=%d\n", p->path,p, intsize);
+
+    /* Copy intspec into irq structure */
+    out_irq.np = p;
+    out_irq.args_count = intsize;
+    for (i = 0; i < intsize; i++)
     {
-		res = dtb_node_read_u32_index(dev, "interrupts",
-						 (index * 3 + i),
-						 out_irq.args + i);
-		if (res)
-			goto out;
-	}
+        res = dtb_node_read_u32_index(dev, "interrupts",
+                         (index * 3 + i),
+                         out_irq.args + i);
+        if (res)
+            goto out;
+    }
     rc = out_irq.args[1];
  out:
-	dtb_node_put(p);
-	return rc;
+    dtb_node_put(p);
+    return rc;
 
 }
 
@@ -489,16 +526,16 @@ int dtb_node_irq_get(struct dtb_node *dev, int index)
  */
 int dtb_node_irq_get_byname(struct dtb_node *dev, const char *name)
 {
-	int index;
+    int index;
 
-	if (!name)
-		return -EINVAL;
+    if (!name)
+        return -EINVAL;
 
-	index = dtb_node_stringlist_search(dev, "interrupt-names", name);
-	if (index < 0)
-		return index;
+    index = dtb_node_stringlist_search(dev, "interrupt-names", name);
+    if (index < 0)
+        return index;
 
-	return dtb_node_irq_get(dev, index);
+    return dtb_node_irq_get(dev, index);
 }
 
 /**
@@ -508,21 +545,21 @@ int dtb_node_irq_get_byname(struct dtb_node *dev, const char *name)
 int dtb_node_irq_count(struct dtb_node *device)
 {
     struct dtb_node *p;
-	uint32_t intsize;
-	int nr = 0, res = 0;
+    uint32_t intsize;
+    int nr = 0, res = 0;
 
-	p = dtb_node_irq_find_parent(device);
-	if (p == NULL)
-		return -EINVAL;
+    p = dtb_node_irq_find_parent(device);
+    if (p == NULL)
+        return -EINVAL;
 
-	/* Get size of interrupt specifier */
-	if (dtb_node_read_u32_array(p, "#interrupt-cells", &intsize, 1))
+    /* Get size of interrupt specifier */
+    if (dtb_node_read_u32_array(p, "#interrupt-cells", &intsize, 1))
     {
-		res = -EINVAL;
-		goto out;
-	}
+        res = -EINVAL;
+        goto out;
+    }
 
-	debug(" path:%s, parent=%pOF, intsize=%d\n", p->path,p, intsize);
+    debug(" path:%s, parent=%pOF, intsize=%d\n", p->path,p, intsize);
 
     res = dtb_node_read_size(device, "interrupts");
     if (res < 0)
@@ -531,7 +568,7 @@ int dtb_node_irq_count(struct dtb_node *device)
     }
     nr = res / (intsize * 4);
  out:
-	dtb_node_put(p);
+    dtb_node_put(p);
 
-	return nr;
+    return nr;
 }

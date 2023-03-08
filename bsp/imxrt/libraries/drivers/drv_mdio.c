@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -51,7 +51,7 @@ static rt_bool_t rt_hw_mdio_init(void *bus, rt_uint32_t src_clock_hz)
     return RT_TRUE;
 }
 
-static rt_size_t rt_hw_mdio_read(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
+static rt_ssize_t rt_hw_mdio_read(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
 {
     RT_ASSERT(data);
     struct rt_mdio_bus *bus_obj = (struct rt_mdio_bus *)bus;
@@ -96,7 +96,7 @@ static rt_size_t rt_hw_mdio_read(void *bus, rt_uint32_t addr, rt_uint32_t reg, v
 }
 
 
-static rt_size_t rt_hw_mdio_write(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
+static rt_ssize_t rt_hw_mdio_write(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
 {
     struct rt_mdio_bus *bus_obj = (struct rt_mdio_bus *)bus;
     uint32_t counter;

@@ -195,9 +195,9 @@ static void qspi_send_cmd(struct stm32_qspi_bus *qspi_bus, struct rt_qspi_messag
     HAL_QSPI_Command(&qspi_bus->QSPI_Handler, &Cmdhandler, 5000);
 }
 
-static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t qspixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    rt_size_t len = 0;
+    rt_ssize_t result = 0;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
@@ -224,18 +224,19 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
         {
             if (HAL_QSPI_Transmit(&qspi_bus->QSPI_Handler, (rt_uint8_t *)sndb, 5000) == HAL_OK)
             {
-                len = length;
+                result = length;
             }
             else
             {
                 LOG_E("QSPI send data failed(%d)!", qspi_bus->QSPI_Handler.ErrorCode);
                 qspi_bus->QSPI_Handler.State = HAL_QSPI_STATE_READY;
+                result = -RT_ERROR;
                 goto __exit;
             }
         }
         else
         {
-            len = 1;
+            result = 1;
         }
     }
     else if (rcvb)/* recv data */
@@ -247,7 +248,7 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
         if (HAL_QSPI_Receive(&qspi_bus->QSPI_Handler, rcvb, 5000) == HAL_OK)
 #endif
         {
-            len = length;
+            result = length;
 #ifdef BSP_QSPI_USING_DMA
             while (qspi_bus->QSPI_Handler.RxXferCount != 0);
 #endif
@@ -256,6 +257,7 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
         {
             LOG_E("QSPI recv data failed(%d)!", qspi_bus->QSPI_Handler.ErrorCode);
             qspi_bus->QSPI_Handler.State = HAL_QSPI_STATE_READY;
+            result = -RT_ERROR;
             goto __exit;
         }
     }
@@ -267,7 +269,7 @@ __exit:
         rt_pin_write(device->parent.cs_pin, PIN_HIGH);
     }
 #endif
-    return len;
+    return result;
 }
 
 static rt_err_t qspi_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration)
@@ -324,17 +326,12 @@ rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name,
     qspi_device->enter_qspi_mode = enter_qspi_mode;
     qspi_device->exit_qspi_mode = exit_qspi_mode;
     qspi_device->config.qspi_dl_width = data_line_width;
-    qspi_device->parent.cs_pin = cs_pin;
 
 #ifdef BSP_QSPI_USING_SOFTCS
-    if(cs_pin != PIN_NONE)
-    {
-        rt_pin_mode(cs_pin, PIN_MODE_OUTPUT);
-        rt_pin_write(cs_pin, PIN_HIGH);
-    }
-#endif
-
-    result = rt_spi_bus_attach_device(&qspi_device->parent, device_name, bus_name, RT_NULL);
+    result = rt_spi_bus_attach_device_cspin(&qspi_device->parent, device_name, bus_name, cs_pin, RT_NULL);
+#else
+    result = rt_spi_bus_attach_device_cspin(&qspi_device->parent, device_name, bus_name, PIN_NONE, RT_NULL);
+#endif /* BSP_QSPI_USING_SOFTCS */
 
 __exit:
     if (result != RT_EOK)

@@ -51,9 +51,11 @@ static inline void midmount_right(struct util_avl_struct *axis,
     lrchild->avl_left = lchild;
     lrchild->avl_right = axis;
 
+    lrchild->height = lchild->height;
     lchild->height = lrheight;
     axis->height = lrheight;
 
+    lrchild->parent = axis->parent;
     lchild->parent = lrchild;
     axis->parent = lrchild;
     if (lchild->avl_right != NULL)
@@ -70,7 +72,7 @@ static inline void rotate_left(struct util_avl_struct *axis,
                                size_t rlheight)
 {
     axis->avl_right = rlchild;
-    rchild->avl_right = axis;
+    rchild->avl_left = axis;
 
     axis->height = rlheight + 1;
     rchild->height = axis->height + 1;
@@ -94,9 +96,11 @@ static inline void midmount_left(struct util_avl_struct *axis,
     rlchild->avl_right = rchild;
     rlchild->avl_left = axis;
 
+    rlchild->height = rchild->height;
     rchild->height = rlheight;
     axis->height = rlheight;
 
+    rlchild->parent = axis->parent;
     rchild->parent = rlchild;
     axis->parent = rlchild;
     if (rchild->avl_left != NULL)
@@ -125,7 +129,7 @@ void util_avl_rebalance(struct util_avl_struct *node,
     {
         struct util_avl_struct *lchild = axis->avl_left;
         struct util_avl_struct *rchild = axis->avl_right;
-        nodeplace = node->parent ? NODE_PLACE(axis) : &root->root_node;
+        nodeplace = axis->parent ? NODE_PLACE(axis) : &root->root_node;
         int lheight = HEIGHT_OF(lchild);
         int rheight = HEIGHT_OF(rchild);
         if (rheight + 1 < lheight)
@@ -135,10 +139,12 @@ void util_avl_rebalance(struct util_avl_struct *node,
             if (HEIGHT_OF(lchild->avl_left) >= lrheight)
             {
                 rotate_right(axis, lchild, lrchild, nodeplace, lrheight);
+                axis = lchild->parent;
             }
             else
             {
                 midmount_right(axis, lchild, lrchild, nodeplace, lrheight);
+                axis = lrchild->parent;
             }
         }
         else if (lheight + 1 < rheight)
@@ -148,20 +154,23 @@ void util_avl_rebalance(struct util_avl_struct *node,
             if (HEIGHT_OF(rchild->avl_right) >= rlheight)
             {
                 rotate_left(axis, rchild, rlchild, nodeplace, rlheight);
+                axis = rchild->parent;
             }
             else
             {
                 midmount_left(axis, rchild, rlchild, nodeplace, rlheight);
+                axis = rlchild->parent;
             }
         }
         else
         {
-            int height = lheight < rheight ? rheight : lheight;
+            int height = (lheight < rheight ? rheight : lheight) + 1;
             if (height == axis->height)
                 break;
             axis->height = height;
+            axis = axis->parent;
         }
-    } while (nodeplace != &root->root_node);
+    } while (axis);
 }
 
 void util_avl_remove(struct util_avl_struct *node, struct util_avl_root *root)
@@ -196,9 +205,10 @@ void util_avl_remove(struct util_avl_struct *node, struct util_avl_root *root)
             *nodeplace = rchild;
             rchild->avl_left = node->avl_left;
             if (rchild->avl_left != NULL)
-                rchild->avl_left->parent = node->parent;
+                rchild->avl_left->parent = rchild;
             rchild->parent = node->parent;
-            node = rchild;
+            util_avl_rebalance(rchild, root);
+            node = rchild->parent;
         }
         else
         {
@@ -221,7 +231,8 @@ void util_avl_remove(struct util_avl_struct *node, struct util_avl_root *root)
             if (sparent->avl_left != NULL)
                 sparent->avl_left->parent = sparent;
             successor->parent = node->parent;
-            node = sparent;
+            util_avl_rebalance(sparent, root);
+            node = successor;
         }
     }
 

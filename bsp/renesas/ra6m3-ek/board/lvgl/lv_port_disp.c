@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,11 +8,16 @@
  * 2021-11-24     Rbb666       The first version
  */
 #include <lvgl.h>
-#include "lcd_port.h"
 #include "hal_data.h"
 
 #if DLG_LVGL_USE_GPU_RA6M3
     #include "lv_port_gpu.h"
+#endif
+
+#ifdef BSP_USING_SPI_LCD
+    #include "lcd_ili9341.h"
+#else
+    #include "lcd_port.h"
 #endif
 
 #define COLOR_BUFFER  (LV_HOR_RES_MAX * LV_VER_RES_MAX / 4)
@@ -22,40 +27,22 @@ static lv_disp_draw_buf_t disp_buf;
 
 /*Descriptor of a display driver*/
 static lv_disp_drv_t disp_drv;
+static struct rt_device_graphic_info info;
 
 /*Static or global buffer(s). The second buffer is optional*/
 // 0x1FFE0000    0x20040000
 __attribute__((section(".ARM.__at_0x1FFE0000"))) lv_color_t buf_1[COLOR_BUFFER];
 
-static uint8_t lvgl_ready_done = RT_EBUSY;
-
-static rt_device_t device;
-static struct rt_device_graphic_info info;
-static rt_sem_t trans_done_semphr = RT_NULL;
-
-void _rm_guix_port_display_callback(display_callback_args_t *p_args)
+#if !DLG_LVGL_USE_GPU_RA6M3
+void _ra_port_display_callback(display_callback_args_t * p_args)
 {
-    if (lvgl_ready_done != RT_EOK)
-        return;
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-    if (DISPLAY_EVENT_LINE_DETECTION == p_args->event)
-    {
-        /* enter interrupt */
-        rt_interrupt_enter();
+    /* TODO */
 
-        lv_disp_flush_ready((lv_disp_drv_t *)&disp_drv);
-
-        rt_sem_release(trans_done_semphr);
-
-        /* exit interrupt */
-        rt_interrupt_leave();
-    }
-}
-
-// Wait until Vsync is triggered through callback function
-void vsync_wait(void)
-{
-    rt_sem_take(trans_done_semphr, RT_WAITING_FOREVER);
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
@@ -68,9 +55,15 @@ static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
     dst->ch.red = src->ch.red;
 #endif
 }
+#endif
 
 static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
+#ifdef BSP_USING_SPI_LCD
+    lcd_fill_array_spi(area->x1, area->y1, area->x2, area->y2, color_p);
+#elif DLG_LVGL_USE_GPU_RA6M3
+    lv_port_gpu_flush();
+#else
     int x1, x2, y1, y2;
 
     x1 = area->x1;
@@ -98,10 +91,6 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
     uint32_t y;
     long int location = 0;
 
-#if DLG_LVGL_USE_GPU_RA6M3
-    lv_port_gpu_flush();
-#endif
-
     /* color_p is a buffer pointer; the buffer is provided by LVGL */
     lv_color16_t *fbp16 = (lv_color16_t *)info.framebuffer;
 
@@ -116,12 +105,16 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 
         color_p += x2 - act_x2;
     }
-
-    vsync_wait();
+#endif
+    lv_disp_flush_ready(disp_drv);
 }
 
 void lv_port_disp_init(void)
 {
+#ifdef BSP_USING_SPI_LCD
+    spi_lcd_init();
+#else
+    static rt_device_t device;
     /* LCD Device Init */
     device = rt_device_find("lcd");
     RT_ASSERT(device != RT_NULL);
@@ -133,22 +126,15 @@ void lv_port_disp_init(void)
 
     RT_ASSERT(info.bits_per_pixel == 8 || info.bits_per_pixel == 16 ||
               info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
-
-    trans_done_semphr = rt_sem_create("lvgl_sem", 1, RT_IPC_FLAG_PRIO);
-    if (trans_done_semphr == RT_NULL)
-    {
-        rt_kprintf("create transform done semphr failed.\n");
-        return;
-    }
-
+#endif
     /*Initialize `disp_buf` with the buffer(s). With only one buffer use NULL instead buf_2 */
     lv_disp_draw_buf_init(&disp_buf, buf_1, NULL, COLOR_BUFFER);
 
     lv_disp_drv_init(&disp_drv); /*Basic initialization*/
 
     /*Set the resolution of the display*/
-    disp_drv.hor_res = LCD_WIDTH;
-    disp_drv.ver_res = LCD_HEIGHT;
+    disp_drv.hor_res = LV_HOR_RES_MAX;
+    disp_drv.ver_res = LV_VER_RES_MAX;
 
     /*Set a display buffer*/
     disp_drv.draw_buf = &disp_buf;
@@ -163,6 +149,4 @@ void lv_port_disp_init(void)
 
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);
-
-    lvgl_ready_done = RT_EOK;
 }

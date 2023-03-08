@@ -228,7 +228,7 @@ static rt_err_t  drv_uart_configure(struct rt_serial_device *serial, struct seri
 static rt_err_t  drv_uart_control(struct rt_serial_device *serial, int cmd, void *arg);
 static int       drv_uart_putc(struct rt_serial_device *serial, char c);
 static int       drv_uart_getc(struct rt_serial_device *serial);
-static rt_size_t drv_uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
+static rt_ssize_t drv_uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
 
 const struct rt_uart_ops _uart_ops =
 {
@@ -390,7 +390,7 @@ static int drv_uart_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static rt_size_t drv_uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t drv_uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     return (0);
 }
