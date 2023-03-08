@@ -218,11 +218,6 @@ static int pwm_led_sample(int argc, char *argv[])
     dir = 1;            /* Increase or decrease direction of PWM pulse width value */
     pulse = 0;          /* PWM pulse width value, the unit is nanoseconds*/
 
-    /* Set LED pin mode to output */
-    rt_pin_mode(LED_PIN_NUM, PIN_MODE_OUTPUT);
-    /* Set high LED pin mode */
-    rt_pin_write(LED_PIN_NUM, PIN_HIGH);
-
     /* Search the Device */
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
     if (pwm_dev == RT_NULL)
