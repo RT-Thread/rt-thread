@@ -78,9 +78,8 @@ void lwp_aspace_switch(struct rt_thread *thread)
 
 void lwp_unmap_user_space(struct rt_lwp *lwp)
 {
+    arch_user_space_free(lwp);
     rt_free(lwp->lwp_obj);
-    rt_aspace_delete(lwp->aspace);
-    arch_user_space_vtable_free(lwp);
 }
 
 static const char *user_get_name(rt_varea_t varea)
