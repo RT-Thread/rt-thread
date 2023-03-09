@@ -42,7 +42,7 @@ volatile __attribute__((aligned(4 * 1024)))
 rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
 
 static rt_uint8_t ASID_BITS = 0;
-static rt_uint16_t next_asid;
+static rt_uint32_t next_asid;
 static rt_uint64_t global_asid_generation;
 #define ASID_MASK ((1 << ASID_BITS) - 1)
 #define ASID_FIRST_GENERATION (1 << ASID_BITS)
