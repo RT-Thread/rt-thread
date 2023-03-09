@@ -44,7 +44,7 @@ void *arch_get_user_sp(void);
 
 /* user space setup and control */
 int arch_user_space_init(struct rt_lwp *lwp);
-void arch_user_space_vtable_free(struct rt_lwp *lwp);
+void arch_user_space_free(struct rt_lwp *lwp);
 void *arch_kernel_mmu_table_get(void);
 void arch_kuser_init(rt_aspace_t aspace, void *vectors);
 int arch_expand_user_stack(void *addr);
