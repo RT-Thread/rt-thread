@@ -189,7 +189,7 @@ static rt_err_t ch32f1_spi_configure(struct rt_spi_device *device, struct rt_spi
     return RT_EOK;
 };
 
-static rt_uint32_t ch32f1_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t ch32f1_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     struct rt_spi_bus *spi_bus;
     struct spi_bus_device *spi_bus_dev;
