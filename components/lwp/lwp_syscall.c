@@ -1676,10 +1676,15 @@ int lwp_dup_user(rt_varea_t varea, void *arg);
 
 static int _copy_process(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp)
 {
+    DLOG(session_start);
+    DLOG(group, "loop [for each varea in aspace]");
+    DLOG(msg, "lwp_aspace", "varea", DLOG_MSG, "dup_user");
+    DLOG(group_end);
     int err;
     dest_lwp->lwp_obj->source = src_lwp->aspace;
     err = rt_aspace_traversal(src_lwp->aspace, lwp_dup_user, dest_lwp);
     dest_lwp->lwp_obj->source = NULL;
+    DLOG(session_stop);
     return err;
 }
 

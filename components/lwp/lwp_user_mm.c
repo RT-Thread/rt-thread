@@ -38,14 +38,22 @@ static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace);
 
 int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
 {
+    DLOG(session_start);
+    DLOG(msg, "app", "lwp_user_mm", DLOG_MSG, "lwp_user_space_init");
+
     int err = -RT_ENOMEM;
+
+    DLOG(msg, "lwp_user_mm", "heap", DLOG_MSG, "malloc rt_lwp_objs");
     lwp->lwp_obj = rt_malloc(sizeof(struct rt_lwp_objs));
+    DLOG(msg, "lwp_user_mm", "lwp_user_mm", DLOG_MSG, "__init_lwp_objs");
     _init_lwp_objs(lwp->lwp_obj, lwp->aspace);
     if (lwp->lwp_obj)
     {
+        DLOG(msg, "lwp_user_mm", "lwp_user_mm", DLOG_MSG, "arch_user_space_init");
         err = arch_user_space_init(lwp);
         if (!is_fork && err == RT_EOK)
         {
+            DLOG(msg, "lwp_user_mm", "aspace", DLOG_MSG, "rt_aspace_map");
             void *addr = (void *)USER_STACK_VSTART;
             err = rt_aspace_map(lwp->aspace, &addr,
                                 USER_STACK_VEND - USER_STACK_VSTART,
@@ -53,6 +61,7 @@ int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
         }
     }
     return err;
+    DLOG(session_stop);
 }
 
 void lwp_aspace_switch(struct rt_thread *thread)

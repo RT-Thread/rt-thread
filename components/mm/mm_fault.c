@@ -98,6 +98,8 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct rt_mm_fault_msg *msg)
 
 int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg)
 {
+    DLOG(session_start);
+    DLOG(msg, "trap", "aspace", DLOG_MSG, "rt_mm_fault_try_fix");
     struct rt_lwp *lwp = lwp_self();
     int err = UNRECOVERABLE;
     uintptr_t va = (uintptr_t)msg->vaddr;
@@ -107,12 +109,16 @@ int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg)
     if (lwp)
     {
         rt_aspace_t aspace = lwp->aspace;
+        DLOG(msg, "aspace", "varea", DLOG_MSG, "find varea");
         rt_varea_t varea = _aspace_bst_search(aspace, msg->vaddr);
         if (varea)
         {
+            DLOG(msg, "aspace", "libcpu_mmu", DLOG_MSG, "rt_hw_mmu_v2p(aspace, msg->vaddr)");
             void *pa = rt_hw_mmu_v2p(aspace, msg->vaddr);
             msg->off = (msg->vaddr - varea->start) >> ARCH_PAGE_SHIFT;
 
+            DLOG(msg, "varea", "varea", DLOG_MSG, "_fetch_page");
+            DLOG(msg, "varea", "aspace", DLOG_MSG, "on_page_fault");
             /* permission checked by fault op */
             switch (msg->fault_op)
             {
@@ -128,6 +134,7 @@ int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg)
             }
         }
     }
+    DLOG(session_stop);
 
     return err;
 }

@@ -32,6 +32,8 @@ enum ioremap_type
 
 static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
 {
+    DLOG(session_start);
+    DLOG(msg, "app", "mm", DLOG_MSG, "rt_iomap");
     void *v_addr = NULL;
     size_t attr;
     size_t lo_off;
@@ -58,6 +60,7 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     default:
         return v_addr;
     }
+    DLOG(msg, "mm", "aspace", DLOG_MSG, "rt_aspace_map_phy");
     err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr), &v_addr);
 
     if (err)
@@ -69,7 +72,9 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     {
         v_addr = v_addr + lo_off;
     }
+    DLOG(msg, "mm", "aspace", DLOG_MSG_RET, "vaddress");
     return v_addr;
+    DLOG(session_stop);
 }
 
 void *rt_ioremap(void *paddr, size_t size)

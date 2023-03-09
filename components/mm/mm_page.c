@@ -70,10 +70,12 @@ static void hint_free(rt_mm_va_hint_t hint)
 
 static void on_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
 {
+    DLOG(msg, "kernel_mem_obj", "aspace", DLOG_MSG, "find varea that includes this vaddress inside msg");
     void *init_start = (void *)init_mpr_align_start;
     void *init_end = (void *)init_mpr_align_end;
     if (msg->vaddr < init_end && msg->vaddr >= init_start)
     {
+        DLOG(msg, "aspace", "kernel_mem_obj", DLOG_MSG, "response.vaddr = init_mpr_cont_start + offset");
         rt_size_t offset = msg->vaddr - init_start;
         msg->response.status = MM_FAULT_STATUS_OK;
         msg->response.vaddr = init_mpr_cont_start + offset;
@@ -81,11 +83,14 @@ static void on_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
     }
     else
     {
+        DLOG(msg, "aspace", "page", DLOG_MSG, "rt_pages_alloc(0)");
         void *raw_page = rt_pages_alloc(0);
         msg->response.status = MM_FAULT_STATUS_OK;
+        DLOG(msg, "aspace", "kernel_mem_obj", DLOG_MSG, "response.vaddr = raw_page");
         msg->response.vaddr = raw_page;
         msg->response.size = ARCH_PAGE_SIZE;
     }
+
 }
 
 static struct rt_mem_obj mm_page_mapper = {
@@ -222,6 +227,9 @@ static int _pages_ref_get(struct rt_page *p, rt_uint32_t size_bits)
 
 static int _pages_free(struct rt_page *p, rt_uint32_t size_bits)
 {
+    DLOG(session_start);
+    DLOG(msg, "app", "page", DLOG_MSG, "_pages_free(struct rt_page *p, rt_uint32_t size_bits)");
+
     rt_uint32_t level = size_bits;
     struct rt_page *buddy;
 
@@ -238,6 +246,12 @@ static int _pages_free(struct rt_page *p, rt_uint32_t size_bits)
         return 0;
     }
 
+    DLOG(group, "loop [level < RT_PAGE_MAX_ORDER - 1 && !(buddy && buddy->size_bits == level)]");
+    DLOG(msg, "page", "page", DLOG_MSG, "page_remove current buddy of p");
+    DLOG(msg, "page", "page", DLOG_MSG, "p = (p < buddy) ? p : buddy, align");
+    DLOG(msg, "page", "page", DLOG_MSG, "level++");
+    DLOG(group_end);
+
     while (level < RT_PAGE_MAX_ORDER - 1)
     {
         buddy = buddy_get(p, level);
@@ -252,7 +266,9 @@ static int _pages_free(struct rt_page *p, rt_uint32_t size_bits)
             break;
         }
     }
+    DLOG(msg, "page", "page", DLOG_MSG, "page_insert(p, level)");
     page_insert(p, level);
+    DLOG(session_stop);
     return 1;
 }
 
@@ -260,6 +276,10 @@ static struct rt_page *_pages_alloc(rt_uint32_t size_bits)
 {
     struct rt_page *p;
 
+    DLOG(session_start);
+    DLOG(participant, "page");
+    DLOG(participant, "app");
+    DLOG(msg, "app", "page", DLOG_MSG, "_page_alloc(size_bits)");
     if (page_list[size_bits])
     {
         p = page_list[size_bits];
@@ -269,6 +289,7 @@ static struct rt_page *_pages_alloc(rt_uint32_t size_bits)
     {
         rt_uint32_t level;
 
+        DLOG(msg, "page", "page", DLOG_MSG, "find useable page group");
         for (level = size_bits + 1; level < RT_PAGE_MAX_ORDER; level++)
         {
             if (page_list[level])
@@ -282,7 +303,13 @@ static struct rt_page *_pages_alloc(rt_uint32_t size_bits)
         }
 
         p = page_list[level];
+        DLOG(msg, "page", "page", DLOG_MSG, "page_remove(p, level)");
         page_remove(p, level);
+        DLOG(group, "loop [level > size_bits]");
+        DLOG(msg, "page", "page", DLOG_MSG ,"page_insert(p, level - 1)，insert into next level of page_list");
+        DLOG(msg, "page", "page", DLOG_MSG, "buddy_get(p, level - 1)，get the buddy page");
+        DLOG(msg, "page", "page", DLOG_MSG, "level--");
+        DLOG(group_end);
         while (level > size_bits)
         {
             page_insert(p, level - 1);
@@ -292,6 +319,8 @@ static struct rt_page *_pages_alloc(rt_uint32_t size_bits)
     }
     p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
     p->ref_cnt = 1;
+    DLOG(msg, "page", "app", DLOG_MSG_RET, "p");
+    DLOG(session_stop);
     return p;
 }
 
@@ -625,20 +654,29 @@ static int _load_mpr_area(void *head, void *tail)
 
 int rt_page_install(rt_region_t region)
 {
+    DLOG(session_start);
+    DLOG(msg, "kernel", "page", DLOG_MSG, "rt_page_install(rt_region_t region)");
     int err = -RT_EINVAL;
     if (region.end != region.start && !(region.start & ARCH_PAGE_MASK) &&
         !(region.end & ARCH_PAGE_MASK) &&
         !((region.end - region.start) & shadow_mask))
     {
+        DLOG(msg, "page", "page", DLOG_MSG, "void *head = addr_to_page(page_start, (void *)region.start)");
         void *head = addr_to_page(page_start, (void *)region.start);
+
+        DLOG(msg, "page", "page", DLOG_MSG, "void *tail = addr_to_page(page_start, (void *)region.end)");
         void *tail = addr_to_page(page_start, (void *)region.end);
 
         page_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
 
+        DLOG(msg, "page", "page", DLOG_MSG, "_load_mpr_area(head, tail), loop for all page from head to tail");
         err = _load_mpr_area(head, tail);
 
         if (err == RT_EOK)
         {
+            DLOG(group, "loop [for all page from head to tail]");
+            DLOG(msg, "page", "aspace", DLOG_MSG, "rt_aspace_load_page(&rt_kernel_space, iter, 1)");
+            DLOG(group_end);
             while (region.start != region.end)
             {
                 struct rt_page *p;
@@ -654,6 +692,7 @@ int rt_page_install(rt_region_t region)
             }
         }
     }
+    DLOG(session_stop);
     return err;
 }
 
