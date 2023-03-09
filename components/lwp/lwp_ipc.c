@@ -940,6 +940,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     else
     {
         rt_free(d->vnode);
+        d->vnode = RT_NULL;
         _chfd_free(fd, fdt_type);
         fd = -1;
     }
