@@ -125,6 +125,8 @@
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_FDT
+#define RT_USING_FDTLIB
 #define RT_USING_RTC
 #define RT_USING_DEV_BUS
 #define RT_USING_VIRTIO
@@ -229,19 +231,11 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
 
 /* Kendryte SDK */
 
 
 /* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -286,14 +280,6 @@
 
 
 /* Uncategorized */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
 
 #define SOC_VIRT64_AARCH64
 
