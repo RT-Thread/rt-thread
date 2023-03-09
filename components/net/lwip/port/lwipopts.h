@@ -637,7 +637,7 @@
 #endif
 
 #if RT_USING_LWIP_VER_NUM >= 0x20000 /* >= v2.0.0 */
-#define LWIP_HOOK_IP4_ROUTE_SRC(dest, src)  lwip_ip4_route_src(dest, src)
+#define LWIP_HOOK_IP4_ROUTE_SRC(src, dest)  lwip_ip4_route_src(dest, src)
 #include "lwip/ip_addr.h"
 struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
 #endif /* RT_USING_LWIP_VER_NUM >= 0x20000 */
