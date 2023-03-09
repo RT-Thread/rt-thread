@@ -77,6 +77,16 @@ rt_hw_get_gtimer_frq:
     MRS X0,CNTFRQ_EL0
     RET
 
+.cfi_sections .debug_frame, .eh_frame
+.global _thread_start
+.cfi_startproc
+_thread_start:
+    .cfi_undefined x30
+    blr x19
+    mov x29, #0
+    blr x20
+.cfi_endproc
+
 .macro SAVE_CONTEXT
     /* Save the entire context. */
     SAVE_FPU SP
