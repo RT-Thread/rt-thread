@@ -78,7 +78,7 @@ rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
     {
         LOG_E("I2C bus operation not supported");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 
@@ -98,7 +98,7 @@ rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
     {
         LOG_E("I2C bus operation not supported");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 
