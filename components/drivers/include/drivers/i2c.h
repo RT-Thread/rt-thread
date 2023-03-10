@@ -97,8 +97,6 @@ rt_inline rt_err_t rt_i2c_bus_unlock(struct rt_i2c_bus_device *bus)
     return rt_mutex_release(&bus->lock);
 }
 
-int rt_i2c_core_init(void);
-
 #ifdef __cplusplus
 }
 #endif
