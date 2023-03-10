@@ -127,12 +127,15 @@ rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
                                        rt_uint8_t        flag,
                                        int suspend_flag)
 {
-    rt_err_t ret = rt_thread_suspend_with_flag(thread, suspend_flag);
-
-    /* suspend thread */
-    if (ret != RT_EOK)
+    if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
     {
-        return ret;
+        rt_err_t ret = rt_thread_suspend_with_flag(thread, suspend_flag);
+
+        /* suspend thread */
+        if (ret != RT_EOK)
+        {
+            return ret;
+        }
     }
 
     switch (flag)
@@ -1218,6 +1221,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
             }
             else
             {
+                /* mutex already taken, suspend current thread */
                 rt_uint8_t priority = thread->current_priority;
 
                 /* mutex is unavailable, push to suspend list */
