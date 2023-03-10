@@ -13,8 +13,10 @@
 #include <encoding.h>
 #include <cpuport.h>
 
-boot_hartid: .int
-    .global         boot_hartid
+    .data
+    .global boot_hartid    /* global varible rt_boot_hartid in .data section */
+boot_hartid:                          
+    .word 0xdeadbeef
 
     .global         _start
     .section ".start", "ax"
