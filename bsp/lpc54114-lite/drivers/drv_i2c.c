@@ -35,7 +35,7 @@ static uint32_t get_i2c_freq(I2C_Type *base)
 
 static rt_ssize_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
-    rt_size_t ret = (0);
+    rt_ssize_t ret = (0);
 
     rt_uint32_t index = 0;
     struct lpc_i2c *lpc_i2c = RT_NULL;
