@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -1013,7 +1013,7 @@ int netdev_dhcp_open(char* netdev_name)
     {
         rt_kprintf("bad network interface device name(%s).\n", netdev_name);
         return -1;
-    }    
+    }
     netdev_dhcp_enabled(netdev,RT_TRUE);
     return 0;
 }
@@ -1074,15 +1074,15 @@ int netdev_ifconfig(int argc, char **argv)
     {
         netdev_list_if();
     }
-#ifdef RT_LWIP_DHCP    
+#ifdef RT_LWIP_DHCP
     else if(argc == 3)
     {
         if (!strcmp(argv[2], "dhcp"))
         {
-            netdev_dhcp_open(argv[1]);    
+            netdev_dhcp_open(argv[1]);
         }
     }
-#endif    
+#endif
     else if (argc == 5)
     {
         rt_kprintf("config : %s\n", argv[1]);
@@ -1094,9 +1094,9 @@ int netdev_ifconfig(int argc, char **argv)
     else
     {
         rt_kprintf("bad parameter! e.g: ifconfig e0 192.168.1.30 192.168.1.1 255.255.255.0\n");
-#ifdef RT_LWIP_DHCP        
+#ifdef RT_LWIP_DHCP
         rt_kprintf("bad parameter! e.g: ifconfig e0 dhcp\n");
-#endif        
+#endif
     }
 
     return 0;
