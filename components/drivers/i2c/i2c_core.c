@@ -56,6 +56,7 @@ rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
                           rt_uint32_t               num)
 {
     rt_ssize_t ret;
+    rt_err_t err;
 
     if (bus->ops->master_xfer)
     {
@@ -67,18 +68,23 @@ rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
                   msgs[ret].addr, msgs[ret].len);
         }
 #endif
-
-        rt_mutex_take(&bus->lock, RT_WAITING_FOREVER);
+        err = rt_mutex_take(&bus->lock, RT_WAITING_FOREVER);
+        if (err != RT_EOK)
+        {
+            return (rt_ssize_t)err;
+        }
         ret = bus->ops->master_xfer(bus, msgs, num);
-        rt_mutex_release(&bus->lock);
-
+        err = rt_mutex_release(&bus->lock);
+        if (err != RT_EOK)
+        {
+            return (rt_ssize_t)err;
+        }
         return ret;
     }
     else
     {
         LOG_E("I2C bus operation not supported");
-
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
 }
 
@@ -91,14 +97,12 @@ rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
     if(bus->ops->i2c_bus_control)
     {
         ret = bus->ops->i2c_bus_control(bus, cmd, arg);
-
         return ret;
     }
     else
     {
         LOG_E("I2C bus operation not supported");
-
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
 }
 
