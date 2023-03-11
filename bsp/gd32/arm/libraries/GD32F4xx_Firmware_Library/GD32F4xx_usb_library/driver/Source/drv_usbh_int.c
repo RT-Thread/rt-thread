@@ -3,45 +3,44 @@
     \brief   USB host mode interrupt handler file
 
     \version 2020-08-01, V3.0.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.1.0, firmware for GD32F4xx
+    \version 2022-06-30, V3.2.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
-#include "drv_usb_core.h"
-#include "drv_usb_host.h"
 #include "drv_usbh_int.h"
-#include "usbh_core.h"
 
 #if defined   (__CC_ARM)        /*!< ARM compiler */
     #pragma O0
 #elif defined (__GNUC__)        /*!< GNU compiler */
     #pragma GCC optimize ("O0")
-#elif defined  (__TASKING__)    /*!< TASKING compiler */
+#elif defined  (__TASKING__)    /*!< TASKING compiler */ 
     #pragma optimize=0
 #endif /* __CC_ARM */
 
@@ -138,8 +137,8 @@ uint32_t usbh_isr (usb_core_driver *udev)
     \param[out] none
     \retval     none
 */
-static inline void usb_pp_halt (usb_core_driver *udev,
-                                uint8_t pp_num,
+static inline void usb_pp_halt (usb_core_driver *udev, 
+                                uint8_t pp_num, 
                                 uint32_t pp_int,
                                 usb_pipe_staus pp_status)
 {
@@ -206,20 +205,22 @@ static uint32_t usbh_int_port (usb_core_driver *udev)
                 udev->regs.hr->HFT = 48000U;
 
                 if (HCTL_48MHZ != clock_type) {
-                    usb_phyclock_config (udev, HCTL_48MHZ);
-                }
+                    if (USB_EMBEDDED_PHY == udev->bp.phy_itf) {
+                        usb_phyclock_config (udev, HCTL_48MHZ);
+                    }
 
-                port_reset = 1U;
+                    port_reset = 1U;
+                }
             } else {
                 /* for high speed device and others */
                 port_reset = 1U;
             }
 
-            usbh_int_fop->port_enabled(udev->host.data);
+            udev->host.port_enabled = 1;
 
             udev->regs.gr->GINTEN |= GINTEN_DISCIE | GINTEN_SOFIE;
         } else {
-            usbh_int_fop->port_disabled(udev->host.data);
+            udev->host.port_enabled = 0;
         }
     }
 
@@ -273,7 +274,8 @@ static uint32_t usbh_int_pipe_in (usb_core_driver *udev, uint32_t pp_num)
 
     usb_pipe *pp = &udev->host.pipe[pp_num];
 
-    __IO uint32_t intr_pp = pp_reg->HCHINTF & pp_reg->HCHINTEN;
+    uint32_t intr_pp = pp_reg->HCHINTF;
+    intr_pp &= pp_reg->HCHINTEN;
 
     uint8_t ep_type = (uint8_t)((pp_reg->HCHCTL & HCHCTL_EPTYPE) >> 18U);
 
@@ -400,16 +402,17 @@ static uint32_t usbh_int_pipe_in (usb_core_driver *udev, uint32_t pp_num)
 #endif /* __ICCARM */
 static uint32_t usbh_int_pipe_out (usb_core_driver *udev, uint32_t pp_num)
 {
+    usbh_host *uhost = udev->host.data;
     usb_pr *pp_reg = udev->regs.pr[pp_num];
-
     usb_pipe *pp = &udev->host.pipe[pp_num];
-
-    uint32_t intr_pp = pp_reg->HCHINTF & pp_reg->HCHINTEN;
+    uint32_t intr_pp = pp_reg->HCHINTF;
+    intr_pp &= pp_reg->HCHINTEN;
 
     if (intr_pp & HCHINTF_ACK) {
-        if (URB_PING == pp->urb_state) {
+        if (1U == udev->host.pipe[pp_num].do_ping) {
+            udev->host.pipe[pp_num].do_ping = 0;
             pp->err_count = 0U;
-            usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_TF, PIPE_XF);
+            usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_ACK, pp->pp_status);
         }
 
         pp_reg->HCHINTF = HCHINTF_ACK;
@@ -424,14 +427,31 @@ static uint32_t usbh_int_pipe_out (usb_core_driver *udev, uint32_t pp_num)
         pp->err_count = 0U;
         usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_TF, PIPE_XF);
     } else if (intr_pp & HCHINTF_NAK) {
+        if (0U == udev->host.pipe[pp_num].do_ping) {
+            if (1U == udev->host.pipe[pp_num].supp_ping) {
+                udev->host.pipe[pp_num].do_ping = 1;
+            }
+        }
+
         pp->err_count = 0U;
         usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_NAK, PIPE_NAK);
     } else if (intr_pp & HCHINTF_USBER) {
         pp->err_count++;
         usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_USBER, PIPE_TRACERR);
     } else if (intr_pp & HCHINTF_NYET) {
+        if (CTL_STATUS_OUT != uhost->control.ctl_state) {
+            if (0U == udev->host.pipe[pp_num].do_ping) {
+                if (1U == udev->host.pipe[pp_num].supp_ping) {
+                    udev->host.pipe[pp_num].do_ping = 1;
+                }
+            }
+
+            usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_NYET, PIPE_NYET);
+        } else {
+            usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_NYET, PIPE_XF);
+        }
+
         pp->err_count = 0U;
-        usb_pp_halt (udev, (uint8_t)pp_num, HCHINTF_NYET, PIPE_NYET);
     } else if (intr_pp & HCHINTF_CH) {
         udev->regs.pr[pp_num]->HCHINTEN &= ~HCHINTEN_CHIE;
 
@@ -440,27 +460,13 @@ static uint32_t usbh_int_pipe_out (usb_core_driver *udev, uint32_t pp_num)
             pp->urb_state = URB_DONE;
 
             if ((uint8_t)USB_EPTYPE_BULK == ((pp_reg->HCHCTL & HCHCTL_EPTYPE) >> 18U)) {
-                pp->data_toggle_out ^= 1U;
+                pp->data_toggle_out ^= 1U; 
             }
             break;
 
         case PIPE_NAK:
-
-            if (URB_PING == pp->urb_state) {
-                (void)usb_pipe_ping (udev, (uint8_t)pp_num);
-            } else {
-                pp->urb_state = URB_NOTREADY;
-            }
-            break;
-
         case PIPE_NYET:
-            if (1U == udev->host.pipe[pp_num].ping) {
-                (void)usb_pipe_ping (udev, (uint8_t)pp_num);
-                pp->urb_state = URB_PING;
-            }
-            else {
-                pp->urb_state = URB_NOTREADY;
-            }
+            pp->urb_state = URB_NOTREADY;
             break;
 
         case PIPE_STALL:
@@ -502,7 +508,7 @@ static uint32_t usbh_int_pipe_out (usb_core_driver *udev, uint32_t pp_num)
 #endif /* __ICCARM */
 static uint32_t usbh_int_rxfifonoempty (usb_core_driver *udev)
 {
-    uint32_t count = 0U;
+    uint32_t count = 0U, xfer_count = 0U;
 
     __IO uint8_t pp_num = 0U;
     __IO uint32_t rx_stat = 0U;
@@ -524,12 +530,14 @@ static uint32_t usbh_int_rxfifonoempty (usb_core_driver *udev)
             /* manage multiple transfer packet */
             udev->host.pipe[pp_num].xfer_buf += count;
             udev->host.pipe[pp_num].xfer_count += count;
+            
+            xfer_count = udev->host.pipe[pp_num].xfer_count;
 
-            udev->host.backup_xfercount[pp_num] = udev->host.pipe[pp_num].xfer_count;
+            udev->host.backup_xfercount[pp_num] = xfer_count;
 
             if (udev->regs.pr[pp_num]->HCHLEN & HCHLEN_PCNT) {
                 /* re-activate the channel when more packets are expected */
-                __IO uint32_t pp_ctl = udev->regs.pr[pp_num]->HCHCTL;
+                uint32_t pp_ctl = udev->regs.pr[pp_num]->HCHCTL;
 
                 pp_ctl |= HCHCTL_CEN;
                 pp_ctl &= ~HCHCTL_CDIS;

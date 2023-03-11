@@ -1,39 +1,25 @@
 /**************************************************************************//**
  * @file     core_cmFunc.h
  * @brief    CMSIS Cortex-M Core Function Access Header File
- * @version  V4.10
- * @date     18. March 2015
+ * @version  V3.01
+ * @date     06. March 2012
  *
  * @note
+ * Copyright (C) 2009-2012 ARM Limited. All rights reserved.
+ *
+ * @par
+ * ARM Limited (ARM) is supplying this software for use with Cortex-M
+ * processor based microcontrollers.  This file can be freely distributed
+ * within development tools that are supporting such ARM based processors.
+ *
+ * @par
+ * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
+ * OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
+ * ARM SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR
+ * CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  *
  ******************************************************************************/
-/* Copyright (c) 2009 - 2015 ARM LIMITED
-
-   All rights reserved.
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions are met:
-   - Redistributions of source code must retain the above copyright
-     notice, this list of conditions and the following disclaimer.
-   - Redistributions in binary form must reproduce the above copyright
-     notice, this list of conditions and the following disclaimer in the
-     documentation and/or other materials provided with the distribution.
-   - Neither the name of ARM nor the names of its contributors may be used
-     to endorse or promote products derived from this software without
-     specific prior written permission.
-   *
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-   ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDERS AND CONTRIBUTORS BE
-   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-   POSSIBILITY OF SUCH DAMAGE.
-   ---------------------------------------------------------------------------*/
-
 
 #ifndef __CORE_CMFUNC_H
 #define __CORE_CMFUNC_H
@@ -198,7 +184,7 @@ __STATIC_INLINE void __set_PRIMASK(uint32_t priMask)
 }
 
 
-#if       (__CORTEX_M >= 0x03) || (__CORTEX_SC >= 300)
+#if       (__CORTEX_M >= 0x03)
 
 /** \brief  Enable FIQ
 
@@ -242,20 +228,6 @@ __STATIC_INLINE void __set_BASEPRI(uint32_t basePri)
 }
 
 
-/** \brief  Set Base Priority with condition
-
-    This function assigns the given value to the Base Priority register only if BASEPRI masking is disabled,
-    or the new value increases the BASEPRI priority level.
-
-    \param [in]    basePri  Base Priority value to set
- */
-__STATIC_INLINE void __set_BASEPRI_MAX(uint32_t basePri)
-{
-  register uint32_t __regBasePriMax      __ASM("basepri_max");
-  __regBasePriMax = (basePri & 0xff);
-}
-
-
 /** \brief  Get Fault Mask
 
     This function returns the current value of the Fault Mask register.
@@ -281,10 +253,10 @@ __STATIC_INLINE void __set_FAULTMASK(uint32_t faultMask)
   __regFaultMask = (faultMask & (uint32_t)1);
 }
 
-#endif /* (__CORTEX_M >= 0x03) || (__CORTEX_SC >= 300) */
+#endif /* (__CORTEX_M >= 0x03) */
 
 
-#if       (__CORTEX_M == 0x04) || (__CORTEX_M == 0x07)
+#if       (__CORTEX_M == 0x04)
 
 /** \brief  Get FPSCR
 
@@ -317,7 +289,19 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
 #endif
 }
 
-#endif /* (__CORTEX_M == 0x04) || (__CORTEX_M == 0x07) */
+#endif /* (__CORTEX_M == 0x04) */
+
+
+#elif defined ( __ICCARM__ ) /*------------------ ICC Compiler -------------------*/
+/* IAR iccarm specific functions */
+
+#include <cmsis_iar.h>
+
+
+#elif defined ( __TMS470__ ) /*---------------- TI CCS Compiler ------------------*/
+/* TI CCS specific functions */
+
+#include <cmsis_ccs.h>
 
 
 #elif defined ( __GNUC__ ) /*------------------ GNU Compiler ---------------------*/
@@ -330,7 +314,7 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_irq(void)
 {
-  __ASM volatile ("cpsie i" : : : "memory");
+  __ASM volatile ("cpsie i");
 }
 
 
@@ -341,7 +325,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_irq(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __disable_irq(void)
 {
-  __ASM volatile ("cpsid i" : : : "memory");
+  __ASM volatile ("cpsid i");
 }
 
 
@@ -368,7 +352,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_CONTROL(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_CONTROL(uint32_t control)
 {
-  __ASM volatile ("MSR control, %0" : : "r" (control) : "memory");
+  __ASM volatile ("MSR control, %0" : : "r" (control) );
 }
 
 
@@ -440,7 +424,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_PSP(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_PSP(uint32_t topOfProcStack)
 {
-  __ASM volatile ("MSR psp, %0\n" : : "r" (topOfProcStack) : "sp");
+  __ASM volatile ("MSR psp, %0\n" : : "r" (topOfProcStack) );
 }
 
 
@@ -467,7 +451,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_MSP(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_MSP(uint32_t topOfMainStack)
 {
-  __ASM volatile ("MSR msp, %0\n" : : "r" (topOfMainStack) : "sp");
+  __ASM volatile ("MSR msp, %0\n" : : "r" (topOfMainStack) );
 }
 
 
@@ -494,7 +478,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_PRIMASK(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_PRIMASK(uint32_t priMask)
 {
-  __ASM volatile ("MSR primask, %0" : : "r" (priMask) : "memory");
+  __ASM volatile ("MSR primask, %0" : : "r" (priMask) );
 }
 
 
@@ -507,7 +491,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_PRIMASK(uint32_t p
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_fault_irq(void)
 {
-  __ASM volatile ("cpsie f" : : : "memory");
+  __ASM volatile ("cpsie f");
 }
 
 
@@ -518,7 +502,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_fault_irq(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __disable_fault_irq(void)
 {
-  __ASM volatile ("cpsid f" : : : "memory");
+  __ASM volatile ("cpsid f");
 }
 
 
@@ -532,7 +516,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_BASEPRI(void)
 {
   uint32_t result;
 
-  __ASM volatile ("MRS %0, basepri" : "=r" (result) );
+  __ASM volatile ("MRS %0, basepri_max" : "=r" (result) );
   return(result);
 }
 
@@ -545,20 +529,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_BASEPRI(void)
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_BASEPRI(uint32_t value)
 {
-  __ASM volatile ("MSR basepri, %0" : : "r" (value) : "memory");
-}
-
-
-/** \brief  Set Base Priority with condition
-
-    This function assigns the given value to the Base Priority register only if BASEPRI masking is disabled,
-    or the new value increases the BASEPRI priority level.
-
-    \param [in]    basePri  Base Priority value to set
- */
-__attribute__( ( always_inline ) ) __STATIC_INLINE void __set_BASEPRI_MAX(uint32_t value)
-{
-  __ASM volatile ("MSR basepri_max, %0" : : "r" (value) : "memory");
+  __ASM volatile ("MSR basepri, %0" : : "r" (value) );
 }
 
 
@@ -585,13 +556,13 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_FAULTMASK(void
  */
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_FAULTMASK(uint32_t faultMask)
 {
-  __ASM volatile ("MSR faultmask, %0" : : "r" (faultMask) : "memory");
+  __ASM volatile ("MSR faultmask, %0" : : "r" (faultMask) );
 }
 
 #endif /* (__CORTEX_M >= 0x03) */
 
 
-#if       (__CORTEX_M == 0x04) || (__CORTEX_M == 0x07)
+#if       (__CORTEX_M == 0x04)
 
 /** \brief  Get FPSCR
 
@@ -604,10 +575,7 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_FPSCR(void)
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
   uint32_t result;
 
-  /* Empty asm statement works as a scheduling barrier */
-  __ASM volatile ("");
   __ASM volatile ("VMRS %0, fpscr" : "=r" (result) );
-  __ASM volatile ("");
   return(result);
 #else
    return(0);
@@ -624,41 +592,25 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_FPSCR(void)
 __attribute__( ( always_inline ) ) __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
 {
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
-  /* Empty asm statement works as a scheduling barrier */
-  __ASM volatile ("");
-  __ASM volatile ("VMSR fpscr, %0" : : "r" (fpscr) : "vfpcc");
-  __ASM volatile ("");
+  __ASM volatile ("VMSR fpscr, %0" : : "r" (fpscr) );
 #endif
 }
 
-#endif /* (__CORTEX_M == 0x04) || (__CORTEX_M == 0x07) */
-
-
-#elif defined ( __ICCARM__ ) /*------------------ ICC Compiler -------------------*/
-/* IAR iccarm specific functions */
-#include <cmsis_iar.h>
-
-
-#elif defined ( __TMS470__ ) /*---------------- TI CCS Compiler ------------------*/
-/* TI CCS specific functions */
-#include <cmsis_ccs.h>
+#endif /* (__CORTEX_M == 0x04) */
 
 
 #elif defined ( __TASKING__ ) /*------------------ TASKING Compiler --------------*/
 /* TASKING carm specific functions */
+
 /*
  * The CMSIS functions have been implemented as intrinsics in the compiler.
- * Please use "carm -?i" to get an up to date list of all intrinsics,
+ * Please use "carm -?i" to get an up to date list of all instrinsics,
  * Including the CMSIS ones.
  */
-
-
-#elif defined ( __CSMC__ ) /*------------------ COSMIC Compiler -------------------*/
-/* Cosmic specific functions */
-#include <cmsis_csm.h>
 
 #endif
 
 /*@} end of CMSIS_Core_RegAccFunctions */
+
 
 #endif /* __CORE_CMFUNC_H */

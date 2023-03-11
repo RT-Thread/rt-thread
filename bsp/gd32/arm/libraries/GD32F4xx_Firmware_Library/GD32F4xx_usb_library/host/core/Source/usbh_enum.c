@@ -3,32 +3,34 @@
     \brief   USB host mode enumeration driver
 
     \version 2020-08-01, V3.0.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.1.0, firmware for GD32F4xx
+    \version 2022-06-30, V3.2.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
@@ -111,11 +113,11 @@ usbh_status usbh_cfgdesc_get (usbh_host *uhost, uint16_t len)
 
     usbh_control *usb_ctl = &uhost->control;
 
-#if (USBH_KEEP_CFG_DESCRIPTOR == 1U)
+#if (USBH_CFG_DESC_KEEP == 1U)
     pdata = uhost->dev_prop.cfgdesc_rawdata;
 #else
     pdata = uhost->dev_prop.data;
-#endif
+#endif /* (USBH_CFG_DESC_KEEP == 1U) */
 
     if (CTL_IDLE == usb_ctl->ctl_state) {
         usb_ctl->setup.req = (usb_req) {
@@ -152,8 +154,8 @@ usbh_status usbh_cfgdesc_get (usbh_host *uhost, uint16_t len)
     \retval     operation status
 */
 usbh_status usbh_strdesc_get (usbh_host *uhost,
-                              uint8_t str_index,
-                              uint8_t *buf,
+                              uint8_t str_index, 
+                              uint8_t *buf, 
                               uint16_t len)
 {
     usbh_status status = USBH_BUSY;
@@ -297,7 +299,7 @@ usbh_status usbh_setdevfeature (usbh_host *uhost, uint8_t feature_selector, uint
         };
 
         usbh_ctlstate_config (uhost, NULL, 0U);
-    }
+    } 
 
     status = usbh_ctl_handler (uhost);
 
@@ -328,7 +330,7 @@ usbh_status usbh_clrdevfeature (usbh_host *uhost, uint8_t feature_selector, uint
         };
 
         usbh_ctlstate_config (uhost, NULL, 0U);
-    }
+    } 
 
     status = usbh_ctl_handler (uhost);
 
@@ -343,7 +345,7 @@ usbh_status usbh_clrdevfeature (usbh_host *uhost, uint8_t feature_selector, uint
     \param[out] none
     \retval     operation status
 */
-usbh_status usbh_clrfeature (usbh_host *uhost, uint8_t ep_addr, uint8_t pp_num)
+usbh_status usbh_clrfeature (usbh_host *uhost, uint8_t ep_addr, uint8_t pp_num) 
 {
     usbh_status status = USBH_BUSY;
     usbh_control *usb_ctl = &uhost->control;
@@ -365,7 +367,7 @@ usbh_status usbh_clrfeature (usbh_host *uhost, uint8_t ep_addr, uint8_t pp_num)
         }
 
         usbh_ctlstate_config (uhost, NULL, 0U);
-    }
+    } 
 
     status = usbh_ctl_handler (uhost);
 
@@ -676,13 +678,13 @@ static void usbh_strdesc_parse (uint8_t *psrc, uint8_t *pdest, uint16_t len)
     if (USB_DESCTYPE_STR == psrc[1]) {
         /* make sure the descriptor is string type */
 
-        /* psrc[0] contains Size of Descriptor, subtract 2 to get the length of string */
+        /* psrc[0] contains size of descriptor, subtract 2 to get the length of string */
         str_len = USB_MIN((uint16_t)psrc[0] - 2U, len);
 
-        psrc += 2U; /* adjust the offset ignoring the string len and descriptor type */
+        psrc += 2U; /* adjust the offset ignoring the string length and descriptor type */
 
-        for (index = 0U; index < str_len; index += 2U) {
-            /* copy only the string and ignore the unicode id, hence add the src */
+        for(index = 0U; index < str_len; index += 2U) {
+            /* copy only the string and ignore the unicode id, hence add the source */
             *pdest = psrc[index];
 
             pdest++;

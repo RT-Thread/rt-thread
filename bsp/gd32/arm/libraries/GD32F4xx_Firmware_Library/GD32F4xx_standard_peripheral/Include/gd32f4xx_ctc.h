@@ -5,32 +5,33 @@
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
@@ -50,7 +51,7 @@ OF SUCH DAMAGE.
 
 /* bits definitions */
 /* CTC_CTL0 */
-#define CTC_CTL0_CKOKIE              BIT(0)                    /*!< clock trim OK(CKOKIF) interrupt enable */
+#define CTC_CTL0_CKOKIE              BIT(0)                    /*!< clock trim OK(CKOKIF) interrupt enable */ 
 #define CTC_CTL0_CKWARNIE            BIT(1)                    /*!< clock trim warning(CKWARNIF) interrupt enable */
 #define CTC_CTL0_ERRIE               BIT(2)                    /*!< error(ERRIF) interrupt enable */
 #define CTC_CTL0_EREFIE              BIT(3)                    /*!< EREFIF interrupt enable */
@@ -64,7 +65,6 @@ OF SUCH DAMAGE.
 #define CTC_CTL1_CKLIM               BITS(16,23)               /*!< clock trim base limit value */
 #define CTC_CTL1_REFPSC              BITS(24,26)               /*!< reference signal source prescaler */
 #define CTC_CTL1_REFSEL              BITS(28,29)               /*!< reference signal source selection */
-#define CTC_CTL1_USBSOFSEL           BIT(30)                   /*!< USBFS or USBHS SOF signal selection */
 #define CTC_CTL1_REFPOL              BIT(31)                   /*!< reference signal source polarity */
 
 /* CTC_STAT */
@@ -93,15 +93,10 @@ OF SUCH DAMAGE.
 #define CTC_REFSOURCE_POLARITY_FALLING                   CTC_CTL1_REFPOL              /*!< reference signal source polarity is falling edge*/
 #define CTC_REFSOURCE_POLARITY_RISING                    ((uint32_t)0x00000000U)      /*!< reference signal source polarity is rising edge*/
 
-/* USBFS or USBHS SOF signal selection definitions */
-#define CTC_USBSOFSEL_USBHS                              CTC_CTL1_USBSOFSEL           /*!< USBHS SOF signal is selected*/
-#define CTC_USBSOFSEL_USBFS                              ((uint32_t)0x00000000U)      /*!< USBFS SOF signal is selected*/
-
 /* reference signal source selection definitions */
 #define CTL1_REFSEL(regval)                              (BITS(28,29) & ((uint32_t)(regval) << 28))
 #define CTC_REFSOURCE_GPIO                               CTL1_REFSEL(0)               /*!< GPIO is selected */
 #define CTC_REFSOURCE_LXTAL                              CTL1_REFSEL(1)               /*!< LXTAL is clock selected */
-#define CTC_REFSOURCE_USBSOF                             CTL1_REFSEL(2)               /*!< USBSOF is selected */
 
 /* reference signal source prescaler definitions */
 #define CTL1_REFPSC(regval)                              (BITS(24,26) & ((uint32_t)(regval) << 24))
@@ -155,8 +150,6 @@ void ctc_hardware_trim_mode_config(uint32_t hardmode);
 
 /* configure reference signal source polarity */
 void ctc_refsource_polarity_config(uint32_t polarity);
-/* select USBFS or USBHS SOF signal */
-void ctc_usbsof_signal_select(uint32_t usbsof);
 /* select reference signal source */
 void ctc_refsource_signal_select(uint32_t refs);
 /* configure reference signal source prescaler */
@@ -181,7 +174,7 @@ void ctc_interrupt_enable(uint32_t interrupt);
 /* disable the CTC interrupt */
 void ctc_interrupt_disable(uint32_t interrupt);
 /* get CTC interrupt flag */
-FlagStatus ctc_interrupt_flag_get(uint32_t int_flag);
+FlagStatus ctc_interrupt_flag_get(uint32_t int_flag); 
 /* clear CTC interrupt flag */
 void ctc_interrupt_flag_clear(uint32_t int_flag);
 /* get CTC flag */

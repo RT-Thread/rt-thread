@@ -5,10 +5,11 @@
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
     Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -38,6 +39,7 @@ OF SUCH DAMAGE.
 
 #define CRC_DATA_RESET_VALUE      ((uint32_t)0xFFFFFFFFU)
 #define CRC_FDATA_RESET_VALUE     ((uint32_t)0x00000000U)
+
 /*!
     \brief      deinit CRC calculation unit
     \param[in]  none
@@ -121,7 +123,7 @@ uint32_t crc_single_data_calculate(uint32_t sdata)
 uint32_t crc_block_data_calculate(uint32_t array[], uint32_t size)
 {
     uint32_t index;
-    for(index = 0U; index < size; index++){
+    for(index = 0U; index < size; index++) {
         CRC_DATA = array[index];
     }
     return (CRC_DATA);
