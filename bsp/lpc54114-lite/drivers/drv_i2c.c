@@ -84,7 +84,7 @@ static rt_ssize_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
 
 static rt_ssize_t slave_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
-    return -RT_EIO;
+    return -RT_ENOSYS;
 }
 
 static rt_err_t i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t cmd, rt_uint32_t arg)
