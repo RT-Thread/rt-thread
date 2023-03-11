@@ -5,32 +5,33 @@
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
@@ -50,7 +51,7 @@ OF SUCH DAMAGE.
 #define IREF_CTL_CSDT                   BITS(0,5)              /*!< current step data */
 #define IREF_CTL_SCMOD                  BIT(7)                 /*!< sink current mode */
 #define IREF_CTL_CPT                    BITS(8,12)             /*!< current precision trim */
-#define IREF_CTL_SSEL                   BIT(14)                /*!< step selection */
+#define IREF_CTL_SSEL                   BIT(14)                /*!< step selection */ 
 #define IREF_CTL_CREN                   BIT(15)                /*!< current reference enable */
 
 /* constants definitions */
@@ -155,19 +156,19 @@ OF SUCH DAMAGE.
 #define IREF_CUR_STEP_DATA_61           CTL_CSDT(61)           /*!< IREF current step data 61 */
 #define IREF_CUR_STEP_DATA_62           CTL_CSDT(62)           /*!< IREF current step data 62 */
 #define IREF_CUR_STEP_DATA_63           CTL_CSDT(63)           /*!< IREF current step data 63 */
-
+ 
 /* IREF mode selection */
 #define IREF_STEP(regval)               (BIT(14) & ((uint32_t)(regval) << 14))
 #define IREF_MODE_LOW_POWER             IREF_STEP(0)           /*!< low power, 1uA step */
 #define IREF_MODE_HIGH_CURRENT          IREF_STEP(1)           /*!< high current, 8uA step */
-
-/* IREF sink current mode*/
+ 
+/* IREF sink current mode*/ 
 #define IREF_CURRENT(regval)            (BIT(7) & ((uint32_t)(regval) << 7))
 #define IREF_SOURCE_CURRENT             IREF_CURRENT(0)        /*!< IREF source current */
 #define IREF_SINK_CURRENT               IREF_CURRENT(1)        /*!< IREF sink current */
 
 /* function declarations */
-/* deinit IREF */
+/* deinitialize IREF */
 void iref_deinit(void);
 /* enable IREF */
 void iref_enable(void);

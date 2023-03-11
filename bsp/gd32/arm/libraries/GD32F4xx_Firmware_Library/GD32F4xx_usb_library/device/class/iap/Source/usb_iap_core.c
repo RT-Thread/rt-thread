@@ -3,32 +3,34 @@
     \brief   IAP driver
 
     \version 2020-08-01, V3.0.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.1.0, firmware for GD32F4xx
+    \version 2022-06-30, V3.2.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
@@ -44,10 +46,10 @@ OF SUCH DAMAGE.
 __ALIGN_BEGIN const usb_desc_dev iap_dev_desc __ALIGN_END =
 {
     .header =
-     {
-         .bLength          = USB_DEV_DESC_LEN,
-         .bDescriptorType  = USB_DESCTYPE_DEV
-     },
+    {
+        .bLength          = USB_DEV_DESC_LEN,
+        .bDescriptorType  = USB_DESCTYPE_DEV
+    },
     .bcdUSB                = 0x0200U,
     .bDeviceClass          = 0x00U,
     .bDeviceSubClass       = 0x00U,
@@ -62,15 +64,15 @@ __ALIGN_BEGIN const usb_desc_dev iap_dev_desc __ALIGN_END =
     .bNumberConfigurations = USBD_CFG_MAX_NUM
 };
 
-__ALIGN_BEGIN const usb_hid_desc_config_set iap_config_desc __ALIGN_END =
+__ALIGN_BEGIN const usb_hid_desc_config_set iap_config_desc __ALIGN_END = 
 {
     .config =
     {
         .header =
-         {
-             .bLength         = sizeof(usb_desc_config),
-             .bDescriptorType = USB_DESCTYPE_CONFIG
-         },
+        {
+            .bLength         = sizeof(usb_desc_config),
+            .bDescriptorType = USB_DESCTYPE_CONFIG
+        },
         .wTotalLength         = USB_DESC_LEN_IAP_CONFIG_SET,
         .bNumInterfaces       = 0x01U,
         .bConfigurationValue  = 0x01U,
@@ -82,10 +84,10 @@ __ALIGN_BEGIN const usb_hid_desc_config_set iap_config_desc __ALIGN_END =
     .hid_itf =
     {
         .header =
-         {
-             .bLength         = sizeof(usb_desc_itf),
-             .bDescriptorType = USB_DESCTYPE_ITF
-         },
+        {
+            .bLength         = sizeof(usb_desc_itf),
+            .bDescriptorType = USB_DESCTYPE_ITF
+        },
         .bInterfaceNumber     = 0x00U,
         .bAlternateSetting    = 0x00U,
         .bNumEndpoints        = 0x02U,
@@ -98,10 +100,10 @@ __ALIGN_BEGIN const usb_hid_desc_config_set iap_config_desc __ALIGN_END =
     .hid_vendor =
     {
         .header =
-         {
-             .bLength         = sizeof(usb_desc_hid),
-             .bDescriptorType = USB_DESCTYPE_HID
-         },
+        {
+            .bLength         = sizeof(usb_desc_hid),
+            .bDescriptorType = USB_DESCTYPE_HID
+        },
         .bcdHID               = 0x0111U,
         .bCountryCode         = 0x00U,
         .bNumDescriptors      = 0x01U,
@@ -112,10 +114,10 @@ __ALIGN_BEGIN const usb_hid_desc_config_set iap_config_desc __ALIGN_END =
     .hid_epin =
     {
         .header =
-         {
-             .bLength         = sizeof(usb_desc_ep),
-             .bDescriptorType = USB_DESCTYPE_EP
-         },
+        {
+            .bLength         = sizeof(usb_desc_ep),
+            .bDescriptorType = USB_DESCTYPE_EP
+        },
         .bEndpointAddress     = IAP_IN_EP,
         .bmAttributes         = USB_EP_ATTR_INT,
         .wMaxPacketSize       = IAP_IN_PACKET,
@@ -125,10 +127,10 @@ __ALIGN_BEGIN const usb_hid_desc_config_set iap_config_desc __ALIGN_END =
     .hid_epout =
     {
         .header =
-         {
-             .bLength         = sizeof(usb_desc_ep),
-             .bDescriptorType = USB_DESCTYPE_EP
-         },
+        {
+            .bLength         = sizeof(usb_desc_ep),
+            .bDescriptorType = USB_DESCTYPE_EP
+        },
         .bEndpointAddress     = IAP_OUT_EP,
         .bmAttributes         = USB_EP_ATTR_INT,
         .wMaxPacketSize       = IAP_OUT_PACKET,
@@ -137,49 +139,49 @@ __ALIGN_BEGIN const usb_hid_desc_config_set iap_config_desc __ALIGN_END =
 };
 
 /* USB language ID Descriptor */
-static __ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END =
+static __ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END = 
 {
     .header =
-     {
-         .bLength         = sizeof(usb_desc_LANGID),
-         .bDescriptorType = USB_DESCTYPE_STR
-     },
+    {
+        .bLength         = sizeof(usb_desc_LANGID),
+        .bDescriptorType = USB_DESCTYPE_STR
+    },
     .wLANGID              = ENG_LANGID
 };
 
 /* USB manufacture string */
-static __ALIGN_BEGIN const usb_desc_str manufacturer_string __ALIGN_END =
+static __ALIGN_BEGIN const usb_desc_str manufacturer_string __ALIGN_END = 
 {
     .header =
-     {
-         .bLength         = USB_STRING_LEN(10U),
-         .bDescriptorType = USB_DESCTYPE_STR,
-     },
+    {
+        .bLength         = USB_STRING_LEN(10U),
+        .bDescriptorType = USB_DESCTYPE_STR,
+    },
     .unicode_string = {'G', 'i', 'g', 'a', 'D', 'e', 'v', 'i', 'c', 'e'}
 };
 
 /* USB product string */
-static __ALIGN_BEGIN const usb_desc_str product_string __ALIGN_END =
+static __ALIGN_BEGIN const usb_desc_str product_string __ALIGN_END = 
 {
     .header =
-     {
-         .bLength         = USB_STRING_LEN(12U),
-         .bDescriptorType = USB_DESCTYPE_STR,
-     },
+    {
+        .bLength         = USB_STRING_LEN(12U),
+        .bDescriptorType = USB_DESCTYPE_STR,
+    },
     .unicode_string = {'G', 'D', '3', '2', '-', 'U', 'S', 'B', '_', 'I', 'A', 'P'}
 };
 
 /* USBD serial string */
-static __ALIGN_BEGIN usb_desc_str serial_string __ALIGN_END =
+static __ALIGN_BEGIN usb_desc_str serial_string __ALIGN_END = 
 {
     .header =
-     {
-         .bLength         = USB_STRING_LEN(2U),
-         .bDescriptorType = USB_DESCTYPE_STR,
-     }
+    {
+        .bLength         = USB_STRING_LEN(2U),
+        .bDescriptorType = USB_DESCTYPE_STR,
+    }
 };
 
-void *const usbd_iap_strings[] =
+void *const usbd_iap_strings[] = 
 {
     [STR_IDX_LANGID]  = (uint8_t *)&usbd_language_id_desc,
     [STR_IDX_MFC]     = (uint8_t *)&manufacturer_string,
@@ -194,17 +196,17 @@ usb_desc iap_desc = {
 };
 
 /* local function prototypes ('static') */
-static uint8_t iap_init (usb_dev *udev, uint8_t config_index);
-static uint8_t iap_deinit (usb_dev *udev, uint8_t config_index);
-static uint8_t iap_req_handler (usb_dev *udev, usb_req *req);
-static uint8_t iap_data_out (usb_dev *udev, uint8_t ep_num);
+static uint8_t iap_init         (usb_dev *udev, uint8_t config_index);
+static uint8_t iap_deinit       (usb_dev *udev, uint8_t config_index);
+static uint8_t iap_req_handler  (usb_dev *udev, usb_req *req);
+static uint8_t iap_data_out     (usb_dev *udev, uint8_t ep_num);
 
 /* IAP requests management functions */
-static void iap_req_erase     (usb_dev *udev);
-static void iap_req_dnload    (usb_dev *udev);
-static void iap_req_optionbyte(usb_dev *udev, uint8_t option_num);
-static void iap_req_leave     (usb_dev *udev);
-static void iap_address_send  (usb_dev *udev);
+static void iap_req_erase       (usb_dev *udev);
+static void iap_req_dnload      (usb_dev *udev);
+static void iap_req_optionbyte  (usb_dev *udev, uint8_t option_num);
+static void iap_req_leave       (usb_dev *udev);
+static void iap_address_send    (usb_dev *udev);
 
 usb_class_core iap_class = {
     .init            = iap_init,
@@ -275,10 +277,10 @@ static uint8_t iap_init (usb_dev *udev, uint8_t config_index)
 {
     static __ALIGN_BEGIN usbd_iap_handler iap_handler __ALIGN_END;
 
-    /* initialize TX endpoint */
+    /* initialize Tx endpoint */
     usbd_ep_setup(udev, &(iap_config_desc.hid_epin));
 
-    /* initialize RX endpoint */
+    /* initialize Rx endpoint */
     usbd_ep_setup(udev, &(iap_config_desc.hid_epout));
 
     /* unlock the internal flash */
@@ -380,47 +382,45 @@ static uint8_t iap_data_out (usb_dev *udev ,uint8_t ep_num)
 {
     usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
 
-    if ((IAP_OUT_EP & 0x7FU) == ep_num) {
-        if (0x01U == iap->report_buf[0]) {
-            switch (iap->report_buf[1]) {
-            case IAP_DNLOAD:
-                iap_req_dnload(udev);
-                break;
+    if (0x01U == iap->report_buf[0]) {
+        switch (iap->report_buf[1]) {
+        case IAP_DNLOAD:
+            iap_req_dnload(udev);
+            break;
 
-            case IAP_ERASE:
-                iap_req_erase(udev);
-                break;
+        case IAP_ERASE:
+            iap_req_erase(udev);
+            break;
 
-            case IAP_OPTION_BYTE1:
-                iap_req_optionbyte(udev, 0x01U);
-                break;
+        case IAP_OPTION_BYTE1:
+            iap_req_optionbyte(udev, 0x01U);
+            break;
 
-            case IAP_LEAVE:
-                iap_req_leave(udev);
-                break;
+        case IAP_LEAVE:
+            iap_req_leave(udev);
+            break;
 
-            case IAP_GETBIN_ADDRESS:
-                iap_address_send(udev);
-                break;
+        case IAP_GETBIN_ADDRESS:
+            iap_address_send(udev);
+            break;
 
-            case IAP_OPTION_BYTE2:
-                iap_req_optionbyte(udev, 0x02U);
-                break;
+        case IAP_OPTION_BYTE2:
+            iap_req_optionbyte(udev, 0x02U);
+            break;
 
-            default:
-                break;
-            }
+        default:
+            break;
         }
-
-        usbd_ep_recev(udev, IAP_OUT_EP, iap->report_buf, IAP_OUT_PACKET);
     }
+
+    usbd_ep_recev(udev, IAP_OUT_EP, iap->report_buf, IAP_OUT_PACKET);
 
     return USBD_OK;
 }
 
 /*!
     \brief      handle the IAP_DNLOAD request
-    \param[in]  udev: pointer to USB device instance
+    \param[in]  udev: pointer to usb device instance
     \param[out] none
     \retval     none
 */
@@ -452,7 +452,7 @@ static void iap_req_dnload(usb_dev *udev)
 
 /*!
     \brief      handle the IAP_ERASE request
-    \param[in]  udev: pointer to USB device instance
+    \param[in]  udev: pointer to usb device instance
     \param[out] none
     \retval     none
 */
@@ -515,7 +515,7 @@ static void iap_req_optionbyte(usb_dev *udev, uint8_t option_num)
 
     usbd_iap_handler *iap = (usbd_iap_handler *)udev->dev.class_data[USBD_IAP_INTERFACE];
 
-    iap->option_byte[0]= 0x02U;
+    iap->option_byte[0] = 0x02U;
 
     if (0x01U == option_num) {
         address = OPT_BYTE_ADDR1;
@@ -537,7 +537,7 @@ static void iap_req_optionbyte(usb_dev *udev, uint8_t option_num)
 
 /*!
     \brief      handle the IAP_LEAVE request
-    \param[in]  udev: pointer to USB device instance
+    \param[in]  udev: pointer to usb device instance
     \param[out] none
     \retval     none
 */
@@ -552,7 +552,7 @@ static void iap_req_leave(usb_dev *udev)
 
 /*!
     \brief      handle the IAP_SEND_ADDRESS request
-    \param[in]  udev: pointer to USB device instance
+    \param[in]  udev: pointer to usb device instance
     \param[out] none
     \retval     none
 */

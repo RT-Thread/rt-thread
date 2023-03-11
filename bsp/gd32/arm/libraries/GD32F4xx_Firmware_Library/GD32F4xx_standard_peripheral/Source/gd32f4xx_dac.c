@@ -5,10 +5,11 @@
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
     Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -61,9 +62,9 @@ void dac_deinit(void)
 */
 void dac_enable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_CTL |= DAC_CTL_DEN0;
-    }else{
+    } else {
         DAC_CTL |= DAC_CTL_DEN1;
     }
 }
@@ -76,9 +77,9 @@ void dac_enable(uint32_t dac_periph)
 */
 void dac_disable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_CTL &= ~DAC_CTL_DEN0;
-    }else{
+    } else {
         DAC_CTL &= ~DAC_CTL_DEN1;
     }
 }
@@ -91,9 +92,9 @@ void dac_disable(uint32_t dac_periph)
 */
 void dac_dma_enable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_CTL |= DAC_CTL_DDMAEN0;
-    }else{
+    } else {
         DAC_CTL |= DAC_CTL_DDMAEN1;
     }
 }
@@ -106,9 +107,9 @@ void dac_dma_enable(uint32_t dac_periph)
 */
 void dac_dma_disable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_CTL &= ~DAC_CTL_DDMAEN0;
-    }else{
+    } else {
         DAC_CTL &= ~DAC_CTL_DDMAEN1;
     }
 }
@@ -121,9 +122,9 @@ void dac_dma_disable(uint32_t dac_periph)
 */
 void dac_output_buffer_enable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_CTL &= ~DAC_CTL_DBOFF0;
-    }else{
+    } else {
         DAC_CTL &= ~DAC_CTL_DBOFF1;
     }
 }
@@ -136,9 +137,9 @@ void dac_output_buffer_enable(uint32_t dac_periph)
 */
 void dac_output_buffer_disable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_CTL |= DAC_CTL_DBOFF0;
-    }else{
+    } else {
         DAC_CTL |= DAC_CTL_DBOFF1;
     }
 }
@@ -152,10 +153,10 @@ void dac_output_buffer_disable(uint32_t dac_periph)
 uint16_t dac_output_value_get(uint32_t dac_periph)
 {
     uint16_t data = 0U;
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         /* store the DAC0 output value */
         data = (uint16_t)DAC0_DO;
-    }else{
+    } else {
         /* store the DAC1 output value */
         data = (uint16_t)DAC1_DO;
     }
@@ -176,8 +177,8 @@ uint16_t dac_output_value_get(uint32_t dac_periph)
 */
 void dac_data_set(uint32_t dac_periph, uint32_t dac_align, uint16_t data)
 {
-    if(DAC0 == dac_periph){
-        switch(dac_align){
+    if(DAC0 == dac_periph) {
+        switch(dac_align) {
         /* data right 12 bit alignment */
         case DAC_ALIGN_12B_R:
             DAC0_R12DH = data;
@@ -193,8 +194,8 @@ void dac_data_set(uint32_t dac_periph, uint32_t dac_align, uint16_t data)
         default:
             break;
         }
-    }else{
-        switch(dac_align){
+    } else {
+        switch(dac_align) {
         /* data right 12 bit alignment */
         case DAC_ALIGN_12B_R:
             DAC1_R12DH = data;
@@ -221,9 +222,9 @@ void dac_data_set(uint32_t dac_periph, uint32_t dac_align, uint16_t data)
 */
 void dac_trigger_enable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_CTL |= DAC_CTL_DTEN0;
-    }else{
+    } else {
         DAC_CTL |= DAC_CTL_DTEN1;
     }
 }
@@ -236,9 +237,9 @@ void dac_trigger_enable(uint32_t dac_periph)
 */
 void dac_trigger_disable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_CTL &= ~DAC_CTL_DTEN0;
-    }else{
+    } else {
         DAC_CTL &= ~DAC_CTL_DTEN1;
     }
 }
@@ -259,13 +260,13 @@ void dac_trigger_disable(uint32_t dac_periph)
     \param[out] none
     \retval     none
 */
-void dac_trigger_source_config(uint32_t dac_periph,uint32_t triggersource)
+void dac_trigger_source_config(uint32_t dac_periph, uint32_t triggersource)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         /* configure DAC0 trigger source */
         DAC_CTL &= ~DAC_CTL_DTSEL0;
         DAC_CTL |= triggersource;
-    }else{
+    } else {
         /* configure DAC1 trigger source */
         DAC_CTL &= ~DAC_CTL_DTSEL1;
         DAC_CTL |= (triggersource << DAC1_REG_OFFSET);
@@ -279,9 +280,9 @@ void dac_trigger_source_config(uint32_t dac_periph,uint32_t triggersource)
 */
 void dac_software_trigger_enable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_SWT |= DAC_SWT_SWTR0;
-    }else{
+    } else {
         DAC_SWT |= DAC_SWT_SWTR1;
     }
 }
@@ -294,9 +295,9 @@ void dac_software_trigger_enable(uint32_t dac_periph)
 */
 void dac_software_trigger_disable(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_SWT &= ~DAC_SWT_SWTR0;
-    }else{
+    } else {
         DAC_SWT &= ~DAC_SWT_SWTR1;
     }
 }
@@ -314,11 +315,11 @@ void dac_software_trigger_disable(uint32_t dac_periph)
 */
 void dac_wave_mode_config(uint32_t dac_periph, uint32_t wave_mode)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         /* configure DAC0 wave mode */
         DAC_CTL &= ~DAC_CTL_DWM0;
         DAC_CTL |= wave_mode;
-    }else{
+    } else {
         /* configure DAC1 wave mode */
         DAC_CTL &= ~DAC_CTL_DWM1;
         DAC_CTL |= (wave_mode << DAC1_REG_OFFSET);
@@ -347,11 +348,11 @@ void dac_wave_mode_config(uint32_t dac_periph, uint32_t wave_mode)
 */
 void dac_wave_bit_width_config(uint32_t dac_periph, uint32_t bit_width)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         /* configure DAC0 wave bit width */
         DAC_CTL &= ~DAC_CTL_DWBW0;
         DAC_CTL |= bit_width;
-    }else{
+    } else {
         /* configure DAC1 wave bit width */
         DAC_CTL &= ~DAC_CTL_DWBW1;
         DAC_CTL |= (bit_width << DAC1_REG_OFFSET);
@@ -380,11 +381,11 @@ void dac_wave_bit_width_config(uint32_t dac_periph, uint32_t bit_width)
 */
 void dac_lfsr_noise_config(uint32_t dac_periph, uint32_t unmask_bits)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         /* configure DAC0 LFSR noise mode */
         DAC_CTL &= ~DAC_CTL_DWBW0;
         DAC_CTL |= unmask_bits;
-    }else{
+    } else {
         /* configure DAC1 LFSR noise mode */
         DAC_CTL &= ~DAC_CTL_DWBW1;
         DAC_CTL |= (unmask_bits << DAC1_REG_OFFSET);
@@ -413,11 +414,11 @@ void dac_lfsr_noise_config(uint32_t dac_periph, uint32_t unmask_bits)
 */
 void dac_triangle_noise_config(uint32_t dac_periph, uint32_t amplitude)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         /* configure DAC0 triangle noise mode */
         DAC_CTL &= ~DAC_CTL_DWBW0;
         DAC_CTL |= amplitude;
-    }else{
+    } else {
         /* configure DAC1 triangle noise mode */
         DAC_CTL &= ~DAC_CTL_DWBW1;
         DAC_CTL |= (amplitude << DAC1_REG_OFFSET);
@@ -517,7 +518,7 @@ void dac_concurrent_output_buffer_disable(void)
 void dac_concurrent_data_set(uint32_t dac_align, uint16_t data0, uint16_t data1)
 {
     uint32_t data = 0U;
-    switch(dac_align){
+    switch(dac_align) {
     /* data right 12b alignment */
     case DAC_ALIGN_12B_R:
         data = ((uint32_t)data1 << DH_12BIT_OFFSET) | data0;
@@ -565,36 +566,6 @@ void dac_concurrent_interrupt_disable(void)
 }
 
 /*!
-    \brief      enable DAC interrupt(DAC DMA underrun interrupt)
-    \param[in]  dac_periph: DACx(x = 0,1)
-    \param[out] none
-    \retval     none
-*/
-void dac_interrupt_enable(uint32_t dac_periph)
-{
-    if(DAC0 == dac_periph){
-        DAC_CTL |= DAC_CTL_DDUDRIE0;
-    }else{
-        DAC_CTL |= DAC_CTL_DDUDRIE1;
-    }
-}
-
-/*!
-    \brief      disable DAC interrupt(DAC DMA underrun interrupt)
-    \param[in]  dac_periph: DACx(x = 0,1)
-    \param[out] none
-    \retval     none
-*/
-void dac_interrupt_disable(uint32_t dac_periph)
-{
-    if(DAC0 == dac_periph){
-        DAC_CTL &= ~DAC_CTL_DDUDRIE0;
-    }else{
-        DAC_CTL &= ~DAC_CTL_DDUDRIE1;
-    }
-}
-
-/*!
     \brief      get the specified DAC flag (DAC DMA underrun flag)
     \param[in]  dac_periph: DACx(x = 0,1)
     \param[out] none
@@ -603,14 +574,14 @@ void dac_interrupt_disable(uint32_t dac_periph)
 FlagStatus dac_flag_get(uint32_t dac_periph)
 {
     FlagStatus temp_flag = RESET;
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         /* check the DMA underrun flag */
-        if(RESET != (DAC_STAT & DAC_STAT_DDUDR0)){
+        if(RESET != (DAC_STAT & DAC_STAT_DDUDR0)) {
             temp_flag = SET;
         }
-    }else{
+    } else {
         /* check the DMA underrun flag */
-        if(RESET != (DAC_STAT & DAC_STAT_DDUDR1)){
+        if(RESET != (DAC_STAT & DAC_STAT_DDUDR1)) {
             temp_flag = SET;
         }
     }
@@ -625,10 +596,40 @@ FlagStatus dac_flag_get(uint32_t dac_periph)
 */
 void dac_flag_clear(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_STAT |= DAC_STAT_DDUDR0;
-    }else{
+    } else {
         DAC_STAT |= DAC_STAT_DDUDR1;
+    }
+}
+
+/*!
+    \brief      enable DAC interrupt(DAC DMA underrun interrupt)
+    \param[in]  dac_periph: DACx(x = 0,1)
+    \param[out] none
+    \retval     none
+*/
+void dac_interrupt_enable(uint32_t dac_periph)
+{
+    if(DAC0 == dac_periph) {
+        DAC_CTL |= DAC_CTL_DDUDRIE0;
+    } else {
+        DAC_CTL |= DAC_CTL_DDUDRIE1;
+    }
+}
+
+/*!
+    \brief      disable DAC interrupt(DAC DMA underrun interrupt)
+    \param[in]  dac_periph: DACx(x = 0,1)
+    \param[out] none
+    \retval     none
+*/
+void dac_interrupt_disable(uint32_t dac_periph)
+{
+    if(DAC0 == dac_periph) {
+        DAC_CTL &= ~DAC_CTL_DDUDRIE0;
+    } else {
+        DAC_CTL &= ~DAC_CTL_DDUDRIE1;
     }
 }
 
@@ -643,18 +644,18 @@ FlagStatus dac_interrupt_flag_get(uint32_t dac_periph)
     FlagStatus temp_flag = RESET;
     uint32_t ddudr_flag = 0U, ddudrie_flag = 0U;
 
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         /* check the DMA underrun flag and DAC DMA underrun interrupt enable flag */
         ddudr_flag = DAC_STAT & DAC_STAT_DDUDR0;
         ddudrie_flag = DAC_CTL & DAC_CTL_DDUDRIE0;
-        if((RESET != ddudr_flag) && (RESET != ddudrie_flag)){
+        if((RESET != ddudr_flag) && (RESET != ddudrie_flag)) {
             temp_flag = SET;
         }
-    }else{
+    } else {
         /* check the DMA underrun flag and DAC DMA underrun interrupt enable flag */
         ddudr_flag = DAC_STAT & DAC_STAT_DDUDR1;
         ddudrie_flag = DAC_CTL & DAC_CTL_DDUDRIE1;
-        if((RESET != ddudr_flag) && (RESET != ddudrie_flag)){
+        if((RESET != ddudr_flag) && (RESET != ddudrie_flag)) {
             temp_flag = SET;
         }
     }
@@ -669,9 +670,9 @@ FlagStatus dac_interrupt_flag_get(uint32_t dac_periph)
 */
 void dac_interrupt_flag_clear(uint32_t dac_periph)
 {
-    if(DAC0 == dac_periph){
+    if(DAC0 == dac_periph) {
         DAC_STAT |= DAC_STAT_DDUDR0;
-    }else{
+    } else {
         DAC_STAT |= DAC_STAT_DDUDR1;
     }
 }

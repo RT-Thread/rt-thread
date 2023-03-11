@@ -5,10 +5,11 @@
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
     Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -40,7 +41,7 @@ OF SUCH DAMAGE.
 #define TLI_OPAQUE_VALUE    0x000000FFU
 
 /*!
-    \brief      deinitialize TLI registers
+    \brief    deinitialize TLI registers
     \param[in]  none
     \param[out] none
     \retval     none
@@ -52,7 +53,7 @@ void tli_deinit(void)
 }
 
 /*!
-    \brief      initialize the parameters of TLI parameter structure with the default values, it is suggested
+    \brief    initialize the parameters of TLI parameter structure with the default values, it is suggested
                 that call this function after a tli_parameter_struct structure is defined
     \param[in]  none
     \param[out] tli_struct: the data needed to initialize TLI
@@ -94,7 +95,7 @@ void tli_struct_para_init(tli_parameter_struct *tli_struct)
 }
 
 /*!
-    \brief      initialize TLI display timing parameters
+    \brief    initialize TLI display timing parameters
     \param[in]  tli_struct: the data needed to initialize TLI
                   synpsz_vpsz: size of the vertical synchronous pulse
                   synpsz_hpsz: size of the horizontal synchronous pulse
@@ -117,28 +118,28 @@ void tli_struct_para_init(tli_parameter_struct *tli_struct)
 void tli_init(tli_parameter_struct *tli_struct)
 {
     /* synchronous pulse size configuration */
-    TLI_SPSZ &= ~(TLI_SPSZ_VPSZ|TLI_SPSZ_HPSZ);
-    TLI_SPSZ = (uint32_t)((uint32_t)tli_struct->synpsz_vpsz|((uint32_t)tli_struct->synpsz_hpsz<<16U));
+    TLI_SPSZ &= ~(TLI_SPSZ_VPSZ | TLI_SPSZ_HPSZ);
+    TLI_SPSZ = (uint32_t)((uint32_t)tli_struct->synpsz_vpsz | ((uint32_t)tli_struct->synpsz_hpsz << 16U));
     /* back-porch size configuration */
-    TLI_BPSZ &= ~(TLI_BPSZ_VBPSZ|TLI_BPSZ_HBPSZ);
-    TLI_BPSZ = (uint32_t)((uint32_t)tli_struct->backpsz_vbpsz|((uint32_t)tli_struct->backpsz_hbpsz<<16U));
+    TLI_BPSZ &= ~(TLI_BPSZ_VBPSZ | TLI_BPSZ_HBPSZ);
+    TLI_BPSZ = (uint32_t)((uint32_t)tli_struct->backpsz_vbpsz | ((uint32_t)tli_struct->backpsz_hbpsz << 16U));
     /* active size configuration */
-    TLI_ASZ &= ~(TLI_ASZ_VASZ|TLI_ASZ_HASZ);
-    TLI_ASZ = (tli_struct->activesz_vasz|(tli_struct->activesz_hasz<<16U));
+    TLI_ASZ &= ~(TLI_ASZ_VASZ | TLI_ASZ_HASZ);
+    TLI_ASZ = (tli_struct->activesz_vasz | (tli_struct->activesz_hasz << 16U));
     /* total size configuration */
-    TLI_TSZ &= ~(TLI_TSZ_VTSZ|TLI_TSZ_HTSZ);
-    TLI_TSZ = (tli_struct->totalsz_vtsz|(tli_struct->totalsz_htsz<<16U));
+    TLI_TSZ &= ~(TLI_TSZ_VTSZ | TLI_TSZ_HTSZ);
+    TLI_TSZ = (tli_struct->totalsz_vtsz | (tli_struct->totalsz_htsz << 16U));
     /* background color configuration */
-    TLI_BGC &= ~(TLI_BGC_BVB|(TLI_BGC_BVG)|(TLI_BGC_BVR));
-    TLI_BGC = (tli_struct->backcolor_blue|(tli_struct->backcolor_green<<8U)|(tli_struct->backcolor_red<<16U));
-    TLI_CTL &= ~(TLI_CTL_HPPS|TLI_CTL_VPPS|TLI_CTL_DEPS|TLI_CTL_CLKPS);
-    TLI_CTL |= (tli_struct->signalpolarity_hs|tli_struct->signalpolarity_vs|\
-                tli_struct->signalpolarity_de|tli_struct->signalpolarity_pixelck);
+    TLI_BGC &= ~(TLI_BGC_BVB | (TLI_BGC_BVG) | (TLI_BGC_BVR));
+    TLI_BGC = (tli_struct->backcolor_blue | (tli_struct->backcolor_green << 8U) | (tli_struct->backcolor_red << 16U));
+    TLI_CTL &= ~(TLI_CTL_HPPS | TLI_CTL_VPPS | TLI_CTL_DEPS | TLI_CTL_CLKPS);
+    TLI_CTL |= (tli_struct->signalpolarity_hs | tli_struct->signalpolarity_vs | \
+                tli_struct->signalpolarity_de | tli_struct->signalpolarity_pixelck);
 
 }
 
 /*!
-    \brief      configure TLI dither function
+    \brief    configure TLI dither function
     \param[in]  dither_stat
                 only one parameter can be selected which is shown as below:
       \arg        TLI_DITHER_ENABLE
@@ -148,15 +149,15 @@ void tli_init(tli_parameter_struct *tli_struct)
 */
 void tli_dither_config(uint8_t dither_stat)
 {
-    if(TLI_DITHER_ENABLE == dither_stat){
+    if(TLI_DITHER_ENABLE == dither_stat) {
         TLI_CTL |= TLI_CTL_DFEN;
-    }else{
+    } else {
         TLI_CTL &= ~(TLI_CTL_DFEN);
     }
 }
 
 /*!
-    \brief      enable TLI
+    \brief    enable TLI
     \param[in]  none
     \param[out] none
     \retval     none
@@ -167,7 +168,7 @@ void tli_enable(void)
 }
 
 /*!
-    \brief      disable TLI
+    \brief    disable TLI
     \param[in]  none
     \param[out] none
     \retval     none
@@ -178,7 +179,7 @@ void tli_disable(void)
 }
 
 /*!
-    \brief      configure TLI reload mode
+    \brief    configure TLI reload mode
     \param[in]  reload_mod
                 only one parameter can be selected which is shown as below:
       \arg        TLI_FRAME_BLANK_RELOAD_EN
@@ -188,17 +189,17 @@ void tli_disable(void)
 */
 void tli_reload_config(uint8_t reload_mod)
 {
-    if(TLI_FRAME_BLANK_RELOAD_EN == reload_mod){
+    if(TLI_FRAME_BLANK_RELOAD_EN == reload_mod) {
         /* the layer configuration will be reloaded at frame blank */
         TLI_RL |= TLI_RL_FBR;
-    }else{
+    } else {
         /* the layer configuration will be reloaded after this bit sets */
         TLI_RL |= TLI_RL_RQR;
     }
 }
 
 /*!
-    \brief      initialize the parameters of TLI layer structure with the default values, it is suggested
+    \brief    initialize the parameters of TLI layer structure with the default values, it is suggested
                 that call this function after a tli_layer_parameter_struct structure is defined
     \param[in]  none
     \param[out] layer_struct: TLI Layer parameter struct
@@ -244,7 +245,7 @@ void tli_layer_struct_para_init(tli_layer_parameter_struct *layer_struct)
 }
 
 /*!
-    \brief      initialize TLI layer
+    \brief    initialize TLI layer
     \param[in]  layerx: LAYERx(x=0,1)
     \param[in]  layer_struct: TLI Layer parameter struct
                   layer_window_rightpos: window right position
@@ -268,14 +269,14 @@ void tli_layer_struct_para_init(tli_layer_parameter_struct *layer_struct)
     \param[out] none
     \retval     none
 */
-void tli_layer_init(uint32_t layerx,tli_layer_parameter_struct *layer_struct)
+void tli_layer_init(uint32_t layerx, tli_layer_parameter_struct *layer_struct)
 {
     /* configure layer window horizontal position */
-    TLI_LxHPOS(layerx) &= ~(TLI_LxHPOS_WLP|(TLI_LxHPOS_WRP));
-    TLI_LxHPOS(layerx) = (uint32_t)((uint32_t)layer_struct->layer_window_leftpos|((uint32_t)layer_struct->layer_window_rightpos<<16U));
+    TLI_LxHPOS(layerx) &= ~(TLI_LxHPOS_WLP | (TLI_LxHPOS_WRP));
+    TLI_LxHPOS(layerx) = (uint32_t)((uint32_t)layer_struct->layer_window_leftpos | ((uint32_t)layer_struct->layer_window_rightpos << 16U));
     /* configure layer window vertical position */
-    TLI_LxVPOS(layerx) &= ~(TLI_LxVPOS_WTP|(TLI_LxVPOS_WBP));
-    TLI_LxVPOS(layerx) = (uint32_t)((uint32_t)layer_struct->layer_window_toppos|((uint32_t)layer_struct->layer_window_bottompos<<16U));
+    TLI_LxVPOS(layerx) &= ~(TLI_LxVPOS_WTP | (TLI_LxVPOS_WBP));
+    TLI_LxVPOS(layerx) = (uint32_t)((uint32_t)layer_struct->layer_window_toppos | ((uint32_t)layer_struct->layer_window_bottompos << 16U));
     /* configure layer packeted pixel format */
     TLI_LxPPF(layerx) &= ~(TLI_LxPPF_PPF);
     TLI_LxPPF(layerx) = layer_struct->layer_ppf;
@@ -283,20 +284,20 @@ void tli_layer_init(uint32_t layerx,tli_layer_parameter_struct *layer_struct)
     TLI_LxSA(layerx) &= ~(TLI_LxSA_SA);
     TLI_LxSA(layerx) = layer_struct->layer_sa;
     /* configure layer default color */
-    TLI_LxDC(layerx) &= ~(TLI_LxDC_DCB|(TLI_LxDC_DCG)|(TLI_LxDC_DCR)|(TLI_LxDC_DCA));
-    TLI_LxDC(layerx) = (uint32_t)((uint32_t)layer_struct->layer_default_blue|((uint32_t)layer_struct->layer_default_green<<8U)
-                                                               |((uint32_t)layer_struct->layer_default_red<<16U)
-                                                               |((uint32_t)layer_struct->layer_default_alpha<<24U));
+    TLI_LxDC(layerx) &= ~(TLI_LxDC_DCB | (TLI_LxDC_DCG) | (TLI_LxDC_DCR) | (TLI_LxDC_DCA));
+    TLI_LxDC(layerx) = (uint32_t)((uint32_t)layer_struct->layer_default_blue | ((uint32_t)layer_struct->layer_default_green << 8U)
+                                  | ((uint32_t)layer_struct->layer_default_red << 16U)
+                                  | ((uint32_t)layer_struct->layer_default_alpha << 24U));
 
     /* configure layer alpha calculation factors */
-    TLI_LxBLEND(layerx) &= ~(TLI_LxBLEND_ACF2|(TLI_LxBLEND_ACF1));
-    TLI_LxBLEND(layerx) = ((layer_struct->layer_acf2)|(layer_struct->layer_acf1));
+    TLI_LxBLEND(layerx) &= ~(TLI_LxBLEND_ACF2 | (TLI_LxBLEND_ACF1));
+    TLI_LxBLEND(layerx) = ((layer_struct->layer_acf2) | (layer_struct->layer_acf1));
     /* configure layer frame buffer base address */
     TLI_LxFBADDR(layerx) &= ~(TLI_LxFBADDR_FBADD);
     TLI_LxFBADDR(layerx) = (layer_struct->layer_frame_bufaddr);
     /* configure layer frame line length */
-    TLI_LxFLLEN(layerx) &= ~(TLI_LxFLLEN_FLL|(TLI_LxFLLEN_STDOFF));
-    TLI_LxFLLEN(layerx) = (uint32_t)((uint32_t)layer_struct->layer_frame_line_length|((uint32_t)layer_struct->layer_frame_buf_stride_offset<<16U));
+    TLI_LxFLLEN(layerx) &= ~(TLI_LxFLLEN_FLL | (TLI_LxFLLEN_STDOFF));
+    TLI_LxFLLEN(layerx) = (uint32_t)((uint32_t)layer_struct->layer_frame_line_length | ((uint32_t)layer_struct->layer_frame_buf_stride_offset << 16U));
     /* configure layer frame total line number */
     TLI_LxFTLN(layerx) &= ~(TLI_LxFTLN_FTLN);
     TLI_LxFTLN(layerx) = (uint32_t)(layer_struct->layer_frame_total_line_number);
@@ -304,56 +305,56 @@ void tli_layer_init(uint32_t layerx,tli_layer_parameter_struct *layer_struct)
 }
 
 /*!
-    \brief      reconfigure window position
+    \brief    reconfigure window position
     \param[in]  layerx: LAYERx(x=0,1)
     \param[in]  offset_x: new horizontal offset
     \param[in]  offset_y: new vertical offset
     \param[out] none
     \retval     none
 */
-void tli_layer_window_offset_modify(uint32_t layerx,uint16_t offset_x,uint16_t offset_y)
+void tli_layer_window_offset_modify(uint32_t layerx, uint16_t offset_x, uint16_t offset_y)
 {
     /* configure window start position */
     uint32_t layer_ppf, line_num, hstart, vstart;
     uint32_t line_length = 0U;
-    TLI_LxHPOS(layerx) &= ~(TLI_LxHPOS_WLP|(TLI_LxHPOS_WRP));
-    TLI_LxVPOS(layerx) &= ~(TLI_LxVPOS_WTP|(TLI_LxVPOS_WBP));
-    hstart = (uint32_t)offset_x+(((TLI_BPSZ & TLI_BPSZ_HBPSZ)>>16U)+1U);
-    vstart = (uint32_t)offset_y+((TLI_BPSZ & TLI_BPSZ_VBPSZ)+1U);
+    TLI_LxHPOS(layerx) &= ~(TLI_LxHPOS_WLP | (TLI_LxHPOS_WRP));
+    TLI_LxVPOS(layerx) &= ~(TLI_LxVPOS_WTP | (TLI_LxVPOS_WBP));
+    hstart = (uint32_t)offset_x + (((TLI_BPSZ & TLI_BPSZ_HBPSZ) >> 16U) + 1U);
+    vstart = (uint32_t)offset_y + ((TLI_BPSZ & TLI_BPSZ_VBPSZ) + 1U);
     line_num = (TLI_LxFTLN(layerx) & TLI_LxFTLN_FTLN);
     layer_ppf = (TLI_LxPPF(layerx) & TLI_LxPPF_PPF);
     /* the bytes of a line equal TLI_LxFLLEN_FLL bits value minus 3 */
-    switch(layer_ppf){
+    switch(layer_ppf) {
     case LAYER_PPF_ARGB8888:
         /* each pixel includes 4bytes, when pixel format is ARGB8888 */
-        line_length = (((TLI_LxFLLEN(layerx) & TLI_LxFLLEN_FLL)-3U)/4U);
+        line_length = (((TLI_LxFLLEN(layerx) & TLI_LxFLLEN_FLL) - 3U) / 4U);
         break;
     case LAYER_PPF_RGB888:
         /* each pixel includes 3bytes, when pixel format is RGB888 */
-        line_length = (((TLI_LxFLLEN(layerx) & TLI_LxFLLEN_FLL)-3U)/3U);
+        line_length = (((TLI_LxFLLEN(layerx) & TLI_LxFLLEN_FLL) - 3U) / 3U);
         break;
     case LAYER_PPF_RGB565:
     case LAYER_PPF_ARGB1555:
     case LAYER_PPF_ARGB4444:
     case LAYER_PPF_AL88:
         /* each pixel includes 2bytes, when pixel format is RGB565,ARG1555,ARGB4444 or AL88 */
-        line_length = (((TLI_LxFLLEN(layerx) & TLI_LxFLLEN_FLL)-3U)/2U);
+        line_length = (((TLI_LxFLLEN(layerx) & TLI_LxFLLEN_FLL) - 3U) / 2U);
         break;
     case LAYER_PPF_L8:
     case LAYER_PPF_AL44:
         /* each pixel includes 1byte, when pixel format is L8 or AL44 */
-        line_length = (((TLI_LxFLLEN(layerx) & TLI_LxFLLEN_FLL)-3U));
+        line_length = (((TLI_LxFLLEN(layerx) & TLI_LxFLLEN_FLL) - 3U));
         break;
     default:
         break;
     }
     /* reconfigure window position */
-    TLI_LxHPOS(layerx) = (hstart|((hstart+line_length-1U)<<16U));
-    TLI_LxVPOS(layerx) = (vstart|((vstart+line_num-1U)<<16U));
+    TLI_LxHPOS(layerx) = (hstart | ((hstart + line_length - 1U) << 16U));
+    TLI_LxVPOS(layerx) = (vstart | ((vstart + line_num - 1U) << 16U));
 }
 
 /*!
-    \brief      initialize the parameters of TLI layer LUT structure with the default values, it is suggested
+    \brief    initialize the parameters of TLI layer LUT structure with the default values, it is suggested
                 that call this function after a tli_layer_lut_parameter_struct structure is defined
     \param[in]  none
     \param[out] lut_struct: TLI layer LUT parameter struct
@@ -373,7 +374,7 @@ void tli_lut_struct_para_init(tli_layer_lut_parameter_struct *lut_struct)
 }
 
 /*!
-    \brief      initialize TLI layer LUT
+    \brief    initialize TLI layer LUT
     \param[in]  layerx: LAYERx(x=0,1)
     \param[in]  lut_struct: TLI layer LUT parameter struct
                   layer_table_addr: look up table write address
@@ -383,16 +384,15 @@ void tli_lut_struct_para_init(tli_layer_lut_parameter_struct *lut_struct)
     \param[out] none
     \retval     none
 */
-void tli_lut_init(uint32_t layerx,tli_layer_lut_parameter_struct *lut_struct)
+void tli_lut_init(uint32_t layerx, tli_layer_lut_parameter_struct *lut_struct)
 {
-    TLI_LxLUT(layerx) &= ~(TLI_LxLUT_TB|TLI_LxLUT_TG|TLI_LxLUT_TR|TLI_LxLUT_TADD);
-    TLI_LxLUT(layerx) = (uint32_t)(((uint32_t)lut_struct->layer_lut_channel_blue)|((uint32_t)lut_struct->layer_lut_channel_green<<8U)
-                                                                   |((uint32_t)lut_struct->layer_lut_channel_red<<16U
-                                                                   |((uint32_t)lut_struct->layer_table_addr<<24U)));
+    TLI_LxLUT(layerx) = (uint32_t)(((uint32_t)lut_struct->layer_lut_channel_blue) | ((uint32_t)lut_struct->layer_lut_channel_green << 8U)
+                                   | ((uint32_t)lut_struct->layer_lut_channel_red << 16U
+                                      | ((uint32_t)lut_struct->layer_table_addr << 24U)));
 }
 
 /*!
-    \brief      initialize TLI layer color key
+    \brief    initialize TLI layer color key
     \param[in]  layerx: LAYERx(x=0,1)
     \param[in]  redkey: color key red
     \param[in]  greenkey: color key green
@@ -400,13 +400,13 @@ void tli_lut_init(uint32_t layerx,tli_layer_lut_parameter_struct *lut_struct)
     \param[out] none
     \retval     none
 */
-void tli_color_key_init(uint32_t layerx,uint8_t redkey,uint8_t greenkey,uint8_t bluekey)
+void tli_color_key_init(uint32_t layerx, uint8_t redkey, uint8_t greenkey, uint8_t bluekey)
 {
-    TLI_LxCKEY(layerx) = (((uint32_t)bluekey)|((uint32_t)greenkey<<8U)|((uint32_t)redkey<<16U));
+    TLI_LxCKEY(layerx) = (((uint32_t)bluekey) | ((uint32_t)greenkey << 8U) | ((uint32_t)redkey << 16U));
 }
 
 /*!
-    \brief      enable TLI layer
+    \brief    enable TLI layer
     \param[in]  layerx: LAYERx(x=0,1)
     \param[out] none
     \retval     none
@@ -417,7 +417,7 @@ void tli_layer_enable(uint32_t layerx)
 }
 
 /*!
-    \brief      disable TLI layer
+    \brief    disable TLI layer
     \param[in]  layerx: LAYERx(x=0,1)
     \param[out] none
     \retval     none
@@ -428,7 +428,7 @@ void tli_layer_disable(uint32_t layerx)
 }
 
 /*!
-    \brief      enable TLI layer color keying
+    \brief    enable TLI layer color keying
     \param[in]  layerx: LAYERx(x=0,1)
     \param[out] none
     \retval     none
@@ -439,7 +439,7 @@ void tli_color_key_enable(uint32_t layerx)
 }
 
 /*!
-    \brief      disable TLI layer color keying
+    \brief    disable TLI layer color keying
     \param[in]  layerx: LAYERx(x=0,1)
     \param[out] none
     \retval     none
@@ -450,7 +450,7 @@ void tli_color_key_disable(uint32_t layerx)
 }
 
 /*!
-    \brief      enable TLI layer LUT
+    \brief    enable TLI layer LUT
     \param[in]  layerx: LAYERx(x=0,1)
     \param[out] none
     \retval     none
@@ -461,7 +461,7 @@ void tli_lut_enable(uint32_t layerx)
 }
 
 /*!
-    \brief      disable TLI layer LUT
+    \brief    disable TLI layer LUT
     \param[in]  layerx: LAYERx(x=0,1)
     \param[out] none
     \retval     none
@@ -472,7 +472,7 @@ void tli_lut_disable(uint32_t layerx)
 }
 
 /*!
-    \brief      set line mark value
+    \brief    set line mark value
     \param[in]  line_num: line number
     \param[out] none
     \retval     none
@@ -484,7 +484,7 @@ void tli_line_mark_set(uint16_t line_num)
 }
 
 /*!
-    \brief      get current displayed position
+    \brief    get current displayed position
     \param[in]  none
     \param[out] none
     \retval     position of current pixel
@@ -495,7 +495,7 @@ uint32_t tli_current_pos_get(void)
 }
 
 /*!
-    \brief      enable TLI interrupt
+    \brief    enable TLI interrupt
     \param[in]  int_flag: TLI interrupt flags
                 one or more parameters can be selected which are shown as below:
       \arg        TLI_INT_LM: line mark interrupt
@@ -511,7 +511,7 @@ void tli_interrupt_enable(uint32_t int_flag)
 }
 
 /*!
-    \brief      disable TLI interrupt
+    \brief    disable TLI interrupt
     \param[in]  int_flag: TLI interrupt flags
                 one or more parameters can be selected which are shown as below:
       \arg        TLI_INT_LM: line mark interrupt
@@ -527,7 +527,7 @@ void tli_interrupt_disable(uint32_t int_flag)
 }
 
 /*!
-    \brief      get TLI interrupt flag
+    \brief    get TLI interrupt flag
     \param[in]  int_flag: TLI interrupt flags
                 one or more parameters can be selected which are shown as below:
       \arg        TLI_INT_FLAG_LM: line mark interrupt flag
@@ -541,9 +541,9 @@ FlagStatus tli_interrupt_flag_get(uint32_t int_flag)
 {
     uint32_t state;
     state = TLI_INTF;
-    if(state & int_flag){
+    if(state & int_flag) {
         state = TLI_INTEN;
-        if(state & int_flag){
+        if(state & int_flag) {
             return SET;
         }
     }
@@ -551,7 +551,7 @@ FlagStatus tli_interrupt_flag_get(uint32_t int_flag)
 }
 
 /*!
-    \brief      clear TLI interrupt flag
+    \brief    clear TLI interrupt flag
     \param[in]  int_flag: TLI interrupt flags
                 one or more parameters can be selected which are shown as below:
       \arg        TLI_INT_FLAG_LM: line mark interrupt flag
@@ -567,7 +567,7 @@ void tli_interrupt_flag_clear(uint32_t int_flag)
 }
 
 /*!
-    \brief      get TLI flag or state in TLI_INTF register or TLI_STAT register
+    \brief    get TLI flag or state in TLI_INTF register or TLI_STAT register
     \param[in]  flag: TLI flags or states
                 only one parameter can be selected which is shown as below:
       \arg        TLI_FLAG_VDE: current VDE state
@@ -585,14 +585,14 @@ FlagStatus tli_flag_get(uint32_t flag)
 {
     uint32_t stat;
     /* choose which register to get flag or state */
-    if(flag >> 31U){
+    if(flag >> 31U) {
         stat = TLI_INTF;
-    }else{
+    } else {
         stat = TLI_STAT;
     }
-    if(flag & stat){
+    if(flag & stat) {
         return SET;
-    }else{
+    } else {
         return RESET;
     }
 }
