@@ -98,8 +98,6 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct rt_mm_fault_msg *msg)
 
 int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg)
 {
-    DLOG(session_start);
-    DLOG(msg, "trap", "aspace", DLOG_MSG, "rt_mm_fault_try_fix");
     struct rt_lwp *lwp = lwp_self();
     int err = UNRECOVERABLE;
     uintptr_t va = (uintptr_t)msg->vaddr;
@@ -134,7 +132,6 @@ int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg)
             }
         }
     }
-    DLOG(session_stop);
 
     return err;
 }

@@ -38,8 +38,6 @@ static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace);
 
 int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
 {
-    DLOG(session_start);
-    DLOG(msg, "app", "lwp_user_mm", DLOG_MSG, "lwp_user_space_init");
 
     int err = -RT_ENOMEM;
 
@@ -61,7 +59,6 @@ int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
         }
     }
     return err;
-    DLOG(session_stop);
 }
 
 void lwp_aspace_switch(struct rt_thread *thread)
@@ -216,6 +213,7 @@ static void _dup_varea(rt_varea_t varea, struct rt_lwp *src_lwp,
 {
     void *vaddr = varea->start;
     void *vend = vaddr + varea->size;
+    DLOG(msg, "lwp_aspace", "varea", DLOG_MSG, "call rt_aspace_load_page, prefetch pages");
     if (vaddr < (void *)USER_STACK_VSTART || vaddr >= (void *)USER_STACK_VEND)
     {
         while (vaddr != vend)
@@ -268,6 +266,7 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
                                      .limit_start = new_lwp->aspace->start,
                                      .prefer = varea->start,
                                      .map_size = varea->size};
+        DLOG(msg, "lwp_aspace", "varea", DLOG_MSG, "rt_aspace_map_phy");
         err = rt_aspace_map_phy(new_lwp->aspace, &hint, varea->attr,
                                 MM_PA_TO_OFF(pa), &va);
         if (err != RT_EOK)
@@ -280,6 +279,7 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
     {
         /* duplicate a mem_obj backing mapping */
         va = varea->start;
+        DLOG(msg, "lwp_aspace", "varea", DLOG_MSG, "rt_aspace_map");
         err = rt_aspace_map(new_lwp->aspace, &va, varea->size, varea->attr,
                             varea->flag, &new_lwp->lwp_obj->mem_obj,
                             varea->offset);
@@ -293,6 +293,7 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
             /* loading page frames for !MMF_PREFETCH varea */
             if (!(varea->flag & MMF_PREFETCH))
             {
+                DLOG(msg, "lwp_aspace", "varea", DLOG_MSG, "_dup_varea");
                 _dup_varea(varea, self_lwp, new_lwp->aspace);
             }
         }
@@ -396,6 +397,7 @@ rt_base_t lwp_brk(void *addr)
         {
             size = (((size_t)addr - lwp->end_heap) + ARCH_PAGE_SIZE - 1) &
                    ~ARCH_PAGE_MASK;
+            DLOG(msg, "lwp_user_mm", "lwp_user_mm", DLOG_MSG, "lwp_map_user");
             va = lwp_map_user(lwp, (void *)lwp->end_heap, size, 0);
         }
         if (va)

@@ -290,8 +290,6 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
                           mm_flag_t flags, rt_mem_obj_t mem_obj,
                           rt_size_t offset)
 {
-    DLOG(session_start);
-    DLOG(msg, "app", "aspace", DLOG_MSG, "_mm_aspace_map");
     int err = RT_EOK;
 
     WR_LOCK(aspace);
@@ -333,7 +331,6 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
         }
     }
 
-    DLOG(session_stop);
     return err;
 }
 
@@ -453,8 +450,6 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
                        rt_mm_va_hint_t hint, rt_size_t attr, rt_size_t pa_off,
                        void **ret_va)
 {
-    DLOG(session_start);
-    DLOG(msg, "app", "aspace", DLOG_MSG, "_mm_aspace_map_phy");
     int err;
     void *vaddr;
 
@@ -514,7 +509,6 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
 
     DLOG(msg, "app",
     "aspace", DLOG_MSG_RET, "return address");
-    DLOG(session_stop);
     return err;
 }
 
@@ -571,8 +565,6 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
 
 void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
 {
-    DLOG(session_start);
-    DLOG(msg, "app", "aspace", DLOG_MSG, "rt_aspace_unmap(addr)");
     struct _mm_range range = {addr, addr + length - 1};
     rt_varea_t varea = _aspace_bst_search_overlap(aspace, range);
 
@@ -594,7 +586,6 @@ void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
         }
         varea = _aspace_bst_search_overlap(aspace, range);
     }
-    DLOG(session_stop);
 }
 
 int rt_aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)

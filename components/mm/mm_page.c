@@ -227,9 +227,6 @@ static int _pages_ref_get(struct rt_page *p, rt_uint32_t size_bits)
 
 static int _pages_free(struct rt_page *p, rt_uint32_t size_bits)
 {
-    DLOG(session_start);
-    DLOG(msg, "app", "page", DLOG_MSG, "_pages_free(struct rt_page *p, rt_uint32_t size_bits)");
-
     rt_uint32_t level = size_bits;
     struct rt_page *buddy;
 
@@ -268,7 +265,6 @@ static int _pages_free(struct rt_page *p, rt_uint32_t size_bits)
     }
     DLOG(msg, "page", "page", DLOG_MSG, "page_insert(p, level)");
     page_insert(p, level);
-    DLOG(session_stop);
     return 1;
 }
 
@@ -276,10 +272,6 @@ static struct rt_page *_pages_alloc(rt_uint32_t size_bits)
 {
     struct rt_page *p;
 
-    DLOG(session_start);
-    DLOG(participant, "page");
-    DLOG(participant, "app");
-    DLOG(msg, "app", "page", DLOG_MSG, "_page_alloc(size_bits)");
     if (page_list[size_bits])
     {
         p = page_list[size_bits];
@@ -654,8 +646,6 @@ static int _load_mpr_area(void *head, void *tail)
 
 int rt_page_install(rt_region_t region)
 {
-    DLOG(session_start);
-    DLOG(msg, "kernel", "page", DLOG_MSG, "rt_page_install(rt_region_t region)");
     int err = -RT_EINVAL;
     if (region.end != region.start && !(region.start & ARCH_PAGE_MASK) &&
         !(region.end & ARCH_PAGE_MASK) &&
@@ -692,7 +682,6 @@ int rt_page_install(rt_region_t region)
             }
         }
     }
-    DLOG(session_stop);
     return err;
 }
 
