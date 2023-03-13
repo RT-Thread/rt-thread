@@ -743,6 +743,7 @@ RTM_EXPORT(rt_sem_control);
 #endif /* RT_USING_SEMAPHORE */
 
 #ifdef RT_USING_MUTEX
+/* iterate over each suspended thread to update highest priority in pending threads */
 rt_inline rt_uint8_t _mutex_update_priority(struct rt_mutex *mutex)
 {
     struct rt_thread *thread;
@@ -760,6 +761,7 @@ rt_inline rt_uint8_t _mutex_update_priority(struct rt_mutex *mutex)
     return mutex->priority;
 }
 
+/* get highest priority inside its taken object and its init priority */
 rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
 {
     rt_list_t *node = RT_NULL;
@@ -782,6 +784,7 @@ rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
     return priority;
 }
 
+/* update priority of target thread and the thread suspended it if any */
 rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t priority, int suspend_flag)
 {
     rt_err_t ret;
@@ -994,8 +997,17 @@ rt_uint8_t rt_mutex_setprioceiling(rt_mutex_t mutex, rt_uint8_t priority)
 
     if ((mutex) && (priority < RT_THREAD_PRIORITY_MAX))
     {
+        /* critical section here if multiple updates to one mutex happen */
+        rt_ubase_t level = rt_hw_interrupt_disable();
         ret_priority = mutex->ceiling_priority;
         mutex->ceiling_priority = priority;
+        if (mutex->owner)
+        {
+            rt_uint8_t priority = _thread_get_mutex_priority(mutex->owner);
+            if (priority != mutex->owner->current_priority)
+                _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE);
+        }
+        rt_hw_interrupt_enable(level);
     }
     else
     {
