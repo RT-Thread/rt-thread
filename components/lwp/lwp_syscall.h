@@ -102,7 +102,7 @@ sysret_t sys_dup2(int oldfd, int new);
 sysret_t sys_log(const char* log, int size);
 
 #ifdef ARCH_MM_MMU
-sysret_t sys_futex(int *uaddr, int op, int val, void *timeout, void *uaddr2, int val3);
+sysret_t sys_futex(int *uaddr, int op, int val, const struct timespec *timeout, int *uaddr2, int val3);
 sysret_t sys_pmutex(void *umutex, int op, void *arg);
 sysret_t sys_cacheflush(void *addr, int len, int cache);
 #endif /* ARCH_MM_MMU */
