@@ -3,7 +3,6 @@
 #define BSP_CFG_H_
 #include "bsp_clock_cfg.h"
             #include "bsp_mcu_family_cfg.h"
-            #include "board_cfg.h"
             #define RA_NOT_DEFINED 0
             #ifndef BSP_CFG_RTOS
              #if (RA_NOT_DEFINED) != (RA_NOT_DEFINED)

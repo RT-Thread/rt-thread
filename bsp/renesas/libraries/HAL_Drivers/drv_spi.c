@@ -88,11 +88,11 @@ static rt_err_t ra_wait_complete(rt_event_t event, const char bus_name[RT_NAME_M
 static spi_bit_width_t ra_width_shift(rt_uint8_t data_width)
 {
     spi_bit_width_t bit_width = SPI_BIT_WIDTH_8_BITS;
-    if(data_width == 1)
+    if (data_width == 1)
         bit_width = SPI_BIT_WIDTH_8_BITS;
-    else if(data_width == 2)
+    else if (data_width == 2)
         bit_width = SPI_BIT_WIDTH_16_BITS;
-    else if(data_width == 4)
+    else if (data_width == 4)
         bit_width = SPI_BIT_WIDTH_32_BITS;
 
     return bit_width;
@@ -101,7 +101,6 @@ static spi_bit_width_t ra_width_shift(rt_uint8_t data_width)
 static rt_err_t ra_write_message(struct rt_spi_device *device, const void *send_buf, const rt_size_t len)
 {
     RT_ASSERT(device != NULL);
-    RT_ASSERT(device->parent.user_data != NULL);
     RT_ASSERT(send_buf != NULL);
     RT_ASSERT(len > 0);
     rt_err_t err = RT_EOK;
@@ -172,7 +171,6 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     rt_err_t err = RT_EOK;
 
     struct ra_spi *spi_dev =  rt_container_of(device->bus, struct ra_spi, bus);
-    spi_dev->cs_pin = (rt_uint32_t)device->parent.user_data;
 
     /**< data_width : 1 -> 8 bits , 2 -> 16 bits, 4 -> 32 bits, default 32 bits*/
     rt_uint8_t data_width = configuration->data_width / 8;
@@ -183,7 +181,7 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     spi_extended_cfg_t *spi_cfg = (spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
 
     /**< Configure Select Line */
-    rt_pin_write(spi_dev->cs_pin, PIN_HIGH);
+    rt_pin_write(device->cs_pin, PIN_HIGH);
 
     /**< config bitrate */
     R_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg->spck_div);
@@ -199,7 +197,7 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     return RT_EOK;
 }
 
-static rt_uint32_t ra_spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t ra_spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
@@ -207,14 +205,13 @@ static rt_uint32_t ra_spixfer(struct rt_spi_device *device, struct rt_spi_messag
 
     rt_err_t err = RT_EOK;
     struct ra_spi *spi_dev =  rt_container_of(device->bus, struct ra_spi, bus);
-    spi_dev->cs_pin = (rt_uint32_t)device->parent.user_data;
 
-    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-            rt_pin_write(spi_dev->cs_pin, PIN_HIGH);
+            rt_pin_write(device->cs_pin, PIN_HIGH);
         else
-            rt_pin_write(spi_dev->cs_pin, PIN_LOW);
+            rt_pin_write(device->cs_pin, PIN_LOW);
     }
 
     if (message->length > 0)
@@ -236,7 +233,7 @@ static rt_uint32_t ra_spixfer(struct rt_spi_device *device, struct rt_spi_messag
         }
     }
 
-    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
             rt_pin_write(spi_dev->cs_pin, PIN_LOW);
@@ -276,17 +273,31 @@ int ra_hw_spi_init(void)
 }
 INIT_BOARD_EXPORT(ra_hw_spi_init);
 #endif
-void rt_hw_spi_device_attach(struct rt_spi_device *device, const char *device_name, const char *bus_name, void *user_data)
+/**
+  * Attach the spi device to SPI bus, this function must be used after initialization.
+  */
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin, void *user_data)
 {
-    RT_ASSERT(device != NULL);
-    RT_ASSERT(device_name != NULL);
-    RT_ASSERT(bus_name != NULL);
-    RT_ASSERT(user_data != NULL);
+    RT_ASSERT(bus_name != RT_NULL);
+    RT_ASSERT(device_name != RT_NULL);
 
-    rt_err_t err = rt_spi_bus_attach_device(device, device_name, bus_name, user_data);
-    if (RT_EOK != err)
+    rt_err_t result;
+    struct rt_spi_device *spi_device;
+
+    /* attach the device to spi bus*/
+    spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
+    RT_ASSERT(spi_device != RT_NULL);
+
+    result = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, cs_pin, user_data);
+    if (result != RT_EOK)
     {
-        LOG_E("%s attach failed.", bus_name);
+        LOG_E("%s attach to %s faild, %d\n", device_name, bus_name, result);
     }
+
+    RT_ASSERT(result == RT_EOK);
+
+    LOG_D("%s attach to %s done", device_name, bus_name);
+
+    return result;
 }
 #endif /* RT_USING_SPI */

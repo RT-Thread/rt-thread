@@ -448,6 +448,31 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
+        config BSP_USING_SPI_LCD
+            bool "Enable SPI LCD"
+            select BSP_USING_GPIO
+            select BSP_USING_SPI
+            select BSP_USING_SPI1
+            default n
+
+            menuconfig BSP_USING_LVGL
+                bool "Enable LVGL for LCD"
+                select PKG_USING_LVGL
+                default n
+                if BSP_USING_LVGL      
+                    config BSP_USING_LCD_ILI9431
+                        bool "Enable LVGL for LCD_ILI9431"
+                        select BSP_USING_SPI_LCD
+                        default n
+                endif
+
+            if BSP_USING_LVGL
+                config BSP_USING_LVGL_DEMO
+                    bool "Enable LVGL demo"
+                    select PKG_USING_LV_MUSIC_DEMO
+                    default y
+            endif
+
     endmenu
 
     menu "Board extended module Drivers"
