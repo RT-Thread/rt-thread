@@ -769,9 +769,13 @@ rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
     rt_list_for_each(node, &(thread->taken_object_list))
     {
         mutex = rt_list_entry(node, struct rt_mutex, taken_list);
-        if (priority > mutex->priority)
+        rt_uint8_t mutex_prio = mutex->priority;
+        /* prio at least be priority ceiling */
+        mutex_prio = mutex_prio < mutex->ceiling_priority ? mutex_prio : mutex->ceiling_priority;
+
+        if (priority > mutex_prio)
         {
-            priority = mutex->priority;
+            priority = mutex_prio;
         }
     }
 
@@ -1200,11 +1204,9 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                 if (mutex->ceiling_priority < mutex->owner->current_priority)
                     _thread_update_priority(mutex->owner, mutex->ceiling_priority, suspend_flag);
             }
-            else
-            {
-                /* insert mutex to thread's taken object list */
-                rt_list_insert_after(&thread->taken_object_list, &mutex->taken_list);
-            }
+
+            /* insert mutex to thread's taken object list */
+            rt_list_insert_after(&thread->taken_object_list, &mutex->taken_list);
         }
         else
         {
@@ -1221,7 +1223,6 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
             }
             else
             {
-                /* mutex already taken, suspend current thread */
                 rt_uint8_t priority = thread->current_priority;
 
                 /* mutex is unavailable, push to suspend list */
