@@ -102,10 +102,6 @@ void lwp_cleanup(struct rt_thread *tid);
 #ifdef ARCH_MM_MMU
     #define ALLOC_KERNEL_STACK_SIZE 5120
 
-    sysret_t sys_futex(int *uaddr, int op, int val, void *timeout, void *uaddr2, int val3);
-    sysret_t sys_pmutex(void *umutex, int op, void *arg);
-    sysret_t sys_cacheflush(void *addr, int len, int cache);
-
     static void *kmem_get(size_t size)
     {
         return rt_malloc(size);
