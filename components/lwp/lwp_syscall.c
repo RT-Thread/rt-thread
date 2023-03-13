@@ -1343,27 +1343,31 @@ rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, tim
             memset(&sevp_k, 0, sizeof(sevp_k));
 
         /* musl passes `struct ksigevent` to kernel, we shoule only get size of that bytes */
-        lwp_get_from_user(&sevp_k, (void *)sevp, sizeof(struct ksigevent));
+        if (!lwp_get_from_user(&sevp_k, (void *)sevp, sizeof(struct ksigevent)))
+        {
+            return -EINVAL;
+        }
     }
-    lwp_get_from_user(&timerid_k, (void *)timerid, sizeof(timerid_k));
 
     /* to protect unsafe implementation in current rt-smart toolchain */
     RT_ASSERT(((struct ksigevent *)sevp)->sigev_tid == *(int *)(&sevp_k.sigev_notify_function));
 
-    ret = timer_create(clockid, &sevp_k, &timerid_k);
+    ret = _SYS_WRAP(timer_create(clockid, &sevp_k, &timerid_k));
 
     /* ID should not extend 32-bits size for libc */
     RT_ASSERT((rt_ubase_t)timerid_k < UINT32_MAX);
     utimer = (rt_ubase_t)timerid_k;
 
-    if (ret != -RT_ERROR){
-        lwp_put_to_user(sevp, (void *)&sevp_k, sizeof(struct ksigevent));
-        lwp_put_to_user(timerid, (void *)&utimer, sizeof(utimer));
+    if (ret != -RT_ERROR)
+    {
+        if (!lwp_put_to_user(sevp, (void *)&sevp_k, sizeof(struct ksigevent)) ||
+            !lwp_put_to_user(timerid, (void *)&utimer, sizeof(utimer)))
+            ret = -EINVAL;
     }
 #else
-    ret = timer_create(clockid, sevp, timerid);
+    ret = _SYS_WRAP(timer_create(clockid, sevp, timerid));
 #endif
-    return (ret < 0 ? GET_ERRNO() : ret);
+    return ret;
 }
 
 rt_err_t sys_timer_delete(timer_t timerid)
