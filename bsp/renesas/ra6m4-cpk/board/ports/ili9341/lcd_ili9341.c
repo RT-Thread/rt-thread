@@ -11,12 +11,12 @@
 
 #ifdef BSP_USING_SPI_LCD
 #include "lcd_ili9341.h"
-#include "drivers/spi.h"
+#include "drv_spi.h"
 
 /* 2.8 inch LCD module */
-/* res pin  -> P4_14 */
-/* d/c pin  -> P4_13 */
-/* cs pin   -> P4_05 */
+/* res pin  -> P6_11 */
+/* d/c pin  -> P4_15 */
+/* cs pin   -> P4_13 */
 /* sda pin  -> p4_11 */
 /* scl pin  -> p4_12 */
 
@@ -27,13 +27,13 @@ rt_err_t spi_lcd_init(void)
 {
     rt_err_t res = RT_EOK;
 
-    rt_hw_spi_device_attach("spi0", "spi30", LCD_CS_PIN, RT_NULL);
+    rt_hw_spi_device_attach("spi1", "spi30", LCD_CS_PIN, RT_NULL);
     lcd_dev = (struct rt_spi_device *)rt_device_find("spi30");
     if (lcd_dev != RT_NULL)
     {
         struct rt_spi_configuration spi_config;
         spi_config.data_width = 8;
-        spi_config.max_hz = 20 * 1000 * 1000;
+        spi_config.max_hz = 25 * 1000 * 1000;
         spi_config.mode = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB;
         rt_spi_configure(lcd_dev, &spi_config);
     }
