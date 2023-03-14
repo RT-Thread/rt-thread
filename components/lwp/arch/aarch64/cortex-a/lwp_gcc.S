@@ -9,7 +9,7 @@
  */
 
 #include "rtconfig.h"
-
+#include "asm-generic.h"
 #include "asm-fpu.h"
 
 /*********************
@@ -188,10 +188,9 @@ lwp_exec_user:
 
 /*
  * void SVC_Handler(regs);
+ * since this routine reset the SP, we take it as a start point
  */
-.global SVC_Handler
-.type SVC_Handler, % function
-SVC_Handler:
+START_POINT(SVC_Handler)
     /* x0 is initial sp */
     mov sp, x0
 
@@ -220,6 +219,7 @@ SVC_Handler:
     blr x30
     /* jump explictly, make this code position independant */
     b arch_syscall_exit
+START_POINT_END(SVC_Handler)
 
 .global arch_syscall_exit
 arch_syscall_exit:
