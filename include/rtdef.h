@@ -158,6 +158,9 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 #define RT_UNUSED(x)                   ((void)x)
 
+/* compile time assertion */
+#define CT_ASSERT(name, expn) typedef char _ct_assert_##name[(expn)?1:-1]
+
 /* Compiler Related Definitions */
 #if defined(__ARMCC_VERSION)           /* ARM Compiler */
 #define rt_section(x)               __attribute__((section(x)))

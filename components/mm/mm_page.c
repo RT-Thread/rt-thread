@@ -29,11 +29,6 @@
 #ifdef RT_USING_SMART
 #include "lwp_arch_comm.h"
 
-#define CT_ASSERT(name, x)                                                     \
-    struct assert_##name                                                       \
-    {                                                                          \
-        char ary[2 * (x)-1];                                                   \
-    }
 #ifdef ARCH_CPU_64BIT
 CT_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
 #else

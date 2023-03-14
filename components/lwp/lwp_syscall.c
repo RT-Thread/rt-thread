@@ -1237,6 +1237,9 @@ struct ksigevent
     int sigev_tid;
 };
 
+/* to protect unsafe implementation in current rt-smart toolchain */
+CT_ASSERT(sigevent_compatible, offsetof(struct ksigevent, sigev_tid) == offsetof(struct sigevent, sigev_notify_function));
+
 rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, timer_t *restrict timerid)
 {
     int ret = 0;
@@ -1264,17 +1267,11 @@ rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, tim
         }
     }
 
-    /* to protect unsafe implementation in current rt-smart toolchain */
-    RT_ASSERT(((struct ksigevent *)sevp)->sigev_tid == *(int *)(&sevp_k.sigev_notify_function));
-
     ret = _SYS_WRAP(timer_create(clockid, &sevp_k, &timerid_k));
-
-    /* ID should not extend 32-bits size for libc */
-    RT_ASSERT((rt_ubase_t)timerid_k < UINT32_MAX);
-    utimer = (rt_ubase_t)timerid_k;
 
     if (ret != -RT_ERROR)
     {
+        utimer = (rt_ubase_t)timerid_k;
         if (!lwp_put_to_user(sevp, (void *)&sevp_k, sizeof(struct ksigevent)) ||
             !lwp_put_to_user(timerid, (void *)&utimer, sizeof(utimer)))
             ret = -EINVAL;
