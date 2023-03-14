@@ -188,7 +188,7 @@ typedef __gnuc_va_list              va_list;
 #define va_end(v)                   __builtin_va_end(v)
 #define va_arg(v,l)                 __builtin_va_arg(v,l)
 #endif /* RT_USING_LIBC */
-#define __RT_STRINGIFY(x...)        (#x)
+#define __RT_STRINGIFY(x...)        #x
 #define RT_STRINGIFY(x...)          __RT_STRINGIFY(x)
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))

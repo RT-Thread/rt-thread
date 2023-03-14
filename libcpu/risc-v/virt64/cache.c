@@ -57,8 +57,3 @@ rt_base_t rt_hw_cpu_dcache_status()
 void rt_hw_sync_cache_local(void *addr, int size)
 {
 }
-
-int sys_cacheflush(void *addr, int size, int cache)
-{
-    return 0;
-}
