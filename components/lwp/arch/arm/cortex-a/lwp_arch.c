@@ -14,6 +14,10 @@
 
 #ifdef ARCH_MM_MMU
 
+#define DBG_TAG "lwp.arch"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
 
@@ -26,7 +30,7 @@ int arch_user_space_init(struct rt_lwp *lwp)
     mmu_table = (size_t *)rt_pages_alloc(2);
     if (!mmu_table)
     {
-        return -1;
+        return -RT_ENOMEM;
     }
 
     lwp->end_heap = USER_HEAP_VADDR;
@@ -34,10 +38,11 @@ int arch_user_space_init(struct rt_lwp *lwp)
     rt_memcpy(mmu_table + KPTE_START, (size_t *)rt_kernel_space.page_table + KPTE_START, ARCH_PAGE_SIZE);
     rt_memset(mmu_table, 0, 3 * ARCH_PAGE_SIZE);
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, 4 * ARCH_PAGE_SIZE);
+
     lwp->aspace = rt_aspace_create((void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
     if (!lwp->aspace)
     {
-        return -1;
+        return -RT_ERROR;
     }
 
     return 0;
@@ -68,12 +73,22 @@ void arch_kuser_init(rt_aspace_t aspace, void *vectors)
     rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, (void *)((char *)vectors + 0x1000 - kuser_sz), kuser_sz);
 }
 
-void arch_user_space_vtable_free(struct rt_lwp *lwp)
+void arch_user_space_free(struct rt_lwp *lwp)
 {
-    if (lwp && lwp->aspace->page_table)
+    if (lwp)
     {
-        rt_pages_free(lwp->aspace->page_table, 2);
-        lwp->aspace->page_table = NULL;
+        RT_ASSERT(lwp->aspace);
+        void *pgtbl = lwp->aspace->page_table;
+        rt_aspace_delete(lwp->aspace);
+
+        /* must be freed after aspace delete, pgtbl is required for unmap */
+        rt_pages_free(pgtbl, 2);
+        lwp->aspace = RT_NULL;
+    }
+    else
+    {
+        LOG_W("%s: NULL lwp as parameter", __func__);
+        RT_ASSERT(0);
     }
 }
 

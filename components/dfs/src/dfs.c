@@ -374,7 +374,7 @@ void fd_release(int fd)
     fdt_fd_release(fdt, fd);
 }
 
-int sys_dup(int oldfd)
+rt_err_t sys_dup(int oldfd)
 {
     int newfd = -1;
     struct dfs_fdtable *fdt = NULL;
@@ -466,7 +466,7 @@ int fd_is_open(const char *pathname)
     return -1;
 }
 
-int sys_dup2(int oldfd, int newfd)
+rt_err_t sys_dup2(int oldfd, int newfd)
 {
     struct dfs_fdtable *fdt = NULL;
     int ret = 0;

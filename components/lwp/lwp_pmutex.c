@@ -418,7 +418,9 @@ static int _pthread_mutex_destroy(void *umutex)
     return 0;
 }
 
-int sys_pmutex(void *umutex, int op, void *arg)
+#include <syscall_generic.h>
+
+sysret_t sys_pmutex(void *umutex, int op, void *arg)
 {
     int ret = -EINVAL;
 

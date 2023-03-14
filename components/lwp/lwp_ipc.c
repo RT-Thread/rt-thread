@@ -815,7 +815,7 @@ static void lwp_fd_release(int fdt_type, int fd)
 
 static int _chfd_alloc(int fdt_type)
 {
-    /* create a BSD socket */ 
+    /* create a BSD socket */
     int fd;
 
     /* allocate a fd */
@@ -940,6 +940,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     else
     {
         rt_free(d->vnode);
+        d->vnode = RT_NULL;
         _chfd_free(fd, fdt_type);
         fd = -1;
     }

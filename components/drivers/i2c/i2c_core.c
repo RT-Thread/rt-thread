@@ -51,11 +51,12 @@ struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name)
     return bus;
 }
 
-rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
+rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
                           struct rt_i2c_msg         msgs[],
                           rt_uint32_t               num)
 {
-    rt_size_t ret;
+    rt_ssize_t ret;
+    rt_err_t err;
 
     if (bus->ops->master_xfer)
     {
@@ -67,18 +68,23 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
                   msgs[ret].addr, msgs[ret].len);
         }
 #endif
-
-        rt_mutex_take(&bus->lock, RT_WAITING_FOREVER);
+        err = rt_mutex_take(&bus->lock, RT_WAITING_FOREVER);
+        if (err != RT_EOK)
+        {
+            return (rt_ssize_t)err;
+        }
         ret = bus->ops->master_xfer(bus, msgs, num);
-        rt_mutex_release(&bus->lock);
-
+        err = rt_mutex_release(&bus->lock);
+        if (err != RT_EOK)
+        {
+            return (rt_ssize_t)err;
+        }
         return ret;
     }
     else
     {
         LOG_E("I2C bus operation not supported");
-
-        return 0;
+        return -RT_EINVAL;
     }
 }
 
@@ -91,24 +97,22 @@ rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
     if(bus->ops->i2c_bus_control)
     {
         ret = bus->ops->i2c_bus_control(bus, cmd, arg);
-
         return ret;
     }
     else
     {
         LOG_E("I2C bus operation not supported");
-
-        return 0;
+        return -RT_EINVAL;
     }
 }
 
-rt_size_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
+rt_ssize_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
                              rt_uint16_t               addr,
                              rt_uint16_t               flags,
                              const rt_uint8_t         *buf,
                              rt_uint32_t               count)
 {
-    rt_size_t ret;
+    rt_ssize_t ret;
     struct rt_i2c_msg msg;
 
     msg.addr  = addr;
@@ -118,16 +122,16 @@ rt_size_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
 
     ret = rt_i2c_transfer(bus, &msg, 1);
 
-    return (ret > 0) ? count : ret;
+    return ret;
 }
 
-rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
+rt_ssize_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
                              rt_uint16_t               addr,
                              rt_uint16_t               flags,
                              rt_uint8_t               *buf,
                              rt_uint32_t               count)
 {
-    rt_size_t ret;
+    rt_ssize_t ret;
     struct rt_i2c_msg msg;
     RT_ASSERT(bus != RT_NULL);
 
@@ -138,11 +142,5 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
 
     ret = rt_i2c_transfer(bus, &msg, 1);
 
-    return (ret > 0) ? count : ret;
+    return ret;
 }
-
-int rt_i2c_core_init(void)
-{
-    return 0;
-}
-INIT_COMPONENT_EXPORT(rt_i2c_core_init);
