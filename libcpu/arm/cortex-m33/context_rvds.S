@@ -113,7 +113,7 @@ schedule
     ; skip register save at the first time
     LDR     r0, =rt_interrupt_from_thread           ; r0 = &rt_interrupt_from_thread
     LDR     r1, [r0]                                ; r1 = *r0
-    CBZ     r1, switch_to_thread                    ; if r1 == 0, goto switch_to_thread
+    CBZ     r1, first_to_thread                     ; if r1 == 0, first_to_thread
 
     ; Whether TrustZone thread stack exists
     LDR     r1,  =rt_trustzone_current_context      ; r1 = &rt_secure_current_context
@@ -162,7 +162,30 @@ contex_ns_store
 
     LDR     r0, [r0]
     STR     r1, [r0]                                ; update from thread stack pointer
+first_to_thread
+	LDR     r1, =rt_interrupt_to_thread
+    LDR     r1, [r1]
+    LDR     r1, [r1]                                ; load thread stack pointer
 
+    ; update current TrustZone context
+    LDMFD   r1!, {r2-r5}                            ; pop thread stack
+    MSR     psplim, r4                              ; psplim = r4
+    MSR     control, r5                             ; control = r5
+    ORR     lr, lr, #0x04                           ; first return
+    
+	LDR     r6,  =rt_trustzone_current_context      ; r6 = &rt_secure_current_context
+    STR     r2, [r6]                                ; *r6 = r2
+    MOV     r0, r2                                  ; r0 = r2
+
+    ; Whether TrustZone thread stack exists
+    CBZ     r0, contex_ns_load                      ; if r0 == 0, goto contex_ns_load
+    PUSH    {r1, r3}                                ; push lr, thread_stack
+    BL rt_trustzone_context_load                    ; call TrustZone load fun
+    POP     {r1, r3}                                ; pop lr, thread_stack
+    MOV     lr, r3                                  ; lr = r1
+    TST     r3, #0x40                               ; if EXC_RETURN[6] is 1, TrustZone stack was used
+    BEQ     contex_ns_load                          ; if r1 & 0x40 == 0, goto contex_ns_load
+    B pendsv_exit
 switch_to_thread
     LDR     r1, =rt_interrupt_to_thread
     LDR     r1, [r1]
