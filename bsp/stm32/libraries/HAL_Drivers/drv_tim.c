@@ -52,8 +52,133 @@ void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_
     {
          *pclk2_doubler = 2;
     }
-#endif
-#endif
+#endif /* !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)) */
+#endif /* defined(SOC_SERIES_STM32MP1) */
+}
+
+void stm32_tim_enable_clock(TIM_HandleTypeDef* htim_base)
+{
+    RT_ASSERT(htim_base != RT_NULL);
+
+    if(RT_FALSE);
+#ifdef TIM1
+    else if(htim_base->Instance==TIM1)
+    {
+        __HAL_RCC_TIM1_CLK_ENABLE();
+    }
+#endif /* TIM1 */
+#ifdef TIM2
+    else if(htim_base->Instance==TIM2)
+    {
+        __HAL_RCC_TIM2_CLK_ENABLE();
+    }
+#endif /* TIM2 */
+#ifdef TIM3
+    else if(htim_base->Instance==TIM3)
+    {
+        __HAL_RCC_TIM3_CLK_ENABLE();
+    }
+#endif /* TIM3 */
+#ifdef TIM4
+    else if(htim_base->Instance==TIM4)
+    {
+        __HAL_RCC_TIM4_CLK_ENABLE();
+    }
+#endif /* TIM4 */
+#ifdef TIM5
+    else if(htim_base->Instance==TIM5)
+    {
+        __HAL_RCC_TIM5_CLK_ENABLE();
+    }
+#endif /* TIM5 */
+#ifdef TIM6
+    else if(htim_base->Instance==TIM6)
+    {
+        __HAL_RCC_TIM6_CLK_ENABLE();
+    }
+#endif /* TIM6 */
+#ifdef TIM7
+    else if(htim_base->Instance==TIM7)
+    {
+        __HAL_RCC_TIM7_CLK_ENABLE();
+    }
+#endif /* TIM7 */
+#ifdef TIM8
+    else if(htim_base->Instance==TIM8)
+    {
+        __HAL_RCC_TIM8_CLK_ENABLE();
+    }
+#endif /* TIM8 */
+#ifdef TIM9
+    else if(htim_base->Instance==TIM9)
+    {
+        __HAL_RCC_TIM9_CLK_ENABLE();
+    }
+#endif /* TIM9 */
+#ifdef TIM10
+    else if(htim_base->Instance==TIM10)
+    {
+        __HAL_RCC_TIM10_CLK_ENABLE();
+    }
+#endif /* TIM10 */
+#ifdef TIM11
+    else if(htim_base->Instance==TIM11)
+    {
+        __HAL_RCC_TIM11_CLK_ENABLE();
+    }
+#endif /* TIM11 */
+#ifdef TIM12
+    else if(htim_base->Instance==TIM12)
+    {
+        __HAL_RCC_TIM12_CLK_ENABLE();
+    }
+#endif /* TIM12 */
+#ifdef TIM13
+    else if(htim_base->Instance==TIM13)
+    {
+        __HAL_RCC_TIM13_CLK_ENABLE();
+    }
+#endif /* TIM13 */
+#ifdef TIM14
+    else if(htim_base->Instance==TIM14)
+    {
+        __HAL_RCC_TIM14_CLK_ENABLE();
+    }
+#endif /* TIM14 */
+#ifdef TIM15
+    else if(htim_base->Instance==TIM15)
+    {
+        __HAL_RCC_TIM15_CLK_ENABLE();
+    }
+#endif /* TIM15 */
+#ifdef TIM16
+    else if(htim_base->Instance==TIM16)
+    {
+        __HAL_RCC_TIM16_CLK_ENABLE();
+    }
+#endif /* TIM16 */
+#ifdef TIM17
+    else if(htim_base->Instance==TIM17)
+    {
+        __HAL_RCC_TIM17_CLK_ENABLE();
+    }
+#endif /* TIM17 */
+#ifdef TIM18
+    else if(htim_base->Instance==TIM18)
+    {
+        __HAL_RCC_TIM18_CLK_ENABLE();
+    }
+#endif /* TIM18 */
+#ifdef TIM19
+    else if(htim_base->Instance==TIM19)
+    {
+        __HAL_RCC_TIM19_CLK_ENABLE();
+    }
+#endif /* TIM19 */
+    else
+    {
+        RT_ASSERT(RT_TRUE);
+    }
 }
 
 #ifdef BSP_USING_TIM
