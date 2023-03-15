@@ -29,23 +29,26 @@
 static int _fetch_page(rt_varea_t varea, struct rt_mm_fault_msg *msg)
 {
     int err = UNRECOVERABLE;
-    varea->mem_obj->on_page_fault(varea, msg);
-    if (msg->response.status == MM_FAULT_STATUS_OK)
+    if (varea->mem_obj && varea->mem_obj->on_page_fault)
     {
-        void *store = msg->response.vaddr;
-        rt_size_t store_sz = msg->response.size;
+        varea->mem_obj->on_page_fault(varea, msg);
+        if (msg->response.status == MM_FAULT_STATUS_OK)
+        {
+            void *store = msg->response.vaddr;
+            rt_size_t store_sz = msg->response.size;
 
-        if (msg->vaddr + store_sz > varea->start + varea->size)
-        {
-            LOG_W("%s more size of buffer is provided than varea", __func__);
-        }
-        else
-        {
-            rt_hw_mmu_map(varea->aspace, msg->vaddr, store + PV_OFFSET,
-                          store_sz, varea->attr);
-            rt_hw_tlb_invalidate_range(varea->aspace, msg->vaddr, store_sz,
-                                       ARCH_PAGE_SIZE);
-            err = RECOVERABLE;
+            if (msg->vaddr + store_sz > varea->start + varea->size)
+            {
+                LOG_W("%s more size of buffer is provided than varea", __func__);
+            }
+            else
+            {
+                rt_hw_mmu_map(varea->aspace, msg->vaddr, store + PV_OFFSET,
+                            store_sz, varea->attr);
+                rt_hw_tlb_invalidate_range(varea->aspace, msg->vaddr, store_sz,
+                                        ARCH_PAGE_SIZE);
+                err = RECOVERABLE;
+            }
         }
     }
     return err;
