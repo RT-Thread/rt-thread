@@ -366,21 +366,13 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
             LOG_E("%s init failed", tim_device->name);
             return;
         }
-        else
-        {
-            /* set the TIMx priority */
-            HAL_NVIC_SetPriority(tim_device->tim_irqn, 3, 0);
 
-            /* enable the TIMx global Interrupt */
-            HAL_NVIC_EnableIRQ(tim_device->tim_irqn);
-
-            /* clear update flag */
-            __HAL_TIM_CLEAR_FLAG(tim, TIM_FLAG_UPDATE);
-            /* enable update request source */
-            __HAL_TIM_URS_ENABLE(tim);
-
-            LOG_D("%s init success", tim_device->name);
-        }
+        stm32_tim_enable_clock(tim);
+        HAL_NVIC_SetPriority(tim_device->tim_irqn, 3, 0); /* set the TIMx priority */
+        HAL_NVIC_EnableIRQ(tim_device->tim_irqn); /* enable the TIMx global Interrupt */
+        __HAL_TIM_CLEAR_FLAG(tim, TIM_FLAG_UPDATE); /* clear update flag */
+        __HAL_TIM_URS_ENABLE(tim); /* enable update request source */
+        LOG_D("%s init success", tim_device->name);
     }
 }
 
@@ -463,7 +455,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 #elif defined(SOC_SERIES_STM32WB)
         if (tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
-       if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
+        if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         if (0)
 #else
