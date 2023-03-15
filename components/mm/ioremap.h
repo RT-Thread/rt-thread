@@ -18,7 +18,8 @@ extern "C" {
 
 void *rt_ioremap(void *paddr, size_t size);
 void *rt_ioremap_nocache(void *paddr, size_t size);
-void *rt_ioremap_cached (void *paddr, size_t size);
+void *rt_ioremap_cached(void *paddr, size_t size);
+void *rt_ioremap_wt(void *paddr, size_t size);
 void rt_iounmap(volatile void *addr);
 
 extern void *rt_ioremap_start;
