@@ -12,7 +12,9 @@
 #define __DRV_TIM_H__
 
 #include <rtdef.h>
+#include <board.h>
 
 void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler);
+void stm32_tim_enable_clock(TIM_HandleTypeDef* htim_base);
 
 #endif /* __DRV_TIM_H__ */
