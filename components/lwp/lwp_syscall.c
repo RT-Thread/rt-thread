@@ -1238,7 +1238,7 @@ struct ksigevent
 };
 
 /* to protect unsafe implementation in current rt-smart toolchain */
-CT_ASSERT(sigevent_compatible, offsetof(struct ksigevent, sigev_tid) == offsetof(struct sigevent, sigev_notify_function));
+RT_CTASSERT(sigevent_compatible, offsetof(struct ksigevent, sigev_tid) == offsetof(struct sigevent, sigev_notify_function));
 
 rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, timer_t *restrict timerid)
 {

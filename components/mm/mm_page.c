@@ -30,9 +30,9 @@
 #include "lwp_arch_comm.h"
 
 #ifdef ARCH_CPU_64BIT
-CT_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
+RT_CTASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
 #else
-CT_ASSERT(size_width, sizeof(rt_size_t) == sizeof(rt_size_t));
+RT_CTASSERT(size_width, sizeof(rt_size_t) == sizeof(rt_size_t));
 #endif /* ARCH_CPU_64BIT */
 
 #endif /* RT_USING_SMART */
