@@ -107,7 +107,7 @@ int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg)
     if (lwp)
     {
         rt_aspace_t aspace = lwp->aspace;
-        DLOG(msg, "aspace", "varea", DLOG_MSG, "find varea");
+        DLOG(msg, "aspace", "varea", DLOG_MSG, "_aspace_bst_search(aspace, msg->vaddr)");
         rt_varea_t varea = _aspace_bst_search(aspace, msg->vaddr);
         if (varea)
         {

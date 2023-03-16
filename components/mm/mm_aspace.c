@@ -62,7 +62,7 @@ static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
     varea->frames = NULL;
 
     DLOG(msg, "aspace",
-    "varea", DLOG_MSG, "varea open");
+    "varea", DLOG_MSG, "varea->mem_obj->on_varea_open(varea)");
     if (varea->mem_obj && varea->mem_obj->on_varea_open)
         varea->mem_obj->on_varea_open(varea);
 }
@@ -159,7 +159,7 @@ static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
 
     DLOG(group, "loop [for all page]");
     DLOG(msg, "page",
-    "libcpu_mmu", DLOG_MSG, "rt_hw_mmu_map");
+    "libcpu_mmu", DLOG_MSG, "rt_hw_mmu_map(aspace, vaddr, phyaddr, pgsz, attr)");
     DLOG(group_end);
 
     /* it's ensured by caller that (void*)end will not overflow */

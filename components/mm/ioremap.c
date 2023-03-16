@@ -58,7 +58,7 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     default:
         return v_addr;
     }
-    DLOG(msg, "mm", "aspace", DLOG_MSG, "rt_aspace_map_phy");
+    DLOG(msg, "mm", "aspace", DLOG_MSG, "rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr), &v_addr)");
     err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr), &v_addr);
 
     if (err)
