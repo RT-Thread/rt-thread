@@ -468,7 +468,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
     if (msd->spi_device == RT_NULL)
     {
         MSD_DEBUG("[err] the SPI SD device has no SPI!\r\n");
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     /* config spi */

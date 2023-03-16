@@ -129,7 +129,7 @@ static rt_err_t n32_spi_init(struct n32_spi *spi_drv, struct rt_spi_configuratio
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     if (cfg->mode & RT_SPI_CPHA)
@@ -238,7 +238,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return n32_spi_init(spi_drv, configuration);
 }
 
-static int _spi_recv(SPI_Module *hspi,
+static rt_ssize_t _spi_recv(SPI_Module *hspi,
         uint8_t *tx_buff,
         uint8_t *rx_buff,
         uint32_t length,
@@ -250,7 +250,7 @@ static int _spi_recv(SPI_Module *hspi,
 
     if ((tx_buff == RT_NULL) && (rx_buff == RT_NULL) || (length == 0))
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     while (length--)
@@ -281,12 +281,12 @@ static int _spi_recv(SPI_Module *hspi,
     return RT_EOK;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     rt_size_t send_length;
     rt_uint8_t *recv_buf;
     const rt_uint8_t *send_buf;
-    rt_err_t stat = RT_EOK;
+    rt_ssize_t stat = RT_EOK;
 
     /* Check Direction parameter */
     RT_ASSERT(device != RT_NULL);
@@ -318,7 +318,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     if (message->send_buf && message->recv_buf)
     {
         LOG_D("%s:%d", __FUNCTION__, __LINE__);
-        stat = RT_EIO;
+        stat = -RT_EIO;
     }
     else if (message->send_buf)
     {
