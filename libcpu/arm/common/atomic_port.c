@@ -81,9 +81,8 @@ rt_atomic_t rt_hw_atomic_load(rt_atomic_t *ptr)
 
 void rt_hw_atomic_store(rt_atomic_t *ptr,rt_atomic_t val)
 {
-    rt_atomic_t oldval;
     do {
-        oldval = __LDREXW(ptr);
+        __LDREXW(ptr);
     }while((__STREXW(val, ptr)) != 0U);
 }
 
@@ -143,9 +142,8 @@ rt_atomic_t rt_hw_atomic_exchange(rt_atomic_t *ptr, rt_atomic_t val)
 
 void rt_hw_atomic_flag_clear(rt_atomic_t *ptr)
 {
-    rt_atomic_t oldval;
     do {
-        oldval = __LDREXW(ptr);
+        __LDREXW(ptr);
     }while((__STREXW(0, ptr)) != 0U);
 }
 
