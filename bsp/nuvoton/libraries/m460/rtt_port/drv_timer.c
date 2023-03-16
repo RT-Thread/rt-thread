@@ -122,7 +122,7 @@ static void nu_timer_init(rt_hwtimer_t *timer, rt_uint32_t state)
 
 static rt_err_t nu_timer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_mode_t opmode)
 {
-    rt_err_t ret = RT_EINVAL;
+    rt_err_t ret = -RT_EINVAL;
     rt_uint32_t u32OpMode;
 
     nu_timer_t psNuTmr = NU_TIMER_DEVICE(timer);
@@ -205,7 +205,7 @@ static rt_err_t nu_timer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg
         break;
 
     default:
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         break;
     }
 

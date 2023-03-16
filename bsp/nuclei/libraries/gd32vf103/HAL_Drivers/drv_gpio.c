@@ -379,7 +379,7 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             break;
         default:
             rt_hw_interrupt_enable(level);
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
 
         /* connect EXTI line to  GPIO pin */
@@ -404,7 +404,7 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(index->pin);
         if (irqmap == RT_NULL)
         {
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         if ((irqmap->pinbit >= GPIO_PIN_5) && (irqmap->pinbit <= GPIO_PIN_9))
         {

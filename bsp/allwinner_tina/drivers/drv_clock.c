@@ -211,7 +211,7 @@ rt_err_t cpu_set_pll_clk(int clk)
     int p = 0, k = 1, m = 1, n = 0;
 
     if (clk == 0)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk > 1152000000)
     {
@@ -244,7 +244,7 @@ rt_err_t audio_set_pll_clk(int clk)
     int m_temp = _24MHZ_ * 2;
 
     if ((clk > 200000000) || (clk < 20000000))
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk == 0)
     {
@@ -288,7 +288,7 @@ rt_err_t video_set_pll_clk(int clk)
     int m_temp = _24MHZ_;
 
     if ((clk > 600000000) || (clk < 30000000))
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk == 0)
     {
@@ -333,7 +333,7 @@ rt_err_t ve_set_pll_clk(int clk)
     int m_temp = _24MHZ_;
 
     if ((clk > 600000000) || (clk < 30000000))
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk == 0)
     {
@@ -377,7 +377,7 @@ rt_err_t periph_set_pll_clk(int clk)
     int n = 0, k = 0;
 
     if ((clk > 1800000000) || (clk < 200000000) || (clk == 0) || (clk % _24MHZ_ != 0))
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     n = clk / _24MHZ_;
 
@@ -413,7 +413,7 @@ rt_err_t periph_set_pll_clk(int clk)
 rt_err_t cpu_set_clk(int clk)
 {
     if (clk < _24MHZ_)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk == cpu_get_clk())
         return RT_EOK;
@@ -446,7 +446,7 @@ rt_err_t bus_gate_clk_enalbe(enum bus_gate bus)
     else if (gate_reg == 0x02)
         CCU->bus_clk_gating2 |= (0x1 << offset);
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     return RT_EOK;
 }
@@ -466,7 +466,7 @@ rt_err_t bus_gate_clk_disalbe(enum bus_gate bus)
     else if (gate_reg == 0x02)
         CCU->bus_clk_gating2 &= ~(0x1 << offset);
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     return RT_EOK;
 }
@@ -486,7 +486,7 @@ rt_err_t bus_software_reset_disalbe(enum bus_gate bus)
     else if (gate_reg == 0x02)
         CCU->bus_soft_rst2 |= (0x1 << offset);
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     return RT_EOK;
 }
@@ -506,7 +506,7 @@ rt_err_t bus_software_reset_enalbe(enum bus_gate bus)
     else if (gate_reg == 0x02)
         CCU->bus_soft_rst2 &= ~(0x1 << offset);
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     return RT_EOK;
 }
@@ -519,7 +519,7 @@ rt_err_t mmc_set_clk(enum mmc_clk_id clk_id, int hz)
 
     if (hz < 0)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     if (hz == 0)

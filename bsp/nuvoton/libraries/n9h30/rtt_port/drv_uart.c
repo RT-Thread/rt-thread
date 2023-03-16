@@ -300,7 +300,7 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
 
     default:
         rt_kprintf("Unsupported data length");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uart_configure;
     }
 
@@ -317,7 +317,7 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
 
     default:
         rt_kprintf("Unsupported stop bit");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uart_configure;
     }
 
@@ -338,7 +338,7 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
 
     default:
         rt_kprintf("Unsupported parity");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uart_configure;
     }
 

@@ -160,7 +160,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     int32_t ret = CAN_Init(p_can_dev->instance, &p_can_dev->ll_init);
     if (ret != LL_OK)
     {
-        rt_ret = RT_EINVAL;
+        rt_ret = -RT_EINVAL;
     }
 
     return rt_ret;

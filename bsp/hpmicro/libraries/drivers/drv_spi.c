@@ -73,7 +73,7 @@ static rt_err_t hpm_spi_configure(struct rt_spi_device *device, struct rt_spi_co
 
     if (cfg->data_width != 8 && cfg->data_width != 16 && cfg->data_width != 32)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     spi_master_get_default_timing_config(&timing_config);

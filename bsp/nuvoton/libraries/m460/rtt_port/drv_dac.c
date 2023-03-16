@@ -118,7 +118,7 @@ static rt_err_t nu_dac_convert(struct rt_dac_device *device, rt_uint32_t channel
 
     if (channel >= psNuDAC->max_chn_num)
     {
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_dac_convert;
     }
 

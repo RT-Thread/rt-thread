@@ -350,12 +350,12 @@ rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     hdr_index = bit2bitno(index->pin);
     if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     level = rt_hw_interrupt_disable();
@@ -389,12 +389,12 @@ rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     hdr_index = bit2bitno(index->pin);
     if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     level = rt_hw_interrupt_disable();
@@ -422,20 +422,20 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     if (enabled == PIN_IRQ_ENABLE)
     {
         hdr_index = bit2bitno(index->pin);
         if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
         {
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         level = rt_hw_interrupt_disable();
         if (pin_irq_hdr_tab[hdr_index].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         irqmap = &pin_irq_map[hdr_index];
 
@@ -452,7 +452,7 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
                 break;
             default:
                 rt_hw_interrupt_enable(level);
-                return RT_EINVAL;
+                return -RT_EINVAL;
         }
 
         rcu_periph_clock_enable(RCU_AF);
@@ -474,13 +474,13 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
         irqmap = get_pin_irq_map(index->pin);
         if (irqmap == RT_NULL)
         {
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         nvic_irq_disable(irqmap->irqno);
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;

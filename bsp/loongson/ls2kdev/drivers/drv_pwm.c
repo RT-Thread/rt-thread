@@ -107,7 +107,7 @@ static rt_err_t loongson_pwm_ioctl(struct rt_device_pwm *device, int cmd, void *
         rc = RT_ENOSYS;
         break;
     default:
-        rc = RT_EINVAL;
+        rc = -RT_EINVAL;
         break;
     }
     return rc;

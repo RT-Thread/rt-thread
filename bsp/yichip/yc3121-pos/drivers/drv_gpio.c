@@ -209,7 +209,7 @@ static rt_err_t yc_pin_irq_enable(struct rt_device *device,
             break;
         default:
             rt_hw_interrupt_enable(level);
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
 
         level = rt_hw_interrupt_disable();
