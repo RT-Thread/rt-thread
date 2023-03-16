@@ -57,7 +57,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     {

@@ -139,7 +139,7 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
 #if defined(SOC_SERIES_APM32F0)

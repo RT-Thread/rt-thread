@@ -452,7 +452,7 @@ static rt_err_t vega_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
 
         if(irq_map->irq_info.pin != pin)
         {
-            return RT_EIO; 
+            return -RT_EIO;
         }
 
         irq_map->enable = PIN_IRQ_ENABLE; 
