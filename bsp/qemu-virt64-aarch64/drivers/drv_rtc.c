@@ -73,7 +73,7 @@ static rt_err_t pl031_rtc_control(rt_device_t dev, int cmd, void *args)
         pl031_write32(RTC_LR, *(time_t *)args);
         break;
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     return RT_EOK;
 }

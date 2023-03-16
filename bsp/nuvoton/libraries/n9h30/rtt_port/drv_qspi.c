@@ -137,7 +137,7 @@ static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
             configuration->data_width == 24 ||
             configuration->data_width == 32))
     {
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_qspi_bus_configure;
     }
 

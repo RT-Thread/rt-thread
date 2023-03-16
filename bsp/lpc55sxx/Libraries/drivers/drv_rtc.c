@@ -116,7 +116,7 @@ static rt_err_t lpc_rtc_control(rt_device_t dev, int cmd, void *args)
         break;
 
         default:
-            return RT_EINVAL;
+            return -RT_EINVAL;
     }
 
     return RT_EOK;

@@ -330,7 +330,7 @@ static void nu_adc_touch_smpl(void *p)
 
 static rt_err_t _nu_adc_control(rt_device_t dev, int cmd, void *args)
 {
-    rt_err_t ret = RT_EINVAL ;
+    rt_err_t ret = -RT_EINVAL ;
     nu_adc_t psNuAdc = (nu_adc_t)dev;
     ADC_T  *adc = psNuAdc->base;
 
@@ -564,7 +564,7 @@ static rt_err_t nu_adc_convert(struct rt_adc_device *device, rt_uint32_t channel
 
     if (channel >= ADC_CH_NUM)
     {
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_adc_convert;
     }
     else if ((ret = _nu_adc_control((rt_device_t)device, SWITCH_CH, (void *)channel)) != RT_EOK)

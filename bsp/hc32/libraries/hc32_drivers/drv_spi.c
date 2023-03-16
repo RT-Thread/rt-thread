@@ -156,7 +156,7 @@ static rt_err_t hc32_spi_init(struct hc32_spi *spi_drv, struct rt_spi_configurat
     /* SI/SO pin shared */
     if (cfg->mode & RT_SPI_3WIRE)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     else
     {

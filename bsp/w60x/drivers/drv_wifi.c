@@ -485,7 +485,7 @@ static rt_err_t drv_wlan_cfg_filter(struct rt_wlan_device *wlan, struct rt_wlan_
 {
     LOG_D("F:%s L:%d", __FUNCTION__, __LINE__);
 
-    return RT_EINVAL;/* not support */
+    return -RT_EINVAL;/* not support */
 }
 
 static rt_err_t drv_wlan_set_channel(struct rt_wlan_device *wlan, int channel)

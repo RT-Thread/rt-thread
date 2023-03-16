@@ -191,7 +191,7 @@ static rt_err_t pin_irq_enable(struct rt_device *dev, rt_base_t pin, rt_uint32_t
             break;
         default:
             rt_hw_interrupt_enable(level);
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
 
         HAL_GPIO_SetIntType(get_st_gpio(pin), get_st_pin(pin), mode);

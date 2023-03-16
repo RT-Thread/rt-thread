@@ -205,7 +205,7 @@ static rt_err_t nu_bpwm_control(struct rt_device_pwm *device, int cmd, void *arg
     case PWM_CMD_GET:
         return nu_bpwm_get(device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 

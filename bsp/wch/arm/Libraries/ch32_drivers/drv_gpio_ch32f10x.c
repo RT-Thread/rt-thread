@@ -367,12 +367,12 @@ rt_err_t ch32f1_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8
     find = exti_line_irq_list_find(pin);
 
     if (find == RT_NULL)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     item = pin_info_list_find(pin);
 
     if (item == RT_NULL)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (enabled == PIN_IRQ_ENABLE)
     {

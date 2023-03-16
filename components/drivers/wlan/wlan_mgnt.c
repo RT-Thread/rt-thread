@@ -1670,7 +1670,7 @@ rt_err_t rt_wlan_register_event_handler(rt_wlan_event_t event, rt_wlan_event_han
 
     if (event >= RT_WLAN_EVT_MAX)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     RT_WLAN_LOG_D("%s is run event:%d", __FUNCTION__, event);
 
@@ -1690,7 +1690,7 @@ rt_err_t rt_wlan_unregister_event_handler(rt_wlan_event_t event)
 
     if (event >= RT_WLAN_EVT_MAX)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     RT_WLAN_LOG_D("%s is run event:%d", __FUNCTION__, event);
     MGNT_LOCK();

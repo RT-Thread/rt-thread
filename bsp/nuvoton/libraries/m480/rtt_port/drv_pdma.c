@@ -314,7 +314,7 @@ exit_pdma_channel_terminate:
 
 static rt_err_t nu_pdma_timeout_set(int i32ChannID, int i32Timeout_us)
 {
-    rt_err_t ret = RT_EINVAL;
+    rt_err_t ret = -RT_EINVAL;
 
     if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
         goto exit_nu_pdma_timeout_set;
@@ -385,7 +385,7 @@ exit_nu_pdma_channel_allocate:
 
 rt_err_t nu_pdma_channel_free(int i32ChannID)
 {
-    rt_err_t ret = RT_EINVAL;
+    rt_err_t ret = -RT_EINVAL;
 
     if (! nu_pdma_inited)
         goto exit_nu_pdma_channel_free;
@@ -403,7 +403,7 @@ exit_nu_pdma_channel_free:
 
 rt_err_t nu_pdma_callback_register(int i32ChannID, nu_pdma_cb_handler_t pfnHandler, void *pvUserData, uint32_t u32EventFilter)
 {
-    rt_err_t ret = RT_EINVAL;
+    rt_err_t ret = -RT_EINVAL;
 
     if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
         goto exit_nu_pdma_callback_register;
@@ -491,7 +491,7 @@ exit_nu_pdma_channel_memctrl_get:
 
 rt_err_t nu_pdma_channel_memctrl_set(int i32ChannID, nu_pdma_memctrl_t eMemCtrl)
 {
-    rt_err_t ret = RT_EINVAL;
+    rt_err_t ret = -RT_EINVAL;
     nu_pdma_chn_t *psPdmaChann = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos];
 
 
@@ -548,7 +548,7 @@ rt_err_t nu_pdma_desc_setup(int i32ChannID, nu_pdma_desc_t dma_desc, uint32_t u3
     uint32_t u32SrcCtl = 0;
     uint32_t u32DstCtl = 0;
 
-    rt_err_t ret = RT_EINVAL;
+    rt_err_t ret = -RT_EINVAL;
 
     if (!dma_desc)
         goto exit_nu_pdma_desc_setup;
@@ -744,7 +744,7 @@ static void _nu_pdma_transfer(int i32ChannID, uint32_t u32Peripheral, nu_pdma_de
 
 rt_err_t nu_pdma_transfer(int i32ChannID, uint32_t u32DataWidth, uint32_t u32AddrSrc, uint32_t u32AddrDst, int32_t i32TransferCnt, uint32_t u32IdleTimeout_us)
 {
-    rt_err_t ret = RT_EINVAL;
+    rt_err_t ret = -RT_EINVAL;
 
     nu_pdma_periph_ctl_t *psPeriphCtl = NULL;
 
@@ -774,7 +774,7 @@ exit_nu_pdma_transfer:
 
 rt_err_t nu_pdma_sg_transfer(int i32ChannID, nu_pdma_desc_t head, uint32_t u32IdleTimeout_us)
 {
-    rt_err_t ret = RT_EINVAL;
+    rt_err_t ret = -RT_EINVAL;
     nu_pdma_periph_ctl_t *psPeriphCtl = NULL;
 
     if (!head)

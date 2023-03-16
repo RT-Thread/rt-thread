@@ -116,7 +116,7 @@ static rt_err_t swm_spi_configure(struct rt_spi_device *device,
 
     if (configure->mode & RT_SPI_3WIRE)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     if (configure->data_width == 8)

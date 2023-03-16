@@ -258,7 +258,7 @@ static rt_err_t ch32f2_hwtimer_control(struct rt_hwtimer_device *device, rt_uint
         }
         else
         {
-            result = RT_EINVAL;
+            result = -RT_EINVAL;
         }
     }
     break;
