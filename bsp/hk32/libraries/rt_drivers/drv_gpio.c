@@ -229,7 +229,7 @@ static rt_err_t hk32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
             pin_irq_hdr_tab[irqindex].args == args)
     {
         rt_hw_interrupt_enable(level);
-        return -RT_EOK;
+        return RT_EOK;
     }
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
