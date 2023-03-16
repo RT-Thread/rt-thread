@@ -10,7 +10,7 @@
 #ifndef RT_ATOMIC_ISRs_H__
 #define RT_ATOMIC_ISRs_H__
 
- #include <rthw.h>
+#include <rthw.h>
 #include <rtthread.h>
 extern rt_base_t rt_hw_interrupt_disable(void);
 extern void rt_hw_interrupt_enable(rt_base_t level);
@@ -21,8 +21,8 @@ __attribute__((always_inline)) static inline  rt_atomic_t rt_isr_atomic_exchange
     level = rt_hw_interrupt_disable();
     rt_atomic_t temp = *ptr;
     *ptr = val;
-    return temp;
     rt_hw_interrupt_enable(level);
+    return temp;
 }
 
 __attribute__((always_inline)) static inline  rt_atomic_t rt_isr_atomic_add(rt_atomic_t *ptr, rt_atomic_t val)
@@ -31,8 +31,8 @@ __attribute__((always_inline)) static inline  rt_atomic_t rt_isr_atomic_add(rt_a
     level = rt_hw_interrupt_disable();
     rt_atomic_t temp = *ptr;
     *ptr += val;
-    return temp;
     rt_hw_interrupt_enable(level);
+    return temp;    
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_sub(rt_atomic_t *ptr, rt_atomic_t val)
@@ -41,8 +41,8 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_sub(rt_at
     level = rt_hw_interrupt_disable();
     rt_atomic_t temp = *ptr;
     *ptr -= val;
+    rt_hw_interrupt_enable(level);
     return temp;
-     rt_hw_interrupt_enable(level);
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_xor(rt_atomic_t *ptr, rt_atomic_t val)
@@ -51,8 +51,8 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_xor(rt_at
     level = rt_hw_interrupt_disable();
     rt_atomic_t temp = *ptr;
     *ptr  = (*ptr)^val;
-    return temp;
     rt_hw_interrupt_enable(level);
+    return temp;
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_and(rt_atomic_t *ptr, rt_atomic_t val)
@@ -61,8 +61,8 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_and(rt_at
     level = rt_hw_interrupt_disable();
     rt_atomic_t temp = *ptr;
     *ptr  = (*ptr)&val;
-    return temp;
     rt_hw_interrupt_enable(level);
+    return temp;
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_or(rt_atomic_t *ptr, rt_atomic_t val)
@@ -71,8 +71,8 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_or(rt_ato
     level = rt_hw_interrupt_disable();
     rt_atomic_t temp = *ptr;
     *ptr  = (*ptr)|val;
-    return temp;
     rt_hw_interrupt_enable(level);
+    return temp;
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_load(rt_atomic_t *ptr)
@@ -80,8 +80,8 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_load(rt_a
     rt_base_t level;
     level = rt_hw_interrupt_disable();
     rt_atomic_t temp = *ptr;
-    return temp;
     rt_hw_interrupt_enable(level);
+    return temp;
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_store(rt_atomic_t *ptr, rt_atomic_t val)
@@ -90,21 +90,23 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_store(rt_
     level = rt_hw_interrupt_disable();
     rt_atomic_t temp = *ptr;
     *ptr = val;
-    return temp;
     rt_hw_interrupt_enable(level);
+    return temp;
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_flag_test_and_set(rt_atomic_t *ptr)
 {
     rt_base_t level;
+    rt_atomic_t temp;
     level = rt_hw_interrupt_disable();
     if(*ptr==0)
     {
+        temp =0;
         *ptr =1;
-        return 0;
     }else
-        return 1;
+       temp =1;
     rt_hw_interrupt_enable(level);
+    return temp;
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_flag_clear(rt_atomic_t *ptr)
@@ -112,21 +114,23 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_flag_clea
     rt_base_t level;
     level = rt_hw_interrupt_disable();
     *ptr = 0;
-    return 0;
     rt_hw_interrupt_enable(level);
+    return 0;
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_compare_exchange_strong(rt_atomic_t *ptr1, rt_atomic_t *ptr2, rt_atomic_t desired)
 {
     rt_base_t level;
+    rt_atomic_t temp;
     level = rt_hw_interrupt_disable();
     if((*ptr1)!=(*ptr2))
-        return 0;
+        temp = 0;
     else
     {
         *ptr1=desired;
-        return 1;
+        temp = 1;
     }
     rt_hw_interrupt_enable(level);
+    return temp;
 }
 #endif

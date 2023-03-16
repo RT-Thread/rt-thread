@@ -18,7 +18,7 @@ if rtconfig.PLATFORM in ['gcc']:
 if rtconfig.PLATFORM in ['iccarm']:
     src += Glob('*_iar.S')
 
-if rtconfig.CPU in ['cortex-m0', 'arm926', 'lpc214x', 'lpc24xx', 's3c24x0', 'AT91SAM7X']:
+if rtconfig.CPU in ['cortex-m0','cortex-m0-dual','arm926', 'lpc214x', 'lpc24xx', 's3c24x0', 'AT91SAM7X']:
     SrcRemove(src, 'atomic_port.c')
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
