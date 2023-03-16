@@ -131,7 +131,7 @@ static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t chan
     if (channel >= psNuEADC->max_chn_num)
     {
         *value = 0xFFFFFFFF;
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_get_eadc_value;
     }
 

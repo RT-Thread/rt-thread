@@ -86,7 +86,7 @@ static rt_err_t hpm_rtc_control(rt_device_t dev, int cmd, void *args)
             hpm_rtc_set_timestamp(*(time_t *)args);
             break;
         default:
-            err = RT_EINVAL;
+            err = -RT_EINVAL;
             break;
     }
 

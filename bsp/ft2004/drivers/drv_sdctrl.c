@@ -243,7 +243,7 @@ static void rthw_sdctrl_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req 
         if (pkg.cmd->cmd_code == 5 || pkg.cmd->cmd_code == 1)
         {
             rt_kprintf("cmd_code is not vaild %x \r\n", pkg.cmd->cmd_code);
-            pkg.cmd->err = RT_EINVAL;
+            pkg.cmd->err = -RT_EINVAL;
             goto _exit;
         }
 

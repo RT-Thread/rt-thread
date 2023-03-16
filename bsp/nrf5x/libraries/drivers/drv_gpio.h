@@ -35,18 +35,10 @@ struct pin_index
 {
     int index;
     NRF_GPIO_Type *gpio;//NRF_P0 or NRF_P1
-    uint32_t pin;
+    rt_base_t pin;
 };
 
-static void nrf5x_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value);
-static int nrf5x_pin_read(rt_device_t dev, rt_base_t pin);
-static void nrf5x_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode);
-static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args);
-static rt_err_t nrf5x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin);
-static rt_err_t nrf5x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                     rt_uint32_t enabled);
-int rt_hw_pin_init(void);
+rt_err_t rt_hw_pin_init(void);
 
 #endif /* __DRV_GPIO_H__ */
 

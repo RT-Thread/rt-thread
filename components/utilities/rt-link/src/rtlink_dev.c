@@ -321,7 +321,7 @@ rt_err_t  rt_link_dev_control(rt_device_t dev, int cmd, void *args)
     if (cmd & RT_DEVICE_CTRL_CONFIG)
     {
         if (args == RT_NULL)
-            return RT_EINVAL;
+            return -RT_EINVAL;
         RTLINK_SERV(dev).service = ((struct rt_link_service *)args)->service;
         RTLINK_SERV(dev).timeout_tx = ((struct rt_link_service *)args)->timeout_tx;
         RTLINK_SERV(dev).flag = ((struct rt_link_service *)args)->flag;

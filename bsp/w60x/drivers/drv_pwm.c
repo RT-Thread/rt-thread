@@ -113,7 +113,7 @@ static rt_err_t wm_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     channel = configuration->channel - 1;
 
     if (channel > 4)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     switch (cmd)
     {
@@ -134,7 +134,7 @@ static rt_err_t wm_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     case PWM_CMD_GET:
         return wm_pwm_get(channel, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 

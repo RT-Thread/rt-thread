@@ -171,7 +171,7 @@ static rt_err_t air32_hwtimer_control(struct rt_hwtimer_device *device, rt_uint3
         }
         else
         {
-            result = RT_EINVAL;
+            result = -RT_EINVAL;
         }
     }
     break;

@@ -348,7 +348,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
     case PWM_CMD_DISABLE_IRQ:
         return drv_pwm_enable_irq((struct EPWM_REGS *)(pwm->pwm_regs), RT_FALSE);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 

@@ -71,7 +71,7 @@ static rt_err_t gd32_pwm_enable(struct rt_device_pwm *device, struct rt_pwm_conf
 
     if (configuration->channel > GD32_MAX_PWM_CHANNELS)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     if (!enable)
     {
@@ -143,12 +143,12 @@ static rt_err_t gd32_pwm_set(struct rt_device_pwm *device, struct rt_pwm_configu
     if (configuration->channel > GD32_MAX_PWM_CHANNELS)
     {
         LOG_I("max channel supported is %d\n", GD32_MAX_PWM_CHANNELS);
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     if (configuration->period < configuration->pulse)
     {
         LOG_I("period should > pulse \n");
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     pwmclk = gd32_get_pwm_clk(config->periph);
@@ -157,12 +157,12 @@ static rt_err_t gd32_pwm_set(struct rt_device_pwm *device, struct rt_pwm_configu
     period_cmp = (uint64_t)(1000000000 / pwmclk) * 10;
     if (configuration->period < period_cmp)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     period_cmp = (uint64_t)(1000000000 / (pwmclk / 65536 / 4)) * 65536;
     if (configuration->period > period_cmp)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     period_cmp = (uint64_t) pwmclk * configuration->period / 1000000000;
@@ -252,7 +252,7 @@ static rt_err_t gd32_pwm_control(struct rt_device_pwm *device, int cmd, void *ar
     case PWM_CMD_GET:
         return gd32_pwm_get(device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 

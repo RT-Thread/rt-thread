@@ -434,7 +434,7 @@ static rt_err_t swm_pin_irq_enable(struct rt_device *device,
             EXTI_Init(gpio_obj->gpio, gpio_obj->pin, EXTI_LOW_LEVEL);
             break;
         default:
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
 
         level = rt_hw_interrupt_disable();

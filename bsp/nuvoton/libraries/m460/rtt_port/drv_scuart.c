@@ -186,7 +186,7 @@ static rt_err_t nu_scuart_configure(struct rt_serial_device *serial,
 
     default:
         LOG_E("Unsupported data length\n");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_scuart_configure;
     }
 
@@ -203,7 +203,7 @@ static rt_err_t nu_scuart_configure(struct rt_serial_device *serial,
 
     default:
         LOG_E("Unsupported stop bit\n");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_scuart_configure;
     }
 
@@ -224,7 +224,7 @@ static rt_err_t nu_scuart_configure(struct rt_serial_device *serial,
 
     default:
         LOG_E("Unsupported parity\n");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_scuart_configure;
     }
 

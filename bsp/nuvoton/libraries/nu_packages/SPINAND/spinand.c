@@ -381,7 +381,7 @@ static rt_err_t spinand_status_register_write(struct rt_qspi_device *qspi, uint8
         break;
 
     default:
-        result = RT_EINVAL;
+        result = -RT_EINVAL;
         goto exit_spinand_status_register_write;
     }
 

@@ -198,7 +198,7 @@ static rt_err_t nu_timer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg
         break;
 
     default:
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         break;
     }
 
