@@ -19,7 +19,7 @@ __attribute__((always_inline)) static inline  rt_atomic_t rt_isr_atomic_exchange
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     *ptr = val;
     return temp;
     rt_hw_interrupt_enable(level);
@@ -29,7 +29,7 @@ __attribute__((always_inline)) static inline  rt_atomic_t rt_isr_atomic_add(rt_a
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     *ptr += val;
     return temp;
     rt_hw_interrupt_enable(level);
@@ -39,7 +39,7 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_sub(rt_at
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     *ptr -= val;
     return temp;
      rt_hw_interrupt_enable(level);
@@ -49,7 +49,7 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_xor(rt_at
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     *ptr  = (*ptr)^val;
     return temp;
     rt_hw_interrupt_enable(level);
@@ -59,7 +59,7 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_and(rt_at
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     *ptr  = (*ptr)&val;
     return temp;
     rt_hw_interrupt_enable(level);
@@ -69,7 +69,7 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_or(rt_ato
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     *ptr  = (*ptr)|val;
     return temp;
     rt_hw_interrupt_enable(level);
@@ -79,7 +79,7 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_load(rt_a
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     return temp;
     rt_hw_interrupt_enable(level);
 }
@@ -88,7 +88,7 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_store(rt_
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     *ptr = val;
     return temp;
     rt_hw_interrupt_enable(level);
@@ -98,7 +98,7 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_flag_test
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_base_t temp = *ptr;
+    rt_atomic_t temp = *ptr;
     if(*ptr==0)
     {
         *ptr =1;
