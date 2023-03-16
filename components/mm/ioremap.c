@@ -62,7 +62,7 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
 
     if (err)
     {
-        LOG_W("IOREMAP 0x%lx failed", paddr);
+        LOG_W("IOREMAP 0x%lx failed %d\n", paddr, err);
         v_addr = NULL;
     }
     else
