@@ -32,7 +32,7 @@ __attribute__((always_inline)) static inline  rt_atomic_t rt_isr_atomic_add(rt_a
     rt_atomic_t temp = *ptr;
     *ptr += val;
     rt_hw_interrupt_enable(level);
-    return temp;    
+    return temp;
 }
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_sub(rt_atomic_t *ptr, rt_atomic_t val)
