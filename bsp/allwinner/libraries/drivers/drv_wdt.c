@@ -39,7 +39,7 @@ static rt_err_t wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
         else
         {
             LOG_E("arg is NULL!");
-            return RT_EIO;
+            return -RT_EIO;
         }
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
@@ -50,7 +50,7 @@ static rt_err_t wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
         else
         {
             LOG_E("arg is NULL!");
-            return RT_EIO;
+            return -RT_EIO;
         }
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMELEFT:
@@ -63,7 +63,7 @@ static rt_err_t wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
         {
             LOG_E("arg is NULL!");
         }
-        return RT_EIO;
+        return -RT_EIO;
     case RT_DEVICE_CTRL_WDT_KEEPALIVE:
         hal_watchdog_feed();
         break;
@@ -74,7 +74,7 @@ static rt_err_t wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
         hal_watchdog_stop(wdg_timeout);
         break;
     default:
-        return RT_EIO;
+        return -RT_EIO;
     }
     return RT_EOK;
 }

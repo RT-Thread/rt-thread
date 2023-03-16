@@ -66,7 +66,7 @@ static rt_err_t configure(struct rt_spi_device* device,
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     /* baudrate */

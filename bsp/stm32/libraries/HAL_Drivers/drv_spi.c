@@ -117,7 +117,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     if (cfg->mode & RT_SPI_CPHA)
@@ -240,7 +240,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     if (HAL_SPI_Init(spi_handle) != HAL_OK)
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) \

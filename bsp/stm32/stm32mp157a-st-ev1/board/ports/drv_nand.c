@@ -180,7 +180,7 @@ static rt_err_t _read_id(struct rt_mtd_nand_device *device)
     return RT_EOK;
 }
 
-static rt_uint8_t rt_hw_nand_ecc_check(rt_uint32_t generatedEcc, rt_uint32_t readEcc, rt_uint8_t* data)
+static rt_err_t rt_hw_nand_ecc_check(rt_uint32_t generatedEcc, rt_uint32_t readEcc, rt_uint8_t* data)
 {
 #define ECC_MASK28    0x0FFFFFFF          /* 28 valid ECC parity bits. */
 #define ECC_MASK      0x05555555          /* 14 ECC parity bits.       */
@@ -235,9 +235,9 @@ static rt_uint8_t rt_hw_nand_ecc_check(rt_uint32_t generatedEcc, rt_uint32_t rea
     }
 
     if (count == 1)           /* Error in the ECC itself. */
-        return RT_EIO;
+        return -RT_EIO;
 
-    return RT_EIO;       /* Unable to correct data. */
+    return -RT_EIO;       /* Unable to correct data. */
 
 #undef ECC_MASK
 #undef ECC_MASK24

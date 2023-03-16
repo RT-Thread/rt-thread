@@ -262,7 +262,7 @@ static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configurat
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     if (cfg->mode & RT_SPI_CPHA)
