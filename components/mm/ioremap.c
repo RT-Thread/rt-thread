@@ -27,6 +27,7 @@ size_t rt_ioremap_size;
 enum ioremap_type
 {
     MM_AREA_TYPE_PHY,
+    MM_AREA_TYPE_PHY_WT,
     MM_AREA_TYPE_PHY_CACHED
 };
 
@@ -51,6 +52,9 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     {
     case MM_AREA_TYPE_PHY:
         attr = MMU_MAP_K_DEVICE;
+        break;
+    case MM_AREA_TYPE_PHY_WT:
+        attr = MMU_MAP_K_RW;
         break;
     case MM_AREA_TYPE_PHY_CACHED:
         attr = MMU_MAP_K_RWCB;
@@ -80,6 +84,11 @@ void *rt_ioremap(void *paddr, size_t size)
 void *rt_ioremap_nocache(void *paddr, size_t size)
 {
     return _ioremap_type(paddr, size, MM_AREA_TYPE_PHY);
+}
+
+void *rt_ioremap_wt(void *paddr, size_t size)
+{
+    return _ioremap_type(paddr, size, MM_AREA_TYPE_PHY_WT);
 }
 
 void *rt_ioremap_cached(void *paddr, size_t size)
