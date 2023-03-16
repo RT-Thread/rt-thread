@@ -179,6 +179,28 @@ menu "kservice optimization"
 
 endmenu
 
+menu "Atomic optimization"
+
+    config RT_USING_ATOMIC
+        bool "Enable Atomic"
+        default n
+        help
+            e.g. If defined RT_USING_HW_ATOMIC,atomic implemented using hardware layer,
+            if defined RT_USING_STD_ATOMIC,Using atomic implemented in stdatomic.h,
+            else realize by using switch global interrupt。
+
+    if RT_USING_ATOMIC
+        config RT_USING_HW_ATOMIC
+            bool "Atomic implemented using hardware layer"
+            default n
+
+        config RT_USING_STD_ATOMIC
+            bool "Using atomic implemented in stdatomic.h"
+            default n
+    endif
+    
+endmenu
+
 menuconfig RT_DEBUG
     bool "Enable debugging features"
     default y
