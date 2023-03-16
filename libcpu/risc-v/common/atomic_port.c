@@ -14,14 +14,14 @@ rt_atomic_t rt_hw_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t result;
     asm volatile ("amoswap.w %0, %1, (%2)" : "=r"(result) : "r"(val), "r"(ptr) : "memory");
-    return(result);
+    return result;
 }
 
 rt_atomic_t rt_hw_atomic_add(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t result;
     asm volatile ("amoadd.w %0, %1, (%2)" : "=r"(result) : "r"(val), "r"(ptr) : "memory");
-    return(result);
+    return result;
 }
 
 rt_atomic_t rt_hw_atomic_sub(volatile rt_atomic_t *ptr, rt_atomic_t val)
@@ -29,35 +29,35 @@ rt_atomic_t rt_hw_atomic_sub(volatile rt_atomic_t *ptr, rt_atomic_t val)
     rt_atomic_t result;
     val = -val;
     asm volatile ("amoadd.w %0, %1, (%2)" : "=r"(result) : "r"(val), "r"(ptr) : "memory");
-    return(result);
+    return result;;
 }
 
 rt_atomic_t rt_hw_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t result;
     asm volatile ("amoxor.w %0, %1, (%2)" : "=r"(result) : "r"(val), "r"(ptr) : "memory");
-    return(result);
+    return result;
 }
 
 rt_atomic_t rt_hw_atomic_and(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t result;
     asm volatile ("amoand.w %0, %1, (%2)" : "=r"(result) : "r"(val), "r"(ptr) : "memory");
-    return(result);
+    return result;
 }
 
 rt_atomic_t rt_hw_atomic_or(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t result;
     asm volatile ("amoor.w %0, %1, (%2)" : "=r"(result) : "r"(val), "r"(ptr) : "memory");
-    return(result);
+    return result;
 }
 
 rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr)
 {
     rt_atomic_t result;
     asm volatile ("amoxor.w %0, x0, (%1)" : "=r"(result) : "r"(ptr) : "memory");
-    return(result);
+    return result;
 }
 
 void rt_hw_atomic_store(volatile rt_atomic_t *ptr, rt_atomic_t val)

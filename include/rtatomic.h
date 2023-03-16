@@ -98,7 +98,6 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_flag_test
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
-    rt_atomic_t temp = *ptr;
     if(*ptr==0)
     {
         *ptr =1;
@@ -119,7 +118,6 @@ __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_flag_clea
 
 __attribute__((always_inline)) static inline rt_atomic_t rt_isr_atomic_compare_exchange_strong(rt_atomic_t *ptr1, rt_atomic_t *ptr2, rt_atomic_t desired)
 {
-    rt_base_t temp;
     rt_base_t level;
     level = rt_hw_interrupt_disable();
     if((*ptr1)!=(*ptr2))
