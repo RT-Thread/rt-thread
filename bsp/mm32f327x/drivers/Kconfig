@@ -18,6 +18,18 @@ menu "Hardware Drivers Config"
                 select RT_USING_SERIAL
                 default y
         endmenu
+
+        menu "ADC Drivers"
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                select RT_USING_ADC
+                default y
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                select RT_USING_ADC
+                default y
+        endmenu
+        
         menu "Flash Drivers"
             config BSP_USING_OCFLASH
                 bool "Enable On Chip Flash"
