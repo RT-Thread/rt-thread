@@ -180,7 +180,7 @@ static rt_err_t rt_link_event_recv(struct rt_link_service *service)
     {
         return ret;
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 static void send_cb(struct rt_link_service *service, void *buffer)

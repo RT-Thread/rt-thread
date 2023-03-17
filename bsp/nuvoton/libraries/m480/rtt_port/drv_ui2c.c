@@ -352,7 +352,7 @@ static rt_ssize_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
 /* Public functions -------------------------------------------------------------*/
 int rt_hw_ui2c_init(void)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
 #if defined(BSP_USING_UI2C0)
     /* Enable UI2C0 clock */

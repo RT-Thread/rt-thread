@@ -134,7 +134,7 @@ static rt_err_t rt_dc_init(rt_device_t dev)
     if (mode<0)
     {
         rt_kprintf("\n\n\nunsupported framebuffer resolution\n\n\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     DC_FB_CONFIG = 0x0;

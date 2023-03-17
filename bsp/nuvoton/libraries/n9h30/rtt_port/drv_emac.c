@@ -397,7 +397,7 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
         rt_err_t result;
 
         result = rt_sem_control(&psNuEmac->eth_sem, RT_IPC_CMD_RESET, 0);
-        RT_ASSERT(result != RT_EOK);
+        RT_ASSERT(result == RT_EOK);
 
         EMAC_CLEAR_INT_FLAG(EMAC, EMAC_INTSTS_TXCPIF_Msk);
         EMAC_ENABLE_INT(EMAC, EMAC_INTEN_TXCPIEN_Msk);
@@ -431,7 +431,7 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
 #if defined(BSP_USING_MMU)
     mmu_clean_invalidated_dcache((uint32_t)psNuEmac->memmgr.psCurrentTxDesc, sizeof(EMAC_DESCRIPTOR_T));
 #endif
-    return (EMAC_SendPktWoCopy(&psNuEmac->memmgr, offset) == 1) ? RT_EOK : RT_ERROR;
+    return (EMAC_SendPktWoCopy(&psNuEmac->memmgr, offset) == 1) ? RT_EOK : -RT_ERROR;
 }
 
 static struct pbuf *nu_emac_rx(rt_device_t dev)

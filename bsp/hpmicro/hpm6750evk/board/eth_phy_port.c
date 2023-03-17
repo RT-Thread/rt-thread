@@ -272,7 +272,7 @@ static void phy_monitor_thread_entry(void *args)
 
 int phy_device_register(void)
 {
-    rt_err_t err = RT_ERROR;
+    rt_err_t err = -RT_ERROR;
     rt_thread_t thread_phy_monitor;
 
     /* Set ops for PHY */
@@ -308,7 +308,7 @@ int phy_device_register(void)
     }
     else
     {
-        err = RT_ERROR;
+        err = -RT_ERROR;
     }
 
     return err;

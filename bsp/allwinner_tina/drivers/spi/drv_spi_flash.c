@@ -27,12 +27,9 @@
 #define DEBUG_PRINTF(...)
 #endif
 
-#ifdef TINA_USING_SPI_FLASH
-
+#if defined(TINA_USING_SPI_FLASH) && defined(RT_USING_SFUD)
 #include "spi_flash.h"
-
-#if defined(RT_USING_SFUD)
-#include "spi_flash_sfud.h"
+#include <spi_flash_sfud.h>
 rt_spi_flash_device_t spi_device;
 int rt_hw_spi_flash_with_sfud_init(void)
 {
@@ -41,14 +38,11 @@ int rt_hw_spi_flash_with_sfud_init(void)
     if (spi_device == NULL)
     {
         DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
-        return RT_ERROR;
+        return -RT_ERROR;
     };
 
     DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
     return RT_EOK;
 }
 INIT_PREV_EXPORT(rt_hw_spi_flash_with_sfud_init);
-
-#endif
-
-#endif
+#endif /* defined(TINA_USING_SPI_FLASH) && defined(RT_USING_SFUD) */

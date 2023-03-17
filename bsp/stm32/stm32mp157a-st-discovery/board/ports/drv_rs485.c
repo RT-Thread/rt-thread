@@ -76,7 +76,7 @@ static int rs485_init(void)
     if (!serial)
     {
         rt_kprintf("find %s failed!\n", RS485_UART_DEVICE_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_device_open(serial, RT_DEVICE_FLAG_INT_RX);
@@ -101,7 +101,7 @@ static int rs485_init(void)
     }
     else
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

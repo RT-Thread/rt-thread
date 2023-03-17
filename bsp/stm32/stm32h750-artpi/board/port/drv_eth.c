@@ -161,7 +161,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     {
         if(HAL_ETH_ReadPHYRegister(&EthHandle, i, PHY_SPECIAL_MODES_REG, &regvalue) != HAL_OK)
         {
-            status = RT_ERROR;
+            status = -RT_ERROR;
             /* Can't read from this device address continue with next address */
             continue;
         }
@@ -188,7 +188,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
             {
                 if(HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ADDR, PHY_BASIC_CONTROL_REG, &regvalue) != HAL_OK)
                 {
-                    status = RT_ERROR;
+                    status = -RT_ERROR;
                     break;
                 }
             }
@@ -216,7 +216,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     }
     else
     {
-        status = RT_ERROR;
+        status = -RT_ERROR;
     }
 
     return status;
@@ -271,7 +271,7 @@ static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
 /* transmit data*/
 rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     HAL_StatusTypeDef state;
     uint32_t i = 0, framelen = 0;
     struct pbuf *q;

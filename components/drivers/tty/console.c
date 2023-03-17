@@ -82,7 +82,7 @@ static rt_err_t iodev_open(struct tty_struct *console)
     ret = rt_device_open(console->driver, oflags);
     if (ret != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rx_notify.notify = console_rx_notify;

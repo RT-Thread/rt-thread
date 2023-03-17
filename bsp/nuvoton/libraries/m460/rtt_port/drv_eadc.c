@@ -123,7 +123,7 @@ static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     nu_eadc_t psNuEADC = (nu_eadc_t)device;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     RT_ASSERT(device);
     RT_ASSERT(value);

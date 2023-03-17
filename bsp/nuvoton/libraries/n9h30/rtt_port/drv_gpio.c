@@ -314,7 +314,7 @@ static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     irqindex = nu_find_irqindex(pin);
     if (irqindex == -(RT_ERROR))
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
         goto exit_nu_gpio_irq_enable;
     }
 

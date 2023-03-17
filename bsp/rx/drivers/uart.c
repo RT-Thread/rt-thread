@@ -75,7 +75,7 @@ static rt_err_t rx_configure(struct rt_serial_device *serial, struct serial_conf
     uart = (struct rx_uart *)serial->parent.user_data;
 
     if (uart->UART > 6) {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* Initialise the working copies */
     smr_copy = 0x00u;
@@ -248,14 +248,14 @@ case 0:
     if (cfg->stop_bits == STOP_BITS_2) {
         smr_copy |= BIT_3;
     } else if (cfg->stop_bits != STOP_BITS_1) {
-        return  RT_ERROR;
+        return  -RT_ERROR;
     }
 
     /*data bit*/
     if (cfg->data_bits == 7) {
         smr_copy |= BIT_6;
     } else if (cfg->data_bits != DATA_BITS_8) {
-        return  RT_ERROR;
+        return  -RT_ERROR;
     }
 
     /*parity*/

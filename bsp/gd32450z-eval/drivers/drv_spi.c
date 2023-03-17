@@ -320,6 +320,6 @@ rt_err_t gd32_spi_bus_register(uint32_t spi_periph,
         }
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 #endif

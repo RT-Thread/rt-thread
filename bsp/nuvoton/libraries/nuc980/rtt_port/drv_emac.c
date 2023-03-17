@@ -419,7 +419,7 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
         rt_err_t result;
 
         result = rt_sem_control(&psNuEmac->eth_sem, RT_IPC_CMD_RESET, 0);
-        RT_ASSERT(result != RT_EOK);
+        RT_ASSERT(result == RT_EOK);
 
         EMAC_CLEAR_INT_FLAG(EMAC, EMAC_INTSTS_TXCPIF_Msk);
         EMAC_ENABLE_INT(EMAC, EMAC_INTEN_TXCPIEN_Msk);
@@ -450,7 +450,7 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
 #endif
 
     /* Return SUCCESS? */
-    return (EMAC_SendPktWoCopy(&psNuEmac->memmgr, offset) == 1) ? RT_EOK : RT_ERROR;
+    return (EMAC_SendPktWoCopy(&psNuEmac->memmgr, offset) == 1) ? RT_EOK : -RT_ERROR;
 }
 
 void nu_emac_pbuf_free(struct pbuf *p)

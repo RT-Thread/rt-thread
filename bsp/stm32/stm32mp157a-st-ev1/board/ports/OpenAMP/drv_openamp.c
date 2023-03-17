@@ -109,7 +109,7 @@ static rt_err_t _init(struct rt_device *dev)
 
     if (rt_sem_init(&device->sema, "openamplock", 1, RT_IPC_FLAG_FIFO) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -213,18 +213,18 @@ static int openamp_init(void)
     hipcc.Instance = IPCC;
     if (HAL_IPCC_Init(&hipcc) != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* openamp slave device */
     MX_OPENAMP_Init(RPMSG_REMOTE, NULL);
 
     if (VIRT_UART_Init(&huart0) != VIRT_UART_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if (VIRT_UART_RegisterCallback(&huart0, VIRT_UART_RXCPLT_CB_ID, VIRT_UART0_RxCpltCallback) != VIRT_UART_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -284,7 +284,7 @@ static int creat_openamp_thread(void)
     if (tid == RT_NULL)
     {
         LOG_E("openamp thread create failed!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_startup(tid);

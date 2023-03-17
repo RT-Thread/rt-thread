@@ -182,7 +182,7 @@ static rt_err_t ifx_configure(struct rt_serial_device *serial, struct serial_con
         result = cyhal_uart_set_baud(uart->config->uart_obj, cfg->baud_rate, NULL);
     }
 
-    RT_ASSERT(result != RT_ERROR);
+    RT_ASSERT(result == RT_EOK);
 
     return RT_EOK;
 }

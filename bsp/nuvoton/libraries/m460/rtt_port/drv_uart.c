@@ -816,7 +816,7 @@ static rt_ssize_t nu_uart_dma_transmit(struct rt_serial_device *serial, rt_uint8
     }
     else
     {
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
 
     return result;

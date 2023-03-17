@@ -126,7 +126,7 @@ int rt_hw_max31875_temp_init(const char *name, struct rt_sensor_config *cfg)
 int rt_hw_max31875_init(const char *name, struct rt_sensor_config *cfg)
 {
     struct rt_sensor_intf *intf;
-    rt_err_t  ret = RT_ERROR;
+    rt_err_t  ret = -RT_ERROR;
 
     RT_ASSERT(name != NULL);
     RT_ASSERT(cfg != NULL);

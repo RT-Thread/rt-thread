@@ -196,7 +196,7 @@ static rt_err_t _send_cmd(
 
     if ((CARD_NCR_MAX + 1) == i)
     {
-        return RT_ERROR;//fail
+        return -RT_ERROR;//fail
     }
 
     //recieve other byte
@@ -261,7 +261,7 @@ static rt_err_t _send_cmd(
     }
     else
     {
-        return RT_ERROR; // unknow type?
+        return -RT_ERROR; // unknow type?
     }
 
     return RT_EOK;
@@ -426,7 +426,7 @@ static rt_err_t _write_block(struct rt_spi_device *device, const void *buffer, u
         if (response != MSD_DATA_OK)
         {
             MSD_DEBUG("[err] write block fail! data response : 0x%02X\r\n", response);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -570,7 +570,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                     {
                         /* SD2.0 not support current voltage */
                         MSD_DEBUG("[err] VCA = 0, SD2.0 not surpport current operation voltage range\r\n");
-                        result = RT_ERROR;
+                        result = -RT_ERROR;
                         goto _exit;
                     }
                 }
@@ -623,7 +623,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                 if (0 == (OCR & (0x1 << 15)))
                 {
                     MSD_DEBUG(("[err] SD 1.x But not surpport current voltage\r\n"));
-                    result = RT_ERROR;
+                    result = -RT_ERROR;
                     goto _exit;
                 }
 
@@ -771,7 +771,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
             {
                 rt_spi_release(msd->spi_device);
                 MSD_DEBUG("[err] It look CMD58 as illegal command so it is not SD card!\r\n");
-                result = RT_ERROR;
+                result = -RT_ERROR;
                 goto _exit;
             }
 
@@ -786,7 +786,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
             if (0 == (OCR & (0x1 << 15)))
             {
                 MSD_DEBUG(("[err] SD 1.x But not surpport current voltage\r\n"));
-                result = RT_ERROR;
+                result = -RT_ERROR;
                 goto _exit;
             }
 
@@ -801,7 +801,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                 {
                     rt_spi_release(msd->spi_device);
                     MSD_DEBUG("[err] SD Ver2.x or later try CMD55 + ACMD41 timeout!\r\n");
-                    result = RT_ERROR;
+                    result = -RT_ERROR;
                     goto _exit;
                 }
 
@@ -818,7 +818,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                 {
                     rt_spi_release(msd->spi_device);
                     MSD_DEBUG("[err] Not SD ready!\r\n");
-                    result = RT_ERROR;
+                    result = -RT_ERROR;
                     goto _exit;
                 }
 
@@ -828,7 +828,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                 {
                     rt_spi_release(msd->spi_device);
                     MSD_DEBUG("[err] ACMD41 fail!\r\n");
-                    result = RT_ERROR;
+                    result = -RT_ERROR;
                     goto _exit;
                 }
 
@@ -857,7 +857,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
             {
                 rt_spi_release(msd->spi_device);
                 MSD_DEBUG("[err] It look 2nd CMD58 as illegal command so it is not SD card!\r\n");
-                result = RT_ERROR;
+                result = -RT_ERROR;
                 goto _exit;
             }
             rt_spi_release(msd->spi_device);
@@ -881,7 +881,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
         else
         {
             MSD_DEBUG("[err] SD card type unkonw!\r\n");
-            result = RT_ERROR;
+            result = -RT_ERROR;
             goto _exit;
         }
     } /* init SD card */
@@ -918,7 +918,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
         if ((result != RT_EOK) || (response[0] != MSD_RESPONSE_NO_ERROR))
         {
             MSD_DEBUG("[err] CMD59 CRC_ON_OFF fail! response : 0x%02X\r\n", response[0]);
-            result = RT_ERROR;
+            result = -RT_ERROR;
             goto _exit;
         }
     } /* set CRC */
@@ -932,7 +932,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
         if ((result != RT_EOK) || (response[0] != MSD_RESPONSE_NO_ERROR))
         {
             MSD_DEBUG("[err] CMD16 SET_BLOCKLEN fail! response : 0x%02X\r\n", response[0]);
-            result = RT_ERROR;
+            result = -RT_ERROR;
             goto _exit;
         }
         msd->geometry.block_size = SECTOR_SIZE;
@@ -958,7 +958,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
         {
             rt_spi_release(msd->spi_device);
             MSD_DEBUG("[err] CMD9 SEND_CSD fail! response : 0x%02X\r\n", response[0]);
-            result = RT_ERROR;
+            result = -RT_ERROR;
             goto _exit;
         }
 
@@ -993,7 +993,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                 if (CSD_STRUCTURE > 2)
                 {
                     MSD_DEBUG("[err] bad CSD Version : %d\r\n", CSD_STRUCTURE);
-                    result = RT_ERROR;
+                    result = -RT_ERROR;
                     goto _exit;
                 }
 
@@ -1174,7 +1174,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                 else
                 {
                     MSD_DEBUG("[err] bad CSD Version : %d\r\n", CSD_STRUCTURE);
-                    result = RT_ERROR;
+                    result = -RT_ERROR;
                     goto _exit;
                 }
             } /* SD CSD Analyze. */

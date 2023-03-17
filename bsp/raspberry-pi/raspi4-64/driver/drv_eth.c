@@ -604,7 +604,7 @@ static rt_err_t bcmgenet_eth_init(rt_device_t device)
 
         rt_kprintf("Uns upported GENETv%d.%d\n", major, (hw_reg >> 16) & 0x0f);
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set interface */

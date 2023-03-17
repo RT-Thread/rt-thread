@@ -93,7 +93,7 @@ static int uart_sample(int argc, char *argv[])
     if (!serial)
     {
         rt_kprintf("find %s failed!\n", uart_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
@@ -110,7 +110,7 @@ static int uart_sample(int argc, char *argv[])
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;
@@ -253,14 +253,14 @@ static int wdt_sample(int argc, char *argv[])
     if (!wdt_dev)
     {
         rt_kprintf("find %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     ret = rt_device_control(wdt_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     if (ret != RT_EOK)
     {
         rt_kprintf("set %s timeout failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     ret = rt_device_control(wdt_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
@@ -351,7 +351,7 @@ int can_sample(int argc, char *argv[])
     if (!can_dev)
     {
         rt_kprintf("find %s failed!\n", can_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
@@ -500,7 +500,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if (hw_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", HWTIMER_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
@@ -526,7 +526,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
     {
         rt_kprintf("set timeout value failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_mdelay(1000);

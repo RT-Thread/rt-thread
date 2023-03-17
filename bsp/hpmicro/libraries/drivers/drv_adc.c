@@ -99,7 +99,7 @@ static rt_err_t init_adc_config(hpm_rtt_adc *adc)
     cfg.adc_clk_div    = 1;
     ret = adc12_init(adc->adc_base, &cfg);
     if (ret != status_success) {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif
 
@@ -113,7 +113,7 @@ static rt_err_t init_adc_config(hpm_rtt_adc *adc)
     cfg.sel_sync_ahb   = true;
     ret = adc16_init(adc->adc_base, &cfg);
     if (ret != status_success) {
-       return RT_ERROR;
+       return -RT_ERROR;
     }
 #endif
     return RT_EOK;
@@ -131,7 +131,7 @@ static rt_err_t init_channel_config(hpm_rtt_adc *adc)
 
     ret = adc12_init_channel(adc->adc_base, &ch_cfg);
     if (ret != status_success) {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif
 
@@ -145,7 +145,7 @@ static rt_err_t init_channel_config(hpm_rtt_adc *adc)
 
     ret = adc16_init_channel(adc->adc_base, &ch_cfg);
     if (ret != status_success) {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif
     return RT_EOK;
@@ -160,12 +160,12 @@ static rt_err_t hpm_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
     hpm_adc_handler = (hpm_rtt_adc *)device->parent.user_data;
     ret = init_adc_config(hpm_adc_handler);
     if (ret != RT_EOK) {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     hpm_adc_handler->channel = channel;
     ret = init_channel_config(hpm_adc_handler);
     if (ret != RT_EOK) {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -208,7 +208,7 @@ int rt_hw_adc_init(void)
     for (uint32_t i = 0; i < adc_nums; i++) {
        ret = rt_hw_adc_register(&hpm_adc_config_tbl[i].hpm_adc_device, hpm_adc_config_tbl[i].adc_name, &hpm_adc_ops, &hpm_adc_config_tbl[i]);
        if (ret != RT_EOK) {
-           ret = RT_ERROR;
+           ret = -RT_ERROR;
            break;
        }
     }

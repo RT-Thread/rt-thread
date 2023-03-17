@@ -482,7 +482,7 @@ static int uart_sample(int argc, char *argv[])
     if (!serial)
     {
         rt_kprintf("find %s failed!\n", uart_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Initialize the semaphore */
@@ -503,7 +503,7 @@ static int uart_sample(int argc, char *argv[])
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;
@@ -609,7 +609,7 @@ static int uart_dma_sample(int argc, char *argv[])
     if (!serial)
     {
         rt_kprintf("find %s failed!\n", uart_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Initialize message queue */
@@ -635,7 +635,7 @@ static int uart_dma_sample(int argc, char *argv[])
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;

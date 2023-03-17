@@ -681,7 +681,7 @@ static rt_err_t nu_pdma_sgtbls_valid(nu_pdma_desc_t head)
         {
             rt_kprintf("The distance is over %d between 0x%08x and 0x%08x. \n", NU_PDMA_SG_LIMITED_DISTANCE, PDMA->SCATBA, node);
             rt_kprintf("Please use nu_pdma_sgtbl_allocate to allocate valid sg-table.\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         node = (nu_pdma_desc_t)(node->NEXT + PDMA->SCATBA);

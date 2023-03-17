@@ -183,7 +183,7 @@ static int rtc_sample(int argc, char *argv[])
     if (!device)
     {
       LOG_E("find %s failed!", RTC_NAME);
-      return RT_ERROR;
+      return -RT_ERROR;
     }
 
     if(rt_device_open(device, 0) != RT_EOK)

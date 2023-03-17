@@ -23,7 +23,7 @@ static rt_err_t hw_rng_sample(int random_num)
 
     if (random_num == 0)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     for (i = 0; i< random_num; i++)

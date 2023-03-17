@@ -118,7 +118,7 @@ int mma8562_hw_init(void)
     if (val != kMMA8562_WHO_AM_I_Device_ID)
     {
         rt_kprintf("MMA8562: Unexpected result from WHO_AM_I (0x%02x)\n", val);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /*  please refer to the "example FXOS8700CQ Driver Code" in FXOS8700 datasheet. */

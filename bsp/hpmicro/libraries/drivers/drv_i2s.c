@@ -434,7 +434,7 @@ static rt_err_t hpm_i2s_start(struct rt_audio_device* audio, int stream)
         }
 
         if (RT_EOK != hpm_i2s_transmit(&hpm_audio->audio, NULL, hpm_audio->rx_buff, I2S_FIFO_SIZE)) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     } else {
         return -RT_ERROR;

@@ -810,7 +810,7 @@ static rt_err_t nu_pdma_sgtbls_valid(nu_pdma_desc_t head)
         {
             rt_kprintf("The distance is over %d between 0x%08x and 0x%08x. \n", NU_PDMA_SG_LIMITED_DISTANCE, PDMA0->SCATBA, node);
             rt_kprintf("Please use nu_pdma_sgtbl_allocate to allocate valid sg-table.\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         node = (nu_pdma_desc_t)(node->NEXT + PDMA0->SCATBA);
@@ -863,7 +863,7 @@ static void _nu_pdma_free_sgtbls(nu_pdma_chn_t *psPdmaChann)
 static rt_err_t _nu_pdma_transfer_chain(int i32ChannID, uint32_t u32DataWidth, uint32_t u32AddrSrc, uint32_t u32AddrDst, uint32_t u32TransferCnt, uint32_t u32IdleTimeout_us)
 {
     int i = 0;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     nu_pdma_periph_ctl_t *psPeriphCtl = NULL;
     nu_pdma_chn_t *psPdmaChann = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos];
 
@@ -1178,7 +1178,7 @@ static rt_ssize_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, u
 {
     nu_pdma_memfun_actor_t psMemFunActor = NULL;
     struct nu_pdma_chn_cb sChnCB;
-    rt_err_t result = RT_ERROR;
+    rt_err_t result = -RT_ERROR;
 
     int idx;
     rt_size_t ret = 0;

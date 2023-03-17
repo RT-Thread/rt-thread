@@ -339,7 +339,7 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
     if (result != RT_EOK)
     {
         LOG_E("can't find low level audio device!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return result;
@@ -362,7 +362,7 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
 
         if (HAL_SAI_Transmit_DMA(&hsai_BlockA2, snd_dev->tx_fifo, TX_FIFO_SIZE / 2) != HAL_OK)
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -426,7 +426,7 @@ int rt_hw_sound_init(void)
     if (snd_dev.decoder == RT_NULL)
     {
         LOG_E("cant't find lowlevel decoder deivce!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* register sound device */
@@ -438,7 +438,7 @@ int rt_hw_sound_init(void)
         device = &(snd_dev.audio.parent);
         rt_device_unregister(device);
         LOG_E("sound device init error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

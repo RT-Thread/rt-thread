@@ -79,7 +79,7 @@ static int uart_dma_sample(int argc, char *argv[])
     if (!serial)
     {
         rt_kprintf("find %s failed!\n", uart_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_mq_init(&rx_mq, "rx_mq",
@@ -111,7 +111,7 @@ static int uart_dma_sample(int argc, char *argv[])
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;

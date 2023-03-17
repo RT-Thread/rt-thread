@@ -465,7 +465,7 @@ __return:
         rt_free(write_buffer);
     }
     rt_device_close(device);
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 int device_test(const char * device_name)
@@ -477,7 +477,7 @@ int device_test(const char * device_name)
     if( device == RT_NULL)
     {
         rt_kprintf("device %s: not found!\r\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     // step 2:init device
@@ -505,7 +505,7 @@ int device_test(const char * device_name)
         return _block_device_test(device);
     default:
         rt_kprintf("unkown device type : %02X",device->type);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 

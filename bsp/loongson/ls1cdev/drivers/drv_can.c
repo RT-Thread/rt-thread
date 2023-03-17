@@ -276,7 +276,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
                 argval != RT_CAN_MODE_LOOPBACK ||
                 argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         if (argval != can->config.mode)
         {
@@ -294,7 +294,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
                 argval != CAN100kBaud &&
                 argval != CAN50kBaud  )
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         if (argval != can->config.baud_rate)
         {

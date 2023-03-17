@@ -45,7 +45,7 @@ static rt_err_t read_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint8
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /* i2c write reg */
@@ -69,7 +69,7 @@ static rt_err_t write_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /* register direct access */
@@ -891,7 +891,7 @@ static int pmic_init(void)
         {
             LOG_D("stpmic init failed: %02x", result);
             rt_hw_pmic_deinit();
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         rt_hw_pmic_init_register();

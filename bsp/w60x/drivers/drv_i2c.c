@@ -135,7 +135,7 @@ static rt_err_t wm_i2c_bus_control(struct rt_i2c_bus_device *bus,
                                    rt_uint32_t cmd,
                                    rt_uint32_t arg)
 {
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 void WM_I2C_IRQHandler(void)
