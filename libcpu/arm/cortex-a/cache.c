@@ -153,26 +153,3 @@ rt_base_t rt_hw_cpu_dcache_status(void)
 {
     return 0;
 }
-
-#ifdef RT_USING_SMART
-#define ICACHE (1<<0)
-#define DCACHE (1<<1)
-#define BCACHE (ICACHE|DCACHE)
-
-int sys_cacheflush(void *addr, int size, int cache)
-{
-    if ((size_t)addr < KERNEL_VADDR_START && (size_t)addr + size <= KERNEL_VADDR_START)
-    {
-        if ((cache & DCACHE) != 0)
-        {
-            rt_hw_cpu_dcache_clean_and_invalidate(addr, size);
-        }
-        if ((cache & ICACHE) != 0)
-        {
-            rt_hw_cpu_icache_invalidate(addr, size);
-        }
-        return 0;
-    }
-    return -1;
-}
-#endif
