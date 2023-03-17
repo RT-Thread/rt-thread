@@ -6,7 +6,7 @@ def usage():
     print('%s clean   -- clean all bsp' % os.path.basename(sys.argv[0]))
     print('%s project -- update all prject files' % os.path.basename(sys.argv[0]))
 
-BSP_ROOT = os.path.join("..", "bsp")
+BSP_ROOT = os.path.join("..", "..", "bsp")
 
 if len(sys.argv) != 2:
     usage()
