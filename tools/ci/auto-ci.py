@@ -50,7 +50,7 @@ results = {
 
 fail = False
 
-BSP_ROOT = '../bsp'
+BSP_ROOT = '../../bsp'
 
 for bsp,cpu in bsp_to_cpu.items():
     project_dir = os.path.join(BSP_ROOT, bsp)
