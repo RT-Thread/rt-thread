@@ -90,7 +90,7 @@ void rt_hw_cpu_dcache_clean_local(void *addr, int size)
     rt_hw_cpu_sync();
 }
 
-void rt_hw_cpu_dcache_clean_invalidate_local(void *addr, int size)
+void rt_hw_cpu_dcache_clean_and_invalidate_local(void *addr, int size)
 {
     dcache_wbinv_range((unsigned long)addr, (unsigned long)((unsigned char *)addr + size));
     rt_hw_cpu_sync();
@@ -127,34 +127,3 @@ void rt_hw_sync_cache_local(void *addr, int size)
     rt_hw_cpu_dcache_clean_local(addr, size);
     rt_hw_cpu_icache_invalidate_local(addr, size);
 }
-
-#ifdef RT_USING_SMART
-#include <lwp_arch.h>
-#define ICACHE (1 << 0)
-#define DCACHE (1 << 1)
-#define BCACHE (ICACHE | DCACHE)
-
-/**
- * TODO moving syscall to kernel
- */
-int sys_cacheflush(void *addr, int size, int cache)
-{
-    /* must in user space */
-    if ((size_t)addr >= USER_VADDR_START && (size_t)addr + size < USER_VADDR_TOP)
-    {
-        /**
-         * we DO NOT check argument 'cache' invalid error
-         */
-        if ((cache & DCACHE) != 0)
-        {
-            rt_hw_cpu_dcache_clean_invalidate_local(addr, size);
-        }
-        if ((cache & ICACHE) != 0)
-        {
-            rt_hw_cpu_icache_invalidate_local(addr, size);
-        }
-        return 0;
-    }
-    return -RT_ERROR;
-}
-#endif

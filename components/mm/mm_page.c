@@ -26,20 +26,11 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
+RT_CTASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
+RT_CTASSERT(size_width, sizeof(rt_size_t) == sizeof(void *));
+
 #ifdef RT_USING_SMART
 #include "lwp_arch_comm.h"
-
-#define CT_ASSERT(name, x)                                                     \
-    struct assert_##name                                                       \
-    {                                                                          \
-        char ary[2 * (x)-1];                                                   \
-    }
-#ifdef ARCH_CPU_64BIT
-CT_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
-#else
-CT_ASSERT(size_width, sizeof(rt_size_t) == sizeof(rt_size_t));
-#endif /* ARCH_CPU_64BIT */
-
 #endif /* RT_USING_SMART */
 
 static rt_size_t init_mpr_align_start;
