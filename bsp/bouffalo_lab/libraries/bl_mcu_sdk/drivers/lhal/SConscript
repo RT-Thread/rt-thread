@@ -1,0 +1,123 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+
+CPPPATH = [cwd + r'/include',
+        cwd + r'/include/arch',
+        cwd + r'/include/arch/risc-v/t-head',
+        cwd + r'/include/arch/risc-v/t-head/Core/Include',
+        cwd + r'/src/flash']
+
+src     = Split("""
+    src/bflb_adc.c
+    src/bflb_cks.c
+    src/bflb_ef_ctrl.c
+    src/bflb_gpio.c
+    src/bflb_i2c.c
+    src/bflb_dma.c
+    src/bflb_rtc.c
+    src/bflb_sec_aes.c
+    src/bflb_sec_sha.c
+    src/bflb_sec_trng.c
+    src/bflb_spi.c
+    src/bflb_timer.c
+    src/bflb_uart.c
+    src/bflb_wdg.c
+    src/bflb_flash.c
+    src/flash/bflb_sf_cfg.c
+    src/flash/bflb_xip_sflash.c
+    src/flash/bflb_sflash.c
+    src/flash/bflb_sf_ctrl.c
+    src/bflb_irq.c
+    src/bflb_l1c.c
+    src/bflb_mtimer.c
+""")
+
+if not GetDepend('BSP_USING_ROMAPI'):
+    src += ['src/bflb_common.c']
+else:
+    if not GetDepend('BSP_USING_BL60X') and not GetDepend('BSP_USING_BL70X'):
+        src += ['src/bflb_common.c']
+
+if GetDepend('BSP_USING_BL61X'):
+    src += Split("""
+        src/bflb_dac.c
+        src/bflb_emac.c
+        src/bflb_ir.c
+        src/bflb_mjpeg.c
+        src/bflb_pwm_v2.c
+        src/bflb_cam.c
+        src/bflb_iso11898.c
+        src/bflb_i2s.c
+        src/bflb_common.c
+        include/arch/risc-v/t-head/rv_hart.c
+        include/arch/risc-v/t-head/rv_pmp.c
+    """)
+    src += ['config/bl616/device_table.c']
+    CPPPATH += [cwd + r'/config/bl616']
+    
+elif GetDepend('BSP_USING_BL60X'):
+    src += Split("""
+        src/bflb_dac.c
+        src/bflb_ir.c
+        src/bflb_pwm_v1.c
+    """)
+    src += ['config/bl602/device_table.c']
+    CPPPATH += [cwd + r'/config/bl602']
+
+elif GetDepend('BSP_USING_BL70X'):
+    src += Split("""
+        src/bflb_dac.c
+        src/bflb_emac.c
+        src/bflb_ir.c
+        src/bflb_pwm_v1.c
+        src/bflb_cam.c
+        src/bflb_spi_psram.c
+    """)
+    src += ['config/bl702/device_table.c']
+    CPPPATH += [cwd + r'/config/bl702']
+
+elif GetDepend('BSP_USING_BL702L'):
+    src += Split("""
+        src/bflb_pwm_v1.c
+        src/bflb_pwm_v2.c
+        src/bflb_spi_psram.c
+    """)
+
+elif GetDepend('BSP_USING_BL628'):
+    src += Split("""
+        src/bflb_dac.c
+        src/bflb_emac.c
+        src/bflb_clock.c
+        src/bflb_pwm_v2.c
+        src/bflb_iso11898.c
+        include/arch/risc-v/t-head/rv_hart.c
+        include/arch/risc-v/t-head/rv_pmp.c
+   """)
+
+elif GetDepend('BSP_USING_BL808'):
+    src += Split("""
+        src/bflb_dac.c
+        src/bflb_emac.c
+        src/bflb_ir.c
+        src/bflb_mjpeg.c
+        src/bflb_pwm_v2.c
+        src/bflb_cam.c
+        src/bflb_iso11898.c
+        src/bflb_csi.c
+        src/bflb_i2s.c
+        include/arch/risc-v/t-head/rv_hart.c
+        include/arch/risc-v/t-head/rv_pmp.c
+    """)
+    src += ['config/bl808/device_table.c']
+    CPPPATH += [cwd + r'/config/bl808']
+    
+LOCAL_CFLAGS = ' -DARCH_RISCV'
+
+group = DefineGroup('bl_lhal', src, depend = [''], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
+
+objs = [group]
+
+Return('objs')

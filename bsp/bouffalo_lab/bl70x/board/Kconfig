@@ -1,0 +1,16 @@
+config BSP_USING_BL70X
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select ARCH_RISCV32
+    select ARCH_RISCV_FPU_S
+    select BSP_USING_ROMAPI
+    default y
+
+config BSP_USING_ROMAPI
+    bool 
+    default y
+
+config BSP_USING_PSRAM
+    bool "Enable PSRAM"
+    default n
