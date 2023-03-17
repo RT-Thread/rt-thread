@@ -71,7 +71,7 @@ rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr)
     rt_atomic_t result;
     rt_atomic_t temp = 1;
     asm volatile ("amoor.w %0, %1, (%2)" : "=r"(result) : "r"(temp), "r"(ptr) : "memory");
-    return(result);
+    return result;
 }
 
 void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr)
@@ -90,7 +90,10 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
     "   bne      %[result], %[tmp], 2f\n"
     "   sc.w.rl  %[tmp], %[new], (%[ptr])\n"
     "   bnez     %[tmp], 1b\n"
-    " 2:\n"
+    "   j 3f\n"
+    " 2:sw  %[result], (%[old])\n"
+    "   li     %[result], 0\n"
+    " 3:\n"
     : [result]"+r" (result), [tmp]"+r" (tmp), [ptr]"+r" (ptr)
     : [new]"r" (new), [old]"r"(old)
     : "memory");

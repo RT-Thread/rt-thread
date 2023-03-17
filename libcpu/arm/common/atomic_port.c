@@ -70,7 +70,7 @@ __attribute__((always_inline)) static inline  rt_atomic_t __STREXW(rt_atomic_t v
 }
 #endif
 
-rt_atomic_t rt_hw_atomic_load(rt_atomic_t *ptr)
+rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr)
 {
     rt_atomic_t oldval;
     do {
@@ -79,14 +79,14 @@ rt_atomic_t rt_hw_atomic_load(rt_atomic_t *ptr)
     return *ptr;
 }
 
-void rt_hw_atomic_store(rt_atomic_t *ptr,rt_atomic_t val)
+void rt_hw_atomic_store(volatile rt_atomic_t *ptr,rt_atomic_t val)
 {
     do {
         __LDREXW(ptr);
     }while((__STREXW(val, ptr)) != 0U);
 }
 
-rt_atomic_t rt_hw_atomic_add(rt_atomic_t *ptr, rt_atomic_t val)
+rt_atomic_t rt_hw_atomic_add(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t oldval;
     do {
@@ -95,7 +95,7 @@ rt_atomic_t rt_hw_atomic_add(rt_atomic_t *ptr, rt_atomic_t val)
     return oldval;
 }
 
-rt_atomic_t rt_hw_atomic_sub(rt_atomic_t *ptr, rt_atomic_t val)
+rt_atomic_t rt_hw_atomic_sub(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t oldval;
     do {
@@ -104,7 +104,7 @@ rt_atomic_t rt_hw_atomic_sub(rt_atomic_t *ptr, rt_atomic_t val)
     return oldval;
 }
 
-rt_atomic_t rt_hw_atomic_and(rt_atomic_t *ptr, rt_atomic_t val)
+rt_atomic_t rt_hw_atomic_and(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t oldval;
     do {
@@ -113,7 +113,7 @@ rt_atomic_t rt_hw_atomic_and(rt_atomic_t *ptr, rt_atomic_t val)
     return oldval;
 }
 
-rt_atomic_t rt_hw_atomic_or(rt_atomic_t *ptr, rt_atomic_t val)
+rt_atomic_t rt_hw_atomic_or(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t oldval;
     do {
@@ -122,7 +122,7 @@ rt_atomic_t rt_hw_atomic_or(rt_atomic_t *ptr, rt_atomic_t val)
     return oldval;
 }
 
-rt_atomic_t rt_hw_atomic_xor(rt_atomic_t *ptr, rt_atomic_t val)
+rt_atomic_t rt_hw_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t oldval;
     do {
@@ -131,7 +131,7 @@ rt_atomic_t rt_hw_atomic_xor(rt_atomic_t *ptr, rt_atomic_t val)
     return oldval;
 }
 
-rt_atomic_t rt_hw_atomic_exchange(rt_atomic_t *ptr, rt_atomic_t val)
+rt_atomic_t rt_hw_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     rt_atomic_t oldval;
     do {
@@ -140,14 +140,14 @@ rt_atomic_t rt_hw_atomic_exchange(rt_atomic_t *ptr, rt_atomic_t val)
     return oldval;
 }
 
-void rt_hw_atomic_flag_clear(rt_atomic_t *ptr)
+void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr)
 {
     do {
         __LDREXW(ptr);
     }while((__STREXW(0, ptr)) != 0U);
 }
 
-rt_atomic_t rt_hw_atomic_flag_test_and_set(rt_atomic_t *ptr)
+rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr)
 {
     rt_atomic_t oldval;
     do {
@@ -156,7 +156,7 @@ rt_atomic_t rt_hw_atomic_flag_test_and_set(rt_atomic_t *ptr)
     return oldval;
 }
 
-rt_atomic_t rt_hw_atomic_compare_exchange_strong(rt_atomic_t *ptr, rt_atomic_t *oldval, rt_atomic_t newval)
+rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *oldval, rt_atomic_t newval)
 {
     rt_atomic_t result;
     rt_atomic_t temp = *oldval;
@@ -165,9 +165,8 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(rt_atomic_t *ptr, rt_atomic_t *
         if (result != temp)
         {
            *oldval = result;
+           result = 0;
         }
     }while((__STREXW(newval, ptr)) != 0U);
     return result;
 }
-
-
