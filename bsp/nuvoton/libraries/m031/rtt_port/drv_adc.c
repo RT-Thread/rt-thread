@@ -134,7 +134,7 @@ static rt_err_t nu_get_adc_value(struct rt_adc_device *device, rt_uint32_t chann
 
 int rt_hw_adc_init(void)
 {
-    rt_err_t result = RT_ERROR;
+    rt_err_t result = -RT_ERROR;
     int nu_sel = 0;
 
     while (nu_adc_arr[nu_sel].name != 0)

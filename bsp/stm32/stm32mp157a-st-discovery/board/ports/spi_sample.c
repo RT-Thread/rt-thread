@@ -32,7 +32,7 @@ static int rt_spi_device_init(void)
     if (RT_NULL == spi_dev)
     {
         rt_kprintf("spi sample run failed! can't find %s device!\n", SPI_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_spi_configure(spi_dev, &cfg);

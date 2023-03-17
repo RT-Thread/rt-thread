@@ -266,7 +266,7 @@ static void can_thread_entry(void* parameter)
  *
  * @param    msg - message to be sent, timeouts - wait timeouts for Tx completion.
  *
- * @return   RT_OK or RT_ERROR.
+ * @return   RT_OK or -RT_ERROR.
  */
 
 rt_err_t can_send_message(struct can_message *msg, rt_uint32_t timeouts)
@@ -276,7 +276,7 @@ rt_err_t can_send_message(struct can_message *msg, rt_uint32_t timeouts)
     if (RT_NULL == msg)
     {
         rt_kprintf("can_send_message input message error\r\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     can_async_write(&CAN_0, msg);

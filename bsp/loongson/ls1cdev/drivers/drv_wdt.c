@@ -36,7 +36,7 @@ static rt_err_t wdt_stop(void)
     if (ret != RT_EOK)
     {
         rt_kprintf("Wdog_Disable error!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return ret;
 }
@@ -50,7 +50,7 @@ static rt_err_t wdt_start(int mode)
     if (ret != RT_EOK)
     {
         rt_kprintf("Wdog_Disable error!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if((mode == RESTENABLE) || (mode == INTERRUPTENABLE))
@@ -62,7 +62,7 @@ static rt_err_t wdt_start(int mode)
     if (ret != RT_EOK)
     {
         rt_kprintf("Wdog_Enable error!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return ret;
@@ -79,7 +79,7 @@ static rt_err_t wdt_keepalive(void)
     if (ret != 0)
     {
         rt_kprintf("LS1C_Wdog_ClrTimeout error!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return ret;
@@ -106,7 +106,7 @@ static rt_err_t wdt_set_timeout(rt_uint32_t second)
     if (ret != RT_EOK)
     {
         rt_kprintf("Wdog_LoadValue error!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return ret;
 }

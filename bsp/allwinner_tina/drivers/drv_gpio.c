@@ -469,7 +469,7 @@ static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
         LOG_E("pin:%d value wrongful", pin);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     gpio_set_irq_callback(pin_index[pin].pin_port, pin_index[pin].pin, hdr, args);
@@ -481,7 +481,7 @@ static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
         LOG_E("pin:%d value wrongful", pin);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     gpio_clear_irq_callback(pin_index[pin].pin_port, pin_index[pin].pin);
@@ -494,7 +494,7 @@ rt_err_t pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t ena
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
         LOG_E("pin:%d value wrongful", pin);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (enabled)

@@ -39,7 +39,7 @@ rt_err_t spi_lcd_init(void)
     }
     else
     {
-        res = RT_ERROR;
+        res = -RT_ERROR;
     }
 
     LCD_Init();

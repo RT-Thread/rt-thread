@@ -461,7 +461,7 @@ int main(void)
     if (!wdg_dev)
     {
         rt_kprintf("find %s failed!\n", IWDG_DEVICE_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* initialize device */
     res = rt_device_init(wdg_dev);

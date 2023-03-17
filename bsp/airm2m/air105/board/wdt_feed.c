@@ -30,14 +30,14 @@ static int wdt_feed_init(void)
     if (!wdg_dev)
     {
         rt_kprintf("find %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     if (ret != RT_EOK)
     {
         rt_kprintf("set %s timeout failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
     if (ret != RT_EOK)

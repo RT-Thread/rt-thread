@@ -301,7 +301,7 @@ static int rt_hw_rtc_init(void)
     if (rt_hw_rtc_register(&apm32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL) != RT_EOK)
     {
         LOG_E("rtc init failed");
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
     else
     {

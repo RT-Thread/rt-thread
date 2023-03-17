@@ -413,7 +413,7 @@ static int pwm(int argc, char **argv)
                 rt_kprintf("pwm set        <channel> <period> <pulse>   - set pwm channel info\n");
                 rt_kprintf("pwm phase      <channel> <phase>            - set pwm phase\n");
                 rt_kprintf("pwm dead_time  <channel> <dead_time>        - set pwm dead time\n");
-                result = - RT_ERROR;
+                result = -RT_ERROR;
             }
         }
     }
@@ -427,7 +427,7 @@ static int pwm(int argc, char **argv)
         rt_kprintf("pwm set        <channel> <period> <pulse>  - set pwm channel info\n");
         rt_kprintf("pwm phase      <channel> <phase>           - set pwm phase\n");
         rt_kprintf("pwm dead_time  <channel> <dead_time>       - set pwm dead time\n");
-        result = - RT_ERROR;
+        result = -RT_ERROR;
     }
 
     return RT_EOK;

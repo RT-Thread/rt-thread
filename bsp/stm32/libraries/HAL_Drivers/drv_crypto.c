@@ -348,7 +348,7 @@ static rt_err_t _cryp_crypt(struct hwcrypto_symmetric *ctx,
     else
     {
         rt_kprintf("error cryp mode : %02x!\n", info->mode);
-        result = RT_ERROR;
+        result = -RT_ERROR;
         goto _exit;
     }
 

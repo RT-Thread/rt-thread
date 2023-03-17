@@ -138,7 +138,7 @@ static rt_err_t rt_hw_nand_set_mode(uint8_t mode)
     }
     else
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 
@@ -153,7 +153,7 @@ static rt_err_t rt_hw_nand_reset(void)
     }
     else
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 
@@ -620,7 +620,7 @@ static rt_err_t nand_init(struct rt_mtd_nand_device *device)
     if (_device.id != MT29F8G08ABACAH4)
     {
         LOG_E("nand id 0x%08x not support", _device.id);
-        return RT_ERROR; /* can't find nand flash */
+        return -RT_ERROR; /* can't find nand flash */
     }
 
     rt_hw_nand_set_mode(4); /* set mode 4, high speed mode*/
@@ -638,7 +638,7 @@ int rt_hw_nand_init(void)
     if (result != RT_EOK)
     {
         LOG_D("nand flash init error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_mutex_init(&_device.lock, "nand", RT_IPC_FLAG_PRIO);
 
@@ -657,7 +657,7 @@ int rt_hw_nand_init(void)
     if (result != RT_EOK)
     {
         rt_device_unregister(&nand_dev.parent);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_kprintf("nand flash init success, id: 0x%08x\n", _device.id);

@@ -156,7 +156,7 @@ rt_err_t TCA9539_WritePin(uint8_t u8Port, uint8_t u8Pin, uint8_t u8PinState)
     u8TempData[0] = u8Port + TCA9539_REG_OUTPUT_PORT0;
     if (RT_EOK != BSP_TCA9539_I2C_Read(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if (0U == u8PinState)
     {
@@ -168,7 +168,7 @@ rt_err_t TCA9539_WritePin(uint8_t u8Port, uint8_t u8Pin, uint8_t u8PinState)
     }
     if (RT_EOK != BSP_TCA9539_I2C_Write(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -196,7 +196,7 @@ rt_err_t TCA9539_ReadPin(uint8_t u8Port, uint8_t u8Pin, uint8_t *pu8PinState)
     u8TempData[0] = u8Port + TCA9539_REG_INPUT_PORT0;
     if (RT_EOK != BSP_TCA9539_I2C_Read(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if (0U != (u8TempData[1] & u8Pin))
     {
@@ -219,7 +219,7 @@ rt_err_t TCA9539_ReadPin(uint8_t u8Port, uint8_t u8Pin, uint8_t *pu8PinState)
  *         This parameter can be one or any combination of the following values:
  *           @arg @ref TCA9539_Pin_Definition
  * @retval rt_err_t:
- *           - RT_ERROR
+ *           - -RT_ERROR
  *           - RT_EOK
  */
 rt_err_t TCA9539_TogglePin(uint8_t u8Port, uint8_t u8Pin)
@@ -229,12 +229,12 @@ rt_err_t TCA9539_TogglePin(uint8_t u8Port, uint8_t u8Pin)
     u8TempData[0] = u8Port + TCA9539_REG_OUTPUT_PORT0;
     if (RT_EOK != BSP_TCA9539_I2C_Read(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     u8TempData[1] ^= u8Pin;
     if (RT_EOK != BSP_TCA9539_I2C_Write(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -252,7 +252,7 @@ rt_err_t TCA9539_TogglePin(uint8_t u8Port, uint8_t u8Pin)
  *         This parameter can be one of the following values:
  *           @arg @ref TCA9539_Direction_Definition
  * @retval rt_err_t:
- *           - RT_ERROR
+ *           - -RT_ERROR
  *           - RT_EOK
  */
 rt_err_t TCA9539_ConfigPin(uint8_t u8Port, uint8_t u8Pin, uint8_t u8Dir)
@@ -262,7 +262,7 @@ rt_err_t TCA9539_ConfigPin(uint8_t u8Port, uint8_t u8Pin, uint8_t u8Dir)
     u8TempData[0] = u8Port + TCA9539_REG_CONFIG_PORT0;
     if (RT_EOK != BSP_TCA9539_I2C_Read(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if (TCA9539_DIR_OUT == u8Dir)
     {
@@ -274,7 +274,7 @@ rt_err_t TCA9539_ConfigPin(uint8_t u8Port, uint8_t u8Pin, uint8_t u8Dir)
     }
     if (RT_EOK != BSP_TCA9539_I2C_Write(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -284,7 +284,7 @@ rt_err_t TCA9539_ConfigPin(uint8_t u8Port, uint8_t u8Pin, uint8_t u8Dir)
  * @brief  Initialize TCA9539.
  * @param  [in] None
  * @retval rt_err_t:
- *           - RT_ERROR
+ *           - -RT_ERROR
  *           - RT_EOK
  */
 int TCA9539_Init(void)
@@ -298,19 +298,19 @@ int TCA9539_Init(void)
     if (i2c_bus == RT_NULL)
     {
         rt_kprintf("can't find %s device!\n", BSP_TCA9539_I2C_BUS_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* All Pins are input as default */
     u8TempData[0] = TCA9539_REG_CONFIG_PORT0;
     u8TempData[1] = 0xFFU;
     if (RT_EOK != BSP_TCA9539_I2C_Write(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     u8TempData[0] = TCA9539_REG_CONFIG_PORT1;
     if (RT_EOK != BSP_TCA9539_I2C_Write(i2c_bus, u8TempData[0], &u8TempData[1], 1U))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

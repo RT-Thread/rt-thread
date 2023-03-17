@@ -390,7 +390,7 @@ static rt_err_t drv_lcd_init(rt_device_t dev)
 
     if(!lcd)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     drv_lcd_hw_init(lcd);
     /* reset LCD */

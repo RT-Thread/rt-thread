@@ -389,7 +389,7 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
         thread = rt_list_entry(queue->suspended_pop_list.next,
                                struct rt_thread,
                                tlist);
-        /* set error code to RT_ERROR */
+        /* set error code to -RT_ERROR */
         thread->error = -RT_ERROR;
 
         /*
@@ -413,7 +413,7 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
         thread = rt_list_entry(queue->suspended_push_list.next,
                                struct rt_thread,
                                tlist);
-        /* set error code to RT_ERROR */
+        /* set error code to -RT_ERROR */
         thread->error = -RT_ERROR;
 
         /*

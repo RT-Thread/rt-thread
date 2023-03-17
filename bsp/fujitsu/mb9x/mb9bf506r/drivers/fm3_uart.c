@@ -408,7 +408,7 @@ static rt_err_t uart03_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->ESCR_f.ESBL = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set data bits */
@@ -440,7 +440,7 @@ static rt_err_t uart03_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->ESCR_f.L2 = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set parity */
@@ -458,7 +458,7 @@ static rt_err_t uart03_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->ESCR_f.P   = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set bit order */
@@ -471,7 +471,7 @@ static rt_err_t uart03_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->SMR_f.BDS = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set NRZ mode */
@@ -484,7 +484,7 @@ static rt_err_t uart03_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->ESCR_f.INV = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     uart->uart_regs->SCR = SCR_RXE | SCR_TXE | SCR_RIE;
@@ -588,7 +588,7 @@ static rt_err_t uart47_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->ESCR_f.ESBL = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set data bits */
@@ -620,7 +620,7 @@ static rt_err_t uart47_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->ESCR_f.L2 = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set parity */
@@ -638,7 +638,7 @@ static rt_err_t uart47_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->ESCR_f.P   = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set bit order */
@@ -651,7 +651,7 @@ static rt_err_t uart47_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->SMR_f.BDS = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* set NRZ mode */
@@ -664,7 +664,7 @@ static rt_err_t uart47_configure(struct rt_serial_device *serial, struct serial_
         uart->uart_regs->ESCR_f.INV = 1;
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* configure fifo */

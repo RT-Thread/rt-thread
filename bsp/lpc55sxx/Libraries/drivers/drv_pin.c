@@ -206,7 +206,7 @@ static rt_int8_t lpc_pin_read(rt_device_t dev, rt_base_t pin)
     int value;
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     value = GPIO_PinRead(lpc_pin_map[pin].gpio, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin);
@@ -268,7 +268,7 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device,
 
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     switch (mode)
@@ -307,7 +307,7 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device,
     }
 
     if(i >= IRQ_MAX_VAL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     /* Initialize PINT */
     PINT_Init(PINT);
@@ -342,7 +342,7 @@ static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     for(i = 0; i < IRQ_MAX_VAL; i++)
@@ -365,7 +365,7 @@ static rt_err_t lpc_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
 
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     for(i = 0; i < IRQ_MAX_VAL; i++)
@@ -404,7 +404,7 @@ static rt_err_t lpc_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     }
 
     if(i >= IRQ_MAX_VAL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     return RT_EOK;
 }

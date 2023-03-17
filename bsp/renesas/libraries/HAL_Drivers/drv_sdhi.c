@@ -165,7 +165,7 @@ rt_err_t command_send(sdhi_instance_ctrl_t *p_ctrl, struct rt_mmcsd_cmd *cmd)
         if (0U == timeout)
         {
             cmd->err = -RT_ETIMEOUT;
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         /* Wait 1 us for consistent loop timing. */
@@ -223,7 +223,7 @@ rt_err_t transfer_write(sdhi_instance_ctrl_t *const p_ctrl,
     fsp_err_t err = p_ctrl->p_cfg->p_lower_lvl_transfer->p_api->reconfigure(p_ctrl->p_cfg->p_lower_lvl_transfer->p_ctrl,
                     p_ctrl->p_cfg->p_lower_lvl_transfer->p_cfg->p_info);
     if (FSP_SUCCESS != err)
-        return RT_ERROR;
+        return -RT_ERROR;
     return RT_EOK;
 }
 
@@ -276,7 +276,7 @@ rt_err_t transfer_read(sdhi_instance_ctrl_t *const p_ctrl,
     fsp_err_t err = p_ctrl->p_cfg->p_lower_lvl_transfer->p_api->reconfigure(p_ctrl->p_cfg->p_lower_lvl_transfer->p_ctrl,
                     p_ctrl->p_cfg->p_lower_lvl_transfer->p_cfg->p_info);
     if (err != FSP_SUCCESS)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     return RT_EOK;
 }
@@ -393,7 +393,7 @@ static rt_err_t clock_rate_set(sdhi_instance_ctrl_t *p_ctrl, uint32_t max_rate)
         }
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 void ra_sdhi_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)

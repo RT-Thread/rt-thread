@@ -212,7 +212,7 @@ static rt_err_t ra_uart_configure(struct rt_serial_device *serial, struct serial
     err = R_SCI_UART_Open(uart->config->p_api_ctrl, uart->config->p_cfg);
     if (FSP_SUCCESS != err)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

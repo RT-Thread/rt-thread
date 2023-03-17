@@ -29,7 +29,7 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
     ret = uart->uart_control(UART_CMD_SET_BAUD, (void *)(cfg->baud_rate));
 
     if (ret != E_OK) {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
 
@@ -59,7 +59,7 @@ static rt_err_t _control(struct rt_serial_device *serial, int cmd, void *arg)
             break;
 
         default:
-            return  RT_ERROR;
+            return  -RT_ERROR;
             break;
     }
 
@@ -180,7 +180,7 @@ int rt_hw_uart_init(void)
         ret = uart->uart_open(config.baud_rate);
 
         if (ret != E_OPNED && ret != E_OK) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         /* enable rx int */
@@ -202,7 +202,7 @@ int rt_hw_uart_init(void)
         ret = uart->uart_open(config.baud_rate);
 
         if (ret != E_OPNED && ret != E_OK) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         /* enable rx int */
@@ -224,7 +224,7 @@ int rt_hw_uart_init(void)
         ret = uart->uart_open(config.baud_rate);
 
         if (ret != E_OPNED && ret != E_OK) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         /* enable rx int */
@@ -246,7 +246,7 @@ int rt_hw_uart_init(void)
         ret = uart->uart_open(config.baud_rate);
 
         if (ret != E_OPNED && ret != E_OK) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         /* enable rx int */

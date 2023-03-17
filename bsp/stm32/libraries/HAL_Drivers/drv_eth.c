@@ -193,7 +193,7 @@ static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
 /* transmit data*/
 rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     HAL_StatusTypeDef state;
     struct pbuf *q;
     uint8_t *buffer = (uint8_t *)(EthHandle.TxDesc->Buffer1Addr);

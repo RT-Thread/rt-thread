@@ -104,7 +104,7 @@ static rt_err_t read_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint8
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /* i2c write reg */
@@ -128,7 +128,7 @@ static rt_err_t write_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 static rt_err_t ov2640_read_id(struct rt_i2c_bus_device *bus)
@@ -143,7 +143,7 @@ static rt_err_t ov2640_read_id(struct rt_i2c_bus_device *bus)
     if (id != OV2640_MID)
     {
         LOG_E("ov2640 init error, mid: 0x%04x", id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     LOG_I("ov2640 read mid success, mid: 0x%04x", id);
@@ -156,7 +156,7 @@ static rt_err_t ov2640_read_id(struct rt_i2c_bus_device *bus)
     if (id != OV2640_PID)
     {
         LOG_E("ov2640 init error, pid: 0x%04x", id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     LOG_I("ov2640 read hid success, pid: 0x%04x", id);
@@ -438,30 +438,30 @@ rt_uint8_t ov2640_set_image_out_size(rt_uint16_t width,rt_uint16_t height)
 }
 
 /* set the image window size */
-rt_uint8_t ov2640_set_image_window_size(rt_uint16_t offx, rt_uint16_t offy, rt_uint16_t width, rt_uint16_t height)
+rt_err_t ov2640_set_image_window_size(rt_uint16_t offx, rt_uint16_t offy, rt_uint16_t width, rt_uint16_t height)
 {
     rt_uint16_t hsize, vsize;
     rt_uint8_t temp;
     if ((width % 4) || (height%4))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     hsize = width / 4;
     vsize = height / 4;
-   write_reg(i2c_bus, 0XFF,0X00);
-   write_reg(i2c_bus, 0XE0,0X04);
-   write_reg(i2c_bus, 0X51,hsize&0XFF);
-   write_reg(i2c_bus, 0X52,vsize&0XFF);
-   write_reg(i2c_bus, 0X53,offx&0XFF);
-   write_reg(i2c_bus, 0X54,offy&0XFF);
-   temp=(vsize>>1)&0X80;
-   temp|=(offy>>4)&0X70;
-   temp|=(hsize>>5)&0X08;
-   temp|=(offx>>8)&0X07;
-   write_reg(i2c_bus, 0X55,temp);
-   write_reg(i2c_bus, 0X57,(hsize>>2)&0X80);
-   write_reg(i2c_bus, 0XE0,0X00);
-   return 0;
+    write_reg(i2c_bus, 0XFF,0X00);
+    write_reg(i2c_bus, 0XE0,0X04);
+    write_reg(i2c_bus, 0X51,hsize&0XFF);
+    write_reg(i2c_bus, 0X52,vsize&0XFF);
+    write_reg(i2c_bus, 0X53,offx&0XFF);
+    write_reg(i2c_bus, 0X54,offy&0XFF);
+    temp=(vsize>>1)&0X80;
+    temp|=(offy>>4)&0X70;
+    temp|=(hsize>>5)&0X08;
+    temp|=(offx>>8)&0X07;
+    write_reg(i2c_bus, 0X55,temp);
+    write_reg(i2c_bus, 0X57,(hsize>>2)&0X80);
+    write_reg(i2c_bus, 0XE0,0X00);
+    return RT_EOK;
 }
 
 /* set output resolution */
@@ -614,21 +614,21 @@ int rt_ov2640_init(void)
     if (i2c_bus == RT_NULL)
     {
         LOG_E("can't find %s deivce", I2C_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* Prepare the camera to be configured */
     result = write_reg(i2c_bus, OV2640_DSP_RA_DLMT, 0x01);
     if (result != RT_EOK )
     {
         LOG_E("ov2640 write reg error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_thread_delay(10);
     result = write_reg(i2c_bus, OV2640_SENSOR_COM7, 0x80);
     if (result != RT_EOK)
     {
         LOG_E("ov2640 soft reset error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_thread_delay(20);
 
@@ -636,7 +636,7 @@ int rt_ov2640_init(void)
     if (result != RT_EOK )
     {
         LOG_E("ov2640 read id error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     for (i = 0; i < sizeof(ov2640_svga_init_reg_tbl) / 2; i++)
@@ -657,7 +657,7 @@ int rt_ov2640_init(void)
     if (dcmi_dev == RT_NULL)
     {
         LOG_E("can't find dcmi device!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_device_open(dcmi_dev, RT_DEVICE_FLAG_RDWR);
 
@@ -665,7 +665,7 @@ int rt_ov2640_init(void)
    if (RT_NULL == jpeg_data_buf)
    {
        rt_kprintf("jpeg data buf malloc error!\n");
-       return RT_ERROR;
+       return -RT_ERROR;
    }
 
     /* start dcmi capture */

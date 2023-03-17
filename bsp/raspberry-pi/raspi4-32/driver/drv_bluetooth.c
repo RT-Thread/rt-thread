@@ -253,10 +253,10 @@ rt_err_t bt_loadfirmware(void)
     }
     else
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 rt_err_t bt_setbaud(void)
@@ -304,7 +304,7 @@ rt_err_t bt_setbaud(void)
             }
         }
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 rt_err_t setLEeventmask(unsigned char mask)
@@ -357,7 +357,7 @@ rt_err_t setLEeventmask(unsigned char mask)
             }
         }
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 
     //if (hciCommand(OGF_LE_CONTROL, 0x01, params, 8)) uart_writeText("setLEeventmask failed\n");
 }
@@ -382,17 +382,17 @@ rt_err_t bt_getbdaddr(unsigned char *bdaddr)
     {
         if ((rx_buff[0] != BT_HCI_EVENT_PKT) || (rx_buff[1] != BT_COMMAND_COMPLETE_CODE))
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         if ((rx_buff[2] != 0x0a) || (rx_buff[3] != 0x01))
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         if ((rx_buff[4] != 0x09) || (rx_buff[5] != 0x10))
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         bdaddr[0] = rx_buff[7];
         bdaddr[1] = rx_buff[8];
@@ -405,7 +405,7 @@ rt_err_t bt_getbdaddr(unsigned char *bdaddr)
     }
     else
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -454,7 +454,7 @@ rt_err_t setLEscanenable(unsigned char state, unsigned char duplicates)
             }
         }
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 rt_err_t setLEscanparameters(unsigned char type, unsigned char linterval, unsigned char hinterval, unsigned char lwindow, unsigned char hwindow, unsigned char own_address_type, unsigned char filter_policy)
@@ -503,7 +503,7 @@ rt_err_t setLEscanparameters(unsigned char type, unsigned char linterval, unsign
             }
         }
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 rt_err_t startActiveScanning()
@@ -571,7 +571,7 @@ rt_err_t bt_setbdaddr(void)
             }
         }
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 rt_err_t bt_reset(void)
 {
@@ -607,7 +607,7 @@ rt_err_t bt_reset(void)
             }
         }
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 rt_device_t bt_uart_init(const char *uartname)

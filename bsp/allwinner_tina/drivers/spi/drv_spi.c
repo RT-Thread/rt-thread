@@ -680,7 +680,7 @@ rt_err_t tina_spi_bus_register(SPI_T *spi, const char *spi_bus_name)
 
     LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 int rt_hw_spi_init(void)

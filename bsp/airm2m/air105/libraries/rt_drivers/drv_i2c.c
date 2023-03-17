@@ -85,7 +85,7 @@ static rt_ssize_t air105_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                  struct rt_i2c_msg msgs[],
                                  rt_uint32_t num)
 {
-    return RT_ERROR;
+    return -RT_ENOSYS;
 }
 static rt_err_t air105_i2c_bus_control(struct rt_i2c_bus_device *bus,
                                    rt_uint32_t cmd,

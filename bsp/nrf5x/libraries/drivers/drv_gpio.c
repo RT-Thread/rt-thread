@@ -266,7 +266,7 @@ static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
         case NRFX_ERROR_NO_MEM:
             return RT_ENOMEM;
         default:
-            return RT_ERROR;
+            return -RT_ERROR;
     }
 }
 

@@ -27,7 +27,7 @@ int rtc_test(void)
     if(ret != RT_EOK)
     {
         rt_kprintf("[RTC Test]Set RTC Date failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_delay(RT_TICK_PER_SECOND);
@@ -36,7 +36,7 @@ int rtc_test(void)
     if(ret != RT_EOK)
     {
         rt_kprintf("[RTC Test]Set RTC Time failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_delay(RT_TICK_PER_SECOND);

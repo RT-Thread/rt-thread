@@ -201,21 +201,21 @@ static int iwdg_sample(int argc, char *argv[])
     if (!wdg_dev)
     {
         rt_kprintf("find %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* initialize the device */
     ret = rt_device_init(wdg_dev);
     if (ret != RT_EOK)
     {
         rt_kprintf("initialize %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* set the overflow time of the watch dog */
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     if (ret != RT_EOK)
     {
         rt_kprintf("set %s timeout failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* set idle thread callback function */
     rt_thread_idle_sethook(idle_hook);
