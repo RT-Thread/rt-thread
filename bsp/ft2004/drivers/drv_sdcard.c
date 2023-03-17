@@ -38,7 +38,7 @@ static rt_err_t _sdcard_mount(void)
         if (mmcsd_wait_cd_changed(rt_tick_from_millisecond(5000)) == -RT_ETIMEOUT)
         {
             rt_kprintf("timeout \r\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         device = rt_device_find("sd0");
     }
@@ -54,7 +54,7 @@ static rt_err_t _sdcard_mount(void)
         else
         {
             LOG_W("sd card mount to '/' failed!");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 

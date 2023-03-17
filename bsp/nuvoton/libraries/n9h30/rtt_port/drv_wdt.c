@@ -231,7 +231,7 @@ static rt_err_t wdt_control(rt_watchdog_t *dev, int cmd, void *args)
         break;
 
     default:
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     SYS_LockReg();

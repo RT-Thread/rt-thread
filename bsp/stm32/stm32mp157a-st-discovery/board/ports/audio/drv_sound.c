@@ -488,7 +488,7 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
     if (cs42l51_drv.read_id() != RT_EOK)
     {
         LOG_E("can't find low level audio device!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_hw_sai2a_init();
@@ -516,7 +516,7 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
 
         if (HAL_SAI_Transmit_DMA(&hsai_BlockA2, snd_dev->tx_fifo, TX_FIFO_SIZE / 2) != HAL_OK)
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -592,7 +592,7 @@ int rt_hw_sound_init(void)
         device = &(snd_dev.audio.parent);
         rt_device_unregister(device);
         LOG_E("sound device init error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

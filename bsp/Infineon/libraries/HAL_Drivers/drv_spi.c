@@ -60,7 +60,7 @@ static void ifx_spi_init(struct ifx_spi *ifx_spi)
     result = cyhal_spi_init(ifx_spi->spi_obj, ifx_spi->mosi_pin, ifx_spi->miso_pin, ifx_spi->sck_pin,
                             NC, NULL, ifx_spi->spi_obj->data_bits, ifx_spi->spi_obj->mode, false);
 
-    RT_ASSERT(result != RT_ERROR);
+    RT_ASSERT(result == RT_EOK);
 
     rt_kprintf("[%s] Freq:[%d]HZ\n", ifx_spi->bus_name, ifx_spi->freq);
 

@@ -262,7 +262,7 @@ static rt_err_t nu_capture_init(struct rt_inputcapture_device *inputcapture)
     if (nu_timer_init(nu_capture) != RT_EOK)
     {
         rt_kprintf("Failed to initialize TIMER.\n");
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return -(ret);

@@ -57,7 +57,7 @@ static int vcom_echo_init(void)
     if (!serial)
     {
         rt_kprintf("find failed!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     result = rt_device_init(serial);
     if (result)

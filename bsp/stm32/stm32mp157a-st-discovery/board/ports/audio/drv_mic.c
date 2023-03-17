@@ -320,7 +320,7 @@ static rt_err_t mic_start(struct rt_audio_device *audio, int stream)
         /* open receive */
         if (HAL_SAI_Receive_DMA(&hsai_BlockB2, mic_dev->rx_fifo, RX_FIFO_SIZE / 2) != HAL_OK)
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         /* supply clk */
         HAL_SAI_Transmit(&hsai_BlockA2, (uint8_t *)&zero_frame[0], 2, 0);
@@ -379,7 +379,7 @@ int rt_hw_mic_init(void)
         device = &(mic_dev.audio.parent);
         rt_device_unregister(device);
         LOG_E("mic device init error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

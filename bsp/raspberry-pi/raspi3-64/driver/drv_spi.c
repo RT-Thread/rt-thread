@@ -131,7 +131,7 @@ static rt_err_t spi_transfernb(rt_uint8_t* tbuf, rt_uint8_t* rbuf, rt_uint32_t l
     return RT_EOK;
 }
 
-static rt_uint32_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
 
     RT_ASSERT(device != RT_NULL);
@@ -163,7 +163,7 @@ static rt_uint32_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
                 spi_gpio_write(cs_pin, 1);
 
     if (res != RT_EOK)
-           return RT_ERROR;
+           return res;
 
     return message->length;
 }

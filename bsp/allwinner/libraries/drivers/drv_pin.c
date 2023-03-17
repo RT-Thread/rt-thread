@@ -51,7 +51,7 @@ static rt_err_t hal_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (ret < 0)
     {
         rt_kprintf("gpio to irq error, irq num:%lu error num: %d", irq, ret);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     level = rt_hw_interrupt_disable();
@@ -61,7 +61,7 @@ static rt_err_t hal_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     {
         rt_hw_interrupt_enable(level);
         rt_kprintf("request irq error, irq num:%lu error num: %d", irq, ret);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_hw_interrupt_enable(level);
 
@@ -78,7 +78,7 @@ static rt_err_t hal_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     if (ret < 0)
     {
         rt_kprintf("gpio to irq error, irq num:%lu error num: %d", irq, ret);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     level = rt_hw_interrupt_disable();
@@ -87,7 +87,7 @@ static rt_err_t hal_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     {
         rt_hw_interrupt_enable(level);
         rt_kprintf("free irq error, error num: %d", ret);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }
@@ -101,7 +101,7 @@ static rt_err_t hal_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     if (ret < 0)
     {
         rt_kprintf("gpio to irq error, irq num:%lu error num: %d", irq, ret);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (enabled == PIN_IRQ_ENABLE)
@@ -110,7 +110,7 @@ static rt_err_t hal_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
         if (ret < 0)
         {
             rt_kprintf("request irq error, error num: %d", ret);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
     else
@@ -119,7 +119,7 @@ static rt_err_t hal_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
         if (ret < 0)
         {
             rt_kprintf("disable irq error, irq num:%lu, error num: %d", irq, ret);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 

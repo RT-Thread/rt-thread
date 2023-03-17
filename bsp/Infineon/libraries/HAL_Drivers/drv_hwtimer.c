@@ -198,7 +198,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         if (result != CY_RSLT_SUCCESS)
         {
             LOG_E("cyhal_timer_set_frequency error\r\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
     break;
@@ -301,7 +301,7 @@ int hwtimer_sample()
     if (hw_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", HWTIMER_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
@@ -329,7 +329,7 @@ int hwtimer_sample()
     if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
     {
         rt_kprintf("set timeout value failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     while (1)

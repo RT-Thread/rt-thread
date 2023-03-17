@@ -142,7 +142,7 @@ static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t chan
 
 int rt_hw_eadc_init(void)
 {
-    rt_err_t result = RT_ERROR;
+    rt_err_t result = -RT_ERROR;
     int nu_sel = 0;
 
     while (nu_eadc_arr[nu_sel].name != 0)

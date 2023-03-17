@@ -369,7 +369,7 @@ RTM_EXPORT(rt_timer_create);
  *
  * @param timer the timer to be deleted
  *
- * @return the operation status, RT_EOK on OK; RT_ERROR on error
+ * @return the operation status, RT_EOK on OK; -RT_ERROR on error
  */
 rt_err_t rt_timer_delete(rt_timer_t timer)
 {

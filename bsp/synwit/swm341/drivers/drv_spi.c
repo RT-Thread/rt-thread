@@ -228,7 +228,7 @@ static rt_err_t swm_spi_txrx1b(struct swm_spi_device *spi_drv, void *rcvb, const
     rt_uint32_t padsnd = 0xFF;
     if (!rcvb && !sndb)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if (!rcvb)
     {

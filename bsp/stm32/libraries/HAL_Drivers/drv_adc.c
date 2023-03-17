@@ -319,7 +319,7 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
 static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
 {
     if(device == RT_NULL)
-      return RT_ERROR;
+      return -RT_ERROR;
 
     rt_uint16_t vref_mv;
 #ifdef __LL_ADC_CALC_VREFANALOG_VOLTAGE

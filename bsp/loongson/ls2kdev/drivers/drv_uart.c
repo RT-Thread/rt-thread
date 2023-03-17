@@ -44,7 +44,7 @@ static rt_err_t ls2k_uart_set_buad(struct rt_serial_device *serial, struct seria
     UART_LCR(uart_dev->base) = 0x80; // Activate buadcfg
     UART_LSB(uart_dev->base) = brtc & 0xff;
     UART_MSB(uart_dev->base) = brtc >> 8;
-    if (((((short)UART_MSB(uart_dev->base)) << 8) | UART_LSB(uart_dev->base)) != brtc) ret = RT_ERROR;
+    if (((((short)UART_MSB(uart_dev->base)) << 8) | UART_LSB(uart_dev->base)) != brtc) ret = -RT_ERROR;
     UART_LCR(uart_dev->base) = CFCR_8BITS; // Back to normal
     UART_MCR(uart_dev->base) = MCR_IENABLE/* | MCR_DTR | MCR_RTS*/;
     UART_IER(uart_dev->base) = 0;

@@ -92,7 +92,7 @@ static rt_err_t rt_hw_sd_init(void)
     if (rt_hw_sd_is_detected() != 0x00)
     {
         LOG_E("can't find sd card!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     SDCARD_Handler.Instance = SDMMC1;
@@ -111,19 +111,19 @@ static rt_err_t rt_hw_sd_init(void)
     if (HAL_SD_Init(&SDCARD_Handler) != RT_EOK)
     {
         LOG_E("sd device init error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (HAL_SD_ConfigWideBusOperation(&SDCARD_Handler, SDMMC_BUS_WIDE_4B) != RT_EOK)
     {
         LOG_E("sd bus config error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (HAL_SD_GetCardInfo(&SDCARD_Handler, &SDCardInfo) != RT_EOK)
     {
         LOG_E("sd get card info error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_mdelay(100);
@@ -131,7 +131,7 @@ static rt_err_t rt_hw_sd_init(void)
     if(HAL_SD_GetCardState(&SDCARD_Handler) != HAL_SD_CARD_TRANSFER)
     {
         LOG_E("sd get card state error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -357,7 +357,7 @@ int rt_hw_sdcard_init(void)
         rt_hw_sd_deinit();
         LOG_E("sdcard init failed");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* register sdcard device */
     sd_device.sdcard.type    = RT_Device_Class_Block;
@@ -394,7 +394,7 @@ int mnt_init(void)
     if (sd_dev == RT_NULL)
     {
         LOG_E("can't find sd deivce name!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (dfs_mount("sd_card", "/", "elm", 0, 0) != 0)

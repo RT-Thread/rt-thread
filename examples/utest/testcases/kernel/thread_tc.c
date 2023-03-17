@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -97,7 +97,7 @@ static void test_static_thread(void)
 {
     rt_err_t ret_init = -RT_ERROR;
     rt_err_t ret_startup = -RT_ERROR;
-    rt_err_t ret_detach = - RT_ERROR;
+    rt_err_t ret_detach = -RT_ERROR;
 
     ret_init = rt_thread_init(&thread2,
                               "thread2",

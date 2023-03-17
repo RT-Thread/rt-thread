@@ -143,7 +143,7 @@ nrfx_spim_evt_handler_t spi_handler[] = {spi0_handler, spi1_handler, spi2_handle
   * @brief  This function config spi bus
   * @param  device
   * @param  configuration
-  * @retval RT_EOK / RT_ERROR
+  * @retval RT_EOK / -RT_ERROR
   */
 static rt_err_t spi_configure(struct rt_spi_device *device,
                               struct rt_spi_configuration *configuration)
@@ -191,7 +191,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
         break;
     default:
         LOG_E("spi_configure mode error %x\n",configuration->mode);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* spi frequency config */
     switch (configuration->max_hz / 1000)
@@ -229,7 +229,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     if(NRFX_SUCCESS == nrf_ret)
         return RT_EOK;
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
@@ -288,7 +288,7 @@ static const struct rt_spi_ops nrfx_spi_ops =
 /*spi bus init*/
 static int rt_hw_spi_bus_init(void)
 {
-    rt_err_t result = RT_ERROR;
+    rt_err_t result = -RT_ERROR;
     for (int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].spi = spi_config[i].spi;
@@ -324,7 +324,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     if (result != RT_EOK)
     {
         LOG_E("%s attach to %s faild, %d", device_name, bus_name, result);
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
     RT_ASSERT(result == RT_EOK);
     return result;
@@ -453,7 +453,7 @@ nrfx_spi_evt_handler_t spi_handler[] = {spi0_handler, spi1_handler, spi2_handler
   * @brief  This function config spi bus
   * @param  device
   * @param  configuration
-  * @retval RT_EOK / RT_ERROR
+  * @retval RT_EOK / -RT_ERROR
   */
 static rt_err_t spi_configure(struct rt_spi_device *device,
                               struct rt_spi_configuration *configuration)
@@ -501,7 +501,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
         break;
     default:
         LOG_E("spi_configure mode error %x\n",configuration->mode);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* spi frequency config */
     switch (configuration->max_hz / 1000)
@@ -539,7 +539,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     if(NRFX_SUCCESS == nrf_ret)
         return RT_EOK;
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
@@ -598,7 +598,7 @@ static const struct rt_spi_ops nrfx_spi_ops =
 /*spi bus init*/
 static int rt_hw_spi_bus_init(void)
 {
-    rt_err_t result = RT_ERROR;
+    rt_err_t result = -RT_ERROR;
     for (int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].spi = spi_config[i].spi;
@@ -634,7 +634,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     if (result != RT_EOK)
     {
         LOG_E("%s attach to %s faild, %d", device_name, bus_name, result);
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
     RT_ASSERT(result == RT_EOK);
     return result;

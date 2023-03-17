@@ -349,14 +349,14 @@ static rt_err_t nu_capture_get_pulsewidth(struct rt_inputcapture_device *inputca
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
     return -(ret);
 }
 
 static rt_err_t nu_epwm_init(nu_capture_t *nu_capture)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     static rt_bool_t bEPWM0Inited = RT_FALSE;
     static rt_bool_t bEPWM1Inited = RT_FALSE;
 
@@ -402,7 +402,7 @@ static rt_err_t nu_capture_init(struct rt_inputcapture_device *inputcapture)
     if (nu_epwm_init(nu_capture) != RT_EOK)
     {
         rt_kprintf("Failed to initialize EPWM%d.\n", nu_capture->epwm);
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return -(ret);

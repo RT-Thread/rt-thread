@@ -582,7 +582,7 @@ exit_nu_adc_convert:
 
 int rt_hw_adc_init(void)
 {
-    rt_err_t result = RT_ERROR;
+    rt_err_t result = -RT_ERROR;
     rt_device_t psDev = &g_sNuADC.dev.parent;
 
     result = rt_hw_adc_register(&g_sNuADC.dev, g_sNuADC.name, &nu_adc_ops, &g_sNuADC);

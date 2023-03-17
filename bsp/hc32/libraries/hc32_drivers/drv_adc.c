@@ -160,7 +160,7 @@ static rt_err_t _adc_enable(struct rt_adc_device *device, rt_uint32_t channel, r
 
 static rt_err_t _adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
-    rt_err_t rt_ret = RT_ERROR;
+    rt_err_t rt_ret = -RT_ERROR;
 
     if (!value)
     {

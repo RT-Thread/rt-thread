@@ -103,7 +103,7 @@ static rt_err_t n32_spi_init(struct n32_spi *spi_drv, struct rt_spi_configuratio
     if (cfg->mode & RT_SPI_SLAVE)
     {
         /* SPI_InitStructure->SpiMode = SPI_MODE_SLAVE; */
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     else
     {

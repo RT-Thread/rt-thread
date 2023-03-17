@@ -44,7 +44,7 @@ static int rt_hw_spi_flash_with_sfud_init(void)
 {
     if (RT_NULL == rt_sfud_flash_probe(SPI_FLASH_DEVICE_NAME, SPI_DEVICE_NAME))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

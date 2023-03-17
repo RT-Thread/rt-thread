@@ -80,7 +80,7 @@ static rt_err_t rt_hw_dcmi_init(DCMI_HandleTypeDef *device)
     if (HAL_DCMI_Init(device) != HAL_OK)
     {
         LOG_E("dcmi init error!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     DCMI->IER = 0x0;

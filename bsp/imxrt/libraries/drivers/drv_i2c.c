@@ -375,7 +375,7 @@ static rt_err_t imxrt_i2c_bus_control(struct rt_i2c_bus_device *bus,
                                       rt_uint32_t cmd,
                                       rt_uint32_t arg)
 {
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 #endif

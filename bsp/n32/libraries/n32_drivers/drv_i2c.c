@@ -340,7 +340,7 @@ static rt_ssize_t rt_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
 {
     struct rt_i2c_msg *msg;
     rt_uint32_t i;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     struct rt_i2c_bus *rt_i2c = (struct rt_i2c_bus *)bus;
 

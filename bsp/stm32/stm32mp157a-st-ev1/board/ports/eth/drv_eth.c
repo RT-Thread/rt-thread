@@ -350,7 +350,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
         if(((HAL_GetTick() - tickstart ) > ETH_TIME_OUT))
         {
             LOG_E("ETH software reset timeout!");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 

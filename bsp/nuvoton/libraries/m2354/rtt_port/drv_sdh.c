@@ -445,7 +445,7 @@ exit_nu_sdh_hotplug_is_mounted:
 }
 static rt_err_t nu_sdh_hotplug_mount(nu_sdh_t sdh)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     DIR *t;
 
     if (nu_sdh_hotplug_is_mounted(sdh->mounted_point) == RT_TRUE)
@@ -490,7 +490,7 @@ static rt_err_t nu_sdh_hotplug_mount(nu_sdh_t sdh)
     else
     {
         rt_kprintf("Failed to mount %s on %s\n", sdh->name, sdh->mounted_point);
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
 exit_nu_sdh_hotplug_mount:
@@ -500,7 +500,7 @@ exit_nu_sdh_hotplug_mount:
 
 static rt_err_t nu_sdh_hotplug_unmount(nu_sdh_t sdh)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     if (nu_sdh_hotplug_is_mounted(sdh->mounted_point) == RT_FALSE)
     {

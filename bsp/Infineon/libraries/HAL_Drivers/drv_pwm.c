@@ -243,7 +243,7 @@ static int pwm_sample(int argc, char *argv[])
     if (pwm_dev == RT_NULL)
     {
         rt_kprintf("pwm sample run failed! can't find %s device!\n", PWM_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);

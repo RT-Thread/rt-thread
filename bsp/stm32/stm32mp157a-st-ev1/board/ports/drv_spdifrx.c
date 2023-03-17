@@ -110,7 +110,7 @@ static rt_err_t _init(rt_device_t dev)
 
     if (HAL_SPDIFRX_Init(&device->spdifrx) != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     sai4a_init(&device->sai4);
@@ -177,7 +177,7 @@ static rt_ssize_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_s
     result = HAL_SAI_Transmit_DMA(&device->sai4, (rt_uint8_t *)buffer, size);
     if (result != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -286,7 +286,7 @@ static int spdifrx_sample(int argc, char **argv)
         {
             rt_kprintf("spdirex loopback mode test failed!\n");
 
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
