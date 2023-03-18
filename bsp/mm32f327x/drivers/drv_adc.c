@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,15 +28,15 @@ struct mm32_adc
 
 #if defined(BSP_USING_ADC1)
 struct mm32_adc mm32_adc1_config = {
-	.adc_x      = ADC1,         
-	.name       = "adc1",       
+    .adc_x      = ADC1,
+    .name       = "adc1",
 };
 #endif /* BSP_USING_ADC1 */
 
 #if defined(BSP_USING_ADC2)
 struct mm32_adc mm32_adc2_config = {
-	.adc_x      = ADC2,         
-	.name       = "adc2",       
+    .adc_x      = ADC2,
+    .name       = "adc2",
 };
 #endif /* BSP_USING_ADC2 */
 
@@ -70,17 +70,17 @@ static rt_err_t mm32_adc_init(struct rt_adc_device *device, rt_uint32_t channel,
     ADC_Init(adc_x, &ADC_InitStruct);
 
     ADC_RegularChannelConfig(adc_x, channel, 0, ADC_Samctl_239_5);
-    ADC_Cmd(adc_x, ENABLE);   
+    ADC_Cmd(adc_x, ENABLE);
     ADCxChannelEnable(adc_x, channel);
 
     //config gpio
     GPIO_InitTypeDef GPIO_InitStruct;
     GPIO_StructInit(&GPIO_InitStruct);
 
-    RCC_AHBPeriphClockCmd(ADC_CONFIG_GPIORCC, ENABLE); 
+    RCC_AHBPeriphClockCmd(ADC_CONFIG_GPIORCC, ENABLE);
     GPIO_InitStruct.GPIO_Pin  = ADC_CONFIG_IOX;
-    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;                           
-    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;                               
+    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;
     GPIO_Init(ADC_CONFIG_GPIOX, &GPIO_InitStruct);
 
     return RT_EOK;
@@ -92,7 +92,7 @@ static rt_err_t mm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t cha
     RT_ASSERT(device != RT_NULL);
     adc_x = device->parent.user_data;
 
-    ADC_SoftwareStartConvCmd(adc_x, ENABLE);                           
+    ADC_SoftwareStartConvCmd(adc_x, ENABLE);
     while(ADC_GetFlagStatus(adc_x, ADC_IT_EOC) == 0);
     ADC_ClearFlag(adc_x, ADC_IT_EOC);
     *value = ADC_GetConversionValue(adc_x);
