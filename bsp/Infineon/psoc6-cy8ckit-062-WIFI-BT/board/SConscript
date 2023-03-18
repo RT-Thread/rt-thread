@@ -33,7 +33,7 @@ if rtconfig.PLATFORM in ['gcc']:
 elif rtconfig.PLATFORM in ['armclang']:
     src += [startup_path_prefix +
             '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_ARM/cy_syslib_mdk.S']
-            
+
 CPPDEFINES = ['CY8C6247BZI_D54', 'CY_USING_HAL', 'COMPONENT_CAT1A', 'COMPONENT_CAT1', 'COMPONENT_BSP_DESIGN_MODUS']
 group = DefineGroup('Drivers', src, depend=[''], CPPPATH=path, CPPDEFINES=CPPDEFINES)
 

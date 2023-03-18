@@ -26,7 +26,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n 
+        default n
 
     menuconfig BSP_USING_USBFS
         bool "Enable USB BUS"

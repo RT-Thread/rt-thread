@@ -152,7 +152,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable ADC0 Channel8"
                     default n
 
-        
+
                 config BSP_USING_ADC0_CH13
                     bool "Enable ADC0 Channel13"
                     default n
