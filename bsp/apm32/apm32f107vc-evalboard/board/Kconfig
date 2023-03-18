@@ -214,6 +214,10 @@ menu "On-chip Peripheral Drivers"
             endif
         endif
 
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT

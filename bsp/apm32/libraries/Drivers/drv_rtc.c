@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,7 @@
  * 2022-03-04     stevetong459      first version
  * 2022-07-15     Aligagago         add apm32F4 serie MCU support
  * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2023-03-18     luobeihai         fix RT-Thread Studio compile error bug
  */
 
 #include "board.h"
@@ -131,7 +132,7 @@ static rt_err_t apm32_rtc_init(void)
  *
  * @return   RT_EOK indicates successful initialize, other value indicates failed;
  */
-static rt_err_t apm32_rtc_get_secs(time_t *sec)
+static rt_err_t apm32_rtc_get_secs(void *args)
 {
     volatile rt_uint32_t counter = 0;
 
@@ -143,12 +144,12 @@ static rt_err_t apm32_rtc_get_secs(time_t *sec)
         }
     }
 
-    *(timer_t *) sec = RTC_ReadCounter();
+    *(rt_uint32_t *) args = RTC_ReadCounter();
 
     return RT_EOK;
 }
 
-static rt_err_t apm32_rtc_set_secs(time_t *sec)
+static rt_err_t apm32_rtc_set_secs(void *args)
 {
     volatile rt_uint32_t counter = 0;
 
@@ -165,13 +166,15 @@ static rt_err_t apm32_rtc_set_secs(time_t *sec)
         }
     }
 
-    RTC_ConfigCounter(*(rt_uint32_t *)sec);
+    RTC_ConfigCounter(*(rt_uint32_t *)args);
 
     return RT_EOK;
 }
 #elif defined(SOC_SERIES_APM32F0) || defined(SOC_SERIES_APM32F4)
-static rt_err_t apm32_rtc_get_timeval(struct timeval *tv)
+static rt_err_t apm32_rtc_get_timeval(void *args)
 {
+    struct timeval *tv = (struct timeval *) args;
+
 #if defined(SOC_SERIES_APM32F0)
     RTC_TIME_T timeConfig;
     RTC_DATE_T dateConfig;
@@ -179,7 +182,7 @@ static rt_err_t apm32_rtc_get_timeval(struct timeval *tv)
     RTC_TimeConfig_T timeConfig;
     RTC_DateConfig_T dateConfig;
 #endif
-    
+
     struct tm tm_new = {0};
 
     RTC_ReadTime(RTC_FORMAT_BIN, &timeConfig);
@@ -191,9 +194,9 @@ static rt_err_t apm32_rtc_get_timeval(struct timeval *tv)
     tm_new.tm_mday = dateConfig.date;
     tm_new.tm_mon  = dateConfig.month - 1;
     tm_new.tm_year = dateConfig.year + 100;
-    
+
     tv->tv_sec = timegm(&tm_new);
-    
+
     return RT_EOK;
 }
 
@@ -232,11 +235,10 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     dateConfig.weekday = tm.tm_wday + 1;
 #endif
     dateConfig.year    = tm.tm_year - 100;
-    
 
     RTC_ConfigTime(RTC_FORMAT_BIN, &timeConfig);
     RTC_ConfigDate(RTC_FORMAT_BIN, &dateConfig);
-    
+
     /* wait for set time completed */
     for (int i = 0; i < 0xFFFF; i++);
 
@@ -248,20 +250,20 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
  *
  * @return   RT_EOK indicates successful initialize, other value indicates failed;
  */
-static rt_err_t apm32_rtc_get_secs(time_t *sec)
+static rt_err_t apm32_rtc_get_secs(void *args)
 {
     struct timeval tv;
     apm32_rtc_get_timeval(&tv);
-    *(time_t *) sec = tv.tv_sec;
+    *(rt_uint32_t *) args = tv.tv_sec;
 
     return RT_EOK;
 }
 
-static rt_err_t apm32_rtc_set_secs(time_t *sec)
+static rt_err_t apm32_rtc_set_secs(void *args)
 {
     rt_err_t result = RT_EOK;
 
-    if (set_rtc_time_stamp(*sec))
+    if (set_rtc_time_stamp(*(rt_uint32_t *)args))
     {
         result = -RT_ERROR;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -53,7 +53,6 @@ static struct apm32_adc adc_config[] =
             GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
             GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
         },
-        RT_NULL
     },
 #endif
 #ifdef BSP_USING_ADC2
@@ -73,7 +72,6 @@ static struct apm32_adc adc_config[] =
             GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
             GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
         },
-        RT_NULL
     },
 #endif
 #ifdef BSP_USING_ADC3
@@ -92,7 +90,6 @@ static struct apm32_adc adc_config[] =
             GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(F, 6),
             GET_PIN(F, 7), GET_PIN(F, 8), GET_PIN(F, 9), GET_PIN(F, 10)
         },
-        RT_NULL
     },
 #endif
 };
@@ -117,7 +114,6 @@ static struct apm32_adc adc_config[] =
             GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
             GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
         },
-        RT_NULL
     },
 #endif
 #ifdef BSP_USING_ADC2
@@ -138,7 +134,6 @@ static struct apm32_adc adc_config[] =
             GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
             GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
         },
-        RT_NULL
     },
 #endif
 #ifdef BSP_USING_ADC3
@@ -159,7 +154,6 @@ static struct apm32_adc adc_config[] =
             GET_PIN(F, 7), GET_PIN(F, 8), GET_PIN(F, 9), GET_PIN(F, 10), GET_PIN(F, 3),
             GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
         },
-        RT_NULL
     },
 #endif
 };
@@ -184,7 +178,6 @@ static struct apm32_adc adc_config[] =
             GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4),
             GET_PIN(C, 5)
         },
-        RT_NULL
     },
 #endif
 };

@@ -7,6 +7,17 @@ config SOC_APM32F103ZE
     select RT_USING_USER_MAIN
     default y
 
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
+endmenu
+
 menu "On-chip Peripheral Drivers"
 
     config BSP_USING_GPIO
@@ -169,6 +180,16 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
         endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
 
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"

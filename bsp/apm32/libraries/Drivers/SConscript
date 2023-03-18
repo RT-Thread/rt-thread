@@ -45,10 +45,25 @@ if GetDepend(['BSP_USING_WDT']):
 if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
     src += ['drv_eth.c']
 
+if GetDepend(['BSP_USING_SDIO']):
+    src += ['drv_sdio.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F0']):
+    src += ['drv_flash/drv_flash_f0.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F1']):
+    src += ['drv_flash/drv_flash_f1.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F4']):
+    src += ['drv_flash/drv_flash_f4.c']
+
 src += ['drv_common.c']
 
 path =  [cwd]
 path += [cwd + '/config']
+
+if GetDepend('BSP_USING_ON_CHIP_FLASH'):
+    path += [cwd + '/drv_flash']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

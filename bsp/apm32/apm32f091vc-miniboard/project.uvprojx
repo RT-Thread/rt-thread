@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, APM32F091xC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\libc\posix\ipc;..\libraries\APM32F0xx_Library\CMSIS\Include;..\libraries\Drivers\config;board;..\..\..\components\finsh;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\stdio;..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\inc;..\..\..\components\drivers\include;..\libraries\Drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Include;..\..\..\libcpu\arm\cortex-m0;..\..\..\libcpu\arm\common;applications;..\..\..\components\libc\compilers\common\extension;.;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\utilities\libadt</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\ipc;board\ports;..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Include;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\extension;..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\inc;..\libraries\Drivers;.;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\Drivers\config;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\..\..\components\libc\compilers\common\include;..\..\..\include;..\..\..\libcpu\arm\common;..\libraries\APM32F0xx_Library\CMSIS\Include;applications;..\..\..\components\libc\posix\io\poll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -380,16 +380,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>ADT</GroupName>
-          <Files>
-            <File>
-              <FileName>avl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\utilities\libadt\avl.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -518,16 +508,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
             </File>
-            <File>
-              <FileName>spi_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -552,11 +532,6 @@
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\Drivers\drv_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\Drivers\drv_spi.c</FilePath>
             </File>
             <File>
               <FileName>drv_usart.c</FileName>
@@ -667,11 +642,6 @@
               <FileName>apm32f0xx_eint.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_eint.c</FilePath>
-            </File>
-            <File>
-              <FileName>apm32f0xx_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_spi.c</FilePath>
             </File>
             <File>
               <FileName>apm32f0xx_misc.c</FileName>

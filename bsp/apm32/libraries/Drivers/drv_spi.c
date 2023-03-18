@@ -204,7 +204,7 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
     return RT_EOK;
 }
 
-static rt_uint32_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);

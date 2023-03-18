@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 #if defined(BSP_USING_DAC1)
 
 #define DBG_TAG               "drv.dac"
-#define DBG_LVL               DBG_LOG//DBG_INFO
+#define DBG_LVL               DBG_LOG
 #include <rtdbg.h>
 
 struct apm32_dac
@@ -40,7 +40,6 @@ static struct apm32_dac dac_config[] =
             DAC_WAVE_GENERATION_NONE,
             DAC_TRIANGLEAMPLITUDE_4095,
         },
-        RT_NULL,
 #elif  defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32F4)
         "dac1",
         DAC,
@@ -50,7 +49,6 @@ static struct apm32_dac dac_config[] =
             DAC_WAVE_GENERATION_NONE,
             DAC_TRIANGLE_AMPLITUDE_4095,
         },
-        RT_NULL,
 #endif
     }
 #endif
