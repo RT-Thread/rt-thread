@@ -331,7 +331,7 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     {
         return -RT_ERROR;
     }
-    
+
 #if defined(SOC_SERIES_APM32F1)
     ADC_ConfigRegularChannel(adc_cfg->adc, channel, 1, ADC_SAMPLETIME_13CYCLES5);
 
@@ -346,7 +346,7 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     }
 
     ADC_EnableSoftwareStartConv(adc_cfg->adc);
-    
+
     while (!ADC_ReadStatusFlag(adc_cfg->adc, ADC_FLAG_EOC))
     {
         if (++counter > DRV_ADC_TIME_OUT)
@@ -358,7 +358,7 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
 #elif defined(SOC_SERIES_APM32F4)
     ADC_ConfigRegularChannel(adc_cfg->adc, channel, 1, ADC_SAMPLETIME_15CYCLES);
     ADC_SoftwareStartConv(adc_cfg->adc);
-    
+
     while (!ADC_ReadStatusFlag(adc_cfg->adc, ADC_FLAG_EOC))
     {
         if (++counter > DRV_ADC_TIME_OUT)
@@ -369,9 +369,9 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     *value = ADC_ReadConversionValue(adc_cfg->adc);
 #elif defined(SOC_SERIES_APM32F0)
     ADC_ConfigChannel((uint16_t)(1u << ((channel) & 0xFu)), ADC_SAMPLE_TIME_239_5);
-    
+
     ADC_StartConversion();
-    
+
     while (!ADC_ReadStatusFlag(ADC_FLAG_CC))
     {
         if (++counter > DRV_ADC_TIME_OUT)
@@ -381,7 +381,7 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     }
     *value = ADC_ReadConversionValue();
 #endif
-    
+
     return RT_EOK;
 }
 

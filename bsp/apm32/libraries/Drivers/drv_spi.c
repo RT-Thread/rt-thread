@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,7 +46,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     struct rt_spi_device *spi_device;
     struct apm32_spi_cs *cs_pin;
     GPIO_Config_T GPIO_InitStructure;
-    
+
     /* initialize the cs pin && select the slave */
 #if defined(SOC_SERIES_APM32F0)
     GPIO_ConfigStructInit(&GPIO_InitStructure);
@@ -100,18 +100,18 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-    
+
     SPI_Config_T hw_spi_config;
-    
+
     struct rt_spi_bus * apm32_spi_bus = (struct rt_spi_bus *)device->bus;
     struct apm32_spi *spi_device = (struct apm32_spi *)apm32_spi_bus->parent.user_data;
     SPI_T *spi = spi_device->config->spi_x;
-    
+
     uint32_t hw_spi_apb_clock;
 #if (DBG_LVL == DBG_LOG)
     uint32_t hw_spi_sys_clock = RCM_ReadSYSCLKFreq();
 #endif
-    
+
     /* apm32 spi gpio init and enable clock */
     extern void apm32_msp_spi_init(void *Instance);
     apm32_msp_spi_init(spi);
@@ -128,7 +128,7 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
     hw_spi_config.nss = (cfg->mode & RT_SPI_NO_CS) ? SPI_NSS_HARD : SPI_NSS_SOFT;
     hw_spi_config.firstBit = (cfg->mode & RT_SPI_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
 #endif
-    
+
     if (cfg->data_width == 8)
     {
         hw_spi_config.length = SPI_DATA_LENGTH_8B;
@@ -191,13 +191,13 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
 
     LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
           hw_spi_sys_clock, hw_spi_apb_clock, cfg->max_hz, hw_spi_config.baudrateDiv);
-    
+
 #if defined(SOC_SERIES_APM32F0)
     SPI_DisableCRC(spi);
     SPI_EnableSSoutput(spi);
     SPI_ConfigFIFOThreshold(spi, SPI_RXFIFO_QUARTER);
 #endif
-    
+
     SPI_Config(spi, &hw_spi_config);
     SPI_Enable(spi);
 
@@ -210,9 +210,9 @@ static rt_ssize_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mes
     RT_ASSERT(message != NULL);
 
     struct rt_spi_configuration *config = &device->config;
-    
+
     struct apm32_spi_cs *cs = device->parent.user_data;
-    
+
     struct rt_spi_bus * apm32_spi_bus = (struct rt_spi_bus *)device->bus;
     struct apm32_spi *spi_device = (struct apm32_spi *)apm32_spi_bus->parent.user_data;
     SPI_T *spi = spi_device->config->spi_x;
@@ -249,7 +249,7 @@ static rt_ssize_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mes
             /* Wait until the transmit buffer is empty */
             while (SPI_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
             SPI_TxData8(spi, data);
-    
+
             /* Wait until a data is received */
             while (SPI_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
             data = SPI_RxData8(spi);
@@ -262,7 +262,7 @@ static rt_ssize_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mes
             while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
             data = SPI_I2S_RxData(spi);
 #endif
-            
+
             if (recv_ptr != RT_NULL)
             {
                 *recv_ptr++ = data;
@@ -284,12 +284,12 @@ static rt_ssize_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mes
             {
                 data = *send_ptr++;
             }
-            
+
 #if defined(SOC_SERIES_APM32F0)
             /* Wait until the transmit buffer is empty */
             while (SPI_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
             SPI_I2S_TxData16(spi, data);
-    
+
             /* Wait until a data is received */
             while (SPI_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
             data = SPI_I2S_RxData16(spi);
@@ -304,7 +304,7 @@ static rt_ssize_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mes
             /* Get the received data */
             data = SPI_I2S_RxData(spi);
 #endif
-            
+
             if (recv_ptr != RT_NULL)
             {
                 *recv_ptr++ = data;
@@ -335,7 +335,7 @@ static const struct rt_spi_ops apm32_spi_ops =
 static int rt_hw_spi_init(void)
 {
     rt_err_t result;
-    
+
     for (int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].config = &spi_config[i];

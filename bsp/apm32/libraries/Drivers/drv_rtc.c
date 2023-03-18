@@ -40,14 +40,14 @@ static rt_uint8_t rtc_init_flag = RESET;
 static rt_err_t apm32_rtc_init(void)
 {
     volatile rt_uint32_t counter = 0;
-    
+
     /* Enable RTC Clock */
 #if defined(SOC_SERIES_APM32F1)
     RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_PMU | RCM_APB1_PERIPH_BAKR);
 #elif defined(SOC_SERIES_APM32F0) || defined(SOC_SERIES_APM32F4)
     RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_PMU);
 #endif
-    
+
     PMU_EnableBackupAccess();
 
     /* Config RTC clock */
@@ -102,12 +102,12 @@ static rt_err_t apm32_rtc_init(void)
     RTC_Config_T rtcConfig;
     RTC_ConfigStructInit(&rtcConfig);
     RTC_Config(&rtcConfig);
-    
+
 #elif defined(SOC_SERIES_APM32F0)
     RTC_EnableInit();
     RTC_Config_T rtcConfig;
     RTC_ConfigStructInit(&rtcConfig);
-    
+
 #ifdef BSP_RTC_USING_LSI
     rtcConfig.AsynchPrediv = 0x63;
     rtcConfig.SynchPrediv  = 0x18F;

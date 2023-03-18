@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -72,7 +72,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_12, EINT4_15_IRQn},
     {GPIO_PIN_13, EINT4_15_IRQn},
     {GPIO_PIN_14, EINT4_15_IRQn},
-    {GPIO_PIN_15, EINT4_15_IRQn},   
+    {GPIO_PIN_15, EINT4_15_IRQn},
 #else
     {GPIO_PIN_0, EINT0_IRQn},
     {GPIO_PIN_1, EINT1_IRQn},
@@ -482,7 +482,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 #endif
         }
         GPIO_Config(PIN_APMPORT(pin), &gpioConfig);
-        
+
 #if defined(SOC_SERIES_APM32F0)
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_SYSCFG);
         SYSCFG_EINTLine((SYSCFG_PORT_T)(((pin) >> 4) & 0xFu), (SYSCFG_PIN_T)irqindex);
@@ -497,7 +497,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         eintConfig.mode = EINT_MODE_INTERRUPT;
         eintConfig.lineCmd = ENABLE;
         EINT_Config(&eintConfig);
-        
+
 #if defined(SOC_SERIES_APM32F0)
         NVIC_EnableIRQRequest(irqmap->irqno, 5);
 #else
@@ -518,7 +518,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         level = rt_hw_interrupt_disable();
 
         pin_irq_enable_mask &= ~irqmap->pinbit;
-        
+
 #if defined(SOC_SERIES_APM32F0)
         if ((irqmap->pinbit >= GPIO_PIN_0) && (irqmap->pinbit <= GPIO_PIN_1))
         {
