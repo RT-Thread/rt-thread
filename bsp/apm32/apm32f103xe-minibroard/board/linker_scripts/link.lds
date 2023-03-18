@@ -94,7 +94,7 @@ SECTIONS
         _end_address_data = .;
     } >RAM
 
-    .stack : 
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;

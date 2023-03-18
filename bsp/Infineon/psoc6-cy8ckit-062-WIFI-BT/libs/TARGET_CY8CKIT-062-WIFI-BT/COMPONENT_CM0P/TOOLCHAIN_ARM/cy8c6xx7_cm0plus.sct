@@ -98,7 +98,7 @@
 #define EFUSE_START             0x90700000
 #define EFUSE_SIZE              0x100000
 
-; Public RAM 
+; Public RAM
 ; This is an unprotected public RAM region, with the placed .cy_sharedmem section.
 ; This region is used to place objects that require full access from both cores.
 ; Uncomment the following lines, define the region size and uncomment placement of
@@ -151,7 +151,7 @@ LR_IROM1 FLASH_START FLASH_SIZE
 
     ; Application heap area (HEAP)
     ARM_LIB_HEAP  +0 EMPTY ((RAM_START+RAM_SIZE)-AlignExpr(ImageLimit(RW_IRAM1), 8)-STACK_SIZE)
-    { 
+    {
     }
 
     ; Stack region growing down
