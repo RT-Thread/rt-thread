@@ -145,7 +145,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_TMR15
                 bool "Enable TMR15"
                 default n
-                
+
             config BSP_USING_TMR16
                 bool "Enable TMR16"
                 default n

@@ -184,15 +184,15 @@ menu "On-chip Peripheral Drivers"
             config CODE_STORED_ON_SDCARD
                 bool "Enable Code STORED On SDCARD"
                 default n
-                help 
-                    "SD CARD work as boot devive"				
+                help
+                    "SD CARD work as boot devive"
         endif
 
     config BSP_USING_USB
         bool "Enable USB"
         select RT_USING_USB_HOST
         default n
-		
+
         if BSP_USING_USB
         config BSP_USB0_HOST
             bool "Enable USB0"
@@ -200,7 +200,7 @@ menu "On-chip Peripheral Drivers"
 
         config BSP_USB1_HOST
             bool "Enable USB1"
-            default n	
+            default n
         endif
 
     menuconfig BSP_USING_I2C
