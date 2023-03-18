@@ -459,7 +459,7 @@ menu "Hardware Drivers Config"
                 bool "Enable LVGL for LCD"
                 select PKG_USING_LVGL
                 default n
-                if BSP_USING_LVGL      
+                if BSP_USING_LVGL
                     config BSP_USING_LCD_ILI9431
                         bool "Enable LVGL for LCD_ILI9431"
                         select BSP_USING_SPI_LCD
