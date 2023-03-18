@@ -3,6 +3,5 @@
 # If you need to exclude a file, add the path to the file in file_path.
 
 dir_path:
-- platform
-- stage
-- utils
+- drivers
+- tools
