@@ -142,7 +142,7 @@ define region IROM8_region = mem:[from __ICFEDIT_region_IROM8_start__ to __ICFED
 define region EROM1_region = mem:[from __ICFEDIT_region_EROM1_start__ to __ICFEDIT_region_EROM1_end__];
 define region IRAM1_region = mem:[from __ICFEDIT_region_IRAM1_start__ to __ICFEDIT_region_IRAM1_end__];
 
-/* Public RAM 
+/* Public RAM
  * This is an unprotected public RAM region, with the placed .cy_sharedmem section.
  * This region is used to place objects that require full access from both cores.
  * Uncomment the following lines, define region size, and uncomment the placement of
@@ -200,7 +200,7 @@ place at start of IRAM1_region  { readwrite section .intvec_ram};
 place in          IRAM1_region  { readwrite };
 place at end   of IRAM1_region  { block HSTACK };
 
-/* Public RAM 
+/* Public RAM
  *To use unprotected public RAM, uncomment the following .cy_sharedmem section placement.
  */
 /*
