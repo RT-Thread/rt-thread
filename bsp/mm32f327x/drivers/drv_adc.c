@@ -17,9 +17,6 @@
 
 #if defined(BSP_USING_ADC)
 
-#define BSP_USING_ADC1
-// #define BSP_USING_ADC2
-
 #define ADC_CONFIG_GPIORCC     RCC_AHBENR_GPIOA
 #define ADC_CONFIG_GPIOX       GPIOA
 #define ADC_CONFIG_IOX         GPIO_Pin_5 | GPIO_Pin_4
@@ -110,7 +107,7 @@ static rt_uint8_t mm32_adc_get_resolution(struct rt_adc_device *device)
 
     RT_ASSERT(device != RT_NULL);
 
-    switch( ((adc_x->CFGR)&(0x00000380)))
+    switch( ((adc_x->CFGR)&(0x00000380)) )
     {
         case ADC_Resolution_12b:
             return 12;
