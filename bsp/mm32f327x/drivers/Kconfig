@@ -1,36 +1,31 @@
 menu "Hardware Drivers Config"
-
     menu "On-chip Peripheral Drivers"
+	
         menu "GPIO Drivers"
             config BSP_USING_GPIO
                 bool "Enable GPIO"
                 select RT_USING_PIN
                 default n
         endmenu
+		
         menu "UART Drivers"
             config BSP_USING_UART1
                 bool "Enable UART1 PA9/10(T/R)"
                 select RT_USING_SERIAL
                 default n
-
             config BSP_USING_UART2
                 bool "Enable UART2 PA2/3(T/R)"
                 select RT_USING_SERIAL
                 default y
         endmenu
-
+		
         menu "ADC Drivers"
-            config BSP_USING_ADC1
-                bool "Enable ADC1"
-                select RT_USING_ADC
-                default n
-				
-            config BSP_USING_ADC2
-                bool "Enable ADC2"
+            config BSP_USING_ADC
+                bool "Enable ADC"
                 select RT_USING_ADC
                 default n
         endmenu
-        
+
         menu "Flash Drivers"
             config BSP_USING_OCFLASH
                 bool "Enable On Chip Flash"
@@ -49,5 +44,4 @@ menu "Hardware Drivers Config"
                 default n
         endmenu
     endmenu
-
 endmenu

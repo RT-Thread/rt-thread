@@ -15,6 +15,11 @@
 #include <hal_rcc.h>
 #include <hal_misc.h>
 
+#if defined(BSP_USING_ADC)
+
+#define BSP_USING_ADC1
+// #define BSP_USING_ADC2
+
 #define ADC_CONFIG_GPIORCC     RCC_AHBENR_GPIOA
 #define ADC_CONFIG_GPIOX       GPIOA
 #define ADC_CONFIG_IOX         GPIO_Pin_5 | GPIO_Pin_4
@@ -99,10 +104,43 @@ static rt_err_t mm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t cha
     return RT_EOK;
 }
 
+static rt_uint8_t mm32_adc_get_resolution(struct rt_adc_device *device)
+{
+    ADC_TypeDef *adc_x = device->parent.user_data;
+
+    RT_ASSERT(device != RT_NULL);
+
+    switch( ((adc_x->CFGR)&(0x00000380)))
+    {
+        case ADC_Resolution_12b:
+            return 12;
+        case ADC_Resolution_11b:
+            return 11;
+        case ADC_Resolution_10b:
+            return 10;
+        case ADC_Resolution_9b:
+            return 9;
+        case ADC_Resolution_8b:
+            return 8;
+        default:
+            return 0;
+    }
+}
+
+static rt_int16_t mm32_adc_get_vref(struct rt_adc_device *device)
+{
+    if(device == RT_NULL)
+        return RT_ERROR;
+
+    return 3300;
+}
+
 static const struct rt_adc_ops mm32_adc_ops =
 {
     .enabled = mm32_adc_init,
     .convert = mm32_get_adc_value,
+    .get_resolution = mm32_adc_get_resolution,
+    .get_vref = mm32_adc_get_vref,
 };
 
 int rt_hw_adc_init(void)
@@ -118,3 +156,5 @@ int rt_hw_adc_init(void)
     return RT_EOK;
 }
 INIT_BOARD_EXPORT(rt_hw_adc_init);
+
+#endif /* BSP_USING_ADC */
