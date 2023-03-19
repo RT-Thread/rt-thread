@@ -96,10 +96,12 @@ rt_weak void rt_show_stack_frame(void)
     rt_kprintf("a3      : 0x%08x\r\n", s_stack_frame->a3);
     rt_kprintf("a4      : 0x%08x\r\n", s_stack_frame->a4);
     rt_kprintf("a5      : 0x%08x\r\n", s_stack_frame->a5);
+#ifndef __riscv_32e
     rt_kprintf("a6      : 0x%08x\r\n", s_stack_frame->a6);
     rt_kprintf("a7      : 0x%08x\r\n", s_stack_frame->a7);
     rt_kprintf("t3      : 0x%08x\r\n", s_stack_frame->t3);
     rt_kprintf("t4      : 0x%08x\r\n", s_stack_frame->t4);
     rt_kprintf("t5      : 0x%08x\r\n", s_stack_frame->t5);
     rt_kprintf("t6      : 0x%08x\r\n", s_stack_frame->t6);
+#endif
 }

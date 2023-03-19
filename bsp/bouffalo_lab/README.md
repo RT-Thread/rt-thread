@@ -116,7 +116,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 
 ### 3.1. GUI方式下载
 
-当前bsp必须使用`bouffalo_flash_cube-1.0.4](https://pan.baidu.com/s/1eG9pkxf3riAqQAu9aXiOjw?pwd=miv1)工具进行烧录，否则无法正常运行。
+当前bsp必须使用[bouffalo_flash_cube-1.0.4](https://pan.baidu.com/s/1eG9pkxf3riAqQAu9aXiOjw?pwd=miv1)工具进行烧录，否则无法正常运行。
 
 1. 连接好串口并在工具上选择对应的串口号
 

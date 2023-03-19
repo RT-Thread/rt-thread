@@ -146,7 +146,7 @@ RT-THREAD bsp company list
 - 紫芯
   - [asm9260t](asm9260t)
 - 博流
-  - [bl808](bl808)
+  - [bouffalo_lab](bouffalo_lab) series
 - 航顺
   - [hk32](hk32) series
 - 辉芒微
