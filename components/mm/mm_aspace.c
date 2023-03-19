@@ -75,12 +75,12 @@ static inline void _varea_uninstall(rt_varea_t varea)
 
     rt_varea_free_pages(varea);
 
+    rt_hw_mmu_unmap(aspace, varea->start, varea->size);
+    rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
+
     WR_LOCK(aspace);
     _aspace_bst_remove(aspace, varea);
     WR_UNLOCK(aspace);
-
-    rt_hw_mmu_unmap(aspace, varea->start, varea->size);
-    rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
 }
 
 int _init_lock(rt_aspace_t aspace)
