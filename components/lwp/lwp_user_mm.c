@@ -362,8 +362,12 @@ void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa,
         va = RT_NULL;
         LOG_W("%s", __func__);
     }
+    else
+    {
+        va += offset;
+    }
 
-    return va + offset;
+    return va;
 }
 
 rt_base_t lwp_brk(void *addr)
