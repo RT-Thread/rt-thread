@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023/01/17     WangShun    The first version
+ * 2023/03/19     Flyingcys    Add riscv_32e support
  */
 #define __ASSEMBLY__
 #include "cpuport.h"
@@ -58,7 +59,11 @@ SW_handler:
     FSTORE  f31, 31 * FREGBYTES(sp)
 #endif
     /* save all from thread context */
+#ifndef __riscv_32e
     addi sp, sp, -32 * REGBYTES
+#else
+    addi sp, sp, -16 * REGBYTES
+#endif
     STORE x5,   5 * REGBYTES(sp)
     STORE x1,   1 * REGBYTES(sp)
     /* Mandatory set the MPIE of mstatus */
@@ -75,6 +80,7 @@ SW_handler:
     STORE x13, 13 * REGBYTES(sp)
     STORE x14, 14 * REGBYTES(sp)
     STORE x15, 15 * REGBYTES(sp)
+#ifndef __riscv_32e
     STORE x16, 16 * REGBYTES(sp)
     STORE x17, 17 * REGBYTES(sp)
     STORE x18, 18 * REGBYTES(sp)
@@ -91,7 +97,7 @@ SW_handler:
     STORE x29, 29 * REGBYTES(sp)
     STORE x30, 30 * REGBYTES(sp)
     STORE x31, 31 * REGBYTES(sp)
-
+#endif
     /* switch to interrupt stack */
     csrrw sp,mscratch,sp
     /* interrupt handle */
@@ -104,22 +110,22 @@ SW_handler:
     csrrw sp,mscratch,sp
 
     /* Determine whether to trigger scheduling at the interrupt function */
-    la    s0, rt_thread_switch_interrupt_flag
-    lw    s2, 0(s0)
-    beqz  s2, 1f
+    la    t0, rt_thread_switch_interrupt_flag
+    lw    t2, 0(t0)
+    beqz  t2, 1f
     /* clear the flag of rt_thread_switch_interrupt_flag */
-    sw    zero, 0(s0)
+    sw    zero, 0(t0)
 
     csrr  a0, mepc
     STORE a0, 0 * REGBYTES(sp)
 
-    la    s0, rt_interrupt_from_thread
-    LOAD  s1, 0(s0)
-    STORE sp, 0(s1)
+    la    t0, rt_interrupt_from_thread
+    LOAD  t1, 0(t0)
+    STORE sp, 0(t1)
 
-    la    s0, rt_interrupt_to_thread
-    LOAD  s1, 0(s0)
-    LOAD  sp, 0(s1)
+    la    t0, rt_interrupt_to_thread
+    LOAD  t1, 0(t0)
+    LOAD  sp, 0(t1)
 
     LOAD  a0,  0 * REGBYTES(sp)
     csrw  mepc, a0
@@ -145,6 +151,7 @@ SW_handler:
     LOAD  x13, 13 * REGBYTES(sp)
     LOAD  x14, 14 * REGBYTES(sp)
     LOAD  x15, 15 * REGBYTES(sp)
+#ifndef __riscv_32e
     LOAD  x16, 16 * REGBYTES(sp)
     LOAD  x17, 17 * REGBYTES(sp)
     LOAD  x18, 18 * REGBYTES(sp)
@@ -163,6 +170,10 @@ SW_handler:
     LOAD  x31, 31 * REGBYTES(sp)
 
     addi  sp, sp, 32 * REGBYTES
+#else
+    addi  sp, sp, 16 * REGBYTES
+#endif
+
 #ifdef ARCH_RISCV_FPU
     FLOAD   f0, 0 * FREGBYTES(sp)
     FLOAD   f1, 1 * FREGBYTES(sp)
