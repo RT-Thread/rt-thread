@@ -1,0 +1,26 @@
+mainmenu "RT-Thread Project Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+config LIBRARIES_DIR
+    string
+    option env="LIBRARIES_DIR"
+    default "../libraries"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "board/Kconfig"
+source "$LIBRARIES_DIR/Kconfig"

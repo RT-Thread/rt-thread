@@ -1,0 +1,89 @@
+menu "General Drivers Configuration"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menu "General Purpose UARTs"
+
+    menuconfig BSP_USING_UART0
+        bool "Enable UART0"
+        default y
+        if BSP_USING_UART0
+            choice
+                prompt "UART0 TX PIN"
+                default UART0_TX_USING_GPIO16 if BSP_USING_BL60X
+                default UART0_TX_USING_GPIO21 if BSP_USING_BL61X
+                default UART0_TX_USING_GPIO14 if BSP_USING_BL70X
+                default UART0_TX_USING_GPIO14 if BSP_USING_BL808
+
+                config UART0_TX_USING_GPIO14
+                    bool "GPIO_14"
+                config UART0_TX_USING_GPIO16
+                    bool "GPIO_16"
+                config UART0_TX_USING_GPIO21
+                    bool "GPIO_21"
+            endchoice
+            choice
+                prompt "UART0 RX PIN"
+                default UART0_RX_USING_GPIO7 if BSP_USING_BL60X
+                default UART0_RX_USING_GPIO22 if BSP_USING_BL61X
+                default UART0_RX_USING_GPIO23 if BSP_USING_BL70X
+                default UART0_RX_USING_GPIO15 if BSP_USING_BL808
+
+                config UART0_RX_USING_GPIO7
+                    bool "GPIO_7"
+                config UART0_RX_USING_GPIO15
+                    bool "GPIO_15"
+                config UART0_RX_USING_GPIO22
+                    bool "GPIO_22"
+                config UART0_RX_USING_GPIO23
+                    bool "GPIO_23"
+            endchoice
+        endif
+        
+    menuconfig BSP_USING_UART1
+        bool "Enable UART1"
+        default n
+        if BSP_USING_UART1
+            choice
+                prompt "UART1 TX PIN"
+                default UART1_TX_USING_GPIO4 if BSP_USING_BL60X
+                default UART1_TX_USING_GPIO16 if BSP_USING_BL61X
+                default UART1_TX_USING_GPIO26 if BSP_USING_BL70X
+                default UART1_TX_USING_GPIO18 if BSP_USING_BL808
+
+                config UART1_TX_USING_GPIO4
+                    bool "GPIO_4"
+                config UART1_TX_USING_GPIO16
+                    bool "GPIO_16"
+                config UART1_TX_USING_GPIO18
+                    bool "GPIO_18"
+                config UART1_TX_USING_GPIO26
+                    bool "GPIO_26"
+            endchoice
+            choice
+                prompt "UART1 RX PIN"
+                default UART1_RX_USING_GPIO3 if BSP_USING_BL60X
+                default UART1_RX_USING_GPIO17 if BSP_USING_BL61X
+                default UART1_RX_USING_GPIO27 if BSP_USING_BL70X
+                default UART1_RX_USING_GPIO19 if BSP_USING_BL808
+
+                config UART1_RX_USING_GPIO3
+                    bool "GPIO_3"
+                config UART1_RX_USING_GPIO5
+                    bool "GPIO_5"
+                config UART1_RX_USING_GPIO17
+                    bool "GPIO_17"
+                config UART1_RX_USING_GPIO19
+                    bool "GPIO_19"
+                config UART1_RX_USING_GPIO27
+                    bool "GPIO_27"
+            endchoice
+        endif
+
+    endmenu
+
+endmenu
+

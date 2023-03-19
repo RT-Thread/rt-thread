@@ -1,0 +1,8 @@
+*.ota
+*.xz
+*.xz.ota
+*.bin
+*.asm
+*.exe
+*-ubuntu
+*-macos
