@@ -21,6 +21,7 @@
 #include "apm32f4xx_rcm.h"
 #include "apm32f4xx_eint.h"
 #include "apm32f4xx_usart.h"
+#include "apm32f4xx_dma.h"
 
 #if defined(RT_USING_ADC)
     #include "apm32f4xx_adc.h"
@@ -44,6 +45,18 @@
 #endif
 #if defined(BSP_USING_ETH)
     #include "apm32f4xx_eth.h"
+#endif
+#if defined(BSP_USING_SDCARD)
+    #include "apm32f4xx_sdio.h"
+#endif
+#if defined(BSP_USING_ON_CHIP_FLASH)
+    #include "apm32f4xx_fmc.h"
+#endif
+#if defined(RT_USING_CAN)
+    #include "apm32f4xx_can.h"
+#endif
+#if defined(BSP_USING_SDRAM)
+    #include "apm32f4xx_dmc.h"
 #endif
 
 #include "drv_common.h"

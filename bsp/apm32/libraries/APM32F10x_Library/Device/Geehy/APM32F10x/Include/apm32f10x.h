@@ -3351,11 +3351,11 @@ typedef struct
     /* @brief I2C Switching register */
     union
     {
-        __IOM uint32_t SWITCH;
+        __IOM uint32_t I2C_SWITCH;
 
         struct
         {
-            __IOM uint32_t SWITCH          : 1;
+            __IOM uint32_t I2C_SWITCH          : 1;
             __IM uint32_t RESERVED1        : 31;
         } SWITCH_B;
     };
@@ -6111,11 +6111,11 @@ typedef struct
     /* @brief Buffer table address register  */
     union
     {
-        __IOM uint32_t SWITCH;
+        __IOM uint32_t USB_SWITCH;
 
         struct
         {
-            __IOM uint32_t SWITCH           : 1;
+            __IOM uint32_t USB_SWITCH           : 1;
             __IM  uint32_t RESERVED         : 31;
         } SWITCH_B;
     };

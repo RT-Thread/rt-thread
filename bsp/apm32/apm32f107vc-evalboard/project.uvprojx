@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>APM32F10X_CL, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\libc\posix\ipc;..\libraries\Drivers\config;board\ports;..\..\..\components\finsh;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;.;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;..\libraries\Drivers;..\..\..\components\drivers\include;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;board;applications;..\..\..\libcpu\arm\cortex-m3;..\..\..\libcpu\arm\common;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\libraries\APM32F10x_Library\CMSIS\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\utilities\libadt</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\ipc;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;.;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\extension;..\libraries\APM32F10x_Library\CMSIS\Include;..\libraries\Drivers;..\..\..\components\drivers\include;board;applications;board\ports;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\Drivers\config;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\poll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -380,16 +380,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>ADT</GroupName>
-          <Files>
-            <File>
-              <FileName>avl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\utilities\libadt\avl.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -677,6 +667,11 @@
               <FileName>apm32f10x_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>apm32f10x_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_dma.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -111,7 +111,7 @@ static rt_err_t apm32_uart_configure(struct rt_serial_device *serial, struct ser
     USART_ConfigStruct.baudRate = cfg->baud_rate;
     USART_ConfigStruct.mode = USART_MODE_TX_RX;
     USART_ConfigStruct.parity = USART_PARITY_NONE;
-    
+
 #if defined(SOC_SERIES_APM32F0)
     switch (cfg->flowcontrol)
     {

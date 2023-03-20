@@ -150,7 +150,7 @@ void phy_reset(void)
 /*
  * GPIO Configuration for ETH
  */
-void ETH_GPIO_Configuration(void)
+void apm32_msp_eth_init(void *instance)
 {
 #ifdef BSP_USING_ETH
     GPIO_Config_T GPIO_ConfigStruct;

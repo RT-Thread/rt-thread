@@ -80,7 +80,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-#define RT_USING_SPI
 
 /* Using USB */
 
@@ -140,9 +139,6 @@
 
 
 /* u8g2: a monochrome graphic library */
-
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -217,6 +213,7 @@
 
 /* Other */
 
+
 /* Signal IO */
 
 
@@ -236,8 +233,6 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_SPI
-#define BSP_USING_SPI1
 
 /* Board extended module Drivers */
 
