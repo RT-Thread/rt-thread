@@ -149,7 +149,7 @@ void phy_reset(void)
 /*
  * GPIO Configuration for ETH
  */
-void ETH_GPIO_Configuration(void)
+void apm32_msp_eth_init(void *instance)
 {
 #ifdef BSP_USING_ETH
     GPIO_Config_T GPIO_ConfigStruct;
@@ -201,4 +201,39 @@ void ETH_GPIO_Configuration(void)
     GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_2, GPIO_AF_ETH);
     GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_7, GPIO_AF_ETH);
 #endif
+}
+
+void apm32_msp_sdio_init(void *Instance)
+{
+    GPIO_Config_T  GPIO_InitStructure;
+
+    /* Enable the GPIO Clock */
+    RCM_EnableAHB1PeriphClock(RCM_AHB1_PERIPH_GPIOC | RCM_AHB1_PERIPH_GPIOD);
+
+    /* Enable the SDIO Clock */
+    RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_SDIO);
+
+    /* Enable the SDIO peripheral reset */
+    RCM_EnableAPB2PeriphReset(RCM_APB2_PERIPH_SDIO);
+
+    /* Configure the GPIO pin */
+    GPIO_InitStructure.pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12;
+    GPIO_InitStructure.mode = GPIO_MODE_AF;
+    GPIO_InitStructure.speed = GPIO_SPEED_50MHz;
+    GPIO_InitStructure.otype = GPIO_OTYPE_PP;
+    GPIO_InitStructure.pupd = GPIO_PUPD_UP;
+    GPIO_Config(GPIOC, &GPIO_InitStructure);
+
+    GPIO_InitStructure.pin = GPIO_PIN_2;
+    GPIO_Config(GPIOD, &GPIO_InitStructure);
+
+    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_8, GPIO_AF_SDIO);
+    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_9, GPIO_AF_SDIO);
+    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_10, GPIO_AF_SDIO);
+    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_11, GPIO_AF_SDIO);
+    GPIO_ConfigPinAF(GPIOC,GPIO_PIN_SOURCE_12, GPIO_AF_SDIO);
+    GPIO_ConfigPinAF(GPIOD,GPIO_PIN_SOURCE_2, GPIO_AF_SDIO);
+
+    /* Disable the SDIO peripheral reset */
+    RCM_DisableAPB2PeriphReset(RCM_APB2_PERIPH_SDIO);
 }

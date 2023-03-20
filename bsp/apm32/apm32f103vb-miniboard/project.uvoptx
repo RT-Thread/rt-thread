@@ -183,7 +183,7 @@
 
   <Group>
     <GroupName>Applications</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -363,7 +363,7 @@
 
   <Group>
     <GroupName>DeviceDrivers</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -479,7 +479,7 @@
 
   <Group>
     <GroupName>Drivers</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -502,8 +502,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Source\arm\startup_apm32f10x_md.s</PathWithFileName>
-      <FilenameWithoutPath>startup_apm32f10x_md.s</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Source\arm\startup_apm32f10x_hd.s</PathWithFileName>
+      <FilenameWithoutPath>startup_apm32f10x_hd.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -840,6 +840,18 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_gpio.c</PathWithFileName>
       <FilenameWithoutPath>apm32f10x_gpio.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>51</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_dma.c</PathWithFileName>
+      <FilenameWithoutPath>apm32f10x_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

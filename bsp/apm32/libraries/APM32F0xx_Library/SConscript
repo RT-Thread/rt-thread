@@ -39,6 +39,9 @@ if GetDepend(['RT_USING_WDT']):
 if GetDepend(['RT_USING_CAN']):
     src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_can.c']
 
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_fmc.c']
+
 path = [cwd + '/Device/Geehy/APM32F0xx/Include',
     cwd + '/APM32F0xx_StdPeriphDriver/inc',
     cwd + '/CMSIS/Include']

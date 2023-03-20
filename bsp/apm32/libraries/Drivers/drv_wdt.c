@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -67,15 +67,15 @@ static rt_err_t apm32_iwdt_init(rt_watchdog_t *wdt)
             return -RT_ERROR;
         }
     }
-    
+
     IWDT_EnableWriteAccess();
-    
+
 #if defined(SOC_SERIES_APM32F0)
     IWDT_ConfigDivider(IWDT_DIV_256);
 #else
     IWDT_ConfigDivider(IWDT_DIVIDER_256);
 #endif
-    
+
     IWDT_DisableWriteAccess();
 
     return RT_EOK;

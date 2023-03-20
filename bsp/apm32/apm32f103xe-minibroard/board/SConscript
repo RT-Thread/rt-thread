@@ -11,7 +11,11 @@ src = Split('''
 board.c
 ''')
 
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('ports/sdcard_port.c')
+
 path =  [cwd]
+path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 

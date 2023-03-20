@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -139,7 +139,7 @@ static struct apm32_timer tmr_config[] =
         TMR6,
 #if defined(SOC_SERIES_APM32F1) || defined(APM32F030) || defined(APM32F070)
         TMR6_IRQn,
-#elif defined(SOC_SERIES_APM32F4) 
+#elif defined(SOC_SERIES_APM32F4)
         TMR6_DAC_IRQn
 #elif defined(SOC_SERIES_APM32F0) && !defined(APM32F030) && !defined(APM32F070)
         TMR6_DAC_IRQn
@@ -237,9 +237,9 @@ static rt_uint32_t apm32_hwtimer_clock_get(TMR_T *tmr)
 {
 #if defined(SOC_SERIES_APM32F0)
     uint32_t pclk1;
-    
+
     pclk1 = RCM_ReadPCLKFreq();
-    
+
     return (rt_uint32_t)(pclk1 * ((RCM->CFG1_B.APB1PSC != 0) ? 2 : 1));
 #else
     uint32_t pclk1, pclk2;
@@ -327,9 +327,9 @@ static void apm32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t stat
     if (state)
     {
         timer_config = (struct apm32_timer *)timer->parent.user_data;
-        
+
         apm32_hwtimer_enable_clock();
-        
+
         prescaler = (uint32_t)(apm32_hwtimer_clock_get(timer_config->tmr) / 10000) - 1;
 
         base_config.period          = 10000 - 1;
@@ -358,7 +358,7 @@ static void apm32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t stat
 #endif
         base_config.repetitionCounter = 0;
         TMR_ConfigTimeBase(timer_config->tmr, &base_config);
-        
+
 #if defined(SOC_SERIES_APM32F0)
         /* set the TIMx priority */
         NVIC_EnableIRQRequest(timer_config->irqn, 3);
