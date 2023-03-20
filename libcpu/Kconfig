@@ -5,6 +5,10 @@ config RT_USING_CACHE
     bool
     default n
 
+config RT_USING_HW_ATOMIC
+    bool
+    default n
+
 config ARCH_CPU_BIG_ENDIAN
     bool
 
@@ -47,6 +51,7 @@ config ARCH_ARM_CORTEX_M3
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_MPU
     bool
@@ -57,21 +62,25 @@ config ARCH_ARM_CORTEX_M4
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M7
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_CACHE
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M33
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_R
     bool
     select ARCH_ARM
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_MMU
     bool
@@ -107,6 +116,7 @@ config ARCH_ARM_CORTEX_A
     select ARCH_ARM
     select ARCH_ARM_MMU
     select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
 
     if ARCH_ARM_CORTEX_A
         config RT_SMP_AUTO_BOOT
@@ -129,18 +139,22 @@ config ARCH_ARM_CORTEX_A
 config ARCH_ARM_CORTEX_A5
     bool
     select ARCH_ARM_CORTEX_A
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_A7
     bool
     select ARCH_ARM_CORTEX_A
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_A8
     bool
     select ARCH_ARM_CORTEX_A
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_SECURE_MODE
     bool "Running in secure mode [ARM Cortex-A]"
@@ -156,6 +170,7 @@ config ARCH_ARMV8
     bool
     select ARCH_ARM
     select ARCH_ARM_MMU
+    select RT_USING_HW_ATOMIC
 
 config ARCH_MIPS
     bool

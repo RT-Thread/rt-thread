@@ -703,45 +703,6 @@ void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
 #include <finsh.h>
 #endif
 
-#if defined(RT_USING_HW_ATOMIC)
-#define rt_atomic_load(ptr) rt_hw_atomic_load(ptr)
-#define rt_atomic_store(ptr, v) rt_hw_atomic_store(ptr, v)
-#define rt_atomic_add(ptr, v) rt_hw_atomic_add(ptr, v)
-#define rt_atomic_sub(ptr, v) rt_hw_atomic_sub(ptr, v)
-#define rt_atomic_and(ptr, v) rt_hw_atomic_and(ptr, v)
-#define rt_atomic_or(ptr, v)  rt_hw_atomic_or(ptr, v)
-#define rt_atomic_xor(ptr, v) rt_hw_atomic_xor(ptr, v)
-#define rt_atomic_exchange(ptr, v) rt_hw_atomic_exchange(ptr, v)
-#define rt_atomic_flag_clear(ptr) rt_hw_atomic_flag_clear(ptr)
-#define rt_atomic_flag_test_and_set(ptr) rt_hw_atomic_flag_test_and_set(ptr)
-#define rt_atomic_compare_exchange_strong(ptr, v,des) rt_hw_atomic_compare_exchange_strong(ptr, v ,des)
-#elif defined(RT_USING_STD_ATOMIC)
-#define rt_atomic_load(ptr) atomic_load(ptr)
-#define rt_atomic_store(ptr, v) atomic_store(ptr, v)
-#define rt_atomic_add(ptr, v) atomic_fetch_add(ptr, v)
-#define rt_atomic_sub(ptr, v) atomic_fetch_sub(ptr, v)
-#define rt_atomic_and(ptr, v) atomic_fetch_and(ptr, v)
-#define rt_atomic_or(ptr, v)  atomic_fetch_or(ptr, v)
-#define rt_atomic_xor(ptr, v) atomic_fetch_xor(ptr, v)
-#define rt_atomic_exchange(ptr, v) atomic_exchange(ptr, v)
-#define rt_atomic_flag_clear(ptr) atomic_flag_clear(ptr)
-#define rt_atomic_flag_test_and_set(ptr) atomic_flag_test_and_set(ptr)
-#define rt_atomic_compare_exchange_strong(ptr, v,des) atomic_compare_exchange_strong(ptr, v ,des)
-#else
-#include "rtatomic.h"
-#define rt_atomic_load(ptr) rt_isr_atomic_load(ptr)
-#define rt_atomic_store(ptr, v) rt_isr_atomic_store(ptr, v)
-#define rt_atomic_add(ptr, v) rt_isr_atomic_add(ptr, v)
-#define rt_atomic_sub(ptr, v) rt_isr_atomic_sub(ptr, v)
-#define rt_atomic_and(ptr, v) rt_isr_atomic_and(ptr, v)
-#define rt_atomic_or(ptr, v)  rt_isr_atomic_or(ptr, v)
-#define rt_atomic_xor(ptr, v) rt_isr_atomic_xor(ptr, v)
-#define rt_atomic_exchange(ptr, v) rt_isr_atomic_exchange(ptr, v)
-#define rt_atomic_flag_clear(ptr) rt_isr_atomic_flag_clear(ptr)
-#define rt_atomic_flag_test_and_set(ptr) rt_isr_atomic_flag_test_and_set(ptr)
-#define rt_atomic_compare_exchange_strong(ptr, v,des) rt_isr_atomic_compare_exchange_strong(ptr, v ,des)
-#endif
-
 /**@}*/
 
 #ifdef __cplusplus

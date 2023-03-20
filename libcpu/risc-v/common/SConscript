@@ -7,7 +7,7 @@ src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
 CPPPATH = [cwd]
 ASFLAGS = ' -I ' + cwd
 
-if rtconfig.CPU in ['cv32e40p', 'rv32m1','juicevm']:
+if not GetDepend('RT_USING_HW_ATOMIC'):
     SrcRemove(src, 'atomic_port.c')
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)

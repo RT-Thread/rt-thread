@@ -90,9 +90,10 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
     "   bne      %[result], %[tmp], 2f\n"
     "   sc.w.rl  %[tmp], %[new], (%[ptr])\n"
     "   bnez     %[tmp], 1b\n"
+    "   li  %[result], 1\n"
     "   j 3f\n"
     " 2:sw  %[result], (%[old])\n"
-    "   li     %[result], 0\n"
+    "   li  %[result], 0\n"
     " 3:\n"
     : [result]"+r" (result), [tmp]"+r" (tmp), [ptr]"+r" (ptr)
     : [new]"r" (new), [old]"r"(old)

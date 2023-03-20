@@ -10,7 +10,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "rtt_board.h"
-
+#include "rtatomic.h"
 void thread_entry(void *arg);
 
 

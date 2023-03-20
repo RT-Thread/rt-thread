@@ -125,7 +125,7 @@ typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
-#if defined(RT_USING_STD_ATOMIC)
+#if defined(RT_USING_STDC_ATOMIC)
 #include <stdatomic.h>
 typedef atomic_size_t rt_atomic_t;
 #else

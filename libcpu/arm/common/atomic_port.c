@@ -25,12 +25,12 @@
     #define __LDREXW(ptr)          _Pragma("push") _Pragma("diag_suppress 3731") ((rt_atomic_t ) __ldrex(ptr))  _Pragma("pop")
 #endif
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
-_Pragma("inline=forced") __intrinsic rt_atomic_t __LDREXW(rt_atomic_t volatile *ptr)
+_Pragma("inline=forced") __intrinsic rt_atomic_t __LDREXW(volatile rt_atomic_t volatile *ptr)
 {
     return __LDREX((unsigned long *)ptr);
 }
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
-__attribute__((always_inline)) static inline  rt_atomic_t __LDREXW(rt_atomic_t *addr)
+__attribute__((always_inline)) static inline  rt_atomic_t __LDREXW(volatile rt_atomic_t *addr)
 {
     rt_atomic_t result;
 
@@ -56,12 +56,12 @@ __attribute__((always_inline)) static inline  rt_atomic_t __LDREXW(rt_atomic_t *
     #define __STREXW(value, ptr)   _Pragma("push") _Pragma("diag_suppress 3731") __strex(value, ptr)        _Pragma("pop")
 #endif
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
-_Pragma("inline=forced") __intrinsic rt_atomic_t __STREXW(rt_atomic_t value, rt_atomic_t volatile *ptr)
+_Pragma("inline=forced") __intrinsic rt_atomic_t __STREXW(rt_atomic_t value, volatile rt_atomic_t *ptr)
 {
     return __STREX(value, (unsigned long *)ptr);
 }
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
-__attribute__((always_inline)) static inline  rt_atomic_t __STREXW(rt_atomic_t value, rt_atomic_t *addr)
+__attribute__((always_inline)) static inline  rt_atomic_t __STREXW(volatile rt_atomic_t value, volatile rt_atomic_t *addr)
 {
     rt_atomic_t result;
 
@@ -75,7 +75,7 @@ rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr)
     rt_atomic_t oldval;
     do {
         oldval = __LDREXW(ptr);
-    }while((__STREXW(oldval, ptr)) != 0U);
+    } while((__STREXW(oldval, ptr)) != 0U);
     return *ptr;
 }
 
@@ -83,7 +83,7 @@ void rt_hw_atomic_store(volatile rt_atomic_t *ptr,rt_atomic_t val)
 {
     do {
         __LDREXW(ptr);
-    }while((__STREXW(val, ptr)) != 0U);
+    } while((__STREXW(val, ptr)) != 0U);
 }
 
 rt_atomic_t rt_hw_atomic_add(volatile rt_atomic_t *ptr, rt_atomic_t val)
@@ -91,7 +91,7 @@ rt_atomic_t rt_hw_atomic_add(volatile rt_atomic_t *ptr, rt_atomic_t val)
     rt_atomic_t oldval;
     do {
         oldval = __LDREXW(ptr);
-    }while((__STREXW(oldval + val, ptr)) != 0U);
+    } while((__STREXW(oldval + val, ptr)) != 0U);
     return oldval;
 }
 
@@ -100,7 +100,7 @@ rt_atomic_t rt_hw_atomic_sub(volatile rt_atomic_t *ptr, rt_atomic_t val)
     rt_atomic_t oldval;
     do {
         oldval = __LDREXW(ptr);
-    }while((__STREXW(oldval - val, ptr)) != 0U);
+    } while((__STREXW(oldval - val, ptr)) != 0U);
     return oldval;
 }
 
@@ -109,7 +109,7 @@ rt_atomic_t rt_hw_atomic_and(volatile rt_atomic_t *ptr, rt_atomic_t val)
     rt_atomic_t oldval;
     do {
         oldval = __LDREXW(ptr);
-    }while((__STREXW(oldval & val, ptr)) != 0U);
+    } while((__STREXW(oldval & val, ptr)) != 0U);
     return oldval;
 }
 
@@ -118,7 +118,7 @@ rt_atomic_t rt_hw_atomic_or(volatile rt_atomic_t *ptr, rt_atomic_t val)
     rt_atomic_t oldval;
     do {
         oldval = __LDREXW(ptr);
-    }while((__STREXW(oldval | val, ptr)) != 0U);
+    } while((__STREXW(oldval | val, ptr)) != 0U);
     return oldval;
 }
 
@@ -127,7 +127,7 @@ rt_atomic_t rt_hw_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t val)
     rt_atomic_t oldval;
     do {
         oldval = __LDREXW(ptr);
-    }while((__STREXW(oldval ^ val, ptr)) != 0U);
+    } while((__STREXW(oldval ^ val, ptr)) != 0U);
     return oldval;
 }
 
@@ -136,7 +136,7 @@ rt_atomic_t rt_hw_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val)
     rt_atomic_t oldval;
     do {
         oldval = __LDREXW(ptr);
-    }while((__STREXW(val, ptr)) != 0U);
+    } while((__STREXW(val, ptr)) != 0U);
     return oldval;
 }
 
@@ -144,7 +144,7 @@ void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr)
 {
     do {
         __LDREXW(ptr);
-    }while((__STREXW(0, ptr)) != 0U);
+    } while((__STREXW(0, ptr)) != 0U);
 }
 
 rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr)
@@ -152,7 +152,7 @@ rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr)
     rt_atomic_t oldval;
     do {
         oldval = __LDREXW(ptr);
-    }while((__STREXW(1, ptr)) != 0U);
+    } while((__STREXW(1, ptr)) != 0U);
     return oldval;
 }
 
@@ -165,8 +165,10 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
         if (result != temp)
         {
            *oldval = result;
-           result = 0;
+           __STREXW(result, ptr);
+           break;
         }
-    }while((__STREXW(newval, ptr)) != 0U);
-    return result;
+    } while((__STREXW(newval, ptr)) != 0U);
+    return (result == temp);
 }
+
