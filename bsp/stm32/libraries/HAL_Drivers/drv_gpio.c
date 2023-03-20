@@ -217,16 +217,16 @@ static rt_int8_t stm32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_TypeDef *gpio_port;
     uint16_t gpio_pin;
-    GPIO_PinState value = PIN_LOW;
+    GPIO_PinState state;
 
     if (PIN_PORT(pin) < PIN_STPORT_MAX)
     {
         gpio_port = PIN_STPORT(pin);
         gpio_pin = PIN_STPIN(pin);
-        value = HAL_GPIO_ReadPin(gpio_port, gpio_pin);
+        state = HAL_GPIO_ReadPin(gpio_port, gpio_pin);
     }
 
-    return value;
+    return (state == GPIO_PIN_RESET) ? PIN_LOW : PIN_HIGH;
 }
 
 static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
