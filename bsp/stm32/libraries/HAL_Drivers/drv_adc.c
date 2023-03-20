@@ -329,8 +329,10 @@ static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
     ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
 
     ret = rt_adc_enable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    if (ret != RT_EOK) return (rt_int16_t)ret;
     vref_value = rt_adc_read(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
     ret = rt_adc_disable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    if (ret != RT_EOK) return (rt_int16_t)ret;
 
     vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
 #else
