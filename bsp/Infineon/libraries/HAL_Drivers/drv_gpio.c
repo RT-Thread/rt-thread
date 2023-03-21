@@ -195,7 +195,7 @@ static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_handler_tab[gpio_port].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
 
     pin_irq_handler_tab[gpio_port].pin = pin;

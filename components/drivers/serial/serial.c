@@ -1028,7 +1028,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 if (pconfig->bufsz != serial->config.bufsz && serial->parent.ref_count)
                 {
                     /*can not change buffer size*/
-                    return RT_EBUSY;
+                    return -RT_EBUSY;
                 }
                 /* set serial configure */
                 serial->config = *pconfig;
