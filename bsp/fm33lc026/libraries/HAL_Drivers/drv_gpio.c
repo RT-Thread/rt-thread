@@ -266,7 +266,7 @@ static rt_err_t fm33_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;

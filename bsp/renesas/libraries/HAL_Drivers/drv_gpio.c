@@ -249,7 +249,7 @@ static rt_err_t ra_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
         if (pin_irq_hdr_tab[irqx].pin != -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_EBUSY;
+            return -RT_EBUSY;
         }
         pin_irq_hdr_tab[irqx].pin = irqx;
         pin_irq_hdr_tab[irqx].hdr = hdr;
