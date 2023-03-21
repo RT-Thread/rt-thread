@@ -260,7 +260,7 @@ static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     switch(err_code)
     {
         case NRFX_ERROR_BUSY:
-            return RT_EBUSY;
+            return -RT_EBUSY;
         case NRFX_SUCCESS:
             return RT_EOK;
         case NRFX_ERROR_NO_MEM:
