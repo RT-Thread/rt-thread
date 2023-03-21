@@ -259,7 +259,7 @@ static rt_ssize_t _spi_recv(SPI_Module *hspi,
         {
             if ((rt_tick_get() - tickstart) > timeout)
             {
-                return RT_ETIMEOUT;
+                return -RT_ETIMEOUT;
             }
         }
         SPI_I2S_TransmitData(hspi, *tx_buff++);
@@ -268,7 +268,7 @@ static rt_ssize_t _spi_recv(SPI_Module *hspi,
         {
             if ((rt_tick_get() - tickstart) > timeout)
             {
-                return RT_ETIMEOUT;
+                return -RT_ETIMEOUT;
             }
         }
         dat = SPI_I2S_ReceiveData(hspi);

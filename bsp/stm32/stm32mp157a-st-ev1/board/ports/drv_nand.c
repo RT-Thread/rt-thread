@@ -115,7 +115,7 @@ static rt_err_t rt_hw_nand_wait_ready(void)
         time++;
         if (time >= 0X1FFFFFFF)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -303,7 +303,7 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
                     /* Check for the Timeout */
                     if ((rt_tick_get() - tickstart) > 10000)
                     {
-                        result = RT_ETIMEOUT;
+                        result = -RT_ETIMEOUT;
                         goto _exit;
                     }
                 }
@@ -359,7 +359,7 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
 
     if (rt_hw_nand_wait_ready() != RT_EOK)
     {
-        result = RT_ETIMEOUT;
+        result = -RT_ETIMEOUT;
         goto _exit;
     }
 
@@ -430,7 +430,7 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
                     /* Check for the Timeout */
                     if ((rt_tick_get() - tickstart) > 10000)
                     {
-                        result = RT_ETIMEOUT;
+                        result = -RT_ETIMEOUT;
                         goto _exit;
                     }
                 }
