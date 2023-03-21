@@ -35,7 +35,7 @@ __attribute__((always_inline)) static inline  rt_atomic_t __LDREXW(volatile rt_a
     rt_atomic_t result;
 
     __asm volatile ("ldrex %0, %1" : "=r" (result) : "Q" (*addr) );
-    return(result);
+    return result;
 }
 #endif
 
@@ -66,7 +66,7 @@ __attribute__((always_inline)) static inline  rt_atomic_t __STREXW(volatile rt_a
     rt_atomic_t result;
 
     __asm volatile ("strex %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" (value) );
-    return(result);
+    return result;
 }
 #endif
 
@@ -171,4 +171,3 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
     } while((__STREXW(newval, ptr)) != 0U);
     return (result == temp);
 }
-

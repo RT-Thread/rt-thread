@@ -23,7 +23,9 @@
 #define rt_atomic_flag_clear(ptr) atomic_flag_clear(ptr)
 #define rt_atomic_flag_test_and_set(ptr) atomic_flag_test_and_set(ptr)
 #define rt_atomic_compare_exchange_strong(ptr, v,des) atomic_compare_exchange_strong(ptr, v ,des)
-#endif
+#else
+#error "The standard library C doesn't support the atomic operation"
+#endif /* __STDC_NO_ATOMICS__ */
 #elif defined(RT_USING_HW_ATOMIC)
 #define rt_atomic_load(ptr) rt_hw_atomic_load(ptr)
 #define rt_atomic_store(ptr, v) rt_hw_atomic_store(ptr, v)
@@ -172,5 +174,5 @@ rt_inline rt_atomic_t rt_soft_atomic_compare_exchange_strong(volatile rt_atomic_
     rt_hw_interrupt_enable(level);
     return temp;
 }
-#endif
+#endif /* RT_USING_STDC_ATOMIC */
 #endif /* __RT_ATOMIC_H__ */

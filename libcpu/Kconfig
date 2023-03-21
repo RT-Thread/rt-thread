@@ -139,22 +139,18 @@ config ARCH_ARM_CORTEX_A
 config ARCH_ARM_CORTEX_A5
     bool
     select ARCH_ARM_CORTEX_A
-    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_A7
     bool
     select ARCH_ARM_CORTEX_A
-    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_A8
     bool
     select ARCH_ARM_CORTEX_A
-    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
-    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_SECURE_MODE
     bool "Running in secure mode [ARM Cortex-A]"

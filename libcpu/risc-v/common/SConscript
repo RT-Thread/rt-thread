@@ -8,7 +8,7 @@ CPPPATH = [cwd]
 ASFLAGS = ' -I ' + cwd
 
 if not GetDepend('RT_USING_HW_ATOMIC'):
-    SrcRemove(src, 'atomic_port.c')
+    SrcRemove(src, 'atomic_riscv.c')
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 
