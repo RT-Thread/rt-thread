@@ -10,6 +10,18 @@
 #ifndef __RT_ATOMIC_H__
 #define __RT_ATOMIC_H__
 
+rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr);
+void rt_hw_atomic_store(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_add(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_sub(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_and(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_or(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val);
+void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr);
+rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr);
+rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old,rt_atomic_t new);
+
 #if defined(RT_USING_STDC_ATOMIC)
 #ifndef __STDC_NO_ATOMICS__
 #define rt_atomic_load(ptr) atomic_load(ptr)

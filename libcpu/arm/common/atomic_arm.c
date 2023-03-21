@@ -156,18 +156,18 @@ rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr)
     return oldval;
 }
 
-rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *oldval, rt_atomic_t newval)
+rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old, rt_atomic_t new)
 {
     rt_atomic_t result;
-    rt_atomic_t temp = *oldval;
+    rt_atomic_t temp = *old;
     do {
         result = __LDREXW(ptr);
         if (result != temp)
         {
-           *oldval = result;
+           *old = result;
            __STREXW(result, ptr);
            break;
         }
-    } while((__STREXW(newval, ptr)) != 0U);
+    } while((__STREXW(new, ptr)) != 0U);
     return (result == temp);
 }
