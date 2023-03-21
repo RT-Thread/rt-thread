@@ -152,7 +152,7 @@ static rt_err_t phy_write_reg(uint8_t phy_addr, uint8_t reg_addr, uint16_t reg_v
         if((rt_tick_get() - tickstart) > ETH_TIME_OUT)
         {
             LOG_E("PHY write reg %02x date %04x timeout!", reg_addr, reg_value);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -184,7 +184,7 @@ static uint16_t phy_read_reg(uint8_t phy_addr, uint8_t reg_addr)
         if((rt_tick_get() - tickstart) > ETH_TIME_OUT)
         {
             LOG_E("PHY read reg %02x timeout!", reg_addr);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -468,7 +468,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
         if((rt_tick_get() - tickstart) > ETH_TIME_OUT)
         {
             LOG_E("PHY software reset timeout!");
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
         else
         {

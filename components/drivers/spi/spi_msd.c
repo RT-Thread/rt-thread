@@ -227,7 +227,7 @@ static rt_err_t _send_cmd(
 
             if (rt_tick_timeout(tick_start, rt_tick_from_millisecond(2000)))
             {
-                return RT_ETIMEOUT;
+                return -RT_ETIMEOUT;
             }
         }
     }
@@ -296,7 +296,7 @@ static rt_err_t _wait_token(struct rt_spi_device *device, uint8_t token)
         if (rt_tick_timeout(tick_start, rt_tick_from_millisecond(CARD_WAIT_TOKEN_TIMES)))
         {
             MSD_DEBUG("[err] wait data start token timeout!\r\n");
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     } /* wati token */
 }
@@ -329,7 +329,7 @@ static rt_err_t _wait_ready(struct rt_spi_device *device)
         if (rt_tick_timeout(tick_start, rt_tick_from_millisecond(1000)))
         {
             MSD_DEBUG("[err] wait ready timeout!\r\n");
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 }
@@ -528,7 +528,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                 if (rt_tick_timeout(tick_start, rt_tick_from_millisecond(CARD_TRY_TIMES)))
                 {
                     MSD_DEBUG("[err] SD card goto IDLE mode timeout!\r\n");
-                    result = RT_ETIMEOUT;
+                    result = -RT_ETIMEOUT;
                     goto _exit;
                 }
             }
@@ -579,7 +579,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                     if (rt_tick_timeout(tick_start, rt_tick_from_millisecond(200)))
                     {
                         MSD_DEBUG("[err] CMD8 SEND_IF_COND timeout!\r\n");
-                        result = RT_ETIMEOUT;
+                        result = -RT_ETIMEOUT;
                         goto _exit;
                     }
                 }
@@ -726,7 +726,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                     if (rt_tick_timeout(tick_start, rt_tick_from_millisecond(CARD_TRY_TIMES)))
                     {
                         MSD_DEBUG("[err] SD card goto IDLE mode timeout!\r\n");
-                        result = RT_ETIMEOUT;
+                        result = -RT_ETIMEOUT;
                         goto _exit;
                     }
                 } /* send CMD0 goto IDLE stat */
@@ -749,7 +749,7 @@ static rt_err_t rt_msd_init(rt_device_t dev)
                     if (rt_tick_timeout(tick_start, rt_tick_from_millisecond(CARD_TRY_TIMES)))
                     {
                         MSD_DEBUG("[err] SD card goto IDLE mode timeout!\r\n");
-                        result = RT_ETIMEOUT;
+                        result = -RT_ETIMEOUT;
                         goto _exit;
                     }
                 } /* send CMD1 */

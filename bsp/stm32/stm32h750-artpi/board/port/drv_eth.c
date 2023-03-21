@@ -194,7 +194,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
             }
             else
             {
-                status = RT_ETIMEOUT;
+                status = -RT_ETIMEOUT;
             }
         }
     }

@@ -38,7 +38,7 @@ rt_err_t command_send(sdhi_instance_ctrl_t *p_ctrl, struct rt_mmcsd_cmd *cmd)
     {
         if (timeout == 0)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
         R_BSP_SoftwareDelay(1U, BSP_DELAY_UNITS_MICROSECONDS);
         timeout--;
