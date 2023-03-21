@@ -57,7 +57,7 @@ static rt_err_t apm32_rtc_init(void)
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     RCM_ConfigRTCCLK(RCM_RTCCLK_LSI);
@@ -68,7 +68,7 @@ static rt_err_t apm32_rtc_init(void)
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     RCM_ConfigRTCCLK(RCM_RTCCLK_LSE);
@@ -83,7 +83,7 @@ static rt_err_t apm32_rtc_init(void)
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -140,7 +140,7 @@ static rt_err_t apm32_rtc_get_secs(void *args)
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -162,7 +162,7 @@ static rt_err_t apm32_rtc_set_secs(void *args)
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 

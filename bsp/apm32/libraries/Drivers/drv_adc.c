@@ -341,7 +341,7 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     {
         if (++counter > DRV_ADC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -351,7 +351,7 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     {
         if (++counter > DRV_ADC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     *value = ADC_ReadConversionValue(adc_cfg->adc);
@@ -363,7 +363,7 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     {
         if (++counter > DRV_ADC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     *value = ADC_ReadConversionValue(adc_cfg->adc);
@@ -376,7 +376,7 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     {
         if (++counter > DRV_ADC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     *value = ADC_ReadConversionValue();

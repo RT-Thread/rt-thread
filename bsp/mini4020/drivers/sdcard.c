@@ -101,7 +101,7 @@ static rt_err_t cmd_data(U16 cmd, U32 arg, U16 mode, U16 blk_len, U16 num, U16 m
         if (!to)
         {
             EOUT("%s TIMEOUT\n", __FUNCTION__);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
 #endif
     }
@@ -141,7 +141,7 @@ static rt_err_t cmd_response(U16 Cmd, U32 Arg, U16 TransMode, U16 BlkLen, U16 No
         if (!to)
         {
             EOUT("%s Timeout\n", __FUNCTION__);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
 #endif
     }
@@ -179,7 +179,7 @@ static rt_err_t cmd_wait(U16 Cmd, U32 Arg, U16 IntMask)
         if (!to)
         {
             EOUT("%s Timeout\n", __FUNCTION__);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
 #endif
 
@@ -221,7 +221,7 @@ static rt_err_t sd_init(void)
         if (err != RT_EOK)
         {
             EOUT("cmd_wait err in %s\n", __FUNCTION__);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
 #endif
 
@@ -230,14 +230,14 @@ static rt_err_t sd_init(void)
         if (err != RT_EOK)
         {
             EOUT("cmd_wait err in %s\n", __FUNCTION__);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
 #ifdef USE_TIMEOUT
         to--;
         if (!to)
         {
             EOUT("%s timeout\n", __FUNCTION__);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
 #endif
 
@@ -325,7 +325,7 @@ static rt_err_t sd_readblock(rt_uint32_t address, rt_uint8_t *buf)
         if (!to)
         {
             EOUT("%s TIMEOUT\n", __FUNCTION__);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
 #endif
     }
