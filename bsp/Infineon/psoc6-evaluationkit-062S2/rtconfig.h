@@ -47,7 +47,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_CONSOLE_DEVICE_NAME "uart6"
 #define RT_VER_NUM 0x50000
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
@@ -166,11 +166,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -186,16 +194,43 @@
 /* Arduino libraries */
 
 
-/* Sensor libraries */
+/* Projects */
 
 
-/* Display libraries */
+/* Sensors */
 
 
-/* Timing libraries */
+/* Display */
 
 
-/* Project libraries */
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+/* Signal IO */
+
+
+/* Uncategorized */
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 #define SOC_FAMILY_IFX
 #define SOC_SERIES_IFX_PSOC62
@@ -213,6 +248,7 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_USING_UART6
 
 /* Board extended module Drivers */
 
