@@ -20,7 +20,7 @@ rt_atomic_t rt_hw_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t val);
 rt_atomic_t rt_hw_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val);
 void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr);
 rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr);
-rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old,rt_atomic_t new);
+rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old, rt_atomic_t new);
 
 #if defined(RT_USING_STDC_ATOMIC)
 #ifndef __STDC_NO_ATOMICS__
@@ -103,7 +103,7 @@ rt_inline rt_atomic_t rt_soft_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t 
     rt_atomic_t temp;
     level = rt_hw_interrupt_disable();
     temp = *ptr;
-    *ptr = (*ptr)^val;
+    *ptr = (*ptr) ^ val;
     rt_hw_interrupt_enable(level);
     return temp;
 }
@@ -114,7 +114,7 @@ rt_inline rt_atomic_t rt_soft_atomic_and(volatile rt_atomic_t *ptr, rt_atomic_t 
     rt_atomic_t temp;
     level = rt_hw_interrupt_disable();
     temp = *ptr;
-    *ptr  = (*ptr)&val;
+    *ptr = (*ptr) & val;
     rt_hw_interrupt_enable(level);
     return temp;
 }
@@ -125,7 +125,7 @@ rt_inline rt_atomic_t rt_soft_atomic_or(volatile rt_atomic_t *ptr, rt_atomic_t v
     rt_atomic_t temp;
     level = rt_hw_interrupt_disable();
     temp = *ptr;
-    *ptr  = (*ptr)|val;
+    *ptr = (*ptr) | val;
     rt_hw_interrupt_enable(level);
     return temp;
 }
@@ -153,10 +153,12 @@ rt_inline rt_atomic_t rt_soft_atomic_flag_test_and_set(volatile rt_atomic_t *ptr
     rt_base_t level;
     rt_atomic_t temp;
     level = rt_hw_interrupt_disable();
-    if (*ptr == 0) {
+    if (*ptr == 0)
+    {
         temp = 0;
         *ptr = 1;
-    } else
+    }
+    else
         temp = 1;
     rt_hw_interrupt_enable(level);
     return temp;
@@ -170,16 +172,19 @@ rt_inline void rt_soft_atomic_flag_clear(volatile rt_atomic_t *ptr)
     rt_hw_interrupt_enable(level);
 }
 
-rt_inline rt_atomic_t rt_soft_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr1, rt_atomic_t *ptr2, rt_atomic_t desired)
+rt_inline rt_atomic_t rt_soft_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr1, rt_atomic_t *ptr2,
+        rt_atomic_t desired)
 {
     rt_base_t level;
     rt_atomic_t temp;
     level = rt_hw_interrupt_disable();
-    if ((*ptr1) != (*ptr2)) {
+    if ((*ptr1) != (*ptr2))
+    {
         *ptr2 = *ptr1;
         temp = 0;
     }
-    else {
+    else
+    {
         *ptr1 = desired;
         temp = 1;
     }
