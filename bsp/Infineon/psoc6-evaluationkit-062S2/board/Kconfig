@@ -10,9 +10,9 @@ config SOC_CY8C624ALQI_S2D42
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
-        bool "Enable USB TO USART (uart0)"
+        bool "Enable USB TO USART (uart6)"
         select BSP_USING_UART
-        select BSP_USING_UART0
+        select BSP_USING_UART6
         default y
 endmenu
 
