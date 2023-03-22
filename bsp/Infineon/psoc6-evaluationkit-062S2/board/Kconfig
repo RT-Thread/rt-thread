@@ -276,7 +276,7 @@ menu "Board extended module Drivers"
             select RW007_NOT_USE_EXAMPLE_DRIVERS
 
         if BSP_USING_RW007
-            comment "Notice: P5_7 --> 47; P5_6 -->46; P0_1 --> 1; P0_4 --> 4"
+            comment "Notice: P5_7 --> 47; P5_6 -->46; P0_5 --> 5; P0_4 --> 4"
             config IFX_RW007_SPI_BUS_NAME
                 string "RW007 BUS NAME"
                 default "spi0"
@@ -292,7 +292,7 @@ menu "Board extended module Drivers"
             config IFX_RW007_CS_PIN
                 int "(INT)CS pin index"
                 range 1 113
-                default 1
+                default 5
 
             config IFX_RW007_BOOT0_PIN
                 int "(INT)BOOT0 pin index (same as spi clk pin)"
@@ -302,7 +302,7 @@ menu "Board extended module Drivers"
             config IFX_RW007_BOOT1_PIN
                 int "(INT)BOOT1 pin index (same as spi cs pin)"
                 range 1 113
-                default 1
+                default 5
 
             config IFX_RW007_INT_BUSY_PIN
                 int "(INT)INT/BUSY pin index"
