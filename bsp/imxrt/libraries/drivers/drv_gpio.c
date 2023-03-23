@@ -668,7 +668,7 @@ static rt_err_t imxrt_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (PIN_INVALID_CHECK(port, pin_num))
     {
         LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -701,7 +701,7 @@ static rt_err_t imxrt_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     if (PIN_INVALID_CHECK(port, pin_num))
     {
         LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -730,13 +730,13 @@ static rt_err_t imxrt_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt
     if (PIN_INVALID_CHECK(port, pin_num))
     {
         LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     if (hdr_tab[pin].pin == -1)
     {
         LOG_D("rtt pin: %d callback function not initialized!\n", pin);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     if (enabled == PIN_IRQ_ENABLE)

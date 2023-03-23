@@ -264,7 +264,7 @@ static rt_err_t ch32f2_hwtimer_control(struct rt_hwtimer_device *device, rt_uint
     break;
 
     default:
-        result = RT_ENOSYS;
+        result = -RT_ENOSYS;
         break;
     }
 

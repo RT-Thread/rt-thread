@@ -97,7 +97,7 @@ static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     if (pin < 0 || pin >= HAL_ARRAY_SIZE(pin_irq_hdr_tab))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -132,7 +132,7 @@ static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
     if (pin < 0 || pin >= HAL_ARRAY_SIZE(pin_irq_hdr_tab))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -163,13 +163,13 @@ static rt_err_t pin_irq_enable(struct rt_device *dev, rt_base_t pin, rt_uint32_t
     {
         if (pin < 0 || pin >= HAL_ARRAY_SIZE(pin_irq_hdr_tab))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         level = rt_hw_interrupt_disable();
         if (pin_irq_hdr_tab[pin].pin == BANK_PIN_DEFAULT)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         switch (pin_irq_hdr_tab[pin].mode)
@@ -204,7 +204,7 @@ static rt_err_t pin_irq_enable(struct rt_device *dev, rt_base_t pin, rt_uint32_t
     }
     else
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     return RT_EOK;

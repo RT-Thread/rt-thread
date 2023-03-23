@@ -340,7 +340,7 @@ static rt_err_t apm32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     irqindex = bit2bitno(PIN_APMPIN(pin));
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -379,7 +379,7 @@ static rt_err_t apm32_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
     irqindex = bit2bitno(PIN_APMPIN(pin));
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -416,7 +416,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqindex = bit2bitno(PIN_APMPIN(pin));
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -424,7 +424,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         irqmap = &pin_irq_map[irqindex];
@@ -512,7 +512,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(PIN_APMPIN(pin));
         if (irqmap == RT_NULL)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
