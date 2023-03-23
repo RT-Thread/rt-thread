@@ -280,7 +280,7 @@ static rt_err_t exti_line_irq_list_bind(struct rt_pin_irq_hdr *irq_hdr)
 
 static rt_err_t exti_line_irq_list_unbind(rt_int16_t pin)
 {
-    rt_err_t ret = RT_EEMPTY;
+    rt_err_t ret = -RT_EEMPTY;
     rt_base_t level;
     struct exti_line_irq *item;
 
