@@ -662,7 +662,7 @@ rt_err_t rt_hw_sdcard_init()
     if (ptr_sddev == RT_NULL)
     {
         EOUT("Failed to allocate sdcard device structure\n");
-        return RT_ENOMEM;
+        return -RT_ENOMEM;
     }
 
     /*sdcard intialize*/
@@ -689,7 +689,7 @@ rt_err_t rt_hw_sdcard_init()
     if (ptr_sddev->part == RT_NULL)
     {
         EOUT("allocate partition failed\n");
-        err =  RT_ENOMEM;
+        err =  -RT_ENOMEM;
         goto FAIL2;
     }
 
@@ -698,7 +698,7 @@ rt_err_t rt_hw_sdcard_init()
     if (ptr_sddev->device == RT_NULL)
     {
         EOUT("allocate device failed\n");
-        err = RT_ENOMEM;
+        err = -RT_ENOMEM;
         goto FAIL1;
     }
 

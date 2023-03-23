@@ -36,7 +36,7 @@ struct rt_data_item
  * @param    evt_notify is the notification callback function.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
- *           When the return value is RT_ENOMEM, it means insufficient memory allocation failed.
+ *           When the return value is -RT_ENOMEM, it means insufficient memory allocation failed.
  */
 rt_err_t
 rt_data_queue_init(struct rt_data_queue *queue,
