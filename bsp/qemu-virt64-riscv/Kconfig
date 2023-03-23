@@ -27,6 +27,7 @@ config BOARD_QEMU_VIRT_RV64
     select RT_USING_USER_MAIN
     select RT_USING_CACHE
     select ARCH_MM_MMU
+    select RT_USING_HW_ATOMIC
     default y
 
 config ENABLE_FPU

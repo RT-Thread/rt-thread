@@ -125,6 +125,13 @@ typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
+#if defined(RT_USING_STDC_ATOMIC)
+#include <stdatomic.h>
+typedef atomic_size_t rt_atomic_t;
+#else
+typedef volatile rt_base_t rt_atomic_t;
+#endif
+
 /* boolean type definitions */
 #define RT_TRUE                         1               /**< boolean true  */
 #define RT_FALSE                        0               /**< boolean fails */

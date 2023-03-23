@@ -7,6 +7,9 @@ src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
 CPPPATH = [cwd]
 ASFLAGS = ' -I ' + cwd
 
+if not GetDepend('RT_USING_HW_ATOMIC'):
+    SrcRemove(src, 'atomic_riscv.c')
+
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 
 Return('group')

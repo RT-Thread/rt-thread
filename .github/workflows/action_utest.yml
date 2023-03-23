@@ -37,9 +37,13 @@ jobs:
          - {UTEST: "kernel/irq",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/irq.conf",     SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "kernel/timer",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/timer.conf",   SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "kernel/thread",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/thread.conf",  SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "kernel/atomic",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/atomic.conf",  SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "kernel/atomic_c11",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/atomic_c11.conf",  SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "components/cpp11", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "cpp11/cpp11.conf",    SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "kernel/mem/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/mem.conf",   SD_FILE: "None", RUN: "yes"}
+         - {UTEST: "kernel/atomic/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/atomic.conf",   SD_FILE: "None", RUN: "yes"}
+         - {UTEST: "kernel/atomic_c11/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv", QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "kernel/atomic_c11.conf",   SD_FILE: "None", RUN: "yes"}
          - {UTEST: "rtsmart/arm",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "sd.bin", RUN: "no"}
          - {UTEST: "rtsmart/aarch64", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "sd.bin", RUN: "no"}
          - {UTEST: "rtsmart/riscv64", RTT_BSP: "bsp/qemu-virt64-riscv",   QEMU_ARCH: "riscv64",  QEMU_MACHINE: "virt",  CONFIG_FILE: "rtsmart/base.conf",   SD_FILE: "None", RUN: "yes"}

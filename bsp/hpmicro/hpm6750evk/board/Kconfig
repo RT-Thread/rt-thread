@@ -5,6 +5,7 @@ config SOC_HPM6000
     select SOC_SERIES_HPM6000
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_HW_ATOMIC
     default y
 
 menu "On-chip Peripheral Drivers"
