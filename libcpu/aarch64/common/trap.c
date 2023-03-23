@@ -90,6 +90,7 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
         break;
     case 0x21:
     case 0x24:
+    case 0x25:
         fault_op = MM_FAULT_OP_WRITE;
         fault_type = _get_type(esr);
         break;
