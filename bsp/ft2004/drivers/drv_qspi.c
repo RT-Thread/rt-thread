@@ -288,7 +288,7 @@ rt_err_t ft2004_qspi_bus_attach_device(const char *bus_name, const char *device_
     if (qspi_device == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!");
-        result = RT_ENOMEM;
+        result = -RT_ENOMEM;
         goto __exit;
     }
 

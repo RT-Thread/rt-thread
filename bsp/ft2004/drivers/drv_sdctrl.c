@@ -555,7 +555,7 @@ static rt_err_t rthw_sdctrl_create(ft_sdctrl_class_t *class_p)
     if (host == RT_NULL)
     {
         LOG_E("L:%d F:%s mmcsd alloc host fail");
-        return RT_ENOMEM;
+        return -RT_ENOMEM;
     }
 
     class_p->ft_sdctrl.config = *(FSdCtrl_Config_t *)FSdCtrl_LookupConfig(0);
