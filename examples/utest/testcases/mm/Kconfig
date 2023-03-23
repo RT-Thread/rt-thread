@@ -1,0 +1,11 @@
+menu "Memory Management Subsytem Testcase"
+
+    config UTEST_MM_API_TC
+    bool "Enable Utest for MM API"
+    default n
+
+    config UTEST_MM_MP_TC
+    bool "Enable Utest for MM in multiprocessing environment"
+    default n
+
+endmenu

@@ -127,8 +127,7 @@ enum rt_mmu_cntl
 
 rt_aspace_t rt_aspace_create(void *start, rt_size_t length, void *pgtbl);
 
-rt_aspace_t rt_aspace_init(rt_aspace_t aspace, void *start, rt_size_t length,
-                           void *pgtbl);
+rt_err_t rt_aspace_init(rt_aspace_t aspace, void *start, rt_size_t length, void *pgtbl);
 
 void rt_aspace_delete(rt_aspace_t aspace);
 
@@ -187,7 +186,7 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
  */
 int rt_aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length);
 
-int mm_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd);
+int rt_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd);
 
 int rt_aspace_load_page(rt_aspace_t aspace, void *addr, rt_size_t npage);
 
