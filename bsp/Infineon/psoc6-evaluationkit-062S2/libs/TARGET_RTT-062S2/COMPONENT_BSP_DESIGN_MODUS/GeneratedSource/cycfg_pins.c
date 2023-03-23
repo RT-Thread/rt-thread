@@ -384,9 +384,9 @@ void init_cycfg_pins(void)
     cyhal_hwmgr_reserve(&CYBSP_CSD_RX_obj);
 #endif //defined (CY_USING_HAL)
 
-    Cy_GPIO_Pin_Init(CYBSP_SWO_PORT, CYBSP_SWO_PIN, &CYBSP_SWO_config);
+//    Cy_GPIO_Pin_Init(CYBSP_SWO_PORT, CYBSP_SWO_PIN, &CYBSP_SWO_config);
 #if defined (CY_USING_HAL)
-    cyhal_hwmgr_reserve(&CYBSP_SWO_obj);
+//    cyhal_hwmgr_reserve(&CYBSP_SWO_obj);
 #endif //defined (CY_USING_HAL)
 
     Cy_GPIO_Pin_Init(CYBSP_SWDIO_PORT, CYBSP_SWDIO_PIN, &CYBSP_SWDIO_config);

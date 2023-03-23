@@ -26,12 +26,27 @@ struct ifx_sw_spi_cs
     rt_uint32_t pin;
 };
 
+#ifdef BSP_USING_SPI0
+    static struct rt_spi_bus spi_bus0;
+#endif
 #ifdef BSP_USING_SPI3
     static struct rt_spi_bus spi_bus3;
 #endif
 
+#ifdef BSP_USING_SPI6
+    static struct rt_spi_bus spi_bus6;
+#endif
 static struct ifx_spi spi_bus_obj[] =
 {
+    #ifdef BSP_USING_SPI0
+    {
+        .bus_name = "spi0",
+        .spi_bus = &spi_bus0,
+        .sck_pin = GET_PIN(0, 4),
+        .miso_pin = GET_PIN(0, 3),
+        .mosi_pin = GET_PIN(0, 2),
+    },
+    #endif
     #ifdef BSP_USING_SPI3
     {
         .bus_name = "spi3",
@@ -39,6 +54,15 @@ static struct ifx_spi spi_bus_obj[] =
         .sck_pin = GET_PIN(6, 2),
         .miso_pin = GET_PIN(6, 1),
         .mosi_pin = GET_PIN(6, 0),
+    },
+    #endif
+    #ifdef BSP_USING_SPI6
+    {
+        .bus_name = "spi6",
+        .spi_bus = &spi_bus6,
+        .sck_pin = GET_PIN(12, 2),
+        .miso_pin = GET_PIN(12, 1),
+        .mosi_pin = GET_PIN(12, 0),
     },
     #endif
 };
