@@ -218,7 +218,7 @@ static struct exti_line_irq *exti_line_irq_list_find(rt_int16_t pin)
 
 static rt_err_t exti_line_irq_list_bind(struct rt_pin_irq_hdr *irq_hdr)
 {
-    rt_err_t ret = RT_EFULL;
+    rt_err_t ret = -RT_EFULL;
     rt_base_t level;
     struct exti_line_irq *item;
     int index;
