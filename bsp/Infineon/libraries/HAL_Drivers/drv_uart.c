@@ -34,6 +34,9 @@ enum
 #ifdef BSP_USING_UART5
     UART5_INDEX,
 #endif
+#ifdef BSP_USING_UART6
+    UART6_INDEX,
+#endif
 };
 
 static struct ifx_uart_config uart_config[] =
@@ -55,6 +58,9 @@ static struct ifx_uart_config uart_config[] =
 #endif
 #ifdef BSP_USING_UART5
     UART5_CONFIG,
+#endif
+#ifdef BSP_USING_UART6
+    UART6_CONFIG,
 #endif
 };
 
@@ -154,6 +160,19 @@ void uart5_isr_callback(void)
 }
 #endif
 
+#ifdef BSP_USING_UART6
+/* UART5 Interrupt Hanlder */
+void uart6_isr_callback(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&uart_obj[UART6_INDEX].serial);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
 /*
  * UARTHS interface
  */
