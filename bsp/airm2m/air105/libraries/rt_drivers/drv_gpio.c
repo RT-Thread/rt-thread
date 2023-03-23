@@ -153,7 +153,7 @@ static rt_err_t air105_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[pin].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         switch (pin_irq_hdr_tab[pin].mode)
         {

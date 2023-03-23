@@ -290,7 +290,7 @@ static rt_err_t _pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irqindex = PIN2INDEX(pin);
@@ -329,7 +329,7 @@ static rt_err_t _pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irqindex = PIN2INDEX(pin);
@@ -361,7 +361,7 @@ static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irqindex = PIN2INDEX(pin);
@@ -374,7 +374,7 @@ static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         /* Configure GPIO_InitStructure */
@@ -414,7 +414,7 @@ static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin,
     {
         if ((pin_irq_enable_mask & (1 << irqindex)) == 0)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();

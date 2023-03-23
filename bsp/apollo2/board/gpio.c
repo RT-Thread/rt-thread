@@ -176,7 +176,7 @@ rt_err_t am_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t 
     {
         if (am_hal_gpio_int_enable_get() != AM_HAL_GPIO_BIT(am_pin_irq_hdr_tab[irqindex].pin))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         /* Disable the GPIO/button interrupt */
@@ -184,7 +184,7 @@ rt_err_t am_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t 
     }
     else
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     return RT_EOK;

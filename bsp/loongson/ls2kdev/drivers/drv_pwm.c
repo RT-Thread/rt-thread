@@ -104,7 +104,7 @@ static rt_err_t loongson_pwm_ioctl(struct rt_device_pwm *device, int cmd, void *
         rc = loongson_pwm_set(device, cfg->channel, cfg->period, cfg->pulse);
         break;
     case PWM_CMD_GET:
-        rc = RT_ENOSYS;
+        rc = -RT_ENOSYS;
         break;
     default:
         rc = -RT_EINVAL;
