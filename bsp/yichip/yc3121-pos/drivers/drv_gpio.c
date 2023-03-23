@@ -224,7 +224,7 @@ static rt_err_t yc_pin_irq_enable(struct rt_device *device,
     }
     else
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     return RT_EOK;
 }

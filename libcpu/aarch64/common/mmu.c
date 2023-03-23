@@ -613,7 +613,7 @@ static int _noncache(uintptr_t *pte)
     else
     {
         // do not support other type to be noncache
-        err = RT_ENOSYS;
+        err = -RT_ENOSYS;
     }
     return err;
 }

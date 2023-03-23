@@ -115,7 +115,7 @@ static rt_ssize_t rt_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_si
 
 static rt_err_t rt_rtc_ioctl(rt_device_t dev, int cmd, void *args)
 {
-    rt_err_t err = RT_ENOSYS;
+    rt_err_t err = -RT_ENOSYS;
 
     static int count = 0;
 
