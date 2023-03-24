@@ -44,7 +44,7 @@ struct _mm_range
 rt_err_t _aspace_bst_init(struct rt_aspace *aspace);
 
 /**
- * @brief
+ * @brief Retrieve any varea if start in [varea->start, varea->end]
  *
  * @param aspace
  * @param start
@@ -53,8 +53,7 @@ rt_err_t _aspace_bst_init(struct rt_aspace *aspace);
 struct rt_varea *_aspace_bst_search(struct rt_aspace *aspace, void *start);
 
 /**
- * @brief Retrieve lowest varea satisfies
- * ((varea->start >= start) || (varea->end >= start))
+ * @brief Retrieve lowest varea satisfies (varea->start >= start)
  *
  * @param aspace
  * @param length

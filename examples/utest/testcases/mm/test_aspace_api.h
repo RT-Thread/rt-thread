@@ -7,36 +7,11 @@
  * Date           Author       Notes
  * 2023-03-20     WangXiaoyao  Complete testcase for mm_aspace.c
  */
-#ifndef __TEST_ASPACE_H__
-#define __TEST_ASPACE_H__
+#ifndef __TEST_ASPACE_API_H__
+#define __TEST_ASPACE_API_H__
 
-#include <rtthread.h>
-#include <rthw.h>
-#include <lwp_arch.h>
-#include <mm_flag.h>
-#include <mm_page.h>
-#include <mmu.h>
-#include <mm_aspace.h>
-#include <utest.h>
-
-extern rt_base_t rt_heap_lock(void);
-extern void rt_heap_unlock(rt_base_t level);
-
-/**
- * @brief During the operations, is heap still the same;
- */
-#define CONSIST_HEAP(statement) do {                 \
-    rt_size_t total, used, max_used;                \
-    rt_size_t totala, useda, max_useda;             \
-    rt_ubase_t level = rt_heap_lock();              \
-    rt_memory_info(&total, &used, &max_used);       \
-    statement;                                      \
-    rt_memory_info(&totala, &useda, &max_useda);    \
-    rt_heap_unlock(level);                          \
-    uassert_true(total == totala);                  \
-    uassert_true(used == useda);                    \
-    uassert_true(max_used == max_useda);            \
-    } while (0)
+#include "common.h"
+#include "test_aspace_api_internal.h"
 
 /**
  * @brief API for aspace create/destroy
@@ -94,46 +69,6 @@ static void aspace_delete_tc(void)
 }
 
 /**
- * @brief 3 cases for find free:
- * with prefer & MAP_FIXED
- * with prefer
- * without prefer
- *
- * the requirement of find free: 
- * it will return a subset in address space that is free
- * the subset contains `length` contiguous elements
- * the alignment is satisfied
- */
-static void test_find_free(void)
-{
-    void *top_page = rt_kernel_space.start + rt_kernel_space.size - 0x1000;
-    void *vaddr = top_page;
-
-    CONSIST_HEAP({
-        /* type 1, on success */
-        uassert_true(!rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, MMF_MAP_FIXED, &rt_mm_dummy_mapper, 0));
-        uassert_true(vaddr == top_page);
-        /* type 1, on failure */
-        uassert_true(rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, MMF_MAP_FIXED, &rt_mm_dummy_mapper, 0));
-        uassert_true(!vaddr);
-
-        /* type 2, on success */
-        vaddr = top_page;
-        uassert_true(!rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
-        uassert_true(vaddr < top_page);
-        uassert_true(!!vaddr);
-        rt_aspace_unmap(&rt_kernel_space, vaddr, 1);
-        /* type 2, on failure */
-        vaddr = rt_kernel_space.start;
-        uassert_true(-RT_ENOSPC == rt_aspace_map(&rt_kernel_space, &vaddr, rt_kernel_space.size - 0x40000000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
-        uassert_true(!vaddr);
-
-        /* free top page */
-        rt_aspace_unmap(&rt_kernel_space, top_page, 1);
-    });
-}
-
-/**
  * @brief Memory Map on Virtual Address Space to Mappable Object
  * int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length, rt_size_t attr,
  *                   mm_flag_t flags, rt_mem_obj_t mem_obj, rt_size_t offset);
@@ -182,6 +117,7 @@ static void aspace_map_tc(void)
         rt_aspace_unmap(&rt_kernel_space, vaddr, 1);
     });
 
+    /* test internal APIs */
     test_find_free();
 }
 
@@ -193,4 +129,4 @@ static void aspace_tc(void)
     return ;
 }
 
-#endif
+#endif /* __TEST_ASPACE_API_H__ */

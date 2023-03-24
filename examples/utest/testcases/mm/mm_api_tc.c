@@ -86,42 +86,6 @@ void flag_tc(void)
 }
 
 #if 0
-void search_tc(void)
-{
-    size_t flags = 0;
-    struct mm_object custom_obj = {
-        .hint_free = NULL,
-    };
-    void *target_va = (void *)0x80003000;
-    mm_aspace_t aspace = ASPACE_NEW();
-
-    TC_ASSERT(!_aspace_bst_search(aspace, target_va)); // ret == NULL
-
-    TC_ASSERT(!mm_aspace_map(aspace, &target_va, 4096, MMU_MAP_K_RWCB, flags,
-                             &custom_obj, 0));
-
-    // test _aspace_bst_search
-    TC_ASSERT(_aspace_bst_search(aspace, target_va));
-    TC_ASSERT(!_aspace_bst_search(aspace, (void *)0x80004000));
-    TC_ASSERT(!_aspace_bst_search(aspace, target_va - 0x1000));
-
-    /**
-     * @brief test _aspace_bst_search_overlap with mm_aspace_map
-     */
-    struct _mm_range range = {0, 0};
-    TC_ASSERT(!_aspace_bst_search_overlap(aspace, range));
-
-    // test _aspace_bst_search
-    target_va = (void *)0x80000000;
-    TC_ASSERT(!mm_aspace_map(aspace, &target_va, 4096, MMU_MAP_K_RWCB, flags,
-                             &custom_obj, 0));
-    TC_ASSERT(_aspace_bst_search_exceed(aspace, (void *)0x7ffff000)->start ==
-              (void *)0x80000000);
-    TC_ASSERT(_aspace_bst_search_exceed(aspace, (void *)0x80003000));
-    TC_ASSERT(!_aspace_bst_search_exceed(aspace, (void *)0x80003001));
-
-    mm_aspace_delete(aspace);
-}
 
 #define BUF_SIZE (4ul << 20)
 static char ALIGN(BUF_SIZE) buf[BUF_SIZE];

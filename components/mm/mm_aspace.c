@@ -687,9 +687,8 @@ static void *_find_head_and_asc_search(rt_aspace_t aspace, rt_size_t req_size,
     {
         void *candidate;
         rt_size_t gap_size;
-        rt_varea_t former = _aspace_bst_search(aspace, limit.start);
 
-        candidate = former ? former->start + former->size : limit.start;
+        candidate = limit.start;
         candidate = _align(candidate, align_mask);
         gap_size = limit.end - candidate + 1;
 
@@ -731,7 +730,7 @@ static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
         }
         else
         {
-            /* search from varea in ascending order */
+            /* search from `varea` in ascending order */
             va = _ascending_search(varea, req_size, align_mask, limit);
             if (va == RT_NULL)
             {
