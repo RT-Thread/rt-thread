@@ -34,17 +34,6 @@ static struct rt_device_graphic_info info;
 __attribute__((section(".ARM.__at_0x1FFE0000"))) lv_color_t buf_1[COLOR_BUFFER];
 
 #if !DLG_LVGL_USE_GPU_RA6M3
-void _ra_port_display_callback(display_callback_args_t * p_args)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    /* TODO */
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
 static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
 {
 #if (LV_COLOR_DEPTH == 16)
@@ -112,7 +101,7 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 void lv_port_disp_init(void)
 {
 #ifdef BSP_USING_SPI_LCD
-    spi_lcd_init();
+    spi_lcd_init(20);
 #else
     static rt_device_t device;
     /* LCD Device Init */
