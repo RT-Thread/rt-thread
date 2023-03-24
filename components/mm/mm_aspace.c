@@ -158,7 +158,7 @@ static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
     int err = RT_EOK;
 
     DLOG(group, "loop [for all page]");
-    DLOG(msg, "page",
+    DLOG(msg, "aspace",
     "libcpu_mmu", DLOG_MSG, "rt_hw_mmu_map(aspace, vaddr, phyaddr, pgsz, attr)");
     DLOG(group_end);
 
@@ -306,14 +306,14 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
     }
 
     DLOG(msg, "aspace",
-    "varea", DLOG_MSG, "_varea_install");
+    "varea", DLOG_MSG, "_varea_install(aspace, varea, &hint)");
     err = _varea_install(aspace, varea, &hint);
     WR_UNLOCK(aspace);
 
     if (err == RT_EOK)
     {
         DLOG(msg, "aspace",
-    "varea", DLOG_MSG, "_varea_post_install");
+    "varea", DLOG_MSG, "_varea_post_install(varea, aspace, attr, flags, mem_obj, offset)");
         /* fill in varea data */
         _varea_post_install(varea, aspace, attr, flags, mem_obj, offset);
 
@@ -321,7 +321,7 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
         {
             /* do the MMU & TLB business */
             DLOG(msg, "aspace",
-    "varea", DLOG_MSG, "_do_prefetch");
+    "varea", DLOG_MSG, "_do_prefetch(aspace, varea, varea->start, varea->size)");
             err = _do_prefetch(aspace, varea, varea->start, varea->size);
             if (err)
             {
@@ -488,7 +488,7 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
             vaddr = varea->start;
 
             DLOG(msg, "aspace",
-    "varea", DLOG_MSG, "_do_named_map");
+    "varea", DLOG_MSG, "_do_named_map(aspace, varea->start, varea->size, pa_off, attr)");
             err = _do_named_map(aspace, varea->start, varea->size,
                                 (rt_size_t)pa_off, attr);
 
@@ -507,8 +507,8 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
             *ret_va = RT_NULL;
     }
 
-    DLOG(msg, "app",
-    "aspace", DLOG_MSG_RET, "return address");
+    DLOG(msg, "aspace",
+    "app", DLOG_MSG_RET, "return address");
     return err;
 }
 
@@ -573,7 +573,7 @@ void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
         LOG_I("%s: No such entry found at %p with %lx bytes\n", __func__, addr, length);
     }
 
-    DLOG(group, "loop [vareas of aspace where contain addr]");
+    DLOG(group, "loop vareas of aspace where contain addr");
     DLOG(msg, "varea", "page", DLOG_MSG, "rt_free(varea)");
     DLOG(group_end);
 

@@ -90,7 +90,6 @@ static void on_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
         msg->response.vaddr = raw_page;
         msg->response.size = ARCH_PAGE_SIZE;
     }
-
 }
 
 static struct rt_mem_obj mm_page_mapper = {
@@ -312,7 +311,6 @@ static struct rt_page *_pages_alloc(rt_uint32_t size_bits)
     p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
     p->ref_cnt = 1;
     DLOG(msg, "page", "app", DLOG_MSG_RET, "p");
-    DLOG(session_stop);
     return p;
 }
 
@@ -627,6 +625,9 @@ static int _load_mpr_area(void *head, void *tail)
     void *iter = (void *)((uintptr_t)head & ~ARCH_PAGE_MASK);
     tail = (void *)FLOOR(tail, ARCH_PAGE_SIZE);
 
+    DLOG(group, "loop [for all page from head to tail]");
+    DLOG(msg, "page", "aspace", DLOG_MSG, "rt_aspace_load_page(&rt_kernel_space, iter, 1)");
+    DLOG(group_end);
     while (iter != tail)
     {
         void *paddr = rt_kmem_v2p(iter);
@@ -664,9 +665,6 @@ int rt_page_install(rt_region_t region)
 
         if (err == RT_EOK)
         {
-            DLOG(group, "loop [for all page from head to tail]");
-            DLOG(msg, "page", "aspace", DLOG_MSG, "rt_aspace_load_page(&rt_kernel_space, iter, 1)");
-            DLOG(group_end);
             while (region.start != region.end)
             {
                 struct rt_page *p;

@@ -47,7 +47,7 @@ int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
     _init_lwp_objs(lwp->lwp_obj, lwp->aspace);
     if (lwp->lwp_obj)
     {
-        DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "user_space_init");
+        DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "arch_user_space_init(lwp)");
         err = arch_user_space_init(lwp);
         if (!is_fork && err == RT_EOK)
         {
@@ -191,6 +191,7 @@ static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size,
 
     rt_mem_obj_t mem_obj = &lwp->lwp_obj->mem_obj;
 
+    DLOG(msg, "user_mm", "aspace", DLOG_MSG, "rt_aspace_map(lwp->aspace, &va, map_size, MMU_MAP_U_RWCB, flags, mem_obj, 0)");
     ret = rt_aspace_map(lwp->aspace, &va, map_size, MMU_MAP_U_RWCB, flags,
                         mem_obj, 0);
     if (ret != RT_EOK)
@@ -330,6 +331,7 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
     map_size &= ~ARCH_PAGE_MASK;
     map_va = (void *)((size_t)map_va & ~ARCH_PAGE_MASK);
 
+    DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "_lwp_map_user(lwp, map_va, map_size, text)");
     ret = _lwp_map_user(lwp, map_va, map_size, text);
 
     if (ret)
@@ -402,7 +404,7 @@ rt_base_t lwp_brk(void *addr)
         {
             size = (((size_t)addr - lwp->end_heap) + ARCH_PAGE_SIZE - 1) &
                    ~ARCH_PAGE_MASK;
-            DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "lwp_map_user");
+            DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "lwp_map_user(lwp, (void *)lwp->end_heap, size, 0)");
             va = lwp_map_user(lwp, (void *)lwp->end_heap, size, 0);
         }
         if (va)
