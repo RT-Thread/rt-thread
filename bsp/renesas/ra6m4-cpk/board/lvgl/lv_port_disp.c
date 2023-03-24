@@ -38,7 +38,7 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 void lv_port_disp_init(void)
 {
 #ifdef BSP_USING_SPI_LCD
-    spi_lcd_init();
+    spi_lcd_init(20);
 #endif
     /*Initialize `disp_buf` with the buffer(s). With only one buffer use NULL instead buf_2 */
     lv_disp_draw_buf_init(&disp_buf, buf_1, buf_2, COLOR_BUFFER);
