@@ -29,6 +29,13 @@
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
+#undef SS
+#if FF_MAX_SS == FF_MIN_SS
+#define SS(fs)	((UINT)FF_MAX_SS)	/* Fixed sector size */
+#else
+#define SS(fs)	((fs)->ssize)	/* Variable sector size */
+#endif
+
 static rt_device_t disk[FF_VOLUMES] = {0};
 
 static int elm_result_to_dfs(FRESULT result)
@@ -751,8 +758,11 @@ int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *n
 
 int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 {
+    FATFS  *f;
     FILINFO file_info;
     FRESULT result;
+
+    f = (FATFS *)fs->data;
 
 #if FF_VOLUMES > 1
     int vol;
@@ -793,7 +803,16 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             st->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 
         st->st_size  = file_info.fsize;
-
+        st->st_blksize = f->csize * SS(f);
+        if (file_info.fattrib & AM_ARC) 
+        {
+            st->st_blocks = file_info.fsize ? ((file_info.fsize - 1) / SS(f) / f->csize + 1) : 0;
+            st->st_blocks *= (st->st_blksize / 512); // man say st_blocks is number of 512B blocks allocated
+        }
+        else 
+        {
+            st->st_blocks = f->csize;
+        }
         /* get st_mtime. */
         {
             struct tm tm_file;
