@@ -40,7 +40,7 @@ struct ra_spi
 };
 #endif
 
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin, void *user_data);
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin);
 
 #ifdef __cplusplus
 }
