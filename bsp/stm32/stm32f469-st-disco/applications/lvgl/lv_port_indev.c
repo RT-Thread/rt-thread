@@ -10,7 +10,6 @@
  */
 #include <lvgl.h>
 #include <rtdevice.h>
-#include <touch.h>
 #include <lcd_port.h>
 
 #define DBG_TAG    "LVGL.port.indev"

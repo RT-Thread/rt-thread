@@ -16,7 +16,6 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#include "touch.h"
 #include "gt911.h"
 
 static struct rt_i2c_client gt911_client;
