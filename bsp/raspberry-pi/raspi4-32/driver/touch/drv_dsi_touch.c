@@ -9,7 +9,6 @@
  */
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <touch.h>
 
 #include "mbox.h"
 #include "drv_dsi_touch.h"

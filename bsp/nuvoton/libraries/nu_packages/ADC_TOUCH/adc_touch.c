@@ -20,7 +20,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
-#include "touch.h"
 //#include "drv_adc.h"
 #include "adc_touch.h"
 

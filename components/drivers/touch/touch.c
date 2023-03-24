@@ -8,7 +8,7 @@
  * 2019-05-20     tyustli      the first version
  */
 
-#include "touch.h"
+#include <rtdevice.h>
 #include <string.h>
 
 #define DBG_TAG  "touch"

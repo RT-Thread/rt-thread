@@ -13,7 +13,6 @@
  */
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <touch.h>
 #include "drv_touch.h"
 #include "string.h"
 #include "drv_pin.h"
