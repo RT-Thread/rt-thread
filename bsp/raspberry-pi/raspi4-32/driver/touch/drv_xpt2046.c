@@ -10,7 +10,6 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <touch.h>
 
 #include "drv_xpt2046.h"
 //http://www.lcdwiki.com/MHS-3.5inch_RPi_Display
