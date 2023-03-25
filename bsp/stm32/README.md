@@ -55,10 +55,15 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | **G4 系列** |  |
 | [stm32g431-st-nucleo](stm32g431-st-nucleo) | ST 官方 STM32G431-nucleo 开发板 |
 | **H7 系列** |  |
+| [stm32h743-armfly-v7](stm32h743-armfly-v7) | 安富莱 STM32H743 v7 开发板 |
 | [stm32h743-atk-apollo](stm32h743-atk-apollo) | 正点原子 h743 阿波罗开发板 |
+| [stm32h743-openmv-h7plus](stm32h743-openmv-h7plus) | OPENMV 官方 H7-PLUS 开发板 |
 | [stm32h743-st-nucleo](stm32h743-st-nucleo) | ST 官方 STM32H743-nucleo 开发板 |
 | [stm32h747-st-discovery](stm32h747-st-discovery) | ST 官方 STM32H747I-discovery 开发板 |
 | [stm32h750-armfly-h7-tool](stm32h750-armfly-h7-tool) | 安富莱 STM32H750 Tool 开发板 |
+| [stm32h750-artpi](stm32h750-artpi) | RT-Thread 官方 STM32H750-artpi 开发板 |
+| [stm32h750-fk750m1-vbt6](stm32h750-fk750m1-vbt6) | 反客科技 FK750M1-VBT6 开发板 |
+| [stm32h750-weact-ministm32h7xx](stm32h750-weact-ministm32h7xx) | 微行电子 STM32H7xx 核心板 |
 | **L0 系列** |  |
 | [stm32l010-st-nucleo](stm32l010-st-nucleo) | ST 官方 STM32L010-nucleo 开发板 |
 | [stm32l053-st-nucleo](stm32l053-st-nucleo) | ST 官方 STM32L053-nucleo 开发板 |
