@@ -28,7 +28,7 @@ documentation/html
 *.dfinish
 *.su
 #source insight 4 project files
-*.si4project 
+*.si4project
 tools/kconfig-frontends/kconfig-mconf
 packages
 dist
@@ -45,6 +45,8 @@ tags
 
 .idea
 .vscode
+*.code-workspace
+*.eide.*
 .history
 CMakeLists.txt
 cmake-build-debug
