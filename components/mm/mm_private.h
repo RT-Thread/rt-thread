@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2022-11-14     WangXiaoyao  the first version
  */
-#ifndef __MM_INTERN_H__
-#define __MM_INTERN_H__
+#ifndef __MM_PRIVATE_H__
+#define __MM_PRIVATE_H__
 
 #include "mm_aspace.h"
 #include <rtdef.h>
@@ -90,4 +90,10 @@ void _aspace_bst_insert(struct rt_aspace *aspace, struct rt_varea *varea);
  */
 void _aspace_bst_remove(struct rt_aspace *aspace, struct rt_varea *varea);
 
-#endif /* __MM_INTERN_H__ */
+void rt_varea_pgmgr_pop(rt_varea_t varea, void *vaddr, rt_size_t size);
+
+void rt_varea_pgmgr_pop_all(rt_varea_t varea);
+
+int _varea_map_with_msg(rt_varea_t varea, struct rt_mm_fault_msg *msg);
+
+#endif /* __MM_PRIVATE_H__ */

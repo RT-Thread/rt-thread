@@ -28,28 +28,15 @@
 
 static int _fetch_page(rt_varea_t varea, struct rt_mm_fault_msg *msg)
 {
-    int err = UNRECOVERABLE;
+    int err;
+    msg->response.status = MM_FAULT_STATUS_UNRECOVERABLE;
+    msg->response.vaddr = 0;
+    msg->response.size = 0;
     if (varea->mem_obj && varea->mem_obj->on_page_fault)
     {
         varea->mem_obj->on_page_fault(varea, msg);
-        if (msg->response.status == MM_FAULT_STATUS_OK)
-        {
-            void *store = msg->response.vaddr;
-            rt_size_t store_sz = msg->response.size;
-
-            if (msg->vaddr + store_sz > varea->start + varea->size)
-            {
-                LOG_W("%s more size of buffer is provided than varea", __func__);
-            }
-            else
-            {
-                rt_hw_mmu_map(varea->aspace, msg->vaddr, store + PV_OFFSET,
-                            store_sz, varea->attr);
-                rt_hw_tlb_invalidate_range(varea->aspace, msg->vaddr, store_sz,
-                                        ARCH_PAGE_SIZE);
-                err = RECOVERABLE;
-            }
-        }
+        err = _varea_map_with_msg(varea, msg);
+        err = (err == RT_EOK ? RECOVERABLE : UNRECOVERABLE);
     }
     return err;
 }
@@ -99,22 +86,22 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct rt_mm_fault_msg *msg)
     return err;
 }
 
-int rt_mm_fault_try_fix(struct rt_mm_fault_msg *msg)
+int rt_aspace_fault_try_fix(struct rt_mm_fault_msg *msg)
 {
     struct rt_lwp *lwp = lwp_self();
     int err = UNRECOVERABLE;
-    uintptr_t va = (uintptr_t)msg->vaddr;
+    uintptr_t va = (uintptr_t)msg->fault_vaddr;
     va &= ~ARCH_PAGE_MASK;
-    msg->vaddr = (void *)va;
+    msg->fault_vaddr = (void *)va;
 
     if (lwp)
     {
         rt_aspace_t aspace = lwp->aspace;
-        rt_varea_t varea = _aspace_bst_search(aspace, msg->vaddr);
+        rt_varea_t varea = _aspace_bst_search(aspace, msg->fault_vaddr);
         if (varea)
         {
-            void *pa = rt_hw_mmu_v2p(aspace, msg->vaddr);
-            msg->off = (msg->vaddr - varea->start) >> ARCH_PAGE_SHIFT;
+            void *pa = rt_hw_mmu_v2p(aspace, msg->fault_vaddr);
+            msg->off = (msg->fault_vaddr - varea->start) >> ARCH_PAGE_SHIFT;
 
             /* permission checked by fault op */
             switch (msg->fault_op)

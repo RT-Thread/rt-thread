@@ -148,12 +148,68 @@ rt_inline void _do_page_fault(struct rt_mm_fault_msg *msg, rt_size_t off,
                               rt_varea_t varea)
 {
     msg->off = off;
-    msg->vaddr = vaddr;
+    msg->fault_vaddr = vaddr;
     msg->fault_op = MM_FAULT_OP_READ;
     msg->fault_type = MM_FAULT_TYPE_PAGE_FAULT;
     msg->response.status = -1;
+    msg->response.vaddr = 0;
+    msg->response.size = 0;
 
     mem_obj->on_page_fault(varea, msg);
+}
+
+int _varea_map_with_msg(rt_varea_t varea, struct rt_mm_fault_msg *msg)
+{
+    int err = -RT_ERROR;
+    if (msg->response.status == MM_FAULT_STATUS_OK)
+    {
+        /**
+         * the page returned by handler is not checked 
+         * cause no much assumption can make on it
+         */
+        void *store = msg->response.vaddr;
+        rt_size_t store_sz = msg->response.size;
+        if (msg->fault_vaddr + store_sz > varea->start + varea->size)
+        {
+            LOG_W("%s: too much (0x%lx) of buffer on vaddr %p is provided",
+                    __func__, store_sz, msg->fault_vaddr);
+        }
+        else
+        {
+            void *map;
+            void *v_addr = msg->fault_vaddr;
+            void *p_addr = store + PV_OFFSET;
+            map = rt_hw_mmu_map(varea->aspace, v_addr, p_addr, store_sz, varea->attr);
+
+            if (!map)
+            {
+                LOG_W("%s: MMU mapping failed for va %p to %p of %lx", __func__,
+                    msg->fault_vaddr, store + PV_OFFSET, store_sz);
+            }
+            else
+            {
+                rt_hw_tlb_invalidate_range(varea->aspace, v_addr, store_sz, ARCH_PAGE_SIZE);
+                err = RT_EOK;
+            }
+        }
+    }
+    else if (msg->response.status == MM_FAULT_STATUS_OK_MAPPED)
+    {
+        if (rt_hw_mmu_v2p(varea->aspace, msg->fault_vaddr) == ARCH_MAP_FAILED)
+        {
+            LOG_W("%s: no page is mapped on %p", __func__, msg->fault_vaddr);
+        }
+        else
+        {
+            err = RT_EOK;
+        }
+    }
+    else
+    {
+        LOG_W("%s: failed on va %p inside varea %p(%s)", __func__, msg->fault_vaddr, varea,
+            varea->mem_obj->get_name ? varea->mem_obj->get_name(varea) : "unknow");
+    }
+    return err;
 }
 
 /* allocate memory page for mapping range */
@@ -173,39 +229,18 @@ static int _do_prefetch(rt_aspace_t aspace, rt_varea_t varea, void *start,
         struct rt_mm_fault_msg msg;
         _do_page_fault(&msg, off, vaddr, varea->mem_obj, varea);
 
-        if (msg.response.status == MM_FAULT_STATUS_OK)
-        {
-            void *store = msg.response.vaddr;
-            rt_size_t store_sz = msg.response.size;
-
-            if (store_sz + vaddr > end)
-            {
-                LOG_W("%s: too much (0x%lx) of buffer at vaddr %p is provided",
-                      __func__, store_sz, vaddr);
-                break;
-            }
-
-            void *map = rt_hw_mmu_map(aspace, vaddr, store + PV_OFFSET,
-                                      store_sz, varea->attr);
-
-            if (!map)
-            {
-                LOG_W("%s: MMU mapping failed for va %p to %p of %lx", __func__,
-                      vaddr, store + PV_OFFSET, store_sz);
-            }
-            else
-            {
-                rt_hw_tlb_invalidate_range(aspace, vaddr, store_sz, ARCH_PAGE_SIZE);
-            }
-            vaddr += store_sz;
-            off += store_sz >> ARCH_PAGE_SHIFT;
-        }
-        else
-        {
-            err = -RT_ENOMEM;
-            LOG_W("%s failed because no memory is provided", __func__);
+        if (_varea_map_with_msg(varea, &msg))
             break;
-        }
+
+        /**
+         * It's hard to identify the mapping pattern on a customized handler
+         * So we terminate the prefetch process on that case
+         */
+        if (msg.response.status == MM_FAULT_STATUS_OK_MAPPED)
+            break;
+
+        vaddr += msg.response.size;
+        off += msg.response.size >> ARCH_PAGE_SHIFT;
     }
 
     return err;
@@ -269,7 +304,7 @@ static inline void _varea_uninstall(rt_varea_t varea)
     rt_hw_mmu_unmap(aspace, varea->start, varea->size);
     rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
 
-    rt_varea_free_pages(varea);
+    rt_varea_pgmgr_pop_all(varea);
 
     WR_LOCK(aspace);
     _aspace_bst_remove(aspace, varea);
@@ -770,6 +805,71 @@ int rt_aspace_load_page(rt_aspace_t aspace, void *addr, rt_size_t npage)
     else
     {
         err = _do_prefetch(aspace, varea, addr, npage << ARCH_PAGE_SHIFT);
+    }
+    return err;
+}
+
+int rt_varea_map_page(rt_varea_t varea, void *vaddr, void *page)
+{
+    int err = RT_EOK;
+    void *page_pa = rt_kmem_v2p(page);
+
+    if (!varea || !vaddr || !page)
+    {
+        LOG_W("%s(%p,%p,%p): invalid input", __func__, varea, vaddr, page);
+        err = -RT_EINVAL;
+    }
+    else if (page_pa == ARCH_MAP_FAILED)
+    {
+        LOG_W("%s: page is not in kernel space", __func__);
+        err = -RT_ERROR;
+    }
+    else if (_not_in_range(vaddr, ARCH_PAGE_SIZE, varea->start, varea->size))
+    {
+        LOG_W("%s(%p,%lx): not in range of varea(%p,%lx)", __func__,
+            vaddr, ARCH_PAGE_SIZE, varea->start, varea->size);
+        err = -RT_EINVAL;
+    }
+    else
+    {
+        err = _do_named_map(
+            varea->aspace,
+            vaddr,
+            ARCH_PAGE_SIZE,
+            MM_PA_TO_OFF(page_pa),
+            varea->attr
+        );
+    }
+
+    return err;
+}
+
+#define ALIGNED(addr) (!((rt_size_t)(addr) & ARCH_PAGE_MASK))
+
+int rt_varea_map_range(rt_varea_t varea, void *vaddr, void *paddr, rt_size_t length)
+{
+    int err;
+    if (!varea || !vaddr || !paddr || !length ||
+        !ALIGNED(vaddr) || !ALIGNED(paddr) || !(ALIGNED(length)))
+    {
+        LOG_W("%s(%p,%p,%p,%lx): invalid input", __func__, varea, vaddr, paddr, length);
+        err = -RT_EINVAL;
+    }
+    else if (_not_in_range(vaddr, length, varea->start, varea->size))
+    {
+        LOG_W("%s(%p,%lx): not in range of varea(%p,%lx)", __func__,
+            vaddr, length, varea->start, varea->size);
+        err = -RT_EINVAL;
+    }
+    else
+    {
+        err = _do_named_map(
+            varea->aspace,
+            vaddr,
+            length,
+            MM_PA_TO_OFF(paddr),
+            varea->attr
+        );
     }
     return err;
 }

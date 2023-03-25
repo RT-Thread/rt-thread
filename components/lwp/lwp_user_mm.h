@@ -30,6 +30,7 @@ void lwp_unmap_user_space(struct rt_lwp *lwp);
 
 int lwp_unmap_user(struct rt_lwp *lwp, void *va);
 void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, rt_bool_t text);
+rt_varea_t lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size);
 
 void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t map_size, rt_bool_t cached);
 int lwp_unmap_user_phy(struct rt_lwp *lwp, void *va);

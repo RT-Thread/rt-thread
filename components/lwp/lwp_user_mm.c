@@ -108,6 +108,9 @@ static const char *user_get_name(rt_varea_t varea)
     return name;
 }
 
+#define NO_AUTO_FETCH               0x1
+#define VAREA_CAN_AUTO_FETCH(varea) (!((rt_ubase_t)((varea)->data) & NO_AUTO_FETCH))
+
 static void _user_do_page_fault(struct rt_varea *varea,
                                 struct rt_mm_fault_msg *msg)
 {
@@ -116,7 +119,7 @@ static void _user_do_page_fault(struct rt_varea *varea,
 
     if (lwp_objs->source)
     {
-        void *paddr = rt_hw_mmu_v2p(lwp_objs->source, msg->vaddr);
+        void *paddr = rt_hw_mmu_v2p(lwp_objs->source, msg->fault_vaddr);
         if (paddr != ARCH_MAP_FAILED)
         {
             void *vaddr;
@@ -128,7 +131,7 @@ static void _user_do_page_fault(struct rt_varea *varea,
                 if (cp)
                 {
                     memcpy(cp, vaddr, ARCH_PAGE_SIZE);
-                    rt_varea_insert_page(varea, cp);
+                    rt_varea_pgmgr_insert(varea, cp);
                     msg->response.status = MM_FAULT_STATUS_OK;
                     msg->response.vaddr = cp;
                     msg->response.size = ARCH_PAGE_SIZE;
@@ -143,7 +146,7 @@ static void _user_do_page_fault(struct rt_varea *varea,
             {
                 rt_page_t page = rt_page_addr2page(vaddr);
                 page->ref_cnt += 1;
-                rt_varea_insert_page(varea, vaddr);
+                rt_varea_pgmgr_insert(varea, vaddr);
                 msg->response.status = MM_FAULT_STATUS_OK;
                 msg->response.vaddr = vaddr;
                 msg->response.size = ARCH_PAGE_SIZE;
@@ -155,14 +158,20 @@ static void _user_do_page_fault(struct rt_varea *varea,
             rt_mm_dummy_mapper.on_page_fault(varea, msg);
         }
     }
-    else /* if (!lwp_objs->source), no aspace as source data */
+    else if (VAREA_CAN_AUTO_FETCH(varea))
     {
+        /* if (!lwp_objs->source), no aspace as source data */
         rt_mm_dummy_mapper.on_page_fault(varea, msg);
     }
 }
 
 static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace)
 {
+    /**
+     * @brief one lwp_obj represent an base layout of page based memory in user space 
+     * This is useful on duplication. Where we only have a (lwp_objs and offset) to
+     * provide identical memory. This is implemented by lwp_objs->source.
+     */
     lwp_objs->source = NULL;
     lwp_objs->mem_obj.get_name = user_get_name;
     lwp_objs->mem_obj.hint_free = NULL;
@@ -322,6 +331,57 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
         ret = (void *)((char *)ret + offset);
     }
     return ret;
+}
+
+rt_varea_t _lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size)
+{
+    void *va = map_va;
+    int ret = 0;
+    size_t flags = 0;
+    rt_mem_obj_t mem_obj = &lwp->lwp_obj->mem_obj;
+    rt_varea_t varea;
+
+    varea = rt_malloc(sizeof(*varea));
+    if (varea)
+    {
+        ret = rt_aspace_map_static(lwp->aspace, varea, &va, map_size,
+                                   MMU_MAP_U_RWCB, flags, mem_obj, 0);
+        /* let aspace handle the free of varea */
+        varea->flag &= ~MMF_STATIC_ALLOC;
+        /* don't apply auto fetch on this */
+        varea->data = (void *)NO_AUTO_FETCH;
+    }
+    else
+    {
+        ret = -RT_ENOMEM;
+    }
+
+    if (ret != RT_EOK)
+    {
+        LOG_I("lwp_map_user: failed to map %lx with size %lx with errno %d", map_va,
+              map_size, ret);
+    }
+
+    return varea;
+}
+
+rt_varea_t lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size)
+{
+    rt_varea_t varea = RT_NULL;
+    size_t offset = 0;
+
+    if (!map_size)
+    {
+        return 0;
+    }
+    offset = (size_t)map_va & ARCH_PAGE_MASK;
+    map_size += (offset + ARCH_PAGE_SIZE - 1);
+    map_size &= ~ARCH_PAGE_MASK;
+    map_va = (void *)((size_t)map_va & ~ARCH_PAGE_MASK);
+
+    varea = _lwp_map_user_varea(lwp, map_va, map_size);
+
+    return varea;
 }
 
 void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa,

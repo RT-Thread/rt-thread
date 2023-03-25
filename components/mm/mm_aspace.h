@@ -197,11 +197,35 @@ int rt_aspace_traversal(rt_aspace_t aspace,
 
 void rt_aspace_print_all(rt_aspace_t aspace);
 
-void rt_varea_insert_page(rt_varea_t varea, void *page_addr);
+/**
+ * @brief Map one page to varea
+ *
+ * @param varea target varea
+ * @param addr user address
+ * @param page the page frame to be mapped
+ * @return int
+ */
+int rt_varea_map_page(rt_varea_t varea, void *vaddr, void *page);
 
-void rt_varea_free_pages(rt_varea_t varea);
+/**
+ * @brief Map a range of physical address to varea
+ *
+ * @param varea target varea
+ * @param vaddr user address
+ * @param paddr physical address
+ * @param length map range
+ * @return int
+ */
+int rt_varea_map_range(rt_varea_t varea, void *vaddr, void *paddr, rt_size_t length);
 
-void rt_varea_offload_page(rt_varea_t varea, void *vaddr, rt_size_t size);
+/**
+ * @brief Insert page to page manager of varea
+ * The page will be freed by varea on uninstall automatically
+ *
+ * @param varea target varea
+ * @param page_addr the page frame to be added
+ */
+void rt_varea_pgmgr_insert(rt_varea_t varea, void *page_addr);
 
 rt_ubase_t rt_kmem_pvoff(void);
 

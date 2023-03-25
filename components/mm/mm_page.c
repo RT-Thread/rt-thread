@@ -63,9 +63,9 @@ static void on_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
 {
     void *init_start = (void *)init_mpr_align_start;
     void *init_end = (void *)init_mpr_align_end;
-    if (msg->vaddr < init_end && msg->vaddr >= init_start)
+    if (msg->fault_vaddr < init_end && msg->fault_vaddr >= init_start)
     {
-        rt_size_t offset = msg->vaddr - init_start;
+        rt_size_t offset = msg->fault_vaddr - init_start;
         msg->response.status = MM_FAULT_STATUS_OK;
         msg->response.vaddr = init_mpr_cont_start + offset;
         msg->response.size = ARCH_PAGE_SIZE;

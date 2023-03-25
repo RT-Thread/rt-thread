@@ -105,9 +105,9 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
         struct rt_mm_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
-            .vaddr = dfar,
+            .fault_vaddr = dfar,
         };
-        if (rt_mm_fault_try_fix(&msg))
+        if (rt_aspace_fault_try_fix(&msg))
         {
             ret = 1;
         }
