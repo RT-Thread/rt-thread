@@ -8,22 +8,11 @@
  * 2022-12-14     WangXiaoyao  the first version
  * 2023-03-20     WangXiaoyao  Format & add more testcases for API under mm_aspace.h
  */
+#include "common.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <rthw.h>
-#include <rtthread.h>
-#include <utest.h>
-
-#include <board.h>
-#include <ioremap.h>
-#include <mm_aspace.h>
-#include <mm_flag.h>
-#include <mm_page.h>
-#include <mm_private.h>
-#include <mmu.h>
-#include <tlb.h>
+/**
+ * @brief Testing all APIs under components/mm
+ */
 
 void ioremap_tc(void);
 void flag_tc(void);

@@ -10,14 +10,23 @@
 #ifndef __TEST_MM_COMMON_H__
 #define __TEST_MM_COMMON_H__
 
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+
+#include <board.h>
 #include <rtthread.h>
 #include <rthw.h>
 #include <lwp_arch.h>
+#include <mmu.h>
+#include <tlb.h>
+#include <utest.h>
+
+#include <ioremap.h>
+#include <mm_aspace.h>
 #include <mm_flag.h>
 #include <mm_page.h>
-#include <mmu.h>
-#include <mm_aspace.h>
-#include <utest.h>
+#include <mm_private.h>
 
 extern rt_base_t rt_heap_lock(void);
 extern void rt_heap_unlock(rt_base_t level);

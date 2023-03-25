@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include "test_aspace_api_internal.h"
+#include "test_synchronization.h"
 
 /**
  * @brief API for aspace create/destroy
@@ -121,11 +122,22 @@ static void aspace_map_tc(void)
     test_find_free();
 }
 
+/**
+ * @brief Page frames mapping to varea
+ * complete the page table on specified varea, and handle tlb maintenance
+ */
+static void varea_map_tc(void)
+{
+    ;
+}
+
 static void aspace_tc(void)
 {
     UTEST_UNIT_RUN(aspace_create_tc);
     UTEST_UNIT_RUN(aspace_delete_tc);
     UTEST_UNIT_RUN(aspace_map_tc);
+    UTEST_UNIT_RUN(varea_map_tc);
+    UTEST_UNIT_RUN(synchronization_tc);
     return ;
 }
 
