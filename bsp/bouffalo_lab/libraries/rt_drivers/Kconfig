@@ -83,6 +83,42 @@ menu "General Drivers Configuration"
             endchoice
         endif
 
+    if BSP_USING_BL808
+        menuconfig BSP_USING_UART2
+            bool "Enable UART2"
+            default n
+            if BSP_USING_UART2
+                choice
+                    prompt "UART2 TX PIN"
+                    default UART2_TX_USING_GPIO20
+
+                    config UART2_TX_USING_GPIO4
+                        bool "GPIO_4"
+                    config UART2_TX_USING_GPIO16
+                        bool "GPIO_16"
+                    config UART2_TX_USING_GPIO18
+                        bool "GPIO_18"
+                    config UART2_TX_USING_GPIO20
+                        bool "GPIO_20"
+                endchoice
+                choice
+                    prompt "UART2 RX PIN"
+                    default UART2_RX_USING_GPIO21
+
+                    config UART2_RX_USING_GPIO3
+                        bool "GPIO_3"
+                    config UART2_RX_USING_GPIO5
+                        bool "GPIO_5"
+                    config UART2_RX_USING_GPIO17
+                        bool "GPIO_17"
+                    config UART2_RX_USING_GPIO19
+                        bool "GPIO_19"
+                    config UART2_RX_USING_GPIO21
+                        bool "GPIO_21"
+                endchoice
+            endif
+        endif
+
     endmenu
 
 endmenu

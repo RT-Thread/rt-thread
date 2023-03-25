@@ -63,7 +63,28 @@
 #define UART1_GPIO_RX           GPIO_PIN_27
 #endif
 
-static struct bflb_device_s    *gpio;
+// uart2
+#ifdef UART2_TX_USING_GPIO4
+#define UART2_GPIO_TX           GPIO_PIN_4
+#elif defined(UART2_TX_USING_GPIO16)
+#define UART2_GPIO_TX           GPIO_PIN_16
+#elif defined(UART2_TX_USING_GPIO18)
+#define UART2_GPIO_TX           GPIO_PIN_18
+#elif defined(UART2_TX_USING_GPIO20)
+#define UART2_GPIO_TX           GPIO_PIN_20
+#endif
+
+#ifdef UART2_RX_USING_GPIO3
+#define UART2_GPIO_RX           GPIO_PIN_3
+#elif defined(UART2_RX_USING_GPIO5)
+#define UART2_GPIO_RX           GPIO_PIN_5
+#elif defined(UART2_RX_USING_GPIO17)
+#define UART2_GPIO_RX           GPIO_PIN_17
+#elif defined(UART2_RX_USING_GPIO19)
+#define UART2_GPIO_RX           GPIO_PIN_19
+#elif defined(UART2_RX_USING_GPIO21)
+#define UART2_GPIO_RX           GPIO_PIN_21
+#endif
 
 struct device_uart
 {
@@ -250,6 +271,7 @@ static const struct rt_uart_ops _uart_ops =
 int rt_hw_uart_init(void)
 {
     rt_err_t result = 0;
+    struct bflb_device_s    *gpio;
 
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     struct rt_serial_device *serial;
@@ -297,6 +319,28 @@ int rt_hw_uart_init(void)
     /* register USART device */
     result = rt_hw_serial_register(serial,
                                     "uart1",
+                                    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                                    uart);
+    RT_ASSERT(result == RT_EOK);
+#endif
+
+#ifdef BSP_USING_UART2
+    static struct device_uart bl_uart2;
+
+    serial  = &bl_uart2.serial;
+    uart    = &bl_uart2;
+
+    serial->ops              = &_uart_ops;
+    serial->config           = config;
+    serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
+
+    uart->bflb_device = bflb_device_get_by_name("uart2");
+    bflb_gpio_uart_init(gpio, UART2_GPIO_TX, GPIO_UART_FUNC_UART2_TX);
+    bflb_gpio_uart_init(gpio, UART2_GPIO_RX, GPIO_UART_FUNC_UART2_RX);
+
+    /* register USART device */
+    result = rt_hw_serial_register(serial,
+                                    "uart2",
                                     RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                                     uart);
     RT_ASSERT(result == RT_EOK);
