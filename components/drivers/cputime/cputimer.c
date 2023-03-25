@@ -357,7 +357,7 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
 
-        thread->error = -RT_EINTR;
+        thread->error = RT_EOK;
 
         rt_schedule();
         if (thread->error == -RT_ETIMEOUT)

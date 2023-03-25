@@ -75,6 +75,10 @@ static const char* rt_errno_strs[] =
     "EIO",
     "EINTRPT",
     "EINVAL",
+    "ETRAP",
+    "ENOENT",
+    "ENOSPC",
+    "OK",    /* EINSCHE is a temporary state, in fact no error. */
     "EUNKNOW"
 };
 
@@ -90,8 +94,8 @@ const char *rt_strerror(rt_err_t error)
     if (error < 0)
         error = -error;
 
-    return (error > RT_EINVAL + 1) ?
-           rt_errno_strs[RT_EINVAL + 1] :
+    return (error > RT_EINSCHE + 1) ?
+           rt_errno_strs[RT_EINSCHE + 1] :
            rt_errno_strs[error];
 }
 RTM_EXPORT(rt_strerror);

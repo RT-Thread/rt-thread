@@ -453,6 +453,7 @@ void rt_schedule(void)
     rt_base_t level;
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
+    struct rt_thread *from_thread_bak = rt_thread_self();
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -522,6 +523,10 @@ void rt_schedule(void)
 
                     RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (from_thread));
 
+                    // RT_ASSERT(from_thread_bak->error == RT_EOK);
+                    /* Need schedule, set a temporary state, means scheduling in progress*/
+                    from_thread_bak->error = -RT_EINSCHE;
+
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
 
@@ -569,6 +574,11 @@ void rt_schedule(void)
     rt_hw_interrupt_enable(level);
 
 __exit:
+
+    if (rt_thread_self()->error != RT_EOK && rt_thread_self()->error != -RT_ETIMEOUT)
+    {
+        rt_thread_self()->error = -RT_EINTR;
+    }
     return;
 }
 #endif /* RT_USING_SMP */

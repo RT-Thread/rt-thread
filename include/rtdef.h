@@ -369,6 +369,7 @@ typedef int (*init_fn_t)(void);
 #define RT_ETRAP                        11              /**< Trap event */
 #define RT_ENOENT                       12              /**< No entry */
 #define RT_ENOSPC                       13              /**< No space left */
+#define RT_EINSCHE                      14              /**< Scheduling in progress */
 
 /**@}*/
 
