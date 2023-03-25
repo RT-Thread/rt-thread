@@ -88,11 +88,11 @@ menu "On-chip Peripheral Drivers"
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
                 range 0 48
-                default 46
+                default 47
             config BSP_I2C1_SDA_PIN
                 int "I2C1 sda pin number"
                 range 0 48
-                default 47
+                default 46
         endif
 
      menuconfig BSP_USING_PWM
