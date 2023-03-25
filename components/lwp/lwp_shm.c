@@ -56,7 +56,7 @@ static void on_shm_varea_close(struct rt_varea *varea)
     shm->ref -= 1;
 }
 
-static void on_shm_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
+static void on_shm_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     struct lwp_shm_struct *shm;
     int err;

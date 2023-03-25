@@ -90,7 +90,7 @@ typedef struct rt_mm_va_hint
 typedef struct rt_mem_obj
 {
     void (*hint_free)(rt_mm_va_hint_t hint);
-    void (*on_page_fault)(struct rt_varea *varea, struct rt_mm_fault_msg *msg);
+    void (*on_page_fault)(struct rt_varea *varea, struct rt_aspace_fault_msg *msg);
 
     /* do pre open bushiness like inc a ref */
     void (*on_varea_open)(struct rt_varea *varea);

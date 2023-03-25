@@ -59,7 +59,7 @@ static void hint_free(rt_mm_va_hint_t hint)
     hint->prefer = rt_mpr_start;
 }
 
-static void on_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
+static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     void *init_start = (void *)init_mpr_align_start;
     void *init_end = (void *)init_mpr_align_end;

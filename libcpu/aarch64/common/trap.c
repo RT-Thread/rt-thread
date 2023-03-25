@@ -102,7 +102,7 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
     if (fault_op)
     {
         asm volatile("mrs %0, far_el1":"=r"(dfar));
-        struct rt_mm_fault_msg msg = {
+        struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
             .fault_vaddr = dfar,

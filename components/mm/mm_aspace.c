@@ -85,7 +85,7 @@ rt_aspace_t rt_aspace_create(void *start, rt_size_t length, void *pgtbl)
     aspace = (rt_aspace_t)rt_malloc(sizeof(*aspace));
     if (aspace)
     {
-        memset(aspace, 0, sizeof(*aspace));
+        rt_memset(aspace, 0, sizeof(*aspace));
 
         err = rt_aspace_init(aspace, start, length, pgtbl);
 
@@ -143,7 +143,7 @@ static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
     return err;
 }
 
-rt_inline void _do_page_fault(struct rt_mm_fault_msg *msg, rt_size_t off,
+rt_inline void _do_page_fault(struct rt_aspace_fault_msg *msg, rt_size_t off,
                               void *vaddr, rt_mem_obj_t mem_obj,
                               rt_varea_t varea)
 {
@@ -158,7 +158,7 @@ rt_inline void _do_page_fault(struct rt_mm_fault_msg *msg, rt_size_t off,
     mem_obj->on_page_fault(varea, msg);
 }
 
-int _varea_map_with_msg(rt_varea_t varea, struct rt_mm_fault_msg *msg)
+int _varea_map_with_msg(rt_varea_t varea, struct rt_aspace_fault_msg *msg)
 {
     int err = -RT_ERROR;
     if (msg->response.status == MM_FAULT_STATUS_OK)
@@ -226,7 +226,7 @@ static int _do_prefetch(rt_aspace_t aspace, rt_varea_t varea, void *start,
     while (vaddr != end)
     {
         /* TODO try to map with huge TLB, when flag & HUGEPAGE */
-        struct rt_mm_fault_msg msg;
+        struct rt_aspace_fault_msg msg;
         _do_page_fault(&msg, off, vaddr, varea->mem_obj, varea);
 
         if (_varea_map_with_msg(varea, &msg))

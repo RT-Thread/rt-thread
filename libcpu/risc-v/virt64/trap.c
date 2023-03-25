@@ -200,13 +200,13 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     if (fault_op)
     {
-        struct rt_mm_fault_msg msg = {
+        struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
-            .vaddr = (void *)stval,
+            .fault_vaddr = (void *)stval,
         };
 
-        if (rt_mm_fault_try_fix(&msg))
+        if (rt_aspace_fault_try_fix(&msg))
         {
             return;
         }

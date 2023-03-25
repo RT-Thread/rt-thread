@@ -42,7 +42,7 @@ enum rt_mm_fault_type
     MM_FAULT_TYPE_GENERIC,
 };
 
-struct rt_mm_fault_msg
+struct rt_aspace_fault_msg
 {
     enum rt_mm_fault_op fault_op;
     enum rt_mm_fault_type fault_type;
@@ -53,6 +53,6 @@ struct rt_mm_fault_msg
 };
 
 /* MMU base page fault handler, return 1 is */
-int rt_aspace_fault_try_fix(struct rt_mm_fault_msg *msg);
+int rt_aspace_fault_try_fix(struct rt_aspace_fault_msg *msg);
 
 #endif /* __MM_FAULT_H__ */

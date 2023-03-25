@@ -112,7 +112,7 @@ static const char *user_get_name(rt_varea_t varea)
 #define VAREA_CAN_AUTO_FETCH(varea) (!((rt_ubase_t)((varea)->data) & NO_AUTO_FETCH))
 
 static void _user_do_page_fault(struct rt_varea *varea,
-                                struct rt_mm_fault_msg *msg)
+                                struct rt_aspace_fault_msg *msg)
 {
     struct rt_lwp_objs *lwp_objs;
     lwp_objs = rt_container_of(varea->mem_obj, struct rt_lwp_objs, mem_obj);
