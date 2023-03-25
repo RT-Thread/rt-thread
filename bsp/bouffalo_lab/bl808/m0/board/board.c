@@ -175,16 +175,6 @@ void rt_hw_board_init(void)
     }
 #endif
 
-    /* GPIO driver initialization is open by default */
-#ifdef BSP_USING_PIN
-    rt_hw_pin_init();
-#endif
-
-    /* I2C driver initialization is open by default */
-#ifdef BSP_USING_I2C
-    rt_hw_i2c_init();
-#endif
-
     /* Set the shell console output device */
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);

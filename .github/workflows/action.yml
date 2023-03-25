@@ -246,6 +246,8 @@ jobs:
          - {RTT_BSP: "microchip/samc21", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "microchip/same54", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "microchip/same70", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "bouffalo_lab/bl60x", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"}
+         - {RTT_BSP: "bouffalo_lab/bl70x", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python

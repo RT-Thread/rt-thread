@@ -4,6 +4,6 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
 CPPPATH = [cwd]
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
