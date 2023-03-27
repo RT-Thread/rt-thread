@@ -48,7 +48,7 @@ ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_all_local() {}
 #define rt_hw_icache_invalidate_all rt_hw_cpu_icache_invalidate_all
 
 /** instruction barrier */
-void rt_hw_cpu_sync(void);
+static inline void rt_hw_cpu_sync(void) {}
 
 /**
  * @brief local cpu icahce & dcache synchronization
