@@ -4771,10 +4771,11 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_mq_open),
     SYSCALL_SIGN(sys_mq_unlink),
     SYSCALL_SIGN(sys_mq_timedsend),
-    SYSCALL_SIGN(sys_mq_timedreceive),
+    SYSCALL_SIGN(sys_mq_timedreceive),                  /* 165 */
     SYSCALL_SIGN(sys_mq_notify),
     SYSCALL_SIGN(sys_mq_getsetattr),
     SYSCALL_SIGN(sys_mq_close),
+    SYSCALL_SIGN(sys_stat), //TODO should be replaced by sys_lstat if symbolic link are implemented
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
