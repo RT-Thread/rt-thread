@@ -177,7 +177,7 @@ int _varea_map_with_msg(rt_varea_t varea, struct rt_aspace_fault_msg *msg)
     if (msg->response.status == MM_FAULT_STATUS_OK)
     {
         /**
-         * the page returned by handler is not checked 
+         * the page returned by handler is not checked
          * cause no much assumption can make on it
          */
         void *store = msg->response.vaddr;

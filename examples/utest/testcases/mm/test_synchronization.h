@@ -125,7 +125,7 @@ static void synchronization_tc(void)
     {
         char name[RT_NAME_MAX];
         rt_sprintf(name, "grp1_%d", i);
-        group1[i] = 
+        group1[i] =
             rt_thread_create(name, group1_entry, (void *)i, ARCH_PAGE_SIZE, PRIO, 10);
         uassert_true(!!group1[i]);
         semaphore_init(&sem1[i], 0);

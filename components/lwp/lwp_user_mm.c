@@ -168,7 +168,7 @@ static void _user_do_page_fault(struct rt_varea *varea,
 static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace)
 {
     /**
-     * @brief one lwp_obj represent an base layout of page based memory in user space 
+     * @brief one lwp_obj represent an base layout of page based memory in user space
      * This is useful on duplication. Where we only have a (lwp_objs and offset) to
      * provide identical memory. This is implemented by lwp_objs->source.
      */

@@ -21,7 +21,7 @@
  * with prefer
  * without prefer
  *
- * the requirement of find free: 
+ * the requirement of find free:
  * it will return a subset in address space that is free
  * the subset contains `length` contiguous elements
  * the alignment is satisfied
