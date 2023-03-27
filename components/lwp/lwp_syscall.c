@@ -34,6 +34,7 @@
 #endif
 
 #include <fcntl.h>
+#include <sys/utsname.h>
 
 #ifdef RT_USING_DFS
 #include <poll.h>
@@ -4566,6 +4567,37 @@ rt_weak sysret_t sys_cacheflush(void *addr, int size, int cache)
     return -EFAULT;
 }
 
+sysret_t sys_uname(struct utsname *uts)
+{
+    struct utsname utsbuff = {0};
+    int ret = 0;
+    char *machine;
+
+    if (!lwp_user_accessable((void *)uts, sizeof(struct utsname)))
+    {
+        return -EFAULT;
+    }
+    rt_strncpy(utsbuff.sysname, "RT-Thread", sizeof(utsbuff.sysname));
+    utsbuff.nodename[0] = '\0';
+    ret = rt_snprintf(utsbuff.release, sizeof(utsbuff.release), "%u.%u.%u",
+                      RT_VERSION_MAJOR, RT_VERSION_MINOR, RT_VERSION_PATCH);
+    if (ret < 0) {
+        return -EIO;
+    }
+    ret = rt_snprintf(utsbuff.version, sizeof(utsbuff.version), "RT-Thread %u.%u.%u %s %s",
+                      RT_VERSION_MAJOR, RT_VERSION_MINOR, RT_VERSION_PATCH, __DATE__, __TIME__);
+    if (ret < 0) {
+        return -EIO;
+    }
+
+    machine = rt_hw_cpu_arch();
+    rt_strncpy(utsbuff.machine, machine, sizeof(utsbuff.machine));
+
+    utsbuff.domainname[0] = '\0';
+    lwp_put_to_user(uts, &utsbuff, sizeof utsbuff);
+    return 0;
+}
+
 const static struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -4776,6 +4808,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_mq_getsetattr),
     SYSCALL_SIGN(sys_mq_close),
     SYSCALL_SIGN(sys_stat), //TODO should be replaced by sys_lstat if symbolic link are implemented
+    SYSCALL_SIGN(sys_uname),                            /* 170 */
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
