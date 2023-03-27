@@ -47,6 +47,7 @@ static int _read_fault(rt_varea_t varea, void *pa, struct rt_aspace_fault_msg *m
     if (msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT)
     {
         RT_ASSERT(pa == ARCH_MAP_FAILED);
+        RT_ASSERT(!(varea->flag & MMF_PREFETCH));
         err = _fetch_page(varea, msg);
     }
     else
@@ -62,6 +63,7 @@ static int _write_fault(rt_varea_t varea, void *pa, struct rt_aspace_fault_msg *
     if (msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT)
     {
         RT_ASSERT(pa == ARCH_MAP_FAILED);
+        RT_ASSERT(!(varea->flag & MMF_PREFETCH));
         err = _fetch_page(varea, msg);
     }
     else if (msg->fault_type == MM_FAULT_TYPE_ACCESS_FAULT &&
@@ -81,6 +83,7 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct rt_aspace_fault_msg *m
     if (msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT)
     {
         RT_ASSERT(pa == ARCH_MAP_FAILED);
+        RT_ASSERT(!(varea->flag & MMF_PREFETCH));
         err = _fetch_page(varea, msg);
     }
     return err;

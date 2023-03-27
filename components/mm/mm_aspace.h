@@ -181,10 +181,9 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
  *
  * @param aspace
  * @param addr
- * @param length
  * @return int
  */
-int rt_aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length);
+int rt_aspace_unmap(rt_aspace_t aspace, void *addr);
 
 int rt_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd);
 
@@ -234,5 +233,7 @@ void rt_kmem_pvoff_set(rt_ubase_t pvoff);
 int rt_kmem_map_phy(void *va, void *pa, rt_size_t length, rt_size_t attr);
 
 void *rt_kmem_v2p(void *vaddr);
+
+void rt_kmem_list(void);
 
 #endif /* __MM_ASPACE_H__ */

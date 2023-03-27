@@ -207,7 +207,7 @@ static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size,
 int lwp_unmap_user(struct rt_lwp *lwp, void *va)
 {
     int err;
-    err = rt_aspace_unmap(lwp->aspace, va, 1);
+    err = rt_aspace_unmap(lwp->aspace, va);
     return err;
 }
 

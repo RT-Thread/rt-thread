@@ -394,7 +394,7 @@ int _lwp_shmdt(void *shm_vaddr)
         return -1;
     }
 
-    ret = rt_aspace_unmap(lwp->aspace, shm_vaddr, 1);
+    ret = rt_aspace_unmap(lwp->aspace, shm_vaddr);
     if (ret != RT_EOK)
     {
         ret = -1;

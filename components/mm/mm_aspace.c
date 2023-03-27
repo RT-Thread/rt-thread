@@ -31,10 +31,10 @@
 #include <mmu.h>
 #include <tlb.h>
 
-static void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length);
 static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
                         void *limit_start, rt_size_t limit_size,
                         mm_flag_t flags);
+static void _varea_uninstall(rt_varea_t varea);
 
 struct rt_aspace rt_kernel_space;
 
@@ -102,8 +102,21 @@ rt_aspace_t rt_aspace_create(void *start, rt_size_t length, void *pgtbl)
 
 void rt_aspace_detach(rt_aspace_t aspace)
 {
-    /* TODO: using traverse to improve performance here */
-    _aspace_unmap(aspace, aspace->start, aspace->size);
+    WR_LOCK(aspace);
+    rt_varea_t varea = ASPACE_VAREA_FIRST(aspace);
+    while (varea)
+    {
+        rt_varea_t prev = varea;
+        _varea_uninstall(varea);
+
+        varea = ASPACE_VAREA_NEXT(varea);
+        if (!(prev->flag & MMF_STATIC_ALLOC))
+        {
+            rt_free(prev);
+        }
+    }
+    WR_UNLOCK(aspace);
+
     rt_mutex_detach(&aspace->bst_lock);
 }
 
@@ -247,7 +260,7 @@ static int _do_prefetch(rt_aspace_t aspace, rt_varea_t varea, void *start,
 }
 
 /* caller must hold the aspace lock */
-int _varea_install(rt_aspace_t aspace, rt_varea_t varea, rt_mm_va_hint_t hint)
+static int _varea_install(rt_aspace_t aspace, rt_varea_t varea, rt_mm_va_hint_t hint)
 {
     void *alloc_va;
     int err = RT_EOK;
@@ -294,7 +307,7 @@ static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
  * restore context modified by varea install
  * caller must NOT hold the aspace lock
  */
-static inline void _varea_uninstall(rt_varea_t varea)
+static void _varea_uninstall(rt_varea_t varea)
 {
     rt_aspace_t aspace = varea->aspace;
 
@@ -600,28 +613,25 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
     return err;
 }
 
-void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
+void _aspace_unmap(rt_aspace_t aspace, void *addr)
 {
-    struct _mm_range range = {addr, addr + length - 1};
-    rt_varea_t varea = _aspace_bst_search_overlap(aspace, range);
+    WR_LOCK(aspace);
+    rt_varea_t varea = _aspace_bst_search(aspace, addr);
+    WR_UNLOCK(aspace);
 
     if (varea == RT_NULL)
     {
-        LOG_I("%s: No such entry found at %p with %lx bytes\n", __func__, addr, length);
+        LOG_I("%s: No such entry found at %p\n", __func__, addr);
     }
 
-    while (varea)
+    _varea_uninstall(varea);
+    if (!(varea->flag & MMF_STATIC_ALLOC))
     {
-        _varea_uninstall(varea);
-        if (!(varea->flag & MMF_STATIC_ALLOC))
-        {
-            rt_free(varea);
-        }
-        varea = _aspace_bst_search_overlap(aspace, range);
+        rt_free(varea);
     }
 }
 
-int rt_aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
+int rt_aspace_unmap(rt_aspace_t aspace, void *addr)
 {
     if (!aspace)
     {
@@ -629,14 +639,14 @@ int rt_aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
         return -RT_EINVAL;
     }
 
-    if (_not_in_range(addr, length, aspace->start, aspace->size))
+    if (_not_in_range(addr, 1, aspace->start, aspace->size))
     {
         LOG_I("%s: %lx not in range of aspace[%lx:%lx]", __func__, addr,
               aspace->start, aspace->start + aspace->size);
         return -RT_EINVAL;
     }
 
-    _aspace_unmap(aspace, addr, length);
+    _aspace_unmap(aspace, addr);
 
     return RT_EOK;
 }
@@ -787,8 +797,12 @@ static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
 int rt_aspace_load_page(rt_aspace_t aspace, void *addr, rt_size_t npage)
 {
     int err = RT_EOK;
-    rt_varea_t varea = _aspace_bst_search(aspace, addr);
+    rt_varea_t varea;
     void *end = addr + (npage << ARCH_PAGE_SHIFT);
+
+    WR_LOCK(aspace);
+    varea = _aspace_bst_search(aspace, addr);
+    WR_UNLOCK(aspace);
 
     if (!varea)
     {
@@ -879,13 +893,22 @@ int rt_aspace_offload_page(rt_aspace_t aspace, void *addr, rt_size_t npage)
     return -RT_ENOSYS;
 }
 
-int mm_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd)
+int rt_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd)
 {
     int err;
-    rt_varea_t varea = _aspace_bst_search(aspace, addr);
+    rt_varea_t varea;
+
+    WR_LOCK(aspace);
+    varea = _aspace_bst_search(aspace, addr);
+    WR_UNLOCK(aspace);
+
     if (varea)
     {
         err = rt_hw_mmu_control(aspace, varea->start, varea->size, cmd);
+        if (err == RT_EOK)
+        {
+            rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
+        }
     }
     else
     {
@@ -898,12 +921,15 @@ int mm_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd)
 int rt_aspace_traversal(rt_aspace_t aspace,
                         int (*fn)(rt_varea_t varea, void *arg), void *arg)
 {
-    rt_varea_t varea = ASPACE_VAREA_FIRST(aspace);
+    rt_varea_t varea;
+    WR_LOCK(aspace);
+    varea = ASPACE_VAREA_FIRST(aspace);
     while (varea)
     {
         fn(varea, arg);
         varea = ASPACE_VAREA_NEXT(varea);
     }
+    WR_UNLOCK(aspace);
 
     return 0;
 }
