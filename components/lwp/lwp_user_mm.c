@@ -333,19 +333,45 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
     return ret;
 }
 
-rt_varea_t _lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size)
+static inline size_t _flags_to_attr(size_t flags)
+{
+    size_t attr;
+
+    if (flags & LWP_MAP_FLAG_NOCACHE)
+    {
+        attr = MMU_MAP_U_RW;
+    }
+    else
+    {
+        attr = MMU_MAP_U_RWCB;
+    }
+
+    return attr;
+}
+
+static inline mm_flag_t _flags_to_aspace_flag(size_t flags)
+{
+    mm_flag_t mm_flag = 0;
+
+    return mm_flag;
+}
+
+static rt_varea_t _lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size, size_t flags)
 {
     void *va = map_va;
     int ret = 0;
-    size_t flags = 0;
     rt_mem_obj_t mem_obj = &lwp->lwp_obj->mem_obj;
     rt_varea_t varea;
+    mm_flag_t mm_flags;
+    size_t attr;
 
     varea = rt_malloc(sizeof(*varea));
     if (varea)
     {
+        attr = _flags_to_attr(flags);
+        mm_flags = _flags_to_aspace_flag(flags);
         ret = rt_aspace_map_static(lwp->aspace, varea, &va, map_size,
-                                   MMU_MAP_U_RWCB, flags, mem_obj, 0);
+                                   attr, mm_flags, mem_obj, 0);
         /* let aspace handle the free of varea */
         varea->flag &= ~MMF_STATIC_ALLOC;
         /* don't apply auto fetch on this */
@@ -365,7 +391,7 @@ rt_varea_t _lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size
     return varea;
 }
 
-rt_varea_t lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size)
+static rt_varea_t _map_user_varea_ext(struct rt_lwp *lwp, void *map_va, size_t map_size, size_t flags)
 {
     rt_varea_t varea = RT_NULL;
     size_t offset = 0;
@@ -379,9 +405,19 @@ rt_varea_t lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size)
     map_size &= ~ARCH_PAGE_MASK;
     map_va = (void *)((size_t)map_va & ~ARCH_PAGE_MASK);
 
-    varea = _lwp_map_user_varea(lwp, map_va, map_size);
+    varea = _lwp_map_user_varea(lwp, map_va, map_size, flags);
 
     return varea;
+}
+
+rt_varea_t lwp_map_user_varea_ext(struct rt_lwp *lwp, void *map_va, size_t map_size, size_t flags)
+{
+    return _map_user_varea_ext(lwp, map_va, map_size, flags);
+}
+
+rt_varea_t lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size)
+{
+    return _map_user_varea_ext(lwp, map_va, map_size, LWP_MAP_FLAG_NONE);
 }
 
 void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa,
