@@ -14,13 +14,14 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <utest.h>
+
 #include <board.h>
 #include <rtthread.h>
 #include <rthw.h>
 #include <lwp_arch.h>
 #include <mmu.h>
 #include <tlb.h>
-#include <utest.h>
 
 #include <ioremap.h>
 #include <mm_aspace.h>
@@ -46,5 +47,19 @@ extern void rt_heap_unlock(rt_base_t level);
     uassert_true(used == useda);                    \
     uassert_true(max_used == max_useda);            \
     } while (0)
+
+static int memtest(volatile char *buf, int value, size_t buf_sz)
+{
+    int ret = 0;
+    for (size_t i = 0; i < buf_sz; i++)
+    {
+        if (buf[i] != value)
+        {
+            ret = -1;
+            break;
+        }
+    }
+    return ret;
+}
 
 #endif /* __TEST_MM_COMMON_H__ */

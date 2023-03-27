@@ -11,6 +11,9 @@
 #define __TEST_BST_ADPT_H__
 
 #include "common.h"
+#include "lwp_arch.h"
+
+#ifdef RT_USING_SMART
 #include "lwp_user_mm.h"
 #include "mm_aspace.h"
 #include "mm_flag.h"
@@ -20,7 +23,7 @@
 void test_bst_adpt(void)
 {
     size_t flags = MMF_MAP_FIXED;
-    void *target_va = (void *)0x80003000;
+    void *target_va = (void *)USER_VADDR_START + 0x3000;
     size_t map_size = 0x1000;
     void *prev_va = target_va - map_size;
     void *next_va = target_va + map_size + 1;
@@ -98,5 +101,7 @@ void test_bst_adpt(void)
 
     lwp_ref_dec(lwp);
 }
+
+#endif /* RT_USING_SMART */
 
 #endif /* __TEST_BST_ADPT_H__ */

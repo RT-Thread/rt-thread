@@ -11,7 +11,9 @@
 #define __TEST_ASPACE_API_INTERNAL_H__
 
 #include "common.h"
+#include "mmu.h"
 #include "test_bst_adpt.h"
+#include <stddef.h>
 
 /**
  * @brief 3 cases for find free:
@@ -42,16 +44,33 @@ static void test_find_free(void)
         uassert_true(!rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
         uassert_true(vaddr < top_page);
         uassert_true(!!vaddr);
-        rt_aspace_unmap(&rt_kernel_space, vaddr, 1);
+        rt_aspace_unmap(&rt_kernel_space, vaddr);
         /* type 2, on failure */
         vaddr = rt_kernel_space.start;
         uassert_true(-RT_ENOSPC == rt_aspace_map(&rt_kernel_space, &vaddr, rt_kernel_space.size - 0x40000000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
         uassert_true(!vaddr);
 
-        /* type 3 is covered by ioremap */
+        /* type 3, on success is covered by ioremap */
+        /* type 3, on failure */
+        size_t map_size = ARCH_PAGE_SIZE;
+        while (1)
+        {
+            void *va = rt_ioremap(0, map_size);
+            if (va)
+            {
+                uassert_true(1);
+                rt_iounmap(va);
+                map_size <<= 1;
+            }
+            else
+            {
+                uassert_true(1);
+                break;
+            }
+        }
 
         /* free top page */
-        rt_aspace_unmap(&rt_kernel_space, top_page, 1);
+        rt_aspace_unmap(&rt_kernel_space, top_page);
     });
 
     /* test mm_private.h */

@@ -16,10 +16,10 @@
 #ifdef RT_USING_SMP
 
 #define THREAD_CNT RT_CPUS_NR
-#define TEST_TIMES 100
+#define TEST_TIMES 2000
 #define PRIO (UTEST_THR_PRIORITY + 1)
 /* size of mapping buffer */
-#define BUF_SIZE (2ul << 20)
+#define BUF_SIZE (64ul << 10)
 
 /* engage with sibling */
 struct rt_semaphore done;
@@ -43,25 +43,10 @@ static void unmap(void *buf)
 {
     int err;
     err =
-        rt_aspace_unmap(&rt_kernel_space, buf, 1);
+        rt_aspace_unmap(&rt_kernel_space, buf);
     if (err)
         uassert_true(0);
     return ;
-}
-
-static int memtest(char *buf, int value)
-{
-    int ret = 0;
-    for (size_t i = 0; i < BUF_SIZE; i++)
-    {
-        if (buf[i] != value)
-        {
-            ret = -1;
-            uassert_true(0);
-            break;
-        }
-    }
-    return ret;
 }
 
 static void group1_entry(void *param)
@@ -78,9 +63,12 @@ static void group1_entry(void *param)
 
         buf = map();
 
-        memset(buf, 'a' + id, BUF_SIZE);
+        memset(buf, 'A' + id, BUF_SIZE);
+        /* if other core write to our cache, force the changes to be visible to us */
         rt_hw_dmb();
-        memtest(buf, 'a' + id);
+
+        if (memtest(buf, 'A' + id, BUF_SIZE))
+            uassert_true(0);
 
         semaphore_signal(&sem1[id]);
         semaphore_wait(&sem2[id]);
@@ -108,8 +96,11 @@ static void group2_entry(void *param)
         buf = map();
 
         memset(buf, 'a' + id, BUF_SIZE);
+        /* if other core write to our cache, force the changes to be visible to us */
         rt_hw_dmb();
-        memtest(buf, 'a' + id);
+
+        if (memtest(buf, 'a' + id, BUF_SIZE))
+            uassert_true(0);
 
         unmap(buf);
     }
@@ -153,7 +144,7 @@ static void synchronization_tc(void)
 
         uassert_true(!rt_thread_startup(group2[i]));
     }
-    
+
     /* wait all thread exit */
     for (size_t i = 0; i < (THREAD_CNT / 2 * 2); i++)
     {
@@ -163,6 +154,12 @@ static void synchronization_tc(void)
     rt_sem_detach(&done);
 }
 
+#else /* RT_USING_SMP */
+
+static void synchronization_tc(void)
+{
+    uassert_true(1);
+}
 #endif /* RT_USING_SMP */
 
 #endif /* __TEST_SYNCHRONIZATION_H__ */

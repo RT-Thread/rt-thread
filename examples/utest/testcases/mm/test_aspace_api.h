@@ -11,6 +11,7 @@
 #define __TEST_ASPACE_API_H__
 
 #include "common.h"
+#include "lwp_arch.h"
 #include "test_aspace_api_internal.h"
 #include "test_synchronization.h"
 
@@ -34,6 +35,19 @@ static void aspace_create_tc(void)
     uassert_true(!aspace);
 }
 
+#if 1 /* make it clear to identify the block :) */
+    /* for testing on _aspace_traverse */
+    static void *_prev_end;
+    static size_t _count;
+    static int _test_increase(rt_varea_t varea, void *param)
+    {
+        uassert_true(varea->start >= _prev_end);
+        _prev_end = varea->start + varea->size;
+        _count += 1;
+        return 0;
+    }
+#endif
+
 static void aspace_delete_tc(void)
 {
     /**
@@ -49,8 +63,10 @@ static void aspace_delete_tc(void)
     void *pgtbl;
     void *vaddr;
 
-    pgtbl = rt_pages_alloc(0);
+    /* compatible to armv7a */
+    pgtbl = rt_pages_alloc(2);
     uassert_true(!!pgtbl);  /* page must be usable */
+    rt_memset(pgtbl, 0, ARCH_PAGE_SIZE);
 
     CONSIST_HEAP({
         aspace = rt_aspace_create((void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, pgtbl);
@@ -63,9 +79,17 @@ static void aspace_delete_tc(void)
         uassert_true(!rt_aspace_map_phy_static(aspace, &varea_phy, &hint, MMU_MAP_K_RWCB, 0, &vaddr));
         uassert_true(!rt_aspace_map(aspace, &vaddr, 0x1000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
         uassert_true(!rt_aspace_map_static(aspace, &varea_mobj, &vaddr, 0x1000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
+
+        /* for testing on _aspace_traverse */
+        _count = 0;
+        _prev_end = 0;
+        uassert_true(!rt_aspace_traversal(aspace, _test_increase, 0));
+        /* ensure the mapping is done */
+        uassert_true(_count == 4);
+
         rt_aspace_delete(aspace);
 
-        uassert_true(rt_pages_free(pgtbl, 0) == 1); /* page free must success */
+        uassert_true(rt_pages_free(pgtbl, 2) == 1); /* page free must success */
     });
 }
 
@@ -83,15 +107,15 @@ static void aspace_map_tc(void)
      * @brief Requirement:
      * Robustness, filter out invalid input
      */
-    void *vaddr;
+    void *vaddr = RT_NULL;
     uassert_true(rt_aspace_map(0, &vaddr, 0x1000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
     uassert_true(vaddr == RT_NULL);
 
-    vaddr = (void *)0x100000;
+    vaddr = (void *)USER_VADDR_START;
     uassert_true(rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
     uassert_true(vaddr == RT_NULL);
 
-    uassert_true(rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, 0x01000000, &rt_mm_dummy_mapper, 0));
+    uassert_true(rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, -1, &rt_mm_dummy_mapper, 0));
     uassert_true(vaddr == RT_NULL);
 
     /**
@@ -115,7 +139,7 @@ static void aspace_map_tc(void)
     CONSIST_HEAP({
         uassert_true(!rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, MMF_CREATE(0, ALIGN_REQ), &rt_mm_dummy_mapper, 0));
         uassert_true(!((rt_ubase_t)vaddr & (ALIGN_REQ - 1)));
-        rt_aspace_unmap(&rt_kernel_space, vaddr, 1);
+        rt_aspace_unmap(&rt_kernel_space, vaddr);
     });
 
     /* test internal APIs */
@@ -125,10 +149,121 @@ static void aspace_map_tc(void)
 /**
  * @brief Page frames mapping to varea
  * complete the page table on specified varea, and handle tlb maintenance
+ * There are 2 variants of this API
+ *
+ * int rt_varea_map_page(rt_varea_t varea, void *vaddr, void *page);
+ * int rt_varea_map_range(rt_varea_t varea, void *vaddr, void *paddr, rt_size_t length);
  */
+
+static rt_varea_t _create_varea(const size_t size)
+{
+    rt_varea_t varea;
+    void *vaddr = RT_NULL;
+
+    varea = rt_malloc(sizeof(*varea));
+    uassert_true(!!varea);
+    uassert_true(!rt_aspace_map_static(&rt_kernel_space, varea, &vaddr, size, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
+    varea->flag &= ~MMF_STATIC_ALLOC;
+    uassert_true(!!vaddr);
+    return varea;
+}
+
+static void test_varea_map_page(void)
+{
+    /**
+     * @brief rt_varea_map_page
+     * Requirements: complete the page table entry
+     */
+    const size_t buf_sz = 4 * ARCH_PAGE_SIZE;
+    rt_varea_t varea = _create_varea(buf_sz);
+    for (size_t i = 0; i < buf_sz; i += ARCH_PAGE_SIZE)
+    {
+        void *page = rt_pages_alloc(0);
+        uassert_true(!!page);
+        uassert_true(!rt_varea_map_page(varea, varea->start + i, page));
+
+        /* let page manager handle the free of page */
+        rt_varea_pgmgr_insert(varea, page);
+        uassert_true(rt_kmem_v2p(varea->start + i) == (page + PV_OFFSET));
+    }
+
+    uassert_true(!rt_aspace_unmap(&rt_kernel_space, varea->start));
+}
+
+static void test_varea_map_range(void)
+{
+    /**
+     * @brief rt_varea_map_range
+     * Requirements: complete the page table entry
+     */
+    const size_t buf_sz = 4 * ARCH_PAGE_SIZE;
+    rt_varea_t varea = _create_varea(buf_sz);
+    void *page = rt_pages_alloc(rt_page_bits(buf_sz));
+    uassert_true(!!page);
+    uassert_true(!rt_varea_map_range(varea, varea->start, page + PV_OFFSET, buf_sz));
+    for (size_t i = 0; i < buf_sz; i += ARCH_PAGE_SIZE)
+    {
+        uassert_true(rt_kmem_v2p(varea->start + i) == (page + i + PV_OFFSET));
+    }
+
+    uassert_true(rt_pages_free(page, rt_page_bits(buf_sz)));
+    uassert_true(!rt_aspace_unmap(&rt_kernel_space, varea->start));
+}
+
 static void varea_map_tc(void)
 {
-    ;
+    CONSIST_HEAP(test_varea_map_page());
+    CONSIST_HEAP(test_varea_map_range());
+}
+
+static void aspace_traversal_tc(void)
+{
+    /**
+     * @brief Requirement
+     * Iterate over each varea in the kernel space
+     */
+    CONSIST_HEAP(aspace_delete_tc());
+    uassert_true(4 == _count);
+}
+
+static void aspace_control_tc(void)
+{
+    /* this case is designed only for one page size */
+    const size_t buf_sz = ARCH_PAGE_SIZE;
+    void *vaddr = RT_NULL;
+    volatile char *remap_nocache;
+    int platform_cache_probe;
+    uassert_true(!rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, MMF_PREFETCH, &rt_mm_dummy_mapper, 0));
+    uassert_true(!!vaddr);
+
+    /* map non-cacheable region to verify cache */
+    remap_nocache = rt_ioremap(rt_kmem_v2p(vaddr), buf_sz);
+    uassert_true(!!remap_nocache);
+
+    /* pre probing */
+    rt_memset(vaddr, 0xba, buf_sz);
+    /* no need to sync transaction on same core */
+    platform_cache_probe = memtest(remap_nocache, 0xab, buf_sz);
+
+    if (!platform_cache_probe)
+    {
+        LOG_I("Cannot distinguish cache attribution on current platform");
+    }
+    else
+    {
+        LOG_I("Ready to verify attribution of cached & non-cacheable");
+    }
+
+    /* verify cache */
+    uassert_true(!rt_aspace_control(&rt_kernel_space, vaddr, MMU_CNTL_NONCACHE));
+    rt_memset(vaddr, 0, buf_sz);
+    uassert_true(!memtest(remap_nocache, 0, buf_sz));
+
+    /* another option as MMU_CNTL_CACHE */
+    uassert_true(!rt_aspace_control(&rt_kernel_space, vaddr, MMU_CNTL_CACHE));
+
+    rt_iounmap(remap_nocache);
+    uassert_true(!rt_aspace_unmap(&rt_kernel_space, vaddr));
 }
 
 static void aspace_tc(void)
@@ -136,7 +271,11 @@ static void aspace_tc(void)
     UTEST_UNIT_RUN(aspace_create_tc);
     UTEST_UNIT_RUN(aspace_delete_tc);
     UTEST_UNIT_RUN(aspace_map_tc);
+    UTEST_UNIT_RUN(aspace_traversal_tc);
+    UTEST_UNIT_RUN(aspace_control_tc);
     UTEST_UNIT_RUN(varea_map_tc);
+
+    /* functionality */
     UTEST_UNIT_RUN(synchronization_tc);
     return ;
 }

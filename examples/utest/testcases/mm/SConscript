@@ -6,7 +6,10 @@ src     = []
 CPPPATH = [cwd]
 
 if GetDepend(['UTEST_MM_API_TC']):
-    src += ['mm_api_tc.c']
+    src += ['mm_api_tc.c', 'mm_libcpu_tc.c']
+
+if GetDepend(['UTEST_MM_LWP_TC']):
+    src += ['mm_lwp_tc.c']
 
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
 
