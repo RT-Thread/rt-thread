@@ -20,7 +20,7 @@ static struct esp32_i2c i2c0 = {0};
 static rt_size_t _master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     i2c_cmd_handle_t cmd;//创建流程
-    rt_size_t ret = (0);   
+    rt_size_t ret = (0);
     rt_uint32_t index = 0;
     // struct esp32_i2c *esp32_i2c = RT_NULL;
     struct rt_i2c_msg *msg = RT_NULL;
@@ -32,14 +32,14 @@ static rt_size_t _master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
     // esp32_i2c = (struct esp32_i2c *)bus;
 
     for(index = 0; index < num; index++)
-    {          
+    {
         msg = &msgs[index];
         direction = ((msg->flags & RT_I2C_RD) ? I2C_MASTER_READ : I2C_MASTER_WRITE);
 
         if (!(msg->flags & RT_I2C_NO_START))
         {
-            /* Start condition and slave address. */ 
-            cmd = i2c_cmd_link_create();//创建流程           
+            /* Start condition and slave address. */
+            cmd = i2c_cmd_link_create();//创建流程
             i2c_master_start(cmd);//启动流程录入
             result = i2c_master_write_byte(cmd, msg->addr << 1 | WRITE_BIT, ACK_CHECK_EN);//发送起始信号和从设备地址
             i2c_master_stop(cmd);//流程录入完毕
@@ -53,7 +53,7 @@ static rt_size_t _master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
             if (direction == I2C_MASTER_WRITE)
             {
                 /* Transmit data. */
-                cmd = i2c_cmd_link_create();//创建流程 
+                cmd = i2c_cmd_link_create();//创建流程
                 i2c_master_start(cmd);//启动流程录入
                 result = i2c_master_write_byte(cmd, msg->buf, ACK_CHECK_EN);
                 i2c_master_stop(cmd);//流程录入完毕
@@ -63,7 +63,7 @@ static rt_size_t _master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg m
             else
             {
                 /* Receive Data. */
-                cmd = i2c_cmd_link_create();//创建流程 
+                cmd = i2c_cmd_link_create();//创建流程
                 i2c_master_start(cmd);//启动流程录入
                 result = i2c_master_read_byte(cmd, msg->buf, ACK_VAL);
                 i2c_master_stop(cmd);//流程录入完毕
@@ -99,8 +99,7 @@ static const struct rt_i2c_bus_device_ops i2c_ops =
 };
 
 int rt_hw_i2c_init(void)
-{   
-
+{
     i2c0.base = &i2c0;
     i2c0.device_name = "i2c0";
     i2c0.bus.ops = &i2c_ops;
