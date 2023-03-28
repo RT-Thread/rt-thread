@@ -1329,6 +1329,7 @@ char **__environ = 0;
 
 pid_t exec(char *filename, int debug, int argc, char **argv)
 {
+    setenv("OS", "RT-Thread", 1);
     return lwp_execve(filename, debug, argc, argv, __environ);
 }
 
