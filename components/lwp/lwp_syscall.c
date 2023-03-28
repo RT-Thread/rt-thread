@@ -4584,7 +4584,7 @@ sysret_t sys_uname(struct utsname *uts)
 {
     struct utsname utsbuff = {0};
     int ret = 0;
-    char *machine;
+    const char *machine;
 
     if (!lwp_user_accessable((void *)uts, sizeof(struct utsname)))
     {
