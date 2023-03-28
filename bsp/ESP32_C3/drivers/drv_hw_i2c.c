@@ -7,6 +7,7 @@
  * Date           Author       Notes
  *2023-03-28      Zxy          first version
  */
+#ifdef RT_USING_I2C
 #include "drv_hw_i2c.h"
 #include "driver/i2c.h"//bsp/ESP32_C3/packages/ESP-IDF-latest/components/driver/include/driver/i2c.h
 #include "hal/i2c_types.h"//bsp/ESP32_C3/packages/ESP-IDF-latest/tools/mocks/hal/include/hal/i2c_types.h
@@ -129,3 +130,4 @@ int rt_hw_i2c_init(void)
     return RT_EOK;
 }
 INIT_BOARD_EXPORT(rt_hw_i2c_init);
+#endif /* RT_USING_I2C */
