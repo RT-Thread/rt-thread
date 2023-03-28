@@ -48,7 +48,7 @@ extern void rt_heap_unlock(rt_base_t level);
     uassert_true(max_used == max_useda);            \
     } while (0)
 
-static int memtest(volatile char *buf, int value, size_t buf_sz)
+rt_inline int memtest(volatile char *buf, int value, size_t buf_sz)
 {
     int ret = 0;
     for (size_t i = 0; i < buf_sz; i++)

@@ -26,12 +26,17 @@ const char *platform_cache_not_guarantee = "Cannot guarantee cache operation wor
  * ==============================================================
  */
 
-int _get1(void)
+static int _get1_const(void)
 {
     return 1;
 }
 
-int _get2(void)
+static int _get1(void)
+{
+    return 1;
+}
+
+static int _get2(void)
 {
     return 2;
 }
@@ -39,12 +44,20 @@ int _get2(void)
 /* hot patching codes and test if the value can be seen by icache */
 static void _test_icache_invalidate_range(void)
 {
+    /* reset _get1 */
+    rt_memcpy(_get1, _get1_const, _get2 - _get1);
+    rt_hw_cpu_dcache_clean(_get1, _get2 - _get1);
+    rt_hw_cpu_icache_invalidate(_get1, _get2 - _get1);
     uassert_true(1 == _get1());
+
+    /* now copy _get2 to _get1 */
     rt_memcpy(_get1, _get2, _get2 - _get1);
     if (1 != _get1())
         LOG_W(platform_cache_not_guarantee);
 
+    rt_hw_cpu_dcache_clean(_get1, _get2 - _get1);
     rt_hw_cpu_icache_invalidate(_get1, _get2 - _get1);
+    __asm__ volatile("isb");
     uassert_true(2 == _get1());
     LOG_I("%s ok", __func__);
 }

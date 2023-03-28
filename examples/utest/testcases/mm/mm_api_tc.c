@@ -51,7 +51,7 @@ void ioremap_tc(void)
     const size_t bufsz = 0x1000;
     void *paddr = (void *)rt_pages_alloc(rt_page_bits(bufsz)) + PV_OFFSET;
     int *vaddr;
-    vaddr = rt_ioremap(paddr, bufsz);
+    vaddr = rt_ioremap_cached(paddr, bufsz);
     if (vaddr)
     {
         TC_ASSERT(*vaddr == *(int *)(paddr - PV_OFFSET));
