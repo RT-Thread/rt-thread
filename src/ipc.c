@@ -540,7 +540,7 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
             thread = rt_thread_self();
 
             /* reset thread error number */
-            thread->error = -RT_EINTR;
+            thread->error = RT_EOK;
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("sem take: suspend thread - %s\n",
                                         thread->name));
@@ -1913,7 +1913,7 @@ static rt_err_t _rt_event_recv(rt_event_t   event,
     /* get current thread */
     thread = rt_thread_self();
     /* reset thread error */
-    thread->error = -RT_EINTR;
+    thread->error = RT_EOK;
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(event->parent.parent)));
 
@@ -2388,7 +2388,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     while (mb->entry == mb->size)
     {
         /* reset error number in thread */
-        thread->error = -RT_EINTR;
+        thread->error = RT_EOK;
 
         /* no waiting, return timeout */
         if (timeout == 0)
@@ -2681,7 +2681,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
     while (mb->entry == 0)
     {
         /* reset error number in thread */
-        thread->error = -RT_EINTR;
+        thread->error = RT_EOK;
 
         /* no waiting, return timeout */
         if (timeout == 0)
@@ -3230,7 +3230,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     while ((msg = (struct rt_mq_message *)mq->msg_queue_free) == RT_NULL)
     {
         /* reset error number in thread */
-        thread->error = -RT_EINTR;
+        thread->error = RT_EOK;
 
         /* no waiting, return timeout */
         if (timeout == 0)
@@ -3583,7 +3583,7 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
     while (mq->entry == 0)
     {
         /* reset error number in thread */
-        thread->error = -RT_EINTR;
+        thread->error = RT_EOK;
 
         /* no waiting, return timeout */
         if (timeout == 0)

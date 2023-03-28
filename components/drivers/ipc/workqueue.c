@@ -81,6 +81,8 @@ static void _workqueue_thread_entry(void *parameter)
 
         /* do work */
         work->work_func(work, work->work_data);
+
+        RT_ASSERT(rt_thread_self()->error == RT_EOK);
         /* clean current work */
         queue->work_current = RT_NULL;
 
@@ -112,6 +114,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         {
             /* resume work thread */
             rt_thread_resume(queue->work_thread);
+            queue->work_thread->error = RT_EOK;
             rt_hw_interrupt_enable(level);
             rt_schedule();
         }
@@ -194,6 +197,7 @@ static void _delayed_work_timeout_handler(void *parameter)
     {
         /* resume work thread */
         rt_thread_resume(queue->work_thread);
+        queue->work_thread->error = RT_EOK;
         rt_hw_interrupt_enable(level);
         rt_schedule();
     }
@@ -352,6 +356,7 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
     {
         /* resume work thread */
         rt_thread_resume(queue->work_thread);
+        queue->work_thread->error = RT_EOK;
         rt_hw_interrupt_enable(level);
         rt_schedule();
     }
