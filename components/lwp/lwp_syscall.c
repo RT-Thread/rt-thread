@@ -4157,7 +4157,7 @@ sysret_t sys_getrandom(void *buf, size_t buflen, unsigned int flags)
 ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
 {
     size_t len, copy_len;
-    int err;
+    int err, rtn;
     int fd = -1;
     struct dfs_fd *d;
     char *copy_path;
@@ -4184,12 +4184,25 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
 
     /* musl __procfdname */
     err = sscanf(copy_path, "/proc/self/fd/%d", &fd);
-    rt_free(copy_path);
 
     if (err != 1)
     {
-        LOG_E("readlink: path not is /proc/self/fd/* , call by musl __procfdname()?");
-        return -EINVAL;
+        rtn = 0;
+        if (access(copy_path, 0))
+        {
+            rtn = -ENOENT;
+            LOG_E("readlink: path not is /proc/self/fd/* and path not exits, call by musl __procfdname()?");
+        }
+        else
+        {
+            rtn = lwp_put_to_user(buf, copy_path, copy_len);
+        }
+        rt_free(copy_path);
+        return rtn;
+    }
+    else
+    {
+        rt_free(copy_path);
     }
 
     d = fd_get(fd);
