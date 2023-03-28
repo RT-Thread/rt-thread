@@ -69,7 +69,7 @@ int usleep(useconds_t usec)
     }
     else  /* scheduler has not run yet */
     {
-        udelay(usec / 1000u * 1000u);
+        udelay(usec / 1000u);
     }
     udelay(usec % 1000u);
 
