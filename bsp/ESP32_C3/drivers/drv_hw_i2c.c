@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ *2023-03-28      Zxy          first version
+ */
 #include "drv_hw_i2c.h"
 #include "driver/i2c.h"//bsp/ESP32_C3/packages/ESP-IDF-latest/components/driver/include/driver/i2c.h
 #include "hal/i2c_types.h"//bsp/ESP32_C3/packages/ESP-IDF-latest/tools/mocks/hal/include/hal/i2c_types.h

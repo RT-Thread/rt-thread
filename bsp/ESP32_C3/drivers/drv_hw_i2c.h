@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ *2023-03-28      Zxy          first version
+ */
 #ifndef __DRV_HW_I2C_H__
 #define __DRV_HW_I2C_H__
 

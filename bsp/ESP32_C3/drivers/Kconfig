@@ -67,7 +67,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_I2C0
         bool "Enable I2C0"
         select RT_USING_I2C
-        default y        
+        default n        
 endmenu
 
 endmenu
