@@ -1,6 +1,6 @@
 
 config SOC_ESPRESSIF
-    bool
+    bool 
 
 config SOC_ESP32_C3
     bool
@@ -24,7 +24,7 @@ choice
         bool "LUATOS ESP32C3 board"
 
     config BSP_BOARD_HX_EXP32C3
-        bool "HONGXU ESP32C3 board"
+        bool "HONGXU ESP32C3 board"    
 endchoice
 
 menu "Onboard Peripheral Drivers"
@@ -57,12 +57,17 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-
+    
     config BSP_USING_UART
-        bool "Enable UART"
+		bool "Enable UART"
         select RT_USING_SERIAL
         select RT_USING_SERIAL_V1
         default y
+
+    config BSP_USING_I2C0
+        bool "Enable I2C0"
+        select RT_USING_I2C
+        default n        
 endmenu
 
 endmenu
