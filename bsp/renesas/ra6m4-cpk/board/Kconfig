@@ -337,6 +337,12 @@ menu "Hardware Drivers Config"
                 config BSP_USING_SCI_SPI0
                     bool "Enable SCI SPI0 BUS"
                     default n
+                config BSP_USING_SCI_SPI1
+                    bool "Enable SCI SPI1 BUS"
+                    default n
+                config BSP_USING_SCI_SPI2
+                    bool "Enable SCI SPI2 BUS"
+                    default n
                 config BSP_USING_SCI_SPI3
                     bool "Enable SCI SPI3 BUS"
                     default n
