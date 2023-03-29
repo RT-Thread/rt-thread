@@ -29,6 +29,16 @@ int dfs_device_fs_mount(struct dfs_filesystem *fs, unsigned long rwflag, const v
     return RT_EOK;
 }
 
+int dfs_device_fs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
+{
+    buf->f_bsize  = 512;
+    buf->f_blocks = 2048 * 64; // 64M
+    buf->f_bfree  = buf->f_blocks;
+    buf->f_bavail = buf->f_bfree;
+
+    return RT_EOK;
+}
+
 int dfs_device_fs_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
     rt_err_t result;
@@ -382,7 +392,7 @@ static const struct dfs_filesystem_ops _device_fs =
     dfs_device_fs_mount,
     RT_NULL, /*unmount*/
     RT_NULL, /*mkfs*/
-    RT_NULL, /*statfs*/
+    dfs_device_fs_statfs,
     dfs_device_fs_unlink,
     dfs_device_fs_stat,
     RT_NULL, /*rename*/
