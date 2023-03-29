@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,11 +7,8 @@
  * Date           Author         Notes
  * 2020-10-26     bigmagic       first version
  */
-
 #include <rthw.h>
 #include "drv_wdt.h"
-#include "drv_gpio.h"
-#include "mbox.h"
 #include "raspi4.h"
 
 #ifdef BSP_USING_WDT
@@ -62,26 +59,22 @@ rt_uint64_t raspi_watchdog_get_timeleft()
 
 static rt_err_t raspi_wdg_init(rt_watchdog_t *wdt)
 {
-    /* init for 10S */
+    /*init for 10S*/
     raspi_watchdog_init(1000000);
     raspi_watchdog_start();
     raspi_watchdog_stop();
-
     return RT_EOK;
 }
 
 static rt_err_t raspi_wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
-    rt_uint64_t timeout_us = 0;
-
+    rt_uint64_t  timeout_us = 0;
     switch (cmd)
     {
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
         timeout_us = *((rt_uint32_t *)arg) * 1000000;
         if (timeout_us >= 0xFFFFFFFF)
-        {
             timeout_us = 0xFFFFFFFF;
-        }
         raspi_watchdog_set_timeout((rt_uint32_t)timeout_us);
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
@@ -102,9 +95,8 @@ static rt_err_t raspi_wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
         raspi_watchdog_stop();
         break;
     default:
-        return -RT_EIO;
+        return RT_EIO;
     }
-
     return RT_EOK;
 }
 
@@ -124,48 +116,6 @@ int rt_hw_wdt_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_wdt_init);
 
-void poweroff(void)
-{
-    unsigned long r;
-
-    rt_kprintf("poweroff...\n");
-
-    /* power off devices one by one */
-    for (r = 0; r < 16; ++r)
-    {
-        bcm271x_mbox_poweroff_devices(r);
-    }
-
-    /* power off gpio pins (but not VCC pins) */
-    GPIO_REG_GPFSEL0(GPIO_BASE) = 0;
-    GPIO_REG_GPFSEL1(GPIO_BASE) = 0;
-    GPIO_REG_GPFSEL2(GPIO_BASE) = 0;
-    GPIO_REG_GPFSEL3(GPIO_BASE) = 0;
-    GPIO_REG_GPFSEL4(GPIO_BASE) = 0;
-    GPIO_REG_GPFSEL5(GPIO_BASE) = 0;
-    GPIO_REG_GPPUD(GPIO_BASE) = 0;
-    rt_thread_mdelay(150);
-
-    GPIO_REG_GPPUDCLK0(GPIO_BASE) = 0xffffffff;
-    GPIO_REG_GPPUDCLK1(GPIO_BASE) = 0xffffffff;
-    rt_thread_mdelay(150);
-
-    /* flush GPIO setup */
-    GPIO_REG_GPPUDCLK0(GPIO_BASE) = 0;
-    GPIO_REG_GPPUDCLK1(GPIO_BASE) = 0;
-
-    /* power off the SoC (GPU + CPU), partition 63 used to indicate halt */
-    r = PM_RSTS;
-    r &= ~0xfffffaaa;
-    r |= 0x555;
-    PM_RSTS |= PM_PASSWORD | r;
-    PM_WDOG |= PM_PASSWORD | 0x0A;
-    PM_RSTC |= PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET;
-
-    while (1) {};
-}
-MSH_CMD_EXPORT(poweroff, poweroff...);
-
 void reboot(void)
 {
     unsigned int r;
@@ -173,13 +123,13 @@ void reboot(void)
     rt_kprintf("reboot system...\n");
     rt_thread_mdelay(100);
     r = PM_RSTS;
-    /* trigger a restart by instructing the GPU to boot from partition 0 */
+    // trigger a restart by instructing the GPU to boot from partition 0
     r &= ~0xfffffaaa;
-    PM_RSTS |= (PM_PASSWORD | r);   /* boot from partition 0 */
+    PM_RSTS |= (PM_PASSWORD | r);   // boot from partition 0
     PM_WDOG |= (PM_PASSWORD | 0x0A);
     PM_RSTC |= (PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
-
-    while (1) {};
+    
+    while (1);
 }
-MSH_CMD_EXPORT(reboot, reboot system...);
+MSH_CMD_EXPORT(reboot,reboot system...);
 #endif /*BSP_USING_WDT */

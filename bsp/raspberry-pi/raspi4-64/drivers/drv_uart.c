@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author         Notes
  * 2020-04-16     bigmagic       first version
+ * 2020-05-26     bigmagic       add other uart
  */
 
 #include <rthw.h>
@@ -15,12 +16,12 @@
 #include "board.h"
 #include "drv_uart.h"
 #include "drv_gpio.h"
+#include <mmu.h>
 
-struct hw_uart_device
-{
-    rt_ubase_t hw_base;
-    rt_uint32_t irqno;
-};
+size_t uart0_addr = 0;
+size_t uart3_addr = 0;
+size_t uart4_addr = 0;
+size_t uart5_addr = 0;
 
 #ifdef RT_USING_UART0
 static struct rt_serial_device _serial0;
@@ -41,6 +42,12 @@ static struct rt_serial_device _serial4;
 #ifdef RT_USING_UART5
 static struct rt_serial_device _serial5;
 #endif
+
+struct hw_uart_device
+{
+    rt_ubase_t hw_base;
+    rt_uint32_t irqno;
+};
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -67,25 +74,25 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
         return RT_EOK;
     }
 
-    if(uart->hw_base == UART0_BASE)
+    if(uart->hw_base == uart0_addr)
     {
         prev_raspi_pin_mode(GPIO_PIN_14, ALT0);
         prev_raspi_pin_mode(GPIO_PIN_15, ALT0);
     }
 
-    if(uart->hw_base == UART3_BASE)
+    if(uart->hw_base == uart3_addr)
     {
         prev_raspi_pin_mode(GPIO_PIN_4, ALT4);
         prev_raspi_pin_mode(GPIO_PIN_5, ALT4);
     }
 
-    if(uart->hw_base == UART4_BASE)
+    if(uart->hw_base == uart4_addr)
     {
         prev_raspi_pin_mode(GPIO_PIN_8, ALT4);
         prev_raspi_pin_mode(GPIO_PIN_9, ALT4);
     }
 
-    if(uart->hw_base == UART5_BASE)
+    if(uart->hw_base == uart5_addr)
     {
         prev_raspi_pin_mode(GPIO_PIN_12, ALT4);
         prev_raspi_pin_mode(GPIO_PIN_13, ALT4);
@@ -107,13 +114,9 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
-
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        /* disable rx irq */
-        PL011_REG_IMSC(uart->hw_base) &= ~((uint32_t)PL011_IMSC_RXIM);
-        rt_hw_interrupt_mask(uart->irqno);
         break;
 
     case RT_DEVICE_CTRL_SET_INT:
@@ -129,17 +132,14 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
         rt_hw_interrupt_umask(uart->irqno);
         break;
     }
-
     return RT_EOK;
 }
 
 static int uart_putc(struct rt_serial_device *serial, char c)
 {
     struct hw_uart_device *uart;
-
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
-
     if(uart->hw_base == AUX_BASE)
     {
         while (!(AUX_MU_LSR_REG(uart->hw_base) & 0x20));
@@ -150,7 +150,6 @@ static int uart_putc(struct rt_serial_device *serial, char c)
         while ((PL011_REG_FR(uart->hw_base) & PL011_FR_TXFF));
         PL011_REG_DR(uart->hw_base) = (uint8_t)c;
     }
-
     return 1;
 }
 
@@ -188,10 +187,50 @@ static const struct rt_uart_ops _uart_ops =
     uart_getc,
 };
 
+void *earlycon_base = (void *)AUX_BASE;
+size_t earlycon_size = 0x1000;
+
+extern void early_putc(int c)
+{
+    if (c == '\n')
+    {
+        early_putc('\r');
+    }
+    while (!(AUX_MU_LSR_REG(earlycon_base) & 0x20));
+    AUX_MU_IO_REG(earlycon_base) = c;
+}
+
+void rt_hw_console_output(const char *str)
+{
+    if (earlycon_base)
+    {
+        while (*str)
+        {
+            early_putc(*str++);
+        }
+    }
+}
+
+void early_printhex(rt_ubase_t number)
+{
+    char str[sizeof("0123456789abcdef")];
+
+    str[16] = 0;
+
+    for (int i = 15; i >= 0; --i)
+    {
+        str[i] = "0123456789abcdef"[(number & 0xf)];
+
+        number >>= 4;
+    }
+
+    rt_kputs(str);
+}
+
 #ifdef RT_USING_UART1
 static void rt_hw_aux_uart_isr(int irqno, void *param)
 {
-    struct rt_serial_device *serial = (struct rt_serial_device*)param;
+    struct rt_serial_device *serial = (struct rt_serial_device*)param; 
     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 }
 #endif
@@ -200,10 +239,10 @@ static void rt_hw_uart_isr(int irqno, void *param)
 {
 #ifdef RT_USING_UART0
     if((PACTL_CS & IRQ_UART0) == IRQ_UART0)
-    {
+    {   
         PACTL_CS &=  ~(IRQ_UART0);
         rt_hw_serial_isr(&_serial0, RT_SERIAL_EVENT_RX_IND);
-        PL011_REG_ICR(UART0_BASE) = PL011_INTERRUPT_RECEIVE;
+        PL011_REG_ICR(uart0_addr) = PL011_INTERRUPT_RECEIVE;
     }
 #endif
 
@@ -277,8 +316,6 @@ static struct hw_uart_device _uart5_device =
 };
 #endif
 
-static struct rt_serial_device _serial0;
-
 int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
@@ -289,15 +326,20 @@ int rt_hw_uart_init(void)
     _serial0.ops    = &_uart_ops;
     _serial0.config = config;
 
-    uart0->hw_base = UART0_BASE;
+    uart0_addr = UART0_BASE;
+#ifdef RT_USING_SMART
+    uart0_addr = (size_t)rt_ioremap((void*)UART0_BASE, 0x1000);
+#endif
+    earlycon_base = (void *)uart0_addr;
+    uart0->hw_base = uart0_addr;
 
-
+    
     /* register UART0 device */
     rt_hw_serial_register(&_serial0, "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart0);
     rt_hw_interrupt_install(uart0->irqno, rt_hw_uart_isr, &_serial0, "uart0");
-
+    
 #endif
 
 #ifdef RT_USING_UART1
@@ -306,8 +348,8 @@ int rt_hw_uart_init(void)
 
     _serial1.ops    = &_uart_ops;
     _serial1.config = config;
-
-    uart1->hw_base = AUX_BASE;
+    
+    uart1->hw_base = (size_t)rt_ioremap((void*)AUX_BASE, 0x1000);
 
     /* register UART1 device */
     rt_hw_serial_register(&_serial1, "uart1",
@@ -323,7 +365,8 @@ int rt_hw_uart_init(void)
     _serial3.ops    = &_uart_ops;
     _serial3.config = config;
 
-    uart3_addr = UART3_BASE;
+    uart3_addr = (size_t)rt_ioremap((void*)UART3_BASE, 0x1000);
+    uart3->hw_base = uart3_addr;
 
     /* register UART3 device */
     rt_hw_serial_register(&_serial3, "uart3",
@@ -339,7 +382,8 @@ int rt_hw_uart_init(void)
     _serial4.ops    = &_uart_ops;
     _serial4.config = config;
 
-    uart4_addr = UART4_BASE;
+    uart4_addr = (size_t)rt_ioremap((void*)UART4_BASE, 0x1000);
+    uart4->hw_base = uart4_addr;
 
     /* register UART4 device */
     rt_hw_serial_register(&_serial4, "uart4",
@@ -355,7 +399,8 @@ int rt_hw_uart_init(void)
     _serial5.ops    = &_uart_ops;
     _serial5.config = config;
 
-    uart5_addr = UART5_BASE;
+    uart5_addr = (size_t)rt_ioremap((void*)UART5_BASE, 0x1000);
+    uart5->hw_base = uart5_addr;
 
     /* register UART5 device */
     rt_hw_serial_register(&_serial5, "uart5",
@@ -365,3 +410,4 @@ int rt_hw_uart_init(void)
 #endif
     return 0;
 }
+

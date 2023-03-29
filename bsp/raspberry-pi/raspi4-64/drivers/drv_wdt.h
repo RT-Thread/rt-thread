@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,6 @@
  * Date           Author         Notes
  * 2020-10-26     bigmagic       first version
  */
-
 #ifndef __DRV_WDT_H__
 #define __DRV_WDT_H__
 
