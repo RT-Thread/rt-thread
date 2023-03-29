@@ -16,23 +16,23 @@ menu "Hardware Drivers Config"
 
             if BSP_USING_UART
                 config RT_USING_UART0
-                bool "Enabel UART 0"
+                bool "Enable UART 0"
                 default y
 
                 config RT_USING_UART1
-                bool "Enabel UART 1"
+                bool "Enable UART 1"
                 default n
 
                 config RT_USING_UART3
-                bool "Enabel UART 3"
+                bool "Enable UART 3"
                 default n
 
                 config RT_USING_UART4
-                bool "Enabel UART 4"
+                bool "Enable UART 4"
                 default n
 
                 config RT_USING_UART5
-                bool "Enabel UART 5"
+                bool "Enable UART 5"
                 default n
             endif
             
@@ -108,7 +108,7 @@ menu "Hardware Drivers Config"
                 select RT_USING_ALARM
                 default n
         endif
-        
+
         menuconfig BSP_USING_SDIO
             bool "Enable SDIO"
             select RT_USING_SDIO

@@ -44,9 +44,9 @@ static void _hw_timer_isr(int vector, void *parameter)
 
 /**
  * The function will initialize the general timer used for the system tick.
- * 
+ *
  * @param none
- * 
+ *
  * @return none
  */
 rt_weak int rt_hw_gtimer_init(void)

@@ -11,14 +11,13 @@
 
 ## 2. 编译说明
 
-推荐使用[env工具](https://www.rt-thread.org/page/download.html)，可以在console下进入到`bsp\raspberry-pi\raspi4-32`目录中，运行以下命令：
+推荐使用[env工具](https://www.rt-thread.org/page/download.html)，可以在console下进入到`bsp\raspberry-pi\raspi4-64`目录中，运行以下命令：
 
 ```
 scons
 ```
 
-来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、kernel7.img文件。
-
+来编译这个板级支持包。如果编译正确无误，会产生 `rtthread.elf` 文件。
 
 ## 3. 环境搭建
 ### 3.1 准备好串口线
@@ -38,7 +37,7 @@ scons
 提取码：pioj 
 ```
 
-解压后将sd目录下的文件拷贝到sd卡即可。以后每次编译后，将生成的kernel7.img进行替换即可。上电后可以看到程序正常运行。
+解压后将sd目录下的文件拷贝到sd卡即可。以后每次编译后，将生成的 `rtthread.bin` 进行替换即可。上电后可以看到程序正常运行。
 
 ### 3.3 RTT程序用uboot加载
 
@@ -48,14 +47,14 @@ scons
 
 **1.电脑上启动tftp服务器**
 
-windows系统电脑上可以安装tftpd搭建tftp服务器。将目录指定到`bsp\raspberry-pi\raspi4-32`。
+windows系统电脑上可以安装tftpd搭建tftp服务器。将目录指定到`bsp\raspberry-pi\raspi4-64`。
 
 **2.修改设置uboot**
 
 在控制台输入下列命令：
 
 ```
-setenv bootcmd "dhcp 0x00200000 x.x.x.x:kernel7.img;dcache flush;go 0x00200000"
+setenv bootcmd "dhcp 0x00208000 x.x.x.x:rtthread.bin;dcache flush;go 0x00208000"
 saveenv
 reset
 ```
@@ -64,38 +63,7 @@ reset
 
 **3.修改链接脚本**
 
-将树莓派`bsp\raspberry-pi\raspi4-32\link.ld`的文件链接地址改为`0x200000`。
-
-```
-SECTIONS
-{
-    . = 0x8000;
-    . = ALIGN(4096);
-    .
-    .
-    .
-}
-```
-
-改为
-
-```
-SECTIONS
-{
-    . = 0x200000;
-    . = ALIGN(4096);
-    .
-    .
-    .
-}
-```
-
-重新编译程序：
-
-```
-scons -c
-scons
-```
+链接脚本会在 python 脚本中自行替换，不用处理
 
 **3.插入网线**
 
@@ -104,16 +72,24 @@ scons
 完成后可以看到串口的输出信息
 
 ```
-heap: 0x000607e8 - 0x040607e8
-
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Oct 27 2020
- 2006 - 2020 Copyright by rt-thread team
-[I/SDIO] SD card capacity 31205376 KB.
-found part[0], begin: 1048576, size: 29.777GB
+ / | \     5.0.0 build Mar 29 2023 10:56:23
+ 2006 - 2022 Copyright by RT-Thread team
+lwIP-2.1.2 initialized!
+EMMC: assuming clock rate to be 100MHz
+[I/sal.skt] Socket Abstraction Layer initialize success.
+[I/utest] utest is initialize success.
+[I/utest] total utest testcase num: (0)
+[I/DBG] version is B1
+
+[I/SDIO] SD card capacity 31166976 KB.
+found part[0], begin: 4194304, size: 256.0MB
+found part[1], begin: 272629760, size: 3.856GB
 file system initialization done!
-Hi, this is RT-Thread!!
+cpu 2 boot success
+cpu 1 boot success
+cpu 3 boot success
 msh />
 ```
 
@@ -132,7 +108,7 @@ msh />
 
 ## 5. 注意事项
 
-目前rt-thread程序可以使用的内存在100MB以内，可以通过调整`board.c`中`platform_mem_desc`表的数据进行相关内存的映射以及修改`board.h`来确定程序使用的堆栈大小。目前在地址`0x08000000`处的1M空间被映射成非cache区供树莓派4的CPU与GPU通信的消息管道。若需要扩大系统内存使用，可自行修改代码进行调整。
+目前rt-thread程序可以使用的内存在100MB以内，可以通过调整`board.c`中`platform_mem_desc`表的数据进行相关内存的映射以及修改`board.h`来确定程序使用的堆栈大小。
 
 ## 6. 联系人信息
 

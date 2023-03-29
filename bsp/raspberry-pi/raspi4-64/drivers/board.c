@@ -85,7 +85,7 @@ rt_region_t init_page_region = {
 };
 
 /**
- *  Initialize the Hardware related stuffs. Called from rtthread_startup() 
+ *  Initialize the Hardware related stuffs. Called from rtthread_startup()
  *  after interrupt disabled.
  */
 void rt_hw_board_init(void)
@@ -121,7 +121,7 @@ void rt_hw_board_init(void)
     //stimer
     stimer_base_addr = (size_t)rt_ioremap((void*)STIMER_BASE, 0x1000);
 
-    //mmc2_base_addr 
+    //mmc2_base_addr
     mmc2_base_addr = (size_t)rt_ioremap((void*)MMC2_BASE_ADDR, 0x1000);
 
     //mbox

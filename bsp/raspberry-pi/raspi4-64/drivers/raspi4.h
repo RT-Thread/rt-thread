@@ -170,7 +170,7 @@ extern size_t stimer_base_addr;
 
 //External Mass Media Controller (SD Card)
 #define MMC0_BASE_ADDR    (PER_BASE+0x300000)
-extern size_t mmc0_base_addr; 
+extern size_t mmc0_base_addr;
 #define MMC2_BASE_ADDR    (PER_BASE+0x340000)
 extern size_t mmc2_base_addr;
 

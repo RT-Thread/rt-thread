@@ -70,7 +70,7 @@ struct raspi_spi_hw_config
     GPIO_FUNC  ce2_mode;
 #endif
     rt_ubase_t hw_base;
-    
+
 };
 
 struct raspi_spi_device

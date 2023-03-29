@@ -93,7 +93,7 @@ static rt_err_t raspi_spi_configure(struct rt_spi_device *device, struct rt_spi_
 
     if(cfg->mode & RT_SPI_CS_HIGH)
     {
-        SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CSPOL_HIGH;   
+        SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CSPOL_HIGH;
     }
 
     //set clk
@@ -120,7 +120,7 @@ static rt_err_t spi_transfernb(struct raspi_spi_hw_config *hwcfg, rt_uint8_t* tb
 {
     rt_uint32_t TXCnt=0;
     rt_uint32_t RXCnt=0;
-    
+
     /* Clear TX and RX fifos */
     SPI_REG_CS(hwcfg->hw_base) |= (SPI_CS_CLEAR_TX | SPI_CS_CLEAR_RX);
 
@@ -168,7 +168,7 @@ static rt_uint32_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
     if (config.mode & RT_SPI_MSB)
     {
         flag = 0;
-    }   
+    }
     else
     {
         flag = 1;
@@ -220,7 +220,7 @@ rt_err_t raspi_spi_hw_init(struct raspi_spi_hw_config *hwcfg)
 #if defined (BSP_USING_SPI0_DEVICE1)
     SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CHIP_SELECT_1;
 #endif
-    
+
 #if defined (BSP_USING_SPI0_DEVICE0) && defined (BSP_USING_SPI0_DEVICE1)
     HWREG32(SPI_REG_CS(hwcfg->hw_base)) |= (SPI_CS_CHIP_SELECT_0 | SPI_CS_CHIP_SELECT_1);
 #endif

@@ -23,7 +23,7 @@ static struct gpio_irq_def _g_gpio_irq_tbl[GPIO_IRQ_NUM];
 uint32_t raspi_get_pin_state(uint32_t fselnum)
 {
     uint32_t gpfsel = 0;
-    
+
     switch (fselnum)
     {
     case 0:
@@ -102,7 +102,7 @@ static void gpio_set_pud(GPIO_PIN pin, GPIO_PUPD_FUNC mode)
     case 3:
         reg_value = GPIO_PUP_PDN_CNTRL_REG3(gpio_base_addr);
         GPIO_PUP_PDN_CNTRL_REG3(gpio_base_addr) = (reg_value | (mode << (fselrest*2)));
-        break;    
+        break;
     default:
         break;
     }
@@ -145,7 +145,6 @@ void prev_raspi_pin_write(GPIO_PIN pin, int pin_value)
         {
             GPIO_REG_GPCLR1(gpio_base_addr) = 1 << (pin % 32);
         }
-        
     }
 }
 
@@ -195,7 +194,7 @@ static rt_int8_t raspi_pin_read(struct rt_device *device, rt_base_t pin)
         else
         {
             pin_level = 0;
-        }  
+        }
 
     }
     else
@@ -423,7 +422,7 @@ int rt_hw_gpio_init(void)
 
     GPIO_REG_GPAFEN0(gpio_base_addr) = 0x0;
     GPIO_REG_GPAFEN0(gpio_base_addr) = 0x0;
-    
+
     rt_hw_interrupt_install(IRQ_GPIO0, gpio_irq_handler, &_g_gpio_irq_tbl[0], "gpio0_irq");
     rt_hw_interrupt_umask(IRQ_GPIO0);
 
