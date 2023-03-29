@@ -109,8 +109,7 @@ static rt_err_t get_timeval(struct timeval *tv)
     {
         if (rt_device_open(device, 0) == RT_EOK)
         {
-            rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIMEVAL, tv);
+            rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIMEVAL, tv);
             rt_device_close(device);
         }
     }
@@ -153,8 +152,7 @@ static int set_timeval(struct timeval *tv)
     {
         if (rt_device_open(device, 0) == RT_EOK)
         {
-            rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIMEVAL, tv);
+            rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIMEVAL, tv);
             rt_device_close(device);
         }
     }
@@ -383,6 +381,7 @@ int stime(const time_t *t)
     }
 
     tv.tv_sec = *t;
+    tv.tv_usec = 0;
     if (set_timeval(&tv) == RT_EOK)
     {
         return 0;
