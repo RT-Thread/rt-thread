@@ -25,7 +25,10 @@ if GetDepend('RT_USING_DEVICE') == False:
     SrcRemove(src, ['device.c'])
 
 if GetDepend('RT_USING_SMP') == False:
-    SrcRemove(src, ['cpu.c'])
+    SrcRemove(src, ['cpu.c','scheduler_mp.c'])
+
+if GetDepend('RT_USING_SMP') == True:
+    SrcRemove(src, ['scheduler_up.c'])
 
 if GetDepend('RT_USING_DM') == False:
     SrcRemove(src, ['driver.c'])
