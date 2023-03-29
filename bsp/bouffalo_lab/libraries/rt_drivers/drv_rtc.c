@@ -63,7 +63,7 @@ static rt_err_t _rtc_control(rt_device_t dev, int cmd, void *args)
 
 void rt_hw_rtc_isr(rt_device_t device)
 {
-    
+
 }
 
 void rt_hw_rtc_init(void)
