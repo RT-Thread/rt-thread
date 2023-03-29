@@ -383,6 +383,7 @@ int stime(const time_t *t)
     }
 
     tv.tv_sec = *t;
+    tv.tv_usec = 0;
     if (set_timeval(&tv) == RT_EOK)
     {
         return 0;
