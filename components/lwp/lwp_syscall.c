@@ -4611,6 +4611,144 @@ sysret_t sys_uname(struct utsname *uts)
     return 0;
 }
 
+sysret_t sys_statfs(const char *path, struct statfs *buf)
+{
+    int ret = 0;
+    int err;
+    size_t len;
+    size_t copy_len;
+    char *copy_path;
+    struct statfs statfsbuff = {0};
+
+    if (!lwp_user_accessable((void *)buf, sizeof(struct statfs)))
+    {
+        return -EFAULT;
+    }
+
+    len = lwp_user_strlen(path, &err);
+    if (err)
+    {
+        return -EFAULT;
+    }
+
+    copy_path = (char*)rt_malloc(len + 1);
+    if (!copy_path)
+    {
+        return -ENOMEM;
+    }
+
+    copy_len = lwp_get_from_user(copy_path, (void*)path, len);
+    if (copy_len == 0)
+    {
+        rt_free(copy_path);
+        return -EFAULT;
+    }
+    copy_path[copy_len] = '\0';
+
+    ret = _SYS_WRAP(statfs(copy_path, &statfsbuff));
+    rt_free(copy_path);
+
+    if (ret == 0)
+    {
+        lwp_put_to_user(buf, &statfsbuff, sizeof statfsbuff);
+    }
+
+    return ret;
+}
+
+sysret_t sys_statfs64(const char *path, size_t sz, struct statfs *buf)
+{
+    int ret = 0;
+    int err;
+    size_t len;
+    size_t copy_len;
+    char *copy_path;
+    struct statfs statfsbuff = {0};
+
+    if (!lwp_user_accessable((void *)buf, sizeof(struct statfs)))
+    {
+        return -EFAULT;
+    }
+
+    if (sz != sizeof(struct statfs)) {
+        return -EINVAL;
+    }
+
+    len = lwp_user_strlen(path, &err);
+    if (err)
+    {
+        return -EFAULT;
+    }
+
+    copy_path = (char*)rt_malloc(len + 1);
+    if (!copy_path)
+    {
+        return -ENOMEM;
+    }
+
+    copy_len = lwp_get_from_user(copy_path, (void*)path, len);
+    if (copy_len == 0)
+    {
+        rt_free(copy_path);
+        return -EFAULT;
+    }
+    copy_path[copy_len] = '\0';
+
+    ret = _SYS_WRAP(statfs(copy_path, &statfsbuff));
+    rt_free(copy_path);
+
+    if (ret == 0)
+    {
+        lwp_put_to_user(buf, &statfsbuff, sizeof statfsbuff);
+    }
+
+    return ret;
+}
+
+sysret_t sys_fstatfs(int fd, struct statfs *buf)
+{
+    int ret = 0;
+    struct statfs statfsbuff = {0};
+
+    if (!lwp_user_accessable((void *)buf, sizeof(struct statfs)))
+    {
+        return -EFAULT;
+    }
+
+    ret = _SYS_WRAP(fstatfs(fd, &statfsbuff));
+
+    if (ret == 0)
+    {
+        lwp_put_to_user(buf, &statfsbuff, sizeof statfsbuff);
+    }
+
+    return ret;
+}
+
+sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
+{
+    int ret = 0;
+    struct statfs statfsbuff = {0};
+
+    if (!lwp_user_accessable((void *)buf, sizeof(struct statfs)))
+    {
+        return -EFAULT;
+    }
+
+    if (sz != sizeof(struct statfs)) {
+        return -EINVAL;
+    }
+
+    ret = _SYS_WRAP(fstatfs(fd, &statfsbuff));
+
+    if (ret == 0)
+    {
+        lwp_put_to_user(buf, &statfsbuff, sizeof statfsbuff);
+    }
+
+    return ret;
+}
+
 const static struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -4822,6 +4960,10 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_mq_close),
     SYSCALL_SIGN(sys_stat), //TODO should be replaced by sys_lstat if symbolic link are implemented
     SYSCALL_SIGN(sys_uname),                            /* 170 */
+    SYSCALL_SIGN(sys_statfs),
+    SYSCALL_SIGN(sys_statfs64),
+    SYSCALL_SIGN(sys_fstatfs),
+    SYSCALL_SIGN(sys_fstatfs64),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

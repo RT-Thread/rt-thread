@@ -521,6 +521,32 @@ int statfs(const char *path, struct statfs *buf)
 RTM_EXPORT(statfs);
 
 /**
+ * this function is a POSIX compliant version, which will return the
+ * information about a mounted file system.
+ *
+ * @param fildes the file description.
+ * @param buf the buffer to save the returned information.
+ *
+ * @return 0 on successful, others on failed.
+ */
+int fstatfs(int fildes, struct statfs *buf)
+{
+    struct dfs_fd *d;
+
+    /* get the fd */
+    d = fd_get(fildes);
+    if (d == NULL)
+    {
+        rt_set_errno(-EBADF);
+
+        return -1;
+    }
+
+    return statfs(d->vnode->fullpath, buf);
+}
+RTM_EXPORT(fstatfs);
+
+/**
  * this function is a POSIX compliant version, which will make a directory
  *
  * @param path the directory path to be made.
