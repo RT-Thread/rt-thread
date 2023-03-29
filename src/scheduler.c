@@ -383,7 +383,6 @@ void rt_schedule(void)
                 {
                     rt_schedule_insert_thread(current_thread);
                 }
-                current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
             to_thread->oncpu = cpu_id;
             if (to_thread != current_thread)
@@ -483,7 +482,6 @@ void rt_schedule(void)
                 {
                     need_insert_from_thread = 1;
                 }
-                rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
 
             if (to_thread != rt_current_thread)
@@ -709,9 +707,6 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         goto __exit;
     }
 
-    /* READY thread, insert to ready queue */
-    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
-
     cpu_id   = rt_hw_cpu_id();
     bind_cpu = thread->bind_cpu ;
 
@@ -723,16 +718,24 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
         rt_thread_ready_priority_group |= thread->number_mask;
 
-        /* there is no time slices left(YIELD), inserting thread before ready list*/
-        if((thread->stat & RT_THREAD_STAT_YIELD_MASK) != 0)
+        if((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
         {
+            /* there is no time slices left(YIELD), inserting thread before ready list*/
+            if((thread->stat & RT_THREAD_STAT_YIELD_MASK) == RT_THREAD_STAT_YIELD)
+            {
             rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
                                 &(thread->tlist));
+            }
+            /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
+            else
+            {
+                rt_list_insert_after(&(rt_thread_priority_table[thread->current_priority]),
+                                      &(thread->tlist));
+            }
         }
-        /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
         else
         {
-            rt_list_insert_after(&(rt_thread_priority_table[thread->current_priority]),
+            rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
                                 &(thread->tlist));
         }
 
@@ -748,13 +751,21 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
         pcpu->priority_group |= thread->number_mask;
 
-        /* there is no time slices left(YIELD), inserting thread before ready list*/
-        if((thread->stat & RT_THREAD_STAT_YIELD_MASK) != 0)
+        if((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
         {
+            /* there is no time slices left(YIELD), inserting thread before ready list*/
+            if((thread->stat & RT_THREAD_STAT_YIELD_MASK) == RT_THREAD_STAT_YIELD)
+            {
             rt_list_insert_before(&(rt_cpu_index(bind_cpu)->priority_table[thread->current_priority]),
-                                &(thread->tlist));
+                                      &(thread->tlist));
+            }
+            /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
+            else
+            {
+                rt_list_insert_after(&(rt_cpu_index(bind_cpu)->priority_table[thread->current_priority]),
+                                      &(thread->tlist));
+            }
         }
-        /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
         else
         {
             rt_list_insert_after(&(rt_cpu_index(bind_cpu)->priority_table[thread->current_priority]),
@@ -767,7 +778,10 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
             rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
         }
     }
-
+    /* clear YIELD status*/
+    thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
+    /* READY thread, insert to ready queue */
+    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
     RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("insert thread[%.*s], the priority: %d\n",
                                       RT_NAME_MAX, thread->name, thread->current_priority));
 
@@ -792,21 +806,31 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         goto __exit;
     }
 
-    /* READY thread, insert to ready queue */
-    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
-    /* there is no time slices left(YIELD), inserting thread before ready list*/
-    if((thread->stat & RT_THREAD_STAT_YIELD_MASK) != 0)
+    if((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
+    {
+        /* there is no time slices left(YIELD), inserting thread before ready list*/
+        if((thread->stat & RT_THREAD_STAT_YIELD_MASK) == RT_THREAD_STAT_YIELD)
+        {
+            rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
+                                  &(thread->tlist));
+        }
+        /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
+        else
+        {
+            rt_list_insert_after(&(rt_thread_priority_table[thread->current_priority]),
+                                  &(thread->tlist));
+        }
+    }
+    else
     {
         rt_list_insert_before(&(rt_thread_priority_table[thread->current_priority]),
                               &(thread->tlist));
-    }
-    /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
-    else
-    {
-        rt_list_insert_after(&(rt_thread_priority_table[thread->current_priority]),
-                              &(thread->tlist));
-    }
 
+    }
+    /* clear YIELD status*/
+    thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
+    /* READY thread, insert to ready queue */
+    thread->stat = RT_THREAD_READY | (thread->stat & ~RT_THREAD_STAT_MASK);
     RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("insert thread[%.*s], the priority: %d\n",
                                       RT_NAME_MAX, thread->name, thread->current_priority));
 
