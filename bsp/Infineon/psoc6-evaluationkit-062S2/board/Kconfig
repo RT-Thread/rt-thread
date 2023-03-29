@@ -112,11 +112,6 @@ menu "On-chip Peripheral Drivers"
             menuconfig BSP_USING_SPI0
                 bool "Enable SPI0 BUS"
                 default n
-                if BSP_USING_SPI0
-                    config BSP_USING_SPI0_SAMPLE
-                        bool "Enable SPI0 BUS Sample"
-                        default n
-                endif
             menuconfig BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
                 default n
@@ -125,6 +120,9 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable SPI3 BUS Sample"
                         default n
                 endif
+            menuconfig BSP_USING_SPI6
+                bool "Enable SPI6 BUS"
+                default n
         endif
 
     menuconfig BSP_USING_ADC

@@ -38,7 +38,7 @@ struct ifx_sw_spi_cs
 #endif
 static struct ifx_spi spi_bus_obj[] =
 {
-    #ifdef BSP_USING_SPI0
+    #if defined(BSP_USING_SPI0)
     {
         .bus_name = "spi0",
         .spi_bus = &spi_bus0,
@@ -47,7 +47,7 @@ static struct ifx_spi spi_bus_obj[] =
         .mosi_pin = GET_PIN(0, 2),
     },
     #endif
-    #ifdef BSP_USING_SPI3
+    #if defined(BSP_USING_SPI3)
     {
         .bus_name = "spi3",
         .spi_bus = &spi_bus3,
@@ -56,7 +56,7 @@ static struct ifx_spi spi_bus_obj[] =
         .mosi_pin = GET_PIN(6, 0),
     },
     #endif
-    #ifdef BSP_USING_SPI6
+    #if defined(BSP_USING_SPI6)
     {
         .bus_name = "spi6",
         .spi_bus = &spi_bus6,
@@ -69,7 +69,7 @@ static struct ifx_spi spi_bus_obj[] =
 
 /* private rt-thread spi ops function */
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message);
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message);
 
 static struct rt_spi_ops ifx_spi_ops =
 {
@@ -146,7 +146,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return RT_EOK;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
@@ -158,9 +158,9 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     struct ifx_sw_spi_cs *cs = device->parent.user_data;
 
     /* take CS */
-    if (message->cs_take)
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
-        cyhal_gpio_write(cs->pin, PIN_LOW);
+        cyhal_gpio_write(device->cs_pin, PIN_LOW);
         LOG_D("spi take cs\n");
     }
 
@@ -185,12 +185,12 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         }
     }
 
-    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-            cyhal_gpio_write(cs->pin, PIN_LOW);
+            cyhal_gpio_write(device->cs_pin, PIN_LOW);
         else
-            cyhal_gpio_write(cs->pin, PIN_HIGH);
+            cyhal_gpio_write(device->cs_pin, PIN_HIGH);
     }
 
     return message->length;
