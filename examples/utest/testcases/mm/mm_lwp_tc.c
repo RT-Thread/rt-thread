@@ -59,7 +59,7 @@ static void test_user_map_varea(void)
         varea = lwp_map_user_varea(lwp, 0, buf_sz),
         lwp->aspace);
     uassert_true(!!varea);
-    uassert_true(varea->attr == MMU_MAP_U_RWCB);
+    uassert_true(varea->attr == (MMU_MAP_U_RWCB));
     uassert_true(varea->size == buf_sz);
     uassert_true(varea->aspace == lwp->aspace);
     uassert_true(varea->flag == 0);
@@ -83,7 +83,7 @@ static void test_user_map_varea_ext(void)
         varea = lwp_map_user_varea_ext(lwp, 0, buf_sz, LWP_MAP_FLAG_NOCACHE),
         lwp->aspace);
     uassert_true(!!varea);
-    uassert_true(varea->attr == MMU_MAP_U_RW);
+    uassert_true(varea->attr == (MMU_MAP_U_RW));
     uassert_true(varea->size == buf_sz);
     uassert_true(varea->aspace == lwp->aspace);
     uassert_true(varea->flag == 0);

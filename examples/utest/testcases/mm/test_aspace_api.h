@@ -135,7 +135,7 @@ static void aspace_map_tc(void)
      * verify that this routine can choose a free region with specified size
      * and specified alignment requirement
      */
-    #define ALIGN_REQ (0x40000000)
+    #define ALIGN_REQ (0x04000000)
     CONSIST_HEAP({
         uassert_true(!rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, MMF_CREATE(0, ALIGN_REQ), &rt_mm_dummy_mapper, 0));
         uassert_true(!((rt_ubase_t)vaddr & (ALIGN_REQ - 1)));
@@ -158,7 +158,7 @@ static void aspace_map_tc(void)
 static rt_varea_t _create_varea(const size_t size)
 {
     rt_varea_t varea;
-    void *vaddr = RT_NULL;
+    void *vaddr = rt_ioremap_start;
 
     varea = rt_malloc(sizeof(*varea));
     uassert_true(!!varea);
@@ -226,6 +226,7 @@ static void aspace_traversal_tc(void)
     uassert_true(4 == _count);
 }
 
+#ifdef ARCH_ARMV8
 static void aspace_control_tc(void)
 {
     /* this case is designed only for one page size */
@@ -265,6 +266,7 @@ static void aspace_control_tc(void)
     rt_iounmap(remap_nocache);
     uassert_true(!rt_aspace_unmap(&rt_kernel_space, vaddr));
 }
+#endif
 
 static void aspace_tc(void)
 {
@@ -272,7 +274,9 @@ static void aspace_tc(void)
     UTEST_UNIT_RUN(aspace_delete_tc);
     UTEST_UNIT_RUN(aspace_map_tc);
     UTEST_UNIT_RUN(aspace_traversal_tc);
+#ifdef ARCH_ARMV8
     UTEST_UNIT_RUN(aspace_control_tc);
+#endif
     UTEST_UNIT_RUN(varea_map_tc);
 
     /* functionality */

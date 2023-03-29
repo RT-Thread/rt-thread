@@ -47,7 +47,7 @@ static void test_find_free(void)
         rt_aspace_unmap(&rt_kernel_space, vaddr);
         /* type 2, on failure */
         vaddr = rt_kernel_space.start;
-        uassert_true(-RT_ENOSPC == rt_aspace_map(&rt_kernel_space, &vaddr, rt_kernel_space.size - 0x40000000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
+        uassert_true(-RT_ENOSPC == rt_aspace_map(&rt_kernel_space, &vaddr, rt_kernel_space.size - 0x08000000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0));
         uassert_true(!vaddr);
 
         /* type 3, on success is covered by ioremap */
