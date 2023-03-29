@@ -41,21 +41,26 @@ rt_weak void rt_hw_interrupt_init(void)
  * @param handler Break-in function requiring binding
  * @param param   NULL
  * @param name    NULL
- * @return NULL
+ * @return old handler
  */
 rt_weak rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
+    rt_isr_handler_t old_handler = RT_NULL;
     void *user_param = param;
     char *user_name = name;
+
     if(vector < ISR_NUMBER)
     {
+        old_handler = rv32irq_table[vector].handler;
         if (handler != RT_NULL)
         {
             rv32irq_table[vector].handler = (rt_isr_handler_t)handler;
             rv32irq_table[vector].param = param;
         }
     }
+
+    return old_handler;
 }
 
 /**

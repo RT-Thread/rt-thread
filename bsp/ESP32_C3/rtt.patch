@@ -113,6 +113,7 @@ index d6670bf759..1d51ffeea0 100644
 +      __stack_cpu0 = .;
 +      __stack_end__ = .;
 +  } > dram0_0_seg
++  PROVIDE( __rt_rvstack = __stack_end__);
 +
 +  .heap :
 +  {
