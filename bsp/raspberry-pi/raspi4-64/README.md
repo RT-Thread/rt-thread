@@ -17,7 +17,7 @@
 scons
 ```
 
-来编译这个板级支持包。如果编译正确无误，会产生 `rtthread.elf` 文件。
+来编译这个板级支持包。如果编译正确无误，会产生 `rtthread.elf`, `rtthread.bin` 文件。
 
 ## 3. 环境搭建
 ### 3.1 准备好串口线
@@ -30,18 +30,11 @@ scons
 
 ### 3.2 RTT固件放在SD卡运行
 
-首先需要准备一张空的32GB以下的SD卡，如果不想自己制作启动固件，可以直接从百度网盘上下载boot的固件。
-
-```
-链接：https://pan.baidu.com/s/1PxgvXAChUIOgueNXhgMs8w 
-提取码：pioj 
-```
-
-解压后将sd目录下的文件拷贝到sd卡即可。以后每次编译后，将生成的 `rtthread.bin` 进行替换即可。上电后可以看到程序正常运行。
+暂时不支持，需要使用 u-boot 加载。
 
 ### 3.3 RTT程序用uboot加载
 
-为了调试方便，已经将uboot引导程序放入uboot目录下，直接将这些文件放到sd卡中即可。
+此 bsp 的 `tools` 下可以找到 [u-boot64.bin](./tools/u-boot64.bin) 和 [config.txt](./tools/config.txt) 两个文件。将其与准备好的 sd 卡中文件替换即可。sd 卡推荐通过树莓派 [imager](https://www.raspberrypi.com/software/) 制作。
 
 需要注意的以下步骤：
 
