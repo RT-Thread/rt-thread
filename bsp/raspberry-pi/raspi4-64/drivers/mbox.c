@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,42 +10,39 @@
  */
 
 /* mailbox message buffer */
+#include <rthw.h>
 #include "mbox.h"
 #include "mmu.h"
+//volatile unsigned int  __attribute__((aligned(16))) mbox[36];
 
-volatile unsigned int *mbox = (volatile unsigned int *) MBOX_ADDR;
-#define BUS_ADDRESS(phys)   (((phys) & ~0xC0000000)  |  0xC0000000)
+#define BUS_ADDRESS(phys)	(((phys) & ~0xC0000000)  |  0xC0000000)
+volatile unsigned int *mbox;
 
 /**
  * Make a mailbox call. Returns 0 on failure, non-zero on success
  */
 int mbox_call(unsigned char ch, int mmu_enable)
 {
-    unsigned int r = (((MBOX_ADDR) & ~0xF) | (ch & 0xF));
-    if (mmu_enable)
-    {
+    unsigned int r = ((((rt_uint32_t)MBOX_ADDR)&~0xF) | (ch&0xF));
+    if(mmu_enable)
         r = BUS_ADDRESS(r);
-    }
     /* wait until we can write to the mailbox */
     do
     {
-        __asm__ volatile ("nop");
-    }
-    while (*MBOX_STATUS & MBOX_FULL);
+        asm volatile("nop");
+    } while (*MBOX_STATUS & MBOX_FULL);
     /* write the address of our message to the mailbox with channel identifier */
     *MBOX_WRITE = r;
     /* now wait for the response */
-    while (1)
+    while(1)
     {
         /* is there a response? */
         do
         {
-            __asm__ volatile ("nop");
-        }
-        while (*MBOX_STATUS & MBOX_EMPTY);
+            asm volatile("nop");
+        } while (*MBOX_STATUS & MBOX_EMPTY);
         /* is it a response to our message? */
-        if (r == *MBOX_READ)
-        {
+        if (r == *MBOX_READ){
             /* is it a valid successful response? */
             return mbox[1] == MBOX_RESPONSE;
         }
@@ -53,74 +50,56 @@ int mbox_call(unsigned char ch, int mmu_enable)
     return 0;
 }
 
-int bcm271x_mbox_poweroff_devices(int id)
-{
-    mbox[0] = 8 * 4;                /* length of the message */
-    mbox[1] = MBOX_REQUEST;         /* this is a request message */
-
-    mbox[2] = MBOX_TAG_SETPOWER;    /* set power state */
-    mbox[3] = 8;                    /* buffer size */
-    mbox[4] = 8;                    /* len */
-
-    mbox[5] = (unsigned int)id;     /* device id */
-    mbox[6] = 0;                    /* bit 0: off, bit 1: no wait */
-
-    mbox[7] = MBOX_TAG_LAST;
-    mbox_call(8, MBOX_CH_PROP);
-
-    return 0;
-}
-
 int bcm271x_mbox_get_touch(void)
 {
-    mbox[0] = 8 * 4;                    // length of the message
-    mbox[1] = MBOX_REQUEST;             // this is a request message
+    mbox[0] = 8 * 4;                        // length of the message
+    mbox[1] = MBOX_REQUEST;                 // this is a request message
 
     mbox[2] = MBOX_TAG_GET_TOUCHBUF;
-    mbox[3] = 4;                        // buffer size
-    mbox[4] = 0;                        // len
+    mbox[3] = 4;                            // buffer size
+    mbox[4] = 0;                            // len
 
-    mbox[5] = 0;                       // id
+    mbox[5] = 0;                            // id
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    return (int)(mbox[5] &  ~0xC0000000);
+    return (int)(mbox[5] & ~0xC0000000);
 }
 
 int bcm271x_notify_reboot(void)
 {
-    mbox[0] = 7 * 4;                        // length of the message
+    mbox[0] = 7*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
     mbox[2] = MBOX_TAG_NOTIFY_REBOOT;       // (the tag id)
     mbox[3] = 0x00000004;                   // length + 4
     mbox[4] = 0x00000000;                   // size of the data
     mbox[5] = 0x00000000;                   // request
 
-    mbox[6] = MBOX_TAG_LAST;
+    mbox[6] = MBOX_TAG_LAST; 
     mbox_call(8, MMU_DISABLE);
     return 0;
 }
 
 int bcm271x_notify_xhci_reset(void)
 {
-    mbox[0] = 7 * 4;                        // length of the message
+    mbox[0] = 7*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
     mbox[2] = MBOX_TAG_NOTIFY_XHCI_RESET;   // (the tag id)
     mbox[3] = 0x00000004;                   // length + 4
     mbox[4] = 0x00000004;                   // size of the data
     mbox[5] = 0x00100000;                   // request
-    mbox[6] = MBOX_TAG_LAST;
+    mbox[6] = MBOX_TAG_LAST; 
     mbox_call(8, MMU_DISABLE);
     return 0;
 }
 
 int bcm271x_gpu_enable(void)
 {
-    mbox[0] = 12 * 4;                        // length of the message
+    mbox[0] = 12*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                  // this is a request message
-
+    
     mbox[2] = MBOX_TAG_CLOCK_SET_RATE;
     mbox[3] = 0x00000008;                   // (the tag id)
     mbox[4] = 0x00000008;                   // (the tag id)
@@ -137,14 +116,14 @@ int bcm271x_gpu_enable(void)
 
 int bcm271x_mbox_hardware_get_model(void)
 {
-    mbox[0] = 8 * 4;                        // length of the message
+    mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
-
+    
     mbox[2] = MBOX_TAG_HARDWARE_GET_MODEL;
     mbox[3] = 4;                            // buffer size
     mbox[4] = 0;                            // len
 
-    mbox[5] = 0;
+    mbox[5] = 0;                            
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -155,14 +134,14 @@ int bcm271x_mbox_hardware_get_model(void)
 
 int bcm271x_mbox_hardware_get_revison(void)
 {
-    mbox[0] = 8 * 4;                        // length of the message
+    mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
-
-    mbox[2] = MBOX_TAG_HARDWARE_GET_REV;
+    
+    mbox[2] = MBOX_TAG_HARDWARE_GET_REV;   
     mbox[3] = 4;                            // buffer size
     mbox[4] = 0;                            // len
 
-    mbox[5] = 0;
+    mbox[5] = 0;                    
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -171,22 +150,22 @@ int bcm271x_mbox_hardware_get_revison(void)
     return mbox[5];
 }
 
-int bcm271x_mbox_hardware_get_mac_address(uint8_t *mac)
+int bcm271x_mbox_hardware_get_mac_address(uint8_t * mac)
 {
-    mbox[0] = 8 * 4;                               // length of the message
+    mbox[0] = 8*4;                                 // length of the message
     mbox[1] = MBOX_REQUEST;                        // this is a request message
-
-    mbox[2] = MBOX_TAG_HARDWARE_GET_MAC_ADDRESS;
+    
+    mbox[2] = MBOX_TAG_HARDWARE_GET_MAC_ADDRESS;   
     mbox[3] = 6;                                   // buffer size
     mbox[4] = 0;                                   // len
 
-    mbox[5] = 0;
+    mbox[5] = 0;                    
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    char *mac_str = (char *)&mbox[5];
+    char * mac_str = (char *)&mbox[5];
     mac[0] = mac_str[0];
     mac[1] = mac_str[1];
     mac[2] = mac_str[2];
@@ -197,36 +176,36 @@ int bcm271x_mbox_hardware_get_mac_address(uint8_t *mac)
 }
 
 
-int bcm271x_mbox_hardware_get_serial(rt_uint64_t *sn)
+int bcm271x_mbox_hardware_get_serial(rt_uint64_t* sn)
 {
-    mbox[0] = 8 * 4;                            // length of the message
+    mbox[0] = 8*4;                              // length of the message
     mbox[1] = MBOX_REQUEST;                     // this is a request message
-
-    mbox[2] = MBOX_TAG_HARDWARE_GET_SERIAL;
+    
+    mbox[2] = MBOX_TAG_HARDWARE_GET_SERIAL;    
     mbox[3] = 8;                                // buffer size
     mbox[4] = 0;                                // len
 
-    mbox[5] = 0;
+    mbox[5] = 0;                    
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    sn = (rt_uint64_t *)&mbox[5];
+    *sn = *(rt_uint64_t *)&mbox[5];
 
     return 0;
 }
 
-int bcm271x_mbox_hardware_get_arm_memory(rt_uint32_t *base, rt_uint32_t *size)
+int bcm271x_mbox_hardware_get_arm_memory(rt_uint32_t * base, rt_uint32_t * size)
 {
-    mbox[0] = 8 * 4;                                // length of the message
+    mbox[0] = 8*4;                                  // length of the message
     mbox[1] = MBOX_REQUEST;                         // this is a request message
-
-    mbox[2] = MBOX_TAG_HARDWARE_GET_ARM_MEMORY;
+    
+    mbox[2] = MBOX_TAG_HARDWARE_GET_ARM_MEMORY;   
     mbox[3] = 8;                                    // buffer size
     mbox[4] = 0;                                    // len
 
-    mbox[5] = 0;
+    mbox[5] = 0;                    
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -234,21 +213,21 @@ int bcm271x_mbox_hardware_get_arm_memory(rt_uint32_t *base, rt_uint32_t *size)
 
     *base = mbox[5];
     *size = mbox[6];
-
+    
     return 0;
 
 }
 
-int bcm271x_mbox_hardware_get_vc_memory(rt_uint32_t *base, rt_uint32_t *size)
+int bcm271x_mbox_hardware_get_vc_memory(rt_uint32_t * base, rt_uint32_t * size)
 {
-    mbox[0] = 8 * 4;                             // length of the message
+    mbox[0] = 8*4;                               // length of the message
     mbox[1] = MBOX_REQUEST;                      // this is a request message
-
+    
     mbox[2] = MBOX_TAG_HARDWARE_GET_VC_MEMORY;
     mbox[3] = 8;                                 // buffer size
     mbox[4] = 0;                                 // len
 
-    mbox[5] = 0;
+    mbox[5] = 0;                    
     mbox[6] = 0;
 
     mbox[7] = MBOX_TAG_LAST;
@@ -256,16 +235,16 @@ int bcm271x_mbox_hardware_get_vc_memory(rt_uint32_t *base, rt_uint32_t *size)
 
     *base = mbox[5];
     *size = mbox[6];
-
+    
     return 0;
 }
 
 int bcm271x_mbox_clock_get_turbo(void)
 {
-    mbox[0] = 8 * 4;                    // length of the message
+    mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-
-    mbox[2] = MBOX_TAG_CLOCK_GET_TURBO;
+    
+    mbox[2] = MBOX_TAG_CLOCK_GET_TURBO; 
     mbox[3] = 8;                        // buffer size
     mbox[4] = 4;                        // len
 
@@ -275,7 +254,7 @@ int bcm271x_mbox_clock_get_turbo(void)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != 0)
+    if(mbox[5] != 0)
     {
         return -1;
     }
@@ -285,10 +264,10 @@ int bcm271x_mbox_clock_get_turbo(void)
 
 int bcm271x_mbox_clock_set_turbo(int level)
 {
-    mbox[0] = 8 * 4;                    // length of the message
+    mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-
-    mbox[2] = MBOX_TAG_CLOCK_SET_TURBO;
+    
+    mbox[2] = MBOX_TAG_CLOCK_SET_TURBO;  
     mbox[3] = 8;                        // buffer size
     mbox[4] = 8;                        // len
 
@@ -298,7 +277,7 @@ int bcm271x_mbox_clock_set_turbo(int level)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != 0)
+    if(mbox[5] != 0)
     {
         return -1;
     }
@@ -308,9 +287,9 @@ int bcm271x_mbox_clock_set_turbo(int level)
 
 int bcm271x_mbox_clock_get_state(int id)
 {
-    mbox[0] = 8 * 4;                     // length of the message
+    mbox[0] = 8*4;                       // length of the message
     mbox[1] = MBOX_REQUEST;              // this is a request message
-
+    
     mbox[2] = MBOX_TAG_CLOCK_GET_STATE;
     mbox[3] = 8;                         // buffer size
     mbox[4] = 4;                         // len
@@ -321,7 +300,7 @@ int bcm271x_mbox_clock_get_state(int id)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != id)
+    if(mbox[5] != id)
     {
         return -1;
     }
@@ -331,9 +310,9 @@ int bcm271x_mbox_clock_get_state(int id)
 
 int bcm271x_mbox_clock_set_state(int id, int state)
 {
-    mbox[0] = 8 * 4;                    // length of the message
+    mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-
+    
     mbox[2] = MBOX_TAG_CLOCK_SET_STATE;
     mbox[3] = 8;                        // buffer size
     mbox[4] = 8;                        // len
@@ -344,7 +323,7 @@ int bcm271x_mbox_clock_set_state(int id, int state)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != id)
+    if(mbox[5] != id)
     {
         return -1;
     }
@@ -354,10 +333,10 @@ int bcm271x_mbox_clock_set_state(int id, int state)
 
 int bcm271x_mbox_clock_get_rate(int id)
 {
-    mbox[0] = 8 * 4;                    // length of the message
+    mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-
-    mbox[2] = MBOX_TAG_CLOCK_GET_RATE;
+    
+    mbox[2] = MBOX_TAG_CLOCK_GET_RATE; 
     mbox[3] = 8;                        // buffer size
     mbox[4] = 4;                        // len
 
@@ -367,7 +346,7 @@ int bcm271x_mbox_clock_get_rate(int id)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != id)
+    if(mbox[5] != id)
     {
         return -1;
     }
@@ -377,9 +356,9 @@ int bcm271x_mbox_clock_get_rate(int id)
 
 int bcm271x_mbox_clock_set_rate(int id, int rate)
 {
-    mbox[0] = 8 * 4;                    // length of the message
+    mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
-
+    
     mbox[2] = MBOX_TAG_CLOCK_SET_RATE;
     mbox[3] = 8;                        // buffer size
     mbox[4] = 8;                        // len
@@ -390,7 +369,7 @@ int bcm271x_mbox_clock_set_rate(int id, int rate)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != id)
+    if(mbox[5] != id)
     {
         return -1;
     }
@@ -400,9 +379,9 @@ int bcm271x_mbox_clock_set_rate(int id, int rate)
 
 int bcm271x_mbox_clock_get_max_rate(int id)
 {
-    mbox[0] = 8 * 4;                        // length of the message
+    mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
-
+    
     mbox[2] = MBOX_TAG_CLOCK_GET_MAX_RATE;
     mbox[3] = 8;                            // buffer size
     mbox[4] = 4;                            // len
@@ -413,7 +392,7 @@ int bcm271x_mbox_clock_get_max_rate(int id)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != id)
+    if(mbox[5] != id)
     {
         return -1;
     }
@@ -423,10 +402,10 @@ int bcm271x_mbox_clock_get_max_rate(int id)
 
 int bcm271x_mbox_clock_get_min_rate(int id)
 {
-    mbox[0] = 8 * 4;                        // length of the message
+    mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
-
-    mbox[2] = MBOX_TAG_CLOCK_GET_MIN_RATE;
+    
+    mbox[2] = MBOX_TAG_CLOCK_GET_MIN_RATE; 
     mbox[3] = 8;                            // buffer size
     mbox[4] = 4;                            // len
 
@@ -436,7 +415,7 @@ int bcm271x_mbox_clock_get_min_rate(int id)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != id)
+    if(mbox[5] != id)
     {
         return -1;
     }
@@ -446,9 +425,9 @@ int bcm271x_mbox_clock_get_min_rate(int id)
 
 int bcm271x_mbox_power_get_state(int id)
 {
-    mbox[0] = 8 * 4;                // length of the message
+    mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
-
+    
     mbox[2] = MBOX_TAG_POWER_GET_STATE;
     mbox[3] = 8;                    // buffer size
     mbox[4] = 4;                    // len
@@ -459,7 +438,7 @@ int bcm271x_mbox_power_get_state(int id)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != id)
+    if(mbox[5] != id)
     {
         return -1;
     }
@@ -469,9 +448,9 @@ int bcm271x_mbox_power_get_state(int id)
 
 int bcm271x_mbox_power_set_state(int id, int state)
 {
-    mbox[0] = 8 * 4;                // length of the message
+    mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
-
+    
     mbox[2] = MBOX_TAG_POWER_SET_STATE;
     mbox[3] = 8;                    // buffer size
     mbox[4] = 8;                    // len
@@ -482,7 +461,7 @@ int bcm271x_mbox_power_set_state(int id, int state)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != id)
+    if(mbox[5] != id)
     {
         return -1;
     }
@@ -492,9 +471,9 @@ int bcm271x_mbox_power_set_state(int id, int state)
 
 int bcm271x_mbox_temp_get(void)
 {
-    mbox[0] = 8 * 4;                // length of the message
+    mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
-
+    
     mbox[2] = MBOX_TAG_TEMP_GET;
     mbox[3] = 8;                    // buffer size
     mbox[4] = 4;                    // len
@@ -505,7 +484,7 @@ int bcm271x_mbox_temp_get(void)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != 0)
+    if(mbox[5] != 0)
     {
         return -1;
     }
@@ -515,9 +494,9 @@ int bcm271x_mbox_temp_get(void)
 
 int bcm271x_mbox_temp_get_max(void)
 {
-    mbox[0] = 8 * 4;                // length of the message
+    mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
-
+    
     mbox[2] = MBOX_TAG_TEMP_GET_MAX;
     mbox[3] = 8;                    // buffer size
     mbox[4] = 4;                    // len
@@ -528,7 +507,7 @@ int bcm271x_mbox_temp_get_max(void)
     mbox[7] = MBOX_TAG_LAST;
     mbox_call(8, MMU_DISABLE);
 
-    if (mbox[5] != 0)
+    if(mbox[5] != 0)
     {
         return -1;
     }

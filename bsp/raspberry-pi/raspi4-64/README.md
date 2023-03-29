@@ -11,61 +11,17 @@
 
 ## 2. 编译说明
 
-
-
-### 2.1 Window上的环境搭建
-
-Windows环境下推荐使用[env工具](https://www.rt-thread.org/page/download.html)进行编译。
-
-首先下载windows上的aarch64的gcc交叉编译工具，版本为gcc-arm-8.3选择aarch64-elf就可以。
-
-将推荐将gcc解压到`\env\tools\gnu_gcc\arm_gcc`目录下。
-
-接着修改`bsp\raspberry-pi\raspi4-64\rtconfig.py`
-
-修改路径：
+推荐使用[env工具](https://www.rt-thread.org/page/download.html)，可以在console下进入到`bsp\raspberry-pi\raspi4-32`目录中，运行以下命令：
 
 ```
-EXEC_PATH = r'E:/env_released_1.1.2/env/tools/gnu_gcc/arm_gcc/gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf/bin'
+scons
 ```
 
-然后在`bsp\raspberry-pi\raspi4-64\`下输入scons编译即可。
-
-**window环境搭建注意**
-
-下载完成`gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf.tar.xz`交叉编译工具链后，最好采用7-zip解压工具进行两次解压。
-确保解压目录下的`/bin/aarch64-elf-ld.exe`文件的size不为0。
-否则编译会出现如下错误:
-
-```
-collect2.exe:fatal error:CreateProcess:No such file or directory
-```
-
-### 2.2 Linux上的环境搭建
-
-Linux下推荐使用[gcc工具][2]。Linux版本下gcc版本可采用`gcc-arm-8.3-2019.03-x86_64-aarch64-elf`。
-
-将工具链解压到指定目录,并修改当前bsp下的`EXEC_PATH`为自定义gcc目录。
-
-```
-PLATFORM    = 'gcc'
-EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'  
-```
-
-直接进入`bsp\raspberry-pi\raspi4-64`，输入scons编译即可。
+来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、kernel7.img文件。
 
 
-## 3. 执行
-
-### 3.1 下载**Raspberry Pi Imager**，生成可以运行的raspbian SD卡
-
-首先下载镜像
-
-* [Raspberry Pi Imager for Ubuntu](https://downloads.raspberrypi.org/imager/imager_amd64.deb)
-* [Raspberry Pi Imager for Windows](https://downloads.raspberrypi.org/imager/imager.exe)
-* [Raspberry Pi Imager for macOS](https://downloads.raspberrypi.org/imager/imager.dmg)
-
-### 3.2 准备好串口线
+## 3. 环境搭建
+### 3.1 准备好串口线
 
 目前版本是使用raspi4的 GPIO 14, GPIO 15来作路口输出，连线情况如下图所示：
 
@@ -73,26 +29,90 @@ EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'
 
 串口参数： 115200 8N1 ，硬件和软件流控为关。
 
-### 3.3 程序下载
+### 3.2 RTT固件放在SD卡运行
 
-当编译生成了rtthread.bin文件后，我们可以将该文件放到sd卡上，并修改sd卡中的`config.txt`文件如下：
+首先需要准备一张空的32GB以下的SD卡，如果不想自己制作启动固件，可以直接从百度网盘上下载boot的固件。
 
 ```
-enable_uart=1
-arm_64bit=1
-kernel=rtthread.bin
-core_freq=250
+链接：https://pan.baidu.com/s/1PxgvXAChUIOgueNXhgMs8w 
+提取码：pioj 
 ```
 
-按上面的方法做好SD卡后，插入树莓派4，通电可以在串口上看到如下所示的输出信息：
+解压后将sd目录下的文件拷贝到sd卡即可。以后每次编译后，将生成的kernel7.img进行替换即可。上电后可以看到程序正常运行。
 
-```text
-heap: 0x000c9350 - 0x040c9350
+### 3.3 RTT程序用uboot加载
+
+为了调试方便，已经将uboot引导程序放入uboot目录下，直接将这些文件放到sd卡中即可。
+
+需要注意的以下步骤：
+
+**1.电脑上启动tftp服务器**
+
+windows系统电脑上可以安装tftpd搭建tftp服务器。将目录指定到`bsp\raspberry-pi\raspi4-32`。
+
+**2.修改设置uboot**
+
+在控制台输入下列命令：
+
+```
+setenv bootcmd "dhcp 0x00200000 x.x.x.x:kernel7.img;dcache flush;go 0x00200000"
+saveenv
+reset
+```
+
+其中`x.x.x.x`为tftp服务器的pc的ip地址。
+
+**3.修改链接脚本**
+
+将树莓派`bsp\raspberry-pi\raspi4-32\link.ld`的文件链接地址改为`0x200000`。
+
+```
+SECTIONS
+{
+    . = 0x8000;
+    . = ALIGN(4096);
+    .
+    .
+    .
+}
+```
+
+改为
+
+```
+SECTIONS
+{
+    . = 0x200000;
+    . = ALIGN(4096);
+    .
+    .
+    .
+}
+```
+
+重新编译程序：
+
+```
+scons -c
+scons
+```
+
+**3.插入网线**
+
+上述准备完成后，将网线插入，保证开发板和tftp服务器在同一个网段的路由器上。上电后uboot可以自动从tftp服务器上获取固件，然后开始执行了。
+
+完成后可以看到串口的输出信息
+
+```
+heap: 0x000607e8 - 0x040607e8
 
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Apr 16 2020
+ / | \     4.0.3 build Oct 27 2020
  2006 - 2020 Copyright by rt-thread team
+[I/SDIO] SD card capacity 31205376 KB.
+found part[0], begin: 1048576, size: 29.777GB
+file system initialization done!
 Hi, this is RT-Thread!!
 msh />
 ```
@@ -103,11 +123,18 @@ msh />
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0,UART2,UART3,UART4,UART5 |
 | GPIO | 支持 | - |
+| SPI | 支持 | SPI0 |
 | MAILBOX | 支持 | - |
+| WATCHDOG | 支持 | - |
+| HDMI | 支持 | - |
 | SDIO | 支持 | - |
 | ETH | 支持 | - |
 
-## 5. 联系人信息
+## 5. 注意事项
+
+目前rt-thread程序可以使用的内存在100MB以内，可以通过调整`board.c`中`platform_mem_desc`表的数据进行相关内存的映射以及修改`board.h`来确定程序使用的堆栈大小。目前在地址`0x08000000`处的1M空间被映射成非cache区供树莓派4的CPU与GPU通信的消息管道。若需要扩大系统内存使用，可自行修改代码进行调整。
+
+## 6. 联系人信息
 
 维护人：[bernard][5]
 
