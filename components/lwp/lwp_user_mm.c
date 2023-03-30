@@ -38,14 +38,22 @@ static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace);
 
 int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
 {
+
     int err = -RT_ENOMEM;
+
+    DLOG(msg, "user_mm", "heap", DLOG_MSG, "malloc rt_lwp_objs");
     lwp->lwp_obj = rt_malloc(sizeof(struct rt_lwp_objs));
+    DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "__init_lwp_objs");
     _init_lwp_objs(lwp->lwp_obj, lwp->aspace);
     if (lwp->lwp_obj)
     {
+        DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "arch_user_space_init(lwp)");
         err = arch_user_space_init(lwp);
         if (!is_fork && err == RT_EOK)
         {
+            DLOG(msg, "user_mm", "aspace", DLOG_MSG, "rt_aspace_map(lwp->aspace, &addr, \
+                                USER_STACK_VEND - USER_STACK_VSTART, \
+                                MMU_MAP_U_RWCB, 0, &lwp->lwp_obj->mem_obj, 0)");
             void *addr = (void *)USER_STACK_VSTART;
             err = rt_aspace_map(lwp->aspace, &addr,
                                 USER_STACK_VEND - USER_STACK_VSTART,
@@ -192,6 +200,7 @@ static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size,
 
     rt_mem_obj_t mem_obj = &lwp->lwp_obj->mem_obj;
 
+    DLOG(msg, "user_mm", "aspace", DLOG_MSG, "rt_aspace_map(lwp->aspace, &va, map_size, MMU_MAP_U_RWCB, flags, mem_obj, 0)");
     ret = rt_aspace_map(lwp->aspace, &va, map_size, MMU_MAP_U_RWCB, flags,
                         mem_obj, 0);
     if (ret != RT_EOK)
@@ -216,6 +225,7 @@ static void _dup_varea(rt_varea_t varea, struct rt_lwp *src_lwp,
 {
     void *vaddr = varea->start;
     void *vend = vaddr + varea->size;
+    DLOG(msg, "aspace", "varea", DLOG_MSG, "call rt_aspace_load_page(dst, vaddr, 1) to prefetch pages");
     if (vaddr < (void *)USER_STACK_VSTART || vaddr >= (void *)USER_STACK_VEND)
     {
         while (vaddr != vend)
@@ -268,6 +278,8 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
                                      .limit_start = new_lwp->aspace->start,
                                      .prefer = varea->start,
                                      .map_size = varea->size};
+        DLOG(msg, "aspace", "varea", DLOG_MSG, "rt_aspace_map_phy(new_lwp->aspace, &hint, varea->attr, \
+                                MM_PA_TO_OFF(pa), &va)");
         err = rt_aspace_map_phy(new_lwp->aspace, &hint, varea->attr,
                                 MM_PA_TO_OFF(pa), &va);
         if (err != RT_EOK)
@@ -280,6 +292,9 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
     {
         /* duplicate a mem_obj backing mapping */
         va = varea->start;
+        DLOG(msg, "aspace", "varea", DLOG_MSG, "rt_aspace_map(new_lwp->aspace, &va, varea->size, varea->attr,\
+                            varea->flag, &new_lwp->lwp_obj->mem_obj,\
+                            varea->offset)");
         err = rt_aspace_map(new_lwp->aspace, &va, varea->size, varea->attr,
                             varea->flag, &new_lwp->lwp_obj->mem_obj,
                             varea->offset);
@@ -293,6 +308,7 @@ int lwp_dup_user(rt_varea_t varea, void *arg)
             /* loading page frames for !MMF_PREFETCH varea */
             if (!(varea->flag & MMF_PREFETCH))
             {
+                DLOG(msg, "lwp_aspace", "varea", DLOG_MSG, "_dup_varea");
                 _dup_varea(varea, self_lwp, new_lwp->aspace);
             }
         }
@@ -324,6 +340,7 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
     map_size &= ~ARCH_PAGE_MASK;
     map_va = (void *)((size_t)map_va & ~ARCH_PAGE_MASK);
 
+    DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "_lwp_map_user(lwp, map_va, map_size, text)");
     ret = _lwp_map_user(lwp, map_va, map_size, text);
 
     if (ret)
@@ -487,6 +504,7 @@ rt_base_t lwp_brk(void *addr)
         {
             size = (((size_t)addr - lwp->end_heap) + ARCH_PAGE_SIZE - 1) &
                    ~ARCH_PAGE_MASK;
+            DLOG(msg, "user_mm", "user_mm", DLOG_MSG, "lwp_map_user(lwp, (void *)lwp->end_heap, size, 0)");
             va = lwp_map_user(lwp, (void *)lwp->end_heap, size, 0);
         }
         if (va)

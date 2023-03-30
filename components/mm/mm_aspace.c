@@ -133,6 +133,11 @@ static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
     LOG_D("%s: va %p length %p", __func__, vaddr, length);
     int err = RT_EOK;
 
+    DLOG(group, "loop [for all page]");
+    DLOG(msg, "aspace",
+		"libcpu_mmu", DLOG_MSG, "rt_hw_mmu_map(aspace, vaddr, phyaddr, pgsz, attr)");
+    DLOG(group_end);
+
     /* it's ensured by caller that (void*)end will not overflow */
     void *end = vaddr + length;
     void *phyaddr = (void *)(offset << MM_PAGE_SHIFT);
@@ -236,6 +241,11 @@ static int _do_prefetch(rt_aspace_t aspace, rt_varea_t varea, void *start,
     void *vaddr = start;
     rt_size_t off = varea->offset + ((start - varea->start) >> ARCH_PAGE_SHIFT);
 
+    DLOG(group, "loop [for all page]");
+    DLOG(msg, "mem_obj",
+        "aspace", DLOG_MSG, "on_page_fault");
+    DLOG(group_end);
+
     while (vaddr != end)
     {
         /* TODO try to map with huge TLB, when flag & HUGEPAGE */
@@ -299,6 +309,8 @@ static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
     varea->offset = offset;
     varea->frames = NULL;
 
+    DLOG(msg, "aspace",
+    "varea", DLOG_MSG, "varea->mem_obj->on_varea_open(varea)");
     if (varea->mem_obj && varea->mem_obj->on_varea_open)
         varea->mem_obj->on_varea_open(varea);
 }
@@ -349,17 +361,24 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
         mem_obj->hint_free(&hint);
     }
 
+    DLOG(msg, "aspace",
+        "varea", DLOG_MSG, "_varea_install(aspace, varea, &hint)");
+
     /* try to allocate a virtual address region for varea */
     err = _varea_install(aspace, varea, &hint);
     WR_UNLOCK(aspace);
 
     if (err == RT_EOK)
     {
+        DLOG(msg, "aspace",
+	    "varea", DLOG_MSG, "_varea_post_install");
         /* fill in varea data */
         _varea_post_install(varea, aspace, attr, flags, mem_obj, offset);
 
         if (MMF_TEST_CNTL(flags, MMF_PREFETCH))
         {
+            DLOG(msg, "aspace",
+                "varea", DLOG_MSG, "_do_prefetch(aspace, varea, varea->start, varea->size)");
             /* do the MMU & TLB business */
             err = _do_prefetch(aspace, varea, varea->start, varea->size);
             if (err)
@@ -532,15 +551,20 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
     else
     {
         WR_LOCK(aspace);
+        DLOG(msg, "aspace",
+            "varea", DLOG_MSG, "_varea_install");
         err = _varea_install(aspace, varea, hint);
         WR_UNLOCK(aspace);
 
         if (err == RT_EOK)
         {
+            DLOG(msg, "aspace",
+                "varea", DLOG_MSG, "_varea_post_install");
             _varea_post_install(varea, aspace, attr, hint->flags, NULL, pa_off);
 
             vaddr = varea->start;
-
+	    DLOG(msg, "aspace",
+		"varea", DLOG_MSG, "_do_named_map(aspace, varea->start, varea->size, pa_off, attr)");
             err = _do_named_map(aspace, varea->start, varea->size,
                                 (rt_size_t)pa_off, attr);
 
@@ -559,6 +583,8 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
             *ret_va = RT_NULL;
     }
 
+    DLOG(msg, "aspace",
+    "app", DLOG_MSG_RET, "return address");
     return err;
 }
 
@@ -615,6 +641,10 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
 
 void _aspace_unmap(rt_aspace_t aspace, void *addr)
 {
+    DLOG(group, "loop vareas of aspace where contain addr");
+    DLOG(msg, "varea", "page", DLOG_MSG, "rt_free(varea)");
+    DLOG(group_end);
+
     WR_LOCK(aspace);
     rt_varea_t varea = _aspace_bst_search(aspace, addr);
     WR_UNLOCK(aspace);

@@ -91,6 +91,7 @@ int arch_user_space_init(struct rt_lwp *lwp)
 {
     rt_ubase_t *mmu_table;
 
+    DLOG(msg, "lwp_user_mm", "page", DLOG_MSG, "alloc page");
     mmu_table = (rt_ubase_t *)rt_pages_alloc(0);
     if (!mmu_table)
     {
@@ -99,9 +100,12 @@ int arch_user_space_init(struct rt_lwp *lwp)
 
     lwp->end_heap = USER_HEAP_VADDR;
 
+    DLOG(msg, "lwp_user_mm", "lwp_user_mm", DLOG_MSG, "copy old page table to new");
     rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
+    DLOG(msg, "lwp_user_mm", "cache", DLOG_MSG, "rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE)");
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
 
+    DLOG(msg, "lwp_user_mm", "page", DLOG_MSG, "rt_aspace_create((void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table)");
     lwp->aspace = rt_aspace_create(
         (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
     if (!lwp->aspace)
