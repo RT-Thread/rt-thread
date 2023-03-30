@@ -26,7 +26,7 @@
 
 #ifdef RT_USING_SMART
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x0fffffff, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM}
+    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x10000000, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM}
 };
 #else
 struct mem_desc platform_mem_desc[] = {
