@@ -60,12 +60,12 @@ menu "On-chip Peripheral Drivers"
             bool "Enable timer0 output pwm"
             default n
             if BSP_USING_PWM0
-                menuconfig BSP_USING_PWM0_CH3
-                    bool "Enable PWM0 channel3"
+                menuconfig BSP_USING_PWM0_CH0
+                    bool "Enable PWM0 channel0"
                     default n
-                    if BSP_USING_PWM0_CH3
-                        config BSP_USING_PWM0_PORT13
-                        bool "Enable PWM0-PORT13 output pwm"
+                    if BSP_USING_PWM0_CH0
+                        config BSP_USING_PWM0_PORT0
+                        bool "Enable PWM0-PORT0 output pwm"
                         default n
                     endif
                 menuconfig BSP_USING_PWM0_CH7
@@ -263,6 +263,10 @@ menu "Board extended module Drivers"
 
     config BSP_USING_SLIDER
         bool "Enable Slider Demo"
+        select BSP_USING_PWM
+        select BSP_USING_PWM0
+        select BSP_USING_PWM0_CH0
+        select BSP_USING_PWM0_PORT0
         default n
 
         menuconfig BSP_USING_RW007
