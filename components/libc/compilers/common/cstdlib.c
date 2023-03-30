@@ -20,7 +20,7 @@ void __rt_libc_exit(int status)
 
     if (self != RT_NULL)
     {
-        LOG_W("thread:%s exit:%d!", self->name, status);
+        LOG_W("thread:%s exit:%d!", self->parent.name, status);
 #ifdef RT_USING_PTHREADS
         if(self->pthread_data != RT_NULL)
         {

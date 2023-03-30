@@ -743,24 +743,11 @@ struct rt_user_context
  */
 struct rt_thread
 {
-    /* rt object */
-#if RT_NAME_MAX > 0
-    char        name[RT_NAME_MAX];                      /**< dynamic name of kernel object */
-#else
-    const char *name;                                   /**< static name of kernel object */
-#endif /* RT_NAME_MAX > 0 */
-    rt_uint8_t  type;                                   /**< type of object */
-    rt_uint8_t  flags;                                  /**< thread's flags */
-
-#ifdef RT_USING_MODULE
-    void       *module_id;                              /**< id of application module */
-#endif /* RT_USING_MODULE */
-
 #ifdef RT_USING_SMART
     int       lwp_ref_count;                            /**< ref count for lwp */
 #endif /* RT_USING_SMART */
 
-    rt_list_t   list;                                   /**< the object list */
+    struct rt_object parent;
     rt_list_t   tlist;                                  /**< the thread list */
 
     /* stack point and entry */
