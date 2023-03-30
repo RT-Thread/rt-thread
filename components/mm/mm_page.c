@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -61,12 +61,12 @@ static void hint_free(rt_mm_va_hint_t hint)
 
 static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
-    DLOG(msg, "kernel_mem_obj", "aspace", DLOG_MSG, "find varea that includes this vaddress inside msg"); 
+    DLOG(msg, "kernel_mem_obj", "aspace", DLOG_MSG, "find varea that includes this vaddress inside msg");
     void *init_start = (void *)init_mpr_align_start;
     void *init_end = (void *)init_mpr_align_end;
     if (msg->fault_vaddr < init_end && msg->fault_vaddr >= init_start)
     {
-	DLOG(msg, "aspace", "kernel_mem_obj", DLOG_MSG, "response.vaddr = init_mpr_cont_start + offset");
+    DLOG(msg, "aspace", "kernel_mem_obj", DLOG_MSG, "response.vaddr = init_mpr_cont_start + offset");
         rt_size_t offset = msg->fault_vaddr - init_start;
         msg->response.status = MM_FAULT_STATUS_OK;
         msg->response.vaddr = init_mpr_cont_start + offset;

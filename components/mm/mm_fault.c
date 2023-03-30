@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -95,16 +95,16 @@ int rt_aspace_fault_try_fix(struct rt_aspace_fault_msg *msg)
     int err = UNRECOVERABLE;
     uintptr_t va = (uintptr_t)msg->fault_vaddr;
     va &= ~ARCH_PAGE_MASK;
-    msg->fault_vaddr = (void *)va; 
- 
+    msg->fault_vaddr = (void *)va;
+
     if (lwp)
     {
-        rt_aspace_t aspace = lwp->aspace;        
+        rt_aspace_t aspace = lwp->aspace;
         DLOG(msg, "aspace", "varea", DLOG_MSG, "_aspace_bst_search(aspace, msg->vaddr)");
-	rt_varea_t varea = _aspace_bst_search(aspace, msg->fault_vaddr);
+    rt_varea_t varea = _aspace_bst_search(aspace, msg->fault_vaddr);
         if (varea)
         {
-	
+
             DLOG(msg, "aspace", "libcpu_mmu", DLOG_MSG, "rt_hw_mmu_v2p(aspace, msg->vaddr)");
             void *pa = rt_hw_mmu_v2p(aspace, msg->fault_vaddr);
             msg->off = (msg->fault_vaddr - varea->start) >> ARCH_PAGE_SHIFT;

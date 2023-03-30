@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -135,7 +135,7 @@ static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
 
     DLOG(group, "loop [for all page]");
     DLOG(msg, "aspace",
-		"libcpu_mmu", DLOG_MSG, "rt_hw_mmu_map(aspace, vaddr, phyaddr, pgsz, attr)");
+        "libcpu_mmu", DLOG_MSG, "rt_hw_mmu_map(aspace, vaddr, phyaddr, pgsz, attr)");
     DLOG(group_end);
 
     /* it's ensured by caller that (void*)end will not overflow */
@@ -371,7 +371,7 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
     if (err == RT_EOK)
     {
         DLOG(msg, "aspace",
-	    "varea", DLOG_MSG, "_varea_post_install");
+        "varea", DLOG_MSG, "_varea_post_install");
         /* fill in varea data */
         _varea_post_install(varea, aspace, attr, flags, mem_obj, offset);
 
@@ -563,8 +563,8 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
             _varea_post_install(varea, aspace, attr, hint->flags, NULL, pa_off);
 
             vaddr = varea->start;
-	    DLOG(msg, "aspace",
-		"varea", DLOG_MSG, "_do_named_map(aspace, varea->start, varea->size, pa_off, attr)");
+        DLOG(msg, "aspace",
+        "varea", DLOG_MSG, "_do_named_map(aspace, varea->start, varea->size, pa_off, attr)");
             err = _do_named_map(aspace, varea->start, varea->size,
                                 (rt_size_t)pa_off, attr);
 
