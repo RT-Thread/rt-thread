@@ -2417,7 +2417,7 @@ rt_err_t sys_thread_delete(rt_thread_t thread)
 #else
     rt_err_t ret = 0;
 
-    if(thread->type != RT_Object_Class_Thread)
+    if(thread->parent.type != RT_Object_Class_Thread)
     {
         ret = -EINVAL;
         goto __exit;

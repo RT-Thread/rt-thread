@@ -787,7 +787,7 @@ long list_process(void)
 
                     thread = threads[index];
                     level = rt_hw_interrupt_disable();
-                    if ((thread->type & ~RT_Object_Class_Static) != RT_Object_Class_Thread)
+                    if ((thread->parent.type & ~RT_Object_Class_Static) != RT_Object_Class_Thread)
                     {
                         rt_hw_interrupt_enable(level);
                         continue;

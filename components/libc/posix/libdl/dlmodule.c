@@ -225,7 +225,7 @@ void dlmodule_destroy_subthread(struct rt_dlmodule *module, rt_thread_t thread)
     rt_thread_free_sig(thread);
 #endif
 
-    if (thread->type & RT_Object_Class_Static)
+    if (thread->parent.type & RT_Object_Class_Static)
     {
         /* detach object */
         rt_object_detach((rt_object_t)thread);
