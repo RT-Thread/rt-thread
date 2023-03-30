@@ -95,7 +95,7 @@ static void irq_callback(void *callback_arg, cyhal_gpio_event_t event)
 
 cyhal_gpio_callback_data_t irq_cb_data;
 
-static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     rt_uint16_t gpio_pin;
 
@@ -132,7 +132,7 @@ static void ifx_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static void ifx_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void ifx_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     rt_uint16_t gpio_pin;
 
@@ -148,7 +148,7 @@ static void ifx_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     cyhal_gpio_write(gpio_pin, value);
 }
 
-static int ifx_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t ifx_pin_read(struct rt_device *device, rt_base_t pin)
 {
     rt_uint16_t gpio_pin;
 
@@ -164,8 +164,8 @@ static int ifx_pin_read(rt_device_t dev, rt_base_t pin)
     return cyhal_gpio_read(gpio_pin);
 }
 
-static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                   rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                   rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_uint16_t gpio_port;
     rt_uint16_t gpio_pin;
@@ -207,7 +207,7 @@ static rt_err_t ifx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t ifx_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t ifx_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_uint16_t gpio_port;
     rt_uint16_t gpio_pin;
@@ -241,7 +241,7 @@ static rt_err_t ifx_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                   rt_uint32_t enabled)
+                                   rt_uint8_t enabled)
 {
     rt_uint16_t gpio_port;
     rt_uint16_t gpio_pin;
