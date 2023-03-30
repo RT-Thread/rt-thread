@@ -31,8 +31,8 @@ struct ifx_pwm
 
 static struct ifx_pwm ifx_pwm_obj[] =
 {
-#ifdef BSP_USING_PWM0_PORT13
-    PWM0_CH3_PORT13_CONFIG,
+#ifdef BSP_USING_PWM0_PORT0
+    PWM0_CH0_PORT0_CONFIG,
 #endif
 
 #ifdef BSP_USING_PWM0_PORT2
@@ -57,6 +57,10 @@ static struct ifx_pwm ifx_pwm_obj[] =
 
 #ifdef BSP_USING_PWM0_PORT12
     PWM0_CH7_PORT12_CONFIG,
+#endif
+
+#ifdef BSP_USING_PWM0_PORT13
+    PWM0_CH3_PORT13_CONFIG,
 #endif
 };
 
@@ -165,26 +169,13 @@ static rt_err_t ifx_hw_pwm_init(struct ifx_pwm *device)
 
     RT_ASSERT(device != RT_NULL);
 
-    /* config pwm channel */
-    if (device->channel == 0x03)
+    if (cyhal_pwm_init_adv(device->pwm_obj, device->gpio, NC, CYHAL_PWM_LEFT_ALIGN, true, 0u, false, RT_NULL) != RT_EOK)
     {
-        if (cyhal_pwm_init_adv(device->pwm_obj, device->gpio, NC, CYHAL_PWM_LEFT_ALIGN, true, 0u, false, RT_NULL) != RT_EOK)
-        {
-            LOG_E("%s channel3 config failed", device->name);
-            result = -RT_ERROR;
-            goto __exit;
-        }
+        LOG_E("%s channel%d config failed", device->name, device->channel);
+        result = -RT_ERROR;
+        goto __exit;
     }
-    /* config pwm channel */
-    if (device->channel == 0x07)
-    {
-        if (cyhal_pwm_init_adv(device->pwm_obj, device->gpio, NC, CYHAL_PWM_LEFT_ALIGN, true, 0u, false, RT_NULL) != RT_EOK)
-        {
-            LOG_E("%s channel7 config failed", device->name);
-            result = -RT_ERROR;
-            goto __exit;
-        }
-    }
+
 __exit:
     return result;
 }

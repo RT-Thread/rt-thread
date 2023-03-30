@@ -13,7 +13,7 @@
 
 #include "drv_gpio.h"
 
-#define LED_PIN     GET_PIN(0, 0)
+#define LED_PIN     GET_PIN(0, 1)
 
 int main(void)
 {
