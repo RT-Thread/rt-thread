@@ -127,7 +127,7 @@ static rt_uint8_t mm32_adc_get_resolution(struct rt_adc_device *device)
 static rt_int16_t mm32_adc_get_vref(struct rt_adc_device *device)
 {
     if(device == RT_NULL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     return 3300;
 }
