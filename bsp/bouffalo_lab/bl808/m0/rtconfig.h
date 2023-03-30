@@ -232,18 +232,12 @@
 
 /* General Drivers Configuration */
 
+#define BSP_USING_GPIO
 
 /* General Purpose UARTs */
 
 #define BSP_USING_UART0
 #define UART0_TX_USING_GPIO14
 #define UART0_RX_USING_GPIO15
-#define BSP_USING_RTC
-#define BSP_USING_WDT
-#define BSP_USING_PWM
-#define BSP_USING_PWM0
-#define BSP_USING_PWM1
-#define BSP_USING_PWM2
-#define BSP_USING_PWM3
 
 #endif
