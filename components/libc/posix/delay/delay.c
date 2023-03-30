@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -66,12 +66,12 @@ int usleep(useconds_t usec)
     if (rt_thread_self() != RT_NULL)
     {
         msleep(usec / 1000u);
+        udelay(usec % 1000u);
     }
     else  /* scheduler has not run yet */
     {
-        udelay(usec / 1000u * 1000u);
+        udelay(usec);
     }
-    udelay(usec % 1000u);
 
     return 0;
 }
