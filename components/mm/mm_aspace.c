@@ -31,104 +31,70 @@
 #include <mmu.h>
 #include <tlb.h>
 
-static void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length);
 static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
                         void *limit_start, rt_size_t limit_size,
                         mm_flag_t flags);
+static void _varea_uninstall(rt_varea_t varea);
 
 struct rt_aspace rt_kernel_space;
 
-rt_varea_t _varea_create(void *start, rt_size_t size)
-{
-    rt_varea_t varea;
-    varea = (rt_varea_t)rt_malloc(sizeof(struct rt_varea));
-    if (varea)
-    {
-        varea->start = start;
-        varea->size = size;
-    }
-    return varea;
-}
-
-static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
-                                       rt_size_t attr, rt_size_t flags,
-                                       rt_mem_obj_t mem_obj, rt_size_t offset)
-{
-    varea->aspace = aspace;
-    varea->attr = attr;
-    varea->mem_obj = mem_obj;
-    varea->flag = flags;
-    varea->offset = offset;
-    varea->frames = NULL;
-
-    if (varea->mem_obj && varea->mem_obj->on_varea_open)
-        varea->mem_obj->on_varea_open(varea);
-}
-
-/* restore context modified by varea install */
-static inline void _varea_uninstall(rt_varea_t varea)
-{
-    rt_aspace_t aspace = varea->aspace;
-
-    if (varea->mem_obj && varea->mem_obj->on_varea_close)
-        varea->mem_obj->on_varea_close(varea);
-
-    rt_varea_free_pages(varea);
-
-    rt_hw_mmu_unmap(aspace, varea->start, varea->size);
-    rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
-
-    WR_LOCK(aspace);
-    _aspace_bst_remove(aspace, varea);
-    WR_UNLOCK(aspace);
-}
-
 int _init_lock(rt_aspace_t aspace)
 {
+    int err;
     MM_PGTBL_LOCK_INIT(aspace);
-    rt_mutex_init(&aspace->bst_lock, "", RT_IPC_FLAG_FIFO);
+    err = rt_mutex_init(&aspace->bst_lock, "aspace", RT_IPC_FLAG_FIFO);
 
-    return RT_EOK;
+    return err;
+}
+
+rt_err_t rt_aspace_init(rt_aspace_t aspace, void *start, rt_size_t length, void *pgtbl)
+{
+    int err = RT_EOK;
+
+    if (pgtbl)
+    {
+        aspace->page_table = pgtbl;
+        aspace->start = start;
+        aspace->size = length;
+
+        err = _aspace_bst_init(aspace);
+        if (err == RT_EOK)
+        {
+            /**
+             * It has the side effect that lock will be added to object
+             * system management. So it must be paired with a detach once
+             * the initialization return successfully.
+             */
+            err = _init_lock(aspace);
+        }
+    }
+    else
+    {
+        err = -RT_EINVAL;
+    }
+
+    return err;
 }
 
 rt_aspace_t rt_aspace_create(void *start, rt_size_t length, void *pgtbl)
 {
     rt_aspace_t aspace = NULL;
-    void *page_table = pgtbl;
+    int err;
 
-    if (page_table)
+    RT_ASSERT(length <= 0 - (rt_size_t)start);
+    aspace = (rt_aspace_t)rt_malloc(sizeof(*aspace));
+    if (aspace)
     {
-        aspace = (rt_aspace_t)rt_malloc(sizeof(*aspace));
-        if (aspace)
-        {
-            aspace->page_table = page_table;
-            aspace->start = start;
-            aspace->size = length;
-            if (_init_lock(aspace) != RT_EOK ||
-                _aspace_bst_init(aspace) != RT_EOK)
-            {
-                rt_free(aspace);
-                aspace = NULL;
-            }
-        }
-    }
-    return aspace;
-}
+        rt_memset(aspace, 0, sizeof(*aspace));
 
-rt_aspace_t rt_aspace_init(rt_aspace_t aspace, void *start, rt_size_t length,
-                           void *pgtbl)
-{
-    void *page_table = pgtbl;
-    LOG_D("%s", __func__);
+        err = rt_aspace_init(aspace, start, length, pgtbl);
 
-    if (page_table)
-    {
-        aspace->page_table = page_table;
-        aspace->start = start;
-        aspace->size = length;
-        if (_init_lock(aspace) != RT_EOK || _aspace_bst_init(aspace) != RT_EOK)
+        if (err != RT_EOK)
         {
-            aspace = NULL;
+            LOG_W("%s(%p, %lx, %p): failed with code %d\n", __func__,
+                start, length, pgtbl, err);
+            rt_free(aspace);
+            aspace = RT_NULL;
         }
     }
     return aspace;
@@ -136,17 +102,29 @@ rt_aspace_t rt_aspace_init(rt_aspace_t aspace, void *start, rt_size_t length,
 
 void rt_aspace_detach(rt_aspace_t aspace)
 {
-    _aspace_unmap(aspace, aspace->start, aspace->size);
+    WR_LOCK(aspace);
+    rt_varea_t varea = ASPACE_VAREA_FIRST(aspace);
+    while (varea)
+    {
+        rt_varea_t prev = varea;
+        _varea_uninstall(varea);
+
+        varea = ASPACE_VAREA_NEXT(varea);
+        if (!(prev->flag & MMF_STATIC_ALLOC))
+        {
+            rt_free(prev);
+        }
+    }
+    WR_UNLOCK(aspace);
+
     rt_mutex_detach(&aspace->bst_lock);
 }
 
 void rt_aspace_delete(rt_aspace_t aspace)
 {
-    if (aspace)
-    {
-        rt_aspace_detach(aspace);
-        rt_free(aspace);
-    }
+    RT_ASSERT(aspace);
+    rt_aspace_detach(aspace);
+    rt_free(aspace);
 }
 
 static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
@@ -178,17 +156,73 @@ static int _do_named_map(rt_aspace_t aspace, void *vaddr, rt_size_t length,
     return err;
 }
 
-rt_inline void _do_page_fault(struct rt_mm_fault_msg *msg, rt_size_t off,
+rt_inline void _do_page_fault(struct rt_aspace_fault_msg *msg, rt_size_t off,
                               void *vaddr, rt_mem_obj_t mem_obj,
                               rt_varea_t varea)
 {
     msg->off = off;
-    msg->vaddr = vaddr;
+    msg->fault_vaddr = vaddr;
     msg->fault_op = MM_FAULT_OP_READ;
     msg->fault_type = MM_FAULT_TYPE_PAGE_FAULT;
     msg->response.status = -1;
+    msg->response.vaddr = 0;
+    msg->response.size = 0;
 
     mem_obj->on_page_fault(varea, msg);
+}
+
+int _varea_map_with_msg(rt_varea_t varea, struct rt_aspace_fault_msg *msg)
+{
+    int err = -RT_ERROR;
+    if (msg->response.status == MM_FAULT_STATUS_OK)
+    {
+        /**
+         * the page returned by handler is not checked
+         * cause no much assumption can make on it
+         */
+        void *store = msg->response.vaddr;
+        rt_size_t store_sz = msg->response.size;
+        if (msg->fault_vaddr + store_sz > varea->start + varea->size)
+        {
+            LOG_W("%s: too much (0x%lx) of buffer on vaddr %p is provided",
+                    __func__, store_sz, msg->fault_vaddr);
+        }
+        else
+        {
+            void *map;
+            void *v_addr = msg->fault_vaddr;
+            void *p_addr = store + PV_OFFSET;
+            map = rt_hw_mmu_map(varea->aspace, v_addr, p_addr, store_sz, varea->attr);
+
+            if (!map)
+            {
+                LOG_W("%s: MMU mapping failed for va %p to %p of %lx", __func__,
+                    msg->fault_vaddr, store + PV_OFFSET, store_sz);
+            }
+            else
+            {
+                rt_hw_tlb_invalidate_range(varea->aspace, v_addr, store_sz, ARCH_PAGE_SIZE);
+                err = RT_EOK;
+            }
+        }
+    }
+    else if (msg->response.status == MM_FAULT_STATUS_OK_MAPPED)
+    {
+        if (rt_hw_mmu_v2p(varea->aspace, msg->fault_vaddr) == ARCH_MAP_FAILED)
+        {
+            LOG_W("%s: no page is mapped on %p", __func__, msg->fault_vaddr);
+        }
+        else
+        {
+            err = RT_EOK;
+        }
+    }
+    else
+    {
+        LOG_W("%s: failed on va %p inside varea %p(%s)", __func__, msg->fault_vaddr, varea,
+            varea->mem_obj->get_name ? varea->mem_obj->get_name(varea) : "unknow");
+    }
+    return err;
 }
 
 /* allocate memory page for mapping range */
@@ -205,48 +239,28 @@ static int _do_prefetch(rt_aspace_t aspace, rt_varea_t varea, void *start,
     while (vaddr != end)
     {
         /* TODO try to map with huge TLB, when flag & HUGEPAGE */
-        struct rt_mm_fault_msg msg;
+        struct rt_aspace_fault_msg msg;
         _do_page_fault(&msg, off, vaddr, varea->mem_obj, varea);
 
-        if (msg.response.status == MM_FAULT_STATUS_OK)
-        {
-            void *store = msg.response.vaddr;
-            rt_size_t store_sz = msg.response.size;
-
-            if (store_sz + vaddr > end)
-            {
-                LOG_W("%s: too much (0x%lx) of buffer at vaddr %p is provided",
-                      __func__, store_sz, vaddr);
-                break;
-            }
-
-            void *map = rt_hw_mmu_map(aspace, vaddr, store + PV_OFFSET,
-                                      store_sz, varea->attr);
-
-            if (!map)
-            {
-                LOG_W("%s: MMU mapping failed for va %p to %p of %lx", __func__,
-                      vaddr, store + PV_OFFSET, store_sz);
-            }
-            else
-            {
-                rt_hw_tlb_invalidate_range(aspace, vaddr, store_sz, ARCH_PAGE_SIZE);
-            }
-            vaddr += store_sz;
-            off += store_sz >> ARCH_PAGE_SHIFT;
-        }
-        else
-        {
-            err = -RT_ENOMEM;
-            LOG_W("%s failed because no memory is provided", __func__);
+        if (_varea_map_with_msg(varea, &msg))
             break;
-        }
+
+        /**
+         * It's hard to identify the mapping pattern on a customized handler
+         * So we terminate the prefetch process on that case
+         */
+        if (msg.response.status == MM_FAULT_STATUS_OK_MAPPED)
+            break;
+
+        vaddr += msg.response.size;
+        off += msg.response.size >> ARCH_PAGE_SHIFT;
     }
 
     return err;
 }
 
-int _varea_install(rt_aspace_t aspace, rt_varea_t varea, rt_mm_va_hint_t hint)
+/* caller must hold the aspace lock */
+static int _varea_install(rt_aspace_t aspace, rt_varea_t varea, rt_mm_va_hint_t hint)
 {
     void *alloc_va;
     int err = RT_EOK;
@@ -274,6 +288,42 @@ int _varea_install(rt_aspace_t aspace, rt_varea_t varea, rt_mm_va_hint_t hint)
     return err;
 }
 
+static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
+                                       rt_size_t attr, rt_size_t flags,
+                                       rt_mem_obj_t mem_obj, rt_size_t offset)
+{
+    varea->aspace = aspace;
+    varea->attr = attr;
+    varea->mem_obj = mem_obj;
+    varea->flag = flags;
+    varea->offset = offset;
+    varea->frames = NULL;
+
+    if (varea->mem_obj && varea->mem_obj->on_varea_open)
+        varea->mem_obj->on_varea_open(varea);
+}
+
+/**
+ * restore context modified by varea install
+ * caller must NOT hold the aspace lock
+ */
+static void _varea_uninstall(rt_varea_t varea)
+{
+    rt_aspace_t aspace = varea->aspace;
+
+    if (varea->mem_obj && varea->mem_obj->on_varea_close)
+        varea->mem_obj->on_varea_close(varea);
+
+    rt_hw_mmu_unmap(aspace, varea->start, varea->size);
+    rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
+
+    rt_varea_pgmgr_pop_all(varea);
+
+    WR_LOCK(aspace);
+    _aspace_bst_remove(aspace, varea);
+    WR_UNLOCK(aspace);
+}
+
 static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
                           mm_flag_t flags, rt_mem_obj_t mem_obj,
                           rt_size_t offset)
@@ -281,6 +331,12 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
     int err = RT_EOK;
 
     WR_LOCK(aspace);
+
+    /**
+     * @brief .prefer & .map_size are scratched from varea which setup by caller
+     * .limit_start & .limit_range_size have default to be in range of aspace
+     * .flags is from parameter, and will be fill in varea if install successfully
+     */
     struct rt_mm_va_hint hint = {.prefer = varea->start,
                                  .map_size = varea->size,
                                  .limit_start = aspace->start,
@@ -293,6 +349,7 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
         mem_obj->hint_free(&hint);
     }
 
+    /* try to allocate a virtual address region for varea */
     err = _varea_install(aspace, varea, &hint);
     WR_UNLOCK(aspace);
 
@@ -314,6 +371,18 @@ static int _mm_aspace_map(rt_aspace_t aspace, rt_varea_t varea, rt_size_t attr,
     }
 
     return err;
+}
+
+rt_varea_t _varea_create(void *start, rt_size_t size)
+{
+    rt_varea_t varea;
+    varea = (rt_varea_t)rt_malloc(sizeof(struct rt_varea));
+    if (varea)
+    {
+        varea->start = start;
+        varea->size = size;
+    }
+    return varea;
 }
 
 #define _IS_OVERFLOW(start, length) ((length) > (0ul - (uintptr_t)(start)))
@@ -339,7 +408,8 @@ static inline int _not_align(void *start, rt_size_t length, rt_size_t mask)
 
 static inline int _not_support(rt_size_t flags)
 {
-    rt_size_t support_ops = (MMF_PREFETCH | MMF_MAP_FIXED | MMF_TEXT);
+    rt_size_t support_ops = (MMF_PREFETCH | MMF_MAP_FIXED | MMF_TEXT |
+        MMF_STATIC_ALLOC | MMF_REQUEST_ALIGN);
     return flags & ~(support_ops | _MMF_ALIGN_MASK);
 }
 
@@ -351,19 +421,25 @@ int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length,
     int err;
     rt_varea_t varea;
 
-    if (!aspace || !addr || !mem_obj || length == 0 ||
-        _not_in_range(*addr, length, aspace->start, aspace->size))
+    if (!aspace || !addr || !mem_obj || length == 0)
     {
         err = -RT_EINVAL;
-        LOG_I("%s: Invalid input", __func__);
+        LOG_I("%s(%p, %p, %lx, %lx, %lx, %p, %lx): Invalid input",
+            __func__, aspace, addr, length, attr, flags, mem_obj, offset);
+    }
+    else if (_not_in_range(*addr, length, aspace->start, aspace->size))
+    {
+        err = -RT_EINVAL;
+        LOG_I("%s(addr:%p, len:%lx): out of range", __func__, *addr, length);
     }
     else if (_not_support(flags))
     {
-        LOG_I("%s: no support flags 0x%p", __func__, flags);
+        LOG_I("%s: no support flags 0x%lx", __func__, flags);
         err = -RT_ENOSYS;
     }
     else
     {
+        /* allocate the varea and fill in start and size */
         varea = _varea_create(*addr, length);
 
         if (varea)
@@ -376,7 +452,7 @@ int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length,
         }
         else
         {
-            LOG_W("%s: mm aspace map failed", __func__);
+            LOG_W("%s: memory allocation failed", __func__);
             err = -RT_ENOMEM;
         }
     }
@@ -461,7 +537,7 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
 
         if (err == RT_EOK)
         {
-            _varea_post_install(varea, aspace, attr, 0, NULL, pa_off);
+            _varea_post_install(varea, aspace, attr, hint->flags, NULL, pa_off);
 
             vaddr = varea->start;
 
@@ -537,28 +613,25 @@ int rt_aspace_map_phy_static(rt_aspace_t aspace, rt_varea_t varea,
     return err;
 }
 
-void _aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
+void _aspace_unmap(rt_aspace_t aspace, void *addr)
 {
-    struct _mm_range range = {addr, addr + length - 1};
-    rt_varea_t varea = _aspace_bst_search_overlap(aspace, range);
+    WR_LOCK(aspace);
+    rt_varea_t varea = _aspace_bst_search(aspace, addr);
+    WR_UNLOCK(aspace);
 
     if (varea == RT_NULL)
     {
-        LOG_I("%s: No such entry found at %p with %lx bytes\n", __func__, addr, length);
+        LOG_I("%s: No such entry found at %p\n", __func__, addr);
     }
 
-    while (varea)
+    _varea_uninstall(varea);
+    if (!(varea->flag & MMF_STATIC_ALLOC))
     {
-        _varea_uninstall(varea);
-        if (!(varea->flag & MMF_STATIC_ALLOC))
-        {
-            rt_free(varea);
-        }
-        varea = _aspace_bst_search_overlap(aspace, range);
+        rt_free(varea);
     }
 }
 
-int rt_aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
+int rt_aspace_unmap(rt_aspace_t aspace, void *addr)
 {
     if (!aspace)
     {
@@ -566,14 +639,14 @@ int rt_aspace_unmap(rt_aspace_t aspace, void *addr, rt_size_t length)
         return -RT_EINVAL;
     }
 
-    if (_not_in_range(addr, length, aspace->start, aspace->size))
+    if (_not_in_range(addr, 1, aspace->start, aspace->size))
     {
         LOG_I("%s: %lx not in range of aspace[%lx:%lx]", __func__, addr,
               aspace->start, aspace->start + aspace->size);
         return -RT_EINVAL;
     }
 
-    _aspace_unmap(aspace, addr, length);
+    _aspace_unmap(aspace, addr);
 
     return RT_EOK;
 }
@@ -659,9 +732,8 @@ static void *_find_head_and_asc_search(rt_aspace_t aspace, rt_size_t req_size,
     {
         void *candidate;
         rt_size_t gap_size;
-        rt_varea_t former = _aspace_bst_search(aspace, limit.start);
 
-        candidate = former ? former->start + former->size : limit.start;
+        candidate = limit.start;
         candidate = _align(candidate, align_mask);
         gap_size = limit.end - candidate + 1;
 
@@ -688,6 +760,7 @@ static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
 
     if (prefer != RT_NULL)
     {
+        /* if prefer and free, just return the prefer region */
         prefer = _align(prefer, align_mask);
         struct _mm_range range = {prefer, prefer + req_size - 1};
         varea = _aspace_bst_search_overlap(aspace, range);
@@ -702,9 +775,11 @@ static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
         }
         else
         {
+            /* search from `varea` in ascending order */
             va = _ascending_search(varea, req_size, align_mask, limit);
             if (va == RT_NULL)
             {
+                /* rewind to first range */
                 limit.end = varea->start - 1;
                 va = _find_head_and_asc_search(aspace, req_size, align_mask,
                                                limit);
@@ -722,8 +797,12 @@ static void *_find_free(rt_aspace_t aspace, void *prefer, rt_size_t req_size,
 int rt_aspace_load_page(rt_aspace_t aspace, void *addr, rt_size_t npage)
 {
     int err = RT_EOK;
-    rt_varea_t varea = _aspace_bst_search(aspace, addr);
+    rt_varea_t varea;
     void *end = addr + (npage << ARCH_PAGE_SHIFT);
+
+    WR_LOCK(aspace);
+    varea = _aspace_bst_search(aspace, addr);
+    WR_UNLOCK(aspace);
 
     if (!varea)
     {
@@ -744,18 +823,92 @@ int rt_aspace_load_page(rt_aspace_t aspace, void *addr, rt_size_t npage)
     return err;
 }
 
+int rt_varea_map_page(rt_varea_t varea, void *vaddr, void *page)
+{
+    int err = RT_EOK;
+    void *page_pa = rt_kmem_v2p(page);
+
+    if (!varea || !vaddr || !page)
+    {
+        LOG_W("%s(%p,%p,%p): invalid input", __func__, varea, vaddr, page);
+        err = -RT_EINVAL;
+    }
+    else if (page_pa == ARCH_MAP_FAILED)
+    {
+        LOG_W("%s: page is not in kernel space", __func__);
+        err = -RT_ERROR;
+    }
+    else if (_not_in_range(vaddr, ARCH_PAGE_SIZE, varea->start, varea->size))
+    {
+        LOG_W("%s(%p,%lx): not in range of varea(%p,%lx)", __func__,
+            vaddr, ARCH_PAGE_SIZE, varea->start, varea->size);
+        err = -RT_EINVAL;
+    }
+    else
+    {
+        err = _do_named_map(
+            varea->aspace,
+            vaddr,
+            ARCH_PAGE_SIZE,
+            MM_PA_TO_OFF(page_pa),
+            varea->attr
+        );
+    }
+
+    return err;
+}
+
+#define ALIGNED(addr) (!((rt_size_t)(addr) & ARCH_PAGE_MASK))
+
+int rt_varea_map_range(rt_varea_t varea, void *vaddr, void *paddr, rt_size_t length)
+{
+    int err;
+    if (!varea || !vaddr || !paddr || !length ||
+        !ALIGNED(vaddr) || !ALIGNED(paddr) || !(ALIGNED(length)))
+    {
+        LOG_W("%s(%p,%p,%p,%lx): invalid input", __func__, varea, vaddr, paddr, length);
+        err = -RT_EINVAL;
+    }
+    else if (_not_in_range(vaddr, length, varea->start, varea->size))
+    {
+        LOG_W("%s(%p,%lx): not in range of varea(%p,%lx)", __func__,
+            vaddr, length, varea->start, varea->size);
+        err = -RT_EINVAL;
+    }
+    else
+    {
+        err = _do_named_map(
+            varea->aspace,
+            vaddr,
+            length,
+            MM_PA_TO_OFF(paddr),
+            varea->attr
+        );
+    }
+    return err;
+}
+
 int rt_aspace_offload_page(rt_aspace_t aspace, void *addr, rt_size_t npage)
 {
     return -RT_ENOSYS;
 }
 
-int mm_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd)
+int rt_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd)
 {
     int err;
-    rt_varea_t varea = _aspace_bst_search(aspace, addr);
+    rt_varea_t varea;
+
+    WR_LOCK(aspace);
+    varea = _aspace_bst_search(aspace, addr);
+    WR_UNLOCK(aspace);
+
     if (varea)
     {
         err = rt_hw_mmu_control(aspace, varea->start, varea->size, cmd);
+        if (err == RT_EOK)
+        {
+            rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
+        }
     }
     else
     {
@@ -768,12 +921,15 @@ int mm_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd)
 int rt_aspace_traversal(rt_aspace_t aspace,
                         int (*fn)(rt_varea_t varea, void *arg), void *arg)
 {
-    rt_varea_t varea = ASPACE_VAREA_FIRST(aspace);
+    rt_varea_t varea;
+    WR_LOCK(aspace);
+    varea = ASPACE_VAREA_FIRST(aspace);
     while (varea)
     {
         fn(varea, arg);
         varea = ASPACE_VAREA_NEXT(varea);
     }
+    WR_UNLOCK(aspace);
 
     return 0;
 }
