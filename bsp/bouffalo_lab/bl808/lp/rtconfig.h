@@ -128,9 +128,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -208,6 +205,8 @@
 
 
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
 
 #define BSP_USING_BL808
 #define BL808_CORE_LP

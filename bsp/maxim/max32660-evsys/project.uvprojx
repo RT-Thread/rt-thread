@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, TARGET_REV=0x4131, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, TARGET=32660, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, TARGET_REV=0x4131, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, TARGET=32660</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\HAL_Drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MAX32660PeriphDriver\CMSIS\Device\Maxim\MAX32660\Include;..\libraries\MAX32660PeriphDriver\CMSIS\Core\Include;..\libraries\MAX32660PeriphDriver\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\libraries\MAX32660PeriphDriver\Include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;.;..\..\..\components\libc\compilers\common\include;board;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers;applications;..\..\..\components\libc\posix\io\poll;..\libraries\MAX32660PeriphDriver\CMSIS\Device\Maxim\MAX32660\Include;..\libraries\MAX32660PeriphDriver\CMSIS\Core\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -449,13 +449,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -553,16 +546,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
+              <FileName>startup_max32660.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\CMSIS\Device\Maxim\MAX32660\Source\ARM\startup_max32660.s</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_max32660.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\MAX32660PeriphDriver\CMSIS\Device\Maxim\MAX32660\Source\ARM\startup_max32660.s</FilePath>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -685,9 +678,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

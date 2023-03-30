@@ -331,9 +331,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>GD32F30X_HD, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>GD32F30X_HD, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\finsh;.;..\..\include;Libraries\CMSIS\GD\GD32F30x\Include;Libraries\CMSIS;Libraries\GD32F30x_standard_peripheral\Include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\components\dfs\filesystems\devfs;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;Libraries\CMSIS\GD\GD32F30x\Include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\stdio;Libraries\CMSIS;..\..\components\dfs\include;..\..\components\dfs\filesystems\elmfat;applications;drivers;Libraries\GD32F30x_standard_peripheral\Include;..\..\components\drivers\include;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\libcpu\arm\common;.;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;..\..\components\finsh;..\..\components\drivers\spi\sfud\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -445,13 +445,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -985,9 +978,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1016,16 +1009,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_wwdgt.c</FileName>
+              <FileName>gd32f30x_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_wwdgt.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_can.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_bkp.c</FileName>
+              <FileName>gd32f30x_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_bkp.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1037,16 +1030,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_timer.c</FileName>
+              <FileName>gd32f30x_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_timer.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>system_gd32f30x.c</FileName>
+              <FileName>gd32f30x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F30x\Source\system_gd32f30x.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_dbg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dbg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_fmc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1065,51 +1072,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_rcu.c</FileName>
+              <FileName>system_gd32f30x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_exmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f30x_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exti.c</FilePath>
+              <FilePath>Libraries\CMSIS\GD\GD32F30x\Source\system_gd32f30x.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1121,23 +1086,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_dbg.c</FileName>
+              <FileName>gd32f30x_enet.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dbg.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_enet.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_gpio.c</FileName>
+              <FileName>gd32f30x_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_adc.c</FileName>
+              <FileName>gd32f30x_wwdgt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_adc.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_wwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_exmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_bkp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f30x_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_pmu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1149,9 +1142,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_spi.c</FileName>
+              <FileName>gd32f30x_rcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_spi.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1163,30 +1156,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_fmc.c</FileName>
+              <FileName>gd32f30x_sdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_fmc.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_sdio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_can.c</FileName>
+              <FileName>gd32f30x_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_can.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_spi.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_enet.c</FileName>
+              <FileName>gd32f30x_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_enet.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_crc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f30x_i2c.c</FileName>
+              <FileName>gd32f30x_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_i2c.c</FilePath>
+              <FilePath>Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_timer.c</FilePath>
             </File>
           </Files>
         </Group>

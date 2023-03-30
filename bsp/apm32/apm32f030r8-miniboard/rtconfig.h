@@ -141,9 +141,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -216,10 +213,13 @@
 
 /* Other */
 
+
 /* Signal IO */
 
 
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
 
 #define SOC_FAMILY_APM32
 #define SOC_SERIES_APM32F0

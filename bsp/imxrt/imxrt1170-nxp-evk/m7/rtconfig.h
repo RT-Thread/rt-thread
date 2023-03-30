@@ -33,6 +33,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -148,9 +149,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -220,13 +218,17 @@
 
 /* Device Control */
 
-/* Privated Packages of RealThread */
 
 /* Other */
 
+
 /* Signal IO */
 
+
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
+
 
 /* Hardware Drivers Config */
 
@@ -236,8 +238,6 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
-#define BSP_USING_USB
-#define BSP_USB0_HOST
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
 

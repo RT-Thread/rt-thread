@@ -144,9 +144,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -224,6 +221,8 @@
 
 
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
 
 #define BSP_USING_BL70X
 #define BSP_USING_ROMAPI
