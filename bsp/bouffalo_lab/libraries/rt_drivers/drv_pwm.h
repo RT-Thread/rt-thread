@@ -16,4 +16,4 @@
 #include "hardware/pwm_v2_reg.h"
 int rt_hw_pwm_init(void);
 
-#endif
+#endif /* __DRV_PWM_H__ */

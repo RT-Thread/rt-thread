@@ -20,6 +20,15 @@ struct rt_watchdog_device wdt_device;
 
 static rt_err_t _wdt_configure(rt_watchdog_t *wdt_device)
 {
+    struct bflb_device_s* wdt = bflb_device_get_by_name("watchdog");
+    struct bflb_wdg_config_s wdg_cfg;
+
+    wdg_cfg.clock_source = BFLB_SYSTEM_XCLK;
+    wdg_cfg.clock_div = 40;
+    wdg_cfg.comp_val = 10000000;
+    wdg_cfg.mode = WDG_MODE_RESET;
+    bflb_wdg_init(wdt, &wdg_cfg);
+
     return RT_EOK;
 }
 
@@ -58,7 +67,7 @@ static rt_err_t _wdt_control(rt_watchdog_t *wdt_device, int cmd, void *arg)
         break;
     default:
         LOG_W("This command is not supported.");
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;

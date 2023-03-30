@@ -91,7 +91,7 @@ static rt_err_t _pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     channel = configuration->channel;
 
     if (channel >= 4)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     struct bflb_device_s* pwm = bflb_device_get_by_name("pwm_v2_0");
     switch (cmd)
@@ -109,7 +109,7 @@ static rt_err_t _pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     case PWM_CMD_GET:
         return _pwm_get(channel, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
@@ -121,15 +121,21 @@ static struct rt_device_pwm pwm_device;
 
 int rt_hw_pwm_init(void)
 {
+    int result = RT_EOK;
+
     struct bflb_device_s* gpio = bflb_device_get_by_name("gpio");
     bflb_gpio_init(gpio, GPIO_PIN_8, GPIO_FUNC_PWM0 | GPIO_ALTERNATE | GPIO_PULLDOWN | GPIO_SMT_EN | GPIO_DRV_1);
     struct bflb_device_s* pwm = bflb_device_get_by_name("pwm_v2_0");
     bflb_pwm_v2_start(pwm);
 
     #if defined(BSP_USING_PWM0) || defined(BSP_USING_PWM1) || defined(BSP_USING_PWM2) || defined(BSP_USING_PWM3)
-        rt_device_pwm_register(&pwm_device, "pwm", &_pwm_ops, 0);
+    result = rt_device_pwm_register(&pwm_device, "pwm", &_pwm_ops, 0);
+    if(result != RT_EOK)
+    {
+        LOG_E("pwm device register fail.");
+    }
     #endif
-    return RT_EOK;
+    return result;
 }
 INIT_DEVICE_EXPORT(rt_hw_pwm_init);
 

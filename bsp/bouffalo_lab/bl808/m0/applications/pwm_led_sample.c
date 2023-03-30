@@ -34,7 +34,7 @@ static int pwm_led_sample(int argc, char *argv[])
     if (pwm_dev == RT_NULL)
     {
         rt_kprintf("pwm sample run failed! can't find %s device!\n", PWM_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* 设置PWM周期和脉冲宽度默认值 */
     rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
@@ -67,4 +67,4 @@ static int pwm_led_sample(int argc, char *argv[])
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(pwm_led_sample, pwm sample);
 
-#endif
+#endif   /* RT_USING_PWM */

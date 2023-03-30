@@ -16,7 +16,7 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
-#if defined(RT_USING_RTC)
+#ifdef RT_USING_RTC
 
 static struct rt_device rtc;
 static rt_uint32_t rtc_time;
@@ -61,13 +61,10 @@ static rt_err_t _rtc_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-void rt_hw_rtc_isr(rt_device_t device)
+int rt_hw_rtc_init(void)
 {
+    int result = RT_EOK;
 
-}
-
-void rt_hw_rtc_init(void)
-{
     struct bflb_device_s* bflb_rtc = bflb_device_get_by_name("rtc");
     bflb_rtc_set_time(bflb_rtc, 0);
     /* register rtc device */
@@ -82,8 +79,14 @@ void rt_hw_rtc_init(void)
     rtc.control     = _rtc_control;
     rtc.user_data   = RT_NULL; /* no private */
 
-    rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
+    result = rt_device_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
+    if(result != RT_EOK)
+    {
+        LOG_E("rtc device register fail.");
+    }
+
+    return result;
 }
 
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
-#endif
+#endif /* RT_USING_RTC */

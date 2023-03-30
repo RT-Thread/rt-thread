@@ -14,6 +14,6 @@
 #include <rtdevice.h>
 #include <rthw.h>
 
-void rt_hw_rtc_init(void);
+int rt_hw_rtc_init(void);
 
 #endif /* __DRV_RTC_H__ */

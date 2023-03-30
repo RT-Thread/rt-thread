@@ -52,7 +52,7 @@ static int wdt_sample(int argc, char *argv[])
     if (!wdg_dev)
     {
         rt_kprintf("find %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* 初始化设备 */
     rt_device_init(wdg_dev);
@@ -62,7 +62,7 @@ static int wdt_sample(int argc, char *argv[])
     if (ret != RT_EOK)
     {
         rt_kprintf("set %s timeout failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* 启动看门狗 */
@@ -79,4 +79,4 @@ static int wdt_sample(int argc, char *argv[])
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(wdt_sample, wdt sample);
 
-#endif
+#endif  /* RT_USING_WDT */
