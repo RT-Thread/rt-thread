@@ -185,7 +185,7 @@ static rt_uint32_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
         (config.mode & RT_SPI_CS_HIGH)?prev_raspi_pin_write(cs_pin, 0):prev_raspi_pin_write(cs_pin, 1);
     }
     if (res != RT_EOK)
-           return RT_ERROR;
+           return -RT_ERROR;
 
     return message->length;
 }
