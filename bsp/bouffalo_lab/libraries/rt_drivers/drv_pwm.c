@@ -128,13 +128,11 @@ int rt_hw_pwm_init(void)
     struct bflb_device_s* pwm = bflb_device_get_by_name("pwm_v2_0");
     bflb_pwm_v2_start(pwm);
 
-    #if defined(BSP_USING_PWM0) || defined(BSP_USING_PWM1) || defined(BSP_USING_PWM2) || defined(BSP_USING_PWM3)
     result = rt_device_pwm_register(&pwm_device, "pwm", &_pwm_ops, 0);
     if(result != RT_EOK)
     {
         LOG_E("pwm device register fail.");
     }
-    #endif
     return result;
 }
 INIT_DEVICE_EXPORT(rt_hw_pwm_init);
