@@ -133,24 +133,24 @@ menu "General Drivers Configuration"
 
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
-        default y
+        default n
         select RT_USING_PWM
         if BSP_USING_PWM
             config BSP_USING_PWM0
                 bool "Enable PWM0"
-                default y
+                default n
 
             config BSP_USING_PWM1
                 bool "Enable PWM1"
-                default y
+                default n
 
             config BSP_USING_PWM2
                 bool "Enable PWM2"
-                default y
+                default n
 
             config BSP_USING_PWM3
                 bool "Enable PWM3"
-                default y
+                default n
         endif
 
 endmenu
