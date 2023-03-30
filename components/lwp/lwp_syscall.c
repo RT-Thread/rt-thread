@@ -1710,7 +1710,7 @@ sysret_t _sys_fork(void)
     /* create thread */
     self_thread = rt_thread_self();
 
-    thread = rt_thread_create(self_thread->name,
+    thread = rt_thread_create(self_thread->parent.name,
             RT_NULL,
             RT_NULL,
             self_thread->stack_size,

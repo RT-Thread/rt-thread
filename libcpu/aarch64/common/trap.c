@@ -289,7 +289,7 @@ void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
 #endif
     process_exception(esr, regs->pc);
     rt_hw_show_register(regs);
-    rt_kprintf("current: %s\n", rt_thread_self()->name);
+    rt_kprintf("current: %s\n", rt_thread_self()->parent.name);
 #ifdef RT_USING_LWP
     check_user_fault(regs, 0, "user fault");
 #endif
@@ -304,7 +304,7 @@ void rt_hw_trap_serror(struct rt_hw_exp_stack *regs)
 {
     rt_kprintf("SError\n");
     rt_hw_show_register(regs);
-    rt_kprintf("current: %s\n", rt_thread_self()->name);
+    rt_kprintf("current: %s\n", rt_thread_self()->parent.name);
 #ifdef RT_USING_FINSH
     list_thread();
 #endif
