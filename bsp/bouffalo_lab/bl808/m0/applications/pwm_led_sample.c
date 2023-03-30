@@ -16,6 +16,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#ifdef RT_USING_PWM
+
 #define LED_PIN_NUM          8     /* LED PIN脚编号，查看驱动文件drv_gpio.c确定 */
 #define PWM_DEV_NAME        "pwm"  /* PWM设备名称 */
 #define PWM_DEV_CHANNEL      0       /* PWM通道 */
@@ -64,3 +66,5 @@ static int pwm_led_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(pwm_led_sample, pwm sample);
+
+#endif

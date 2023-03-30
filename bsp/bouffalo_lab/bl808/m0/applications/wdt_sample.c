@@ -19,6 +19,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#ifdef RT_USING_WDT
+
 #define WDT_DEVICE_NAME    "wdt"    /* 看门狗设备名称 */
 
 static rt_device_t wdg_dev;         /* 看门狗设备句柄 */
@@ -76,3 +78,5 @@ static int wdt_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(wdt_sample, wdt sample);
+
+#endif
