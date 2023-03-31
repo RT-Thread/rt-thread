@@ -743,10 +743,6 @@ struct rt_user_context
  */
 struct rt_thread
 {
-#ifdef RT_USING_SMART
-    int       lwp_ref_count;                            /**< ref count for lwp */
-#endif /* RT_USING_SMART */
-
     struct rt_object parent;
     rt_list_t   tlist;                                  /**< the thread list */
 

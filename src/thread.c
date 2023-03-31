@@ -274,7 +274,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #endif /* RT_USING_PTHREADS */
 
 #ifdef RT_USING_MODULE
-    thread->module_id = 0;
+    thread->parent.module_id = 0;
 #endif /* RT_USING_MODULE */
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
