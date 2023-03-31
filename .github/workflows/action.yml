@@ -351,6 +351,6 @@ jobs:
           source ~/.env/env.sh
           for bsp in $(echo $SRTT_BSP | tr ',' '\n'); do
             echo "Compiling BSP: ===== $bsp ===="
-            pushd bsp/$RTT_BSP && pkgs --update && popd
-            scons -C bsp/$RTT_BSP
+            pushd bsp/$bsp && pkgs --update && popd
+            scons -C bsp/$bsp
           done
