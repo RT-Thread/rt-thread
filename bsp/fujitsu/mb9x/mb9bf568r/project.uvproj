@@ -345,9 +345,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;CMSIS\Include;CMSIS\DeviceSupport;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;drivers;..\..\..\..\components\finsh;.;..\..\..\..\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;drivers;..\..\..\..\components\finsh;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\compilers\common\extension;CMSIS\DeviceSupport;CMSIS\Include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\posix\ipc;applications;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\io\poll;.;..\..\..\..\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -406,16 +406,16 @@
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>system_mb9abxxx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\DeviceSupport\system_mb9abxxx.c</FilePath>
+              <FileName>startup_mb9bf56xr.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>CMSIS\DeviceSupport\arm\startup_mb9bf56xr.s</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_mb9bf56xr.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>CMSIS\DeviceSupport\arm\startup_mb9bf56xr.s</FilePath>
+              <FileName>system_mb9abxxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\DeviceSupport\system_mb9abxxx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -482,13 +482,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -520,13 +513,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\serial.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\led.c</FilePath>
@@ -537,6 +523,13 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -638,9 +631,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

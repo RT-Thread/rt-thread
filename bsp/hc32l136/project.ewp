@@ -2035,9 +2035,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -2182,7 +2179,7 @@
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\thread.c</name>

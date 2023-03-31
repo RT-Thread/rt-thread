@@ -346,9 +346,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, CORE_M4, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_SPIFI, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, CORE_M4, USE_SPIFI</Define>
               <Undefine />
-              <IncludePath>applications;.;..\Libraries\Device\NXP\LPC43xx\Include;..\Libraries\CMSIS\Include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\drivers;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\applications;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\drivers;..\Libraries\CMSIS\Include;.;..\Libraries\Device\NXP\LPC43xx\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -481,13 +481,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -705,9 +698,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

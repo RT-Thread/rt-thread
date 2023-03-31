@@ -219,7 +219,7 @@
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
-          <state>STM32F746xx</state>
+          <state>STM32F723xx</state>
           <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
@@ -1260,7 +1260,7 @@
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
-          <state>STM32F746xx</state>
+          <state>STM32F723xx</state>
           <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
@@ -2140,7 +2140,7 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
@@ -2194,7 +2194,7 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\iar\startup_stm32f746xx.s</name>
+      <name>$PROJ_DIR$\..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\iar\startup_stm32f723xx.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32f7xx_hal_msp.c</name>
@@ -2207,9 +2207,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_hwtimer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
@@ -2263,7 +2260,7 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>

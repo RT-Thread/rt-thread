@@ -2189,9 +2189,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -2297,7 +2294,7 @@
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\thread.c</name>
@@ -2309,91 +2306,91 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_misc.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_fsmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_comp.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_dma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_pwr.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_flash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_wwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_iwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\Source\system_mm32f327x.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_dac.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_bkp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_dbg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\Source\IAR_StartAsm\startup_mm32f327x_iar.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_rcc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_ver.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_uid.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_eth.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_crs.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_tim.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_comp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_crs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\Source\system_mm32f327x.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_sdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_wwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_rcc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_dac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\Source\IAR_StartAsm\startup_mm32f327x_iar.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_dbg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_pwr.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_uid.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_eth.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_iwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F327x\HAL_lib\src\hal_ver.c</name>
     </file>
   </group>
   <group>

@@ -36,6 +36,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -175,9 +176,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -250,18 +248,11 @@
 
 /* Other */
 
+
 /* Signal IO */
 
 
 /* Uncategorized */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
 
 #define SOC_TINA
 #define TINA_USING_UART0

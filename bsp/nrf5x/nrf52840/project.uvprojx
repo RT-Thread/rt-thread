@@ -8,12 +8,12 @@
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
-      <uAC6>0</uAC6>
+      <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>nRF52840_xxAA</Device>
           <Vendor>Nordic Semiconductor</Vendor>
-          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.38.0</PackID>
+          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.35.0</PackID>
           <PackURL>http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/</PackURL>
           <Cpu>IRAM(0x20000000,0x40000) IROM(0x00000000,0x100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec />
@@ -313,30 +313,30 @@
             <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
-            <OneElfS>1</OneElfS>
+            <OneElfS>0</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>3</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>1</v6Lang>
-            <v6LangP>1</v6LangP>
+            <v6Lang>3</v6Lang>
+            <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>--reduce_paths</MiscControls>
-              <Define>NRF52840_XXAA, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <MiscControls />
+              <Define>NRF52840_XXAA, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>applications;.;..\libraries\cmsis\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\drivers;..\..\..\components\finsh;.;..\..\..\include;packages\nrfx-latest;packages\nrfx-latest\drivers;packages\nrfx-latest\drivers\include;packages\nrfx-latest\mdk;packages\nrfx-latest\hal;packages\nrfx-latest\drivers\src;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>packages\nrfx-latest\drivers\src;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\finsh;applications;..\..\..\components\drivers\include;..\libraries\drivers;packages\nrfx-latest\hal;packages\nrfx-latest;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\cmsis\include;packages\nrfx-latest\drivers;board;packages\nrfx-latest\mdk;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;packages\nrfx-latest\drivers\include;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,13 +448,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -679,9 +672,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -703,65 +696,9 @@
           <GroupName>nrf_Drivers</GroupName>
           <Files>
             <File>
-              <FileName>nrfx_twi_twim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_twi_twim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_power.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_power.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_nvmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_nvmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>nrfx_twis.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\nrfx-latest\drivers\src\nrfx_twis.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_gpiote.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_gpiote.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_systick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_systick.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_i2s.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -773,69 +710,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>nrfx_twim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_twim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_comp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_comp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_usbreg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_usbreg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_qdec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_qdec.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_lpcomp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_lpcomp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_saadc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_saadc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>arm_startup_nrf52840.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>packages\nrfx-latest\mdk\arm_startup_nrf52840.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>nrfx_twi.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\nrfx-latest\drivers\src\nrfx_twi.c</FilePath>
@@ -843,107 +717,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>nrfx_pdm.c</FileName>
+              <FileName>nrfx_spim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_pdm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_rng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_rng.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_temp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_temp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_nrf52840.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\mdk\system_nrf52840.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_nfct.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_nfct.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_uarte.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_uarte.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_spis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_spis.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_usbd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_usbd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>nrfx_egu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_egu.c</FilePath>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_spim.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -955,9 +731,226 @@
           </Files>
           <Files>
             <File>
-              <FileName>nrfx_spim.c</FileName>
+              <FileName>nrfx_lpcomp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nrfx-latest\drivers\src\nrfx_spim.c</FilePath>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_lpcomp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_i2s.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_i2s.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_rng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_spis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_spis.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_comp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_twi_twim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_twi_twim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_saadc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_saadc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_usbd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_usbd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_nvmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_nvmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_pdm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_pdm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_usbreg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_usbreg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>arm_startup_nrf52840.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>packages\nrfx-latest\mdk\arm_startup_nrf52840.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_gpiote.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_gpiote.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_qdec.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_qdec.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_temp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_temp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_power.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_uarte.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_uarte.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_nrf52840.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\mdk\system_nrf52840.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_systick.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_egu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_egu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_nfct.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_nfct.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_twim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_twim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrfx_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrfx-latest\drivers\src\nrfx_qspi.c</FilePath>
             </File>
           </Files>
         </Group>

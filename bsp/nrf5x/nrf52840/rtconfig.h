@@ -4,41 +4,6 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
-/* Hardware Drivers Config */
-
-#define SOC_NRF52840
-#define SOC_NORDIC
-#define BSP_BOARD_PCA_10056
-
-/* Onboard Peripheral Drivers */
-
-#define BSP_USING_JLINK_TO_USART
-#define RT_BSP_LED_PIN 13
-
-/* On-chip Peripheral Drivers */
-
-#define BSP_USING_GPIO
-#define BSP_USING_UART
-#define NRFX_USING_UART
-#define BSP_USING_UART0
-#define BSP_UART0_RX_PIN 8
-#define BSP_UART0_TX_PIN 6
-
-/* MCU flash config */
-
-#define MCU_FLASH_START_ADDRESS 0x00000000
-#define MCU_FLASH_SIZE_KB 1024
-#define MCU_SRAM_START_ADDRESS 0x20000000
-#define MCU_SRAM_SIZE_KB 256
-#define MCU_FLASH_PAGE_SIZE 0x1000
-#define BLE_STACK_USING_NULL
-#define NRFX_CLOCK_ENABLED 1
-#define NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY 7
-#define NRFX_CLOCK_CONFIG_LF_SRC 1
-#define NRFX_UART_ENABLED 1
-#define NRFX_UART0_ENABLED 1
-#define NRFX_GPIOTE_ENABLED 1
-
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -66,6 +31,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -77,7 +43,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40101
+#define RT_VER_NUM 0x50000
 
 /* RT-Thread Components */
 
@@ -102,6 +68,7 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
@@ -167,9 +134,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -189,6 +153,11 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 #define PKG_USING_NRFX
 #define PKG_USING_NRFX_LATEST_VERSION
 
@@ -196,6 +165,9 @@
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -208,13 +180,73 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
-/* Privated Packages of RealThread */
+/* Arduino libraries */
 
 
-/* Network Utilities */
+/* Projects */
 
 
-/* RT-Thread Smart */
+/* Sensors */
 
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
+
+/* Hardware Drivers Config */
+
+#define SOC_NRF52840
+#define SOC_NORDIC
+#define BSP_BOARD_PCA_10056
+
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_JLINK_TO_USART
+#define RT_BSP_LED_PIN 13
+
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_GPIO
+#define BSP_USING_UART
+#define NRFX_USING_UART
+#define BSP_USING_UART0
+#define BSP_UART0_RX_PIN 8
+#define BSP_UART0_TX_PIN 6
+
+/* MCU flash config */
+
+#define MCU_FLASH_START_ADDRESS 0x00000000
+#define MCU_FLASH_SIZE_KB 1024
+#define MCU_SRAM_START_ADDRESS 0x20000000
+#define MCU_SRAM_SIZE_KB 256
+#define MCU_FLASH_PAGE_SIZE 0x1000
+#define BLE_STACK_USING_NULL
+#define NRFX_CLOCK_ENABLED 1
+#define NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY 7
+#define NRFX_CLOCK_CONFIG_LF_SRC 1
+#define NRFX_UART_ENABLED 1
+#define NRFX_UART0_ENABLED 1
+#define NRFX_GPIOTE_ENABLED 1
 
 #endif
