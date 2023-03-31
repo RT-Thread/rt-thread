@@ -20,7 +20,6 @@ source "$PKGS_DIR/Kconfig"
 
 config BCM2836_SOC
     bool
-    select ARCH_ARM_CORTEX_A7
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

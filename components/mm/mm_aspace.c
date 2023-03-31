@@ -38,7 +38,7 @@ static void _varea_uninstall(rt_varea_t varea);
 
 struct rt_aspace rt_kernel_space;
 
-int _init_lock(rt_aspace_t aspace)
+static int _init_lock(rt_aspace_t aspace)
 {
     int err;
     MM_PGTBL_LOCK_INIT(aspace);
