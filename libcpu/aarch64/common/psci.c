@@ -39,10 +39,10 @@
         return psci_call((MIGRATE), cpuid, 0, 0);                                  \
     }
 
+struct psci_ops_t psci_ops;
+
 #ifdef RT_USING_FDT
 #include "dtb_node.h"
-
-struct psci_ops_t psci_ops;
 
 #if __SIZE_WIDTH__ == 64
 #define PSCI_FN_NATIVE(version, name) PSCI_##version##_FN64_##name
