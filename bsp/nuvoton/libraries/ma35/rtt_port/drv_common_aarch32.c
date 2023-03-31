@@ -54,7 +54,7 @@ const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc) / sizeof(pl
  * This function will initialize board
  */
 
-rt_mmu_info mmu_info;
+struct rt_aspace mmu_info;
 
 extern size_t MMUTable[];
 

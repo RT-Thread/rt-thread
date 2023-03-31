@@ -66,7 +66,7 @@ typedef struct nu_qspi *nu_qspi_t;
 static void nu_qspi_transmission_with_poll(struct nu_qspi *spi_bus,
         uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word);
 static int nu_qspi_register_bus(struct nu_qspi *spi_bus, const char *name);
-static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
+static rt_ssize_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
 static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
 
 /* Public functions -------------------------------------------------------------*/
@@ -354,7 +354,7 @@ static int nu_qspi_mode_config(struct nu_qspi *spi_bus, rt_uint8_t *tx, rt_uint8
     return qspi_lines;
 }
 
-static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     struct nu_qspi *spi_bus;
     struct rt_qspi_configuration *qspi_configuration;
@@ -362,7 +362,7 @@ static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     rt_uint8_t u8last = 1;
     rt_uint8_t bytes_per_word;
     uint32_t idx;
-    rt_uint32_t u32len = 0;
+    rt_ssize_t u32len = 0;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(message != RT_NULL);
