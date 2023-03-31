@@ -254,8 +254,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_TINA
 #define TINA_USING_UART0
 #define TINA_USING_UART2

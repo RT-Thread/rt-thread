@@ -264,7 +264,5 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 
 #endif

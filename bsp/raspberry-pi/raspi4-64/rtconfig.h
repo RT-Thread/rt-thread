@@ -344,8 +344,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define BCM2711_SOC
 #define BSP_SUPPORT_FPU
 

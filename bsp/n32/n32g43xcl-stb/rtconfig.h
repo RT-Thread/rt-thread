@@ -229,9 +229,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
-
 /* Hardware Drivers Config */
 
 #define SOC_SERIES_N32G43X

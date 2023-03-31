@@ -288,8 +288,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_VIRT64_AARCH64
 
 /* AARCH64 qemu virt64 configs */

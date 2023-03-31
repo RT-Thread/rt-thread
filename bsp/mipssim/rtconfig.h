@@ -227,8 +227,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define MIPSSIM
 
 #endif

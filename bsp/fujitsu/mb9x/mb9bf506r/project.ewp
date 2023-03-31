@@ -1885,7 +1885,7 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\fm3_uart.c</name>
+      <name>$PROJ_DIR$\drivers\led.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\nand.c</name>
@@ -1894,7 +1894,7 @@
       <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\led.c</name>
+      <name>$PROJ_DIR$\drivers\fm3_uart.c</name>
     </file>
   </group>
   <group>

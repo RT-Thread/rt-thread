@@ -1871,40 +1871,40 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\workqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringblk_buf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringbuffer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\pipe.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\waitqueue.c</name>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringblk_buf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringbuffer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\waitqueue.c</name>
     </file>
   </group>
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\led.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\drivers\spi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\uart.c</name>
+      <name>$PROJ_DIR$\drivers\emac.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\emac.c</name>
+      <name>$PROJ_DIR$\drivers\led.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>

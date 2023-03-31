@@ -215,8 +215,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_ES32F3696LT
 
 /* Hardware Drivers Config */

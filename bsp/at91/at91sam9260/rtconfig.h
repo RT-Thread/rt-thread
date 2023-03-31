@@ -224,8 +224,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_AT91SAM926
 #define RT_USING_DBGU
 #define RT_USING_LED

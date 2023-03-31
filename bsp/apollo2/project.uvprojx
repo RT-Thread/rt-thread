@@ -629,27 +629,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>smbus.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\smbus.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
@@ -664,16 +643,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>adc.c</FileName>
+              <FileName>i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\adc.c</FilePath>
+              <FilePath>board\i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pdm.c</FileName>
+              <FileName>smbus.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\pdm.c</FilePath>
+              <FilePath>board\smbus.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -685,6 +664,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\uart.c</FilePath>
@@ -692,9 +678,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>i2c.c</FileName>
+              <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\i2c.c</FilePath>
+              <FilePath>board\adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\flash.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -709,6 +702,13 @@
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pdm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\pdm.c</FilePath>
             </File>
           </Files>
         </Group>

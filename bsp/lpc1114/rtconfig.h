@@ -210,8 +210,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_LPC1114
 
 #endif

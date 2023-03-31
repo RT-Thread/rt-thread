@@ -227,9 +227,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
-
 /* Hardware Drivers Config */
 
 #define BSP_USING_QSPIFLASH

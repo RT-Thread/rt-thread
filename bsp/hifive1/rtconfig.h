@@ -216,8 +216,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FE310
 
 #endif

@@ -403,16 +403,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>demo_thread.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\demo_thread.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>demo_thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\demo_thread.c</FilePath>
             </File>
           </Files>
         </Group>

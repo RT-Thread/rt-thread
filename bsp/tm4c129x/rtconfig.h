@@ -261,8 +261,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_TM4C129
 #define RT_USING_UART0
 

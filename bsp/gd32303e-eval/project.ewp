@@ -2172,61 +2172,19 @@
   <group>
     <name>Libraries</name>
     <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_timer.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exmc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_bkp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_ctc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_wwdgt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_enet.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_pmu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dbg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Source\system_gd32f30x.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_adc.c</name>
@@ -2235,19 +2193,61 @@
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_sdio.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_enet.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_pmu.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Source\IAR\startup_gd32f30x_hd.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_usart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_fmc.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Source\system_gd32f30x.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_bkp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exti.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_fwdgt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_wwdgt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Source\IAR\startup_gd32f30x_hd.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_ctc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dma.c</name>
     </file>
   </group>
   <group>

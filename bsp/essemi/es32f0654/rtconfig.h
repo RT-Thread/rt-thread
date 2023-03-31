@@ -214,8 +214,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_ES32F0654LT
 
 /* Hardware Drivers Config */

@@ -722,44 +722,23 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>fpu.c</FileName>
+              <FileName>crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\driverlib\fpu.c</FilePath>
+              <FilePath>libraries\driverlib\crc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>emac.c</FileName>
+              <FileName>flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\driverlib\emac.c</FilePath>
+              <FilePath>libraries\driverlib\flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>systick.c</FileName>
+              <FileName>aes.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\driverlib\systick.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_rvmdk.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\startup\startup_rvmdk.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>epi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\epi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\interrupt.c</FilePath>
+              <FilePath>libraries\driverlib\aes.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -771,30 +750,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hibernate.c</FileName>
+              <FileName>emac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\driverlib\hibernate.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\cpu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>eeprom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\eeprom.c</FilePath>
+              <FilePath>libraries\driverlib\emac.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -806,9 +764,163 @@
           </Files>
           <Files>
             <File>
+              <FileName>sysexc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\sysexc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>udma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\udma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>qei.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\qei.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>watchdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\watchdog.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\systick.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>epi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\epi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shamd5.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\shamd5.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>onewire.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\onewire.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>eeprom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\eeprom.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\driverlib\lcd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sysctl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\sysctl.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hibernate.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\hibernate.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_rvmdk.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\startup\startup_rvmdk.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\interrupt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>des.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\des.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\fpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tiva_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\tiva_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\usb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ssi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\ssi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\driverlib\i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -827,41 +939,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>udma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\udma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>shamd5.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\shamd5.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\usb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\driverlib\gpio.c</FilePath>
@@ -869,86 +946,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>aes.c</FileName>
+              <FileName>cpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\driverlib\aes.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sysctl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\sysctl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>watchdog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\watchdog.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>des.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\des.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sysexc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\sysexc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>onewire.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\onewire.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ssi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\ssi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>qei.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\qei.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tiva_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\driverlib\tiva_timer.c</FilePath>
+              <FilePath>libraries\driverlib\cpu.c</FilePath>
             </File>
           </Files>
         </Group>

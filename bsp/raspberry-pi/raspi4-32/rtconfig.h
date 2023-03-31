@@ -321,8 +321,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define BCM2711_SOC
 
 /* Hardware Drivers Config */

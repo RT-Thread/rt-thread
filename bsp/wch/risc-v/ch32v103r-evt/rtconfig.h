@@ -215,8 +215,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_RISCV_FAMILY_CH32
 #define SOC_RISCV_SERIES_CH32V1
 

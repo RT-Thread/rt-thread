@@ -230,8 +230,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define RT_USING_UART1
 #define SOC_MCIMX6X4
 

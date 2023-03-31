@@ -234,8 +234,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_APOLLO2
 
 #endif

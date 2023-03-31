@@ -2175,52 +2175,31 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_gpio.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_pmu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_bkp.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_fmc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_crc.c</name>
+      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F10x\Source\system_gd32f10x.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_rtc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_timer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_adc.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dac.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_exti.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_crc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_fwdgt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dbg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_misc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_rcu.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_exmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_pmu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F10x\Source\IAR\startup_gd32f10x_cl.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F10x\Source\system_gd32f10x.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_i2c.c</name>
@@ -2229,25 +2208,46 @@
       <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_usart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_fmc.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_rcu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F10x\Source\IAR\startup_gd32f10x_cl.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_fwdgt.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_enet.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_rtc.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_wwdgt.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_can.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dac.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_spi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_wwdgt.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_bkp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_dbg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_exmc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_misc.c</name>
     </file>
   </group>
   <group>

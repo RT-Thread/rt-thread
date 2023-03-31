@@ -377,16 +377,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -484,16 +484,16 @@
           <GroupName>CPlusPlus</GroupName>
           <Files>
             <File>
-              <FileName>cxx_crt_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
+              <FileName>cxx_crt.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cxx_Semaphore.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\components\libc\cplusplus\cxx_Semaphore.cpp</FilePath>
+              <FileName>cxx_crt_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -505,16 +505,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cxx_Thread.cpp</FileName>
+              <FileName>cxx_Semaphore.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\components\libc\cplusplus\cxx_Thread.cpp</FilePath>
+              <FilePath>..\..\components\libc\cplusplus\cxx_Semaphore.cpp</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cxx_crt.cpp</FileName>
+              <FileName>cxx_Thread.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
+              <FilePath>..\..\components\libc\cplusplus\cxx_Thread.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -717,30 +717,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_i2c.c</FileName>
+              <FileName>drv_sd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
+              <FilePath>drivers\drv_sd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_lcd.c</FileName>
+              <FileName>drv_sdram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_sram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_sram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock_config.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\clock_config.c</FilePath>
+              <FilePath>drivers\drv_sdram.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -759,16 +745,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_emac.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_emac.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>drv_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\drv_lcd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drt_mpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drt_mpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_emac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_emac.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -780,23 +780,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_sd.c</FileName>
+              <FileName>drv_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_sd.c</FilePath>
+              <FilePath>drivers\drv_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_sdram.c</FileName>
+              <FileName>clock_config.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_sdram.c</FilePath>
+              <FilePath>drivers\clock_config.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drt_mpu.c</FileName>
+              <FileName>drv_sram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drt_mpu.c</FilePath>
+              <FilePath>drivers\drv_sram.c</FilePath>
             </File>
           </Files>
         </Group>

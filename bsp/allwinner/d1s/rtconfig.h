@@ -279,8 +279,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define BOARD_allwinnerd1s
 #define __STACKSIZE__ 16384
 

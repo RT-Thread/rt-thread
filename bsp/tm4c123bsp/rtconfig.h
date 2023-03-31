@@ -223,9 +223,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
-
 /* Hardware Drivers Config */
 
 #define tm4c123

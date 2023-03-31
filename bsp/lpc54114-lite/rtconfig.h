@@ -250,8 +250,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_LPC54114
 
 /* LPC54110 Bsp Config */

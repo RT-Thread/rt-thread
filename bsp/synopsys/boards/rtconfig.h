@@ -223,8 +223,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_EMSK
 #define EMSK_USING_UART0
 #define EMSK_USING_UART1

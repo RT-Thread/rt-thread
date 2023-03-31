@@ -217,8 +217,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_GD32350R
 #define BSP_USING_UART0
 

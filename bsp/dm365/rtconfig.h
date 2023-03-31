@@ -300,8 +300,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_DM365
 
 /* BSP configure */

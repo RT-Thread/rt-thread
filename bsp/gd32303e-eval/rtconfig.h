@@ -242,8 +242,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_GD32303E
 #define RT_USING_USART0
 #define RT_USING_USART1

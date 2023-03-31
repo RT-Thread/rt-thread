@@ -214,8 +214,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_ESPRESSIF
 #define SOC_ESP32_C3
 

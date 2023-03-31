@@ -226,8 +226,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_LPC55S28_SERIES
 
 /* Hardware Drivers Config */

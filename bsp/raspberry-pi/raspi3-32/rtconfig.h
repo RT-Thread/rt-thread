@@ -264,8 +264,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define BCM2836_SOC
 
 /* Hardware Drivers Config */

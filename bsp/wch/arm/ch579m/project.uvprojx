@@ -688,93 +688,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>CH57x_timer2.c</FileName>
+              <FileName>CH57x_uart1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer2.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_uart2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart2.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_uart0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_timer3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer3.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_int.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_int.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_pwr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_uart3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart3.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_clk.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_clk.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>CH57x_spi1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_spi1.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart1.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -786,9 +702,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_uart1.c</FileName>
+              <FileName>CH57x_timer1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_uart1.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer1.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_clk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_clk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_flash.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -800,9 +751,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_spi0.c</FileName>
+              <FileName>CH57x_uart3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_spi0.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart3.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_timer3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer3.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_lcd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -814,16 +779,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_timer1.c</FileName>
+              <FileName>CH57x_pwm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_timer1.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_pwm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>CH57x_adc.c</FileName>
+              <FileName>CH57x_uart2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\StdPeriphDriver\CH57x_adc.c</FilePath>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_uart0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_uart0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_spi0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_spi0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_int.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_int.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_timer2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_timer2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>CH57x_spi1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\StdPeriphDriver\CH57x_spi1.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1152,16 +1152,16 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev_ipaddr.c</FileName>
+              <FileName>netdev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+              <FilePath>..\..\..\..\components\net\netdev\src\netdev.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>netdev.c</FileName>
+              <FileName>netdev_ipaddr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\net\netdev\src\netdev.c</FilePath>
+              <FilePath>..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
             </File>
           </Files>
         </Group>

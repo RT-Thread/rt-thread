@@ -774,9 +774,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cyhal_scb_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_scb_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -816,13 +830,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_01_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cyhal_system.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_system.c</FilePath>
@@ -840,20 +847,6 @@
               <FileName>cyhal_utils_psoc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_psoc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -896,13 +889,6 @@
               <FileName>cyhal_lptimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_lptimer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_03_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -977,9 +963,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cy_syspm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>psoc6_01_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -987,23 +987,9 @@
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileName>cybsp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_capsense.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_capsense.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_clocks.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</FilePath>
+              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\cybsp.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1015,44 +1001,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_psoc6_03_cm4.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_03_cm4.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_routing.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_connectivity_bt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cybsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\cybsp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cycfg_system.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_peripherals.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_peripherals.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1064,9 +1015,58 @@
           </Files>
           <Files>
             <File>
+              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_routing.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_psoc6_03_cm4.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_03_cm4.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_clocks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_capsense.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_capsense.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cycfg_pins.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_connectivity_bt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_peripherals.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CPROTO-062S3-4343W\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_peripherals.c</FilePath>
             </File>
           </Files>
         </Group>

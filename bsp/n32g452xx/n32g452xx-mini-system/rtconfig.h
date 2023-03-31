@@ -217,9 +217,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
-
 /* Hardware Drivers Config */
 
 #define SOC_N32G452XX

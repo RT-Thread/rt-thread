@@ -299,8 +299,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_GD32450Z
 #define BSP_USING_SDRAM
 #define BSP_USING_UART0

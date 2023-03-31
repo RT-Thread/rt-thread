@@ -283,8 +283,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_CME_M7
 
 #endif

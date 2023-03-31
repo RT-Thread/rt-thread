@@ -687,9 +687,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>HAL_misc.c</FileName>
+              <FileName>HAL_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_misc.c</FilePath>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_pwr.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -701,23 +701,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_rcc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>startup_MM32L0xx.s</FileName>
               <FileType>2</FileType>
               <FilePath>Libraries\MM32L0xx\Source\KEIL_StartAsm\startup_MM32L0xx.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -729,9 +722,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_flash.c</FileName>
+              <FileName>HAL_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_flash.c</FilePath>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_bkp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_can.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -743,16 +764,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_pwr.c</FileName>
+              <FileName>HAL_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_pwr.c</FilePath>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_adc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_iwdg.c</FileName>
+              <FileName>HAL_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_iwdg.c</FilePath>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_flash.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -760,13 +781,6 @@
               <FileName>HAL_wwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_wwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -785,20 +799,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>HAL_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_gpio.c</FilePath>
@@ -806,23 +806,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_uart.c</FileName>
+              <FileName>HAL_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_uart.c</FilePath>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_can.c</FileName>
+              <FileName>HAL_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_can.c</FilePath>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_tim.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_bkp.c</FileName>
+              <FileName>HAL_iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_bkp.c</FilePath>
+              <FilePath>Libraries\MM32L0xx\HAL_lib\src\HAL_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>

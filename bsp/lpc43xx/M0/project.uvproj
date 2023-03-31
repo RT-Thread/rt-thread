@@ -392,9 +392,9 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>vbus_drv.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\vbus_drv.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -406,9 +406,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>vbus_drv.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\vbus_drv.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -589,16 +589,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_led.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\drv_led.c</FilePath>
+              <FilePath>..\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\drv_uart.c</FilePath>
+              <FilePath>..\drivers\drv_led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -731,6 +731,13 @@
           <GroupName>VBus</GroupName>
           <Files>
             <File>
+              <FileName>vbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\vbus\vbus.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>watermark_queue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\vbus\watermark_queue.c</FilePath>
@@ -748,13 +755,6 @@
               <FileName>vbus_chnx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\vbus\vbus_chnx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>vbus.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\vbus\vbus.c</FilePath>
             </File>
           </Files>
         </Group>

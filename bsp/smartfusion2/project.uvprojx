@@ -405,16 +405,16 @@
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>system_m2sxxx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\system_m2sxxx.c</FilePath>
+              <FileName>startup_m2sxxx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>CMSIS\startup_arm\startup_m2sxxx.s</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_m2sxxx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>CMSIS\startup_arm\startup_m2sxxx.s</FilePath>
+              <FileName>system_m2sxxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\system_m2sxxx.c</FilePath>
             </File>
           </Files>
           <Files>

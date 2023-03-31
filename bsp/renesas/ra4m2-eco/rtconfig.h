@@ -230,8 +230,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_RENESAS
 #define SOC_SERIES_R7FA4M2
 

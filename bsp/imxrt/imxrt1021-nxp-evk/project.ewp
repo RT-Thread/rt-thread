@@ -1367,9 +1367,6 @@
   <group>
     <name>rt_usbd</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</name>
     </file>
     <file>
@@ -1377,6 +1374,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\core\usbdevice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</name>
     </file>
   </group>
   <group>

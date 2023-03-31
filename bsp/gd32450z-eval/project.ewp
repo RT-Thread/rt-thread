@@ -2167,97 +2167,97 @@
   <group>
     <name>Libraries</name>
     <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dbg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rcu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_iref.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F4xx\Source\IAR\startup_gd32f4xx.s</name>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_sdio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_trng.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fwdgt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_tli.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_enet.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ipa.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dci.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_timer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exti.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_can.c</name>
+      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F4xx\Source\IAR\startup_gd32f4xx.s</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F4xx\Source\system_gd32f4xx.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dac.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ctc.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exmc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dbg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_tli.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ipa.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fwdgt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_enet.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dci.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F4xx\Source\system_gd32f4xx.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rcu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fmc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_timer.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</name>
     </file>
   </group>
   <group>

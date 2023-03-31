@@ -222,8 +222,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define BSP_USING_BL70X
 #define BSP_USING_ROMAPI
 

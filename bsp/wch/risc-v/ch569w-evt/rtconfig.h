@@ -215,8 +215,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_CH56X
 #define SOC_SERIES_CH569
 

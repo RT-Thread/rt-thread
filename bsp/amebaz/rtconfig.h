@@ -292,9 +292,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
-
 /* Env config */
 
 #define SYS_PKGS_USING_STATISTICS

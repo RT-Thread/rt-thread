@@ -262,8 +262,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FRDM_K64F
 
 #endif

@@ -306,8 +306,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_LS2K1000
 #define RT_USING_UART0
 

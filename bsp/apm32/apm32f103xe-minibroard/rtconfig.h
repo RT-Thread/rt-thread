@@ -250,8 +250,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_APM32
 #define SOC_SERIES_APM32F1
 

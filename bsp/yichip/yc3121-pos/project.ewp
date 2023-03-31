@@ -2252,19 +2252,19 @@
       <name>$PROJ_DIR$\Libraries\sdk\yc_wdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\startup\flash_start_iar.s</name>
+      <name>$PROJ_DIR$\Libraries\sdk\yc_systick.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\core\misc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_systick.c</name>
+      <name>$PROJ_DIR$\Libraries\startup\flash_start_iar.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\sdk\yc_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\sdk\yc_gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\sdk\yc_uart.c</name>

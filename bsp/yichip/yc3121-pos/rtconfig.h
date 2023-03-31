@@ -216,8 +216,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_SWM320VET7
 
 /* Hardware Drivers Config */

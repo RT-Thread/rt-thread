@@ -731,44 +731,16 @@
           <GroupName>Vango_Lib</GroupName>
           <Files>
             <File>
-              <FileName>lib_clk.c</FileName>
+              <FileName>lib_cmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_clk.c</FilePath>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_cmp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>lib_pwm.c</FileName>
+              <FileName>lib_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_target.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xxP\Source\Keil5\startup_target.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_version.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_version.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_LoadNVR.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xxP\Source\lib_LoadNVR.c</FilePath>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -787,58 +759,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_flash.c</FileName>
+              <FileName>lib_pmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_flash.c</FilePath>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_pmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>lib_ana.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_ana.c</FilePath>
+              <FileName>startup_target.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\Vango\V85xxP\Source\Keil5\startup_target.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>lib_spi.c</FileName>
+              <FileName>lib_clk.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_crypt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_crypt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_tmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_tmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_cmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_cmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_misc.c</FilePath>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_clk.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -850,16 +787,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_pmu.c</FileName>
+              <FileName>lib_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_pmu.c</FilePath>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>lib_wdt.c</FileName>
+              <FileName>system_target.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_wdt.c</FilePath>
+              <FilePath>Libraries\CMSIS\Vango\V85xxP\Source\system_target.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_LoadNVR.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Vango\V85xxP\Source\lib_LoadNVR.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -871,16 +815,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_uart.c</FileName>
+              <FileName>lib_crypt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_adc.c</FilePath>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_crypt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -892,6 +829,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>lib_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>lib_u32k.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_u32k.c</FilePath>
@@ -899,9 +843,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_rtc.c</FileName>
+              <FileName>lib_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_rtc.c</FilePath>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_lcd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -913,9 +857,65 @@
           </Files>
           <Files>
             <File>
-              <FileName>system_target.c</FileName>
+              <FileName>lib_version.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xxP\Source\system_target.c</FilePath>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_version.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_tmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_tmr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_ana.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_ana.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xxP_standard_peripheral\Source\lib_flash.c</FilePath>
             </File>
           </Files>
         </Group>

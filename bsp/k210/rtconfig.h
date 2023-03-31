@@ -276,8 +276,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_K210
 #define BOARD_K210_EVB
 

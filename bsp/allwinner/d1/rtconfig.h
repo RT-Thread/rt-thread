@@ -336,8 +336,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define BOARD_allwinnerd1
 #define ENABLE_FPU
 #define __STACKSIZE__ 16384

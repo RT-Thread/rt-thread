@@ -2251,97 +2251,97 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_timr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_lcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_jpeg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_sdram.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_port.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\CMSIS\DeviceSupport\startup\iar\startup_SWM341.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_div.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_qei.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\CMSIS\DeviceSupport\system_SWM341.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_pwm.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_iofilt.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_sfc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_dac.c</name>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_dma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_dma2d.c</name>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_jpeg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_rtc.c</name>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_qei.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_sleep.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_wdt.c</name>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_flash.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_usbh.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_sleep.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_dma2d.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_usbd.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\libraries\CMSIS\DeviceSupport\startup\iar\startup_SWM341.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\CMSIS\DeviceSupport\system_SWM341.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_timr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_sdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_wdt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_div.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_port.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_pwm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_dac.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_cordic.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\SWM341_StdPeriph_Driver\SWM341_sdram.c</name>
     </file>
   </group>
   <group>

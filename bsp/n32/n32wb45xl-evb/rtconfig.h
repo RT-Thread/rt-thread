@@ -234,8 +234,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_N32
 #define SOC_SERIES_N32WB452
 

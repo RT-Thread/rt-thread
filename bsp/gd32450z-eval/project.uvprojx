@@ -773,41 +773,6 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>gd32f4xx_exmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_fmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_gd32f4xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\ARM\startup_gd32f4xx.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f4xx_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</FilePath>
@@ -815,58 +780,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_ctc.c</FileName>
+              <FileName>gd32f4xx_dbg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ctc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_trng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_trng.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_fwdgt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fwdgt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_syscfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_dci.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dci.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_rcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_can.c</FilePath>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dbg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -878,6 +794,90 @@
           </Files>
           <Files>
             <File>
+              <FileName>startup_gd32f4xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\ARM\startup_gd32f4xx.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_ipa.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ipa.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_trng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_trng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_iref.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_iref.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_wwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>gd32f4xx_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rtc.c</FilePath>
@@ -885,23 +885,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_adc.c</FileName>
+              <FileName>gd32f4xx_ctc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</FilePath>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ctc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_usart.c</FileName>
+              <FileName>gd32f4xx_exmc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</FilePath>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_exmc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_dbg.c</FileName>
+              <FileName>gd32f4xx_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dbg.c</FilePath>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -920,58 +920,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>gd32f4xx_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>gd32f4xx_enet.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_enet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_wwdgt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_wwdgt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_iref.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_iref.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_gd32f4xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\system_gd32f4xx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f4xx_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_spi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -983,9 +948,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f4xx_ipa.c</FileName>
+              <FileName>system_gd32f4xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_ipa.c</FilePath>
+              <FilePath>Libraries\CMSIS\GD\GD32F4xx\Source\system_gd32f4xx.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_rcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_rcu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_dci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_dci.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_fwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_fwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f4xx_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</FilePath>
             </File>
           </Files>
         </Group>

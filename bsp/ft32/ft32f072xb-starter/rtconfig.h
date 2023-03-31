@@ -217,8 +217,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_FT32
 #define SOC_SERIES_FT32F0
 

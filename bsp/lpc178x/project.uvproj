@@ -384,16 +384,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -522,13 +522,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>lpc177x_8x_emc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_glcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_glcd.c</FilePath>
@@ -550,6 +543,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>lpc17xx_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc17xx_lcd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
@@ -564,9 +564,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>lpc17xx_lcd.c</FileName>
+              <FileName>lpc177x_8x_emc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\lpc17xx_lcd.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
             </File>
           </Files>
           <Files>

@@ -219,9 +219,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
-
 /* Hardware Drivers Config */
 
 /* Onboard Peripheral Drivers */

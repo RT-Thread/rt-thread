@@ -223,8 +223,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_AT91SAM926
 #define RT_USING_UART3
 #define RT_USING_LED

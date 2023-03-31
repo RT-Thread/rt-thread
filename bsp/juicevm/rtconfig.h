@@ -262,8 +262,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_JUICEVM_RV64
 #define BOARD_RV64_FRDM_JUICEVM
 #define BSP_USING_UART0

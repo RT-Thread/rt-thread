@@ -230,8 +230,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_RK3568
 
 /* Hardware Drivers Config */

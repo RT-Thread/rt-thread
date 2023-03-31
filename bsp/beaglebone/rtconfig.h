@@ -223,8 +223,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_AM335X
 #define RT_USING_UART0
 

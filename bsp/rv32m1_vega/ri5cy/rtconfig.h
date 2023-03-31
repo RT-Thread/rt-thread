@@ -279,8 +279,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_VEGA_RI5CY
 #define BOARD_X_FRDM_VEGA
 #define BSP_USING_UART0

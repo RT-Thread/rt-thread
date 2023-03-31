@@ -219,8 +219,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_FM33
 #define SOC_SERIES_FM33LC0XX
 

@@ -2270,37 +2270,37 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_pm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_wdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_spi.c</name>
+      <name>$PROJ_DIR$\drivers\drv_i2c.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_hwtimer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
+      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\drivers\drv_wdt.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\drivers\drv_soft_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_rtc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_i2c.c</name>
+      <name>$PROJ_DIR$\drivers\drv_pm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
   </group>
   <group>

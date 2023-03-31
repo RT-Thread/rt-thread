@@ -222,8 +222,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_HC32
 #define SOC_SERIES_HC32F4
 

@@ -219,8 +219,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32L4
 

@@ -246,8 +246,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define IA32
 
 #endif

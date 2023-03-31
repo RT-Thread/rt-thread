@@ -217,8 +217,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_THEAD_SMART
 #define RT_USING_UART1
 

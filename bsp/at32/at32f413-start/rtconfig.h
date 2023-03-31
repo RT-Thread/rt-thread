@@ -224,8 +224,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_AT32
 #define SOC_SERIES_AT32F413
 

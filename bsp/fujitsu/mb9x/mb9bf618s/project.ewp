@@ -1877,19 +1877,19 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\startup.c</name>
+      <name>$PROJ_DIR$\applications\application.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\application.c</name>
+      <name>$PROJ_DIR$\applications\startup.c</name>
     </file>
   </group>
   <group>
     <name>CMSIS</name>
     <file>
-      <name>$PROJ_DIR$\CMSIS\DeviceSupport\fujitsu\mb9bf61x\system_mb9bf61x.c</name>
+      <name>$PROJ_DIR$\CMSIS\DeviceSupport\fujitsu\mb9bf61x\startup\iar\startup_mb9bf61x.S</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\CMSIS\DeviceSupport\fujitsu\mb9bf61x\startup\iar\startup_mb9bf61x.S</name>
+      <name>$PROJ_DIR$\CMSIS\DeviceSupport\fujitsu\mb9bf61x\system_mb9bf61x.c</name>
     </file>
   </group>
   <group>
@@ -1958,10 +1958,10 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\led.c</name>
+      <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
+      <name>$PROJ_DIR$\drivers\led.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\serial.c</name>

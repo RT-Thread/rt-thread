@@ -694,16 +694,23 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>gd32f3x0_syscfg.c</FileName>
+              <FileName>gd32f3x0_pmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_syscfg.c</FilePath>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_pmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>gd32f3x0_dma.c</FileName>
+              <FileName>gd32f3x0_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_dma.c</FilePath>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f3x0_cec.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_cec.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -715,9 +722,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f3x0_tsi.c</FileName>
+              <FileName>gd32f3x0_ctc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_tsi.c</FilePath>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_ctc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f3x0_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_fmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f3x0_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_spi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -729,6 +750,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>gd32f3x0_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>system_gd32f3x0.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\CMSIS\GD\GD32F3x0\Source\system_gd32f3x0.c</FilePath>
@@ -736,9 +764,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f3x0_crc.c</FileName>
+              <FileName>gd32f3x0_syscfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_crc.c</FilePath>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_syscfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f3x0_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -750,9 +785,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f3x0_pmu.c</FileName>
+              <FileName>gd32f3x0_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_pmu.c</FilePath>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f3x0_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f3x0_cmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_cmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f3x0_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_crc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -771,13 +827,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f3x0_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f3x0_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_rtc.c</FilePath>
@@ -785,23 +834,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f3x0_fmc.c</FileName>
+              <FileName>gd32f3x0_tsi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_fmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f3x0_rcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_rcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f3x0_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_misc.c</FilePath>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_tsi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -813,13 +848,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f3x0_cmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_cmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f3x0_dbg.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_dbg.c</FilePath>
@@ -827,44 +855,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32f3x0_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f3x0_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f3x0_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f3x0_ctc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_ctc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32f3x0_cec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_cec.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32f3x0_fwdgt.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_fwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32f3x0_rcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32F3x0_standard_peripheral\Source\gd32f3x0_rcu.c</FilePath>
             </File>
           </Files>
         </Group>

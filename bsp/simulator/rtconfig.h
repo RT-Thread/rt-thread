@@ -257,8 +257,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_SIMULATOR
 
 /* Peripheral Drivers */

@@ -224,8 +224,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_SERIES_ACM32F0
 
 /* Hardware Drivers Config */

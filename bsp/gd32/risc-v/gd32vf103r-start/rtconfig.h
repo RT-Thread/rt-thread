@@ -217,8 +217,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_GD32
 #define SOC_GD32VF103V
 

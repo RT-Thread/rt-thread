@@ -794,6 +794,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cyhal_system.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_system.c</FilePath>
@@ -808,9 +815,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cyhal_utils_psoc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_psoc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -885,13 +906,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_03_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cyhal_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_uart.c</FilePath>
@@ -909,13 +923,6 @@
               <FileName>cy_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_systick.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -941,13 +948,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>psoc6_01_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
@@ -965,23 +965,9 @@
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cycfg_system.c</FileName>
+              <FileName>cycfg_peripherals.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_dmas.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_dmas.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_pins.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_peripherals.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -989,20 +975,6 @@
               <FileName>cycfg_routing.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cybsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\cybsp.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1021,9 +993,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>system_psoc6_cm4.c</FileName>
+              <FileName>cybsp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\cybsp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_dmas.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_dmas.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1035,16 +1014,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_psoc6_02_cm4.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_02_cm4.S</FilePath>
+              <FileName>cycfg_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cycfg_peripherals.c</FileName>
+              <FileName>system_psoc6_cm4.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_peripherals.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1052,6 +1031,27 @@
               <FileName>cycfg_connectivity_bt.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_psoc6_02_cm4.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_02_cm4.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_pins.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</FilePath>
             </File>
           </Files>
         </Group>

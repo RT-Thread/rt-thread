@@ -2330,19 +2330,19 @@
   <group>
     <name>Fal</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\samples\porting\fal_flash_sfud_port.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_partition.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_flash.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\fal\samples\porting\fal_flash_sfud_port.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_rtt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_partition.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal.c</name>
     </file>
   </group>
   <group>

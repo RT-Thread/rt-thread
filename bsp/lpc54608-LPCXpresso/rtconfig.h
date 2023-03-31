@@ -324,8 +324,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_LPC54608
 #define RT_USING_UART0
 #define BSP_DRV_SDCARD

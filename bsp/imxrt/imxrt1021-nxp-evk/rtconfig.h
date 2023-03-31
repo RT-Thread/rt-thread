@@ -275,8 +275,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_IMXRT1020_SERIES
 
 /* Hardware Drivers */

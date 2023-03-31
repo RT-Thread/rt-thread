@@ -230,8 +230,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_MM32
 #define SOC_SERIES_MM32F3277
 

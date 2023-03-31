@@ -245,8 +245,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_LPC4088
 
 /* Hardware Drivers Config */

@@ -224,8 +224,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_LS1B
 #define RT_MEM_SIZE 256
 #define RT_OSC_CLK 25000000

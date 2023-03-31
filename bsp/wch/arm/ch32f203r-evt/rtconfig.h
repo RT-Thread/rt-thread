@@ -229,8 +229,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_ARM_FAMILY_CH32
 #define SOC_ARM_SERIES_CH32F203
 

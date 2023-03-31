@@ -224,8 +224,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_SERIES_V85XXP
 #define SOC_V85XXP
 

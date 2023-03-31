@@ -224,8 +224,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_IMXRT1050_SERIES
 
 /* Hardware Drivers Config */

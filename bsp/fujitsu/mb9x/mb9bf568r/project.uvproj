@@ -389,16 +389,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -406,16 +406,16 @@
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>startup_mb9bf56xr.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>CMSIS\DeviceSupport\arm\startup_mb9bf56xr.s</FilePath>
+              <FileName>system_mb9abxxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\DeviceSupport\system_mb9abxxx.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>system_mb9abxxx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\DeviceSupport\system_mb9abxxx.c</FilePath>
+              <FileName>startup_mb9bf56xr.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>CMSIS\DeviceSupport\arm\startup_mb9bf56xr.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -513,9 +513,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>serial.c</FileName>
+              <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\serial.c</FilePath>
+              <FilePath>drivers\led.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -527,9 +527,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>led.c</FileName>
+              <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\led.c</FilePath>
+              <FilePath>drivers\serial.c</FilePath>
             </File>
           </Files>
         </Group>

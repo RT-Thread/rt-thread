@@ -223,8 +223,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_IFX
 #define SOC_SERIES_IFX_PSOC62
 

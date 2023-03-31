@@ -472,9 +472,9 @@
           <GroupName>CPlusPlus</GroupName>
           <Files>
             <File>
-              <FileName>cxx_crt.cpp</FileName>
+              <FileName>cxx_Mutex.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
             </File>
           </Files>
           <Files>
@@ -486,9 +486,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cxx_Mutex.cpp</FileName>
+              <FileName>cxx_Semaphore.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_Semaphore.cpp</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cxx_crt.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
             </File>
           </Files>
           <Files>
@@ -496,13 +503,6 @@
               <FileName>cxx_crt_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cxx_Semaphore.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_Semaphore.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -843,9 +843,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>reset.c</FileName>
+              <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform\reset.c</FilePath>
+              <FilePath>platform\interrupt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -857,9 +857,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>interrupt.c</FileName>
+              <FileName>reset.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform\interrupt.c</FilePath>
+              <FilePath>platform\reset.c</FilePath>
             </File>
           </Files>
         </Group>

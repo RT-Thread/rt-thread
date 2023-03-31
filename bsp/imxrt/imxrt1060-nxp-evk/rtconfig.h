@@ -258,8 +258,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_IMXRT1060_SERIES
 
 /* Hardware Drivers Config */

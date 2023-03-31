@@ -218,8 +218,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_FAMILY_HK32
 #define SOC_SERIES_HK32F0XX
 

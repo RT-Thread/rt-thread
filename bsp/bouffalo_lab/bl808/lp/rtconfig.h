@@ -206,8 +206,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define BSP_USING_BL808
 #define BL808_CORE_LP
 

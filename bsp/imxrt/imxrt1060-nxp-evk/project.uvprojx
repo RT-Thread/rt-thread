@@ -996,9 +996,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>udisk.c</FileName>
+              <FileName>mass.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\usb\usbhost\class\udisk.c</FilePath>
+              <FilePath>..\..\..\components\drivers\usb\usbhost\class\mass.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1010,9 +1010,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mass.c</FileName>
+              <FileName>udisk.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\usb\usbhost\class\mass.c</FilePath>
+              <FilePath>..\..\..\components\drivers\usb\usbhost\class\udisk.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1027,16 +1027,16 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev.c</FileName>
+              <FileName>netdev_ipaddr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\netdev\src\netdev.c</FilePath>
+              <FilePath>..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>netdev_ipaddr.c</FileName>
+              <FileName>netdev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+              <FilePath>..\..\..\components\net\netdev\src\netdev.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -326,8 +326,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define FT2004
 
 /* Hardware Drivers Config */

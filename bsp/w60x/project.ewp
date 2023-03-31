@@ -2724,10 +2724,10 @@
   <group>
     <name>Utilities</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\utilities\ulog\backend\console_be.c</name>
+      <name>$PROJ_DIR$\..\..\components\utilities\ulog\ulog.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\utilities\ulog\ulog.c</name>
+      <name>$PROJ_DIR$\..\..\components\utilities\ulog\backend\console_be.c</name>
     </file>
   </group>
 </project>

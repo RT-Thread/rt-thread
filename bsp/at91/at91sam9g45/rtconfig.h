@@ -234,8 +234,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_AT91SAM9G45
 
 /* Hardware Drivers Config */

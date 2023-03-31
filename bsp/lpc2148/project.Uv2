@@ -11,8 +11,8 @@ Group (Finsh)
 Group (Kernel)
 Group (POSIX)
 
-File 1,1,<applications\startup.c><startup.c>
 File 1,1,<applications\application.c><application.c>
+File 1,1,<applications\startup.c><startup.c>
 File 2,1,<..\..\components\libc\compilers\armlibc\syscall_mem.c><syscall_mem.c>
 File 2,1,<..\..\components\libc\compilers\armlibc\syscalls.c><syscalls.c>
 File 2,1,<..\..\components\libc\compilers\common\cctype.c><cctype.c>

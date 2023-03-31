@@ -222,8 +222,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_BM3803
 #define RT_USING_UART1
 

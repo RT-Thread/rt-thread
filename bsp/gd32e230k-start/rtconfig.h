@@ -220,8 +220,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_GD32E230K
 #define RT_USING_USART0
 #define RT_USING_USART1

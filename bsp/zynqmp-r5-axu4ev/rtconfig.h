@@ -302,8 +302,6 @@
 
 /* Uncategorized */
 
-/* Privated Packages of RealThread */
-
 #define SOC_ZYNQMP_R5
 
 /* Hardware Drivers Config */
