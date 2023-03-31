@@ -10,7 +10,7 @@
 #include <lvgl.h>
 #include "hal_data.h"
 
-#ifdef BSP_USING_SPI_LCD
+#ifdef PKG_USING_ILI9341
     #include "lcd_ili9341.h"
 #endif
 
@@ -29,7 +29,7 @@ static lv_color_t buf_2[COLOR_BUFFER];
 
 static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-#ifdef BSP_USING_SPI_LCD
+#ifdef PKG_USING_ILI9341
     lcd_fill_array_spi(area->x1, area->y1, area->x2, area->y2, color_p);
 #endif
     lv_disp_flush_ready(disp_drv);
@@ -37,7 +37,7 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 
 void lv_port_disp_init(void)
 {
-#ifdef BSP_USING_SPI_LCD
+#ifdef PKG_USING_ILI9341
     spi_lcd_init(20);
 #endif
     /*Initialize `disp_buf` with the buffer(s). With only one buffer use NULL instead buf_2 */
