@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-fno-common -fdata-sections -ffreestanding -fno-builtin -mthumb</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, XIP_BOOT_HEADER_DCD_ENABLE=1, SKIP_SYSCLK_INIT, RT_USING_LIBC, __FPU_PRESENT=1, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE=1, DATA_SECTION_IS_CACHEABLE=1, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, CPU_MIMXRT1062DVL6A, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM, RT_USING_ARM_LIBC</Define>
+              <Define>DATA_SECTION_IS_CACHEABLE=0, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, ENDIANNESS, SKIP_SYSCLK_INIT, USE_RTOS, RT_USING_LIBC, __FPU_PRESENT=1, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE=1, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, CPU_MIMXRT1062DVL6A, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM</Define>
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1060\CMSIS\Include;..\libraries\MIMXRT1060\MIMXRT1060;..\libraries\MIMXRT1060\MIMXRT1060\drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;xip</IncludePath>
+              <IncludePath>..\libraries\drivers;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\libraries\MIMXRT1060\MIMXRT1060;..\..\..\include;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\finsh;board\MCUX_Config;..\..\..\components\drivers\include;board\ports;..\..\..\components\net\netdev\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\..\..\components\libc\posix\io\stdio;xip;..\..\..\components\dfs\filesystems\elmfat;..\libraries\MIMXRT1060\CMSIS\Include;..\libraries\MIMXRT1060\MIMXRT1060\drivers;applications;..\..\..\components\dfs\include;..\..\..\components\drivers\usb\usbhost;..\..\..\components\drivers\include;.;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\usb\usbhost\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\usb\usbhost\class;..\..\..\components\drivers\include;..\..\..\components\drivers\usb\usbhost\core;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -379,6 +379,13 @@
       <Groups>
         <Group>
           <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>mnt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\mnt.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>main.c</FileName>
@@ -450,9 +457,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -493,13 +500,6 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
-          <Files>
-            <File>
-              <FileName>cputime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\cputime\cputime.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>i2c-bit-ops.c</FileName>
@@ -579,6 +579,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>phy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\phy\phy.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
@@ -617,6 +624,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\drv_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\drv_gpio.c</FilePath>
@@ -624,9 +638,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_i2c.c</FileName>
+              <FileName>drv_sdram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_i2c.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_sdram.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -634,6 +648,107 @@
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_usbh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\drv_usbh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usb_host_devices.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\usb\host\usb_host_devices.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usb_host_ehci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\usb\host\usb_host_ehci.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usb_host_framework.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\usb\host\usb_host_framework.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usb_host_hci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\usb\host\usb_host_hci.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usb_phy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\usb\phy\usb_phy.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Filesystem</GroupName>
+          <Files>
+            <File>
+              <FileName>devfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_elm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ffunicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -665,6 +780,13 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -742,9 +864,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -794,13 +916,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_pxp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_pxp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>startup_MIMXRT1062.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\libraries\MIMXRT1060\MIMXRT1060\arm\startup_MIMXRT1062.s</FilePath>
@@ -822,6 +937,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>generic_list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1060\MIMXRT1060\drivers\generic_list.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_common.c</FilePath>
@@ -829,9 +951,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>fsl_lpi2c.c</FileName>
+              <FileName>fsl_semc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_lpi2c.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_semc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_os_abstraction_rtthread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_os_abstraction_rtthread.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -850,19 +979,81 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>rt_usbh</GroupName>
+          <Files>
+            <File>
+              <FileName>udisk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\usb\usbhost\class\udisk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hub.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\usb\usbhost\core\hub.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usbhost.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\usb\usbhost\core\usbhost.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mass.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\usb\usbhost\class\mass.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usbhost_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\usb\usbhost\core\usbhost_core.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\usb\usbhost\core\driver.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SAL</GroupName>
+          <Files>
+            <File>
+              <FileName>netdev_ipaddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>netdev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\netdev\src\netdev.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>xip</GroupName>
+          <Files>
+            <File>
+              <FileName>evkmimxrt1060_flexspi_nor_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>xip\evkmimxrt1060_flexspi_nor_config.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>fsl_flexspi_nor_boot.c</FileName>
               <FileType>1</FileType>
               <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>evkbmimxrt1060_flexspi_nor_config.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>xip\evkbmimxrt1060_flexspi_nor_config.c</FilePath>
             </File>
           </Files>
         </Group>

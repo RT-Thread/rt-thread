@@ -348,12 +348,12 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\STM32F0xx_HAL_Driver\Inc</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\CMSIS\Include</state>
@@ -1390,12 +1390,12 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\STM32F0xx_HAL_Driver\Inc</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\CMSIS\Include</state>
@@ -2141,9 +2141,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -2255,7 +2252,7 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>

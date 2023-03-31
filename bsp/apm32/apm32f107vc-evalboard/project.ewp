@@ -226,8 +226,6 @@
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
-          <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>APM32F10X_CL</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
@@ -352,41 +350,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\dfs_net</state>
-          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\libraries\Drivers\config</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\socket</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\Drivers</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include</state>
+          <state>$PROJ_DIR$\..\libraries\Drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\socket\sys_socket</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\impl</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\netdev\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi\sfud\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
+          <state>$PROJ_DIR$\board</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1340,8 +1324,6 @@
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
-          <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>APM32F10X_CL</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
@@ -1466,41 +1448,27 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\dfs_net</state>
-          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\libraries\Drivers\config</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc</state>
-          <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\socket</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\Drivers</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include</state>
+          <state>$PROJ_DIR$\..\libraries\Drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\include\socket\sys_socket</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\libraries\APM32F10x_Library\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\sal\impl</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\netdev\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi\sfud\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
+          <state>$PROJ_DIR$\board</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2285,6 +2253,9 @@
   <group>
     <name>CPU</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -2299,15 +2270,6 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_core.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_dev.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
@@ -2335,29 +2297,11 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\sfud\src\sfud.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_core.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_dev.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_flash_sfud.c</name>
-    </file>
   </group>
   <group>
     <name>Drivers</name>
     <file>
       <name>$PROJ_DIR$\board\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\board\ports\spi_flash_init.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Source\iar\startup_apm32f10x_cl.s</name>
@@ -2366,37 +2310,10 @@
       <name>$PROJ_DIR$\..\libraries\Drivers\drv_common.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\Drivers\drv_eth.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\Drivers\drv_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\Drivers\drv_soft_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\Drivers\drv_spi.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\Drivers\drv_usart.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Filesystem</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs\devfs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_file.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_fs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_posix.c</name>
     </file>
   </group>
   <group>
@@ -2412,9 +2329,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
     </file>
   </group>
   <group>
@@ -2450,7 +2364,7 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
@@ -2471,9 +2385,6 @@
       <name>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_misc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_spi.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_usart.c</name>
     </file>
     <file>
@@ -2483,154 +2394,10 @@
       <name>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\src\apm32f10x_eth.c</name>
-    </file>
-  </group>
-  <group>
-    <name>lwIP</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\api_lib.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\api_msg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\err.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\netbuf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\netdb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\netifapi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\sockets.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\tcpip.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\apps\ping\ping.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\def.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\dns.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\inet_chksum.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\init.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ip.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\autoip.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\dhcp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\etharp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\icmp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\igmp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_addr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_frag.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\memp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\netif.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\pbuf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\raw.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\stats.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\sys.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_in.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_out.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\timeouts.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\udp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\netif\ethernet.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\netif\lowpan6.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\port\ethernetif.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\port\sys_arch.c</name>
+      <name>$PROJ_DIR$\..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_dma.c</name>
     </file>
   </group>
   <group>
     <name>POSIX</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll\poll.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll\select.c</name>
-    </file>
-  </group>
-  <group>
-    <name>SAL</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\sal\dfs_net\dfs_net.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\sal\impl\af_inet_lwip.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\sal\socket\net_netdb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\sal\socket\net_sockets.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\sal\src\sal_socket.c</name>
-    </file>
   </group>
 </project>

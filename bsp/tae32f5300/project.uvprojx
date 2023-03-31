@@ -330,9 +330,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>USE_TAE_DRIVER, __STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, TAE32F53xx, __RTTHREAD__, __DEBUG, RT_USING_ARM_LIBC</Define>
+              <Define>USE_TAE_DRIVER, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, TAE32F53xx, __RTTHREAD__, __DEBUG</Define>
               <Undefine />
-              <IncludePath>application;.;board;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc;Libraries\CMSIS\Include;Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Include;Libraries\TAE32F53xx_StdPeriph_Driver\inc</IncludePath>
+              <IncludePath>..\..\components\libc\compilers\common\extension\fcntl\octal;application;..\..\components\libc\posix\io\stdio;Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Include;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;Libraries\TAE32F53xx_StdPeriph_Driver\inc;..\..\include;Libraries\CMSIS\Include;..\..\components\drivers\include;drivers;..\..\components\finsh;..\..\libcpu\arm\common;..\..\components\libc\posix\ipc;..\..\components\drivers\include;.;..\..\components\drivers\include;board</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -463,9 +463,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -706,9 +706,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

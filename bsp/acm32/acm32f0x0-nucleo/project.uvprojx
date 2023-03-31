@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>libraries\HAL_Driver\Inc;libraries\Device;libraries\CMSIS;applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension\fcntl\octal;libraries\Device;..\..\..\include;..\..\..\components\libc\posix\io\stdio;libraries\CMSIS;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;.;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;applications;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;libraries\HAL_Driver\Inc;drivers;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -551,13 +551,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -676,58 +669,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_pm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_pm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -739,9 +683,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_soft_i2c.c</FileName>
+              <FileName>drv_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_soft_i2c.c</FilePath>
+              <FilePath>drivers\drv_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_pm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_pm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -749,6 +714,34 @@
               <FileName>drv_wdt.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_soft_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_soft_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_adc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -857,9 +850,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

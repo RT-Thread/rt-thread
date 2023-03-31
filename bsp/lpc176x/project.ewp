@@ -1856,9 +1856,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -1874,43 +1871,43 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\pipe.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\workqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\ipc\waitqueue.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringblk_buf.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\ringbuffer.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\workqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\pipe.c</name>
     </file>
   </group>
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
+      <name>$PROJ_DIR$\drivers\uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\led.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\uart.c</name>
+      <name>$PROJ_DIR$\drivers\emac.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\spi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\emac.c</name>
+      <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
   </group>
   <group>
@@ -1961,7 +1958,7 @@
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\thread.c</name>

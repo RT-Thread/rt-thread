@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
-
   <SchemaVersion>2.1</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>rt-thread</TargetName>
@@ -19,28 +16,28 @@
           <PackID>Keil.STM32H7xx_DFP.3.0.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00020000) IRAM2(0x24000000,0x00080000) IROM(0x08000000,0x00100000) IROM2(0x08100000,0x00100000) XRAM(0x30000000,0x00048000) XRAM2(0x38000000,0x00010000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <FlashUtilSpec />
+          <StartupFile />
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC8000 -FN1 -FF0STM32H7x_2048 -FS08000000 -FL0200000 -FP0($$Device:STM32H750VBTx$CMSIS\Flash\STM32H7x_2048.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:STM32H750VBTx$Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h7xx.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>$$Device:STM32H750VBTx$CMSIS\SVD\STM32H743x.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -62,8 +59,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -72,8 +69,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -83,14 +80,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -104,8 +101,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument />
+          <IncludeLibraryModules />
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -139,10 +136,10 @@
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <Flash4 />
+          <pFcarmOut />
+          <pFcarmGrp />
+          <pFcArmRoot />
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -175,7 +172,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M7"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -308,7 +305,7 @@
                 <Size>0x80000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -335,10 +332,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls />
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, STM32H750xx, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_HAL_DRIVER</Define>
-              <Undefine></Undefine>
-              <IncludePath>..\libraries\HAL_Drivers\config;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;board\port;..\..\..\components\dfs\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;board\CubeMX_Config\Inc;.;..\..\..\components\drivers\spi\sfud\inc;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\libc\posix\io\stdio;..\..\..\include;board;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\dfs\filesystems\devfs;..\..\..\libcpu\arm\common;..\libraries\STM32H7xx_HAL\CMSIS\Device\ST\STM32H7xx\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\spi;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Inc;..\..\..\components\drivers\include;board\port\lcd;applications</IncludePath>
+              <Undefine />
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;board\port\lcd;board;..\libraries\HAL_Drivers\CMSIS\Include;applications;..\..\..\components\dfs\include;..\libraries\HAL_Drivers;board\port;..\libraries\STM32H7xx_HAL\CMSIS\Device\ST\STM32H7xx\Include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers\config;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Inc;.;..\..\..\components\drivers\spi\sfud\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -353,10 +350,10 @@
             <useXO>0</useXO>
             <uClangAs>0</uClangAs>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -368,13 +365,13 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase></pXoBase>
+            <pXoBase />
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <IncludeLibs />
+            <IncludeLibsPath />
+            <Misc />
+            <LinkerInputFile />
+            <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -397,36 +394,50 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cctype.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cwchar.c</FileName>
               <FileType>1</FileType>
@@ -438,25 +449,40 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cpu_cache.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
@@ -472,47 +498,8 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -523,52 +510,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>i2c_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -579,52 +529,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>i2c_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -635,52 +548,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -691,52 +567,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -747,52 +586,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -803,52 +605,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -859,52 +624,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -915,52 +643,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -971,52 +662,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1027,52 +681,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1083,52 +700,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\rtc\rtc.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1139,52 +719,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>serial_v2.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial_v2.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1195,52 +738,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>qspi_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\qspi_core.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1251,52 +757,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sfud.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1307,52 +776,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sfud_sfdp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1363,52 +795,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1419,52 +814,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1475,52 +833,15 @@
                 </FileArmAds>
               </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_flash_sfud.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
               <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
                 <FileArmAds>
                   <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
                     <VariousControls>
                       <MiscControls>  --c99</MiscControls>
                       <Define> </Define>
@@ -1541,46 +862,64 @@
               <FileType>2</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\CMSIS\Device\ST\STM32H7xx\Source\Templates\arm\startup_stm32h750xx.s</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\CubeMX_Config\Src\stm32h7xx_hal_msp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_lcd_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\port\lcd\drv_lcd_spi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_lcd_spi_ext.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\port\lcd\drv_lcd_spi_ext.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_qspi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_qspi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_spi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_usart_v2.c</FileName>
               <FileType>1</FileType>
@@ -1596,21 +935,29 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
@@ -1626,21 +973,29 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
@@ -1656,61 +1011,85 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\device.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>memheap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\memheap.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mempool.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
@@ -1726,136 +1105,190 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_sram.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sram.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rtc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cortex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_i2c_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_cryp_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cryp_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_rtc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rtc_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_cryp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cryp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_usart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_crc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_crc_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_uart_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_mdma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdma.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_uart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_comp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_comp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_rng.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rng.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_crc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_cec.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cec.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_qspi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_qspi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32h7xx_hal_pwr_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>system_stm32h7xx.c</FileName>
               <FileType>1</FileType>
@@ -1866,11 +1299,9 @@
       </Groups>
     </Target>
   </Targets>
-
   <RTE>
-    <apis/>
-    <components/>
-    <files/>
+    <apis />
+    <components />
+    <files />
   </RTE>
-
 </Project>

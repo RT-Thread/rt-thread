@@ -33,6 +33,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -48,6 +49,7 @@
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50000
 #define RT_USING_CACHE
+#define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -143,9 +145,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -218,18 +217,11 @@
 
 /* Other */
 
+
 /* Signal IO */
 
 
 /* Uncategorized */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-
-/* RT-Thread Smart */
 
 #define SOC_IMXRT1060_SERIES
 

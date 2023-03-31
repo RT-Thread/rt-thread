@@ -33,6 +33,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
@@ -44,6 +45,7 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50000
+#define RT_USING_HW_ATOMIC
 #define ARCH_RISCV
 
 /* RT-Thread Components */
@@ -135,9 +137,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -210,6 +209,7 @@
 
 /* Other */
 
+
 /* Signal IO */
 
 
@@ -222,15 +222,15 @@
 
 #define SOC_CH32V307VC
 
+/* Onboard Peripheral Drivers */
+
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
 #define LSI_VALUE 40000
-
-/* Onboard Peripheral Drivers */
-
 
 /* Board extended module Drivers */
 

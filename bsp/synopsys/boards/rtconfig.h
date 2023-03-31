@@ -38,6 +38,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_MEMHEAP
@@ -51,7 +52,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40101
+#define RT_VER_NUM 0x50000
 #define RT_USING_CPU_FFS
 
 /* RT-Thread Components */
@@ -74,6 +75,7 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 4096
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 8
@@ -141,9 +143,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -163,6 +162,11 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
@@ -170,6 +174,9 @@
 #define PKG_USING_EMBARC_BSP_UPSTREAM_VERSION
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -182,13 +189,39 @@
 /* entertainment: terminal games and other interesting software packages */
 
 
-/* Privated Packages of RealThread */
+/* Arduino libraries */
 
 
-/* Network Utilities */
+/* Projects */
 
 
-/* RT-Thread Smart */
+/* Sensors */
+
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 #define SOC_EMSK
 #define EMSK_USING_UART0

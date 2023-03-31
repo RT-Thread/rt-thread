@@ -13,12 +13,18 @@
 #define RT_THREAD_PRIORITY_MAX 256
 #define RT_TICK_PER_SECOND 100
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 16384
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 16384
+
+/* kservice optimization */
+
+#define RT_KSERVICE_USING_STDLIB
+#define RT_KPRINTF_USING_LONGLONG
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -31,8 +37,10 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
 
@@ -47,7 +55,6 @@
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
 #define KERNEL_VADDR_START 0x150000000
-#define PV_OFFSET 0x0
 #define ARCH_RISCV
 #define ARCH_RISCV64
 
@@ -57,28 +64,21 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 16384
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 8192
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-#define FINSH_USING_DESCRIPTION
-#define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 8192
 #define FINSH_CMD_SIZE 80
+#define MSH_USING_BUILT_IN_COMMANDS
+#define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-
-/* Device virtual file system */
-
 #define RT_USING_DFS
+#define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX 8
 #define DFS_FILESYSTEM_TYPES_MAX 4
@@ -91,22 +91,36 @@
 #define RT_DFS_ELM_WORD_ACCESS
 #define RT_DFS_ELM_USE_LFN_3
 #define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 8
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 #define RT_DFS_ELM_REENTRANT
+#define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
+#define RT_USING_FAL
+#define FAL_DEBUG_CONFIG
+#define FAL_DEBUG 1
+#define FAL_PART_HAS_TABLE_CFG
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
+#define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SYSTEM_WORKQUEUE
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 8192
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_TTY
@@ -121,30 +135,36 @@
 #define RT_USING_RTC
 #define RT_USING_WDT
 #define RT_USING_TOUCH
+#define RT_USING_DEV_BUS
 
 /* Using USB */
 
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
-#define RT_USING_LIBC
-#define RT_USING_MUSL
-#define RT_USING_POSIX
-#define RT_USING_POSIX_CLOCKTIME
+#define RT_LIBC_DEFAULT_TIMEZONE 8
+
+/* POSIX (Portable Operating System Interface) layer */
+
+#define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
+
 
 /* Network */
 
-/* Socket abstraction layer */
-
 #define RT_USING_SAL
+#define SAL_INTERNET_CHECK
 
-/* protocol stack implement */
+/* Docking with protocol stacks */
 
 #define SAL_USING_LWIP
 #define SAL_USING_POSIX
-
-/* Network interface device */
-
 #define RT_USING_NETDEV
 #define NETDEV_USING_IFCONFIG
 #define NETDEV_USING_PING
@@ -152,11 +172,9 @@
 #define NETDEV_USING_AUTO_DEFAULT
 #define NETDEV_IPV4 1
 #define NETDEV_IPV6 0
-
-/* light weight TCP/IP stack */
-
 #define RT_USING_LWIP
 #define RT_USING_LWIP212
+#define RT_USING_LWIP_VER_NUM 0x20102
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
@@ -174,20 +192,13 @@
 #define RT_LWIP_TCP
 #define RT_LWIP_RAW
 #define RT_MEMP_NUM_NETCONN 8
-#define RT_MEMP_NUM_TCPIP_MSG_API 16
-#define RT_MEMP_NUM_TCPIP_MSG_INPKT 16
 #define RT_LWIP_PBUF_NUM 16
-#define RT_LWIP_PBUF_STRUCT_NUM 16
-#define RT_LWIP_NETBUF_NUM 16
 #define RT_LWIP_RAW_PCB_NUM 4
 #define RT_LWIP_UDP_PCB_NUM 4
-#define RT_UDP_RECVMBOX_SIZE 16
-#define RT_RECV_BUFSIZE_DEFAULT 64
 #define RT_LWIP_TCP_PCB_NUM 4
 #define RT_LWIP_TCP_SEG_NUM 40
 #define RT_LWIP_TCP_SND_BUF 8196
 #define RT_LWIP_TCP_WND 8196
-#define RT_TCP_RECVMBOX_SIZE 16
 #define RT_LWIP_TCPTHREAD_PRIORITY 10
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
 #define RT_LWIP_TCPTHREAD_STACKSIZE 8192
@@ -205,21 +216,12 @@
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
 
-/* AT commands */
-
-
-/* VBUS(Virtual Software BUS) */
-
-
 /* Utilities */
 
-#define RT_USING_SMART
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
-#define LWP_TID_MAX_NR 64
-#define RT_LWP_SHM_MAX_NR 64
+#define RT_USING_ADT
+
+/* RT-Thread Utestcases */
+
 
 /* RT-Thread online packages */
 
@@ -256,9 +258,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -278,11 +277,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -298,16 +305,36 @@
 /* Arduino libraries */
 
 
-/* Sensor libraries */
+/* Projects */
 
 
-/* Display libraries */
+/* Sensors */
 
 
-/* Timing libraries */
+/* Display */
 
 
-/* Project libraries */
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 #define BOARD_allwinnerd1
 #define ENABLE_FPU
@@ -315,10 +342,21 @@
 
 /* General Drivers Configuration */
 
+#define BSP_USING_M7
+
 /* General Purpose UARTs */
 
+#define BSP_USING_UART0
+#define UART0_TX_USING_GPIOB8
+#define UART0_RX_USING_GPIOB9
 #define BSP_USING_WDT
 #define BSP_USING_RTC
+#define BSP_USING_SDMMC
+#define SD_CARD_CHECK
+#define BSP_USING_FS
+
+/* Board extended module Drivers */
+
 #define RT_USING_SUNXI_HAL
 
 /* UART Devices */
@@ -344,7 +382,32 @@
 /* SDMMC Devices */
 
 
+/* SPI Devices */
+
+#define DRIVERS_SPI
+
 /* TWI Devices */
 
+
+/* G2D Devices */
+
+#define DRIVERS_G2D
+#define DRIVERS_USB
+
+/* USB HOST */
+
+
+/* USB DEVICE */
+
+#define USB_DEVICE
+#define HAL_TEST_UDC
+
+/* CE Devices */
+
+#define DRIVERS_CE
+
+/* EFUSE Devices */
+
+#define DRIVERS_EFUSE
 
 #endif

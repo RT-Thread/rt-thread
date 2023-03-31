@@ -354,25 +354,24 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\libraries\Drivers</state>
           <state>$PROJ_DIR$\..\libraries\Drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\APM32F0xx_Library\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\utilities\libadt</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Include</state>
           <state>$PROJ_DIR$\board</state>
         </option>
@@ -1452,25 +1451,24 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\libraries\Drivers</state>
           <state>$PROJ_DIR$\..\libraries\Drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\APM32F0xx_Library\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\utilities\libadt</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Include</state>
           <state>$PROJ_DIR$\board</state>
         </option>
@@ -2197,12 +2195,6 @@
     </settings>
   </configuration>
   <group>
-    <name>ADT</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\utilities\libadt\avl.c</name>
-    </file>
-  </group>
-  <group>
     <name>Applications</name>
     <file>
       <name>$PROJ_DIR$\applications\main.c</name>
@@ -2300,12 +2292,6 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_core.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_dev.c</name>
-    </file>
   </group>
   <group>
     <name>Drivers</name>
@@ -2320,9 +2306,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\Drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\Drivers\drv_spi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\Drivers\drv_usart.c</name>
@@ -2376,7 +2359,7 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
@@ -2389,9 +2372,6 @@
     <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_eint.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_spi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\APM32F0xx_Library\APM32F0xx_StdPeriphDriver\src\apm32f0xx_misc.c</name>

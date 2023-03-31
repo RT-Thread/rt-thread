@@ -336,7 +336,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\LPC55S36\components\codec;..\Libraries\drivers;board\MCUX_Config\board;..\Libraries\LPC55S36\LPC55S36;..\Libraries\LPC55S36\middleware\sdmmc\inc;.;..\Libraries\CMSIS\Core\Include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\include;board;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\Libraries\LPC55S36\middleware\sdmmc\port;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\Libraries\LPC55S36\LPC55S36\drivers;..\..\..\components\libc\posix\io\stdio;applications;..\Libraries\drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\Libraries\LPC55S36\LPC55S36;..\..\..\components\finsh;..\..\..\components\drivers\include;..\Libraries\drivers\config;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;board\MCUX_Config\board;.;..\..\..\components\libc\posix\io\poll;..\Libraries\drivers;..\..\..\libcpu\arm\cortex-m33;..\Libraries\LPC55S36\middleware\sdmmc\port;..\Libraries\LPC55S36\middleware\sdmmc\inc;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;..\Libraries\LPC55S36\LPC55S36\drivers;..\..\..\components\libc\compilers\common\include;applications;..\Libraries\LPC55S36\components\codec;board;..\Libraries\CMSIS\Core\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,6 +448,13 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
+          <Files>
+            <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -714,9 +721,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
