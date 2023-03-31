@@ -58,13 +58,11 @@
         <file category="header" name="ra/board/ra6m3/board_leds.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/bsp_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_ioport_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_timer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_transfer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_uart_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_common_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_features.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_version.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_gpt.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_ioport.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_sci_uart.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/base_addresses.h" path=""/>
@@ -124,7 +122,6 @@
       <files>
         <file category="include" name="ra_cfg/fsp_cfg/"/>
         <file category="include" name="ra_cfg/fsp_cfg/bsp/"/>
-        <file category="header" name="ra_cfg/fsp_cfg/bsp/board_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_device_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_device_pn_cfg.h" path=""/>

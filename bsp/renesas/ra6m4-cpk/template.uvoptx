@@ -89,7 +89,7 @@
         <sRfunc>1</sRfunc>
         <sRbox>1</sRbox>
         <tLdApp>1</tLdApp>
-        <tGomain>0</tGomain>
+        <tGomain>1</tGomain>
         <tRbreak>1</tRbreak>
         <tRwatch>1</tRwatch>
         <tRmem>1</tRmem>
@@ -117,6 +117,11 @@
         <pMon>Segger\JL2CM3.dll</pMon>
       </DebugOpt>
       <TargetDriverDllRegistry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>UL2V8M</Key>
+          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC2000 -FN3 -FF0RA6M4_1M -FS00 -FL0100000 -FF1RA6M4_DATA_C1M -FS18000000 -FL12000 -FF2RA6M4_CONF -FS2100A000 -FL2300 -FP0($$Device:R7FA6M4AF$Flash\RA6M4_1M.FLM) -FP1($$Device:R7FA6M4AF$Flash\RA6M4_DATA_C1M.FLM) -FP2($$Device:R7FA6M4AF$Flash\RA6M4_CONF.FLM))</Name>
+        </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>

@@ -57,56 +57,73 @@
         <file category="source" name="ra/board/ra6m4_cpk/board_leds.c"/>
         <file category="header" name="ra/board/ra6m4_cpk/board_leds.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/bsp_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_cgc_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_external_irq_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_flash_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_ioport_api.h" path=""/>
+        <file category="header" name="ra/fsp/inc/api/r_spi_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_transfer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_uart_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_common_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_features.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_version.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_flash_hp.h" path=""/>
+        <file category="header" name="ra/fsp/inc/instances/r_dtc.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_icu.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_ioport.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_sci_uart.h" path=""/>
+        <file category="header" name="ra/fsp/inc/instances/r_spi.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/base_addresses.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/renesas.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/system.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c"/>
+        <file category="other" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.o"/>
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c"/>
+        <file category="other" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.o"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_arm_exceptions.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_common.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_common.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_common.o"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_compiler_support.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_delay.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_delay.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_delay.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_group_irq.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_group_irq.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_group_irq.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_guard.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_guard.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_guard.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_io.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_io.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_io.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_irq.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_irq.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_irq.o"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_mcu_api.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_module_stop.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_rom_registers.c"/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_rom_registers.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_sbrk.c"/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_sbrk.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_security.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_security.h" path=""/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_security.o"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_tfu.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_elc.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_feature.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_mcu_info.h" path=""/>
-        <file category="source" name="ra/fsp/src/r_flash_hp/r_flash_hp.c"/>
+        <file category="source" name="ra/fsp/src/r_dtc/r_dtc.c"/>
         <file category="source" name="ra/fsp/src/r_icu/r_icu.c"/>
+        <file category="other" name="ra/fsp/src/r_icu/r_icu.o"/>
         <file category="source" name="ra/fsp/src/r_ioport/r_ioport.c"/>
+        <file category="other" name="ra/fsp/src/r_ioport/r_ioport.o"/>
         <file category="source" name="ra/fsp/src/r_sci_uart/r_sci_uart.c"/>
+        <file category="other" name="ra/fsp/src/r_sci_uart/r_sci_uart.o"/>
+        <file category="source" name="ra/fsp/src/r_spi/r_spi.c"/>
         <file category="other" name="ra/SConscript"/>
       </files>
     </component>
@@ -114,15 +131,16 @@
       <files>
         <file category="include" name="ra_cfg/fsp_cfg/"/>
         <file category="include" name="ra_cfg/fsp_cfg/bsp/"/>
-        <file category="header" name="ra_cfg/fsp_cfg/bsp/board_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_device_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_device_pn_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_family_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_pin_cfg.h" path=""/>
+        <file category="header" name="ra_cfg/fsp_cfg/r_dtc_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_icu_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_ioport_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_sci_uart_cfg.h" path=""/>
+        <file category="header" name="ra_cfg/fsp_cfg/r_spi_cfg.h" path=""/>
         <file category="other" name="ra_cfg/SConscript"/>
       </files>
     </component>
