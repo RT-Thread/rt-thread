@@ -437,7 +437,7 @@ __STATIC_INLINE void nu_buffer_cpy(rt_uint8_t address, void *buffer, rt_size_t s
     }
 }
 
-static rt_ssize_t _ep_read(rt_uint8_t address, void *buffer)
+static rt_size_t _ep_read(rt_uint8_t address, void *buffer)
 {
     rt_size_t size  = 0;
 
@@ -465,7 +465,7 @@ static rt_ssize_t _ep_read(rt_uint8_t address, void *buffer)
     return size;
 }
 
-static rt_ssize_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_size_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     RT_ASSERT(!(address & USB_DIR_IN));
 
@@ -497,7 +497,7 @@ static rt_ssize_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t s
     return size;
 }
 
-static rt_ssize_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_size_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 {
 
     RT_ASSERT((address & USB_DIR_IN));

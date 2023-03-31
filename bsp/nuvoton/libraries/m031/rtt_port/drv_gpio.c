@@ -29,13 +29,13 @@
 
 /* Private functions ------------------------------------------------------------*/
 
-static void nu_gpio_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode);
-static void nu_gpio_write(struct rt_device *device, rt_base_t pin, rt_base_t value);
-static int nu_gpio_read(struct rt_device *device, rt_base_t pin);
-static rt_err_t nu_gpio_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args);
+static void nu_gpio_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode);
+static void nu_gpio_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value);
+static rt_int8_t nu_gpio_read(struct rt_device *device, rt_base_t pin);
+static rt_err_t nu_gpio_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint8_t mode, void (*hdr)(void *args), void *args);
 static rt_err_t nu_gpio_detach_irq(struct rt_device *device, rt_int32_t pin);
-static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled);
-static rt_base_t nu_gpio_get(const char *name);
+static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled);
+static rt_base_t nu_gpio_pin_get(const char *name);
 
 /* Private variables ------------------------------------------------------------*/
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[IRQ_MAX_NUM];
@@ -47,7 +47,7 @@ static struct rt_pin_ops nu_gpio_ops =
     nu_gpio_attach_irq,
     nu_gpio_detach_irq,
     nu_gpio_irq_enable,
-    nu_gpio_get,
+    nu_gpio_pin_get,
 };
 
 static rt_uint32_t g_u32PinIrqMask = 0x0;
@@ -102,7 +102,32 @@ static void pin_irq_hdr(rt_uint32_t irq_status, rt_uint32_t port_index)
     }
 }
 
-static void nu_gpio_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static rt_base_t nu_gpio_pin_get(const char *name)
+{
+    /* Get pin number by name,such as PA.0, PF12 */
+    if ((name[2] == '\0') || ((name[2] == '.') && (name[3] == '\0')))
+        return -(RT_EINVAL);
+
+    long number;
+
+    if ((name[2] == '.'))
+        number = atol(&name[3]);
+    else
+        number = atol(&name[2]);
+
+    if (number > 15)
+        return -(RT_EINVAL);
+
+    if (name[1] >= 'A' && name[1] <= 'H')
+        return ((name[1] - 'A') * 0x10) + number;
+
+    if (name[1] >= 'a' && name[1] <= 'h')
+        return ((name[1] - 'a') * 0x10) + number;
+
+    return -(RT_EINVAL);
+}
+
+static void nu_gpio_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     GPIO_T *PORT;
 
@@ -140,7 +165,7 @@ static void nu_gpio_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode
 #endif
 }
 
-static void nu_gpio_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void nu_gpio_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     if (nu_port_check(pin))
         return;
@@ -148,7 +173,7 @@ static void nu_gpio_write(struct rt_device *device, rt_base_t pin, rt_base_t val
     GPIO_PIN_DATA(NU_GET_PORT(pin), NU_GET_PINS(pin)) = value;
 }
 
-static int nu_gpio_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t nu_gpio_read(struct rt_device *device, rt_base_t pin)
 {
     if (nu_port_check(pin))
         return PIN_LOW;
@@ -156,7 +181,7 @@ static int nu_gpio_read(struct rt_device *device, rt_base_t pin)
     return GPIO_PIN_DATA(NU_GET_PORT(pin), NU_GET_PINS(pin));
 }
 
-static rt_err_t nu_gpio_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t nu_gpio_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
     rt_int32_t irqindex;
@@ -223,7 +248,7 @@ static rt_err_t nu_gpio_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     GPIO_T *PORT;
     rt_base_t level;
@@ -280,32 +305,6 @@ exit_nu_gpio_irq_enable:
 
     rt_hw_interrupt_enable(level);
     return -(ret);
-}
-
-static rt_base_t nu_gpio_get(const char *name)
-{
-    /* Get pin number by name,such as PA.0, PF12 */
-    if ((name[2] == '\0')||((name[2] == '.')&&(name[3] == '\0')))
-        return -(RT_EINVAL);
-
-    long number;
-
-    if ((name[2] == '.'))
-        number = atol(&name[3]);
-    else
-        number = atol(&name[2]);
-
-    if (number > 15)
-        return -(RT_EINVAL);
-
-    if (name[1] >= 'A' && name[1] <= 'H')
-        return ((name[1] - 'A') * 0x10) + number;
-
-    if (name[1] >= 'a' && name[1] <= 'h')
-        return ((name[1] - 'a') * 0x10) + number;
-
-    return -(RT_EINVAL);
-
 }
 
 int rt_hw_gpio_init(void)
