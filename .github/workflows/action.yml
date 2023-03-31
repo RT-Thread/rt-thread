@@ -28,7 +28,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: ${{ matrix.legs.RTT_BSP }}
-    #if: github.repository_owner == 'RT-Thread'
+    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix:
@@ -333,7 +333,7 @@ jobs:
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
 
       - name: Bsp Scons Compile
-        #if: ${{ success() }}
+        if: ${{ success() }}
         shell: bash
         env:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
