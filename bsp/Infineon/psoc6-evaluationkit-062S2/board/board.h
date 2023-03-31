@@ -40,7 +40,7 @@
 #define IFX_EFLASH_END_ADDRESS          ((uint32_t)(IFX_EFLASH_START_ADRESS + IFX_EFLASH_SIZE))
 
 /*SRAM CONFIG*/
-#define IFX_SRAM_SIZE                   (1014)
+#define IFX_SRAM_SIZE                   (1013)
 #define IFX_SRAM_END                    (0x08002000 + IFX_SRAM_SIZE * 1024)
 
 #ifdef __ARMCC_VERSION

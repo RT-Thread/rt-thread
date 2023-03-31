@@ -117,6 +117,7 @@ rt_varea_t _aspace_bst_search_exceed(struct rt_aspace *aspace, void *start)
 
         if (cmp < 0)
         {
+            /* varae exceed start */
             ptrdiff_t off = va_s - start;
             if (off < min_off)
             {
@@ -127,6 +128,7 @@ rt_varea_t _aspace_bst_search_exceed(struct rt_aspace *aspace, void *start)
         }
         else if (cmp > 0)
         {
+            /* find the next huger varea */
             node = node->avl_right;
         }
         else

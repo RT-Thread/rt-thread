@@ -52,6 +52,7 @@ struct mem_desc
     rt_uint32_t vaddr_end;
     rt_uint32_t paddr_start;
     rt_uint32_t attr;
+    struct rt_varea varea;
 };
 
 #define MMU_MAP_MTBL_XN       (1<<0)
