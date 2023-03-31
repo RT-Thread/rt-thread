@@ -5,7 +5,7 @@ menu "General Drivers Configuration"
         select RT_USING_PIN
         default y
 
-     menuconfig BSP_USING_ADC
+     config BSP_USING_ADC
         bool "Enable ADC"
         select RT_USING_ADC
         default n
