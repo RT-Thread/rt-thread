@@ -350,5 +350,5 @@ jobs:
           for bsp in $(echo $SRTT_BSP | tr ',' '\n'); do
             echo "Compiling BSP: ===== $bsp ===="
             pushd bsp/$bsp && pkgs --update && popd
-            scons -C bsp/$bsp
+            scons -C bsp/$bsp -j8
           done
