@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>CORE_CM4, VIRTIO_SLAVE_ONLY, __STDC_LIMIT_MACROS, __LOG_TRACE_IO_, METAL_MAX_DEVICE_REGIONS=2, RT_USING_LIBC, NO_ATOMIC_64_SUPPORT, __CLK_TCK=RT_TICK_PER_SECOND, STM32MP157Axx, __RTTHREAD__, METAL_INTERNAL, USE_HAL_DRIVER, RT_USING_ARM_LIBC</Define>
+              <Define>CORE_CM4, VIRTIO_SLAVE_ONLY, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __LOG_TRACE_IO_, METAL_MAX_DEVICE_REGIONS=2, RT_USING_LIBC, NO_ATOMIC_64_SUPPORT, __CLK_TCK=RT_TICK_PER_SECOND, STM32MP157Axx, __RTTHREAD__, METAL_INTERNAL, USE_HAL_DRIVER</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\CM4\Inc;board\ports;board\ports\audio;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc;..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>board;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;board\ports\audio;board\CubeMX_Config\CM4\Inc;applications;..\libraries\HAL_Drivers\CMSIS\Include;..\libraries\HAL_Drivers;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;board\ports;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -450,9 +450,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -707,9 +707,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

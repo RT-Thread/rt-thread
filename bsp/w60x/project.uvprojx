@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--c99 --gnu</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, WM_W600, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, WM_W600</Define>
               <Undefine />
-              <IncludePath>applications;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\hwcrypto;.;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\wlan;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;.;..\..\include;packages\wm_libraries-latest;packages\wm_libraries-latest\Include;packages\wm_libraries-latest\Include\Driver;packages\wm_libraries-latest\Platform\Drivers\spi;packages\wm_libraries-latest\Include\OS;packages\wm_libraries-latest\Include\Platform;packages\wm_libraries-latest\Include\OS;packages\wm_libraries-latest\Include\WiFi;packages\wm_libraries-latest\Platform\Inc;packages\wm_libraries-latest\Platform\Common\Params;packages\wm_libraries-latest\Platform\Common\crypto;packages\wm_libraries-latest\Platform\Common\crypto\digest;packages\wm_libraries-latest\Platform\Common\crypto\math;packages\wm_libraries-latest\Platform\Common\crypto\symmetric;packages\wm_libraries-latest\Platform\Boot\gcc;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\net\lwip\port;..\..\components\net\lwip-dhcpd;packages\netutils-latest\ntp;oneshot;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc;..\..\components\net\netdev\include;..\..\components\net\sal\include;..\..\components\net\sal\include\socket;..\..\components\net\sal\impl;..\..\components\net\sal\include\dfs_net;..\..\components\net\sal\include\socket\sys_socket;..\..\components\utilities\ulog</IncludePath>
+              <IncludePath>..\..\components\drivers\include;oneshot;..\..\components\dfs\filesystems\devfs;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\cortex-m3;packages\wm_libraries-latest\Include\Platform;..\..\include;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;packages\wm_libraries-latest\Include;..\..\components\finsh;..\..\components\drivers\include;..\..\components\net\lwip-dhcpd;..\..\components\drivers\spi;..\..\components\net\netdev\include;packages\wm_libraries-latest\Platform\Inc;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\utilities\ulog;..\..\components\libc\posix\io\stdio;packages\wm_libraries-latest\Platform\Common\crypto;..\..\components\net\sal\include;drivers;..\..\components\net\sal\include\socket\sys_socket;..\..\components\net\sal\include\socket;..\..\components\drivers\hwcrypto;..\..\components\drivers\include;packages\wm_libraries-latest\Platform\Common\crypto\math;packages\wm_libraries-latest\Include\OS;packages\wm_libraries-latest\Platform\Common\crypto\symmetric;..\..\components\dfs\include;..\..\components\drivers\include;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\drivers\include;.;..\..\libcpu\arm\common;..\..\components\net\lwip\port;packages\wm_libraries-latest\Platform\Common\crypto\digest;packages\wm_libraries-latest\Platform\Boot\gcc;..\..\components\net\sal\impl;..\..\components\drivers\include;..\..\components\libc\posix\ipc;packages\wm_libraries-latest;packages\wm_libraries-latest\Include\Driver;packages\wm_libraries-latest\Platform\Common\Params;packages\wm_libraries-latest\Include\WiFi;applications;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;..\..\components\drivers\wlan;packages\wm_libraries-latest\Platform\Drivers\spi;packages\netutils-latest\ntp;..\..\components\drivers\include;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\net\sal\include\dfs_net</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -447,13 +447,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -905,9 +898,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1633,16 +1626,16 @@
           <GroupName>Utilities</GroupName>
           <Files>
             <File>
-              <FileName>console_be.c</FileName>
+              <FileName>ulog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\utilities\ulog\backend\console_be.c</FilePath>
+              <FilePath>..\..\components\utilities\ulog\ulog.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ulog.c</FileName>
+              <FileName>console_be.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\utilities\ulog\ulog.c</FilePath>
+              <FilePath>..\..\components\utilities\ulog\backend\console_be.c</FilePath>
             </File>
           </Files>
         </Group>

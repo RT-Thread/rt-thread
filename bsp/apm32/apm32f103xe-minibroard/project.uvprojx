@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, APM32F10X_HD</Define>
               <Undefine />
-              <IncludePath>board;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\..\..\components\dfs\include;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\ipc;..\libraries\APM32F10x_Library\CMSIS\Include;..\libraries\Drivers;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\Drivers\config;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board\ports;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;..\..\..\components\libc\posix\io\stdio;..\..\..\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;applications;..\..\..\components\libc\posix\io\poll</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\..\..\include;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;applications;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;.;..\libraries\APM32F10x_Library\CMSIS\Include;..\..\..\components\dfs\filesystems\elmfat;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\components\drivers\include;board;..\..\..\components\dfs\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;board\ports;..\libraries\Drivers\config;..\libraries\Drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -447,6 +447,13 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
+          <Files>
+            <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -786,9 +793,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

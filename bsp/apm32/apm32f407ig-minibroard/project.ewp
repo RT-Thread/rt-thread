@@ -225,6 +225,7 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
+          <state>_DLIB_THREAD_SUPPORT</state>
           <state>APM32F40X</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
@@ -370,6 +371,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\libraries\APM32F4xx_Library\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\libraries\APM32F4xx_Library\APM32F4xx_ETH_Driver\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\board</state>
@@ -1308,6 +1310,7 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
+          <state>_DLIB_THREAD_SUPPORT</state>
           <state>APM32F40X</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
@@ -1453,6 +1456,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\libraries\APM32F4xx_Library\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\libraries\APM32F4xx_Library\APM32F4xx_ETH_Driver\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\board</state>
@@ -2223,7 +2227,7 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
@@ -2352,7 +2356,7 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
@@ -2367,7 +2371,13 @@
       <name>$PROJ_DIR$\..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_usart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_syscfg.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_rcm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_dma.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_eint.c</name>

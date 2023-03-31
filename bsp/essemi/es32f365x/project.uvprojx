@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, ES32F36xx, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, ES32F36xx, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>applications;.;drivers\ES;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;..\..\..\components\finsh;.;..\..\..\include;..\es32f369x\libraries\CMSIS\Device\EastSoft\ES32F36xx\Include;..\es32f369x\libraries\CMSIS\Include;..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>drivers;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\es32f369x\libraries\CMSIS\Device\EastSoft\ES32F36xx\Include;..\..\..\include;..\es32f369x\libraries\CMSIS\Include;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;.;drivers\ES;..\..\..\components\drivers\include;..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Include;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;applications;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -449,13 +449,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -553,16 +546,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\es32f369x\drivers\drv_uart.c</FilePath>
+              <FilePath>..\es32f369x\drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_gpio.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\es32f369x\drivers\drv_gpio.c</FilePath>
+              <FilePath>..\es32f369x\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -678,9 +671,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -709,219 +702,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>ald_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_nand.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nand.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ald_iap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_iap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_ebi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_ebi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_trng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_trng.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_acmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_acmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_pis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pis.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_cmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_cmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_nor_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nor_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_rtchw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtchw.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_flash_ext.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash_ext.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_tsense.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_tsense.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_es32f36xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\es32f369x\libraries\CMSIS\Device\EastSoft\ES32F36xx\Startup\keil\startup_es32f36xx.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_usb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_bkpc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_bkpc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_sram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_sram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_calc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_calc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_crypt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crypt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ald_rmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rmu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -933,9 +716,128 @@
           </Files>
           <Files>
             <File>
-              <FileName>utils.c</FileName>
+              <FileName>ald_rtchw.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\utils.c</FilePath>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtchw.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_usb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_acmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_acmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_ebi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_ebi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_crypt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crypt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_nand.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nand.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_tsense.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_tsense.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_bkpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_bkpc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_qspi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_nor_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nor_lcd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_calc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_calc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -947,9 +849,100 @@
           </Files>
           <Files>
             <File>
+              <FileName>ald_trng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_trng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>ald_i2s.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_i2s.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_cmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_cmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_es32f36xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\es32f369x\libraries\CMSIS\Device\EastSoft\ES32F36xx\Startup\keil\startup_es32f36xx.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_rmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\utils.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_pis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pis.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_flash_ext.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash_ext.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ald_sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\es32f369x\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_sram.c</FilePath>
             </File>
           </Files>
         </Group>

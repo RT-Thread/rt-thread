@@ -346,9 +346,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>MB9B610S, __STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>MB9B610S, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>applications;.;CMSIS\Include;CMSIS\DeviceSupport\fujitsu\mb9bf61x;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m3;drivers;..\..\..\..\components\finsh;.;..\..\..\..\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\include;..\..\..\..\components\libc\posix\ipc;CMSIS\DeviceSupport\fujitsu\mb9bf61x;..\..\..\..\libcpu\arm\common;drivers;applications;..\..\..\..\components\libc\posix\io\poll;CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -407,16 +407,16 @@
           <GroupName>CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>system_mb9bf61x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>CMSIS\DeviceSupport\fujitsu\mb9bf61x\system_mb9bf61x.c</FilePath>
+              <FileName>startup_mb9bf61x.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>CMSIS\DeviceSupport\fujitsu\mb9bf61x\startup\arm\startup_mb9bf61x.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup_mb9bf61x.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>CMSIS\DeviceSupport\fujitsu\mb9bf61x\startup\arm\startup_mb9bf61x.S</FilePath>
+              <FileName>system_mb9bf61x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>CMSIS\DeviceSupport\fujitsu\mb9bf61x\system_mb9bf61x.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -483,13 +483,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -521,13 +514,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\led.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
@@ -538,6 +524,13 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\serial.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -639,9 +632,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

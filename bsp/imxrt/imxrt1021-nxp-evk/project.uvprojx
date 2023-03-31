@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, XIP_BOOT_HEADER_ENABLE=1, SKIP_SYSCLK_INIT, CPU_MIMXRT1021DAG5A, __PERF_COUNT_PLATFORM_SPECIFIC_HEADER__=&lt;rtthread.h&gt;, RT_USING_LIBC, __FPU_PRESENT=1, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __perf_counter_printf__=rt_kprintf, STD=C99, ENDIANNESS, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, XIP_BOOT_HEADER_ENABLE=1, SKIP_SYSCLK_INIT, CPU_MIMXRT1021DAG5A, RT_USING_LIBC, __FPU_PRESENT=1, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, STD=C99, ENDIANNESS, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM</Define>
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1020\CMSIS\Include;..\libraries\MIMXRT1020\MIMXRT1021;..\libraries\MIMXRT1020\MIMXRT1021\drivers;packages\perf_counter-latest;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\usb\usbdevice;xip</IncludePath>
+              <IncludePath>..\libraries\drivers;..\..\..\components\drivers\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;.;..\..\..\libcpu\arm\cortex-m7;board;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;board\MCUX_Config;..\..\..\components\dfs\filesystems\elmfat;..\libraries\MIMXRT1020\CMSIS\Include;..\..\..\components\drivers\usb\usbdevice;xip;..\..\..\components\dfs\include;..\..\..\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\MIMXRT1020\MIMXRT1021\drivers;board\ports;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\libraries\MIMXRT1020\MIMXRT1021;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;applications</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -449,9 +449,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -492,20 +492,6 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
-          <Files>
-            <File>
-              <FileName>cputime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\cputime\cputime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cputime_cortexm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\cputime\cputime_cortexm.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>i2c-bit-ops.c</FileName>
@@ -613,6 +599,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>gpt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\sdio\gpt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>mmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\sdio\mmc.c</FilePath>
@@ -689,6 +682,13 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\drv_common.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -877,9 +877,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -957,36 +957,19 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>perf_counter</GroupName>
-          <Files>
-            <File>
-              <FileName>perf_os_patch_rt_thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\perf_counter-latest\os\perf_os_patch_rt_thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>perf_counter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\perf_counter-latest\perf_counter.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>rt_usbd</GroupName>
-          <Files>
-            <File>
-              <FileName>usbdevice_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>mstorage.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>usbdevice_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</FilePath>
             </File>
           </Files>
           <Files>
