@@ -51,11 +51,9 @@ static rt_err_t _rtc_control(rt_device_t dev, int cmd, void *args)
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
-    {
         rtc_time = *(rt_uint32_t *)args;
         bflb_rtc_set_time(bflb_rtc, 0);
-    }
-    break;
+        break;
     }
 
     return RT_EOK;
