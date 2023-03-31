@@ -83,7 +83,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-
 /* Using USB */
 
 
@@ -219,7 +218,6 @@
 
 /* Other */
 
-
 /* Signal IO */
 
 
@@ -230,6 +228,7 @@
 
 /* General Drivers Configuration */
 
+#define BSP_USING_GPIO
 
 /* General Purpose UARTs */
 
