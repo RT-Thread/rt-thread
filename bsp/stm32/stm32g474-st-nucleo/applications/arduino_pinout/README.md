@@ -1,5 +1,7 @@
 # The Arduino Compatible for STM32G474 Nucleo development board
 
+English | [中文](https://github.com/kurisaW/rt-thread/edit/g474_rtdu/bsp/stm32/stm32g474-st-nucleo/applications/arduino_pinout/README_zh.md)
+
 ## 1 RTduino - Arduino compatible layer of RT-Thread ecosystem
 
 The STM32G474 Nucleo development board has been fully adapted to the [RTduino package](https://github.com/RTduino/RTduino), which is an Arduino compatible layer of RT-Thread ecosystem. Users can operate the BSP according to the programming habits of Arduino and can use a large number of libraries provided by the Arduino community, which greatly enhances the RT-Thread ecosystem. For more information, please refer to [RTduino package documentation](https://github.com/RTduino/RTduino).
