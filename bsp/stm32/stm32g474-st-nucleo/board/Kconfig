@@ -9,6 +9,25 @@ config SOC_STM32G474RE
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_ADC2
+        select BSP_USING_ADC3
+        select BSP_USING_PWM
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM3
+        select BSP_USING_PWM3_CH1
+        select BSP_USING_I2C
+        select BSP_USING_I2C2
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -59,6 +78,63 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
                 default n
         endif
+
+        menuconfig BSP_USING_ADC
+            bool "Enable ADC"
+            default n
+            select RT_USING_ADC
+            if BSP_USING_ADC
+                config BSP_USING_ADC1
+                    bool "Enable ADC1"
+                    default n
+                config BSP_USING_ADC2
+                    bool "Enable ADC2"
+                    default n
+                config BSP_USING_ADC3
+                    bool "Enable ADC3"
+                    default n
+            endif
+    
+        menuconfig BSP_USING_PWM
+            bool "Enable PWM"
+            default n
+            select RT_USING_PWM
+            if BSP_USING_PWM
+            menuconfig BSP_USING_PWM2
+                bool "Enable timer2 output PWM"
+                default n
+                if BSP_USING_PWM2
+                    config BSP_USING_PWM2_CH3
+                        bool "Enable PWM2 channel3"
+                        default n
+                endif
+    
+            menuconfig BSP_USING_PWM3
+                bool "Enable timer3 output PWM"
+                default n
+                if BSP_USING_PWM3
+                    config BSP_USING_PWM3_CH1
+                        bool "Enable PWM3 channel1"
+                        default n
+                endif
+    
+            endif
+    
+        menuconfig BSP_USING_I2C1
+            bool "Enable I2C1 BUS (software simulation)"
+            default n
+            select RT_USING_I2C
+            select RT_USING_I2C_BITOPS
+            select RT_USING_PIN
+            if BSP_USING_I2C1
+                config BSP_I2C2_SCL_PIN
+                    int "i2c2 scl pin number (P(,8)"
+                    default 112
+                config BSP_I2C2_SDA_PIN
+                    int "i2c2 sda pin number (P(,9)"
+                    default 112
+            endif
+    
     source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
