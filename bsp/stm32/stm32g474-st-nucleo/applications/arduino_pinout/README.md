@@ -1,6 +1,6 @@
 # The Arduino Compatible for STM32G474 Nucleo development board
 
-English | [中文](https://github.com/kurisaW/rt-thread/edit/g474_rtdu/bsp/stm32/stm32g474-st-nucleo/applications/arduino_pinout/README_zh.md)
+English | [中文](https://github.com/kurisaW/rt-thread/blob/g474_rtdu/bsp/stm32/stm32g474-st-nucleo/applications/arduino_pinout/README_zh.md)
 
 ## 1 RTduino - Arduino compatible layer of RT-Thread ecosystem
 
