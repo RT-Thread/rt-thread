@@ -21,25 +21,25 @@
  */
 const pin_map_t pin_map_table[]=
 {
-    {D0, GET_PINS(A,2), "lpuart1"},     /* Serial-Tx */
-    {D1, GET_PINS(A,3), "lpuart1"},     /* Serial-Rx */
-    {D2, GET_PINS(A,10)},
-    {D3, GET_PINS(B,3), "PWM2", 2},     /* PWM */
-    {D4, GET_PINS(B,5)},
-    {D5, GET_PINS(B,4), "pwm3", 1},     /* PWM */
-    {D6, GET_PINS(B,10), "pwm2", 3},    /* PWM */
-    {D7, GET_PINS(A,8)},
-    {D8, GET_PINS(A,9)},
-    {D9, GET_PINS(C,7), "PWM8", 2},     /* PWM */
-    {D10, GET_PINS(B,6), "PWM4", 1},    /* PWM */
-    {D11, GET_PINS(A,7), "PWM3", 2},    /* PWM */
-    {D12, GET_PINS(A,6)},
-    {D13, GET_PINS(A,5)},
-    {D14, GET_PINS(B,9), "i2c2"},       /* I2C-SDA (Wire) */
-    {D15, GET_PINS(B,8), "i2c2"},       /* I2C-SCL (Wire) */
-    {D16, GET_PINS(C,13)},
-    {A0, GET_PINS(A,0), "adc1", 1},     /* ADC */
-    {A1, GET_PINS(A,1), "adc1", 2},     /* ADC */
+    {D0, GET_PIN(A,2), "lpuart1"},     /* Serial-Tx */
+    {D1, GET_PIN(A,3), "lpuart1"},     /* Serial-Rx */
+    {D2, GET_PIN(A,10)},
+    {D3, GET_PIN(B,3), "PWM2", 2},     /* PWM */
+    {D4, GET_PIN(B,5)},
+    {D5, GET_PIN(B,4), "pwm3", 1},     /* PWM */
+    {D6, GET_PIN(B,10), "pwm2", 3},    /* PWM */
+    {D7, GET_PIN(A,8)},
+    {D8, GET_PIN(A,9)},
+    {D9, GET_PIN(C,7), "PWM8", 2},     /* PWM */
+    {D10, GET_PIN(B,6), "PWM4", 1},    /* PWM */
+    {D11, GET_PIN(A,7), "PWM3", 2},    /* PWM */
+    {D12, GET_PIN(A,6)},
+    {D13, GET_PIN(A,5)},
+    {D14, GET_PIN(B,9), "i2c2"},       /* I2C-SDA (Wire) */
+    {D15, GET_PIN(B,8), "i2c2"},       /* I2C-SCL (Wire) */
+    {D16, GET_PIN(C,13)},
+    {A0, GET_PIN(A,0), "adc1", 1},     /* ADC */
+    {A1, GET_PIN(A,1), "adc1", 2},     /* ADC */
     {A2, GET_PIN(A,4), "adc2", 17},     /* ADC */
     {A3, GET_PIN(B,0), "adc3", 12},     /* ADC */
     {A4, GET_PIN(C,1), "adc2", 7},      /* ADC */
