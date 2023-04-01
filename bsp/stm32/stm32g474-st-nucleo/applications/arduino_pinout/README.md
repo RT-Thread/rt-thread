@@ -47,7 +47,3 @@ Hardware Drivers Config --->
 | 23 (A6) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 | 24 (A7) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 
-> 注意：
->
-> 1. xxxxxxxxx
-> 2. xxxxxxxxx
