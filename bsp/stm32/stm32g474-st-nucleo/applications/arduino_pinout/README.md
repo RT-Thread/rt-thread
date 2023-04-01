@@ -44,7 +44,7 @@ For more information on pin layout, please refer to [pins_arduino.c](pins_arduin
 | 17 (A0) | PA0 | Yes | ADC1-CH1, default used by the RT-Thread ADC device framework adc1 |
 | 18 (A1) | PA1 | Yes | ADC1-CH2, default used by the RT-Thread ADC device framework adc1 |
 | 19 (A2) | PA4 | Yes | ADC2-CH17, default used by the RT-Thread ADC device framework adc2 |
-| 20 (A3) | PB0 | Yes | ADC3-CH12, default used by the RT-Thread ADC device framework adc3 |
+| 20 (A3) | PB0 | Yes | ADC1-CH15, default used by the RT-Thread ADC device framework adc1 |
 | 21 (A4) | PC1 | Yes | ADC2-CH7, default used by the RT-Thread ADC device framework adc2 |
 | 22 (A5) | PC0 | Yes | ADC2-CH6, default used by the RT-Thread ADC device framework adc2 |
 | 23 (A6) | -- |  | Internal reference voltage ADC of the chip, default used by the RT-Thread ADC device framework adc1 |

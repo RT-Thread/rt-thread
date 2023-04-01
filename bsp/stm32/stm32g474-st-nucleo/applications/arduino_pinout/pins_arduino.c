@@ -41,7 +41,7 @@ const pin_map_t pin_map_table[]=
     {A0, GET_PIN(A,0), "adc1", 1},     /* ADC */
     {A1, GET_PIN(A,1), "adc1", 2},     /* ADC */
     {A2, GET_PIN(A,4), "adc2", 17},     /* ADC */
-    {A3, GET_PIN(B,0), "adc3", 12},     /* ADC */
+    {A3, GET_PIN(B,0), "adc1", 15},     /* ADC */
     {A4, GET_PIN(C,1), "adc2", 7},      /* ADC */
     {A5, GET_PIN(C,0), "adc2", 6},      /* ADC */
     {A6, RT_NULL, "adc1", 3},           /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
