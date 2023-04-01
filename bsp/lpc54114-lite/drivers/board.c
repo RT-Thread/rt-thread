@@ -53,7 +53,7 @@ void rt_hw_board_init()
 #endif
 
     BOARD_BootClockFROHF48M();
-    /* init systick  1 systick = 1/(100M / 100) 100��systick = 1s*/
+    /* init systick  1 systick = 1/(100M / 100) 100个systick = 1s*/
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
