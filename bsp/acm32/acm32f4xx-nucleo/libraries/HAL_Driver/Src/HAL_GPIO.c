@@ -361,12 +361,13 @@ void HAL_GPIO_DeInit(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
     uint32_t lu32_Current_Pin;
     uint32_t lu32_Position_Mask;
     
-    volatile uint32_t *lu32_SEL1 = NULL;        // ???�� -> 1��???�䨮???��??��1
-    volatile uint32_t *lu32_SEL2 = NULL;        // ???�� -> 1��???�䨮???��??��2
-    volatile uint32_t *lu32_PollUP   = NULL;    // ???�� -> ��?��-??????��??��
-    volatile uint32_t *lu32_PollDown = NULL;    // ???�� -> ??��-??????��??��
-    volatile uint32_t *lu32_ODEnable = NULL;    // ???�� -> ?a??��1?��??��??��
-    volatile uint32_t *lu32_ADS      = NULL;    // ???�� -> ��y��??��?��?a??????��??��
+    volatile uint32_t *lu32_SEL1 = NULL;        // 初始化指针 -> 选择器1的内存地址
+    volatile uint32_t *lu32_SEL2 = NULL;        // 初始化指针 -> 选择器2的内存地址
+    volatile uint32_t *lu32_PollUP   = NULL;    // 初始化指针 -> 上拉操作的内存地址
+    volatile uint32_t *lu32_PollDown = NULL;    // 初始化指针 -> 下拉操作的内存地址
+    volatile uint32_t *lu32_ODEnable = NULL;    // 初始化指针 -> 开启输出设备的内存地址
+    volatile uint32_t *lu32_ADS      = NULL;    // 初始化指针 -> 用于存储ADS数组的内存地址
+
     
     GPIO_TypeDef *GPIOx;
 
