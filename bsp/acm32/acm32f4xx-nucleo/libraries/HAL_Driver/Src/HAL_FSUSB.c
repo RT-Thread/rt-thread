@@ -348,7 +348,7 @@ void HAL_FSUSB_Receive_Data(uint8_t *buffer,uint32_t length,uint8_t ep_index)
 } 
 
 
-//ep_index±íÊ¾¶Ëµã±àºÅ
+//ep_indexè¡¨ç¤ºçš„æ˜¯èœå•
 void HAL_FSUSB_EP0_Send_Empty_Packet(void)
 {
 	HAL_FSUSB_Start_EP_Transfer(0,USB_EP0);    
