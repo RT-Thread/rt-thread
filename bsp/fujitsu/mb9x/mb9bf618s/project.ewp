@@ -301,16 +301,16 @@
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\CMSIS\Include</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\CMSIS\DeviceSupport\fujitsu\mb9bf61x</state>
         </option>
@@ -1238,16 +1238,16 @@
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\CMSIS\Include</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\CMSIS\DeviceSupport\fujitsu\mb9bf61x</state>
         </option>
@@ -1877,10 +1877,10 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\startup.c</name>
+      <name>$PROJ_DIR$\applications\application.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\application.c</name>
+      <name>$PROJ_DIR$\applications\startup.c</name>
     </file>
   </group>
   <group>
@@ -1943,9 +1943,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -1961,13 +1958,13 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\serial.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\drivers\led.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\serial.c</name>
     </file>
   </group>
   <group>
@@ -2015,7 +2012,7 @@
       <name>$PROJ_DIR$\..\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\src\thread.c</name>

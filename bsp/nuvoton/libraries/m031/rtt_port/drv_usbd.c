@@ -12,7 +12,8 @@
 
 #include <rtconfig.h>
 
-#ifdef BSP_USING_USBD
+#if defined(BSP_USING_USBD)
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <string.h>
@@ -191,7 +192,7 @@ static rt_err_t _ep_disable(uep_t ep)
     return RT_EOK;
 }
 
-static rt_ssize_t _ep_read(rt_uint8_t address, void *buffer)
+static rt_size_t _ep_read(rt_uint8_t address, void *buffer)
 {
     rt_size_t size = 0;
     rt_uint8_t *buf;
@@ -207,7 +208,7 @@ static rt_ssize_t _ep_read(rt_uint8_t address, void *buffer)
     return size;
 }
 
-static rt_ssize_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_size_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     RT_ASSERT(!(address & USB_DIR_IN));
 
@@ -216,7 +217,7 @@ static rt_ssize_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t s
     return size;
 }
 
-static rt_ssize_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_size_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     RT_ASSERT((address & USB_DIR_IN));
 

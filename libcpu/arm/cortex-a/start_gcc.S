@@ -147,7 +147,14 @@ after_enable_mmu:
 
     /* disable the data alignment check */
     mrc p15, 0, r1, c1, c0, 0
-    bic r1, #(1<<1)
+    bic r1, #(1<<1)             /* Disable Alignment fault checking */
+#ifndef RT_USING_SMART
+    bic r1, #(1<<0)             /* Disable MMU */
+    bic r1, #(1<<2)             /* Disable data cache */
+    bic r1, #(1<<11)            /* Disable program flow prediction */
+    bic r1, #(1<<12)            /* Disable instruction cache */
+    bic r1, #(3<<19)            /* bit[20:19] must be zero */
+#endif /* RT_USING_SMART */
     mcr p15, 0, r1, c1, c0, 0
 
     /* enable I cache + branch prediction */

@@ -348,6 +348,11 @@ rt_weak void rt_hw_secondary_cpu_idle_exec(void)
  */
 /*@{*/
 
+const char *rt_hw_cpu_arch(void)
+{
+    return "aarch64";
+}
+
 /** shutdown CPU */
 rt_weak void rt_hw_cpu_shutdown()
 {

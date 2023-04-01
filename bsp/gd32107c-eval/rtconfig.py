@@ -36,7 +36,7 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
-	
+
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc' # -D' + PART_TYPE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
@@ -66,7 +66,7 @@ elif PLATFORM == 'armcc':
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-gd32.map --scatter gd32_rom.sct'
 
-    LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)' 
+    LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)'
 
     EXEC_PATH += '/ARM/ARMCC/bin'
     print(EXEC_PATH)

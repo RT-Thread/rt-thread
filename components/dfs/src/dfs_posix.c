@@ -353,21 +353,7 @@ int fstat(int fildes, struct stat *buf)
         return -1;
     }
 
-    /* it's the root directory */
-    buf->st_dev = 0;
-
-    buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-                   S_IWUSR | S_IWGRP | S_IWOTH;
-    if (d->vnode->type == FT_DIRECTORY)
-    {
-        buf->st_mode &= ~S_IFREG;
-        buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-    }
-
-    buf->st_size    = d->vnode->size;
-    buf->st_mtime   = 0;
-
-    return RT_EOK;
+    return stat(d->vnode->fullpath, buf);
 }
 RTM_EXPORT(fstat);
 
@@ -533,6 +519,32 @@ int statfs(const char *path, struct statfs *buf)
     return result;
 }
 RTM_EXPORT(statfs);
+
+/**
+ * this function is a POSIX compliant version, which will return the
+ * information about a mounted file system.
+ *
+ * @param fildes the file description.
+ * @param buf the buffer to save the returned information.
+ *
+ * @return 0 on successful, others on failed.
+ */
+int fstatfs(int fildes, struct statfs *buf)
+{
+    struct dfs_fd *d;
+
+    /* get the fd */
+    d = fd_get(fildes);
+    if (d == NULL)
+    {
+        rt_set_errno(-EBADF);
+
+        return -1;
+    }
+
+    return statfs(d->vnode->fullpath, buf);
+}
+RTM_EXPORT(fstatfs);
 
 /**
  * this function is a POSIX compliant version, which will make a directory

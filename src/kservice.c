@@ -62,6 +62,11 @@ rt_weak void rt_hw_us_delay(rt_uint32_t us)
         "Please consider implementing rt_hw_us_delay() in another file.\n"));
 }
 
+rt_weak const char *rt_hw_cpu_arch(void)
+{
+    return "unknown";
+}
+
 static const char* rt_errno_strs[] =
 {
     "OK",
@@ -1567,6 +1572,12 @@ rt_inline void _heap_unlock(rt_base_t level)
     rt_exit_critical();
 #endif
 }
+
+#ifdef RT_USING_UTESTCASES
+/* export to utest to observe the inner statements */
+rt_base_t rt_heap_lock(void) __attribute__((alias("_heap_lock")));
+void rt_heap_unlock(rt_base_t level) __attribute__((alias("_heap_unlock")));
+#endif
 
 #if defined(RT_USING_SMALL_MEM_AS_HEAP)
 static rt_smem_t system_heap;

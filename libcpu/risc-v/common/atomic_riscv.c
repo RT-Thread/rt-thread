@@ -120,7 +120,7 @@ void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr)
 #endif
 }
 
-rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old, rt_atomic_t new)
+rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, volatile rt_atomic_t *old, rt_atomic_t new)
 {
     rt_atomic_t tmp = *old;
     rt_atomic_t result;

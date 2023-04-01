@@ -14,7 +14,7 @@
     #include "lv_port_gpu.h"
 #endif
 
-#ifdef BSP_USING_SPI_LCD
+#ifdef PKG_USING_ILI9341
     #include "lcd_ili9341.h"
 #else
     #include "lcd_port.h"
@@ -48,7 +48,7 @@ static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
 
 static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
-#ifdef BSP_USING_SPI_LCD
+#ifdef PKG_USING_ILI9341
     lcd_fill_array_spi(area->x1, area->y1, area->x2, area->y2, color_p);
 #elif DLG_LVGL_USE_GPU_RA6M3
     lv_port_gpu_flush();
@@ -100,7 +100,7 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 
 void lv_port_disp_init(void)
 {
-#ifdef BSP_USING_SPI_LCD
+#ifdef PKG_USING_ILI9341
     spi_lcd_init(20);
 #else
     static rt_device_t device;

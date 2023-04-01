@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, N32G45X, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, N32G45X, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\msp;..\Libraries\rt_drivers;..\..\..\components\finsh;.;..\..\..\include;..\Libraries\N32_Std_Driver\CMSIS\core;..\Libraries\N32_Std_Driver\CMSIS\device;..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\inc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\rt_drivers;.;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;board;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;board\msp;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\stdio;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\Libraries\N32_Std_Driver\CMSIS\core;applications;..\..\..\components\drivers\include;..\Libraries\N32_Std_Driver\CMSIS\device;..\..\..\include;..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -447,13 +447,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -706,9 +699,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -730,6 +723,48 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
+              <FileName>n32g45x_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_wwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_sdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_opamp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_opamp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>n32g45x_dvp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_dvp.c</FilePath>
@@ -744,23 +779,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32g45x_rcc.c</FileName>
+              <FileName>n32g45x_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_rcc.c</FilePath>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_spi.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32g45x_usart.c</FileName>
+              <FileName>n32g45x_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_bkp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_bkp.c</FilePath>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_tim.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -772,13 +800,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32g45x_tsc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_tsc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>n32g45x_eth.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_eth.c</FilePath>
@@ -786,9 +807,44 @@
           </Files>
           <Files>
             <File>
+              <FileName>n32g45x_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>n32g45x_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_pwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_comp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_n32g45x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\CMSIS\device\system_n32g45x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_bkp.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -807,16 +863,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32g45x_spi.c</FileName>
+              <FileName>n32g45x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_spi.c</FilePath>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_adc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>system_n32g45x.c</FileName>
+              <FileName>n32g45x_dbg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\CMSIS\device\system_n32g45x.c</FilePath>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_dbg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32g45x_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_qspi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -828,23 +891,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32g45x_sdio.c</FileName>
+              <FileName>n32g45x_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_wwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_wwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_tim.c</FilePath>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_rcc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -863,16 +912,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32g45x_dbg.c</FileName>
+              <FileName>n32g45x_tsc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_dbg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_comp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_comp.c</FilePath>
+              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_tsc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -880,55 +922,6 @@
               <FileName>n32g45x_dac.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_opamp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_opamp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_qspi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32g45x_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\N32_Std_Driver\n32g45x_std_periph_driver\src\n32g45x_dma.c</FilePath>
             </File>
           </Files>
         </Group>

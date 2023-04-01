@@ -157,6 +157,7 @@ int dfs_tmpfs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
     buf->f_bsize  = 512;
     buf->f_blocks = (superblock->df_size + 511) / 512;
     buf->f_bfree  = 1;
+    buf->f_bavail = buf->f_bfree;
 
     return RT_EOK;
 }

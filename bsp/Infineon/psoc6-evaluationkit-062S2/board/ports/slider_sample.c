@@ -44,7 +44,7 @@ static rt_thread_t sld_thread = RT_NULL;
     #error You need enable PWM to use this sample
 #else
     #define PWM_DEV_NAME "pwm0"
-    #define PWM_DEV_CHANNEL 3
+    #define PWM_DEV_CHANNEL 0
     static struct rt_device_pwm *pwm_dev;
 #endif
 
@@ -128,7 +128,7 @@ void Slider_Init(void)
         return;
     }
 
-#ifdef BSP_USING_PWM0_PORT13
+#ifdef BSP_USING_PWM0_PORT0
     /* Initiate PWM*/
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
 

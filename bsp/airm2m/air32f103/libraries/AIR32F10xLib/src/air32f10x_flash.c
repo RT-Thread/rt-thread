@@ -1480,8 +1480,8 @@ FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
 /**
   * @brief  Clears the FLASH's pending flags.
   * @note   This function can be used for all AIR32F103 devices.
-  *         - For AIR32F10X_XL devices, this function clears Bank1 or Bank2�s pending flags
-  *         - For other devices, it clears Bank1�s pending flags.
+  *         - For AIR32F10X_XL devices, this function clears Bank1 or Bank2’s pending flags
+  *         - For other devices, it clears Bank1’s pending flags.
   * @param  FLASH_FLAG: specifies the FLASH flags to clear.
   *   This parameter can be any combination of the following values:
   *     @arg FLASH_FLAG_PGERR: FLASH Program error flag
