@@ -31,31 +31,30 @@
 /* Includes ------------------------------------------------------------------*/
 #include "air105.h"
 
-
-#define SSC_ITSysXTAL12M                    BIT(18) //ϵͳ��12Mʱ�ӱ�־
-#define SSC_ITSysGlitch                     BIT(17) //����Դë�̱�־
-#define SSC_ITSysVolHigh                    BIT(16) //����Դ��ѹ��־
-#define SSC_ITSysVolLow                     BIT(15) //����ԴǷѹ��־
+#define SSC_ITSysXTAL12M                    BIT(18) //系统12M时钟源标志
+#define SSC_ITSysGlitch                     BIT(17) //供源噪声标志
+#define SSC_ITSysVolHigh                    BIT(16) //供源电压高标志
+#define SSC_ITSysVolLow                     BIT(15) //供源电压低标志
 
 typedef struct
 {
-    FunctionalState ParityCheck;                                //��żУ��ʹ��
+    FunctionalState ParityCheck;                                //偶校验使用
 }SSC_InitTypeDef;
 
 
 /*
- *  ��BPK��Ϊ4��ÿ��256����Ϊ��λ���ö�дȨ��
- *  SSC_BPKAccessCtrBlock_0Ϊ��ʼ0��ַ��
- */
+ *  以BPK为4，每256为一单元格编号，用于多单元格写入
+ *  SSC_BPKAccessCtrBlock_0为初始0地址。
+ */ 
 #define SSC_BPKAccessCtrBlock_0             (0x01)
 #define SSC_BPKAccessCtrBlock_1             (0x02)
 #define SSC_BPKAccessCtrBlock_All           (0x03)
 
 typedef enum
 {
-    SSC_BPKReadOnly     = 0x01,     //BPK��ֻ��
-    SSC_BPKWriteOnly    = 0x02,     //BPK��ֻд
-    SSC_BPKReadWrite    = 0x03      //BPK���д
+    SSC_BPKReadOnly     = 0x01,     //BPK只读
+    SSC_BPKWriteOnly    = 0x02,     //BPK只写
+    SSC_BPKReadWrite    = 0x03      //BPK读写
 }SSC_BPKAccessCtrlTypeDef;
 #define IS_BPK_ACCESS_CTRL(CTRL) (((CTRL) == SSC_BPKReadOnly) || ((CTRL) == SSC_BPKWriteOnly) || \
                                 ((CTRL) == SSC_BPKReadWrite))
@@ -76,7 +75,7 @@ typedef enum
 
 /**
   * @method SSC_Init
-  * @brief  SSC��ȫ���Գ�ʼ��
+  * @brief  SSC全局初始化函数
   * @param  SSC_InitTypeDef SSC_InitStruct
   * @retval void
   */
@@ -85,7 +84,7 @@ void SSC_Init(SSC_InitTypeDef *SSC_InitStruct);
 
 /**
   * @method SSC_GetITStatus
-  * @brief  SSC��ȫ�ж�״̬
+  * @brief  SSC全局状态判断函数
   * @param  uint32_t SSC_IT
   * @retval ITStatus
   */
@@ -94,7 +93,7 @@ ITStatus SSC_GetITStatus(uint32_t SSC_IT);
 
 /**
   * @method SSC_ClearITPendingBit
-  * @brief  SSC��ȫ�ж����
+  * @brief  SSC清除全局中断状态函数
   * @param  uint32_t SSC_IT
   * @retval void
   */
@@ -103,7 +102,7 @@ void SSC_ClearITPendingBit( uint32_t SSC_IT);
 
 /**
   * @method SSC_SetDataRAMScrambler
-  * @brief  ��������RAM����
+  * @brief  设置数据RAM扰码
   * @param  uint32_t Scrambler
   * @retval void
   */
@@ -112,7 +111,7 @@ void SSC_SetDataRAMScrambler(uint32_t Scrambler);
 
 /**
   * @method SSC_BPKAccessCtrConfig
-  * @brief  ����BPK����Ȩ��
+  * @brief  配置BPK访问权限
   * @param  uint32_t SSC_BPKAccessCtrBlock
   * @param  SSC_BPKAccessCtrlTypeDef SSC_BPKAccessCtr
   * @retval void
@@ -122,7 +121,7 @@ void SSC_BPKAccessCtrlConfig(uint32_t SSC_BPKAccessCtrBlock, SSC_BPKAccessCtrlTy
 
 /**
   * @method SSC_SENSOR_Enable
-  * @brief  ����ϵͳSensor
+  * @brief  使能系统Sensor
   * @param  SSC_SENSOR
   * @retval
   */
@@ -131,7 +130,7 @@ uint32_t SSC_SENSORCmd(uint32_t SSC_SENSOR, FunctionalState NewState);
 
 /**
   * @method SSC_SENSORLock
-  * @brief  ����ϵͳSensor����״̬
+  * @brief  锁定系统Sensor状态
   * @param  SSC_SENSOR
   * @retval
   */
@@ -140,7 +139,7 @@ void SSC_SENSORLock(uint32_t SSC_SENSOR);
 
 /**
   * @method SSC_SENSOR_AttackRespMode
-  * @brief  ϵͳSensor��Ӧ��ʽ
+  * @brief  系统Sensor响应模式
   * @param  SSC_SENSOR_RespMode
   * @retval
   */

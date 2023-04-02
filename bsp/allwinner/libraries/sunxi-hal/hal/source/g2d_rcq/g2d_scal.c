@@ -300,7 +300,7 @@ __s32 g2d_vsu_para_set(struct scaler_submodule *p_scal, __u32 fmt, __u32 in_w,
 
 	temp = in_w << VSU_PHASE_FRAC_BITWIDTH;
 	if (out_w)
-		//do_div(temp, out_w);/////////////tempÊÇ½á¹û
+		// do_div(temp, out_w); /////////// tempæ˜¯è¢«é™¤æ•°
 		temp = temp/out_w;
 	else
 		temp = 0;

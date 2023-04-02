@@ -116,7 +116,7 @@ ITStatus TRNG_GetITStatus(uint32_t TRNG_IT)
 }
 
 /**
-  * @brief  ����жϱ�־λ
+  * @brief  设置TRNG中断标志位
   * @param  TRNG_IT:
   *         TRNG_IT_RNG0_S128
   *         TRNG_IT_RNG1_S128
