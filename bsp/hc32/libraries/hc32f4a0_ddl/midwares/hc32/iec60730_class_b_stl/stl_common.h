@@ -108,7 +108,7 @@ extern void __iar_program_start(void);
 
 #define CallApplicationStartUp( )       __iar_program_start()
 #else
-#error  "Unsupported tool chain"
+#error "Unsupported tool chain"
 #endif
 /**
  * @}

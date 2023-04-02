@@ -223,7 +223,7 @@ struct __packed__ T_UINT32 {
 
 
 #else
-#error  "Unknown compiler."
+#error "Unknown compiler."
 #endif
 
 

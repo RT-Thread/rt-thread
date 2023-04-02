@@ -257,7 +257,7 @@ am_reset_isr(void)
     __asm("    bkpt     ");
 }
 #else
-#error  "GNU STDC inline not supported."
+#error "GNU STDC inline not supported."
 #endif
 
 //*****************************************************************************

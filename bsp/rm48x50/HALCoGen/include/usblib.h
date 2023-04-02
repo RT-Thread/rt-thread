@@ -97,7 +97,7 @@ extern "C"
 #elif (__TMS470__)
 #define PACKED __attribute__ ((packed))
 #else
-#error  "Unrecognized COMPILER!"
+#error "Unrecognized COMPILER!"
 #endif
 
 //*****************************************************************************

@@ -34,7 +34,7 @@
 
 #if defined(USB_STACK_USE_DEDICATED_RAM) && (USB_STACK_USE_DEDICATED_RAM > 0U)
 
-#error  "The SOC does not suppoort dedicated RAM case."
+#error "The SOC does not suppoort dedicated RAM case."
 
 #endif
 

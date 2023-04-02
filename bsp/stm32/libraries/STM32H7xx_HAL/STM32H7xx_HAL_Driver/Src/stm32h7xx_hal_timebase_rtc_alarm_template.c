@@ -119,7 +119,7 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
   /* Ensure that RTC is clocked by 1MHz */
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_1MHZ;
 #else
-#error  "Please select the RTC Clock source"
+#error "Please select the RTC Clock source"
 #endif /* RTC_CLOCK_SOURCE_LSE */
 
   if(HAL_RCC_OscConfig(&RCC_OscInitStruct) == HAL_OK)

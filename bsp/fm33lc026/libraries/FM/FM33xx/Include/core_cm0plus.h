@@ -150,7 +150,7 @@
   #define __UNALIGNED_UINT32(x)     (*x)
 
 #else
-  #error  "Unknown compiler"
+  #error "Unknown compiler"
 #endif
 
 /** __FPU_USED indicates whether an FPU is used or not.

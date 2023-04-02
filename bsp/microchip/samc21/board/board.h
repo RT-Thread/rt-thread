@@ -41,7 +41,7 @@
 #elif defined(__SAMC21J18AU__) || defined(__ATSAMC21J18AU__)
   #define SAMC21_SRAM_SIZE   32
 #else
-  #error  "Board does not support the specified device."
+  #error "Board does not support the specified device."
 #endif
 
 #define SAMC21_SRAM_END        (0x20000000 + SAMC21_SRAM_SIZE * 1024)

@@ -258,7 +258,7 @@
 
 
 #else
-  #error  "Unknown compiler."
+  #error "Unknown compiler."
 #endif
 
 

@@ -42,7 +42,7 @@ ENTRY(_start)
     // mx6dq has 256kB of OCRAM
     #define OCRAM_LEN 256K
 #else
-    #error  "Unknown chip!"
+    #error "Unknown chip!"
 #endif
 
 /*
@@ -55,7 +55,7 @@ ENTRY(_start)
     // mx6dq and mx6sdl DDR memory starts at this address
     #define DDR_ORG 0x10000000
 #else
-    #error  "Unknown chip!"
+    #error "Unknown chip!"
 #endif
 
 #if defined(BOARD_SABRE_AI)

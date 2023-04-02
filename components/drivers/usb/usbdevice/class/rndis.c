@@ -766,7 +766,7 @@ static rt_err_t send_encapsulated_command_done(udevice_t device, rt_size_t size)
     }
     return RT_EOK;
 }
-//#error  "here have bug ep 0x82 send failed"
+//#error "here have bug ep 0x82 send failed"
 static rt_err_t _rndis_send_encapsulated_command(ufunction_t func, ureq_t setup)
 {
     RT_ASSERT(setup->wLength <= sizeof(rndis_message_buffer));

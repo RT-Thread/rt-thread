@@ -25,7 +25,7 @@
 #elif defined(__SAML10D16A__) || defined(__ATSAML10D16A__)
   #define SAML10_SRAM_SIZE   16
 #else
-  #error  "Board does not support the specified device."
+  #error "Board does not support the specified device."
 #endif
 
 #define SAML10_SRAM_END        (0x20000000 + SAML10_SRAM_SIZE * 1024)

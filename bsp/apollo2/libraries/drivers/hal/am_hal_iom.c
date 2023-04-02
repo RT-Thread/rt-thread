@@ -1005,7 +1005,7 @@ am_hal_iom_config(uint32_t ui32Module, const am_hal_iom_config_t *psConfig)
         (AM_REG_IOMSTR_FIFOTHR_FIFOWTHR(check_iom_threshold(psConfig->ui8WriteThreshold)) |
          AM_REG_IOMSTR_FIFOTHR_FIFORTHR(check_iom_threshold(psConfig->ui8ReadThreshold)));
 #else
-#error  "AM_ASSERT_INVALID_THRESHOLD must be 0 or 1."
+#error "AM_ASSERT_INVALID_THRESHOLD must be 0 or 1."
 #endif
 
     // Apply I2C clock stretching workaround if B2 silicon and IOM 1,2,3, or 5

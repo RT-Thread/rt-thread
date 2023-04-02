@@ -87,7 +87,7 @@
 #elif defined(__SAMD20J18__) || defined(__ATSAMD20J18__)
 #include "samd20j18.h"
 #else
-  #error  "Library does not support the specified device."
+  #error "Library does not support the specified device."
 #endif
 
 #endif /* _SAMD20_ */

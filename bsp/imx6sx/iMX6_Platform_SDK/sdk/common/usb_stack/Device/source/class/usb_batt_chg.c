@@ -36,7 +36,7 @@
 #elif defined(__GNUC__)
   #include <string.h>
 #else
-  #error  "Not supported compiler type"
+  #error "Not supported compiler type"
 #endif
 
 /* Private memory definition *************************************************/

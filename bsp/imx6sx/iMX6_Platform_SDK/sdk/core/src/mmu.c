@@ -146,7 +146,7 @@ void mmu_init()
 #elif defined(CHIP_MX6SL)
     mmu_map_l1_range(0x80000000, 0x80000000, 0x40000000, kOuterInner_WB_WA, share_attr, kRWAccess); // 1GB DDR
 #else
-#error  "Unknown chip type!"
+#error "Unknown chip type!"
 #endif
 }
 

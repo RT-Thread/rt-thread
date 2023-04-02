@@ -71,7 +71,7 @@ extern "C"
     Cy_LPComp_SetInterruptTriggerMode((base), (channel), (intType), &(obj->context))
 
 #else
-#error  "Unhandled LPCOMP IP Block"
+#error "Unhandled LPCOMP IP Block"
 #endif
 
 
@@ -82,7 +82,7 @@ LPCOMP_Type *const _cyhal_lpcomp_base[] =
 #if (_CYHAL_LPCOMP_INSTANCES == 1)
     LPCOMP,
 #else
-    #error  "Unhandled LP_COMP instance count"
+    #error "Unhandled LP_COMP instance count"
 #endif
 };
 
@@ -91,7 +91,7 @@ static const _cyhal_system_irq_t _cyhal_lp_comp_irq_n[] =
 #if (_CYHAL_LPCOMP_INSTANCES == 1)
     lpcomp_interrupt_IRQn,
 #else
-    #error  "Unhandled LP_COMP instance count"
+    #error "Unhandled LP_COMP instance count"
 #endif
 };
 
@@ -103,7 +103,7 @@ static uint8_t _cyhal_lpcomp_get_block_from_irqn(_cyhal_system_irq_t irqn)
     case lpcomp_interrupt_IRQn:
         return 0;
 #else
-    #error  "Unhandled LP_COMP instance count"
+    #error "Unhandled LP_COMP instance count"
 #endif
     default:
         CY_ASSERT(false); // Should never be called

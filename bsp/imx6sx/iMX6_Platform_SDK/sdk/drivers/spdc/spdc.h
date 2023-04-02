@@ -66,7 +66,7 @@
 #define SPDC_FRM_CNT_BUF_ADDR	0x93400000
 #define SPDC_LUT_BUF_ADDR		0x93500000
 #else
-#error  "SPDC is not supported on the platform"
+#error "SPDC is not supported on the platform"
 #endif
 
 enum epd_operation {

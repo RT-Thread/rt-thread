@@ -75,7 +75,7 @@ static const _cyhal_system_irq_t _cyhal_ctb_irq_n[] =
     pass_0_interrupt_ctbs_IRQn,
     pass_1_interrupt_ctbs_IRQn,
 #else
-    #error  "Unhandled CTB instance count"
+    #error "Unhandled CTB instance count"
 #endif
 };
 

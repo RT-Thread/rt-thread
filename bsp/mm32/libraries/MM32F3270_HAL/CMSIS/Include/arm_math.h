@@ -301,7 +301,7 @@
 #elif defined ( _MSC_VER )
 
 #else
-  #error  "Unknown compiler"
+  #error "Unknown compiler"
 #endif
 
 
@@ -435,7 +435,7 @@ extern "C"
 #elif defined(_MSC_VER )
   #define __SIMD32_TYPE int32_t
 #else
-  #error  "Unknown compiler"
+  #error "Unknown compiler"
 #endif
 
 #define __SIMD32(addr)        (*(__SIMD32_TYPE **) & (addr))
@@ -7350,7 +7350,7 @@ arm_status arm_sqrt_q15(
 #elif defined ( _MSC_VER )
 
 #else
-  #error  "Unknown compiler"
+  #error "Unknown compiler"
 #endif
 
 #endif /* _ARM_MATH_H */

@@ -16,7 +16,7 @@
 
 #if defined (__cplusplus)
 #ifdef __REDLIB__
-#error  "Redlib does not support C++"
+#error "Redlib does not support C++"
 #else
 //*****************************************************************************
 //

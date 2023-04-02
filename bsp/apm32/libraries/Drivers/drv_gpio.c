@@ -49,7 +49,7 @@
     #define __APM32_PORT_MAX 1u
 #else
     #define __APM32_PORT_MAX 0u
-    #error  "Unsupported APM32 GPIO peripheral."
+    #error "Unsupported APM32 GPIO peripheral."
 #endif
 
 #define PIN_APMPORT_MAX __APM32_PORT_MAX

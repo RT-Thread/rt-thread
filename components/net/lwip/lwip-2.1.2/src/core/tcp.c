@@ -2576,7 +2576,7 @@ tcp_ext_arg_alloc_id(void)
   LWIP_ASSERT_CORE_LOCKED();
 
 #if LWIP_TCP_PCB_NUM_EXT_ARGS >= 255
-#error  "LWIP_TCP_PCB_NUM_EXT_ARGS"
+#error "LWIP_TCP_PCB_NUM_EXT_ARGS"
 #endif
   LWIP_ASSERT("Increase LWIP_TCP_PCB_NUM_EXT_ARGS in lwipopts.h", result < LWIP_TCP_PCB_NUM_EXT_ARGS);
   return result;

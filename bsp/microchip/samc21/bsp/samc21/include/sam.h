@@ -59,7 +59,7 @@
 #elif defined(__SAMC21J18AU__) || defined(__ATSAMC21J18AU__)
 #include "samc21j18au.h"
 #else
-#error  "Library does not support the specified device"
+#error "Library does not support the specified device"
 #endif
 
 #endif /* _SAM_ */

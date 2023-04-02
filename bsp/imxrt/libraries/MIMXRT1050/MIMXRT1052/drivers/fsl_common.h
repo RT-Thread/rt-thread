@@ -270,7 +270,7 @@ _Pragma("diag_suppress=Pm120")
 #define SDK_L2CACHE_ALIGN(var) var __attribute__((aligned(FSL_FEATURE_L2CACHE_LINESIZE_BYTE)))
 #endif
 #else
-#error  "Toolchain not supported"
+#error "Toolchain not supported"
 #define SDK_ALIGN(var, alignbytes) var
 #if defined(FSL_FEATURE_L1DCACHE_LINESIZE_BYTE)
 #define SDK_L1DCACHE_ALIGN(var) var
@@ -336,7 +336,7 @@ _Pragma("diag_suppress=Pm120")
 #define AT_NONCACHEABLE_SECTION_ALIGN_INIT(var, alignbytes) var __attribute__((aligned(alignbytes)))
 #endif
 #else
-#error  "Toolchain not supported."
+#error "Toolchain not supported."
 #define AT_NONCACHEABLE_SECTION(var) var
 #define AT_NONCACHEABLE_SECTION_ALIGN(var, alignbytes) var
 #define AT_NONCACHEABLE_SECTION_INIT(var) var
@@ -357,7 +357,7 @@ _Pragma("diag_suppress=Pm120")
 #define AT_QUICKACCESS_SECTION_CODE(func) __attribute__((section("CodeQuickAccess"))) func
 #define AT_QUICKACCESS_SECTION_DATA(func) __attribute__((section("DataQuickAccess"))) func
 #else
-#error  "Toolchain not supported."
+#error "Toolchain not supported."
 #endif /* defined(__ICCARM__) */
 #else
 #if (defined(__ICCARM__))
@@ -370,7 +370,7 @@ _Pragma("diag_suppress=Pm120")
 #define AT_QUICKACCESS_SECTION_CODE(func) func
 #define AT_QUICKACCESS_SECTION_DATA(func) func
 #else
-#error  "Toolchain not supported."
+#error "Toolchain not supported."
 #endif
 #endif /* __FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE */
 /* @} */
@@ -383,7 +383,7 @@ _Pragma("diag_suppress=Pm120")
 #elif(defined(__GNUC__))
 #define RAMFUNCTION_SECTION_CODE(func) __attribute__((section("RamFunction"))) func
 #else
-#error  "Toolchain not supported."
+#error "Toolchain not supported."
 #endif /* defined(__ICCARM__) */
 /* @} */
 /*******************************************************************************

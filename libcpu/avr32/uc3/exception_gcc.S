@@ -48,7 +48,7 @@
  */
 
 #if !__AVR32_UC__ && !__AVR32_AP__
-  #error  "Implementation of the AVR32 architecture not supported by the INTC driver."
+  #error "Implementation of the AVR32 architecture not supported by the INTC driver."
 #endif
 
 

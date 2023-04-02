@@ -34,7 +34,7 @@
     #define __FT32_PORT_MAX 1u
 #else
     #define __FT32_PORT_MAX 0u
-    #error  "Unsupported FT32 GPIO peripheral."
+    #error "Unsupported FT32 GPIO peripheral."
 #endif
 
 #define PIN_STPORT_MAX __FT32_PORT_MAX

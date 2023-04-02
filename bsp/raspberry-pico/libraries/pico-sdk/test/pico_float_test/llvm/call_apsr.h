@@ -17,7 +17,7 @@
 #define CALL_APSR_H
 
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
-#error  "big endian support not implemented"
+#error "big endian support not implemented"
 #endif
 
 union cpsr {

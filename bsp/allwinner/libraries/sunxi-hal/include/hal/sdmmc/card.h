@@ -39,9 +39,9 @@ extern "C" {
 #define CONFIG_SDIO_USE_FUNS
 //#define CONFIG_USE_SDIO_COMBO
 
-//#define SD_SUPPORT_VERSION3           /* not support for not support 1V8 */ #error  "!!"
-//#define CONFIG_USE_MMC_QUIRK          /*  not support now */ #error  "!!"
-//#define CONFIG_SDIO_USE_FUNS          /* close to save code. and not support now */ #error  "!!"
+//#define SD_SUPPORT_VERSION3           /* not support for not support 1V8 */ #error "!!"
+//#define CONFIG_USE_MMC_QUIRK          /*  not support now */ #error "!!"
+//#define CONFIG_SDIO_USE_FUNS          /* close to save code. and not support now */ #error "!!"
 
 #define SYSTEM_SIMULATION
 

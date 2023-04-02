@@ -161,7 +161,7 @@ ATTR_PLACE_AT(section_name) ATTR_ALIGN(alignment)
     ATTR_RAMFUNC ATTR_ALIGN(alignment)
 
 #else
-#error  "Unknown toolchain"
+#error "Unknown toolchain"
 #endif
 
 #ifdef __cplusplus

@@ -414,7 +414,7 @@ static cy_rslt_t _cyhal_interconnect_check_connection(cyhal_source_t source, cyh
         : _cyhal_interconnect_change_connection_indirect(source_mux_group, source_mux_input_idx, source_mux_output_idx,
             dest_mux_group, dest_mux_input_idx, dest_mux_output_idx, type, connect == CYHAL_CONNECT_TYPE_CONNECT);
 #else
-#error  "Unrecognized PERI version"
+#error "Unrecognized PERI version"
 #endif
 }
 

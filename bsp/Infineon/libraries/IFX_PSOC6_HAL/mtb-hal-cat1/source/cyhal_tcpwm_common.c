@@ -722,7 +722,7 @@ cy_rslt_t _cyhal_tcpwm_connect_digital(cyhal_tcpwm_t *obj, cyhal_source_t source
                 rslt = CYHAL_TCPWM_RSLT_ERR_BAD_ARGUMENT;
         }
 #else
-#error  "Unrecognized TCPWM version"
+#error "Unrecognized TCPWM version"
 #endif
     }
 
@@ -812,7 +812,7 @@ cy_rslt_t _cyhal_tcpwm_enable_output(cyhal_tcpwm_t *obj, cyhal_tcpwm_output_t si
 
     return CY_RSLT_SUCCESS;
 #else
-#error  "Unrecognized TCPWM version"
+#error "Unrecognized TCPWM version"
 #endif
 #else
     CY_UNUSED_PARAMETER(obj);
@@ -899,7 +899,7 @@ cy_rslt_t _cyhal_tcpwm_disconnect_digital(cyhal_tcpwm_t *obj, cyhal_source_t sou
             return CYHAL_TCPWM_RSLT_ERR_BAD_ARGUMENT;
     }
 #else
-#error  "Unrecognized TCPWM version"
+#error "Unrecognized TCPWM version"
 #endif
 
     trig_index -= (_CYHAL_TCPWM_TRIGGER_INPUTS_IDX_OFFSET[_CYHAL_TCPWM_GET_IP_BLOCK(block)]);
@@ -964,7 +964,7 @@ cy_rslt_t _cyhal_tcpwm_disable_output(cyhal_tcpwm_t *obj, cyhal_tcpwm_output_t s
 
     return CY_RSLT_SUCCESS;
 #else
-#error  "Unrecognized TCPWM version"
+#error "Unrecognized TCPWM version"
 #endif
 #else
     CY_UNUSED_PARAMETER(obj);

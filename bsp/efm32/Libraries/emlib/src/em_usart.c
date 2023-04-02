@@ -68,7 +68,7 @@
 #define USART_REF_VALID(ref)    (((ref) == USART0) || ((ref) == USART1) || \
                                  ((ref) == USART2) || ((ref) == USART3))
 #else
-#error  "Undefined number of USARTs."
+#error "Undefined number of USARTs."
 #endif
 
 #define USART_IRDA_VALID(ref)    ((ref) == USART0)

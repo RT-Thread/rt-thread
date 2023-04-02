@@ -38,7 +38,7 @@
 #elif defined (CYW20829_PSVP)
     #include "cyw20829_psvp.h"
 #else
-    #error  "Undefined part number"
+    #error "Undefined part number"
 #endif
 
 #endif /* _CY_DEVICE_HEADERS_H_ */

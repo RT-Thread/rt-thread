@@ -61,7 +61,7 @@
 #define RTC_CLOCK_SOURCE_LSI
 
 #if !defined(RTC_CLOCK_SOURCE_LSI) && !defined(RTC_CLOCK_SOURCE_LSE) && !defined(RTC_CLOCK_SOURCE_HSE)
-#error  "Please select the RTC Clock source AT PROJECT LEVEL"
+#error "Please select the RTC Clock source AT PROJECT LEVEL"
 #endif
 
 #if defined (RTC_CLOCK_SOURCE_LSE)
@@ -138,7 +138,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 #elif defined (RTC_CLOCK_SOURCE_HSE)
     if ((PeriphClkInitStruct.RTCClockSelection == RCC_RTCCLKSOURCE_HSE_DIV32) && (__HAL_RCC_GET_FLAG(RCC_FLAG_HSERDY) != 0x00u))
 #else
-#error  "Please select the RTC Clock source"
+#error "Please select the RTC Clock source"
 #endif
     {
       /* Do nothing */

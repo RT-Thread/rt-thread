@@ -40,47 +40,47 @@
 
 
 #if !defined(Cmod_PORT) || !defined(Cmod_PIN) || !defined(Cmod_PORT_NUM)
-#error  "Cmod Capacitor is not assigned: missing #define Cmod_PORT, #define Cmod_PIN, #define Cmod_PORT_NUM"
+#error "Cmod Capacitor is not assigned: missing #define Cmod_PORT, #define Cmod_PIN, #define Cmod_PORT_NUM"
 #endif
 
 #if !defined(LinearSlider0_Sns0_PORT) || !defined(LinearSlider0_Sns0_PIN)
-#error  "LinearSlider0_Sns0 Sensor is not assigned: missing #define LinearSlider0_Sns0_PORT, #define LinearSlider0_Sns0_PIN"
+#error "LinearSlider0_Sns0 Sensor is not assigned: missing #define LinearSlider0_Sns0_PORT, #define LinearSlider0_Sns0_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns1_PORT) || !defined(LinearSlider0_Sns1_PIN)
-#error  "LinearSlider0_Sns1 Sensor is not assigned: missing #define LinearSlider0_Sns1_PORT, #define LinearSlider0_Sns1_PIN"
+#error "LinearSlider0_Sns1 Sensor is not assigned: missing #define LinearSlider0_Sns1_PORT, #define LinearSlider0_Sns1_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns2_PORT) || !defined(LinearSlider0_Sns2_PIN)
-#error  "LinearSlider0_Sns2 Sensor is not assigned: missing #define LinearSlider0_Sns2_PORT, #define LinearSlider0_Sns2_PIN"
+#error "LinearSlider0_Sns2 Sensor is not assigned: missing #define LinearSlider0_Sns2_PORT, #define LinearSlider0_Sns2_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns3_PORT) || !defined(LinearSlider0_Sns3_PIN)
-#error  "LinearSlider0_Sns3 Sensor is not assigned: missing #define LinearSlider0_Sns3_PORT, #define LinearSlider0_Sns3_PIN"
+#error "LinearSlider0_Sns3 Sensor is not assigned: missing #define LinearSlider0_Sns3_PORT, #define LinearSlider0_Sns3_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns4_PORT) || !defined(LinearSlider0_Sns4_PIN)
-#error  "LinearSlider0_Sns4 Sensor is not assigned: missing #define LinearSlider0_Sns4_PORT, #define LinearSlider0_Sns4_PIN"
+#error "LinearSlider0_Sns4 Sensor is not assigned: missing #define LinearSlider0_Sns4_PORT, #define LinearSlider0_Sns4_PIN"
 #endif
 
 #if !defined(CY_CAPSENSE_CPU_CLK)
-#error  "CPU clock frequency is not set: missing #define CY_CAPSENSE_CPU_CLK"
+#error "CPU clock frequency is not set: missing #define CY_CAPSENSE_CPU_CLK"
 #endif
 
 #if !defined(CY_CAPSENSE_PERI_CLK)
-#error  "Peripheral clock core is not set: missing #define CY_CAPSENSE_PERI_CLK"
+#error "Peripheral clock core is not set: missing #define CY_CAPSENSE_PERI_CLK"
 #endif
 
 #if !defined(CY_CAPSENSE_VDDA_MV)
-#error  "VDDA voltage is not set: missing #define CY_CAPSENSE_VDDA_MV"
+#error "VDDA voltage is not set: missing #define CY_CAPSENSE_VDDA_MV"
 #endif
 
 #if !defined(CY_CAPSENSE_PERI_DIV_TYPE)
-#error  "Peripheral clock divider type is not set: missing #define CY_CAPSENSE_PERI_DIV_TYPE"
+#error "Peripheral clock divider type is not set: missing #define CY_CAPSENSE_PERI_DIV_TYPE"
 #endif
 
 #if !defined(CY_CAPSENSE_PERI_DIV_INDEX)
-#error  "Peripheral clock divider index is not set: missing #define CY_CAPSENSE_PERI_DIV_INDEX"
+#error "Peripheral clock divider index is not set: missing #define CY_CAPSENSE_PERI_DIV_INDEX"
 #endif
 
 
@@ -102,7 +102,7 @@
 
 /* Check the used Middleware version */
 #if (CY_CAPSENSE_MW_VERSION_REQUIRED > CY_CAPSENSE_MW_VERSION)
-    #error  "The CapSense Configurator requires a newer version of the CapSense Middleware. Update the CapSense Middleware in your project."
+    #error "The CapSense Configurator requires a newer version of the CapSense Middleware. Update the CapSense Middleware in your project."
 #endif
 
 #define CY_CAPSENSE_BIST_SUPPORTED                (CY_CAPSENSE_MW_VERSION >= 210)

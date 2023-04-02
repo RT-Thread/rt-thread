@@ -413,7 +413,7 @@ extern "C"
 #define CMSIS_UNUSED
 #define __SIMD32_TYPE int32_t
 #else
-#error  "Unknown compiler"
+#error "Unknown compiler"
 #endif
 
 #define __SIMD32(addr)  (*(__SIMD32_TYPE **) & (addr))

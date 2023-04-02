@@ -360,7 +360,7 @@ __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
 
 
 #else
-#error  "Unknown compiler."
+#error "Unknown compiler."
 #endif
 
 

@@ -40,7 +40,7 @@ drv_uart_cfg_t m_uart0_cfg = {
 #endif  /* BSP_USING_UART0 */
 
 #ifdef BSP_USING_UART1
-    #error  "<nrfx_uart> not support UART1. Use UART0 instead."
+    #error "<nrfx_uart> not support UART1. Use UART0 instead."
 #endif  /* BSP_USING_UART1 */
 
 #ifdef BSP_USING_UART0

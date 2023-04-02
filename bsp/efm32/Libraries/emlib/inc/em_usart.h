@@ -210,7 +210,7 @@ typedef enum
   usartPrsRxCh10 = USART_INPUT_RXPRSSEL_PRSCH10,   /**< PRSCH10 selected as USART_INPUT */
   usartPrsRxCh11 = USART_INPUT_RXPRSSEL_PRSCH11    /**< PRSCH11 selected as USART_INPUT */
 #else
-#error  "Unknown EFM32 family."
+#error "Unknown EFM32 family."
 #endif
 } USART_PrsRxCh_TypeDef;
 #endif

@@ -172,7 +172,7 @@ area of a module to a memory space in physical RAM. */
 /* Suppress warning message: extended constant initialiser used */
 #pragma diag_suppress 1296
 #else
-#error  " ""unsupported compiler!!"
+#error " ""unsupported compiler!!"
 #endif
 /**
  * @}

@@ -345,7 +345,7 @@ _Pragma("diag_suppress=Pm120")
 /*! Macro to define a variable with alignbytes alignment */
 #define SDK_ALIGN(var, alignbytes) var __attribute__((aligned(alignbytes)))
 #else
-#error  "Toolchain not supported"
+#error "Toolchain not supported"
 #endif
 
 /*! Macro to define a variable with L1 d-cache line size alignment */
@@ -405,7 +405,7 @@ _Pragma("diag_suppress=Pm120")
 #define AT_NONCACHEABLE_SECTION_ALIGN(var, alignbytes) \
     __attribute__((section("NonCacheable,\"aw\",%nobits @"))) var __attribute__((aligned(alignbytes)))
 #else
-#error  "Toolchain not supported."
+#error "Toolchain not supported."
 #endif
 
 #else
@@ -439,7 +439,7 @@ _Pragma("diag_suppress=Pm120")
 #define AT_QUICKACCESS_SECTION_DATA_ALIGN(var, alignbytes) \
     __attribute__((section("DataQuickAccess"))) var __attribute__((aligned(alignbytes)))
 #else
-#error  "Toolchain not supported."
+#error "Toolchain not supported."
 #endif /* defined(__ICCARM__) */
 
 /*! @name Ram Function */
@@ -450,7 +450,7 @@ _Pragma("diag_suppress=Pm120")
 #elif (defined(__GNUC__))
 #define RAMFUNCTION_SECTION_CODE(func) __attribute__((section("RamFunction"))) func
 #else
-#error  "Toolchain not supported."
+#error "Toolchain not supported."
 #endif /* defined(__ICCARM__) */
 /* @} */
 

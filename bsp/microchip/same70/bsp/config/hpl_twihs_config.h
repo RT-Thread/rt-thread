@@ -167,7 +167,7 @@
 #elif CONF_TWIHS0_CWGR_CLDIV_CALC(CONF_TWIHS0_FREQUENCY, CONF_TWIHS0_BAUD, 128) <= 255
 #define CONF_TWIHS0_CWGR_CKDIV 7
 #else
-#error  "Failed to generate TWI0 I2C baudrate, please check settings."
+#error "Failed to generate TWI0 I2C baudrate, please check settings."
 #endif
 #endif /* end ifndef CONF_TWIHS0_CWGR_CKDIV */
 

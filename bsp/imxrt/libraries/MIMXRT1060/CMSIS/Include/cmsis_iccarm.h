@@ -28,7 +28,7 @@
 #define __CMSIS_ICCARM_H__
 
 #ifndef __ICCARM__
-  #error  "This file should only be compiled by ICCARM"
+  #error "This file should only be compiled by ICCARM"
 #endif
 
 #pragma system_include
@@ -509,7 +509,7 @@ __packed struct  __iar_u32 { uint32_t v; };
   #endif
 
   #ifdef __INTRINSICS_INCLUDED
-  #error  "intrinsics.h is already included previously!"
+  #error "intrinsics.h is already included previously!"
   #endif
 
   #include <intrinsics.h>

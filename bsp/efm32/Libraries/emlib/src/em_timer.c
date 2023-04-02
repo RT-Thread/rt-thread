@@ -72,7 +72,7 @@
                                  ((ref) == TIMER2) || \
                                  ((ref) == TIMER3))
 #else
-#error  "Undefined number of timers."
+#error "Undefined number of timers."
 #endif
 
 /** Validation of TIMER compare/capture channel number */

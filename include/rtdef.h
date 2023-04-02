@@ -249,7 +249,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_inline                   static inline
 #define RTT_API
 #else
-    #error  "not supported tool chain"
+    #error "not supported tool chain"
 #endif /* __ARMCC_VERSION */
 
 /* initialization export */

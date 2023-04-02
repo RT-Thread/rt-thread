@@ -121,14 +121,14 @@ static u16_t dns_txid;
 #ifndef DNS_MAX_TTL
 #define DNS_MAX_TTL               604800
 #elif DNS_MAX_TTL > 0x7FFFFFFF
-#error  "DNS_MAX_TTL must be a positive 32-bit value"
+#error "DNS_MAX_TTL must be a positive 32-bit value"
 #endif
 
 #if DNS_TABLE_SIZE > 255
-#error  "DNS_TABLE_SIZE must fit into an u8_t"
+#error "DNS_TABLE_SIZE must fit into an u8_t"
 #endif
 #if DNS_MAX_SERVERS > 255
-#error  "DNS_MAX_SERVERS must fit into an u8_t"
+#error "DNS_MAX_SERVERS must fit into an u8_t"
 #endif
 
 /* The number of parallel requests (i.e. calls to dns_gethostbyname
@@ -140,7 +140,7 @@ static u16_t dns_txid;
 #define DNS_MAX_REQUESTS          DNS_TABLE_SIZE
 #else
 #if DNS_MAX_REQUESTS > 255
-#error  "DNS_MAX_REQUESTS must fit into an u8_t"
+#error "DNS_MAX_REQUESTS must fit into an u8_t"
 #endif
 #endif
 #else
@@ -155,7 +155,7 @@ static u16_t dns_txid;
 #define DNS_MAX_SOURCE_PORTS      DNS_MAX_REQUESTS
 #else
 #if DNS_MAX_SOURCE_PORTS > 255
-#error  "DNS_MAX_SOURCE_PORTS must fit into an u8_t"
+#error "DNS_MAX_SOURCE_PORTS must fit into an u8_t"
 #endif
 #endif
 #else

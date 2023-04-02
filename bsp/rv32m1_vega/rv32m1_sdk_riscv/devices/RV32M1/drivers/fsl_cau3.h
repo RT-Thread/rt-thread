@@ -55,7 +55,7 @@
 #define FSL_CAU3_SEMA42_GATE (1)
 #define FSL_CAU3_SEMA42_CLOCK_NAME kCLOCK_Sema420
 #else
-#error  "FSL_CAU3_USE_HW_SEMA requires SEMA42 semaphore."
+#error "FSL_CAU3_USE_HW_SEMA requires SEMA42 semaphore."
 #endif
 #endif
 

@@ -44,11 +44,11 @@
 #define PHDC_BULK_IN_EP_SIZE      		(32)
 #if USB_METADATA_SUPPORTED
     #if (PHDC_BULK_OUT_EP_SIZE < 32)
-      #error  "Minimum Endpoint Size required is 32 bytes"
+      #error "Minimum Endpoint Size required is 32 bytes"
     #endif
 
     #if (PHDC_BULK_IN_EP_SIZE < 32)
-      #error  "Minimum Endpoint Size required is 32 bytes"
+      #error "Minimum Endpoint Size required is 32 bytes"
     #endif
 #endif
 

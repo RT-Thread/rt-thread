@@ -81,7 +81,7 @@ typedef long double                             float64;
 typedef struct { Uint32 low32; Uint32 high32; } Uint64;
 typedef struct { int32  low32; int32  high32; } int64;
 #else
-#error  "F2837xD_Cla_Typedefs.h must be included before F2837xD_Device.h or any other header \"
+#error "F2837xD_Cla_Typedefs.h must be included before F2837xD_Device.h or any other header \"
 file that redefines data types using the guard macros F28_DATA_TYPES or DSP28_DATA_TYPES
 #endif //(!defined(F28_DATA_TYPES) && !defined(DSP28_DATA_TYPES))
 

@@ -80,7 +80,7 @@
 #define RTC_ASYNCH_PREDIV       0U
 #define RTC_SYNCH_PREDIV       31U
 #else
-#error  "Please select the RTC Clock source"
+#error "Please select the RTC Clock source"
 #endif /* RTC_CLOCK_SOURCE_LSE */
 
 /* Private macro -------------------------------------------------------------*/
@@ -142,7 +142,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   RCC_OscInitStruct.HSEState            = RCC_HSE_ON;
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_HSE_DIV32;
 #else
-#error  "Please select the RTC Clock source"
+#error "Please select the RTC Clock source"
 #endif /* RTC_CLOCK_SOURCE_LSE */
 
   Status = HAL_RCC_OscConfig(&RCC_OscInitStruct);

@@ -98,7 +98,7 @@
   // User-reserved area: #include the header file of your board here (if any).
   #include "user_board.h"
 #else
-  #error  "No known AVR32 board defined"
+  #error "No known AVR32 board defined"
 #endif
 
 #if (defined EXT_BOARD)

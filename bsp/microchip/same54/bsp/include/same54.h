@@ -44,7 +44,7 @@
 #elif defined(__SAME54P20A__) || defined(__ATSAME54P20A__)
   #include "same54p20a.h"
 #else
-  #error  "Library does not support the specified device."
+  #error "Library does not support the specified device."
 #endif
 
 #endif /* _SAME54_ */

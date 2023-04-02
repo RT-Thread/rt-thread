@@ -101,7 +101,7 @@ int cpu_get_cores(void)
     // mx6sl only has one core
     core_count = ONE_CORE_ACTIVE;
 #else
-    #error  "Unknown cpu!"
+    #error "Unknown cpu!"
 #endif
 
     return core_count;

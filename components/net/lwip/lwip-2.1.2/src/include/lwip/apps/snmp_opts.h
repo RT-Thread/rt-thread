@@ -76,11 +76,11 @@
 #endif
 
 #if SNMP_USE_NETCONN && SNMP_USE_RAW
-#error  "SNMP stack can use only one of the APIs {raw, netconn}"
+#error "SNMP stack can use only one of the APIs {raw, netconn}"
 #endif
 
 #if LWIP_SNMP && !SNMP_USE_NETCONN && !SNMP_USE_RAW
-#error  "SNMP stack needs a receive API and UDP {raw, netconn}"
+#error "SNMP stack needs a receive API and UDP {raw, netconn}"
 #endif
 
 #if SNMP_USE_NETCONN

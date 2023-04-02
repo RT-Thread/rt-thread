@@ -428,7 +428,7 @@ void SystemIrqHandler(uint32_t mcause) {
 #elif defined(__GNUC__)
 __attribute__((weak)) void SystemIrqHandler(uint32_t mcause) {
 #else
-  #error  "Not supported compiler type"
+  #error "Not supported compiler type"
 #endif
     uint32_t intNum;
 

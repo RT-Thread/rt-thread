@@ -56,15 +56,15 @@
       CSI_CSICR1_RF_OR_INTEN_MASK | CSI_CSICR1_SFF_DMA_DONE_INTEN_MASK | CSI_CSICR1_STATFF_INTEN_MASK |      \
       CSI_CSICR1_FB2_DMA_DONE_INTEN_MASK | CSI_CSICR1_FB1_DMA_DONE_INTEN_MASK | CSI_CSICR1_RXFF_INTEN_MASK | \
       CSI_CSICR1_SOF_INTEN_MASK))
-#error  "CSI_CSICR1_INT_EN_MASK could not cover all interrupt bits in CSICR1."
+#error "CSI_CSICR1_INT_EN_MASK could not cover all interrupt bits in CSICR1."
 #endif
 
 #if ((~CSI_CSICR3_INT_EN_MASK) & (CSI_CSICR3_ECC_INT_EN_MASK | CSI_CSICR3_HRESP_ERR_EN_MASK))
-#error  "CSI_CSICR3_INT_EN_MASK could not cover all interrupt bits in CSICR3."
+#error "CSI_CSICR3_INT_EN_MASK could not cover all interrupt bits in CSICR3."
 #endif
 
 #if ((~CSI_CSICR18_INT_EN_MASK) & ((CSI_CSICR18_FIELD0_DONE_IE_MASK | CSI_CSICR18_DMA_FIELD1_DONE_IE_MASK | CSI_CSICR18_BASEADDR_CHANGE_ERROR_IE_MASK) << 6U))
-#error  "CSI_CSICR18_INT_EN_MASK could not cover all interrupt bits in CSICR18."
+#error "CSI_CSICR18_INT_EN_MASK could not cover all interrupt bits in CSICR18."
 #endif
 
 /*! @brief Error codes for the CSI driver. */
