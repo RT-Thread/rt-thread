@@ -9,6 +9,12 @@ config SOC_STM32G474RE
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_STLINK_TO_USART
+        bool "Enable STLINK TO USART (lpuart1)"
+        select BSP_USING_UART
+        select BSP_USING_LPUART1
+        default y
+        
     config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
@@ -43,7 +49,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_LPUART1
                 bool "Enable LPUART1"
-                default y
+                default n
 
             config BSP_LPUART1_RX_USING_DMA
                 bool "Enable LPUART1 RX DMA"
@@ -125,10 +131,10 @@ menu "On-chip Peripheral Drivers"
             if BSP_USING_I2C1
                 config BSP_I2C2_SCL_PIN
                     int "i2c2 scl pin number (PB8)"
-                    default 112
+                    default 24
                 config BSP_I2C2_SDA_PIN
                     int "i2c2 sda pin number (PB9)"
-                    default 112
+                    default 25
             endif
     
     source "../libraries/HAL_Drivers/Kconfig"
