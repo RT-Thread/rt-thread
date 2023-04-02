@@ -53,6 +53,15 @@ extern "C" {
     }
 #endif /* BSP_USING_PWM5 */
 
+#ifdef BSP_USING_PWM8
+#define PWM8_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM8,         \
+       .name                    = "pwm8",       \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM8 */
+    
 #ifdef BSP_USING_PWM12
 #define PWM12_CONFIG                            \
     {                                           \
