@@ -13,9 +13,9 @@ CPPPATH = [cwd + "/include"]
 if GetDepend('DFS_USING_POSIX'):
     src += ['src/dfs_posix.c']
 
-group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS_V1'], CPPPATH = CPPPATH)
+group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS_V2'], CPPPATH = CPPPATH)
 
-if GetDepend('RT_USING_DFS_V1'):
+if GetDepend('RT_USING_DFS_V2'):
     # search in the file system implementation
     list = os.listdir(cwd)
 

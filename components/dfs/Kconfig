@@ -1,19 +1,4 @@
-menuconfig RT_USING_DFS
-    bool "DFS: device virtual file system"
-    select RT_USING_MUTEX
-    default y
-    help
-        The device file system is a light weight virtual file system.
-
-if RT_USING_DFS
-    config DFS_USING_POSIX
-        bool "Using posix-like functions, open/read/write/close"
-        default y
-
-    config DFS_USING_WORKDIR
-        bool "Using working directory"
-        default y
-
+if RT_USING_DFS_V1
     config DFS_FILESYSTEMS_MAX
         int "The maximal number of mounted file system"
         default 4
@@ -21,22 +6,6 @@ if RT_USING_DFS
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
         default 4
-
-    config DFS_FD_MAX
-        int "The maximal number of opened files"
-        default 16
-
-    config RT_USING_DFS_MNTTABLE
-        bool "Using mount table for file system"
-        default n
-        help
-            User can use mount table for automatically mount, for example:
-                const struct dfs_mount_tbl mount_table[] =
-                {
-                    {"flash0", "/", "elm", 0, 0},
-                    {0}
-                };
-            The mount_table must be terminated with NULL.
 
     config RT_USING_DFS_ELMFAT
         bool "Enable elm-chan fatfs"

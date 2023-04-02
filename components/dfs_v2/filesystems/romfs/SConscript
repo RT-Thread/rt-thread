@@ -1,0 +1,15 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
+
+if GetDepend('DFS_ROMFS_ROOT'):
+    # A new ROMFS root has been defined, we should remove the romfs.c
+    SrcRemove(src, ['romfs.c'])
+
+group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS','RT_USING_DFS_ROMFS'], CPPPATH = CPPPATH)
+
+Return('group')
