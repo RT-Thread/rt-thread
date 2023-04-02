@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-04-01     Wangyuqiang  first version
+ * 2023-04-02     Wangyuqiang  first version
  */
 
 #ifndef Pins_Arduino_h
@@ -42,5 +42,8 @@
 
 /* i2c1 : PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+
+/* Serial1 : PC4-TX  PC5-RX */
+#define RTDUINO_SERIAL2_DEVICE_NAME      "uart1"
 
 #endif /* Pins_Arduino_h */
