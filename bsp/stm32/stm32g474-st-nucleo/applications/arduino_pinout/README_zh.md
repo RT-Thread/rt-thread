@@ -21,8 +21,8 @@ Hardware Drivers Config --->
 ![stm32g474-nucleo-pinout.jpg](./stm32g474-nucleo-pinout.jpg)
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
-| 0 (D0) | PA2 | 是 | Serial-Tx，默认被RT-Thread的UART设备框架lpuart1接管 |
-| 1 (D1) | PA3 | 是 | Serial-Rx，默认被RT-Thread的UART设备框架lpuart1接管 |
+| 0 (D0) | PC4 | 是 | Serial-Tx，默认被RT-Thread的UART设备框架uart1接管 |
+| 1 (D1) | PC5 | 是 | Serial-Rx，默认被RT-Thread的UART设备框架uart1接管 |
 | 2 (D2) | PA10 | 是 |  |
 | 3 (D3) | PB3 | 是 |  |
 | 4 (D4) | PB5 | 是 |  |
@@ -35,15 +35,14 @@ Hardware Drivers Config --->
 | 11 (D11) | PA7 | 是 |  |
 | 12 (D12) | PA6 | 是 |  |
 | 13 (D13) | PA5 | 是 |  |
-| 14 (D14) | PB9 | 是 | I2C2-SDA，默认被RT-Thread的I2C设备框架i2c2接管 |
-| 15 (D15) | PB8 | 是 | I2C2-SCL，默认被RT-Thread的I2C设备框架i2c2接管 |
+| 14 (D14) | PB9 | 是 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
+| 15 (D15) | PB8 | 是 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
 | 16 (D16) | PC13 | 是 |  |
 | 17 (A0) | PA0 | 是 | ADC1-CH1，默认被RT-Thread的ADC设备框架adc1接管 |
 | 18 (A1) | PA1 | 是 | ADC1-CH2，默认被RT-Thread的ADC设备框架adc1接管 |
 | 19 (A2) | PA4 | 是 | ADC2-CH17，默认被RT-Thread的ADC设备框架adc2接管 |
 | 20 (A3) | PB0 | 是 | ADC1-CH15，默认被RT-Thread的ADC设备框架adc1接管 |
-| 21 (A4) | PC1 | 是 | ADC2-CH7，默认被RT-Thread的ADC设备框架adc2接管 |
-| 22 (A5) | PC0 | 是 | ADC2-CH6，默认被RT-Thread的ADC设备框架adc2接管 |
+| 21 (A4) | PC1 | 是 | ADC1-CH7，默认被RT-Thread的ADC设备框架adc1接管 |
+| 22 (A5) | PC0 | 是 | ADC1-CH6，默认被RT-Thread的ADC设备框架adc1接管 |
 | 23 (A6) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 | 24 (A7) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
-
