@@ -21,18 +21,18 @@ Hardware Drivers Config --->
 ![stm32g474-nucleo-pinout.jpg](./stm32g474-nucleo-pinout.jpg)
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
-| 0 (D0) | PC4 | 是 | Serial-Tx，默认被RT-Thread的UART设备框架uart1接管 |
-| 1 (D1) | PC5 | 是 | Serial-Rx，默认被RT-Thread的UART设备框架uart1接管 |
+| 0 (D0) | PC5 | 是 | Serial-RX，默认被RT-Thread的UART设备框架uart1接管 |
+| 1 (D1) | PC4 | 是 | Serial-TX，默认被RT-Thread的UART设备框架uart1接管 |
 | 2 (D2) | PA10 | 是 |  |
-| 3 (D3) | PB3 | 是 |  |
+| 3 (D3) | PB3 | 是 | PWM2-CH2，默认被RT-Thread的PWM设备框架pwm2接管 |
 | 4 (D4) | PB5 | 是 |  |
 | 5 (D5) | PB4 | 是 | PWM3-CH1，默认被RT-Thread的PWM设备框架pwm3接管 |
 | 6 (D6) | PB10 | 是 | PWM2-CH3，默认被RT-Thread的PWM设备框架pwm2接管 |
 | 7 (D7) | PA8 | 是 |  |
 | 8 (D8) | PA9 | 是 |  |
-| 9 (D9) | PC7 | 是 |  |
-| 10 (D10) | PB6 | 是 |  |
-| 11 (D11) | PA7 | 是 |  |
+| 9 (D9) | PC7 | 是 | PWM8-CH2，默认被RT-Thread的PWM设备框架pwm8接管 |
+| 10 (D10) | PB6 | 是 | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管 |
+| 11 (D11) | PA7 | 是 | PWM3-CH2，默认被RT-Thread的PWM设备框架pwm3接管 |
 | 12 (D12) | PA6 | 是 |  |
 | 13 (D13) | PA5 | 是 |  |
 | 14 (D14) | PB9 | 是 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
