@@ -70,9 +70,9 @@ struct at_socket *at_get_socket(int socket)
     rt_slist_for_each(node, &_socket_list)
     {
         at_sock = rt_slist_entry(node, struct at_socket, list);
-        if (socket == at_sock->socket)
+        if (at_sock && socket == at_sock->socket)
         {
-            if (at_sock && at_sock->magic == AT_SOCKET_MAGIC)
+            if (at_sock->magic == AT_SOCKET_MAGIC)
             {
                 rt_hw_interrupt_enable(level);
                 return at_sock;
@@ -97,9 +97,9 @@ struct at_socket *at_get_base_socket(int base_socket)
     rt_slist_for_each(node, &_socket_list)
     {
         at_sock = rt_slist_entry(node, struct at_socket, list);
-        if (base_socket == (int)at_sock->user_data && at_sock->state != AT_SOCKET_LISTEN)
+        if (at_sock && base_socket == (int)at_sock->user_data && at_sock->state != AT_SOCKET_LISTEN)
         {
-            if (at_sock && at_sock->magic == AT_SOCKET_MAGIC)
+            if (at_sock->magic == AT_SOCKET_MAGIC)
             {
                 rt_hw_interrupt_enable(level);
                 return at_sock;
@@ -149,7 +149,7 @@ static int at_recvpkt_all_delete(rt_slist_t *rlist)
     {
         pkt = rt_slist_entry(node, struct at_recv_pkt, list);
         node = rt_slist_next(node);
-        if (pkt->buff)
+        if (pkt && pkt->buff)
         {
             rt_free(pkt->buff);
         }
@@ -176,7 +176,7 @@ static int at_recvpkt_node_delete(rt_slist_t *rlist, rt_slist_t *node)
     rt_slist_remove(rlist, node);
 
     pkt = rt_slist_entry(node, struct at_recv_pkt, list);
-    if (pkt->buff)
+    if (pkt && pkt->buff)
     {
         rt_free(pkt->buff);
     }
@@ -208,6 +208,8 @@ static size_t at_recvpkt_get(rt_slist_t *rlist, char *mem, size_t len)
 
         free_node = node;
         node = rt_slist_next(node);
+
+        if (!pkt) continue;
 
         page_pos = pkt->bfsz_totle - pkt->bfsz_index;
 
@@ -330,7 +332,7 @@ static int alloc_empty_socket(rt_slist_t *l)
     rt_slist_for_each(node, &_socket_list)
     {
         at_sock = rt_slist_entry(node, struct at_socket, list);
-        if(at_sock->socket != idx)
+        if(at_sock && at_sock->socket != idx)
             break;
         idx++;
         pre_node = node;
@@ -527,9 +529,9 @@ static int free_socket(struct at_socket *sock)
         rt_slist_for_each(node, &_socket_list)
         {
             at_sock = rt_slist_entry(node, struct at_socket, list);
-            if (sock->socket == at_sock->socket)
+            if (at_sock && sock->socket == at_sock->socket)
             {
-                if (at_sock && at_sock->magic == AT_SOCKET_MAGIC)
+                if (at_sock->magic == AT_SOCKET_MAGIC)
                 {
                     rt_slist_remove(&_socket_list, &at_sock->list);
                     break;
