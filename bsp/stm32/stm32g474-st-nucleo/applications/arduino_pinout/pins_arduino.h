@@ -40,7 +40,7 @@
 
 #define F_CPU          170000000L  /* CPU:170MHz */
 
-/* i2c2 : P(,9-SDA P(,8-SCL */
+/* i2c2 : PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c2"
 
 #endif /* Pins_Arduino_h */
