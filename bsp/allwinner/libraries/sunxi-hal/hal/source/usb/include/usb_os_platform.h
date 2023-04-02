@@ -39,7 +39,7 @@ static inline void put_be32(__u8 *buf, __u32 val)
     buf[3] = (__u8)val;
 }
 
-/* ȡ����ֵ */
+/* 取绝对值 */
 #undef  absolute
 #define absolute(p)                     ((p) > 0 ? (p) : -(p))
 

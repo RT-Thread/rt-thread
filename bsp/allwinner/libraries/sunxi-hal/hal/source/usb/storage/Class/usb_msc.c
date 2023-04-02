@@ -44,8 +44,8 @@
 #define  MSC_DRV_NAME       "Mass Storage Class"
 #define  MSC_DRV_AUTHOR     "Host Driver Author"
 
-static struct usb_host_func_drv mscDrv;     /*  */
-static __u32 mscDev_id_array;               /* ��¼��mscDev�ı�� */
+static struct usb_host_func_drv mscDrv;     /* 存储USB Mass Storage设备驱动 */
+static __u32 mscDev_id_array;               /* 记录已连接的mscDev的id值 */
 
 static struct usb_drv_dev_match_table msc_match_table [] =
 {
@@ -255,16 +255,16 @@ static struct usb_drv_dev_match_table msc_match_table [] =
 *                     get_mscDev_id
 *
 * Description:
-*    ���²�����豸����ID
+*    获取USB Mass Storage设备的ID
 *
 * Parameters:
 *    void
 *
 * Return value:
-*    ���ط����ID
+*    返回设备的ID
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -288,17 +288,17 @@ static unsigned int get_mscDev_id(void)
 *                     free_mscDev_id
 *
 * Description:
-*    �ͷŷ����ID
+*    释放USB Mass Storage设备的ID
 *
 * Parameters:
-*    bit : input.  mscDev��ID��
+*    bit : input.  mscDev的ID号
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -306,14 +306,15 @@ static int free_mscDev_id(unsigned int bit)
 {
     if (usb_test_bit(bit, (volatile uint32_t *)&mscDev_id_array) == 0)
     {
-        hal_log_err("ERR: free_host_id: invalid bit(%d)", bit);
+        hal_log_err("ERR: free_mscDev_id: invalid bit(%d)", bit);
         return -1;
     }
 
-    /* ���ո�λ */
+    /* 释放占用位 */
     usb_clear_bit(bit, (volatile uint32_t *)&mscDev_id_array);
     return 0;
 }
+
 
 /*
 *******************************************************************************
@@ -323,18 +324,19 @@ static int free_mscDev_id(unsigned int bit)
 *
 *
 * Parameters:
-*    mscDev  �� input. msc�豸��Ϣ
-*    intf    :  input. USB�ӿ�
+*    mscDev  : input. msc设备信息
+*    intf    : input. USB接口
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
+
 static int mscDevInit(__mscDev_t *mscDev, struct usb_interface *intf)
 {
     int ret = 0;
@@ -369,7 +371,7 @@ static int mscDevInit(__mscDev_t *mscDev, struct usb_interface *intf)
         return USB_ERR_ALLOC_URB_FAILED;
     }
 
-    /* һ��Կ�� */
+    /* 一次性锁 */
     mscDev->scan_lock = hal_sem_create(1);
 
     if (mscDev->scan_lock == NULL)
@@ -388,7 +390,7 @@ static int mscDevInit(__mscDev_t *mscDev, struct usb_interface *intf)
         goto error1;
     }
 
-    /* �߳�ͬ�� */
+    /* 线程同步 */
     mscDev->ThreadSemi = hal_sem_create(0);
 
     if (mscDev->ThreadSemi == NULL)
@@ -463,13 +465,13 @@ error0:
 *
 *
 * Parameters:
-*    mscDev  �� input. msc�豸��Ϣ
+*    mscDev  -- input. msc设备信息
 *
 * Return value:
-*    ��
+*    none
 *
 * note:
-*    ��
+*    none
 *
 *******************************************************************************
 */
@@ -529,10 +531,10 @@ static void mscDevFree(__mscDev_t *mscDev)
 *
 *
 * Return value:
-*    ��
+*    none
 *
 * note:
-*    ��
+*    none
 *
 *******************************************************************************
 */
@@ -555,10 +557,10 @@ static void SetMscDevState(__mscDev_t *mscDev, mscDev_state_t state)
 *
 *
 * Return value:
-*    ��/��
+*    none/error
 *
 * note:
-*    ��
+*    none
 *
 *******************************************************************************
 */
@@ -578,10 +580,10 @@ unsigned int mscDevOnline(__mscDev_t *mscDev)
 *
 *
 * Return value:
-*    ��
+*    void
 *
 * note:
-*    ��
+*    none
 *
 *******************************************************************************
 */
@@ -598,17 +600,17 @@ static void GetDeviceInfo(__mscDev_t *mscDev, unsigned int index)
 *                     GetTransport
 *
 * Description:
-*    ���msc�豸�Ĵ��䷽ʽ
+*    获取msc设备的传输方式
 *
 * Parameters:
-*    mscDev  �� input. msc�豸��Ϣ
+*    mscDev 获取 input.msc设备信息
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    none
 *
 *******************************************************************************
 */
@@ -638,20 +640,20 @@ static int GetTransport(__mscDev_t *mscDev)
 
 /*
 *******************************************************************************
-*                     GetTransport
+*                     GetProtocol
 *
 * Description:
-*    ���msc�豸�Ĵ��䷽ʽ
+*    获取msc设备的传输方式
 *
 * Parameters:
-*    mscDev  �� input. msc�豸��Ϣ
+*    mscDev 获取 input.msc设备信息
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    none
 *
 *******************************************************************************
 */
@@ -702,20 +704,21 @@ static int GetProtocol(__mscDev_t *mscDev)
 *                     CreatePipes
 *
 * Description:
-*    ��������ܵ�
+*    创建管道函数
 *
 * Parameters:
-*    mscDev  �� input. msc�豸��Ϣ
+*    mscDev 获取 input.msc设备信息
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    none
 *
 *******************************************************************************
 */
+
 static int CreatePipes(__mscDev_t *mscDev)
 {
     struct usb_host_virt_interface *altsetting = mscDev->pusb_intf->cur_altsetting;
@@ -786,16 +789,16 @@ static int CreatePipes(__mscDev_t *mscDev)
 *                     mscDevAdd
 *
 * Description:
-*
+*     添加msc设备
 *
 * Parameters:
-*    mscDev  �� input. msc�豸��Ϣ
+*    mscDev  : input. msc设备信息
 *
 * Return value:
-*    ��
+*    None
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -827,7 +830,7 @@ static void mscDevAdd(__mscDev_t *mscDev)
         mscLun->mscDev       = mscDev;
         mscLun->LunNo        = i;
         mscLun->DiskSubClass = mscDev->SubClass;
-        mscLun->RemoveAble   = 1;    /* Ĭ�Ͼ��ǿ��ƶ��豸 */
+        mscLun->RemoveAble   = 1;    /* 默认为可移动设备 */
         mscDev->Lun[i]  = mscLun;
         hal_log_info("begin mscLunAdd\n");
         ret = mscLunAdd(mscLun);
@@ -839,7 +842,7 @@ static void mscDevAdd(__mscDev_t *mscDev)
             continue;
         }
 
-        /* ����豸�Ƿ��ƶ��豸, ��delay */
+        /* 判断设备是否可移动设备, 若不是则delay */
         if (mscLun->RemoveAble == 0)
         {
             mscDev->SuspendTime = 10000; /* 10s */
@@ -863,13 +866,13 @@ static void mscDevAdd(__mscDev_t *mscDev)
 *
 *
 * Parameters:
-*    mscDev  �� input. msc�豸��Ϣ
+*    mscDev  : input. msc设备信息
 *
 * Return value:
-*    ��
+*    无
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -908,19 +911,20 @@ static void mscDevDel(__mscDev_t *mscDev)
 *                     MediaChangeThread
 *
 * Description:
-*    ���ʼ���߳�
+*    媒体变化线程
 *
 * Parameters:
-*    p_arg  �� input. ��mscDev, msc�豸��Ϣ
+*    p_arg  : input. 为mscDev, msc设备信息
 *
 * Return value:
-*    ��
+*    无
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
+
 static void MediaChangeThread(void *p_arg)
 {
     __mscDev_t *mscDev = (__mscDev_t *)p_arg;
@@ -928,7 +932,7 @@ static void MediaChangeThread(void *p_arg)
     while (1)
     {
         unsigned int i = 0;
-        //--<1>--ɱ���߳�
+        //--<1>--销毁线程
         //TryTo//KillThreadSelf("MediaChangeThread");
 
         for (i = 0; i < mscDev->MaxLun; i++)
@@ -958,16 +962,16 @@ static void MediaChangeThread(void *p_arg)
 *                     mscDevScanThread
 *
 * Description:
-*    mscDevɨ��
+*    mscDev扫描
 *
 * Parameters:
-*    p_arg  �� input. ��mscDev, msc�豸��Ϣ
+*    p_arg  : input. 指向mscDev, msc设备信息
 *
 * Return value:
-*    ��
+*    无
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -985,18 +989,18 @@ static void mscDevScanThread(void *p_arg)
 *                     QueueCmnd
 *
 * Description:
-*    �������Lun
+*    将命令队列提交到Lun
 *
 * Parameters:
-*    mscLun     �� input. �����Ӧ��Lun
-*    scsi_cmnd  :  input. ����
+*    mscLun     ： input. 对应的Lun
+*    scsi_cmnd  :  input. 命令
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -1056,18 +1060,18 @@ int mscDevQueueCmnd(__mscLun_t *mscLun, __ScsiCmnd_t *ScsiCmnd)
 *                     mscCmndDone
 *
 * Description:
-*    ���������ȥ���ط��������
+*    处理命令完成后的回调函数
 *
 * Parameters:
-*    mscLun         �� input. �����Ӧ��Lun
-*    scsi_cmnd      :  input. ����
-*    TransStatus    :  input. ����״̬
+*    mscLun         ： input. 对应的Lun
+*    scsi_cmnd      :  input. 命令
+*    TransStatus    :  input. 数据传输状态
 *
 * Return value:
-*    ��
+*    无
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -1105,7 +1109,7 @@ static void mscCmndDone(__mscDev_t *mscDev, __ScsiCmnd_t *ScsiCmnd, int TransSta
         {
             hal_log_err("ERR: ScsiCmnd(%x) retry %d times, maybe device is died",
                        ((__u8 *)(ScsiCmnd->cmnd.CommandBlock))[0], ScsiCmnd->retries);
-            /* ��ʹ����ִ�ж��ʧ��Ҳ������Ϊ�豸����, ��Ϊ�豸���ܲ�֧��������� */
+           /* 不要使用异步执行操作，因为设备可能不支持并且可能会导致失败 */
         }
     }
     else
@@ -1132,16 +1136,16 @@ static void mscCmndDone(__mscDev_t *mscDev, __ScsiCmnd_t *ScsiCmnd, int TransSta
 *                     mscMainThread
 *
 * Description:
-*    ���̣߳��������Ĵ���
+*    线程函数，控制整个系统运行。
 *
 * Parameters:
-*    p_arg  �� input. ��mscDev, msc�豸��Ϣ
+*    p_arg  -- input. 对象指针，mscDev, msc设备信息。
 *
 * Return value:
-*    ��
+*    无
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -1155,17 +1159,17 @@ static void mscMainThread(void *p_arg)
 
     while (1)
     {
-        //--<1>--ɱ���߳�
+        //--<1>--线程退出
         //TryTo//KillThreadSelf("mscMainThread");
         /* sleep */
         //UsbThreadSleep(mscDev->ThreadSemi);
     //      kthread_stop(mscDev->MainThreadId);
         hal_sem_wait(mscDev->ThreadSemi);
         /* cmd_list is empty?
-         * mscDevQueueCmnd��cmd�ӵ�cmd_list���պ�����mscMainThread�������������
-         * forѭ����⵽cmd_list���վͻ�ȥִ����һ�����ִ����Ϻ�cmd_list���ˡ�
-         * ��ʱUsbThreadWakeUp����mscMainThread������cmd_list�Ѿ����ˡ�
-         */
+        * 如果mscDevQueueCmnd的cmd加入了cmd_list队列就会唤醒mscMainThread线程去执行，
+        * for循环从cmd_list取出一个cmd执行完再继续取下一个。
+        * 所以UsbThreadWakeUp函数用于将mscMainThread线程唤醒，去执行已经加入到cmd_list的cmd。
+        */
         if (usb_list_empty(&(mscDev->cmd_list)))
         {
             hal_log_err("Wrn: mscDev cmd_list is empty");
@@ -1209,18 +1213,18 @@ static void mscMainThread(void *p_arg)
 *                     mscDevProbe
 *
 * Description:
-*    ��������ܵ�
+*    设备探测函数
 *
 * Parameters:
-*    intf       �� input. USB�ӿ���Ϣ
-*    table_item :  input. ƥ���
+*    intf       ： input. USB接口信息
+*    table_item :  input. 匹配项
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    备注
 *
 *******************************************************************************
 */
@@ -1240,9 +1244,9 @@ static int32_t mscDevProbe(struct usb_interface *intf, const struct usb_drv_dev_
     }
 
     //----------------------------------------------------------------
-    //   ��ʼ��mscDev
+    //   初始化mscDev
     //----------------------------------------------------------------
-    /* ��ʼ��һ��mscDev */
+    /* 初始化一个mscDev */
     mscDev = (__mscDev_t *)hal_malloc(sizeof(__mscDev_t));
 
     if (mscDev == NULL)
@@ -1263,7 +1267,7 @@ static int32_t mscDevProbe(struct usb_interface *intf, const struct usb_drv_dev_
     }
 
     GetDeviceInfo(mscDev, match_table_index);
-    /* ���SubClass */
+    /* 获取 SubClass */
     ret = GetProtocol(mscDev);
 
     if (ret != USB_ERR_SUCCESS)
@@ -1273,7 +1277,7 @@ static int32_t mscDevProbe(struct usb_interface *intf, const struct usb_drv_dev_
         goto error2;
     }
 
-    /* ���Transport */
+    /* 获取 Transport */
     ret = GetTransport(mscDev);
 
     if (ret != USB_ERR_SUCCESS)
@@ -1283,7 +1287,7 @@ static int32_t mscDevProbe(struct usb_interface *intf, const struct usb_drv_dev_
         goto error3;
     }
 
-    /* ��������ܵ� */
+    /* 创建管道 */
     ret = CreatePipes(mscDev);
     if (ret != USB_ERR_SUCCESS)
     {
@@ -1292,11 +1296,12 @@ static int32_t mscDevProbe(struct usb_interface *intf, const struct usb_drv_dev_
         goto error4;
     }
 
+
     //----------------------------------------------------------------
-    //   ʶ��mscDev
+    //识别mscDev
     //----------------------------------------------------------------
     SetMscDevState(mscDev, MSC_DEV_ONLINE);
-    /* ���MaxLun */
+    /* 获取MaxLun */
     mscDev->MaxLun = mscGetMaxLun(mscDev) + 1;
 
     if (mscDev->MaxLun > MSC_MAX_LUN)
@@ -1368,17 +1373,17 @@ error0:
 *                     mscDevSuspend
 *
 * Description:
-*    �����豸
+*    挂起设备
 *
 * Parameters:
-*    intf  �� input. USB�ӿ���Ϣ
+*    intf  ： input. USB接口信息
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -1413,17 +1418,17 @@ static int32_t mscDevSuspend(struct usb_interface *intf)
 *                     mscDevRemove
 *
 * Description:
-*    msc�豸�Ƴ�
+*    msc设备移除
 *
 * Parameters:
-*    intf  �� input. USB�ӿ���Ϣ
+*    intf  ： input. USB接口信息
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -1447,9 +1452,9 @@ static void mscDevRemove(struct usb_interface *intf)
 
     SetMscDevState(mscDev, MSC_DEV_OFFLINE);
     hal_log_info("mscDevRemove: SetMscDevState MSC_DEV_OFFLINE");
-    /* ֹͣ��ǰ���� */
+    /* 停止当前传输 */
     mscDev->StopTransport(mscDev);
-    /* �Ͽ�mscDev��������е�Lun */
+    /* 断开mscDev与所有Lun的关联 */
     mscDevDel(mscDev);
     /* kill media change thrad */
     kthread_stop(mscDev->MediaChangeId);
@@ -1461,7 +1466,7 @@ static void mscDevRemove(struct usb_interface *intf)
         hal_sem_delete(mscDev->ThreadSemi);
         mscDev->ThreadSemi = NULL;
     }
-    /* �ͷ�mscDev��Դ */
+    /* 释放mscDev资源 */
     mscDevFree(mscDev);
     hal_free(mscDev);
     hal_log_info("mscDevRemove complete");
@@ -1473,17 +1478,17 @@ static void mscDevRemove(struct usb_interface *intf)
 *                     mscDrv_init
 *
 * Description:
-*    msc������ʼ��
+*    msc驱动初始化
 *
 * Parameters:
-*    drv  �� input. msc����
+*    drv  为input.msc驱动
 *
 * Return value:
-*    0  ���ɹ�
-*   !0  ��ʧ��
+*    0  成功
+*   !0  失败
 *
 * note:
-*    ��
+*    
 *
 *******************************************************************************
 */
@@ -1511,16 +1516,16 @@ static int mscDrvInit(struct usb_host_func_drv *drv)
 *                     scsi_bus_drv_reg
 *
 * Description:
-*    ��scsi����ע������
+*    SCSI总线驱动注册函数
 *
 * Parameters:
-*    drv : input.  ����
+*    drv : input.  驱动
 *
 * Return value:
 *    EPDK_OK / EPDK_FAIL
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
@@ -1532,7 +1537,7 @@ int mscInit(void)
     mscDev_id_array  = 0;
     init_usbh_buff_manager();
     usbh_disk_time_init();
-    /* ���ݿͻ�������Ҫ��ӳdisk��״̬, ������ǹ���disk��״̬ */
+    /* 数据库客户端需要映射disk状态, 这就是针对disk状态 */
     usbh_disk_info_reg();
 
     if (mscDrvInit(&mscDrv) != 0)
@@ -1555,16 +1560,16 @@ int mscInit(void)
 *                     scsi_bus_drv_reg
 *
 * Description:
-*    ��scsi����ע������
+*    SCSI总线驱动注册
 *
 * Parameters:
-*    drv : input.  ����
+*    drv : input.  驱动
 *
 * Return value:
 *    EPDK_OK / EPDK_FAIL
 *
 * note:
-*    ��
+*    无
 *
 *******************************************************************************
 */
