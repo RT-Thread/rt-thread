@@ -389,7 +389,7 @@ The parameters and return values of the thread suspend interface `rt_thread_susp
 
    Functions' context switch is achieved manually. User only needs to understand the role of the interface, which is not recommended.
 
-To resume a thread is to let the suspended thread re-enter the ready state and put the thread into the system's ready queue; if the recovered thread is first in place of the priority list, then the system will start context switching. Thread resuming uses the following function interface:
+To resume a thread is to let the suspended thread re-enter the ready state and put the thread into the system's ready queue. Thread resuming uses the following function interface:
 
 ```c
 rt_err_t rt_thread_resume (rt_thread_t thread);
