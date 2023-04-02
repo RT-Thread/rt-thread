@@ -449,7 +449,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-        if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
+        if (tim->Instance == TIM1 || tim->Instance == TIM8 || tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32WB)
