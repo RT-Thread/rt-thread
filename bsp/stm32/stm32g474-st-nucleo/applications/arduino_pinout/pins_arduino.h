@@ -44,6 +44,6 @@
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
 /* Serial1 : PC4-TX  PC5-RX */
-#define RTDUINO_SERIAL2_DEVICE_NAME      "uart1"
+#define RTDUINO_SERIAL_DEVICE_NAME      "uart1"
 
 #endif /* Pins_Arduino_h */
