@@ -47,7 +47,7 @@
 #define __AIR32_PORT_MAX 1u
 #else
 #define __AIR32_PORT_MAX 0u
-#error Unsupported AIR32 GPIO peripheral.
+#error  "Unsupported AIR32 GPIO peripheral."
 #endif
 
 #define PIN_AIRPORT_MAX __AIR32_PORT_MAX

@@ -78,7 +78,7 @@
     #elif (CY_IP_MXTTCANFD_INSTANCES == 10)
         #define CY_CHANNEL_COUNT_CAN (CANFD0_CAN_NR + CANFD1_CAN_NR + CANFD2_CAN_NR + CANFD3_CAN_NR + CANFD4_CAN_NR + CANFD5_CAN_NR + CANFD6_CAN_NR + CANFD7_CAN_NR + CANFD8_CAN_NR + CANFD9_CAN_NR)
     #elif (CY_IP_MXTTCANFD_INSTANCES > 10)
-        #warning Unhandled CAN instance count
+        #warning "Unhandled CAN instance count"
     #endif
 #elif defined(CY_IP_M0S8CAN_INSTANCES)
     #define CY_BLOCK_COUNT_CAN      (CY_IP_M0S8CAN_INSTANCES)
@@ -188,7 +188,7 @@
     #elif (CY_IP_MXAHBDMAC_INSTANCES == 3)
         #define CY_CHANNEL_COUNT_DMA (MXAHBDMAC0_CH_NR + MXAHBDMAC1_CH_NR + MXAHBDMAC2_CH_NR)
     #else
-        #warning Unhandled DMA instance count
+        #warning "Unhandled DMA instance count"
     #endif
 #elif defined(CPUSS_CPUMEMSS_DMAC_PRESENT)
     #define CY_BLOCK_COUNT_DMA      (CPUSS_CPUMEMSS_DMAC_PRESENT)
@@ -359,7 +359,7 @@
         #elif (CY_IP_MXTCPWM_INSTANCES == 10)
             #define CY_CHANNEL_COUNT_TCPWM (TCPWM0_CNT_NR + TCPWM1_CNT_NR + TCPWM2_CNT_NR + TCPWM3_CNT_NR + TCPWM4_CNT_NR + TCPWM5_CNT_NR + TCPWM6_CNT_NR + TCPWM7_CNT_NR + TCPWM8_CNT_NR + TCPWM9_CNT_NR)
         #elif (CY_IP_MXTCPWM_INSTANCES > 10)
-            #warning Unhandled TCPWM instance count
+            #warning "Unhandled TCPWM instance count"
         #endif
     #elif (CY_IP_MXTCPWM_VERSION == 2)
         #if (CY_IP_MXTCPWM_INSTANCES == 1)
@@ -374,7 +374,7 @@
             #elif (TCPWM_GRP_NR == 4)
                 #define CY_CHANNEL_COUNT_TCPWM (TCPWM_GRP_NR0_GRP_GRP_CNT_NR + TCPWM_GRP_NR1_GRP_GRP_CNT_NR + TCPWM_GRP_NR2_GRP_GRP_CNT_NR + TCPWM_GRP_NR3_GRP_GRP_CNT_NR)
             #elif (TCPWM_GRP_NR > 4)
-                #warning Unhandled TCPWM instance count
+                #warning "Unhandled TCPWM instance count"
             #endif
         #elif (CY_IP_MXTCPWM_INSTANCES == 2)
             #if (TCPWM0_GRP_NR == 0)
@@ -386,7 +386,7 @@
             #elif (TCPWM0_GRP_NR == 3)
                 #define CY_CHANNEL_COUNT_TCPWM0 (TCPWM0_GRP_NR0_GRP_GRP_CNT_NR + TCPWM0_GRP_NR1_GRP_GRP_CNT_NR + TCPWM0_GRP_NR2_GRP_GRP_CNT_NR)
             #elif (TCPWM0_GRP_NR > 3)
-                #warning Unhandled TCPWM instance count
+                #warning "Unhandled TCPWM instance count"
             #endif
             #if (TCPWM1_GRP_NR == 0)
                 #define CY_CHANNEL_COUNT_TCPWM1 (0u)
@@ -397,14 +397,14 @@
             #elif (TCPWM1_GRP_NR == 3)
                 #define CY_CHANNEL_COUNT_TCPWM1 (TCPWM1_GRP_NR0_GRP_GRP_CNT_NR + TCPWM1_GRP_NR1_GRP_GRP_CNT_NR + TCPWM1_GRP_NR2_GRP_GRP_CNT_NR)
             #elif (TCPWM1_GRP_NR > 3)
-                #warning Unhandled TCPWM instance count
+                #warning "Unhandled TCPWM instance count"
             #endif
             #define CY_CHANNEL_COUNT_TCPWM (CY_CHANNEL_COUNT_TCPWM0 + CY_CHANNEL_COUNT_TCPWM1)
         #elif (CY_IP_MXTCPWM_INSTANCES > 2)
-            #warning Unhandled TCPWM instance count
+            #warning "Unhandled TCPWM instance count"
         #endif
     #else
-        #warning Unrecognized TCPWM IP version
+        #warning "Unrecognized TCPWM IP version"
     #endif
 #elif defined(CY_IP_M0S8TCPWM_INSTANCES)
     #define CY_BLOCK_COUNT_TCPWM        (CY_IP_M0S8TCPWM_INSTANCES)
@@ -413,7 +413,7 @@
     #elif (CY_IP_M0S8TCPWM_INSTANCES == 1)
         #define CY_CHANNEL_COUNT_TCPWM  (TCPWM_CNT_NR)
     #else
-        #warning Unhandled TCPWM instance count
+        #warning "Unhandled TCPWM instance count"
     #endif
 #else
     #define CY_BLOCK_COUNT_TCPWM    (0)
@@ -427,7 +427,7 @@
     #elif (CY_IP_MXTDM_INSTANCES == 1)
         #define CY_CHANNEL_COUNT_TDM (TDM_NR)
     #else
-        #warning Unhandled TDM instance count
+        #warning "Unhandled TDM instance count"
     #endif
 #else
     #define CY_BLOCK_COUNT_TDM      (0)
@@ -1100,7 +1100,7 @@ static const _cyhal_hwmgr_offset_t cyhal_block_offsets_dma[] =
     MXAHBDMAC0_CH_NR + MXAHBDMAC1_CH_NR,
 #endif
 #if (CY_IP_MXAHBDMAC_INSTANCES > 3)
-    #warning Unhandled DMA instance count
+    #warning "Unhandled DMA instance count"
 #endif
 #endif /* defined(CY_IP_MXAHBDMAC_INSTANCES) */
 };
@@ -1167,7 +1167,7 @@ static const _cyhal_hwmgr_offset_t cyhal_block_offsets_can[] =
         CANFD0_CAN_NR + CANFD1_CAN_NR + CANFD2_CAN_NR + CANFD3_CAN_NR + CANFD4_CAN_NR + CANFD5_CAN_NR + CANFD6_CAN_NR + CANFD7_CAN_NR + CANFD8_CAN_NR,
     #endif
     #if (CY_IP_MXTTCANFD_INSTANCES > 10)
-        #warning Unhandled CAN instance count
+        #warning "Unhandled CAN instance count"
     #endif
 #else
     0
@@ -1225,7 +1225,7 @@ static const _cyhal_hwmgr_offset_t cyhal_block_offsets_tcpwm[] =
             TCPWM0_CNT_NR + TCPWM1_CNT_NR + TCPWM2_CNT_NR + TCPWM3_CNT_NR + TCPWM4_CNT_NR + TCPWM5_CNT_NR + TCPWM6_CNT_NR + TCPWM7_CNT_NR + TCPWM8_CNT_NR,
         #endif
         #if (CY_IP_MXTCPWM_INSTANCES > 10)
-            #warning Unhandled TCPWM instance count
+            #warning "Unhandled TCPWM instance count"
         #endif
     #else // CY_IP_MXTCPWM_VERSION >= 2
         #if (CY_IP_MXTCPWM_INSTANCES == 1)
@@ -1277,7 +1277,7 @@ static const _cyhal_hwmgr_offset_t cyhal_block_offsets_tcpwm[] =
                 _CYHAL_TCPWM0_TOTAL_CNT_NR +_CYHAL_TCPWM1_TOTAL_CNT_NR,
             #endif
         #else
-            #warning Unhandled TCPWM instance count
+            #warning "Unhandled TCPWM instance count"
         #endif
     #endif
 #endif

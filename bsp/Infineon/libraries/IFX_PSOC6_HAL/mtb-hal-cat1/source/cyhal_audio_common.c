@@ -108,7 +108,7 @@ static I2S_Type *const _cyhal_audioss_base[] =
 #endif
 
 #if (CY_IP_MXS40AUDIOSS_INSTANCES > 2)
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 };
 
@@ -130,7 +130,7 @@ static const cyhal_source_t _cyhal_audioss_rx_trigger[] =
 #endif
 
 #if (CY_IP_MXS40AUDIOSS_INSTANCES > 3)
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 };
 #endif
@@ -150,7 +150,7 @@ static const cyhal_source_t _cyhal_audioss_tx_trigger[] =
 #endif
 
 #if (CY_IP_MXS40AUDIOSS_INSTANCES > 3)
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 };
 #endif
@@ -172,7 +172,7 @@ static const _cyhal_system_irq_t _cyhal_audioss_irq_n[] =
 #endif
 
 #if (CY_IP_MXS40AUDIOSS_INSTANCES > 3)
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 };
 
@@ -197,7 +197,7 @@ static uint8_t _cyhal_audioss_get_block_from_irqn(_cyhal_system_irq_t irqn)
             return 2;
 #endif
 #if (CY_IP_MXS40AUDIOSS_INSTANCES > 3)
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 #endif /* (CY_CPU_CORTEX_M4) */
         default:
@@ -213,7 +213,7 @@ static const en_clk_dst_t _cyhal_audioss_clock[] =
 #if (CY_IP_MXAUDIOSS_INSTANCES == 1)
     PCLK_AUDIOSS_CLOCK_POS_I2S_EN,
 #else
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 };
 #endif
@@ -253,7 +253,7 @@ static TDM_Type *const _cyhal_audioss_base[] =
 #if (CY_IP_MXTDM_INSTANCES == 1)
     TDM0,
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
 };
 
@@ -266,10 +266,10 @@ static const uint8_t _cyhal_audioss_max_channels[] =
         TDM_NR0_CH_NR,
         TDM_NR1_CH_NR,
     #else
-        #warning Unhandled TDM struct count
+        #warning "Unhandled TDM struct count"
     #endif
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
 };
 
@@ -279,7 +279,7 @@ static const en_clk_dst_t _cyhal_audioss_clock[] =
 #if (CY_IP_MXTDM_INSTANCES == 1)
     PCLK_TDM0_CLK_IF_SRSS0,
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
 };
 
@@ -289,7 +289,7 @@ static const cyhal_source_t _cyhal_audioss_rx_trigger[] =
 #if (CY_IP_MXTDM_INSTANCES == 1)
     CYHAL_TRIGGER_TDM_TR_RX_REQ0,
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
 };
 
@@ -298,7 +298,7 @@ static const cyhal_source_t _cyhal_audioss_tx_trigger[] =
 #if (CY_IP_MXTDM_INSTANCES == 1)
     CYHAL_TRIGGER_TDM_TR_TX_REQ0,
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
 };
 
@@ -309,7 +309,7 @@ static const _cyhal_system_irq_t _cyhal_audioss_tx_irq_n[] =
 #if (CY_IP_MXTDM_INSTANCES == 1)
     tdm_0_interrupts_tx_0_IRQn,
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
 };
 
@@ -318,7 +318,7 @@ static const _cyhal_system_irq_t _cyhal_audioss_rx_irq_n[] =
 #if (CY_IP_MXTDM_INSTANCES == 1)
     tdm_0_interrupts_rx_0_IRQn,
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
 };
 
@@ -330,7 +330,7 @@ static uint8_t _cyhal_audioss_get_block_from_irqn(_cyhal_system_irq_t irqn) {
         case tdm_0_interrupts_rx_0_IRQn:
             return 0;
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
         default:
             CY_ASSERT(false); // Should never be called with a non-TDM IRQn

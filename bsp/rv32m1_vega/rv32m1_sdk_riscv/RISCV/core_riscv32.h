@@ -48,7 +48,7 @@
   #define __STATIC_INLINE  static inline
 
 #else
-  #error Unknown compiler
+  #error  "Unknown compiler"
 #endif
 
 #if defined ( __GNUC__ )
@@ -100,7 +100,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __REV16(uint32_t value)
 }
 
 #else
-  #error Unknown compiler
+  #error  "Unknown compiler"
 #endif
 
 #ifdef __cplusplus

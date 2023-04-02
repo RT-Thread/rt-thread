@@ -55,7 +55,7 @@
 #elif defined(__SAMD51P20A__) || defined(__ATSAMD51P20A__)
   #define SAME5x_SRAM_SIZE   256
 #else
-  #error Board does not support the specified device.
+  #error  "Board does not support the specified device."
 #endif
 
 #define SAME5x_SRAM_END      (0x20000000 + SAME5x_SRAM_SIZE * 1024)

@@ -115,7 +115,7 @@
   #define __STATIC_INLINE  static inline
 
 #else
-  #error Unknown compiler
+  #error  "Unknown compiler"
 #endif
 
 /** __FPU_USED indicates whether an FPU is used or not.

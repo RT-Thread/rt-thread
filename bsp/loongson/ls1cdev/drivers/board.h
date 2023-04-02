@@ -46,7 +46,7 @@ void rt_hw_board_init(void);
 #define SDRAM_COL       (COL_512)
 #define SDRAM_ROW       (ROW_8K)
 #else
-#error Unknown Board
+#error  "Unknown Board"
 #endif
 
 /* Early Debug config */

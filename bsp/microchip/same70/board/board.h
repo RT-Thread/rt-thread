@@ -87,7 +87,7 @@
 #elif defined(__SAMV71Q21B__) || defined(__ATSAMV71Q21B__)
   #define SAME70_SRAM_SIZE   384
 #else
-#error Board does not support the specified device
+#error  "Board does not support the specified device"
 #endif
 
 #define SAME70_SRAM_END    (0x20400000 + SAME70_SRAM_SIZE * 1024)

@@ -278,7 +278,7 @@ uint16_t Writeraw(uint8_t uart_id, uint16_t write_len, uint8_t* write_buffer) {
 
 void timer_irq_handler(uint32_t mcause)
 {
-#warning requires critical section if interrupt nesting is used.
+#warning "requires critical section if interrupt nesting is used."
     rt_interrupt_enter();
     rt_tick_increase();
     rt_interrupt_leave();

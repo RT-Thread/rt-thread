@@ -1064,7 +1064,7 @@ typedef enum _dma_request_source
 #elif defined(__IAR_SYSTEMS_ICC__)
   #pragma language=extended
 #else
-  #error Not supported compiler type
+  #error  "Not supported compiler type"
 #endif
 
 /* ----------------------------------------------------------------------------
@@ -47096,7 +47096,7 @@ typedef struct {
 #elif defined(__IAR_SYSTEMS_ICC__)
   #pragma language=default
 #else
-  #error Not supported compiler type
+  #error  "Not supported compiler type"
 #endif
 
 /*!

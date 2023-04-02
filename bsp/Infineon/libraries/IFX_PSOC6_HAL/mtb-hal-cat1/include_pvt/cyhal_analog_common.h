@@ -50,7 +50,7 @@
     #define _CYHAL_COMP_CTB_DEFAULT_BYPASS      false
     #define _CYHAL_COMP_CTB_HIST(hysteresis)    (hysteresis)
 #else
-    #error Unhandled PASS IP Block
+    #error  "Unhandled PASS IP Block"
 #endif
 #endif
 

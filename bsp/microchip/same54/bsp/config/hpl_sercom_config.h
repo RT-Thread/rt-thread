@@ -376,7 +376,7 @@
 #define CONF_SERCOM_7_I2CM_SPEED 0x00 // Speed: Standard/Fast mode
 #endif
 #if CONF_SERCOM_7_I2CM_TRISE < 215 || CONF_SERCOM_7_I2CM_TRISE > 300
-#warning Bad I2C Rise time for Standard/Fast mode, reset to 215ns
+#warning "Bad I2C Rise time for Standard/Fast mode, reset to 215ns"
 #undef CONF_SERCOM_7_I2CM_TRISE
 #define CONF_SERCOM_7_I2CM_TRISE 215U
 #endif
@@ -395,10 +395,10 @@
 	 / (CONF_SERCOM_7_I2CM_BAUD * 10U))
 #ifndef CONF_SERCOM_7_I2CM_BAUD_RATE
 #if CONF_SERCOM_7_I2CM_BAUD_BAUDLOW > (0xFF * 2)
-#warning Requested I2C baudrate too low, please check
+#warning "Requested I2C baudrate too low, please check"
 #define CONF_SERCOM_7_I2CM_BAUD_RATE 0xFF
 #elif CONF_SERCOM_7_I2CM_BAUD_BAUDLOW <= 1
-#warning Requested I2C baudrate too high, please check
+#warning "Requested I2C baudrate too high, please check"
 #define CONF_SERCOM_7_I2CM_BAUD_RATE 1
 #else
 #define CONF_SERCOM_7_I2CM_BAUD_RATE                                                                                   \

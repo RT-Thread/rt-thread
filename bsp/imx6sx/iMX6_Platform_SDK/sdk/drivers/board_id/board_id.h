@@ -113,7 +113,7 @@ void show_board_id(const fsl_board_id_t board_id, const char* const indent);
 #elif defined(CHIP_MX6DQ)
 #define CHIP_TYPE        CHIP_TYPE_MX6DQ
 #else
-#error Need to define a chip type
+#error  "Need to define a chip type"
 #endif
 
 #if defined(BOARD_SABRE_AI)
@@ -125,7 +125,7 @@ void show_board_id(const fsl_board_id_t board_id, const char* const indent);
 #elif defined(BOARD_EVK)
 #define BOARD_TYPE            BOARD_TYPE_EVK
 #else
-#error Need to define a board type
+#error  "Need to define a board type"
 #endif
 
 #if defined(BOARD_REV_A)
@@ -137,7 +137,7 @@ void show_board_id(const fsl_board_id_t board_id, const char* const indent);
 #elif defined(BOARD_REV_D)
 #define BOARD_REVISION        BOARD_REVISION_D
 #else
-#error Need to define a board revision
+#error  "Need to define a board revision"
 #endif
 
 #endif /*BOARD_ID_H_ */

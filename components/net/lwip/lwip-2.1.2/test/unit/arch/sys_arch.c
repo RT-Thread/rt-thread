@@ -365,7 +365,7 @@ sys_arch_mbox_tryfetch(sys_mbox_t *q, void **msg)
 }
 
 #if LWIP_NETCONN_SEM_PER_THREAD
-#error LWIP_NETCONN_SEM_PER_THREAD==1 not supported
+#error  "LWIP_NETCONN_SEM_PER_THREAD==1 not supported"
 #endif /* LWIP_NETCONN_SEM_PER_THREAD */
 
 #endif /* !NO_SYS */

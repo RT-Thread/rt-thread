@@ -47,7 +47,7 @@ regular_func_with_section hw_divider_divmod_u32
 #if SIO_DIV_CSR_READY_LSB == 0
 .equ SIO_DIV_CSR_READY_SHIFT_FOR_CARRY, 1
 #else
-#error need to change SHIFT above
+#error  "need to change SHIFT above"
 #endif
 
 regular_func_with_section hw_divider_save_state

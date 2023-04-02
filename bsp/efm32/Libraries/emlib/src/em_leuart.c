@@ -61,7 +61,7 @@
 #elif (LEUART_COUNT == 2)
 #define LEUART_REF_VALID(ref)    (((ref) == LEUART0) || ((ref) == LEUART1))
 #else
-#error Undefined number of low energy UARTs (LEUART).
+#error  "Undefined number of low energy UARTs (LEUART)."
 #endif
 
 /** @endcond */

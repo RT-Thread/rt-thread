@@ -41,7 +41,7 @@ static rt_sem_t trans_done_semphr = RT_NULL;
 static rt_thread_t sld_thread = RT_NULL;
 
 #ifndef RT_USING_PWM
-    #error You need enable PWM to use this sample
+    #error  "You need enable PWM to use this sample"
 #else
     #define PWM_DEV_NAME "pwm0"
     #define PWM_DEV_CHANNEL 3
@@ -182,7 +182,7 @@ static void process_touch(void)
     }
 
 #ifndef RT_USING_PWM
-#error You need enable PWM to use this sample
+#error  "You need enable PWM to use this sample"
 #else
     /* Update the LED state if requested */
     if (led_update_req)

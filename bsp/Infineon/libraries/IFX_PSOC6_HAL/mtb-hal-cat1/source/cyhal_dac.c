@@ -89,7 +89,7 @@ static CTDAC_Type *const _cyhal_dac_base[] = {
     CTDAC1,
 #endif
 #if (CY_IP_MXS40PASS_CTDAC_INSTANCES > 2)
-#warning Unhandled CTDAC instance count
+#warning "Unhandled CTDAC instance count"
 #endif
 };
 

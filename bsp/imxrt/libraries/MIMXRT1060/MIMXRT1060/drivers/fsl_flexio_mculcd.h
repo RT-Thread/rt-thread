@@ -49,7 +49,7 @@
 #endif
 
 #if (16UL != FLEXIO_MCULCD_DATA_BUS_WIDTH) && (8UL != FLEXIO_MCULCD_DATA_BUS_WIDTH)
-#error Only support data bus 8-bit or 16-bit
+#error  "Only support data bus 8-bit or 16-bit"
 #endif
 
 /*! @brief FlexIO LCD transfer status */

@@ -327,7 +327,7 @@ static void _uhd_ctrl_phase_setup(void)
 		_uhd_ctrl_request_end(UHD_TRANS_DISCONNECT);
 		return; // Endpoint not valid
 	}
-#error TODO check address in list
+#error  "TODO check address in list"
 	/* Reconfigure USB address of pipe 0 used for all control endpoints */
 	uhd_udesc_set_uhaddr(0, uhd_ctrl_request_first->add);
 #else

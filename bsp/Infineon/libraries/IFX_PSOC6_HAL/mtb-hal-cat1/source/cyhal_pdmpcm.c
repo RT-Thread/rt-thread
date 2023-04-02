@@ -151,7 +151,7 @@ static PDM_Type *const _cyhal_pdm_pcm_base[] =
 #endif
 
 #if (_CYHAL_PDM_INSTANCES > 2)
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 };
 
@@ -216,7 +216,7 @@ static const _cyhal_system_irq_t* _cyhal_pdm_pcm_irq_n[] =
     _cyhal_pdm_pcm_irq_n1,
 #endif
 #if (_CYHAL_PDM_INSTANCES > 2)
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 };
 
@@ -248,7 +248,7 @@ static void _cyhal_pdm_pcm_get_block_from_irqn(_cyhal_system_irq_t irqn, uint8_t
         break;
 #endif
 #if (_CYHAL_PDM_INSTANCES > 2)
-    #warning Unhandled audioss instance count
+    #warning "Unhandled audioss instance count"
 #endif
 #endif /* (CY_CPU_CORTEX_M4) */
     default:
@@ -265,7 +265,7 @@ static const en_clk_dst_t _cyhal_pdm_clock[] =
 #if (CY_IP_MXPDM_INSTANCES >= 1)
     PCLK_PDM0_CLK_IF_SRSS
 #else
-    #warning Unhandled tdm instance count
+    #warning "Unhandled tdm instance count"
 #endif
 };
 #endif

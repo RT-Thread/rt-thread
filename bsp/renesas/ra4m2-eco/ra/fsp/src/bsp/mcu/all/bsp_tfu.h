@@ -51,7 +51,7 @@ FSP_HEADER
 
 /* No form of inline is available, it happens only when -std=c89, gnu89 and
  * above are OK */
-  #warning \
+  #warning "\"
     "-std=c89 doesn't support type checking on TFU. Please use -std=gnu89 or higher for example -std=c99"
  #else
   #ifdef __GNUC_GNU_INLINE__

@@ -81,7 +81,7 @@ __packed struct T_UINT32 {
 #define __UNALIGNED_UINT32(x)     (((struct T_UINT32 *)(x))->v)
 #endif
 #ifndef   __ALIGNED
-#warning No compiler specific solution for __ALIGNED. __ALIGNED is ignored.
+#warning "No compiler specific solution for __ALIGNED. __ALIGNED is ignored."
 #define __ALIGNED(x)
 #endif
 #ifndef   __PACKED
@@ -198,7 +198,7 @@ struct __packed__ T_UINT32 {
 #define __NO_RETURN
 #endif
 #ifndef   __USED
-#warning No compiler specific solution for __USED. __USED is ignored.
+#warning "No compiler specific solution for __USED. __USED is ignored."
 #define __USED
 #endif
 #ifndef   __WEAK
@@ -211,7 +211,7 @@ struct __packed__ T_UINT32 {
 #define __UNALIGNED_UINT32(x)     (((struct T_UINT32 *)(x))->v)
 #endif
 #ifndef   __ALIGNED
-#warning No compiler specific solution for __ALIGNED. __ALIGNED is ignored.
+#warning "No compiler specific solution for __ALIGNED. __ALIGNED is ignored."
 #define __ALIGNED(x)
 #endif
 #ifndef   __PACKED
@@ -223,7 +223,7 @@ struct __packed__ T_UINT32 {
 
 
 #else
-#error Unknown compiler.
+#error  "Unknown compiler."
 #endif
 
 

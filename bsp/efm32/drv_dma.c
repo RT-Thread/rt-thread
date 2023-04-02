@@ -30,7 +30,7 @@ DMA_DESCRIPTOR_TypeDef dmaControlBlock[DMA_CHAN_COUNT * 2] __attribute__ ((align
 #elif defined (__GNUC__)
 DMA_DESCRIPTOR_TypeDef dmaControlBlock[DMA_CHAN_COUNT * 2] __attribute__ ((aligned(256)));
 #else
-#error Undefined toolkit, need to define alignment
+#error  "Undefined toolkit, need to define alignment"
 #endif
 
 /* Private function prototypes -----------------------------------------------*/

@@ -94,7 +94,7 @@
 #elif defined(CONFIG_ARCH_QPFPU)
 #define FPU_REG_SIZE 2
 #else
-#error not supported !!!
+#error  "not supported !!!"
 #endif
 
 #define REG_F0_NDX   (INT_XCPT_REGS + FPU_REG_SIZE * 0)

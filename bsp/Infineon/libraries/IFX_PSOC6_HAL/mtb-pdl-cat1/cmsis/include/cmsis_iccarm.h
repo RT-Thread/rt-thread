@@ -30,7 +30,7 @@
 #define __CMSIS_ICCARM_H__
 
 #ifndef __ICCARM__
-  #error This file should only be compiled by ICCARM
+  #error  "This file should only be compiled by ICCARM"
 #endif
 
 #pragma system_include
@@ -50,7 +50,7 @@
     /* Needs IAR language extensions */
     #define __ALIGNED(x) __attribute__((aligned(x)))
   #else
-    #warning No compiler specific solution for __ALIGNED.__ALIGNED is ignored.
+    #warning "No compiler specific solution for __ALIGNED.__ALIGNED is ignored."
     #define __ALIGNED(x)
   #endif
 #endif
@@ -511,7 +511,7 @@ __packed struct  __iar_u32 { uint32_t v; };
   #endif
 
   #ifdef __INTRINSICS_INCLUDED
-  #error intrinsics.h is already included previously!
+  #error  "intrinsics.h is already included previously!"
   #endif
 
   #include <intrinsics.h>

@@ -26,7 +26,7 @@
 
 #if !defined(BL602) && !defined(BL702) && !defined(BL702L) && \
     !defined(BL616) && !defined(BL606P) && !defined(BL808) && !defined(BL628)
-#error please define a supported chip
+#error  "please define a supported chip"
 #endif
 
 #ifdef CONFIG_PARAM_ASSERT

@@ -51,7 +51,7 @@
 #endif
 
 #if ((ELCDIF_CTRL1_IRQ_MASK & ELCDIF_AS_CTRL_IRQ_MASK) || (ELCDIF_AS_CTRL_IRQ_MASK & ELCDIF_AS_CTRL_IRQ_EN_MASK))
-#error Interrupt bits overlap, need to update the interrupt functions.
+#error  "Interrupt bits overlap, need to update the interrupt functions."
 #endif
 
 /* LUT memory entery number. */

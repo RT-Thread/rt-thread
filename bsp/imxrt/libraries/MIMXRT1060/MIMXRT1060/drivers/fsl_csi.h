@@ -56,7 +56,7 @@
  * The queue max size is 254, so that the queue element index could use `uint8_t`.
  */
 #if (CSI_DRIVER_ACTUAL_QUEUE_SIZE > 254)
-#error Required queue size is too large
+#error  "Required queue size is too large"
 #endif
 
 /*
@@ -72,17 +72,17 @@
      (CSI_CR1_EOF_INT_EN_MASK | CSI_CR1_COF_INT_EN_MASK | CSI_CR1_SF_OR_INTEN_MASK | CSI_CR1_RF_OR_INTEN_MASK | \
       CSI_CR1_SFF_DMA_DONE_INTEN_MASK | CSI_CR1_STATFF_INTEN_MASK | CSI_CR1_FB2_DMA_DONE_INTEN_MASK |           \
       CSI_CR1_FB1_DMA_DONE_INTEN_MASK | CSI_CR1_RXFF_INTEN_MASK | CSI_CR1_SOF_INTEN_MASK))
-#error CSI_CR1_INT_EN_MASK could not cover all interrupt bits in CSICR1.
+#error  "CSI_CR1_INT_EN_MASK could not cover all interrupt bits in CSICR1."
 #endif
 
 #if ((~CSI_CR3_INT_EN_MASK) & (CSI_CR3_ECC_INT_EN_MASK | CSI_CR3_HRESP_ERR_EN_MASK))
-#error CSI_CR3_INT_EN_MASK could not cover all interrupt bits in CSICR3.
+#error  "CSI_CR3_INT_EN_MASK could not cover all interrupt bits in CSICR3."
 #endif
 
 #if ((~CSI_CR18_INT_EN_MASK) &                                                                                   \
      ((CSI_CR18_FIELD0_DONE_IE_MASK | CSI_CR18_DMA_FIELD1_DONE_IE_MASK | CSI_CR18_BASEADDR_CHANGE_ERROR_IE_MASK) \
       << 6U))
-#error CSI_CR18_INT_EN_MASK could not cover all interrupt bits in CSICR18.
+#error  "CSI_CR18_INT_EN_MASK could not cover all interrupt bits in CSICR18."
 #endif
 
 /*! @brief Error codes for the CSI driver. */

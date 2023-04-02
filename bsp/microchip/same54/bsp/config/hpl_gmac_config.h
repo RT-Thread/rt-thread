@@ -199,7 +199,7 @@
 #endif
 
 #if CONF_GMAC_MCK_FREQUENCY > 2500000
-#warning For conformance with the 802.3 specification, MDC must not exceed 2.5 MHz
+#warning "For conformance with the 802.3 specification, MDC must not exceed 2.5 MHz"
 #endif
 // <q> Disable Copy of Pause Frames
 // <i> Set to one to prevent valid pause frames being copied to memory. When

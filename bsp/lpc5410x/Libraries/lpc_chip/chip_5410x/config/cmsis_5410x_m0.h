@@ -58,7 +58,7 @@ extern "C" {
 //  #pragma push // FIXME not usable for IAR
   #pragma language=extended
 #else
-  #error Not supported compiler type
+  #error  "Not supported compiler type"
 #endif
 
 /*

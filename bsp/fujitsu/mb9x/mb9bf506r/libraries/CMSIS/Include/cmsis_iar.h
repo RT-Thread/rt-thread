@@ -14,7 +14,7 @@
 #define __CMSIS_IAR_H__
 
 #ifndef __ICCARM__
-  #error This file should only be compiled by ICCARM
+  #error  "This file should only be compiled by ICCARM"
 #endif
 
 #pragma system_include

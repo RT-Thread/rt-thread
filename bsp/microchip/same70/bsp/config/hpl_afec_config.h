@@ -1034,7 +1034,7 @@
       || CONF_AFEC_0_CHANNEL6_ENABLE || CONF_AFEC_0_CHANNEL7_ENABLE || CONF_AFEC_0_CHANNEL8_ENABLE                     \
       || CONF_AFEC_0_CHANNEL9_ENABLE || CONF_AFEC_0_CHANNEL10_ENABLE || CONF_AFEC_0_CHANNEL11_ENABLE)                  \
      == 0)
-#warning Select one channel at least, check your configuration!
+#warning "Select one channel at least, check your configuration!"
 #endif
 
 // <<< end of configuration section >>>

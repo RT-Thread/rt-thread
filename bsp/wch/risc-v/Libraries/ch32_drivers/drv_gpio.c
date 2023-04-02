@@ -45,7 +45,7 @@
 #define __CH32_PORT_MAX 1u
 #else
 #define __CH32_PORT_MAX 0u
-#error Unsupported CH32 GPIO peripheral.
+#error  "Unsupported CH32 GPIO peripheral."
 #endif
 
 #define PIN_STPORT_MAX __CH32_PORT_MAX

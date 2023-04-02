@@ -49,7 +49,7 @@ extern "C" {
 struct netif;
 
 #if (BRIDGEIF_MAX_PORTS < 0) || (BRIDGEIF_MAX_PORTS >= 64)
-#error BRIDGEIF_MAX_PORTS must be [1..63]
+#error  "BRIDGEIF_MAX_PORTS must be [1..63]"
 #elif BRIDGEIF_MAX_PORTS < 8
 typedef u8_t bridgeif_portmask_t;
 #elif BRIDGEIF_MAX_PORTS < 16

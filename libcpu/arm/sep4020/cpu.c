@@ -14,7 +14,7 @@
 extern rt_base_t rt_hw_interrupt_disable(void);
 
 //TODO
-#warning I DON'T KNOW IF THE MMU OPERATION WORKS ON SEP4020
+#warning "I DON'T KNOW IF THE MMU OPERATION WORKS ON SEP4020"
 
 /**
  * @addtogroup S3C24X0

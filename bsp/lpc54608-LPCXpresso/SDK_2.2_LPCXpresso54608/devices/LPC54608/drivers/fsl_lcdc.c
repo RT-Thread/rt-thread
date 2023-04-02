@@ -41,7 +41,7 @@
 
 /* Macro to contruct the LCD_POL[PCD]. */
 #if (LCD_POL_PCD_LO_MASK != 0x1F)
-#error LCD_POL_PCD_LO is not 5-bit. The macro LCD_POL_PCD_LO_WIDTH should be updated.
+#error  "LCD_POL_PCD_LO is not 5-bit. The macro LCD_POL_PCD_LO_WIDTH should be updated."
 #endif
 #define LCD_POL_PCD_LO_WIDTH 5U
 #define LCD_POL_PCD(pcd) (LCD_POL_PCD_LO(pcd) | LCD_POL_PCD_HI((pcd) >> LCD_POL_PCD_LO_WIDTH))
@@ -55,7 +55,7 @@
 
 /* Detect the cursor interrupt and normal interrupt bits overlap. */
 #if (LCDC_CURSOR_INT_MASK & LCDC_NORMAL_INT_MASK)
-#error Cursor interrupt and normal interrupt overlap. The driver should be updated.
+#error  "Cursor interrupt and normal interrupt overlap. The driver should be updated."
 #endif
 
 /* The max cursor clip value. */

@@ -43,10 +43,10 @@
 #if LWIP_SNMP && SNMP_LWIP_MIB2 /* don't build if not configured for use in lwipopts.h */
 
 #if !LWIP_STATS
-#error LWIP_SNMP MIB2 needs LWIP_STATS (for MIB2)
+#error  "LWIP_SNMP MIB2 needs LWIP_STATS (for MIB2)"
 #endif
 #if !MIB2_STATS
-#error LWIP_SNMP MIB2 needs MIB2_STATS (for MIB2)
+#error  "LWIP_SNMP MIB2 needs MIB2_STATS (for MIB2)"
 #endif
 
 #include "lwip/snmp.h"

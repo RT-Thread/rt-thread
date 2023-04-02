@@ -1337,7 +1337,7 @@ netif_alloc_client_data_id(void)
   LWIP_ASSERT_CORE_LOCKED();
 
 #if LWIP_NUM_NETIF_CLIENT_DATA > 256
-#error LWIP_NUM_NETIF_CLIENT_DATA must be <= 256
+#error  "LWIP_NUM_NETIF_CLIENT_DATA must be <= 256"
 #endif
   LWIP_ASSERT("Increase LWIP_NUM_NETIF_CLIENT_DATA in lwipopts.h", result < LWIP_NUM_NETIF_CLIENT_DATA);
   return (u8_t)(result + LWIP_NETIF_CLIENT_DATA_INDEX_MAX);

@@ -105,7 +105,7 @@
 #elif defined(__SAMD21J16B__) || defined(__ATSAMD21J16B__)
   #include "samd21j16b.h"
 #else
-  #error Library does not support the specified device.
+  #error  "Library does not support the specified device."
 #endif
 
 #endif /* _SAMD21_ */

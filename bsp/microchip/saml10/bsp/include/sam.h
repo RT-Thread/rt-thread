@@ -43,7 +43,7 @@
 #elif defined(__SAML10E16A__) || defined(__ATSAML10E16A__)
 #include "saml10e16a.h"
 #else
-#error Library does not support the specified device
+#error  "Library does not support the specified device"
 #endif
 
 #endif /* _SAM_ */

@@ -724,7 +724,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef *hrtc);  /*!< pointer to
 
 #else /* !CORE_CA7 */
 
-#error Please #define CORE_CM4 or CORE_CA7
+#error  "Please #define CORE_CM4 or CORE_CA7"
 
 #endif
 /**

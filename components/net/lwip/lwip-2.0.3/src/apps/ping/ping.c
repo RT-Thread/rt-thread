@@ -96,7 +96,7 @@ err_t lwip_ping_send(int s, ip_addr_t *addr, int size)
 #elif LWIP_IPV4
     to.sin_addr.s_addr = addr->addr;
 #elif LWIP_IPV6
-#error Not supported IPv6.
+#error  "Not supported IPv6."
 #endif
 
     err = lwip_sendto(s, iecho, ping_size, 0, (struct sockaddr*) &to, sizeof(to));

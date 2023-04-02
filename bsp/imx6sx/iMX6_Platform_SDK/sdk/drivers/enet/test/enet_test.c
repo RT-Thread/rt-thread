@@ -43,7 +43,7 @@
 #elif defined(BOARD_EVB)
 #define ENET_PHY_ADDR 0
 #else
-#Error Unknown ENET_PHY_ADDR
+#error  "Unknown ENET_PHY_ADDR"
 #endif
 
 static imx_enet_priv_t enet0;

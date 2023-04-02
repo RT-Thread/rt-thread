@@ -170,7 +170,7 @@ area of a module to a memory space in physical RAM. */
 #define __RAM_FUNC                  __attribute__((section("RAMCODE")))
 #endif /* __RAM_FUNC */
 #else
-#error  "unsupported compiler!!"
+#error  " ""unsupported compiler!!"
 #endif
 /**
  * @}

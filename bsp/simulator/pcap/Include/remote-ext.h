@@ -36,7 +36,7 @@
 
 
 #ifndef HAVE_REMOTE
-#error Please do not include this file directly. Just define HAVE_REMOTE and then include pcap.h
+#error  "Please do not include this file directly. Just define HAVE_REMOTE and then include pcap.h"
 #endif
 
 // Definition for Microsoft Visual Studio

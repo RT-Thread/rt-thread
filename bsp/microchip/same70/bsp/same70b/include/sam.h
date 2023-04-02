@@ -49,7 +49,7 @@
 #elif defined(__SAME70Q21B__) || defined(__ATSAME70Q21B__)
 #include "same70q21b.h"
 #else
-#error Library does not support the specified device
+#error  "Library does not support the specified device"
 #endif
 
 #endif /* _SAM_ */

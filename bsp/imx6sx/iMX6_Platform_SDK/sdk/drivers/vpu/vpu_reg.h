@@ -385,7 +385,7 @@
 #define PARA_BUF2_SIZE                  (2 * 1024)
 #define PARA_BUF_SIZE                   (10 * 1024)
 #else
-#error  you must define PLATFORM properly
+#error  " you must define PLATFORM properly"
 #endif
 
 /*----------------------------------------------------------------------------

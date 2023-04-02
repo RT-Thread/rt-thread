@@ -33,7 +33,7 @@
 
 /* Make sure that this isn't included by Visual C++ */
 #ifdef _MSC_VER
-#error You should run hg revert SDL_config.h 
+#error  "You should run hg revert SDL_config.h "
 #endif
 
 /* C language features */

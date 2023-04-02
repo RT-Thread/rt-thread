@@ -309,7 +309,7 @@
 #elif defined ( __TASKING__ )
 
 #else
-  #error Unknown compiler
+  #error  "Unknown compiler"
 #endif
 
 
@@ -476,7 +476,7 @@ extern "C"
   #define CMSIS_INLINE
 
 #else
-  #error Unknown compiler
+  #error  "Unknown compiler"
 #endif
 
 #define __SIMD32(addr)        (*(__SIMD32_TYPE **) & (addr))
@@ -7146,7 +7146,7 @@ void arm_rfft_fast_f32(
 #elif defined ( __TASKING__ )
 
 #else
-  #error Unknown compiler
+  #error  "Unknown compiler"
 #endif
 
 #endif /* _ARM_MATH_H */

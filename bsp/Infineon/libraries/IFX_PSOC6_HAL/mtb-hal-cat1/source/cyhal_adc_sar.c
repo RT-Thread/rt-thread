@@ -102,7 +102,7 @@ static SAR_Type *const _cyhal_adc_base[] =
     SAR1,
 #endif
 #if (_CYHAL_ADC_SAR_INSTANCES >= 3)
-    #warning Unhandled SAR instance count
+    #warning "Unhandled SAR instance count"
 #endif
 #endif
 };
@@ -122,7 +122,7 @@ static const en_clk_dst_t _cyhal_adc_clock[] =
     PCLK_PASS0_CLOCK_SAR,
     PCLK_PASS1_CLOCK_SAR,
 #else
-    #warning Unhandled SAR instance count
+    #warning "Unhandled SAR instance count"
 #endif
 };
 
@@ -141,7 +141,7 @@ static const cyhal_source_t _cyhal_adc_tr_out[] =
     CYHAL_TRIGGER_PASS0_TR_SAR_OUT,
     CYHAL_TRIGGER_PASS1_TR_SAR_OUT,
 #else
-    #warning Unhandled SAR instance count
+    #warning "Unhandled SAR instance count"
 #endif
 };
 
@@ -160,7 +160,7 @@ static const cyhal_dest_t _cyhal_adc_tr_in[] =
     CYHAL_TRIGGER_PASS0_TR_SAR_IN,
     CYHAL_TRIGGER_PASS1_TR_SAR_IN,
 #else
-    #warning Unhandled SAR instance count
+    #warning "Unhandled SAR instance count"
 #endif
 };
 
@@ -181,7 +181,7 @@ static const _cyhal_system_irq_t _cyhal_adc_irq_n[] =
     pass_0_interrupt_sar_IRQn,
     pass_0_interrupt_sar_IRQn,
 #else
-    #warning Unhandled SAR instance count
+    #warning "Unhandled SAR instance count"
 #endif
 };
 
@@ -210,7 +210,7 @@ static uint8_t _cyhal_adc_get_block_from_irqn(_cyhal_system_irq_t irqn)
     case pass_1_interrupt_sar_IRQn:
         return 1;
 #else
-    #warning Unhandled SAR instance count
+    #warning "Unhandled SAR instance count"
 #endif
 #endif /* (CY_CPU_CORTEX_M4 || CY_IP_M0S8PASS4A_SAR_INSTANCES) */
     default:

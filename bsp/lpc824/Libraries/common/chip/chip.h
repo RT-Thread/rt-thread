@@ -40,13 +40,13 @@ extern "C" {
 #endif
 
 #ifndef CORE_M0PLUS
-#error CORE_M0PLUS is not defined for the LPC8xx architecture
-#error CORE_M0PLUS should be defined as part of your compiler define list
+#error  "CORE_M0PLUS is not defined for the LPC8xx architecture"
+#error  "CORE_M0PLUS should be defined as part of your compiler define list"
 #endif
 
 #ifndef CHIP_LPC8XX
-#error The LPC8XX Chip include path is used for this build, but
-#error CHIP_LPC8XX is not defined!
+#error  "The LPC8XX Chip include path is used for this build, but"
+#error  "CHIP_LPC8XX is not defined!"
 #endif
 
 /** @defgroup PERIPH_8XX_BASE CHIP: LPC8xx Peripheral addresses and register set declarations

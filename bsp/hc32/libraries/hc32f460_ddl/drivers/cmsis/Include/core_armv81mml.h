@@ -73,7 +73,7 @@
 #define __CORTEX_M                      (81U)                                       /*!< Cortex-M Core */
 
 #if defined ( __CC_ARM )
-  #error Legacy Arm Compiler does not support Armv8.1-M target architecture.
+  #error  "Legacy Arm Compiler does not support Armv8.1-M target architecture."
 #elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
   #if defined __ARM_FP
     #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)

@@ -38,7 +38,7 @@
 
 /* Check the used Driver version */
 #if (CY_SMIF_DRV_VERSION_REQUIRED > CY_SMIF_DRV_VERSION)
-   #error The QSPI Configurator requires a newer version of the PDL. Update the PDL in your project.
+   #error  "The QSPI Configurator requires a newer version of the PDL. Update the PDL in your project."
 #endif
 
 #define CY_SMIF_DEVICE_NUM 1

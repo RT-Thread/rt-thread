@@ -176,9 +176,9 @@
                     typedef long long int s64;/**< used for signed 64bit */
                     typedef unsigned long long int u64;/**< used for unsigned 64bit */
                 #else
-                    #warning Either the correct data type for signed 64 bit integer \
+                    #warning "Either the correct data type for signed 64 bit integer \"
                     could not be found, or 64 bit integers are not supported in your environment.
-                    #warning If 64 bit integers are supported on your platform, \
+                    #warning "If 64 bit integers are supported on your platform, \"
                     please set s64 manually.
                 #endif
 
@@ -218,7 +218,7 @@
                 typedef unsigned long int u64;/**< used for unsigned 64bit */
 
             #else
-                #warning The data types defined above which not supported \
+                #warning "The data types defined above which not supported \"
                 define the data types manually
             #endif
         #endif
@@ -250,9 +250,9 @@
                 typedef long long int s64;/**< used for signed 64bit */
                 typedef unsigned long long int u64;/**< used for unsigned 64bit */
             #else
-                #warning Either the correct data type for signed 64 bit integer \
+                #warning "Either the correct data type for signed 64 bit integer \"
                 could not be found, or 64 bit integers are not supported in your environment.
-                #warning If 64 bit integers are supported on your platform, \
+                #warning "If 64 bit integers are supported on your platform, \"
                 please set s64 manually.
             #endif
 
@@ -292,7 +292,7 @@
             typedef unsigned long int u64;/**< used for unsigned 64bit */
 
         #else
-            #warning The data types defined above which not supported \
+            #warning "The data types defined above which not supported \"
             define the data types manually
         #endif
     #endif

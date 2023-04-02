@@ -33,7 +33,7 @@
 #define BOARD_APP_UART_IRQ  IRQn_UART0
 #else
 #ifndef BOARD_APP_UART_IRQ
-#warning no IRQ specified for applicaiton uart
+#warning "no IRQ specified for applicaiton uart"
 #endif
 #endif
 

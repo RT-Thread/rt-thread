@@ -60,7 +60,7 @@
 #define __STM32_PORT_MAX 1u
 #else
 #define __STM32_PORT_MAX 0u
-#error Unsupported STM32 GPIO peripheral.
+#error  "Unsupported STM32 GPIO peripheral."
 #endif
 
 #define PIN_STPORT_MAX __STM32_PORT_MAX

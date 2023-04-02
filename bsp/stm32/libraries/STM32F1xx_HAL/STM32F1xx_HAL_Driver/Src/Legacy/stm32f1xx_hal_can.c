@@ -128,10 +128,10 @@
 /* Select HAL CAN module in stm32f1xx_hal_conf.h file:
    (#) HAL_CAN_MODULE_ENABLED for new HAL CAN driver fixing FIFO limitations
    (#) HAL_CAN_LEGACY_MODULE_ENABLED for legacy HAL CAN driver */
-#error 'The HAL CAN driver cannot be used with its legacy, Please ensure to enable only one HAL CAN module at once in stm32f1xx_hal_conf.h file'
+#error  "The HAL CAN driver cannot be used with its legacy, Please ensure to enable only one HAL CAN module at once in stm32f1xx_hal_conf.h file"
 #endif /* HAL_CAN_MODULE_ENABLED */
 
-#warning 'Legacy HAL CAN driver is enabled! It can be used with known limitations, refer to the release notes. However it is recommended to use rather the new HAL CAN driver'
+#warning "Legacy HAL CAN driver is enabled! It can be used with known limitations, refer to the release notes. However it is recommended to use rather the new HAL CAN driver"
   
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
