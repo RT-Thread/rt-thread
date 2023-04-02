@@ -64,6 +64,10 @@ struct dfs_fd
     void *data;                  /* Specific fd data */
 };
 
+#define DFS_FD_GET_TYPE(fd)         ((fd)->vnode == RT_NULL ? 0       : (fd)->vnode->type)
+#define DFS_FD_GET_PATH(fd)         ((fd)->vnode == RT_NULL ? RT_NULL : (fd)->vnode->path)
+#define DFS_FD_GET_SIZE(fd)         ((fd)->vnode == RT_NULL ? 0       : (fd)->vnode->size)
+
 struct dfs_mmap2_args
 {
     void *addr;
