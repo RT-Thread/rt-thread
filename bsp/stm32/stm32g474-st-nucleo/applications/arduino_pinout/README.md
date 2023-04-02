@@ -27,15 +27,15 @@ For additional information on pin layout, refer to [pins_arduino.c](pins_arduino
 | 0 (D0) | PC4 | Yes | Serial-Tx, by default managed by the RT-Thread UART device framework uart1 |
 | 1 (D1) | PC5 | Yes | Serial-Rx, by default managed by the RT-Thread UART device framework uart1 |
 | 2 (D2) | PA10 | Yes |  |
-| 3 (D3) | PB3 | Yes |  | PWM2-CH2, taken over by the RT-Thread PWM device framework pwm2 by default
+| 3 (D3) | PB3 | Yes |  | PWM2-CH2, taken over by the RT-Thread PWM device framework pwm2 by default |
 | 4 (D4) | PB5 | Yes |  |
 | 5 (D5) | PB4 | Yes | PWM3-CH1, by default managed by the RT-Thread PWM device framework pwm3 |
 | 6 (D6) | PB10 | Yes | PWM2-CH3, by default managed by the RT-Thread PWM device framework pwm2 |
 | 7 (D7) | PA8 | Yes |  |
 | 8 (D8) | PA9 | Yes |  |
-| 9 (D9) | PC7 | Yes |  | PWM8-CH2, taken over by the RT-Thread PWM device framework pwm8 by default
-| 10 (D10) | PB6 | Yes |  | PWM4-CH1, taken over by the RT-Thread PWM device framework pwm4 by default
-| 11 (D11) | PA7 | Yes |  | PWM3-CH2, taken over by the RT-Thread PWM device framework pwm3 by default
+| 9 (D9) | PC7 | Yes |  | PWM8-CH2, taken over by the RT-Thread PWM device framework pwm8 by default |
+| 10 (D10) | PB6 | Yes |  | PWM4-CH1, taken over by the RT-Thread PWM device framework pwm4 by default |
+| 11 (D11) | PA7 | Yes |  | PWM3-CH2, taken over by the RT-Thread PWM device framework pwm3 by default |
 | 12 (D12) | PA6 | Yes |  |
 | 13 (D13) | PA5 | Yes |  |
 | 14 (D14) | PB9 | Yes | I2C1-SDA, by default managed by the RT-Thread I2C device framework i2c1 |
