@@ -325,7 +325,7 @@ nvm_rank_ldo5:
 #define OTP_OUTPUT_LDO5         ((NVM_SECTOR3_REGISTER_6 & 0x03))       // nvm_output_ldo5
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-#define BIT(_x)  (1<<(_x))
+#define BIT(_x)  (1UL << (_x))
 #define STM32_PMIC_NUM_IRQ_REGS       4
 
 #define TURN_ON_REG                 0x1

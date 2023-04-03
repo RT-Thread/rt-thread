@@ -45,7 +45,7 @@ struct clk_core;
 struct clk_ops;
 
 #undef BIT
-#define BIT(x) (1 << (x))
+#define BIT(x) (1UL << (x))
 
 #define BITS_PER_LONGS 32
 #define GENMASK(h, l) \
