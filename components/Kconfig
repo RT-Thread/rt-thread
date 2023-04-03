@@ -26,7 +26,7 @@ config RT_USING_LEGACY
     default n
 
 source "$RTT_DIR/components/finsh/Kconfig"
-source "$RTT_DIR/components/Kconfig_dfs"
+source "$RTT_DIR/components/dfs/Kconfig"
 source "$RTT_DIR/components/fal/Kconfig"
 source "$RTT_DIR/components/lwp/Kconfig"
 source "$RTT_DIR/components/drivers/Kconfig"

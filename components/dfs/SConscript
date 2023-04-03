@@ -1,25 +1,15 @@
-from building import *
+# RT-Thread building script for bridge
+
 import os
+from building import *
 
-# The set of source files associated with this SConscript file.
-src     = []
-cwd     = GetCurrentDir()
-CPPPATH = [cwd + "/include"]
-group   = []
+cwd = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
 
-if GetDepend('RT_USING_DFS') and not GetDepend('RT_USING_DFS_V2'):
-    src = ['src/dfs.c', 'src/dfs_file.c', 'src/dfs_fs.c']
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
-    if GetDepend('DFS_USING_POSIX'):
-        src += ['src/dfs_posix.c']
-
-    group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
-
-    # search in the file system implementation
-    list = os.listdir(cwd)
-
-    for item in list:
-        if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
-            group = group + SConscript(os.path.join(item, 'SConscript'))
-
-Return('group')
+Return('objs')
