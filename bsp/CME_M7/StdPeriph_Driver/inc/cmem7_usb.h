@@ -212,7 +212,7 @@ void USB_EnableInt(BOOL enable);
 
 /**
  * @brief Flush TX/RX FIFO
-   * @param[in] num Flush FIFO��0: non-periodic TX FIFO (HOST Mode) or FIFO 0 (DEVICE Mode); 1: Periodic TX FIFO (HOST Mode) or FIFO 1 (DEVICE Mode); 2-15: FIFO n in DEVICE Mode; 16: Flush All TX FIFO; otherwise: Flush RX FIFO
+   * @param[in] num Flush FIFO, 0: non-periodic TX FIFO (HOST Mode) or FIFO 0 (DEVICE Mode); 1: Periodic TX FIFO (HOST Mode) or FIFO 1 (DEVICE Mode); 2-15: FIFO n in DEVICE Mode; 16: Flush All TX FIFO; otherwise: Flush RX FIFO
  * @retval void
    */
 void USB_FlushFIFO(uint32_t num);
@@ -233,7 +233,7 @@ BOOL USB_roleIsHost(void);
 /**
  * @brief Control and get VBus Status (Only for HOST Mode)
    * @param[in] opt Bit1: Set VBus using Bit0; Bit0: Turn VBus On or Off
- * @retval BOOL TRUE: VBus is on; FALSE��VBus is off
+ * @retval BOOL TRUE: VBus is on; FALSE: VBus is off
  * @note It cannot control VBus actually due to HW problem
    */
 BOOL USB_hostVBus(uint32_t opt);
@@ -363,13 +363,13 @@ BOOL USB_hostINT_isPCD(void);
 void USB_hostINT_clrPCD(void);
 
 /**
- * @brief Port Enable/Disable Change��PEDC��Interrupt Asserted (Only for HOST Mode)
+ * @brief Port Enable/Disable Change (PEDC) Interrupt Asserted (Only for HOST Mode)
  * @retval BOOL TRUE: Interrupt Asserted; FALSE: Interrupt is NOT asserted
    */
 BOOL USB_hostINT_isPEDC(void);
 
 /**
- * @brief Clear Port Enable/Disable Change��PEDC��Interrupt Flag (Only for HOST Mode)
+ * @brief Clear Port Enable/Disable Change (PEDC) Interrupt Flag (Only for HOST Mode)
  * @retval void
    */
 void USB_hostINT_clrPEDC(void);
@@ -520,7 +520,7 @@ void USB_devINT_enDone(uint32_t ep, BOOL in, BOOL en);
  * @brief Transaction Done Interrupt Asserted (Only for DEVICE Mode)
    * @param[in] ep Endpoint
    * @param[in] in Endpoint Direction, TRUE: IN; FALSE: OUT
- * @retval uint32_t Result, Bit0: Done; Bit1��Buffer Not Available Error; Bit2: SETUP Phase Done
+ * @retval uint32_t Result, Bit0: Done; Bit1: Buffer Not Available Error; Bit2: SETUP Phase Done
    */
 uint32_t USB_devINT_isDone(uint32_t ep, BOOL in);
 
