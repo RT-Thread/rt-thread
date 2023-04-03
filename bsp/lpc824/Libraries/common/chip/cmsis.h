@@ -62,11 +62,11 @@ extern "C" {
 //  #pragma push // FIXME not usable for IAR
   #pragma language=extended
 #else
-  #error Not supported compiler type
+  #error "Not supported compiler type"
 #endif
 
 #if !defined(CORE_M0PLUS)
-#error Please #define CORE_M0PLUS
+#error "Please #define CORE_M0PLUS"
 #endif
 
 /** @defgroup CMSIS_8XX CHIP: LPC8xx Cortex CMSIS definitions

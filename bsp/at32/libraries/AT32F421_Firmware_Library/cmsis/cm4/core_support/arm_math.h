@@ -367,7 +367,7 @@ extern "C"
 #elif defined ( _MSC_VER )
 
 #else
-  #error Unknown compiler
+  #error "Unknown compiler"
 #endif
 
 
@@ -881,7 +881,7 @@ extern "C"
 #elif defined(_MSC_VER )
   #define __SIMD32_TYPE int32_t
 #else
-  #error Unknown compiler
+  #error "Unknown compiler"
 #endif
 
 #define __SIMD32(addr)        (*(__SIMD32_TYPE **) & (addr))
@@ -8954,7 +8954,7 @@ float32_t arm_yule_distance(const uint32_t *pA, const uint32_t *pB, uint32_t num
 #elif defined ( _MSC_VER )
 
 #else
-  #error Unknown compiler
+  #error "Unknown compiler"
 #endif
 
 #ifdef   __cplusplus

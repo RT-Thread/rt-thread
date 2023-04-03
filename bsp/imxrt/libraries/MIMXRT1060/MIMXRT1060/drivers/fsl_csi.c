@@ -1051,7 +1051,7 @@ void CSI_ExtractYFromUYVY(void *datBase, const void *dmaBase, size_t count)
 #pragma diag_default = Pe940
 #endif
 #else
-#error Toolchain not supported.
+#error "Toolchain not supported."
 #endif
 
 static void CSI_MemCopy(void *pDest, const void *pSrc, size_t cnt)

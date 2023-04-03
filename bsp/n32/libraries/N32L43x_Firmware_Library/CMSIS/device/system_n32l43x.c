@@ -100,29 +100,29 @@
     #elif (SYSCLK_FREQ == MSI_VALUE_L6)
         #define MSI_CLK 6
     #else
-        #error SYSCL_FREQ must be set to MSI_VALUE_Lx(x=0~6)
+        #error "SYSCL_FREQ must be set to MSI_VALUE_Lx(x=0~6)"
     #endif
 
 #elif SYSCLK_SRC == SYSCLK_USE_HSI
 
     #if SYSCLK_FREQ != HSI_VALUE
-        #error SYSCL_FREQ must be set to HSI_VALUE
+        #error "SYSCL_FREQ must be set to HSI_VALUE"
     #endif
 
 #elif SYSCLK_SRC == SYSCLK_USE_HSE
 
     #ifndef HSE_VALUE
-        #error HSE_VALUE must be defined!
+        #error "HSE_VALUE must be defined!"
     #endif
 
     #if SYSCLK_FREQ != HSE_VALUE
-        #error SYSCL_FREQ must be set to HSE_VALUE
+        #error "SYSCL_FREQ must be set to HSE_VALUE"
     #endif
 
 #elif SYSCLK_SRC == SYSCLK_USE_HSI_PLL
 
     #ifndef HSI_VALUE
-        #error HSI_VALUE must be defined!
+        #error "HSI_VALUE must be defined!"
     #endif
 
     #if ((SYSCLK_FREQ % (HSI_VALUE / 2)) == 0) && (SYSCLK_FREQ / (HSI_VALUE / 2) >= 2)                                     \
@@ -146,13 +146,13 @@
         #define PLL_MUL    (SYSCLK_FREQ / (HSI_VALUE / 4))
 
     #else
-        #error Cannot make a PLL multiply factor to SYSCLK_FREQ.
+        #error "Cannot make a PLL multiply factor to SYSCLK_FREQ."
     #endif
 
 #elif SYSCLK_SRC == SYSCLK_USE_HSE_PLL
 
     #ifndef HSE_VALUE
-        #error HSE_VALUE must be defined!
+        #error "HSE_VALUE must be defined!"
     #endif
 
     #if ((SYSCLK_FREQ % (HSE_VALUE / 2)) == 0) && (SYSCLK_FREQ / (HSE_VALUE / 2) >= 2)                                     \
@@ -176,11 +176,11 @@
         #define PLL_MUL    (SYSCLK_FREQ / (HSE_VALUE / 4))
 
     #else
-        #error Cannot make a PLL multiply factor to SYSCLK_FREQ.
+        #error "Cannot make a PLL multiply factor to SYSCLK_FREQ."
     #endif
 
 #else
-#error wrong value for SYSCLK_SRC
+#error "wrong value for SYSCLK_SRC"
 #endif
 
 /* #define VECT_TAB_SRAM */

@@ -25,7 +25,7 @@
 #elif defined(EFM32G230F128)
 #elif defined(EFM32GG990F1024)
 #else
-#error Unknown MCU type
+#error "Unknown MCU type"
 #endif
 
 /* Includes ------------------------------------------------------------------*/

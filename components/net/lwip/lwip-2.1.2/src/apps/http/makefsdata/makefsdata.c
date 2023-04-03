@@ -74,7 +74,7 @@ int deflate_level = 10; /* default compression level, can be changed via command
 
 #else
 
-#error makefsdata not supported on this platform
+#error "makefsdata not supported on this platform"
 
 #endif
 

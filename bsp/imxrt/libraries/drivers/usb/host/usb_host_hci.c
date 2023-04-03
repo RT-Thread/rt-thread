@@ -27,7 +27,7 @@
 
 #if defined __CORTEX_M && (__CORTEX_M == 7U)
 #if (defined(USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE) && (USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE > 0U))
-#warning USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE is not supported.
+#warning "USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE is not supported."
 #endif
 #endif
 

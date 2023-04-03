@@ -65,7 +65,7 @@ extern "C" {
  #elif __ARM_ARCH_8M_MAIN__
   #define RENESAS_CORTEX_M33
  #else
-  #warning Unsupported Architecture
+  #warning "Unsupported Architecture"
  #endif
 
 /* ----------------Configuration of the Cortex-M Processor and Core Peripherals---------------- */
@@ -135,7 +135,7 @@ extern "C" {
 
 /* anonymous unions are enabled by default */
  #else
-  #warning Not supported compiler type
+  #warning "Not supported compiler type"
  #endif
 
 /* =========================================================================================================================== */

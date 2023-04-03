@@ -109,7 +109,7 @@ static MXS40ADCMIC_Type *const _cyhal_adcmic_base[] =
 #if (CY_IP_MXS40ADCMIC_INSTANCES <= 1)
     MXS40ADCMIC0,
 #else
-    #warning Unhandled ADCMIC instance count
+    #warning "Unhandled ADCMIC instance count"
 #endif
 };
 
@@ -118,7 +118,7 @@ static const en_clk_dst_t _cyhal_adcmic_clock[] =
 #if (CY_IP_MXS40ADCMIC_INSTANCES <= 1)
     PCLK_ADCMIC_CLK_HF,
 #else
-    #warning Unhandled ADCMIC instance count
+    #warning "Unhandled ADCMIC instance count"
 #endif
 };
 
@@ -129,7 +129,7 @@ static const _cyhal_system_irq_t _cyhal_adcmic_irq_n[] =
 #if (CY_IP_MXS40ADCMIC_INSTANCES <= 1)
     adcmic_interrupt_adcmic_IRQn,
 #else
-    #warning Unhandled ADCMIC instance count
+    #warning "Unhandled ADCMIC instance count"
 #endif
 };
 
@@ -141,7 +141,7 @@ static uint8_t _cyhal_adcmic_get_block_from_irqn(_cyhal_system_irq_t irqn)
         case adcmic_interrupt_adcmic_IRQn:
             return 0;
     #else
-        #warning Unhandled ADCMIC instance count
+        #warning "Unhandled ADCMIC instance count"
     #endif
         default:
             CY_ASSERT(false); // Should never be called with a non-ADCMIC IRQn

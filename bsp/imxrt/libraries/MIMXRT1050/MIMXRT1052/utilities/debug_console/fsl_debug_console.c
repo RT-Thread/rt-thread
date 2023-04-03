@@ -159,7 +159,7 @@ static volatile uint8_t s_debugConsoleReadWaitSemaphore;
 
 #else
 
-#error RTOS type is not defined by DEBUG_CONSOLE_SYNCHRONIZATION_MODE.
+#error "RTOS type is not defined by DEBUG_CONSOLE_SYNCHRONIZATION_MODE."
 
 #endif /* DEBUG_CONSOLE_SYNCHRONIZATION_MODE == DEBUG_CONSOLE_SYNCHRONIZATION_FREERTOS */
 

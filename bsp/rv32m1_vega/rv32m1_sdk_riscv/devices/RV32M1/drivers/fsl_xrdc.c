@@ -252,7 +252,7 @@ void XRDC_SetMemAccessConfig(XRDC_Type *base, const xrdc_mem_access_config_t *co
 #elif(FSL_FEATURE_XRDC_DOMAIN_COUNT <= 16U)
     i = 8U;
 #else
-#error Does not support more than 16 domain.
+#error "Does not support more than 16 domain."
 #endif
 
     while (i--)
@@ -402,7 +402,7 @@ void XRDC_SetPeriphAccessConfig(XRDC_Type *base, const xrdc_periph_access_config
 #elif(FSL_FEATURE_XRDC_DOMAIN_COUNT <= 16U)
     i = 8U;
 #else
-#error Does not support more than 16 domain.
+#error "Does not support more than 16 domain."
 #endif
 
     while (i--)

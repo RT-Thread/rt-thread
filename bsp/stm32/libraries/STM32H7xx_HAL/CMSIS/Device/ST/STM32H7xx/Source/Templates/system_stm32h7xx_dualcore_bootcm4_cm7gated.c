@@ -249,7 +249,7 @@ void SystemInit (void)
 #endif
 
 #else
-#error Please #define CORE_CM4 or CORE_CM7
+#error "Please #define CORE_CM4 or CORE_CM7"
 #endif
 #endif
 

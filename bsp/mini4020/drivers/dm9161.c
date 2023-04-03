@@ -372,13 +372,13 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
             case MII_KS8721_ID:     /* Micrel KS8721: PHY_ID1 = 0x22, PHY_ID2 = 0x1610 */
             {
                 enable_mdi();
-                #warning SHOULD SET MAC ADDR
+                #warning "SHOULD SET MAC ADDR"
                 //get_mac_address(dev);     /* Get ethernet address and store it in dev->dev_addr */
                 update_mac_address();   /* Program ethernet address into MAC */
 
                 //用哈希寄存器比较当前群播地址，全双工，添加CRC校验，短数据帧进行填充
                 sep_emac_write(MAC_CTRL, 0xa413);
-                #warning SHOULD DETERMIN LINK SPEED
+                #warning "SHOULD DETERMIN LINK SPEED"
                 update_link_speed(phy_address);
                 dm9161_device.phy_addr = phy_address;
                 disable_mdi();
@@ -494,7 +494,7 @@ static rt_err_t rt_dm9161_close(rt_device_t dev)
 
     /* Disable Receiver and Transmitter */
     disable_mdi();
-    #warning disable ether;
+    #warning "disable ether;"
 
 //  INT_ENABLE(28);
     /* Disable PHY interrupt */
@@ -537,7 +537,7 @@ rt_err_t rt_dm9161_tx( rt_device_t dev, struct pbuf* p)
 //  rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
     /* disable dm9000a interrupt */
-    #warning SHOULD DISABLE INTEERUPT?
+    #warning "SHOULD DISABLE INTEERUPT?"
 
     /*Search for available BD*/
     for (i = 0;i<MAX_TX_DESCR;)
@@ -566,7 +566,7 @@ rt_err_t rt_dm9161_tx( rt_device_t dev, struct pbuf* p)
         q = q->next;
     }
 
-    #warning SHOULD NOTICE IT'S LENGTH
+    #warning "SHOULD NOTICE IT'S LENGTH"
 
     length = length << 16;
 
@@ -665,7 +665,7 @@ void rt_hw_dm9161_init()
      * SRAM Tx/Rx pointer automatically return to start address,
      * Packet Transmitted, Packet Received
      */
-    #warning NOTICE:
+    #warning "NOTICE:"
     //dm9161_device.imr_all = IMR_PAR | IMR_PTM | IMR_PRM;
 
     dm9161_device.dev_addr[0] = 0x01;
@@ -689,7 +689,7 @@ void rt_hw_dm9161_init()
     eth_device_init(&(dm9161_device.parent), "e0");
 
     /* instal interrupt */
-    #warning TODO
+    #warning "TODO"
     //rt_hw_interrupt_install(INTEINT4_7, rt_dm9161_isr, RT_NULL);
     //rt_hw_interrupt_umask(INTEINT4_7);
 }

@@ -64,7 +64,7 @@
 #define LWIPERF_TCP_MAX_IDLE_SEC    10U
 #endif
 #if LWIPERF_TCP_MAX_IDLE_SEC > 255
-#error LWIPERF_TCP_MAX_IDLE_SEC must fit into an u8_t
+#error "LWIPERF_TCP_MAX_IDLE_SEC must fit into an u8_t"
 #endif
 
 /** Change this if you don't want to lwiperf to listen to any IP version */

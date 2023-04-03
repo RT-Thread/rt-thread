@@ -255,7 +255,7 @@ typedef enum IRQn
 #elif defined (__CSMC__)
 /* anonymous unions are enabled by default */
 #else
-#warning Not supported compiler type
+#warning "Not supported compiler type"
 #endif
 
 
@@ -1038,7 +1038,7 @@ extern void SystemInit(void);
 #elif defined (__CSMC__)
 /* anonymous unions are enabled by default */
 #else
-#warning Not supported compiler type
+#warning "Not supported compiler type"
 #endif
 
 #ifdef __cplusplus

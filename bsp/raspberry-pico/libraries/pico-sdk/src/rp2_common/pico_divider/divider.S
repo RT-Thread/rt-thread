@@ -53,7 +53,7 @@ need to change SHIFT above
 
 
 #if (SIO_DIV_SDIVISOR_OFFSET != SIO_DIV_SDIVIDEND_OFFSET + 4) || (SIO_DIV_QUOTIENT_OFFSET != SIO_DIV_SDIVISOR_OFFSET + 4) || (SIO_DIV_REMAINDER_OFFSET != SIO_DIV_QUOTIENT_OFFSET + 4)
-#error register layout has changed - we rely on this order to make sure we save/restore in the right order
+#error "register layout has changed - we rely on this order to make sure we save/restore in the right order"
 #endif
 
 # SIO_BASE ptr in r2

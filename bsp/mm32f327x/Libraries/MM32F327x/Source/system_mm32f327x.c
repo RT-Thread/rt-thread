@@ -67,7 +67,7 @@
 #if defined(SYSCLK_FREQ_HSE) || defined(SYSCLK_FREQ_24MHz) || defined(SYSCLK_FREQ_36MHz) || defined(SYSCLK_FREQ_48MHz) || defined(SYSCLK_FREQ_XXMHz)
 
 #if defined(HSE_VALUE) && (!(HSE_VALUE == 8000000))
-#warning redefine HSE_VALUE in reg_common.h Line 48 and ignore this warning
+#warning "redefine HSE_VALUE in reg_common.h Line 48 and ignore this warning"
 #endif
 
 #endif

@@ -94,31 +94,31 @@ typedef enum
 
 // Check LUN defines.
 #ifndef LUN_0
-  #error LUN_0 must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_0 must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 #ifndef LUN_1
-  #error LUN_1 must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_1 must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 #ifndef LUN_2
-  #error LUN_2 must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_2 must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 #ifndef LUN_3
-  #error LUN_3 must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_3 must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 #ifndef LUN_4
-  #error LUN_4 must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_4 must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 #ifndef LUN_5
-  #error LUN_5 must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_5 must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 #ifndef LUN_6
-  #error LUN_6 must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_6 must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 #ifndef LUN_7
-  #error LUN_7 must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_7 must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 #ifndef LUN_USB
-  #error LUN_USB must be defined as ENABLE or DISABLE in conf_access.h
+  #error "LUN_USB must be defined as ENABLE or DISABLE in conf_access.h"
 #endif
 
 /*! \name LUN IDs
@@ -169,7 +169,7 @@ typedef enum
 
 // Check the configuration of write protection in conf_access.h.
 #ifndef GLOBAL_WR_PROTECT
-  #error GLOBAL_WR_PROTECT must be defined as true or false in conf_access.h
+  #error "GLOBAL_WR_PROTECT must be defined as true or false in conf_access.h"
 #endif
 
 

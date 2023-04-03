@@ -60,7 +60,7 @@
 #elif (ACMP_COUNT == 2)
 #define ACMP_REF_VALID(ref)    (((ref) == ACMP0) || ((ref) == ACMP1))
 #else
-#error Undefined number of analog comparators (ACMP).
+#error "Undefined number of analog comparators (ACMP)."
 #endif
 
 /** @endcond */

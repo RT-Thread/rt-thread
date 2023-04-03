@@ -217,7 +217,7 @@ typedef enum
 #elif defined (__CSMC__)
   /* anonymous unions are enabled by default */
 #else
-  #warning Not supported compiler type
+  #warning "Not supported compiler type"e"e"
 #endif
 
 /* --------  Configuration of the Cortex-M33 Processor and Core Peripherals  ------ */
@@ -1690,7 +1690,7 @@ typedef struct
 #elif defined (__CSMC__)
   /* anonymous unions are enabled by default */
 #else
-  #warning Not supported compiler type
+  #warning "Not supported compiler type"
 #endif
 
 

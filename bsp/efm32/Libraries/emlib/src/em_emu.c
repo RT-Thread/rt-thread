@@ -48,16 +48,16 @@
 /* Consistency check, since restoring assumes similar bitpositions in */
 /* CMU OSCENCMD and STATUS regs */
 #if (CMU_STATUS_AUXHFRCOENS != CMU_OSCENCMD_AUXHFRCOEN)
-#error Conflict in AUXHFRCOENS and AUXHFRCOEN bitpositions
+#error "Conflict in AUXHFRCOENS and AUXHFRCOEN bitpositions"
 #endif
 #if (CMU_STATUS_HFXOENS != CMU_OSCENCMD_HFXOEN)
-#error Conflict in HFXOENS and HFXOEN bitpositions
+#error "Conflict in HFXOENS and HFXOEN bitpositions"
 #endif
 #if (CMU_STATUS_LFRCOENS != CMU_OSCENCMD_LFRCOEN)
-#error Conflict in LFRCOENS and LFRCOEN bitpositions
+#error "Conflict in LFRCOENS and LFRCOEN bitpositions"
 #endif
 #if (CMU_STATUS_LFXOENS != CMU_OSCENCMD_LFXOEN)
-#error Conflict in LFXOENS and LFXOEN bitpositions
+#error "Conflict in LFXOENS and LFXOEN bitpositions"
 #endif
 
 /*******************************************************************************

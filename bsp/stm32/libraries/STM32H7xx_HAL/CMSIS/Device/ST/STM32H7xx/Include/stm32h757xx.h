@@ -242,7 +242,7 @@ typedef enum
 #define __DCACHE_PRESENT          1       /*!< CM7 data cache present                        */
 #include "core_cm7.h"                 /*!< Cortex-M7 processor and core peripherals          */
 #else  /* UNKNOWN_CORE */
-#error Please #define CORE_CM4 or CORE_CM7
+#error "Please #define CORE_CM4 or CORE_CM7"
 #endif /* CORE_CM7 */
 #endif /* CORE_CM4 */
 

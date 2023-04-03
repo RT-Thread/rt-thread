@@ -9472,7 +9472,7 @@ BMA2x2_RETURN_FUNCTION_TYPE bma2x2_read_accel_eight_resolution_xyzt(
 BMA2x2_RETURN_FUNCTION_TYPE bma2x2_get_fifo_data_output_reg(
     u8 *output_reg_u8)
 {
-#warning This API is deprecated ,Instead use the \
+#warning "This API is deprecated ,Instead use the \"
 "bma2x2_read_fifo_data" API for reading FIFO data
 
     u8 data_u8 = BMA2x2_INIT_VALUE;

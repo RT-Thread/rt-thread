@@ -31,7 +31,7 @@
 #define __V85XXP_PORT_MAX 1u
 #else
 #define __V85XXP_PORT_MAX 0u
-#error Unsupported V85XXP GPIO peripheral.
+#error "Unsupported V85XXP GPIO peripheral."
 #endif
 
 #define PIN_V85XXPPORT_MAX __V85XXP_PORT_MAX

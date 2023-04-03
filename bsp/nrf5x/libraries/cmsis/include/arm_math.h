@@ -315,7 +315,7 @@ extern "C"
   #define CMSIS_UNUSED
 
 #else
-  #error Unknown compiler
+  #error "Unknown compiler"
 #endif
 
 #define __SIMD32(addr)        (*(__SIMD32_TYPE **) & (addr))

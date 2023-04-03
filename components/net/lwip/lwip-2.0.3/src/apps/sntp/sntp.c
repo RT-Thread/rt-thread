@@ -539,7 +539,7 @@ sntp_init(void)
 #if SNTP_SERVER_DNS
   sntp_setservername(0, SNTP_SERVER_ADDRESS);
 #else
-#error SNTP_SERVER_ADDRESS string not supported SNTP_SERVER_DNS==0
+#error "SNTP_SERVER_ADDRESS string not supported SNTP_SERVER_DNS==0"
 #endif
 #endif /* SNTP_SERVER_ADDRESS */
 

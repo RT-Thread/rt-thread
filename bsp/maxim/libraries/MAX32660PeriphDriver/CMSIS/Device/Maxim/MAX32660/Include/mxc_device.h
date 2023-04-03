@@ -45,7 +45,7 @@
 #include "max32660.h"
 
 #ifndef TARGET
-    #error TARGET NOT DEFINED
+    #error "TARGET NOT DEFINED"
 #endif
 
 // Create a string definition for the TARGET
@@ -55,7 +55,7 @@
 
 // Define which revisions of the IP we are using
 #ifndef TARGET_REV
-    #error TARGET_REV NOT DEFINED
+    #error "TARGET_REV NOT DEFINED"
 #endif
 
 #if(TARGET_REV == 0x4131) 
@@ -65,7 +65,7 @@
     #define MXC_UART_REV        1
 #else
 
-#error TARGET_REV NOT SUPPORTED
+#error "TARGET_REV NOT SUPPORTED"
 
 #endif  // if(TARGET_REV == ...) 
 

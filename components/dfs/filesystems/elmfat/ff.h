@@ -30,7 +30,7 @@ extern "C" {
 #include "ffconf.h"		/* FatFs configuration options */
 
 #if FF_DEFINED != FFCONF_DEF
-#error Wrong configuration file (ffconf.h).
+#error "Wrong configuration file (ffconf.h)."
 #endif
 
 
@@ -68,7 +68,7 @@ typedef WORD			WCHAR;	/* UTF-16 character type */
 
 #if FF_FS_EXFAT
 #if FF_INTDEF != 2
-#error exFAT feature wants C99 or later
+#error "exFAT feature wants C99 or later"
 #endif
 typedef QWORD FSIZE_t;
 #if FF_LBA64
@@ -78,7 +78,7 @@ typedef DWORD LBA_t;
 #endif
 #else
 #if FF_LBA64
-#error exFAT needs to be enabled when enable 64-bit LBA
+#error "exFAT needs to be enabled when enable 64-bit LBA"
 #endif
 typedef DWORD FSIZE_t;
 typedef DWORD LBA_t;
@@ -101,7 +101,7 @@ typedef DWORD TCHAR;
 #define _T(x) U ## x
 #define _TEXT(x) U ## x
 #elif FF_USE_LFN && (FF_LFN_UNICODE < 0 || FF_LFN_UNICODE > 3)
-#error Wrong FF_LFN_UNICODE setting
+#error "Wrong FF_LFN_UNICODE setting"
 #else									/* ANSI/OEM code in SBCS/DBCS */
 typedef char TCHAR;
 #define _T(x) x

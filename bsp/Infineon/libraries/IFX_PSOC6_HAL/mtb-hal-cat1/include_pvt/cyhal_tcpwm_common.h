@@ -68,7 +68,7 @@ extern "C" {
             // This is based on the model of 4x continuous groups mapping to x IP blocks (0-3 to 1, 4-7 to 2, etc)
             #define _CYHAL_TCPWM_CNT_NUMBER(resource) ((((resource).block_num % _CYHAL_TCPWM_MAX_GRPS_PER_IP_BLOCK) << 8) | (resource).channel_num)
         #else
-            #warning Unhandled TCPWM instance count
+            #warning "Unhandled TCPWM instance count"
         #endif
     #endif
 #elif defined(CY_IP_M0S8TCPWM_INSTANCES)
@@ -84,7 +84,7 @@ extern "C" {
     #elif (CY_IP_MXTCPWM_INSTANCES == 2)
         #define _CYHAL_TCPWM_ADJUST_BLOCK_INDEX(block)    ((_CYHAL_TCPWM_GET_IP_BLOCK(block) == 0) ? (block) : (_CYHAL_TCPWM_GET_GRP(block) + TCPWM0_GRP_NR))
     #else
-        #warning Unhandled TCPWM instance count
+        #warning "Unhandled TCPWM instance count"
     #endif
 #else
     #define _CYHAL_TCPWM_ADJUST_BLOCK_INDEX(block) (block)
@@ -99,7 +99,7 @@ extern "C" {
     #elif (CY_IP_MXTCPWM_INSTANCES == 2)
         #define _CYHAL_TCPWM_CHANNELS (TCPWM0_CNT_NR + TCPWM1_CNT_NR)
     #else
-        #warning Unhandled TCPWM instance count
+        #warning "Unhandled TCPWM instance count"
     #endif
 #else // (CY_IP_MXTCPWM_VERSION >= 2)
     #if (CY_IP_MXTCPWM_INSTANCES == 1)
@@ -146,14 +146,14 @@ extern "C" {
 
         #define _CYHAL_TCPWM_CHANNELS (_CYHAL_TCPWM0_CHANNELS + _CYHAL_TCPWM1_CHANNELS)
     #else
-        #warning Unhandled TCPWM instance count
+        #warning "Unhandled TCPWM instance count"
     #endif
 #endif
 #elif defined(CY_IP_M0S8TCPWM_INSTANCES)
     #if (CY_IP_M0S8TCPWM_INSTANCES == 1)
         #define _CYHAL_TCPWM_CHANNELS (TCPWM_CNT_NR)
     #else
-        #warning Unhandled TCPWM instance count
+        #warning "Unhandled TCPWM instance count"
     #endif
 #endif
 
@@ -170,7 +170,7 @@ extern "C" {
     extern const uint16_t _CYHAL_TCPWM_TRIGGER_INPUTS_IDX_OFFSET[2];
     extern const uint16_t _CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[2];
     #else
-    #warning Unhandled TCPWM instance count
+    #warning "Unhandled TCPWM instance count"
     #endif
 #else // (CY_IP_M0S8TCPWM_VERSION == 2)
     // PSoC™ 4 devices have a number of reserved input lines coming directly from

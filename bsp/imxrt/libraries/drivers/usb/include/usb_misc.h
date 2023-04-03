@@ -365,7 +365,7 @@ _Pragma("diag_suppress=Pm120")
 #define USB_LINK_USB_BDT_BSS
 #define USB_LINK_USB_GLOBAL_BSS
 #else
-#error The tool-chain is not supported.
+#error "The tool-chain is not supported."
 #endif
 
 #if (defined(USB_DEVICE_CONFIG_BUFFER_PROPERTY_CACHEABLE) && (USB_DEVICE_CONFIG_BUFFER_PROPERTY_CACHEABLE)) || \

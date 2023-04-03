@@ -124,7 +124,7 @@
     #define __RESTRICT                             __restrict
   #endif
   #ifndef   __COMPILER_BARRIER
-    #warning No compiler specific solution for __COMPILER_BARRIER. __COMPILER_BARRIER is ignored.
+    #warning "No compiler specific solution for __COMPILER_BARRIER. __COMPILER_BARRIER is ignored."
     #define __COMPILER_BARRIER()                   (void)0
   #endif
 
@@ -193,11 +193,11 @@
     #define __ALIGNED(x)              __align(x)
   #endif
   #ifndef   __RESTRICT
-    #warning No compiler specific solution for __RESTRICT. __RESTRICT is ignored.
+    #warning "No compiler specific solution for __RESTRICT. __RESTRICT is ignored."
     #define __RESTRICT
   #endif
   #ifndef   __COMPILER_BARRIER
-    #warning No compiler specific solution for __COMPILER_BARRIER. __COMPILER_BARRIER is ignored.
+    #warning "No compiler specific solution for __COMPILER_BARRIER. __COMPILER_BARRIER is ignored."
     #define __COMPILER_BARRIER()                   (void)0
   #endif
 
@@ -225,7 +225,7 @@
     #define __NO_RETURN
   #endif
   #ifndef   __USED
-    #warning No compiler specific solution for __USED. __USED is ignored.
+    #warning "No compiler specific solution for __USED. __USED is ignored."
     #define __USED
   #endif
   #ifndef   __WEAK
@@ -261,21 +261,21 @@
     #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(addr))->v)
   #endif
   #ifndef   __ALIGNED
-    #warning No compiler specific solution for __ALIGNED. __ALIGNED is ignored.
+    #warning "No compiler specific solution for __ALIGNED. __ALIGNED is ignored."
     #define __ALIGNED(x)
   #endif
   #ifndef   __RESTRICT
-    #warning No compiler specific solution for __RESTRICT. __RESTRICT is ignored.
+    #warning "No compiler specific solution for __RESTRICT. __RESTRICT is ignored."
     #define __RESTRICT
   #endif
   #ifndef   __COMPILER_BARRIER
-    #warning No compiler specific solution for __COMPILER_BARRIER. __COMPILER_BARRIER is ignored.
+    #warning "No compiler specific solution for __COMPILER_BARRIER. __COMPILER_BARRIER is ignored."
     #define __COMPILER_BARRIER()                   (void)0
   #endif
 
 
 #else
-  #error Unknown compiler.
+  #error "Unknown compiler."
 #endif
 
 

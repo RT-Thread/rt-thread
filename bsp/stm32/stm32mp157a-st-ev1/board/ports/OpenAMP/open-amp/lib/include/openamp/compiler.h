@@ -61,7 +61,7 @@ extern "C" {
  * There is no default definition here to avoid wrong structures packing in case
  * of not supported compiler
  */
-#error Please implement the structure packing macros for your compiler here!
+#error "Please implement the structure packing macros for your compiler here!"
 #endif
 
 #if defined __cplusplus

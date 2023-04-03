@@ -230,7 +230,7 @@ _Pragma("diag_suppress=Pm120")
 #define SDK_L2CACHE_ALIGN(var) var __attribute__((aligned(FSL_FEATURE_L2CACHE_LINESIZE_BYTE)))
 #endif
 #else
-#error Toolchain not supported
+#error "Toolchain not supported"
 #define SDK_ALIGN(var, alignbytes) var
 #if defined(FSL_FEATURE_L1DCACHE_LINESIZE_BYTE)
 #define SDK_L1DCACHE_ALIGN(var) var
@@ -277,7 +277,7 @@ _Pragma("diag_suppress=Pm120")
 #define AT_NONCACHEABLE_SECTION_ALIGN(var, alignbytes) var __attribute__((aligned(alignbytes)))
 #endif
 #else
-#error Toolchain not supported.
+#error "Toolchain not supported."
 #define AT_NONCACHEABLE_SECTION(var) var
 #define AT_NONCACHEABLE_SECTION_ALIGN(var, alignbytes) var
 #endif

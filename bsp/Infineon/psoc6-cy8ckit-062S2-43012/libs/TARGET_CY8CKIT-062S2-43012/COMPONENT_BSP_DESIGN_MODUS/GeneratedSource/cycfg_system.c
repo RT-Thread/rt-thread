@@ -320,7 +320,7 @@ __WEAK void __NO_RETURN cycfg_ClockStartupError(uint32_t error)
         #endif /* CY_CFG_SYSCLK_CLKTIMER_ENABLED */
 
         #ifdef CY_CFG_SYSCLK_CLKALTSYSTICK_ENABLED
-            #error Configuration Error : ALT SYSTICK cannot be enabled for Secure devices.
+            #error "Configuration Error : ALT SYSTICK cannot be enabled for Secure devices."
         #endif /* CY_CFG_SYSCLK_CLKALTSYSTICK_ENABLED */
 
         #ifdef CY_CFG_SYSCLK_PILO_ENABLED
@@ -855,22 +855,22 @@ void init_cycfg_system(void)
         cy_en_pra_status_t configStatus;
         init_cycfg_secure_struct(&srss_0_clock_0_secureConfig);
         #if (((CY_CFG_SYSCLK_CLKPATH0_SOURCE_NUM >= 3UL) && (CY_CFG_SYSCLK_CLKPATH0_SOURCE_NUM <= 5UL))  && (CY_CFG_SYSCLK_CLKHF0_CLKPATH_NUM == 0UL))
-            #error Configuration Error : ALTHF, ILO, PILO cannot drive HF0.
+            #error "Configuration Error : ALTHF, ILO, PILO cannot drive HF0."
         #endif
         #if (((CY_CFG_SYSCLK_CLKPATH1_SOURCE_NUM >= 3UL) && (CY_CFG_SYSCLK_CLKPATH1_SOURCE_NUM <= 5UL)) && (CY_CFG_SYSCLK_CLKHF0_CLKPATH_NUM == 1UL))
-            #error Configuration Error : ALTHF, ILO, PILO cannot drive HF0.
+            #error "Configuration Error : ALTHF, ILO, PILO cannot drive HF0."
         #endif
         #if (((CY_CFG_SYSCLK_CLKPATH2_SOURCE_NUM >= 3UL) && (CY_CFG_SYSCLK_CLKPATH2_SOURCE_NUM <= 5UL)) && (CY_CFG_SYSCLK_CLKHF0_CLKPATH_NUM == 2UL))
-            #error Configuration Error : ALTHF, ILO, PILO cannot drive HF0.
+            #error "Configuration Error : ALTHF, ILO, PILO cannot drive HF0."
         #endif
         #if (((CY_CFG_SYSCLK_CLKPATH3_SOURCE_NUM >= 3UL) && (CY_CFG_SYSCLK_CLKPATH3_SOURCE_NUM <= 5UL)) && (CY_CFG_SYSCLK_CLKHF0_CLKPATH_NUM == 3UL))
-            #error Configuration Error : ALTHF, ILO, PILO cannot drive HF0.
+            #error "Configuration Error : ALTHF, ILO, PILO cannot drive HF0."
         #endif
         #if (((CY_CFG_SYSCLK_CLKPATH4_SOURCE_NUM >= 3UL) && (CY_CFG_SYSCLK_CLKPATH4_SOURCE_NUM <= 5UL)) && (CY_CFG_SYSCLK_CLKHF0_CLKPATH_NUM == 4UL))
-            #error Configuration Error : ALTHF, ILO, PILO cannot drive HF0.
+            #error "Configuration Error : ALTHF, ILO, PILO cannot drive HF0."
         #endif
         #if (((CY_CFG_SYSCLK_CLKPATH5_SOURCE_NUM >= 3UL) && (CY_CFG_SYSCLK_CLKPATH5_SOURCE_NUM <= 5UL)) && (CY_CFG_SYSCLK_CLKHF0_CLKPATH_NUM == 5UL))
-            #error Configuration Error : ALTHF, ILO, PILO cannot drive HF0.
+            #error "Configuration Error : ALTHF, ILO, PILO cannot drive HF0."
         #endif
 
         configStatus = CY_PRA_FUNCTION_CALL_RETURN_PARAM(CY_PRA_MSG_TYPE_SYS_CFG_FUNC,
@@ -892,7 +892,7 @@ void init_cycfg_system(void)
             #ifdef CY_CFG_PWR_INIT
                 init_cycfg_power();
             #else
-                #warning Power system will not be configured. Update power personality to v1.20 or later.
+                #warning "Power system will not be configured. Update power personality to v1.20 or later."
             #endif /* CY_CFG_PWR_INIT */
         #endif /* CY_CFG_PWR_ENABLED */
 
@@ -1149,11 +1149,11 @@ void init_cycfg_system(void)
         #endif
 
         #ifndef CY_CFG_SYSCLK_IMO_ENABLED
-            #error the IMO must be enabled for proper chip operation
+            #error "the IMO must be enabled for proper chip operation"
         #endif
 
         #ifndef CY_CFG_SYSCLK_CLKHF0_ENABLED
-            #error the CLKHF0 must be enabled for proper chip operation
+            #error "the CLKHF0 must be enabled for proper chip operation"
         #endif
 
     #endif /* defined(CY_DEVICE_SECURE) */

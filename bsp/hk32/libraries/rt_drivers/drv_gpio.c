@@ -47,7 +47,7 @@
     #define __HK32_PORT_MAX 1u
 #else
     #define __HK32_PORT_MAX 0u
-    #error Unsupported HK32 GPIO peripheral.
+    #error "Unsupported HK32 GPIO peripheral."
 #endif
 #define PIN_HKPORT_MAX __HK32_PORT_MAX
 

@@ -261,7 +261,7 @@ typedef enum IRQn
 	USB1F_USB1H_HDMICEC1_IRQn  = 31, /* A<- */
 } IRQn_Type;
 #else
-	#error Interrupt Type not found!
+	#error "Interrupt Type not found!"
 #endif // PDL_INT_TYPE
 
 #include "core_cm4.h"

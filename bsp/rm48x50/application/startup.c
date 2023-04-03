@@ -91,7 +91,7 @@ void rtthread_startup(void)
 #elif defined(__TI_COMPILER_VERSION__)
     rt_system_heap_init((void*)&system_data_end, (void*)MEMEND);
 #else
-#error Unkown compiler
+#error "Unkown compiler"
 #endif
 #endif
 

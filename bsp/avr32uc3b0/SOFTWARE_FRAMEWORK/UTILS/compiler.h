@@ -914,13 +914,13 @@ typedef struct
 #if ((defined __GNUC__) && (defined __AVR32__)) || ((defined __ICCAVR32__) || (defined __AAVR32__))
   #define LITTLE_ENDIAN_MCU     FALSE
 #else
-  #error If you are here, you should check what is exactly the processor you are using...
+  #error "If you are here, you should check what is exactly the processor you are using..."
   #define LITTLE_ENDIAN_MCU     FALSE
 #endif
 
 // Check that MCU endianism is correctly defined.
 #ifndef LITTLE_ENDIAN_MCU
-  #error YOU MUST define the MCU endianism with LITTLE_ENDIAN_MCU: either FALSE or TRUE
+  #error "YOU MUST define the MCU endianism with LITTLE_ENDIAN_MCU: either FALSE or TRUE"
 #endif
 
 //! Boolean evaluating MCU big endianism.
@@ -1018,7 +1018,7 @@ typedef struct
   #define LSB0D(u64)      MSB7D(u64)            //!< Least significant byte of 1st rank of \a u64.
 
 #else
-  #error  Unknown endianism.
+  #error " Unknown endianism."
 #endif
 
 //! @}

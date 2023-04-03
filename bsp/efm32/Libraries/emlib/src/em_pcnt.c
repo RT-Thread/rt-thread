@@ -62,7 +62,7 @@
 #define PCNT_REF_VALID(ref)    (((ref) == PCNT0) || ((ref) == PCNT1) || \
                                 ((ref) == PCNT2))
 #else
-#error Undefined number of pulse counters (PCNT).
+#error "Undefined number of pulse counters (PCNT)."
 #endif
 
 /** @endcond */

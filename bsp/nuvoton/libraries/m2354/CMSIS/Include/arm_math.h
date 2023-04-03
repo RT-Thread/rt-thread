@@ -313,7 +313,7 @@
 #elif defined ( __TASKING__ )
 
 #else
-    #error Unknown compiler
+    #error "Unknown compiler"
 #endif
 
 
@@ -480,7 +480,7 @@ typedef double float64_t;
 #define CMSIS_INLINE
 
 #else
-#error Unknown compiler
+#error "Unknown compiler"
 #endif
 
 #define __SIMD32(addr)        (*(__SIMD32_TYPE **) & (addr))
@@ -7246,7 +7246,7 @@ CMSIS_INLINE __STATIC_INLINE q7_t arm_bilinear_interp_q7(
 #elif defined ( __TASKING__ )
 
 #else
-    #error Unknown compiler
+    #error "Unknown compiler"
 #endif
 
 #endif /* _ARM_MATH_H */

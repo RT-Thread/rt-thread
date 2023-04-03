@@ -109,7 +109,7 @@ extern "C" {
  #elif __ARM_ARCH_8_1M_MAIN__
   #define RENESAS_CORTEX_M85
  #else
-  #warning Unsupported Architecture
+  #warning "Unsupported Architecture"
  #endif
 
  #ifdef __cplusplus

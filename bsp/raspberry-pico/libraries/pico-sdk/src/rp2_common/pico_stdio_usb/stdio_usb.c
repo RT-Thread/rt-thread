@@ -108,7 +108,7 @@ bool stdio_usb_init(void) {
 }
 #else
 #include "pico/stdio_usb.h"
-#warning stdio USB was configured, but is being disabled as TinyUSB is explicitly linked
+#warning "stdio USB was configured, but is being disabled as TinyUSB is explicitly linked"
 bool stdio_usb_init(void) {
     return false;
 }

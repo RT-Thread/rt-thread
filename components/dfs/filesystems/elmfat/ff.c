@@ -31,7 +31,7 @@
 ---------------------------------------------------------------------------*/
 
 #if FF_DEFINED != 86631	/* Revision ID */
-#error Wrong include file (ff.h).
+#error "Wrong include file (ff.h)."
 #endif
 
 
@@ -237,7 +237,7 @@
 /* Re-entrancy related */
 #if FF_FS_REENTRANT
 #if FF_USE_LFN == 1
-#error Static LFN work area cannot be used in thread-safe configuration
+#error "Static LFN work area cannot be used in thread-safe configuration"
 #endif
 #define LEAVE_FF(fs, res)	{ unlock_fs(fs, res); return res; }
 #else
@@ -257,7 +257,7 @@
 
 /* Definitions of sector size */
 #if (FF_MAX_SS < FF_MIN_SS) || (FF_MAX_SS != 512 && FF_MAX_SS != 1024 && FF_MAX_SS != 2048 && FF_MAX_SS != 4096) || (FF_MIN_SS != 512 && FF_MIN_SS != 1024 && FF_MIN_SS != 2048 && FF_MIN_SS != 4096)
-#error Wrong sector size configuration
+#error "Wrong sector size configuration"
 #endif
 #if FF_MAX_SS == FF_MIN_SS
 #define SS(fs)	((UINT)FF_MAX_SS)	/* Fixed sector size */
@@ -269,7 +269,7 @@
 /* Timestamp */
 #if FF_FS_NORTC == 1
 #if FF_NORTC_YEAR < 1980 || FF_NORTC_YEAR > 2107 || FF_NORTC_MON < 1 || FF_NORTC_MON > 12 || FF_NORTC_MDAY < 1 || FF_NORTC_MDAY > 31
-#error Invalid FF_FS_NORTC settings
+#error "Invalid FF_FS_NORTC settings"
 #endif
 #define GET_FATTIME()	((DWORD)(FF_NORTC_YEAR - 1980) << 25 | (DWORD)FF_NORTC_MON << 21 | (DWORD)FF_NORTC_MDAY << 16)
 #else
@@ -280,7 +280,7 @@
 /* File lock controls */
 #if FF_FS_LOCK != 0
 #if FF_FS_READONLY
-#error FF_FS_LOCK must be 0 at read-only configuration
+#error "FF_FS_LOCK must be 0 at read-only configuration"
 #endif
 typedef struct {
 	FATFS *fs;		/* Object ID 1, volume (NULL:blank entry) */
@@ -459,7 +459,7 @@ typedef struct {
 /*--------------------------------*/
 
 #if FF_VOLUMES < 1 || FF_VOLUMES > 10
-#error Wrong FF_VOLUMES setting
+#error "Wrong FF_VOLUMES setting"
 #endif
 static FATFS* FatFs[FF_VOLUMES];	/* Pointer to the filesystem objects (logical drives) */
 static WORD Fsid;					/* Filesystem mount ID */
@@ -480,7 +480,7 @@ static const char* const VolumeStr[FF_VOLUMES] = {FF_VOLUME_STRS};	/* Pre-define
 
 #if FF_LBA64
 #if FF_MIN_GPT > 0x100000000
-#error Wrong FF_MIN_GPT setting
+#error "Wrong FF_MIN_GPT setting"
 #endif
 static const BYTE GUID_MS_Basic[16] = {0xA2,0xA0,0xD0,0xEB,0xE5,0xB9,0x33,0x44,0x87,0xC0,0x68,0xB6,0xB7,0x26,0x99,0xC7};
 #endif
@@ -493,7 +493,7 @@ static const BYTE GUID_MS_Basic[16] = {0xA2,0xA0,0xD0,0xEB,0xE5,0xB9,0x33,0x44,0
 
 #if FF_USE_LFN == 0		/* Non-LFN configuration */
 #if FF_FS_EXFAT
-#error LFN must be enabled when enable exFAT
+#error "LFN must be enabled when enable exFAT"
 #endif
 #define DEF_NAMBUF
 #define INIT_NAMBUF(fs)
@@ -502,13 +502,13 @@ static const BYTE GUID_MS_Basic[16] = {0xA2,0xA0,0xD0,0xEB,0xE5,0xB9,0x33,0x44,0
 
 #else					/* LFN configurations */
 #if FF_MAX_LFN < 12 || FF_MAX_LFN > 255
-#error Wrong setting of FF_MAX_LFN
+#error "Wrong setting of FF_MAX_LFN"
 #endif
 #if FF_LFN_BUF < FF_SFN_BUF || FF_SFN_BUF < 12
-#error Wrong setting of FF_LFN_BUF or FF_SFN_BUF
+#error "Wrong setting of FF_LFN_BUF or FF_SFN_BUF"
 #endif
 #if FF_LFN_UNICODE < 0 || FF_LFN_UNICODE > 3
-#error Wrong setting of FF_LFN_UNICODE
+#error "Wrong setting of FF_LFN_UNICODE"
 #endif
 static const BYTE LfnOfs[] = {1,3,5,7,9,14,16,18,20,22,24,28,30};	/* FAT: Offset of LFN characters in the directory entry */
 #define MAXDIRB(nc)	((nc + 44U) / 15 * SZDIRE)	/* exFAT: Size of directory entry block scratchpad buffer needed for the name length */
@@ -549,7 +549,7 @@ static WCHAR LfnBuf[FF_MAX_LFN + 1];		/* LFN working buffer */
 #define MAX_MALLOC	0x8000	/* Must be >=FF_MAX_SS */
 
 #else
-#error Wrong setting of FF_USE_LFN
+#error "Wrong setting of FF_USE_LFN"
 
 #endif	/* FF_USE_LFN == 1 */
 #endif	/* FF_USE_LFN == 0 */
@@ -6346,7 +6346,7 @@ FRESULT f_fdisk (
 
 #if FF_USE_STRFUNC
 #if FF_USE_LFN && FF_LFN_UNICODE && (FF_STRF_ENCODE < 0 || FF_STRF_ENCODE > 3)
-#error Wrong FF_STRF_ENCODE setting
+#error "Wrong FF_STRF_ENCODE setting"
 #endif
 /*-----------------------------------------------------------------------*/
 /* Get a String from the File                                            */

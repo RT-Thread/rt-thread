@@ -2864,7 +2864,7 @@ typedef struct {
 } Pwm;
 
 #else /* COMPONENT_TYPEDEF_STYLE */
-#error Unknown component typedef style
+#error "Unknown component typedef style"
 #endif /* COMPONENT_TYPEDEF_STYLE */
 
 #endif /* !(defined(__ASSEMBLER__) || defined(__IAR_SYSTEMS_ASM__)) */

@@ -46,7 +46,7 @@ typedef uint8_t pheap_node_id_t;
 #elif PICO_PHEAP_MAX_ENTRIES < 65535
 typedef uint16_t pheap_node_id_t;
 #else
-#error invalid PICO_PHEAP_MAX_ENTRIES
+#error "invalid PICO_PHEAP_MAX_ENTRIES"
 #endif
 
 typedef struct pheap_node {

@@ -129,7 +129,7 @@ typedef enum {
 #define __ALIAS_FUNC(FUNC)                      __attribute__ ((weak, alias(#FUNC)))
 #define __WEAK_ALIAS_FUNC(FUNC, FUNC_ALIAS)     void FUNC(void) __attribute__ ((weak, alias(#FUNC_ALIAS)));
 #else
-#error Not supported compiler type
+#error "Not supported compiler type"
 #endif
 
 

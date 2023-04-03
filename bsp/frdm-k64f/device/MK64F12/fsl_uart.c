@@ -127,7 +127,7 @@ static void UART_WriteNonBlocking(UART_Type *base, const uint8_t *data, size_t l
 #if (defined(UART0))
 #define UART_HANDLE_ARRAY_SIZE 1
 #else /* UART0 */
-#error No UART instance.
+#error "No UART instance."
 #endif /* UART 0 */
 #endif /* UART 1 */
 #endif /* UART 2 */

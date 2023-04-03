@@ -131,7 +131,7 @@ typedef enum {
 #elif defined(__TASKING__)
   #pragma warning 586
 #else
-  #warning Not supported compiler type
+  #warning "Not supported compiler type"
 #endif
 
 
@@ -7925,7 +7925,7 @@ typedef struct {                                    /*!< SOFT_RESET Structure   
 #elif defined(__TASKING__)
   #pragma warning restore
 #else
-  #warning Not supported compiler type
+  #warning "Not supported compiler type"
 #endif
 
 

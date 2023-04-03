@@ -33,7 +33,7 @@
 #define __MM32_PORT_MAX 1u
 #else
 #define __MM32_PORT_MAX 0u
-#error Unsupported MM32 GPIO peripheral.
+#error "Unsupported MM32 GPIO peripheral."
 #endif
 
 #define PIN_STPORT_MAX __MM32_PORT_MAX

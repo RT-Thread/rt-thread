@@ -49,7 +49,7 @@ extern "C" {
 #elif defined(COMPONENT_CAT2)
 #define _CYHAL_WDT_MATCH_BITS     (16)
 #else
-#error Unhandled device type
+#error "Unhandled device type"
 #endif
 
 #if defined(CY_IP_MXS40SRSS) || defined(CY_IP_MXS40SSRSS)

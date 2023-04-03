@@ -151,7 +151,7 @@ void SystemInit (void)
   CLEAR_REG(EXTI_C2->EMR2);
   CLEAR_REG(EXTI_C2->EMR3);
 #else
-#error Please #define CORE_CM4
+#error "Please #define CORE_CM4"
 #endif	                         
 }
 

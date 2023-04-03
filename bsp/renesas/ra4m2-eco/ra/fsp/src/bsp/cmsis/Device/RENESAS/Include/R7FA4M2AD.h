@@ -104,7 +104,7 @@ extern "C" {
 
 /* anonymous unions are enabled by default */
  #else
-  #warning Not supported compiler type
+  #warning "Not supported compiler type"
  #endif
 
 /* =========================================================================================================================== */

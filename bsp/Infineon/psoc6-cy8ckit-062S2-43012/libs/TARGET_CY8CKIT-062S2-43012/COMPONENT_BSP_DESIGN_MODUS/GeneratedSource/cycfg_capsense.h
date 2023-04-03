@@ -40,71 +40,71 @@
 
 
 #if !defined(Cmod_PORT) || !defined(Cmod_PIN) || !defined(Cmod_PORT_NUM)
-#error Cmod Capacitor is not assigned: missing #define Cmod_PORT, #define Cmod_PIN, #define Cmod_PORT_NUM
+#error "Cmod Capacitor is not assigned: missing #define Cmod_PORT, #define Cmod_PIN, #define Cmod_PORT_NUM"
 #endif
 
 #if !defined(CintA_PORT) || !defined(CintA_PIN) || !defined(CintA_PORT_NUM)
-#error CintA Capacitor is not assigned: missing #define CintA_PORT, #define CintA_PIN, #define CintA_PORT_NUM
+#error "CintA Capacitor is not assigned: missing #define CintA_PORT, #define CintA_PIN, #define CintA_PORT_NUM"
 #endif
 
 #if !defined(CintB_PORT) || !defined(CintB_PIN) || !defined(CintB_PORT_NUM)
-#error CintB Capacitor is not assigned: missing #define CintB_PORT, #define CintB_PIN, #define CintB_PORT_NUM
+#error "CintB Capacitor is not assigned: missing #define CintB_PORT, #define CintB_PIN, #define CintB_PORT_NUM"
 #endif
 
 #if !defined(Button0_Rx0_PORT) || !defined(Button0_Rx0_PIN)
-#error Button0_Rx0 Sensor is not assigned: missing #define Button0_Rx0_PORT, #define Button0_Rx0_PIN
+#error "Button0_Rx0 Sensor is not assigned: missing #define Button0_Rx0_PORT, #define Button0_Rx0_PIN"
 #endif
 
 #if !defined(Button0_Tx_PORT) || !defined(Button0_Tx_PIN)
-#error Button0_Tx Sensor is not assigned: missing #define Button0_Tx_PORT, #define Button0_Tx_PIN
+#error "Button0_Tx Sensor is not assigned: missing #define Button0_Tx_PORT, #define Button0_Tx_PIN"
 #endif
 
 #if !defined(Button1_Rx0_PORT) || !defined(Button1_Rx0_PIN)
-#error Button1_Rx0 Sensor is not assigned: missing #define Button1_Rx0_PORT, #define Button1_Rx0_PIN
+#error "Button1_Rx0 Sensor is not assigned: missing #define Button1_Rx0_PORT, #define Button1_Rx0_PIN"
 #endif
 
 #if !defined(Button1_Tx_PORT) || !defined(Button1_Tx_PIN)
-#error Button1_Tx Sensor is not assigned: missing #define Button1_Tx_PORT, #define Button1_Tx_PIN
+#error "Button1_Tx Sensor is not assigned: missing #define Button1_Tx_PORT, #define Button1_Tx_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns0_PORT) || !defined(LinearSlider0_Sns0_PIN)
-#error LinearSlider0_Sns0 Sensor is not assigned: missing #define LinearSlider0_Sns0_PORT, #define LinearSlider0_Sns0_PIN
+#error "LinearSlider0_Sns0 Sensor is not assigned: missing #define LinearSlider0_Sns0_PORT, #define LinearSlider0_Sns0_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns1_PORT) || !defined(LinearSlider0_Sns1_PIN)
-#error LinearSlider0_Sns1 Sensor is not assigned: missing #define LinearSlider0_Sns1_PORT, #define LinearSlider0_Sns1_PIN
+#error "LinearSlider0_Sns1 Sensor is not assigned: missing #define LinearSlider0_Sns1_PORT, #define LinearSlider0_Sns1_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns2_PORT) || !defined(LinearSlider0_Sns2_PIN)
-#error LinearSlider0_Sns2 Sensor is not assigned: missing #define LinearSlider0_Sns2_PORT, #define LinearSlider0_Sns2_PIN
+#error "LinearSlider0_Sns2 Sensor is not assigned: missing #define LinearSlider0_Sns2_PORT, #define LinearSlider0_Sns2_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns3_PORT) || !defined(LinearSlider0_Sns3_PIN)
-#error LinearSlider0_Sns3 Sensor is not assigned: missing #define LinearSlider0_Sns3_PORT, #define LinearSlider0_Sns3_PIN
+#error "LinearSlider0_Sns3 Sensor is not assigned: missing #define LinearSlider0_Sns3_PORT, #define LinearSlider0_Sns3_PIN"
 #endif
 
 #if !defined(LinearSlider0_Sns4_PORT) || !defined(LinearSlider0_Sns4_PIN)
-#error LinearSlider0_Sns4 Sensor is not assigned: missing #define LinearSlider0_Sns4_PORT, #define LinearSlider0_Sns4_PIN
+#error "LinearSlider0_Sns4 Sensor is not assigned: missing #define LinearSlider0_Sns4_PORT, #define LinearSlider0_Sns4_PIN"
 #endif
 
 #if !defined(CY_CAPSENSE_CPU_CLK)
-#error CPU clock frequency is not set: missing #define CY_CAPSENSE_CPU_CLK
+#error "CPU clock frequency is not set: missing #define CY_CAPSENSE_CPU_CLK"
 #endif
 
 #if !defined(CY_CAPSENSE_PERI_CLK)
-#error Peripheral clock core is not set: missing #define CY_CAPSENSE_PERI_CLK
+#error "Peripheral clock core is not set: missing #define CY_CAPSENSE_PERI_CLK"
 #endif
 
 #if !defined(CY_CAPSENSE_VDDA_MV)
-#error VDDA voltage is not set: missing #define CY_CAPSENSE_VDDA_MV
+#error "VDDA voltage is not set: missing #define CY_CAPSENSE_VDDA_MV"
 #endif
 
 #if !defined(CY_CAPSENSE_PERI_DIV_TYPE)
-#error Peripheral clock divider type is not set: missing #define CY_CAPSENSE_PERI_DIV_TYPE
+#error "Peripheral clock divider type is not set: missing #define CY_CAPSENSE_PERI_DIV_TYPE"
 #endif
 
 #if !defined(CY_CAPSENSE_PERI_DIV_INDEX)
-#error Peripheral clock divider index is not set: missing #define CY_CAPSENSE_PERI_DIV_INDEX
+#error "Peripheral clock divider index is not set: missing #define CY_CAPSENSE_PERI_DIV_INDEX"
 #endif
 
 
@@ -126,7 +126,7 @@
 
 /* Check the used Middleware version */
 #if (CY_CAPSENSE_MW_VERSION_REQUIRED > CY_CAPSENSE_MW_VERSION)
-    #error The CapSense Configurator requires a newer version of the CapSense Middleware. Update the CapSense Middleware in your project.
+    #error "The CapSense Configurator requires a newer version of the CapSense Middleware. Update the CapSense Middleware in your project."
 #endif
 
 #define CY_CAPSENSE_BIST_SUPPORTED                (CY_CAPSENSE_MW_VERSION >= 210)
@@ -2290,19 +2290,19 @@ extern cy_stc_capsense_context_t cy_capsense_context;
 
 
 #if ((CY_CAPSENSE_PERI_CLK / 2) > 50000000)
-    #warning The maximum CSD modulator clock frequency is 50 MHz: increase CSD modulator clock divider to meet the valid operation conditions
+    #warning "The maximum CSD modulator clock frequency is 50 MHz: increase CSD modulator clock divider to meet the valid operation conditions"
 #endif
 
 #if ((CY_CAPSENSE_PERI_CLK / 2) > 50000000)
-    #warning The maximum CSX modulator clock frequency is 50 MHz: increase CSX modulator clock divider to meet the valid operation conditions
+    #warning "The maximum CSX modulator clock frequency is 50 MHz: increase CSX modulator clock divider to meet the valid operation conditions"
 #endif
 
 #if ((CY_CAPSENSE_PERI_CLK / 2 / 32) > 3000000)
-    #warning The maximum Tx clock frequency is 3 MHz: increase Tx clock divider for widget Button0 to meet the valid operation conditions
+    #warning "The maximum Tx clock frequency is 3 MHz: increase Tx clock divider for widget Button0 to meet the valid operation conditions"
 #endif
 
 #if ((CY_CAPSENSE_PERI_CLK / 2 / 32) > 3000000)
-    #warning The maximum Tx clock frequency is 3 MHz: increase Tx clock divider for widget Button1 to meet the valid operation conditions
+    #warning "The maximum Tx clock frequency is 3 MHz: increase Tx clock divider for widget Button1 to meet the valid operation conditions"
 #endif
 
 

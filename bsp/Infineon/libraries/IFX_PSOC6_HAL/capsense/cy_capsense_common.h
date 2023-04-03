@@ -103,7 +103,7 @@ extern "C" {
 
     /* Check used driver version */
     #if (CY_CSD_DRV_VERSION_REQUIRED > CY_CSD_DRV2_VERSION)
-        #error Some of the features supported by the CAPSENSE&trade; Middleware version CY_CAPSENSE_MW_VERSION require newer version of the PDL. Update the PDL in your project.
+        #error "Some of the features supported by the CAPSENSE&trade; Middleware version CY_CAPSENSE_MW_VERSION require newer version of the PDL. Update the PDL in your project."
     #endif
 
 #endif
@@ -122,7 +122,7 @@ extern "C" {
 
     /* Check used driver version */
     #if (CY_CSD_DRV_VERSION_REQUIRED > CY_CSD_DRV2_VERSION)
-        #error Some of the features supported by the CAPSENSE&trade; Middleware version CY_CAPSENSE_MW_VERSION require newer version of the PDL. Update the PDL in your project.
+        #error "Some of the features supported by the CAPSENSE&trade; Middleware version CY_CAPSENSE_MW_VERSION require newer version of the PDL. Update the PDL in your project."
     #endif
 
 #endif
@@ -141,7 +141,7 @@ extern "C" {
 
     /* Check used driver version */
     #if (CY_MSC_DRV_VERSION_REQUIRED > CY_MSC_DRV2_VERSION)
-        #error Some of the features supported by the CAPSENSE&trade; Middleware version CY_CAPSENSE_MW_VERSION require newer version of the PDL. Update the PDL in your project.
+        #error "Some of the features supported by the CAPSENSE&trade; Middleware version CY_CAPSENSE_MW_VERSION require newer version of the PDL. Update the PDL in your project."
     #endif
 
 #endif

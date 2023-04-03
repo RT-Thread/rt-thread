@@ -44,7 +44,7 @@
 #define PICO_FLASH_SPI_CLKDIV 4
 #endif
 #if PICO_FLASH_SPI_CLKDIV & 1
-#error PICO_FLASH_SPI_CLKDIV must be even
+#error "PICO_FLASH_SPI_CLKDIV must be even"
 #endif
 
 // Define interface width: single/dual/quad IO

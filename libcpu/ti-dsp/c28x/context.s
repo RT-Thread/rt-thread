@@ -54,9 +54,9 @@
         #ifdef RT_USING_ZERO_LATENCY
             #define ZERO_LATENCY 1
             #ifndef ZERO_LATENCY_INT_MASK
-                #error ZERO_LATENCY_INT_MASK must be defined for zero latency interrupt
+                #error "ZERO_LATENCY_INT_MASK must be defined for zero latency interrupt"
             #elif ZERO_LATENCY_INT_MASK & 0x8000
-                #error RTOS bit (0x8000) must not be set in ZERO_LATENCY_INT_MASK
+                #error "RTOS bit (0x8000) must not be set in ZERO_LATENCY_INT_MASK"
             #endif
         #else
             #define ZERO_LATENCY 0
