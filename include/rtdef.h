@@ -47,7 +47,7 @@
  * 2022-08-16     Meco Man     change version number to v5.0.0
  * 2022-09-12     Meco Man     define rt_ssize_t
  * 2022-12-20     Meco Man     add const name for rt_object
- * 2023-04-01     Rose_Man     change version number to v5.1.0
+ * 2023-04-01     Chushicheng  change version number to v5.0.1
  */
 
 #ifndef __RT_DEF_H__
@@ -73,8 +73,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                1               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
+#define RT_VERSION_MINOR                0               /**< Minor version number (x.X.x) */
+#define RT_VERSION_PATCH                1               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + (minor * 100) + revise)

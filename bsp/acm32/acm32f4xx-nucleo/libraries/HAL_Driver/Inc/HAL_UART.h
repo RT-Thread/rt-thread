@@ -127,7 +127,7 @@
 #define UART_MODE_RX                        (0x00000200)        /*!< RX mode        */
 #define UART_MODE_TX                        (0x00000100)        /*!< TX mode        */
 #define UART_MODE_TX_RX                     (0x00000300)        /*!< RX and TX mode */
-#define UART_MODE_TX_RX_DEBUG               (0x10000300)        /*!< RX¡¢TX mode and Debug use this uart */
+#define UART_MODE_TX_RX_DEBUG               (0x10000300)        /*!< RX/TX mode and Debug use this uart */
 #define UART_MODE_HALF_DUPLEX               (0x20000300)        /*!< Single half duplex */
 /**
   * @}

@@ -147,19 +147,19 @@ typedef enum {
 	G2D_SEQ_NORMAL = 0x0,
 
 	/* for interleaved yuv422 */
-	G2D_SEQ_VYUY   = 0x1,			/* pixel 0�ڵ�16λ */
-	G2D_SEQ_YVYU   = 0x2,			/* pixel 1�ڵ�16λ */
+	G2D_SEQ_VYUY   = 0x1,			/* pixel 0在16位 */
+	G2D_SEQ_YVYU   = 0x2,			/* pixel 1在16位 */
 
 	/* for uv_combined yuv420 */
 	G2D_SEQ_VUVU   = 0x3,
 
 	/* for 16bpp rgb */
-	G2D_SEQ_P10    = 0x4,			/* pixel 0�ڵ�16λ */
-	G2D_SEQ_P01    = 0x5,			/* pixel 1�ڵ�16λ */
+	G2D_SEQ_P10    = 0x4,			/* pixel 0在16位 */
+	G2D_SEQ_P01    = 0x5,			/* pixel 1在16位 */
 
 	/* planar format or 8bpp rgb */
-	G2D_SEQ_P3210  = 0x6,			/* pixel 0�ڵ�8λ */
-	G2D_SEQ_P0123  = 0x7,			/* pixel 3�ڵ�8λ */
+	G2D_SEQ_P3210  = 0x6,			/* pixel 0在8位 */
+	G2D_SEQ_P0123  = 0x7,			/* pixel 3在8位 */
 
 	/* for 4bpp rgb */
 	G2D_SEQ_P76543210  = 0x8,			/* 7,6,5,4,3,2,1,0 */
