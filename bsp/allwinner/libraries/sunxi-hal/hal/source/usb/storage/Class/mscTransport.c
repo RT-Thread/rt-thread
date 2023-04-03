@@ -33,13 +33,13 @@
 *                     mscUrbCallBack
 *
 * Description:
-*    urb call back����
+*    urb call back函数
 *
 * Parameters:
-*    urb : input. ��Ҫ������URB
+*    urb : input. 需要提交的URB
 *
 * Return value:
-*    ��
+*    无
 *
 * note:
 *
@@ -113,14 +113,14 @@ static void mscTimeOut(void *parg)
 *                     mscUsbTransport
 *
 * Description:
-*    ����URB
+*    发送URB
 *
 * Parameters:
-*    mscDev   :  input. Ŀ���豸
-*    TimeOut  :  input. ��ʱʱ��
+*    mscDev   :  input. 目标设备
+*    TimeOut  :  input. 超时时间
 *
 * Return value:
-*    ����URB��״̬
+*    返回URB状态
 *
 * note:
 *
@@ -145,18 +145,19 @@ static int mscUsbTransport(__mscDev_t *mscDev, unsigned int TimeOut)
     }
 
     /* fill URB */
-    mscDev->CurrentUrb->context       = (void *)mscDev->UrbWait;
-    mscDev->CurrentUrb->actual_length = 0;
-    mscDev->CurrentUrb->error_count   = 0;
-    mscDev->CurrentUrb->status        = 0;
-    /* ����buffer���䷽ʽ, �������msc��buff, �Ͳ���ʹ��DMA�� ��Ϊbuffer, Ҫpalloc������ */
-    mscDev->CurrentUrb->transfer_flags = URB_ASYNC_UNLINK;
-//    mscDev->CurrentUrb->transfer_flags = URB_ASYNC_UNLINK | URB_NO_SETUP_DMA_MAP;
-
-//    if (mscDev->CurrentUrb->transfer_buffer == mscDev->iobuf)
-//    {
-//        mscDev->CurrentUrb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
-//    }
+        mscDev->CurrentUrb->context       = (void *)mscDev->UrbWait;
+        mscDev->CurrentUrb->actual_length = 0;
+        mscDev->CurrentUrb->error_count   = 0;
+        mscDev->CurrentUrb->status        = 0;
+        /* 设置buffer传输方式, 如果使用msc的buff，则不使用DMA，需要palloc分配内存 */
+        mscDev->CurrentUrb->transfer_flags = URB_ASYNC_UNLINK;
+    //    mscDev->CurrentUrb->transfer_flags = URB_ASYNC_UNLINK | URB_NO_SETUP_DMA_MAP;
+    
+    //    if (mscDev->CurrentUrb->transfer_buffer == mscDev->iobuf)
+    //    {
+    //        mscDev->CurrentUrb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
+    //    }
+    
 
     mscDev->CurrentUrb->transfer_dma = 0;
     mscDev->CurrentUrb->setup_dma    = 0;
@@ -220,21 +221,21 @@ static int mscUsbTransport(__mscDev_t *mscDev, unsigned int TimeOut)
 *                     mscCtrlMsg
 *
 * Description:
-*    ���Ϳ�������
+*    USB控制消息函数
 *
 * Parameters:
-*    mscDev         :  input.  Ŀ���豸
-*    Pipe           :  input.  URB�ܵ�
-*    Request        :  input.  ��������
-*    RequestType    :  input.  ������������
-*    Value          :  input.  ֵ
-*    Index          :  input.  ����
-*    Buffer         :  input.  ������
-*    BufferLen      :  input.  ��������С
-*    TimeOut        :  input.  URB��ʱʱ��
+*    mscDev         :  input.  目标设备
+*    Pipe           :  input.  URB通道
+*    Request        :  input.  请求类型
+*    RequestType    :  input.  请求方向(读/写)和请求类型
+*    Value          :  input.  值
+*    Index          :  input.  索引
+*    Buffer         :  input.  输入/输出缓存区
+*    BufferLen      :  input.  输入/输出缓存区大小
+*    TimeOut        :  input.  URB超时时间
 *
 * Return value:
-*    ����URB��״̬
+*    返回URB状态
 *
 * note:
 *
@@ -257,24 +258,24 @@ static int mscSendCtrlReq(__mscDev_t *mscDev,
         return USB_ERR_BAD_ARGUMENTS;
     }
 
-    /* ���ctrl���� */
-    mscDev->CtrlReq->bRequest     = Request;
-    mscDev->CtrlReq->bRequestType = RequestType;
-    mscDev->CtrlReq->wValue       = cpu_to_le16(Value);
-    mscDev->CtrlReq->wIndex       = cpu_to_le16(Index);
-    mscDev->CtrlReq->wLength      = cpu_to_le16(BufferLen);
-    /* fill and submit the Urb */
-    memset(mscDev->CurrentUrb, 0x00, sizeof(struct urb));
-    usb_fill_control_urb(mscDev->CurrentUrb,
-                         mscDev->pusb_dev,
-                         Pipe,
-                         (unsigned char *)mscDev->CtrlReq,
-                         Buffer,
-                         BufferLen,
-                         mscUrbCallBack,
-                         NULL);
-    /* transport */
-    return mscUsbTransport(mscDev, TimeOut);
+      /* 填充控制请求结构体 */
+      mscDev->CtrlReq->bRequest     = Request;                 // 请求类型
+      mscDev->CtrlReq->bRequestType = RequestType;             // 请求方向(读/写)和请求类型
+      mscDev->CtrlReq->wValue       = cpu_to_le16(Value);       // 值, 使用小端字节序
+      mscDev->CtrlReq->wIndex       = cpu_to_le16(Index);       // 索引, 使用小端字节序
+      mscDev->CtrlReq->wLength      = cpu_to_le16(BufferLen);   // 缓冲区大小, 使用小端字节序
+      /* 填充并提交Urb */
+      memset(mscDev->CurrentUrb, 0x00, sizeof(struct urb));
+      usb_fill_control_urb(mscDev->CurrentUrb,
+                           mscDev->pusb_dev,
+                           Pipe,
+                           (unsigned char *)mscDev->CtrlReq,
+                           Buffer,
+                           BufferLen,
+                           mscUrbCallBack,
+                           NULL);
+      /* 发送请求并等待响应 */
+      return mscUsbTransport(mscDev, TimeOut);
 }
 
 /*
@@ -282,14 +283,14 @@ static int mscSendCtrlReq(__mscDev_t *mscDev,
 *                     mscClearHalt
 *
 * Description:
-*    ���ep����״̬
+*    清除端点状态
 *
 * Parameters:
-*    mscDev     :  input. Ŀ���豸
-*    Pipe       :  input. urb��pipe
+*    mscDev     :  input. 目标设备
+*    Pipe       :  input. urb的pipe
 *
 * Return value:
-*    ����URB��ִ�н��
+*    返回URB执行结果
 *
 * note:
 *
@@ -339,17 +340,17 @@ static int mscClearHalt(__mscDev_t *mscDev, unsigned int Pipe)
 *                     AnalyseBlukUrbState
 *
 * Description:
-*    ����Bulk Urb��״̬
+*    分析Bulk Urb状态
 *
 * Parameters:
-*    mscDev     :  input. Ŀ���豸
-*    UrbState   :  input. URB��ִ��״̬
-*    Pipe       :  input. urb��pipe
-*    WantLen    :  input. ԭ���봫������ݳ���
-*    ActLen     :  input. ʵ�ʴ�������ݳ���
+*    mscDev     :  input. 目标设备
+*    UrbState   :  input. URB执行状态
+*    Pipe       :  input. urb的pipe
+*    WantLen    :  input. 原始要求传输数据长度
+*    ActLen     :  input. 实际传输数据长度
 *
 * Return value:
-*    ����USB����Ľ��
+*    返回USB操作结果
 *
 * note:
 *
@@ -437,18 +438,18 @@ static int AnalyseBulkUrbState(__mscDev_t *mscDev,
 *                     mscSendBlukReq
 *
 * Description:
-*    ����bulk����
+*    发送bulk请求
 *
 * Parameters:
-*    mscDev     :  input. Ŀ���豸
-*    Pipe       :  input. urb��pipe
-*    Buffer     :  input. ������
-*    BufferLen  :  input. ��������С
-*    ActLen     :  input. ʵ�ʴ�������ݳ���
-*    TimeOut    :  input. URB��ʱʱ��
+*    mscDev     :  input. 目标设备
+*    Pipe       :  input. urb的pipe
+*    Buffer     :  input. 数据缓冲区
+*    BufferLen  :  input. 数据缓冲区大小
+*    ActLen     :  input. 实际传输数据长度
+*    TimeOut    :  input. URB超时时间
 *
 * Return value:
-*    ����USB����Ľ��
+*    返回USB操作结果
 *
 * note:
 *
@@ -491,13 +492,13 @@ static int mscSendBulkReq(__mscDev_t *mscDev,
 *                     GetMaxLun
 *
 * Description:
-*    ������Lun������������豸���ʧ�ܣ���ô��Ĭ���豸ֻ��1��Lun
+*    获取当前设备的最大Lun编号，如果获取失败，则默认设备只有1个Lun
 *
 * Parameters:
-*    mscDev  :  input. Ŀ���豸
+*    mscDev  :  input. 目标设备
 *
 * Return value:
-*    Lun ����
+*    Lun 编号
 *
 * note:
 *
@@ -620,13 +621,13 @@ static int mscBoReset(__mscDev_t *mscDev)
 *                     mscPortReset
 *
 * Description:
-*    reset �豸
+*    重置设备
 *
 * Parameters:
-*    mscDev  :  input. Ŀ���豸
+*    mscDev  :  input. 目标设备
 *
 * Return value:
-*    ���سɹ�����ʧ��
+*    返回成功或失败
 *
 * note:
 *
@@ -775,9 +776,9 @@ int mscBoTransport(__mscDev_t *mscDev, __ScsiCmnd_t *ScsiCmnd)
                              &ActLen,
                              TimeOut);
 
-        /* ��Щ�豸��read/write��������ݴ�������У������ep stall��
-           �����������������clear feature�ǲ����ģ�������Ҫ�����ش���
-          */
+        /* 有些设备在read/write数据时会发生endpoint stall的情况，
+        解除stall可能需要进行clear feature操作，所以需要进行重试
+        */
         if (ret == USB_STOR_XFER_STALLED)
         {
             __u8  Command = 0;
