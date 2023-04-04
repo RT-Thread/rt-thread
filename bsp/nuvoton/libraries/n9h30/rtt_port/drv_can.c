@@ -283,7 +283,7 @@ exit_nu_can_configure:
 
 static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 {
-    rt_uint32_t argval = (rt_uint32_t)arg;
+    rt_uint32_t argval = *(rt_uint32_t *)arg;
     nu_can_t psNuCAN = (nu_can_t)can;
 
     RT_ASSERT(can);

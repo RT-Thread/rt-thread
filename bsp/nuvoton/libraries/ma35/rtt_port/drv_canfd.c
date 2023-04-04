@@ -366,7 +366,7 @@ exit_nu_canfd_configure:
 
 static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
 {
-    rt_uint32_t argval = (rt_uint32_t)arg;
+    rt_uint32_t argval = *(rt_uint32_t *)arg;
     nu_canfd_t psNuCANFD = (nu_canfd_t)can;
 
     RT_ASSERT(can);

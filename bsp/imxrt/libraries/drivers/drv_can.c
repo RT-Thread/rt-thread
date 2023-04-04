@@ -234,7 +234,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             mask = kFLEXCAN_RxWarningInterruptEnable;

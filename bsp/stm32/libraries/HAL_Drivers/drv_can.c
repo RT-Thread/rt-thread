@@ -192,7 +192,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        argval = (rt_uint32_t) arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             if (CAN1 == drv_can->CanHandle.Instance)
@@ -248,7 +248,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t) arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             __HAL_CAN_ENABLE_IT(&drv_can->CanHandle, CAN_IT_RX_FIFO0_MSG_PENDING);
@@ -409,7 +409,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         break;
     }
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t) arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval != RT_CAN_MODE_NORMAL &&
                 argval != RT_CAN_MODE_LISTEN &&
                 argval != RT_CAN_MODE_LOOPBACK &&
@@ -424,7 +424,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval != CAN1MBaud &&
                 argval != CAN800kBaud &&
                 argval != CAN500kBaud &&
@@ -444,7 +444,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_PRIV:
-        argval = (rt_uint32_t) arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval != RT_CAN_MODE_PRIV &&
                 argval != RT_CAN_MODE_NOPRIV)
         {

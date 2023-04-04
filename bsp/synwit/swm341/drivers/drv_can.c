@@ -183,7 +183,7 @@ static rt_err_t swm_can_control(struct rt_can_device *can_device, int cmd, void 
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
-        argval = (rt_uint32_t)arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             can_dev->can_cfg->CANx->IE &= ~(CAN_IE_RXDA_Msk | CAN_IE_RXOV_Msk);
@@ -198,7 +198,7 @@ static rt_err_t swm_can_control(struct rt_can_device *can_device, int cmd, void 
         }
         break;
     case RT_DEVICE_CTRL_SET_INT:
-        argval = (rt_uint32_t)arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval == RT_DEVICE_FLAG_INT_RX)
         {
             can_dev->can_cfg->CANx->IE |= (CAN_IE_RXDA_Msk | CAN_IE_RXOV_Msk);
@@ -258,7 +258,7 @@ static rt_err_t swm_can_control(struct rt_can_device *can_device, int cmd, void 
         break;
     }
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t)arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval != RT_CAN_MODE_NORMAL &&
             argval != RT_CAN_MODE_LISTEN &&
             argval != RT_CAN_MODE_LOOPBACK &&
@@ -273,7 +273,7 @@ static rt_err_t swm_can_control(struct rt_can_device *can_device, int cmd, void 
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t)arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval != CAN1MBaud &&
             argval != CAN800kBaud &&
             argval != CAN500kBaud &&
@@ -293,7 +293,7 @@ static rt_err_t swm_can_control(struct rt_can_device *can_device, int cmd, void 
         }
         break;
     case RT_CAN_CMD_SET_PRIV:
-        argval = (rt_uint32_t)arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval != RT_CAN_MODE_PRIV &&
             argval != RT_CAN_MODE_NOPRIV)
         {

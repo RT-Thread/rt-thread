@@ -270,7 +270,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
           return setfilter(pbxcan, (struct rt_can_filter_config *) arg);
         break;
     case RT_CAN_CMD_SET_MODE:
-        argval = (rt_uint32_t) arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval != RT_CAN_MODE_NORMAL ||
                 argval != RT_CAN_MODE_LISTEN ||
                 argval != RT_CAN_MODE_LOOPBACK ||
@@ -285,7 +285,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
+        argval = *(rt_uint32_t *) arg;
         if (argval != CAN1MBaud &&
                 argval != CAN800kBaud &&
                 argval != CAN500kBaud &&
