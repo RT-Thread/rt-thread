@@ -6,9 +6,10 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2022-07-15     Aligagago         add APM32F4 series MCU support
+ * 2022-12-26     luobeihai         add APM32F0 series MCU support
  * 2023-03-18     luobeihai         fix RT-Thread Studio compile error bug
+ * 2023-03-27     luobeihai         add APM32E1/S1 series MCU support
  */
 
 #include "board.h"
@@ -42,7 +43,7 @@ static rt_err_t apm32_rtc_init(void)
     volatile rt_uint32_t counter = 0;
 
     /* Enable RTC Clock */
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_PMU | RCM_APB1_PERIPH_BAKR);
 #elif defined(SOC_SERIES_APM32F0) || defined(SOC_SERIES_APM32F4)
     RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_PMU);
@@ -61,7 +62,7 @@ static rt_err_t apm32_rtc_init(void)
         }
     }
     RCM_ConfigRTCCLK(RCM_RTCCLK_LSI);
-#else
+#elif defined(BSP_RTC_USING_LSE)
     RCM_DisableLSI();
     RCM_ConfigLSE(RCM_LSE_OPEN);
     while (!RCM_ReadStatusFlag(RCM_FLAG_LSERDY))
@@ -77,7 +78,7 @@ static rt_err_t apm32_rtc_init(void)
     RCM_EnableRTCCLK();
     RTC_WaitForSynchro();
 
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     counter = 0;
     while (!RTC_ReadStatusFlag(RTC_FLAG_OC))
     {
@@ -93,7 +94,7 @@ static rt_err_t apm32_rtc_init(void)
 
 #ifdef BSP_RTC_USING_LSI
     RTC_ConfigPrescaler(LSI_VALUE - 1);
-#else
+#elif defined(BSP_RTC_USING_LSE)
     RTC_ConfigPrescaler(LSE_VALUE - 1);
 #endif /* BSP_RTC_USING_LSI */
 
@@ -117,7 +118,7 @@ static rt_err_t apm32_rtc_init(void)
 #endif /* BSP_RTC_USING_LSI */
     RTC_Config(&rtcConfig);
 
-#endif /* SOC_SERIES_APM32F1 */
+#endif /* SOC_SERIES_APM32F1 || SOC_SERIES_APM32E1 || SOC_SERIES_APM32S1 */
 
     if (!rtc_init_flag)
     {
@@ -126,13 +127,13 @@ static rt_err_t apm32_rtc_init(void)
     return RT_EOK;
 }
 
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
 /**
  * @brief    This function will initialize the rtc on chip.
  *
  * @return   RT_EOK indicates successful initialize, other value indicates failed;
  */
-static rt_err_t apm32_rtc_get_secs(void *args)
+static rt_err_t apm32_rtc_get_secs(time_t *sec)
 {
     volatile rt_uint32_t counter = 0;
 
@@ -144,12 +145,12 @@ static rt_err_t apm32_rtc_get_secs(void *args)
         }
     }
 
-    *(rt_uint32_t *) args = RTC_ReadCounter();
+    *(time_t *) sec = RTC_ReadCounter();
 
     return RT_EOK;
 }
 
-static rt_err_t apm32_rtc_set_secs(void *args)
+static rt_err_t apm32_rtc_set_secs(time_t *sec)
 {
     volatile rt_uint32_t counter = 0;
 
@@ -166,7 +167,7 @@ static rt_err_t apm32_rtc_set_secs(void *args)
         }
     }
 
-    RTC_ConfigCounter(*(rt_uint32_t *)args);
+    RTC_ConfigCounter(*(rt_uint32_t *)sec);
 
     return RT_EOK;
 }
@@ -270,7 +271,7 @@ static rt_err_t apm32_rtc_set_secs(void *args)
 
     return result;
 }
-#endif
+#endif /* SOC_SERIES_APM32F1 || SOC_SERIES_APM32E1 || SOC_SERIES_APM32S1 */
 
 static const struct rt_rtc_ops apm32_rtc_ops =
 {

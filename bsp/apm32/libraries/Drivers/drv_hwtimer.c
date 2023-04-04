@@ -6,8 +6,9 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2022-07-15     Aligagago         add APM32F4 series MCU support
+ * 2022-12-26     luobeihai         add APM32F0 series MCU support
+ * 2023-03-27     luobeihai         add APM32E1/S1 series MCU support
  */
 
 #include <board.h>
@@ -96,7 +97,7 @@ static struct apm32_timer tmr_config[] =
     {
         "timer1",
         TMR1,
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
         TMR1_UP_IRQn,
 #elif defined(SOC_SERIES_APM32F4)
         TMR1_UP_TMR10_IRQn,
@@ -137,7 +138,7 @@ static struct apm32_timer tmr_config[] =
     {
         "timer6",
         TMR6,
-#if defined(SOC_SERIES_APM32F1) || defined(APM32F030) || defined(APM32F070)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(APM32F030) || defined(APM32F070)
         TMR6_IRQn,
 #elif defined(SOC_SERIES_APM32F4)
         TMR6_DAC_IRQn
@@ -157,7 +158,7 @@ static struct apm32_timer tmr_config[] =
     {
         "timer8",
         TMR8,
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1)
         TMR8_UP_IRQn,
 #elif defined(SOC_SERIES_APM32F4)
         TMR8_UP_TMR13_IRQn,
@@ -241,12 +242,19 @@ static rt_uint32_t apm32_hwtimer_clock_get(TMR_T *tmr)
     pclk1 = RCM_ReadPCLKFreq();
 
     return (rt_uint32_t)(pclk1 * ((RCM->CFG1_B.APB1PSC != 0) ? 2 : 1));
-#else
+#endif /* SOC_SERIES_APM32F0 */
+
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     uint32_t pclk1, pclk2;
 
     RCM_ReadPCLKFreq(&pclk1, &pclk2);
 
+#if defined(SOC_SERIES_APM32S1)
+    if (tmr == TMR1)
+#else
     if (tmr == TMR1 || tmr == TMR8 || tmr == TMR9 || tmr == TMR10 || tmr == TMR11)
+#endif /* SOC_SERIES_APM32S1 */
     {
         return (rt_uint32_t)(pclk2 * ((RCM->CFG_B.APB2PSC != 0) ? 2 : 1));
     }
@@ -316,7 +324,8 @@ static void apm32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t stat
 {
 #if defined(SOC_SERIES_APM32F0)
     TMR_TimeBase_T   base_config;
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     TMR_BaseConfig_T base_config;
 #endif
     uint32_t prescaler = 0;
@@ -344,7 +353,8 @@ static void apm32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t stat
         {
             base_config.counterMode   = TMR_COUNTER_MODE_DOWN;
         }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         base_config.division        = prescaler;
         base_config.clockDivision   = TMR_CLOCK_DIV_1;
         if (timer->info->cntmode == HWTIMER_CNTMODE_UP)
@@ -364,11 +374,16 @@ static void apm32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t stat
         NVIC_EnableIRQRequest(timer_config->irqn, 3);
         /* enable update request source */
         TMR_ConfigUPdateRequest(timer_config->tmr, TMR_UPDATE_SOURCE_REGULAR);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         /* set the TIMx priority */
         NVIC_EnableIRQRequest(timer_config->irqn, 3, 0);
         /* enable update request source */
+    #if defined(SOC_SERIES_APM32E1)
+        TMR_ConfigUPdateRequest(timer_config->tmr, TMR_UPDATE_SOURCE_REGULAR);
+    #else
         TMR_ConfigUpdateRequest(timer_config->tmr, TMR_UPDATE_SOURCE_REGULAR);
+    #endif
 #endif
         /* clear update flag */
         TMR_ClearStatusFlag(timer_config->tmr, TMR_FLAG_UPDATE);
@@ -405,7 +420,9 @@ static rt_err_t apm32_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtim
 #if defined(SOC_SERIES_APM32F0)
     if (timer_config->tmr == TMR1 || timer_config->tmr == TMR2 || timer_config->tmr == TMR3 || \
         timer_config->tmr == TMR15)
-#else
+#elif defined(SOC_SERIES_APM32S1)
+    if (timer_config->tmr == TMR1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32F4)
     if (timer_config->tmr == TMR1 || timer_config->tmr == TMR2 || timer_config->tmr == TMR3 || \
         timer_config->tmr == TMR4 || timer_config->tmr == TMR5 || timer_config->tmr == TMR8 || \
         timer_config->tmr == TMR9 || timer_config->tmr == TMR12)
@@ -497,7 +514,7 @@ void TMR1_BRK_UP_TRG_COM_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
-#elif defined(SOC_SERIES_APM32F1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
 #ifdef BSP_USING_TMR1
 void TMR1_UP_IRQHandler(void)
 {
@@ -568,7 +585,7 @@ void TMR5_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_TMR6
-#if defined(SOC_SERIES_APM32F1) || defined(APM32F030) || defined(APM32F070)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(APM32F030) || defined(APM32F070)
     void TMR6_IRQHandler(void)
 #elif defined(SOC_SERIES_APM32F4)
     void TMR6_DAC_IRQHandler(void)
@@ -593,7 +610,7 @@ void TMR7_IRQHandler(void)
 }
 #endif
 
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1)
 #ifdef BSP_USING_TMR8
 void TMR8_UP_IRQHandler(void)
 {

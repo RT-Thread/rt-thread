@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-03-14     luobeihai    first version
+ * 2023-03-27     luobeihai    add APM32E1 series MCU support
  */
 
 #include "board.h"
@@ -690,7 +691,7 @@ void SD_LowLevel_DMA_TxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
     sdio_obj.cfg = &sdio_config;
     sdio_obj.dma.handle_tx = sdio_config.dma_tx.Instance;
 
-#if defined (SOC_SERIES_APM32F1)
+#if defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1)
     /* clear DMA flag */
     DMA_ClearStatusFlag(DMA2_FLAG_GINT4 | DMA2_FLAG_TC4 | DMA2_FLAG_HT4 | DMA2_FLAG_TERR4);
 
@@ -754,7 +755,7 @@ void SD_LowLevel_DMA_RxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
     sdio_obj.cfg = &sdio_config;
     sdio_obj.dma.handle_rx = sdio_config.dma_rx.Instance;
 
-#if defined (SOC_SERIES_APM32F1)
+#if defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1)
     /* clear DMA flag */
     DMA_ClearStatusFlag(DMA2_FLAG_GINT4 | DMA2_FLAG_TC4 | DMA2_FLAG_HT4 | DMA2_FLAG_TERR4);
 
@@ -846,7 +847,7 @@ int rt_hw_sdio_init(void)
     hsd.Instance = SDCARD_INSTANCE;
 
     /* enable DMA clock */
-#if defined (SOC_SERIES_APM32F1)
+#if defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1)
     SET_BIT(RCM->AHBCLKEN, sdio_config.dma_rx.dma_rcm);
 #elif defined (SOC_SERIES_APM32F4)
     SET_BIT(RCM->AHB1CLKEN, sdio_config.dma_rx.dma_rcm);
