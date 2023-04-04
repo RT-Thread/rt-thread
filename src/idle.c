@@ -207,7 +207,7 @@ static void rt_defunct_execute(void)
             break;
         }
 #ifdef RT_USING_MODULE
-        module = (struct rt_dlmodule*)thread->module_id;
+        module = (struct rt_dlmodule*)thread->parent.module_id;
         if (module)
         {
             dlmodule_destroy(module);

@@ -143,7 +143,7 @@ rt_module_t rt_module_self(void)
         return RT_NULL;
 
     /* return current module */
-    return (rt_module_t)tid->module_id;
+    return (rt_module_t)tid->parent.module_id;
 }
 RTM_EXPORT(rt_module_self);
 
@@ -319,7 +319,7 @@ rt_module_t rt_module_open(const char *path)
             module->module_entry));
 
         /* set module id */
-        module->module_thread->module_id = (void *)module;
+        module->module_thread->parent.module_id = (void *)module;
         module->parent.flag = RT_MODULE_FLAG_WITHENTRY;
 
         /* startup module thread */
@@ -520,11 +520,11 @@ rt_module_t rt_module_exec_cmd(const char *path, const char* cmd_line, int line_
             2048, RT_THREAD_PRIORITY_MAX - 2, 10);
 
         /* set module id */
-        module->module_thread->module_id = (void *)module;
+        module->module_thread->parent.module_id = (void *)module;
         module->parent.flag = RT_MODULE_FLAG_WITHENTRY;
 
         /* startup module thread */
-        rt_thread_startup(module->module_thread);
+        rt_thread_startup(module->parent.module_thread);
     }
     else
     {
