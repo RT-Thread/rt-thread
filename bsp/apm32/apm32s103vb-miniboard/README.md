@@ -1,8 +1,8 @@
-# APM32F103ZE MINI BOARD BSP 说明
+# APM32S103VB MINI BOARD BSP 说明
 
 ## 简介
 
-本文档为 APM32F103ZE MINI 开发板（MINI BOARD）的 BSP (板级支持包) 说明。
+本文档为 APM32S103VB MINI 开发板（MINI BOARD）的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -13,16 +13,16 @@
 
 ## 开发板介绍
 
-APM32F103ZE MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO。开发板外观如下图所示：
+APM32S103VB MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO。开发板外观如下图所示：
 
-![board](figures/APM32F103ZE.png)
+![board](figures/APM32S103VB-MINI.png)
 
 - 有关开发板和芯片的详情可至极海官网查阅。[官网开发板链接 ](https://www.geehy.com/support/apm32?id=192)
 
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：APM32F103ZET6，主频 96MHz，512KB FLASH ，128KB RAM
+- MCU：APM32S103VBT6，主频 96MHz，128KB FLASH ，36KB RAM
 - 外部 RAM：无
 - 外部 FLASH：无
 - 常用外设
@@ -43,14 +43,16 @@ APM32F103ZE MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO
 | **片上外设** | **支持情况** | **备注**                             |
 | GPIO         |     支持     | PA0, PA1... PG15 ---> PIN: 0, 1...108 |
 | UART         |     支持     | UART1/2                               |
-| ADC          |     支持     | ADC1/2/3                              |
+| ADC          |     支持     | ADC1/2                              |
 | DAC          |     支持     | DAC1                                  |
 | RTC          |     支持     | 支持外部晶振和内部低速时钟            |
-| TMR          |     支持     | TMR1/2/3/4/5/6/7/8                    |
+| TMR          |     支持     | TMR1/2/3/4                    |
 | PWM          |     支持     | TMR3 ->CH1/2/3/4                      |
 | I2C          |     支持     | 软件I2C                               |
-| SPI          |     支持     | SPI1/2/3                              |
+| SPI          |     支持     | SPI1/2                              |
 | WDT          |     支持     | IWDT                                  |
+| Flash | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
+| CAN | 支持 | CAN1/CAN2 |
 
 ## 使用说明
 
@@ -79,6 +81,8 @@ APM32F103ZE MINI BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO
 ##### 1、建立J-Flash工程
 
 ![board](figures/JFlash_Leader_01.png)
+
+**注意**：步骤4选择芯片型号时，要根据自己的开发板所用的芯片型号进行选择。比如本开发板，则选择对应的 **APM32S103VBT6** 。
 
 ##### 2、连接开发板
 
@@ -110,3 +114,5 @@ msh >
 -[abbbcc ](https://gitee.com/abbbcc)
 
 -[stevetong459 ](https://github.com/stevetong459)
+
+-[luobeihai](https://github.com/luobeihai)
