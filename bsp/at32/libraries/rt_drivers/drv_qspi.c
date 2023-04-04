@@ -8,6 +8,7 @@
  * 2022-05-16     shelton      first version
  */
 
+#include <rtdevice.h>
 #include "drv_common.h"
 #include "drv_qspi.h"
 
