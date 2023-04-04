@@ -97,7 +97,7 @@ static rt_err_t apm32_can_config(struct rt_can_device *can, struct can_configure
     drv_can->can_init.nonAutoRetran    = DISABLE;
     drv_can->can_init.rxFIFOLockMode   = DISABLE;
     drv_can->can_init.txFIFOPriority   = ENABLE;
-    
+
     /* can mode config */
     switch (cfg->mode)
     {
@@ -121,21 +121,21 @@ static rt_err_t apm32_can_config(struct rt_can_device *can, struct can_configure
         drv_can->can_init.mode = CAN_MODE_NORMAL;
         break;
     }
-    
+
     /* can baud config */
     baud_index = get_can_baud_index(cfg->baud_rate);
     drv_can->can_init.syncJumpWidth    = can_baud_rate_tab[baud_index].syncJumpWidth;
     drv_can->can_init.timeSegment1     = can_baud_rate_tab[baud_index].timeSegment1;
     drv_can->can_init.timeSegment2     = can_baud_rate_tab[baud_index].timeSegment2;
     drv_can->can_init.prescaler        = can_baud_rate_tab[baud_index].prescaler;
-    
+
     /* init can */
     if (CAN_Config(drv_can->CANx, &drv_can->can_init) != SUCCESS)
     {
         LOG_D("Can init error");
         return -RT_ERROR;
     }
-    
+
     /* default filter config */
 #if defined(SOC_SERIES_APM32F4) || defined(APM32F10X_CL)
     CAN_ConfigFilter(&drv_can->FilterConfig);
@@ -366,7 +366,7 @@ static rt_err_t apm32_can_control(struct rt_can_device *can, int cmd, void *arg)
                 drv_can->FilterConfig.filterFIFO = CAN_FILTER_FIFO_0;
                 drv_can->FilterConfig.filterScale = CAN_FILTER_SCALE_32BIT;
                 drv_can->FilterConfig.filterActivation = ENABLE;
-                
+
                 /* Filter conf */
 #if defined(SOC_SERIES_APM32F4) || defined(APM32F10X_CL)
                 CAN_ConfigFilter(&drv_can->FilterConfig);
@@ -550,11 +550,11 @@ static int apm32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t f
     RT_ASSERT(can);
 
     drv_can = (struct apm32_can *)can->parent.user_data;
-    
+
     pmsg = (struct rt_can_msg *) buf;
 
     CAN_RxMessage(drv_can->CANx, (CAN_RX_FIFO_T)fifo, &RxMessage);
-    
+
     /* get data  */
     pmsg->data[0] = RxMessage.data[0];
     pmsg->data[1] = RxMessage.data[1];
@@ -576,7 +576,7 @@ static int apm32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t f
         pmsg->ide = RT_CAN_EXTID;
         pmsg->id = RxMessage.extID;
     }
-    
+
     /* get type */
     if (CAN_RTXR_DATA == RxMessage.remoteTxReq)
     {
@@ -591,7 +591,7 @@ static int apm32_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t f
 
     /* get len */
     pmsg->len = RxMessage.dataLengthCode;
-    
+
     /* get hdr_index */
     if (drv_can->CANx == CAN1)
     {
@@ -713,7 +713,7 @@ static void _can_sce_isr(struct rt_can_device *can)
     can->status.rcverrcnt = errtype >> 24;
     can->status.snderrcnt = (errtype >> 16 & 0xFF);
     can->status.errcode = errtype & 0x07;
-    
+
     /* clear error interrupt flag */
     CAN_ClearIntFlag(drv_can->CANx, CAN_INT_ERR);
 }
