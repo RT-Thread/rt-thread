@@ -1034,7 +1034,7 @@ void lwp_cleanup(struct rt_thread *tid)
         return;
     }
 
-    LOG_I("cleanup thread: %s, stack_addr: %08X", tid->name, tid->stack_addr);
+    LOG_I("cleanup thread: %s, stack_addr: %08X", tid->parent.name, tid->stack_addr);
 
     level = rt_hw_interrupt_disable();
     lwp = (struct rt_lwp *)tid->lwp;

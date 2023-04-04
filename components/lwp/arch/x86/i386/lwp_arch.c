@@ -48,7 +48,7 @@ int arch_expand_user_stack(void *addr)
         else /* map failed, send signal SIGSEGV */
         {
 #ifdef RT_USING_SIGNALS
-            dbg_log(DBG_ERROR, "[fault] thread %s mapped addr %p failed!\n", rt_thread_self()->name, addr);
+            dbg_log(DBG_ERROR, "[fault] thread %s mapped addr %p failed!\n", rt_thread_self()->parent.name, addr);
             lwp_thread_kill(rt_thread_self(), SIGSEGV);
             ret = 1;    /* return 1, will return back to intr, then check exit */
 #endif
@@ -57,7 +57,7 @@ int arch_expand_user_stack(void *addr)
     else    /* not stack, send signal SIGSEGV */
     {
 #ifdef RT_USING_SIGNALS
-        dbg_log(DBG_ERROR, "[fault] thread %s access unmapped addr %p!\n", rt_thread_self()->name, addr);
+        dbg_log(DBG_ERROR, "[fault] thread %s access unmapped addr %p!\n", rt_thread_self()->parent.name, addr);
         lwp_thread_kill(rt_thread_self(), SIGSEGV);
         ret = 1;    /* return 1, will return back to intr, then check exit */
 #endif

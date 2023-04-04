@@ -388,7 +388,7 @@ uintptr_t handle_trap(uintptr_t mcause, uintptr_t epc, uintptr_t * sp)
         rt_kprintf("\n");
         print_stack_frame(sp);
         rt_kprintf("exception pc => 0x%08x\n", epc);
-        rt_kprintf("current thread: %.*s\n", RT_NAME_MAX, tid->name);
+        rt_kprintf("current thread: %.*s\n", RT_NAME_MAX, tid->parent.name);
 #if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
         list_thread();
 #endif

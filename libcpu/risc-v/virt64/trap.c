@@ -217,7 +217,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
 
-    LOG_E("User Fault, killing thread: %s", rt_thread_self()->name);
+    LOG_E("User Fault, killing thread: %s", rt_thread_self()->parent.name);
 
     EXIT_TRAP;
     sys_exit(-1);
@@ -344,7 +344,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
         rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
         dump_regs(sp);
         rt_kprintf("--------------Thread list--------------\n");
-        rt_kprintf("current thread: %s\n", rt_thread_self()->name);
+        rt_kprintf("current thread: %s\n", rt_thread_self()->parent.name);
 
         extern struct rt_thread *rt_current_thread;
         rt_kprintf("--------------Backtrace--------------\n");
