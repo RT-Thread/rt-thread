@@ -10,7 +10,7 @@ config SOC_STM32G474RE
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
-        bool "Enable STLINK TO USART (uart1)"
+        bool "Enable STLINK TO USART (lpuart1)"
         select BSP_USING_UART
         select BSP_USING_UART1
         default y

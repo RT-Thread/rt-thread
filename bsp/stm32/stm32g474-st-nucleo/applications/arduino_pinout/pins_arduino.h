@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-04-02     Wangyuqiang  first version
+ * 2023-04-04     Wangyuqiang  first version
  */
 
 #ifndef Pins_Arduino_h
@@ -40,10 +40,12 @@
 
 #define F_CPU          170000000L  /* CPU:170MHz */
 
+#define LED_BUILTIN     D13  /* Default Built-in LED */
+
 /* i2c1 : PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
-/* Serial1 : PC4-TX  PC5-RX */
-#define RTDUINO_SERIAL_DEVICE_NAME      "uart1"
+/* Serial2 : PA9-TX  PA10-RX */
+#define RTDUINO_SERIAL2_DEVICE_NAME      "uart1"
 
 #endif /* Pins_Arduino_h */

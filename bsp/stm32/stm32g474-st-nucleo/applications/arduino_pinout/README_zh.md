@@ -21,20 +21,20 @@ Hardware Drivers Config --->
 ![stm32g474-nucleo-pinout.jpg](./stm32g474-nucleo-pinout.jpg)
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
-| 0 (D0) | PC5 | 是 | Serial-RX，默认被RT-Thread的UART设备框架uart1接管 |
-| 1 (D1) | PC4 | 是 | Serial-TX，默认被RT-Thread的UART设备框架uart1接管 |
-| 2 (D2) | PA10 | 是 |  |
+| 0 (D0) | PC5 | 是 |  |
+| 1 (D1) | PC4 | 是 |  |
+| 2 (D2) | PA10 | 是 | Serial2-RX，默认被RT-Thread的UART设备框架uart1接管 |
 | 3 (D3) | PB3 | 是 | PWM2-CH2，默认被RT-Thread的PWM设备框架pwm2接管 |
 | 4 (D4) | PB5 | 是 |  |
 | 5 (D5) | PB4 | 是 | PWM3-CH1，默认被RT-Thread的PWM设备框架pwm3接管 |
 | 6 (D6) | PB10 | 是 | PWM2-CH3，默认被RT-Thread的PWM设备框架pwm2接管 |
 | 7 (D7) | PA8 | 是 |  |
-| 8 (D8) | PA9 | 是 |  |
+| 8 (D8) | PA9 | 是 | Serial2-TX，默认被RT-Thread的UART设备框架uart1接管 |
 | 9 (D9) | PC7 | 是 | PWM8-CH2，默认被RT-Thread的PWM设备框架pwm8接管 |
 | 10 (D10) | PB6 | 是 | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管 |
 | 11 (D11) | PA7 | 是 | PWM3-CH2，默认被RT-Thread的PWM设备框架pwm3接管 |
 | 12 (D12) | PA6 | 是 |  |
-| 13 (D13) | PA5 | 是 |  |
+| 13 (D13) | PA5 | 是 | 板载用户LED |
 | 14 (D14) | PB9 | 是 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
 | 15 (D15) | PB8 | 是 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
 | 16 (D16) | PC13 | 是 |  |
@@ -46,3 +46,11 @@ Hardware Drivers Config --->
 | 22 (A5) | PC0 | 是 | ADC1-CH6，默认被RT-Thread的ADC设备框架adc1接管 |
 | 23 (A6) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 | 24 (A7) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
+
+> Notice:
+> 在 Nucleo 64 引脚板上，D0 和 D1 引脚默认不可用，因为它们被 STLink 虚拟通信端口（例如用于 printf）使用。
+>
+> 如果您想使用这些引脚（而不是默认的虚拟通信端口），您需要关闭 SB62/SB63并打开 SB13/SB14焊桥。
+
+> References:
+> 1.[stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf](https://www.st.com/resource/en/user_manual/dm00105823-stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf)

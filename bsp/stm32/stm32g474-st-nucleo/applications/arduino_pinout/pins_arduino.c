@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-04-02     Wangyuqiang  first version
+ * 2023-04-04     Wangyuqiang  first version
  */
 
 #include <Arduino.h>
@@ -21,20 +21,20 @@
  */
 const pin_map_t pin_map_table[]=
 {
-    {D0, GET_PIN(C,5), "uart1"},        /* Serial1-RX */
-    {D1, GET_PIN(C,4), "uart1"},        /* Serial1-TX */
-    {D2, GET_PIN(A,10)},
+    {D0, GET_PIN(C,5)},
+    {D1, GET_PIN(C,4)},
+    {D2, GET_PIN(A,10), "uart1"},       /* Serial2-RX */
     {D3, GET_PIN(B,3), "pwm2", 2},      /* PWM */
     {D4, GET_PIN(B,5)},
     {D5, GET_PIN(B,4), "pwm3", 1},      /* PWM */
     {D6, GET_PIN(B,10), "pwm2", 3},     /* PWM */
     {D7, GET_PIN(A,8)},
-    {D8, GET_PIN(A,9)},
+    {D8, GET_PIN(A,9), "uart1"},        /* Serial2-TX */
     {D9, GET_PIN(C,7), "pwm8", 2},      /* PWM */
     {D10, GET_PIN(B,6), "pwm4", 1},     /* PWM */
     {D11, GET_PIN(A,7), "pwm3", 2},     /* PWM */
     {D12, GET_PIN(A,6)},
-    {D13, GET_PIN(A,5)},
+    {D13, GET_PIN(A,5)},                /* LED_BUILTIN */
     {D14, GET_PIN(B,9), "i2c1"},        /* I2C-SDA (Wire) */
     {D15, GET_PIN(B,8), "i2c1"},        /* I2C-SCL (Wire) */
     {D16, GET_PIN(C,13)},

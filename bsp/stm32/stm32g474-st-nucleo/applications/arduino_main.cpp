@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-04-01     Wangyuqiang  first version
+ * 2023-04-04     Wangyuqiang  first version
  */
 
 #include <Arduino.h>
@@ -13,12 +13,12 @@
 void setup(void)
 {
     /* put your setup code here, to run once: */
-    Serial.begin();
-    Serial.println("Hello RTduino!");
+    pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop(void)
 {
     /* put your main code here, to run repeatedly: */
-    delay(1000);
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+    delay(100);
 }
