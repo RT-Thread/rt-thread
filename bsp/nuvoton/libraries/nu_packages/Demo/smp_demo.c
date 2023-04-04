@@ -151,26 +151,30 @@ static int go_happy_mutex(void)
     rt_thread_t thread;
     rt_mutex_t  sem = rt_mutex_create("mutexsem", RT_IPC_FLAG_PRIO);
 
-    if(sem != RT_NULL)
+    if(sem == RT_NULL)
     {
-        thread = rt_thread_create("mutex0", happy_mutex, (void *)sem, 2048, 25, 20);
-        if (thread != RT_NULL)
-        {
-#ifdef RT_USING_SMP
-            rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void *)0);
-#endif
-            rt_thread_startup(thread);
-        }
-
-        thread = rt_thread_create("mutex1", happy_mutex, (void *)sem, 2048, 25, 20);
-        if (thread != RT_NULL)
-        {
-#ifdef RT_USING_SMP
-            rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void *)1);
-#endif
-            rt_thread_startup(thread);
-        }
+        rt_kprintf("create mutex failed");
+        return (int)-RT_ERROR;
     }
+
+    thread = rt_thread_create("mutex0", happy_mutex, (void *)sem, 2048, 25, 20);
+    if (thread != RT_NULL)
+    {
+#ifdef RT_USING_SMP
+        rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void *)0);
+#endif
+        rt_thread_startup(thread);
+    }
+
+    thread = rt_thread_create("mutex1", happy_mutex, (void *)sem, 2048, 25, 20);
+    if (thread != RT_NULL)
+    {
+#ifdef RT_USING_SMP
+        rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void *)1);
+#endif
+        rt_thread_startup(thread);
+    }
+
     return 0;
 }
 MSH_CMD_EXPORT(go_happy_mutex, demo mutex);
