@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#if defined(BSP_USING_QSPI1)
+#ifdef BSP_USING_QSPI1
 #define QSPI1_BUS_CONFIG                                       \
     {                                                          \
         .qspi_x                 = QSPI1,                       \
@@ -25,7 +25,7 @@ extern "C" {
     }
 #endif /* BSP_USING_QSPI1 */
 
-#if defined(BSP_USING_QSPI2)
+#ifdef BSP_USING_QSPI2
 #define QSPI2_BUS_CONFIG                                       \
     {                                                          \
         .qspi_x                 = QSPI2,                       \

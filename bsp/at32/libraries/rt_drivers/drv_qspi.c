@@ -12,7 +12,7 @@
 #include "drv_common.h"
 #include "drv_qspi.h"
 
-#ifdef RT_USING_QSPI
+#ifdef BSP_USING_QSPI
 #if !defined(BSP_USING_QSPI1) && !defined(BSP_USING_QSPI2)
 #error "Please define at least one BSP_USING_QSPIx"
 #endif
