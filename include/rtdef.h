@@ -47,6 +47,7 @@
  * 2022-08-16     Meco Man     change version number to v5.0.0
  * 2022-09-12     Meco Man     define rt_ssize_t
  * 2022-12-20     Meco Man     add const name for rt_object
+ * 2023-04-01     Chushicheng  change version number to v5.0.1
  */
 
 #ifndef __RT_DEF_H__
@@ -73,7 +74,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
 #define RT_VERSION_MINOR                0               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
+#define RT_VERSION_PATCH                1               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + (minor * 100) + revise)
@@ -124,6 +125,13 @@ typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
+
+#if defined(RT_USING_STDC_ATOMIC)
+#include <stdatomic.h>
+typedef atomic_size_t rt_atomic_t;
+#else
+typedef volatile rt_base_t rt_atomic_t;
+#endif
 
 /* boolean type definitions */
 #define RT_TRUE                         1               /**< boolean true  */

@@ -390,10 +390,10 @@ typedef struct
   */
 typedef struct
 {
-  __IO uint32_t CTRL;     /*!< Timer x��s control register,                        Address offset: 0x00 */
-  __IO uint32_t VALUE;    /*!< Timer x��s current count register,                  Address offset: 0x04 */
-  __IO uint32_t RELOAD;   /*!< Timer x��s reload register,                         Address offset: 0x08 */
-  __IO uint32_t INT;      /*!< Timer x��s interrupt status register,               Address offset: 0x0C */
+  __IO uint32_t CTRL;     /*!< Timer x’s control register,                        Address offset: 0x00 */
+  __IO uint32_t VALUE;    /*!< Timer x’s current count register,                  Address offset: 0x04 */
+  __IO uint32_t RELOAD;   /*!< Timer x’s reload register,                         Address offset: 0x08 */
+  __IO uint32_t INT;      /*!< Timer x’s interrupt status register,               Address offset: 0x0C */
 } TMR_TypeDef;
 
 /** 
@@ -401,14 +401,14 @@ typedef struct
   */
 typedef struct
 {
-  __IO uint32_t CTL;    /*!< PWM Timer x��s control register,                        Address offset: 0x00 */
-  __IO uint32_t TAR;    /*!< PWM Timer x��s current count register,                  Address offset: 0x04 */
-  __IO uint32_t CCTL0;  /*!< PWM Timer x��s compare/capture control register 0,      Address offset: 0x08 */
-  __IO uint32_t CCTL1;  /*!< PWM Timer x��s compare/capture control register 1,      Address offset: 0x0C */
-  __IO uint32_t CCTL2;  /*!< PWM Timer x��s compare/capture control register 2,      Address offset: 0x10 */
-  __IO uint32_t CCR0;   /*!< PWM Timer x��s compare/capture data register 0,         Address offset: 0x14 */
-  __IO uint32_t CCR1;   /*!< PWM Timer x��s compare/capture data register 1,         Address offset: 0x18 */
-  __IO uint32_t CCR2;   /*!< PWM Timer x��s compare/capture data register 2,         Address offset: 0x1C */
+  __IO uint32_t CTL;    /*!< PWM Timer x’s control register,                        Address offset: 0x00 */
+  __IO uint32_t TAR;    /*!< PWM Timer x’s current count register,                  Address offset: 0x04 */
+  __IO uint32_t CCTL0;  /*!< PWM Timer x’s compare/capture control register 0,      Address offset: 0x08 */
+  __IO uint32_t CCTL1;  /*!< PWM Timer x’s compare/capture control register 1,      Address offset: 0x0C */
+  __IO uint32_t CCTL2;  /*!< PWM Timer x’s compare/capture control register 2,      Address offset: 0x10 */
+  __IO uint32_t CCR0;   /*!< PWM Timer x’s compare/capture data register 0,         Address offset: 0x14 */
+  __IO uint32_t CCR1;   /*!< PWM Timer x’s compare/capture data register 1,         Address offset: 0x18 */
+  __IO uint32_t CCR2;   /*!< PWM Timer x’s compare/capture data register 2,         Address offset: 0x1C */
 } PWM_TypeDef;
 
 /** 
@@ -417,8 +417,8 @@ typedef struct
 typedef struct
 {
   __IO uint32_t OSEL;      /*!< PWM output selection register,                         Address offset: 0x00 */
-//  __IO uint32_t ISEL01;    /*!< PWM0 and PWM1��s input selection register,              Address offset: 0x04 */
-//  __IO uint32_t ISEL23;    /*!< PWM2 and PWM3��s input selection register,              Address offset: 0x08 */
+//  __IO uint32_t ISEL01;    /*!< PWM0 and PWM1’s input selection register,              Address offset: 0x04 */
+//  __IO uint32_t ISEL23;    /*!< PWM2 and PWM3’s input selection register,              Address offset: 0x08 */
   uint32_t RESERVED0;    /*!< RESERVED0,              Address offset: 0x04 */
   uint32_t RESERVED1;    /*!< RESERVED1,              Address offset: 0x08 */
 } PWM_MUX_TypeDef;
@@ -655,7 +655,7 @@ typedef struct
 /**************  Bits definition for PMU_CONTROL register    ******************/
 #define PMU_CONTROL_INT_IOA_EN_Pos    (0U)                                     
 #define PMU_CONTROL_INT_IOA_EN_Msk    (0x1U << PMU_CONTROL_INT_IOA_EN_Pos)          /*!< 0x00000001 */
-#define PMU_CONTROL_INT_IOA_EN         PMU_CONTROL_INT_IOA_EN_Msk                   /*!< PMU��s interrupt enable register.  This bit is used to control the interrupt signal output to CPU */
+#define PMU_CONTROL_INT_IOA_EN         PMU_CONTROL_INT_IOA_EN_Msk                   /*!< PMU’s interrupt enable register.  This bit is used to control the interrupt signal output to CPU */
 #define PMU_CONTROL_RTCLK_SEL_Pos     (1U)                                     
 #define PMU_CONTROL_RTCLK_SEL_Msk     (0x1U << PMU_CONTROL_RTCLK_SEL_Pos)      /*!< 0x00000002 */
 #define PMU_CONTROL_RTCLK_SEL          PMU_CONTROL_RTCLK_SEL_Msk               /*!< RTC Clock selection */
@@ -679,7 +679,7 @@ typedef struct
 //#define PMU_CONTROL_PWUPCYC            PMU_CONTROL_PWUPCYC_Msk                 /*!< Power-up cycle count, this register control the power-up wait time when a wake-up even is received.  The unit is 32K clock period */
 //#define PMU_CONTROL_NOWAITLOCK_Pos    (17U)
 //#define PMU_CONTROL_NOWAITLOCK_Msk    (0x1U << PMU_CONTROL_NOWAITLOCK_Pos)     /*!< 0x00020000 */
-//#define PMU_CONTROL_NOWAITLOCK         PMU_CONTROL_NOWAITLOCK_Msk              /*!< if the hardware will wait for PLLL��s lock signal when switch clock source to PLLL/PLLH */
+//#define PMU_CONTROL_NOWAITLOCK         PMU_CONTROL_NOWAITLOCK_Msk              /*!< if the hardware will wait for PLLL’s lock signal when switch clock source to PLLL/PLLH */
 
 /**************  Bits definition for PMU_STS register        ******************/
 #define PMU_STS_INT_32K_Pos           (0U)                                     
@@ -710,42 +710,42 @@ typedef struct
 /**************  Bits definition for PMU_IOAOEN register     ******************/
 #define PMU_IOAOEN_Pos                (0U)                                     
 #define PMU_IOAOEN_Msk                (0xFFFFU << PMU_IOAOEN_Pos)              /*!< 0x0000FFFF */
-#define PMU_IOAOEN_IOAOEN              PMU_IOAOEN_Msk                          /*!< Each bit control the IOA��s output enable signal */
+#define PMU_IOAOEN_IOAOEN              PMU_IOAOEN_Msk                          /*!< Each bit control the IOA’s output enable signal */
 
 /**************  Bits definition for PMU_IOAIE register      ******************/
 #define PMU_IOAIE_Pos                 (0U)                                     
 #define PMU_IOAIE_Msk                 (0xFFFFU << PMU_IOAIE_Pos)               /*!< 0x0000FFFF */
-#define PMU_IOAIE_IOAIE                PMU_IOAIE_Msk                           /*!< Each bit control the IOA��s input enable signal */
+#define PMU_IOAIE_IOAIE                PMU_IOAIE_Msk                           /*!< Each bit control the IOA’s input enable signal */
  
 /**************  Bits definition for PMU_IOADAT register     ******************/
 #define PMU_IOADAT_Pos                (0U)                                     
 #define PMU_IOADAT_Msk                (0xFFFFU << PMU_IOADAT_Pos)              /*!< 0x0000FFFF */
-#define PMU_IOADAT_IOADAT              PMU_IOADAT_Msk                          /*!< Each bit control the IOA��s output data and pull low/high function */
+#define PMU_IOADAT_IOADAT              PMU_IOADAT_Msk                          /*!< Each bit control the IOA’s output data and pull low/high function */
 
 /**************  Bits definition for PMU_IOAATT register     ******************/
 #define PMU_IOAATT_Pos                (0U)                                     
 #define PMU_IOAATT_Msk                (0xFFFFU << PMU_IOAATT_Pos)              /*!< 0x0000FFFF */
-#define PMU_IOAATT_IOAATT              PMU_IOAATT_Msk                          /*!< Each bit control the IOA��s attribute and pull low/high function */
+#define PMU_IOAATT_IOAATT              PMU_IOAATT_Msk                          /*!< Each bit control the IOA’s attribute and pull low/high function */
 
 /**************  Bits definition for PMU_IOAWKUEN register   ******************/
 #define PMU_IOAWKUEN_Pos              (0U)                                     
 #define PMU_IOAWKUEN_Msk              (0xFFFFFFFFU << PMU_IOAWKUEN_Pos)        /*!< 0xFFFFFFFF */
-#define PMU_IOAWKUEN_IOAWKUEN          PMU_IOAWKUEN_Msk                        /*!< Every 2 bits control the IOA��s wake up function */
+#define PMU_IOAWKUEN_IOAWKUEN          PMU_IOAWKUEN_Msk                        /*!< Every 2 bits control the IOA’s wake up function */
 
 /**************  Bits definition for PMU_IOASTS register     ******************/
 #define PMU_IOASTS_Pos                (0U)                                     
 #define PMU_IOASTS_Msk                (0xFFFFU << PMU_IOASTS_Pos)              /*!< 0x0000FFFF */
-#define PMU_IOASTS_IOASTS              PMU_IOASTS_Msk                          /*!< Each bit represents the current IOA��s input data value */
+#define PMU_IOASTS_IOASTS              PMU_IOASTS_Msk                          /*!< Each bit represents the current IOA’s input data value */
 
 /**************  Bits definition for PMU_IOAINT register     ******************/
 #define PMU_IOAINT_Pos                (0U)                                     
 #define PMU_IOAINT_Msk                (0xFFFFU << PMU_IOAINT_Pos)              /*!< 0x0000FFFF */
-#define PMU_IOAINT_IOAINT              PMU_IOAINT_Msk                          /*!< Each bit represents the IOA��s interrupt status.  The corresponded bit will be set to 1 when corresponded wake-up event is detected.  This register can be clear to 0 by writing corresponded bit to 1 */
+#define PMU_IOAINT_IOAINT              PMU_IOAINT_Msk                          /*!< Each bit represents the IOA’s interrupt status.  The corresponded bit will be set to 1 when corresponded wake-up event is detected.  This register can be clear to 0 by writing corresponded bit to 1 */
 
 /**************  Bits definition for PMU_IOADR register      ******************/
 #define PMU_IOADR_IOA0DR_Pos          (0U)                                     
 #define PMU_IOADR_IOA0DR_Msk          (0x1U << PMU_IOADR_IOA0DR_Pos)           /*!< 0x00000001 */
-#define PMU_IOADR_IOA0DR               PMU_IOADR_IOA0DR_Msk                    /*!< IOA0��s driving strength setting, change to this register will change all setting of IOA0~IOA15 */
+#define PMU_IOADR_IOA0DR               PMU_IOADR_IOA0DR_Msk                    /*!< IOA0’s driving strength setting, change to this register will change all setting of IOA0~IOA15 */
 #define PMU_IOADR_IOAXDR_Pos          (1U)                                     
 #define PMU_IOADR_IOAXDR_Msk          (0x7FFFU << PMU_IOADR_IOAXDR_Pos)        /*!< 0x0000FFFE */
 #define PMU_IOADR_IOAXDR               PMU_IOADR_IOAXDR_Msk                    /*!< Each bit represent the current driving strength setting of IOA1~IOA15 */
@@ -853,13 +853,13 @@ typedef struct
 //#define ANA_REG1_ADC_SEL_11           (0xBU << ANA_REG1_ADC_SEL_Pos)
 #define ANA_REG1_RESDIV_Pos           (4U)                                     
 #define ANA_REG1_RESDIV_Msk           (0x1U << ANA_REG1_RESDIV_Pos)            /*!< 0x00000010 */
-#define ANA_REG1_RESDIV                ANA_REG1_RESDIV_Msk                     /*!< Enable resistor division for M ADC��s input signal */
+#define ANA_REG1_RESDIV                ANA_REG1_RESDIV_Msk                     /*!< Enable resistor division for M ADC’s input signal */
 #define ANA_REG1_GDE4_Pos             (5U)                                     
 #define ANA_REG1_GDE4_Msk             (0x1U << ANA_REG1_GDE4_Pos)              /*!< 0x00000020 */
-#define ANA_REG1_GDE4                  ANA_REG1_GDE4_Msk                       /*!< Enable cap division for M ADC��s input signal */
+#define ANA_REG1_GDE4                  ANA_REG1_GDE4_Msk                       /*!< Enable cap division for M ADC’s input signal */
 //#define ANA_REG1_PRES_EN_Pos          (6U)                                     
 //#define ANA_REG1_PRES_EN_Msk          (0x1U << ANA_REG1_PRES_EN_Pos)           /*!< 0x00000040 */
-//#define ANA_REG1_PRES_EN               ANA_REG1_PRES_EN_Msk                    /*!< Enable pull down resistor for M ADC��s input signal */
+//#define ANA_REG1_PRES_EN               ANA_REG1_PRES_EN_Msk                    /*!< Enable pull down resistor for M ADC’s input signal */
 //#define ANA_REG1_ADCRSTM_Pos          (7U)                                     
 //#define ANA_REG1_ADCRSTM_Msk          (0x1U << ANA_REG1_ADCRSTM_Pos)           /*!< 0x00000080 */
 //#define ANA_REG1_ADCRSTM               ANA_REG1_ADCRSTM_Msk                    /*!<  */
@@ -1228,7 +1228,7 @@ typedef struct
 #define ANA_REGD_AVCCTRIM_7          (0x7U << ANA_REGD_AVCCTRIM_Pos)
 #define ANA_REGD_VREFTRIM_Pos         (6U)                                     
 #define ANA_REGD_VREFTRIM_Msk         (0x3U << ANA_REGD_VREFTRIM_Pos)          /*!< 0x000000C0 */
-#define ANA_REGD_VREFTRIM              ANA_REGD_VREFTRIM_Msk                   /*!< Trimming of VREF, which will affect DVCC/33��s output by same ratio */ 
+#define ANA_REGD_VREFTRIM              ANA_REGD_VREFTRIM_Msk                   /*!< Trimming of VREF, which will affect DVCC/33’s output by same ratio */ 
 #define ANA_REGD_VREFTRIM_0           (0x0U << ANA_REGD_VREFTRIM_Pos)
 #define ANA_REGD_VREFTRIM_1           (0x1U << ANA_REGD_VREFTRIM_Pos)
 #define ANA_REGD_VREFTRIM_2           (0x2U << ANA_REGD_VREFTRIM_Pos)
@@ -1697,7 +1697,7 @@ typedef struct
 /**************  Bits definition for RTC_PWD register        ******************/
 #define RTC_PWD_PWDEN_Pos             (0U)                                     
 #define RTC_PWD_PWDEN_Msk             (0x1U << RTC_PWD_PWDEN_Pos)              /*!< 0x00000001 */
-#define RTC_PWD_PWDEN                  RTC_PWD_PWDEN_Msk                       /*!< This register is used to protect the RTC_CE port��s access.  Before access the RTC_CE, programmer should write 0x5AA55AA5 to this port, and the PWDEN will be set to 1.  This bit will be cleared automatically after any write to RTC_CE port.  Which means programmer should write to this port again before next access to RTC_CE port */ 
+#define RTC_PWD_PWDEN                  RTC_PWD_PWDEN_Msk                       /*!< This register is used to protect the RTC_CE port’s access.  Before access the RTC_CE, programmer should write 0x5AA55AA5 to this port, and the PWDEN will be set to 1.  This bit will be cleared automatically after any write to RTC_CE port.  Which means programmer should write to this port again before next access to RTC_CE port */ 
 
 /**************  Bits definition for RTC_CE register         ******************/
 #define RTC_CE_CE_Pos                 (0U)                                     
@@ -2056,7 +2056,7 @@ typedef struct
 /**************  Bits definition for FLASH_CONF register     ******************/
 //#define FLASH_CONF_Pos                (0U)                                     
 //#define FLASH_CONF_Msk                (0xFFFFFFFFU << FLASH_CONF_Pos)          /*!< 0xFFFFFFFF */
-//#define FLASH_CONF_CONF                FLASH_CONF_Msk                          /*!< This register is used to read/write the Flash IP��s configuration register */ 
+//#define FLASH_CONF_CONF                FLASH_CONF_Msk                          /*!< This register is used to read/write the Flash IP’s configuration register */ 
 
 /**************  Bits definition for FLASH_SERASE register   ******************/
 #define FLASH_SERASE_Pos              (0U)                                     
@@ -2092,38 +2092,38 @@ typedef struct
 /**************  Bits definition for IOx_OEN register        ******************/
 #define IOx_OEN_IOXOEN_Pos            (0U)                                     
 #define IOx_OEN_IOXOEN_Msk            (0xFFFFU << IOx_OEN_IOXOEN_Pos)          /*!< 0x0000FFFF */
-#define IOx_OEN_IOXOEN                 IOx_OEN_IOXOEN_Msk                      /*!< Each bit control the IOX��s output enable signal */
+#define IOx_OEN_IOXOEN                 IOx_OEN_IOXOEN_Msk                      /*!< Each bit control the IOX’s output enable signal */
 
 /**************  Bits definition for IOx_IE register         ******************/
 #define IOx_IE_IOXIE_Pos              (0U)                                     
 #define IOx_IE_IOXIE_Msk              (0xFFFFU << IOx_IE_IOXIE_Pos)            /*!< 0x0000FFFF */
-#define IOx_IE_IOXIE                   IOx_IE_IOXIE_Msk                        /*!< Each bit control the IOX��s input enable signal */
+#define IOx_IE_IOXIE                   IOx_IE_IOXIE_Msk                        /*!< Each bit control the IOX’s input enable signal */
 
 /**************  Bits definition for IOx_DAT register        ******************/
 #define IOx_DAT_IOXDAT_Pos            (0U)                                     
 #define IOx_DAT_IOXDAT_Msk            (0xFFFFU << IOx_DAT_IOXDAT_Pos)          /*!< 0x0000FFFF */
-#define IOx_DAT_IOXDAT                 IOx_DAT_IOXDAT_Msk                      /*!< Each bit control the IOX��s output data and pull low/high function */
+#define IOx_DAT_IOXDAT                 IOx_DAT_IOXDAT_Msk                      /*!< Each bit control the IOX’s output data and pull low/high function */
 
 /**************  Bits definition for IOx_ATT register        ******************/
 #define IOx_ATT_IOXATT_Pos            (0U)                                     
 #define IOx_ATT_IOXATT_Msk            (0xFFFFU << IOx_ATT_IOXATT_Pos)          /*!< 0x0000FFFF */
-#define IOx_ATT_IOXATT                 IOx_ATT_IOXATT_Msk                      /*!< Each bit control the IOX��s attribute and pull low/high function */
+#define IOx_ATT_IOXATT                 IOx_ATT_IOXATT_Msk                      /*!< Each bit control the IOX’s attribute and pull low/high function */
 
 /**************  Bits definition for IOx_STS register        ******************/
 #define IOx_STS_IOXSTS_Pos            (0U)                                     
 #define IOx_STS_IOXSTS_Msk            (0xFFFFU << IOx_STS_IOXSTS_Pos)          /*!< 0x0000FFFF */
-#define IOx_STS_IOXSTS                 IOx_STS_IOXSTS_Msk                      /*!< Each bit represents the current IOX��s input data value */
+#define IOx_STS_IOXSTS                 IOx_STS_IOXSTS_Msk                      /*!< Each bit represents the current IOX’s input data value */
 
 ///**************  Bits definition for IOx_CM register         ******************/
 //#define IOx_CM_IOXCM0_Pos             (0U)                                     
 //#define IOx_CM_IOXCM0_Msk             (0x1U << IOx_CM_IOXCM0_Pos)              /*!< 0x00000001 */
-//#define IOx_CM_IOXCM0                  IOx_CM_IOXCM0_Msk                       /*!< IOX0��s Schmitt trigger setting, change to this register will change all setting of IOX0~IOX7 */
+//#define IOx_CM_IOXCM0                  IOx_CM_IOXCM0_Msk                       /*!< IOX0’s Schmitt trigger setting, change to this register will change all setting of IOX0~IOX7 */
 //#define IOx_CM_IOXCM1_7_Pos           (1U)                                     
 //#define IOx_CM_IOXCM1_7_Msk           (0x7FU << IOx_CM_IOXCM1_7_Pos)           /*!< 0x000000FE */
 //#define IOx_CM_IOXCM1_7                IOx_CM_IOXCM1_7_Msk                     /*!< Each bit represent the current Schmitt trigger setting of IOX1~IOX7 */
 //#define IOx_CM_IOXCM8_Pos             (8U)                                     
 //#define IOx_CM_IOXCM8_Msk             (0x1U << IOx_CM_IOXCM8_Pos)              /*!< 0x00000100 */
-//#define IOx_CM_IOXCM8                  IOx_CM_IOXCM8_Msk                       /*!< IOX8��s Schmitt trigger setting, change to this register will change all setting of IOX8~IOX15 */
+//#define IOx_CM_IOXCM8                  IOx_CM_IOXCM8_Msk                       /*!< IOX8’s Schmitt trigger setting, change to this register will change all setting of IOX8~IOX15 */
 //#define IOx_CM_IOXCM9_15_Pos          (9U)                                     
 //#define IOx_CM_IOXCM9_15_Msk          (0x7FU << IOx_CM_IOXCM9_15_Pos)          /*!< 0x0000FE00 */
 //#define IOx_CM_IOXCM9_15               IOx_CM_IOXCM9_15_Msk                    /*!< Each bit represent the current Schmitt trigger setting of IOX9~IOX15 */
@@ -2131,13 +2131,13 @@ typedef struct
 ///**************  Bits definition for IOx_SR register         ******************/
 //#define IOx_SR_IOXSR0_Pos             (0U)                                     
 //#define IOx_SR_IOXSR0_Msk             (0x1U << IOx_SR_IOXSR0_Pos)              /*!< 0x00000001 */
-//#define IOx_SR_IOXSR0                  IOx_SR_IOXSR0_Msk                       /*!< IOX0��s slew rate setting, change to this register will change all setting of IOX0~IOX7 */
+//#define IOx_SR_IOXSR0                  IOx_SR_IOXSR0_Msk                       /*!< IOX0’s slew rate setting, change to this register will change all setting of IOX0~IOX7 */
 //#define IOx_SR_IOXSR1_7_Pos           (1U)                                     
 //#define IOx_SR_IOXSR1_7_Msk           (0x7FU << IOx_SR_IOXSR1_7_Pos)           /*!< 0x000000FE */
 //#define IOx_SR_IOXSR1_7                IOx_SR_IOXSR1_7_Msk                     /*!< Each bit represent the current slew rate setting of IOX1~IOX7 */
 //#define IOx_SR_IOXSR8_Pos             (8U)                                     
 //#define IOx_SR_IOXSR8_Msk             (0x1U << IOx_SR_IOXSR8_Pos)              /*!< 0x00000100 */
-//#define IOx_SR_IOXSR8                  IOx_SR_IOXSR8_Msk                       /*!< IOX8��s slew rate setting, change to this register will change all setting of IOX8~IOX15 */
+//#define IOx_SR_IOXSR8                  IOx_SR_IOXSR8_Msk                       /*!< IOX8’s slew rate setting, change to this register will change all setting of IOX8~IOX15 */
 //#define IOx_SR_IOXSR9_15_Pos          (9U)                                     
 //#define IOx_SR_IOXSR9_15_Msk          (0x7FU << IOx_SR_IOXSR9_15_Pos)          /*!< 0x0000FE00 */
 //#define IOx_SR_IOXSR9_15               IOx_SR_IOXSR9_15_Msk                    /*!< Each bit represent the current slew rate setting of IOX9~IOX15 */
@@ -2145,13 +2145,13 @@ typedef struct
 ///**************  Bits definition for IOx_DR register         ******************/
 //#define IOx_DR_IOXDR0_Pos             (0U)                                     
 //#define IOx_DR_IOXDR0_Msk             (0x1U << IOx_DR_IOXDR0_Pos)              /*!< 0x00000001 */
-//#define IOx_DR_IOXDR0                  IOx_DR_IOXDR0_Msk                       /*!< IOX0��s driving strength setting, change to this register will change all setting of IOX0~IOX7 */
+//#define IOx_DR_IOXDR0                  IOx_DR_IOXDR0_Msk                       /*!< IOX0’s driving strength setting, change to this register will change all setting of IOX0~IOX7 */
 //#define IOx_DR_IOXDR1_7_Pos           (1U)                                     
 //#define IOx_DR_IOXDR1_7_Msk           (0x7FU << IOx_DR_IOXDR1_7_Pos)           /*!< 0x000000FE */
 //#define IOx_DR_IOXDR1_7                IOx_DR_IOXDR1_7_Msk                     /*!< Each bit represent the current driving strength setting of IOX1~IOX7 */
 //#define IOx_DR_IOXDR8_Pos             (8U)                                     
 //#define IOx_DR_IOXDR8_Msk             (0x1U << IOx_DR_IOXDR8_Pos)              /*!< 0x00000100 */
-//#define IOx_DR_IOXDR8                  IOx_DR_IOXDR8_Msk                       /*!< IOX8��s driving strength setting, change to this register will change all setting of IOX8~IOX15 */
+//#define IOx_DR_IOXDR8                  IOx_DR_IOXDR8_Msk                       /*!< IOX8’s driving strength setting, change to this register will change all setting of IOX8~IOX15 */
 //#define IOx_DR_IOXDR9_15_Pos          (9U)                                     
 //#define IOx_DR_IOXDR9_15_Msk          (0x7FU << IOx_DR_IOXDR9_15_Pos)          /*!< 0x0000FE00 */
 //#define IOx_DR_IOXDR9_15               IOx_DR_IOXDR9_15_Msk                    /*!< Each bit represent the current driving strength setting of IOX9~IOX15 */
@@ -2176,7 +2176,7 @@ typedef struct
 /**************  Bits definition for IO_MISC register        ******************/
 #define IO_MISC_PLLHDIV_Pos           (0U)                                     
 #define IO_MISC_PLLHDIV_Msk           (0x7U << IO_MISC_PLLHDIV_Pos)            /*!< 0x00000007 */
-#define IO_MISC_PLLHDIV                IO_MISC_PLLHDIV_Msk                     /*!< When IOB1 is selected to special function 3, this register is used to control the divide ratio of PLLH��s output */
+#define IO_MISC_PLLHDIV                IO_MISC_PLLHDIV_Msk                     /*!< When IOB1 is selected to special function 3, this register is used to control the divide ratio of PLLH’s output */
 #define IO_MISC_PLLHDIV_1             (0x0U << IO_MISC_PLLHDIV_Pos)
 #define IO_MISC_PLLHDIV_2             (0x1U << IO_MISC_PLLHDIV_Pos)
 #define IO_MISC_PLLHDIV_4             (0x2U << IO_MISC_PLLHDIV_Pos)
@@ -2632,7 +2632,7 @@ typedef struct
 #define ISO7816_INFO_RCACK             ISO7816_INFO_RCACK_Msk                  /*!< The received ACK at the end of transmit */ 
 #define ISO7816_INFO_CHKSUM_Pos       (1U)                                     
 #define ISO7816_INFO_CHKSUM_Msk       (0x1U << ISO7816_INFO_CHKSUM_Pos)        /*!< 0x00000002 */
-#define ISO7816_INFO_CHKSUM            ISO7816_INFO_CHKSUM_Msk                 /*!< The transmitted or received data��s check sum bit */ 
+#define ISO7816_INFO_CHKSUM            ISO7816_INFO_CHKSUM_Msk                 /*!< The transmitted or received data’s check sum bit */ 
 #define ISO7816_INFO_RCERR_Pos        (2U)                                     
 #define ISO7816_INFO_RCERR_Msk        (0x1U << ISO7816_INFO_RCERR_Pos)         /*!< 0x00000004 */
 #define ISO7816_INFO_RCERR             ISO7816_INFO_RCERR_Msk                  /*!< When received data have check sum error */ 
@@ -2858,10 +2858,10 @@ typedef struct
 /**************  Bits definition for PWMx_CTL register       ******************/
 #define PWM_CTL_IFG_Pos               (0U)                                     
 #define PWM_CTL_IFG_Msk               (0x1U << PWM_CTL_IFG_Pos)                /*!< 0x00000001 */
-#define PWM_CTL_IFG                    PWM_CTL_IFG_Msk                         /*!< PWM Timer x��s interrupt status flag, write 1 to clear this flag to 0 */
+#define PWM_CTL_IFG                    PWM_CTL_IFG_Msk                         /*!< PWM Timer x’s interrupt status flag, write 1 to clear this flag to 0 */
 #define PWM_CTL_IE_Pos                (1U)                                     
 #define PWM_CTL_IE_Msk                (0x1U << PWM_CTL_IE_Pos)                 /*!< 0x00000002 */
-#define PWM_CTL_IE                     PWM_CTL_IE_Msk                          /*!< PWM Timer x��s interrupt enable register */
+#define PWM_CTL_IE                     PWM_CTL_IE_Msk                          /*!< PWM Timer x’s interrupt enable register */
 #define PWM_CTL_CLR_Pos               (2U)                                     
 #define PWM_CTL_CLR_Msk               (0x1U << PWM_CTL_CLR_Pos)                /*!< 0x00000004 */
 #define PWM_CTL_CLR                    PWM_CTL_CLR_Msk                         /*!< TAR clear register, when this bit is set to 1, the TAR will be clear to 0 */
@@ -2879,7 +2879,7 @@ typedef struct
 #define PWM_CTL_MC_UPDOWN             (0x3U << PWM_CTL_MC_Pos)                 /*!< 0x00000030 */
 #define PWM_CTL_ID_Pos                (6U)                                     
 #define PWM_CTL_ID_Msk                (0x3U << PWM_CTL_ID_Pos)                 /*!< 0x000000C0 */
-#define PWM_CTL_ID                     PWM_CTL_ID_Msk                          /*!< PWM timer x��s Input clock divider control */
+#define PWM_CTL_ID                     PWM_CTL_ID_Msk                          /*!< PWM timer x’s Input clock divider control */
 #define PWM_CTL_ID_DIV2               (0x0U << PWM_CTL_ID_Pos)                 /*!< 0x00000000 */
 #define PWM_CTL_ID_DIV4               (0x1U << PWM_CTL_ID_Pos)                 /*!< 0x00000040 */
 #define PWM_CTL_ID_DIV8               (0x2U << PWM_CTL_ID_Pos)                 /*!< 0x00000080 */
@@ -2888,7 +2888,7 @@ typedef struct
 /**************  Bits definition for PWMx_TAR register       ******************/
 #define PWM_TAR_TAR_Pos               (0U)                                     
 #define PWM_TAR_TAR_Msk               (0xFFFFU << PWM_TAR_TAR_Pos)             /*!< 0x0000FFFF */
-#define PWM_TAR_TAR                    PWM_TAR_TAR_Msk                         /*!< PWM Timer x��s current count register */
+#define PWM_TAR_TAR                    PWM_TAR_TAR_Msk                         /*!< PWM Timer x’s current count register */
 
 /**************  Bits definition for PWMx_CCTLy register     ******************/
 #define PWM_CCTL_CCIGG_Pos            (0U)                                     
@@ -2902,7 +2902,7 @@ typedef struct
 #define PWM_CCTL_OUT                   PWM_CCTL_OUT_Msk                        /*!< This bit is used to control the output value of OUTx when OUTMOD is set to 0 */
 //#define PWM_CCTL_CCI_Pos              (3U)                                     
 //#define PWM_CCTL_CCI_Msk              (0x1U << PWM_CCTL_CCI_Pos)               /*!< 0x00000008 */
-//#define PWM_CCTL_CCI                   PWM_CCTL_CCI_Msk                        /*!< The read only register shows the current status of INx��s input */
+//#define PWM_CCTL_CCI                   PWM_CCTL_CCI_Msk                        /*!< The read only register shows the current status of INx’s input */
 #define PWM_CCTL_CCIE_Pos             (4U)                                     
 #define PWM_CCTL_CCIE_Msk             (0x1U << PWM_CCTL_CCIE_Pos)              /*!< 0x00000010 */
 #define PWM_CCTL_CCIE                  PWM_CCTL_CCIE_Msk                       /*!< Compare interrupt enable register */
@@ -2925,7 +2925,7 @@ typedef struct
 #define PWM_CCTL_OUTEN                 PWM_CCTL_OUTEN_Msk                      /*!< OUTx output enable control register */
 //#define PWM_CCTL_SCCI_Pos             (10U)                                     
 //#define PWM_CCTL_SCCI_Msk             (0x1U << PWM_CCTL_SCCI_Pos)              /*!< 0x00000400 */
-//#define PWM_CCTL_SCCI                  PWM_CCTL_SCCI_Msk                       /*!< The read only register shows the INx��s input value when the TAR is equal to CCRx */
+//#define PWM_CCTL_SCCI                  PWM_CCTL_SCCI_Msk                       /*!< The read only register shows the INx’s input value when the TAR is equal to CCRx */
 //#define PWM_CCTL_CM_Pos               (14U)                                     
 //#define PWM_CCTL_CM_Msk               (0x3U << PWM_CCTL_CM_Pos)                /*!< 0x0000C000 */
 //#define PWM_CCTL_CM                    PWM_CCTL_CM_Msk                         /*!< Capture edge selection */
@@ -2942,56 +2942,56 @@ typedef struct
 /**************  Bits definition for PWM_O_SEL register      ******************/
 #define PWM_O_SEL_O_SEL0_Pos          (0U)                                     
 #define PWM_O_SEL_O_SEL0_Msk          (0xFU << PWM_O_SEL_O_SEL0_Pos)           /*!< 0x0000000F */
-#define PWM_O_SEL_O_SEL0               PWM_O_SEL_O_SEL0_Msk                    /*!< External output PWM0��s output selection register */
+#define PWM_O_SEL_O_SEL0               PWM_O_SEL_O_SEL0_Msk                    /*!< External output PWM0’s output selection register */
 #define PWM_O_SEL_O_SEL1_Pos          (4U)                                     
 #define PWM_O_SEL_O_SEL1_Msk          (0xFU << PWM_O_SEL_O_SEL1_Pos)           /*!< 0x000000F0 */
-#define PWM_O_SEL_O_SEL1               PWM_O_SEL_O_SEL1_Msk                    /*!< External output PWM1��s output selection register */
+#define PWM_O_SEL_O_SEL1               PWM_O_SEL_O_SEL1_Msk                    /*!< External output PWM1’s output selection register */
 #define PWM_O_SEL_O_SEL2_Pos          (8U)                                     
 #define PWM_O_SEL_O_SEL2_Msk          (0xFU << PWM_O_SEL_O_SEL2_Pos)           /*!< 0x000000F00 */
-#define PWM_O_SEL_O_SEL2               PWM_O_SEL_O_SEL2_Msk                    /*!< External output PWM2��s output selection register */
+#define PWM_O_SEL_O_SEL2               PWM_O_SEL_O_SEL2_Msk                    /*!< External output PWM2’s output selection register */
 #define PWM_O_SEL_O_SEL3_Pos          (12U)                                     
 #define PWM_O_SEL_O_SEL3_Msk          (0xFU << PWM_O_SEL_O_SEL3_Pos)           /*!< 0x0000F000 */
-#define PWM_O_SEL_O_SEL3               PWM_O_SEL_O_SEL3_Msk                    /*!< External output PWM3��s output selection register */
+#define PWM_O_SEL_O_SEL3               PWM_O_SEL_O_SEL3_Msk                    /*!< External output PWM3’s output selection register */
 
 ///**************  Bits definition for PWM_I_SEL01 register    ******************/
 //#define PWM_I_SEL01_I_SEL00_Pos       (0U)                                     
 //#define PWM_I_SEL01_I_SEL00_Msk       (0x3U << PWM_I_SEL01_I_SEL00_Pos)        /*!< 0x00000003 */
-//#define PWM_I_SEL01_I_SEL00            PWM_I_SEL01_I_SEL00_Msk                 /*!< PWM0��s IN0 external input control */
+//#define PWM_I_SEL01_I_SEL00            PWM_I_SEL01_I_SEL00_Msk                 /*!< PWM0’s IN0 external input control */
 //#define PWM_I_SEL01_I_SEL01_Pos       (2U)                                     
 //#define PWM_I_SEL01_I_SEL01_Msk       (0x3U << PWM_I_SEL01_I_SEL01_Pos)        /*!< 0x000000C */
-//#define PWM_I_SEL01_I_SEL01            PWM_I_SEL01_I_SEL01_Msk                 /*!< PWM0��s IN1 external input control */
+//#define PWM_I_SEL01_I_SEL01            PWM_I_SEL01_I_SEL01_Msk                 /*!< PWM0’s IN1 external input control */
 //#define PWM_I_SEL01_I_SEL02_Pos       (4U)                                     
 //#define PWM_I_SEL01_I_SEL02_Msk       (0x3U << PWM_I_SEL01_I_SEL02_Pos)        /*!< 0x00000030 */
-//#define PWM_I_SEL01_I_SEL02            PWM_I_SEL01_I_SEL02_Msk                 /*!< PWM0��s IN2 external input control */
+//#define PWM_I_SEL01_I_SEL02            PWM_I_SEL01_I_SEL02_Msk                 /*!< PWM0’s IN2 external input control */
 //#define PWM_I_SEL01_I_SEL10_Pos       (16U)                                     
 //#define PWM_I_SEL01_I_SEL10_Msk       (0x3U << PWM_I_SEL01_I_SEL10_Pos)        /*!< 0x00030000 */
-//#define PWM_I_SEL01_I_SEL10            PWM_I_SEL01_I_SEL10_Msk                 /*!< PWM1��s IN0 external input control */
+//#define PWM_I_SEL01_I_SEL10            PWM_I_SEL01_I_SEL10_Msk                 /*!< PWM1’s IN0 external input control */
 //#define PWM_I_SEL01_I_SEL11_Pos       (18U)                                     
 //#define PWM_I_SEL01_I_SEL11_Msk       (0x3U << PWM_I_SEL01_I_SEL11_Pos)        /*!< 0x000C0000 */
-//#define PWM_I_SEL01_I_SEL11            PWM_I_SEL01_I_SEL11_Msk                 /*!< PWM1��s IN1 external input control */
+//#define PWM_I_SEL01_I_SEL11            PWM_I_SEL01_I_SEL11_Msk                 /*!< PWM1’s IN1 external input control */
 //#define PWM_I_SEL01_I_SEL12_Pos       (20U)                                     
 //#define PWM_I_SEL01_I_SEL12_Msk       (0x3U << PWM_I_SEL01_I_SEL12_Pos)        /*!< 0x00300000 */
-//#define PWM_I_SEL01_I_SEL12            PWM_I_SEL01_I_SEL12_Msk                 /*!< PWM1��s IN2 external input control */
+//#define PWM_I_SEL01_I_SEL12            PWM_I_SEL01_I_SEL12_Msk                 /*!< PWM1’s IN2 external input control */
 //
 ///**************  Bits definition for PWM_I_SEL23 register    ******************/
 //#define PWM_I_SEL23_I_SEL20_Pos       (0U)                                     
 //#define PWM_I_SEL23_I_SEL20_Msk       (0x3U << PWM_I_SEL23_I_SEL20_Pos)        /*!< 0x00000003 */
-//#define PWM_I_SEL23_I_SEL20            PWM_I_SEL23_I_SEL20_Msk                 /*!< PWM2��s IN0 external input control */
+//#define PWM_I_SEL23_I_SEL20            PWM_I_SEL23_I_SEL20_Msk                 /*!< PWM2’s IN0 external input control */
 //#define PWM_I_SEL23_I_SEL21_Pos       (2U)                                     
 //#define PWM_I_SEL23_I_SEL21_Msk       (0x3U << PWM_I_SEL23_I_SEL21_Pos)        /*!< 0x0000000C */
-//#define PWM_I_SEL23_I_SEL21            PWM_I_SEL23_I_SEL21_Msk                 /*!< PWM2��s IN1 external input control */
+//#define PWM_I_SEL23_I_SEL21            PWM_I_SEL23_I_SEL21_Msk                 /*!< PWM2’s IN1 external input control */
 //#define PWM_I_SEL23_I_SEL22_Pos       (4U)                                     
 //#define PWM_I_SEL23_I_SEL22_Msk       (0x3U << PWM_I_SEL23_I_SEL22_Pos)        /*!< 0x00000030 */
-//#define PWM_I_SEL23_I_SEL22            PWM_I_SEL23_I_SEL22_Msk                 /*!< PWM2��s IN2 external input control */
+//#define PWM_I_SEL23_I_SEL22            PWM_I_SEL23_I_SEL22_Msk                 /*!< PWM2’s IN2 external input control */
 //#define PWM_I_SEL23_I_SEL30_Pos       (16U)                                     
 //#define PWM_I_SEL23_I_SEL30_Msk       (0x3U << PWM_I_SEL23_I_SEL30_Pos)        /*!< 0x00030000 */
-//#define PWM_I_SEL23_I_SEL30            PWM_I_SEL23_I_SEL30_Msk                 /*!< PWM3��s IN0 external input control */
+//#define PWM_I_SEL23_I_SEL30            PWM_I_SEL23_I_SEL30_Msk                 /*!< PWM3’s IN0 external input control */
 //#define PWM_I_SEL23_I_SEL31_Pos       (18U)                                     
 //#define PWM_I_SEL23_I_SEL31_Msk       (0x3U << PWM_I_SEL23_I_SEL31_Pos)        /*!< 0x000C0000 */
-//#define PWM_I_SEL23_I_SEL31            PWM_I_SEL23_I_SEL31_Msk                 /*!< PWM3��s IN1 external input control */
+//#define PWM_I_SEL23_I_SEL31            PWM_I_SEL23_I_SEL31_Msk                 /*!< PWM3’s IN1 external input control */
 //#define PWM_I_SEL23_I_SEL32_Pos       (20U)                                     
 //#define PWM_I_SEL23_I_SEL32_Msk       (0x3U << PWM_I_SEL23_I_SEL32_Pos)        /*!< 0x00300000 */
-//#define PWM_I_SEL23_I_SEL32            PWM_I_SEL23_I_SEL32_Msk                 /*!< PWM3��s IN2 external input control */
+//#define PWM_I_SEL23_I_SEL32            PWM_I_SEL23_I_SEL32_Msk                 /*!< PWM3’s IN2 external input control */
 
 /******************************************************************************/
 /*                                                                            */
@@ -3058,248 +3058,248 @@ typedef struct
 /**************  Bits definition for LCD_SEGCTRL0 register   ******************/
 #define LCD_SEGCTRL0_SEG0_Pos         (0U)
 #define LCD_SEGCTRL0_SEG0_Msk         (0x1U << LCD_SEGCTRL0_SEG0_Pos)          /*!< 0x00000001 */
-#define LCD_SEGCTRL0_SEG0             LCD_SEGCTRL0_SEG0_Msk                    /*!< SEG 0��s enable control */
+#define LCD_SEGCTRL0_SEG0             LCD_SEGCTRL0_SEG0_Msk                    /*!< SEG 0’s enable control */
 #define LCD_SEGCTRL0_SEG1_Pos         (1U)
 #define LCD_SEGCTRL0_SEG1_Msk         (0x1U << LCD_SEGCTRL0_SEG1_Pos)          /*!< 0x00000002 */
-#define LCD_SEGCTRL0_SEG1             LCD_SEGCTRL0_SEG1_Msk                    /*!< SEG 1��s enable control */
+#define LCD_SEGCTRL0_SEG1             LCD_SEGCTRL0_SEG1_Msk                    /*!< SEG 1’s enable control */
 #define LCD_SEGCTRL0_SEG2_Pos         (2U)
 #define LCD_SEGCTRL0_SEG2_Msk         (0x1U << LCD_SEGCTRL0_SEG2_Pos)          /*!< 0x00000004 */
-#define LCD_SEGCTRL0_SEG2             LCD_SEGCTRL0_SEG2_Msk                    /*!< SEG 2��s enable control */
+#define LCD_SEGCTRL0_SEG2             LCD_SEGCTRL0_SEG2_Msk                    /*!< SEG 2’s enable control */
 #define LCD_SEGCTRL0_SEG3_Pos         (3U)
 #define LCD_SEGCTRL0_SEG3_Msk         (0x1U << LCD_SEGCTRL0_SEG3_Pos)          /*!< 0x00000008 */
-#define LCD_SEGCTRL0_SEG3             LCD_SEGCTRL0_SEG3_Msk                    /*!< SEG 3��s enable control */
+#define LCD_SEGCTRL0_SEG3             LCD_SEGCTRL0_SEG3_Msk                    /*!< SEG 3’s enable control */
 #define LCD_SEGCTRL0_SEG4_Pos         (4U)
 #define LCD_SEGCTRL0_SEG4_Msk         (0x1U << LCD_SEGCTRL0_SEG4_Pos)          /*!< 0x00000010 */
-#define LCD_SEGCTRL0_SEG4             LCD_SEGCTRL0_SEG4_Msk                    /*!< SEG 4��s enable control */
+#define LCD_SEGCTRL0_SEG4             LCD_SEGCTRL0_SEG4_Msk                    /*!< SEG 4’s enable control */
 #define LCD_SEGCTRL0_SEG5_Pos         (5U)
 #define LCD_SEGCTRL0_SEG5_Msk         (0x1U << LCD_SEGCTRL0_SEG5_Pos)          /*!< 0x00000020 */
-#define LCD_SEGCTRL0_SEG5             LCD_SEGCTRL0_SEG5_Msk                    /*!< SEG 5��s enable control */
+#define LCD_SEGCTRL0_SEG5             LCD_SEGCTRL0_SEG5_Msk                    /*!< SEG 5’s enable control */
 #define LCD_SEGCTRL0_SEG6_Pos         (6U)
 #define LCD_SEGCTRL0_SEG6_Msk         (0x1U << LCD_SEGCTRL0_SEG6_Pos)          /*!< 0x00000040 */
-#define LCD_SEGCTRL0_SEG6             LCD_SEGCTRL0_SEG6_Msk                    /*!< SEG 6��s enable control */
+#define LCD_SEGCTRL0_SEG6             LCD_SEGCTRL0_SEG6_Msk                    /*!< SEG 6’s enable control */
 #define LCD_SEGCTRL0_SEG7_Pos         (7U)
 #define LCD_SEGCTRL0_SEG7_Msk         (0x1U << LCD_SEGCTRL0_SEG7_Pos)          /*!< 0x00000080 */
-#define LCD_SEGCTRL0_SEG7             LCD_SEGCTRL0_SEG7_Msk                    /*!< SEG 7��s enable control */
+#define LCD_SEGCTRL0_SEG7             LCD_SEGCTRL0_SEG7_Msk                    /*!< SEG 7’s enable control */
 #define LCD_SEGCTRL0_SEG8_Pos         (8U)
 #define LCD_SEGCTRL0_SEG8_Msk         (0x1U << LCD_SEGCTRL0_SEG8_Pos)          /*!< 0x00000100 */
-#define LCD_SEGCTRL0_SEG8             LCD_SEGCTRL0_SEG8_Msk                    /*!< SEG 8��s enable control */
+#define LCD_SEGCTRL0_SEG8             LCD_SEGCTRL0_SEG8_Msk                    /*!< SEG 8’s enable control */
 #define LCD_SEGCTRL0_SEG9_Pos         (9U)
 #define LCD_SEGCTRL0_SEG9_Msk         (0x1U << LCD_SEGCTRL0_SEG9_Pos)          /*!< 0x00000200 */
-#define LCD_SEGCTRL0_SEG9             LCD_SEGCTRL0_SEG9_Msk                    /*!< SEG 9��s enable control */
+#define LCD_SEGCTRL0_SEG9             LCD_SEGCTRL0_SEG9_Msk                    /*!< SEG 9’s enable control */
 #define LCD_SEGCTRL0_SEG10_Pos        (10U)
 #define LCD_SEGCTRL0_SEG10_Msk        (0x1U << LCD_SEGCTRL0_SEG10_Pos)         /*!< 0x00000400 */
-#define LCD_SEGCTRL0_SEG10             LCD_SEGCTRL0_SEG10_Msk                  /*!< SEG 10��s enable control */
+#define LCD_SEGCTRL0_SEG10             LCD_SEGCTRL0_SEG10_Msk                  /*!< SEG 10’s enable control */
 #define LCD_SEGCTRL0_SEG11_Pos        (11U)
 #define LCD_SEGCTRL0_SEG11_Msk        (0x1U << LCD_SEGCTRL0_SEG11_Pos)         /*!< 0x00000800 */
-#define LCD_SEGCTRL0_SEG11             LCD_SEGCTRL0_SEG11_Msk                  /*!< SEG 11��s enable control */
+#define LCD_SEGCTRL0_SEG11             LCD_SEGCTRL0_SEG11_Msk                  /*!< SEG 11’s enable control */
 #define LCD_SEGCTRL0_SEG12_Pos        (12U)
 #define LCD_SEGCTRL0_SEG12_Msk        (0x1U << LCD_SEGCTRL0_SEG12_Pos)         /*!< 0x00001000 */
-#define LCD_SEGCTRL0_SEG12             LCD_SEGCTRL0_SEG12_Msk                  /*!< SEG 12��s enable control */
+#define LCD_SEGCTRL0_SEG12             LCD_SEGCTRL0_SEG12_Msk                  /*!< SEG 12’s enable control */
 #define LCD_SEGCTRL0_SEG13_Pos        (13U)
 #define LCD_SEGCTRL0_SEG13_Msk        (0x1U << LCD_SEGCTRL0_SEG13_Pos)         /*!< 0x00002000 */
-#define LCD_SEGCTRL0_SEG13             LCD_SEGCTRL0_SEG13_Msk                  /*!< SEG 13��s enable control */
+#define LCD_SEGCTRL0_SEG13             LCD_SEGCTRL0_SEG13_Msk                  /*!< SEG 13’s enable control */
 #define LCD_SEGCTRL0_SEG14_Pos        (14U)
 #define LCD_SEGCTRL0_SEG14_Msk        (0x1U << LCD_SEGCTRL0_SEG14_Pos)         /*!< 0x00004000 */
-#define LCD_SEGCTRL0_SEG14             LCD_SEGCTRL0_SEG14_Msk                  /*!< SEG 14��s enable control */
+#define LCD_SEGCTRL0_SEG14             LCD_SEGCTRL0_SEG14_Msk                  /*!< SEG 14’s enable control */
 #define LCD_SEGCTRL0_SEG15_Pos        (15U)
 #define LCD_SEGCTRL0_SEG15_Msk        (0x1U << LCD_SEGCTRL0_SEG15_Pos)         /*!< 0x00008000 */
-#define LCD_SEGCTRL0_SEG15             LCD_SEGCTRL0_SEG15_Msk                  /*!< SEG 15��s enable control */
+#define LCD_SEGCTRL0_SEG15             LCD_SEGCTRL0_SEG15_Msk                  /*!< SEG 15’s enable control */
 #define LCD_SEGCTRL0_SEG16_Pos        (16U)
 #define LCD_SEGCTRL0_SEG16_Msk        (0x1U << LCD_SEGCTRL0_SEG16_Pos)         /*!< 0x00010000 */
-#define LCD_SEGCTRL0_SEG16             LCD_SEGCTRL0_SEG16_Msk                  /*!< SEG 16��s enable control */
+#define LCD_SEGCTRL0_SEG16             LCD_SEGCTRL0_SEG16_Msk                  /*!< SEG 16’s enable control */
 #define LCD_SEGCTRL0_SEG17_Pos        (17U)
 #define LCD_SEGCTRL0_SEG17_Msk        (0x1U << LCD_SEGCTRL0_SEG17_Pos)         /*!< 0x00020000 */
-#define LCD_SEGCTRL0_SEG17             LCD_SEGCTRL0_SEG17_Msk                  /*!< SEG 17��s enable control */
+#define LCD_SEGCTRL0_SEG17             LCD_SEGCTRL0_SEG17_Msk                  /*!< SEG 17’s enable control */
 #define LCD_SEGCTRL0_SEG18_Pos        (18U)
 #define LCD_SEGCTRL0_SEG18_Msk        (0x1U << LCD_SEGCTRL0_SEG18_Pos)         /*!< 0x00040000 */
-#define LCD_SEGCTRL0_SEG18             LCD_SEGCTRL0_SEG18_Msk                  /*!< SEG 18��s enable control */
+#define LCD_SEGCTRL0_SEG18             LCD_SEGCTRL0_SEG18_Msk                  /*!< SEG 18’s enable control */
 #define LCD_SEGCTRL0_SEG19_Pos        (19U)
 #define LCD_SEGCTRL0_SEG19_Msk        (0x1U << LCD_SEGCTRL0_SEG19_Pos)         /*!< 0x00080000 */
-#define LCD_SEGCTRL0_SEG19             LCD_SEGCTRL0_SEG19_Msk                  /*!< SEG 19��s enable control */
+#define LCD_SEGCTRL0_SEG19             LCD_SEGCTRL0_SEG19_Msk                  /*!< SEG 19’s enable control */
 #define LCD_SEGCTRL0_SEG20_Pos        (20U)
 #define LCD_SEGCTRL0_SEG20_Msk        (0x1U << LCD_SEGCTRL0_SEG20_Pos)         /*!< 0x00100000 */
-#define LCD_SEGCTRL0_SEG20             LCD_SEGCTRL0_SEG20_Msk                  /*!< SEG 20��s enable control */
+#define LCD_SEGCTRL0_SEG20             LCD_SEGCTRL0_SEG20_Msk                  /*!< SEG 20’s enable control */
 #define LCD_SEGCTRL0_SEG21_Pos        (21U)
 #define LCD_SEGCTRL0_SEG21_Msk        (0x1U << LCD_SEGCTRL0_SEG21_Pos)         /*!< 0x00200000 */
-#define LCD_SEGCTRL0_SEG21             LCD_SEGCTRL0_SEG21_Msk                  /*!< SEG 21��s enable control */
+#define LCD_SEGCTRL0_SEG21             LCD_SEGCTRL0_SEG21_Msk                  /*!< SEG 21’s enable control */
 #define LCD_SEGCTRL0_SEG22_Pos        (22U)
 #define LCD_SEGCTRL0_SEG22_Msk        (0x1U << LCD_SEGCTRL0_SEG22_Pos)         /*!< 0x00400000 */
-#define LCD_SEGCTRL0_SEG22             LCD_SEGCTRL0_SEG22_Msk                  /*!< SEG 22��s enable control */
+#define LCD_SEGCTRL0_SEG22             LCD_SEGCTRL0_SEG22_Msk                  /*!< SEG 22’s enable control */
 #define LCD_SEGCTRL0_SEG23_Pos        (23U)
 #define LCD_SEGCTRL0_SEG23_Msk        (0x1U << LCD_SEGCTRL0_SEG23_Pos)         /*!< 0x00800000 */
-#define LCD_SEGCTRL0_SEG23             LCD_SEGCTRL0_SEG23_Msk                  /*!< SEG 23��s enable control */
+#define LCD_SEGCTRL0_SEG23             LCD_SEGCTRL0_SEG23_Msk                  /*!< SEG 23’s enable control */
 #define LCD_SEGCTRL0_SEG24_Pos        (24U)
 #define LCD_SEGCTRL0_SEG24_Msk        (0x1U << LCD_SEGCTRL0_SEG24_Pos)         /*!< 0x01000000 */
-#define LCD_SEGCTRL0_SEG24             LCD_SEGCTRL0_SEG24_Msk                  /*!< SEG 24��s enable control */
+#define LCD_SEGCTRL0_SEG24             LCD_SEGCTRL0_SEG24_Msk                  /*!< SEG 24’s enable control */
 #define LCD_SEGCTRL0_SEG25_Pos        (25U)
 #define LCD_SEGCTRL0_SEG25_Msk        (0x1U << LCD_SEGCTRL0_SEG25_Pos)         /*!< 0x02000000 */
-#define LCD_SEGCTRL0_SEG25             LCD_SEGCTRL0_SEG25_Msk                  /*!< SEG 25��s enable control */
+#define LCD_SEGCTRL0_SEG25             LCD_SEGCTRL0_SEG25_Msk                  /*!< SEG 25’s enable control */
 #define LCD_SEGCTRL0_SEG26_Pos        (26U)
 #define LCD_SEGCTRL0_SEG26_Msk        (0x1U << LCD_SEGCTRL0_SEG26_Pos)         /*!< 0x04000000 */
-#define LCD_SEGCTRL0_SEG26             LCD_SEGCTRL0_SEG26_Msk                  /*!< SEG 26��s enable control */
+#define LCD_SEGCTRL0_SEG26             LCD_SEGCTRL0_SEG26_Msk                  /*!< SEG 26’s enable control */
 #define LCD_SEGCTRL0_SEG27_Pos        (27U)
 #define LCD_SEGCTRL0_SEG27_Msk        (0x1U << LCD_SEGCTRL0_SEG27_Pos)         /*!< 0x08000000 */
-#define LCD_SEGCTRL0_SEG27             LCD_SEGCTRL0_SEG27_Msk                  /*!< SEG 27��s enable control */
+#define LCD_SEGCTRL0_SEG27             LCD_SEGCTRL0_SEG27_Msk                  /*!< SEG 27’s enable control */
 #define LCD_SEGCTRL0_SEG28_Pos        (28U)
 #define LCD_SEGCTRL0_SEG28_Msk        (0x1U << LCD_SEGCTRL0_SEG28_Pos)         /*!< 0x10000000 */
-#define LCD_SEGCTRL0_SEG28             LCD_SEGCTRL0_SEG28_Msk                  /*!< SEG 28��s enable control */
+#define LCD_SEGCTRL0_SEG28             LCD_SEGCTRL0_SEG28_Msk                  /*!< SEG 28’s enable control */
 #define LCD_SEGCTRL0_SEG29_Pos        (29U)
 #define LCD_SEGCTRL0_SEG29_Msk        (0x1U << LCD_SEGCTRL0_SEG29_Pos)         /*!< 0x20000000 */
-#define LCD_SEGCTRL0_SEG29             LCD_SEGCTRL0_SEG29_Msk                  /*!< SEG 29��s enable control */
+#define LCD_SEGCTRL0_SEG29             LCD_SEGCTRL0_SEG29_Msk                  /*!< SEG 29’s enable control */
 #define LCD_SEGCTRL0_SEG30_Pos        (30U)
 #define LCD_SEGCTRL0_SEG30_Msk        (0x1U << LCD_SEGCTRL0_SEG30_Pos)         /*!< 0x40000000 */
-#define LCD_SEGCTRL0_SEG30             LCD_SEGCTRL0_SEG30_Msk                  /*!< SEG 30��s enable control */
+#define LCD_SEGCTRL0_SEG30             LCD_SEGCTRL0_SEG30_Msk                  /*!< SEG 30’s enable control */
 #define LCD_SEGCTRL0_SEG31_Pos        (31U)
 #define LCD_SEGCTRL0_SEG31_Msk        (0x1U << LCD_SEGCTRL0_SEG31_Pos)         /*!< 0x80000000 */
-#define LCD_SEGCTRL0_SEG31             LCD_SEGCTRL0_SEG31_Msk                  /*!< SEG 31��s enable control */
+#define LCD_SEGCTRL0_SEG31             LCD_SEGCTRL0_SEG31_Msk                  /*!< SEG 31’s enable control */
 
 /**************  Bits definition for LCD_SEGCTRL1 register   ******************/
 #define LCD_SEGCTRL1_SEG32_Pos        (0U)
 #define LCD_SEGCTRL1_SEG32_Msk        (0x1U << LCD_SEGCTRL1_SEG32_Pos)         /*!< 0x00000001 */
-#define LCD_SEGCTRL1_SEG32             LCD_SEGCTRL1_SEG32_Msk                  /*!< SEG 32��s enable control */
+#define LCD_SEGCTRL1_SEG32             LCD_SEGCTRL1_SEG32_Msk                  /*!< SEG 32’s enable control */
 #define LCD_SEGCTRL1_SEG33_Pos        (1U)
 #define LCD_SEGCTRL1_SEG33_Msk        (0x1U << LCD_SEGCTRL1_SEG33_Pos)         /*!< 0x00000002 */
-#define LCD_SEGCTRL1_SEG33             LCD_SEGCTRL1_SEG33_Msk                  /*!< SEG 33��s enable control */
+#define LCD_SEGCTRL1_SEG33             LCD_SEGCTRL1_SEG33_Msk                  /*!< SEG 33’s enable control */
 #define LCD_SEGCTRL1_SEG34_Pos        (2U)
 #define LCD_SEGCTRL1_SEG34_Msk        (0x1U << LCD_SEGCTRL1_SEG34_Pos)         /*!< 0x00000004 */
-#define LCD_SEGCTRL1_SEG34             LCD_SEGCTRL1_SEG34_Msk                  /*!< SEG 34��s enable control */
+#define LCD_SEGCTRL1_SEG34             LCD_SEGCTRL1_SEG34_Msk                  /*!< SEG 34’s enable control */
 #define LCD_SEGCTRL1_SEG35_Pos        (3U)
 #define LCD_SEGCTRL1_SEG35_Msk        (0x1U << LCD_SEGCTRL1_SEG35_Pos)         /*!< 0x00000008 */
-#define LCD_SEGCTRL1_SEG35             LCD_SEGCTRL1_SEG35_Msk                  /*!< SEG 35��s enable control */
+#define LCD_SEGCTRL1_SEG35             LCD_SEGCTRL1_SEG35_Msk                  /*!< SEG 35’s enable control */
 #define LCD_SEGCTRL1_SEG36_Pos        (4U)
 #define LCD_SEGCTRL1_SEG36_Msk        (0x1U << LCD_SEGCTRL1_SEG36_Pos)         /*!< 0x00000010 */
-#define LCD_SEGCTRL1_SEG36             LCD_SEGCTRL1_SEG36_Msk                  /*!< SEG 36��s enable control */
+#define LCD_SEGCTRL1_SEG36             LCD_SEGCTRL1_SEG36_Msk                  /*!< SEG 36’s enable control */
 #define LCD_SEGCTRL1_SEG37_Pos        (5U)
 #define LCD_SEGCTRL1_SEG37_Msk        (0x1U << LCD_SEGCTRL1_SEG37_Pos)         /*!< 0x00000020 */
-#define LCD_SEGCTRL1_SEG37             LCD_SEGCTRL1_SEG37_Msk                  /*!< SEG 37��s enable control */
+#define LCD_SEGCTRL1_SEG37             LCD_SEGCTRL1_SEG37_Msk                  /*!< SEG 37’s enable control */
 #define LCD_SEGCTRL1_SEG38_Pos        (6U)
 #define LCD_SEGCTRL1_SEG38_Msk        (0x1U << LCD_SEGCTRL1_SEG38_Pos)         /*!< 0x00000040 */
-#define LCD_SEGCTRL1_SEG38             LCD_SEGCTRL1_SEG38_Msk                  /*!< SEG 38��s enable control */
+#define LCD_SEGCTRL1_SEG38             LCD_SEGCTRL1_SEG38_Msk                  /*!< SEG 38’s enable control */
 #define LCD_SEGCTRL1_SEG39_Pos        (7U)
 #define LCD_SEGCTRL1_SEG39_Msk        (0x1U << LCD_SEGCTRL1_SEG39_Pos)         /*!< 0x00000080 */
-#define LCD_SEGCTRL1_SEG39             LCD_SEGCTRL1_SEG39_Msk                  /*!< SEG 39��s enable control */
+#define LCD_SEGCTRL1_SEG39             LCD_SEGCTRL1_SEG39_Msk                  /*!< SEG 39’s enable control */
 #define LCD_SEGCTRL1_SEG40_Pos        (8U)
 #define LCD_SEGCTRL1_SEG40_Msk        (0x1U << LCD_SEGCTRL1_SEG40_Pos)         /*!< 0x00000100 */
-#define LCD_SEGCTRL1_SEG40             LCD_SEGCTRL1_SEG40_Msk                  /*!< SEG 40��s enable control */
+#define LCD_SEGCTRL1_SEG40             LCD_SEGCTRL1_SEG40_Msk                  /*!< SEG 40’s enable control */
 #define LCD_SEGCTRL1_SEG41_Pos        (9U)
 #define LCD_SEGCTRL1_SEG41_Msk        (0x1U << LCD_SEGCTRL1_SEG41_Pos)         /*!< 0x00000200 */
-#define LCD_SEGCTRL1_SEG41             LCD_SEGCTRL1_SEG41_Msk                  /*!< SEG 41��s enable control */
+#define LCD_SEGCTRL1_SEG41             LCD_SEGCTRL1_SEG41_Msk                  /*!< SEG 41’s enable control */
 #define LCD_SEGCTRL1_SEG42_Pos        (10U)
 #define LCD_SEGCTRL1_SEG42_Msk        (0x1U << LCD_SEGCTRL1_SEG42_Pos)         /*!< 0x00000400 */
-#define LCD_SEGCTRL1_SEG42             LCD_SEGCTRL1_SEG42_Msk                  /*!< SEG 42��s enable control */
+#define LCD_SEGCTRL1_SEG42             LCD_SEGCTRL1_SEG42_Msk                  /*!< SEG 42’s enable control */
 #define LCD_SEGCTRL1_SEG43_Pos        (11U)
 #define LCD_SEGCTRL1_SEG43_Msk        (0x1U << LCD_SEGCTRL1_SEG43_Pos)         /*!< 0x00000800 */
-#define LCD_SEGCTRL1_SEG43             LCD_SEGCTRL1_SEG43_Msk                  /*!< SEG 43��s enable control */
+#define LCD_SEGCTRL1_SEG43             LCD_SEGCTRL1_SEG43_Msk                  /*!< SEG 43’s enable control */
 #define LCD_SEGCTRL1_SEG44_Pos        (12U)
 #define LCD_SEGCTRL1_SEG44_Msk        (0x1U << LCD_SEGCTRL1_SEG44_Pos)         /*!< 0x00001000 */
-#define LCD_SEGCTRL1_SEG44             LCD_SEGCTRL1_SEG44_Msk                  /*!< SEG 44��s enable control */
+#define LCD_SEGCTRL1_SEG44             LCD_SEGCTRL1_SEG44_Msk                  /*!< SEG 44’s enable control */
 #define LCD_SEGCTRL1_SEG45_Pos        (13U)
 #define LCD_SEGCTRL1_SEG45_Msk        (0x1U << LCD_SEGCTRL1_SEG45_Pos)         /*!< 0x00002000 */
-#define LCD_SEGCTRL1_SEG45             LCD_SEGCTRL1_SEG45_Msk                  /*!< SEG 45��s enable control */
+#define LCD_SEGCTRL1_SEG45             LCD_SEGCTRL1_SEG45_Msk                  /*!< SEG 45’s enable control */
 #define LCD_SEGCTRL1_SEG46_Pos        (14U)
 #define LCD_SEGCTRL1_SEG46_Msk        (0x1U << LCD_SEGCTRL1_SEG46_Pos)         /*!< 0x00004000 */
-#define LCD_SEGCTRL1_SEG46             LCD_SEGCTRL1_SEG46_Msk                  /*!< SEG 46��s enable control */
+#define LCD_SEGCTRL1_SEG46             LCD_SEGCTRL1_SEG46_Msk                  /*!< SEG 46’s enable control */
 #define LCD_SEGCTRL1_SEG47_Pos        (15U)
 #define LCD_SEGCTRL1_SEG47_Msk        (0x1U << LCD_SEGCTRL1_SEG47_Pos)         /*!< 0x00008000 */
-#define LCD_SEGCTRL1_SEG47             LCD_SEGCTRL1_SEG47_Msk                  /*!< SEG 47��s enable control */
+#define LCD_SEGCTRL1_SEG47             LCD_SEGCTRL1_SEG47_Msk                  /*!< SEG 47’s enable control */
 #define LCD_SEGCTRL1_SEG48_Pos        (16U)
 #define LCD_SEGCTRL1_SEG48_Msk        (0x1U << LCD_SEGCTRL1_SEG48_Pos)         /*!< 0x00010000 */
-#define LCD_SEGCTRL1_SEG48             LCD_SEGCTRL1_SEG48_Msk                  /*!< SEG 48��s enable control */
+#define LCD_SEGCTRL1_SEG48             LCD_SEGCTRL1_SEG48_Msk                  /*!< SEG 48’s enable control */
 #define LCD_SEGCTRL1_SEG49_Pos        (17U)
 #define LCD_SEGCTRL1_SEG49_Msk        (0x1U << LCD_SEGCTRL1_SEG49_Pos)         /*!< 0x00020000 */
-#define LCD_SEGCTRL1_SEG49             LCD_SEGCTRL1_SEG49_Msk                  /*!< SEG 49��s enable control */
+#define LCD_SEGCTRL1_SEG49             LCD_SEGCTRL1_SEG49_Msk                  /*!< SEG 49’s enable control */
 #define LCD_SEGCTRL1_SEG50_Pos        (18U)
 #define LCD_SEGCTRL1_SEG50_Msk        (0x1U << LCD_SEGCTRL1_SEG50_Pos)         /*!< 0x00040000 */
-#define LCD_SEGCTRL1_SEG50             LCD_SEGCTRL1_SEG50_Msk                  /*!< SEG 50��s enable control */
+#define LCD_SEGCTRL1_SEG50             LCD_SEGCTRL1_SEG50_Msk                  /*!< SEG 50’s enable control */
 #define LCD_SEGCTRL1_SEG51_Pos        (19U)
 #define LCD_SEGCTRL1_SEG51_Msk        (0x1U << LCD_SEGCTRL1_SEG51_Pos)         /*!< 0x00080000 */
-#define LCD_SEGCTRL1_SEG51             LCD_SEGCTRL1_SEG51_Msk                  /*!< SEG 51��s enable control */
+#define LCD_SEGCTRL1_SEG51             LCD_SEGCTRL1_SEG51_Msk                  /*!< SEG 51’s enable control */
 #define LCD_SEGCTRL1_SEG52_Pos        (20U)
 #define LCD_SEGCTRL1_SEG52_Msk        (0x1U << LCD_SEGCTRL1_SEG52_Pos)         /*!< 0x00100000 */
-#define LCD_SEGCTRL1_SEG52             LCD_SEGCTRL1_SEG52_Msk                  /*!< SEG 52��s enable control */
+#define LCD_SEGCTRL1_SEG52             LCD_SEGCTRL1_SEG52_Msk                  /*!< SEG 52’s enable control */
 #define LCD_SEGCTRL1_SEG53_Pos        (21U)
 #define LCD_SEGCTRL1_SEG53_Msk        (0x1U << LCD_SEGCTRL1_SEG53_Pos)         /*!< 0x00200000 */
-#define LCD_SEGCTRL1_SEG53             LCD_SEGCTRL1_SEG53_Msk                  /*!< SEG 53��s enable control */
+#define LCD_SEGCTRL1_SEG53             LCD_SEGCTRL1_SEG53_Msk                  /*!< SEG 53’s enable control */
 #define LCD_SEGCTRL1_SEG54_Pos        (22U)
 #define LCD_SEGCTRL1_SEG54_Msk        (0x1U << LCD_SEGCTRL1_SEG54_Pos)         /*!< 0x00400000 */
-#define LCD_SEGCTRL1_SEG54             LCD_SEGCTRL1_SEG54_Msk                  /*!< SEG 54��s enable control */
+#define LCD_SEGCTRL1_SEG54             LCD_SEGCTRL1_SEG54_Msk                  /*!< SEG 54’s enable control */
 #define LCD_SEGCTRL1_SEG55_Pos        (23U)
 #define LCD_SEGCTRL1_SEG55_Msk        (0x1U << LCD_SEGCTRL1_SEG55_Pos)         /*!< 0x00800000 */
-#define LCD_SEGCTRL1_SEG55             LCD_SEGCTRL1_SEG55_Msk                  /*!< SEG 55��s enable control */
+#define LCD_SEGCTRL1_SEG55             LCD_SEGCTRL1_SEG55_Msk                  /*!< SEG 55’s enable control */
 #define LCD_SEGCTRL1_SEG56_Pos        (24U)
 #define LCD_SEGCTRL1_SEG56_Msk        (0x1U << LCD_SEGCTRL1_SEG56_Pos)         /*!< 0x01000000 */
-#define LCD_SEGCTRL1_SEG56             LCD_SEGCTRL1_SEG56_Msk                  /*!< SEG 56��s enable control */
+#define LCD_SEGCTRL1_SEG56             LCD_SEGCTRL1_SEG56_Msk                  /*!< SEG 56’s enable control */
 #define LCD_SEGCTRL1_SEG57_Pos        (25U)
 #define LCD_SEGCTRL1_SEG57_Msk        (0x1U << LCD_SEGCTRL1_SEG57_Pos)         /*!< 0x02000000 */
-#define LCD_SEGCTRL1_SEG57             LCD_SEGCTRL1_SEG57_Msk                  /*!< SEG 57��s enable control */
+#define LCD_SEGCTRL1_SEG57             LCD_SEGCTRL1_SEG57_Msk                  /*!< SEG 57’s enable control */
 #define LCD_SEGCTRL1_SEG58_Pos        (26U)
 #define LCD_SEGCTRL1_SEG58_Msk        (0x1U << LCD_SEGCTRL1_SEG58_Pos)         /*!< 0x04000000 */
-#define LCD_SEGCTRL1_SEG58             LCD_SEGCTRL1_SEG58_Msk                  /*!< SEG 58��s enable control */
+#define LCD_SEGCTRL1_SEG58             LCD_SEGCTRL1_SEG58_Msk                  /*!< SEG 58’s enable control */
 #define LCD_SEGCTRL1_SEG59_Pos        (27U)
 #define LCD_SEGCTRL1_SEG59_Msk        (0x1U << LCD_SEGCTRL1_SEG59_Pos)         /*!< 0x08000000 */
-#define LCD_SEGCTRL1_SEG59             LCD_SEGCTRL1_SEG59_Msk                  /*!< SEG 59��s enable control */
+#define LCD_SEGCTRL1_SEG59             LCD_SEGCTRL1_SEG59_Msk                  /*!< SEG 59’s enable control */
 #define LCD_SEGCTRL1_SEG60_Pos        (28U)
 #define LCD_SEGCTRL1_SEG60_Msk        (0x1U << LCD_SEGCTRL1_SEG60_Pos)         /*!< 0x10000000 */
-#define LCD_SEGCTRL1_SEG60             LCD_SEGCTRL1_SEG60_Msk                  /*!< SEG 60��s enable control */
+#define LCD_SEGCTRL1_SEG60             LCD_SEGCTRL1_SEG60_Msk                  /*!< SEG 60’s enable control */
 #define LCD_SEGCTRL1_SEG61_Pos        (29U)
 #define LCD_SEGCTRL1_SEG61_Msk        (0x1U << LCD_SEGCTRL1_SEG61_Pos)         /*!< 0x20000000 */
-#define LCD_SEGCTRL1_SEG61             LCD_SEGCTRL1_SEG61_Msk                  /*!< SEG 61��s enable control */
+#define LCD_SEGCTRL1_SEG61             LCD_SEGCTRL1_SEG61_Msk                  /*!< SEG 61’s enable control */
 #define LCD_SEGCTRL1_SEG62_Pos        (30U)
 #define LCD_SEGCTRL1_SEG62_Msk        (0x1U << LCD_SEGCTRL1_SEG62_Pos)         /*!< 0x40000000 */
-#define LCD_SEGCTRL1_SEG62             LCD_SEGCTRL1_SEG62_Msk                  /*!< SEG 62��s enable control */
+#define LCD_SEGCTRL1_SEG62             LCD_SEGCTRL1_SEG62_Msk                  /*!< SEG 62’s enable control */
 #define LCD_SEGCTRL1_SEG63_Pos        (31U)
 #define LCD_SEGCTRL1_SEG63_Msk        (0x1U << LCD_SEGCTRL1_SEG63_Pos)         /*!< 0x80000000 */
-#define LCD_SEGCTRL1_SEG63             LCD_SEGCTRL1_SEG63_Msk                  /*!< SEG 63��s enable control */
+#define LCD_SEGCTRL1_SEG63             LCD_SEGCTRL1_SEG63_Msk                  /*!< SEG 63’s enable control */
 
 /**************  Bits definition for LCD_SEGCTRL2 register   ******************/
 #define LCD_SEGCTRL2_SEG64_Pos        (0U)
 #define LCD_SEGCTRL2_SEG64_Msk        (0x1U << LCD_SEGCTRL2_SEG64_Pos)         /*!< 0x00000001 */
-#define LCD_SEGCTRL2_SEG64             LCD_SEGCTRL2_SEG64_Msk                  /*!< SEG 64��s enable control */
+#define LCD_SEGCTRL2_SEG64             LCD_SEGCTRL2_SEG64_Msk                  /*!< SEG 64’s enable control */
 #define LCD_SEGCTRL2_SEG65_Pos        (1U)
 #define LCD_SEGCTRL2_SEG65_Msk        (0x1U << LCD_SEGCTRL2_SEG65_Pos)         /*!< 0x00000002 */
-#define LCD_SEGCTRL2_SEG65             LCD_SEGCTRL2_SEG65_Msk                  /*!< SEG 65��s enable control */
+#define LCD_SEGCTRL2_SEG65             LCD_SEGCTRL2_SEG65_Msk                  /*!< SEG 65’s enable control */
 #define LCD_SEGCTRL2_SEG66_Pos        (2U)
 #define LCD_SEGCTRL2_SEG66_Msk        (0x1U << LCD_SEGCTRL2_SEG66_Pos)         /*!< 0x00000004 */
-#define LCD_SEGCTRL2_SEG66             LCD_SEGCTRL2_SEG66_Msk                  /*!< SEG 66��s enable control */
+#define LCD_SEGCTRL2_SEG66             LCD_SEGCTRL2_SEG66_Msk                  /*!< SEG 66’s enable control */
 #define LCD_SEGCTRL2_SEG67_Pos        (3U)
 #define LCD_SEGCTRL2_SEG67_Msk        (0x1U << LCD_SEGCTRL2_SEG67_Pos)         /*!< 0x00000008 */
-#define LCD_SEGCTRL2_SEG67             LCD_SEGCTRL2_SEG67_Msk                  /*!< SEG 67��s enable control */
+#define LCD_SEGCTRL2_SEG67             LCD_SEGCTRL2_SEG67_Msk                  /*!< SEG 67’s enable control */
 #define LCD_SEGCTRL2_SEG68_Pos        (4U)
 #define LCD_SEGCTRL2_SEG68_Msk        (0x1U << LCD_SEGCTRL2_SEG68_Pos)         /*!< 0x00000010 */
-#define LCD_SEGCTRL2_SEG68             LCD_SEGCTRL2_SEG68_Msk                  /*!< SEG 68��s enable control */
+#define LCD_SEGCTRL2_SEG68             LCD_SEGCTRL2_SEG68_Msk                  /*!< SEG 68’s enable control */
 #define LCD_SEGCTRL2_SEG69_Pos        (5U)
 #define LCD_SEGCTRL2_SEG69_Msk        (0x1U << LCD_SEGCTRL2_SEG69_Pos)         /*!< 0x00000020 */
-#define LCD_SEGCTRL2_SEG69             LCD_SEGCTRL2_SEG69_Msk                  /*!< SEG 69��s enable control */
+#define LCD_SEGCTRL2_SEG69             LCD_SEGCTRL2_SEG69_Msk                  /*!< SEG 69’s enable control */
 #define LCD_SEGCTRL2_SEG70_Pos        (6U)
 #define LCD_SEGCTRL2_SEG70_Msk        (0x1U << LCD_SEGCTRL2_SEG70_Pos)         /*!< 0x00000040 */
-#define LCD_SEGCTRL2_SEG70             LCD_SEGCTRL2_SEG70_Msk                  /*!< SEG 70��s enable control */
+#define LCD_SEGCTRL2_SEG70             LCD_SEGCTRL2_SEG70_Msk                  /*!< SEG 70’s enable control */
 #define LCD_SEGCTRL2_SEG71_Pos        (7U)
 #define LCD_SEGCTRL2_SEG71_Msk        (0x1U << LCD_SEGCTRL2_SEG71_Pos)         /*!< 0x00000080 */
-#define LCD_SEGCTRL2_SEG71             LCD_SEGCTRL2_SEG71_Msk                  /*!< SEG 71��s enable control */
+#define LCD_SEGCTRL2_SEG71             LCD_SEGCTRL2_SEG71_Msk                  /*!< SEG 71’s enable control */
 #define LCD_SEGCTRL2_SEG72_Pos        (8U)
 #define LCD_SEGCTRL2_SEG72_Msk        (0x1U << LCD_SEGCTRL2_SEG72_Pos)         /*!< 0x00000100 */
-#define LCD_SEGCTRL2_SEG72             LCD_SEGCTRL2_SEG72_Msk                  /*!< SEG 72��s enable control */
+#define LCD_SEGCTRL2_SEG72             LCD_SEGCTRL2_SEG72_Msk                  /*!< SEG 72’s enable control */
 #define LCD_SEGCTRL2_SEG73_Pos        (9U)
 #define LCD_SEGCTRL2_SEG73_Msk        (0x1U << LCD_SEGCTRL2_SEG73_Pos)         /*!< 0x00000200 */
-#define LCD_SEGCTRL2_SEG73             LCD_SEGCTRL2_SEG73_Msk                  /*!< SEG 73��s enable control */
+#define LCD_SEGCTRL2_SEG73             LCD_SEGCTRL2_SEG73_Msk                  /*!< SEG 73’s enable control */
 #define LCD_SEGCTRL2_SEG74_Pos        (10U)
 #define LCD_SEGCTRL2_SEG74_Msk        (0x1U << LCD_SEGCTRL2_SEG74_Pos)         /*!< 0x00000400 */
-#define LCD_SEGCTRL2_SEG74             LCD_SEGCTRL2_SEG74_Msk                  /*!< SEG 74��s enable control */
+#define LCD_SEGCTRL2_SEG74             LCD_SEGCTRL2_SEG74_Msk                  /*!< SEG 74’s enable control */
 #define LCD_SEGCTRL2_SEG75_Pos        (11U)
 #define LCD_SEGCTRL2_SEG75_Msk        (0x1U << LCD_SEGCTRL2_SEG75_Pos)         /*!< 0x00000800 */
-#define LCD_SEGCTRL2_SEG75             LCD_SEGCTRL2_SEG75_Msk                  /*!< SEG 75��s enable control */
+#define LCD_SEGCTRL2_SEG75             LCD_SEGCTRL2_SEG75_Msk                  /*!< SEG 75’s enable control */
 #define LCD_SEGCTRL2_SEG76_Pos        (12U)
 #define LCD_SEGCTRL2_SEG76_Msk        (0x1U << LCD_SEGCTRL2_SEG76_Pos)         /*!< 0x00001000 */
-#define LCD_SEGCTRL2_SEG76             LCD_SEGCTRL2_SEG76_Msk                  /*!< SEG 76��s enable control */
+#define LCD_SEGCTRL2_SEG76             LCD_SEGCTRL2_SEG76_Msk                  /*!< SEG 76’s enable control */
 #define LCD_SEGCTRL2_SEG77_Pos        (13U)
 #define LCD_SEGCTRL2_SEG77_Msk        (0x1U << LCD_SEGCTRL2_SEG77_Pos)         /*!< 0x00002000 */
-#define LCD_SEGCTRL2_SEG77             LCD_SEGCTRL2_SEG77_Msk                  /*!< SEG 77��s enable control */
+#define LCD_SEGCTRL2_SEG77             LCD_SEGCTRL2_SEG77_Msk                  /*!< SEG 77’s enable control */
 #define LCD_SEGCTRL2_SEG78_Pos        (14U)
 #define LCD_SEGCTRL2_SEG78_Msk        (0x1U << LCD_SEGCTRL2_SEG78_Pos)         /*!< 0x00004000 */
-#define LCD_SEGCTRL2_SEG78             LCD_SEGCTRL2_SEG78_Msk                  /*!< SEG 78��s enable control */
+#define LCD_SEGCTRL2_SEG78             LCD_SEGCTRL2_SEG78_Msk                  /*!< SEG 78’s enable control */
 #define LCD_SEGCTRL2_SEG79_Pos        (15U)
 #define LCD_SEGCTRL2_SEG79_Msk        (0x1U << LCD_SEGCTRL2_SEG79_Pos)         /*!< 0x00008000 */
-#define LCD_SEGCTRL2_SEG79             LCD_SEGCTRL2_SEG79_Msk                  /*!< SEG 79��s enable control */
+#define LCD_SEGCTRL2_SEG79             LCD_SEGCTRL2_SEG79_Msk                  /*!< SEG 79’s enable control */
 
 /******************************************************************************/
 /*                                                                            */

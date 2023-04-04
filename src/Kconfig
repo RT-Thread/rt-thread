@@ -475,8 +475,12 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x50000
+    default 0x50001
     help
         RT-Thread version number
+
+config RT_USING_STDC_ATOMIC
+    bool "Use atomic implemented in stdatomic.h"
+    default n
 
 endmenu

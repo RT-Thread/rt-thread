@@ -56,7 +56,7 @@ struct nu_spi_cs
 static void nu_spi_transmission_with_poll(struct nu_spi *spi_bus,
         uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word);
 static int nu_spi_register_bus(struct nu_spi *spi_bus, const char *name);
-static rt_uint32_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
+static rt_ssize_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
 static rt_err_t nu_spi_bus_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
 
 #if defined(BSP_USING_SPI_PDMA)
@@ -570,7 +570,7 @@ void nu_spi_transfer(struct nu_spi *spi_bus, uint8_t *tx, uint8_t *rx, int lengt
 #endif
 }
 
-static rt_uint32_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     struct nu_spi *spi_bus;
     struct rt_spi_configuration *configuration;

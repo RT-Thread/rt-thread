@@ -26,7 +26,7 @@
 #define GPIOMIS 0x418
 #define GPIOIC  0x41c
 
-#define BIT(x)  (1 << (x))
+#define BIT(x)  (1UL << (x))
 
 #define PL061_GPIO_NR   8
 

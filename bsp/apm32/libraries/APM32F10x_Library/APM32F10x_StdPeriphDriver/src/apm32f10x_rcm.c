@@ -1331,7 +1331,7 @@ void RCM_ClearStatusFlag(void)
 /*!
  * @brief     Read the specified RCM interrupt Flag
  *
- * @param     flag ��Reads specifies RCM interrupt flag.
+ * @param     flag : Reads specifies RCM interrupt flag.
  *                   This parameter can be one of the following values:
  *                   @arg RCM_INT_LSIRDY : LSI ready interrupt flag
  *                   @arg RCM_INT_LSERDY : LSE ready interrupt flag

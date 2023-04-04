@@ -14,7 +14,6 @@
 #if defined(NU_PKG_USING_ADC_TOUCH_SW)
 
 #include "rtdevice.h"
-#include "touch.h"
 #include "touch_sw.h"
 
 /* Private define ---------------------------------------------------------------*/

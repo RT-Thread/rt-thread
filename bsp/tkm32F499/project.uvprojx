@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;drivers\lcd;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;.;..\..\include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc;Libraries\CMSIS_and_startup\CMSIS;Libraries\CMSIS_and_startup;Libraries\Hal_lib\inc</IncludePath>
+              <IncludePath>..\..\components\dfs\filesystems\devfs;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;..\..\components\finsh;drivers\lcd;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\stdio;Libraries\CMSIS_and_startup;applications;Libraries\CMSIS_and_startup\CMSIS;Libraries\Hal_lib\inc;..\..\components\dfs\include;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\libcpu\arm\common;drivers;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,13 +448,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -710,9 +703,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -734,16 +727,9 @@
           <GroupName>TKM32_Lib</GroupName>
           <Files>
             <File>
-              <FileName>HAL_syscfg.c</FileName>
+              <FileName>HAL_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_syscfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_uart.c</FilePath>
+              <FilePath>Libraries\Hal_lib\src\HAL_can.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -755,13 +741,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>HAL_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\Hal_lib\src\HAL_spi.c</FilePath>
@@ -769,23 +748,16 @@
           </Files>
           <Files>
             <File>
+              <FileName>HAL_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>HAL_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\Hal_lib\src\HAL_pwr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_Tk499.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS_and_startup\startup_Tk499.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -804,6 +776,34 @@
           </Files>
           <Files>
             <File>
+              <FileName>HAL_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_Tk499.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS_and_startup\startup_Tk499.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_syscfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>HAL_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\Hal_lib\src\HAL_tim.c</FilePath>
@@ -811,30 +811,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_iwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>HAL_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\Hal_lib\src\HAL_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -849,6 +828,20 @@
               <FileName>HAL_rcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\Hal_lib\src\HAL_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>

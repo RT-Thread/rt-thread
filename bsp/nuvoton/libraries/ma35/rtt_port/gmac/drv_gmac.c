@@ -460,7 +460,7 @@ static rt_err_t nu_gmac_init(rt_device_t device)
     count = 0;
     do
     {
-        LOG_D("[%s] Set %d pkt frame buffer address - 0x%08x, size=%d", __func__, count, (u32)(&psgmacmemmgr->psRXFrames[count]), PKT_FRAME_BUF_SIZE);
+        //LOG_D("[%s] Set %d pkt frame buffer address - 0x%08x, size=%d", __func__, count, (u32)(&psgmacmemmgr->psRXFrames[count]), PKT_FRAME_BUF_SIZE);
         status = synopGMAC_set_rx_qptr(gmacdev, (u32)(&psgmacmemmgr->psRXFrames[count]), PKT_FRAME_BUF_SIZE, 0);
         if (status < 0)
         {
@@ -576,22 +576,14 @@ rt_err_t nu_gmac_tx(rt_device_t device, struct pbuf *p)
         offload_needed = 0;
 #endif
         u32 index = gmacdev->TxNext;
-        u8 *pu8PktData = (u8 *)((u32)&psgmacmemmgr->psTXFrames[index] | UNCACHEABLE);
-        struct pbuf *q;
-        rt_uint32_t offset = 0;
+        void *puPktData = (void *)((u32)&psgmacmemmgr->psTXFrames[index] | UNCACHEABLE);
 
         LOG_D("%s: Transmitting data(%08x-%d).\n", psNuGMAC->name, (u32)&psgmacmemmgr->psTXFrames[index], p->tot_len);
 
         /* Copy to TX data buffer. */
-        for (q = p; q != NULL; q = q->next)
-        {
-            rt_uint8_t *ptr = q->payload;
-            rt_uint32_t len = q->len;
-            rt_memcpy(&pu8PktData[offset], ptr, len);
-            offset += len;
-        }
+        pbuf_copy_partial(p, puPktData, p->tot_len, 0);
 
-        status = synopGMAC_xmit_frames(gmacdev, (u8 *)&psgmacmemmgr->psTXFrames[index], offset, offload_needed, 0);
+        status = synopGMAC_xmit_frames(gmacdev, (u8 *)&psgmacmemmgr->psTXFrames[index], p->tot_len, offload_needed, 0);
         if (status != 0)
         {
             LOG_E("%s No More Free Tx skb\n", __func__);

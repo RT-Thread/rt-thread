@@ -5,6 +5,11 @@ menu "General Drivers Configuration"
         select RT_USING_PIN
         default y
 
+     config BSP_USING_ADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
     menu "General Purpose UARTs"
 
     menuconfig BSP_USING_UART0
@@ -83,7 +88,75 @@ menu "General Drivers Configuration"
             endchoice
         endif
 
+    if BSP_USING_BL808
+        menuconfig BSP_USING_UART2
+            bool "Enable UART2"
+            default n
+            if BSP_USING_UART2
+                choice
+                    prompt "UART2 TX PIN"
+                    default UART2_TX_USING_GPIO20
+
+                    config UART2_TX_USING_GPIO4
+                        bool "GPIO_4"
+                    config UART2_TX_USING_GPIO16
+                        bool "GPIO_16"
+                    config UART2_TX_USING_GPIO18
+                        bool "GPIO_18"
+                    config UART2_TX_USING_GPIO20
+                        bool "GPIO_20"
+                endchoice
+                choice
+                    prompt "UART2 RX PIN"
+                    default UART2_RX_USING_GPIO21
+
+                    config UART2_RX_USING_GPIO3
+                        bool "GPIO_3"
+                    config UART2_RX_USING_GPIO5
+                        bool "GPIO_5"
+                    config UART2_RX_USING_GPIO17
+                        bool "GPIO_17"
+                    config UART2_RX_USING_GPIO19
+                        bool "GPIO_19"
+                    config UART2_RX_USING_GPIO21
+                        bool "GPIO_21"
+                endchoice
+            endif
+        endif
+
     endmenu
+
+    menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+
+            config BSP_USING_PWM1
+                bool "Enable PWM1"
+                default n
+
+            config BSP_USING_PWM2
+                bool "Enable PWM2"
+                default n
+
+            config BSP_USING_PWM3
+                bool "Enable PWM3"
+                default n
+        endif
 
 endmenu
 

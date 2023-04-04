@@ -45,8 +45,9 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart4"
+#define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50000
+#define RT_USING_HW_ATOMIC
 #define ARCH_RISCV
 #define ARCH_RISCV32
 
@@ -142,9 +143,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -221,6 +219,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 

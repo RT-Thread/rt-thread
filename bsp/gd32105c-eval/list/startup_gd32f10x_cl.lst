@@ -629,11 +629,12 @@ ARM Macro Assembler    Page 10
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\output\startup_gd32f10x_cl.d -o.\output\startup_gd32f10x_cl.o -I
-E:\code\rtt\rt-thread\bsp\gd32105c-eval\RTE -ID:\Keil_v5\ARM\PACK\GigaDevice\GD
-32F10x_DFP\2.0.1\Device\Include -ID:\Keil_v5\ARM\CMSIS\Include --predefine="__M
-ICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 514" --predefine="GD32F10X_
-CL SETA 1" --predefine="USE_STDPERIPH_DRIVER SETA 1" --list=.\list\startup_gd32
-f10x_cl.lst Libraries\CMSIS\GD\GD32F10x\Source\ARM\startup_gd32f10x_cl.s
+.\RTE\_rt-thread_gd32f105 -ID:\software\KEIL_V5_ArmPacks\GigaDevice\GD32F10x_DF
+P\2.0.3\Device\Include -ID:\software\KEIL_V5\ARM\CMSIS\Include --predefine="__M
+ICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 530" --predefine="GD32F10X_
+CL SETA 1" --predefine="USE_STDPERIPH_DRIVER SETA 1" --predefine="_RTE_ SETA 1"
+ --list=.\list\startup_gd32f10x_cl.lst Libraries\CMSIS\GD\GD32F10x\Source\ARM\s
+tartup_gd32f10x_cl.s
 
 
 
@@ -1847,4 +1848,4 @@ Symbol: __main
 0x_cl.s
 Comment: __main used once
 2 symbols
-429 symbols in table
+430 symbols in table

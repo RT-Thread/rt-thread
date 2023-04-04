@@ -1,5 +1,5 @@
 #include "bflb_ef_ctrl.h"
-#include "hardware/ef_ctrl_reg.h"
+#include "include/hardware/ef_ctrl_reg.h"
 
 #if defined(BL602) || defined(BL702) || defined(BL702L)
 #define BFLB_EF_CTRL_BASE ((uint32_t)0x40007000)

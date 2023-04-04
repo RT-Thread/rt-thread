@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, GD32F20X_CL, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, GD32F20X_CL</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;board;..\libraries\gd32_drivers;..\..\..\..\components\finsh;.;..\..\..\..\include;..\libraries\GD32F20x_Firmware_Library\CMSIS\GD\GD32F20x\Include;..\libraries\GD32F20x_Firmware_Library\CMSIS;..\libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;applications;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\include;..\libraries\GD32F20x_Firmware_Library\GD32F20x_standard_peripheral\Include;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;..\..\..\..\components\finsh;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;.;board;..\..\..\..\components\drivers\include;..\libraries\GD32F20x_Firmware_Library\CMSIS\GD\GD32F20x\Include;..\libraries\GD32F20x_Firmware_Library\CMSIS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -447,13 +447,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -685,9 +678,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

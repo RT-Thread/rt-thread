@@ -90,6 +90,7 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
         break;
     case 0x21:
     case 0x24:
+    case 0x25:
         fault_op = MM_FAULT_OP_WRITE;
         fault_type = _get_type(esr);
         break;
@@ -101,12 +102,12 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
     if (fault_op)
     {
         asm volatile("mrs %0, far_el1":"=r"(dfar));
-        struct rt_mm_fault_msg msg = {
+        struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
-            .vaddr = dfar,
+            .fault_vaddr = dfar,
         };
-        if (rt_mm_fault_try_fix(&msg))
+        if (rt_aspace_fault_try_fix(&msg))
         {
             ret = 1;
         }

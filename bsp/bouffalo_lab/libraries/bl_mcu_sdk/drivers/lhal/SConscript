@@ -4,7 +4,8 @@ from building import *
 
 cwd     = GetCurrentDir()
 
-CPPPATH = [cwd + r'/include',
+CPPPATH = [cwd,
+        cwd + r'/include',
         cwd + r'/include/arch',
         cwd + r'/include/arch/risc-v/t-head',
         cwd + r'/include/arch/risc-v/t-head/Core/Include',

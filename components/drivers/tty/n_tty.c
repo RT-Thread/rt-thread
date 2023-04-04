@@ -536,7 +536,7 @@ static void __isig(int sig, struct tty_struct *tty)
         if (sig == SIGTSTP)
         {
             struct rt_lwp *old_lwp;
-            
+
             rt_memcpy(&old_termios, &(tty->init_termios), sizeof(struct termios));
             tty->init_termios = *new_termios;
             ld = tty->ldisc;
@@ -549,7 +549,7 @@ static void __isig(int sig, struct tty_struct *tty)
             }
             tty_sigaddset(&lwp->signal_mask, SIGTTOU);
             old_lwp = tty_pop(&tty->head, RT_NULL);
-            tty->foreground = old_lwp;  
+            tty->foreground = old_lwp;
         }
         else
         {
@@ -805,7 +805,7 @@ static size_t __process_echoes(struct tty_struct *tty)
     unsigned char c = 0;
     char ch = 0;
     unsigned char num_chars = 0, num_bs = 0;
-    
+
     tail = ldata->echo_tail;
     while (ldata->echo_commit != tail)
     {
@@ -1126,7 +1126,19 @@ static int n_tty_open(struct dfs_fd *fd)
     }
 
     ldata->atomic_read_lock = rt_mutex_create("atomic_read_lock",RT_IPC_FLAG_FIFO);
+    if(ldata->atomic_read_lock == RT_NULL)
+    {
+        LOG_E("n_tty_open atomic_read_lock create fail");
+        return -1;
+    }
+
     ldata->output_lock = rt_mutex_create("output_lock",RT_IPC_FLAG_FIFO);
+    if(ldata->output_lock == RT_NULL)
+    {
+        LOG_E("n_tty_open output_lock create fail");
+        return -1;
+    }
+
     tty->disc_data = ldata;
     reset_buffer_flags(ldata);
     ldata->column = 0;

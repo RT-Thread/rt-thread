@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, CPU_MK64FN1M0VLL12, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, CPU_MK64FN1M0VLL12, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;device;device\MK64F12;..\..\components\finsh;.;..\..\include;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\..\components\net\lwip\port;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;device\MK64F12;..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\..\components\finsh;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\stdio;device;.;applications;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\libcpu\arm\cortex-m4;board;..\..\components\net\lwip\port;..\..\libcpu\arm\common;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;..\..\components\net\lwip\lwip-2.0.3\src\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -479,9 +479,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1009,9 +1009,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

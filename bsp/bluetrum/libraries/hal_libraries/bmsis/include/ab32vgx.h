@@ -13,7 +13,7 @@
 #define UINT_MAX                0xffffffff
 #endif // UINT_MAX
 
-#define BIT(n)                  (1ul << (n))
+#define BIT(n)                  (1UL << (n))
 
 #define AT(x)                   __attribute__((section(#x)))
 #define ALIGNED(n)              __attribute__((aligned(n)))

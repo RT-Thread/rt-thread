@@ -359,7 +359,7 @@
               <MiscControls />
               <Define>CY_USING_HAL, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, COMPONENT_CAT1A, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, COMPONENT_BSP_DESIGN_MODUS, __RTTHREAD__, COMPONENT_CAT1, CY8C6247BZI_D54</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\finsh;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;..\..\..\components\utilities\libadt;..\..\..\libcpu\arm\cortex-m4;..\libraries\HAL_Drivers;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;..\..\..\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\..\..\components\libc\posix\io\poll;..\libraries\IFX_PSOC6_HAL\core-lib\include;board;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\..\..\libcpu\arm\common;..\libraries\IFX_PSOC6_HAL\retarget-io;..\..\..\components\libc\posix\io\stdio;..\..\..\components\drivers\include;.;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\libraries\HAL_Drivers\config;..\libraries\IFX_PSOC6_HAL\capsense;libs\TARGET_CY8CKIT-062-WIFI-BT;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;applications;board\ports;libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\include</IncludePath>
+              <IncludePath>..\libraries\IFX_PSOC6_HAL\retarget-io;..\..\..\components\libc\compilers\common\extension;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\..\..\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;.;..\libraries\IFX_PSOC6_HAL\capsense;..\libraries\IFX_PSOC6_HAL\core-lib\include;applications;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;board;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\libraries\HAL_Drivers\config;board\ports;libs\TARGET_CY8CKIT-062-WIFI-BT;..\libraries\IFX_PSOC6_HAL\psoc6cm0p</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,16 +399,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>ADT</GroupName>
-          <Files>
-            <File>
-              <FileName>avl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\utilities\libadt\avl.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -480,13 +470,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -725,9 +708,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -791,23 +774,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cy_scb_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_01_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -833,6 +802,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cyhal_system.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_system.c</FilePath>
@@ -850,6 +826,13 @@
               <FileName>cyhal_utils_psoc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_psoc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>psoc6_01_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -966,16 +949,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cy_device.c</FileName>
+              <FileName>psoc6_03_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\source\cy_device.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileName>cy_device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\source\cy_device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1004,30 +987,9 @@
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cycfg.c</FileName>
+              <FileName>cycfg_pins.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_system.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_clocks.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_connectivity_bt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1035,20 +997,6 @@
               <FileName>cycfg_qspi_memslot.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_psoc6_cm4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_psoc6_01_cm4.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_01_cm4.s</FilePath>
             </File>
           </Files>
           <Files>
@@ -1067,13 +1015,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cycfg_pins.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cycfg_capsense.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_capsense.c</FilePath>
@@ -1081,9 +1022,51 @@
           </Files>
           <Files>
             <File>
+              <FileName>startup_psoc6_01_cm4.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_01_cm4.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_psoc6_cm4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cycfg_routing.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_connectivity_bt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_clocks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</FilePath>
             </File>
           </Files>
         </Group>

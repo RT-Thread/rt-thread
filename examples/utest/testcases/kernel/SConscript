@@ -41,6 +41,9 @@ if GetDepend(['UTEST_MAILBOX_TC']):
 if GetDepend(['UTEST_THREAD_TC']):
     src += ['thread_tc.c']
 
+if GetDepend(['UTEST_ATOMIC_TC']):
+    src += ['atomic_tc.c']
+
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
 
 Return('group')

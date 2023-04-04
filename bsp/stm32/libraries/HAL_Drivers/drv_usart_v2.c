@@ -116,11 +116,14 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     RT_ASSERT(cfg != RT_NULL);
 
     uart = rt_container_of(serial, struct stm32_uart, serial);
-
     uart->handle.Instance          = uart->config->Instance;
     uart->handle.Init.BaudRate     = cfg->baud_rate;
     uart->handle.Init.Mode         = UART_MODE_TX_RX;
+#ifdef USART_CR1_OVER8
+    uart->handle.Init.OverSampling = cfg->baud_rate > 5000000 ? UART_OVERSAMPLING_8 : UART_OVERSAMPLING_16;
+#else
     uart->handle.Init.OverSampling = UART_OVERSAMPLING_16;
+#endif /* USART_CR1_OVER8 */
 
     switch (cfg->data_bits)
     {

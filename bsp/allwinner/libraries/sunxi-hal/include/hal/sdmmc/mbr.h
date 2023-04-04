@@ -39,7 +39,7 @@ typedef struct tag_PARTITION
     __u8  classname[12];                // major device name
     __u8  name[12];                     // minor device name
     __u8  res[24];                      // reserved
-} PARTITION;                            // 64 bytes Ӧ�ô��� pack
+} PARTITION;                            // 64 bytes 应该使用 pack
 
 // mbr information
 typedef struct tag_MBR

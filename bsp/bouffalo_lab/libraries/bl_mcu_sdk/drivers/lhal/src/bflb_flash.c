@@ -25,7 +25,7 @@
 #include "bflb_xip_sflash.h"
 #include "bflb_sf_cfg.h"
 #include "bflb_flash.h"
-#include "hardware/sf_ctrl_reg.h"
+#include "include/hardware/sf_ctrl_reg.h"
 
 #if defined(BL616)
 static uint32_t flash1_size = 4 * 1024 * 1024;

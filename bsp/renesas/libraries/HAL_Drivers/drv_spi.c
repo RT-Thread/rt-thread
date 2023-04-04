@@ -122,7 +122,6 @@ static rt_err_t ra_write_message(struct rt_spi_device *device, const void *send_
 static rt_err_t ra_read_message(struct rt_spi_device *device, void *recv_buf, const rt_size_t len)
 {
     RT_ASSERT(device != NULL);
-    RT_ASSERT(device->parent.user_data != NULL);
     RT_ASSERT(recv_buf != NULL);
     RT_ASSERT(len > 0);
     rt_err_t err = RT_EOK;
@@ -204,7 +203,6 @@ static rt_ssize_t ra_spixfer(struct rt_spi_device *device, struct rt_spi_message
     RT_ASSERT(message != RT_NULL);
 
     rt_err_t err = RT_EOK;
-    struct ra_spi *spi_dev =  rt_container_of(device->bus, struct ra_spi, bus);
 
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
@@ -236,9 +234,9 @@ static rt_ssize_t ra_spixfer(struct rt_spi_device *device, struct rt_spi_message
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
-            rt_pin_write(spi_dev->cs_pin, PIN_LOW);
+            rt_pin_write(device->cs_pin, PIN_LOW);
         else
-            rt_pin_write(spi_dev->cs_pin, PIN_HIGH);
+            rt_pin_write(device->cs_pin, PIN_HIGH);
     }
     return err;
 }
@@ -276,7 +274,7 @@ INIT_BOARD_EXPORT(ra_hw_spi_init);
 /**
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin, void *user_data)
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
@@ -288,7 +286,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
 
-    result = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, cs_pin, user_data);
+    result = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, cs_pin, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("%s attach to %s faild, %d\n", device_name, bus_name, result);

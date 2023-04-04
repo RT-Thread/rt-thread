@@ -11,7 +11,7 @@
 #ifndef __ST1663I_H__
 #define __ST1663I_H__
 
-#include "touch.h"
+#include <rtdevice.h>
 
 #define ST_REGITER_LEN           1
 #define ST_MAX_TOUCH             5

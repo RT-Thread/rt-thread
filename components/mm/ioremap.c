@@ -98,7 +98,7 @@ void *rt_ioremap_cached(void *paddr, size_t size)
 
 void rt_iounmap(volatile void *vaddr)
 {
-    rt_aspace_unmap(&rt_kernel_space, (void *)vaddr, 1);
+    rt_aspace_unmap(&rt_kernel_space, (void *)vaddr);
 }
 
 #else
