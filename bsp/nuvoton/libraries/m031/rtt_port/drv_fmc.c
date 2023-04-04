@@ -318,6 +318,7 @@ static int nu_fmc_init(void)
     SYS_LockReg();
 
     g_mutex_fmc = rt_mutex_create("nu_fmc_lock", RT_IPC_FLAG_PRIO);
+    RT_ASSERT(g_mutex_fmc != RT_NULL);
 
     /* RT_USING_FAL */
 #if defined(RT_USING_FAL)
