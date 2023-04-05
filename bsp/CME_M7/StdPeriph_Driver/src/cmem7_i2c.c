@@ -43,6 +43,7 @@ typedef struct {
 
 static uint32_t i2c_GetClock(I2C0_Type* I2Cx) {
 	uint32_t dividor;
+	assert_param(IS_I2C_ALL_PERIPH(I2Cx));
 
 	if ((uint32_t)I2Cx == (uint32_t)I2C0) {
 		dividor = GLOBAL_CTRL->CLK_SEL_0_b.I2C0_CLK;
@@ -54,7 +55,7 @@ static uint32_t i2c_GetClock(I2C0_Type* I2Cx) {
 }
 
 static uint16_t i2c_NormalizeAddr(I2C0_Type* I2Cx, uint16_t addr) {
-  assert_param(IS_I2C_ALL_PERIPH(I2Cx));
+  	assert_param(IS_I2C_ALL_PERIPH(I2Cx));
 	
 	if (I2Cx->CTRL_b.MODE == I2C_Mode_Master) {
 		if (I2Cx->CTRL_b.MASTER_ADDR_WIDTH == I2C_ADDR_WIDTH_7BIT) {
@@ -97,12 +98,12 @@ void I2C_Init(I2C0_Type* I2Cx, I2C_InitTypeDef* I2C_Init) {
 	
 	I2Cx->CTRL_b.MODE = I2C_Init->I2C_Mode;
 	if (I2Cx->CTRL_b.MODE == I2C_Mode_Master) {
-	  I2Cx->CTRL_b.MASTER_ADDR_WIDTH = I2C_Init->I2C_AddressWidth;
+	  	I2Cx->CTRL_b.MASTER_ADDR_WIDTH = I2C_Init->I2C_AddressWidth;
 		I2Cx->TAR_b.START_BYTE = TRUE;
 		I2Cx->TAR_b.ADDR10 = i2c_NormalizeAddr(I2Cx, I2C_Init->I2C_Address);
 	}
 	if (I2Cx->CTRL_b.MODE == I2C_Mode_Slave) {
-	  I2Cx->CTRL_b.SLAVE_ADDR_WIDTH = I2C_Init->I2C_AddressWidth;
+	  	I2Cx->CTRL_b.SLAVE_ADDR_WIDTH = I2C_Init->I2C_AddressWidth;
 		I2Cx->SAR_b.ADDR10 = i2c_NormalizeAddr(I2Cx, I2C_Init->I2C_Address);
 	}
 	
@@ -116,13 +117,13 @@ void I2C_Init(I2C0_Type* I2Cx, I2C_InitTypeDef* I2C_Init) {
 		  i2c_GetClock(I2Cx) / I2C_Init->timing->I2C_Freq / 2;
 		I2Cx->SCL_CNT_b.LOW_LEVEL_TICK = 
 		  i2c_GetClock(I2Cx) / I2C_Init->timing->I2C_Freq / 2;
-	  I2Cx->SDA_SETUP_b.TSU_DAT = ((uint64_t)I2C_Init->timing->I2C_TsuDat) * 
+	  	I2Cx->SDA_SETUP_b.TSU_DAT = ((uint64_t)I2C_Init->timing->I2C_TsuDat) * 
 		  i2c_GetClock(I2Cx) / 1000000000;
 		I2Cx->SDA_SETUP_b.TSETUP = ((uint64_t)I2C_Init->timing->I2C_Tsetup) * 
 		  i2c_GetClock(I2Cx) / 1000000000;
 		I2Cx->TSU_STA_SETUP_b.TBUF = ((uint64_t)I2C_Init->timing->I2C_Tbuf) * 
 		  i2c_GetClock(I2Cx) / 1000000000;
-	  I2Cx->TSU_STA_SETUP_b.TSU_STA = ((uint64_t)I2C_Init->timing->I2C_TsuSta) * 
+	  	I2Cx->TSU_STA_SETUP_b.TSU_STA = ((uint64_t)I2C_Init->timing->I2C_TsuSta) * 
 		  i2c_GetClock(I2Cx) / 1000000000;
 		I2Cx->TSU_STA_SETUP_b.SDA_FILTER_EN = I2C_Init->timing->I2C_SdaFilterEn;
 		I2Cx->TSU_STA_SETUP_b.SDA_FILTER_CNT = I2C_Init->timing->I2C_SdaFilterSpike;
@@ -134,14 +135,14 @@ void I2C_Init(I2C0_Type* I2Cx, I2C_InitTypeDef* I2C_Init) {
 void I2C_Enable(I2C0_Type* I2Cx, BOOL enable) {
 	assert_param(IS_I2C_ALL_PERIPH(I2Cx));
 	
-  I2Cx->ENABLE_b.EN = enable;
+  	I2Cx->ENABLE_b.EN = enable;
 }
 
 void I2C_EnableInt(I2C0_Type* I2Cx, uint32_t Int, BOOL enable) {
-  assert_param(IS_I2C_ALL_PERIPH(I2Cx));
+  	assert_param(IS_I2C_ALL_PERIPH(I2Cx));
 	assert_param(IS_I2C_INT(Int));
 	
-  if (enable) {
+  	if (enable) {
 	  I2Cx->INT_MASK &= ~Int;
 	} else {
 		I2Cx->INT_MASK |= Int;
