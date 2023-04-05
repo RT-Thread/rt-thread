@@ -199,44 +199,43 @@ def GCCResult(rtconfig, str):
     return result
 
 def GenerateGCCConfig(rtconfig):
-    # str = ''
-    # cc_header = ''
-    # cc_header += '#ifndef CCONFIG_H__\n'
-    # cc_header += '#define CCONFIG_H__\n'
-    # cc_header += '/* Automatically generated file; DO NOT EDIT. */\n'
-    # cc_header += '/* compiler configure file for RT-Thread in GCC*/\n\n'
+    str = ''
+    cc_header = ''
+    cc_header += '#ifndef CCONFIG_H__\n'
+    cc_header += '#define CCONFIG_H__\n'
+    cc_header += '/* Automatically generated file; DO NOT EDIT. */\n'
+    cc_header += '/* compiler configure file for RT-Thread in GCC*/\n\n'
 
-    # if CheckHeader(rtconfig, 'newlib.h'):
-    #     str += '#include <newlib.h>\n'
-    #     cc_header += '#define HAVE_NEWLIB_H 1\n'
-    #     cc_header += '#define LIBC_VERSION "newlib %s"\n\n' % GetNewLibVersion(rtconfig)
+    if CheckHeader(rtconfig, 'newlib.h'):
+        str += '#include <newlib.h>\n'
+        cc_header += '#define HAVE_NEWLIB_H 1\n'
+        cc_header += '#define LIBC_VERSION "newlib %s"\n\n' % GetNewLibVersion(rtconfig)
 
-    # if CheckHeader(rtconfig, 'sys/signal.h'):
-    #     str += '#include <sys/signal.h>\n'
-    #     cc_header += '#define HAVE_SYS_SIGNAL_H 1\n'
-    # if CheckHeader(rtconfig, 'sys/select.h'):
-    #     str += '#include <sys/select.h>\n'
-    #     cc_header += '#define HAVE_SYS_SELECT_H 1\n'
-    # if CheckHeader(rtconfig, 'pthread.h'):
-    #     str += "#include <pthread.h>\n"
-    #     cc_header += '#define HAVE_PTHREAD_H 1\n'
+    if CheckHeader(rtconfig, 'sys/signal.h'):
+        str += '#include <sys/signal.h>\n'
+        cc_header += '#define HAVE_SYS_SIGNAL_H 1\n'
+    if CheckHeader(rtconfig, 'sys/select.h'):
+        str += '#include <sys/select.h>\n'
+        cc_header += '#define HAVE_SYS_SELECT_H 1\n'
+    if CheckHeader(rtconfig, 'pthread.h'):
+        str += "#include <pthread.h>\n"
+        cc_header += '#define HAVE_PTHREAD_H 1\n'
 
-    # # if CheckHeader(rtconfig, 'sys/dirent.h'):
-    # #    str += '#include <sys/dirent.h>\n'
+    # if CheckHeader(rtconfig, 'sys/dirent.h'):
+    #    str += '#include <sys/dirent.h>\n'
 
-    # # add some common features
-    # str += 'const char* version = __VERSION__;\n'
-    # str += 'const int iso_c_visible = __ISO_C_VISIBLE;\n'
-    # str += '\n#ifdef HAVE_INITFINI_ARRAY\n'
-    # str += 'const int init_fini_array = HAVE_INITFINI_ARRAY;\n'
-    # str += '#endif\n'
+    # add some common features
+    str += 'const char* version = __VERSION__;\n'
+    str += 'const int iso_c_visible = __ISO_C_VISIBLE;\n'
+    str += '\n#ifdef HAVE_INITFINI_ARRAY\n'
+    str += 'const int init_fini_array = HAVE_INITFINI_ARRAY;\n'
+    str += '#endif\n'
 
-    # cc_header += '\n'
-    # cc_header += GCCResult(rtconfig, str)
-    # cc_header += '\n#endif\n'
+    cc_header += '\n'
+    cc_header += GCCResult(rtconfig, str)
+    cc_header += '\n#endif\n'
 
-    # cc_file = open('cconfig.h', 'w')
-    # if cc_file:
-    #     cc_file.write(cc_header)
-    #     cc_file.close()
-    pass
+    cc_file = open('cconfig.h', 'w')
+    if cc_file:
+        cc_file.write(cc_header)
+        cc_file.close()
