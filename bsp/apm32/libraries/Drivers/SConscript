@@ -48,11 +48,20 @@ if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
 if GetDepend(['BSP_USING_SDIO']):
     src += ['drv_sdio.c']
 
+if GetDepend(['RT_USING_CAN']):
+    src += ['drv_can.c']
+
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F0']):
     src += ['drv_flash/drv_flash_f0.c']
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F1']):
     src += ['drv_flash/drv_flash_f1.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32E1']):
+    src += ['drv_flash/drv_flash_e1.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32S1']):
+    src += ['drv_flash/drv_flash_s1.c']
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F4']):
     src += ['drv_flash/drv_flash_f4.c']

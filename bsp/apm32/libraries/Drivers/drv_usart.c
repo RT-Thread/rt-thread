@@ -6,7 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-08-20     Abbcc        first version
- * 2022-12-26     luobeihai    add apm32F0 serie MCU support
+ * 2022-12-26     luobeihai    add APM2F0 series MCU support
+ * 2023-03-27     luobeihai    add APM32E1/S1 series MCU support
  */
 
 #include "board.h"
@@ -66,7 +67,8 @@ static struct apm32_usart usart_config[] =
         USART2_IRQn,
     },
 #endif
-#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32F4)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
 #ifdef BSP_USING_UART3
     {
         "uart3",
@@ -95,7 +97,7 @@ static struct apm32_usart usart_config[] =
         USART6_IRQn,
     },
 #endif
-#endif
+#endif /* SOC_SERIES_APM32F0 */
 };
 
 static rt_err_t apm32_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
@@ -126,7 +128,8 @@ static rt_err_t apm32_uart_configure(struct rt_serial_device *serial, struct ser
         USART_ConfigStruct.hardwareFlowCtrl = USART_FLOW_CTRL_NONE;
         break;
     }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     switch (cfg->flowcontrol)
     {
     case RT_SERIAL_FLOWCONTROL_NONE:
@@ -139,7 +142,7 @@ static rt_err_t apm32_uart_configure(struct rt_serial_device *serial, struct ser
         USART_ConfigStruct.hardwareFlow = USART_HARDWARE_FLOW_NONE;
         break;
     }
-#endif
+#endif /* SOC_SERIES_APM32F0 */
 
     switch (cfg->data_bits)
     {
@@ -224,7 +227,8 @@ static rt_err_t apm32_uart_control(struct rt_serial_device *serial, int cmd, voi
         USART_EnableInterrupt(usart->usartx, USART_INT_RXBNEIE);
         break;
     }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     switch (cmd)
     {
     /* disable interrupt */
@@ -247,7 +251,7 @@ static rt_err_t apm32_uart_control(struct rt_serial_device *serial, int cmd, voi
         USART_EnableInterrupt(usart->usartx, USART_INT_RXBNE);
         break;
     }
-#endif
+#endif /* SOC_SERIES_APM32F0 */
     return RT_EOK;
 }
 
@@ -302,7 +306,8 @@ static void usart_isr(struct rt_serial_device *serial)
 #if defined(SOC_SERIES_APM32F0)
     if ((USART_ReadStatusFlag(usart->usartx, USART_FLAG_RXBNE) != RESET) &&
             (USART_ReadIntFlag(usart->usartx, USART_INT_FLAG_RXBNE) != RESET))
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     if ((USART_ReadStatusFlag(usart->usartx, USART_FLAG_RXBNE) != RESET) &&
             (USART_ReadIntFlag(usart->usartx, USART_INT_RXBNE) != RESET))
 #endif
@@ -336,7 +341,8 @@ static void usart_isr(struct rt_serial_device *serial)
         {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_LBDF);
         }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_OVRE) != RESET)
         {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_OVRE);
@@ -361,7 +367,7 @@ static void usart_isr(struct rt_serial_device *serial)
         {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_LBD);
         }
-#endif
+#endif /* SOC_SERIES_APM32F0 */
         if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_TXBE) != RESET)
         {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_TXBE);
@@ -380,7 +386,6 @@ void USART1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif /* BSP_USING_UART1 */
 
 #if defined(BSP_USING_UART2)
