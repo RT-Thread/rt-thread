@@ -1,29 +1,29 @@
 /**
-	*****************************************************************************
-	* @file     cmem7_wdg.h
-	*
-	* @brief    CMEM7 watchdog header file
-	*
-	*
-	* @version  V1.0
-	* @date     3. September 2013
-	*
-	* @note               
-	*           
-	*****************************************************************************
-	* @attention
-	*
-	* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-	* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-	* TIME. AS A RESULT, CAPITAL-MICRO SHALL NOT BE HELD LIABLE FOR ANY DIRECT, 
-	* INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-	* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-	* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-	*
-	* <h2><center>&copy; COPYRIGHT 2013 Capital-micro </center></h2>
-	*****************************************************************************
-	*/
-	
+    *****************************************************************************
+    * @file     cmem7_wdg.h
+    *
+    * @brief    CMEM7 watchdog header file
+    *
+    *
+    * @version  V1.0
+    * @date     3. September 2013
+    *
+    * @note
+    *
+    *****************************************************************************
+    * @attention
+    *
+    * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+    * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+    * TIME. AS A RESULT, CAPITAL-MICRO SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
+    * INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+    * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+    * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+    *
+    * <h2><center>&copy; COPYRIGHT 2013 Capital-micro </center></h2>
+    *****************************************************************************
+    */
+
 #ifndef __CMEM7_WDG_H
 #define __CMEM7_WDG_H
 
@@ -58,47 +58,47 @@
 
 /**
   * @brief  Deinitializes the Watchdog peripheral registers to their default reset values.
-	* @param[in] None
+    * @param[in] None
   * @retval None
-	*/ 
+    */
 void WDG_DeInit(void);
 
 /**
   * @brief  Watchdog initialization
   * @note   This function should be called at first before any other interfaces.
-	* @param[in] trigger Watchdog interrupt trigger mode, which is a value of @ref WDG_TRIGGER_MODE
-	* @param[in] ResetMillSecond MillSeconds lasts before global reset
+    * @param[in] trigger Watchdog interrupt trigger mode, which is a value of @ref WDG_TRIGGER_MODE
+    * @param[in] ResetMillSecond MillSeconds lasts before global reset
   * @retval None
-	*/ 
+    */
 void WDG_Init(uint8_t trigger, uint16_t ResetMillSecond);
 
 /**
-  * @brief  Enable or disable watchdog interrupt. 
-	* @param[in] Int interrupt mask bits, which is a value of @ref WDG_INT
-	* @param[in] Enable The bit indicates if the specific interrupt are enable or not
+  * @brief  Enable or disable watchdog interrupt.
+    * @param[in] Int interrupt mask bits, which is a value of @ref WDG_INT
+    * @param[in] Enable The bit indicates if the specific interrupt are enable or not
   * @retval None
-	*/ 
+    */
 void WDG_ITConfig(uint8_t Int, BOOL Enable);
 
 /**
-  * @brief  Check the specific interrupt are set or not 
-	* @param	None
+  * @brief  Check the specific interrupt are set or not
+    * @param    None
   * @retval BOOL The bit indicates if the specific interrupt are set or not
-	*/
+    */
 BOOL WDG_GetITStatus(void);
 
 /**
   * @brief  Clear the specific interrupt
-	* @param	None
+    * @param    None
   * @retval None
-	*/
+    */
 void WDG_ClearITPendingBit(void);
 
 /**
-  * @brief  Enable or disable watchdog. 
-	* @param[in] Enable The bit indicates if watchdog is enable or not
+  * @brief  Enable or disable watchdog.
+    * @param[in] Enable The bit indicates if watchdog is enable or not
   * @retval None
-	*/ 
+    */
 void WDG_Cmd(BOOL Enable);
 
 
