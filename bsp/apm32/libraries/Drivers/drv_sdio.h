@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-03-14     luobeihai    first version
+ * 2023-03-27     luobeihai    add APM32E1 series MCU support
  */
 
 #ifndef _DRV_SDIO_H
@@ -127,7 +128,7 @@
 
 #define HW_SDIO_DATATIMEOUT                    (0xF0000000U)
 
-#if defined (SOC_SERIES_APM32F1)
+#if defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1)
 #define SDIO_BUS_CONFIG                                  \
     {                                                    \
         .Instance = SDIO,                                \
@@ -153,7 +154,7 @@
     }
 #endif /* SOC_SERIES_APM32F1 */
 
-#if defined (SOC_SERIES_APM32F1)
+#if defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1)
 #define DMA_INSTANCE_TYPE              DMA_Channel_T
 #elif defined (SOC_SERIES_APM32F4)
 #define DMA_INSTANCE_TYPE              DMA_Stream_T

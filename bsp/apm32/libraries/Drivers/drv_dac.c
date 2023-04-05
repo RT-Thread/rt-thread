@@ -6,8 +6,9 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2022-07-15     Aligagago         add APM32F4 series MCU support
+ * 2022-12-26     luobeihai         add APM32F0 series MCU support
+ * 2023-03-27     luobeihai         add APM32E1 series MCU support
  */
 
 #include <board.h>
@@ -40,7 +41,7 @@ static struct apm32_dac dac_config[] =
             DAC_WAVE_GENERATION_NONE,
             DAC_TRIANGLEAMPLITUDE_4095,
         },
-#elif  defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32F4)
+#elif  defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1) || defined (SOC_SERIES_APM32F4)
         "dac1",
         DAC,
         {
@@ -67,7 +68,7 @@ static rt_err_t apm32_dac_enabled(struct rt_dac_device *device, rt_uint32_t chan
 {
     GPIO_Config_T GPIO_ConfigStruct;
     struct apm32_dac *cfg = (struct apm32_dac *)device->parent.user_data;
-#if defined (SOC_SERIES_APM32F1)
+#if defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1)
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOA);
     GPIO_ConfigStruct.mode = GPIO_MODE_ANALOG;
 #elif defined (SOC_SERIES_APM32F4)
@@ -159,7 +160,7 @@ static rt_err_t apm32_dac_set_value(struct rt_dac_device *device, rt_uint32_t ch
         LOG_E("dac channel must be 1 or 2.");
         return -RT_ERROR;
     }
-#elif defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32F4)
+#elif defined (SOC_SERIES_APM32F1) || defined (SOC_SERIES_APM32E1) || defined (SOC_SERIES_APM32F4)
     if (channel == 1)
     {
         DAC_ConfigChannel1Data(DAC_ALIGN_12BIT_R, *value);

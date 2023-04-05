@@ -335,8 +335,13 @@
             <VariousControls>
               <MiscControls />
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, APM32F10X_HD</Define>
+<<<<<<< Updated upstream
               <Undefine />
               <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\..\..\include;..\..\..\components\finsh;..\..\..\components\drivers\include;.;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\libraries\APM32F10x_Library\CMSIS\Include;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;board\ports;..\..\..\libcpu\arm\common;board;applications;..\libraries\Drivers\config;..\libraries\Drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc</IncludePath>
+=======
+              <Undefine></Undefine>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\..\..\libcpu\arm\common;..\libraries\Drivers;board;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\finsh;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\Drivers\config;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;board\ports;..\libraries\APM32F10x_Library\CMSIS\Include;..\..\..\components\drivers\include;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;.;applications</IncludePath>
+>>>>>>> Stashed changes
             </VariousControls>
           </Cads>
           <Aads>
@@ -454,8 +459,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
+<<<<<<< Updated upstream
           </Files>
           <Files>
+=======
+>>>>>>> Stashed changes
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>

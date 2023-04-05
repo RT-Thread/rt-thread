@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author            Notes
- * 2020-08-20     Abbcc             first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
- * 2022-03-18     luobeihai         fix warning about incompatible function pointer types
+ * Date           Author       Notes
+ * 2020-08-20     Abbcc        first version
+ * 2022-07-15     Aligagago    add apm32F4 series MCU support
+ * 2022-12-26     luobeihai    add apm32F0 series MCU support
+ * 2022-03-18     luobeihai    fix warning about incompatible function pointer types
+ * 2023-03-27     luobeihai    add APM32E1/S1 series MCU support
  */
 
 #include <board.h>
@@ -73,7 +74,8 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_13, EINT4_15_IRQn},
     {GPIO_PIN_14, EINT4_15_IRQn},
     {GPIO_PIN_15, EINT4_15_IRQn},
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     {GPIO_PIN_0, EINT0_IRQn},
     {GPIO_PIN_1, EINT1_IRQn},
     {GPIO_PIN_2, EINT2_IRQn},
@@ -90,7 +92,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_13, EINT15_10_IRQn},
     {GPIO_PIN_14, EINT15_10_IRQn},
     {GPIO_PIN_15, EINT15_10_IRQn},
-#endif
+#endif /* SOC_SERIES_APM32F0 */
 };
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
@@ -164,7 +166,8 @@ static void apm32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
         gpio_pin = PIN_APMPIN(pin);
 #if defined(SOC_SERIES_APM32F0)
         GPIO_WriteBitValue(gpio_port, gpio_pin, (GPIO_BSRET_T)value);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         GPIO_WriteBitValue(gpio_port, gpio_pin, (uint8_t)value);
 #endif
     }
@@ -196,7 +199,7 @@ static void apm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     }
 
     /* Configure gpioConfigure */
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     gpioConfig.pin = PIN_APMPIN(pin);
     gpioConfig.mode = GPIO_MODE_OUT_PP;
     gpioConfig.speed = GPIO_SPEED_50MHz;
@@ -450,7 +453,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             gpioConfig.pupd = GPIO_PUPD_NO;
             eintConfig.trigger = EINT_TRIGGER_ALL;
             break;
-#elif defined(SOC_SERIES_APM32F1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
         case PIN_IRQ_MODE_RISING:
             gpioConfig.mode = GPIO_MODE_IN_PD;
             eintConfig.trigger = EINT_TRIGGER_RISING;
@@ -486,7 +489,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 #if defined(SOC_SERIES_APM32F0)
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_SYSCFG);
         SYSCFG_EINTLine((SYSCFG_PORT_T)(((pin) >> 4) & 0xFu), (SYSCFG_PIN_T)irqindex);
-#elif defined(SOC_SERIES_APM32F1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_AFIO);
         GPIO_ConfigEINTLine((GPIO_PORT_SOURCE_T)(((pin) >> 4) & 0xFu), (GPIO_PIN_SOURCE_T)irqindex);
 #elif defined(SOC_SERIES_APM32F4)
@@ -500,7 +503,8 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
 #if defined(SOC_SERIES_APM32F0)
         NVIC_EnableIRQRequest(irqmap->irqno, 5);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         NVIC_EnableIRQRequest(irqmap->irqno, 5, 0);
 #endif
         pin_irq_enable_mask |= irqmap->pinbit;
@@ -546,7 +550,8 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         {
             NVIC_DisableIRQRequest(irqmap->irqno);
         }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         if ((irqmap->pinbit >= GPIO_PIN_5) && (irqmap->pinbit <= GPIO_PIN_9))
         {
             if (!(pin_irq_enable_mask & (GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9)))
@@ -565,7 +570,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         {
             NVIC_DisableIRQRequest(irqmap->irqno);
         }
-#endif
+#endif /* SOC_SERIES_APM32F0 */
         rt_hw_interrupt_enable(level);
     }
     else
@@ -599,7 +604,8 @@ void GPIO_EXTI_IRQHandler(uint8_t exti_line)
 {
 #if defined(SOC_SERIES_APM32F0)
     if (EINT_ReadIntFlag(1U << exti_line) != RESET)
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     if (EINT_ReadIntFlag((EINT_LINE_T)(1U << exti_line)) != RESET)
 #endif
     {
@@ -641,7 +647,8 @@ void EINT4_15_IRQHandler(void)
     GPIO_EXTI_IRQHandler(15);
     rt_interrupt_leave();
 }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
 void EINT0_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -703,7 +710,7 @@ void EINT15_10_IRQHandler(void)
 
 int rt_hw_pin_init(void)
 {
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
 #ifdef GPIOA
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOA);
 #endif

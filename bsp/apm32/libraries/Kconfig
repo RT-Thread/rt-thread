@@ -15,3 +15,13 @@ config SOC_SERIES_APM32F4
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_APM32
+
+config SOC_SERIES_APM32E1
+    bool
+    select ARCH_ARM_CORTEX_M3
+    select SOC_FAMILY_APM32
+
+config SOC_SERIES_APM32S1
+    bool
+    select ARCH_ARM_CORTEX_M3
+    select SOC_FAMILY_APM32

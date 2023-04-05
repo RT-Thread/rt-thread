@@ -63,3 +63,52 @@ void apm32_msp_sdio_init(void *Instance)
     GPIO_InitStructure.pin = GPIO_PIN_2;
     GPIO_Config(GPIOD, &GPIO_InitStructure);
 }
+
+void apm32_msp_can_init(void *Instance)
+{
+#if defined(BSP_USING_CAN1) || defined(BSP_USING_CAN2)
+    GPIO_Config_T  GPIO_InitStructure;
+    CAN_T *CANx = (CAN_T *)Instance;
+
+    if (CAN1 == CANx)
+    {
+        RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_CAN1);
+
+        RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_AFIO);
+        RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOD);
+
+        GPIO_ConfigPinRemap(GPIO_REMAP2_CAN1);
+
+        /* CAN1 Tx */
+        GPIO_InitStructure.pin   = GPIO_PIN_1;
+        GPIO_InitStructure.mode  = GPIO_MODE_AF_PP;
+        GPIO_InitStructure.speed = GPIO_SPEED_50MHz;
+        GPIO_Config(GPIOD, &GPIO_InitStructure);
+
+        /* CAN1 Rx */
+        GPIO_InitStructure.pin = GPIO_PIN_0;
+        GPIO_InitStructure.mode = GPIO_MODE_IN_FLOATING;
+        GPIO_Config(GPIOD, &GPIO_InitStructure);
+    }
+    else if (CAN2 == CANx)
+    {
+        RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_CAN2);
+
+        RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_AFIO);
+        RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOB);
+
+        GPIO_ConfigPinRemap(GPIO_REMAP_CAN2);
+
+        /* CAN2 Tx */
+        GPIO_InitStructure.pin   = GPIO_PIN_6;
+        GPIO_InitStructure.mode  = GPIO_MODE_AF_PP;
+        GPIO_InitStructure.speed = GPIO_SPEED_50MHz;
+        GPIO_Config(GPIOB, &GPIO_InitStructure);
+
+        /* CAN2 Rx */
+        GPIO_InitStructure.pin  = GPIO_PIN_5;
+        GPIO_InitStructure.mode = GPIO_MODE_IN_FLOATING;
+        GPIO_Config(GPIOB, &GPIO_InitStructure);
+    }
+#endif
+}
