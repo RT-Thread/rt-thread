@@ -317,6 +317,19 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
+    add_rtconfig = GetOption('add_rtconfig')
+    if add_rtconfig:
+        add_rtconfig = add_rtconfig.split(',')
+        if isinstance(add_rtconfig, list):
+            for config in add_rtconfig:
+                if isinstance(config, str):
+                    AddDepend(add_rtconfig)
+                    env.Append(CFLAGS=' -D' + config, CXXFLAGS=' -D' + config, AFLAGS=' -D' + config)
+                else:
+                    print('add_rtconfig arguements are illegal!')
+        else:
+            print('add_rtconfig arguements are illegal!')
+
     if GetOption('genconfig'):
         from genconf import genconfig
         genconfig()
@@ -1049,3 +1062,4 @@ def PackageSConscript(package):
     from package import BuildPackage
 
     return BuildPackage(package)
+
