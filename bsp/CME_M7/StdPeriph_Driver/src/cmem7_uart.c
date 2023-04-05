@@ -37,7 +37,8 @@
 
 static uint32_t UART_GetClock(UART0_Type* UARTx) {
     uint32_t dividor;
-
+    assert_param(IS_UART_ALL_PERIPH(UARTx));
+    
     if ((uint32_t)UARTx == (uint32_t)UART0) {
         dividor = GLOBAL_CTRL->CLK_SEL_0_b.UART0_CLK;
     } else if ((uint32_t)UARTx == (uint32_t)UART1) {
