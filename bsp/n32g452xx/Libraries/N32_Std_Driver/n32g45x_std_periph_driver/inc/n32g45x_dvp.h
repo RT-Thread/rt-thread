@@ -590,4 +590,8 @@ void DVP_ConfigDma( FunctionalState Cmd);
  * @}
  */
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
