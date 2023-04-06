@@ -123,7 +123,9 @@ class Win32Spawn:
 
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
-
+    # The cconfig.h will NOT generate in the lastest RT-Thread code.
+    # When you want to use it, you can uncomment out the following code.
+     
     # if rtconfig.PLATFORM in ['gcc']:
     #     contents = ''
     #     if not os.path.isfile('cconfig.h'):
