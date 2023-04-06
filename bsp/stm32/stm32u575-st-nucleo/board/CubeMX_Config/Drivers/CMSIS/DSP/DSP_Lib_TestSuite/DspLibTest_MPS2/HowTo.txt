@@ -1,0 +1,29 @@
+
+Used board:
+   MPS2+.
+
+Used BIOS:
+  mbb_v121.ebf         ; use this for ULINKpro
+  mbb_v220.ebf         ; CMSIS-DAP
+
+Used Images:
+  AN382\an382_v3.txt   ; Cortex-M0
+  AN385\an385_v3.txt   ; Cortex-M3
+  AN386\an386_v3.txt   ; Cortex-M4
+  AN500\an500_v1.txt   ; Cortex-M7
+  AN505\an505_v2.txt   ; Cortex-M33 (IoT Kit)
+  AN519\an519_v1.txt   ; Cortex-M23 (IoT Kit)
+
+Used Debugger:
+  IoT Kit:
+    ULINKpro, JTAG, 25MHz, HW Reset
+  other:
+    ULINKpro, JTAG, 25MHz, Autodetect
+
+Memory Settings:
+  IoT Kit:
+    ROM: 0x10000000
+    RAM: 0x38000000    
+  other:
+    ROM: 0x00000000
+    RAM: 0x20000000

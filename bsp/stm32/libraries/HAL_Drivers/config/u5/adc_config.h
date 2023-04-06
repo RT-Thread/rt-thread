@@ -22,7 +22,7 @@ extern "C" {
 #define ADC1_CONFIG                                                 \
     {                                                               \
        .Instance                   = ADC1,                          \
-       .Init.ClockPrescaler        = ADC_CLOCK_SYNC_PCLK_DIV4,      \
+      /* .Init.ClockPrescaler        = ADC_CLOCK_SYNC_PCLK_DIV4,  */    \
        .Init.Resolution            = ADC_RESOLUTION_12B,            \
        .Init.DataAlign             = ADC_DATAALIGN_RIGHT,           \
        .Init.ScanConvMode          = ADC_SCAN_DISABLE,              \

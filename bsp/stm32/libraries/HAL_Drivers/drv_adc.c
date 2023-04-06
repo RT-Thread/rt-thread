@@ -88,7 +88,7 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
             || channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0)
 #endif /* ADC_CHANNEL_TEMPSENSOR */
 #ifdef ADC_CHANNEL_VBAT
-            || channel != (=ADC_CHANNEL_VBAT - ADC_CHANNEL_0)
+            || channel != (ADC_CHANNEL_VBAT - ADC_CHANNEL_0)
 #endif /* ADC_CHANNEL_VBAT */
 ))
 /* ADC channel number is up to 18 */
@@ -334,7 +334,7 @@ static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
     ret = rt_adc_disable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
     if (ret != RT_EOK) return (rt_int16_t)ret;
 
-    vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
+    //vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
 #else
     vref_mv = 3300;
 #endif /* __LL_ADC_CALC_VREFANALOG_VOLTAGE */
