@@ -1,0 +1,36 @@
+name: Static code analysis
+
+on: 
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  scancode_job:
+    runs-on: ubuntu-latest
+    name: Static code analysis
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+      
+      - name: cppcheck
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get -qq install cppcheck
+          git remote -v
+          git fetch origin
+          cppcheck --version
+          ls
+          git branch -a
+          changed_files=$(git diff --name-only HEAD origin/master | grep -E '\.(c|cpp|cc|cxx)$' || true)
+          if [ -n "$changed_files" ];then
+              cppcheck --enable=warning,performance,portability --inline-suppr --error-exitcode=1 --force $changed_files
+              err=$?
+              if [ $err -ne 0 ]; then
+                  echo "CPPCHECK REPORT, PLEASE CHECK THE WARNING !!!!!!!!!"
+              fi
+          fi
