@@ -86,10 +86,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
-#define RT_USING_ADC
-#define RT_USING_PWM
 #define RT_USING_SPI
 
 /* Using USB */
@@ -259,9 +256,6 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_ARDUINO
-#define BSP_USING_KEY
-#define BSP_USING_MPU6XXX
 
 /* On-chip Peripheral Drivers */
 
@@ -270,24 +264,6 @@
 #define BSP_USING_UART1
 #define BSP_USING_UART2
 #define BSP_USING_LPUART1
-#define BSP_USING_ADC
-#define BSP_USING_ADC1
-#define BSP_USING_PWM
-#define BSP_USING_PWM1
-#define BSP_USING_PWM1_CH1
-#define BSP_USING_PWM1_CH2
-#define BSP_USING_PWM1_CH3
-#define BSP_USING_PWM4
-#define BSP_USING_PWM4_CH4
-#define BSP_USING_SPI
-#define BSP_USING_SPI1
-#define BSP_USING_I2C
-#define BSP_USING_I2C1
-
-/* Notice: PB8 --> 24; PB9 --> 25 */
-
-#define BSP_I2C1_SCL_PIN 24
-#define BSP_I2C1_SDA_PIN 25
 
 /* Board extended module Drivers */
 
