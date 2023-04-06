@@ -19,6 +19,25 @@ config SOC_MIMXRT1062DVL6A
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH3
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH0
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
