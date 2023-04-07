@@ -562,8 +562,8 @@ int nfs_read(struct dfs_fd *file, void *buf, size_t count)
     if (file->vnode->type == FT_DIRECTORY)
         return -EISDIR;
 
-    RT_ASSERT(file->vnode->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->data));
+    RT_ASSERT(file->vnode->fs != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->fs));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
@@ -631,8 +631,8 @@ int nfs_write(struct dfs_fd *file, const void *buf, size_t count)
     if (file->vnode->type == FT_DIRECTORY)
         return -EISDIR;
 
-    RT_ASSERT(file->vnode->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->data));
+    RT_ASSERT(file->vnode->fs != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->fs));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
@@ -693,8 +693,8 @@ int nfs_lseek(struct dfs_fd *file, off_t offset)
     if (file->vnode->type == FT_DIRECTORY)
         return -EISDIR;
 
-    RT_ASSERT(file->vnode->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->data));
+    RT_ASSERT(file->vnode->fs != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->fs));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
@@ -712,8 +712,8 @@ int nfs_lseek(struct dfs_fd *file, off_t offset)
 int nfs_close(struct dfs_fd *file)
 {
     nfs_filesystem *nfs;
-    RT_ASSERT(file->vnode->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->data));
+    RT_ASSERT(file->vnode->fs != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->fs));
 
     RT_ASSERT(file->vnode->ref_count > 0);
     if (file->vnode->ref_count > 1)
@@ -749,7 +749,7 @@ int nfs_close(struct dfs_fd *file)
 int nfs_open(struct dfs_fd *file)
 {
     nfs_filesystem *nfs;
-    RT_ASSERT(file->vnode->data != NULL);
+    RT_ASSERT(file->vnode->fs != NULL);
     struct dfs_filesystem *dfs_nfs  = file->vnode->fs;
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     RT_ASSERT(nfs != NULL);
@@ -1111,8 +1111,8 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
     nfs_filesystem *nfs;
     char *name;
 
-    RT_ASSERT(file->vnode->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->data));
+    RT_ASSERT(file->vnode->fs != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->vnode->fs));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     dir = (nfs_dir *)(nfs->data);
     RT_ASSERT(dir != NULL);
