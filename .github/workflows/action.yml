@@ -61,6 +61,7 @@ jobs:
                 - "at32/at32f413-start"
                 - "at32/at32f415-start"
                 - "at32/at32f421-start"
+                - "at32/at32f423-start"
                 - "at32/at32f425-start"
                 - "at32/at32f435-start"
                 - "at32/at32f437-start"
