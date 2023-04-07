@@ -176,8 +176,8 @@ extern "C" {
 #if defined(BSP_USING_UART6)
 #define UART6_CONFIG                                                \
     {                                                               \
-        .name = "usart6",                                           \
-        .uart_x = UART6,                                            \
+        .name = "uart6",                                            \
+        .uart_x = USART6,                                           \
         .irqn = USART6_IRQn,                                        \
     }
 
