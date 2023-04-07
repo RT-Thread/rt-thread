@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>ARDUINO_ARCH_RTTHREAD, __STDC_LIMIT_MACROS, STM32U575xx, __PERF_COUNT_PLATFORM_SPECIFIC_HEADER__=&lt;rtthread.h&gt;, __perf_counter_printf__=rt_kprintf, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, ARDUINO=10819, __RTTHREAD__, RT_USING_ARMLIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, STM32U575xx, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>packages\RTduino-latest\libraries\user;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;packages\RTduino-latest\libraries\buildin\Wire;packages\FlexibleButton-v1.0.0;.;board;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;packages\RTduino-latest\libraries\buildin\SPI;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\poll;packages\perf_counter-latest;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;packages\RTduino-latest\core;packages\mpu6xxx-latest\inc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;packages\RTduino-latest\libraries\buildin\Servo;..\..\..\components\libc\cplusplus;board\CubeMX_Config\Inc;..\..\..\components\drivers\include;applications;..\..\..\components\drivers\spi;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\libc\compilers\common\extension;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include;applications\arduino_pinout;..\..\..\components\drivers\include;..\libraries\HAL_Drivers</IncludePath>
+              <IncludePath>..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;.;board;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\..\..\components\libc\cplusplus;board\CubeMX_Config\Inc;..\..\..\components\drivers\include;applications;..\..\..\components\drivers\spi;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\libc\compilers\common\extension;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -379,13 +379,6 @@
       <Groups>
         <Group>
           <GroupName>Applications</GroupName>
-          <Files>
-            <File>
-              <FileName>arduino_main.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>applications\arduino_main.cpp</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>main.c</FileName>
@@ -457,9 +450,9 @@
           <GroupName>CPlusPlus</GroupName>
           <Files>
             <File>
-              <FileName>cxx_crt_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
+              <FileName>cxx_Mutex.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
             </File>
           </Files>
           <Files>
@@ -471,9 +464,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cxx_crt.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
+              <FileName>cxx_crt_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -485,9 +478,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cxx_Mutex.cpp</FileName>
+              <FileName>cxx_crt.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -545,6 +538,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>i2c-bit-ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>i2c_core.c</FileName>
@@ -610,6 +610,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\misc\adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
@@ -662,9 +669,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_usart2_test.c</FileName>
+              <FileName>drv_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\ports\drv_usart2_test.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drv_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -724,16 +731,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>flex_button</GroupName>
-          <Files>
-            <File>
-              <FileName>flexible_button.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\FlexibleButton-v1.0.0\flexible_button.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1003,6 +1000,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>stm32u5xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>stm32u5xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma_ex.c</FilePath>
@@ -1010,407 +1014,16 @@
           </Files>
           <Files>
             <File>
+              <FileName>stm32u5xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>stm32u5xx_hal_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_exti.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>mpu6xxx</GroupName>
-          <Files>
-            <File>
-              <FileName>mpu6xxx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\mpu6xxx-latest\src\mpu6xxx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mpu6xxx_sample.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\mpu6xxx-latest\samples\mpu6xxx_sample.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>perf_counter</GroupName>
-          <Files>
-            <File>
-              <FileName>perf_os_patch_rt_thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\perf_counter-latest\os\perf_os_patch_rt_thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>perf_counter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\perf_counter-latest\perf_counter.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>RTduino</GroupName>
-          <Files>
-            <File>
-              <FileName>pins_arduino.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\arduino_pinout\pins_arduino.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HardwareSerial.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\core\HardwareSerial.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>Print.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\core\Print.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>RTduino.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\core\RTduino.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>Stream.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\core\Stream.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>Tone.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\core\Tone.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>WInterrupts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\RTduino-latest\core\WInterrupts.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>WMath_c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\RTduino-latest\core\WMath_c.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>WMath_cpp.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\core\WMath_cpp.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>WString.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\core\WString.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dtostrf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\RTduino-latest\core\avr\dtostrf.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>wiring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\RTduino-latest\core\wiring.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>wiring_analog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\RTduino-latest\core\wiring_analog.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>wiring_digital.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\RTduino-latest\core\wiring_digital.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>wiring_pulse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\RTduino-latest\core\wiring_pulse.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>wiring_shift.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\RTduino-latest\core\wiring_shift.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=gnu99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SPI.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\libraries\buildin\SPI\SPI.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>Servo.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\libraries\buildin\Servo\Servo.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>Wire.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>packages\RTduino-latest\libraries\buildin\Wire\Wire.cpp</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c++11</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
             </File>
           </Files>
         </Group>

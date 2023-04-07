@@ -86,7 +86,9 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_ADC
 #define RT_USING_SPI
 
 /* Using USB */
@@ -166,19 +168,11 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define PKG_USING_PERF_COUNTER
-#define PKG_USING_PERF_COUNTER_LATEST_VERSION
 
 /* peripheral libraries and drivers */
 
 /* sensors drivers */
 
-#define PKG_USING_MPU6XXX
-#define PKG_USING_MPU6XXX_LATEST_VERSION
-#define PKG_USING_MPU6XXX_SAMPLE
-#define PKG_USING_MPU6XXX_ACCE
-#define PKG_USING_MPU6XXX_GYRO
-#define PKG_USING_MPU6XXX_MAG
 
 /* touch drivers */
 
@@ -201,20 +195,9 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define PKG_USING_FLEXIBLE_BUTTON
-#define PKG_USING_FLEXIBLE_BUTTON_V100
 
 /* Arduino libraries */
 
-#define PKG_USING_RTDUINO
-#define RTDUINO_THREAD_SIZE 1536
-#define RTDUINO_THREAD_PRIO 30
-#define RTDUINO_SUPPORT_HIGH_PRECISION_MICROS
-#define RTDUINO_USING_WIRE
-#define RTDUINO_WIRE_BUFFER_LENGTH 32
-#define RTDUINO_USING_SPI
-#define RTDUINO_USING_SERVO
-#define PKG_USING_RTDUINO_LATEST_VERSION
 
 /* Projects */
 
@@ -262,8 +245,6 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_UART2
-#define BSP_USING_LPUART1
 
 /* Board extended module Drivers */
 

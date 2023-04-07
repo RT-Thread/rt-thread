@@ -48,6 +48,12 @@ menu "Onboard Peripheral Drivers"
 			select PKG_USING_MPU6XXX
 			select PKG_USING_MPU6XXX_LATEST_VERSION
 			default n
+			
+	config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH"
+        select BSP_USING_SPI
+        select RT_USING_SFUD
+        default n
 		
 endmenu
 
