@@ -52,7 +52,7 @@ static rt_base_t air105_pin_get(const char *name)
     return pin;
 }
 
-static void air105_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void air105_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     if (pin < GPIO_MAX)
     {
@@ -60,7 +60,7 @@ static void air105_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-static int air105_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t air105_pin_read(rt_device_t dev, rt_base_t pin)
 {
     if (pin < GPIO_MAX)
     {
@@ -72,7 +72,7 @@ static int air105_pin_read(rt_device_t dev, rt_base_t pin)
     }
 }
 
-static void air105_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void air105_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     if (pin >= GPIO_MAX)
     {
@@ -99,8 +99,8 @@ static void air105_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static rt_err_t air105_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t air105_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                     rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
 
@@ -123,7 +123,7 @@ static rt_err_t air105_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t air105_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t air105_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
@@ -136,7 +136,7 @@ static rt_err_t air105_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t air105_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                     rt_uint32_t enabled)
+                                     rt_uint8_t enabled)
 {
 
     rt_base_t level;
