@@ -252,7 +252,7 @@ void at32_msp_can_init(void *instance)
 void at32_msp_usb_init(void *instance)
 {
     /* defalut usb clock from hext */
-    usb_clk48_s clk_s = USB_CLK_HICK;
+    usb_clk48_s clk_s = USB_CLK_HEXT;
 
     crm_periph_clock_enable(CRM_OTGFS1_PERIPH_CLOCK, TRUE);
 

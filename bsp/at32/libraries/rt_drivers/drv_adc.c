@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-05-16     shelton      first version
  * 2023-01-31     shelton      add support f421/f425
+ * 2023-04-08     shelton      add support f423
  */
 
 #include "drv_common.h"
@@ -45,8 +46,10 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 {
     adc_type *adc_x;
     adc_base_config_type adc_config_struct;
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F423)
     adc_common_config_type adc_common_struct;
+    adc_common_default_para_init(&adc_common_struct);
 #endif
 
     RT_ASSERT(device != RT_NULL);
@@ -55,7 +58,6 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     at32_msp_adc_init(adc_x);
 
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
-    adc_common_default_para_init(&adc_common_struct);
     /* config combine mode */
     adc_common_struct.combine_mode = ADC_INDEPENDENT_MODE;
     /* config division, adcclk is division by hclk */
@@ -70,6 +72,12 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     adc_common_struct.tempervintrv_state = FALSE;
     /* config voltage battery */
     adc_common_struct.vbat_state = FALSE;
+    adc_common_config(&adc_common_struct);
+#elif defined (SOC_SERIES_AT32F423)
+    /* config division, adcclk is division by hclk */
+    adc_common_struct.div = ADC_HCLK_DIV_4;
+    /* config inner temperature sensor and vintrv */
+    adc_common_struct.tempervintrv_state = FALSE;
     adc_common_config(&adc_common_struct);
 #else
 #if !defined (SOC_SERIES_AT32F415) && !defined (SOC_SERIES_AT32F421) && \
@@ -123,7 +131,8 @@ static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_uint32_t cha
     adc_x = device->parent.user_data;
 
     /* adc_x regular channels configuration */
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F423)
     adc_ordinary_channel_set(adc_x, (adc_channel_select_type)channel, 1, ADC_SAMPLETIME_247_5);
 #else
     adc_ordinary_channel_set(adc_x, (adc_channel_select_type)channel, 1, ADC_SAMPLETIME_239_5);
@@ -133,7 +142,8 @@ static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_uint32_t cha
     adc_ordinary_software_trigger_enable(adc_x, TRUE);
 
     /* wait for the adc to convert */
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F423)
     while((adc_flag_get(adc_x, ADC_OCCE_FLAG) == RESET) && timeout < 0xFFFF)
 #else
     while((adc_flag_get(adc_x, ADC_CCE_FLAG) == RESET) && timeout < 0xFFFF)
