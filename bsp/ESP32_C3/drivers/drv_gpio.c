@@ -50,7 +50,7 @@ static rt_err_t mcu_pin_attach_irq(struct rt_device *device, rt_base_t pin,
 {
 
     /*TODO: start irq handle */
-    return RT_EOK;
+    return -RT_ENOSYS;
 }
 
 static rt_err_t mcu_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
