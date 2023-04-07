@@ -99,21 +99,21 @@ static rt_base_t ab32_pin_get(const char *name)
     return pin;
 }
 
-static void ab32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void ab32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     rt_uint8_t port = PIN_PORT(pin);
     rt_uint8_t gpio_pin  = pin - port_table[port].total_pin;
     hal_gpio_write(PORT_SFR(port), gpio_pin, (rt_uint8_t)value);
 }
 
-static int ab32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t ab32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     rt_uint8_t port = PIN_PORT(pin);
     rt_uint8_t gpio_pin  = pin - port_table[port].total_pin;
     return hal_gpio_read(PORT_SFR(port), gpio_pin);
 }
 
-static void ab32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void ab32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     struct gpio_init gpio_init;
     rt_uint8_t port = PIN_PORT(pin);
@@ -147,19 +147,19 @@ static void ab32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     hal_gpio_init(PORT_SFR(port), &gpio_init);
 }
 
-static rt_err_t ab32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t ab32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                     rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     return -RT_ERROR;
 }
 
-static rt_err_t ab32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t ab32_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     return -RT_ERROR;
 }
 
 static rt_err_t ab32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                     rt_uint32_t enabled)
+                                     rt_uint8_t enabled)
 {
     return -RT_ERROR;
 }
