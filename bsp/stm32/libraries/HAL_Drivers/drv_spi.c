@@ -482,7 +482,7 @@ static int rt_hw_spi_bus_init(void)
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             spi_bus_obj[i].dma.handle_rx.Init.Request = spi_config[i].dma_rx->request;
 #endif
-#if defined(BSP_SPI1_RX_USING_DMA)
+#ifndef SOC_SERIES_STM32U5
             spi_bus_obj[i].dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
             spi_bus_obj[i].dma.handle_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
             spi_bus_obj[i].dma.handle_rx.Init.MemInc              = DMA_MINC_ENABLE;
@@ -526,7 +526,7 @@ static int rt_hw_spi_bus_init(void)
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             spi_bus_obj[i].dma.handle_tx.Init.Request = spi_config[i].dma_tx->request;
 #endif
-#if defined(BSP_SPI1_TX_USING_DMA)
+#ifndef SOC_SERIES_STM32U5
             spi_bus_obj[i].dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
             spi_bus_obj[i].dma.handle_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
             spi_bus_obj[i].dma.handle_tx.Init.MemInc              = DMA_MINC_ENABLE;

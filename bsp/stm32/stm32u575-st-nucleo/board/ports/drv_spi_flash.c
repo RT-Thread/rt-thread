@@ -21,13 +21,12 @@
 #include "spi_flash_sfud.h"
 
 
-/* SPI Flash 驱动 */
+
 static int rt_hw_spi_flash_init(void)
 {
-    /* 往总线 spi1 上挂载一个 spi10 从设备 */
-    rt_hw_spi_device_attach("spi1", "spi10", 24);  // CS 脚：PB8
 
-    /* 使用 SFUD 探测 spi10 从设备，并将 spi10 连接的 flash 初始化为块设备，名称 W25Q128 */
+    rt_hw_spi_device_attach("spi1", "spi10", 24);  // CS:PB8
+
     if (RT_NULL == rt_sfud_flash_probe("W25Q128", "spi10"))
     {
         return -RT_ERROR;
@@ -35,7 +34,6 @@ static int rt_hw_spi_flash_init(void)
 
     return RT_EOK;
 }
-/* 导出到自动初始化 */
 INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init);
 
 
