@@ -409,7 +409,7 @@ int rt_hw_spi_bus_init(void)
         lpspis[i].spi_bus.parent.user_data = &lpspis[i];
 
         ret = rt_spi_bus_register(&lpspis[i].spi_bus, lpspis[i].bus_name, &imxrt_spi_ops);
-#ifdef BSP_USING_BLOCKING_SPI
+#ifndef BSP_USING_BLOCKING_SPI
         if(RT_TRUE == lpspis[i].dma_flag)
         {
             lpspi_dma_config(&lpspis[i]);

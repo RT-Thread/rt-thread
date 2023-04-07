@@ -12,9 +12,6 @@ if rtconfig.PLATFORM in ['gcc']:
 else:
     CPPDEFINES = []
 
-if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
-    src += ['arduino_main.cpp']
-
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
 list = os.listdir(cwd)
