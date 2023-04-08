@@ -150,6 +150,7 @@ CLIENT *clntudp_bufcreate(struct sockaddr_in *raddr,
 
         if ((port =
              pmap_getport(raddr, program, version, IPPROTO_UDP)) == 0) {
+            rt_kprintf("pmap_getport failure\n");
             goto fooy;
         }
         raddr->sin_port = htons(port);
@@ -164,7 +165,7 @@ CLIENT *clntudp_bufcreate(struct sockaddr_in *raddr,
     cu->cu_total.tv_usec = -1;
     cu->cu_sendsz = sendsz;
     cu->cu_recvsz = recvsz;
-    call_msg.rm_xid = ((unsigned long)rt_thread_self()) ^ ((unsigned long)rt_tick_get()) ^ (xid_count++);
+    call_msg.rm_xid = (uint32_t)(((unsigned long)rt_thread_self()) ^ ((unsigned long)rt_tick_get()) ^ (xid_count++));
     call_msg.rm_direction = CALL;
     call_msg.rm_call.cb_rpcvers = RPC_MSG_VERSION;
     call_msg.rm_call.cb_prog = program;
@@ -172,6 +173,7 @@ CLIENT *clntudp_bufcreate(struct sockaddr_in *raddr,
     xdrmem_create(&(cu->cu_outxdrs), cu->cu_outbuf, sendsz, XDR_ENCODE);
     if (!xdr_callhdr(&(cu->cu_outxdrs), &call_msg))
     {
+        rt_kprintf("xdr_callhdr failure\n");
         goto fooy;
     }
     cu->cu_xdrpos = XDR_GETPOS(&(cu->cu_outxdrs));
