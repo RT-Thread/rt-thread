@@ -64,7 +64,7 @@ static int dfs_net_write(struct dfs_file *file, const void *buf, size_t count)
 {
     int ret;
     int socket = (int)(size_t)file->vnode->data;
-    
+
     ret = sal_sendto(socket, buf, count, 0, NULL, 0);
     if (ret < 0)
     {
