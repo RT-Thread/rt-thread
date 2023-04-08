@@ -9,7 +9,6 @@
  */
 
 #include <Arduino.h>
-#include <board.h>
 #include "pins_arduino.h"
 
 /*
@@ -44,6 +43,6 @@ const pin_map_t pin_map_table[]=
     {A3, GET_PIN(B,0), "adc1", 15},     /* ADC */
     {A4, GET_PIN(C,1), "adc1", 7},      /* ADC */
     {A5, GET_PIN(C,0), "adc1", 6},      /* ADC */
-    {A6, RT_NULL, "adc1", 3},           /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
-    {A7, RT_NULL, "adc1", 3},           /* ADC, On-Chip: internal temperature sensor, ADC_CHANNEL_TEMPSENSOR */
+    {A6, RT_NULL, "adc1", RT_ADC_INTERN_CH_VREF},   /* ADC, On-Chip: internal reference voltage */
+    {A7, RT_NULL, "adc1", RT_ADC_INTERN_CH_TEMPER}, /* ADC, On-Chip: internal temperature sensor */
 };
