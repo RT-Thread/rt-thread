@@ -4565,18 +4565,20 @@ sysret_t sys_mq_close(mqd_t mqd)
 
 rt_weak sysret_t sys_cacheflush(void *addr, int size, int cache)
 {
-    if (addr < addr + size &&
-        (size_t)addr >= USER_VADDR_START &&
-        (size_t)addr + size < USER_VADDR_TOP)
+    if (((size_t)addr < (size_t)addr + size) &&
+        ((size_t)addr >= USER_VADDR_START) &&
+        ((size_t)addr + size < USER_VADDR_TOP))
     {
         if ((cache & DCACHE))
         {
             rt_hw_cpu_dcache_clean_and_invalidate(addr, size);
         }
+
         if ((cache & ICACHE))
         {
             rt_hw_cpu_icache_invalidate(addr, size);
         }
+
         return 0;
     }
     return -EFAULT;
