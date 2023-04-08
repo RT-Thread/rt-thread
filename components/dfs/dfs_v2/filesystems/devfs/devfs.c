@@ -39,7 +39,7 @@ int dfs_device_fs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
     return RT_EOK;
 }
 
-int dfs_device_fs_ioctl(struct dfs_fd *file, int cmd, void *args)
+int dfs_device_fs_ioctl(struct dfs_file *file, int cmd, void *args)
 {
     rt_err_t result;
     rt_device_t dev_id;
@@ -61,7 +61,7 @@ int dfs_device_fs_ioctl(struct dfs_fd *file, int cmd, void *args)
     return result;
 }
 
-int dfs_device_fs_read(struct dfs_fd *file, void *buf, size_t count)
+int dfs_device_fs_read(struct dfs_file *file, void *buf, size_t count)
 {
     int result;
     rt_device_t dev_id;
@@ -82,7 +82,7 @@ int dfs_device_fs_read(struct dfs_fd *file, void *buf, size_t count)
     return result;
 }
 
-int dfs_device_fs_write(struct dfs_fd *file, const void *buf, size_t count)
+int dfs_device_fs_write(struct dfs_file *file, const void *buf, size_t count)
 {
     int result;
     rt_device_t dev_id;
@@ -103,7 +103,7 @@ int dfs_device_fs_write(struct dfs_fd *file, const void *buf, size_t count)
     return result;
 }
 
-int dfs_device_fs_close(struct dfs_fd *file)
+int dfs_device_fs_close(struct dfs_file *file)
 {
     rt_err_t result;
     rt_device_t dev_id;
@@ -144,7 +144,7 @@ int dfs_device_fs_close(struct dfs_fd *file)
     return -EIO;
 }
 
-int dfs_device_fs_open(struct dfs_fd *file)
+int dfs_device_fs_open(struct dfs_file *file)
 {
     rt_err_t result;
     rt_device_t device;
@@ -334,7 +334,7 @@ int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat 
     return -ENOENT;
 }
 
-int dfs_device_fs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
+int dfs_device_fs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
 {
     rt_uint32_t index;
     rt_object_t object;
@@ -373,7 +373,7 @@ int dfs_device_fs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t co
     return index * sizeof(struct dirent);
 }
 
-static int dfs_device_fs_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+static int dfs_device_fs_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int mask = 0;
 

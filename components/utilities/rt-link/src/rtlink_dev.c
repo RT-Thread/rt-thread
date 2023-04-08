@@ -25,7 +25,7 @@
 #include <sys/statfs.h>
 #include <poll.h>
 
-int rtlink_fops_open(struct dfs_fd *fd)
+int rtlink_fops_open(struct dfs_file *fd)
 {
     rt_uint16_t flags = 0;
     rt_device_t device;
@@ -58,7 +58,7 @@ int rtlink_fops_open(struct dfs_fd *fd)
     return rt_device_open(device, flags);
 }
 
-int rtlink_fops_close(struct dfs_fd *fd)
+int rtlink_fops_close(struct dfs_file *fd)
 {
     rt_device_t device;
     device = (rt_device_t)fd->vnode->data;
@@ -67,7 +67,7 @@ int rtlink_fops_close(struct dfs_fd *fd)
     return rt_device_close(device);
 }
 
-int rtlink_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
+int rtlink_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     rt_device_t device;
     device = (rt_device_t)fd->vnode->data;
@@ -82,7 +82,7 @@ int rtlink_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     }
 }
 
-int rtlink_fops_read(struct dfs_fd *fd, void *buf, size_t count)
+int rtlink_fops_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
@@ -96,7 +96,7 @@ int rtlink_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     return size;
 }
 
-int rtlink_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
+int rtlink_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
@@ -110,7 +110,7 @@ int rtlink_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     return size;
 }
 
-int rtlink_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+int rtlink_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int mask = 0;
     int flags = 0;

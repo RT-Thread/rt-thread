@@ -64,7 +64,7 @@ static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 }
 
 /* fops for serial */
-static int serial_fops_open(struct dfs_fd *fd)
+static int serial_fops_open(struct dfs_file *fd)
 {
     rt_err_t ret = 0;
     rt_uint16_t flags = 0;
@@ -100,7 +100,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     return ret;
 }
 
-static int serial_fops_close(struct dfs_fd *fd)
+static int serial_fops_close(struct dfs_file *fd)
 {
     rt_device_t device;
 
@@ -112,7 +112,7 @@ static int serial_fops_close(struct dfs_fd *fd)
     return 0;
 }
 
-static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
+static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     rt_device_t device;
     int flags = (int)(rt_base_t)args;
@@ -135,7 +135,7 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     return rt_device_control(device, cmd, args);
 }
 
-static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
+static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
@@ -169,7 +169,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     return size;
 }
 
-static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
+static int serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     rt_device_t device;
 
@@ -177,7 +177,7 @@ static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     return rt_device_write(device, -1, buf, count);
 }
 
-static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+static int serial_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int mask = 0;
     int flags = 0;
