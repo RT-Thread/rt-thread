@@ -167,9 +167,10 @@ int win_ioctlsocket(int s, long cmd, void *arg)
 
 #ifdef SAL_USING_POSIX
 /* use windows poll, but not wait */
-int inet_poll(struct dfs_fd* file, struct rt_pollreq* req)
+int inet_poll(struct dfs_file* file, struct rt_pollreq* req)
 {
-    /*WSAPOLLFD winpoll;
+    /*
+    WSAPOLLFD winpoll;
     struct sal_socket* sal_sock;
     int mask = 0;
     int poll_event = 0;
@@ -189,7 +190,10 @@ int inet_poll(struct dfs_fd* file, struct rt_pollreq* req)
     if (mask == 0)
         return 0;
 
-    return winpoll.revents;*/
+    return winpoll.revents;
+    */
+
+   return 0;
 }
 #endif /* SAL_USING_POSIX */
 

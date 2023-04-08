@@ -328,7 +328,7 @@ int dfs_elm_statfs(struct dfs_filesystem *fs, struct statfs *buf)
     return 0;
 }
 
-int dfs_elm_open(struct dfs_fd *file)
+int dfs_elm_open(struct dfs_file *file)
 {
     FIL *fd;
     BYTE mode;
@@ -464,7 +464,7 @@ int dfs_elm_open(struct dfs_fd *file)
     return RT_EOK;
 }
 
-int dfs_elm_close(struct dfs_fd *file)
+int dfs_elm_close(struct dfs_file *file)
 {
     FRESULT result;
 
@@ -501,7 +501,7 @@ int dfs_elm_close(struct dfs_fd *file)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_ioctl(struct dfs_fd *file, int cmd, void *args)
+int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
 {
     switch (cmd)
     {
@@ -537,7 +537,7 @@ int dfs_elm_ioctl(struct dfs_fd *file, int cmd, void *args)
     return -ENOSYS;
 }
 
-int dfs_elm_read(struct dfs_fd *file, void *buf, size_t len)
+int dfs_elm_read(struct dfs_file *file, void *buf, size_t len)
 {
     FIL *fd;
     FRESULT result;
@@ -560,7 +560,7 @@ int dfs_elm_read(struct dfs_fd *file, void *buf, size_t len)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_write(struct dfs_fd *file, const void *buf, size_t len)
+int dfs_elm_write(struct dfs_file *file, const void *buf, size_t len)
 {
     FIL *fd;
     FRESULT result;
@@ -584,7 +584,7 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, size_t len)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_flush(struct dfs_fd *file)
+int dfs_elm_flush(struct dfs_file *file)
 {
     FIL *fd;
     FRESULT result;
@@ -596,7 +596,7 @@ int dfs_elm_flush(struct dfs_fd *file)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
+int dfs_elm_lseek(struct dfs_file *file, off_t offset)
 {
     FRESULT result = FR_OK;
     if (file->vnode->type == FT_REGULAR)
@@ -635,7 +635,7 @@ int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
+int dfs_elm_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
 {
     DIR *dir;
     FILINFO fno;

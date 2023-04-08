@@ -162,7 +162,7 @@ int dfs_tmpfs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
     return RT_EOK;
 }
 
-int dfs_tmpfs_ioctl(struct dfs_fd *file, int cmd, void *args)
+int dfs_tmpfs_ioctl(struct dfs_file *file, int cmd, void *args)
 {
     struct tmpfs_file *d_file;
     struct tmpfs_sb *superblock;
@@ -263,7 +263,7 @@ find_subpath:
     return NULL;
 }
 
-int dfs_tmpfs_read(struct dfs_fd *file, void *buf, size_t count)
+int dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count)
 {
     rt_size_t length;
     struct tmpfs_file *d_file;
@@ -286,7 +286,7 @@ int dfs_tmpfs_read(struct dfs_fd *file, void *buf, size_t count)
 }
 
 
-int dfs_tmpfs_write(struct dfs_fd *fd, const void *buf, size_t count)
+int dfs_tmpfs_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     struct tmpfs_file *d_file;
     struct tmpfs_sb *superblock;
@@ -324,7 +324,7 @@ int dfs_tmpfs_write(struct dfs_fd *fd, const void *buf, size_t count)
     return count;
 }
 
-int dfs_tmpfs_lseek(struct dfs_fd *file, off_t offset)
+int dfs_tmpfs_lseek(struct dfs_file *file, off_t offset)
 {
     if (offset <= (off_t)file->vnode->size)
     {
@@ -336,7 +336,7 @@ int dfs_tmpfs_lseek(struct dfs_fd *file, off_t offset)
     return -EIO;
 }
 
-int dfs_tmpfs_close(struct dfs_fd *file)
+int dfs_tmpfs_close(struct dfs_file *file)
 {
     RT_ASSERT(file->vnode->ref_count > 0);
     if (file->vnode->ref_count > 1)
@@ -349,7 +349,7 @@ int dfs_tmpfs_close(struct dfs_fd *file)
     return RT_EOK;
 }
 
-int dfs_tmpfs_open(struct dfs_fd *file)
+int dfs_tmpfs_open(struct dfs_file *file)
 {
     rt_size_t size;
     struct tmpfs_sb *superblock;
@@ -498,7 +498,7 @@ int dfs_tmpfs_stat(struct dfs_filesystem *fs,
     return RT_EOK;
 }
 
-int dfs_tmpfs_getdents(struct dfs_fd *file,
+int dfs_tmpfs_getdents(struct dfs_file *file,
                        struct dirent *dirp,
                        uint32_t    count)
 {

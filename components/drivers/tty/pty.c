@@ -175,7 +175,7 @@ static rt_err_t  pty_device_control(rt_device_t dev, int cmd, void *args)
     return -ENOIOCTLCMD;
 }
 
-static int ptmx_open(struct dfs_fd *fd)
+static int ptmx_open(struct dfs_file *fd)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;

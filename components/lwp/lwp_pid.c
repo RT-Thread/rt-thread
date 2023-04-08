@@ -135,7 +135,7 @@ static void __exit_files(struct rt_lwp *lwp)
 
     while (fd >= 0)
     {
-        struct dfs_fd *d;
+        struct dfs_file *d;
 
         d = lwp->fdt.fds[fd];
         if (d)

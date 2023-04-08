@@ -54,7 +54,7 @@ int dfs_ramfs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
     return RT_EOK;
 }
 
-int dfs_ramfs_ioctl(struct dfs_fd *file, int cmd, void *args)
+int dfs_ramfs_ioctl(struct dfs_file *file, int cmd, void *args)
 {
     return -EIO;
 }
@@ -92,7 +92,7 @@ struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs *ramfs,
     return NULL;
 }
 
-int dfs_ramfs_read(struct dfs_fd *file, void *buf, size_t count)
+int dfs_ramfs_read(struct dfs_file *file, void *buf, size_t count)
 {
     rt_size_t length;
     struct ramfs_dirent *dirent;
@@ -114,7 +114,7 @@ int dfs_ramfs_read(struct dfs_fd *file, void *buf, size_t count)
     return length;
 }
 
-int dfs_ramfs_write(struct dfs_fd *fd, const void *buf, size_t count)
+int dfs_ramfs_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
@@ -151,7 +151,7 @@ int dfs_ramfs_write(struct dfs_fd *fd, const void *buf, size_t count)
     return count;
 }
 
-int dfs_ramfs_lseek(struct dfs_fd *file, off_t offset)
+int dfs_ramfs_lseek(struct dfs_file *file, off_t offset)
 {
     if (offset <= (off_t)file->vnode->size)
     {
@@ -163,7 +163,7 @@ int dfs_ramfs_lseek(struct dfs_fd *file, off_t offset)
     return -EIO;
 }
 
-int dfs_ramfs_close(struct dfs_fd *file)
+int dfs_ramfs_close(struct dfs_file *file)
 {
     RT_ASSERT(file->vnode->ref_count > 0);
     if (file->vnode->ref_count > 1)
@@ -176,7 +176,7 @@ int dfs_ramfs_close(struct dfs_fd *file)
     return RT_EOK;
 }
 
-int dfs_ramfs_open(struct dfs_fd *file)
+int dfs_ramfs_open(struct dfs_file *file)
 {
     rt_size_t size;
     struct dfs_ramfs *ramfs;
@@ -316,7 +316,7 @@ int dfs_ramfs_stat(struct dfs_filesystem *fs,
     return RT_EOK;
 }
 
-int dfs_ramfs_getdents(struct dfs_fd *file,
+int dfs_ramfs_getdents(struct dfs_file *file,
                        struct dirent *dirp,
                        uint32_t    count)
 {

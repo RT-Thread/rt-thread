@@ -783,7 +783,7 @@ static int lwp_fd_new(int fdt_type)
     return fdt_fd_new(fdt);
 }
 
-static struct dfs_fd *lwp_fd_get(int fdt_type, int fd)
+static struct dfs_file *lwp_fd_get(int fdt_type, int fd)
 {
     struct dfs_fdtable *fdt;
 
@@ -830,7 +830,7 @@ static int _chfd_alloc(int fdt_type)
 
 static void _chfd_free(int fd, int fdt_type)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     d = lwp_fd_get(fdt_type, fd);
     if (d == RT_NULL)
@@ -841,7 +841,7 @@ static void _chfd_free(int fd, int fdt_type)
 }
 
 /* for fops */
-static int channel_fops_poll(struct dfs_fd *file, struct rt_pollreq *req)
+static int channel_fops_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     int mask = POLLOUT;
     rt_channel_t ch;
@@ -859,7 +859,7 @@ static int channel_fops_poll(struct dfs_fd *file, struct rt_pollreq *req)
     return mask;
 }
 
-static int channel_fops_close(struct dfs_fd *file)
+static int channel_fops_close(struct dfs_file *file)
 {
     rt_channel_t ch;
     rt_base_t level;
@@ -902,7 +902,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
 {
     int fd;
     rt_channel_t ch = RT_NULL;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     fd = _chfd_alloc(fdt_type);     /* allocate an IPC channel descriptor */
     if (fd == -1)
@@ -910,7 +910,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
         goto quit;
     }
     d = lwp_fd_get(fdt_type, fd);
-    d->vnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
+    d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
     if (!d->vnode)
     {
         _chfd_free(fd, fdt_type);
@@ -921,7 +921,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     ch = rt_raw_channel_open(name, flags);
     if (ch)
     {
-        rt_memset(d->vnode, 0, sizeof(struct dfs_fnode));
+        rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
         rt_list_init(&d->vnode->list);
         d->vnode->type = FT_USER;
         d->vnode->path = NULL;
@@ -934,7 +934,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
         d->pos = 0;
         d->vnode->ref_count = 1;
 
-        /* set socket to the data of dfs_fd */
+        /* set socket to the data of dfs_file */
         d->vnode->data = (void *)ch;
     }
     else
@@ -950,7 +950,7 @@ quit:
 
 static rt_channel_t fd_2_channel(int fdt_type, int fd)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     d = lwp_fd_get(fdt_type, fd);
     if (d)
@@ -969,8 +969,8 @@ static rt_channel_t fd_2_channel(int fdt_type, int fd)
 rt_err_t lwp_channel_close(int fdt_type, int fd)
 {
     rt_channel_t ch;
-    struct dfs_fd *d;
-    struct dfs_fnode *vnode;
+    struct dfs_file *d;
+    struct dfs_vnode *vnode;
 
     d = lwp_fd_get(fdt_type, fd);
     if (!d)
