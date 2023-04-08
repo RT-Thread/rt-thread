@@ -1,5 +1,7 @@
 # STM32G474 Nucleo开发板的Arduino生态兼容说明
 
+[English](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32g474-st-nucleo/applications/arduino_pinout/README.md) | 中文
+
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
 STM32G474 Nucleo开发板已经完整适配了[RTduino软件包](https://github.com/RTduino/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)。
