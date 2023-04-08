@@ -45,9 +45,100 @@ struct stm32_adc
 };
 
 static struct stm32_adc stm32_adc_obj[sizeof(adc_config) / sizeof(adc_config[0])];
-static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel);
 
-static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t stm32_adc_get_channel(rt_int8_t rt_channel, uint32_t *stm32_channel)
+{
+    switch (rt_channel)
+    {
+    case  0:
+        *stm32_channel = ADC_CHANNEL_0;
+        break;
+    case  1:
+        *stm32_channel = ADC_CHANNEL_1;
+        break;
+    case  2:
+        *stm32_channel = ADC_CHANNEL_2;
+        break;
+    case  3:
+        *stm32_channel = ADC_CHANNEL_3;
+        break;
+    case  4:
+        *stm32_channel = ADC_CHANNEL_4;
+        break;
+    case  5:
+        *stm32_channel = ADC_CHANNEL_5;
+        break;
+    case  6:
+        *stm32_channel = ADC_CHANNEL_6;
+        break;
+    case  7:
+        *stm32_channel = ADC_CHANNEL_7;
+        break;
+    case  8:
+        *stm32_channel = ADC_CHANNEL_8;
+        break;
+    case  9:
+        *stm32_channel = ADC_CHANNEL_9;
+        break;
+    case 10:
+        *stm32_channel = ADC_CHANNEL_10;
+        break;
+    case 11:
+        *stm32_channel = ADC_CHANNEL_11;
+        break;
+    case 12:
+        *stm32_channel = ADC_CHANNEL_12;
+        break;
+    case 13:
+        *stm32_channel = ADC_CHANNEL_13;
+        break;
+    case 14:
+        *stm32_channel = ADC_CHANNEL_14;
+        break;
+    case 15:
+        *stm32_channel = ADC_CHANNEL_15;
+        break;
+#ifdef ADC_CHANNEL_16
+    case 16:
+        *stm32_channel = ADC_CHANNEL_16;
+        break;
+#endif /* ADC_CHANNEL_16 */
+    case 17:
+        *stm32_channel = ADC_CHANNEL_17;
+        break;
+#ifdef ADC_CHANNEL_18
+    case 18:
+        *stm32_channel = ADC_CHANNEL_18;
+        break;
+#endif /* ADC_CHANNEL_18 */
+#ifdef ADC_CHANNEL_19
+    case 19:
+        *stm32_channel = ADC_CHANNEL_19;
+        break;
+#endif /* ADC_CHANNEL_19 */
+#ifdef ADC_CHANNEL_VREFINT
+    case RT_ADC_INTERN_CH_VREF:
+        *stm32_channel = ADC_CHANNEL_VREFINT;
+        break;
+#endif /* ADC_CHANNEL_VREFINT */
+#ifdef ADC_CHANNEL_VBAT
+    case RT_ADC_INTERN_CH_VBAT:
+        *stm32_channel = ADC_CHANNEL_VBAT;
+        break;
+#endif /* ADC_CHANNEL_VBAT */
+#ifdef ADC_CHANNEL_TEMPSENSOR
+    case RT_ADC_INTERN_CH_TEMPER:
+        *stm32_channel = ADC_CHANNEL_TEMPSENSOR;
+        break;
+#endif /* ADC_CHANNEL_TEMPSENSOR */
+    default:
+        return -RT_EINVAL;
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     ADC_HandleTypeDef *stm32_adc_handler;
     RT_ASSERT(device != RT_NULL);
@@ -57,68 +148,11 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
     {
         ADC_ChannelConfTypeDef ADC_ChanConf;
         rt_memset(&ADC_ChanConf, 0, sizeof(ADC_ChanConf));
-#ifndef ADC_CHANNEL_16
-        if (channel == 16)
-        {
-            LOG_E("ADC channel must not be 16.");
-            return -RT_ERROR;
-        }
-#endif
 
-/* ADC channel number is up to 17 */
-#if !defined(ADC_CHANNEL_18)
-        if (channel <= 17 || (
-#ifdef ADC_CHANNEL_VREFINT
-               channel != (ADC_CHANNEL_VREFINT - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_VREFINT */
-#ifdef ADC_CHANNEL_TEMPSENSOR
-           ||  channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_TEMPSENSOR */
-#ifdef ADC_CHANNEL_VBAT
-           ||  channel != (ADC_CHANNEL_VBAT - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_VBAT */
-))
-/* ADC channel number is up to 19 */
-#elif defined(ADC_CHANNEL_19)
-        if (channel <= 19 || (
-#ifdef ADC_CHANNEL_VREFINT
-               channel != (ADC_CHANNEL_VREFINT - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_VREFINT */
-#ifndef ADC_CHANNEL_TEMPSENSOR
-            || channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_TEMPSENSOR */
-#ifdef ADC_CHANNEL_VBAT
-            || channel != (=ADC_CHANNEL_VBAT - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_VBAT */
-))
-/* ADC channel number is up to 18 */
-#else
-        if (channel <= 18 || (
-#ifdef ADC_CHANNEL_VREFINT
-               channel != (ADC_CHANNEL_VREFINT - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_VREFINT */
-#ifdef ADC_CHANNEL_TEMPSENSOR
-            || channel != (ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_TEMPSENSOR */
-#ifdef ADC_CHANNEL_VBAT
-            || channel != (ADC_CHANNEL_VBAT - ADC_CHANNEL_0)
-#endif /* ADC_CHANNEL_VBAT */
-))
-#endif /* !defined(ADC_CHANNEL_18) */
+        if(stm32_adc_get_channel(channel, &ADC_ChanConf.Channel) != RT_EOK)
         {
-            /* set stm32 ADC channel */
-            ADC_ChanConf.Channel =  stm32_adc_get_channel(channel);
-        }
-        else
-        {
-#if !defined(ADC_CHANNEL_18)
-            LOG_E("ADC channel must be between 0 and 17.");
-#elif defined(ADC_CHANNEL_19)
-            LOG_E("ADC channel must be between 0 and 19.");
-#else
-            LOG_E("ADC channel must be between 0 and 18.");
-#endif /* !defined(ADC_CHANNEL_18) */
-            return -RT_ERROR;
+            LOG_E("ADC channel illegal: %d", channel);
+            return -RT_EINVAL;
         }
 
 #if defined(SOC_SERIES_STM32MP1) || defined (SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
@@ -219,103 +253,6 @@ static rt_uint8_t stm32_adc_get_resolution(struct rt_adc_device *device)
 #endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F3) */
 }
 
-static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
-{
-    rt_uint32_t stm32_channel = 0;
-
-    switch (channel)
-    {
-    case  0:
-        stm32_channel = ADC_CHANNEL_0;
-        break;
-    case  1:
-        stm32_channel = ADC_CHANNEL_1;
-        break;
-    case  2:
-        stm32_channel = ADC_CHANNEL_2;
-        break;
-    case  3:
-        stm32_channel = ADC_CHANNEL_3;
-        break;
-    case  4:
-        stm32_channel = ADC_CHANNEL_4;
-        break;
-    case  5:
-        stm32_channel = ADC_CHANNEL_5;
-        break;
-    case  6:
-        stm32_channel = ADC_CHANNEL_6;
-        break;
-    case  7:
-        stm32_channel = ADC_CHANNEL_7;
-        break;
-    case  8:
-        stm32_channel = ADC_CHANNEL_8;
-        break;
-    case  9:
-        stm32_channel = ADC_CHANNEL_9;
-        break;
-    case 10:
-        stm32_channel = ADC_CHANNEL_10;
-        break;
-    case 11:
-        stm32_channel = ADC_CHANNEL_11;
-        break;
-    case 12:
-        stm32_channel = ADC_CHANNEL_12;
-        break;
-    case 13:
-        stm32_channel = ADC_CHANNEL_13;
-        break;
-    case 14:
-        stm32_channel = ADC_CHANNEL_14;
-        break;
-    case 15:
-        stm32_channel = ADC_CHANNEL_15;
-        break;
-#ifdef ADC_CHANNEL_16
-    case 16:
-        stm32_channel = ADC_CHANNEL_16;
-        break;
-#endif
-    case 17:
-        stm32_channel = ADC_CHANNEL_17;
-        break;
-#ifdef ADC_CHANNEL_18
-    case 18:
-        stm32_channel = ADC_CHANNEL_18;
-        break;
-#endif
-#ifdef ADC_CHANNEL_19
-    case 19:
-        stm32_channel = ADC_CHANNEL_19;
-        break;
-#endif
-    default:
-        switch (channel)
-        {
-#ifdef ADC_CHANNEL_VREFINT
-          case ADC_CHANNEL_VREFINT - ADC_CHANNEL_0:
-            stm32_channel = ADC_CHANNEL_VREFINT;
-            break;
-#endif /* ADC_CHANNEL_VREFINT */
-#ifdef ADC_CHANNEL_VBAT
-          case ADC_CHANNEL_VBAT - ADC_CHANNEL_0:
-            stm32_channel = ADC_CHANNEL_VBAT;
-            break;
-#endif /* ADC_CHANNEL_VBAT */
-#ifdef ADC_CHANNEL_TEMPSENSOR
-          case ADC_CHANNEL_TEMPSENSOR - ADC_CHANNEL_0:
-            stm32_channel = ADC_CHANNEL_TEMPSENSOR;
-            break;
-#endif /* ADC_CHANNEL_TEMPSENSOR */
-        }
-        break;
-    }
-
-    return stm32_channel;
-}
-
 static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
 {
     if(device == RT_NULL)
@@ -328,10 +265,10 @@ static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
 
     ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
 
-    ret = rt_adc_enable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    ret = rt_adc_enable(device, RT_ADC_INTERN_CH_VREF);
     if (ret != RT_EOK) return (rt_int16_t)ret;
-    vref_value = rt_adc_read(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
-    ret = rt_adc_disable(device, ADC_CHANNEL_VREFINT - ADC_CHANNEL_0);
+    vref_value = rt_adc_read(device, RT_ADC_INTERN_CH_VREF);
+    ret = rt_adc_disable(device, RT_ADC_INTERN_CH_VREF);
     if (ret != RT_EOK) return (rt_int16_t)ret;
 
     vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
@@ -341,7 +278,7 @@ static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
     return vref_mv;
 }
 
-static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     ADC_HandleTypeDef *stm32_adc_handler;
 
