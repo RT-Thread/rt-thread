@@ -1,6 +1,6 @@
 # STM32G474 Nucleo开发板的Arduino生态兼容说明
 
-[English](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32g474-st-nucleo/applications/arduino_pinout/README.md) | 中文
+**中文** | [English](README.md) 
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
@@ -20,7 +20,12 @@ Hardware Drivers Config --->
 
 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
+
 ![stm32g474-nucleo-pinout.jpg](./stm32g474-nucleo-pinout.jpg)
+![nucleo_g474re_arduino_left.jpg](./nucleo_g474re_arduino_left.jpg)
+![nucleo_g474re_arduino_right.jpg](./nucleo_g474re_arduino_right.jpg)
+
+
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
 | 0 (D0) | PC5 | 是 |  |
@@ -49,10 +54,6 @@ Hardware Drivers Config --->
 | 23 (A6) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 | 24 (A7) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 
-> Notice:
-> 在 Nucleo 64 引脚板上，D0 和 D1 引脚默认不可用，因为它们被 STLink 虚拟通信端口（例如用于 printf）使用。
->
-> 如果您想使用这些引脚（而不是默认的虚拟通信端口），您需要关闭 SB62/SB63并打开 SB13/SB14焊桥。
-
 > References:
 > 1.[stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf](https://www.st.com/resource/en/user_manual/dm00105823-stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf)
+> 2.[ST-Nucleo-G474RE](https://os.mbed.com/platforms/ST-Nucleo-G474RE)

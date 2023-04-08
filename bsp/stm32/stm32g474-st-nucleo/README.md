@@ -1,6 +1,6 @@
 # STM32G431-Nucleo BSP Introduction
 
-[中文](README_zh.md) 
+**English** | [中文](README_zh.md) 
 
 ## MCU: STM32G474RB @170MHz, 512KB FLASH,  128KB RAM
 

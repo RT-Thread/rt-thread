@@ -1,6 +1,6 @@
 # The Arduino Compatible for STM32G474 Nucleo development board
 
-English | [中文](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32g474-st-nucleo/applications/arduino_pinout/README_zh.md)
+**English** | [中文](README_zh.md)
 
 ## 1 RTduino - Arduino Ecosystem Compatibility Layer for RT-Thread
 
@@ -20,7 +20,10 @@ Hardware Drivers Config --->
 
 For additional information on pin layout, refer to [pins_arduino.c](pins_arduino.c) and [pins_arduino.h](pins_arduino.h).
 
+
 ![stm32g474-nucleo-pinout.jpg](./stm32g474-nucleo-pinout.jpg)
+![nucleo_g474re_arduino_left.jpg](./nucleo_g474re_arduino_left.jpg)
+![nucleo_g474re_arduino_right.jpg](./nucleo_g474re_arduino_right.jpg)
 
 | Arduino Pin Number  | STM32 Pin Number | 5V Tolerance | Remarks |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
@@ -50,10 +53,6 @@ For additional information on pin layout, refer to [pins_arduino.c](pins_arduino
 | 23 (A6) | -- |  | On-chip reference voltage ADC, default controlled by RT-Thread's ADC device framework adc1 |
 | 24 (A7) | -- |  | On-chip temperature sensor ADC, default controlled by RT-Thread's ADC device framework adc1 |
 
-> Notice:
-> On Nucleo 64-pins boards, the D0 and D1 pins are not available per default as they are used by the STLink Virtual Comm Port (used for printf for example).
->
->If you want to use these pins (instead of the default Virtual Comm Port) you need to close SB62/SB63 and open SB13/SB14 solder bridges.
-
 > References:
 > 1.[stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf](https://www.st.com/resource/en/user_manual/dm00105823-stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf)
+> 2.[ST-Nucleo-G474RE](https://os.mbed.com/platforms/ST-Nucleo-G474RE)

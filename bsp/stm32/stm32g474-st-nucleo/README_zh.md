@@ -1,5 +1,7 @@
 # NUCLEO-G474RE 开发板 BSP 说明
 
+**中文** | [English](README.md)
+
 ## 简介
 
 本文档为 NUCLEO-G474RE 开发板的 BSP (板级支持包) 说明。
