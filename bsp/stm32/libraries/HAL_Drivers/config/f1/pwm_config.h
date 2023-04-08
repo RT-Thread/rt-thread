@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-13     zylx         first version
+ * 2023-04-08     Wangyuqiang  complete PWM defination
  */
 
 #ifndef __PWM_CONFIG_H__
@@ -24,7 +25,6 @@ extern "C" {
        .name                    = "pwm1",       \
        .channel                 = RT_NULL       \
     }
-
 #endif /* BSP_USING_PWM1 */
 
 #ifdef BSP_USING_PWM2
@@ -134,6 +134,60 @@ extern "C" {
        .channel                 = RT_NULL       \
     }
 #endif /* BSP_USING_PWM13 */
+
+#ifdef BSP_USING_PWM14
+#define PWM14_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM14,        \
+       .name                    = "pwm14",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM14 */
+
+#ifdef BSP_USING_PWM15
+#define PWM15_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM15,        \
+       .name                    = "pwm15",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM15 */
+
+#ifdef BSP_USING_PWM16
+#define PWM16_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM16,        \
+       .name                    = "pwm16",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM16 */
+
+#ifdef BSP_USING_PWM17
+#define PWM17_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM17,        \
+       .name                    = "pwm17",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM17 */
+
+#ifdef BSP_USING_PWM18
+#define PWM18_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM18,        \
+       .name                    = "pwm18",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM18 */
+
+#ifdef BSP_USING_PWM19
+#define PWM19_CONFIG                            \
+    {                                           \
+       .tim_handle.Instance     = TIM19,        \
+       .name                    = "pwm19",      \
+       .channel                 = RT_NULL       \
+    }
+#endif /* BSP_USING_PWM19 */
 
 #ifdef __cplusplus
 }
