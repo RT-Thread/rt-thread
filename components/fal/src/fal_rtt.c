@@ -406,7 +406,7 @@ const static struct rt_device_ops char_dev_ops =
 #include <sys/statfs.h> /* statfs() */
 
 /* RT-Thread device filesystem interface */
-static int char_dev_fopen(struct dfs_fd *fd)
+static int char_dev_fopen(struct dfs_file *fd)
 {
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 
@@ -429,7 +429,7 @@ static int char_dev_fopen(struct dfs_fd *fd)
     return RT_EOK;
 }
 
-static int char_dev_fread(struct dfs_fd *fd, void *buf, size_t count)
+static int char_dev_fread(struct dfs_file *fd, void *buf, size_t count)
 {
     int ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
@@ -449,7 +449,7 @@ static int char_dev_fread(struct dfs_fd *fd, void *buf, size_t count)
     return ret;
 }
 
-static int char_dev_fwrite(struct dfs_fd *fd, const void *buf, size_t count)
+static int char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count)
 {
     int ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;

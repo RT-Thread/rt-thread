@@ -525,7 +525,7 @@ void *lwp_mmap2(void *addr, size_t length, int prot, int flags, int fd,
     }
     else
     {
-        struct dfs_fd *d;
+        struct dfs_file *d;
 
         d = fd_get(fd);
         if (d && d->vnode->type == FT_DEVICE)

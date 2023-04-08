@@ -21,7 +21,7 @@ extern "C" {
 
 /* Pre-declaration */
 struct dfs_filesystem;
-struct dfs_fd;
+struct dfs_file;
 
 /* File system operations */
 struct dfs_filesystem_ops

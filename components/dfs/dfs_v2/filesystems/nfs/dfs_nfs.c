@@ -546,12 +546,12 @@ int nfs_unmount(struct dfs_filesystem *fs)
     return 0;
 }
 
-int nfs_ioctl(struct dfs_fd *file, int cmd, void *args)
+int nfs_ioctl(struct dfs_file *file, int cmd, void *args)
 {
     return -ENOSYS;
 }
 
-int nfs_read(struct dfs_fd *file, void *buf, size_t count)
+int nfs_read(struct dfs_file *file, void *buf, size_t count)
 {
     READ3args args;
     READ3res res;
@@ -620,7 +620,7 @@ int nfs_read(struct dfs_fd *file, void *buf, size_t count)
     return total;
 }
 
-int nfs_write(struct dfs_fd *file, const void *buf, size_t count)
+int nfs_write(struct dfs_file *file, const void *buf, size_t count)
 {
     WRITE3args args;
     WRITE3res res;
@@ -685,7 +685,7 @@ int nfs_write(struct dfs_fd *file, const void *buf, size_t count)
     return total;
 }
 
-int nfs_lseek(struct dfs_fd *file, off_t offset)
+int nfs_lseek(struct dfs_file *file, off_t offset)
 {
     nfs_file *fd;
     nfs_filesystem *nfs;
@@ -709,7 +709,7 @@ int nfs_lseek(struct dfs_fd *file, off_t offset)
     return -EIO;
 }
 
-int nfs_close(struct dfs_fd *file)
+int nfs_close(struct dfs_file *file)
 {
     nfs_filesystem *nfs;
     RT_ASSERT(file->vnode->fs != NULL);
@@ -746,7 +746,7 @@ int nfs_close(struct dfs_fd *file)
     return 0;
 }
 
-int nfs_open(struct dfs_fd *file)
+int nfs_open(struct dfs_file *file)
 {
     nfs_filesystem *nfs;
     RT_ASSERT(file->vnode->fs != NULL);
@@ -1103,7 +1103,7 @@ int nfs_rename(struct dfs_filesystem *fs, const char *src, const char *dest)
     return ret;
 }
 
-int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
+int nfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
 {
     nfs_dir *dir;
     rt_uint32_t index;

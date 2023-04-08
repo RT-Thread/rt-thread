@@ -52,7 +52,7 @@ static resource_id_t id_mgr = RESOURCE_ID_INIT(RT_UNAMED_PIPE_NUMBER, resoure_id
  *           When the return value is -1, it means the file descriptor is invalid.
  *           When the return value is -RT_ENOMEM, it means insufficient memory allocation failed.
  */
-static int pipe_fops_open(struct dfs_fd *fd)
+static int pipe_fops_open(struct dfs_file *fd)
 {
     int rc = 0;
     rt_pipe_t *pipe;
@@ -99,7 +99,7 @@ __exit:
  *           When the return value is 0, it means the operation is successful.
  *           When the return value is -1, it means the file descriptor is invalid.
  */
-static int pipe_fops_close(struct dfs_fd *fd)
+static int pipe_fops_close(struct dfs_file *fd)
 {
     rt_device_t device;
     rt_pipe_t *pipe;
@@ -164,7 +164,7 @@ static int pipe_fops_close(struct dfs_fd *fd)
  *           When the return value is 0, it means the operation is successful.
  *           When the return value is -EINVAL, it means the command is invalid.
  */
-static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
+static int pipe_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     rt_pipe_t *pipe;
     int ret = 0;
@@ -200,7 +200,7 @@ static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
  *           When the return value is 0, it means O_NONBLOCK is enabled and there is no thread that has the pipe open for writing.
  *           When the return value is -EAGAIN, it means there are no data to be read.
  */
-static int pipe_fops_read(struct dfs_fd *fd, void *buf, size_t count)
+static int pipe_fops_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int len = 0;
     rt_pipe_t *pipe;
@@ -254,7 +254,7 @@ out:
  *           When the return value is -EAGAIN, it means O_NONBLOCK is enabled and there are no space to be written.
  *           When the return value is -EPIPE, it means there is no thread that has the pipe open for reading.
  */
-static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
+static int pipe_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     int len;
     rt_pipe_t *pipe;
@@ -325,7 +325,7 @@ static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
  *           POLLOUT means there is space to be written.
  *           POLLERR means there is no thread that occupied the pipe to open for reading.
  */
-static int pipe_fops_poll(struct dfs_fd *fd, rt_pollreq_t *req)
+static int pipe_fops_poll(struct dfs_file *fd, rt_pollreq_t *req)
 {
     int mask = 0;
     rt_pipe_t *pipe;

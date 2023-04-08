@@ -36,7 +36,7 @@
 int open(const char *file, int flags, ...)
 {
     int fd, result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* allocate a fd */
     fd = fd_new();
@@ -89,7 +89,7 @@ RTM_EXPORT(creat);
 int close(int fd)
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     d = fd_get(fd);
     if (d == NULL)
@@ -132,7 +132,7 @@ ssize_t read(int fd, void *buf, size_t len)
 #endif
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fd);
@@ -172,7 +172,7 @@ ssize_t write(int fd, const void *buf, size_t len)
 #endif
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fd);
@@ -208,7 +208,7 @@ RTM_EXPORT(write);
 off_t lseek(int fd, off_t offset, int whence)
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     d = fd_get(fd);
     if (d == NULL)
@@ -342,7 +342,7 @@ RTM_EXPORT(stat);
  */
 int fstat(int fildes, struct stat *buf)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fildes);
@@ -370,7 +370,7 @@ RTM_EXPORT(fstat);
 int fsync(int fildes)
 {
     int ret;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fildes);
@@ -401,7 +401,7 @@ RTM_EXPORT(fsync);
 int fcntl(int fildes, int cmd, ...)
 {
     int ret = -1;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fildes);
@@ -467,7 +467,7 @@ RTM_EXPORT(ioctl);
 int ftruncate(int fd, off_t length)
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     d = fd_get(fd);
     if (d == NULL)
@@ -531,7 +531,7 @@ RTM_EXPORT(statfs);
  */
 int fstatfs(int fildes, struct statfs *buf)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fildes);
@@ -557,7 +557,7 @@ RTM_EXPORT(fstatfs);
 int mkdir(const char *path, mode_t mode)
 {
     int fd;
-    struct dfs_fd *d;
+    struct dfs_file *d;
     int result;
 
     fd = fd_new();
@@ -619,7 +619,7 @@ RTM_EXPORT(rmdir);
  */
 DIR *opendir(const char *name)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
     int fd, result;
     DIR *t;
 
@@ -675,7 +675,7 @@ RTM_EXPORT(opendir);
 struct dirent *readdir(DIR *d)
 {
     int result;
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
 
     fd = fd_get(d->fd);
     if (fd == NULL)
@@ -722,7 +722,7 @@ RTM_EXPORT(readdir);
  */
 long telldir(DIR *d)
 {
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
     long result;
 
     fd = fd_get(d->fd);
@@ -748,7 +748,7 @@ RTM_EXPORT(telldir);
  */
 void seekdir(DIR *d, long offset)
 {
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
 
     fd = fd_get(d->fd);
     if (fd == NULL)
@@ -772,7 +772,7 @@ RTM_EXPORT(seekdir);
  */
 void rewinddir(DIR *d)
 {
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
 
     fd = fd_get(d->fd);
     if (fd == NULL)
@@ -799,7 +799,7 @@ RTM_EXPORT(rewinddir);
 int closedir(DIR *d)
 {
     int result;
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
 
     fd = fd_get(d->fd);
     if (fd == NULL)
