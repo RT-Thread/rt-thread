@@ -14,6 +14,10 @@
 #define __ADC_H__
 #include <rtthread.h>
 
+#define RT_ADC_INTERN_CH_TEMPER ((rt_uint32_t)-1)
+#define RT_ADC_INTERN_CH_VREF   ((rt_uint32_t)-2)
+#define RT_ADC_INTERN_CH_VBAT   ((rt_uint32_t)-3)
+
 struct rt_adc_device;
 struct rt_adc_ops
 {
