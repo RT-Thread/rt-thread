@@ -115,7 +115,7 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const stru
     return result;
 }
 
-rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_uint32_t channel)
+rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_int8_t channel)
 {
     rt_uint32_t value;
 
@@ -126,7 +126,7 @@ rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_uint32_t channel)
     return value;
 }
 
-rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_uint32_t channel)
+rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_int8_t channel)
 {
     rt_err_t result = RT_EOK;
 
@@ -144,7 +144,7 @@ rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_uint32_t channel)
     return result;
 }
 
-rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
+rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_int8_t channel)
 {
     rt_err_t result = RT_EOK;
 
@@ -162,7 +162,7 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_uint32_t channel)
     return result;
 }
 
-rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_uint32_t channel)
+rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_int8_t channel)
 {
     rt_uint32_t value = 0;
     rt_int16_t vref = 0, voltage = 0;
