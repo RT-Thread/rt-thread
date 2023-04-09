@@ -53,6 +53,10 @@ For additional information on pin layout, refer to [pins_arduino.c](pins_arduino
 | 23 (A6) | -- |  | On-chip reference voltage ADC, default controlled by RT-Thread's ADC device framework adc1 |
 | 24 (A7) | -- |  | On-chip temperature sensor ADC, default controlled by RT-Thread's ADC device framework adc1 |
 
+> Notice:
+> 
+> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timers can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
+
 > References:
-> 1.[stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf](https://www.st.com/resource/en/user_manual/dm00105823-stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf)
-> 2.[ST-Nucleo-G474RE](https://os.mbed.com/platforms/ST-Nucleo-G474RE)
+> 1. [stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf](https://www.st.com/resource/en/user_manual/dm00105823-stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf)
+> 2. [ST-Nucleo-G474RE](https://os.mbed.com/platforms/ST-Nucleo-G474RE)
