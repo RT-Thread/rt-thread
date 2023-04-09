@@ -54,6 +54,10 @@ Hardware Drivers Config --->
 | 23 (A6) | -- |  | 芯片内部参考电压 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 | 24 (A7) | -- |  | 芯片内部温度 ADC，默认被RT-Thread的ADC设备框架adc1接管 |
 
-> References:
-> 1.[stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf](https://www.st.com/resource/en/user_manual/dm00105823-stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf)
-> 2.[ST-Nucleo-G474RE](https://os.mbed.com/platforms/ST-Nucleo-G474RE)
+> 注意：
+> 
+> 1. 驱动舵机和analogWrite函数要选择不同定时器发生的PWM信号引脚，由于STM32的定时器4个通道需要保持相同的频率，如果采用相同的定时器发生的PWM分别驱动舵机和analogWrite，可能会导致舵机失效。
+
+> 参考资料:
+> 1. [stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf](https://www.st.com/resource/en/user_manual/dm00105823-stm32-nucleo-64-boards-mb1136-stmicroelectronics.pdf)
+> 2. [ST-Nucleo-G474RE](https://os.mbed.com/platforms/ST-Nucleo-G474RE)
