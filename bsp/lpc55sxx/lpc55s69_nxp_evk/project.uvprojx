@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\libc\compilers\common\include;applications;..\Libraries\LPC55S6X\components\codec;board;..\Libraries\drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\dfs\dfs_v1\include;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\Libraries\drivers;board\MCUX_Config\board;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\CMSIS\Core\Include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m33;..\Libraries\LPC55S6X\LPC55S6X;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\finsh;..\Libraries\LPC55S6X\LPC55S6X\drivers;.;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll</IncludePath>
+              <IncludePath>..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\libc\compilers\common\include;applications;..\Libraries\LPC55S6X\components\codec;board;..\Libraries\drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\dfs\dfs_v1\include;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\Libraries\drivers;board\MCUX_Config\board;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\CMSIS\Core\Include;..\..\..\libcpu\arm\cortex-m33;..\Libraries\LPC55S6X\LPC55S6X;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\Libraries\LPC55S6X\LPC55S6X\drivers;.;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -530,54 +530,9 @@
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
             </File>
             <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\rtc\rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>block_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\block_dev.c</FilePath>
-            </File>
-            <File>
-              <FileName>gpt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\gpt.c</FilePath>
-            </File>
-            <File>
-              <FileName>mmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\mmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mmcsd_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\mmcsd_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\sd.c</FilePath>
-            </File>
-            <File>
-              <FileName>sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\sdio.c</FilePath>
-            </File>
-            <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -600,11 +555,6 @@
               <FilePath>board\board.c</FilePath>
             </File>
             <File>
-              <FileName>drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_i2c.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_key.c</FilePath>
@@ -615,29 +565,9 @@
               <FilePath>..\Libraries\drivers\drv_led.c</FilePath>
             </File>
             <File>
-              <FileName>drv_mma8562.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_mma8562.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_pin.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_sdif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_sdif.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_spi.c</FilePath>
             </File>
             <File>
               <FileName>drv_uart.c</FileName>
