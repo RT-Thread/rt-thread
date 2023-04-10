@@ -9,6 +9,7 @@
  */
 
 #include <rtthread.h>
+#include <drv_common.h>
 
 void rt_hw_show_memory(rt_uint32_t addr, rt_size_t size)
 {
@@ -35,4 +36,8 @@ void rt_hw_show_memory(rt_uint32_t addr, rt_size_t size)
     }
 
     return;
+}
+
+rt_uint8_t rt_interrupt_get_nest(void) {
+    return __get_IPSR();
 }
