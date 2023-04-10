@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2023-04-04     default      first version
+ * Date           Author         Notes
+ * 2023-04-04     songw4232      first version
  */
 
 #ifndef Pins_Arduino_h
