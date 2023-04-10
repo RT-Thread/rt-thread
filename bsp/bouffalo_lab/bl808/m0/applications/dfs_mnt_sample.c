@@ -34,7 +34,7 @@ int mnt_init(void)
     /* 使用 filesystem 分区创建块设备，块设备名称为 filesystem */
     rootfs = fal_blk_device_create("filesystem");
     if(rootfs == RT_NULL)
-        return;
+        return -RT_ERROR;
 
     /* 将 elm fat 文件系统挂载 filesystem 分区 */
     if (dfs_mount("filesystem", "/", "elm", 0, 0) == 0)
