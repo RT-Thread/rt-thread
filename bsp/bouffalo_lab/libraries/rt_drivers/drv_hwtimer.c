@@ -185,11 +185,11 @@ int rt_hw_hwtimer_init(void)
     }
 
 #ifdef BSP_USING_TIMER0
-    bflb_irq_attach(s_gptimers[0]->bflb_timer->irq_num, timer0_isr, NULL);
+    bflb_irq_attach(bflb_device_get_by_name("timer0")->irq_num, timer0_isr, NULL);
 #endif  /* BSP_USING_TIMER0 */
 
 #ifdef BSP_USING_TIMER1
-    bflb_irq_attach(s_gptimers[1]->bflb_timer->irq_num, timer1_isr, NULL);
+    bflb_irq_attach(bflb_device_get_by_name("timer1")->irq_num, timer1_isr, NULL);
 #endif  /* BSP_USING_TIMER1 */
 
     return ret;
