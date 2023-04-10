@@ -24,7 +24,7 @@ extern const struct fal_flash_dev _onchip_flash;
 }
 /* ====================== Partition Configuration ========================== */
 #ifdef FAL_PART_HAS_TABLE_CFG
-/* partition table */      
+/* partition table */
 #define FAL_PART_TABLE                                                                       \
 {                                                                                            \
     {FAL_PART_MAGIC_WORD,         "bl", "bflb_onchip",               0, 8 * 1024 * 1024, 0}, \
