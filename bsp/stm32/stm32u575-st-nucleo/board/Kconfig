@@ -41,13 +41,13 @@ menu "Onboard Peripheral Drivers"
 		
 		
 	config BSP_USING_MPU6XXX
-			bool "Enable mpu6xxx (i2c2)"
-			select BSP_USING_I2C
-			select BSP_USING_I2C2
-			select PKG_USING_SENSORS_DRIVERS
-			select PKG_USING_MPU6XXX
-			select PKG_USING_MPU6XXX_LATEST_VERSION
-			default n
+		bool "Enable mpu6xxx (i2c2)"
+		select BSP_USING_I2C
+		select BSP_USING_I2C2
+		select PKG_USING_SENSORS_DRIVERS
+		select PKG_USING_MPU6XXX
+		select PKG_USING_MPU6XXX_LATEST_VERSION
+		default n
 			
 	config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH"

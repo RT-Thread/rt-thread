@@ -85,11 +85,7 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
-#define RT_USING_ADC
-#define RT_USING_SPI
 
 /* Using USB */
 
@@ -106,7 +102,6 @@
 
 /* Socket is in the 'Network' category */
 
-#define RT_USING_CPLUSPLUS
 
 /* Network */
 
