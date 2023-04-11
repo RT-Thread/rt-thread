@@ -79,7 +79,7 @@ rt_bool_t msh_ishex(char *strvalue)
  *
  * @param strvalue string
  *
- * @return true or false
+ * @return integer transformed from string
  */
 int msh_strtohex(char *strvalue)
 {
