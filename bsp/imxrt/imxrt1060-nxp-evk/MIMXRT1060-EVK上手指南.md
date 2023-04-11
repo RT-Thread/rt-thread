@@ -41,13 +41,9 @@ On-chip Peripherial Drivers选项设置：
 
 ![](./figures/3.png)
 
-### 2.6 移除usb文件夹包含的文件
-
-![](./figures/7.png)
-
 <div STYLE="page-break-after: always;"></div>
 
-### 2.7 编译工程
+### 2.6 编译工程
 
 ![](./figures/8.png)
 
@@ -116,7 +112,7 @@ int wifi_spi_device_init(void)
 
 ![](./figures/13.png)
 
-`rw007 sn`与`rw007 ver`可以正常输出无乱码时，RW007驱动成功！！！
+`rw007 sn`与`rw007 ver`可以正常输出无乱码时，RW007驱动成功！
 
 ### 4.6 wifi联网测试
 
@@ -132,4 +128,4 @@ int wifi_spi_device_init(void)
 
 ![](./figures/16.png)
 
-至此MIMXRT1060-EVK的基础环境便搭建测试完毕！！！。
+至此MIMXRT1060-EVK的基础环境便搭建测试完毕！
