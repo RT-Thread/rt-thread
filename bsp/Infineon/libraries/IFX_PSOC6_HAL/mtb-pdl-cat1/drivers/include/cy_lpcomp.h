@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_lpcomp.h
-* \version 1.40
+* \version 1.50
 *
 *  This file provides constants and parameter values for the Low Power Comparator driver.
 *
@@ -48,7 +48,7 @@
 *
 * The sequence recommended for the low-power comparator operation:
 *
-* 1) To initialize the driver, call the  Cy_LPComp_Init() function providing
+* 1) To initialize the driver, call the  Cy_LPComp_Init_Ext() function providing
 * the filled cy_stc_lpcomp_config_t structure, the low-power comparator
 * channel number and the low-power comparator registers structure pointer.
 *
@@ -67,7 +67,7 @@
 * to the dedicated IO pins, AMUXBUSA/AMUXBUSB or Vref:
 * \image html lpcomp_inputs.png
 *
-* 4) Power on the comparator using the Cy_LPComp_Enable() function.
+* 4) Power on the comparator using the Cy_LPComp_Enable_Ext() function.
 *
 * 5) The comparator output can be monitored using
 * the Cy_LPComp_GetCompare() function or using the low-power comparator
@@ -104,9 +104,11 @@
 * and the negative low-power comparator input connects to the local reference.
 * The LED blinks twice after a device reset and goes into Hibernate mode.
 * When the voltage on the positive input is greater than the local reference
-* voltage (0.45V - 0.75V), the device wakes up and the LED starts blinking.
+* voltage (0.45V - 0.75V), the device wakes up and the LED starts blinking. \n
+* Section of declarations:
 * \snippet lpcomp/snippet/main.c LP_COMP_CFG_HIBERNATE
-*
+* Section of application code:
+* \snippet lpcomp/snippet/main.c LP_COMP_FUNC_HIBERNATE
 * \section group_lpcomp_more_information More Information
 *
 * For a detailed description of the registers, refer to
@@ -115,6 +117,17 @@
 * \section group_lpcomp_Changelog Changelog
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
+*   <tr>
+*     <td>1.50</td>
+*     <td> * Minor improvement in implementation of disabling functionality for the comparator.
+*          * Documented MISRA C-2012 violation of the Rule 10.3.
+*     </td>
+*     <td>
+*         * Power drive mode for the comparator is restored to the level before disabling,
+*           instead of initial level.
+*         * MISRA C-2012 compliance.
+*     </td>
+*   </tr>
 *   <tr>
 *     <td>1.40</td>
 *     <td>Introduced an extended versions of the existing functions with
@@ -125,7 +138,11 @@
 *         * \ref Cy_LPComp_SetInterruptTriggerMode_Ext(),
 *         * \ref Cy_LPComp_SetPower_Ext()
 *     </td>
-*     <td>Improve thread safe implementation of the PDL.</td>
+*     <td>
+*         * Improved returning of the comparator from disabled to operational state
+*           with restoring power drive and interrupt edge-detect modes, configured before disable.
+*         * Improved thread safe implementation of the PDL.
+*     </td>
 *   </tr>
 *   <tr>
 *     <td>1.30</td>
@@ -208,7 +225,7 @@ extern "C"
 #define CY_LPCOMP_DRV_VERSION_MAJOR       1
 
 /** Driver minor version. */
-#define CY_LPCOMP_DRV_VERSION_MINOR       40
+#define CY_LPCOMP_DRV_VERSION_MINOR       50
 
 /******************************************************************************
 * API Constants
@@ -354,29 +371,29 @@ typedef enum
 /** The low-power comparator trim polarity. */
 typedef enum
 {
-   CY_LPCOMP_TRIM_NEGATIVE = 0x00U,   /**< The low-power comparator trim is negative. */
-   CY_LPCOMP_TRIM_POSITIVE = 0x01U,   /**< The low-power comparator trim is positive. */
+   CY_LPCOMP_TRIM_NEGATIVE = 0x00UL,   /**< The low-power comparator trim is negative. */
+   CY_LPCOMP_TRIM_POSITIVE = 0x01UL,   /**< The low-power comparator trim is positive. */
 } cy_en_lpcomp_trim_polarity_t;
 
 /** The low-power comparator trim magnitude. */
 typedef enum
 {
-    CY_LPCOMP_TRIM_0mV  = 0x00U,   /**< The low-power comparator trim value 0mV. */
-    CY_LPCOMP_TRIM_1mV  = 0x01U,   /**< The low-power comparator trim value 1mV. */
-    CY_LPCOMP_TRIM_2mV  = 0x02U,   /**< The low-power comparator trim value 2mV. */
-    CY_LPCOMP_TRIM_3mV  = 0x03U,   /**< The low-power comparator trim value 3mV. */
-    CY_LPCOMP_TRIM_4mV  = 0x04U,   /**< The low-power comparator trim value 4mV. */
-    CY_LPCOMP_TRIM_5mV  = 0x05U,   /**< The low-power comparator trim value 5mV. */
-    CY_LPCOMP_TRIM_6mV  = 0x06U,   /**< The low-power comparator trim value 6mV. */
-    CY_LPCOMP_TRIM_7mV  = 0x07U,   /**< The low-power comparator trim value 7mV. */
-    CY_LPCOMP_TRIM_8mV  = 0x08U,   /**< The low-power comparator trim value 8mV. */
-    CY_LPCOMP_TRIM_9mV  = 0x09U,   /**< The low-power comparator trim value 9mV. */
-    CY_LPCOMP_TRIM_10mV = 0x0AU,   /**< The low-power comparator trim value 10mV. */
-    CY_LPCOMP_TRIM_11mV = 0x0BU,   /**< The low-power comparator trim value 11mV. */
-    CY_LPCOMP_TRIM_12mV = 0x0CU,   /**< The low-power comparator trim value 12mV. */
-    CY_LPCOMP_TRIM_13mV = 0x0DU,   /**< The low-power comparator trim value 13mV. */
-    CY_LPCOMP_TRIM_14mV = 0x0EU,   /**< The low-power comparator trim value 14mV. */
-    CY_LPCOMP_TRIM_15mV = 0x0FU    /**< The low-power comparator trim value 15mV. */
+    CY_LPCOMP_TRIM_0mV  = 0x00UL,   /**< The low-power comparator trim value 0mV. */
+    CY_LPCOMP_TRIM_1mV  = 0x01UL,   /**< The low-power comparator trim value 1mV. */
+    CY_LPCOMP_TRIM_2mV  = 0x02UL,   /**< The low-power comparator trim value 2mV. */
+    CY_LPCOMP_TRIM_3mV  = 0x03UL,   /**< The low-power comparator trim value 3mV. */
+    CY_LPCOMP_TRIM_4mV  = 0x04UL,   /**< The low-power comparator trim value 4mV. */
+    CY_LPCOMP_TRIM_5mV  = 0x05UL,   /**< The low-power comparator trim value 5mV. */
+    CY_LPCOMP_TRIM_6mV  = 0x06UL,   /**< The low-power comparator trim value 6mV. */
+    CY_LPCOMP_TRIM_7mV  = 0x07UL,   /**< The low-power comparator trim value 7mV. */
+    CY_LPCOMP_TRIM_8mV  = 0x08UL,   /**< The low-power comparator trim value 8mV. */
+    CY_LPCOMP_TRIM_9mV  = 0x09UL,   /**< The low-power comparator trim value 9mV. */
+    CY_LPCOMP_TRIM_10mV = 0x0AUL,   /**< The low-power comparator trim value 10mV. */
+    CY_LPCOMP_TRIM_11mV = 0x0BUL,   /**< The low-power comparator trim value 11mV. */
+    CY_LPCOMP_TRIM_12mV = 0x0CUL,   /**< The low-power comparator trim value 12mV. */
+    CY_LPCOMP_TRIM_13mV = 0x0DUL,   /**< The low-power comparator trim value 13mV. */
+    CY_LPCOMP_TRIM_14mV = 0x0EUL,   /**< The low-power comparator trim value 14mV. */
+    CY_LPCOMP_TRIM_15mV = 0x0FUL    /**< The low-power comparator trim value 15mV. */
 } cy_en_lpcomp_trim_magnitude_t;
 #endif
 
@@ -509,8 +526,8 @@ __STATIC_INLINE void Cy_LPComp_SetInterruptMask(LPCOMP_Type* base, uint32_t inte
 __STATIC_INLINE uint32_t Cy_LPComp_GetInterruptStatusMasked(LPCOMP_Type const * base);
 __STATIC_INLINE void Cy_LPComp_ConnectULPReference(LPCOMP_Type *base, cy_en_lpcomp_channel_t channel);
 #if defined (CY_IP_MXS22LPCOMP)
-void Cy_LPComp_GetTrim(LPCOMP_Type const * base, cy_en_lpcomp_channel_t channel, cy_en_lpcomp_trim_t * state);
-void Cy_LPComp_SetTrim(LPCOMP_Type * base, cy_en_lpcomp_channel_t channel, const cy_en_lpcomp_trim_t * state);
+void Cy_LPComp_GetTrim(LPCOMP_Type const * base, cy_en_lpcomp_channel_t channel, cy_en_lpcomp_trim_t * trim);
+void Cy_LPComp_SetTrim(LPCOMP_Type * base, cy_en_lpcomp_channel_t channel, const cy_en_lpcomp_trim_t * trim);
 #endif
 /** \addtogroup group_lpcomp_functions_syspm_callback
 * The driver supports the SysPm callback for Deep Sleep and Hibernate transition.

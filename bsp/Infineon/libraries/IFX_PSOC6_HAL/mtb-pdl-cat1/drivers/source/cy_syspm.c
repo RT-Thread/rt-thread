@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_syspm.c
-* \version 5.70
+* \version 5.91
 *
 * This driver provides the source code for API power management.
 *
@@ -344,6 +344,7 @@ uint32_t Cy_SysPm_ReadStatus(void)
         pmStatus |= CY_SYSPM_STATUS_CM4_ACTIVE;
     }
 
+#if (__CORTEX_M == 0) || (defined (__CM0P_PRESENT) && (__CM0P_PRESENT == 1))
     /* Check whether CM0p is in Deep Sleep mode */
     if ((CPUSS_CM0_STATUS & CM0_DEEPSLEEP_MASK) == CM0_DEEPSLEEP_MASK)
     {
@@ -358,6 +359,7 @@ uint32_t Cy_SysPm_ReadStatus(void)
     {
         pmStatus |= CY_SYSPM_STATUS_CM0_ACTIVE;
     }
+#endif /* (__CORTEX_M == 0) || (defined (__CM0P_PRESENT) && (__CM0P_PRESENT == 1)) */
 
     /* Check whether the device is in LP mode by reading
     *  the core voltage:
@@ -2362,12 +2364,11 @@ bool Cy_SysPm_Cm4IsDeepSleep(void)
     return ((Cy_SysPm_ReadStatus() & CY_SYSPM_STATUS_CM4_DEEPSLEEP) != 0U);
 }
 
-
+#if (__CORTEX_M == 0) || (defined (__CM0P_PRESENT) && (__CM0P_PRESENT == 1))
 bool Cy_SysPm_Cm0IsActive(void)
 {
     return ((Cy_SysPm_ReadStatus() & CY_SYSPM_STATUS_CM0_ACTIVE) != 0U);
 }
-
 
 bool Cy_SysPm_Cm0IsSleep(void)
 {
@@ -2379,7 +2380,7 @@ bool Cy_SysPm_Cm0IsDeepSleep(void)
 {
     return((Cy_SysPm_ReadStatus() & CY_SYSPM_STATUS_CM0_DEEPSLEEP) != 0U);
 }
-
+#endif /* (__CORTEX_M == 0) || (defined (__CM0P_PRESENT) && (__CM0P_PRESENT == 1)) */
 
 bool Cy_SysPm_IsSystemLp(void)
 {

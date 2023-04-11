@@ -52,7 +52,7 @@ typedef struct
 } cy_stc_device_t;
 
 /* Pointer to device configuration structure */
-#define CY_DEVICE_CFG                   (&cy_deviceIpBlockCfgPlayer)
+#define CY_DEVICE_CFG                   (&cy_deviceIpBlockCfg)
 
 #define CY_SRSS_NUM_PLL400M                 SRSS_NUM_PLL400M
 #define CY_SRSS_PLL400M_PRESENT             0
@@ -62,8 +62,8 @@ typedef struct
 *                   Global Variables
 *******************************************************************************/
 
-extern const cy_stc_device_t   cy_deviceIpBlockCfgPlayer;
-extern const cy_stc_device_t * cy_device;
+extern const cy_stc_device_t   cy_deviceIpBlockCfg;
+extern const cy_stc_device_t* cy_device;
 
 /*******************************************************************************
 *                   Global Extern Functions
@@ -82,7 +82,7 @@ extern const cy_stc_device_t * cy_device;
 /*******************************************************************************
 *               Macro Definitions
 *******************************************************************************/
-#ifdef CY_SECURE_WORLD
+#ifdef CY_PDL_TZ_ENABLED
 #define SECURE_ALIAS_OFFSET                 0x10000000UL
 #define GET_ALIAS_ADDRESS(addr)             ((uint32_t)((uint32_t)addr + SECURE_ALIAS_OFFSET))
 #else
@@ -98,6 +98,7 @@ void Cy_PDL_Init(const cy_stc_device_t * device);
 /*******************************************************************************
 *               Register Access Helper Macros
 *******************************************************************************/
+#define CY_DEVICE_CAT1B                /* Device Category */
 /*******************************************************************************
 *               SDHC
 *******************************************************************************/
@@ -713,6 +714,23 @@ typedef MXAHBDMAC_Type DMAC_Type;
 /** HF PATH # used for Core */
 #define CY_SYSCLK_CLK_CORE_HF_PATH_NUM     0U
 
+/** FLL Max Frequency */
+#define  CY_SYSCLK_FLL_MAX_OUTPUT_FREQ     (96000000UL)
+
+
+
+/* HF PATH # Max Allowed Frequencies */
+#define CY_SYSCLK_MAX_FREQ_HF0             96000000U
+#define CY_SYSCLK_MAX_FREQ_HF1             96000000U
+#define CY_SYSCLK_MAX_FREQ_HF2             48000000U
+#define CY_SYSCLK_MAX_FREQ_HF3             24000000U
+
+#define CY_SYSCLK_HF_MAX_FREQ(hfNum)       (((hfNum) == 0U) ?  (CY_SYSCLK_MAX_FREQ_HF0) : \
+                                           (((hfNum) == 1U) ?  (CY_SYSCLK_MAX_FREQ_HF1) : \
+                                           (((hfNum) == 2U) ?  (CY_SYSCLK_MAX_FREQ_HF2) : \
+                                           (((hfNum) == 3U) ?  (CY_SYSCLK_MAX_FREQ_HF3) : \
+                                           (0U)))))
+
 
 /* Technology Independant Register set */
 #define SRSS_CLK_DSI_SELECT                 (((SRSS_Type *) SRSS)->CLK_DSI_SELECT)
@@ -1170,9 +1188,9 @@ typedef MXAHBDMAC_Type DMAC_Type;
 #define PERI_TR_1TO1_GR_V2_TR_CTL_TR_SEL_Pos PERI_TR_1TO1_GR_TR_CTL_TR_SEL_Pos
 #define PERI_TR_GR_V2_TR_CTL_DBG_FREEZE_EN_Msk PERI_TR_GR_TR_CTL_DBG_FREEZE_EN_Msk
 #define PERI_TR_GR_V2_TR_CTL_DBG_FREEZE_EN_Pos PERI_TR_GR_TR_CTL_DBG_FREEZE_EN_Pos
-#define CY_PERI_V1 0U /* CY_PERI_V1 as 0 is used for proper condition in cy_trigmux.c for player */
-#define PERI_TR_CMD_COUNT_Pos 0UL /* used for proper condition in cy_trigmux.c for player */
-#define PERI_TR_CMD_COUNT_Msk 0UL /* used for proper condition in cy_trigmux.c for player */
+#define CY_PERI_V1 0U
+#define PERI_TR_CMD_COUNT_Pos 0UL
+#define PERI_TR_CMD_COUNT_Msk 0UL
 #endif /* CY_IP_MXSPERI */
 
 /* CLK_HF* to PERI PCLK Group Mapping */
@@ -1200,17 +1218,17 @@ typedef MXAHBDMAC_Type DMAC_Type;
 *                MCWDT
 *******************************************************************************/
 
-#define MCWDT_STRUCT_MCWDT_CNTLOW(base)      (((MCWDT_STRUCT_Type *)(base))->MCWDT_CNTLOW)
-#define MCWDT_STRUCT_MCWDT_CNTHIGH(base)     (((MCWDT_STRUCT_Type *)(base))->MCWDT_CNTHIGH)
-#define MCWDT_STRUCT_MCWDT_MATCH(base)       (((MCWDT_STRUCT_Type *)(base))->MCWDT_MATCH)
-#define MCWDT_STRUCT_MCWDT_CONFIG(base)      (((MCWDT_STRUCT_Type *)(base))->MCWDT_CONFIG)
-#define MCWDT_STRUCT_MCWDT_CTL(base)         (((MCWDT_STRUCT_Type *)(base))->MCWDT_CTL)
-#define MCWDT_STRUCT_MCWDT_INTR(base)        (((MCWDT_STRUCT_Type *)(base))->MCWDT_INTR)
-#define MCWDT_STRUCT_MCWDT_INTR_SET(base)    (((MCWDT_STRUCT_Type *)(base))->MCWDT_INTR_SET)
-#define MCWDT_STRUCT_MCWDT_INTR_MASK(base)   (((MCWDT_STRUCT_Type *)(base))->MCWDT_INTR_MASK)
-#define MCWDT_STRUCT_MCWDT_INTR_MASKED(base) (((MCWDT_STRUCT_Type *)(base))->MCWDT_INTR_MASKED)
-#define MCWDT_STRUCT_MCWDT_LOCK(base)        (((MCWDT_STRUCT_Type *)(base))->MCWDT_LOCK)
-#define MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base) (((MCWDT_STRUCT_Type *)(base))->MCWDT_LOWER_LIMIT)
+#define MCWDT_CNTLOW(base)      (((MCWDT_STRUCT_Type *)(base))->MCWDT_CNTLOW)
+#define MCWDT_CNTHIGH(base)     (((MCWDT_STRUCT_Type *)(base))->MCWDT_CNTHIGH)
+#define MCWDT_MATCH(base)       (((MCWDT_STRUCT_Type *)(base))->MCWDT_MATCH)
+#define MCWDT_CONFIG(base)      (((MCWDT_STRUCT_Type *)(base))->MCWDT_CONFIG)
+#define MCWDT_CTL(base)         (((MCWDT_STRUCT_Type *)(base))->MCWDT_CTL)
+#define MCWDT_INTR(base)        (((MCWDT_STRUCT_Type *)(base))->MCWDT_INTR)
+#define MCWDT_INTR_SET(base)    (((MCWDT_STRUCT_Type *)(base))->MCWDT_INTR_SET)
+#define MCWDT_INTR_MASK(base)   (((MCWDT_STRUCT_Type *)(base))->MCWDT_INTR_MASK)
+#define MCWDT_INTR_MASKED(base) (((MCWDT_STRUCT_Type *)(base))->MCWDT_INTR_MASKED)
+#define MCWDT_LOCK(base)        (((MCWDT_STRUCT_Type *)(base))->MCWDT_LOCK)
+#define MCWDT_LOWER_LIMIT(base) (((MCWDT_STRUCT_Type *)(base))->MCWDT_LOWER_LIMIT)
 
 
 
@@ -1221,6 +1239,8 @@ typedef MXAHBDMAC_Type DMAC_Type;
 #define CPUSS_SYSTICK_S_CTL                 (((CPUSS_Type*) CPUSS_BASE)->SYSTICK_S_CTL)
 #define CPUSS_TRIM_RAM_CTL                  (((CPUSS_Type*) CPUSS_BASE)->TRIM_RAM_CTL)
 #define CPUSS_TRIM_ROM_CTL                  (((CPUSS_Type*) CPUSS_BASE)->TRIM_ROM_CTL)
+
+#define CPUSS_PRODUCT_ID                    (((CPUSS_Type*) CPUSS_BASE)->PRODUCT_ID)
 
 
 /* ARM core registers */
@@ -1831,6 +1851,8 @@ we need to define this for version 2 only. */
 #define CY_IPC_INTR_STRUCT_PTR(ipcIntrIndex)   &(((IPC_Type *)IPC_BASE)->INTR_STRUCT[ipcIntrIndex])
 #endif
 
+#define CY_IPC_STRUCT_PTR_FOR_IP(ipcIndex, base)            ((IPC_STRUCT_Type*)((uint32_t)(base) + (sizeof(IPC_STRUCT_Type) * (ipcIndex))))
+#define CY_IPC_INTR_STRUCT_PTR_FOR_IP(ipcIntrIndex, base)   &(((IPC_Type *)base)->INTR_STRUCT[ipcIntrIndex])
 
 #define CY_IPC_CHANNELS                        (uint32_t)4
 #define CY_IPC_INTERRUPTS                      (uint32_t)2
@@ -1915,8 +1937,6 @@ we need to define this for version 2 only. */
 #define MPC_PC_NR                                RAMC0_MPC_PC_NR
 #endif
 
-/* This is a temporary fix as there is no IP flag to differentiate between Player and 28929 */
-#ifdef MS_CTL_1_2_SECTION_SIZE
 typedef MS_CTL_1_2_Type                         MS_CTL_Type;
 
 #define MS_CTL_BASE MS_CTL_1_2_BASE
@@ -1952,7 +1972,6 @@ typedef MS_CTL_1_2_Type                         MS_CTL_Type;
 #define MS_CTL_DMAC1_MSC_ACG_CTL_CFG_GATE_RESP_Msk      MS_CTL_1_2_DMAC1_MSC_ACG_CTL_CFG_GATE_RESP_Msk
 #define MS_CTL_DMAC1_MSC_ACG_CTL_SEC_RESP_Pos           MS_CTL_1_2_DMAC1_MSC_ACG_CTL_SEC_RESP_Pos
 #define MS_CTL_DMAC1_MSC_ACG_CTL_SEC_RESP_Msk           MS_CTL_1_2_DMAC1_MSC_ACG_CTL_SEC_RESP_Msk
-#endif
 
 /*******************************************************************************
 *                MXSRAMC

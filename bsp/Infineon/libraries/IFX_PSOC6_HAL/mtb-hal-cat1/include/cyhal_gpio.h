@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -178,7 +178,6 @@ typedef struct cyhal_gpio_callback_data_s
 /*******************************************************************************
 *       Functions
 *******************************************************************************/
-void _cyhal_gpio_irq_handler(void);
 
 /** Initialize the GPIO pin <br>
  * See \ref subsection_gpio_snippet_1.

@@ -1,12 +1,12 @@
 /***************************************************************************//**
 * \file cy_csd.h
-* \version 1.20
+* \version 1.20.1
 *
 * The header file of the CSD driver.
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation
+* Copyright 2018-2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,19 +32,19 @@
 ********************************************************************************
 * \{
 *
-* The CSD HW block enables multiple sensing capabilities on PSoC devices,
+* The CSD HW block enables multiple sensing capabilities on PSoC&trade; devices,
 * including self-cap and mutual-cap capacitive touch sensing solutions,
 * a 10-bit ADC, IDAC, and Comparator.
 *
-* The CapSense solution includes:
-* * The CapSense Configurator tool, which is a configuration wizard to create
-*   and configure CapSense widgets. It can be launched in ModusToolbox
+* The CAPSENSE&trade; solution includes:
+* * The CAPSENSE&trade; Configurator tool, which is a configuration wizard to create
+*   and configure CAPSENSE&trade; widgets. It can be launched in ModusToolbox&trade;
 *   from the CSD personality as well as in standalone mode.
 *   It contains separate documentation on how to create and
 *   configure widgets, parameters, and algorithm descriptions.
 * * An API to control the design from the application program. This documentation
 *   describes the API with code snippets about how to use them.
-* * The CapSense Tuner tool for real-time tuning, testing, and debugging,
+* * The CAPSENSE&trade; Tuner tool for real-time tuning, testing, and debugging,
 *   for easy and smooth design of human interfaces on customer products.
 *   The Tuner tool communicates with a device through a HW bridge and
 *   communication drivers (EzI2C, UART, etc.) and allows monitoring of
@@ -53,7 +53,7 @@
 * and/or other drivers such as GPIO or SysClk directly. All of that is
 * configured and managed by middleware.
 *
-* \image html capsense_solution.png "CapSense Solution" width=800px
+* \image html capsense_solution.png "CAPSENSE&trade; Solution" width=800px
 * \image latex capsense_solution.png
 *
 * This section describes only the CSD driver. Refer to the corresponding sections
@@ -107,7 +107,7 @@
 *
 * \snippet csd/snippet/main.c snippet_Cy_CSD_Conversion
 *
-* The entire solution, either CapSense or CSDADC, in addition to
+* The entire solution, either CAPSENSE&trade; or CSDADC, in addition to
 * the CSD HW block, incorporates the following instances:
 *
 * * \ref group_csd_config_clocks
@@ -116,7 +116,7 @@
 * * \ref group_csd_config_pin
 *
 * The CSD driver does not configure those blocks and they should be managed by
-* an upper level. When using CapSense or CSDADC, those blocks are managed by
+* an upper level. When using CAPSENSE&trade; or CSDADC, those blocks are managed by
 * middleware.
 *
 ********************************************************************************
@@ -183,7 +183,7 @@
 * The CSD HW block is powered down in the Deep Sleep or Hibernate power modes.
 * So, it cannot be used as a wake-up source in these power modes.
 *
-* If a CapSense or ADC middleware is used, the interrupt service routine is managed
+* If a CAPSENSE&trade; or CSDADC middleware is used, the interrupt service routine is managed
 * by middleware. When using the CSD driver for custom implementation or other
 * middleware, the application program must manage the interrupt service routine.
 *
@@ -249,35 +249,72 @@
 * \section group_csd_more_information More Information
 ********************************************************************************
 *
+* Important information about the CAPSENSE&trade; technology overview, appropriate
+* Infineon device for the design, CAPSENSE&trade; system and sensor design guidelines,
+* different interfaces and tuning guidelines necessary for a successful design
+* of a CAPSENSE&trade; system is available in the Getting Started with CAPSENSE&trade;
+* document and the product-specific CAPSENSE&trade; design guide. Infineon highly
+* recommends starting with these documents. They can be found on the
+* Infineon web site at www.infineon.com
+*
 * For more information, refer to the following documents:
 *
-* * <a href="http://www.cypress.com/trm218176"><b>Technical Reference Manual (TRM)</b></a>
+* * CAPSENSE&trade; Overview:
 *
-* * <a href="https://github.com/cypresssemiconductorco/capsense">
-*   <b>CapSense Middleware Library</b></a>
+*   * <a href="https://github.com/Infineon/capsense">
+*     <b>CAPSENSE&trade; Middleware Library</b></a>
 *
-* * <a href="https://cypresssemiconductorco.github.io/capsense/capsense_api_reference_manual/html/index.html">
-*   <b>CapSense Middleware API Reference Guide</b></a>
+*   * <a href="https://infineon.github.io/capsense/capsense_api_reference_manual/html/index.html">
+*     <b>CAPSENSE&trade; Middleware API Reference Guide</b></a>
 *
-* * <a href="https://github.com/cypresssemiconductorco/csdadc">
-*   <b>CSDADC Middleware Library</b></a>
+*   * <a href="https://github.com/Infineon/csdadc">
+*     <b>CSDADC Middleware Library</b></a>
 *
-* * <a href="https://cypresssemiconductorco.github.io/csdadc/csdadc_api_reference_manual/html/index.html">
-*   <b>CSDADC Middleware API Reference Guide</b></a>
+*   * <a href="https://infineon.github.io/csdadc/csdadc_api_reference_manual/html/index.html">
+*     <b>CSDADC Middleware API Reference Guide</b></a>
 *
-* * <a href="https://github.com/cypresssemiconductorco/csdidac">
-*   <b>CSDIDAC Middleware Library</b></a>
+*   * <a href="https://github.com/Infineon/csdidac">
+*     <b>CSDIDAC Middleware Library</b></a>
 *
-* * <a href="https://cypresssemiconductorco.github.io/csdidac/csdidac_api_reference_manual/html/index.html">
-*   <b>CSDIDAC Middleware API Reference Guide</b></a>
+*   * <a href="https://infineon.github.io/csdidac/csdidac_api_reference_manual/html/index.html">
+*     <b>CSDIDAC Middleware API Reference Guide</b></a>
 *
-* * \ref page_getting_started "Getting Started with the PDL"
+*   * <a href="https://www.infineon.com/dgdl/Infineon-ModusToolbox_CAPSENSE_Configurator_5.0_User_Guide-UserManual-v01_00-EN.pdf?fileId=8ac78c8c8386267f0183a960b36a598c&utm_source=cypress&utm_medium=referral&utm_campaign=202110_globe_en_all_integration-files&redirId=180685">
+*     <b>ModusToolbox&trade; CAPSENSE&trade; Configurator Tool Guide</b></a>
 *
-* * <a href="http://www.cypress.com/ds218787"><b>PSoC 63 with BLE Datasheet Programmable System-on-Chip</b></a>
+*   * <a href="https://www.infineon.com/dgdl/Infineon-ModusToolbox_CAPSENSE_Configurator_5.0_User_Guide-UserManual-v01_00-EN.pdf?fileId=8ac78c8c8386267f0183a960b36a598c&utm_source=cypress&utm_medium=referral&utm_campaign=202110_globe_en_all_integration-files&redirId=180685">
+*     <b>ModusToolbox&trade; CAPSENSE&trade; Tuner Tool Guide</b></a>
 *
-* * <a href="http://www.cypress.com/an85951"><b>AN85951 PSoC 4 and PSoC 6 MCU CapSense Design Guide for more detail</b></a>
+*   * <a href="https://www.infineon.com/dgdl/Infineon-AN85951_PSoC_4_and_PSoC_6_MCU_CapSense_Design_Guide-ApplicationNotes-v27_00-EN.pdf?fileId=8ac78c8c7cdc391c017d0723535d4661">
+*     <b>CAPSENSE&trade; Design Guide</b></a>
 *
-* * <a href="http://www.cypress.com/an210781"><b>AN210781 Getting Started with PSoC 6 MCU with Bluetooth Low Energy (BLE) Connectivity</b></a>
+* * ModusToolbox&trade; Overview:
+*
+*   * <a href="https://www.infineon.com/cms/en/design-support/tools/sdk/modustoolbox-software">
+*     <b>ModusToolbox&trade; Software Environment, Quick Start Guide, Documentation, and Videos</b></a>
+*
+*   * <a href="https://www.infineon.com/dgdl/Infineon-ModusToolbox_CAPSENSE_Configurator_5.0_User_Guide-UserManual-v01_00-EN.pdf?fileId=8ac78c8c8386267f0183a960b36a598c&utm_source=cypress&utm_medium=referral&utm_campaign=202110_globe_en_all_integration-files&redirId=180685">
+*     <b>ModusToolbox&trade; Device Configurator Tool Guide</b></a>
+*
+* * General Information:
+*
+*   * \ref page_getting_started "Getting Started with the PDL"
+*
+*   * <a href="https://www.infineon.com/dgdl/Infineon-PSoC_6_MCU_PSoC_63_with_BLE_Datasheet_Programmable_System-on-Chip_(PSoC)-DataSheet-v16_00-EN.pdf?fileId=8ac78c8c7d0d8da4017d0ee4efe46c37">
+*     <b>PSoC&trade; 63 with BLE Datasheet Programmable System-on-Chip</b></a>
+*
+*   * <a href="https://www.infineon.com/dgdl/Infineon-AN85951_PSoC_4_and_PSoC_6_MCU_CapSense_Design_Guide-ApplicationNotes-v28_00-EN.pdf?fileId=8ac78c8c7cdc391c017d0723535d4661">
+*     <b>AN85951 PSoC&trade; 4 and PSoC&trade; 6 MCU CAPSENSE&trade; Design Guide</b></a>
+*
+*   * <a href="https://www.infineon.com/dgdl/Infineon-AN210781_Getting_Started_with_PSoC_6_MCU_with_Bluetooth_Low_Energy_(BLE)_Connectivity_on_PSoC_Creator-ApplicationNotes-v05_00-EN.pdf?fileId=8ac78c8c7cdc391c017d0d311f536528">
+*     <b>AN210781 Getting Started with PSoC&trade; 6 MCU with Bluetooth Low Energy (BLE) Connectivity</b></a>
+*
+*   * <a href="https://www.infineon.com/cms/en/design-support/software/code-examples/psoc-6-code-examples-for-modustoolbox">
+*     <b>PSoC&trade; 6 MCU Code Examples for ModusToolbox&trade; Software</b></a>
+*
+*   * <a href="https://github.com/Infineon"><b>Infineon Technologies GitHub</b></a>
+*
+*   * <a href="http://www.infineon.com"><b>Infineon Technologies</b></a>
 *
 ********************************************************************************
 * \section group_csd_changelog Changelog
@@ -285,9 +322,14 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>1.20.1</td>
+*     <td>Documentation updates</td>
+*     <td>Add trademark symbol</td>
+*   </tr>
+*   <tr>
 *     <td>1.20</td>
 *     <td>Added Cy_CSD_Capture() function</td>
-*     <td>CapSense memory consumption optimization</td>
+*     <td>CAPSENSE&trade; memory consumption optimization</td>
 *   </tr>
 *   <tr>
 *     <td>1.10.2</td>
@@ -302,9 +344,9 @@
 *   <tr>
 *     <td rowspan="2">1.10</td>
 *     <td>The CSD driver sources are enclosed with the conditional compilation
-*         to ensure a successful compilation for non-CapSense-capable devices
+*         to ensure successful compilation for incompatible devices
 *     </td>
-*     <td>Compilation for non-CapSense-capable devices</td>
+*     <td>Compilation for incompatible devices</td>
 *   <tr>
 *     <td>Changed the Cy_CSD_GetConversionStatus() function implementation</td>
 *     <td>Fixed defect</td>
@@ -456,13 +498,13 @@ typedef enum
     */
     CY_CSD_USER_DEFINED_KEY = 1U,
 
-    /** The CSD HW block is captured by a CapSense middleware */
+    /** The CSD HW block is captured by a CAPSENSE middleware */
     CY_CSD_CAPSENSE_KEY = 2U,
 
-    /** The CSD HW block is captured by a ADC middleware */
+    /** The CSD HW block is captured by a CSDADC middleware */
     CY_CSD_ADC_KEY = 3U,
 
-    /** The CSD HW block is captured by a IDAC middleware */
+    /** The CSD HW block is captured by a CSDIDAC middleware */
     CY_CSD_IDAC_KEY = 4U,
 
     /** The CSD HW block is captured by a CMP middleware */

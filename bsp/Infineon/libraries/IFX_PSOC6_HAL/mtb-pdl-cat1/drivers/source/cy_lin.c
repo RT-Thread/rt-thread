@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_lin.c
-* \version 1.0
+* \version 1.1
 *
 * \brief
 * Provides an API declaration of the LIN driver
@@ -369,7 +369,7 @@ cy_en_lin_status_t Cy_LIN_SetCmd(LIN_CH_Type* base, uint32_t command)
         ret = CY_LIN_BAD_PARAM;
     }
     /* If software has already set the command and it is not complete then the channel must be busy processing the command.
-       beofre setting the command make sure that hardware has already set the bit to 0 for the above cases.
+       before setting the command make sure that hardware has already set the bit to 0 for the above cases.
     */
     else if (((_FLD2VAL(LIN_CH_CMD_TX_HEADER, LIN_CH_CMD(base)) != 0UL) && (command & LIN_CH_CMD_RX_HEADER_Msk) != 0UL) ||
              ((_FLD2VAL(LIN_CH_CMD_RX_HEADER, LIN_CH_CMD(base)) != 0UL) && (command & LIN_CH_CMD_TX_HEADER_Msk) != 0UL) ||
@@ -682,7 +682,7 @@ cy_en_lin_status_t Cy_LIN_ErrCtl_Enable(LIN_Type* base, cy_stc_lin_test_error_co
                            _VAL2FLD(LIN_ERROR_CTL_TX_PID_STOP_ERROR, test_error_config->txPIDStop_error)      |\
                            _VAL2FLD(LIN_ERROR_CTL_TX_DATA_STOP_ERROR, test_error_config->txDataStop_error)    |\
                            _VAL2FLD(LIN_ERROR_CTL_TX_CHECKSUM_ERROR, test_error_config->txChecksum_error)     |\
-                           _VAL2FLD(LIN_ERROR_CTL_TX_CHECKSUM_STOP_ERROR, test_error_config->txCheksumStop_error) |\
+                           _VAL2FLD(LIN_ERROR_CTL_TX_CHECKSUM_STOP_ERROR, test_error_config->txChecksumStop_error) |\
                            _VAL2FLD(LIN_ERROR_CTL_ENABLED, 1U));
 
     return CY_LIN_SUCCESS;

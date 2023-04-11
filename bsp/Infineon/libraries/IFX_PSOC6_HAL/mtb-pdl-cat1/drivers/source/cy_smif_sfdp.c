@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_smif_sfdp.c
-* \version 2.30
+* \version 2.40
 *
 * \brief
 *  This file provides the source code for SFDP enumeration in SMIF driver.
@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2021 Cypress Semiconductor Corporation
+* Copyright 2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -197,7 +197,7 @@ typedef enum
                                               * single data rate.
                                              */
     PROTOCOL_MODE_1S_8S_8S          = 8U,   /**< One DQ signal used during command transfer in single data rate,
-                                              * eigth DQ signals used during address transfer and data transfer in
+                                              * eighth DQ signals used during address transfer and data transfer in
                                               * single data rate.
                                              */
     PROTOCOL_MODE_8D_8D_8D          = 9U,   /**< eight DQ signal used during command, address and data transfer in
@@ -1986,17 +1986,17 @@ static cy_en_smif_status_t SfdpEnterFourByteAddressing(SMIF_Type *base, uint8_t 
                                                        cy_stc_smif_context_t const *context)
 {
     cy_en_smif_status_t result = CY_SMIF_CMD_NOT_FOUND;
-    if ((entryMethodByte & CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_ALWAYS_4_BYTE) != 0U)
+
+    if ((entryMethodByte & CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_SUPPORTED_MASK) != 0U)
     {
-        /* Memory always operates in 4-byte mode */
+        /* Supports one of the 4-byte Entry methods */
         result = CY_SMIF_SUCCESS;
-    }
-    if ((entryMethodByte & CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_B7) != 0U)
-    {
+
         if ((entryMethodByte & CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_WR_EN_B7) != 0U)
         {
             /* To enter a 4-byte addressing write enable is required */
             cy_stc_smif_mem_cmd_t* writeEn = device->writeEnCmd;
+
             if(NULL != writeEn)
             {
                 result = Cy_SMIF_TransmitCommand(base,
@@ -2010,7 +2010,10 @@ static cy_en_smif_status_t SfdpEnterFourByteAddressing(SMIF_Type *base, uint8_t 
                                                 context);
             }
         }
-        if ((CY_SMIF_CMD_NOT_FOUND == result) || (CY_SMIF_SUCCESS == result))
+
+        if ( (((entryMethodByte & CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_B7) != 0U) ||
+             ((entryMethodByte & CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_WR_EN_B7) != 0U)) &&
+             (result == CY_SMIF_SUCCESS))
         {
             /* To enter a 4-byte addressing B7 instruction is required */
             result = Cy_SMIF_TransmitCommand(base,
@@ -2024,7 +2027,6 @@ static cy_en_smif_status_t SfdpEnterFourByteAddressing(SMIF_Type *base, uint8_t 
                                              context);
         }
     }
-
     return result;
 }
 
@@ -2746,7 +2748,7 @@ cy_en_smif_status_t Cy_SMIF_MemInitSfdpMode(SMIF_Type *base,
                 if (FOUR_BYTE_ADDRESS == device->numOfAddrBytes)
                 {
                     /* Enter 4-byte addressing mode */
-                    result = SfdpEnterFourByteAddressing(base, sfdpBuffer[CY_SMIF_SFDP_BFPT_BYTE_3C], device, slaveSelect, context);
+                    result = SfdpEnterFourByteAddressing(base, sfdpBuffer[CY_SMIF_SFDP_BFPT_BYTE_3F], device, slaveSelect, context);
                     uint8_t fourByteAddressBuffer[CY_SMIF_SFDP_LENGTH];
 
                     /* Initialize SFDP Buffer */

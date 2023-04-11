@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_sar.c
-* \version 2.0.1
+* \version 2.10
 *
 * Provides the public functions for the API for the SAR driver.
 *
@@ -188,7 +188,7 @@ cy_en_sar_status_t Cy_SAR_CommonInit(PASS_Type * base, const cy_stc_sar_common_c
 * and guidance in the \ref group_sar_initialization section.
 *
 * \return
-* - \ref CY_SAR_SUCCESS : initialization complete successfylly
+* - \ref CY_SAR_SUCCESS : initialization complete successfully
 * - \ref CY_SAR_BAD_PARAM : input pointers are null or some configuration
                             setting is invalid, initialization incomplete.
 *
@@ -1213,7 +1213,7 @@ int16_t Cy_SAR_RawCounts2Counts(const SAR_Type *base, uint32_t chan, int16_t adc
 * - Gain: Value stored by the \ref Cy_SAR_SetChannelGain function.
 *
 * \note
-* This funtion is only valid when result alignment is right aligned.
+* This function is only valid when result alignment is right aligned.
 *
 * \param base
 * Pointer to structure describing registers
@@ -1277,7 +1277,7 @@ float32_t Cy_SAR_CountsTo_Volts(const SAR_Type *base, uint32_t chan, int16_t adc
 * - Gain: Value stored by the \ref Cy_SAR_SetChannelGain function.
 *
 * \note
-* This funtion is only valid when result alignment is right aligned.
+* This function is only valid when result alignment is right aligned.
 *
 * \param base
 * Pointer to structure describing registers
@@ -1351,7 +1351,7 @@ int16_t Cy_SAR_CountsTo_mVolts(const SAR_Type *base, uint32_t chan, int16_t adcC
 * - Gain: Value stored by the \ref Cy_SAR_SetChannelGain function.
 *
 * \note
-* This funtion is only valid when result alignment is right aligned.
+* This function is only valid when result alignment is right aligned.
 *
 * \param base
 * Pointer to structure describing registers
@@ -1414,7 +1414,7 @@ int32_t Cy_SAR_CountsTo_uVolts(const SAR_Type *base, uint32_t chan, int16_t adcC
 * and "OR" them together.
 *
 * \param state
-* Open or close the desired swithces. Select a value from \ref cy_en_sar_switch_state_t.
+* Open or close the desired switches. Select a value from \ref cy_en_sar_switch_state_t.
 *
 * \return None
 *

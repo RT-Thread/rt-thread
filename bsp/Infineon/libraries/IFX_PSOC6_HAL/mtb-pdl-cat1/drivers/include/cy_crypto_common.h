@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_common.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides common constants and parameters
@@ -34,6 +34,7 @@
 
 #if defined (CY_IP_MXCRYPTO)
 
+#include "cy_crypto_config.h"
 #include "cy_syslib.h"
 
 #if defined(__cplusplus)
@@ -43,6 +44,13 @@ extern "C" {
 #include <stddef.h>
 #include <stdbool.h>
 #include "cy_sysint.h"
+
+/** Driver major version */
+#define CY_CRYPTO_DRV_VERSION_MAJOR         2
+
+/** Driver minor version */
+#define CY_CRYPTO_DRV_VERSION_MINOR         70
+
 
 /* Enable SHA functionality */
 #if !defined(CPUSS_CRYPTO_SHA) && (defined(CPUSS_CRYPTO_SHA1) || defined(CPUSS_CRYPTO_SHA2))
@@ -61,11 +69,22 @@ extern "C" {
     #define CPUSS_CRYPTO_STR                (1)
 #endif
 
-/** Driver major version */
-#define CY_CRYPTO_DRV_VERSION_MAJOR         2
+#if !defined(CPUSS_CRYPTO_CHACHA) && defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
+#define CPUSS_CRYPTO_CHACHA (0)
+#endif
 
-/** Driver minor version */
-#define CY_CRYPTO_DRV_VERSION_MINOR         50
+/** \cond INTERNAL */
+
+/* The width of the Crypto hardware registers values in bits. */
+#define CY_CRYPTO_HW_REGS_WIDTH             (32UL)
+
+/* Calculates the actual size in bytes of the bits value */
+#define CY_CRYPTO_BYTE_SIZE_OF_BITS(x)      (uint32_t)(((uint32_t)(x) + 7U) >> 3U)
+
+/* Calculates the actual size in 32-bit words of the bits value */
+#define CY_CRYPTO_WORD_SIZE_OF_BITS(x)      (uint32_t)(((uint32_t)(x) + 31U) >> 5U)
+
+/** \endcond */
 
 /**
 * \addtogroup group_crypto_cli_srv_macros
@@ -86,6 +105,9 @@ extern "C" {
 
 /** Defines the Crypto TDES key size (in bytes) */
 #define CY_CRYPTO_TDES_KEY_SIZE           (24u)
+
+
+#if defined(CY_CRYPTO_CFG_AES_C)
 
 /** Defines the Crypto AES block size (in bytes) */
 #define CY_CRYPTO_AES_BLOCK_SIZE          (16u)
@@ -108,66 +130,101 @@ extern "C" {
 /** Defines size of the AES block, in four-byte words */
 #define CY_CRYPTO_AES_BLOCK_SIZE_U32      (uint32_t)(CY_CRYPTO_AES_BLOCK_SIZE / 4UL)
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#endif /* defined(CY_CRYPTO_CFG_AES_C) */
+
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C)
 
 /* Defines for the SHA algorithm */
-/** Hash size for the SHA1 mode (in bytes)   */
-#define CY_CRYPTO_SHA1_DIGEST_SIZE          (20u)
-/** Hash size for the SHA224 mode (in bytes) */
-#define CY_CRYPTO_SHA224_DIGEST_SIZE        (28u)
-/** Hash size for the SHA256 mode (in bytes) */
-#define CY_CRYPTO_SHA256_DIGEST_SIZE        (32u)
-/** Hash size for the SHA384 mode (in bytes) */
-#define CY_CRYPTO_SHA384_DIGEST_SIZE        (48u)
-/** Hash size for the SHA512 mode (in bytes) */
-#define CY_CRYPTO_SHA512_DIGEST_SIZE        (64u)
-/** Hash size for the SHA512_224 mode (in bytes) */
-#define CY_CRYPTO_SHA512_224_DIGEST_SIZE    (28u)
-/** Hash size for the SHA512_256 mode (in bytes) */
-#define CY_CRYPTO_SHA512_256_DIGEST_SIZE    (32u)
-/** The maximal Hash size for the SHA modes (in bytes). */
-#define CY_CRYPTO_SHA_MAX_DIGEST_SIZE       (CY_CRYPTO_SHA512_DIGEST_SIZE)
-
-/** Block size for the SHA1 mode (in bytes)   */
-#define CY_CRYPTO_SHA1_BLOCK_SIZE           (64u)
 /** Block size for the SHA256 mode (in bytes)   */
 #define CY_CRYPTO_SHA256_BLOCK_SIZE         (64u)
+/** Pad size for the SHA256 mode (in bytes)   */
+#define CY_CRYPTO_SHA256_PAD_SIZE           (56uL)
+
 /** Block size for the SHA512 mode (in bytes)   */
 #define CY_CRYPTO_SHA512_BLOCK_SIZE         (128u)
-/** Maximal block size for the SHA modes (in bytes)   */
-#define CY_CRYPTO_SHA_MAX_BLOCK_SIZE        (CY_CRYPTO_SHA512_BLOCK_SIZE)
-
-/** \cond INTERNAL */
-
-#define CY_CRYPTO_SHA256_PAD_SIZE           (56uL)
+/** Pad size for the SHA512 mode (in bytes)   */
 #define CY_CRYPTO_SHA512_PAD_SIZE           (112uL)
 
-#define CY_CRYPTO_SHA1_HASH_SIZE            (20u)
-#define CY_CRYPTO_SHA256_HASH_SIZE          (32u)
-#define CY_CRYPTO_SHA512_HASH_SIZE          (64u)
-#define CY_CRYPTO_SHA_MAX_HASH_SIZE         (CY_CRYPTO_SHA512_HASH_SIZE)
+#if defined(CY_CRYPTO_CFG_SHA2_512_ENABLED)
+    /** Hash size for the SHA384 mode (in bytes) */
+    #define CY_CRYPTO_SHA384_DIGEST_SIZE        (48u)
+    /** Hash size for the SHA512 mode (in bytes) */
+    #define CY_CRYPTO_SHA512_DIGEST_SIZE        (64u)
+    /** Hash size for the SHA512_224 mode (in bytes) */
+    #define CY_CRYPTO_SHA512_224_DIGEST_SIZE    (28u)
+    /** Hash size for the SHA512_256 mode (in bytes) */
+    #define CY_CRYPTO_SHA512_256_DIGEST_SIZE    (32u)
 
-#define CY_CRYPTO_SHA1_ROUND_MEM_SIZE       (320uL)
-#define CY_CRYPTO_SHA256_ROUND_MEM_SIZE     (256uL)
-#define CY_CRYPTO_SHA512_ROUND_MEM_SIZE     (640uL)
-#define CY_CRYPTO_SHA_MAX_ROUND_MEM_SIZE    (CY_CRYPTO_SHA512_ROUND_MEM_SIZE)
+/** \cond INTERNAL */
+    /** Internal hash size for the SHA512_256 mode (in bytes) */
+    #define CY_CRYPTO_SHA512_HASH_SIZE          (64u)
+    /** Internal round mem size for the SHA512_256 mode (in bytes) */
+    #define CY_CRYPTO_SHA512_ROUND_MEM_SIZE     (640uL)
+/** \endcond */
+#endif
+#if defined(CY_CRYPTO_CFG_SHA2_256_ENABLED)
+    /** Hash size for the SHA224 mode (in bytes) */
+    #define CY_CRYPTO_SHA224_DIGEST_SIZE        (28u)
+    /** Hash size for the SHA256 mode (in bytes) */
+    #define CY_CRYPTO_SHA256_DIGEST_SIZE        (32u)
 
-/* The width of the Crypto hardware registers values in bits. */
-#define CY_CRYPTO_HW_REGS_WIDTH             (32UL)
+/** \cond INTERNAL */
+    /** Internal hash size for the SHA256 mode (in bytes) */
+    #define CY_CRYPTO_SHA256_HASH_SIZE          (32u)
+    /** Internal round mem size for the SHA256 mode (in bytes) */
+    #define CY_CRYPTO_SHA256_ROUND_MEM_SIZE     (256uL)
+/** \endcond */
+#endif
+#if defined(CY_CRYPTO_CFG_SHA1_ENABLED)
+    /** Hash size for the SHA1 mode (in bytes)   */
+    #define CY_CRYPTO_SHA1_DIGEST_SIZE          (20u)
+    /** Block size for the SHA1 mode (in bytes)  */
+    #define CY_CRYPTO_SHA1_BLOCK_SIZE           (64u)
 
-/* Calculates the actual size in bytes of the bits value */
-#define CY_CRYPTO_BYTE_SIZE_OF_BITS(x)      (uint32_t)(((uint32_t)(x) + 7u) >> 3u)
+/** \cond INTERNAL */
+    /** Internal hash size for the SHA1 mode (in bytes) */
+    #define CY_CRYPTO_SHA1_HASH_SIZE            (20u)
+    /** Internal round mem size for the SHA1 mode (in bytes) */
+    #define CY_CRYPTO_SHA1_ROUND_MEM_SIZE       (320uL)
+/** \endcond */
+#endif
 
-/* Calculates the actual size in 32-bit words of the bits value */
-#define CY_CRYPTO_WORD_SIZE_OF_BITS(x)      (uint32_t)(((uint32_t)(x) + 31u) >> 5u)
+/** \cond INTERNAL */
+#if defined(CY_CRYPTO_CFG_SHA2_512_ENABLED)
+    #define CY_CRYPTO_SHA_MAX_DIGEST_SIZE       (CY_CRYPTO_SHA512_DIGEST_SIZE)
+    #define CY_CRYPTO_SHA_MAX_BLOCK_SIZE        (CY_CRYPTO_SHA512_BLOCK_SIZE)
+    #define CY_CRYPTO_SHA_MAX_HASH_SIZE         (CY_CRYPTO_SHA512_HASH_SIZE)
+#elif defined(CY_CRYPTO_CFG_SHA2_256_ENABLED)
+    #define CY_CRYPTO_SHA_MAX_DIGEST_SIZE       (CY_CRYPTO_SHA256_DIGEST_SIZE)
+    #define CY_CRYPTO_SHA_MAX_BLOCK_SIZE        (CY_CRYPTO_SHA256_BLOCK_SIZE)
+    #define CY_CRYPTO_SHA_MAX_HASH_SIZE         (CY_CRYPTO_SHA256_HASH_SIZE)
+#elif defined(CY_CRYPTO_CFG_SHA1_ENABLED)
+    #define CY_CRYPTO_SHA_MAX_DIGEST_SIZE       (CY_CRYPTO_SHA1_DIGEST_SIZE)
+    #define CY_CRYPTO_SHA_MAX_BLOCK_SIZE        (CY_CRYPTO_SHA1_BLOCK_SIZE)
+    #define CY_CRYPTO_SHA_MAX_HASH_SIZE         (CY_CRYPTO_SHA1_HASH_SIZE)
+#else
+    #define CY_CRYPTO_SHA_MAX_DIGEST_SIZE       (0u)
+    #define CY_CRYPTO_SHA_MAX_BLOCK_SIZE        (0u)
+    #define CY_CRYPTO_SHA_MAX_HASH_SIZE         (0u)
+#endif
 
+#if defined(CY_CRYPTO_CFG_SHA2_512_ENABLED)
+    #define CY_CRYPTO_SHA_MAX_ROUND_MEM_SIZE    (CY_CRYPTO_SHA512_ROUND_MEM_SIZE)
+#elif defined(CY_CRYPTO_CFG_SHA1_ENABLED)
+    #define CY_CRYPTO_SHA_MAX_ROUND_MEM_SIZE    (CY_CRYPTO_SHA1_ROUND_MEM_SIZE)
+#elif defined(CY_CRYPTO_CFG_SHA2_256_ENABLED)
+    #define CY_CRYPTO_SHA_MAX_ROUND_MEM_SIZE    (CY_CRYPTO_SHA256_ROUND_MEM_SIZE)
+#else
+    #define CY_CRYPTO_SHA_MAX_ROUND_MEM_SIZE    (0u)
+#endif
 /** \endcond */
 
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C) */
 
 
-#if (CPUSS_CRYPTO_VU == 1)
+#if (CPUSS_CRYPTO_VU == 1) && defined(CY_CRYPTO_CFG_RSA_C)
 
+/** \cond INTERNAL */
 /** Processed message size for the RSA 1024Bit mode (in bytes) */
 #define CY_CRYPTO_RSA1024_MESSAGE_SIZE      CY_CRYPTO_BYTE_SIZE_OF_BITS(1024u)
 /** Processed message size for the RSA 1536Bit mode (in bytes) */
@@ -178,9 +235,65 @@ extern "C" {
 #define CY_CRYPTO_RSA3072_MESSAGE_SIZE      CY_CRYPTO_BYTE_SIZE_OF_BITS(3072u)
 /** Processed message size for the RSA 4096Bit mode (in bytes) */
 #define CY_CRYPTO_RSA4096_MESSAGE_SIZE      CY_CRYPTO_BYTE_SIZE_OF_BITS(4096u)
+/** \endcond */
 
-#endif /* #if (CPUSS_CRYPTO_VU == 1) */
+/**
+* \addtogroup group_crypto_data_structures
+* \{
+*/
 
+/**
+* All fields for the context structure are internal. Firmware never reads or
+* writes these values. Firmware allocates the structure and provides the
+* address of the structure to the driver in the function calls. Firmware must
+* ensure that the defined instance of this structure remains in scope
+* while the drive is in use.
+*
+* The driver uses this structure to store and manipulate the RSA public key and
+* additional coefficients to accelerate RSA calculation.
+*
+*  RSA key contained from two fields:
+*  - n - modulus part of the key
+*  - e - exponent part of the key.
+*
+* Other fields are accelerating coefficients and can be calculated by
+* \ref Cy_Crypto_Rsa_CalcCoefs.
+*
+* \note The <b>modulus</b> and <b>exponent</b> values in the
+* \ref cy_stc_crypto_rsa_pub_key_t must also be in little-endian order.<br>
+* Use \ref Cy_Crypto_InvertEndianness function to convert to or from
+* little-endian order.
+*/
+typedef struct
+{
+    /** \cond INTERNAL */
+    /** The pointer to the modulus part of public key. */
+    uint8_t *moduloPtr;
+    /** The modulus length, in bits, maximum supported size is 2048Bit */
+    uint32_t moduloLength;
+
+    /** The pointer to the exponent part of public key */
+    uint8_t *pubExpPtr;
+    /** The exponent length, in bits, maximum supported size is 256Bit */
+    uint32_t pubExpLength;
+
+    /** The pointer to the Barrett coefficient. Memory for it should be
+        allocated by user with size moduloLength + 1. */
+    uint8_t *barretCoefPtr;
+
+    /** The pointer to the binary inverse of the modulo. Memory for it
+        should be allocated by user with size moduloLength. */
+    uint8_t *inverseModuloPtr;
+
+    /** The pointer to the (2^moduloLength mod modulo). Memory for it should
+        be allocated by user with size moduloLength */
+    uint8_t *rBarPtr;
+/** \endcond */
+} cy_stc_crypto_rsa_pub_key_t;
+
+/** \} group_crypto_data_structures */
+
+#endif /* (CPUSS_CRYPTO_VU == 1) && defined(CY_CRYPTO_CFG_RSA_C) */
 
 /** Crypto Driver PDL ID */
 #define CY_CRYPTO_ID                        CY_PDL_DRV_ID(0x0Cu)
@@ -257,66 +370,6 @@ typedef struct
 /** \} group_crypto_config_structure */
 
 /**
-* \addtogroup group_crypto_data_structures
-* \{
-*/
-
-#if (CPUSS_CRYPTO_VU == 1)
-
-/**
-* All fields for the context structure are internal. Firmware never reads or
-* writes these values. Firmware allocates the structure and provides the
-* address of the structure to the driver in the function calls. Firmware must
-* ensure that the defined instance of this structure remains in scope
-* while the drive is in use.
-*
-* The driver uses this structure to store and manipulate the RSA public key and
-* additional coefficients to accelerate RSA calculation.
-*
-*  RSA key contained from two fields:
-*  - n - modulus part of the key
-*  - e - exponent part of the key.
-*
-* Other fields are accelerating coefficients and can be calculated by
-* \ref Cy_Crypto_Rsa_CalcCoefs.
-*
-* \note The <b>modulus</b> and <b>exponent</b> values in the
-* \ref cy_stc_crypto_rsa_pub_key_t must also be in little-endian order.<br>
-* Use \ref Cy_Crypto_InvertEndianness function to convert to or from
-* little-endian order.
-*/
-typedef struct
-{
-    /** \cond INTERNAL */
-    /** The pointer to the modulus part of public key. */
-    uint8_t *moduloPtr;
-    /** The modulus length, in bits, maximum supported size is 2048Bit */
-    uint32_t moduloLength;
-
-    /** The pointer to the exponent part of public key */
-    uint8_t *pubExpPtr;
-    /** The exponent length, in bits, maximum supported size is 256Bit */
-    uint32_t pubExpLength;
-
-    /** The pointer to the Barrett coefficient. Memory for it should be
-        allocated by user with size moduloLength + 1. */
-    uint8_t *barretCoefPtr;
-
-    /** The pointer to the binary inverse of the modulo. Memory for it
-        should be allocated by user with size moduloLength. */
-    uint8_t *inverseModuloPtr;
-
-    /** The pointer to the (2^moduloLength mod modulo). Memory for it should
-        be allocated by user with size moduloLength */
-    uint8_t *rBarPtr;
-/** \endcond */
-} cy_stc_crypto_rsa_pub_key_t;
-
-#endif /* #if (CPUSS_CRYPTO_VU == 1) */
-
-/** \} group_crypto_data_structures */
-
-/**
 * \addtogroup group_crypto_cli_data_structures
 * \{
 */
@@ -366,7 +419,7 @@ typedef enum
 * \{
 */
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C)
 /** The key length options for the AES method. */
 typedef enum
 {
@@ -374,7 +427,7 @@ typedef enum
     CY_CRYPTO_KEY_AES_192   = 0x01u,   /**< The AES key size is 192 bits */
     CY_CRYPTO_KEY_AES_256   = 0x02u    /**< The AES key size is 256 bits */
 } cy_en_crypto_aes_key_length_t;
-#endif /* #if (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C) */
 
 /** Defines the direction of the Crypto methods */
 typedef enum
@@ -385,35 +438,39 @@ typedef enum
     CY_CRYPTO_DECRYPT   = 0x01u
 } cy_en_crypto_dir_mode_t;
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C)
 /** Defines modes of SHA method */
 typedef enum
 {
-#if (CPUSS_CRYPTO_SHA1 == 1)
+#if (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED)
     CY_CRYPTO_MODE_SHA1          = 0x00u,   /**< Sets the SHA1 mode */
-#endif /* #if (CPUSS_CRYPTO_SHA1 == 1) */
+#endif /* (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED) */
 
-#if (CPUSS_CRYPTO_SHA256 == 1)
+#if (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED)
     CY_CRYPTO_MODE_SHA224        = 0x01u,   /**< Sets the SHA224 mode */
     CY_CRYPTO_MODE_SHA256        = 0x02u,   /**< Sets the SHA256 mode */
-#endif /* #if (CPUSS_CRYPTO_SHA256 == 1) */
+#endif /* (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED) */
 
-#if (CPUSS_CRYPTO_SHA512 == 1)
+#if (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED)
     CY_CRYPTO_MODE_SHA384        = 0x03u,   /**< Sets the SHA384 mode */
     CY_CRYPTO_MODE_SHA512        = 0x04u,   /**< Sets the SHA512 mode */
     CY_CRYPTO_MODE_SHA512_256    = 0x05u,   /**< Sets the SHA512/256 mode */
     CY_CRYPTO_MODE_SHA512_224    = 0x06u,   /**< Sets the SHA512/224 mode */
-#endif /* #if (CPUSS_CRYPTO_SHA512 == 1) */
+#endif /* (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED) */
+    CY_CRYPTO_MODE_SHA_NONE    = 0x07u,   /**< Sets the SHA None mode */
+
 
 } cy_en_crypto_sha_mode_t;
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C) */
 
+#if defined(CY_CRYPTO_CFG_RSA_C) && defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED)
 /** Signature verification status */
 typedef enum
 {
     CY_CRYPTO_RSA_VERIFY_SUCCESS = 0x00u,   /**< PKCS1-v1.5 verify SUCCESS */
     CY_CRYPTO_RSA_VERIFY_FAIL    = 0x01u    /**< PKCS1-v1.5 verify FAILED */
 } cy_en_crypto_rsa_ver_result_t;
+#endif /* defined(CY_CRYPTO_CFG_RSA_C) && defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) */
 
 /** Errors of the Crypto block */
 typedef enum
@@ -449,7 +506,10 @@ typedef enum
     CY_CRYPTO_NOT_SUPPORTED       = CY_CRYPTO_ID | CY_PDL_STATUS_ERROR   | 0x0Au,
 
     /** The Crypto operation parameters are incorrect. */
-    CY_CRYPTO_BAD_PARAMS          = CY_CRYPTO_ID | CY_PDL_STATUS_ERROR   | 0x0Bu
+    CY_CRYPTO_BAD_PARAMS          = CY_CRYPTO_ID | CY_PDL_STATUS_ERROR   | 0x0Bu,
+
+    /** The key for the DES method is weak. */
+    CY_CRYPTO_TRNG_UNHEALTHY      = CY_CRYPTO_ID | CY_PDL_STATUS_WARNING | 0x0Cu
 
 } cy_en_crypto_status_t;
 
@@ -460,17 +520,30 @@ typedef enum
 * \{
 */
 
+#if (CPUSS_CRYPTO_VU == 1) && defined (CY_CRYPTO_CFG_ECP_C)
 /** List of supported elliptic curve IDs */
 typedef enum {
     CY_CRYPTO_ECC_ECP_NONE = 0,
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
     CY_CRYPTO_ECC_ECP_SECP192R1,
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
     CY_CRYPTO_ECC_ECP_SECP224R1,
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
     CY_CRYPTO_ECC_ECP_SECP256R1,
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
     CY_CRYPTO_ECC_ECP_SECP384R1,
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
     CY_CRYPTO_ECC_ECP_SECP521R1,
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
     /* Count of supported curves */
     CY_CRYPTO_ECC_ECP_CURVES_CNT
 } cy_en_crypto_ecc_curve_id_t;
+
+#endif /* (CPUSS_CRYPTO_VU == 1) && defined (CY_CRYPTO_CFG_ECP_C) */
 
 /** \} group_crypto_lld_asymmetric_enums */
 
@@ -483,32 +556,42 @@ typedef enum
     CY_CRYPTO_INSTR_ENABLE       = 0x01u,
     CY_CRYPTO_INSTR_DISABLE      = 0x02u,
 
-#if (CPUSS_CRYPTO_PR == 1)
+#if (CPUSS_CRYPTO_PR == 1) && defined(CY_CRYPTO_CFG_PRNG_C)
     CY_CRYPTO_INSTR_PRNG_INIT    = 0x03u,
     CY_CRYPTO_INSTR_PRNG         = 0x04u,
-#endif /* #if (CPUSS_CRYPTO_PR == 1) */
+#endif /* (CPUSS_CRYPTO_PR == 1) && defined(CY_CRYPTO_CFG_PRNG_C) */
 
-#if (CPUSS_CRYPTO_TR == 1)
+#if (CPUSS_CRYPTO_TR == 1) && defined(CY_CRYPTO_CFG_TRNG_C)
     CY_CRYPTO_INSTR_TRNG_INIT    = 0x05u,
     CY_CRYPTO_INSTR_TRNG         = 0x06u,
-#endif /* #if (CPUSS_CRYPTO_PR == 1) */
+#endif /* (CPUSS_CRYPTO_TR == 1) && defined(CY_CRYPTO_CFG_TRNG_C) */
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C)
     CY_CRYPTO_INSTR_AES_INIT     = 0x07u,
     CY_CRYPTO_INSTR_AES_ECB      = 0x08u,
+
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC)
     CY_CRYPTO_INSTR_AES_CBC      = 0x09u,
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC) */
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB)
     CY_CRYPTO_INSTR_AES_CFB      = 0x0Au,
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB) */
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR)
     CY_CRYPTO_INSTR_AES_CTR      = 0x0Bu,
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C) */
+
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_CMAC_C)
     CY_CRYPTO_INSTR_CMAC         = 0x0Cu,
-#endif /* #if (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_CMAC_C) */
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C)
     CY_CRYPTO_INSTR_SHA          = 0x0Du,
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C) */
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_HMAC_C)
     CY_CRYPTO_INSTR_HMAC         = 0x0Eu,
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_HMAC_C) */
 
 #if (CPUSS_CRYPTO_STR == 1)
     CY_CRYPTO_INSTR_MEM_CPY      = 0x0Fu,
@@ -517,39 +600,54 @@ typedef enum
     CY_CRYPTO_INSTR_MEM_XOR      = 0x12u,
 #endif /* #if (CPUSS_CRYPTO_STR == 1) */
 
-#if (CPUSS_CRYPTO_CRC == 1)
+#if (CPUSS_CRYPTO_CRC == 1) && defined(CY_CRYPTO_CFG_CRC_C)
     CY_CRYPTO_INSTR_CRC_INIT     = 0x13u,
     CY_CRYPTO_INSTR_CRC          = 0x14u,
-#endif /* #if (CPUSS_CRYPTO_CRC == 1) */
+#endif /* (CPUSS_CRYPTO_CRC == 1) && defined(CY_CRYPTO_CFG_CRC_C) */
 
-#if (CPUSS_CRYPTO_DES == 1)
+#if (CPUSS_CRYPTO_DES == 1) && defined(CY_CRYPTO_CFG_DES_C)
     CY_CRYPTO_INSTR_DES          = 0x15u,
     CY_CRYPTO_INSTR_3DES         = 0x16u,
-#endif /* #if (CPUSS_CRYPTO_DES == 1) */
+#endif /* (CPUSS_CRYPTO_DES == 1) && defined(CY_CRYPTO_CFG_DES_C) */
 
-#if (CPUSS_CRYPTO_VU == 1)
+#if (CPUSS_CRYPTO_VU == 1) && defined(CY_CRYPTO_CFG_RSA_C)
     CY_CRYPTO_INSTR_RSA_PROC     = 0x17u,
     CY_CRYPTO_INSTR_RSA_COEF     = 0x18u,
-#endif /* #if (CPUSS_CRYPTO_VU == 1) */
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#if defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED)
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C)
     CY_CRYPTO_INSTR_RSA_VER      = 0x19u,
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C) */
+#endif /* defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) */
+
+#endif /* (CPUSS_CRYPTO_VU == 1) && defined(CY_CRYPTO_CFG_RSA_C) */
 
     CY_CRYPTO_INSTR_SRV_INFO     = 0x55u,
 
 #if (CPUSS_CRYPTO_VU == 1)
+#if defined(CY_CRYPTO_CFG_RSA_C)
     CY_CRYPTO_INSTR_MEMBUF_SET   = 0x56u,
     CY_CRYPTO_INSTR_MEMBUF_ADDR  = 0x57u,
     CY_CRYPTO_INSTR_MEMBUF_SIZE  = 0x58u,
+#endif /* defined(CY_CRYPTO_CFG_RSA_C) */
 
+#if defined(CY_CRYPTO_CFG_ECP_C)
     CY_CRYPTO_INSTR_ECC_GET_DP   = 0x59u,
     CY_CRYPTO_INSTR_ECC_ECP_MUL  = 0x5Au,
+#endif /* defined(CY_CRYPTO_CFG_ECP_C) */
+
+#if defined(CY_CRYPTO_CFG_ECDSA_GENKEY_C)
     CY_CRYPTO_INSTR_ECP_GEN_PRIK = 0x5Bu,
     CY_CRYPTO_INSTR_ECP_GEN_PUBK = 0x5Cu,
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_GENKEY_C) */
 
+#if defined(CY_CRYPTO_CFG_ECDSA_SIGN_C)
     CY_CRYPTO_INSTR_ECDSA_SIGN   = 0x5Du,
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_SIGN_C) */
+
+#if defined(CY_CRYPTO_CFG_ECDSA_VERIFY_C)
     CY_CRYPTO_INSTR_ECDSA_VER    = 0x5Eu
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_VERIFY_C) */
 #endif /* #if (CPUSS_CRYPTO_VU == 1) */
 
 } cy_en_crypto_comm_instr_t;
@@ -561,7 +659,7 @@ typedef enum
 * \{
 */
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C)
 
 /** The structure for storing the AES state.
 * All fields for this structure are internal. Firmware never reads or
@@ -594,9 +692,9 @@ typedef struct
     uint32_t blockIdx;
     /** \endcond */
 } cy_stc_crypto_aes_state_t;
-#endif /* #if (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C) */
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C)
 
 /** The structure for storing the SHA state.
 * All fields for the context structure are internal. Firmware never reads or
@@ -623,8 +721,41 @@ typedef struct
     /** \endcond */
 } cy_stc_crypto_sha_state_t;
 
-#endif /* (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C) */
 
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_HMAC_C)
+
+/** The structure for storing the HMAC state.
+* All fields for the context structure are internal. Firmware never reads or
+* writes these values. Firmware allocates the structure and provides the
+* address of the structure to the driver in the function calls. Firmware must
+* ensure that the defined instance of this structure remains in scope
+* while the drive is in use.
+*/
+
+typedef struct
+{
+    /** \cond INTERNAL */
+    /* Pointer to store the ipad */
+    uint8_t *ipad;
+
+    /* Pointer to store the opad */
+    uint8_t *opad;
+
+    /* Pointer to store the key */
+    uint8_t *m0Key;
+
+    /* Pointer to store the sha buffer */
+    void* sha_buffer;
+
+    /* Hash state*/
+    cy_stc_crypto_sha_state_t hashState;
+    /** \endcond */
+} cy_stc_crypto_hmac_state_t;
+
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_HMAC_C) */
+
+#if (CPUSS_CRYPTO_VU == 1) && defined(CY_CRYPTO_CFG_ECP_C)
 /** A point on a ECC curve */
 typedef struct {
     /** The x co-ordinate */
@@ -650,6 +781,7 @@ typedef struct {
     /** The private key */
     void *k;
 } cy_stc_crypto_ecc_key;
+#endif /* (CPUSS_CRYPTO_VU == 1) && defined(CY_CRYPTO_CFG_ECP_C) */
 
 /** \} group_crypto_data_structures */
 
@@ -705,7 +837,11 @@ typedef struct
 * ensure that the defined instance of this structure remains in scope
 * while the drive is in use.
 */
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+CY_ALIGN(__SCB_DCACHE_LINE_SIZE) typedef struct
+#else
 typedef struct
+#endif
 {
     /** \cond INTERNAL */
     /** Operation instruction code */
@@ -730,7 +866,7 @@ typedef struct
 } cy_stc_crypto_context_t;
 
 
-#if (CPUSS_CRYPTO_DES == 1)
+#if (CPUSS_CRYPTO_DES == 1) && defined(CY_CRYPTO_CFG_DES_C)
 /** The structure for storing the DES context.
 * All fields for the context structure are internal. Firmware never reads or
 * writes these values. Firmware allocates the structure and provides the
@@ -751,9 +887,9 @@ typedef struct
     uint32_t *src;
     /** \endcond */
 } cy_stc_crypto_context_des_t;
-#endif /* #if (CPUSS_CRYPTO_DES == 1) */
+#endif /* (CPUSS_CRYPTO_DES == 1) && defined(CY_CRYPTO_CFG_DES_C) */
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C)
 /** The structure for storing the AES context.
 * All fields for the context structure are internal. Firmware never reads or
 * writes these values. Firmware allocates the structure and provides the
@@ -786,10 +922,9 @@ typedef struct
     uint32_t *src;
     /** \endcond */
 } cy_stc_crypto_context_aes_t;
-#endif /* #if (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C) */
 
-#if (CPUSS_CRYPTO_SHA == 1)
-
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C)
 /** The structure for storing the SHA context.
 * All fields for the context structure are internal. Firmware never reads or
 * writes these values. Firmware allocates the structure and provides the
@@ -814,9 +949,9 @@ typedef struct
     uint32_t  keyLength;
     /** \endcond */
 } cy_stc_crypto_context_sha_t;
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C) */
 
-#if (CPUSS_CRYPTO_PR == 1)
+#if (CPUSS_CRYPTO_PR == 1) && defined(CY_CRYPTO_CFG_PRNG_C)
 /** The structure for storing the PRNG context.
 * All fields for the context structure are internal. Firmware never reads or
 * writes these values. Firmware allocates the structure and provides the
@@ -834,9 +969,185 @@ typedef struct
     uint32_t *prngNum;                    /**< Pointer to generated value */
     /** \endcond */
 } cy_stc_crypto_context_prng_t;
-#endif /* #if (CPUSS_CRYPTO_PR == 1) */
+#endif /* (CPUSS_CRYPTO_PR == 1) && defined(CY_CRYPTO_CFG_PRNG_C) */
 
-#if (CPUSS_CRYPTO_TR == 1)
+#if (CPUSS_CRYPTO_TR == 1) && defined(CY_CRYPTO_CFG_TRNG_C)
+/** \cond INTERNAL */
+#define CY_CRYPTO_TR_RO_ENABLE           (1U)
+#define CY_CRYPTO_TR_RO_DISABLE          (0U)
+/** \endcond */
+
+/** \cond INTERNAL */
+typedef enum
+{
+    /** "Selection of the ring oscillator (RO) source: */
+    CY_CRYPTO_TR_SRC_RO11 = 0,  /**< "0": fixed RO 11 bit. */
+    CY_CRYPTO_TR_SRC_RO15,      /**< "1": fixed RO 15 bit. */
+    CY_CRYPTO_TR_SRC_GARO15,    /**< "2": fixed Galois RO 15 bit. */
+    CY_CRYPTO_TR_SRC_GARO31,    /**< "3": flexible Galois RO 31 bit. */
+    CY_CRYPTO_TR_SRC_FIRO15,    /**< "4": fixed Fibonacci RO 15 bit. */
+    CY_CRYPTO_TR_SRC_FIRO31     /**< "5": flexible Fibonacci RO 31 bit. */
+} cy_en_crypto_trng_ro_sel_t;
+/** \endcond */
+
+/******************************************
+ * Configuration structure
+ ******************************************/
+/** \cond INTERNAL */
+typedef enum
+{
+    /** "Selection of the bitstream: */
+    CY_CRYPTO_TRMON_BS_DAS = 0, /**< "0": DAS bitstream. */
+    CY_CRYPTO_TRMON_BS_RED,     /**< "1": RED bitstream. */
+    CY_CRYPTO_TRMON_BS_TR,      /**< "2": TR bitstream.  */
+    CY_CRYPTO_TRMON_BS_UNDEF    /**< "3": Undefined.     */
+} cy_en_crypto_trng_bs_sel_t;
+/** \endcond */
+
+/** The structure for storing the TRNG configuration.
+*/
+typedef struct
+{
+    /** \cond INTERNAL */
+    /**
+     * "Specifies the clock divider that is used to sample oscillator data.
+     * This clock divider is wrt. "clk_sys".
+     * "0": sample clock is "clk_sys".
+     * "1": sample clock is "clk_sys"/2.
+     *
+     * "255": sample clock is "clk_sys"/256. */
+    uint8_t sampleClockDiv;
+    /**
+     * "Specifies the clock divider that is used to produce reduced bits.
+     * "0": 1 reduced bit is produced for each sample.
+     * "1": 1 reduced bit is produced for each 2 samples.
+     *
+     * "255": 1 reduced bit is produced for each 256 samples. */
+    uint8_t reducedClockDiv;
+    /**
+     * Specifies an initialization delay: number of removed/dropped samples
+     * before reduced bits are generated. This field should be programmed
+     * in the range [1, 255]. After starting the oscillators,
+     * at least the first 2 samples should be removed/dropped to clear the state
+     * of internal synchronizers. In addition, it is advised to drop
+     * at least the second 2 samples from the oscillators (to circumvent
+     * the semi-predictable oscillator startup behavior).
+     *
+     * This result in the default field value of "3".
+     * Field encoding is as follows:
+     * "0": 1 sample is dropped.
+     * "1": 2 samples are dropped.
+     *
+     * "255": 256 samples are dropped.
+     *
+     * The TR_INITIALIZED interrupt cause is set to '1', when
+     * the initialization delay is passed. */
+    uint8_t initDelay;
+    /**
+     * "Specifies if the "von Neumann corrector" is disabled or enabled:
+     * '0': disabled.
+     * '1': enabled.
+     * The "von Neumann corrector" post-processes the reduced bits
+     * to remove a '0' or '1' bias. The corrector operates on reduced bit pairs
+     * ("oldest bit, newest bit"):
+     * "00": no bit is produced.
+     * "01": '0' bit is produced (oldest bit).
+     * "10": '1' bit is produced (oldest bit).
+     * "11": no bit is produced.
+     * Note that the corrector produces bits at a random pace and at a frequency
+     * that is 1/4 of the reduced bit frequency (reduced bits are processed
+     * in pairs, and half of the pairs do NOT produce a bit). */
+    bool    vnCorrectorEnable;
+    /**
+     * Specifies if TRNG functionality is stopped on an adaptive proportion
+     * test detection (when HW sets INTR.TR_AP_DETECT to '1'):
+     * '0': Functionality is NOT stopped.
+     * '1': Functionality is stopped (TR_CTL1 fields are set to '0' by HW). */
+    bool    stopOnAPDetect;
+    /**
+     * Specifies if TRNG functionality is stopped on a repetition
+     * count test detection (when HW sets INTR.TR_RC_DETECT to '1'):
+     * '0': Functionality is NOT stopped.
+     * '1': Functionality is stopped (TR_CTL1 fields are set to '0' by HW). */
+    bool    stopOnRCDetect;
+
+    /**
+     * FW sets this field to '1' to enable the ring oscillator with 11 inverters.
+     */
+    bool    ro11Enable;
+    /**
+     * FW sets this field to '1' to enable the ring oscillator with 15 inverters.
+     */
+    bool    ro15Enable;
+    /**
+     * FW sets this field to '1' to enable the fixed Galois ring oscillator
+     * with 15 inverters. */
+    bool    garo15Enable;
+    /**
+     * FW sets this field to '1' to enable the programmable Galois ring
+     * oscillator with up to 31 inverters. The TR_GARO_CTL register specifies
+     * the programmable polynomial. */
+    bool    garo31Enable;
+    /**
+     * FW sets this field to '1' to enable the fixed Fibonacci ring oscillator
+     * with 15 inverters. */
+    bool    firo15Enable;
+    /**
+     * FW sets this field to '1' to enable the programmable Fibonacci ring
+     * oscillator with up to 31 inverters. The TR_FIRO_CTL register specifies
+     * the programmable polynomial. */
+    bool    firo31Enable;
+
+    /**
+     * Polynomial for programmable Galois ring oscillator.
+     * The polynomial is represented WITHOUT
+     * the high order bit (this bit is always assumed '1').
+     * The polynomial should be aligned such that the more
+     * significant bits (bit 30 and down) contain the polynomial
+     * and the less significant bits (bit 0 and up) contain padding '0's. */
+    uint32_t garo31Poly;
+
+    /**
+     * Polynomial for programmable Fibonacci ring oscillator.
+     * The polynomial is represented WITHOUT
+     * the high order bit (this bit is always assumed '1').
+     * The polynomial should be aligned such that the more
+     * significant bits (bit 30 and down) contain the polynomial
+     * and the less significant bits (bit 0 and up) contain padding '0's. */
+    uint32_t firo31Poly;
+
+    /**
+     * Selection of the bitstream:
+     * "0": DAS bitstream.
+     * "1": RED bitstream.
+     * "2": TR bitstream.
+     * "3": Undefined.  */
+    cy_en_crypto_trng_bs_sel_t monBitStreamSelect;
+
+    /**
+     * Cutoff count (legal range is [1, 255]):
+     * "0": Illegal.
+     * "1": 1 repetition.
+     * ..
+     * "255": 255 repetitions. */
+    uint8_t monCutoffCount8;
+
+    /**
+     * Cutoff count (legal range is [1, 65535]).
+     * "0": Illegal.
+     * "1": 1 occurrence.
+     * ...
+     * "65535": 65535 occurrences. */
+    uint16_t monCutoffCount16;
+    /**
+     * Window size (minus 1) :
+     * "0": 1 bit.
+     * ...
+     * "65535": 65536 bits. */
+    uint16_t monWindowSize;
+    /** \endcond */
+} cy_stc_crypto_trng_config_t;
+
 /** The structure for storing the TRNG context.
 * All fields for the context structure are internal. Firmware never reads or
 * writes these values. Firmware allocates the structure and provides the
@@ -870,7 +1181,7 @@ typedef struct
     uint32_t *trngNum;
     /** \endcond */
 } cy_stc_crypto_context_trng_t;
-#endif /* #if (CPUSS_CRYPTO_TR == 1) */
+#endif /* (CPUSS_CRYPTO_TR == 1) && defined(CY_CRYPTO_CFG_TRNG_C) */
 
 #if (CPUSS_CRYPTO_STR == 1)
 /** The structure for storing the string context.
@@ -892,7 +1203,7 @@ typedef struct
 } cy_stc_crypto_context_str_t;
 #endif /* #if (CPUSS_CRYPTO_STR == 1) */
 
-#if (CPUSS_CRYPTO_CRC == 1)
+#if (CPUSS_CRYPTO_CRC == 1) && defined(CY_CRYPTO_CFG_CRC_C)
 /** The structure for storing the CRC context.
 * All fields for the context structure are internal. Firmware never reads or
 * writes these values. Firmware allocates the structure and provides the
@@ -914,11 +1225,32 @@ typedef struct
     uint32_t remXor;                /**<  Output data XOR flag */
     /** \endcond */
 } cy_stc_crypto_context_crc_t;
-#endif /* #if (CPUSS_CRYPTO_CRC == 1) */
+#endif /* (CPUSS_CRYPTO_CRC == 1) && defined(CY_CRYPTO_CFG_CRC_C) */
 
 #if (CPUSS_CRYPTO_VU == 1)
+#if defined(CY_CRYPTO_CFG_RSA_C)
+/** The structure for storing the RSA context.
+* All fields for the context structure are internal. Firmware never reads or
+* writes these values. Firmware allocates the structure and provides the
+* address of the structure to the driver in function calls. Firmware must
+* ensure that the defined instance of this structure remains in scope
+* while the drive is in use.
+*/
+typedef struct
+{
+    /** \cond INTERNAL */
+    /** Pointer to key data */
+    cy_stc_crypto_rsa_pub_key_t const *key;
+    /** Pointer to data source block */
+    uint32_t const *message;
+    /** Operation data size */
+    uint32_t messageSize;
+    /** Pointer to data destination block */
+    uint32_t *result;
+    /** \endcond */
+} cy_stc_crypto_context_rsa_t;
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#if defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) && (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C)
 /** The structure for storing the RSA verification context.
 * All fields for the context structure are internal. Firmware never reads or
 * writes these values. Firmware allocates the structure and provides the
@@ -941,29 +1273,10 @@ typedef struct
     uint32_t decryptedSignatureLength;
     /** \endcond */
 } cy_stc_crypto_context_rsa_ver_t;
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) && (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C) */
+#endif /* defined(CY_CRYPTO_CFG_RSA_C) */
 
-/** The structure for storing the RSA context.
-* All fields for the context structure are internal. Firmware never reads or
-* writes these values. Firmware allocates the structure and provides the
-* address of the structure to the driver in function calls. Firmware must
-* ensure that the defined instance of this structure remains in scope
-* while the drive is in use.
-*/
-typedef struct
-{
-    /** \cond INTERNAL */
-    /** Pointer to key data */
-    cy_stc_crypto_rsa_pub_key_t const *key;
-    /** Pointer to data source block */
-    uint32_t const *message;
-    /** Operation data size */
-    uint32_t messageSize;
-    /** Pointer to data destination block */
-    uint32_t *result;
-    /** \endcond */
-} cy_stc_crypto_context_rsa_t;
-
+#if defined(CY_CRYPTO_CFG_ECDSA_C)
 /** The structure for storing the ECC operations context.
 * All fields for the context structure are internal. Firmware never reads or
 * writes these values. Firmware allocates the structure and provides the
@@ -992,7 +1305,69 @@ typedef struct
     uint8_t *dst1;
     /** \endcond */
 } cy_stc_crypto_context_ecc_t;
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_C) */
 #endif /* #if (CPUSS_CRYPTO_VU == 1) */
+
+
+#if defined(CY_CRYPTO_CFG_CHACHA_ENABLED) && (CPUSS_CRYPTO_CHACHA == 1)
+
+/** Defines the chacha state size (in bytes) */
+#define CHACHA_STATE_SIZE 64u
+
+/** Defines the chacha key stream size (in bytes) */
+#define CHACHA_KEYSTREAM_SIZE 64u
+
+/** Defines the chacha state block size (in bytes) */
+#define CHACHA_BLOCK_SIZE 64u
+
+/** \cond INTERNAL */
+
+/** Defines the chacha key size (in bytes) */
+#define CHACHA_KEY_SIZE 32u
+
+/** Defines the chacha nonce size (in bytes) */
+#define CHACHA_NONCE_SIZE 12u
+
+/** Defines the chacha counter size (in bytes) */
+#define CHACHA_COUNTER_SIZE 4u
+
+/** Defines the chacha const size (in bytes) */
+#define CHACHA_CONST_SIZE 16u
+/** \endcond */
+
+typedef struct
+{
+    /** \cond INTERNAL */
+
+    /** buffer to store the constant*/
+    uint32_t constant[CHACHA_CONST_SIZE/4u];
+
+    /** buffer to store the chacha key*/
+    uint8_t key[CHACHA_KEY_SIZE];
+
+    /** To store the counter*/
+    uint32_t counter;
+
+    /** buffer to store the nonce*/
+    uint8_t nonce[CHACHA_NONCE_SIZE];
+    /** \endcond */
+}cy_stc_crypto_v2_chacha_input_buffer;
+
+typedef struct
+{
+    /** \cond INTERNAL */
+    /** The pointer to store chacha state */
+    cy_stc_crypto_v2_chacha_input_buffer *state;
+    /** The pointer to chacha key stream */
+    uint8_t *key;
+    /** To store the chacha key bytes used */
+    uint8_t keyIndexUsed;
+     /** To store the rounds for the chacha operation*/
+    uint8_t round;
+    /** \endcond */
+} cy_stc_crypto_chacha_state_t;
+
+#endif
 
 /** \} group_crypto_cli_data_structures */
 
@@ -1000,7 +1375,7 @@ typedef struct
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 #endif /* #if !defined (CY_CRYPTO_COMMON_H) */
 

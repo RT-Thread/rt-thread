@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -26,6 +26,18 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *******************************************************************************/
+
+/**
+ * \addtogroup group_hal_impl_dma DMA (Direct Memory Access)
+ * \ingroup group_hal_impl
+ * \{
+ * \section section_hal_impl_dma_data_arr_requirement User-provided data arrays requirements
+ * CM7 cores in CAT1C devices support Data Cache. Data Cache line is 32 bytes. User needs to make sure that
+ * the source and destination buffer pointers points to 32 byte aligned data. User can use CY_ALIGN(32) macro for
+ * 32 byte alignment.
+ *
+ * \} group_hal_impl_dma
+ */
 
 #include "cyhal_dma.h"
 #include "cyhal_system.h"

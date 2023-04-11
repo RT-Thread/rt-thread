@@ -67,7 +67,7 @@ extern "C" {
 * trigger on one of the following events Overflow, Underflow, Terminal Count,
 * Compare Match 0/1, and PWM output. The available triggers are dependent on the PWM mode.
 * All these features are only available in TCPWM Version 2.
-* * Overflow, Underflow, and Comapre(cc_match) trigger outputs are only available in TCPWM Version 1.
+* * Overflow, Underflow, and Compare(cc_match) trigger outputs are only available in TCPWM Version 1.
 * * Second Compare Match (CC_MATCH1) event is only available in TCPWM Version 2.
 *
 * \section group_tcpwm_pwm_configuration Configuration Considerations

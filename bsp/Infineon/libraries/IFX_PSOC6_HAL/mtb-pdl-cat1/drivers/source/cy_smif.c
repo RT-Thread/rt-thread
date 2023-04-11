@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_smif.c
-* \version 2.30
+* \version 2.40
 *
 * \brief
 *  This file provides the source code for the SMIF driver APIs.
@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2016-2021 Cypress Semiconductor Corporation
+* Copyright 2016-2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,7 @@
 #if defined (CY_IP_MXSMIF)
 
 #include "cy_smif.h"
+#include "cy_sysclk.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -161,7 +162,11 @@ void Cy_SMIF_DeInit(SMIF_Type *base)
 * Sets the mode of operation for the SMIF. The mode of operation can be the XIP
 * mode where the slave devices are mapped as memories and are directly accessed
 * from the PSoC register map. In the MMIO mode, the SMIF block acts as a simple
-* SPI engine.
+* SPI engine. MMIO mode and XIP modes are mutually exclusive. SMIF IP Version 3
+* and above support MMIO mode transactions even when XIP mode is enabled. However,
+* user has to ensure that XIP transaction is not issued during an ongoing MMIO
+* transaction. Rather wait for MMIO transaction to complete since few MMIO operations
+* make external flash busy and it cannot respond to XIP read transaction.
 *
 * \note With SMIF V1 IP, Interrupt and triggers are not working in XIP mode, see TRM for details
 *
@@ -1169,7 +1174,7 @@ cy_en_smif_status_t Cy_SMIF_TransmitCommand_Ext(SMIF_Type *base,
     }
 
 #if ((CY_IP_MXSMIF_VERSION==2) || (CY_IP_MXSMIF_VERSION==3))
-    /* Switch back to prefered XIP mode data rate */
+    /* Switch back to preferred XIP mode data rate */
     temp = SMIF_CTL(base);
     temp &= ~(SMIF_CTL_CLOCK_IF_TX_SEL_Msk);
     SMIF_CTL(base) =  temp | _VAL2FLD(SMIF_CTL_CLOCK_IF_TX_SEL, context->preXIPDataRate);
@@ -1307,7 +1312,7 @@ cy_en_smif_status_t Cy_SMIF_TransmitData_Ext(SMIF_Type *base,
     }
 
 #if ((CY_IP_MXSMIF_VERSION==2) || (CY_IP_MXSMIF_VERSION==3))
-    /* Switch back to prefered XIP mode data rate */
+    /* Switch back to preferred XIP mode data rate */
     temp = SMIF_CTL(base);
     temp &= ~(SMIF_CTL_CLOCK_IF_TX_SEL_Msk);
     SMIF_CTL(base) =  temp | _VAL2FLD(SMIF_CTL_CLOCK_IF_TX_SEL, context->preXIPDataRate);
@@ -1442,7 +1447,7 @@ cy_en_smif_status_t Cy_SMIF_TransmitDataBlocking_Ext(SMIF_Type *base,
     }
 
 #if ((CY_IP_MXSMIF_VERSION==2) || (CY_IP_MXSMIF_VERSION==3))
-    /* Switch back to prefered XIP mode data rate */
+    /* Switch back to preferred XIP mode data rate */
     temp = SMIF_CTL(base);
     temp &= ~(SMIF_CTL_CLOCK_IF_TX_SEL_Msk);
     SMIF_CTL(base) =  temp | _VAL2FLD(SMIF_CTL_CLOCK_IF_TX_SEL, context->preXIPDataRate);
@@ -1716,7 +1721,7 @@ cy_en_smif_status_t Cy_SMIF_ReceiveDataBlocking_Ext(SMIF_Type *base,
     }
 
 #if ((CY_IP_MXSMIF_VERSION==2) || (CY_IP_MXSMIF_VERSION==3))
-    /* Switch back to prefered XIP mode data rate */
+    /* Switch back to preferred XIP mode data rate */
     temp = SMIF_CTL(base);
     temp &= ~(SMIF_CTL_CLOCK_IF_TX_SEL_Msk);
     SMIF_CTL(base) =  temp | _VAL2FLD(SMIF_CTL_CLOCK_IF_TX_SEL, context->preXIPDataRate);
@@ -2309,302 +2314,67 @@ void Cy_SMIF_SetRxCaptureMode(SMIF_Type *base, cy_en_smif_capture_mode_t mode)
 
     SMIF_CTL2(base) = _VAL2FLD(SMIF_CORE_CTL2_RX_CAPTURE_MODE, (uint32_t)mode);
 }
-
-static bool Cy_SMIF_IsBridgeOn(SMIF_Base_Type *base)
-{
-    CY_ASSERT_L1(NULL != base);
-
-    return _FLD2VAL(SMIF_SMIF_BRIDGE_CTL_ENABLED, SMIF_BRIDGE_CTL(base));
-}
-static bool Cy_SMIF_IsRegionAddrAligned(uint32_t addr, cy_en_smif_bridge_remap_region_size_t regionSize)
-{
-    return (((addr & 0x1FFFFFFFU) & (~regionSize)) == 0U);
-}
-/*******************************************************************************
-* Function Name: Cy_SMIF_Bridge_Enable
-****************************************************************************//**
-* This function is used to enable/disable Bridge
-*
-* \param base
-* Holds the base address of the SMIF base registers.
-*
-* \param enable
-* enable/disable the bridge
-*
-* \note
-* This API is available for CAT1D devices.
-*******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_Bridge_Enable(SMIF_Base_Type *base, bool enable)
-{
-    CY_ASSERT_L1(NULL != base);
-
-    uint32_t prevStatus = Cy_SysLib_EnterCriticalSection();
-
-    /* Confirming all smif core is not busy */
-    for(uint32_t smifCoreIdx = 0; smifCoreIdx < CY_SMIF_CORE_COUNT; smifCoreIdx+=1U)
-    {
-        if(Cy_SMIF_BusyCheck(&(base->CORE[smifCoreIdx])) == true)
-        {
-            return CY_SMIF_BUSY;
-        }
-    }
-
-    /* Set Enable bit of the smif bridge */
-    SMIF_BRIDGE_CTL(base) = _VAL2FLD(SMIF_SMIF_BRIDGE_CTL_ENABLED, (uint32_t) enable);
-
-    Cy_SysLib_ExitCriticalSection(prevStatus);
-
-    return CY_SMIF_SUCCESS;;
-}
-
-/*******************************************************************************
-* Function Name: Cy_SMIF_Bridge_SetPortPriority
-****************************************************************************//**
-* This function sets the priority of PORTS (AHB/AXI)
-*
-* \param base
-* Holds the base address of the SMIF base registers.
-*
-* \param bridge_priority
-* priotiry configuration for different ports using AHB/AXI interface
-*
-* \note
-* This API is available for CAT1D devices.
-*******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_Bridge_SetPortPriority(SMIF_Base_Type *base, cy_stc_smif_bridge_pri_t* bridge_priority)
-{
-    CY_ASSERT_L1(NULL != base);
-    CY_ASSERT_L1(NULL != bridge_priority);
-
-    SMIF_BRIDGE_CTL(base) = _VAL2FLD(SMIF_SMIF_BRIDGE_CTL_ARB_PRI_AHB_SMIF0, (uint32_t) bridge_priority->pri_ahb_smif0) |
-                            _VAL2FLD(SMIF_SMIF_BRIDGE_CTL_ARB_PRI_AHB_SMIF1, (uint32_t) bridge_priority->pri_ahb_smif1) |
-                            _VAL2FLD(SMIF_SMIF_BRIDGE_CTL_ARB_PRI_AXI_SMIF0, (uint32_t) bridge_priority->pri_ahb_smif0) |
-                            _VAL2FLD(SMIF_SMIF_BRIDGE_CTL_ARB_PRI_AXI_SMIF1, (uint32_t) bridge_priority->pri_ahb_smif0);
-
-    return CY_SMIF_SUCCESS;
-}
-
-/*******************************************************************************
-* Function Name: Cy_SMIF_Bridge_SetSimpleRemapRegion
-****************************************************************************//**
-* This function sets up a new remap region.
-*
-* \param base
-* Holds the base address of the SMIF base registers.
-*
-* \param region_info
-* Region Information contains xip address and target remap physical addresses
-* along with size of remap.
-*
-* \note
-* This API is available for CAT1D devices.
-*******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_Bridge_SetSimpleRemapRegion(SMIF_Base_Type *base, const cy_stc_smif_bridge_remap_t* region_info)
-{
-    CY_ASSERT_L1(NULL != base);
-    CY_ASSERT_L1(NULL != region_info);
-
-    cy_en_smif_bridge_xip_space_t xipSpace = CY_EN_BRIDGE_SMIF0_XIP_SPACE;
-    cy_en_smif_bridge_remap_type_t remapDest = CY_EN_BRIDGE_REMAP_TYPE_TO_SMIF0;
-    cy_en_smif_status_t result = CY_SMIF_SUCCESS;
-
-    /* Status Checking */
-   if(Cy_SMIF_IsBridgeOn(base) == true)
-   {
-       result = CY_SMIF_BAD_PARAM;
-   }
-
-   /* Parameter Checking */
-   if ((result == CY_SMIF_SUCCESS) ||
-          (region_info->regionIdx >= CY_SMIF_BRIDGE_REMAP_REGION_COUNT) ||
-          (!Cy_SMIF_IsRegionAddrAligned(region_info->xipAddr, region_info->regionSize)) ||
-          (!Cy_SMIF_IsRegionAddrAligned(region_info->phyAddr, region_info->regionSize)))
-   {
-       result = CY_SMIF_BAD_PARAM;
-   }
-
-   /* Check the input address */
-   if ((region_info->xipAddr & SMIF_SMIF0_XIP_MASK) == SMIF_SMIF0_XIP_ADDR)
-   {
-       xipSpace = CY_EN_BRIDGE_SMIF0_XIP_SPACE;
-   }
-   else if ((region_info->xipAddr & SMIF_SMIF1_XIP_MASK) == SMIF_SMIF1_XIP_ADDR)
-   {
-       xipSpace = CY_EN_BRIDGE_SMIF1_XIP_SPACE;
-   }
-   else
-   {
-       result = CY_SMIF_BAD_PARAM;
-   }
-
-   /* Check the remap address */
-   if ((region_info->phyAddr & SMIF_SMIF0_XIP_MASK) == SMIF_SMIF0_XIP_ADDR)
-   {
-       remapDest = CY_EN_BRIDGE_REMAP_TYPE_TO_SMIF0;
-   }
-   else if ((region_info->phyAddr & SMIF_SMIF1_XIP_MASK) == SMIF_SMIF1_XIP_ADDR)
-   {
-       remapDest = CY_EN_BRIDGE_REMAP_TYPE_TO_SMIF1;
-   }
-   else
-   {
-       result = CY_SMIF_BAD_PARAM;
-   }
-
-   if (result == CY_SMIF_SUCCESS)
-   {
-       SMIF_REMAPREGION_CTL(base, region_info->regionIdx) = (_VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_CTL_USE_SMIF, (uint32_t)remapDest) |
-                                                            _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_CTL_SMIF_SPACE, (uint32_t)xipSpace));
-       SMIF_REMAPREGION_ADDR(base, region_info->regionIdx) = _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_CTL_USE_SMIF, (uint32_t)region_info->xipAddr);
-       SMIF_REMAPREGION_MASK(base, region_info->regionIdx) = _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_CTL_USE_SMIF, (uint32_t)region_info->regionSize);
-
-       if (remapDest == CY_EN_BRIDGE_REMAP_TYPE_TO_SMIF0)
-       {
-           SMIF_REMAPREGION_SMIF0_REMAP(base, region_info->regionIdx)  = region_info->phyAddr;
-       }
-       else
-       {
-           SMIF_REMAPREGION_SMIF0_REMAP(base, region_info->regionIdx) = region_info->phyAddr;
-       }
-   }
-
-   return result;
-
-}
-
-/*******************************************************************************
-* Function Name: Cy_SMIF_Bridge_SetInterleavingRemapRegion
-****************************************************************************//**
-* This function sets up a new interleaving remap region.
-*
-* \param base
-* Holds the base address of the SMIF base registers.
-*
-* \param region_info
-* Region Information contains xip address and target remap physical addresses
-* on both CORES since interleaving uses both the PORTS along with size of remap.
-*
-* \note
-* This API is available for CAT1D devices.
-*******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_Bridge_SetInterleavingRemapRegion(SMIF_Base_Type *base, const cy_stc_smif_bridge_interleave_remap_t* region_info)
-{
-    CY_ASSERT_L1(NULL != base);
-    CY_ASSERT_L1(NULL != region_info);
-
-    cy_en_smif_bridge_xip_space_t xipSpace = CY_EN_BRIDGE_SMIF0_XIP_SPACE;
-    cy_en_smif_bridge_xip_space_t phy0Space = CY_EN_BRIDGE_SMIF0_XIP_SPACE;
-    cy_en_smif_bridge_xip_space_t phy1Space = CY_EN_BRIDGE_SMIF0_XIP_SPACE;
-    cy_en_smif_status_t result = CY_SMIF_SUCCESS;
-
-     /* Status Checking */
-    if(Cy_SMIF_IsBridgeOn(base) == true)
-    {
-        result = CY_SMIF_BAD_PARAM;
-    }
-
-    /* Parameter Checking */
-    if ((result == CY_SMIF_SUCCESS) ||
-        (region_info->regionIdx >= CY_SMIF_BRIDGE_REMAP_REGION_COUNT) ||
-        (!Cy_SMIF_IsRegionAddrAligned(region_info->xipAddr, region_info->regionSize)) ||
-        (!Cy_SMIF_IsRegionAddrAligned(region_info->phyAddr0, region_info->regionSize)) ||
-        (!Cy_SMIF_IsRegionAddrAligned(region_info->phyAddr1, region_info->regionSize)))
-    {
-        result = CY_SMIF_BAD_PARAM;
-    }
-
-    /* Check the input address */
-    if ((region_info->xipAddr & SMIF_SMIF0_XIP_MASK) == SMIF_SMIF0_XIP_ADDR)
-    {
-        xipSpace = CY_EN_BRIDGE_SMIF0_XIP_SPACE;
-    }
-    else if ((region_info->xipAddr & SMIF_SMIF1_XIP_MASK) == SMIF_SMIF1_XIP_ADDR)
-    {
-        xipSpace = CY_EN_BRIDGE_SMIF1_XIP_SPACE;
-    }
-    else
-    {
-        result = CY_SMIF_BAD_PARAM;
-    }
-
-    /* Check the remap address */
-    if ((region_info->phyAddr0 & SMIF_SMIF0_XIP_MASK) == SMIF_SMIF0_XIP_ADDR)
-    {
-        phy0Space = CY_EN_BRIDGE_SMIF0_XIP_SPACE;
-    }
-    else if ((region_info->phyAddr0 & SMIF_SMIF1_XIP_MASK) == SMIF_SMIF1_XIP_ADDR)
-    {
-        phy0Space = CY_EN_BRIDGE_SMIF1_XIP_SPACE;
-    }
-    else
-    {
-        result = CY_SMIF_BAD_PARAM;
-    }
-
-    if ((region_info->phyAddr1 & SMIF_SMIF0_XIP_MASK) == SMIF_SMIF0_XIP_ADDR)
-    {
-        phy1Space = CY_EN_BRIDGE_SMIF0_XIP_SPACE;
-    }
-    else if ((region_info->phyAddr1 & SMIF_SMIF1_XIP_MASK) == SMIF_SMIF1_XIP_ADDR)
-    {
-        phy1Space = CY_EN_BRIDGE_SMIF1_XIP_SPACE;
-    }
-    else
-    {
-        result = CY_SMIF_BAD_PARAM;
-    }
-
-    if ((result == CY_SMIF_SUCCESS) && (phy0Space != phy1Space))
-    {
-        SMIF_REMAPREGION_CTL(base, region_info->regionIdx) = _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_CTL_USE_SMIF, (uint32_t) CY_EN_BRIDGE_REMAP_TYPE_INTERLEAVE) |
-                                                             _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_CTL_SMIF_SPACE, (uint32_t)xipSpace);
-        SMIF_REMAPREGION_ADDR(base, region_info->regionIdx) = _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_ADDR_ADDR, (uint32_t)region_info->xipAddr);
-        SMIF_REMAPREGION_MASK(base, region_info->regionIdx) = _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_MASK_MASK, (uint32_t)region_info->regionSize);
-         SMIF_REMAPREGION_SMIF0_REMAP(base, region_info->regionIdx)    = _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_SMIF0_REMAP_SMIF0_REMAP, (uint32_t)region_info->phyAddr0);
-        SMIF_REMAPREGION_SMIF1_REMAP(base, region_info->regionIdx) = _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_SMIF0_REMAP_SMIF0_REMAP, (uint32_t)region_info->phyAddr1);
-    }
-
-    return result;
-}
-
-/*******************************************************************************
-* Function Name: Cy_SMIF_Bridge_DeactivateRemapRegion
-****************************************************************************//**
-* This function sets up a new interleaving remap region.
-*
-* \param base
-* Holds the base address of the SMIF base registers.
-*
-* \param regionIdx
-* Region index for which the remap region should be deactivated.
-*
-* \note
-* This API is available for CAT1D devices.
-*******************************************************************************/
-cy_en_smif_status_t Cy_SMIF_Bridge_DeactivateRemapRegion(SMIF_Base_Type *base, uint32_t regionIdx)
-{
-    CY_ASSERT_L1(NULL != base);
-    cy_en_smif_status_t result = CY_SMIF_SUCCESS;
-
-    /* Check Bridge status and input parameters */
-    if ((Cy_SMIF_IsBridgeOn(base) == true) || \
-       (regionIdx >= CY_SMIF_BRIDGE_REMAP_REGION_COUNT))
-    {
-        result = CY_SMIF_BAD_PARAM;
-    }
-
-    if (result == CY_SMIF_SUCCESS)
-    {
-        SMIF_REMAPREGION_CTL(base, regionIdx)   = _VAL2FLD(SMIF_SMIF_BRIDGE_SMIF_REMAP_REGION_CTL_USE_SMIF, (uint32_t) CY_EN_BRIDGE_REMAP_TYPE_INACTIVE);
-    }
-
-    return CY_SMIF_SUCCESS;
-
-}
-
 #endif
 
-#if defined (CY_IP_MXS40SRSS) || defined (CY_IP_MXS40SSRSS)
+#if (CY_IP_MXSMIF_VERSION>=2) || defined (CY_DOXYGEN)
+/*******************************************************************************
+* Function Name: Cy_SMIF_DeviceTransfer_SetMergeTimeout
+****************************************************************************//**
+*
+* This function enables merging continuous transfers over XIP so that the overhead
+* of transferring command and address will not be there for reading consecutive addresses.
+* User can specify a timeout value to specify how long the device would be selected waiting
+* for next incremental address read.
+*
+* \param base
+* Holds the base address of the SMIF block registers.
+*
+* \param slave
+* Holds the slave select line for which merge should be enabled.
+*
+* \param timeout (see \ref cy_en_smif_merge_timeout_t)
+*
+* \note This API is not supported on CAT1A devices.
+* \note External memory should also support this mode of transfer.
+*
+*******************************************************************************/
+void Cy_SMIF_DeviceTransfer_SetMergeTimeout(SMIF_Type *base, cy_en_smif_slave_select_t slave, cy_en_smif_merge_timeout_t timeout)
+{
+    SMIF_DEVICE_Type volatile * device = Cy_SMIF_GetDeviceBySlot(base, slave);
+    uint32_t temp;
+    temp = SMIF_DEVICE_CTL(device);
+    temp &= ~(SMIF_DEVICE_CTL_MERGE_TIMEOUT_Msk);
+    SMIF_DEVICE_CTL(device) = temp | _VAL2FLD(SMIF_DEVICE_CTL_MERGE_EN,  1U)  |
+                          _VAL2FLD(SMIF_DEVICE_CTL_MERGE_TIMEOUT,  (uint32_t)timeout);
+}
+
+/*******************************************************************************
+* Function Name: Cy_SMIF_DeviceTransfer_ClearMergeTimeout
+****************************************************************************//**
+*
+* This function disables continuous transfer merging.
+*
+* \param base
+* Holds the base address of the SMIF block registers.
+*
+* \param slave
+* Holds the slave select line for which merge should be disabled.
+*
+* \note This API is not supported on CAT1A devices.
+* \note External memory should also support this mode of transfer.
+
+*******************************************************************************/
+void Cy_SMIF_DeviceTransfer_ClearMergeTimeout(SMIF_Type *base, cy_en_smif_slave_select_t slave)
+{
+    SMIF_DEVICE_Type volatile * device = Cy_SMIF_GetDeviceBySlot(base, slave);
+    uint32_t temp;
+    temp = SMIF_DEVICE_CTL(device);
+    temp &= ~(SMIF_DEVICE_CTL_MERGE_EN_Msk | SMIF_DEVICE_CTL_MERGE_TIMEOUT_Msk);
+    SMIF_DEVICE_CTL(device) = temp;
+}
+#endif
+
+#if defined (CY_IP_MXS40SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 /*******************************************************************************
 * Function Name: Cy_SMIF_DeepSleepCallback
 ****************************************************************************//**
@@ -2666,6 +2436,16 @@ cy_en_syspm_status_t Cy_SMIF_DeepSleepCallback(cy_stc_syspm_callback_params_t *c
             }
             else
             {
+#if (CY_IP_MXSMIF_VERSION == 5u)
+                if (locBase == SMIF0_CORE0)
+                {
+                    Cy_SysClk_ClkHfDisable(CY_SMIF_CORE_0_HF);
+                }
+                if (locBase == SMIF0_CORE1)
+                {
+                    Cy_SysClk_ClkHfDisable(CY_SMIF_CORE_1_HF);
+                }
+#endif
                 Cy_SMIF_Disable(locBase);
                 retStatus = CY_SYSPM_SUCCESS;
             }
@@ -2678,6 +2458,16 @@ cy_en_syspm_status_t Cy_SMIF_DeepSleepCallback(cy_stc_syspm_callback_params_t *c
             /* Other driver is not ready for Deep Sleep. Restore Active mode
             * configuration.
             */
+#if (CY_IP_MXSMIF_VERSION == 5u)
+            if (locBase == SMIF0_CORE0)
+            {
+                Cy_SysClk_ClkHfEnable(CY_SMIF_CORE_0_HF);
+            }
+            if (locBase == SMIF0_CORE1)
+            {
+                Cy_SysClk_ClkHfEnable(CY_SMIF_CORE_1_HF);
+            }
+#endif
             Cy_SMIF_Enable(locBase, locContext);
 
         }
@@ -2698,6 +2488,16 @@ cy_en_syspm_status_t Cy_SMIF_DeepSleepCallback(cy_stc_syspm_callback_params_t *c
 
         case CY_SYSPM_AFTER_TRANSITION:
         {
+#if (CY_IP_MXSMIF_VERSION == 5u)
+            if (locBase == SMIF0_CORE0)
+            {
+                Cy_SysClk_ClkHfEnable(CY_SMIF_CORE_0_HF);
+            }
+            if (locBase == SMIF0_CORE1)
+            {
+                 Cy_SysClk_ClkHfEnable(CY_SMIF_CORE_1_HF);
+            }
+#endif
             /* Put external memory in active mode */
             Cy_SMIF_Enable(locBase, locContext);
         }
@@ -2775,6 +2575,16 @@ cy_en_syspm_status_t Cy_SMIF_HibernateCallback(cy_stc_syspm_callback_params_t *c
             else
             {
                 retStatus = CY_SYSPM_SUCCESS;
+#if (CY_IP_MXSMIF_VERSION == 5u)
+                if (locBase == SMIF0_CORE0)
+                {
+                    Cy_SysClk_ClkHfDisable(CY_SMIF_CORE_0_HF);
+                }
+                if (locBase == SMIF0_CORE1)
+                {
+                     Cy_SysClk_ClkHfDisable(CY_SMIF_CORE_1_HF);
+                }
+#endif
                 Cy_SMIF_Disable(locBase);
             }
             /* Add check memory that memory not in progress */
@@ -2786,6 +2596,16 @@ cy_en_syspm_status_t Cy_SMIF_HibernateCallback(cy_stc_syspm_callback_params_t *c
             /* Other driver is not ready for Deep Sleep. Restore Active mode
             * configuration.
             */
+#if (CY_IP_MXSMIF_VERSION == 5u)
+            if (locBase == SMIF0_CORE0)
+            {
+                Cy_SysClk_ClkHfEnable(CY_SMIF_CORE_0_HF);
+            }
+            if (locBase == SMIF0_CORE1)
+            {
+                 Cy_SysClk_ClkHfEnable(CY_SMIF_CORE_1_HF);
+            }
+#endif
             Cy_SMIF_Enable(locBase, locContext);
 
         }
@@ -2799,6 +2619,17 @@ cy_en_syspm_status_t Cy_SMIF_HibernateCallback(cy_stc_syspm_callback_params_t *c
 
         case CY_SYSPM_AFTER_TRANSITION:
         {
+#if (CY_IP_MXSMIF_VERSION == 5u)
+            if (locBase == SMIF0_CORE0)
+            {
+                Cy_SysClk_ClkHfEnable(CY_SMIF_CORE_0_HF);
+            }
+            if (locBase == SMIF0_CORE1)
+            {
+                 Cy_SysClk_ClkHfEnable(CY_SMIF_CORE_1_HF);
+            }
+#endif
+
             Cy_SMIF_Enable(locBase, locContext);
             /* Put external memory in active mode */
 
@@ -2812,7 +2643,7 @@ cy_en_syspm_status_t Cy_SMIF_HibernateCallback(cy_stc_syspm_callback_params_t *c
 
     return (retStatus);
 }
-#endif /* defined (CY_IP_MXS40SRSS) || defined (CY_IP_MXS40SSRSS) */
+#endif /* defined (CY_IP_MXS40SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS) */
 
 #if defined(__cplusplus)
 }

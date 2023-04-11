@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_efuse.h
-* \version 2.10
+* \version 2.20
 *
 * Provides the API declarations of the eFuse driver.
 *
@@ -45,6 +45,7 @@
 *   [PSoC 6 Programming Specifications]
 *   (http://www.cypress.com/documentation/programming-specifications/psoc-6-programming-specifications)
 * - CAT1B devices support writing to eFuse memory.
+* - CAT1C devices does not support writing to eFuse memory.
 *
 * One eFuse macro consists of 256 bits (32 * 8).
 * Consult the device-specific datasheet to determine how many
@@ -68,6 +69,11 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>2.20</td>
+*     <td>Updated driver to support the CAT1C family of devices.</td>
+*     <td>Added new family of devices.</td>
+*   </tr>
+*   <tr>
 *     <td>2.10</td>
 *     <td>Implementation for newly introduced APIs for CAT1B devices has been updated.</td>
 *     <td>Updated driver APIs support for CAT1B devices.</td>
@@ -83,7 +89,7 @@
 *   <tr>
 *     <td>1.10.4</td>
 *     <td>Minor documentation updates.</td>
-*     <td>Removed MISRA 2004 compliance details and verified MISRA 2012 complaince.</td>
+*     <td>Removed MISRA 2004 compliance details and verified MISRA 2012 compliance.</td>
 *   </tr>
 *   <tr>
 *     <td>1.10.3</td>
@@ -137,7 +143,7 @@
 /** The driver major version */
 #define CY_EFUSE_DRV_VERSION_MAJOR          2
 /** The driver minor version */
-#define CY_EFUSE_DRV_VERSION_MINOR          10
+#define CY_EFUSE_DRV_VERSION_MINOR          20
 /** The eFuse driver identifier */
 #define CY_EFUSE_ID                         (CY_PDL_DRV_ID(0x1AUL))
 /** The number of bits in the byte */
@@ -337,6 +343,25 @@ void Cy_EFUSE_Enable(EFUSE_Type *base);
 *
 *******************************************************************************/
 void Cy_EFUSE_Disable(EFUSE_Type *base);
+
+/*******************************************************************************
+* Function Name: Cy_EFUSE_IsEnabled
+****************************************************************************//**
+*
+* Check if EFUSE block is Enabled or Not.
+*
+* \param base
+* The pointer to the EFUSE instance.
+*
+* \return
+* - True if the EFUSE is enabled.
+* - False if EFUSE is disabled.
+*
+* \note
+* Supported in CAT1B devices.
+*
+*******************************************************************************/
+bool Cy_EFUSE_IsEnabled(EFUSE_Type *base);
 
 
 /*******************************************************************************

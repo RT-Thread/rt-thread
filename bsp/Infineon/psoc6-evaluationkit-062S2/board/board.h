@@ -24,7 +24,6 @@
 #ifdef BSP_USING_USBD
     #include "cy_usb_dev.h"
     #include "cy_usb_dev_hid.h"
-    #include "cycfg_usbdev.h"
 #endif
 
 /*FLASH CONFIG*/

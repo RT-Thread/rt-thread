@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -27,13 +27,18 @@
 * limitations under the License.
 *******************************************************************************/
 #include <string.h>
+#if !defined(COMPONENT_CAT5)
 #include "cy_device_headers.h"
+#endif
 #include "cyhal_timer_impl.h"
 #include "cyhal_hwmgr.h"
 #include "cyhal_gpio.h"
 #include "cyhal_interconnect.h"
 #include "cyhal_syspm.h"
 #include "cyhal_clock.h"
+#if defined(COMPONENT_CAT5)
+#include "cyhal_irq_impl.h"
+#endif
 
 #if (CYHAL_DRIVER_AVAILABLE_TIMER)
 
@@ -62,6 +67,15 @@ static const cy_stc_tcpwm_counter_config_t _cyhal_timer_default_config =
     .stopInput = CY_TCPWM_INPUT_0,
     .countInputMode = 0x3U,
     .countInput = CY_TCPWM_INPUT_1,
+#if (CY_IP_MXTCPWM_VERSION >= 2U)
+    .capture1InputMode = 0x3U,
+    .capture1Input = CY_TCPWM_INPUT_0,
+    .enableCompare1Swap = false,
+    .compare2 = 16384,
+    .compare3 = 16384,
+    .trigger0Event = CY_TCPWM_CNT_TRIGGER_ON_DISABLED,
+    .trigger1Event = CY_TCPWM_CNT_TRIGGER_ON_DISABLED,
+#endif
 };
 
 /** Convert timer direction from the HAL enum to the corresponding PDL constant
@@ -110,7 +124,12 @@ cy_rslt_t _cyhal_timer_init_hw(cyhal_timer_t *obj, const cy_stc_tcpwm_counter_co
     else if (CY_RSLT_SUCCESS == (result = _cyhal_utils_allocate_clock(&(obj->tcpwm.clock), timer, CYHAL_CLOCK_BLOCK_PERIPHERAL_16BIT, true)))
     {
         obj->tcpwm.dedicated_clock = true;
+        #if defined(COMPONENT_CAT5)
+        // CAT5 lacks hardware required to divide from 96MHz to 1MHz
+        result = cyhal_timer_set_frequency(obj, CYHAL_TIMER_DEFAULT_FREQ * 3);
+        #else
         result = cyhal_timer_set_frequency(obj, CYHAL_TIMER_DEFAULT_FREQ);
+        #endif
         if (CY_RSLT_SUCCESS == result)
         {
             if (CY_SYSCLK_SUCCESS != _cyhal_utils_peri_pclk_assign_divider(pclk, &(obj->tcpwm.clock)))
@@ -143,11 +162,49 @@ cy_rslt_t cyhal_timer_init(cyhal_timer_t *obj, cyhal_gpio_t pin, const cyhal_clo
         return CYHAL_TIMER_RSLT_ERR_BAD_ARGUMENT;
 
     memset(obj, 0, sizeof(cyhal_timer_t));
-    obj->tcpwm.resource.type = CYHAL_RSC_INVALID;
-    cy_rslt_t result = cyhal_hwmgr_allocate(CYHAL_RSC_TCPWM, &obj->tcpwm.resource);
-    if (CY_RSLT_SUCCESS == result)
+    cy_rslt_t result = CY_RSLT_SUCCESS;
+
+    #if defined(COMPONENT_CAT5)
+    // T2Timer requested
+    if((uint32_t)clk == (uint32_t)(CYHAL_CLOCK_T2TIMER))
     {
-        result = _cyhal_timer_init_hw(obj, &_cyhal_timer_default_config, clk);
+        result = cyhal_hwmgr_allocate(CYHAL_RSC_T2TIMER, &obj->t2timer.resource);
+        if (CY_RSLT_SUCCESS == result)
+        {
+            obj->t2timer.which_timer = obj->t2timer.resource.block_num;
+            result = _cyhal_t2timer_init(&obj->t2timer, NULL);
+            if(result == CY_RSLT_SUCCESS)
+            {
+                obj->is_t2timer = true;
+            }
+        }
+    }
+    else
+    {
+        // T2Timer not specifically requested, use either TCPWM or T2Timer
+    #endif
+        obj->tcpwm.resource.type = CYHAL_RSC_INVALID;
+        result = cyhal_hwmgr_allocate(CYHAL_RSC_TCPWM, &obj->tcpwm.resource);
+        if (CY_RSLT_SUCCESS == result)
+        {
+            result = _cyhal_timer_init_hw(obj, &_cyhal_timer_default_config, clk);
+    #if defined(COMPONENT_CAT5)
+            obj->is_t2timer = false;
+        }
+        else
+        {
+            result = cyhal_hwmgr_allocate(CYHAL_RSC_T2TIMER, &obj->t2timer.resource);
+            if (CY_RSLT_SUCCESS == result)
+            {
+                obj->t2timer.which_timer = obj->t2timer.resource.block_num;
+                result = _cyhal_t2timer_init(&obj->t2timer, NULL);
+                if(result == CY_RSLT_SUCCESS)
+                {
+                    obj->is_t2timer = true;
+                }
+            }
+        }
+    #endif
     }
 
     if (CY_RSLT_SUCCESS != result)
@@ -164,6 +221,10 @@ cy_rslt_t cyhal_timer_init_cfg(cyhal_timer_t *obj, const cyhal_timer_configurato
     obj->tcpwm.resource = *cfg->resource;
     obj->tcpwm.owned_by_configurator = true;
     cy_rslt_t result = _cyhal_timer_init_hw(obj, cfg->config, cfg->clock);
+    #if defined(COMPONENT_CAT5)
+    // Device configurator doesn't currently support T2Timer
+    obj->is_t2timer = false;
+    #endif
 
     if(CY_RSLT_SUCCESS != result)
     {
@@ -175,22 +236,45 @@ cy_rslt_t cyhal_timer_init_cfg(cyhal_timer_t *obj, const cyhal_timer_configurato
 cy_rslt_t cyhal_timer_configure(cyhal_timer_t *obj, const cyhal_timer_cfg_t *cfg)
 {
     cy_rslt_t rslt;
-    obj->default_value = cfg->value;
-    cy_stc_tcpwm_counter_config_t config = _cyhal_timer_default_config;
-    config.period = cfg->period;
-    config.compare0 = cfg->compare_value;
-    config.runMode = cfg->is_continuous ? CY_TCPWM_COUNTER_CONTINUOUS : CY_TCPWM_COUNTER_ONESHOT;
-    config.compareOrCapture = cfg->is_compare ? CY_TCPWM_COUNTER_MODE_COMPARE : CY_TCPWM_COUNTER_MODE_CAPTURE;
-    config.countDirection = _cyhal_timer_convert_direction(cfg->direction);
-    // DeInit will clear the interrupt mask; save it now and restore after we re-nit
-    uint32_t old_mask = Cy_TCPWM_GetInterruptMask(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
-    Cy_TCPWM_Counter_DeInit(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource), &config);
-    rslt = (cy_rslt_t)Cy_TCPWM_Counter_Init(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource), &config);
-    Cy_TCPWM_Counter_Enable(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
-    Cy_TCPWM_SetInterruptMask(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource), old_mask);
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        if((cfg->direction != CYHAL_TIMER_DIR_DOWN) || (cfg->is_compare != true) || (cfg->value != 0x0))
+        {
+            // T2Timer can only count down, it has no capture mode, and doesn't support starting values
+            return CYHAL_TIMER_RSLT_ERR_UNSUPPORTED;
+        }
+        cyhal_t2timer_cfg_t t2t_cfg = {
+            .mode = T2_ARM_TIMER_MODE_FREERUNNING,
+            .counter_mode = T2_ARM_TIMER_COUNTER_MODE_ONESHOT,
+            .duration = cfg->compare_value,
+        };
+        if(cfg->is_continuous)
+        {
+            t2t_cfg.counter_mode = T2_ARM_TIMER_COUNTER_MODE_WRAPPING;
+        }
+        rslt = _cyhal_t2timer_configure(&obj->t2timer, &t2t_cfg);
+    }
+    else
+    #endif
+    {
+        obj->default_value = cfg->value;
+        cy_stc_tcpwm_counter_config_t config = _cyhal_timer_default_config;
+        config.period = cfg->period;
+        config.compare0 = cfg->compare_value;
+        config.runMode = cfg->is_continuous ? CY_TCPWM_COUNTER_CONTINUOUS : CY_TCPWM_COUNTER_ONESHOT;
+        config.compareOrCapture = cfg->is_compare ? CY_TCPWM_COUNTER_MODE_COMPARE : CY_TCPWM_COUNTER_MODE_CAPTURE;
+        config.countDirection = _cyhal_timer_convert_direction(cfg->direction);
+        // DeInit will clear the interrupt mask; save it now and restore after we re-nit
+        uint32_t old_mask = Cy_TCPWM_GetInterruptMask(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
+        Cy_TCPWM_Counter_DeInit(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource), &config);
+        rslt = (cy_rslt_t)Cy_TCPWM_Counter_Init(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource), &config);
+        Cy_TCPWM_Counter_Enable(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
+        Cy_TCPWM_SetInterruptMask(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource), old_mask);
 
-    // This must be called after Cy_TCPWM_Counter_Init
-    cyhal_timer_reset(obj);
+        // This must be called after Cy_TCPWM_Counter_Init
+        cyhal_timer_reset(obj);
+    }
 
     return rslt;
 }
@@ -198,26 +282,45 @@ cy_rslt_t cyhal_timer_configure(cyhal_timer_t *obj, const cyhal_timer_cfg_t *cfg
 cy_rslt_t cyhal_timer_set_frequency(cyhal_timer_t *obj, uint32_t hz)
 {
     cy_rslt_t result = CY_RSLT_SUCCESS;
-    if(!obj->tcpwm.dedicated_clock)
-    {
-        result = CYHAL_TIMER_RSLT_ERR_SHARED_CLOCK;
-    }
 
-    const cyhal_clock_tolerance_t tolerance = {
-        .type = CYHAL_TOLERANCE_PERCENT,
-        .value = 2,
-    };
-    if(CY_RSLT_SUCCESS == result)
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
     {
-        if((CY_RSLT_SUCCESS == cyhal_clock_set_enabled(&obj->tcpwm.clock, false, false)) &&
-           (CY_RSLT_SUCCESS == cyhal_clock_set_frequency(&obj->tcpwm.clock, hz, &tolerance)) &&
-           (CY_RSLT_SUCCESS == cyhal_clock_set_enabled(&obj->tcpwm.clock, true, false)))
+        result = _cyhal_t2timer_set_frequency(&obj->t2timer, hz);
+    }
+    else
+    #endif
+    {
+        if(!obj->tcpwm.dedicated_clock)
         {
-            obj->tcpwm.clock_hz = cyhal_clock_get_frequency(&obj->tcpwm.clock);
+            result = CYHAL_TIMER_RSLT_ERR_SHARED_CLOCK;
         }
-        else
+        #if !defined(COMPONENT_CAT5)
+        const cyhal_clock_tolerance_t tolerance = {
+            .type = CYHAL_TOLERANCE_PERCENT,
+            .value = 2,
+        };
+        #endif
+        if(CY_RSLT_SUCCESS == result)
         {
-            result = CYHAL_TIMER_RSLT_ERR_CLOCK_INIT;
+            #if defined(COMPONENT_CAT5)
+            uint32_t current_freq = _cyhal_utils_get_peripheral_clock_frequency(&(obj->tcpwm.resource));
+            uint32_t divider = ((current_freq + hz - 1) / hz);
+            // _set_divider doesn't use this with CAT5, but to avoid warnings here is what it would use
+            en_clk_dst_t clk_dst = (en_clk_dst_t)(_CYHAL_TCPWM_DATA[_CYHAL_TCPWM_ADJUST_BLOCK_INDEX(obj->tcpwm.resource.block_num)].clock_dst + obj->tcpwm.resource.channel_num);
+            if(CY_RSLT_SUCCESS == _cyhal_utils_peri_pclk_set_divider(clk_dst, &obj->tcpwm.clock, (divider - 1)))
+            #else
+            if((CY_RSLT_SUCCESS == cyhal_clock_set_enabled(&obj->tcpwm.clock, false, false)) &&
+            (CY_RSLT_SUCCESS == cyhal_clock_set_frequency(&obj->tcpwm.clock, hz, &tolerance)) &&
+            (CY_RSLT_SUCCESS == cyhal_clock_set_enabled(&obj->tcpwm.clock, true, false)))
+            #endif
+            {
+                obj->tcpwm.clock_hz = cyhal_clock_get_frequency(&obj->tcpwm.clock);
+            }
+            else
+            {
+                result = CYHAL_TIMER_RSLT_ERR_CLOCK_INIT;
+            }
         }
     }
 
@@ -227,39 +330,101 @@ cy_rslt_t cyhal_timer_set_frequency(cyhal_timer_t *obj, uint32_t hz)
 cy_rslt_t cyhal_timer_start(cyhal_timer_t *obj)
 {
     CY_ASSERT(NULL != obj);
+    cy_rslt_t result = CY_RSLT_SUCCESS;
+    #if (CYHAL_DRIVER_AVAILABLE_SYSPM)
+    #if defined(COMPONENT_CAT5)
+    if (_cyhal_tcpwm_pm_transition_pending() || (obj->is_t2timer && obj->running))
+    #else
     if (_cyhal_tcpwm_pm_transition_pending())
+    #endif
     {
         return CYHAL_SYSPM_RSLT_ERR_PM_PENDING;
     }
-
-    Cy_TCPWM_Counter_Enable(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
-    #if defined(CY_IP_MXTCPWM) && (CY_IP_MXTCPWM_VERSION >= 2)
-    Cy_TCPWM_TriggerStart_Single(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
-    #else
-    Cy_TCPWM_TriggerStart(obj->tcpwm.base, (1 << _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource)));
     #endif
-    return CY_RSLT_SUCCESS;
+
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        result = _cyhal_t2timer_start(&obj->t2timer);
+        if(result == CY_RSLT_SUCCESS)
+        {
+            obj->running = true;
+        }
+    }
+    else
+    #endif
+    {
+        Cy_TCPWM_Counter_Enable(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
+        #if defined(CY_IP_MXTCPWM) && (CY_IP_MXTCPWM_VERSION >= 2)
+        Cy_TCPWM_TriggerStart_Single(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
+        #else
+        Cy_TCPWM_TriggerStart(obj->tcpwm.base, (1 << _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource)));
+        #endif
+    }
+    return result;
 }
 
 cy_rslt_t cyhal_timer_stop(cyhal_timer_t *obj)
 {
     CY_ASSERT(NULL != obj);
-    Cy_TCPWM_Counter_Disable(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
-    return CY_RSLT_SUCCESS;
+    cy_rslt_t result = CY_RSLT_SUCCESS;
+
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        result = _cyhal_t2timer_stop(&obj->t2timer);
+        if(result == CY_RSLT_SUCCESS)
+        {
+            obj->running = false;
+        }
+    }
+    else
+    #endif
+    {
+        Cy_TCPWM_Counter_Disable(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
+    }
+
+    return result;
 }
 
 cy_rslt_t cyhal_timer_reset(cyhal_timer_t *obj)
 {
     CY_ASSERT(NULL != obj);
-    Cy_TCPWM_Counter_SetCounter(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource), obj->default_value);
+    cy_rslt_t result = CY_RSLT_SUCCESS;
 
-    return CY_RSLT_SUCCESS;
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        result = _cyhal_t2timer_reset(&obj->t2timer);
+        if(result == CY_RSLT_SUCCESS)
+        {
+            obj->running = true;
+        }
+    }
+    else
+    #endif
+    {
+        Cy_TCPWM_Counter_SetCounter(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource), obj->default_value);
+    }
+
+    return result;
 }
 
 uint32_t cyhal_timer_read(const cyhal_timer_t *obj)
 {
     CY_ASSERT(NULL != obj);
-    return Cy_TCPWM_Counter_GetCounter(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
+    uint32_t read_value = 0;
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        read_value = _cyhal_t2timer_read(&obj->t2timer);
+    }
+    else
+    #endif
+    {
+        read_value = Cy_TCPWM_Counter_GetCounter(obj->tcpwm.base, _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource));
+    }
+    return read_value;
 }
 
 static cyhal_tcpwm_input_t _cyhal_timer_translate_input_signal(cyhal_timer_input_t event)
@@ -302,12 +467,24 @@ static cyhal_tcpwm_output_t _cyhal_timer_translate_output_signal(cyhal_timer_out
 
 cy_rslt_t cyhal_timer_connect_digital2(cyhal_timer_t *obj, cyhal_source_t source, cyhal_timer_input_t signal, cyhal_edge_type_t edge_type)
 {
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        return CYHAL_TIMER_RSLT_ERR_UNSUPPORTED;
+    }
+    #endif
     cyhal_tcpwm_input_t tcpwm_signal = _cyhal_timer_translate_input_signal(signal);
     return _cyhal_tcpwm_connect_digital(&(obj->tcpwm), source, tcpwm_signal, edge_type);
 }
 
 cy_rslt_t cyhal_timer_connect_digital(cyhal_timer_t *obj, cyhal_source_t source, cyhal_timer_input_t signal)
 {
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        return CYHAL_TIMER_RSLT_ERR_UNSUPPORTED;
+    }
+    #endif
 #if defined(CY_IP_M0S8PERI_TR) || defined(CY_IP_MXPERI_TR) || defined(CY_IP_MXSPERI)
     /* Signal type just tells us edge vs. level, but TCPWM lets you customize which edge you want. So default
      * to rising edge. If the application cares about the edge type, it can use connect_digital2 */
@@ -324,17 +501,35 @@ cy_rslt_t cyhal_timer_connect_digital(cyhal_timer_t *obj, cyhal_source_t source,
 
 cy_rslt_t cyhal_timer_enable_output(cyhal_timer_t *obj, cyhal_timer_output_t signal, cyhal_source_t *source)
 {
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        return CYHAL_TIMER_RSLT_ERR_UNSUPPORTED;
+    }
+    #endif
     cyhal_tcpwm_output_t tcpwm_signal = _cyhal_timer_translate_output_signal(signal);
     return _cyhal_tcpwm_enable_output(&(obj->tcpwm), tcpwm_signal, source);
 }
 
 cy_rslt_t cyhal_timer_disconnect_digital(cyhal_timer_t *obj, cyhal_source_t source, cyhal_timer_input_t signal)
 {
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        return CYHAL_TIMER_RSLT_ERR_UNSUPPORTED;
+    }
+    #endif
     return _cyhal_tcpwm_disconnect_digital(&(obj->tcpwm), source, _cyhal_timer_translate_input_signal(signal));
 }
 
 cy_rslt_t cyhal_timer_disable_output(cyhal_timer_t *obj, cyhal_timer_output_t signal)
 {
+    #if defined(COMPONENT_CAT5)
+    if(obj->is_t2timer)
+    {
+        return CYHAL_TIMER_RSLT_ERR_UNSUPPORTED;
+    }
+    #endif
     return _cyhal_tcpwm_disable_output(&(obj->tcpwm), _cyhal_timer_translate_output_signal(signal));
 }
 

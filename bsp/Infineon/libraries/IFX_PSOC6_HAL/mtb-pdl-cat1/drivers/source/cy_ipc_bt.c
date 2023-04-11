@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_ipc_bt.c
-* \version 1.70
+* \version 1.80
 *
 * \brief
 *  This driver provides the source code for BT IPC.
@@ -79,6 +79,7 @@ static cy_en_btipcdrv_status_t Cy_bt_PutBuffer(cy_stc_ipc_bt_context_t *btIpcCon
 static cy_en_btipcdrv_status_t Cy_BTIPC_HCI_FIFOPut(cy_stc_ipc_bt_context_t *btIpcContext, uint32_t *pMsg);
 cy_en_btipcdrv_status_t Cy_BTIPC_HPC_RelBuffer(cy_stc_ipc_bt_context_t *btIpcContext, uint32_t* msgPtr);
 
+CY_IPC_SECTION_BEGIN
 void Cy_BTIPC_IRQ_Handler(cy_stc_ipc_bt_context_t *btIpcContext)
 {
     uint32_t shadowIntr;
@@ -240,7 +241,7 @@ void Cy_BTIPC_IRQ_Handler(cy_stc_ipc_bt_context_t *btIpcContext)
             }
             else
             {
-                BTIPC_LOG_L0("Error: Msg recevied after FIFO is full !\n");
+                BTIPC_LOG_L0("Error: Msg received after FIFO is full !\n");
                 contextPtr->droppedHCI++;
                 /* Add assert here */
                 CY_ASSERT_L1(false);
@@ -249,8 +250,9 @@ void Cy_BTIPC_IRQ_Handler(cy_stc_ipc_bt_context_t *btIpcContext)
         }
     }
 }
+CY_IPC_SECTION_END
 
-
+CY_IPC_SECTION_BEGIN
 cy_en_btipcdrv_status_t Cy_BTIPC_HCI_RelChannel(cy_stc_ipc_bt_context_t *btIpcContext)
 {
     IPC_STRUCT_Type *ipcPtr;
@@ -270,6 +272,7 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HCI_RelChannel(cy_stc_ipc_bt_context_t *btIpcCo
 
     return CY_BT_IPC_DRV_SUCCESS;
 }
+CY_IPC_SECTION_END
 
 
 cy_en_btipcdrv_status_t Cy_BTIPC_HPC_RelChannel(cy_stc_ipc_bt_context_t *btIpcContext, void * buf)
@@ -573,6 +576,7 @@ cy_en_btipcdrv_status_t Cy_BTIPC_Deinit(cy_stc_ipc_bt_context_t *btIpcContext)
 }
 
 
+CY_IPC_SECTION_BEGIN
 cy_en_btipcdrv_status_t Cy_BTIPC_HCI_getPTI (cy_en_btipc_hcipti_t *pti, uint32_t *p_length, uint32_t *msgPtr)
 {
     cy_stc_ipc_msg_buff_t *ipcMsgBuf;
@@ -614,8 +618,9 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HCI_getPTI (cy_en_btipc_hcipti_t *pti, uint32_t
     *p_length = Cy_bt_getPLLegnth(*pti, bufAddr);
     return CY_BT_IPC_DRV_SUCCESS;
 }
+CY_IPC_SECTION_END
 
-
+CY_IPC_SECTION_BEGIN
 cy_en_btipcdrv_status_t Cy_BTIPC_HCI_GetReadBufPtr (cy_stc_ipc_bt_context_t *btIpcContext, void **ppData, size_t* pLength)
 {
     cy_stc_ipc_bt_context_t *contextPtr = btIpcContext;
@@ -698,8 +703,9 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HCI_GetReadBufPtr (cy_stc_ipc_bt_context_t *btI
     *ppData = srcPtr;
     return CY_BT_IPC_DRV_SUCCESS;
 }
+CY_IPC_SECTION_END
 
-
+CY_IPC_SECTION_BEGIN
 cy_en_btipcdrv_status_t Cy_BTIPC_HCI_GetWriteBufPtr(cy_stc_ipc_bt_context_t *btIpcContext, cy_en_btipc_hcipti_t pti, void **ppData, size_t length)
 {
     cy_stc_ipc_bt_context_t *contextPtr = btIpcContext;
@@ -725,9 +731,9 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HCI_GetWriteBufPtr(cy_stc_ipc_bt_context_t *btI
 
     *ppData = NULL;
 
-    /* Get the buffer type based on the payload type indeicator */
+    /* Get the buffer type based on the payload type indicator */
     bufType = Cy_bt_get_buf_type(pti);
-    /* Pick a free buffe from the pool of buffers */
+    /* Pick a free buffer from the pool of buffers */
     status = Cy_bt_GetBuffer (contextPtr, (void **)&destBuf, bufType, length);
     if (((uint32_t)status) != 0UL)
     {
@@ -743,8 +749,9 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HCI_GetWriteBufPtr(cy_stc_ipc_bt_context_t *btI
     *ppData = bPtr;
     return CY_BT_IPC_DRV_SUCCESS;
 }
+CY_IPC_SECTION_END
 
-
+CY_IPC_SECTION_BEGIN
 cy_en_btipcdrv_status_t Cy_BTIPC_HCI_Write(cy_stc_ipc_bt_context_t *btIpcContext, cy_en_btipc_hcipti_t pti, void *data, size_t length)
 {
     cy_stc_ipc_bt_context_t *contextPtr = btIpcContext;
@@ -781,7 +788,7 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HCI_Write(cy_stc_ipc_bt_context_t *btIpcContext
 #else
         ipcPacket.bufAddr = (uint8_t*)((uint32_t)bPtr - ((uint32_t)BTSS_DATA_RAM_IPC - 0x28000000UL));
 #endif
-        /* end of buffer preperation */
+        /* end of buffer preparation */
         msgPtr = (uint32_t*)((void*)&ipcPacket);
     }
     else /* Short Message */
@@ -814,6 +821,7 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HCI_Write(cy_stc_ipc_bt_context_t *btIpcContext
         return CY_BT_IPC_DRV_ERROR_LOCK_ACQUIRE;
     }
 }
+CY_IPC_SECTION_END
 
 cy_en_btipcdrv_status_t Cy_BTIPC_HPC_GetWriteBufPtr(cy_stc_ipc_bt_context_t *btIpcContext, void **ppData, size_t length)
 {
@@ -993,6 +1001,7 @@ cy_en_btipcdrv_status_t Cy_BTIPC_Buffer_RegisterCb(cy_stc_ipc_bt_context_t *btIp
 }
 
 
+CY_IPC_SECTION_BEGIN
 static cy_en_btipcdrv_status_t Cy_bt_GetBuffer (cy_stc_ipc_bt_context_t *btIpcContext, void **ppBuf, cy_en_btipc_buftype_t bufType, size_t length)
 {
     cy_stc_ipc_bt_context_t *contextPtr = btIpcContext;
@@ -1070,7 +1079,7 @@ static cy_en_btipcdrv_status_t Cy_bt_GetBuffer (cy_stc_ipc_bt_context_t *btIpcCo
     }
 
 }
-
+CY_IPC_SECTION_END
 
 static cy_en_btipcdrv_status_t Cy_bt_PutBuffer(cy_stc_ipc_bt_context_t *btIpcContext, cy_stc_ipc_bt_buf_t *bufDecriptor)
 {
@@ -1124,7 +1133,7 @@ static cy_en_btipcdrv_status_t Cy_bt_PutBuffer(cy_stc_ipc_bt_context_t *btIpcCon
 }
 
 
-/* Local function implmentation */
+/* Local function implementation */
 cy_en_btipcdrv_status_t Cy_bt_handle_hpclong_msg(cy_stc_ipc_bt_context_t *btIpcContext, uint32_t * msgPtr)
 {
     cy_stc_ipc_bt_context_t *contextPtr = btIpcContext;
@@ -1297,11 +1306,12 @@ cy_en_btipcdrv_status_t Cy_bt_handle_buf_add(cy_stc_ipc_bt_context_t *btIpcConte
 }
 
 
+CY_IPC_SECTION_BEGIN
 static cy_en_btipc_buftype_t Cy_bt_get_buf_type(cy_en_btipc_hcipti_t pti)
 {
     cy_en_btipc_buftype_t bufType;
 
-    /* To be done: Currently retruning Control buffer for all PTIs. Need to change it once we have clarity on it */
+    /* To be done: Currently returning Control buffer for all PTIs. Need to change it once we have clarity on it */
     switch (pti)
     {
         case CY_BT_IPC_HCI_CMD:
@@ -1334,8 +1344,9 @@ static cy_en_btipc_buftype_t Cy_bt_get_buf_type(cy_en_btipc_hcipti_t pti)
     }
     return bufType;
 }
+CY_IPC_SECTION_END
 
-
+CY_IPC_SECTION_BEGIN
 static uint32_t Cy_bt_getPLLegnth(cy_en_btipc_hcipti_t pti, uint8_t* bufAddr)
 {
     uint32_t length;
@@ -1377,8 +1388,9 @@ static uint32_t Cy_bt_getPLLegnth(cy_en_btipc_hcipti_t pti, uint8_t* bufAddr)
     }
     return length;
 }
+CY_IPC_SECTION_END
 
-
+CY_IPC_SECTION_BEGIN
 static bool Cy_bt_isOffsetNeeded(cy_en_btipc_hcipti_t pti)
 {
     bool ret;
@@ -1402,7 +1414,7 @@ static bool Cy_bt_isOffsetNeeded(cy_en_btipc_hcipti_t pti)
 
     return ret;
 }
-
+CY_IPC_SECTION_END
 
 static cy_en_btipcdrv_status_t Cy_BTIPC_HCI_FIFOPut(cy_stc_ipc_bt_context_t *btIpcContext, uint32_t *pMsg)
 {
@@ -1433,6 +1445,7 @@ static cy_en_btipcdrv_status_t Cy_BTIPC_HCI_FIFOPut(cy_stc_ipc_bt_context_t *btI
     return CY_BT_IPC_DRV_SUCCESS;
 }
 
+CY_IPC_SECTION_BEGIN
 cy_en_btipcdrv_status_t Cy_BTIPC_HCI_FIFOGet(cy_stc_ipc_bt_context_t *btIpcContext, uint32_t **ppMsg, uint8_t delete)
 {
     cy_stc_ipc_bt_context_t *contextPtr = btIpcContext;
@@ -1471,6 +1484,7 @@ cy_en_btipcdrv_status_t Cy_BTIPC_HCI_FIFOGet(cy_stc_ipc_bt_context_t *btIpcConte
     }
     return CY_BT_IPC_DRV_SUCCESS;
 }
+CY_IPC_SECTION_END
 
 uint16_t Cy_BTIPC_HCI_FIFOCount(cy_stc_ipc_bt_context_t *btIpcContext)
 {

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file  cy_sysint.c
-* \version 1.70
+* \version 1.80
 *
 * \brief
 * Provides an API implementation of the SysInt driver.
@@ -26,34 +26,51 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_M33SYSCPUSS) || defined(CY_IP_M55APPCPUSS)
+#if (defined (CY_IP_M33SYSCPUSS) || defined(CY_IP_M55APPCPUSS))
 
 #include "cy_sysint.h"
 
-#ifndef CY_SECURE_WORLD
+#ifndef CY_PDL_TZ_ENABLED
 static uint32_t *__ns_vector_table_rw_ptr = (uint32_t*)&__ns_vector_table_rw;
 #endif
 
+#if ((defined(CY_CPU_CORTEX_M0P) && (CY_CPU_CORTEX_M0P)) && !defined(CY_IP_M0SECCPUSS))
+void Cy_SysInt_SetNmiSource(cy_en_sysint_nmi_t nmiNum, cy_en_intr_t intrSrc)
+#else
 void Cy_SysInt_SetNmiSource(cy_en_sysint_nmi_t nmiNum, IRQn_Type intrSrc)
-
+#endif
 {
+#if ((defined(CY_CPU_CORTEX_M0P) && (CY_CPU_CORTEX_M0P)) && !defined(CY_IP_M0SECCPUSS))
+    CY_ASSERT_L1(CY_SYSINT_IS_PC_0);
+    (void)nmiNum;
+    (void)intrSrc;
+#else
     CY_ASSERT_L3(CY_SYSINT_IS_NMI_NUM_VALID(nmiNum));
 #if (CY_CPU_CORTEX_M55)
     MXCM55_CM55_NMI_CTL((uint32_t)nmiNum - 1UL) = (uint32_t)intrSrc;
 #else
     MXCM33_CM33_NMI_CTL((uint32_t)nmiNum - 1UL) = (uint32_t)intrSrc;
 #endif
+#endif
 }
 
 
+#if ((defined(CY_CPU_CORTEX_M0P) && (CY_CPU_CORTEX_M0P)) && !defined(CY_IP_M0SECCPUSS))
+cy_en_intr_t Cy_SysInt_GetNmiSource(cy_en_sysint_nmi_t nmiNum)
+#else
 IRQn_Type Cy_SysInt_GetNmiSource(cy_en_sysint_nmi_t nmiNum)
-
+#endif
 {
     CY_ASSERT_L3(CY_SYSINT_IS_NMI_NUM_VALID(nmiNum));
+
+#if ((defined(CY_CPU_CORTEX_M0P) && (CY_CPU_CORTEX_M0P)) && !defined(CY_IP_M0SECCPUSS))
+    return (cy_en_intr_t)nmiNum;
+#else
 #if (CY_CPU_CORTEX_M55)
     return ((IRQn_Type)(MXCM55_CM55_NMI_CTL((uint32_t)nmiNum - 1UL)));
 #else
     return ((IRQn_Type)(MXCM33_CM33_NMI_CTL((uint32_t)nmiNum - 1UL)));
+#endif
 #endif
 }
 
@@ -67,7 +84,7 @@ cy_en_sysint_status_t Cy_SysInt_Init(const cy_stc_sysint_t* config, cy_israddres
         CY_ASSERT_L3(CY_SYSINT_IS_PRIORITY_VALID(config->intrPriority));
 
         NVIC_SetPriority(config->intrSrc, config->intrPriority);
-#ifdef CY_SECURE_WORLD
+#ifdef CY_PDL_TZ_ENABLED
         if (SCB->VTOR == (uint32_t)__s_vector_table)
 #else
         if (SCB->VTOR == (uint32_t)__ns_vector_table_rw_ptr)
@@ -88,7 +105,7 @@ cy_en_sysint_status_t Cy_SysInt_Init(const cy_stc_sysint_t* config, cy_israddres
 cy_israddress Cy_SysInt_SetVector(IRQn_Type IRQn, cy_israddress userIsr)
 {
     cy_israddress prevIsr;
-#ifdef CY_SECURE_WORLD
+#ifdef CY_PDL_TZ_ENABLED
     uint32_t *ptr;
     if (SCB->VTOR == (uint32_t)__s_vector_table)
     {
@@ -120,7 +137,7 @@ cy_israddress Cy_SysInt_GetVector(IRQn_Type IRQn)
 {
     cy_israddress currIsr;
 
-#ifdef CY_SECURE_WORLD
+#ifdef CY_PDL_TZ_ENABLED
     /* Return the SRAM ISR address only if it was moved to __ramVectors */
     if (SCB->VTOR == (uint32_t)__s_vector_table)
     {
@@ -142,11 +159,12 @@ cy_israddress Cy_SysInt_GetVector(IRQn_Type IRQn)
     return (currIsr);
 }
 
-
+#if !(defined(CY_CPU_CORTEX_M0P) && (CY_CPU_CORTEX_M0P))
 void Cy_SysInt_SoftwareTrig(IRQn_Type IRQn)
 {
     NVIC->STIR = (uint32_t)IRQn & CY_SYSINT_STIR_MASK;
 }
+#endif
 
 #endif
 

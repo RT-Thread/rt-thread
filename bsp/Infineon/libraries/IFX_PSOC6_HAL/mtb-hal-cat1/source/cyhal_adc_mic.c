@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -57,7 +57,7 @@
 #include "cyhal_gpio.h"
 #include "cyhal_hwmgr.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_system.h"
 #include <string.h>
 
@@ -75,33 +75,13 @@ static const uint32_t _CYHAL_ADCMIC_TARGET_CLOCK_HZ     = 24000000u;
 static const uint32_t _CYHAL_ADCMIC_SAMPLE_RATE_HZ      = 480000u; /* Fixed by the HW */
 static const uint32_t _CYHAL_ADCMIC_ACQUISITION_TIME_NS = 2084u;   /* 1 / 480 ksps */
 
-static const cy_stc_adcmic_dc_path_config_t _CYHAL_ADCMIC_DEFAULT_DC_CONFIG =
+static const cy_stc_adcmic_dc_config_t _CYHAL_ADCMIC_DEFAULT_DC_CONFIG =
 {
     .range = CY_ADCMIC_DC_RANGE_3_6V,
-    .input = CY_ADCMIC_REFGND, /* Will be updated to match the actual input when a read is triggered */
-    .tmrLatch = true,
-};
-
-static const cy_stc_adcmic_timer_trigger_config_t _CYHAL_ADCMIC_TMR_TRG_CFG =
-{
-    .timerTrigger = true,
-    .fifoTrigger = false,
-    .period = 10000,
-    .input = CY_ADCMIC_TIMER_COUNT_INPUT_CLK_SYS
-};
-
-static const cy_stc_adcmic_config_t _CYHAL_ADCMIC_DEFAULT_CONFIG =
-{
-    .clockDiv = 1U,
-    .source = CY_ADCMIC_DC,
-    .sampleRate = CY_ADCMIC_480KSPS, /* This is the only sample rate supported for DC measurement */
-    .anaConfig = NULL, /* Only applicable for the analog mic input path */
-    .digConfig = NULL, /* Only applicable for the digital PDM input path */
-    /* Safe to cast away const because this struct is itself stored in flash */
-    .dcConfig = (cy_stc_adcmic_dc_path_config_t *)&_CYHAL_ADCMIC_DEFAULT_DC_CONFIG,
-    .biQuadConfig = NULL, /* BiQuad isn't used for DC measurements */
-    .fifoConfig = NULL, /* FIFO isn't used for DC measurements */
-    .tmrTrgConfig = &_CYHAL_ADCMIC_TMR_TRG_CFG,
+    .channel = CY_ADCMIC_REFGND, /* Will be updated to match the actual input when a read is triggered */
+    .timerPeriod = 10000,
+    .timerInput = CY_ADCMIC_TIMER_COUNT_INPUT_CLK_SYS
+    /* context will be populated during init */
 };
 
 static MXS40ADCMIC_Type *const _cyhal_adcmic_base[] =
@@ -194,7 +174,7 @@ static void _cyhal_adcmic_irq_handler(void)
         int16_t dc_data = Cy_ADCMic_GetDcResult(obj->base);
         if (obj->async_transfer_in_uv)
         {
-            *(obj->async_buff_next) = Cy_ADCMic_CountsTo_uVolts(obj->base, dc_data);
+            *(obj->async_buff_next) = Cy_ADCMic_CountsTo_uVolts(dc_data, &obj->pdl_context);
         }
         else
         {
@@ -243,26 +223,6 @@ static cy_en_adcmic_dc_channel_t _cyhal_adcmic_convert_channel_sel(uint8_t bit_i
         CY_ADCMIC_GPIO5,
         CY_ADCMIC_GPIO6,
         CY_ADCMIC_GPIO7,
-        CY_ADCMIC_GPIO8,
-        CY_ADCMIC_GPIO9,
-        CY_ADCMIC_GPIO10,
-        CY_ADCMIC_GPIO11,
-        CY_ADCMIC_GPIO12,
-        CY_ADCMIC_GPIO13,
-        CY_ADCMIC_GPIO14,
-        CY_ADCMIC_GPIO15,
-        CY_ADCMIC_GPIO16,
-        CY_ADCMIC_GPIO17,
-        CY_ADCMIC_GPIO18,
-        CY_ADCMIC_GPIO19,
-        CY_ADCMIC_GPIO20,
-        CY_ADCMIC_GPIO21,
-        CY_ADCMIC_GPIO22,
-        CY_ADCMIC_GPIO23,
-        CY_ADCMIC_GPIO24,
-        CY_ADCMIC_GPIO25,
-        CY_ADCMIC_GPIO26,
-        CY_ADCMIC_GPIO27
     };
 
     if (bit_index < sizeof(gpio_channel) / sizeof(gpio_channel[0]))
@@ -357,12 +317,7 @@ cy_rslt_t _cyhal_adc_config_hw(cyhal_adc_t *obj, const cyhal_adc_configurator_t*
 
     if (result == CY_RSLT_SUCCESS)
     {
-        result = (cy_rslt_t)Cy_ADCMic_Init(obj->base, cfg->config);
-    }
-
-    if (result == CY_RSLT_SUCCESS)
-    {
-        result = (cy_rslt_t)Cy_ADCMic_SetDcConvTime(obj->base, CY_ADCMIC_DC_CONV_TIME_15_US);
+        result = (cy_rslt_t)Cy_ADCMic_Init(obj->base, cfg->config, CY_ADCMIC_DC);
     }
 
     if (result == CY_RSLT_SUCCESS)
@@ -372,7 +327,7 @@ cy_rslt_t _cyhal_adc_config_hw(cyhal_adc_t *obj, const cyhal_adc_configurator_t*
         cy_stc_sysint_t irqCfg = { _cyhal_adcmic_irq_n[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT };
         Cy_SysInt_Init(&irqCfg, _cyhal_adcmic_irq_handler);
         NVIC_EnableIRQ(_cyhal_adcmic_irq_n[obj->resource.block_num]);
-        Cy_ADCMic_StartConvert(obj->base);
+        /* No need to explicitly start conversion, that happens automatically when we enable */
     }
     else
     {
@@ -385,7 +340,17 @@ cy_rslt_t cyhal_adc_init(cyhal_adc_t *obj, cyhal_gpio_t pin, const cyhal_clock_t
 {
     cyhal_adc_configurator_t config;
     config.resource = NULL;
-    config.config = &_CYHAL_ADCMIC_DEFAULT_CONFIG;
+    cy_stc_adcmic_dc_config_t dcConfig = _CYHAL_ADCMIC_DEFAULT_DC_CONFIG;
+    dcConfig.context = &obj->pdl_context;
+
+    cy_stc_adcmic_config_t pdl_config =
+    {
+        .micConfig   = NULL,
+        .pdmConfig   = NULL,
+        .dcConfig    = &dcConfig
+    };
+
+    config.config = &pdl_config;
     config.clock = clk;
     config.num_channels = 0u;
 
@@ -646,7 +611,7 @@ int32_t cyhal_adc_read(const cyhal_adc_channel_t *obj)
 int32_t cyhal_adc_read_uv(const cyhal_adc_channel_t *obj)
 {
     CY_ASSERT(NULL != obj);
-    return Cy_ADCMic_CountsTo_uVolts(obj->adc->base, _cyhal_adc_read_raw(obj));
+    return Cy_ADCMic_CountsTo_uVolts(_cyhal_adc_read_raw(obj), &obj->adc->pdl_context);
 }
 
 static void _cyhal_adcmic_start_async_read(cyhal_adc_t* obj, size_t num_scan, int32_t* result_list)

@@ -1,7 +1,0 @@
-capsense
-core-lib
-core-make
-mtb-hal-cat1
-mtb-pdl-cat1
-psoc6cm0p
-recipe-make-cat1a

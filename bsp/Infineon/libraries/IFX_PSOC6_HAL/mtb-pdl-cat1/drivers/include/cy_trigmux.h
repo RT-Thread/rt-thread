@@ -1,6 +1,6 @@
 /*******************************************************************************
 * \file cy_trigmux.h
-* \version 1.40
+* \version 1.50
 *
 *  This file provides constants and parameter values for the Trigger multiplexer driver.
 *
@@ -168,6 +168,11 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>1.50</td>
+*     <td>Updated driver to support the CAT1C family of devices.</td>
+*     <td>Added new family of devices.</td>
+*   </tr>
+*   <tr>
 *     <td>1.40</td>
 *     <td>Fixed MISRA violation.</td>
 *     <td>MISRA compliance.</td>
@@ -184,7 +189,7 @@
 *   <tr>
 *     <td>1.20.3</td>
 *     <td>Minor documentation updates.</td>
-*     <td>Removed MISRA 2004 compliance details and verified MISRA 2012 complaince.</td>
+*     <td>Removed MISRA 2004 compliance details and verified MISRA 2012 compliance.</td>
 *   </tr>
 *   <tr>
 *     <td>1.20.2</td>
@@ -284,7 +289,7 @@ extern "C" {
 #define CY_TRIGMUX_DRV_VERSION_MAJOR       1
 
 /** The driver minor version */
-#define CY_TRIGMUX_DRV_VERSION_MINOR       40
+#define CY_TRIGMUX_DRV_VERSION_MINOR       50
 
 /** TRIGMUX PDL ID */
 #define CY_TRIGMUX_ID                       CY_PDL_DRV_ID(0x33UL) /**< The trigger multiplexer driver identifier */

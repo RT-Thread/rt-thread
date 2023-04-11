@@ -1,13 +1,14 @@
 /***************************************************************************//**
 * \file cy_ipc_sema.h
-* \version 1.70
+* \version 1.80
 *
 * \brief
 * Header file for IPC SEM functions
 *
 ********************************************************************************
 * \copyright
-* Copyright 2016-2020 Cypress Semiconductor Corporation
+* Copyright (c) (2020-2022), Cypress Semiconductor Corporation (an Infineon company) or
+* an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");

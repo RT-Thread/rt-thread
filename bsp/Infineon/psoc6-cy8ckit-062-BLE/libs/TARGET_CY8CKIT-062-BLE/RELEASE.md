@@ -1,5 +1,5 @@
 # CY8CKIT-062-BLE BSP Release Notes
-The PSoC 6 BLE Pioneer Kit is a low-cost hardware platform that enables design and debug of the PSoC 63 Line (CY8C6347BZI-BLD53).
+The PSoC™ 6 BLE Pioneer Kit is a low-cost hardware platform that enables design and debug of the PSoC™ 63 Line (CY8C6347BZI-BLD53).
 
 NOTE: BSPs are versioned by family. This means that version 1.2.0 of any BSP in a family (eg: PSoC™ 6) will have the same software maturity level. However, not all updates are necessarily applicable for each BSP in the family so not all version numbers will exist for each board. Additionally, new BSPs may not start at version 1.0.0. In the event of adding a common feature across all BSPs, the libraries are assigned the same version number. For example if BSP_A is at v1.3.0 and BSP_B is at v1.2.0, the event will trigger a version update to v1.4.0 for both BSP_A and BSP_B. This allows the common feature to be tracked in a consistent way.
 
@@ -15,6 +15,19 @@ The CY8CKIT-062-BLE library includes the following:
 * API documentation
 
 ### What Changed?
+#### v4.1.0
+* Add macro `CYBSP_USER_BTN_DRIVE` indicating the drive mode that should be used for user buttons
+* PSoC 64 boards: Fix cybsp_init not recognizing that a prebuilt CM0+ image is in use when using TFM.
+#### v4.0.0
+Note: This revision is only compatible with ModusToolbox Tools 3.0 and newer.
+* Removed default dependency on CAPSENSE™ middleware. The library manager can be used to add this dependency if desired.
+* Updated recipe-make, core-make, and PDL to new major versions
+* Regenerated code with Configurators from ModusToolbox™ v3.0.0
+* Renamed top level board makefile to bsp.mk
+* Removed version.xml file in favor of new props.json
+#### v3.1.0
+* Added optional macro CYBSP_CUSTOM_SYSCLK_PM_CALLBACK to allow overriding default clock power management behavior.
+* Enable AIROC™ BLE stack for MCUs with an integrated BLE radio
 #### v3.0.0
 * Updated to HAL dependency to v2.0.0
 * Updated CAPSENSE™ dependency to v3.0.0
@@ -69,12 +82,12 @@ This version of the CY8CKIT-062-BLE BSP was validated for compatibility with the
 
 | Software and Tools                        | Version |
 | :---                                      | :----:  |
-| ModusToolbox™ Software Environment        | 2.4.0   |
+| ModusToolbox™ Software Environment        | 3.0.0   |
 | GCC Compiler                              | 10.3.1  |
-| IAR Compiler                              | 8.4     |
-| ARM Compiler                              | 6.11    |
+| IAR Compiler                              | 9.30.1  |
+| ARM Compiler                              | 6.16    |
 
-Minimum required ModusToolbox™ Software Environment: v2.4.0
+Minimum required ModusToolbox™ Software Environment: v3.0.0
 
 ### More information
 * [CY8CKIT-062-BLE BSP API Reference Manual][api]
@@ -86,4 +99,4 @@ Minimum required ModusToolbox™ Software Environment: v2.4.0
 [api]: https://infineon.github.io/TARGET_CY8CKIT-062-BLE/html/modules.html
 
 ---
-© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2021.
+© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2022.
