@@ -105,8 +105,8 @@ void BOARD_InitPins(void) {
       IOMUXC_GPIO_AD_B0_02_GPIO1_IO02,        /* GPIO_AD_B0_02 is configured as GPIO1_IO02 */
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
   IOMUXC_SetPinMux(
-	  IOMUXC_GPIO_AD_B0_11_GPIO1_IO11,        /* GPIO_AD_B0_02 is configured as GPIO1_IO02 */
-	  0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+      IOMUXC_GPIO_AD_B0_11_GPIO1_IO11,        /* GPIO_AD_B0_02 is configured as GPIO1_IO02 */
+      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 is configured as LPUART1_TX */
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
@@ -187,15 +187,15 @@ void BOARD_InitPins(void) {
                                                  Pull Up / Down Config. Field: 100K Ohm Pull Down
                                                  Hyst. Enable Field: Hysteresis Disabled */
   IOMUXC_SetPinConfig(
-	  IOMUXC_GPIO_AD_B0_11_GPIO1_IO11,        /* GPIO_AD_B0_11 PAD functional properties : */
-	  0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
+      IOMUXC_GPIO_AD_B0_11_GPIO1_IO11,        /* GPIO_AD_B0_11 PAD functional properties : */
+      0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
                                                  Drive Strength Field: R0/6
                                                  Speed Field: medium(100MHz)
                                                  Open Drain Enable Field: Open Drain Disabled
                                                  Pull / Keep Enable Field: Pull/Keeper Enabled
                                                  Pull / Keep Select Field: Keeper
                                                  Pull Up / Down Config. Field: 100K Ohm Pull Down
-											   	 Hyst. Enable Field: Hysteresis Disabled */
+                                                 Hyst. Enable Field: Hysteresis Disabled */
   IOMUXC_SetPinConfig(
       IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 PAD functional properties : */
       0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
