@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_syspm.h
-* \version 5.70
+* \version 5.91
 *
 * Provides the function definitions for the power management API.
 *
@@ -27,9 +27,9 @@
 /**
 * \addtogroup group_syspm
 * \{
-* \defgroup group_pd_pdcm            PDCM         (Power Dependency Control Matrix)
-* \defgroup group_pd_ppu             PPU         (Power Policy Unit)
-* \defgroup group_btss               BTSS Host API(Bluetooth Sub System Host API)
+* \defgroup group_syspm_pdcm            PDCM (Power Dependency Control Matrix)
+* \defgroup group_syspm_ppu             PPU (Power Policy Unit)
+* \defgroup group_syspm_btss            BTSS Host API(Bluetooth Sub System Host API)
 * \} */
 
 /**
@@ -144,6 +144,28 @@
 * * SRSS implements a Power Dependency Control Matrix (PDCM) that allows hardware
 * and software to specify dependencies between power domains.
 *
+* <b>C) CAT1C Architecture</b>:
+*
+* 1) CAT1C MCU's can operate in different power modes that are intended to minimize
+* the average power consumption in an application. The power modes supported by
+* CATC devices in the order of decreasing power consumption are:
+* * <b>ACTIVE </b> - all peripherals are available
+* * <b>Low-Power Active (LPACTIVE) profile </b>- Low-power profile of Active mode where
+* all peripherals including the CPU are available, but with limited capability
+* * <b>SLEEP </b> - all peripherals except the CPU are available
+* * <b>Low-Power Sleep (LPSLEEP) profile </b>- Low-power profile of Sleep mode where
+* all peripherals except the CPU are available, but with limited capability
+* * <b>DEEPSLEEP </b>- only low-frequency peripherals are available
+* * <b>HIBERNATE </b>- the device and I/O states are frozen and the device resets on wakeup
+* * <b>XRES </b>- the device enters this state when the XRES_L pin is asserted
+*
+* Active, Sleep, and DeepSleep are standard Arm-defined power modes supported by
+* the Arm CPUs and Instruction Set Architecture (ISA).
+* LPACTIVE and LPSLEEP are similar to Active and Sleep modes, respectively; however,
+* the high-current components are either frequency or current limited or turned off.
+* Hibernate mode and XRES state are the lowest power mode/state that the CATC devices
+* can be in.
+*
 * \subsection group_syspm_system_power_modes System Power Modes
 * * <b>LP</b> - In this mode, code is executed and all logic and
 *   memories are powered. Firmware may disable/reduce clocks for specific
@@ -191,7 +213,7 @@
 *   \ref group_syspm_wakingup_from_hibernate in Configuration considerations.
 *
 * \warning * Above is list of all the System Power modes in general, a device
-* support sbuset of the above System Power modes.Please refer to TRM for more information.
+* support subset of the above System Power modes.Please refer to TRM for more information.
 *
 * \subsubsection group_syspm_switching_into_lp Switching the System into Low Power
 * To set system LP mode you need to set LP voltage for the active core
@@ -825,6 +847,109 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>5.91</td>
+*     <td>Updated \ref Cy_SysPm_Init() function.</td>
+*     <td>To remove the clearing of reset reason.</td>
+*   </tr>
+*   <tr>
+*     <td>5.90</td>
+*     <td>
+*           Added new function \ref Cy_SysPm_SetupDeepSleepRAM().
+*     </td>
+*     <td>Added support for DSRAM Setup for CAT1B devices.</td>
+*   </tr>
+*   <tr>
+*     <td rowspan="4">5.80</td>
+*     <td>
+*         Support for CAT1C devices.
+*     </td>
+*     <td>Power Management support for CAT1C devices.</td>
+*   <tr>
+*     <td>New API's Added/Modified
+*         * Cy_SysPm_IsBgRefCtrl()
+*         * Cy_SysPm_BgRefCtrl()
+*         * Cy_SysPm_LdoSetMode()
+*         * Cy_SysPm_LdoGetMode()
+*         * Cy_SysPm_LdoIsEnabled()
+*         * Cy_SysPm_Cm7IsActive()
+*         * Cy_SysPm_Cm7IsSleep()
+*         * Cy_SysPm_Cm7IsDeepSleep()
+*         * Cy_SysPm_Cm7IsLowPower()
+*         * Cy_SysPm_Cm0IsActive()
+*         * Cy_SysPm_Cm0IsSleep()
+*         * Cy_SysPm_Cm0IsLowPower()
+*         * Cy_SysPm_Cm0IsDeepSleep()
+*         * Cy_SysPm_IsSystemLp()
+*         * Cy_SysPm_PmicEnable()
+*         * Cy_SysPm_PmicDisable()
+*         * Cy_SysPm_PmicAlwaysEnable()
+*         * Cy_SysPm_PmicEnableOutput()
+*         * Cy_SysPm_PmicDisableOutput()
+*         * Cy_SysPm_PmicLock()
+*         * Cy_SysPm_PmicUnlock()
+*         * Cy_SysPm_PmicIsEnabled()
+*         * Cy_SysPm_PmicIsOutputEnabled()
+*         * Cy_SysPm_PmicIsLocked()
+*         * Cy_SysPm_OvdEnable()
+*         * Cy_SysPm_OvdDisable()
+*         * Cy_SysPm_OvdVdddSelect()
+*         * Cy_SysPm_OvdVddaSelect()
+*         * Cy_SysPm_OvdActionSelect()
+*         * Cy_SysPm_BodEnable()
+*         * Cy_SysPm_BodDisable()
+*         * Cy_SysPm_BodVdddSelect()
+*         * Cy_SysPm_BodVddaSelect()
+*         * Cy_SysPm_BodActionSelect()
+*         * Cy_SysPm_SupplySupervisionStatus()
+*         * Cy_SysPm_SystemIsMinRegulatorCurrentSet()
+*         * Cy_SysPm_LinearRegDisable()
+*         * Cy_SysPm_LinearRegEnable()
+*         * Cy_SysPm_LinearRegGetStatus()
+*         * Cy_SysPm_DeepSleepRegDisable()
+*         * Cy_SysPm_DeepSleepRegEnable()
+*         * Cy_SySPm_IsDeepSleepRegEnabled()
+*         * Cy_SysPm_ReghcSelectMode()
+*         * Cy_SysPm_ReghcGetMode()
+*         * Cy_SysPm_ReghcSelectDriveOut()
+*         * Cy_SysPm_ReghcGetDriveOut()
+*         * Cy_SysPm_ReghcAdjustOutputVoltage()
+*         * Cy_SysPm_ReghcDisableIntSupplyWhileExtActive()
+*         * Cy_SysPm_ReghcEnableIntSupplyWhileExtActive()
+*         * Cy_SysPm_ReghcDisablePmicEnableOutput()
+*         * Cy_SysPm_ReghcEnablePmicEnableOutput()
+*         * Cy_SysPm_ReghcEnablePmicStatusInput()
+*         * Cy_SysPm_ReghcDisablePmicStatusInput()
+*         * Cy_SysPm_ReghcSetPmicStatusWaitTime()
+*         * Cy_SysPm_ReghcIsConfigured()
+*         * Cy_SysPm_ReghcSetConfigured()
+*         * Cy_SysPm_ReghcDisable()
+*         * Cy_SysPm_ReghcEnable()
+*         * Cy_SysPm_ReghcDisablePmicStatusTimeout()
+*         * Cy_SysPm_ReghcEnablePmicStatusTimeout()
+*         * Cy_SysPm_ReghcIsEnabled()
+*         * Cy_SysPm_ReghcIsStatusOk()
+*         * Cy_SysPm_ReghcIsSequencerBusy()
+*         * Cy_SysPm_ReghcDisableVAdj()
+*         * Cy_SysPm_ReghcEnableVAdj()
+*         * Cy_SysPm_ReghcDisablePmicInDeepSleep()
+*         * Cy_SysPm_ReghcEnablePmicInDeepSleep()
+*         * Cy_SysPm_ReghcIsOcdWithinLimits()
+*         * Cy_SysPm_ReghcIsCircuitEnabledAndOperating()
+*
+*     </td>
+*     <td>New API's to handle CAT1C devices.</td>
+*   <tr>
+*     <td>Added \ref group_syspm_functions_ovd, \ref group_syspm_functions_bod, \ref group_syspm_functions_linearreg and \ref group_syspm_functions_reghc API's.</td>
+*     <td>New API's to handle Power Management in CAT1C Devices.</td>
+*   </tr>
+*   <tr>
+*     <td>
+*           Added following functions for BTSS IP Reset:
+*           \ref Cy_BTSS_AssertReset(), \ref Cy_BTSS_IsResetAsserted(),
+*     </td>
+*     <td>Added API's to support for BTSS IP Reset.</td>
+*   </tr>
+*   <tr>
 *     <td rowspan="3">5.70</td>
 *     <td>
 *         Support for CAT1B devices.
@@ -842,15 +967,13 @@
 *         * Cy_SysPm_TriggerSoftReset()
 *         * Cy_SysPm_GetHibernateWakeupCause()
 *         * Cy_SysPm_ClearHibernateWakeupCause()
-*         * Cy_SysPm_NwellRegEnable()
-*         * Cy_SysPm_IsNwellRegEnabled()
 *         * Cy_SysPm_CoreBuckSetVoltage()
 *         * Cy_SysPm_CoreBuckGetVoltage()
 *         * Cy_SysPm_CoreBuckSetMode()
 *         * Cy_SysPm_CoreBuckGetMode()
 *         * Cy_SysPm_CoreBuckConfig()
 *         * Cy_SysPm_CoreBuckStatus()
-*         * Cy_SysPm_LdoExtraRequester()
+*         * Cy_SysPm_LdoExtraRequesterConfig()
 *         * Cy_SysPm_SdrConfigure()
 *         * Cy_SysPm_SdrSetVoltage()
 *         * Cy_SysPm_SdrGetVoltage()
@@ -871,10 +994,9 @@
 *     </td>
 *     <td>New API's to handle CAT1B devices.</td>
 *   <tr>
-*     <td>Added \ref group_pd_ppu, \ref group_pd_pdcm and \ref group_btss API's.</td>
+*     <td>Added \ref group_syspm_ppu, \ref group_syspm_pdcm and \ref group_syspm_btss API's.</td>
 *     <td>New API's to handle Power Management in CAT1B Devices.</td>
 *   </tr>
-
 *   </tr>
 *   <tr>
 *     <td rowspan="2">5.60</td>
@@ -920,8 +1042,8 @@
 *   </tr>
 *   <tr>
 *     <td>Updated the \ref Cy_SysPm_CpuEnterDeepSleep() function to ensure the Low-power mode
-*         entry abort when a system call intiated by Cortex-M4 or Cortex-M0+ is pending.</td>
-*     <td>Fixed the issue when the non-blocking flash write intitated by the Cortex-M4 application
+*         entry abort when a system call initiated by Cortex-M4 or Cortex-M0+ is pending.</td>
+*     <td>Fixed the issue when the non-blocking flash write initiated by the Cortex-M4 application
 *         fails to complete because the Cortex-M0+ CPU is in Deep Sleep mode.</td>
 *   </tr>
 *   <tr>
@@ -944,7 +1066,7 @@
 *           \ref Cy_SysPm_SystemSetNormalRegulatorCurrent,
 *           \ref Cy_SysPm_LdoSetVoltage, \ref Cy_SysPm_LdoSetMode,
 *           \ref Cy_SysPm_BuckEnable, \ref Cy_SysPm_BuckSetVoltage1,
-*           Following functions are updated as unavailble for PSoC 64 devices:
+*           Following functions are updated as unavailable for PSoC 64 devices:
 *           \ref Cy_SysPm_WriteVoltageBitForFlash, \ref Cy_SysPm_SaveRegisters,
 *           \ref Cy_SysPm_RestoreRegisters,
 *           \ref Cy_SysPm_BuckSetVoltage2, \ref Cy_SysPm_BuckEnableVoltage2,
@@ -1485,6 +1607,10 @@
 *   \defgroup group_syspm_functions_pmic       PMIC
 *   \defgroup group_syspm_functions_backup     Backup Domain
 *   \defgroup group_syspm_functions_callback   Low Power Callbacks
+*   \defgroup group_syspm_functions_linearreg  Linear Regulator
+*   \defgroup group_syspm_functions_reghc      REGHC (High Current Regulator)
+*   \defgroup group_syspm_functions_ovd        OVD
+*   \defgroup group_syspm_functions_bod        BOD
 * \}
 * \defgroup group_syspm_data_structures Data Structures
 * \defgroup group_syspm_data_enumerates Enumerated Types
@@ -1525,7 +1651,7 @@ extern "C" {
 #define CY_SYSPM_DRV_VERSION_MAJOR       5
 
 /** Driver minor version */
-#define CY_SYSPM_DRV_VERSION_MINOR       70
+#define CY_SYSPM_DRV_VERSION_MINOR       91
 
 /** SysPm driver identifier */
 #define CY_SYSPM_ID                      (CY_PDL_DRV_ID(0x10U))
@@ -1578,6 +1704,8 @@ extern "C" {
 
 /* Macro to validate parameters in Cy_SysPm_ExecuteCallback() function */
 #if defined (CY_IP_MXS40SRSS)
+#if (CY_IP_MXS40SRSS_VERSION < 3)
+
 /**
 * \note
 * This macro is available for CAT1A devices.
@@ -1587,7 +1715,56 @@ extern "C" {
                                                          ((type) == CY_SYSPM_HIBERNATE) || \
                                                          ((type) == CY_SYSPM_ULP) || \
                                                          ((type) == CY_SYSPM_LP))
-#endif
+#endif /* (CY_IP_MXS40SRSS_VERSION < 3) */
+
+#if (CY_IP_MXS40SRSS_VERSION >= 3)
+
+/* Macro to validate parameters in Cy_SysPm_ExecuteCallback() function */
+/**
+* \note
+* This macro is available for CAT1C devices.
+**/
+#define CY_SYSPM_IS_CALLBACK_TYPE_VALID(type)           (((type) == CY_SYSPM_SLEEP) || \
+                                                         ((type) == CY_SYSPM_DEEPSLEEP) || \
+                                                         ((type) == CY_SYSPM_HIBERNATE) || \
+                                                         ((type) == CY_SYSPM_LPACTIVE_ENTER) || \
+                                                         ((type) == CY_SYSPM_LPACTIVE_EXIT))
+
+/* Macro to validate OVD ACTION */
+/**
+* \note
+* This macro is available for CAT1C devices.
+**/
+
+#define CY_OVD_CHECK_ACTION_CFG(ovdActionSelect)        (((ovdActionSelect) == CY_SYSPM_OVD_ACTION_NOTHING) || \
+                                                         ((ovdActionSelect) == CY_SYSPM_OVD_ACTION_FAULT) || \
+                                                         ((ovdActionSelect) == CY_SYSPM_OVD_ACTION_RESET))
+
+/* Macro to validate BOD ACTION */
+/**
+* \note
+* This macro is available for CAT1C devices.
+**/
+
+#define CY_BOD_CHECK_ACTION_CFG(bodActionSelect)        (((bodActionSelect) == CY_SYSPM_BOD_ACTION_NOTHING) || \
+                                                         ((bodActionSelect) == CY_SYSPM_BOD_ACTION_FAULT) || \
+                                                         ((bodActionSelect) == CY_SYSPM_BOD_ACTION_RESET))
+
+/* Macro to validate SUPPLY ENTITY */
+/**
+* \note
+* This macro is available for CAT1C devices.
+**/
+#define CY_OVD_CHECK_SUPPLY_ENTITY(supplyEntitySelect)  (((supplyEntitySelect) == CY_SYSPM_ENTITY_BOD_VDDD) || \
+                                                         ((supplyEntitySelect) == CY_SYSPM_ENTITY_BOD_VDDA) || \
+                                                         ((supplyEntitySelect) == CY_SYSPM_ENTITY_BOD_VCCD) || \
+                                                         ((supplyEntitySelect) == CY_SYSPM_ENTITY_OVD_VDDD) || \
+                                                         ((supplyEntitySelect) == CY_SYSPM_ENTITY_OVD_VDDA) || \
+                                                         ((supplyEntitySelect) == CY_SYSPM_ENTITY_OVD_VCCD))
+
+#endif /* (CY_IP_MXS40SRSS_VERSION >= 3) */
+#endif /* defined (CY_IP_MXS40SRSS) */
+
 
 #if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
 /**
@@ -1605,6 +1782,9 @@ extern "C" {
 #define CY_SYSPM_IS_DEEPSLEEP_MODE_VALID(mode)             (((mode) == CY_SYSPM_DEEPSLEEP)     || \
                                                             ((mode) == CY_SYSPM_DEEPSLEEP_RAM) || \
                                                             ((mode) == CY_SYSPM_DEEPSLEEP_OFF))
+/* Macro to validate parameters in Cy_SysPm_SetupDeepSleepRAM() function */
+#define CY_SYSPM_IS_DSRAM_CHECK_VALID(dsramCheck)          (((dsramCheck) == CY_SYSPM_PRE_DSRAM) || \
+                                                            ((dsramCheck) == CY_SYSPM_POST_DSRAM))
 
 /* Macro to validate parameters in Cy_SysPm_CoreBuckSetVoltage() & Cy_SysPm_CoreBuckConfig functions */
 #define CY_SYSPM_IS_CORE_BUCK_VOLTAGE_VALID(voltage)    (((voltage) == CY_SYSPM_CORE_BUCK_VOLTAGE_0_76V) || \
@@ -1647,6 +1827,16 @@ extern "C" {
 /* Macro to Enable/Disable Pause on Core Buck Regulator */
 #define CY_SYSPM_CORE_BUCK_PAUSE_ENABLE(enable)          CY_REG32_CLR_SET(SRSS_PWR_CBUCK_CTL2, SRSS_PWR_CBUCK_CTL2_CBUCK_PAUSE, \
                                                           enable)
+
+/* Macro to Enable/Disable Override on Core Buck Regulator */
+#define CY_SYSPM_CORE_BUCK_OVERRRIDE_ENABLE(enable)          CY_REG32_CLR_SET(SRSS_PWR_CBUCK_CTL2, SRSS_PWR_CBUCK_CTL2_CBUCK_OVERRIDE, \
+                                                          enable)
+
+/* Macro to Enable/Disable Copy Settings of Core Buck Regulator*/
+#define CY_SYSPM_CORE_BUCK_COPY_SETTINGS_ENABLE(enable)          CY_REG32_CLR_SET(SRSS_PWR_CBUCK_CTL2, SRSS_PWR_CBUCK_CTL2_CBUCK_COPY_SETTINGS, \
+                                                          enable)
+
+
 /* Macro to validate core buck Inrush Limit in Cy_SysPm_CoreBuckConfig() function */
 #define CY_SYSPM_IS_CORE_BUCK_INRUSH_LIMIT_VALID(limit)    (((limit) == CY_SYSPM_CORE_BUCK_INRUSH_LIMIT_10)     || \
                                                             ((limit) == CY_SYSPM_CORE_BUCK_INRUSH_LIMIT_100))
@@ -1691,11 +1881,10 @@ extern "C" {
 #define CY_SYSPM_IS_SDR_NUM_VALID(num)    (((num) == CY_SYSPM_SDR_0)     || \
                                            ((num) == CY_SYSPM_SDR_1))
 
-/* Macro to validate the word index supported in Backup Domain for Store/Restore */
-#define CY_SYSPM_IS_WORD_INDEX_VALID(index)    (index < CY_SRSS_BACKUP_NUM_BREG)
-
-/* Macro to validate number of words supported in Backup Domain for Store/Restore */
-#define CY_SYSPM_IS_WORD_SIZE_VALID(size)    ((size) <= CY_SRSS_BACKUP_NUM_BREG)
+/* Macro to validate parameters in RAM/ROM TRIM functions */
+#define CY_SYSPM_IS_SDR_TRIM_VOLTAGE_VALID(voltage)     (((voltage) == CY_SYSPM_SDR_VOLTAGE_0_900V) || \
+                                                         ((voltage) == CY_SYSPM_SDR_VOLTAGE_1_000V)  || \
+                                                         ((voltage) == CY_SYSPM_SDR_VOLTAGE_1_100V))
 
 /**
 * \note
@@ -1706,8 +1895,8 @@ extern "C" {
 #define CY_SYSPM_IS_SRAM0_MACRO_NUM_VALID(macroNum)      (((macroNum) == CY_SYSPM_SRAM0_MACRO_0)         || \
                                                          ((macroNum) == CY_SYSPM_SRAM0_MACRO_1))
 
+#endif /* defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN) */
 
-#endif
 
 /* Macro to validate parameters in Cy_SysPm_ExecuteCallback() function */
 
@@ -1879,13 +2068,21 @@ extern "C" {
                                             CY_SYSPM_HIBERNATE_PIN0_LOW    | CY_SYSPM_HIBERNATE_PIN0_HIGH |\
                                             CY_SYSPM_HIBERNATE_PIN1_LOW    | CY_SYSPM_HIBERNATE_PIN1_HIGH)
 
-#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
+#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_DOXYGEN)
+/**
+* \note
+* This macro is available for CAT1B & CAT1C devices.
+**/
 /* The mask for low power modes the power circuits (POR/BOD, Bandgap
 *  reference, Reference buffer, Current reference) when active core regulator is
 *  LDO
 */
 #define CY_SYSPM_PWR_CIRCUITS_LPMODE_ACTIVE_LDO_MASK    (SRSS_PWR_CTL2_LINREG_LPMODE_Msk | CY_SYSPM_PWR_CIRCUITS_LPMODE_ACTIVE_BUCK_MASK)
 
+/**
+* \note
+* This macro is available for CAT1B & CAT1C devices.
+**/
 /* The mask for low power modes the power circuits (POR/BOD, Bandgap
 *  reference, Reference buffer, Current reference) when active core regulator is
 *  Buck
@@ -1893,6 +2090,21 @@ extern "C" {
 #define CY_SYSPM_PWR_CIRCUITS_LPMODE_ACTIVE_BUCK_MASK    (SRSS_PWR_CTL2_PORBOD_LPMODE_Msk |\
                                                           SRSS_PWR_CTL2_REFVBUF_DIS_Msk |\
                                                           SRSS_PWR_CTL2_BGREF_LPMODE_Msk)
+
+/**
+* \note
+* This macro is available for CAT1B & CAT1C devices.
+**/
+/* Macro to validate the word index supported in Backup Domain for Store/Restore */
+#define CY_SYSPM_IS_WORD_INDEX_VALID(index)    (index < CY_SRSS_BACKUP_NUM_BREG)
+
+/**
+* \note
+* This macro is available for CAT1B & CAT1C devices.
+**/
+/* Macro to validate number of words supported in Backup Domain for Store/Restore */
+#define CY_SYSPM_IS_WORD_SIZE_VALID(size)    ((size) <= CY_SRSS_BACKUP_NUM_BREG)
+
 #else
 /* The mask for low power modes the power circuits (POR/BOD, Bandgap
 *  reference, Reference buffer, Current reference) when active core regulator is
@@ -1917,6 +2129,8 @@ extern "C" {
 * Defines for the CPU and system power modes status.
 */
 
+#ifdef CY_IP_M4CPUSS
+
 /** The CM4 is in CPU Active mode */
 #define CY_SYSPM_STATUS_CM4_ACTIVE       (0x01U)
 
@@ -1925,6 +2139,11 @@ extern "C" {
 
 /** The CM4 is in CPU Deep Sleep mode */
 #define CY_SYSPM_STATUS_CM4_DEEPSLEEP    (0x04U)
+
+#endif
+
+#if (__CORTEX_M == 0) || (defined (__CM0P_PRESENT) && (__CM0P_PRESENT == 1))
+
 
 /** The CM0p is CPU Active mode */
 #define CY_SYSPM_STATUS_CM0_ACTIVE       ((uint32_t) 0x01U << 8U)
@@ -1935,11 +2154,76 @@ extern "C" {
 /** The CM0p is in CPU Deep Sleep mode */
 #define CY_SYSPM_STATUS_CM0_DEEPSLEEP    ((uint32_t) 0x04U << 8U)
 
+/** The CM0 is in low power mode */
+#define CY_SYSPM_STATUS_CM0_LOWPOWER     ((uint32_t) 0x80U << 8U)
+
+#endif
+
+
+#ifdef CY_IP_M7CPUSS
+
+/** The CM7_0 is Active */
+#define CY_SYSPM_STATUS_CM7_0_ACTIVE       ((uint32_t) ((uint32_t)0x01U << 16U))
+
+/** The CM7_0 is in Sleep */
+#define CY_SYSPM_STATUS_CM7_0_SLEEP        ((uint32_t) ((uint32_t)0x02U << 16U))
+
+/** The CM7_0 is in DeepSleep */
+#define CY_SYSPM_STATUS_CM7_0_DEEPSLEEP    ((uint32_t) ((uint32_t)0x04U << 16U))
+
+/** The CM7_0 is Low Power mode */
+#define CY_SYSPM_STATUS_CM7_0_LOWPOWER     ((uint32_t) ((uint32_t)0x80U << 16U))
+
+/** The define of retained power mode of the CM7_0 */
+#define CY_SYSPM_CM7_0_PWR_CTL_PWR_MODE_RETAINED     (2U)
+
+/** The CM7_1 is Active */
+#define CY_SYSPM_STATUS_CM7_1_ACTIVE       ((uint32_t) ((uint32_t)0x01U << 24U))
+
+/** The CM7_1 is in Sleep */
+#define CY_SYSPM_STATUS_CM7_1_SLEEP        ((uint32_t) ((uint32_t)0x02U << 24U))
+
+/** The CM7_1 is in DeepSleep */
+#define CY_SYSPM_STATUS_CM7_1_DEEPSLEEP    ((uint32_t) ((uint32_t)0x04U << 24U))
+
+/** The CM7_1 is Low Power mode */
+#define CY_SYSPM_STATUS_CM7_1_LOWPOWER     ((uint32_t) ((uint32_t)0x80U << 24U))
+
+/** The define of retained power mode of the CM7_1 */
+#define CY_SYSPM_CM7_1_PWR_CTL_PWR_MODE_RETAINED     (2U)
+
+#endif /* CY_IP_M7CPUSS */
+
 /** The system is Low Power mode */
 #define CY_SYSPM_STATUS_SYSTEM_LP        (0x80U)
 
 /** The system is in Ultra Low Power mode */
 #define CY_SYSPM_STATUS_SYSTEM_ULP       ((uint32_t) 0x08U << 8U)
+
+/** The system is LPACTIVE Power mode */
+#define CY_SYSPM_STATUS_SYSTEM_LPACTIVE  (0x08UL << 16U)
+
+/** The wait time for transition of the device from the Active into
+* the LPActive (Low Power Active)
+*/
+#define CY_SYSPM_ACTIVE_TO_LP_WAIT_US           (1u)
+
+/** The wait delay time which occurs before the Active reference is settled.
+* This delay is used in transition of the device from Active into the
+* LPACTIVE (Low Power Active) mode
+*/
+#define CY_SYSPM_LP_TO_ACTIVE_WAIT_BEFORE_US    (8u)
+
+/** The wait delay time which occurs after the Active reference is settled.
+* This delay is used in transition the device from Active into the
+* LPACTIVE (Low Power Active) mode
+*/
+#define CY_SYSPM_LP_TO_ACTIVE_WAIT_AFTER_US    (1u)
+
+/** The internal define of the tries number in the Cy_SysPm_ExitLpMode()
+* function
+ */
+#define CY_SYSPM_WAIT_DELAY_TRYES                        (100u)
 
 /** \} group_syspm_return_status */
 
@@ -1977,10 +2261,30 @@ typedef enum
     CY_SYSPM_WAIT_FOR_EVENT         /**< Wait for an event. */
 } cy_en_syspm_waitfor_t;
 
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
+/**
+* This enumeration is used to distinguish between the pre and post checks required during DS-RAM.
+*/
+/**
+* \note
+* This enum is available for CAT1B devices.
+**/
+
+typedef enum
+{
+    CY_SYSPM_PRE_DSRAM,             /**< Pre DSRAM Checks. */
+    CY_SYSPM_POST_DSRAM             /**< Post DSRAM Checks. */
+} cy_en_syspm_dsram_checks_t;
+#endif
+
 /** This enumeration is used to configure wakeup sources for the System Hibernate
 *   power mode.
 */
-#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_DOXYGEN)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
+/**
+* \note
+* This macro is available for CAT1B & CAT1C devices.
+**/
 
 typedef enum
 {
@@ -2015,6 +2319,10 @@ typedef enum
     CY_SYSPM_HIBERNATE_PIN1_HIGH    = (0x1U << 9)
 } cy_en_syspm_hibernate_wakeup_source_t;
 #else
+/**
+* \note
+* This macro is available for CAT1A devices.
+**/
 typedef enum
 {
     /** Wake on a low logic level for the LPComp0. */
@@ -2154,13 +2462,13 @@ typedef enum
     CY_SYSPM_SLEEP      = 0U,    /**< The Sleep enum callback type */
     CY_SYSPM_DEEPSLEEP  = 1U,    /**< The Deep Sleep enum callback type */
     CY_SYSPM_HIBERNATE  = 2U,    /**< The Hibernate enum callback type */
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) || defined (CY_DOXYGEN)
     CY_SYSPM_LP         = 3U,    /**< The Low Power enum callback type, This Macro is available only for CAT1A devices */
     CY_SYSPM_ULP        = 4U,     /**< The Ultra Low Power enum callback type, This Macro is available only for CAT1A devices  */
 #endif
 #if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS28SRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_DOXYGEN)
-    CY_SYSPM_LPACTIVE_ENTER = 3U,    /**< The LPACTIVE/LPSLEEP ENTER enum callback type, This Macro is available only for CAT1B devices  */
-    CY_SYSPM_LPACTIVE_EXIT  = 4U,    /**< The LPACTIVE/LPSLEEP EXIT enum callback type, This Macro is available only for CAT1B devices  */
+    CY_SYSPM_LPACTIVE_ENTER = 3U,    /**< The LPACTIVE (Low Power Active)/LPSLEEP (Low Power Sleep) ENTER enum callback type, This Macro is available only for CAT1B and CAT1D devices  */
+    CY_SYSPM_LPACTIVE_EXIT  = 4U,    /**< The LPACTIVE  (Low Power Active)/LPSLEEP (Low Power Sleep) EXIT enum callback type, This Macro is available only for CAT1B and CAT1D devices  */
 #endif
 #if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS28SRSS) || defined (CY_DOXYGEN)
     CY_SYSPM_DEEPSLEEP_RAM  = 5U,    /**< The Deep Sleep RAM enum callback type, This Macro is available only for CAT1B devices */
@@ -2339,10 +2647,204 @@ typedef enum
     CY_SYSPM_HVLDO_VOLTAGE_3_000V = 15U,    /**< 3.000 V nominal voltage. */
 } cy_en_syspm_hvldo_voltage_t;
 
+
+#endif
+
+
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_DOXYGEN)
 /**
 * \note
-* This enum is available for CAT1B devices.
+* This enum is available for CAT1C devices.
 **/
+/**
+* Selects the voltage threshold for OVD on VDDD
+*/
+typedef enum
+{
+    CY_SYSPM_OVD_VDDD_5_5V      = 0x0u,       /**< OVD -> VDDD > 5.5 V */
+    CY_SYSPM_OVD_VDDD_5_0V      = 0x01u       /**< OVD -> VDDD > 5.0 V  */
+} cy_en_syspm_ovd_vddd_sel_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/**
+* Selects the voltage threshold for OVD on VDDA
+*/
+typedef enum
+{
+    CY_SYSPM_OVD_VDDA_5_5V      = 0x0u,                    /**< OVD -> VDDA > 5.5 V */
+    CY_SYSPM_OVD_VDDA_5_0V      = 0x01u                 /**< OVD -> VDDA > 5.0 V  */
+} cy_en_syspm_ovd_vdda_sel_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/**
+* Selects OVD over VDDD or VDDA or VCCD
+*/
+typedef enum
+{
+    CY_SYSPM_OVD_ON_VDDD        = 0x0u,                 /**< OVD -> VDDD */
+    CY_SYSPM_OVD_ON_VDDA        = 0x01u,                /**< OVD -> VDDA */
+    CY_SYSPM_OVD_ON_VCCD        = 0x02u                 /**< OVD -> VCCD */
+} cy_en_syspm_ovd_sel_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/**
+ * OVD action select configuration.
+ */
+typedef enum
+{
+    CY_SYSPM_OVD_ACTION_NOTHING = 0x0u,              /**<Select OVD action select: nothing */
+    CY_SYSPM_OVD_ACTION_FAULT   = 0x1u,              /**<Select OVD action select: fault */
+    CY_SYSPM_OVD_ACTION_RESET   = 0x2u,              /**<Select OVD action select: reset */
+} cy_en_syspm_ovd_action_select_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/**
+* Selects the voltage threshold for BOD on VDDD
+*/
+typedef enum
+{
+    CY_SYSPM_BOD_VDDD_2_7V      = 0x0u,                 /**< BOD -> VDDD < 2.7 V */
+    CY_SYSPM_BOD_VDDD_3_0V      = 0x01u               /**< BOD -> VDDD < 3.0 V  */
+} cy_en_syspm_bod_vddd_sel_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/**
+* Selects the voltage threshold for BOD on VDDA
+*/
+typedef enum
+{
+    CY_SYSPM_BOD_VDDA_2_7V      = 0x0u,                    /**< BOD -> VDDA < 2.7 V */
+    CY_SYSPM_BOD_VDDA_3_0V      = 0x01u                 /**< BOD -> VDDA < 3.0 V  */
+} cy_en_syspm_bod_vdda_sel_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/**
+* Selects BOD over VDDD or VDDA or VCCD
+*/
+typedef enum
+{
+    CY_SYSPM_BOD_ON_VDDD        = 0x0u,                 /**< BOD -> VDDD */
+    CY_SYSPM_BOD_ON_VDDA        = 0x01u,                /**< BOD -> VDDA */
+    CY_SYSPM_BOD_ON_VCCD        = 0x02u                 /**< BOD -> VCCD */
+} cy_en_syspm_bod_sel_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/**
+ * BOD action select configuration.
+ */
+typedef enum
+{
+    CY_SYSPM_BOD_ACTION_NOTHING = 0x0u,              /**<Select BOD action select: nothing */
+    CY_SYSPM_BOD_ACTION_FAULT   = 0x1u,              /**<Select BOD action select: fault */
+    CY_SYSPM_BOD_ACTION_RESET   = 0x2u,              /**<Select BOD action select: reset */
+} cy_en_syspm_bod_action_select_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/**
+ * Supply Supervision Status
+ */
+typedef enum
+{
+    CY_SYSPM_ENTITY_BOD_VDDD    = 0x0u,              /**<BOD indicates VDDD is OK */
+    CY_SYSPM_ENTITY_BOD_VDDA    = 0x1u,              /**<BOD indicates VDDA is OK */
+    CY_SYSPM_ENTITY_BOD_VCCD    = 0x2u,              /**<BOD indicates VCCD is OK */
+    CY_SYSPM_ENTITY_OVD_VDDD    = 0x3u,              /**<OVD indicates VDDD is OK */
+    CY_SYSPM_ENTITY_OVD_VDDA    = 0x4u,              /**<OVD indicates VDDA is OK */
+    CY_SYSPM_ENTITY_OVD_VCCD    = 0x5u,              /**<OVD indicates VCCD is OK */
+} cy_en_syspm_supply_entity_select_t;
+
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/** This enumeration is used to select the REGHC mode */
+typedef enum
+{
+    CY_SYSPM_REGHC_MODE_TRANSISTOR = 0u, /**< External Transistor Mode */
+    CY_SYSPM_REGHC_MODE_PMIC       = 1u, /**< External PMIC Mode */
+} cy_en_syspm_reghc_mode_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/** This enumeration is used to set the voltage trims */
+typedef enum
+{
+    CY_SYSPM_REGHC_VADJ_1_020V =  0u,    /**< 1.020 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_025V =  1u,    /**< 1.025 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_030V =  2u,    /**< 1.030 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_035V =  3u,    /**< 1.035 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_040V =  4u,    /**< 1.040 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_045V =  5u,    /**< 1.045 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_050V =  6u,    /**< 1.050 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_055V =  7u,    /**< 1.055 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_060V =  8u,    /**< 1.060 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_065V =  9u,    /**< 1.065 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_070V = 10u,    /**< 1.070 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_075V = 11u,    /**< 1.075 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_080V = 12u,    /**< 1.080 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_085V = 13u,    /**< 1.085 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_090V = 14u,    /**< 1.090 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_095V = 15u,    /**< 1.095V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_100V = 16u,    /**< Default Value, 1.100 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_105V = 17u,    /**< 1.105 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_110V = 18u,    /**< 1.110 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_115V = 19u,    /**< 1.115 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_120V = 20u,    /**< 1.120 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_125V = 21u,    /**< 1.125 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_130V = 22u,    /**< 1.130 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_135V = 23u,    /**< 1.135 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_140V = 24u,    /**< 1.140 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_145V = 25u,    /**< 1.145 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_150V = 26u,    /**< 1.150 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_155V = 27u,    /**< 1.155 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_160V = 28u,    /**< 1.160 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_165V = 29u,    /**< 1.165 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_170V = 30u,    /**< 1.170 V nominal voltage. */
+    CY_SYSPM_REGHC_VADJ_1_175V = 31u,    /**< 1.175 V nominal voltage. */
+} cy_en_syspm_reghc_vadj_t;
+
+/**
+* \note
+* This enum is available for CAT1C devices.
+**/
+/** Drive out configuration */
+typedef enum
+{
+    CY_SYSPM_REGHC_DRIVE_OUT_0P9_VCCD_BY_VADJ  = 0u,    /**< DRV_VOUT=(0.9 * vccd)/vdj Volts */
+    CY_SYSPM_REGHC_DRIVE_OUT_0P8_VCCD_BY_VADJ  = 1u,    /**< DRV_VOUT=(0.8 * vccd)/vdj Volts */
+    CY_SYSPM_REGHC_DRIVE_OUT_0P6_VCCD_BY_VADJ  = 2u,    /**< DRV_VOUT=(0.6 * vccd)/vdj Volts */
+    CY_SYSPM_REGHC_DRIVE_OUT_VCCD              = 3u,    /**< DRV_VOUT=vccd Volts */
+} cy_en_syspm_reghc_drive_out_t;
+
+#endif
+
 /**
 * For SRAM0, this enumeration represents the Macro Numbers
 */
@@ -2351,9 +2853,6 @@ typedef enum
     CY_SYSPM_SRAM0_MACRO_0              = 0U,    /**< SRAM0:Macro-0 */
     CY_SYSPM_SRAM0_MACRO_1              = 1U,    /**< SRAM0:Macro-1 */
 } cy_en_syspm_sram0_macro_t;
-
-
-#endif
 
 
 
@@ -2623,8 +3122,8 @@ typedef struct
     uint8_t   coreBuckMode;    /**< Core Buck Mode :
                                     0x00 - Low Power Mode,
                                     0x10 - Low Ripple(high power) */
-    cy_stc_syspm_sdr_params_t *sdr0Config; /**< SDR-0 Paramaters \ref cy_stc_syspm_sdr_params_t */
-    cy_stc_syspm_sdr_params_t *sdr1Config; /**< SDR-1 Paramaters \ref cy_stc_syspm_sdr_params_t */
+    cy_stc_syspm_sdr_params_t *sdr0Config; /**< SDR-0 Parameters \ref cy_stc_syspm_sdr_params_t */
+    cy_stc_syspm_sdr_params_t *sdr1Config; /**< SDR-1 Parameters \ref cy_stc_syspm_sdr_params_t */
 } cy_stc_syspm_extraReq_params_t;
 
 #endif
@@ -2727,7 +3226,7 @@ cy_en_syspm_sram_pwr_mode_t Cy_SysPm_GetSRAMMacroPwrMode(cy_en_syspm_sram_index_
 *******************************************************************************/
 cy_en_syspm_status_t Cy_SysPm_SetSRAMPwrMode(cy_en_syspm_sram_index_t sramNum, cy_en_syspm_sram_pwr_mode_t sramPwrMode);
 
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) || defined (CY_DOXYGEN)
 
 /*******************************************************************************
 * Function Name: Cy_SysPm_WriteVoltageBitForFlash
@@ -2827,7 +3326,7 @@ void Cy_SysPm_SaveRegisters(cy_stc_syspm_backup_regs_t *regs);
 void Cy_SysPm_RestoreRegisters(cy_stc_syspm_backup_regs_t const *regs);
 
 #endif /* !((CY_CPU_CORTEX_M4) && (defined (CY_DEVICE_SECURE))) */
-#endif
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) */
 
 /** \} group_syspm_functions_general */
 
@@ -2952,7 +3451,7 @@ uint32_t Cy_SysPm_ReadStatus(void);
 *******************************************************************************/
 cy_en_syspm_status_t Cy_SysPm_CpuEnterSleep(cy_en_syspm_waitfor_t waitFor);
 
-#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_DOXYGEN)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
 
 /*******************************************************************************
 * Function Name: Cy_SysPm_Init
@@ -2965,13 +3464,29 @@ cy_en_syspm_status_t Cy_SysPm_CpuEnterSleep(cy_en_syspm_waitfor_t waitFor);
 *
 *******************************************************************************/
 void Cy_SysPm_Init(void);
+#endif
 
+#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_DOXYGEN)
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_IsLpmReady
+****************************************************************************//**
+*
+* Checks if the system is LPM ready.
+*
+* \return
+* - True if the system is LPM Ready.
+* - False if the system is not LPM Ready.
+*
+*******************************************************************************/
+bool Cy_SysPm_IsLpmReady(void);
 
 /*******************************************************************************
 * Function Name: Cy_SysPm_SystemLpActiveEnter
 ****************************************************************************//**
 *
-* Change the system from ACTIVE -> LPACTIVE/LPSLEEP Profile
+* Change the system from ACTIVE Profile to LPACTIVE (Low Power Active)/LPSLEEP
+* (Low Power Sleep) Profile
 *
 * \return
 * - CY_SYSPM_SUCCESS - Entered the system Low Power mode or
@@ -2996,7 +3511,8 @@ cy_en_syspm_status_t Cy_SysPm_SystemLpActiveEnter(void);
 * Function Name: Cy_SysPm_SystemLpActiveExit
 ****************************************************************************//**
 *
-* Changes the system from LPACTIVE/LPSLEEP profile -> ACTIVE
+* Changes the system from LPACTIVE (Low Power Active)/LPSLEEP (Low Power Sleep)
+* Profile to ACTIVE Profile
 *
 * \return
 * - CY_SYSPM_SUCCESS - Entered the system Low Power mode or
@@ -3021,7 +3537,8 @@ cy_en_syspm_status_t Cy_SysPm_SystemLpActiveExit(void);
 * Function Name: Cy_SysPm_IsSystemLpActiveEnabled
 ****************************************************************************//**
 *
-* Checks if the system is in LPACTIVE/LPSLEEP profile
+* Checks if the system is in LPACTIVE (Low Power Active)/LPSLEEP (Low Power Sleep)
+* Profile
 *
 * \return
 * True if enabled, False if disabled.
@@ -3068,7 +3585,7 @@ bool Cy_SysPm_IsSystemLpActiveEnabled(void);
 *    - Set VTOR register with vector table address.
 *    - Enable all the peripheral IP's using \ref Cy_SysClk_PeriGroupSetSlaveCtl.
 * 2. SMIF Initialization
-*    - Perform  SMIF Initalization.
+*    - Perform  SMIF Initialization.
 * 3. Jump to API in the Flash.
 *
 * \param deepSleepMode
@@ -3274,7 +3791,8 @@ void Cy_SysPm_TriggerSoftReset(void);
 *******************************************************************************/
 cy_en_syspm_status_t Cy_SysPm_CpuEnterDeepSleep(cy_en_syspm_waitfor_t waitFor);
 
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) || defined (CY_DOXYGEN)
+
 /*******************************************************************************
 * Function Name: Cy_SysPm_SystemEnterLp
 ****************************************************************************//**
@@ -3431,7 +3949,7 @@ cy_en_syspm_status_t Cy_SysPm_SystemEnterLp(void);
 *
 *******************************************************************************/
 cy_en_syspm_status_t Cy_SysPm_SystemEnterUlp(void);
-#endif
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) */
 
 /*******************************************************************************
 * Function Name: Cy_SysPm_SystemEnterHibernate
@@ -3604,6 +4122,9 @@ void Cy_SysPm_ClearHibernateWakeupSource(uint32_t wakeupSource);
 * \return
 * Wakeup Reason \ref cy_en_syspm_hibernate_wakeup_source_t
 *
+* \note
+* This API is available for CAT1B devices.
+*
 *******************************************************************************/
 cy_en_syspm_hibernate_wakeup_source_t Cy_SysPm_GetHibernateWakeupCause(void);
 
@@ -3612,6 +4133,9 @@ cy_en_syspm_hibernate_wakeup_source_t Cy_SysPm_GetHibernateWakeupCause(void);
 ****************************************************************************//**
 *
 * This function Clears the wakeup cause register.
+*
+* \note
+* This API is available for CAT1B devices.
 *
 *******************************************************************************/
 void Cy_SysPm_ClearHibernateWakeupCause(void);
@@ -3745,7 +4269,8 @@ void Cy_SysPm_CpuSleepOnExit(bool enable);
 * \{
 */
 
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) || defined (CY_DOXYGEN)
+
 /*******************************************************************************
 * Function Name: Cy_SysPm_LdoSetVoltage
 ****************************************************************************//**
@@ -3814,7 +4339,7 @@ void Cy_SysPm_CpuSleepOnExit(bool enable);
 *
 *******************************************************************************/
 cy_en_syspm_status_t Cy_SysPm_LdoSetVoltage(cy_en_syspm_ldo_voltage_t voltage);
-#endif
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) */
 
 /*******************************************************************************
 * Function Name: Cy_SysPm_LdoSetMode
@@ -3864,48 +4389,740 @@ cy_en_syspm_status_t Cy_SysPm_LdoSetMode(cy_en_syspm_ldo_mode_t mode);
 *******************************************************************************/
 cy_en_syspm_ldo_mode_t Cy_SysPm_LdoGetMode(void);
 
-#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
-/*******************************************************************************
-* Function Name: Cy_SysPm_NwellRegEnable
-****************************************************************************//**
-*
-* Enables/Disables the Nwell Regulator.
-*
-* \param enable
-* True or False.
-*
-* \note
-* This API is available for CAT1B devices.
-*
-*
-*******************************************************************************/
-void Cy_SysPm_NwellRegEnable(bool enable);
+/** \} group_syspm_functions_ldo */
+
+
+/**
+* \addtogroup group_syspm_functions_linearreg
+* \{
+*/
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
 
 /*******************************************************************************
-* Function Name: Cy_SysPm_IsNwellRegEnabled
+* Function Name: Cy_SysPm_LinearRegDisable
 ****************************************************************************//**
 *
-* Gets the status of Nwell Regulator.
-*
-* \return
-* True if enabled, False if disabled.
+* Disables internal linear regulator.
 *
 * \note
-* This API is available for CAT1B devices.
+* This API is available for CAT1C devices.
 *
 *******************************************************************************/
-bool Cy_SysPm_IsNwellRegEnabled(void);
+void Cy_SysPm_LinearRegDisable(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_LinearRegEnable
+****************************************************************************//**
+*
+* Enables internal linear regulator.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_LinearRegEnable(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_LinearRegGetStatus
+****************************************************************************//**
+*
+* Check the status of the internal linear regulator.
+*
+* \return
+* true  - status ok
+* false - status fail
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_LinearRegGetStatus(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_DeepSleepRegDisable
+****************************************************************************//**
+*
+* Disables internal DeepSleep regulator.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_DeepSleepRegDisable(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_DeepSleepRegEnable
+****************************************************************************//**
+*
+* Enables internal DeepSleep regulator.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_DeepSleepRegEnable(void);
+
+/*******************************************************************************
+* Function Name: Cy_SySPm_IsDeepSleepRegEnabled
+****************************************************************************//**
+*
+* Checks if internal DeepSleep regulator is enabled or not.
+*
+* \return
+* true  - Enabled
+* false - Disabled
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SySPm_IsDeepSleepRegEnabled(void);
+
+#endif
+/** \} group_syspm_functions_linearreg */
+
+/**
+* \addtogroup group_syspm_functions_reghc
+* \{
+*/
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_DOXYGEN)
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcSelectMode
+****************************************************************************//**
+*
+* Selects one of the supported REGHC modes.
+*
+* \param
+* mode - PMIC or Pass Transistor
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcSelectMode(cy_en_syspm_reghc_mode_t mode);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcGetMode
+****************************************************************************//**
+*
+* Gets the supported REGHC modes.
+*
+* \return \ref cy_en_syspm_reghc_mode_t
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+cy_en_syspm_reghc_mode_t Cy_SysPm_ReghcGetMode(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcSelectDriveOut
+****************************************************************************//**
+*
+* Selects DRV_OUT setting.
+*
+* \param
+* drvOut - \ref cy_en_syspm_reghc_drive_out_t
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcSelectDriveOut(cy_en_syspm_reghc_drive_out_t drvOut);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcGetDriveOut
+****************************************************************************//**
+*
+* Gets the DRV_OUT setting.
+*
+* \return \ref cy_en_syspm_reghc_drive_out_t
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+cy_en_syspm_reghc_drive_out_t Cy_SysPm_ReghcGetDriveOut(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcAdjustOutputVoltage
+****************************************************************************//**
+*
+* Selects regulator output voltage adjustment.
+*
+* \param
+* trim - \ref cy_en_syspm_reghc_vadj_t
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcAdjustOutputVoltage(cy_en_syspm_reghc_vadj_t trim);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcDisableIntSupplyWhileExtActive
+****************************************************************************//**
+*
+*  Internal Active Linear Regulator disabled after PMIC enabled.  OCD is disabled.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcDisableIntSupplyWhileExtActive(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcEnableIntSupplyWhileExtActive
+****************************************************************************//**
+*
+*   Internal Active Linear Regulator kept enabled.  See datasheet for minimum
+*   PMIC vccd input to prevent OCD.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcEnableIntSupplyWhileExtActive(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcDisablePmicEnableOutput
+****************************************************************************//**
+*
+* Disables "PMIC enable" output.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcDisablePmicEnableOutput(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcEnablePmicEnableOutput
+****************************************************************************//**
+*
+* Enables "PMIC enable" output.
+*
+* \param
+* polarity => true - output high, false - output low.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcEnablePmicEnableOutput(bool polarity);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcEnablePmicStatusInput
+****************************************************************************//**
+*
+* Enables receiving status from PMIC.
+*
+* \param
+* polarity => true/false -> receiving high/low means abnormal status.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcEnablePmicStatusInput(bool polarity);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcDisablePmicStatusInput
+****************************************************************************//**
+*
+* Disables PMIC status input
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcDisablePmicStatusInput(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcSetPmicStatusWaitTime
+****************************************************************************//**
+*
+* Wait count in 4us steps after PMIC status ok. This is used by the hardware
+* sequencer to allow additional settling time before disabling the internal
+* regulator.
+* The LSB is 32 IMO periods which results in a nominal LSB step of 4us.
+*
+* \param
+* waitTime = 0 to 1023 -> (waitTime * 4us) Delay
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcSetPmicStatusWaitTime(uint16_t waitTime);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcIsConfigured
+****************************************************************************//**
+*
+* Indicates that the REGHC has been configured.
+* Do not change REGHC settings after this bit is high.
+*
+* \return
+* true - Configured, false - Not configured
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_ReghcIsConfigured(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcSetConfigured
+****************************************************************************//**
+*
+* Set REGHC is configured. This is required to apply setting before enabling REGHC.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcSetConfigured(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcDisable
+****************************************************************************//**
+*
+* Disables REGHC.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcDisable(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcEnable
+****************************************************************************//**
+*
+* Enables REGHC.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcEnable(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcDisablePmicStatusTimeout
+****************************************************************************//**
+*
+* Disables timeout when waiting for REGHC_PMIC_STATUS_OK.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcDisablePmicStatusTimeout(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcEnablePmicStatusTimeout
+****************************************************************************//**
+*
+* Enables timeout while waiting for REGHC_PMIC_STATUS_OK==1 when switching to PMIC.
+* Timeout expiration triggers reset.
+*
+* \param
+* timeout = 1 - 255 -> (timeout * 128us) delay until reset
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcEnablePmicStatusTimeout(uint8_t timeout);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcIsEnabled
+****************************************************************************//**
+*
+* Indicates the state of the REGHC enable/disable sequencer.  This bit is only
+* valid when REGHC_SEQ_BUSY==0.
+*
+* \return
+* true - Enabled, false - Disabled
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_ReghcIsEnabled(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcIsStatusOk
+****************************************************************************//**
+*
+* Indicates the PMIC status is ok.  This includes polarity adjustment according
+* to REGHC_PMIC_STATUS_POLARITY.
+*
+* \return
+* false: PMIC status is not ok or PMIC input is disabled (PMIC_STATUS_INEN == 0)
+* true:  PMIC status input is enabled and indicates ok
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_ReghcIsStatusOk(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcIsSequencerBusy
+****************************************************************************//**
+*
+* Indicates whether the REGHC circuit is busy. Indicates the REGHC enable/disable
+* sequencer is busy transitioning to/from REGHC.
+*
+* \return
+* true:  REGHC busy
+* false: REGHC not busy
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_ReghcIsSequencerBusy(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcDisableVAdj
+****************************************************************************//**
+*
+* Device does not generate VADJ, and it must not be part of the PMIC feedback loop.
+* This reduces current by turning off the internal resistor divider that generates
+* VADJ.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcDisableVAdj(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcEnableVAdj
+****************************************************************************//**
+*
+* Device generates VADJ when PMIC is enabled.  This allows the feedback loop to
+* compensate for voltage drops in the PCB and package.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcEnableVAdj(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcDisablePmicInDeepSleep
+****************************************************************************//**
+*
+* Device operates from internal regulators during DEEPSLEEP.  If PMIC is enabled
+* at the beginning of the DEEPSLEEP transition, hardware changes to the internal
+* regulators and disables the PMIC.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcDisablePmicInDeepSleep(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcEnablePmicInDeepSleep
+****************************************************************************//**
+*
+* DEEPSLEEP transition does not change PMIC enable.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_ReghcEnablePmicInDeepSleep(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcIsOcdWithinLimits
+****************************************************************************//**
+*
+* Indicates the over-current detector is operating and the current drawn from
+* REGHC is within limits.  OCD is only a choice for transistor mode, and it is
+* disabled for PMIC mode.
+*
+* \return
+* false: Current measurement exceeds limit or detector is OFF,
+* true:  Current measurement within limit
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_ReghcIsOcdWithinLimits(void);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_ReghcIsCircuitEnabledAndOperating
+****************************************************************************//**
+*
+* Indicates the REGHC circuit is enabled and operating.
+*
+* \return
+* false: REGHC Disabled
+* true:  REGHC Enabled and Operating
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_ReghcIsCircuitEnabledAndOperating(void);
+
 
 #endif
 
-/** \} group_syspm_functions_ldo */
+/** \} group_syspm_functions_reghc */
+
+
+/**
+* \addtogroup group_syspm_functions_ovd
+* \{
+*/
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))  || defined (CY_DOXYGEN)
+/*******************************************************************************
+* Function Name: Cy_SysPm_OvdEnable
+****************************************************************************//**
+*
+*  Enables OVD over either VDDD or VDDA or VCCD.
+*
+*  \param ovdSel \ref cy_en_syspm_ovd_sel_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \note
+* OVD over VDDD and VCCD are enabled by default and cannot be disabled.
+*
+*******************************************************************************/
+void Cy_SysPm_OvdEnable(cy_en_syspm_ovd_sel_t ovdSel);
+
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_OvdDisable
+****************************************************************************//**
+*
+*  Disables OVD over either VDDD or VDDA or VCCD.
+*
+*  \param ovdSel \ref cy_en_syspm_ovd_sel_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \note
+* OVD over VDDD and VCCD are enabled by default and cannot be disabled.
+*
+* \note
+* Disabling OVD over VDDA will perform the /ref cy_en_syspm_ovd_action_select_t
+* action selected for VDDA. If no action is desired when disabling, firmware
+* must first write CY_SYSPM_OVD_ACTION_NOTHING in a separate write cycle.
+*
+*******************************************************************************/
+void Cy_SysPm_OvdDisable(cy_en_syspm_ovd_sel_t ovdSel);
+
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_OvdVdddSelect
+****************************************************************************//**
+*
+*  Selects voltage threshold for OVD on VDDD
+*
+*  \param ovdVdddSel \ref cy_en_syspm_ovd_vddd_sel_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_OvdVdddSelect(cy_en_syspm_ovd_vddd_sel_t ovdVdddSel);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_OvdVddaSelect
+****************************************************************************//**
+*
+*  Selects voltage threshold for OVD on VDDA
+*
+*  \param ovdVddaSel \ref cy_en_syspm_ovd_vdda_sel_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_OvdVddaSelect(cy_en_syspm_ovd_vdda_sel_t ovdVddaSel);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_OvdActionSelect
+****************************************************************************//**
+*
+*  Sets the action taken when the threshold is crossed in the programmed directions(s)
+* for VDDA.
+*
+*  \param ovdActionSelect \ref cy_en_syspm_ovd_action_select_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \note
+* This API is not applicable for selectng actions for VDDD and VCCD as the default
+* action is RESET for them.
+*
+*******************************************************************************/
+void Cy_SysPm_OvdActionSelect(cy_en_syspm_ovd_action_select_t ovdActionSelect);
+
+#endif
+
+/** \} group_syspm_functions_ovd */
+
+/**
+* \addtogroup group_syspm_functions_bod
+* \{
+*/
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+/*******************************************************************************
+* Function Name: Cy_SysPm_BodEnable
+****************************************************************************//**
+*
+*  Enables BOD over either VDDD or VDDA or VCCD.
+*
+*  \param bodSel \ref cy_en_syspm_bod_sel_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \note
+* BOD over VDDD and VCCD are enabled by default and cannot be disabled.
+*
+*******************************************************************************/
+void Cy_SysPm_BodEnable(cy_en_syspm_bod_sel_t bodSel);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_BodDisable
+****************************************************************************//**
+*
+*  Disables BOD over either VDDD or VDDA or VCCD.
+*
+*  \param bodSel \ref cy_en_syspm_bod_sel_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \note
+* BOD over VDDD and VCCD are enabled by default and cannot be disabled.
+*
+* \note
+* Disabling BOD over VDDA will perform the /ref cy_en_syspm_bod_action_select_t
+* action selected for VDDA. If no action is desired when disabling, firmware
+* must first write CY_SYSPM_BOD_ACTION_NOTHING in a separate write cycle.
+*
+*******************************************************************************/
+void Cy_SysPm_BodDisable(cy_en_syspm_bod_sel_t bodSel);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_BodVdddSelect
+****************************************************************************//**
+*
+*  Selects voltage threshold for BOD on VDDD
+*
+*  \param bodVdddSel \ref cy_en_syspm_bod_vddd_sel_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_BodVdddSelect(cy_en_syspm_bod_vddd_sel_t bodVdddSel);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_BodVddaSelect
+****************************************************************************//**
+*
+*  Selects voltage threshold for BOD on VDDA
+*
+*  \param bodVddaSel \ref cy_en_syspm_bod_vdda_sel_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+ void Cy_SysPm_BodVddaSelect(cy_en_syspm_bod_vdda_sel_t bodVddaSel);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_BodActionSelect
+****************************************************************************//**
+*
+*  Sets the action taken when the threshold is crossed in the programmed directions(s)
+* for VDDA.
+*
+*  \param bodActionSelect \ref cy_en_syspm_bod_action_select_t.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \note
+* This API is not applicable for selectng actions for VDDD and VCCD as the default
+* action is RESET for them.
+*
+*******************************************************************************/
+void Cy_SysPm_BodActionSelect(cy_en_syspm_bod_action_select_t bodActionSelect);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_SupplySupervisionStatus
+****************************************************************************//**
+*
+* Supply Status.
+*
+* \param supplyEntitySelect \ref cy_en_syspm_supply_entity_select_t.
+
+* \return
+* State of BOD/OVD on VDDD/VDDA/VCCD, whether OK or Not OK
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_SupplySupervisionStatus(cy_en_syspm_supply_entity_select_t supplyEntitySelect);
+
+#endif
+
+/** \} group_syspm_functions_bod */
+
 
 /**
 * \addtogroup group_syspm_functions_buck
 * \{
 */
 
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) || defined (CY_DOXYGEN)
+
 /*******************************************************************************
 * Function Name: Cy_SysPm_BuckEnable
 ****************************************************************************//**
@@ -4175,7 +5392,7 @@ void Cy_SysPm_BuckEnableVoltage2(void);
 *
 *******************************************************************************/
 bool Cy_SysPm_BuckIsOutputEnabled(cy_en_syspm_buck_out_t output);
-#endif
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) */
 /** \} group_syspm_functions_buck */
 
 /**
@@ -4326,7 +5543,9 @@ cy_stc_syspm_callback_t* Cy_SysPm_GetFailedCallback(cy_en_syspm_callback_type_t 
 * \addtogroup group_syspm_functions_power_status
 * \{
 */
-#if defined (CY_IP_MXS40SRSS)
+#if defined (CY_IP_MXS40SRSS)  || defined (CY_DOXYGEN)
+
+#if (CY_IP_MXS40SRSS_VERSION < 3)  || defined (CY_DOXYGEN)
 /*******************************************************************************
 * Function Name: Cy_SysPm_Cm4IsActive
 ****************************************************************************//**
@@ -4386,6 +5605,26 @@ bool Cy_SysPm_Cm4IsSleep(void);
 *******************************************************************************/
 bool Cy_SysPm_Cm4IsDeepSleep(void);
 
+/*******************************************************************************
+* Function Name: Cy_SysPm_IsSystemUlp
+****************************************************************************//**
+*
+* Checks if the system is in ULP mode.
+*
+* \return
+* - True the system is in ULP mode.
+* - False the system is is not ULP mode.
+*
+* \note
+* This API is available for CAT1A devices.
+*
+* \funcusage
+* \snippet syspm/snippet/main.c snippet_Cy_SysPm_IsSystemUlp
+*
+*******************************************************************************/
+bool Cy_SysPm_IsSystemUlp(void);
+
+#endif
 
 /*******************************************************************************
 * Function Name: Cy_SysPm_Cm0IsActive
@@ -4394,11 +5633,11 @@ bool Cy_SysPm_Cm4IsDeepSleep(void);
 * Checks if the CM0+ is in CPU Active mode.
 *
 * \return
-* - True if the CM0+ is in CPU Sleep mode.
-* - False if the CM0+ is not in CPU Sleep mode.
+* - True if the CM0+ is in CPU Active mode.
+* - False if the CM0+ is not in CPU Active mode.
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 * \funcusage
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_Cm0IsActive
@@ -4418,7 +5657,7 @@ bool Cy_SysPm_Cm0IsActive(void);
 * - False if the CM0+ is not in CPU Sleep mode.
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 * \funcusage
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_Cm0IsSleep
@@ -4438,7 +5677,7 @@ bool Cy_SysPm_Cm0IsSleep(void);
 * - False if the CM0+ is not in CPU Deep Sleep mode
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 * \funcusage
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_Cm0IsDeepSleep
@@ -4457,7 +5696,7 @@ bool Cy_SysPm_Cm0IsDeepSleep(void);
 * - False the system is not in LP mode.
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 * \funcusage
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_IsSystemLp
@@ -4465,26 +5704,137 @@ bool Cy_SysPm_Cm0IsDeepSleep(void);
 *******************************************************************************/
 bool Cy_SysPm_IsSystemLp(void);
 
+#if (CY_IP_MXS40SRSS_VERSION >= 3)
 /*******************************************************************************
-* Function Name: Cy_SysPm_IsSystemUlp
+* Function Name: Cy_SysPm_Cm0IsLowPower
 ****************************************************************************//**
 *
-* Checks if the system is in ULP mode.
+* Checks if the CM0+ is in the low power mode.
 *
 * \return
-* - True the system is in ULP mode.
-* - False the system is is not ULP mode.
+* true - if the CM0+ is in the low power mode,
+* false - if the CM0+ is not in the low power mode.
 *
 * \note
-* This API is available for CAT1A devices.
-*
-* \funcusage
-* \snippet syspm/snippet/main.c snippet_Cy_SysPm_IsSystemUlp
+* This API is available for CAT1C devices.
 *
 *******************************************************************************/
-bool Cy_SysPm_IsSystemUlp(void);
+bool Cy_SysPm_Cm0IsLowPower(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_IsBgRefCtrl
+****************************************************************************//**
+*
+* Get the power mode status of Bandgap Ref Circuits
+*
+* \return
+* true - Bandgap Ref Circuits power mode is enabled,
+* false - Bandgap Ref Circuits power mode is disabled.
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+bool Cy_SysPm_IsBgRefCtrl(void);
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_BgRefCtrl
+****************************************************************************//**
+*
+* Enables/Disables powers mode of Bandgap Ref Circuits
+*
+* \param enable
+* true - to enable, false - to disable
+*
+* \note
+* This API is available for CAT1C devices.
+*
+*******************************************************************************/
+void Cy_SysPm_BgRefCtrl(bool enable);
+
 #endif
 
+#endif
+
+#if defined(CY_IP_M7CPUSS) || defined (CY_DOXYGEN)
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_Cm7IsActive
+****************************************************************************//**
+*
+* Checks if CM7 is in the active mode.
+*
+* \param core
+* Selects the core, 0 for CM7_0, 1 for CM7_1
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \return
+* true - if CM7 is in the active mode, false - if the CM7 is not in active mode.
+*
+*******************************************************************************/
+bool Cy_SysPm_Cm7IsActive(uint8_t core);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_Cm7IsSleep
+****************************************************************************//**
+*
+* Checks if the CM4 is in the sleep mode.
+*
+* \param core
+* Selects the core, 0 for CM7_0, 1 for CM7_1
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \return
+* true - if the CM7 is in the sleep mode,
+* false - if the CM7 is not in the sleep mode.
+*
+*******************************************************************************/
+bool Cy_SysPm_Cm7IsSleep(uint8_t core);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_Cm7IsDeepSleep
+****************************************************************************//**
+*
+* Checks if the CM7 is in the deep sleep mode.
+*
+* \param core
+* Selects the core, 0 for CM7_0, 1 for CM7_1
+*
+* \return
+* true - if CM7 is in the deep sleep mode, false - if the CM7 is not in
+* the deep sleep mode.
+*
+*******************************************************************************/
+bool Cy_SysPm_Cm7IsDeepSleep(uint8_t core);
+
+
+/*******************************************************************************
+* Function Name: Cy_SysPm_Cm4IsLowPower
+****************************************************************************//**
+*
+* Checks if the CM7 is in the low power mode.
+*
+* \param core
+* Selects the core, 0 for CM7_0, 1 for CM7_1
+*
+* \note
+* This API is available for CAT1C devices.
+*
+* \return
+* true - if the CM7 is in the low power mode,
+* false - if the CM7 is not in the low power mode.
+*
+*******************************************************************************/
+bool Cy_SysPm_Cm7IsLowPower(uint8_t core);
+
+
+#endif
 /** \} group_syspm_functions_power_status */
 
 
@@ -4519,15 +5869,13 @@ void Cy_SysPm_CpuSendWakeupEvent(void);
 * \funcusage
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_SystemSetNormalRegulatorCurrent
 *
-* \note CAT1B devices, function always returns 0.
-*
 *******************************************************************************/
 bool Cy_SysPm_SystemIsMinRegulatorCurrentSet(void);
 #endif /* defined (CY_IP_MXS40SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN) */
 /** \} group_syspm_functions_power */
 
 
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) || defined (CY_DOXYGEN)
 /**
 * \addtogroup group_syspm_functions_buck
 * \{
@@ -4690,7 +6038,7 @@ void Cy_SysPm_BuckSetVoltage2HwControl(bool hwControl);
 *
 *******************************************************************************/
 bool Cy_SysPm_BuckIsVoltage2HwControlled(void);
-#endif /* CY_IP_MXS40SRSS */
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) */
 
 
 #if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
@@ -4764,6 +6112,21 @@ cy_en_syspm_core_buck_mode_t Cy_SysPm_CoreBuckGetMode(void);
 *
 * Configures the Core Buck Regulator
 *
+* \note
+* Core buck voltage and mode are selected based on a voting system by the
+* following 5 requesters
+* Deepsleep Requester, SDR0 DS Requester, SDR0 Requester, SDR1 Requester and
+* Extra Requester.
+* The requesters may all request different voltages and CBUCK modes.
+* When multiple requesters are used for a profile, the requests are harmonized
+* into a composite request according to rules:
+*  - The composite CBUCK voltage request is the maximum voltage from all
+*    enabled requesters.
+*  - The composite CBUCK mode is the maximum setting among all enabled requesters
+*    to get the highest mode.
+*
+* For information about the CBUCK control, refer to the appropriate device TRM.
+*
 * \param config
 * Structure containing the config parameters, \ref cy_stc_syspm_core_buck_params_t
 *
@@ -4792,10 +6155,23 @@ cy_en_syspm_status_t Cy_SysPm_CoreBuckConfig(cy_stc_syspm_core_buck_params_t *co
 cy_en_syspm_status_t Cy_SysPm_CoreBuckStatus(void);
 
 /*******************************************************************************
-* Function Name: Cy_SysPm_LdoExtraRequester
+* Function Name: Cy_SysPm_LdoExtraRequesterConfig
 ****************************************************************************//**
 *
 * Configures the Extra Requester for Core Buck Regulator
+*
+* \note
+* The extra requester caters to two special cases:
+*   - To temporarily force the system to choose a scratch profile with the
+*     settings defined by the extra requester.  This allows other requester
+*     settings to be changed without changing the internal setting of an active
+*     profile.  This can be used to change the target voltage of an enabled
+*     stepdown regulator.
+*   - To participate in requester harmonization as an extra requester.
+*     This can be used to restrict the composite settings higher than the
+*     hardware would normally choose according to the harmonization rules.
+*
+* For information about the CBUCK control, refer to the appropriate device TRM.
 *
 * \param extraReqConfig
 * Pointer to structure containing the extra requester config parameters,
@@ -4808,7 +6184,7 @@ cy_en_syspm_status_t Cy_SysPm_CoreBuckStatus(void);
 * see \ref cy_en_syspm_status_t.
 *
 *******************************************************************************/
-cy_en_syspm_status_t Cy_SysPm_LdoExtraRequester(cy_stc_syspm_extraReq_params_t *extraReqConfig);
+cy_en_syspm_status_t Cy_SysPm_LdoExtraRequesterConfig(cy_stc_syspm_extraReq_params_t *extraReqConfig);
 
 #endif
 /** \} group_syspm_functions_buck */
@@ -4818,7 +6194,8 @@ cy_en_syspm_status_t Cy_SysPm_LdoExtraRequester(cy_stc_syspm_extraReq_params_t *
 * \addtogroup group_syspm_functions_ldo
 * \{
 */
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3))
+
 /*******************************************************************************
 * Function Name: Cy_SysPm_LdoGetVoltage
 ****************************************************************************//**
@@ -4840,7 +6217,8 @@ cy_en_syspm_status_t Cy_SysPm_LdoExtraRequester(cy_stc_syspm_extraReq_params_t *
 *
 *******************************************************************************/
 cy_en_syspm_ldo_voltage_t Cy_SysPm_LdoGetVoltage(void);
-#endif
+
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) */
 
 /*******************************************************************************
 * Function Name: Cy_SysPm_LdoIsEnabled
@@ -4865,6 +6243,10 @@ bool Cy_SysPm_LdoIsEnabled(void);
 *
 * Configures the SDR(Step Down Regulator)
 *
+* \note
+*  The CBUCK voltage selection must be 60mV higher than the SDR output or the
+* regulator output may bypass.
+*
 * \param sdr
 * CY_SYSPM_SDR_0 - for SDR0
 * CY_SYSPM_SDR_1 - for SDR1
@@ -4883,6 +6265,10 @@ void Cy_SysPm_SdrConfigure(cy_en_syspm_sdr_t sdr, cy_stc_syspm_sdr_params_t *con
 ****************************************************************************//**
 *
 * Set the SDR(Step Down Regulator) Voltage
+*
+* \note
+*  The CBUCK voltage selection must be 60mV higher than the SDR output or the
+* regulator output may bypass.
 *
 * \param sdr
 * CY_SYSPM_SDR_0 - for SDR0
@@ -4924,6 +6310,9 @@ cy_en_syspm_sdr_voltage_t Cy_SysPm_SdrGetVoltage(cy_en_syspm_sdr_t sdr);
 *
 * Enable the SDR(Step Down Regulator)
 *
+* \note
+* Applicable for only SDR1, whereas SDR0 is always enabled.
+*
 * \param sdr
 * CY_SYSPM_SDR_0 - for SDR0
 * CY_SYSPM_SDR_1 - for SDR1
@@ -4932,7 +6321,7 @@ cy_en_syspm_sdr_voltage_t Cy_SysPm_SdrGetVoltage(cy_en_syspm_sdr_t sdr);
 * true - enable, false - disable
 *
 * \note
-* This parameter is available for CAT1B devices.
+* This function is available for CAT1B devices.
 *
 *******************************************************************************/
 void Cy_SysPm_SdrEnable(cy_en_syspm_sdr_t sdr, bool enable);
@@ -4951,7 +6340,7 @@ void Cy_SysPm_SdrEnable(cy_en_syspm_sdr_t sdr, bool enable);
 * True if enabled, False if disabled.
 *
 * \note
-* This parameter is available for CAT1B devices.
+* This function is available for CAT1B devices.
 *
 *******************************************************************************/
 bool Cy_SysPm_IsSdrEnabled(cy_en_syspm_sdr_t sdr);
@@ -4966,7 +6355,7 @@ bool Cy_SysPm_IsSdrEnabled(cy_en_syspm_sdr_t sdr);
 * Structure containing the config parameters, \ref cy_stc_syspm_hvldo_params_t
 *
 * \note
-* This parameter is available for CAT1B devices.
+* This function is available for CAT1B devices.
 *
 *******************************************************************************/
 void Cy_SysPm_HvLdoConfigure(cy_stc_syspm_hvldo_params_t *config);
@@ -4981,7 +6370,7 @@ void Cy_SysPm_HvLdoConfigure(cy_stc_syspm_hvldo_params_t *config);
 * Pick from \ref cy_en_syspm_hvldo_voltage_t
 *
 * \note
-* This parameter is available for CAT1B devices.
+* This function is available for CAT1B devices.
 *
 *******************************************************************************/
 void Cy_SysPm_HvLdoSetVoltage(cy_en_syspm_hvldo_voltage_t voltage);
@@ -4996,7 +6385,7 @@ void Cy_SysPm_HvLdoSetVoltage(cy_en_syspm_hvldo_voltage_t voltage);
 * Gets Voltage enum value of type \ref cy_en_syspm_hvldo_voltage_t
 *
 * \note
-* This parameter is available for CAT1B devices.
+* This function is available for CAT1B devices.
 *
 *******************************************************************************/
 cy_en_syspm_hvldo_voltage_t Cy_SysPm_HvLdoGetVoltage(void);
@@ -5080,6 +6469,24 @@ bool Cy_SysPm_IoIsFrozen(void);
 *******************************************************************************/
 void Cy_SysPm_IoUnfreeze(void);
 
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+/*******************************************************************************
+* Function Name: Cy_SysPm_IoFreeze
+****************************************************************************//**
+*
+* Freezes IOs.
+*
+* Freezes the IO cells directly to save the IO-cell state on a wakeup from the
+* Hibernate. Do not call this function before entering the
+* Hibernate mode, because Cy_SysPm_Hibernate() function freezes the IO cells.
+*
+* \note
+* This function is available for CAT1C devices.
+*
+******************************************************************************/
+void Cy_SysPm_IoFreeze(void);
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) */
+
 #if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
 
 /*******************************************************************************
@@ -5146,7 +6553,7 @@ void Cy_SysPm_DeepSleepIoUnfreeze(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicEnable
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 void Cy_SysPm_PmicEnable(void);
@@ -5196,7 +6603,7 @@ void Cy_SysPm_PmicEnable(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicDisable
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 void Cy_SysPm_PmicDisable(cy_en_syspm_pmic_wakeup_polarity_t polarity);
@@ -5217,7 +6624,7 @@ void Cy_SysPm_PmicDisable(cy_en_syspm_pmic_wakeup_polarity_t polarity);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicAlwaysEnable
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 void Cy_SysPm_PmicAlwaysEnable(void);
@@ -5239,7 +6646,7 @@ void Cy_SysPm_PmicAlwaysEnable(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicEnableOutput
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 void Cy_SysPm_PmicEnableOutput(void);
@@ -5273,7 +6680,7 @@ void Cy_SysPm_PmicEnableOutput(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicDisableOutput
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 void Cy_SysPm_PmicDisableOutput(void);
@@ -5296,7 +6703,7 @@ void Cy_SysPm_PmicDisableOutput(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicLock
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 void Cy_SysPm_PmicLock(void);
@@ -5319,7 +6726,7 @@ void Cy_SysPm_PmicLock(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicEnable
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 void Cy_SysPm_PmicUnlock(void);
@@ -5339,7 +6746,7 @@ void Cy_SysPm_PmicUnlock(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicLock
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 bool Cy_SysPm_PmicIsEnabled(void);
@@ -5359,7 +6766,7 @@ bool Cy_SysPm_PmicIsEnabled(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicDisable
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 bool Cy_SysPm_PmicIsOutputEnabled(void);
@@ -5379,7 +6786,7 @@ bool Cy_SysPm_PmicIsOutputEnabled(void);
 * \snippet syspm/snippet/main.c snippet_Cy_SysPm_PmicLock
 *
 * \note
-* This API is available for CAT1A devices.
+* This API is available for CAT1A & CAT1C devices.
 *
 *******************************************************************************/
 bool Cy_SysPm_PmicIsLocked(void);
@@ -5483,7 +6890,7 @@ void Cy_SysPm_BackupDisableVoltageMeasurement(void);
 *******************************************************************************/
 void Cy_SysPm_BackupSuperCapCharge(cy_en_syspm_sc_charge_key_t key);
 
-#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3) || defined (CY_DOXYGEN)
 
 /*******************************************************************************
 * Function Name: Cy_SysPm_BackupWordStore
@@ -5503,7 +6910,7 @@ void Cy_SysPm_BackupSuperCapCharge(cy_en_syspm_sc_charge_key_t key);
 * Number of words to be stored
 *
 * \note
-* This API is available for CAT1B devices.
+* This API is available for CAT1B & CAT1C devices.
 *
 *******************************************************************************/
 
@@ -5527,18 +6934,41 @@ void Cy_SysPm_BackupWordStore(uint32_t wordIndex, uint32_t *wordSrcPointer, uint
 * Number of words to be Restored
 *
 * \note
-* This API is available for CAT1B devices.
+* This API is available for CAT1B & CAT1C devices.
 *
 *******************************************************************************/
 void Cy_SysPm_BackupWordReStore(uint32_t wordIndex, uint32_t *wordDstPointer, uint32_t wordSize);
 #endif
 
-#if defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
+/*******************************************************************************
+* Function Name: Cy_SysPm_SetupDeepSleepRAM
+****************************************************************************//**
+*
+* Implements Pre and Post Deepsleep RAM Setup.
+*
+* \param dsramCheck
+* CY_SYSPM_PRE_DSRAM or CY_SYSPM_POST_DSRAM
+*
+* \param dsramIntState
+* Variable to save the interrupt state before and after Deepsleep RAM.
+*
+* \return
+* - CY_SYSPM_SUCCESS - Deepsleep RAM checks are successful
+* - CY_SYSPM_CANCELED - Operation was canceled. Call the function again until
+*   the function returns CY_SYSPM_SUCCESS.
+*
+* \note
+* This API is available for CAT1B devices.
+*
+*******************************************************************************/
+cy_en_syspm_status_t Cy_SysPm_SetupDeepSleepRAM(cy_en_syspm_dsram_checks_t dsramCheck, uint32_t *dsramIntState);
+
 /*******************************************************************************
 * Function Name: Cy_SysPm_CpuEnterRAMOffDeepSleep
 ****************************************************************************//**
 *
-* Sets executing CPU to the Deep Sleep mode forcefull RAM OFF.
+* Sets executing CPU to the Deep Sleep mode forceful RAM OFF.
 *
 * \return
 * Entered status, see \ref cy_en_syspm_status_t.
@@ -5551,8 +6981,8 @@ void Cy_SysPm_BackupWordReStore(uint32_t wordIndex, uint32_t *wordDstPointer, ui
 * Management State, not to be used by the customers.
 *
 *******************************************************************************/
-
 cy_en_syspm_status_t Cy_SysPm_CpuEnterRAMOffDeepSleep(void);
+
 #endif
 
 
@@ -5565,7 +6995,7 @@ cy_en_syspm_status_t Cy_SysPm_CpuEnterRAMOffDeepSleep(void);
 * Backward compatibility macro. The following code is DEPRECATED and must
 * not be used in new projects
 *******************************************************************************/
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3))
 /**
 * \note
 * These macros is available for CAT1A devices.
@@ -5611,7 +7041,7 @@ typedef cy_en_syspm_buck_voltage2_t          cy_en_syspm_simo_buck_voltage2_t;
 #define CY_SYSPM_HIBPIN1_LOW                 CY_SYSPM_HIBERNATE_PIN1_LOW
 #define CY_SYSPM_HIBPIN1_HIGH                CY_SYSPM_HIBERNATE_PIN1_HIGH
 
-#if defined (CY_IP_MXS40SRSS)
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3))
 /**
 * \note
 * These macros is available for CAT1A devices.
@@ -5619,7 +7049,15 @@ typedef cy_en_syspm_buck_voltage2_t          cy_en_syspm_simo_buck_voltage2_t;
 #define CY_SYSPM_ENTER_LP_MODE               CY_SYSPM_ULP
 #define CY_SYSPM_EXIT_LP_MODE                CY_SYSPM_LP
 #define CY_SYSPM_STATUS_SYSTEM_LOWPOWER      CY_SYSPM_STATUS_SYSTEM_ULP
-#endif /* CY_IP_MXS40SRSS */
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3) */
+
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+/**
+* \note
+* These macros is available for CAT1C devices.
+**/
+#define CY_SYSPM_STATUS_SYSTEM_LOWPOWER      CY_SYSPM_STATUS_SYSTEM_LPACTIVE
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3) */
 
 typedef cy_en_syspm_hibernate_wakeup_source_t  cy_en_syspm_hib_wakeup_source_t;
 
@@ -5693,7 +7131,7 @@ typedef cy_en_syspm_hibernate_wakeup_source_t  cy_en_syspm_hib_wakeup_source_t;
 }
 #endif
 
-#endif /* CY_IP_MXS40SRSS */
+#endif /* defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS) */
 
 #endif /* CY_SYSPM_H */
 

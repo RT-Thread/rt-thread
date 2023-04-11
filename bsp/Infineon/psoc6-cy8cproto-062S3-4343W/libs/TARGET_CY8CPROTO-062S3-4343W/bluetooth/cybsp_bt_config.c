@@ -1,6 +1,6 @@
 /***********************************************************************************************//**
  * \copyright
- * Copyright 2020-2021 Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2020-2022 Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -23,6 +23,29 @@
 #include "cybsp_bt_config.h"
 #include "cycfg_connectivity_bt.h"
 #include "wiced_bt_dev.h"
+
+// Not all boards use all of these pins. Any that arn't defined we will fallback on No Connects.
+#if !defined(CYBSP_BT_POWER)
+    #define CYBSP_BT_POWER              (NC)
+#endif
+#if !defined(CYCFG_BT_DEV_WAKE_GPIO)
+    #define CYCFG_BT_DEV_WAKE_GPIO      (NC)
+#endif
+#if !defined(CYCFG_BT_HOST_WAKE_GPIO)
+    #define CYCFG_BT_HOST_WAKE_GPIO     (NC)
+#endif
+#if !defined(CYBSP_BT_UART_TX)
+    #define CYBSP_BT_UART_TX            (NC)
+#endif
+#if !defined(CYBSP_BT_UART_RX)
+    #define CYBSP_BT_UART_RX            (NC)
+#endif
+#if !defined(CYBSP_BT_UART_RTS)
+    #define CYBSP_BT_UART_RTS           (NC)
+#endif
+#if !defined(CYBSP_BT_UART_CTS)
+    #define CYBSP_BT_UART_CTS           (NC)
+#endif
 
 const cybt_platform_config_t cybsp_bt_platform_cfg =
 {

@@ -141,7 +141,7 @@ static bool _cyhal_wdt_initialized = false;
 static uint16_t _cyhal_wdt_initial_timeout_ms = 0;
 
 #if defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)
-__STATIC_INLINE uint16_t _cyhal_wdt_timeout_to_match(uint16_t timeout_ms)
+__STATIC_INLINE uint32_t _cyhal_wdt_timeout_to_match(uint16_t timeout_ms)
 {
     uint32_t timeout = ((uint64_t)timeout_ms * CY_SYSCLK_ILO_FREQ) / 1000;
     return (uint32_t)(timeout + Cy_WDT_GetCount());

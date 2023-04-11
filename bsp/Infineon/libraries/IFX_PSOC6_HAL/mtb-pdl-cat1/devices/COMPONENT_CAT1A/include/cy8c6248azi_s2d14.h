@@ -482,9 +482,9 @@ typedef enum {
 #define CY_ROM_BASE                     0x00000000UL
 #define CY_ROM_SIZE                     0x00010000UL
 #define CY_SRAM_BASE                    0x08000000UL
-#define CY_SRAM_SIZE                    0x00100000UL
+#define CY_SRAM_SIZE                    0x00080000UL
 #define CY_FLASH_BASE                   0x10000000UL
-#define CY_FLASH_SIZE                   0x00200000UL
+#define CY_FLASH_SIZE                   0x00100000UL
 #define CY_EM_EEPROM_BASE               0x14000000UL
 #define CY_EM_EEPROM_SIZE               0x00008000UL
 #define CY_SFLASH_BASE                  0x16000000UL
@@ -568,6 +568,7 @@ typedef enum {
 #include "gpio_psoc6_02_128_tqfp.h"
 
 #define CY_DEVICE_PSOC6A2M
+#define CY_DEVICE_SERIES_PSOC_62
 #define CY_SILICON_ID                   0xE4561202UL
 #define CY_HF_CLK_MAX_FREQ              150000000UL
 

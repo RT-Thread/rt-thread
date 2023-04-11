@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_efuse_v3.c
-* \version 2.10
+* \version 2.20
 *
 * \brief
 * Provides API implementation of the eFuse version_3 driver.
@@ -84,6 +84,17 @@ void Cy_EFUSE_Disable(EFUSE_Type *base)
 {
     EFUSE_CTL(base) = 0UL;
 }
+
+/**
+ *****************************************************************************
+ ** Cy_EFUSE_IsEnabled
+ ** Checks if EFUSE block is enabled or not.
+ *****************************************************************************/
+bool Cy_EFUSE_IsEnabled(EFUSE_Type *base)
+{
+    return (0U != _FLD2VAL(EFUSE_CTL_ENABLED, EFUSE_CTL(base)));
+}
+
 
 /**
  *****************************************************************************

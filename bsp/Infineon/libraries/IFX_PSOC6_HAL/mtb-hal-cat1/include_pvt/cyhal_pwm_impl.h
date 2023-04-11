@@ -71,7 +71,7 @@ __STATIC_INLINE void _cyhal_pwm_register_callback(cyhal_pwm_t *obj, cyhal_pwm_ev
 __STATIC_INLINE void _cyhal_pwm_enable_event(cyhal_pwm_t *obj, cyhal_pwm_event_t event, uint8_t intr_priority, bool enable)
 {
     uint32_t converted = _cyhal_pwm_convert_event(event);
-    _cyhal_tcpwm_enable_event(obj->tcpwm.base, &obj->tcpwm.resource, converted, intr_priority, enable);
+    _cyhal_tcpwm_enable_event(&obj->tcpwm, &obj->tcpwm.resource, converted, intr_priority, enable);
 }
 
 #define cyhal_pwm_enable_event(obj, event, intr_priority, enable) \

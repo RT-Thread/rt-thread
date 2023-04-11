@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_aes_v2.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code fro the API for the AES method
@@ -27,15 +27,17 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_aes_v2.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C)
 
 #include "cy_crypto_core_hw_v2.h"
 #include "cy_crypto_core_mem_v2.h"
@@ -149,6 +151,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Free(CRYPTO_Type *base, cy_stc_crypt
 *
 * Sets AES mode and prepares inverse key.
 *
+* For CAT1C devices when D-Cache is enabled parameters key, aesState and aesBuffers must align and end in 32 byte boundary.
+*
 * \param base
 * The pointer to the CRYPTO instance.
 *
@@ -181,13 +185,22 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Init(CRYPTO_Type *base,
     CY_ASSERT_L3(CY_CRYPTO_IS_KEYLENGTH_VALID(keyLength));
 
     uint16_t keySize = CY_CRYPTO_AES_128_KEY_SIZE + ((uint16_t)keyLength * 8u);
-
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)key,(int32_t)keySize);
+#endif
     Cy_Crypto_Core_V2_MemSet(base, aesState, 0u, ((uint16_t)sizeof(cy_stc_crypto_aes_state_t)));
+
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_InvalidateDCache_by_Addr((volatile void *)aesState, (int32_t)sizeof(cy_stc_crypto_aes_state_t));
+#endif
 
     aesState->buffers = (cy_stc_crypto_aes_buffers_t*) aesBuffers;
     aesState->keyLength = keyLength;
-
     Cy_Crypto_Core_V2_MemCpy(base, aesState->buffers->key, key, keySize);
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_InvalidateDCache_by_Addr(aesState->buffers->key, (int32_t)keySize);
+#endif
 
     return (CY_CRYPTO_SUCCESS);
 }
@@ -197,6 +210,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Init(CRYPTO_Type *base,
 ****************************************************************************//**
 *
 * Performs an AES operation on one block.
+*
+* For CAT1C devices when D-Cache is enabled parameters dst and src must align and end in 32 byte boundary.
 *
 * \param base
 * The pointer to the CRYPTO instance.
@@ -225,6 +240,10 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Ecb(CRYPTO_Type *base,
                                             uint8_t const *src,
                                             cy_stc_crypto_aes_state_t *aesState)
 {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)src,(int32_t)CY_CRYPTO_AES_BLOCK_SIZE);
+#endif
     (CY_CRYPTO_ENCRYPT == dirMode) ? \
         Cy_Crypto_Core_V2_Aes_LoadEncKey(base, aesState) : Cy_Crypto_Core_V2_Aes_LoadDecKey(base, aesState);
 
@@ -239,14 +258,22 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Ecb(CRYPTO_Type *base,
 
     Cy_Crypto_Core_WaitForReady(base);
 
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_InvalidateDCache_by_Addr(dst, (int32_t)CY_CRYPTO_AES_BLOCK_SIZE);
+#endif
+
     return (CY_CRYPTO_SUCCESS);
 }
 
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_V2_Aes_Cbc
 ****************************************************************************//**
 *
 * Performs AES operation on a plain text with Cipher Block Chaining (CBC).
+*
+* For CAT1C devices when D-Cache is enabled parameters ivPtr, dst and src must align and end in 32 byte boundary.
+* For CAT1A and CAT1C devices with DCache disabled, src must be 4-Byte aligned.
 *
 * \param base
 * The pointer to the CRYPTO instance.
@@ -265,7 +292,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Ecb(CRYPTO_Type *base,
 * The pointer to a destination cipher text.
 *
 * \param src
-* The pointer to a source plain text. Must be 4-Byte aligned.
+* The pointer to a source plain text.
 *
 * \param aesState
 * The pointer to the AES state structure allocated by the user. The user
@@ -286,6 +313,12 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Cbc(CRYPTO_Type *base,
     uint32_t size = srcSize;
     uint32_t ivBlockId = CY_CRYPTO_V2_RB_BLOCK1;
     cy_en_crypto_status_t tmpResult = CY_CRYPTO_SIZE_NOT_X16;
+
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)ivPtr,(int32_t)CY_CRYPTO_AES_BLOCK_SIZE);
+    SCB_CleanDCache_by_Addr((volatile void *)src,(int32_t)srcSize);
+#endif
 
     /* Check whether the data size is multiple of CY_CRYPTO_AES_BLOCK_SIZE */
     if (0UL == (srcSize & ((uint32_t)CY_CRYPTO_AES_BLOCK_SIZE - 1UL)))
@@ -346,16 +379,25 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Cbc(CRYPTO_Type *base,
         Cy_Crypto_Core_V2_Sync(base);
 
         tmpResult = CY_CRYPTO_SUCCESS;
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        SCB_InvalidateDCache_by_Addr(dst, (int32_t)srcSize);
+#endif
     }
+
 
     return (tmpResult);
 }
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC) */
 
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_V2_Aes_Cfb
 ********************************************************************************
 *
 * Performs AES operation on a plain text with the Cipher Feedback Block method (CFB).
+*
+* For CAT1C devices when D-Cache is enabled parameters ivPtr, dst and src must align and end in 32 byte boundary.
+* For CAT1A and CAT1C devices with DCache disabled, src must be 4-Byte aligned.
 *
 * \param base
 * The pointer to the CRYPTO instance.
@@ -374,7 +416,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Cbc(CRYPTO_Type *base,
 * The pointer to a destination cipher text.
 *
 * \param src
-* The pointer to a source plain text. Must be 4-Byte aligned.
+* The pointer to a source plain text.
 *
 * \param aesState
 * The pointer to the AES state structure allocated by the user. The user
@@ -395,6 +437,12 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Cfb(CRYPTO_Type *base,
     uint32_t size = srcSize;
 
     cy_en_crypto_status_t tmpResult = CY_CRYPTO_SIZE_NOT_X16;
+
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        /* Flush the cache */
+        SCB_CleanDCache_by_Addr((volatile void *)ivPtr,(int32_t)CY_CRYPTO_AES_BLOCK_SIZE);
+        SCB_CleanDCache_by_Addr((volatile void *)src,(int32_t)srcSize);
+#endif
 
     /* Check whether the data size is multiple of CY_CRYPTO_AES_BLOCK_SIZE */
     if (0UL == (size & ((uint32_t)CY_CRYPTO_AES_BLOCK_SIZE - 1UL)))
@@ -442,16 +490,25 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Cfb(CRYPTO_Type *base,
         Cy_Crypto_Core_V2_Sync(base);
 
         tmpResult = CY_CRYPTO_SUCCESS;
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        SCB_InvalidateDCache_by_Addr(dst, (int32_t)srcSize);
+#endif
     }
+
 
     return (tmpResult);
 }
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB) */
 
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_V2_Aes_Ctr
 ********************************************************************************
 *
 * Performs AES operation on a plain text using the counter method (CTR).
+*
+* For CAT1C devices when D-Cache is enabled parameters ivPtr, streamBlock, dst and src must align and end in 32 byte boundary.
+* For CAT1A and CAT1C devices with DCache disabled, src must be 4-Byte aligned.
 *
 * \param base
 * The pointer to the CRYPTO instance.
@@ -473,7 +530,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Cfb(CRYPTO_Type *base,
 * The pointer to a destination cipher text.
 *
 * \param src
-* The pointer to a source plain text. Must be 4-Byte aligned.
+* The pointer to a source plain text.
 *
 * \param aesState
 * The pointer to the AES state structure allocated by the user. The user
@@ -493,17 +550,33 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Ctr(CRYPTO_Type *base,
                                             uint8_t const *src,
                                             cy_stc_crypto_aes_state_t *aesState)
 {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    CY_ALIGN(__SCB_DCACHE_LINE_SIZE) static uint32_t blockCounter[CY_CRYPTO_AES_BLOCK_SIZE_U32] = { 0UL };
+    Cy_Crypto_Core_V2_MemSet(base, (void*)blockCounter, 0x00U, (uint16_t)sizeof(blockCounter));
+#else
     uint32_t blockCounter[CY_CRYPTO_AES_BLOCK_SIZE_U32] = { 0UL };
+#endif
     uint64_t counter;
     uint32_t cnt;
     uint32_t i;
 
     (void)streamBlock; /* Suppress warning */
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)ivPtr,(int32_t)CY_CRYPTO_AES_BLOCK_SIZE);
+    SCB_CleanDCache_by_Addr((volatile void *)src,(int32_t)srcSize);
+    SCB_CleanDCache_by_Addr((volatile void *)streamBlock,(int32_t)CY_CRYPTO_AES_BLOCK_SIZE);
+#endif
 
     blockCounter[ 0] = (uint32_t) CY_CRYPTO_MERGE_BYTES(ivPtr[ 3], ivPtr[ 2], ivPtr[ 1], ivPtr[ 0]);
     blockCounter[ 1] = (uint32_t) CY_CRYPTO_MERGE_BYTES(ivPtr[ 7], ivPtr[ 6], ivPtr[ 5], ivPtr[ 4]);
     blockCounter[ 2] = (uint32_t) CY_CRYPTO_MERGE_BYTES(ivPtr[11], ivPtr[10], ivPtr[ 9], ivPtr[ 8]);
     blockCounter[ 3] = (uint32_t) CY_CRYPTO_MERGE_BYTES(ivPtr[15], ivPtr[14], ivPtr[13], ivPtr[12]);
+
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)blockCounter,(int32_t)sizeof(blockCounter));
+#endif
 
     counter = CY_SWAP_ENDIAN64(*(uint64_t*)(blockCounter + CY_CRYPTO_AES_CTR_CNT_POS));
 
@@ -547,18 +620,23 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Aes_Ctr(CRYPTO_Type *base,
 
     /* Save the reminder of the last non-complete block */
     *srcOffset = (uint32_t)(srcSize % CY_CRYPTO_AES_BLOCK_SIZE);
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_InvalidateDCache_by_Addr(dst, (int32_t)srcSize);
+#endif
 
     return (CY_CRYPTO_SUCCESS);
 }
-
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR) */
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 11.3');
-#endif /* #if (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

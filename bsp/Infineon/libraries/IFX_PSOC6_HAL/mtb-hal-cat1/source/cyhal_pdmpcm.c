@@ -1,5 +1,4 @@
 /*******************************************************************************
-#include "Cyhal_utils_psoc.h"
 * File Name: cyhal_pdmpcm.c
 *
 * Description:
@@ -8,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -37,7 +36,7 @@
 #include "cyhal_syspm_impl.h"
 #include "cyhal_system.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cy_device.h"
 #include "cy_device_headers.h"
 #include "cy_utils.h"
@@ -157,11 +156,12 @@ static PDM_Type *const _cyhal_pdm_pcm_base[] =
 
 /* Note: We don't track channels in HWMGR because they are not completely independent. Instead we
  * keep a pointer to the obj struct for each channel */
+static bool _cyhal_pdm_pcm_arrays_initialized = false;
 #if (_CYHAL_PDM_INST0)
-static cyhal_pdm_pcm_t* _cyhal_pdm_pcm_config_structs_inst0[_CYHAL_PDM_CHANNELS0] = { NULL };
+CY_NOINIT static cyhal_pdm_pcm_t* _cyhal_pdm_pcm_config_structs_inst0[_CYHAL_PDM_CHANNELS0];
 #endif
 #if (_CYHAL_PDM_INST1)
-static cyhal_pdm_pcm_t* _cyhal_pdm_pcm_config_structs_inst1[_CYHAL_PDM_CHANNELS1] = { NULL };
+CY_NOINIT static cyhal_pdm_pcm_t* _cyhal_pdm_pcm_config_structs_inst1[_CYHAL_PDM_CHANNELS1];
 #endif
 
 static uint8_t _cyhal_pdm_num_channels[] =
@@ -224,7 +224,6 @@ static void _cyhal_pdm_pcm_get_block_from_irqn(_cyhal_system_irq_t irqn, uint8_t
 {
     switch (irqn)
     {
-#if (CY_CPU_CORTEX_M4) || defined(COMPONENT_CAT1B)
 #if (_CYHAL_PDM_INST0)
 #if (CY_IP_MXAUDIOSS_INSTANCES == 1)
     case audioss_interrupt_pdm_IRQn: /* Only MXAUDIOSS leaves off the trailing 0 for 1 instance. MXPDM keeps it. */
@@ -250,7 +249,6 @@ static void _cyhal_pdm_pcm_get_block_from_irqn(_cyhal_system_irq_t irqn, uint8_t
 #if (_CYHAL_PDM_INSTANCES > 2)
     #warning Unhandled audioss instance count
 #endif
-#endif /* (CY_CPU_CORTEX_M4) */
     default:
         CY_ASSERT(false); // Should never be called with a non-PDM IRQn
         *block = *channel = 0;
@@ -1070,6 +1068,27 @@ static cy_rslt_t _cyhal_pdm_pcm_init_clock(cyhal_pdm_pcm_t *obj, const cyhal_clo
     return result;
 }
 
+static void _cyhal_pdm_pcm_arrays_init( void )
+{
+    if (!_cyhal_pdm_pcm_arrays_initialized)
+    {
+#if (_CYHAL_PDM_INST0)
+        for (uint8_t i = 0; i < _CYHAL_PDM_CHANNELS0; i++)
+        {
+            _cyhal_pdm_pcm_config_structs_inst0[i] = NULL;
+        }
+#endif
+#if (_CYHAL_PDM_INST1)
+        for (uint8_t i = 0; i < _CYHAL_PDM_CHANNELS1; i++)
+        {
+            _cyhal_pdm_pcm_config_structs_inst1[i] = NULL;
+        }
+#endif
+        _cyhal_pdm_pcm_arrays_initialized = true;
+    }
+
+}
+
 static cy_rslt_t _cyhal_pdm_pcm_init_hw(cyhal_pdm_pcm_t *obj, int paired_channel, cyhal_pdm_pcm_t* existing_obj,
 #if defined(CY_IP_MXAUDIOSS_INSTANCES)
                                         const cy_stc_pdm_pcm_config_t* pdl_struct)
@@ -1168,6 +1187,8 @@ cy_rslt_t cyhal_pdm_pcm_init(cyhal_pdm_pcm_t *obj, cyhal_gpio_t pin_data, cyhal_
     CY_ASSERT(NULL != obj);
     memset(obj, 0, sizeof(cyhal_pdm_pcm_t));
     cy_rslt_t result = CY_RSLT_SUCCESS;
+
+    _cyhal_pdm_pcm_arrays_init();
 
     /* Explicitly marked not allocated resources as invalid to prevent freeing them. */
     obj->resource.type = CYHAL_RSC_INVALID;
@@ -1305,6 +1326,8 @@ cy_rslt_t cyhal_pdm_pcm_init_cfg(cyhal_pdm_pcm_t *obj, const cyhal_pdm_pcm_confi
     obj->user_trigger_level = cfg->chan_config->rxFifoTriggerLevel + 1;
 #endif
 
+    _cyhal_pdm_pcm_arrays_init();
+
     cyhal_pdm_pcm_t* existing_obj = _cyhal_pdm_pcm_find_existing_obj(obj->resource.block_num);
     cy_rslt_t result = _cyhal_pdm_pcm_init_clock(obj, cfg->clock, existing_obj);
 
@@ -1329,6 +1352,7 @@ cy_rslt_t cyhal_pdm_pcm_init_cfg(cyhal_pdm_pcm_t *obj, const cyhal_pdm_pcm_confi
 void cyhal_pdm_pcm_free(cyhal_pdm_pcm_t *obj)
 {
     CY_ASSERT(NULL != obj);
+    CY_ASSERT(_cyhal_pdm_pcm_arrays_initialized); /* Should not be freeing if we never initialized anything */
 
     if (CYHAL_RSC_INVALID != obj->resource.type)
     {

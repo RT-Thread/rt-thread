@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_prot.h
-* \version 1.70
+* \version 1.80
 *
 * \brief
 * Provides an API declaration of the Protection Unit driver
@@ -370,6 +370,12 @@
 * \section group_prot_changelog Changelog
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
+*   <tr>
+*     <td>1.80</td>
+*     <td>\ref Cy_Prot_ConfigPpuProgSlaveAddr(), \ref Cy_Prot_EnablePpuProgSlaveRegion() \ref Cy_Prot_DisablePpuProgSlaveRegion()
+*         APIs are only available for PSoC6 devices</td>
+*     <td>MISRA C-2012 compliance and Move PERI version-1 APIs to supported devices</td>
+*   </tr>
 *   <tr>
 *     <td>1.70</td>
 *     <td> Added support for CAT1C devices. </td>
@@ -1063,11 +1069,14 @@ cy_en_prot_status_t Cy_Prot_DisableSmpuSlaveStruct(PROT_SMPU_SMPU_STRUCT_Type* b
 * \addtogroup group_prot_functions_ppu_prog_v2
 * \{
 */
+
 cy_en_prot_status_t Cy_Prot_ConfigPpuProgMasterAtt(PERI_MS_PPU_PR_Type* base, uint16_t pcMask, cy_en_prot_perm_t userPermission, cy_en_prot_perm_t privPermission, bool secure);
-cy_en_prot_status_t Cy_Prot_ConfigPpuProgSlaveAddr(PERI_MS_PPU_PR_Type* base, uint32_t address, cy_en_prot_size_t regionSize);
 cy_en_prot_status_t Cy_Prot_ConfigPpuProgSlaveAtt(PERI_MS_PPU_PR_Type* base, uint16_t pcMask, cy_en_prot_perm_t userPermission, cy_en_prot_perm_t privPermission, bool secure);
+#if defined (CY_IP_M4CPUSS)
+cy_en_prot_status_t Cy_Prot_ConfigPpuProgSlaveAddr(PERI_MS_PPU_PR_Type* base, uint32_t address, cy_en_prot_size_t regionSize);
 cy_en_prot_status_t Cy_Prot_EnablePpuProgSlaveRegion(PERI_MS_PPU_PR_Type* base);
 cy_en_prot_status_t Cy_Prot_DisablePpuProgSlaveRegion(PERI_MS_PPU_PR_Type* base);
+#endif
 
 /** \} group_prot_functions_ppu_prog_v2 */
 

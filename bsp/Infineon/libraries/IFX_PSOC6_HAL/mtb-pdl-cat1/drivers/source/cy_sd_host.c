@@ -1,6 +1,6 @@
 /*******************************************************************************
 * \file cy_sd_host.c
-* \version 2.0
+* \version 2.1
 *
 * \brief
 *  This file provides the driver code to the API for the SD Host Controller
@@ -625,6 +625,8 @@ __STATIC_INLINE cy_en_sd_host_status_t Cy_SD_Host_eMMC_InitCard(SDHC_Type *base,
 * Also, this function must set the SIGNALING_EN bit of the SDHC_CORE_HOST_CTRL2_R
 * register when ioVoltage = CY_SD_HOST_IO_VOLT_1_8V.
 *
+* \note lowVoltageSignaling is not supported for CAT1C devices.
+*
 * \note After calling this function, the SD Host is configured in
 * highest supported bus speed mode (for the SD card, irrespective of
 * the value of lowVoltageSignaling), or eMMC legacy (for the eMMC card)
@@ -1144,7 +1146,7 @@ cy_en_sd_host_status_t Cy_SD_Host_Write(SDHC_Type *base,
 *
 * \note This function starts the erase operation end exits.
 * It is the user's responsibility to check when the erase operation completes.
-* The erase operation completes when ref\ Cy_SD_Host_GetCardStatus returns
+* The erase operation completes when \ref Cy_SD_Host_GetCardStatus returns
 * the status value where both ready-for-data (CY_SD_HOST_CMD13_READY_FOR_DATA)
 * and card-transition (CY_SD_HOST_CARD_TRAN) bits are set.
 * Also it is the user's responsibility to clear the CY_SD_HOST_CMD_COMPLETE flag
@@ -3023,6 +3025,7 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
     cy_stc_sd_host_cmd_config_t cmd;
     cy_en_sd_host_status_t      ret = CY_SD_HOST_ERROR_INVALID_PARAMETER;
     uint32_t                    response = 0UL;
+    uint32_t                    retry;
 
     /* Check for the NULL pointer. */
     if ((NULL != base) && (NULL != context))
@@ -3042,11 +3045,11 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
             cmd.commandArgument = context->RCA << CY_SD_HOST_RCA_SHIFT;
             cmd.dataPresent = false;
             cmd.enableAutoResponseErrorCheck = false;
-            cmd.respType = CY_SD_HOST_RESPONSE_LEN_48;
             cmd.enableCrcCheck = true;
             cmd.enableIdxCheck = true;
 
             /* Issue CMD12. */
+            cmd.respType = CY_SD_HOST_RESPONSE_LEN_48B;
             cmd.commandIndex = CY_SD_HOST_SD_CMD12;
             cmd.cmdType      = CY_SD_HOST_CMD_ABORT;
             ret = Cy_SD_Host_SendCommand(base, &cmd);
@@ -3055,6 +3058,28 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
             {
                 /* Wait for the Command Complete event. */
                 ret = Cy_SD_Host_PollCmdComplete(base);
+            }
+
+            if (CY_SD_HOST_SUCCESS == ret)
+            {
+                Cy_SysLib_DelayUs(CY_SD_HOST_NCC_MIN_US);
+
+                ret = CY_SD_HOST_ERROR_TIMEOUT;
+                retry = CY_SD_HOST_RETRY_TIME;
+
+                /* Waiting for DAT0 deassertion in scope of R1b response */
+                while (retry > 0UL)
+                {
+                    /* Command Complete */
+                    if ((Cy_SD_Host_GetPresentState(base) & CY_SD_HOST_DAT_0_Msk) == CY_SD_HOST_DAT_0_Msk)
+                    {
+                        ret = CY_SD_HOST_SUCCESS;
+                        break;
+                    }
+
+                    Cy_SysLib_DelayUs(CY_SD_HOST_CMD_TIMEOUT_MS);
+                    retry--;
+                }
             }
 
             if (CY_SD_HOST_SUCCESS != ret)
@@ -3067,6 +3092,7 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
             Cy_SD_Host_ErrorReset(base);
 
             /* Issue CMD13. */
+            cmd.respType = CY_SD_HOST_RESPONSE_LEN_48;
             cmd.commandIndex = CY_SD_HOST_SD_CMD13;
             cmd.cmdType      = CY_SD_HOST_CMD_NORMAL;
             ret = Cy_SD_Host_SendCommand(base, &cmd);
@@ -3092,6 +3118,7 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
                 (response & CY_SD_HOST_CMD13_CURRENT_STATE_MSK))
             {
                 /* Issue CMD12 */
+                cmd.respType = CY_SD_HOST_RESPONSE_LEN_48B;
                 cmd.commandIndex = CY_SD_HOST_SD_CMD12;
                 cmd.cmdType       = CY_SD_HOST_CMD_ABORT;
                 ret = Cy_SD_Host_SendCommand(base, &cmd);
@@ -3100,6 +3127,28 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
                 {
                     /* Wait for the Command Complete event. */
                     ret = Cy_SD_Host_PollCmdComplete(base);
+                }
+
+                if (CY_SD_HOST_SUCCESS == ret)
+                {
+                    Cy_SysLib_DelayUs(CY_SD_HOST_NCC_MIN_US);
+
+                    ret = CY_SD_HOST_ERROR_TIMEOUT;
+                    retry = CY_SD_HOST_RETRY_TIME;
+
+                    /* Waiting for DAT0 deassertion in scope of R1b response */
+                    while (retry > 0UL)
+                    {
+                        /* Command Complete */
+                        if ((Cy_SD_Host_GetPresentState(base) & CY_SD_HOST_DAT_0_Msk) == CY_SD_HOST_DAT_0_Msk)
+                        {
+                            ret = CY_SD_HOST_SUCCESS;
+                            break;
+                        }
+
+                        Cy_SysLib_DelayUs(CY_SD_HOST_CMD_TIMEOUT_MS);
+                        retry--;
+                    }
                 }
 
                 if (CY_SD_HOST_SUCCESS != ret)
@@ -3112,6 +3161,7 @@ cy_en_sd_host_status_t  Cy_SD_Host_AbortTransfer(SDHC_Type *base,
                 Cy_SD_Host_ErrorReset(base);
 
                 /* Issue CMD13. */
+                cmd.respType = CY_SD_HOST_RESPONSE_LEN_48;
                 cmd.commandIndex = CY_SD_HOST_SD_CMD13;
                 cmd.cmdType      = CY_SD_HOST_CMD_NORMAL;
                 ret = Cy_SD_Host_SendCommand(base, &cmd);
@@ -3225,7 +3275,8 @@ cy_en_sd_host_status_t Cy_SD_Host_WriteProtect(SDHC_Type *base,
 * as the pointer to the context.
 *
 * \return uint32_t
-*     The card status (the result of the CMD13 command).
+*     The card status (the result of the CMD13 command). To get the details of
+* card status, "AND" returned value with \ref cy_en_sd_host_r1_response_t.
 *
 *******************************************************************************/
 uint32_t Cy_SD_Host_GetCardStatus(SDHC_Type *base,

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_usbfs_dev_drv_io.c
-* \version 2.20.2
+* \version 2.20.3
 *
 * Provides data transfer API implementation of the USBFS driver.
 *
@@ -466,7 +466,7 @@ cy_en_usbfs_dev_drv_status_t Cy_USBFS_Dev_Drv_RemoveEndpoint(USBFS_Type *base,
     Cy_USBFS_Dev_Drv_ClearArbEpInterrupt(base, endpoint, ENDPOINT_ARB_INTR_SOURCES_ALL);
 
     /* Removes the active endpoint */
-    context->activeEpMask &= (uint8_t) ~EP2MASK(endpont);
+    context->activeEpMask &= (uint8_t) ~EP2MASK(endpoint);
 
     /* Clear abort mask for endpoint */
     context->epAbortMask &= (uint8_t) ~EP2MASK(endpoint);

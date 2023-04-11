@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -30,8 +30,8 @@
 #include "cyhal_flash.h"
 #include "cy_utils.h"
 #include "cyhal_syspm.h"
-#include "cyhal_utils_psoc.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_utils_impl.h"
+#include "cyhal_irq_impl.h"
 #include <string.h>
 
 #if (CYHAL_DRIVER_AVAILABLE_FLASH)
@@ -61,37 +61,37 @@ static const cyhal_flash_block_info_t _CYHAL_FLASH_BLOCKS[_CYHAL_INTERNAL_MEMORY
      * that it is possible to read from one region while writing to another region. Because
      * dual-bank mode is highly device specific, for simplicity we stick to single-bank mode
      * in the portable HAL driver */
-    // Large main flash region, 2KB sectors
+    // Large main flash region, 32KB sectors
     {
         .start_address = CY_FLASH_LG_SBM_BASE,
         .size = CY_FLASH_LG_SBM_SIZE,
-        .sector_size = 2048u,
-        .page_size = 64u,
-        .erase_value = 0x00U,
+        .sector_size = 32768u,
+        .page_size = 8u,
+        .erase_value = 0xFFU,
     },
-    // Small main flash region, 128B sectors
+    // Small main flash region, 8KB sectors
     {
         .start_address = CY_FLASH_SM_SBM_BASE,
         .size = CY_FLASH_SM_SBM_SIZE,
-        .sector_size = 128u,
-        .page_size = 64u,
-        .erase_value = 0x00U,
+        .sector_size = 8192u,
+        .page_size = 8u,
+        .erase_value = 0xFFU,
     },
-    // Large wflash region, 2KB sectors
+    // Large wflash region, 32KB sectors
     {
         .start_address = CY_WFLASH_LG_SBM_BASE,
         .size = CY_WFLASH_LG_SBM_SIZE,
         .sector_size = 2048u, /* Hard-coded in the IP */
-        .page_size = 32u,
-        .erase_value = 0x00U,
+        .page_size = 4u,
+        .erase_value = 0xFFU,
     },
     // Small wflash region, 128B sectors
     {
         .start_address = CY_WFLASH_SM_SBM_BASE,
         .size = CY_WFLASH_SM_SBM_SIZE,
         .sector_size = 128u,
-        .page_size = 32u,
-        .erase_value = 0x00U,
+        .page_size = 4u,
+        .erase_value = 0xFFU,
     },
 #else
     // Main Flash
@@ -275,7 +275,7 @@ cy_rslt_t cyhal_flash_read(cyhal_flash_t *obj, uint32_t address, uint8_t *data, 
     {
         return CYHAL_FLASH_RSLT_ERR_ADDRESS;
     }
-    memcpy(data, (void *)address, size);
+    memcpy((void *)data, (void *)address, size);
     return CY_RSLT_SUCCESS;
 }
 
