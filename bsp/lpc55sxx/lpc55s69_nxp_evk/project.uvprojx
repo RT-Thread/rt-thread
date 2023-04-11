@@ -10,7 +10,7 @@
       <TargetName>rtthread-lpc55s6x</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\libc\compilers\common\include;applications;..\Libraries\LPC55S6X\components\codec;board;..\Libraries\drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\dfs\dfs_v1\include;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\Libraries\drivers;board\MCUX_Config\board;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\CMSIS\Core\Include;..\..\..\libcpu\arm\cortex-m33;..\Libraries\LPC55S6X\LPC55S6X;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\Libraries\LPC55S6X\LPC55S6X\drivers;.;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;applications;..\Libraries\LPC55S6X\components\codec;board;..\Libraries\drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\Libraries\drivers;board\MCUX_Config\board;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\CMSIS\Core\Include;..\Libraries\LPC55S6X\LPC55S6X;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\Libraries\LPC55S6X\LPC55S6X\drivers;.;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -480,16 +480,6 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>i2c_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>i2c_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
-            </File>
-            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
@@ -577,51 +567,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>devfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\filesystems\devfs\devfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_elm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\filesystems\elmfat\dfs_elm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\filesystems\elmfat\ff.c</FilePath>
-            </File>
-            <File>
-              <FileName>ffunicode.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\filesystems\elmfat\ffunicode.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs_file.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
@@ -643,11 +588,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
