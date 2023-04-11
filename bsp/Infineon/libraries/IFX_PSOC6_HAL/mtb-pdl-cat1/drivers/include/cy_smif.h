@@ -1,12 +1,12 @@
 /***************************************************************************//**
 * \file cy_smif.h
-* \version 2.30
+* \version 2.40
 *
 * Provides an API declaration of the Cypress SMIF driver.
 *
 ********************************************************************************
 * \copyright
-* Copyright 2016-2021 Cypress Semiconductor Corporation
+* Copyright 2016-2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -172,7 +172,7 @@
 * The memory regions available for XIP addresses allocation are defined
 * in a linker script file (.ld).
 *
-* With SMIF V3 IP, MMIO mode transacations are also allowed when the device is set
+* With SMIF V3 IP, MMIO mode transactions are also allowed when the device is set
 * to XIP mode. However, only blocking SMIF API's are expected to be used for erase or
 * program operations as external flash will be busy for such operation and may not be
 * available for XIP at that moment. Blocking API's will ensure the transaction is complete
@@ -225,6 +225,25 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td rowspan="4">2.40</td>
+*     <td>Enhanced \ref Cy_SMIF_MemEraseSector to compute sector boundary for erase operation and \n
+*         Minor Bug fixes.
+*      </td>
+*     <td>Code Enhancements.</td>
+*   </tr>
+*   <tr>
+*     <td>Added new API \ref Cy_SMIF_MemCmdPowerDown and \ref Cy_SMIF_MemCmdReleasePowerDown.</td>
+*     <td>Reduce power consumption.</td>
+*   </tr>
+*   <tr>
+*     <td>Added new API \ref Cy_SMIF_DeviceTransfer_SetMergeTimeout and \ref Cy_SMIF_DeviceTransfer_ClearMergeTimeout.</td>
+*     <td>Allow user to configure merge timeout.</td>
+*   </tr>
+*   <tr>
+*     <td>Removed Bridge API support.</td>
+*     <td>Removed feature not supported in existing devices.</td>
+*   </tr>
+*   <tr>
 *     <td rowspan="5">2.30</td>
 *     <td>Octal SDR and DDR support using SFDP mode.</td>
 *     <td>Octal device support.</td>
@@ -254,10 +273,10 @@
 *   <tr>
 *     <td>Added new API's for CAT1D devices\n
 *         \ref Cy_SMIF_SetRxCaptureMode()\n
-*         \ref Cy_SMIF_Bridge_Enable()\n
-*         \ref Cy_SMIF_Bridge_SetPortPriority()\n
-*         \ref Cy_SMIF_Bridge_SetSimpleRemapRegion()\n
-*         \ref Cy_SMIF_Bridge_SetInterleavingRemapRegion()\n
+*         Cy_SMIF_Bridge_Enable()\n
+*         Cy_SMIF_Bridge_SetPortPriority()\n
+*         Cy_SMIF_Bridge_SetSimpleRemapRegion()\n
+*         Cy_SMIF_Bridge_SetInterleavingRemapRegion()\n
 *         \ref Cy_SMIF_MemOctalEnable()\n
       </td>
 *     <td>Support for CAT1D devices.</td>
@@ -559,7 +578,7 @@ extern "C" {
 #define CY_SMIF_DRV_VERSION_MAJOR       2
 
 /** The driver minor version */
-#define CY_SMIF_DRV_VERSION_MINOR       30
+#define CY_SMIF_DRV_VERSION_MINOR       40
 
 /** One microsecond timeout for Cy_SMIF_TimeoutRun() */
 #define CY_SMIF_WAIT_1_UNIT             (1U)
@@ -722,7 +741,7 @@ extern "C" {
 #define CY_SMIF_CMD_MMIO_FIFO_WR_LAST_BYTE_Msk       (0x00080000UL)   /* DATA[19]        Last byte               */
 
 #define CY_SMIF_CMD_MMIO_FIFO_WR_DATA_RATE_Pos       (18UL)           /* [18]         Data Rate         */
-#define CY_SMIF_CMD_MMIO_FIFO_WR_DATA_RATE_Msk       (0x00040000UL)   /* DATA[18]     Data Reate         */
+#define CY_SMIF_CMD_MMIO_FIFO_WR_DATA_RATE_Msk       (0x00040000UL)   /* DATA[18]     Data Rate         */
 
 #define CY_SMIF_CMD_MMIO_FIFO_WR_WIDTH_Pos           (16UL)           /* [17:16]         Transfer width       */
 #define CY_SMIF_CMD_MMIO_FIFO_WR_WIDTH_Msk           (0x00030000UL)   /* DATA[17:16]     Transfer width  */
@@ -774,6 +793,11 @@ extern "C" {
 #define CY_SMIF_CMD_FIFO_WR_RX_COUNT_Msk        (0x0000FFFFUL)   /* DATA[15:0]      RX count             */
 #define CY_SMIF_CMD_FIFO_WR_RX_COUNT_Pos        (0UL)            /* [0]             RX count             */
 #endif /* CY_IP_MXSMIF_VERSION */
+
+#if (CY_IP_MXSMIF_VERSION == 5u)
+#define CY_SMIF_CORE_0_HF 3U
+#define CY_SMIF_CORE_1_HF 4U
+#endif
 
 /** \endcond */
 /** \} group_smif_macros */
@@ -1020,124 +1044,6 @@ typedef enum
 
 #endif /* CY_IP_MXSMIF_VERSION */
 
-#if (CY_IP_MXSMIF_VERSION>=5) || defined (CY_DOXYGEN)
-/** Specifies the  PORT priority for XIP space. */
-/**
-* \note
-* This enum is available for CAT1D devices.
-**/
-
-typedef enum
-{
-    CY_EN_BRIDGE_PRIO_SMIF0_XIP_SPACE = 0, // The master accessing through the SMIF0 XIP space has high priority.
-    CY_EN_BRIDGE_PRIO_SMIF1_XIP_SPACE = 1, // The master accessing through the SMIF1 XIP space has high priority.
-} cy_en_smif_bridge_xip_space_pri_t;
-
-/** Specifies the XIP space. */
-/**
-* \note
-* This enum is available for CAT1D devices.
-**/
-
-typedef enum
-{
-    CY_EN_BRIDGE_SMIF0_XIP_SPACE = 0,
-    CY_EN_BRIDGE_SMIF1_XIP_SPACE = 1,
-} cy_en_smif_bridge_xip_space_t;
-
-/** Specifies the port priority on bridge interface. */
-/**
-* \note
-* This structure is available for CAT1D devices.
-**/
-
-typedef struct
-{
-    cy_en_smif_bridge_xip_space_pri_t pri_ahb_smif0;  /**< This specifies the priority for AHB access over SMIF0 */
-    cy_en_smif_bridge_xip_space_pri_t pri_ahb_smif1;  /**< This specifies the priority for AHB access over SMIF1 */
-    cy_en_smif_bridge_xip_space_pri_t pri_axi_smif0;  /**< This specifies the priority for AXI access over SMIF0 */
-    cy_en_smif_bridge_xip_space_pri_t pri_axi_smif1;  /**< This specifies the priority for AXI access over SMIF1 */
-} cy_stc_smif_bridge_pri_t;
-
-/** Specifies the remap type. */
-/**
-* \note
-* This enum is available for CAT1D devices.
-**/
-
-typedef enum
-{
-    CY_EN_BRIDGE_REMAP_TYPE_INACTIVE   = 0,
-    CY_EN_BRIDGE_REMAP_TYPE_TO_SMIF0   = 1,
-    CY_EN_BRIDGE_REMAP_TYPE_TO_SMIF1   = 2,
-    CY_EN_BRIDGE_REMAP_TYPE_INTERLEAVE = 3,
-} cy_en_smif_bridge_remap_type_t;
-
-/** Specifies the interleave size. */
-/**
-* \note
-* This enum is available for CAT1D devices.
-**/
-
-typedef enum
-{
-    CY_EN_BRIDGE_INTERLEAVE_8BYTE   = 0,
-    CY_EN_BRIDGE_INTERLEAVE_16BYTE  = 1,
-    CY_EN_BRIDGE_INTERLEAVE_32BYTE  = 2,
-    CY_EN_BRIDGE_INTERLEAVE_64BYTE  = 3,
-    CY_EN_BRIDGE_INTERLEAVE_128BYTE = 4,
-} cy_en_smif_bridge_interleave_step_t;
-
-/** Specifies the remap size. */
-/**
-* \note
-* This enum is available for CAT1D devices.
-**/
-
-typedef enum
-{
-    CY_EN_BRIDGE_REMAP_SIZE_1MB   = 0x1FF00000U,
-    CY_EN_BRIDGE_REMAP_SIZE_2MB   = 0x1FE00000U,
-    CY_EN_BRIDGE_REMAP_SIZE_4MB   = 0x1FC00000U,
-    CY_EN_BRIDGE_REMAP_SIZE_8MB   = 0x1F800000U,
-    CY_EN_BRIDGE_REMAP_SIZE_16MB  = 0x1F000000U,
-    CY_EN_BRIDGE_REMAP_SIZE_32MB  = 0x1E000000U,
-    CY_EN_BRIDGE_REMAP_SIZE_64MB  = 0x1C000000U,
-    CY_EN_BRIDGE_REMAP_SIZE_128MB = 0x18000000U,
-    CY_EN_BRIDGE_REMAP_SIZE_256MB = 0x10000000U,
-    CY_EN_BRIDGE_REMAP_SIZE_512MB = 0x00000000U,
-} cy_en_smif_bridge_remap_region_size_t;
-
-/** Specifies the remap region information. */
-/**
-* \note
-* This structure is available for CAT1D devices.
-**/
-
-typedef struct
-{
-    uint32_t                              regionIdx;   /**< This specifies the region index (0..8) */
-    cy_en_smif_bridge_remap_region_size_t regionSize;  /**< This specifies the region size */
-    uint32_t                              xipAddr;     /**< This specifies XIP address to be remapped */
-    uint32_t                              phyAddr;     /**< This specifies target remapped address */
-} cy_stc_smif_bridge_remap_t;
-
-/** Specifies the interleaved memory region. */
-/**
-* \note
-* This structure is available for CAT1D devices.
-**/
-typedef struct
-{
-    uint32_t                              regionIdx;       /**< This specifies the region index (0..8) */
-    cy_en_smif_bridge_remap_region_size_t regionSize;      /**< This specifies the region size */
-    uint32_t                              xipAddr;         /**< This specifies XIP address to be remapped */
-    uint32_t                              phyAddr0;        /**< This specifies remapped address on PORT0 */
-    uint32_t                              phyAddr1;        /**< This specifies remapped address on PORT1 */
-} cy_stc_smif_bridge_interleave_remap_t;
-
-#endif /* CY_IP_MXSMIF_VERSION */
-
 /** \cond INTERNAL */
 /*******************************************************************************
 * These are legacy macros. They are left here just for backward compatibility.
@@ -1336,6 +1242,9 @@ cy_en_smif_status_t Cy_SMIF_SendDummyCycles_Ext(SMIF_Type *base,
                                                 cy_en_smif_txfr_width_t transferWidth,
                                                 cy_en_smif_data_rate_t dataRate,
                                                 uint32_t cycles);
+void Cy_SMIF_DeviceTransfer_SetMergeTimeout(SMIF_Type *base, cy_en_smif_slave_select_t slave, cy_en_smif_merge_timeout_t timeout);
+void Cy_SMIF_DeviceTransfer_ClearMergeTimeout(SMIF_Type *base, cy_en_smif_slave_select_t slave);
+
 #endif /* CY_IP_MXSMIF_VERSION */
 
 __STATIC_INLINE void Cy_SMIF_Disable(SMIF_Type *base);
@@ -1369,12 +1278,6 @@ cy_en_smif_status_t Cy_SMIF_SetCryptoDisable(SMIF_Type *base, cy_en_smif_slave_s
 cy_en_smif_status_t Cy_SMIF_ConvertSlaveSlotToIndex(cy_en_smif_slave_select_t ss, uint32_t *device_idx);
 #if (CY_IP_MXSMIF_VERSION>=5) || defined (CY_DOXYGEN)
 void Cy_SMIF_SetRxCaptureMode(SMIF_Type *base, cy_en_smif_capture_mode_t mode);
-cy_en_smif_status_t Cy_SMIF_Bridge_Enable(SMIF_Base_Type *base, bool enable);
-cy_en_smif_status_t Cy_SMIF_Bridge_SetPortPriority(SMIF_Base_Type *base, cy_stc_smif_bridge_pri_t* bridge_priority);
-cy_en_smif_status_t Cy_SMIF_Bridge_SetSimpleRemapRegion(SMIF_Base_Type *base, const cy_stc_smif_bridge_remap_t* region_info);
-cy_en_smif_status_t Cy_SMIF_Bridge_SetInterleavingRemapRegion(SMIF_Base_Type *base,
-                                                                              const cy_stc_smif_bridge_interleave_remap_t* region_info);
-cy_en_smif_status_t Cy_SMIF_Bridge_DeactivateRemapRegion(SMIF_Base_Type *base, uint32_t regionIdx);
 #endif
 /** \addtogroup group_smif_functions_syspm_callback
 * The driver supports SysPm callback for Deep Sleep and Hibernate transition.
@@ -1414,7 +1317,8 @@ __STATIC_INLINE SMIF_DEVICE_Type volatile * Cy_SMIF_GetDeviceBySlot(SMIF_Type *b
 *
 * Disables the operation of the SMIF block. The SMIF block can be disabled only
 * when it is not in the active state. Use the Cy_SMIF_BusyCheck() API to check
-* it before calling this API.
+* it before calling this API. Make sure the clock supplied to SMIF block is also
+* disabled before calling this API using \ref Cy_SysClk_ClkHfDisable
 *
 * \param base
 * Holds the base address of the SMIF block registers.

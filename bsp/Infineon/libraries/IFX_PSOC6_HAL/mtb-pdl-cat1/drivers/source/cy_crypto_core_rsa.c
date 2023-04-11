@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_rsa.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code to the API to calculate
@@ -29,22 +29,18 @@
 
 #if defined (CY_IP_MXCRYPTO)
 
-#include "cy_crypto_common.h"
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 #include "cy_crypto_core_rsa.h"
+
+#if (CPUSS_CRYPTO_VU == 1) && defined(CY_CRYPTO_CFG_RSA_C)
+
 #include "cy_crypto_core_vu.h"
 #include "cy_crypto_core_mem.h"
 #include "cy_syslib.h"
 #include <string.h>
-
-#define CY_CRYPTO_SHA1_PADDING_SIZE        (15u)
-#define CY_CRYPTO_SHA256_512_PADDING_SIZE  (19u)
-
-#if (CPUSS_CRYPTO_VU == 1)
 
 /* Functions prototypes */
 static void Cy_Crypto_Core_Rsa_MontCoeff(CRYPTO_Type *base, uint32_t modDerReg, uint32_t modReg, uint32_t size);
@@ -62,7 +58,10 @@ static void Cy_Crypto_Core_Rsa_expModByMont(CRYPTO_Type *base,
                                      uint32_t rBar,
                                      uint32_t size);
 
-#endif /* #if (CPUSS_CRYPTO_VU == 1) */
+#if defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED)
+
+#define CY_CRYPTO_SHA1_PADDING_SIZE        (15u)
+#define CY_CRYPTO_SHA256_512_PADDING_SIZE  (19u)
 
 /**
 * \addtogroup group_crypto_lld_asymmetric_functions
@@ -92,7 +91,7 @@ static void Cy_Crypto_Core_Rsa_expModByMont(CRYPTO_Type *base,
 * SHA mode used for hash calculation \ref cy_en_crypto_sha_mode_t.
 *
 * \param digest
-* The pointer to the hash of the message whose signature is to be verified.
+* The pointer to the hash of the message or the message whose signature is to be verified.
 *
 * \param decryptedSignature
 * The pointer to the decrypted signature to be verified.
@@ -103,6 +102,9 @@ static void Cy_Crypto_Core_Rsa_expModByMont(CRYPTO_Type *base,
 * \return
 * \ref cy_en_crypto_status_t
 *
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCoreRsaVerUse
+*
 *******************************************************************************/
 cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
                             cy_en_crypto_rsa_ver_result_t *verResult,
@@ -111,19 +113,83 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
                             uint8_t const *decryptedSignature,
                             uint32_t decryptedSignatureLength)
 {
+    if(digestType == CY_CRYPTO_MODE_SHA_NONE)
+    {
+        return CY_CRYPTO_BAD_PARAMS;
+    }
+
+    return Cy_Crypto_Core_Rsa_Verify_Ext(base,
+                                verResult,
+                                digestType,
+                                digest,
+                                0,
+                                decryptedSignature,
+                                decryptedSignatureLength);
+}
+/*******************************************************************************
+* Function Name: Cy_Crypto_Core_Rsa_Verify_Ext
+****************************************************************************//**
+*
+* RSA verification with checks for content, paddings and signature format.
+* SHA digest of the message and decrypted message should be calculated before.
+* Supports only PKCS1-v1_5 format, inside of this format supported padding
+* using only SHA, cases with MD2 and MD5 are not supported.
+* PKCS1-v1_5 described here, page 31:
+* http://www.emc.com/collateral/white-papers/h11300-pkcs-1v2-2-rsa-cryptography-standard-wp.pdf
+*
+* For CAT1C devices when D-Cache is enabled parameter decryptedSignature must align and end in 32 byte boundary.
+*
+* Returns the verification result \ref cy_en_crypto_rsa_ver_result_t.
+*
+* \param base
+* The pointer to the CRYPTO instance.
+*
+* \param verResult
+* The pointer to the verification result \ref cy_en_crypto_rsa_ver_result_t.
+*
+* \param digestType
+* SHA mode used for hash calculation \ref cy_en_crypto_sha_mode_t.
+*
+* \param digest
+* The pointer to the hash of the message or the message whose signature is to be verified.
+*
+* \param digestLength
+* The length of the message whose signature is to be verified and is applicable for CY_CRYPTO_MODE_SHA_NONE mode.
+*
+* \param decryptedSignature
+* The pointer to the decrypted signature to be verified.
+*
+* \param decryptedSignatureLength
+* The length of the decrypted signature to be verified (in bytes)
+*
+* \return
+* \ref cy_en_crypto_status_t
+*
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCoreRsaVerUse
+*
+*******************************************************************************/
+cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify_Ext(CRYPTO_Type *base,
+                            cy_en_crypto_rsa_ver_result_t *verResult,
+                            cy_en_crypto_sha_mode_t digestType,
+                            uint8_t const *digest,
+                            uint32_t digestLength,
+                            uint8_t const *decryptedSignature,
+                            uint32_t decryptedSignatureLength)
+{
     cy_en_crypto_status_t tmpResult = CY_CRYPTO_SUCCESS;
 
     /* Encodings for hash functions */
 
-    #if (CPUSS_CRYPTO_SHA1 == 1)
+    #if (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED)
     static const uint8_t sha1EncStr[CY_CRYPTO_SHA1_PADDING_SIZE] =
     {
         0x30u, 0x21u, 0x30u, 0x09u, 0x06u, 0x05u, 0x2Bu, 0x0Eu,
         0x03u, 0x02u, 0x1Au, 0x05u, 0x00u, 0x04u, 0x14u
     };
-    #endif /* #if (CPUSS_CRYPTO_SHA1 == 1) */
+    #endif /* (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED) */
 
-    #if (CPUSS_CRYPTO_SHA256 == 1)
+    #if (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED)
     static const uint8_t sha224EncStr[CY_CRYPTO_SHA256_512_PADDING_SIZE] =
     {
         0x30u, 0x2Du, 0x30u, 0x0Du, 0x06u, 0x09u, 0x60u, 0x86u,
@@ -137,9 +203,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
         0x48u, 0x01u, 0x65u, 0x03u, 0x04u, 0x02u, 0x01u, 0x05u,
         0x00u, 0x04u, 0x20u
     };
-    #endif /* #if (CPUSS_CRYPTO_SHA256 == 1) */
+    #endif /* (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED) */
 
-    #if (CPUSS_CRYPTO_SHA512 == 1)
+    #if (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED)
     static const uint8_t sha384EncStr[CY_CRYPTO_SHA256_512_PADDING_SIZE] =
     {
         0x30u, 0x41u, 0x30u, 0x0Du, 0x06u, 0x09u, 0x60u, 0x86u,
@@ -167,7 +233,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
         0x48u, 0x01u, 0x65u, 0x03u, 0x04u, 0x02u, 0x06u, 0x05u,
         0x00u, 0x04u, 0x20u
     };
-    #endif /* #if (CPUSS_CRYPTO_SHA512 == 1) */
+    #endif /* (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED) */
 
     uint8_t  const *encodingArr = NULL;
     uint32_t encodingArrSize = 0u;
@@ -180,15 +246,15 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
     switch (digestType)
     {
 
-#if (CPUSS_CRYPTO_SHA1 == 1)
+    #if (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED)
     case CY_CRYPTO_MODE_SHA1:
         encodingArr  = sha1EncStr;
         encodingArrSize = sizeof(sha1EncStr);
         locDigestSize      = CY_CRYPTO_SHA1_DIGEST_SIZE;
         break;
-#endif /* #if (CPUSS_CRYPTO_SHA1 == 1) */
+    #endif /* (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED) */
 
-#if (CPUSS_CRYPTO_SHA256 == 1)
+    #if (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED)
     case CY_CRYPTO_MODE_SHA224:
         encodingArr  = sha224EncStr;
         encodingArrSize = sizeof(sha224EncStr);
@@ -200,9 +266,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
         encodingArrSize = sizeof(sha256EncStr);
         locDigestSize      = CY_CRYPTO_SHA256_DIGEST_SIZE;
         break;
-#endif /* #if (CPUSS_CRYPTO_SHA256 == 1) */
+    #endif /* (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED) */
 
-#if (CPUSS_CRYPTO_SHA512 == 1)
+    #if (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED)
     case CY_CRYPTO_MODE_SHA384:
         encodingArr  = sha384EncStr;
         encodingArrSize = sizeof(sha384EncStr);
@@ -226,8 +292,12 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
         encodingArrSize = sizeof(sha512_256EncStr);
         locDigestSize      = CY_CRYPTO_SHA512_256_DIGEST_SIZE;
         break;
-#endif /* #if (CPUSS_CRYPTO_SHA512 == 1) */
-
+    #endif /* (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED) */
+    case CY_CRYPTO_MODE_SHA_NONE:
+        encodingArr  = NULL;
+        encodingArrSize = 0;
+        locDigestSize  = digestLength;
+        break;
     default:
     /* Unknown Digest Type */
         break;
@@ -236,11 +306,16 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
     /* Fail by default */
     *verResult = CY_CRYPTO_RSA_VERIFY_FAIL;
 
-    /* Check size of decrypted message */
-    if (decryptedSignatureLength < (encodingArrSize + locDigestSize + 11u))
+    if (CY_CRYPTO_MODE_SHA_NONE != digestType)
     {
-        cmpRes = 1u;  /* further checking is not needed */
+        /* Check size of decrypted message */
+        if (decryptedSignatureLength < (encodingArrSize + locDigestSize + 11u))
+        {
+            cmpRes = 1u;  /* further checking is not needed */
+        }
+
     }
+
 
     psLength = decryptedSignatureLength - locDigestSize - encodingArrSize - 3u;
 
@@ -266,19 +341,25 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
         }
     }
 
-    /* Check the padding (T string) */
-    if (0u == cmpRes)
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        /* Flush the cache */
+        SCB_CleanDCache_by_Addr((volatile void *)(decryptedSignature),(int32_t)decryptedSignatureLength);
+#endif
+
+    if ((CY_CRYPTO_MODE_SHA_NONE != digestType) && (0u == cmpRes))
     {
-        cmpRes = Cy_Crypto_Core_MemCmp(base, encodingArr,
-                        (decryptedSignature + psLength + 3u),
+
+        cmpRes = Cy_Crypto_Core_MemCmp(base, (void const *)encodingArr,
+                        (void const *)(decryptedSignature + psLength + 3u),
                         (uint16_t)encodingArrSize);
     }
 
     /* Check the digest */
     if (0u == cmpRes)
     {
-        cmpRes = Cy_Crypto_Core_MemCmp(base, digest,
-                        (decryptedSignature + (decryptedSignatureLength - locDigestSize)),
+
+        cmpRes = Cy_Crypto_Core_MemCmp(base, (void const *)digest,
+                        (void const *)(decryptedSignature + (decryptedSignatureLength - locDigestSize)),
                         (uint16_t)locDigestSize);
     }
 
@@ -291,8 +372,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Verify(CRYPTO_Type *base,
 }
 
 /** \} group_crypto_lld_asymmetric_functions */
-
-#if (CPUSS_CRYPTO_VU == 1)
+#endif /* defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) */
 
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_Rsa_MontCoeff
@@ -756,6 +836,9 @@ static void Cy_Crypto_Core_Rsa_expModByMont(CRYPTO_Type *base,
 * RSA process algorithm based on the Montgomery algorithm
 * using Barrett reduction
 *
+* For CAT1C devices when D-Cache is enabled parameters message, processedMessage and
+* key(pubExpPtr, moduloPtr, barretCoefPtr, inverseModuloPtr and  rBarPtr) must align and end in 32 byte boundary.
+*
 * https://en.wikipedia.org/wiki/RSA_%28cryptosystem%29
 *
 * \param base
@@ -776,6 +859,9 @@ static void Cy_Crypto_Core_Rsa_expModByMont(CRYPTO_Type *base,
 *
 * \return
 * \ref cy_en_crypto_status_t
+*
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCoreRsaVerUse
 *
 *******************************************************************************/
 cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Proc(CRYPTO_Type *base,
@@ -803,12 +889,18 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Proc(CRYPTO_Type *base,
     uint32_t rBarReg             = 11u;
     uint16_t vu_mem_size         = 0U;
     void *vu_mem_address         = NULL;
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)expPtr,(int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(expBitLength));
+    SCB_CleanDCache_by_Addr((volatile void *)nPtr,(int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength));
+    SCB_CleanDCache_by_Addr((volatile void *)message,(int32_t)messageSize);
+#endif
 
     vu_mem_address = Cy_Crypto_Core_GetVuMemoryAddress(base);
     vu_mem_size = (uint16_t)Cy_Crypto_Core_GetVuMemorySize(base);
 
     /* Clear all Crypto Buffer before operations */
-    Cy_Crypto_Core_MemSet(base, vu_mem_address, 0x00u, vu_mem_size);
+    Cy_Crypto_Core_MemSet(base, (void*)vu_mem_address, 0x00u, vu_mem_size);
 
     CY_CRYPTO_VU_ALLOC_MEM(base, yReg,             nBitLength);
     CY_CRYPTO_VU_ALLOC_MEM(base, xReg,             nBitLength);
@@ -825,11 +917,17 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Proc(CRYPTO_Type *base,
     /* Check coefficients */
     if (barretCoef == NULL)
     {
+
         Cy_Crypto_Core_Rsa_BarrettGetU(base, barrettReg, modReg, nBitLength);
         Cy_Crypto_Core_Vu_WaitForComplete(base);
     }
     else
     {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        /* Flush the cache */
+        CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to int32_t.');
+        SCB_CleanDCache_by_Addr((volatile void *)barretCoef,(int32_t)(CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength) + (uint32_t)1u));
+#endif
         Cy_Crypto_Core_Vu_SetMemValue(base, barrettReg, barretCoef, nBitLength + (uint32_t)1u);
     }
 
@@ -842,6 +940,10 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Proc(CRYPTO_Type *base,
     }
     else
     {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        /* Flush the cache */
+        SCB_CleanDCache_by_Addr((volatile void *)rBar,(int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength));
+#endif
         Cy_Crypto_Core_Vu_SetMemValue(base, rBarReg, rBar, nBitLength);
     }
 
@@ -852,6 +954,10 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Proc(CRYPTO_Type *base,
     }
     else
     {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        /* Flush the cache */
+        SCB_CleanDCache_by_Addr((volatile void *)inverseModulo,(int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength));
+#endif
         Cy_Crypto_Core_Vu_SetMemValue(base, inverseModuloReg, inverseModulo, nBitLength);
     }
 
@@ -869,6 +975,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Proc(CRYPTO_Type *base,
 
     /* Copy the tmpResult to output buffer */
     Cy_Crypto_Core_Vu_GetMemValue(base, (uint8_t*)processedMessage, yReg, nBitLength);
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        SCB_InvalidateDCache_by_Addr(processedMessage, (int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength));
+#endif
 
     CY_CRYPTO_VU_FREE_MEM(base, CY_CRYPTO_VU_REG_BIT(yReg) | CY_CRYPTO_VU_REG_BIT(xReg) |
                                 CY_CRYPTO_VU_REG_BIT(eReg) | CY_CRYPTO_VU_REG_BIT(modReg) |
@@ -889,6 +998,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Proc(CRYPTO_Type *base,
 *                         coefficient for Barrett reduction,
 *                         binary inverse of the modulo,
 *                         result of (2^moduloLength mod modulo)
+*
+* For CAT1C devices when D-Cache is enabled parameters key(moduloPtr, barretCoefPtr, inverseModuloPtr and  rBarPtr) must align and end in 32 byte boundary.
 *
 * \param base
 * The pointer to the CRYPTO instance.
@@ -919,11 +1030,16 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Coef(CRYPTO_Type *base,
     uint16_t vu_mem_size         = 0U;
     void *vu_mem_address         = NULL;
 
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)nPtr,(int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength));
+#endif
+
     vu_mem_address = Cy_Crypto_Core_GetVuMemoryAddress(base);
     vu_mem_size = (uint16_t)Cy_Crypto_Core_GetVuMemorySize(base);
 
     /* Clear all Crypto Buffer before operations */
-    Cy_Crypto_Core_MemSet(base, vu_mem_address, 0x00u, vu_mem_size);
+    Cy_Crypto_Core_MemSet(base, (void*)vu_mem_address, 0x00u, vu_mem_size);
 
     CY_CRYPTO_VU_ALLOC_MEM(base, modReg,           nBitLength);
     CY_CRYPTO_VU_ALLOC_MEM(base, barrettReg,       nBitLength + 1u);
@@ -955,13 +1071,19 @@ cy_en_crypto_status_t Cy_Crypto_Core_Rsa_Coef(CRYPTO_Type *base,
     CY_CRYPTO_VU_FREE_MEM(base, CY_CRYPTO_VU_REG_BIT(modReg) | CY_CRYPTO_VU_REG_BIT(inverseModuloReg) | CY_CRYPTO_VU_REG_BIT(barrettReg) | CY_CRYPTO_VU_REG_BIT(rBarReg));
 
     Cy_Crypto_Core_Vu_WaitForComplete(base);
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to int32_t.');
+    SCB_InvalidateDCache_by_Addr(barretCoef, (int32_t)(CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength)+1u));
+    SCB_InvalidateDCache_by_Addr(inverseModulo, (int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength));
+    SCB_InvalidateDCache_by_Addr(rBar, (int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(nBitLength));
+#endif
 
     return (tmpResult);
 }
 
 /** \} group_crypto_lld_asymmetric_functions */
 
-#endif /* #if (CPUSS_CRYPTO_VU == 1) */
+#endif /* (CPUSS_CRYPTO_VU == 1) && defined(CY_CRYPTO_CFG_RSA_C) */
 
 #if defined(__cplusplus)
 }

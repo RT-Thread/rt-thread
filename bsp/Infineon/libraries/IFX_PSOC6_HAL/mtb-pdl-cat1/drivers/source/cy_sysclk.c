@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_sysclk.c
-* \version 3.40
+* \version 3.50
 *
 * Provides an API implementation of the sysclk driver.
 *
@@ -2805,7 +2805,7 @@ uint32_t Cy_SysClk_FllGetFrequency(void)
     bool  enabled;    /* FLL enable status; n/a for direct */
     uint32_t freq = 0UL;    /* FLL Frequency */
 
-    cy_stc_fll_manual_config_t fllCfg = {0UL,0U,CY_SYSCLK_FLL_CCO_RANGE0,false,0U,0U,0U,0U,CY_SYSCLK_FLLPLL_OUTPUT_AUTO,0U};
+    cy_stc_fll_manual_config_t fllCfg;
     Cy_SysClk_FllGetConfiguration(&fllCfg);
     enabled = (Cy_SysClk_FllIsEnabled()) && (CY_SYSCLK_FLLPLL_OUTPUT_INPUT != fllCfg.outputMode);
     fDiv = fllCfg.fllMult;
@@ -2825,10 +2825,10 @@ uint32_t Cy_SysClk_FllGetFrequency(void)
 
 uint32_t Cy_SysClk_PllGetFrequency(uint32_t clkPath)
 {
-    uint32_t fDiv;    /* PLL multiplier/feedback divider */
-    uint32_t rDiv;    /* PLL reference divider */
-    uint32_t oDiv;    /* PLL output divider */
-    bool  enabled;    /* PLL enable status; n/a for direct */
+    uint32_t fDiv = 0UL;    /* PLL multiplier/feedback divider */
+    uint32_t rDiv = 0UL;    /* PLL reference divider */
+    uint32_t oDiv = 0UL;    /* PLL output divider */
+    bool  enabled = false;    /* PLL enable status; n/a for direct */
     uint32_t freq=0UL;    /* PLL Frequency */
 
     if((CY_SRSS_NUM_PLL > 0UL) && (clkPath > 0UL))
@@ -2837,12 +2837,14 @@ uint32_t Cy_SysClk_PllGetFrequency(uint32_t clkPath)
 
         if (clkPath <= CY_SRSS_NUM_PLL)
         {
-            cy_stc_pll_manual_config_t pllcfg = {0U,0U,0U,false,CY_SYSCLK_FLLPLL_OUTPUT_AUTO};
-            (void)Cy_SysClk_PllGetConfiguration(clkPath, &pllcfg);
-            enabled = (Cy_SysClk_PllIsEnabled(clkPath)) && (CY_SYSCLK_FLLPLL_OUTPUT_INPUT != pllcfg.outputMode);
-            fDiv = pllcfg.feedbackDiv;
-            rDiv = pllcfg.referenceDiv;
-            oDiv = pllcfg.outputDiv;
+            cy_stc_pll_manual_config_t pllcfg;
+            if (CY_SYSCLK_SUCCESS == Cy_SysClk_PllGetConfiguration(clkPath, &pllcfg))
+            {
+                enabled = (Cy_SysClk_PllIsEnabled(clkPath)) && (CY_SYSCLK_FLLPLL_OUTPUT_INPUT != pllcfg.outputMode);
+                fDiv = pllcfg.feedbackDiv;
+                rDiv = pllcfg.referenceDiv;
+                oDiv = pllcfg.outputDiv;
+            }
 
             if (enabled && /* If PLL is enabled and not bypassed */
             (0UL != rDiv) && (0UL != oDiv)) /* to avoid division by zero */

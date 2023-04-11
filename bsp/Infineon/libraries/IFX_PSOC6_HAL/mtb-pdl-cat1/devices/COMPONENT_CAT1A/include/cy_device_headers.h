@@ -131,8 +131,8 @@
     #include "cy8c6347bzi_bld54.h"
 #elif defined (CY8C6247BFI_D54)
     #include "cy8c6247bfi_d54.h"
-#elif defined (CYBLE_416045_02)
-    #include "cyble_416045_02.h"
+#elif defined (CYBLE_416045_02_device)
+    #include "cyble_416045_02_device.h"
 #elif defined (CY8C6347FMI_BUD53)
     #include "cy8c6347fmi_bud53.h"
 #elif defined (CY8C6347FMI_BUD13)
@@ -163,6 +163,8 @@
     #include "cyb0644abzi_s2d44.h"
 #elif defined (CYS0644ABZI_S2D44)
     #include "cys0644abzi_s2d44.h"
+#elif defined (CYS0644AFNI_S2D43)
+    #include "cys0644afni_s2d43.h"
 #elif defined (CY8C624ABZI_S2D44A0)
     #include "cy8c624abzi_s2d44a0.h"
 #elif defined (CY8C624ABZI_S2D44)

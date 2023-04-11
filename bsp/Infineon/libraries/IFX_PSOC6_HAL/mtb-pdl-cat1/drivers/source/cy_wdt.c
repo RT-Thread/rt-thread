@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_wdt.c
-* \version 1.40
+* \version 1.50
 *
 *  This file provides the source code to the API for the WDT driver.
 *
@@ -25,7 +25,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXS28SRSS)|| defined (CY_IP_MXS40SSRSS ) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)
+#if defined (CY_IP_MXS28SRSS)|| defined (CY_IP_MXS40SSRSS ) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3) || defined (CY_IP_MXS22SRSS )
 
 #include "cy_wdt.h"
 
@@ -172,7 +172,7 @@ void Cy_WDT_SetIgnoreBits(uint32_t bitsNum)
 
     if (false == Cy_WDT_Locked())
     {
-#if defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
         SRSS_WDT_MATCH2 = _CLR_SET_FLD32U((SRSS_WDT_MATCH2), SRSS_WDT_MATCH2_IGNORE_BITS_ABOVE, (WDT_MAX_IGNORE_BITS - bitsNum));
 #else
         SRSS_WDT_MATCH = _CLR_SET_FLD32U((SRSS_WDT_MATCH), SRSS_WDT_MATCH_IGNORE_BITS, bitsNum);
@@ -181,7 +181,7 @@ void Cy_WDT_SetIgnoreBits(uint32_t bitsNum)
 }
 
 
-#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS) || defined (CY_DOXYGEN)
 
 /*******************************************************************************
 * Function Name: Cy_WDT_SetMatchBits

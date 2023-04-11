@@ -27,10 +27,16 @@
  * \cond
  * @{
  */
-#include "ppu_macros.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include "cy_syslib.h"
+
+/*
+ * Macro additions by Cypress Semiconductor Corporation
+ */
+#define fwk_assert     CY_ASSERT
+#define FWK_SUCCESS    CY_RET_SUCCESS
+
 
 /*
  * PPU 1.1 register definitions

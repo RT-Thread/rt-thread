@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_ecc.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constant and parameters for the API for the ECC
@@ -39,7 +39,10 @@
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_VU == 1)
+CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 20.5', 5, \
+'Since CY_CRYPTO_ECC_MAX_SIZE is decided by curve type, use of #undef will not make it ambiguous that which macros exist at a particular point within a translation unit.');
+
+#if (CPUSS_CRYPTO_VU == 1) && defined (CY_CRYPTO_CFG_ECP_C)
 
 typedef enum cy_en_red_mul_algs {
     CY_CRYPTO_NIST_P_CURVE_SPECIFIC_RED_ALG = 0,
@@ -74,30 +77,15 @@ typedef struct {
 
 cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_curve_id_t curveId);
 
+#if defined(CY_CRYPTO_CFG_ECDSA_C)
 /**
 * \addtogroup group_crypto_lld_asymmetric_functions
 * \{
 */
 
+#if defined(CY_CRYPTO_CFG_ECDSA_GENKEY_C)
 /** Pointer to a random number supplier function */
 typedef int (*cy_func_get_random_data_t)(void *rndInfo, uint8_t *rndData, size_t rndSize);
-
-cy_en_crypto_status_t Cy_Crypto_Core_ECC_MakeKeyPair(CRYPTO_Type *base,
-                                   cy_en_crypto_ecc_curve_id_t curveID,
-                                   cy_stc_crypto_ecc_key *key,
-                                   cy_func_get_random_data_t GetRandomDataFunc, void *randomDataInfo);
-cy_en_crypto_status_t Cy_Crypto_Core_ECC_SignHash(CRYPTO_Type *base,
-                                    const uint8_t *hash,
-                                    uint32_t hashlen,
-                                    uint8_t *sig,
-                                    const cy_stc_crypto_ecc_key *key,
-                                    const uint8_t *messageKey);
-cy_en_crypto_status_t Cy_Crypto_Core_ECC_VerifyHash(CRYPTO_Type *base,
-                                    const uint8_t *sig,
-                                    const uint8_t *hash,
-                                    uint32_t hashlen,
-                                    uint8_t *stat,
-                                    const cy_stc_crypto_ecc_key *key);
 
 cy_en_crypto_status_t Cy_Crypto_Core_ECC_MakePrivateKey(CRYPTO_Type *base,
         cy_en_crypto_ecc_curve_id_t curveID, uint8_t *key,
@@ -105,27 +93,77 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_MakePrivateKey(CRYPTO_Type *base,
 cy_en_crypto_status_t Cy_Crypto_Core_ECC_MakePublicKey(CRYPTO_Type *base,
         cy_en_crypto_ecc_curve_id_t curveID,
         const uint8_t *privateKey, cy_stc_crypto_ecc_key *publicKey);
+cy_en_crypto_status_t Cy_Crypto_Core_ECC_MakeKeyPair(CRYPTO_Type *base,
+        cy_en_crypto_ecc_curve_id_t curveID,
+        cy_stc_crypto_ecc_key *key,
+        cy_func_get_random_data_t GetRandomDataFunc, void *randomDataInfo);
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_GENKEY_C) */
+
+#if defined(CY_CRYPTO_CFG_ECDSA_SIGN_C)
+cy_en_crypto_status_t Cy_Crypto_Core_ECC_SignHash(CRYPTO_Type *base,
+                                    const uint8_t *hash,
+                                    uint32_t hashlen,
+                                    uint8_t *sig,
+                                    const cy_stc_crypto_ecc_key *key,
+                                    const uint8_t *messageKey);
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_SIGN_C) */
+
+#if defined(CY_CRYPTO_CFG_ECDSA_VERIFY_C)
+cy_en_crypto_status_t Cy_Crypto_Core_ECC_VerifyHash(CRYPTO_Type *base,
+                                    const uint8_t *sig,
+                                    const uint8_t *hash,
+                                    uint32_t hashlen,
+                                    uint8_t *stat,
+                                    const cy_stc_crypto_ecc_key *key);
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_VERIFY_C) */
 
 /** \} group_crypto_lld_asymmetric_functions */
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_C) */
 
 /* Sizes for NIST P-curves */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
 #define CY_CRYPTO_ECC_P192_SIZE            (192u)      /* 2^192 - 2^64 - 1 */
 #define CY_CRYPTO_ECC_P192_BYTE_SIZE       CY_CRYPTO_BYTE_SIZE_OF_BITS(CY_CRYPTO_ECC_P192_SIZE)
 
+#undef  CY_CRYPTO_ECC_MAX_SIZE
+#define CY_CRYPTO_ECC_MAX_SIZE             CY_CRYPTO_ECC_P192_SIZE
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
+
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
 #define CY_CRYPTO_ECC_P224_SIZE            (224u)      /* 2^224 - 2^96  + 1 */
 #define CY_CRYPTO_ECC_P224_BYTE_SIZE       CY_CRYPTO_BYTE_SIZE_OF_BITS(CY_CRYPTO_ECC_P224_SIZE)
 
+#undef  CY_CRYPTO_ECC_MAX_SIZE
+#define CY_CRYPTO_ECC_MAX_SIZE             CY_CRYPTO_ECC_P224_SIZE
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
+
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
 #define CY_CRYPTO_ECC_P256_SIZE            (256u)      /* 2^256 - 2^224 + 2^192 + 2^96 - 1 */
 #define CY_CRYPTO_ECC_P256_BYTE_SIZE       CY_CRYPTO_BYTE_SIZE_OF_BITS(CY_CRYPTO_ECC_P256_SIZE)
 
+#undef  CY_CRYPTO_ECC_MAX_SIZE
+#define CY_CRYPTO_ECC_MAX_SIZE             CY_CRYPTO_ECC_P256_SIZE
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
+
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
 #define CY_CRYPTO_ECC_P384_SIZE            (384u)      /* 2^384 - 2^128 - 2^96 + 2^32 - 1 */
 #define CY_CRYPTO_ECC_P384_BYTE_SIZE       CY_CRYPTO_BYTE_SIZE_OF_BITS(CY_CRYPTO_ECC_P384_SIZE)
 
+#undef  CY_CRYPTO_ECC_MAX_SIZE
+#define CY_CRYPTO_ECC_MAX_SIZE             CY_CRYPTO_ECC_P384_SIZE
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
+
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
 #define CY_CRYPTO_ECC_P521_SIZE            (521u)      /* 2^521 - 1 */
 #define CY_CRYPTO_ECC_P521_BYTE_SIZE       CY_CRYPTO_BYTE_SIZE_OF_BITS(CY_CRYPTO_ECC_P521_SIZE)
 
-#define CY_CRYPTO_ECC_MAX_SIZE             (CY_CRYPTO_ECC_P521_SIZE)
-#define CY_CRYPTO_ECC_MAX_BYTE_SIZE        (CY_CRYPTO_ECC_P521_BYTE_SIZE)
+#undef  CY_CRYPTO_ECC_MAX_SIZE
+#define CY_CRYPTO_ECC_MAX_SIZE             CY_CRYPTO_ECC_P521_SIZE
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
+
+#if defined(CY_CRYPTO_ECC_MAX_SIZE)
+#define CY_CRYPTO_ECC_MAX_BYTE_SIZE        CY_CRYPTO_BYTE_SIZE_OF_BITS(CY_CRYPTO_ECC_MAX_SIZE)
+#endif /* defined(CY_CRYPTO_ECC_MAX_SIZE) */
 
 /* "Global" vector unit registers. */
 #define VR_D                               10u
@@ -134,8 +172,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_MakePublicKey(CRYPTO_Type *base,
 #define VR_BARRETT                         13u
 #define VR_P                               14u         /* polynomial */
 
+#endif /* (CPUSS_CRYPTO_VU == 1) && defined (CY_CRYPTO_CFG_ECP_C) */
 
-#endif /* #if (CPUSS_CRYPTO_VU == 1) */
+CY_MISRA_BLOCK_END('MISRA C-2012 Rule 20.5');
 
 #if defined(__cplusplus)
 }

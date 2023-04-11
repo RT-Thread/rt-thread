@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -29,7 +29,7 @@
 #include "cyhal_interconnect.h"
 #include "cyhal_system.h"
 #include "cyhal_hwmgr.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 
 #if (CYHAL_DRIVER_AVAILABLE_GPIO)
 
@@ -48,9 +48,11 @@ extern "C" {
 #endif
 
 /* Callback array for GPIO interrupts */
-static cyhal_gpio_callback_data_t* _cyhal_gpio_callbacks[IOSS_GPIO_GPIO_PORT_NR] = { NULL };
+static bool _cyhal_gpio_arrays_initialized = false;
+CY_NOINIT static cyhal_gpio_callback_data_t* _cyhal_gpio_callbacks[IOSS_GPIO_GPIO_PORT_NR];
 #if defined(CY_IP_MXS40IOSS) || defined(CY_IP_MXS40SIOSS) || defined (CY_IP_MXS22IOSS)
-static cyhal_source_t _cyhal_gpio_source_signals[sizeof(cyhal_pin_map_peri_tr_io_output)/sizeof(cyhal_resource_pin_mapping_t)] = { CYHAL_TRIGGER_CPUSS_ZERO };
+#define _CYHAL_GPIO_SOURCE_SIGNAL_COUNT (sizeof(cyhal_pin_map_peri_tr_io_output)/sizeof(cyhal_resource_pin_mapping_t))
+CY_NOINIT static cyhal_source_t _cyhal_gpio_source_signals[_CYHAL_GPIO_SOURCE_SIGNAL_COUNT];
 #endif
 
 #if defined(CY_DEVICE_PMG1S3)
@@ -62,7 +64,7 @@ static cyhal_source_t _cyhal_gpio_source_signals[sizeof(cyhal_pin_map_peri_tr_io
 *       Internal Interrupt Service Routine
 *******************************************************************************/
 
-void _cyhal_gpio_irq_handler(void)
+static void _cyhal_gpio_irq_handler(void)
 {
     _cyhal_system_irq_t irqn = _cyhal_irq_get_active();
 #if !defined(COMPONENT_CAT1C)
@@ -161,18 +163,10 @@ static uint32_t _cyhal_gpio_convert_drive_mode(cyhal_gpio_drive_mode_t drive_mod
          * not modified after switch statement based on direction as direction
          * does not make sense for input only drive modes */
         case CYHAL_GPIO_DRIVE_NONE:
-            #if defined (CY_IP_MXS22IOSS)
-            drvMode = CY_GPIO_DM_CFG3_ENABLE;
-            #else
             drvMode = CY_GPIO_DM_HIGHZ;
-            #endif // CY_IP_MXS22IOSS or other
             return drvMode;
         case CYHAL_GPIO_DRIVE_ANALOG:
-            #if defined (CY_IP_MXS22IOSS)
-            drvMode = CY_GPIO_DM_CFG3_ENABLE_IN_OFF;
-            #else
             drvMode = CY_GPIO_DM_ANALOG;
-            #endif // CY_IP_MXS22IOSS or other
             return drvMode;
         case CYHAL_GPIO_DRIVE_PULLUP:
             drvMode = CY_GPIO_DM_PULLUP;
@@ -199,20 +193,12 @@ static uint32_t _cyhal_gpio_convert_drive_mode(cyhal_gpio_drive_mode_t drive_mod
             }
             else
             {
-                #if defined (CY_IP_MXS22IOSS)
-                drvMode = CY_GPIO_DM_CFG3_ENABLE;
-                #else
                 drvMode = CY_GPIO_DM_HIGHZ;
-                #endif // CY_IP_MXS22IOSS or other
             }
             break;
         default:
             CY_ASSERT(false);
-            #if defined (CY_IP_MXS22IOSS)
-            drvMode = CY_GPIO_DM_CFG3_ENABLE;
-            #else
             drvMode = CY_GPIO_DM_HIGHZ;
-            #endif // CY_IP_MXS22IOSS or other
     }
 
     if (direction == CYHAL_GPIO_DIR_OUTPUT)
@@ -226,31 +212,27 @@ static uint32_t _cyhal_gpio_convert_drive_mode(cyhal_gpio_drive_mode_t drive_mod
     return drvMode;
 }
 
-void _cyhal_gpio_set_ext_dm(cyhal_gpio_t pin, cyhal_gpio_drive_mode_t drive_mode)
-{
-#if defined(CY_IP_MXS22IOSS) /* This is the only ip with a notion of ext drive mode */
-    if ((CYHAL_GPIO_DRIVE_NONE == drive_mode)
-        || (CYHAL_GPIO_DRIVE_ANALOG == drive_mode)
-        || (CYHAL_GPIO_DRIVE_PULL_NONE == drive_mode))
-    {
-        /* Input buffer on or off will have been handled by the regular dm register, so we treat these
-         * all the same. This includes "pull none", because that acts as "strong drive" in output/bidir
-         * direction (in which case the ext drive mode is ignored) and highz otherwise. */
-        Cy_GPIO_SetExtDrivemode(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), CY_GPIO_EXT_DM_HIGHZ);
-    }
-#else
-    CY_UNUSED_PARAMETER(pin);
-    CY_UNUSED_PARAMETER(drive_mode);
-#endif
-}
-
-
 /*******************************************************************************
 *       HAL Implementation
 *******************************************************************************/
 
 cy_rslt_t cyhal_gpio_init(cyhal_gpio_t pin, cyhal_gpio_direction_t direction, cyhal_gpio_drive_mode_t drive_mode, bool init_val)
 {
+    if (!_cyhal_gpio_arrays_initialized)
+    {
+        for (uint8_t i = 0; i < IOSS_GPIO_GPIO_PORT_NR; i++)
+        {
+            _cyhal_gpio_callbacks[i] = NULL;
+        }
+#if defined(CY_IP_MXS40IOSS) || defined(CY_IP_MXS40SIOSS) || defined (CY_IP_MXS22IOSS)
+        for (uint8_t i = 0; i < _CYHAL_GPIO_SOURCE_SIGNAL_COUNT; i++)
+        {
+            _cyhal_gpio_source_signals[i] = CYHAL_TRIGGER_CPUSS_ZERO;
+        }
+#endif
+        _cyhal_gpio_arrays_initialized = true;
+    }
+
     /* Mbed creates GPIOs for pins that are dedicated to other peripherals in some cases. */
 #ifndef __MBED__
     cyhal_resource_inst_t pinRsc = _cyhal_utils_get_gpio_resource(pin);
@@ -263,7 +245,6 @@ cy_rslt_t cyhal_gpio_init(cyhal_gpio_t pin, cyhal_gpio_direction_t direction, cy
     {
         uint32_t pdl_drive_mode = _cyhal_gpio_convert_drive_mode(drive_mode, direction);
         Cy_GPIO_Pin_FastInit(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), pdl_drive_mode, init_val, HSIOM_SEL_GPIO);
-        _cyhal_gpio_set_ext_dm(pin, drive_mode);
     }
 
     return status;
@@ -271,42 +252,44 @@ cy_rslt_t cyhal_gpio_init(cyhal_gpio_t pin, cyhal_gpio_direction_t direction, cy
 
 void cyhal_gpio_free(cyhal_gpio_t pin)
 {
-    if (pin != CYHAL_NC_PIN_VALUE)
+    if(_cyhal_gpio_arrays_initialized)
     {
-#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
-        Cy_GPIO_SetInterruptMask(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), 0);
-#elif defined(COMPONENT_CAT2)
-        Cy_GPIO_SetInterruptEdge(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), CY_GPIO_INTR_DISABLE);
-#endif
-        cyhal_gpio_register_callback(pin, NULL);
-
-        (void)cyhal_gpio_disable_output(pin);
-        #if defined(CY_IP_MXS40IOSS) || defined(CY_IP_MXS40SIOSS)
-        for(uint8_t i = 0; i < (uint8_t)(sizeof(cyhal_pin_map_peri_tr_io_output)/sizeof(cyhal_resource_pin_mapping_t)); i++)
+        if (pin != CYHAL_NC_PIN_VALUE)
         {
-            cyhal_resource_pin_mapping_t mapping = cyhal_pin_map_peri_tr_io_output[i];
-            if(mapping.pin == pin)
+#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+            Cy_GPIO_SetInterruptMask(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), 0);
+#elif defined(COMPONENT_CAT2)
+            Cy_GPIO_SetInterruptEdge(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), CY_GPIO_INTR_DISABLE);
+#endif
+            cyhal_gpio_register_callback(pin, NULL);
+
+            (void)cyhal_gpio_disable_output(pin);
+            #if defined(CY_IP_MXS40IOSS) || defined(CY_IP_MXS40SIOSS)
+            for(uint8_t i = 0; i < (uint8_t)(sizeof(cyhal_pin_map_peri_tr_io_output)/sizeof(cyhal_resource_pin_mapping_t)); i++)
             {
-                if (CYHAL_TRIGGER_CPUSS_ZERO != _cyhal_gpio_source_signals[i])
+                cyhal_resource_pin_mapping_t mapping = cyhal_pin_map_peri_tr_io_output[i];
+                if(mapping.pin == pin)
                 {
-                    (void)cyhal_gpio_disconnect_digital(pin, _cyhal_gpio_source_signals[i]);
+                    if (CYHAL_TRIGGER_CPUSS_ZERO != _cyhal_gpio_source_signals[i])
+                    {
+                        (void)cyhal_gpio_disconnect_digital(pin, _cyhal_gpio_source_signals[i]);
+                    }
                 }
             }
-        }
-        #endif
+            #endif
 
-        #if defined (CY_IP_MXS22IOSS)
-        Cy_GPIO_Pin_FastInit(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), CY_GPIO_DM_CFG3_ENABLE_IN_OFF, 0UL, HSIOM_SEL_GPIO);
-        _cyhal_gpio_set_ext_dm(pin, CYHAL_GPIO_DRIVE_NONE);
-        #else
-        Cy_GPIO_Pin_FastInit(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), CY_GPIO_DM_ANALOG, 0UL, HSIOM_SEL_GPIO);
-        #endif // CY_IP_MXS22IOSS or other
+            Cy_GPIO_Pin_FastInit(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), CY_GPIO_DM_ANALOG, 0UL, HSIOM_SEL_GPIO);
 
-        /* Do not attempt to free the resource we don't reserve in mbed. */
+            /* Do not attempt to free the resource we don't reserve in mbed. */
 #ifndef __MBED__
-        cyhal_resource_inst_t pinRsc = _cyhal_utils_get_gpio_resource(pin);
-        cyhal_hwmgr_free(&pinRsc);
+            cyhal_resource_inst_t pinRsc = _cyhal_utils_get_gpio_resource(pin);
+            cyhal_hwmgr_free(&pinRsc);
 #endif
+        }
+    }
+    else
+    {
+        CY_ASSERT(false); /* Should not be freeing if we never initialized anything */
     }
 }
 
@@ -314,7 +297,6 @@ cy_rslt_t cyhal_gpio_configure(cyhal_gpio_t pin, cyhal_gpio_direction_t directio
 {
     uint32_t pdldrive_mode = _cyhal_gpio_convert_drive_mode(drive_mode, direction);
     Cy_GPIO_SetDrivemode(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), pdldrive_mode);
-    _cyhal_gpio_set_ext_dm(pin, drive_mode);
 
     return CY_RSLT_SUCCESS;
 }
@@ -348,7 +330,13 @@ void cyhal_gpio_register_callback(cyhal_gpio_t pin, cyhal_gpio_callback_data_t* 
 
 void cyhal_gpio_enable_event(cyhal_gpio_t pin, cyhal_gpio_event_t event, uint8_t intr_priority, bool enable)
 {
-    Cy_GPIO_ClearInterrupt(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin));
+#if (_CYHAL_IRQ_MUXING)
+    /* We may be in a critical section. Only clear the interrupt status if there isn't a pending interrupt */
+    if ((Cy_GPIO_GetInterruptStatus(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin)) == 0) || enable)
+#endif
+    {
+        Cy_GPIO_ClearInterrupt(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin));
+    }
 #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || defined(COMPONENT_CAT1D)
     Cy_GPIO_SetInterruptEdge(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), (uint32_t)event);
     Cy_GPIO_SetInterruptMask(CYHAL_GET_PORTADDR(pin), CYHAL_GET_PIN(pin), (uint32_t)enable);
@@ -419,8 +407,21 @@ cy_rslt_t cyhal_gpio_connect_digital(cyhal_gpio_t pin, cyhal_source_t source)
 
 #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1C)
             cyhal_dest_t dest = (cyhal_dest_t)(CYHAL_TRIGGER_PERI_TR_IO_OUTPUT0 + mapping.channel_num);
-#elif defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1D)
+#elif defined(COMPONENT_CAT1B)
             cyhal_dest_t dest = (cyhal_dest_t)(CYHAL_TRIGGER_IOSS_PERI_TR_IO_OUTPUT_OUT0 + mapping.channel_num);
+#elif defined(COMPONENT_CAT1D)
+            cyhal_dest_t dest;
+            if(0u == mapping.block_num)
+            {
+                dest = CYHAL_TRIGGER_IOSS_PERI0_TR_IO_OUTPUT_OUT0;
+            }
+            else
+            {
+                CY_ASSERT(1u == mapping.block_num);
+                dest = CYHAL_TRIGGER_IOSS_PERI1_TR_IO_OUTPUT_OUT0;
+            }
+
+            dest = (cyhal_dest_t)(dest + mapping.channel_num);
 #endif
 
             cy_rslt_t rslt = _cyhal_connect_signal(source, dest);
@@ -450,8 +451,21 @@ cy_rslt_t cyhal_gpio_enable_output(cyhal_gpio_t pin, cyhal_signal_type_t type, c
 
 #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1C)
             cyhal_internal_source_t int_src = (cyhal_internal_source_t)(_CYHAL_TRIGGER_PERI_TR_IO_INPUT0 + mapping.channel_num);
-#elif defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1D)
+#elif defined(COMPONENT_CAT1B)
             cyhal_internal_source_t int_src = (cyhal_internal_source_t)(_CYHAL_TRIGGER_IOSS_PERI_TR_IO_INPUT_IN0 + mapping.channel_num);
+#elif defined(COMPONENT_CAT1D)
+            cyhal_internal_source_t int_src;
+            if(0u == mapping.block_num)
+            {
+                int_src = _CYHAL_TRIGGER_IOSS_PERI0_TR_IO_INPUT_IN0;
+            }
+            else
+            {
+                CY_ASSERT(1u == mapping.block_num);
+                int_src = _CYHAL_TRIGGER_IOSS_PERI1_TR_IO_INPUT_IN0;
+            }
+
+            int_src = (cyhal_internal_source_t)(int_src + mapping.channel_num);
 #endif
             *source = (cyhal_source_t)_CYHAL_TRIGGER_CREATE_SOURCE(int_src, type);
 
@@ -473,8 +487,21 @@ cy_rslt_t cyhal_gpio_disconnect_digital(cyhal_gpio_t pin, cyhal_source_t source)
 
 #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1C)
             cyhal_dest_t dest = (cyhal_dest_t)(CYHAL_TRIGGER_PERI_TR_IO_OUTPUT0 + mapping.channel_num);
-#elif defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1D)
+#elif defined(COMPONENT_CAT1B)
             cyhal_dest_t dest = (cyhal_dest_t)(CYHAL_TRIGGER_IOSS_PERI_TR_IO_OUTPUT_OUT0 + mapping.channel_num);
+#elif defined(COMPONENT_CAT1D)
+            cyhal_dest_t dest;
+            if(0u == mapping.block_num)
+            {
+                dest = CYHAL_TRIGGER_IOSS_PERI0_TR_IO_OUTPUT_OUT0;
+            }
+            else
+            {
+                CY_ASSERT(1u == mapping.block_num);
+                dest = CYHAL_TRIGGER_IOSS_PERI1_TR_IO_OUTPUT_OUT0;
+            }
+
+            dest = (cyhal_dest_t)(dest + mapping.channel_num);
 #endif
 
             cy_rslt_t rslt = _cyhal_disconnect_signal(source, dest);

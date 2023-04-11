@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_mem_v1.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code to the API for the PRNG
@@ -27,9 +27,11 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_mem_v1.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
@@ -238,7 +240,9 @@ void Cy_Crypto_Core_V1_MemXor(CRYPTO_Type *base,
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /*  defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

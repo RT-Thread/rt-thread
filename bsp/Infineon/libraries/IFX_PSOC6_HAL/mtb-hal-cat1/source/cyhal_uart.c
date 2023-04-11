@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -35,7 +35,7 @@
 #include "cyhal_syspm.h"
 #include "cyhal_clock.h"
 #include "cyhal_interconnect.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 
 #if (CYHAL_DRIVER_AVAILABLE_UART)
 
@@ -93,13 +93,27 @@ static const cy_stc_scb_uart_config_t _cyhal_uart_default_config = {
  * IRQ handler when we are able to determine what it is */
 static volatile cyhal_uart_t* _cyhal_uart_irq_obj = NULL;
 
+#if defined (COMPONENT_CAT5)
+static void _cyhal_uart_irq_handler(_cyhal_system_irq_t irqn)
+#else
 static void _cyhal_uart_irq_handler(void)
+#endif
 {
     /* Save the old value and store it aftewards in case we get into a nested IRQ situation */
     /* Safe to cast away volatile because we don't expect this pointer to be changed while we're in here, they
      * just might change where the original pointer points */
     cyhal_uart_t* old_irq_obj = (cyhal_uart_t*)_cyhal_uart_irq_obj;
+#if defined (COMPONENT_CAT5)
+    _cyhal_uart_irq_obj = (cyhal_uart_t*) _cyhal_scb_get_irq_obj(irqn);
+#else
     _cyhal_uart_irq_obj = (cyhal_uart_t*) _cyhal_scb_get_irq_obj();
+#endif
+
+    if (NULL == _cyhal_uart_irq_obj)
+    {
+        return;  /* The interrupt object is not valid */
+    }
+
     cyhal_uart_t* obj = (cyhal_uart_t*)_cyhal_uart_irq_obj;
 
     /* Cy_SCB_UART_Interrupt() manipulates the interrupt masks. Save a copy to work around it. */
@@ -182,6 +196,25 @@ static void _cyhal_uart_irq_handler(void)
     _cyhal_uart_irq_obj = old_irq_obj;
 }
 
+#if defined (COMPONENT_CAT5)
+static void _cyhal_uart0_irq_handler(void)
+{
+    _cyhal_uart_irq_handler(scb_0_interrupt_IRQn);
+}
+
+static void _cyhal_uart1_irq_handler(void)
+{
+    _cyhal_uart_irq_handler(scb_1_interrupt_IRQn);
+}
+
+static void _cyhal_uart2_irq_handler(void)
+{
+    _cyhal_uart_irq_handler(scb_2_interrupt_IRQn);
+}
+
+static CY_SCB_IRQ_THREAD_CB_t _cyhal_irq_cb[3] = {_cyhal_uart0_irq_handler, _cyhal_uart1_irq_handler, _cyhal_uart2_irq_handler};
+#endif
+
 static void _cyhal_uart_cb_wrapper(uint32_t event)
 {
     static const uint32_t status_map[] =
@@ -227,6 +260,10 @@ static bool _cyhal_uart_pm_callback_instance(void *obj_ptr, cyhal_syspm_callback
     GPIO_PRT_Type *rtsport = ((obj->pin_rts != NC) && obj->rts_enabled) ? CYHAL_GET_PORTADDR(obj->pin_rts) : NULL;
     uint8_t txpin = (uint8_t)CYHAL_GET_PIN(obj->pin_tx);
     uint8_t rtspin = (uint8_t)CYHAL_GET_PIN(obj->pin_rts);
+    #if defined (COMPONENT_CAT5)
+        CY_UNUSED_PARAMETER(txpin);
+        CY_UNUSED_PARAMETER(rtspin);
+    #endif
 
     switch (pdl_mode)
     {
@@ -379,12 +416,26 @@ static cy_rslt_t _cyhal_uart_setup_resources(cyhal_uart_t *obj, cyhal_gpio_t tx,
     obj->pin_cts = CYHAL_NC_PIN_VALUE;
     obj->pin_rts = CYHAL_NC_PIN_VALUE;
 
+    // checking for invalid flow control pin combinations (corresponding pin required) and checking that at least TX or RX is specified (both cannot be NC)
+    if ((NC == tx && NC != rts) || (NC == rx && NC != cts) || (NC == tx && NC == rx))
+    {
+        return CYHAL_UART_RSLT_ERR_INVALID_PIN;
+    }
+
     uint32_t saved_intr_status = cyhal_system_critical_section_enter();
+
     // pins_blocks will contain bit representation of blocks, that are connected to specified pin
     // 1 block - 1 bit, so, for example, pin_blocks = 0x00000006 means that certain pin
     // can belong to next non-reserved blocks SCB2 and SCB1
-    uint32_t pins_blocks = _CYHAL_SCB_CHECK_AFFILIATION(tx, cyhal_pin_map_scb_uart_tx);
-    pins_blocks &= _CYHAL_SCB_CHECK_AFFILIATION(rx, cyhal_pin_map_scb_uart_rx);
+    uint32_t pins_blocks = _CYHAL_SCB_AVAILABLE_BLOCKS_MASK;
+    if (NC != tx)
+    {
+        pins_blocks &= _CYHAL_SCB_CHECK_AFFILIATION(tx, cyhal_pin_map_scb_uart_tx);
+    }
+    if (NC != rx)
+    {
+        pins_blocks &= _CYHAL_SCB_CHECK_AFFILIATION(rx, cyhal_pin_map_scb_uart_rx);
+    }
     if (NC != cts)
     {
         pins_blocks &= _CYHAL_SCB_CHECK_AFFILIATION(cts, cyhal_pin_map_scb_uart_cts);
@@ -415,7 +466,7 @@ static cy_rslt_t _cyhal_uart_setup_resources(cyhal_uart_t *obj, cyhal_gpio_t tx,
     const cyhal_resource_pin_mapping_t *cts_map = _CYHAL_SCB_FIND_MAP_BLOCK(cts, cyhal_pin_map_scb_uart_cts, &uart_rsc);
     const cyhal_resource_pin_mapping_t *rts_map = _CYHAL_SCB_FIND_MAP_BLOCK(rts, cyhal_pin_map_scb_uart_rts, &uart_rsc);
 
-    if (NULL == tx_map || NULL == rx_map || (NC != cts && NULL == cts_map) || (NC != rts && NULL == rts_map))
+    if ((NC != tx && NULL == tx_map) || (NC != rx && NULL == rx_map) || (NC != cts && NULL == cts_map) || (NC != rts && NULL == rts_map))
     {
         // Should never enter here, as _CYHAL_SCB_CHECK_AFFILIATION above garantee that all of these pin maps exist.
         CY_ASSERT(false);
@@ -431,13 +482,19 @@ static cy_rslt_t _cyhal_uart_setup_resources(cyhal_uart_t *obj, cyhal_gpio_t tx,
     obj->resource = uart_rsc;
 
     // reserve the TX pin
-    result = _cyhal_utils_reserve_and_connect(tx_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_TX);
-    if (result == CY_RSLT_SUCCESS)
+    if ((result == CY_RSLT_SUCCESS) && NC != tx)
     {
-        obj->pin_tx = tx;
+        result = _cyhal_utils_reserve_and_connect(tx_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_TX);
+        if (result == CY_RSLT_SUCCESS)
+        {
+            obj->pin_tx = tx;
+        }
+    }
 
-        //reseve the RX pin
-        result = _cyhal_utils_reserve_and_connect(rx_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_RX);
+    //reseve the RX pin
+    if ((result == CY_RSLT_SUCCESS) && NC != rx)
+    {
+        result = _cyhal_utils_reserve_and_connect(rx_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_RX);
         if (result == CY_RSLT_SUCCESS)
         {
             obj->pin_rx = rx;
@@ -447,7 +504,7 @@ static cy_rslt_t _cyhal_uart_setup_resources(cyhal_uart_t *obj, cyhal_gpio_t tx,
     if ((result == CY_RSLT_SUCCESS) && (NULL != cts_map))
     {
         // reserve the CTS pin
-        result = _cyhal_utils_reserve_and_connect(cts_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_CTS);
+        result = _cyhal_utils_reserve_and_connect(cts_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_CTS);
         if (result == CY_RSLT_SUCCESS)
         {
             obj->cts_enabled = true;
@@ -458,7 +515,7 @@ static cy_rslt_t _cyhal_uart_setup_resources(cyhal_uart_t *obj, cyhal_gpio_t tx,
     if ((result == CY_RSLT_SUCCESS) && (NULL != rts_map))
     {
         // reserve the RTS pin
-        result = _cyhal_utils_reserve_and_connect(rts_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_RTS);
+        result = _cyhal_utils_reserve_and_connect(rts_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_RTS);
         if (result == CY_RSLT_SUCCESS)
         {
             obj->rts_enabled = true;
@@ -491,7 +548,8 @@ static cy_rslt_t _cyhal_uart_setup_resources(cyhal_uart_t *obj, cyhal_gpio_t tx,
 
 static cy_rslt_t _cyhal_uart_init_hw(cyhal_uart_t *obj)
 {
-    obj->base = _CYHAL_SCB_BASE_ADDRESSES[obj->resource.block_num];
+    uint8_t scb_arr_index = _cyhal_scb_get_block_index(obj->resource.block_num);
+    obj->base = _CYHAL_SCB_BASE_ADDRESSES[scb_arr_index];
 
     cy_rslt_t result = (cy_rslt_t) Cy_SCB_UART_Init(obj->base, &(obj->config), &(obj->context));
 
@@ -501,8 +559,13 @@ static cy_rslt_t _cyhal_uart_init_hw(cyhal_uart_t *obj)
         obj->callback_data.callback_arg = NULL;
         obj->irq_cause = CYHAL_UART_IRQ_NONE;
 
-        _cyhal_irq_register(_CYHAL_SCB_IRQ_N[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_uart_irq_handler);
-        _cyhal_irq_enable(_CYHAL_SCB_IRQ_N[obj->resource.block_num]);
+        #if defined (COMPONENT_CAT5)
+            Cy_SCB_RegisterInterruptCallback(obj->base, _cyhal_irq_cb[_CYHAL_SCB_IRQ_N[scb_arr_index]]);
+            Cy_SCB_EnableInterrupt(obj->base);
+        #endif
+
+        _cyhal_irq_register(_CYHAL_SCB_IRQ_N[scb_arr_index], CYHAL_ISR_PRIORITY_DEFAULT, (cy_israddress)_cyhal_uart_irq_handler);
+        _cyhal_irq_enable(_CYHAL_SCB_IRQ_N[scb_arr_index]);
 
         _cyhal_scb_update_instance_data(obj->resource.block_num, (void*)obj, &_cyhal_uart_pm_callback_instance);
 
@@ -590,7 +653,8 @@ void cyhal_uart_free(cyhal_uart_t *obj)
 
     if (obj->resource.type != CYHAL_RSC_INVALID)
     {
-        _cyhal_system_irq_t irqn = _CYHAL_SCB_IRQ_N[obj->resource.block_num];
+        uint8_t scb_arr_index = _cyhal_scb_get_block_index(obj->resource.block_num);
+        _cyhal_system_irq_t irqn = _CYHAL_SCB_IRQ_N[scb_arr_index];
         _cyhal_irq_free(irqn);
 
         _cyhal_scb_update_instance_data(obj->resource.block_num, NULL, NULL);
@@ -641,7 +705,11 @@ cy_rslt_t cyhal_uart_set_baud(cyhal_uart_t *obj, uint32_t baudrate, uint32_t *ac
         divider = _cyhal_utils_divider_value(&(obj->resource), baudrate * oversample_value, 0);
 
         /* Set baud rate */
-        status = cyhal_clock_set_divider(&(obj->clock), divider);
+        #if defined (COMPONENT_CAT5)
+            status = _cyhal_utils_peri_pclk_set_freq(0, &(obj->clock), baudrate, oversample_value);
+        #else
+            status = cyhal_clock_set_divider(&(obj->clock), divider);
+        #endif
         if(status != CY_RSLT_SUCCESS)
         {
             cyhal_clock_set_enabled(&(obj->clock), true, false);
@@ -660,7 +728,7 @@ cy_rslt_t cyhal_uart_set_baud(cyhal_uart_t *obj, uint32_t baudrate, uint32_t *ac
         status = cyhal_clock_set_enabled(&(obj->clock), true, false);
 
         /* Configure the UART interface */
-        #if (CY_IP_MXSCB_VERSION >= 2) /* Versions 2 and later */
+        #if (CY_IP_MXSCB_VERSION >= 2) || (CY_IP_MXS22SCB_VERSION >= 1)
         uint32_t mem_width = (obj->config.dataWidth <= CY_SCB_BYTE_WIDTH)
             #if defined(COMPONENT_CAT1)
             ? CY_SCB_MEM_WIDTH_BYTE : CY_SCB_MEM_WIDTH_HALFWORD;
@@ -785,11 +853,11 @@ cy_rslt_t cyhal_uart_enable_flow_control(cyhal_uart_t *obj, bool enable_cts, boo
             const cyhal_resource_pin_mapping_t *cts_map = _CYHAL_SCB_FIND_MAP_BLOCK(obj->pin_cts, cyhal_pin_map_scb_uart_cts, &obj->resource);
             if (false == obj->dc_configured)
             {
-                result = _cyhal_utils_reserve_and_connect(cts_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_CTS);
+                result = _cyhal_utils_reserve_and_connect(cts_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_CTS);
             }
             else
             {
-                result = cyhal_connect_pin(cts_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_CTS);
+                result = cyhal_connect_pin(cts_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_CTS);
             }
             if (CY_RSLT_SUCCESS == result)
             {
@@ -822,11 +890,11 @@ cy_rslt_t cyhal_uart_enable_flow_control(cyhal_uart_t *obj, bool enable_cts, boo
             const cyhal_resource_pin_mapping_t *rts_map = _CYHAL_SCB_FIND_MAP_BLOCK(obj->pin_rts, cyhal_pin_map_scb_uart_rts, &obj->resource);
             if (false == obj->dc_configured)
             {
-                result = _cyhal_utils_reserve_and_connect(rts_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_RTS);
+                result = _cyhal_utils_reserve_and_connect(rts_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_RTS);
             }
             else
             {
-                result = cyhal_connect_pin(rts_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_RTS);
+                result = cyhal_connect_pin(rts_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_UART_RTS);
             }
             obj->rts_enabled = (CY_RSLT_SUCCESS == result);
         }
@@ -920,6 +988,10 @@ void cyhal_uart_register_callback(cyhal_uart_t *obj, cyhal_uart_event_callback_t
 
 void cyhal_uart_enable_event(cyhal_uart_t *obj, cyhal_uart_event_t event, uint8_t intr_priority, bool enable)
 {
+    uint8_t scb_arr_index = _cyhal_scb_get_block_index(obj->resource.block_num);
+    _cyhal_irq_disable(_CYHAL_SCB_IRQ_N[scb_arr_index]);
+    _cyhal_irq_clear_pending(_CYHAL_SCB_IRQ_N[scb_arr_index]);
+
     if (enable)
     {
         obj->irq_cause |= event;
@@ -936,8 +1008,24 @@ void cyhal_uart_enable_event(cyhal_uart_t *obj, cyhal_uart_event_t event, uint8_
         if (event & CYHAL_UART_IRQ_TX_ERROR)
         {
             // Omit underflow condition as the interrupt perpetually triggers
-            Cy_SCB_ClearTxInterrupt(obj->base, (CY_SCB_UART_TX_OVERFLOW | CY_SCB_UART_TRANSMIT_ERR));
-            Cy_SCB_SetTxInterruptMask(obj->base, Cy_SCB_GetTxInterruptMask(obj->base) | (CY_SCB_UART_TX_OVERFLOW | CY_SCB_UART_TRANSMIT_ERR));
+            //Standard mode only uses OVERFLOW irq
+            if(obj->config.uartMode == CY_SCB_UART_STANDARD)
+            {
+                Cy_SCB_ClearTxInterrupt(obj->base, (CY_SCB_UART_TX_OVERFLOW | CY_SCB_UART_TRANSMIT_ERR));
+                Cy_SCB_SetTxInterruptMask(obj->base, Cy_SCB_GetTxInterruptMask(obj->base) | (CY_SCB_UART_TX_OVERFLOW | CY_SCB_UART_TRANSMIT_ERR));
+            }
+            //SMARTCARD mode uses OVERFLOW, NACK, and ARB_LOST irq's
+            else if(obj->config.uartMode == CY_SCB_UART_SMARTCARD)
+            {
+                Cy_SCB_ClearTxInterrupt(obj->base, (CY_SCB_UART_TX_OVERFLOW | CY_SCB_TX_INTR_UART_NACK | CY_SCB_TX_INTR_UART_ARB_LOST | CY_SCB_UART_TRANSMIT_ERR));
+                Cy_SCB_SetTxInterruptMask(obj->base, Cy_SCB_GetTxInterruptMask(obj->base) | (CY_SCB_UART_TX_OVERFLOW | CY_SCB_TX_INTR_UART_NACK | CY_SCB_TX_INTR_UART_ARB_LOST | CY_SCB_UART_TRANSMIT_ERR));
+            }
+            //LIN Mode only uses OVERFLOW, ARB_LOST irq's
+            else
+            {
+                Cy_SCB_ClearTxInterrupt(obj->base, (CY_SCB_UART_TX_OVERFLOW | CY_SCB_TX_INTR_UART_ARB_LOST | CY_SCB_UART_TRANSMIT_ERR));
+                Cy_SCB_SetTxInterruptMask(obj->base, Cy_SCB_GetTxInterruptMask(obj->base) | (CY_SCB_UART_TX_OVERFLOW | CY_SCB_TX_INTR_UART_ARB_LOST | CY_SCB_UART_TRANSMIT_ERR));
+            }
         }
         if (event & CYHAL_UART_IRQ_TX_FIFO)
         {
@@ -1017,7 +1105,8 @@ void cyhal_uart_enable_event(cyhal_uart_t *obj, cyhal_uart_event_t event, uint8_
         Cy_SCB_SetTxInterruptMask(obj->base, Cy_SCB_GetTxInterruptMask(obj->base) & ~CY_SCB_TX_INTR_MASK);
     }
 
-    _cyhal_irq_set_priority(_CYHAL_SCB_IRQ_N[obj->resource.block_num], intr_priority);
+    _cyhal_irq_set_priority(_CYHAL_SCB_IRQ_N[scb_arr_index], intr_priority);
+    _cyhal_irq_enable(_CYHAL_SCB_IRQ_N[scb_arr_index]);
 }
 
 cy_rslt_t cyhal_uart_set_fifo_level(cyhal_uart_t *obj, cyhal_uart_fifo_type_t type, uint16_t level)

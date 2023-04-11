@@ -14,8 +14,7 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include "drv_common.h"
-
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 
 #define GPIO_INTERRUPT_PRIORITY (7u)
 

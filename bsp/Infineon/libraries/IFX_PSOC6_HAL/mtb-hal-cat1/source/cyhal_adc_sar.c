@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -32,18 +32,31 @@
  * \ingroup group_hal_impl
  * \{
  * \section cyhal_adc_impl_features Features
- * The CAT1A/CAT2 (PMG/PSoC™ 4/PSoC™ 6) ADC supports the following features:
+ * The CAT1A/CAT2 (PMG/PSoC™ 4/PSoC™ 6/XMC7™) ADC supports the following features:
  * * Resolution: 12 bit
  * * Only @ref CYHAL_POWER_LEVEL_DEFAULT and CYHAL_POWER_LEVEL_OFF are defined. The default power
  *   level will automatically adjust based on smple rate.
  * * Average counts: 2, 4, 8, 16, 32, 64, 128, 256
- * * Up to four unique acquisition times.
- * * DMA-based transfer when using @ref cyhal_adc_read_async. When using @ref cyhal_adc_read_async_uv,
- *   only interrupt-driven software copy is supported.
+ *
+ * CAT1A supports DMA-based transfer when using @ref cyhal_adc_read_async. When using @ref
+ * cyhal_adc_read_async_uv, only interrupt-driven software copy is supported.
+ *
+ * CAT1A/CAT2 support the following features:
+ * * Up to four unique acquisition times
+ *
+ * CAT1C supports the following features:
+ * * Unique acquisition time per channel
+ * * Single-ended channels only, referenced to VREF
+ * * Internal VREF only
+ * * No external bypass
  *
  * After initializing the ADC or changing the reference or bypass selection, it may be necessary to wait up to
  * 210 us for the reference buffer to settle. See the architecture TRM (Analog Subsystem -> SAR ADC ->
  * Architecture -> SARREF) for device specific guidance.
+ *
+ * \note On CAT1C devices, the \ref cyhal_source_t object populated by \ref cyhal_adc_enable_output is only valid
+ * as long as the last channel initialized is not disabled, and no new channels are added. If it necessary to
+ * make any of these changes, disable the output using \ref cyhal_adc_disable_output, then re-enable
  * \} group_hal_impl_adc
  */
 
@@ -56,7 +69,7 @@
 #include "cyhal_gpio.h"
 #include "cyhal_hwmgr.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_interconnect.h"
 #include "cyhal_syspm.h"
 #include "cyhal_system.h"
@@ -66,8 +79,22 @@
 
 #if defined(CY_IP_MXS40PASS_SAR_INSTANCES)
 #define _CYHAL_ADC_SAR_INSTANCES CY_IP_MXS40PASS_SAR_INSTANCES
+#elif defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+#define _CYHAL_ADC_SAR_INSTANCES CY_IP_MXS40EPASS_ESAR_INSTANCES
 #elif defined(CY_IP_M0S8PASS4A_SAR_INSTANCES)
 #define _CYHAL_ADC_SAR_INSTANCES CY_IP_M0S8PASS4A_SAR_INSTANCES
+#endif
+
+/* ESAR only sign extends to 16 bits, but we return 32-bit signed values. This means that
+ * while we can technically read the ADC results using DMA, doing so doesn't bring any
+ * real value because still have to post-process the results using the CPU to achieve
+ * proper sign extension. We do this on existing CAT1A and CAT2 devices because we had
+ * already released DMA support before the issue was realized and we can't remove it
+ * without breaking BWC, but extending this behavior to new devices would just be misleading */
+#if (CYHAL_DRIVER_AVAILABLE_DMA && !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES))
+    #define _CYHAL_ADC_DMA_SUPPORTED (1u)
+#else
+    #define _CYHAL_ADC_DMA_SUPPORTED (0u)
 #endif
 
 #if defined(__cplusplus)
@@ -77,6 +104,7 @@ extern "C"
 
 // The PDL for M0S8 PASS doesn't take the register as an argument; it always writes to MUX_SWITCH0
 #if defined(CY_IP_M0S8PASS4A_SAR_INSTANCES)
+    #define CY_SAR_MAX_NUM_CHANNELS CY_SAR_SEQ_NUM_CHANNELS
     #define _CYHAL_ADC_SARSEQ_STATE(state) (state)
     #define _CYHAL_ADC_SWITCH_STATE(state) (state)
     #define _CYHAL_ADC_SET_SWITCH(base, mask, state) Cy_SAR_SetAnalogSwitch((base), (mask), (state))
@@ -86,22 +114,47 @@ extern "C"
     #define _CYHAL_ADC_SET_SWITCH(base, mask, state) Cy_SAR_SetAnalogSwitch((base), CY_SAR_MUX_SWITCH0, (mask), _CYHAL_ADC_SWITCH_STATE((state)))
 #endif
 
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    const uint32_t _CYHAL_ADC_MIN_ACQUISITION_TIME_NS = 300u;
+#else
+    const uint32_t _CYHAL_ADC_MIN_ACQUISITION_TIME_NS = 167;
+#endif
+
 #if (CY_IP_MXS40PASS_SAR_INSTANCES == 1) && !defined(CY_DEVICE_PSOC6A256K)
     #define _CYHAL_ADC_SINGLE_UNSUFFIXED
 #endif
 
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+static PASS_SAR_Type *const _cyhal_adc_base[] =
+#else
 static SAR_Type *const _cyhal_adc_base[] =
+#endif
 {
 #if defined(_CYHAL_ADC_SINGLE_UNSUFFIXED)
     SAR,
 #else
 #if (_CYHAL_ADC_SAR_INSTANCES >= 1)
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    PASS0_SAR0,
+#else
     SAR0,
 #endif
+#endif
 #if (_CYHAL_ADC_SAR_INSTANCES >= 2)
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    PASS0_SAR1,
+#else
     SAR1,
 #endif
+#endif
 #if (_CYHAL_ADC_SAR_INSTANCES >= 3)
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    PASS0_SAR2,
+#else
+    SAR2,
+#endif
+#endif
+#if (_CYHAL_ADC_SAR_INSTANCES >= 4)
     #warning Unhandled SAR instance count
 #endif
 #endif
@@ -113,16 +166,34 @@ static const en_clk_dst_t _cyhal_adc_clock[] =
     PCLK_PASS_CLOCK_SAR,
 #elif (CY_IP_M0S8PASS4A_SAR_INSTANCES == 1)
     PCLK_PASS0_CLOCK_SAR,
-#elif (CY_IP_MXS40PASS_SAR_INSTANCES == 1)
-    PCLK_PASS_CLOCK_SAR0,
-#elif (CY_IP_MXS40PASS_SAR_INSTANCES == 2)
-    PCLK_PASS_CLOCK_SAR0,
-    PCLK_PASS_CLOCK_SAR1,
 #elif (CY_IP_M0S8PASS4A_SAR_INSTANCES == 2)
     PCLK_PASS0_CLOCK_SAR,
     PCLK_PASS1_CLOCK_SAR,
 #else
+    #if (_CYHAL_ADC_SAR_INSTANCES >= 1)
+        #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+        PCLK_PASS0_CLOCK_SAR0,
+        #else
+        PCLK_PASS_CLOCK_SAR0,
+        #endif
+    #endif /* (_CYHAL_ADC_SAR_INSTANCES >= 1) */
+    #if (_CYHAL_ADC_SAR_INSTANCES >= 2)
+        #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+        PCLK_PASS0_CLOCK_SAR1,
+        #else
+        PCLK_PASS_CLOCK_SAR1,
+        #endif
+    #endif /* (_CYHAL_ADC_SAR_INSTANCES >= 2) */
+    #if (_CYHAL_ADC_SAR_INSTANCES >= 3)
+        #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+        PCLK_PASS0_CLOCK_SAR2,
+        #else
+        PCLK_PASS_CLOCK_SAR2,
+        #endif
+    #endif /* (_CYHAL_ADC_SAR_INSTANCES >= 3) */
+    #if (_CYHAL_ADC_SAR_INSTANCES >= 4)
     #warning Unhandled SAR instance count
+    #endif
 #endif
 };
 
@@ -140,10 +211,29 @@ static const cyhal_source_t _cyhal_adc_tr_out[] =
 #elif (CY_IP_M0S8PASS4A_SAR_INSTANCES == 2)
     CYHAL_TRIGGER_PASS0_TR_SAR_OUT,
     CYHAL_TRIGGER_PASS1_TR_SAR_OUT,
+#elif defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    /* There are two "tr_gen" outputs per SAR, but we only expose one type of trigger
+     * so we simplify and only use the first trigger per SAR */
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 0)
+    CYHAL_TRIGGER_PASS0_TR_SAR_GEN_OUT0_EDGE,
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 1)
+    CYHAL_TRIGGER_PASS0_TR_SAR_GEN_OUT2_EDGE,
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 2)
+    CYHAL_TRIGGER_PASS0_TR_SAR_GEN_OUT4_EDGE,
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 3)
+    #error "Unhandled EPASS_ESAR count"
+    #endif
 #else
     #warning Unhandled SAR instance count
 #endif
 };
+
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+static uint8_t _cyhal_adc_last_enabled(const cyhal_adc_t* obj); /* Or last channel, if no channel is enabled */
+#endif
 
 static const cyhal_dest_t _cyhal_adc_tr_in[] =
 {
@@ -159,6 +249,21 @@ static const cyhal_dest_t _cyhal_adc_tr_in[] =
 #elif (CY_IP_M0S8PASS4A_SAR_INSTANCES == 2)
     CYHAL_TRIGGER_PASS0_TR_SAR_IN,
     CYHAL_TRIGGER_PASS1_TR_SAR_IN,
+#elif defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    /* We don't use groups, so we always trigger the SAR starting from channel 0 */
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 0)
+    CYHAL_TRIGGER_PASS0_TR_SAR_CH_IN0,
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 1)
+    (cyhal_dest_t)(CYHAL_TRIGGER_PASS0_TR_SAR_CH_IN0 + PASS_SAR_SLICE_NR0_SAR_SAR_CHAN_NR),
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 2)
+    (cyhal_dest_t)(CYHAL_TRIGGER_PASS0_TR_SAR_CH_IN0
+                    + PASS_SAR_SLICE_NR0_SAR_SAR_CHAN_NR + PASS_SAR_SLICE_NR1_SAR_SAR_CHAN_NR),
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 3)
+    #error "Unhandled EPASS_ESAR count"
+    #endif
 #else
     #warning Unhandled SAR instance count
 #endif
@@ -166,6 +271,30 @@ static const cyhal_dest_t _cyhal_adc_tr_in[] =
 
 static cyhal_adc_t* _cyhal_adc_config_structs[_CYHAL_ADC_SAR_INSTANCES];
 
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+static _cyhal_system_irq_t _cyhal_adc_calc_channel_irq(uint8_t adc_num, uint8_t channel_num)
+{
+    _cyhal_system_irq_t base = pass_0_interrupts_sar_0_IRQn;
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 1)
+    if(adc_num > 0u)
+    {
+        base = (_cyhal_system_irq_t)(base + PASS_SAR_SLICE_NR0_SAR_SAR_CHAN_NR);
+    }
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 2)
+    if(adc_num > 1u)
+    {
+        base = (_cyhal_system_irq_t)(base + PASS_SAR_SLICE_NR1_SAR_SAR_CHAN_NR);
+    }
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 3)
+    #error "Unhandled ADC instance count"
+    #endif
+
+    _cyhal_system_irq_t irq = (_cyhal_system_irq_t)(base + channel_num);
+    return irq;
+}
+#else
 static const _cyhal_system_irq_t _cyhal_adc_irq_n[] =
 {
 #if defined(_CYHAL_ADC_SINGLE_UNSUFFIXED)
@@ -184,12 +313,37 @@ static const _cyhal_system_irq_t _cyhal_adc_irq_n[] =
     #warning Unhandled SAR instance count
 #endif
 };
+#endif
+
+#if defined(CY_IP_MXS40EPASS_ESAR)
+// Expected to be lowest value possible
+#define _CYHAL_ADC_VBG_CHANNEL_IDX  (0)
+static cyhal_adc_channel_t _cyhal_adc_vbg_channels[CY_IP_MXS40EPASS_ESAR_INSTANCES];
+#endif /* defined(CY_IP_MXS40EPASS_ESAR) */
 
 static uint8_t _cyhal_adc_get_block_from_irqn(_cyhal_system_irq_t irqn)
 {
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    uint8_t channel_offset = (uint8_t)(irqn - pass_0_interrupts_sar_0_IRQn);
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 3u)
+    #error "Unhandled ADC instance count"
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 2u)
+    if(channel_offset >= PASS_SAR_SLICE_NR1_SAR_SAR_CHAN_NR + PASS_SAR_SLICE_NR0_SAR_SAR_CHAN_NR)
+    {
+        return 2u;
+    }
+    #endif
+    #if (CY_IP_MXS40EPASS_ESAR_INSTANCES > 1u)
+    if(channel_offset >= PASS_SAR_SLICE_NR0_SAR_SAR_CHAN_NR)
+    {
+        return 1u;
+    }
+    #endif
+    return 0u;
+#else
     switch (irqn)
     {
-#if (CY_CPU_CORTEX_M4 || CY_IP_M0S8PASS4A_SAR_INSTANCES) // M0S8 only has one processor, a CM0 variant
 #if defined(_CYHAL_ADC_SINGLE_UNSUFFIXED)
     case pass_interrupt_sar_IRQn:
         return 0;
@@ -212,14 +366,53 @@ static uint8_t _cyhal_adc_get_block_from_irqn(_cyhal_system_irq_t irqn)
 #else
     #warning Unhandled SAR instance count
 #endif
-#endif /* (CY_CPU_CORTEX_M4 || CY_IP_M0S8PASS4A_SAR_INSTANCES) */
     default:
         CY_ASSERT(false); // Should never be called with a non-SAR IRQn
         return 0;
     }
+#endif
 }
 
-#if defined(CY_IP_MXS40PASS_SAR_INSTANCES)
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+static const cy_stc_sar2_config_t _CYHAL_ADC_DEFAULT_PDL_CONFIG =
+{
+    .preconditionTime = 1u,
+    .powerupTime = 0u,
+    .enableIdlePowerDown = 0u,
+    .msbStretchMode = CY_SAR2_MSB_STRETCH_MODE_1CYCLE, /* Give similar behavior to MXS40PASS */
+    .enableHalfLsbConv = true,
+    .sarMuxEnable = true,
+    .adcEnable = true,
+    .sarIpEnable = true,
+    .channelConfig = { NULL } /* Channels will be individually configured */
+};
+
+static const cy_stc_sar2_channel_config_t _CYHAL_ADC_DEFAULT_PDL_CHAN_CONFIG =
+{
+    /* channelHwEnable will be populated from the user's configuration */
+    /* triggerSelection will be populated based on continous scanning configuration */
+    .preenptionType = CY_SAR2_PREEMPTION_FINISH_RESUME,
+    /* isGroupEnd is populated from the position relative to other enabled channels */
+    .doneLevel = CY_SAR2_DONE_LEVEL_PULSE,
+    .portAddress = CY_SAR2_PORT_ADDRESS_SARMUX0, /* Despite what the name implies, this means use our own SarMux */
+    /* pinAddress will be populated based on user's configuration */
+    .extMuxSelect = 0u, /* We don't support the external mux features in the HAL */
+    .extMuxEnable = false,
+    .preconditionMode = CY_SAR2_PRECONDITION_MODE_OFF, /* Consistent with MXS40PASS */
+    .overlapDiagMode = CY_SAR2_OVERLAP_DIAG_MODE_OFF, /* Other settings are for debugging */
+    /* sampleTime will be computed based on channel configuration */
+    .calibrationValueSelect = CY_SAR2_CALIBRATION_VALUE_REGULAR,
+    /* postProcessingMode will be populated based on whether averaging is enabled */
+    .resultAlignment = CY_SAR2_RESULT_ALIGNMENT_RIGHT,
+    .signExtention = CY_SAR2_SIGN_EXTENTION_UNSIGNED,
+    /* averageCount is populated based on global adc configuration. rightShift is populated based on average vs. accumulate */
+    .rangeDetectionMode = CY_SAR2_RANGE_DETECTION_MODE_BELOW_LO, /* Placeholder value, range detection is not exposed */
+    .rangeDetectionLoThreshold = 0u,
+    .rangeDetectionHiThreshold = 0u,
+    .interruptMask = 0u, /* interruptMask will be updated if this is the last channel */
+};
+
+#elif defined(CY_IP_MXS40PASS_SAR_INSTANCES)
 /* OR in the following user-configurable values: vref, bypass, vneg, */
 #define _CYHAL_ADC_DEFAULT_CTRL ((uint32_t)CY_SAR_VREF_PWR_100 | (uint32_t)CY_SAR_VREF_SEL_BGR \
                                 | (uint32_t)CY_SAR_BYPASS_CAP_DISABLE | (uint32_t)CY_SAR_CTRL_NEGVREF_HW \
@@ -262,7 +455,11 @@ static const cyhal_adc_config_t _CYHAL_ADC_DEFAULT_CONFIG =
     .average_count       = 1,
     .average_mode_flags  = CYHAL_ADC_AVG_MODE_AVERAGE,
     .continuous_scanning = true,
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    .vneg                = CYHAL_ADC_VNEG_VSSA,
+#else
     .vneg                = CYHAL_ADC_VNEG_VREF,
+#endif
     .vref                = CYHAL_ADC_REF_INTERNAL,
     .ext_vref            = NC,
     .ext_vref_mv         = 0u,
@@ -273,13 +470,117 @@ static const cyhal_adc_config_t _CYHAL_ADC_DEFAULT_CONFIG =
 /*******************************************************************************
 *       Internal helper functions
 *******************************************************************************/
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES) /* Not specific to this IP, but no other IP needs these */
+static uint8_t _cyhal_adc_first_enabled(const cyhal_adc_t* obj) /* Or first channel, if no channel is enabled */
+{
+    uint8_t first_enabled = 0u;
+    for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+    {
+        if(NULL != obj->channel_config[i] && obj->base->CH[i].ENABLE)
+        {
+            first_enabled = i;
+            break;
+        }
+    }
+
+    return first_enabled;
+}
+
+static uint8_t _cyhal_adc_last_enabled(const cyhal_adc_t* obj) /* Or last channel, if no channel is enabled */
+{
+    uint8_t last_enabled = CY_SAR_MAX_NUM_CHANNELS - 1u;
+    /* NOT uint, or the loop will never terminate */
+    for(int i = CY_SAR_MAX_NUM_CHANNELS - 1; i >= 0; --i)
+    {
+        if(NULL != obj->channel_config[i] && obj->base->CH[i].ENABLE)
+        {
+            last_enabled = i;
+            break;
+        }
+    }
+
+    return last_enabled;
+}
+
+static int32_t _cyhal_adc_counts_to_uvolts(cyhal_adc_t* obj, uint8_t channel, uint32_t counts)
+{
+    CY_UNUSED_PARAMETER(obj); /* We're always single-ended with vneg set to vssa */
+    CY_UNUSED_PARAMETER(channel); /* We're always single-ended with vneg set to vssa */
+
+    /* 900000 uV (0.9V) is value from SAR2 ADC PDL driver documentation and stands for voltage on VBG diode.
+    *  It always remains stable and it is recommended to be used as reference in ADC counts to Voltage calculations */
+    return (int32_t)((counts * 900000.0f) / obj->vbg_last_value);
+}
+
+static void _cyhal_adc_extract_channel_conf(cyhal_adc_t* adc, cy_stc_sar2_channel_config_t* channel_configs)
+{
+    for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+    {
+        /* The ADC channel configuration structs do not come up with determistic values, so force to 0 any channel
+           which we have not explicitly configured */
+        if(NULL == adc->channel_config[i])
+        {
+            memset(&channel_configs[i], 0u, sizeof(cy_stc_sar2_channel_config_t));;
+        }
+        else
+        {
+            channel_configs[i].triggerSelection = (cy_en_sar2_trigger_selection_t)_FLD2VAL(PASS_SAR_CH_TR_CTL_SEL, adc->base->CH[i].TR_CTL);
+            channel_configs[i].channelPriority  = (uint8_t)_FLD2VAL(PASS_SAR_CH_TR_CTL_PRIO, adc->base->CH[i].TR_CTL);
+            channel_configs[i].preenptionType   = (cy_en_sar2_preemption_type_t)_FLD2VAL(PASS_SAR_CH_TR_CTL_PREEMPT_TYPE, adc->base->CH[i].TR_CTL);
+            channel_configs[i].isGroupEnd       = (bool)_FLD2BOOL(PASS_SAR_CH_TR_CTL_GROUP_END, adc->base->CH[i].TR_CTL);
+            channel_configs[i].doneLevel        = (cy_en_sar2_done_level_t)_FLD2BOOL(PASS_SAR_CH_TR_CTL_DONE_LEVEL, adc->base->CH[i].TR_CTL);
+
+            channel_configs[i].pinAddress             = (cy_en_sar2_pin_address_t)_FLD2VAL(PASS_SAR_CH_SAMPLE_CTL_PIN_ADDR, adc->base->CH[i].SAMPLE_CTL);
+            channel_configs[i].portAddress            = (cy_en_sar2_port_address_t)_FLD2VAL(PASS_SAR_CH_SAMPLE_CTL_PORT_ADDR, adc->base->CH[i].SAMPLE_CTL);
+            channel_configs[i].extMuxSelect           = (uint8_t)_FLD2VAL(PASS_SAR_CH_SAMPLE_CTL_EXT_MUX_SEL, adc->base->CH[i].SAMPLE_CTL);
+            channel_configs[i].extMuxEnable           = (bool)_FLD2BOOL(PASS_SAR_CH_SAMPLE_CTL_EXT_MUX_EN, adc->base->CH[i].SAMPLE_CTL);
+            channel_configs[i].preconditionMode       = (cy_en_sar2_precondition_mode_t)_FLD2VAL(PASS_SAR_CH_SAMPLE_CTL_PRECOND_MODE, adc->base->CH[i].SAMPLE_CTL);
+            channel_configs[i].overlapDiagMode        = (cy_en_sar2_overlap_diag_mode_t)_FLD2VAL(PASS_SAR_CH_SAMPLE_CTL_OVERLAP_DIAG, adc->base->CH[i].SAMPLE_CTL);
+            channel_configs[i].sampleTime             = (uint16_t)_FLD2VAL(PASS_SAR_CH_SAMPLE_CTL_SAMPLE_TIME, adc->base->CH[i].SAMPLE_CTL);
+            channel_configs[i].calibrationValueSelect = (cy_en_sar2_calibration_value_select_t)_FLD2VAL(PASS_SAR_CH_SAMPLE_CTL_ALT_CAL, adc->base->CH[i].SAMPLE_CTL);
+
+            channel_configs[i].postProcessingMode = (cy_en_sar2_post_processing_mode_t)_FLD2VAL(PASS_SAR_CH_POST_CTL_POST_PROC, adc->base->CH[i].POST_CTL);
+            channel_configs[i].resultAlignment    = (cy_en_sar2_result_alignment_t)_FLD2VAL(PASS_SAR_CH_POST_CTL_LEFT_ALIGN, adc->base->CH[i].POST_CTL);
+            channel_configs[i].signExtention      = (cy_en_sar2_sign_extention_t)_FLD2VAL(PASS_SAR_CH_POST_CTL_SIGN_EXT, adc->base->CH[i].POST_CTL);
+            channel_configs[i].averageCount       = (uint8_t)_FLD2VAL(PASS_SAR_CH_POST_CTL_AVG_CNT, adc->base->CH[i].POST_CTL);
+            channel_configs[i].rightShift         = (uint8_t)_FLD2VAL(PASS_SAR_CH_POST_CTL_SHIFT_R, adc->base->CH[i].POST_CTL);
+            channel_configs[i].rangeDetectionMode = (cy_en_sar2_range_detection_mode_t)_FLD2VAL(PASS_SAR_CH_POST_CTL_RANGE_MODE, adc->base->CH[i].POST_CTL);
+
+            channel_configs[i].rangeDetectionLoThreshold = (uint16_t)_FLD2VAL(PASS_SAR_CH_RANGE_CTL_RANGE_LO, adc->base->CH[i].RANGE_CTL);
+            channel_configs[i].rangeDetectionHiThreshold = (uint16_t)_FLD2VAL(PASS_SAR_CH_RANGE_CTL_RANGE_HI, adc->base->CH[i].RANGE_CTL);
+
+            channel_configs[i].channelHwEnable = (bool)(adc->base->CH[i].ENABLE);
+            channel_configs[i].interruptMask = Cy_SAR2_Channel_GetInterruptMask(adc->base, i);
+        }
+    }
+}
+#endif
+
 static void _cyhal_adc_update_intr_mask(const cyhal_adc_t* obj)
 {
     bool needs_eos = (obj->async_scans_remaining > 0) /* Async transfer in progress */
                     || (false == obj->conversion_complete) /* ISR needs to flag that a conversion finished */
+   #if !defined(CY_IP_MXS40EPASS_ESAR)
                     || obj->stop_after_scan /* ISR needs to stop the conversion after the scan finishes */
+   #endif
                     || (0u != (CYHAL_ADC_EOS & obj->user_enabled_events)); /* User requested EOS event */
 
+    #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    uint8_t last_channel = _cyhal_adc_last_enabled(obj);
+    uint32_t current_mask = Cy_SAR2_Channel_GetInterruptMask(obj->base, last_channel);
+    uint32_t new_mask;
+    if(needs_eos)
+    {
+        new_mask = current_mask | CY_SAR2_INT_GRP_DONE;
+    }
+    else
+    {
+        new_mask = current_mask & ~CY_SAR2_INT_GRP_DONE;
+    }
+
+    Cy_SAR2_Channel_ClearInterrupt(obj->base, last_channel, new_mask & (~current_mask));
+    Cy_SAR2_Channel_SetInterruptMask(obj->base, last_channel, new_mask);
+    #else
     uint32_t current_mask = Cy_SAR_GetInterruptMask(obj->base);
     uint32_t new_mask;
     if(needs_eos)
@@ -293,12 +594,13 @@ static void _cyhal_adc_update_intr_mask(const cyhal_adc_t* obj)
 
     Cy_SAR_ClearInterrupt(obj->base, new_mask & (~current_mask));
     Cy_SAR_SetInterruptMask(obj->base, new_mask);
+    #endif
 }
 
 static uint8_t _cyhal_adc_max_configured_channel(const cyhal_adc_t* obj)
 {
     uint8_t max = 0;
-    for(uint8_t i = 0; i < CY_SAR_SEQ_NUM_CHANNELS; ++i)
+    for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
     {
         if(NULL != obj->channel_config[i])
         {
@@ -308,6 +610,13 @@ static uint8_t _cyhal_adc_max_configured_channel(const cyhal_adc_t* obj)
     return max;
 }
 
+static cyhal_source_t _cyhal_adc_calculate_source(cyhal_adc_t *obj)
+{
+    CY_ASSERT(obj->resource.block_num < _CYHAL_ADC_SAR_INSTANCES);
+    return _cyhal_adc_tr_out[obj->resource.block_num];
+}
+
+#if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
 static uint32_t _cyhal_adc_get_mux_switch_control(cyhal_gpio_t gpio)
 {
     static const uint32_t mux_lookup[] =
@@ -519,8 +828,8 @@ static void _cyhal_adc_extract_channel_conf(cyhal_adc_t* adc, cy_stc_sar_channel
         channel_configs[i].differential  = _FLD2BOOL(SAR_CHAN_CONFIG_DIFFERENTIAL_EN, adc->base->CHAN_CONFIG[i]);
         channel_configs[i].resolution    = (cy_en_sar_channel_ctrl_resolution_t)_FLD2VAL(SAR_CHAN_CONFIG_RESOLUTION, adc->base->CHAN_CONFIG[i]);
         // Range and Saturate interrupt masks have an enable bit per channel
-        channel_configs[i].rangeIntrEn   = (0u != (Cy_SAR_GetRangeInterruptMask(adc->base) & 1u << i));
-        channel_configs[i].satIntrEn     = (0u != (Cy_SAR_GetSatInterruptMask(adc->base) & 1u << i));
+        channel_configs[i].rangeIntrEn   = (0u != (Cy_SAR_GetRangeInterruptMask(adc->base) & 1uL << i));
+        channel_configs[i].satIntrEn     = (0u != (Cy_SAR_GetSatInterruptMask(adc->base) & 1uL << i));
     }
 }
 
@@ -568,10 +877,12 @@ static cy_rslt_t _cyhal_adc_populate_pdl_config(const cyhal_adc_config_t* hal_co
     }
     return result;
 }
-#else
+
+#else /* defined(CY_IP_M0S8PASS4A_SAR_INSTANCES) */
+
 static uint32_t _cyhal_adc_convert_average_mode(uint32_t average_mode_flags)
 {
-    uint32 result = 0;
+    uint32_t result = 0;
     if(0u != (average_mode_flags & CYHAL_ADC_AVG_MODE_ACCUMULATE))
     {
         result |= CY_SAR_AVG_MODE_SEQUENTIAL_ACCUM;
@@ -624,8 +935,22 @@ static cy_rslt_t _cyhal_adc_populate_pdl_config(const cyhal_adc_config_t* hal_co
     }
     return result;
 }
-#endif
+#endif /* defined(CY_IP_M0S8PASS4A_SAR_INSTANCES) */
+static int32_t _cyhal_adc_counts_to_uvolts(cyhal_adc_t* obj, uint8_t channel, int32_t counts)
+{
+    return Cy_SAR_CountsTo_uVolts(obj->base, channel, counts);
+}
+#endif /* defined(CY_IP_MXS40EPASS_ESAR_INSTANCES) */
 
+static void _cyhal_adc_start_convert(cyhal_adc_t* obj)
+{
+    #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    /* Continuous vs. single-shot is handled via the trigger configuration */
+    Cy_SAR2_Channel_SoftwareTrigger(obj->base, _cyhal_adc_first_enabled(obj));
+    #else
+    Cy_SAR_StartConvert(obj->base, obj->continuous_scanning ? CY_SAR_START_CONVERT_CONTINUOUS : CY_SAR_START_CONVERT_SINGLE_SHOT);
+    #endif
+}
 static void _cyhal_adc_irq_handler(void)
 {
     /* The only enabled event is scan finished */
@@ -634,12 +959,19 @@ static void _cyhal_adc_irq_handler(void)
     _cyhal_system_irq_t irqn = _cyhal_irq_get_active();
     uint8_t block = _cyhal_adc_get_block_from_irqn(irqn);
     cyhal_adc_t* obj = _cyhal_adc_config_structs[block];
+    #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    uint8_t channel_idx = _cyhal_adc_last_enabled(obj);
+    Cy_SAR2_Channel_ClearInterrupt(obj->base, channel_idx, CY_SAR2_INT_GRP_DONE);
+    #else
     Cy_SAR_ClearInterrupt(obj->base, CY_SAR_INTR_EOS);
+    #endif
     obj->conversion_complete = true;
+    #if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
     if(obj->stop_after_scan)
     {
         Cy_SAR_StopConvert(obj->base);
     }
+    #endif
 
     if(obj->async_scans_remaining > 0)
     {
@@ -649,8 +981,21 @@ static void _cyhal_adc_irq_handler(void)
         {
             for(uint8_t i = 0; i < num_channels; ++i)
             {
-                int32_t counts = Cy_SAR_GetResult32(obj->base, i);
-                *obj->async_buff_next = obj->async_transfer_in_uv ? Cy_SAR_CountsTo_uVolts(obj->base, i, counts) : counts;
+                int32_t counts = 0;
+                #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+                if (_CYHAL_ADC_VBG_CHANNEL_IDX == i)
+                {
+                    obj->vbg_last_value = Cy_SAR2_Channel_GetResult(obj->base, _CYHAL_ADC_VBG_CHANNEL_IDX, NULL);
+                    continue;
+                }
+                else
+                {
+                    counts = Cy_SAR2_Channel_GetResult(obj->base, i, NULL);
+                }
+                #else
+                counts = Cy_SAR_GetResult32(obj->base, i);
+                #endif
+                *obj->async_buff_next = obj->async_transfer_in_uv ? _cyhal_adc_counts_to_uvolts(obj, i, counts) : counts;
                 ++obj->async_buff_next;
             }
             --(obj->async_scans_remaining);
@@ -661,7 +1006,7 @@ static void _cyhal_adc_irq_handler(void)
             }
             else if(false == obj->continuous_scanning)
             {
-                Cy_SAR_StartConvert(obj->base, CY_SAR_START_CONVERT_SINGLE_SHOT);
+                _cyhal_adc_start_convert(obj);
             }
             /* If we're continously scanning, another scan will be kicked off automatically
              * so we don't need to do anything */
@@ -670,7 +1015,7 @@ static void _cyhal_adc_irq_handler(void)
         {
             CY_ASSERT(CYHAL_ASYNC_DMA == obj->async_mode);
 
-#if defined(CY_IP_M0S8CPUSSV3_DMAC) || defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M4CPUSS_DMAC)
+#if _CYHAL_ADC_DMA_SUPPORTED
             cyhal_dma_cfg_t dma_config =
             {
                 .src_addr = (uint32_t)obj->base->CHAN_RESULT,
@@ -696,14 +1041,13 @@ static void _cyhal_adc_irq_handler(void)
             CY_ASSERT(CY_RSLT_SUCCESS == result);
 
             /* Don't increment the buffer here - do that when the DMA completes */
-
             if(false == obj->continuous_scanning)
             {
-                Cy_SAR_StartConvert(obj->base, CY_SAR_START_CONVERT_SINGLE_SHOT);
+                _cyhal_adc_start_convert(obj);
             }
 #else
             CY_ASSERT(false); // DMA not supported on the current device
-#endif //defined(CY_IP_M0S8CPUSSV3_DMAC) || defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M4CPUSS_DMAC)
+#endif //_CYHAL_ADC_DMA_SUPPORTED
         }
     }
 
@@ -720,7 +1064,7 @@ static void _cyhal_adc_irq_handler(void)
 
 }
 
-#if defined(CY_IP_M0S8CPUSSV3_DMAC) || defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M4CPUSS_DMAC)
+#if _CYHAL_ADC_DMA_SUPPORTED
 static void _cyhal_adc_dma_handler(void* arg, cyhal_dma_event_t event)
 {
     CY_ASSERT(CYHAL_DMA_TRANSFER_COMPLETE == event);
@@ -849,22 +1193,41 @@ cy_rslt_t _cyhal_adc_config_hw(cyhal_adc_t *obj, const cyhal_adc_configurator_t*
 
     if (result == CY_RSLT_SUCCESS)
     {
+#if defined(CY_IP_MXS40EPASS_ESAR)
+        result = (cy_rslt_t)Cy_SAR2_Init(obj->base, cfg->config);
+        Cy_SAR2_SetReferenceBufferMode(PASS0_EPASS_MMIO, CY_SAR2_REF_BUF_MODE_ON);
+#else
         result = (cy_rslt_t)Cy_SAR_Init(obj->base, cfg->config);
+#endif
     }
 
     if (result == CY_RSLT_SUCCESS)
     {
+#if !defined(CY_IP_MXS40EPASS_ESAR)
         Cy_SAR_SetVssaSarSeqCtrl(obj->base, _CYHAL_ADC_SARSEQ_STATE(true));
         Cy_SAR_SetVssaVminusSwitch(obj->base, _CYHAL_ADC_SWITCH_STATE(true));
+#endif
 
         _cyhal_analog_init();
 
+        _cyhal_adc_update_intr_mask(obj);
         _cyhal_adc_config_structs[obj->resource.block_num] = obj;
+#if defined(CY_IP_MXS40EPASS_ESAR)
+        /* Register every channel to the same handler; only the current last one in the group will fire
+         * but this avoids us having to unregister and reregister interrupts every time we enable/disable a channel */
+        for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+        {
+            _cyhal_irq_register(_cyhal_adc_calc_channel_irq(obj->resource.block_num, i),
+                                CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_adc_irq_handler);
+            _cyhal_irq_enable(_cyhal_adc_calc_channel_irq(obj->resource.block_num, i));
+        }
+
+        Cy_SAR2_Enable(obj->base);
+#else
         _cyhal_irq_register(_cyhal_adc_irq_n[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_adc_irq_handler);
         _cyhal_irq_enable(_cyhal_adc_irq_n[obj->resource.block_num]);
-
-        _cyhal_adc_update_intr_mask(obj);
         Cy_SAR_Enable(obj->base);
+#endif
     }
     else
     {
@@ -901,7 +1264,9 @@ cy_rslt_t cyhal_adc_init_cfg(cyhal_adc_t *adc, cyhal_adc_channel_t** channels, u
             /* Nothing in this flow needs to know what the pins are - and the inputs aren't even
              * necesssarily pins. The configurator takes care of resource reservation and routing for us */
             channel->vplus = NC;
+#if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
             channel->vminus = NC;
+#endif
             /* The configurator takes care of initial solving, but store this so that we behave properly
              * if the user changes any of the configuration at runtime */
             channel->minimum_acquisition_ns = cfg->achieved_acquisition_time[i];
@@ -912,27 +1277,47 @@ cy_rslt_t cyhal_adc_init_cfg(cyhal_adc_t *adc, cyhal_adc_channel_t** channels, u
 
 cy_rslt_t cyhal_adc_init(cyhal_adc_t *obj, cyhal_gpio_t pin, const cyhal_clock_t *clk)
 {
+    cy_rslt_t result = CY_RSLT_SUCCESS;
+#if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    /* On EPASS, there are no non-default values that we need to set on the ADC-wide PDL config */
     cy_stc_sar_config_t pdl_config;
 
 #if defined(CY_IP_M0S8PASS4A_INSTANCES)
     cy_stc_sar_channel_config_t chan_configs[CY_SAR_SEQ_NUM_CHANNELS];
     memset(chan_configs, 0, sizeof(chan_configs));
     // No channels have actually been configured yet, so an empty set of config structs is fine here
-    cy_rslt_t result =  _cyhal_adc_populate_pdl_config(&_CYHAL_ADC_DEFAULT_CONFIG, &pdl_config, chan_configs);
+    result =  _cyhal_adc_populate_pdl_config(&_CYHAL_ADC_DEFAULT_CONFIG, &pdl_config, chan_configs);
 #else
-    cy_rslt_t result = _cyhal_adc_populate_pdl_config(&_CYHAL_ADC_DEFAULT_CONFIG, &pdl_config);
+    result = _cyhal_adc_populate_pdl_config(&_CYHAL_ADC_DEFAULT_CONFIG, &pdl_config);
+#endif
 #endif
 
     if (CY_RSLT_SUCCESS == result)
     {
         cyhal_adc_configurator_t config;
         config.resource = NULL;
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+        config.config = &_CYHAL_ADC_DEFAULT_PDL_CONFIG;
+#else
         config.config = &pdl_config;
+#endif
         config.clock = clk;
         config.num_channels = 0u;
 
         result = _cyhal_adc_config_hw(obj, &config, pin, false);
     }
+#if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    /* Some of the default configuration options are per-channel in the hardware and therefore
+     * need to be stored on the hal object, call into configure() to take care of that */
+    if(CY_RSLT_SUCCESS == result)
+    {
+        result = cyhal_adc_configure(obj, &_CYHAL_ADC_DEFAULT_CONFIG);
+    }
+    if (CY_RSLT_SUCCESS == result)
+    {
+        obj->vbg_chan_inited = false;
+    }
+#endif
     return result;
 }
 
@@ -940,8 +1325,15 @@ void cyhal_adc_free(cyhal_adc_t *obj)
 {
     if (NULL != obj && NULL != obj->base)
     {
+#if defined(CY_IP_MXS40EPASS_ESAR)
+        for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+        {
+            _cyhal_irq_free(_cyhal_adc_calc_channel_irq(obj->resource.block_num, i));
+        }
+#else
         _cyhal_system_irq_t irqn = _cyhal_adc_irq_n[obj->resource.block_num];
         _cyhal_irq_free(irqn);
+#endif
         _cyhal_adc_config_structs[obj->resource.block_num] = NULL;
 
         cy_rslt_t rslt;
@@ -954,14 +1346,20 @@ void cyhal_adc_free(cyhal_adc_t *obj)
         }
         (void)rslt; // Disable compiler warning in release build
 
+#if !defined(CY_IP_MXS40EPASS_ESAR)
         Cy_SAR_SetVssaSarSeqCtrl(obj->base, _CYHAL_ADC_SARSEQ_STATE(false));
         Cy_SAR_SetVssaVminusSwitch(obj->base, _CYHAL_ADC_SWITCH_STATE(false));
 
         Cy_SAR_StopConvert(obj->base);
+#endif
 
         if(false == obj->owned_by_configurator)
         {
+#if !defined(CY_IP_MXS40EPASS_ESAR)
             Cy_SAR_Disable(obj->base);
+#else
+            Cy_SAR2_Disable(obj->base);
+#endif
 
             if(obj->dedicated_clock)
             {
@@ -980,6 +1378,112 @@ void cyhal_adc_free(cyhal_adc_t *obj)
     }
 }
 
+#if defined(CY_IP_MXS40EPASS_ESAR)
+cy_rslt_t _cyhal_adc_populate_acquisition_timers(cyhal_adc_t* obj)
+{
+    /* EPASS has dedicated acquisition timer per channel. To avoid
+     * having to ifdef the numerous callsiteas, implement this as a no-op */
+    CY_UNUSED_PARAMETER(obj);
+    return CY_RSLT_SUCCESS;
+}
+
+cy_rslt_t _cyhal_adc_apply_channel_configs(cyhal_adc_t* obj, cy_stc_sar2_channel_config_t* channel_configs)
+{
+    uint32_t clock_frequency_hz = cyhal_clock_get_frequency(&(obj->clock));
+    uint32_t clock_period_ns = (clock_frequency_hz > 0u)
+        ? (_CYHAL_UTILS_NS_PER_SECOND / clock_frequency_hz)
+        : 0u;
+    CY_ASSERT(0u != clock_period_ns);
+
+    bool found_enabled = false;
+    uint8_t last_enabled = 0u;
+    for(size_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+    {
+        Cy_SAR2_Channel_DeInit(obj->base, i);
+        if (channel_configs[i].channelHwEnable)
+        {
+            last_enabled = i;
+            if(false == found_enabled) /* Set trigger on the start of the group */
+            {
+                found_enabled = true;
+                channel_configs[i].triggerSelection = obj->continuous_scanning ?
+                    CY_SAR2_TRIGGER_CONTINUOUS : CY_SAR2_TRIGGER_GENERIC0;
+            }
+
+            if(obj->channel_config[i]->avg_enabled)
+            {
+                /* Value stored is 1 less than the desired count, but decrement is done by Cy_SAR2_Channel_Init */
+                channel_configs[i].averageCount = obj->average_count;
+                /* postProcessingMode=AVG triggers the repeated acquisition of samples.
+                 * The difference between accumulate and average is whether we do a right shift afterwards
+                 */
+                uint8_t rightShift;
+                channel_configs[i].postProcessingMode = CY_SAR2_POST_PROCESSING_MODE_AVG;
+                if(obj->average_is_accumulate)
+                {
+                    rightShift = 0u;
+                }
+                else
+                {
+                    for(rightShift = 31u; (0u == (obj->average_count & 1u << rightShift)); --rightShift) { }
+                }
+                channel_configs[i].rightShift = rightShift;
+            }
+            else
+            {
+                channel_configs[i].averageCount = 0u;
+                channel_configs[i].postProcessingMode = CY_SAR2_POST_PROCESSING_MODE_NONE;
+                channel_configs[i].rightShift = 0u;
+            }
+
+            uint16_t sample_clock_cycles =
+                (uint16_t)((obj->channel_config[i]->minimum_acquisition_ns + (clock_period_ns - 1)) / clock_period_ns);
+            channel_configs[i].sampleTime = sample_clock_cycles;
+        }
+        channel_configs[i].isGroupEnd = false;
+        channel_configs[i].interruptMask = 0u;
+    }
+
+    channel_configs[last_enabled].isGroupEnd = true;
+    channel_configs[last_enabled].interruptMask = CY_SAR2_INT_GRP_DONE;
+
+    /* We need to do a 2 pass because we don't know what channel is at the end until
+     * we've gone past it */
+    cy_rslt_t result = CY_RSLT_SUCCESS;
+    for(size_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+    {
+        cy_rslt_t result2 = Cy_SAR2_Channel_Init(obj->base, i, &channel_configs[i]);
+        if(CY_RSLT_SUCCESS == result)
+        {
+            result = result2;
+        }
+    }
+
+    if(CY_RSLT_SUCCESS == result)
+    {
+        /* We only support one trigger output per ADC instance, so by convention we always drive trigger 0 */
+        result = Cy_SAR2_SetGenericTriggerOutput(PASS0_EPASS_MMIO, obj->resource.block_num, 0u, last_enabled);
+    }
+    return result;
+}
+
+void _cyhal_adc_channel_update_config(cyhal_adc_channel_t* obj, cy_stc_sar2_channel_config_t *pdl_cfg, const cyhal_adc_channel_config_t *cfg)
+{
+    /* We're just applying the HAL configuration provided. The PDL config could already have values that
+     * aren't derived from cyhal_adc_channel_config_t, especially if we're updating an existing channel,
+     * so omit the customary memset to 0 step */
+    pdl_cfg->channelHwEnable = cfg->enabled;
+    /* There's no hardware field to explicitly enable/disable averaging for a channel, you just set an average count
+     * of 1 if you don't want to average a channel. Because the HAL also allows the average count to be globally
+     * set to 1 to disable averaging on all channels, we need to separately keep track of whether this particular
+     * channel is supposed to be subject to averaging when it is enabled in general. */
+    obj->avg_enabled = cfg->enable_averaging;
+    /* Here we only update "primary" data sources that aren't derived from anything other than the
+     * cyhal_adc_channel_config_t. We don't set anything that can be derived from the channel pdl config
+     * combined with the ADC config; that is taken care of in _cyhal_adc_apply_channel_configs */
+}
+
+#else
 cy_rslt_t _cyhal_adc_populate_acquisition_timers(cyhal_adc_t* obj)
 {
     const uint32_t ACQUISITION_CLOCKS_MIN = 2;
@@ -1007,14 +1511,13 @@ cy_rslt_t _cyhal_adc_populate_acquisition_timers(cyhal_adc_t* obj)
             if(NULL != chan_config)
             {
                 bool found = false;
-                for(uint8_t timer = 0; timer < sizeof(sample_timer_ns) / sizeof(sample_timer_ns[0]); ++timer)
+                for(uint8_t timer = 0; !found && timer < sizeof(sample_timer_ns) / sizeof(sample_timer_ns[0]); ++timer)
                 {
                     if(chan_config->minimum_acquisition_ns == sample_timer_ns[timer])
                     {
                         /* Matched a pre-existing timer; use that */
                         assigned_timer[channel] = timer;
                         found = true;
-                        break;
                     }
                     else if(0 == sample_timer_ns[timer])
                     {
@@ -1022,7 +1525,6 @@ cy_rslt_t _cyhal_adc_populate_acquisition_timers(cyhal_adc_t* obj)
                         sample_timer_ns[timer] = chan_config->minimum_acquisition_ns;
                         assigned_timer[channel] = timer;
                         found = true;
-                        break;
                     }
                 }
 
@@ -1068,12 +1570,49 @@ cy_rslt_t _cyhal_adc_populate_acquisition_timers(cyhal_adc_t* obj)
 
     return result;
 }
-
+#endif
 
 cy_rslt_t cyhal_adc_configure(cyhal_adc_t *obj, const cyhal_adc_config_t *config)
 {
     cy_rslt_t result = CY_RSLT_SUCCESS;
+    obj->continuous_scanning = config->continuous_scanning;
 
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    /* No external bypass or external vref option available */
+    if (config->is_bypassed
+        || CYHAL_ADC_REF_INTERNAL != config->vref
+        || CYHAL_ADC_VNEG_VSSA != config->vneg
+        || config->average_count < 1u
+        || config->average_count > (UINT8_MAX + 1)) /* 8-bit field stores (desired_count - 1) */
+    {
+        /* No need to check here that the other vref/bypass related parameters are consistent with these
+         * selections, there are already checks further down that do that */
+        result = CYHAL_ADC_RSLT_BAD_ARGUMENT;
+    }
+
+    /* Even though average count can technically be any value between 1 and 256, when we're operating in "true"
+     * average mode (i.e. not accumulate) we're limited to powers of 2 because those are the only division
+     * ratios that can be achieved through the "shiftRight" functionality.
+     */
+
+     obj->average_is_accumulate = (0u != (config->average_mode_flags & CYHAL_ADC_AVG_MODE_ACCUMULATE));
+     if(false == obj->average_is_accumulate)
+     {
+         bool saw_one = false;
+         for(uint8_t i = 0; i < 16u; ++i)
+         {
+             if(0u != (config->average_count & (1u << i)))
+             {
+                 if(saw_one) /* Two bits set, not a power of 2 */
+                 {
+                    result = CYHAL_ADC_RSLT_BAD_ARGUMENT;
+                    break;
+                 }
+                 saw_one = true;
+             }
+         }
+     }
+#endif
 #if defined(CYHAL_PIN_MAP_DRIVE_MODE_PASS_SAR_EXT_VREF0)
     if(NC != config->ext_vref)
     {
@@ -1176,6 +1715,7 @@ cy_rslt_t cyhal_adc_configure(cyhal_adc_t *obj, const cyhal_adc_config_t *config
         result = CYHAL_ADC_RSLT_BAD_ARGUMENT;
     }
 
+#if !defined(CY_IP_MXS40EPASS_ESAR)
     cy_stc_sar_config_t pdl_config;
 #if defined(CY_IP_M0S8PASS4A_SAR_INSTANCES)
     if(CY_RSLT_SUCCESS == result)
@@ -1217,13 +1757,24 @@ cy_rslt_t cyhal_adc_configure(cyhal_adc_t *obj, const cyhal_adc_config_t *config
         Cy_SAR_SetInterruptMask(obj->base, CY_SAR_INTR_EOS);
         Cy_SAR_Enable(obj->base);
     }
+#else
+    if(CY_RSLT_SUCCESS == result)
+    {
+        /* On EPASS, there is no global configuration to update, but we need to repopulate the channel configuration */
+        obj->average_count = config->average_count;
+        obj->average_is_accumulate = (0u != (config->average_mode_flags & CYHAL_ADC_AVG_MODE_ACCUMULATE));
+        cy_stc_sar2_channel_config_t channel_configs[CY_SAR_MAX_NUM_CHANNELS];
 
-    obj->continuous_scanning = config->continuous_scanning;
+        _cyhal_adc_extract_channel_conf(obj, channel_configs);
+        result = _cyhal_adc_apply_channel_configs(obj, channel_configs);
+    }
+#endif
+
     if(obj->continuous_scanning)
     {
         obj->conversion_complete = false;
         _cyhal_adc_update_intr_mask(obj);
-        Cy_SAR_StartConvert(obj->base, CY_SAR_START_CONVERT_CONTINUOUS);
+        _cyhal_adc_start_convert(obj);
     }
     return result;
 }
@@ -1233,17 +1784,28 @@ cy_rslt_t cyhal_adc_set_power(cyhal_adc_t *obj, cyhal_power_level_t power)
     // The SAR doesn't have selectable power levels in the same way that the opamps do.
     if(CYHAL_POWER_LEVEL_OFF == power)
     {
+#if !defined(CY_IP_MXS40EPASS_ESAR)
         Cy_SAR_Disable(obj->base);
+#else
+        Cy_SAR2_Disable(obj->base);
+#endif
     }
     else
     {
+#if !defined(CY_IP_MXS40EPASS_ESAR)
         Cy_SAR_Enable(obj->base);
+#else
+        Cy_SAR2_Enable(obj->base);
+#endif
     }
     return CY_RSLT_SUCCESS;
 }
 
 static uint16_t _cyhal_adc_get_average_count(cyhal_adc_t* obj, int channel_idx)
 {
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    return _FLD2VAL(PASS_SAR_CH_POST_CTL_AVG_CNT, obj->base->CH[channel_idx].POST_CTL);
+#else
     uint32_t average_count = 1;
     /* If averaging is in interleaved mode, it does not impact the sample time */
 #if defined(CY_IP_MXS40PASS_SAR_INSTANCES)
@@ -1259,16 +1821,21 @@ static uint16_t _cyhal_adc_get_average_count(cyhal_adc_t* obj, int channel_idx)
     }
 
     return (obj->base->CHAN_CONFIG[channel_idx] & SAR_CHAN_CONFIG_AVG_EN_Msk) ? average_count : 1;
+#endif
 }
 
 /* Gets acquisition times and conversion clocks for all enabled channels, factoring in averaging */
 static void _cyhal_adc_get_sample_times(cyhal_adc_t* obj, uint32_t* min_acquisition_ns, uint32_t* conversion_clock_cycles)
 {
     *min_acquisition_ns = *conversion_clock_cycles = 0;
-    for(uint8_t i = 0; i < CY_SAR_SEQ_NUM_CHANNELS; ++i)
+    for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
     {
         cyhal_adc_channel_t* chan_config = obj->channel_config[i];
+#if defined(CY_IP_MXS40EPASS_ESAR)
+        if((NULL != chan_config) && (0u != (obj->base->CH[i].ENABLE)))
+#else
         if((NULL != chan_config) && (0u != (obj->base->CHAN_EN & ((uint32_t)1U << i))))
+#endif
         {
             uint32_t min_time = chan_config->minimum_acquisition_ns;
             uint8_t clock_cycles = _CYHAL_ADC_CONVERSION_CYCLES;
@@ -1324,6 +1891,16 @@ uint32_t _cyhal_adc_compute_actual_sample_rate(cyhal_adc_t* obj)
     uint32_t clock_period_ns = (clock_frequency_hz > 0)
         ? (_CYHAL_UTILS_NS_PER_SECOND / clock_frequency_hz)
         : 0;
+    CY_ASSERT(clock_period_ns > 0);
+
+    uint32_t total_sample_time_ns = 0;
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+    {
+        uint32_t sample_count = _FLD2VAL(PASS_SAR_CH_SAMPLE_CTL_SAMPLE_TIME, obj->base->CH[i].SAMPLE_CTL);
+        total_sample_time_ns +=  sample_count * clock_period_ns;
+    }
+#else
     uint16_t sample_timer[] =
     {
         (obj->base->SAMPLE_TIME01 & SAR_SAMPLE_TIME01_SAMPLE_TIME0_Msk) >> SAR_SAMPLE_TIME01_SAMPLE_TIME0_Pos,
@@ -1331,8 +1908,6 @@ uint32_t _cyhal_adc_compute_actual_sample_rate(cyhal_adc_t* obj)
         (obj->base->SAMPLE_TIME23 & SAR_SAMPLE_TIME23_SAMPLE_TIME2_Msk) >> SAR_SAMPLE_TIME23_SAMPLE_TIME2_Pos,
         (obj->base->SAMPLE_TIME23 & SAR_SAMPLE_TIME23_SAMPLE_TIME3_Msk) >> SAR_SAMPLE_TIME23_SAMPLE_TIME3_Pos,
     };
-
-    uint32_t total_sample_time_ns = 0;
 
     for(uint8_t i = 0; i < CY_SAR_SEQ_NUM_CHANNELS; ++i)
     {
@@ -1349,7 +1924,7 @@ uint32_t _cyhal_adc_compute_actual_sample_rate(cyhal_adc_t* obj)
         sample_time_ns *= _cyhal_adc_get_average_count(obj, i);
         total_sample_time_ns += sample_time_ns;
     }
-
+#endif
     uint32_t sample_frequency_hz = (total_sample_time_ns > 0)
         ? (_CYHAL_UTILS_NS_PER_SECOND / total_sample_time_ns)
         : 0;
@@ -1386,6 +1961,7 @@ cy_rslt_t cyhal_adc_set_sample_rate(cyhal_adc_t* obj, uint32_t desired_sample_ra
 *       ADC Channel HAL Functions
 *******************************************************************************/
 
+#if !defined(CY_IP_MXS40EPASS_ESAR)
 /* Updates the channel with the new config while preserving configuration parameters that
  * cyhal_adc_channel_config_t doesn't impact like pin selection */
 void _cyhal_adc_channel_update_config(cyhal_adc_channel_t* obj, const cyhal_adc_channel_config_t* config)
@@ -1459,24 +2035,25 @@ static void _cyhal_adc_update_chan_offset(cyhal_adc_channel_t* obj)
     Cy_SAR_SetChannelOffset(obj->adc->base, obj->channel_idx, offset);
 #endif
 }
+#endif
 
 cy_rslt_t cyhal_adc_channel_init_diff(cyhal_adc_channel_t *obj, cyhal_adc_t* adc, cyhal_gpio_t vplus, cyhal_gpio_t vminus, const cyhal_adc_channel_config_t* cfg)
 {
     CY_ASSERT(obj != NULL);
     CY_ASSERT(adc != NULL);
 
-    const uint32_t CYHAL_ADC_MIN_ACQUISITION_TIME_NS = 167;
-
     cy_rslt_t result = CY_RSLT_SUCCESS;
 
     memset(obj, 0, sizeof(cyhal_adc_channel_t));
     obj->vplus = NC;
+#if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
     obj->vminus = NC;
+    const cyhal_resource_pin_mapping_t *vminus_map = NULL;
+#endif
 
     // Check for invalid pin or pin belonging to a different SAR
     const cyhal_resource_pin_mapping_t *vplus_map = _cyhal_utils_get_resource(vplus, cyhal_pin_map_pass_sarmux_pads,
         sizeof(cyhal_pin_map_pass_sarmux_pads)/sizeof(cyhal_pin_map_pass_sarmux_pads[0]), NULL, false);
-    const cyhal_resource_pin_mapping_t *vminus_map = NULL;
 
     if(NULL == vplus_map || adc->resource.block_num != vplus_map->block_num)
     {
@@ -1488,14 +2065,18 @@ cy_rslt_t cyhal_adc_channel_init_diff(cyhal_adc_channel_t *obj, cyhal_adc_t* adc
     if (CY_RSLT_SUCCESS == result)
     {
         // Find the first available channel
-        for(chosen_channel = 0; chosen_channel < CY_SAR_SEQ_NUM_CHANNELS; ++chosen_channel)
+        #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+        for(chosen_channel = _CYHAL_ADC_VBG_CHANNEL_IDX + 1; chosen_channel < CY_SAR_MAX_NUM_CHANNELS; ++chosen_channel)
+        #else
+        for(chosen_channel = 0; chosen_channel < CY_SAR_MAX_NUM_CHANNELS; ++chosen_channel)
+        #endif /* defined(CY_IP_MXS40EPASS_ESAR_INSTANCES) or other */
         {
             if(NULL == adc->channel_config[chosen_channel])
             {
                 break;
             }
         }
-        if (chosen_channel >= CY_SAR_SEQ_NUM_CHANNELS) // No channels available
+        if (chosen_channel >= CY_SAR_MAX_NUM_CHANNELS) // No channels available
             result = CYHAL_ADC_RSLT_NO_CHANNELS;
     }
 
@@ -1507,12 +2088,16 @@ cy_rslt_t cyhal_adc_channel_init_diff(cyhal_adc_channel_t *obj, cyhal_adc_t* adc
         obj->adc = adc;
         obj->channel_idx = chosen_channel;
         obj->adc->channel_config[chosen_channel] = obj;
-        obj->minimum_acquisition_ns = (cfg->min_acquisition_ns > CYHAL_ADC_MIN_ACQUISITION_TIME_NS)
-                                       ? cfg->min_acquisition_ns : CYHAL_ADC_MIN_ACQUISITION_TIME_NS;
+        obj->minimum_acquisition_ns = (cfg->min_acquisition_ns > _CYHAL_ADC_MIN_ACQUISITION_TIME_NS)
+                                       ? cfg->min_acquisition_ns : _CYHAL_ADC_MIN_ACQUISITION_TIME_NS;
     }
 
     if((CY_RSLT_SUCCESS == result) && (CYHAL_ADC_VNEG != vminus))
     {
+        #if defined(CY_IP_MXS40EPASS_ESAR)
+        /* We don't support differential channels */
+        result = CYHAL_ADC_RSLT_BAD_ARGUMENT;
+        #else
         vminus_map = _cyhal_utils_get_resource(vminus, cyhal_pin_map_pass_sarmux_pads,
             sizeof(cyhal_pin_map_pass_sarmux_pads)/sizeof(cyhal_pin_map_pass_sarmux_pads[0]), NULL, false);
         if (NULL == vminus_map || adc->resource.block_num != vminus_map->block_num)
@@ -1526,6 +2111,7 @@ cy_rslt_t cyhal_adc_channel_init_diff(cyhal_adc_channel_t *obj, cyhal_adc_t* adc
             result = CYHAL_ADC_RSLT_BAD_ARGUMENT;
         }
         #endif
+        #endif
     }
 
     if(CY_RSLT_SUCCESS == result)
@@ -1536,6 +2122,7 @@ cy_rslt_t cyhal_adc_channel_init_diff(cyhal_adc_channel_t *obj, cyhal_adc_t* adc
     if(CY_RSLT_SUCCESS == result)
     {
         obj->vplus = vplus;
+#if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
         if(CYHAL_ADC_VNEG != vminus)
         {
             result = _cyhal_utils_reserve_and_connect(vminus_map, CYHAL_PIN_MAP_DRIVE_MODE_PASS_SARMUX_PADS);
@@ -1545,12 +2132,41 @@ cy_rslt_t cyhal_adc_channel_init_diff(cyhal_adc_channel_t *obj, cyhal_adc_t* adc
     if(CY_RSLT_SUCCESS == result)
     {
         obj->vminus = vminus;
-
+#endif
         result = _cyhal_adc_populate_acquisition_timers(obj->adc);
     }
 
     if(CY_RSLT_SUCCESS == result)
     {
+#if defined(CY_IP_MXS40EPASS_ESAR)
+        cy_stc_sar2_channel_config_t channel_configs[CY_SAR_MAX_NUM_CHANNELS];
+        _cyhal_adc_extract_channel_conf(obj->adc, channel_configs);
+        channel_configs[obj->channel_idx] = _CYHAL_ADC_DEFAULT_PDL_CHAN_CONFIG;
+        channel_configs[obj->channel_idx].pinAddress =
+            (cy_en_sar2_pin_address_t)(CY_SAR2_PIN_ADDRESS_AN0 + vplus_map->channel_num);
+
+        #if defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+        if (false == adc->vbg_chan_inited)
+        {
+            uint8_t block_idx = adc->resource.block_num;
+
+            _cyhal_adc_vbg_channels[block_idx].adc = adc;
+            _cyhal_adc_vbg_channels[block_idx].channel_idx = _CYHAL_ADC_VBG_CHANNEL_IDX;
+            _cyhal_adc_vbg_channels[block_idx].adc->channel_config[_CYHAL_ADC_VBG_CHANNEL_IDX] = &_cyhal_adc_vbg_channels[block_idx];
+            _cyhal_adc_vbg_channels[block_idx].minimum_acquisition_ns = obj->minimum_acquisition_ns;
+
+            channel_configs[_CYHAL_ADC_VBG_CHANNEL_IDX] = _CYHAL_ADC_DEFAULT_PDL_CHAN_CONFIG;
+            channel_configs[_CYHAL_ADC_VBG_CHANNEL_IDX].pinAddress = CY_SAR2_PIN_ADDRESS_VBG;
+
+            _cyhal_adc_channel_update_config(obj, &channel_configs[_CYHAL_ADC_VBG_CHANNEL_IDX], cfg);
+
+            adc->vbg_chan_inited = true;
+        }
+        #endif /* defined(CY_IP_MXS40EPASS_ESAR_INSTANCES) */
+
+        _cyhal_adc_channel_update_config(obj, &channel_configs[obj->channel_idx], cfg);
+        result = _cyhal_adc_apply_channel_configs(obj->adc, channel_configs);
+#else
         uint32_t fw_ctrl_plus = _cyhal_adc_get_fw_switch_control(vplus, true);
         uint32_t mux_ctrl_plus = _cyhal_adc_get_mux_switch_control(vplus);
 
@@ -1568,6 +2184,7 @@ cy_rslt_t cyhal_adc_channel_init_diff(cyhal_adc_channel_t *obj, cyhal_adc_t* adc
 
         _cyhal_adc_channel_set_pin_config(obj, obj->vplus, obj->vminus);
         result = cyhal_adc_channel_configure(obj, cfg);
+#endif
     }
 
     if(CY_RSLT_SUCCESS != result)
@@ -1582,6 +2199,15 @@ cy_rslt_t cyhal_adc_channel_configure(cyhal_adc_channel_t *obj, const cyhal_adc_
 {
     CY_ASSERT(NULL != obj);
 
+    obj->minimum_acquisition_ns = (config->min_acquisition_ns > _CYHAL_ADC_MIN_ACQUISITION_TIME_NS)
+                                   ? config->min_acquisition_ns : _CYHAL_ADC_MIN_ACQUISITION_TIME_NS;
+
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    cy_stc_sar2_channel_config_t channel_configs[CY_SAR_MAX_NUM_CHANNELS];
+    _cyhal_adc_extract_channel_conf(obj->adc, channel_configs);
+    _cyhal_adc_channel_update_config(obj, &channel_configs[obj->channel_idx], config);
+    return _cyhal_adc_apply_channel_configs(obj->adc, channel_configs);
+#else
     _cyhal_adc_channel_update_config(obj, config);
     if(config->enabled)
     {
@@ -1593,6 +2219,7 @@ cy_rslt_t cyhal_adc_channel_configure(cyhal_adc_channel_t *obj, const cyhal_adc_
     }
     _cyhal_adc_update_chan_offset(obj);
     return _cyhal_adc_populate_acquisition_timers(obj->adc);
+#endif
 }
 
 void cyhal_adc_channel_free(cyhal_adc_channel_t *obj)
@@ -1602,6 +2229,7 @@ void cyhal_adc_channel_free(cyhal_adc_channel_t *obj)
         // Disable the channel, the unconfigure it
         obj->adc->channel_config[obj->channel_idx] = NULL;
 
+#if !defined(CY_IP_MXS40EPASS_ESAR)
         if(false == obj->adc->owned_by_configurator)
         {
             if(NC != obj->vplus)
@@ -1622,30 +2250,70 @@ void cyhal_adc_channel_free(cyhal_adc_channel_t *obj)
                 Cy_SAR_SetSwitchSarSeqCtrl(obj->adc->base, mux_ctrl_minus, _CYHAL_ADC_SARSEQ_STATE(false));
             }
         }
+        obj->adc->base->CHAN_CONFIG[obj->channel_idx] = 0;
+#else
+        Cy_SAR2_Channel_DeInit(obj->adc->base, obj->channel_idx);
+#endif
 
         if(false == obj->adc->owned_by_configurator)
         {
             _cyhal_utils_release_if_used(&(obj->vplus));
+#if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
             _cyhal_utils_release_if_used(&(obj->vminus));
+#endif
         }
 
-        obj->adc->base->CHAN_CONFIG[obj->channel_idx] = 0;
+        #if defined(CY_IP_MXS40EPASS_ESAR)
+        if (obj->adc->vbg_chan_inited)
+        {
+            // If VBG sampling channel is activated, go through all channels and find how many activated left.
+            // If no more active user channels left, DeInit VBG channel too.
+            uint8_t active_chan_num = 0;
+            for(uint8_t chan_idx = 0; chan_idx < CY_SAR_MAX_NUM_CHANNELS; ++chan_idx)
+            {
+                if(NULL != obj->adc->channel_config[chan_idx])
+                {
+                    ++active_chan_num;
+                    if (active_chan_num > 1)
+                    {
+                        // If 2 or more channels are active (VBG + at least one user channel), no reason to continue
+                        // as we will definitely not going to DeInit VBG channel
+                        break;
+                    }
+                }
+            }
+            if (1 == active_chan_num)
+            {
+                // Only VBG channel left to be active, DeIniting it
+                Cy_SAR2_Channel_DeInit(obj->adc->base, _CYHAL_ADC_VBG_CHANNEL_IDX);
+                obj->adc->vbg_chan_inited = false;
+            }
+        }
+        #endif /* defined(CY_IP_MXS40EPASS_ESAR) */
+
         obj->adc = NULL;
     }
 }
 
 uint16_t cyhal_adc_read_u16(const cyhal_adc_channel_t *obj)
 {
+    int32_t signed_result = cyhal_adc_read(obj);
+
 #if defined(CY_IP_M0S8PASS4A_SAR_INSTANCES)
     const uint8_t RESULT_SCALING_FACTOR = UINT16_MAX / ((1 << obj->adc->resolution) - 1); // 12-bit SAR resolution
 #else
     const uint8_t RESULT_SCALING_FACTOR = UINT16_MAX / 0xFFF; // constant 12-bit SAR resolution
 #endif
-    int32_t signed_result = cyhal_adc_read(obj);
+
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    uint16_t unsigned_result = (uint16_t)((uint32_t)(signed_result) & 0xFFFF);
+#else
     /* Legacy API for BWC. Convert from signed to unsigned by adding 0x800 to
      * convert the lowest signed 12-bit number to 0x0.
      */
     uint16_t unsigned_result = (uint16_t)(signed_result + 0x800);
+#endif
+
     /* The SAR provides a 12-bit result, but this API is defined to fill a full 16-bit range */
     uint16_t scaled_result = unsigned_result * RESULT_SCALING_FACTOR;
     return scaled_result;
@@ -1657,19 +2325,36 @@ int32_t cyhal_adc_read(const cyhal_adc_channel_t *obj)
 
 #if defined(CY_IP_MXS40PASS_SAR_INSTANCES)
     bool isInterleaved = (CY_SAR_AVG_MODE_INTERLEAVED == (SAR_SAMPLE_CTRL(obj->adc->base) & SAR_SAMPLE_CTRL_AVG_MODE_Msk));
-#else
+#elif !defined(CY_IP_MXS40EPASS_ESAR)
     bool isInterleaved = false;
 #endif
-    bool isChannelAveraging = (obj->adc->base->CHAN_CONFIG[obj->channel_idx] & SAR_CHAN_CONFIG_AVG_EN_Msk);
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    cy_stc_sar2_channel_config_t channel_configs[CY_SAR_MAX_NUM_CHANNELS];
+#endif
     if(!obj->adc->continuous_scanning)
     {
         /* Enable the selected channel only, then perform an on-demand conversion.
          * Save the old enabled channel set to restore after we're done */
+#if defined(CY_IP_MXS40EPASS_ESAR)
+        _cyhal_adc_extract_channel_conf(obj->adc, channel_configs);
+        /* We need to do a full update because the first and last channels in the group must be enabled */
+        for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i) /* Fortunately, each ADC supports a max of 32 channels */
+        {
+            old_en_mask |= channel_configs[i].channelHwEnable << i;
+            channel_configs[i].channelHwEnable = (obj->channel_idx == i) || (_CYHAL_ADC_VBG_CHANNEL_IDX == i);
+        }
+        _cyhal_adc_apply_channel_configs(obj->adc, channel_configs);
+#else
+        bool isChannelAveraging = (obj->adc->base->CHAN_CONFIG[obj->channel_idx] & SAR_CHAN_CONFIG_AVG_EN_Msk);
         bool isChannelInterleaved = (isInterleaved && isChannelAveraging);
         old_en_mask = SAR_CHAN_EN(obj->adc->base);
         Cy_SAR_SetChanMask(obj->adc->base, (uint32_t) (1U << obj->channel_idx));
+#endif
+
         obj->adc->conversion_complete = false;
+        #if !defined(CY_IP_MXS40EPASS_ESAR)
         obj->adc->stop_after_scan = isChannelInterleaved;
+        #endif
         _cyhal_adc_update_intr_mask(obj->adc);
 
         // If interleaved averaging and average is enabled for this channel, set for
@@ -1680,7 +2365,11 @@ int32_t cyhal_adc_read(const cyhal_adc_channel_t *obj)
         // scans there will be no interrupt, therefore conversion_complete will never
         // be set true, and therefore the loop below would be stuck waiting forever,
         // never able to trigger a subsequent scan.
+#if defined(CY_IP_MXS40EPASS_ESAR)
+        Cy_SAR2_Channel_SoftwareTrigger(obj->adc->base, _cyhal_adc_first_enabled(obj->adc));
+#else
         Cy_SAR_StartConvert(obj->adc->base, (isChannelInterleaved) ? CY_SAR_START_CONVERT_CONTINUOUS : CY_SAR_START_CONVERT_SINGLE_SHOT);
+#endif
     }
 
     /* Cy_SAR_IsEndConversion relies on and clears the EOS interrupt status bit.
@@ -1689,11 +2378,26 @@ int32_t cyhal_adc_read(const cyhal_adc_channel_t *obj)
      */
     while(!obj->adc->conversion_complete) { }
 
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    /* Cy_SAR2_Channel_GetResult returns 12-bit unsigned value, which represent ADC count value in range from 0V to 3.3V/5V
+    *  (depends on VDDA). Casting it to signed 32 bit int as per cyhal_adc_read return value description.  */
+    int32_t result = (int32_t)(Cy_SAR2_Channel_GetResult(obj->adc->base, obj->channel_idx, NULL /* We don't need the status bits */));
+    obj->adc->vbg_last_value = Cy_SAR2_Channel_GetResult(obj->adc->base, _CYHAL_ADC_VBG_CHANNEL_IDX, NULL /* We don't need the status bits */);
+#else
     int32_t result = Cy_SAR_GetResult32(obj->adc->base, obj->channel_idx);
+#endif
 
     if(!obj->adc->continuous_scanning)
     {
+#if defined(CY_IP_MXS40EPASS_ESAR)
+        for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+        {
+            channel_configs[i].channelHwEnable = (0u != (old_en_mask & (1u << i)));
+        }
+        _cyhal_adc_apply_channel_configs(obj->adc, channel_configs);
+#else
         Cy_SAR_SetChanMask(obj->adc->base, old_en_mask);
+#endif
     }
 
     return result;
@@ -1704,7 +2408,7 @@ int32_t cyhal_adc_read_uv(const cyhal_adc_channel_t *obj)
     CY_ASSERT(NULL != obj);
 
     int32_t counts = cyhal_adc_read(obj);
-    return Cy_SAR_CountsTo_uVolts(obj->adc->base, obj->channel_idx, counts);
+    return _cyhal_adc_counts_to_uvolts(obj->adc, obj->channel_idx, counts);
 }
 
 void _cyhal_adc_start_async_read(cyhal_adc_t* obj, size_t num_scan, int32_t* result_list)
@@ -1717,7 +2421,7 @@ void _cyhal_adc_start_async_read(cyhal_adc_t* obj, size_t num_scan, int32_t* res
 
     if(false == obj->continuous_scanning)
     {
-        Cy_SAR_StartConvert(obj->base, CY_SAR_START_CONVERT_SINGLE_SHOT);
+        _cyhal_adc_start_convert(obj);
     }
     cyhal_system_critical_section_exit(savedIntrStatus);
 }
@@ -1747,7 +2451,7 @@ cy_rslt_t cyhal_adc_set_async_mode(cyhal_adc_t *obj, cyhal_async_mode_t mode, ui
 
     if(mode == CYHAL_ASYNC_DMA)
     {
-#if defined(CY_IP_M0S8CPUSSV3_DMAC) || defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M4CPUSS_DMAC)
+#if _CYHAL_ADC_DMA_SUPPORTED
         result = cyhal_dma_init(&(obj->dma), CYHAL_DMA_PRIORITY_DEFAULT, CYHAL_DMA_DIRECTION_PERIPH2MEM);
         if(CY_RSLT_SUCCESS == result)
         {
@@ -1761,7 +2465,7 @@ cy_rslt_t cyhal_adc_set_async_mode(cyhal_adc_t *obj, cyhal_async_mode_t mode, ui
     }
     else
     {
-#if defined(CY_IP_M0S8CPUSSV3_DMAC) || defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M4CPUSS_DMAC)
+#if _CYHAL_ADC_DMA_SUPPORTED
         /* Free the DMA instances if we reserved them but don't need them anymore */
         if(CYHAL_RSC_INVALID != obj->dma.resource.type)
         {
@@ -1801,8 +2505,16 @@ void cyhal_adc_enable_event(cyhal_adc_t *obj, cyhal_adc_event_t event, uint8_t i
 
     _cyhal_adc_update_intr_mask(obj);
 
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    for(uint8_t i = 0; i < CY_SAR_MAX_NUM_CHANNELS; ++i)
+    {
+        _cyhal_system_irq_t irqn = _cyhal_adc_calc_channel_irq(obj->resource.block_num, i);
+        _cyhal_irq_set_priority(irqn, intr_priority);
+    }
+#else
     _cyhal_system_irq_t irqn = _cyhal_adc_irq_n[obj->resource.block_num];
     _cyhal_irq_set_priority(irqn, intr_priority);
+#endif
 }
 
 static cyhal_dest_t _cyhal_adc_calculate_dest(uint8_t block_num)
@@ -1811,25 +2523,15 @@ static cyhal_dest_t _cyhal_adc_calculate_dest(uint8_t block_num)
     return _cyhal_adc_tr_in[block_num];
 }
 
-static cyhal_source_t _cyhal_adc_calculate_source(uint8_t block_num)
-{
-    CY_ASSERT(block_num < _CYHAL_ADC_SAR_INSTANCES);
-    return _cyhal_adc_tr_out[block_num];
-}
-
 cy_rslt_t cyhal_adc_connect_digital(cyhal_adc_t *obj, cyhal_source_t source, cyhal_adc_input_t input)
 {
     if(input == CYHAL_ADC_INPUT_START_SCAN)
     {
+#if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
         Cy_SAR_SetConvertMode(obj->base, CY_SAR_TRIGGER_MODE_FW_AND_HWEDGE);
-        cyhal_dest_t dest = _cyhal_adc_calculate_dest(obj->resource.block_num);
-#if defined(CY_IP_M0S8PASS4A_SAR_INSTANCES)
-        // On M0S8 the trigger type is not configurable so the type argument to connect_signal is ignored
-        // Therefore, we arbitrarily pick EDGE to satisfy the interface
-        return _cyhal_connect_signal(source, dest);
-#else
-        return _cyhal_connect_signal(source, dest);
 #endif
+        cyhal_dest_t dest = _cyhal_adc_calculate_dest(obj->resource.block_num);
+        return _cyhal_connect_signal(source, dest);
     }
 
     return CYHAL_ADC_RSLT_BAD_ARGUMENT;
@@ -1841,10 +2543,10 @@ cy_rslt_t cyhal_adc_enable_output(cyhal_adc_t *obj, cyhal_adc_output_t output, c
     {
 #if defined(CY_IP_M0S8PASS4A_SAR_INSTANCES)
         SAR_SAMPLE_CTRL(obj->base) |= SAR_SAMPLE_CTRL_EOS_DSI_OUT_EN_Msk;
-#else
+#elif !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES) /* Trigger is always enabled for ESAR */
         SAR_SAMPLE_CTRL(obj->base) |= SAR_SAMPLE_CTRL_TRIGGER_OUT_EN_Msk;
 #endif
-        *source = _cyhal_adc_calculate_source(obj->resource.block_num);
+        *source = _cyhal_adc_calculate_source(obj);
         return CY_RSLT_SUCCESS;
     }
 
@@ -1855,7 +2557,10 @@ cy_rslt_t cyhal_adc_disconnect_digital(cyhal_adc_t *obj, cyhal_source_t source, 
 {
     if(input == CYHAL_ADC_INPUT_START_SCAN)
     {
+        #if !defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+        /* EPASS is always in hw trigger mode, we can just also force the trigger through SW */
         Cy_SAR_SetConvertMode(obj->base, CY_SAR_TRIGGER_MODE_FW_ONLY);
+        #endif
         cyhal_dest_t dest = _cyhal_adc_calculate_dest(obj->resource.block_num);
         return _cyhal_disconnect_signal(source, dest);
     }
@@ -1872,6 +2577,9 @@ cy_rslt_t cyhal_adc_disable_output(cyhal_adc_t *obj, cyhal_adc_output_t output)
 
 #if defined(CY_IP_M0S8PASS4A_SAR_INSTANCES)
     SAR_SAMPLE_CTRL(obj->base) &= ~SAR_SAMPLE_CTRL_EOS_DSI_OUT_EN_Msk;
+#elif defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    /* Output trigger is always enabled for ESAR */
+    CY_UNUSED_PARAMETER(obj);
 #else
     SAR_SAMPLE_CTRL(obj->base) &= ~SAR_SAMPLE_CTRL_TRIGGER_OUT_EN_Msk;
 #endif
