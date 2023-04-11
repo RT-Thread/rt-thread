@@ -52,7 +52,7 @@ cy_rslt_t cyhal_crc_init(cyhal_crc_t *obj)
 
 void cyhal_crc_free(cyhal_crc_t *obj)
 {
-    CY_ASSERT(NULL != obj || obj->resource.type != CYHAL_RSC_CRYPTO);
+    CY_ASSERT(NULL != obj&&obj->resource.type != CYHAL_RSC_CRYPTO);
     _cyhal_crc_calc_free(obj->base);
     if (obj->resource.type != CYHAL_RSC_INVALID)
     {
