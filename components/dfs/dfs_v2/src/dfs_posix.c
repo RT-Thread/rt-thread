@@ -20,9 +20,8 @@
 
 /**
  * @addtogroup FsPosixApi
+ * @{
  */
-
-/*@{*/
 
 /**
  * this function is a POSIX compliant version, which will open a file and
@@ -979,4 +978,4 @@ char *getcwd(char *buf, size_t size)
 }
 RTM_EXPORT(getcwd);
 
-/* @} */
+/**@}*/

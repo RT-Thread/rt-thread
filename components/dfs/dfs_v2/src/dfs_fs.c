@@ -18,8 +18,8 @@
 
 /**
  * @addtogroup FsApi
+ * @{
  */
-/*@{*/
 
 /**
  * this function will register a file system instance to device file system.
@@ -654,4 +654,4 @@ int df(const char *path)
 FINSH_FUNCTION_EXPORT(df, get disk free);
 #endif
 
-/* @} */
+/**@}*/
