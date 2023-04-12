@@ -78,7 +78,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
-    if (vector < MAX_HANDLERS || vector >= 0)
+    if (vector < MAX_HANDLERS && vector >= 0)
     {
         old_handler = isr_table[vector].handler;
 
