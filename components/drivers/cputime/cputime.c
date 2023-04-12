@@ -18,7 +18,7 @@ static const struct rt_clock_cputime_ops *_cputime_ops  = RT_NULL;
  * The clock_cpu_getres() function shall return the resolution of CPU time, the
  * number of nanosecond per tick.
  *
- * @return the number of nanosecond per tick(x (1000 * 1000))
+ * @return the number of nanosecond per tick(x (1000UL * 1000))
  */
 uint64_t clock_cpu_getres(void)
 {
@@ -80,7 +80,7 @@ uint64_t clock_cpu_microsecond(uint64_t cpu_tick)
 {
     uint64_t unit = clock_cpu_getres();
 
-    return (uint64_t)(((cpu_tick * unit) / (1000 * 1000)) / 1000);
+    return (uint64_t)(((cpu_tick * unit) / (1000UL * 1000)) / 1000);
 }
 
 /**
@@ -95,7 +95,7 @@ uint64_t clock_cpu_millisecond(uint64_t cpu_tick)
 {
     uint64_t unit = clock_cpu_getres();
 
-    return (uint64_t)(((cpu_tick * unit) / (1000 * 1000)) / (1000 * 1000));
+    return (uint64_t)(((cpu_tick * unit) / (1000UL * 1000)) / (1000UL * 1000));
 }
 
 /**

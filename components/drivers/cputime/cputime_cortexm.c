@@ -23,7 +23,7 @@ static uint64_t cortexm_cputime_getres(void)
 {
     uint64_t ret = 1000UL * 1000 * 1000;
 
-    ret = (ret * (1000 * 1000)) / SystemCoreClock;
+    ret = (ret * (1000UL * 1000)) / SystemCoreClock;
     return ret;
 }
 

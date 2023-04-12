@@ -312,7 +312,7 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
 rt_err_t rt_cputime_ndelay(rt_uint64_t ns)
 {
     uint64_t unit = clock_cpu_getres();
-    return rt_cputime_sleep(ns * (1000 * 1000) / unit);
+    return rt_cputime_sleep(ns * (1000UL * 1000) / unit);
 }
 
 rt_err_t rt_cputime_udelay(rt_uint64_t us)
