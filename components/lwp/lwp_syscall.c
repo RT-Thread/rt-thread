@@ -1525,7 +1525,7 @@ long _sys_clone(void *arg[])
         goto fail;
     }
 
-    thread = rt_thread_create(self->name,
+    thread = rt_thread_create(self->parent.name,
             RT_NULL,
             RT_NULL,
             self->stack_size,
@@ -1636,12 +1636,12 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
     dst_fdt->fds = rt_calloc(src_fdt->maxfd, sizeof(void *));
     if (dst_fdt->fds)
     {
-        struct dfs_fd *d_s;
+        struct dfs_file *d_s;
         int i;
 
         dst_fdt->maxfd = src_fdt->maxfd;
 
-        dfs_fd_lock();
+        dfs_file_lock();
         /* dup files */
         for (i = 0; i < src_fdt->maxfd; i++)
         {
@@ -1652,7 +1652,7 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
                 d_s->ref_count++;
             }
         }
-        dfs_fd_unlock();
+        dfs_file_unlock();
         return 0;
     }
     return -RT_ERROR;
@@ -1713,7 +1713,7 @@ sysret_t _sys_fork(void)
     /* create thread */
     self_thread = rt_thread_self();
 
-    thread = rt_thread_create(self_thread->name,
+    thread = rt_thread_create(self_thread->parent.name,
             RT_NULL,
             RT_NULL,
             self_thread->stack_size,
@@ -2361,7 +2361,7 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
         /* load ok, now set thread name and swap the data of lwp and new_lwp */
         level = rt_hw_interrupt_disable();
 
-        rt_strncpy(thread->name, run_name + last_backslash, RT_NAME_MAX);
+        rt_strncpy(thread->parent.name, run_name + last_backslash, RT_NAME_MAX);
 
         rt_pages_free(page, 0);
 
@@ -2420,7 +2420,7 @@ rt_err_t sys_thread_delete(rt_thread_t thread)
 #else
     rt_err_t ret = 0;
 
-    if(thread->type != RT_Object_Class_Thread)
+    if(thread->parent.type != RT_Object_Class_Thread)
     {
         ret = -EINVAL;
         goto __exit;
@@ -3729,7 +3729,7 @@ struct libc_dirent {
 sysret_t sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
 {
     int ret = -1;
-    struct dfs_fd *dfs_fd;
+    struct dfs_file *file;
     size_t cnt = (nbytes / sizeof(struct libc_dirent));
     size_t rtt_nbytes = 0;
     struct dirent *rtt_dirp;
@@ -3751,8 +3751,8 @@ sysret_t sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
     {
         return -ENOMEM;
     }
-    dfs_fd = fd_get(fd);
-    ret = dfs_file_getdents(dfs_fd, rtt_dirp, rtt_nbytes);
+    file = fd_get(fd);
+    ret = dfs_file_getdents(file, rtt_dirp, rtt_nbytes);
     if (ret > 0)
     {
         size_t i = 0;
@@ -4064,9 +4064,9 @@ sysret_t sys_getrlimit(unsigned int resource, unsigned long rlim[2])
         {
             struct dfs_fdtable *fdt = dfs_fdtable_get();
 
-            dfs_fd_lock();
+            dfs_file_lock();
             rlim[0] = fdt->maxfd;
-            dfs_fd_unlock();
+            dfs_file_unlock();
             rlim[1] = DFS_FD_MAX;
             ret = 0;
         }
@@ -4161,7 +4161,7 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
     size_t len, copy_len;
     int err, rtn;
     int fd = -1;
-    struct dfs_fd *d;
+    struct dfs_file *d;
     char *copy_path;
 
     len = lwp_user_strlen(path, &err);
@@ -4565,18 +4565,20 @@ sysret_t sys_mq_close(mqd_t mqd)
 
 rt_weak sysret_t sys_cacheflush(void *addr, int size, int cache)
 {
-    if (addr < addr + size &&
-        (size_t)addr >= USER_VADDR_START &&
-        (size_t)addr + size < USER_VADDR_TOP)
+    if (((size_t)addr < (size_t)addr + size) &&
+        ((size_t)addr >= USER_VADDR_START) &&
+        ((size_t)addr + size < USER_VADDR_TOP))
     {
         if ((cache & DCACHE))
         {
             rt_hw_cpu_dcache_clean_and_invalidate(addr, size);
         }
+
         if ((cache & ICACHE))
         {
             rt_hw_cpu_icache_invalidate(addr, size);
         }
+
         return 0;
     }
     return -EFAULT;

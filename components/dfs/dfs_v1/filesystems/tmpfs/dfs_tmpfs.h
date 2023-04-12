@@ -39,6 +39,7 @@ struct tmpfs_sb
     struct tmpfs_file root;        /* root dir */
     rt_size_t         df_size;     /* df size */
     rt_list_t         sibling;     /* sb sibling list */
+    struct rt_spinlock lock;       /* tmpfs lock */
 };
 
 int dfs_tmpfs_init(void);

@@ -107,7 +107,7 @@ BOOL phy_Init() {
             speed = 1000;
         }
 
-        printf("PHY runs in %dM speed %s duplex\n",
+        printf("PHY runs in %uM speed %s duplex\n",
             speed, (phy_GetDuplex() == PHY_DUPLEX_HALF) ? "half" : "full");
     }
 

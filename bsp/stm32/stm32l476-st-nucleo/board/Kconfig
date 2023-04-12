@@ -27,8 +27,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM2_CH2
         select BSP_USING_PWM2_CH3
         select BSP_USING_PWM3
-        select BSP_USING_PWM3_CH0
         select BSP_USING_PWM3_CH1
+        select BSP_USING_PWM3_CH2
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH1
         select BSP_USING_PWM17
@@ -210,11 +210,11 @@ menu "On-chip Peripheral Drivers"
             bool "Enable timer3 output PWM"
             default n
             if BSP_USING_PWM3
-                config BSP_USING_PWM3_CH0
-                    bool "Enable PWM3 channel0"
-                    default n
                 config BSP_USING_PWM3_CH1
                     bool "Enable PWM3 channel1"
+                    default n
+                config BSP_USING_PWM3_CH2
+                    bool "Enable PWM3 channel2"
                     default n
             endif
 

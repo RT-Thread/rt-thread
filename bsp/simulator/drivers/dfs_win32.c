@@ -144,7 +144,7 @@ char * dfs_win32_dirdup(char * path)
     return file_path;
 }
 
-static int dfs_win32_open(struct dfs_fd *file)
+static int dfs_win32_open(struct dfs_file *file)
 {
     int fd;
     uint32_t oflag, mode;
@@ -239,7 +239,7 @@ __err:
     return win32_result_to_dfs(res);
 }
 
-static int dfs_win32_close(struct dfs_fd *file)
+static int dfs_win32_close(struct dfs_file *file)
 {
     if (file->flags & O_DIRECTORY)
     {
@@ -260,12 +260,12 @@ static int dfs_win32_close(struct dfs_fd *file)
     return win32_result_to_dfs(GetLastError());
 }
 
-static int dfs_win32_ioctl(struct dfs_fd *file, int cmd, void *args)
+static int dfs_win32_ioctl(struct dfs_file *file, int cmd, void *args)
 {
     return -ENOSYS;
 }
 
-static int dfs_win32_read(struct dfs_fd *file, void *buf, size_t len)
+static int dfs_win32_read(struct dfs_file *file, void *buf, size_t len)
 {
     int fd;
     int char_read;
@@ -280,7 +280,7 @@ static int dfs_win32_read(struct dfs_fd *file, void *buf, size_t len)
     return char_read;
 }
 
-static int dfs_win32_write(struct dfs_fd *file, const void *buf, size_t len)
+static int dfs_win32_write(struct dfs_file *file, const void *buf, size_t len)
 {
     int fd;
     int char_write;
@@ -296,12 +296,12 @@ static int dfs_win32_write(struct dfs_fd *file, const void *buf, size_t len)
     return char_write;
 }
 
-static int dfs_win32_flush(struct dfs_fd *file)
+static int dfs_win32_flush(struct dfs_file *file)
 {
     return 0;
 }
 
-static int dfs_win32_seek(struct dfs_fd *file,
+static int dfs_win32_seek(struct dfs_file *file,
                           rt_off_t offset)
 {
     int result;
@@ -325,7 +325,7 @@ static int dfs_win32_seek(struct dfs_fd *file,
 }
 
 /* return the size of struct dirent*/
-static int dfs_win32_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
+static int dfs_win32_getdents(struct dfs_file *file, struct dirent *dirp, rt_uint32_t count)
 {
     WINDIR *wdirp;
     struct dirent *d = dirp;

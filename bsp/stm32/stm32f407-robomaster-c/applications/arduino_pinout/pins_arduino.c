@@ -9,7 +9,6 @@
  */
 
 #include <Arduino.h>
-#include <board.h>
 #include "pins_arduino.h"
 
 /*
@@ -35,6 +34,6 @@ const pin_map_t pin_map_table[]=
     {D11, GET_PIN(C,6), "pwm8", 1},     /* PWM */
     {D12, GET_PIN(I,6), "pwm8", 2},     /* PWM */
     {D13, GET_PIN(I,7), "pwm8", 3},     /* PWM */
-    {A0, RT_NULL, "adc1", 18},          /* ADC, On-Chip: internal temperature sensor, ADC_CHANNEL_TEMPSENSOR */
-    {A1, RT_NULL, "adc1", 17},          /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
+    {A0, RT_NULL, "adc1", RT_ADC_INTERN_CH_VREF},   /* ADC, On-Chip: internal temperature sensor */
+    {A1, RT_NULL, "adc1", RT_ADC_INTERN_CH_TEMPER}, /* ADC, On-Chip: internal reference voltage */
 };

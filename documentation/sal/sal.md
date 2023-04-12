@@ -685,7 +685,7 @@ struct sal_socket_ops
     int (*getsockname)(int s, struct sockaddr *name, socklen_t *namelen);
     int (*ioctlsocket)(int s, long cmd, void *arg);
 #ifdef SAL_USING_POSIX
-    int (*poll)       (struct dfs_fd *file, struct rt_pollreq *req);
+    int (*poll)       (struct dfs_file *file, struct rt_pollreq *req);
 #endif
 };
 
@@ -732,7 +732,7 @@ The following is the access registration process implemented by AT Socket networ
 #ifdef SAL_USING_AT
 
 /* A custom poll execution function that handles the events received in the poll */
-static int at_poll(struct dfs_fd *file, struct rt_pollreq *req)
+static int at_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     int mask = 0;
     struct at_socket *sock;

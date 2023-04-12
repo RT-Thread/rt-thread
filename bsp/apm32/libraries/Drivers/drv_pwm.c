@@ -6,8 +6,9 @@
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2022-07-15     Aligagago         add APM32F4 series MCU support
+ * 2022-12-26     luobeihai         add APM32F0 series MCU support
+ * 2023-03-27     luobeihai         add APM32E1/S1 series MCU support
  */
 
 #include <board.h>
@@ -359,7 +360,8 @@ static rt_err_t apm32_pwm_hw_init(struct apm32_pwm *device)
 
     /* enable update request source */
     TMR_ConfigUPdateRequest(tmr, TMR_UPDATE_SOURCE_REGULAR);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     TMR_BaseConfig_T   base_config;
     TMR_OCConfig_T     oc_config;
 
@@ -402,8 +404,12 @@ static rt_err_t apm32_pwm_hw_init(struct apm32_pwm *device)
     }
 
     /* enable update request source */
+#if defined(SOC_SERIES_APM32E1)
+    TMR_ConfigUPdateRequest(tmr, TMR_UPDATE_SOURCE_REGULAR);
+#else
     TMR_ConfigUpdateRequest(tmr, TMR_UPDATE_SOURCE_REGULAR);
-#endif
+#endif /* SOC_SERIES_APM32E1 */
+#endif /* SOC_SERIES_APM32F0 */
 
     return result;
 }
@@ -416,12 +422,19 @@ static rt_uint32_t timer_clock_get(TMR_T *tmr)
     pclk1 = RCM_ReadPCLKFreq();
 
     return (rt_uint32_t)(pclk1 * ((RCM->CFG1_B.APB1PSC != 0) ? 2 : 1));
-#else
+#endif /* SOC_SERIES_APM32F0 */
+
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     uint32_t pclk1, pclk2;
 
     RCM_ReadPCLKFreq(&pclk1, &pclk2);
 
+#if defined(SOC_SERIES_APM32S1)
+    if (tmr == TMR1)
+#else
     if (tmr == TMR1 || tmr == TMR8 || tmr == TMR9 || tmr == TMR10 || tmr == TMR11)
+#endif /* SOC_SERIES_APM32S1 */
     {
         return (rt_uint32_t)(pclk2 * ((RCM->CFG_B.APB2PSC != 0) ? 2 : 1));
     }
@@ -448,7 +461,9 @@ static rt_err_t drv_pwm_enable(TMR_T *tmr, struct rt_pwm_configuration *configur
         }
 #if defined(SOC_SERIES_APM32F0)
         if (tmr == TMR1 || tmr == TMR15 || tmr == TMR16 || tmr == TMR17)
-#else
+#elif defined(SOC_SERIES_APM32S1)
+        if (tmr == TMR1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32F4)
         if (tmr == TMR1 || tmr == TMR8)
 #endif
         {
@@ -468,7 +483,9 @@ static rt_err_t drv_pwm_enable(TMR_T *tmr, struct rt_pwm_configuration *configur
         }
 #if defined(SOC_SERIES_APM32F0)
         if (tmr == TMR1 || tmr == TMR15 || tmr == TMR16 || tmr == TMR17)
-#else
+#elif defined(SOC_SERIES_APM32S1)
+        if (tmr == TMR1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32F4)
         if (tmr == TMR1 || tmr == TMR8)
 #endif
         {

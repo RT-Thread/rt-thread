@@ -57,7 +57,7 @@ static rt_err_t ifx_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 
         if (result != RT_EOK)
         {
-            LOG_E("ADC initialization failed. Error: %ld\n", (long unsigned int)result);
+            LOG_E("ADC initialization failed. Error: %u\n", result);
             return -RT_ENOSYS;
         }
 
@@ -67,7 +67,7 @@ static rt_err_t ifx_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 
         if (result != RT_EOK)
         {
-            LOG_E("ADC single ended channel initialization failed. Error: %ld\n", (long unsigned int)result);
+            LOG_E("ADC single ended channel initialization failed. Error: %u\n", result);
             return -RT_ENOSYS;
         }
 
@@ -76,7 +76,7 @@ static rt_err_t ifx_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 
         if (result != RT_EOK)
         {
-            printf("ADC configuration update failed. Error: %ld\n", (long unsigned int)result);
+            printf("ADC configuration update failed. Error: %u\n", result);
             return -RT_ENOSYS;
         }
     }

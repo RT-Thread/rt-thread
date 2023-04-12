@@ -246,6 +246,7 @@ static void lpspi_normal_config(struct imxrt_spi *spi)
 
 static void lpspi_dma_config(struct imxrt_spi *spi)
 {
+#ifdef BSP_USING_DMA
     RT_ASSERT(spi != RT_NULL);
 
     DMAMUX_SetSource(DMAMUX, spi->dma->rx_channel, spi->dma->rx_request);
@@ -264,6 +265,7 @@ static void lpspi_dma_config(struct imxrt_spi *spi)
                                         &spi->dma->tx_edma);
 
     LOG_D("%s dma config done\n", spi->bus_name);
+#endif
 }
 
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
@@ -362,13 +364,16 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     {
 #ifdef BSP_USING_BLOCKING_SPI
         status = LPSPI_MasterTransferBlocking(spi->base, &transfer);
+        rt_sem_release(spi->xfer_sem);
 #else
         status = LPSPI_MasterTransferNonBlocking(spi->base, &spi->spi_normal, &transfer);
 #endif
     }
     else
     {
+#ifdef BSP_USING_DMA
         status = LPSPI_MasterTransferEDMA(spi->base,&spi->dma->spi_edma,&transfer);
+#endif
     }
     rt_sem_take(spi->xfer_sem, RT_WAITING_FOREVER);
 
@@ -404,7 +409,7 @@ int rt_hw_spi_bus_init(void)
         lpspis[i].spi_bus.parent.user_data = &lpspis[i];
 
         ret = rt_spi_bus_register(&lpspis[i].spi_bus, lpspis[i].bus_name, &imxrt_spi_ops);
-
+#ifndef BSP_USING_BLOCKING_SPI
         if(RT_TRUE == lpspis[i].dma_flag)
         {
             lpspi_dma_config(&lpspis[i]);
@@ -413,6 +418,7 @@ int rt_hw_spi_bus_init(void)
         {
             lpspi_normal_config(&lpspis[i]);
         }
+#endif
         char sem_name[RT_NAME_MAX];
         rt_sprintf(sem_name, "%s_s", lpspis[i].bus_name);
         lpspis[i].xfer_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);

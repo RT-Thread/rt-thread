@@ -9,6 +9,37 @@ config SOC_STM32G474RE
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_STLINK_TO_USART
+        bool "Enable STLINK TO USART (lpuart1)"
+        select BSP_USING_UART
+        select BSP_USING_UART1
+        default y
+        
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_UART1
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_ADC2
+        select BSP_USING_PWM
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM3
+        select BSP_USING_PWM3_CH1
+        select BSP_USING_PWM3_CH2
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH1
+        select BSP_USING_PWM8
+        select BSP_USING_PWM8_CH2
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -25,7 +56,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_LPUART1
                 bool "Enable LPUART1"
-                default y
+                default n
 
             config BSP_LPUART1_RX_USING_DMA
                 bool "Enable LPUART1 RX DMA"
@@ -59,6 +90,84 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
                 default n
         endif
+
+        menuconfig BSP_USING_ADC
+            bool "Enable ADC"
+            default n
+            select RT_USING_ADC
+            if BSP_USING_ADC
+                config BSP_USING_ADC1
+                    bool "Enable ADC1"
+                    default n
+                config BSP_USING_ADC2
+                    bool "Enable ADC2"
+                    default n
+            endif
+    
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM2
+            bool "Enable timer2 output PWM"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH2
+                    bool "Enable PWM2 channel2"
+                    default n
+                config BSP_USING_PWM2_CH3
+                    bool "Enable PWM2 channel3"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM3
+            bool "Enable timer3 output PWM"
+            default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH1
+                    bool "Enable PWM3 channel1"
+                    default n
+                config BSP_USING_PWM3_CH2
+                    bool "Enable PWM3 channel2"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM4
+            bool "Enable timer4 output PWM"
+            default n
+            if BSP_USING_PWM4
+                config BSP_USING_PWM4_CH1
+                    bool "Enable PWM4 channel1"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM8
+            bool "Enable timer8 output PWM"
+            default n
+            if BSP_USING_PWM8
+                config BSP_USING_PWM8_CH2
+                    bool "Enable PWM8 channel2"
+                    default n
+            endif
+
+        endif
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number (PB8)"
+                default 24
+            config BSP_I2C1_SDA_PIN
+                int "i2c1 sda pin number (PB9)"
+                default 25
+        endif
+    
     source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu

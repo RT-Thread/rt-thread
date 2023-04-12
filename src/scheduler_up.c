@@ -117,7 +117,7 @@ static void _scheduler_stack_check(struct rt_thread *thread)
     {
         rt_base_t level;
 
-        rt_kprintf("thread:%s stack overflow\n", thread->name);
+        rt_kprintf("thread:%s stack overflow\n", thread->parent.name);
 
         level = rt_hw_interrupt_disable();
         while (level);
@@ -126,13 +126,13 @@ static void _scheduler_stack_check(struct rt_thread *thread)
     else if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
     {
         rt_kprintf("warning: %s stack is close to the top of stack address.\n",
-                   thread->name);
+                   thread->parent.name);
     }
 #else
     else if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
     {
         rt_kprintf("warning: %s stack is close to end of stack address.\n",
-                   thread->name);
+                   thread->parent.name);
     }
 #endif /* ARCH_CPU_STACK_GROWS_UPWARD */
 }
@@ -281,8 +281,8 @@ void rt_schedule(void)
                          "thread:%.*s(sp:0x%08x), "
                          "from thread:%.*s(sp: 0x%08x)\n",
                          rt_interrupt_nest, highest_ready_priority,
-                         RT_NAME_MAX, to_thread->name, to_thread->sp,
-                         RT_NAME_MAX, from_thread->name, from_thread->sp));
+                         RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
+                         RT_NAME_MAX, from_thread->parent.name, from_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
                 _scheduler_stack_check(to_thread);
@@ -384,7 +384,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     }
 
     RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("insert thread[%.*s], the priority: %d\n",
-                                      RT_NAME_MAX, thread->name, thread->current_priority));
+                                      RT_NAME_MAX, thread->parent.name, thread->current_priority));
 
     /* set priority mask */
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -414,7 +414,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
     level = rt_hw_interrupt_disable();
 
     RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("remove thread[%.*s], the priority: %d\n",
-                                      RT_NAME_MAX, thread->name,
+                                      RT_NAME_MAX, thread->parent.name,
                                       thread->current_priority));
 
     /* remove thread from ready list */

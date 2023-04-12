@@ -271,7 +271,7 @@ int dfs_mount(const char   *device_name,
     /* Check if the path exists or not, raw APIs call, fixme */
     if ((strcmp(fullpath, "/") != 0) && (strcmp(fullpath, "/dev") != 0))
     {
-        struct dfs_fd fd;
+        struct dfs_file fd;
 
         fd_init(&fd);
         if (dfs_file_open(&fd, fullpath, O_RDONLY | O_DIRECTORY) < 0)

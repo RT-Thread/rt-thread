@@ -122,6 +122,13 @@ menu "Hardware Drivers Config"
             select BSP_USING_SPI0
             default n
 
+        config BSP_USING_ETH
+            bool "Enable Ethernet"
+            select RT_USING_SAL
+            select RT_USING_LWIP
+            select RT_USING_NETDEV
+            default n
+
         menuconfig BSP_USING_LVGL
             bool "Enable LVGL for LCD"
             select PKG_USING_LVGL

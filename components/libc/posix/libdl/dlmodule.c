@@ -197,7 +197,7 @@ struct rt_dlmodule *dlmodule_create(void)
 
 void dlmodule_destroy_subthread(struct rt_dlmodule *module, rt_thread_t thread)
 {
-    RT_ASSERT(thread->module_id == module);
+    RT_ASSERT(thread->parent.module_id== module);
 
     /* lock scheduler to prevent scheduling in cleanup function. */
     rt_enter_critical();
@@ -225,7 +225,7 @@ void dlmodule_destroy_subthread(struct rt_dlmodule *module, rt_thread_t thread)
     rt_thread_free_sig(thread);
 #endif
 
-    if (thread->type & RT_Object_Class_Static)
+    if (thread->parent.type & RT_Object_Class_Static)
     {
         /* detach object */
         rt_object_detach((rt_object_t)thread);
@@ -409,7 +409,7 @@ struct rt_dlmodule *dlmodule_self(void)
     tid = rt_thread_self();
     if (tid)
     {
-        ret = (struct rt_dlmodule*) tid->module_id;
+        ret = (struct rt_dlmodule*) tid->parent.module_id;
     }
 
     return ret;
@@ -555,7 +555,7 @@ struct rt_dlmodule* dlmodule_exec(const char* pgname, const char* cmd, int cmd_s
                 module->stack_size, module->priority, 10);
             if (tid)
             {
-                tid->module_id = module;
+                tid->parent.module_id= module;
                 module->main_thread = tid;
 
                 rt_thread_startup(tid);
@@ -732,7 +732,7 @@ struct rt_dlmodule* dlmodule_exec_custom(const char* pgname, const char* cmd, in
                 module->stack_size, module->priority, 10);
             if (tid)
             {
-                tid->module_id = module;
+                tid->parent.module_id= module;
                 module->main_thread = tid;
 
                 rt_thread_startup(tid);

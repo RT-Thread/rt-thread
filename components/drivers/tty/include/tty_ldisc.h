@@ -23,16 +23,16 @@ struct tty_ldisc_ops
     char    *name;
     int num;
 
-    int (*open)     (struct dfs_fd *fd);
+    int (*open)     (struct dfs_file *fd);
     int (*close)    (struct tty_struct *tty);
-    int (*ioctl)    (struct dfs_fd *fd, int cmd, void *args);
-    int (*read)     (struct dfs_fd *fd, void *buf, size_t count);
-    int (*write)    (struct dfs_fd *fd, const void *buf, size_t count);
-    int (*flush)    (struct dfs_fd *fd);
-    int (*lseek)    (struct dfs_fd *fd, off_t offset);
-    int (*getdents) (struct dfs_fd *fd, struct dirent *dirp, uint32_t count);
+    int (*ioctl)    (struct dfs_file *fd, int cmd, void *args);
+    int (*read)     (struct dfs_file *fd, void *buf, size_t count);
+    int (*write)    (struct dfs_file *fd, const void *buf, size_t count);
+    int (*flush)    (struct dfs_file *fd);
+    int (*lseek)    (struct dfs_file *fd, off_t offset);
+    int (*getdents) (struct dfs_file *fd, struct dirent *dirp, uint32_t count);
 
-    int (*poll)     (struct dfs_fd *fd, struct rt_pollreq *req);
+    int (*poll)     (struct dfs_file *fd, struct rt_pollreq *req);
     void (*set_termios) (struct tty_struct *tty, struct termios *old);
     int (*receive_buf) (struct tty_struct *tty,char *cp, int count);
 

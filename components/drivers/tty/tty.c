@@ -210,7 +210,7 @@ int tty_check_change(struct tty_struct *tty)
     return __tty_check_change(tty, SIGTTOU);
 }
 
-static int tty_open(struct dfs_fd *fd)
+static int tty_open(struct dfs_file *fd)
 {
     int ret = 0;
     int noctty = 0;
@@ -251,7 +251,7 @@ static int tty_open(struct dfs_fd *fd)
     return ret;
 }
 
-static int tty_close(struct dfs_fd *fd)
+static int tty_close(struct dfs_file *fd)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -304,7 +304,7 @@ static int tiocsctty(struct tty_struct *tty, int arg)
     return 0;
 }
 
-static int tty_ioctl(struct dfs_fd *fd, int cmd, void *args)
+static int tty_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -335,7 +335,7 @@ static int tty_ioctl(struct dfs_fd *fd, int cmd, void *args)
     return ret;
 }
 
-static int tty_read(struct dfs_fd *fd, void *buf, size_t count)
+static int tty_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -351,7 +351,7 @@ static int tty_read(struct dfs_fd *fd, void *buf, size_t count)
     return ret;
 }
 
-static int tty_write(struct dfs_fd *fd, const void *buf, size_t count)
+static int tty_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -367,7 +367,7 @@ static int tty_write(struct dfs_fd *fd, const void *buf, size_t count)
     return ret;
 }
 
-static int tty_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+static int tty_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;

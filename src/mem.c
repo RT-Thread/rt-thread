@@ -375,7 +375,7 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
             mem->pool_ptr = MEM_USED();
 #ifdef RT_USING_MEMTRACE
             if (rt_thread_self())
-                rt_smem_setname(mem, rt_thread_self()->name);
+                rt_smem_setname(mem, rt_thread_self()->parent.name);
             else
                 rt_smem_setname(mem, "NONE");
 #endif /* RT_USING_MEMTRACE */

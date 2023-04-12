@@ -6,3 +6,5 @@ dir_path:
 - APM32F0xx_Library
 - APM32F10x_Library
 - APM32F4xx_Library
+- APM32E10x_Library
+- APM32S10x_Library

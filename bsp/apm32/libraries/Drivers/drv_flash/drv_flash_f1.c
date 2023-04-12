@@ -137,7 +137,7 @@ int apm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
  *
  * @return result
  */
-int apm32_flash_erase(rt_uint32_t addr, rt_uint32_t size)
+int apm32_flash_erase(rt_uint32_t addr, size_t size)
 {
     rt_err_t result = RT_EOK;
     rt_uint32_t start_addr = addr;

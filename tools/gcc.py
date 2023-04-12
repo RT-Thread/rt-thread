@@ -199,6 +199,9 @@ def GCCResult(rtconfig, str):
     return result
 
 def GenerateGCCConfig(rtconfig):
+    # The cconfig.h will NOT generate in the lastest RT-Thread code.
+    # When you want to use it, you can uncomment out the following code.
+
     # str = ''
     # cc_header = ''
     # cc_header += '#ifndef CCONFIG_H__\n'

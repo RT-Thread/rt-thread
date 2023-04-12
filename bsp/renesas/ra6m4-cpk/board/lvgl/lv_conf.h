@@ -16,7 +16,7 @@
 #define LV_USE_PERF_MONITOR         1
 #define LV_COLOR_DEPTH              16
 
-#ifdef BSP_USING_SPI_LCD
+#ifdef PKG_USING_ILI9341
     #define LV_HOR_RES_MAX          240
     #define LV_VER_RES_MAX          320
     #define LV_COLOR_16_SWAP        1

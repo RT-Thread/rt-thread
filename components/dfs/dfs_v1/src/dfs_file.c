@@ -16,15 +16,15 @@
 #include <dfs_private.h>
 #include <unistd.h>
 
-#define DFS_FNODE_HASH_NR 128
+#define DFS_VNODE_HASH_NR 128
 
-struct dfs_fnode_mgr
+struct dfs_vnode_mgr
 {
     struct rt_mutex lock;
-    rt_list_t head[DFS_FNODE_HASH_NR];
+    rt_list_t head[DFS_VNODE_HASH_NR];
 };
 
-static struct dfs_fnode_mgr dfs_fm;
+static struct dfs_vnode_mgr dfs_fm;
 
 void dfs_fm_lock(void)
 {
@@ -36,12 +36,12 @@ void dfs_fm_unlock(void)
     rt_mutex_release(&dfs_fm.lock);
 }
 
-void dfs_fnode_mgr_init(void)
+void dfs_vnode_mgr_init(void)
 {
     int i = 0;
 
     rt_mutex_init(&dfs_fm.lock, "dfs_mgr", RT_IPC_FLAG_PRIO);
-    for (i = 0; i < DFS_FNODE_HASH_NR; i++)
+    for (i = 0; i < DFS_VNODE_HASH_NR; i++)
     {
         rt_list_init(&dfs_fm.head[i]);
     }
@@ -58,12 +58,12 @@ static unsigned int bkdr_hash(const char *str)
         hash = hash * seed + (*str++);
     }
 
-    return (hash % DFS_FNODE_HASH_NR);
+    return (hash % DFS_VNODE_HASH_NR);
 }
 
-static struct dfs_fnode *dfs_fnode_find(const char *path, rt_list_t **hash_head)
+static struct dfs_vnode *dfs_vnode_find(const char *path, rt_list_t **hash_head)
 {
-    struct dfs_fnode *vnode = NULL;
+    struct dfs_vnode *vnode = NULL;
     int hash = bkdr_hash(path);
     rt_list_t *hh;
 
@@ -76,7 +76,7 @@ static struct dfs_fnode *dfs_fnode_find(const char *path, rt_list_t **hash_head)
 
     while (hh != &dfs_fm.head[hash])
     {
-        vnode = rt_container_of(hh, struct dfs_fnode, list);
+        vnode = rt_container_of(hh, struct dfs_vnode, list);
         if (rt_strcmp(path, vnode->fullpath) == 0)
         {
             /* found */
@@ -103,13 +103,13 @@ static struct dfs_fnode *dfs_fnode_find(const char *path, rt_list_t **hash_head)
 int dfs_file_is_open(const char *pathname)
 {
     char *fullpath = NULL;
-    struct dfs_fnode *vnode = NULL;
+    struct dfs_vnode *vnode = NULL;
     int ret = 0;
 
     fullpath = dfs_normalize_path(NULL, pathname);
 
     dfs_fm_lock();
-    vnode = dfs_fnode_find(fullpath, NULL);
+    vnode = dfs_vnode_find(fullpath, NULL);
     if (vnode)
     {
         ret = 1;
@@ -130,12 +130,12 @@ int dfs_file_is_open(const char *pathname)
  *
  * @return 0 on successful, -1 on failed.
  */
-int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
+int dfs_file_open(struct dfs_file *fd, const char *path, int flags)
 {
     struct dfs_filesystem *fs;
     char *fullpath;
     int result;
-    struct dfs_fnode *vnode = NULL;
+    struct dfs_vnode *vnode = NULL;
     rt_list_t *hash_head;
 
     /* parameter check */
@@ -153,7 +153,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
 
     dfs_fm_lock();
     /* vnode find */
-    vnode = dfs_fnode_find(fullpath, &hash_head);
+    vnode = dfs_vnode_find(fullpath, &hash_head);
     if (vnode)
     {
         vnode->ref_count++;
@@ -173,7 +173,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
             return -ENOENT;
         }
 
-        vnode = rt_calloc(1, sizeof(struct dfs_fnode));
+        vnode = rt_calloc(1, sizeof(struct dfs_vnode));
         if (!vnode)
         {
             dfs_fm_unlock();
@@ -270,9 +270,9 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
  *
  * @return 0 on successful, -1 on failed.
  */
-int dfs_file_close(struct dfs_fd *fd)
+int dfs_file_close(struct dfs_file *fd)
 {
-    struct dfs_fnode *vnode = NULL;
+    struct dfs_vnode *vnode = NULL;
     int result = 0;
 
     if (fd == NULL)
@@ -331,7 +331,7 @@ int dfs_file_close(struct dfs_fd *fd)
  *
  * @return 0 on successful, -1 on failed.
  */
-int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
+int dfs_file_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     if (fd == NULL)
     {
@@ -376,7 +376,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
  *
  * @return the actual read data bytes or 0 on end of file or failed.
  */
-int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
+int dfs_file_read(struct dfs_file *fd, void *buf, size_t len)
 {
     int result = 0;
 
@@ -407,7 +407,7 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
  *
  * @return the read dirent, others on failed.
  */
-int dfs_file_getdents(struct dfs_fd *fd, struct dirent *dirp, size_t nbytes)
+int dfs_file_getdents(struct dfs_file *fd, struct dirent *dirp, size_t nbytes)
 {
     /* parameter check */
     if (fd == NULL)
@@ -490,7 +490,7 @@ __exit:
  *
  * @return the actual written data length.
  */
-int dfs_file_write(struct dfs_fd *fd, const void *buf, size_t len)
+int dfs_file_write(struct dfs_file *fd, const void *buf, size_t len)
 {
     if (fd == NULL)
     {
@@ -512,7 +512,7 @@ int dfs_file_write(struct dfs_fd *fd, const void *buf, size_t len)
  *
  * @return 0 on successful, -1 on failed.
  */
-int dfs_file_flush(struct dfs_fd *fd)
+int dfs_file_flush(struct dfs_file *fd)
 {
     if (fd == NULL)
         return -EINVAL;
@@ -531,7 +531,7 @@ int dfs_file_flush(struct dfs_fd *fd)
  *
  * @return the current position after seek.
  */
-int dfs_file_lseek(struct dfs_fd *fd, off_t offset)
+int dfs_file_lseek(struct dfs_file *fd, off_t offset)
 {
     int result;
 
@@ -703,7 +703,7 @@ __exit:
  *
  * @return the status of truncated.
  */
-int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
+int dfs_file_ftruncate(struct dfs_file *fd, off_t length)
 {
     int result;
 
@@ -723,7 +723,7 @@ int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
     return result;
 }
 
-int dfs_file_mmap2(struct dfs_fd *fd, struct dfs_mmap2_args *mmap2)
+int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2)
 {
     int ret = 0;
 
@@ -752,7 +752,7 @@ int dfs_file_mmap2(struct dfs_fd *fd, struct dfs_mmap2_args *mmap2)
 
 void ls(const char *pathname)
 {
-    struct dfs_fd fd;
+    struct dfs_file fd;
     struct dirent dirent;
     struct stat stat;
     int length;
@@ -834,7 +834,7 @@ FINSH_FUNCTION_EXPORT(rm, remove files or directories);
 
 void cat(const char *filename)
 {
-    struct dfs_fd fd;
+    struct dfs_file fd;
     int length = 0;
     char buffer[81];
 
@@ -867,8 +867,8 @@ FINSH_FUNCTION_EXPORT(cat, print file);
 #define BUF_SZ  4096
 static void copyfile(const char *src, const char *dst)
 {
-    struct dfs_fd fd;
-    struct dfs_fd src_fd;
+    struct dfs_file fd;
+    struct dfs_file src_fd;
     rt_uint8_t *block_ptr;
     rt_int32_t read_bytes;
 
@@ -928,7 +928,7 @@ static void copydir(const char *src, const char *dst)
     struct dirent dirent;
     struct stat stat;
     int length;
-    struct dfs_fd cpfd;
+    struct dfs_file cpfd;
     if (dfs_file_open(&cpfd, src, O_DIRECTORY) < 0)
     {
         rt_kprintf("open %s failed\n", src);
