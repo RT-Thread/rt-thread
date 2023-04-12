@@ -1,5 +1,7 @@
 # MIMXRT1060-EVK上手指南
 
+**中文** | [English](MIMXRT1060-EVK User Manual.md)
+
 MIMXRT1060-EVK支持RT-Studio工程，本上手指南以RT-Studio环境的开发说明举例。
 
 ## 1 准备阶段
