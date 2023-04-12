@@ -34,7 +34,7 @@ rt_base_t rt_hw_interrupt_disable(void);
  * This function will set the specified interrupt status, which shall saved by
  * rt_hw_intterrupt_disable function. If the saved interrupt status is interrupt
  * opened, this function will open system interrupt status.
- * 
+ *
  * @param level the interrupt status to be set.
  */
 void rt_hw_interrupt_enable(rt_base_t level);
@@ -72,7 +72,7 @@ void rt_hw_interrupt_umask(int vector);
  * @note not all of platform provide this function.
  */
 void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler,
-		rt_isr_handler_t *old_handler);
+                            rt_isr_handler_t *old_handler);
 
 /**
  * This function will reset whole platform.

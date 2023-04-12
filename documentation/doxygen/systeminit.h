@@ -7,7 +7,7 @@
  *
  * @brief System initialization procedure.
  *
- * When RT-Thread operating system starts up, the basic operating system facility 
+ * When RT-Thread operating system starts up, the basic operating system facility
  * initialization routines must be invoked.
  *
  * The suggested initialization sequence is:
