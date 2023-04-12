@@ -287,7 +287,7 @@ void nu_qei_set_cmpval(rt_device_t *pulse_encoder, rt_uint32_t u32val)
 
 int rt_hw_qei_init(void)
 {
-    int result = RT_ERROR;
+    int result = -RT_ERROR;
     int nu_sel = 0;
     while (nu_qei_arr[nu_sel].name != 0)
     {

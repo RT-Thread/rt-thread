@@ -21,7 +21,6 @@ File 2,1,<..\..\components\libc\compilers\common\cstdlib.c><cstdlib.c>
 File 2,1,<..\..\components\libc\compilers\common\cstring.c><cstring.c>
 File 2,1,<..\..\components\libc\compilers\common\ctime.c><ctime.c>
 File 2,1,<..\..\components\libc\compilers\common\cwchar.c><cwchar.c>
-File 3,1,<..\..\libcpu\arm\common\backtrace.c><backtrace.c>
 File 3,1,<..\..\libcpu\arm\common\div0.c><div0.c>
 File 3,1,<..\..\libcpu\arm\common\showmem.c><showmem.c>
 File 3,2,<..\..\libcpu\arm\lpc214x\context_rvds.S><context_rvds.S>
@@ -42,7 +41,7 @@ File 6,1,<..\..\src\kservice.c><kservice.c>
 File 6,1,<..\..\src\mem.c><mem.c>
 File 6,1,<..\..\src\mempool.c><mempool.c>
 File 6,1,<..\..\src\object.c><object.c>
-File 6,1,<..\..\src\scheduler.c><scheduler.c>
+File 6,1,<..\..\src\scheduler_up.c><scheduler_up.c>
 File 6,1,<..\..\src\thread.c><thread.c>
 File 6,1,<..\..\src\timer.c><timer.c>
 
@@ -105,7 +104,7 @@ Options 1,0,0  // Target 'rtthread-lpc2148'
  RV_STAVEC ()
  ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  ADSCMISC ()
- ADSCDEFN (RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND)
+ ADSCDEFN (RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND)
  ADSCUDEF ()
  ADSCINCD (..\..\components\libc\compilers\common\extension;..\..\include;..\..\components\libc\posix\ipc;drivers;..\..\components\libc\compilers\common\include;.;applications;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\libcpu\arm\lpc214x;..\..\libcpu\arm\common;..\..\components\finsh)
  ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }

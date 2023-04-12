@@ -11,6 +11,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#define DBG_TAG "hw.mmu"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+
 #include <board.h>
 #include "cp15.h"
 #include "mm_page.h"
@@ -24,7 +28,6 @@
 #include "ioremap.h"
 #else
 #define KERNEL_VADDR_START 0
-#define PV_OFFSET 0
 #endif
 
 /* level1 page table, each entry for 1MB memory. */
@@ -56,9 +59,26 @@ void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd,
 
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
 {
+    void *vaddr;
+    size_t length;
+    /* init kernel space */
+#ifdef RT_USING_SMART
+    rt_aspace_init(&rt_kernel_space, (void *)USER_VADDR_TOP, -USER_VADDR_TOP, (void *)MMUTable);
+#else
+    rt_aspace_init(&rt_kernel_space, (void *)0x1000, 0 - 0x1000, (void *)MMUTable);
+#endif /* RT_USING_SMART */
+
     /* set page table */
     for(; size > 0; size--)
     {
+        if (mdesc->paddr_start == (rt_uint32_t)ARCH_MAP_FAILED)
+            mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
+
+        vaddr = (void *)mdesc->vaddr_start;
+        length = mdesc->vaddr_end - mdesc->vaddr_start;
+        rt_aspace_map_static(&rt_kernel_space, &mdesc->varea, &vaddr, length,
+                             mdesc->attr, MMF_MAP_FIXED, &rt_mm_dummy_mapper, 0);
+
         rt_hw_mmu_setmtt(mdesc->vaddr_start, mdesc->vaddr_end,
                 mdesc->paddr_start, mdesc->attr);
         mdesc++;
@@ -122,12 +142,10 @@ int rt_hw_mmu_map_init(struct rt_aspace *aspace, void* v_address, size_t size, s
     }
 
 #ifdef RT_USING_SMART
-    rt_aspace_init(&rt_kernel_space, (void *)USER_VADDR_TOP, 0 - USER_VADDR_TOP, vtable);
     rt_ioremap_start = v_address;
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
 #else
-    rt_aspace_init(&rt_kernel_space, (void *)0x1000, 0 - 0x1000, vtable);
     rt_mpr_start = (void *)0 - rt_mpr_size;
 #endif
 
@@ -336,7 +354,7 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     if (aspace != &rt_kernel_space)
     {
         void *pgtbl = aspace->page_table;
-        pgtbl = _rt_kmem_v2p(pgtbl);
+        pgtbl = rt_kmem_v2p(pgtbl);
 
         rt_hw_mmu_switch(pgtbl);
 

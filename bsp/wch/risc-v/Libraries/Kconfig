@@ -5,21 +5,26 @@ config SOC_RISCV_SERIES_CH32V1
     bool
     select ARCH_RISCV
     select SOC_RISCV_FAMILY_CH32
+    select RT_USING_HW_ATOMIC
 
 config SOC_RISCV_SERIES_CH32V2
     bool
     select ARCH_RISCV
     select SOC_RISCV_FAMILY_CH32
+    select RT_USING_HW_ATOMIC
 
 config SOC_RISCV_SERIES_CH32V3
     bool
     select ARCH_RISCV
     select SOC_RISCV_FAMILY_CH32
+    select RT_USING_HW_ATOMIC
 
 config SOC_FAMILY_CH56X
     bool
     select ARCH_RISCV
+    select RT_USING_HW_ATOMIC
 
 config SOC_SERIES_CH569
     bool
     select SOC_FAMILY_CH56X
+    select RT_USING_HW_ATOMIC

@@ -21,10 +21,11 @@ source "$PKGS_DIR/Kconfig"
 config BCM2711_SOC
     bool
     select ARCH_ARMV8
+    select ARCH_ARM_MMU
     select RT_USING_CACHE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select ARCH_CPU_64BIT
     default y
 
-source "driver/Kconfig"
+source "drivers/Kconfig"

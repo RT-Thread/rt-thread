@@ -338,7 +338,7 @@ EPIWorkaroundWordWrite(uint32_t *pui32Addr, uint32_t ui32Value)
     __asm
     {
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         NOP
@@ -364,7 +364,7 @@ EPIWorkaroundWordRead(uint32_t *pui32Addr)
     __asm
     {
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         NOP
@@ -392,7 +392,7 @@ EPIWorkaroundHWordWrite(uint16_t *pui16Addr, uint16_t ui16Value)
     __asm
     {
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         NOP
@@ -419,7 +419,7 @@ EPIWorkaroundHWordRead(uint16_t *pui16Addr)
     __asm
     {
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         NOP
@@ -447,7 +447,7 @@ EPIWorkaroundByteWrite(uint8_t *pui8Addr, uint8_t ui8Value)
     __asm
     {
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         NOP
@@ -474,7 +474,7 @@ EPIWorkaroundByteRead(uint8_t *pui8Addr)
     __asm
     {
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         NOP
@@ -525,7 +525,7 @@ EPIWorkaroundWordWrite(uint32_t *pui32Addr, uint32_t ui32Value)
 
     __asm volatile (
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         "    NOP\n"
@@ -553,7 +553,7 @@ EPIWorkaroundWordRead(uint32_t *pui32Addr)
 
     __asm volatile(
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         "    NOP\n"
@@ -580,7 +580,7 @@ EPIWorkaroundHWordWrite(uint16_t *pui16Addr, uint16_t ui16Value)
 
     __asm volatile (
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         "    NOP\n"
@@ -610,7 +610,7 @@ EPIWorkaroundHWordRead(uint16_t *pui16Addr)
 
     __asm volatile(
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         "    NOP\n"
@@ -636,7 +636,7 @@ EPIWorkaroundByteWrite(uint8_t *pui8Addr, uint8_t ui8Value)
 
     __asm volatile (
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         "    NOP\n"
@@ -665,7 +665,7 @@ EPIWorkaroundByteRead(uint8_t *pui8Addr)
 
     __asm volatile(
         //
-        // Add a NOP to ensure we don抰 have a flash read immediately before
+        // Add a NOP to ensure we don’t have a flash read immediately before
         // the EPI read.
         //
         "    NOP\n"

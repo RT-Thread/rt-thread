@@ -126,6 +126,7 @@ struct rt_lwp
     struct lwp_avl_struct *address_search_head; /* for addressed object fast rearch */
     char working_directory[DFS_PATH_MAX];
     int debug;
+    int background;
     uint32_t bak_first_ins;
 
 #ifdef LWP_ENABLE_ASID

@@ -4,7 +4,7 @@
 
 ## 1 RTduino - Arduino Ecosystem Compatibility Layer for RT-Thread
 
-STM32F401 Nucleo board has support [RTduino](https://github.com/RTduino/RTduino). Users can use Arduino APIs, third party libraries and programming method to program on Blue Pill board.
+STM32F401 Nucleo board has support [RTduino](https://github.com/RTduino/RTduino). Users can use Arduino APIs, third party libraries and programming method to program on the board.
 
 ### 1.1 How to Enable RTduino
 
@@ -52,7 +52,7 @@ This board complies with Arduino UNO pins layout. For more details, please take 
 
 > Notice:
 > 
-> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timer can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
+> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timers can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
 
 > References
 > 

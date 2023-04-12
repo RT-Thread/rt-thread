@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;..\..\..\components\finsh;.;..\..\..\include;libraries\CMSIS\CoreSupport;libraries\CMSIS\DeviceSupport;libraries\SWM341_StdPeriph_Driver;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>libraries\CMSIS\CoreSupport;..\..\..\components\libc\compilers\common\extension\fcntl\octal;drivers;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;libraries\CMSIS\DeviceSupport;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;applications;..\..\..\components\drivers\include;.;..\..\..\libcpu\arm\cortex-m33;libraries\SWM341_StdPeriph_Driver</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -450,9 +450,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -693,9 +693,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -717,79 +717,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>SWM341_wdt.c</FileName>
+              <FileName>SWM341_pwm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_jpeg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_jpeg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_usbh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_usbh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_div.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_div.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_SWM341.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\CMSIS\DeviceSupport\system_SWM341.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_sfc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_sfc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_dma2d.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_dma2d.c</FilePath>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_pwm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -801,79 +731,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>SWM341_lcd.c</FileName>
+              <FileName>system_SWM341.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_lcd.c</FilePath>
+              <FilePath>libraries\CMSIS\DeviceSupport\system_SWM341.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>SWM341_sdram.c</FileName>
+              <FileName>SWM341_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_sdram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_cordic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_cordic.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM341_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_spi.c</FilePath>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -885,37 +752,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>SWM341_usbd.c</FileName>
+              <FileName>SWM341_usbh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_usbd.c</FilePath>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_usbh.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>SWM341_port.c</FileName>
+              <FileName>SWM341_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_port.c</FilePath>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_crc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>SWM341_qei.c</FileName>
+              <FileName>SWM341_sfc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_qei.c</FilePath>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_sfc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>SWM341_iofilt.c</FileName>
+              <FileName>SWM341_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_iofilt.c</FilePath>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>SWM341_can.c</FileName>
+              <FileName>startup_SWM341.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libraries\CMSIS\DeviceSupport\startup\arm\startup_SWM341.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_can.c</FilePath>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -927,9 +801,135 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_SWM341.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\CMSIS\DeviceSupport\startup\arm\startup_SWM341.s</FilePath>
+              <FileName>SWM341_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_jpeg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_jpeg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_dma2d.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_dma2d.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_lcd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_port.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_div.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_div.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_sdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_iofilt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_iofilt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_qei.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_qei.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_usbd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_usbd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_cordic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_cordic.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\SWM341_StdPeriph_Driver\SWM341_uart.c</FilePath>
             </File>
           </Files>
         </Group>

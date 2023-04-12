@@ -61,7 +61,7 @@ For more information, please see [pins_arduino.c](pins_arduino.c) and [pins_ardu
 
 > Notice:
 > 
-> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timer can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
+> 1. Don't use a same hardware timer to drive PWM (analogRead) and servos at same time, because hardware timers can only generate a same frequency for 4 PWM channels. Otherwise, it could cause a failure when drive servos.
 
 ## 3 Communication
 

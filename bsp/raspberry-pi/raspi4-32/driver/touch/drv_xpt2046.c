@@ -10,7 +10,6 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <touch.h>
 
 #include "drv_xpt2046.h"
 //http://www.lcdwiki.com/MHS-3.5inch_RPi_Display
@@ -191,7 +190,7 @@ static void touch_readly(void *args)
     }
 }
 
-static rt_size_t xpt2046_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
+static rt_ssize_t xpt2046_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
     rt_uint16_t* touchxy = (rt_uint16_t *)buf;
     if((read_num != 0) && (touch_flag == 1))

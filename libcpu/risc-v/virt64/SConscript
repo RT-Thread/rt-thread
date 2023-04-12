@@ -6,6 +6,7 @@ Import('rtconfig')
 
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
+src     = src + ['../common/atomic_riscv.c']
 CPPPATH = [cwd]
 ASFLAGS = ''
 

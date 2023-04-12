@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -72,12 +72,7 @@
 #define PHY_TIMEOUT_COUNT 0x3FFFFFFU
 
 /* defined the Reset pin, PORT and PIN config by menuconfig */
-#ifdef SOC_IMXRT1170_SERIES
 #define RESET_PIN GET_PIN(PHY_RESET_KSZ8081_PORT, PHY_RESET_KSZ8081_PIN)
-#else
-#define RESET_PIN GET_PIN(PHY_RESET_PORT, PHY_RESET_PIN)
-#endif
-
 
 /*******************************************************************************
  * Prototypes

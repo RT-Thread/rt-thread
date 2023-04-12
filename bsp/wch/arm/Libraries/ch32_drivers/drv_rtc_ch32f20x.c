@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -76,7 +76,7 @@ static rt_err_t ch32f2_rt_rtc_init(void)
     return RT_EOK;
 }
 
-static rt_err_t ch32f2_get_secs(void *args)
+static rt_err_t ch32f2_get_secs(time_t *args)
 {
     *(rt_uint32_t *)args = RTC_GetCounter();
     LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
@@ -84,7 +84,7 @@ static rt_err_t ch32f2_get_secs(void *args)
     return RT_EOK;
 }
 
-static rt_err_t ch32f2_set_secs(void *args)
+static rt_err_t ch32f2_set_secs(time_t *args)
 {
     /* Set the RTC counter value */
     RTC_SetCounter(*(rt_uint32_t *)args);

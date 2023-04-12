@@ -225,6 +225,7 @@ void rt_cpus_unlock(rt_base_t level)
 
     if (pcpu->current_thread != RT_NULL)
     {
+        RT_ASSERT(pcpu->current_thread->cpus_lock_nest > 0);
         pcpu->current_thread->cpus_lock_nest--;
 
         if (pcpu->current_thread->cpus_lock_nest == 0)

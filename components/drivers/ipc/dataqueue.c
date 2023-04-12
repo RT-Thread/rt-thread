@@ -36,7 +36,7 @@ struct rt_data_item
  * @param    evt_notify is the notification callback function.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
- *           When the return value is RT_ENOMEM, it means insufficient memory allocation failed.
+ *           When the return value is -RT_ENOMEM, it means insufficient memory allocation failed.
  */
 rt_err_t
 rt_data_queue_init(struct rt_data_queue *queue,
@@ -84,7 +84,7 @@ RTM_EXPORT(rt_data_queue_init);
  * @param    timeout is the waiting time.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
- *           When the return value is RT_ETIMEOUT, it means the specified time out.
+ *           When the return value is -RT_ETIMEOUT, it means the specified time out.
  */
 rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
                             const void *data_ptr,
@@ -201,7 +201,7 @@ RTM_EXPORT(rt_data_queue_push);
  * @param    timeout is the waiting time.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
- *           When the return value is RT_ETIMEOUT, it means the specified time out.
+ *           When the return value is -RT_ETIMEOUT, it means the specified time out.
  */
 rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
                            const void **data_ptr,
@@ -389,7 +389,7 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
         thread = rt_list_entry(queue->suspended_pop_list.next,
                                struct rt_thread,
                                tlist);
-        /* set error code to RT_ERROR */
+        /* set error code to -RT_ERROR */
         thread->error = -RT_ERROR;
 
         /*
@@ -413,7 +413,7 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
         thread = rt_list_entry(queue->suspended_push_list.next,
                                struct rt_thread,
                                tlist);
-        /* set error code to RT_ERROR */
+        /* set error code to -RT_ERROR */
         thread->error = -RT_ERROR;
 
         /*

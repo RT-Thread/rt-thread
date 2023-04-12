@@ -578,7 +578,7 @@ void System_Enter_Standby_Mode(void)
 * Description : clear all stop setting and status 
 * Input       : none
 * Output      : none 
-* Author      : CWT                         Date : 2021?¨º
+* Author      : CWT                         Date : 2021å¹´4æœˆ
 **********************************************************************************/
 void System_Clear_Stop_Wakeup(void) 
 {
@@ -658,7 +658,7 @@ void System_Enter_Sleep_Mode(uint8_t SleepEntry)
 * Description : Get System Last Reset Reason
 * Input       : none 
 * Output      : RESET_REASON
-* Author      : CWT                         Date : 2021?¨º
+* Author      : CWT                         Date : 2021å¹´4æœˆ
 **********************************************************************************/
 RESET_REASON System_Return_Last_Reset_Reason(void)
 {
@@ -688,14 +688,14 @@ RESET_REASON System_Return_Last_Reset_Reason(void)
     return RESET_REASON_INVALID;  // this should not happen 
 }
 
- /*********************************************************************************
+/*********************************************************************************
 * Function    : System_Set_Buzzer_Divider
 * Description : set buzzer divide factor 
 * Input       : 
               div: div factor, if div = 80 then output buzzer freq=HCLK/80   
               enable: FUNC_DISABLE and FUNC_ENABLE      
 * Output      : none
-* Author      : xwl                         Date : 2021?¡§o
+* Author      : xwl                         Date : 2021å¹´4æœˆ
 **********************************************************************************/
 void System_Set_Buzzer_Divider(uint32_t div, FUNC_DISABLE_ENABLE enable)  
 {      
@@ -715,7 +715,7 @@ void System_Set_Buzzer_Divider(uint32_t div, FUNC_DISABLE_ENABLE enable)
 * Description : Configure USB PHY, such as clock select, pll...
 * Input       : none  
 * Output      : 0: fail, 1:success 
-* Author      : xwl                         Date : 2021?¨º
+* Author      : xwl                         Date : 2021å¹´4æœˆ
 **********************************************************************************/
 uint32_t System_USB_PHY_Config(void) 
 {

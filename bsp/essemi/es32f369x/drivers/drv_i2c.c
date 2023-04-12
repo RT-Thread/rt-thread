@@ -265,13 +265,13 @@ SUCCESS:
     return OK;
 }
 
-static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
 {
     struct rt_i2c_msg *msg;
     rt_uint32_t i;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     for (i = 0; i < num; i++)
     {

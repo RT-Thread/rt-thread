@@ -339,12 +339,12 @@ rt_err_t tkm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     irqindex = bit2bitno(index->pin);
     if (irqindex < 0 || irqindex >= ITEM_NUM(tkm32_pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();

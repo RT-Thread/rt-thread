@@ -11,20 +11,25 @@
 #include <rtthread.h>
 #include <stdint.h>
 
+#include <mm_fault.h>
+#include "mmu.h"
 #include "encoding.h"
-#include "mm_fault.h"
 #include "stack.h"
 #include "sbi.h"
 #include "riscv.h"
-#include "tick.h"
+#include "interrupt.h"
 #include "plic.h"
-#include "riscv_mmu.h"
+#include "tick.h"
 
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
 #else
 #define rt_hw_backtrace(...) (0)
 #endif
+
+#define DBG_TAG "libcpu.trap"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 
 void dump_regs(struct rt_hw_stack_frame *regs)
 {
@@ -64,17 +69,17 @@ void dump_regs(struct rt_hw_stack_frame *regs)
 
     switch (__MASKVALUE(satp_v >> 60, __MASK(4)))
     {
-    case 0:
-        mode_str = "No Address Translation/Protection Mode";
-        break;
+        case 0:
+            mode_str = "No Address Translation/Protection Mode";
+            break;
 
-    case 8:
-        mode_str = "Page-based 39-bit Virtual Addressing Mode";
-        break;
+        case 8:
+            mode_str = "Page-based 39-bit Virtual Addressing Mode";
+            break;
 
-    case 9:
-        mode_str = "Page-based 48-bit Virtual Addressing Mode";
-        break;
+        case 9:
+            mode_str = "Page-based 48-bit Virtual Addressing Mode";
+            break;
     }
 
     rt_kprintf("\tMode = %s\n", mode_str);
@@ -116,30 +121,7 @@ static const char *Interrupt_Name[] =
         "Reserved-11",
 };
 
-enum
-{
-    EP_INSTRUCTION_ADDRESS_MISALIGNED = 0,
-    EP_INSTRUCTION_ACCESS_FAULT,
-    EP_ILLEGAL_INSTRUCTION,
-    EP_BREAKPOINT,
-    EP_LOAD_ADDRESS_MISALIGNED,
-    EP_LOAD_ACCESS_FAULT,
-    EP_STORE_ADDRESS_MISALIGNED,
-    EP_STORE_ACCESS_FAULT,
-    EP_ENVIRONMENT_CALL_U_MODE,
-    EP_ENVIRONMENT_CALL_S_MODE,
-    EP_RESERVED10,
-    EP_ENVIRONMENT_CALL_M_MODE,
-    EP_INSTRUCTION_PAGE_FAULT, /* page attr */
-    EP_LOAD_PAGE_FAULT,        /* read data */
-    EP_RESERVED14,
-    EP_STORE_PAGE_FAULT, /* write data */
-};
-
 extern struct rt_irq_desc irq_desc[];
-
-#include "rtdbg.h"
-#include "encoding.h"
 
 #ifndef RT_USING_SMP
 static volatile int nested = 0;
@@ -218,13 +200,13 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     if (fault_op)
     {
-        struct rt_mm_fault_msg msg = {
+        struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
-            .vaddr = (void *)stval,
+            .fault_vaddr = (void *)stval,
         };
 
-        if (rt_mm_fault_try_fix(&msg))
+        if (rt_aspace_fault_try_fix(&msg))
         {
             return;
         }
@@ -235,13 +217,14 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
 
-    LOG_E("User Fault, killing thread: %s", rt_thread_self()->name);
+    LOG_E("User Fault, killing thread: %s", rt_thread_self()->parent.name);
 
     EXIT_TRAP;
     sys_exit(-1);
 }
 #endif
 
+#ifdef ENABLE_VECTOR
 static void vector_enable(struct rt_hw_stack_frame *sp)
 {
     sp->sstatus |= SSTATUS_VS_INITIAL;
@@ -276,6 +259,7 @@ static int illegal_inst_recoverable(rt_ubase_t stval, struct rt_hw_stack_frame *
 
     return flag;
 }
+#endif
 
 static void handle_nested_trap_panic(
     rt_size_t cause,
@@ -289,6 +273,9 @@ static void handle_nested_trap_panic(
     dump_regs(eframe);
     rt_hw_cpu_shutdown();
 }
+
+#define IN_USER_SPACE (stval >= USER_VADDR_START && stval < USER_VADDR_TOP)
+#define PAGE_FAULT (id == EP_LOAD_PAGE_FAULT || id == EP_STORE_PAGE_FAULT)
 
 /* Trap entry */
 void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
@@ -342,7 +329,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             }
 #endif /* ENABLE_VECTOR */
 #ifdef RT_USING_SMART
-            if (!(sp->sstatus & 0x100))
+            if (!(sp->sstatus & 0x100) || (PAGE_FAULT && IN_USER_SPACE))
             {
                 handle_user(scause, stval, sepc, sp);
                 // if handle_user() return here, jump to u mode then
@@ -357,7 +344,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
         rt_kprintf("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
         dump_regs(sp);
         rt_kprintf("--------------Thread list--------------\n");
-        rt_kprintf("current thread: %s\n", rt_thread_self()->name);
+        rt_kprintf("current thread: %s\n", rt_thread_self()->parent.name);
 
         extern struct rt_thread *rt_current_thread;
         rt_kprintf("--------------Backtrace--------------\n");

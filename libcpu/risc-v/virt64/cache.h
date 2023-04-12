@@ -21,11 +21,11 @@
 
 ALWAYS_INLINE void rt_hw_cpu_dcache_clean_local(void *addr, int size) {}
 ALWAYS_INLINE void rt_hw_cpu_dcache_invalidate_local(void *addr, int size) {}
-ALWAYS_INLINE void rt_hw_cpu_dcache_clean_invalidate_local(void *addr, int size) {}
+ALWAYS_INLINE void rt_hw_cpu_dcache_clean_and_invalidate_local(void *addr, int size) {}
 
 ALWAYS_INLINE void rt_hw_cpu_dcache_clean_all_local() {}
 ALWAYS_INLINE void rt_hw_cpu_dcache_invalidate_all_local(void) {}
-ALWAYS_INLINE void rt_hw_cpu_dcache_clean_invalidate_all_local(void) {}
+ALWAYS_INLINE void rt_hw_cpu_dcache_clean_and_invalidate_all_local(void) {}
 
 ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_local(void *addr, int size) {}
 ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_all_local() {}
@@ -36,17 +36,19 @@ ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_all_local() {}
 
 #define rt_hw_cpu_dcache_clean rt_hw_cpu_dcache_clean_local
 #define rt_hw_cpu_dcache_invalidate rt_hw_cpu_dcache_invalidate_local
-#define rt_hw_cpu_dcache_clean_invalidate rt_hw_cpu_dcache_clean_invalidate_local
+#define rt_hw_cpu_dcache_clean_and_invalidate rt_hw_cpu_dcache_clean_and_invalidate_local
 
 #define rt_hw_cpu_dcache_clean_all rt_hw_cpu_dcache_clean_all_local
 #define rt_hw_cpu_dcache_invalidate_all rt_hw_cpu_dcache_invalidate_all_local
-#define rt_hw_cpu_dcache_clean_invalidate_all rt_hw_cpu_dcache_clean_invalidate_all_local
+#define rt_hw_cpu_dcache_clean_and_invalidate_all rt_hw_cpu_dcache_clean_and_invalidate_all_local
 
 #define rt_hw_cpu_icache_invalidate rt_hw_cpu_icache_invalidate_local
 #define rt_hw_cpu_icache_invalidate_all rt_hw_cpu_icache_invalidate_all_local
 
+#define rt_hw_icache_invalidate_all rt_hw_cpu_icache_invalidate_all
+
 /** instruction barrier */
-void rt_hw_cpu_sync(void);
+static inline void rt_hw_cpu_sync(void) {}
 
 /**
  * @brief local cpu icahce & dcache synchronization

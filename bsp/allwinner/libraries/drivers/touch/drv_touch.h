@@ -12,7 +12,6 @@
 #include <stddef.h>
 #include "rtthread.h"
 #include "rtdevice.h"
-#include <touch.h>
 
 #define TOUCH_POLL_MODE (1 << 0)
 #define TOUCH_INT_MODE (1 << 1)

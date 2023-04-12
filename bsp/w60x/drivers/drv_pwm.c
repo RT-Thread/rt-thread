@@ -83,7 +83,7 @@ static rt_err_t wm_pwm_set(rt_uint8_t channel, struct rt_pwm_configuration *conf
     }
     else
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 
@@ -113,7 +113,7 @@ static rt_err_t wm_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     channel = configuration->channel - 1;
 
     if (channel > 4)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     switch (cmd)
     {
@@ -122,19 +122,19 @@ static rt_err_t wm_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
         if (ret == WM_SUCCESS)
             return RT_EOK;
         else
-            return RT_ERROR;
+            return -RT_ERROR;
     case PWM_CMD_DISABLE:
         ret = tls_pwm_stop(channel);
         if (ret == WM_SUCCESS)
             return RT_EOK;
         else
-            return RT_ERROR;
+            return -RT_ERROR;
     case PWM_CMD_SET:
         return wm_pwm_set(channel, configuration);
     case PWM_CMD_GET:
         return wm_pwm_get(channel, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 

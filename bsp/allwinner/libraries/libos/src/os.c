@@ -5,6 +5,8 @@
 #ifdef RT_USING_SMART
 #include <mmu.h>
 #include <lwp_arch.h>
+#else
+#define PV_OFFSET 0
 #endif
 #include <cache.h>
 
@@ -142,7 +144,7 @@ void awos_arch_mems_clean_dcache_region(unsigned long start, unsigned long len)
 
 void awos_arch_mems_clean_flush_dcache_region(unsigned long start, unsigned long len)
 {
-    rt_hw_cpu_dcache_clean_invalidate((void *)start, len);
+    rt_hw_cpu_dcache_clean_and_invalidate((void *)start, len);
 }
 
 void awos_arch_mems_flush_dcache_region(unsigned long start, unsigned long len)

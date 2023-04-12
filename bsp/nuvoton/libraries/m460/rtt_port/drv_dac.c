@@ -111,14 +111,14 @@ static rt_err_t nu_dac_disabled(struct rt_dac_device *device, rt_uint32_t channe
 static rt_err_t nu_dac_convert(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     nu_dac_t psNuDAC = (nu_dac_t)device;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     RT_ASSERT(device);
     RT_ASSERT(value);
 
     if (channel >= psNuDAC->max_chn_num)
     {
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_dac_convert;
     }
 

@@ -2204,9 +2204,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -2312,7 +2309,7 @@
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\thread.c</name>
@@ -2324,64 +2321,64 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_pwr.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\Source\system_MM32F103.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_rcc.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_rtc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_iwdg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_tim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_bkp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_gpio.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\Source\IAR_StartAsm\startup_MM32F103.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_can.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_wwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_i2c.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_pwr.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_exti.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_misc.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_i2c.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_crc.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_flash.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_spi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_rtc.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_bkp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\Source\IAR_StartAsm\startup_MM32F103.s</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_rcc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_wwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_tim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_misc.c</name>
     </file>
   </group>
   <group>

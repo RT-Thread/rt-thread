@@ -71,6 +71,7 @@
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c"/>
         <file category="other" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.o"/>
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c"/>
+        <file category="other" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.o"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_arm_exceptions.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.h" path=""/>
@@ -100,6 +101,7 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.h" path=""/>
         <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_register_protection.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_rom_registers.c"/>
+        <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_rom_registers.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_sbrk.c"/>
         <file category="other" name="ra/fsp/src/bsp/mcu/all/bsp_sbrk.o"/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_security.c"/>
@@ -120,7 +122,6 @@
       <files>
         <file category="include" name="ra_cfg/fsp_cfg/"/>
         <file category="include" name="ra_cfg/fsp_cfg/bsp/"/>
-        <file category="header" name="ra_cfg/fsp_cfg/bsp/board_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_device_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_device_pn_cfg.h" path=""/>

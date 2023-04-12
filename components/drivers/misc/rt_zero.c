@@ -12,13 +12,13 @@
 
 static struct rt_device zero_dev;
 
-static rt_size_t zero_read    (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t zero_read    (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_memset(buffer, 0, size);
     return size;
 }
 
-static rt_size_t zero_write   (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t zero_write   (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     return size;
 }

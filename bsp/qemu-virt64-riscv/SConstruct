@@ -31,7 +31,7 @@ stack_size = 4096
 
 stack_lds = open('link_stacksize.lds', 'w')
 if GetDepend('__STACKSIZE__'): stack_size = GetDepend('__STACKSIZE__')
-stack_lds.write('__STACKSIZE__ = %d;' % stack_size)
+stack_lds.write('__STACKSIZE__ = %d;\n' % stack_size)
 stack_lds.close()
 
 # make a building

@@ -388,7 +388,7 @@ static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_c
 static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *arg);
 static int _uart_putc(struct rt_serial_device *serial, char c);
 static int _uart_getc(struct rt_serial_device *serial);
-static rt_size_t _uart_transmit(struct rt_serial_device *serial,
+static rt_ssize_t _uart_transmit(struct rt_serial_device *serial,
                                 rt_uint8_t *buf, rt_size_t size, rt_uint32_t tx_flag);
 
 const struct rt_uart_ops _uart_ops =
@@ -720,7 +720,7 @@ static int _uart_getc(struct rt_serial_device *serial)
     return data;
 }
 
-static rt_size_t _uart_transmit(struct rt_serial_device *serial,
+static rt_ssize_t _uart_transmit(struct rt_serial_device *serial,
                                 rt_uint8_t *buf, rt_size_t size, rt_uint32_t tx_flag)
 {
     struct sunxi_uart *uart;

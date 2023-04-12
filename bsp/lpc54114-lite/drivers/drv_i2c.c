@@ -33,9 +33,9 @@ static uint32_t get_i2c_freq(I2C_Type *base)
     return freq;
 }
 
-static rt_size_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
+static rt_ssize_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
-    rt_size_t ret = (0);
+    rt_ssize_t ret = (0);
 
     rt_uint32_t index = 0;
     struct lpc_i2c *lpc_i2c = RT_NULL;
@@ -82,14 +82,14 @@ static rt_size_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg ms
     return ret;
 }
 
-static rt_size_t slave_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
+static rt_ssize_t slave_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
-    return 0;
+    return -RT_ENOSYS;
 }
 
 static rt_err_t i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t cmd, rt_uint32_t arg)
 {
-    return RT_EOK;
+    return -RT_EINVAL;
 }
 
 static const struct rt_i2c_bus_device_ops ops =

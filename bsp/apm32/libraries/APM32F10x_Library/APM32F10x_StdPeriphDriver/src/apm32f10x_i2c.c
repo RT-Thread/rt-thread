@@ -75,7 +75,7 @@ void I2C_Config(I2C_T* i2c, I2C_Config_T* i2cConfig)
     uint32_t PCLK1 = 8000000, PCLK2 = 0;
     uint16_t result = 0x04;
 
-    i2c->SWITCH = 0;
+    i2c->I2C_SWITCH = 0;
 
     /* I2C CTRL2 Configuration */
     RCM_ReadPCLKFreq(&PCLK1, &PCLK2);
@@ -399,7 +399,7 @@ uint16_t I2C_ReadRegister(I2C_T* i2c, I2C_REGISTER_T i2cRegister)
         case I2C_REGISTER_RISETMAX:
             return i2c->RISETMAX;
         case I2C_REGISTER_SWITCH:
-            return i2c->SWITCH;
+            return i2c->I2C_SWITCH;
         default:
             return 0;
     }

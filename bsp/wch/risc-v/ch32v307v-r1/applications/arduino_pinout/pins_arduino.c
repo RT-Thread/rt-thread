@@ -26,7 +26,7 @@ const pin_map_t pin_map_table[]=
     {D2, GET_PIN(A,8), "pwm1", 1},      /* PWM */
     {D3, GET_PIN(A,7), "pwm3", 2},      /* PWM */
     {D4, GET_PIN(A,6), "pwm3", 1},      /* PWM */
-    {D5, GET_PIN(B,5)},                 /* LED_BUILTIN */
+    {D5, GET_PIN(B,5)},
     {D6, GET_PIN(B,8), "pwm4", 3},      /* PWM */
     {D7, GET_PIN(B,9), "pwm4", 4},      /* PWM */
     {D8, GET_PIN(B,1), "pwm3", 4},      /* PWM */

@@ -407,7 +407,7 @@ static rt_err_t sdhci_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
     if (count <= 0)
     {
         rt_kprintf("EMMC: Set clock: timeout waiting for inhibit flags. Status %08x.\n",read32(pdat->virt + EMMC_STATUS));
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     // Switch clock off.
@@ -436,7 +436,7 @@ static rt_err_t sdhci_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
     if (count <= 0)
     {
         rt_kprintf("EMMC: ERROR: failed to get stable clock %d.\n", clock);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     mmcsd_dbg("set stable clock %d.\n", clock);
     return RT_EOK;
@@ -486,7 +486,7 @@ static rt_err_t reset_emmc(struct sdhci_pdata_t * pdat){
     if (cnt <= 0)
     {
         rt_kprintf("ERROR: failed to reset EMMC\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     temp = read32((pdat->virt + EMMC_CONTROL1));
     temp |= C1_CLK_INTLEN | C1_TOUNIT_MAX;

@@ -109,13 +109,13 @@ static rt_err_t _init(struct rt_device *dev)
 
     if (rt_sem_init(&device->sema, "openamplock", 1, RT_IPC_FLAG_FIFO) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
 }
 
-static rt_size_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_size_t count, rbsize, offset;
     rt_uint8_t *buf     = RT_NULL;
@@ -162,7 +162,7 @@ static rt_size_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_siz
     return count;
 }
 
-static rt_size_t _write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _write(struct rt_device *dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_err_t result = VIRT_UART_OK;
 
@@ -213,18 +213,18 @@ static int openamp_init(void)
     hipcc.Instance = IPCC;
     if (HAL_IPCC_Init(&hipcc) != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* openamp slave device */
     MX_OPENAMP_Init(RPMSG_REMOTE, NULL);
 
     if (VIRT_UART_Init(&huart0) != VIRT_UART_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if (VIRT_UART_RegisterCallback(&huart0, VIRT_UART_RXCPLT_CB_ID, VIRT_UART0_RxCpltCallback) != VIRT_UART_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -284,7 +284,7 @@ static int creat_openamp_thread(void)
     if (tid == RT_NULL)
     {
         LOG_E("openamp thread create failed!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_startup(tid);

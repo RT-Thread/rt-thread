@@ -154,18 +154,18 @@ static rt_err_t wm_rtc_control(rt_device_t dev, int cmd, void *args)
         break;
 #endif
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     return RT_EOK;
 }
 
-static rt_size_t wm_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t wm_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     wm_rtc_control(dev, RT_DEVICE_CTRL_RTC_GET_TIME, buffer);
     return size;
 }
 
-static rt_size_t wm_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t wm_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     wm_rtc_control(dev, RT_DEVICE_CTRL_RTC_SET_TIME, (void *)buffer);
     return size;

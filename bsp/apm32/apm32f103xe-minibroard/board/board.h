@@ -21,6 +21,7 @@
 #include "apm32f10x_rcm.h"
 #include "apm32f10x_eint.h"
 #include "apm32f10x_usart.h"
+#include "apm32f10x_dma.h"
 
 #if defined(RT_USING_ADC)
     #include "apm32f10x_adc.h"
@@ -41,6 +42,18 @@
 #if defined(RT_USING_WDT)
     #include "apm32f10x_iwdt.h"
     #include "apm32f10x_wwdt.h"
+#endif
+#if defined(BSP_USING_SDCARD)
+    #include "apm32f10x_sdio.h"
+#endif
+#if defined(BSP_USING_ON_CHIP_FLASH)
+    #include "apm32f10x_fmc.h"
+#endif
+#if defined(RT_USING_CAN)
+    #include "apm32f10x_can.h"
+#endif
+#if defined(BSP_USING_SDRAM)
+    #include "apm32f10x_dmc.h"
 #endif
 
 #include "drv_common.h"

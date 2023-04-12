@@ -406,7 +406,7 @@ static rt_err_t swm_pin_irq_enable(struct rt_device *device,
     gpio_obj = _pin2struct(pin);
     if (gpio_obj == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     if (enabled == PIN_IRQ_ENABLE)
@@ -434,7 +434,7 @@ static rt_err_t swm_pin_irq_enable(struct rt_device *device,
             EXTI_Init(gpio_obj->gpio, gpio_obj->pin, EXTI_LOW_LEVEL);
             break;
         default:
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
 
         level = rt_hw_interrupt_disable();

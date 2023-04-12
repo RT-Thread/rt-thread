@@ -55,7 +55,7 @@ static rt_err_t read_reg(struct rt_i2c_bus_device *bus, rt_uint16_t reg, rt_uint
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /* i2c write reg */
@@ -82,7 +82,7 @@ static rt_err_t write_reg(struct rt_i2c_bus_device *bus, rt_uint16_t reg, rt_uin
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 static rt_err_t wm8994_set_output_mode(struct rt_i2c_bus_device *bus, rt_uint16_t mode)
@@ -466,7 +466,7 @@ static rt_err_t _read_id(struct rt_i2c_bus_device *bus, rt_uint16_t *id)
     if (*id != WM8994_ID)
     {
         LOG_E("error id: 0x%04x", *id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     LOG_I("wm8994 init success, id: %04x", *id);
@@ -655,7 +655,7 @@ static rt_err_t rt_wm8994_init(rt_device_t dev)
     if (device->i2c_bus == RT_NULL)
     {
         LOG_E("can't find %c deivce", I2C_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     result = _wm8994_init(device);
@@ -697,14 +697,14 @@ static rt_err_t rt_wm8994_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_wm8994_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_wm8994_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
 
     return RT_EOK;
 }
 
-static rt_size_t rt_wm8994_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_wm8994_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
 

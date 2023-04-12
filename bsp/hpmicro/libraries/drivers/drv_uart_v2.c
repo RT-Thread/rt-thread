@@ -704,7 +704,7 @@ hpm_stat_t hpm_uart_dma_tx_init(struct hpm_uart *uart_ctx)
     return status;
 }
 
-static int hpm_uart_dma_config(struct rt_serial_device *serial, void *arg)
+static rt_err_t hpm_uart_dma_config(struct rt_serial_device *serial, void *arg)
 {
     rt_ubase_t ctrl_arg = (rt_ubase_t) arg;
     struct hpm_uart *uart = (struct hpm_uart *)serial->parent.user_data;
@@ -720,7 +720,7 @@ static int hpm_uart_dma_config(struct rt_serial_device *serial, void *arg)
         config.src_fixed = true;
         config.size_in_byte = serial->config.rx_bufsz;
         if (status_success != dma_setup_handshake(uart->rx_chn_ctx.resource.base, &config)) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         uint32_t mux = DMA_SOC_CHN_TO_DMAMUX_CHN(uart->rx_chn_ctx.resource.base, uart->rx_dma_mux);
         dmamux_config(BOARD_UART_DMAMUX, uart->rx_chn_ctx.resource.channel, mux, true);
@@ -864,7 +864,7 @@ static int hpm_uart_getc(struct rt_serial_device *serial)
     return result;
 }
 
-static rt_size_t hpm_uart_transmit(struct rt_serial_device *serial,
+static rt_ssize_t hpm_uart_transmit(struct rt_serial_device *serial,
                                     rt_uint8_t *buf,
                                     rt_size_t size,
                                     rt_uint32_t tx_flag)
@@ -1288,7 +1288,7 @@ int rt_hw_uart_init(void)
     }
 
     if (RT_EOK != hpm_uart_config()) {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     for (uint32_t i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++) {

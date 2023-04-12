@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +12,8 @@
 #define __DRV_SPI_H__
 
 #include "board.h"
+#include <rtthread.h>
+#include <drivers/spi.h>
 
 struct apm32_spi_config
 {

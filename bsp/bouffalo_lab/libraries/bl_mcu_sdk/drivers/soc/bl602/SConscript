@@ -1,0 +1,48 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+
+CPPPATH = [cwd]
+CPPDEFINES = []
+
+src += Split("""
+    std/startup/start.S
+    std/startup/start_load.c
+    std/startup/system_bl602.c
+    std/startup/interrupt.c
+""")
+
+src += Split("""
+    std/src/bl602_aon.c
+    std/src/bl602_common.c
+    std/src/bl602_clock.c
+    std/src/bl602_ef_cfg.c
+    std/src/bl602_glb.c
+    std/src/bl602_hbn.c
+    std/src/bl602_l1c.c
+    std/src/bl602_pds.c 
+    std/src/bl602_tzc_sec.c
+    std/src/bl602_sflash_ext.c
+    std/src/bl602_xip_sflash_ext.c
+    std/src/bl602_sf_cfg_ext.c
+""")
+src += ['std/port/bl602_clock.c']
+
+CPPPATH += [cwd + r'/std/include',
+        cwd + r'/std/include/hardware']
+
+if GetDepend('BSP_USING_ROMAPI'):
+    src += Split("""
+        std/src/bl602_romapi.c
+    """)
+    CPPDEFINES += ['BFLB_USE_ROM_DRIVER']
+
+CPPDEFINES += ['CONFIG_IRQ_NUM=80', 'BFLB_USE_HAL_DRIVER', 'BL602', 'default_interrupt_handler=SW_handler']
+LOCAL_CFLAGS = ' -DARCH_RISCV'
+
+group = DefineGroup('bl602', src, depend = ['BSP_USING_BL60X'], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LOCAL_CFLAGS = LOCAL_CFLAGS)
+
+Return('group')

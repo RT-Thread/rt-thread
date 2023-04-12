@@ -183,7 +183,7 @@ static rt_err_t rt_uart_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     /* interrupt receive */
     rt_base_t level;
@@ -205,7 +205,7 @@ static rt_size_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_si
     return length;
 }
 
-static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     char *ptr = (char*) buffer;
     struct lpc8xx_uart* uart;

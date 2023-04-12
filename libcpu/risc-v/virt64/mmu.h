@@ -50,8 +50,6 @@ struct mem_desc
 #define COMBINEPTE(paddr, attr)                                                \
     ((((paddr) >> PAGE_OFFSET_BIT) << PTE_PPN_SHIFT) | (attr))
 
-#define ARCH_ADDRESS_WIDTH_BITS 64
-
 #define MMU_MAP_ERROR_VANOTALIGN -1
 #define MMU_MAP_ERROR_PANOTALIGN -2
 #define MMU_MAP_ERROR_NOPAGE     -3
@@ -68,19 +66,6 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
 void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size);
 void rt_hw_aspace_switch(rt_aspace_t aspace);
 void *rt_hw_mmu_v2p(rt_aspace_t aspace, void *vaddr);
-
-static inline void *_rt_kmem_v2p(void *vaddr)
-{
-    return rt_hw_mmu_v2p(&rt_kernel_space, vaddr);
-}
-
-static inline void *rt_kmem_v2p(void *vaddr)
-{
-    MM_PGTBL_LOCK(&rt_kernel_space);
-    void *paddr = _rt_kmem_v2p(vaddr);
-    MM_PGTBL_UNLOCK(&rt_kernel_space);
-    return paddr;
-}
 
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd);

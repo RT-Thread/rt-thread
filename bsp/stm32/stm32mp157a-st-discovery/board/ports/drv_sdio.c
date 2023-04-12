@@ -612,7 +612,7 @@ int mnt_init(void)
     if (sd == RT_NULL)
     {
         rt_kprintf("can't find sd0 device!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (dfs_mount("sd0", "/", "elm", 0, 0) != 0)

@@ -43,7 +43,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
 
     if(configuration->data_width > 8)
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     {
@@ -107,7 +107,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
 
     if(!(configuration->mode & RT_SPI_MSB))
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     spi_init_struct.Mode = SPI_MODE_MASTER;

@@ -1,29 +1,29 @@
 /**
-	*****************************************************************************
-	* @file     cmem7_ddr.h
-	*
-	* @brief    CMEM7 AES header file
-	*
-	*
-	* @version  V1.0
-	* @date     3. September 2013
-	*
-	* @note               
-	*           
-	*****************************************************************************
-	* @attention
-	*
-	* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-	* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-	* TIME. AS A RESULT, CAPITAL-MICRO SHALL NOT BE HELD LIABLE FOR ANY DIRECT, 
-	* INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-	* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-	* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-	*
-	* <h2><center>&copy; COPYRIGHT 2013 Capital-micro </center></h2>
-	*****************************************************************************
-	*/
-	
+    *****************************************************************************
+    * @file     cmem7_ddr.h
+    *
+    * @brief    CMEM7 AES header file
+    *
+    *
+    * @version  V1.0
+    * @date     3. September 2013
+    *
+    * @note
+    *
+    *****************************************************************************
+    * @attention
+    *
+    * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+    * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+    * TIME. AS A RESULT, CAPITAL-MICRO SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
+    * INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+    * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+    * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+    *
+    * <h2><center>&copy; COPYRIGHT 2013 Capital-micro </center></h2>
+    *****************************************************************************
+    */
+
 #ifndef __CMEM7_DDR_H
 #define __CMEM7_DDR_H
 
@@ -36,11 +36,11 @@
 /** @defgroup _MEM_TYPE
   * @{
   */
-enum _MEM_TYPE 
+enum _MEM_TYPE
 {
-	MEM_DDR2=1,
-	MEM_DDR3		
-} ;	
+    MEM_DDR2=1,
+    MEM_DDR3
+} ;
 /**
   * @}
   */
@@ -50,30 +50,30 @@ enum _MEM_TYPE
   */
 enum _BUS_WIDTH
 {
-	BUS_WIDTH_8,
-	BUS_WIDTH_16,
-	BUS_WIDTH_MAX
+    BUS_WIDTH_8,
+    BUS_WIDTH_16,
+    BUS_WIDTH_MAX
 };
 /**
   * @}
   */
 /** @defgroup _CHIP_TYPE
   * @{
-  */  
+  */
 enum _CHIP_TYPE
 {
-	_32Mbx8,
-	_64Mbx8,
-	_128Mbx8,
-	_256Mbx8,
-	_512Mbx8,
-	_16Mbx16,
-	_32Mbx16,
-	_64Mbx16,
-	_128Mbx16,
-	_256Mbx16,
-	_512Mbx16,
-	CHIP_TYPE_MAX
+    _32Mbx8,
+    _64Mbx8,
+    _128Mbx8,
+    _256Mbx8,
+    _512Mbx8,
+    _16Mbx16,
+    _32Mbx16,
+    _64Mbx16,
+    _128Mbx16,
+    _256Mbx16,
+    _512Mbx16,
+    CHIP_TYPE_MAX
 };
 /**
   * @}
@@ -81,27 +81,27 @@ enum _CHIP_TYPE
 
 /** @defgroup _CHIP_NUM
   * @{
-  */  
+  */
 enum _CHIP_NUM
 {
-	CHIP_NUM_x1,
-	CHIP_NUM_x2,
-	CHIP_NUM_MAX
+    CHIP_NUM_x1,
+    CHIP_NUM_x2,
+    CHIP_NUM_MAX
 };
 /**
   * @}
   */
-  
+
 /** @defgroup MEM_CHIP_INFO
   * @{
   */
 typedef struct {
-	uint8_t mem_type;     /*!< ddr type @ref _MEM_TYPE*/
-	uint8_t Bus_width;	/*!< ddr qs bus width @ref _BUS_WIDTH*/
-	uint8_t Chip_type;	/*!< chip type @ref _CHIP_TYPE*/
-	uint8_t Chip_num;	/*!< chip number @ref _CHIP_NUM*/
-	uint8_t Chip_bank;      /*!< chip bank number*/		
-} MEM_CHIP_INFO;								
+    uint8_t mem_type;     /*!< ddr type @ref _MEM_TYPE*/
+    uint8_t Bus_width;  /*!< ddr qs bus width @ref _BUS_WIDTH*/
+    uint8_t Chip_type;  /*!< chip type @ref _CHIP_TYPE*/
+    uint8_t Chip_num;   /*!< chip number @ref _CHIP_NUM*/
+    uint8_t Chip_bank;      /*!< chip bank number*/
+} MEM_CHIP_INFO;
 /**
   * @}
   */
@@ -111,18 +111,18 @@ typedef struct {
   * @{
   */
 typedef struct {
-	uint32_t tCK;       		/*!< Period of clock(ps), not data period */ 
-	uint32_t tCL;						/*!< tCL */
-	uint32_t tRCD;						/*!< tRCD */
-	uint32_t tRP;						/*!< tRP */
-	uint32_t tRC;						/*!< tRC */
-	uint32_t tRAS;						/*!< tRAS */
-	uint32_t tWR;						/*!< tWR */
-	uint32_t tRRD;						/*!< tRRD */
-	uint32_t tWTR;						/*!< tWTR */
-	uint32_t tRTP;						/*!< tRTP */
-	uint32_t tFAW;						/*!< tFAW */
-} DDR2MEM;								/*!< DDR2时序定义 */
+    uint32_t tCK;               /*!< Period of clock(ps), not data period */
+    uint32_t tCL;                       /*!< tCL */
+    uint32_t tRCD;                      /*!< tRCD */
+    uint32_t tRP;                       /*!< tRP */
+    uint32_t tRC;                       /*!< tRC */
+    uint32_t tRAS;                      /*!< tRAS */
+    uint32_t tWR;                       /*!< tWR */
+    uint32_t tRRD;                      /*!< tRRD */
+    uint32_t tWTR;                      /*!< tWTR */
+    uint32_t tRTP;                      /*!< tRTP */
+    uint32_t tFAW;                      /*!< tFAW */
+} DDR2MEM;                              /*!< DDR2鏃跺簭瀹氫箟 */
 /**
   * @}
   */
@@ -131,20 +131,20 @@ typedef struct {
   * @{
   */
 typedef struct {
-	uint32_t tCK;       		/*!< Period of clock(ps), not data period */ 
-	uint32_t tCL;						/*!< tCL */
-	uint32_t tWCL;						/*!< tWCL */
-	uint32_t tRCD;						/*!< tRCD */
-	uint32_t tRAS;						/*!< tRAS */
-	uint32_t tRP;						/*!< tRP */
-	uint32_t tRC;						/*!< tRC */
-	uint32_t tRRD;						/*!< tRRD */
-	uint32_t tFAW;						/*!< tFAW */
-	uint32_t tWR;						/*!< tWR */
-	uint32_t tRTP;						/*!< tRTP */
-	uint32_t tZQoper;					/*!< tZQCL */
-	uint32_t tZQCS;						/*!< tZQCS */
-} DDR3MEM;								/*!< DDR3时序定义 */
+    uint32_t tCK;               /*!< Period of clock(ps), not data period */
+    uint32_t tCL;                       /*!< tCL */
+    uint32_t tWCL;                      /*!< tWCL */
+    uint32_t tRCD;                      /*!< tRCD */
+    uint32_t tRAS;                      /*!< tRAS */
+    uint32_t tRP;                       /*!< tRP */
+    uint32_t tRC;                       /*!< tRC */
+    uint32_t tRRD;                      /*!< tRRD */
+    uint32_t tFAW;                      /*!< tFAW */
+    uint32_t tWR;                       /*!< tWR */
+    uint32_t tRTP;                      /*!< tRTP */
+    uint32_t tZQoper;                   /*!< tZQCL */
+    uint32_t tZQCS;                     /*!< tZQCS */
+} DDR3MEM;                              /*!< DDR3鏃跺簭瀹氫箟 */
 /**
   * @}
   */
@@ -152,8 +152,8 @@ typedef struct {
 /** @defgroup DDR2PREDEF
   * @{
   */
-extern const DDR2MEM DDR2PREDEF[];		/*!< Pre-defined DDR2 Timing in library */
-#define DDR2_400C			0			/*!< sg5E: DDR2-400C CL=4, tCK=5000ps */
+extern const DDR2MEM DDR2PREDEF[];      /*!< Pre-defined DDR2 Timing in library */
+#define DDR2_400C           0           /*!< sg5E: DDR2-400C CL=4, tCK=5000ps */
 
 /**
   * @}
@@ -162,8 +162,8 @@ extern const DDR2MEM DDR2PREDEF[];		/*!< Pre-defined DDR2 Timing in library */
 /** @defgroup DDR3PREDEF
   * @{
   */
-extern const DDR3MEM DDR3PREDEF[];		/*!< Pre-defined DDR3 Timing in library */
-#define DDR3_400		  	0
+extern const DDR3MEM DDR3PREDEF[];      /*!< Pre-defined DDR3 Timing in library */
+#define DDR3_400            0
 #define DDR3_667        1
 
 /**

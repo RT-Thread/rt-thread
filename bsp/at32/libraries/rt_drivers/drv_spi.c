@@ -7,6 +7,8 @@
  * Date           Author       Notes
  * 2022-05-16     shelton      first version
  * 2022-11-10     shelton      support spi dma
+ * 2023-01-31     shelton      add support f421/f425
+ * 2023-04-08     shelton      add support f423
  */
 
 #include "drv_common.h"
@@ -60,7 +62,7 @@ static struct at32_spi_config spi_config[] = {
 
 /* private rt-thread spi ops function */
 static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configuration* configuration);
-static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* message);
+static rt_ssize_t xfer(struct rt_spi_device* device, struct rt_spi_message* message);
 
 static struct rt_spi_ops at32_spi_ops =
 {
@@ -136,7 +138,7 @@ static rt_err_t configure(struct rt_spi_device* device,
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     /* baudrate */
@@ -351,7 +353,7 @@ static void _spi_polling_receive_transmit(struct at32_spi *instance, rt_uint8_t 
     }
 }
 
-static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* message)
+static rt_ssize_t xfer(struct rt_spi_device* device, struct rt_spi_message* message)
 {
     struct rt_spi_bus * at32_spi_bus = (struct rt_spi_bus *)device->bus;
     struct at32_spi *instance = (struct at32_spi *)at32_spi_bus->parent.user_data;
@@ -516,7 +518,12 @@ static void at32_spi_dma_init(struct at32_spi *instance)
 
         dma_reset(instance->config->dma_rx->dma_channel);
         dma_init(instance->config->dma_rx->dma_channel, &dma_init_struct);
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F425)
+        dma_flexible_config(instance->config->dma_rx->dma_x, instance->config->dma_rx->flex_channel, \
+                           (dma_flexible_request_type)instance->config->dma_rx->request_id);
+#endif
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F423)
         dmamux_enable(instance->config->dma_rx->dma_x, TRUE);
         dmamux_init(instance->config->dma_rx->dmamux_channel, (dmamux_requst_id_sel_type)instance->config->dma_rx->request_id);
 #endif
@@ -531,7 +538,12 @@ static void at32_spi_dma_init(struct at32_spi *instance)
 
         dma_reset(instance->config->dma_tx->dma_channel);
         dma_init(instance->config->dma_tx->dma_channel, &dma_init_struct);
-#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437)
+#if defined (SOC_SERIES_AT32F425)
+        dma_flexible_config(instance->config->dma_tx->dma_x, instance->config->dma_tx->flex_channel, \
+                           (dma_flexible_request_type)instance->config->dma_tx->request_id);
+#endif
+#if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
+    defined (SOC_SERIES_AT32F423)
         dmamux_enable(instance->config->dma_tx->dma_x, TRUE);
         dmamux_init(instance->config->dma_tx->dmamux_channel, (dmamux_requst_id_sel_type)instance->config->dma_tx->request_id);
 #endif
@@ -725,6 +737,62 @@ void SPI4_TX_DMA_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif /* defined(BSP_SPI14_TX_USING_DMA) */
+#endif
+
+#if defined (SOC_SERIES_AT32F421)
+void SPI1_TX_RX_DMA_IRQHandler(void)
+{
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
+    SPI1_TX_DMA_IRQHandler();
+#endif
+
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
+    SPI1_RX_DMA_IRQHandler();
+#endif
+}
+
+void SPI2_TX_RX_DMA_IRQHandler(void)
+{
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
+    SPI2_TX_DMA_IRQHandler();
+#endif
+
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
+    SPI2_RX_DMA_IRQHandler();
+#endif
+}
+#endif
+
+#if defined (SOC_SERIES_AT32F425)
+void SPI1_TX_RX_DMA_IRQHandler(void)
+{
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
+    SPI1_TX_DMA_IRQHandler();
+#endif
+
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
+    SPI1_RX_DMA_IRQHandler();
+#endif
+}
+
+void SPI3_2_TX_RX_DMA_IRQHandler(void)
+{
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
+    SPI2_TX_DMA_IRQHandler();
+#endif
+
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
+    SPI2_RX_DMA_IRQHandler();
+#endif
+
+#if defined(BSP_USING_SPI3) && defined(BSP_SPI3_TX_USING_DMA)
+    SPI3_TX_DMA_IRQHandler();
+#endif
+
+#if defined(BSP_USING_SPI3) && defined(BSP_SPI3_RX_USING_DMA)
+    SPI3_RX_DMA_IRQHandler();
+#endif
+}
 #endif
 
 static struct at32_spi spis[sizeof(spi_config) / sizeof(spi_config[0])] = {0};

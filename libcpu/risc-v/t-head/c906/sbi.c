@@ -68,8 +68,8 @@ static struct sbi_ret sbi_get_impl_version(void)
 
 void sbi_print_version(void)
 {
-    u_int major;
-    u_int minor;
+    unsigned int major;
+    unsigned int minor;
 
     /* For legacy SBI implementations. */
     if (sbi_spec_version == 0)

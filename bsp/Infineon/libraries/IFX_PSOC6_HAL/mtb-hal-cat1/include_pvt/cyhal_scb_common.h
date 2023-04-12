@@ -46,7 +46,7 @@ extern "C" {
 #endif
 
 #if defined(CY_IP_MXSCB_INSTANCES)
-#if defined(CY_DEVICE_PSOC6A256K)
+#if defined(CY_DEVICE_PSOC6A256K) || defined(CY8C624ALQI_S2D42)
 //Special case for 256k device which has 6 SCBs numbered 0, 1, 2, 4, 5, 6
 #define _SCB_ARRAY_SIZE                 (CY_IP_MXSCB_INSTANCES + 1)
 #else

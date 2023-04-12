@@ -92,7 +92,7 @@ static rt_err_t n32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 {
     if (channel > ADC_CH_18)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     return RT_EOK;
 }
@@ -104,7 +104,7 @@ static rt_err_t n32_adc_convert(struct rt_adc_device *device, rt_uint32_t channe
 
     if (channel > ADC_CH_18)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     config = (struct n32_adc_config *)(device->parent.user_data);
 

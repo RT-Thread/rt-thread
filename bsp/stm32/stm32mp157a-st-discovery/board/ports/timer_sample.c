@@ -46,7 +46,7 @@ static int hwtimer_stop(void)
     if (hw_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", HWTIMER_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     ret = rt_device_close(hw_dev);
@@ -74,7 +74,7 @@ static int hwtimer_start(void)
     if (hw_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", HWTIMER_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* find adc dev */
@@ -82,7 +82,7 @@ static int hwtimer_start(void)
     if (adc_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", HWADC_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Open the device in read/write mode */
@@ -111,7 +111,7 @@ static int hwtimer_start(void)
     if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
     {
         rt_kprintf("set timeout value failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_mdelay(3500);
@@ -153,7 +153,7 @@ _exit:
         rt_kprintf("tim_sample stop          - stop TIM14 \n");
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 MSH_CMD_EXPORT(tim_sample, tim sample);
 

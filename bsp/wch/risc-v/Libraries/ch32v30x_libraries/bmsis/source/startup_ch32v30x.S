@@ -379,13 +379,7 @@ handle_reset:
     ori t0, t0, 3           
 	csrw mtvec, t0
     
-    la t0, _eusrstack
-	addi t0, t0, -512
-    csrw mscratch,t0
-
     jal  SystemInit
 	la t0, entry
 	csrw mepc, t0
 	mret
-
-

@@ -7,7 +7,7 @@
 #include "hpm_common.h"
 #include "hpm_soc.h"
 #include <rtthread.h>
-#include "riscv-stackframe.h"
+#include "rt_hw_stack_frame.h"
 
 #define MCAUSE_INSTR_ADDR_MISALIGNED (0U)       //!< Instruction Address misaligned
 #define MCAUSE_INSTR_ACCESS_FAULT (1U)          //!< Instruction access fault

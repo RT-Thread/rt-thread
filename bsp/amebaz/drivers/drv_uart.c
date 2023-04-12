@@ -31,7 +31,7 @@ static rt_err_t  ameba_uart_configure    (struct rt_serial_device *serial, struc
 static rt_err_t  ameba_uart_control      (struct rt_serial_device *serial, int cmd, void *arg);
 static int       ameba_uart_putc         (struct rt_serial_device *serial, char c);
 static int       ameba_uart_getc         (struct rt_serial_device *serial);
-static rt_size_t ameba_uart_dma_transmit (struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
+static rt_ssize_t ameba_uart_dma_transmit (struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
 
 static void ameba_uart_irq(uint32_t id, SerialIrq event);
 
@@ -118,7 +118,7 @@ static int ameba_uart_getc (struct rt_serial_device *serial)
     return serial_getc(&uart->serial);
 }
 
-static rt_size_t ameba_uart_dma_transmit (struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t ameba_uart_dma_transmit (struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     return (0);
 }

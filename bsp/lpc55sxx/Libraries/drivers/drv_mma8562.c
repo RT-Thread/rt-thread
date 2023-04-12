@@ -102,7 +102,7 @@ void get_mma8562(uint8_t data)
 
     rt_kprintf("*** MMA8562 X %d, Y %d, Z %d\r\n", (accel.x), (accel.y), (accel.z) );
 }
-FINSH_FUNCTION_EXPORT(get_mma8562, get mma8562. e.g: get_mma8562(0))
+MSH_CMD_EXPORT(get_mma8562, get mma8562. e.g: get_mma8562(0))
 #endif
 
 int mma8562_hw_init(void)
@@ -118,7 +118,7 @@ int mma8562_hw_init(void)
     if (val != kMMA8562_WHO_AM_I_Device_ID)
     {
         rt_kprintf("MMA8562: Unexpected result from WHO_AM_I (0x%02x)\n", val);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /*  please refer to the "example FXOS8700CQ Driver Code" in FXOS8700 datasheet. */

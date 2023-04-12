@@ -128,7 +128,7 @@ static int rt_hw_dfsdm_init(void)
     hdfsdm1_channel1.Init.RightBitShift            = 2;
     if(HAL_OK != HAL_DFSDM_ChannelInit(&hdfsdm1_channel1))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* DATAIN1_RIGHT */
@@ -148,7 +148,7 @@ static int rt_hw_dfsdm_init(void)
     hdfsdm1_channel0.Init.RightBitShift            = 2;
     if(HAL_OK != HAL_DFSDM_ChannelInit(&hdfsdm1_channel0))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Initialize filter 0 (data_in1 right channel) */
@@ -165,7 +165,7 @@ static int rt_hw_dfsdm_init(void)
     hdfsdm1_filter0.Init.FilterParam.IntOversampling  = 1;
     if (HAL_OK != HAL_DFSDM_FilterInit(&hdfsdm1_filter0))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Initialize filter 1 (data_in1 left channel) */
@@ -182,19 +182,19 @@ static int rt_hw_dfsdm_init(void)
     hdfsdm1_filter1.Init.FilterParam.IntOversampling  = 1;
     if (HAL_OK != HAL_DFSDM_FilterInit(&hdfsdm1_filter1))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Configure regular channel and continuous mode for filter 0 (data_in1 left channel) */
     if (HAL_OK != HAL_DFSDM_FilterConfigRegChannel(&hdfsdm1_filter1, DFSDM_CHANNEL_1, DFSDM_CONTINUOUS_CONV_ON))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Configure regular channel and continuous mode for filter 1 (data_in1 right channel) */
     if (HAL_OK != HAL_DFSDM_FilterConfigRegChannel(&hdfsdm1_filter0, DFSDM_CHANNEL_0, DFSDM_CONTINUOUS_CONV_ON))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -206,13 +206,13 @@ static rt_err_t rt_hw_dfsdm_open(void)
     if (HAL_OK != HAL_DFSDM_FilterRegularStart_DMA(&hdfsdm1_filter0, FILTER0_FIFO, FILTER_FIFO_SIZE))
     {
         LOG_E("DFSDM DATA_IN1 rifht channel start conversions failed!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (HAL_OK != HAL_DFSDM_FilterRegularStart_DMA(&hdfsdm1_filter1, FILTER1_FIFO, FILTER_FIFO_SIZE))
     {
         LOG_E("DFSDM DATA_IN1 left channel start conversions failed!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -246,7 +246,7 @@ static rt_err_t _close(rt_device_t dev)
    return RT_EOK;
 }
 
-static rt_size_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
     rt_uint32_t i = 0;
@@ -273,7 +273,7 @@ static rt_size_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t si
     return size;
 }
 
-static rt_size_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
    RT_ASSERT(dev != RT_NULL);
 
@@ -326,14 +326,14 @@ static int dfsdm_sample(int argc, char **argv)
     if (dfsdm_dev == RT_NULL)
     {
         rt_kprintf("no dfsdm device!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     sound_dev = rt_device_find("decoder");
     if (sound_dev == RT_NULL)
     {
         rt_kprintf("no decoder device!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* open dfsdm device */
@@ -350,7 +350,7 @@ static int dfsdm_sample(int argc, char **argv)
     if (HAL_SAI_Transmit_DMA(&hsai_BlockA2, (uint8_t *)PLAY_BUF, PALY_SIZE) != HAL_OK)
     {
         rt_kprintf("sai transmit dma failed!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_kprintf("dfsdm audio record test begin!\n");
 

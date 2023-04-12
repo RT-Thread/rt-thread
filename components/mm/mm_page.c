@@ -26,22 +26,11 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
+RT_CTASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
+RT_CTASSERT(size_width, sizeof(rt_size_t) == sizeof(void *));
+
 #ifdef RT_USING_SMART
 #include "lwp_arch_comm.h"
-
-#define CT_ASSERT(name, x)                                                     \
-    struct assert_##name                                                       \
-    {                                                                          \
-        char ary[2 * (x)-1];                                                   \
-    }
-#ifdef ARCH_CPU_64BIT
-CT_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
-#else
-CT_ASSERT(size_width, sizeof(rt_size_t) == sizeof(rt_size_t));
-#endif /* ARCH_CPU_64BIT */
-
-#else
-#define PV_OFFSET 0
 #endif /* RT_USING_SMART */
 
 static rt_size_t init_mpr_align_start;
@@ -70,13 +59,13 @@ static void hint_free(rt_mm_va_hint_t hint)
     hint->prefer = rt_mpr_start;
 }
 
-static void on_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
+static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     void *init_start = (void *)init_mpr_align_start;
     void *init_end = (void *)init_mpr_align_end;
-    if (msg->vaddr < init_end && msg->vaddr >= init_start)
+    if (msg->fault_vaddr < init_end && msg->fault_vaddr >= init_start)
     {
-        rt_size_t offset = msg->vaddr - init_start;
+        rt_size_t offset = msg->fault_vaddr - init_start;
         msg->response.status = MM_FAULT_STATUS_OK;
         msg->response.vaddr = init_mpr_cont_start + offset;
         msg->response.size = ARCH_PAGE_SIZE;
@@ -404,13 +393,18 @@ static rt_page_t (*pages_alloc_handler)(rt_uint32_t size_bits);
 
 void *rt_pages_alloc(rt_uint32_t size_bits)
 {
+    void *alloc_buf = RT_NULL;
     struct rt_page *p;
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
     p = pages_alloc_handler(size_bits);
     rt_hw_interrupt_enable(level);
-    return page_to_addr(p);
+    if (p)
+    {
+        alloc_buf = page_to_addr(p);
+    }
+    return alloc_buf;
 }
 
 int rt_pages_free(void *addr, rt_uint32_t size_bits)
@@ -454,7 +448,7 @@ void list_page(void)
         rt_kprintf("\n");
     }
     rt_hw_interrupt_enable(level);
-    rt_kprintf("free pages is 0x%08x\n", total);
+    rt_kprintf("free pages is 0x%08lx (%ld KB)\n", total, total * ARCH_PAGE_SIZE / 1024);
     rt_kprintf("-------------------------------\n");
 }
 MSH_CMD_EXPORT(list_page, show page info);
@@ -490,6 +484,11 @@ void rt_page_init(rt_region_t reg)
     reg.start += ARCH_PAGE_MASK;
     reg.start &= ~ARCH_PAGE_MASK;
     reg.end &= ~ARCH_PAGE_MASK;
+    if (reg.end <= reg.start)
+    {
+        LOG_E("region end(%p) must greater than start(%p)", reg.start, reg.end);
+        RT_ASSERT(0);
+    }
     page_nr = ((reg.end - reg.start) >> ARCH_PAGE_SHIFT);
     shadow.start = reg.start & ~shadow_mask;
     shadow.end = FLOOR(reg.end, shadow_mask + 1);
@@ -512,8 +511,7 @@ void rt_page_init(rt_region_t reg)
     if (err != RT_EOK)
     {
         LOG_E("MPR map failed with size %lx at %p", rt_mpr_size, rt_mpr_start);
-        while (1)
-            ;
+        RT_ASSERT(0);
     }
 
     /* calculate footprint */
@@ -583,14 +581,19 @@ void rt_page_init(rt_region_t reg)
 
     pages_alloc_handler = _early_pages_alloc;
     /* doing the page table bushiness */
-    rt_aspace_load_page(&rt_kernel_space, (void *)init_mpr_align_start,
-                        init_mpr_npage);
+    if (rt_aspace_load_page(&rt_kernel_space, (void *)init_mpr_align_start, init_mpr_npage))
+    {
+        LOG_E("%s: failed to load pages", __func__);
+        RT_ASSERT(0);
+    }
+
     if (rt_hw_mmu_tbl_get() == rt_kernel_space.page_table)
         rt_page_cleanup();
 }
 
-static void _load_mpr_area(void *head, void *tail)
+static int _load_mpr_area(void *head, void *tail)
 {
+    int err = 0;
     void *iter = (void *)((uintptr_t)head & ~ARCH_PAGE_MASK);
     tail = (void *)FLOOR(tail, ARCH_PAGE_SIZE);
 
@@ -599,10 +602,16 @@ static void _load_mpr_area(void *head, void *tail)
         void *paddr = rt_kmem_v2p(iter);
         if (paddr == ARCH_MAP_FAILED)
         {
-            rt_aspace_load_page(&rt_kernel_space, iter, 1);
+            err = rt_aspace_load_page(&rt_kernel_space, iter, 1);
+            if (err != RT_EOK)
+            {
+                LOG_E("%s: failed to load page", __func__);
+                break;
+            }
         }
         iter += ARCH_PAGE_SIZE;
     }
+    return err;
 }
 
 int rt_page_install(rt_region_t region)
@@ -617,22 +626,24 @@ int rt_page_install(rt_region_t region)
 
         page_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
 
-        _load_mpr_area(head, tail);
+        err = _load_mpr_area(head, tail);
 
-        while (region.start != region.end)
+        if (err == RT_EOK)
         {
-            struct rt_page *p;
-            int size_bits;
+            while (region.start != region.end)
+            {
+                struct rt_page *p;
+                int size_bits;
 
-            size_bits = RT_PAGE_MAX_ORDER - 1;
-            p = addr_to_page(page_start, (void *)region.start);
-            p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
-            p->ref_cnt = 1;
+                size_bits = RT_PAGE_MAX_ORDER - 1;
+                p = addr_to_page(page_start, (void *)region.start);
+                p->size_bits = ARCH_ADDRESS_WIDTH_BITS;
+                p->ref_cnt = 1;
 
-            _pages_free(p, size_bits);
-            region.start += (1UL << (size_bits + ARCH_PAGE_SHIFT));
+                _pages_free(p, size_bits);
+                region.start += (1UL << (size_bits + ARCH_PAGE_SHIFT));
+            }
         }
-        err = 0;
     }
     return err;
 }

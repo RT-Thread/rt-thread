@@ -196,12 +196,12 @@ static rt_err_t rt_hpm_eth_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_hpm_eth_read(rt_device_t dev, rt_off_t pos, void * buffer, rt_size_t size)
+static rt_ssize_t rt_hpm_eth_read(rt_device_t dev, rt_off_t pos, void * buffer, rt_size_t size)
 {
     return 0;
 }
 
-static rt_size_t rt_hpm_eth_write(rt_device_t dev, rt_off_t pos, const void * buffer, rt_size_t size)
+static rt_ssize_t rt_hpm_eth_write(rt_device_t dev, rt_off_t pos, const void * buffer, rt_size_t size)
 {
     return 0;
 }
@@ -239,7 +239,7 @@ static rt_err_t rt_hpm_eth_control(rt_device_t dev, int cmd, void * args)
 
 static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     uint32_t status;
     enet_device *enet_dev = (enet_device *)dev->user_data;
     uint32_t tx_buff_size = enet_dev->desc.tx_buff_cfg.size;
@@ -436,7 +436,7 @@ SDK_DECLARE_EXT_ISR_M(IRQn_ENET1, isr_enet1)
 
 int rt_hw_eth_init(void)
 {
-    rt_err_t err = RT_ERROR;
+    rt_err_t err = -RT_ERROR;
 
     for (uint32_t i = 0; i < ARRAY_SIZE(s_geths); i++)
     {

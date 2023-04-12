@@ -561,7 +561,7 @@ rt_err_t rtgui_touch_hw_init(const char * spi_device_name)
       }
 
     touch = (struct rtgui_touch_device*)rt_malloc (sizeof(struct rtgui_touch_device));
-    if (touch == RT_NULL) return RT_ENOMEM; /* no memory yet */
+    if (touch == RT_NULL) return -RT_ENOMEM; /* no memory yet */
 
     /* clear device structure */
     rt_memset(&(touch->parent), 0, sizeof(struct rt_device));

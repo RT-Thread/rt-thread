@@ -1034,7 +1034,7 @@ void lwp_cleanup(struct rt_thread *tid)
         return;
     }
 
-    LOG_I("cleanup thread: %s, stack_addr: %08X", tid->name, tid->stack_addr);
+    LOG_I("cleanup thread: %s, stack_addr: %08X", tid->parent.name, tid->stack_addr);
 
     level = rt_hw_interrupt_disable();
     lwp = (struct rt_lwp *)tid->lwp;
@@ -1059,7 +1059,7 @@ void lwp_cleanup(struct rt_thread *tid)
 
 static void lwp_copy_stdio_fdt(struct rt_lwp *lwp)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
     struct dfs_fdtable *lwp_fdt;
 
     lwp_fdt = &lwp->fdt;
@@ -1096,6 +1096,8 @@ static void _lwp_thread_entry(void *parameter)
         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, lwp->text_entry, sizeof(uint32_t));
         icache_invalid_all();
     }
+
+    rt_hw_icache_invalidate_all();
 
 #ifdef ARCH_MM_MMU
     arch_start_umode(lwp->args, lwp->text_entry, (void *)USER_STACK_VEND, tid->stack_addr + tid->stack_size);
@@ -1282,6 +1284,10 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 
                 }
             }
+            else
+            {
+                lwp->background = RT_TRUE;
+            }
             thread->lwp = lwp;
 #ifndef ARCH_MM_MMU
             struct lwp_app_head *app_head = (struct lwp_app_head*)lwp->text_entry;
@@ -1323,6 +1329,7 @@ char **__environ = 0;
 
 pid_t exec(char *filename, int debug, int argc, char **argv)
 {
+    setenv("OS", "RT-Thread", 1);
     return lwp_execve(filename, debug, argc, argv, __environ);
 }
 

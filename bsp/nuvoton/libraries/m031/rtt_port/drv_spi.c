@@ -55,7 +55,7 @@ static rt_err_t nu_spi_bus_configure(struct rt_spi_device *device, struct rt_spi
     static void nu_pdma_spi_rx_cb(void *pvUserData, uint32_t u32EventFilter);
     static rt_err_t nu_pdma_spi_rx_config(struct nu_spi *spi_bus, uint8_t *pu8Buf, int32_t i32RcvLen, uint8_t bytes_per_word);
     static rt_err_t nu_pdma_spi_tx_config(struct nu_spi *spi_bus, const uint8_t *pu8Buf, int32_t i32SndLen, uint8_t bytes_per_word);
-    static rt_size_t nu_spi_pdma_transmit(struct nu_spi *spi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word);
+    static rt_ssize_t nu_spi_pdma_transmit(struct nu_spi *spi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word);
 #endif
 /* Public functions -------------------------------------------------------------*/
 void nu_spi_transfer(struct nu_spi *spi_bus, uint8_t *tx, uint8_t *rx, int length, uint8_t bytes_per_word);
@@ -120,7 +120,7 @@ static rt_err_t nu_spi_bus_configure(struct rt_spi_device *device,
         u32SPIMode = SPI_MODE_3;
         break;
     default:
-        ret = RT_EIO;
+        ret = -RT_EIO;
         goto exit_nu_spi_bus_configure;
     }
 
@@ -130,7 +130,7 @@ static rt_err_t nu_spi_bus_configure(struct rt_spi_device *device,
             configuration->data_width == 24 ||
             configuration->data_width == 32))
     {
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_spi_bus_configure;
     }
 
@@ -300,7 +300,7 @@ exit_nu_pdma_spi_tx_config:
 /**
  * SPI PDMA transfer
  */
-static rt_size_t nu_spi_pdma_transmit(struct nu_spi *spi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word)
+static rt_ssize_t nu_spi_pdma_transmit(struct nu_spi *spi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word)
 {
     rt_err_t result = RT_EOK;
     rt_uint32_t u32Offset = 0;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -864,7 +864,7 @@ static int adc_vol_sample(int argc, char *argv[])
     if (adc_dev == RT_NULL)
     {
         rt_kprintf("adc sample run failed! can't find %s device!\n", ADC_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     for (int i = 1; i <= 18; ++i)
@@ -900,7 +900,7 @@ static int hwtimer_init(const char *name)
     if (hw_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
     if (ret != RT_EOK)
@@ -921,7 +921,7 @@ static int hwtimer_init(const char *name)
     if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
     {
         rt_kprintf("set timeout value failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_mdelay(3500);

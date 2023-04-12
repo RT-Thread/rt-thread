@@ -315,7 +315,7 @@ static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     irqindex = GPIO_PIN_INDEX(pin);
     if (irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -330,7 +330,7 @@ static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin  = pin;
     pin_irq_hdr_tab[irqindex].hdr  = hdr;
@@ -353,7 +353,7 @@ static rt_err_t hc32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     irqindex = GPIO_PIN_INDEX(pin);
     if (irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -397,7 +397,7 @@ static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
     irqindex = GPIO_PIN_INDEX(pin);
     if (irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irq_map  = &pin_irq_map[irqindex];
@@ -409,7 +409,7 @@ static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         /* Exint config */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -153,7 +153,7 @@ static int rt_hw_rtc_init(void)
     if (rt_hw_rtc_register(&ifx32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL) != RT_EOK)
     {
         LOG_E("rtc init failed");
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
     else
     {

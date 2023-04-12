@@ -17,7 +17,7 @@
 #include "nu_adc.h"
 
 #if defined(BSP_USING_ADC_TOUCH)
-    #include "touch.h"
+    #include <rtdevice.h>
 #endif
 
 typedef enum

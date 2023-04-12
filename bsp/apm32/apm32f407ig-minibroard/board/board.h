@@ -42,6 +42,9 @@
     #include "apm32f4xx_iwdt.h"
     #include "apm32f4xx_wwdt.h"
 #endif
+#if defined(RT_USING_CAN)
+    #include "apm32f4xx_can.h"
+#endif
 
 #include "drv_common.h"
 #include "drv_gpio.h"

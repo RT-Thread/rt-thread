@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,8 +12,12 @@
 #define __DRV_HWTIMER_H__
 
 #include <rtthread.h>
-
+#if defined(SOC_RISCV_SERIES_CH32V3)
 #include "ch32v30x_tim.h"
+#endif
+#if defined(SOC_RISCV_SERIES_CH32V2)
+#include "ch32v20x_tim.h"
+#endif
 
 #ifdef BSP_USING_HWTIMER
 

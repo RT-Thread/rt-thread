@@ -1,9 +1,12 @@
 from building import *
 import os
 
-cwd = GetCurrentDir()
-src = Glob('*.c')
+cwd     = GetCurrentDir()
 CPPPATH = [cwd]
+src     = Glob('*.c')
+
+if GetDepend(['PKG_USING_RTDUINO']) and not GetDepend(['RTDUINO_NO_SETUP_LOOP']):
+    src += ['arduino_main.cpp']
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 

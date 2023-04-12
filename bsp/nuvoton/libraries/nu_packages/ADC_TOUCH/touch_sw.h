@@ -14,7 +14,7 @@
 #define __TOUCH_SW_H__
 
 #include <rtthread.h>
-#include "touch.h"
+#include <rtdevice.h>
 
 typedef enum
 {

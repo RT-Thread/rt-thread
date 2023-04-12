@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021/01/02     bernard      the first version
+ * 2022/12/18     bernard      fix the _m_lock to tid in user land.
  */
 
 #include <rtthread.h>
@@ -31,6 +32,25 @@ struct rt_pmutex
     struct rt_object *custom_obj;
     rt_uint8_t type; /* pmutex type */
 };
+
+/*
+ * userspace mutex definitions in musl
+ */
+struct rt_umutex
+{
+    union
+    {
+        int __i[6];
+        volatile int __vi[6];
+        volatile void *volatile __p[6];
+    } __u;
+};
+#define _m_type     __u.__i[0]
+#define _m_lock     __u.__vi[1]
+#define _m_waiters  __u.__vi[2]
+#define _m_prev     __u.__p[3]
+#define _m_next     __u.__p[4]
+#define _m_count    __u.__i[5]
 
 static struct rt_mutex _pmutex_lock;
 
@@ -218,9 +238,16 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
 {
     struct rt_lwp *lwp = RT_NULL;
     struct rt_pmutex *pmutex = RT_NULL;
+    struct rt_umutex *umutex_p = (struct rt_umutex*)umutex;
     rt_err_t lock_ret = 0;
     rt_int32_t time = RT_WAITING_FOREVER;
     register rt_base_t temp;
+
+    if (!lwp_user_accessable((void *)umutex, sizeof(struct rt_umutex)))
+    {
+        rt_set_errno(EINVAL);
+        return -EINVAL;
+    }
 
     if (timeout)
     {
@@ -257,6 +284,10 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
         break;
     case PMUTEX_RECURSIVE:
         lock_ret = rt_mutex_take_interruptible(pmutex->lock.kmutex, time);
+        if (lock_ret == RT_EOK)
+        {
+            umutex_p->_m_lock = rt_thread_self()->tid;
+        }
         break;
     case PMUTEX_ERRORCHECK:
         temp = rt_hw_interrupt_disable();
@@ -267,6 +298,10 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
             return -EDEADLK;
         }
         lock_ret = rt_mutex_take_interruptible(pmutex->lock.kmutex, time);
+        if (lock_ret == RT_EOK)
+        {
+            umutex_p->_m_lock = rt_thread_self()->tid;
+        }
         rt_hw_interrupt_enable(temp);
         break;
     default: /* unknown type */
@@ -299,9 +334,10 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
 
 static int _pthread_mutex_unlock(void *umutex)
 {
+    rt_err_t lock_ret = 0;
     struct rt_lwp *lwp = RT_NULL;
     struct rt_pmutex *pmutex = RT_NULL;
-    rt_err_t lock_ret = 0;
+    struct rt_umutex *umutex_p = (struct rt_umutex*)umutex;
 
     lock_ret = rt_mutex_take_interruptible(&_pmutex_lock, RT_WAITING_FOREVER);
     if (lock_ret != RT_EOK)
@@ -337,6 +373,10 @@ static int _pthread_mutex_unlock(void *umutex)
     case PMUTEX_RECURSIVE:
     case PMUTEX_ERRORCHECK:
         lock_ret = rt_mutex_release(pmutex->lock.kmutex);
+        if ((lock_ret == RT_EOK) && pmutex->lock.kmutex->owner == NULL)
+        {
+            umutex_p->_m_lock = 0;
+        }
         break;
     default: /* unknown type */
         return -EINVAL;
@@ -378,7 +418,9 @@ static int _pthread_mutex_destroy(void *umutex)
     return 0;
 }
 
-int sys_pmutex(void *umutex, int op, void *arg)
+#include <syscall_generic.h>
+
+sysret_t sys_pmutex(void *umutex, int op, void *arg)
 {
     int ret = -EINVAL;
 

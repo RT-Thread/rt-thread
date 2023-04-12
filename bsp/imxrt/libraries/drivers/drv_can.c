@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -263,7 +263,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
         if (filter_mask == 0xffffffff)
         {
             LOG_E("%s filter is full!\n", can->name);
-            res = RT_ERROR;
+            res = -RT_ERROR;
             break;
         }
         else if (filter_mask == 0)
@@ -316,7 +316,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
             {
                 if (filter_mask & (1 << item->hdr_bank))
                 {
-                    res = RT_ERROR;
+                    res = -RT_ERROR;
                     LOG_E("%s hdr%d filter already set!\n", can->name, item->hdr_bank);
                     break;
                 }
@@ -338,28 +338,28 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
         break;
 
     case RT_CAN_CMD_SET_BAUD:
-        res = RT_ERROR;
+        res = -RT_ERROR;
         break;
     case RT_CAN_CMD_SET_MODE:
-        res = RT_ERROR;
+        res = -RT_ERROR;
         break;
 
     case RT_CAN_CMD_SET_PRIV:
-        res = RT_ERROR;
+        res = -RT_ERROR;
         break;
     case RT_CAN_CMD_GET_STATUS:
         FLEXCAN_GetBusErrCount(can->base, (rt_uint8_t *)(&can->can_dev.status.snderrcnt), (rt_uint8_t *)(&can->can_dev.status.rcverrcnt));
         rt_memcpy(arg, &can->can_dev.status, sizeof(can->can_dev.status));
         break;
     default:
-        res = RT_ERROR;
+        res = -RT_ERROR;
         break;
     }
 
     return res;
 }
 
-static int can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
+static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
     struct rt_can_msg *msg;
@@ -420,14 +420,14 @@ static int can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t 
         ret = RT_EOK;
         break;
     case kStatus_Fail:
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
         break;
     case kStatus_FLEXCAN_TxBusy:
-        ret = RT_EBUSY;
+        ret = -RT_EBUSY;
         break;
     }
 
-    return ret;
+    return (rt_ssize_t)ret;
 }
 
 static int can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)

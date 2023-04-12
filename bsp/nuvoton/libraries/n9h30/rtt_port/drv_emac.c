@@ -81,8 +81,8 @@ static rt_err_t nu_emac_init(rt_device_t dev);
 
 static rt_err_t nu_emac_open(rt_device_t dev, rt_uint16_t oflag);
 static rt_err_t nu_emac_close(rt_device_t dev);
-static rt_size_t nu_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-static rt_size_t nu_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+static rt_ssize_t nu_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+static rt_ssize_t nu_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 static rt_err_t nu_emac_control(rt_device_t dev, int cmd, void *args);
 static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p);
 static struct pbuf *nu_emac_rx(rt_device_t dev);
@@ -350,13 +350,13 @@ static rt_err_t nu_emac_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t nu_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t nu_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t nu_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t nu_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
@@ -397,7 +397,7 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
         rt_err_t result;
 
         result = rt_sem_control(&psNuEmac->eth_sem, RT_IPC_CMD_RESET, 0);
-        RT_ASSERT(result != RT_EOK);
+        RT_ASSERT(result == RT_EOK);
 
         EMAC_CLEAR_INT_FLAG(EMAC, EMAC_INTSTS_TXCPIF_Msk);
         EMAC_ENABLE_INT(EMAC, EMAC_INTEN_TXCPIEN_Msk);
@@ -431,7 +431,7 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
 #if defined(BSP_USING_MMU)
     mmu_clean_invalidated_dcache((uint32_t)psNuEmac->memmgr.psCurrentTxDesc, sizeof(EMAC_DESCRIPTOR_T));
 #endif
-    return (EMAC_SendPktWoCopy(&psNuEmac->memmgr, offset) == 1) ? RT_EOK : RT_ERROR;
+    return (EMAC_SendPktWoCopy(&psNuEmac->memmgr, offset) == 1) ? RT_EOK : -RT_ERROR;
 }
 
 static struct pbuf *nu_emac_rx(rt_device_t dev)

@@ -13,6 +13,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define DBG_TAG "hw.mmu"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
+#include <board.h>
 #include <cache.h>
 #include <mm_aspace.h>
 #include <mm_page.h>
@@ -21,17 +26,12 @@
 #include <tlb.h>
 
 #ifdef RT_USING_SMART
+#include <board.h>
 #include <ioremap.h>
 #include <lwp_user_mm.h>
-#include <tlb.h>
 #endif
 
-#define DBG_TAG "hw.mmu"
-#define DBG_LVL DBG_LOG
-#include <rtdbg.h>
-
 #ifndef RT_USING_SMART
-#define PV_OFFSET 0
 #define USER_VADDR_START 0
 #endif
 
@@ -44,7 +44,7 @@ rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
 
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
-    uintptr_t page_table = (uintptr_t)_rt_kmem_v2p(aspace->page_table);
+    uintptr_t page_table = (uintptr_t)rt_kmem_v2p(aspace->page_table);
     current_mmu_table = aspace->page_table;
 
     write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
@@ -137,7 +137,9 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
     // TODO trying with HUGEPAGE here
     while (npages--)
     {
+        MM_PGTBL_LOCK(aspace);
         ret = _map_one_page(aspace, v_addr, p_addr, attr);
+        MM_PGTBL_UNLOCK(aspace);
         if (ret != 0)
         {
             /* error, undo map */
@@ -257,6 +259,7 @@ static inline void _init_region(void *vaddr, size_t size)
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
+    LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start, rt_mpr_start);
 }
 #else
 static inline void _init_region(void *vaddr, size_t size)
@@ -444,7 +447,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
  * otherwise is a failure and no report will be
  * returned.
  *
- * @param mmu_info
+ * @param aspace
  * @param mdesc
  * @param desc_nr
  */
@@ -475,6 +478,9 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                                     .map_size = mdesc->vaddr_end -
                                                 mdesc->vaddr_start + 1,
                                     .prefer = (void *)mdesc->vaddr_start};
+
+        if (mdesc->paddr_start == (rt_size_t)ARCH_MAP_FAILED)
+            mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
 
         rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);

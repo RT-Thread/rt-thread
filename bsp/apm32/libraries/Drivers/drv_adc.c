@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2022-07-15     Aligagago         add APM32F4 series MCU support
+ * 2022-12-26     luobeihai         add APM32F0 series MCU support
+ * 2023-03-27     luobeihai         add APM32E1/S1 series MCU support
  */
 
 #include <board.h>
@@ -33,7 +34,7 @@ struct apm32_adc
     struct rt_adc_device adc_dev;
 };
 
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
 static struct apm32_adc adc_config[] =
 {
 #ifdef BSP_USING_ADC1
@@ -49,11 +50,11 @@ static struct apm32_adc adc_config[] =
             1
         },
         {
-            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(A, 4),
-            GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
-            GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3),
+            GET_PIN(A, 4), GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7),
+            GET_PIN(B, 0), GET_PIN(B, 1), GET_PIN(C, 0), GET_PIN(C, 1),
+            GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4), GET_PIN(C, 5)
         },
-        RT_NULL
     },
 #endif
 #ifdef BSP_USING_ADC2
@@ -69,11 +70,11 @@ static struct apm32_adc adc_config[] =
             1
         },
         {
-            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(A, 4),
-            GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
-            GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3),
+            GET_PIN(A, 4), GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7),
+            GET_PIN(B, 0), GET_PIN(B, 1), GET_PIN(C, 0), GET_PIN(C, 1),
+            GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4), GET_PIN(C, 5)
         },
-        RT_NULL
     },
 #endif
 #ifdef BSP_USING_ADC3
@@ -89,10 +90,10 @@ static struct apm32_adc adc_config[] =
             1
         },
         {
-            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(F, 6),
-            GET_PIN(F, 7), GET_PIN(F, 8), GET_PIN(F, 9), GET_PIN(F, 10)
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3),
+            GET_PIN(F, 6), GET_PIN(F, 7), GET_PIN(F, 8), GET_PIN(F, 9),
+            GET_PIN(F, 10)
         },
-        RT_NULL
     },
 #endif
 };
@@ -113,11 +114,11 @@ static struct apm32_adc adc_config[] =
             1
         },
         {
-            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(A, 4),
-            GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
-            GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3),
+            GET_PIN(A, 4), GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7),
+            GET_PIN(B, 0), GET_PIN(B, 1), GET_PIN(C, 0), GET_PIN(C, 1),
+            GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4), GET_PIN(C, 5)
         },
-        RT_NULL
     },
 #endif
 #ifdef BSP_USING_ADC2
@@ -134,11 +135,11 @@ static struct apm32_adc adc_config[] =
             1
         },
         {
-            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(A, 4),
-            GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
-            GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3),
+            GET_PIN(A, 4), GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7),
+            GET_PIN(B, 0), GET_PIN(B, 1), GET_PIN(C, 0), GET_PIN(C, 1),
+            GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4), GET_PIN(C, 5)
         },
-        RT_NULL
     },
 #endif
 #ifdef BSP_USING_ADC3
@@ -155,11 +156,11 @@ static struct apm32_adc adc_config[] =
             1
         },
         {
-            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(F, 6),
-            GET_PIN(F, 7), GET_PIN(F, 8), GET_PIN(F, 9), GET_PIN(F, 10), GET_PIN(F, 3),
-            GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3)
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3),
+            GET_PIN(F, 6), GET_PIN(F, 7), GET_PIN(F, 8), GET_PIN(F, 9),
+            GET_PIN(F, 10), GET_PIN(F, 3), GET_PIN(C, 0), GET_PIN(C, 1),
+            GET_PIN(C, 2), GET_PIN(C, 3)
         },
-        RT_NULL
     },
 #endif
 };
@@ -179,12 +180,11 @@ static struct apm32_adc adc_config[] =
             ADC_EXT_TRIG_EDGE_NONE
         },
         {
-            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3), GET_PIN(A, 4),
-            GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7), GET_PIN(B, 0), GET_PIN(B, 1),
-            GET_PIN(C, 0), GET_PIN(C, 1), GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4),
-            GET_PIN(C, 5)
+            GET_PIN(A, 0), GET_PIN(A, 1), GET_PIN(A, 2), GET_PIN(A, 3),
+            GET_PIN(A, 4), GET_PIN(A, 5), GET_PIN(A, 6), GET_PIN(A, 7),
+            GET_PIN(B, 0), GET_PIN(B, 1), GET_PIN(C, 0), GET_PIN(C, 1),
+            GET_PIN(C, 2), GET_PIN(C, 3), GET_PIN(C, 4), GET_PIN(C, 5)
         },
-        RT_NULL
     },
 #endif
 };
@@ -193,7 +193,16 @@ static struct apm32_adc adc_config[] =
 static rt_err_t apm32_adc_channel_check(struct rt_adc_device *device, rt_uint32_t channel)
 {
     struct apm32_adc *adc_cfg = ((struct apm32_adc *)device->parent.user_data);
-#if defined(SOC_SERIES_APM32F1)
+
+    if ((adc_cfg->adc == ADC1) || (adc_cfg->adc == ADC2))
+    {
+        if (channel <= 15)
+        {
+            return RT_EOK;
+        }
+    }
+
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1)
     if (adc_cfg->adc == ADC3)
     {
         if (channel <= 8)
@@ -201,25 +210,20 @@ static rt_err_t apm32_adc_channel_check(struct rt_adc_device *device, rt_uint32_
             return RT_EOK;
         }
     }
-    else
+#endif
+
+#if defined(SOC_SERIES_APM32F4)
+    if (adc_cfg->adc == ADC3)
     {
         if (channel <= 13)
         {
             return RT_EOK;
         }
     }
-#elif defined(SOC_SERIES_APM32F4)
-    if (channel <= 13)
-    {
-        return RT_EOK;
-    }
-#elif defined(SOC_SERIES_APM32F0)
-    if (channel <= 16)
-    {
-        return RT_EOK;
-    }
 #endif
+
     LOG_E("channel %d of %s is not supported.", channel, adc_cfg->name);
+
     return -RT_ERROR;
 }
 
@@ -232,7 +236,7 @@ static rt_err_t apm32_adc_gpio_init(struct rt_adc_device *device, rt_uint32_t ch
     {
         return -RT_ERROR;
     }
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOA << ((adc_cfg->channel_pin[channel] >> 4) & 0xFu));
     hw_gpio_config.mode = GPIO_MODE_ANALOG;
 #elif defined(SOC_SERIES_APM32F4)
@@ -280,7 +284,8 @@ static rt_err_t apm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
     {
         ADC_Disable();
     }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     if (enabled)
     {
         if (adc_cfg->adc == ADC1)
@@ -291,10 +296,12 @@ static rt_err_t apm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
         {
             RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_ADC2);
         }
-        else
+    #ifdef BSP_USING_ADC3
+        else if (adc_cfg->adc == ADC3)
         {
             RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_ADC3);
         }
+    #endif /* BSP_USING_ADC3 */
         if (apm32_adc_gpio_init(device, channel) != RT_EOK)
         {
             return -RT_ERROR;
@@ -308,7 +315,7 @@ static rt_err_t apm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
     {
         ADC_Disable(adc_cfg->adc);
     }
-#endif
+#endif /* SOC_SERIES_APM32F0 */
 
     return RT_EOK;
 }
@@ -338,8 +345,8 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     {
         return -RT_ERROR;
     }
-    
-#if defined(SOC_SERIES_APM32F1)
+
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     ADC_ConfigRegularChannel(adc_cfg->adc, channel, 1, ADC_SAMPLETIME_13CYCLES5);
 
     ADC_StartCalibration(adc_cfg->adc);
@@ -348,47 +355,47 @@ static rt_err_t apm32_adc_get_value(struct rt_adc_device *device, rt_uint32_t ch
     {
         if (++counter > DRV_ADC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
     ADC_EnableSoftwareStartConv(adc_cfg->adc);
-    
+
     while (!ADC_ReadStatusFlag(adc_cfg->adc, ADC_FLAG_EOC))
     {
         if (++counter > DRV_ADC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     *value = ADC_ReadConversionValue(adc_cfg->adc);
 #elif defined(SOC_SERIES_APM32F4)
     ADC_ConfigRegularChannel(adc_cfg->adc, channel, 1, ADC_SAMPLETIME_15CYCLES);
     ADC_SoftwareStartConv(adc_cfg->adc);
-    
+
     while (!ADC_ReadStatusFlag(adc_cfg->adc, ADC_FLAG_EOC))
     {
         if (++counter > DRV_ADC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     *value = ADC_ReadConversionValue(adc_cfg->adc);
 #elif defined(SOC_SERIES_APM32F0)
     ADC_ConfigChannel((uint16_t)(1u << ((channel) & 0xFu)), ADC_SAMPLE_TIME_239_5);
-    
+
     ADC_StartConversion();
-    
+
     while (!ADC_ReadStatusFlag(ADC_FLAG_CC))
     {
         if (++counter > DRV_ADC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     *value = ADC_ReadConversionValue();
 #endif
-    
+
     return RT_EOK;
 }
 

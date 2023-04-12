@@ -358,3 +358,70 @@ void at32_msp_emac_init(void *instance)
     gpio_init(GPIOD, &gpio_init_struct);
 }
 #endif /* BSP_USING_EMAC */
+
+#ifdef BSP_USING_USBD
+void at32_msp_usb_init(void *instance)
+{
+    usb_clk48_s clk_s;
+
+    /* default usb clock source from hick */
+    clk_s = USB_CLK_HICK;
+
+    /* enable usb clock */
+    crm_periph_clock_enable(CRM_USB_PERIPH_CLOCK, TRUE);
+
+    if(clk_s == USB_CLK_HICK)
+    {
+        crm_usb_clock_source_select(CRM_USB_CLOCK_SOURCE_HICK);
+
+        /* enable the acc calibration ready interrupt */
+        crm_periph_clock_enable(CRM_ACC_PERIPH_CLOCK, TRUE);
+
+        /* update the c1\c2\c3 value */
+        acc_write_c1(7980);
+        acc_write_c2(8000);
+        acc_write_c3(8020);
+
+        /* open acc calibration */
+        acc_calibration_mode_enable(ACC_CAL_HICKTRIM, TRUE);
+    }
+    else
+    {
+        switch(system_core_clock)
+        {
+            /* 48MHz */
+            case 48000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_1);
+                break;
+            /* 72MHz */
+            case 72000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_1_5);
+                break;
+            /* 96MHz */
+            case 96000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_2);
+                break;
+            /* 120MHz */
+            case 120000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_2_5);
+                break;
+            /* 144MHz */
+            case 144000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_3);
+                break;
+            /* 168MHz */
+            case 168000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_3_5);
+                break;
+            /* 192MHz */
+            case 192000000:
+                crm_usb_clock_div_set(CRM_USB_DIV_4);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+#endif /* BSP_USING_USBD */
+

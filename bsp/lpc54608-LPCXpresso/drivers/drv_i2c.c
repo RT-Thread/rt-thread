@@ -143,13 +143,13 @@ struct lpc_i2c_bus
     I2C_Type *I2C;
 };
 
-static rt_size_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
+static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus,
                               struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     struct rt_i2c_msg *msg;
     i2c_master_transfer_t xfer = {0};
     rt_uint32_t i;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     struct lpc_i2c_bus *lpc_i2c = (struct lpc_i2c_bus *)bus;
 

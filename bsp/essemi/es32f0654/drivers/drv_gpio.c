@@ -337,7 +337,7 @@ rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     /* pin no. convert to dec no. */
     for (irqindex = 0; irqindex < 16; irqindex++)
@@ -349,7 +349,7 @@ rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     }
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == pin &&
@@ -363,7 +363,7 @@ rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;
@@ -381,12 +381,12 @@ rt_err_t es32f0_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     irqindex = index->pin & 0x00FF;
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == -1)
@@ -419,7 +419,7 @@ rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     if (enabled == PIN_IRQ_ENABLE)
     {
@@ -433,13 +433,13 @@ rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         }
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         level = rt_hw_interrupt_disable();
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         irqmap = &pin_irq_map[irqindex];
         ald_gpio_exti_init(index->gpio, index->pin, &exti_initstruct);
@@ -470,13 +470,13 @@ rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(index->pin);
         if (irqmap == RT_NULL)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         NVIC_DisableIRQ(irqmap->irqno);
     }
     else
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     return RT_EOK;
 }

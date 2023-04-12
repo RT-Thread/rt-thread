@@ -123,7 +123,9 @@ class Win32Spawn:
 
 # generate cconfig.h file
 def GenCconfigFile(env, BuildOptions):
-
+    # The cconfig.h will NOT generate in the lastest RT-Thread code.
+    # When you want to use it, you can uncomment out the following code.
+     
     # if rtconfig.PLATFORM in ['gcc']:
     #     contents = ''
     #     if not os.path.isfile('cconfig.h'):
@@ -223,7 +225,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     utils.ReloadModule(rtconfig) # update environment variables to rtconfig.py
 
-    # some env variables have loaded in SConsctruct Environment() before re-load rtconfig.py;
+    # some env variables have loaded in Environment() of SConstruct before re-load rtconfig.py;
     # after update rtconfig.py's variables, those env variables need to synchronize
     if exec_prefix:
         env['CC'] = rtconfig.CC
@@ -233,6 +235,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LINK'] = rtconfig.LINK
     if exec_path:
         env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+    if GetOption('strict-compiling'):
+        STRICT_FLAGS = ''
+        if rtconfig.PLATFORM in ['gcc']:
+            STRICT_FLAGS += ' -Werror' #-Wextra
+            env.Append(CFLAGS=STRICT_FLAGS, CXXFLAGS=STRICT_FLAGS)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM in ['armcc', 'armclang']:
@@ -310,6 +318,19 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     # auto append '_REENT_SMALL' when using newlib 'nano.specs' option
     if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
+
+    add_rtconfig = GetOption('add_rtconfig')
+    if add_rtconfig:
+        add_rtconfig = add_rtconfig.split(',')
+        if isinstance(add_rtconfig, list):
+            for config in add_rtconfig:
+                if isinstance(config, str):
+                    AddDepend(add_rtconfig)
+                    env.Append(CFLAGS=' -D' + config, CXXFLAGS=' -D' + config, AFLAGS=' -D' + config)
+                else:
+                    print('add_rtconfig arguements are illegal!')
+        else:
+            print('add_rtconfig arguements are illegal!')
 
     if GetOption('genconfig'):
         from genconf import genconfig
@@ -1043,3 +1064,4 @@ def PackageSConscript(package):
     from package import BuildPackage
 
     return BuildPackage(package)
+

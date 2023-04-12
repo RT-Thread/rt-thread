@@ -21,18 +21,18 @@
 int dfs_net_getsocket(int fd)
 {
     int socket;
-    struct dfs_fd *_dfs_fd;
+    struct dfs_file *file;
 
-    _dfs_fd = fd_get(fd);
-    if (_dfs_fd == NULL) return -1;
+    file = fd_get(fd);
+    if (file == NULL) return -1;
 
-    if (_dfs_fd->vnode->type != FT_SOCKET) socket = -1;
-    else socket = (int)(size_t)_dfs_fd->vnode->data;
+    if (file->vnode->type != FT_SOCKET) socket = -1;
+    else socket = (int)(size_t)file->vnode->data;
 
     return socket;
 }
 
-static int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
+static int dfs_net_ioctl(struct dfs_file* file, int cmd, void* args)
 {
     int ret;
     int socket = (int)(size_t)file->vnode->data;
@@ -46,7 +46,7 @@ static int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
     return ret;
 }
 
-static int dfs_net_read(struct dfs_fd* file, void *buf, size_t count)
+static int dfs_net_read(struct dfs_file* file, void *buf, size_t count)
 {
     int ret;
     int socket = (int)(size_t)file->vnode->data;
@@ -60,11 +60,11 @@ static int dfs_net_read(struct dfs_fd* file, void *buf, size_t count)
     return ret;
 }
 
-static int dfs_net_write(struct dfs_fd *file, const void *buf, size_t count)
+static int dfs_net_write(struct dfs_file *file, const void *buf, size_t count)
 {
     int ret;
     int socket = (int)(size_t)file->vnode->data;
-    
+
     ret = sal_sendto(socket, buf, count, 0, NULL, 0);
     if (ret < 0)
     {
@@ -73,7 +73,7 @@ static int dfs_net_write(struct dfs_fd *file, const void *buf, size_t count)
     }
     return ret;
 }
-static int dfs_net_close(struct dfs_fd* file)
+static int dfs_net_close(struct dfs_file* file)
 {
     int socket;
     int ret = 0;
@@ -86,9 +86,9 @@ static int dfs_net_close(struct dfs_fd* file)
     return ret;
 }
 
-static int dfs_net_poll(struct dfs_fd *file, struct rt_pollreq *req)
+static int dfs_net_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
-    extern int sal_poll(struct dfs_fd *file, struct rt_pollreq *req);
+    extern int sal_poll(struct dfs_file *file, struct rt_pollreq *req);
 
     return sal_poll(file, req);
 }

@@ -1,0 +1,40 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('ports/spi_flash_init.c')
+
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('ports/sdcard_port.c')
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += Glob('ports/drv_sdram.c')
+
+path =  [cwd]
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/APM32E10x_Library/Device/Geehy/APM32E10x/Source/arm/startup_apm32e10x_hd.s']
+
+if rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/APM32E10x_Library/Device/Geehy/APM32E10x/Source/iar/startup_apm32e10x_hd.s']
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/APM32E10x_Library/Device/Geehy/APM32E10x/Source/gcc/startup_apm32e10x_hd.S']
+
+# You can select chips from the list above
+CPPDEFINES = ['APM32E10X_HD']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

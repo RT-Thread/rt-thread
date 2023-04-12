@@ -102,7 +102,10 @@ continue:
     isb
 
 #ifdef RT_USING_SMART
-    ldr r5, =PV_OFFSET
+    /* load r5 with PV_OFFSET */
+    ldr r7, =_reset
+    adr r5, _reset
+    sub r5, r5, r7
 
     mov r7, #0x100000
     sub r7, #1
@@ -144,7 +147,14 @@ after_enable_mmu:
 
     /* disable the data alignment check */
     mrc p15, 0, r1, c1, c0, 0
-    bic r1, #(1<<1)
+    bic r1, #(1<<1)             /* Disable Alignment fault checking */
+#ifndef RT_USING_SMART
+    bic r1, #(1<<0)             /* Disable MMU */
+    bic r1, #(1<<2)             /* Disable data cache */
+    bic r1, #(1<<11)            /* Disable program flow prediction */
+    bic r1, #(1<<12)            /* Disable instruction cache */
+    bic r1, #(3<<19)            /* bit[20:19] must be zero */
+#endif /* RT_USING_SMART */
     mcr p15, 0, r1, c1, c0, 0
 
     /* enable I cache + branch prediction */
@@ -166,6 +176,9 @@ bss_loop:
     strlo r0,[r1],#4            /* clear 4 bytes                    */
     blo bss_loop                /* loop until done                  */
 
+    mov r0, r5
+    bl rt_kmem_pvoff_set
+
 #ifdef RT_USING_SMP
     mrc p15, 0, r1, c1, c0, 1
     mov r0, #(1<<6)
@@ -173,7 +186,10 @@ bss_loop:
     mcr p15, 0, r1, c1, c0, 1   /* enable smp */
 #endif
 
-    /* initialize the mmu table and enable mmu */
+    /**
+     * void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
+     * initialize the mmu table and enable mmu
+     */
     ldr r0, =platform_mem_desc
     ldr r1, =platform_mem_desc_size
     ldr r1, [r1]
@@ -595,16 +611,19 @@ vector_resv:
     bl      rt_hw_trap_resv
     b       .
 
-#ifdef RT_USING_SMP
 .global rt_hw_clz
 rt_hw_clz:
     clz r0, r0
     bx lr
 
+#ifdef RT_USING_SMP
+
 .global rt_secondary_cpu_entry
 rt_secondary_cpu_entry:
 #ifdef RT_USING_SMART
-    ldr     r5, =PV_OFFSET
+    ldr     r0, =_reset
+    adr     r5, _reset
+    sub     r5, r5, r0
 
     ldr     lr, =after_enable_mmu_n
     ldr     r0, =init_mtbl

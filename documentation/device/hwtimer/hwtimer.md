@@ -354,7 +354,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if (hw_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", HWTIMER_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Open the device in read-write mode */
@@ -384,7 +384,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
     {
         rt_kprintf("set timeout value failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* delay 3500ms */

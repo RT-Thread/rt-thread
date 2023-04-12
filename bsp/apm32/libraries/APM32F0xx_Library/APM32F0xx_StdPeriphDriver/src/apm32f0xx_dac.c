@@ -95,13 +95,20 @@ void DAC_Reset(void)
  */
 void DAC_Config(uint32_t channel, DAC_Config_T* dacConfig)
 {
-    uint32_t tmpcfg;
+    uint32_t tmp1 = 0, tmp2 = 0;
 
-    tmpcfg = ((uint32_t)dacConfig->trigger | \
+    tmp1 = DAC->CTRL;
+
+    tmp1 &= ~(((uint32_t)0x00000FFE) << channel);
+
+    tmp2 = ((uint32_t)dacConfig->trigger | \
               (uint32_t)dacConfig->waveGeneration | \
               (uint32_t)dacConfig->maskAmplitudeSelect | \
               (uint32_t)dacConfig->outputBuff);
-    DAC->CTRL = (tmpcfg << channel);
+
+    tmp1 |= tmp2 << channel;
+
+    DAC->CTRL = tmp1;
 }
 
 /*!

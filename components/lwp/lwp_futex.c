@@ -174,7 +174,9 @@ void futex_wake(struct rt_futex *futex, int number)
     rt_schedule();
 }
 
-int sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
+#include <syscall_generic.h>
+
+sysret_t sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
               int *uaddr2, int val3)
 {
     struct rt_lwp *lwp = RT_NULL;

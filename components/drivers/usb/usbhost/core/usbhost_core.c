@@ -164,7 +164,7 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
     device->cfg_desc = (ucfg_desc_t)rt_malloc(cfg_desc.wTotalLength);
     if(device->cfg_desc == RT_NULL)
     {
-        return RT_ENOMEM;
+        return -RT_ENOMEM;
     }
     rt_memset(device->cfg_desc, 0, cfg_desc.wTotalLength);
 
@@ -205,14 +205,14 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
                 if(rt_usb_hcd_alloc_pipe(device->hcd, &pipe, device, ep_desc) != RT_EOK)
                 {
                     rt_kprintf("alloc pipe failed\n");
-                    return RT_ERROR;
+                    return -RT_ERROR;
                 }
                 rt_usb_instance_add_pipe(device,pipe);
             }
             else
             {
                 rt_kprintf("get endpoint desc failed\n");
-                return RT_ERROR;
+                return -RT_ERROR;
             }
         }
         /* find driver by class code found in interface descriptor */
@@ -225,7 +225,7 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
             device->intf[i] = (struct uhintf*)rt_malloc(sizeof(struct uhintf));
             if(device->intf[i] == RT_NULL)
             {
-                return RT_ENOMEM;
+                return -RT_ENOMEM;
             }
             device->intf[i]->drv = drv;
             device->intf[i]->device = device;
@@ -332,7 +332,7 @@ rt_err_t rt_usbh_get_descriptor(uinst_t device, rt_uint8_t type, void* buffer,
             }
         }
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /**
@@ -360,7 +360,7 @@ rt_err_t rt_usbh_set_address(uinst_t device)
 
     if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) != 8)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, RT_NULL, 0, timeout) == 0)
     {
@@ -395,11 +395,11 @@ rt_err_t rt_usbh_set_configure(uinst_t device, int config)
 
     if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) != 8)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if(rt_usb_hcd_pipe_xfer(device->hcd, device->pipe_ep0_in, RT_NULL, 0, timeout) != 0)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }
@@ -429,7 +429,7 @@ rt_err_t rt_usbh_set_interface(uinst_t device, int intf)
 
     if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) != 8)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -460,7 +460,7 @@ rt_err_t rt_usbh_clear_feature(uinst_t device, int endpoint, int feature)
 
     if(rt_usb_hcd_setup_xfer(device->hcd, device->pipe_ep0_out, &setup, timeout) != 8)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

@@ -207,7 +207,7 @@ static void rt_defunct_execute(void)
             break;
         }
 #ifdef RT_USING_MODULE
-        module = (struct rt_dlmodule*)thread->module_id;
+        module = (struct rt_dlmodule*)thread->parent.module_id;
         if (module)
         {
             dlmodule_destroy(module);
@@ -292,7 +292,11 @@ static void rt_thread_system_entry(void *parameter)
 {
     while (1)
     {
-        rt_sem_take(&system_sem, RT_WAITING_FOREVER);
+        int ret= rt_sem_take(&system_sem, RT_WAITING_FOREVER);
+        if (ret != RT_EOK)
+        {
+            RT_ASSERT(0);
+        }
         rt_defunct_execute();
     }
 }

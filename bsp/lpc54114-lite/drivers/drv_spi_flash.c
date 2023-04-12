@@ -26,7 +26,7 @@ int rt_hw_flash_init(void)
 
     if(rt_sfud_flash_probe("flash0", "spi20") == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

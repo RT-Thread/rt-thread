@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2022-07-15     Aligagago         add APM32F4 series MCU support
+ * 2022-12-26     luobeihai         add APM32F0 series MCU support
+ * 2023-03-28     luobeihai         add APM32E1/S1 series MCU support
  */
 
 #include "drv_spi.h"
@@ -46,7 +47,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     struct rt_spi_device *spi_device;
     struct apm32_spi_cs *cs_pin;
     GPIO_Config_T GPIO_InitStructure;
-    
+
     /* initialize the cs pin && select the slave */
 #if defined(SOC_SERIES_APM32F0)
     GPIO_ConfigStructInit(&GPIO_InitStructure);
@@ -57,7 +58,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     GPIO_InitStructure.pupd = GPIO_PUPD_NO;
     GPIO_Config(cs_gpiox, &GPIO_InitStructure);
     GPIO_WriteBitValue(cs_gpiox, cs_gpio_pin, Bit_SET);
-#elif defined(SOC_SERIES_APM32F1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     GPIO_ConfigStructInit(&GPIO_InitStructure);
     GPIO_InitStructure.pin = cs_gpio_pin;
     GPIO_InitStructure.mode = GPIO_MODE_OUT_PP;
@@ -100,18 +101,18 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-    
+
     SPI_Config_T hw_spi_config;
-    
+
     struct rt_spi_bus * apm32_spi_bus = (struct rt_spi_bus *)device->bus;
     struct apm32_spi *spi_device = (struct apm32_spi *)apm32_spi_bus->parent.user_data;
     SPI_T *spi = spi_device->config->spi_x;
-    
+
     uint32_t hw_spi_apb_clock;
 #if (DBG_LVL == DBG_LOG)
     uint32_t hw_spi_sys_clock = RCM_ReadSYSCLKFreq();
 #endif
-    
+
     /* apm32 spi gpio init and enable clock */
     extern void apm32_msp_spi_init(void *Instance);
     apm32_msp_spi_init(spi);
@@ -124,11 +125,12 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
 #if defined(SOC_SERIES_APM32F0)
     hw_spi_config.slaveSelect = (cfg->mode & RT_SPI_NO_CS) ? SPI_SSC_DISABLE : SPI_SSC_ENABLE;
     hw_spi_config.firstBit = (cfg->mode & RT_SPI_MSB) ? SPI_FIRST_BIT_MSB : SPI_FIRST_BIT_LSB;
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     hw_spi_config.nss = (cfg->mode & RT_SPI_NO_CS) ? SPI_NSS_HARD : SPI_NSS_SOFT;
     hw_spi_config.firstBit = (cfg->mode & RT_SPI_MSB) ? SPI_FIRSTBIT_MSB : SPI_FIRSTBIT_LSB;
 #endif
-    
+
     if (cfg->data_width == 8)
     {
         hw_spi_config.length = SPI_DATA_LENGTH_8B;
@@ -139,12 +141,13 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
 #if defined(SOC_SERIES_APM32F0)
     hw_spi_apb_clock = RCM_ReadPCLKFreq();
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     if (spi == SPI1)
     {
         RCM_ReadPCLKFreq(NULL, &hw_spi_apb_clock);
@@ -191,28 +194,28 @@ static rt_err_t apm32_spi_configure(struct rt_spi_device *device, struct rt_spi_
 
     LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
           hw_spi_sys_clock, hw_spi_apb_clock, cfg->max_hz, hw_spi_config.baudrateDiv);
-    
+
 #if defined(SOC_SERIES_APM32F0)
     SPI_DisableCRC(spi);
     SPI_EnableSSoutput(spi);
     SPI_ConfigFIFOThreshold(spi, SPI_RXFIFO_QUARTER);
 #endif
-    
+
     SPI_Config(spi, &hw_spi_config);
     SPI_Enable(spi);
 
     return RT_EOK;
 }
 
-static rt_uint32_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
 
     struct rt_spi_configuration *config = &device->config;
-    
+
     struct apm32_spi_cs *cs = device->parent.user_data;
-    
+
     struct rt_spi_bus * apm32_spi_bus = (struct rt_spi_bus *)device->bus;
     struct apm32_spi *spi_device = (struct apm32_spi *)apm32_spi_bus->parent.user_data;
     SPI_T *spi = spi_device->config->spi_x;
@@ -222,7 +225,8 @@ static rt_uint32_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
     {
 #if defined(SOC_SERIES_APM32F0)
         GPIO_WriteBitValue(cs->GPIOx, cs->GPIO_Pin, (GPIO_BSRET_T)RESET);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         GPIO_WriteBitValue(cs->GPIOx, cs->GPIO_Pin, RESET);
 #endif
         LOG_D("spi take cs\n");
@@ -249,11 +253,11 @@ static rt_uint32_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
             /* Wait until the transmit buffer is empty */
             while (SPI_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
             SPI_TxData8(spi, data);
-    
+
             /* Wait until a data is received */
             while (SPI_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
             data = SPI_RxData8(spi);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32F4)
             /* Wait until the transmit buffer is empty */
             while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
             SPI_I2S_TxData(spi, data);
@@ -261,8 +265,16 @@ static rt_uint32_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
             /* Wait until a data is received */
             while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
             data = SPI_I2S_RxData(spi);
+#elif defined(SOC_SERIES_APM32S1)
+            /* Wait until the transmit buffer is empty */
+            while (SPI_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
+            SPI_TxData(spi, data);
+
+            /* Wait until a data is received */
+            while (SPI_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
+            data = SPI_RxData(spi);
 #endif
-            
+
             if (recv_ptr != RT_NULL)
             {
                 *recv_ptr++ = data;
@@ -284,16 +296,16 @@ static rt_uint32_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
             {
                 data = *send_ptr++;
             }
-            
+
 #if defined(SOC_SERIES_APM32F0)
             /* Wait until the transmit buffer is empty */
             while (SPI_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
             SPI_I2S_TxData16(spi, data);
-    
+
             /* Wait until a data is received */
             while (SPI_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
             data = SPI_I2S_RxData16(spi);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32F4)
             /* Wait until the transmit buffer is empty */
             while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
             /* Send the byte */
@@ -303,8 +315,18 @@ static rt_uint32_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
             while (SPI_I2S_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
             /* Get the received data */
             data = SPI_I2S_RxData(spi);
+#elif defined(SOC_SERIES_APM32S1)
+            /* Wait until the transmit buffer is empty */
+            while (SPI_ReadStatusFlag(spi, SPI_FLAG_TXBE) == RESET);
+            /* Send the byte */
+            SPI_TxData(spi, data);
+
+            /* Wait until a data is received */
+            while (SPI_ReadStatusFlag(spi, SPI_FLAG_RXBNE) == RESET);
+            /* Get the received data */
+            data = SPI_RxData(spi);
 #endif
-            
+
             if (recv_ptr != RT_NULL)
             {
                 *recv_ptr++ = data;
@@ -317,7 +339,8 @@ static rt_uint32_t apm32_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
     {
 #if defined(SOC_SERIES_APM32F0)
         GPIO_WriteBitValue(cs->GPIOx, cs->GPIO_Pin, (GPIO_BSRET_T)SET);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         GPIO_WriteBitValue(cs->GPIOx, cs->GPIO_Pin, SET);
 #endif
         LOG_D("spi release cs\n");
@@ -335,7 +358,7 @@ static const struct rt_spi_ops apm32_spi_ops =
 static int rt_hw_spi_init(void)
 {
     rt_err_t result;
-    
+
     for (int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].config = &spi_config[i];

@@ -213,7 +213,7 @@ rt_weak rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_
         /* is not in interrupt context */
         if (rt_interrupt_get_nest() == 0)
         {
-            log_len += ulog_strcpy(log_len, log_buf + log_len, rt_thread_self()->name);
+            log_len += ulog_strcpy(log_len, log_buf + log_len, rt_thread_self()->parent.name);
         }
         else
         {

@@ -162,14 +162,14 @@ static rt_err_t nu_reset_port(rt_uint8_t port)
     if (port > NU_MAX_USBH_PORT)
     {
         RT_DEBUG_LOG(RT_DEBUG_USB, ("%s ERROR: port index over NU_MAX_USBH_PORT\n", __func__));
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     psPortCtrl = &s_sUSBHDev.asPortCtrl[port - 1];
     if (psPortCtrl->sRHPortDev.pUDev == NULL)
     {
         RT_DEBUG_LOG(RT_DEBUG_USB, ("%s ERROR: udev not found\n", __func__));
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     usbh_reset_port(psPortCtrl->sRHPortDev.pUDev);
@@ -345,7 +345,7 @@ static rt_err_t nu_close_pipe(upipe_t pipe)
     psPortCtrl = GetRHPortControlFromPipe(pipe);
     if (psPortCtrl == RT_NULL)
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     psPortDev = GetPortDevFromPipe(pipe);

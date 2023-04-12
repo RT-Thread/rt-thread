@@ -30,6 +30,8 @@ config RT_USING_SMART
     select RT_USING_ZERO
     select RT_USING_RANDOM
     select RT_USING_RTC
+    select RT_USING_POSIX_TIMER
+    select RT_USING_POSIX_CLOCK
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
@@ -52,7 +54,7 @@ config RT_CPUS_NR
 
 config RT_ALIGN_SIZE
     int "Alignment size for CPU architecture data access"
-    default 4
+    default 8
     help
         Alignment size for CPU architecture data access
 
@@ -473,8 +475,12 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x50000
+    default 0x50001
     help
         RT-Thread version number
+
+config RT_USING_STDC_ATOMIC
+    bool "Use atomic implemented in stdatomic.h"
+    default n
 
 endmenu

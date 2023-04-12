@@ -70,7 +70,7 @@ INIT_APP_EXPORT(stm32_sdcard_mount);
 static int rt_hw_spi2_tfcard(void)
 {
     __HAL_RCC_GPIOC_CLK_ENABLE();
-    rt_hw_spi_device_attach("spi2", "spi20", GPIOD, GPIO_PIN_2);
+    rt_hw_spi_device_attach("spi2", "spi20", GET_PIN(D, 2));
     return msd_init("sd0", "spi20");
 }
 INIT_DEVICE_EXPORT(rt_hw_spi2_tfcard);

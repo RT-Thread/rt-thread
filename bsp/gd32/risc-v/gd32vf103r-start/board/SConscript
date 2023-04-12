@@ -9,6 +9,7 @@ cwd = GetCurrentDir()
 # add general drivers
 src = Split('''
 board.c
+trap_gcc.S
 ''')
 
 path =  [cwd]

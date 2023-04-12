@@ -152,7 +152,7 @@ static rt_err_t phy_write_reg(uint8_t phy_addr, uint8_t reg_addr, uint16_t reg_v
         if((rt_tick_get() - tickstart) > ETH_TIME_OUT)
         {
             LOG_E("PHY write reg %02x date %04x timeout!", reg_addr, reg_value);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -184,7 +184,7 @@ static uint16_t phy_read_reg(uint8_t phy_addr, uint8_t reg_addr)
         if((rt_tick_get() - tickstart) > ETH_TIME_OUT)
         {
             LOG_E("PHY read reg %02x timeout!", reg_addr);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -350,7 +350,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
         if(((HAL_GetTick() - tickstart ) > ETH_TIME_OUT))
         {
             LOG_E("ETH software reset timeout!");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -468,7 +468,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
         if((rt_tick_get() - tickstart) > ETH_TIME_OUT)
         {
             LOG_E("PHY software reset timeout!");
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
         else
         {
@@ -494,14 +494,14 @@ static rt_err_t rt_stm32_eth_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_stm32_eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_stm32_eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     LOG_D("emac read");
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t rt_stm32_eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_stm32_eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     LOG_D("emac write");
     rt_set_errno(-RT_ENOSYS);

@@ -56,13 +56,24 @@ static void on_shm_varea_close(struct rt_varea *varea)
     shm->ref -= 1;
 }
 
-static void on_shm_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
+static void on_shm_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     struct lwp_shm_struct *shm;
+    int err;
     shm = rt_container_of(varea->mem_obj, struct lwp_shm_struct, mem_obj);
-    msg->response.status = MM_FAULT_STATUS_OK;
-    msg->response.vaddr = (void *)shm->addr;
-    msg->response.size = shm->size;
+
+    /* map all share page frames to user space in a time */
+    void *page = (void *)shm->addr;
+    void *pg_paddr = page + PV_OFFSET;
+    err = rt_varea_map_range(varea, varea->start, pg_paddr, shm->size);
+
+    if (err == RT_EOK)
+    {
+        msg->response.status = MM_FAULT_STATUS_OK_MAPPED;
+        msg->response.size = shm->size;
+        msg->response.vaddr = page;
+    }
+
     return ;
 }
 
@@ -101,7 +112,7 @@ static int _lwp_shmget(size_t key, size_t size, int create)
     int id = -1;
     struct lwp_avl_struct *node_key = 0;
     struct lwp_avl_struct *node_pa = 0;
-    void *page_addr = 0, *page_addr_p = RT_NULL;
+    void *page_addr = 0;
     uint32_t bit = 0;
 
     /* try to locate the item with the key in the binary tree */
@@ -134,11 +145,10 @@ static int _lwp_shmget(size_t key, size_t size, int create)
         {
             goto err;
         }
-        page_addr_p = (void *)((char *)page_addr + PV_OFFSET);    /* physical address */
 
         /* initialize the shared memory structure */
         p = _shm_ary + id;
-        p->addr = (size_t)page_addr_p;
+        p->addr = (size_t)page_addr;
         p->size = (1UL << (bit + ARCH_PAGE_SHIFT));
         p->ref = 0;
         p->key = key;
@@ -236,7 +246,7 @@ static int _lwp_shmrm(int id)
         return 0;
     }
     bit = rt_page_bits(p->size);
-    rt_pages_free((void *)((char *)p->addr - PV_OFFSET), bit);
+    rt_pages_free((void *)p->addr, bit);
     lwp_avl_remove(node_key, &shm_tree_key);
     node_pa = node_key + 1;
     lwp_avl_remove(node_pa, &shm_tree_pa);
@@ -262,7 +272,7 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     struct rt_lwp *lwp  = RT_NULL;
     struct lwp_avl_struct *node_key = RT_NULL;
     struct lwp_shm_struct *p = RT_NULL;
-    void *va = RT_NULL;
+    void *va = shm_vaddr;
 
     /* The id is used to locate the node_key in the binary tree, and then get the
      * shared-memory structure linked to the node_key. We don't use the id to refer
@@ -282,16 +292,12 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     {
         return RT_NULL;
     }
-    if (shm_vaddr == 0)
-        va = ARCH_MAP_FAILED;
-    else
-        va = shm_vaddr;
 
     err = rt_aspace_map(lwp->aspace, &va, p->size, MMU_MAP_U_RWCB, MMF_PREFETCH,
                         &p->mem_obj, 0);
     if (err != RT_EOK)
     {
-        va = 0;
+        va = RT_NULL;
     }
     return va;
 }
@@ -388,7 +394,7 @@ int _lwp_shmdt(void *shm_vaddr)
         return -1;
     }
 
-    ret = rt_aspace_unmap(lwp->aspace, shm_vaddr, 1);
+    ret = rt_aspace_unmap(lwp->aspace, shm_vaddr);
     if (ret != RT_EOK)
     {
         ret = -1;

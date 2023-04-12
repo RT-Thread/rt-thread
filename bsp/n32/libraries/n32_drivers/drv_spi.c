@@ -41,12 +41,12 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
 #if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     if (spi_periph != SPI1 && spi_periph != SPI2 && spi_periph != SPI3)
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
     if (spi_periph != SPI1 && spi_periph != SPI2)
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 #endif
 
@@ -60,7 +60,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -30,10 +30,10 @@ struct pin_info
 };
 
 /*
-*pin: assign number, start 0
-*group: such GPIOA, use 'A'
-*gpio_pin: such GPIO_PIN_0, use '0'
-*/
+ *pin: assign number, start 0
+ *group: such GPIOA, use 'A'
+ *gpio_pin: such GPIO_PIN_0, use '0'
+ */
 #define ASSIGN_PIN(pin, group, gpio_pin)                                                            \
     {                                                                                               \
         pin, GPIO_Pin_##gpio_pin, GPIO_PortSourceGPIO##group, GPIO_PinSource##gpio_pin, GPIO##group \
@@ -102,37 +102,37 @@ static const struct pin_info pin_info_list[] = {
     ASSIGN_PIN(48, D, 0),
     ASSIGN_PIN(49, D, 1),
     ASSIGN_PIN(50, D, 2),
-        ASSIGN_PIN(51, D, 3),
-        ASSIGN_PIN(52, D, 4),
-        ASSIGN_PIN(53, D, 5),
-        ASSIGN_PIN(54, D, 6),
-        ASSIGN_PIN(55, D, 7),
-        ASSIGN_PIN(56, D, 8),
-        ASSIGN_PIN(57, D, 9),
-        ASSIGN_PIN(58, D, 10),
-        ASSIGN_PIN(59, D, 11),
-        ASSIGN_PIN(60, D, 12),
-        ASSIGN_PIN(61, D, 13),
-        ASSIGN_PIN(62, D, 14),
-        ASSIGN_PIN(63, D, 15),
+    ASSIGN_PIN(51, D, 3),
+    ASSIGN_PIN(52, D, 4),
+    ASSIGN_PIN(53, D, 5),
+    ASSIGN_PIN(54, D, 6),
+    ASSIGN_PIN(55, D, 7),
+    ASSIGN_PIN(56, D, 8),
+    ASSIGN_PIN(57, D, 9),
+    ASSIGN_PIN(58, D, 10),
+    ASSIGN_PIN(59, D, 11),
+    ASSIGN_PIN(60, D, 12),
+    ASSIGN_PIN(61, D, 13),
+    ASSIGN_PIN(62, D, 14),
+    ASSIGN_PIN(63, D, 15),
 #endif
 #if defined(GPIOE)
     ASSIGN_PIN(64, E, 0),
     ASSIGN_PIN(65, E, 1),
     ASSIGN_PIN(66, E, 2),
-        ASSIGN_PIN(67, E, 3),
-        ASSIGN_PIN(68, E, 4),
-        ASSIGN_PIN(69, E, 5),
-        ASSIGN_PIN(70, E, 6),
-        ASSIGN_PIN(71, E, 7),
-        ASSIGN_PIN(72, E, 8),
-        ASSIGN_PIN(73, E, 9),
-        ASSIGN_PIN(74, E, 10),
-        ASSIGN_PIN(75, E, 11),
-        ASSIGN_PIN(76, E, 12),
-        ASSIGN_PIN(77, E, 13),
-        ASSIGN_PIN(78, E, 14),
-        ASSIGN_PIN(79, E, 15),
+    ASSIGN_PIN(67, E, 3),
+    ASSIGN_PIN(68, E, 4),
+    ASSIGN_PIN(69, E, 5),
+    ASSIGN_PIN(70, E, 6),
+    ASSIGN_PIN(71, E, 7),
+    ASSIGN_PIN(72, E, 8),
+    ASSIGN_PIN(73, E, 9),
+    ASSIGN_PIN(74, E, 10),
+    ASSIGN_PIN(75, E, 11),
+    ASSIGN_PIN(76, E, 12),
+    ASSIGN_PIN(77, E, 13),
+    ASSIGN_PIN(78, E, 14),
+    ASSIGN_PIN(79, E, 15),
 #endif
 };
 
@@ -167,8 +167,8 @@ static rt_base_t pin_info_list_find_pin(rt_uint16_t portsource, rt_uint16_t pins
 }
 
 /*
-*use: 0 using the exti line, -1 do not using
-*/
+ *use: 0 using the exti line, -1 do not using
+ */
 struct exti_line_irq
 {
     rt_uint16_t nvic_priority;
@@ -249,7 +249,7 @@ static struct exti_line_irq *exti_line_irq_list_find(rt_int16_t pin)
 
 static rt_err_t exti_line_irq_list_bind(struct rt_pin_irq_hdr *irq_hdr)
 {
-    rt_err_t ret = RT_EFULL;
+    rt_err_t ret = -RT_EFULL;
     rt_base_t level;
     struct exti_line_irq *item;
     int index;
@@ -280,7 +280,7 @@ static rt_err_t exti_line_irq_list_bind(struct rt_pin_irq_hdr *irq_hdr)
 
 static rt_err_t exti_line_irq_list_unbind(rt_int16_t pin)
 {
-    rt_err_t ret = RT_EEMPTY;
+    rt_err_t ret = -RT_EEMPTY;
     rt_base_t level;
     struct exti_line_irq *item;
 
@@ -300,7 +300,7 @@ static rt_err_t exti_line_irq_list_unbind(rt_int16_t pin)
     return ret;
 }
 
-void ch32f2_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void ch32f2_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_info *item;
     GPIO_InitTypeDef gpio_initstruct;
@@ -340,7 +340,7 @@ void ch32f2_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_Init(item->gpio, &gpio_initstruct);
 }
 
-void ch32f2_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void ch32f2_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_info *item;
 
@@ -354,7 +354,7 @@ void ch32f2_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     GPIO_WriteBit(item->gpio, item->gpio_pin, (BitAction)value);
 }
 
-int ch32f2_pin_read(rt_device_t dev, rt_base_t pin)
+rt_int8_t ch32f2_pin_read(rt_device_t dev, rt_base_t pin)
 {
     const struct pin_info *item;
 
@@ -368,7 +368,7 @@ int ch32f2_pin_read(rt_device_t dev, rt_base_t pin)
     return GPIO_ReadInputDataBit(item->gpio, item->gpio_pin);
 }
 
-rt_err_t ch32f2_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args),
+rt_err_t ch32f2_pin_attach_irq(struct rt_device *device, rt_base_t pin, rt_uint8_t mode, void (*hdr)(void *args),
                                void *args)
 {
     struct rt_pin_irq_hdr bind_item;
@@ -381,12 +381,12 @@ rt_err_t ch32f2_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint
     return exti_line_irq_list_bind(&bind_item);
 }
 
-rt_err_t ch32f2_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t ch32f2_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     return exti_line_irq_list_unbind(pin);
 }
 
-rt_err_t ch32f2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t ch32f2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     struct exti_line_irq *find;
     const struct pin_info *item;
@@ -398,12 +398,12 @@ rt_err_t ch32f2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint3
     find = exti_line_irq_list_find(pin);
 
     if (find == RT_NULL)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     item = pin_info_list_find(pin);
 
     if (item == RT_NULL)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (enabled == PIN_IRQ_ENABLE)
     {

@@ -64,7 +64,7 @@ static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 }
 
 /* fops for serial */
-static int serial_fops_open(struct dfs_fd *fd)
+static int serial_fops_open(struct dfs_file *fd)
 {
     rt_err_t ret = 0;
     rt_uint16_t flags = 0;
@@ -100,7 +100,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     return ret;
 }
 
-static int serial_fops_close(struct dfs_fd *fd)
+static int serial_fops_close(struct dfs_file *fd)
 {
     rt_device_t device;
 
@@ -112,7 +112,7 @@ static int serial_fops_close(struct dfs_fd *fd)
     return 0;
 }
 
-static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
+static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     rt_device_t device;
     int flags = (int)(rt_base_t)args;
@@ -135,7 +135,7 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     return rt_device_control(device, cmd, args);
 }
 
-static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
+static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
@@ -169,7 +169,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     return size;
 }
 
-static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
+static int serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     rt_device_t device;
 
@@ -177,7 +177,7 @@ static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     return rt_device_write(device, -1, buf, count);
 }
 
-static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+static int serial_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int mask = 0;
     int flags = 0;
@@ -381,7 +381,7 @@ static void _serial_check_buffer_size(void)
 }
 
 #if defined(RT_USING_POSIX_STDIO) || defined(RT_SERIAL_USING_DMA)
-static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
+static rt_ssize_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
 {
     struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
 
@@ -413,7 +413,7 @@ static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
  *
  * @return length
  */
-static rt_size_t rt_dma_calc_recved_len(struct rt_serial_device *serial)
+static rt_ssize_t rt_dma_calc_recved_len(struct rt_serial_device *serial)
 {
     return _serial_fifo_calc_recved_len(serial);
 }
@@ -850,7 +850,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_serial_read(struct rt_device *dev,
+static rt_ssize_t rt_serial_read(struct rt_device *dev,
                                 rt_off_t          pos,
                                 void             *buffer,
                                 rt_size_t         size)
@@ -876,7 +876,7 @@ static rt_size_t rt_serial_read(struct rt_device *dev,
     return _serial_poll_rx(serial, (rt_uint8_t *)buffer, size);
 }
 
-static rt_size_t rt_serial_write(struct rt_device *dev,
+static rt_ssize_t rt_serial_write(struct rt_device *dev,
                                  rt_off_t          pos,
                                  const void       *buffer,
                                  rt_size_t         size)
@@ -922,6 +922,7 @@ static const struct speed_baudrate_item _tbl[] =
     {B115200, BAUD_RATE_115200},
     {B230400, BAUD_RATE_230400},
     {B460800, BAUD_RATE_460800},
+    {B500000, BAUD_RATE_500000},
     {B921600, BAUD_RATE_921600},
     {B2000000, BAUD_RATE_2000000},
     {B3000000, BAUD_RATE_3000000},
@@ -1027,7 +1028,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 if (pconfig->bufsz != serial->config.bufsz && serial->parent.ref_count)
                 {
                     /*can not change buffer size*/
-                    return RT_EBUSY;
+                    return -RT_EBUSY;
                 }
                 /* set serial configure */
                 serial->config = *pconfig;

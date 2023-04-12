@@ -87,14 +87,14 @@ static int print_io_config()
 {
     int i;
     rt_kprintf("IO Configuration Table\n");
-    rt_kprintf("┌───────┬────────────────────────┐\n");
-    rt_kprintf("│Pin    │Function                │\n");
-    rt_kprintf("├───────┼────────────────────────┤\n");
+    rt_kprintf("+-------+------------------------+\n");
+    rt_kprintf("|Pin    |Function                |\n");
+    rt_kprintf("+-------+------------------------+\n");
     for(i = 0; i < sizeof io_config / sizeof io_config[0]; i++)
     {
-        rt_kprintf("│%-2d     │%-24.24s│\n", io_config[i].io_num, io_config[i].func_name);
+        rt_kprintf("|%-2d     |%-24.24s|\n", io_config[i].io_num, io_config[i].func_name);
     }
-    rt_kprintf("└───────┴────────────────────────┘\n");
+    rt_kprintf("+-------+------------------------+\n");
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(print_io_config, io, print io config);

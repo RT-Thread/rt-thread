@@ -13,7 +13,7 @@
 #define SPINOR_INFO(fmt, arg...) hal_log_info(SPINOR_FMT(fmt), ##arg)
 
 #ifndef BIT
-#define BIT(x) (1 << x)
+#define BIT(x) (1UL << (x))
 #endif
 
 #ifndef MIN

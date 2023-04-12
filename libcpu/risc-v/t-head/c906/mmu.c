@@ -6,12 +6,16 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-01-30     lizhirui     first version
+ * 2022-12-13     WangXiaoyao  Port to new mm
  */
 
-#include "rtconfig.h"
 #include <rtthread.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#define DBG_TAG "hw.mmu"
+#define DBG_LVL DBG_WARNING
+#include <rtdbg.h>
 
 #include <cache.h>
 #include <mm_aspace.h>
@@ -21,35 +25,87 @@
 #include <tlb.h>
 
 #ifdef RT_USING_SMART
+#include <board.h>
 #include <ioremap.h>
 #include <lwp_user_mm.h>
-#include <tlb.h>
 #endif
 
-#define DBG_TAG "MMU"
-#define DBG_LVL DBG_LOG
-#include <rtdbg.h>
-
 #ifndef RT_USING_SMART
-#define PV_OFFSET 0
 #define USER_VADDR_START 0
 #endif
 
 static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr, size_t size);
 
-void rt_hw_aspace_switch(rt_aspace_t aspace)
-{
-    uintptr_t page_table = (uintptr_t)_rt_kmem_v2p(aspace->page_table);
-
-    write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
-                        ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
-    rt_hw_tlb_invalidate_all_local();
-}
-
 static void *current_mmu_table = RT_NULL;
 
 volatile __attribute__((aligned(4 * 1024)))
 rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
+
+static rt_uint8_t ASID_BITS = 0;
+static rt_uint32_t next_asid;
+static rt_uint64_t global_asid_generation;
+#define ASID_MASK ((1 << ASID_BITS) - 1)
+#define ASID_FIRST_GENERATION (1 << ASID_BITS)
+#define MAX_ASID ASID_FIRST_GENERATION
+
+static void _asid_init()
+{
+    unsigned int satp_reg = read_csr(satp);
+    satp_reg |= (((rt_uint64_t)0xffff) << PPN_BITS);
+    write_csr(satp, satp_reg);
+    unsigned short valid_asid_bit = ((read_csr(satp) >> PPN_BITS) & 0xffff);
+
+    // The maximal value of ASIDLEN, is 9 for Sv32 or 16 for Sv39, Sv48, and Sv57
+    for (unsigned i = 0; i < 16; i++)
+    {
+        if (!(valid_asid_bit & 0x1))
+        {
+            break;
+        }
+
+        valid_asid_bit >>= 1;
+        ASID_BITS++;
+    }
+
+    global_asid_generation = ASID_FIRST_GENERATION;
+    next_asid = 1;
+}
+
+static rt_uint64_t _asid_check_switch(rt_aspace_t aspace)
+{
+    if ((aspace->asid ^ global_asid_generation) >> ASID_BITS) // not same generation
+    {
+        if (next_asid != MAX_ASID)
+        {
+            aspace->asid = global_asid_generation | next_asid;
+            next_asid++;
+        }
+        else
+        {
+            // scroll to next generation
+            global_asid_generation += ASID_FIRST_GENERATION;
+            next_asid = 1;
+            rt_hw_tlb_invalidate_all_local();
+
+            aspace->asid = global_asid_generation | next_asid;
+            next_asid++;
+        }
+    }
+
+    return aspace->asid & ASID_MASK;
+}
+
+void rt_hw_aspace_switch(rt_aspace_t aspace)
+{
+    uintptr_t page_table = (uintptr_t)rt_kmem_v2p(aspace->page_table);
+    current_mmu_table = aspace->page_table;
+
+    rt_uint64_t asid = _asid_check_switch(aspace);
+    write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
+                        (asid << PPN_BITS) |
+                        ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
+    asm volatile("sfence.vma x0,%0"::"r"(asid):"memory");
+}
 
 void *rt_hw_mmu_tbl_get()
 {
@@ -136,7 +192,9 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
     // TODO trying with HUGEPAGE here
     while (npages--)
     {
+        MM_PGTBL_LOCK(aspace);
         ret = _map_one_page(aspace, v_addr, p_addr, attr);
+        MM_PGTBL_UNLOCK(aspace);
         if (ret != 0)
         {
             /* error, undo map */
@@ -256,7 +314,7 @@ static inline void _init_region(void *vaddr, size_t size)
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
-    rt_kprintf("rt_ioremap_start: %p, rt_mpr_start: %p\n", rt_ioremap_start, rt_mpr_start);
+    LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start, rt_mpr_start);
 }
 #else
 static inline void _init_region(void *vaddr, size_t size)
@@ -382,7 +440,8 @@ void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr)
     }
     else
     {
-        paddr = 0;
+        LOG_I("%s: failed at %p", __func__, vaddr);
+        paddr = (uintptr_t)ARCH_MAP_FAILED;
     }
     return (void *)paddr;
 }
@@ -418,7 +477,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
         {
             uintptr_t *pte = _query(aspace, vaddr, &level);
             void *range_end = vaddr + _get_level_size(level);
-            RT_ASSERT(range_end < vend);
+            RT_ASSERT(range_end <= vend);
 
             if (pte)
             {
@@ -444,7 +503,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
  * otherwise is a failure and no report will be
  * returned.
  *
- * @param mmu_info
+ * @param aspace
  * @param mdesc
  * @param desc_nr
  */
@@ -476,10 +535,15 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                                                 mdesc->vaddr_start + 1,
                                     .prefer = (void *)mdesc->vaddr_start};
 
+        if (mdesc->paddr_start == (rt_size_t)ARCH_MAP_FAILED)
+            mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
+
         rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);
         mdesc++;
     }
+
+    _asid_init();
 
     rt_hw_aspace_switch(&rt_kernel_space);
     rt_page_cleanup();

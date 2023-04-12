@@ -38,7 +38,7 @@ static struct mcu_drv_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])
   * @brief  This function config spi bus
   * @param  device
   * @param  configuration
-  * @retval RT_EOK / RT_ERROR
+  * @retval RT_EOK / -RT_ERROR
   */
 static rt_err_t spi_configure(struct rt_spi_device *device,
                               struct rt_spi_configuration *configuration)
@@ -63,7 +63,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
         break;
     default:
         LOG_E("spi_configure mode error %x\n", configuration->mode);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     tmp_spi->spixfer_req.width = SPI17Y_WIDTH_1;
@@ -119,7 +119,7 @@ static const struct rt_spi_ops nrfx_spi_ops =
 /*spi bus init*/
 static int rt_hw_spi_bus_init(void)
 {
-    rt_err_t result = RT_ERROR;
+    rt_err_t result = -RT_ERROR;
     for (int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].spi_instance = spi_config[i].spi_instance;
@@ -155,7 +155,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     if (result != RT_EOK)
     {
         LOG_E("%s attach to %s faild, %d", device_name, bus_name, result);
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
     /* TODO: SET THE GPIO */
 

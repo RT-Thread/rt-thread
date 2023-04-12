@@ -195,5 +195,6 @@ SECTIONS
     PROVIDE( _heap_end = . );
     . = __stack_size;
     PROVIDE( _sp = . );
+    PROVIDE( __rt_rvstack = .);
   } >ram AT>ram
 }

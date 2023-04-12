@@ -162,7 +162,7 @@ rt_err_t nu_whc_close(rt_device_t dev)
     return RT_EOK;
 }
 
-rt_size_t nu_whc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+rt_ssize_t nu_whc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     nu_whc_t psWhc = (nu_whc_t)dev;
     nu_whc_priv_t psWhcPriv = psWhc->psPriv;
@@ -180,7 +180,7 @@ exit_nu_whc_read:
     return 0;
 }
 
-rt_size_t nu_whc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+rt_ssize_t nu_whc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     nu_whc_t psWhc = (nu_whc_t)dev;
     nu_whc_priv_t psWhcPriv = psWhc->psPriv;

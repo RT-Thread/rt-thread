@@ -43,7 +43,7 @@ static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 }
 
 /* fops for serial */
-static int serial_fops_open(struct dfs_fd *fd)
+static int serial_fops_open(struct dfs_file *fd)
 {
     rt_err_t ret = 0;
     rt_uint16_t flags = 0;
@@ -79,7 +79,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     return ret;
 }
 
-static int serial_fops_close(struct dfs_fd *fd)
+static int serial_fops_close(struct dfs_file *fd)
 {
     rt_device_t device;
 
@@ -91,7 +91,7 @@ static int serial_fops_close(struct dfs_fd *fd)
     return 0;
 }
 
-static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
+static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     rt_device_t device;
     int flags = (int)(rt_base_t)args;
@@ -114,7 +114,7 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     return rt_device_control(device, cmd, args);
 }
 
-static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
+static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
@@ -139,7 +139,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     return size;
 }
 
-static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
+static int serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     rt_device_t device;
 
@@ -147,7 +147,7 @@ static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     return rt_device_write(device, -1, buf, count);
 }
 
-static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+static int serial_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int mask = 0;
     int flags = 0;
@@ -194,7 +194,7 @@ const static struct dfs_file_ops _serial_fops =
 };
 #endif /* RT_USING_POSIX_STDIO */
 
-static rt_size_t rt_serial_get_linear_buffer(struct rt_ringbuffer       *rb,
+static rt_ssize_t rt_serial_get_linear_buffer(struct rt_ringbuffer       *rb,
                                                     rt_uint8_t         **ptr)
 {
     rt_size_t size;
@@ -220,7 +220,7 @@ static rt_size_t rt_serial_get_linear_buffer(struct rt_ringbuffer       *rb,
     return rb->buffer_size - rb->read_index;
 }
 
-static rt_size_t rt_serial_update_read_index(struct rt_ringbuffer    *rb,
+static rt_ssize_t rt_serial_update_read_index(struct rt_ringbuffer    *rb,
                                                     rt_uint16_t       read_index)
 {
     rt_size_t size;
@@ -253,7 +253,7 @@ static rt_size_t rt_serial_update_read_index(struct rt_ringbuffer    *rb,
     return read_index;
 }
 
-static rt_size_t rt_serial_update_write_index(struct rt_ringbuffer  *rb,
+static rt_ssize_t rt_serial_update_write_index(struct rt_ringbuffer  *rb,
                                                      rt_uint16_t     write_size)
 {
     rt_uint16_t size;
@@ -296,7 +296,7 @@ static rt_size_t rt_serial_update_write_index(struct rt_ringbuffer  *rb,
   * @param size Receive data buffer length.
   * @return Return the final length of data received.
   */
-rt_size_t _serial_poll_rx(struct rt_device          *dev,
+rt_ssize_t _serial_poll_rx(struct rt_device          *dev,
                                  rt_off_t            pos,
                                  void               *buffer,
                                  rt_size_t           size)
@@ -343,7 +343,7 @@ rt_size_t _serial_poll_rx(struct rt_device          *dev,
   * @param size Transmit data buffer length.
   * @return Return the final length of data received.
   */
-rt_size_t _serial_poll_tx(struct rt_device           *dev,
+rt_ssize_t _serial_poll_tx(struct rt_device           *dev,
                                  rt_off_t             pos,
                                  const void          *buffer,
                                  rt_size_t            size)
@@ -386,7 +386,7 @@ rt_size_t _serial_poll_tx(struct rt_device           *dev,
   * @param size Receive data buffer length.
   * @return Return the final length of data received.
   */
-static rt_size_t _serial_fifo_rx(struct rt_device        *dev,
+static rt_ssize_t _serial_fifo_rx(struct rt_device        *dev,
                                         rt_off_t          pos,
                                         void             *buffer,
                                         rt_size_t         size)
@@ -448,7 +448,7 @@ static rt_size_t _serial_fifo_rx(struct rt_device        *dev,
   * @param size Transmit data buffer length.
   * @return Return the final length of data transmit.
   */
-static rt_size_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
+static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
                                                       rt_off_t          pos,
                                                 const void             *buffer,
                                                       rt_size_t         size)
@@ -495,7 +495,7 @@ static rt_size_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
   * @param size Transmit data buffer length.
   * @return Return the final length of data transmit.
   */
-static rt_size_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
+static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
                                                      rt_off_t          pos,
                                                const void             *buffer,
                                                     rt_size_t          size)
@@ -555,7 +555,7 @@ static rt_size_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
   * @param size Transmit data buffer length.
   * @return Return the final length of data transmit.
   */
-static rt_size_t _serial_fifo_tx_nonblocking(struct rt_device        *dev,
+static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device        *dev,
                                                     rt_off_t          pos,
                                               const void             *buffer,
                                                     rt_size_t         size)
@@ -1024,6 +1024,7 @@ const static struct speed_baudrate_item _tbl[] =
     {B115200, BAUD_RATE_115200},
     {B230400, BAUD_RATE_230400},
     {B460800, BAUD_RATE_460800},
+    {B500000, BAUD_RATE_500000},
     {B921600, BAUD_RATE_921600},
     {B2000000, BAUD_RATE_2000000},
     {B3000000, BAUD_RATE_3000000},
@@ -1371,7 +1372,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-static rt_size_t rt_serial_read(struct rt_device *dev,
+static rt_ssize_t rt_serial_read(struct rt_device *dev,
                                 rt_off_t          pos,
                                 void             *buffer,
                                 rt_size_t         size)
@@ -1392,7 +1393,7 @@ static rt_size_t rt_serial_read(struct rt_device *dev,
 }
 
 
-static rt_size_t rt_serial_write(struct rt_device *dev,
+static rt_ssize_t rt_serial_write(struct rt_device *dev,
                                  rt_off_t          pos,
                                  const void       *buffer,
                                  rt_size_t         size)

@@ -625,7 +625,7 @@ void SDIO_ClearFlag(uint32_t SDIO_FLAG)
  *            SDIO_IT_SDIOIT - SD I/O interrupt received interrupt
  *            SDIO_IT_CEATAEND - CE-ATA command completion signal received for CMD61 interrupt
  *
- * @return  ITStatus£ºSET or RESET
+ * @return  ITStatusÂ£:SET or RESET
  */
 ITStatus SDIO_GetITStatus(uint32_t SDIO_IT)
 {

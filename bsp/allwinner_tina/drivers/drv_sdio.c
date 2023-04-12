@@ -774,7 +774,7 @@ err:
         rt_free(host);
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 INIT_APP_EXPORT(tina_sdio_init);
 #endif

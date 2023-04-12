@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,11 +13,11 @@
 
 #ifdef BSP_USING_GPIO
 #define PIN_NUM(port, no) (((((port) & 0xFu) << 4) | ((no) & 0xFu)))
-#define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
-#define PIN_NO(pin) ((uint8_t)((pin) & 0xFu))
+#define PIN_PORT(pin) ((rt_uint8_t)(((pin) >> 4) & 0xFu))
+#define PIN_NO(pin) ((rt_uint8_t)((pin) & 0xFu))
 
 #define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (0x400u * PIN_PORT(pin))))
-#define PIN_STPIN(pin) ((uint16_t)(1u << PIN_NO(pin)))
+#define PIN_STPIN(pin) ((rt_uint16_t)(1u << PIN_NO(pin)))
 
 #if defined(GPIOZ)
 #define __CH32_PORT_MAX 12u
@@ -89,7 +89,7 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
 };
-static uint32_t pin_irq_enable_mask = 0;
+static rt_uint32_t pin_irq_enable_mask = 0;
 
 #define ITEM_NUM(items) (sizeof(items) / sizeof((items)[0]))
 
@@ -133,7 +133,7 @@ static rt_base_t ch32_pin_get(const char *name)
 static void ch32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
     GPIO_TypeDef *gpio_port;
-    uint16_t gpio_pin;
+    rt_uint16_t gpio_pin;
 
     if (PIN_PORT(pin) < PIN_STPORT_MAX)
     {
@@ -146,7 +146,7 @@ static void ch32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 static int ch32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_TypeDef *gpio_port;
-    uint16_t gpio_pin;
+    rt_uint16_t gpio_pin;
     int value = PIN_LOW;
 
     if (PIN_PORT(pin) < PIN_STPORT_MAX)
@@ -215,7 +215,7 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
     return -1;
 }
 
-rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
+rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint32_t pinbit)
 {
     rt_int32_t mapindex = bit2bitno(pinbit);
     if (mapindex < 0 || mapindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
@@ -426,7 +426,7 @@ rt_inline void pin_irq_hdr(int irqno)
     }
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+void HAL_GPIO_EXTI_Callback(rt_uint16_t GPIO_Pin)
 {
     pin_irq_hdr(bit2bitno(GPIO_Pin));
 }
