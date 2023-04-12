@@ -308,8 +308,6 @@ static void rt_slab_page_init(struct rt_slab *slab, void *addr, rt_size_t npages
 /**
  * @brief This function will init slab memory management algorithm
  *
- * @param slab the slab memory management object.
- *
  * @param name is the name of the slab memory management object.
  *
  * @param begin_addr the beginning address of system page.
