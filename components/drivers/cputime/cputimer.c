@@ -286,7 +286,7 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
 
     if (!clock_cpu_issettimeout())
     {
-        rt_int32_t ms = tick * clock_cpu_getres() / 1000000;
+        rt_int32_t ms = clock_cpu_millisecond(tick);
         return rt_thread_delay(rt_tick_from_millisecond(ms));
     }
 
@@ -311,8 +311,8 @@ rt_err_t rt_cputime_sleep(rt_uint64_t tick)
 
 rt_err_t rt_cputime_ndelay(rt_uint64_t ns)
 {
-    double unit = clock_cpu_getres();
-    return rt_cputime_sleep(ns / unit);
+    uint64_t unit = clock_cpu_getres();
+    return rt_cputime_sleep(ns * (1000 * 1000) / unit);
 }
 
 rt_err_t rt_cputime_udelay(rt_uint64_t us)
