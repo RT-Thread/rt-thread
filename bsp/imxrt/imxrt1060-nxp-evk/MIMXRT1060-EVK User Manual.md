@@ -30,15 +30,15 @@ Set the On-chip Peripheral Drivers option:
 
 ### 2.3 Go to File, and click the Import
 
-![](./figures/1_ZN.png)
+![](./figures/1_en.png)
 
 ### 2.4 Import RT-Thread BSP to workspace 
 
-![](./figures/2_ZN.png)
+![](./figures/2_en.png)
 
 ### 2.5 Fill out the project info
 
-![](./figures/3_ZN.png)
+![](./figures/3_en.png)
 
 ### 2.6 Compile project
 
@@ -52,7 +52,7 @@ Each BSP of RT-Thread already has several drivers by default, such as on-chip pe
 
 RT-Thread has a lot of up-for-grab software packages, by using RT-Studio IDE, the software packages can be easily added to the project.
 
-![](./figures/17_ZN.png)
+![](./figures/17_en.png)
 
 ## 4 Connect to Internet: Use the RW007 module
 
@@ -66,13 +66,13 @@ The SPI interface provided by the MIMXRT1060-EVK onboard Arduino interface has d
 
 RW007 supports SPI interface for communication, MIMXRT1060-EVK supports SPI driver, defaults to using polling mode to communicate with RW007 (currently it does not support interrupt and DMA mode to communicate with RW007), the following shows how to use RT-Studio to configure SPI:
 
-![](./figures/10_ZN.png)
+![](./figures/10_en.png)
 
 ### 4.2 Configure the RW007 package using RT-Studio
 
 Click the RT-Thread Settings option on the left, there is a configuration menu will be shown on the right, enter RW007 in the search bar, and select `rw007:SPI WIFI rw007 driver`, the corresponding configuration parameters are as follows:
 
-![](./figures/9_ZN.png)
+![](./figures/9_en.png)
 
 ### 4.3 Plug the RW007 module into the onboard Arduino interface
 
