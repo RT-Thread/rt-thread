@@ -204,7 +204,7 @@ struct rt_slab
 /**
  * @brief Alloc memory size by page.
  *
- * @param slab the slab memory management object.
+ * @param m the slab memory management object.
  *
  * @param npages the number of pages.
  */
@@ -243,7 +243,7 @@ void *rt_slab_page_alloc(rt_slab_t m, rt_size_t npages)
 /**
  * @brief Free memory by page.
  *
- * @param slab the slab memory management object.
+ * @param m the slab memory management object.
  *
  * @param addr is the head address of first page.
  *
