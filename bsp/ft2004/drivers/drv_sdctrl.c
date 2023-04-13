@@ -243,7 +243,7 @@ static void rthw_sdctrl_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req 
         if (pkg.cmd->cmd_code == 5 || pkg.cmd->cmd_code == 1)
         {
             rt_kprintf("cmd_code is not vaild %x \r\n", pkg.cmd->cmd_code);
-            pkg.cmd->err = RT_EINVAL;
+            pkg.cmd->err = -RT_EINVAL;
             goto _exit;
         }
 
@@ -555,7 +555,7 @@ static rt_err_t rthw_sdctrl_create(ft_sdctrl_class_t *class_p)
     if (host == RT_NULL)
     {
         LOG_E("L:%d F:%s mmcsd alloc host fail");
-        return RT_ENOMEM;
+        return -RT_ENOMEM;
     }
 
     class_p->ft_sdctrl.config = *(FSdCtrl_Config_t *)FSdCtrl_LookupConfig(0);

@@ -288,7 +288,7 @@ static rt_err_t lpc_emac_phy_init(phy_speed_t * speed, phy_duplex_t * duplex)
         eth_device_linkchange(&lpc_emac_device.parent, RT_FALSE);
 
         ETH_PRINTF("PHY_Init failed!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Wait for link up and get the actual PHY link speed. */
@@ -383,13 +383,13 @@ static rt_err_t lpc_emac_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t lpc_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t lpc_emac_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t lpc_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t lpc_emac_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_set_errno(-RT_ENOSYS);
     return 0;
@@ -428,7 +428,7 @@ rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
 
     if (p->tot_len > ENET_TXBUFF_SIZE)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     packet_dump("TX dump", p);
@@ -439,7 +439,7 @@ rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
         result = rt_sem_take(&lpc_emac_device.tx_wait, RT_TICK_PER_SECOND/10);
         if (result != RT_EOK)
         {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -453,7 +453,7 @@ rt_err_t lpc_emac_tx(rt_device_t dev, struct pbuf *p)
 
     if ((result == kStatus_ENET_TxFrameFail) || (result == kStatus_ENET_TxFrameOverLen) || (result == kStatus_ENET_TxFrameBusy))
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

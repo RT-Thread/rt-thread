@@ -25,13 +25,13 @@ STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rcc_ex.c
 STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rng.c
 STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_gpio.c
 ''')
-  
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_uart.c']
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_uart_ex.c']
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_usart.c']
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_usart_ex.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_i2c.c']
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_i2c_ex.c']
@@ -67,7 +67,7 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
 
 if GetDepend(['BSP_USING_SUBGHZ']):
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_subghz.c']
-	
+
 path = [cwd + '/STM32WLxx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32WLxx/Include']
 

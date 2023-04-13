@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 
 #ifdef RT_USING_I2C
 
-#define LOG_TAG              "drv.i2c"
+#define DBG_TAG              "drv.i2c"
 #define DBG_LVL               DBG_INFO
 #include <rtdbg.h>
 
@@ -43,28 +43,28 @@ static const struct apm32_soft_i2c_config soft_i2c_config[] =
         BSP_I2C1_SCL_PIN,
         BSP_I2C1_SDA_PIN,
         "i2c1"
-    }
+    },
 #endif
 #ifdef BSP_USING_I2C2
     {
         BSP_I2C2_SCL_PIN,
         BSP_I2C2_SDA_PIN,
         "i2c2"
-    }
+    },
 #endif
 #ifdef BSP_USING_I2C3
     {
         BSP_I2C3_SCL_PIN,
         BSP_I2C3_SDA_PIN,
         "i2c3"
-    }
+    },
 #endif
 #ifdef BSP_USING_I2C4
     {
         BSP_I2C4_SCL_PIN,
         BSP_I2C4_SDA_PIN,
         "i2c4"
-    }
+    },
 #endif
 };
 
@@ -75,7 +75,7 @@ static struct apm32_soft_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_c
  *
  * @param    i2c is a pointer to the object of soft i2c.
  */
-static void _soft_i2c_gpio_init(struct apm32_soft_i2c *i2c)
+static void apm32_soft_i2c_gpio_init(struct apm32_soft_i2c *i2c)
 {
     struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)i2c->ops.data;
 
@@ -93,7 +93,7 @@ static void _soft_i2c_gpio_init(struct apm32_soft_i2c *i2c)
  *
  * @param    state is the level of sda pin.
  */
-static void _soft_i2c_set_sda(void *data, rt_int32_t state)
+static void apm32_soft_i2c_set_sda(void *data, rt_int32_t state)
 {
     struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)data;
 
@@ -107,7 +107,7 @@ static void _soft_i2c_set_sda(void *data, rt_int32_t state)
  *
  * @param    state is the level of scl pin.
  */
-static void _soft_i2c_set_scl(void *data, rt_int32_t state)
+static void apm32_soft_i2c_set_scl(void *data, rt_int32_t state)
 {
     struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)data;
 
@@ -119,7 +119,7 @@ static void _soft_i2c_set_scl(void *data, rt_int32_t state)
  *
  * @param    data is a pointer to the i2c config class.
  */
-static rt_int32_t _soft_i2c_get_sda(void *data)
+static rt_int32_t apm32_soft_i2c_get_sda(void *data)
 {
     struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)data;
     return rt_pin_read(cfg->sda_pin);
@@ -130,7 +130,7 @@ static rt_int32_t _soft_i2c_get_sda(void *data)
  *
  * @param    data is a pointer to the i2c config class.
  */
-static rt_int32_t _soft_i2c_get_scl(void *data)
+static rt_int32_t apm32_soft_i2c_get_scl(void *data)
 {
     struct apm32_soft_i2c_config *cfg = (struct apm32_soft_i2c_config *)data;
     return rt_pin_read(cfg->scl_pin);
@@ -141,7 +141,7 @@ static rt_int32_t _soft_i2c_get_scl(void *data)
  *
  * @param    us is the microseconds to delay.
  */
-static void _soft_i2c_udelay(rt_uint32_t us)
+static void apm32_soft_i2c_udelay(rt_uint32_t us)
 {
     rt_uint32_t count_old = SysTick->VAL;
     rt_uint32_t count_now;
@@ -183,9 +183,9 @@ static rt_err_t apm32_i2c_bus_unlock(const struct apm32_soft_i2c_config *cfg)
         while (i++ < 9)
         {
             rt_pin_write(cfg->scl_pin, PIN_HIGH);
-            _soft_i2c_udelay(100);
+            apm32_soft_i2c_udelay(100);
             rt_pin_write(cfg->scl_pin, PIN_LOW);
-            _soft_i2c_udelay(100);
+            apm32_soft_i2c_udelay(100);
         }
     }
     if (PIN_LOW == rt_pin_read(cfg->sda_pin))
@@ -199,11 +199,11 @@ static rt_err_t apm32_i2c_bus_unlock(const struct apm32_soft_i2c_config *cfg)
 static const struct rt_i2c_bit_ops apm32_bit_ops_default =
 {
     .data     = RT_NULL,
-    .set_sda  = _soft_i2c_set_sda,
-    .set_scl  = _soft_i2c_set_scl,
-    .get_sda  = _soft_i2c_get_sda,
-    .get_scl  = _soft_i2c_get_scl,
-    .udelay   = _soft_i2c_udelay,
+    .set_sda  = apm32_soft_i2c_set_sda,
+    .set_scl  = apm32_soft_i2c_set_scl,
+    .get_sda  = apm32_soft_i2c_get_sda,
+    .get_scl  = apm32_soft_i2c_get_scl,
+    .udelay   = apm32_soft_i2c_udelay,
     .delay_us = 1,
     .timeout  = 100
 };
@@ -223,7 +223,7 @@ int rt_hw_i2c_init(void)
         i2c_obj[i].ops = apm32_bit_ops_default;
         i2c_obj[i].ops.data = (void *)&soft_i2c_config[i];
         i2c_obj[i].i2c2_bus.priv = &i2c_obj[i].ops;
-        _soft_i2c_gpio_init(&i2c_obj[i]);
+        apm32_soft_i2c_gpio_init(&i2c_obj[i]);
 
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c2_bus, soft_i2c_config[i].bus_name);
 
@@ -231,10 +231,10 @@ int rt_hw_i2c_init(void)
 
         apm32_i2c_bus_unlock(&soft_i2c_config[i]);
 
-        LOG_D("software simulation %s init done, pin scl: %s, pin sda: %s",
+        LOG_D("software simulation %s init done, pin scl: %d, pin sda: %d",
               soft_i2c_config[i].bus_name,
-              soft_i2c_config[i].scl_pin_name,
-              soft_i2c_config[i].sda_pin_name);
+              soft_i2c_config[i].scl_pin,
+              soft_i2c_config[i].sda_pin);
     }
 
     return RT_EOK;

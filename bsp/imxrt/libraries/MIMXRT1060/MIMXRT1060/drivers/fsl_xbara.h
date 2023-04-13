@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2019 NXP
+ * Copyright 2016-2019, 2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -28,6 +28,9 @@
 /* Set the XBARA_SELx_SELx field to a new value. */
 #define XBARA_WR_SELx_SELx(base, input, output) XBARA_SetSignalsConnection((base), (input), (output))
 
+/* For driver backward compatibility.  */
+#define kXBARA_RequestInterruptEnalbe kXBARA_RequestInterruptEnable
+
 /*!
  * @brief XBARA active edge for detection
  */
@@ -46,7 +49,7 @@ typedef enum _xbar_request
 {
     kXBARA_RequestDisable         = 0U, /*!< Interrupt and DMA are disabled. */
     kXBARA_RequestDMAEnable       = 1U, /*!< DMA enabled, interrupt disabled. */
-    kXBARA_RequestInterruptEnalbe = 2U  /*!< Interrupt enabled, DMA disabled. */
+    kXBARA_RequestInterruptEnable = 2U  /*!< Interrupt enabled, DMA disabled. */
 } xbara_request_t;
 
 /*!

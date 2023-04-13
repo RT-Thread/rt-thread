@@ -255,7 +255,7 @@ static void n32_gpio_clock_enable(GPIO_Module* GPIOx)
     {
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOD, ENABLE);
     }
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     else if (GPIOx == GPIOE)
     {
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOE, ENABLE);
@@ -296,7 +296,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     /* Configure GPIO_InitStructure */
     GPIO_InitStructure.Pin = index->pin;
 
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 #endif
 
@@ -308,7 +308,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
         GPIO_InitStructure.GPIO_Pull = GPIO_No_Pull;
@@ -318,7 +318,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_INPUT_PULLUP)
     {
         /* input setting: pull up. */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
         GPIO_InitStructure.GPIO_Pull = GPIO_Pull_Up;
@@ -328,7 +328,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_INPUT_PULLDOWN)
     {
         /* input setting: pull down. */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
         GPIO_InitStructure.GPIO_Pull = GPIO_Pull_Down;
@@ -340,7 +340,7 @@ static void n32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         /* output setting: od. */
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
     }
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
     GPIO_InitPeripheral(index->gpio, &GPIO_InitStructure);
@@ -379,7 +379,7 @@ rt_inline rt_int32_t port2portsource(GPIO_Module* module)
     {
         return GPIOD_PORT_SOURCE;
     }
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     else if (module == GPIOE)
     {
         return GPIOE_PORT_SOURCE;
@@ -422,12 +422,12 @@ static rt_err_t n32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     irqindex = bit2bitno(index->pin);
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -442,7 +442,7 @@ static rt_err_t n32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;
@@ -462,12 +462,12 @@ static rt_err_t n32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     irqindex = bit2bitno(index->pin);
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -497,7 +497,7 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     if (enabled == PIN_IRQ_ENABLE)
@@ -505,7 +505,7 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqindex = bit2bitno(index->pin);
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -513,7 +513,7 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         irqmap = &pin_irq_map[irqindex];
@@ -561,7 +561,7 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(index->pin);
         if (irqmap == RT_NULL)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();

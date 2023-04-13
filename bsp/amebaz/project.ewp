@@ -2138,10 +2138,10 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\applications\smartconfig_app.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\smartconfig_app.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
     </file>
   </group>
   <group>
@@ -2194,9 +2194,6 @@
   </group>
   <group>
     <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
@@ -2321,7 +2318,7 @@
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\thread.c</name>

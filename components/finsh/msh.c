@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -294,9 +294,9 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     return 0;
 }
 
+#if defined(RT_USING_SMART) && defined(DFS_USING_POSIX)
 pid_t exec(char*, int, int, char**);
 
-#if defined(RT_USING_LWP) && defined(DFS_USING_POSIX)
 /* check whether a file of the given path exits */
 static rt_bool_t _msh_lwp_cmd_exists(const char *path)
 {
@@ -342,7 +342,7 @@ static char *_msh_exec_search_path(const char *path, const char *pg_name)
         *path_buffer = '\0';
     }
     strcat(path_buffer, pg_name);
-    
+
     if (_msh_lwp_cmd_exists(path_buffer))
     {
         return path_buffer;
@@ -447,7 +447,7 @@ int _msh_exec_lwp(int debug, char *cmd, rt_size_t length)
         goto found_program;
     }
 
-    /* only check these paths when the first argument doesn't contain path 
+    /* only check these paths when the first argument doesn't contain path
        seperator */
     if (strstr(argv[0], "/"))
     {
@@ -518,14 +518,14 @@ int msh_exec(char *cmd, rt_size_t length)
     }
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     /* exec from msh_exec , debug = 0*/
     /* _msh_exec_lwp return is pid , <= 0 means failed */
     if (_msh_exec_lwp(0, cmd, length) > 0)
     {
         return 0;
     }
-#endif /* RT_USING_LWP */
+#endif /* RT_USING_SMART */
 #endif /* DFS_USING_POSIX */
 
     /* truncate the cmd at the first space. */
@@ -721,7 +721,7 @@ void msh_auto_complete(char *prefix)
 
             ptr --;
         }
-#if defined(RT_USING_MODULE) || defined(RT_USING_LWP)
+#if defined(RT_USING_MODULE) || defined(RT_USING_SMART)
         /* There is a chance that the user want to run the module directly. So
          * try to complete the file names. If the completed path is not a
          * module, the system won't crash anyway. */

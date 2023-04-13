@@ -594,7 +594,7 @@ static rt_err_t _hid_descriptor_config(uhid_comm_desc_t hid, rt_uint8_t cintf_nr
 
     return RT_EOK;
 }
-static rt_size_t _hid_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _hid_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     struct hid_s *hiddev = (struct hid_s *)dev;
     struct hid_report report;

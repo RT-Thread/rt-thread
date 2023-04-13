@@ -76,6 +76,32 @@ void BOARD_InitPins(void)
     /* Enables the clock for the I/O controller.: Enable Clock. */
     CLOCK_EnableClock(kCLOCK_Iocon);
 
+    IOCON->PIO[0][13] = ((IOCON->PIO[0][13] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                         /* Selects pin function.
+                          * : PORT013 (pin 71) is configured as FC1_RXD_SDA_MOSI_DATA. */
+                         | IOCON_PIO_FUNC(PIO0_13_FUNC_ALT5)
+
+                         /* Select Digital mode.
+                          * : Enable Digital mode.
+                          * Digital input is enabled. */
+                         | IOCON_PIO_DIGIMODE(PIO0_13_DIGIMODE_DIGITAL));
+
+    IOCON->PIO[0][14] = ((IOCON->PIO[0][14] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                         /* Selects pin function.
+                          * : PORT014 (pin 72) is configured as FC1_TXD_SCL_MISO_WS. */
+                         | IOCON_PIO_FUNC(PIO0_14_FUNC_ALT6)
+
+                         /* Select Digital mode.
+                          * : Enable Digital mode.
+                          * Digital input is enabled. */
+                         | IOCON_PIO_DIGIMODE(PIO0_14_DIGIMODE_DIGITAL));
+
     IOCON->PIO[0][17] = ((IOCON->PIO[0][17] &
                           /* Mask bits to zero which are setting */
                           (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
@@ -259,30 +285,6 @@ void BOARD_InitPins(void)
                          * : Digital mode, digital input is enabled. */
                         | IOCON_PIO_DIGIMODE(PIO1_2_DIGIMODE_DIGITAL));
 
-    IOCON->PIO[1][20] = ((IOCON->PIO[1][20] &
-                          /* Mask bits to zero which are setting */
-                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
-
-                         /* Selects pin function.
-                          * : PORT120 (pin 4) is configured as FC4_TXD_SCL_MISO_WS. */
-                         | IOCON_PIO_FUNC(PIO1_20_FUNC_ALT5)
-
-                         /* Select Digital mode.
-                          * : Digital mode, digital input is enabled. */
-                         | IOCON_PIO_DIGIMODE(PIO1_20_DIGIMODE_DIGITAL));
-
-    IOCON->PIO[1][21] = ((IOCON->PIO[1][21] &
-                          /* Mask bits to zero which are setting */
-                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
-
-                         /* Selects pin function.
-                          * : PORT121 (pin 30) is configured as FC4_RXD_SDA_MOSI_DATA. */
-                         | IOCON_PIO_FUNC(PIO1_21_FUNC_ALT5)
-
-                         /* Select Digital mode.
-                          * : Digital mode, digital input is enabled. */
-                         | IOCON_PIO_DIGIMODE(PIO1_21_DIGIMODE_DIGITAL));
-
     IOCON->PIO[1][24] = ((IOCON->PIO[1][24] &
                           /* Mask bits to zero which are setting */
                           (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
@@ -336,12 +338,41 @@ void BOARD_InitPins(void)
                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
 
                         /* Selects pin function.
-                         * : PORT17 (pin 9) is configured as PIO1_7. */
-                        | IOCON_PIO_FUNC(PIO1_7_FUNC_ALT0)
+                         * : PORT17 (pin 9) is configured as CTIMER2_MAT2. */
+                        | IOCON_PIO_FUNC(PIO1_7_FUNC_ALT3)
 
                         /* Select Digital mode.
                          * : Digital mode, digital input is enabled. */
                         | IOCON_PIO_DIGIMODE(PIO1_7_DIGIMODE_DIGITAL));
+
+    IOCON->PIO[1][10] = ((IOCON->PIO[1][10] &
+                          /* Mask bits to zero which are setting */
+                          (~(IOCON_PIO_FUNC_MASK | IOCON_PIO_DIGIMODE_MASK)))
+
+                        /* Selects pin function.
+                         * : PORT110 (pin 40) is configured as CTIMER1_MAT0. */
+                        | IOCON_PIO_FUNC(PIO1_10_FUNC_ALT3)
+
+                        /* Select Digital mode.
+                         * : Enable Digital mode.
+                         * Digital input is enabled. */
+                        | IOCON_PIO_DIGIMODE(PIO1_10_DIGIMODE_DIGITAL));
+
+    /* I2C4 */
+    IOCON_PinMuxSet(IOCON, 1U, 20, 5 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI);
+    IOCON_PinMuxSet(IOCON, 1U, 21, 5 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI);
+
+    /* FC3 SPI */
+    IOCON_PinMuxSet(IOCON, 0, 2, 1 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI); /* MISO */
+    IOCON_PinMuxSet(IOCON, 0, 3, 1 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI); /* MOSI */
+   // IOCON_PinMuxSet(IOCON, 0, 4, 8 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI); /* CS */
+    IOCON_PinMuxSet(IOCON, 0, 6, 1 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI); /* SCK */
+
+
+    /* FC8 SPI */
+    IOCON_PinMuxSet(IOCON, 1, 3,  6 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI); /* MISO */
+    IOCON_PinMuxSet(IOCON, 0, 26, 9 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI); /* MOSI */
+    IOCON_PinMuxSet(IOCON, 1, 2,  6 | IOCON_PIO_MODE_INACT | IOCON_PIO_SLEW_STANDARD | IOCON_PIO_INV_DI | IOCON_PIO_DIGITAL_EN | IOCON_PIO_OPENDRAIN_DI); /* SCK */
 }
 /***********************************************************************************************************************
  * EOF

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,8 +23,6 @@
 #define MAX_PERIOD 65535
 #define MIN_PERIOD 3
 #define MIN_PULSE 2
-
-extern void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 
 enum
 {
@@ -380,24 +378,26 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
     tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
-
     if (HAL_TIM_Base_Init(tim) != HAL_OK)
     {
         LOG_E("%s pwm init failed", device->name);
         result = -RT_ERROR;
         goto __exit;
     }
-    if (HAL_TIM_PWM_Init(tim) != HAL_OK)
-    {
-        LOG_E("%s pwm init failed", device->name);
-        result = -RT_ERROR;
-        goto __exit;
-    }
+
+    stm32_tim_enable_clock(tim);
 
     clock_config.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
     if (HAL_TIM_ConfigClockSource(tim, &clock_config) != HAL_OK)
     {
         LOG_E("%s clock init failed", device->name);
+        result = -RT_ERROR;
+        goto __exit;
+    }
+
+    if (HAL_TIM_PWM_Init(tim) != HAL_OK)
+    {
+        LOG_E("%s pwm init failed", device->name);
         result = -RT_ERROR;
         goto __exit;
     }
@@ -463,6 +463,7 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     }
 
     /* pwm pin configuration */
+    void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
     HAL_TIM_MspPostInit(tim);
 
     /* enable update request source */
@@ -472,7 +473,7 @@ __exit:
     return result;
 }
 
-static void pwm_get_channel(void)
+static void stm32_pwm_get_channel(void)
 {
 #ifdef BSP_USING_PWM1_CH1
     stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 0;
@@ -616,7 +617,7 @@ static int stm32_pwm_init(void)
     int i = 0;
     int result = RT_EOK;
 
-    pwm_get_channel();
+    stm32_pwm_get_channel();
 
     for (i = 0; i < sizeof(stm32_pwm_obj) / sizeof(stm32_pwm_obj[0]); i++)
     {

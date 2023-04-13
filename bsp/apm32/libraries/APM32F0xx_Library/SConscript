@@ -1,0 +1,52 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+Device/Geehy/APM32F0xx/Source/system_apm32f0xx.c
+APM32F0xx_StdPeriphDriver/src/apm32f0xx_gpio.c
+APM32F0xx_StdPeriphDriver/src/apm32f0xx_syscfg.c
+APM32F0xx_StdPeriphDriver/src/apm32f0xx_misc.c
+APM32F0xx_StdPeriphDriver/src/apm32f0xx_rcm.c
+APM32F0xx_StdPeriphDriver/src/apm32f0xx_usart.c
+APM32F0xx_StdPeriphDriver/src/apm32f0xx_eint.c
+""")
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_adc.c']
+
+if GetDepend(['RT_USING_DAC']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_dac.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_rtc.c']
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_pmu.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_spi.c']
+
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_tmr.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_wwdt.c']
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_iwdt.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_can.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_fmc.c']
+
+path = [cwd + '/Device/Geehy/APM32F0xx/Include',
+    cwd + '/APM32F0xx_StdPeriphDriver/inc',
+    cwd + '/CMSIS/Include']
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

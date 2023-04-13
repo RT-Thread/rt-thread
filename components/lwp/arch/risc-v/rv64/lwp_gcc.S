@@ -121,6 +121,16 @@ arch_signal_quit:
  * routine in user stack
  */
 user_do_signal:
+    /* prefetch ustack to avoid corrupted status in RESTORE/STORE pair below */
+    LOAD t0, FRAME_OFF_SP(sp)
+    addi t1, t0, -CTX_REG_NR * REGBYTES
+    LOAD t2, (t0)
+    li t3, -0x1000
+1:
+    add t0, t0, t3
+    LOAD t2, (t0)
+    bgt t0, t1, 1b
+
     /** restore and backup kernel sp carefully to avoid leaking */
     addi t0, sp, CTX_REG_NR * REGBYTES
     csrw sscratch, t0
@@ -299,7 +309,7 @@ copy_context_loop:
     addi a7, a7, -0xfe
     beqz a7, arch_signal_quit
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
     /* save setting when syscall enter */
     call  rt_thread_self
     call  lwp_user_setting_save
@@ -314,7 +324,7 @@ copy_context_loop:
 arch_syscall_exit:
     CLOSE_INTERRUPT
 
-    #if defined(RT_USING_USERSPACE)
+    #if defined(ARCH_MM_MMU)
         LOAD s0, 2 * REGBYTES(sp)
         andi s0, s0, 0x100
         bnez s0, dont_ret_to_user
@@ -322,7 +332,7 @@ arch_syscall_exit:
     #endif
 dont_ret_to_user:
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
     /* restore setting when syscall exit */
     call  rt_thread_self
     call  lwp_user_setting_restore

@@ -267,7 +267,7 @@ int rt_hw_mouse_init(void)
     virtual_addr_t virt = MOUSE_ADDRESS;
     int irq = MOUSE_IRQ_NUM;
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     virt = (virtual_addr_t)rt_ioremap((void*)MOUSE_ADDRESS, 0x1000);
 #endif
     id = (((read32(virt + 0xfec) & 0xff) << 24) |
@@ -278,14 +278,14 @@ int rt_hw_mouse_init(void)
     if(((id >> 12) & 0xff) != 0x41 || (id & 0xfff) != 0x050)
     {
         LOG_E("read id fail id:0x%08x", id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     pdat = rt_malloc(sizeof(struct mouse_pl050_pdata_t));
     if(!pdat)
     {
         LOG_E("malloc memory failed");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_memset(pdat, 0, sizeof(struct mouse_pl050_pdata_t));
 

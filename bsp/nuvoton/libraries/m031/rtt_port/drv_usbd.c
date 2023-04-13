@@ -12,7 +12,8 @@
 
 #include <rtconfig.h>
 
-#ifdef BSP_USING_USBD
+#if defined(BSP_USING_USBD)
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <string.h>

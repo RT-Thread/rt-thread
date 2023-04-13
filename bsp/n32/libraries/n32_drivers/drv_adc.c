@@ -64,7 +64,7 @@ static void n32_adc_init(struct n32_adc_config *config)
     ADC_DeInit((ADC_Module*)config->adc_periph);
 
     /* ADC configuration */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     ADC_InitStructure.WorkMode       = ADC_WORKMODE_INDEPENDENT;
 #endif
 
@@ -92,7 +92,7 @@ static rt_err_t n32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channe
 {
     if (channel > ADC_CH_18)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     return RT_EOK;
 }
@@ -104,7 +104,7 @@ static rt_err_t n32_adc_convert(struct rt_adc_device *device, rt_uint32_t channe
 
     if (channel > ADC_CH_18)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     config = (struct n32_adc_config *)(device->parent.user_data);
 
@@ -137,7 +137,7 @@ int rt_hw_adc_init(void)
     int i = 0;
     int result = RT_EOK;
 
-#if defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
+#if defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X) || defined(SOC_N32G4FR)
 #ifdef BSP_USING_ADC
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOA, ENABLE);
     RCC_EnableAHBPeriphClk(RCC_AHB_PERIPH_ADC, ENABLE);

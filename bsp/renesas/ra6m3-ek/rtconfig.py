@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     NM = PREFIX + 'nm'
 
-    DEVICE = ' -mcpu=cortex-m33 -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T script/fsp.ld -L script/'
@@ -69,9 +69,9 @@ elif PLATFORM == 'armclang':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --cpu Cortex-M33'
+    DEVICE = ' --cpu Cortex-M4'
 
-    CFLAGS = ' -mcpu=Cortex-M33 -xc -std=c99 --target=arm-arm-none-eabi -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c'
+    CFLAGS = ' -mcpu=Cortex-M4 -xc -std=c99 --target=arm-arm-none-eabi -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c'
     CFLAGS += ' -fno-rtti -funsigned-char -ffunction-sections'
     CFLAGS += ' -Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal'
 

@@ -65,7 +65,7 @@ static rt_err_t rt_fdcan_init(rt_device_t dev)
 
     if (HAL_FDCAN_Init(&device->fdcan) != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     device->filter.IdType             = FDCAN_EXTENDED_ID;
@@ -77,7 +77,7 @@ static rt_err_t rt_fdcan_init(rt_device_t dev)
 
     if (HAL_FDCAN_ConfigFilter(&device->fdcan, &device->filter)!=HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     HAL_FDCAN_Start(&device->fdcan);
     HAL_FDCAN_ActivateNotification(&device->fdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0); /* open rx fifo0 new message it */
@@ -124,7 +124,7 @@ static rt_err_t rt_fdcan_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-static rt_size_t rt_fdcan_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_fdcan_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
     struct stm32_fdcan *device = (struct stm32_fdcan *)dev;
@@ -155,7 +155,7 @@ static rt_size_t rt_fdcan_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_s
     return 0;
 }
 
-static rt_size_t rt_fdcan_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_fdcan_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
     struct stm32_fdcan *device = (struct stm32_fdcan *)dev;
@@ -172,7 +172,7 @@ static rt_size_t rt_fdcan_write(rt_device_t dev, rt_off_t pos, const void *buffe
 
     if (HAL_FDCAN_AddMessageToTxFifoQ(&device->fdcan, &device->tx_config, (uint8_t *)buffer) != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -265,7 +265,7 @@ int fdcan_sample(int argc, char **argv)
     if (dev == RT_NULL)
     {
         rt_kprintf("can't find fdcan1 device!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_device_open(dev, RT_DEVICE_OFLAG_RDWR);
 

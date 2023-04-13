@@ -565,7 +565,7 @@ Configuration is mainly done by modifying the file under project directory - rtc
 #define RT_NAME_MAX 8
 
 /* Set the number of aligned bytes when bytes are aligned. Usually use ALIGN(RT_ALIGN_SIZE) for byte alignment.*/
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 8
 
 /* Define the number of system thread priorities; usually define the priority of idle threads with RT_THREAD_PRIORITY_MAX-1 */
 #define RT_THREAD_PRIORITY_MAX 32

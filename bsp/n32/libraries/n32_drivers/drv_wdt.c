@@ -39,7 +39,7 @@ static rt_err_t n32_wdt_open(rt_watchdog_t *wdt, rt_uint16_t oflag)
     RCC_EnableLsi(ENABLE);
 
     /* Wait till LSI is ready */
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452)
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
     while (RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET)
     {
     }
@@ -151,7 +151,7 @@ static rt_err_t n32_wdt_control(rt_watchdog_t *wdt, int cmd, void *args)
             break;
 
         default:
-            return RT_EINVAL;
+            return -RT_EINVAL;
     }
 
     return RT_EOK;

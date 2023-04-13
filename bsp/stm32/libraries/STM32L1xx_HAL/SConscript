@@ -22,21 +22,21 @@ STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_gpio.c
 """)
 
 
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_uart.c']
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_usart.c']
 
 if GetDepend(['RT_USING_I2C']):
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_i2c.c']
-    
+
 if GetDepend(['RT_USING_SPI']):
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_spi.c']
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_ll_spi.c']
 
 if GetDepend(['RT_USING_USB']):
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_pcd.c']
-    src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_pcd_ex.c'] 
+    src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_pcd_ex.c']
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_ll_usb.c']
 
 
@@ -70,7 +70,7 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_flash.c']
     src += ['STM32L1xx_HAL_Driver/Src/stm32L1xx_hal_flash_ex.c']
 
-path = [cwd + '/CMSIS/Device/ST/STM32L1xx/Include', 
+path = [cwd + '/CMSIS/Device/ST/STM32L1xx/Include',
     cwd + '/STM32L1xx_HAL_Driver/Inc']
 
 CPPDEFINES = ['USE_HAL_DRIVER']

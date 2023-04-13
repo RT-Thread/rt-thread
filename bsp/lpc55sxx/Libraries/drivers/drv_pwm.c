@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,12 +7,18 @@
  * Date           Author       Notes
  * 2019-04-28     tyustli      first version
  * 2019-07-15     Magicoe      The first version for LPC55S6x, we can also use SCT as PWM
- *
+ * 2023-02-28     Z8MAN8       Update docking to the RT-Thread device frame
  */
 
 #include <rtthread.h>
 
 #ifdef RT_USING_PWM
+#if !defined(BSP_USING_CTIMER1_MAT0) && !defined(BSP_USING_CTIMER1_MAT1) && \
+    !defined(BSP_USING_CTIMER1_MAT2)
+#error "Please define at least one BSP_USING_CTIMERx_MATx"
+#else
+    #define BSP_USING_CTIMER1
+#endif
 #if !defined(BSP_USING_CTIMER2_MAT0) && !defined(BSP_USING_CTIMER2_MAT1) && \
     !defined(BSP_USING_CTIMER2_MAT2)
 #error "Please define at least one BSP_USING_CTIMERx_MATx"
@@ -29,6 +35,67 @@
 
 #define DEFAULT_DUTY                  50
 #define DEFAULT_FREQ                  1000
+
+enum
+{
+#ifdef BSP_USING_CTIMER1
+    PWM1_INDEX,
+#endif
+#ifdef BSP_USING_CTIMER2
+    PWM2_INDEX,
+#endif
+};
+
+struct lpc_pwm
+{
+    struct rt_device_pwm pwm_device;
+    CTIMER_Type *    tim;
+    uint32_t channel;
+    char *name;
+};
+
+static struct lpc_pwm lpc_pwm_obj[] =
+{
+#if defined(BSP_USING_CTIMER1_MAT0) || defined(BSP_USING_CTIMER1_MAT1) || \
+        defined(BSP_USING_CTIMER1_MAT2)
+    {
+       .tim                     = CTIMER1,
+       .name                    = "pwm1",
+       .channel                 = RT_NULL
+    },
+#endif
+
+#if defined(BSP_USING_CTIMER2_MAT0) || defined(BSP_USING_CTIMER2_MAT1) || \
+        defined(BSP_USING_CTIMER2_MAT2)
+    {
+       .tim                     = CTIMER2,
+       .name                    = "pwm2",
+       .channel                 = RT_NULL
+    },
+#endif
+};
+
+static void pwm_get_channel(void)
+{
+#ifdef BSP_USING_CTIMER1_MAT0
+    lpc_pwm_obj[PWM1_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_CTIMER1_MAT1
+    lpc_pwm_obj[PWM1_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_CTIMER1_MAT2
+    lpc_pwm_obj[PWM1_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_CTIMER2_MAT0
+    lpc_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_CTIMER2_MAT1
+    lpc_pwm_obj[PWM2_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_CTIMER2_MAT2
+    lpc_pwm_obj[PWM2_INDEX].channel |= 1 << 2;
+#endif
+}
 
 static rt_err_t lpc_drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg);
 
@@ -66,17 +133,31 @@ static rt_err_t lpc_drv_pwm_get(struct rt_device_pwm *device, struct rt_pwm_conf
 
     base = (CTIMER_Type *)device->parent.user_data;
 
-#ifdef BSP_USING_CTIMER2
     /* get frequence */
-    pwmClock = CLOCK_GetFreq(kCLOCK_CTimer2) ;
-#endif
-
+    if (base == CTIMER1)
+    {
+        pwmClock = CLOCK_GetCTimerClkFreq(1U) ;
+    }
+    else if(base == CTIMER2)
+    {
+        pwmClock = CLOCK_GetCTimerClkFreq(2U) ;
+    }
     get_frequence = pwmClock / (base->MR[kCTIMER_Match_3] + 1);
 
-    if(configuration->channel == 1)
+    if(configuration->channel == 0)
+    {
+        /* get dutycycle */
+        get_duty = (100*(base->MR[kCTIMER_Match_3] + 1 - base->MR[kCTIMER_Match_0]))/(base->MR[kCTIMER_Match_3] + 1);
+    }
+    else if(configuration->channel == 1)
     {
         /* get dutycycle */
         get_duty = (100*(base->MR[kCTIMER_Match_3] + 1 - base->MR[kCTIMER_Match_1]))/(base->MR[kCTIMER_Match_3] + 1);
+    }
+    else if(configuration->channel == 2)
+    {
+        /* get dutycycle */
+        get_duty = (100*(base->MR[kCTIMER_Match_3] + 1 - base->MR[kCTIMER_Match_2]))/(base->MR[kCTIMER_Match_3] + 1);
     }
 
     /* get dutycycle */
@@ -106,26 +187,38 @@ static rt_err_t lpc_drv_pwm_set(struct rt_device_pwm *device, struct rt_pwm_conf
     /* Timer counter is incremented on every APB bus clock */
     config.prescale = 0;
 
-    if(configuration->channel == 1)
+    /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
+    /* Calculate PWM period match value */
+    double tmp = configuration->period;
+    /* Target frequence. */
+    tmp = 1000000000/tmp;
+    if (base == CTIMER1)
     {
-        /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
-        /* Calculate PWM period match value */
-        pwmPeriod = (( CLOCK_GetFreq(kCLOCK_CTimer2) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
+        pwmPeriod = (( CLOCK_GetCTimerClkFreq(1U) / (config.prescale + 1) ) / (uint32_t)tmp) - 1;
+    }
+    else if (base == CTIMER2)
+    {
+        pwmPeriod = (( CLOCK_GetCTimerClkFreq(2U) / (config.prescale + 1) ) / (uint32_t)tmp) - 1;
+    }
 
-        /* Calculate pulse width match value */
-        if (DEFAULT_DUTY == 0)
-        {
-            pulsePeriod = pwmPeriod + 1;
-        }
-        else
-        {
-            pulsePeriod = (pwmPeriod * (100 - DEFAULT_DUTY)) / 100;
-        }
-        /* Match on channel 3 will define the PWM period */
-        base->MR[kCTIMER_Match_3] = pwmPeriod;
-        /* This will define the PWM pulse period */
+    /* Calculate pulse width match value */
+    tmp = configuration->pulse;
+    pulsePeriod = (1.0 - tmp / configuration->period) * pwmPeriod;
+    /* Match on channel 3 will define the PWM period */
+    base->MR[kCTIMER_Match_3] = pwmPeriod;
+
+    /* This will define the PWM pulse period */
+    if(configuration->channel == 0)
+    {
+        base->MR[kCTIMER_Match_0] = pulsePeriod;
+    }
+    else if(configuration->channel == 1)
+    {
         base->MR[kCTIMER_Match_1] = pulsePeriod;
-
+    }
+    else if(configuration->channel == 2)
+    {
+        base->MR[kCTIMER_Match_2] = pulsePeriod;
     }
 
     return RT_EOK;
@@ -146,36 +239,58 @@ static rt_err_t lpc_drv_pwm_control(struct rt_device_pwm *device, int cmd, void 
     case PWM_CMD_GET:
         return lpc_drv_pwm_get(device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
-int rt_hw_pwm_init(void)
+static rt_err_t rt_hw_pwm_init(struct lpc_pwm *device)
 {
     rt_err_t ret = RT_EOK;
+    CTIMER_Type *tim = RT_NULL;
+    uint32_t channel = RT_NULL;
 
-#ifdef BSP_USING_CTIMER2
-
-    static struct rt_device_pwm pwm1_device;
+    static struct rt_device_pwm pwm_device;
     ctimer_config_t config;
     uint32_t pwmPeriod, pulsePeriod;
 
-    /* Use 12 MHz clock for some of the Ctimers */
-    CLOCK_AttachClk(kMAIN_CLK_to_CTIMER2);
 
-    /* Run as a timer */
-    config.mode = kCTIMER_TimerMode;
-    /* This field is ignored when mode is timer */
-    config.input = kCTIMER_Capture_0;
-    /* Timer counter is incremented on every APB bus clock */
-    config.prescale = 0;
+    tim = device->tim;
+    channel = device->channel;
 
-    CTIMER_Init(CTIMER2, &config);
+    if(tim == CTIMER1)
+    {
+        /* Use 12 MHz clock for some of the Ctimers */
+        CLOCK_AttachClk(kMAIN_CLK_to_CTIMER1);
 
-#ifdef BSP_USING_CTIMER2_MAT1
-    /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
-    /* Calculate PWM period match value */
-    pwmPeriod = (( CLOCK_GetFreq(kCLOCK_CTimer2) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
+        /* Run as a timer */
+        config.mode = kCTIMER_TimerMode;
+        /* This field is ignored when mode is timer */
+        config.input = kCTIMER_Capture_0;
+        /* Timer counter is incremented on every APB bus clock */
+        config.prescale = 0;
+
+        CTIMER_Init(CTIMER1, &config);
+        /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
+        /* Calculate PWM period match value */
+        pwmPeriod = (( CLOCK_GetCTimerClkFreq(1U) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
+    }
+    else if (tim == CTIMER2)
+    {
+        /* Use 12 MHz clock for some of the Ctimers */
+        CLOCK_AttachClk(kMAIN_CLK_to_CTIMER2);
+
+        /* Run as a timer */
+        config.mode = kCTIMER_TimerMode;
+        /* This field is ignored when mode is timer */
+        config.input = kCTIMER_Capture_0;
+        /* Timer counter is incremented on every APB bus clock */
+        config.prescale = 0;
+
+        CTIMER_Init(CTIMER2, &config);
+        /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
+        /* Calculate PWM period match value */
+        pwmPeriod = (( CLOCK_GetCTimerClkFreq(2U) / (config.prescale + 1) ) / DEFAULT_FREQ) - 1;
+    }
 
     /* Calculate pulse width match value */
     if (DEFAULT_DUTY == 0)
@@ -184,23 +299,59 @@ int rt_hw_pwm_init(void)
     }
     else
     {
-        pulsePeriod = (pwmPeriod * (100 - DEFAULT_DUTY)) / 100;
+        pulsePeriod = ((pwmPeriod + 1) * (100 - DEFAULT_DUTY)) / 100;
     }
-    CTIMER_SetupPwmPeriod(CTIMER2, kCTIMER_Match_1 , pwmPeriod, pulsePeriod, false);
-#endif
 
-    ret = rt_device_pwm_register(&pwm1_device, "pwm1", &lpc_drv_ops, CTIMER2);
-
-    if (ret != RT_EOK)
+    if (channel & 0x01)
     {
-        LOG_E("%s register failed", "pwm1");
+        CTIMER_SetupPwmPeriod(tim, kCTIMER_Match_3 , kCTIMER_Match_0, pwmPeriod, pulsePeriod, false);
+        }
+    if (channel & 0x02)
+    {
+        CTIMER_SetupPwmPeriod(tim, kCTIMER_Match_3 , kCTIMER_Match_1, pwmPeriod, pulsePeriod, false);
     }
-
-#endif /* BSP_USING_CTIMER2 */
-
+    if (channel & 0x04)
+    {
+        CTIMER_SetupPwmPeriod(tim, kCTIMER_Match_3 , kCTIMER_Match_2, pwmPeriod, pulsePeriod, false);
+    }
     return ret;
 }
 
-INIT_DEVICE_EXPORT(rt_hw_pwm_init);
+static int lpc_pwm_init(void)
+{
+    int i = 0;
+    int result = RT_EOK;
 
+    pwm_get_channel();
+
+    for (i = 0; i < sizeof(lpc_pwm_obj) / sizeof(lpc_pwm_obj[0]); i++)
+    {
+        /* pwm init */
+        if (rt_hw_pwm_init(&lpc_pwm_obj[i]) != RT_EOK)
+        {
+            LOG_E("%s init failed", lpc_pwm_obj[i].name);
+            result = -RT_ERROR;
+            goto __exit;
+        }
+        else
+        {
+            LOG_D("%s init success", lpc_pwm_obj[i].name);
+
+            /* register pwm device */
+            if (rt_device_pwm_register(&lpc_pwm_obj[i].pwm_device, lpc_pwm_obj[i].name, &lpc_drv_ops, lpc_pwm_obj[i].tim) == RT_EOK)
+            {
+                LOG_D("%s register success", lpc_pwm_obj[i].name);
+            }
+            else
+            {
+                LOG_E("%s register failed", lpc_pwm_obj[i].name);
+                result = -RT_ERROR;
+            }
+        }
+    }
+
+__exit:
+    return result;
+}
+INIT_DEVICE_EXPORT(lpc_pwm_init);
 #endif /* RT_USING_PWM */

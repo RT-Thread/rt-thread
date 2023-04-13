@@ -160,7 +160,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     int32_t ret = CAN_Init(p_can_dev->instance, &p_can_dev->ll_init);
     if (ret != LL_OK)
     {
-        rt_ret = RT_EINVAL;
+        rt_ret = -RT_EINVAL;
     }
 
     return rt_ret;
@@ -390,7 +390,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     ll_ret = CAN_FillTxFrame(p_can_dev->instance, CAN_TX_BUF_PTB, &stc_tx_frame);
     if (ll_ret != LL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* Request transmission */
     CAN_StartTx(p_can_dev->instance, CAN_TX_REQ_PTB);

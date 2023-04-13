@@ -32,6 +32,12 @@ menu "Hardware Drivers Config"
             select BSP_USING_SDH1
             default y
 
+        config BOARD_USING_STORAGE_RAWNAND
+            bool "Raw NAND supporting(over nfi)"
+            select BSP_USING_NFI
+            select RT_USING_MTD_NAND
+            default y
+
         config BOARD_USING_STORAGE_SPIFLASH
             bool "SPI NOR FLASH supporting(over qspi0)"
             select BSP_USING_QSPI
@@ -50,6 +56,17 @@ menu "Hardware Drivers Config"
             select BSP_USING_EPWM
             select BSP_USING_EPWM1
             select BSP_USING_EPWM1_PWM
+            default y
+
+        config BOARD_USING_MPU6500
+            bool "MPU6500 6-axis MotionTracking Sensor(over i2c1)"
+            select RT_USING_SENSOR
+            select PKG_USING_MPU6XXX
+            select PKG_USING_MPU6XXX_LATEST_VERSION
+            select PKG_USING_MPU6XXX_ACCE
+            select PKG_USING_MPU6XXX_GYRO
+            select BSP_USING_I2C
+            select BSP_USING_I2C1
             default y
 
         config BOARD_USING_USBHOST
@@ -139,7 +156,7 @@ menu "Hardware Drivers Config"
     if BOARD_USING_SENSOR1
         config BOARD_USING_SENSON1_ID
             int "Specify Sensor1 ID"
-            default 0 
+            default 0
             range 0 2
             help
                 HM1055=0

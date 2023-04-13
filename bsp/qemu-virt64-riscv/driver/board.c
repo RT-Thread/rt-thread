@@ -13,6 +13,7 @@
 #include <rtdevice.h>
 
 #include "board.h"
+#include "mm_aspace.h"
 #include "tick.h"
 
 #include "drv_uart.h"
@@ -23,7 +24,7 @@
 #include "plic.h"
 #include "stack.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include "riscv_mmu.h"
 #include "mmu.h"
 #include "page.h"
@@ -31,52 +32,45 @@
 
 rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END};
 
-rt_mmu_info mmu_info;
-
 extern size_t MMUTable[];
 
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x10000000 - 1, KERNEL_VADDR_START + PV_OFFSET, NORMAL_MEM},
+    {KERNEL_VADDR_START, (rt_size_t)RT_HW_PAGE_END - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
 };
 
 #define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))
 
 #endif
 
-void init_bss(void)
-{
-    unsigned int *dst;
-
-    dst = &__bss_start;
-    while (dst < &__bss_end)
-    {
-        *dst++ = 0;
-    }
-}
-
 void primary_cpu_entry(void)
 {
     extern void entry(void);
 
     /* disable global interrupt */
-    init_bss();
     rt_hw_interrupt_disable();
+
     entry();
 }
 
 #define IOREMAP_SIZE (1ul << 30)
 
+#ifndef ARCH_KERNEL_IN_HIGH_VA
+#define IOREMAP_VEND USER_VADDR_START
+#else
+#define IOREMAP_VEND 0ul
+#endif
+
 void rt_hw_board_init(void)
 {
-#ifdef RT_USING_USERSPACE
-    rt_page_init(init_page_region);
-    /* init mmu_info structure */
-    rt_hw_mmu_map_init(&mmu_info, (void *)(USER_VADDR_START - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, 0);
-    // this API is reserved currently since PLIC etc had not been porting completely to MMU version
-    rt_hw_mmu_kernel_map_init(&mmu_info, 0x00000000UL, 0x80000000);
-    /* setup region, and enable MMU */
-    rt_hw_mmu_setup(&mmu_info, platform_mem_desc, NUM_MEM_DESC);
+#ifdef RT_USING_SMART
+    /* init data structure */
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(IOREMAP_VEND - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, PV_OFFSET);
 
+    /* init page allocator */
+    rt_page_init(init_page_region);
+
+    /* setup region, and enable MMU */
+    rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, NUM_MEM_DESC);
 #endif
 
 #ifdef RT_USING_HEAP

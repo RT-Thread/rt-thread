@@ -1,5 +1,5 @@
-/* Linker script to configure memory regions. 
- * Need modifying for a specific board. 
+/* Linker script to configure memory regions.
+ * Need modifying for a specific board.
  *   FLASH.ORIGIN: starting address of flash
  *   FLASH.LENGTH: length of flash
  *   RAM.ORIGIN: starting address of RAM bank 0
@@ -17,7 +17,7 @@ MEMORY
  * with other linker script that defines memory regions FLASH and RAM.
  * It references following symbols, which must be defined in code:
  *   Reset_Handler : Entry of reset handler
- * 
+ *
  * It defines following symbols, which code can use without definition:
  *   __exidx_start
  *   __exidx_end
@@ -61,7 +61,7 @@ SECTIONS
         *(.glue_7)
         *(.glue_7t)
         *(.gnu.linkonce.t*)
-        
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -108,7 +108,7 @@ SECTIONS
         KEEP(*(.eh_frame*))
     } > FLASH
 
-    .ARM.extab : 
+    .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
     } > FLASH
@@ -180,7 +180,7 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
         __bss_end__ = .;
-    } > RAM 
+    } > RAM
 
     ASSERT(__StackTop <= 0x20028000, "stack address error")
 }

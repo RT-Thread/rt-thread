@@ -21,7 +21,7 @@ static int rt_spi_device_init(void)
 {
     struct rt_spi_configuration cfg;
 
-    rt_hw_spi_device_attach("spi5", "spi50", NULL, NULL);
+    rt_hw_spi_device_attach("spi5", "spi50", PIN_NONE);
 
     cfg.data_width = 8;
     cfg.mode   = RT_SPI_MASTER | RT_SPI_MODE_0 | RT_SPI_MSB | RT_SPI_NO_CS;
@@ -32,7 +32,7 @@ static int rt_spi_device_init(void)
     if (RT_NULL == spi_dev)
     {
         rt_kprintf("spi sample run failed! can't find %s device!\n", SPI_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_spi_configure(spi_dev, &cfg);

@@ -381,7 +381,7 @@ static rt_err_t spinand_status_register_write(struct rt_qspi_device *qspi, uint8
         break;
 
     default:
-        result = RT_EINVAL;
+        result = -RT_EINVAL;
         goto exit_spinand_status_register_write;
     }
 
@@ -392,7 +392,7 @@ static rt_err_t spinand_status_register_write(struct rt_qspi_device *qspi, uint8
 
     if (spinand_isbusy(qspi))
     {
-        result = RT_EIO;
+        result = -RT_EIO;
         goto exit_spinand_status_register_write;
     }
 
@@ -690,7 +690,7 @@ static rt_err_t spinand_reset(struct rt_qspi_device *qspi)
 
     if (spinand_isbusy(qspi))
     {
-        result = RT_EIO;
+        result = -RT_EIO;
         goto exit_spinand_reset;
     }
 

@@ -21,7 +21,7 @@ void qemu_gpio3_key_poweroff(void *args)
     rt_hw_cpu_shutdown();
 }
 
-int pin_init()
+static int pin_init()
 {
     rt_pin_attach_irq(3, PIN_IRQ_MODE_FALLING, qemu_gpio3_key_poweroff, RT_NULL);
     rt_pin_irq_enable(3, RT_TRUE);

@@ -25,9 +25,10 @@ if GetDepend(['RT_USING_DAC']):
 
 if GetDepend('BSP_USING_ONCHIP_RTC'):
     src += ['drv_rtc.c']
-    
+
 if GetDepend(['RT_USING_I2C']):
-    src += ['drv_soft_i2c.c']
+    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
+        src += ['drv_soft_i2c.c']
 
 if GetDepend(['RT_USING_SPI']):
     src += ['drv_spi.c']
@@ -38,13 +39,40 @@ if GetDepend(['RT_USING_HWTIMER']):
 if GetDepend(['RT_USING_PWM']):
     src += ['drv_pwm.c']
 
-if GetDepend(['RT_USING_WDT']):
+if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
+    src += ['drv_eth.c']
+
+if GetDepend(['BSP_USING_SDIO']):
+    src += ['drv_sdio.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['drv_can.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F0']):
+    src += ['drv_flash/drv_flash_f0.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F1']):
+    src += ['drv_flash/drv_flash_f1.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32E1']):
+    src += ['drv_flash/drv_flash_e1.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32S1']):
+    src += ['drv_flash/drv_flash_s1.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_APM32F4']):
+    src += ['drv_flash/drv_flash_f4.c']
 
 src += ['drv_common.c']
 
 path =  [cwd]
 path += [cwd + '/config']
+
+if GetDepend('BSP_USING_ON_CHIP_FLASH'):
+    path += [cwd + '/drv_flash']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

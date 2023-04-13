@@ -23,6 +23,44 @@ menu "Onboard Peripheral Drivers"
         bool "Enable SDRAM"
         default n
 
+    menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_NETDEV
+        select RT_USING_LWIP
+        default n
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
+            select RT_USING_PHY
+            bool "Enable ethernet phy"
+            default y
+
+        if BSP_USING_PHY
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1060EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_KSZ8081_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+                config PHY_RESET_KSZ8081_PORT
+                    int "indicate port of reset"
+                    default 1
+
+                config PHY_RESET_KSZ8081_PIN
+                    int "indicate pin of reset"
+                    default 9
+
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+        endif
+    endif
+
     menuconfig BSP_USING_LCD
         bool "Enable LCD"
         default n
@@ -108,14 +146,66 @@ menu "Onboard Peripheral Drivers"
             select PKG_USING_GUI_GUIDER_DEMO
             default n
     endif
+
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS_DEVFS
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select BSP_USING_SDIO
+                select RT_USING_DFS_ELMFAT
+                default n
+        endif
 endmenu
 
 menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        default n
 
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_SDIO
+            config CODE_STORED_ON_SDCARD
+                bool "Enable Code STORED On SDCARD"
+                default n
+                help
+                    "SD CARD work as boot devive"
+        endif
+
+    config BSP_USING_USB
+        bool "Enable USB"
+        select RT_USING_USB_HOST
+        default n
+
+        if BSP_USING_USB
+        config BSP_USB0_HOST
+            bool "Enable USB0"
+            default n
+
+        config BSP_USB1_HOST
+            bool "Enable USB1"
+            default n
+        endif
 
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
@@ -166,6 +256,38 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_LPUART8
                 bool "Enable LPUART8"
                 default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+            
+            config BSP_USING_BLOCKING_SPI
+                bool "Enable SPI Polling xfer"
+                default n
+        
+            config BSP_SPI1_USING_DMA
+                bool "Enable SPI1 DMA xfer"
+                depends on BSP_USING_SPI1
+                select BSP_USING_DMA
+                default n
+
+            config BSP_SPI1_RX_DMA_CHANNEL
+                depends on BSP_SPI1_USING_DMA
+                int "Set SPI1 RX DMA channel (0-32)"
+                default 0
+
+            config BSP_SPI1_TX_DMA_CHANNEL
+                depends on BSP_SPI1_USING_DMA
+                int "Set SPI1 TX DMA channel (0-32)"
+                default 1
         endif
 
     config BSP_USING_PXP

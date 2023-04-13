@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -48,7 +48,7 @@ rt_inline void spi_delay2(struct rt_spi_bit_ops *ops)
 #define MISO_IN(ops)         DIR_MISO(ops, 1)
 #define MISO_OUT(ops)        DIR_MISO(ops, 0)
 
-rt_inline rt_size_t spi_xfer_4line_data8(struct rt_spi_bit_ops       *ops,
+rt_inline rt_ssize_t spi_xfer_4line_data8(struct rt_spi_bit_ops       *ops,
                                          struct rt_spi_configuration *config,
                                          const void                  *send_buf,
                                          void                        *recv_buf,
@@ -111,7 +111,7 @@ rt_inline rt_size_t spi_xfer_4line_data8(struct rt_spi_bit_ops       *ops,
     return length;
 }
 
-rt_inline rt_size_t spi_xfer_4line_data16(struct rt_spi_bit_ops       *ops,
+rt_inline rt_ssize_t spi_xfer_4line_data16(struct rt_spi_bit_ops       *ops,
                                           struct rt_spi_configuration *config,
                                           const void                  *send_buf,
                                           void                        *recv_buf,
@@ -174,7 +174,7 @@ rt_inline rt_size_t spi_xfer_4line_data16(struct rt_spi_bit_ops       *ops,
     return length;
 }
 
-rt_inline rt_size_t spi_xfer_3line_data8(struct rt_spi_bit_ops       *ops,
+rt_inline rt_ssize_t spi_xfer_3line_data8(struct rt_spi_bit_ops       *ops,
                                          struct rt_spi_configuration *config,
                                          const void                  *send_buf,
                                          void                        *recv_buf,
@@ -275,7 +275,7 @@ rt_inline rt_size_t spi_xfer_3line_data8(struct rt_spi_bit_ops       *ops,
     return length;
 }
 
-rt_inline rt_size_t spi_xfer_3line_data16(struct rt_spi_bit_ops       *ops,
+rt_inline rt_ssize_t spi_xfer_3line_data16(struct rt_spi_bit_ops       *ops,
                                           struct rt_spi_configuration *config,
                                           const void                  *send_buf,
                                           void                        *recv_buf,
@@ -412,12 +412,12 @@ rt_err_t spi_bit_configure(struct rt_spi_device *device, struct rt_spi_configura
     return RT_EOK;
 }
 
-rt_uint32_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+rt_ssize_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     struct rt_spi_bit_obj *obj = rt_container_of(device->bus, struct rt_spi_bit_obj, bus);
     struct rt_spi_bit_ops *ops = obj->ops;
     struct rt_spi_configuration *config = &obj->config;
-    rt_base_t cs_pin = (rt_base_t)device->parent.user_data;
+    rt_base_t cs_pin = device->cs_pin;
 
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
@@ -438,7 +438,7 @@ rt_uint32_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *me
 #endif
 
     /* take CS */
-    if (message->cs_take)
+    if (message->cs_take && (cs_pin != PIN_NONE))
     {
         LOG_I("spi take cs\n");
         rt_pin_write(cs_pin, PIN_LOW);
@@ -492,7 +492,7 @@ rt_uint32_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *me
     }
 
     /* release CS */
-    if (message->cs_release)
+    if (message->cs_release && (cs_pin != PIN_NONE))
     {
         spi_delay(ops);
         rt_pin_write(cs_pin, PIN_HIGH);

@@ -55,7 +55,7 @@ static struct hpm_i2c hpm_i2cs[] =
 #endif
 };
 
-static rt_size_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num);
+static rt_ssize_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num);
 
 
 struct rt_i2c_bus_device_ops hpm_i2c_ops =
@@ -65,7 +65,7 @@ struct rt_i2c_bus_device_ops hpm_i2c_ops =
     RT_NULL
 };
 
-static rt_size_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
+static rt_ssize_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     RT_ASSERT(bus != RT_NULL);
     RT_ASSERT(msgs != RT_NULL);
@@ -74,7 +74,7 @@ static rt_size_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct r
     struct hpm_i2c *i2c_info = (struct hpm_i2c *)bus;
 
     hpm_stat_t i2c_stat = status_success;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     rt_uint32_t i;
 
     for (i = 0; i < num; i++)

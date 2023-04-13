@@ -22,7 +22,7 @@
 .equ I_Bit,           0x80   /* when I bit is set, IRQ is disabled */
 .equ F_Bit,           0x40   /* when F bit is set, FIQ is disabled */
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 .data
 .align 14
 init_mtbl:
@@ -101,8 +101,11 @@ continue:
     dsb
     isb
 
-#ifdef RT_USING_USERSPACE
-    ldr r5, =PV_OFFSET
+#ifdef RT_USING_SMART
+    /* load r5 with PV_OFFSET */
+    ldr r7, =_reset
+    adr r5, _reset
+    sub r5, r5, r7
 
     mov r7, #0x100000
     sub r7, #1
@@ -144,7 +147,14 @@ after_enable_mmu:
 
     /* disable the data alignment check */
     mrc p15, 0, r1, c1, c0, 0
-    bic r1, #(1<<1)
+    bic r1, #(1<<1)             /* Disable Alignment fault checking */
+#ifndef RT_USING_SMART
+    bic r1, #(1<<0)             /* Disable MMU */
+    bic r1, #(1<<2)             /* Disable data cache */
+    bic r1, #(1<<11)            /* Disable program flow prediction */
+    bic r1, #(1<<12)            /* Disable instruction cache */
+    bic r1, #(3<<19)            /* bit[20:19] must be zero */
+#endif /* RT_USING_SMART */
     mcr p15, 0, r1, c1, c0, 0
 
     /* enable I cache + branch prediction */
@@ -166,6 +176,9 @@ bss_loop:
     strlo r0,[r1],#4            /* clear 4 bytes                    */
     blo bss_loop                /* loop until done                  */
 
+    mov r0, r5
+    bl rt_kmem_pvoff_set
+
 #ifdef RT_USING_SMP
     mrc p15, 0, r1, c1, c0, 1
     mov r0, #(1<<6)
@@ -173,34 +186,22 @@ bss_loop:
     mcr p15, 0, r1, c1, c0, 1   /* enable smp */
 #endif
 
-    /* initialize the mmu table and enable mmu */
+    /**
+     * void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
+     * initialize the mmu table and enable mmu
+     */
     ldr r0, =platform_mem_desc
     ldr r1, =platform_mem_desc_size
     ldr r1, [r1]
     bl rt_hw_init_mmu_table
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     ldr r0, =MMUTable     /* vaddr    */
     add r0, r5            /* to paddr */
     bl  rt_hw_mmu_switch
 #else
     bl rt_hw_mmu_init
 #endif
-
-    /* call C++ constructors of global objects */
-    ldr     r0, =__ctors_start__
-    ldr     r1, =__ctors_end__
-
-ctor_loop:
-    cmp     r0, r1
-    beq     ctor_end
-    ldr     r2, [r0], #4
-    stmfd   sp!, {r0-r1}
-    mov     lr, pc
-    bx      r2
-    ldmfd   sp!, {r0-r1}
-    b       ctor_loop
-ctor_end:
 
     /* start RT-Thread Kernel */
     ldr     pc, _rtthread_startup
@@ -240,7 +241,7 @@ stack_setup:
 
     bx      lr
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 .align 2
 .global enable_mmu
 enable_mmu:
@@ -273,34 +274,27 @@ rt_hw_set_process_id:
     MCR p15, 0, r0, c13, c0, 1
     mov pc, lr
 
+#endif
 .global rt_hw_mmu_switch
 rt_hw_mmu_switch:
-    mov r3, #0
-    mcr p15, 0, r3, c13, c0, 1   /* set contextid = 0, for synchronization*/ 
-    isb
-    
     orr r0, #0x18
-    mcr p15, 0, r0, c2, c0, 0    /* ttbr0 */
+    mcr p15, 0, r0, c2, c0, 0       // ttbr0
 
-    isb
-    mov r1, r1, LSL #0x8         
-    and r2, r2, #0xff             
-    orr r1, r1, r2                /* contextid.PROCID = pid, contextid.ASID = asid*/
-    mcr p15, 0, r1, c13, c0, 1    /* set contextid = r1*/ 
-    isb
-
-    mcr p15, 0, r0, c7, c5, 0    /* iciallu */
-    mcr p15, 0, r0, c7, c5, 6    /* bpiall */
+                                    //invalid tlb
+    mov r0, #0
+    mcr p15, 0, r0, c8, c7, 0
+    mcr p15, 0, r0, c7, c5, 0       //iciallu
+    mcr p15, 0, r0, c7, c5, 6       //bpiall 
 
     dsb
     isb
     mov pc, lr
+
 .global rt_hw_mmu_tbl_get
 rt_hw_mmu_tbl_get:
     mrc p15, 0, r0, c2, c0, 0    /* ttbr0 */
     bic r0, #0x18
     mov pc, lr
-#endif
 
 _halt:
     wfe
@@ -346,7 +340,7 @@ vector_irq:
     mrs     r1,  spsr         /* original mode */
     stmfd   r0!, {r1}
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     stmfd   r0, {r13, r14}^   /* usr_sp, usr_lr */
     sub     r0, #8
 #endif
@@ -394,7 +388,7 @@ vector_irq:
     cmp     r1, #1
     beq     rt_hw_context_switch_interrupt_do
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     ldmfd   sp!, {r0-r12,lr}
     cps     #Mode_SVC
     push    {r0-r12}
@@ -445,7 +439,7 @@ rt_hw_context_switch_interrupt_do:
     stmfd   sp!, {r1-r4}        /* push old task's r0-r3 */
     stmfd   sp!, {r0}           /* push old task's cpsr */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     stmfd   sp, {r13, r14}^     /*push usr_sp, usr_lr */
     sub     sp, #8
 #endif
@@ -472,9 +466,9 @@ rt_hw_context_switch_interrupt_do:
     ldr     sp,  [r6]       /* get new task's stack pointer */
 
     bl      rt_thread_self
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     mov     r4, r0
-    bl      lwp_mmu_switch
+    bl      lwp_aspace_switch
     mov     r0, r4
     bl      lwp_user_setting_restore
 #endif
@@ -492,7 +486,7 @@ rt_hw_context_switch_interrupt_do:
 1:
 #endif
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     ldmfd sp, {r13, r14}^    /*pop usr_sp, usr_lr */
     add sp, #8
 #endif
@@ -500,7 +494,7 @@ rt_hw_context_switch_interrupt_do:
     ldmfd   sp!, {r4}        /* pop new task's cpsr to spsr */
     msr     spsr_cxsf, r4
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     and     r4, #0x1f
     cmp     r4, #0x10
     bne     1f
@@ -558,7 +552,7 @@ vector_undef:
     .globl  vector_pabt
 vector_pabt:
     push_svc_reg
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     /* cp Mode_ABT stack to SVC */
     sub     sp, sp, #17 * 4     /* Sizeof(struct rt_hw_exp_stack)  */
     mov     lr, r0
@@ -586,7 +580,7 @@ vector_pabt:
     .globl  vector_dabt
 vector_dabt:
     push_svc_reg
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     /* cp Mode_ABT stack to SVC */
     sub     sp, sp, #17 * 4    /* Sizeof(struct rt_hw_exp_stack)  */
     mov     lr, r0
@@ -617,16 +611,19 @@ vector_resv:
     bl      rt_hw_trap_resv
     b       .
 
-#ifdef RT_USING_SMP
 .global rt_hw_clz
 rt_hw_clz:
     clz r0, r0
     bx lr
 
+#ifdef RT_USING_SMP
+
 .global rt_secondary_cpu_entry
 rt_secondary_cpu_entry:
-#ifdef RT_USING_USERSPACE
-    ldr     r5, =PV_OFFSET
+#ifdef RT_USING_SMART
+    ldr     r0, =_reset
+    adr     r5, _reset
+    sub     r5, r5, r0
 
     ldr     lr, =after_enable_mmu_n
     ldr     r0, =init_mtbl
@@ -656,7 +653,7 @@ after_enable_mmu_n:
     bl stack_setup
 
     /* initialize the mmu table and enable mmu */
-#ifndef RT_USING_USERSPACE
+#ifndef RT_USING_SMART
     bl rt_hw_mmu_init
 #endif
 

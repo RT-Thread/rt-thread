@@ -333,8 +333,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\libcpu\arm\common\backtrace.c</PathWithFileName>
-      <FilenameWithoutPath>backtrace.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\libcpu\arm\common\atomic_arm.c</PathWithFileName>
+      <FilenameWithoutPath>atomic_arm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -809,8 +809,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\src\scheduler.c</PathWithFileName>
-      <FilenameWithoutPath>scheduler.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\src\scheduler_up.c</PathWithFileName>
+      <FilenameWithoutPath>scheduler_up.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

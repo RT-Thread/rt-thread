@@ -25,8 +25,8 @@
 static rt_err_t hpm_rtc_init(rt_device_t dev);
 static rt_err_t hpm_rtc_open(rt_device_t dev, rt_uint16_t oflag);
 static rt_err_t hpm_rtc_close(rt_device_t dev);
-static rt_size_t hpm_rtc_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t size);
-static rt_size_t hpm_rtc_write(rt_device_t dev, rt_off_t pos, const void *buf, rt_size_t size);
+static rt_ssize_t hpm_rtc_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t size);
+static rt_ssize_t hpm_rtc_write(rt_device_t dev, rt_off_t pos, const void *buf, rt_size_t size);
 static rt_err_t hpm_rtc_control(rt_device_t dev, int cmd, void *args);
 
 static time_t hpm_rtc_get_timestamp(void);
@@ -64,11 +64,11 @@ static rt_err_t hpm_rtc_close(rt_device_t dev)
 {
     return RT_EOK;
 }
-static rt_size_t hpm_rtc_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t size)
+static rt_ssize_t hpm_rtc_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t size)
 {
     return 0;
 }
-static rt_size_t hpm_rtc_write(rt_device_t dev, rt_off_t pos, const void *buf, rt_size_t size)
+static rt_ssize_t hpm_rtc_write(rt_device_t dev, rt_off_t pos, const void *buf, rt_size_t size)
 {
     return 0;
 }
@@ -86,7 +86,7 @@ static rt_err_t hpm_rtc_control(rt_device_t dev, int cmd, void *args)
             hpm_rtc_set_timestamp(*(time_t *)args);
             break;
         default:
-            err = RT_EINVAL;
+            err = -RT_EINVAL;
             break;
     }
 

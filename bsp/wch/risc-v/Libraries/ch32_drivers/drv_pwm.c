@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,6 +16,8 @@
 
 #define LOG_TAG "drv.pwm"
 #include <drv_log.h>
+
+#define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
 void ch32_tim_clock_init(TIM_TypeDef* timx)
 {

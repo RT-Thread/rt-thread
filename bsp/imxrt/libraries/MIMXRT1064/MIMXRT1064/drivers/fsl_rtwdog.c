@@ -2,7 +2,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -50,7 +50,7 @@ void RTWDOG_Init(RTWDOG_Type *base, const rtwdog_config_t *config)
 
     uint32_t value = 0U;
     uint32_t primaskValue = 0U;
- 
+
     value = RTWDOG_CS_EN(config->enableRtwdog) | RTWDOG_CS_CLK(config->clockSource) | RTWDOG_CS_INT(config->enableInterrupt) |
             RTWDOG_CS_WIN(config->enableWindowMode) | RTWDOG_CS_UPDATE(config->enableUpdate) |
             RTWDOG_CS_DBG(config->workMode.enableDebug) | RTWDOG_CS_STOP(config->workMode.enableStop) |

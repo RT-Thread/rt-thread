@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -343,9 +343,9 @@ static int ch32_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-rt_size_t ch32dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t ch32dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
-    return RT_EOK;
+    return -RT_EIO;
 }
 
 static void uart_isr(struct rt_serial_device *serial)
@@ -369,7 +369,11 @@ static const struct rt_uart_ops ch32_uart_ops =
 };
 
 #ifdef BSP_USING_UART1
+#if defined (SOC_RISCV_SERIES_CH32V2)
+void USART1_IRQHandler(void) __attribute__((interrupt()));
+#else
 void USART1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 void USART1_IRQHandler(void)
 {
     GET_INT_SP();
@@ -381,7 +385,11 @@ void USART1_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART2
+#if defined (SOC_RISCV_SERIES_CH32V2)
+void USART2_IRQHandler(void) __attribute__((interrupt()));
+#else
 void USART2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 void USART2_IRQHandler(void)
 {
     GET_INT_SP();
@@ -393,7 +401,11 @@ void USART2_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART3
+#if defined (SOC_RISCV_SERIES_CH32V2)
+void USART3_IRQHandler(void) __attribute__((interrupt()));
+#else
 void USART3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 void USART3_IRQHandler(void)
 {
     GET_INT_SP();
@@ -405,7 +417,11 @@ void USART3_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART4
-void UART4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#if defined (SOC_RISCV_SERIES_CH32V2)
+void USART4_IRQHandler(void) __attribute__((interrupt()));
+#else
+void USART4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 void UART4_IRQHandler(void)
 {
     GET_INT_SP();
@@ -417,7 +433,11 @@ void UART4_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART5
-void UART5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#if defined (SOC_RISCV_SERIES_CH32V2)
+void USART5_IRQHandler(void) __attribute__((interrupt()));
+#else
+void USART5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 void UART5_IRQHandler(void)
 {
     GET_INT_SP();
@@ -429,7 +449,11 @@ void UART5_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART6
-void UART6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#if defined (SOC_RISCV_SERIES_CH32V2)
+void USART6_IRQHandler(void) __attribute__((interrupt()));
+#else
+void USART6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 void UART6_IRQHandler(void)
 {
     GET_INT_SP();
@@ -441,7 +465,11 @@ void UART6_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART7
-void UART7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#if defined (SOC_RISCV_SERIES_CH32V2)
+void USART7_IRQHandler(void) __attribute__((interrupt()));
+#else
+void USART7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 void UART7_IRQHandler(void)
 {
     GET_INT_SP();
@@ -453,7 +481,11 @@ void UART7_IRQHandler(void)
 #endif
 
 #ifdef BSP_USING_UART8
-void UART8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#if defined (SOC_RISCV_SERIES_CH32V2)
+void USART8_IRQHandler(void) __attribute__((interrupt()));
+#else
+void USART8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 void UART8_IRQHandler(void)
 {
     GET_INT_SP();

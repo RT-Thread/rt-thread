@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -116,11 +116,14 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     RT_ASSERT(cfg != RT_NULL);
 
     uart = rt_container_of(serial, struct stm32_uart, serial);
-
     uart->handle.Instance          = uart->config->Instance;
     uart->handle.Init.BaudRate     = cfg->baud_rate;
     uart->handle.Init.Mode         = UART_MODE_TX_RX;
+#ifdef USART_CR1_OVER8
+    uart->handle.Init.OverSampling = cfg->baud_rate > 5000000 ? UART_OVERSAMPLING_8 : UART_OVERSAMPLING_16;
+#else
     uart->handle.Init.OverSampling = UART_OVERSAMPLING_16;
+#endif /* USART_CR1_OVER8 */
 
     switch (cfg->data_bits)
     {
@@ -369,7 +372,7 @@ static int stm32_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static rt_size_t stm32_transmit(struct rt_serial_device     *serial,
+static rt_ssize_t stm32_transmit(struct rt_serial_device     *serial,
                                        rt_uint8_t           *buf,
                                        rt_size_t             size,
                                        rt_uint32_t           tx_flag)

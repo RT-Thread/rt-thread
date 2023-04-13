@@ -46,6 +46,8 @@
  * 2022-06-29     Meco Man     add RT_USING_LIBC and standard libc headers
  * 2022-08-16     Meco Man     change version number to v5.0.0
  * 2022-09-12     Meco Man     define rt_ssize_t
+ * 2022-12-20     Meco Man     add const name for rt_object
+ * 2023-04-01     Chushicheng  change version number to v5.0.1
  */
 
 #ifndef __RT_DEF_H__
@@ -72,7 +74,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
 #define RT_VERSION_MINOR                0               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
+#define RT_VERSION_PATCH                1               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + (minor * 100) + revise)
@@ -124,6 +126,13 @@ typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
+#if defined(RT_USING_STDC_ATOMIC)
+#include <stdatomic.h>
+typedef atomic_size_t rt_atomic_t;
+#else
+typedef volatile rt_base_t rt_atomic_t;
+#endif
+
 /* boolean type definitions */
 #define RT_TRUE                         1               /**< boolean true  */
 #define RT_FALSE                        0               /**< boolean fails */
@@ -156,6 +165,9 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 /* Common Utilities */
 
 #define RT_UNUSED(x)                   ((void)x)
+
+/* compile time assertion */
+#define RT_CTASSERT(name, expn) typedef char _ct_assert_##name[(expn)?1:-1]
 
 /* Compiler Related Definitions */
 #if defined(__ARMCC_VERSION)           /* ARM Compiler */
@@ -355,7 +367,9 @@ typedef int (*init_fn_t)(void);
 #define RT_EIO                          8               /**< IO error */
 #define RT_EINTR                        9               /**< Interrupted system call */
 #define RT_EINVAL                       10              /**< Invalid argument */
-#define RT_ETRAP                        11              /**< trap event */
+#define RT_ETRAP                        11              /**< Trap event */
+#define RT_ENOENT                       12              /**< No entry */
+#define RT_ENOSPC                       13              /**< No space left */
 
 /**@}*/
 
@@ -412,21 +426,25 @@ typedef struct rt_slist_node rt_slist_t;                /**< Type for single lis
  */
 struct rt_object
 {
-    char       name[RT_NAME_MAX];                       /**< name of kernel object */
-    rt_uint8_t type;                                    /**< type of kernel object */
-    rt_uint8_t flag;                                    /**< flag of kernel object */
+#if RT_NAME_MAX > 0
+    char        name[RT_NAME_MAX];                       /**< dynamic name of kernel object */
+#else
+    const char *name;                                    /**< static name of kernel object */
+#endif /* RT_NAME_MAX > 0 */
+    rt_uint8_t  type;                                    /**< type of kernel object */
+    rt_uint8_t  flag;                                    /**< flag of kernel object */
 
 #ifdef RT_USING_MODULE
-    void      *module_id;                               /**< id of application module */
+    void      * module_id;                               /**< id of application module */
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
-    int       lwp_ref_count;                            /**< ref count for lwp */
-#endif /* RT_USING_LWP */
+#ifdef RT_USING_SMART
+    int         lwp_ref_count;                           /**< ref count for lwp */
+#endif /* RT_USING_SMART */
 
-    rt_list_t  list;                                    /**< list node of kernel object */
+    rt_list_t   list;                                    /**< list node of kernel object */
 };
-typedef struct rt_object *rt_object_t;                  /**< Type for kernel objects. */
+typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
 
 /**
  *  The object type can be one of the follows with specific
@@ -563,6 +581,8 @@ typedef struct rt_timer *rt_timer_t;
 /**
  * @addtogroup Signal
  */
+/**@{*/
+
 #ifdef RT_USING_SIGNALS
 #include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
@@ -573,7 +593,7 @@ typedef void (*rt_sighandler_t)(int signo);
 
 #else
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <sys/signal.h>
 #endif
 
@@ -676,7 +696,7 @@ struct rt_cpu
 
 struct rt_thread;
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 typedef rt_err_t (*rt_wakeup_func_t)(void *object, struct rt_thread *thread);
 
 struct rt_wakeup
@@ -724,20 +744,7 @@ struct rt_user_context
  */
 struct rt_thread
 {
-    /* rt object */
-    char        name[RT_NAME_MAX];                      /**< the name of thread */
-    rt_uint8_t  type;                                   /**< type of object */
-    rt_uint8_t  flags;                                  /**< thread's flags */
-
-#ifdef RT_USING_MODULE
-    void       *module_id;                              /**< id of application module */
-#endif /* RT_USING_MODULE */
-
-#ifdef RT_USING_LWP
-    int       lwp_ref_count;                            /**< ref count for lwp */
-#endif /* RT_USING_LWP */
-
-    rt_list_t   list;                                   /**< the object list */
+    struct rt_object parent;
     rt_list_t   tlist;                                  /**< the thread list */
 
     /* stack point and entry */
@@ -768,7 +775,7 @@ struct rt_thread
     rt_uint8_t  number;
     rt_uint8_t  high_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-    rt_uint32_t number_mask;
+    rt_uint32_t number_mask;                            /**< priority number mask */
 
 #ifdef RT_USING_MUTEX
     /* object for IPC */
@@ -793,7 +800,7 @@ struct rt_thread
     void            *si_list;                           /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
 
-#if defined(RT_USING_LWP)
+#ifdef RT_USING_SMART
     void            *msg_ret;                           /**< the return msg */
 #endif
 
@@ -813,7 +820,7 @@ struct rt_thread
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
 
     /* light weight process if present */
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     void        *lwp;
     /* for user create */
     void        *user_entry;
@@ -833,7 +840,7 @@ struct rt_thread
 
     struct rt_wakeup wakeup;                            /**< wakeup data */
     int exit_request;
-#ifdef RT_USING_USERSPACE
+#if defined(ARCH_MM_MMU)
     int step_exec;
     int debug_attach_req;
     int debug_ret_user;
@@ -1174,7 +1181,7 @@ enum rt_device_class_type
 /**
  * device control
  */
-#define RT_DEVICE_CTRL_BASE(Type)        (RT_Device_Class_##Type * 0x100)
+#define RT_DEVICE_CTRL_BASE(Type)        ((RT_Device_Class_##Type + 1) * 0x100)
 
 /**
  * special device commands
@@ -1204,8 +1211,8 @@ struct rt_device_ops
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
     rt_err_t  (*close)  (rt_device_t dev);
-    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 };
 #endif /* RT_USING_DEVICE_OPS */
@@ -1226,10 +1233,10 @@ typedef struct rt_wqueue rt_wqueue_t;
 struct rt_device
 {
     struct rt_object          parent;                   /**< inherit from rt_object */
-#ifdef RT_USING_DM    
+#ifdef RT_USING_DM
     struct rt_driver *drv;
-    void *dtb_node; 
-#endif    
+    void *dtb_node;
+#endif
     enum rt_device_class_type type;                     /**< device type */
     rt_uint16_t               flag;                     /**< device flag */
     rt_uint16_t               open_flag;                /**< device open flag */
@@ -1248,8 +1255,8 @@ struct rt_device
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
     rt_err_t  (*close)  (rt_device_t dev);
-    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif /* RT_USING_DEVICE_OPS */
 
@@ -1262,7 +1269,7 @@ struct rt_device
 };
 
 #define RT_DRIVER_MATCH_DTS (1<<0)
-struct rt_device_id 
+struct rt_device_id
 {
     const char *compatible;
     void *data;
@@ -1270,16 +1277,16 @@ struct rt_device_id
 
 struct rt_driver
 {
-#ifdef RT_USING_DEVICE_OPS    
+#ifdef RT_USING_DEVICE_OPS
     const struct rt_device_ops *dev_ops;
 #else
     /* common device interface */
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
     rt_err_t  (*close)  (rt_device_t dev);
-    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);    
+    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 #endif
     const struct filesystem_ops *fops;
     const char *name;
@@ -1304,7 +1311,7 @@ struct rt_device_notify
     struct rt_device *dev;
 };
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 struct rt_channel
 {
     struct rt_ipc_object parent;                        /**< inherit from object */

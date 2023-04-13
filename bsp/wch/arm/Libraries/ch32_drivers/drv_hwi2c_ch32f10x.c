@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -291,7 +291,7 @@ static int ch32f1_i2c_write(I2C_TypeDef *i2c_periph,
     return 0;
 }
 
-static rt_size_t ch32f1_master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
+static rt_ssize_t ch32f1_master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     struct rt_i2c_msg *msg;
     struct i2c_bus_device *i2c_bus_dev;

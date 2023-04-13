@@ -64,7 +64,7 @@ static int nu_uuart_receive(struct rt_serial_device *serial);
 static void nu_uuart_isr(nu_uuart_t serial);
 
 #if defined(RT_SERIAL_USING_DMA)
-    static rt_size_t nu_uuart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
+    static rt_ssize_t nu_uuart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
     static void nu_pdma_uuart_rx_cb(void *pvOwner, uint32_t u32Events);
     static void nu_pdma_uuart_tx_cb(void *pvOwner, uint32_t u32Events);
 #endif
@@ -224,7 +224,7 @@ static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct seria
 
     default:
         rt_kprintf("Unsupported data length");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uuart_configure;
     }
 
@@ -241,7 +241,7 @@ static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct seria
 
     default:
         rt_kprintf("Unsupported stop bit");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uuart_configure;
     }
 
@@ -262,7 +262,7 @@ static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct seria
 
     default:
         rt_kprintf("Unsupported parity");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uuart_configure;
     }
     /* Reset this module */
@@ -406,7 +406,7 @@ static void nu_pdma_uuart_tx_cb(void *pvOwner, uint32_t u32Events)
 /**
  * UUart DMA transfer
  */
-static rt_size_t nu_uuart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t nu_uuart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     rt_err_t result = RT_EOK;
 
@@ -435,7 +435,7 @@ static rt_size_t nu_uuart_dma_transmit(struct rt_serial_device *serial, rt_uint8
     }
     else
     {
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
 
     return result;

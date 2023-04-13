@@ -329,21 +329,21 @@ rt_err_t test_wdt(void)
     if (!wdg_dev)
     {
         rt_kprintf("find %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* 鍒濆鍖栬澶� */
     ret = rt_device_init(wdg_dev);
     if (ret != RT_EOK)
     {
         rt_kprintf("initialize %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* 璁剧疆鐪嬮棬鐙楁孩鍑烘椂闂� */
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     if (ret != RT_EOK)
     {
         rt_kprintf("set %s timeout failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* 鍚姩鐪嬮棬鐙� */
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
@@ -383,7 +383,7 @@ int test_rtc(void)
     if (ret != RT_EOK)
     {
         rt_kprintf("[RTC Test]Set RTC Date failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_delay(RT_TICK_PER_SECOND);
@@ -392,7 +392,7 @@ int test_rtc(void)
     if (ret != RT_EOK)
     {
         rt_kprintf("[RTC Test]Set RTC Time failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_delay(RT_TICK_PER_SECOND);

@@ -333,9 +333,14 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, RT_USING_LIBC, APM32F40X, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, APM32F40X, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
+<<<<<<< Updated upstream
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\Drivers;..\libraries\Drivers\config;..\..\..\components\dfs\include;..\..\..\components\finsh;.;..\..\..\include;..\libraries\APM32F4xx_Library\Device\Geehy\APM32F4xx\Include;..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\inc;..\libraries\APM32F4xx_Library\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>applications;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;.;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\APM32F4xx_Library\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\dfs\include;..\..\..\include;..\..\..\components\drivers\include;..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\inc;..\..\..\libcpu\arm\common;board;..\..\..\components\libc\posix\ipc;..\libraries\Drivers\config;..\libraries\Drivers;..\..\..\components\libc\posix\io\stdio;..\libraries\APM32F4xx_Library\Device\Geehy\APM32F4xx\Include;..\..\..\components\libc\compilers\common\include;..\libraries\APM32F4xx_Library\APM32F4xx_ETH_Driver\inc</IncludePath>
+=======
+              <Undefine></Undefine>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m4;..\..\..\libcpu\arm\common;..\libraries\Drivers;..\..\..\components\drivers\include;..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\inc;..\..\..\components\libc\posix\io\stdio;.;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\Drivers\config;..\libraries\APM32F4xx_Library\CMSIS\Include;..\libraries\APM32F4xx_Library\Device\Geehy\APM32F4xx\Include;..\libraries\APM32F4xx_Library\APM32F4xx_ETH_Driver\inc;..\..\..\components\drivers\include;board;applications;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc</IncludePath>
+>>>>>>> Stashed changes
             </VariousControls>
           </Cads>
           <Aads>
@@ -449,12 +454,15 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
+<<<<<<< Updated upstream
           </Files>
           <Files>
+=======
+>>>>>>> Stashed changes
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
@@ -588,6 +596,7 @@
           </Files>
         </Group>
         <Group>
+<<<<<<< Updated upstream
           <GroupName>Filesystem</GroupName>
           <Files>
             <File>
@@ -619,6 +628,8 @@
           </Files>
         </Group>
         <Group>
+=======
+>>>>>>> Stashed changes
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
@@ -647,6 +658,7 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
+<<<<<<< Updated upstream
           </Files>
           <Files>
             <File>
@@ -654,6 +666,8 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
+=======
+>>>>>>> Stashed changes
           </Files>
         </Group>
         <Group>
@@ -730,9 +744,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -761,12 +775,31 @@
           </Files>
           <Files>
             <File>
+              <FileName>apm32f4xx_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_syscfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>apm32f4xx_rcm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_rcm.c</FilePath>
             </File>
           </Files>
           <Files>
+            <File>
+              <FileName>apm32f4xx_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>apm32f4xx_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\APM32F4xx_Library\APM32F4xx_StdPeriphDriver\src\apm32f4xx_dma.c</FilePath>
+            </File>
             <File>
               <FileName>apm32f4xx_eint.c</FileName>
               <FileType>1</FileType>

@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>HK32F030x8, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>HK32F030x8, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\msp;..\libraries\rt_drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Include;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\Core;..\libraries\HK32F0xx_StdPeriph_Driver\inc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>board;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\finsh;..\..\..\components\drivers\include;.;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;applications;..\libraries\rt_drivers;..\..\..\components\libc\compilers\common\extension;board\msp;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\Core;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;..\libraries\HK32F0xx_StdPeriph_Driver\inc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -470,13 +470,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -743,9 +736,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

@@ -2,21 +2,21 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Glob('*.S')
-src	+= Glob('*.c')
+src += Glob('*.c')
 
 if GetDepend(['TARGET_E2000']):
     if GetDepend(['TARGET_E2000Q']):
-        src	+= Glob(cwd + '/e2000/q/parameters.c')
+        src += Glob(cwd + '/e2000/q/parameters.c')
     elif GetDepend(['TARGET_E2000D']):
-        src	+= Glob(cwd + '/e2000/d/parameters.c')
+        src += Glob(cwd + '/e2000/d/parameters.c')
     elif GetDepend(['TARGET_E2000S']):
-        src	+= Glob(cwd + '/e2000/s/parameters.c')
+        src += Glob(cwd + '/e2000/s/parameters.c')
 
 if GetDepend(['TARGET_F2000_4']):
-    src	+= Glob(cwd + '/d2000/parameters.c')
+    src += Glob(cwd + '/d2000/parameters.c')
 
 if GetDepend(['TARGET_D2000']):
-    src	+= Glob(cwd + '/ft2004/parameters.c')
+    src += Glob(cwd + '/ft2004/parameters.c')
 
 CPPPATH = [cwd]
 

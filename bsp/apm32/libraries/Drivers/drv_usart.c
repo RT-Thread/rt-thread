@@ -1,19 +1,22 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-08-20     Abbcc        first version
+ * 2022-12-26     luobeihai    add APM2F0 series MCU support
+ * 2023-03-27     luobeihai    add APM32E1/S1 series MCU support
  */
 
 #include "board.h"
 #include "drv_usart.h"
 
-
 #ifdef RT_USING_SERIAL
-#if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2)
+#if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && \
+    !defined(BSP_USING_UART3) && !defined(BSP_USING_UART4) && \
+    !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6)
     #error "Please define at least one BSP_USING_UARTx"
     /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
@@ -34,6 +37,18 @@ enum
 #ifdef BSP_USING_UART2
     UART2_INDEX,
 #endif
+#ifdef BSP_USING_UART3
+    UART3_INDEX,
+#endif
+#ifdef BSP_USING_UART4
+    UART4_INDEX,
+#endif
+#ifdef BSP_USING_UART5
+    UART5_INDEX,
+#endif
+#ifdef BSP_USING_UART6
+    UART6_INDEX,
+#endif
 };
 
 static struct apm32_usart usart_config[] =
@@ -52,9 +67,40 @@ static struct apm32_usart usart_config[] =
         USART2_IRQn,
     },
 #endif
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
+#ifdef BSP_USING_UART3
+    {
+        "uart3",
+        USART3,
+        USART3_IRQn,
+    },
+#endif
+#ifdef BSP_USING_UART4
+    {
+        "uart4",
+        UART4,
+        UART4_IRQn,
+    },
+#endif
+#ifdef BSP_USING_UART5
+    {
+        "uart5",
+        UART5,
+        UART5_IRQn,
+    },
+#endif
+#ifdef BSP_USING_UART6
+    {
+        "uart6",
+        USART6,
+        USART6_IRQn,
+    },
+#endif
+#endif /* SOC_SERIES_APM32F0 */
 };
 
-static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t apm32_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     USART_Config_T USART_ConfigStruct;
     RT_ASSERT(serial != RT_NULL);
@@ -64,10 +110,39 @@ static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_c
 
     apm32_usart_init();
 
-    USART_ConfigStruct.baudRate = cfg->baud_rate;;
-    USART_ConfigStruct.hardwareFlow = USART_HARDWARE_FLOW_NONE;
+    USART_ConfigStruct.baudRate = cfg->baud_rate;
     USART_ConfigStruct.mode = USART_MODE_TX_RX;
     USART_ConfigStruct.parity = USART_PARITY_NONE;
+
+#if defined(SOC_SERIES_APM32F0)
+    switch (cfg->flowcontrol)
+    {
+    case RT_SERIAL_FLOWCONTROL_NONE:
+
+        USART_ConfigStruct.hardwareFlowCtrl = USART_FLOW_CTRL_NONE;
+        break;
+    case RT_SERIAL_FLOWCONTROL_CTSRTS:
+        USART_ConfigStruct.hardwareFlowCtrl = USART_FLOW_CTRL_RTS_CTS;
+        break;
+    default:
+        USART_ConfigStruct.hardwareFlowCtrl = USART_FLOW_CTRL_NONE;
+        break;
+    }
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
+    switch (cfg->flowcontrol)
+    {
+    case RT_SERIAL_FLOWCONTROL_NONE:
+        USART_ConfigStruct.hardwareFlow = USART_HARDWARE_FLOW_NONE;
+        break;
+    case RT_SERIAL_FLOWCONTROL_CTSRTS:
+        USART_ConfigStruct.hardwareFlow = USART_HARDWARE_FLOW_RTS_CTS;
+        break;
+    default:
+        USART_ConfigStruct.hardwareFlow = USART_HARDWARE_FLOW_NONE;
+        break;
+    }
+#endif /* SOC_SERIES_APM32F0 */
 
     switch (cfg->data_bits)
     {
@@ -120,7 +195,7 @@ static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_c
     return RT_EOK;
 }
 
-static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t apm32_uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct apm32_usart *usart;
 
@@ -129,6 +204,31 @@ static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *ar
     usart = (struct apm32_usart *) serial->parent.user_data;
     RT_ASSERT(usart != RT_NULL);
 
+#if defined(SOC_SERIES_APM32F0)
+    switch (cmd)
+    {
+    /* disable interrupt */
+    case RT_DEVICE_CTRL_CLR_INT:
+
+        /* disable rx irq */
+        NVIC_DisableIRQRequest(usart->irq_type);
+
+        /* disable interrupt */
+        USART_DisableInterrupt(usart->usartx, USART_INT_RXBNEIE);
+
+        break;
+
+    /* enable interrupt */
+    case RT_DEVICE_CTRL_SET_INT:
+        /* enable rx irq */
+        NVIC_EnableIRQRequest(usart->irq_type, 1);
+
+        /* enable interrupt */
+        USART_EnableInterrupt(usart->usartx, USART_INT_RXBNEIE);
+        break;
+    }
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     switch (cmd)
     {
     /* disable interrupt */
@@ -150,12 +250,12 @@ static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *ar
         /* enable interrupt */
         USART_EnableInterrupt(usart->usartx, USART_INT_RXBNE);
         break;
-
     }
+#endif /* SOC_SERIES_APM32F0 */
     return RT_EOK;
 }
 
-static int _uart_putc(struct rt_serial_device *serial, char c)
+static int apm32_uart_putc(struct rt_serial_device *serial, char c)
 {
     struct apm32_usart *usart;
     RT_ASSERT(serial != RT_NULL);
@@ -171,7 +271,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
-static int _uart_getc(struct rt_serial_device *serial)
+static int apm32_uart_getc(struct rt_serial_device *serial)
 {
     int ch;
     struct apm32_usart *usart;
@@ -198,32 +298,76 @@ static void usart_isr(struct rt_serial_device *serial)
     struct apm32_usart *usart;
 
     RT_ASSERT(serial != RT_NULL);
-    RT_ASSERT(serial != RT_NULL);
     usart = (struct apm32_usart *) serial->parent.user_data;
 
     RT_ASSERT(usart != RT_NULL);
 
     /* UART in mode Receiver */
+#if defined(SOC_SERIES_APM32F0)
+    if ((USART_ReadStatusFlag(usart->usartx, USART_FLAG_RXBNE) != RESET) &&
+            (USART_ReadIntFlag(usart->usartx, USART_INT_FLAG_RXBNE) != RESET))
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     if ((USART_ReadStatusFlag(usart->usartx, USART_FLAG_RXBNE) != RESET) &&
             (USART_ReadIntFlag(usart->usartx, USART_INT_RXBNE) != RESET))
+#endif
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-        USART_ClearStatusFlag(usart->usartx, USART_FLAG_RXBNE);
-        USART_ClearIntFlag(usart->usartx, USART_INT_RXBNE);
     }
-
     else
     {
+#if defined(SOC_SERIES_APM32F0)
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_OVRE) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_OVRE);
+        }
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_NEF) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_NEF);
+        }
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_FEF) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_FEF);
+        }
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_PEF) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_PEF);
+        }
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_CTSF) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_CTSF);
+        }
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_LBDF) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_LBDF);
+        }
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_OVRE) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_OVRE);
+        }
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_NE) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_NE);
+        }
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_FE) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_FE);
+        }
+        if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_PE) != RESET)
+        {
+            USART_ClearStatusFlag(usart->usartx, USART_FLAG_PE);
+        }
         if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_CTS) != RESET)
         {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_CTS);
         }
-
         if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_LBD) != RESET)
         {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_LBD);
         }
-
+#endif /* SOC_SERIES_APM32F0 */
         if (USART_ReadStatusFlag(usart->usartx, USART_FLAG_TXBE) != RESET)
         {
             USART_ClearStatusFlag(usart->usartx, USART_FLAG_TXBE);
@@ -242,7 +386,6 @@ void USART1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif /* BSP_USING_UART1 */
 
 #if defined(BSP_USING_UART2)
@@ -256,15 +399,66 @@ void USART2_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-
 #endif /* BSP_USING_UART2 */
+
+#if defined(BSP_USING_UART3)
+void USART3_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    usart_isr(&(usart_config[UART3_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_UART3 */
+
+#if defined(BSP_USING_UART4)
+void UART4_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    usart_isr(&(usart_config[UART4_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_UART4 */
+
+#if defined(BSP_USING_UART5)
+void UART5_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    usart_isr(&(usart_config[UART5_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_UART5 */
+
+#if defined(BSP_USING_UART6)
+void USART6_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    usart_isr(&(usart_config[UART6_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_UART6 */
 
 static const struct rt_uart_ops apm32_usart_ops =
 {
-    .configure = _uart_configure,
-    .control = _uart_control,
-    .putc = _uart_putc,
-    .getc = _uart_getc,
+    .configure = apm32_uart_configure,
+    .control = apm32_uart_control,
+    .putc = apm32_uart_putc,
+    .getc = apm32_uart_getc,
     .dma_transmit = RT_NULL
 };
 

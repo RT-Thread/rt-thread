@@ -108,7 +108,7 @@ extern "C" {
 #define SPI3_TX_DMA_CLOCK               CRM_DMA1_PERIPH_CLOCK
 #define SPI3_TX_DMA_CHANNEL             DMA1_CHANNEL6
 #define SPI3_TX_DMA_IRQ                 DMA1_Channel6_IRQn
-#define SPI2_TX_DMA_MUX_CHANNEL         DMA1MUX_CHANNEL6
+#define SPI3_TX_DMA_MUX_CHANNEL         DMA1MUX_CHANNEL6
 #define SPI3_TX_DMA_REQ_ID              DMAMUX_DMAREQ_ID_SPI3_TX
 #elif defined(BSP_UART3_TX_USING_DMA) && !defined(UART3_TX_DMA_CHANNEL)
 #define UART3_TX_DMA_IRQHandler         DMA1_Channel6_IRQHandler

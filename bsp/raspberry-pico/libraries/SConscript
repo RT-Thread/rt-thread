@@ -7,6 +7,8 @@ cwd = GetCurrentDir()
 
 # The set of source files associated with this SConscript file.
 src = Split("""
+pico-sdk/src/rp2_common/hardware_flash/flash.c
+pico-sdk/src/rp2_common/pico_multicore/multicore.c
 pico-sdk/src/rp2_common/pico_stdlib/stdlib.c
 pico-sdk/src/rp2_common/hardware_gpio/gpio.c
 pico-sdk/src/rp2_common/hardware_claim/claim.c
@@ -59,6 +61,8 @@ generated/bs2_default_padded_checksummed.S
 """)
 
 path = [
+    cwd + '/pico-sdk/src/rp2_common/hardware_flash/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_multicore/include',
     cwd + '/pico-sdk/src/common/pico_stdlib/include',
     cwd + '/pico-sdk/src/rp2_common/hardware_gpio/include',
     cwd + '/pico-sdk/src/common/pico_base/include',
@@ -73,7 +77,7 @@ path = [
     cwd + '/pico-sdk/src/rp2_common/hardware_dma/include',
     cwd + '/pico-sdk/src/rp2_common/hardware_spi/include',
     cwd + '/pico-sdk/src/rp2_common/hardware_i2c/include',
-    cwd + '/pico-sdk/src/rp2_common/hardware_pwm/include',    
+    cwd + '/pico-sdk/src/rp2_common/hardware_pwm/include',
     cwd + '/pico-sdk/src/rp2_common/hardware_divider/include',
     cwd + '/pico-sdk/src/common/pico_time/include',
     cwd + '/pico-sdk/src/rp2_common/hardware_timer/include',

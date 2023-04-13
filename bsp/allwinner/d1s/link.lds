@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -30,7 +30,7 @@ SECTIONS
     . = 0x40400000 ;
 
     /* __STACKSIZE__ = 4096; */
-
+    __text_start = .;
     .start :
     {
         *(.start);
@@ -82,6 +82,8 @@ SECTIONS
     .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) } > SRAM
 
     . = ALIGN(8);
+    __text_end = .;
+    __text_size = __text_end - __text_start;
 
     .data :
     {

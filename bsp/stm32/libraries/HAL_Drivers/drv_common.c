@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -133,11 +133,11 @@ void _Error_Handler(char *s, int num)
  */
 void rt_hw_us_delay(rt_uint32_t us)
 {
-    rt_uint32_t ticks;
+    rt_uint64_t ticks;
     rt_uint32_t told, tnow, tcnt = 0;
     rt_uint32_t reload = SysTick->LOAD;
 
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    ticks = us * (reload / (1000000 / RT_TICK_PER_SECOND));
     told = SysTick->VAL;
     while (1)
     {

@@ -46,6 +46,13 @@ extern "C" {
 #define DBG_COLOR
 #endif
 
+/* for dlog */
+#ifdef PKG_USING_DLOG
+#include <dlog.h>
+#else
+#define DLOG(...)
+#endif
+
 #if defined(RT_USING_ULOG)
 /* using ulog compatible with rtdbg  */
 #include <ulog.h>

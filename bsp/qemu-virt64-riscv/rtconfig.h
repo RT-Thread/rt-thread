@@ -6,7 +6,7 @@
 
 /* RT-Thread Kernel */
 
-#define RT_NAME_MAX 20
+#define RT_NAME_MAX 24
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -39,6 +39,7 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -55,6 +56,7 @@
 #define RT_VER_NUM 0x50000
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
+#define RT_USING_HW_ATOMIC
 #define ARCH_MM_MMU
 #define ARCH_RISCV
 #define ARCH_RISCV64
@@ -115,6 +117,7 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CPUTIME
 #define RT_USING_CPUTIME_RISCV
+#define CPUTIME_TIMER_FREQ 300000000
 #define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
@@ -124,6 +127,8 @@
 #define RT_USING_VIRTIO10
 #define RT_USING_VIRTIO_BLK
 #define RT_USING_VIRTIO_NET
+#define RT_USING_VIRTIO_CONSOLE
+#define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
 
 /* Using USB */
 
@@ -217,6 +222,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
+#define RT_USING_ADT
 
 /* RT-Thread Utestcases */
 
@@ -256,9 +262,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -278,11 +281,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -323,6 +334,7 @@
 
 /* Other */
 
+
 /* Signal IO */
 
 
@@ -333,6 +345,7 @@
 #define RISCV_S_MODE
 #define BSP_USING_VIRTIO_BLK
 #define BSP_USING_VIRTIO_NET
+#define BSP_USING_VIRTIO_CONSOLE
 #define BOARD_QEMU_VIRT_RV64
 #define ENABLE_FPU
 #define ARCH_USING_NEW_CTX_SWITCH

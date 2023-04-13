@@ -34,7 +34,7 @@ typedef unsigned long long int  u64;
 #define true    1
 #define false   0
 
-#define BIT(nr)         (1 << (nr))
+#define BIT(nr)         (1UL << (nr))
 
 /* Compute the number of elements in the given array */
 #define ARRAY_SIZE(a)               \

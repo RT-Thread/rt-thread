@@ -199,7 +199,7 @@ EMBARC_CPPPATH = [  EMBARC_BSP_ROOT,
 #print("EMBARC_CPPPATH: %s"%EMBARC_CPPPATH)
 
 if TOOLCHAIN == 'mw':
-    EXEC_PATH 	= 'C:/ARC/MetaWare/arc/bin'
+    EXEC_PATH   = 'C:/ARC/MetaWare/arc/bin'
     MAKE = 'gmake'
     PREFIX = ''
     CC = 'ccac'
@@ -228,7 +228,7 @@ if TOOLCHAIN == 'mw':
     LFLAGS = ' -Hhostlink ' + OPT_ARG_FILE + ' -Hnocopyr -Hnosdata -Hnocrt -Hldopt=-Coutput=rtthread_snps_embarc.map -Hldopt=-Csections -Hldopt=-Ccrossfunc -Hldopt=-Csize -zstdout %s' % LINK_SCRIPT
 
 elif TOOLCHAIN == 'gnu':
-    EXEC_PATH 	= 'C:/arc_gnu/bin'
+    EXEC_PATH   = 'C:/arc_gnu/bin'
     MAKE = 'make'
     PREFIX = 'arc-elf32-'
     CC = PREFIX + 'gcc'

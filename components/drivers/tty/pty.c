@@ -123,7 +123,7 @@ static rt_err_t pty_device_close(struct rt_device *dev)
     return result;
 }
 
-static rt_size_t pty_device_read(struct rt_device *dev,
+static rt_ssize_t pty_device_read(struct rt_device *dev,
         rt_off_t          pos,
         void             *buffer,
         rt_size_t         size)
@@ -133,7 +133,7 @@ static rt_size_t pty_device_read(struct rt_device *dev,
     return len;
 }
 
-static rt_size_t pty_device_write(struct rt_device *dev,
+static rt_ssize_t pty_device_write(struct rt_device *dev,
         rt_off_t          pos,
         const void       *buffer,
         rt_size_t         size)
@@ -175,7 +175,7 @@ static rt_err_t  pty_device_control(rt_device_t dev, int cmd, void *args)
     return -ENOIOCTLCMD;
 }
 
-static int ptmx_open(struct dfs_fd *fd)
+static int ptmx_open(struct dfs_file *fd)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -209,6 +209,12 @@ static int ptmx_open(struct dfs_fd *fd)
     if (ld->ops->open)
     {
         ret = ld->ops->open(fd);
+    }
+
+    rt_device_t device = (rt_device_t)fd->vnode->data;
+    if(fd->vnode->ref_count == 1)
+    {
+        ret = rt_device_open(device, fd->flags);
     }
 
     return ret;
@@ -286,7 +292,8 @@ static int pts_register(struct tty_struct *ptm_drv, struct tty_struct *pts_drv, 
 extern struct termios tty_std_termios;
     pts_drv->init_termios = tty_std_termios;
     pts_drv->init_termios.c_cflag = B38400 | CS8 | CREAD;
-    pts_drv->init_termios.c_lflag |= ICANON;
+    pts_drv->init_termios.c_lflag |= ECHO | ICANON;
+    pts_drv->init_termios.c_oflag |= ONLCR;
     pts_drv->init_termios.__c_ispeed = 38400;
     pts_drv->init_termios.__c_ospeed = 38400;
 
@@ -308,7 +315,7 @@ static int ptmx_register(void)
 
     level = rt_hw_interrupt_disable();
     RT_ASSERT(ptm_drv->init_flag == TTY_INIT_FLAG_NONE);
-    
+
     device = &(ptm_drv->parent);
 
     device->type = RT_Device_Class_Char;
@@ -348,7 +355,6 @@ static int ptmx_register(void)
     }
     tty_initstack(ptm_drv->head);
 
-    rt_spin_lock_init(&ptm_drv->spinlock);
     ptm_drv->pgrp = -1;
     ptm_drv->session = -1;
     ptm_drv->foreground = RT_NULL;

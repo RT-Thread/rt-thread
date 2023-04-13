@@ -40,6 +40,8 @@ extern "C" {
 #define DST_TUR     9   /* Turkey */
 #define DST_AUSTALT 10  /* Australian style with shift in 1986 */
 
+struct itimerspec;
+
 struct timezone
 {
     int tz_minuteswest;   /* minutes west of Greenwich */

@@ -536,7 +536,7 @@ static void __isig(int sig, struct tty_struct *tty)
         if (sig == SIGTSTP)
         {
             struct rt_lwp *old_lwp;
-            
+
             rt_memcpy(&old_termios, &(tty->init_termios), sizeof(struct termios));
             tty->init_termios = *new_termios;
             ld = tty->ldisc;
@@ -549,7 +549,7 @@ static void __isig(int sig, struct tty_struct *tty)
             }
             tty_sigaddset(&lwp->signal_mask, SIGTTOU);
             old_lwp = tty_pop(&tty->head, RT_NULL);
-            tty->foreground = old_lwp;  
+            tty->foreground = old_lwp;
         }
         else
         {
@@ -805,7 +805,7 @@ static size_t __process_echoes(struct tty_struct *tty)
     unsigned char c = 0;
     char ch = 0;
     unsigned char num_chars = 0, num_bs = 0;
-    
+
     tail = ldata->echo_tail;
     while (ldata->echo_commit != tail)
     {
@@ -1112,7 +1112,7 @@ void console_ldata_init(struct tty_struct *tty)
     return;
 }
 
-static int n_tty_open(struct dfs_fd *fd)
+static int n_tty_open(struct dfs_file *fd)
 {
     int ret = 0;
     struct n_tty_data *ldata = RT_NULL;
@@ -1126,7 +1126,19 @@ static int n_tty_open(struct dfs_fd *fd)
     }
 
     ldata->atomic_read_lock = rt_mutex_create("atomic_read_lock",RT_IPC_FLAG_FIFO);
+    if(ldata->atomic_read_lock == RT_NULL)
+    {
+        LOG_E("n_tty_open atomic_read_lock create fail");
+        return -1;
+    }
+
     ldata->output_lock = rt_mutex_create("output_lock",RT_IPC_FLAG_FIFO);
+    if(ldata->output_lock == RT_NULL)
+    {
+        LOG_E("n_tty_open output_lock create fail");
+        return -1;
+    }
+
     tty->disc_data = ldata;
     reset_buffer_flags(ldata);
     ldata->column = 0;
@@ -1320,7 +1332,7 @@ static int n_tty_close(struct tty_struct *tty)
     return ret;
 }
 
-static int n_tty_ioctl(struct dfs_fd *fd, int cmd, void *args)
+static int n_tty_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     int ret = 0;
     struct tty_struct *real_tty = RT_NULL;
@@ -1833,7 +1845,7 @@ static int job_control(struct tty_struct *tty)
     return __tty_check_change(tty, SIGTTIN);
 }
 
-static int n_tty_read(struct dfs_fd *fd, void *buf, size_t count)
+static int n_tty_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int level = 0;
     char *b = (char *)buf;
@@ -1894,7 +1906,7 @@ static int n_tty_read(struct dfs_fd *fd, void *buf, size_t count)
     return retval;
 }
 
-static int n_tty_write(struct dfs_fd *fd, const void *buf, size_t count)
+static int n_tty_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     int retval = 0;
     char *b = (char *)buf;
@@ -1975,22 +1987,22 @@ break_out:
     return retval;
 }
 
-static int n_tty_flush(struct dfs_fd *fd)
+static int n_tty_flush(struct dfs_file *fd)
 {
     return 0;
 }
 
-static int n_tty_lseek(struct dfs_fd *fd, off_t offset)
+static int n_tty_lseek(struct dfs_file *fd, off_t offset)
 {
     return 0;
 }
 
-static int n_tty_getdents(struct dfs_fd *fd, struct dirent *dirp, uint32_t count)
+static int n_tty_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t count)
 {
     return 0;
 }
 
-static int n_tty_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+static int n_tty_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     rt_base_t level = 0;
     int mask = POLLOUT;

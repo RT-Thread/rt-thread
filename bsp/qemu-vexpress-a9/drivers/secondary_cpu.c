@@ -19,7 +19,7 @@
 #ifdef RT_USING_SMP
 #include <interrupt.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <mmu.h>
 #endif
 
@@ -35,7 +35,7 @@ void rt_hw_secondary_cpu_up(void)
     volatile void **plat_boot_reg = (volatile void **)0x10000034;
     char *entry = (char *)rt_secondary_cpu_entry;
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     plat_boot_reg = (volatile void **)rt_hw_mmu_map(&mmu_info, 0, (void *)plat_boot_reg, 0x1000, MMU_MAP_K_RW);
     if (!plat_boot_reg)
     {

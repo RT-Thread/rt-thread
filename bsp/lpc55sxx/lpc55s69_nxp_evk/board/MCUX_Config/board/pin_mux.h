@@ -44,6 +44,18 @@ void BOARD_InitBootPins(void);
  * @brief Standard mode, output slew rate control is enabled */
 #define IOCON_PIO_SLEW_STANDARD 0x00u
 /*!
+ * @brief Select Digital mode.: Enable Digital mode. Digital input is enabled. */
+#define PIO0_13_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 5. */
+#define PIO0_13_FUNC_ALT5 0x05u
+/*!
+ * @brief Select Digital mode.: Enable Digital mode. Digital input is enabled. */
+#define PIO0_14_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 6. */
+#define PIO0_14_FUNC_ALT6 0x06u
+/*!
  * @brief Select Digital mode.: Digital mode, digital input is enabled. */
 #define PIO0_17_DIGIMODE_DIGITAL 0x01u
 /*!
@@ -162,8 +174,14 @@ void BOARD_InitBootPins(void);
  * @brief Select Digital mode.: Digital mode, digital input is enabled. */
 #define PIO1_7_DIGIMODE_DIGITAL 0x01u
 /*!
- * @brief Selects pin function.: Alternative connection 0. */
-#define PIO1_7_FUNC_ALT0 0x00u
+ * @brief Selects pin function.: Alternative connection 3. */
+#define PIO1_7_FUNC_ALT3 0x03u
+/*!
+ * @brief Select Digital mode.: Enable Digital mode. Digital input is enabled. */
+#define PIO1_10_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 3. */
+#define PIO1_10_FUNC_ALT3 0x03u
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

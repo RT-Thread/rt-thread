@@ -20,15 +20,15 @@ if GetDepend(['BSP_USING_KEY']):
 
 if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += Glob('ports/drv_qspi_flash.c')
-    
+
 if GetDepend(['BSP_USING_FS']):
     src += Glob('ports/drv_filesystem.c')
     if GetDepend(['BSP_USING_SPI_FLASH_LITTLEFS']):
         src += Glob('ports/fal/fal_spi_flash_sfud_port.c')
         path += [cwd + '/ports/fal']
 
-if GetDepend(['BSP_USING_ICM20608']) or GetDepend(['BSP_USING_AHT10']):
-    src += Glob('ports/sensor_port.c')
+if GetDepend(['RT_USING_SENSOR']):
+    src += Glob('ports/drv_sensors.c')
 
 if GetDepend(['BSP_USING_AUDIO']):
     src += Glob('ports/audio/drv_es8388.c')
@@ -38,13 +38,13 @@ if GetDepend(['BSP_USING_AUDIO_RECORD']):
     src += Glob('ports/audio/drv_mic.c')
 
 if GetDepend(['BSP_USING_STM32_SDIO']):
-    src += Glob('ports/drv_sdio_adapter.c')    
+    src += Glob('ports/drv_sdio_adapter.c')
 
 
 
 if GetDepend(['BSP_USING_AUDIO']):
     path += [cwd + '/ports/audio']
-    
+
 startup_path_prefix = SDK_LIB
 
 if rtconfig.PLATFORM in ['gcc']:
@@ -54,7 +54,7 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/iar/startup_stm32l475xx.s']
 
-CPPDEFINES = ['STM32L475xx'] 
+CPPDEFINES = ['STM32L475xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

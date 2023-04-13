@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-10-03     Bernard      The first version
  * 2020/11/20     BalanceTWK   Add FPU support
+ * 2023/01/04     WangShun     Adapt to CH32
  */
 
 #ifndef CPUPORT_H__
@@ -26,6 +27,15 @@ typedef union {
 #endif
 #endif
 
+/* Preprocessor Definition */
+#if __riscv_flen == 32
+#define ARCH_RISCV_FPU_S
+#endif
+
+#if __riscv_flen == 64
+#define ARCH_RISCV_FPU_D
+#endif
+
 /* bytes of register width  */
 #ifdef ARCH_CPU_64BIT
 #define STORE                   sd
@@ -37,6 +47,7 @@ typedef union {
 #define REGBYTES                4
 #endif
 
+/* Preprocessor Definition */
 #ifdef ARCH_RISCV_FPU
 #ifdef ARCH_RISCV_FPU_D
 #define FSTORE                  fsd

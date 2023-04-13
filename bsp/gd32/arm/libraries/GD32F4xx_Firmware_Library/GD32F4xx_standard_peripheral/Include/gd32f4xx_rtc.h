@@ -5,32 +5,33 @@
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
@@ -280,7 +281,7 @@ typedef struct
     ControlStatus tamper_precharge_enable;                                      /*!< RTC tamper precharge feature during a voltage level detection */
     uint32_t tamper_precharge_time;                                             /*!< RTC tamper precharge duration if precharge feature is enabled */
     ControlStatus tamper_with_timestamp;                                        /*!< RTC tamper time-stamp feature */
-}rtc_tamper_struct;
+}rtc_tamper_struct; 
 
 /* time register value */
 #define TIME_SC(regval)                    (BITS(0,6) & ((uint32_t)(regval) << 0))    /*!< write value to RTC_TIME_SC bit field */
@@ -501,12 +502,12 @@ typedef struct
 #define RTC_WUT_RESET                      ((uint32_t)0x0000FFFFU)                    /*!< RTC_WUT register reset value */
 
 /* RTC alarm */
-#define RTC_ALARM0                         ((uint8_t)0x01U)                           /*!< RTC alarm 0 */
-#define RTC_ALARM1                         ((uint8_t)0x02U)                           /*!< RTC alarm 1 */
+#define RTC_ALARM0                         ((uint8_t)0x01U)                           /*!< RTC alarm 0 */              
+#define RTC_ALARM1                         ((uint8_t)0x02U)                           /*!< RTC alarm 1 */   
 
 /* RTC coarse calibration direction */
-#define CALIB_INCREASE                     ((uint8_t)0x01U)                           /*!< RTC coarse calibration increase */
-#define CALIB_DECREASE                     ((uint8_t)0x02U)                           /*!< RTC coarse calibration decrease */
+#define CALIB_INCREASE                     ((uint8_t)0x01U)                           /*!< RTC coarse calibration increase */  
+#define CALIB_DECREASE                     ((uint8_t)0x02U)                           /*!< RTC coarse calibration decrease */  
 
 /* RTC wakeup timer clock */
 #define CTL_WTCS(regval)                   (BITS(0,2) & ((regval)<< 0))
@@ -516,7 +517,7 @@ typedef struct
 #define WAKEUP_RTCCK_DIV2                  CTL_WTCS(3)                                /*!< wakeup timer clock is RTC clock divided by 2 */
 #define WAKEUP_CKSPRE                      CTL_WTCS(4)                                /*!< wakeup timer clock is ckapre */
 #define WAKEUP_CKSPRE_2EXP16               CTL_WTCS(6)                                /*!< wakeup timer clock is ckapre and wakeup timer add 2exp16 */
-
+ 
 /* RTC_AF pin */
 #define RTC_AF0_TIMESTAMP                  ((uint32_t)0x00000000)                     /*!< RTC_AF0 use for timestamp */
 #define RTC_AF1_TIMESTAMP                  RTC_TAMP_TSSEL                             /*!< RTC_AF1 use for timestamp */
@@ -524,7 +525,7 @@ typedef struct
 #define RTC_AF1_TAMPER0                    RTC_TAMP_TP0SEL                            /*!< RTC_AF1 use for tamper0 */
 
 /* RTC flags */
-#define RTC_FLAG_ALRM0W                                      RTC_STAT_ALRM0WF                           /*!< alarm0 configuration can be write flag */
+#define RTC_FLAG_ALRM0W                    RTC_STAT_ALRM0WF                           /*!< alarm0 configuration can be write flag */
 #define RTC_FLAG_ALRM1W                    RTC_STAT_ALRM1WF                           /*!< alarm1 configuration can be write flag */
 #define RTC_FLAG_WTW                       RTC_STAT_WTWF                              /*!< wakeup timer can be write flag */
 #define RTC_FLAG_SOP                       RTC_STAT_SOPF                              /*!< shift function operation pending flag */

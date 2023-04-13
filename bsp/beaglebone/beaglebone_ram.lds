@@ -20,7 +20,7 @@ SECTIONS
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
-        . = ALIGN(4);	
+        . = ALIGN(4);
 
         /* section information for modules */
         . = ALIGN(4);

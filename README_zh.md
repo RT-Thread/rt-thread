@@ -83,7 +83,7 @@ RT-Thread RTOS 支持许多架构，并且已经涵盖了当前应用中的主�
 
 - ARM Cortex-M0/M0+：如芯片制造商 ST
 - ARM Cortex-M3：如芯片制造商 ST、全志、灵动等.
-- ARM Cortex-M4：如芯片制造商 ST、Nuvoton、NXP、[Nordic](https://github.com/RT-Thread/rt-thread/tree/master/bsp/nrf5x)、GigaDevice、Realtek、Ambiq Micro等
+- ARM Cortex-M4：如芯片制造商 ST、Infineon、Nuvoton、NXP、[Nordic](https://github.com/RT-Thread/rt-thread/tree/master/bsp/nrf5x)、GigaDevice、Realtek、Ambiq Micro等
 - ARM Cortex-M7：如芯片制造商 ST、NXP
 - ARM Cortex-M23：如芯片制造商 GigaDevice
 - ARM Cortex-M33：如芯片制造商 ST
@@ -93,7 +93,7 @@ RT-Thread RTOS 支持许多架构，并且已经涵盖了当前应用中的主�
 - ARM9：如芯片制造商Allwinner、Xilinx 、GOKE
 - ARM11：如芯片制造商Fullhan
 - MIPS32：如芯片制造商loongson、Ingenic
-- RISC-V：如芯片制造商Hifive、Kendryte、[芯来Nuclei](https://nucleisys.com/)
+- RISC-V RV32E/RV32I[F]/RV64[D]：如芯片制造商sifive、[嘉楠Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[博流](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[芯来Nuclei](https://nucleisys.com/)、[平头哥T-Head](https://www.t-head.cn/)
 - ARC：如芯片制造商SYNOPSYS
 - DSP：如芯片制造商 TI
 - C-Sky

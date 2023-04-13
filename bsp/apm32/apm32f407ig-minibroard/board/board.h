@@ -15,6 +15,7 @@
 #include <apm32f4xx.h>
 
 #include "apm32f4xx_gpio.h"
+#include "apm32f4xx_syscfg.h"
 #include "apm32f4xx_rcm.h"
 #include "apm32f4xx_misc.h"
 #include "apm32f4xx_rcm.h"
@@ -40,6 +41,9 @@
 #if defined(RT_USING_WDT)
     #include "apm32f4xx_iwdt.h"
     #include "apm32f4xx_wwdt.h"
+#endif
+#if defined(RT_USING_CAN)
+    #include "apm32f4xx_can.h"
 #endif
 
 #include "drv_common.h"

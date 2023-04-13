@@ -438,7 +438,7 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     bool status;
 
@@ -450,7 +450,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_
     return 0;
 }
 
-static rt_size_t rt_sdcard_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_sdcard_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     bool status;
 

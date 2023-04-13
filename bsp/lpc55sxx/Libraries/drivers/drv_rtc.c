@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,11 +18,7 @@
 
 #ifdef RT_USING_RTC
 
-#if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
-    #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
-#endif
-
-static time_t get_timestamp(void)
+static rt_err_t lpc_get_timestamp(time_t *timestamp)
 {
     struct tm tm_new = {0};
     rtc_datetime_t rtcDate;
@@ -38,10 +34,12 @@ static time_t get_timestamp(void)
     tm_new.tm_mon  = rtcDate.month - 1;
     tm_new.tm_year = rtcDate.year - 1900;
 
-    return timegm(&tm_new);
+    timegm(&tm_new);
+    *timestamp = timegm(&tm_new);
+    return RT_EOK;
 }
 
-static int set_timestamp(time_t timestamp)
+static int lpc_set_timestamp(time_t timestamp)
 {
     struct tm now;
     rtc_datetime_t rtcDate;
@@ -89,12 +87,12 @@ static rt_err_t lpc_rtc_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t lpc_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
+static rt_ssize_t lpc_rtc_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
     return 0;
 }
 
-static rt_size_t lpc_rtc_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
+static rt_ssize_t lpc_rtc_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
     return 0;
 }
@@ -107,18 +105,18 @@ static rt_err_t lpc_rtc_control(rt_device_t dev, int cmd, void *args)
     {
         case RT_DEVICE_CTRL_RTC_GET_TIME:
         {
-            *(uint32_t *)args = get_timestamp();
+            lpc_get_timestamp(args);
         }
         break;
 
         case RT_DEVICE_CTRL_RTC_SET_TIME:
         {
-            set_timestamp(*(time_t *)args);
+            lpc_set_timestamp(*(time_t *)args);
         }
         break;
 
         default:
-            return RT_EINVAL;
+            return -RT_EINVAL;
     }
 
     return RT_EOK;

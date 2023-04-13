@@ -16,16 +16,17 @@
 
 #include "board.h"
 #include "drv_timer.h"
+#include "mm_aspace.h"
 
 #include <mmu.h>
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <page.h>
 #include <lwp_arch.h>
 #endif
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x0fffffff, KERNEL_VADDR_START + PV_OFFSET, NORMAL_MEM}
+    {KERNEL_VADDR_START, KERNEL_VADDR_START + 0x10000000, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM}
 };
 #else
 struct mem_desc platform_mem_desc[] = {
@@ -49,11 +50,9 @@ void idle_wfi(void)
  * This function will initialize board
  */
 
-rt_mmu_info mmu_info;
-
 extern size_t MMUTable[];
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 rt_region_t init_page_region = {
     (uint32_t)PAGE_START,
     (uint32_t)PAGE_END,
@@ -62,23 +61,23 @@ rt_region_t init_page_region = {
 
 void rt_hw_board_init(void)
 {
-#ifdef RT_USING_USERSPACE
-    rt_hw_mmu_map_init(&mmu_info, (void*)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
+#ifdef RT_USING_SMART
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
 
     rt_page_init(init_page_region);
-    rt_hw_mmu_ioremap_init(&mmu_info, (void*)0xf0000000, 0x10000000);
+    rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0xf0000000, 0x10000000);
 
-    arch_kuser_init(&mmu_info, (void*)0xffff0000);
+    arch_kuser_init(&rt_kernel_space, (void*)0xffff0000);
 #else
-    rt_hw_mmu_map_init(&mmu_info, (void*)0x80000000, 0x10000000, MMUTable, 0);
-    rt_hw_mmu_ioremap_init(&mmu_info, (void*)0x80000000, 0x10000000);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0x80000000, 0x10000000);
 #endif
-
-    /* initialize hardware interrupt */
-    rt_hw_interrupt_init();
 
     /* initialize system heap */
     rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+
+    /* initialize hardware interrupt */
+    rt_hw_interrupt_init();
 
     rt_components_board_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);

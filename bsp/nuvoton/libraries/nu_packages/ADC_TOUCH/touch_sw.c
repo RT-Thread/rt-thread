@@ -14,7 +14,6 @@
 #if defined(NU_PKG_USING_ADC_TOUCH_SW)
 
 #include "rtdevice.h"
-#include "touch.h"
 #include "touch_sw.h"
 
 /* Private define ---------------------------------------------------------------*/
@@ -154,7 +153,7 @@ rt_err_t nu_adc_touch_enable(rt_touch_t psRtTouch)
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 rt_err_t nu_adc_touch_disable(void)
@@ -171,7 +170,7 @@ rt_err_t nu_adc_touch_disable(void)
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 rt_err_t nu_adc_touch_sw_register(S_TOUCH_SW *psTouchSW)

@@ -87,7 +87,7 @@ _start:
 
 #if defined(ENABLE_SMP)
 2:
-	la t0, trap_entry
+	la t0, SW_handler
 	csrw mtvec, t0
 
 	csrr a0, mhartid

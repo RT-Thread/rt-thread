@@ -1,15 +1,15 @@
 menu "INTC driver"
 
 config DRIVERS_INTC
-	bool "enable INTC driver"
-	default n
+    bool "enable INTC driver"
+    default n
 
 menu "INTC option features"
 
 config DRIVERS_INTC_FEATURE_1
-	bool "INTC feature 1"
-	select DRIVERS_INTC
-	default n
+    bool "INTC feature 1"
+    select DRIVERS_INTC
+    default n
 
 endmenu
 

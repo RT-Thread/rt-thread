@@ -62,8 +62,8 @@ if (isdefinedsymbol(__use_shmem__)) {
 }
 
 /* 512B - memory for veneer table (NSC - secure, non-secure callable memory) */
-define symbol m_veneer_table_start				       = 0x1000FE00;
-define symbol m_veneer_table_size				         = 0x200;
+define symbol m_veneer_table_start                     = 0x1000FE00;
+define symbol m_veneer_table_size                        = 0x200;
 
 define symbol m_usb_sram_start                 = 0x50100000;
 define symbol m_usb_sram_end                   = 0x50103FFF;
@@ -78,7 +78,7 @@ if (isdefinedsymbol(__use_shmem__)) {
   define region rpmsg_sh_mem_region     = mem:[from rpmsg_sh_mem_start to rpmsg_sh_mem_end];
 }
 
-define region VENEER_TABLE_region	  = mem:[from m_veneer_table_start to m_veneer_table_start + m_veneer_table_size - 1];
+define region VENEER_TABLE_region     = mem:[from m_veneer_table_start to m_veneer_table_start + m_veneer_table_size - 1];
 
 define block CSTACK    with alignment = 8, size = __size_cstack__   { };
 define block HEAP      with alignment = 8, size = __size_heap__     { };
@@ -113,7 +113,7 @@ place in DATA_region                        { block RW };
 place in DATA_region                        { block ZI };
 place in DATA_region                        { last block HEAP };
 place in CSTACK_region                      { block CSTACK };
-place in VENEER_TABLE_region    			      { section Veneer$$CMSE };
+place in VENEER_TABLE_region                      { section Veneer$$CMSE };
 
 if (isdefinedsymbol(__use_shmem__)) {
   place in rpmsg_sh_mem_region                { section rpmsg_sh_mem_section };

@@ -24,7 +24,7 @@ static rt_err_t  uart_configure(struct rt_serial_device *serial, struct serial_c
 static rt_err_t  uart_control(struct rt_serial_device *serial, int cmd, void *arg);
 static int       uart_putc(struct rt_serial_device *serial, char c);
 static int       uart_getc(struct rt_serial_device *serial);
-static rt_size_t uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
+static rt_ssize_t uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction);
 
 void UART0_DriverIRQHandler(void);
 
@@ -115,7 +115,7 @@ static int uart_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-static rt_size_t uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     return (0);
 }

@@ -118,7 +118,7 @@ static rt_err_t nu_timer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_
     else
     {
         rt_kprintf("nu_timer_start set compared value failed\n");
-        err = RT_ERROR;
+        err = -RT_ERROR;
     }
 
     if (HWTIMER_MODE_PERIOD == opmode)
@@ -132,7 +132,7 @@ static rt_err_t nu_timer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_
     else
     {
         rt_kprintf("nu_timer_start set operation mode failed\n");
-        err = RT_ERROR;
+        err = -RT_ERROR;
     }
 
     TIMER_Start(nu_timer->timer_periph);
@@ -191,7 +191,7 @@ static rt_err_t nu_timer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg
         break;
 
     default:
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         break;
     }
 

@@ -166,11 +166,11 @@ long list_thread(void)
     maxlen = RT_NAME_MAX;
 
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.s cpu bind pri  status      sp     stack size max used left tick  error\n", maxlen, item_title);
+    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- ---\n");
 #else
-    rt_kprintf("%-*.s pri  status      sp     stack size max used left tick  error\n", maxlen, item_title);
+    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- ---\n");
 #endif /*RT_USING_SMP*/
@@ -204,12 +204,12 @@ long list_thread(void)
 
 #ifdef RT_USING_SMP
                     if (thread->oncpu != RT_CPU_DETACHED)
-                        rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX, thread->name, thread->oncpu, thread->bind_cpu, thread->current_priority);
+                        rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->oncpu, thread->bind_cpu, thread->current_priority);
                     else
-                        rt_kprintf("%-*.*s N/A %3d %4d ", maxlen, RT_NAME_MAX, thread->name, thread->bind_cpu, thread->current_priority);
+                        rt_kprintf("%-*.*s N/A %3d %4d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->bind_cpu, thread->current_priority);
 
 #else
-                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
 #endif /*RT_USING_SMP*/
                     stat = (thread->stat & RT_THREAD_STAT_MASK);
                     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
@@ -256,7 +256,7 @@ static void show_wait_queue(struct rt_list_node *list)
     for (node = list->next; node != list; node = node->next)
     {
         thread = rt_list_entry(node, struct rt_thread, tlist);
-        rt_kprintf("%.*s", RT_NAME_MAX, thread->name);
+        rt_kprintf("%.*s", RT_NAME_MAX, thread->parent.name);
 
         if (node->next != list)
             rt_kprintf("/");
@@ -278,7 +278,7 @@ long list_sem(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s v   suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s v   suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" --- --------------\n");
 
@@ -344,7 +344,7 @@ long list_event(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s      set    suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s      set    suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf("  ---------- --------------\n");
 
@@ -408,7 +408,7 @@ long list_mutex(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s   owner  hold priority suspend thread \n", maxlen, item_title);
+    rt_kprintf("%-*.*s   owner  hold priority suspend thread \n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" -------- ---- -------- --------------\n");
 
@@ -439,7 +439,7 @@ long list_mutex(void)
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
-                           m->owner->name,
+                           m->owner->parent.name,
                            m->hold,
                            m->priority,
                            rt_list_len(&m->parent.suspend_thread));
@@ -452,7 +452,7 @@ long list_mutex(void)
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
-                           m->owner->name,
+                           m->owner->parent.name,
                            m->hold,
                            m->priority,
                            rt_list_len(&m->parent.suspend_thread));
@@ -481,7 +481,7 @@ long list_mailbox(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s entry size suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s entry size suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ----  ---- --------------\n");
 
@@ -551,7 +551,7 @@ long list_msgqueue(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s entry suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s entry suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ----  --------------\n");
     do
@@ -617,7 +617,7 @@ long list_memheap(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s  pool size  max used size available size\n", maxlen, item_title);
+    rt_kprintf("%-*.*s  pool size  max used size available size\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ---------- ------------- --------------\n");
     do
@@ -673,7 +673,7 @@ long list_mempool(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s block total free suspend thread\n", maxlen, item_title);
+    rt_kprintf("%-*.*s block total free suspend thread\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ----  ----  ---- --------------\n");
     do
@@ -751,7 +751,7 @@ long list_timer(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s  periodic   timeout    activated     mode\n", maxlen, item_title);
+    rt_kprintf("%-*.*s  periodic   timeout    activated     mode\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ---------- ---------- ----------- ---------\n");
     do
@@ -849,7 +849,7 @@ long list_device(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s         type         ref count\n", maxlen, item_title);
+    rt_kprintf("%-*.*s         type         ref count\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" -------------------- ----------\n");
     do

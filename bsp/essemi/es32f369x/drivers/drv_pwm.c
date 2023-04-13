@@ -81,7 +81,7 @@ static rt_err_t es32f3_pwm_control(struct rt_device_pwm *device, int cmd, void *
         _ccep_ch_en = timer_initstruct->perh->CCEP & TIMER_CCEP_CC4EN_MSK;
     }
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     switch (cmd)
     {

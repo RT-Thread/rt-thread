@@ -23,7 +23,7 @@
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #endif
 
@@ -71,7 +71,7 @@ enum rt_object_info_type
 #ifdef RT_USING_HEAP
     RT_Object_Info_Memory,                            /**< The object is a memory. */
 #endif
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     RT_Object_Info_Channel,                            /**< The object is a IPC channel */
 #endif
 #ifdef RT_USING_HEAP
@@ -129,7 +129,7 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
     /* initialize object container - small memory */
     {RT_Object_Class_Memory, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Memory), sizeof(struct rt_memory)},
 #endif
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     /* initialize object container - module */
     {RT_Object_Class_Channel, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Channel), sizeof(struct rt_channel)},
     {RT_Object_Class_Custom, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Custom), sizeof(struct rt_custom_object)},
@@ -387,8 +387,11 @@ void rt_object_init(struct rt_object         *object,
     /* initialize object's parameters */
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
-    /* copy name */
-    rt_strncpy(object->name, name, RT_NAME_MAX);
+#if RT_NAME_MAX > 0
+    rt_strncpy(object->name, name, RT_NAME_MAX);  /* copy name */
+#else
+    object->name = name;
+#endif /* RT_NAME_MAX > 0 */
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
@@ -483,8 +486,11 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     /* set object flag */
     object->flag = 0;
 
-    /* copy name */
-    rt_strncpy(object->name, name, RT_NAME_MAX);
+#if RT_NAME_MAX > 0
+    rt_strncpy(object->name, name, RT_NAME_MAX); /* copy name */
+#else
+    object->name = name;
+#endif /* RT_NAME_MAX > 0 */
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
@@ -635,7 +641,6 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
  * container.
  *
  * @param name the specified name of object.
- * @param type the type of object
  * @param data the custom data
  * @param data_destroy the custom object destroy callback
  *

@@ -140,7 +140,7 @@ static rt_err_t spi_transfernb(struct raspi_spi_hw_config *hwcfg, rt_uint8_t* tb
     return RT_EOK;
 }
 
-static rt_uint32_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     rt_err_t res;
     rt_uint8_t flag;
@@ -197,7 +197,7 @@ static rt_uint32_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
     }
 
     if (res != RT_EOK)
-           return RT_ERROR;
+           return res;
 
     return message->length;
 }

@@ -258,6 +258,23 @@ int DISP_SetTransparencyMode(E_DISP_LAYER eLayer, E_TRANSPARENCY_MODE eTM)
     return 0;
 }
 
+uint32_t DISP_LCDTIMING_GetFPS(const DISP_LCD_TIMING* psDispLCDTiming)
+{
+    static uint32_t u32FPS = 0;
+
+    if ( psDispLCDTiming != NULL )
+    {
+        uint32_t u32HTotal, u32VTotal;
+
+        u32HTotal = psDispLCDTiming->u32HA + psDispLCDTiming->u32HBP + psDispLCDTiming->u32HFP + psDispLCDTiming->u32HSL;
+        u32VTotal = psDispLCDTiming->u32VA + psDispLCDTiming->u32VBP + psDispLCDTiming->u32VFP + psDispLCDTiming->u32VSL;
+
+        u32FPS =  psDispLCDTiming->u32PCF / u32HTotal / u32VTotal;
+    }
+
+    return u32FPS;
+}
+
 int DISP_Trigger(E_DISP_LAYER eLayer, uint32_t u32Action)
 {
     switch (eLayer)

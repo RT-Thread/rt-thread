@@ -8,6 +8,10 @@
 #ifndef __NU_SDH_H__
 #define __NU_SDH_H__
 
+#if defined ( __CC_ARM   )
+    #pragma anon_unions
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -114,6 +118,10 @@ void SDH_SetPower(SDH_T *sdh, uint32_t u32OnOff);
 /*@}*/ /* end of group Standard_Driver */
 #ifdef __cplusplus
 }
+#endif
+
+#if defined ( __CC_ARM   )
+    #pragma no_anon_unions
 #endif
 
 #endif

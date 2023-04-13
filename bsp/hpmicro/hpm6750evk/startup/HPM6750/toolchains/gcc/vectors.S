@@ -9,7 +9,7 @@
     .align 9
 __vector_table:
     .weak default_isr_trap
-    .set default_isr_trap, irq_handler_trap
+    .set default_isr_trap, SW_handler
     .long default_isr_trap
     IRQ_HANDLER 1 /* GPIO0_A IRQ handler */
     IRQ_HANDLER 2 /* GPIO0_B IRQ handler */

@@ -5,10 +5,11 @@
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
     Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -40,37 +41,37 @@ OF SUCH DAMAGE.
 #include "gd32f4xx.h"
 
 /* TLI definitions */
-#define TLI                               TLI_BASE               /*!< TLI base address */
+#define TLI                               TLI_BASE                          /*!< TLI base address */
 /* TLI layer definitions */
-#define LAYER0                            TLI_BASE               /*!< TLI layer0 base address */
-#define LAYER1                            (TLI_BASE+0x80)        /*!< TLI layer1 base address */
+#define LAYER0                            TLI_BASE                          /*!< TLI layer0 base address */
+#define LAYER1                            (TLI_BASE + 0x00000080U)          /*!< TLI layer1 base address */
 
 /* registers definitions */
-#define TLI_SPSZ                          REG32(TLI + 0x08U)          /*!< TLI synchronous pulse size register */
-#define TLI_BPSZ                          REG32(TLI + 0x0CU)          /*!< TLI back-porch size register */
-#define TLI_ASZ                           REG32(TLI + 0x10U)          /*!< TLI active size register */
-#define TLI_TSZ                           REG32(TLI + 0x14U)          /*!< TLI total size register */
-#define TLI_CTL                           REG32(TLI + 0x18U)          /*!< TLI control register */
-#define TLI_RL                            REG32(TLI + 0x24U)          /*!< TLI reload Layer register */
-#define TLI_BGC                           REG32(TLI + 0x2CU)          /*!< TLI background color register */
-#define TLI_INTEN                         REG32(TLI + 0x34U)          /*!< TLI interrupt enable register */
-#define TLI_INTF                          REG32(TLI + 0x38U)          /*!< TLI interrupt flag register */
-#define TLI_INTC                          REG32(TLI + 0x3CU)          /*!< TLI interrupt flag clear register */
-#define TLI_LM                            REG32(TLI + 0x40U)          /*!< TLI line mark register */
-#define TLI_CPPOS                         REG32(TLI + 0x44U)          /*!< TLI current pixel position register */
-#define TLI_STAT                          REG32(TLI + 0x48U)          /*!< TLI status register */
-#define TLI_LxCTL(layerx)                 REG32((layerx) + 0x84U)     /*!< TLI layer x control register */
-#define TLI_LxHPOS(layerx)                REG32((layerx) + 0x88U)     /*!< TLI layer x horizontal position parameters register */
-#define TLI_LxVPOS(layerx)                REG32((layerx) + 0x8CU)     /*!< TLI layer x vertical position parameters register */
-#define TLI_LxCKEY(layerx)                REG32((layerx) + 0x90U)     /*!< TLI layer x color key register */
-#define TLI_LxPPF(layerx)                 REG32((layerx) + 0x94U)     /*!< TLI layer x packeted pixel format register */
-#define TLI_LxSA(layerx)                  REG32((layerx) + 0x98U)     /*!< TLI layer x specified alpha register */
-#define TLI_LxDC(layerx)                  REG32((layerx) + 0x9CU)     /*!< TLI layer x default color register */
-#define TLI_LxBLEND(layerx)               REG32((layerx) + 0xA0U)     /*!< TLI layer x blending register */
-#define TLI_LxFBADDR(layerx)              REG32((layerx) + 0xACU)     /*!< TLI layer x frame base address register */
-#define TLI_LxFLLEN(layerx)               REG32((layerx) + 0xB0U)     /*!< TLI layer x frame line length register */
-#define TLI_LxFTLN(layerx)                REG32((layerx) + 0xB4U)     /*!< TLI layer x frame total line number register */
-#define TLI_LxLUT(layerx)                 REG32((layerx) + 0xC4U)     /*!< TLI layer x look up table register */
+#define TLI_SPSZ                          REG32(TLI + 0x00000008U)          /*!< TLI synchronous pulse size register */
+#define TLI_BPSZ                          REG32(TLI + 0x0000000CU)          /*!< TLI back-porch size register */
+#define TLI_ASZ                           REG32(TLI + 0x00000010U)          /*!< TLI active size register */
+#define TLI_TSZ                           REG32(TLI + 0x00000014U)          /*!< TLI total size register */
+#define TLI_CTL                           REG32(TLI + 0x00000018U)          /*!< TLI control register */
+#define TLI_RL                            REG32(TLI + 0x00000024U)          /*!< TLI reload Layer register */
+#define TLI_BGC                           REG32(TLI + 0x0000002CU)          /*!< TLI background color register */
+#define TLI_INTEN                         REG32(TLI + 0x00000034U)          /*!< TLI interrupt enable register */
+#define TLI_INTF                          REG32(TLI + 0x00000038U)          /*!< TLI interrupt flag register */
+#define TLI_INTC                          REG32(TLI + 0x0000003CU)          /*!< TLI interrupt flag clear register */
+#define TLI_LM                            REG32(TLI + 0x00000040U)          /*!< TLI line mark register */
+#define TLI_CPPOS                         REG32(TLI + 0x00000044U)          /*!< TLI current pixel position register */
+#define TLI_STAT                          REG32(TLI + 0x00000048U)          /*!< TLI status register */
+#define TLI_LxCTL(layerx)                 REG32((layerx) + 0x00000084U)     /*!< TLI layer x control register */
+#define TLI_LxHPOS(layerx)                REG32((layerx) + 0x00000088U)     /*!< TLI layer x horizontal position parameters register */
+#define TLI_LxVPOS(layerx)                REG32((layerx) + 0x0000008CU)     /*!< TLI layer x vertical position parameters register */
+#define TLI_LxCKEY(layerx)                REG32((layerx) + 0x00000090U)     /*!< TLI layer x color key register */
+#define TLI_LxPPF(layerx)                 REG32((layerx) + 0x00000094U)     /*!< TLI layer x packeted pixel format register */
+#define TLI_LxSA(layerx)                  REG32((layerx) + 0x00000098U)     /*!< TLI layer x specified alpha register */
+#define TLI_LxDC(layerx)                  REG32((layerx) + 0x0000009CU)     /*!< TLI layer x default color register */
+#define TLI_LxBLEND(layerx)               REG32((layerx) + 0x000000A0U)     /*!< TLI layer x blending register */
+#define TLI_LxFBADDR(layerx)              REG32((layerx) + 0x000000ACU)     /*!< TLI layer x frame base address register */
+#define TLI_LxFLLEN(layerx)               REG32((layerx) + 0x000000B0U)     /*!< TLI layer x frame line length register */
+#define TLI_LxFTLN(layerx)                REG32((layerx) + 0x000000B4U)     /*!< TLI layer x frame total line number register */
+#define TLI_LxLUT(layerx)                 REG32((layerx) + 0x000000C4U)     /*!< TLI layer x look up table register */
 
 /* bits definitions */
 /* TLI_SPSZ */
@@ -192,8 +193,7 @@ OF SUCH DAMAGE.
 
 /* constants definitions */
 /* TLI parameter struct definitions */
-typedef struct
-{
+typedef struct {
     uint16_t synpsz_vpsz;                     /*!< size of the vertical synchronous pulse */
     uint16_t synpsz_hpsz;                     /*!< size of the horizontal synchronous pulse */
     uint16_t backpsz_vbpsz;                   /*!< size of the vertical back porch plus synchronous pulse */
@@ -209,11 +209,10 @@ typedef struct
     uint32_t signalpolarity_vs;               /*!< vertical pulse polarity selection */
     uint32_t signalpolarity_de;               /*!< data enable polarity selection */
     uint32_t signalpolarity_pixelck;          /*!< pixel clock polarity selection */
-}tli_parameter_struct;
+} tli_parameter_struct;
 
 /* TLI layer parameter struct definitions */
-typedef struct
-{
+typedef struct {
     uint16_t layer_window_rightpos;           /*!< window right position */
     uint16_t layer_window_leftpos;            /*!< window left position */
     uint16_t layer_window_bottompos;          /*!< window bottom position */
@@ -230,29 +229,27 @@ typedef struct
     uint16_t layer_frame_buf_stride_offset;   /*!< frame buffer stride offset */
     uint16_t layer_frame_line_length;         /*!< frame line length */
     uint16_t layer_frame_total_line_number;   /*!< frame total line number */
-}tli_layer_parameter_struct;
+} tli_layer_parameter_struct;
 
 /* TLI layer LUT parameter struct definitions */
-typedef struct
-{
+typedef struct {
     uint32_t layer_table_addr;                /*!< look up table write address */
     uint8_t layer_lut_channel_red;            /*!< red channel of a LUT entry */
     uint8_t layer_lut_channel_green;          /*!< green channel of a LUT entry */
     uint8_t layer_lut_channel_blue;           /*!< blue channel of a LUT entry */
-}tli_layer_lut_parameter_struct;
+} tli_layer_lut_parameter_struct;
 
 /* packeted pixel format */
-typedef enum
-{
-     LAYER_PPF_ARGB8888,                      /*!< layerx pixel format ARGB8888 */
-     LAYER_PPF_RGB888,                        /*!< layerx pixel format RGB888 */
-     LAYER_PPF_RGB565,                        /*!< layerx pixel format RGB565 */
-     LAYER_PPF_ARGB1555,                      /*!< layerx pixel format ARGB1555 */
-     LAYER_PPF_ARGB4444,                      /*!< layerx pixel format ARGB4444 */
-     LAYER_PPF_L8,                            /*!< layerx pixel format L8 */
-     LAYER_PPF_AL44,                          /*!< layerx pixel format AL44 */
-     LAYER_PPF_AL88                           /*!< layerx pixel format AL88 */
-}tli_layer_ppf_enum;
+typedef enum {
+    LAYER_PPF_ARGB8888,                      /*!< layerx pixel format ARGB8888 */
+    LAYER_PPF_RGB888,                        /*!< layerx pixel format RGB888 */
+    LAYER_PPF_RGB565,                        /*!< layerx pixel format RGB565 */
+    LAYER_PPF_ARGB1555,                      /*!< layerx pixel format ARGB1555 */
+    LAYER_PPF_ARGB4444,                      /*!< layerx pixel format ARGB4444 */
+    LAYER_PPF_L8,                            /*!< layerx pixel format L8 */
+    LAYER_PPF_AL44,                          /*!< layerx pixel format AL44 */
+    LAYER_PPF_AL88                           /*!< layerx pixel format AL88 */
+} tli_layer_ppf_enum;
 
 /* TLI flags */
 #define TLI_FLAG_VDE                   TLI_STAT_VDE                /*!< current VDE status */
@@ -333,16 +330,16 @@ void tli_reload_config(uint8_t reload_mod);
   that call this function after a tli_layer_parameter_struct structure is defined */
 void tli_layer_struct_para_init(tli_layer_parameter_struct *layer_struct);
 /* initialize TLI layer */
-void tli_layer_init(uint32_t layerx,tli_layer_parameter_struct *layer_struct);
+void tli_layer_init(uint32_t layerx, tli_layer_parameter_struct *layer_struct);
 /* reconfigure window position */
-void tli_layer_window_offset_modify(uint32_t layerx,uint16_t offset_x,uint16_t offset_y);
+void tli_layer_window_offset_modify(uint32_t layerx, uint16_t offset_x, uint16_t offset_y);
 /* initialize the parameters of TLI layer LUT structure with the default values, it is suggested
   that call this function after a tli_layer_lut_parameter_struct structure is defined */
 void tli_lut_struct_para_init(tli_layer_lut_parameter_struct *lut_struct);
 /* initialize TLI layer LUT */
-void tli_lut_init(uint32_t layerx,tli_layer_lut_parameter_struct *lut_struct);
+void tli_lut_init(uint32_t layerx, tli_layer_lut_parameter_struct *lut_struct);
 /* initialize TLI layer color key */
-void tli_color_key_init(uint32_t layerx,uint8_t redkey,uint8_t greenkey,uint8_t bluekey);
+void tli_color_key_init(uint32_t layerx, uint8_t redkey, uint8_t greenkey, uint8_t bluekey);
 /* enable TLI layer */
 void tli_layer_enable(uint32_t layerx);
 /* disable TLI layer */

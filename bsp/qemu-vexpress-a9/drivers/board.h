@@ -16,7 +16,7 @@
 #include "vexpress_a9.h"
 
 #include "mmu.h"
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include "ioremap.h"
 #endif
 
@@ -28,7 +28,7 @@ extern int __bss_end;
 #define HEAP_BEGIN      ((void*)&__bss_end)
 #endif
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #define HEAP_END        (void*)(KERNEL_VADDR_START + 16 * 1024 * 1024)
 #define PAGE_START      HEAP_END
 #define PAGE_END        (void*)(KERNEL_VADDR_START + 128 * 1024 * 1024)
@@ -37,7 +37,5 @@ extern int __bss_end;
 #endif
 
 void rt_hw_board_init(void);
-
-extern rt_mmu_info mmu_info;
 
 #endif

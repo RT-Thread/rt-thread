@@ -1,28 +1,28 @@
 /**
-	*****************************************************************************
-	* @file     cmem7_usb.h
-	*
-	* @brief    CMEM7 USB header file
-	*
-	*
-	* @version  V1.0
-	* @date     3. September 2013
-	*
-	* @note               
-	*           
-	*****************************************************************************
-	* @attention
-	*
-	* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-	* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-	* TIME. AS A RESULT, CAPITAL-MICRO SHALL NOT BE HELD LIABLE FOR ANY DIRECT, 
-	* INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-	* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-	* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-	*
-	* <h2><center>&copy; COPYRIGHT 2013 Capital-micro </center></h2>
-	*****************************************************************************
-	*/
+    *****************************************************************************
+    * @file     cmem7_usb.h
+    *
+    * @brief    CMEM7 USB header file
+    *
+    *
+    * @version  V1.0
+    * @date     3. September 2013
+    *
+    * @note
+    *
+    *****************************************************************************
+    * @attention
+    *
+    * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+    * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+    * TIME. AS A RESULT, CAPITAL-MICRO SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
+    * INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+    * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+    * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+    *
+    * <h2><center>&copy; COPYRIGHT 2013 Capital-micro </center></h2>
+    *****************************************************************************
+    */
 
 #ifndef __CMEM7_USB_H
 #define __CMEM7_USB_H
@@ -38,19 +38,19 @@
 /**
  *
  */
-#define SET_HCDMA_DESC_ADDR(a)		(((uint32_t)(a)) >> 9)
-#define MIN(a, b)					(((a) <= (b)) ? (a) : (b))
-#define MAX(a, b)					(((a) >= (b)) ? (a) : (b))
-#define BIT(b)						(0x1u << (b))
+#define SET_HCDMA_DESC_ADDR(a)      (((uint32_t)(a)) >> 9)
+#define MIN(a, b)                   (((a) <= (b)) ? (a) : (b))
+#define MAX(a, b)                   (((a) >= (b)) ? (a) : (b))
+#define BIT(b)                      (0x1U << (b))
 
 /** @defgroup USB_HOST_PID
   * @{
   */
-#define USB_HOST_PID_DATA0			0x0				/*!< Indicates the Data PID is DATA0                                       */
-#define USB_HOST_PID_DATA2			0x1				/*!< Indicates the Data PID is DATA2                                       */
-#define USB_HOST_PID_DATA1			0x2				/*!< Indicates the Data PID is DATA1                                       */
-#define USB_HOST_PID_MDATA			0x3				/*!< Indicates the Data PID is MDATA (non-control)                         */
-#define USB_HOST_PID_SETUP			0x3				/*!< Indicates the Data PID is SETUP (control)                             */
+#define USB_HOST_PID_DATA0          0x0             /*!< Indicates the Data PID is DATA0                                       */
+#define USB_HOST_PID_DATA2          0x1             /*!< Indicates the Data PID is DATA2                                       */
+#define USB_HOST_PID_DATA1          0x2             /*!< Indicates the Data PID is DATA1                                       */
+#define USB_HOST_PID_MDATA          0x3             /*!< Indicates the Data PID is MDATA (non-control)                         */
+#define USB_HOST_PID_SETUP          0x3             /*!< Indicates the Data PID is SETUP (control)                             */
 /**
   * @}
   */
@@ -59,10 +59,10 @@
   * @{
   */
 typedef enum {
-	USB_EP_TYPE_CONTROL =			0x0,			/*!< Control                                                               */
-	USB_EP_TYPE_ISO =				0x1,			/*!< Isochronous                                                           */
-	USB_EP_TYPE_BULK =				0x2,			/*!< Bulk                                                                  */
-	USB_EP_TYPE_INT =				0x3,			/*!< Interrupt                                                             */
+    USB_EP_TYPE_CONTROL =           0x0,            /*!< Control                                                               */
+    USB_EP_TYPE_ISO =               0x1,            /*!< Isochronous                                                           */
+    USB_EP_TYPE_BULK =              0x2,            /*!< Bulk                                                                  */
+    USB_EP_TYPE_INT =               0x3,            /*!< Interrupt                                                             */
 } USB_EP_TYPE;
 /**
   * @}
@@ -72,10 +72,10 @@ typedef enum {
   * @{
   */
 typedef enum {
-	USB_ENUM_SPEED_HS =				0x0,			/*!< Enumerated Speed is High Speed                                        */
-	USB_ENUM_SPEED_FS =				0x1,			/*!< Enumerated Speed is Full Speed                                        */
-	USB_ENUM_SPEED_LS =				0x2,			/*!< Enumerated Speed is Low  Speed                                        */
-	USB_ENUM_SPEED_FS_48M =			0x3,			/*!< Enumerated Speed is Full Speed (PHY clock is running at 48MHz)        */
+    USB_ENUM_SPEED_HS =             0x0,            /*!< Enumerated Speed is High Speed                                        */
+    USB_ENUM_SPEED_FS =             0x1,            /*!< Enumerated Speed is Full Speed                                        */
+    USB_ENUM_SPEED_LS =             0x2,            /*!< Enumerated Speed is Low  Speed                                        */
+    USB_ENUM_SPEED_FS_48M =         0x3,            /*!< Enumerated Speed is Full Speed (PHY clock is running at 48MHz)        */
 } USB_ENUM_SPEED;
 /**
   * @}
@@ -85,15 +85,15 @@ typedef enum {
   * @{
   */
 typedef enum {
-	USB_INT_GP_HOST_DISC,							/*!< Device disconnection interrupt (Only for HOST Mode)                   */
-	USB_INT_GP_DEV_RESET,							/*!< USB Port Reset Interrupt (Only for DEVICE Mode)                       */
-	USB_INT_GP_DEV_ENUMDONE,						/*!< Enumeration Done Interrupt (Only for DEVICE Mode)                     */
-	USB_INT_GP_DEV_SUSP,							/*!< USB Suspend Interrupt (Only for DEVICE Mode)                          */
-	USB_INT_GP_DEV_EARLY,							/*!< USB Idle Interrupt (Only for DEVICE Mode)                             */
-	USB_INT_GP_SOF,									/*!< SOF Interrupt                                                         */
-	USB_INT_GP_MIS,									/*!< USB access overstep the boundary Interrupt                            */
-	USB_INT_GP_IDCHG,								/*!< OTG Connector ID Status Change Interrupt                              */
-	USB_INT_GP_SESSREQ,								/*!< Session Request / Create Interrupt                                    */
+    USB_INT_GP_HOST_DISC,                           /*!< Device disconnection interrupt (Only for HOST Mode)                   */
+    USB_INT_GP_DEV_RESET,                           /*!< USB Port Reset Interrupt (Only for DEVICE Mode)                       */
+    USB_INT_GP_DEV_ENUMDONE,                        /*!< Enumeration Done Interrupt (Only for DEVICE Mode)                     */
+    USB_INT_GP_DEV_SUSP,                            /*!< USB Suspend Interrupt (Only for DEVICE Mode)                          */
+    USB_INT_GP_DEV_EARLY,                           /*!< USB Idle Interrupt (Only for DEVICE Mode)                             */
+    USB_INT_GP_SOF,                                 /*!< SOF Interrupt                                                         */
+    USB_INT_GP_MIS,                                 /*!< USB access overstep the boundary Interrupt                            */
+    USB_INT_GP_IDCHG,                               /*!< OTG Connector ID Status Change Interrupt                              */
+    USB_INT_GP_SESSREQ,                             /*!< Session Request / Create Interrupt                                    */
 } USB_INT_GP;
 /**
   * @}
@@ -103,11 +103,11 @@ typedef enum {
   * @{
   */
 typedef enum {
-	USB_INT_OTG_SESEND,								/*!< Session End Interrupt                                                 */
-	USB_INT_OTG_STANDAUP,							/*!< B Device timeout to connect Interrupt                                 */
-	USB_INT_OTG_HNDETECT,							/*!< Host Negotiation Detected Interrupt                                   */
-	USB_INT_OTG_HNSUCCHG,							/*!< Host Negotiation Success Status Change Interrupt                      */
-	USB_INT_OTG_KEEPAPP,							/*!< Debounce Done Interrupt (Only for HOST Mode)                          */
+    USB_INT_OTG_SESEND,                             /*!< Session End Interrupt                                                 */
+    USB_INT_OTG_STANDAUP,                           /*!< B Device timeout to connect Interrupt                                 */
+    USB_INT_OTG_HNDETECT,                           /*!< Host Negotiation Detected Interrupt                                   */
+    USB_INT_OTG_HNSUCCHG,                           /*!< Host Negotiation Success Status Change Interrupt                      */
+    USB_INT_OTG_KEEPAPP,                            /*!< Debounce Done Interrupt (Only for HOST Mode)                          */
 } USB_INT_OTG;
 /**
   * @}
@@ -117,10 +117,10 @@ typedef enum {
   * @{
   */
 typedef enum {
-	USB_OTG_DEV_HNSUCC = 8,							/*!< Host Negotiation Success (Only for DEVICE Mode, Read Only)            */
-	USB_OTG_DEV_HNPREQ = 9,							/*!< HNP Request (Only for DEVICE Mode)                                    */
-	USB_OTG_HST_HNPENABLE = 10,						/*!< Host Set HNP Enable (Only for HOST Mode)                              */
-	USB_OTG_DEV_HNPENABLE = 11,						/*!< Device HNP Enabled (Only for DEVICE Mode)                             */
+    USB_OTG_DEV_HNSUCC = 8,                         /*!< Host Negotiation Success (Only for DEVICE Mode, Read Only)            */
+    USB_OTG_DEV_HNPREQ = 9,                         /*!< HNP Request (Only for DEVICE Mode)                                    */
+    USB_OTG_HST_HNPENABLE = 10,                     /*!< Host Set HNP Enable (Only for HOST Mode)                              */
+    USB_OTG_DEV_HNPENABLE = 11,                     /*!< Device HNP Enabled (Only for DEVICE Mode)                             */
 } USB_OTG_CTL;
 
 /**
@@ -129,7 +129,7 @@ typedef enum {
 
 typedef union {
     __IO uint32_t  HPRT;                            /*!< Host Port Control and Status Register                                 */
-    
+
     struct {
       __I  uint32_t  PCS        :  1;               /*!< If a device is attached to the port                                   */
       __IO uint32_t  PCD        :  1;               /*!< A device connection is detected                                       */
@@ -212,7 +212,7 @@ void USB_EnableInt(BOOL enable);
 
 /**
  * @brief Flush TX/RX FIFO
-   * @param[in] num Flush FIFO£¬0: non-periodic TX FIFO (HOST Mode) or FIFO 0 (DEVICE Mode); 1: Periodic TX FIFO (HOST Mode) or FIFO 1 (DEVICE Mode); 2-15: FIFO n in DEVICE Mode; 16: Flush All TX FIFO; otherwise: Flush RX FIFO
+   * @param[in] num Flush FIFO, 0: non-periodic TX FIFO (HOST Mode) or FIFO 0 (DEVICE Mode); 1: Periodic TX FIFO (HOST Mode) or FIFO 1 (DEVICE Mode); 2-15: FIFO n in DEVICE Mode; 16: Flush All TX FIFO; otherwise: Flush RX FIFO
  * @retval void
    */
 void USB_FlushFIFO(uint32_t num);
@@ -233,7 +233,7 @@ BOOL USB_roleIsHost(void);
 /**
  * @brief Control and get VBus Status (Only for HOST Mode)
    * @param[in] opt Bit1: Set VBus using Bit0; Bit0: Turn VBus On or Off
- * @retval BOOL TRUE: VBus is on; FALSE£ºVBus is off
+ * @retval BOOL TRUE: VBus is on; FALSE: VBus is off
  * @note It cannot control VBus actually due to HW problem
    */
 BOOL USB_hostVBus(uint32_t opt);
@@ -363,13 +363,13 @@ BOOL USB_hostINT_isPCD(void);
 void USB_hostINT_clrPCD(void);
 
 /**
- * @brief Port Enable/Disable Change£¨PEDC£©Interrupt Asserted (Only for HOST Mode)
+ * @brief Port Enable/Disable Change (PEDC) Interrupt Asserted (Only for HOST Mode)
  * @retval BOOL TRUE: Interrupt Asserted; FALSE: Interrupt is NOT asserted
    */
 BOOL USB_hostINT_isPEDC(void);
 
 /**
- * @brief Clear Port Enable/Disable Change£¨PEDC£©Interrupt Flag (Only for HOST Mode)
+ * @brief Clear Port Enable/Disable Change (PEDC) Interrupt Flag (Only for HOST Mode)
  * @retval void
    */
 void USB_hostINT_clrPEDC(void);
@@ -520,7 +520,7 @@ void USB_devINT_enDone(uint32_t ep, BOOL in, BOOL en);
  * @brief Transaction Done Interrupt Asserted (Only for DEVICE Mode)
    * @param[in] ep Endpoint
    * @param[in] in Endpoint Direction, TRUE: IN; FALSE: OUT
- * @retval uint32_t Result, Bit0: Done; Bit1£ºBuffer Not Available Error; Bit2: SETUP Phase Done
+ * @retval uint32_t Result, Bit0: Done; Bit1: Buffer Not Available Error; Bit2: SETUP Phase Done
    */
 uint32_t USB_devINT_isDone(uint32_t ep, BOOL in);
 

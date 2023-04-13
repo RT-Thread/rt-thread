@@ -15,8 +15,7 @@
 #if defined(NU_PKG_USING_MAX31875)
 
 #include <sys/time.h>
-#include "sensor.h"
-#include "max31875_c.h"
+#include "sensor_max31875.h"
 
 #define DBG_ENABLE
 #define DBG_LEVEL DBG_LOG
@@ -65,9 +64,9 @@ static int max31875_i2c_read_reg(int address, const char *reg, int reg_length, c
     return RT_EOK;
 }
 
-static rt_size_t max31875_fetch_data(struct rt_sensor_device *sensor, void *buf, rt_size_t len)
+static rt_ssize_t max31875_fetch_data(rt_sensor_t sensor, rt_sensor_data_t data, rt_size_t len)
 {
-    struct rt_sensor_data *data = (struct rt_sensor_data *)buf;
+    RT_ASSERT(data);
 
     if (sensor->info.type == RT_SENSOR_CLASS_TEMP)
     {
@@ -127,7 +126,7 @@ int rt_hw_max31875_temp_init(const char *name, struct rt_sensor_config *cfg)
 int rt_hw_max31875_init(const char *name, struct rt_sensor_config *cfg)
 {
     struct rt_sensor_intf *intf;
-    rt_err_t  ret = RT_ERROR;
+    rt_err_t  ret = -RT_ERROR;
 
     RT_ASSERT(name != NULL);
     RT_ASSERT(cfg != NULL);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -66,9 +66,9 @@ static struct ch32_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])] =
 static rt_uint32_t ch32_spi_clock_get(SPI_TypeDef *spix);
 static void ch32_spi_clock_and_io_init(SPI_TypeDef *spix);
 static rt_uint8_t spix_readwritebyte(SPI_TypeDef *Instance, rt_uint8_t TxData);
-static rt_err_t spi_transmitreceive(SPI_TypeDef *Instance, uint8_t *send_buf, uint8_t *recv_buf, uint16_t send_length);
-static rt_err_t spi_transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t send_length);
-static rt_err_t spi_receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t send_length);
+static rt_err_t spi_transmitreceive(SPI_TypeDef *Instance, rt_uint8_t *send_buf, rt_uint8_t *recv_buf, rt_uint16_t send_length);
+static rt_err_t spi_transmit(SPI_TypeDef *Instance, rt_uint8_t *send_buf, rt_uint16_t send_length);
+static rt_err_t spi_receive(SPI_TypeDef *Instance, rt_uint8_t *recv_buf,rt_uint16_t send_length);
 
 static void ch32_spi_clock_and_io_init(SPI_TypeDef *spix)
 {
@@ -168,7 +168,7 @@ static rt_uint32_t ch32_spi_clock_get(SPI_TypeDef *spix)
  * */
 static rt_uint8_t spix_readwritebyte(SPI_TypeDef *Instance, rt_uint8_t TxData)
 {
-    uint8_t i=0;
+    rt_uint8_t i=0;
     while (SPI_I2S_GetFlagStatus(Instance, SPI_I2S_FLAG_TXE) == RESET)
     {
         i++;
@@ -188,9 +188,9 @@ static rt_uint8_t spix_readwritebyte(SPI_TypeDef *Instance, rt_uint8_t TxData)
 /*
  *spi transmit and receive
  * */
-static rt_err_t spi_transmitreceive(SPI_TypeDef *Instance, uint8_t *send_buf, uint8_t *recv_buf, uint16_t send_length)
+static rt_err_t spi_transmitreceive(SPI_TypeDef *Instance, rt_uint8_t *send_buf, rt_uint8_t *recv_buf, rt_uint16_t send_length)
 {
-    uint16_t i=0;
+    rt_uint16_t i=0;
     for(i = 0; i < send_length; i++)
     {
         recv_buf[i] = spix_readwritebyte(Instance, send_buf[i]);
@@ -201,9 +201,9 @@ static rt_err_t spi_transmitreceive(SPI_TypeDef *Instance, uint8_t *send_buf, ui
 /*
  *spi transmit
  * */
-static rt_err_t spi_transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t send_length)
+static rt_err_t spi_transmit(SPI_TypeDef *Instance, rt_uint8_t *send_buf, rt_uint16_t send_length)
 {
-    uint16_t i=0;
+    rt_uint16_t i=0;
     for(i = 0; i < send_length; i++)
     {
         spix_readwritebyte(Instance, send_buf[i]);
@@ -214,9 +214,9 @@ static rt_err_t spi_transmit(SPI_TypeDef *Instance, uint8_t *send_buf, uint16_t 
 /*
  *spi  receive
  * */
-static rt_err_t spi_receive(SPI_TypeDef *Instance, uint8_t *recv_buf,uint16_t send_length)
+static rt_err_t spi_receive(SPI_TypeDef *Instance, rt_uint8_t *recv_buf,rt_uint16_t send_length)
 {
-    uint16_t i=0;
+    rt_uint16_t i=0;
     for(i = 0; i < send_length; i++)
     {
         recv_buf[i] = spix_readwritebyte(Instance, 0xFF);  /*发送数据为0xff 此时显示为不发送*/
@@ -262,7 +262,7 @@ static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configurat
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     if (cfg->mode & RT_SPI_CPHA)
@@ -285,7 +285,7 @@ static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configurat
 
     spi_handle->Init.SPI_NSS = SPI_NSS_Soft;
     //device is not RT_NULL, so spi_bus not need check
-    uint32_t SPI_APB_CLOCK;
+    rt_uint32_t SPI_APB_CLOCK;
     ch32_spi_clock_and_io_init(spi_handle->Instance);
     SPI_APB_CLOCK = ch32_spi_clock_get(spi_handle->Instance);
 
@@ -311,7 +311,7 @@ static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configurat
     }
     else if (cfg->max_hz >= SPI_APB_CLOCK / 64)
     {
-       spi_handle->Init.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;
+        spi_handle->Init.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;
     }
     else if (cfg->max_hz >= SPI_APB_CLOCK / 128)
     {
@@ -322,11 +322,11 @@ static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configurat
         /*  min prescaler 256 */
         spi_handle->Init.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
     }
-     LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
-         HAL_RCC_GetSysClockFreq(),
-         SPI_APB_CLOCK,
-         cfg->max_hz,
-         spi_handle->Init.SPI_BaudRatePrescaler);
+    LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
+        HAL_RCC_GetSysClockFreq(),
+        SPI_APB_CLOCK,
+        cfg->max_hz,
+        spi_handle->Init.SPI_BaudRatePrescaler);
 
     if (cfg->mode & RT_SPI_MSB)
     {
@@ -342,7 +342,7 @@ static rt_err_t ch32_spi_init(struct ch32_spi *spi_drv, struct rt_spi_configurat
 
     SPI_Cmd(spi_handle->Instance, ENABLE);
 
-     LOG_D("%s init done", spi_drv->config->bus_name);
+    LOG_D("%s init done", spi_drv->config->bus_name);
 
     return RT_EOK;
 }
@@ -358,9 +358,9 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return ch32_spi_init(spi_drv, configuration);
 }
 
-static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    rt_err_t state;
+    rt_err_t state = RT_EOK;
     rt_size_t message_length, already_send_length;
     rt_uint16_t send_length;
     rt_uint8_t *recv_buf;
@@ -384,11 +384,11 @@ static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message 
             GPIO_WriteBit(cs->GPIOx, cs->GPIO_Pin, Bit_RESET);
     }
 
-     LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
-     LOG_D("%s sendbuf: %X, recvbuf: %X, length: %d",
-           spi_drv->config->bus_name,
-           (uint32_t)message->send_buf,
-           (uint32_t)message->recv_buf, message->length);
+    LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
+    LOG_D("%s sendbuf: %X, recvbuf: %X, length: %d",
+            spi_drv->config->bus_name,
+            (rt_uint32_t)message->send_buf,
+            (rt_uint32_t)message->recv_buf, message->length);
 
     message_length = message->length;
     recv_buf = message->recv_buf;
@@ -416,12 +416,12 @@ static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message 
          /* start once data exchange */
         if (message->send_buf && message->recv_buf)
         {
-            state = spi_transmitreceive(spi_handle->Instance, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length);
+            state = spi_transmitreceive(spi_handle->Instance, (rt_uint8_t *)send_buf, (rt_uint8_t *)recv_buf, send_length);
         }
         else if (message->send_buf)
         {
 
-            state = spi_transmit(spi_handle->Instance, (uint8_t *)send_buf, send_length);
+            state = spi_transmit(spi_handle->Instance, (rt_uint8_t *)send_buf, send_length);
             if (message->cs_release && (device->config.mode & RT_SPI_3WIRE))
             {
                 /* release the CS by disable SPI when using 3 wires SPI */
@@ -430,20 +430,20 @@ static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message 
         }
         else
         {
-            memset((uint8_t *)recv_buf, 0xff, send_length);
+            rt_memset((rt_uint8_t *)recv_buf, 0xff, send_length);
             /* clear the old error flag */
             SPI_I2S_ClearFlag(spi_handle->Instance, SPI_I2S_FLAG_OVR);
-            state = spi_receive(spi_handle->Instance, (uint8_t *)recv_buf, send_length);
+            state = spi_receive(spi_handle->Instance, (rt_uint8_t *)recv_buf, send_length);
         }
 
         if (state != RT_EOK)
         {
-             LOG_I("spi transfer error : %d", state);
+            LOG_I("spi transfer error : %d", state);
             message->length = 0;
         }
         else
         {
-             LOG_D("%s transfer done", spi_drv->config->bus_name);
+            LOG_D("%s transfer done", spi_drv->config->bus_name);
         }
 
     }
@@ -454,6 +454,11 @@ static rt_uint32_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message 
             GPIO_WriteBit(cs->GPIOx, cs->GPIO_Pin, Bit_RESET);
         else
             GPIO_WriteBit(cs->GPIOx, cs->GPIO_Pin, Bit_SET);
+    }
+
+    if(state != RT_EOK)
+    {
+        return -RT_ERROR;
     }
 
     return message->length;
@@ -478,7 +483,7 @@ static int rt_hw_spi_bus_init(void)
         result = rt_spi_bus_register(&spi_bus_obj[i].spi_bus, spi_config[i].bus_name, &ch32_spi_ops);
         RT_ASSERT(result == RT_EOK);
 
-         LOG_D("%s bus init done", spi_config[i].bus_name);
+        LOG_D("%s bus init done", spi_config[i].bus_name);
     }
 
     return result;
@@ -487,7 +492,7 @@ static int rt_hw_spi_bus_init(void)
 /**
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef *cs_gpiox, uint16_t cs_gpio_pin)
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef *cs_gpiox, rt_uint16_t cs_gpio_pin)
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);

@@ -55,6 +55,8 @@ menu "Hardware Drivers Config"
         config BOARD_USING_MPU6500
             bool "MPU6500 6-axis MotionTracking Sensor(over i2c2)"
             select PKG_USING_MPU6XXX
+            select PKG_USING_MPU6XXX_LATEST_VERSION
+            select PKG_USING_MPU6XXX_ACCE
             select BSP_USING_I2C
             select BSP_USING_I2C2
             default y
@@ -108,7 +110,7 @@ menu "Hardware Drivers Config"
 
         config BOARD_USING_LCD_ILI9341
             bool "LCD ILI9341 (over spi2)"
-	    select RT_USING_TOUCH	    
+        select RT_USING_TOUCH
             select BSP_USING_SPI2
             select BSP_USING_EADC
             select BSP_USING_EADC0

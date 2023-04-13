@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  * Copyright (c) 2019-2020, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -33,6 +33,18 @@ int main(void)
 #endif
 
     rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
+
+#ifdef RT_USING_SDIO
+    rt_thread_mdelay(2000);
+    if (dfs_mount("sd", "/", "elm", 0, NULL) == 0)
+    {
+        rt_kprintf("sd mounted to /\n");
+    }
+    else
+    {
+        rt_kprintf("sd mount to / failed\n");
+    }
+#endif
     while (1)
     {
         rt_pin_write(LEDB_PIN, PIN_HIGH);    /* Set GPIO output 1 */

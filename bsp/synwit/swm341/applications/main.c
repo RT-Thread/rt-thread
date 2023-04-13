@@ -68,7 +68,7 @@ static int adc_vol_sample(int argc, char *argv[])
     if (adc_dev == RT_NULL)
     {
         rt_kprintf("adc sample run failed! can't find %s device!\n", ADC_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     ret = rt_adc_enable(adc_dev, ADC_DEV_CHANNEL);
@@ -103,7 +103,7 @@ static int dac_vol_sample(int argc, char *argv[])
     if (dac_dev == RT_NULL)
     {
         rt_kprintf("dac sample run failed! can't find %s device!\n", DAC_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* 打开通道 */
@@ -206,7 +206,7 @@ int can_sample(int argc, char *argv[])
     if (!can_dev)
     {
         rt_kprintf("find %s failed!\n", can_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* 初始化 CAN 接收信号量 */
@@ -273,7 +273,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if (hw_dev == RT_NULL)
     {
         rt_kprintf("hwtimer sample run failed! can't find %s device!\n", HWTIMER_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
@@ -300,7 +300,7 @@ static int hwtimer_sample(int argc, char *argv[])
     if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
     {
         rt_kprintf("set timeout value failed\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_thread_mdelay(3500);
@@ -330,7 +330,7 @@ static int pwm_sample(int argc, char *argv[])
     if (pwm_dev == RT_NULL)
     {
         rt_kprintf("pwm sample run failed! can't find %s device!\n", PWM_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
@@ -400,19 +400,19 @@ static int wdt_sample(int argc, char *argv[])
     if (!wdg_dev)
     {
         rt_kprintf("find %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     ret = rt_device_init(wdg_dev);
     if (ret != RT_EOK)
     {
         rt_kprintf("initialize %s failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     if (ret != RT_EOK)
     {
         rt_kprintf("set %s timeout failed!\n", device_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
     if (ret != RT_EOK)

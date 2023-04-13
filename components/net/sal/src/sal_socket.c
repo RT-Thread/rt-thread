@@ -1062,7 +1062,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_addr);
             sal_sockaddr_to_ipaddr(addr,&input_ipaddr);
             netdev_set_ipaddr(sock->netdev,&input_ipaddr);
-            return 0;    
+            return 0;
 
         case SIOCGIFNETMASK:
             addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_netmask);
@@ -1079,7 +1079,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_netmask);
             sal_sockaddr_to_ipaddr(addr,&input_ipaddr);
             netdev_set_netmask(sock->netdev,&input_ipaddr);
-            return 0;            
+            return 0;
 
         case SIOCGIFHWADDR:
             addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
@@ -1088,7 +1088,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
 
         case SIOCGIFMTU:
             ifr->ifr_ifru.ifru_mtu = sock->netdev->mtu;
-            return 0;            
+            return 0;
 
         default:
             break;
@@ -1098,7 +1098,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
 }
 
 #ifdef SAL_USING_POSIX
-int sal_poll(struct dfs_fd *file, struct rt_pollreq *req)
+int sal_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     struct sal_socket *sock;
     struct sal_proto_family *pf;

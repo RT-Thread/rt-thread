@@ -39,7 +39,7 @@ static void zsay_bibi(void);
 void zs_start(char *path)
 {
     struct zfile *zf;
-    rt_err_t res = RT_ERROR;
+    rt_err_t res = -RT_ERROR;
     char *p,*q;
     zf = rt_malloc(sizeof(struct zfile));
     if (zf == RT_NULL)

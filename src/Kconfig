@@ -1,8 +1,9 @@
+#include "rtconfig.h"
 menu "RT-Thread Kernel"
 
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
-    range 2 32
+    range 1 64
     default 8
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
@@ -21,6 +22,17 @@ config RT_USING_SMART
     bool "Enable RT-Thread Smart (microkernel on kernel/userland)"
     default n
     select RT_USING_LWP
+    select RT_USING_DFS
+    select RT_USING_LIBC
+    select RT_USING_POSIX_CLOCKTIME
+    select RT_USING_TTY
+    select RT_USING_NULL
+    select RT_USING_ZERO
+    select RT_USING_RANDOM
+    select RT_USING_RTC
+    select RT_USING_POSIX_TIMER
+    select RT_USING_POSIX_CLOCK
+    depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
 
@@ -42,7 +54,7 @@ config RT_CPUS_NR
 
 config RT_ALIGN_SIZE
     int "Alignment size for CPU architecture data access"
-    default 4
+    default 8
     help
         Alignment size for CPU architecture data access
 
@@ -293,6 +305,16 @@ endmenu
 
 menu "Memory Management"
 
+    config RT_PAGE_MAX_ORDER
+        int "Max order of pages allocatable by page allocator"
+        default 11
+        help
+            For example, A value of 11 means the maximum chunk of contiguous memory
+            allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
+            Large memory requirement can consume all system resource, and should
+            consider reserved memory instead to enhance system endurance.
+            Max order should at least satisfied usage by huge page.
+
     config RT_USING_MEMPOOL
         bool "Using memory pool"
         default y
@@ -453,8 +475,12 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x50000
+    default 0x50001
     help
         RT-Thread version number
+
+config RT_USING_STDC_ATOMIC
+    bool "Use atomic implemented in stdatomic.h"
+    default n
 
 endmenu

@@ -23,7 +23,7 @@ menu "On-chip Peripheral Drivers"
                bool "Enable UART1"
                default y
         endif
-		
+
 endmenu
 
 menu "Onboard Peripheral Drivers"
@@ -40,11 +40,6 @@ menu "Onboard System Settings"
         range 1 10000000
         default 5000000u
 
-
-    config configTOTAL_HEAP_SIZE
-        string "!!Please remove the Double quotation marks in rtconfig.h"
-        default "( ( unsigned int) (64 * 1024 ) )"
-        
 endmenu
 
 endmenu

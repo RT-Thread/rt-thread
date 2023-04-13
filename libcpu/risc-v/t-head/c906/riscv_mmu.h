@@ -12,8 +12,8 @@
 #ifndef __RISCV_MMU_H__
 #define __RISCV_MMU_H__
 
-#include <rthw.h>
 #include <rtthread.h>
+#include <rthw.h>
 #include "riscv.h"
 
 #undef PAGE_SIZE
@@ -51,29 +51,58 @@
 
 #define PHYSICAL_ADDRESS_WIDTH_BITS 56
 
-#define PAGE_ATTR_NEXT_LEVEL (0)
-#define PAGE_ATTR_RWX (PTE_X | PTE_W | PTE_R)
-#define PAGE_ATTR_READONLY (PTE_R)
-#define PAGE_ATTR_READEXECUTE (PTE_X | PTE_R)
+#define PAGE_ATTR_NEXT_LEVEL    (0)
+#define PAGE_ATTR_RWX           (PTE_X | PTE_W | PTE_R)
+#define PAGE_ATTR_READONLY      (PTE_R)
+#define PAGE_ATTR_XN            (PTE_W | PTE_R)
+#define PAGE_ATTR_READEXECUTE   (PTE_X | PTE_R)
 
 #define PAGE_ATTR_USER (PTE_U)
 #define PAGE_ATTR_SYSTEM (0)
 
-#define PAGE_DEFAULT_ATTR_LEAF (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G | PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D)
-#define PAGE_DEFAULT_ATTR_NEXT (PAGE_ATTR_NEXT_LEVEL | PTE_V | PTE_G | PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D)
+#define PAGE_ATTR_CB    (PTE_BUF | PTE_CACHE)
+#define PAGE_ATTR_DEV   (PTE_SO)
 
-#define PAGE_IS_LEAF(pte) __MASKVALUE(pte,PAGE_ATTR_RWX)
+#define PAGE_DEFAULT_ATTR_LEAF (PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D | PTE_U | PAGE_ATTR_RWX | PTE_V)
+#define PAGE_DEFAULT_ATTR_NEXT (PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D | PTE_V)
 
-#define PTE_USED(pte) __MASKVALUE(pte,PTE_V)
+#define PAGE_IS_LEAF(pte) __MASKVALUE(pte, PAGE_ATTR_RWX)
 
-#define mmu_flush_tlb() do{asm volatile("sfence.vma x0,x0");}while(0)
+#define PTE_USED(pte) __MASKVALUE(pte, PTE_V)
+#define PTE_WRAP(attr) (attr | PTE_A | PTE_D)
 
-//compatible to rt-smart new version
-#define MMU_MAP_K_DEVICE (PAGE_ATTR_RWX | PTE_V | PTE_G | PTE_SO | PTE_BUF | PTE_A | PTE_D)
-#define MMU_MAP_K_RWCB (PAGE_ATTR_RWX | PTE_V | PTE_G | PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D)
-#define ARCH_PAGE_SIZE PAGE_SIZE
-#define ARCH_PAGE_MASK (ARCH_PAGE_SIZE - 1)
-#define ARCH_PAGE_SHIFT PAGE_OFFSET_BIT
+/**
+ * encoding of SATP (Supervisor Address Translation and Protection register)
+ */
+#define SATP_MODE_OFFSET    60
+#define SATP_MODE_BARE      0
+#define SATP_MODE_SV39      8
+#define SATP_MODE_SV48      9
+#define SATP_MODE_SV57      10
+#define SATP_MODE_SV64      11
+
+#define PPN_BITS            44
+
+#define ARCH_VADDR_WIDTH        39
+#define SATP_MODE               SATP_MODE_SV39
+
+#define MMU_MAP_K_DEVICE        PTE_WRAP(PAGE_ATTR_DEV | PTE_G | PAGE_ATTR_XN | PTE_V)
+#define MMU_MAP_K_RWCB          PTE_WRAP(PAGE_ATTR_CB | PTE_G | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_K_RW            PTE_WRAP(PTE_G | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_U_RWCB          PTE_WRAP(PAGE_ATTR_CB | PTE_U | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_U_RWCB_XN       PTE_WRAP(PAGE_ATTR_CB | PTE_U | PAGE_ATTR_XN | PTE_V)
+#define MMU_MAP_U_RW            PTE_WRAP(PTE_U | PAGE_ATTR_RWX | PTE_V)
+
+#define PTE_XWR_MASK            0xe
+
+#define ARCH_PAGE_SIZE          PAGE_SIZE
+#define ARCH_PAGE_MASK          (ARCH_PAGE_SIZE - 1)
+#define ARCH_PAGE_SHIFT         PAGE_OFFSET_BIT
+#define ARCH_INDEX_WIDTH        9
+#define ARCH_INDEX_SIZE         (1ul << ARCH_INDEX_WIDTH)
+#define ARCH_INDEX_MASK         (ARCH_INDEX_SIZE - 1)
+
+#define ARCH_MAP_FAILED         ((void *)0x8000000000000000)
 
 void mmu_set_pagetable(rt_ubase_t addr);
 void mmu_enable_user_page_access();

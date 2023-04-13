@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -62,7 +62,7 @@ static rt_err_t rt_led_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_led_read(rt_device_t dev, rt_off_t pos, void *buffer,
+static rt_ssize_t rt_led_read(rt_device_t dev, rt_off_t pos, void *buffer,
                              rt_size_t size)
 {
     rt_ubase_t index = 0;
@@ -87,7 +87,7 @@ static rt_size_t rt_led_read(rt_device_t dev, rt_off_t pos, void *buffer,
     return index;
 }
 
-static rt_size_t rt_led_write(rt_device_t dev, rt_off_t pos,
+static rt_ssize_t rt_led_write(rt_device_t dev, rt_off_t pos,
                               const void *buffer, rt_size_t size)
 {
     rt_ubase_t index = 0;

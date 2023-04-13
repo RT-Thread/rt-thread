@@ -1,42 +1,25 @@
 /*
 ** ###################################################################
-**     Processors:          MIMXRT1052CVL5A
-**                          MIMXRT1052DVL6A
+**     Processors:          MIMXRT1062CVJ5A
+**                          MIMXRT1062CVL5A
+**                          MIMXRT1062DVJ6A
+**                          MIMXRT1062DVL6A
+**                          MIMXRT1062DVN6B
+**                          MIMXRT1062XVN5B
 **
 **     Compiler:            GNU C Compiler
-**     Reference manual:    IMXRT1050RM Rev.C, 08/2017
-**     Version:             rev. 0.1, 2017-01-10
-**     Build:               b170927
+**     Reference manual:    IMXRT1060RM Rev.3, 07/2021 | IMXRT106XSRM Rev.0
+**     Version:             rev. 0.2, 2022-03-25
+**     Build:               b220401
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2017 NXP
-**     Redistribution and use in source and binary forms, with or without modification,
-**     are permitted provided that the following conditions are met:
+**     Copyright 2016-2022 NXP
+**     All rights reserved.
 **
-**     1. Redistributions of source code must retain the above copyright notice, this list
-**       of conditions and the following disclaimer.
-**
-**     2. Redistributions in binary form must reproduce the above copyright notice, this
-**       list of conditions and the following disclaimer in the documentation and/or
-**       other materials provided with the distribution.
-**
-**     3. Neither the name of the copyright holder nor the names of its
-**       contributors may be used to endorse or promote products derived from this
-**       software without specific prior written permission.
-**
-**     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-**     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-**     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-**     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
-**     ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-**     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-**     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-**     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-**     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-**     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**     SPDX-License-Identifier: BSD-3-Clause
 **
 **     http:                 www.nxp.com
 **     mail:                 support@nxp.com
@@ -47,59 +30,56 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
+HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x2000;
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x2000;
+VECTOR_RAM_SIZE = DEFINED(__ram_vector_table__) ? 0x00000400 : 0;
 
 /* Specify the memory areas */
 MEMORY
 {
-  m_boot_data           (RX)  : ORIGIN = 0x60000000, LENGTH = 0x00001000
-  m_image_vertor_table  (RX)  : ORIGIN = 0x60001000, LENGTH = 0x00001000
-
+  m_flash_config        (RX)  : ORIGIN = 0x60000000, LENGTH = 0x00001000
+  m_ivt                 (RX)  : ORIGIN = 0x60001000, LENGTH = 0x00001000
   m_interrupts          (RX)  : ORIGIN = 0x60002000, LENGTH = 0x00000400
-  m_text                (RX)  : ORIGIN = 0x60002400, LENGTH = 0x003FDC00
-
-  m_itcm                (RW)  : ORIGIN = 0x00000000, LENGTH = 0x00020000
-  m_dtcm                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00020000
-  m_ocram               (RW)  : ORIGIN = 0x20200000, LENGTH = 0x00040000
-
-  m_sdram               (RW)  : ORIGIN = 0x80000000, LENGTH = 0x01E00000
-  m_nocache             (RW)  : ORIGIN = 0x81E00000, LENGTH = 0x00200000
+  m_text                (RX)  : ORIGIN = 0x60002400, LENGTH = 0x007FDC00
+  m_qacode              (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00020000
+  m_data                (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00020000
+  m_data2               (RW)  : ORIGIN = 0x20200000, LENGTH = 0x000C0000
 }
 
 /* Define output sections */
 SECTIONS
 {
-  .boot_data :
+  __NCACHE_REGION_START = ORIGIN(m_data2);
+  __NCACHE_REGION_SIZE  = 0;
+
+  .flash_config :
   {
     . = ALIGN(4);
     __FLASH_BASE = .;
     KEEP(* (.boot_hdr.conf))     /* flash config section */
     . = ALIGN(4);
-  } > m_boot_data
+  } > m_flash_config
 
-  ivt_begin = ORIGIN(m_boot_data) + LENGTH(m_boot_data);
+  ivt_begin = ORIGIN(m_flash_config) + LENGTH(m_flash_config);
 
-  .image_vertor_table : AT(ivt_begin)
+  .ivt : AT(ivt_begin)
   {
     . = ALIGN(4);
-    KEEP(*(.boot_hdr.ivt))
-    KEEP(*(.boot_hdr.boot_data))
-    KEEP(*(.boot_hdr.dcd_data))
+    KEEP(* (.boot_hdr.ivt))           /* ivt section */
+    KEEP(* (.boot_hdr.boot_data))     /* boot section */
+    KEEP(* (.boot_hdr.dcd_data))      /* dcd section */
     . = ALIGN(4);
-  } > m_image_vertor_table
+  } > m_ivt
 
   /* The startup code goes first into internal RAM */
   .interrupts :
   {
     __VECTOR_TABLE = .;
+    __Vectors = .;
     . = ALIGN(4);
     KEEP(*(.isr_vector))     /* Startup code */
     . = ALIGN(4);
   } > m_interrupts
-
-  __VECTOR_RAM = __VECTOR_TABLE;
-  __RAM_VECTOR_TABLE_SIZE_BYTES = 0x0;
 
   /* The program code and other data goes into internal RAM */
   .text :
@@ -211,6 +191,20 @@ SECTIONS
   __etext = .;    /* define a global symbol at end of code */
   __DATA_ROM = .; /* Symbol is used by startup for data initialization */
 
+  .interrupts_ram :
+  {
+    . = ALIGN(4);
+    __VECTOR_RAM__ = .;
+    __interrupts_ram_start__ = .; /* Create a global symbol at data start */
+    *(.m_interrupts_ram)     /* This is a user defined section */
+    . += VECTOR_RAM_SIZE;
+    . = ALIGN(4);
+    __interrupts_ram_end__ = .; /* Define a global symbol at data end */
+  } > m_data
+
+  __VECTOR_RAM = DEFINED(__ram_vector_table__) ? __VECTOR_RAM__ : ORIGIN(m_interrupts);
+  __RAM_VECTOR_TABLE_SIZE_BYTES = DEFINED(__ram_vector_table__) ? (__interrupts_ram_end__ - __interrupts_ram_start__) : 0x0;
+
   .data : AT(__DATA_ROM)
   {
     . = ALIGN(4);
@@ -219,26 +213,38 @@ SECTIONS
     *(m_usb_dma_init_data)
     *(.data)                 /* .data sections */
     *(.data*)                /* .data* sections */
+    *(DataQuickAccess)       /* quick access data section */
     KEEP(*(.jcr*))
-    *(NonCacheable.init)
-    *(NonCacheable)
     . = ALIGN(4);
     __data_end__ = .;        /* define a global symbol at data end */
-  } > m_sdram
+  } > m_data
 
-  __NDATA_ROM = __DATA_ROM + (__data_end__ - __data_start__);
+  __ram_function_flash_start = __DATA_ROM + (__data_end__ - __data_start__); /* Symbol is used by startup for TCM data initialization */
+
+  .ram_function : AT(__ram_function_flash_start)
+  {
+    . = ALIGN(32);
+    __ram_function_start__ = .;
+    *(CodeQuickAccess)
+    . = ALIGN(128);
+    __ram_function_end__ = .;
+  } > m_qacode
+
+  __NDATA_ROM = __ram_function_flash_start + (__ram_function_end__ - __ram_function_start__);
   .ncache.init : AT(__NDATA_ROM)
   {
     __noncachedata_start__ = .;   /* create a global symbol at ncache data start */
+    *(NonCacheable.init)
     . = ALIGN(4);
     __noncachedata_init_end__ = .;   /* create a global symbol at initialized ncache data end */
-  } > m_ocram
+  } > m_data
   . = __noncachedata_init_end__;
   .ncache :
   {
+    *(NonCacheable)
     . = ALIGN(4);
     __noncachedata_end__ = .;     /* define a global symbol at ncache data end */
-  } > m_ocram
+  } > m_data
 
   __DATA_END = __NDATA_ROM + (__noncachedata_init_end__ - __noncachedata_start__);
   text_end = ORIGIN(m_text) + LENGTH(m_text);
@@ -258,26 +264,25 @@ SECTIONS
     . = ALIGN(4);
     __bss_end__ = .;
     __END_BSS = .;
-  } > m_sdram
+  } > m_data
 
-  .stack :
+    .stack :
   {
     . = ALIGN(8);
     stack_start = .;
     . += STACK_SIZE;
     stack_end = .;
     __StackTop = .;
-  } > m_sdram
-  
+  } > m_data
+
   .RTT_HEAP :
   {
     heap_start = .;
     . = ALIGN(8);
-  } > m_sdram
+  } > m_data
 
-  PROVIDE(heap_end = ORIGIN(m_sdram) + LENGTH(m_sdram));
+  PROVIDE(heap_end = ORIGIN(m_data2) + LENGTH(m_data2));
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 
 }
-

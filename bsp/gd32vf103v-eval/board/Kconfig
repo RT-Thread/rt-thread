@@ -3,6 +3,7 @@ menu "Hardware Drivers Config"
 config SOC_GD32VF103V
     bool
     select SOC_SERIES_GD32VF103V
+    select RT_USING_HW_ATOMIC
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -29,7 +30,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART0
                 bool "Enable USART0"
                 default y
-        endif    
+        endif
 
 endmenu
 

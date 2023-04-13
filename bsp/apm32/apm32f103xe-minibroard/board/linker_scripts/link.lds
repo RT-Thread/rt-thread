@@ -5,11 +5,11 @@
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x08000000, LENGTH = 512k /* 512KB flash */
-    DATA (rw) : ORIGIN = 0x20000000, LENGTH = 128k /* 128KB sram */
+    ROM (rx) : ORIGIN = 0x08000000, LENGTH = 512K /* 512K flash */
+    RAM (rw) : ORIGIN = 0x20000000, LENGTH = 128K /* 128K sram */
 }
 ENTRY(Reset_Handler)
-_system_stack_size = 0x200;
+_system_stack_size = 0x400;
 
 SECTIONS
 {
@@ -18,6 +18,7 @@ SECTIONS
         . = ALIGN(4);
         _stext = .;
         KEEP(*(.isr_vector))            /* Startup code */
+
         . = ALIGN(4);
         *(.text)                        /* remaining code */
         *(.text.*)                      /* remaining code */
@@ -32,22 +33,29 @@ SECTIONS
         __fsymtab_start = .;
         KEEP(*(FSymTab))
         __fsymtab_end = .;
+
         . = ALIGN(4);
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
-        . = ALIGN(4);
 
         /* section information for initial. */
         . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
-        . = ALIGN(4);
 
         . = ALIGN(4);
+
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+
         _etext = .;
-    } > CODE = 0
+    } > ROM = 0
 
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
     __exidx_start = .;
@@ -57,7 +65,8 @@ SECTIONS
 
         /* This is used by the startup in order to initialize the .data secion */
         _sidata = .;
-    } > CODE
+        _start_address_init_data = .;
+    } > ROM
     __exidx_end = .;
 
     /* .data section which is used for initialized data */
@@ -67,24 +76,36 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _sdata = . ;
+        _start_address_data = .;
 
         *(.data)
         *(.data.*)
         *(.gnu.linkonce.d*)
 
+
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
+
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-    } >DATA
+        _end_address_data = .;
+    } >RAM
 
-    .stack : 
+    .stack :
     {
+        . = ALIGN(4);
+        _sstack = .;
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;
-    } >DATA
+        _end_stack = .;
+    } >RAM
 
     __bss_start = .;
+    _start_address_bss = .;
     .bss :
     {
         . = ALIGN(4);
@@ -98,10 +119,11 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
         _ebss = . ;
-        
+
         *(.bss.init)
-    } > DATA
+    } > RAM
     __bss_end = .;
+    _end_address_bss = .;
 
     _end = .;
 

@@ -12,6 +12,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#ifdef RT_USING_SMART
+
 #define DBG_TAG "syscall"
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
@@ -19,7 +21,6 @@
 #include <stdint.h>
 #include <mmu.h>
 #include <page.h>
-#include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 
 #include "riscv_mmu.h"
@@ -58,3 +59,4 @@ void syscall_handler(struct rt_hw_stack_frame *regs)
     regs->epc += 4; // skip ecall instruction
     LOG_I("[0x%lx] %s ret: 0x%lx", rt_thread_self(), syscall_name, regs->a0);
 }
+#endif /* RT_USING_SMART */

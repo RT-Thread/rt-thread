@@ -28,8 +28,9 @@
 #include "lwp_signal.h"
 #include "lwp_syscall.h"
 #include "lwp_avl.h"
+#include "mm_aspace.h"
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 #include "lwp_shm.h"
 
 #include "mmu.h"
@@ -57,12 +58,18 @@ extern "C" {
 
 #define LWP_ARG_MAX         8
 
+struct rt_lwp_objs
+{
+    rt_aspace_t source;
+    struct rt_mem_obj mem_obj;
+};
+
 struct rt_lwp
 {
-#ifdef RT_USING_USERSPACE
-    rt_mmu_info mmu_info;
-    struct lwp_avl_struct *map_area;
+#ifdef ARCH_MM_MMU
     size_t end_heap;
+    rt_aspace_t aspace;
+    struct rt_lwp_objs *lwp_obj;
 #else
 #ifdef ARCH_MM_MPU
     struct rt_mpu_info mpu_info;
@@ -119,6 +126,7 @@ struct rt_lwp
     struct lwp_avl_struct *address_search_head; /* for addressed object fast rearch */
     char working_directory[DFS_PATH_MAX];
     int debug;
+    int background;
     uint32_t bak_first_ins;
 
 #ifdef LWP_ENABLE_ASID
@@ -153,14 +161,14 @@ int lwp_execve(char *filename, int debug, int argc, char **argv, char **envp);
 
 /*create by lwp_setsid.c*/
 int setsid(void);
-#ifdef RT_USING_USERSPACE
-void lwp_mmu_switch(struct rt_thread *thread);
+#ifdef ARCH_MM_MMU
+void lwp_aspace_switch(struct rt_thread *thread);
 #endif
 void lwp_user_setting_save(rt_thread_t thread);
 void lwp_user_setting_restore(rt_thread_t thread);
 int lwp_setaffinity(pid_t pid, int cpu);
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 struct __pthread {
     /* Part 1 -- these fields may be external or
      *      * internal (accessed via asm) ABI. Do not change. */

@@ -8,6 +8,8 @@ board.c
 pin_mux.c
 clock_config.c
 fsl_host.c
+interrupt.c
+trap_gcc.S
 ''')
 CPPPATH = [cwd]
 

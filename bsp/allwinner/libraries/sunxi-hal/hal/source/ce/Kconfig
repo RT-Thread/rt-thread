@@ -6,7 +6,7 @@ config DRIVERS_CE
 
 config HAL_TEST_CE
     bool "enable ce hal APIs test command"
-	depends on DRIVERS_CE
+    depends on DRIVERS_CE
         default n
 
 

@@ -295,7 +295,7 @@ static rt_err_t swm_pwm_control(struct rt_device_pwm *pwm_device, int cmd, void 
     case PWM_CMD_GET:
         return swm_pwm_get(pwm_device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 

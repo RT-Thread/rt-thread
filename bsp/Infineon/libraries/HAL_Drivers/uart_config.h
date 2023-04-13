@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,12 +20,12 @@ extern "C"
 #endif
 
 #ifdef BSP_USING_UART0
-/* UART0 device driver structure */
-cy_stc_sysint_t UART0_SCB_IRQ_cfg =
-{
-    .intrSrc = (IRQn_Type) scb_0_interrupt_IRQn,
-    .intrPriority = (7u),
-};
+    /* UART0 device driver structure */
+    cy_stc_sysint_t UART0_SCB_IRQ_cfg =
+        {
+            .intrSrc = (IRQn_Type)scb_0_interrupt_IRQn,
+            .intrPriority = (7u),
+    };
 #endif
 #ifdef BSP_USING_UART1
     /* UART1 device driver structure */
@@ -68,6 +68,14 @@ cy_stc_sysint_t UART0_SCB_IRQ_cfg =
     };
 #endif
 
+#ifdef BSP_USING_UART6
+    /* UART6 device driver structure */
+    cy_stc_sysint_t UART6_SCB_IRQ_cfg =
+        {
+            .intrSrc = (IRQn_Type)scb_6_interrupt_IRQn,
+            .intrPriority = (7u),
+    };
+#endif
 #if defined(BSP_USING_UART0)
 #ifndef UART0_CONFIG
 #define UART0_CONFIG                            \
@@ -102,6 +110,18 @@ cy_stc_sysint_t UART0_SCB_IRQ_cfg =
 
 #if defined(BSP_USING_UART2)
 #ifndef UART2_CONFIG
+#if defined(SOC_CY8C6244LQI_S4D92)
+#define UART2_CONFIG                            \
+    {                                           \
+        .name = "uart2",                        \
+        .tx_pin = P3_1,                         \
+        .rx_pin = P3_0,                         \
+        .usart_x = SCB2,                        \
+        .intrSrc = scb_2_interrupt_IRQn,        \
+        .userIsr = uart_isr_callback(uart2),    \
+        .UART_SCB_IRQ_cfg = &UART2_SCB_IRQ_cfg, \
+    }
+#else
 #define UART2_CONFIG                            \
     {                                           \
         .name = "uart2",                        \
@@ -112,6 +132,7 @@ cy_stc_sysint_t UART0_SCB_IRQ_cfg =
         .userIsr = uart_isr_callback(uart2),    \
         .UART_SCB_IRQ_cfg = &UART2_SCB_IRQ_cfg, \
     }
+#endif /* SOC_CY8C6244LQI_S4D92 */
     void uart2_isr_callback(void);
 #endif /* UART2_CONFIG */
 #endif /* BSP_USING_UART2 */
@@ -164,6 +185,21 @@ cy_stc_sysint_t UART0_SCB_IRQ_cfg =
 #endif /* UART5_CONFIG */
 #endif /* BSP_USING_UART5 */
 
+#if defined(BSP_USING_UART6)
+#ifndef UART6_CONFIG
+#define UART6_CONFIG                            \
+    {                                           \
+        .name = "uart6",                        \
+        .tx_pin = P6_5,                         \
+        .rx_pin = P6_4,                         \
+        .usart_x = SCB6,                        \
+        .intrSrc = scb_6_interrupt_IRQn,        \
+        .userIsr = uart_isr_callback(uart6),    \
+        .UART_SCB_IRQ_cfg = &UART6_SCB_IRQ_cfg, \
+    }
+    void uart6_isr_callback(void);
+#endif /* UART6_CONFIG */
+#endif /* BSP_USING_UART6 */
 #ifdef __cplusplus
 }
 #endif

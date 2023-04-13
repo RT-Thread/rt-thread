@@ -169,7 +169,7 @@ static rt_err_t phy_write_reg(uint8_t phy_addr, uint8_t reg_addr, uint16_t reg_v
     return RT_EOK;
 }
 
-static uint16_t phy_read_reg(uint8_t phy_addr, uint8_t reg_addr)
+static rt_ssize_t phy_read_reg(uint8_t phy_addr, uint8_t reg_addr)
 {
     uint16_t reg_value = 0;
     uint32_t status = 0;
@@ -194,7 +194,7 @@ static uint16_t phy_read_reg(uint8_t phy_addr, uint8_t reg_addr)
         if((rt_tick_get() - tickstart) > ETH_TIME_OUT)
         {
             LOG_E("PHY read reg %02x timeout!", reg_addr);
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -336,7 +336,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
 
-    rt_uint32_t status, i;
+    rt_ssize_t status, i;
     volatile rt_uint32_t tickstart = 0;
     rt_uint8_t  *macAddr = &stm32_eth_device.dev_addr[0];
 
@@ -360,7 +360,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
         if(((HAL_GetTick() - tickstart ) > ETH_TIME_OUT))
         {
             LOG_E("ETH software reset timeout!");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -478,7 +478,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
         if((rt_tick_get() - tickstart) > ETH_TIME_OUT)
         {
             LOG_E("PHY software reset timeout!");
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
         else
         {
@@ -504,14 +504,14 @@ static rt_err_t rt_stm32_eth_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_stm32_eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_stm32_eth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     LOG_D("emac read");
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t rt_stm32_eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_stm32_eth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     LOG_D("emac write");
     rt_set_errno(-RT_ENOSYS);
@@ -711,7 +711,7 @@ void ETH1_IRQHandler(void)
 
 static void phy_linkchange()
 {
-    rt_uint32_t status = 0;
+    rt_ssize_t status = 0;
 
     /* Read status register to acknowledge the interrupt */
     status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_INSR);

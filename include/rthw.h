@@ -54,6 +54,11 @@ enum RT_HW_CACHE_OPS
  * CPU interfaces
  */
 #ifdef RT_USING_CACHE
+
+#ifdef RT_USING_SMART
+#include <cache.h>
+#endif
+
 void rt_hw_cpu_icache_enable(void);
 void rt_hw_cpu_icache_disable(void);
 rt_base_t rt_hw_cpu_icache_status(void);
@@ -80,6 +85,8 @@ void rt_hw_cpu_dcache_ops(int ops, void* addr, int size);
 
 void rt_hw_cpu_reset(void);
 void rt_hw_cpu_shutdown(void);
+
+const char *rt_hw_cpu_arch(void);
 
 rt_uint8_t *rt_hw_stack_init(void       *entry,
                              void       *parameter,
@@ -200,8 +207,11 @@ void rt_hw_secondary_cpu_idle_exec(void);
 #define rt_hw_spin_lock(lock)     *(lock) = rt_hw_interrupt_disable()
 #define rt_hw_spin_unlock(lock)   rt_hw_interrupt_enable(*(lock))
 
-typedef int rt_spinlock_t;
-
+typedef rt_ubase_t rt_spinlock_t;
+struct rt_spinlock
+{
+    rt_spinlock_t lock;
+};
 #endif
 
 #ifdef RT_USING_CACHE

@@ -24,7 +24,7 @@ struct hal_i2c_bus
 };
 
 //connect am drv to rt drv.
-static rt_size_t _i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg *msgs, rt_uint32_t num)
+static rt_ssize_t _i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg *msgs, rt_uint32_t num)
 {
     struct hal_i2c_bus *_i2c_bus = (struct hal_i2c_bus *)bus;
     struct rt_i2c_msg *msg;

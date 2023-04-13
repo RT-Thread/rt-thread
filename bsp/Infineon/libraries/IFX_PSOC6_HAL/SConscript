@@ -19,11 +19,7 @@ src = Split('''
             mtb-hal-cat1/source/cyhal_utils_psoc.c
             mtb-hal-cat1/source/cyhal_utils.c
             mtb-hal-cat1/source/cyhal_lptimer.c
-            mtb-hal-cat1/source/cyhal_irq_psoc.c   
-            mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_02.c
-            mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_02_124_bga.c
-            mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c
-            mtb-pdl-cat1/drivers/source/cy_scb_common.c
+            mtb-hal-cat1/source/cyhal_irq_psoc.c
             mtb-pdl-cat1/drivers/source/cy_sysclk.c
             mtb-pdl-cat1/drivers/source/cy_systick.c
             mtb-pdl-cat1/drivers/source/cy_gpio.c
@@ -36,19 +32,50 @@ src = Split('''
             mtb-pdl-cat1/drivers/source/cy_ipc_sema.c
             mtb-pdl-cat1/drivers/source/cy_ipc_drv.c
             mtb-pdl-cat1/drivers/source/cy_trigmux.c
-            mtb-pdl-cat1/drivers/source/cy_prot.c           
-            TARGET_CY8CKIT-062S2-43012/cybsp.c
-            TARGET_CY8CKIT-062S2-43012/COMPONENT_CM4/system_psoc6_cm4.c
-            TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg.c
-            TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_pins.c
-            TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_system.c
-            TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_clocks.c
-            TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_routing.c
-            TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_peripherals.c            
-            lib/cy_capsense.lib
+            mtb-pdl-cat1/drivers/source/cy_prot.c
+            mtb-pdl-cat1/drivers/source/cy_scb_common.c
             ''')
 
-src += Glob(cwd + '/psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+if GetDepend(['SOC_CY8C624ABZI_S2D44']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_02.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_02_124_bga.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
+if GetDepend(['SOC_CY8C6245LQI_S3D72']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_03.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_03_68_qfn.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
+if GetDepend(['SOC_CY8C624ALQI_S2D42']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_02.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_02_68_qfn.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
+if GetDepend(['SOC_CY8C6247BZI_D54']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_01.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_01_124_bga.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
+if GetDepend(['SOC_CY8C6347BZI_BLD53']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_01.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_01_116_bga_ble.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_ble_clk.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
+
+if GetDepend(['SOC_CY8C6244LQI_S4D92']):
+    src += ['mtb-pdl-cat1/devices/COMPONENT_CAT1A/source/cy_device.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/triggers/cyhal_triggers_psoc6_04.c']
+    src += ['mtb-hal-cat1/COMPONENT_CAT1A/source/pin_packages/cyhal_psoc6_04_68_qfn.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_ble_clk.c']
+    src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
 
 if GetDepend(['RT_USING_SERIAL']):
     src += ['retarget-io/cy_retarget_io.c']
@@ -59,8 +86,8 @@ if GetDepend(['RT_USING_ADC']):
     src += ['mtb-hal-cat1/source/cyhal_dma_dw.c']
     src += ['mtb-hal-cat1/source/cyhal_dma_dmac.c']
     src += ['mtb-hal-cat1/source/cyhal_dma.c']
-    src += ['mtb-hal-cat1/source/cyhal_analog_common.c']
     src += ['mtb-hal-cat1/source/cyhal_adc_sar.c']
+    src += ['mtb-hal-cat1/source/cyhal_analog_common.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_dma.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_sar.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_dmac.c']
@@ -69,15 +96,6 @@ if GetDepend(['RT_USING_ADC']):
 if GetDepend(['RT_USING_SDIO']):
     src += ['mtb-hal-cat1/source/cyhal_sdhc.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_sd_host.c']
-
-if GetDepend(['RT_USING_QSPI']):
-    src += ['mtb-hal-cat1/source/cyhal_qspi.c']
-    src += ['mtb-pdl-cat1/drivers/source/cy_dma.c']
-    src += ['mtb-pdl-cat1/drivers/source/cy_smif.c']
-    src += ['mtb-pdl-cat1/drivers/source/cy_smif_sfdp.c']
-    src += ['mtb-pdl-cat1/drivers/source/cy_smif_memslot.c']
-    src += ['mtb_shared/serial-flash/cy_serial_flash_qspi.c']
-    src += ['TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_qspi_memslot.c']
 
 if GetDepend(['RT_USING_PWM']):
     src += ['mtb-hal-cat1/source/cyhal_pwm.c']
@@ -93,23 +111,13 @@ if GetDepend(['RT_USING_SPI']):
 if GetDepend(['RT_USING_I2C']):
     src += ['mtb-hal-cat1/source/cyhal_i2c.c']
 
-if GetDepend('BSP_USING_USBD'):
-    src += ['mtb_shared/usbdev/cy_usb_dev.c']
-    src += ['mtb_shared/usbdev/cy_usb_dev_hid.c']
-    src += ['mtb-hal-cat1/source/cyhal_usb_dev.c']
-    src += ['mtb-pdl-cat1/drivers/source/cy_dma.c']
-    src += ['mtb-pdl-cat1/drivers/source/cy_usbfs_dev_drv.c']
-    src += ['mtb-pdl-cat1/drivers/source/cy_usbfs_dev_drv_io.c']
-    src += ['mtb-pdl-cat1/drivers/source/cy_usbfs_dev_drv_io_dma.c']
-    src += ['TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_usbdev.c']
-
 if GetDepend('BSP_USING_RTC'):
-    src += ['mtb-pdl-cat1/drivers/source/cy_rtc.c']
     src += ['mtb-hal-cat1/source/cyhal_rtc.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_rtc.c']
 
 if GetDepend('BSP_USING_ON_CHIP_FLASH'):
-    src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
     src += ['mtb-hal-cat1/source/cyhal_flash.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
 
 if GetDepend(['BSP_USING_SLIDER']):
     src += ['capsense/cy_capsense_control.c']
@@ -123,33 +131,64 @@ if GetDepend(['BSP_USING_SLIDER']):
     src += ['capsense/cy_capsense_centroid.c']
     src += ['capsense/cy_capsense_filter.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_csd.c']
-    src += ['TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/cycfg_capsense.c']
+    if rtconfig.PLATFORM in ['armclang']:
+        src += ['lib/cy_capsense.lib']
 
 if GetDepend(['RT_USING_WDT']):
     src += ['mtb-pdl-cat1/drivers/source/cy_wdt.c']
     src += ['mtb-hal-cat1/source/cyhal_wdt.c']
 
 if GetDepend(['RT_USING_DAC']):
-    src += ['mtb_shared/csdidac/cy_csdidac.c']	
+    src += ['mtb_shared/csdidac/cy_csdidac.c']
 
 if GetDepend(['RT_USING_HWTIMER']):
-    src += ['mtb-hal-cat1/source/cyhal_timer.c']    
+    src += ['mtb-hal-cat1/source/cyhal_timer.c']
 
-path = [cwd + '/capsense',
-        cwd + '/psoc6cm0p',
-        cwd + '/retarget-io',
+path = [cwd + '/retarget-io',
         cwd + '/core-lib/include',
-        cwd + '/mtb_shared/serial-flash',
         cwd + '/mtb_shared/usbdev',
         cwd + '/mtb_shared/csdidac',
+        cwd + '/mtb_shared/serial-flash',
         cwd + '/mtb-pdl-cat1/cmsis/include',
         cwd + '/mtb-pdl-cat1/drivers/include',
-        cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include',
         cwd + '/mtb-hal-cat1/include_pvt',
-        cwd + '/mtb-hal-cat1/include',
-        cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include',
-        cwd + '/TARGET_CY8CKIT-062S2-43012',
-        cwd + '/TARGET_CY8CKIT-062S2-43012/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource']
+        cwd + '/mtb-hal-cat1/include']
+
+if GetDepend(['SOC_CY8C624ABZI_S2D44']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C6245LQI_S3D72']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C624ALQI_S2D42']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C6247BZI_D54']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C6347BZI_BLD53']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
+
+if GetDepend(['SOC_CY8C6244LQI_S4D92']):
+    path += [cwd + '/psoc6cm0p']
+    path += [cwd + '/capsense']
+    path += [cwd + '/mtb-hal-cat1/COMPONENT_CAT1A/include']
+    path += [cwd + '/mtb-pdl-cat1/devices/COMPONENT_CAT1A/include']
 
 group = DefineGroup('Libraries', src, depend=[''], CPPPATH=path)
 

@@ -236,7 +236,7 @@ static int adc_vol_sample(int argc, char *argv[])
     if (adc_dev == RT_NULL)
     {
         rt_kprintf("adc sample run failed! can't find %s device!\n", ADC_DEV_NAME);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* enable the device */

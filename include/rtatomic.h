@@ -1,0 +1,195 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-03-14     WangShun     first version
+ */
+#ifndef __RT_ATOMIC_H__
+#define __RT_ATOMIC_H__
+
+rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr);
+void rt_hw_atomic_store(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_add(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_sub(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_and(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_or(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t val);
+rt_atomic_t rt_hw_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val);
+void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr);
+rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr);
+rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old, rt_atomic_t new);
+
+#if defined(RT_USING_STDC_ATOMIC)
+#ifndef __STDC_NO_ATOMICS__
+#define rt_atomic_load(ptr) atomic_load(ptr)
+#define rt_atomic_store(ptr, v) atomic_store(ptr, v)
+#define rt_atomic_add(ptr, v) atomic_fetch_add(ptr, v)
+#define rt_atomic_sub(ptr, v) atomic_fetch_sub(ptr, v)
+#define rt_atomic_and(ptr, v) atomic_fetch_and(ptr, v)
+#define rt_atomic_or(ptr, v)  atomic_fetch_or(ptr, v)
+#define rt_atomic_xor(ptr, v) atomic_fetch_xor(ptr, v)
+#define rt_atomic_exchange(ptr, v) atomic_exchange(ptr, v)
+#define rt_atomic_flag_clear(ptr) atomic_flag_clear(ptr)
+#define rt_atomic_flag_test_and_set(ptr) atomic_flag_test_and_set(ptr)
+#define rt_atomic_compare_exchange_strong(ptr, v,des) atomic_compare_exchange_strong(ptr, v ,des)
+#else
+#error "The standard library C doesn't support the atomic operation"
+#endif /* __STDC_NO_ATOMICS__ */
+#elif defined(RT_USING_HW_ATOMIC)
+#define rt_atomic_load(ptr) rt_hw_atomic_load(ptr)
+#define rt_atomic_store(ptr, v) rt_hw_atomic_store(ptr, v)
+#define rt_atomic_add(ptr, v) rt_hw_atomic_add(ptr, v)
+#define rt_atomic_sub(ptr, v) rt_hw_atomic_sub(ptr, v)
+#define rt_atomic_and(ptr, v) rt_hw_atomic_and(ptr, v)
+#define rt_atomic_or(ptr, v)  rt_hw_atomic_or(ptr, v)
+#define rt_atomic_xor(ptr, v) rt_hw_atomic_xor(ptr, v)
+#define rt_atomic_exchange(ptr, v) rt_hw_atomic_exchange(ptr, v)
+#define rt_atomic_flag_clear(ptr) rt_hw_atomic_flag_clear(ptr)
+#define rt_atomic_flag_test_and_set(ptr) rt_hw_atomic_flag_test_and_set(ptr)
+#define rt_atomic_compare_exchange_strong(ptr, v,des) rt_hw_atomic_compare_exchange_strong(ptr, v ,des)
+#else
+#include <rthw.h>
+#define rt_atomic_load(ptr) rt_soft_atomic_load(ptr)
+#define rt_atomic_store(ptr, v) rt_soft_atomic_store(ptr, v)
+#define rt_atomic_add(ptr, v) rt_soft_atomic_add(ptr, v)
+#define rt_atomic_sub(ptr, v) rt_soft_atomic_sub(ptr, v)
+#define rt_atomic_and(ptr, v) rt_soft_atomic_and(ptr, v)
+#define rt_atomic_or(ptr, v)  rt_soft_atomic_or(ptr, v)
+#define rt_atomic_xor(ptr, v) rt_soft_atomic_xor(ptr, v)
+#define rt_atomic_exchange(ptr, v) rt_soft_atomic_exchange(ptr, v)
+#define rt_atomic_flag_clear(ptr) rt_soft_atomic_flag_clear(ptr)
+#define rt_atomic_flag_test_and_set(ptr) rt_soft_atomic_flag_test_and_set(ptr)
+#define rt_atomic_compare_exchange_strong(ptr, v,des) rt_soft_atomic_compare_exchange_strong(ptr, v ,des)
+
+rt_inline rt_atomic_t rt_soft_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    temp = *ptr;
+    *ptr = val;
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+
+rt_inline rt_atomic_t rt_soft_atomic_add(volatile rt_atomic_t *ptr, rt_atomic_t val)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    temp = *ptr;
+    *ptr += val;
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+
+rt_inline rt_atomic_t rt_soft_atomic_sub(volatile rt_atomic_t *ptr, rt_atomic_t val)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    temp = *ptr;
+    *ptr -= val;
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+
+rt_inline rt_atomic_t rt_soft_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t val)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    temp = *ptr;
+    *ptr = (*ptr) ^ val;
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+
+rt_inline rt_atomic_t rt_soft_atomic_and(volatile rt_atomic_t *ptr, rt_atomic_t val)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    temp = *ptr;
+    *ptr = (*ptr) & val;
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+
+rt_inline rt_atomic_t rt_soft_atomic_or(volatile rt_atomic_t *ptr, rt_atomic_t val)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    temp = *ptr;
+    *ptr = (*ptr) | val;
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+
+rt_inline rt_atomic_t rt_soft_atomic_load(volatile rt_atomic_t *ptr)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    temp = *ptr;
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+
+rt_inline void rt_soft_atomic_store(volatile rt_atomic_t *ptr, rt_atomic_t val)
+{
+    rt_base_t level;
+    level = rt_hw_interrupt_disable();
+    *ptr = val;
+    rt_hw_interrupt_enable(level);
+}
+
+rt_inline rt_atomic_t rt_soft_atomic_flag_test_and_set(volatile rt_atomic_t *ptr)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    if (*ptr == 0)
+    {
+        temp = 0;
+        *ptr = 1;
+    }
+    else
+        temp = 1;
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+
+rt_inline void rt_soft_atomic_flag_clear(volatile rt_atomic_t *ptr)
+{
+    rt_base_t level;
+    level = rt_hw_interrupt_disable();
+    *ptr = 0;
+    rt_hw_interrupt_enable(level);
+}
+
+rt_inline rt_atomic_t rt_soft_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr1, rt_atomic_t *ptr2,
+        rt_atomic_t desired)
+{
+    rt_base_t level;
+    rt_atomic_t temp;
+    level = rt_hw_interrupt_disable();
+    if ((*ptr1) != (*ptr2))
+    {
+        *ptr2 = *ptr1;
+        temp = 0;
+    }
+    else
+    {
+        *ptr1 = desired;
+        temp = 1;
+    }
+    rt_hw_interrupt_enable(level);
+    return temp;
+}
+#endif /* RT_USING_STDC_ATOMIC */
+#endif /* __RT_ATOMIC_H__ */

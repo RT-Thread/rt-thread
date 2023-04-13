@@ -36,12 +36,12 @@
  */
 
 #include "sbi.h"
-#include <stdbool.h>
 #include <rtthread.h>
+#include <stdbool.h>
 
 /* SBI Implementation-Specific Definitions */
-#define OPENSBI_VERSION_MAJOR_OFFSET    16
-#define OPENSBI_VERSION_MINOR_MASK  0xFFFF
+#define OPENSBI_VERSION_MAJOR_OFFSET 16
+#define OPENSBI_VERSION_MINOR_MASK 0xFFFF
 
 unsigned long sbi_spec_version;
 unsigned long sbi_impl_id;
@@ -51,29 +51,25 @@ static bool has_time_extension = false;
 static bool has_ipi_extension = false;
 static bool has_rfnc_extension = false;
 
-static struct sbi_ret
-sbi_get_spec_version(void)
+static struct sbi_ret sbi_get_spec_version(void)
 {
     return (SBI_CALL0(SBI_EXT_ID_BASE, SBI_BASE_GET_SPEC_VERSION));
 }
 
-static struct sbi_ret
-sbi_get_impl_id(void)
+static struct sbi_ret sbi_get_impl_id(void)
 {
     return (SBI_CALL0(SBI_EXT_ID_BASE, SBI_BASE_GET_IMPL_ID));
 }
 
-static struct sbi_ret
-sbi_get_impl_version(void)
+static struct sbi_ret sbi_get_impl_version(void)
 {
     return (SBI_CALL0(SBI_EXT_ID_BASE, SBI_BASE_GET_IMPL_VERSION));
 }
 
-void
-sbi_print_version(void)
+void sbi_print_version(void)
 {
-    u_int major;
-    u_int minor;
+    unsigned int major;
+    unsigned int minor;
 
     /* For legacy SBI implementations. */
     if (sbi_spec_version == 0)
@@ -89,7 +85,8 @@ sbi_print_version(void)
         rt_kprintf("SBI: Berkely Boot Loader %lu\n", sbi_impl_version);
         break;
     case (SBI_IMPL_ID_XVISOR):
-        rt_kprintf("SBI: eXtensible Versatile hypervISOR %lu\n", sbi_impl_version);
+        rt_kprintf("SBI: eXtensible Versatile hypervISOR %lu\n",
+                   sbi_impl_version);
         break;
     case (SBI_IMPL_ID_KVM):
         rt_kprintf("SBI: Kernel-based Virtual Machine %lu\n", sbi_impl_version);
@@ -116,8 +113,7 @@ sbi_print_version(void)
     rt_kprintf("SBI Specification Version: %u.%u\n", major, minor);
 }
 
-void
-sbi_set_timer(uint64_t val)
+void sbi_set_timer(uint64_t val)
 {
     struct sbi_ret ret;
 
@@ -133,16 +129,14 @@ sbi_set_timer(uint64_t val)
     }
 }
 
-void
-sbi_send_ipi(const unsigned long *hart_mask)
+void sbi_send_ipi(const unsigned long *hart_mask)
 {
     struct sbi_ret ret;
 
     /* Use the IPI legacy replacement extension, if available. */
     if (has_ipi_extension)
     {
-        ret = SBI_CALL2(SBI_EXT_ID_IPI, SBI_IPI_SEND_IPI,
-                        *hart_mask, 0);
+        ret = SBI_CALL2(SBI_EXT_ID_IPI, SBI_IPI_SEND_IPI, *hart_mask, 0);
         RT_ASSERT(ret.error == SBI_SUCCESS);
     }
     else
@@ -151,16 +145,15 @@ sbi_send_ipi(const unsigned long *hart_mask)
     }
 }
 
-void
-sbi_remote_fence_i(const unsigned long *hart_mask)
+void sbi_remote_fence_i(const unsigned long *hart_mask)
 {
     struct sbi_ret ret;
 
     /* Use the RFENCE legacy replacement extension, if available. */
     if (has_rfnc_extension)
     {
-        ret = SBI_CALL2(SBI_EXT_ID_RFNC, SBI_RFNC_REMOTE_FENCE_I,
-                        *hart_mask, 0);
+        ret =
+            SBI_CALL2(SBI_EXT_ID_RFNC, SBI_RFNC_REMOTE_FENCE_I, *hart_mask, 0);
         RT_ASSERT(ret.error == SBI_SUCCESS);
     }
     else
@@ -169,28 +162,29 @@ sbi_remote_fence_i(const unsigned long *hart_mask)
     }
 }
 
-void
-sbi_remote_sfence_vma(const unsigned long *hart_mask, unsigned long start, unsigned long size)
+int sbi_remote_sfence_vma(const unsigned long *hart_mask,
+                          const unsigned long hart_mask_base,
+                          unsigned long start, unsigned long size)
 {
-    struct sbi_ret ret;
+    struct sbi_ret ret = {.error = SBI_SUCCESS};
 
     /* Use the RFENCE legacy replacement extension, if available. */
     if (has_rfnc_extension)
     {
-        ret = SBI_CALL4(SBI_EXT_ID_RFNC, SBI_RFNC_REMOTE_SFENCE_VMA,
-                        *hart_mask, 0, start, size);
-        RT_ASSERT(ret.error == SBI_SUCCESS);
+        ret = SBI_CALL4(SBI_EXT_ID_RFNC, SBI_RFNC_REMOTE_SFENCE_VMA, *hart_mask,
+                        hart_mask_base, start, size);
     }
     else
     {
-        (void)SBI_CALL3(SBI_REMOTE_SFENCE_VMA, 0, (uint64_t)hart_mask,
-                        start, size);
+        (void)SBI_CALL3(SBI_REMOTE_SFENCE_VMA, 0, (uint64_t)hart_mask, start,
+                        size);
     }
+    return ret.error;
 }
 
-void
-sbi_remote_sfence_vma_asid(const unsigned long *hart_mask, unsigned long start, unsigned long size,
-                           unsigned long asid)
+void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+                                unsigned long start, unsigned long size,
+                                unsigned long asid)
 {
     struct sbi_ret ret;
 
@@ -203,13 +197,13 @@ sbi_remote_sfence_vma_asid(const unsigned long *hart_mask, unsigned long start, 
     }
     else
     {
-        (void)SBI_CALL4(SBI_REMOTE_SFENCE_VMA_ASID, 0,
-                        (uint64_t)hart_mask, start, size, asid);
+        (void)SBI_CALL4(SBI_REMOTE_SFENCE_VMA_ASID, 0, (uint64_t)hart_mask,
+                        start, size, asid);
     }
 }
 
-int
-sbi_hsm_hart_start(unsigned long hart, unsigned long start_addr, unsigned long priv)
+int sbi_hsm_hart_start(unsigned long hart, unsigned long start_addr,
+                       unsigned long priv)
 {
     struct sbi_ret ret;
 
@@ -217,14 +211,12 @@ sbi_hsm_hart_start(unsigned long hart, unsigned long start_addr, unsigned long p
     return (ret.error != 0 ? (int)ret.error : 0);
 }
 
-void
-sbi_hsm_hart_stop(void)
+void sbi_hsm_hart_stop(void)
 {
     (void)SBI_CALL0(SBI_EXT_ID_HSM, SBI_HSM_HART_STOP);
 }
 
-int
-sbi_hsm_hart_status(unsigned long hart)
+int sbi_hsm_hart_status(unsigned long hart)
 {
     struct sbi_ret ret;
 
@@ -233,8 +225,7 @@ sbi_hsm_hart_status(unsigned long hart)
     return (ret.error != 0 ? (int)ret.error : (int)ret.value);
 }
 
-void
-sbi_init(void)
+void sbi_init(void)
 {
     struct sbi_ret sret;
 
@@ -262,4 +253,12 @@ sbi_init(void)
         has_ipi_extension = true;
     if (sbi_probe_extension(SBI_EXT_ID_RFNC) != 0)
         has_rfnc_extension = true;
+}
+
+void rt_hw_console_output(const char *str)
+{
+    while (*str)
+    {
+        sbi_console_putchar(*str++);
+    }
 }

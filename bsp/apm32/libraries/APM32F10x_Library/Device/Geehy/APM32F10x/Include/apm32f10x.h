@@ -5,9 +5,9 @@
  *
  * @details     This file contains all the peripheral register's definitions, bits definitions and memory mapping
  *
- * @version     V1.0.2
+ * @version     V1.0.4
  *
- * @date        2022-01-05
+ * @date        2022-12-01
  *
  * @attention
  *
@@ -17,7 +17,7 @@
  *  GEEHY COPYRIGHT NOTICE (GEEHY SOFTWARE PACKAGE LICENSE).
  *
  *  The program is only for reference, which is distributed in the hope
- *  that it will be usefull and instructional for customers to develop
+ *  that it will be useful and instructional for customers to develop
  *  their software. Unless required by applicable law or agreed to in
  *  writing, the program is distributed on an "AS IS" BASIS, WITHOUT
  *  ANY WARRANTY OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,54 +25,90 @@
  *  and limitations under the License.
  */
 
+/* Define to prevent recursive inclusion */
 #ifndef __APM32F10X_H
 #define __APM32F10X_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /*!
  *  APM32F10X_LD: APM32 Low    density devices, the Flash memory density ranges between 16 and 32 Kbytes.
  *  APM32F10X_MD: APM32 Medium density devices, the Flash memory density ranges between 64 and 128 Kbytes.
  *  APM32F10X_HD: APM32 High   density devices, the Flash memory density ranges between 256 and 512 Kbytes.
+ *  APM32F10X_CL: APM32 Connectivity line devices, such as APM32F105xx and APM32F107xx serial devices.
  */
-#if !defined (APM32F10X_LD)  && !defined (APM32F10X_MD) && !defined (APM32F10X_HD)
+#if !defined (APM32F10X_LD)  && !defined (APM32F10X_MD) && !defined (APM32F10X_HD) && !defined (APM32F10X_CL)
 #error "Please select a the target APM32F10x device used in your application (in apm32f10x.h file)"
 #endif
+
+/** @addtogroup CMSIS
+  @{
+*/
+
+/** @addtogroup APM32F10x
+  * @brief Peripheral Access Layer
+  @{
+*/
+
+/** @defgroup HSE_Macros
+  @{
+*/
 
 /**
  * @brief Define Value of the External oscillator in Hz
  */
 #ifndef  HSE_VALUE
- #define HSE_VALUE                  ((uint32_t)8000000)
+#ifndef APM32F10X_CL
+#define HSE_VALUE                  ((uint32_t)8000000)
+#else
+#define HSE_VALUE                  ((uint32_t)25000000)
+#endif
 #endif
 
-/** Time out for HSE start up */
+/* Time out for HSE start up */
 #define HSE_STARTUP_TIMEOUT         ((uint16_t)0x05000)
 
-/** Value of the Internal oscillator in Hz */
+/* Value of the Internal oscillator in Hz */
 #define HSI_VALUE                   ((uint32_t)8000000)
+
+/**@} end of group HSE_Macros */
+
+/** @defgroup APM32F10x_StdPeripheral_Library_Version
+  @{
+*/
 
 /**
  * @brief APM32F10x Standard Peripheral Library version number
  */
 #define __APM32F10X_STDPERIPH_VERSION_MAIN   (0x01) /*!< [31:24] main version */
 #define __APM32F10X_STDPERIPH_VERSION_SUB1   (0x00) /*!< [23:16] sub1 version */
-#define __APM32F10X_STDPERIPH_VERSION_SUB2   (0x02) /*!< [15:8]  sub2 version */
+#define __APM32F10X_STDPERIPH_VERSION_SUB2   (0x07) /*!< [15:8]  sub2 version */
 #define __APM32F10X_STDPERIPH_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __APM32F10X_STDPERIPH_VERSION       ( (__APM32F10X_STDPERIPH_VERSION_MAIN << 24)\
                                              |(__APM32F10X_STDPERIPH_VERSION_SUB1 << 16)\
                                              |(__APM32F10X_STDPERIPH_VERSION_SUB2 << 8)\
                                              |(__APM32F10X_STDPERIPH_VERSION_RC))
 
+/**@} end of group APM32F0xx_StdPeripheral_Library_Version */
 
-/** APM32 devices does not provide an MPU */
- #define __MPU_PRESENT                  0
-/** APM32 uses 4 Bits for the Priority Levels  */
+/** @defgroup Configuraion_for_CMSIS
+  @{
+*/
+
+/* APM32 devices does not provide an MPU */
+#define __MPU_PRESENT                  0
+/* APM32 uses 4 Bits for the Priority Levels  */
 #define __NVIC_PRIO_BITS                4
-/** Set to 1 if different SysTick Config is used */
+/* Set to 1 if different SysTick Config is used */
 #define __Vendor_SysTickConfig          0
+
+/**@} end of group Configuraion_for_CMSIS */
+
+/** @defgroup Peripheral_Enumerations
+  @{
+*/
 
 /**
  * @brief APM32F10x Interrupt Number Definition, according to the selected device
@@ -80,154 +116,202 @@
  */
 typedef enum IRQn
 {
-/******  Cortex-M3 Processor Exceptions Numbers ***************************************************/
-  NonMaskableInt_IRQn         = -14,    /*!< 2 Non Maskable Interrupt                             */
-  MemoryManagement_IRQn       = -12,    /*!< 4 Cortex-M3 Memory Management Interrupt              */
-  BusFault_IRQn               = -11,    /*!< 5 Cortex-M3 Bus Fault Interrupt                      */
-  UsageFault_IRQn             = -10,    /*!< 6 Cortex-M3 Usage Fault Interrupt                    */
-  SVCall_IRQn                 = -5,     /*!< 11 Cortex-M3 SV Call Interrupt                       */
-  DebugMonitor_IRQn           = -4,     /*!< 12 Cortex-M3 Debug Monitor Interrupt                 */
-  PendSV_IRQn                 = -2,     /*!< 14 Cortex-M3 Pend SV Interrupt                       */
-  SysTick_IRQn                = -1,     /*!< 15 Cortex-M3 System Tick Interrupt                   */
+    /******  Cortex-M3 Processor Exceptions Numbers ***************************************************/
+    NonMaskableInt_IRQn         = -14,    /*!< 2 Non Maskable Interrupt                             */
+    MemoryManagement_IRQn       = -12,    /*!< 4 Cortex-M3 Memory Management Interrupt              */
+    BusFault_IRQn               = -11,    /*!< 5 Cortex-M3 Bus Fault Interrupt                      */
+    UsageFault_IRQn             = -10,    /*!< 6 Cortex-M3 Usage Fault Interrupt                    */
+    SVCall_IRQn                 = -5,     /*!< 11 Cortex-M3 SV Call Interrupt                       */
+    DebugMonitor_IRQn           = -4,     /*!< 12 Cortex-M3 Debug Monitor Interrupt                 */
+    PendSV_IRQn                 = -2,     /*!< 14 Cortex-M3 Pend SV Interrupt                       */
+    SysTick_IRQn                = -1,     /*!< 15 Cortex-M3 System Tick Interrupt                   */
 
-/******  APM32 specific Interrupt Numbers *********************************************************/
-  WWDT_IRQn                   = 0,      /*!< Window WatchDog Interrupt                            */
-  PVD_IRQn                    = 1,      /*!< PVD through EINT Line detection Interrupt            */
-  TAMPER_IRQn                 = 2,      /*!< Tamper Interrupt                                     */
-  RTC_IRQn                    = 3,      /*!< RTC global Interrupt                                 */
-  FLASH_IRQn                  = 4,      /*!< FLASH global Interrupt                               */
-  RCM_IRQn                    = 5,      /*!< RCM global Interrupt                                 */
-  EINT0_IRQn                  = 6,      /*!< EINT Line0 Interrupt                                 */
-  EINT1_IRQn                  = 7,      /*!< EINT Line1 Interrupt                                 */
-  EINT2_IRQn                  = 8,      /*!< EINT Line2 Interrupt                                 */
-  EINT3_IRQn                  = 9,      /*!< EINT Line3 Interrupt                                 */
-  EINT4_IRQn                  = 10,     /*!< EINT Line4 Interrupt                                 */
-  DMA1_Channel1_IRQn          = 11,     /*!< DMA1 Channel 1 global Interrupt                      */
-  DMA1_Channel2_IRQn          = 12,     /*!< DMA1 Channel 2 global Interrupt                      */
-  DMA1_Channel3_IRQn          = 13,     /*!< DMA1 Channel 3 global Interrupt                      */
-  DMA1_Channel4_IRQn          = 14,     /*!< DMA1 Channel 4 global Interrupt                      */
-  DMA1_Channel5_IRQn          = 15,     /*!< DMA1 Channel 5 global Interrupt                      */
-  DMA1_Channel6_IRQn          = 16,     /*!< DMA1 Channel 6 global Interrupt                      */
-  DMA1_Channel7_IRQn          = 17,     /*!< DMA1 Channel 7 global Interrupt                      */
+    /******  APM32 specific Interrupt Numbers *********************************************************/
+    WWDT_IRQn                   = 0,      /*!< Window WatchDog Interrupt                            */
+    PVD_IRQn                    = 1,      /*!< PVD through EINT Line detection Interrupt            */
+    TAMPER_IRQn                 = 2,      /*!< Tamper Interrupt                                     */
+    RTC_IRQn                    = 3,      /*!< RTC global Interrupt                                 */
+    FLASH_IRQn                  = 4,      /*!< FLASH global Interrupt                               */
+    RCM_IRQn                    = 5,      /*!< RCM global Interrupt                                 */
+    EINT0_IRQn                  = 6,      /*!< EINT Line0 Interrupt                                 */
+    EINT1_IRQn                  = 7,      /*!< EINT Line1 Interrupt                                 */
+    EINT2_IRQn                  = 8,      /*!< EINT Line2 Interrupt                                 */
+    EINT3_IRQn                  = 9,      /*!< EINT Line3 Interrupt                                 */
+    EINT4_IRQn                  = 10,     /*!< EINT Line4 Interrupt                                 */
+    DMA1_Channel1_IRQn          = 11,     /*!< DMA1 Channel 1 global Interrupt                      */
+    DMA1_Channel2_IRQn          = 12,     /*!< DMA1 Channel 2 global Interrupt                      */
+    DMA1_Channel3_IRQn          = 13,     /*!< DMA1 Channel 3 global Interrupt                      */
+    DMA1_Channel4_IRQn          = 14,     /*!< DMA1 Channel 4 global Interrupt                      */
+    DMA1_Channel5_IRQn          = 15,     /*!< DMA1 Channel 5 global Interrupt                      */
+    DMA1_Channel6_IRQn          = 16,     /*!< DMA1 Channel 6 global Interrupt                      */
+    DMA1_Channel7_IRQn          = 17,     /*!< DMA1 Channel 7 global Interrupt                      */
 
 #if defined (APM32F10X_LD)
-  /**  APM32F10X Low-density devices specific Interrupt Numbers */
-  ADC1_2_IRQn                 = 18,     /*!< ADC1 and ADC2 global Interrupt                       */
-  USBD1_HP_CAN1_TX_IRQn       = 19,     /*!< USB Device 1 High Priority or CAN1 TX Interrupts     */
-  USBD1_LP_CAN1_RX0_IRQn      = 20,     /*!< USB Device 1 Low Priority or CAN1 RX0 Interrupts     */
-  CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
-  CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
-  EINT9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
-  TMR1_BRK_IRQn               = 24,     /*!< TMR1 Break Interrupt                                 */
-  TMR1_UP_IRQn                = 25,     /*!< TMR1 Update Interrupt                                */
-  TMR1_TRG_COM_IRQn           = 26,     /*!< TMR1 Trigger and Commutation Interrupt               */
-  TMR1_CC_IRQn                = 27,     /*!< TMR1 Capture Compare Interrupt                       */
-  TMR2_IRQn                   = 28,     /*!< TMR2 global Interrupt                                */
-  TMR3_IRQn                   = 29,     /*!< TMR3 global Interrupt                                */
-  I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
-  I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
-  SPI1_IRQn                   = 35,     /*!< SPI1 global Interrupt                                */
-  USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
-  USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
-  EINT15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EINT Line Interrupt                */
-  USBDWakeUp_IRQn             = 42,     /*!< USB Device WakeUp from suspend through EINT Line Interrupt */
-  FPU_IRQn                    = 43,     /*!< FPU Global Interrupt                                 */
-  QSPI_IRQn                   = 44,     /*!< QSPI Global Interrupt                                */
-  USBD2_HP_IRQn               = 45,     /*!< USB Device 2 High Priority                           */
-  USBD2_LP_IRQn               = 46      /*!< USB Device 2 Low Priority                            */
+    /*  APM32F10X Low-density devices specific Interrupt Numbers */
+    ADC1_2_IRQn                 = 18,     /*!< ADC1 and ADC2 global Interrupt                       */
+    USBD1_HP_CAN1_TX_IRQn       = 19,     /*!< USB Device 1 High Priority or CAN1 TX Interrupts     */
+    USBD1_LP_CAN1_RX0_IRQn      = 20,     /*!< USB Device 1 Low Priority or CAN1 RX0 Interrupts     */
+    CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
+    CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
+    EINT9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
+    TMR1_BRK_IRQn               = 24,     /*!< TMR1 Break Interrupt                                 */
+    TMR1_UP_IRQn                = 25,     /*!< TMR1 Update Interrupt                                */
+    TMR1_TRG_COM_IRQn           = 26,     /*!< TMR1 Trigger and Commutation Interrupt               */
+    TMR1_CC_IRQn                = 27,     /*!< TMR1 Capture Compare Interrupt                       */
+    TMR2_IRQn                   = 28,     /*!< TMR2 global Interrupt                                */
+    TMR3_IRQn                   = 29,     /*!< TMR3 global Interrupt                                */
+    I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
+    I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
+    SPI1_IRQn                   = 35,     /*!< SPI1 global Interrupt                                */
+    USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
+    USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
+    EINT15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
+    RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EINT Line Interrupt                */
+    USBDWakeUp_IRQn             = 42,     /*!< USB Device WakeUp from suspend through EINT Line Interrupt */
+    FPU_IRQn                    = 43,     /*!< FPU Global Interrupt                                 */
+    QSPI_IRQn                   = 44,     /*!< QSPI Global Interrupt                                */
+    USBD2_HP_IRQn               = 45,     /*!< USB Device 2 High Priority                           */
+    USBD2_LP_IRQn               = 46      /*!< USB Device 2 Low Priority                            */
 
 #elif defined (APM32F10X_MD)
-  /**  APM32F10X Medium-density devices specific Interrupt Numbers */
-  ADC1_2_IRQn                 = 18,     /*!< ADC1 and ADC2 global Interrupt                       */
-  USBD1_HP_CAN1_TX_IRQn       = 19,     /*!< USB Device 1 High Priority or CAN1 TX Interrupts     */
-  USBD1_LP_CAN1_RX0_IRQn      = 20,     /*!< USB Device 1 Low Priority or CAN1 RX0 Interrupts     */
-  CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
-  CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
-  EINT9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
-  TMR1_BRK_IRQn               = 24,     /*!< TMR1 Break Interrupt                                 */
-  TMR1_UP_IRQn                = 25,     /*!< TMR1 Update Interrupt                                */
-  TMR1_TRG_COM_IRQn           = 26,     /*!< TMR1 Trigger and Commutation Interrupt               */
-  TMR1_CC_IRQn                = 27,     /*!< TMR1 Capture Compare Interrupt                       */
-  TMR2_IRQn                   = 28,     /*!< TMR2 global Interrupt                                */
-  TMR3_IRQn                   = 29,     /*!< TMR3 global Interrupt                                */
-  TMR4_IRQn                   = 30,     /*!< TMR4 global Interrupt                                */
-  I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
-  I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
-  I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
-  I2C2_ER_IRQn                = 34,     /*!< I2C2 Error Interrupt                                 */
-  SPI1_IRQn                   = 35,     /*!< SPI1 global Interrupt                                */
-  SPI2_IRQn                   = 36,     /*!< SPI2 global Interrupt                                */
-  USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
-  USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
-  USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
-  EINT15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EINT Line Interrupt                */
-  USBDWakeUp_IRQn             = 42,     /*!< USB Device WakeUp from suspend through EINT Line Interrupt */
-  FPU_IRQn                    = 43,     /*!< FPU Global Interrupt                                 */
-  QSPI_IRQn                   = 44,     /*!< QSPI Global Interrupt                                */
-  USBD2_HP_IRQn               = 45,     /*!< USB Device 2 High Priority                           */
-  USBD2_LP_IRQn               = 46      /*!< USB Device 2 Low Priority                            */
+    /*  APM32F10X Medium-density devices specific Interrupt Numbers */
+    ADC1_2_IRQn                 = 18,     /*!< ADC1 and ADC2 global Interrupt                       */
+    USBD1_HP_CAN1_TX_IRQn       = 19,     /*!< USB Device 1 High Priority or CAN1 TX Interrupts     */
+    USBD1_LP_CAN1_RX0_IRQn      = 20,     /*!< USB Device 1 Low Priority or CAN1 RX0 Interrupts     */
+    CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
+    CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
+    EINT9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
+    TMR1_BRK_IRQn               = 24,     /*!< TMR1 Break Interrupt                                 */
+    TMR1_UP_IRQn                = 25,     /*!< TMR1 Update Interrupt                                */
+    TMR1_TRG_COM_IRQn           = 26,     /*!< TMR1 Trigger and Commutation Interrupt               */
+    TMR1_CC_IRQn                = 27,     /*!< TMR1 Capture Compare Interrupt                       */
+    TMR2_IRQn                   = 28,     /*!< TMR2 global Interrupt                                */
+    TMR3_IRQn                   = 29,     /*!< TMR3 global Interrupt                                */
+    TMR4_IRQn                   = 30,     /*!< TMR4 global Interrupt                                */
+    I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
+    I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
+    I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
+    I2C2_ER_IRQn                = 34,     /*!< I2C2 Error Interrupt                                 */
+    SPI1_IRQn                   = 35,     /*!< SPI1 global Interrupt                                */
+    SPI2_IRQn                   = 36,     /*!< SPI2 global Interrupt                                */
+    USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
+    USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
+    USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
+    EINT15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
+    RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EINT Line Interrupt                */
+    USBDWakeUp_IRQn             = 42,     /*!< USB Device WakeUp from suspend through EINT Line Interrupt */
+    FPU_IRQn                    = 43,     /*!< FPU Global Interrupt                                 */
+    QSPI_IRQn                   = 44,     /*!< QSPI Global Interrupt                                */
+    USBD2_HP_IRQn               = 45,     /*!< USB Device 2 High Priority                           */
+    USBD2_LP_IRQn               = 46      /*!< USB Device 2 Low Priority                            */
 
 #elif defined (APM32F10X_HD)
-  /**  APM32F10X High-density devices specific Interrupt Numbers */
-  ADC1_2_IRQn                 = 18,     /*!< ADC1 and ADC2 global Interrupt                       */
-  USBD1_HP_CAN1_TX_IRQn       = 19,     /*!< USB Device 1 High Priority or CAN1 TX Interrupts     */
-  USBD1_LP_CAN1_RX0_IRQn      = 20,     /*!< USB Device 1 Low Priority or CAN1 RX0 Interrupts     */
-  CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
-  CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
-  EINT9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
-  TMR1_BRK_IRQn               = 24,     /*!< TMR1 Break Interrupt                                 */
-  TMR1_UP_IRQn                = 25,     /*!< TMR1 Update Interrupt                                */
-  TMR1_TRG_COM_IRQn           = 26,     /*!< TMR1 Trigger and Commutation Interrupt               */
-  TMR1_CC_IRQn                = 27,     /*!< TMR1 Capture Compare Interrupt                       */
-  TMR2_IRQn                   = 28,     /*!< TMR2 global Interrupt                                */
-  TMR3_IRQn                   = 29,     /*!< TMR3 global Interrupt                                */
-  TMR4_IRQn                   = 30,     /*!< TMR4 global Interrupt                                */
-  I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
-  I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
-  I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
-  I2C2_ER_IRQn                = 34,     /*!< I2C2 Error Interrupt                                 */
-  SPI1_IRQn                   = 35,     /*!< SPI1 global Interrupt                                */
-  SPI2_IRQn                   = 36,     /*!< SPI2 global Interrupt                                */
-  USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
-  USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
-  USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
-  EINT15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
-  RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EINT Line Interrupt                */
-  USBDWakeUp_IRQn             = 42,     /*!< USB Device WakeUp from suspend through EINT Line Interrupt */
-  TMR8_BRK_IRQn               = 43,     /*!< TMR8 Break Interrupt                                 */
-  TMR8_UP_IRQn                = 44,     /*!< TMR8 Update Interrupt                                */
-  TMR8_TRG_COM_IRQn           = 45,     /*!< TMR8 Trigger and Commutation Interrupt               */
-  TMR8_CC_IRQn                = 46,     /*!< TMR8 Capture Compare Interrupt                       */
-  ADC3_IRQn                   = 47,     /*!< ADC3 global Interrupt                                */
-  EMMC_IRQn                   = 48,     /*!< EMMC global Interrupt                                */
-  SDIO_IRQn                   = 49,     /*!< SDIO global Interrupt                                */
-  TMR5_IRQn                   = 50,     /*!< TMR5 global Interrupt                                */
-  SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                */
-  UART4_IRQn                  = 52,     /*!< UART4 global Interrupt                               */
-  UART5_IRQn                  = 53,     /*!< UART5 global Interrupt                               */
-  TMR6_IRQn                   = 54,     /*!< TMR6 global Interrupt                                */
-  TMR7_IRQn                   = 55,     /*!< TMR7 global Interrupt                                */
-  DMA2_Channel1_IRQn          = 56,     /*!< DMA2 Channel 1 global Interrupt                      */
-  DMA2_Channel2_IRQn          = 57,     /*!< DMA2 Channel 2 global Interrupt                      */
-  DMA2_Channel3_IRQn          = 58,     /*!< DMA2 Channel 3 global Interrupt                      */
-  DMA2_Channel4_5_IRQn        = 59,     /*!< DMA2 Channel 4 and Channel 5 global Interrupt        */
-  USBD2_HP_CAN2_TX_IRQn       = 61,     /*!< USB Device 2 High Priority or CAN2 TX Interrupts     */
-  USBD2_LP_CAN2_RX0_IRQn      = 62,     /*!< USB Device 2 Low Priority or CAN2 RX0 Interrupts     */
-  CAN2_RX1_IRQn               = 63,     /*!< CAN2 RX1 Interrupts                                  */
-  CAN2_SCE_IRQn               = 64,     /*!< CAN2 SCE Interrupts                                  */
+    /*  APM32F10X High-density devices specific Interrupt Numbers */
+    ADC1_2_IRQn                 = 18,     /*!< ADC1 and ADC2 global Interrupt                       */
+    USBD1_HP_CAN1_TX_IRQn       = 19,     /*!< USB Device 1 High Priority or CAN1 TX Interrupts     */
+    USBD1_LP_CAN1_RX0_IRQn      = 20,     /*!< USB Device 1 Low Priority or CAN1 RX0 Interrupts     */
+    CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
+    CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
+    EINT9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
+    TMR1_BRK_IRQn               = 24,     /*!< TMR1 Break Interrupt                                 */
+    TMR1_UP_IRQn                = 25,     /*!< TMR1 Update Interrupt                                */
+    TMR1_TRG_COM_IRQn           = 26,     /*!< TMR1 Trigger and Commutation Interrupt               */
+    TMR1_CC_IRQn                = 27,     /*!< TMR1 Capture Compare Interrupt                       */
+    TMR2_IRQn                   = 28,     /*!< TMR2 global Interrupt                                */
+    TMR3_IRQn                   = 29,     /*!< TMR3 global Interrupt                                */
+    TMR4_IRQn                   = 30,     /*!< TMR4 global Interrupt                                */
+    I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
+    I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
+    I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
+    I2C2_ER_IRQn                = 34,     /*!< I2C2 Error Interrupt                                 */
+    SPI1_IRQn                   = 35,     /*!< SPI1 global Interrupt                                */
+    SPI2_IRQn                   = 36,     /*!< SPI2 global Interrupt                                */
+    USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
+    USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
+    USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
+    EINT15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
+    RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EINT Line Interrupt                */
+    USBDWakeUp_IRQn             = 42,     /*!< USB Device WakeUp from suspend through EINT Line Interrupt */
+    TMR8_BRK_IRQn               = 43,     /*!< TMR8 Break Interrupt                                 */
+    TMR8_UP_IRQn                = 44,     /*!< TMR8 Update Interrupt                                */
+    TMR8_TRG_COM_IRQn           = 45,     /*!< TMR8 Trigger and Commutation Interrupt               */
+    TMR8_CC_IRQn                = 46,     /*!< TMR8 Capture Compare Interrupt                       */
+    ADC3_IRQn                   = 47,     /*!< ADC3 global Interrupt                                */
+    EMMC_IRQn                   = 48,     /*!< EMMC global Interrupt                                */
+    SDIO_IRQn                   = 49,     /*!< SDIO global Interrupt                                */
+    TMR5_IRQn                   = 50,     /*!< TMR5 global Interrupt                                */
+    SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                */
+    UART4_IRQn                  = 52,     /*!< UART4 global Interrupt                               */
+    UART5_IRQn                  = 53,     /*!< UART5 global Interrupt                               */
+    TMR6_IRQn                   = 54,     /*!< TMR6 global Interrupt                                */
+    TMR7_IRQn                   = 55,     /*!< TMR7 global Interrupt                                */
+    DMA2_Channel1_IRQn          = 56,     /*!< DMA2 Channel 1 global Interrupt                      */
+    DMA2_Channel2_IRQn          = 57,     /*!< DMA2 Channel 2 global Interrupt                      */
+    DMA2_Channel3_IRQn          = 58,     /*!< DMA2 Channel 3 global Interrupt                      */
+    DMA2_Channel4_5_IRQn        = 59,     /*!< DMA2 Channel 4 and Channel 5 global Interrupt        */
+    USBD2_HP_CAN2_TX_IRQn       = 61,     /*!< USB Device 2 High Priority or CAN2 TX Interrupts     */
+    USBD2_LP_CAN2_RX0_IRQn      = 62,     /*!< USB Device 2 Low Priority or CAN2 RX0 Interrupts     */
+    CAN2_RX1_IRQn               = 63,     /*!< CAN2 RX1 Interrupts                                  */
+    CAN2_SCE_IRQn               = 64,     /*!< CAN2 SCE Interrupts                                  */
+#elif defined (APM32F10X_CL)
+    /*  APM32F10X Connectivity-line devices specific Interrupt Numbers */
+    ADC1_2_IRQn                 = 18,     /*!< ADC1 and ADC2 global Interrupt                       */
+    CAN1_TX_IRQn                = 19,     /*!< CAN1 TX Interrupts                                   */
+    CAN1_RX0_IRQn               = 20,     /*!< CAN1 RX0 Interrupts                                  */
+    CAN1_RX1_IRQn               = 21,     /*!< CAN1 RX1 Interrupt                                   */
+    CAN1_SCE_IRQn               = 22,     /*!< CAN1 SCE Interrupt                                   */
+    EINT9_5_IRQn                = 23,     /*!< External Line[9:5] Interrupts                        */
+    TMR1_BRK_IRQn               = 24,     /*!< TMR1 Break Interrupt                                 */
+    TMR1_UP_IRQn                = 25,     /*!< TMR1 Update Interrupt                                */
+    TMR1_TRG_COM_IRQn           = 26,     /*!< TMR1 Trigger and Commutation Interrupt               */
+    TMR1_CC_IRQn                = 27,     /*!< TMR1 Capture Compare Interrupt                       */
+    TMR2_IRQn                   = 28,     /*!< TMR2 global Interrupt                                */
+    TMR3_IRQn                   = 29,     /*!< TMR3 global Interrupt                                */
+    TMR4_IRQn                   = 30,     /*!< TMR4 global Interrupt                                */
+    I2C1_EV_IRQn                = 31,     /*!< I2C1 Event Interrupt                                 */
+    I2C1_ER_IRQn                = 32,     /*!< I2C1 Error Interrupt                                 */
+    I2C2_EV_IRQn                = 33,     /*!< I2C2 Event Interrupt                                 */
+    I2C2_ER_IRQn                = 34,     /*!< I2C2 Error Interrupt                                 */
+    SPI1_IRQn                   = 35,     /*!< SPI1 global Interrupt                                */
+    SPI2_IRQn                   = 36,     /*!< SPI2 global Interrupt                                */
+    USART1_IRQn                 = 37,     /*!< USART1 global Interrupt                              */
+    USART2_IRQn                 = 38,     /*!< USART2 global Interrupt                              */
+    USART3_IRQn                 = 39,     /*!< USART3 global Interrupt                              */
+    EINT15_10_IRQn              = 40,     /*!< External Line[15:10] Interrupts                      */
+    RTCAlarm_IRQn               = 41,     /*!< RTC Alarm through EINT Line Interrupt                */
+    OTG_FS_WKUP_IRQn            = 42,     /*!< USB Device WakeUp from suspend through EINT Line Interrupt */
+    TMR5_IRQn                   = 50,     /*!< TMR5 global Interrupt                                */
+    SPI3_IRQn                   = 51,     /*!< SPI3 global Interrupt                                */
+    UART4_IRQn                  = 52,     /*!< UART4 global Interrupt                               */
+    UART5_IRQn                  = 53,     /*!< UART5 global Interrupt                               */
+    TMR6_IRQn                   = 54,     /*!< TMR6 global Interrupt                                */
+    TMR7_IRQn                   = 55,     /*!< TMR7 global Interrupt                                */
+    DMA2_Channel1_IRQn          = 56,     /*!< DMA2 Channel 1 global Interrupt                      */
+    DMA2_Channel2_IRQn          = 57,     /*!< DMA2 Channel 2 global Interrupt                      */
+    DMA2_Channel3_IRQn          = 58,     /*!< DMA2 Channel 3 global Interrupt                      */
+    DMA2_Channel4_IRQn          = 59,     /*!< DMA2 Channel 4 global Interrupt                      */
+    DMA2_Channel5_IRQn          = 60,     /*!< DMA2 Channel 5 global Interrupt                      */
+    ETH_IRQn                    = 61,     /*!< ETH global Interrupt                                 */
+    ETH_WKUP_IRQn               = 62,     /*!< ETH Wake up Interrupt                                */
+    CAN2_TX_IRQn                = 63,     /*!< CAN2 TX Interrupts                                   */
+    CAN2_RX0_IRQn               = 64,     /*!< CAN2 RX0 Interrupts                                  */
+    CAN2_RX1_IRQn               = 65,     /*!< CAN2 RX1 Interrupts                                  */
+    CAN2_SCE_IRQn               = 66,     /*!< CAN2 SCE Interrupts                                  */
+    OTG_FS_IRQn                 = 67,     /*!< OTG FS Interrupts                                    */
 #endif
 } IRQn_Type;
 
-/**
- * @}
- */
+/**@} end of group Peripheral_Enumerations */
 
+
+/* Includes */
 #include "core_cm3.h"
 #include "system_apm32f10x.h"
 #include <stdint.h>
 
+/** @defgroup Exported_Types
+  @{
+*/
 
 typedef int32_t s32;
 typedef int16_t s16;
@@ -262,13 +346,13 @@ typedef __I uint16_t vuc16;
 typedef __I uint8_t vuc8;
 
 #ifndef __IM
-  #define __IM   __I
+#define __IM   __I
 #endif
 #ifndef __OM
-  #define __OM   __O
+#define __OM   __O
 #endif
 #ifndef __IOM
-  #define __IOM  __IO
+#define __IOM  __IO
 #endif
 
 enum {BIT_RESET, BIT_SET};
@@ -284,12 +368,18 @@ enum {ERROR, SUCCESS};
 #pragma anon_unions
 #endif
 
+/**@} end of group Exported_types */
+
+/** @defgroup Peripheral_registers_structures
+  @{
+*/
+
 /**
  * @brief Reset and clock management unit (RCM)
  */
 typedef struct
 {
-    /** Clock control register */
+    /* Clock control register */
     union
     {
         __IOM uint32_t CTRL;
@@ -306,13 +396,17 @@ typedef struct
             __IOM uint32_t HSEBCFG         : 1;
             __IOM uint32_t CSSEN           : 1;
             __IM  uint32_t RESERVED2       : 4;
-            __IOM uint32_t PLLEN           : 1;
-            __IM  uint32_t PLLRDYFLG       : 1;
-            __IM  uint32_t RESERVED3       : 6;
+            __IOM uint32_t PLL1EN          : 1;
+            __IM  uint32_t PLL1RDYFLG      : 1;
+            __IOM uint32_t PLL2EN          : 1;
+            __IM  uint32_t PLL2RDYFLG      : 1;
+            __IOM uint32_t PLL3EN          : 1;
+            __IM  uint32_t PLL3RDYFLG      : 1;
+            __IM  uint32_t RESERVED3       : 2;
         } CTRL_B;
     };
 
-    /** Clock configuration register */
+    /* Clock configuration register */
     union
     {
         __IOM uint32_t CFG;
@@ -325,17 +419,26 @@ typedef struct
             __IOM uint32_t APB1PSC         : 3;
             __IOM uint32_t APB2PSC         : 3;
             __IOM uint32_t ADCPSC          : 2;
-            __IOM uint32_t PLLSRCSEL       : 1;
+            __IOM uint32_t PLL1SRCSEL      : 1;
+#ifdef APM32F10X_CL
+            __IOM uint32_t PLLPSC1L        : 1;
+            __IOM uint32_t PLL1MULCFG      : 4;
+            __IOM uint32_t OTGFSPSC        : 2;
+            __IOM uint32_t MCOSEL          : 4;
+            __IM  uint32_t RESERVED        : 4;
+#else
             __IOM uint32_t PLLHSEPSC       : 1;
-            __IOM uint32_t PLLMULCFG       : 4;
+            __IOM uint32_t PLL1MULCFG      : 4;
             __IOM uint32_t USBDPSC         : 2;
             __IOM uint32_t MCOSEL          : 3;
             __IOM uint32_t FPUPSC          : 1;
-            __IM  uint32_t RESERVED        : 4;
+            __IOM uint32_t SDRAMPSC        : 2;
+            __IM  uint32_t RESERVED        : 2;
+#endif
         } CFG_B;
     } ;
 
-    /** Clock interrupt control register */
+    /* Clock interrupt control register */
     union
     {
         __IOM uint32_t INT;
@@ -346,177 +449,187 @@ typedef struct
             __IM  uint32_t LSERDYFLG       : 1;
             __IM  uint32_t HSIRDYFLG       : 1;
             __IM  uint32_t HSERDYFLG       : 1;
-            __IM  uint32_t PLLRDYFLG       : 1;
-            __IM  uint32_t RESERVED1       : 2;
-            __IM  uint32_t CSSIF           : 1;
+            __IM  uint32_t PLL1RDYFLG      : 1;
+            __IM  uint32_t PLL2RDYFLG      : 1;
+            __IM  uint32_t PLL3RDYFLG      : 1;
+            __IM  uint32_t CSSFLG          : 1;
             __IOM uint32_t LSIRDYEN        : 1;
             __IOM uint32_t LSERDYEN        : 1;
             __IOM uint32_t HSIRDYEN        : 1;
             __IOM uint32_t HSERDYEN        : 1;
-            __IOM uint32_t PLLRDYEN        : 1;
-            __IM  uint32_t RESERVED2       : 3;
+            __IOM uint32_t PLL1RDYEN       : 1;
+            __IOM uint32_t PLL2RDYEN       : 1;
+            __IOM uint32_t PLL3RDYEN       : 1;
+            __IM  uint32_t RESERVED1       : 1;
             __OM  uint32_t LSIRDYCLR       : 1;
             __OM  uint32_t LSERDYCLR       : 1;
             __OM  uint32_t HSIRDYCLR       : 1;
             __OM  uint32_t HSERDYCLR       : 1;
-            __OM  uint32_t PLLRDYCLR       : 1;
-            __IM  uint32_t RESERVED3       : 2;
+            __OM  uint32_t PLL1RDYCLR      : 1;
+            __OM  uint32_t PLL2RDYCLR      : 1;
+            __OM  uint32_t PLL3RDYCLR      : 1;
             __OM  uint32_t CSSCLR          : 1;
-            __IM  uint32_t RESERVED4       : 8;
+            __IM  uint32_t RESERVED2       : 8;
         } INT_B;
     } ;
 
-    /** APB2 peripheral reset register */
+    /* APB2 peripheral reset register */
     union
     {
         __IOM uint32_t APB2RST;
 
         struct
         {
-            __IOM uint32_t AFIO            : 1;
+            __IOM uint32_t AFIORST         : 1;
             __IM  uint32_t RESERVED1       : 1;
-            __IOM uint32_t PA              : 1;
-            __IOM uint32_t PB              : 1;
-            __IOM uint32_t PC              : 1;
-            __IOM uint32_t PD              : 1;
-            __IOM uint32_t PE              : 1;
-            __IOM uint32_t PF              : 1;
-            __IOM uint32_t PG              : 1;
-            __IOM uint32_t ADC1            : 1;
-            __IOM uint32_t ADC2            : 1;
-            __IOM uint32_t TMR1            : 1;
-            __IOM uint32_t SPI1            : 1;
-            __IOM uint32_t TMR8            : 1;
-            __IOM uint32_t USART1          : 1;
-            __IOM uint32_t ADC3            : 1;
+            __IOM uint32_t PARST           : 1;
+            __IOM uint32_t PBRST           : 1;
+            __IOM uint32_t PCRST           : 1;
+            __IOM uint32_t PDRST           : 1;
+            __IOM uint32_t PERST           : 1;
+            __IOM uint32_t PFRST           : 1;
+            __IOM uint32_t PGRST           : 1;
+            __IOM uint32_t ADC1RST         : 1;
+            __IOM uint32_t ADC2RST         : 1;
+            __IOM uint32_t TMR1RST         : 1;
+            __IOM uint32_t SPI1RST         : 1;
+            __IOM uint32_t TMR8RST         : 1;
+            __IOM uint32_t USART1RST       : 1;
+            __IOM uint32_t ADC3RST         : 1;
             __IM  uint32_t RESERVED2       : 16;
         } APB2RST_B;
     } ;
 
-    /** APB1 peripheral reset register */
+    /* APB1 peripheral reset register */
     union
     {
         __IOM uint32_t APB1RST;
 
         struct
         {
-            __IOM uint32_t TMR2            : 1;
-            __IOM uint32_t TMR3            : 1;
-            __IOM uint32_t TMR4            : 1;
-            __IOM uint32_t TMR5            : 1;
-            __IOM uint32_t TMR6            : 1;
-            __IOM uint32_t TMR7            : 1;
+            __IOM uint32_t TMR2RST         : 1;
+            __IOM uint32_t TMR3RST         : 1;
+            __IOM uint32_t TMR4RST         : 1;
+            __IOM uint32_t TMR5RST         : 1;
+            __IOM uint32_t TMR6RST         : 1;
+            __IOM uint32_t TMR7RST         : 1;
             __IM  uint32_t RESERVED1       : 5;
-            __IOM uint32_t WWDT            : 1;
+            __IOM uint32_t WWDTRST         : 1;
             __IM  uint32_t RESERVED2       : 2;
-            __IOM uint32_t SPI2            : 1;
-            __IOM uint32_t SPI3            : 1;
+            __IOM uint32_t SPI2RST         : 1;
+            __IOM uint32_t SPI3RST         : 1;
             __IM  uint32_t RESERVED3       : 1;
-            __IOM uint32_t USART2          : 1;
-            __IOM uint32_t USART3          : 1;
-            __IOM uint32_t UART4           : 1;
-            __IOM uint32_t UART5           : 1;
-            __IOM uint32_t I2C1            : 1;
-            __IOM uint32_t I2C2            : 1;
-            __IOM uint32_t USBD            : 1;
+            __IOM uint32_t USART2RST       : 1;
+            __IOM uint32_t USART3RST       : 1;
+            __IOM uint32_t UART4RST        : 1;
+            __IOM uint32_t UART5RST        : 1;
+            __IOM uint32_t I2C1RST         : 1;
+            __IOM uint32_t I2C2RST         : 1;
+            __IOM uint32_t USBDRST         : 1;
             __IM  uint32_t RESERVED4       : 1;
-            __IOM uint32_t CAN1            : 1;
-            __IM  uint32_t CAN2            : 1;
-            __IOM uint32_t BAKP            : 1;
-            __IOM uint32_t PMU             : 1;
-            __IOM uint32_t DAC             : 1;
+            __IOM uint32_t CAN1RST         : 1;
+            __IOM uint32_t CAN2RST         : 1;
+            __IOM uint32_t BAKPRST         : 1;
+            __IOM uint32_t PMURST          : 1;
+            __IOM uint32_t DACRST          : 1;
             __IM  uint32_t RESERVED5       : 2;
         } APB1RST_B;
     } ;
 
-    /** AHB clock enable register */
+    /* AHB clock enable register */
     union
     {
         __IOM uint32_t AHBCLKEN;
 
         struct
         {
-            __IOM uint32_t DMA1            : 1;
-            __IOM uint32_t DMA2            : 1;
-            __IOM uint32_t SRAM            : 1;
-            __IOM uint32_t FPU             : 1;
-            __IOM uint32_t FMC             : 1;
-            __IOM uint32_t QSPI            : 1;
-            __IOM uint32_t CRC             : 1;
+            __IOM uint32_t DMA1EN          : 1;
+            __IOM uint32_t DMA2EN          : 1;
+            __IOM uint32_t SRAMEN          : 1;
+            __IOM uint32_t FPUEN           : 1;
+            __IOM uint32_t FMCEN           : 1;
+            __IOM uint32_t QSPIEN          : 1;
+            __IOM uint32_t CRCEN           : 1;
             __IM  uint32_t RESERVED1       : 1;
-            __IOM uint32_t EMMC            : 1;
+            __IOM uint32_t EMMCEN          : 1;
             __IM  uint32_t RESERVED2       : 1;
-            __IOM uint32_t SDIO            : 1;
-            __IM  uint32_t RESERVED3       : 21;
+            __IOM uint32_t SDIOEN          : 1;
+            __IM  uint32_t RESERVED3       : 1;
+            __IOM uint32_t OTGFSEN         : 1;
+            __IM  uint32_t RESERVED4       : 1;
+            __IOM uint32_t MACEN           : 1;
+            __IOM uint32_t MACTXEN         : 1;
+            __IOM uint32_t MACRXEN         : 1;
+            __IM  uint32_t RESERVED5       : 15;
         } AHBCLKEN_B;
     } ;
 
-    /** APB2 clock enable register */
+    /* APB2 clock enable register */
     union
     {
         __IOM uint32_t APB2CLKEN;
 
         struct
         {
-            __IOM uint32_t AFIO            : 1;
+            __IOM uint32_t AFIOEN          : 1;
             __IM  uint32_t RESERVED1       : 1;
-            __IOM uint32_t PA              : 1;
-            __IOM uint32_t PB              : 1;
-            __IOM uint32_t PC              : 1;
-            __IOM uint32_t PD              : 1;
-            __IOM uint32_t PE              : 1;
-            __IOM uint32_t PF              : 1;
-            __IOM uint32_t PG              : 1;
-            __IOM uint32_t ADC1            : 1;
-            __IOM uint32_t ADC2            : 1;
-            __IOM uint32_t TMR1            : 1;
-            __IOM uint32_t SPI1            : 1;
-            __IOM uint32_t TMR8            : 1;
-            __IOM uint32_t USART1          : 1;
-            __IOM uint32_t ADC3            : 1;
+            __IOM uint32_t PAEN            : 1;
+            __IOM uint32_t PBEN            : 1;
+            __IOM uint32_t PCEN            : 1;
+            __IOM uint32_t PDEN            : 1;
+            __IOM uint32_t PEEN            : 1;
+            __IOM uint32_t PFEN            : 1;
+            __IOM uint32_t PGEN            : 1;
+            __IOM uint32_t ADC1EN          : 1;
+            __IOM uint32_t ADC2EN          : 1;
+            __IOM uint32_t TMR1EN          : 1;
+            __IOM uint32_t SPI1EN          : 1;
+            __IOM uint32_t TMR8EN          : 1;
+            __IOM uint32_t USART1EN        : 1;
+            __IOM uint32_t ADC3EN          : 1;
             __IM  uint32_t RESERVED2       : 16;
         } APB2CLKEN_B;
     };
 
-    /** APB1 clock enable register */
+    /* APB1 clock enable register */
     union
     {
         __IOM uint32_t APB1CLKEN;
 
         struct
         {
-            __IOM uint32_t TMR2            : 1;
-            __IOM uint32_t TMR3            : 1;
-            __IOM uint32_t TMR4            : 1;
-            __IOM uint32_t TMR5            : 1;
-            __IOM uint32_t TMR6            : 1;
-            __IOM uint32_t TMR7            : 1;
+            __IOM uint32_t TMR2EN          : 1;
+            __IOM uint32_t TMR3EN          : 1;
+            __IOM uint32_t TMR4EN          : 1;
+            __IOM uint32_t TMR5EN          : 1;
+            __IOM uint32_t TMR6EN          : 1;
+            __IOM uint32_t TMR7EN          : 1;
             __IM  uint32_t RESERVED1       : 5;
-            __IOM uint32_t WWDT            : 1;
+            __IOM uint32_t WWDTEN          : 1;
             __IM  uint32_t RESERVED2       : 2;
-            __IOM uint32_t SPI2            : 1;
-            __IOM uint32_t SPI3            : 1;
+            __IOM uint32_t SPI2EN          : 1;
+            __IOM uint32_t SPI3EN          : 1;
             __IM  uint32_t RESERVED3       : 1;
-            __IOM uint32_t USART2          : 1;
-            __IOM uint32_t USART3          : 1;
-            __IOM uint32_t UART4           : 1;
-            __IOM uint32_t UART5           : 1;
-            __IOM uint32_t I2C1            : 1;
-            __IOM uint32_t I2C2            : 1;
-            __IOM uint32_t USBD            : 1;
+            __IOM uint32_t USART2EN        : 1;
+            __IOM uint32_t USART3EN        : 1;
+            __IOM uint32_t UART4EN         : 1;
+            __IOM uint32_t UART5EN         : 1;
+            __IOM uint32_t I2C1EN          : 1;
+            __IOM uint32_t I2C2EN          : 1;
+            __IOM uint32_t USBDEN          : 1;
             __IM  uint32_t RESERVED4       : 1;
-            __IOM uint32_t CAN1            : 1;
-            __IM  uint32_t CAN2            : 1;
-            __IOM uint32_t BAKP            : 1;
-            __IOM uint32_t PMU             : 1;
-            __IOM uint32_t DAC             : 1;
+            __IOM uint32_t CAN1EN          : 1;
+            __IOM uint32_t CAN2EN          : 1;
+            __IOM uint32_t BAKPEN          : 1;
+            __IOM uint32_t PMUEN           : 1;
+            __IOM uint32_t DACEN           : 1;
             __IM  uint32_t RESERVED5       : 2;
         } APB1CLKEN_B;
     } ;
 
-    /** Backup domain control register */
+    /* Backup domain control register */
     union
-        {
+    {
         __IOM uint32_t BDCTRL;
 
         struct
@@ -533,7 +646,7 @@ typedef struct
         } BDCTRL_B;
     } ;
 
-    /** Control/status register */
+    /* Control/status register */
     union
     {
         __IOM uint32_t CSTS;
@@ -553,6 +666,39 @@ typedef struct
             __IOM uint32_t LPWRRSTFLG      : 1;
         } CSTS_B;
     } ;
+
+    /* AHB peripheral reset register */
+    union
+    {
+        __IOM uint32_t AHBRST;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1       : 12;
+            __IOM uint32_t OTGFSRST        : 1;
+            __IM  uint32_t RESERVED2       : 1;
+            __IOM uint32_t MACRST          : 1;
+            __IM  uint32_t RESERVED3       : 17;
+        } AHBRST_B;
+    } ;
+
+    /* Clock configuration register2 */
+    union
+    {
+        __IOM uint32_t CFG2;
+
+        struct
+        {
+            __IOM uint32_t PLLPSC1         : 4;
+            __IOM uint32_t PLLPSC2         : 4;
+            __IOM uint32_t PLL2MUL         : 4;
+            __IOM uint32_t PLL3MUL         : 4;
+            __IOM uint32_t PLLPSC1SRC      : 1;
+            __IOM uint32_t I2S2SRCSEL      : 1;
+            __IOM uint32_t I2S3SRCSEL      : 1;
+            __IM  uint32_t RESERVED1       : 13;
+        } CFG2_B;
+    } ;
 } RCM_T;
 
 /**
@@ -560,7 +706,7 @@ typedef struct
  */
 typedef struct
 {
-    /** Port configure register low */
+    /* Port configure register low */
     union
     {
         __IOM uint32_t CFGLOW;
@@ -586,7 +732,7 @@ typedef struct
         } CFGLOW_B;
     } ;
 
-    /** Port configure register high */
+    /* Port configure register high */
     union
     {
         __IOM uint32_t CFGHIG;
@@ -612,7 +758,7 @@ typedef struct
         } CFGHIG_B;
     } ;
 
-    /** Port data in register */
+    /* Port data in register */
     union
     {
         __IM  uint32_t IDATA;
@@ -639,7 +785,7 @@ typedef struct
         } IDATA_B;
     } ;
 
-    /** Port data output register */
+    /* Port data output register */
     union
     {
         __IOM uint32_t ODATA;
@@ -666,7 +812,7 @@ typedef struct
         } ODATA_B;
     } ;
 
-    /** Port bit set/clear register */
+    /* Port bit set/clear register */
     union
     {
         __OM  uint32_t BSC;
@@ -708,7 +854,7 @@ typedef struct
         } BSC_B;
     } ;
 
-    /** Port bit clear register */
+    /* Port bit clear register */
     union
     {
         __OM  uint32_t BC;
@@ -735,7 +881,7 @@ typedef struct
         } BC_B;
     } ;
 
-    /** Port configuration lock register */
+    /* Port configuration lock register */
     union
     {
         __IOM uint32_t LOCK;
@@ -769,7 +915,7 @@ typedef struct
  */
 typedef struct
 {
-    /** Event control register */
+    /* Event control register */
     union
     {
         __IOM uint32_t EVCTRL;
@@ -783,38 +929,51 @@ typedef struct
         } EVCTRL_B;
     } ;
 
-    /** Alternate function IO remap and Serial wire JTAG configuration register */
+    /* Alternate function IO remap and Serial wire JTAG configuration register */
     union
     {
         __IOM uint32_t REMAP1;
 
         struct
         {
-            __IOM uint32_t SPI1RMP         : 1;
-            __IOM uint32_t I2C1RMP         : 1;
-            __IOM uint32_t USART1RMP       : 1;
-            __IOM uint32_t USART2RMP       : 1;
-            __IOM uint32_t USART3RMP       : 2;
-            __IOM uint32_t TMR1RMP         : 2;
-            __IOM uint32_t TMR2RMP         : 2;
-            __IOM uint32_t TMR3RMP         : 2;
-            __IOM uint32_t TMR4RMP         : 1;
-            __IOM uint32_t CAN1RMP         : 2;
-            __IOM uint32_t PD01RMP         : 1;
-            __IOM uint32_t TMR5CH4IRMP     : 1;
+            __IOM uint32_t SPI1RMP           : 1;
+            __IOM uint32_t I2C1RMP           : 1;
+            __IOM uint32_t USART1RMP         : 1;
+            __IOM uint32_t USART2RMP         : 1;
+            __IOM uint32_t USART3RMP         : 2;
+            __IOM uint32_t TMR1RMP           : 2;
+            __IOM uint32_t TMR2RMP           : 2;
+            __IOM uint32_t TMR3RMP           : 2;
+            __IOM uint32_t TMR4RMP           : 1;
+            __IOM uint32_t CAN1RMP           : 2;
+            __IOM uint32_t PD01RMP           : 1;
+            __IOM uint32_t TMR5CH4IRMP       : 1;
+#if defined(APM32F10X_CL)
+            __IM  uint32_t RESERVED1         : 4;
+            __IOM uint32_t MACRMP            : 1;
+            __IOM uint32_t CAN2RMP           : 1;
+            __IOM uint32_t MACEISEL          : 1;
+            __IOM uint32_t SWJCFG            : 3;
+            __IM  uint32_t RESERVED2         : 1;
+            __IOM uint32_t SPI3RMP           : 1;
+            __IOM uint32_t TMR2ITR1RMP       : 1;
+            __IOM uint32_t PTPPPSRMP         : 1;
+            __IM  uint32_t RESERVED3         : 1;
+#else
             __IOM uint32_t ADC1_ETRGINJC_RMP : 1;
             __IOM uint32_t ADC1_ETRGREGC_RMP : 1;
             __IOM uint32_t ADC2_ETRGINJC_RMP : 1;
             __IOM uint32_t ADC2_ETRGREGC_RMP : 1;
-            __IM  uint32_t RESERVED1       : 1;
-            __IOM uint32_t CAN2RMP         : 1;
-            __IM  uint32_t RESERVED2       : 1;
-            __OM  uint32_t SWJCFG          : 3;
-            __IM  uint32_t RESERVED3       : 5;
+            __IM  uint32_t RESERVED1         : 1;
+            __IOM uint32_t CAN2RMP           : 1;
+            __IM  uint32_t RESERVED2         : 1;
+            __OM  uint32_t SWJCFG            : 3;
+            __IM  uint32_t RESERVED3         : 5;
+#endif
         } REMAP1_B;
     } ;
 
-    /** External interrupt select register1 */
+    /* External interrupt select register1 */
     union
     {
         __IOM uint32_t EINTSEL1;
@@ -829,7 +988,7 @@ typedef struct
         } EINTSEL1_B;
     } ;
 
-    /** External interrupt select register2 */
+    /* External interrupt select register2 */
     union
     {
         __IOM uint32_t EINTSEL2;
@@ -844,7 +1003,7 @@ typedef struct
         } EINTSEL2_B;
     } ;
 
-    /** External interrupt select register3 */
+    /* External interrupt select register3 */
     union
     {
         __IOM uint32_t EINTSEL3;
@@ -859,7 +1018,7 @@ typedef struct
         } EINTSEL3_B;
     } ;
 
-    /** External interrupt select register4 */
+    /* External interrupt select register4 */
     union
     {
         __IOM uint32_t EINTSEL4;
@@ -875,7 +1034,7 @@ typedef struct
     } ;
     __IM  uint32_t  RESERVED;
 
-    /** Alternate function IO remap register2 */
+    /* Alternate function IO remap register2 */
     union
     {
         __IOM uint32_t REMAP2;
@@ -894,7 +1053,7 @@ typedef struct
  */
 typedef struct
 {
-    /** Status register */
+    /* Status register */
     union
     {
         __IOM uint32_t STS;
@@ -915,7 +1074,7 @@ typedef struct
         } STS_B;
     } ;
 
-    /** TX Buffer Data Register */
+    /* TX Buffer Data Register */
     union
     {
         __IOM uint32_t DATA;
@@ -927,7 +1086,7 @@ typedef struct
         } DATA_B;
     } ;
 
-    /** Baud rate register */
+    /* Baud rate register */
     union
     {
         __IOM uint32_t BR;
@@ -940,7 +1099,7 @@ typedef struct
         } BR_B;
     } ;
 
-    /** Control register 1 */
+    /* Control register 1 */
     union
     {
         __IOM uint32_t CTRL1;
@@ -965,7 +1124,7 @@ typedef struct
         } CTRL1_B;
     } ;
 
-    /** Control register 2 */
+    /* Control register 2 */
     union
     {
         __IOM uint32_t CTRL2;
@@ -987,7 +1146,7 @@ typedef struct
         } CTRL2_B;
     } ;
 
-    /** Control register 3 */
+    /* Control register 3 */
     union
     {
         __IOM uint32_t CTRL3;
@@ -1009,7 +1168,7 @@ typedef struct
         } CTRL3_B;
     } ;
 
-    /** Guard TMRe and divider number register */
+    /* Guard TMRe and divider number register */
     union
     {
         __IOM uint32_t GTPSC;
@@ -1028,7 +1187,7 @@ typedef struct
  */
 typedef struct
 {
-    /** FMC access control register */
+    /* FMC access control register */
     union
     {
         __IOM uint32_t CTRL1;
@@ -1043,7 +1202,7 @@ typedef struct
         } CTRL1_B;
     } ;
 
-    /** key register */
+    /* key register */
     union
     {
         __OM  uint32_t KEY;
@@ -1054,7 +1213,7 @@ typedef struct
         } KEY_B;
     } ;
 
-    /** option byte key register */
+    /* option byte key register */
     union
     {
         __OM  uint32_t OBKEY;
@@ -1065,7 +1224,7 @@ typedef struct
         } OBKEY_B;
     };
 
-    /** status register */
+    /* status register */
     union
     {
         __IOM uint32_t STS;
@@ -1082,7 +1241,7 @@ typedef struct
         } STS_B;
     };
 
-    /** status register */
+    /* status register */
     union
     {
         __IOM uint32_t CTRL2;
@@ -1106,7 +1265,7 @@ typedef struct
         } CTRL2_B;
     } ;
 
-    /** address register */
+    /* address register */
     union
     {
         __OM  uint32_t ADDR;
@@ -1119,7 +1278,7 @@ typedef struct
 
     __IM  uint32_t  RESERVED;
 
-    /** Option byte register */
+    /* Option byte register */
     union
     {
         __IOM  uint32_t OBCS;
@@ -1138,7 +1297,7 @@ typedef struct
         } OBCS_B;
     };
 
-    /** Write protection register */
+    /* Write protection register */
     union
     {
         __IM  uint32_t WRTPROT;
@@ -1155,7 +1314,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief  DATA register */
+    /* @brief  DATA register */
     union
     {
         __IOM uint32_t DATA;
@@ -1166,7 +1325,7 @@ typedef struct
         } DATA_B;
     } ;
 
-    /** @brief independent DATA register */
+    /* @brief independent DATA register */
     union
     {
         __IOM  uint32_t INDATA;
@@ -1178,7 +1337,7 @@ typedef struct
         } INDATA_B;
     };
 
-    /** @brief Countrol register */
+    /* @brief Countrol register */
     union
     {
         __IOM uint32_t CTRL;
@@ -1196,7 +1355,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief Control register */
+    /* @brief Control register */
     union
     {
         __IOM uint32_t CTRL;
@@ -1210,7 +1369,7 @@ typedef struct
         } CTRL_B;
     };
 
-    /** @brief Control and State register */
+    /* @brief Control and State register */
     union
     {
         __IOM uint32_t CSTS;
@@ -1227,7 +1386,7 @@ typedef struct
         } CSTS_B;
     };
 
-    /** @brief RTC predivision loading register High Bit */
+    /* @brief RTC predivision loading register High Bit */
     union
     {
         __OM uint32_t PSCRLDH;
@@ -1239,7 +1398,7 @@ typedef struct
         } PSCRLDH_B;
     };
 
-    /** @brief  RTC predivision loading register Low Bit */
+    /* @brief  RTC predivision loading register Low Bit */
     union
     {
         __OM uint32_t PSCRLDL;
@@ -1251,7 +1410,7 @@ typedef struct
         } PSCRLDL_B;
     };
 
-    /** @brief RTC predivider remainder register High Bit */
+    /* @brief RTC predivider remainder register High Bit */
     union
     {
         __IM uint32_t PSCH;
@@ -1263,7 +1422,7 @@ typedef struct
         } PSCH_B;
     };
 
-    /** @brief RTC predivider remainder register Low Bit */
+    /* @brief RTC predivider remainder register Low Bit */
     union
     {
         __IM uint32_t PSCL;
@@ -1275,7 +1434,7 @@ typedef struct
         } PSCL_B;
     };
 
-    /** @brief RTC count register High Bit */
+    /* @brief RTC count register High Bit */
     union
     {
         __IOM uint32_t CNTH;
@@ -1287,7 +1446,7 @@ typedef struct
         } CNTH_B;
     };
 
-    /** @brief RTC count register Low Bit */
+    /* @brief RTC count register Low Bit */
     union
     {
         __IOM uint32_t CNTL;
@@ -1299,7 +1458,7 @@ typedef struct
         } CNTL_B;
     };
 
-    /** @brief RTC alarm clock register High Bit */
+    /* @brief RTC alarm clock register High Bit */
     union
     {
         __OM uint32_t ALRH;
@@ -1311,7 +1470,7 @@ typedef struct
         } ALRH_B;
     };
 
-    /** @brief RTC alarm clock register Low Bit */
+    /* @brief RTC alarm clock register Low Bit */
     union
     {
         __OM uint32_t ALRL;
@@ -1329,7 +1488,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief Control register */
+    /* @brief Control register */
     union
     {
         __IOM uint32_t CTRL;
@@ -1347,7 +1506,7 @@ typedef struct
         } CTRL_B;
     };
 
-    /** @brief PMU Status register */
+    /* @brief PMU Status register */
     union
     {
         __IOM uint32_t CSTS;
@@ -1371,7 +1530,7 @@ typedef struct
 {
     __IM  uint32_t  RESERVED;
 
-    /** @brief BAKPR DATA1 register */
+    /* @brief BAKPR DATA1 register */
     union
     {
         __IOM uint32_t DATA1;
@@ -1383,7 +1542,7 @@ typedef struct
         } DATA1_B;
     };
 
-    /** @brief BAKPR DATA2 register */
+    /* @brief BAKPR DATA2 register */
     union
     {
         __IOM uint32_t DATA2;
@@ -1395,7 +1554,7 @@ typedef struct
         } DATA2_B;
     };
 
-    /** @brief BAKPR DATA3 register */
+    /* @brief BAKPR DATA3 register */
     union
     {
         __IOM uint32_t DATA3;
@@ -1407,7 +1566,7 @@ typedef struct
         } DATA3_B;
     };
 
-    /** @brief BAKPR DATA4 register */
+    /* @brief BAKPR DATA4 register */
     union
     {
         __IOM uint32_t DATA4;
@@ -1419,7 +1578,7 @@ typedef struct
         } DATA4_B;
     };
 
-    /** @brief BAKPR DATA5 register */
+    /* @brief BAKPR DATA5 register */
     union
     {
         __IOM uint32_t DATA5;
@@ -1431,7 +1590,7 @@ typedef struct
         } DATA5_B;
     };
 
-    /** @brief BAKPR DATA6 register */
+    /* @brief BAKPR DATA6 register */
     union
     {
         __IOM uint32_t DATA6;
@@ -1443,7 +1602,7 @@ typedef struct
         } DATA6_B;
     };
 
-    /** @brief BAKPR DATA7 register */
+    /* @brief BAKPR DATA7 register */
     union
     {
         __IOM uint32_t DATA7;
@@ -1455,7 +1614,7 @@ typedef struct
         } DATA7_B;
     };
 
-    /** @brief BAKPR DATA8 register */
+    /* @brief BAKPR DATA8 register */
     union
     {
         __IOM uint32_t DATA8;
@@ -1467,7 +1626,7 @@ typedef struct
         } DATA8_B;
     };
 
-    /** @brief BAKPR DATA9 register */
+    /* @brief BAKPR DATA9 register */
     union
     {
         __IOM uint32_t DATA9;
@@ -1479,7 +1638,7 @@ typedef struct
         } DATA9_B;
     };
 
-    /** @brief BAKPR DATA10 register */
+    /* @brief BAKPR DATA10 register */
     union
     {
         __IOM uint32_t DATA10;
@@ -1491,7 +1650,7 @@ typedef struct
         } DATA10_B;
     };
 
-    /** @brief BAKPR Clock Calibration register */
+    /* @brief BAKPR Clock Calibration register */
     union
     {
         __IOM uint32_t CLKCAL;
@@ -1506,7 +1665,7 @@ typedef struct
         } CLKCAL_B;
     } ;
 
-    /** @brief BAKPR Control register */
+    /* @brief BAKPR Control register */
     union
     {
         __IOM uint32_t CTRL;
@@ -1519,7 +1678,7 @@ typedef struct
         } CTRL_B;
     };
 
-    /** @brief BAKPR Control register */
+    /* @brief BAKPR Control register */
     union
     {
         __IOM uint32_t CSTS;
@@ -1538,7 +1697,7 @@ typedef struct
 
     __IM  uint32_t  RESERVED1[2];
 
-    /** @briefBAKPR DATA11 register */
+    /* @briefBAKPR DATA11 register */
     union
     {
         __IOM uint32_t DATA11;
@@ -1550,7 +1709,7 @@ typedef struct
         } DATA11_B;
     };
 
-    /** @briefBAKPR DATA12 register */
+    /* @briefBAKPR DATA12 register */
     union
     {
         __IOM uint32_t DATA12;
@@ -1562,7 +1721,7 @@ typedef struct
         } DATA12_B;
     };
 
-    /** @briefBAKPR DATA13 register */
+    /* @briefBAKPR DATA13 register */
     union
     {
         __IOM uint32_t DATA13;
@@ -1574,7 +1733,7 @@ typedef struct
         } DATA13_B;
     };
 
-    /** @briefBAKPR DATA14 register */
+    /* @briefBAKPR DATA14 register */
     union
     {
         __IOM uint32_t DATA14;
@@ -1586,7 +1745,7 @@ typedef struct
         } DATA14_B;
     };
 
-    /** @briefBAKPR DATA15 register */
+    /* @briefBAKPR DATA15 register */
     union
     {
         __IOM uint32_t DATA15;
@@ -1598,7 +1757,7 @@ typedef struct
         } DATA15_B;
     };
 
-    /** @briefBAKPR DATA16 register */
+    /* @briefBAKPR DATA16 register */
     union
     {
         __IOM uint32_t DATA16;
@@ -1610,7 +1769,7 @@ typedef struct
         } DATA16_B;
     };
 
-    /** @briefBAKPR DATA17 register */
+    /* @briefBAKPR DATA17 register */
     union
     {
         __IOM uint32_t DATA17;
@@ -1622,7 +1781,7 @@ typedef struct
         } DATA17_B;
     };
 
-    /** @briefBAKPR DATA18 register */
+    /* @briefBAKPR DATA18 register */
     union
     {
         __IOM uint32_t DATA18;
@@ -1634,7 +1793,7 @@ typedef struct
         } DATA18_B;
     };
 
-    /** @briefBAKPR DATA19 register */
+    /* @briefBAKPR DATA19 register */
     union
     {
         __IOM uint32_t DATA19;
@@ -1646,7 +1805,7 @@ typedef struct
         } DATA19_B;
     };
 
-    /** @briefBAKPR DATA20 register */
+    /* @briefBAKPR DATA20 register */
     union
     {
         __IOM uint32_t DATA20;
@@ -1658,7 +1817,7 @@ typedef struct
         } DATA20_B;
     };
 
-    /** @briefBAKPR DATA21 register */
+    /* @briefBAKPR DATA21 register */
     union
     {
         __IOM uint32_t DATA21;
@@ -1670,7 +1829,7 @@ typedef struct
         } DATA21_B;
     };
 
-    /** @briefBAKPR DATA22 register */
+    /* @briefBAKPR DATA22 register */
     union
     {
         __IOM uint32_t DATA22;
@@ -1682,7 +1841,7 @@ typedef struct
         } DATA22_B;
     };
 
-    /** @briefBAKPR DATA23 register */
+    /* @briefBAKPR DATA23 register */
     union
     {
         __IOM uint32_t DATA23;
@@ -1694,7 +1853,7 @@ typedef struct
         } DATA23_B;
     };
 
-    /** @briefBAKPR DATA24 register */
+    /* @briefBAKPR DATA24 register */
     union
     {
         __IOM uint32_t DATA24;
@@ -1706,7 +1865,7 @@ typedef struct
         } DATA24_B;
     };
 
-    /** @briefBAKPR DATA25 register */
+    /* @briefBAKPR DATA25 register */
     union
     {
         __IOM uint32_t DATA25;
@@ -1718,7 +1877,7 @@ typedef struct
         } DATA25_B;
     };
 
-    /** @briefBAKPR DATA26 register */
+    /* @briefBAKPR DATA26 register */
     union
     {
         __IOM uint32_t DATA26;
@@ -1730,7 +1889,7 @@ typedef struct
         } DATA26_B;
     };
 
-    /** @briefBAKPR DATA27 register */
+    /* @briefBAKPR DATA27 register */
     union
     {
         __IOM uint32_t DATA27;
@@ -1742,7 +1901,7 @@ typedef struct
         } DATA27_B;
     };
 
-    /** @briefBAKPR DATA28 register */
+    /* @briefBAKPR DATA28 register */
     union
     {
         __IOM uint32_t DATA28;
@@ -1754,7 +1913,7 @@ typedef struct
         } DATA28_B;
     };
 
-    /** @briefBAKPR DATA29 register */
+    /* @briefBAKPR DATA29 register */
     union
     {
         __IOM uint32_t DATA29;
@@ -1766,7 +1925,7 @@ typedef struct
         } DATA29_B;
     };
 
-    /** @briefBAKPR DATA30 register */
+    /* @briefBAKPR DATA30 register */
     union
     {
         __IOM uint32_t DATA30;
@@ -1778,7 +1937,7 @@ typedef struct
         } DATA30_B;
     };
 
-    /** @briefBAKPR DATA31 register */
+    /* @briefBAKPR DATA31 register */
     union
     {
         __IOM uint32_t DATA31;
@@ -1790,7 +1949,7 @@ typedef struct
         } DATA31_B;
     };
 
-    /** @briefBAKPR DATA32 register */
+    /* @briefBAKPR DATA32 register */
     union
     {
         __IOM uint32_t DATA32;
@@ -1802,7 +1961,7 @@ typedef struct
         } DATA32_B;
     };
 
-    /** @briefBAKPR DATA33 register */
+    /* @briefBAKPR DATA33 register */
     union
     {
         __IOM uint32_t DATA33;
@@ -1814,7 +1973,7 @@ typedef struct
         } DATA33_B;
     };
 
-    /** @briefBAKPR DATA34 register */
+    /* @briefBAKPR DATA34 register */
     union
     {
         __IOM uint32_t DATA34;
@@ -1826,7 +1985,7 @@ typedef struct
         } DATA34_B;
     };
 
-    /** @briefBAKPR DATA35 register */
+    /* @briefBAKPR DATA35 register */
     union
     {
         __IOM uint32_t DATA35;
@@ -1838,7 +1997,7 @@ typedef struct
         } DATA35_B;
     };
 
-    /** @briefBAKPR DATA36 register */
+    /* @briefBAKPR DATA36 register */
     union
     {
         __IOM uint32_t DATA36;
@@ -1850,7 +2009,7 @@ typedef struct
         } DATA36_B;
     };
 
-    /** @briefBAKPR DATA37 register */
+    /* @briefBAKPR DATA37 register */
     union
     {
         __IOM uint32_t DATA37;
@@ -1862,7 +2021,7 @@ typedef struct
         } DATA37_B;
     };
 
-    /** @briefBAKPR DATA38 register */
+    /* @briefBAKPR DATA38 register */
     union
     {
         __IOM uint32_t DATA38;
@@ -1874,7 +2033,7 @@ typedef struct
         } DATA38_B;
     };
 
-    /** @briefBAKPR DATA39 register */
+    /* @briefBAKPR DATA39 register */
     union
     {
         __IOM uint32_t DATA39;
@@ -1886,7 +2045,7 @@ typedef struct
         } DATA39_B;
     };
 
-    /** @briefBAKPR DATA40 register */
+    /* @briefBAKPR DATA40 register */
     union
     {
         __IOM uint32_t DATA40;
@@ -1898,7 +2057,7 @@ typedef struct
         } DATA40_B;
     };
 
-    /** @briefBAKPR DATA41 register */
+    /* @briefBAKPR DATA41 register */
     union
     {
         __IOM uint32_t DATA41;
@@ -1910,7 +2069,7 @@ typedef struct
         } DATA41_B;
     };
 
-    /** @briefBAKPR DATA42 register */
+    /* @briefBAKPR DATA42 register */
     union
     {
         __IOM uint32_t DATA42;
@@ -1928,7 +2087,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief Countrol register 1 */
+    /* @brief Countrol register 1 */
     union
     {
         __IOM uint32_t CTRL1;
@@ -1947,7 +2106,7 @@ typedef struct
         } CTRL1_B;
     };
 
-    /** @brief Countrol register 2 */
+    /* @brief Countrol register 2 */
     union
     {
         __IOM uint32_t CTRL2;
@@ -1971,7 +2130,7 @@ typedef struct
         } CTRL2_B;
     };
 
-    /** @brief Control register from mode */
+    /* @brief Control register from mode */
     union
     {
         __IOM uint32_t SMCTRL;
@@ -1990,7 +2149,7 @@ typedef struct
         } SMCTRL_B;
     };
 
-    /** @brief DMA and Interrupt enable register */
+    /* @brief DMA and Interrupt enable register */
     union
     {
         __IOM  uint32_t DIEN;
@@ -2016,7 +2175,7 @@ typedef struct
         } DIEN_B;
     };
 
-    /** @brief Status register */
+    /* @brief Status register */
     union
     {
         __IOM  uint32_t STS;
@@ -2040,7 +2199,7 @@ typedef struct
         } STS_B;
     };
 
-    /** @brief Software controls event generation registers */
+    /* @brief Software controls event generation registers */
     union
     {
         __OM  uint32_t CEG;
@@ -2059,12 +2218,12 @@ typedef struct
         } CEG_B;
     };
 
-    /** @brief Capture the compare mode register 1 */
+    /* @brief Capture the compare mode register 1 */
     union
     {
         __IOM uint32_t CCM1;
 
-        /** @brief Compare mode */
+        /* @brief Compare mode */
         struct
         {
             __IOM uint32_t CC1SEL          : 2;
@@ -2080,7 +2239,7 @@ typedef struct
             __IM  uint32_t RESERVED        : 16;
         } CCM1_COMPARE_B;
 
-        /** @brief Capture mode */
+        /* @brief Capture mode */
         struct
         {
             __IOM uint32_t CC1SEL          : 2;
@@ -2093,12 +2252,12 @@ typedef struct
         } CCM1_CAPTURE_B;
     };
 
-    /** @brief Capture the compare mode register 2 */
+    /* @brief Capture the compare mode register 2 */
     union
     {
         __IOM uint32_t CCM2;
 
-        /** @brief Compare mode */
+        /* @brief Compare mode */
         struct
         {
             __IOM uint32_t CC3SEL          : 2;
@@ -2114,7 +2273,7 @@ typedef struct
             __IM  uint32_t RESERVED        : 16;
         } CCM2_COMPARE_B;
 
-        /** @brief Capture mode */
+        /* @brief Capture mode */
         struct
         {
             __IOM uint32_t CC3SEL          : 2;
@@ -2127,7 +2286,7 @@ typedef struct
         } CCM2_CAPTURE_B;
     };
 
-    /** @brief Channel control register */
+    /* @brief Channel control register */
     union
     {
         __IOM uint32_t CCEN;
@@ -2152,7 +2311,7 @@ typedef struct
         } CCEN_B;
     };
 
-    /** @brief Counting register */
+    /* @brief Counting register */
     union
     {
         __IOM uint32_t CNT;
@@ -2164,7 +2323,7 @@ typedef struct
         } CNT_B;
     };
 
-    /** @brief Division register */
+    /* @brief Division register */
     union
     {
         __IOM uint32_t PSC;
@@ -2176,7 +2335,7 @@ typedef struct
         } PSC_B;
     };
 
-    /** @brief Automatic reload register */
+    /* @brief Automatic reload register */
     union
     {
         __IOM uint32_t AUTORLD;
@@ -2188,7 +2347,7 @@ typedef struct
         } AUTORLD_B;
     };
 
-    /** @brief Repeat count register */
+    /* @brief Repeat count register */
     union
     {
         __IOM uint32_t REPCNT;
@@ -2200,7 +2359,7 @@ typedef struct
         } REPCNT_B;
     };
 
-    /** @brief Capture comparison register channel 1 */
+    /* @brief Capture comparison register channel 1 */
     union
     {
         __IOM uint32_t CC1;
@@ -2212,7 +2371,7 @@ typedef struct
         } CC1_B;
     };
 
-    /** @brief Capture comparison register channel 2 */
+    /* @brief Capture comparison register channel 2 */
     union
     {
         __IOM uint32_t CC2;
@@ -2224,7 +2383,7 @@ typedef struct
         } CC2_B;
     };
 
-    /** @brief Capture comparison register channel 3 */
+    /* @brief Capture comparison register channel 3 */
     union
     {
         __IOM uint32_t CC3;
@@ -2236,7 +2395,7 @@ typedef struct
         } CC3_B;
     };
 
-    /** @brief Capture comparison register channel 4 */
+    /* @brief Capture comparison register channel 4 */
     union
     {
         __IOM uint32_t CC4;
@@ -2248,7 +2407,7 @@ typedef struct
         } CC4_B;
     };
 
-    /** @brief Brake and dead zone registers */
+    /* @brief Brake and dead zone registers */
     union
     {
         __IOM uint32_t BDT;
@@ -2267,7 +2426,7 @@ typedef struct
         } BDT_B;
     };
 
-    /** @brief DMA control register */
+    /* @brief DMA control register */
     union
     {
         __IOM uint32_t DCTRL;
@@ -2281,7 +2440,7 @@ typedef struct
         } DCTRL_B;
     };
 
-    /** @brief Consecutive DMA addresses */
+    /* @brief Consecutive DMA addresses */
     union
     {
         __IOM uint32_t DMADDR;
@@ -2298,7 +2457,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief Interrupt status register */
+    /* @brief Interrupt status register */
     union
     {
         __IM uint32_t INTSTS;
@@ -2337,7 +2496,7 @@ typedef struct
         } INTSTS_B;
     };
 
-    /** @brief Interrupt reset register */
+    /* @brief Interrupt reset register */
     union
     {
         __OM uint32_t INTFCLR;
@@ -2382,7 +2541,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief DMA Channel setup register */
+    /* @brief DMA Channel setup register */
     union
     {
 
@@ -2406,7 +2565,7 @@ typedef struct
         } CHCFG_B;
     };
 
-    /** @brief DMA Channel transfer number register*/
+    /* @brief DMA Channel transfer number register*/
     union
     {
         __IOM uint32_t CHNDATA;
@@ -2418,7 +2577,7 @@ typedef struct
         } CHNDATA_B;
     };
 
-    /** @brief DMA Channel peripheral address register */
+    /* @brief DMA Channel peripheral address register */
     union
     {
         __IOM uint32_t CHPADDR;
@@ -2429,7 +2588,7 @@ typedef struct
         } CHPADDR_B;
     };
 
-    /** @brief DMA Channel memory address register */
+    /* @brief DMA Channel memory address register */
     union
     {
         __IOM uint32_t CHMADDR;
@@ -2446,7 +2605,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief CAN Each mailbox contains the sending mailbox identifier register */
+    /* @brief CAN Each mailbox contains the sending mailbox identifier register */
     union
     {
         __IOM uint32_t TXMID;
@@ -2461,7 +2620,7 @@ typedef struct
         } TXMID_B;
     };
 
-    /** @brief CAN Send the mailbox data length and timestamp register */
+    /* @brief CAN Send the mailbox data length and timestamp register */
     union
     {
         __IOM uint32_t TXDLEN;
@@ -2473,7 +2632,7 @@ typedef struct
         } TXDLEN_B;
     };
 
-    /** @brief CAN Send mailbox low byte data register */
+    /* @brief CAN Send mailbox low byte data register */
     union
     {
         __IOM uint32_t TXMDL;
@@ -2487,7 +2646,7 @@ typedef struct
         } TXMDL_B;
     };
 
-    /** @brief CAN Send mailbox High byte data register */
+    /* @brief CAN Send mailbox High byte data register */
     union
     {
         __IOM uint32_t TXMDH;
@@ -2507,7 +2666,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief CAN Each mailbox contains the receive mailbox identifier register */
+    /* @brief CAN Each mailbox contains the receive mailbox identifier register */
     union
     {
         __IM uint32_t RXMID;
@@ -2522,7 +2681,7 @@ typedef struct
         } RXMID_B;
     };
 
-    /** @brief CAN receive the mailbox data length and timestamp register */
+    /* @brief CAN receive the mailbox data length and timestamp register */
     union
     {
         __IM uint32_t RXDLEN;
@@ -2536,7 +2695,7 @@ typedef struct
         } RXDLEN_B;
     };
 
-    /** @brief CAN receive mailbox low byte data register */
+    /* @brief CAN receive mailbox low byte data register */
     union
     {
         __IM uint32_t RXMDL;
@@ -2550,7 +2709,7 @@ typedef struct
         } RXMDL_B;
     };
 
-    /** @briefCAN receive mailbox High byte data register */
+    /* @briefCAN receive mailbox High byte data register */
     union
     {
         __IOM uint32_t RXMDH;
@@ -2570,7 +2729,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief CAN Filter bank register 1 */
+    /* @brief CAN Filter bank register 1 */
     union
     {
         __IOM uint32_t  FBANK1;
@@ -2612,7 +2771,7 @@ typedef struct
         } FBANK1_B;
     };
 
-    /** @brief CAN Filter bank register 2 */
+    /* @brief CAN Filter bank register 2 */
     union
     {
         __IOM uint32_t  FBANK2;
@@ -2660,7 +2819,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief CAN Master control register */
+    /* @brief CAN Master control register */
     union
     {
         __IOM uint32_t MCTRL;
@@ -2681,7 +2840,7 @@ typedef struct
         } MCTRL_B;
     };
 
-    /** @brief CAN Master States register */
+    /* @brief CAN Master States register */
     union
     {
         __IOM uint32_t MSTS;
@@ -2702,7 +2861,7 @@ typedef struct
         } MSTS_B;
     };
 
-    /** @brief CAN Send States register */
+    /* @brief CAN Send States register */
     union
     {
         __IOM uint32_t TXSTS;
@@ -2737,7 +2896,7 @@ typedef struct
         } TXSTS_B;
     };
 
-    /** @brief CAN Receive FIFO 0 register */
+    /* @brief CAN Receive FIFO 0 register */
     union
     {
         __IOM uint32_t RXF0;
@@ -2753,7 +2912,7 @@ typedef struct
         } RXF0_B;
     };
 
-    /** @brief CAN Receive FIFO 1 register */
+    /* @brief CAN Receive FIFO 1 register */
     union
     {
         __IOM uint32_t RXF1;
@@ -2769,7 +2928,7 @@ typedef struct
         } RXF1_B;
     };
 
-    /** @brief CAN Interrupts register */
+    /* @brief CAN Interrupts register */
     union
     {
         __IOM uint32_t INTEN;
@@ -2796,7 +2955,7 @@ typedef struct
         } INTEN_B;
     };
 
-    /** @brief CAN Error States register */
+    /* @brief CAN Error States register */
     union
     {
         __IOM uint32_t ERRSTS;
@@ -2814,7 +2973,7 @@ typedef struct
         } ERRSTS_B;
     };
 
-    /** @brief CAN Bit Time register */
+    /* @brief CAN Bit Time register */
     union
     {
         __IOM uint32_t BITTIM;
@@ -2840,7 +2999,7 @@ typedef struct
 
     __IM uint32_t RESERVED1[12];
 
-    /** @brief CAN Filter the master control register */
+    /* @brief CAN Filter the master control register */
     union
     {
         __IOM uint32_t FCTRL;
@@ -2854,7 +3013,7 @@ typedef struct
         } FCTRL_B;
     };
 
-    /** @brief CAN Filter register */
+    /* @brief CAN Filter register */
     union
     {
         __IOM uint32_t FMCFG;
@@ -2895,7 +3054,7 @@ typedef struct
 
     __IM uint32_t RESERVED2;
 
-    /** @brief CAN Filter bit scale register */
+    /* @brief CAN Filter bit scale register */
     union
     {
         __IOM uint32_t FSCFG;
@@ -2931,12 +3090,12 @@ typedef struct
             __IOM uint32_t FSCFG26         : 1;
             __IOM uint32_t FSCFG27         : 1;
             __IM  uint32_t RESERVED        : 4;
-        }FSCFG_B;
+        } FSCFG_B;
     };
 
     __IM uint32_t RESERVED3;
 
-    /** @brief CAN Filter FIFO associated registers */
+    /* @brief CAN Filter FIFO associated registers */
     union
     {
         __IOM uint32_t FFASS;
@@ -2977,7 +3136,7 @@ typedef struct
 
     __IM uint32_t RESERVED4;
 
-    /** @brief CAN Filter activation register */
+    /* @brief CAN Filter activation register */
     union
     {
         __IOM uint32_t FACT;
@@ -3027,7 +3186,7 @@ typedef struct
  */
 typedef struct
 {
-    /** @brief Control register 1 */
+    /* @brief Control register 1 */
     union
     {
         __IOM uint32_t CTRL1;
@@ -3054,7 +3213,7 @@ typedef struct
         } CTRL1_B;
     } ;
 
-    /** @brief Control register 2 */
+    /* @brief Control register 2 */
     union
     {
         __IOM uint32_t CTRL2;
@@ -3072,7 +3231,7 @@ typedef struct
         } CTRL2_B;
     } ;
 
-    /** @brief Slave machine address register 1 */
+    /* @brief Slave machine address register 1 */
     union
     {
         __IOM uint32_t SADDR1;
@@ -3088,7 +3247,7 @@ typedef struct
         } SADDR1_B;
     };
 
-    /** @brief Slave machine address register 2 */
+    /* @brief Slave machine address register 2 */
     union
     {
         __IOM uint32_t SADDR2;
@@ -3101,7 +3260,7 @@ typedef struct
         } SADDR2_B;
     };
 
-    /** @brief Cache data register */
+    /* @brief Cache data register */
     union
     {
         __IOM uint32_t DATA;
@@ -3113,7 +3272,7 @@ typedef struct
         } DATA_B;
     };
 
-    /** @brief Status register 1 */
+    /* @brief Status register 1 */
     union
     {
         __IOM uint32_t STS1;
@@ -3140,7 +3299,7 @@ typedef struct
         } STS1_B;
     };
 
-    /** @brief Status register 2 */
+    /* @brief Status register 2 */
     union
     {
         __IOM uint32_t STS2;
@@ -3160,7 +3319,7 @@ typedef struct
         } STS2_B;
     };
 
-    /** @brief Clock control register */
+    /* @brief Clock control register */
     union
     {
         __IOM uint32_t CLKCTRL;
@@ -3175,7 +3334,7 @@ typedef struct
         } CLKCTRL_B;
     };
 
-    /** @brief  Maximum rise time */
+    /* @brief  Maximum rise time */
     union
     {
         __IOM uint32_t RISETMAX;
@@ -3189,14 +3348,14 @@ typedef struct
 
     __IM uint32_t RESERVED[55];
 
-    /** @brief I2C Switching register */
+    /* @brief I2C Switching register */
     union
     {
-        __IOM uint32_t SWITCH;
+        __IOM uint32_t I2C_SWITCH;
 
         struct
         {
-            __IOM uint32_t SWITCH          : 1;
+            __IOM uint32_t I2C_SWITCH          : 1;
             __IM uint32_t RESERVED1        : 31;
         } SWITCH_B;
     };
@@ -3221,7 +3380,7 @@ typedef struct
 typedef struct
 {
 
-    /** Status register */
+    /* Status register */
     union
     {
         __IOM uint32_t STS;
@@ -3237,7 +3396,7 @@ typedef struct
         } STS_B;
     };
 
-    /** Control register1*/
+    /* Control register1*/
     union
     {
         __IOM uint32_t CTRL1;
@@ -3262,7 +3421,7 @@ typedef struct
         } CTRL1_B;
     };
 
-    /** Control register2*/
+    /* Control register2*/
     union
     {
         __IOM uint32_t CTRL2;
@@ -3289,7 +3448,7 @@ typedef struct
         } CTRL2_B;
     };
 
-    /** Sample time register1*/
+    /* Sample time register1*/
     union
     {
         __IOM uint32_t SMPTIM1;
@@ -3308,7 +3467,7 @@ typedef struct
         } SMPTIM1_B;
     };
 
-    /** Sample time register2*/
+    /* Sample time register2*/
     union
     {
         __IOM uint32_t SMPTIM2;
@@ -3329,7 +3488,7 @@ typedef struct
         } SMPTIM2_B;
     };
 
-    /** Injected channel Data offset register1*/
+    /* Injected channel Data offset register1*/
     union
     {
         __IOM uint32_t INJDOF1;
@@ -3341,7 +3500,7 @@ typedef struct
         } INJDOF1_B;
     };
 
-    /** Injected channel Data offset register2*/
+    /* Injected channel Data offset register2*/
     union
     {
         __IOM uint32_t INJDOF2;
@@ -3353,7 +3512,7 @@ typedef struct
         } INJDOF2_B;
     };
 
-    /** Injected channel Data offset register3*/
+    /* Injected channel Data offset register3*/
     union
     {
         __IOM uint32_t INJDOF3;
@@ -3365,7 +3524,7 @@ typedef struct
         } INJDOF3_B;
     };
 
-    /** Injected channel Data offset register4*/
+    /* Injected channel Data offset register4*/
     union
     {
         __IOM uint32_t INJDOF4;
@@ -3377,7 +3536,7 @@ typedef struct
         } INJDOF4_B;
     };
 
-    /** Analog watchdog high threshold register*/
+    /* Analog watchdog high threshold register*/
     union
     {
         __IOM uint32_t AWDHT;
@@ -3389,7 +3548,7 @@ typedef struct
         } AWDHT_B;
     };
 
-    /** Analog watchdog low threshold register*/
+    /* Analog watchdog low threshold register*/
     union
     {
         __IOM uint32_t AWDLT;
@@ -3401,7 +3560,7 @@ typedef struct
         } AWDLT_B;
     };
 
-    /** Regular channel sequence register1*/
+    /* Regular channel sequence register1*/
     union
     {
         __IOM uint32_t REGSEQ1;
@@ -3417,7 +3576,7 @@ typedef struct
         } REGSEQ1_B;
     };
 
-    /** Regular channel sequence register2*/
+    /* Regular channel sequence register2*/
     union
     {
         __IOM uint32_t REGSEQ2;
@@ -3434,7 +3593,7 @@ typedef struct
         } REGSEQ2_B;
     };
 
-    /** Regular channel sequence register3*/
+    /* Regular channel sequence register3*/
     union
     {
         __IOM uint32_t REGSEQ3;
@@ -3451,7 +3610,7 @@ typedef struct
         } REGSEQ3_B;
     };
 
-    /** Injected sequence register*/
+    /* Injected sequence register*/
     union
     {
         __IOM uint32_t INJSEQ;
@@ -3467,7 +3626,7 @@ typedef struct
         } INJSEQ_B;
     };
 
-    /** Injected Data register1*/
+    /* Injected Data register1*/
     union
     {
         __IM uint32_t INJDATA1;
@@ -3479,7 +3638,7 @@ typedef struct
         } INJDATA1_B;
     };
 
-    /** Injected Data register2*/
+    /* Injected Data register2*/
     union
     {
         __IM uint32_t INJDATA2;
@@ -3491,7 +3650,7 @@ typedef struct
         } INJDATA2_B;
     };
 
-    /** Injected Data register3*/
+    /* Injected Data register3*/
     union
     {
         __IM uint32_t INJDATA3;
@@ -3503,7 +3662,7 @@ typedef struct
         } INJDATA3_B;
     };
 
-    /** Injected Data register4*/
+    /* Injected Data register4*/
     union
     {
         __IM uint32_t INJDATA4;
@@ -3515,7 +3674,7 @@ typedef struct
         } INJDATA4_B;
     };
 
-    /** Regular Data register*/
+    /* Regular Data register*/
     union
     {
         __IOM uint32_t REGDATA;
@@ -3526,14 +3685,14 @@ typedef struct
             __IM  uint32_t ADC2DATA        : 16;
         } REGDATA_B;
     };
-}ADC_T;
+} ADC_T;
 
 /**
  * @brief External Interrupt(EINT)
  */
 typedef struct
 {
-    /** Interrupt mask register */
+    /* Interrupt mask register */
     union
     {
         __IOM uint32_t IMASK;
@@ -3563,7 +3722,7 @@ typedef struct
         } IMASK_B;
     };
 
-    /** Event mask register */
+    /* Event mask register */
     union
     {
         __IOM uint32_t EMASK;
@@ -3593,7 +3752,7 @@ typedef struct
         } EEN_B;
     };
 
-    /** Rising Trigger Event Enable register */
+    /* Rising Trigger Event Enable register */
     union
     {
         __IOM uint32_t RTEN;
@@ -3623,7 +3782,7 @@ typedef struct
         } RTEN_B;
     };
 
-    /** Falling Trigger Event Enable register */
+    /* Falling Trigger Event Enable register */
     union
     {
         __IOM uint32_t FTEN;
@@ -3653,7 +3812,7 @@ typedef struct
         } FTEN_B;
     };
 
-    /** Software Interrupt Enable register */
+    /* Software Interrupt Enable register */
     union
     {
         __IOM uint32_t SWINTE;
@@ -3683,7 +3842,7 @@ typedef struct
         } SWINTE_B;
     };
 
-    /** Interrupt Flag Enable register */
+    /* Interrupt Flag Enable register */
     union
     {
         __IOM uint32_t IPEND;
@@ -3712,7 +3871,7 @@ typedef struct
             __IM  uint32_t RESERVED        : 12;
         } IF_B;
     };
-}EINT_T;
+} EINT_T;
 
 /**
  * @brief Independent watchdog(IWDT)
@@ -3720,7 +3879,7 @@ typedef struct
 typedef struct
 {
 
-    /** Keyword register */
+    /* Keyword register */
     union
     {
         __OM uint32_t KEY;
@@ -3732,7 +3891,7 @@ typedef struct
         } KEY_B;
     };
 
-    /** Frequency Divider register */
+    /* Frequency Divider register */
     union
     {
         __IOM uint32_t PSC;
@@ -3744,7 +3903,7 @@ typedef struct
         } DIV_B;
     };
 
-    /** Reload values register */
+    /* Reload values register */
     union
     {
         __IOM uint32_t CNTRLD;
@@ -3756,7 +3915,7 @@ typedef struct
         } CNTRLD_B;
     };
 
-    /** Status register */
+    /* Status register */
     union
     {
         __IM uint32_t STS;
@@ -3768,14 +3927,14 @@ typedef struct
             __IM  uint32_t RESERVED        : 30;
         } STS_B;
     };
-}IWDT_T;
+} IWDT_T;
 
 /**
  * @brief Serial peripheral interface(SPI)
  */
 typedef struct
 {
-    /** Control register 1 */
+    /* Control register 1 */
     union
     {
         __IOM uint32_t CTRL1;
@@ -3800,7 +3959,7 @@ typedef struct
         } CTRL1_B;
     };
 
-    /** Control register 2 */
+    /* Control register 2 */
     union
     {
         __IOM uint32_t CTRL2;
@@ -3818,7 +3977,7 @@ typedef struct
         } CTRL2_B;
     };
 
-    /** Status register */
+    /* Status register */
     union
     {
         __IOM uint32_t STS;
@@ -3837,7 +3996,7 @@ typedef struct
         } STS_B;
     };
 
-    /** Data register */
+    /* Data register */
     union
     {
         __IOM uint32_t DATA;
@@ -3849,7 +4008,7 @@ typedef struct
         } DATA_B;
     };
 
-    /** CRC polynomial register */
+    /* CRC polynomial register */
     union
     {
         __IOM uint32_t CRCPOLY;
@@ -3861,7 +4020,7 @@ typedef struct
         } CRCPOLY_B;
     };
 
-    /** Receive CRC register */
+    /* Receive CRC register */
     union
     {
         __IM uint32_t RXCRC;
@@ -3870,10 +4029,10 @@ typedef struct
         {
             __IM  uint32_t RXCRC           : 16;
             __IM  uint32_t RESERVED        : 16;
-        }RXCRC_B;
+        } RXCRC_B;
     };
 
-    /** Transmit CRC register */
+    /* Transmit CRC register */
     union
     {
         __IM uint32_t TXCRC;
@@ -3882,10 +4041,10 @@ typedef struct
         {
             __IM  uint32_t TXCRC           : 16;
             __IM  uint32_t RESERVED        : 16;
-        }TXCRC_B;
+        } TXCRC_B;
     };
 
-    /** Transmit I2S CTRL register */
+    /* Transmit I2S CTRL register */
     union
     {
         __IOM uint32_t I2SCFG;
@@ -3902,10 +4061,10 @@ typedef struct
             __IOM uint32_t I2SEN           : 1;
             __IOM uint32_t MODESEL         : 1;
             __IM  uint32_t RESERVED2       : 20;
-        }I2SCFG_B;
+        } I2SCFG_B;
     };
 
-    /** Transmit I2S DIV register */
+    /* Transmit I2S DIV register */
     union
     {
         __IOM uint32_t I2SPSC;
@@ -3916,9 +4075,9 @@ typedef struct
             __IOM uint32_t ODDPSC          : 1;
             __IOM uint32_t MCIEN           : 1;
             __IM  uint32_t RESERVED1       : 22;
-        }I2SPSC_B;
+        } I2SPSC_B;
     };
-}SPI_T;
+} SPI_T;
 
 /**
  * @brief Window watchdog (WWDT)
@@ -3926,7 +4085,7 @@ typedef struct
 typedef struct
 {
 
-    /** Control register */
+    /* Control register */
     union
     {
         __IOM uint32_t CTRL;
@@ -3939,7 +4098,7 @@ typedef struct
         } CTRL_B;
     };
 
-    /** Configure register */
+    /* Configure register */
     union
     {
         __IOM uint32_t CFG;
@@ -3953,7 +4112,7 @@ typedef struct
         } CFG_B;
     };
 
-    /** Status register */
+    /* Status register */
     union
     {
         __IOM uint32_t STS;
@@ -3964,14 +4123,14 @@ typedef struct
             __IM  uint32_t RESERVED        : 31;
         } STS_B;
     };
-}WWDT_T;
+} WWDT_T;
 
 /**
  * @brief Secure digital input/output interface (SDIO)
  */
 typedef struct
 {
-    /** Power control register */
+    /* Power control register */
     union
     {
         __IOM uint32_t PWRCTRL;
@@ -3983,7 +4142,7 @@ typedef struct
         } PWRCTRL_B;
     };
 
-    /** Clock control register */
+    /* Clock control register */
     union
     {
         __IOM uint32_t CLKCTRL;
@@ -4001,7 +4160,7 @@ typedef struct
         } CLKCTRL_B;
     };
 
-    /** Argument register */
+    /* Argument register */
     union
     {
         __IOM uint32_t ARG;
@@ -4012,7 +4171,7 @@ typedef struct
         } ARG_B;
     };
 
-    /** Command register */
+    /* Command register */
     union
     {
         __IOM uint32_t CMD;
@@ -4032,7 +4191,7 @@ typedef struct
         } CMD_B;
     };
 
-    /** Command response register */
+    /* Command response register */
     union
     {
         __IM uint32_t CMDRES;
@@ -4044,7 +4203,7 @@ typedef struct
         } CMDRES_B;
     };
 
-    /** SDIO response register1 */
+    /* SDIO response register1 */
     union
     {
         __IM uint32_t RES1;
@@ -4055,7 +4214,7 @@ typedef struct
         } RES1_B;
     };
 
-    /** SDIO response register2 */
+    /* SDIO response register2 */
     union
     {
         __IM uint32_t RES2;
@@ -4066,7 +4225,7 @@ typedef struct
         } RES2_B;
     };
 
-    /** SDIO response register3 */
+    /* SDIO response register3 */
     union
     {
         __IM uint32_t RES3;
@@ -4077,7 +4236,7 @@ typedef struct
         } RES3_B;
     };
 
-    /** SDIO response register4 */
+    /* SDIO response register4 */
     union
     {
         __IM uint32_t RES4;
@@ -4088,7 +4247,7 @@ typedef struct
         } RES4_B;
     };
 
-    /** Data timer register */
+    /* Data timer register */
     union
     {
         __IOM uint32_t DATATIME;
@@ -4099,7 +4258,7 @@ typedef struct
         } DTMR_B;
     };
 
-    /** Data length register */
+    /* Data length register */
     union
     {
         __IOM uint32_t DATALEN;
@@ -4111,7 +4270,7 @@ typedef struct
         } DLEN_B;
     };
 
-    /** Data control register */
+    /* Data control register */
     union
     {
         __IOM uint32_t DCTRL;
@@ -4131,7 +4290,7 @@ typedef struct
         } DCTRL_B;
     };
 
-    /** Data count register */
+    /* Data count register */
     union
     {
         __IM uint32_t DCNT;
@@ -4143,7 +4302,7 @@ typedef struct
         } DCNT_B;
     };
 
-    /** SDIO status register */
+    /* SDIO status register */
     union
     {
         __IM uint32_t STS;
@@ -4178,7 +4337,7 @@ typedef struct
         } STS_B;
     };
 
-    /** SDIO interrupt clear register */
+    /* SDIO interrupt clear register */
     union
     {
         __IOM uint32_t ICF;
@@ -4203,7 +4362,7 @@ typedef struct
         } ICF_B;
     };
 
-    /** SDIO interrupt mask register */
+    /* SDIO interrupt mask register */
     union
     {
         __IOM uint32_t MASK;
@@ -4240,7 +4399,7 @@ typedef struct
 
     __IM  uint32_t  RESERVED[2];
 
-    /** SDIO FIFO count register */
+    /* SDIO FIFO count register */
     union
     {
         __IM uint32_t FIFOCNT;
@@ -4254,7 +4413,7 @@ typedef struct
 
     __IM  uint32_t  RESERVED1[13];
 
-    /** SDIO data FIFO register */
+    /* SDIO data FIFO register */
     union
     {
         __IOM uint32_t FIFODATA;
@@ -4264,14 +4423,14 @@ typedef struct
             __IOM  uint32_t FIFODATA       : 32;
         } FIFODATA_B;
     };
-}SDIO_T;
+} SDIO_T;
 
 /**
  * @brief Digital to Analog Converter(DAC)
  */
 typedef struct
 {
-    /** Control register */
+    /* Control register */
     union
     {
         __IOM uint32_t CTRL;
@@ -4297,7 +4456,7 @@ typedef struct
         } CTRL_B;
     };
 
-    /** Software trigger register */
+    /* Software trigger register */
     union
     {
         __OM uint32_t SWTRG;
@@ -4310,7 +4469,7 @@ typedef struct
         } SWTRG_B;
     };
 
-    /** Channel1 12-bit right-aligned register */
+    /* Channel1 12-bit right-aligned register */
     union
     {
         __IOM uint32_t DH12R1;
@@ -4322,7 +4481,7 @@ typedef struct
         } DH12R1_B;
     };
 
-    /** Channel1 12-bit left-aligned register */
+    /* Channel1 12-bit left-aligned register */
     union
     {
         __IOM uint32_t DH12L1;
@@ -4335,7 +4494,7 @@ typedef struct
         } DH12L1_B;
     };
 
-    /** Channel1 8-bit right-aligned register */
+    /* Channel1 8-bit right-aligned register */
     union
     {
         __IOM uint32_t DH8R1;
@@ -4347,19 +4506,19 @@ typedef struct
         } DH8R1_B;
     };
 
-        /** Channel2 12-bit right-aligned register */
-        union
-        {
-            __IOM uint32_t DH12R2;
+    /* Channel2 12-bit right-aligned register */
+    union
+    {
+        __IOM uint32_t DH12R2;
 
-            struct
-            {
+        struct
+        {
             __IOM uint32_t DATA            : 12;
             __IM  uint32_t RESERVED        : 20;
         } DH12R2_B;
     };
 
-    /** Channel2 12-bit left-aligned register */
+    /* Channel2 12-bit left-aligned register */
     union
     {
         __IOM uint32_t DH12L2;
@@ -4369,10 +4528,10 @@ typedef struct
             __IM  uint32_t RESERVED1       : 4;
             __IOM uint32_t DATA            : 12;
             __IM  uint32_t RESERVED2       : 16;
-        }DH12L2_B;
+        } DH12L2_B;
     };
 
-    /** Channel2 8-bit right-aligned register */
+    /* Channel2 8-bit right-aligned register */
     union
     {
         __IOM uint32_t DH8R2;
@@ -4384,7 +4543,7 @@ typedef struct
         } DH8R2_B;
     };
 
-    /** Channel1,Channel2 12-bit right-aligned register */
+    /* Channel1,Channel2 12-bit right-aligned register */
     union
     {
         __IOM uint32_t DH12RDUAL;
@@ -4398,7 +4557,7 @@ typedef struct
         } DH12RDUAL_B;
     };
 
-    /** Channel1,Channel2 12-bit left-aligned register */
+    /* Channel1,Channel2 12-bit left-aligned register */
     union
     {
         __IOM uint32_t DH12LDUAL;
@@ -4412,7 +4571,7 @@ typedef struct
         } DH12LDUAL_B;
     };
 
-    /** Channel1,Channel2 8-bit right-aligned register */
+    /* Channel1,Channel2 8-bit right-aligned register */
     union
     {
         __IOM uint32_t DH8RDUAL;
@@ -4425,7 +4584,7 @@ typedef struct
         } DH8RDUAL_B;
     };
 
-    /** Channel1 data output register */
+    /* Channel1 data output register */
     union
     {
         __IM uint32_t DATAOCH1;
@@ -4437,7 +4596,7 @@ typedef struct
         } DATAOCH1_B;
     };
 
-    /** Channel2 data output register */
+    /* Channel2 data output register */
     union
     {
         __IM uint32_t DATAOCH2;
@@ -4448,14 +4607,14 @@ typedef struct
             __IM  uint32_t RESERVED        : 20;
         } DATAOCH2_B;
     };
-}DAC_T;
+} DAC_T;
 
 /**
- * @brief EMMC Register
+ * @brief SMC Register
  */
 typedef struct
 {
-    /** SRAM/NOR-Flash chip-select control register */
+    /* SRAM/NOR-Flash chip-select control register */
     union
     {
         __IOM uint32_t CSCTRL;
@@ -4479,13 +4638,13 @@ typedef struct
             __IOM uint32_t CRAMPSIZECFG    : 3;
             __IOM uint32_t WRBURSTEN       : 1;
             __IOM uint32_t RESERVED2       : 12;
-        }CSCTRL_B;
+        } CSCTRL_B;
     };
-}SNCTRL_T;
+} SNCTRL_T;
 
 typedef struct
 {
-    /** SRAM/NOR-Flash write timing registers */
+    /* SRAM/NOR-Flash write timing registers */
     union
     {
         __IOM uint32_t WRTTIM;
@@ -4500,9 +4659,9 @@ typedef struct
             __IOM uint32_t DATALATCFG      : 4;
             __IOM uint32_t ACCMODECFG      : 2;
             __IM  uint32_t RESERVED2       : 2;
-        }WRTTIM_T;
+        } WRTTIM_T;
     };
-}SNWCLK_T;
+} SNWCLK_T;
 
 /**
  * @brief Flexible Static Memory Controller
@@ -4510,7 +4669,7 @@ typedef struct
 typedef struct
 {
     __IO uint32_t SNCTRL_T[8];
-} EMMC_Bank1_T;
+} SMC_Bank1_T;
 
 /**
  * @brief Flexible Static Memory Controller Bank1E
@@ -4518,14 +4677,14 @@ typedef struct
 typedef struct
 {
     __IO uint32_t WRTTIM[7];
-} EMMC_Bank1E_T;
+} SMC_Bank1E_T;
 
 /**
  * @brief Flexible Static Memory Controller Bank 2
  */
 typedef struct
 {
-    /** PC Card/NAND Flash control register 2 */
+    /* PC Card/NAND Flash control register 2 */
     union
     {
         __IOM uint32_t CTRL2;
@@ -4543,10 +4702,10 @@ typedef struct
             __IOM uint32_t A2RDCFG         : 4;
             __IOM uint32_t ECCPSCFG        : 3;
             __IM  uint32_t RESERVED3       : 12;
-        }CTRL2_B;
+        } CTRL2_B;
     };
 
-    /** FIFO status and interrupt register 2 */
+    /* FIFO status and interrupt register 2 */
     union
     {
         __IOM uint32_t STSINT2;
@@ -4560,10 +4719,10 @@ typedef struct
             __IOM uint32_t IHLDEN          : 1;
             __IOM uint32_t IFEDEN          : 1;
             __IM  uint32_t FEFLG           : 1;
-            __IM  uint32_t RESERVED        :25;
-        }STSINT2_B;
+            __IM  uint32_t RESERVED        : 25;
+        } STSINT2_B;
     };
-    /** Common memory space timing register 2 */
+    /* Common memory space timing register 2 */
     union
     {
         __IOM uint32_t CMSTIM2;
@@ -4574,10 +4733,10 @@ typedef struct
             __IOM uint32_t WAIT2           : 8;
             __IOM uint32_t HLD2            : 8;
             __IOM uint32_t HIZ2            : 8;
-        }CMSTIM2_B;
+        } CMSTIM2_B;
     };
 
-    /** Attribute memory space timing register 2 */
+    /* Attribute memory space timing register 2 */
     union
     {
         __IOM uint32_t AMSTIM2;
@@ -4588,12 +4747,12 @@ typedef struct
             __IOM uint32_t WAIT2           : 8;
             __IOM uint32_t HLD2            : 8;
             __IOM uint32_t HIZ2            : 8;
-        }AMSTIM2_B;
+        } AMSTIM2_B;
     };
 
     __IOM uint32_t RESERVED;
 
-    /** ECC result register 2 */
+    /* ECC result register 2 */
     union
     {
         __IM  uint32_t ECCRS2;
@@ -4603,14 +4762,14 @@ typedef struct
             __IM  uint32_t ECCRS2          : 32;
         } ECCRS2_B;
     };
-}EMMC_Bank2_T;
+} SMC_Bank2_T;
 
 /**
  * @brief Flexible Static Memory Controller Bank 3
  */
 typedef struct
 {
-    /** PC Card/NAND Flash control register 3 */
+    /* PC Card/NAND Flash control register 3 */
     union
     {
         __IOM uint32_t CTRL3;
@@ -4628,10 +4787,10 @@ typedef struct
             __IOM uint32_t A2RDCFG         : 4;
             __IOM uint32_t ECCPSCFG        : 3;
             __IM  uint32_t RESERVED3       : 12;
-        }CTRL3_B;
+        } CTRL3_B;
     };
 
-    /** FIFO status and interrupt register 3 */
+    /* FIFO status and interrupt register 3 */
     union
     {
         __IOM uint32_t STSINT3;
@@ -4645,11 +4804,11 @@ typedef struct
             __IOM uint32_t IHLDEN          : 1;
             __IOM uint32_t IFEDEN          : 1;
             __IM  uint32_t FEFLG           : 1;
-            __IM  uint32_t RESERVED        :16;
-        }STSINT3_B;
+            __IM  uint32_t RESERVED        : 16;
+        } STSINT3_B;
     };
 
-    /** Common memory space timing register 3 */
+    /* Common memory space timing register 3 */
     union
     {
         __IOM uint32_t CMSTIM3;
@@ -4660,10 +4819,10 @@ typedef struct
             __IOM uint32_t WAIT3           : 8;
             __IOM uint32_t HLD3            : 8;
             __IOM uint32_t HIZ3            : 8;
-        }CMSTIM3_B;
+        } CMSTIM3_B;
     };
 
-    /** Attribute memory space timing register 3 */
+    /* Attribute memory space timing register 3 */
     union
     {
         __IOM uint32_t AMSTIM3;
@@ -4674,12 +4833,12 @@ typedef struct
             __IOM uint32_t WAIT3           : 8;
             __IOM uint32_t HLD3            : 8;
             __IOM uint32_t HIZ3            : 8;
-        }AMSTIM3_B;
+        } AMSTIM3_B;
     };
 
     __IOM uint32_t RESERVED;
 
-    /** ECC result register 3 */
+    /* ECC result register 3 */
     union
     {
         __IM  uint32_t ECCRS3;
@@ -4689,14 +4848,14 @@ typedef struct
             __IM  uint32_t ECCRS3       : 32;
         } ECCRS3_B;
     };
-}EMMC_Bank3_T;
+} SMC_Bank3_T;
 
 /**
  * @brief Flexible Static Memory Controller Bank 4
  */
 typedef struct
 {
-    /** PC Card/NAND Flash control register 4 */
+    /* PC Card/NAND Flash control register 4 */
     union
     {
         __IOM uint32_t CTRL4;
@@ -4714,10 +4873,10 @@ typedef struct
             __IOM uint32_t A2RDCFG         : 4;
             __IOM uint32_t ECCPSCFG        : 3;
             __IM  uint32_t RESERVED3       : 12;
-        }CTRL4_B;
+        } CTRL4_B;
     };
 
-    /** FIFO status and interrupt register 4 */
+    /* FIFO status and interrupt register 4 */
     union
     {
         __IOM uint32_t STSINT4;
@@ -4731,11 +4890,11 @@ typedef struct
             __IOM uint32_t IHLDEN          : 1;
             __IOM uint32_t IFEDEN          : 1;
             __IM  uint32_t FEFLG           : 1;
-            __IM  uint32_t RESERVED        :16;
-        }STSINT4_B;
+            __IM  uint32_t RESERVED        : 16;
+        } STSINT4_B;
     };
 
-    /** Common memory space timing register 4 */
+    /* Common memory space timing register 4 */
     union
     {
         __IOM uint32_t CMSTIM4;
@@ -4746,10 +4905,10 @@ typedef struct
             __IOM uint32_t WAIT4           : 8;
             __IOM uint32_t HLD4            : 8;
             __IOM uint32_t HIZ4            : 8;
-        }CMSTIM4_B;
+        } CMSTIM4_B;
     };
 
-    /** Attribute memory space timing register 4 */
+    /* Attribute memory space timing register 4 */
     union
     {
         __IOM uint32_t AMSTIM4;
@@ -4760,10 +4919,10 @@ typedef struct
             __IOM uint32_t WAIT4           : 8;
             __IOM uint32_t HLD4            : 8;
             __IOM uint32_t HIZ4            : 8;
-        }AMSTIM4_B;
+        } AMSTIM4_B;
     };
 
-    /** I/O space timing register 4 */
+    /* I/O space timing register 4 */
     union
     {
         __IOM uint32_t IOSTIM4;
@@ -4774,16 +4933,16 @@ typedef struct
             __IOM uint32_t WAIT4           : 8;
             __IOM uint32_t HLD4            : 8;
             __IOM uint32_t HIZ4            : 8;
-        }IOSTIM4_B;
+        } IOSTIM4_B;
     };
-}EMMC_Bank4_T;
+} SMC_Bank4_T;
 
 /**
  * @brief Queued serial peripheral interface(QSPI)
  */
 typedef struct
 {
-    /** @brief Control register 1 */
+    /* @brief Control register 1 */
     union
     {
         __IOM uint32_t CTRL1;
@@ -4799,10 +4958,10 @@ typedef struct
             __IM  uint32_t RESERVED3       : 7;
             __IOM uint32_t FRF             : 2;
             __IM  uint32_t RESERVED4       : 8;
-        }CTRL1_B;
+        } CTRL1_B;
     };
 
-    /** @brief Control register 2 */
+    /* @brief Control register 2 */
     union
     {
         __IOM uint32_t CTRL2;
@@ -4810,10 +4969,10 @@ typedef struct
         {
             __IOM uint32_t NDF             : 16;
             __IM  uint32_t RESERVED        : 16;
-        }CTRL2_B;
+        } CTRL2_B;
     };
 
-    /** @brief QSPI Enable register */
+    /* @brief QSPI Enable register */
     union
     {
         __IOM uint32_t SSIEN;
@@ -4821,12 +4980,12 @@ typedef struct
         {
             __IOM uint32_t EN              : 1;
             __IM  uint32_t RESERVED        : 31;
-        }SSIEN_B;
+        } SSIEN_B;
     };
 
     __IM  uint32_t RESERVED;
 
-    /** @brief QSPI Slave enable register */
+    /* @brief QSPI Slave enable register */
     union
     {
         __IOM uint32_t SLAEN;
@@ -4834,10 +4993,10 @@ typedef struct
         {
             __IOM uint32_t SLAEN           : 1;
             __IM  uint32_t RESERVED        : 31;
-        }SLAEN_B;
+        } SLAEN_B;
     };
 
-    /** @brief Baudrate register */
+    /* @brief Baudrate register */
     union
     {
         __IOM uint32_t BR;
@@ -4845,10 +5004,10 @@ typedef struct
         {
             __IOM uint32_t CLKDIV          : 16;
             __IM  uint32_t RESERVED        : 16;
-        }BR_B;
+        } BR_B;
     };
 
-    /** @brief Transmission FIFO threshhold level register */
+    /* @brief Transmission FIFO threshhold level register */
     union
     {
         __IOM uint32_t TFTL;
@@ -4858,10 +5017,10 @@ typedef struct
             __IM  uint32_t RESERVED1       : 13;
             __IOM uint32_t TFTH            : 3;
             __IM  uint32_t RESERVED2       : 13;
-        }TFTL_B;
+        } TFTL_B;
     };
 
-    /** @brief Reception FIFO threshhold level register */
+    /* @brief Reception FIFO threshhold level register */
     union
     {
         __IOM uint32_t RFTL;
@@ -4869,10 +5028,10 @@ typedef struct
         {
             __IOM uint32_t RFT             : 3;
             __IM  uint32_t RESERVED        : 29;
-        }RFTL_B;
+        } RFTL_B;
     };
 
-    /** @brief Transmission FIFO level register */
+    /* @brief Transmission FIFO level register */
     union
     {
         __IOM uint32_t TFL;
@@ -4880,10 +5039,10 @@ typedef struct
         {
             __IOM uint32_t TFL             : 3;
             __IM  uint32_t RESERVED        : 29;
-        }TFL_B;
+        } TFL_B;
     };
 
-    /** @brief Reception FIFO level register */
+    /* @brief Reception FIFO level register */
     union
     {
         __IOM uint32_t RFL;
@@ -4891,10 +5050,10 @@ typedef struct
         {
             __IOM uint32_t RFL             : 3;
             __IM  uint32_t RESERVED        : 29;
-        }RFL_B;
+        } RFL_B;
     };
 
-    /** @brief Status register */
+    /* @brief Status register */
     union
     {
         __IOM uint32_t STS;
@@ -4908,10 +5067,10 @@ typedef struct
             __IM  uint32_t RESERVED1       : 1;
             __IOM uint32_t DCEF            : 1;
             __IM  uint32_t RESERVED2       : 25;
-        }STS_B;
+        } STS_B;
     };
 
-    /** @brief Interrupt enable register */
+    /* @brief Interrupt enable register */
     union
     {
         __IOM uint32_t INTEN;
@@ -4924,10 +5083,10 @@ typedef struct
             __IOM uint32_t RFFIE           : 1;
             __IOM uint32_t MSTIE           : 1;
             __IM  uint32_t RESERVED        : 26;
-        }INTEN_B;
+        } INTEN_B;
     };
 
-    /** @brief Interrupt status register */
+    /* @brief Interrupt status register */
     union
     {
         __IM uint32_t ISTS;
@@ -4940,10 +5099,10 @@ typedef struct
             __IM  uint32_t RFFIF           : 1;
             __IM  uint32_t MSTIF           : 1;
             __IM  uint32_t RESERVED        : 26;
-        }ISTS_B;
+        } ISTS_B;
     };
 
-    /** @brief Raw interrupt register */
+    /* @brief Raw interrupt register */
     union
     {
         __IM uint32_t RIS;
@@ -4956,10 +5115,10 @@ typedef struct
             __IM  uint32_t RXFIR           : 1;
             __IM  uint32_t MSTIR           : 1;
             __IM  uint32_t RESERVED        : 26;
-        }RIS_B;
+        } RIS_B;
     };
 
-    /** @brief Transmission FIFO overflow interrupt clear register */
+    /* @brief Transmission FIFO overflow interrupt clear register */
     union
     {
         __IM uint32_t TFOIC;
@@ -4967,10 +5126,10 @@ typedef struct
         {
             __IM  uint32_t TFOIC           : 1;
             __IM  uint32_t RESERVED        : 31;
-        }TFOIC_B;
+        } TFOIC_B;
     };
 
-    /** @brief Reception FIFO overflow interrupt clear register */
+    /* @brief Reception FIFO overflow interrupt clear register */
     union
     {
         __IM uint32_t RFOIC;
@@ -4978,10 +5137,10 @@ typedef struct
         {
             __IM  uint32_t RFOIC           : 1;
             __IM  uint32_t RESERVED        : 31;
-        }RFOIC_B;
+        } RFOIC_B;
     };
 
-    /** @brief Reception FIFO underflow interrupt clear register */
+    /* @brief Reception FIFO underflow interrupt clear register */
     union
     {
         __IM uint32_t RFUIC;
@@ -4989,10 +5148,10 @@ typedef struct
         {
             __IM  uint32_t RFUIC           : 1;
             __IM  uint32_t RESERVED        : 31;
-        }RFUIC_B;
+        } RFUIC_B;
     };
 
-    /** @brief Master interrupt clear register */
+    /* @brief Master interrupt clear register */
     union
     {
         __IM uint32_t MIC;
@@ -5000,10 +5159,10 @@ typedef struct
         {
             __IM  uint32_t MIC             : 1;
             __IM  uint32_t RESERVED        : 31;
-        }MIC_B;
+        } MIC_B;
     };
 
-    /** @brief Interrupt clear register */
+    /* @brief Interrupt clear register */
     union
     {
         __IM uint32_t ICF;
@@ -5011,24 +5170,24 @@ typedef struct
         {
             __IM  uint32_t ICF             : 1;
             __IM  uint32_t RESERVED        : 31;
-        }ICF_B;
+        } ICF_B;
     };
 
     __IM  uint32_t RESERVED1[5];
 
-    /** @brief Data register */
+    /* @brief Data register */
     union
     {
         __IOM uint32_t DATA;
         struct
         {
             __IOM  uint32_t DATA           : 32;
-        }DATA_B;
+        } DATA_B;
     };
 
     __IM  uint32_t RESERVED2[35];
 
-    /** @brief Reception sample register */
+    /* @brief Reception sample register */
     union
     {
         __IOM uint32_t RSD;
@@ -5038,10 +5197,10 @@ typedef struct
             __IM  uint32_t RESERVED1       : 8;
             __IOM uint32_t RSE             : 1;
             __IM  uint32_t RESERVED2       : 15;
-        }RSD_B;
+        } RSD_B;
     };
 
-    /** @brief Reception sample register */
+    /* @brief Reception sample register */
     union
     {
         __IOM uint32_t CTRL3;
@@ -5056,12 +5215,12 @@ typedef struct
             __IM  uint32_t RESERVED3       : 14;
             __IOM uint32_t CSEN            : 1;
             __IM  uint32_t RESERVED4       : 1;
-        }CTRL3_B;
+        } CTRL3_B;
     };
 
     __IM  uint32_t  RESERVED3[66];
 
-    /** @brief IO switch register */
+    /* @brief IO switch register */
     union
     {
         __IOM uint32_t IOSW;
@@ -5069,16 +5228,16 @@ typedef struct
         {
             __IOM uint32_t IOSW            : 1;
             __IM  uint32_t RESERVED        : 31;
-        }IOSW_B;
+        } IOSW_B;
     };
-}QSPI_T;
+} QSPI_T;
 
 /**
  * @brief SEC Inter-integrated circuit (SCI2C)
  */
 typedef struct
 {
-    /** @brief Control register 1 */
+    /* @brief Control register 1 */
     union
     {
         __IOM uint32_t CTRL1;
@@ -5095,10 +5254,10 @@ typedef struct
             __IOM uint32_t RFFIE           : 1;
             __IOM uint32_t DSMA            : 1;
             __IM uint32_t RESERVED2        : 21;
-        }CTRL1_B;
+        } CTRL1_B;
     };
 
-    /** @brief Master address register */
+    /* @brief Master address register */
     union
     {
         __IOM uint32_t TARADDR;
@@ -5109,10 +5268,10 @@ typedef struct
             __IOM uint32_t GCEN            : 1;
             __IOM uint32_t MAM             : 1;
             __IM uint32_t RESERVED         : 19;
-        }TARADDR_B;
+        } TARADDR_B;
     };
 
-    /** @brief Slave address register */
+    /* @brief Slave address register */
     union
     {
         __IOM uint32_t SLAADDR;
@@ -5120,10 +5279,10 @@ typedef struct
         {
             __IOM uint32_t ADDR            : 10;
             __IM uint32_t RESERVED         : 22;
-        }SLAADDR_B;
+        } SLAADDR_B;
     };
 
-    /** @brief High speed master code register */
+    /* @brief High speed master code register */
     union
     {
         __IOM uint32_t HSMC;
@@ -5131,10 +5290,10 @@ typedef struct
         {
             __IOM uint32_t HSMC            : 4;
             __IM uint32_t RESERVED         : 28;
-        }HSMC_B;
+        } HSMC_B;
     };
 
-    /** @brief Data register */
+    /* @brief Data register */
     union
     {
         __IOM uint32_t DATA;
@@ -5144,10 +5303,10 @@ typedef struct
             __IOM uint32_t CMD             : 1;
             __IOM uint32_t STOP            : 1;
             __IM uint32_t RESERVED         : 22;
-        }DATA_B;
+        } DATA_B;
     };
 
-    /** @brief Standard speed clock high counter register */
+    /* @brief Standard speed clock high counter register */
     union
     {
         __IOM uint32_t SSCHC;
@@ -5155,10 +5314,10 @@ typedef struct
         {
             __IOM uint32_t CNT             : 16;
             __IM uint32_t RESERVED         : 16;
-        }SSCHC_B;
+        } SSCHC_B;
     };
 
-    /** @brief Standard speed clock low counter register */
+    /* @brief Standard speed clock low counter register */
     union
     {
         __IOM uint32_t SSCLC;
@@ -5166,10 +5325,10 @@ typedef struct
         {
             __IOM uint32_t CNT             : 16;
             __IM uint32_t RESERVED         : 16;
-        }SSCLC_B;
+        } SSCLC_B;
     };
 
-    /** @brief Fast speed clock high counter register */
+    /* @brief Fast speed clock high counter register */
     union
     {
         __IOM uint32_t FSCHC;
@@ -5177,10 +5336,10 @@ typedef struct
         {
             __IOM uint32_t CNT             : 16;
             __IM uint32_t RESERVED         : 16;
-        }FSCHC_B;
+        } FSCHC_B;
     };
 
-    /** @brief Fast speed clock low counter register */
+    /* @brief Fast speed clock low counter register */
     union
     {
         __IOM uint32_t FSCLC;
@@ -5188,10 +5347,10 @@ typedef struct
         {
             __IOM uint32_t CNT             : 16;
             __IM uint32_t RESERVED         : 16;
-        }FSCLC_B;
+        } FSCLC_B;
     };
 
-    /** @brief High speed clock high counter */
+    /* @brief High speed clock high counter */
     union
     {
         __IOM uint32_t HSCHC;
@@ -5199,10 +5358,10 @@ typedef struct
         {
             __IOM uint32_t CNT             : 16;
             __IM uint32_t RESERVED         : 16;
-        }HSCHC_B;
+        } HSCHC_B;
     };
 
-    /** @brief High speed clock low counter register */
+    /* @brief High speed clock low counter register */
     union
     {
         __IOM uint32_t HSCLC;
@@ -5210,10 +5369,10 @@ typedef struct
         {
             __IOM uint32_t CNT             : 16;
             __IM uint32_t RESERVED         : 16;
-        }HSCLC_B;
+        } HSCLC_B;
     };
 
-    /** @brief Interrupt status register */
+    /* @brief Interrupt status register */
     union
     {
         __IM uint32_t INTSTS;
@@ -5234,10 +5393,10 @@ typedef struct
             __IM uint32_t RSTADIF          : 1;
             __IM uint32_t MOHIF            : 1;
             __IM uint32_t RESERVED         : 18;
-        }INTSTS_B;
+        } INTSTS_B;
     };
 
-    /** @brief Interrupt enable register */
+    /* @brief Interrupt enable register */
     union
     {
         __IOM uint32_t INTEN;
@@ -5258,10 +5417,10 @@ typedef struct
             __IOM uint32_t RSTADIE         : 1;
             __IOM uint32_t MOHIE           : 1;
             __IM uint32_t RESERVED         : 18;
-        }INTEN_B;
+        } INTEN_B;
     };
 
-    /** @brief Raw interrupt status register */
+    /* @brief Raw interrupt status register */
     union
     {
         __IM uint32_t RIS;
@@ -5282,10 +5441,10 @@ typedef struct
             __IM uint32_t RSTADIF          : 1;
             __IM uint32_t MOHIF            : 1;
             __IM uint32_t RESERVED         : 18;
-        }RIS_B;
+        } RIS_B;
     };
 
-    /** @brief Reception FIFO threshold register */
+    /* @brief Reception FIFO threshold register */
     union
     {
         __IOM uint32_t RFT;
@@ -5293,10 +5452,10 @@ typedef struct
         {
             __IOM uint32_t RFT             : 8;
             __IM uint32_t RESERVED         : 24;
-        }RFT_B;
+        } RFT_B;
     };
 
-    /** @brief Transmission FIFO threshold register */
+    /* @brief Transmission FIFO threshold register */
     union
     {
         __IOM uint32_t TFT;
@@ -5304,10 +5463,10 @@ typedef struct
         {
             __IOM uint32_t TFT             : 8;
             __IM uint32_t RESERVED         : 24;
-        }TFT_B;
+        } TFT_B;
     };
 
-    /** @brief Interruption clear register */
+    /* @brief Interruption clear register */
     union
     {
         __IM uint32_t INTCLR;
@@ -5315,10 +5474,10 @@ typedef struct
         {
             __IM uint32_t INTCLR           : 1;
             __IM uint32_t RESERVED         : 31;
-        }INTCLR_B;
+        } INTCLR_B;
     };
 
-    /** @brief Reception FIFO underflow interruption clear register */
+    /* @brief Reception FIFO underflow interruption clear register */
     union
     {
         __IM uint32_t RFUIC;
@@ -5326,10 +5485,10 @@ typedef struct
         {
             __IM uint32_t RFUIC            : 1;
             __IM uint32_t RESERVED         : 31;
-        }RFUIC_B;
+        } RFUIC_B;
     };
 
-    /** @brief Reception FIFO overflow interruption clear register */
+    /* @brief Reception FIFO overflow interruption clear register */
     union
     {
         __IM uint32_t RFOIC;
@@ -5337,10 +5496,10 @@ typedef struct
         {
             __IM uint32_t RFOIC            : 1;
             __IM uint32_t RESERVED         : 31;
-        }RFOIC_B;
+        } RFOIC_B;
     };
 
-    /** @brief Transmission FIFO overflow interruption clear register */
+    /* @brief Transmission FIFO overflow interruption clear register */
     union
     {
         __IM uint32_t TFOIC;
@@ -5348,10 +5507,10 @@ typedef struct
         {
             __IM uint32_t TFOIC            : 1;
             __IM uint32_t RESERVED         : 31;
-        }TFOIC_B;
+        } TFOIC_B;
     };
 
-    /** @brief Reception request interruption clear register */
+    /* @brief Reception request interruption clear register */
     union
     {
         __IM uint32_t RRIC;
@@ -5359,10 +5518,10 @@ typedef struct
         {
             __IM uint32_t RRIC             : 1;
             __IM uint32_t RESERVED         : 31;
-        }RRIC_B;
+        } RRIC_B;
     };
 
-    /** @brief Transmission abort interruption clear register */
+    /* @brief Transmission abort interruption clear register */
     union
     {
         __IM uint32_t TAIC;
@@ -5370,10 +5529,10 @@ typedef struct
         {
             __IM uint32_t TAIC             : 1;
             __IM uint32_t RESERVED         : 31;
-        }TAIC_B;
+        } TAIC_B;
     };
 
-    /** @brief Receive done interruption clear register */
+    /* @brief Receive done interruption clear register */
     union
     {
         __IM uint32_t RDIC;
@@ -5381,10 +5540,10 @@ typedef struct
         {
             __IM uint32_t RDIC             : 1;
             __IM uint32_t RESERVED         : 31;
-        }RDIC_B;
+        } RDIC_B;
     };
 
-    /** @brief Activity interruption clear register */
+    /* @brief Activity interruption clear register */
     union
     {
         __IM uint32_t AIC;
@@ -5392,10 +5551,10 @@ typedef struct
         {
             __IM uint32_t AIC              : 1;
             __IM uint32_t RESERVED         : 31;
-        }AIC_B;
+        } AIC_B;
     };
 
-    /** @brief Stop detection interruption clear register */
+    /* @brief Stop detection interruption clear register */
     union
     {
         __IM uint32_t STPDIC;
@@ -5403,10 +5562,10 @@ typedef struct
         {
             __IM uint32_t STPDIC           : 1;
             __IM uint32_t RESERVED         : 31;
-        }STPDIC_B;
+        } STPDIC_B;
     };
 
-    /** @brief Start detection interruption clear register */
+    /* @brief Start detection interruption clear register */
     union
     {
         __IM uint32_t STADIC;
@@ -5414,10 +5573,10 @@ typedef struct
         {
             __IM uint32_t STADIC           : 1;
             __IM uint32_t RESERVED         : 31;
-        }STADIC_B;
+        } STADIC_B;
     };
 
-    /** @brief General call interruption clear register */
+    /* @brief General call interruption clear register */
     union
     {
         __IM uint32_t GCIC;
@@ -5425,10 +5584,10 @@ typedef struct
         {
             __IM uint32_t GCIC             : 1;
             __IM uint32_t RESERVED         : 31;
-        }GCIC_B;
+        } GCIC_B;
     };
 
-    /** @brief Control register 2 */
+    /* @brief Control register 2 */
     union
     {
         __IOM uint32_t CTRL2;
@@ -5438,10 +5597,10 @@ typedef struct
             __IOM uint32_t ABR             : 1;
             __IOM uint32_t TCB             : 1;
             __IM uint32_t RESERVED         : 29;
-        }CTRL2_B;
+        } CTRL2_B;
     };
 
-    /** @brief Status register 1 */
+    /* @brief Status register 1 */
     union
     {
         __IM uint32_t STS1;
@@ -5455,10 +5614,10 @@ typedef struct
             __IM uint32_t MAF              : 1;
             __IM uint32_t SAF              : 1;
             __IM uint32_t RESERVED         : 24;
-        }STS1_B;
+        } STS1_B;
     };
 
-    /** @brief Transmission FIFO level */
+    /* @brief Transmission FIFO level */
     union
     {
         __IOM uint32_t TFL;
@@ -5466,10 +5625,10 @@ typedef struct
         {
             __IOM uint32_t TFL             : 4;
             __IM uint32_t RESERVED         : 28;
-        }TFL_B;
+        } TFL_B;
     };
 
-    /** @brief Reception FIFO level */
+    /* @brief Reception FIFO level */
     union
     {
         __IOM uint32_t RFL;
@@ -5477,10 +5636,10 @@ typedef struct
         {
             __IOM uint32_t RFL             : 4;
             __IM uint32_t RESERVED         : 28;
-        }RFL_B;
+        } RFL_B;
     };
 
-    /** @brief SDA hold time length register */
+    /* @brief SDA hold time length register */
     union
     {
         __IOM uint32_t SDAHOLD;
@@ -5489,10 +5648,10 @@ typedef struct
             __IOM uint32_t TXHOLD          : 16;
             __IOM uint32_t RXHOLD          : 8;
             __IM uint32_t RESERVED         : 8;
-        }SDAHOLD_B;
+        } SDAHOLD_B;
     };
 
-    /** @brief Transmission abort source register */
+    /* @brief Transmission abort source register */
     union
     {
         __IM uint32_t TAS;
@@ -5515,10 +5674,10 @@ typedef struct
             __IM uint32_t USRARB           : 1;
             __IM uint32_t FLUCNT           : 1;
             __IM uint32_t RESERVED         : 16;
-        }TAS_B;
+        } TAS_B;
     };
 
-    /** @brief Slave data NACK only register */
+    /* @brief Slave data NACK only register */
     union
     {
         __IOM uint32_t SDNO;
@@ -5526,10 +5685,10 @@ typedef struct
         {
             __IOM uint32_t NACK            : 1;
             __IM uint32_t RESERVED         : 31;
-        }SDNO_B;
+        } SDNO_B;
     };
 
-    /** @brief DMA control register */
+    /* @brief DMA control register */
     union
     {
         __IOM uint32_t DMACTRL;
@@ -5538,10 +5697,10 @@ typedef struct
             __IOM uint32_t RXEN            : 1;
             __IOM uint32_t TXEN            : 1;
             __IM uint32_t RESERVED         : 30;
-        }DMACTRL_B;
+        } DMACTRL_B;
     };
 
-    /** @brief DMA transmission data level register */
+    /* @brief DMA transmission data level register */
     union
     {
         __IOM uint32_t DTDL;
@@ -5549,10 +5708,10 @@ typedef struct
         {
             __IOM uint32_t DTDL            : 4;
             __IM uint32_t RESERVED         : 28;
-        }DTDL_B;
+        } DTDL_B;
     };
 
-    /** @brief DMA teception data level register */
+    /* @brief DMA teception data level register */
     union
     {
         __IOM uint32_t DRDL;
@@ -5560,10 +5719,10 @@ typedef struct
         {
             __IOM uint32_t DRDL            : 4;
             __IM uint32_t RESERVED         : 28;
-        }DRDL_B;
+        } DRDL_B;
     };
 
-    /** @brief SDA delay register */
+    /* @brief SDA delay register */
     union
     {
         __IOM uint32_t SDADLY;
@@ -5571,10 +5730,10 @@ typedef struct
         {
             __IOM uint32_t SDADLY          : 8;
             __IM uint32_t RESERVED         : 24;
-        }SDADLY_B;
+        } SDADLY_B;
     };
 
-    /** @brief Genernal call ACK register */
+    /* @brief Genernal call ACK register */
     union
     {
         __IOM uint32_t GCA;
@@ -5582,10 +5741,10 @@ typedef struct
         {
             __IOM uint32_t GCA             : 1;
             __IM uint32_t RESERVED         : 31;
-        }GCA_B;
+        } GCA_B;
     };
 
-    /** @brief Status register 2 */
+    /* @brief Status register 2 */
     union
     {
         __IM uint32_t STS2;
@@ -5595,10 +5754,10 @@ typedef struct
             __IM uint32_t SDWB             : 1;
             __IM uint32_t SRDL             : 1;
             __IM uint32_t RESERVED         : 29;
-        }STS2_B;
+        } STS2_B;
     };
 
-    /** @brief Low speed spike suppression limit */
+    /* @brief Low speed spike suppression limit */
     union
     {
         __IOM uint32_t LSSSL;
@@ -5606,10 +5765,10 @@ typedef struct
         {
             __IOM uint32_t LSSSL           : 8;
             __IM uint32_t RESERVED         : 24;
-        }LSSSL_B;
+        } LSSSL_B;
     };
 
-    /** @brief High speed spike suppression limit */
+    /* @brief High speed spike suppression limit */
     union
     {
         __IOM uint32_t HSSSL;
@@ -5617,12 +5776,12 @@ typedef struct
         {
             __IOM uint32_t HSSSL           : 8;
             __IM uint32_t RESERVED         : 24;
-        }HSSSL_B;
+        } HSSSL_B;
     };
 
     uint32_t RESERVED[22];
 
-    /** @brief Switch register */
+    /* @brief Switch register */
     union
     {
         __IOM uint32_t SW;
@@ -5630,16 +5789,16 @@ typedef struct
         {
             __IOM uint32_t SW              : 1;
             __IM uint32_t RESERVED         : 31;
-        }SW_B;
+        } SW_B;
     };
-}SCI2C_T;
+} SCI2C_T;
 
 /**
  * @brief Dynamic memory controler (DMC)
  */
 typedef struct
 {
-    /** @brief Configuraion register */
+    /* @brief Configuraion register */
     union
     {
         __IOM uint32_t CFG;
@@ -5651,10 +5810,10 @@ typedef struct
             __IOM uint32_t CAWCFG          : 4;
             __IOM uint32_t DWCFG           : 2;
             __IM  uint32_t RESERVED2       : 17;
-        }CFG_B;
+        } CFG_B;
     };
 
-    /** @brief Timing register 0 */
+    /* @brief Timing register 0 */
     union
     {
         __IOM uint32_t TIM0;
@@ -5670,10 +5829,10 @@ typedef struct
             __IOM uint32_t ATACP           : 4;
             __IOM uint32_t ECASLSEL1       : 1;
             __IOM uint32_t EXSR1           : 5;
-        }TIM0_B;
+        } TIM0_B;
     };
 
-    /** @brief Timing register 1 */
+    /* @brief Timing register 1 */
     union
     {
         __IOM uint32_t TIM1;
@@ -5682,10 +5841,10 @@ typedef struct
             __IOM uint32_t STBTIM          : 16;
             __IOM uint32_t ARNUMCFG        : 4;
             __IM  uint32_t RESERVED        : 12;
-        }TIM1_B;
+        } TIM1_B;
     };
 
-    /** @brief Control register 1 */
+    /* @brief Control register 1 */
     union
     {
         __IOM uint32_t CTRL1;
@@ -5703,10 +5862,10 @@ typedef struct
             __IM  uint32_t SRMFLG          : 1;
             __IOM uint32_t BANKNUMCFG      : 5;
             __IM  uint32_t RESERVED2       : 15;
-        }CTRL1_B;
+        } CTRL1_B;
     };
 
-    /** @brief Refresh register */
+    /* @brief Refresh register */
     union
     {
         __IOM uint32_t REF;
@@ -5714,10 +5873,10 @@ typedef struct
         {
             __IOM uint32_t RCYCCFG         : 16;
             __IM  uint32_t RESERVED        : 16;
-        }REF_B;
+        } REF_B;
     };
 
-    /** @brief Chip select register */
+    /* @brief Chip select register */
     union
     {
         __IOM uint32_t CHIPSEL;
@@ -5726,12 +5885,12 @@ typedef struct
             __IM  uint32_t RESERVED        : 16;
             __IOM uint32_t BACHIPSEL       : 16;
 
-        }CHIPSEL_B;
+        } CHIPSEL_B;
     };
 
     __IM  uint32_t  RESERVED[15];
 
-    /** @brief Mask register */
+    /* @brief Mask register */
     union
     {
         __IOM uint32_t MASK;
@@ -5740,12 +5899,12 @@ typedef struct
             __IOM uint32_t MSIZESEL        : 5;
             __IOM uint32_t MTYPESEL        : 3;
             __IM  uint32_t RESERVED        : 24;
-        }MASK_B;
+        } MASK_B;
     };
 
     __IM  uint32_t  RESERVED1[234];
 
-    /** @brief Switch register */
+    /* @brief Switch register */
     union
     {
         __IOM uint32_t SW;
@@ -5753,10 +5912,10 @@ typedef struct
         {
             __IOM uint32_t MCSW            : 1;
             __IM  uint32_t RESERVED        : 31;
-        }SW_B;
+        } SW_B;
     };
 
-    /** @brief Control register 2 */
+    /* @brief Control register 2 */
     union
     {
         __IOM uint32_t CTRL2;
@@ -5769,16 +5928,16 @@ typedef struct
             __IOM uint32_t BUFFEN          : 1;
             __IOM uint32_t WRPBSEL         : 1;
             __IM  uint32_t RESERVED        : 24;
-        }CTRL2_B;
+        } CTRL2_B;
     };
-}DMC_T;
+} DMC_T;
 
 /**
  * @brief Debug MCU(DBGMCU)
  */
 typedef struct
 {
-    /** @brief ID register */
+    /* @brief ID register */
     union
     {
         __IOM uint32_t IDCODE;
@@ -5787,10 +5946,10 @@ typedef struct
             __IOM uint32_t EQR             : 12;
             __IM  uint32_t RESERVED        : 4;
             __IOM uint32_t WVR             : 16;
-        }IDCODE_B;
+        } IDCODE_B;
     };
 
-    /** @brief Control register */
+    /* @brief Control register */
     union
     {
         __IOM uint32_t CFG;
@@ -5824,9 +5983,9 @@ typedef struct
             __IOM uint32_t TMR10_STS       : 1;
             __IOM uint32_t TMR11_STS       : 1;
             __IM  uint32_t RESERVED3       : 1;
-        }CFG_B;
+        } CFG_B;
     };
-}DBGMCU_T;
+} DBGMCU_T;
 
 /**
  * @brief   USB Device controler(USBD)
@@ -5848,17 +6007,17 @@ typedef union
         __IOM uint32_t RXDTOG              : 1;
         __IOM uint32_t CTFR                : 1;
         __IM  uint32_t RESERVED            : 16;
-    }EP_B;
-}USBD_EP_REG_T;
+    } EP_B;
+} USBD_EP_REG_T;
 
 typedef struct
 {
-    /** Endpoint */
+    /* Endpoint */
     USBD_EP_REG_T EP[8];
 
     __IM  uint32_t  RESERVED[8];
 
-    /** @brief Control register */
+    /* @brief Control register */
     union
     {
         __IOM uint32_t CTRL;
@@ -5880,10 +6039,10 @@ typedef struct
             __IOM uint32_t PMAOUIEN        : 1;
             __IOM uint32_t CTRIEN          : 1;
             __IM  uint32_t RESERVED2       : 16;
-        }CTRL_B;
+        } CTRL_B;
     };
 
-    /** @brief Interrupt status register */
+    /* @brief Interrupt status register */
     union
     {
         __IOM uint32_t INTSTS;
@@ -5902,10 +6061,10 @@ typedef struct
             __IOM uint32_t PMOFLG          : 1;
             __IOM uint32_t CTFLG           : 1;
             __IM  uint32_t RESERVED2       : 16;
-        }INTSTS_B;
+        } INTSTS_B;
     };
 
-    /** @brief Frame number register */
+    /* @brief Frame number register */
     union
     {
         __IM uint32_t FRANUM;
@@ -5918,10 +6077,10 @@ typedef struct
             __IM  uint32_t RXDMSTS         : 1;
             __IM  uint32_t RXDPSTS         : 1;
             __IM  uint32_t RESERVED        : 16;
-        }FRANUM_B;
+        } FRANUM_B;
     };
 
-    /** @brief Device address register */
+    /* @brief Device address register */
     union
     {
         __IOM uint32_t ADDR;
@@ -5931,10 +6090,10 @@ typedef struct
             __IOM uint32_t ADDR            : 7;
             __IOM uint32_t USBDEN          : 1;
             __IM  uint32_t RESERVED        : 24;
-        }ADDR_B;
+        } ADDR_B;
     };
 
-    /** @brief Buffer table address register */
+    /* @brief Buffer table address register */
     union
     {
         __IOM uint32_t BUFFTB;
@@ -5944,44 +6103,757 @@ typedef struct
             __IM  uint32_t RESERVED1       : 3;
             __IOM uint32_t BUFFTB          : 13;
             __IM  uint32_t RESERVED2       : 16;
-        }BUFFTB_B;
+        } BUFFTB_B;
     };
 
     __IM  uint32_t  RESERVED1[43];
 
-    /** @brief Buffer table address register  */
+    /* @brief Buffer table address register  */
     union
     {
-        __IOM uint32_t SWITCH;
+        __IOM uint32_t USB_SWITCH;
 
         struct
         {
-            __IOM uint32_t SWITCH           : 1;
+            __IOM uint32_t USB_SWITCH           : 1;
             __IM  uint32_t RESERVED         : 31;
-        }SWITCH_B;
+        } SWITCH_B;
     };
-}USBD_T;
+} USBD_T;
 
-/** FMC base address in the alias region */
+/**
+  * @brief Ethernet: media access control (Ethernet_MAC)
+  */
+
+typedef struct
+{
+
+    union
+    {
+        __IOM uint32_t CFG;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1  : 2;
+            __IOM uint32_t RXEN       : 1;
+            __IOM uint32_t TXEN       : 1;
+            __IOM uint32_t DC         : 1;
+            __IOM uint32_t BL         : 2;
+            __IOM uint32_t ACS        : 1;
+            __IM  uint32_t RESERVED2  : 1;
+            __IOM uint32_t DISR       : 1;
+            __IOM uint32_t IPC        : 1;
+            __IOM uint32_t DM         : 1;
+            __IOM uint32_t LBM        : 1;
+            __IOM uint32_t DISRXO     : 1;
+            __IOM uint32_t SSEL       : 1;
+            __IM  uint32_t RESERVED3  : 1;
+            __IOM uint32_t DISCRS     : 1;
+            __IOM uint32_t IFG        : 3;
+            __IM  uint32_t RESERVED4  : 2;
+            __IOM uint32_t JDIS       : 1;
+            __IOM uint32_t WDTDIS     : 1;
+        } CFG_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t FRAF;
+
+        struct
+        {
+            __IOM uint32_t PR         : 1;
+            __IOM uint32_t HUC        : 1;
+            __IOM uint32_t HMC        : 1;
+            __IOM uint32_t DAIF       : 1;
+            __IOM uint32_t PM         : 1;
+            __IOM uint32_t DISBF      : 1;
+            __IOM uint32_t PCTRLF     : 1;
+            __IOM uint32_t SAIF       : 1;
+            __IOM uint32_t SAFEN      : 1;
+            __IOM uint32_t HPF        : 1;
+            __IM  uint32_t RESERVED1  : 21;
+            __IOM uint32_t RXA        : 1;
+        } FRAF_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t HTH;
+
+        struct
+        {
+            __IOM uint32_t HTH        : 32;
+        } HTH_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t HTL;
+
+        struct
+        {
+            __IOM uint32_t HTL        : 32;
+        } HTL_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR;
+
+        struct
+        {
+            __IOM uint32_t MB         : 1;
+            __IOM uint32_t MW         : 1;
+            __IOM uint32_t CR         : 3;
+            __IM  uint32_t RESERVED1  : 1;
+            __IOM uint32_t MR         : 5;
+            __IOM uint32_t PA         : 5;
+        } ADDR_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t DATA;
+
+        struct
+        {
+            __IOM uint32_t MD         : 16;
+        } DATA_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t FCTRL;
+
+        struct
+        {
+            __IOM uint32_t FCTRLB     : 1;
+            __IOM uint32_t TXFCTRLEN  : 1;
+            __IOM uint32_t RXFCTRLEN  : 1;
+            __IOM uint32_t UNPFDETE   : 1;
+            __IOM uint32_t PTSEL      : 2;
+            __IM  uint32_t RESERVED1  : 1;
+            __IOM uint32_t ZQPDIS     : 1;
+            __IM  uint32_t RESERVED2  : 8;
+            __IOM uint32_t PT         : 16;
+        } FCTRL_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t VLANT;
+
+        struct
+        {
+            __IOM uint32_t VLANTID    : 16;
+            __IOM uint32_t VLANTCOMP  : 1;
+        } VLANT_B;
+    } ;
+    __IM  uint32_t  RESERVED[2];
+    __IOM uint32_t  REMWKUPFFL;
+
+    union
+    {
+        __IOM  uint32_t PMTCTRLSTS;
+
+        struct
+        {
+            __IOM  uint32_t PD        : 1;
+            __IOM  uint32_t MPEN      : 1;
+            __IOM  uint32_t WKUPFEN   : 1;
+            __IM  uint32_t  RESERVED1 : 2;
+            __IOM  uint32_t MPRX      : 1;
+            __IOM  uint32_t WKUPFRX   : 1;
+            __IM  uint32_t  RESERVED2 : 2;
+            __IOM  uint32_t GUN       : 1;
+            __IM  uint32_t  RESERVED3 : 21;
+            __IOM  uint32_t WKUPFRST  : 1;
+        } PMTCTRLSTS_B;
+    } ;
+    __IM  uint32_t  RESERVED1[2];
+
+    union
+    {
+        __IOM uint32_t ISTS;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1  : 3;
+            __IM  uint32_t PMTIS      : 1;
+            __IM  uint32_t MMCIS      : 1;
+            __IM  uint32_t MMCRXIS    : 1;
+            __IM  uint32_t MMCTXIS    : 1;
+            __IM  uint32_t RESERVED2  : 2;
+            __IOM uint32_t TSIS       : 1;
+        } ISTS_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t IMASK;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1  : 3;
+            __IOM uint32_t PMTIM      : 1;
+            __IM  uint32_t RESERVED2  : 5;
+            __IOM uint32_t TSTIM      : 1;
+        } IMASK_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR0H;
+
+        struct
+        {
+            __IOM uint32_t ADDR0H     : 16;
+            __IM  uint32_t RESERVED1  : 15;
+            __IM  uint32_t AL1        : 1;
+        } ADDR0H_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR0L;
+
+        struct
+        {
+            __IOM uint32_t ADDR0L     : 32;
+        } ADDR0L_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR1H;
+
+        struct
+        {
+            __IOM uint32_t ADDR1H     : 16;
+            __IM  uint32_t RESERVED1  : 8;
+            __IOM uint32_t MASKBCTRL  : 6;
+            __IOM uint32_t ADDRSEL    : 1;
+            __IOM uint32_t ADDREN     : 1;
+        } ADDR1H_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR1L;
+
+        struct
+        {
+            __IOM uint32_t ADDR1L     : 32;
+        } ADDR1L_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR2H;
+
+        struct
+        {
+            __IOM uint32_t ADDR2H     : 16;
+            __IM  uint32_t RESERVED1  : 8;
+            __IOM uint32_t MASKBCTRL  : 6;
+            __IOM uint32_t ADDRSEL    : 1;
+            __IOM uint32_t ADDREN     : 1;
+        } ADDR2H_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR2L;
+
+        struct
+        {
+            __IOM uint32_t ADDR2L     : 31;
+        } ADDR2L_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR3H;
+
+        struct
+        {
+            __IOM uint32_t ADDR3H     : 16;
+            __IM  uint32_t RESERVED1  : 8;
+            __IOM uint32_t MASKBCTRL  : 6;
+            __IOM uint32_t ADDRSEL    : 1;
+            __IOM uint32_t ADDREN     : 1;
+        } ADDR3H_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t ADDR3L;
+
+        struct
+        {
+            __IOM uint32_t ADDR3L     : 32;
+        } ADDR3L_B;
+    } ;
+    __IM  uint32_t  RESERVED2[40];
+
+    union
+    {
+        __IOM uint32_t CTRL;
+
+        struct
+        {
+            __IOM uint32_t CNTRST     : 1;
+            __IOM uint32_t CNTSTOPRO  : 1;
+            __IOM uint32_t RSTOR      : 1;
+            __IOM uint32_t MCNTF      : 1;
+            __IM  uint32_t RESERVED1  : 28;
+        } CTRL_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t RXINT;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1  : 5;
+            __IOM uint32_t RXFCE      : 1;
+            __IOM uint32_t RXFAE      : 1;
+            __IM  uint32_t RESERVED2  : 10;
+            __IOM uint32_t RXGUNF     : 1;
+        } RXINT_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t TXINT;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1  : 14;
+            __IOM uint32_t TXGFSCOL   : 1;
+            __IOM uint32_t TXGFMCOL   : 1;
+            __IM  uint32_t RESERVED2  : 5;
+            __IOM uint32_t TXGF       : 1;
+        } TXINT_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t RXINTMASK;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1  : 5;
+            __IOM uint32_t RXFCEM     : 1;
+            __IOM uint32_t RXFAEM     : 1;
+            __IM  uint32_t RESERVED2  : 10;
+            __IOM uint32_t RXGUNFM    : 1;
+        } RXINTMASK_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t TXINTMASK;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1  : 14;
+            __IOM uint32_t TXGFSCOLM  : 1;
+            __IOM uint32_t TXGFMCOLM  : 1;
+            __IM  uint32_t RESERVED2  : 5;
+            __IOM uint32_t TXGFM      : 1;
+        } TXINTMASK_B;
+    } ;
+    __IM  uint32_t  RESERVED3[14];
+
+    union
+    {
+        __IM  uint32_t TXGFSCCNT;
+
+        struct
+        {
+            __IM  uint32_t TXGFSCCNT  : 32;
+        } TXGFSCCNT_B;
+    } ;
+
+    union
+    {
+        __IM  uint32_t TXGFMCCNT;
+
+        struct
+        {
+            __IM  uint32_t TXGFMCCNT  : 32;
+        } TXGFMCCNT_B;
+    } ;
+    __IM  uint32_t  RESERVED4[5];
+
+    union
+    {
+        __IM  uint32_t TXGFCNT;
+
+        struct
+        {
+            __IM  uint32_t TXGFCNT    : 32;
+        } TXGFCNT_B;
+    } ;
+    __IM  uint32_t  RESERVED5[10];
+
+    union
+    {
+        __IM  uint32_t RXFCECNT;
+
+        struct
+        {
+            __IM  uint32_t RXFCECNT   : 32;
+        } RXFCECNT_B;
+    } ;
+
+    union
+    {
+        __IM  uint32_t RXFAECNT;
+
+        struct
+        {
+            __IM  uint32_t RXFAECNT   : 32;
+        } RXFAECNT_B;
+    } ;
+    __IM  uint32_t  RESERVED6[10];
+
+    union
+    {
+        __IM  uint32_t RXGUNCNT;
+
+        struct
+        {
+            __IM  uint32_t RXGUNCNT   : 32;
+        } RXGUNCNT_B;
+    } ;
+    __IM  uint32_t  RESERVED7[334];
+
+    union
+    {
+        __IOM uint32_t TSCTRL;
+
+        struct
+        {
+            __IOM uint32_t TSEN       : 1;
+            __IOM uint32_t TSUDSEL    : 1;
+            __IOM uint32_t TSSTINIT   : 1;
+            __IOM uint32_t TSSTUD     : 1;
+            __IOM uint32_t TSTRGIEN   : 1;
+            __IOM uint32_t TSADDUD    : 1;
+        } TSCTRL_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t SUBSECI;
+
+        struct
+        {
+            __IOM uint32_t STSUBSECI  : 8;
+        } SUBSECI_B;
+    } ;
+
+    union
+    {
+        __IM  uint32_t TSH;
+
+        struct
+        {
+            __IM  uint32_t STSEC      : 32;
+        } TSH_B;
+    } ;
+
+    union
+    {
+        __IM  uint32_t TSL;
+
+        struct
+        {
+            __IM  uint32_t STSUBSEC   : 31;
+            __IM  uint32_t STSEL      : 1;
+        } TSL_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t TSHUD;
+
+        struct
+        {
+            __IOM uint32_t TSUDSEC    : 32;
+        } TSHUD_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t TSLUD;
+
+        struct
+        {
+            __IOM uint32_t TSUDSUBSEC : 31;
+            __IOM uint32_t TSUDSEL    : 1;
+        } TSLUD_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t TSA;
+
+        struct
+        {
+            __IOM uint32_t TSA        : 32;
+        } TSA_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t TTSH;
+
+        struct
+        {
+            __IOM uint32_t TTSH       : 32;
+        } TTSH_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t TTSL;
+
+        struct
+        {
+            __IOM uint32_t TTSL       : 32;
+        } TTSL_B;
+    } ;
+    __IM  uint32_t  RESERVED8[567];
+
+    union
+    {
+        __IOM uint32_t DMABMOD;
+
+        struct
+        {
+            __IOM uint32_t SWR        : 1;
+            __IOM uint32_t DAS        : 1;
+            __IOM uint32_t DSL        : 5;
+            __IM  uint32_t RESERVED1  : 1;
+            __IOM uint32_t PBL        : 6;
+            __IOM uint32_t PR         : 2;
+            __IOM uint32_t FB         : 1;
+            __IOM uint32_t RPBL       : 6;
+            __IOM uint32_t USP        : 1;
+            __IOM uint32_t PBLx4      : 1;
+            __IOM uint32_t AAL        : 1;
+        } DMABMOD_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t DMATXPD;
+
+        struct
+        {
+            __IOM uint32_t TXPD       : 32;
+        } DMATXPD_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t DMARXPD;
+
+        struct
+        {
+            __IOM uint32_t RXPD       : 32;
+        } DMARXPD_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t DMARXDLADDR;
+
+        struct
+        {
+            __IOM uint32_t RXSTA      : 32;
+        } DMARXDLADDR_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t DMATXDLADDR;
+
+        struct
+        {
+            __IOM uint32_t TXSTA      : 32;
+        } DMATXDLADDR_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t DMASTS;
+
+        struct
+        {
+            __IOM uint32_t TXFLG      : 1;
+            __IOM uint32_t TXSFLG     : 1;
+            __IOM uint32_t TXBU       : 1;
+            __IOM uint32_t TXJTO      : 1;
+            __IOM uint32_t RXOVF      : 1;
+            __IOM uint32_t TXUNF      : 1;
+            __IOM uint32_t RXFLG      : 1;
+            __IOM uint32_t RXBU       : 1;
+            __IOM uint32_t RXSFLG     : 1;
+            __IOM uint32_t RXWTOFLG   : 1;
+            __IOM uint32_t ETXFLG     : 1;
+            __IM  uint32_t RESERVED1  : 2;
+            __IOM uint32_t FBERRFLG   : 1;
+            __IOM uint32_t ERXFLG     : 1;
+            __IOM uint32_t AINTS      : 1;
+            __IOM uint32_t NINTS      : 1;
+            __IM  uint32_t RXSTS      : 3;
+            __IM  uint32_t TXSTS      : 3;
+            __IM  uint32_t ERRB       : 3;
+            __IM  uint32_t RESERVED2  : 1;
+            __IM  uint32_t MMCFLG     : 1;
+            __IM  uint32_t PMTFLG     : 1;
+            __IM  uint32_t TSTFLG     : 1;
+        } DMASTS_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t DMAOPMOD;
+
+        struct
+        {
+            __IM  uint32_t RESERVED1  : 1;
+            __IOM uint32_t STRX       : 1;
+            __IOM uint32_t OSECF      : 1;
+            __IOM uint32_t RXTHCTRL   : 2;
+            __IM  uint32_t RESERVED2  : 1;
+            __IOM uint32_t FUF        : 1;
+            __IOM uint32_t FERRF      : 1;
+            __IM  uint32_t RESERVED3  : 5;
+            __IOM uint32_t STTX       : 1;
+            __IOM uint32_t TXTHCTRL   : 3;
+            __IM  uint32_t RESERVED4  : 3;
+            __IOM uint32_t FTXF       : 1;
+            __IOM uint32_t TXSF       : 1;
+            __IM  uint32_t RESERVED5  : 2;
+            __IOM uint32_t DISFRXF    : 1;
+            __IOM uint32_t RXSF       : 1;
+            __IOM uint32_t DISDT      : 1;
+        } DMAOPMOD_B;
+    } ;
+
+    union
+    {
+        __IOM uint32_t DMAINTEN;
+
+        struct
+        {
+            __IOM uint32_t TXIEN      : 1;
+            __IOM uint32_t TXSEN      : 1;
+            __IOM uint32_t TXBUEN     : 1;
+            __IOM uint32_t TXJTOEN    : 1;
+            __IOM uint32_t RXOVFEN    : 1;
+            __IOM uint32_t TXUNFEN    : 1;
+            __IOM uint32_t RXIEN      : 1;
+            __IOM uint32_t RXBUEN     : 1;
+            __IOM uint32_t RXSEN      : 1;
+            __IOM uint32_t RXWTOEN    : 1;
+            __IOM uint32_t ETXIEN     : 1;
+            __IM  uint32_t RESERVED1  : 2;
+            __IOM uint32_t FBERREN    : 1;
+            __IOM uint32_t ERXIEN     : 1;
+            __IOM uint32_t AINTSEN    : 1;
+            __IOM uint32_t NINTSEN    : 1;
+        } DMAINTEN_B;
+    } ;
+
+    union
+    {
+        __IM  uint32_t DMAMFABOCNT;
+
+        struct
+        {
+            __IM  uint32_t MISFCNT    : 16;
+            __IM  uint32_t MISFCNTOVF : 1;
+            __IM  uint32_t AMISFCNT   : 11;
+            __IM  uint32_t OVFCNTOVF  : 1;
+        } DMAMFABOCNT_B;
+    } ;
+    __IM  uint32_t  RESERVED9[9];
+
+    union
+    {
+        __IM  uint32_t DMAHTXD;
+
+        struct
+        {
+            __IM  uint32_t HTXDADDRP  : 32;
+        } DMAHTXD_B;
+    } ;
+
+    union
+    {
+        __IM  uint32_t DMAHRXD;
+
+        struct
+        {
+            __IM  uint32_t HRXDADDRP  : 32;
+        } DMAHRXD_B;
+    } ;
+
+    union
+    {
+        __IM  uint32_t DMAHTXBADDR;
+
+        struct
+        {
+            __IM  uint32_t HTXBADDRP  : 32;
+        } DMAHTXBADDR_B;
+    } ;
+
+    union
+    {
+        __IM  uint32_t DMAHRXBADDR;
+
+        struct
+        {
+            __IM  uint32_t HRXBADDRP  : 32;
+        } DMAHRXBADDR_B;
+    } ;
+} ETH_T;
+
+/**@} end of group Peripheral_registers_structures*/
+
+/** @defgroup Peripheral_memory_map
+  @{
+*/
+
+/* FMC base address in the alias region */
 #define FMC_BASE                ((uint32_t)0x08000000)
-/** SRAM base address in the alias region */
+/* SRAM base address in the alias region */
 #define SRAM_BASE               ((uint32_t)0x20000000)
-/** Peripheral base address in the alias region */
+/* Peripheral base address in the alias region */
 #define PERIPH_BASE             ((uint32_t)0x40000000)
 
-/** SRAM base address in the bit-band region */
+/* SRAM base address in the bit-band region */
 #define SRAM_BB_BASE            ((uint32_t)0x22000000)
-/** Peripheral base address in the bit-band region */
+/* Peripheral base address in the bit-band region */
 #define PERIPH_BB_BASE          ((uint32_t)0x42000000)
 
-/** EMMC registers base address */
-#define EMMC_R_BASE             ((uint32_t)0xA0000000)
-/** QSPI registers base address */
+/* SMC registers base address */
+#define SMC_R_BASE             ((uint32_t)0xA0000000)
+/* QSPI registers base address */
 #define QSPI_BASE               ((uint32_t)0xA0000000)
-/** DMC registers base address */
+/* DMC registers base address */
 #define DMC_BASE                ((uint32_t)0xA0000000)
 
-/** Peripheral memory map */
+/* Peripheral memory map */
 #define APB1PERIPH_BASE         PERIPH_BASE
 #define APB2PERIPH_BASE         (PERIPH_BASE + 0x10000)
 #define AHBPERIPH_BASE          (PERIPH_BASE + 0x20000)
@@ -6056,24 +6928,35 @@ typedef struct
 #define RCM_BASE                (AHBPERIPH_BASE + 0x1000)
 #define CRC_BASE                (AHBPERIPH_BASE + 0x3000)
 
-/** FMC registers base address */
+#define ETH_BASE                (AHBPERIPH_BASE + 0x8000)
+#define ETH_MAC_BASE            (ETH_BASE)
+#define ETH_MMC_BASE            (ETH_BASE + 0x0100)
+#define ETH_PTP_BASE            (ETH_BASE + 0x0700)
+#define ETH_DMA_BASE            (ETH_BASE + 0x1000)
+/* FMC registers base address */
 #define FMC_R_BASE              (AHBPERIPH_BASE + 0x2000)
-/** FMC Option Bytes base address */
+/* FMC Option Bytes base address */
 #define OB_BASE                 ((uint32_t)0x1FFFF800)
 
-/** EMMC Bank1 registers base address */
-#define EMMC_Bank1_R_BASE       (EMMC_R_BASE + 0x0000)
-/** EMMC Bank1E registers base address */
-#define EMMC_Bank1E_R_BASE      (EMMC_R_BASE + 0x0104)
-/** EMMC Bank2 registers base address */
-#define EMMC_Bank2_R_BASE       (EMMC_R_BASE + 0x0060)
-/** EMMC Bank3 registers base address */
-#define EMMC_Bank3_R_BASE       (EMMC_R_BASE + 0x0080)
-/**EMMC Bank4 registers base address  */
-#define EMMC_Bank4_R_BASE       (EMMC_R_BASE + 0x00A0)
+/* SMC Bank1 registers base address */
+#define SMC_Bank1_R_BASE       (SMC_R_BASE + 0x0000)
+/* SMC Bank1E registers base address */
+#define SMC_Bank1E_R_BASE      (SMC_R_BASE + 0x0104)
+/* SMC Bank2 registers base address */
+#define SMC_Bank2_R_BASE       (SMC_R_BASE + 0x0060)
+/* SMC Bank3 registers base address */
+#define SMC_Bank3_R_BASE       (SMC_R_BASE + 0x0080)
+/*SMC Bank4 registers base address  */
+#define SMC_Bank4_R_BASE       (SMC_R_BASE + 0x00A0)
 
-/** Debug MCU registers base address */
+/* Debug MCU registers base address */
 #define DBGMCU_BASE             ((uint32_t)0xE0042000)
+
+/**@} end of group Peripheral_memory_map*/
+
+/** @defgroup Peripheral_declaration
+  @{
+*/
 
 #define CRC                     ((CRC_T *) CRC_BASE)
 #define RTC                     ((RTC_T *) RTC_BASE)
@@ -6154,11 +7037,11 @@ typedef struct
 #define FMC                     ((FMC_T *) FMC_R_BASE)
 #define USBD                    ((USBD_T *)USBD_BASE)
 
-#define EMMC_Bank1              ((EMMC_Bank1_T *) EMMC_Bank1_R_BASE)
-#define EMMC_Bank1E             ((EMMC_Bank1E_T *)EMMC_Bank1E_R_BASE)
-#define EMMC_Bank2              ((EMMC_Bank2_T *) EMMC_Bank2_R_BASE)
-#define EMMC_Bank3              ((EMMC_Bank3_T *) EMMC_Bank3_R_BASE)
-#define EMMC_Bank4              ((EMMC_Bank4_T *) EMMC_Bank4_R_BASE)
+#define SMC_Bank1              ((SMC_Bank1_T *) SMC_Bank1_R_BASE)
+#define SMC_Bank1E             ((SMC_Bank1E_T *)SMC_Bank1E_R_BASE)
+#define SMC_Bank2              ((SMC_Bank2_T *) SMC_Bank2_R_BASE)
+#define SMC_Bank3              ((SMC_Bank3_T *) SMC_Bank3_R_BASE)
+#define SMC_Bank4              ((SMC_Bank4_T *) SMC_Bank4_R_BASE)
 
 #define DBGMCU                  ((DBGMCU_T *) DBGMCU_BASE)
 
@@ -6172,7 +7055,17 @@ typedef struct
 #define DMC                     ((DMC_T *)DMC_BASE)
 #endif
 
-/** Define one bit mask */
+#if defined (APM32F10X_CL)
+#define ETH                     ((ETH_T *) ETH_BASE)
+#endif
+
+/**@} end of group Peripheral_declaration*/
+
+/** @defgroup Exported_Macros
+  @{
+*/
+
+/* Define one bit mask */
 #define BIT0                    ((uint32_t)0x00000001)
 #define BIT1                    ((uint32_t)0x00000002)
 #define BIT2                    ((uint32_t)0x00000004)
@@ -6220,11 +7113,12 @@ typedef struct
 
 #define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
 
+/**@} end of group Exported_Macros*/
+/**@} end of group APM32F10x */
+/**@} end of group CMSIS */
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __APM32F10X_H */
-
-

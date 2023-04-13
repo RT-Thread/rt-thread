@@ -46,8 +46,8 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
-				
-			config BSP_USING_LPUART1
+
+            config BSP_USING_LPUART1
                 bool "Enable LPUART1"
                 default n
 
@@ -56,7 +56,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
                 default n
         endif
-    
+
     menuconfig BSP_USING_I2C
         bool "Enable I2C BUS"
         default n
@@ -68,7 +68,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C3 BUS"
                 default y
                 if BSP_USING_I2C3
-                    comment "Notice: PC0 --> 32; PC1 --> 33" 
+                    comment "Notice: PC0 --> 32; PC1 --> 33"
                     config BSP_I2C3_SCL_PIN
                         int "i2c3 scl pin number"
                         range 1 176
@@ -83,7 +83,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C4 BUS"
                 default n
                 if BSP_USING_I2C4
-                    comment "Notice: PC1 --> 33; PD6 --> 54" 
+                    comment "Notice: PC1 --> 33; PD6 --> 54"
                     config BSP_I2C4_SCL_PIN
                         int "i2c4 scl pin number"
                         range 1 176
@@ -99,7 +99,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable on-chip FLASH"
         select RT_USING_FAL
         default n
-        
+
     config BSP_USING_ON_CHIP_FLASH_FATFS
         bool "Enable onchip flash with FatFS"
         depends on BSP_USING_ON_CHIP_FLASH
@@ -110,10 +110,10 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_USBD
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
-        default n 
-   
+        default n
+
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 endmenu

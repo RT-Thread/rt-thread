@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -59,11 +59,11 @@ static rt_err_t lpc_ctimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *a
     {
         uint32_t clk;
         uint32_t pre;
-        if(hwtimer_dev == CTIMER0) clk = CLOCK_GetFreq(kCLOCK_CTimer0);
-        if(hwtimer_dev == CTIMER1) clk = CLOCK_GetFreq(kCLOCK_CTimer1);
-        if(hwtimer_dev == CTIMER2) clk = CLOCK_GetFreq(kCLOCK_CTimer2);
-        if(hwtimer_dev == CTIMER3) clk = CLOCK_GetFreq(kCLOCK_CTimer3);
-        if(hwtimer_dev == CTIMER4) clk = CLOCK_GetFreq(kCLOCK_CTimer4);
+        if(hwtimer_dev == CTIMER0) clk = CLOCK_GetFreq(kCLOCK_Timer0);
+        if(hwtimer_dev == CTIMER1) clk = CLOCK_GetFreq(kCLOCK_Timer1);
+        if(hwtimer_dev == CTIMER2) clk = CLOCK_GetFreq(kCLOCK_Timer2);
+        if(hwtimer_dev == CTIMER3) clk = CLOCK_GetFreq(kCLOCK_Timer3);
+        if(hwtimer_dev == CTIMER4) clk = CLOCK_GetFreq(kCLOCK_Timer4);
 
         pre = clk / *((uint32_t *)args) - 1;
 

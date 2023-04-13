@@ -73,6 +73,7 @@ rt_err_t nu_pdma_channel_memctrl_set(int i32ChannID, nu_pdma_memctrl_t eMemCtrl)
 nu_pdma_cb_handler_t nu_pdma_callback_hijack(int i32ChannID, nu_pdma_cbtype_t eCBType, nu_pdma_chn_cb_t psChnCb_Hijack);
 rt_err_t nu_pdma_filtering_set(int i32ChannID, uint32_t u32EventFilter);
 uint32_t nu_pdma_filtering_get(int i32ChannID);
+nu_pdma_desc_t nu_pdma_get_channel_desc(int32_t i32ChannID);
 
 // For scatter-gather DMA
 rt_err_t nu_pdma_desc_setup(int i32ChannID, nu_pdma_desc_t dma_desc, uint32_t u32DataWidth, uint32_t u32AddrSrc, uint32_t u32AddrDst, int32_t TransferCnt, nu_pdma_desc_t next, uint32_t u32BeSilent);

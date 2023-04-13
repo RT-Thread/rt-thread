@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,16 +22,10 @@
 extern "C" {
 #endif /* ifdef __cplusplus */
 
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef* cs_gpiox, uint16_t cs_gpio_pin);
-
-#ifdef __cplusplus
-}
-#endif /* ifdef __cplusplus */
-
 struct ch32_hw_spi_cs
 {
     GPIO_TypeDef* GPIOx;
-    uint16_t GPIO_Pin;
+    rt_uint16_t GPIO_Pin;
 };
 
 struct ch32_spi_config
@@ -56,17 +50,17 @@ typedef struct __SPI_HandleTypeDef
 
   SPI_InitTypeDef            Init;           /*!< SPI communication parameters             */
 
-  uint8_t                    *pTxBuffPtr;    /*!< Pointer to SPI Tx transfer Buffer        */
+  rt_uint8_t                    *pTxBuffPtr;    /*!< Pointer to SPI Tx transfer Buffer        */
 
-  uint16_t                   TxXferSize;     /*!< SPI Tx Transfer size                     */
+  rt_uint16_t                   TxXferSize;     /*!< SPI Tx Transfer size                     */
 
-  volatile uint16_t          TxXferCount;    /*!< SPI Tx Transfer Counter                  */
+  volatile rt_uint16_t          TxXferCount;    /*!< SPI Tx Transfer Counter                  */
 
-  uint8_t                    *pRxBuffPtr;    /*!< Pointer to SPI Rx transfer Buffer        */
+  rt_uint8_t                    *pRxBuffPtr;    /*!< Pointer to SPI Rx transfer Buffer        */
 
-  uint16_t                   RxXferSize;     /*!< SPI Rx Transfer size                     */
+  rt_uint16_t                   RxXferSize;     /*!< SPI Rx Transfer size                     */
 
-  volatile uint16_t          RxXferCount;    /*!< SPI Rx Transfer Counter                  */
+  volatile rt_uint16_t          RxXferCount;    /*!< SPI Rx Transfer Counter                  */
 
 
 } SPI_HandleTypeDef;
@@ -82,6 +76,11 @@ struct ch32_spi
 
 
 };
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef* cs_gpiox, uint16_t cs_gpio_pin);
+
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef* cs_gpiox, rt_uint16_t cs_gpio_pin);
+
+#ifdef __cplusplus
+}
+#endif /* ifdef __cplusplus */
 
 #endif /*__DRV_SPI_H__ */

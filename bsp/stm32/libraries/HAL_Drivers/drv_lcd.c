@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,15 +12,16 @@
 
 #ifdef BSP_USING_LCD
 #include <lcd_port.h>
+#include <rtdevice.h>
 #include <string.h>
 
-//#define DRV_DEBUG
-#define LOG_TAG             "drv.lcd"
+#define DRV_DEBUG
+#define LOG_TAG "drv.lcd"
 #include <drv_log.h>
 
-#define LCD_DEVICE(dev)     (struct drv_lcd_device*)(dev)
+#define LCD_DEVICE(dev) (struct drv_lcd_device *)(dev)
 
-static LTDC_HandleTypeDef LtdcHandle = {0};
+LTDC_HandleTypeDef LtdcHandle = {0};
 
 struct drv_lcd_device
 {
@@ -45,7 +46,7 @@ static rt_err_t drv_lcd_init(struct rt_device *device)
     lcd = lcd;
     return RT_EOK;
 }
-
+#ifndef ART_PI_TouchGFX_LIB
 static rt_err_t drv_lcd_control(struct rt_device *device, int cmd, void *args)
 {
     struct drv_lcd_device *lcd = LCD_DEVICE(device);
@@ -83,11 +84,11 @@ static rt_err_t drv_lcd_control(struct rt_device *device, int cmd, void *args)
         struct rt_device_graphic_info *info = (struct rt_device_graphic_info *)args;
 
         RT_ASSERT(info != RT_NULL);
-        info->pixel_format  = lcd->lcd_info.pixel_format;
+        info->pixel_format = lcd->lcd_info.pixel_format;
         info->bits_per_pixel = 16;
-        info->width         = lcd->lcd_info.width;
-        info->height        = lcd->lcd_info.height;
-        info->framebuffer   = lcd->lcd_info.framebuffer;
+        info->width = lcd->lcd_info.width;
+        info->height = lcd->lcd_info.height;
+        info->framebuffer = lcd->lcd_info.framebuffer;
     }
     break;
 
@@ -108,7 +109,7 @@ void HAL_LTDC_LineEventCallback(LTDC_HandleTypeDef *hltdc)
 {
     rt_sem_release(&_lcd.lcd_lock);
 }
-
+#endif
 void LTDC_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -144,7 +145,7 @@ rt_err_t stm32_lcd_init(struct drv_lcd_device *lcd)
     /* Accumulated vertical back porch = Vsync + VBP - 1 */
     LtdcHandle.Init.AccumulatedVBP = LCD_VSYNC_HEIGHT + LCD_VBP - 1;
     /* Accumulated active width = Hsync + HBP + Active Width - 1 */
-    LtdcHandle.Init.AccumulatedActiveW = LCD_HSYNC_WIDTH + LCD_HBP + lcd->lcd_info.width - 1 ;
+    LtdcHandle.Init.AccumulatedActiveW = LCD_HSYNC_WIDTH + LCD_HBP + lcd->lcd_info.width - 1;
     /* Accumulated active height = Vsync + VBP + Active Heigh - 1 */
     LtdcHandle.Init.AccumulatedActiveH = LCD_VSYNC_HEIGHT + LCD_VBP + lcd->lcd_info.height - 1;
     /* Total height = Vsync + VBP + Active Heigh + VFP - 1 */
@@ -197,7 +198,7 @@ rt_err_t stm32_lcd_init(struct drv_lcd_device *lcd)
     pLayerCfg.Alpha = 255;
 
     /* Default Color configuration (configure A,R,G,B component values) */
-    pLayerCfg.Alpha0 = 255;
+    pLayerCfg.Alpha0 = 0;
     pLayerCfg.Backcolor.Blue = 0;
     pLayerCfg.Backcolor.Green = 0;
     pLayerCfg.Backcolor.Red = 0;
@@ -261,7 +262,6 @@ void turn_on_lcd_backlight(void)
 #else
 void turn_on_lcd_backlight(void)
 {
-
 }
 #endif
 
@@ -301,9 +301,9 @@ int drv_lcd_hw_init(void)
     _lcd.lcd_info.pixel_format = LCD_PIXEL_FORMAT;
 
     /* malloc memory for Triple Buffering */
-    _lcd.lcd_info.framebuffer = rt_malloc(LCD_BUF_SIZE);
-    _lcd.back_buf = rt_malloc(LCD_BUF_SIZE);
-    _lcd.front_buf = rt_malloc(LCD_BUF_SIZE);
+    _lcd.lcd_info.framebuffer = rt_malloc_align(LCD_BUF_SIZE, LCD_BUF_SIZE);
+    _lcd.back_buf = rt_malloc_align(LCD_BUF_SIZE, LCD_BUF_SIZE);
+    _lcd.front_buf = rt_malloc_align(LCD_BUF_SIZE, LCD_BUF_SIZE);
     if (_lcd.lcd_info.framebuffer == RT_NULL || _lcd.back_buf == RT_NULL || _lcd.front_buf == RT_NULL)
     {
         LOG_E("init frame buffer failed!\n");
@@ -316,12 +316,14 @@ int drv_lcd_hw_init(void)
     memset(_lcd.back_buf, 0xFF, LCD_BUF_SIZE);
     memset(_lcd.front_buf, 0xFF, LCD_BUF_SIZE);
 
-    device->type    = RT_Device_Class_Graphic;
+    device->type = RT_Device_Class_Graphic;
 #ifdef RT_USING_DEVICE_OPS
-    device->ops     = &lcd_ops;
+    device->ops = &lcd_ops;
 #else
-    device->init    = drv_lcd_init;
+    device->init = drv_lcd_init;
+#ifndef ART_PI_TouchGFX_LIB
     device->control = drv_lcd_control;
+#endif
 #endif
 
     /* register lcd device */
@@ -362,6 +364,7 @@ __exit:
 }
 INIT_DEVICE_EXPORT(drv_lcd_hw_init);
 
+#ifndef ART_PI_TouchGFX_LIB
 #ifdef DRV_DEBUG
 #ifdef FINSH_USING_MSH
 int lcd_test()
@@ -371,28 +374,60 @@ int lcd_test()
 
     while (1)
     {
-        /* red */
-        for (int i = 0; i < LCD_BUF_SIZE / 2; i++)
+        if (lcd->lcd_info.pixel_format == RTGRAPHIC_PIXEL_FORMAT_RGB565)
         {
-            lcd->lcd_info.framebuffer[2 * i] = 0x00;
-            lcd->lcd_info.framebuffer[2 * i + 1] = 0xF8;
+            /* red */
+            for (int i = 0; i < LCD_BUF_SIZE / 2; i++)
+            {
+                lcd->lcd_info.framebuffer[2 * i] = 0x00;
+                lcd->lcd_info.framebuffer[2 * i + 1] = 0xF8;
+            }
+            lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
+            rt_thread_mdelay(1000);
+            /* green */
+            for (int i = 0; i < LCD_BUF_SIZE / 2; i++)
+            {
+                lcd->lcd_info.framebuffer[2 * i] = 0xE0;
+                lcd->lcd_info.framebuffer[2 * i + 1] = 0x07;
+            }
+            lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
+            rt_thread_mdelay(1000);
+            /* blue */
+            for (int i = 0; i < LCD_BUF_SIZE / 2; i++)
+            {
+                lcd->lcd_info.framebuffer[2 * i] = 0x1F;
+                lcd->lcd_info.framebuffer[2 * i + 1] = 0x00;
+            }
         }
-        lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
-        rt_thread_mdelay(1000);
-        /* green */
-        for (int i = 0; i < LCD_BUF_SIZE / 2; i++)
+        else if (lcd->lcd_info.pixel_format == RTGRAPHIC_PIXEL_FORMAT_RGB888)
         {
-            lcd->lcd_info.framebuffer[2 * i] = 0xE0;
-            lcd->lcd_info.framebuffer[2 * i + 1] = 0x07;
+            /* red */
+            for (int i = 0; i < LCD_BUF_SIZE / 3; i++)
+            {
+                lcd->lcd_info.framebuffer[3 * i] = 0x00;
+                lcd->lcd_info.framebuffer[3 * i + 1] = 0x00;
+                lcd->lcd_info.framebuffer[3 * i + 2] = 0xff;
+            }
+            lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
+            rt_thread_mdelay(1000);
+            /* green */
+            for (int i = 0; i < LCD_BUF_SIZE / 3; i++)
+            {
+                lcd->lcd_info.framebuffer[3 * i] = 0x00;
+                lcd->lcd_info.framebuffer[3 * i + 1] = 0xff;
+                lcd->lcd_info.framebuffer[3 * i + 2] = 0x00;
+            }
+            lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
+            rt_thread_mdelay(1000);
+            /* blue */
+            for (int i = 0; i < LCD_BUF_SIZE / 3; i++)
+            {
+                lcd->lcd_info.framebuffer[3 * i] = 0xff;
+                lcd->lcd_info.framebuffer[3 * i + 1] = 0x00;
+                lcd->lcd_info.framebuffer[3 * i + 2] = 0x00;
+            }
         }
-        lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
-        rt_thread_mdelay(1000);
-        /* blue */
-        for (int i = 0; i < LCD_BUF_SIZE / 2; i++)
-        {
-            lcd->lcd_info.framebuffer[2 * i] = 0x1F;
-            lcd->lcd_info.framebuffer[2 * i + 1] = 0x00;
-        }
+
         lcd->parent.control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
         rt_thread_mdelay(1000);
     }
@@ -401,3 +436,4 @@ MSH_CMD_EXPORT(lcd_test, lcd_test);
 #endif /* FINSH_USING_MSH */
 #endif /* DRV_DEBUG */
 #endif /* BSP_USING_LCD */
+#endif

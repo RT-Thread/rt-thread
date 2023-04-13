@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -144,8 +144,15 @@ static void ch32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state
         tim = (TIM_HandleTypeDef *)timer->parent.user_data;
         tim_device = (struct ch32_hwtimer *)timer;
 
+#if defined (SOC_RISCV_SERIES_CH32V2)
+        if(tim->instance == TIM1)
+#elif defined(SOC_RISCV_SERIES_CH32V3)
         if(tim->instance == TIM1 || tim->instance == TIM8 ||
                 tim->instance == TIM9 || tim->instance == TIM10)
+#else
+#error " unsupported CH32 series! "
+        if(RT_NULL)
+#endif
         {
             RCC_APB2PeriphClockCmd(tim->rcc, ENABLE);
             prescaler_value = (RCC_ClockStruct.PCLK2_Frequency * pclk2_doubler / 10000) - 1;
@@ -168,13 +175,13 @@ static void ch32_hwtimer_init(struct rt_hwtimer_device *timer, rt_uint32_t state
         {
             tim->init.TIM_CounterMode   = TIM_CounterMode_Down;
         }
-
+#if defined (SOC_RISCV_SERIES_CH32V3)
         /* TIM6 and TIM7 only support counter up mode */
         if(tim->instance == TIM6 || tim->instance == TIM7)
         {
             tim->init.TIM_CounterMode = TIM_CounterMode_Up;
         }
-
+#endif
         TIM_TimeBaseInit(tim->instance, &tim->init);
 
         NVIC_InitStruct.NVIC_IRQChannel = tim_device->irqn;
@@ -203,12 +210,12 @@ static rt_err_t ch32_hwtimer_start(struct rt_hwtimer_device *timer, rt_uint32_t 
     if (mode == HWTIMER_MODE_ONESHOT)
     {
         /* set timer to single mode */
-        tim->instance->CTLR1 &= (uint16_t) ~((uint16_t)TIM_OPM);
+        tim->instance->CTLR1 &= (rt_uint16_t) ~((rt_uint16_t)TIM_OPM);
         tim->instance->CTLR1 |= TIM_OPMode_Single;
     }
     else
     {
-        tim->instance->CTLR1 &= (uint16_t) ~((uint16_t)TIM_OPM);
+        tim->instance->CTLR1 &= (rt_uint16_t) ~((rt_uint16_t)TIM_OPM);
         tim->instance->CTLR1 |= TIM_OPMode_Repetitive;
     }
 
@@ -266,8 +273,15 @@ static rt_err_t ch32_hwtimer_control(struct rt_hwtimer_device *timer, rt_uint32_
         ch32_get_pclk_doubler(&pclk1_doubler, &pclk2_doubler);
         RCC_GetClocksFreq(&RCC_ClockStruct);
 
+#if defined (SOC_RISCV_SERIES_CH32V2)
+        if(tim->instance == TIM1)
+#elif defined(SOC_RISCV_SERIES_CH32V3)
         if(tim->instance == TIM1 || tim->instance == TIM8 ||
                 tim->instance == TIM9 || tim->instance == TIM10)
+#else
+#error " unsupported CH32 series! "
+        if(RT_NULL)
+#endif
         {
             val = RCC_ClockStruct.PCLK2_Frequency * pclk2_doubler / freq;
         }
@@ -288,12 +302,12 @@ static rt_err_t ch32_hwtimer_control(struct rt_hwtimer_device *timer, rt_uint32_
         if (*(rt_hwtimer_mode_t *)args == HWTIMER_MODE_ONESHOT)
         {
             /* set timer to single mode */
-            tim->instance->CTLR1 &= (uint16_t) ~((uint16_t)TIM_OPM);
+            tim->instance->CTLR1 &= (rt_uint16_t) ~((rt_uint16_t)TIM_OPM);
             tim->instance->CTLR1 |= TIM_OPMode_Single;
         }
         else
         {
-            tim->instance->CTLR1 &= (uint16_t) ~((uint16_t)TIM_OPM);
+            tim->instance->CTLR1 &= (rt_uint16_t) ~((rt_uint16_t)TIM_OPM);
             tim->instance->CTLR1 |= TIM_OPMode_Repetitive;
         }
         break;

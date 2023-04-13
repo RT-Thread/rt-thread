@@ -28,14 +28,15 @@
 #define D13       (13)
 #define D14       (14)
 #define D15       (15)
-#define A0        (16)
-#define A1        (17)
-#define A2        (18)
-#define A3        (19)
-#define A4        (20)
-#define A5        (21)
-#define A6        (22)
-#define A7        (23)
+#define D16       (16)
+#define A0        (17)
+#define A1        (18)
+#define A2        (19)
+#define A3        (20)
+#define A4        (21)
+#define A5        (22)
+#define A6        (23)
+#define A7        (24)
 
 #define F_CPU          84000000L  /* CPU:84MHz */
 

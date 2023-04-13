@@ -6,12 +6,13 @@ SECTIONS
     . = 0x20000000;
 
     . = ALIGN(4);
-    .text : 
+    .text :
     {
         *(.init)
+        *(.vectors)
         *(.text)
         *(.gnu.linkonce.t*)
-        
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -21,7 +22,7 @@ SECTIONS
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
-        . = ALIGN(4);   
+        . = ALIGN(4);
 
         . = ALIGN(4);
         __rt_init_start = .;
@@ -74,11 +75,13 @@ SECTIONS
 
     . = ALIGN(4);
     .nobss : { *(.nobss) }
-    
+
     . = ALIGN(4);
     __bss_start__ = .;
+    __bss_start = .;
     .bss : { *(.bss)}
     __bss_end__ = .;
+    __bss_end = .;
 
     /* stabs debugging sections. */
     .stab 0 : { *(.stab) }

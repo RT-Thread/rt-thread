@@ -6,12 +6,12 @@ config DRIVERS_MSGBOX
 
 config DRIVERS_MSGBOX_SX
     bool "enable Message Box(SX) driver"
-	depends on DRIVERS_MSGBOX
+    depends on DRIVERS_MSGBOX
         default n
 
 config DRIVERS_MSGBOX_AMP
     bool "enable Message Box(amp) driver"
-	depends on DRIVERS_MSGBOX
+    depends on DRIVERS_MSGBOX
         default n
 
 endmenu

@@ -9,12 +9,22 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
+#include "ch32v30x.h"
+
+/* defined the LED0 pin: PB5 */
+#define LED0_PIN              rt_pin_get("PB.5")
 
 int main(void)
 {
+    /* set LED0 pin mode to output */
+    rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
+
     while (1)
     {
-        rt_kprintf("Hello RT-Thread!\n");
-        rt_thread_mdelay(1000);
+        rt_pin_write(LED0_PIN, PIN_HIGH);
+        rt_thread_mdelay(500);
+        rt_pin_write(LED0_PIN, PIN_LOW);
+        rt_thread_mdelay(500);
     }
 }

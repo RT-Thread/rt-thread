@@ -90,7 +90,7 @@ rt_err_t ra_can_configure(struct rt_can_device *can_dev, struct can_configure *c
     err = R_CAN_Open(can->config->p_api_ctrl, can->config->p_cfg);
     if (FSP_SUCCESS != err)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }
@@ -187,7 +187,7 @@ int ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uint32_t b
     if (R_CAN_Write(can->config->p_api_ctrl, boxno, &g_can_tx_frame) != FSP_SUCCESS)
     {
         rt_exit_critical();
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }

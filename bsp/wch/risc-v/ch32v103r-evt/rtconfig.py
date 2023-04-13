@@ -1,6 +1,6 @@
 import os
 ARCH     = 'risc-v'
-CPU      = 'ch32v1'
+CPU      = 'ch32'
 # toolchains options
 CROSS_TOOL  = 'gcc'
 
@@ -10,13 +10,13 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'D:/Softwares/RT_ThreadStudio/repo/Extract/ToolChain_Support_Packages/WCH/RISC-V-GCC-WCH/8.2.0/bin'
+    EXEC_PATH   = r'D:\RT-ThreadStudio\repo\Extract\ToolChain_Support_Packages\WCH\RISC-V-GCC-WCH\8.2.0\bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
 
-# if os.getenv('RTT_EXEC_PATH'):
-    # EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 #BUILD = 'release'
@@ -53,7 +53,7 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -g3'
+        CFLAGS += ' -O1 -g3'
         AFLAGS += ' -g3'
     else:
         CFLAGS += ' -O2'

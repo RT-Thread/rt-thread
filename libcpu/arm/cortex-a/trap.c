@@ -8,18 +8,19 @@
  * 2013-07-20     Bernard      first version
  */
 
-#include <rtthread.h>
-#include <rthw.h>
-#include <board.h>
 #include <backtrace.h>
+#include <board.h>
+#include <rthw.h>
+#include <rtthread.h>
 
 #include "interrupt.h"
+#include "mm_fault.h"
 
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
 #endif
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #include <lwp_arch.h>
 
@@ -44,14 +45,23 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 
 int check_user_stack(struct rt_hw_exp_stack *regs)
 {
-    void* dfar = RT_NULL;
+    void *dfar = RT_NULL;
+    asm volatile("MRC p15, 0, %0, c6, c0, 0" : "=r"(dfar));
 
-    asm volatile ("MRC p15, 0, %0, c6, c0, 0":"=r"(dfar));
-    if (arch_expand_user_stack(dfar))
+    if ((dfar >= (void *)USER_STACK_VSTART) && (dfar < (void *)USER_STACK_VEND))
     {
-        regs->pc -= 8;
-        return 1;
+        struct rt_aspace_fault_msg msg = {
+            .fault_op = MM_FAULT_OP_WRITE,
+            .fault_type = MM_FAULT_TYPE_PAGE_FAULT,
+            .fault_vaddr = dfar,
+        };
+        if (rt_aspace_fault_try_fix(&msg))
+        {
+            regs->pc -= 8;
+            return 1;
+        }
     }
+
     return 0;
 }
 #endif
@@ -70,7 +80,7 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
     rt_kprintf("fp :0x%08x ip :0x%08x\n", regs->fp, regs->ip);
     rt_kprintf("sp :0x%08x lr :0x%08x pc :0x%08x\n", regs->sp, regs->lr, regs->pc);
     rt_kprintf("cpsr:0x%08x\n", regs->cpsr);
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     {
         uint32_t v;
         asm volatile ("MRC p15, 0, %0, c5, c0, 0":"=r"(v));
@@ -79,7 +89,7 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
         rt_kprintf("ttbr0:0x%08x\n", v);
         asm volatile ("MRC p15, 0, %0, c6, c0, 0":"=r"(v));
         rt_kprintf("dfar:0x%08x\n", v);
-        rt_kprintf("0x%08x -> 0x%08x\n", v, rt_hw_mmu_v2p(&mmu_info, (void *)v));
+        rt_kprintf("0x%08x -> 0x%08x\n", v, rt_kmem_v2p((void *)v));
     }
 #endif
 }
@@ -128,7 +138,7 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
         }
     }
 #endif
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     check_user_fault(regs, 4, "User undefined instruction");
 #endif
     rt_unwind(regs, 4);
@@ -169,7 +179,7 @@ void rt_hw_trap_swi(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
 {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     if (dbg_check_event(regs, 4))
     {
         return;
@@ -195,7 +205,7 @@ void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
 {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     if (dbg_check_event(regs, 8))
     {
         return;

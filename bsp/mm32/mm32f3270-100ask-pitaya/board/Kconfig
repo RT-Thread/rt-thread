@@ -41,16 +41,16 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
-			config BSP_USING_UART2
+            config BSP_USING_UART2
                 bool "Enable UART2"
                 default n
-			config BSP_USING_UART3
+            config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"

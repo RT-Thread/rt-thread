@@ -25,7 +25,7 @@
 #include <sys/statfs.h>
 #include <poll.h>
 
-int rtlink_fops_open(struct dfs_fd *fd)
+int rtlink_fops_open(struct dfs_file *fd)
 {
     rt_uint16_t flags = 0;
     rt_device_t device;
@@ -58,7 +58,7 @@ int rtlink_fops_open(struct dfs_fd *fd)
     return rt_device_open(device, flags);
 }
 
-int rtlink_fops_close(struct dfs_fd *fd)
+int rtlink_fops_close(struct dfs_file *fd)
 {
     rt_device_t device;
     device = (rt_device_t)fd->vnode->data;
@@ -67,7 +67,7 @@ int rtlink_fops_close(struct dfs_fd *fd)
     return rt_device_close(device);
 }
 
-int rtlink_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
+int rtlink_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     rt_device_t device;
     device = (rt_device_t)fd->vnode->data;
@@ -82,7 +82,7 @@ int rtlink_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     }
 }
 
-int rtlink_fops_read(struct dfs_fd *fd, void *buf, size_t count)
+int rtlink_fops_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
@@ -96,7 +96,7 @@ int rtlink_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     return size;
 }
 
-int rtlink_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
+int rtlink_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
@@ -110,7 +110,7 @@ int rtlink_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     return size;
 }
 
-int rtlink_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+int rtlink_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int mask = 0;
     int flags = 0;
@@ -180,7 +180,7 @@ static rt_err_t rt_link_event_recv(struct rt_link_service *service)
     {
         return ret;
     }
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 static void send_cb(struct rt_link_service *service, void *buffer)
@@ -265,7 +265,7 @@ rt_err_t  rt_link_dev_close(rt_device_t dev)
     return rt_link_service_detach(&rtlink->service);
 }
 
-rt_size_t rt_link_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+rt_ssize_t rt_link_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
@@ -305,7 +305,7 @@ rt_size_t rt_link_dev_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_
     return read_len;
 }
 
-rt_size_t rt_link_dev_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+rt_ssize_t rt_link_dev_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
@@ -321,7 +321,7 @@ rt_err_t  rt_link_dev_control(rt_device_t dev, int cmd, void *args)
     if (cmd & RT_DEVICE_CTRL_CONFIG)
     {
         if (args == RT_NULL)
-            return RT_EINVAL;
+            return -RT_EINVAL;
         RTLINK_SERV(dev).service = ((struct rt_link_service *)args)->service;
         RTLINK_SERV(dev).timeout_tx = ((struct rt_link_service *)args)->timeout_tx;
         RTLINK_SERV(dev).flag = ((struct rt_link_service *)args)->flag;

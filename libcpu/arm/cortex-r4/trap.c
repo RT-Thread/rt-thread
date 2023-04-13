@@ -50,7 +50,7 @@ void rt_hw_trap_udef(struct rt_hw_exp_stack *regs)
     rt_kprintf("undefined instruction\n");
     rt_hw_show_register(regs);
     if (rt_thread_self() != RT_NULL)
-        rt_kprintf("Current Thread: %s\n", rt_thread_self()->name);
+        rt_kprintf("Current Thread: %s\n", rt_thread_self()->parent.name);
     rt_hw_cpu_shutdown();
 }
 

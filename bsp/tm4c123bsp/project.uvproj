@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, TARGET_IS_TM4C123_RB1, rvmdk, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, PART_TM4C123GH6PM, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, TARGET_IS_TM4C123_RB1, rvmdk, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, PART_TM4C123GH6PM, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;board;libraries\Drivers;libraries\Drivers\config;..\..\components\finsh;.;..\..\include;libraries\TivaWare_C_series\tm4c123_driverlib;libraries\TivaWare_C_series\tm4c123_driverlib\driverlib;libraries\TivaWare_C_series\tm4c123_driverlib\driverlib\inc;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;..\..\components\finsh;..\..\components\drivers\include;libraries\Drivers;..\..\components\drivers\spi;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\stdio;libraries\TivaWare_C_series\tm4c123_driverlib\driverlib;..\..\components\drivers\include;libraries\TivaWare_C_series\tm4c123_driverlib;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\libc\posix\ipc;applications;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;libraries\TivaWare_C_series\tm4c123_driverlib\driverlib\inc;board;libraries\Drivers\config;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -470,13 +470,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -764,9 +757,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

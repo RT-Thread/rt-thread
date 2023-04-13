@@ -43,7 +43,7 @@ pos: channel
 void *buffer: rt_uint32_t pulse[size]
 size : number of pulse, only set to sizeof(rt_uint32_t).
 */
-static rt_size_t _pwm_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _pwm_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_err_t result = RT_EOK;
     struct rt_device_pwm *pwm = (struct rt_device_pwm *)dev;
@@ -71,7 +71,7 @@ pos: channel
 void *buffer: rt_uint32_t pulse[size]
 size : number of pulse, only set to sizeof(rt_uint32_t).
 */
-static rt_size_t _pwm_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _pwm_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     rt_err_t result = RT_EOK;
     struct rt_device_pwm *pwm = (struct rt_device_pwm *)dev;
@@ -413,7 +413,7 @@ static int pwm(int argc, char **argv)
                 rt_kprintf("pwm set        <channel> <period> <pulse>   - set pwm channel info\n");
                 rt_kprintf("pwm phase      <channel> <phase>            - set pwm phase\n");
                 rt_kprintf("pwm dead_time  <channel> <dead_time>        - set pwm dead time\n");
-                result = - RT_ERROR;
+                result = -RT_ERROR;
             }
         }
     }
@@ -427,7 +427,7 @@ static int pwm(int argc, char **argv)
         rt_kprintf("pwm set        <channel> <period> <pulse>  - set pwm channel info\n");
         rt_kprintf("pwm phase      <channel> <phase>           - set pwm phase\n");
         rt_kprintf("pwm dead_time  <channel> <dead_time>       - set pwm dead time\n");
-        result = - RT_ERROR;
+        result = -RT_ERROR;
     }
 
     return RT_EOK;

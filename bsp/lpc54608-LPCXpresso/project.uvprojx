@@ -330,9 +330,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>RT_USING_LIBC, CPU_LPC54608, CORE_M4, SDK_DEBUGCONSOLE=0, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, CPU_LPC54608J512ET180=1, RT_USING_ARM_LIBC</Define>
+              <Define>RT_USING_LIBC, CPU_LPC54608, RT_USING_ARMLIBC, SDK_DEBUGCONSOLE=0, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, CORE_M4, CPU_LPC54608J512ET180=1</Define>
               <Undefine />
-              <IncludePath>applications;.;SDK_2.2_LPCXpresso54608\CMSIS\Include;SDK_2.2_LPCXpresso54608\devices\LPC54608;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\cplusplus;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;drivers;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\finsh;.;..\..\include;SDK_2.2_LPCXpresso54608\devices\LPC54608\drivers;SDK_2.2_LPCXpresso54608\devices\LPC54608\utilities;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\inc;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\src;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\net\lwip\port;..\..\components\libc\posix\delay;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc;..\..\components\libc\posix\pthreads;..\..\components\net\netdev\include;..\..\components\net\sal\include;..\..\components\net\sal\include\socket;..\..\components\net\sal\impl;..\..\components\net\sal\include\dfs_net;..\..\components\net\sal\include\socket\sys_socket</IncludePath>
+              <IncludePath>..\..\components\drivers\include;..\..\components\dfs\filesystems\devfs;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\libcpu\arm\cortex-m4;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\finsh;..\..\components\drivers\include;..\..\components\net\sal\include\socket\sys_socket;..\..\components\drivers\spi;..\..\components\net\netdev\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\include;SDK_2.2_LPCXpresso54608\devices\LPC54608\drivers;..\..\components\libc\posix\io\stdio;..\..\components\drivers\include;..\..\components\net\sal\include;drivers;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\src;..\..\components\dfs\filesystems\elmfat;..\..\components\libc\posix\pthreads;..\..\components\libc\cplusplus;..\..\components\net\sal\include\socket;SDK_2.2_LPCXpresso54608\CMSIS\Include;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\inc;..\..\components\dfs\include;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\include;..\..\components\drivers\include;..\..\libcpu\arm\common;SDK_2.2_LPCXpresso54608\devices\LPC54608;..\..\components\net\sal\impl;..\..\components\drivers\include;..\..\components\libc\posix\ipc;applications;.;..\..\components\net\lwip\port;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;SDK_2.2_LPCXpresso54608\devices\LPC54608\utilities;..\..\components\libc\posix\delay;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\net\sal\include\dfs_net</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -484,13 +484,6 @@
           <GroupName>CPlusPlus</GroupName>
           <Files>
             <File>
-              <FileName>cxx_Mutex.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cxx_crt_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
@@ -505,6 +498,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>cxx_crt.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cxx_Thread.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\components\libc\cplusplus\cxx_Thread.cpp</FilePath>
@@ -512,9 +512,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cxx_crt.cpp</FileName>
+              <FileName>cxx_Mutex.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
+              <FilePath>..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -522,9 +522,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -658,6 +658,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>gpt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\sdio\gpt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>mmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\sdio\mmc.c</FilePath>
@@ -710,37 +717,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>clock_config.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\clock_config.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_phy.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\fsl_phy.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_ft5406.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_ft5406.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_sdram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_sdram.c</FilePath>
+              <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -752,9 +731,58 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_sdram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_uart.c</FilePath>
+              <FilePath>drivers\drv_sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_phy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\fsl_phy.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_sram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_sram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\clock_config.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_sd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_sd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_ft5406.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_ft5406.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -769,27 +797,6 @@
               <FileName>drv_emac.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_emac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_sd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_sram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_sram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_i2c.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -971,9 +978,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

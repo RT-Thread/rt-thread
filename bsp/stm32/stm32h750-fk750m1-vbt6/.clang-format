@@ -1,0 +1,38 @@
+---
+BasedOnStyle: Microsoft
+Language: Cpp
+
+###################################
+#          indent conf
+###################################
+
+UseTab: Never
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 0
+AccessModifierOffset: -4
+NamespaceIndentation: All
+FixNamespaceComments: false
+BreakBeforeBraces: Linux
+
+###################################
+#          other styles
+###################################
+
+# 
+# for more conf, you can ref: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+
+AllowShortIfStatementsOnASingleLine: true
+
+AllowShortLoopsOnASingleLine: true
+
+AllowShortBlocksOnASingleLine: true
+
+IndentCaseLabels: true
+
+SortIncludes: false
+
+AlignConsecutiveMacros: AcrossEmptyLines
+
+AlignConsecutiveAssignments: Consecutive

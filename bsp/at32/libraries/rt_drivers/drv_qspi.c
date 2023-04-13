@@ -8,6 +8,7 @@
  * 2022-05-16     shelton      first version
  */
 
+#include <rtdevice.h>
 #include "drv_common.h"
 #include "drv_qspi.h"
 
@@ -444,14 +445,14 @@ rt_err_t at32_qspi_bus_attach_device(const char *bus_name, const char *device_na
     if (qspi_device == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!");
-        result = RT_ENOMEM;
+        result = -RT_ENOMEM;
         goto __exit;
     }
     cs_pin = (struct at32_hw_spi_cs *)rt_malloc(sizeof(struct at32_hw_spi_cs));
     if (qspi_device == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!");
-        result = RT_ENOMEM;
+        result = -RT_ENOMEM;
         goto __exit;
     }
 

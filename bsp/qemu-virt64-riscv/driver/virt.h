@@ -13,11 +13,10 @@
 
 #include <rtdef.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <mmu.h>
 #include <ioremap.h>
 
-extern rt_mmu_info mmu_info;
 #endif
 
 /* VirtIO */

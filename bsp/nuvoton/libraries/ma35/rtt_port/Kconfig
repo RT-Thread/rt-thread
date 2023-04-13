@@ -5,6 +5,32 @@
         select RT_USING_USER_MAIN
         default y
 
+    config BSP_USING_SSPCC
+        bool
+        depends on SOC_SERIES_MA35D1 && !USE_MA35D1_SUBM
+        default y
+
+    config BSP_USING_SSMCC
+        bool
+        depends on SOC_SERIES_MA35D1 && !USE_MA35D1_SUBM
+        default y
+
+    config BSP_USING_UMCTL2
+        bool
+        depends on SOC_SERIES_MA35D1 && !USE_MA35D1_SUBM
+        default y
+
+    config BSP_USING_RTP
+        bool
+        depends on SOC_SERIES_MA35D1 && !USE_MA35D1_SUBM
+        default y
+
+    if BSP_USING_RTP
+        config RTP_USING_AT_STARTUP
+            bool "Enable RTP Executation at startup"
+            default y
+    endif
+
     config USE_MA35D1_AARCH32
         bool
         select ARCH_ARM_CORTEX_A
@@ -16,6 +42,15 @@
     config USE_MA35D1_AARCH64
         bool
         select ARCH_ARMV8
+
+    if USE_MA35D1_AARCH64
+        config BSP_USING_GIC
+            bool
+            default y
+        config BSP_USING_GICV2
+            bool
+            default y
+    endif
 
     config USE_MA35D1_SUBM
         bool
@@ -943,7 +978,7 @@
 
     menuconfig BSP_USING_ECAP
         bool "Enable Enhanced Input Capture Timer(ECAP)"
-	select RT_USING_INPUT_CAPTURE
+    select RT_USING_INPUT_CAPTURE
 
         if BSP_USING_ECAP
 
@@ -1097,6 +1132,36 @@
             select RT_USING_WATCHDOG
             default n
         endif
+
+    config BSP_USING_HWSEM
+        bool "Enable Hardware semaphore(HWSEM)"
+        default y
+
+        if BSP_USING_HWSEM
+            config BSP_USING_HWSEM0
+            bool "Enable HWSEM0"
+            default y
+        endif
+
+    config BSP_USING_WHC
+        bool "Enable Wormhole(WHC)"
+        default y
+
+        if BSP_USING_WHC
+            config BSP_USING_WHC0
+            bool "Enable WHC0"
+            default y
+
+            config BSP_USING_WHC1
+            bool "Enable WHC1"
+            depends on !USE_MA35D1_SUBM
+            default n
+        endif
+
+    config BSP_USING_NFI
+        bool "Enable Raw NAND flash Interface(NFI)"
+        depends on !USE_MA35D1_SUBM
+        default y
 
     config BSP_USING_EBI
         bool "Enable External Bus Interface(EBI)"

@@ -47,7 +47,7 @@ def AddOptions():
                       dest = 'project-path',
                       type = 'string',
                       default = None,
-                      help = 'set dist-ide project output path')
+                      help = 'set project output path')
     AddOption('--project-name',
                       dest = 'project-name',
                       type = 'string',
@@ -85,11 +85,16 @@ def AddOptions():
                       dest = 'target',
                       type = 'string',
                       help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
-    AddOption('--exec-prefix',
+    AddOption('--strict',
+                dest='strict-compiling',
+                help='Compiling project with strict mode and ALL warning will be errors',
+                action='store_true',
+                default=False)
+    AddOption('--cc-prefix', '--exec-prefix',
                 dest = 'exec-prefix',
                 type = 'string',
-                help = 'set RTT_EXEC_PREFIX temperately')
-    AddOption('--exec-path',
+                help = 'set RTT_CC_PREFIX temperately')
+    AddOption('--cc-path', '--exec-path',
                 dest = 'exec-path',
                 type = 'string',
                 help = 'set RTT_EXEC_PATH temperately')
@@ -122,6 +127,10 @@ def AddOptions():
                 action = 'store_true',
                 default = False,
                 help = 'Don`t show pyconfig window')
+    AddOption('--add-rtconfig',
+                dest = 'add_rtconfig',
+                type = 'string',
+                help = 'Add macro definitions and scons depend at build time. It is similar to adding macro definitions in rtconfig.h')
     if platform.system() != 'Windows':
         AddOption('--menuconfig',
                     dest = 'menuconfig',

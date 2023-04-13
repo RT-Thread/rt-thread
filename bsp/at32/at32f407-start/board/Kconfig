@@ -26,7 +26,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
-        default n 
+        default n
 
     config BSP_USING_EMAC
         bool "Enable Ethernet"
@@ -44,6 +44,11 @@ menu "On-chip Peripheral Drivers"
                     bool "PHY USING DP83848"
             endchoice
         endif
+
+    config BSP_USING_USBD
+        bool "Enable USB BUS"
+        select RT_USING_USB_DEVICE
+        default n
 
     menuconfig BSP_USING_RTC
         bool "Enable RTC"

@@ -38,7 +38,7 @@ SECTIONS
         *(.rodata*)
 
         KEEP(*(.eh_frame*))
-	        /* section information for finsh shell */
+            /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
         KEEP(*(FSymTab))
@@ -63,14 +63,14 @@ SECTIONS
         PROVIDE(__ctors_end__ = .);
 
     } > FLASH
-	
-	 .nrf_queue :
-	{
-		PROVIDE(__start_nrf_queue = .);
-		KEEP(*(.nrf_balloc))
-		PROVIDE(__stop_nrf_queue = .);
-	} > FLASH
-	
+
+     .nrf_queue :
+    {
+        PROVIDE(__start_nrf_queue = .);
+        KEEP(*(.nrf_balloc))
+        PROVIDE(__stop_nrf_queue = .);
+    } > FLASH
+
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
@@ -128,7 +128,7 @@ SECTIONS
         . = ALIGN(4);
         __bss_end__ = .;
     } > RAM
-    
+
     .heap (COPY):
     {
         __HeapBase = .;
@@ -154,13 +154,13 @@ SECTIONS
 
     /* Check if data + heap + stack exceeds RAM limit */
     ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
-    
+
     /* Check if text sections + data exceeds FLASH limit */
     DataInitFlashUsed = __bss_start__ - __data_start__;
     CodeFlashUsed = __etext - ORIGIN(FLASH);
     TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
-    
+
 }
 
 

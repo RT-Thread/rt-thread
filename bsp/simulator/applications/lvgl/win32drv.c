@@ -12,6 +12,7 @@
 #if USE_WIN32DRV
 
 #include <windowsx.h>
+#include <malloc.h>
 #include <process.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -142,9 +143,6 @@ static void lv_win32_display_driver_flush_callback(
     const lv_area_t* area,
     lv_color_t* color_p);
 
-static void lv_win32_display_refresh_handler(
-    lv_timer_t* param);
-
 static void lv_win32_pointer_driver_read_callback(
     lv_indev_drv_t* indev_drv,
     lv_indev_data_t* data);
@@ -157,6 +155,9 @@ static void lv_win32_encoder_driver_read_callback(
     lv_indev_drv_t* indev_drv,
     lv_indev_data_t* data);
 
+static lv_win32_window_context_t* lv_win32_get_display_context(
+    lv_disp_t* display);
+
 static LRESULT CALLBACK lv_win32_window_message_callback(
     HWND   hWnd,
     UINT   uMsg,
@@ -165,6 +166,25 @@ static LRESULT CALLBACK lv_win32_window_message_callback(
 
 static unsigned int __stdcall lv_win32_window_thread_entrypoint(
     void* raw_parameter);
+
+static void lv_win32_push_key_to_keyboard_queue(
+    lv_win32_window_context_t* context,
+    uint32_t key,
+    lv_indev_state_t state)
+{
+    lv_win32_keyboard_queue_item_t* current =
+        (lv_win32_keyboard_queue_item_t*)(_aligned_malloc(
+            sizeof(lv_win32_keyboard_queue_item_t),
+            MEMORY_ALLOCATION_ALIGNMENT));
+    if (current)
+    {
+        current->key = key;
+        current->state = state;
+        InterlockedPushEntrySList(
+            context->keyboard_queue,
+            &current->ItemEntry);
+    }
+}
 
 /**********************
  *  GLOBAL VARIABLES
@@ -181,24 +201,6 @@ EXTERN_C lv_indev_t* lv_win32_encoder_device_object = NULL;
  **********************/
 
 static HWND g_window_handle = NULL;
-
-static HDC g_buffer_dc_handle = NULL;
-static UINT32* g_pixel_buffer = NULL;
-static SIZE_T g_pixel_buffer_size = 0;
-
-static lv_disp_t* g_display = NULL;
-static bool volatile g_display_refreshing = false;
-
-static bool volatile g_mouse_pressed = false;
-static LPARAM volatile g_mouse_value = 0;
-
-static bool volatile g_mousewheel_pressed = false;
-static int16_t volatile g_mousewheel_value = 0;
-
-static bool volatile g_keyboard_pressed = false;
-static WPARAM volatile g_keyboard_value = 0;
-
-static int volatile g_dpi_value = USER_DEFAULT_SCREEN_DPI;
 
 /**********************
  *      MACROS
@@ -238,6 +240,72 @@ EXTERN_C void lv_win32_add_all_input_devices_to_group(
     lv_indev_set_group(lv_win32_encoder_device_object, group);
 }
 
+EXTERN_C lv_win32_window_context_t* lv_win32_get_window_context(
+    HWND window_handle)
+{
+    return (lv_win32_window_context_t*)(
+        GetPropW(window_handle, L"LVGL.SimulatorWindow.WindowContext"));
+}
+
+EXTERN_C bool lv_win32_init_window_class()
+{
+    WNDCLASSEXW window_class;
+    window_class.cbSize = sizeof(WNDCLASSEXW);
+    window_class.style = 0;
+    window_class.lpfnWndProc = lv_win32_window_message_callback;
+    window_class.cbClsExtra = 0;
+    window_class.cbWndExtra = 0;
+    window_class.hInstance = NULL;
+    window_class.hIcon = NULL;
+    window_class.hCursor = LoadCursorW(NULL, IDC_ARROW);
+    window_class.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    window_class.lpszMenuName = NULL;
+    window_class.lpszClassName = LVGL_SIMULATOR_WINDOW_CLASS;
+    window_class.hIconSm = NULL;
+    return RegisterClassExW(&window_class);
+}
+
+EXTERN_C HWND lv_win32_create_display_window(
+    const wchar_t* window_title,
+    lv_coord_t hor_res,
+    lv_coord_t ver_res,
+    HINSTANCE instance_handle,
+    HICON icon_handle,
+    int show_window_mode)
+{
+    HWND display_window_handle = CreateWindowExW(
+        WINDOW_EX_STYLE,
+        LVGL_SIMULATOR_WINDOW_CLASS,
+        window_title,
+        WINDOW_STYLE,
+        CW_USEDEFAULT,
+        0,
+        hor_res,
+        ver_res,
+        NULL,
+        NULL,
+        instance_handle,
+        NULL);
+    if (display_window_handle)
+    {
+        SendMessageW(
+            display_window_handle,
+            WM_SETICON,
+            TRUE,
+            (LPARAM)icon_handle);
+        SendMessageW(
+            display_window_handle,
+            WM_SETICON,
+            FALSE,
+            (LPARAM)icon_handle);
+
+        ShowWindow(display_window_handle, show_window_mode);
+        UpdateWindow(display_window_handle);
+    }
+
+    return display_window_handle;
+}
+
 EXTERN_C bool lv_win32_init(
     HINSTANCE instance_handle,
     int show_window_mode,
@@ -245,6 +313,11 @@ EXTERN_C bool lv_win32_init(
     lv_coord_t ver_res,
     HICON icon_handle)
 {
+    if (!lv_win32_init_window_class())
+    {
+        return false;
+    }
+
     PWINDOW_THREAD_PARAMETER parameter =
         (PWINDOW_THREAD_PARAMETER)malloc(sizeof(WINDOW_THREAD_PARAMETER));
     parameter->window_mutex = CreateEventExW(NULL, NULL, 0, EVENT_ALL_ACCESS);
@@ -264,53 +337,16 @@ EXTERN_C bool lv_win32_init(
 
     WaitForSingleObjectEx(parameter->window_mutex, INFINITE, FALSE);
 
-    static lv_disp_draw_buf_t display_buffer;
-#if (LV_COLOR_DEPTH == 32) || \
-    (LV_COLOR_DEPTH == 16 && LV_COLOR_16_SWAP == 0) || \
-    (LV_COLOR_DEPTH == 8) || \
-    (LV_COLOR_DEPTH == 1)
-    lv_disp_draw_buf_init(
-        &display_buffer,
-        (lv_color_t*)g_pixel_buffer,
-        NULL,
-        hor_res * ver_res);
-#else
-    lv_disp_draw_buf_init(
-        &display_buffer,
-        (lv_color_t*)malloc(hor_res * ver_res * sizeof(lv_color_t)),
-        NULL,
-        hor_res * ver_res);
-#endif
+    lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+        lv_win32_get_window_context(g_window_handle));
+    if (!context)
+    {
+        return false;
+    }
 
-    static lv_disp_drv_t display_driver;
-    lv_disp_drv_init(&display_driver);
-    display_driver.hor_res = hor_res;
-    display_driver.ver_res = ver_res;
-    display_driver.flush_cb = lv_win32_display_driver_flush_callback;
-    display_driver.draw_buf = &display_buffer;
-    display_driver.direct_mode = 1;
-    g_display = lv_disp_drv_register(&display_driver);
-    lv_timer_del(g_display->refr_timer);
-    g_display->refr_timer = NULL;
-    lv_timer_create(lv_win32_display_refresh_handler, 0, NULL);
-
-    static lv_indev_drv_t pointer_driver;
-    lv_indev_drv_init(&pointer_driver);
-    pointer_driver.type = LV_INDEV_TYPE_POINTER;
-    pointer_driver.read_cb = lv_win32_pointer_driver_read_callback;
-    lv_win32_pointer_device_object = lv_indev_drv_register(&pointer_driver);
-
-    static lv_indev_drv_t keypad_driver;
-    lv_indev_drv_init(&keypad_driver);
-    keypad_driver.type = LV_INDEV_TYPE_KEYPAD;
-    keypad_driver.read_cb = lv_win32_keypad_driver_read_callback;
-    lv_win32_keypad_device_object = lv_indev_drv_register(&keypad_driver);
-
-    static lv_indev_drv_t encoder_driver;
-    lv_indev_drv_init(&encoder_driver);
-    encoder_driver.type = LV_INDEV_TYPE_ENCODER;
-    encoder_driver.read_cb = lv_win32_encoder_driver_read_callback;
-    lv_win32_encoder_device_object = lv_indev_drv_register(&encoder_driver);
+    lv_win32_pointer_device_object = context->mouse_device_object;
+    lv_win32_keypad_device_object = context->keyboard_device_object;
+    lv_win32_encoder_device_object = context->mousewheel_device_object;
 
     return true;
 }
@@ -621,161 +657,119 @@ static void lv_win32_display_driver_flush_callback(
     const lv_area_t* area,
     lv_color_t* color_p)
 {
-    if (lv_disp_flush_is_last(disp_drv))
+    lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+        lv_win32_get_window_context((HWND)disp_drv->user_data));
+    if (context)
     {
+        if (lv_disp_flush_is_last(disp_drv))
+        {
 #if (LV_COLOR_DEPTH == 32) || \
     (LV_COLOR_DEPTH == 16 && LV_COLOR_16_SWAP == 0) || \
     (LV_COLOR_DEPTH == 8) || \
     (LV_COLOR_DEPTH == 1)
-        UNREFERENCED_PARAMETER(color_p);
+            UNREFERENCED_PARAMETER(color_p);
 #elif (LV_COLOR_DEPTH == 16 && LV_COLOR_16_SWAP != 0)
-        SIZE_T count = g_pixel_buffer_size / sizeof(UINT16);
-        PUINT16 source = (PUINT16)color_p;
-        PUINT16 destination = (PUINT16)g_pixel_buffer;
-        for (SIZE_T i = 0; i < count; ++i)
-        {
-            UINT16 current = *source;
-            *destination = (LOBYTE(current) << 8) | HIBYTE(current);
-
-            ++source;
-            ++destination;
-        }
-#else
-        for (int y = area->y1; y <= area->y2; ++y)
-        {
-            for (int x = area->x1; x <= area->x2; ++x)
+            SIZE_T count = context->display_framebuffer_size / sizeof(UINT16);
+            PUINT16 source = (PUINT16)color_p;
+            PUINT16 destination = (PUINT16)context->display_framebuffer_base;
+            for (SIZE_T i = 0; i < count; ++i)
             {
-                g_pixel_buffer[y * disp_drv->hor_res + x] =
-                    lv_color_to32(*color_p);
-                color_p++;
+                UINT16 current = *source;
+                *destination = (LOBYTE(current) << 8) | HIBYTE(current);
+
+                ++source;
+                ++destination;
             }
-        }
+#else
+            uint32_t* destination = context->display_framebuffer_base;
+
+            for (int y = area->y1; y <= area->y2; ++y)
+            {
+                for (int x = area->x1; x <= area->x2; ++x)
+                {
+                    destination[y * disp_drv->hor_res + x] =
+                        lv_color_to32(*color_p);
+                    color_p++;
+                }
+            }
 #endif
 
-        InvalidateRect(g_window_handle, NULL, FALSE);
+            InvalidateRect(disp_drv->user_data, NULL, FALSE);
+        }
     }
 
     lv_disp_flush_ready(disp_drv);
-}
-
-static void lv_win32_display_refresh_handler(
-    lv_timer_t* param)
-{
-    UNREFERENCED_PARAMETER(param);
-
-    if (!g_display_refreshing)
-    {
-        _lv_disp_refr_timer(NULL);
-    }
 }
 
 static void lv_win32_pointer_driver_read_callback(
     lv_indev_drv_t* indev_drv,
     lv_indev_data_t* data)
 {
-    UNREFERENCED_PARAMETER(indev_drv);
+    lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+        lv_win32_get_display_context(indev_drv->disp));
+    if (!context)
+    {
+        return;
+    }
 
-    data->state = (lv_indev_state_t)(
-        g_mouse_pressed ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
-
-    data->point.x = MulDiv(
-        GET_X_LPARAM(g_mouse_value),
-        USER_DEFAULT_SCREEN_DPI,
-        WIN32DRV_MONITOR_ZOOM * g_dpi_value);
-    data->point.y = MulDiv(
-        GET_Y_LPARAM(g_mouse_value),
-        USER_DEFAULT_SCREEN_DPI,
-        WIN32DRV_MONITOR_ZOOM * g_dpi_value);
-
-    if (data->point.x < 0)
-    {
-        data->point.x = 0;
-    }
-    if (data->point.x > g_display->driver->hor_res - 1)
-    {
-        data->point.x = g_display->driver->hor_res - 1;
-    }
-    if (data->point.y < 0)
-    {
-        data->point.y = 0;
-    }
-    if (data->point.y > g_display->driver->ver_res - 1)
-    {
-        data->point.y = g_display->driver->ver_res - 1;
-    }
+    data->state = context->mouse_state;
+    data->point = context->mouse_point;
 }
 
 static void lv_win32_keypad_driver_read_callback(
     lv_indev_drv_t* indev_drv,
     lv_indev_data_t* data)
 {
-    UNREFERENCED_PARAMETER(indev_drv);
-
-    data->state = (lv_indev_state_t)(
-        g_keyboard_pressed ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
-
-    WPARAM KeyboardValue = g_keyboard_value;
-
-    switch (KeyboardValue)
+    lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+        lv_win32_get_display_context(indev_drv->disp));
+    if (!context)
     {
-    case VK_UP:
-        data->key = LV_KEY_UP;
-        break;
-    case VK_DOWN:
-        data->key = LV_KEY_DOWN;
-        break;
-    case VK_LEFT:
-        data->key = LV_KEY_LEFT;
-        break;
-    case VK_RIGHT:
-        data->key = LV_KEY_RIGHT;
-        break;
-    case VK_ESCAPE:
-        data->key = LV_KEY_ESC;
-        break;
-    case VK_DELETE:
-        data->key = LV_KEY_DEL;
-        break;
-    case VK_BACK:
-        data->key = LV_KEY_BACKSPACE;
-        break;
-    case VK_RETURN:
-        data->key = LV_KEY_ENTER;
-        break;
-    case VK_NEXT:
-        data->key = LV_KEY_NEXT;
-        break;
-    case VK_PRIOR:
-        data->key = LV_KEY_PREV;
-        break;
-    case VK_HOME:
-        data->key = LV_KEY_HOME;
-        break;
-    case VK_END:
-        data->key = LV_KEY_END;
-        break;
-    default:
-        if (KeyboardValue >= 'A' && KeyboardValue <= 'Z')
-        {
-            KeyboardValue += 0x20;
-        }
-
-        data->key = (uint32_t)KeyboardValue;
-
-        break;
+        return;
     }
+
+    EnterCriticalSection(&context->keyboard_mutex);
+
+    lv_win32_keyboard_queue_item_t* current =
+        (lv_win32_keyboard_queue_item_t*)(InterlockedPopEntrySList(
+            context->keyboard_queue));
+    if (current)
+    {
+        data->key = current->key;
+        data->state = current->state;
+
+        _aligned_free(current);
+
+        data->continue_reading = true;
+    }
+
+    LeaveCriticalSection(&context->keyboard_mutex);
 }
 
 static void lv_win32_encoder_driver_read_callback(
     lv_indev_drv_t* indev_drv,
     lv_indev_data_t* data)
 {
-    UNREFERENCED_PARAMETER(indev_drv);
+    lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+        lv_win32_get_display_context(indev_drv->disp));
+    if (!context)
+    {
+        return;
+    }
 
-    data->state = (lv_indev_state_t)(
-        g_mousewheel_pressed ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL);
-    data->enc_diff = g_mousewheel_value;
-    g_mousewheel_value = 0;
+    data->state = context->mousewheel_state;
+    data->enc_diff = context->mousewheel_enc_diff;
+    context->mousewheel_enc_diff = 0;
+}
+
+static lv_win32_window_context_t* lv_win32_get_display_context(
+    lv_disp_t* display)
+{
+    if (display)
+    {
+        return lv_win32_get_window_context((HWND)display->driver->user_data);
+    }
+
+    return NULL;
 }
 
 static LRESULT CALLBACK lv_win32_window_message_callback(
@@ -786,155 +780,550 @@ static LRESULT CALLBACK lv_win32_window_message_callback(
 {
     switch (uMsg)
     {
+    case WM_CREATE:
+    {
+        // Note: Return -1 directly because WM_DESTROY message will be sent
+        // when destroy the window automatically. We free the resource when
+        // processing the WM_DESTROY message of this window.
+
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            malloc(sizeof(lv_win32_window_context_t)));
+        if (!context)
+        {
+            return -1;
+        }
+
+        RECT request_content_size;
+        GetWindowRect(hWnd, &request_content_size);
+
+        context->display_hor_res =
+            request_content_size.right - request_content_size.left;
+        context->display_ver_res =
+            request_content_size.bottom - request_content_size.top;
+        context->display_dpi = lv_win32_get_dpi_for_window(hWnd);
+        context->display_framebuffer_context_handle =
+            lv_win32_create_frame_buffer(
+                hWnd,
+                context->display_hor_res,
+                context->display_ver_res,
+                &context->display_framebuffer_base,
+                &context->display_framebuffer_size);
+#if (LV_COLOR_DEPTH == 32) || \
+    (LV_COLOR_DEPTH == 16 && LV_COLOR_16_SWAP == 0) || \
+    (LV_COLOR_DEPTH == 8) || \
+    (LV_COLOR_DEPTH == 1)
+        lv_disp_draw_buf_init(
+            &context->display_buffer,
+            (lv_color_t*)context->display_framebuffer_base,
+            NULL,
+            context->display_hor_res * context->display_ver_res);
+#else
+        size_t draw_buffer_size = sizeof(lv_color_t);
+        draw_buffer_size *= context->display_hor_res;
+        draw_buffer_size *= context->display_ver_res;
+        lv_disp_draw_buf_init(
+            &context->display_buffer,
+            (lv_color_t*)malloc(draw_buffer_size),
+            NULL,
+            context->display_hor_res * context->display_ver_res);
+#endif
+        lv_disp_drv_init(&context->display_driver);
+        context->display_driver.hor_res = context->display_hor_res;
+        context->display_driver.ver_res = context->display_ver_res;
+        context->display_driver.flush_cb =
+            lv_win32_display_driver_flush_callback;
+        context->display_driver.draw_buf = &context->display_buffer;
+        context->display_driver.direct_mode = 1;
+        context->display_driver.user_data = hWnd;
+        context->display_device_object =
+            lv_disp_drv_register(&context->display_driver);
+        if (!context->display_device_object)
+        {
+            return -1;
+        }
+
+        context->mouse_state = LV_INDEV_STATE_REL;
+        context->mouse_point.x = 0;
+        context->mouse_point.y = 0;
+        lv_indev_drv_init(&context->mouse_driver);
+        context->mouse_driver.type = LV_INDEV_TYPE_POINTER;
+        context->mouse_driver.disp = context->display_device_object;
+        context->mouse_driver.read_cb =
+            lv_win32_pointer_driver_read_callback;
+        context->mouse_device_object =
+            lv_indev_drv_register(&context->mouse_driver);
+        if (!context->mouse_device_object)
+        {
+            return -1;
+        }
+
+        context->mousewheel_state = LV_INDEV_STATE_REL;
+        context->mousewheel_enc_diff = 0;
+        lv_indev_drv_init(&context->mousewheel_driver);
+        context->mousewheel_driver.type = LV_INDEV_TYPE_ENCODER;
+        context->mousewheel_driver.disp = context->display_device_object;
+        context->mousewheel_driver.read_cb =
+            lv_win32_encoder_driver_read_callback;
+        context->mousewheel_device_object =
+            lv_indev_drv_register(&context->mousewheel_driver);
+        if (!context->mousewheel_device_object)
+        {
+            return -1;
+        }
+
+        InitializeCriticalSection(&context->keyboard_mutex);
+        context->keyboard_queue = _aligned_malloc(
+            sizeof(SLIST_HEADER),
+            MEMORY_ALLOCATION_ALIGNMENT);
+        if (!context->keyboard_queue)
+        {
+            return -1;
+        }
+        InitializeSListHead(context->keyboard_queue);
+        context->keyboard_utf16_high_surrogate = 0;
+        context->keyboard_utf16_low_surrogate = 0;
+        lv_indev_drv_init(&context->keyboard_driver);
+        context->keyboard_driver.type = LV_INDEV_TYPE_KEYPAD;
+        context->keyboard_driver.disp = context->display_device_object;
+        context->keyboard_driver.read_cb =
+            lv_win32_keypad_driver_read_callback;
+        context->keyboard_device_object =
+            lv_indev_drv_register(&context->keyboard_driver);
+        if (!context->keyboard_device_object)
+        {
+            return -1;
+        }
+
+        if (!SetPropW(
+            hWnd,
+            L"LVGL.SimulatorWindow.WindowContext",
+            (HANDLE)(context)))
+        {
+            return -1;
+        }
+
+        RECT calculated_window_size;
+
+        calculated_window_size.left = 0;
+        calculated_window_size.right = MulDiv(
+            context->display_hor_res * WIN32DRV_MONITOR_ZOOM,
+            context->display_dpi,
+            USER_DEFAULT_SCREEN_DPI);
+        calculated_window_size.top = 0;
+        calculated_window_size.bottom = MulDiv(
+            context->display_ver_res * WIN32DRV_MONITOR_ZOOM,
+            context->display_dpi,
+            USER_DEFAULT_SCREEN_DPI);
+
+        AdjustWindowRectEx(
+            &calculated_window_size,
+            WINDOW_STYLE,
+            FALSE,
+            WINDOW_EX_STYLE);
+        OffsetRect(
+            &calculated_window_size,
+            -calculated_window_size.left,
+            -calculated_window_size.top);
+
+        SetWindowPos(
+            hWnd,
+            NULL,
+            0,
+            0,
+            calculated_window_size.right,
+            calculated_window_size.bottom,
+            SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+
+        lv_win32_register_touch_window(hWnd, 0);
+
+        lv_win32_enable_child_window_dpi_message(hWnd);
+
+        break;
+    }
     case WM_MOUSEMOVE:
     case WM_LBUTTONDOWN:
     case WM_LBUTTONUP:
     case WM_MBUTTONDOWN:
     case WM_MBUTTONUP:
     {
-        g_mouse_value = lParam;
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            lv_win32_get_window_context(hWnd));
+        if (!context)
+        {
+            return 0;
+        }
+
+        context->mouse_point.x = MulDiv(
+            GET_X_LPARAM(lParam),
+            USER_DEFAULT_SCREEN_DPI,
+            WIN32DRV_MONITOR_ZOOM * context->display_dpi);
+        context->mouse_point.y = MulDiv(
+            GET_Y_LPARAM(lParam),
+            USER_DEFAULT_SCREEN_DPI,
+            WIN32DRV_MONITOR_ZOOM * context->display_dpi);
+        if (context->mouse_point.x < 0)
+        {
+            context->mouse_point.x = 0;
+        }
+        if (context->mouse_point.x > context->display_hor_res - 1)
+        {
+            context->mouse_point.x = context->display_hor_res - 1;
+        }
+        if (context->mouse_point.y < 0)
+        {
+            context->mouse_point.y = 0;
+        }
+        if (context->mouse_point.y > context->display_ver_res - 1)
+        {
+            context->mouse_point.y = context->display_ver_res - 1;
+        }
+
         if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONUP)
         {
-            g_mouse_pressed = (uMsg == WM_LBUTTONDOWN);
+            context->mouse_state = (
+                uMsg == WM_LBUTTONDOWN
+                ? LV_INDEV_STATE_PR
+                : LV_INDEV_STATE_REL);
         }
         else if (uMsg == WM_MBUTTONDOWN || uMsg == WM_MBUTTONUP)
         {
-            g_mousewheel_pressed = (uMsg == WM_MBUTTONDOWN);
+            context->mousewheel_state = (
+                uMsg == WM_MBUTTONDOWN
+                ? LV_INDEV_STATE_PR
+                : LV_INDEV_STATE_REL);
         }
         return 0;
     }
     case WM_KEYDOWN:
     case WM_KEYUP:
     {
-        g_keyboard_pressed = (uMsg == WM_KEYDOWN);
-        g_keyboard_value = wParam;
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            lv_win32_get_window_context(hWnd));
+        if (context)
+        {
+            EnterCriticalSection(&context->keyboard_mutex);
+
+            bool skip_translation = false;
+            uint32_t translated_key = 0;
+
+            switch (wParam)
+            {
+            case VK_UP:
+                translated_key = LV_KEY_UP;
+                break;
+            case VK_DOWN:
+                translated_key = LV_KEY_DOWN;
+                break;
+            case VK_LEFT:
+                translated_key = LV_KEY_LEFT;
+                break;
+            case VK_RIGHT:
+                translated_key = LV_KEY_RIGHT;
+                break;
+            case VK_ESCAPE:
+                translated_key = LV_KEY_ESC;
+                break;
+            case VK_DELETE:
+                translated_key = LV_KEY_DEL;
+                break;
+            case VK_BACK:
+                translated_key = LV_KEY_BACKSPACE;
+                break;
+            case VK_RETURN:
+                translated_key = LV_KEY_ENTER;
+                break;
+            case VK_TAB:
+            case VK_NEXT:
+                translated_key = LV_KEY_NEXT;
+                break;
+            case VK_PRIOR:
+                translated_key = LV_KEY_PREV;
+                break;
+            case VK_HOME:
+                translated_key = LV_KEY_HOME;
+                break;
+            case VK_END:
+                translated_key = LV_KEY_END;
+                break;
+            default:
+                skip_translation = true;
+                break;
+            }
+
+            if (!skip_translation)
+            {
+                lv_win32_push_key_to_keyboard_queue(
+                    context,
+                    translated_key,
+                    ((uMsg == WM_KEYUP)
+                        ? LV_INDEV_STATE_REL
+                        : LV_INDEV_STATE_PR));
+            }
+
+            LeaveCriticalSection(&context->keyboard_mutex);
+        }
+
+        break;
+    }
+    case WM_CHAR:
+    {
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            lv_win32_get_window_context(hWnd));
+        if (context)
+        {
+            EnterCriticalSection(&context->keyboard_mutex);
+
+            uint16_t raw_code_point = (uint16_t)(wParam);
+
+            if (raw_code_point >= 0x20 && raw_code_point != 0x7F)
+            {
+                if (IS_HIGH_SURROGATE(raw_code_point))
+                {
+                    context->keyboard_utf16_high_surrogate = raw_code_point;
+                }
+                else if (IS_LOW_SURROGATE(raw_code_point))
+                {
+                    context->keyboard_utf16_low_surrogate = raw_code_point;
+                }
+
+                uint32_t code_point = raw_code_point;
+
+                if (context->keyboard_utf16_high_surrogate &&
+                    context->keyboard_utf16_low_surrogate)
+                {
+                    uint16_t high_surrogate =
+                        context->keyboard_utf16_high_surrogate;
+                    uint16_t low_surrogate =
+                        context->keyboard_utf16_low_surrogate;
+
+                    code_point = (low_surrogate & 0x03FF);
+                    code_point += (((high_surrogate & 0x03FF) + 0x40) << 10);
+
+                    context->keyboard_utf16_high_surrogate = 0;
+                    context->keyboard_utf16_low_surrogate = 0;
+                }
+
+                uint32_t lvgl_code_point =
+                    _lv_txt_unicode_to_encoded(code_point);
+
+                lv_win32_push_key_to_keyboard_queue(
+                    context,
+                    lvgl_code_point,
+                    LV_INDEV_STATE_PR);
+                lv_win32_push_key_to_keyboard_queue(
+                    context,
+                    lvgl_code_point,
+                    LV_INDEV_STATE_REL);
+            }
+
+            LeaveCriticalSection(&context->keyboard_mutex);
+        }
+
         break;
     }
     case WM_MOUSEWHEEL:
     {
-        g_mousewheel_value = -(GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA);
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            lv_win32_get_window_context(hWnd));
+        if (context)
+        {
+            context->mousewheel_enc_diff =
+                -(GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA);
+        }
+
         break;
     }
     case WM_TOUCH:
     {
-        UINT cInputs = LOWORD(wParam);
-        HTOUCHINPUT hTouchInput = (HTOUCHINPUT)(lParam);
-
-        PTOUCHINPUT pInputs = malloc(cInputs * sizeof(TOUCHINPUT));
-        if (pInputs)
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            lv_win32_get_window_context(hWnd));
+        if (context)
         {
-            if (lv_win32_get_touch_input_info(
-                hTouchInput,
-                cInputs,
-                pInputs,
-                sizeof(TOUCHINPUT)))
+            UINT cInputs = LOWORD(wParam);
+            HTOUCHINPUT hTouchInput = (HTOUCHINPUT)(lParam);
+
+            PTOUCHINPUT pInputs = malloc(cInputs * sizeof(TOUCHINPUT));
+            if (pInputs)
             {
-                for (UINT i = 0; i < cInputs; ++i)
+                if (lv_win32_get_touch_input_info(
+                    hTouchInput,
+                    cInputs,
+                    pInputs,
+                    sizeof(TOUCHINPUT)))
                 {
-                    POINT Point;
-                    Point.x = TOUCH_COORD_TO_PIXEL(pInputs[i].x);
-                    Point.y = TOUCH_COORD_TO_PIXEL(pInputs[i].y);
-                    if (!ScreenToClient(hWnd, &Point))
+                    for (UINT i = 0; i < cInputs; ++i)
                     {
-                        continue;
+                        POINT Point;
+                        Point.x = TOUCH_COORD_TO_PIXEL(pInputs[i].x);
+                        Point.y = TOUCH_COORD_TO_PIXEL(pInputs[i].y);
+                        if (!ScreenToClient(hWnd, &Point))
+                        {
+                            continue;
+                        }
+
+                        context->mouse_point.x = MulDiv(
+                            Point.x,
+                            USER_DEFAULT_SCREEN_DPI,
+                            WIN32DRV_MONITOR_ZOOM * context->display_dpi);
+                        context->mouse_point.y = MulDiv(
+                            Point.y,
+                            USER_DEFAULT_SCREEN_DPI,
+                            WIN32DRV_MONITOR_ZOOM * context->display_dpi);
+
+                        DWORD MousePressedMask =
+                            TOUCHEVENTF_MOVE | TOUCHEVENTF_DOWN;
+
+                        context->mouse_state = (
+                            pInputs[i].dwFlags & MousePressedMask
+                            ? LV_INDEV_STATE_PR
+                            : LV_INDEV_STATE_REL);
                     }
-
-                    uint16_t x = (uint16_t)(Point.x & 0xffff);
-                    uint16_t y = (uint16_t)(Point.y & 0xffff);
-
-                    DWORD MousePressedMask =
-                        TOUCHEVENTF_MOVE | TOUCHEVENTF_DOWN;
-
-                    g_mouse_value = (y << 16) | x;
-                    g_mouse_pressed = (pInputs[i].dwFlags & MousePressedMask);
                 }
+
+                free(pInputs);
             }
 
-            free(pInputs);
+            lv_win32_close_touch_input_handle(hTouchInput);
         }
-
-        lv_win32_close_touch_input_handle(hTouchInput);
 
         break;
     }
     case WM_DPICHANGED:
     {
-        g_dpi_value = HIWORD(wParam);
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            lv_win32_get_window_context(hWnd));
+        if (context)
+        {
+            context->display_dpi = HIWORD(wParam);
 
-        LPRECT SuggestedRect = (LPRECT)lParam;
+            LPRECT SuggestedRect = (LPRECT)lParam;
 
-        SetWindowPos(
-            hWnd,
-            NULL,
-            SuggestedRect->left,
-            SuggestedRect->top,
-            SuggestedRect->right,
-            SuggestedRect->bottom,
-            SWP_NOZORDER | SWP_NOACTIVATE);
+            SetWindowPos(
+                hWnd,
+                NULL,
+                SuggestedRect->left,
+                SuggestedRect->top,
+                SuggestedRect->right,
+                SuggestedRect->bottom,
+                SWP_NOZORDER | SWP_NOACTIVATE);
 
-        RECT ClientRect;
-        GetClientRect(hWnd, &ClientRect);
+            RECT ClientRect;
+            GetClientRect(hWnd, &ClientRect);
 
-        int WindowWidth = MulDiv(
-            g_display->driver->hor_res * WIN32DRV_MONITOR_ZOOM,
-            g_dpi_value,
-            USER_DEFAULT_SCREEN_DPI);
-        int WindowHeight = MulDiv(
-            g_display->driver->ver_res * WIN32DRV_MONITOR_ZOOM,
-            g_dpi_value,
-            USER_DEFAULT_SCREEN_DPI);
+            int WindowWidth = MulDiv(
+                context->display_hor_res * WIN32DRV_MONITOR_ZOOM,
+                context->display_dpi,
+                USER_DEFAULT_SCREEN_DPI);
+            int WindowHeight = MulDiv(
+                context->display_ver_res * WIN32DRV_MONITOR_ZOOM,
+                context->display_dpi,
+                USER_DEFAULT_SCREEN_DPI);
 
-        SetWindowPos(
-            hWnd,
-            NULL,
-            SuggestedRect->left,
-            SuggestedRect->top,
-            SuggestedRect->right + (WindowWidth - ClientRect.right),
-            SuggestedRect->bottom + (WindowHeight - ClientRect.bottom),
-            SWP_NOZORDER | SWP_NOACTIVATE);
+            SetWindowPos(
+                hWnd,
+                NULL,
+                SuggestedRect->left,
+                SuggestedRect->top,
+                SuggestedRect->right + (WindowWidth - ClientRect.right),
+                SuggestedRect->bottom + (WindowHeight - ClientRect.bottom),
+                SWP_NOZORDER | SWP_NOACTIVATE);
+        }
 
         break;
     }
     case WM_PAINT:
     {
-        g_display_refreshing = true;
-
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
 
-        if (g_display)
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            lv_win32_get_window_context(hWnd));
+        if (context)
         {
-            SetStretchBltMode(hdc, HALFTONE);
+            if (context->display_framebuffer_context_handle)
+            {
+                SetStretchBltMode(hdc, HALFTONE);
 
-            StretchBlt(
-                hdc,
-                ps.rcPaint.left,
-                ps.rcPaint.top,
-                ps.rcPaint.right - ps.rcPaint.left,
-                ps.rcPaint.bottom - ps.rcPaint.top,
-                g_buffer_dc_handle,
-                0,
-                0,
-                MulDiv(
+                StretchBlt(
+                    hdc,
+                    ps.rcPaint.left,
+                    ps.rcPaint.top,
                     ps.rcPaint.right - ps.rcPaint.left,
-                    USER_DEFAULT_SCREEN_DPI,
-                    WIN32DRV_MONITOR_ZOOM * g_dpi_value),
-                MulDiv(
                     ps.rcPaint.bottom - ps.rcPaint.top,
-                    USER_DEFAULT_SCREEN_DPI,
-                    WIN32DRV_MONITOR_ZOOM * g_dpi_value),
-                SRCCOPY);
+                    context->display_framebuffer_context_handle,
+                    0,
+                    0,
+                    MulDiv(
+                        ps.rcPaint.right - ps.rcPaint.left,
+                        USER_DEFAULT_SCREEN_DPI,
+                        WIN32DRV_MONITOR_ZOOM * context->display_dpi),
+                    MulDiv(
+                        ps.rcPaint.bottom - ps.rcPaint.top,
+                        USER_DEFAULT_SCREEN_DPI,
+                        WIN32DRV_MONITOR_ZOOM * context->display_dpi),
+                    SRCCOPY);
+            }
         }
 
         EndPaint(hWnd, &ps);
 
-        g_display_refreshing = false;
-
         break;
     }
     case WM_DESTROY:
+    {
+        lv_win32_window_context_t* context = (lv_win32_window_context_t*)(
+            RemovePropW(hWnd, L"LVGL.SimulatorWindow.WindowContext"));
+        if (context)
+        {
+            lv_disp_t* display_device_object = context->display_device_object;
+            context->display_device_object = NULL;
+            lv_disp_remove(display_device_object);
+#if (LV_COLOR_DEPTH == 32) || \
+    (LV_COLOR_DEPTH == 16 && LV_COLOR_16_SWAP == 0) || \
+    (LV_COLOR_DEPTH == 8) || \
+    (LV_COLOR_DEPTH == 1)
+#else
+            free(context->display_buffer.buf1);
+#endif
+            DeleteDC(context->display_framebuffer_context_handle);
+
+            lv_indev_t* mouse_device_object =
+                context->mouse_device_object;
+            context->mouse_device_object = NULL;
+            lv_indev_delete(mouse_device_object);
+
+            lv_indev_t* mousewheel_device_object =
+                context->mousewheel_device_object;
+            context->mousewheel_device_object = NULL;
+            lv_indev_delete(mousewheel_device_object);
+
+            lv_indev_t* keyboard_device_object =
+                context->keyboard_device_object;
+            context->keyboard_device_object = NULL;
+            lv_indev_delete(keyboard_device_object);
+            do
+            {
+                PSLIST_ENTRY current = InterlockedPopEntrySList(
+                    context->keyboard_queue);
+                if (!current)
+                {
+                    _aligned_free(context->keyboard_queue);
+                    context->keyboard_queue = NULL;
+                    break;
+                }
+
+                _aligned_free(current);
+
+            } while (true);
+            DeleteCriticalSection(&context->keyboard_mutex);
+
+            free(context);
+        }
+
         PostQuitMessage(0);
+
         break;
+    }
     default:
         return DefWindowProcW(hWnd, uMsg, wParam, lParam);
     }
@@ -948,94 +1337,17 @@ static unsigned int __stdcall lv_win32_window_thread_entrypoint(
     PWINDOW_THREAD_PARAMETER parameter =
         (PWINDOW_THREAD_PARAMETER)raw_parameter;
 
-    WNDCLASSEXW window_class;
-    window_class.cbSize = sizeof(WNDCLASSEXW);
-    window_class.style = 0;
-    window_class.lpfnWndProc = lv_win32_window_message_callback;
-    window_class.cbClsExtra = 0;
-    window_class.cbWndExtra = 0;
-    window_class.hInstance = parameter->instance_handle;
-    window_class.hIcon = parameter->icon_handle;
-    window_class.hCursor = LoadCursorW(NULL, IDC_ARROW);
-    window_class.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    window_class.lpszMenuName = NULL;
-    window_class.lpszClassName = L"lv_sim_visual_studio";
-    window_class.hIconSm = parameter->icon_handle;
-    if (!RegisterClassExW(&window_class))
-    {
-        return 0;
-    }
-
-    HWND window_handle = CreateWindowExW(
-        WINDOW_EX_STYLE,
-        window_class.lpszClassName,
-        L"LVGL Simulator for Windows Desktop",
-        WINDOW_STYLE,
-        CW_USEDEFAULT,
-        0,
-        CW_USEDEFAULT,
-        0,
-        NULL,
-        NULL,
-        parameter->instance_handle,
-        NULL);
-
-    if (!window_handle)
-    {
-        return 0;
-    }
-
-    g_dpi_value = lv_win32_get_dpi_for_window(window_handle);
-
-    RECT window_size;
-
-    window_size.left = 0;
-    window_size.right = MulDiv(
-        parameter->hor_res * WIN32DRV_MONITOR_ZOOM,
-        g_dpi_value,
-        USER_DEFAULT_SCREEN_DPI);
-    window_size.top = 0;
-    window_size.bottom = MulDiv(
-        parameter->ver_res * WIN32DRV_MONITOR_ZOOM,
-        g_dpi_value,
-        USER_DEFAULT_SCREEN_DPI);
-
-    AdjustWindowRectEx(
-        &window_size,
-        WINDOW_STYLE,
-        FALSE,
-        WINDOW_EX_STYLE);
-    OffsetRect(
-        &window_size,
-        -window_size.left,
-        -window_size.top);
-
-    SetWindowPos(
-        window_handle,
-        NULL,
-        0,
-        0,
-        window_size.right,
-        window_size.bottom,
-        SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
-
-    lv_win32_register_touch_window(window_handle, 0);
-
-    lv_win32_enable_child_window_dpi_message(window_handle);
-
-    HDC hNewBufferDC = lv_win32_create_frame_buffer(
-        window_handle,
+    g_window_handle = lv_win32_create_display_window(
+        L"LVGL Simulator for Windows Desktop (Display 1)",
         parameter->hor_res,
         parameter->ver_res,
-        &g_pixel_buffer,
-        &g_pixel_buffer_size);
-
-    DeleteDC(g_buffer_dc_handle);
-    g_buffer_dc_handle = hNewBufferDC;
-
-    ShowWindow(window_handle, parameter->show_window_mode);
-    UpdateWindow(window_handle);
-    g_window_handle = window_handle;
+        parameter->instance_handle,
+        parameter->icon_handle,
+        parameter->show_window_mode);
+    if (!g_window_handle)
+    {
+        return 0;
+    }
 
     SetEvent(parameter->window_mutex);
 

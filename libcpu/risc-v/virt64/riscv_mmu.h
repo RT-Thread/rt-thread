@@ -58,7 +58,7 @@
 
 #define PTE_USED(pte) __MASKVALUE(pte, PTE_V)
 
-/** 
+/**
  * encoding of SATP (Supervisor Address Translation and Protection register)
  */
 #define SATP_MODE_OFFSET    60
@@ -68,18 +68,12 @@
 #define SATP_MODE_SV57      10
 #define SATP_MODE_SV64      11
 
-#define ARCH_VA_WIDTH           39
+#define ARCH_VADDR_WIDTH        39
 #define SATP_MODE               SATP_MODE_SV39
-
-#define mmu_flush_tlb()                   \
-    do                                    \
-    {                                     \
-        asm volatile("sfence.vma x0,x0"); \
-    } while (0)
-
 
 #define MMU_MAP_K_DEVICE        (PTE_G | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_K_RWCB          (PTE_G | PTE_X | PTE_W | PTE_R | PTE_V)
+#define MMU_MAP_K_RW            (PTE_G | PTE_X | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_U_RWCB          (PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_U_RWCB_XN       (PTE_U | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_U_RW            (PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
@@ -92,6 +86,8 @@
 #define ARCH_INDEX_WIDTH        9
 #define ARCH_INDEX_SIZE         (1ul << ARCH_INDEX_WIDTH)
 #define ARCH_INDEX_MASK         (ARCH_INDEX_SIZE - 1)
+
+#define ARCH_MAP_FAILED         ((void *)0x8000000000000000)
 
 void mmu_set_pagetable(rt_ubase_t addr);
 void mmu_enable_user_page_access();

@@ -190,6 +190,7 @@ void DISP_SetBlendValue(uint32_t u32GloAV_Src, uint32_t u32GloAV_Dst);
 void DISP_SetColorKeyValue(uint32_t u32ColorKeyLow, uint32_t u32ColorKeyHigh);
 int DISP_SetFBAddr(E_DISP_LAYER eLayer, uint32_t u32DMAFBStartAddr);
 int DISP_SetFBFmt(E_DISP_LAYER eLayer, E_FB_FMT eFbFmt, uint32_t u32Pitch);
+uint32_t DISP_LCDTIMING_GetFPS(const DISP_LCD_TIMING* psDispLCDTiming);
 
 /*@}*/ /* end of group DISP_EXPORTED_FUNCTIONS */
 

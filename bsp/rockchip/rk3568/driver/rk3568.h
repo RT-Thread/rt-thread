@@ -11,6 +11,8 @@
 #ifndef __RK3568_H__
 #define __RK3568_H__
 
+#include <rtthread.h>
+
 /* UART */
 #define UART_MMIO_BASE  0xfe650000
 #define UART0_MMIO_BASE 0xfdd50000

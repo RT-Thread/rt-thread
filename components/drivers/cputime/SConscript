@@ -4,6 +4,7 @@ cwd     = GetCurrentDir()
 CPPPATH = [cwd + '/../include']
 src     = Split('''
 cputime.c
+cputimer.c
 ''')
 
 if GetDepend('RT_USING_CPUTIME_CORTEXM'):

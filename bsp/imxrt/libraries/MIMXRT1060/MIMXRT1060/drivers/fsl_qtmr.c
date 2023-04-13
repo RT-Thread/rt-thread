@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 NXP
+ * Copyright 2017-2022 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -525,6 +525,8 @@ void QTMR_ClearStatusFlags(TMR_Type *base, qtmr_channel_selection_t channel, uin
  *    depending on the count direction
  * 2. User can call the utility macros provided in fsl_common.h to convert to ticks
  * 3. This function supports cases, providing only primary source clock without secondary source clock.
+ * 4. The load register is reset before the counter is reinitialized to the value
+      specified in the load register.
  *
  * param base     Quad Timer peripheral base address
  * param channel  Quad Timer channel number
@@ -533,6 +535,34 @@ void QTMR_ClearStatusFlags(TMR_Type *base, qtmr_channel_selection_t channel, uin
 void QTMR_SetTimerPeriod(TMR_Type *base, qtmr_channel_selection_t channel, uint16_t ticks)
 {
     /* Set the length bit to reinitialize the counters on a match */
+    base->CHANNEL[channel].CTRL |= TMR_CTRL_LENGTH_MASK;
+
+    /* Reset LOAD register to reinitialize the counters */
+    base->CHANNEL[channel].LOAD &= (uint16_t)(~TMR_LOAD_LOAD_MASK);
+
+    if ((base->CHANNEL[channel].CTRL & TMR_CTRL_DIR_MASK) != 0U)
+    {
+        /* Counting down */
+        base->CHANNEL[channel].COMP2 = ticks - 1U;
+    }
+    else
+    {
+        /* Counting up */
+        base->CHANNEL[channel].COMP1 = ticks - 1U;
+    }
+}
+
+/*!
+ * brief Set compare value.
+ *
+ * This function sets the value used for comparison with the counter value.
+ *
+ * param base     Quad Timer peripheral base address
+ * param channel  Quad Timer channel number
+ * param ticks    Timer period in units of ticks.
+ */
+void QTMR_SetCompareValue(TMR_Type *base, qtmr_channel_selection_t channel, uint16_t ticks)
+{
     base->CHANNEL[channel].CTRL |= TMR_CTRL_LENGTH_MASK;
 
     if ((base->CHANNEL[channel].CTRL & TMR_CTRL_DIR_MASK) != 0U)

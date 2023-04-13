@@ -73,13 +73,13 @@ BSP 的制作过程分为如下四个步骤：
 
 ### 3.2 修改芯片基本配置
 
-在 **board.h** 文件中配置了 FLASH 和 RAM 的相关参数，这个文件中需要修改的是 `IFX_FLASH_START_ADRESS` 、`IFX_EFLASH_START_ADRESS` 和 `IFX_SRAM_SIZE` 这两个宏控制的参数。本次制作的 BSP 所用的 CY8CKIT-062S2-43012 芯片的 flash 大小为 2M，ram 的大小为 1M，因此对该文件作出如下的修改：
+在 **board.h** 文件中配置了 FLASH 和 RAM 的相关参数，`IFX_SRAM_SIZE` 这个宏控制的参数。本次制作的 BSP 所用的 CY8CKIT-062S2-43012 芯片 RAM 的大小为 1M，因此对该文件作出如下的修改：
 
 ![](./figures/board_h.png)
 
 #### 3.2.1 堆内存配置讲解
 
-通常情况下，系统 RAM 中的一部分内存空间会被用作堆内存。下面代码的作用是，在不同编译器下规定堆内存的起始地址 **HEAP_BEGIN** 和结束地址 **HEAP_END**。这里 **HEAP_BEGIN** 和 **HEAP_END** 的值需要和后面 [3.4.1 修改链接脚本](# 3.4.1 修改链接脚本) 章节所修改的配置相一致。
+通常情况下，系统 RAM 中的一部分内存空间会被用作堆内存。下面代码的作用是，在不同编译器下规定堆内存的起始地址 **HEAP_BEGIN** 和结束地址 **HEAP_END**。这里 **HEAP_BEGIN** 和 **HEAP_END** 的值需要和后面  [3.5.1 修改链接脚本](# 3.5.1 修改链接脚本) 章节所修改的配置相一致。
 
 在某些系列的芯片中，芯片 RAM 可能分布在不连续的多块内存区域上。此时堆内存的位置可以和系统内存在同一片连续的内存区域，也可以存放在一片独立的内存区域中。
 
@@ -96,50 +96,114 @@ BSP 的制作过程分为如下四个步骤：
 
 | 宏定义               | 意义     | 格式                   |
 | -------------------- | -------- | ---------------------- |
-| SOC_IFX_PSOC6_43012  | 芯片型号 | SOC_IFX_PSOC6_xxx      |
-| SOC_SERIES_IFX_PSOC6 | 芯片系列 | SOC_SERIES_IFX_PSOC6xx |
+| SOC_CY8C624ABZI_S2D44 | 芯片型号 | SOC_CY8C6xxx_xxxx  |
+| SOC_SERIES_IFX_PSOC62 | 芯片系列 | SOC_SERIES_IFX_PSOC6x |
 
 关于 BSP 上的外设支持选项，一个初次提交的 BSP 仅仅需要支持串口驱动即可，因此在配置选项中只需保留这两个驱动配置项，如下图所示：
 
 ![](./figures/Kconfig.png)
 
-### 3.4 修改工程构建相关文件
+### 3.4 添加外设相关文件
+
+#### 3.4.1 添加底层外设库
+
+接下来为 BSP 添加底层外设库文件，下图的文件是从 Modus 生成的文件夹中拷贝而来。**（只有移植新的系列才需要做此步骤，同 PSOC6 系列无需此步骤）**
+
+![](./figures/hal_config2.png)
+
+Modus 生成的源库文件路径如下图，在 Modus 工作空间下的 `mtb_shared` 文件夹下：**（只有移植新的系列才需要做此步骤，同 PSOC6 系列无需此步骤）**
+
+![](./figures/hal_config3.png)
+
+将以上文件拷贝至 BSP 的 `libraries/IFX_PSOC6_HAL` 文件夹下。**（只有移植新的系列才需要做此步骤，同 PSOC6 系列无需此步骤）**
+
+![](./figures/hal_config1.png)
+
+同时下载 [TARGET_CY8CKIT-062S2-43012](https://github.com/Infineon/TARGET_CY8CKIT-062S2-43012/releases)  **V3.0.0** 发行版本（需根据不同芯片型号下载），至具体 BSP 的 libs 文件夹下。
+
+![](./figures/hal_config4.png)
+
+下载至具体 BSP 的 libs 文件夹下，例如下图：
+
+![](./figures/hal_config4-1.png)
+
+### 3.5 修改工程构建相关文件
 
 接下来需要修改用于构建工程相关的文件。
 
-#### 3.4.1 修改链接脚本
+#### 3.5.1 修改链接脚本
 
 **linker_scripts** 链接文件如下图所示：
 
 ![](./figures/linker_scripts.png)
 
-下面以 MDK 使用的链接脚本 link.sct 为例，演示如何修改链接脚本：
-
-![](./figures/linkscripts_change.png)
-
-本次制作 BSP 使用的芯片为  CY8CKIT-062S2-43012 ，FLASH 为 2M，因此修改 FLASH_SIZE 的参数为 0x00020000。RAM 的大小为 1M， 因此修改 RAM_SIZE 的参数为 0x000FD800。这样的修改方式在一般的应用下就够用了，后续如果有特殊要求，则需要按照链接脚本的语法来根据需求修改。修改链接脚本时，可以参考 [**3.2.1 堆内存配置讲解**](# 3.2.1 堆内存配置讲解) 章节来确定 BSP 的内存分配。
-
-其他两个链接脚本的文件为 iar 使用的 link.icf 和 gcc 编译器使用的 link.lds，修改的方式也是类似的，如下图所示：
-
-* link.ld 修改内容
+以 **GCC** 工具链使用的链接脚本 link.ld 为例，演示如何修改链接脚本：
 
 ![](./figures/link_lds.png)
 
-####  3.4.2 修改构建脚本
+**方式一（推荐）：**
 
-**SConscript** 脚本决定 MDK/IAR 工程的生成以及编译过程中要添加文件。
+**FLASH** 和 **RAM** 大小信息可以参考上述拷贝的 **TARGET_CY8CKIT-062S2-43012** 文件夹下的链接脚本，进行修改，其路径在 TARGET_CY8CKIT-062S2-43012/COMPONENT_CM4/TOOLCHAIN_ARM（TOOLCHAIN_GCC_ARM）/cy8c6xxa_cm4_dual.sct（.ld）：
 
-在这一步中需要修改芯片型号以及芯片启动文件的地址，修改内容如下图所示：
+![](./figures/link_ifx1.png)
 
-![](./figures/SConscript.png)
+![](./figures/link_ifx2.png)
 
-#### 3.4.3 修改编译选项
+**方式二：**
 
-rtconfig.py 用于选择编译工具链，可以自行在 CROSS_TOOL 后面选择修改编译工程所需要的工具链，目前 PSCOC6 支持 gcc 和 armclang。
+本次制作 BSP 使用的芯片为  `CY8CKIT-062S2-43012` ，FLASH 为 **2M**，因此修改 FLASH_SIZE 的参数为 `0x00020000`。RAM 的大小为 **1M**， 因此修改 RAM_SIZE 的参数为 `0x000FD800`。修改链接脚本时，可以参考 [**3.2.1 堆内存配置讲解**](# 3.2.1 堆内存配置讲解) 章节来确定 BSP 的内存分配。
+
+---
+
+MDK 编译器使用的 link.sct，修改的方式也是类似的，如下图所示：
+
+* link.sct 修改内容
+
+![](./figures/linkscripts_change.png)
+
+####  3.5.2 修改构建脚本
+
+**SConscript** 脚本决定 **MDK/IAR/RT-Thread Studio** 工程的生成以及编译过程中要添加文件。
+
+根据具体的路径添加通用外设配置**（只有移植新的系列才需要做此步骤，同 PSOC6 系列无需此步骤）**
+
+![](./figures/hal_config5.png)
+
+添加专有芯片相关文件，如下图：
+
+![](./figures/hal_config5-1.png)
+
+首次移植，需要使用串口外设**（只有移植新的系列才需要做此步骤，同 PSOC6 系列无需此步骤）**
+
+![](./figures/hal_config6.png)
+
+添加库所使用到的头文件路径，如下图：
+
+![](./figures/hal_config7.png)
+
+在这一步中需要修改芯片型号以及芯片启动文件的地址，修改内容如下图所示：其中 **CPPDEFINES**  的参数要根据芯片底层库中定义的芯片型号去填写。
+
+![](./figures/SConscript2.png)
+
+BSP 下的 lib/SConscript 中需要根据不同编译器选择不同的启动文件。
+
+![](./figures/SConscript1.png)
+
+**注意：**
+
+需要特别注意的是，假如使用的是 GCC 工具链，那么需要对启动文件做如下修改：将原有的 **main** 改成 **entry**
+
+![](./figures/entry.png)
+
+#### 3.5.3 修改编译选项
+
+rtconfig.py 用于选择编译工具链，可以自行在 **CROSS_TOOL** 后面选择修改编译工程所需要的工具链，目前 PSCOC6 支持 GCC 和 ArmClang 两种工具链。
 
 ![](./figures/rt_configpy.png)
 
-#### 3.4.4 修改工程模板
+#### 3.5.4 修改工程模板
+
+MDK 为例：
 
 **template** 文件是生成 MDK/IAR 工程的模板文件，通过修改该文件可以设置工程中使用的芯片型号以及下载方式。MDK4/MDK5/IAR 的工程模板文件，如下图所示：
 
@@ -153,11 +217,55 @@ rtconfig.py 用于选择编译工具链，可以自行在 CROSS_TOOL 后面选�
 
 ![](./figures/template_3.png)
 
-### 3.5 重新生成工程
+---
 
-重新生成工程需要使用 Env 工具。
+**RT-Thread Studio** 为例，介绍如何导入，修改模板配置：
 
-#### 3.5.1 重新生成 rtconfig.h 文件
+1、打开 ENV 工具，在工程目录使用 `scons --dist` 命令将工程打包。（整个过程需要保证没有错误）
+
+![](./figures/dist1.png)
+
+打包完成后，可以在 BSP 目录下看到生成的 `dist` 文件夹：
+
+![](./figures/dist2.png)
+
+使用 dist 后生成的工程就可以直接导入到 RT-Thread Studio 中进行开发了。
+
+![](./figures/dist3.png)
+
+打开 RT-Thread Studio ，在 IDE 的左上角点击 `文件—>导入—>RT-Thread Studio 项目到工作空间中`
+
+![](./figures/studio1.png)
+
+选择 dist 出来工程的路径：
+
+![](./figures/studio2.png)
+
+点击 finsh 即可导入到 Studio 中：
+
+![](./figures/studio2-1.png)
+
+导入成功后，文件资源管理器窗口中会显示如下结构，其中 RT-Thread Settings 为图形化工程配置文件，双击打开即可。
+
+![](./figures/studio3.png)
+
+RT-Thread Settings 中硬件相关配置是在 board/Kconfig 中描述的。移植过程如需添加/修改配置，请修改此文件。
+
+![](./figures/studio4.png)
+
+### 3.6 重新生成工程
+
+* MDK5 ：重新生成工程需要使用 Env 工具。
+
+* RT-Thread Studio：使用 Env 工具/同步 scons 配置至项目
+
+同步 scons 配置至项目：
+
+![](./figures/studio5.png)
+
+#### 3.6.1 重新生成 rtconfig.h 文件
+
+**MDK5：**
 
 在 Env 界面输入命令 menuconfig 对工程进行配置，并生成新的 rtconfig.h 文件。如下图所示：
 
@@ -165,9 +273,15 @@ rtconfig.py 用于选择编译工具链，可以自行在 CROSS_TOOL 后面选�
 
 ![](./figures/menuconfig_2.png)
 
-#### 3.5.2 重新生成 MDK 工程
+---
 
-下面以重新生成 MDK 工程为例，介绍如何重新生成 BSP 工程。
+**RT-Thread Studio：**
+
+使用上述方法/点击同步 scons 配置至项目。
+
+#### 3.6.2 重新生成 MDK 工程
+
+以重新生成 MDK 工程为例，介绍如何重新生成 BSP 工程。
 
 使用 env 工具输入命令 `scons --target=mdk5` 重新生成工程，如下图所示：
 
@@ -177,7 +291,25 @@ rtconfig.py 用于选择编译工具链，可以自行在 CROSS_TOOL 后面选�
 
 接下来我们可以分别使用命令 `scons --target=mdk4` 和 `scons --target=iar`，来更新 MDK4 和 IAR 的工程，使得该 BSP 变成一个完整的，可以提交到 GitHub 的 BSP （MDK4工程的制作为可选）。
 
+---
+
+**RT-Thread Studio：** 使用上述方法/点击同步 scons 配置至项目
+
 感谢每一位贡献代码的开发者，RT-Thread 将与你一同成长。
+
+### 3.7 RT-Thread Studio 下载配置
+
+1、点击 Studio 顶部导航栏中的配置按钮：
+
+![](./figures/studio_cfg1.png)
+
+2、确保可执行文件选择配置如下图：
+
+![](./figures/studio_cfg2.png)
+
+3、Debugger 配置项，需按照不同的芯片选择目标文件，OpenOCD 会根据此文件进行烧录：
+
+![](./figures/studio_cfg3.png)
 
 ## 4. 规范
 

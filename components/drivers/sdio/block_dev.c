@@ -280,7 +280,7 @@ static rt_err_t rt_mmcsd_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-static rt_size_t rt_mmcsd_read(rt_device_t dev,
+static rt_ssize_t rt_mmcsd_read(rt_device_t dev,
                                rt_off_t    pos,
                                void       *buffer,
                                rt_size_t   size)
@@ -303,7 +303,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
     while (remain_size)
     {
         req_size = (remain_size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
-        err = rt_mmcsd_req_blk(blk_dev->card, pos + offset, rd_ptr, req_size, 0);
+        err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos + offset, rd_ptr, req_size, 0);
         if (err)
             break;
         offset += req_size;
@@ -321,7 +321,7 @@ static rt_size_t rt_mmcsd_read(rt_device_t dev,
     return size - remain_size;
 }
 
-static rt_size_t rt_mmcsd_write(rt_device_t dev,
+static rt_ssize_t rt_mmcsd_write(rt_device_t dev,
                                 rt_off_t    pos,
                                 const void *buffer,
                                 rt_size_t   size)
@@ -344,7 +344,7 @@ static rt_size_t rt_mmcsd_write(rt_device_t dev,
     while (remain_size)
     {
         req_size = (remain_size > blk_dev->max_req_size) ? blk_dev->max_req_size : remain_size;
-        err = rt_mmcsd_req_blk(blk_dev->card, pos + offset, wr_ptr, req_size, 1);
+        err = rt_mmcsd_req_blk(blk_dev->card, part->offset + pos + offset, wr_ptr, req_size, 1);
         if (err)
             break;
         offset += req_size;

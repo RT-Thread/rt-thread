@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -93,7 +93,7 @@ void rt_hw_us_delay(rt_uint32_t us)
 /**
  * This function will config the board for initialization.
  */
-rt_weak void rt_hw_board_init()
+rt_weak void rt_hw_board_init(void)
 {
     /* Systick initialization */
     rt_hw_systick_init();

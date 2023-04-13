@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <elf.h>
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 #include <mmu.h>
 #include <page.h>
 #endif

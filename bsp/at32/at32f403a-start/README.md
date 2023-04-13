@@ -50,6 +50,7 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | WDT       | 支持     |                            |
 | RTC       | 支持     |                            |
 | FLASH     | 支持     |                            |
+| USB       | 支持     |                            |
 
 ### IO在板级支持包中的映射情况
 
@@ -94,6 +95,8 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | PB9  | CAN1_TX        |
 | PB5  | CAN2_RX        |
 | PB6  | CAN2_TX        |
+| PA11 | USB_DM         |
+| PA12 | USB_DP         |
 
 ## 使用说明
 

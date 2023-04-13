@@ -392,7 +392,7 @@ static rt_err_t drv_wlan_softap(struct rt_wlan_device *wlan, struct rt_ap_info *
     rt_memcpy(ipinfo.dnsname, "local.w60x", sizeof("local.w60x"));
     int ret = tls_wifi_softap_create(&apinfo, &ipinfo);
 
-    return (ret == WM_SUCCESS) ? RT_EOK : RT_ERROR;
+    return (ret == WM_SUCCESS) ? RT_EOK : -RT_ERROR;
 }
 
 static rt_err_t drv_wlan_disconnect(struct rt_wlan_device *wlan)
@@ -426,7 +426,7 @@ static rt_err_t drv_wlan_ap_deauth(struct rt_wlan_device *wlan, rt_uint8_t mac[]
     unsigned short reason = WLAN_REASON_UNSPECIFIED;/* htons */
     int ret = tls_wifi_send_mgmt(WM_WIFI_MGMT_TYPE_DEAUTH, &machdr, (u8 *)&reason, sizeof(reason), &tx);
 
-    return (0 == ret) ? RT_EOK : RT_ERROR;
+    return (0 == ret) ? RT_EOK : -RT_ERROR;
 }
 
 static rt_err_t drv_wlan_scan_stop(struct rt_wlan_device *wlan)
@@ -485,7 +485,7 @@ static rt_err_t drv_wlan_cfg_filter(struct rt_wlan_device *wlan, struct rt_wlan_
 {
     LOG_D("F:%s L:%d", __FUNCTION__, __LINE__);
 
-    return RT_EINVAL;/* not support */
+    return -RT_EINVAL;/* not support */
 }
 
 static rt_err_t drv_wlan_set_channel(struct rt_wlan_device *wlan, int channel)

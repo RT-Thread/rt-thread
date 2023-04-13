@@ -24,7 +24,7 @@
 #include "drv_i2s.h"
 #include "drivers/audio.h"
 
-static rt_size_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size);
+static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size);
 
 struct hpm_i2s
 {
@@ -434,7 +434,7 @@ static rt_err_t hpm_i2s_start(struct rt_audio_device* audio, int stream)
         }
 
         if (RT_EOK != hpm_i2s_transmit(&hpm_audio->audio, NULL, hpm_audio->rx_buff, I2S_FIFO_SIZE)) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     } else {
         return -RT_ERROR;
@@ -462,7 +462,7 @@ static rt_err_t hpm_i2s_stop(struct rt_audio_device* audio, int stream)
     return RT_EOK;
 }
 
-static rt_size_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size)
+static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* writeBuf, void* readBuf, rt_size_t size)
 {
     RT_ASSERT(audio != RT_NULL);
     struct hpm_i2s* hpm_audio = (struct hpm_i2s*)audio->parent.user_data;

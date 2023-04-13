@@ -225,11 +225,11 @@ static int gd32_i2c_write(rt_uint32_t i2c_periph, uint16_t slave_address, uint8_
     return 0;
 }
 
-static rt_size_t gd32_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
+static rt_ssize_t gd32_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     struct rt_i2c_msg *msg;
     rt_uint32_t i;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     struct gd32_i2c_bus *gd32_i2c = (struct gd32_i2c_bus *)bus;
 

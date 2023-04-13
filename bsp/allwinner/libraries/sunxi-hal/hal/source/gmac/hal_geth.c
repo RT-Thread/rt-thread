@@ -40,7 +40,7 @@
 #include <sunxi_hal_miiphy.h>
 #include <rtthread.h>
 #include <netif/ethernetif.h>
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
 #include <page.h>
 #include <ioremap.h>
 #endif
@@ -262,7 +262,7 @@ int is_enough_desc_available(struct dma_desc *entry)
     if(desc->desc0.tx.own != 0)
     {
         printf("desc %08x desc0 %08x desc1 %08x\n",desc,desc->desc0,desc->desc1);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -284,7 +284,7 @@ int wait_tx_completed(struct dma_desc *entry)
         if(timeout_cnt > 1000)
         {
             printf("emac send data timeout \n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
     desc_tag_clean(desc);
@@ -307,13 +307,13 @@ static rt_err_t rt_geth_xmit(rt_device_t dev, struct pbuf *p)
     unsigned int i = 0;
     unsigned int copy_offset = 0;
 
-    if (!rt_geth_dev.phy_link_status) return RT_ERROR;
+    if (!rt_geth_dev.phy_link_status) return -RT_ERROR;
 
     first = rt_geth_dev.get_buffer_config.dma_desc_tx + tx_dirty;
     ret = is_enough_desc_available(first);
     if(ret < 0)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     copy_offset = 0;
@@ -326,7 +326,7 @@ static rt_err_t rt_geth_xmit(rt_device_t dev, struct pbuf *p)
         if(copy_offset >= ((1 << 11) - 1))
         {
             printf("send data exceed max len copy_offset %d\n",copy_offset);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
@@ -565,7 +565,7 @@ static int geth_dma_desc_init(void)
 {
     void *temp = RT_NULL;
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     rt_geth_dev.get_buffer_config.rx_buff_addr = rt_pages_alloc(RX_BUFFER_INDEX_NUM);
 #else
     rt_geth_dev.get_buffer_config.rx_buff_addr = rt_malloc(DMA_MEM_ALIGN_SIZE * DMA_DESC_RX_NUM);
@@ -577,7 +577,7 @@ static int geth_dma_desc_init(void)
     }
     //temp = (void *)rt_ioremap_nocache((void *)awos_arch_virt_to_phys((unsigned long)rt_geth_dev.get_buffer_config.rx_buff_addr), (SYS_PAGE_SIZE<<RX_BUFFER_INDEX_NUM));
     rt_geth_dev.get_buffer_config.phy_rx_buff_addr = (void *)awos_arch_virt_to_phys((unsigned long)rt_geth_dev.get_buffer_config.rx_buff_addr);
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     rt_geth_dev.get_buffer_config.tx_buff_addr = rt_pages_alloc(TX_BUFFER_INDEX_NUM);
 #else
     rt_geth_dev.get_buffer_config.tx_buff_addr = rt_malloc(DMA_MEM_ALIGN_SIZE * DMA_DESC_TX_NUM);
@@ -590,7 +590,7 @@ static int geth_dma_desc_init(void)
     //temp = (void *)rt_ioremap_nocache((void *)awos_arch_virt_to_phys((unsigned long)rt_geth_dev.get_buffer_config.tx_buff_addr), (SYS_PAGE_SIZE<<TX_BUFFER_INDEX_NUM));
     rt_geth_dev.get_buffer_config.phy_tx_buff_addr = (void *)awos_arch_virt_to_phys((unsigned long)rt_geth_dev.get_buffer_config.tx_buff_addr);
 
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     rt_geth_dev.get_buffer_config.dma_desc_rx = (hal_geth_dma_desc_t *)rt_pages_alloc(RX_BD_INDEX_NUM);
 #else
     rt_geth_dev.get_buffer_config.dma_desc_rx = (hal_geth_dma_desc_t *)rt_malloc(sizeof(hal_geth_dma_desc_t) * DMA_DESC_RX_NUM);
@@ -603,7 +603,7 @@ static int geth_dma_desc_init(void)
 
     //temp = (void *)rt_ioremap_nocache((void *)awos_arch_virt_to_phys((unsigned long)rt_geth_dev.get_buffer_config.dma_desc_rx), (SYS_PAGE_SIZE<<RX_BD_INDEX_NUM));
     rt_geth_dev.get_buffer_config.phy_dma_desc_rx = (hal_geth_dma_desc_t *)awos_arch_virt_to_phys((unsigned long)rt_geth_dev.get_buffer_config.dma_desc_rx);
-#ifdef RT_USING_USERSPACE
+#ifdef RT_USING_SMART
     rt_geth_dev.get_buffer_config.dma_desc_tx = (hal_geth_dma_desc_t *)rt_pages_alloc(TX_BD_INDEX_NUM);
 #else
     rt_geth_dev.get_buffer_config.dma_desc_tx = (hal_geth_dma_desc_t *)rt_malloc(sizeof(hal_geth_dma_desc_t) * DMA_DESC_TX_NUM);
@@ -743,14 +743,14 @@ static rt_err_t rt_geth_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t rt_geth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t rt_geth_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     printf("gmac read\n");
     rt_set_errno(-RT_ENOSYS);
     return 0;
 }
 
-static rt_size_t rt_geth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t rt_geth_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     printf("gmac write\n");
     rt_set_errno(-RT_ENOSYS);

@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--diag_suppress=186,66</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, HC32L136, __CLK_TCK=RT_TICK_PER_SECOND, USE_DDL_DRIVER, __RTTHREAD__, __DEBUG, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, HC32L136, __CLK_TCK=RT_TICK_PER_SECOND, USE_DDL_DRIVER, __RTTHREAD__, __DEBUG</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;board;drivers;..\..\components\finsh;Libraries\CMSIS\Include;Libraries\CMSIS\Device\HDSC\HC32L136\Include;Libraries\HC32L136_StdPeriph_Driver\inc;.;..\..\include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>Libraries\HC32L136_StdPeriph_Driver\inc;..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries\CMSIS\Device\HDSC\HC32L136\Include;Libraries\CMSIS\Include;..\..\components\libc\posix\io\stdio;..\..\include;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;.;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\finsh;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;board;applications;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,13 +448,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -773,9 +766,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

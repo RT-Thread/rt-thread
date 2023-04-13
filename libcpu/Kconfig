@@ -5,6 +5,10 @@ config RT_USING_CACHE
     bool
     default n
 
+config RT_USING_HW_ATOMIC
+    bool
+    default n
+
 config ARCH_CPU_BIG_ENDIAN
     bool
 
@@ -47,6 +51,7 @@ config ARCH_ARM_CORTEX_M3
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_MPU
     bool
@@ -57,21 +62,25 @@ config ARCH_ARM_CORTEX_M4
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M7
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_CACHE
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M33
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_R
     bool
     select ARCH_ARM
+    select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_MMU
     bool
@@ -79,28 +88,20 @@ config ARCH_ARM_MMU
     select ARCH_MM_MMU
     depends on ARCH_ARM
 
-config RT_USING_USERSPACE
-    bool "Isolated user space"
-    default n
-    depends on ARCH_MM_MMU
-
+if RT_USING_SMART
 config KERNEL_VADDR_START
     hex "The virtural address of kernel start"
+    default 0xffff000000000000 if ARCH_ARMV8
     default 0xc0000000 if ARCH_ARM
     default 0x80000000 if ARCH_RISCV
-    depends on RT_USING_USERSPACE
-
-config PV_OFFSET
-    hex "The offset of kernel physical address and virtural address"
-    default 0xa0000000 if ARCH_ARM
-    default 0x0        if ARCH_RISCV
-    depends on RT_USING_USERSPACE
+    depends on ARCH_MM_MMU
 
 config RT_IOREMAP_LATE
     bool "Support to create IO mapping in the kernel address space after system initlalization."
     default n
     depends on ARCH_ARM_CORTEX_A
-    depends on RT_USING_USERSPACE
+    depends on ARCH_MM_MMU
+endif
 
 config ARCH_ARM_ARM9
     bool
@@ -113,7 +114,9 @@ config ARCH_ARM_ARM11
 config ARCH_ARM_CORTEX_A
     bool
     select ARCH_ARM
+    select ARCH_ARM_MMU
     select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
 
     if ARCH_ARM_CORTEX_A
         config RT_SMP_AUTO_BOOT
@@ -162,6 +165,8 @@ config RT_BACKTRACE_FUNCTION_NAME
 config ARCH_ARMV8
     bool
     select ARCH_ARM
+    select ARCH_ARM_MMU
+    select RT_USING_HW_ATOMIC
 
 config ARCH_MIPS
     bool

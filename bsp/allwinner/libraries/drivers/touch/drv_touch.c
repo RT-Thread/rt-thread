@@ -152,7 +152,7 @@ int rt_touch_write(rt_uint16_t addr, void *data_buf, size_t data_len)
         return -1;
 }
 
-static rt_size_t touch_readpoint(struct rt_touch_device *touch, void *buf, rt_size_t touch_num)
+static rt_ssize_t touch_readpoint(struct rt_touch_device *touch, void *buf, rt_size_t touch_num)
 {
     rt_device_t device;
     struct rt_touch_data *data = (struct rt_touch_data *)buf;
@@ -264,7 +264,7 @@ int rt_touch_init(void)
     else if (TOUCH_POLL_MODE == current_driver->check_mode)
     {
         rt_thread_t thread;
-        irq_pin = RT_PIN_NONE; // No interrupt pins are used
+        irq_pin = PIN_IRQ_PIN_NONE; // No interrupt pins are used
         thread = rt_thread_create("touch", touch_poll_entry, RT_NULL, 2048, 16, 20);
         if (thread == RT_NULL)
         {

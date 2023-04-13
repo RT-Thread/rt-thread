@@ -1,7 +1,7 @@
 menu "Hardware Drivers Config"
 
 config SOC_LPC55S6X
-    bool 
+    bool
     select SOC_LPC55S6X_SERIES
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -13,7 +13,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable DMA"
         select RT_USING_DMA
         default n
-    
+
     config BSP_USING_PIN
         bool "Enable GPIO"
         select RT_USING_PIN
@@ -24,7 +24,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable UART"
             select RT_USING_UART
             default y
-            
+
             if BSP_USING_UART
                 config BSP_USING_UART0
                     bool "Enable Flexcomm0 as UART"
@@ -42,6 +42,22 @@ menu "On-chip Peripheral Drivers"
                         endchoice
                     endif
 
+                config BSP_USING_UART1
+                    bool "Enable Flexcomm1 as UART"
+                    default n
+                    if BSP_USING_UART1
+                    choice
+                        prompt "Select UART1 badurate"
+                        default HW_UART1_BAUDRATE_115200
+
+                        config HW_UART1_BAUDRATE_9600
+                            bool "Badurate 9600"
+
+                        config HW_UART1_BAUDRATE_115200
+                            bool "Badurate 115200"
+                    endchoice
+                endif
+
                 config BSP_USING_UART2
                     bool "Enable Flexcomm2 as UART"
                     default n
@@ -54,9 +70,9 @@ menu "On-chip Peripheral Drivers"
                                 bool "Badurate 9600"
 
                             config HW_UART2_BAUDRATE_115200
-                                bool "Badurate 115200"   
+                                bool "Badurate 115200"
                         endchoice
-                    endif 
+                    endif
             endif
 
 
@@ -70,6 +86,7 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_I2C1
                     bool "Enable Flexcomm1 I2C"
                     default y
+
                     if BSP_USING_I2C1
                         choice
                             prompt "Select I2C1 badurate"
@@ -105,7 +122,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable SPI"
             select RT_USING_SPI
             default y
-            
+
             if BSP_USING_SPI
                 config BSP_USING_SPI3
                     bool "Enable Flexcomm3 as SPI"
@@ -121,7 +138,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable ADC Channel"
             select RT_USING_ADC
             default y
-            
+
             if BSP_USING_ADC
                 config BSP_USING_ADC0_CH0
                     bool "Enable ADC0 Channel0"
@@ -130,6 +147,21 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_ADC0_CH1
                     bool "Enable ADC0 Channel1"
                     default n
+
+                config BSP_USING_ADC0_CH8
+                    bool "Enable ADC0 Channel8"
+                    default n
+
+
+                config BSP_USING_ADC0_CH13
+                    bool "Enable ADC0 Channel13"
+                    default n
+
+
+                config BSP_USING_ADC0_CH26
+                    bool "Enable ADC0 Channel26"
+                    default n
+
             endif
 
     config BSP_USING_SDIO
@@ -180,9 +212,13 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_PWM
+                config BSP_USING_CTIMER1_MAT0
+                    bool "Enable CIMER1 Match0 as PWM output"
+                    default y
+
                 config BSP_USING_CTIMER2_MAT0
                     bool "Enable CIMER2 Match0 as PWM output"
-                    default y
+                    default n
 
                 config BSP_USING_CTIMER2_MAT1
                     bool "Enable CIMER2 Match1 as PWM output"
@@ -190,6 +226,10 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_USING_CTIMER2_MAT2
                     bool "Enable CIMER2 Match2 as PWM output"
+                    default n
+
+                config BSP_USING_CTIMER3_MAT2
+                    bool "Enable CIMER3 Match2 as PWM output"
                     default n
             endif
 endmenu
@@ -214,6 +254,24 @@ menu "Onboard Peripheral Drivers"
                 string "the device name for 3-Axis Sensor"
                 default "i2c4"
         endif
+
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_UART2
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC0
+        select BSP_USING_PWM
+        select BSP_USING_CTIMER1_MAT0
+        select BSP_USING_CTIMER2_MAT0
+        select BSP_USING_CTIMER2_MAT1
+        select BSP_USING_CTIMER2_MAT2
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
 
 endmenu
 

@@ -98,7 +98,7 @@ static struct udevice_descriptor dev_desc =
     USB_DESC_TYPE_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
     USB_CLASS_CDC,              //bDeviceClass;
-    0x00,                       //bDeviceSubClass;
+    0x02,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     CDC_MAX_PACKET_SIZE,        //bMaxPacketSize0;
     _VENDOR_ID,                 //idVendor;
@@ -118,7 +118,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
     USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
     USB_CLASS_CDC,                  //bDeviceClass
-    0x00,                           //bDeviceSubClass
+    0x02,                           //bDeviceSubClass
     0x00,                           //bDeviceProtocol
     64,                             //bMaxPacketSize0
     0x01,                           //bNumConfigurations
@@ -240,7 +240,7 @@ rt_weak rt_err_t vcom_get_stored_serno(char *serno, int size);
 
 rt_err_t vcom_get_stored_serno(char *serno, int size)
 {
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 rt_align(4)
 const static char* _ustring[] =
@@ -721,7 +721,7 @@ static int _vcom_getc(struct rt_serial_device *serial)
     return result;
 }
 
-static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt_size_t size)
+static rt_ssize_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt_size_t size)
 {
     rt_base_t level;
     rt_size_t   put_len = 0;
@@ -751,7 +751,7 @@ static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt
     return size;
 }
 
-static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct ufunction *func;
     struct vcom *data;

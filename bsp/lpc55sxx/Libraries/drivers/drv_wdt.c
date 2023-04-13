@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -204,7 +204,7 @@ static rt_err_t lpc_wwdt_control(rt_watchdog_t *wdt, int cmd, void *args)
     }
     break;
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;

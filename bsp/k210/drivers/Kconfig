@@ -3,6 +3,7 @@ config SOC_K210
     select ARCH_RISCV64
     select ARCH_RISCV_FPU_S
     select PKG_USING_K210_SDK
+    select RT_USING_HW_ATOMIC
 
 config BOARD_K210_EVB
     bool
@@ -143,7 +144,7 @@ if BSP_USING_LCD
     choice
         prompt "backlight active polarity"
         default BSP_LCD_BACKLIGHT_ACTIVE_LOW
-        
+
         config BSP_LCD_BACKLIGHT_ACTIVE_LOW
             bool "lcd backlight on low level"
         config BSP_LCD_BACKLIGHT_ACTIVE_HIGH
@@ -153,7 +154,7 @@ if BSP_USING_LCD
     config BSP_LCD_CLK_FREQ
         int "Lcd max clk frequency"
         default 15000000
-    
+
     choice
         prompt "lcd scan direction"
         default BSP_BOARD_K210_OPENMV_TEST
@@ -168,7 +169,7 @@ if BSP_USING_LCD
             bool "board_k210_Draco lcd scan: DIR_YX_LRUD"
 
         config  BSP_BOARD_USER
-            bool "board_user: user defined."    
+            bool "board_user: user defined."
     endchoice
 
     config BSP_LCD_X_MAX

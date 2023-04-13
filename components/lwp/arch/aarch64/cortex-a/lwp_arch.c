@@ -8,16 +8,17 @@
  * 2021-05-18     Jesven       first version
  */
 
-#include <rtthread.h>
 #include <rthw.h>
+#include <rtthread.h>
 
-#ifdef RT_USING_USERSPACE
+#ifdef ARCH_MM_MMU
 
-#include <mmu.h>
-#include <page.h>
-#include <lwp_mm_area.h>
-#include <lwp_user_mm.h>
+#define DBG_TAG "lwp.arch"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 #include <lwp_arch.h>
+#include <lwp_user_mm.h>
 
 extern size_t MMUTable[];
 
@@ -25,34 +26,48 @@ int arch_user_space_init(struct rt_lwp *lwp)
 {
     size_t *mmu_table;
 
-    mmu_table = (size_t*)rt_pages_alloc(0);
+    mmu_table = (size_t *)rt_pages_alloc(0);
     if (!mmu_table)
     {
-        return -1;
+        return -RT_ENOMEM;
     }
 
     lwp->end_heap = USER_HEAP_VADDR;
+
     memset(mmu_table, 0, ARCH_PAGE_SIZE);
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
-    rt_hw_mmu_map_init(&lwp->mmu_info, (void*)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table, PV_OFFSET);
+
+    lwp->aspace = rt_aspace_create(
+        (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
+    if (!lwp->aspace)
+    {
+        return -RT_ERROR;
+    }
 
     return 0;
 }
 
 void *arch_kernel_mmu_table_get(void)
 {
-    return (void*)NULL;
+    return (void *)NULL;
 }
 
-void arch_kuser_init(rt_mmu_info *mmu_info, void *vectors)
+void arch_user_space_free(struct rt_lwp *lwp)
 {
-}
-
-void arch_user_space_vtable_free(struct rt_lwp *lwp)
-{
-    if (lwp && lwp->mmu_info.vtable)
+    if (lwp)
     {
-        rt_pages_free(lwp->mmu_info.vtable, 0);
+        RT_ASSERT(lwp->aspace);
+        void *pgtbl = lwp->aspace->page_table;
+        rt_aspace_delete(lwp->aspace);
+
+        /* must be freed after aspace delete, pgtbl is required for unmap */
+        rt_pages_free(pgtbl, 0);
+        lwp->aspace = NULL;
+    }
+    else
+    {
+        LOG_W("%s: NULL lwp as parameter", __func__);
+        RT_ASSERT(0);
     }
 }
 
@@ -62,9 +77,11 @@ int arch_expand_user_stack(void *addr)
     size_t stack_addr = (size_t)addr;
 
     stack_addr &= ~ARCH_PAGE_MASK;
-    if ((stack_addr >= (size_t)USER_STACK_VSTART) && (stack_addr < (size_t)USER_STACK_VEND))
+    if ((stack_addr >= (size_t)USER_STACK_VSTART) &&
+        (stack_addr < (size_t)USER_STACK_VEND))
     {
-        void *map = lwp_map_user(lwp_self(), (void*)stack_addr, ARCH_PAGE_SIZE, 0);
+        void *map =
+            lwp_map_user(lwp_self(), (void *)stack_addr, ARCH_PAGE_SIZE, 0);
 
         if (map || lwp_user_accessable(addr, 1))
         {

@@ -78,7 +78,7 @@ static rt_err_t partition_control(rt_device_t dev, rt_uint8_t cmd, void *args)
     return RT_EOK;
 }
 
-static rt_size_t partition_read(rt_device_t dev,
+static rt_ssize_t partition_read(rt_device_t dev,
                                    rt_off_t pos,
                                    void* buffer,
                                    rt_size_t size)
@@ -93,7 +93,7 @@ static rt_size_t partition_read(rt_device_t dev,
     return rt_device_read(part->block_device, pos + part->partition->offset/part->sector_size, buffer, size);
 }
 
-static rt_size_t partition_write(rt_device_t dev,
+static rt_ssize_t partition_write(rt_device_t dev,
                                     rt_off_t pos,
                                     const void* buffer,
                                     rt_size_t size)

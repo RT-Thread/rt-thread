@@ -13,8 +13,8 @@
 /* Definition of logic unit number for each drive */
 #define LUN_USB     (0U)    /* lun 0 of usb drive */
 
-static rt_size_t hpm_usb_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-static rt_size_t hpm_usb_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+static rt_ssize_t hpm_usb_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+static rt_ssize_t hpm_usb_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 rt_err_t  hpm_usb_control(rt_device_t dev, int cmd, void *args);
 
 rt_uint8_t usb_dev_addr;
@@ -50,7 +50,7 @@ void hpm_usb_set_addr(uint8_t dev_addr)
     usb_dev_addr = dev_addr;
 }
 
-static rt_size_t hpm_usb_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t hpm_usb_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_bool_t result;
 
@@ -63,7 +63,7 @@ static rt_size_t hpm_usb_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_si
     return result ? size : 0;
 }
 
-static rt_size_t hpm_usb_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t hpm_usb_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     bool result;
 
@@ -93,7 +93,7 @@ rt_err_t hpm_usb_control(rt_device_t dev, int cmd, void *args)
         break;
 
     default:
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         break;
     }
 

@@ -16,7 +16,6 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#include "touch.h"
 #include "gt911.h"
 
 static struct rt_i2c_client gt911_client;
@@ -200,7 +199,7 @@ static void gt911_touch_down(void *buf, rt_int8_t id, rt_int16_t x, rt_int16_t y
 static rt_int8_t pre_id[GT911_MAX_TOUCH];
 static rt_uint8_t pre_touch = 0;
 
-static rt_size_t gt911_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
+static rt_ssize_t gt911_read_point(struct rt_touch_device *touch, void *buf, rt_size_t read_num)
 {
     rt_uint8_t point_status = 0;
     rt_uint8_t touch_num = 0;
@@ -471,7 +470,7 @@ int rt_hw_gt911_init(const char *name, struct rt_touch_config *cfg)
     rt_memset(&pre_x[0], 0xff,  GT911_MAX_TOUCH * sizeof(rt_int16_t));
     rt_memset(&pre_y[0], 0xff,  GT911_MAX_TOUCH * sizeof(rt_int16_t));
     rt_memset(&pre_w[0], 0xff,  GT911_MAX_TOUCH * sizeof(rt_int16_t));
-    rt_memset(&s_tp_dowm[0], 0, GT911_MAX_TOUCH * sizeof(rt_int16_t));
+    rt_memset(&s_tp_dowm[0], 0, GT911_MAX_TOUCH * sizeof(rt_int8_t));
     rt_memset(&pre_id[0], 0xff, GT911_MAX_TOUCH * sizeof(rt_uint8_t));
 
     /* register touch device */

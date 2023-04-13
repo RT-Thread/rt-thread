@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -301,13 +301,13 @@ static rt_err_t ch32f2_pwm_device_enable(struct rt_device_pwm *device, struct rt
   if (channel_index <= 4 && channel_index > 0)
   {
     if (pwm_device->channel[channel_index - 1] == 0xFF)
-      return RT_EINVAL;
+      return -RT_EINVAL;
 
     TIM_CCxCmd(pwm_device->periph, pwm_device->channel[channel_index - 1], ccx_state);
   }
   else
   {
-    return RT_EINVAL;
+    return -RT_EINVAL;
   }
 
   TIM_Cmd(pwm_device->periph, ENABLE);
@@ -355,7 +355,7 @@ static rt_err_t ch32f2_pwm_device_get(struct rt_device_pwm *device, struct rt_pw
     configuration->pulse = ((ccr_counter * 100) / arr_counter) * configuration->period / 100;
   }
   else
-    return RT_EINVAL;
+    return -RT_EINVAL;
 
   return RT_EOK;
 }
@@ -451,7 +451,7 @@ static rt_err_t ch32f2_pwm_device_set(struct rt_device_pwm *device, struct rt_pw
   }
   else
   {
-    return RT_EINVAL;
+    return -RT_EINVAL;
   }
 
   TIM_ARRPreloadConfig(pwm_device->periph, ENABLE);
@@ -477,7 +477,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
   case PWM_CMD_GET:
     return ch32f2_pwm_device_get(device, configuration);
   default:
-    return RT_EINVAL;
+    return -RT_EINVAL;
   }
 }
 

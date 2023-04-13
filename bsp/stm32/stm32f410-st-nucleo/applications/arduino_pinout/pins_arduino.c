@@ -9,7 +9,6 @@
  */
 
 #include <Arduino.h>
-#include <board.h>
 #include "pins_arduino.h"
 
 /*
@@ -37,12 +36,13 @@ const pin_map_t pin_map_table[]=
     {D13, GET_PIN(A,5)},                /* LED_BUILTIN */
     {D14, GET_PIN(B,9), "i2c1"},        /* I2C-SDA (Wire) */
     {D15, GET_PIN(B,8), "i2c1"},        /* I2C-SCL (Wire) */
+    {D16, GET_PIN(C,13)},               /* USER KEY */
     {A0, GET_PIN(A,0), "adc1", 0},      /* ADC */
     {A1, GET_PIN(A,1), "adc1", 1},      /* ADC */
     {A2, GET_PIN(A,4), "adc1", 4},      /* ADC */
     {A3, GET_PIN(B,0), "adc1", 8},      /* ADC */
     {A4, GET_PIN(C,1), "adc1", 11},     /* ADC */
     {A5, GET_PIN(C,0), "adc1", 10},     /* ADC */
-    {A6, RT_NULL, "adc1", 17},          /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
-    {A7, RT_NULL, "adc1", 16},          /* ADC, On-Chip: internal temperature sensor, ADC_CHANNEL_TEMPSENSOR */
+    {A6, RT_NULL, "adc1", RT_ADC_INTERN_CH_VREF},   /* ADC, On-Chip: internal reference voltage */
+    {A7, RT_NULL, "adc1", RT_ADC_INTERN_CH_TEMPER}, /* ADC, On-Chip: internal temperature sensor */
 };

@@ -13,6 +13,7 @@ APM32F10x_StdPeriphDriver/src/apm32f10x_misc.c
 APM32F10x_StdPeriphDriver/src/apm32f10x_rcm.c
 APM32F10x_StdPeriphDriver/src/apm32f10x_usart.c
 APM32F10x_StdPeriphDriver/src/apm32f10x_eint.c
+APM32F10x_StdPeriphDriver/src/apm32f10x_dma.c
 """)
 
 if GetDepend(['RT_USING_ADC']):
@@ -30,14 +31,30 @@ if GetDepend(['RT_USING_SPI']):
 
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
     src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_tmr.c']
-    
+
 if GetDepend(['RT_USING_WDT']):
     src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_wwdt.c']
     src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_iwdt.c']
-    
-path = [cwd + '/Device/Geehy/APM32F10x/Include', 
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_can.c']
+
+if GetDepend(['RT_USING_SDIO']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_sdio.c']
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_dmc.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    src += ['APM32F10x_StdPeriphDriver/src/apm32f10x_fmc.c']
+
+if GetDepend(['BSP_USING_ETH']):
+    src += ['APM32F10x_ETH_Driver/src/apm32f10x_eth.c']
+
+path = [cwd + '/Device/Geehy/APM32F10x/Include',
     cwd + '/APM32F10x_StdPeriphDriver/inc',
-    cwd + '/CMSIS/Include']
+    cwd + '/CMSIS/Include',
+    cwd + '/APM32F10x_ETH_Driver/inc']
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

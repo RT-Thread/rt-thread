@@ -93,7 +93,7 @@ rt_err_t dma_memcpy(void *src, void *dst, unsigned int size, unsigned int dch, u
     if(rt_sem_take(&dma_sem, timeout) != RT_EOK)
     {
         rt_kprintf("dma transfer timeout!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

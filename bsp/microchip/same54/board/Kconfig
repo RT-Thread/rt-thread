@@ -19,7 +19,7 @@ choice
     help
         Refer to SAME54 DataSheet
 
-endchoice 
+endchoice
 endmenu
 
 menu "Onboard Peripheral Drivers"

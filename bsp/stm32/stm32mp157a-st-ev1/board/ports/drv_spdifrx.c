@@ -110,7 +110,7 @@ static rt_err_t _init(rt_device_t dev)
 
     if (HAL_SPDIFRX_Init(&device->spdifrx) != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     sai4a_init(&device->sai4);
@@ -134,7 +134,7 @@ static rt_err_t _close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_size_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
+static rt_ssize_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
     rt_uint32_t tickstart = 0;
 
@@ -167,7 +167,7 @@ static rt_size_t _read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t si
     return size;
 }
 
-static rt_size_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
+static rt_ssize_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
     RT_ASSERT(dev != RT_NULL);
 
@@ -177,7 +177,7 @@ static rt_size_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_si
     result = HAL_SAI_Transmit_DMA(&device->sai4, (rt_uint8_t *)buffer, size);
     if (result != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -286,7 +286,7 @@ static int spdifrx_sample(int argc, char **argv)
         {
             rt_kprintf("spdirex loopback mode test failed!\n");
 
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 
