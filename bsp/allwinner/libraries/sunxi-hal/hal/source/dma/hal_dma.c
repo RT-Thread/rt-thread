@@ -493,7 +493,7 @@ hal_dma_status_t hal_dma_prep_cyclic(struct sunxi_dma_chan *chan,
     uint32_t i = 0;
     uint32_t __cpsr;
 
-    if ((NULL == chan && chan->cyclic) || (0 == buf_addr))
+    if ((NULL == chan) || (0 == buf_addr))
     {
         DMA_ERR("[dma] chan or buf_addr is NULL\n");
         return HAL_DMA_STATUS_INVALID_PARAMETER;
