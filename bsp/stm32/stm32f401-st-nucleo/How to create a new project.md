@@ -1,97 +1,95 @@
-# [STM32F401] How to create a new project
+## [STM32F401] How to create a new project
 
-:::info
+***info:***
 :bulb: Download the latest RT-Thread studio from link -
 https://www.rt-thread.io/studio.html 
 and follow the instructions to install it on your windows machine. 
-:::
 
-### Create a new project
+## 1 Create a new project
 
-- Go to File -> Import.
+### 1.1 Go to File -> Import.
 
-![](https://i.imgur.com/HjMyZCg.png)
+![](./figures_en/Import_bsp.png)
 
+### 1.2 Select RT-Thread Bsp Project into Workspace.
 
-- Select RT-Thread Bsp Project into Workspace.
+![](./figures_en/Workspace.png)
 
-![](https://i.imgur.com/jcwFf24.png)
+### 1.3 Import Projects from BSP.
 
-- Import Projects from BSP.
+![](./figures_en/Import_prj.png)
 
-![](https://i.imgur.com/XZZOTbT.png)
+### 1.4 Browse Bsp Location to rt-threadx\bsp\stm32\stm32f401-st-nucleo, then click Select Folder.
 
-- Browse Bsp Location to rt-threadx\bsp\stm32\stm32f401-st-nucleo, then click Select Folder.
+![](./figures_en/Folder.png)
 
-![](https://i.imgur.com/osnThIA.png)
+### 1.5 Fill up the rest of the information and select ST-LINK for debugger. Then, click finish button. There will be a newly created project at the workspace. 
 
-- Fill up the rest of the information and select ST-LINK for debugger. Then, click finish button. There will be a newly created project at the workspace. 
+![](./figures_en/Info.png)
 
-![](https://i.imgur.com/1sLBJ88.png)
+![](./figures_en/Import.png)
 
-![](https://i.imgur.com/0Z4ahmr.png)
+![](./figures_en/Project.png)
 
-![](https://i.imgur.com/o3kdLrx.png)
+## 2 Tool Chain
 
-### Tool Chain
+### 2.1 Select the latest tool chain version to resolve the warning.
 
-- Select the latest tool chain version to resolve the warning.
+![](./figures_en/BuildSetting.png)
 
-![](https://i.imgur.com/aqCQRRX.png)
+![](./figures_en/GUN_Tools.png)
 
-![](https://i.imgur.com/CJ38q4n.png)
+### 2.2 If there is no latest tool chain version, click SDK manager to download the latest version.
 
-- **If** there is no latest tool chain version, click SDK manager to download the latest version.
+![](./figures_en/SDK.png)
 
-![](https://i.imgur.com/rG3DJM6.png)
+> Select the latest version from the RT-Thread SDK Manager window and click install packages button. After installation, click Exit SDK Manger button again.
 
-> - Select the latest version from the RT-Thread SDK Manager window and click install packages button. After installation, click Exit SDK Manger button again.
+![](./figures_en/SDK_ver.png)
 
-![](https://i.imgur.com/BNvMNzb.png)
+> Then select the latest version from the Open Build Settings Dialog.
 
-> - Then select the latest version from the Open Build Settings Dialog.
+## 3 RT-Thread Setting
 
-### RT-Thread Setting
+### 3.1 In order to configure kernel and to enable add-on software packages, click RT-Thread Settings. Then, click detail button.
 
-- In order to configure kernel and to enable add-on software packages, click RT-Thread Settings. Then, click detail button.
+![](./figures_en/config.png)
 
-![](https://i.imgur.com/OOJq4U8.png)
+![](./figures_en/softpkgs.png)
 
-![](https://i.imgur.com/jctYIJA.png)
+![](./figures_en/select.png)
 
-![](https://i.imgur.com/bonMpvv.png)
+### 3.2 After configuration, click save to update the latest configuration.
 
-- After configuration, click save to update the latest configuration.
+![](./figures_en/save_select.png)
 
-![](https://i.imgur.com/yubp4yc.png)
+![](./figures_en/saveing.png)
 
-![](https://i.imgur.com/Bz4BwWm.png)
+## 4 Compilation
 
-### Compilation
+### 4.1 In order to complie the project, select the project and ensure that it is [Active - Debug ] state.
 
-- In order to complie the project, select the project and ensure that it is [Active - Debug ] state.
+![](./figures_en/select_prj.png)
 
-![](https://i.imgur.com/YM6wXdr.png)
+### 4.2 Click compilation icon at the menu bar to compile the project.
 
-- Click compilation icon at the menu bar to compile the project.
+![](./figures_en/build.png)
 
-![](https://i.imgur.com/FVTw9CD.png)
+![](./figures_en/build_finish.png)
 
-![](https://i.imgur.com/M6OMuLM.png)
+## 5 Terminal 
 
-### Terminal 
+To access the development board, click terminal icon at the menu ba and select the correct serial port.
 
-- To access the development board, click terminal icon at the menu ba and select the correct serial port.
+![](./figures_en/terminal.png)
 
-![](https://i.imgur.com/HFzLRi9.png)
+## 6 Additional Info 
 
-### Additional Info 
-
-- If you need addtional information, visit to 
+If you need addtional information, visit to 
 
 https://www.rt-thread.io/document/site/programming-manual/interrupt/interrupt/
 
-
 ## 
+
 ###### Author
 ###### Stanley Lwin [04 / 11 / 2023]
