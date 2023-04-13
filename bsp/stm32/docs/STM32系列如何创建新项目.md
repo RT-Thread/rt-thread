@@ -8,7 +8,7 @@
 
 ## 1创建新工程
 
-### 1.1 Go to File -> Import.
+### 1.1 导入BSP
 
 ![](../stm32f401-st-nucleo/figures_en/Import_bsp.png)
 
