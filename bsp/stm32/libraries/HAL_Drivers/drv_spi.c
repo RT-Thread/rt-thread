@@ -140,7 +140,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     spi_handle->Init.NSS = SPI_NSS_SOFT;
 
-    uint32_t SPI_CLOCK;
+    static uint32_t SPI_CLOCK;
 
 /* Some series may only have APBPERIPH_BASE, but don't have HAL_RCC_GetPCLK2Freq */
 #if defined(APBPERIPH_BASE)
