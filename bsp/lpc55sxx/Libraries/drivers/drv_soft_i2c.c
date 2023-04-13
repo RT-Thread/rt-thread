@@ -10,11 +10,9 @@
 
 #include <board.h>
 #include "drv_soft_i2c.h"
-// #include "drv_config.h"
 
 #ifdef RT_USING_I2C
 
-//#define DRV_DEBUG
 #define LOG_TAG              "drv.i2c"
 #include <drv_log.h>
 
