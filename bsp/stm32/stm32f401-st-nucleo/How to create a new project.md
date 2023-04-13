@@ -77,6 +77,16 @@ and follow the instructions to install it on your windows machine.
 
 ![](./figures_en/build_finish.png)
 
+### Reset Mode Setup
+
+- By default, it is selected as hardware reset. After downloading the code, it is required to press the reset physical button on the board. However, this can be done automatically by selecting system reset option at the dropdown list.
+
+- To select system reset, click the configuration icon at menubar. Then, go to download tab. At the reset mode setup, you can either select hardware or system reset.
+
+![](https://i.imgur.com/i5Xb43u.png)
+
+![](https://i.imgur.com/m7AiYbp.png)
+
 ## 5 Terminal 
 
 To access the development board, click terminal icon at the menu ba and select the correct serial port.
