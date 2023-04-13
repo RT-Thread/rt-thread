@@ -1072,7 +1072,7 @@ int16_t Get_CalibrationValue(ADC_TypeDef* ADCx)
     }
 
     for(i=0; i<10; i++){
-        for(j=0; j<10; j++){
+        for(j=0; j<9; j++){
             if(buf[j]>buf[j+1]){
               t=buf[j];
               buf[j]=buf[j+1];
