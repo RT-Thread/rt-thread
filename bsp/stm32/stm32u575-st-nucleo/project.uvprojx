@@ -1,43 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
+
   <SchemaVersion>2.1</SchemaVersion>
+
   <Header>### uVision Project, (C) Keil Software</Header>
+
   <Targets>
     <Target>
       <TargetName>rtthread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6140000::V6.14::ARMCLANG</pCCUsed>
+      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32U575ZITx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32U5xx_DFP.1.1.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32U5xx_DFP.2.1.0</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IROM(0x08000000-0x81FFFFF) IRAM(0x20000000-0x200BFFFF) CLOCK(8000000) FPU3(SFPU) CPUTYPE("Cortex-M33") ELITTLE TZ</Cpu>
-          <FlashUtilSpec />
-          <StartupFile />
-          <FlashDriverDll />
+          <FlashUtilSpec></FlashUtilSpec>
+          <StartupFile></StartupFile>
+          <FlashDriverDll></FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile />
-          <MemoryEnv />
-          <Cmp />
-          <Asm />
-          <Linker />
-          <OHString />
-          <InfinionOptionDll />
-          <SLE66CMisc />
-          <SLE66AMisc />
-          <SLE66LinkerMisc />
+          <RegisterFile></RegisterFile>
+          <MemoryEnv></MemoryEnv>
+          <Cmp></Cmp>
+          <Asm></Asm>
+          <Linker></Linker>
+          <OHString></OHString>
+          <InfinionOptionDll></InfinionOptionDll>
+          <SLE66CMisc></SLE66CMisc>
+          <SLE66AMisc></SLE66AMisc>
+          <SLE66LinkerMisc></SLE66LinkerMisc>
           <SFDFile>$$Device:STM32U575ZITx$CMSIS\SVD\STM32U5xx.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath />
-          <IncludePath />
-          <LibPath />
-          <RegisterFilePath />
-          <DBRegisterFilePath />
+          <BinPath></BinPath>
+          <IncludePath></IncludePath>
+          <LibPath></LibPath>
+          <RegisterFilePath></RegisterFilePath>
+          <DBRegisterFilePath></DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -52,15 +55,15 @@
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>0</BrowseInformation>
-          <ListingPath />
+          <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -69,8 +72,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name />
-            <UserProg2Name />
+            <UserProg1Name></UserProg1Name>
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -80,14 +83,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
-            <UserProg2Name />
+            <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>1</SelectedForBatchBuild>
-          <SVCSIdString />
+          <SVCSIdString></SVCSIdString>
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -101,15 +104,15 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument />
-          <IncludeLibraryModules />
+          <CustomArgument></CustomArgument>
+          <IncludeLibraryModules></IncludeLibraryModules>
           <ComprImg>0</ComprImg>
         </CommonProperty>
         <DllOption>
-          <SimDllName />
-          <SimDllArguments />
-          <SimDlgDll />
-          <SimDlgDllArguments />
+          <SimDllName></SimDllName>
+          <SimDllArguments></SimDllArguments>
+          <SimDlgDll></SimDlgDll>
+          <SimDlgDllArguments></SimDlgDllArguments>
           <TargetDllName>SARMV8M.DLL</TargetDllName>
           <TargetDllArguments>-MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
@@ -136,10 +139,10 @@
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4 />
-          <pFcarmOut />
-          <pFcarmGrp />
-          <pFcArmRoot />
+          <Flash4></Flash4>
+          <pFcarmOut></pFcarmOut>
+          <pFcarmGrp></pFcarmGrp>
+          <pFcArmRoot></pFcArmRoot>
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -172,7 +175,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M33"</AdsCpuType>
-            <RvctDeviceName />
+            <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -306,7 +309,7 @@
                 <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector />
+            <RvctStartVector></RvctStartVector>
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -333,10 +336,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls />
+              <MiscControls></MiscControls>
               <Define>__STDC_LIMIT_MACROS, STM32U575xx, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
-              <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;board;..\..\..\libcpu\arm\cortex-m33;..\libraries\HAL_Drivers\CMSIS\Include;.;..\libraries\HAL_Drivers;applications;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include</IncludePath>
+              <Undefine></Undefine>
+              <IncludePath>.;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\libraries\HAL_Drivers;..\..\..\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m33;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\libc\compilers\common\extension;applications;board\CubeMX_Config\Inc;board;..\..\..\components\libc\posix\io\stdio</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -351,10 +354,10 @@
             <useXO>0</useXO>
             <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
-              <MiscControls />
-              <Define />
-              <Undefine />
-              <IncludePath />
+              <MiscControls></MiscControls>
+              <Define></Define>
+              <Undefine></Undefine>
+              <IncludePath></IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -366,13 +369,13 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase />
+            <pXoBase></pXoBase>
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
-            <IncludeLibs />
-            <IncludeLibsPath />
-            <Misc />
-            <LinkerInputFile />
-            <DisabledWarnings />
+            <IncludeLibs></IncludeLibs>
+            <IncludeLibsPath></IncludeLibsPath>
+            <Misc></Misc>
+            <LinkerInputFile></LinkerInputFile>
+            <DisabledWarnings></DisabledWarnings>
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -395,50 +398,36 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>cctype.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>cstdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>cstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>cwchar.c</FileName>
               <FileType>1</FileType>
@@ -454,43 +443,31 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m33\context_rvds.S</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m33\cpuport.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>syscall_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m33\syscall_rvds.S</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>trustzone.c</FileName>
               <FileType>1</FileType>
@@ -502,65 +479,84 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
+              <FileName>i2c-bit-ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+            </File>
+            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\misc\adc.c</FilePath>
+            </File>
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>rt_drv_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\misc\rt_drv_pwm.c</FilePath>
+            </File>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -572,36 +568,36 @@
               <FileType>2</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Source\Templates\arm\startup_stm32u575xx.s</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\CubeMX_Config\Src\stm32u5xx_hal_msp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>drv_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_adc.c</FilePath>
+            </File>
             <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>drv_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_spi.c</FilePath>
+            </File>
             <File>
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
@@ -617,22 +613,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
@@ -648,85 +638,61 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\device.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mem.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mempool.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
@@ -742,148 +708,156 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>stm32u5xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi.c</FilePath>
+            </File>
             <File>
               <FileName>stm32u5xx_hal_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_crc.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>stm32u5xx_hal_spi_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi_ex.c</FilePath>
+            </File>
             <File>
               <FileName>stm32u5xx_hal_icache.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_icache.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart_ex.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gpio.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_rng.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rng.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>stm32u5xx_hal_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim.c</FilePath>
+            </File>
             <File>
               <FileName>stm32u5xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cortex.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>stm32u5xx_hal_ospi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_ospi.c</FilePath>
+            </File>
             <File>
               <FileName>stm32u5xx_hal_cryp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cryp.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_crc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_crc_ex.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>stm32u5xx_hal_lptim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_lptim.c</FilePath>
+            </File>
             <File>
               <FileName>stm32u5xx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc_ex.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>stm32u5xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c.c</FilePath>
+            </File>
             <File>
               <FileName>stm32u5xx_hal_usart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart_ex.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_cryp_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cryp_ex.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>system_stm32u5xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Source\Templates\system_stm32u5xx.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_pwr_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr_ex.c</FilePath>
             </File>
-          </Files>
-          <Files>
             <File>
               <FileName>stm32u5xx_hal_comp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_comp.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>stm32u5xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32u5xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32u5xx_hal_tim_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim_ex.c</FilePath>
+            </File>
             <File>
               <FileName>stm32u5xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma_ex.c</FilePath>
             </File>
-          </Files>
-          <Files>
+            <File>
+              <FileName>stm32u5xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc.c</FilePath>
+            </File>
             <File>
               <FileName>stm32u5xx_hal_exti.c</FileName>
               <FileType>1</FileType>
@@ -894,23 +868,21 @@
       </Groups>
     </Target>
   </Targets>
+
   <RTE>
-    <apis />
-    <components />
-    <files />
+    <apis/>
+    <components/>
+    <files/>
   </RTE>
+
   <LayerInfo>
     <Layers>
       <Layer>
         <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc />
-        <LayUrl />
-        <LayKeys />
-        <LayCat />
-        <LayLic />
         <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>
   </LayerInfo>
+
 </Project>
