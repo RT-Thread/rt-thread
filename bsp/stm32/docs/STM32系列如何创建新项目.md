@@ -10,43 +10,43 @@
 
 ### 1.1 Go to File -> Import.
 
-![](../stm32f401-st-nucleo/figures/HjMyZCg.png)
+![](../stm32f401-st-nucleo/figures/Import_bsp.png)
 
 ### 1.2选择 RT-Thread Bsp Project into Workspace.
 
-![](../stm32f401-st-nucleo/figures/jcwFf24.png)
+![](../stm32f401-st-nucleo/figures/Workspace.png)
 
 ### 1.3 从BSP导入工程
 
-![](../stm32f401-st-nucleo/figures/XZZOTbT.png)
+![](../stm32f401-st-nucleo/figures/Import_prj.png)
 
 ### 1.4 选择BSP路径 rt-threadx\bsp\stm32\stm32f401-st-nucleo
 
-![](../stm32f401-st-nucleo/figures/osnThIA.png)
+![](../stm32f401-st-nucleo/figures/Folder.png)
 
 ### 1.5 填写信息，选择ST-LINK作为调试器，单击“完成”按钮。工作区将有一个新创建的项目
 
-![](../stm32f401-st-nucleo/figures/1sLBJ88.png)
+![](../stm32f401-st-nucleo/figures/Info.png)
 
-![](../stm32f401-st-nucleo/figures/0Z4ahmr.png)
+![](../stm32f401-st-nucleo/figures/Import.png)
 
-![](../stm32f401-st-nucleo/figures/o3kdLrx.png)
+![](../stm32f401-st-nucleo/figures/Project.png)
 
 ## 2 工具链
 
 ### 2.1 选择最新的工具链版本以解决警告。
 
-![](../stm32f401-st-nucleo/figures/aqCQRRX.png)
+![](../stm32f401-st-nucleo/figures/BuildSetting.png)
 
-![](../stm32f401-st-nucleo/figures/CJ38q4n.png)
+![](../stm32f401-st-nucleo/figures/GUN_Tools.png)
 
 ### 2.2 如果没有最新的工具链版本，请单击SDK管理器下载最新版本.
 
-![](../stm32f401-st-nucleo/figures/rG3DJM6.png)
+![](../stm32f401-st-nucleo/figures/SDK.png)
 
 > 从“RT线程SDK管理器”窗口中选择最新版本，然后单击“安装软件包”按钮。安装完成后，再次单击“退出SDK管理器”按钮。
 
-![](../stm32f401-st-nucleo/figures/BNvMNzb.png)
+![](../stm32f401-st-nucleo/figures/SDK_ver.png)
 
 > Then select the latest version from the Open Build Settings Dialog.
 
@@ -54,33 +54,33 @@
 
 ### 3.1 然后从“打开生成设置”对话框中选择最新版本。
 
-![](../stm32f401-st-nucleo/figures/OOJq4U8.png)
+![](../stm32f401-st-nucleo/figures/config.png)
 
-![](../stm32f401-st-nucleo/figures/jctYIJA.png)
+![](../stm32f401-st-nucleo/figures/softpkgs.png)
 
-![](../stm32f401-st-nucleo/figures/bonMpvv.png)
+![](../stm32f401-st-nucleo/figures/select.png)
 
 ### 3.2 配置完成后，单击保存以更新最新配置。
 
-![](../stm32f401-st-nucleo/figures/yubp4yc.png)
+![](../stm32f401-st-nucleo/figures/save_select.png)
 
-![](../stm32f401-st-nucleo/figures/Bz4BwWm.png)
+![](../stm32f401-st-nucleo/figures/saveing.png)
 
 ## 4 Compilation
 
 ### 4.1为了使项目复杂化，请选择项目并确保其处于[Active - Debug ] 状态。 
 
-![](../stm32f401-st-nucleo/figures/YM6wXdr.png)
+![](../stm32f401-st-nucleo/figures/select_prj.png)
 
 ### 4.2 单击菜单栏上的编译图标以编译项目。
 
-![](../stm32f401-st-nucleo/figures/FVTw9CD.png)
+![](../stm32f401-st-nucleo/figures/build.png)
 
-![](../stm32f401-st-nucleo/figures/M6OMuLM.png)
+![](../stm32f401-st-nucleo/figures/build_finish.png)
 
 ## 5 终端
 
-连接开发板，请单击菜单ba上的终端图标，然后选择正确的串行端口。![](../stm32f401-st-nucleo/figures/HFzLRi9.png)
+连接开发板，请单击菜单ba上的终端图标，然后选择正确的串行端口。![](../stm32f401-st-nucleo/figures/terminal.png)
 
 ## 6 附加信息 
 
