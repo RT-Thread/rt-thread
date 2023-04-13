@@ -2,7 +2,7 @@
  * @File:    flexible_button_demo.c
  * @Author:  MurphyZhao
  * @Date:    2018-09-29
- * 
+ *
  * Copyright (c) 2018-2019 MurphyZhao <d2014zjt@163.com>
  *               https://github.com/murphyzhao
  * All rights reserved.
@@ -223,7 +223,7 @@ static void button_scan(void *arg)
 static void user_button_init(void)
 {
     int i;
-    
+
     rt_memset(&user_button[0], 0x0, sizeof(user_button));
 
     user_button[USER_BUTTON_0].usr_button_read = button_key0_read;
@@ -233,11 +233,11 @@ static void user_button_init(void)
     //user_button[USER_BUTTON_1].cb = (flex_button_response_callback)btn_1_cb;
 
     user_button[USER_BUTTON_2].usr_button_read = button_key2_read;
-		//user_button[USER_BUTTON_2].cb = (flex_button_response_callback)btn_2_cb;
-	
+        //user_button[USER_BUTTON_2].cb = (flex_button_response_callback)btn_2_cb;
+
     user_button[USER_BUTTON_3].usr_button_read = button_keywkup_read;
-		user_button[USER_BUTTON_3].cb = (flex_button_response_callback)btn_3_cb;
-	
+        user_button[USER_BUTTON_3].cb = (flex_button_response_callback)btn_3_cb;
+
 
     rt_pin_mode(PIN_KEY0, PIN_MODE_INPUT); /* set KEY pin mode to input */
     rt_pin_mode(PIN_KEY1, PIN_MODE_INPUT); /* set KEY pin mode to input */
