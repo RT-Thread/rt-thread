@@ -140,6 +140,8 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 /**
  * @brief Enqueue a thread to defunct queue.
  *
+ * @param thread the thread to be enqueued.
+ *
  * @note It must be called between rt_hw_interrupt_disable and rt_hw_interrupt_enable
  */
 void rt_thread_defunct_enqueue(rt_thread_t thread)
