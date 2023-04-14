@@ -116,7 +116,7 @@ After turning on the option, `ctrl + s` saves the settings and the RTduino packa
 
 #### 5.2 Using RTduino
 
-In ``arduino_main.cpp`` you will see the familiar ``void setup(void)`` and ``void loop(void)``, so we can use the BSP here like the official arduino board, the sample code is as follows:
+In `arduino_main.cpp` you will see the familiar `void setup(void)` and `void loop(void)`, so we can use the BSP here like the official arduino board, the sample code is as follows:
 
 ```c++
 #include <Arduino.h>
