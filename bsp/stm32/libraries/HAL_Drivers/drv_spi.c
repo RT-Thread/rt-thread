@@ -140,7 +140,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     spi_handle->Init.NSS = SPI_NSS_SOFT;
 
-    uint32_t SPI_CLOCK;
+    static uint32_t SPI_CLOCK;
 
 /* Some series may only have APBPERIPH_BASE, but don't have HAL_RCC_GetPCLK2Freq */
 #if defined(APBPERIPH_BASE)
@@ -482,6 +482,7 @@ static int rt_hw_spi_bus_init(void)
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             spi_bus_obj[i].dma.handle_rx.Init.Request = spi_config[i].dma_rx->request;
 #endif
+#ifndef SOC_SERIES_STM32U5
             spi_bus_obj[i].dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
             spi_bus_obj[i].dma.handle_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
             spi_bus_obj[i].dma.handle_rx.Init.MemInc              = DMA_MINC_ENABLE;
@@ -489,6 +490,7 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
             spi_bus_obj[i].dma.handle_rx.Init.Mode                = DMA_NORMAL;
             spi_bus_obj[i].dma.handle_rx.Init.Priority            = DMA_PRIORITY_HIGH;
+#endif
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
             spi_bus_obj[i].dma.handle_rx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
             spi_bus_obj[i].dma.handle_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
@@ -524,6 +526,7 @@ static int rt_hw_spi_bus_init(void)
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             spi_bus_obj[i].dma.handle_tx.Init.Request = spi_config[i].dma_tx->request;
 #endif
+#ifndef SOC_SERIES_STM32U5
             spi_bus_obj[i].dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
             spi_bus_obj[i].dma.handle_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
             spi_bus_obj[i].dma.handle_tx.Init.MemInc              = DMA_MINC_ENABLE;
@@ -531,6 +534,7 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
             spi_bus_obj[i].dma.handle_tx.Init.Mode                = DMA_NORMAL;
             spi_bus_obj[i].dma.handle_tx.Init.Priority            = DMA_PRIORITY_LOW;
+#endif
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
             spi_bus_obj[i].dma.handle_tx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
             spi_bus_obj[i].dma.handle_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
