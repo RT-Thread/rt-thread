@@ -51,7 +51,7 @@ static status_t USDHC_TransferFunction(USDHC_Type *base, usdhc_transfer_t *conte
 
     usdhc_adma_config_t dmaConfig;
 
-    if (content->data != NULL)
+    if (content != NULL && content->data != NULL)
     {
         memset(&dmaConfig, 0, sizeof(usdhc_adma_config_t));
         /* config adma */
