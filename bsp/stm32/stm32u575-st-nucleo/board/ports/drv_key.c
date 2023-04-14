@@ -32,6 +32,7 @@
 #include <rtdevice.h>
 #include <board.h>
 
+/*The button PIN_KEY0,PIN_KEY1,PIN_KEY2 are an expansion button,which users can add according to their needs*/
 #define PIN_KEY0  GET_PIN(D,10)
 #define PIN_KEY1  GET_PIN(D,9)
 #define PIN_KEY2  GET_PIN(D,8)
@@ -227,17 +228,11 @@ static void user_button_init(void)
     rt_memset(&user_button[0], 0x0, sizeof(user_button));
 
     user_button[USER_BUTTON_0].usr_button_read = button_key0_read;
-    //user_button[USER_BUTTON_0].cb = (flex_button_response_callback)btn_0_cb;
-
     user_button[USER_BUTTON_1].usr_button_read = button_key1_read;
-    //user_button[USER_BUTTON_1].cb = (flex_button_response_callback)btn_1_cb;
-
     user_button[USER_BUTTON_2].usr_button_read = button_key2_read;
-        //user_button[USER_BUTTON_2].cb = (flex_button_response_callback)btn_2_cb;
 
     user_button[USER_BUTTON_3].usr_button_read = button_keywkup_read;
-        user_button[USER_BUTTON_3].cb = (flex_button_response_callback)btn_3_cb;
-
+    user_button[USER_BUTTON_3].cb = (flex_button_response_callback)btn_3_cb;
 
     rt_pin_mode(PIN_KEY0, PIN_MODE_INPUT); /* set KEY pin mode to input */
     rt_pin_mode(PIN_KEY1, PIN_MODE_INPUT); /* set KEY pin mode to input */
@@ -279,4 +274,3 @@ int flex_button_main(void)
 #ifdef FINSH_USING_MSH
 INIT_APP_EXPORT(flex_button_main);
 #endif
-
