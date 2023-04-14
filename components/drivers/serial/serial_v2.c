@@ -1316,12 +1316,12 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     rt_memset(row_s,0,4);
                     rt_memset(col_s,0,4);
                     cnt1 = 0;
-                    while(_tio_buf[cnt1] != ';' && cnt1 < _TIO_BUFLEN)
+                    while(cnt1 < _TIO_BUFLEN && _tio_buf[cnt1] != ';')
                     {
                         cnt1++;
                     }
                     cnt2 = ++cnt1;
-                    while(_tio_buf[cnt2] != ';' && cnt2 < _TIO_BUFLEN)
+                    while(cnt2 < _TIO_BUFLEN && _tio_buf[cnt2] != ';')
                     {
                         cnt2++;
                     }
