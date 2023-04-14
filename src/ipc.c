@@ -3697,6 +3697,178 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
     return RT_EOK;
 }
 
+static rt_err_t _rt_mq_recv_with_size(rt_mq_t    mq,
+                    void      *buffer,
+                    rt_size_t  size,
+                    rt_size_t  *real_size,
+                    rt_int32_t timeout,
+                    int suspend_flag)
+{
+    struct rt_thread *thread;
+    rt_base_t level;
+    struct rt_mq_message *msg;
+    rt_uint32_t tick_delta;
+    rt_err_t ret;
+
+    /* parameter check */
+    RT_ASSERT(mq != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mq->parent.parent) == RT_Object_Class_MessageQueue);
+    RT_ASSERT(buffer != RT_NULL);
+    RT_ASSERT(size != 0);
+
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
+
+    /* initialize delta tick */
+    tick_delta = 0;
+    /* get current thread */
+    thread = rt_thread_self();
+    RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mq->parent.parent)));
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    /* for non-blocking call */
+    if (mq->entry == 0 && timeout == 0)
+    {
+        rt_hw_interrupt_enable(level);
+
+        return -RT_ETIMEOUT;
+    }
+
+    /* message queue is empty */
+    while (mq->entry == 0)
+    {
+        /* reset error number in thread */
+        thread->error = -RT_EINTR;
+
+        /* no waiting, return timeout */
+        if (timeout == 0)
+        {
+            /* enable interrupt */
+            rt_hw_interrupt_enable(level);
+
+            thread->error = -RT_ETIMEOUT;
+
+            return -RT_ETIMEOUT;
+        }
+
+        /* suspend current thread */
+        ret = _ipc_list_suspend(&(mq->parent.suspend_thread),
+                            thread,
+                            mq->parent.parent.flag,
+                            suspend_flag);
+        if (ret != RT_EOK)
+        {
+            rt_hw_interrupt_enable(level);
+            return ret;
+        }
+
+        /* has waiting time, start thread timer */
+        if (timeout > 0)
+        {
+            /* get the start tick of timer */
+            tick_delta = rt_tick_get();
+
+            RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n",
+                                        thread->parent.name));
+
+            /* reset the timeout of thread timer and start it */
+            rt_timer_control(&(thread->thread_timer),
+                             RT_TIMER_CTRL_SET_TIME,
+                             &timeout);
+            rt_timer_start(&(thread->thread_timer));
+        }
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        /* re-schedule */
+        rt_schedule();
+
+        /* recv message */
+        if (thread->error != RT_EOK)
+        {
+            /* return error */
+            return thread->error;
+        }
+
+        /* disable interrupt */
+        level = rt_hw_interrupt_disable();
+
+        /* if it's not waiting forever and then re-calculate timeout tick */
+        if (timeout > 0)
+        {
+            tick_delta = rt_tick_get() - tick_delta;
+            timeout -= tick_delta;
+            if (timeout < 0)
+                timeout = 0;
+        }
+    }
+
+    /* get message from queue */
+    msg = (struct rt_mq_message *)mq->msg_queue_head;
+
+    /* move message queue head */
+    mq->msg_queue_head = msg->next;
+    /* reach queue tail, set to NULL */
+    if (mq->msg_queue_tail == msg)
+        mq->msg_queue_tail = RT_NULL;
+
+    /* decrease message entry */
+    if(mq->entry > 0)
+    {
+        mq->entry --;
+    }
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    /* get real size of message */
+    *real_size = size > mq->msg_size ? mq->msg_size : size;
+
+    /* copy message */
+    rt_memcpy(buffer, msg + 1, *real_size);
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+    /* put message to free list */
+    msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+    mq->msg_queue_free = msg;
+
+    /* resume suspended thread */
+    if (!rt_list_isempty(&(mq->suspend_sender_thread)))
+    {
+        _ipc_list_resume(&(mq->suspend_sender_thread));
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
+
+        rt_schedule();
+
+        return RT_EOK;
+    }
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
+
+    return RT_EOK;
+}
+
+rt_err_t _rt_mq_recv_with_size(rt_mq_t    mq,
+                    void      *buffer,
+                    rt_size_t  size,
+                    rt_size_t  *real_size,
+                    rt_int32_t timeout)
+{
+    return _rt_mq_recv_with_size(mq, buffer, size, real_size, timeout, RT_UNINTERRUPTIBLE);
+}
+RTM_EXPORT(_rt_mq_recv_with_size);
+
 rt_err_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
