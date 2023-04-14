@@ -25,7 +25,7 @@
  * rt_system_timer_init();
  *
  * - initialize system heap memory
- * rt_system_heap_init();
+ * rt_system_heap_init(__bss_end, __end_of_memory);
  *
  * - initialize module system
  * rt_system_module_init();

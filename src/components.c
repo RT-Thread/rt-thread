@@ -231,7 +231,7 @@ void rt_application_init(void)
  * @brief  This function will call all levels of initialization functions to complete
  *         the initialization of the system, and finally start the scheduler.
  *
- * @return 0, but never return.
+ * @return Normally never returns. If 0 is returned, the scheduler failed.
  */
 int rtthread_startup(void)
 {
