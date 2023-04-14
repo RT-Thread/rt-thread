@@ -9,6 +9,50 @@ config SOC_STM32U575ZI
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH1
+        select BSP_USING_PWM1_CH2
+        select BSP_USING_PWM1_CH3
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH4
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_SPI
+        default n
+
+    config BSP_USING_KEY
+        bool "Enable onboard keys"
+        select RT_USING_PIN
+        select RT_USING_TIMER_SOFT
+        select PKG_USING_FLEXIBLE_BUTTON
+        default n
+
+    config BSP_USING_MPU6XXX
+        bool "Enable mpu6xxx (i2c2)"
+        select BSP_USING_I2C
+        select BSP_USING_I2C2
+        select PKG_USING_SENSORS_DRIVERS
+        select PKG_USING_MPU6XXX
+        select PKG_USING_MPU6XXX_LATEST_VERSION
+        default n
+
+    config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH"
+        select BSP_USING_SPI
+        select RT_USING_SFUD
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -31,6 +75,127 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default y
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default y
+
+            config BSP_LPUART1_RX_USING_DMA
+                bool "Enable LPUART1 RX DMA"
+                depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+
+            menuconfig BSP_USING_PWM1
+                bool "Enable timer1 output PWM"
+                default n
+                if BSP_USING_PWM1
+                    config BSP_USING_PWM1_CH1
+                        bool "Enable PWM1 channel1"
+                        default n
+
+                    config BSP_USING_PWM1_CH2
+                        bool "Enable PWM1 channel2"
+                        default n
+
+                    config BSP_USING_PWM1_CH3
+                        bool "Enable PWM1 channel3"
+                        default n
+
+                    config BSP_USING_PWM1_CH4
+                        bool "Enable PWM1 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM4
+                bool "Enable timer4 output PWM"
+                default n
+                if BSP_USING_PWM4
+                    config BSP_USING_PWM4_CH1
+                        bool "Enable PWM4 channel1"
+                        default n
+
+                    config BSP_USING_PWM4_CH2
+                        bool "Enable PWM4 channel2"
+                        default n
+
+                    config BSP_USING_PWM4_CH3
+                        bool "Enable PWM4 channel3"
+                        default n
+
+                    config BSP_USING_PWM4_CH4
+                        bool "Enable PWM4 channel4"
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1 BUS (software simulation)"
+                default y
+                if BSP_USING_I2C1
+                    comment "Notice: PB8 --> 24; PB9 --> 25" 
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 scl pin number"
+                        range 1 176
+                        default 24
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 1 176
+                        default 25
+                endif
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"

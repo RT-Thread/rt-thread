@@ -12,6 +12,12 @@ board.c
 CubeMX_Config/Src/stm32u5xx_hal_msp.c
 ''')
 
+if GetDepend(['BSP_USING_KEY']):
+    src += Glob('ports/drv_key.c')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('ports/drv_spi_flash.c')
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 
