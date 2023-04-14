@@ -20,9 +20,8 @@
 
 /**
  * @addtogroup FsPosixApi
+ * @{
  */
-
-/*@{*/
 
 /**
  * this function is a POSIX compliant version, which will open a file and
@@ -260,8 +259,8 @@ RTM_EXPORT(lseek);
  * this function is a POSIX compliant version, which will rename old file name
  * to new file name.
  *
- * @param old the old file name.
- * @param new the new file name.
+ * @param old_file the old file name.
+ * @param new_file the new file name.
  *
  * @return 0 on successful, -1 on failed.
  *
@@ -392,7 +391,7 @@ RTM_EXPORT(fsync);
  *
  * @param fildes the file description
  * @param cmd the specified command
- * @param data represents the additional information that is needed by this
+ * @param ... represents the additional information that is needed by this
  * specific device to perform the requested function.
  *
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
@@ -434,7 +433,7 @@ RTM_EXPORT(fcntl);
  *
  * @param fildes the file description
  * @param cmd the specified command
- * @param data represents the additional information that is needed by this
+ * @param ... represents the additional information that is needed by this
  * specific device to perform the requested function.
  *
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
@@ -921,8 +920,6 @@ int access(const char *path, int amode)
  * working directory.
  *
  * @param buf the current directory.
- *
- * @return null.
  */
 void setcwd(char *buf)
 {
@@ -979,4 +976,4 @@ char *getcwd(char *buf, size_t size)
 }
 RTM_EXPORT(getcwd);
 
-/* @} */
+/**@}*/
