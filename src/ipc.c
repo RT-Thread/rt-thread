@@ -3867,7 +3867,7 @@ rt_err_t rt_mq_recv_with_size(rt_mq_t    mq,
 {
     return _rt_mq_recv_with_size(mq, buffer, size, real_size, timeout, RT_UNINTERRUPTIBLE);
 }
-RTM_EXPORT(_rt_mq_recv_with_size);
+RTM_EXPORT(rt_mq_recv_with_size);
 
 rt_err_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
