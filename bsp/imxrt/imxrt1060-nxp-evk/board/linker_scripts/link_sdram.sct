@@ -1,0 +1,107 @@
+#!armclang --target=arm-arm-none-eabi -mcpu=cortex-m7 -E -x c
+/*
+** ###################################################################
+**     Processors:          MIMXRT1062CVJ5A
+**                          MIMXRT1062CVL5A
+**                          MIMXRT1062DVJ6A
+**                          MIMXRT1062DVL6A
+**                          MIMXRT1062DVN6B
+**                          MIMXRT1062XVN5B
+**
+**     Compiler:            Keil ARM C/C++ Compiler
+**     Reference manual:    IMXRT1060RM Rev.3, 07/2021 | IMXRT106XSRM Rev.0
+**     Version:             rev. 0.2, 2022-03-25
+**     Build:               b220401
+**
+**     Abstract:
+**         Linker file for the Keil ARM C/C++ Compiler
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2022 NXP
+**     All rights reserved.
+**
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+#define m_interrupts_start             0x00000000
+#define m_interrupts_size              0x00000400
+
+#define m_text_start                   0x00000400
+#define m_text_size                    0x0001FC00
+
+#define m_data_start                   0x80000000
+#define m_data_size                    0x01E00000
+
+#define m_data2_start                  0x20000000
+#define m_data2_size                   0x00020000
+
+#define m_data3_start                  0x20200000
+#define m_data3_size                   0x000C0000
+
+#define m_ncache_start                 0x81E00000
+#define m_ncache_size                  0x00200000
+
+/* Sizes */
+#if (defined(__stack_size__))
+  #define Stack_Size                   __stack_size__
+#else
+  #define Stack_Size                   0x0400
+#endif
+
+#if (defined(__heap_size__))
+  #define Heap_Size                    __heap_size__
+#else
+  #define Heap_Size                    0x0400
+#endif
+#define RTT_HEAP_SIZE (m_data_size-ImageLength(RW_m_data)-ImageLength(ARM_LIB_HEAP)-ImageLength(ARM_LIB_STACK))
+LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start {   ; load region size_region
+  VECTOR_ROM m_interrupts_start FIXED m_interrupts_size { ; load address = execution address
+    * (.isr_vector,+FIRST)
+  }
+  ER_m_text m_text_start FIXED m_text_size { ; load address = execution address
+    * (InRoot$$Sections)
+    * (CodeQuickAccess)
+    .ANY (+RO)
+  }
+  VECTOR_RAM m_interrupts_start EMPTY 0 {
+  }
+#if (defined(__heap_noncacheable__))
+  RW_m_data m_data_start m_data_size-Stack_Size { ; RW data
+#else
+  RW_m_data m_data_start m_data_size-Stack_Size-Heap_Size { ; RW data
+#endif
+    .ANY (+RW +ZI)
+    * (*m_usb_dma_init_data)
+    * (*m_usb_dma_noninit_data)
+  }
+#if (!defined(__heap_noncacheable__))
+  ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
+  }
+#endif
+  ARM_LIB_STACK +0 EMPTY Stack_Size{} ; Stack region growing down
+  RTT_HEAP +0 EMPTY RTT_HEAP_SIZE{}
+  RW_m_data2 m_data2_start m_data2_size { ;
+    * (DataQuickAccess)
+  }
+#if (defined(__heap_noncacheable__))
+  RW_m_ncache m_ncache_start m_ncache_size - Heap_Size { ; ncache RW data
+#else
+  RW_m_ncache m_ncache_start m_ncache_size { ; ncache RW data
+#endif
+    * (NonCacheable.init)
+    * (*NonCacheable)
+  }
+#if (defined(__heap_noncacheable__))
+  ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
+  }
+  RW_m_ncache_unused +0 EMPTY m_ncache_size-ImageLength(RW_m_ncache)-Heap_Size { ; Empty region added for MPU configuration
+#else
+  RW_m_ncache_unused +0 EMPTY m_ncache_size-ImageLength(RW_m_ncache) { ; Empty region added for MPU configuration
+#endif
+  }
+}
