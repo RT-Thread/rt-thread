@@ -175,43 +175,49 @@ menu "On-chip Peripheral Drivers"
                     default y
             endif
 
-        config BSP_USING_SOFT_SPI1
-            bool "Enable SSPI1 Bus (User SPI)"
-            default n
-            if BSP_USING_SOFT_SPI1
-                comment "Notice: PIO1_9 --> 10; PIO1_10 --> 40; PIO0_18 --> 56" 
-                config BSP_S_SPI1_SCK_PIN
-                    int "sspi1 SCL pin number"
-                    range 1 100
-                    default 10
-                config BSP_S_SPI1_MOSI_PIN
-                    int "sspi1 MISO pin number"
-                    range 1 100
-                    default 40
-                config BSP_S_SPI1_MISO_PIN
-                    int "sspi1 MOSI pin number"
-                    range 1 100
-                    default 56    
-            endif
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable soft SPI BUS"
+        default n
+        select RT_USING_SOFT_SPI
+        if BSP_USING_SOFT_SPI
+            menuconfig BSP_USING_SOFT_SPI1
+                bool "Enable soft SPI1 BUS (software simulation)"
+                default n
+                if BSP_USING_SOFT_SPI1
+                    comment "Notice: PIO1_9(sck) --> 10; PIO1_10(mosi) --> 40; PIO0_18(miso) --> 56" 
+                    config BSP_S_SPI1_SCK_PIN
+                        int "soft spi1 sck pin number"
+                        range 1 100
+                        default 10
+                    config BSP_S_SPI1_MISO_PIN
+                        int "soft spi1 miso pin number"
+                        range 1 100
+                        default 56
+                    config BSP_S_SPI1_MOSI_PIN
+                        int "soft spi1 mosi pin number"
+                        range 1 100
+                        default 40
+                endif
 
-        config BSP_USING_SOFT_SPI2
-            bool "Enable SSPI2 Bus (soft SPI)"
-            default n
-            if BSP_USING_SOFT_SPI2
-                comment "Notice: PIO1_11 --> 93; PIO1_5 --> 31; PIO1_8 --> 24" 
-                config BSP_S_SPI2_SCK_PIN
-                    int "sspi2 SCL pin number"
-                    range 1 100
-                    default 93
-                config BSP_S_SPI2_MOSI_PIN
-                    int "sspi2 MISO pin number"
-                    range 1 100
-                    default 31
-                config BSP_S_SPI2_MISO_PIN
-                    int "sspi2 MOSI pin number"
-                    range 1 100
-                    default 24    
-            endif   
+            menuconfig BSP_USING_SOFT_SPI2
+                bool "Enable soft SPI2 BUS (software simulation)"
+                default n
+                if BSP_USING_SOFT_SPI2
+                    comment "Notice: PIO1_11(sck) --> 93; PIO1_5(miso) --> 31; PIO1_8(mosi) --> 24"
+                    config BSP_S_SPI2_SCK_PIN
+                        int "soft spi2 sck pin number"
+                        range 1 100
+                        default 93
+                    config BSP_S_SPI2_MISO_PIN
+                        int "soft spi2 miso pin number"
+                        range 1 100
+                        default 31
+                    config BSP_S_SPI2_MOSI_PIN
+                        int "soft spi2 mosi pin number"
+                        range 1 100
+                        default 24
+                endif
+        endif
             
     menuconfig BSP_USING_ADC
         config BSP_USING_ADC
