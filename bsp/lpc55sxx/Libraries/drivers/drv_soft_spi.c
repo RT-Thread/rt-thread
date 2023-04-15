@@ -10,9 +10,9 @@
 #include <board.h>
 #include "drv_soft_spi.h"
 
-#ifdef RT_USING_SOFT_SPI
+#if defined(RT_USING_PIN) && defined(RT_USING_SPI_BITOPS) && defined(RT_USING_SPI)
 
-//#define DRV_DEBUG
+
 #define LOG_TAG             "drv.soft_spi"
 #include <drv_log.h>
 
@@ -39,7 +39,7 @@ rt_err_t rt_hw_softspi_device_attach(const char *bus_name, const char *device_na
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
 
-    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, cs_pin, RT_NULL);
+    result = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, cs_pin, RT_NULL);
     return result;
 }
 
@@ -159,10 +159,10 @@ static void lpc_udelay(rt_uint32_t us)
     rt_uint32_t reload = SysTick->LOAD;
 
     ticks = us * reload / (1000000UL / RT_TICK_PER_SECOND);
-    told = SysTick->CNT;
+    told = SysTick->VAL;
     while (1)
     {
-        tnow = SysTick->CNT;
+        tnow = SysTick->VAL;
         if (tnow != told)
         {
             if (tnow < told)

@@ -178,7 +178,9 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_SOFT_SPI
         bool "Enable soft SPI BUS"
         default n
-        select RT_USING_SOFT_SPI
+        select RT_USING_PIN
+        select RT_USING_SPI_BITOPS
+        select RT_USING_SPI
         if BSP_USING_SOFT_SPI
             menuconfig BSP_USING_SOFT_SPI1
                 bool "Enable soft SPI1 BUS (software simulation)"
