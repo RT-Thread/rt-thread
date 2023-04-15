@@ -3355,7 +3355,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
 {
     return _rt_mq_send_wait(mq, buffer, size, timeout, RT_UNINTERRUPTIBLE);
 }
-RTM_EXPORT(rt_mq_send_wait)
+RTM_EXPORT(rt_mq_send_wait);
 
 rt_err_t rt_mq_send_wait_interruptible(rt_mq_t     mq,
                          const void *buffer,
@@ -3364,7 +3364,7 @@ rt_err_t rt_mq_send_wait_interruptible(rt_mq_t     mq,
 {
     return _rt_mq_send_wait(mq, buffer, size, timeout, RT_INTERRUPTIBLE);
 }
-RTM_EXPORT(rt_mq_send_wait_interruptible)
+RTM_EXPORT(rt_mq_send_wait_interruptible);
 
 rt_err_t rt_mq_send_wait_killable(rt_mq_t     mq,
                          const void *buffer,
@@ -3373,7 +3373,7 @@ rt_err_t rt_mq_send_wait_killable(rt_mq_t     mq,
 {
     return _rt_mq_send_wait(mq, buffer, size, timeout, RT_KILLABLE);
 }
-RTM_EXPORT(rt_mq_send_wait_killable)
+RTM_EXPORT(rt_mq_send_wait_killable);
 /**
  * @brief    This function will send a message to the messagequeue object.
  *           If there is a thread suspended on the messagequeue, the thread will be resumed.
