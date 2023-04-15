@@ -989,19 +989,7 @@ static int DbgConsole_PrintfFormattedData(PUTCHAR_FUNC func_ptr, const char *fmt
                     {
                         if (0U == (flags_used & (uint32_t)kPRINTF_Pound))
                         {
-                            if (0U != (flags_used & (uint32_t)kPRINTF_Pound))
-                            {
-                                vlen += 2;
-                            }
                             DbgConsole_PrintfPaddingCharacter(' ', vlen, (int32_t)field_width, &count, func_ptr);
-                            if (0U != (flags_used & (uint32_t)kPRINTF_Pound))
-                            {
-                                (void)func_ptr('0');
-                                (void)func_ptr(use_caps ? 'X' : 'x');
-                                count += 2;
-
-                                dschar = true;
-                            }
                         }
                     }
 
