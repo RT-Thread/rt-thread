@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_efuse.c
-* \version 2.10
+* \version 2.20
 *
 * \brief
 * Provides API implementation of the eFuse driver.
@@ -40,9 +40,15 @@
 #define CY_EFUSE_OPCODE_DATA_Msk            (0xFFUL)          /**< The mask for extracting data from the SROM API return value */
 #define CY_EFUSE_IPC_STRUCT                 (Cy_IPC_Drv_GetIpcBaseAddress(CY_IPC_CHAN_SYSCALL)) /**< IPC structure to be used */
 #define CY_EFUSE_IPC_NOTIFY_STRUCT0         (0x1UL << CY_IPC_INTR_SYSCALL1) /**< IPC notify bit for IPC0 structure (dedicated to System Call) */
+
 /** \endcond */
 
+#ifdef ENABLE_CM7_DATA_CACHE
+CY_SECTION_SHAREDMEM
+CY_ALIGN(32) static volatile uint32_t opcode = 0UL;
+#else
 static volatile uint32_t opcode;
+#endif
 
 static cy_en_efuse_status_t ProcessOpcode(void);
 
@@ -72,19 +78,38 @@ cy_en_efuse_status_t Cy_EFUSE_GetEfuseBit(uint32_t bitNum, bool *bitVal)
 cy_en_efuse_status_t Cy_EFUSE_GetEfuseByte(uint32_t offset, uint8_t *byteVal)
 {
     cy_en_efuse_status_t result = CY_EFUSE_BAD_PARAM;
+    cy_en_ipcdrv_status_t retStatus;
 
     if (byteVal != NULL)
     {
         /* Prepare opcode before calling the SROM API */
         opcode = CY_EFUSE_OPCODE_READ_FUSE_BYTE | (offset << CY_EFUSE_OPCODE_OFFSET_Pos);
 
+        #ifdef ENABLE_CM7_DATA_CACHE
+        #if defined (CY_IP_M7CPUSS)
+            #if (CY_CPU_CORTEX_M7)
+                SCB_CleanDCache_by_Addr((uint32_t *)&opcode, (int32_t)sizeof(opcode));
+            #endif
+        #endif
+        #endif
+
+        retStatus = Cy_IPC_Drv_SendMsgPtr(CY_EFUSE_IPC_STRUCT, CY_EFUSE_IPC_NOTIFY_STRUCT0, (void*)&opcode);
+
         /* Send the IPC message */
-        if (Cy_IPC_Drv_SendMsgPtr(CY_EFUSE_IPC_STRUCT, CY_EFUSE_IPC_NOTIFY_STRUCT0, (void*)&opcode) == CY_IPC_DRV_SUCCESS)
+        if (retStatus == CY_IPC_DRV_SUCCESS)
         {
             /* Wait until the IPC structure is locked */
             while(Cy_IPC_Drv_IsLockAcquired(CY_EFUSE_IPC_STRUCT) != false)
             {
             }
+
+        #ifdef ENABLE_CM7_DATA_CACHE
+        #if defined (CY_IP_M7CPUSS)
+            #if (CY_CPU_CORTEX_M7)
+                SCB_InvalidateDCache_by_Addr((uint32_t *)&opcode, (int32_t)sizeof(opcode));
+            #endif
+        #endif
+        #endif
 
             /* The result of the SROM API call is returned to the opcode variable */
             if ((opcode & CY_EFUSE_OPCODE_STS_Msk) == CY_EFUSE_OPCODE_SUCCESS)

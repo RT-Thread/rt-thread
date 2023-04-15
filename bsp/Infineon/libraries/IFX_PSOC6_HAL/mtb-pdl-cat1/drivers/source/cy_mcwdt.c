@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_mcwdt.c
-* \version 1.60
+* \version 1.70
 *
 *  Description:
 *   Provides a system API for the MCWDT driver.
@@ -25,7 +25,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3) || defined (CY_IP_MXS22SRSS)
 
 #include "cy_mcwdt.h"
 
@@ -66,10 +66,10 @@ cy_en_mcwdt_status_t Cy_MCWDT_Init(MCWDT_STRUCT_Type *base, cy_stc_mcwdt_config_
         CY_ASSERT_L3(CY_MCWDT_IS_MODE_VALID((cy_en_mcwdtmode_t)config->c1Mode));
         CY_ASSERT_L3(CY_MCWDT_IS_MODE_VALID((cy_en_mcwdtmode_t)config->c2Mode));
 
-        MCWDT_STRUCT_MCWDT_MATCH(base) = _VAL2FLD(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH1, config->c1Match) |
+        MCWDT_MATCH(base) = _VAL2FLD(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH1, config->c1Match) |
                                          _VAL2FLD(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0, config->c0Match);
 
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_BITS2, config->c2ToggleBit)      |
+        MCWDT_CONFIG(base) = _VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_BITS2, config->c2ToggleBit)      |
                                        _VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MODE2, config->c2Mode)              |
                                        _VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0, config->c0ClearOnMatch)     |
                                        _VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1, config->c1ClearOnMatch)     |
@@ -78,20 +78,20 @@ cy_en_mcwdt_status_t Cy_MCWDT_Init(MCWDT_STRUCT_Type *base, cy_stc_mcwdt_config_
                                        (config->c0c1Cascade ? MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE0_1_Msk : 0UL) |
                                        _VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MODE0, config->c0Mode);
 
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
-        MCWDT_STRUCT_MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE0, config->c0LowerLimitMode);
-        MCWDT_STRUCT_MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE1, config->c1LowerLimitMode);
-        MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base) = _VAL2FLD(MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT1, config->c1LowerLimit) |
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
+        MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE0, config->c0LowerLimitMode);
+        MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE1, config->c1LowerLimitMode);
+        MCWDT_LOWER_LIMIT(base) = _VAL2FLD(MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT1, config->c1LowerLimit) |
                                          _VAL2FLD(MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT0, config->c0LowerLimit);
-#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
+#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS  */
 
-#if defined (CY_IP_MXS40SSRSS)
-        MCWDT_STRUCT_MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY0_1, config->c0c1carryoutconfig);
-        MCWDT_STRUCT_MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY1_2, config->c1c2carryoutconfig);
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
+        MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY0_1, config->c0c1carryoutconfig);
+        MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY1_2, config->c1c2carryoutconfig);
 
-        MCWDT_STRUCT_MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH0_1, config->c0c1matchconfig);
-        MCWDT_STRUCT_MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH1_2, config->c1c2matchconfig);
-#endif /* CY_IP_MXS40SSRSS */
+        MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH0_1, config->c0c1matchconfig);
+        MCWDT_CONFIG(base) |=_VAL2FLD(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH1_2, config->c1c2matchconfig);
+#endif /* CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS */
 
         ret = CY_MCWDT_SUCCESS;
     }
@@ -118,17 +118,17 @@ void Cy_MCWDT_DeInit(MCWDT_STRUCT_Type *base)
 {
     Cy_MCWDT_Unlock(base);
 
-    MCWDT_STRUCT_MCWDT_CNTLOW(base)      = 0UL;
-    MCWDT_STRUCT_MCWDT_CNTHIGH(base)     = 0UL;
-    MCWDT_STRUCT_MCWDT_MATCH(base)       = 0UL;
-    MCWDT_STRUCT_MCWDT_CONFIG(base)      = 0UL;
-    MCWDT_STRUCT_MCWDT_CTL(base)         = 0UL;
-    MCWDT_STRUCT_MCWDT_INTR(base)        = 0UL;
-    MCWDT_STRUCT_MCWDT_INTR_SET(base)    = 0UL;
-    MCWDT_STRUCT_MCWDT_INTR_MASK(base)   = 0UL;
-    #if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
-    MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base) = 0UL;
-    #endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
+    MCWDT_CNTLOW(base)      = 0UL;
+    MCWDT_CNTHIGH(base)     = 0UL;
+    MCWDT_MATCH(base)       = 0UL;
+    MCWDT_CONFIG(base)      = 0UL;
+    MCWDT_CTL(base)         = 0UL;
+    MCWDT_INTR(base)        = 0UL;
+    MCWDT_INTR_SET(base)    = 0UL;
+    MCWDT_INTR_MASK(base)   = 0UL;
+    #if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
+    MCWDT_LOWER_LIMIT(base) = 0UL;
+    #endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS */
 }
 
 
@@ -157,11 +157,11 @@ void Cy_MCWDT_DeInit(MCWDT_STRUCT_Type *base)
 *******************************************************************************/
 uint32_t Cy_MCWDT_GetCountCascaded(MCWDT_STRUCT_Type const *base)
 {
-    uint32_t countVal = MCWDT_STRUCT_MCWDT_CNTLOW(base);
+    uint32_t countVal = MCWDT_CNTLOW(base);
     uint32_t counter1 = countVal >> MCWDT_STRUCT_MCWDT_CNTLOW_WDT_CTR1_Pos;
     uint32_t counter0 = countVal & MCWDT_STRUCT_MCWDT_CNTLOW_WDT_CTR0_Msk;
-    uint32_t match0 = _FLD2VAL(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0, MCWDT_STRUCT_MCWDT_MATCH(base));
-    uint32_t match1 = _FLD2VAL(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH1, MCWDT_STRUCT_MCWDT_MATCH(base));
+    uint32_t match0 = _FLD2VAL(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0, MCWDT_MATCH(base));
+    uint32_t match1 = _FLD2VAL(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH1, MCWDT_MATCH(base));
 #if defined (CY_IP_MXS40SRSS_MCWDT)
     /*
      * The counter  counter0 goes to zero when it reaches the match0
@@ -178,7 +178,7 @@ uint32_t Cy_MCWDT_GetCountCascaded(MCWDT_STRUCT_Type const *base)
     }
 #endif
     /* Check if the counter0 is Free running */
-    if (0UL == _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0, MCWDT_STRUCT_MCWDT_CONFIG(base)))
+    if (0UL == _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0, MCWDT_CONFIG(base)))
     {
         /* Save match0 value with the correction when counter0
          *  goes to zero when it reaches the match0 value.
@@ -202,7 +202,7 @@ uint32_t Cy_MCWDT_GetCountCascaded(MCWDT_STRUCT_Type const *base)
     counter0 += counter1;
 
     /* Set counter1 match value to 65535 when the counter1 is free running */
-    if (0UL == _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1, MCWDT_STRUCT_MCWDT_CONFIG(base)))
+    if (0UL == _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1, MCWDT_CONFIG(base)))
     {
         match1 = MCWDT_STRUCT_MCWDT_CNTLOW_WDT_CTR1_Msk >> MCWDT_STRUCT_MCWDT_CNTLOW_WDT_CTR1_Pos;
     }
@@ -230,6 +230,6 @@ uint32_t Cy_MCWDT_GetCountCascaded(MCWDT_STRUCT_Type const *base)
 }
 #endif
 
-#endif /* CY_IP_MXS40SRSS_MCWDT, CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
+#endif /* CY_IP_MXS40SRSS_MCWDT, CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS */
 
 /* [] END OF FILE */

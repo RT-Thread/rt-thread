@@ -1,0 +1,17 @@
+{
+    "configurator_support": true,
+    "core": {
+        "id": "64efd1f5-a088-4029-b8d5-b944aa1631c7",
+        "name": "mtb-pdl-cat1"
+    },
+    "opt":{
+    "svd":
+        {"COMPONENT_PSOC6_01": "devices/COMPONENT_CAT1A/svd/psoc6_01.svd",
+        "COMPONENT_PSOC6_02": "devices/COMPONENT_CAT1A/svd/psoc6_02.svd",
+        "COMPONENT_PSOC6_03": "devices/COMPONENT_CAT1A/svd/psoc6_03.svd",
+        "COMPONENT_PSOC6_04": "devices/COMPONENT_CAT1A/svd/psoc6_04.svd",
+        "COMPONENT_CYW20829": "devices/COMPONENT_CAT1B/svd/cyw20829.svd",
+        "COMPONENT_CAT1C4M": "devices/COMPONENT_CAT1C/svd/cat1c4m.svd",
+        "COMPONENT_CAT1C8M": "devices/COMPONENT_CAT1C/svd/cat1c8m.svd"}
+    }
+}

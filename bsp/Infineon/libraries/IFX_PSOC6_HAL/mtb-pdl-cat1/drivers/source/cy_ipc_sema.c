@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_ipc_sema.c
-* \version 1.70
+* \version 1.80
 *
 *  Description:
 *   IPC Semaphore Driver - This source file contains the source code for the
@@ -54,6 +54,11 @@ static IPC_STRUCT_Type* cy_semaIpcStruct;
 * On other CPUs user must specify the IPC semaphores channel and pass 0 / NULL
 * to count and memPtr parameters correspondingly.
 *
+* CM7 cores in CAT1C devices support Data Cache. Data Cache line is 32 bytes.
+* User needs to make sure that the memPtr pointer passed to the Cy_IPC_Sema_Init
+* function points to 32 byte aligned array of words that contain the semaphore data.
+* User can use CY_ALIGN(32) macro for 32 byte alignment.
+*
 * \param ipcChannel
 * The IPC channel number used for semaphores
 *
@@ -78,8 +83,11 @@ cy_en_ipcsema_status_t Cy_IPC_Sema_Init(uint32_t ipcChannel,
 {
     /* Structure containing semaphores control data */
     CY_SECTION_SHAREDMEM
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    static cy_stc_ipc_sema_t       cy_semaData CY_ALIGN(__SCB_DCACHE_LINE_SIZE);
+#else
     static cy_stc_ipc_sema_t       cy_semaData;
-
+#endif
     cy_en_ipcsema_status_t retStatus = CY_IPC_SEMA_BAD_PARAM;
 
     if( (NULL == memPtr) && (0u == count))
@@ -147,13 +155,23 @@ cy_en_ipcsema_status_t Cy_IPC_Sema_InitExt(uint32_t ipcChannel, cy_stc_ipc_sema_
     {
         if(NULL != ipcSema)
         {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+            SCB_CleanDCache_by_Addr((uint32_t*)&ipcSema->maxSema, (int32_t)sizeof(ipcSema->maxSema));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
             /* Check if semaphore count is a multiple of 32 */
             if( 0UL == (ipcSema->maxSema & CY_IPC_SEMA_PER_WORD_MASK))
             {
                 cy_semaIpcStruct = Cy_IPC_Drv_GetIpcBaseAddress(ipcChannel);
 
                 /* Initialize all semaphores to released */
-                (void)memset(ipcSema->arrayPtr, 0, (ipcSema->maxSema /8u));
+                for (uint32_t index=0; index<(uint32_t)(ipcSema->maxSema / CY_IPC_SEMA_PER_WORD); index++)
+                {
+                    ipcSema->arrayPtr[index] = 0UL;
+                }
+
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+                SCB_CleanDCache_by_Addr((uint32_t*)ipcSema->arrayPtr, (int32_t)sizeof(*ipcSema->arrayPtr));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
 
                 /* Make sure semaphores start out released.  */
                 /* Ignore the return value since it is OK if it was already released. */
@@ -242,6 +260,10 @@ cy_en_ipcsema_status_t Cy_IPC_Sema_Set(uint32_t semaNumber, bool preemptable)
     /* Get pointer to structure */
     semaStruct = (cy_stc_ipc_sema_t *)Cy_IPC_Drv_ReadDataValue(cy_semaIpcStruct);
 
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_InvalidateDCache_by_Addr((uint32_t*)&semaStruct->maxSema, (int32_t)sizeof(semaStruct->maxSema));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
+
     if (semaNumber < semaStruct->maxSema)
     {
         semaIndex = semaNumber / CY_IPC_SEMA_PER_WORD;
@@ -256,9 +278,16 @@ cy_en_ipcsema_status_t Cy_IPC_Sema_Set(uint32_t semaNumber, bool preemptable)
            If so, check if specific channel can be locked. */
         if(CY_IPC_DRV_SUCCESS == Cy_IPC_Drv_LockAcquire (cy_semaIpcStruct))
         {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+            SCB_InvalidateDCache_by_Addr((uint32_t*)semaStruct->arrayPtr, (int32_t)sizeof(*semaStruct->arrayPtr));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
+
             if((semaStruct->arrayPtr[semaIndex] & semaMask) == 0UL)
             {
                 semaStruct->arrayPtr[semaIndex] |= semaMask;
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+                SCB_CleanDCache_by_Addr((uint32_t*)semaStruct->arrayPtr, (int32_t)sizeof(*semaStruct->arrayPtr));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
                 retStatus = CY_IPC_SEMA_SUCCESS;
             }
             else
@@ -330,6 +359,10 @@ cy_en_ipcsema_status_t Cy_IPC_Sema_Clear(uint32_t semaNumber, bool preemptable)
     /* Get pointer to structure */
     semaStruct = (cy_stc_ipc_sema_t *)Cy_IPC_Drv_ReadDataValue(cy_semaIpcStruct);
 
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+     SCB_InvalidateDCache_by_Addr((uint32_t*)&semaStruct->maxSema, (int32_t)sizeof(semaStruct->maxSema));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
+
     if (semaNumber < semaStruct->maxSema)
     {
         semaIndex = semaNumber / CY_IPC_SEMA_PER_WORD;
@@ -344,9 +377,15 @@ cy_en_ipcsema_status_t Cy_IPC_Sema_Clear(uint32_t semaNumber, bool preemptable)
            If so, check if specific channel can be locked. */
         if(CY_IPC_DRV_SUCCESS == Cy_IPC_Drv_LockAcquire (cy_semaIpcStruct))
         {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+            SCB_InvalidateDCache_by_Addr((uint32_t*)semaStruct->arrayPtr, (int32_t)sizeof(*semaStruct->arrayPtr));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
             if((semaStruct->arrayPtr[semaIndex] & semaMask) != 0UL)
             {
                 semaStruct->arrayPtr[semaIndex] &= ~semaMask;
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+                SCB_CleanDCache_by_Addr((uint32_t*)semaStruct->arrayPtr, (int32_t)sizeof(*semaStruct->arrayPtr));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
                 retStatus = CY_IPC_SEMA_SUCCESS;
             }
             else
@@ -399,11 +438,19 @@ cy_en_ipcsema_status_t Cy_IPC_Sema_Status(uint32_t semaNumber)
     /* Get pointer to structure */
     semaStruct = (cy_stc_ipc_sema_t *)Cy_IPC_Drv_ReadDataValue(cy_semaIpcStruct);
 
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_InvalidateDCache_by_Addr((uint32_t*)&semaStruct->maxSema, (int32_t)sizeof(semaStruct->maxSema));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
+
     if (semaNumber < semaStruct->maxSema)
     {
         /* Get the index into the semaphore array and calculate the mask */
         semaIndex = semaNumber / CY_IPC_SEMA_PER_WORD;
         semaMask = (uint32_t)(1UL << (semaNumber - (semaIndex * CY_IPC_SEMA_PER_WORD) ));
+
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        SCB_InvalidateDCache_by_Addr((uint32_t*)semaStruct->arrayPtr, (int32_t)sizeof(*semaStruct->arrayPtr));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
 
         if((semaStruct->arrayPtr[semaIndex] & semaMask) != 0UL)
         {
@@ -441,7 +488,9 @@ uint32_t Cy_IPC_Sema_GetMaxSems(void)
 
     /* Get pointer to structure */
     semaStruct = (cy_stc_ipc_sema_t *)Cy_IPC_Drv_ReadDataValue(cy_semaIpcStruct);
-
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+     SCB_InvalidateDCache_by_Addr((uint32_t*)&semaStruct->maxSema, (int32_t)sizeof(semaStruct->maxSema));
+#endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
     return (semaStruct->maxSema);
 }
 

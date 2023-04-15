@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_cmac_v2.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constants and function prototypes
@@ -31,13 +31,13 @@
 
 #include "cy_crypto_common.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO) && defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_CMAC_C)
 
 /** \cond INTERNAL */
 
@@ -47,6 +47,18 @@ typedef struct
     uint32_t block_idx;
     uint8_t *k;
 } cy_stc_crypto_v2_cmac_state_t;
+
+/* The structure to define used memory buffers */
+typedef struct
+{
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    CY_ALIGN(32) cy_stc_crypto_v2_cmac_state_t cmacState;
+    CY_ALIGN(32) uint8_t k[CY_CRYPTO_AES_BLOCK_SIZE];
+#else
+    cy_stc_crypto_v2_cmac_state_t cmacState;
+    uint8_t k[CY_CRYPTO_AES_BLOCK_SIZE];
+#endif
+} cy_stc_crypto_v2_cmac_buffers_t;
 
 /* The function prototypes */
 void Cy_Crypto_Core_V2_Cmac_Init(cy_stc_crypto_v2_cmac_state_t *cmacState,
@@ -75,13 +87,13 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Cmac(CRYPTO_Type *base,
 /** \endcond */
 
 
-#endif /* #if (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_CMAC_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_IP_MXCRYPTO) && defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
 
 #endif /* #if !defined (CY_CRYPTO_CORE_CMAC_V2_H) */
 

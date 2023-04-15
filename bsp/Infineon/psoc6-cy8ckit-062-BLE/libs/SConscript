@@ -13,10 +13,10 @@ if rtconfig.PLATFORM in ['iccarm']:
 elif rtconfig.PLATFORM in ['gcc', 'armclang']:
     src += Glob(cwd + '/TARGET_CY8CKIT-062-BLE/*.c')
     src += Glob(cwd + '/TARGET_CY8CKIT-062-BLE/COMPONENT_CM4/*.c')
-    src += Glob(cwd + '/TARGET_CY8CKIT-062-BLE/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource/*.c')
+    src += Glob(cwd + '/TARGET_CY8CKIT-062-BLE/config/GeneratedSource/*.c')
 
     CPPPATH = [ cwd + '/TARGET_CY8CKIT-062-BLE',
-                cwd + '/TARGET_CY8CKIT-062-BLE/COMPONENT_BSP_DESIGN_MODUS/GeneratedSource']
+                cwd + '/TARGET_CY8CKIT-062-BLE/config/GeneratedSource']
     if rtconfig.PLATFORM in ['gcc']:
         src += [cwd + '/TARGET_CY8CKIT-062-BLE/COMPONENT_CM4/TOOLCHAIN_GCC_ARM/startup_psoc6_01_cm4.S']
     elif rtconfig.PLATFORM in ['armclang']:

@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -48,11 +48,11 @@ typedef cyhal_source_t (*_cyhal_hwmgr_get_output_source_t)(uint8_t block_num, ui
  * @param[in] dest      The optional destination target of the resource type to be reserved
  * @param[in] get_src   Function to use to get a source for a specific block/channel
  * @param[in] get_dest  Function to use to get a destination for a specific block/channel
- * @param[out] resource The reserved resource if successful
+ * @param[out] obj      The reserved resource if successful
  * @return The status of the reservation request
  */
 cy_rslt_t _cyhal_hwmgr_allocate_with_connection(cyhal_resource_t type, const cyhal_source_t *src, const cyhal_dest_t *dest,
-    _cyhal_hwmgr_get_output_source_t get_src, _cyhal_hwmgr_get_input_dest_t get_dest, cyhal_resource_inst_t *resource);
+    _cyhal_hwmgr_get_output_source_t get_src, _cyhal_hwmgr_get_input_dest_t get_dest, cyhal_resource_inst_t *obj);
 
 #if defined(__cplusplus)
 }

@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -31,7 +31,7 @@
 #include "cyhal_interconnect.h"
 #include "cyhal_syspm.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_triggers.h"
 
 #if defined(__cplusplus)
@@ -54,31 +54,83 @@ typedef DMAC_Type                   cyhal_dmac_hw_type;
 #define DMAC1_IRQn                  (cpuss_interrupts_dmac1_0_IRQn)
 #define GET_RESOURCE_DATA(x)        (x.dmac)
 typedef MXAHBDMAC_Type              cyhal_dmac_hw_type;
+#elif defined(CY_IP_MXSAXIDMAC)
+#define DMAC0_IRQn                  (m55appcpuss_interrupts_axidmac_0_IRQn)
+typedef SAXI_DMAC_Type              cyhal_dmac_hw_type;
+#define GET_RESOURCE_DATA(x)        (x.dmac)
 #endif
 
-#if defined(CPUSS_DMAC0_CH_NR) && defined(CPUSS_DMAC1_CH_NR)
+#if defined (AXI_DMAC_CH_NR)
+#if APPCPUSS_AXIDMAC1_PRESENT
+#define NUM_DMAC0_CHANNELS          (APPCPUSS_AXIDMAC0_CH_NR)
+#define NUM_DMAC_CHANNELS           (APPCPUSS_AXIDMAC0_CH_NR + APPCPUSS_AXIDMAC1_CH_NR)
+#else
+#define NUM_DMAC0_CHANNELS          (APPCPUSS_AXIDMAC0_CH_NR)
+#define NUM_DMAC_CHANNELS           (APPCPUSS_AXIDMAC0_CH_NR)
+#endif
+#elif defined(CPUSS_DMAC0_CH_NR) && defined(CPUSS_DMAC1_CH_NR) && (CPUSS_DMAC0_PRESENT > 0) && (CPUSS_DMAC1_PRESENT > 0)
 #define NUM_DMAC_CHANNELS           (CPUSS_DMAC0_CH_NR + CPUSS_DMAC1_CH_NR)
+#define NUM_DMAC0_CHANNELS          (CPUSS_DMAC0_CH_NR)
 #elif defined(CPUSS_DMAC_CH_NR)
 #define NUM_DMAC_CHANNELS           (CPUSS_DMAC_CH_NR)
 #define CPUSS_DMAC0_CH_NR           (CPUSS_DMAC_CH_NR)
+#define NUM_DMAC0_CHANNELS          (CPUSS_DMAC_CH_NR)
 #define CYHAL_TRIGGER_CPUSS_DMAC0_TR_IN0   (CYHAL_TRIGGER_CPUSS_DMAC_TR_IN0)
 #define _CYHAL_TRIGGER_CPUSS_DMAC0_TR_OUT0 (_CYHAL_TRIGGER_CPUSS_DMAC_TR_OUT0)
 #endif
 
+//Wrappers for PDL functions and Macros for AXI DMAC differences
+#if defined(CY_IP_MXSAXIDMAC)
+#define _cyhal_dmac_channel_enable(base, channel)   Cy_AXIDMAC_Channel_Enable(base, channel)
+#define _cyhal_dmac_channel_disable(base, channel)  Cy_AXIDMAC_Channel_Disable(base, channel)
+#define _cyhal_dmac_get_active_channel(base)        Cy_AXIDMAC_GetActiveChannel(base)
+#define _cyhal_dmac_channel_get_interrupt_status_masked(base, channel) Cy_AXIDMAC_Channel_GetInterruptStatusMasked(base, channel)
+#define _CYHAL_DMAC_CHANNEL_ENABLED        (CY_AXIDMAC_CHANNEL_ENABLED)
+#define _CYHAL_DMAC_CHANNEL_DISABLED       (CY_AXIDMAC_CHANNEL_DISABLED)
+#define _CYHAL_DMAC_DESCR            (CY_AXIDMAC_DESCR)
+#define _CYHAL_DMAC_X_LOOP           (CY_AXIDMAC_X_LOOP)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE_Msk   (SAXI_DMAC_CH_DESCR_CTL_TR_IN_TYPE_Msk)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE_Msk   (SAXI_DMAC_CH_DESCR_CTL_TR_OUT_TYPE_Msk)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE        (SAXI_DMAC_CH_DESCR_CTL_TR_IN_TYPE)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE       (SAXI_DMAC_CH_DESCR_CTL_TR_OUT_TYPE)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE_Pos    (SAXI_DMAC_CH_DESCR_CTL_TR_IN_TYPE_Pos)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE_Pos    (SAXI_DMAC_CH_DESCR_CTL_TR_OUT_TYPE_Pos)
+#define _CYHAL_TRIGGER_CPUSS_ZERO                  (CYHAL_TRIGGER_M33SYSCPUSS_ZERO)
+#elif defined(CY_IP_MXAHBDMAC) || defined(CY_IP_M0S8CPUSSV3_DMAC) || defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC)
+#define _cyhal_dmac_channel_enable(base, channel)   Cy_DMAC_Channel_Enable(base, channel)
+#define _cyhal_dmac_channel_disable(base, channel)  Cy_DMAC_Channel_Disable(base, channel)
+#define _cyhal_dmac_get_active_channel(base)        Cy_DMAC_GetActiveChannel(base)
+#define _cyhal_dmac_channel_get_interrupt_status_masked(base, channel) Cy_DMAC_Channel_GetInterruptStatusMasked(base, channel)
+#define _CYHAL_DMAC_CHANNEL_ENABLED        (CY_DMAC_CHANNEL_ENABLED)
+#define _CYHAL_DMAC_CHANNEL_DISABLED       (CY_DMAC_CHANNEL_DISABLED)
+#define _CYHAL_DMAC_DESCR            (CY_DMAC_DESCR)
+#define _CYHAL_DMAC_X_LOOP           (CY_DMAC_X_LOOP)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE_Msk    (DMAC_CH_V2_DESCR_CTL_TR_IN_TYPE_Msk)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE_Msk   (DMAC_CH_V2_DESCR_CTL_TR_OUT_TYPE_Msk)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE        (DMAC_CH_V2_DESCR_CTL_TR_IN_TYPE)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE       (DMAC_CH_V2_DESCR_CTL_TR_OUT_TYPE)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE_Pos    (DMAC_CH_V2_DESCR_CTL_TR_IN_TYPE_Pos)
+#define _CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE_Pos   (DMAC_CH_V2_DESCR_CTL_TR_OUT_TYPE_Pos)
+#define _CYHAL_TRIGGER_CPUSS_ZERO                  (CYHAL_TRIGGER_CPUSS_ZERO)
+#endif
 
 
 static cyhal_dma_t* _cyhal_dma_dmac_config_structs[NUM_DMAC_CHANNELS];
 
 /** Default dmac descriptor config */
+#if defined(CY_IP_MXSAXIDMAC)
+static const cy_stc_axidmac_descriptor_config_t _cyhal_dma_dmac_default_descriptor_config =
+#else
 static const cy_stc_dmac_descriptor_config_t _cyhal_dma_dmac_default_descriptor_config =
+#endif
 {
     .srcAddress = 0,                                // Overriden by cyhal_dma_cfg_t.src_addr
     .dstAddress = 0,                                // Overriden by cyhal_dma_cfg_t.dst_addr
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
     .dataSize = CY_DMAC_WORD,                       // Overridden by cyhal_dma_cfg_t.transfer_width
     .dstTransferSize = CY_DMAC_TRANSFER_SIZE_DATA,  // Overriden by direction
     .srcTransferSize = CY_DMAC_TRANSFER_SIZE_DATA,  // Overriden by direction
     .retrigger = CY_DMAC_RETRIG_IM,
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
     .interruptType = CY_DMAC_DESCR,                 // Overridden by cyhal_dma_cfg_t.action
     .triggerOutType = CY_DMAC_DESCR_CHAIN,          // Overridden by [en/dis]able_output()
     .channelState = CY_DMAC_CHANNEL_ENABLED,
@@ -93,6 +145,10 @@ static const cy_stc_dmac_descriptor_config_t _cyhal_dma_dmac_default_descriptor_
     .yCount = 1UL,                                  // Overriden by cyhal_dma_cfg_t.length
     .nextDescriptor = 0,
 #elif defined(CY_IP_M0S8CPUSSV3_DMAC)
+    .dataSize = CY_DMAC_WORD,                       // Overridden by cyhal_dma_cfg_t.transfer_width
+    .dstTransferSize = CY_DMAC_TRANSFER_SIZE_DATA,  // Overriden by direction
+    .srcTransferSize = CY_DMAC_TRANSFER_SIZE_DATA,  // Overriden by direction
+    .retrigger = CY_DMAC_RETRIG_IM,
     .triggerType = CY_DMAC_SINGLE_DESCR,
     .dataCount = 1,                                 // Overriden by cyhal_dma_cfg_t.length
     .dstAddrIncrement = true,                       // Overriden by cyhal_dma_cfg_t.dst_increment
@@ -100,11 +156,29 @@ static const cy_stc_dmac_descriptor_config_t _cyhal_dma_dmac_default_descriptor_
     .interrupt = true,
     .preemptable = true,
     .flipping = false,
+#elif defined(CY_IP_MXSAXIDMAC)
+    .interruptType = CY_AXIDMAC_DESCR,              // Overridden by cyhal_dma_cfg_t.action
+    .triggerOutType = CY_AXIDMAC_DESCR_CHAIN,       // Overridden by [en/dis]able_output()
+    .channelState = CY_AXIDMAC_CHANNEL_ENABLED,
+    .triggerInType = CY_AXIDMAC_DESCR,              // Overridden by cyhal_dma_cfg_t.action & [dis]connect_digital()
+    .dataPrefetch = false,
+    .descriptorType = CY_AXIDMAC_1D_MEMCOPY_COPY,   // Overriden by cyhal_dma_cfg_t.burst_size
+    .srcXincrement = 1U,                            // Overriden by cyhal_dma_cfg_t.src_increment
+    .dstXincrement = 1U,                            // Overriden by cyhal_dma_cfg_t.dst_increment
+    .xCount = 1UL,                                  // Overriden by cyhal_dma_cfg_t.length/burst_size
+    .srcYincrement = 0U,                            // Overriden by cyhal_dma_cfg_t.burst_size
+    .dstYincrement = 0U,                            // Overriden by cyhal_dma_cfg_t.burst_size
+    .yCount = 1UL,                                  // Overriden by cyhal_dma_cfg_t.length
+    .nextDescriptor = 0,
 #endif
 };
 
 /** Default dmac channel config */
+#if defined(CY_IP_MXSAXIDMAC)
+static const cy_stc_axidmac_channel_config_t _cyhal_dma_dmac_default_channel_config =
+#else
 static const cy_stc_dmac_channel_config_t _cyhal_dma_dmac_default_channel_config =
+#endif
 {
     .priority = 1,                          // Overriden by config().priority
     .enable = false,
@@ -113,6 +187,8 @@ static const cy_stc_dmac_channel_config_t _cyhal_dma_dmac_default_channel_config
     .descriptor = 0,                        // Overriden by config()
 #elif defined(CY_IP_M0S8CPUSSV3_DMAC)
     .descriptor = CY_DMAC_DESCRIPTOR_PING,  // Overriden by config()
+#elif defined(CY_IP_MXSAXIDMAC)
+    .bufferable = false,
 #endif
 };
 
@@ -129,7 +205,7 @@ static bool _cyhal_dma_dmac_pm_transition_pending = false;
 static bool _cyhal_dma_dmac_has_enabled(void)
 {
     for (uint8_t i = 0; i < NUM_DMAC_CHANNELS; i++)
-        if (_cyhal_dma_dmac_config_structs[i])
+        if (NULL != _cyhal_dma_dmac_config_structs[i])
             return true;
     return false;
 }
@@ -162,7 +238,7 @@ static bool _cyhal_dma_dmac_pm_callback(cyhal_syspm_callback_state_t state, cyha
 /** Gets the dmac configuration struct offset */
 static inline uint8_t _cyhal_dma_dmac_get_cfg_offset(const cyhal_dma_t* obj)
 {
-    return (obj->resource.block_num * CPUSS_DMAC0_CH_NR) + obj->resource.channel_num;
+    return (obj->resource.block_num * NUM_DMAC0_CHANNELS) + obj->resource.channel_num;
 }
 
 /** Sets the dmac configuration struct */
@@ -180,7 +256,11 @@ static inline void _cyhal_dma_dmac_free_obj(cyhal_dma_t *obj)
 /** Gets the dmac configuration struct from block and channel */
 static inline cyhal_dma_t* _cyhal_dma_dmac_get_obj(uint8_t block, uint8_t channel)
 {
+#if defined(CY_IP_MXSAXIDMAC)
+    return _cyhal_dma_dmac_config_structs[(block * APPCPUSS_AXIDMAC0_CH_NR) + channel];
+#else
     return _cyhal_dma_dmac_config_structs[(block * CPUSS_DMAC0_CH_NR) + channel];
+#endif
 }
 
 /** Gets the dmac block number from irq number */
@@ -188,45 +268,34 @@ static inline cyhal_dma_t* _cyhal_dma_dmac_get_obj(uint8_t block, uint8_t channe
 static inline uint8_t _cyhal_dma_dmac_get_block_from_irqn(_cyhal_system_irq_t irqn)
 {
     uint8_t diff = irqn - DMAC0_IRQn;
-#if defined(CPUSS_DMAC0_CH_NR) && !defined(CPUSS_DMAC1_CH_NR)
-    CY_ASSERT(diff < CPUSS_DMAC0_CH_NR);
-
-    if (diff < CPUSS_DMAC0_CH_NR)
+    CY_ASSERT(diff < NUM_DMAC_CHANNELS);
+    if (diff < NUM_DMAC0_CHANNELS)
         return 0;
-#elif defined(CPUSS_DMAC0_CH_NR) && defined(CPUSS_DMAC1_CH_NR)
-    CY_ASSERT(diff < CPUSS_DMAC0_CH_NR + CPUSS_DMAC1_CH_NR);
-
-    if (diff < CPUSS_DMAC0_CH_NR)
-        return 0;
-    if (diff < CPUSS_DMAC0_CH_NR + CPUSS_DMAC1_CH_NR)
+#if (NUM_DMAC0_CHANNELS < NUM_DMAC_CHANNELS)
+    if (diff < NUM_DMAC_CHANNELS)
         return 1;
 #endif
-
-    // Should never reach here. Just silencing compiler warnings.
-    CY_ASSERT(false);
-    return 0xFF;
+    else
+    {
+        // Should never reach here. Just silencing compiler warnings.
+        CY_ASSERT(false);
+        return 0xFF;
+    }
 }
 
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
 /** Gets the dmac channel number from irq number */
 /** This should never be called from a non-dma IRQn */
 static inline uint8_t _cyhal_dma_dmac_get_channel_from_irqn(_cyhal_system_irq_t irqn)
 {
     uint8_t diff = irqn - DMAC0_IRQn;
-#if defined(CPUSS_DMAC0_CH_NR) && !defined(CPUSS_DMAC1_CH_NR)
-    CY_ASSERT(diff < CPUSS_DMAC0_CH_NR);
-
-    if (diff < CPUSS_DMAC0_CH_NR)
+    CY_ASSERT(diff < NUM_DMAC_CHANNELS);
+    if (diff < NUM_DMAC0_CHANNELS)
         return diff;
-#elif defined(CPUSS_DMAC0_CH_NR) && defined(CPUSS_DMAC1_CH_NR)
-    CY_ASSERT(diff < CPUSS_DMAC0_CH_NR + CPUSS_DW1_CH_NR);
-
-    if (diff < CPUSS_DMAC0_CH_NR)
-        return diff;
+#if (NUM_DMAC0_CHANNELS < NUM_DMAC_CHANNELS)
     else
-        return diff - CPUSS_DMAC0_CH_NR;
+        return diff - NUM_DMAC0_CHANNELS;
 #endif
-
     // Should never reach here. Just silencing compiler warnings.
     CY_ASSERT(false);
     return 0xFF;
@@ -248,11 +317,17 @@ static inline _cyhal_system_irq_t _cyhal_dma_dmac_get_irqn(cyhal_dma_t *obj)
 /** Gets the dmac base pointer from block number */
 static inline cyhal_dmac_hw_type* _cyhal_dma_dmac_get_base(uint8_t block_num)
 {
-#if defined(CPUSS_DMAC0_CH_NR) && !defined(CPUSS_DMAC1_CH_NR)
+#if defined(CY_IP_MXSAXIDMAC)
+    CY_UNUSED_PARAMETER(block_num);
+    return SAXI_DMAC;
+#elif defined(CPUSS_DMAC0_CH_NR) && !defined(CPUSS_DMAC1_CH_NR)
     CY_UNUSED_PARAMETER(block_num);
     return DMAC;
 #elif defined(CPUSS_DMAC0_CH_NR) && defined(CPUSS_DMAC1_CH_NR)
     return (block_num == 0) ? MXAHBDMAC0 : MXAHBDMAC1;
+#else
+    //Should never get here
+    #error "Error: No corresponding base type"
 #endif
 }
 
@@ -264,7 +339,11 @@ static inline uint32_t _cyhal_dma_dmac_get_trigger_line(uint8_t block_num, uint8
     /* cyhal_dest_t triggers are guaranteed to be sorted by trigger type, block
      * num, then channel num, therefore, we can just directly find the proper
      * trigger by calculating an offset. */
+#if defined(CY_IP_MXSAXIDMAC)
+    cyhal_dest_t trigger = (cyhal_dest_t)(CYHAL_TRIGGER_M55APPCPUSS_AXIDMAC_TR_IN0 + (block_num * APPCPUSS_AXIDMAC0_CH_NR) + channel_num);
+#else
     cyhal_dest_t trigger = (cyhal_dest_t)(CYHAL_TRIGGER_CPUSS_DMAC0_TR_IN0 + (block_num * CPUSS_DMAC0_CH_NR) + channel_num);
+#endif
 
     /* One to one triggers have bit 8 set in cyhal_dest_to_mux but
      * Cy_TrigMux_SwTrigger wants the trigger group field to have bit 5 set to
@@ -280,14 +359,14 @@ static inline uint32_t _cyhal_dma_dmac_get_trigger_line(uint8_t block_num, uint8
      * Bits   30: Input/output bit. Set to 1 for output.
      * Bits 12-8: Trigger group selection.
      * Bits  7-0: Select the output trigger number in the trigger group. */
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
     return PERI_TR_CMD_OUT_SEL_Msk | ((uint32_t)trig_group << 8) | cyhal_mux_dest_index[trigger];
 #elif defined(CY_IP_M0S8CPUSSV3_DMAC)
     return PERI_TR_CTL_TR_OUT_Msk | ((uint32_t)trig_group << 8) | cyhal_mux_dest_index[trigger];
 #endif
 }
 
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
 /** Convert PDL interrupt cause to hal dma event */
 static inline cyhal_dma_event_t _cyhal_dma_dmac_convert_interrupt_cause(cyhal_dma_t *obj, uint32_t cause)
 {
@@ -316,8 +395,8 @@ static inline cyhal_dma_event_t _cyhal_dma_dmac_convert_interrupt_cause(cyhal_dm
         if (0 == obj->expected_bursts)
         {
             hal_rslt |= CYHAL_DMA_DESCRIPTOR_COMPLETE;
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
-            obj->expected_bursts = (GET_RESOURCE_DATA(obj->descriptor_config).interruptType == CY_DMAC_X_LOOP)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
+            obj->expected_bursts = (GET_RESOURCE_DATA(obj->descriptor_config).interruptType == _CYHAL_DMAC_X_LOOP)
                 ? GET_RESOURCE_DATA(obj->descriptor_config).yCount
                 : 1;
 #else
@@ -336,13 +415,17 @@ static void _cyhal_dma_dmac_irq_handler(void)
     /* Use irqn to get appropriate config structure */
     _cyhal_system_irq_t irqn = _cyhal_irq_get_active();
     uint8_t block = _cyhal_dma_dmac_get_block_from_irqn(irqn);
+#if defined(CY_IP_MXSAXIDMAC)
+    SAXI_DMAC_Type* base = _cyhal_dma_dmac_get_base(block);
+#else
     DMAC_Type* base = _cyhal_dma_dmac_get_base(block);
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#endif
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
     uint8_t channel = _cyhal_dma_dmac_get_channel_from_irqn(irqn);
     cyhal_dma_t *obj = _cyhal_dma_dmac_get_obj(block, channel);
 
     /* Get interrupt type and call users event callback if they have enabled that event */
-    uint32_t cause = Cy_DMAC_Channel_GetInterruptStatusMasked(base, channel);
+    uint32_t cause = _cyhal_dmac_channel_get_interrupt_status_masked(base, channel);
     cyhal_dma_event_t event_type = _cyhal_dma_dmac_convert_interrupt_cause(obj, cause);
     uint32_t events_to_callback = event_type & obj->irq_cause;
     if(obj->callback_data.callback != NULL && events_to_callback)
@@ -351,7 +434,11 @@ static void _cyhal_dma_dmac_irq_handler(void)
     }
 
     /* Clear all interrupts */
+#if defined(CY_IP_MXSAXIDMAC)
+    Cy_AXIDMAC_Channel_ClearInterrupt(base, channel, CY_AXIDMAC_INTR_MASK);
+#else
     Cy_DMAC_Channel_ClearInterrupt(base, channel, CY_DMAC_INTR_MASK);
+#endif
 #elif defined(CY_IP_M0S8CPUSSV3_DMAC)
     uint32_t channels = Cy_DMAC_GetInterruptStatusMasked(base);
     for(int i = 0 ; ((uint32_t)(1 << i)) <= channels ; i++)
@@ -371,37 +458,77 @@ static void _cyhal_dma_dmac_irq_handler(void)
 
 static cyhal_source_t _cyhal_dma_dmac_get_src(uint8_t block_num, uint8_t channel_num)
 {
+#if defined(CY_IP_MXSAXIDMAC)
+    return (cyhal_source_t)_CYHAL_TRIGGER_CREATE_SOURCE((_CYHAL_TRIGGER_M55APPCPUSS_AXIDMAC_TR_OUT0 + (block_num * APPCPUSS_AXIDMAC0_CH_NR) + channel_num), CYHAL_SIGNAL_TYPE_EDGE);
+#else
     return (cyhal_source_t)_CYHAL_TRIGGER_CREATE_SOURCE((_CYHAL_TRIGGER_CPUSS_DMAC0_TR_OUT0 + (block_num * CPUSS_DMAC0_CH_NR) + channel_num), CYHAL_SIGNAL_TYPE_EDGE);
+#endif
 }
 
 static cyhal_dest_t _cyhal_dma_dmac_get_dest(uint8_t block_num, uint8_t channel_num)
 {
+#if defined(CY_IP_MXSAXIDMAC)
+    return (cyhal_dest_t)(CYHAL_TRIGGER_M55APPCPUSS_AXIDMAC_TR_IN0 + (block_num * APPCPUSS_AXIDMAC0_CH_NR) + channel_num);
+#else
     return (cyhal_dest_t)(CYHAL_TRIGGER_CPUSS_DMAC0_TR_IN0 + (block_num * CPUSS_DMAC0_CH_NR) + channel_num);
+#endif
 }
 
 static cy_rslt_t _cyhal_dma_dmac_stage(cyhal_dma_t *obj)
 {
     cyhal_dmac_hw_type* base = _cyhal_dma_dmac_get_base(obj->resource.block_num);
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_CleanDCache_by_Addr((void *)&(obj->descriptor), sizeof(obj->descriptor));
+    #endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
+#if defined(CY_IP_MXSAXIDMAC)
+    cy_rslt_t rslt = Cy_AXIDMAC_Descriptor_Init(GET_RESOURCE_DATA(&obj->descriptor), GET_RESOURCE_DATA(&obj->descriptor_config));
+#else
     cy_rslt_t rslt = Cy_DMAC_Descriptor_Init(GET_RESOURCE_DATA(&obj->descriptor), GET_RESOURCE_DATA(&obj->descriptor_config));
+#endif
 #elif defined(CY_IP_M0S8CPUSSV3_DMAC)
     cy_rslt_t rslt = Cy_DMAC_Descriptor_Init(base, obj->resource.channel_num, obj->descriptor, GET_RESOURCE_DATA(&obj->descriptor_config));
 #endif
+#if defined(CY_IP_MXSAXIDMAC)
+    if(CY_AXIDMAC_SUCCESS != rslt)
+#else
     if(CY_DMAC_SUCCESS != rslt)
+#endif
         return CYHAL_DMA_RSLT_ERR_INVALID_PARAMETER;
 
     /* Setup channel and enable */
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_CleanDCache_by_Addr((void *)&(obj->channel_config), sizeof(obj->channel_config));
+    #endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
+#if defined(CY_IP_MXSAXIDMAC)
+    if(CY_AXIDMAC_SUCCESS != Cy_AXIDMAC_Channel_Init(base, obj->resource.channel_num, GET_RESOURCE_DATA(&obj->channel_config)))
+#else
     if(CY_DMAC_SUCCESS != Cy_DMAC_Channel_Init(base, obj->resource.channel_num, GET_RESOURCE_DATA(&obj->channel_config)))
+#endif
         return CYHAL_DMA_RSLT_ERR_INVALID_PARAMETER;
 
-
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_MXSAXIDMAC)
+    Cy_AXIDMAC_Channel_SetInterruptMask(base, obj->resource.channel_num, CY_AXIDMAC_INTR_MASK);
+#elif defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
     Cy_DMAC_Channel_SetInterruptMask(base, obj->resource.channel_num, CY_DMAC_INTR_MASK);
 #endif
-
+#if defined(CY_IP_MXSAXIDMAC)
+    Cy_AXIDMAC_Enable(base);
+#else
     Cy_DMAC_Enable(base);
+#endif
 
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_MXSAXIDMAC)
+    /* src_misal and dst_misal interrupts are triggered immediately on enable
+     * so return those errors here */
+    uint32_t status = Cy_AXIDMAC_Channel_GetInterruptStatus(base, obj->resource.channel_num);
+    if((status & CY_AXIDMAC_INTR_INVALID_DESCR_TYPE))
+    {
+        /* Clear all interrupts and return error */
+        Cy_AXIDMAC_Channel_ClearInterrupt(base, obj->resource.channel_num, CY_AXIDMAC_INTR_MASK);
+        return CYHAL_DMA_RSLT_ERR_INVALID_ALIGNMENT;
+    }
+#elif defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
     /* src_misal and dst_misal interrupts are triggered immediately on enable
      * so return those errors here */
     uint32_t status = Cy_DMAC_Channel_GetInterruptStatus(base, obj->resource.channel_num);
@@ -429,7 +556,11 @@ static cy_rslt_t _cyhal_dma_dmac_stage(cyhal_dma_t *obj)
 
 cy_rslt_t _cyhal_dma_dmac_init(cyhal_dma_t *obj, cyhal_source_t *src, cyhal_dest_t *dest, uint8_t priority)
 {
+#if defined(CY_IP_MXSAXIDMAC)
+    if(!CY_AXIDMAC_IS_PRIORITY_VALID(priority))
+#else
     if(!CY_DMAC_IS_PRIORITY_VALID(priority))
+#endif
         return CYHAL_DMA_RSLT_ERR_INVALID_PRIORITY;
 
     if (_cyhal_dma_dmac_pm_transition_pending)
@@ -447,17 +578,19 @@ cy_rslt_t _cyhal_dma_dmac_init(cyhal_dma_t *obj, cyhal_source_t *src, cyhal_dest
     /* Setup descriptor and channel configs */
     GET_RESOURCE_DATA(obj->descriptor_config) = _cyhal_dma_dmac_default_descriptor_config;
     GET_RESOURCE_DATA(obj->channel_config) = _cyhal_dma_dmac_default_channel_config;
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
     GET_RESOURCE_DATA(obj->channel_config).descriptor = GET_RESOURCE_DATA(&obj->descriptor);
 #elif defined(CY_IP_M0S8CPUSSV3_DMAC)
     obj->descriptor = obj->channel_config.descriptor;
 #endif
     GET_RESOURCE_DATA(obj->channel_config).priority = priority;
 
+#if CYHAL_DRIVER_AVAILABLE_SYSPM
     if (!_cyhal_dma_dmac_has_enabled())
     {
         _cyhal_syspm_register_peripheral_callback(&_cyhal_dma_dmac_pm_callback_args);
     }
+#endif
 
     _cyhal_dma_dmac_set_obj(obj);
 
@@ -475,7 +608,7 @@ cy_rslt_t _cyhal_dma_dmac_init_cfg(cyhal_dma_t *obj, const cyhal_dma_configurato
     obj->callback_data.callback = NULL;
 
     /* Setup descriptor and channel configs */
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
     obj->descriptor_config.dmac = *(cfg->dmac_descriptor_config);
     obj->channel_config.dmac = *(cfg->dmac_channel_config);
     GET_RESOURCE_DATA(obj->channel_config).descriptor = GET_RESOURCE_DATA(&obj->descriptor);
@@ -487,10 +620,12 @@ cy_rslt_t _cyhal_dma_dmac_init_cfg(cyhal_dma_t *obj, const cyhal_dma_configurato
     obj->expected_bursts = 1;
 #endif
 
+#if CYHAL_DRIVER_AVAILABLE_SYSPM
     if (!_cyhal_dma_dmac_has_enabled())
     {
         _cyhal_syspm_register_peripheral_callback(&_cyhal_dma_dmac_pm_callback_args);
     }
+#endif
 
     _cyhal_dma_dmac_set_obj(obj);
 
@@ -502,21 +637,26 @@ void _cyhal_dma_dmac_free(cyhal_dma_t *obj)
     cyhal_dmac_hw_type* base = _cyhal_dma_dmac_get_base(obj->resource.block_num);
 #if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
     Cy_DMAC_Descriptor_DeInit(GET_RESOURCE_DATA(&obj->descriptor));
+    Cy_DMAC_Channel_DeInit(base, obj->resource.channel_num);
 #elif defined(CY_IP_M0S8CPUSSV3_DMAC)
     Cy_DMAC_Descriptor_DeInit(base, obj->resource.channel_num, obj->descriptor);
-#endif
-
     Cy_DMAC_Channel_DeInit(base, obj->resource.channel_num);
+#elif defined(CY_IP_MXSAXIDMAC)
+    Cy_AXIDMAC_Descriptor_DeInit(GET_RESOURCE_DATA(&obj->descriptor));
+    Cy_AXIDMAC_Channel_DeInit(base, obj->resource.channel_num);
+#endif
 
     _cyhal_irq_free(_cyhal_dma_dmac_get_irqn(obj));
 
     _cyhal_dma_dmac_free_obj(obj);
 
+#if CYHAL_DRIVER_AVAILABLE_SYSPM
     if (!_cyhal_dma_dmac_has_enabled())
     {
         _cyhal_syspm_unregister_peripheral_callback(&_cyhal_dma_dmac_pm_callback_args);
         _cyhal_dma_dmac_pm_transition_pending = false;
     }
+#endif
 }
 
 /* Initialize descriptor, initialize channel, enable channel, enable channel
@@ -542,9 +682,14 @@ cy_rslt_t _cyhal_dma_dmac_configure(cyhal_dma_t *obj, const cyhal_dma_cfg_t *cfg
     }
 #endif
 
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_CleanDCache_by_Addr((void *)cfg->src_addr, cfg->length * (cfg->transfer_width / 8));
+    SCB_CleanDCache_by_Addr((void *)cfg->dst_addr, cfg->length * (cfg->transfer_width / 8));
+    #endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
     GET_RESOURCE_DATA(obj->descriptor_config).srcAddress = (void*)cfg->src_addr;
     GET_RESOURCE_DATA(obj->descriptor_config).dstAddress = (void*)cfg->dst_addr;
 
+#if !defined(CY_IP_MXSAXIDMAC)
     if(cfg->transfer_width == 8)
         GET_RESOURCE_DATA(obj->descriptor_config).dataSize = CY_DMAC_BYTE;
     else if(cfg->transfer_width == 16)
@@ -562,16 +707,16 @@ cy_rslt_t _cyhal_dma_dmac_configure(cyhal_dma_t *obj, const cyhal_dma_cfg_t *cfg
         GET_RESOURCE_DATA(obj->descriptor_config).srcTransferSize = CY_DMAC_TRANSFER_SIZE_WORD;
     else if (obj->direction == CYHAL_DMA_DIRECTION_MEM2PERIPH)
         GET_RESOURCE_DATA(obj->descriptor_config).dstTransferSize = CY_DMAC_TRANSFER_SIZE_WORD;
-
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#endif
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
     GET_RESOURCE_DATA(obj->descriptor_config).nextDescriptor = GET_RESOURCE_DATA(&obj->descriptor);
     if ((cfg->action == CYHAL_DMA_TRANSFER_BURST) || (cfg->action == CYHAL_DMA_TRANSFER_FULL))
     {
-        GET_RESOURCE_DATA(obj->descriptor_config).channelState = CY_DMAC_CHANNEL_ENABLED;
+        GET_RESOURCE_DATA(obj->descriptor_config).channelState = _CYHAL_DMAC_CHANNEL_ENABLED;
     }
     else
     {
-        GET_RESOURCE_DATA(obj->descriptor_config).channelState = CY_DMAC_CHANNEL_DISABLED;
+        GET_RESOURCE_DATA(obj->descriptor_config).channelState = _CYHAL_DMAC_CHANNEL_DISABLED;
     }
 
     GET_RESOURCE_DATA(obj->descriptor_config).srcXincrement = cfg->src_increment;
@@ -585,7 +730,11 @@ cy_rslt_t _cyhal_dma_dmac_configure(cyhal_dma_t *obj, const cyhal_dma_cfg_t *cfg
         if(cfg->length % cfg->burst_size != 0)
             return CYHAL_DMA_RSLT_ERR_INVALID_BURST_SIZE;
 
+#if defined(CY_IP_MXSAXIDMAC)
+        GET_RESOURCE_DATA(obj->descriptor_config).descriptorType = CY_AXIDMAC_2D_MEMCOPY_COPY;
+#else
         GET_RESOURCE_DATA(obj->descriptor_config).descriptorType = CY_DMAC_2D_TRANSFER;
+#endif
         GET_RESOURCE_DATA(obj->descriptor_config).xCount = cfg->burst_size;
         GET_RESOURCE_DATA(obj->descriptor_config).yCount = cfg->length / cfg->burst_size;
         GET_RESOURCE_DATA(obj->descriptor_config).srcYincrement = cfg->src_increment * cfg->burst_size;
@@ -593,7 +742,11 @@ cy_rslt_t _cyhal_dma_dmac_configure(cyhal_dma_t *obj, const cyhal_dma_cfg_t *cfg
     }
     else
     {
+#if defined(CY_IP_MXSAXIDMAC)
+        GET_RESOURCE_DATA(obj->descriptor_config).descriptorType = CY_AXIDMAC_1D_MEMCOPY_COPY;
+#else
         GET_RESOURCE_DATA(obj->descriptor_config).descriptorType = CY_DMAC_1D_TRANSFER;
+#endif
         GET_RESOURCE_DATA(obj->descriptor_config).xCount = cfg->length;
     }
 
@@ -602,16 +755,16 @@ cy_rslt_t _cyhal_dma_dmac_configure(cyhal_dma_t *obj, const cyhal_dma_cfg_t *cfg
         (cfg->action == CYHAL_DMA_TRANSFER_BURST || cfg->action == CYHAL_DMA_TRANSFER_BURST_DISABLE))
     {
         obj->expected_bursts = GET_RESOURCE_DATA(obj->descriptor_config).yCount;
-        GET_RESOURCE_DATA(obj->descriptor_config).interruptType = CY_DMAC_X_LOOP;
-        if (obj->source == CYHAL_TRIGGER_CPUSS_ZERO) // If not overridden by connect_digital()
-            GET_RESOURCE_DATA(obj->descriptor_config).triggerInType = CY_DMAC_X_LOOP;
+        GET_RESOURCE_DATA(obj->descriptor_config).interruptType = _CYHAL_DMAC_X_LOOP;
+        if (obj->source == _CYHAL_TRIGGER_CPUSS_ZERO) // If not overridden by connect_digital()
+            GET_RESOURCE_DATA(obj->descriptor_config).triggerInType = _CYHAL_DMAC_X_LOOP;
     }
     else
     {
         obj->expected_bursts = 1;
-        GET_RESOURCE_DATA(obj->descriptor_config).interruptType = CY_DMAC_DESCR;
-        if (obj->source == CYHAL_TRIGGER_CPUSS_ZERO) // If not overridden by connect_digital()
-            GET_RESOURCE_DATA(obj->descriptor_config).triggerInType = CY_DMAC_DESCR;
+        GET_RESOURCE_DATA(obj->descriptor_config).interruptType = _CYHAL_DMAC_DESCR;
+        if (obj->source == _CYHAL_TRIGGER_CPUSS_ZERO) // If not overridden by connect_digital()
+            GET_RESOURCE_DATA(obj->descriptor_config).triggerInType = _CYHAL_DMAC_DESCR;
      }
 #elif defined(CY_IP_M0S8CPUSSV3_DMAC)
     if(cfg->burst_size != 0)
@@ -633,14 +786,14 @@ cy_rslt_t _cyhal_dma_dmac_configure(cyhal_dma_t *obj, const cyhal_dma_cfg_t *cfg
 cy_rslt_t _cyhal_dma_dmac_enable(cyhal_dma_t *obj)
 {
     cyhal_dmac_hw_type* base = _cyhal_dma_dmac_get_base(obj->resource.block_num);
-    Cy_DMAC_Channel_Enable(base, obj->resource.channel_num);
+    _cyhal_dmac_channel_enable(base, obj->resource.channel_num);
     return CY_RSLT_SUCCESS;
 }
 
 cy_rslt_t _cyhal_dma_dmac_disable(cyhal_dma_t *obj)
 {
     cyhal_dmac_hw_type* base = _cyhal_dma_dmac_get_base(obj->resource.block_num);
-    Cy_DMAC_Channel_Disable(base, obj->resource.channel_num);
+    _cyhal_dmac_channel_disable(base, obj->resource.channel_num);
     return CY_RSLT_SUCCESS;
 }
 
@@ -691,10 +844,27 @@ void _cyhal_dma_dmac_enable_event(cyhal_dma_t *obj, cyhal_dma_event_t event, uin
 bool _cyhal_dma_dmac_is_busy(cyhal_dma_t *obj)
 {
     /* The value is a bit field of all pending or active channels */
-    return Cy_DMAC_GetActiveChannel(_cyhal_dma_dmac_get_base(obj->resource.block_num)) & (1 << obj->resource.channel_num);
+    return _cyhal_dmac_get_active_channel(_cyhal_dma_dmac_get_base(obj->resource.block_num)) & (1 << obj->resource.channel_num);
 }
-
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXSAXIDMAC)
+#if defined(CY_IP_MXSAXIDMAC)
+static cy_en_axidmac_trigger_type_t _cyhal_convert_input_t(cyhal_dma_input_t input)
+{
+    switch(input)
+    {
+        case CYHAL_DMA_INPUT_TRIGGER_SINGLE_ELEMENT:
+            return CY_AXIDMAC_M_LOOP;
+        case CYHAL_DMA_INPUT_TRIGGER_SINGLE_BURST:
+            return CY_AXIDMAC_X_LOOP;
+        case CYHAL_DMA_INPUT_TRIGGER_ALL_ELEMENTS:
+            return CY_AXIDMAC_DESCR;
+        default:
+            // Should never reach here. Just silencing compiler warnings.
+            CY_ASSERT(false);
+            return CY_AXIDMAC_DESCR;
+    }
+}
+#elif defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
 static cy_en_dmac_trigger_type_t _cyhal_convert_input_t(cyhal_dma_input_t input)
 {
     switch(input)
@@ -711,7 +881,27 @@ static cy_en_dmac_trigger_type_t _cyhal_convert_input_t(cyhal_dma_input_t input)
             return CY_DMAC_DESCR;
     }
 }
+#endif
 
+#if defined(CY_IP_MXSAXIDMAC)
+static cy_en_axidmac_trigger_type_t _cyhal_convert_output_t(cyhal_dma_output_t output)
+{
+    switch(output)
+    {
+        case CYHAL_DMA_OUTPUT_TRIGGER_SINGLE_ELEMENT:
+            return CY_AXIDMAC_M_LOOP;
+        case CYHAL_DMA_OUTPUT_TRIGGER_SINGLE_BURST:
+
+            return CY_AXIDMAC_X_LOOP;
+        case CYHAL_DMA_OUTPUT_TRIGGER_ALL_ELEMENTS:
+            return CY_AXIDMAC_DESCR;
+        default:
+            // Should never reach here. Just silencing compiler warnings.
+            CY_ASSERT(false);
+            return CY_AXIDMAC_DESCR;
+    }
+}
+#else
 static cy_en_dmac_trigger_type_t _cyhal_convert_output_t(cyhal_dma_output_t output)
 {
     switch(output)
@@ -728,6 +918,7 @@ static cy_en_dmac_trigger_type_t _cyhal_convert_output_t(cyhal_dma_output_t outp
             return CY_DMAC_DESCR;
     }
 }
+#endif
 
 cy_rslt_t _cyhal_dma_dmac_connect_digital(cyhal_dma_t *obj, cyhal_source_t source, cyhal_dma_input_t input)
 {
@@ -737,10 +928,13 @@ cy_rslt_t _cyhal_dma_dmac_connect_digital(cyhal_dma_t *obj, cyhal_source_t sourc
         return CYHAL_DMA_RSLT_ERR_INVALID_PARAMETER;
 
     obj->descriptor_config.dmac.triggerInType = _cyhal_convert_input_t(input);
-    Cy_DMAC_Channel_Disable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
-    obj->descriptor.dmac.ctl &= ~DMAC_CH_V2_DESCR_CTL_TR_IN_TYPE_Msk;
-    obj->descriptor.dmac.ctl |= _VAL2FLD(DMAC_CH_V2_DESCR_CTL_TR_IN_TYPE, obj->descriptor_config.dmac.triggerInType);
-    Cy_DMAC_Channel_Enable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
+
+    _cyhal_dmac_channel_disable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
+
+    obj->descriptor.dmac.ctl &= ~_CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE_Msk;
+    obj->descriptor.dmac.ctl |= _VAL2FLD(_CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE, obj->descriptor_config.dmac.triggerInType);
+
+    _cyhal_dmac_channel_enable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
 
     cyhal_dest_t dest = _cyhal_dma_dmac_get_dest(obj->resource.block_num, obj->resource.channel_num);
 
@@ -754,11 +948,12 @@ cy_rslt_t _cyhal_dma_dmac_enable_output(cyhal_dma_t *obj, cyhal_dma_output_t out
        output != CYHAL_DMA_OUTPUT_TRIGGER_ALL_ELEMENTS)
         return CYHAL_DMA_RSLT_ERR_INVALID_PARAMETER;
 
-    Cy_DMAC_Channel_Disable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
-    obj->descriptor.dmac.ctl &= ~DMAC_CH_V2_DESCR_CTL_TR_OUT_TYPE_Msk;
-    obj->descriptor.dmac.ctl |= _VAL2FLD(DMAC_CH_V2_DESCR_CTL_TR_OUT_TYPE, _cyhal_convert_output_t(output));
-    Cy_DMAC_Channel_Enable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
+    _cyhal_dmac_channel_disable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
 
+    obj->descriptor.dmac.ctl &= ~_CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE_Msk;
+    obj->descriptor.dmac.ctl |= _VAL2FLD(_CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE, _cyhal_convert_output_t(output));
+
+    _cyhal_dmac_channel_enable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
     *source = _cyhal_dma_dmac_get_src(obj->resource.block_num, obj->resource.channel_num);
 
     return CY_RSLT_SUCCESS;
@@ -771,15 +966,16 @@ cy_rslt_t _cyhal_dma_dmac_disconnect_digital(cyhal_dma_t *obj, cyhal_source_t so
        input != CYHAL_DMA_INPUT_TRIGGER_ALL_ELEMENTS)
         return CYHAL_DMA_RSLT_ERR_INVALID_PARAMETER;
 
-    Cy_DMAC_Channel_Disable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
 
     // There is no option to totally disable. Just reset to default.
     // NOTE: Use .interruptType since it matches the desired .triggerInType from configure(), but
     // is not modified by connect/disconnect functions
-    obj->descriptor.dmac.ctl &= ~DMAC_CH_V2_DESCR_CTL_TR_IN_TYPE_Msk;
-    obj->descriptor.dmac.ctl |= _VAL2FLD(DMAC_CH_V2_DESCR_CTL_TR_IN_TYPE, _cyhal_dma_dmac_default_descriptor_config.interruptType);
+    _cyhal_dmac_channel_disable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
 
-    Cy_DMAC_Channel_Enable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
+    obj->descriptor.dmac.ctl &= ~_CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE_Msk;
+    obj->descriptor.dmac.ctl |= _VAL2FLD(_CYHAL_DMAC_CH_DESCR_CTL_TR_IN_TYPE, _cyhal_dma_dmac_default_descriptor_config.interruptType);
+
+    _cyhal_dmac_channel_enable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
 
     cyhal_dest_t dest = _cyhal_dma_dmac_get_dest(obj->resource.block_num, obj->resource.channel_num);
 
@@ -793,13 +989,13 @@ cy_rslt_t _cyhal_dma_dmac_disable_output(cyhal_dma_t *obj, cyhal_dma_output_t ou
        output != CYHAL_DMA_OUTPUT_TRIGGER_ALL_ELEMENTS)
         return CYHAL_DMA_RSLT_ERR_INVALID_PARAMETER;
 
-    Cy_DMAC_Channel_Disable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
-
     // There is no option to totally disable. Just reset to default.
-    obj->descriptor.dmac.ctl &= ~DMAC_CH_V2_DESCR_CTL_TR_OUT_TYPE_Msk;
-    obj->descriptor.dmac.ctl |= _VAL2FLD(DMAC_CH_V2_DESCR_CTL_TR_OUT_TYPE, _cyhal_dma_dmac_default_descriptor_config.triggerOutType);
+    _cyhal_dmac_channel_disable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
 
-    Cy_DMAC_Channel_Enable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
+    obj->descriptor.dmac.ctl &= ~_CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE_Msk;
+    obj->descriptor.dmac.ctl |= _VAL2FLD(_CYHAL_DMAC_CH_DESCR_CTL_TR_OUT_TYPE, _cyhal_dma_dmac_default_descriptor_config.triggerOutType);
+
+    _cyhal_dmac_channel_enable(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num);
 
     return CY_RSLT_SUCCESS;
 
@@ -815,6 +1011,7 @@ cy_rslt_t _cyhal_dma_dmac_connect_digital(cyhal_dma_t *obj, cyhal_source_t sourc
     Cy_DMAC_Channel_SetCurrentDescriptor(_cyhal_dma_dmac_get_base(obj->resource.block_num), obj->resource.channel_num, obj->descriptor);
 
     cyhal_dest_t dest = (cyhal_dest_t)(CYHAL_TRIGGER_CPUSS_DMAC0_TR_IN0 + obj->resource.channel_num);
+
 
     return _cyhal_connect_signal(source, dest);
 }

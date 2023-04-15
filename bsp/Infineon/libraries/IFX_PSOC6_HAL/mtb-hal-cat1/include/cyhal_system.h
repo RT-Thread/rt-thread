@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -86,6 +86,12 @@ extern "C" {
 /** Functionality not supported on the current platform */
 #define CYHAL_SYSTEM_RSLT_ERR_NOT_SUPPORTED           \
     (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_SYSTEM, 0))
+/** Incorrect argument passed into a function */
+#define CYHAL_SYSTEM_RSLT_BAD_ARGUMENT           \
+    (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_SYSTEM, 1))
+/** Failed to reset the device */
+#define CYHAL_SYSTEM_RSLT_FAILED_RESET           \
+    (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_SYSTEM, 2))
 
 /**
  * \}
@@ -171,7 +177,16 @@ cyhal_reset_reason_t cyhal_system_get_reset_reason(void);
  */
 void cyhal_system_clear_reset_reason(void);
 
-/** Registers the specified handler as the callback function for the specififed irq_num with the
+/** Resets the device
+ *
+ * The mechanism used to reset the device is implementation-specific and the reset
+ * behavior differs between devices.
+ *
+ * @return This function does not return if successful. Otherwise an error is returned.
+ */
+cy_rslt_t cyhal_system_reset_device(void);
+
+/** Registers the specified handler as the callback function for the specified irq_num with the
  * given priority. For devices that mux interrupt sources into mcu interrupts, the irq_src defines
  * the source of the interrupt.
  *

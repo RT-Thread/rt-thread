@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_smif_memslot.h
-* \version 2.30
+* \version 2.40
 *
 * \brief
 *  This file provides the constants and parameter values for the memory-level
@@ -10,7 +10,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2016-2021 Cypress Semiconductor Corporation
+* Copyright 2016-2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -104,7 +104,7 @@ extern "C" {
 */
 #define CY_SMIF_FLAG_SMIF_REV_3      (16U)
 
-/** Continous transfer merge enable.
+/** Continuous transfer merge enable.
 * This skips the overhead (command, address, mode, dummy cycles) for a continuous
 * (linear sequential) transfer. */
 #define CY_SMIF_FLAG_MERGE_ENABLE     (32U)
@@ -154,6 +154,8 @@ extern "C" {
 #define CY_SMIF_WRITE_STATUS_REG2_T2_CMD            (0x31U)                 /**< The write status register 2 type 2 command */
 #define CY_SMIF_READ_STATUS_REG2_T2_CMD             (0x3FU)                 /**< The read status register 2 type 2 command */
 #define CY_SMIF_CHIP_ERASE_CMD                      (0x60U)                 /**< The Chip Erase command */
+#define CY_SMIF_POWER_DOWN_CMD                      (0xB9U)                 /**< The Power-down command */
+#define CY_SMIF_RELEASE_POWER_DOWN_CMD              (0xABU)                 /**< The Release Power-down command */
 #define CY_SMIF_QE_BIT_STATUS_REG2_T1               (0x02U)                 /**< The QE bit is in status register 2 type 1.
                                                                             * It should be written as the second byte.
                                                                             */
@@ -229,6 +231,7 @@ extern "C" {
 #define CY_SMIF_SFDP_BFPT_BYTE_28                   (0x28U)                 /**< The byte 0x28 of the JEDEC Basic Flash Parameter Table */
 #define CY_SMIF_SFDP_BFPT_BYTE_3A                   (0x3AU)                 /**< The byte 0x3A of the JEDEC Basic Flash Parameter Table */
 #define CY_SMIF_SFDP_BFPT_BYTE_3C                   (0x3CU)                 /**< The byte 0x3C of the JEDEC Basic Flash Parameter Table */
+#define CY_SMIF_SFDP_BFPT_BYTE_3F                   (0x3FU)                 /**< The byte 0x3F of the JEDEC Basic Flash Parameter Table */
 #define CY_SMIF_SFDP_BFPT_BYTE_40                   (0x40U)                 /**< The byte 0x40 of the JEDEC Basic Flash Parameter Table */
 #define CY_SMIF_SFDP_BFPT_BYTE_41                   (0x41U)                 /**< The byte 0x41 of the JEDEC Basic Flash Parameter Table */
 #define CY_SMIF_SFDP_BFPT_BYTE_42                   (0x42U)                 /**< The byte 0x42 of the JEDEC Basic Flash Parameter Table */
@@ -351,6 +354,7 @@ extern "C" {
 #define CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_WR_EN_B7 (2U)                      /**< Issue write enable instruction followed with 0xB7 */
 #define CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_ALWAYS_4_BYTE (0x40U)              /**< Memory always operates in 4-byte mode */
 #define CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_B7_CMD (0xB7U)                     /**< The instruction required to enter 4-byte addressing mode */
+#define CY_SMIF_SFDP_ENTER_4_BYTE_METHOD_SUPPORTED_MASK (0x7FU)              /**< Mask indicating 4-byte address mode entry supported */
 
 /* ----------------------------  17th DWORD  --------------------------- */
 #define CY_SMIF_SFDP_FAST_READ_1_1_8_Pos            (0UL)                  /**< The SFDP 1-1-8 fast read support (Bitfield 24:31)               */
@@ -608,7 +612,7 @@ typedef struct
     uint32_t dualQuadSlots;
     cy_stc_smif_mem_device_cfg_t* deviceCfg;   /**< The configuration of the device */
 #if(CY_IP_MXSMIF_VERSION>=2)
-    /** Continous transfer merge timeout.
+    /** Continuous transfer merge timeout.
      * After this period the memory device is deselected. A later transfer, even from a
      * continuous address, starts with the overhead phases (command, address, mode, dummy cycles).
      * This configuration parameter is available for CAT1B, CAT1C and CAT1D devices. */
@@ -724,6 +728,13 @@ cy_en_smif_status_t Cy_SMIF_MemLocateHybridRegion(cy_stc_smif_mem_config_t const
                                                cy_stc_smif_hybrid_region_info_t** regionInfo, uint32_t address);
 void Cy_SMIF_SetReadyPollingDelay(uint16_t pollTimeoutUs,
                                   cy_stc_smif_context_t *context);
+cy_en_smif_status_t Cy_SMIF_MemCmdPowerDown(SMIF_Type *base,
+                                    cy_stc_smif_mem_config_t const *memDevice,
+                                    cy_stc_smif_context_t const *context);
+
+cy_en_smif_status_t Cy_SMIF_MemCmdReleasePowerDown(SMIF_Type *base,
+                                    cy_stc_smif_mem_config_t const *memDevice,
+                                    cy_stc_smif_context_t const *context);
 
 /** \} group_smif_mem_slot_functions */
 

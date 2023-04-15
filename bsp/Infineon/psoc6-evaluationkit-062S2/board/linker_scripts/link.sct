@@ -4,7 +4,7 @@
 
 ;*******************************************************************************
 ;* \file cy8c6xxa_cm4_dual.sct
-;* \version 2.91
+;* \version 2.95.1
 ;*
 ;* Linker file for the ARMCC.
 ;*
@@ -63,7 +63,7 @@
 
 ; By default, the COMPONENT_CM0P_SLEEP prebuilt image is used for the CM0p core.
 ; More about CM0+ prebuilt images, see here:
-; https://github.com/cypresssemiconductorco/psoc6cm0p
+; https://github.com/Infineon/psoc6cm0p
 ; The size of the Cortex-M0+ application flash image
 #define FLASH_CM0P_SIZE         0x2000
 
@@ -144,6 +144,7 @@ LR_IROM1 (FLASH_START + FLASH_CM0P_SIZE) (FLASH_SIZE - FLASH_CM0P_SIZE)
     RW_IRAM1 +0 UNINIT
     {
         * (.noinit)
+        * (.bss.noinit)
     }
 
     ; Application heap area (HEAP)

@@ -1,6 +1,6 @@
 /***************************************************************************//**
-* \file cy_crypto_core_ecc.h
-* \version 2.50
+* \file cy_crypto_core_ecc_nist_p.c
+* \version 2.70
 *
 * \brief
 *  This file provides Elliptic Curve (EC) Scalar Multiplication using (X,Y)-only,
@@ -34,6 +34,8 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+#if defined (CY_CRYPTO_CFG_ECP_C)
 
 #include "cy_crypto_core_vu.h"
 
@@ -73,16 +75,30 @@ static cy_en_crypto_ecc_red_mul_algs_t mul_red_alg_select = CY_CRYPTO_NIST_P_BAR
 *           reduction based on Mersenne prime reduction approach
 * Method 3: generic Barrett reduction
 ***************************************************************/
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
 static void Cy_Crypto_Core_EC_CS_MUL_Red_P192(CRYPTO_Type *base, uint32_t z, uint32_t x);
-static void Cy_Crypto_Core_EC_CS_MUL_Red_P224(CRYPTO_Type *base, uint32_t z, uint32_t x);
-static void Cy_Crypto_Core_EC_CS_MUL_Red_P256(CRYPTO_Type *base, uint32_t z, uint32_t x);
-static void Cy_Crypto_Core_EC_CS_MUL_Red_P384(CRYPTO_Type *base, uint32_t z, uint32_t x);
-static void Cy_Crypto_Core_EC_CS_MUL_Red_P521(CRYPTO_Type *base, uint32_t z, uint32_t x);
 static void Cy_Crypto_Core_EC_SM_MUL_Red_P192(CRYPTO_Type *base, uint32_t z, uint32_t x);
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
+
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
+static void Cy_Crypto_Core_EC_CS_MUL_Red_P224(CRYPTO_Type *base, uint32_t z, uint32_t x);
 static void Cy_Crypto_Core_EC_SM_MUL_Red_P224(CRYPTO_Type *base, uint32_t z, uint32_t x);
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
+
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
+static void Cy_Crypto_Core_EC_CS_MUL_Red_P256(CRYPTO_Type *base, uint32_t z, uint32_t x);
 static void Cy_Crypto_Core_EC_SM_MUL_Red_P256(CRYPTO_Type *base, uint32_t z, uint32_t x);
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
+
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
+static void Cy_Crypto_Core_EC_CS_MUL_Red_P384(CRYPTO_Type *base, uint32_t z, uint32_t x);
 static void Cy_Crypto_Core_EC_SM_MUL_Red_P384(CRYPTO_Type *base, uint32_t z, uint32_t x);
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
+
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
+static void Cy_Crypto_Core_EC_CS_MUL_Red_P521(CRYPTO_Type *base, uint32_t z, uint32_t x);
 static void Cy_Crypto_Core_EC_SM_MUL_Red_P521(CRYPTO_Type *base, uint32_t z, uint32_t x);
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
 
 static void Cy_Crypto_Core_EC_CS_MulRed(CRYPTO_Type *base, uint32_t z, uint32_t x, uint32_t size);
 static void Cy_Crypto_Core_EC_SM_MulRed(CRYPTO_Type *base, uint32_t z, uint32_t x, uint32_t size);
@@ -93,7 +109,7 @@ static void Cy_Crypto_Core_EC_MulRed(CRYPTO_Type *base, uint32_t z, uint32_t x, 
 *    Curve-specific multiplication reduction algorithms
 ***************************************************************/
 
-
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_CS_MUL_Red_P192
 ****************************************************************************//**
@@ -163,8 +179,10 @@ static void Cy_Crypto_Core_EC_CS_MUL_Red_P192(CRYPTO_Type *base, uint32_t z, uin
    CY_CRYPTO_VU_FREE_MEM (base, CY_CRYPTO_VU_REG_BIT(t1) | CY_CRYPTO_VU_REG_BIT(t2));
    CY_CRYPTO_VU_POP_REG (base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_CS_MUL_Red_P224
 ****************************************************************************//**
@@ -234,8 +252,10 @@ static void Cy_Crypto_Core_EC_CS_MUL_Red_P224(CRYPTO_Type *base, uint32_t z, uin
 
    CY_CRYPTO_VU_POP_REG (base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_CS_MUL_Red_P256
 ****************************************************************************//**
@@ -425,8 +445,10 @@ static void Cy_Crypto_Core_EC_CS_MUL_Red_P256(CRYPTO_Type *base, uint32_t z, uin
                                  CY_CRYPTO_VU_REG_BIT(t2) | CY_CRYPTO_VU_REG_BIT(t3) | CY_CRYPTO_VU_REG_BIT(t4));
     CY_CRYPTO_VU_POP_REG (base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_CS_MUL_Red_P384
 ****************************************************************************//**
@@ -572,8 +594,10 @@ static void Cy_Crypto_Core_EC_CS_MUL_Red_P384(CRYPTO_Type *base, uint32_t z, uin
     CY_CRYPTO_VU_FREE_MEM (base, CY_CRYPTO_VU_REG_BIT(t0) | CY_CRYPTO_VU_REG_BIT(t1) | CY_CRYPTO_VU_REG_BIT(t2));
     CY_CRYPTO_VU_POP_REG (base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_CS_MUL_Red_P521
 ****************************************************************************//**
@@ -624,6 +648,7 @@ static void Cy_Crypto_Core_EC_CS_MUL_Red_P521(CRYPTO_Type *base, uint32_t z, uin
 
     CY_CRYPTO_VU_POP_REG (base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
 
 
 /*******************************************************************************
@@ -649,21 +674,31 @@ static void Cy_Crypto_Core_EC_CS_MulRed(CRYPTO_Type *base, uint32_t z, uint32_t 
 
     switch (eccMode)
     {
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP192R1:
             Cy_Crypto_Core_EC_CS_MUL_Red_P192(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP224R1:
             Cy_Crypto_Core_EC_CS_MUL_Red_P224(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP256R1:
             Cy_Crypto_Core_EC_CS_MUL_Red_P256(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP384R1:
             Cy_Crypto_Core_EC_CS_MUL_Red_P384(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP521R1:
             Cy_Crypto_Core_EC_CS_MUL_Red_P521(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
         default:
         /* Unsupported Eliptic Curve ID */
             break;
@@ -676,8 +711,9 @@ static void Cy_Crypto_Core_EC_CS_MulRed(CRYPTO_Type *base, uint32_t z, uint32_t 
 **********************************************************************/
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
 /*******************************************************************************
-* Function Name: Cy_Crypto_Core_EC_CS_MUL_Red_P224
+* Function Name: Cy_Crypto_Core_EC_SM_MUL_Red_P192
 ****************************************************************************//**
 *
 * Shift-multiply multiplication modular reduction for P192.
@@ -743,8 +779,10 @@ static void Cy_Crypto_Core_EC_SM_MUL_Red_P192(CRYPTO_Type *base, uint32_t z, uin
    CY_CRYPTO_VU_FREE_MEM (base, CY_CRYPTO_VU_REG_BIT(partial) | CY_CRYPTO_VU_REG_BIT(hi));
    CY_CRYPTO_VU_POP_REG (base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_SM_MUL_Red_P224
 ****************************************************************************//**
@@ -813,8 +851,10 @@ static void Cy_Crypto_Core_EC_SM_MUL_Red_P224(CRYPTO_Type *base, uint32_t z, uin
     CY_CRYPTO_VU_FREE_MEM (base, CY_CRYPTO_VU_REG_BIT(partial) | CY_CRYPTO_VU_REG_BIT(hi));
     CY_CRYPTO_VU_POP_REG (base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_SM_MUL_Red_P256
 ****************************************************************************//**
@@ -864,74 +904,84 @@ static void Cy_Crypto_Core_EC_SM_MUL_Red_P256(CRYPTO_Type *base, uint32_t z, uin
 
     Cy_Crypto_Core_Vu_SetMemValue (base, coeff, P256_ShMul_COEFF, 224u);
 
-    /* Step 2: 1st round of shift-multiply
-     * (Separate hi and lo (LSR hi>>CURVE_SIZE), multiply hi*c and add hi*coeff + lo)
-     * hi*coeff + lo
+    /* Step 2: 1st round of shift-multiply:
+     * - separate hi and lo (LSR hi >> CURVE_SIZE),
+     * - multiply hi * coeff,
+     * - add hi * coeff + lo
      */
-    CY_CRYPTO_VU_LSR (base, hi, my_x, sh256);           /* hi = prod >> CURVE_SIZE = prod[511:256] */
-    CY_CRYPTO_VU_MOV (base, my_z, my_x);                /* z == lo = prod[255:0] */
+    CY_CRYPTO_VU_LSR  (base, hi, my_x, sh256);           /* hi = prod >> CURVE_SIZE = prod[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, my_x);                /* z == lo = prod[255:0] */
 
-    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);       /* partial = hi*coeff */
-
-    CY_CRYPTO_VU_ADD (base, partial, partial, my_z);    /* partial = hi*coeff + lo */
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, partial, partial, my_z);    /* partial = hi * coeff + lo */
 
     /* Step 3: 2nd round of shift-multiply */
-    CY_CRYPTO_VU_LSR (base, hi, partial, sh256);        /* hi = partial>>CURVE_SIZE = partial[511:256] */
-    CY_CRYPTO_VU_MOV (base, my_z, partial);             /* z == lo = partial[255:0] */
-    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);       /* partial = hi*coeff */
-    CY_CRYPTO_VU_ADD (base, partial, partial, my_z);    /* z = hi*coeff + lo */
+    CY_CRYPTO_VU_LSR  (base, hi, partial, sh256);        /* hi = partial >> CURVE_SIZE = partial[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, partial);             /* z == lo = partial[255:0] */
+
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, partial, partial, my_z);    /* z = hi * coeff + lo  */
 
     /* Step 4: 3rd round of shift-multiply */
-    CY_CRYPTO_VU_LSR (base, hi, partial, sh256);        /* hi = partial>>CURVE_SIZE = partial[511:256] */
-    CY_CRYPTO_VU_MOV (base, my_z, partial);             /* z == lo = partial[255:0] */
+    CY_CRYPTO_VU_LSR  (base, hi, partial, sh256);        /* hi = partial >> CURVE_SIZE = partial[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, partial);             /* z == lo = partial[255:0] */
 
-    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);       /* partial = hi*coeff */
-    CY_CRYPTO_VU_ADD (base, partial, partial, my_z);    /* z = hi*coeff + lo */
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, partial, partial, my_z);    /* z = hi * coeff + lo  */
 
     /* Step 5: 4th round of shift-multiply */
-    CY_CRYPTO_VU_LSR (base, hi, partial, sh256);        /* hi = partial>>CURVE_SIZE = partial[511:256] */
-    CY_CRYPTO_VU_MOV (base, my_z, partial);             /* z == lo = partial[255:0] */
+    CY_CRYPTO_VU_LSR  (base, hi, partial, sh256);        /* hi = partial >> CURVE_SIZE = partial[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, partial);             /* z == lo = partial[255:0] */
 
-    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);       /* partial = hi*coeff */
-    CY_CRYPTO_VU_ADD (base, partial, partial, my_z);    /* z = hi*coeff + lo */
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, partial, partial, my_z);    /* z = hi * coeff + lo  */
 
     /* Step 6: 5th round of shift-multiply */
-    CY_CRYPTO_VU_LSR (base, hi, partial, sh256);        /* hi = partial>>CURVE_SIZE = partial[511:256] */
-    CY_CRYPTO_VU_MOV (base, my_z, partial);             /* z == lo = partial[255:0] */
+    CY_CRYPTO_VU_LSR  (base, hi, partial, sh256);        /* hi = partial >> CURVE_SIZE = partial[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, partial);             /* z == lo = partial[255:0] */
 
-    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);       /* partial = hi*coeff */
-    CY_CRYPTO_VU_ADD (base, partial, partial, my_z);    /* z = hi*coeff + lo */
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, partial, partial, my_z);    /* z = hi * coeff + lo  */
 
     /* Step 7: 6th round of shift-multiply */
-    CY_CRYPTO_VU_LSR (base, hi, partial, sh256);        /* hi = partial>>CURVE_SIZE = partial[511:256] */
-    CY_CRYPTO_VU_MOV (base, my_z, partial);             /* z == lo = partial[255:0] */
+    CY_CRYPTO_VU_LSR  (base, hi, partial, sh256);        /* hi = partial >> CURVE_SIZE = partial[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, partial);             /* z == lo = partial[255:0] */
 
-    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);       /* partial = hi*coeff */
-    CY_CRYPTO_VU_ADD (base, partial, partial, my_z);    /* z = hi*coeff + lo */
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, partial, partial, my_z);    /* z = hi * coeff + lo  */
 
     /* Step 8: 7th round of shift-multiply */
-    CY_CRYPTO_VU_LSR (base, hi, partial, sh256);        /* hi = partial>>CURVE_SIZE = partial[511:256] */
-    CY_CRYPTO_VU_MOV (base, my_z, partial);             /* z == lo = partial[255:0] */
+    CY_CRYPTO_VU_LSR  (base, hi, partial, sh256);        /* hi = partial >> CURVE_SIZE = partial[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, partial);             /* z == lo = partial[255:0] */
 
-    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);       /* partial = hi*coeff */
-    CY_CRYPTO_VU_ADD (base, partial, partial, my_z);    /* z = hi*coeff + lo */
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, partial, partial, my_z);    /* z = hi * coeff + lo  */
 
     /* Step 9: 8th round of shift-multiply */
-    CY_CRYPTO_VU_LSR (base, hi, partial, sh256);        /* hi = partial>>CURVE_SIZE = partial[511:256] */
-    CY_CRYPTO_VU_MOV (base, my_z, partial);             /* z == lo = partial[255:0] */
+    CY_CRYPTO_VU_LSR  (base, hi, partial, sh256);        /* hi = partial >> CURVE_SIZE = partial[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, partial);             /* z == lo = partial[255:0] */
 
-    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);       /* partial = hi*coeff */
-    CY_CRYPTO_VU_ADD (base, my_z, partial, my_z);       /* z = hi*coeff + lo */
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, partial, partial, my_z);    /* z = hi * coeff + lo  */
+
+    /* Step 10: 9th round of shift-multiply */
+    CY_CRYPTO_VU_LSR  (base, hi, partial, sh256);        /* hi = partial >> CURVE_SIZE = partial[511:256] */
+    CY_CRYPTO_VU_MOV  (base, my_z, partial);             /* z == lo = partial[255:0] */
+
+    CY_CRYPTO_VU_UMUL (base, partial, hi, coeff);        /* partial = hi * coeff */
+    CY_CRYPTO_VU_ADD  (base, my_z, partial, my_z);       /* z = hi * coeff + lo  */
 
     /* Step 11: Final reduction (compare to P-256 and reduce if necessary, based on CARRY flag) */
-    CY_CRYPTO_VU_CMP_SUB (base, my_z, VR_P);            /* C = (z >= VR_P) */
-    CY_CRYPTO_VU_COND_SUB(base, CY_CRYPTO_VU_COND_CS, my_z, my_z, VR_P);
+    CY_CRYPTO_VU_CMP_SUB  (base, my_z, VR_P);            /* C = (z >= VR_P) */
+    CY_CRYPTO_VU_COND_SUB (base, CY_CRYPTO_VU_COND_CS, my_z, my_z, VR_P);
 
     CY_CRYPTO_VU_FREE_MEM(base, CY_CRYPTO_VU_REG_BIT(partial) | CY_CRYPTO_VU_REG_BIT(hi) | CY_CRYPTO_VU_REG_BIT(coeff));
     CY_CRYPTO_VU_POP_REG(base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_SM_MUL_Red_P384
 ****************************************************************************//**
@@ -1006,8 +1056,10 @@ static void Cy_Crypto_Core_EC_SM_MUL_Red_P384(CRYPTO_Type *base, uint32_t z, uin
     CY_CRYPTO_VU_FREE_MEM (base, CY_CRYPTO_VU_REG_BIT(partial) | CY_CRYPTO_VU_REG_BIT(hi) | CY_CRYPTO_VU_REG_BIT(coeff));
     CY_CRYPTO_VU_POP_REG (base);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_EC_SM_MUL_Red_P521
 ****************************************************************************//**
@@ -1056,8 +1108,8 @@ static void Cy_Crypto_Core_EC_SM_MUL_Red_P521(CRYPTO_Type *base, uint32_t z, uin
 
     CY_CRYPTO_VU_FREE_MEM (base, CY_CRYPTO_VU_REG_BIT(t0));
     CY_CRYPTO_VU_POP_REG (base);
-
 }
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
 
 
 /*******************************************************************************
@@ -1083,22 +1135,33 @@ static void Cy_Crypto_Core_EC_SM_MulRed(CRYPTO_Type *base, uint32_t z, uint32_t 
 {
     (void)size; /* Suppress warning */
 
-    switch (eccMode) {
+    switch (eccMode)
+    {
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP192R1:
             Cy_Crypto_Core_EC_SM_MUL_Red_P192(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP224R1:
             Cy_Crypto_Core_EC_SM_MUL_Red_P224(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP256R1:
             Cy_Crypto_Core_EC_SM_MUL_Red_P256(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP384R1:
             Cy_Crypto_Core_EC_SM_MUL_Red_P384(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
+    #if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
         case CY_CRYPTO_ECC_ECP_SECP521R1:
             Cy_Crypto_Core_EC_SM_MUL_Red_P521(base, z, x);
             break;
+    #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
         default:
         /* Unsupported Eliptic Curve ID */
             break;
@@ -1115,7 +1178,7 @@ static void Cy_Crypto_Core_EC_SM_MulRed(CRYPTO_Type *base, uint32_t z, uint32_t 
 * Function Name: Cy_Crypto_Core_EC_Bar_MulRed
 ****************************************************************************//**
 *
-* Curve-specific multiplication modular reduction for P224.
+* Barrett multiplication modular reduction.
 * t[b-1:0] = z_double >> size
 * t = t * VR_BARRETT
 * t = t + ((z_double >> size) << size)  - for leading '1' Barrett bit.
@@ -1354,7 +1417,7 @@ void Cy_Crypto_Core_EC_SubMod( CRYPTO_Type *base, uint32_t z, uint32_t a, uint32
 * The pointer to a Crypto instance.
 *
 * \param z
-* Result = a / 2 % mod.Register index for result value.
+* Result = a / 2 % mod. Register index for result value.
 *
 * \param a
 * Register index for value to be halved.
@@ -1830,16 +1893,17 @@ void Cy_Crypto_Core_JacobianEcScalarMul(CRYPTO_Type *base, uint32_t s_x, uint32_
     /* Affine-to-Jacobian Transform. */
     CY_CRYPTO_VU_SET_TO_ONE (base, my_s_z);
 
-    /* EC scalar multiplication (irregular) */
-    /* Operation. */
+    /* EC scalar multiplication (irregular) operation. */
     CY_CRYPTO_VU_SET_TO_ZERO (base, clr);
     CY_CRYPTO_VU_CLSAME (base, t, my_d, clr);
 
-    CY_CRYPTO_VU_LSL (base, my_d, my_d, t); /* Get rid of leading '0's */
+    /* This is needed, otherwise clsame is wrong */
+    Cy_Crypto_Core_Vu_WaitForComplete(base);
 
     clsame = Cy_Crypto_Core_Vu_RegDataPtrRead (base, t);
 
-    CY_CRYPTO_VU_LSL1 (base, my_d, my_d); /* Get rid of leading '1' */
+    CY_CRYPTO_VU_LSL  (base, my_d, my_d, t); /* Get rid of leading '0's */
+    CY_CRYPTO_VU_LSL1 (base, my_d, my_d);    /* Get rid of leading '1' */
 
     /* Binary left-to-right algorithm
     * Perform point addition and point doubling to implement scalar multiplication
@@ -1896,21 +1960,31 @@ void Cy_Crypto_Core_EC_NistP_SetMode(uint32_t bitsize)
 {
     switch (bitsize)
     {
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
         case CY_CRYPTO_ECC_P192_SIZE:
             eccMode = CY_CRYPTO_ECC_ECP_SECP192R1;
             break;
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
         case CY_CRYPTO_ECC_P224_SIZE:
             eccMode = CY_CRYPTO_ECC_ECP_SECP224R1;
             break;
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
         case CY_CRYPTO_ECC_P256_SIZE:
             eccMode = CY_CRYPTO_ECC_ECP_SECP256R1;
             break;
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
         case CY_CRYPTO_ECC_P384_SIZE:
             eccMode = CY_CRYPTO_ECC_ECP_SECP384R1;
             break;
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
         case CY_CRYPTO_ECC_P521_SIZE:
             eccMode = CY_CRYPTO_ECC_ECP_SECP521R1;
             break;
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
         default:
             eccMode = CY_CRYPTO_ECC_ECP_NONE;
             break;
@@ -1926,7 +2000,7 @@ void Cy_Crypto_Core_EC_NistP_SetMode(uint32_t bitsize)
 *
 * \param alg
 * one of {CURVE_SPECIFIC_RED_ALG, SHIFT_MUL_RED_ALG, BARRETT_RED_ALG}.
-* See cy_en_crypto_ecc_red_mul_algs_t.
+* See \ref cy_en_crypto_ecc_red_mul_algs_t.
 *
 *******************************************************************************/
 void Cy_Crypto_Core_EC_NistP_SetRedAlg(cy_en_crypto_ecc_red_mul_algs_t alg)
@@ -2040,6 +2114,12 @@ cy_en_crypto_status_t Cy_Crypto_Core_EC_NistP_PointMultiplication(CRYPTO_Type *b
 
         if ((NULL != ecpGX) && (NULL != ecpGY) && (NULL != ecpD) && (NULL != ecpQX) && (NULL != ecpQY))
         {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+            /* Flush the cache */
+            SCB_CleanDCache_by_Addr((volatile void *)ecpGX, (int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(bitsize));
+            SCB_CleanDCache_by_Addr((volatile void *)ecpGY, (int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(bitsize));
+            SCB_CleanDCache_by_Addr((volatile void *)ecpD, (int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(bitsize));
+#endif
             /* Public parameters and characteristics of elliptic curve */
             CY_CRYPTO_VU_ALLOC_MEM (base, VR_D, bitsize);        /* Scalar factor */
             CY_CRYPTO_VU_ALLOC_MEM (base, VR_S_X, bitsize);
@@ -2063,7 +2143,10 @@ cy_en_crypto_status_t Cy_Crypto_Core_EC_NistP_PointMultiplication(CRYPTO_Type *b
             /* Get result P = (X,Y) = d.G from EC scalar multiplication */
             Cy_Crypto_Core_Vu_GetMemValue (base, ecpQX, VR_S_X, bitsize);
             Cy_Crypto_Core_Vu_GetMemValue (base, ecpQY, VR_S_Y, bitsize);
-
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+            SCB_InvalidateDCache_by_Addr(ecpQX, (int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(bitsize));
+            SCB_InvalidateDCache_by_Addr(ecpQY, (int32_t)CY_CRYPTO_BYTE_SIZE_OF_BITS(bitsize));
+#endif
             /* Free memory */
             CY_CRYPTO_VU_FREE_MEM (base,
                                     CY_CRYPTO_VU_REG_BIT(VR_ORDER) |
@@ -2079,6 +2162,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_EC_NistP_PointMultiplication(CRYPTO_Type *b
 
     return myStatus;
 }
+
+#endif /* defined (CY_CRYPTO_CFG_ECP_C) */
 
 #if defined(__cplusplus)
 }

@@ -6,7 +6,7 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -28,9 +28,7 @@
 
 #include "cy_result.h"
 #include "cybsp_types.h"
-#if defined(CYBSP_WIFI_CAPABLE) && defined(CY_USING_HAL)
-#include "cyhal_sdio.h"
-#endif
+#include "cybsp_hw_config.h"
 #if defined(COMPONENT_WICED_BLE) || defined(COMPONENT_WICED_DUALMODE)
 #include "cybsp_bt_config.h"
 #endif
@@ -64,18 +62,6 @@ extern "C" {
  *          to the hardware module that had a problem.
  */
 cy_rslt_t cybsp_init(void);
-
-#if defined(CYBSP_WIFI_CAPABLE) && defined(CY_USING_HAL)
-
-#define CYBSP_WIFI_INTERFACE_TYPE        CYBSP_SDIO_INTERFACE
-
-/**
- * \brief Get the initialized sdio object used for communicating with the WiFi Chip.
- * \note This function should only be called after cybsp_init();
- * \returns The initialized sdio object.
- */
-cyhal_sdio_t* cybsp_get_wifi_sdio_obj(void);
-#endif // defined(CYBSP_WIFI_CAPABLE)
 
 #if defined(CYBSP_CUSTOM_SYSCLK_PM_CALLBACK)
 //--------------------------------------------------------------------------------------------------

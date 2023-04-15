@@ -1902,6 +1902,8 @@ const rt_uint8_t __lowest_bit_bitmap[] =
  * Bits are numbered starting at 1 (the least significant bit).  A return value of
  * zero from any of these functions means that the argument was zero.
  *
+ * @param value is the value to find the first bit set in.
+ *
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
@@ -1936,6 +1938,8 @@ const rt_uint8_t __lowest_bit_bitmap[] =
  *
  * Bits are numbered starting at 1 (the least significant bit).  A return value of
  * zero from any of these functions means that the argument was zero.
+ *
+ * @param value is the value to find the first bit set in.
  *
  * @return Return the index of the first bit set. If value is 0, then this function
  *         shall return 0.

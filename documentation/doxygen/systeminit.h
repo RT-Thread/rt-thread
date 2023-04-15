@@ -7,7 +7,7 @@
  *
  * @brief System initialization procedure.
  *
- * When RT-Thread operating system starts up, the basic operating system facility 
+ * When RT-Thread operating system starts up, the basic operating system facility
  * initialization routines must be invoked.
  *
  * The suggested initialization sequence is:
@@ -55,19 +55,9 @@
  * has not started. User can allocate memory, create thread, semaphore etc. However,
  * user shall not suspend 'current' thread.
  */
-void rt_application_init()
-{
-}
+void rt_application_init();
 
 /**
  * @ingroup SystemInit
- *
- * This function will initialize system heap memory.
- *
- * @param begin_addr the beginning address of system heap memory.
- * @param end_addr the end address of system heap memory.
- *
  */
-void rt_system_heap_init(void* begin_addr, void* end_addr)
-{
-}
+void rt_system_heap_init(void* begin_addr, void* end_addr);

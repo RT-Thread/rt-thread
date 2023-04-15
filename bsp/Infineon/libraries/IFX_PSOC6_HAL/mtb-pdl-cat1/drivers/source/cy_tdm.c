@@ -111,7 +111,7 @@ cy_en_tdm_status_t Cy_AudioTDM_TX_Init( TDM_TX_STRUCT_Type * base, cy_stc_tdm_co
     CY_ASSERT_L2(CY_TDM_IS_CHANNEL_SIZE_VALID(channelSIZE));
     CY_ASSERT_L2(CY_I2S_TDM_IS_INPUT_SIGNAL_MODE_VALID(config->signalInput));
 
-    /* Channnel Default */
+    /* Channel Default */
     if((bool)(TDM_STRUCT_TX_CTL(base) & TDM_TDM_STRUCT_TDM_TX_STRUCT_TX_CTL_ENABLED_Msk))
     {
         ret = CY_TDM_BAD_PARAM;

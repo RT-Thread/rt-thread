@@ -120,7 +120,7 @@ void Slider_Init(void)
     /* Initiate first scan */
     Cy_CapSense_ScanAllWidgets(&cy_capsense_context);
 
-    trans_done_semphr = rt_sem_create("slider_sem", 1, RT_IPC_FLAG_PRIO);
+    trans_done_semphr = rt_sem_create("slider_sem", 0, RT_IPC_FLAG_PRIO);
     if (trans_done_semphr == RT_NULL)
     {
         rt_kprintf("create transform done semphr failed.\n");

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_aes_v1.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constant and parameters for the API for the AES method
@@ -31,13 +31,13 @@
 
 #include "cy_crypto_common.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO) && defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C)
 
 void Cy_Crypto_Core_V1_Aes_ProcessBlock(CRYPTO_Type *base,
                             cy_stc_crypto_aes_state_t const *aesState,
@@ -65,6 +65,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Ecb(CRYPTO_Type *base,
                                                 uint8_t const *src,
                                                 cy_stc_crypto_aes_state_t *aesState);
 
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC)
 cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Cbc(CRYPTO_Type *base,
                                                 cy_en_crypto_dir_mode_t dirMode,
                                                 uint32_t srcSize,
@@ -72,8 +73,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Cbc(CRYPTO_Type *base,
                                                 uint8_t *dst,
                                                 uint8_t const *src,
                                                 cy_stc_crypto_aes_state_t *aesState);
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC) */
 
-
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB)
 cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Cfb(CRYPTO_Type *base,
                                                 cy_en_crypto_dir_mode_t dirMode,
                                                 uint32_t srcSize,
@@ -81,7 +83,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Cfb(CRYPTO_Type *base,
                                                 uint8_t *dst,
                                                 uint8_t const *src,
                                                 cy_stc_crypto_aes_state_t *aesState);
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB) */
 
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR)
 cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Ctr(CRYPTO_Type *base,
                                                 uint32_t srcSize,
                                                 uint32_t *srcOffset,
@@ -90,15 +94,16 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Ctr(CRYPTO_Type *base,
                                                 uint8_t *dst,
                                                 uint8_t const *src,
                                                 cy_stc_crypto_aes_state_t *aesState);
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR) */
 
 
-#endif /* #if (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_IP_MXCRYPTO) && defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
 
 #endif /* #if !defined (CY_CRYPTO_CORE_AES_V1_H) */
 

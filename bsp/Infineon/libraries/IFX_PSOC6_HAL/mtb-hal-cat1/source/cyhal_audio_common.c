@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -32,7 +32,7 @@
 #include "cyhal_hw_resources.h"
 #include "cyhal_hwmgr.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_dma.h"
 #include "cyhal_syspm.h"
 #include "cy_device.h"
@@ -227,9 +227,11 @@ typedef cy_stc_i2s_config_t _cyhal_audioss_pdl_config_t;
 #define _CYHAL_AUDIOSS_TX_SCK_MAP cyhal_pin_map_tdm_tdm_tx_sck
 #define _CYHAL_AUDIOSS_TX_WS_MAP  cyhal_pin_map_tdm_tdm_tx_fsync
 #define _CYHAL_AUDIOSS_TX_SDO_MAP cyhal_pin_map_tdm_tdm_tx_sd
+#define _CYHAL_AUDIOSS_TX_MCK_MAP cyhal_pin_map_tdm_tdm_tx_mck
 #define _CYHAL_AUDIOSS_RX_SCK_MAP cyhal_pin_map_tdm_tdm_rx_sck
 #define _CYHAL_AUDIOSS_RX_WS_MAP  cyhal_pin_map_tdm_tdm_rx_fsync
 #define _CYHAL_AUDIOSS_RX_SDI_MAP cyhal_pin_map_tdm_tdm_rx_sd
+#define _CYHAL_AUDIOSS_RX_MCK_MAP cyhal_pin_map_tdm_tdm_rx_mck
 
 #define _CYHAL_AUDIOSS_DRIVE_MODE_TX_SCK    CYHAL_PIN_MAP_DRIVE_MODE_TDM_TDM_TX_SCK
 #define _CYHAL_AUDIOSS_DRIVE_MODE_TX_WS     CYHAL_PIN_MAP_DRIVE_MODE_TDM_TDM_TX_FSYNC
@@ -250,10 +252,11 @@ static uint8_t _cyhal_audioss_length_from_pdl(cy_en_tdm_ws_t pdl_length);
 
 static TDM_Type *const _cyhal_audioss_base[] =
 {
-#if (CY_IP_MXTDM_INSTANCES == 1)
+#if defined (TDM0)
     TDM0,
-#else
-    #warning Unhandled tdm instance count
+#endif
+#if defined (TDM1)
+    TDM1,
 #endif
 };
 
@@ -268,11 +271,18 @@ static const uint8_t _cyhal_audioss_max_channels[] =
     #else
         #warning Unhandled TDM struct count
     #endif
+#elif (CY_IP_MXTDM_INSTANCES == 2)
+    #if (TDM_NR == 2)
+        TDM_NR_CH_NR,
+    #else
+        #warning Unhandled TDM struct count
+    #endif
 #else
     #warning Unhandled tdm instance count
 #endif
 };
 
+#if !defined (COMPONENT_CAT5)
 #define _CYHAL_AUDIOSS_USES_PCLK
 static const en_clk_dst_t _cyhal_audioss_clock[] =
 {
@@ -301,45 +311,79 @@ static const cyhal_source_t _cyhal_audioss_tx_trigger[] =
     #warning Unhandled tdm instance count
 #endif
 };
+#endif /* !defined (COMPONENT_CAT5) */
 
 static _cyhal_audioss_t* _cyhal_audioss_config_structs[CY_IP_MXTDM_INSTANCES];
 
+// These structures will most probably be cleaned up a bit once we have more details
+// on TDM interrupts for Hatchet1. Seems like there are no separate lines for tx and
+// rx interrupts but it will be confirmed once we have a working patch.
 static const _cyhal_system_irq_t _cyhal_audioss_tx_irq_n[] =
 {
-#if (CY_IP_MXTDM_INSTANCES == 1)
-    tdm_0_interrupts_tx_0_IRQn,
-#else
-    #warning Unhandled tdm instance count
+#if defined (TDM0)
+    #if defined(COMPONENT_CAT5)
+        tdm_0_interrupts_IRQn,
+    #else
+        tdm_0_interrupts_tx_0_IRQn,
+    #endif
+#endif
+#if defined (TDM1)
+    #if defined(COMPONENT_CAT5)
+        tdm_1_interrupts_IRQn,
+    #else
+        tdm_1_interrupts_tx_0_IRQn,
+    #endif
 #endif
 };
 
 static const _cyhal_system_irq_t _cyhal_audioss_rx_irq_n[] =
 {
-#if (CY_IP_MXTDM_INSTANCES == 1)
-    tdm_0_interrupts_rx_0_IRQn,
-#else
-    #warning Unhandled tdm instance count
+#if defined (TDM0)
+    #if defined(COMPONENT_CAT5)
+        tdm_0_interrupts_IRQn,
+    #else
+        tdm_0_interrupts_rx_0_IRQn,
+    #endif
+#endif
+#if defined (TDM1)
+    #if defined(COMPONENT_CAT5)
+        tdm_1_interrupts_IRQn,
+    #else
+        tdm_1_interrupts_rx_0_IRQn,
+    #endif
 #endif
 };
 
-static uint8_t _cyhal_audioss_get_block_from_irqn(_cyhal_system_irq_t irqn) {
-    switch (irqn)
-    {
-#if (CY_IP_MXTDM_INSTANCES == 1)
-        case tdm_0_interrupts_tx_0_IRQn:
-        case tdm_0_interrupts_rx_0_IRQn:
+static uint8_t _cyhal_audioss_get_block_from_irqn(_cyhal_system_irq_t irqn)
+{
+#if defined (TDM0)
+    #if defined (COMPONENT_CAT5)
+        if (irqn == tdm_0_interrupts_IRQn)
+    #else
+        if ((irqn == tdm_0_interrupts_tx_0_IRQn) || (irqn == tdm_0_interrupts_rx_0_IRQn))
+    #endif
             return 0;
-#else
-    #warning Unhandled tdm instance count
 #endif
-        default:
-            CY_ASSERT(false); // Should never be called with a non-TDM IRQn
-            return 0;
-    }
+#if defined (TDM1)
+    #if defined (COMPONENT_CAT5)
+        if (irqn == tdm_1_interrupts_IRQn)
+    #else
+        if ((irqn == tdm_1_interrupts_tx_0_IRQn) || (irqn == tdm_1_interrupts_rx_0_IRQn))
+    #endif
+            return 1;
+#endif
+    CY_ASSERT(false); // Should never be called with a non-TDM IRQn
+    return 0;
 }
 
+#if defined (COMPONENT_CAT5)
+static void _cyhal_audioss_irq_handler(UINT8 instance, BOOL8 rx_int);
+static void _cyhal_audioss_irq_handler_rx(_cyhal_system_irq_t irqn);
+static void _cyhal_audioss_irq_handler_tx(_cyhal_system_irq_t irqn);
+#else
 static void _cyhal_audioss_irq_handler_rx(void);
 static void _cyhal_audioss_irq_handler_tx(void);
+#endif
 typedef cy_stc_tdm_config_t _cyhal_audioss_pdl_config_t;
 
 #else
@@ -350,18 +394,19 @@ static void _cyhal_audioss_update_enabled_events(_cyhal_audioss_t* obj);
 static void _cyhal_audioss_process_event(_cyhal_audioss_t *obj, uint32_t event);
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
 static void _cyhal_audioss_update_rx_trigger_level(_cyhal_audioss_t* obj);
-#endif
+static uint32_t _cyhal_audioss_read_fifo(_cyhal_audioss_t *obj);
+#if (CYHAL_DRIVER_AVAILABLE_DMA)
+static cy_rslt_t _cyhal_audioss_dma_perform_rx(_cyhal_audioss_t *obj);
+static void _cyhal_audioss_dma_handler_rx(void *callback_arg, cyhal_dma_event_t event);
+#endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) */
 static uint32_t _cyhal_audioss_disable_events(_cyhal_audioss_t *obj, bool tx);
 static void _cyhal_audioss_restore_events(_cyhal_audioss_t *obj, bool tx, uint32_t old_events);
-#if defined(_CYHAL_AUDIOSS_RX_ENABLED)
-static cy_rslt_t _cyhal_audioss_dma_perform_rx(_cyhal_audioss_t *obj);
-#endif
+#if (CYHAL_DRIVER_AVAILABLE_DMA)
 static cy_rslt_t _cyhal_audioss_dma_perform_tx(_cyhal_audioss_t *obj);
-#if defined(_CYHAL_AUDIOSS_RX_ENABLED)
-static void _cyhal_audioss_dma_handler_rx(void *callback_arg, cyhal_dma_event_t event);
-#endif
 static void _cyhal_audioss_dma_handler_tx(void *callback_arg, cyhal_dma_event_t event);
 static uint8_t _cyhal_audioss_rounded_word_length(_cyhal_audioss_t *obj, bool is_tx);
+#endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
 static bool _cyhal_audioss_pm_callback(cyhal_syspm_callback_state_t state, cyhal_syspm_callback_mode_t mode, void* callback_arg);
 static cy_rslt_t _cyhal_audioss_populate_pdl_config(_cyhal_audioss_t *obj, _cyhal_audioss_pdl_config_t* pdl_config,
                                                     const _cyhal_audioss_config_t* hal_cfg,
@@ -370,9 +415,6 @@ static cy_rslt_t _cyhal_audioss_populate_pdl_config(_cyhal_audioss_t *obj, _cyha
 static void _cyhal_audioss_reconstruct_pdl_config(_cyhal_audioss_t *obj, _cyhal_audioss_pdl_config_t* pdl_config);
 static cy_rslt_t _cyhal_audioss_compute_sclk_div(_cyhal_audioss_t *obj, uint32_t sample_rate_hz, uint32_t mclk_hz, uint8_t channel_length, uint8_t num_channels, uint16_t *sclk_div);
 static uint32_t _cyhal_audioss_get_num_in_fifo(_cyhal_audioss_t *obj, bool is_tx);
-#if defined(_CYHAL_AUDIOSS_RX_ENABLED)
-static uint32_t _cyhal_audioss_read_fifo(_cyhal_audioss_t *obj);
-#endif
 static void _cyhal_audioss_write_fifo(_cyhal_audioss_t *obj, uint32_t value);
 
 cy_rslt_t _cyhal_audioss_init_clock(_cyhal_audioss_t *obj, const cyhal_clock_t* clk, bool all_mclk)
@@ -384,8 +426,9 @@ cy_rslt_t _cyhal_audioss_init_clock(_cyhal_audioss_t *obj, const cyhal_clock_t* 
     }
     else if (false == all_mclk) // No need to reserve a clock if we're using the mclk pin
     {
-        // The hardware is generally going to be hardwired to an hfclk, which has very limited divider options. In the event
-        // that we're hooked up a PERI divider, we don't have any particular expectations about its width - so just ask for 16-bit or larger
+        // The hardware is generally going to be hardwired to an hfclk (or equivalent dedicated clock),
+        // which has very limited divider options. In the event that we're hooked up a PERI divider,
+        // we don't have any particular expectations about its width - so just ask for 16-bit or larger
         result = _cyhal_utils_allocate_clock(&(obj->clock), &(obj->resource), CYHAL_CLOCK_BLOCK_PERIPHERAL_16BIT, true);
         if(CY_RSLT_SUCCESS == result)
         {
@@ -474,17 +517,23 @@ cy_rslt_t _cyhal_audioss_init_hw(_cyhal_audioss_t *obj, const _cyhal_audioss_pdl
         obj->pm_callback.args = (void*)obj;
         obj->pm_callback.ignore_modes = (cyhal_syspm_callback_mode_t)(CYHAL_SYSPM_BEFORE_TRANSITION | CYHAL_SYSPM_AFTER_DS_WFI_TRANSITION);
         obj->pm_transition_ready = false;
+#if (CYHAL_DRIVER_AVAILABLE_SYSPM)
         _cyhal_syspm_register_peripheral_callback(&(obj->pm_callback));
-
+#endif /*  (CYHAL_DRIVER_AVAILABLE_SYSPM) */
         _cyhal_audioss_config_structs[obj->resource.block_num] = obj;
 #if defined(CY_IP_MXAUDIOSS)
         _cyhal_irq_register(_cyhal_audioss_irq_n[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_audioss_irq_handler);
         _cyhal_irq_enable(_cyhal_audioss_irq_n[obj->resource.block_num]);
 #elif defined(CY_IP_MXTDM)
-        _cyhal_irq_register(_cyhal_audioss_rx_irq_n[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_audioss_irq_handler_rx);
+    #if defined (COMPONENT_CAT5)
+        Cy_AudioTDM_RegisterInterruptCallback(obj->base,  _cyhal_audioss_irq_handler);
+        Cy_AudioTDM_EnableInterrupt(obj->base); // Enables both TX and RX
+    #endif
+
+        _cyhal_irq_register(_cyhal_audioss_rx_irq_n[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, (cy_israddress)_cyhal_audioss_irq_handler_rx);
         _cyhal_irq_enable(_cyhal_audioss_rx_irq_n[obj->resource.block_num]);
 
-        _cyhal_irq_register(_cyhal_audioss_tx_irq_n[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_audioss_irq_handler_tx );
+        _cyhal_irq_register(_cyhal_audioss_tx_irq_n[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, (cy_israddress)_cyhal_audioss_irq_handler_tx );
         _cyhal_irq_enable(_cyhal_audioss_tx_irq_n[obj->resource.block_num]);
 #else
 #error "Unrecognized audio IP"
@@ -552,6 +601,7 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
     const cyhal_resource_pin_mapping_t *rx_ws_map  = (NULL != rx_pins) ? _CYHAL_UTILS_GET_RESOURCE(rx_pins->ws, _CYHAL_AUDIOSS_RX_WS_MAP) : NULL;
     const cyhal_resource_pin_mapping_t *rx_sdi_map = (NULL != rx_pins) ? _CYHAL_UTILS_GET_RESOURCE(rx_pins->data, _CYHAL_AUDIOSS_RX_SDI_MAP) : NULL;
 #endif
+
     const cyhal_resource_pin_mapping_t *mclk_map_rx = NULL;
     const cyhal_resource_pin_mapping_t *mclk_map_tx = NULL;
 
@@ -579,17 +629,16 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
               ? ((NULL != mclk_map_rx) ? mclk_map_rx : _CYHAL_UTILS_GET_RESOURCE(tx_pins->mclk, cyhal_pin_map_audioss_clk_i2s_if))
           : NULL;
 
-    uint8_t mclk_rx_dm = CYHAL_PIN_MAP_DRIVE_MODE_AUDIOSS_CLK_I2S_IF;
-#if defined(_CYHAL_AUDIOSS_RX_ENABLED)
     uint8_t mclk_tx_dm = CYHAL_PIN_MAP_DRIVE_MODE_AUDIOSS_CLK_I2S_IF;
+#if defined(_CYHAL_AUDIOSS_RX_ENABLED)
+    uint8_t mclk_rx_dm = CYHAL_PIN_MAP_DRIVE_MODE_AUDIOSS_CLK_I2S_IF;
 #endif
 #elif defined(CY_IP_MXTDM)
-    mclk_map_rx = (NULL != rx_pins) ? _CYHAL_UTILS_GET_RESOURCE(rx_pins->mclk, cyhal_pin_map_tdm_tdm_rx_mck) : NULL;
-    mclk_map_tx = (NULL != tx_pins) ? _CYHAL_UTILS_GET_RESOURCE(tx_pins->mclk, cyhal_pin_map_tdm_tdm_tx_mck) : NULL;
-
-    uint8_t mclk_rx_dm = CYHAL_PIN_MAP_DRIVE_MODE_TDM_TDM_RX_MCK;
+    mclk_map_rx = (NULL != rx_pins) ? _CYHAL_UTILS_GET_RESOURCE(rx_pins->mclk, _CYHAL_AUDIOSS_RX_MCK_MAP) : NULL;
+    mclk_map_tx = (NULL != tx_pins) ? _CYHAL_UTILS_GET_RESOURCE(tx_pins->mclk, _CYHAL_AUDIOSS_TX_MCK_MAP) : NULL;
+    uint8_t mclk_tx_dm = (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_TDM_TDM_TX_MCK;
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
-    uint8_t mclk_tx_dm = CYHAL_PIN_MAP_DRIVE_MODE_TDM_TDM_TX_MCK;
+    uint8_t mclk_rx_dm = (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_TDM_TDM_RX_MCK;
 #endif
 #endif
 
@@ -690,25 +739,34 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
         obj->resource.type = CYHAL_RSC_INVALID;
     }
 
+    uint8_t dm_tx_sck, dm_tx_ws;
+#if defined (COMPONENT_CAT5)
+    dm_tx_sck = (config->is_tx_slave) ? CYHAL_PIN_MAP_DRIVE_MODE_TDM_SLAVE : _CYHAL_AUDIOSS_DRIVE_MODE_TX_SCK;
+    dm_tx_ws = (config->is_tx_slave) ? CYHAL_PIN_MAP_DRIVE_MODE_TDM_SLAVE : _CYHAL_AUDIOSS_DRIVE_MODE_TX_WS;
+#else
+    dm_tx_sck = _CYHAL_AUDIOSS_DRIVE_MODE_TX_SCK;
+    dm_tx_ws = _CYHAL_AUDIOSS_DRIVE_MODE_TX_WS;
+#endif
+
     /* Reserve the pins */
     if(CY_RSLT_SUCCESS == result && NULL != tx_pins)
     {
-        result = _cyhal_utils_reserve_and_connect(tx_sck_map, _CYHAL_AUDIOSS_DRIVE_MODE_TX_SCK);
+        result = _cyhal_utils_reserve_and_connect(tx_sck_map, dm_tx_sck);
         if(CY_RSLT_SUCCESS == result)
         {
             obj->pin_tx_sck = tx_pins->sck;
-            result = _cyhal_utils_reserve_and_connect(tx_ws_map, _CYHAL_AUDIOSS_DRIVE_MODE_TX_WS);
+            result = _cyhal_utils_reserve_and_connect(tx_ws_map, dm_tx_ws);
         }
         if(CY_RSLT_SUCCESS == result)
         {
             obj->pin_tx_ws = tx_pins->ws;
-            result = _cyhal_utils_reserve_and_connect(tx_sdo_map, _CYHAL_AUDIOSS_DRIVE_MODE_TX_SDO);
+            result = _cyhal_utils_reserve_and_connect(tx_sdo_map, (uint8_t)_CYHAL_AUDIOSS_DRIVE_MODE_TX_SDO);
         }
         if(CY_RSLT_SUCCESS == result)
         {
             obj->pin_tx_sdo = tx_pins->data;
         }
-#if defined(_CYHAL_AUDIOSS_TX_SLAVE_AVAILABLE)
+#if defined(_CYHAL_AUDIOSS_TX_SLAVE_AVAILABLE) && !defined (COMPONENT_CAT5)
         // In slave mode, the clock and word select pins are inputs
         if(CY_RSLT_SUCCESS == result && config->is_tx_slave)
         {
@@ -725,20 +783,29 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
     if(CY_RSLT_SUCCESS == result && NULL != rx_pins)
     {
-        result = _cyhal_utils_reserve_and_connect(rx_sck_map, _CYHAL_AUDIOSS_DRIVE_MODE_RX_SCK);
+        result = _cyhal_utils_reserve_and_connect(rx_sdi_map, (uint8_t)_CYHAL_AUDIOSS_DRIVE_MODE_RX_SDI);
+
+#if defined (COMPONENT_CAT5)
+        if(CY_RSLT_SUCCESS == result)
+        {
+            obj->pin_rx_sdi = rx_pins->data;
+            obj->pin_rx_sck = rx_pins->sck; // The SCK and WS are tied to the TX on this device
+            obj->pin_rx_ws = rx_pins->ws;
+        }
+#else
+        if(CY_RSLT_SUCCESS == result)
+        {
+            obj->pin_rx_sdi = rx_pins->data;
+            result = _cyhal_utils_reserve_and_connect(rx_sck_map, (uint8_t)_CYHAL_AUDIOSS_DRIVE_MODE_RX_SCK);
+        }
         if(CY_RSLT_SUCCESS == result)
         {
             obj->pin_rx_sck = rx_pins->sck;
-            result = _cyhal_utils_reserve_and_connect(rx_ws_map, _CYHAL_AUDIOSS_DRIVE_MODE_RX_WS);
+            result = _cyhal_utils_reserve_and_connect(rx_ws_map, (uint8_t)_CYHAL_AUDIOSS_DRIVE_MODE_RX_WS);
         }
         if(CY_RSLT_SUCCESS == result)
         {
             obj->pin_rx_ws = rx_pins->ws;
-            result = _cyhal_utils_reserve_and_connect(rx_sdi_map, _CYHAL_AUDIOSS_DRIVE_MODE_RX_SDI);
-        }
-        if(CY_RSLT_SUCCESS == result)
-        {
-            obj->pin_rx_sdi = rx_pins->data;
         }
 
         // In slave mode, the clock and word select pins are inputs
@@ -750,6 +817,8 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
                 result = cyhal_gpio_configure(obj->pin_rx_ws, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE);
             }
         }
+#endif
+
     }
 #endif
 
@@ -766,7 +835,7 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
             if(NULL != mclk_map_rx)
             {
-                result = _cyhal_utils_reserve_and_connect(mclk_map_rx, mclk_tx_dm);
+                result = _cyhal_utils_reserve_and_connect(mclk_map_rx, mclk_rx_dm);
                 if(CY_RSLT_SUCCESS == result)
                 {
                     obj->pin_rx_mclk = mclk_map_rx->pin;
@@ -779,7 +848,7 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
                 /* Don't try to reserve twice if rx and tx mclk are the same pin */
                 if(NULL == mclk_map_rx || mclk_map_tx->pin != mclk_map_rx->pin)
                 {
-                    result = _cyhal_utils_reserve_and_connect(mclk_map_tx, mclk_rx_dm);
+                    result = _cyhal_utils_reserve_and_connect(mclk_map_tx, mclk_tx_dm);
                 }
                 if(CY_RSLT_SUCCESS == result)
                 {
@@ -839,8 +908,8 @@ cy_rslt_t _cyhal_audioss_init(_cyhal_audioss_t *obj, const _cyhal_audioss_pins_t
     _cyhal_audioss_pdl_config_t pdl_config;
     memset(&pdl_config, 0, sizeof(pdl_config));
 #if defined(CY_IP_MXTDM)
-    cy_stc_tdm_config_tx_t tx_config;
-    cy_stc_tdm_config_rx_t rx_config;
+    cy_stc_tdm_config_tx_t tx_config = {0};
+    cy_stc_tdm_config_rx_t rx_config = {0};
     pdl_config.tx_config = &tx_config;
     pdl_config.rx_config = &rx_config;
 #endif
@@ -943,7 +1012,10 @@ void _cyhal_audioss_free(_cyhal_audioss_t *obj)
         _cyhal_irq_free(irqn);
 #endif
 
+#if (CYHAL_DRIVER_AVAILABLE_SYSPM)
         _cyhal_syspm_unregister_peripheral_callback(&(obj->pm_callback));
+#endif /*  (CYHAL_DRIVER_AVAILABLE_SYSPM) */
+
         if(NULL != obj->base)
         {
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
@@ -988,17 +1060,19 @@ void _cyhal_audioss_free(_cyhal_audioss_t *obj)
         cyhal_clock_free(&(obj->clock));
     }
 
+#if (CYHAL_DRIVER_AVAILABLE_DMA)
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
     if(CYHAL_RSC_INVALID != obj->rx_dma.resource.type)
     {
         cyhal_dma_free(&obj->rx_dma);
     }
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) */
 
     if(CYHAL_RSC_INVALID != obj->tx_dma.resource.type)
     {
         cyhal_dma_free(&obj->tx_dma);
     }
+#endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
 }
 
 static uint8_t _cyhal_audioss_fifo_trigger_level(_cyhal_audioss_t* obj, bool is_tx)
@@ -1081,12 +1155,17 @@ static cy_rslt_t _cyhal_audioss_compute_sclk_div(_cyhal_audioss_t *obj, uint32_t
 #endif
         uint32_t actual_source_freq = (0u != mclk_hz) ? mclk_hz : cyhal_clock_get_frequency(&obj->clock);
         uint32_t best_divider = (actual_source_freq + (desired_divided_freq / 2)) / desired_divided_freq; // Round to nearest divider
+#if !defined (COMPONENT_CAT5)
         uint32_t desired_source_freq = desired_divided_freq * best_divider;
         uint32_t diff = (uint32_t)abs(_cyhal_utils_calculate_tolerance(SCLK_TOLERANCE.type, desired_source_freq, actual_source_freq));
         if(diff <= SCLK_TOLERANCE.value && best_divider <= MAX_SCLK_DIVIDER)
         {
             *sclk_div = (uint16_t)best_divider;
         }
+#else
+        // Tolerance check cannot be reliably done on this device. Therefore skip it.
+        *sclk_div = best_divider;
+#endif
     }
 
     return (0 == *sclk_div) ? obj->interface->err_clock : CY_RSLT_SUCCESS;
@@ -1094,7 +1173,7 @@ static cy_rslt_t _cyhal_audioss_compute_sclk_div(_cyhal_audioss_t *obj, uint32_t
 
 cy_rslt_t _cyhal_audioss_set_sample_rate(_cyhal_audioss_t *obj, uint32_t sample_rate_hz)
 {
-    uint16_t sclk_div_tx;
+    uint16_t sclk_div_tx = 0;
     _cyhal_audioss_pdl_config_t pdl_config;
     memset(&pdl_config, 0, sizeof(pdl_config));
 #if defined(CY_IP_MXTDM)
@@ -1115,7 +1194,7 @@ cy_rslt_t _cyhal_audioss_set_sample_rate(_cyhal_audioss_t *obj, uint32_t sample_
 #endif /* _CYHAL_AUDIOSS_RX_ENABLED */
     cy_rslt_t result = _cyhal_audioss_compute_sclk_div(obj, sample_rate_hz, obj->mclk_hz_tx, obj->channel_length_tx, tx_channels, &sclk_div_tx);
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
-    uint16_t sclk_div_rx;
+    uint16_t sclk_div_rx = 0;
     if(CY_RSLT_SUCCESS == result)
     {
         result = _cyhal_audioss_compute_sclk_div(obj, sample_rate_hz, obj->mclk_hz_rx, obj->channel_length_rx, rx_channels, &sclk_div_rx);
@@ -1736,6 +1815,8 @@ static cy_rslt_t _cyhal_audioss_populate_pdl_config(_cyhal_audioss_t *obj, _cyha
         pdl_config->rx_config->chEn = hal_cfg->channel_mask;
         pdl_config->rx_config->signalInput = 0; /* TX and RX signaling independent */
         pdl_config->rx_config->i2sMode = hal_cfg->is_i2s;
+        pdl_config->rx_config->signExtend = CY_ZERO_EXTEND;
+        pdl_config->rx_config->lateSample = false;
     }
 #else
 #error "Unrecognized audio IP"
@@ -1743,7 +1824,11 @@ static cy_rslt_t _cyhal_audioss_populate_pdl_config(_cyhal_audioss_t *obj, _cyha
     return result;
 }
 
-// Round up the word length to the next power of 2
+#if (CYHAL_DRIVER_AVAILABLE_DMA)
+/* Round up the word length to the next power of 2
+*  NOTE: This method used only in I2S HAL function related to DMA.
+*   To avoid compilation warning declare this function only when DMA is available
+*/
 static uint8_t _cyhal_audioss_rounded_word_length(_cyhal_audioss_t *obj, bool is_tx)
 {
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
@@ -1764,6 +1849,7 @@ static uint8_t _cyhal_audioss_rounded_word_length(_cyhal_audioss_t *obj, bool is
 
     return 32u;
 }
+#endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
 
 cy_rslt_t _cyhal_audioss_write_async(_cyhal_audioss_t *obj, const void *tx, size_t tx_length)
 {
@@ -1829,8 +1915,10 @@ cy_rslt_t _cyhal_audioss_set_async_mode(_cyhal_audioss_t *obj, cyhal_async_mode_
 
     cy_rslt_t result = CY_RSLT_SUCCESS;
 
+
     if(mode == CYHAL_ASYNC_DMA)
     {
+    #if (CYHAL_DRIVER_AVAILABLE_DMA)
         // Reserve a DMA channel for each direction that is enabled
         if(_cyhal_audioss_is_direction_enabled(obj, true) && CYHAL_RSC_INVALID == obj->tx_dma.resource.type)
         {
@@ -1838,30 +1926,37 @@ cy_rslt_t _cyhal_audioss_set_async_mode(_cyhal_audioss_t *obj, cyhal_async_mode_
             result = cyhal_dma_init(&obj->tx_dma, CYHAL_DMA_PRIORITY_DEFAULT, CYHAL_DMA_DIRECTION_MEM2PERIPH);
             cyhal_dma_register_callback(&obj->tx_dma, &_cyhal_audioss_dma_handler_tx, obj);
         }
-#if defined(_CYHAL_AUDIOSS_RX_ENABLED)
+        #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
         if(_cyhal_audioss_is_direction_enabled(obj, false) && CYHAL_RSC_INVALID == obj->rx_dma.resource.type)
         {
             /* Reserve a DMA channel for async receive if rx is enabled */
             result = cyhal_dma_init(&obj->rx_dma, CYHAL_DMA_PRIORITY_DEFAULT, CYHAL_DMA_DIRECTION_PERIPH2MEM);
             cyhal_dma_register_callback(&obj->rx_dma, &_cyhal_audioss_dma_handler_rx, obj);
         }
-#endif
+        #endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) */
+    #else
+        CY_ASSERT(0); /* DMA driver is not available */
+    #endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
     }
     else
     {
         /* Free the DMA instances if we reserved them but don't need them anymore */
         if(CYHAL_RSC_INVALID != obj->tx_dma.resource.type)
         {
+        #if (CYHAL_DRIVER_AVAILABLE_DMA)
             cyhal_dma_free(&obj->tx_dma);
+        #endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
             obj->tx_dma.resource.type = CYHAL_RSC_INVALID;
         }
 #if defined(_CYHAL_AUDIOSS_RX_ENABLED)
         if(CYHAL_RSC_INVALID != obj->rx_dma.resource.type)
         {
+        #if (CYHAL_DRIVER_AVAILABLE_DMA)
             cyhal_dma_free(&obj->rx_dma);
+        #endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
             obj->rx_dma.resource.type = CYHAL_RSC_INVALID;
         }
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) */
     }
 
     if(CY_RSLT_SUCCESS == result)
@@ -2033,7 +2128,7 @@ static cy_rslt_t _cyhal_audioss_length_to_pdl(uint8_t user_length, cy_en_tdm_ws_
 #endif
 
 #if defined(CY_IP_MXAUDIOSS)
-void _cyhal_audioss_irq_handler(void)
+static void _cyhal_audioss_irq_handler(void)
 {
     _cyhal_system_irq_t irqn = _cyhal_irq_get_active();
     uint8_t block = _cyhal_audioss_get_block_from_irqn(irqn);
@@ -2045,9 +2140,15 @@ void _cyhal_audioss_irq_handler(void)
     _cyhal_audioss_process_event(obj, event);
 }
 #elif defined(CY_IP_MXTDM)
-void _cyhal_audioss_irq_handler_rx()
+
+#if defined (COMPONENT_CAT5)
+static void _cyhal_audioss_irq_handler_rx(_cyhal_system_irq_t irqn)
+{
+#else
+static void _cyhal_audioss_irq_handler_rx()
 {
     _cyhal_system_irq_t irqn = _cyhal_irq_get_active();
+#endif
     uint8_t block = _cyhal_audioss_get_block_from_irqn(irqn);
     _cyhal_audioss_t* obj = _cyhal_audioss_config_structs[block];
 
@@ -2057,9 +2158,14 @@ void _cyhal_audioss_irq_handler_rx()
     _cyhal_audioss_process_event(obj, event);
 }
 
-void _cyhal_audioss_irq_handler_tx()
+#if defined (COMPONENT_CAT5)
+static void _cyhal_audioss_irq_handler_tx(_cyhal_system_irq_t irqn)
+{
+#else
+static void _cyhal_audioss_irq_handler_tx()
 {
     _cyhal_system_irq_t irqn = _cyhal_irq_get_active();
+#endif
     uint8_t block = _cyhal_audioss_get_block_from_irqn(irqn);
     _cyhal_audioss_t* obj = _cyhal_audioss_config_structs[block];
 
@@ -2068,6 +2174,13 @@ void _cyhal_audioss_irq_handler_tx()
     uint32_t event = obj->interface->convert_interrupt_cause(interrupt_status, true);
     _cyhal_audioss_process_event(obj, event);
 }
+
+#if defined (COMPONENT_CAT5)
+static void _cyhal_audioss_irq_handler(UINT8 instance, BOOL8 rx_int)
+{
+    (rx_int) ? _cyhal_audioss_irq_handler_rx(instance) : _cyhal_audioss_irq_handler_tx(instance);
+}
+#endif
 #endif
 
 static void _cyhal_audioss_update_enabled_events(_cyhal_audioss_t *obj)
@@ -2184,7 +2297,7 @@ static void _cyhal_audioss_restore_events(_cyhal_audioss_t *obj, bool tx, uint32
 #endif
 }
 
-#if defined(_CYHAL_AUDIOSS_RX_ENABLED)
+#if defined(_CYHAL_AUDIOSS_RX_ENABLED) && (CYHAL_DRIVER_AVAILABLE_DMA)
 static cy_rslt_t _cyhal_audioss_dma_perform_rx(_cyhal_audioss_t *obj)
 {
     // We could have received an event after we started the DMA but before it
@@ -2238,8 +2351,9 @@ static cy_rslt_t _cyhal_audioss_dma_perform_rx(_cyhal_audioss_t *obj)
 
     return result;
 }
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) && (CYHAL_DRIVER_AVAILABLE_DMA) */
 
+#if (CYHAL_DRIVER_AVAILABLE_DMA)
 static cy_rslt_t _cyhal_audioss_dma_perform_tx(_cyhal_audioss_t *obj)
 {
     // We could have received an event after the DMA brought the FIFO below the
@@ -2300,6 +2414,7 @@ static cy_rslt_t _cyhal_audioss_dma_perform_tx(_cyhal_audioss_t *obj)
 
     return result;
 }
+#endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
 
 static uint32_t _cyhal_audioss_get_num_in_fifo(_cyhal_audioss_t *obj, bool is_tx)
 {
@@ -2336,7 +2451,7 @@ static void _cyhal_audioss_write_fifo(_cyhal_audioss_t *obj, uint32_t value)
 #endif
 }
 
-#if defined(_CYHAL_AUDIOSS_RX_ENABLED)
+#if defined(_CYHAL_AUDIOSS_RX_ENABLED) && (CYHAL_DRIVER_AVAILABLE_DMA)
 /* Callback argument is the I2S instance */
 static void _cyhal_audioss_dma_handler_rx(void *callback_arg, cyhal_dma_event_t event)
 {
@@ -2349,8 +2464,9 @@ static void _cyhal_audioss_dma_handler_rx(void *callback_arg, cyhal_dma_event_t 
     cyhal_dma_enable_event(&obj->rx_dma, CYHAL_DMA_TRANSFER_COMPLETE, obj->async_dma_priority, false);
     _cyhal_audioss_process_event(obj, obj->interface->event_rx_complete);
 }
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) && (CYHAL_DRIVER_AVAILABLE_DMA) */
 
+#if (CYHAL_DRIVER_AVAILABLE_DMA)
 /* Callback argument is the I2S instance */
 static void _cyhal_audioss_dma_handler_tx(void *callback_arg, cyhal_dma_event_t event)
 {
@@ -2363,6 +2479,7 @@ static void _cyhal_audioss_dma_handler_tx(void *callback_arg, cyhal_dma_event_t 
     cyhal_dma_enable_event(&obj->tx_dma, CYHAL_DMA_TRANSFER_COMPLETE, obj->async_dma_priority, false);
     _cyhal_audioss_process_event(obj, obj->interface->event_tx_complete);
 }
+#endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
 
 static void _cyhal_audioss_process_event(_cyhal_audioss_t *obj, uint32_t event)
 {
@@ -2402,9 +2519,13 @@ static void _cyhal_audioss_process_event(_cyhal_audioss_t *obj, uint32_t event)
                 }
                 case CYHAL_ASYNC_DMA:
                 {
+                #if (CYHAL_DRIVER_AVAILABLE_DMA)
                     cy_rslt_t result = _cyhal_audioss_dma_perform_tx(obj);
                     CY_UNUSED_PARAMETER(result);
                     CY_ASSERT(CY_RSLT_SUCCESS == result);
+                #else
+                    CY_ASSERT(0); /* DMA driver is not available */
+                #endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
                     break;
                 }
                 default:
@@ -2449,7 +2570,11 @@ static void _cyhal_audioss_process_event(_cyhal_audioss_t *obj, uint32_t event)
                    break;
                 }
                 case CYHAL_ASYNC_DMA:
+                #if (CYHAL_DRIVER_AVAILABLE_DMA)
                    _cyhal_audioss_dma_perform_rx(obj);
+                #else
+                    CY_ASSERT(0); /* DMA driver is not available */
+                #endif /* (CYHAL_DRIVER_AVAILABLE_DMA) */
                    break;
 
                 default:
@@ -2471,7 +2596,7 @@ static void _cyhal_audioss_process_event(_cyhal_audioss_t *obj, uint32_t event)
 
         cyhal_system_critical_section_exit(savedIntrStatus);
     }
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) */
 
     /* Mark async transfer as complete if we just finished one. */
     if(0 != (event & obj->interface->event_tx_complete))
@@ -2486,7 +2611,7 @@ static void _cyhal_audioss_process_event(_cyhal_audioss_t *obj, uint32_t event)
         obj->async_rx_buff = NULL;
         _cyhal_audioss_update_enabled_events(obj);
     }
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) */
 
     if(0 != (event & obj->user_enabled_events))
     {
@@ -2510,7 +2635,7 @@ static bool _cyhal_audioss_pm_callback(cyhal_syspm_callback_state_t state, cyhal
 #else
             bool is_active = _cyhal_audioss_is_tx_enabled(obj);
             obj->pm_transition_ready = !is_active && !_cyhal_audioss_is_tx_busy(obj);
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) */
             return obj->pm_transition_ready;
         }
         case CYHAL_SYSPM_CHECK_FAIL:
@@ -2530,7 +2655,7 @@ static cyhal_source_t _cyhal_audioss_calculate_source(_cyhal_audioss_t *obj, boo
 #else
     CY_UNUSED_PARAMETER(is_rx);
     return _cyhal_audioss_tx_trigger[obj->resource.block_num];
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_RX_ENABLED) */
 }
 #endif
 
@@ -2546,7 +2671,7 @@ cy_rslt_t _cyhal_audioss_enable_output(_cyhal_audioss_t *obj, bool is_rx, cyhal_
     {
         REG_I2S_TR_CTL(obj->base) |= I2S_TR_CTL_TX_REQ_EN_Msk;
     }
-    #endif
+    #endif /* defined(CY_IP_MXAUDIOSS) */
 
     *source = _cyhal_audioss_calculate_source(obj, is_rx);
     return CY_RSLT_SUCCESS;
@@ -2554,7 +2679,7 @@ cy_rslt_t _cyhal_audioss_enable_output(_cyhal_audioss_t *obj, bool is_rx, cyhal_
     CY_UNUSED_PARAMETER(is_rx);
     CY_UNUSED_PARAMETER(source);
     return obj->interface->err_not_supported;
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_TRIGGERS_AVAILABLE) */
 }
 
 cy_rslt_t _cyhal_audioss_disable_output(_cyhal_audioss_t *obj, bool is_rx)
@@ -2573,13 +2698,13 @@ cy_rslt_t _cyhal_audioss_disable_output(_cyhal_audioss_t *obj, bool is_rx)
     /* On MXTDM the trigger lines are always enabled */
     CY_UNUSED_PARAMETER(obj);
     CY_UNUSED_PARAMETER(is_rx);
-    #endif
+    #endif /* defined(CY_IP_MXAUDIOSS) */
 
     return CY_RSLT_SUCCESS;
 #else
     CY_UNUSED_PARAMETER(is_rx);
     return obj->interface->err_not_supported;
-#endif
+#endif /* defined(_CYHAL_AUDIOSS_TRIGGERS_AVAILABLE) */
 }
 
 
