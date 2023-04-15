@@ -1071,8 +1071,8 @@ int16_t Get_CalibrationValue(ADC_TypeDef* ADCx)
         buf[i] = ADCx->RDATAR;
     }
 
-    for(i=0; i<10; i++){
-        for(j=0; j<9; j++){
+    for(i=0; i<9; i++){
+        for(j=0; j<9-i; j++){
             if(buf[j]>buf[j+1]){
               t=buf[j];
               buf[j]=buf[j+1];
