@@ -32,7 +32,7 @@ struct lpc_soft_spi
 };
 
 #ifdef BSP_USING_SOFT_SPI1
-#define SOFT_SPI1_BUS_CONFIG                                    \
+#define SOFT_SPI1_BUS_CONFIG                                \
     {                                                       \
         .sck = BSP_S_SPI1_SCK_PIN,                          \
         .mosi = BSP_S_SPI1_MOSI_PIN,                        \
@@ -41,7 +41,7 @@ struct lpc_soft_spi
     }
 #endif /* BSP_USING_SOFT_SPI1 */
 #ifdef BSP_USING_SOFT_SPI2
-#define SOFT_SPI2_BUS_CONFIG                                    \
+#define SOFT_SPI2_BUS_CONFIG                                \
     {                                                       \
         .sck = BSP_S_SPI2_SCK_PIN,                          \
         .mosi = BSP_S_SPI2_MOSI_PIN,                        \
