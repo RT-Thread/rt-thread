@@ -3859,7 +3859,7 @@ static rt_err_t _rt_mq_recv_with_size(rt_mq_t    mq,
     return RT_EOK;
 }
 
-rt_err_t _rt_mq_recv_with_size(rt_mq_t    mq,
+rt_err_t rt_mq_recv_with_size(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_size_t  *real_size,
