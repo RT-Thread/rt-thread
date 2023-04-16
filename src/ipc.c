@@ -3551,6 +3551,7 @@ static rt_base_t _rt_mq_recv(rt_mq_t    mq,
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
     rt_err_t ret;
+    rt_size_t len;
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
@@ -3667,7 +3668,7 @@ static rt_base_t _rt_mq_recv(rt_mq_t    mq,
     rt_hw_interrupt_enable(level);
 
     /* get real message length */
-    rt_size_t len = size > mq->msg_size ? mq->msg_size : size;
+    len = size > mq->msg_size ? mq->msg_size : size;
     /* copy message */
     rt_memcpy(buffer, msg + 1, len);
 
