@@ -3710,7 +3710,7 @@ rt_ssize_t rt_mq_recv(rt_mq_t    mq,
 }
 RTM_EXPORT(rt_mq_recv);
 
-rt_err_t rt_mq_recv_interruptible(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv_interruptible(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout)
@@ -3719,7 +3719,7 @@ rt_err_t rt_mq_recv_interruptible(rt_mq_t    mq,
 }
 RTM_EXPORT(rt_mq_recv_interruptible);
 
-rt_err_t rt_mq_recv_killable(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv_killable(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout)
