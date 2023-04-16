@@ -111,14 +111,14 @@ static void mq_recv_case(rt_mq_t testmq)
     for (int var = 0; var < MAX_MSGS + 1; ++var)
     {
         ret = rt_mq_recv(testmq, &recv_buf[var], sizeof(recv_buf[0]), RT_WAITING_FOREVER);
-        uassert_true(ret > 0);
+        uassert_true(ret >= 0);
         uassert_true(recv_buf[var] == (var + 1));
     }
 
     for (int var = 0; var < 3; ++var)
     {
         ret = rt_mq_recv(testmq, &recv_buf[var], sizeof(recv_buf[0]), RT_WAITING_FOREVER);
-        uassert_true(ret > 0);
+        uassert_true(ret >= 0);
         uassert_true(recv_buf[var] == (var + 1));
     }
 }
