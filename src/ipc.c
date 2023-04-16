@@ -44,6 +44,7 @@
  * 2022-04-08     Stanley      Correct descriptions
  * 2022-10-15     Bernard      add nested mutex feature
  * 2022-10-16     Bernard      add prioceiling feature in mutex
+ * 2023-04-16     Xin-zheqi    add queue recv function with real message size
  */
 
 #include <rtthread.h>
@@ -119,8 +120,8 @@ rt_inline rt_err_t _ipc_object_init(struct rt_ipc_object *ipc)
  * @warning  This function can ONLY be called in the thread context, you can use RT_DEBUG_IN_THREAD_CONTEXT to
  *           check the context.
  *           In addition, this function is generally called by the following functions:
- *           rt_sem_take(),  rt_mutex_take(),  rt_event_recv(),   rt_mb_send_wait(),
- *           rt_mb_recv(),   rt_mq_recv(),     rt_mq_send_wait()
+ *           rt_sem_take(),     rt_mutex_take(),    rt_event_recv(),            rt_mb_send_wait(),
+ *           rt_mb_recv(),      rt_mq_recv(),       rt_mq_recv_with_size(),     rt_mq_send_wait()
  */
 rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
                                        struct rt_thread *thread,
@@ -198,7 +199,7 @@ rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
  *
  * @warning  This function is generally called by the following functions:
  *           rt_sem_release(),    rt_mutex_release(),    rt_mb_send_wait(),    rt_mq_send_wait(),
- *           rt_mb_urgent(),      rt_mb_recv(),          rt_mq_urgent(),       rt_mq_recv(),
+ *           rt_mb_urgent(),      rt_mb_recv(),          rt_mq_urgent(),       rt_mq_recv(),        rt_mq_recv_with_size(),
  */
 rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
 {
@@ -3697,6 +3698,34 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
     return RT_EOK;
 }
 
+/**
+ * @brief    This function will receive a message from message queue object,
+ *           if there is no message in messagequeue object, the thread shall wait for a specified time.
+ *
+ * @note     Only when there is mail in the mailbox, the receiving thread can get the mail immediately and return RT_EOK,
+ *           otherwise the receiving thread will be suspended until timeout.
+ *           If the mail is not received within the specified time, it will return -RT_ETIMEOUT.
+ *
+ * @param    mq is a pointer to the messagequeue object to be received.
+ *
+ * @param    buffer is the content of the message.
+ *
+ * @param    size is the required length of the message(Unit: Byte).
+ *
+ * @param    real_size is the real length of the message.
+ *
+ * @param    timeout is a timeout period (unit: an OS tick). If the message is unavailable, the thread will wait for
+ *           the message in the queue up to the amount of time specified by this parameter.
+ *
+ *           NOTE:
+ *           If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *           message is unavailable in the queue, the thread will be waiting forever.
+ *           If use macro RT_WAITING_NO to set this parameter, which means that this
+ *           function is non-blocking and will return immediately.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the mailbox release failed.
+ */
 static rt_err_t _rt_mq_recv_with_size(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
