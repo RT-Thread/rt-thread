@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_systick.c
-* \version 1.50
+* \version 1.60
 *
 * Provides the API definitions of the SisTick driver.
 *
@@ -103,7 +103,7 @@ void Cy_SysTick_Disable(void)
 }
 
 
-#ifdef CY_SECURE_WORLD
+#ifdef CY_PDL_TZ_ENABLED
 
 void Cy_NsSysTick_EnableInterrupt(void)
 {
@@ -137,7 +137,7 @@ void Cy_SysTick_SetClockSource(cy_en_systick_clock_source_t clockSource)
     }
     else
     {
-#ifdef CY_SECURE_WORLD
+#ifdef CY_PDL_TZ_ENABLEDs
         CPUSS_SYSTICK_S_CTL = _VAL2FLD(CPUSS_SYSTICK_S_CTL_CLOCK_SOURCE, (uint32_t) clockSource);
 #else
         CPUSS_SYSTICK_NS_CTL = _VAL2FLD(CPUSS_SYSTICK_NS_CTL_CLOCK_SOURCE, (uint32_t) clockSource);
@@ -157,7 +157,7 @@ cy_en_systick_clock_source_t Cy_SysTick_GetClockSource(void)
     }
     else
     {
-#ifdef CY_SECURE_WORLD
+#ifdef CY_PDL_TZ_ENABLED
         returnValue =  (cy_en_systick_clock_source_t) ((uint32_t) _FLD2VAL(CPUSS_SYSTICK_S_CTL_CLOCK_SOURCE, CPUSS_SYSTICK_S_CTL));
 #else
         returnValue =  (cy_en_systick_clock_source_t) ((uint32_t) _FLD2VAL(CPUSS_SYSTICK_NS_CTL_CLOCK_SOURCE, CPUSS_SYSTICK_NS_CTL));

@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* (c) (2016-2021), Cypress Semiconductor Corporation (an Infineon company) or
+* (c) (2016-2022), Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -33,10 +33,6 @@
     #include "cyw20829a0kml.h"
 #elif defined (CYW89829A0KML)
     #include "cyw89829a0kml.h"
-#elif defined (PLAYER_PSVP)
-    #include "player_psvp.h"
-#elif defined (CYW20829_PSVP)
-    #include "cyw20829_psvp.h"
 #else
     #error Undefined part number
 #endif

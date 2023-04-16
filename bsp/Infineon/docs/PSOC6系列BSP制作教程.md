@@ -119,13 +119,63 @@ Modus 生成的源库文件路径如下图，在 Modus 工作空间下的 `mtb_s
 
 ![](./figures/hal_config1.png)
 
-同时下载 [TARGET_CY8CKIT-062S2-43012](https://github.com/Infineon/TARGET_CY8CKIT-062S2-43012/releases)  **V3.0.0** 发行版本（需根据不同芯片型号下载），至具体 BSP 的 libs 文件夹下。
+接下来需要添加板级配置文件，接下来介绍使用英飞凌官方以及非官方开发板的添加步骤：
 
-![](./figures/hal_config4.png)
+1、**英飞凌官方开发板步骤**
 
-下载至具体 BSP 的 libs 文件夹下，例如下图：
+打开 `ModusToolbox` 软件(版本需 >=V3.0.0)，点击新建项目：
+
+![](./figures/ModusToolbox.png)
+
+输入开发板型号信息，然后选择下一步：
+
+![](./figures/ModusToolbox1.png)
+
+选择 `Hello World` 模板工程，接下来点击创建该工程：
+
+![](./figures/ModusToolbox2.png)
+
+值得注意的是，`APP_CY8CKIT-062S2-43012` 这个 bsp 需要为 4.1.0 版本：
+
+![](./figures/ModusToolbox2.2.png)
+
+等待下载完成后，打开对应的 BSP 文件夹，找到 bsps 下生成的文件：
+
+![](./figures/ModusToolbox3.png)
+
+拷贝其中的内容到 RT-Thread 具体 BSP 的 libs文件夹下，例如下图：
 
 ![](./figures/hal_config4-1.png)
+
+同时按照具体路径配置 `SConscript` 脚本文件。
+
+2、**非英飞凌官方开发板步骤**
+
+首先找到 ModusToolbox 安装路径下 `BSP Assistant` 这个软件：
+
+![](./figures/ModusToolbox4.png)
+
+点击 File->New 进行新建项目，按照下图选择目标芯片等：
+
+![](./figures/ModusToolbox5.png)
+
+点击 `Device Configurator 4.0` 后进入图形化配置界面进行外设配置：
+
+![](./figures/ModusToolbox6.png)
+
+引脚部分，swd 的引脚配置是必须的，保持默认即可
+
+![](./figures/ModusToolbox7.png)
+
+时钟相关配置，最初保持默认即可：
+
+![](./figures/ModusToolbox8.png)
+
+全部都配置好后，在界面中按 `ctrl+s ` 即可自动生成配置文件，然后拷贝其中的内容到 RT-Thread 具体 BSP 的 libs文件夹下，例如下图：
+
+![](./figures/hal_config4-1.png)
+
+同时按照具体路径配置 `SConscript` 脚本文件。
 
 ### 3.5 修改工程构建相关文件
 

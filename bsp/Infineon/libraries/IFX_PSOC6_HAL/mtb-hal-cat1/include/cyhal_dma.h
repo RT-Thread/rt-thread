@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -243,9 +243,9 @@ typedef enum
  * stringent address and data alignment requirements. */
 typedef struct
 {
-    uint32_t src_addr;                  //!< Source address
+    uint32_t src_addr;                  //!< Source address. Some devices can apply special requirements for user data arrays. Please refer to implementation-specific documentation to see whether any limitations exist for used device.
     int16_t  src_increment;             //!< Source address auto increment amount in multiples of transfer_width
-    uint32_t dst_addr;                  //!< Destination address
+    uint32_t dst_addr;                  //!< Destination address. Some devices can apply special requirements for user data arrays. Please refer to implementation-specific documentation to see whether any limitations exist for used device.
     int16_t  dst_increment;             //!< Destination address auto increment amount in multiples of transfer_width
     uint8_t  transfer_width;            //!< Transfer width in bits. Valid values are: 8, 16, or 32
     uint32_t length;                    //!< Number of elements to be transferred in total
@@ -279,7 +279,7 @@ typedef struct
  * @param[out] obj  Pointer to a DMA object. The caller must allocate the memory
  *  for this object but the init function will initialize its contents.
  * @param[in]  src          An optional source signal to connect to the DMA
- * @param[in]  dest         An optional destination singal to drive from the DMA
+ * @param[in]  dest         An optional destination signal to drive from the DMA
  * @param[out] dest_source  An optional pointer to user-allocated source signal object which
  * will be initialized by enable_output. If \p dest is non-null, this must also be non-null.
  * \p dest_source should be passed to (dis)connect_digital functions to (dis)connect the

@@ -212,6 +212,7 @@ void rt_system_scheduler_start(void)
 
 /**
  * @addtogroup Thread
+ * @cond
  */
 
 /**@{*/
@@ -500,3 +501,4 @@ rt_uint16_t rt_critical_level(void)
 RTM_EXPORT(rt_critical_level);
 
 /**@}*/
+/**@endcond*/

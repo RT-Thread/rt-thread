@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_syslib.c
-* \version 3.10
+* \version 3.20
 *
 *  Description:
 *   Provides system API implementation for the SysLib driver.
@@ -29,6 +29,10 @@
 
 #include "cy_syslib.h"
 
+#if defined (CY_IP_M33SYSCPUSS)
+#include "cy_efuse.h"
+#endif
+
 #ifdef CY_IP_M4CPUSS
 #include "cy_ipc_drv.h"
 #endif
@@ -53,14 +57,13 @@
 /* ROM and SRAM wait states for the slow clock domain (ULP mode at 0.9v) */
 #define CY_SYSLIB_ULP_SLOW_WS_0_FREQ_MAX     ( 25UL)
 #define CY_SYSLIB_ULP_SLOW_WS_1_FREQ_MAX     ( 50UL)
-#elif CY_IP_M33SYSCPUSS
+#elif (defined(CY_IP_M33SYSCPUSS) && (CY_IP_M33SYSCPUSS))
 /* These definitions can be removed once SystemCorClockUpdate() function is implemented */
 #define CY_SYSCLK_IMO_FREQ          (8000000UL) /* Hz */
 #define CY_DELAY_1K_THRESHOLD           (1000u)
 #define CY_DELAY_1K_MINUS_1_THRESHOLD   (CY_DELAY_1K_THRESHOLD - 1u)
 #define CY_DELAY_1M_THRESHOLD           (1000000u)
 #define CY_DELAY_1M_MINUS_1_THRESHOLD   (CY_DELAY_1M_THRESHOLD - 1u)
-#define CY_DELAY_MS_OVERFLOW_THRESHOLD  (0x8000u)
 
 #endif
 
@@ -105,20 +108,18 @@
         #endif /* (__ARMCC_VERSION >= 6010050) */
 #endif  /* (__ARMCC_VERSION) */
 
-#ifndef CY_SYSLIB_DELAY_CALIBRATION_FACTOR
-#define CY_SYSLIB_DELAY_CALIBRATION_FACTOR     1U
+#if defined(CY_INIT_CODECOPY_ENABLE)
+CY_SECTION_INIT_CODECOPY_BEGIN
 #endif
-
 void Cy_SysLib_Delay(uint32_t milliseconds)
 {
-    while(milliseconds > CY_DELAY_MS_OVERFLOW)
+    uint32_t max_delay_ms = 0xFFFFFFFFU / (cy_delayFreqKhz * CY_SYSLIB_DELAY_CALIBRATION_FACTOR);
+
+    while(milliseconds > max_delay_ms)
     {
-        /* This loop prevents an overflow in value passed to Cy_SysLib_DelayCycles() API.
-         * At 100 MHz, (milliseconds * cy_delayFreqKhz) product overflows
-         * in case if milliseconds parameter is more than 42 seconds.
-         */
-        Cy_SysLib_DelayCycles(cy_delay32kMs);
-        milliseconds -= CY_DELAY_MS_OVERFLOW;
+        /* This loop prevents an overflow in value passed to Cy_SysLib_DelayCycles() API. */
+        Cy_SysLib_DelayCycles(max_delay_ms * cy_delayFreqKhz * CY_SYSLIB_DELAY_CALIBRATION_FACTOR);
+        milliseconds -= max_delay_ms;
     }
 
     Cy_SysLib_DelayCycles(milliseconds * cy_delayFreqKhz * CY_SYSLIB_DELAY_CALIBRATION_FACTOR);
@@ -148,7 +149,7 @@ __NO_RETURN void Cy_SysLib_Halt(uint32_t reason)
     }
 
     #if defined (__ARMCC_VERSION)
-        __breakpoint(0x0);
+        __BKPT(0x0);
     #elif defined(__GNUC__)
         CY_HALT();
     #elif defined (__ICCARM__)
@@ -289,6 +290,46 @@ uint64_t Cy_SysLib_GetUniqueId(void)
 #endif
 #endif
 
+
+#if (defined (CY_IP_M33SYSCPUSS) && defined(CY_IP_MXEFUSE))
+
+#define CY_DIE_REG_EFUSE_OFFSET    0x74
+#define CY_DIE_REG_COUNT           3U
+
+uint64_t Cy_SysLib_GetUniqueId(void)
+{
+    uint32_t uniqueIdHi;
+    uint32_t uniqueIdLo;
+    uint32_t dieRead[3];
+    cy_en_efuse_status_t status = CY_EFUSE_ERR_UNC;
+
+    status = Cy_EFUSE_ReadWordArray(EFUSE, dieRead, CY_DIE_REG_EFUSE_OFFSET, CY_DIE_REG_COUNT);
+
+    if(status == CY_EFUSE_SUCCESS)
+    {
+        uniqueIdHi = ((uint32_t)  _FLD2VAL(EFUSE_DATA_DIE_2_YEAR, dieRead[2])              << (CY_UNIQUE_ID_DIE_YEAR_Pos  - CY_UNIQUE_ID_DIE_X_Pos)) |
+                     (((uint32_t)_FLD2VAL(EFUSE_DATA_DIE_2_REVISION_ID, dieRead[2]) & 1U)  << (CY_UNIQUE_ID_DIE_MINOR_Pos - CY_UNIQUE_ID_DIE_X_Pos)) |
+                     ((uint32_t)  _FLD2VAL(EFUSE_DATA_DIE_1_SORT, dieRead[1])               << (CY_UNIQUE_ID_DIE_SORT_Pos  - CY_UNIQUE_ID_DIE_X_Pos)) |
+                     ((uint32_t)  _FLD2VAL(EFUSE_DATA_DIE_1_Y, dieRead[1])                  << (CY_UNIQUE_ID_DIE_Y_Pos     - CY_UNIQUE_ID_DIE_X_Pos)) |
+                     ((uint32_t)  _FLD2VAL(EFUSE_DATA_DIE_1_X, dieRead[1]));
+
+        uniqueIdLo = (((uint32_t) _FLD2VAL(EFUSE_DATA_DIE_0_WAFER, dieRead[0])       << CY_UNIQUE_ID_DIE_WAFER_Pos) |
+                     ((uint32_t) _FLD2VAL(EFUSE_DATA_DIE_0_LOT, dieRead[0])));
+
+        return (((uint64_t) uniqueIdHi << CY_UNIQUE_ID_DIE_X_Pos) | uniqueIdLo);
+    }
+    else
+    {
+        return 0UL;
+    }
+}
+#endif
+
+
+#if defined(CY_INIT_CODECOPY_ENABLE)
+CY_SECTION_INIT_CODECOPY_END
+#endif
+
 #if (CY_ARM_FAULT_DEBUG == CY_ARM_FAULT_DEBUG_ENABLED)
 
 
@@ -304,8 +345,8 @@ void Cy_SysLib_FaultHandler(uint32_t const *faultStackAddr)
     cy_faultFrame.pc  = faultStackAddr[CY_PC_Pos];
     cy_faultFrame.psr = faultStackAddr[CY_PSR_Pos];
 
-#ifdef CY_IP_M4CPUSS
-#if (CY_CPU_CORTEX_M4)
+#if (defined (CY_IP_M4CPUSS) || defined (CY_IP_M7CPUSS))
+#if (CY_CPU_CORTEX_M4 || (defined (CY_CPU_CORTEX_M7) && CY_CPU_CORTEX_M7))
     /* Stores the Configurable Fault Status Register state with the fault cause */
     cy_faultFrame.cfsr.cfsrReg = SCB->CFSR;
     /* Stores the Hard Fault Status Register */
@@ -362,6 +403,9 @@ __WEAK void Cy_SysLib_ProcessingFault(void)
 }
 #endif /* (CY_ARM_FAULT_DEBUG == CY_ARM_FAULT_DEBUG_ENABLED) || defined(CY_DOXYGEN) */
 
+#if defined(CY_INIT_CODECOPY_ENABLE)
+CY_SECTION_INIT_CODECOPY_BEGIN
+#endif
 
 void Cy_SysLib_SetWaitStates(bool ulpMode, uint32_t clkHfMHz)
 {
@@ -420,6 +464,8 @@ uint8_t Cy_SysLib_GetDeviceRevision(void)
 {
 #ifdef CY_IP_M4CPUSS
     return ((SFLASH_SI_REVISION_ID == 0UL) ? CY_SYSLIB_DEVICE_REV_0A : SFLASH_SI_REVISION_ID);
+#elif defined(CY_IP_M33SYSCPUSS) || defined(CY_IP_M7CPUSS)
+    return ((uint8_t)((_FLD2VAL(CPUSS_PRODUCT_ID_MINOR_REV, CPUSS_PRODUCT_ID) << 4U) | _FLD2VAL(CPUSS_PRODUCT_ID_MAJOR_REV, CPUSS_PRODUCT_ID)));
 #else
     return 0;
 #endif
@@ -440,6 +486,11 @@ void Cy_Syslib_SetWarmBootEntryPoint(uint32_t *entryPoint, bool enable)
     *(uint32_t *)CY_SYSPM_BOOTROM_ENTRYPOINT_ADDR = (uint32_t)entryPoint | (enable ? CY_SYSPM_BOOTROM_DSRAM_DBG_ENABLE_MASK : 0UL) ;
 }
 #endif
+
+#if defined(CY_INIT_CODECOPY_ENABLE)
+CY_SECTION_INIT_CODECOPY_END
+#endif
+
 #endif /* CY_IP_M33SYSCPUSS, CY_IP_M4CPUSS */
 
 /* [] END OF FILE */

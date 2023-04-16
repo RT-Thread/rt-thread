@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -32,6 +32,14 @@
 #if defined(CY_USING_HAL)
 #include "cyhal_hwmgr.h"
 #include "cyhal_syspm.h"
+
+#if defined(CYBSP_WIFI_CAPABLE) && defined(CYHAL_UDB_SIO)
+#include "SDIO_HOST.h"
+#endif
+#endif // defined(CY_USING_HAL)
+
+#if defined(COMPONENT_MW_CAT1CM0P)
+    #include "mtb_cat1cm0p.h"
 #endif
 
 #if defined(__cplusplus)
@@ -44,20 +52,6 @@ extern "C" {
 #ifndef CYBSP_SYSCLK_PM_CALLBACK_ORDER
     #define CYBSP_SYSCLK_PM_CALLBACK_ORDER  (255u)
 #endif
-
-#if defined(CYBSP_WIFI_CAPABLE) && defined(CY_USING_HAL)
-static cyhal_sdio_t sdio_obj;
-
-//--------------------------------------------------------------------------------------------------
-// cybsp_get_wifi_sdio_obj
-//--------------------------------------------------------------------------------------------------
-cyhal_sdio_t* cybsp_get_wifi_sdio_obj(void)
-{
-    return &sdio_obj;
-}
-
-
-#endif // if defined(CYBSP_WIFI_CAPABLE) && defined(CY_USING_HAL)
 
 #if !defined(CYBSP_CUSTOM_SYSCLK_PM_CALLBACK)
 //--------------------------------------------------------------------------------------------------
@@ -116,9 +110,18 @@ cy_rslt_t cybsp_init(void)
     cy_rslt_t result = CY_RSLT_SUCCESS;
     #endif // if defined(CY_USING_HAL)
 
-    #if defined(COMPONENT_BSP_DESIGN_MODUS) || defined(COMPONENT_CUSTOM_DESIGN_MODUS)
-    init_cycfg_all();
+    // By default, the peripheral configuration will be done on the first core running user code.
+    // This is the CM0+ if it is available and not running a pre-built image, and the CM4 otherwise.
+    // This is done to ensure configuration is available for all cores that might need to use it.
+    // In the case of a dual core project, this can be changed below to perform initialization on
+    // the CM4 if necessary.
+    #if defined(CORE_NAME_CM0P_0) || !(__CM0P_PRESENT) || (defined(CORE_NAME_CM4_0) && \
+    defined(CY_USING_PREBUILT_CM0P_IMAGE))
+    cycfg_config_init();
     #endif
+
+    // Do any additional configuration reservations that are needed on all cores.
+    cycfg_config_reservations();
 
     if (CY_RSLT_SUCCESS == result)
     {
@@ -129,25 +132,18 @@ cy_rslt_t cybsp_init(void)
         #endif
     }
 
-    #if defined(CYBSP_WIFI_CAPABLE) && defined(CY_USING_HAL)
-    // Initialize SDIO interface. This must be done before other HAL API calls as some SDIO
-    // implementations require specific peripheral instances.
-    // NOTE: The full WiFi interface still needs to be initialized via cybsp_wifi_init_primary().
-    // This is typically done when starting up WiFi.
+    #if defined(CYBSP_WIFI_CAPABLE) && defined(CYHAL_UDB_SIO)
+
+    // Reserve resources for the UDB SDIO interface that might want to be used by others. This
+    // includes specific clock and DMA instances. This must be done before other HAL API calls as
+    // specific peripheral instances are needed
+    // NOTE: The full SDIO/WiFi interface still needs to be initialized via
+    // cybsp_wifi_init_primary(). This is typically done when starting up WiFi.
     if (CY_RSLT_SUCCESS == result)
     {
-        // Reserves: CYBSP_WIFI_SDIO, CYBSP_WIFI_SDIO_D0, CYBSP_WIFI_SDIO_D1, CYBSP_WIFI_SDIO_D2,
-        // CYBSP_WIFI_SDIO_D3, CYBSP_WIFI_SDIO_CMD and CYBSP_WIFI_SDIO_CLK.
-        result = cyhal_sdio_init(
-            &sdio_obj,
-            CYBSP_WIFI_SDIO_CMD,
-            CYBSP_WIFI_SDIO_CLK,
-            CYBSP_WIFI_SDIO_D0,
-            CYBSP_WIFI_SDIO_D1,
-            CYBSP_WIFI_SDIO_D2,
-            CYBSP_WIFI_SDIO_D3);
+        result = SDIO_ReserveResources();
     }
-    #endif // defined(CYBSP_WIFI_CAPABLE)
+    #endif // defined(CYBSP_WIFI_CAPABLE) && defined(CYHAL_UDB_SIO)
 
     // CYHAL_HWMGR_RSLT_ERR_INUSE error code could be returned if any needed for BSP resource was
     // reserved by user previously. Please review the Device Configurator (design.modus) and the BSP

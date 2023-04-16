@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_flash.h
-* \version 3.60
+* \version 3.70
 *
 * Provides the API declarations of the Flash driver.
 *
@@ -122,9 +122,14 @@
 *
 * For CAT1C devices Flash memory controller has the dual bank mode feature. When using dual bank mode,
 * flash memory region is split into two half banks. One is called Logical Bank 0 and the other is called Logical Bank 1
-* User will be able to read froma a different logical bank while writing to one logical bank.
+* User will be able to read from a different logical bank while writing to one logical bank.
 *
 * For CAT1C devices Erase ROW is not supported. User has to erase the entire sector before writing to the sector.
+*
+* CM7 cores in CAT1C devices support Data Cache. Data Cache line is 32 bytes.
+* User needs to make sure that the pointer passed to the following functions points to 32 byte aligned data.
+* Cy_Flash_StartWrite, Cy_Flash_ProgramRow, Cy_Flash_Program and Cy_Flash_Program_WorkFlash.
+* User can use CY_ALIGN(32) macro for 32 byte alignment.
 *
 * <center>
 * <table class="doxtable">
@@ -202,7 +207,7 @@
 *        call Cy_SysDisableCM4(). <b>Note:</b> In this state Debug mode is not
 *        supported.
 *     .
-* -# For CAT1C devices flash write opertion is only allowed after the sector in erased.
+* -# For CAT1C devices flash write operation is only allowed after the sector in erased.
 * -# For CAT1A devices use the following rules for split by sectors. (In this context, read means
 *    read of any bus master: CM0+, CM4, DMA, Crypto, etc.)
 *     -# Do not write to and read/execute from the same flash sector at the same
@@ -245,6 +250,11 @@
 *
 * <table class="doxtable">
 *   <tr><th>Version</th><th style="width: 52%;">Changes</th><th>Reason for Change</th></tr>
+*   <tr>
+*     <td>3.70</td>
+*     <td>Fixed MISRA 2012 violations and Documentation Update.</td>
+*     <td>MISRA 2012 compliance.</td>
+*   </tr>
 *   <tr>
 *     <td>3.60</td>
 *     <td>Added API's to support new product family. Enhancement for support of eCT flash.</td>
@@ -396,7 +406,7 @@
 #include "cy_ipc_drv.h"
 #include "cy_syslib.h"
 #if defined(CY_IP_MXFLASHC_VERSION_ECT)
-#include "cy_srom.h"
+#include "cy_flash_srom.h"
 #endif
 
 #if defined(__cplusplus)
@@ -415,7 +425,7 @@ extern "C" {
 #define CY_FLASH_DRV_VERSION_MAJOR       3
 
 /** Driver minor version */
-#define CY_FLASH_DRV_VERSION_MINOR       60
+#define CY_FLASH_DRV_VERSION_MINOR       70
 
 #define CY_FLASH_ID               (CY_PDL_DRV_ID(0x14UL))                          /**< FLASH PDL ID */
 
@@ -602,7 +612,7 @@ typedef enum
     CY_FLASH_PROGRAMROW_BLOCKING     = (0x01UL)    /**< Set program row API in blocking mode */
 } cy_en_flash_programrow_blocking_t;
 
-/** Flash balnk check on Program row configuration */
+/** Flash blank check on Program row configuration */
 typedef enum
 {
     CY_FLASH_PROGRAMROW_BLANK_CHECK      =  (0x00UL),    /**< Performs blank check on Program Row */
@@ -625,8 +635,8 @@ typedef enum
 /** Flash Erase sector function execution type configuration */
 typedef enum
 {
-    CY_FLASH_ERASESECTOR_NON_BLOCKING      = (0x00UL), /**< Erase sector API execited in non blocking mode */
-    CY_FLASH_ERASESECTOR_BLOCKING          = (0x01UL)  /**< Erase sector API execited in blocking mode */
+    CY_FLASH_ERASESECTOR_NON_BLOCKING      = (0x00UL), /**< Erase sector API executed in non blocking mode */
+    CY_FLASH_ERASESECTOR_BLOCKING          = (0x01UL)  /**< Erase sector API executed in blocking mode */
 } cy_en_flash_erasesector_blocking_t;
 
 /** Flash Erase sector interrupt mask configuration */
@@ -636,21 +646,21 @@ typedef enum
     CY_FLASH_ERASESECTOR_SET_INTR_MASK     = (0x01UL)  /**< Erase sector API interrupt is set */
 } cy_en_flash_erasesector_intrmask_t;
 
-/** Flash cheksum bank configuration */
+/** Flash checksum bank configuration */
 typedef enum
 {
     CY_FLASH_CHECKSUM_BANK0     = (0x00UL), /**< Checksum calculated for Bank0 */
     CY_FLASH_CHECKSUM_BANK1     = (0x01UL)  /**< Checksum calculated for Bank1 */
 } cy_en_flash_checksum_bank_t;
 
-/** Flash cheksum page configuration */
+/** Flash checksum page configuration */
 typedef enum
 {
     CY_FLASH_CHECKSUM_PAGE     = (0x00UL), /**< Checksum calculated for that page */
     CY_FLASH_CHECKSUM_WHOLE    = (0x01UL)  /**< Checksum calculated for whole region */
 } cy_en_flash_checksum_scope_t;
 
-/** Flash cheksum region configuration */
+/** Flash checksum region configuration */
 typedef enum
 {
     CY_FLASH_CHECKSUM_MAIN        = (0x00UL), /**< Checksum calculated for Main flash region */
@@ -701,52 +711,52 @@ typedef enum
 /** Flash program row configuration structure */
 typedef struct
 {
-    const uint32_t*                         destAddr; /**< Specifies the configuration of flash operation */
-    const uint32_t*                         dataAddr; /**< Specifies the configuration of flash operation */
-    cy_en_flash_programrow_blocking_t       blocking; /**< Specifies the code of flash operation */
-    cy_en_flash_programrow_skipblankcheck_t skipBC;   /**< Specifies the code of flash operation */
-    cy_en_flash_programrow_datasize_t       dataSize; /**< Specifies the configuration of flash operation */
-    cy_en_flash_programrow_location_t       dataLoc;  /**< Specifies the configuration of flash operation */
-    cy_en_flash_programrow_intrmask_t       intrMask; /**< Specifies the configuration of flash operation */
+    const uint32_t*                         destAddr; /**< Destination address of flash  */
+    const uint32_t*                         dataAddr; /**< pointer to 32byte aligned source data to be written to the flash */
+    cy_en_flash_programrow_blocking_t       blocking; /**< blocking or non blocking mode. \ref cy_en_flash_programrow_blocking_t */
+    cy_en_flash_programrow_skipblankcheck_t skipBC;   /**< blank check operation \ref cy_en_flash_programrow_skipblankcheck_t */
+    cy_en_flash_programrow_datasize_t       dataSize; /**< size of the data to be written. \ref cy_en_flash_programrow_datasize_t */
+    cy_en_flash_programrow_location_t       dataLoc;  /**< data location for the operation \ref cy_en_flash_programrow_location_t */
+    cy_en_flash_programrow_intrmask_t       intrMask; /**< interrupt mask to be set. \ref cy_en_flash_programrow_intrmask_t */
 }cy_stc_flash_programrow_config_t;
 
 /** Flash erase row configuration structure */
 typedef struct
 {
-    const uint32_t*                    sectorAddr;     /**< Specifies the configuration of flash operation */
-    cy_en_flash_erasesector_blocking_t blocking; /**< Specifies the code of flash operation */
-    cy_en_flash_erasesector_intrmask_t intrMask; /**< Specifies the configuration of flash operation */
+    const uint32_t*                    sectorAddr;  /**< Sector address to be erased */
+    cy_en_flash_erasesector_blocking_t blocking;    /**< blocking or non blocking mode \ref cy_en_flash_erasesector_blocking_t */
+    cy_en_flash_erasesector_intrmask_t intrMask;    /**< interrupt mask to be set. \ref cy_en_flash_erasesector_intrmask_t */
 }cy_stc_flash_erasesector_config_t;
 
 /** Flash checksum configuration structure */
 typedef struct
 {
-    uint8_t                       rowId;  /**< Specifies the configuration of flash operation */
-    cy_en_flash_checksum_bank_t   bank;   /**< Specifies the code of flash operation */
-    cy_en_flash_checksum_scope_t  whole;  /**< Specifies the configuration of flash operation */
-    cy_en_flash_checksum_region_t region; /**< Specifies the configuration of flash operation */
+    uint8_t                       rowId;  /**< row id for checksum */
+    cy_en_flash_checksum_bank_t   bank;   /**< Checksum calculated for Bank0 or Bank1 \ref cy_en_flash_checksum_bank_t */
+    cy_en_flash_checksum_scope_t  whole;  /**< Checksum calculated for whole region or page \ref cy_en_flash_checksum_scope_t */
+    cy_en_flash_checksum_region_t region; /**< Specifies the configuration of flash operation \ref cy_en_flash_checksum_region_t */
 } cy_stc_flash_checksum_config_t;
 
 /** Flash compute hash configuration structure */
 typedef struct
 {
-    const uint32_t*                startAddr; /**< Specifies the configuration of flash operation */
-    uint32_t                       numOfByte; /**< Specifies the configuration of flash operation */
-    cy_en_flash_computehash_type_t type;      /**< Specifies the code of flash operation */
+    const uint32_t*                startAddr; /**< Address for computing hash */
+    uint32_t                       numOfByte; /**< Number of Bytes for computing hash */
+    cy_en_flash_computehash_type_t type;      /**< Compute CRC8 hash or basic hash. /ref cy_en_flash_computehash_type_t*/
 } cy_stc_flash_computehash_config_t;
 
 /** Flash erase resume configuration structure */
 typedef struct
 {
-    cy_en_flash_eraseresume_setintr_t  intrMask; /**< Specifies the code of flash operation */
-    cy_en_flash_eraseresume_blocking_t blocking; /**< Specifies the code of flash operation */
+    cy_en_flash_eraseresume_setintr_t  intrMask; /**< Interrupt mask for erase resume operation \ref cy_en_flash_eraseresume_setintr_t */
+    cy_en_flash_eraseresume_blocking_t blocking; /**< Blocking or non blocking mode. \ref cy_en_flash_eraseresume_blocking_t */
 } cy_stc_flash_eraseresume_config_t;
 
 /** Flash blank check configuration structure */
 typedef struct
 {
-    const uint32_t* addrToBeChecked;         /**< Specifies the configuration of flash operation */
-    uint32_t        numOfWordsToBeChecked;   /**< Specifies the configuration of flash operation */
+    const uint32_t* addrToBeChecked;         /**< Address for which blank check to be performed. */
+    uint32_t        numOfWordsToBeChecked;   /**< No of words to be checked. */
 } cy_stc_flash_blankcheck_config_t;
 
 /** \} group_flash_srom_config_structure */
@@ -910,6 +920,8 @@ void Cy_Flashc_MainECCDisable(void);
 *
 * \note This function is applicable for CAT1C devices.
 *
+* \note User needs to make sure that the data pointer passed to this function points to 32 byte aligned data.
+*
 * \param config configuration of this function.
 * This parameter is defined by the cy_stc_flash_programrow_config_t
 * in \ref group_flash_srom_config_structure macro.
@@ -943,6 +955,8 @@ cy_en_flashdrv_status_t Cy_Flash_Program_WorkFlash(const cy_stc_flash_programrow
 *
 * \note This function is applicable for CAT1C devices.
 *
+* \note User needs to make sure that the data pointer passed to this function points to 32 byte aligned data.
+*
 * \param config configuration of this function.
 * This parameter is defined by the cy_stc_flash_programrow_config_t
 * in \ref group_flash_srom_config_structure macro.
@@ -971,14 +985,14 @@ cy_en_flashdrv_status_t Cy_Flash_Program(const cy_stc_flash_programrow_config_t*
 * This parameter is defined by the cy_stc_flash_checksum_config_t
 * in \ref cy_stc_flash_checksum_config_t macro.
 *
-* \param cheksumPtr The pointer to the address whire cheksum is to be stored
+* \param checksumPtr The pointer to the address where checksum is to be stored
 *
 * \return Returns the status of the Flash operation.
 *
 * \funcusage
 * \snippet flash/snippet/main.c snippet_Cy_Flash_Checksum
 *******************************************************************************/
-cy_en_flashdrv_status_t Cy_Flash_Checksum (const cy_stc_flash_checksum_config_t *config, uint32_t* cheksumPtr);
+cy_en_flashdrv_status_t Cy_Flash_Checksum (const cy_stc_flash_checksum_config_t *config, uint32_t* checksumPtr);
 
 /*******************************************************************************
 * Function Name: Cy_Flash_EraseSuspend
@@ -1329,7 +1343,7 @@ cy_en_flashdrv_status_t Cy_Flash_StartEraseSubsector(uint32_t subSectorAddr);
 * To avoid the Read while Write violation,
 * use Cy_Flash_IsOperationComplete() to ensure flash operation is complete.
 *
-* \note This is a blocking function and will not return untill the Write operation is complete.
+* \note This is a blocking function and will not return until the Write operation is complete.
 * \note This function is applicable for CAT1A devices.
 *
 * \param rowAddr Address of the flash row number.
@@ -1374,7 +1388,7 @@ cy_en_flashdrv_status_t Cy_Flash_WriteRow(uint32_t rowAddr, const uint32_t* data
 * To avoid the Read while Write violation,
 * use Cy_Flash_IsOperationComplete() to ensure flash operation is complete.
 *
-* \note This is a non blocking function and will not wait untill the Write operation is complete.
+* \note This is a non blocking function and will not wait until the Write operation is complete.
 * \note This function is applicable for CAT1A devices.
 *
 * \param rowAddr The address of the flash row number.
@@ -1489,7 +1503,7 @@ cy_en_flashdrv_status_t Cy_Flash_IsOperationComplete(void);
 * \note Before reading data from previously programmed/erased flash rows, the
 * user must clear the flash cache with the Cy_SysLib_ClearFlashCacheAndBuffer()
 * function.
-* \note This is added as backword compatiability function in CAT1C devices.
+* \note This is added as backword compatibility function in CAT1C devices.
 * This function will not erase the row before writing to the row. Erase ROW is not supported in CAT1C devices.
 * User can use \ref Cy_Flash_EraseSector or  Cy_Flash_EraseAll functions.
 * \note  A Read while Write violation occurs when a flash Read operation is initiated
@@ -1498,7 +1512,9 @@ cy_en_flashdrv_status_t Cy_Flash_IsOperationComplete(void);
 * To avoid the Read while Write violation,
 * use Cy_Flash_IsOperationComplete() to ensure flash operation is complete.
 *
-* \note This is a non blocking function and will not wait untill the Write operation is complete.
+* \note This is a non blocking function and will not wait until the Write operation is complete.
+*
+* \note User needs to make sure that the data pointer passed to this function points to 32 byte aligned data for CAT1C devices.
 *
 * \param rowAddr Address of the flash row number.
 * The Read-while-Write violation occurs when the flash read operation is
@@ -1510,6 +1526,7 @@ cy_en_flashdrv_status_t Cy_Flash_IsOperationComplete(void);
 * of the data array must be equal to the flash row size. The flash row size for
 * the selected device is defined by the \ref CY_FLASH_SIZEOF_ROW macro. Refer to
 * the device datasheet for the details.
+* For CAT1C devices this data pointer needs to point to 32 byte aligned data.
 *
 * \return Returns the status of the Flash operation,
 * returns CY_FLASH_DRV_OPERATION_STARTED if operation starts with out error.
@@ -1540,7 +1557,7 @@ cy_en_flashdrv_status_t Cy_Flash_StartWrite(uint32_t rowAddr, const uint32_t* da
 * To avoid the Read while Write violation,
 * use Cy_Flash_IsOperationComplete() to ensure flash operation is complete.
 *
-* \note This is a non blocking function and will not wait untill the operation is complete.
+* \note This is a non blocking function and will not wait until the operation is complete.
 *
 * \param sectorAddr Address of the flash row number.
 * The Read-while-Write violation occurs when the flash read operation is
@@ -1582,7 +1599,9 @@ cy_en_flashdrv_status_t Cy_Flash_StartEraseSector(uint32_t sectorAddr);
 * To avoid the Read while Write violation,
 * use Cy_Flash_IsOperationComplete() to ensure flash operation is complete.
 *
-* \note This is a blocking function and will not return untill the Write operation is complete.
+* \note This is a blocking function and will not return until the Write operation is complete.
+*
+* \note User needs to make sure that the data pointer passed to this function points to 32 byte aligned data for CAT1C devices.
 *
 * \param rowAddr Address of the flash row number.
 * The Read-while-Write violation occurs when the flash read operation is
@@ -1594,6 +1613,7 @@ cy_en_flashdrv_status_t Cy_Flash_StartEraseSector(uint32_t sectorAddr);
 * of the data array must be equal to the flash row size. The flash row size for
 * the selected device is defined by the \ref CY_FLASH_SIZEOF_ROW macro. Refer to
 * the device datasheet for the details.
+* For CAT1C devices this data pointer needs to point to 32 byte aligned data.
 *
 * \return Returns the status of the Flash operation,
 * see \ref cy_en_flashdrv_status_t.
@@ -1622,7 +1642,7 @@ cy_en_flashdrv_status_t Cy_Flash_ProgramRow(uint32_t rowAddr, const uint32_t* da
 * To avoid the Read while Write violation,
 * use Cy_Flash_IsOperationComplete() to ensure flash operation is complete.
 *
-* \note This is a blocking function and will not return untill the erase operation is complete.
+* \note This is a blocking function and will not return until the erase operation is complete.
 *
 * \param sectorAddr Address of the flash row number.
 * The Read-while-Write violation occurs when the flash read operation is

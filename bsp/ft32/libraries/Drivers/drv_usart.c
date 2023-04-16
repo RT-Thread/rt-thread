@@ -357,7 +357,7 @@ static void uart_isr(struct rt_serial_device *serial)
         }
         USART_ClearFlag(uart->config->Instance, USART_IT_IDLE);
     }
-    else if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) != RESET))
+    else if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) != RESET)
     {
         if ((serial->parent.open_flag & RT_DEVICE_FLAG_DMA_TX) != 0)
         {

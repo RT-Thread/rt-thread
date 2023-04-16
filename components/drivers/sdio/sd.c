@@ -380,7 +380,7 @@ rt_err_t mmcsd_send_app_op_cond(struct rt_mmcsd_host *host,
         cmd.arg = ocr;
     cmd.flags = RESP_SPI_R1 | RESP_R3 | CMD_BCR;
 
-    for (i = 100; i; i--)
+    for (i = 1000; i; i--)
     {
         err = mmcsd_send_app_cmd(host, RT_NULL, &cmd, 3);
         if (err)

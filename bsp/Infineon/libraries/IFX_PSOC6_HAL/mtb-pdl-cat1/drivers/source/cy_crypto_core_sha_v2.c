@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_sha_v2.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code to the API for the SHA method
@@ -27,15 +27,17 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_sha_v2.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C)
 
 #include "cy_crypto_core_hw_v2.h"
 #include "cy_crypto_core_mem_v2.h"
@@ -58,7 +60,7 @@ extern "C" {
 * CY_CRYPTO_SHA512, CY_CRYPTO_SHA384, CY_CRYPTO_SHA512_224, CY_CRYPTO_SHA512_256
 *
 * \param shaBuffers
-* The pointer to the memory buffers storage.
+* The pointer to the memory buffers storage, see \ref cy_stc_crypto_v2_sha_buffers_t
 *
 * \return
 * \ref cy_en_crypto_status_t
@@ -74,7 +76,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Init(CRYPTO_Type *base,
     (void)base; /* Suppress warning */
 
     /* Initialization vectors for different modes of the SHA algorithm */
-    #if (CPUSS_CRYPTO_SHA1 == 1)
+    #if (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED)
     static const uint8_t sha1InitHash[] =
     {
        0x67u, 0x45u, 0x23u, 0x01u,
@@ -83,9 +85,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Init(CRYPTO_Type *base,
        0x10u, 0x32u, 0x54u, 0x76u,
        0xc3u, 0xd2u, 0xe1u, 0xf0u
     };
-    #endif /* #if (CPUSS_CRYPTO_SHA1 == 1) */
+    #endif /* (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED) */
 
-    #if (CPUSS_CRYPTO_SHA256 == 1)
+    #if (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED)
     static const uint8_t sha224InitHash[] =
     {
        0xc1u, 0x05u, 0x9eu, 0xd8u,
@@ -109,9 +111,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Init(CRYPTO_Type *base,
        0x1fu, 0x83u, 0xd9u, 0xabu,
        0x5bu, 0xe0u, 0xcdu, 0x19u
     };
-    #endif /* #if (CPUSS_CRYPTO_SHA256 == 1) */
+    #endif /* (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED) */
 
-    #if (CPUSS_CRYPTO_SHA512 == 1)
+    #if (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED)
     static const uint8_t sha512_224InitHash[] = {
        0x8cu, 0x3du, 0x37u, 0xc8u, 0x19u, 0x54u, 0x4du, 0xa2u,
        0x73u, 0xe1u, 0x99u, 0x66u, 0x89u, 0xdcu, 0xd4u, 0xd6u,
@@ -155,13 +157,13 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Init(CRYPTO_Type *base,
        0x1fu, 0x83u, 0xd9u, 0xabu, 0xfbu, 0x41u, 0xbdu, 0x6bu,
        0x5bu, 0xe0u, 0xcdu, 0x19u, 0x13u, 0x7eu, 0x21u, 0x79u
     };
-    #endif /* #if (CPUSS_CRYPTO_SHA512 == 1) */
+    #endif /* (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED) */
 
     CY_ASSERT_L1((shaBuffers != NULL) && (hashState != NULL));
 
     switch (mode)
     {
-        #if (CPUSS_CRYPTO_SHA1 == 1)
+        #if (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED)
             case CY_CRYPTO_MODE_SHA1:
                 hashState->block          = (uint8_t*)((cy_stc_crypto_v2_sha1_buffers_t*)shaBuffers)->block;
                 hashState->hash           = (uint8_t*)((cy_stc_crypto_v2_sha1_buffers_t*)shaBuffers)->hash;
@@ -173,8 +175,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Init(CRYPTO_Type *base,
                 hashState->hashSize       = CY_CRYPTO_SHA1_HASH_SIZE;
                 hashState->digestSize     = CY_CRYPTO_SHA1_DIGEST_SIZE;
                 break;
-        #endif /* #if (CPUSS_CRYPTO_SHA1 == 1) */
-        #if (CPUSS_CRYPTO_SHA256 == 1)
+        #endif /* (CPUSS_CRYPTO_SHA1 == 1) && defined(CY_CRYPTO_CFG_SHA1_ENABLED) */
+
+        #if (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED)
             case CY_CRYPTO_MODE_SHA256:
                 hashState->block          = (uint8_t*)((cy_stc_crypto_v2_sha256_buffers_t*)shaBuffers)->block;
                 hashState->hash           = (uint8_t*)((cy_stc_crypto_v2_sha256_buffers_t*)shaBuffers)->hash;
@@ -197,8 +200,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Init(CRYPTO_Type *base,
                 hashState->hashSize       = CY_CRYPTO_SHA256_HASH_SIZE;
                 hashState->digestSize     = CY_CRYPTO_SHA224_DIGEST_SIZE;
                 break;
-        #endif /* #if (CPUSS_CRYPTO_SHA256 == 1) */
-        #if (CPUSS_CRYPTO_SHA512 == 1)
+        #endif /* (CPUSS_CRYPTO_SHA256 == 1) && defined(CY_CRYPTO_CFG_SHA2_256_ENABLED) */
+
+        #if (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED)
             case CY_CRYPTO_MODE_SHA512:
                 hashState->block          = (uint8_t*)((cy_stc_crypto_v2_sha512_buffers_t*)shaBuffers)->block;
                 hashState->hash           = (uint8_t*)((cy_stc_crypto_v2_sha512_buffers_t*)shaBuffers)->hash;
@@ -243,7 +247,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Init(CRYPTO_Type *base,
                 hashState->hashSize       = CY_CRYPTO_SHA512_HASH_SIZE;
                 hashState->digestSize     = CY_CRYPTO_SHA512_224_DIGEST_SIZE;
                 break;
-        #endif /* #if (CPUSS_CRYPTO_SHA512 == 1) */
+        #endif /* (CPUSS_CRYPTO_SHA512 == 1) && defined(CY_CRYPTO_CFG_SHA2_512_ENABLED) */
+
             default:
                 tmpResult = CY_CRYPTO_BAD_PARAMS;
                 break;
@@ -278,9 +283,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Start(CRYPTO_Type *base, cy_stc_cryp
         hashState->messageSize = 0U;
 
         if (hashState->hashSize != 0U)
-        {
-            Cy_Crypto_Core_V2_MemCpy(base, hashState->hash, hashState->initialHash, (uint16_t)hashState->hashSize);
 
+        {
+            Cy_Crypto_Core_V2_MemCpy(base, (void*)hashState->hash, (void const*)hashState->initialHash, (uint16_t)hashState->hashSize);
             tmpResult = CY_CRYPTO_SUCCESS;
         }
     }
@@ -293,6 +298,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Start(CRYPTO_Type *base, cy_stc_cryp
 ****************************************************************************//**
 *
 * Performs the SHA calculation on one message.
+*
+* For CAT1C devices when D-Cache is enabled parameter message must align and end in 32 byte boundary.
 *
 * \param base
 * The pointer to the CRYPTO instance.
@@ -324,6 +331,11 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Update(CRYPTO_Type *base,
 
     if ((hashState != NULL) && (message != NULL))
     {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        /* Flush the cache */
+        SCB_CleanDCache_by_Addr((volatile void *)message,(int32_t)messageSize);
+#endif
+
         if (hashState->blockSize != 0U)
         {
             if (messageSize != 0U)
@@ -405,6 +417,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Update(CRYPTO_Type *base,
 ****************************************************************************//**
 *
 * Completes SHA calculation.
+*
+* For CAT1C devices when D-Cache is enabled parameter digest must align and end in 32 byte boundary.
 *
 * \param base
 * The pointer to the CRYPTO instance.
@@ -488,6 +502,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Finish(CRYPTO_Type *base,
         Cy_Crypto_Core_V2_FFStoreSync(base);
 
         tmpResult = CY_CRYPTO_SUCCESS;
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        SCB_InvalidateDCache_by_Addr(digest, (int32_t)hashState->digestSize);
+#endif
     }
 
     return (tmpResult);
@@ -498,6 +515,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Finish(CRYPTO_Type *base,
 ****************************************************************************//**
 *
 * Clears the used memory buffers.
+*
+* For CAT1C devices when D-Cache is enabled parameter hashState must align and end in 32 byte boundary.
 *
 * \param base
 * The pointer to the CRYPTO instance.
@@ -516,16 +535,18 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha_Free(CRYPTO_Type *base, cy_stc_crypt
     if (hashState != NULL)
     {
         /* Clears the context buffers */
-        Cy_Crypto_Core_V2_MemSet(base, hashState->block, 0x00U, (uint16_t)hashState->blockSize);
-        Cy_Crypto_Core_V2_MemSet(base, hashState->hash,  0x00U, (uint16_t)hashState->hashSize);
+        Cy_Crypto_Core_V2_MemSet(base, (void*)hashState->block, 0x00U, (uint16_t)hashState->blockSize);
+        Cy_Crypto_Core_V2_MemSet(base, (void*)hashState->hash,  0x00U, (uint16_t)hashState->hashSize);
 
         /* Clears the hash state */
-        Cy_Crypto_Core_V2_MemSet(base, hashState, 0x00U, (uint16_t)sizeof(cy_stc_crypto_sha_state_t));
+        Cy_Crypto_Core_V2_MemSet(base, (void*)hashState, 0x00U, (uint16_t)sizeof(cy_stc_crypto_sha_state_t));
 
         /* Clears the memory buffer. */
         Cy_Crypto_Core_V2_RBClear(base);
         Cy_Crypto_Core_V2_Sync(base);
-
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        SCB_InvalidateDCache_by_Addr(hashState, (int32_t)sizeof(cy_stc_crypto_sha_state_t));
+#endif
         tmpResult = CY_CRYPTO_SUCCESS;
     }
 
@@ -564,13 +585,23 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha(CRYPTO_Type *base,
                                 cy_en_crypto_sha_mode_t mode)
 {
     cy_en_crypto_status_t tmpResult = CY_CRYPTO_BAD_PARAMS;
-
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
     /* Allocate maximal space for the structure which stores the SHA buffers */
-    cy_stc_crypto_v2_sha512_buffers_t shaBuffers = {{ 0 }, { 0 }};
+    CY_SECTION_SHAREDMEM
+    CY_ALIGN(__SCB_DCACHE_LINE_SIZE) static cy_stc_crypto_v2_sha_buffers_t shaBuffers;
+    /* Allocate space for the structure which stores the SHA context */
+    CY_SECTION_SHAREDMEM
+    CY_ALIGN(__SCB_DCACHE_LINE_SIZE) static cy_stc_crypto_sha_state_t hashState;
 
+    Cy_Crypto_Core_V2_MemSet(base, (void*)&shaBuffers, 0x00U, (uint16_t)sizeof(cy_stc_crypto_v2_sha_buffers_t));
+    Cy_Crypto_Core_V2_MemSet(base, (void*)&hashState, 0x00U, (uint16_t)sizeof(cy_stc_crypto_sha_state_t));
+
+#else
+    /* Allocate maximal space for the structure which stores the SHA buffers */
+    cy_stc_crypto_v2_sha_buffers_t shaBuffers = {{ 0 }, { 0 }};
     /* Allocate space for the structure which stores the SHA context */
     cy_stc_crypto_sha_state_t hashState = { 0 };
-
+#endif
     /* No buffers are needed for the Crypto_ver2 IP block. */
     tmpResult = Cy_Crypto_Core_V2_Sha_Init   (base, &hashState, mode, &shaBuffers);
 
@@ -595,13 +626,15 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Sha(CRYPTO_Type *base,
 }
 
 
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_SHA_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

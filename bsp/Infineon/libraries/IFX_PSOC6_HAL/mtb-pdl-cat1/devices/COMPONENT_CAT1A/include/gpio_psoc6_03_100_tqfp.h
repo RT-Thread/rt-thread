@@ -399,10 +399,6 @@ typedef enum
 
     /* P0.0 */
     P0_0_GPIO                       =  0,       /* GPIO controls 'out' */
-    P0_0_AMUXA                      =  4,       /* Analog mux bus A */
-    P0_0_AMUXB                      =  5,       /* Analog mux bus B */
-    P0_0_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P0_0_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P0_0_TCPWM0_LINE0               =  8,       /* Digital Active - tcpwm[0].line[0]:0 */
     P0_0_TCPWM1_LINE0               =  9,       /* Digital Active - tcpwm[1].line[0]:0 */
     P0_0_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:0 */
@@ -415,10 +411,6 @@ typedef enum
 
     /* P0.1 */
     P0_1_GPIO                       =  0,       /* GPIO controls 'out' */
-    P0_1_AMUXA                      =  4,       /* Analog mux bus A */
-    P0_1_AMUXB                      =  5,       /* Analog mux bus B */
-    P0_1_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P0_1_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P0_1_TCPWM0_LINE_COMPL0         =  8,       /* Digital Active - tcpwm[0].line_compl[0]:0 */
     P0_1_TCPWM1_LINE_COMPL0         =  9,       /* Digital Active - tcpwm[1].line_compl[0]:0 */
     P0_1_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:1 */
@@ -431,10 +423,6 @@ typedef enum
 
     /* P0.2 */
     P0_2_GPIO                       =  0,       /* GPIO controls 'out' */
-    P0_2_AMUXA                      =  4,       /* Analog mux bus A */
-    P0_2_AMUXB                      =  5,       /* Analog mux bus B */
-    P0_2_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P0_2_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P0_2_TCPWM0_LINE1               =  8,       /* Digital Active - tcpwm[0].line[1]:0 */
     P0_2_TCPWM1_LINE1               =  9,       /* Digital Active - tcpwm[1].line[1]:0 */
     P0_2_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:2 */
@@ -447,10 +435,6 @@ typedef enum
 
     /* P0.3 */
     P0_3_GPIO                       =  0,       /* GPIO controls 'out' */
-    P0_3_AMUXA                      =  4,       /* Analog mux bus A */
-    P0_3_AMUXB                      =  5,       /* Analog mux bus B */
-    P0_3_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P0_3_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P0_3_TCPWM0_LINE_COMPL1         =  8,       /* Digital Active - tcpwm[0].line_compl[1]:0 */
     P0_3_TCPWM1_LINE_COMPL1         =  9,       /* Digital Active - tcpwm[1].line_compl[1]:0 */
     P0_3_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:3 */
@@ -463,10 +447,6 @@ typedef enum
 
     /* P0.4 */
     P0_4_GPIO                       =  0,       /* GPIO controls 'out' */
-    P0_4_AMUXA                      =  4,       /* Analog mux bus A */
-    P0_4_AMUXB                      =  5,       /* Analog mux bus B */
-    P0_4_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P0_4_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P0_4_TCPWM0_LINE2               =  8,       /* Digital Active - tcpwm[0].line[2]:0 */
     P0_4_TCPWM1_LINE2               =  9,       /* Digital Active - tcpwm[1].line[2]:0 */
     P0_4_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:4 */
@@ -480,10 +460,6 @@ typedef enum
 
     /* P0.5 */
     P0_5_GPIO                       =  0,       /* GPIO controls 'out' */
-    P0_5_AMUXA                      =  4,       /* Analog mux bus A */
-    P0_5_AMUXB                      =  5,       /* Analog mux bus B */
-    P0_5_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P0_5_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P0_5_TCPWM0_LINE_COMPL2         =  8,       /* Digital Active - tcpwm[0].line_compl[2]:0 */
     P0_5_TCPWM1_LINE_COMPL2         =  9,       /* Digital Active - tcpwm[1].line_compl[2]:0 */
     P0_5_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:5 */
@@ -498,10 +474,6 @@ typedef enum
 
     /* P2.0 */
     P2_0_GPIO                       =  0,       /* GPIO controls 'out' */
-    P2_0_AMUXA                      =  4,       /* Analog mux bus A */
-    P2_0_AMUXB                      =  5,       /* Analog mux bus B */
-    P2_0_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P2_0_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P2_0_TCPWM0_LINE3               =  8,       /* Digital Active - tcpwm[0].line[3]:0 */
     P2_0_TCPWM1_LINE3               =  9,       /* Digital Active - tcpwm[1].line[3]:0 */
     P2_0_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:6 */
@@ -516,10 +488,6 @@ typedef enum
 
     /* P2.1 */
     P2_1_GPIO                       =  0,       /* GPIO controls 'out' */
-    P2_1_AMUXA                      =  4,       /* Analog mux bus A */
-    P2_1_AMUXB                      =  5,       /* Analog mux bus B */
-    P2_1_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P2_1_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P2_1_TCPWM0_LINE_COMPL3         =  8,       /* Digital Active - tcpwm[0].line_compl[3]:0 */
     P2_1_TCPWM1_LINE_COMPL3         =  9,       /* Digital Active - tcpwm[1].line_compl[3]:0 */
     P2_1_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:7 */
@@ -534,10 +502,6 @@ typedef enum
 
     /* P2.2 */
     P2_2_GPIO                       =  0,       /* GPIO controls 'out' */
-    P2_2_AMUXA                      =  4,       /* Analog mux bus A */
-    P2_2_AMUXB                      =  5,       /* Analog mux bus B */
-    P2_2_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P2_2_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P2_2_TCPWM0_LINE0               =  8,       /* Digital Active - tcpwm[0].line[0]:1 */
     P2_2_TCPWM1_LINE4               =  9,       /* Digital Active - tcpwm[1].line[4]:0 */
     P2_2_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:8 */
@@ -550,10 +514,6 @@ typedef enum
 
     /* P2.3 */
     P2_3_GPIO                       =  0,       /* GPIO controls 'out' */
-    P2_3_AMUXA                      =  4,       /* Analog mux bus A */
-    P2_3_AMUXB                      =  5,       /* Analog mux bus B */
-    P2_3_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P2_3_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P2_3_TCPWM0_LINE_COMPL0         =  8,       /* Digital Active - tcpwm[0].line_compl[0]:1 */
     P2_3_TCPWM1_LINE_COMPL4         =  9,       /* Digital Active - tcpwm[1].line_compl[4]:0 */
     P2_3_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:9 */
@@ -566,10 +526,6 @@ typedef enum
 
     /* P2.4 */
     P2_4_GPIO                       =  0,       /* GPIO controls 'out' */
-    P2_4_AMUXA                      =  4,       /* Analog mux bus A */
-    P2_4_AMUXB                      =  5,       /* Analog mux bus B */
-    P2_4_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P2_4_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P2_4_TCPWM0_LINE1               =  8,       /* Digital Active - tcpwm[0].line[1]:1 */
     P2_4_TCPWM1_LINE5               =  9,       /* Digital Active - tcpwm[1].line[5]:0 */
     P2_4_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:10 */
@@ -581,10 +537,6 @@ typedef enum
 
     /* P2.5 */
     P2_5_GPIO                       =  0,       /* GPIO controls 'out' */
-    P2_5_AMUXA                      =  4,       /* Analog mux bus A */
-    P2_5_AMUXB                      =  5,       /* Analog mux bus B */
-    P2_5_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P2_5_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P2_5_TCPWM0_LINE_COMPL1         =  8,       /* Digital Active - tcpwm[0].line_compl[1]:1 */
     P2_5_TCPWM1_LINE_COMPL5         =  9,       /* Digital Active - tcpwm[1].line_compl[5]:0 */
     P2_5_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:11 */
@@ -596,10 +548,6 @@ typedef enum
 
     /* P2.6 */
     P2_6_GPIO                       =  0,       /* GPIO controls 'out' */
-    P2_6_AMUXA                      =  4,       /* Analog mux bus A */
-    P2_6_AMUXB                      =  5,       /* Analog mux bus B */
-    P2_6_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P2_6_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P2_6_TCPWM0_LINE2               =  8,       /* Digital Active - tcpwm[0].line[2]:1 */
     P2_6_TCPWM1_LINE6               =  9,       /* Digital Active - tcpwm[1].line[6]:0 */
     P2_6_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:12 */
@@ -612,10 +560,6 @@ typedef enum
 
     /* P2.7 */
     P2_7_GPIO                       =  0,       /* GPIO controls 'out' */
-    P2_7_AMUXA                      =  4,       /* Analog mux bus A */
-    P2_7_AMUXB                      =  5,       /* Analog mux bus B */
-    P2_7_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P2_7_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P2_7_TCPWM0_LINE_COMPL2         =  8,       /* Digital Active - tcpwm[0].line_compl[2]:1 */
     P2_7_TCPWM1_LINE_COMPL6         =  9,       /* Digital Active - tcpwm[1].line_compl[6]:0 */
     P2_7_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:13 */
@@ -663,10 +607,6 @@ typedef enum
 
     /* P5.0 */
     P5_0_GPIO                       =  0,       /* GPIO controls 'out' */
-    P5_0_AMUXA                      =  4,       /* Analog mux bus A */
-    P5_0_AMUXB                      =  5,       /* Analog mux bus B */
-    P5_0_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P5_0_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P5_0_TCPWM0_LINE0               =  8,       /* Digital Active - tcpwm[0].line[0]:2 */
     P5_0_TCPWM1_LINE0               =  9,       /* Digital Active - tcpwm[1].line[0]:1 */
     P5_0_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:16 */
@@ -681,10 +621,6 @@ typedef enum
 
     /* P5.1 */
     P5_1_GPIO                       =  0,       /* GPIO controls 'out' */
-    P5_1_AMUXA                      =  4,       /* Analog mux bus A */
-    P5_1_AMUXB                      =  5,       /* Analog mux bus B */
-    P5_1_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P5_1_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P5_1_TCPWM0_LINE_COMPL0         =  8,       /* Digital Active - tcpwm[0].line_compl[0]:2 */
     P5_1_TCPWM1_LINE_COMPL0         =  9,       /* Digital Active - tcpwm[1].line_compl[0]:1 */
     P5_1_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:17 */
@@ -699,10 +635,6 @@ typedef enum
 
     /* P5.6 */
     P5_6_GPIO                       =  0,       /* GPIO controls 'out' */
-    P5_6_AMUXA                      =  4,       /* Analog mux bus A */
-    P5_6_AMUXB                      =  5,       /* Analog mux bus B */
-    P5_6_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P5_6_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P5_6_TCPWM0_LINE1               =  8,       /* Digital Active - tcpwm[0].line[1]:2 */
     P5_6_TCPWM1_LINE1               =  9,       /* Digital Active - tcpwm[1].line[1]:1 */
     P5_6_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:18 */
@@ -712,10 +644,6 @@ typedef enum
 
     /* P5.7 */
     P5_7_GPIO                       =  0,       /* GPIO controls 'out' */
-    P5_7_AMUXA                      =  4,       /* Analog mux bus A */
-    P5_7_AMUXB                      =  5,       /* Analog mux bus B */
-    P5_7_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P5_7_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P5_7_TCPWM0_LINE_COMPL1         =  8,       /* Digital Active - tcpwm[0].line_compl[1]:2 */
     P5_7_TCPWM1_LINE_COMPL1         =  9,       /* Digital Active - tcpwm[1].line_compl[1]:1 */
     P5_7_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:19 */
@@ -725,10 +653,6 @@ typedef enum
 
     /* P6.0 */
     P6_0_GPIO                       =  0,       /* GPIO controls 'out' */
-    P6_0_AMUXA                      =  4,       /* Analog mux bus A */
-    P6_0_AMUXB                      =  5,       /* Analog mux bus B */
-    P6_0_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P6_0_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P6_0_TCPWM0_LINE2               =  8,       /* Digital Active - tcpwm[0].line[2]:2 */
     P6_0_TCPWM1_LINE2               =  9,       /* Digital Active - tcpwm[1].line[2]:1 */
     P6_0_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:20 */
@@ -742,10 +666,6 @@ typedef enum
 
     /* P6.1 */
     P6_1_GPIO                       =  0,       /* GPIO controls 'out' */
-    P6_1_AMUXA                      =  4,       /* Analog mux bus A */
-    P6_1_AMUXB                      =  5,       /* Analog mux bus B */
-    P6_1_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P6_1_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P6_1_TCPWM0_LINE_COMPL2         =  8,       /* Digital Active - tcpwm[0].line_compl[2]:2 */
     P6_1_TCPWM1_LINE_COMPL2         =  9,       /* Digital Active - tcpwm[1].line_compl[2]:1 */
     P6_1_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:21 */
@@ -759,10 +679,6 @@ typedef enum
 
     /* P6.2 */
     P6_2_GPIO                       =  0,       /* GPIO controls 'out' */
-    P6_2_AMUXA                      =  4,       /* Analog mux bus A */
-    P6_2_AMUXB                      =  5,       /* Analog mux bus B */
-    P6_2_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P6_2_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P6_2_TCPWM0_LINE3               =  8,       /* Digital Active - tcpwm[0].line[3]:2 */
     P6_2_TCPWM1_LINE3               =  9,       /* Digital Active - tcpwm[1].line[3]:1 */
     P6_2_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:22 */
@@ -774,10 +690,6 @@ typedef enum
 
     /* P6.3 */
     P6_3_GPIO                       =  0,       /* GPIO controls 'out' */
-    P6_3_AMUXA                      =  4,       /* Analog mux bus A */
-    P6_3_AMUXB                      =  5,       /* Analog mux bus B */
-    P6_3_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P6_3_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P6_3_TCPWM0_LINE_COMPL3         =  8,       /* Digital Active - tcpwm[0].line_compl[3]:2 */
     P6_3_TCPWM1_LINE_COMPL3         =  9,       /* Digital Active - tcpwm[1].line_compl[3]:1 */
     P6_3_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:23 */
@@ -789,10 +701,6 @@ typedef enum
 
     /* P6.4 */
     P6_4_GPIO                       =  0,       /* GPIO controls 'out' */
-    P6_4_AMUXA                      =  4,       /* Analog mux bus A */
-    P6_4_AMUXB                      =  5,       /* Analog mux bus B */
-    P6_4_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P6_4_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P6_4_TCPWM0_LINE0               =  8,       /* Digital Active - tcpwm[0].line[0]:3 */
     P6_4_TCPWM1_LINE4               =  9,       /* Digital Active - tcpwm[1].line[4]:1 */
     P6_4_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:24 */
@@ -808,10 +716,6 @@ typedef enum
 
     /* P6.5 */
     P6_5_GPIO                       =  0,       /* GPIO controls 'out' */
-    P6_5_AMUXA                      =  4,       /* Analog mux bus A */
-    P6_5_AMUXB                      =  5,       /* Analog mux bus B */
-    P6_5_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P6_5_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P6_5_TCPWM0_LINE_COMPL0         =  8,       /* Digital Active - tcpwm[0].line_compl[0]:3 */
     P6_5_TCPWM1_LINE_COMPL4         =  9,       /* Digital Active - tcpwm[1].line_compl[4]:1 */
     P6_5_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:25 */
@@ -827,10 +731,6 @@ typedef enum
 
     /* P6.6 */
     P6_6_GPIO                       =  0,       /* GPIO controls 'out' */
-    P6_6_AMUXA                      =  4,       /* Analog mux bus A */
-    P6_6_AMUXB                      =  5,       /* Analog mux bus B */
-    P6_6_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P6_6_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P6_6_TCPWM0_LINE1               =  8,       /* Digital Active - tcpwm[0].line[1]:3 */
     P6_6_TCPWM1_LINE5               =  9,       /* Digital Active - tcpwm[1].line[5]:1 */
     P6_6_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:26 */
@@ -842,10 +742,6 @@ typedef enum
 
     /* P6.7 */
     P6_7_GPIO                       =  0,       /* GPIO controls 'out' */
-    P6_7_AMUXA                      =  4,       /* Analog mux bus A */
-    P6_7_AMUXB                      =  5,       /* Analog mux bus B */
-    P6_7_AMUXA_DSI                  =  6,       /* Analog mux bus A, DSI control */
-    P6_7_AMUXB_DSI                  =  7,       /* Analog mux bus B, DSI control */
     P6_7_TCPWM0_LINE_COMPL1         =  8,       /* Digital Active - tcpwm[0].line_compl[1]:3 */
     P6_7_TCPWM1_LINE_COMPL5         =  9,       /* Digital Active - tcpwm[1].line_compl[5]:1 */
     P6_7_CSD_CSD_TX                 = 10,       /* Digital Active - csd.csd_tx:27 */
@@ -1118,10 +1014,6 @@ typedef enum
 
     /* P10.0 */
     P10_0_GPIO                      =  0,       /* GPIO controls 'out' */
-    P10_0_AMUXA                     =  4,       /* Analog mux bus A */
-    P10_0_AMUXB                     =  5,       /* Analog mux bus B */
-    P10_0_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P10_0_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P10_0_TCPWM0_LINE2              =  8,       /* Digital Active - tcpwm[0].line[2]:5 */
     P10_0_TCPWM1_LINE6              =  9,       /* Digital Active - tcpwm[1].line[6]:2 */
     P10_0_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:44 */
@@ -1136,10 +1028,6 @@ typedef enum
 
     /* P10.1 */
     P10_1_GPIO                      =  0,       /* GPIO controls 'out' */
-    P10_1_AMUXA                     =  4,       /* Analog mux bus A */
-    P10_1_AMUXB                     =  5,       /* Analog mux bus B */
-    P10_1_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P10_1_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P10_1_TCPWM0_LINE_COMPL2        =  8,       /* Digital Active - tcpwm[0].line_compl[2]:5 */
     P10_1_TCPWM1_LINE_COMPL6        =  9,       /* Digital Active - tcpwm[1].line_compl[6]:2 */
     P10_1_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:45 */
@@ -1154,10 +1042,6 @@ typedef enum
 
     /* P10.2 */
     P10_2_GPIO                      =  0,       /* GPIO controls 'out' */
-    P10_2_AMUXA                     =  4,       /* Analog mux bus A */
-    P10_2_AMUXB                     =  5,       /* Analog mux bus B */
-    P10_2_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P10_2_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P10_2_TCPWM0_LINE3              =  8,       /* Digital Active - tcpwm[0].line[3]:5 */
     P10_2_TCPWM1_LINE7              =  9,       /* Digital Active - tcpwm[1].line[7]:2 */
     P10_2_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:46 */
@@ -1170,10 +1054,6 @@ typedef enum
 
     /* P10.3 */
     P10_3_GPIO                      =  0,       /* GPIO controls 'out' */
-    P10_3_AMUXA                     =  4,       /* Analog mux bus A */
-    P10_3_AMUXB                     =  5,       /* Analog mux bus B */
-    P10_3_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P10_3_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P10_3_TCPWM0_LINE_COMPL3        =  8,       /* Digital Active - tcpwm[0].line_compl[3]:5 */
     P10_3_TCPWM1_LINE_COMPL7        =  9,       /* Digital Active - tcpwm[1].line_compl[7]:2 */
     P10_3_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:47 */
@@ -1186,10 +1066,6 @@ typedef enum
 
     /* P10.4 */
     P10_4_GPIO                      =  0,       /* GPIO controls 'out' */
-    P10_4_AMUXA                     =  4,       /* Analog mux bus A */
-    P10_4_AMUXB                     =  5,       /* Analog mux bus B */
-    P10_4_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P10_4_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P10_4_TCPWM0_LINE0              =  8,       /* Digital Active - tcpwm[0].line[0]:6 */
     P10_4_TCPWM1_LINE0              =  9,       /* Digital Active - tcpwm[1].line[0]:3 */
     P10_4_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:48 */
@@ -1200,10 +1076,6 @@ typedef enum
 
     /* P10.5 */
     P10_5_GPIO                      =  0,       /* GPIO controls 'out' */
-    P10_5_AMUXA                     =  4,       /* Analog mux bus A */
-    P10_5_AMUXB                     =  5,       /* Analog mux bus B */
-    P10_5_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P10_5_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P10_5_TCPWM0_LINE_COMPL0        =  8,       /* Digital Active - tcpwm[0].line_compl[0]:6 */
     P10_5_TCPWM1_LINE_COMPL0        =  9,       /* Digital Active - tcpwm[1].line_compl[0]:3 */
     P10_5_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:49 */
@@ -1214,10 +1086,6 @@ typedef enum
 
     /* P10.6 */
     P10_6_GPIO                      =  0,       /* GPIO controls 'out' */
-    P10_6_AMUXA                     =  4,       /* Analog mux bus A */
-    P10_6_AMUXB                     =  5,       /* Analog mux bus B */
-    P10_6_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P10_6_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P10_6_TCPWM0_LINE1              =  8,       /* Digital Active - tcpwm[0].line[1]:6 */
     P10_6_TCPWM1_LINE1              =  9,       /* Digital Active - tcpwm[1].line[1]:3 */
     P10_6_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:50 */
@@ -1228,10 +1096,6 @@ typedef enum
 
     /* P10.7 */
     P10_7_GPIO                      =  0,       /* GPIO controls 'out' */
-    P10_7_AMUXA                     =  4,       /* Analog mux bus A */
-    P10_7_AMUXB                     =  5,       /* Analog mux bus B */
-    P10_7_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P10_7_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P10_7_TCPWM0_LINE_COMPL1        =  8,       /* Digital Active - tcpwm[0].line_compl[1]:6 */
     P10_7_TCPWM1_LINE_COMPL1        =  9,       /* Digital Active - tcpwm[1].line_compl[1]:3 */
     P10_7_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:51 */
@@ -1241,10 +1105,6 @@ typedef enum
 
     /* P11.0 */
     P11_0_GPIO                      =  0,       /* GPIO controls 'out' */
-    P11_0_AMUXA                     =  4,       /* Analog mux bus A */
-    P11_0_AMUXB                     =  5,       /* Analog mux bus B */
-    P11_0_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P11_0_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P11_0_TCPWM0_LINE2              =  8,       /* Digital Active - tcpwm[0].line[2]:6 */
     P11_0_TCPWM1_LINE2              =  9,       /* Digital Active - tcpwm[1].line[2]:3 */
     P11_0_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:52 */
@@ -1259,10 +1119,6 @@ typedef enum
 
     /* P11.1 */
     P11_1_GPIO                      =  0,       /* GPIO controls 'out' */
-    P11_1_AMUXA                     =  4,       /* Analog mux bus A */
-    P11_1_AMUXB                     =  5,       /* Analog mux bus B */
-    P11_1_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P11_1_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P11_1_TCPWM0_LINE_COMPL2        =  8,       /* Digital Active - tcpwm[0].line_compl[2]:6 */
     P11_1_TCPWM1_LINE_COMPL2        =  9,       /* Digital Active - tcpwm[1].line_compl[2]:3 */
     P11_1_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:53 */
@@ -1277,10 +1133,6 @@ typedef enum
 
     /* P11.2 */
     P11_2_GPIO                      =  0,       /* GPIO controls 'out' */
-    P11_2_AMUXA                     =  4,       /* Analog mux bus A */
-    P11_2_AMUXB                     =  5,       /* Analog mux bus B */
-    P11_2_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P11_2_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P11_2_TCPWM0_LINE3              =  8,       /* Digital Active - tcpwm[0].line[3]:6 */
     P11_2_TCPWM1_LINE3              =  9,       /* Digital Active - tcpwm[1].line[3]:3 */
     P11_2_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:54 */
@@ -1293,10 +1145,6 @@ typedef enum
 
     /* P11.3 */
     P11_3_GPIO                      =  0,       /* GPIO controls 'out' */
-    P11_3_AMUXA                     =  4,       /* Analog mux bus A */
-    P11_3_AMUXB                     =  5,       /* Analog mux bus B */
-    P11_3_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P11_3_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P11_3_TCPWM0_LINE_COMPL3        =  8,       /* Digital Active - tcpwm[0].line_compl[3]:6 */
     P11_3_TCPWM1_LINE_COMPL3        =  9,       /* Digital Active - tcpwm[1].line_compl[3]:3 */
     P11_3_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:55 */
@@ -1310,10 +1158,6 @@ typedef enum
 
     /* P11.4 */
     P11_4_GPIO                      =  0,       /* GPIO controls 'out' */
-    P11_4_AMUXA                     =  4,       /* Analog mux bus A */
-    P11_4_AMUXB                     =  5,       /* Analog mux bus B */
-    P11_4_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P11_4_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P11_4_TCPWM0_LINE0              =  8,       /* Digital Active - tcpwm[0].line[0]:7 */
     P11_4_TCPWM1_LINE4              =  9,       /* Digital Active - tcpwm[1].line[4]:3 */
     P11_4_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:56 */
@@ -1326,10 +1170,6 @@ typedef enum
 
     /* P11.5 */
     P11_5_GPIO                      =  0,       /* GPIO controls 'out' */
-    P11_5_AMUXA                     =  4,       /* Analog mux bus A */
-    P11_5_AMUXB                     =  5,       /* Analog mux bus B */
-    P11_5_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P11_5_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P11_5_TCPWM0_LINE_COMPL0        =  8,       /* Digital Active - tcpwm[0].line_compl[0]:7 */
     P11_5_TCPWM1_LINE_COMPL4        =  9,       /* Digital Active - tcpwm[1].line_compl[4]:3 */
     P11_5_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:57 */
@@ -1341,10 +1181,6 @@ typedef enum
 
     /* P11.6 */
     P11_6_GPIO                      =  0,       /* GPIO controls 'out' */
-    P11_6_AMUXA                     =  4,       /* Analog mux bus A */
-    P11_6_AMUXB                     =  5,       /* Analog mux bus B */
-    P11_6_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P11_6_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P11_6_TCPWM0_LINE1              =  8,       /* Digital Active - tcpwm[0].line[1]:7 */
     P11_6_TCPWM1_LINE5              =  9,       /* Digital Active - tcpwm[1].line[5]:3 */
     P11_6_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:58 */
@@ -1356,10 +1192,6 @@ typedef enum
 
     /* P11.7 */
     P11_7_GPIO                      =  0,       /* GPIO controls 'out' */
-    P11_7_AMUXA                     =  4,       /* Analog mux bus A */
-    P11_7_AMUXB                     =  5,       /* Analog mux bus B */
-    P11_7_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P11_7_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P11_7_TCPWM0_LINE_COMPL1        =  8,       /* Digital Active - tcpwm[0].line_compl[1]:7 */
     P11_7_TCPWM1_LINE_COMPL5        =  9,       /* Digital Active - tcpwm[1].line_compl[5]:3 */
     P11_7_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:59 */
@@ -1370,10 +1202,6 @@ typedef enum
 
     /* P12.0 */
     P12_0_GPIO                      =  0,       /* GPIO controls 'out' */
-    P12_0_AMUXA                     =  4,       /* Analog mux bus A */
-    P12_0_AMUXB                     =  5,       /* Analog mux bus B */
-    P12_0_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P12_0_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P12_0_TCPWM0_LINE2              =  8,       /* Digital Active - tcpwm[0].line[2]:7 */
     P12_0_TCPWM1_LINE6              =  9,       /* Digital Active - tcpwm[1].line[6]:3 */
     P12_0_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:60 */
@@ -1385,10 +1213,6 @@ typedef enum
 
     /* P12.1 */
     P12_1_GPIO                      =  0,       /* GPIO controls 'out' */
-    P12_1_AMUXA                     =  4,       /* Analog mux bus A */
-    P12_1_AMUXB                     =  5,       /* Analog mux bus B */
-    P12_1_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P12_1_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P12_1_TCPWM0_LINE_COMPL2        =  8,       /* Digital Active - tcpwm[0].line_compl[2]:7 */
     P12_1_TCPWM1_LINE_COMPL6        =  9,       /* Digital Active - tcpwm[1].line_compl[6]:3 */
     P12_1_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:61 */
@@ -1400,10 +1224,6 @@ typedef enum
 
     /* P12.6 */
     P12_6_GPIO                      =  0,       /* GPIO controls 'out' */
-    P12_6_AMUXA                     =  4,       /* Analog mux bus A */
-    P12_6_AMUXB                     =  5,       /* Analog mux bus B */
-    P12_6_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P12_6_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P12_6_TCPWM0_LINE3              =  8,       /* Digital Active - tcpwm[0].line[3]:7 */
     P12_6_TCPWM1_LINE7              =  9,       /* Digital Active - tcpwm[1].line[7]:3 */
     P12_6_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:62 */
@@ -1413,10 +1233,6 @@ typedef enum
 
     /* P12.7 */
     P12_7_GPIO                      =  0,       /* GPIO controls 'out' */
-    P12_7_AMUXA                     =  4,       /* Analog mux bus A */
-    P12_7_AMUXB                     =  5,       /* Analog mux bus B */
-    P12_7_AMUXA_DSI                 =  6,       /* Analog mux bus A, DSI control */
-    P12_7_AMUXB_DSI                 =  7,       /* Analog mux bus B, DSI control */
     P12_7_TCPWM0_LINE_COMPL3        =  8,       /* Digital Active - tcpwm[0].line_compl[3]:7 */
     P12_7_TCPWM1_LINE_COMPL7        =  9,       /* Digital Active - tcpwm[1].line_compl[7]:3 */
     P12_7_CSD_CSD_TX                = 10,       /* Digital Active - csd.csd_tx:63 */

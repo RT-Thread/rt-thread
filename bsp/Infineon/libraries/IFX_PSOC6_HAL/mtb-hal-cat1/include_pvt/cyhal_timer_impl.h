@@ -84,7 +84,7 @@ __STATIC_INLINE void cyhal_timer_register_callback_internal(cyhal_timer_t *obj, 
 __STATIC_INLINE void cyhal_timer_enable_event_internal(cyhal_timer_t *obj, cyhal_timer_event_t event, uint8_t intr_priority, bool enable)
 {
     uint32_t converted = _cyhal_timer_convert_event(event);
-    _cyhal_tcpwm_enable_event(obj->tcpwm.base, &obj->tcpwm.resource, converted, intr_priority, enable);
+    _cyhal_tcpwm_enable_event(&obj->tcpwm, &obj->tcpwm.resource, converted, intr_priority, enable);
 }
 
 #define cyhal_timer_enable_event(obj, event, intr_priority, enable) cyhal_timer_enable_event_internal(obj, event, intr_priority, enable)

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_seglcd.h
-* \version 1.10
+* \version 1.10.1
 *
 * \brief
 * Provides an API declaration of the Segment LCD driver.
@@ -252,6 +252,11 @@
 * \section group_seglcd_changelog Changelog
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
+*   <tr>
+*     <td>1.10.1</td>
+*     <td>Fixed a misprint in the documentation.</td>
+*     <td>Improving user experience.</td>
+*   </tr>
 *   <tr>
 *     <td>1.10</td>
 *     <td>Fixed/Documented MISRA 2012 violations.</td>

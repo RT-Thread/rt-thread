@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_pdm_pcm_v2.h
-* \version 1.0
+* \version 1.10
 *
 * The header file of the PDM_PCM driver.
 *
@@ -95,6 +95,12 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>1.10</td>
+*     <td>Minor documentation updates.</td>
+*     <td>Documentation enhancement.</td>
+*     <td></td>
+*   </tr>
+*   <tr>
 *     <td>1.0</td>
 *     <td>Initial version</td>
 *     <td></td>
@@ -143,7 +149,7 @@ extern "C"
 #define CY_PDM_PCM_V2_DRV_VERSION_MAJOR       1
 
 /** The driver minor version */
-#define CY_PDM_PCM_V2_DRV_VERSION_MINOR       0
+#define CY_PDM_PCM_V2_DRV_VERSION_MINOR       1
 
 /** The PDM-PCM driver identifier */
 #define CY_PDM_PCM_V2_ID                       CY_PDL_DRV_ID(0x73u)
@@ -551,13 +557,16 @@ __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_ReadFifoSilent(PDM_Type const * base
 */
 
 /******************************************************************************
-* Function Name: Cy_PDM_PCM_Enable
+* Function Name: Cy_PDM_PCM_Channel_Enable
 ***************************************************************************//**
 *
 * Enables the PDM-PCM data conversion.
 *
 * \param base The pointer to the  PDM-PCM instance address.
 * \param channel_num Channel number to be enabled
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_Enable
 *
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_Channel_Enable(PDM_Type * base, uint8_t channel_num)
@@ -567,13 +576,16 @@ __STATIC_INLINE void Cy_PDM_PCM_Channel_Enable(PDM_Type * base, uint8_t channel_
 }
 
 /******************************************************************************
-* Function Name: Cy_PDM_PCM_Disable
+* Function Name: Cy_PDM_PCM_Channel_Disable
 ***************************************************************************//**
 *
 * Disables the PDM-PCM data conversion.
 *
 * \param base The pointer to the PDM-PCM instance address.
 * \param channel_num Channel number to be disabled
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_Disable
 *
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_Channel_Disable(PDM_Type * base, uint8_t channel_num)
@@ -591,6 +603,9 @@ __STATIC_INLINE void Cy_PDM_PCM_Channel_Disable(PDM_Type * base, uint8_t channel
 * \param base The pointer to the  PDM-PCM instance address.
 * \param channel_num Channel number to be activated
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Activate_Channel
+*
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_Activate_Channel(PDM_Type * base, uint8_t channel_num)
 {
@@ -605,6 +620,9 @@ __STATIC_INLINE void Cy_PDM_PCM_Activate_Channel(PDM_Type * base, uint8_t channe
 *
 * \param base The pointer to the  PDM-PCM instance address.
 * \param channel_num Channel number to be deactivated
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_DeActivate_Channel
 *
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_DeActivate_Channel(PDM_Type * base, uint8_t channel_num)
@@ -623,6 +641,9 @@ __STATIC_INLINE void Cy_PDM_PCM_DeActivate_Channel(PDM_Type * base, uint8_t chan
 * \param channel_num Channel number
 * \return true if channel is active, false when stopped.
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_GetCurrentState
+*
 ******************************************************************************/
 __STATIC_INLINE bool Cy_PDM_PCM_Channel_GetCurrentState(PDM_Type const * base, uint8_t channel_num)
 {
@@ -638,6 +659,9 @@ __STATIC_INLINE bool Cy_PDM_PCM_Channel_GetCurrentState(PDM_Type const * base, u
 *
 * \param base The pointer to the PDM-PCM instance address.
 * \param rate Halve rate sampling or Full rate sampling \ref cy_en_pdm_pcm_halve_rate_sel_t.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_SetRateSampling
 *
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_SetRateSampling(PDM_Type * base, cy_en_pdm_pcm_halve_rate_sel_t rate)
@@ -656,6 +680,9 @@ __STATIC_INLINE void Cy_PDM_PCM_SetRateSampling(PDM_Type * base, cy_en_pdm_pcm_h
 * \param base The pointer to the PDM-PCM instance address
 * \param channel_num Channel number for which the CIC filter Decimation code to be set
 * \param decimcode decimation code value to be set. \ref cy_en_pdm_pcm_ch_cic_decimcode_t.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_Set_Cic_DecimCode
 *
 ******************************************************************************/
 __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_Cic_DecimCode(PDM_Type * base, uint8_t channel_num, cy_en_pdm_pcm_ch_cic_decimcode_t decimcode)
@@ -679,6 +706,9 @@ __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_Cic_DecimCode(PDM_Type * base, uint
 * \param decimcode Decimation code value to be set. \ref cy_en_pdm_pcm_ch_fir0_decimcode_t.
 * \param scale Scale value to be set.
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_Set_Fir0
+*
 ******************************************************************************/
 __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_Fir0(PDM_Type * base, uint8_t channel_num, cy_en_pdm_pcm_ch_fir0_decimcode_t decimcode,uint8_t scale)
 {
@@ -698,6 +728,9 @@ __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_Fir0(PDM_Type * base, uint8_t chann
 * \param channel_num Channel number for which the FIR1 Decimation code and the filter to be set.
 * \param decimcode Decimation code value to be set. \ref cy_en_pdm_pcm_ch_fir1_decimcode_t.
 * \param scale Scale value to be set.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_Set_Fir1
 *
 ******************************************************************************/
 __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_Fir1(PDM_Type * base, uint8_t channel_num, cy_en_pdm_pcm_ch_fir1_decimcode_t decimcode,uint8_t scale)
@@ -721,6 +754,9 @@ __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_Fir1(PDM_Type * base, uint8_t chann
 * \param channel_num Channel number for which DC block coef to be set.
 * \param coef coef value to be set. \ref cy_en_pdm_pcm_ch_dcblock_coef_t.
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_Set_DCblock
+*
 ******************************************************************************/
 __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_DCblock(PDM_Type * base, uint8_t channel_num, cy_en_pdm_pcm_ch_dcblock_coef_t coef)
 {
@@ -738,6 +774,9 @@ __STATIC_INLINE void  Cy_PDM_PCM_Channel_Set_DCblock(PDM_Type * base, uint8_t ch
 * \param channel_num Channel number
 * \param interrupt Interrupt bit mask
 * \ref group_pdm_pcm_macros_interrupt_masks_v2.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_SetInterruptMask
 *
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_Channel_SetInterruptMask(PDM_Type * base, uint8_t channel_num, uint32_t interrupt)
@@ -775,6 +814,9 @@ __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_GetInterruptMask(PDM_Type const * ba
 * \param channel_num Channel number
 * \return The interrupt bit mask \ref group_pdm_pcm_macros_interrupt_masks_v2.
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_ReadFifo
+*
 *****************************************************************************/
 __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_GetInterruptStatusMasked(PDM_Type const * base, uint8_t channel_num)
 {
@@ -791,6 +833,9 @@ __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_GetInterruptStatusMasked(PDM_Type co
 * \param base The pointer to the PDM-PCM instance address.
 * \param channel_num Channel number
 * \return The interrupt bit mask \ref group_pdm_pcm_macros_interrupt_masks_v2.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_ReadFifo
 *
 ******************************************************************************/
 __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_GetInterruptStatus(PDM_Type const * base, uint8_t channel_num)
@@ -809,6 +854,9 @@ __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_GetInterruptStatus(PDM_Type const * 
 * \param channel_num Channel number
 * \param interrupt
 *  The interrupt bit mask \ref group_pdm_pcm_macros_interrupt_masks_v2.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_ClearInterrupt
 *
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_Channel_ClearInterrupt(PDM_Type * base, uint8_t channel_num, uint32_t interrupt)
@@ -848,6 +896,9 @@ __STATIC_INLINE void Cy_PDM_PCM_Channel_SetInterrupt(PDM_Type * base, uint8_t ch
 * \param channel_num Channel number
 * \return The current number of used FIFO words (range is 0 - 63).
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_GetNumInFifo
+*
 ******************************************************************************/
 __STATIC_INLINE uint8_t Cy_PDM_PCM_Channel_GetNumInFifo(PDM_Type const * base, uint8_t channel_num)
 {
@@ -865,6 +916,9 @@ __STATIC_INLINE uint8_t Cy_PDM_PCM_Channel_GetNumInFifo(PDM_Type const * base, u
 * \param channel_num Channel number
 * \return The data word read from the FIFO is returned.
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_ReadFifo
+*
 ******************************************************************************/
 __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_ReadFifo(PDM_Type const * base, uint8_t channel_num)
 {
@@ -879,6 +933,9 @@ __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_ReadFifo(PDM_Type const * base, uint
 *
 * \param base The pointer to the PDM-PCM instance address.
 * \param channel_num Channel number
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_FreezeFifo
 *
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_Channel_FreezeFifo(PDM_Type * base, uint8_t channel_num)
@@ -896,6 +953,9 @@ __STATIC_INLINE void Cy_PDM_PCM_Channel_FreezeFifo(PDM_Type * base, uint8_t chan
 * \param base The pointer to the PDM-PCM instance address.
 * \param channel_num Channel number
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_UnfreezeFifo
+*
 ******************************************************************************/
 __STATIC_INLINE void Cy_PDM_PCM_Channel_UnfreezeFifo(PDM_Type * base, uint8_t channel_num)
 {
@@ -912,6 +972,9 @@ __STATIC_INLINE void Cy_PDM_PCM_Channel_UnfreezeFifo(PDM_Type * base, uint8_t ch
 * \param base Pointer to PDM-PCM instance address.
 * \param channel_num Channel number
 * \return Silent FIFO value is read and returned.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_ReadFifoSilent
 *
 ******************************************************************************/
 __STATIC_INLINE uint32_t Cy_PDM_PCM_Channel_ReadFifoSilent(PDM_Type const * base, uint8_t channel_num)

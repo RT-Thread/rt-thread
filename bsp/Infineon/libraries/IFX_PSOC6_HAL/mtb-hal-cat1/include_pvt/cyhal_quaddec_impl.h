@@ -75,7 +75,7 @@ __STATIC_INLINE void _cyhal_quaddec_enable_event(cyhal_quaddec_t *obj,
                                                  bool enable)
 {
     uint32_t converted = _cyhal_quaddec_convert_event(event);
-    _cyhal_tcpwm_enable_event(obj->tcpwm.base, &obj->tcpwm.resource, converted, intr_priority,
+    _cyhal_tcpwm_enable_event(&obj->tcpwm, &obj->tcpwm.resource, converted, intr_priority,
                               enable);
 }
 

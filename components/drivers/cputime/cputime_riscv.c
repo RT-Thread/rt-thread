@@ -6,11 +6,11 @@
 
 /* Use Cycle counter of Data Watchpoint and Trace Register for CPU time */
 
-static double riscv_cputime_getres(void)
+static uint64_t riscv_cputime_getres(void)
 {
-    double ret = 1000UL * 1000 * 1000;
+    uint64_t ret = 1000UL * 1000 * 1000;
 
-    ret = ret / CPUTIME_TIMER_FREQ;
+    ret = (ret * (1000UL * 1000)) / CPUTIME_TIMER_FREQ;
     return ret;
 }
 

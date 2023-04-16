@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -140,6 +140,17 @@ extern "C" {
 /** Command error */
 #define CYHAL_I2C_RSLT_ERR_CMD_ERROR                    \
     (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_I2C, 10))
+/** RX or TX Buffer is not initialized */
+#define CYHAL_I2C_RSLT_ERR_BUFFERS_NULL_PTR             \
+    (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_I2C, 11))
+
+/** Timeout warning */
+#define CYHAL_I2C_RSLT_WARN_TIMEOUT                     \
+    (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_WARNING, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_I2C, 20))
+/** Other operation in progress */
+#define CYHAL_I2C_RSLT_WARN_DEVICE_BUSY                 \
+    (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_WARNING, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_I2C, 21))
+
 /**
  * \}
  */
@@ -148,6 +159,10 @@ extern "C" {
 #define CYHAL_I2C_MODE_SLAVE (true)
 /** Named define for Master mode for use when initializing the \ref cyhal_i2c_cfg_t structure. */
 #define CYHAL_I2C_MODE_MASTER (false)
+
+/** Named define for default address mask for use when initializing the \ref cyhal_i2c_adv_cfg_t structure. */
+#define CYHAL_I2C_DEFAULT_ADDR_MASK               (0xFE)
+
 
 /** Enum to enable/disable/report interrupt cause flags. */
 typedef enum
@@ -166,12 +181,27 @@ typedef enum
     CYHAL_I2C_MASTER_ERR_EVENT         = 1 << 20, /**< Indicates the I2C hardware has detected an error. */
 } cyhal_i2c_event_t;
 
+/** Enum to enable/disable/report address interrupt cause flags. */
+typedef enum
+{
+    CYHAL_I2C_ADDR_EVENT_NONE    = 0,       /**< No event */
+    CYHAL_I2C_GENERAL_CALL_EVENT = 1 << 1,  /**< Indicates the slave was addressed by the general call address. */
+    CYHAL_I2C_ADDR_MATCH_EVENT   = 1 << 2,  /**< Indicates the slave matching address received. */
+} cyhal_i2c_addr_event_t;
+
 /** I2C FIFO type */
 typedef enum
 {
     CYHAL_I2C_FIFO_RX, //!< Set RX FIFO level
     CYHAL_I2C_FIFO_TX, //!< Set TX FIFO level
 } cyhal_i2c_fifo_type_t;
+
+/** I2C Command ACK / NAK */
+typedef enum
+{
+    CYHAL_I2C_CMD_ACK, //!< Send ACK to current byte
+    CYHAL_I2C_CMD_NAK, //!< Send NAK to current byte
+} cyhal_i2c_command_rsp_t;
 
 /** Enum of possible output signals from an I2C */
 typedef enum
@@ -182,7 +212,8 @@ typedef enum
 
 /** Handler for I2C events */
 typedef void (*cyhal_i2c_event_callback_t)(void *callback_arg, cyhal_i2c_event_t event);
-
+/** Handler for I2C address events */
+typedef cyhal_i2c_command_rsp_t (*cyhal_i2c_address_callback_t)(void *callback_arg, cyhal_i2c_addr_event_t event, uint8_t address);
 
 /** @brief Initial I2C configuration */
 typedef struct
@@ -193,6 +224,14 @@ typedef struct
                                     Refer to the device datasheet for the supported I2C data rates */
 } cyhal_i2c_cfg_t;
 
+/** @brief I2C advanced configuration */
+typedef struct
+{
+    cyhal_i2c_cfg_t basic_cfg;                /**<  Basic I2C configuration */
+    uint8_t         address_mask;             /**<  Mask of the slave resource. Not applicable for the master. */
+    bool            enable_address_callback;  /**<  Indicates address callback feature is enabled or disable.
+                                                    When it's true the address callback will be invoked. */
+} cyhal_i2c_adv_cfg_t;
 
 /** Initialize the I2C peripheral, and configures its specified pins. By default
  * it is configured as a Master with a bus frequency = CYHAL_I2C_MASTER_DEFAULT_FREQ.
@@ -229,6 +268,18 @@ void cyhal_i2c_free(cyhal_i2c_t *obj);
  */
 cy_rslt_t cyhal_i2c_configure(cyhal_i2c_t *obj, const cyhal_i2c_cfg_t *cfg);
 
+/** Configure the I2C block with advanced parameters.
+ * Refer to \ref cyhal_i2c_adv_cfg_t structure for the description of advanced parameters.
+ * NOTE: Master/Slave specific functions only work when the block is configured
+ * to be in that mode.<br>
+ * See \ref subsection_i2c_snippet_1
+ *
+ * @param[in] obj   The I2C object
+ * @param[in] cfg   Advanced configuration settings to apply
+ * @return The status of the configure request
+ *
+ */
+cy_rslt_t cyhal_i2c_configure_adv(cyhal_i2c_t *obj, const cyhal_i2c_adv_cfg_t *cfg);
 
 /**
  * I2C master blocking write
@@ -365,6 +416,21 @@ cy_rslt_t cyhal_i2c_abort_async(cyhal_i2c_t *obj);
  */
 void cyhal_i2c_register_callback(cyhal_i2c_t *obj, cyhal_i2c_event_callback_t callback, void *callback_arg);
 
+/** Register an I2C address callback handler<br>
+ *
+ * This function will be called when one of the events enabled by \ref cyhal_i2c_enable_address_event occurs.
+ * NOTE: This function will not have an effect if enable_address_callback parameter of
+ * \ref cyhal_i2c_adv_cfg_t structure was false when \ref cyhal_i2c_configure_adv was called.
+ *
+ * See \ref subsection_i2c_snippet_2
+ *
+ * @param[in] obj          The I2C object
+ * @param[in] callback     The callback handler which will be invoked when an event triggers
+ * @param[in] callback_arg Generic argument that will be provided to the callback when called
+ *
+ */
+void cyhal_i2c_register_address_callback(cyhal_i2c_t *obj, cyhal_i2c_address_callback_t callback, void *callback_arg);
+
 /** Configure and Enable or Disable I2C Interrupt.
  *
  * When an enabled event occurs, the function specified by \ref cyhal_i2c_register_callback will be called.
@@ -377,6 +443,19 @@ void cyhal_i2c_register_callback(cyhal_i2c_t *obj, cyhal_i2c_event_callback_t ca
  * @param[in] enable         True to turn on interrupts, False to turn off
  */
 void cyhal_i2c_enable_event(cyhal_i2c_t *obj, cyhal_i2c_event_t event, uint8_t intr_priority, bool enable);
+
+/** Configure and Enable or Disable I2C Address Interrupt.
+ *
+ * When an enabled event occurs, the function specified by \ref cyhal_i2c_register_address_callback will be called.
+ *
+ * See \ref subsection_i2c_snippet_2
+ *
+ * @param[in] obj            The I2C object
+ * @param[in] event          The I2C address event type
+ * @param[in] intr_priority  The priority for NVIC interrupt events
+ * @param[in] enable         True to turn on interrupts, False to turn off
+ */
+void cyhal_i2c_enable_address_event(cyhal_i2c_t *obj, cyhal_i2c_addr_event_t event, uint8_t intr_priority, bool enable);
 
 /** Sets a threshold level for a FIFO that will generate an interrupt and a
  * trigger output. The RX FIFO interrupt and trigger will be activated when
@@ -417,6 +496,63 @@ cy_rslt_t cyhal_i2c_disable_output(cyhal_i2c_t *obj, cyhal_i2c_output_t output);
  * @return The status of the operation
  */
 cy_rslt_t cyhal_i2c_init_cfg(cyhal_i2c_t *obj, const cyhal_i2c_configurator_t *cfg);
+
+
+/** Returns the number of bytes written by the I2C master.
+ * Calling the \ref cyhal_i2c_slave_config_write_buffer API will clear the counter of bytes sent by master
+ *
+ * @param[in]  obj          The I2C object
+ * @return  The number of bytes written by the I2C master.
+ * */
+uint32_t cyhal_i2c_slave_readable(cyhal_i2c_t *obj);
+
+/** Returns the number of bytes can be read by the I2C master.
+ * Calling the \ref cyhal_i2c_slave_config_read_buffer API will clear the counter of bytes read by master
+ *
+ * @param[in]  obj          The I2C object
+ * @return  The number of bytes can be read by the I2C master.
+ * */
+uint32_t cyhal_i2c_slave_writable(cyhal_i2c_t *obj);
+
+/** Wait for master send data to RX buffer and store them to the user-defined buffer.
+ * NOTE: If size of actual data is less then expected the function copy only available data.
+ *
+ * @param[in]     obj        The I2C object
+ * @param[in]     dst_buff   Pointer on memory to store the data from the slave RX buffer.
+ * @param[in,out] size       [in] The number of bytes to read, [out] number actually read.
+ * @param[in]     timeout    Timeout in millisecond, set this value to 0 if you don't want to wait at all.
+ * @return  The status of the read request
+ * */
+cy_rslt_t cyhal_i2c_slave_read(cyhal_i2c_t *obj, uint8_t *dst_buff, uint16_t *size, uint32_t timeout);
+
+/** Write data from the user-defined buffer to I2C TX buffer.
+ * NOTE: If size of actual data is less then expected the function copy only available data.
+ *
+ * @param[in]     obj        The I2C object
+ * @param[in]     src_buff   Pointer on memory to copy the data to the slave TX buffer.
+ * @param[in,out] size       [in] The number of bytes to send, [out] number actually sent.
+ * @param[in]     timeout    Timeout in millisecond,  set this value to 0 if you don't want to wait at all.
+ * @return  The status of the write request
+ * */
+cy_rslt_t cyhal_i2c_slave_write(cyhal_i2c_t *obj, const uint8_t *src_buff, uint16_t *size, uint32_t timeout);
+
+/**
+ * The function aborts the configured slave read buffer to be read by the master.
+ * If the master reads and "abort operation" is requested, the
+ * \ref CYHAL_I2C_SLAVE_RD_BUF_EMPTY_EVENT event occurs.
+ *
+ * @param[in]  obj                The I2C object
+ *
+ * @return The status of the slave_abort_read request
+ */
+cy_rslt_t cyhal_i2c_slave_abort_read(cyhal_i2c_t *obj);
+
+/** Clear the I2C buffers
+ *
+ * @param[in]  obj        The I2C object
+ * @return The status of the clear request
+ * */
+cy_rslt_t cyhal_i2c_clear(cyhal_i2c_t *obj);
 
 #if defined(__cplusplus)
 }

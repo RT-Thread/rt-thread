@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -37,16 +37,15 @@
 #include "cy_device.h"
 #include "cy_pdl.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_peri_common.h"
-#include "cyhal_irq_psoc.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 #if defined(CY_IP_MXSCB_INSTANCES)
-#if defined(CY_DEVICE_PSOC6A256K) || defined(CY8C624ALQI_S2D42)
+#if defined(CY_DEVICE_PSOC6A256K)
 //Special case for 256k device which has 6 SCBs numbered 0, 1, 2, 4, 5, 6
 #define _SCB_ARRAY_SIZE                 (CY_IP_MXSCB_INSTANCES + 1)
 #else
@@ -54,7 +53,18 @@ extern "C" {
 #endif /* CY_DEVICE_PSOC6A256K */
 #elif defined(CY_IP_M0S8SCB_INSTANCES)
 #define _SCB_ARRAY_SIZE                 (CY_IP_M0S8SCB_INSTANCES)
+#elif defined(CY_IP_MXS22SCB_INSTANCES)
+#define _SCB_ARRAY_SIZE                 (CY_IP_MXS22SCB_INSTANCES)
 #endif /* CY_IP_MXSCB_INSTANCES */
+
+/* Indicates the invalid SCB block selected */
+#define _CYHAL_SCB_BLOCK_ID_INVALID     (0xFF)
+
+/* Return number of bytes to copy into the destination buffer */
+#define _CYHAL_SCB_BYTES_TO_COPY(actBufSize, bufSize) \
+                                (((uint32_t) (actBufSize) < (uint32_t) (bufSize)) ? \
+                                 ((uint32_t) (actBufSize)) : ((uint32_t) (bufSize)) )
+
 
 /** \addtogroup group_hal_results_scb SCB HAL Results
  *  SCB specific return codes
@@ -84,6 +94,8 @@ typedef enum
     CYHAL_SCB_OUTPUT_TRIGGER_TX_FIFO_LEVEL_REACHED, //!< Output the TX FIFO signal which is triggered when the transmit FIFO has less entries than the configured level.
 } cyhal_scb_output_t;
 
+/** The mask of available SCB blocks */
+extern const uint32_t _CYHAL_SCB_AVAILABLE_BLOCKS_MASK;
 /** The start address of the SCB blocks */
 extern CySCB_Type* const _CYHAL_SCB_BASE_ADDRESSES[_SCB_ARRAY_SIZE];
 /** The interrupt number of the SCB blocks. */
@@ -97,11 +109,27 @@ extern const _cyhal_system_irq_t _CYHAL_SCB_IRQ_N[_SCB_ARRAY_SIZE];
  */
 uint8_t cyhal_scb_get_block_from_irqn(_cyhal_system_irq_t irqn);
 
+/** Get the index of SCB block in internal arrays corresponding to SCB instance.
+ *
+ * @param[in] scb_block_num The SCB instance number
+ * @return              The corresponding index of SCB block in internal array
+ */
+uint8_t _cyhal_scb_get_block_index(uint8_t scb_block_num);
+
+#if defined (COMPONENT_CAT5)
+/** Get the SCB object corresponding to the currently running ISR.
+ *
+ * @param[in] irqn The index of the irq object to retrieve
+ * @return A pointer to the SCB object corresponding to the currently running ISR.
+ */
+void *_cyhal_scb_get_irq_obj(_cyhal_system_irq_t irqn);
+#else
 /** Get the SCB object corresponding to the currently running ISR.
  *
  * @return A pointer to the SCB object corresponding to the currently running ISR.
  */
 void *_cyhal_scb_get_irq_obj(void);
+#endif
 
 /** Sets the desired clocks & data rate to achieve the specified frequency. Configuration of clock is not changed if
  * driver does not own it.
@@ -194,10 +222,12 @@ static inline en_clk_dst_t _cyhal_scb_get_clock_index(uint32_t block_num)
     en_clk_dst_t clk;
     // PSOC6A256K does not have SCB 3
     #if defined(CY_DEVICE_PSOC6A256K)
-    if (block_num < 3)
-        clk = (en_clk_dst_t)((uint32_t)_CYHAL_SCB0_PCLK_CLOCK + block_num);
-    else
-        clk = (en_clk_dst_t)((uint32_t)_CYHAL_SCB0_PCLK_CLOCK + block_num -1);
+        if (block_num < 3)
+            clk = (en_clk_dst_t)((uint32_t)_CYHAL_SCB0_PCLK_CLOCK + block_num);
+        else
+            clk = (en_clk_dst_t)((uint32_t)_CYHAL_SCB0_PCLK_CLOCK + block_num -1);
+    #elif defined (COMPONENT_CAT5)
+        clk = (en_clk_dst_t)(block_num);
     #else
         clk = (en_clk_dst_t)((uint32_t)_CYHAL_SCB0_PCLK_CLOCK + block_num);
     #endif

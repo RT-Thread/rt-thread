@@ -21,7 +21,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -115,6 +115,8 @@
 /** Macro specifying whether the I2C driver is available for the current device \def CYHAL_DRIVER_AVAILABLE_I2C
 */
 /** Macro specifying whether the I2S driver is available for the current device \def CYHAL_DRIVER_AVAILABLE_I2S
+*/
+/** Macro specifying whether the IPC driver is available for the current device \def CYHAL_DRIVER_AVAILABLE_IPC
 */
 /** Macro specifying whether the TX functionality is available on the I2S driver for the current device \def CYHAL_DRIVER_AVAILABLE_I2S_TX
 */

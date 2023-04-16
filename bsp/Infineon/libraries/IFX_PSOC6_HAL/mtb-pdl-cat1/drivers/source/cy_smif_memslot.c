@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_smif_memslot.c
-* \version 2.30
+* \version 2.40
 *
 * \brief
 *  This file provides the source code for the memory-level APIs of the SMIF driver.
@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2016-2021 Cypress Semiconductor Corporation
+* Copyright 2016-2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -63,15 +63,15 @@ static cy_en_smif_status_t cy_smif_octalddrenable(SMIF_Type *base,
 * in memory-mapped (XIP) mode. This function can also be called instead of
 * calling \ref Cy_SMIF_MemSfdpDetect when SFDP auto-discovery is enabled.
 * Note that this function performs SFDP on all the external memories whereas
-* \ref Cy_SMIF_MemSfdpDetect peforms it only on one memory that is specified
+* \ref Cy_SMIF_MemSfdpDetect performs it only on one memory that is specified
 * through the arguments. This function configures the SMIF device slot registers
 * with the configuration from \ref cy_stc_smif_mem_config_t structure which is
 * a member of the \ref cy_stc_smif_block_config_t structure. If SFDP discovery
-* is enabled in the configuration strucutre through autoDetectSfdp field,
+* is enabled in the configuration structure through autoDetectSfdp field,
 * this function calls \ref Cy_SMIF_MemSfdpDetect function for each memory,
 * fills the structures with the discovered parameters, and configures the
 * SMIF device slot registers accordingly. \ref Cy_SMIF_Init must have been
-* called prior to calling this funciton.
+* called prior to calling this function.
 * The \ref cy_stc_smif_context_t context structure returned from \ref Cy_SMIF_Init
 * is passed as a parameter to this function.
 *
@@ -1896,13 +1896,13 @@ cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t c
 * The memory device configuration.
 *
 * \param address
-* The address of the block to be erased. The address should be aligned with
-* the start address of the sector.
+* The address of the block to be erased. The address will be aligned to
+* the start address of the sector in which address is located.
 *
 * \param length
-* The size of data to erase. The length should be equal to the sum of all sectors
-* length to be erased. Otherwise, API returns \ref CY_SMIF_BAD_PARAM without
-* performing erase operation.
+* The length of data to erase. The length will be aligned to the sector
+* boundary where end address is located. If length exceeds memory size
+* API returns \ref CY_SMIF_BAD_PARAM without performing erase operation.
 *
 * \param context
 * This is the pointer to the context structure \ref cy_stc_smif_context_t
@@ -1913,7 +1913,7 @@ cy_en_smif_status_t Cy_SMIF_MemWrite(SMIF_Type *base, cy_stc_smif_mem_config_t c
 * \return The status of the operation. See \ref cy_en_smif_status_t.
 *
 * \note Memories like hybrid have sectors of different sizes. \n
-* Check the adress and length parameters before calling this function.
+* Check the address and length parameters before calling this function.
 *
 * \funcusage
 * \snippet smif/snippet/main.c snippet_Cy_SMIF_MemEraseSector
@@ -1925,7 +1925,7 @@ cy_en_smif_status_t Cy_SMIF_MemEraseSector(SMIF_Type *base, cy_stc_smif_mem_conf
 {
     cy_en_smif_status_t status = CY_SMIF_SUCCESS;
     uint32_t endAddress = address + length - 1UL;
-    uint32_t eraseEnd = 0UL;
+    uint32_t hybridRegionEnd = 0UL;
     uint32_t hybridRegionStart = 0UL;
     uint8_t addrArray[CY_SMIF_FOUR_BYTES_ADDR] = {0U};
     cy_stc_smif_hybrid_region_info_t* hybrInfo = NULL;
@@ -1937,43 +1937,58 @@ cy_en_smif_status_t Cy_SMIF_MemEraseSector(SMIF_Type *base, cy_stc_smif_mem_conf
     /* Check if the address exceeds the memory size */
     if (endAddress < device->memSize)
     {
-        /* In case of hybrid memory - update sector size and offset for first sector */
-        status = Cy_SMIF_MemLocateHybridRegion(memConfig, &hybrInfo, address);
-        if (CY_SMIF_SUCCESS == status)
-        {
-            hybridRegionStart = hybrInfo->regionAddress;
-            eraseSectorSize = hybrInfo->eraseSize;
-            eraseEnd = (hybrInfo->sectorsCount * eraseSectorSize) + hybridRegionStart - 1UL;
-        }
+        /* Align start address and end address to corresponding sector boundary */
+        cy_stc_smif_hybrid_region_info_t* regionInfo = NULL;
 
-        /* Check if the length is less than sector size */
-        if(length < eraseSectorSize)
-        {
-            status = CY_SMIF_BAD_PARAM;
-        }
-    }
-    else
-    {
-        status = CY_SMIF_BAD_PARAM;
-    }
+        /* Check if it is a hybrid memory */
+        status = Cy_SMIF_MemLocateHybridRegion(memConfig, &regionInfo, address);
 
-    /* Check if the start address and the sector size are aligned */
-    if((status != CY_SMIF_BAD_PARAM) && (0UL == ((address - hybridRegionStart) % eraseSectorSize)))
-    {
-        /* If the memory is hybrid and there is more than one region to
-         * erase - update the sector size and offset for the last sector */
-        if(endAddress > eraseEnd)
+        if ((CY_SMIF_SUCCESS == status) && (regionInfo != NULL)) /* Hybrid */
         {
-            status = Cy_SMIF_MemLocateHybridRegion(memConfig, &hybrInfo, endAddress);
+            uint32_t offsetInRegion = address - regionInfo->regionAddress;
+            uint32_t sectorOffsetInRegion = offsetInRegion / regionInfo->eraseSize;
+
+            /* Align start address */
+            address = regionInfo->regionAddress + (sectorOffsetInRegion * regionInfo->eraseSize);
+
+            /* Last hybrid region in desired block */
+            status = Cy_SMIF_MemLocateHybridRegion(memConfig, &regionInfo, endAddress);
             if (CY_SMIF_SUCCESS == status)
             {
-                hybridRegionStart = hybrInfo->regionAddress;
-                eraseSectorSize = hybrInfo->eraseSize;
+                offsetInRegion = endAddress - regionInfo->regionAddress + 1UL;
+                sectorOffsetInRegion  = offsetInRegion / regionInfo->eraseSize;
+                if (0UL != offsetInRegion % regionInfo->eraseSize)
+                {
+                    sectorOffsetInRegion++;
+                }
+                /* Align end address */
+                endAddress = regionInfo->regionAddress + (sectorOffsetInRegion * regionInfo->eraseSize);
+
+                /* Update length according the aligned start address and end address */
+                length = endAddress - address;
             }
         }
+        else /* Not hybrid (unified) sectors layout */
+        {
+            /* If start address is somewhere at the middle of erase page, align it to the page start */
+            if (0UL != (address % eraseSectorSize))
+            {
+                address = eraseSectorSize * (address / eraseSectorSize);
+            }
 
-        /* Check if the end address and the sector size are aligned */
-        if((status != CY_SMIF_BAD_PARAM) && (0UL == ((endAddress - hybridRegionStart + 1UL) % eraseSectorSize)))
+            /* If end address is somewhere at the middle of erase page, align it to the page end */
+            if (0UL != ((endAddress + 1UL) % eraseSectorSize))
+            {
+                endAddress = (eraseSectorSize * (endAddress + 1UL) / eraseSectorSize);
+            }
+            /* Update length according the aligned start address and end address */
+            length = endAddress - address + 1UL;
+
+            status = CY_SMIF_SUCCESS;
+        }
+
+        /* Check if the address exceeds the memory size */
+        if (endAddress < device->memSize)
         {
             uint32_t interruptState = 0UL;
 
@@ -1993,18 +2008,18 @@ cy_en_smif_status_t Cy_SMIF_MemEraseSector(SMIF_Type *base, cy_stc_smif_mem_conf
                     maxEraseTime =  hybrInfo->eraseTime;
                     eraseSectorSize = hybrInfo->eraseSize;
                     hybridRegionStart = hybrInfo->regionAddress;
-                    eraseEnd = (hybrInfo->sectorsCount * eraseSectorSize) + hybridRegionStart - 1UL;
-                    if(endAddress < eraseEnd)
+                    hybridRegionEnd = (hybrInfo->sectorsCount * eraseSectorSize) + hybridRegionStart - 1UL;
+                    if(endAddress < hybridRegionEnd)
                     {
-                        eraseEnd = endAddress;
+                        hybridRegionEnd = endAddress;
                     }
                 }
                 else
                 {
-                    eraseEnd = endAddress;
+                    hybridRegionEnd = endAddress;
                 }
 
-                while (address < eraseEnd)
+                while (address < hybridRegionEnd)
                 {
                     /* The Write Enable bit may be cleared by the memory after every successful
                     * operation of write/erase operations. Therefore, it must be set for
@@ -2053,13 +2068,13 @@ cy_en_smif_status_t Cy_SMIF_MemEraseSector(SMIF_Type *base, cy_stc_smif_mem_conf
         }
         else
         {
-            /* The end address and the sector size are not aligned */
+            /* Aligned end address exceeds memory size */
             status = CY_SMIF_BAD_PARAM;
         }
     }
     else
     {
-        /* The start address and the sector size are not aligned */
+        /* end address exceeds memory size */
         status = CY_SMIF_BAD_PARAM;
     }
 
@@ -2120,6 +2135,102 @@ cy_en_smif_status_t Cy_SMIF_MemEraseChip(SMIF_Type *base, cy_stc_smif_mem_config
     }
 
     return status;
+}
+
+/*******************************************************************************
+* Function Name: Cy_SMIF_MemCmdPowerDown
+****************************************************************************//**
+*
+* This function sends a Power-down command to the selected memory device in
+* Single SPI mode. Please note that, once \ref Cy_SMIF_MemCmdPowerDown is issued, external
+* memory will not respond to any other command except \ref Cy_SMIF_MemCmdReleasePowerDown.
+*
+* \note This function uses the low-level Cy_SMIF_TransmitCommand() API.
+* Cy_SMIF_TransmitCommand() API works in a blocking mode. In the dual quad mode
+* this API should be called for each memory.
+*
+* \param base
+* Holds the base address of the SMIF block registers.
+*
+* \param memDevice
+* The device to which the command is sent.
+*
+* \param context
+* This is the pointer to the context structure \ref cy_stc_smif_context_t
+* allocated by the user. The structure is used during the SMIF
+* operation for internal configuration and data retention. The user must not
+* modify anything in this structure.
+*
+* \return A status of the command transmission.
+*        - \ref CY_SMIF_SUCCESS
+*        - \ref CY_SMIF_EXCEED_TIMEOUT
+*
+*******************************************************************************/
+cy_en_smif_status_t Cy_SMIF_MemCmdPowerDown(SMIF_Type *base,
+                                    cy_stc_smif_mem_config_t const *memDevice,
+                                    cy_stc_smif_context_t const *context)
+{
+
+    cy_en_smif_status_t result;
+
+    /* The memory Power-down command */
+    result = Cy_SMIF_TransmitCommand( base, CY_SMIF_POWER_DOWN_CMD,
+                                          CY_SMIF_WIDTH_SINGLE,
+                                          NULL,
+                                          CY_SMIF_CMD_WITHOUT_PARAM,
+                                          CY_SMIF_WIDTH_NA,
+                                          memDevice->slaveSelect,
+                                          CY_SMIF_TX_LAST_BYTE,
+                                          context);
+
+    return result;
+}
+/*******************************************************************************
+* Function Name: Cy_SMIF_MemCmdReleasePowerDown
+****************************************************************************//**
+*
+* This function sends a Release Power-down command to the selected memory device
+* in Single SPI mode.
+*
+* \note This function uses the low-level Cy_SMIF_TransmitCommand() API.
+* Cy_SMIF_TransmitCommand() API works in a blocking mode. In the dual quad mode
+* this API should be called for each memory.
+*
+* \param base
+* Holds the base address of the SMIF block registers.
+*
+* \param memDevice
+* The device to which the command is sent.
+*
+* \param context
+* This is the pointer to the context structure \ref cy_stc_smif_context_t
+* allocated by the user. The structure is used during the SMIF
+* operation for internal configuration and data retention. The user must not
+* modify anything in this structure.
+*
+* \return A status of the command transmission.
+*        - \ref CY_SMIF_SUCCESS
+*        - \ref CY_SMIF_EXCEED_TIMEOUT
+*
+*******************************************************************************/
+cy_en_smif_status_t Cy_SMIF_MemCmdReleasePowerDown(SMIF_Type *base,
+                                    cy_stc_smif_mem_config_t const *memDevice,
+                                    cy_stc_smif_context_t const *context)
+{
+
+    cy_en_smif_status_t result;
+
+    /* The memory Release Power-down command */
+    result = Cy_SMIF_TransmitCommand( base, CY_SMIF_RELEASE_POWER_DOWN_CMD,
+                                          CY_SMIF_WIDTH_SINGLE,
+                                          NULL,
+                                          CY_SMIF_CMD_WITHOUT_PARAM,
+                                          CY_SMIF_WIDTH_NA,
+                                          memDevice->slaveSelect,
+                                          CY_SMIF_TX_LAST_BYTE,
+                                          context);
+
+    return result;
 }
 
 #if defined(__cplusplus)

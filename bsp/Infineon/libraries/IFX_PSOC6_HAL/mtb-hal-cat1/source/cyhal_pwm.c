@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -180,7 +180,7 @@ static cy_rslt_t _cyhal_pwm_update_clock_freq(cyhal_pwm_t *obj, uint32_t period_
          * desired_freq_hz = counts_per_us * 1e6
          * But if we break those out separately, we lose too much precision to rounding in counts_per_us
          */
-        uint64_t desired_freq_hz = (uint64_t)((max_period_counts * 1e6) / period_us);
+        uint64_t desired_freq_hz = (uint64_t)((max_period_counts * 1000000) / period_us);
 
         if(desired_freq_hz > source_hz)
         {
@@ -227,6 +227,24 @@ static cy_rslt_t _cyhal_pwm_init_clock(cyhal_pwm_t *obj, uint32_t dead_time_us, 
         if (dead_time_us > 0)
         {
             div = (((uint64_t)source_hz * dead_time_us) / (_CYHAL_PWM_US_PER_SEC * _CYHAL_PWM_MAX_DEAD_TIME_CYCLES)) + 1;
+            #if defined (COMPONENT_CAT5)
+                /* TODO: dividers are limited on this device. Need to investigate a better solution.
+                 * Refer to TCPWM_TPORT_CLK_DIV_SEL_t. Below is an approximation that will hopefully
+                   give good enough scale when configuring the PWM in the configure() function.
+                 */
+                if(( div % 2 != 0) && ( div != 1 ) && ( div < 12 ))
+                {
+                    div++;
+                }
+                else if ((div > 12) && (div < 16))
+                {
+                    div = 16;
+                }
+                else if (div > 16)
+                {
+                    div = 32; // Max allowed
+                }
+            #endif
         }
         else
         {
@@ -335,11 +353,15 @@ cy_rslt_t cyhal_pwm_init_adv(cyhal_pwm_t *obj, cyhal_gpio_t pin, cyhal_gpio_t co
 
     if(CY_RSLT_SUCCESS == result)
     {
-        result = _cyhal_utils_reserve_and_connect(map, CYHAL_PIN_MAP_DRIVE_MODE_TCPWM_LINE);
+        result = _cyhal_utils_reserve_and_connect(map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_TCPWM_LINE);
     }
     if (CY_RSLT_SUCCESS == result)
     {
         obj->pin = pin;
+        #if defined (COMPONENT_CAT5)
+            Cy_TCPWM_SelectTrigmuxOutput(TCPCM_TRIGMUX_OUTPUT_LINE_OUT);
+            Cy_TCPWM_SelectInputSignalForWGPOMux(map->channel_num, (TCPCM_LOGIC_TRIGMUX_INPUT_t)(TCPCM_LOGIC_TRIGMUX_WGPO_INPUT_LINE_OUT_0 + map->channel_num));
+        #endif
     }
 
     if (CY_RSLT_SUCCESS == result && NC != compl_pin)
@@ -358,10 +380,14 @@ cy_rslt_t cyhal_pwm_init_adv(cyhal_pwm_t *obj, cyhal_gpio_t pin, cyhal_gpio_t co
         }
         else
         {
-            result = _cyhal_utils_reserve_and_connect(map_compl, CYHAL_PIN_MAP_DRIVE_MODE_TCPWM_LINE_COMPL);
+            result = _cyhal_utils_reserve_and_connect(map_compl, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_TCPWM_LINE_COMPL);
             if (CY_RSLT_SUCCESS == result)
             {
                 obj->pin_compl = compl_pin;
+                #if defined (COMPONENT_CAT5)
+                    Cy_TCPWM_SelectTrigmuxOutput(TCPCM_TRIGMUX_OUTPUT_LINE_OUT);
+                    Cy_TCPWM_SelectInputSignalForWGPOMux(map_compl->channel_num, (TCPCM_LOGIC_TRIGMUX_INPUT_t)(TCPCM_LOGIC_TRIGMUX_WGPO_INPUT_LINE_OUT_0 + map_compl->channel_num));
+                #endif
             }
         }
     #else

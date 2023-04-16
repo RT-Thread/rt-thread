@@ -49,6 +49,9 @@ if  GetDepend('BSP_USING_I2S'):
 if  GetDepend('BSP_USING_WM8904'):
     src += ['drv_sound_wm8904.c']
 
+if  GetDepend('BSP_USING_SOFT_I2C'):
+    src += ['drv_soft_i2c.c']
+    
 path =  [cwd,cwd + '/config']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

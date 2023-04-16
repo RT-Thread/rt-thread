@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_hw_vu.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constants and function prototypes
@@ -36,6 +36,9 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 14.3', 23, \
+'Since value of CY_CRYPTO_V1 is decided by PDL device agnostic / hardware specific model, controlling expression will not have an invariant value.');
 
 #if (CPUSS_CRYPTO_VU == 1)
 
@@ -520,12 +523,20 @@ __STATIC_INLINE void CY_CRYPTO_VU_FREE_MEM (CRYPTO_Type *base, uint32_t reg_mask
 
 __STATIC_INLINE void CY_CRYPTO_VU_COND_LSL (CRYPTO_Type *base, uint32_t cc, uint32_t rdst, uint32_t rsrc1, uint32_t rsrc0)
 {
-    Cy_Crypto_Core_Vu_RunInstr(base, CY_CRYPTO_SYNC_NON_BLOCKING,
-                                     (uint32_t)CY_CRYPTO_VU_LSL_OPC,
-                                    ((uint32_t)cc    << CY_CRYPTO_RSRC20_SHIFT) |
-                                    ((uint32_t)rdst  << CY_CRYPTO_RSRC12_SHIFT) |
-                                    ((uint32_t)rsrc1 << CY_CRYPTO_RSRC4_SHIFT)  |
-                                    ((uint32_t)rsrc0 << CY_CRYPTO_RSRC0_SHIFT));
+    if ((CY_CRYPTO_V1) && (0u == REG_CRYPTO_VU_RF_DATA(base, rsrc0)))
+    {
+        CY_CRYPTO_VU_COND_XOR_REG(base, cc, rdst, rsrc1, rsrc0);
+    }
+    else
+    {
+
+        Cy_Crypto_Core_Vu_RunInstr(base, CY_CRYPTO_SYNC_NON_BLOCKING,
+                                        (uint32_t)CY_CRYPTO_VU_LSL_OPC,
+                                        ((uint32_t)cc    << CY_CRYPTO_RSRC20_SHIFT) |
+                                        ((uint32_t)rdst  << CY_CRYPTO_RSRC12_SHIFT) |
+                                        ((uint32_t)rsrc1 << CY_CRYPTO_RSRC4_SHIFT)  |
+                                        ((uint32_t)rsrc0 << CY_CRYPTO_RSRC0_SHIFT));
+    }
 }
 
 __STATIC_INLINE void CY_CRYPTO_VU_LSL (CRYPTO_Type *base, uint32_t rdst, uint32_t rsrc1, uint32_t rsrc0)
@@ -591,12 +602,21 @@ __STATIC_INLINE void CY_CRYPTO_VU_LSL1_WITH_CARRY (CRYPTO_Type *base, uint32_t r
 
 __STATIC_INLINE void CY_CRYPTO_VU_COND_LSR (CRYPTO_Type *base, uint32_t cc, uint32_t rdst, uint32_t rsrc1, uint32_t rsrc0)
 {
-    Cy_Crypto_Core_Vu_RunInstr(base, CY_CRYPTO_SYNC_NON_BLOCKING,
+
+    if ((CY_CRYPTO_V1) && (0u == REG_CRYPTO_VU_RF_DATA(base, rsrc0)))
+    {
+        CY_CRYPTO_VU_COND_XOR_REG(base, cc, rdst, rsrc1, rsrc0);
+    }
+    else
+    {
+         Cy_Crypto_Core_Vu_RunInstr(base, CY_CRYPTO_SYNC_NON_BLOCKING,
                                      (uint32_t)((CY_CRYPTO_V1) ? CY_CRYPTO_VU1_LSR_OPC : CY_CRYPTO_VU2_LSR_OPC),
                                     ((uint32_t)cc       << CY_CRYPTO_RSRC20_SHIFT) |
                                     ((uint32_t)rdst     << CY_CRYPTO_RSRC12_SHIFT) |
                                     ((uint32_t)rsrc1    << CY_CRYPTO_RSRC4_SHIFT)  |
                                     ((uint32_t)rsrc0    << CY_CRYPTO_RSRC0_SHIFT));
+
+    }
 }
 
 __STATIC_INLINE void CY_CRYPTO_VU_LSR (CRYPTO_Type *base, uint32_t rdst, uint32_t rsrc1, uint32_t rsrc0)
@@ -629,7 +649,7 @@ __STATIC_INLINE void CY_CRYPTO_VU_COND_LSR1 (CRYPTO_Type *base, uint32_t cc, uin
 
 __STATIC_INLINE void CY_CRYPTO_VU_LSR1 (CRYPTO_Type *base, uint32_t rdst, uint32_t rsrc1)
 {
-    CY_CRYPTO_VU_COND_LSR1 (base, CY_CRYPTO_VU_COND_ALWAYS, rdst, rsrc1);
+    CY_CRYPTO_VU_COND_LSR1(base, CY_CRYPTO_VU_COND_ALWAYS, rdst, rsrc1);
 }
 
 __STATIC_INLINE void CY_CRYPTO_VU_COND_LSR1_WITH_CARRY (CRYPTO_Type *base, uint32_t cc, uint32_t rdst, uint32_t rsrc1)
@@ -931,10 +951,10 @@ __STATIC_INLINE void CY_CRYPTO_VU_COND_USQUARE (CRYPTO_Type *base, uint32_t cc, 
     {
         /***** V2 *******/
             Cy_Crypto_Core_Vu_RunInstr(base, CY_CRYPTO_SYNC_NON_BLOCKING,
-                                         (uint32_t)CY_CRYPTO_VU2_USQUARE_OPC,
+                                     (uint32_t)CY_CRYPTO_VU2_USQUARE_OPC,
                                         ((uint32_t)cc   << CY_CRYPTO_RSRC20_SHIFT) |
-                                        ((uint32_t)rdst << CY_CRYPTO_RSRC12_SHIFT) |
-                                        ((uint32_t)rsrc << CY_CRYPTO_RSRC0_SHIFT));
+                                    ((uint32_t)rdst << CY_CRYPTO_RSRC12_SHIFT) |
+                                    ((uint32_t)rsrc << CY_CRYPTO_RSRC0_SHIFT));
     }
 }
 
@@ -1112,6 +1132,8 @@ __STATIC_INLINE void CY_CRYPTO_VU_RESTORE_REG (CRYPTO_Type *base, uint32_t rdst,
 
 
 #endif /* #if (CPUSS_CRYPTO_VU == 1) */
+
+CY_MISRA_BLOCK_END('MISRA C-2012 Rule 14.3');
 
 #if defined(__cplusplus)
 }

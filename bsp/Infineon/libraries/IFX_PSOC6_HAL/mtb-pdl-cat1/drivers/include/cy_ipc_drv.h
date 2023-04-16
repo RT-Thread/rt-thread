@@ -1,12 +1,13 @@
 /***************************************************************************//**
 * \file cy_ipc_drv.h
-* \version 1.70
+* \version 1.80
 *
 * Provides an API declaration of the IPC driver.
 *
 ********************************************************************************
 * \copyright
-* Copyright 2016-2020 Cypress Semiconductor Corporation
+* Copyright (c) (2020-2022), Cypress Semiconductor Corporation (an Infineon company) or
+* an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,11 +39,11 @@
 * to get access to all functions and declarations in the PDL.
 *
 * There are four parts to the API:
-*     - Driver-level (DRV) API - used internally by Semaphore, Pipe and Bluetooth levels. These APIs are supported in both CAT1A and CAT1B devices.
+*     - Driver-level (DRV) API - used internally by Semaphore, Pipe and Bluetooth levels. These APIs are supported in all CAT1 devices.
 *     - Pipe-level (PIPE) API - establishes a communication channel between
-*       processors. These APIs are supported in both CAT1A and CAT1B devices.
+*       processors. These APIs are supported in all CAT1 devices.
 *     - Semaphore-level (SEMA) API - enables users to set and clear flags to
-*       synchronize operations. These APIs are supported in both CAT1A and CAT1B devices.
+*       synchronize operations. These APIs are supported in all CAT1 devices.
 *     - Bluetooth Subsystem (BTSS) API - establishes communication channel
 *       between MCU and the BTSS. These APIs are supported in CAT1B devices.
 *
@@ -73,7 +74,7 @@
 * These transactions are handled transparently by the DRV-level API. Use the
 * PIPE, SEMA and BTSS layers of the API to implement communication in your application.
 * The data transferred is limited to a single 32-bit value in case of PIPE and SEMA and two
-* 32-bit value incse of BTIPC. As implemented by
+* 32-bit value incase of BTIPC. As implemented by
 * the PIPE API, that value is a pointer to a data structure of arbitrary size
 * and complexity.
 * BTSS uses both 32-bit registers for communication of short messages. If the payload
@@ -283,6 +284,27 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>1.80</td>
+*     <td>
+*         <ul>
+*         <li>Defined CY_IPC_CHAN_SYSCALL macro and handled caches for CM7 device.<br>
+*         <li>Other than CAT1A devices, pipe config structure \ref cy_stc_ipc_pipe_config_t description is changed.
+*         ep0ConfigData is used for receiver endpoint and ep1ConfigData is used for send endpoint.
+*         For CAT1A devices, ep0ConfigData is always used for first endpoint(CM0+) and ep1ConfigData is always used for second endpoint(CM4).<br>
+*         <li>Updated argument name of Cy_IPC_Drv_SetInterruptMask(),
+*             Cy_IPC_Drv_SetInterrupt() and Cy_IPC_Drv_ClearInterrupt() for better
+*             user readability.<br>
+*         <li>Added multiple IPs support.<br>
+*         <li>Removed standard c library functions from cy_ipc_sema.c.</td>
+*         </ul>
+*     <td>
+*         <ul>
+*         <li>Added support for CM7.<br>
+*         <li>Enhancement based on usability/efficiency.<br>
+*         <li>To support multiple IPC IP instances.<br>
+*         <li>Code cleanup.</td>
+*         </ul>
+*   <tr>
 *     <td rowspan="1">1.70</td>
 *     <td>Added BT IPC service layer.</td>
 *     <td>To support communication between MCU and BTSS through IPC.</td>
@@ -400,6 +422,32 @@
 #include "cy_syslib.h"
 #include <stddef.h>
 
+/*******************************************************************************
+*   Memory model definitions
+*******************************************************************************/
+#if defined(__ARMCC_VERSION)
+/** To create cross compiler compatible code, use the CY_NOINIT, CY_SECTION, CY_UNUSED, CY_ALIGN
+ * attributes at the first place of declaration/definition.
+ * For example: CY_NOINIT uint32_t noinitVar;
+ */
+    #define CY_IPC_SECTION_BEGIN    __attribute__ ((section(".text.cy_ipc")))
+    #define CY_IPC_SECTION_END
+#elif defined (__GNUC__)
+    #if defined (__clang__)
+        #define CY_IPC_SECTION_BEGIN    __attribute__ ((section("__DATA, .text.cy_ipc")))
+        #define CY_IPC_SECTION_END
+    #else
+        #define CY_IPC_SECTION_BEGIN    __attribute__ ((section(".text.cy_ipc")))
+        #define CY_IPC_SECTION_END
+    #endif
+
+#elif defined (__ICCARM__)
+    #define CY_IPC_SECTION_BEGIN    _Pragma("default_function_attributes = @\".text.cy_ipc\"")
+    #define CY_IPC_SECTION_END      _Pragma("default_function_attributes = ")
+#else // if defined(__ARMCC_VERSION)
+    #error "An unsupported toolchain"
+#endif // (__ARMCC_VERSION)
+
 
 /**
 * \addtogroup group_ipc_macros
@@ -410,7 +458,7 @@
 #define CY_IPC_DRV_VERSION_MAJOR       1
 
 /** Driver minor version */
-#define CY_IPC_DRV_VERSION_MINOR       70
+#define CY_IPC_DRV_VERSION_MINOR       80
 
 /** Defines a value to indicate that no notification events are needed */
 #define CY_IPC_NO_NOTIFICATION         (uint32_t)(0x00000000UL)
@@ -435,6 +483,8 @@
 /** \cond INTERNAL */
 #if (CY_CPU_CORTEX_M0P)
     #define CY_IPC_CHAN_SYSCALL         CY_IPC_CHAN_SYSCALL_CM0
+#elif (defined (CY_CPU_CORTEX_M7) && CY_CPU_CORTEX_M7) && (defined (CY_IP_M7CPUSS)) /* CM7 */
+    #define CY_IPC_CHAN_SYSCALL         ((CY_IS_CM7_CORE_0) ? CY_IPC_CHAN_SYSCALL_CM7_0 : CY_IPC_CHAN_SYSCALL_CM7_1)
 #else
     #define CY_IPC_CHAN_SYSCALL         CY_IPC_CHAN_SYSCALL_CM4
 #endif  /* (CY_CPU_CORTEX_M0P) */
@@ -503,14 +553,14 @@ __STATIC_INLINE cy_en_ipcdrv_status_t Cy_IPC_Drv_SendMsgPtr (IPC_STRUCT_Type* ba
 __STATIC_INLINE cy_en_ipcdrv_status_t Cy_IPC_Drv_ReadMsgPtr (IPC_STRUCT_Type const * base, void ** msgPtr);
 
 __STATIC_INLINE void     Cy_IPC_Drv_SetInterruptMask (IPC_INTR_STRUCT_Type * base,
-                                                      uint32_t ipcReleaseMask, uint32_t ipcAcquireMask);
+                                                      uint32_t ipcReleaseMask, uint32_t ipcNotifyMask);
 __STATIC_INLINE uint32_t Cy_IPC_Drv_GetInterruptMask (IPC_INTR_STRUCT_Type const * base);
 __STATIC_INLINE uint32_t Cy_IPC_Drv_GetInterruptStatusMasked (IPC_INTR_STRUCT_Type const * base);
 __STATIC_INLINE uint32_t Cy_IPC_Drv_GetInterruptStatus (IPC_INTR_STRUCT_Type const * base);
 __STATIC_INLINE void     Cy_IPC_Drv_SetInterrupt (IPC_INTR_STRUCT_Type * base,
-                                                      uint32_t ipcReleaseMask, uint32_t ipcAcquireMask);
+                                                      uint32_t ipcReleaseMask, uint32_t ipcNotifyMask);
 __STATIC_INLINE void     Cy_IPC_Drv_ClearInterrupt (IPC_INTR_STRUCT_Type * base,
-                                                      uint32_t ipcReleaseMask, uint32_t ipcAcquireMask);
+                                                      uint32_t ipcReleaseMask, uint32_t ipcNotifyMask);
 
 
 /*******************************************************************************
@@ -538,6 +588,38 @@ __STATIC_INLINE IPC_STRUCT_Type* Cy_IPC_Drv_GetIpcBaseAddress (uint32_t ipcIndex
 {
     CY_ASSERT_L1(CY_IPC_CHANNELS > ipcIndex);
     return ( (IPC_STRUCT_Type*) CY_IPC_STRUCT_PTR(ipcIndex));
+}
+
+
+/*******************************************************************************
+* Function Name: Cy_IPC_Drv_GetIpcBaseAddressForIP
+****************************************************************************//**
+*
+* This function takes an IPC channel index and based address of the IPC IP as
+* parameters and returns the base address the IPC registers corresponding to
+* the IPC channel in the corresponding IPC IP.
+*
+* \note The user is responsible for ensuring that ipcIndex does not exceed the
+* limits.
+*
+* \param ipcIndex
+* Represents the number of IPC structure. This is converted to the base address of
+* the IPC channel registers.
+*
+* \param base
+* Represents the pointer to the base address of the IPC IP.
+*
+* \return
+* Returns a pointer to the base of the IPC registers.
+*
+* \funcusage
+* \snippet ipc/snippet/main.c snippet_Cy_IPC_Drv_SendMsgWord
+*
+*******************************************************************************/
+__STATIC_INLINE IPC_STRUCT_Type* Cy_IPC_Drv_GetIpcBaseAddressForIP (uint32_t ipcIndex, IPC_Type *base)
+{
+    CY_ASSERT_L1(CY_IPC_CHANNELS > ipcIndex);
+    return ( (IPC_STRUCT_Type*) CY_IPC_STRUCT_PTR_FOR_IP(ipcIndex, base));
 }
 
 
@@ -570,6 +652,38 @@ __STATIC_INLINE IPC_INTR_STRUCT_Type* Cy_IPC_Drv_GetIntrBaseAddr (uint32_t ipcIn
 
 
 /*******************************************************************************
+* Function Name: Cy_IPC_Drv_GetIntrBaseAddrForIP
+****************************************************************************//**
+*
+* This function takes an IPC interrupt structure index and based address of the
+* IPC IP as parameters and returns the base address of the IPC interrupt registers
+* corresponding to the IPC Interrupt in the corresponding IPC IP.
+*
+* \note The user is responsible for ensuring that ipcIntrIndex does not exceed the
+* limits and also pass the right base address.
+*
+* \param ipcIntrIndex
+* Represents the number of IPC interrupt structure. This is converted to the
+* base address of the IPC interrupt registers.
+*
+* \param base
+* Represents the pointer to the base address of the IPC IP.
+*
+* \return
+* Returns a pointer to the base of the IPC interrupt registers.
+*
+* \funcusage
+* \snippet ipc/snippet/main.c snippet_Cy_IPC_Drv_GetInterruptStatus
+*
+*******************************************************************************/
+__STATIC_INLINE IPC_INTR_STRUCT_Type* Cy_IPC_Drv_GetIntrBaseAddrForIP (uint32_t ipcIntrIndex, IPC_Type *base)
+{
+    CY_ASSERT_L1(CY_IPC_INTERRUPTS > ipcIntrIndex);
+    return ( (IPC_INTR_STRUCT_Type*) CY_IPC_INTR_STRUCT_PTR_FOR_IP(ipcIntrIndex, base));
+}
+
+
+/*******************************************************************************
 * Function Name: Cy_IPC_Drv_SetInterruptMask
 ****************************************************************************//**
 *
@@ -584,7 +698,7 @@ __STATIC_INLINE IPC_INTR_STRUCT_Type* Cy_IPC_Drv_GetIntrBaseAddr (uint32_t ipcIn
 * An encoded list of all IPC channels that can trigger the interrupt on a
 * release event.
 *
-* \param ipcAcquireMask
+* \param ipcNotifyMask
 * An encoded list of all IPC channels that can trigger the interrupt on a
 * notify event.
 *
@@ -593,11 +707,11 @@ __STATIC_INLINE IPC_INTR_STRUCT_Type* Cy_IPC_Drv_GetIntrBaseAddr (uint32_t ipcIn
 *
 *******************************************************************************/
 __STATIC_INLINE void  Cy_IPC_Drv_SetInterruptMask (IPC_INTR_STRUCT_Type* base,
-                                              uint32_t ipcReleaseMask, uint32_t ipcAcquireMask)
+                                              uint32_t ipcReleaseMask, uint32_t ipcNotifyMask)
 {
-    CY_ASSERT_L1(0UL == (ipcAcquireMask & ~(uint32_t)(IPC_STRUCT_NOTIFY_INTR_NOTIFY_Msk)));
+    CY_ASSERT_L1(0UL == (ipcNotifyMask & ~(uint32_t)(IPC_STRUCT_NOTIFY_INTR_NOTIFY_Msk)));
     CY_ASSERT_L1(0UL == (ipcReleaseMask & ~(uint32_t)(IPC_STRUCT_RELEASE_INTR_RELEASE_Msk)));
-    REG_IPC_INTR_STRUCT_INTR_MASK(base) = _VAL2FLD( IPC_INTR_STRUCT_INTR_MASK_NOTIFY,  ipcAcquireMask) |
+    REG_IPC_INTR_STRUCT_INTR_MASK(base) = _VAL2FLD( IPC_INTR_STRUCT_INTR_MASK_NOTIFY,  ipcNotifyMask) |
                       _VAL2FLD( IPC_INTR_STRUCT_INTR_MASK_RELEASE, ipcReleaseMask);
 }
 
@@ -707,7 +821,7 @@ __STATIC_INLINE uint32_t Cy_IPC_Drv_GetInterruptStatus(IPC_INTR_STRUCT_Type cons
 * An encoded list of all IPC channels that can trigger the interrupt on a
 * release event.
 *
-* \param ipcAcquireMask
+* \param ipcNotifyMask
 * An encoded list of all IPC channels that can trigger the interrupt on a
 * notify event.
 *
@@ -715,11 +829,11 @@ __STATIC_INLINE uint32_t Cy_IPC_Drv_GetInterruptStatus(IPC_INTR_STRUCT_Type cons
 * \snippet ipc/snippet/main.c snippet_Cy_IPC_Drv_SetInterrupt
 *
 *******************************************************************************/
-__STATIC_INLINE void  Cy_IPC_Drv_SetInterrupt(IPC_INTR_STRUCT_Type* base, uint32_t ipcReleaseMask, uint32_t ipcAcquireMask)
+__STATIC_INLINE void  Cy_IPC_Drv_SetInterrupt(IPC_INTR_STRUCT_Type* base, uint32_t ipcReleaseMask, uint32_t ipcNotifyMask)
 {
-    CY_ASSERT_L1(0UL == (ipcAcquireMask  & ~(uint32_t)(IPC_STRUCT_NOTIFY_INTR_NOTIFY_Msk)));
+    CY_ASSERT_L1(0UL == (ipcNotifyMask  & ~(uint32_t)(IPC_STRUCT_NOTIFY_INTR_NOTIFY_Msk)));
     CY_ASSERT_L1(0UL == (ipcReleaseMask & ~(uint32_t)(IPC_STRUCT_RELEASE_INTR_RELEASE_Msk)));
-    REG_IPC_INTR_STRUCT_INTR_SET(base) =  _VAL2FLD( IPC_INTR_STRUCT_INTR_NOTIFY,  ipcAcquireMask )  |
+    REG_IPC_INTR_STRUCT_INTR_SET(base) =  _VAL2FLD( IPC_INTR_STRUCT_INTR_NOTIFY,  ipcNotifyMask )  |
                       _VAL2FLD( IPC_INTR_STRUCT_INTR_RELEASE, ipcReleaseMask );
 }
 
@@ -739,7 +853,7 @@ __STATIC_INLINE void  Cy_IPC_Drv_SetInterrupt(IPC_INTR_STRUCT_Type* base, uint32
 * An encoded list of all IPC channels that can trigger the interrupt on a
 * release event.
 *
-* \param ipcAcquireMask
+* \param ipcNotifyMask
 * An encoded list of all IPC channels that can trigger the interrupt on a
 * notify event.
 *
@@ -747,11 +861,11 @@ __STATIC_INLINE void  Cy_IPC_Drv_SetInterrupt(IPC_INTR_STRUCT_Type* base, uint32
 * \snippet ipc/snippet/main.c snippet_Cy_IPC_Drv_GetInterruptStatusMasked
 *
 *******************************************************************************/
-__STATIC_INLINE void  Cy_IPC_Drv_ClearInterrupt(IPC_INTR_STRUCT_Type* base, uint32_t ipcReleaseMask, uint32_t ipcAcquireMask)
+__STATIC_INLINE void  Cy_IPC_Drv_ClearInterrupt(IPC_INTR_STRUCT_Type* base, uint32_t ipcReleaseMask, uint32_t ipcNotifyMask)
 {
-    CY_ASSERT_L1(0UL == (ipcAcquireMask  & ~(uint32_t)(IPC_STRUCT_NOTIFY_INTR_NOTIFY_Msk)));
+    CY_ASSERT_L1(0UL == (ipcNotifyMask  & ~(uint32_t)(IPC_STRUCT_NOTIFY_INTR_NOTIFY_Msk)));
     CY_ASSERT_L1(0UL == (ipcReleaseMask & ~(uint32_t)(IPC_STRUCT_RELEASE_INTR_RELEASE_Msk)));
-    REG_IPC_INTR_STRUCT_INTR(base) =  _VAL2FLD(IPC_INTR_STRUCT_INTR_NOTIFY,  ipcAcquireMask) |
+    REG_IPC_INTR_STRUCT_INTR(base) =  _VAL2FLD(IPC_INTR_STRUCT_INTR_NOTIFY,  ipcNotifyMask) |
                   _VAL2FLD(IPC_INTR_STRUCT_INTR_RELEASE, ipcReleaseMask);
     (void)REG_IPC_INTR_STRUCT_INTR(base);  /* Read the register to flush the cache */
 }

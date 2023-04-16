@@ -53,9 +53,9 @@ extern "C" {
 * * Programmable Counter taps through PERIOD_BUFF register.
 * * Line output generated from a XOR combination of all enabled counter taps (bit position) defined by PERIOD_BUFF.
 * * Programmable Compare Register. Compare value can be swapped with a buffered compare value on comparison event.
-* * Interrupt on Comparision match events (CC0_MATCH/CC1_MATCH).
-* * Start, Reload, Stop, Shift, and Serail-in Inputs.
-* * Comparision match and Line Outputs.
+* * Interrupt on Comparison match events (CC0_MATCH/CC1_MATCH).
+* * Start, Reload, Stop, Shift, and Serial-in Inputs.
+* * Comparison match and Line Outputs.
 * * Line output can be output with invert polarity.
 *
 * \note Shift Register mode is available only in TCPWM Version 2
@@ -136,7 +136,7 @@ typedef struct cy_stc_tcpwm_shiftreg_config
     uint32_t    shiftInputMode;     /**< Configures how the shift input behaves. */
     uint32_t    shiftInput;         /**< Selects which input the shift uses. The inputs are device-specific. */
     uint32_t    serialInputMode;    /**< Configures how the serial input behaves. */
-    uint32_t    serialInput;        /**< Selects which input the serial usese. Inputs are device-specific. */
+    uint32_t    serialInput;        /**< Selects which input the serial uses. Inputs are device-specific. */
     uint32_t    shiftRegOnDisable;  /**< Specifies the behavior of the ShiftReg outputs line_out and line_compl_out while the Shift Register is disabled. */
     uint32_t    trigger0Event;      /**< Configures which internal event generates on output trigger 0. */
     uint32_t    trigger1Event;      /**< Configures which internal event generates on output trigger 1. */

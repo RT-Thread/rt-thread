@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_ipc_pipe.c
-* \version 1.70
+* \version 1.80
 *
 *  Description:
 *   IPC Pipe Driver - This source file includes code for the Pipe layer on top
@@ -103,7 +103,9 @@ void Cy_IPC_Pipe_Init(cy_stc_ipc_pipe_config_t const *config)
     CY_ASSERT_L1(NULL != config->userPipeIsrHandler);
     /* Parameters checking end */
 
-#if (CY_CPU_CORTEX_M0P && CY_IP_M4CPUSS)
+#if defined(CY_IP_M4CPUSS)
+/* Only for CAT1A devices. This Part of code is soon going to deprecated */
+#if (CY_CPU_CORTEX_M0P)
 
     /* Receiver endpoint = EP0, Sender endpoint = EP1 */
     epConfigDataA = config->ep0ConfigData;
@@ -126,7 +128,7 @@ void Cy_IPC_Pipe_Init(cy_stc_ipc_pipe_config_t const *config)
     ipc_intr_cypipeConfig.intrSrc          = (IRQn_Type)((int32_t)cpuss_interrupts_ipc_0_IRQn + (int32_t)epConfigDataA.ipcNotifierNumber);
     ipc_intr_cypipeConfig.intrPriority     = epConfigDataA.ipcNotifierPriority;
 
-#endif
+#endif /* (CY_CPU_CORTEX_M0P) */
 
     /* Initialize the pipe endpoints */
     Cy_IPC_Pipe_EndpointInit(epConfigDataA.epAddress,
@@ -142,6 +144,53 @@ void Cy_IPC_Pipe_Init(cy_stc_ipc_pipe_config_t const *config)
 
     /* Enable the interrupts */
     NVIC_EnableIRQ(ipc_intr_cypipeConfig.intrSrc);
+
+#else
+
+   /* Receiver endpoint = EP0, Sender endpoint = EP1 */
+    epConfigDataA = config->ep0ConfigData;
+    epConfigDataB = config->ep1ConfigData;
+
+/* New Implementation which supports all devices */
+#if defined(CY_IP_M4CPUSS) && (CY_CPU_CORTEX_M0P)
+    /* Configure CM0 interrupts */
+    ipc_intr_cypipeConfig.intrSrc          = (IRQn_Type)epConfigDataA.ipcNotifierMuxNumber;
+    CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum');
+    ipc_intr_cypipeConfig.cm0pSrc          = (cy_en_intr_t)((int32_t)cpuss_interrupts_ipc_0_IRQn + (int32_t)epConfigDataA.ipcNotifierNumber);
+    ipc_intr_cypipeConfig.intrPriority     = epConfigDataA.ipcNotifierPriority;
+#elif defined (CY_IP_M7CPUSS) /* CM7 */
+    /* Configure CM0 interrupts */
+    CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to uint32_t');
+    ipc_intr_cypipeConfig.intrSrc          = ((epConfigDataA.ipcNotifierMuxNumber << 16) | (uint32_t)((int32_t)cpuss_interrupts_ipc_0_IRQn + (int32_t)epConfigDataA.ipcNotifierNumber));
+    ipc_intr_cypipeConfig.intrPriority     = epConfigDataA.ipcNotifierPriority;
+#else
+    /* Configure interrupts */
+    CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum');
+    ipc_intr_cypipeConfig.intrSrc          = (IRQn_Type)((int32_t)cpuss_interrupts_ipc_0_IRQn + (int32_t)epConfigDataA.ipcNotifierNumber);
+    ipc_intr_cypipeConfig.intrPriority     = epConfigDataA.ipcNotifierPriority;
+
+#endif /* (CY_CPU_CORTEX_M0P && CY_IP_M4CPUSS) */
+
+    /* Initialize the pipe endpoints */
+    Cy_IPC_Pipe_EndpointInit(epConfigDataA.epAddress,
+                             config->endpointsCallbacksArray,
+                             config->endpointClientsCount,
+                             epConfigDataA.epConfig,
+                             &ipc_intr_cypipeConfig);
+
+    /* Create the endpoints for the CM4 just for reference */
+    Cy_IPC_Pipe_EndpointInit(epConfigDataB.epAddress, NULL, 0UL, epConfigDataB.epConfig, NULL);
+
+    (void)Cy_SysInt_Init(&ipc_intr_cypipeConfig, config->userPipeIsrHandler);
+
+    /* Enable the interrupts */
+#if defined (CY_IP_M7CPUSS)
+   CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum');
+   NVIC_EnableIRQ((IRQn_Type)((ipc_intr_cypipeConfig.intrSrc >> 16) & 0x00FFU));
+#else
+    NVIC_EnableIRQ(ipc_intr_cypipeConfig.intrSrc);
+#endif /* defined (CY_IP_M7CPUSS) */
+#endif /* CY_IP_M4CPUSS */
 }
 
 
@@ -219,7 +268,12 @@ void Cy_IPC_Pipe_EndpointInit(uint32_t epAddr, cy_ipc_pipe_callback_array_ptr_t 
 
     if (NULL != epInterrupt)
     {
-        endpoint->pipeIntrSrc     = epInterrupt->intrSrc;
+        #if defined (CY_IP_M7CPUSS)
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum.');
+            endpoint->pipeIntrSrc     = (IRQn_Type)((epInterrupt->intrSrc >> 16) & 0x00FFU);
+        #else
+            endpoint->pipeIntrSrc     = epInterrupt->intrSrc;
+        #endif /* CY_IP_M7CPUSS */
     }
 }
 
@@ -293,6 +347,12 @@ cy_en_ipc_pipe_status_t Cy_IPC_Pipe_SendMessage(uint32_t toAddr, uint32_t fromAd
                 * (uint32_t *) msgPtr &= ~(CY_IPC_PIPE_MSG_RELEASE_Msk);
 
                 * (uint32_t *) msgPtr |= releaseMask;
+
+                #if (defined (CY_CPU_CORTEX_M7) && (CY_CPU_CORTEX_M7)) && (defined (CY_IP_M7CPUSS))
+                    /* Flush the cache */
+                    CY_MISRA_DEVIATE_LINE('SIZEOF_MISMATCH','SizeOf void pointer is passed.');
+                    SCB_CleanDCache_by_Addr((uint32_t *)msgPtr,(int32_t)sizeof(msgPtr));
+                #endif
 
                 /* If the channel was acquired, write the message.   */
                 Cy_IPC_Drv_WriteDataValue(toEp->ipcPtr, (uint32_t) msgPtr);
@@ -497,6 +557,10 @@ void Cy_IPC_Pipe_ExecCallback(cy_stc_ipc_pipe_ep_t * endpoint)
             /* Extract Client ID  */
             if( CY_IPC_DRV_SUCCESS == Cy_IPC_Drv_ReadMsgPtr (endpoint->ipcPtr, (void **)&msgPtr))
             {
+                #if (defined (CY_CPU_CORTEX_M7) && CY_CPU_CORTEX_M7) && (defined (CY_IP_M7CPUSS))
+                    SCB_InvalidateDCache_by_Addr(msgPtr, (int32_t)sizeof(*msgPtr));
+                #endif
+
                 /* Get release mask */
                 releaseMask = _FLD2VAL(CY_IPC_PIPE_MSG_RELEASE, *msgPtr);
                 clientID    = _FLD2VAL(CY_IPC_PIPE_MSG_CLIENT,  *msgPtr);

@@ -21,6 +21,7 @@ struct rt_cputimer
     void *parameter;
     rt_uint64_t init_tick;
     rt_uint64_t timeout_tick;
+    struct rt_semaphore sem;
 };
 typedef struct rt_cputimer *rt_cputimer_t;
 

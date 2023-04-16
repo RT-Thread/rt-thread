@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_ipc_drv.c
-* \version 1.70
+* \version 1.80
 *
 *  \brief
 *   IPC Driver - This source file contains the low-level driver code for
@@ -211,6 +211,7 @@ cy_en_ipcdrv_status_t  Cy_IPC_Drv_ReadMsgWord (IPC_STRUCT_Type const * base, uin
 * \snippet ipc/snippet/main.c snippet_Cy_IPC_Drv_SendMsgWord
 *
 *******************************************************************************/
+CY_IPC_SECTION_BEGIN
 cy_en_ipcdrv_status_t  Cy_IPC_Drv_SendMsgDWord (IPC_STRUCT_Type* base, uint32_t notifyEventIntr, uint32_t* message)
 {
     cy_en_ipcdrv_status_t retStatus = CY_IPC_DRV_ERROR;
@@ -231,6 +232,7 @@ cy_en_ipcdrv_status_t  Cy_IPC_Drv_SendMsgDWord (IPC_STRUCT_Type* base, uint32_t 
     }
     return (retStatus);
 }
+CY_IPC_SECTION_END
 
 /*******************************************************************************
 * Function Name: Cy_IPC_Drv_ReadMsgDWord
