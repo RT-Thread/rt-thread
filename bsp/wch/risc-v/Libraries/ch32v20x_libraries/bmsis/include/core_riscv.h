@@ -246,9 +246,9 @@ __attribute__( ( always_inline ) ) RV_STATIC_INLINE void __WFE(void)
 /*******************************************************************************
 * Function Name  : SetVTFIRQ
 * Description    : Set VTF Interrupt
-* Input          : addr��VTF interrupt service function base address.
-*                  IRQn��Interrupt Numbers
-*                  num��VTF Interrupt Numbers
+* Input          : addr - VTF interrupt service function base address.
+*                  IRQn - Interrupt Numbers
+*                  num - VTF Interrupt Numbers
 *                  NewState: DISABLE or ENABLE
 * Return         : None
 *******************************************************************************/

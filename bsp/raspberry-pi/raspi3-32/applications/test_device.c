@@ -308,11 +308,11 @@ EXIT:
 }
 
 #ifdef RT_USING_WDT
-#define WDT_DEVICE_NAME    "wdg"    /* 鐪嬮棬鐙楄澶囧悕绉� */
-static rt_device_t wdg_dev;         /* 鐪嬮棬鐙楄澶囧彞鏌� */
+#define WDT_DEVICE_NAME    "wdg"    /* 看门狗设备名称 */
+static rt_device_t wdg_dev;         /* 看门狗设备句柄 */
 static void idle_hook(void)
 {
-    /* 鍦ㄧ┖闂茬嚎绋嬬殑鍥炶皟鍑芥暟閲屽杺鐙� */
+    /* 在空闲线程的回调函数里喂狗 */
     rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, NULL);
     //rt_kprintf("feed the dog!\n ");
 }
@@ -321,38 +321,38 @@ rt_err_t test_wdt(void)
 {
     rt_kprintf("Hello Test WDT!\n");
     rt_err_t ret = RT_EOK;
-    rt_uint32_t timeout = 1;        /* 婧㈠嚭鏃堕棿锛屽崟浣嶏細绉� */
+    rt_uint32_t timeout = 1;        /* 溢出时间，单位：秒 */
     char device_name[RT_NAME_MAX];
     rt_strncpy(device_name, WDT_DEVICE_NAME, RT_NAME_MAX);
-    /* 鏍规嵁璁惧鍚嶇О鏌ユ壘鐪嬮棬鐙楄澶囷紝鑾峰彇璁惧鍙ユ焺 */
+    /* 根据设备名称查找看门狗设备，获取设备句柄 */
     wdg_dev = rt_device_find(device_name);
     if (!wdg_dev)
     {
         rt_kprintf("find %s failed!\n", device_name);
         return -RT_ERROR;
     }
-    /* 鍒濆鍖栬澶� */
+    /* 初始化设备 */
     ret = rt_device_init(wdg_dev);
     if (ret != RT_EOK)
     {
         rt_kprintf("initialize %s failed!\n", device_name);
         return -RT_ERROR;
     }
-    /* 璁剧疆鐪嬮棬鐙楁孩鍑烘椂闂� */
+    /* 设置看门狗溢出时间 */
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     if (ret != RT_EOK)
     {
         rt_kprintf("set %s timeout failed!\n", device_name);
         return -RT_ERROR;
     }
-    /* 鍚姩鐪嬮棬鐙� */
+    /* 启动看门狗 */
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
     if (ret != RT_EOK)
     {
         rt_kprintf("start %s failed!\n", device_name);
         return -RT_ERROR;
     }
-    /* 璁剧疆绌洪棽绾跨▼鍥炶皟鍑芥暟 */
+    /* 设置空闲线程回调函数 */
     rt_thread_idle_sethook(idle_hook);
 
     return ret;
