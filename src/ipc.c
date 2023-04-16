@@ -44,7 +44,7 @@
  * 2022-04-08     Stanley      Correct descriptions
  * 2022-10-15     Bernard      add nested mutex feature
  * 2022-10-16     Bernard      add prioceiling feature in mutex
- * 2023-04-16     Xin-zheqi    redesigen queue recv function return real message size
+ * 2023-04-16     Xin-zheqi    redesigen queue recv and send function return real message size
  */
 
 #include <rtthread.h>
@@ -3302,7 +3302,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
 
     /* the msg is the new tailer of list, the next shall be NULL */
     msg->next = RT_NULL;
-    
+
     /* add the length */
     *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
