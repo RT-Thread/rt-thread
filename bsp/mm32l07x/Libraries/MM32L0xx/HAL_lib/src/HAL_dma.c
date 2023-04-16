@@ -476,7 +476,7 @@ ITStatus DMA_GetITStatus(uint32_t DMA_IT)
 }
 
 /**
-* @brief  Clears the DMAy Channelx’s interrupt pending bits.
+* @brief  Clears the DMAy Channelx's interrupt pending bits.
 * @param DMA_IT: specifies the DMA interrupt pending bit to clear.
 *   This parameter can be any combination (for the same DMA) of
 *   the following values:
