@@ -3202,7 +3202,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* greater than one message size */
-    if (size + sizeof(rt_size_t) > mq->msg_size)
+    if (size + sizeof(size) > mq->msg_size)
         return -RT_ERROR;
 
     /* initialize delta tick */
@@ -3306,7 +3306,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     /* add the length */
     *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
-    rt_memcpy((char *)msg + sizeof(msg) + sizeof(size), buffer, size);
+    rt_memcpy(((rt_size_t *)(msg + 1)) + 1, buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3448,7 +3448,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     RT_ASSERT(size != 0);
 
     /* greater than one message size */
-    if (size + sizeof(rt_size_t) > mq->msg_size)
+    if (size + sizeof(size) > mq->msg_size)
         return -RT_ERROR;
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mq->parent.parent)));
@@ -3475,7 +3475,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     /* add the length */
     *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
-    rt_memcpy((char *)msg + sizeof(msg) + sizeof(size), buffer, size);
+    rt_memcpy(((rt_size_t *)(msg + 1)) + 1, buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3674,9 +3674,9 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
     rt_hw_interrupt_enable(level);
 
     /* get real message length */
-    len = *(rt_size_t*)(msg + 1);
+    len = *(rt_size_t *)(msg + 1);
     /* copy message */
-    rt_memcpy(buffer, (char *)msg + sizeof(msg) + sizeof(len), len);
+    rt_memcpy(buffer, ((rt_size_t *)(msg + 1)) + 1, len);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
