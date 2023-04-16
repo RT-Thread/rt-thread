@@ -208,7 +208,7 @@ ssize_t mq_receive(mqd_t mqdes, char *msg_ptr, size_t msg_len, unsigned *msg_pri
     }
 
     result = rt_mq_recv(mqdes->mq, msg_ptr, msg_len, RT_WAITING_FOREVER);
-    if (result > 0)
+    if (result >= 0)
         return msg_len;
 
     rt_set_errno(EBADF);
@@ -259,7 +259,7 @@ ssize_t mq_timedreceive(mqd_t                  mqdes,
         tick = rt_timespec_to_tick(abs_timeout);
 
     result = rt_mq_recv(mqdes->mq, msg_ptr, msg_len, tick);
-    if (result > 0)
+    if (result >= 0)
         return msg_len;
 
     if (result == -RT_ETIMEOUT)
