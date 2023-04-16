@@ -3161,6 +3161,7 @@ RTM_EXPORT(rt_mq_delete);
  *           thread will be resumed and an error code will be returned. By
  *           contrast, the rt_mq_send() function will return an error code
  *           immediately without waiting when the messagequeue if fully used.
+ *           The front four Bytes are the length of the message
  *
  * @see      rt_mq_send()
  *
@@ -3201,7 +3202,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* greater than one message size */
-    if (size > mq->msg_size)
+    if (size + sizeof(rt_size_t) > mq->msg_size)
         return -RT_ERROR;
 
     /* initialize delta tick */
@@ -3301,8 +3302,11 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
 
     /* the msg is the new tailer of list, the next shall be NULL */
     msg->next = RT_NULL;
+    
+    /* add the length */
+    *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
-    rt_memcpy(msg + 1, buffer, size);
+    rt_memcpy((char *)msg + sizeof(msg) + sizeof(size), buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3444,7 +3448,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     RT_ASSERT(size != 0);
 
     /* greater than one message size */
-    if (size > mq->msg_size)
+    if (size + sizeof(rt_size_t) > mq->msg_size)
         return -RT_ERROR;
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mq->parent.parent)));
@@ -3468,8 +3472,10 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
+    /* add the length */
+    *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
-    rt_memcpy(msg + 1, buffer, size);
+    rt_memcpy((char *)msg + sizeof(msg) + sizeof(size), buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3668,9 +3674,9 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
     rt_hw_interrupt_enable(level);
 
     /* get real message length */
-    len = size > mq->msg_size ? mq->msg_size : size;
+    len = *(rt_size_t*)(msg + 1);
     /* copy message */
-    rt_memcpy(buffer, msg + 1, len);
+    rt_memcpy(buffer, (char *)msg + sizeof(msg) + sizeof(len), len);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
