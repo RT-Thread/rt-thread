@@ -8,7 +8,7 @@ STM32U575-NUCLEO 上手指南是通过使用 SPI1 驱动 RW007 模块实例进�
 > 1.STM32U575-NUCLEO 开发板  
 2.RW007 WiFi 模块  
 3.Mini-USB 连接线（连接开发板与电脑）  
-4.ENV 编译构建环境（[安装使用说明](https://www.rt-thread.org/document/site/programming-manual/env/env/)）  
+4.ENV 编译构建环境（[安装使用说明](https://www.rt-thread.org/document/site/#/development-tools/env/env)）  
 5.开发常用软件（git、Keil5、STM32CubeMX、串口调试等）  
 
 ##开始上路
