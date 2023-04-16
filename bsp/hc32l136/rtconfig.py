@@ -5,12 +5,12 @@ ARCH='arm'
 CPU='cortex-m0'
 CROSS_TOOL='iar'
 
-print "############rtconfig##############"
+print(############rtconfig##############")
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
-print "CROSS_TOOL: " + CROSS_TOOL
+print("CROSS_TOOL: " + CROSS_TOOL)
 
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
