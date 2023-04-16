@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_scb_uart.c
-* \version 2.90
+* \version 3.0
 *
 * Provides UART API implementation of the SCB driver.
 *
@@ -24,7 +24,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXSCB)
+#if (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB))
 
 #include "cy_scb_uart.h"
 
@@ -299,7 +299,7 @@ cy_en_scb_uart_status_t Cy_SCB_UART_Init(CySCB_Type *base, cy_stc_scb_uart_confi
     }
 
     /* Configure the UART interface */
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     SCB_CTRL(base) = _BOOL2FLD(SCB_CTRL_ADDR_ACCEPT, config->acceptAddrInFifo)                      |
                  _VAL2FLD(SCB_CTRL_MEM_WIDTH, ((config->dataWidth <= CY_SCB_BYTE_WIDTH)? 0UL:1UL))  |
                  _VAL2FLD(SCB_CTRL_OVS, ovs)                                                        |
@@ -325,7 +325,7 @@ cy_en_scb_uart_status_t Cy_SCB_UART_Init(CySCB_Type *base, cy_stc_scb_uart_confi
                          _VAL2FLD(SCB_UART_RX_CTRL_BREAK_WIDTH, (config->breakWidth - 1UL))          |
                          _VAL2FLD(SCB_UART_RX_CTRL_STOP_BITS,   ((uint32_t) config->stopBits) - 1UL) |
                          _VAL2FLD(CY_SCB_UART_RX_CTRL_SET_PARITY, (uint32_t) config->parity);
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     SCB_UART_RX_CTRL(base)|=_BOOL2FLD(SCB_UART_RX_CTRL_BREAK_LEVEL, config->breaklevel);
 #endif /* CY_IP_MXSCB_VERSION */
 
@@ -1665,6 +1665,6 @@ static void HandleDataTransmit(CySCB_Type *base, cy_stc_scb_uart_context_t *cont
 }
 #endif
 
-#endif /* CY_IP_MXSCB */
+#endif /* (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB)) */
 
 /* [] END OF FILE */

@@ -35,7 +35,7 @@
 
                 IMPORT |Image$$ARM_LIB_STACK$$ZI$$Base|
                 IMPORT |Image$$ARM_LIB_STACK$$ZI$$Length|
-                
+
 __Vectors       DCD    |Image$$ARM_LIB_STACK$$ZI$$Base| + |Image$$ARM_LIB_STACK$$ZI$$Length| ; Top of Stack
 
                 DCD     Reset_Handler             ; Reset Handler
@@ -56,22 +56,22 @@ __Vectors       DCD    |Image$$ARM_LIB_STACK$$ZI$$Base| + |Image$$ARM_LIB_STACK$
                 DCD     SysTick_Handler           ; SysTick Handler
 
                 ; External interrupts                           Description
-                DCD     NvicMux0_IRQHandler                   ; CPU User Interrupt #0 
-                DCD     NvicMux1_IRQHandler                   ; CPU User Interrupt #1 
-                DCD     NvicMux2_IRQHandler                   ; CPU User Interrupt #2 
-                DCD     NvicMux3_IRQHandler                   ; CPU User Interrupt #3 
-                DCD     NvicMux4_IRQHandler                   ; CPU User Interrupt #4 
-                DCD     NvicMux5_IRQHandler                   ; CPU User Interrupt #5 
-                DCD     NvicMux6_IRQHandler                   ; CPU User Interrupt #6 
-                DCD     NvicMux7_IRQHandler                   ; CPU User Interrupt #7 
-                DCD     Internal0_IRQHandler                  ; Internal SW Interrupt #0 
-                DCD     Internal1_IRQHandler                  ; Internal SW Interrupt #1 
-                DCD     Internal2_IRQHandler                  ; Internal SW Interrupt #2 
-                DCD     Internal3_IRQHandler                  ; Internal SW Interrupt #3 
-                DCD     Internal4_IRQHandler                  ; Internal SW Interrupt #4 
-                DCD     Internal5_IRQHandler                  ; Internal SW Interrupt #5 
-                DCD     Internal6_IRQHandler                  ; Internal SW Interrupt #6 
-                DCD     Internal7_IRQHandler                  ; Internal SW Interrupt #7 
+                DCD     NvicMux0_IRQHandler                   ; CPU User Interrupt #0
+                DCD     NvicMux1_IRQHandler                   ; CPU User Interrupt #1
+                DCD     NvicMux2_IRQHandler                   ; CPU User Interrupt #2
+                DCD     NvicMux3_IRQHandler                   ; CPU User Interrupt #3
+                DCD     NvicMux4_IRQHandler                   ; CPU User Interrupt #4
+                DCD     NvicMux5_IRQHandler                   ; CPU User Interrupt #5
+                DCD     NvicMux6_IRQHandler                   ; CPU User Interrupt #6
+                DCD     NvicMux7_IRQHandler                   ; CPU User Interrupt #7
+                DCD     Internal0_IRQHandler                  ; Internal SW Interrupt #0
+                DCD     Internal1_IRQHandler                  ; Internal SW Interrupt #1
+                DCD     Internal2_IRQHandler                  ; Internal SW Interrupt #2
+                DCD     Internal3_IRQHandler                  ; Internal SW Interrupt #3
+                DCD     Internal4_IRQHandler                  ; Internal SW Interrupt #4
+                DCD     Internal5_IRQHandler                  ; Internal SW Interrupt #5
+                DCD     Internal6_IRQHandler                  ; Internal SW Interrupt #6
+                DCD     Internal7_IRQHandler                  ; Internal SW Interrupt #7
 
 __Vectors_End
 
@@ -116,7 +116,7 @@ Vectors_Copy
                 STR r3, [r0]
                 ADDS r0, r0, #4
                 ADDS r1, r1, #4
-                SUBS r2, r2, #1
+                SUBS r2, r2, #4
                 CMP r2, #0
                 BNE Vectors_Copy
 

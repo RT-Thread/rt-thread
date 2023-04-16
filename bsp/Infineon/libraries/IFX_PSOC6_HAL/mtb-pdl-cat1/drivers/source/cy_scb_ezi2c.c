@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_scb_ezi2c.c
-* \version 2.90
+* \version 3.0
 *
 * Provides EZI2C API implementation of the SCB driver.
 *
@@ -24,7 +24,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXSCB)
+#if (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB))
 
 #include "cy_scb_ezi2c.h"
 
@@ -132,8 +132,8 @@ cy_en_scb_ezi2c_status_t Cy_SCB_EZI2C_Init(CySCB_Type *base, cy_stc_scb_ezi2c_co
     context->buf1rwBondary = 0UL;
     context->baseAddr1     = 0UL;
 
-    context->buf1Size      = 0UL;
-    context->buf1rwBondary = 0UL;
+    context->buf2Size      = 0UL;
+    context->buf2rwBondary = 0UL;
     context->baseAddr2     = 0UL;
 
     return CY_SCB_EZI2C_SUCCESS;
@@ -1313,6 +1313,6 @@ static void UpdateAddressMask(CySCB_Type *base, cy_stc_scb_ezi2c_context_t const
 }
 #endif
 
-#endif /* CY_IP_MXSCB */
+#endif /* (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB)) */
 
 /* [] END OF FILE */

@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -35,25 +35,31 @@ extern "C"
 {
 #endif
 
+#if !defined(SRSS_NUM_PLL)
 
-#if defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
-#define _CYHAL_SRSS_NUM_PLL (SRSS_NUM_PLL200M + SRSS_NUM_PLL400M)
+#if defined(COMPONENT_CAT1D)
+#define SRSS_NUM_PLL SRSS_NUM_TOTAL_DPLL
+#elif defined(COMPONENT_CAT1B)
+#define SRSS_NUM_PLL (SRSS_NUM_PLL200M + SRSS_NUM_PLL400M)
+#endif
+
+#endif /* !defined(SRSS_NUM_PLL) */
+
+#if defined(COMPONENT_CAT1C)
+#define _CYHAL_SRSS_NUM_PLL (SRSS_NUM_PLL + SRSS_NUM_PLL400M)
 #else
 #define _CYHAL_SRSS_NUM_PLL SRSS_NUM_PLL
-#endif
+#endif /* defined(COMPONENT_CAT1C) or other */
 
 /**
  * \addtogroup group_hal_impl_clock Clocks
  * \ingroup group_hal_impl
  * \{
  * Implementation specific interface for using the Clock driver. These items, while usable
- * within the HAL, are <b>not</b> necessarily portable between devices. The diagram below
- * shows how the clocks relate to each other. This is a superset of what is available. See
+ * within the HAL, are <b>not</b> necessarily portable between devices. The diagrams below
+ * show how the clocks relate to each other. This is a superset of what is available. See
  * the device specific Data Sheet for the exact set of clocks that are available on a
  * specific device.
- *
- * \image html mxs40_clock_tree.png
- *
  * \section section_clock_snippets_impl Code snippets
  * \note Error handling code has been intentionally left out of snippets to highlight API usage.
  *
@@ -61,6 +67,36 @@ extern "C"
  * The following snippet shows the clock driver can be used to initialize all clocks in the system.
  * \note This example is device specific.
  * \snippet hal_clock.c snippet_cyhal_clock_system_init_p6
+ * \addtogroup group_hal_impl_clock_psoc6_01 PSoC™ 6S1 Clocks
+ * \{
+ * <b>PSoC™ 6S1 Clock Tree:</b>
+ * \image html psoc6able2_clock_tree.png
+ * \}
+ * \addtogroup group_hal_impl_clock_psoc6_02 PSoC™ 6S2 Clocks
+ * \{
+ * <b>PSoC™ 6S2 Clock Tree:</b>
+ * \image html psoc6a2m_clock_tree.png
+ * \}
+ * \addtogroup group_hal_impl_clock_psoc6_03 PSoC™ 6S3 Clocks
+ * \{
+ * <b>PSoC™ 6S3 Clock Tree:</b>
+ * \image html psoc6a512k_clock_tree.png
+ * \}
+ * \addtogroup group_hal_impl_clock_psoc6_04 PSoC™ 6S4 Clocks
+ * \{
+ * <b>PSoC™ 6S4 Clock Tree:</b>
+ * \image html psoc6a256k_clock_tree.png
+ * \}
+ * \addtogroup group_hal_impl_clock_xmc7100 XMC7100/T2G-B-H-4M Clocks
+ * \{
+ * <b>XMC7100/T2G-B-H-4M Clock Tree:</b>
+ * \image html xmc7100_clock_tree.png
+ * \}
+ * \addtogroup group_hal_impl_clock_xmc7200 XMC7200/T2G-B-H-8M Clocks
+  * \{
+ * <b>XMC7200/T2G-B-H-8M Clock Tree:</b>
+ * \image html xmc7200_clock_tree.png
+ * \}
  */
 
 /** \cond INTERNAL */
@@ -84,7 +120,7 @@ extern const cyhal_clock_t CYHAL_CLOCK_MEM;
 extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_MEM;
 #endif
 
-#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B)
+#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1D)
 /** Internal Low Speed Oscillator: This is a low accuracy fixed-frequency clock in the kilohertz range that is available in sleep, deep sleep and hibernate power modes. */
 extern const cyhal_clock_t CYHAL_CLOCK_ILO;
 /** Internal Low Speed Oscillator: This is a low accuracy fixed-frequency clock in the kilohertz range that is available in sleep, deep sleep and hibernate power modes. */
@@ -149,10 +185,13 @@ extern const cyhal_clock_t CYHAL_CLOCK_LF;
 /** Low Frequency Clock: This clock is the source for the multi-counter watchdog timers (MCWDT), and can also be a source for the RTC. */
 extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_LF;
 
+/* PUMP clock is only available on CAT1A and CAT1B devices */
+#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B)
 /** Analog Pump Clock: This clock ensures precision analog performance in low voltage applications. */
 extern const cyhal_clock_t CYHAL_CLOCK_PUMP;
 /** Analog Pump Clock: This clock ensures precision analog performance in low voltage applications. */
 extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_PUMP;
+#endif /* defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) */
 
 /** Backup Clock: This clock is available to the backup domain. Typically useful if an external WCO is not available. */
 extern const cyhal_clock_t CYHAL_CLOCK_BAK;
@@ -204,8 +243,8 @@ extern const cyhal_clock_t CYHAL_CLOCK_SLOW;
 /** Slow Clock: This clock is used for the CM0+ CPU, Datawire and CRYPTO components and the associated CPUSS slow infrastructure. */
 extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_SLOW;
 #endif
-#if defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
-#if defined(COMPONENT_CAT1B)
+#if defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || defined(COMPONENT_CAT1D)
+#if defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1D)
 /** Internal High-Speed Oscillator: This is a fixed-frequency clock that is commonly used as a general purpose source for clocks that do not require specific frequencies or very high accuracy. This clock is stopped in the deep sleep and hibernate power modes. */
 extern const cyhal_clock_t CYHAL_CLOCK_IHO;
 /** Internal High-Speed Oscillator: This is a fixed-frequency clock that is commonly used as a general purpose source for clocks that do not require specific frequencies or very high accuracy. This clock is stopped in the deep sleep and hibernate power modes. */
@@ -257,19 +296,25 @@ extern const cyhal_clock_t CYHAL_CLOCK_PLL[SRSS_NUM_PLL400M];
 extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_PLL[SRSS_NUM_PLL400M];
 #endif
 
+#if (SRSS_NUM_DPLL_LP > 0) && defined(COMPONENT_CAT1D)
+/** 250MHz Digital Phase-Locked Loop: A high-frequency clock able to generate a wide range of clock frequencies making it suitable for most on-chip purposes. This clock is stopped in the deep sleep and hibernate power modes. */
+extern const cyhal_clock_t CYHAL_CLOCK_DPLL_LP[SRSS_NUM_DPLL_LP];
+/** 250MHz Digital Phase-Locked Loop: A high-frequency clock able to generate a wide range of clock frequencies making it suitable for most on-chip purposes. This clock is stopped in the deep sleep and hibernate power modes. */
+extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_DPLL_LP[SRSS_NUM_DPLL_LP];
+#endif
+#if (SRSS_NUM_DPLL_HP > 0) && defined(COMPONENT_CAT1D)
+/** 500MHz Digital Phase-Locked Loop: A high-frequency clock able to generate a wide range of clock frequencies making it suitable for most on-chip purposes. This clock is stopped in the deep sleep and hibernate power modes. */
+extern const cyhal_clock_t CYHAL_CLOCK_DPLL_HP[SRSS_NUM_DPLL_HP];
+/** 500MHz Digital Phase-Locked Loop: A high-frequency clock able to generate a wide range of clock frequencies making it suitable for most on-chip purposes. This clock is stopped in the deep sleep and hibernate power modes. */
+extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_DPLL_HP[SRSS_NUM_DPLL_HP];
+#endif
+
 /** High Frequency Clock: A high-frequency clock output driving specific peripherals. */
 extern const cyhal_clock_t CYHAL_CLOCK_HF[SRSS_NUM_HFROOT];
 /** High Frequency Clock: A high-frequency clock output driving specific peripherals. */
 extern const cyhal_resource_inst_t CYHAL_CLOCK_RSC_HF[SRSS_NUM_HFROOT];
 
 /** \} group_hal_impl_clock */
-
-
-#if defined(PERI_PERI_PCLK_PCLK_GROUP_NR)
-#define _CYHAL_CLOCK_PERI_GROUPS    PERI_PERI_PCLK_PCLK_GROUP_NR
-#else
-#define _CYHAL_CLOCK_PERI_GROUPS    1
-#endif
 
 cy_rslt_t _cyhal_clock_allocate_channel(cyhal_clock_t *clock, cyhal_clock_block_t block, const void* funcs);
 
@@ -291,6 +336,9 @@ static inline const void* _cyhal_clock_get_funcs(cyhal_clock_block_t block)
         #if defined(COMPONENT_CAT1C)
         case CYHAL_CLOCK_BLOCK_PLL200:
         case CYHAL_CLOCK_BLOCK_PLL400:
+        #elif defined(COMPONENT_CAT1D)
+        case CYHAL_CLOCK_BLOCK_DPLL_LP:
+        case CYHAL_CLOCK_BLOCK_DPLL_HP:
         #else
         case CYHAL_CLOCK_BLOCK_PLL:
         #endif

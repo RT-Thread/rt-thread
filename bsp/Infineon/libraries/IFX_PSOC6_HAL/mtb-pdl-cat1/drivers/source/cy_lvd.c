@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_lvd.c
-* \version 1.50
+* \version 1.60
 *
 * The source code file for the LVD driver.
 *
@@ -25,7 +25,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3))
+#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) || defined (CY_IP_MXS22SRSS)
 
 #include "cy_lvd.h"
 

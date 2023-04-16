@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* (c) (2016-2021), Cypress Semiconductor Corporation (an Infineon company) or
+* (c) (2016-2022), Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -182,7 +182,7 @@ typedef enum {
 #define CY_IP_MXS40BLE52SS_VERSION      1u
 #define CY_IP_MXTTCANFD                 1u
 #define CY_IP_MXTTCANFD_INSTANCES       1u
-#define CY_IP_MXTTCANFD_VERSION         1u
+#define CY_IP_MXTTCANFD_VERSION         3u
 #define CY_IP_M33SYSCPUSS               1u
 #define CY_IP_M33SYSCPUSS_INSTANCES     1u
 #define CY_IP_M33SYSCPUSS_VERSION       1u
@@ -248,6 +248,7 @@ typedef enum {
 #include "gpio_cyw20829_40_qfn.h"
 
 #define CY_DEVICE_CYW20829
+#define CY_DEVICE_SERIES_20829
 #define CY_SILICON_ID                   0x1EB41069UL
 #define CY_HF_CLK_MAX_FREQ              96000000UL
 
@@ -763,11 +764,11 @@ typedef enum {
 #define BACKUP                                  ((BACKUP_Type*) BACKUP_BASE)                                      /* 0x40220000 */
 
 /*******************************************************************************
-*                                    CRYPTO
+*                                  CRYPTOLITE
 *******************************************************************************/
 
-#define CRYPTO_BASE                             0x40230000UL
-#define CRYPTO                                  ((CRYPTO_Type*) CRYPTO_BASE)                                      /* 0x40230000 */
+#define CRYPTOLITE_BASE                         0x40230000UL
+#define CRYPTOLITE                              ((CRYPTOLITE_Type*) CRYPTOLITE_BASE)                              /* 0x40230000 */
 
 /*******************************************************************************
 *                                    HSIOM

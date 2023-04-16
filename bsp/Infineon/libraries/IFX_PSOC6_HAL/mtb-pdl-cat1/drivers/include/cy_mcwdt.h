@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_mcwdt.h
-* \version 1.60
+* \version 1.70
 *
 * Provides an API declaration of the Cypress PDL 3.0 MCWDT driver
 *
@@ -89,6 +89,14 @@
 * The values of the MCWDT counters can be monitored using
 * Cy_MCWDT_GetCount().
 *
+* CAT1C devices supports MCWDT_B type of counters, which are slightly different
+* from MCWDT, which is explained above
+*
+* A simplified diagram of the MCWDT_B hardware is shown below:
+* \image html mcwdt_b.png
+*
+* \note Please refer to TRM for more information on CAT1C supported MCWDT_B counters.
+*
 * \note In addition to the MCWDTs, each device has a separate watchdog timer
 * (WDT) that can also be used to generate a watchdog reset or periodic
 * interrupts. For more information on the WDT, see the appropriate section
@@ -102,6 +110,34 @@
 * \section group_mcwdt_changelog Changelog
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
+*   <tr>
+*     <td>1.70</td>
+*     <td>Added MCWDT_B type support required for CAT1C devices.<br>Newly added APIs:
+*         \n Cy_MCWDT_SetLowerAction(),
+*         \n Cy_MCWDT_SetUpperAction(),
+*         \n Cy_MCWDT_SetWarnAction(),
+*         \n Cy_MCWDT_SetSubCounter2Action(),
+*         \n Cy_MCWDT_GetLowerAction(),
+*         \n Cy_MCWDT_GetUpperAction(),
+*         \n Cy_MCWDT_GetWarnAction(),
+*         \n Cy_MCWDT_GetSubCounter2Action(),
+*         \n Cy_MCWDT_SetAutoService(),
+*         \n Cy_MCWDT_GetAutoService(),
+*         \n Cy_MCWDT_SetSleepDeepPause(),
+*         \n Cy_MCWDT_GetSleepDeepPause(),
+*         \n Cy_MCWDT_SetDebugRun(),
+*         \n Cy_MCWDT_GetDebugRun(),
+*         \n Cy_MCWDT_SetLowerLimit(),
+*         \n Cy_MCWDT_SetUpperLimit(),
+*         \n Cy_MCWDT_SetWarnLimit(),
+*         \n Cy_MCWDT_GetLowerLimit(),
+*         \n Cy_MCWDT_GetUpperLimit(),
+*         \n Cy_MCWDT_GetWarnLimit(),
+*         \n Cy_MCWDT_WaitForCounterReset(),
+*         \n Cy_MCWDT_CpuSelectForDpSlpPauseAction(),
+*         \n Cy_MCWDT_GetCascadeMatchCombined().</td>
+*     <td>Support for new devices.</td>
+*   </tr>
 *   <tr>
 *     <td>1.60</td>
 *     <td>CAT1B, CAT1C devices support.<br>Newly added APIs:
@@ -191,83 +227,12 @@ extern "C" {
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3))
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) || defined (CY_IP_MXS22SRSS)
 
 #include <stdbool.h>
 #include <stddef.h>
 #include "cy_syslib.h"
 
-/**
-* \addtogroup group_mcwdt_data_structures
-* \{
-*/
-
-/** The MCWDT component configuration structure. */
-typedef struct
-{
-    uint16_t c0Match;        /**< The sub-counter#0 match comparison value, for interrupt or watchdog timeout.
-                                  Range: 0 - 65535 for c0ClearOnMatch = 0 and 1 - 65535 for
-                                  c0ClearOnMatch = 1. */
-    uint16_t c1Match;        /**< The sub-counter#1 match comparison value, for interrupt or watchdog timeout.
-                                  Range: 0 - 65535 for c1ClearOnMatch = 0 and 1 - 65535 for
-                                  c1ClearOnMatch = 1. */
-    uint8_t  c0Mode;         /**< The sub-counter#0 mode. It can have the following values: \ref CY_MCWDT_MODE_NONE,
-                                  \ref CY_MCWDT_MODE_INT, \ref CY_MCWDT_MODE_RESET and \ref CY_MCWDT_MODE_INT_RESET. */
-    uint8_t  c1Mode;         /**< The sub-counter#1 mode.  It can have the following values: \ref CY_MCWDT_MODE_NONE,
-                                  \ref CY_MCWDT_MODE_INT, \ref CY_MCWDT_MODE_RESET and \ref CY_MCWDT_MODE_INT_RESET. */
-    uint8_t  c2ToggleBit;    /**< The sub-counter#2 Period / Toggle Bit value.
-                                  Range: 0 - 31. */
-    uint8_t  c2Mode;         /**< The sub-counter#2 mode. It can have the following values: \ref CY_MCWDT_MODE_NONE
-                                  and \ref CY_MCWDT_MODE_INT. */
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
-/**
-* \note
-* This parameter is available for CAT1B devices.
-**/
-    uint16_t c0LowerLimit;        /**< Lower limit for sub-counter 0 of this MCWDT.
-                                  Range: 0 - 65535. */
-/**
-* \note
-* This parameter is available for CAT1B devices.
-**/
-    uint16_t c1LowerLimit;        /**< Lower limit for sub-counter 0 of this MCWDT.
-                                  Range: 0 - 65535. */
-/**
-* \note
-* This parameter is available for CAT1B devices.
-**/
-    uint16_t c0LowerLimitMode;        /**< Watchdog Counter Action on service before lower limit.
-                                  Range: 0 - 2., 0 - Do nothing, 1 - Assert WDT_INTx, 2 - Assert WDT Reset */
-/**
-* \note
-* This parameter is available for CAT1B devices.
-**/
-    uint16_t c1LowerLimitMode;        /**< Watchdog Counter Action on service before lower limit.
-                                  Range: 0 - 2., 0 - Do nothing, 1 - Assert WDT_INTx, 2 - Assert WDT Reset */
-#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
-
-/**
-* \note
-* This parameter is available for devices having MXS40SSRSS IP.
-**/
-
-#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
-    bool  c0c1carryoutconfig;      /**< Carryout behaviour that applies when counter 0 and 1 are cascaded
-                                      false: carry out on counter 0 match, true: carry out on counter 0 roll-over */
-    bool  c0c1matchconfig;         /**< Matching behaviour that applies when counter 0 and 1 are cascaded
-                                      false: Match based on counter 1 alone, true: Match based on counter 1 and 0 simulataneously */
-    bool  c1c2carryoutconfig;      /**< Carryout behaviour that applies when counter 1 and 2 are cascaded
-                                      false: carry out on counter 1 match, true: carry out on counter 1 roll-over */
-    bool  c1c2matchconfig;         /**< Matching behaviour that applies when counter 1 and 2 are cascaded
-                                      false: Match based on counter 1 alone, true: Match based on counter 2 and 1 simulataneously */
-#endif /* CY_IP_MXS40SSRSS */
-    bool     c0ClearOnMatch; /**< The sub-counter#0 Clear On Match parameter enabled/disabled. */
-    bool     c1ClearOnMatch; /**< The sub-counter#1 Clear On Match parameter enabled/disabled. */
-    bool     c0c1Cascade;    /**< The sub-counter#1 is clocked by LFCLK or from sub-counter#0 cascade. */
-    bool     c1c2Cascade;    /**< The sub-counter#2 is clocked by LFCLK or from sub-counter#1 cascade. */
-} cy_stc_mcwdt_config_t;
-
-/** \} group_mcwdt_data_structures */
 
 /**
 * \addtogroup group_mcwdt_macros
@@ -278,7 +243,7 @@ typedef struct
 #define CY_MCWDT_DRV_VERSION_MAJOR       1
 
 /** Driver minor version */
-#define CY_MCWDT_DRV_VERSION_MINOR       60
+#define CY_MCWDT_DRV_VERSION_MINOR       70
 
 /** \cond INTERNAL_MACROS */
 
@@ -324,6 +289,11 @@ typedef struct
                                                                    that handle multiple counters, including Cy_MCWDT_Enable(),
                                                                    Cy_MCWDT_Disable(), Cy_MCWDT_ClearInterrupt() and Cy_MCWDT_ResetCounters(). */
 
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+/** For compatibility with CAT1C MCWDT driver */
+#define MCWDT_STRUCT_Type MCWDT_Type
+#endif
+
 /** \} group_mcwdt_macros */
 
 
@@ -363,7 +333,7 @@ typedef enum
                               It is used for Set/GetCascade functions. */
 } cy_en_mcwdtcascade_t;
 
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 /** The mcwdt lower limit identifiers. */
 /**
 * \note
@@ -386,7 +356,7 @@ typedef enum
     CY_MCWDT_LOWER_LIMIT_MODE_INT,      /**< Assert WDT_INTx. */
     CY_MCWDT_LOWER_LIMIT_MODE_RESET,         /**< Assert WDT Reset. */
 } cy_en_mcwdtlowerlimitmode_t;
-#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS*/
+#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS*/
 
 /** The MCWDT error codes. */
 typedef enum
@@ -395,7 +365,191 @@ typedef enum
     CY_MCWDT_BAD_PARAM = CY_MCWDT_ID | CY_PDL_STATUS_ERROR | 0x01u,     /**< One or more invalid parameters */
 } cy_en_mcwdt_status_t;
 
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+/** The MCWDT Enable/Disable identifiers. */
+/**
+* \note
+* Below enum is available for CAT1C devices only.
+**/
+typedef enum
+{
+    CY_MCWDT_DISABLE = 0u,
+    CY_MCWDT_ENABLE,
+} cy_en_mcwdt_enable_t;
+
+/** The MCWDT Deep Sleep Cores identifiers. */
+/**
+* \note
+* Below enum is available for CAT1C devices only.
+**/
+typedef enum
+{
+    CY_MCWDT_PAUSED_BY_DPSLP_CM0       = 0u,
+    CY_MCWDT_PAUSED_BY_DPSLP_CM7_0     = 1u,
+    CY_MCWDT_PAUSED_BY_DPSLP_CM7_1     = 2u,
+    CY_MCWDT_PAUSED_BY_NO_CORE         = 3u,
+} cy_en_mcwdt_select_core_t;
+
+/** The MCWDT subcounter 2 actions. */
+/**
+* \note
+* Below enum is available for CAT1C devices only.
+**/
+typedef enum
+{
+    CY_MCWDT_CNT2_ACTION_NONE,
+    CY_MCWDT_CNT2_ACTION_INT,
+} cy_en_mcwdt_cnt2_action_t;
+
+/** The MCWDT lower and upper actions. */
+/**
+* \note
+* Below enum is available for CAT1C devices only.
+**/
+typedef enum
+{
+    CY_MCWDT_ACTION_NONE,                 /**< The No action mode. It is used for Set/GetMode functions. */
+    CY_MCWDT_ACTION_FAULT,                /**< The Fault mode. It is used for Set/GetMode functions. */
+    CY_MCWDT_ACTION_FAULT_THEN_RESET,     /**< The Reset mode. It is used for Set/GetMode functions. */
+} cy_en_mcwdt_lower_upper_action_t;
+
+/** The MCWDT warn actions. */
+typedef enum
+{
+    CY_MCWDT_WARN_ACTION_NONE,
+    CY_MCWDT_WARN_ACTION_INT,
+} cy_en_mcwdt_warn_action_t;
+
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) */
+
 /** \} group_mcwdt_enums */
+
+/**
+* \addtogroup group_mcwdt_data_structures
+* \{
+*/
+
+/** The MCWDT component configuration structure. */
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+typedef struct
+{
+    uint16_t c0LowerLimit;                              /**< The sub-counter#0 lower limit value, for reset or fault.
+                                                        Range: 0 - 65535 for c0AutoService = 0 and 1 - 65535 for c0AutoService = 1.
+                                                        Only for CAT1C devices*/
+    uint16_t c0UpperLimit;                              /**< The sub-counter#0 upper limit value, for reset or fault.
+                                                        Range: 0 - 65535 for c0AutoService = 0 and 1 - 65535 for c0AutoService = 1.
+                                                        Only for CAT1C devices*/
+    uint16_t c0WarnLimit;                               /**< The sub-counter#0 warn limit value, for interrupt.
+                                                        Range: 0 - 65535 for c0AutoService = 0 and 1 - 65535 for c0AutoService = 1.
+                                                        Only for CAT1C devices*/
+    cy_en_mcwdt_lower_upper_action_t  c0LowerAction;    /**< The sub-counter#0 action. It can have the following values:
+                                                        \ref cy_en_mcwdt_lower_upper_action_t. Only for CAT1C devices*/
+    cy_en_mcwdt_lower_upper_action_t  c0UpperAction;    /**< The sub-counter#0 action. It can have the following values:
+                                                        \ref cy_en_mcwdt_lower_upper_action_t. Only for CAT1C devices*/
+    cy_en_mcwdt_warn_action_t  c0WarnAction;            /**< The sub-counter#0 warn action. It can have the following values:
+                                                        \ref cy_en_mcwdt_warn_action_t. Only for CAT1C devices*/
+    cy_en_mcwdt_enable_t     c0AutoService;             /**< The sub-counter#0 Auto Service parameter enabled/disabled.
+                                                        Range: FALSE - TRUE. Only for CAT1C devices*/
+    cy_en_mcwdt_enable_t     c0SleepDeepPause;          /**< The sub-counter#0 Auto Service parameter enabled/disabled.
+                                                        Range: FALSE - TRUE. Only for CAT1C devices*/
+    cy_en_mcwdt_enable_t     c0DebugRun;                /**< The sub-counter#0 Auto Service parameter enabled/disabled.
+                                                        Range: FALSE - TRUE. Only for CAT1C devices*/
+    uint16_t c1LowerLimit;                              /**< The sub-counter#0 lower limit value, for reset or fault.
+                                                        Range: 0 - 65535 for c1AutoService = 0 and 1 - 65535 for c1AutoService = 1.
+                                                        Only for CAT1C devices*/
+    uint16_t c1UpperLimit;                              /**< The sub-counter#0 upper limit value, for reset or fault.
+                                                        Range: 0 - 65535 for c1AutoService = 0 and 1 - 65535 for c1AutoService = 1.
+                                                        Only for CAT1C devices*/
+    uint16_t c1WarnLimit;                               /**< The sub-counter#0 warn limit value, for interrupt.
+                                                        Range: 0 - 65535 for c1AutoService = 0 and 1 - 65535 for c1AutoService = 1.
+                                                        Only for CAT1C devices*/
+    cy_en_mcwdt_lower_upper_action_t  c1LowerAction;    /**< The sub-counter#1 action. It can have the following values:
+                                                        \ref cy_en_mcwdt_lower_upper_action_t. Only for CAT1C devices*/
+    cy_en_mcwdt_lower_upper_action_t  c1UpperAction;    /**< The sub-counter#1 action. It can have the following values:
+                                                        \ref cy_en_mcwdt_lower_upper_action_t. Only for CAT1C devices*/
+    cy_en_mcwdt_warn_action_t  c1WarnAction;            /**< The sub-counter#1 warn action. It can have the following values:
+                                                        \ref cy_en_mcwdt_warn_action_t. Only for CAT1C devices*/
+    cy_en_mcwdt_enable_t     c1AutoService;             /**< The sub-counter#1 Auto Service parameter enabled/disabled.
+                                                        Range: FALSE - TRUE. Only for CAT1C devices*/
+    cy_en_mcwdt_enable_t     c1SleepDeepPause;          /**< The sub-counter#1 Auto Service parameter enabled/disabled.
+                                                        Range: FALSE - TRUE. Only for CAT1C devices*/
+    cy_en_mcwdt_enable_t     c1DebugRun;                /**< The sub-counter#1 Auto Service parameter enabled/disabled.
+                                                        Range: FALSE - TRUE. Only for CAT1C devices*/
+    uint32_t  c2ToggleBit;                              /**< The sub-counter#2 Period / Toggle Bit value. Only for CAT1C devices*/
+    cy_en_mcwdt_cnt2_action_t  c2Action;                /**< The sub-counter#2 mode. It can have the following values:
+                                                        \ref cy_en_mcwdt_cnt2_action_t. Only for CAT1C devices*/
+    cy_en_mcwdt_enable_t     c2SleepDeepPause;          /**< The sub-counter#2 Auto Service parameter enabled/disabled.
+                                                        Range: FALSE - TRUE. Only for CAT1C devices*/
+    cy_en_mcwdt_enable_t     c2DebugRun;                /**< The sub-counter#2 Auto Service parameter enabled/disabled. Only for CAT1C devices **/
+
+    cy_en_mcwdt_select_core_t coreSelect;               /**< Selecting the the core. The DeepSleep of the core pauses this MCWDT counter Only for CAT1C devices **/
+} cy_stc_mcwdt_config_t;
+#endif
+
+
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3)) || defined (CY_IP_MXS22SRSS)
+/**
+* \note
+* Below structure variables are available for CAT1A, CAT1B and CAT1D devices.
+**/
+typedef struct
+{
+    uint16_t c0Match;        /**< The sub-counter#0 match comparison value, for interrupt or watchdog timeout.
+                                  Range: 0 - 65535 for c0ClearOnMatch = 0 and 1 - 65535 for
+                                  c0ClearOnMatch = 1. For CAT1A, CAT1B and CAT1D devices */
+    uint16_t c1Match;        /**< The sub-counter#1 match comparison value, for interrupt or watchdog timeout.
+                                  Range: 0 - 65535 for c1ClearOnMatch = 0 and 1 - 65535 for
+                                  c1ClearOnMatch = 1. For CAT1A, CAT1B and CAT1D devices */
+    uint8_t  c0Mode;         /**< The sub-counter#0 mode. It can have the following values: \ref CY_MCWDT_MODE_NONE,
+                                  \ref CY_MCWDT_MODE_INT, \ref CY_MCWDT_MODE_RESET and \ref CY_MCWDT_MODE_INT_RESET.
+                                  For CAT1A, CAT1B and CAT1D devices */
+    uint8_t  c1Mode;         /**< The sub-counter#1 mode.  It can have the following values: \ref CY_MCWDT_MODE_NONE,
+                                  \ref CY_MCWDT_MODE_INT, \ref CY_MCWDT_MODE_RESET and \ref CY_MCWDT_MODE_INT_RESET.
+                                  For CAT1A, CAT1B and CAT1D devices */
+    uint8_t  c2ToggleBit;    /**< The sub-counter#2 Period / Toggle Bit value.
+                                  Range: 0 - 31. For CAT1A, CAT1B and CAT1D devices */
+    uint8_t  c2Mode;         /**< The sub-counter#2 mode. It can have the following values: \ref CY_MCWDT_MODE_NONE
+                                  and \ref CY_MCWDT_MODE_INT. For CAT1A, CAT1B and CAT1D devices */
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
+    uint16_t c0LowerLimit;        /**< Lower limit for sub-counter 0 of this MCWDT.
+                                  Range: 0 - 65535. Only for CAT1B devices */
+    uint16_t c1LowerLimit;        /**< Lower limit for sub-counter 0 of this MCWDT.
+                                  Range: 0 - 65535. Only for CAT1B devices */
+    uint16_t c0LowerLimitMode;        /**< Watchdog Counter Action on service before lower limit.
+                                  Range: 0 - 2., 0 - Do nothing, 1 - Assert WDT_INTx, 2 - Assert WDT Reset.
+                                  Only for CAT1B devices */
+    uint16_t c1LowerLimitMode;        /**< Watchdog Counter Action on service before lower limit.
+                                  Range: 0 - 2., 0 - Do nothing, 1 - Assert WDT_INTx, 2 - Assert WDT Reset.
+                                  Only for CAT1B devices */
+#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS */
+
+/**
+* \note
+* This parameter is available for devices having MXS40SSRSS IP.
+**/
+
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS) || defined (CY_DOXYGEN)
+    bool  c0c1carryoutconfig;      /**< Carryout behaviour that applies when counter 0 and 1 are cascaded
+                                      false: carry out on counter 0 match, true: carry out on counter 0 roll-over.
+                                      Only for CAT1B devices */
+    bool  c0c1matchconfig;         /**< Matching behaviour that applies when counter 0 and 1 are cascaded
+                                      false: Match based on counter 1 alone, true: Match based on counter 1 and 0 simultaneously.
+                                      Only for CAT1B devices */
+    bool  c1c2carryoutconfig;      /**< Carryout behaviour that applies when counter 1 and 2 are cascaded
+                                      false: carry out on counter 1 match, true: carry out on counter 1 roll-over.
+                                      Only for CAT1B devices */
+    bool  c1c2matchconfig;         /**< Matching behaviour that applies when counter 1 and 2 are cascaded
+                                      false: Match based on counter 1 alone, true: Match based on counter 2 and 1 simultaneously.
+                                      Only for CAT1B devices */
+#endif /* CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS */
+
+    bool     c0ClearOnMatch; /**< The sub-counter#0 Clear On Match parameter enabled/disabled. For CAT1A, CAT1B and CAT1D devices */
+    bool     c1ClearOnMatch; /**< The sub-counter#1 Clear On Match parameter enabled/disabled. For CAT1A, CAT1B and CAT1D devices */
+    bool     c0c1Cascade;    /**< The sub-counter#1 is clocked by LFCLK or from sub-counter#0 cascade. For CAT1A, CAT1B and CAT1D devices */
+    bool     c1c2Cascade;    /**< The sub-counter#2 is clocked by LFCLK or from sub-counter#1 cascade. For CAT1A, CAT1B and CAT1D devices */
+} cy_stc_mcwdt_config_t;
+#endif
+/** \} group_mcwdt_data_structures */
 
 
 /** \cond PARAM_CHECK_MACROS */
@@ -403,14 +557,14 @@ typedef enum
 /** Parameter check macros */
 #define CY_MCWDT_IS_CNTS_MASK_VALID(counters)  (0U == ((counters) & (uint32_t)~CY_MCWDT_CTR_Msk))
 
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 #define CY_MCWDT_IS_LOWER_LIMIT_VALID(counter)             ((CY_MCWDT_LOWER_LIMIT0 == (counter)) || \
                                                            (CY_MCWDT_LOWER_LIMIT1 == (counter)))
 
 #define CY_MCWDT_IS_LOWER_LIMIT_MODE_VALID(mode)           ((CY_MCWDT_LOWER_LIMIT_MODE_NOTHING == (mode)) || \
                                                            (CY_MCWDT_LOWER_LIMIT_MODE_INT == (mode))       || \
                                                            (CY_MCWDT_LOWER_LIMIT_MODE_RESET == (mode)))
-#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
+#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS */
 
 #define CY_MCWDT_IS_CNT_NUM_VALID(counter)    ((CY_MCWDT_COUNTER0 == (counter)) || \
                                                (CY_MCWDT_COUNTER1 == (counter)) || \
@@ -433,7 +587,7 @@ typedef enum
 
 #define CY_MCWDT_IS_BIT_VALID(bit)            (31UL >= (bit))
 
-#if defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 #define CY_MCWDT_IS_CARRYMODE_CASCADE_VALID(cascade)    ((CY_MCWDT_CASCADE_C0C1 == (cascade)) || \
                                                         (CY_MCWDT_CASCADE_C1C2 == (cascade)))
 #endif
@@ -457,6 +611,7 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetEnabledStatus(MCWDT_STRUCT_Type const *base
 __STATIC_INLINE void     Cy_MCWDT_Lock(MCWDT_STRUCT_Type *base);
 __STATIC_INLINE void     Cy_MCWDT_Unlock(MCWDT_STRUCT_Type *base);
 __STATIC_INLINE uint32_t Cy_MCWDT_GetLockedStatus(MCWDT_STRUCT_Type const *base);
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3) || defined (CY_IP_MXS22SRSS)
 __STATIC_INLINE void     Cy_MCWDT_SetMode(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t counter, cy_en_mcwdtmode_t mode);
 __STATIC_INLINE cy_en_mcwdtmode_t Cy_MCWDT_GetMode(MCWDT_STRUCT_Type const *base, cy_en_mcwdtctr_t counter);
 __STATIC_INLINE void     Cy_MCWDT_SetClearOnMatch(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t counter, uint32_t enable);
@@ -465,6 +620,8 @@ __STATIC_INLINE void     Cy_MCWDT_SetCascade(MCWDT_STRUCT_Type *base, cy_en_mcwd
 __STATIC_INLINE cy_en_mcwdtcascade_t Cy_MCWDT_GetCascade(MCWDT_STRUCT_Type const *base);
 __STATIC_INLINE void     Cy_MCWDT_SetMatch(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t counter, uint32_t match, uint16_t waitUs);
 __STATIC_INLINE uint32_t Cy_MCWDT_GetMatch(MCWDT_STRUCT_Type const *base, cy_en_mcwdtctr_t counter);
+uint32_t Cy_MCWDT_GetCountCascaded(MCWDT_STRUCT_Type const *base);
+#endif
 __STATIC_INLINE void     Cy_MCWDT_SetToggleBit(MCWDT_STRUCT_Type *base, uint32_t bit);
 __STATIC_INLINE uint32_t Cy_MCWDT_GetToggleBit(MCWDT_STRUCT_Type const *base);
 __STATIC_INLINE uint32_t Cy_MCWDT_GetCount(MCWDT_STRUCT_Type const *base, cy_en_mcwdtctr_t counter);
@@ -475,25 +632,48 @@ __STATIC_INLINE void     Cy_MCWDT_SetInterrupt(MCWDT_STRUCT_Type *base, uint32_t
 __STATIC_INLINE uint32_t Cy_MCWDT_GetInterruptMask(MCWDT_STRUCT_Type const *base);
 __STATIC_INLINE void     Cy_MCWDT_SetInterruptMask(MCWDT_STRUCT_Type *base, uint32_t counters);
 __STATIC_INLINE uint32_t Cy_MCWDT_GetInterruptStatusMasked(MCWDT_STRUCT_Type const *base);
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 __STATIC_INLINE uint32_t Cy_MCWDT_GetLowerLimit(MCWDT_STRUCT_Type const *base, cy_en_mcwdtlowerlimit_t counter);
 __STATIC_INLINE void Cy_MCWDT_SetLowerLimit(MCWDT_STRUCT_Type *base, cy_en_mcwdtlowerlimit_t counter, uint32_t lowerLimit, uint16_t waitUs);
 __STATIC_INLINE cy_en_mcwdtlowerlimitmode_t Cy_MCWDT_GetLowerLimitMode(MCWDT_STRUCT_Type const *base, cy_en_mcwdtlowerlimit_t counter);
 __STATIC_INLINE void Cy_MCWDT_SetLowerLimitMode(MCWDT_STRUCT_Type *base, cy_en_mcwdtlowerlimit_t counter, cy_en_mcwdtlowerlimitmode_t mode);
 __STATIC_INLINE uint32_t Cy_MCWDT_GetLowerLimitCascaded(MCWDT_STRUCT_Type const *base);
-#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
+#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS */
 
-#if defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 __STATIC_INLINE void Cy_MCWDT_SetCascadeCarryOutRollOver(MCWDT_STRUCT_Type *base, cy_en_mcwdtcascade_t counter, bool carryoutconfig);
 __STATIC_INLINE bool Cy_MCWDT_GetCascadeCarryOutRollOver(MCWDT_STRUCT_Type const *base, cy_en_mcwdtcascade_t counter);
 
 __STATIC_INLINE void Cy_MCWDT_SetCascadeMatchCombined(MCWDT_STRUCT_Type *base, cy_en_mcwdtcascade_t counter, bool matchconfig);
 __STATIC_INLINE bool Cy_MCWDT_GetCascadeMatchCombined(MCWDT_STRUCT_Type const *base, cy_en_mcwdtcascade_t counter);
+#endif /* CY_IP_MXS40SSRSS,CY_IP_MXS22SRSS */
 
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+void Cy_MCWDT_CpuSelectForDpSlpPauseAction(MCWDT_Type *base, cy_en_mcwdt_select_core_t core);
+void Cy_MCWDT_SetLowerAction(MCWDT_Type *base, cy_en_mcwdtctr_t counter, cy_en_mcwdt_lower_upper_action_t action);
+void Cy_MCWDT_SetUpperAction(MCWDT_Type *base, cy_en_mcwdtctr_t counter, cy_en_mcwdt_lower_upper_action_t action);
+void Cy_MCWDT_SetWarnAction(MCWDT_Type *base, cy_en_mcwdtctr_t counter, cy_en_mcwdt_warn_action_t action);
+void Cy_MCWDT_SetSubCounter2Action(MCWDT_Type *base, cy_en_mcwdt_cnt2_action_t action);
+cy_en_mcwdt_lower_upper_action_t Cy_MCWDT_GetLowerAction(MCWDT_Type *base, cy_en_mcwdtctr_t counter);
+cy_en_mcwdt_lower_upper_action_t  Cy_MCWDT_GetUpperAction(MCWDT_Type *base, cy_en_mcwdtctr_t counter);
+cy_en_mcwdt_warn_action_t Cy_MCWDT_GetWarnAction(MCWDT_Type *base, cy_en_mcwdtctr_t counter);
+cy_en_mcwdt_cnt2_action_t Cy_MCWDT_GetSubCounter2Action(MCWDT_Type *base);
+void Cy_MCWDT_SetAutoService(MCWDT_Type *base, cy_en_mcwdtctr_t counter, uint32_t enable);
+uint32_t Cy_MCWDT_GetAutoService(MCWDT_Type const *base, cy_en_mcwdtctr_t counter);
+uint32_t Cy_MCWDT_GetSleepDeepPause(MCWDT_Type const *base, cy_en_mcwdtctr_t counter);
+void Cy_MCWDT_SetSleepDeepPause(MCWDT_Type *base, cy_en_mcwdtctr_t counter, uint32_t enable);
+void Cy_MCWDT_SetDebugRun(MCWDT_Type *base, cy_en_mcwdtctr_t counter, uint32_t enable);
+uint32_t Cy_MCWDT_GetDebugRun(MCWDT_Type const *base, cy_en_mcwdtctr_t counter);
+void Cy_MCWDT_SetLowerLimit(MCWDT_Type *base, cy_en_mcwdtctr_t counter, uint16_t limit, uint16_t waitUs);
+void Cy_MCWDT_SetUpperLimit(MCWDT_Type *base, cy_en_mcwdtctr_t counter, uint16_t limit, uint16_t waitUs);
+void Cy_MCWDT_SetWarnLimit(MCWDT_Type *base, cy_en_mcwdtctr_t counter, uint16_t limit, uint16_t waitUs);
+uint16_t Cy_MCWDT_GetUpperLimit(MCWDT_Type *base, cy_en_mcwdtctr_t counter);
+uint16_t Cy_MCWDT_GetWarnLimit(MCWDT_Type *base, cy_en_mcwdtctr_t counter);
+void Cy_MCWDT_WaitForCounterReset(MCWDT_Type *base, cy_en_mcwdtctr_t counter);
+void Cy_MCWDT_ClearWatchdog(MCWDT_Type *base, uint32_t counters);
+uint16_t Cy_MCWDT_GetLowerLimit(MCWDT_Type *base, cy_en_mcwdtctr_t counter);
 
-
-#endif /* CY_IP_MXS40SSRSS */
-uint32_t Cy_MCWDT_GetCountCascaded(MCWDT_STRUCT_Type const *base);
+#endif
 
 
 /*******************************************************************************
@@ -522,6 +702,22 @@ uint32_t Cy_MCWDT_GetCountCascaded(MCWDT_STRUCT_Type const *base);
 *******************************************************************************/
 __STATIC_INLINE void Cy_MCWDT_Enable(MCWDT_STRUCT_Type *base, uint32_t counters, uint16_t waitUs)
 {
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+
+    if (0UL != (counters & CY_MCWDT_CTR0))
+    {
+        MCWDT_CTR_CTL(base, CY_MCWDT_COUNTER0) |= MCWDT_CTR_CTL_ENABLE_Msk;
+    }
+    if (0UL != (counters & CY_MCWDT_CTR1))
+    {
+        MCWDT_CTR_CTL(base, CY_MCWDT_COUNTER1) |= MCWDT_CTR_CTL_ENABLE_Msk;
+    }
+    if (0UL != (counters & CY_MCWDT_CTR2))
+    {
+        MCWDT_CTR2_CTL(base) |= MCWDT_CTR2_CTL_ENABLE_Msk;
+    }
+
+#else
     uint32_t enableCounters;
 
     CY_ASSERT_L2(CY_MCWDT_IS_CNTS_MASK_VALID(counters));
@@ -531,7 +727,8 @@ __STATIC_INLINE void Cy_MCWDT_Enable(MCWDT_STRUCT_Type *base, uint32_t counters,
                      ((0UL != (counters & CY_MCWDT_CTR1)) ? MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLE1_Msk : 0UL) |
                      ((0UL != (counters & CY_MCWDT_CTR2)) ? MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLE2_Msk : 0UL);
 
-    MCWDT_STRUCT_MCWDT_CTL(base) |= enableCounters;
+    MCWDT_CTL(base) |= enableCounters;
+#endif
 
     Cy_SysLib_DelayUs(waitUs);
 }
@@ -563,6 +760,21 @@ __STATIC_INLINE void Cy_MCWDT_Enable(MCWDT_STRUCT_Type *base, uint32_t counters,
 *******************************************************************************/
 __STATIC_INLINE void Cy_MCWDT_Disable(MCWDT_STRUCT_Type *base, uint32_t counters, uint16_t waitUs)
 {
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+
+    if (0UL != (counters & CY_MCWDT_CTR0))
+    {
+        MCWDT_CTR_CTL(base, CY_MCWDT_COUNTER0) &= (uint32_t) ~MCWDT_CTR_CTL_ENABLE_Msk;
+    }
+    if (0UL != (counters & CY_MCWDT_CTR1))
+    {
+        MCWDT_CTR_CTL(base, CY_MCWDT_COUNTER1) &= (uint32_t) ~MCWDT_CTR_CTL_ENABLE_Msk;
+    }
+    if (0UL != (counters & CY_MCWDT_CTR2))
+    {
+        MCWDT_CTR2_CTL(base) &= (uint32_t) ~MCWDT_CTR2_CTL_ENABLE_Msk;
+    }
+#else
     uint32_t disableCounters;
 
     CY_ASSERT_L2(CY_MCWDT_IS_CNTS_MASK_VALID(counters));
@@ -572,7 +784,8 @@ __STATIC_INLINE void Cy_MCWDT_Disable(MCWDT_STRUCT_Type *base, uint32_t counters
                       ((0UL != (counters & CY_MCWDT_CTR1)) ? MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLE1_Msk : 0UL) |
                       ((0UL != (counters & CY_MCWDT_CTR2)) ? MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLE2_Msk : 0UL);
 
-    MCWDT_STRUCT_MCWDT_CTL(base) &= ~disableCounters;
+    MCWDT_CTL(base) &= ~disableCounters;
+#endif
 
     Cy_SysLib_DelayUs(waitUs);
 }
@@ -600,22 +813,40 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetEnabledStatus(MCWDT_STRUCT_Type const *base
 
     CY_ASSERT_L3(CY_MCWDT_IS_CNT_NUM_VALID(counter));
 
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    switch (counter)
+    {
+    case CY_MCWDT_COUNTER0:
+        status = _FLD2VAL(MCWDT_CTR_CTL_ENABLE, MCWDT_CTR_CTL(base, CY_MCWDT_COUNTER0));
+        break;
+    case CY_MCWDT_COUNTER1:
+         status = _FLD2VAL(MCWDT_CTR_CTL_ENABLE, MCWDT_CTR_CTL(base, CY_MCWDT_COUNTER1));
+        break;
+    case CY_MCWDT_COUNTER2:
+        status = _FLD2VAL(MCWDT_CTR2_CTL_ENABLE, MCWDT_CTR2_CTL(base));
+        break;
+    default:
+        CY_ASSERT(0u != 0u);
+    break;
+    }
+#else
     switch (counter)
     {
         case CY_MCWDT_COUNTER0:
-            status = _FLD2VAL(MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLED0, MCWDT_STRUCT_MCWDT_CTL(base));
+            status = _FLD2VAL(MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLED0, MCWDT_CTL(base));
             break;
         case CY_MCWDT_COUNTER1:
-            status = _FLD2VAL(MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLED1, MCWDT_STRUCT_MCWDT_CTL(base));
+            status = _FLD2VAL(MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLED1, MCWDT_CTL(base));
             break;
         case CY_MCWDT_COUNTER2:
-            status = _FLD2VAL(MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLED2, MCWDT_STRUCT_MCWDT_CTL(base));
+            status = _FLD2VAL(MCWDT_STRUCT_MCWDT_CTL_WDT_ENABLED2, MCWDT_CTL(base));
             break;
 
         default:
             CY_ASSERT(0u != 0u);
         break;
     }
+#endif
 
     return (status);
 }
@@ -636,8 +867,11 @@ __STATIC_INLINE void Cy_MCWDT_Lock(MCWDT_STRUCT_Type *base)
     uint32_t interruptState;
 
     interruptState = Cy_SysLib_EnterCriticalSection();
-
-    MCWDT_STRUCT_MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_LOCK(base), MCWDT_STRUCT_MCWDT_LOCK_MCWDT_LOCK, (uint32_t)CY_MCWDT_LOCK_SET01);
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_LOCK(base), MCWDT_LOCK_MCWDT_LOCK, CY_MCWDT_LOCK_SET01);
+#else
+    MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_LOCK(base), MCWDT_STRUCT_MCWDT_LOCK_MCWDT_LOCK, (uint32_t)CY_MCWDT_LOCK_SET01);
+#endif
 
     Cy_SysLib_ExitCriticalSection(interruptState);
 }
@@ -658,10 +892,13 @@ __STATIC_INLINE void Cy_MCWDT_Unlock(MCWDT_STRUCT_Type *base)
     uint32_t interruptState;
 
     interruptState = Cy_SysLib_EnterCriticalSection();
-
-    MCWDT_STRUCT_MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_LOCK(base), MCWDT_STRUCT_MCWDT_LOCK_MCWDT_LOCK, (uint32_t)CY_MCWDT_LOCK_CLR0);
-    MCWDT_STRUCT_MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_LOCK(base), MCWDT_STRUCT_MCWDT_LOCK_MCWDT_LOCK, (uint32_t)CY_MCWDT_LOCK_CLR1);
-
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_LOCK(base), MCWDT_LOCK_MCWDT_LOCK, (uint32_t)CY_MCWDT_LOCK_CLR0);
+    MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_LOCK(base), MCWDT_LOCK_MCWDT_LOCK, (uint32_t)CY_MCWDT_LOCK_CLR1);
+#else
+    MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_LOCK(base), MCWDT_STRUCT_MCWDT_LOCK_MCWDT_LOCK, (uint32_t)CY_MCWDT_LOCK_CLR0);
+    MCWDT_LOCK(base) = _CLR_SET_FLD32U(MCWDT_LOCK(base), MCWDT_STRUCT_MCWDT_LOCK_MCWDT_LOCK, (uint32_t)CY_MCWDT_LOCK_CLR1);
+#endif
     Cy_SysLib_ExitCriticalSection(interruptState);
 }
 
@@ -681,9 +918,15 @@ __STATIC_INLINE void Cy_MCWDT_Unlock(MCWDT_STRUCT_Type *base)
 *******************************************************************************/
 __STATIC_INLINE uint32_t Cy_MCWDT_GetLockedStatus(MCWDT_STRUCT_Type const *base)
 {
-    return ((0UL != (MCWDT_STRUCT_MCWDT_LOCK(base) & MCWDT_STRUCT_MCWDT_LOCK_MCWDT_LOCK_Msk)) ? 1UL : 0UL);
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    return ((0UL !=_FLD2VAL(MCWDT_LOCK_MCWDT_LOCK, MCWDT_LOCK(base))) ? 1UL : 0UL);
+#else
+    return ((0UL != (MCWDT_LOCK(base) & MCWDT_STRUCT_MCWDT_LOCK_MCWDT_LOCK_Msk)) ? 1UL : 0UL);
+#endif
 }
 
+
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3) || defined (CY_IP_MXS22SRSS)
 
 /*******************************************************************************
 * Function Name: Cy_MCWDT_SetMode
@@ -707,6 +950,9 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetLockedStatus(MCWDT_STRUCT_Type const *base)
 *  This API must not be called while the counters are running.
 *  Prior to calling this API, the counter must be disabled.
 *
+* \note
+* This API is available for CAT1A, CAT1B and CAT1D devices.
+*
 *******************************************************************************/
 __STATIC_INLINE void Cy_MCWDT_SetMode(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t counter, cy_en_mcwdtmode_t mode)
 {
@@ -719,7 +965,7 @@ __STATIC_INLINE void Cy_MCWDT_SetMode(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t 
     mask = (counter == CY_MCWDT_COUNTER2) ? CY_MCWDT_C2_MODE_MASK : CY_MCWDT_C0C1_MODE_MASK;
     mask = mask << shift;
 
-    MCWDT_STRUCT_MCWDT_CONFIG(base) = (MCWDT_STRUCT_MCWDT_CONFIG(base) & ~mask) | ((uint32_t) mode << shift);
+    MCWDT_CONFIG(base) = (MCWDT_CONFIG(base) & ~mask) | ((uint32_t) mode << shift);
 }
 
 
@@ -738,6 +984,9 @@ __STATIC_INLINE void Cy_MCWDT_SetMode(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t 
 *  \return
 *  The current mode of the counter. See enum typedef cy_en_mcwdtmode_t.
 *
+* \note
+* This API is available for CAT1A, CAT1B and CAT1D devices.
+*
 *******************************************************************************/
 __STATIC_INLINE cy_en_mcwdtmode_t Cy_MCWDT_GetMode(MCWDT_STRUCT_Type const *base, cy_en_mcwdtctr_t counter)
 {
@@ -746,7 +995,7 @@ __STATIC_INLINE cy_en_mcwdtmode_t Cy_MCWDT_GetMode(MCWDT_STRUCT_Type const *base
     CY_ASSERT_L3(CY_MCWDT_IS_CNT_NUM_VALID(counter));
 
     mask = (counter == CY_MCWDT_COUNTER2) ? CY_MCWDT_C2_MODE_MASK : CY_MCWDT_C0C1_MODE_MASK;
-    mode = (MCWDT_STRUCT_MCWDT_CONFIG(base) >> (CY_MCWDT_BYTE_SHIFT * ((uint32_t)counter))) & mask;
+    mode = (MCWDT_CONFIG(base) >> (CY_MCWDT_BYTE_SHIFT * ((uint32_t)counter))) & mask;
 
     return ((cy_en_mcwdtmode_t) mode);
 }
@@ -774,6 +1023,9 @@ __STATIC_INLINE cy_en_mcwdtmode_t Cy_MCWDT_GetMode(MCWDT_STRUCT_Type const *base
 *  This API must not be called while the counters are running.
 *  Prior to calling this API, the counter must be disabled.
 *
+* \note
+* This API is available for CAT1A, CAT1B and CAT1D devices.
+*
 *******************************************************************************/
 __STATIC_INLINE void Cy_MCWDT_SetClearOnMatch(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t counter, uint32_t enable)
 {
@@ -782,11 +1034,11 @@ __STATIC_INLINE void Cy_MCWDT_SetClearOnMatch(MCWDT_STRUCT_Type *base, cy_en_mcw
 
     if (CY_MCWDT_COUNTER0 == counter)
     {
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0, enable);
+        MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0, enable);
     }
     else
     {
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1, enable);
+        MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1, enable);
     }
 }
 
@@ -809,6 +1061,9 @@ __STATIC_INLINE void Cy_MCWDT_SetClearOnMatch(MCWDT_STRUCT_Type *base, cy_en_mcw
 *  \note
 *  The match value is not supported by Counter 2.
 *
+* \note
+* This API is available for CAT1A, CAT1B and CAT1D devices.
+*
 *******************************************************************************/
 __STATIC_INLINE uint32_t Cy_MCWDT_GetClearOnMatch(MCWDT_STRUCT_Type const *base, cy_en_mcwdtctr_t counter)
 {
@@ -818,11 +1073,11 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetClearOnMatch(MCWDT_STRUCT_Type const *base,
 
     if (CY_MCWDT_COUNTER0 == counter)
     {
-        getClear = _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0, MCWDT_STRUCT_MCWDT_CONFIG(base));
+        getClear = _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0, MCWDT_CONFIG(base));
     }
     else
     {
-        getClear = _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1, MCWDT_STRUCT_MCWDT_CONFIG(base));
+        getClear = _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1, MCWDT_CONFIG(base));
     }
 
     return (getClear);
@@ -845,17 +1100,19 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetClearOnMatch(MCWDT_STRUCT_Type const *base,
 *  This API must not be called when the counters are running.
 *  Prior to calling this API, the counter must be disabled.
 *
+* \note
+* This API is available for CAT1A, CAT1B and CAT1D devices.
+*
 *******************************************************************************/
 __STATIC_INLINE void Cy_MCWDT_SetCascade(MCWDT_STRUCT_Type *base, cy_en_mcwdtcascade_t cascade)
 {
     CY_ASSERT_L3(CY_MCWDT_IS_CASCADE_VALID(cascade));
 
-    MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE0_1,
+    MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE0_1,
                                              (uint32_t) cascade);
-    MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE1_2,
+    MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE1_2,
                                              ((uint32_t) cascade >> 1u));
 }
-
 
 /*******************************************************************************
 * Function Name: Cy_MCWDT_GetCascade
@@ -869,17 +1126,19 @@ __STATIC_INLINE void Cy_MCWDT_SetCascade(MCWDT_STRUCT_Type *base, cy_en_mcwdtcas
 *  \return
 *  The current cascade option values.
 *
+* \note
+* This API is available for CAT1A, CAT1B and CAT1D devices.
+*
 *******************************************************************************/
 __STATIC_INLINE cy_en_mcwdtcascade_t Cy_MCWDT_GetCascade(MCWDT_STRUCT_Type const *base)
 {
     uint32_t cascade;
 
-    cascade = (_FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE1_2, MCWDT_STRUCT_MCWDT_CONFIG(base)) << 1u) |
-               _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE0_1, MCWDT_STRUCT_MCWDT_CONFIG(base));
+    cascade = (_FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE1_2, MCWDT_CONFIG(base)) << 1u) |
+               _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CASCADE0_1, MCWDT_CONFIG(base));
 
     return ((cy_en_mcwdtcascade_t) cascade);
 }
-
 
 /*******************************************************************************
 * Function Name: Cy_MCWDT_SetMatch
@@ -913,19 +1172,22 @@ __STATIC_INLINE cy_en_mcwdtcascade_t Cy_MCWDT_GetCascade(MCWDT_STRUCT_Type const
 *  Setting this parameter to a zero means No wait. This must be taken
 *  into account when changing the match values on the running counters.
 *
+* \note
+* This API is available for CAT1A, CAT1B and CAT1D devices.
+*
 *******************************************************************************/
 __STATIC_INLINE void Cy_MCWDT_SetMatch(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t counter, uint32_t match, uint16_t waitUs)
 {
     CY_ASSERT_L3(CY_MCWDT_IS_CNT_NUM_VALID(counter));
     CY_ASSERT_L2(CY_MCWDT_IS_MATCH_VALID((CY_MCWDT_COUNTER0 == counter) ?                                                       \
-                                         ((MCWDT_STRUCT_MCWDT_CONFIG(base) & MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0_Msk) > 0U) :  \
-                                         ((MCWDT_STRUCT_MCWDT_CONFIG(base) & MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1_Msk) > 0U),   \
+                                         ((MCWDT_CONFIG(base) & MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR0_Msk) > 0U) :  \
+                                         ((MCWDT_CONFIG(base) & MCWDT_STRUCT_MCWDT_CONFIG_WDT_CLEAR1_Msk) > 0U),   \
                                           match));
 
-    MCWDT_STRUCT_MCWDT_MATCH(base) = (counter == CY_MCWDT_COUNTER0) ?
-        _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_MATCH(base), MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0,
+    MCWDT_MATCH(base) = (counter == CY_MCWDT_COUNTER0) ?
+        _CLR_SET_FLD32U(MCWDT_MATCH(base), MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0,
                         (match & MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0_Msk)) :
-        _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_MATCH(base), MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH1,
+        _CLR_SET_FLD32U(MCWDT_MATCH(base), MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH1,
                         (match & MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0_Msk));
 
     Cy_SysLib_DelayUs(waitUs);
@@ -950,6 +1212,9 @@ __STATIC_INLINE void Cy_MCWDT_SetMatch(MCWDT_STRUCT_Type *base, cy_en_mcwdtctr_t
 *  \return
 *  A 16-bit match value.
 *
+* \note
+* This API is available for CAT1A, CAT1B and CAT1D devices.
+*
 *******************************************************************************/
 __STATIC_INLINE uint32_t Cy_MCWDT_GetMatch(MCWDT_STRUCT_Type const *base, cy_en_mcwdtctr_t counter)
 {
@@ -957,12 +1222,12 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetMatch(MCWDT_STRUCT_Type const *base, cy_en_
 
     CY_ASSERT_L3(CY_MCWDT_IS_CNT_NUM_VALID(counter));
 
-    match = (counter == CY_MCWDT_COUNTER0) ? _FLD2VAL(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0, MCWDT_STRUCT_MCWDT_MATCH(base)) :
-                                          _FLD2VAL(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH1, MCWDT_STRUCT_MCWDT_MATCH(base));
+    match = (counter == CY_MCWDT_COUNTER0) ? _FLD2VAL(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH0, MCWDT_MATCH(base)) :
+                                          _FLD2VAL(MCWDT_STRUCT_MCWDT_MATCH_WDT_MATCH1, MCWDT_MATCH(base));
 
     return (match);
 }
-
+#endif /* (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION < 3) || defined (CY_IP_MXS22SRSS) */
 
 /*******************************************************************************
 * Function Name: Cy_MCWDT_SetToggleBit
@@ -984,8 +1249,11 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetMatch(MCWDT_STRUCT_Type const *base, cy_en_
 __STATIC_INLINE void Cy_MCWDT_SetToggleBit(MCWDT_STRUCT_Type *base, uint32_t bit)
 {
     CY_ASSERT_L2(CY_MCWDT_IS_BIT_VALID(bit));
-
-    MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_BITS2, bit);
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    MCWDT_CTR2_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CTR2_CONFIG(base), MCWDT_CTR2_CONFIG_BITS, bit);
+#else
+    MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_BITS2, bit);
+#endif
 }
 
 
@@ -1004,7 +1272,11 @@ __STATIC_INLINE void Cy_MCWDT_SetToggleBit(MCWDT_STRUCT_Type *base, uint32_t bit
 *******************************************************************************/
 __STATIC_INLINE uint32_t Cy_MCWDT_GetToggleBit(MCWDT_STRUCT_Type const *base)
 {
-    return (_FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_BITS2, MCWDT_STRUCT_MCWDT_CONFIG(base)));
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    return (uint32_t)(_FLD2VAL(MCWDT_CTR2_CONFIG_BITS, MCWDT_CTR2_CONFIG(base)));
+#else
+    return (_FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_BITS2, MCWDT_CONFIG(base)));
+#endif
 }
 
 
@@ -1031,22 +1303,41 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetCount(MCWDT_STRUCT_Type const *base, cy_en_
 
     CY_ASSERT_L3(CY_MCWDT_IS_CNT_NUM_VALID(counter));
 
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    switch (counter)
+    {
+    case CY_MCWDT_COUNTER0:
+        countVal = (uint16_t)(_FLD2VAL(MCWDT_CTR_CNT_CNT, MCWDT_CTR_CNT(base, CY_MCWDT_COUNTER0)));
+        break;
+    case CY_MCWDT_COUNTER1:
+        countVal = (uint16_t)(_FLD2VAL(MCWDT_CTR_CNT_CNT, MCWDT_CTR_CNT(base, CY_MCWDT_COUNTER1)));
+        break;
+    case CY_MCWDT_COUNTER2:
+        countVal = (_FLD2VAL(MCWDT_CTR2_CNT_CNT2, MCWDT_CTR2_CNT(base)));
+        break;
+    default:
+        CY_ASSERT(0u != 0u);
+        break;
+    }
+
+#else
+
     switch (counter)
     {
         case CY_MCWDT_COUNTER0:
-            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_CNTLOW_WDT_CTR0, MCWDT_STRUCT_MCWDT_CNTLOW(base));
+            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_CNTLOW_WDT_CTR0, MCWDT_CNTLOW(base));
             break;
         case CY_MCWDT_COUNTER1:
-            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_CNTLOW_WDT_CTR1, MCWDT_STRUCT_MCWDT_CNTLOW(base));
+            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_CNTLOW_WDT_CTR1, MCWDT_CNTLOW(base));
             break;
         case CY_MCWDT_COUNTER2:
-            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_CNTHIGH_WDT_CTR2, MCWDT_STRUCT_MCWDT_CNTHIGH(base));
+            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_CNTHIGH_WDT_CTR2, MCWDT_CNTHIGH(base));
             break;
-
         default:
             CY_ASSERT(0u != 0u);
-        break;
+            break;
     }
+#endif
 
     return (countVal);
 }
@@ -1063,7 +1354,7 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetCount(MCWDT_STRUCT_Type const *base, cy_en_
 *
 *  \param counters
 *  OR of all counters to reset. See the \ref CY_MCWDT_CTR0, CY_MCWDT_CTR1, and
-*  CY_MCWDT_CTR2  macros.
+*  CY_MCWDT_CTR2 macros.
 *
 *  \param waitUs
 *  The function waits for some delay in microseconds before returning, because
@@ -1079,9 +1370,24 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetCount(MCWDT_STRUCT_Type const *base, cy_en_
 *  immediately after the function call. This can be done by the
 *  Cy_MCWDT_GetCount() API.
 *
+*  \note
+*  For CAT1C devices, only CY_MCWDT_CTR0 and CY_MCWDT_CTR1 can be Reset.
+*
 *******************************************************************************/
 __STATIC_INLINE void Cy_MCWDT_ResetCounters(MCWDT_STRUCT_Type *base, uint32_t counters, uint16_t waitUs)
 {
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    if (0UL != (counters & CY_MCWDT_CTR0))
+    {
+        MCWDT_SERVICE(base) |= MCWDT_SERVICE_CTR0_SERVICE_Msk;
+    }
+    if (0UL != (counters & CY_MCWDT_CTR1))
+    {
+        MCWDT_SERVICE(base) |= MCWDT_SERVICE_CTR1_SERVICE_Msk;
+    }
+
+#else
+
     uint32_t resetCounters;
 
     CY_ASSERT_L2(CY_MCWDT_IS_CNTS_MASK_VALID(counters));
@@ -1091,11 +1397,12 @@ __STATIC_INLINE void Cy_MCWDT_ResetCounters(MCWDT_STRUCT_Type *base, uint32_t co
                     ((0UL != (counters & CY_MCWDT_CTR1)) ? MCWDT_STRUCT_MCWDT_CTL_WDT_RESET1_Msk : 0UL) |
                     ((0UL != (counters & CY_MCWDT_CTR2)) ? MCWDT_STRUCT_MCWDT_CTL_WDT_RESET2_Msk : 0UL);
 
-    MCWDT_STRUCT_MCWDT_CTL(base) |= resetCounters;
+    MCWDT_CTL(base) |= resetCounters;
 
     Cy_SysLib_DelayUs(waitUs);
 
-    MCWDT_STRUCT_MCWDT_CTL(base) |= resetCounters;
+    MCWDT_CTL(base) |= resetCounters;
+#endif
 
     Cy_SysLib_DelayUs(waitUs);
 }
@@ -1117,7 +1424,7 @@ __STATIC_INLINE void Cy_MCWDT_ResetCounters(MCWDT_STRUCT_Type *base, uint32_t co
 *******************************************************************************/
 __STATIC_INLINE uint32_t Cy_MCWDT_GetInterruptStatus(MCWDT_STRUCT_Type const *base)
 {
-    return (MCWDT_STRUCT_MCWDT_INTR(base));
+    return (MCWDT_INTR(base));
 }
 
 
@@ -1142,8 +1449,8 @@ __STATIC_INLINE void Cy_MCWDT_ClearInterrupt(MCWDT_STRUCT_Type *base, uint32_t c
 {
     CY_ASSERT_L2(CY_MCWDT_IS_CNTS_MASK_VALID(counters));
 
-    MCWDT_STRUCT_MCWDT_INTR(base) = counters;
-    (void) MCWDT_STRUCT_MCWDT_INTR(base);
+    MCWDT_INTR(base) = counters;
+    (void) MCWDT_INTR(base);
 }
 
 
@@ -1165,7 +1472,7 @@ __STATIC_INLINE void Cy_MCWDT_SetInterrupt(MCWDT_STRUCT_Type *base, uint32_t cou
 {
     CY_ASSERT_L2(CY_MCWDT_IS_CNTS_MASK_VALID(counters));
 
-    MCWDT_STRUCT_MCWDT_INTR_SET(base) = counters;
+    MCWDT_INTR_SET(base) = counters;
 }
 
 
@@ -1186,7 +1493,7 @@ __STATIC_INLINE void Cy_MCWDT_SetInterrupt(MCWDT_STRUCT_Type *base, uint32_t cou
 *******************************************************************************/
 __STATIC_INLINE uint32_t Cy_MCWDT_GetInterruptMask(MCWDT_STRUCT_Type const *base)
 {
-    return (MCWDT_STRUCT_MCWDT_INTR_MASK(base));
+    return (MCWDT_INTR_MASK(base));
 }
 
 
@@ -1209,7 +1516,7 @@ __STATIC_INLINE void Cy_MCWDT_SetInterruptMask(MCWDT_STRUCT_Type *base, uint32_t
 {
     CY_ASSERT_L2(CY_MCWDT_IS_CNTS_MASK_VALID(counters));
 
-    MCWDT_STRUCT_MCWDT_INTR_MASK(base) = counters;
+    MCWDT_INTR_MASK(base) = counters;
 }
 
 
@@ -1233,10 +1540,10 @@ __STATIC_INLINE void Cy_MCWDT_SetInterruptMask(MCWDT_STRUCT_Type *base, uint32_t
 *******************************************************************************/
 __STATIC_INLINE uint32_t Cy_MCWDT_GetInterruptStatusMasked(MCWDT_STRUCT_Type const *base)
 {
-    return (MCWDT_STRUCT_MCWDT_INTR_MASKED(base));
+    return (MCWDT_INTR_MASKED(base));
 }
 
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 /*******************************************************************************
 * Function Name: Cy_MCWDT_SetLowerLimit
 ****************************************************************************//**
@@ -1273,10 +1580,10 @@ __STATIC_INLINE void Cy_MCWDT_SetLowerLimit(MCWDT_STRUCT_Type *base, cy_en_mcwdt
 {
     CY_ASSERT_L3(CY_MCWDT_IS_LOWER_LIMIT_VALID(counter));
 
-    MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base) = (counter == CY_MCWDT_LOWER_LIMIT0) ?
-        _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base), MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT0,
+    MCWDT_LOWER_LIMIT(base) = (counter == CY_MCWDT_LOWER_LIMIT0) ?
+        _CLR_SET_FLD32U(MCWDT_LOWER_LIMIT(base), MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT0,
                         (lowerLimit & MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT0_Msk)) :
-        _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base), MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT1,
+        _CLR_SET_FLD32U(MCWDT_LOWER_LIMIT(base), MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT1,
                         (lowerLimit & MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT0_Msk));
 
     Cy_SysLib_DelayUs(waitUs);
@@ -1310,10 +1617,10 @@ __STATIC_INLINE uint32_t Cy_MCWDT_GetLowerLimit(MCWDT_STRUCT_Type const *base, c
     switch (counter)
     {
         case CY_MCWDT_LOWER_LIMIT0:
-            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT0, MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base));
+            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT0, MCWDT_LOWER_LIMIT(base));
             break;
         case CY_MCWDT_LOWER_LIMIT1:
-            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT1, MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base));
+            countVal = _FLD2VAL(MCWDT_STRUCT_MCWDT_LOWER_LIMIT_WDT_LOWER_LIMIT1, MCWDT_LOWER_LIMIT(base));
             break;
         default:
             CY_ASSERT(0u != 0u);
@@ -1354,11 +1661,11 @@ __STATIC_INLINE void Cy_MCWDT_SetLowerLimitMode(MCWDT_STRUCT_Type *base, cy_en_m
 
     if (CY_MCWDT_LOWER_LIMIT0 == counter)
     {
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE0, mode);
+        MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE0, mode);
     }
     else
     {
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE1, mode);
+        MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE1, mode);
     }
 }
 
@@ -1389,11 +1696,11 @@ __STATIC_INLINE cy_en_mcwdtlowerlimitmode_t Cy_MCWDT_GetLowerLimitMode(MCWDT_STR
 
     if (CY_MCWDT_LOWER_LIMIT0 == counter)
     {
-        getLowerLimitMode = _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE0, MCWDT_STRUCT_MCWDT_CONFIG(base));
+        getLowerLimitMode = _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE0, MCWDT_CONFIG(base));
     }
     else
     {
-        getLowerLimitMode = _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE1, MCWDT_STRUCT_MCWDT_CONFIG(base));
+        getLowerLimitMode = _FLD2VAL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_LOWER_MODE1, MCWDT_CONFIG(base));
     }
 
     return (cy_en_mcwdtlowerlimitmode_t)getLowerLimitMode;
@@ -1421,11 +1728,11 @@ __STATIC_INLINE cy_en_mcwdtlowerlimitmode_t Cy_MCWDT_GetLowerLimitMode(MCWDT_STR
 *******************************************************************************/
 __STATIC_INLINE uint32_t Cy_MCWDT_GetLowerLimitCascaded(MCWDT_STRUCT_Type const *base)
 {
-    return (uint32_t)(MCWDT_STRUCT_MCWDT_LOWER_LIMIT(base));
+    return (uint32_t)(MCWDT_LOWER_LIMIT(base));
 }
-#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
+#endif /* CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS ,CY_IP_MXS22SRSS*/
 
-#if defined (CY_IP_MXS40SSRSS) || defined (CY_DOXYGEN)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS) || defined (CY_DOXYGEN)
 
 /*******************************************************************************
 * Function Name: Cy_MCWDT_SetCascadeCarryOutRollOver
@@ -1457,11 +1764,11 @@ __STATIC_INLINE void Cy_MCWDT_SetCascadeCarryOutRollOver(MCWDT_STRUCT_Type *base
 
     if (CY_MCWDT_CASCADE_C0C1 == counter)
     {
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY0_1, carryoutconfig);
+        MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY0_1, carryoutconfig);
     }
     else
     {
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY1_2, carryoutconfig);
+        MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY1_2, carryoutconfig);
     }
 }
 
@@ -1494,10 +1801,10 @@ __STATIC_INLINE bool Cy_MCWDT_GetCascadeCarryOutRollOver(MCWDT_STRUCT_Type const
     switch (counter)
     {
         case CY_MCWDT_CASCADE_C0C1:
-            countVal = _FLD2BOOL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY0_1, MCWDT_STRUCT_MCWDT_CONFIG(base));
+            countVal = _FLD2BOOL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY0_1, MCWDT_CONFIG(base));
             break;
         case CY_MCWDT_CASCADE_C1C2:
-            countVal = _FLD2BOOL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY1_2, MCWDT_STRUCT_MCWDT_CONFIG(base));
+            countVal = _FLD2BOOL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_CARRY1_2, MCWDT_CONFIG(base));
             break;
         default:
             CY_ASSERT(0u != 0u);
@@ -1535,11 +1842,11 @@ __STATIC_INLINE void Cy_MCWDT_SetCascadeMatchCombined(MCWDT_STRUCT_Type *base, c
 {
     if (CY_MCWDT_CASCADE_C0C1 == counter)
     {
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH0_1, matchconfig);
+        MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH0_1, matchconfig);
     }
     else
     {
-        MCWDT_STRUCT_MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_STRUCT_MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH1_2, matchconfig);
+        MCWDT_CONFIG(base) = _CLR_SET_FLD32U(MCWDT_CONFIG(base), MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH1_2, matchconfig);
     }
 }
 
@@ -1570,10 +1877,10 @@ __STATIC_INLINE bool Cy_MCWDT_GetCascadeMatchCombined(MCWDT_STRUCT_Type const *b
     switch (counter)
     {
         case CY_MCWDT_CASCADE_C0C1:
-            countVal = _FLD2BOOL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH0_1, MCWDT_STRUCT_MCWDT_CONFIG(base));
+            countVal = _FLD2BOOL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH0_1, MCWDT_CONFIG(base));
             break;
         case CY_MCWDT_CASCADE_C1C2:
-            countVal = _FLD2BOOL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH1_2, MCWDT_STRUCT_MCWDT_CONFIG(base));
+            countVal = _FLD2BOOL(MCWDT_STRUCT_MCWDT_CONFIG_WDT_MATCH1_2, MCWDT_CONFIG(base));
             break;
         default:
             CY_ASSERT(0u != 0u);
@@ -1583,11 +1890,12 @@ __STATIC_INLINE bool Cy_MCWDT_GetCascadeMatchCombined(MCWDT_STRUCT_Type const *b
     return (countVal);
 }
 
-#endif /*  CY_IP_MXS40SSRSS */
+#endif /*  CY_IP_MXS40SSRSS,CY_IP_MXS22SRSS */
+
 
 /** \} group_mcwdt_functions */
 
-#endif /* CY_IP_MXS40SRSS_MCWDT, CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
+#endif /* CY_IP_MXS40SRSS_MCWDT, CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS, CY_IP_MXS22SRSS */
 
 #if defined(__cplusplus)
 }

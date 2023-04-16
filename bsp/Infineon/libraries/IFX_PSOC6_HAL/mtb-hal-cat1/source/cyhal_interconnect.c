@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -35,11 +35,6 @@ extern "C"
 
 #if (CYHAL_DRIVER_AVAILABLE_INTERCONNECT)
 
-// Helpers for creating Cy_TrigMux_* inputs
-#define CY_TRIGMUX_INPUT_LINE(mux_group, source_idx) (uint32_t)(((uint32_t)(mux_group)) << 8 | (source_idx))
-#define CY_TRIGMUX_OUTPUT_LINE(mux_group, dest_idx) (uint32_t)(0x40000000 |  ((uint32_t)(mux_group)) << 8 | (dest_idx))
-#define CY_SELECT_OUTPUT_LINE(mux_group, dest_idx) (uint32_t)(0x40001000 | ((uint32_t)(mux_group)) << 8 | (dest_idx))
-
 typedef enum
 {
     CYHAL_CONNECT_TYPE_VALIDATE,
@@ -49,6 +44,49 @@ typedef enum
 
 // Only define if there are actual trigger signals
 #if defined(CY_IP_M0S8PERI_TR) || defined(CY_IP_MXPERI_TR) || defined(CY_IP_MXSPERI)
+//Need to take peri #
+#ifdef CY_IP_M0S8PERI_INSTANCES
+#define _CYHAL_PERI_INSTANCES (CY_IP_M0S8PERI_INSTANCES)
+#elif defined(CY_IP_MXSPERI_INSTANCES)
+#define _CYHAL_PERI_INSTANCES (CY_IP_MXSPERI_INSTANCES)
+#elif defined(CY_IP_MXPERI_TR_INSTANCES)
+#define _CYHAL_PERI_INSTANCES (CY_IP_MXPERI_TR_INSTANCES)
+#endif
+#ifdef _CYHAL_PERI_INSTANCES
+static uint8_t _CYHAL_INTERCONNECT_BASE_IDX[_CYHAL_PERI_INSTANCES] = {
+    0,
+#if (_CYHAL_PERI_INSTANCES == 2)
+    PERI0_TR_GROUP_NR,
+#elif (_CYHAL_PERI_INSTANCES > 2)
+#error "Max amount of PERI instances is 2"
+//For current devices there is a maximum of 2 PERI instances possible
+#endif
+};
+
+static uint32_t get_peri_block_from_trigger(uint8_t mux_group)
+{
+    uint32_t blk_idx = 0;
+    for(uint8_t i = 0; i < _CYHAL_PERI_INSTANCES;i++)
+    {
+        if(mux_group > _CYHAL_INTERCONNECT_BASE_IDX[i])
+        {
+            blk_idx=i;
+        }
+    }
+    return blk_idx;
+}
+
+static uint32_t get_local_peri_group_num_from_trigger(uint8_t mux_group)
+{
+    return ((uint32_t)(mux_group - _CYHAL_INTERCONNECT_BASE_IDX[get_peri_block_from_trigger(mux_group)]));
+}
+// Helpers for creating Cy_TrigMux_* inputs                                //helper for local peri based group
+#define CY_TRIGMUX_INPUT_LINE(mux_group, source_idx) (uint32_t)(((get_local_peri_group_num_from_trigger(mux_group))) << 8 | (source_idx) | (get_peri_block_from_trigger(mux_group) << 16u))
+#define CY_TRIGMUX_OUTPUT_LINE(mux_group, dest_idx) (uint32_t)(0x40000000 |  ((get_local_peri_group_num_from_trigger(mux_group))) << 8 | (dest_idx) | (get_peri_block_from_trigger(mux_group) << 16u))
+#define CY_SELECT_OUTPUT_LINE(mux_group, dest_idx) (uint32_t)(0x40001000 | ((get_local_peri_group_num_from_trigger(mux_group))) << 8 | (dest_idx) | (get_peri_block_from_trigger(mux_group) << 16u))
+#else
+#error "No PERI Instances"
+#endif
 #if (CY_IP_MXPERI_VERSION >= 2u) || (CY_IP_M0S8PERI_VERSION >= 1u) || (CY_IP_MXSPERI >= 1u)
 static int8_t _cyhal_get_first_1to1_mux_idx(void)
 {
@@ -483,12 +521,7 @@ cy_rslt_t cyhal_disconnect_pin(cyhal_gpio_t pin)
 {
     GPIO_PRT_Type *port = Cy_GPIO_PortToAddr(CYHAL_GET_PORT(pin));
 
-    #if defined (CY_IP_MXS22IOSS)
-    // TODO: Explorer-related change. Most likely will be fixed in future
-    Cy_GPIO_Pin_FastInit(port, CYHAL_GET_PIN(pin), CY_GPIO_DM_CFG3_ENABLE, 1, HSIOM_SEL_GPIO);
-    #else
     Cy_GPIO_Pin_FastInit(port, CYHAL_GET_PIN(pin), CY_GPIO_DM_HIGHZ, 1, HSIOM_SEL_GPIO);
-    #endif // CY_IP_MXS22IOSS or other
 
     return CY_RSLT_SUCCESS;
 }

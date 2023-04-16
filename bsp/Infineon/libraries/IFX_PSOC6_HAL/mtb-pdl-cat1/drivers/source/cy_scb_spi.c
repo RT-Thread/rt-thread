@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_scb_spi.c
-* \version 2.90
+* \version 3.0
 *
 * Provides SPI API implementation of the SCB driver.
 *
@@ -24,7 +24,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXSCB)
+#if (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB))
 
 #include "cy_scb_spi.h"
 
@@ -72,7 +72,7 @@ cy_en_scb_spi_status_t Cy_SCB_SPI_Init(CySCB_Type *base, cy_stc_scb_spi_config_t
     {
         return CY_SCB_SPI_BAD_PARAM;
     }
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     uint32_t memWidth_type = CY_SCB_MEM_WIDTH_BYTE;
 #endif /* CY_IP_MXSCB_VERSION */
     CY_ASSERT_L3(CY_SCB_SPI_IS_MODE_VALID     (config->spiMode));
@@ -90,14 +90,14 @@ cy_en_scb_spi_status_t Cy_SCB_SPI_Init(CySCB_Type *base, cy_stc_scb_spi_config_t
     CY_ASSERT_L2(CY_SCB_IS_INTR_VALID(config->masterSlaveIntEnableMask, CY_SCB_SPI_MASTER_SLAVE_INTR_MASK));
 
     uint32_t locSclkMode = CY_SCB_SPI_GetSclkMode(config->subMode, config->sclkMode);
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     uint32_t memWidth = config->rxDataWidth <= config->txDataWidth ? config->txDataWidth : config->rxDataWidth ;
 
-    if(memWidth == CY_SCB_BYTE_WIDTH)
+    if(memWidth <= CY_SCB_BYTE_WIDTH)
     {
         memWidth_type = CY_SCB_MEM_WIDTH_BYTE;
     }
-    else if(memWidth == CY_SCB_HALF_WORD_WIDTH)
+    else if(memWidth <= CY_SCB_HALF_WORD_WIDTH)
     {
         memWidth_type = CY_SCB_MEM_WIDTH_HALFWORD;
     }
@@ -112,7 +112,7 @@ cy_en_scb_spi_status_t Cy_SCB_SPI_Init(CySCB_Type *base, cy_stc_scb_spi_config_t
     SCB_CTRL(base) =_BOOL2FLD(SCB_CTRL_EC_AM_MODE, config->enableWakeFromSleep) |
                  _VAL2FLD(SCB_CTRL_OVS, (config->oversample - 1UL))          |
                  _VAL2FLD(SCB_CTRL_MODE, CY_SCB_CTRL_MODE_SPI);
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     Cy_SCB_SetMemWidth(base, memWidth_type);
 #elif(CY_IP_MXSCB_VERSION==1)
     SCB_CTRL(base) |=_BOOL2FLD(SCB_CTRL_BYTE_MODE, byteMode);
@@ -130,7 +130,7 @@ cy_en_scb_spi_status_t Cy_SCB_SPI_Init(CySCB_Type *base, cy_stc_scb_spi_config_t
                      _VAL2FLD(CY_SCB_SPI_CTRL_CLK_MODE,      locSclkMode)                         |
                      _VAL2FLD(CY_SCB_SPI_CTRL_SSEL_POLARITY, config->ssPolarity)                  |
                      _VAL2FLD(SCB_SPI_CTRL_MODE,  (uint32_t) config->subMode);
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     if(config->subMode == CY_SCB_SPI_MOTOROLA)
     {
         SCB_SPI_CTRL(base) &= ~SCB_SPI_CTRL_SSEL_SETUP_DEL_Msk;
@@ -154,7 +154,7 @@ cy_en_scb_spi_status_t Cy_SCB_SPI_Init(CySCB_Type *base, cy_stc_scb_spi_config_t
     /* Configure the TX direction */
     SCB_TX_CTRL(base) = _BOOL2FLD(SCB_TX_CTRL_MSB_FIRST, config->enableMsbFirst) |
                     _VAL2FLD(SCB_TX_CTRL_DATA_WIDTH, (config->txDataWidth - 1UL));
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     if(config->subMode == CY_SCB_SPI_MOTOROLA)
     {
         /* Configure the TX direction */
@@ -163,7 +163,7 @@ cy_en_scb_spi_status_t Cy_SCB_SPI_Init(CySCB_Type *base, cy_stc_scb_spi_config_t
 #endif /* CY_IP_MXSCB_VERSION */
 
     SCB_TX_FIFO_CTRL(base) = _VAL2FLD(SCB_TX_FIFO_CTRL_TRIGGER_LEVEL, config->txFifoTriggerLevel);
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     if(config->subMode == CY_SCB_SPI_MOTOROLA)
     {
         /* Configure the RX direction */
@@ -175,8 +175,8 @@ cy_en_scb_spi_status_t Cy_SCB_SPI_Init(CySCB_Type *base, cy_stc_scb_spi_config_t
     /* Set up interrupt sources */
     SCB_INTR_RX_MASK(base) = (config->rxFifoIntEnableMask & CY_SCB_SPI_RX_INTR_MASK);
     SCB_INTR_TX_MASK(base) = (config->txFifoIntEnableMask & CY_SCB_SPI_TX_INTR_MASK);
-    SCB_INTR_M(base)       = (config->masterSlaveIntEnableMask & CY_SCB_SPI_MASTER_DONE);
-    SCB_INTR_S(base)       = (config->masterSlaveIntEnableMask & CY_SCB_SPI_SLAVE_ERR);
+    SCB_INTR_M_MASK(base)       = (config->masterSlaveIntEnableMask & CY_SCB_SPI_MASTER_DONE);
+    SCB_INTR_S_MASK(base)       = (config->masterSlaveIntEnableMask & CY_SCB_SPI_SLAVE_ERR);
     SCB_INTR_SPI_EC_MASK(base) = 0UL;
 
     /* Initialize the context */
@@ -222,14 +222,14 @@ void Cy_SCB_SPI_DeInit(CySCB_Type *base)
     SCB_SPI_CTRL(base)     = CY_SCB_SPI_CTRL_DEF_VAL;
 
     /* RX direction */
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     SCB_SPI_RX_CTRL(base) = 0UL;
 #endif /* CY_IP_MXSCB_VERSION */
     SCB_RX_CTRL(base)      = CY_SCB_RX_CTRL_DEF_VAL;
     SCB_RX_FIFO_CTRL(base) = 0UL;
 
     /* TX direction */
-#if(CY_IP_MXSCB_VERSION>=2)
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
     SCB_SPI_TX_CTRL(base) = 0UL;
 #endif /* CY_IP_MXSCB_VERSION */
     SCB_TX_CTRL(base)      = CY_SCB_TX_CTRL_DEF_VAL;
@@ -964,8 +964,8 @@ static void HandleReceive(CySCB_Type *base, cy_stc_scb_spi_context_t *context)
 {
     /* Get data in RX FIFO */
     uint32_t numToCopy = Cy_SCB_GetNumInRxFifo(base);
-#if(CY_IP_MXSCB_VERSION>=2)
-    uint32_t data_width;
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
+    uint32_t mem_width;
 #endif /* CY_IP_MXSCB_VERSION */
 
     /* Adjust the number to read */
@@ -985,9 +985,9 @@ static void HandleReceive(CySCB_Type *base, cy_stc_scb_spi_context_t *context)
 
         Cy_SCB_ReadArrayNoCheck(base, context->rxBuf, numToCopy);
 
-#if(CY_IP_MXSCB_VERSION>=2)
-        data_width = Cy_SCB_Get_RxDataWidth(base);
-        buf = &buf[((data_width/8UL) * numToCopy)];
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
+        mem_width = _FLD2VAL(SCB_CTRL_MEM_WIDTH, SCB_CTRL(base));
+        buf = &buf[((1UL << mem_width) * numToCopy)];
 #elif(CY_IP_MXSCB_VERSION==1)
         buf = &buf[(Cy_SCB_IsRxDataWidthByte(base) ? (numToCopy) : (2UL * numToCopy))];
 #endif /* CY_IP_MXSCB_VERSION */
@@ -1037,8 +1037,8 @@ static void HandleTransmit(CySCB_Type *base, cy_stc_scb_spi_context_t *context)
 {
     uint32_t numToCopy;
     uint32_t fifoSize = Cy_SCB_GetFifoSize(base);
-#if(CY_IP_MXSCB_VERSION>=2)
-    uint32_t data_width;
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
+    uint32_t mem_width;
 #endif /* CY_IP_MXSCB_VERSION */
 
     numToCopy = fifoSize - Cy_SCB_GetNumInTxFifo(base);
@@ -1060,9 +1060,9 @@ static void HandleTransmit(CySCB_Type *base, cy_stc_scb_spi_context_t *context)
 
         Cy_SCB_WriteArrayNoCheck(base, context->txBuf, numToCopy);
 
-#if(CY_IP_MXSCB_VERSION>=2)
-        data_width = Cy_SCB_Get_TxDataWidth(base);
-        buf = &buf[((data_width/8UL) * numToCopy)];
+#if((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
+        mem_width = _FLD2VAL(SCB_CTRL_MEM_WIDTH, SCB_CTRL(base));
+        buf = &buf[((1UL << mem_width) * numToCopy)];
 #elif(CY_IP_MXSCB_VERSION==1)
         buf = &buf[(Cy_SCB_IsTxDataWidthByte(base) ? (numToCopy) : (2UL * numToCopy))];
 #endif /* CY_IP_MXSCB_VERSION */
@@ -1117,6 +1117,6 @@ static void DiscardArrayNoCheck(CySCB_Type const *base, uint32_t size)
 }
 #endif
 
-#endif /* CY_IP_MXSCB */
+#endif /* (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB)) */
 
 /* [] END OF FILE */

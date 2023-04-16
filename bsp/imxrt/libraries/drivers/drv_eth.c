@@ -239,6 +239,9 @@ static void _enet_clk_init(void)
 //    IOMUXC_GPR->GPR1 |= 1 << 23;
         /* Set 50MHz output clock required by PHY. */
     const clock_enet_pll_config_t config = {.enableClkOutput = true, .loopDivider = 1};
+#if defined(SOC_IMXRT1020_SERIES)
+    const clock_enet_pll_config_t config = {.enableClkOutput = true, .enableClkOutput500M = true, .loopDivider = 1};
+#endif
     CLOCK_InitEnetPll(&config);
 
     /* Output 50M clock to PHY. */

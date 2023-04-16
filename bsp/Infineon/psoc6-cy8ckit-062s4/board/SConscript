@@ -29,12 +29,12 @@ startup_path_prefix = SDK_LIB
 
 if rtconfig.PLATFORM in ['gcc']:
     src += [startup_path_prefix +
-            '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_GCC_ARM/cy_syslib_gcc.S']
+            '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_GCC_ARM/cy_syslib_ext.S']
 elif rtconfig.PLATFORM in ['armclang']:
     src += [startup_path_prefix +
-            '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_ARM/cy_syslib_mdk.S']
+            '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_ARM/cy_syslib_ext.S']
 
-CPPDEFINES = ['CY8C6244LQI_S4D92', 'CY_USING_HAL', 'COMPONENT_CAT1A', 'COMPONENT_CAT1', 'COMPONENT_BSP_DESIGN_MODUS']
+CPPDEFINES = ['CY8C6244LQI_S4D92', 'CORE_NAME_CM0P_0', 'CORE_NAME_CM4_0', 'CY_USING_PREBUILT_CM0P_IMAGE', 'CY_USING_HAL', 'COMPONENT_CAT1A', 'COMPONENT_CAT1', 'COMPONENT_BSP_DESIGN_MODUS']
 group = DefineGroup('Drivers', src, depend=[''], CPPPATH=path, CPPDEFINES=CPPDEFINES)
 
 Return('group')

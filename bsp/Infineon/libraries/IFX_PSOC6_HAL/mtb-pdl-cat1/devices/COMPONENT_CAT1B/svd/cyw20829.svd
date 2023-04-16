@@ -3838,127 +3838,6 @@ Note: the SRAM controller write buffer is only used when ECC checking is enabled
           </fields>
         </register>
         <register>
-          <name>ECC_CTL</name>
-          <description>ECC control</description>
-          <addressOffset>0x20</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x3</resetValue>
-          <resetMask>0x7F000F</resetMask>
-          <fields>
-            <field>
-              <name>EN</name>
-              <description>ECC enable:
-'0': Disabled.
-'1': Enabled.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-write</access>
-              <enumeratedValues>
-                <enumeratedValue>
-                  <name>ECC_DISABLED</name>
-                  <description>N/A</description>
-                  <value>0</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>ECC_ENABLED</name>
-                  <description>N/A</description>
-                  <value>1</value>
-                </enumeratedValue>
-              </enumeratedValues>
-            </field>
-            <field>
-              <name>AUTO_CORRECT</name>
-              <description>ECC auto correction:
-'0': Disabled. Corrected ECC errors are ONLY HW corrected 'on-the-fly' (not corrected in the SRAM). Fault reporting is enabled.
-'1': Enabled. Correctable ECC errors are HW corrected 'on-the-fly' and in the SRAM, without CPU intervention. Fault reporting is enabled.
-
-Note: This field is ignored when EN is '0' or when CHECK_EN is '0'.</description>
-              <bitRange>[1:1]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>INJ_EN</name>
-              <description>ECC parity injection:
-'0': Disabled.
-'1': Enabled. Instead of calculating the parity from the transfer's write data, the parity is taken from PARITY upon a match of the transfer's write address with ECC_MATCH.WORD_ADDR (no match is performed on the transfer's write strobes/mask).
-
-Note: Parity injection invalidates the write buffer for this word address. If only a part of 64-bit data word is written AND consistency should be maintained, STATUS.ALL_WB_EMPTY is '1' should be checked before.
-
-Note: This field is ignored when EN is '0'.</description>
-              <bitRange>[2:2]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>CHECK_EN</name>
-              <description>ECC checking enable:
-'0': Disabled. No ECC checking and associated bus errors. No fault reporting. Intended for SRAM initialization.
-'1': Enabled.
-
-Note: This field is ignored when EN is '0'.</description>
-              <bitRange>[3:3]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>PARITY</name>
-              <description>Injected parity.</description>
-              <bitRange>[22:16]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>ECC_MATCH</name>
-          <description>ECC match</description>
-          <addressOffset>0x24</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x1FFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>WORD_ADDR</name>
-              <description>Specifies the word address where an error will be injected.
-- On a write transfer to this SRAM address and when the ECC_CTL.INJ_EN bit is '1', the parity (ECC_CTL.PARITY) is injected.</description>
-              <bitRange>[24:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>ECC_STATUS0</name>
-          <description>ECC status 0</description>
-          <addressOffset>0x28</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x0</resetMask>
-          <fields>
-            <field>
-              <name>ADDR</name>
-              <description>ECC error address. This register captures the address location when ECC error happens.</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>ECC_STATUS1</name>
-          <description>ECC status 1</description>
-          <addressOffset>0x2C</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x0</resetMask>
-          <fields>
-            <field>
-              <name>SYNDROME</name>
-              <description>This register captures the ECC syndrome when ECC error happens.</description>
-              <bitRange>[6:0]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
           <name>PWR_MACRO_CTL</name>
           <description>SRAM power partition power control</description>
           <addressOffset>0x200</addressOffset>
@@ -4731,134 +4610,6 @@ HW initializes the block attributes NS to 1 in case SECEXT = 0.</description>
             </field>
           </fields>
         </register>
-        <register>
-          <name>PATCH_CTL</name>
-          <description>Patch control</description>
-          <addressOffset>0x100</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x80000000</resetMask>
-          <fields>
-            <field>
-              <name>ENABLED</name>
-              <description>Patching enable:
-'0': Disabled.
-'1': Enabled.</description>
-              <bitRange>[31:31]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>PATCH_STATUS</name>
-          <description>Patch status</description>
-          <addressOffset>0x104</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x80000000</resetMask>
-          <fields>
-            <field>
-              <name>PATCH_IDX</name>
-              <description>Match index of the patch structure that produced the most recent valid address match. The index is in the range [0, PATCH_NR-1].
-Only matches with PATCH_STRUCT_CTL.VALID=1 are considered.</description>
-              <bitRange>[8:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>PATCH_VALID</name>
-              <description>Validity of MATCH_IDX:
-'0': Not valid.
-'1': Valid.
-Only matches with PATCH_STRUCT_CTL.VALID=1 are considered.
-Note: The rationale of that bit is to inform initial value of IDX has been overwritten.</description>
-              <bitRange>[31:31]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>PATCH_CFG</name>
-          <description>Patch design time configuration info</description>
-          <addressOffset>0x110</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x303FF</resetMask>
-          <fields>
-            <field>
-              <name>PATCH_NR</name>
-              <description>Patch number; i.e. number of patch structures. Legal range (linear): [0, 512].</description>
-              <bitRange>[9:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>PATCH_SIZE</name>
-              <description>Patch size; i.e. number of Bytes that are 'patched' by a single patch structure. This value is same as the word size of ROM and fixed at design time.
-'0': 8 Bytes.
-'1': 16 Bytes. &lt;- choice for this ROM (128 bit)
-'2': 32 Bytes.
-'3': 64 Bytes.</description>
-              <bitRange>[17:16]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>PATCH_SROM</name>
-          <description>Patch SROM boundary</description>
-          <addressOffset>0x120</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>BOUNDARY</name>
-              <description>Specifies the boundary between non-patchable and patchable SROM memory locations (the address specifies the first patchable SROM memory location). The SROM is divided into two partitions:
-- The first/lower partition is non-patchable. This partition may be used to provide an unmutable 'root of trust'.
-- The second/high partition is patchable. This partition may be used for FW that requires updates.
-
-Note: Higher bit indices reflect the SROM location in the memory map. When BOUNDARY equals the SROM base address, the complete SROM is patchable. When ADDR equal the SROM base address plus the SROM size, the complete SROM is non-patchable.</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <dim>512</dim>
-          <dimIncrement>4</dimIncrement>
-          <name>PATCH_STRUCT_CTL[%s]</name>
-          <description>Patch structure control</description>
-          <addressOffset>0x800</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x1</resetMask>
-          <fields>
-            <field>
-              <name>VALID</name>
-              <description>Patch structure validity:
-'0': Not valid.
-'1': Valid.
-
-Note: VALID uses the bit field '0' location, rather than the more typical bit field '31' location. This architecture decision was made to allow for SROM location anywhere in a 32-bit address space, and not require extensive address manipulatin when accessing PATCH_CTL.MATCH_ADDR.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>MATCH_ADDR</name>
-              <description>Match address. SROM accesses are matched/compared to this address. An address match results into patching/redirection of the SROM access (if CTL.ENABLED is '1'): the SROM access is redirected to access the PATCH_DATA register with the according index of the matching patch structure. Specifically, given an index i, the PATCH_DATA access address is given by: PATCH_DATA.ADDR + i * 'patch size', where patch size is the number of Bytes that are patched by a single patch structure (2 ^ (3+PATCH_CFG.PATCH_SIZE)).
-
-The MATCH_ADDR[] bit range is dependent on two design time configuration parameters:
-- The lowest index is determined by PATCH_SIZE. E.g., a 8 Byte patch size uses '3' as the lowest bit index, a 16 Byte patch size uses '4' as the lowest bit index, etc. Unused lower bit indices are '0'.
-- The highest index is determined by the SROM size as specified by SROM_MASK (the next power of two multiple of the SROM size). E.g., a 0xffff:0000 mask specifies a 64 KByte SROM size and uses '15' as the highest bit index, a 0xfff0:0000 mask specifies a 1 MByte SROM size and uses '19' as the highest bit index, etc. Unused higher bit indices reflect the SROM location in the address space.</description>
-              <bitRange>[31:4]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
         <cluster>
           <name>MPC</name>
           <description>MPC Memory Protection Controller registers</description>
@@ -5488,30 +5239,6 @@ HW initializes the block attributes NS to 1 in case SECEXT = 0.</description>
             </fields>
           </register>
         </cluster>
-        <register>
-          <dim>8192</dim>
-          <dimIncrement>4</dimIncrement>
-          <name>PATCH_DATA[%s]</name>
-          <description>Patch data RAM</description>
-          <addressOffset>0x8000</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>DATA</name>
-              <description>Patch data word.
-
-Depending on the selected PATCH_SIZE multiple words of PATCH_DATA form one patch entry.
-E.g. in this controller the PATCH_SIZE is 16 byte, equal to the with of the SROM. Thus 4 words of PATCH_DATA are one entry, which is read intead of the ROM data in case patch got enabled.
-
-In case of smaller portion than PATCH_SIZE should be replaced, the original content of the entire SROM line can be copied into one patch entry and only the desired portion can be changed.</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
       </registers>
     </peripheral>
     <peripheral>
@@ -5750,23 +5477,6 @@ The CPU interrupt handler SW can read SYSTEM_INT_IDX to determine the system int
               <name>SYSTEM_INT_IDX</name>
               <description>System interrupt select for CPU NMI. The reset value ('1023') ensures that the CPU NMI is NOT connected to any system interrupt after DeepSleep reset.</description>
               <bitRange>[9:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>CM33_S_VECTOR_TABLE_BASE</name>
-          <description>CM33 secure vector table base</description>
-          <addressOffset>0x1000</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x10000000</resetValue>
-          <resetMask>0xFFFFFF80</resetMask>
-          <fields>
-            <field>
-              <name>ADDR25</name>
-              <description>Address of CM33 secure vector table to be used at reset. This default value points to Secure ROM start address i.e. 0x1000_0000.</description>
-              <bitRange>[31:7]</bitRange>
               <access>read-write</access>
             </field>
           </fields>
@@ -6205,30 +5915,6 @@ Address of next descriptor in descriptor list. When this field is '0', this is t
               <description>Current address of destination location.</description>
               <bitRange>[31:0]</bitRange>
               <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>ECC_CTL</name>
-          <description>ECC control</description>
-          <addressOffset>0x80</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFE0003FF</resetMask>
-          <fields>
-            <field>
-              <name>WORD_ADDR</name>
-              <description>Specifies the word address where an error will be injected.
-- On a write transfer to this SRAM word address and when CTL.ECC_INJ_EN bit is '1', the parity (PARITY) is injected.</description>
-              <bitRange>[9:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>PARITY</name>
-              <description>ECC parity to use for ECC error injection at address WORD_ADDR.</description>
-              <bitRange>[31:25]</bitRange>
-              <access>read-write</access>
             </field>
           </fields>
         </register>
@@ -7191,52 +6877,6 @@ Note: no exception for the debug host, it also causes the read side effect</desc
           </fields>
         </register>
         <register>
-          <name>SYSTICK_S_CTL</name>
-          <description>Secure SysTick timer control</description>
-          <addressOffset>0x100</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x40000147</resetValue>
-          <resetMask>0xC3FFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>TENMS</name>
-              <description>Specifies the number of clock source cycles (minus 1) that make up 10 ms. E.g., for a 32,768 Hz reference clock, TENMS is 328 - 1 = 327.</description>
-              <bitRange>[23:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>CLOCK_SOURCE</name>
-              <description>Specifies an external clock source:
-'0': The low frequency clock 'clk_lf' is selected. The precision of this clock depends on whether the low frequency clock source is a SRSS internal RC oscillator (imprecise) or a device external crystal oscillator (precise).
-'1': The internal main oscillator (IMO) clock 'clk_imo' is selected. The MXS40 platform uses a fixed frequency IMO clock.
-o '2': The external crystal oscillator (ECO) clock 'clk_eco' is selected.
-'3': The SRSS 'clk_timer' is selected ('clk_timer' is a divided/gated version of 'clk_hf' or 'clk_imo').
-
-Note: If NOREF is '1', the CLOCK_SOURCE value is NOT used.
-Note: It is SW's responsibility to provide the correct NOREF, SKEW and TENMS field values for the selected clock source.</description>
-              <bitRange>[25:24]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>SKEW</name>
-              <description>Specifies the precision of the clock source and if the TENMS field represents exactly 10 ms (clock source frequency is a multiple of 100 Hz). This affects the suitability of the SysTick timer as a SW real-time clock:
-'0': Precise.
-'1': Imprecise.</description>
-              <bitRange>[30:30]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>NOREF</name>
-              <description>Specifies if an external clock source is provided:
-'0': An external clock source is provided. 
-'1': An external clock source is NOT provided and only the CPU internal clock can be used as SysTick timer clock source.</description>
-              <bitRange>[31:31]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
           <name>SYSTICK_NS_CTL</name>
           <description>Non Secure SysTick timer control</description>
           <addressOffset>0x120</addressOffset>
@@ -7279,149 +6919,6 @@ Note: It is SW's responsibility to provide the correct NOREF, SKEW and TENMS fie
 '1': An external clock source is NOT provided and only the CPU internal clock can be used as SysTick timer clock source.</description>
               <bitRange>[31:31]</bitRange>
               <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>INTR_MSC</name>
-          <description>Master security controller Interrupt</description>
-          <addressOffset>0x200</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x3F</resetMask>
-          <fields>
-            <field>
-              <name>CODE_MS0_MSC</name>
-              <description>This interrupt cause field is activated (HW sets the field to '1') when there is a MSC interrupt violation.
-
-SW writes a '1' to this field to clear the interrupt cause to '0'. The HW captures a new MSC interrupt only after clearing the interrupt cause.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>SYS_MS0_MSC</name>
-              <description>N/A</description>
-              <bitRange>[1:1]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>SYS_MS1_MSC</name>
-              <description>N/A</description>
-              <bitRange>[2:2]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>EXP_MS_MSC</name>
-              <description>N/A</description>
-              <bitRange>[3:3]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DMAC0_MSC</name>
-              <description>N/A</description>
-              <bitRange>[4:4]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DMAC1_MSC</name>
-              <description>N/A</description>
-              <bitRange>[5:5]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>INTR_MASK_MSC</name>
-          <description>Master security controller Interrupt mask</description>
-          <addressOffset>0x208</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x3F</resetMask>
-          <fields>
-            <field>
-              <name>CODE_MS0_MSC</name>
-              <description>Mask bit for corresponding field in the INTR register.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>SYS_MS0_MSC</name>
-              <description>Mask bit for corresponding field in the INTR register.</description>
-              <bitRange>[1:1]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>SYS_MS1_MSC</name>
-              <description>Mask bit for corresponding field in the INTR register.</description>
-              <bitRange>[2:2]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>EXP_MS_MSC</name>
-              <description>Mask bit for corresponding field in the INTR register.</description>
-              <bitRange>[3:3]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DMAC0_MSC</name>
-              <description>Mask bit for corresponding field in the INTR register.</description>
-              <bitRange>[4:4]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DMAC1_MSC</name>
-              <description>Mask bit for corresponding field in the INTR register.</description>
-              <bitRange>[5:5]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>INTR_MASKED_MSC</name>
-          <description>Master security controller Interrupt masked</description>
-          <addressOffset>0x20C</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x3F</resetMask>
-          <fields>
-            <field>
-              <name>CODE_MS0_MSC</name>
-              <description>Logical and of corresponding INTR and INTR_MASK fields.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>SYS_MS0_MSC</name>
-              <description>Logical and of corresponding INTR and INTR_MASK fields.</description>
-              <bitRange>[1:1]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>SYS_MS1_MSC</name>
-              <description>Logical and of corresponding INTR and INTR_MASK fields.</description>
-              <bitRange>[2:2]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>EXP_MS_MSC</name>
-              <description>Logical and of corresponding INTR and INTR_MASK fields.</description>
-              <bitRange>[3:3]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>DMAC0_MSC</name>
-              <description>Logical and of corresponding INTR and INTR_MASK fields.</description>
-              <bitRange>[4:4]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>DMAC1_MSC</name>
-              <description>Logical and of corresponding INTR and INTR_MASK fields.</description>
-              <bitRange>[5:5]</bitRange>
-              <access>read-only</access>
             </field>
           </fields>
         </register>
@@ -7790,57 +7287,6 @@ An attempt to make a NOT allowed state transition will NOT affect this register 
           <name>TRIM_RAM_CTL</name>
           <description>RAM trim control</description>
           <addressOffset>0x2110</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>TRIM</name>
-              <description>N/A</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>TRIM_RAM_CTL2</name>
-          <description>RAM trim control2</description>
-          <addressOffset>0x2114</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>TRIM</name>
-              <description>N/A</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>TRIM_RAM_CTL3</name>
-          <description>RAM trim control3</description>
-          <addressOffset>0x2118</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>TRIM</name>
-              <description>N/A</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>TRIM_RAM_CTL4</name>
-          <description>RAM trim control4</description>
-          <addressOffset>0x211C</addressOffset>
           <size>32</size>
           <access>read-write</access>
           <resetValue>0x0</resetValue>
@@ -9110,7 +8556,8 @@ SW writes a '1' to the bit fields to generate a notify event. Due to the transie
             </field>
             <field>
               <name>CAL_RESET</name>
-              <description>Reset clock calibration logic.  This can be used to recover from unexpected conditions, such as no clock present on counter #1.</description>
+              <description>Reset clock calibration logic for window mode.  This can be used to recover from unexpected conditions, such as no clock present on counter #1.
+Set this bit only when CLK_CAL_TEST.CAL_WINDOW_SEL=1 (window mode).  It takes 3 clock cycles for reset to propagate.</description>
               <bitRange>[29:29]</bitRange>
               <access>read-write</access>
             </field>
@@ -15446,52 +14893,6 @@ Leap Year corrected</description>
           </fields>
         </register>
         <register>
-          <name>PMIC_CTL</name>
-          <description>PMIC control register</description>
-          <addressOffset>0x44</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0xA0000000</resetValue>
-          <resetMask>0xE001FF00</resetMask>
-          <fields>
-            <field>
-              <name>UNLOCK</name>
-              <description>This byte must be set to 0x3A for PMIC to be disabled.  When the UNLOCK code is not present: writes to PMIC_EN field are ignored and the hardware ignores the value in PMIC_EN.  Do not change PMIC_EN in the same write cycle as setting/clearing the UNLOCK code; do these in separate write cycles.</description>
-              <bitRange>[15:8]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>POLARITY</name>
-              <description>N/A</description>
-              <bitRange>[16:16]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>PMIC_EN_OUTEN</name>
-              <description>Output enable for the output driver in the PMIC_EN pad.
-0: Output pad is tristate for PMIC_EN pin.  This can allow this pin to be used for another purpose. Tristate condition is kept only if the UNLOCK key (0x3A) is present
-1: Output pad is enabled for PMIC_EN pin.</description>
-              <bitRange>[29:29]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>PMIC_ALWAYSEN</name>
-              <description>Override normal PMIC controls to prevent accidentally turning off the PMIC by errant firmware.
-0: Normal operation, PMIC_EN and PMIC_OUTEN work as described
-1: PMIC_EN and PMIC_OUTEN are ignored and the output pad is forced enabled.
-Note: This bit is a write-once bit until the next backup reset.</description>
-              <bitRange>[30:30]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>PMIC_EN</name>
-              <description>Enable for external PMIC that supplies vddd (if present).  This bit will only clear if UNLOCK was written correctly in a previous write operation and PMIC_ALWAYSEN=0.  When PMIC_EN=0, the system functions normally until vddd is no longer present (OFF w/Backup mode).  Firmware can set this bit, if it does so before vddd is actually removed.  This bit is also set by any RTC alarm or PMIC pin wakeup event regardless of UNLOCK setting.</description>
-              <bitRange>[31:31]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
           <name>RESET</name>
           <description>Backup reset register</description>
           <addressOffset>0x48</addressOffset>
@@ -15505,117 +14906,6 @@ Note: This bit is a write-once bit until the next backup reset.</description>
               <description>Writing 1 to this register resets the backup logic.  Hardware clears it when the reset is complete.  After setting this register, firmware should confirm it reads as 0 before attempting to write other backup registers.</description>
               <bitRange>[31:31]</bitRange>
               <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>LPECO_CTL</name>
-          <description>Low-power external crystal oscillator control</description>
-          <addressOffset>0x80</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x40000000</resetValue>
-          <resetMask>0xD0001130</resetMask>
-          <fields>
-            <field>
-              <name>LPECO_CRANGE</name>
-              <description>Specifies the load capacitance of the chosen crystal.
-2'b00: load is in range [5pF, 10pF],
-2'b01: load is in range (10pF, 15pF],
-2'b10: load is in range (15pF, 20pF],
-2'b11: load is in range (20pF, 25pF]</description>
-              <bitRange>[5:4]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>LPECO_FRANGE</name>
-              <description>Specifies the crystal frequency range.
-0: Crystal frequency is in range [4, 6) MHz
-1: Crystal frequency is in range [6, 8] MHz.  Use this setting for 6 MHz.</description>
-              <bitRange>[8:8]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>LPECO_AMP_SEL</name>
-              <description>Selects the oscillation amplitude.  WARNING: the crystal can be permanently damaged by selecting an amplitude that exceeds the crystal limits.
-0: maximum amplitude is 1.35V.  This is the lowest power setting.
-1: maximum amplitude is 1.8V.  This is the lowest jitter setting.</description>
-              <bitRange>[12:12]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>LPECO_DIV_ENABLE</name>
-              <description>LPECO prescaler enable.  Do not set this to '1' when LPECO_EN==0.  SW sets this field to '1' to enable the divider and HW sets this field to '0' to indicate that divider enabling has completed. When the divider is enabled, its integer and fractional counters are initialized to '0'. 
- 
-HW sets the LPECO_DIV_ENABLE field to '0' when the enabling is performed and HW set CLK_LPECO_PRESCALER.ENABLED to '1' when the enabling is performed.</description>
-              <bitRange>[28:28]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>LPECO_AMPDET_EN</name>
-              <description>Minimum amplitude detector enable/disable.  Ignored when LPECO_EN==0.
-0: Initially enabled, and then automatically disabled when amplitude detector detects sufficient amplitude.
-1: Keep minimum amplitude detector enabled as long as LPECO is enabled.</description>
-              <bitRange>[30:30]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>LPECO_EN</name>
-              <description>Master enable for LPECO oscillator.  This also disables the LPECO prescaler.</description>
-              <bitRange>[31:31]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>LPECO_PRESCALE</name>
-          <description>Low-power external crystal oscillator prescaler</description>
-          <addressOffset>0x84</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x3FFFF01</resetMask>
-          <fields>
-            <field>
-              <name>LPECO_DIV_ENABLED</name>
-              <description>LPECO prescaler enabled. HW sets this field to '1' as a result of an BACKUP_LPECO_CTL.LPECO_DIV_ENABLE.  HW sets this field to '0' as a result of writing CLK_LPECO_CONFIG.LPECO_EN==0.  This field does not update unless LPECO clock is toggling.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>LPECO_FRAC_DIV</name>
-              <description>Fractional value, sufficient to get prescaler output within the +/-65ppm calibration range.  Do not change this setting when LPECO Prescaler is enabled.</description>
-              <bitRange>[15:8]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>LPECO_INT_DIV</name>
-              <description>Integer divide value allows for LPECO frequencies up to 8MHz to generate 32768 Hz.  Subtract one from the desired divide value when writing this field.  For example, to divide by 1, write LPECO_INT_DIV=0.  Do not change this setting when LPECO Prescaler is enabled.</description>
-              <bitRange>[25:16]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>LPECO_STATUS</name>
-          <description>Low-power external crystal oscillator status</description>
-          <addressOffset>0x88</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x3</resetMask>
-          <fields>
-            <field>
-              <name>LPECO_AMPDET_OK</name>
-              <description>Indicates sufficient oscillation amplitude reported by LPECO amplitude detector.  This field will read as zero when the amplitude detector is off (see LPECO_CTL.LPECO_AMPDET_EN).</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>LPECO_READY</name>
-              <description>Indicates the LPECO has had enough time to start.  This field is driven by a stabilization counter clocked by IMO.</description>
-              <bitRange>[1:1]</bitRange>
-              <access>read-only</access>
             </field>
           </fields>
         </register>
@@ -15636,90 +14926,6 @@ HW sets the LPECO_DIV_ENABLE field to '0' when the enabling is performed and HW 
             </field>
           </fields>
         </register>
-        <cluster>
-          <name>CSV_BAK</name>
-          <description>CSV registers for clk_bak clock</description>
-          <addressOffset>0x00000100</addressOffset>
-          <cluster>
-            <name>CSV</name>
-            <description>clk_bak Backup domain Clock Supervisor registers</description>
-            <addressOffset>0x00000000</addressOffset>
-            <register>
-              <name>REF_CTL</name>
-              <description>Clock Supervision Reference Control</description>
-              <addressOffset>0x0</addressOffset>
-              <size>32</size>
-              <access>read-write</access>
-              <resetValue>0x0</resetValue>
-              <resetMask>0x800000FF</resetMask>
-              <fields>
-                <field>
-                  <name>STARTUP</name>
-                  <description>Startup delay time -1 (in reference clock cycles), after enable, from reference clock start to monitored clock start.
-At a minimum (both clocks running): STARTUP &gt;= (PERIOD +3) * FREQ_RATIO - UPPER, with FREQ_RATIO = (Reference frequency / Monitored frequency)
-On top of that the actual clock startup delay and the margin for accuracy of both clocks must be added.</description>
-                  <bitRange>[7:0]</bitRange>
-                  <access>read-write</access>
-                </field>
-                <field>
-                  <name>CSV_EN</name>
-                  <description>Enables clock supervision, both frequency and loss.    
-CSV in Active domain: Clock supervision is reset during DeepSleep and Hibernate modes.  When enabled it begins operating automatically after a DeepSleep wakeup, but it must be reconfigured after Hibernate wakeup.  
-CSV in DeepSleep domain: Clock supervision is reset during Hibernate mode.  It must be reconfigured after Hibernate wakeup.
-CSV in Backup domain: Clock supervision operates during Hibernate mode, can be configured to wake from Hibernate, and continues operating during reboot.
-
-A CSV error detection is reported to the Fault structure.</description>
-                  <bitRange>[31:31]</bitRange>
-                  <access>read-write</access>
-                </field>
-              </fields>
-            </register>
-            <register>
-              <name>REF_LIMIT</name>
-              <description>Clock Supervision Reference Limits</description>
-              <addressOffset>0x4</addressOffset>
-              <size>32</size>
-              <access>read-write</access>
-              <resetValue>0x0</resetValue>
-              <resetMask>0xFF00FF</resetMask>
-              <fields>
-                <field>
-                  <name>LOWER</name>
-                  <description>Cycle time lower limit.  Set the lower limit -1, in reference clock cycles, before the next monitored clock event is allowed to happen.  If a monitored clock event happens before this limit is reached a CSV error is detected.
-LOWER must be at least 1 less than UPPER. In case the clocks are asynchronous LOWER must be at least 3 less than UPPER.</description>
-                  <bitRange>[7:0]</bitRange>
-                  <access>read-write</access>
-                </field>
-                <field>
-                  <name>UPPER</name>
-                  <description>Cycle time upper limit.  Set the upper limit -1, in reference clock cycles, before (or same time) the next monitored clock event must happen.  If a monitored clock event does not happen before this limit is reached, or does not happen at all (clock loss), a CSV error is detected.</description>
-                  <bitRange>[23:16]</bitRange>
-                  <access>read-write</access>
-                </field>
-              </fields>
-            </register>
-            <register>
-              <name>MON_CTL</name>
-              <description>Clock Supervision Monitor Control</description>
-              <addressOffset>0x8</addressOffset>
-              <size>32</size>
-              <access>read-write</access>
-              <resetValue>0x0</resetValue>
-              <resetMask>0xFF</resetMask>
-              <fields>
-                <field>
-                  <name>PERIOD</name>
-                  <description>Period time.  Set the Period -1, in monitored clock cycles, before the next monitored clock event happens. 
-PERIOD &lt;=  (UPPER+1) / FREQ_RATIO -1, with FREQ_RATIO = (Reference frequency / Monitored frequency)
-In case the clocks are asynchronous: PERIOD &lt;=  UPPER / FREQ_RATIO -1
-Additionally margin must be added for accuracy of both clocks.</description>
-                  <bitRange>[7:0]</bitRange>
-                  <access>read-write</access>
-                </field>
-              </fields>
-            </register>
-          </cluster>
-        </cluster>
         <register>
           <dim>4</dim>
           <dimIncrement>4</dimIncrement>
@@ -15777,22 +14983,188 @@ Additionally margin must be added for accuracy of both clocks.</description>
             </field>
           </fields>
         </register>
+      </registers>
+    </peripheral>
+    <peripheral>
+      <name>CRYPTOLITE</name>
+      <description>N/A</description>
+      <baseAddress>0x40230000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>65536</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
         <register>
-          <dim>48</dim>
-          <dimIncrement>4</dimIncrement>
-          <name>BREG_SET3[%s]</name>
-          <description>Backup register region 3</description>
-          <addressOffset>0x1080</addressOffset>
+          <name>CTL</name>
+          <description>Control</description>
+          <addressOffset>0x0</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <resetMask>0xF00</resetMask>
+          <fields>
+            <field>
+              <name>P</name>
+              <description>User/privileged access control:
+'0': user mode.
+'1': privileged mode.
+
+This field is set with the user/privileged access control of the transaction that writes any (including possible memory holes in the IP aperture) of the CRYPTO component registers; i.e. the access control is inherited from the write transaction and not specified by the transaction write data.
+
+All CRYPTO component master transactions use the P field for the user/privileged access control ('hprot[1]').</description>
+              <bitRange>[0:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>NS</name>
+              <description>Secure/on-secure access control:
+'0': secure.
+'1': non-secure.
+
+This field is set with the secure/non-secure access control of the transaction that writes  any (including possible memory holes in the IP aperture) of the CRYPTO component registers; i.e. the access control is inherited from the write transaction and not specified by the transaction write data.
+
+All CRYPTO component master transactions use the NS field for the secure/non-secure access control ('hprot[4]').</description>
+              <bitRange>[1:1]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>PC</name>
+              <description>Protection context.
+
+This field is set with the protection context of the transaction that writes any (including possible memory holes in the IP aperture) of the CRYPTO component registers; i.e. the context is inherited from the write transaction and not specified by the transaction write data.
+
+All CRYPTO component master transactions use the PC field for the protection context.</description>
+              <bitRange>[7:4]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>MS</name>
+              <description>Master identifier of the cryptography IP. This is a design time configurable parameter.</description>
+              <bitRange>[11:8]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>STATUS</name>
+          <description>Status</description>
+          <addressOffset>0x4</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <resetMask>0x1</resetMask>
+          <fields>
+            <field>
+              <name>BUSY</name>
+              <description>Busy indication:
+'0': IP not busy.
+'1': IP busy (AES, SHA or VU functionality (TRNG functionality NOT included)).</description>
+              <bitRange>[0:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>SHA_DESCR</name>
+          <description>SHA descriptor pointer</description>
+          <addressOffset>0xC0</addressOffset>
           <size>32</size>
           <access>read-write</access>
           <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
+          <resetMask>0x0</resetMask>
           <fields>
             <field>
-              <name>BREG</name>
-              <description>Backup memory that contains application-specific data.  Memory is retained on vbackup supply.</description>
-              <bitRange>[31:0]</bitRange>
+              <name>PTR</name>
+              <description>SHA-256 descriptor pointer. The descriptor points to a structure with 32-bit words:
+For message schedule function: 
+Word 0: Control word.
+- WORD0[28]: '0' for message schedule function.
+Word 1: Pointer to 512 b message chunk (input).
+Word 2: Pointer to 64 * 32 b word message schedule array (output).
+For process function:
+Word 0: Control word. 
+- WORD0[28]: '1' for process function.
+Word 1: Pointer to 8 * 32 b word current hash value (input) and new hash value (output).
+Word 2: Pointer to 64 * 32 b word message schedule array (input).
+
+A write to this register automatically starts a SHA-256 operation. The write ONLY takes effect when the IP is NOT busy (STATUS.BUSY is '0'). The write will be made pending/blocked as long as the IP is busy.
+
+Note: the pointers must be 32-bit word aligned.
+
+Note: HW updates this field when the SHA-256 engine is busy.</description>
+              <bitRange>[31:2]</bitRange>
               <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>INTR_ERROR</name>
+          <description>Error interrupt</description>
+          <addressOffset>0xF0</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <resetMask>0x1</resetMask>
+          <fields>
+            <field>
+              <name>BUS_ERROR</name>
+              <description>AHB-Lite master interface bus error or ECC error. Note that the IP terminates its AES, SHA or VU functionality when it detects an error.
+
+Note: The error is sticky. This allows SW to check for an error after a series of operations, rather than checking after every individual operation.</description>
+              <bitRange>[0:0]</bitRange>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>INTR_ERROR_SET</name>
+          <description>Error interrupt set</description>
+          <addressOffset>0xF4</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <resetMask>0x1</resetMask>
+          <fields>
+            <field>
+              <name>BUS_ERROR</name>
+              <description>Write this field with '1' to set corresponding INTR_ERROR field to '1' (a write of '0' has no effect).</description>
+              <bitRange>[0:0]</bitRange>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>INTR_ERROR_MASK</name>
+          <description>Error interrupt mask</description>
+          <addressOffset>0xF8</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <resetValue>0x0</resetValue>
+          <resetMask>0x1</resetMask>
+          <fields>
+            <field>
+              <name>BUS_ERROR</name>
+              <description>Mask for corresponding field in INTR_ERROR register.</description>
+              <bitRange>[0:0]</bitRange>
+              <access>read-write</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>INTR_ERROR_MASKED</name>
+          <description>Error interrupt masked</description>
+          <addressOffset>0xFC</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <resetValue>0x0</resetValue>
+          <resetMask>0x1</resetMask>
+          <fields>
+            <field>
+              <name>BUS_ERROR</name>
+              <description>Logical and of corresponding INTR_ERROR and INTR_ERROR_MASK fields.</description>
+              <bitRange>[0:0]</bitRange>
+              <access>read-only</access>
             </field>
           </fields>
         </register>
@@ -16043,88 +15415,6 @@ See PORT_SEL0 for connection details.</description>
                 <name>IO7_SEL</name>
                 <description>Selects connection for IO pin 7 route.</description>
                 <bitRange>[28:24]</bitRange>
-                <access>read-write</access>
-              </field>
-            </fields>
-          </register>
-        </cluster>
-        <cluster>
-          <dim>128</dim>
-          <dimIncrement>16</dimIncrement>
-          <name>SECURE_PRT[%s]</name>
-          <description>HSIOM secure attribute port registers</description>
-          <addressOffset>0x00001000</addressOffset>
-          <register>
-            <name>NONSECURE_MASK</name>
-            <description>Non-Secure Mask</description>
-            <addressOffset>0x0</addressOffset>
-            <size>32</size>
-            <access>read-write</access>
-            <resetValue>0xFF</resetValue>
-            <resetMask>0xFF</resetMask>
-            <fields>
-              <field>
-                <name>NONSECURE0</name>
-                <description>Non-secure attribute for IO0. 
-0 - Allows Secure access only.
-1 - Allows Non-secure access only.</description>
-                <bitRange>[0:0]</bitRange>
-                <access>read-write</access>
-              </field>
-              <field>
-                <name>NONSECURE1</name>
-                <description>Non-secure attribute for IO1. 
-0 - Allows Secure access only.
-1 - Allows Non-secure access only.</description>
-                <bitRange>[1:1]</bitRange>
-                <access>read-write</access>
-              </field>
-              <field>
-                <name>NONSECURE2</name>
-                <description>Non-secure attribute for IO2. 
-0 - Allows Secure access only.
-1 - Allows Non-secure access only.</description>
-                <bitRange>[2:2]</bitRange>
-                <access>read-write</access>
-              </field>
-              <field>
-                <name>NONSECURE3</name>
-                <description>Non-secure attribute for IO3. 
-0 - Allows Secure access only.
-1 - Allows Non-secure access only.</description>
-                <bitRange>[3:3]</bitRange>
-                <access>read-write</access>
-              </field>
-              <field>
-                <name>NONSECURE4</name>
-                <description>Non-secure attribute for IO4. 
-0 - Allows Secure access only.
-1 - Allows Non-secure access only.</description>
-                <bitRange>[4:4]</bitRange>
-                <access>read-write</access>
-              </field>
-              <field>
-                <name>NONSECURE5</name>
-                <description>Non-secure attribute for IO5. 
-0 - Allows Secure access only.
-1 - Allows Non-secure access only.</description>
-                <bitRange>[5:5]</bitRange>
-                <access>read-write</access>
-              </field>
-              <field>
-                <name>NONSECURE6</name>
-                <description>Non-secure attribute for IO6. 
-0 - Allows Secure access only.
-1 - Allows Non-secure access only.</description>
-                <bitRange>[6:6]</bitRange>
-                <access>read-write</access>
-              </field>
-              <field>
-                <name>NONSECURE7</name>
-                <description>Non-secure attribute for IO7. 
-0 - Allows Secure access only.
-1 - Allows Non-secure access only.</description>
-                <bitRange>[7:7]</bitRange>
                 <access>read-write</access>
               </field>
             </fields>
@@ -17952,82 +17242,6 @@ Note: The upper value on Voh is limited to Vddio - 400mV</description>
           </register>
         </cluster>
         <register>
-          <name>SEC_INTR_CAUSE0</name>
-          <description>Secure Interrupt port cause register 0</description>
-          <addressOffset>0x7000</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>PORT_INT</name>
-              <description>Each IO port has an associated bit field in this register. The bit field reflects the IO port's interrupt line (bit field i reflects 'gpio_interrupts[i]' for IO port i). The register is used when the system uses a combined interrupt line 'gpio_interrupt'. The software ISR reads the register to determine which IO port(s) is responsible for the combined interrupt line. Once, the IO port(s) is determined, the IO port's GPIO_PRT_INTR register is read to determine the IO pin(s) in the IO port that caused the interrupt.
-'0': Port has no pending interrupt
-'1': Port has pending interrupt</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>SEC_INTR_CAUSE1</name>
-          <description>Secure Interrupt port cause register 1</description>
-          <addressOffset>0x7004</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>PORT_INT</name>
-              <description>Each IO port has an associated bit field in this register. The bit field reflects the IO port's interrupt line (bit field i reflects 'gpio_interrupts[i]' for IO port i). The register is used when the system uses a combined interrupt line 'gpio_interrupt'. The software ISR reads the register to determine which IO port(s) is responsible for the combined interrupt line. Once, the IO port(s) is determined, the IO port's GPIO_PORT_INTR register is read to determine the IO pin(s) in the IO port that caused the interrupt.
-'0': Port has no pending interrupt
-'1': Port has pending interrupt</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>SEC_INTR_CAUSE2</name>
-          <description>Secure Interrupt port cause register 2</description>
-          <addressOffset>0x7008</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>PORT_INT</name>
-              <description>Each IO port has an associated bit field in this register. The bit field reflects the IO port's interrupt line (bit field i reflects 'gpio_interrupts[i]' for IO port i). The register is used when the system uses a combined interrupt line 'gpio_interrupt'. The software ISR reads the register to determine which IO port(s) is responsible for the combined interrupt line. Once, the IO port(s) is determined, the IO port's GPIO_PORT_INTR register is read to determine the IO pin(s) in the IO port that caused the interrupt.
-'0': Port has no pending interrupt
-'1': Port has pending interrupt</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>SEC_INTR_CAUSE3</name>
-          <description>Secure Interrupt port cause register 3</description>
-          <addressOffset>0x700C</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>PORT_INT</name>
-              <description>Each IO port has an associated bit field in this register. The bit field reflects the IO port's interrupt line (bit field i reflects 'gpio_interrupts[i]' for IO port i). The register is used when the system uses a combined interrupt line 'gpio_interrupt'. The software ISR reads the register to determine which IO port(s) is responsible for the combined interrupt line. Once, the IO port(s) is determined, the IO port's GPIO_PORT_INTR register is read to determine the IO pin(s) in the IO port that caused the interrupt.
-'0': Port has no pending interrupt
-'1': Port has pending interrupt</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
           <name>INTR_CAUSE0</name>
           <description>Interrupt port cause register 0</description>
           <addressOffset>0x8000</addressOffset>
@@ -18262,76 +17476,6 @@ For example 'vddusb, vddio_0, vddio_a, vbackup, vddio_r, vddio_1' are present th
             <field>
               <name>VDDD_ACTIVE</name>
               <description>Same as VDDIO_ACTIVE for the digital supply VDDD.</description>
-              <bitRange>[31:31]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>VDD_PWRSW_STATUS</name>
-          <description>Power switch status</description>
-          <addressOffset>0x8024</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x1</resetMask>
-          <fields>
-            <field>
-              <name>PWROK</name>
-              <description>Power Switch status.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>VDD_PWRSW_CTL</name>
-          <description>Power Switch control</description>
-          <addressOffset>0x8100</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x80000000</resetValue>
-          <resetMask>0x80FF0333</resetMask>
-          <fields>
-            <field>
-              <name>ILIM</name>
-              <description>Inrush current limit level select.</description>
-              <bitRange>[1:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>THRES_SEL</name>
-              <description>Threshold select.</description>
-              <bitRange>[5:4]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>SW_ON</name>
-              <description>Switch enable signal.</description>
-              <bitRange>[8:8]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>PWROK_BYPASS</name>
-              <description>Switch is turn on and dc current limiting is disabled when PWROK_BYPASS and SW_ON are set to '1'</description>
-              <bitRange>[9:9]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>MODEHV_LOCK</name>
-              <description>This byte must be set to 0x3A for MODEHV to be taken affect by HW. When this byte is not equal to 0x3A, 
-writes to MODEHV are ignored and HW ignores the value of MODEHV.
-Do not change MODEHV in the same write cycle as setting/clearing the MODEHV_LOCK code; Do these in separate write cycles.
- Only write to this field when the VDDIO is at the correct voltage. Wrong setting of MODEHV can cause damage to the part.</description>
-              <bitRange>[23:16]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>MODEHV</name>
-              <description>Controls the bias circuit of 3.3V GPIOs
-1 = 3.3V supply mode
-0 = 1.8V supply mode
-This bit can only be set/clear if MODEHV_LOCK==0x3A. SW/FW must make sure that VDDIO is at 1.8V before clearing the bit to 0. Failure to do so can cause damage to the part.</description>
               <bitRange>[31:31]</bitRange>
               <access>read-write</access>
             </field>
@@ -19875,7 +19019,7 @@ Note: The ongoing message transfer is aborted (INTR.RX_RESPONSE_DONE is NOT acti
               <addressOffset>0x0</addressOffset>
               <size>32</size>
               <access>read-only</access>
-              <resetValue>0x0</resetValue>
+              <resetValue>0x32380609</resetValue>
               <resetMask>0xFFFFFFFF</resetMask>
               <fields>
                 <field>
@@ -21530,7 +20674,8 @@ FIFO 0 can be operated in blocking or in overwrite mode (see Section 3.4.2).
                 <field>
                   <name>F0FL</name>
                   <description>Rx FIFO 0 Fill Level
-Number of elements stored in Rx FIFO 0, range 0 to 64.</description>
+Number of elements stored in Rx FIFO 0, range 0 to 64.
+When the software reading the value immediately after writing to RXF0A.F0AI, this value should be read twice to ensure that the update is refracted.</description>
                   <bitRange>[6:0]</bitRange>
                   <access>read-only</access>
                 </field>
@@ -21538,7 +20683,8 @@ Number of elements stored in Rx FIFO 0, range 0 to 64.</description>
                   <name>F0GI</name>
                   <description>Rx FIFO 0 Get Index
 Rx FIFO 0 read index pointer, range 0 to 63.
-This field is updated by the software writing to RxF0A.F0AI</description>
+This field is updated by the software writing to RXF0A.F0AI.
+When the software reading the value immediately after writing to RXF0A.F0AI, this value should be read twice to ensure that the update is refracted.</description>
                   <bitRange>[13:8]</bitRange>
                   <access>read-only</access>
                 </field>
@@ -21665,7 +20811,8 @@ FIFO 1 can be operated in blocking or in overwrite mode (see Section 3.4.2).
                 <field>
                   <name>F1FL</name>
                   <description>Rx FIFO 1 Fill Level
-Number of elements stored in Rx FIFO 1, range 0 to 64.</description>
+Number of elements stored in Rx FIFO 1, range 0 to 64.
+When the software reading the value immediately after writing to RXF1A.F1AI, this value should be read twice to ensure that the update is refracted.</description>
                   <bitRange>[6:0]</bitRange>
                   <access>read-only</access>
                 </field>
@@ -21673,7 +20820,8 @@ Number of elements stored in Rx FIFO 1, range 0 to 64.</description>
                   <name>F1GI</name>
                   <description>Rx FIFO 1 Get Index
 Rx FIFO 1 read index pointer, range 0 to 63.
-This field is updated by the software writing to RxF1A.FAI</description>
+This field is updated by the software writing to RXF1A.F1AI.
+When the software reading the value immediately after writing to RXF1A.F1AI, this value should be read twice to ensure that the update is refracted.</description>
                   <bitRange>[13:8]</bitRange>
                   <access>read-only</access>
                 </field>
@@ -22114,14 +21262,17 @@ The Tx Event FIFO elements are indexed from 0 to EFS-1</description>
                 <field>
                   <name>EFFL</name>
                   <description>Event FIFO Fill Level
-Number of elements stored in Tx Event FIFO, range 0 to 32.</description>
+Number of elements stored in Tx Event FIFO, range 0 to 32.
+When the software reading the value immediately after writing to TXEFA.EFAI, this value should be read twice to ensure that the update is refracted.</description>
                   <bitRange>[5:0]</bitRange>
                   <access>read-only</access>
                 </field>
                 <field>
                   <name>EFGI</name>
                   <description>Event FIFO Get Index
-Tx Event FIFO read index pointer, range 0 to 31.</description>
+Tx Event FIFO read index pointer, range 0 to 31.
+This field is updated by the software writing to TXEFA.EFAI.
+When the software reading the value immediately after writing to TXEFA.EFAI, this value should be read twice to ensure that the update is refracted.</description>
                   <bitRange>[12:8]</bitRange>
                   <access>read-only</access>
                 </field>
@@ -23036,7 +22187,7 @@ Trigger out of order.
               <addressOffset>0x12C</addressOffset>
               <size>32</size>
               <access>read-only</access>
-              <resetValue>0x0</resetValue>
+              <resetValue>0x80</resetValue>
               <resetMask>0xFFC0FFFF</resetMask>
               <fields>
                 <field>
@@ -23520,59 +22671,6 @@ When enabled divide the Host clock (HCLK) by PRESCALE+1 to create Time Stamp clo
 When enabled this counter will count Time Stamp clock ticks from the pre-scaler.
 When written this counter and the pre-scaler will reset to 0 (write data is ignored).</description>
               <bitRange>[15:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>ECC_CTL</name>
-          <description>ECC control</description>
-          <addressOffset>0x1080</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x10000</resetMask>
-          <fields>
-            <field>
-              <name>ECC_EN</name>
-              <description>Enable ECC for CANFD SRAM
-When disabled also all error injection functionality is disabled.</description>
-              <bitRange>[16:16]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>ECC_ERR_INJ</name>
-          <description>ECC error injection</description>
-          <addressOffset>0x1084</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0xFFFC</resetValue>
-          <resetMask>0x7F10FFFC</resetMask>
-          <fields>
-            <field>
-              <name>ERR_ADDR</name>
-              <description>Specifies the address of the word where an error will be injected on write or an non-correctable error will be suppressed.
-When the ERR_EN bit is set an error parity (ERR_PAR) is injected when any write, from bus or a CAN channel, is done to this address.
-When the ERR_EN bit is set and the access address matches ERR_ADDR then a non-correctable ECC error or an Address error will NOT result in a bus error or CAN channel shutdown.
-Note that error reporting to the fault structure cannot be suppressed.</description>
-              <bitRange>[15:2]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>ERR_EN</name>
-              <description>Enable error injection (ECC_EN must be 1).
-When this bit is set the error parity (ERR_PAR) will be used when an AHB write is done to the ERR_ADDR address.
-When the error word is read a single or double error will be reported to the fault structure just like for a real ECC error (even if this bit is no longer set).
-When this bit is set (and ECC_EN=1) a non-correctable error (ECC or address error) for the ERR_ADDR will not be reported back to the CAN channel or  AHB bus.</description>
-              <bitRange>[20:20]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>ERR_PAR</name>
-              <description>ECC Parity bits to use for ECC error injection at address ERR_ADDR.</description>
-              <bitRange>[30:24]</bitRange>
               <access>read-write</access>
             </field>
           </fields>
@@ -25415,12 +24513,12 @@ To generate a duty cycle of 0 percent, the counter CC0 register should be set to
           <size>32</size>
           <access>read-only</access>
           <resetValue>0x0</resetValue>
-          <resetMask>0xFFFF</resetMask>
+          <resetMask>0xFFFFFFFF</resetMask>
           <fields>
             <field>
               <name>FIFO_DATA</name>
-              <description>Data from the FIFO</description>
-              <bitRange>[15:0]</bitRange>
+              <description>Data from the FIFO which contains two pcm data samples of 16 bits with the first sample in the lower half and the next sample in the upper half</description>
+              <bitRange>[31:0]</bitRange>
               <access>read-only</access>
             </field>
           </fields>
@@ -25473,7 +24571,7 @@ To generate a duty cycle of 0 percent, the counter CC0 register should be set to
           <fields>
             <field>
               <name>ADC_DCIN_MUX</name>
-              <description>ADC DC input selection (32-to-1 MUX):
+              <description>ADC DC input selection (32-to-1 MUX) but only the lower 8 GPIO's are enabled so the selection is limited to GPIO 0 through 7:
  01111 ADC reference ground (ADC_REFGND)
  01110 ADC BG REF (ADC_BGREF)
  01101 Core supply (VDDC)
@@ -25955,19 +25053,19 @@ To generate a duty cycle of 0 percent, the counter CC0 register should be set to
           <fields>
             <field>
               <name>EN</name>
-              <description>Enable for the aux_adc block</description>
+              <description>When 1 enable the aux_adc block</description>
               <bitRange>[0:0]</bitRange>
               <access>read-write</access>
             </field>
             <field>
               <name>DF3_BYPASS</name>
-              <description>Bypass df3 FIR completely</description>
+              <description>When 1 bypass df3 FIR completely else FIR is enabled</description>
               <bitRange>[2:2]</bitRange>
               <access>read-write</access>
             </field>
             <field>
               <name>BIQUAD_BYPASS</name>
-              <description>Bypass biquad completely</description>
+              <description>When 1 bypass biquad completely else biquad is enabled</description>
               <bitRange>[3:3]</bitRange>
               <access>read-write</access>
             </field>
@@ -29637,45 +28735,6 @@ A stop bit error is detected after a data frame is received, and the UART_RX_CTL
           </fields>
         </register>
         <register>
-          <name>TEST</name>
-          <description>Test</description>
-          <addressOffset>0x100</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x1</resetValue>
-          <resetMask>0x3</resetMask>
-          <fields>
-            <field>
-              <name>MARG_READ</name>
-              <description>Margin Read</description>
-              <bitRange>[1:0]</bitRange>
-              <access>read-write</access>
-              <enumeratedValues>
-                <enumeratedValue>
-                  <name>LOWR</name>
-                  <description>Low Resistance: -50 percent from nominal</description>
-                  <value>0</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>DEFAULTR</name>
-                  <description>Nominal resistance (Default read condition)</description>
-                  <value>1</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>HIGHR</name>
-                  <description>High Resistance: +50 percent from nominal</description>
-                  <value>2</value>
-                </enumeratedValue>
-                <enumeratedValue>
-                  <name>HIGHERR</name>
-                  <description>Higher Resistance: +100 percent from nominal</description>
-                  <value>3</value>
-                </enumeratedValue>
-              </enumeratedValues>
-            </field>
-          </fields>
-        </register>
-        <register>
           <name>CMD</name>
           <description>Command</description>
           <addressOffset>0x110</addressOffset>
@@ -29718,25 +28777,6 @@ Programming a memory bit to '1' requires blowing a fuse and requires an eFUSE ma
 
 Note: during a program operation, a read operation can not be performed. An AHB-Lite read transfer to the eFUSE memory during a program operation results in an AHB-Lite bus error.</description>
               <bitRange>[31:31]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>CONFIG</name>
-          <description>Config</description>
-          <addressOffset>0x114</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x1</resetMask>
-          <fields>
-            <field>
-              <name>PGM_32B_EN</name>
-              <description>Enable 32Bit programming State Machine
-'0': Disable - Disable writes to EFUSE data area from doing automatic programming. Only allow 1 bit programming through CMD reg
-'1': Enabled - allows writes to EFUSE Data area to program all bits within the 32 bit word that are set to 1.</description>
-              <bitRange>[0:0]</bitRange>
               <access>read-write</access>
             </field>
           </fields>
@@ -31064,193 +30104,6 @@ When BUSY is '0', the mode of operation (ARB_MODE or MMIO_MODE) can be safely ch
           </fields>
         </register>
         <register>
-          <name>INT_CLOCK_DELAY_TAP_SEL0</name>
-          <description>Internal Clocking Delay Tap Select Register 0</description>
-          <addressOffset>0x10</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>DATA_BIT0</name>
-              <description>Delay line tap selection for the IP's spi_data[0] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL).
-A value of 0 selects the receive capture clock source specified by CTL.CLOCK_IF_RX_SEL. All other values select a tap of the clock delay line. When the data learning pattern is enabled this value is set by HW.</description>
-              <bitRange>[7:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DATA_BIT1</name>
-              <description>Delay line tap selection for the IP's spi_data[1] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL).
-See DATA_BIT0.</description>
-              <bitRange>[15:8]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DATA_BIT2</name>
-              <description>Delay line tap selection for the IP's spi_data[2] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL).
-See DATA_BIT0.</description>
-              <bitRange>[23:16]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DATA_BIT3</name>
-              <description>Delay line tap selection for the IP's spi_data[3] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL).
-See DATA_BIT0.</description>
-              <bitRange>[31:24]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>INT_CLOCK_DELAY_TAP_SEL1</name>
-          <description>Internal Clocking Delay Tap Select Register 1</description>
-          <addressOffset>0x14</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>DATA_BIT4</name>
-              <description>Delay line tap selection for the IP's spi_data[4] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL).
-See DATA_BIT0.</description>
-              <bitRange>[7:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DATA_BIT5</name>
-              <description>Delay line tap selection for the IP's spi_data[5] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL).
-See DATA_BIT0.</description>
-              <bitRange>[15:8]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DATA_BIT6</name>
-              <description>Delay line tap selection for the IP's spi_data[6] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL).
-See DATA_BIT0.</description>
-              <bitRange>[23:16]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DATA_BIT7</name>
-              <description>Delay line tap selection for the IP's spi_data[7] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL).
-See DATA_BIT0.</description>
-              <bitRange>[31:24]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>DL_CTL</name>
-          <description>Data Learning Control Register</description>
-          <addressOffset>0x18</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x3070000</resetValue>
-          <resetMask>0xF0FFFFF</resetMask>
-          <fields>
-            <field>
-              <name>DLP</name>
-              <description>Data Learning Pattern</description>
-              <bitRange>[15:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DLP_SIZE</name>
-              <description>Size of data learning pattern as such:
-'0': 1 bit
-...
-'15': 16 bit.
-
-If CTL.INT_CLOCK_DL_ENABLED = '1 ' the DLP_SIZE+1 LSBs of the expected data learning patter (DLP[DLP_SIZE:0]) are compared with the data learning pattern generated by the memory device and captured during the last latency / dummy cycles of a memory read transfer.
-
-Note: For DDR read data transfers the size of the DLP must be an even number, i.e. DLP_SIZE must be an odd number.</description>
-              <bitRange>[19:16]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>DL_WARNING_LEVEL</name>
-              <description>Determines when the DL_WARNING interrupt cause field is set:
-- DL_WARNING is set when the number of delay line taps resulting to a correctly captured DLP is less than DL_WARNING_LEVEL for at least one input data line
-
-Note: To provide a margin in both directions relatively to the selected middle tap at least 3 delay line taps have to result into a correctly captured DLP, i.e. the DL_WARNING_LEVEL has to be set to greater or equal 3.</description>
-              <bitRange>[27:24]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>DL_STATUS0</name>
-          <description>Data Learning Status Register 0</description>
-          <addressOffset>0x20</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>DATA_BIT0</name>
-              <description>Number of delay line taps for the IP's spi_data[0] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL) with correctly captured DLP in last read transaction. Legal range: [0, 255].</description>
-              <bitRange>[7:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>DATA_BIT1</name>
-              <description>Number of delay line taps for the IP's spi_data[1] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL) with correctly captured DLP in last read transaction. Legal range: [0, 255].</description>
-              <bitRange>[15:8]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>DATA_BIT2</name>
-              <description>Number of delay line taps for the IP's spi_data[2] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL) with correctly captured DLP in last read transaction. Legal range: [0, 255].</description>
-              <bitRange>[23:16]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>DATA_BIT3</name>
-              <description>Number of delay line taps for the IP's spi_data[3] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL) with correctly captured DLP in last read transaction. Legal range: [0, 255].</description>
-              <bitRange>[31:24]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>DL_STATUS1</name>
-          <description>Data Learning Status Register 1</description>
-          <addressOffset>0x24</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFFF</resetMask>
-          <fields>
-            <field>
-              <name>DATA_BIT4</name>
-              <description>Number of delay line taps for the IP's spi_data[4] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL) with correctly captured DLP in last read transaction. Legal range: [0, 255].</description>
-              <bitRange>[7:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>DATA_BIT5</name>
-              <description>Number of delay line taps for the IP's spi_data[5] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL) with correctly captured DLP in last read transaction. Legal range: [0, 255].</description>
-              <bitRange>[15:8]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>DATA_BIT6</name>
-              <description>Number of delay line taps for the IP's spi_data[6] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL) with correctly captured DLP in last read transaction. Legal range: [0, 255].</description>
-              <bitRange>[23:16]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>DATA_BIT7</name>
-              <description>Number of delay line taps for the IP's spi_data[7] (note the mapping of spi_data to IO in DEVICE.CTL.DATA_SEL) with correctly captured DLP in last read transaction. Legal range: [0, 255].</description>
-              <bitRange>[31:24]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
-        <register>
           <name>TX_CMD_FIFO_STATUS</name>
           <description>Transmitter command FIFO status</description>
           <addressOffset>0x44</addressOffset>
@@ -31595,121 +30448,6 @@ Note: To provide a margin in both directions relatively to the selected middle t
             </field>
           </fields>
         </register>
-        <register>
-          <name>SLOW_CA_CTL</name>
-          <description>Slow cache control</description>
-          <addressOffset>0x100</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0xC0000000</resetValue>
-          <resetMask>0xC3030000</resetMask>
-          <fields>
-            <field>
-              <name>WAY</name>
-              <description>Specifies the cache way for which cache information is provided in SLOW_CA_STATUS0/1/2.</description>
-              <bitRange>[17:16]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>SET_ADDR</name>
-              <description>Specifies the cache set for which cache information is provided in SLOW_CA_STATUS0/1/2.</description>
-              <bitRange>[25:24]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>PREF_EN</name>
-              <description>Prefetch enable:
-'0': Disabled.
-'1': Enabled.
-
-Prefetching requires the cache to be enabled; i.e. ENABLED is '1'.</description>
-              <bitRange>[30:30]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>ENABLED</name>
-              <description>Cache enable:
-'0': Disabled.
-'1': Enabled.</description>
-              <bitRange>[31:31]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>SLOW_CA_CMD</name>
-          <description>Slow cache command</description>
-          <addressOffset>0x108</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x1</resetMask>
-          <fields>
-            <field>
-              <name>INV</name>
-              <description>Cache and prefetch buffer invalidation. 
-SW writes a '1' to clear the cache and prefetch buffer. The cache's LRU structure is also reset to its default state.
-Note, 
-A write access will invalidate the prefetch buffer automatically in hardware.
-A write access should invalidate both fast and slow caches, by firmware.
-Note, firmware should invalidate the cache and prefetch buffer only when STATUS.BUSY is '0'.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>FAST_CA_CTL</name>
-          <description>Fast cache control</description>
-          <addressOffset>0x180</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0xC0000000</resetValue>
-          <resetMask>0xC3030000</resetMask>
-          <fields>
-            <field>
-              <name>WAY</name>
-              <description>See SLOW_CA_CTL.WAY.</description>
-              <bitRange>[17:16]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>SET_ADDR</name>
-              <description>See SLOW_CA_CTL.SET_ADDR.</description>
-              <bitRange>[25:24]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>PREF_EN</name>
-              <description>See SLOW_CA_CTL.PREF_EN.</description>
-              <bitRange>[30:30]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>ENABLED</name>
-              <description>See SLOW_CA_CTL.ENABLED.</description>
-              <bitRange>[31:31]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>FAST_CA_CMD</name>
-          <description>Fast cache command</description>
-          <addressOffset>0x188</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x1</resetMask>
-          <fields>
-            <field>
-              <name>INV</name>
-              <description>See SLOW_CA_CMD.INV.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
         <cluster>
           <name>SMIF_CRYPTO</name>
           <description>Cryptography registers (one set for each key)</description>
@@ -32011,88 +30749,6 @@ The encryption decision and the associated key are locked in at the beginning of
             </fields>
           </register>
         </cluster>
-        <register>
-          <name>CRC_CMD</name>
-          <description>CRC Command</description>
-          <addressOffset>0x600</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x3</resetMask>
-          <fields>
-            <field>
-              <name>START</name>
-              <description>SW sets this field to '1' to start a CRC calculation over the 64 CRC input bits provided in CRC_INPUT0 and CRC_INPUT1, using 0xFF as CRC feedback. HW sets this field to '0' to indicate that the operation has completed. Once completed, the result of the operation can be read from CRC_OUTPUT.
-
-A CRC calculation over 64 bits is done by writing the 64 input bits to CRC_INPUT0/1, performing a START command and reading the CRC result from CRC_OUTPUT.
-
-This register is only applicable for MMIO accesses.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>CONTINUE</name>
-              <description>SW sets this field to '1' to continue a CRC calculation over the 64 CRC input bits provided in CRC_INPUT0 and CRC_INPUT1, using the current CRC output in CRC_OUTPUT as CRC feedback. HW sets this field to '0' to indicate that the operation has completed. Once completed, the result of the operation can be read from CRC_OUTPUT.
-
-This command is used to perform a CRC calculation over more than 64 intput bits. For example a CRC calculation over 128 bits is done by writing the first 64 input bits to CRC_INPUT0/1, performing a START command, writing the second 64 input bits to CRC_INPUT0/1, performing a CONTINUE command and reading the CRC result from CRC_OUTPUT. For a CRC calculation of even more input bits the CONTINUE command has to be used multiple times.
-
-This register is only applicable for MMIO accesses.</description>
-              <bitRange>[1:1]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>CRC_INPUT0</name>
-          <description>CRC input 0</description>
-          <addressOffset>0x620</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x0</resetMask>
-          <fields>
-            <field>
-              <name>INPUT</name>
-              <description>Lower 32 input bits to the CRC engine.</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>CRC_INPUT1</name>
-          <description>CRC input 1</description>
-          <addressOffset>0x624</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0x0</resetMask>
-          <fields>
-            <field>
-              <name>INPUT</name>
-              <description>Higher 32 input bits to the CRC engine.</description>
-              <bitRange>[31:0]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <name>CRC_OUTPUT</name>
-          <description>CRC output</description>
-          <addressOffset>0x640</addressOffset>
-          <size>32</size>
-          <access>read-only</access>
-          <resetValue>0xFF</resetValue>
-          <resetMask>0xFF</resetMask>
-          <fields>
-            <field>
-              <name>CRC_OUTPUT</name>
-              <description>CRC engine output.</description>
-              <bitRange>[7:0]</bitRange>
-              <access>read-only</access>
-            </field>
-          </fields>
-        </register>
         <register>
           <name>INTR</name>
           <description>Interrupt register</description>

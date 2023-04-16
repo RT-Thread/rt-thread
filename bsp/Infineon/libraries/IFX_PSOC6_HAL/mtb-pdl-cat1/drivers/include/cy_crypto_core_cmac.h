@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_cmac.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constants and function prototypes
@@ -39,7 +39,7 @@
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_CMAC_C)
 
 #include "cy_crypto_core_cmac_v1.h"
 #include "cy_crypto_core_cmac_v2.h"
@@ -92,6 +92,9 @@ typedef cy_en_crypto_status_t (*cy_crypto_cmac_func_t)(CRYPTO_Type *base,
 * \return
 * \ref cy_en_crypto_status_t
 *
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCoreCmacUse
+*
 *******************************************************************************/
 __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Cmac(CRYPTO_Type *base,
                                           uint8_t  const *message,
@@ -101,15 +104,19 @@ __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Cmac(CRYPTO_Type *base,
                                           uint8_t *cmac,
                                           cy_stc_crypto_aes_state_t *aesState)
 {
-    cy_en_crypto_status_t tmpResult;
+    cy_en_crypto_status_t tmpResult = CY_CRYPTO_NOT_SUPPORTED;
 
     if (CY_CRYPTO_V1)
     {
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         tmpResult = Cy_Crypto_Core_V1_Cmac(base, message, messageSize, key, keyLength, cmac, aesState);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         tmpResult = Cy_Crypto_Core_V2_Cmac(base, message, messageSize, key, keyLength, cmac, aesState);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
     }
 
     return tmpResult;
@@ -117,7 +124,7 @@ __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Cmac(CRYPTO_Type *base,
 
 /** \} group_crypto_lld_mac_functions */
 
-#endif /* (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_CMAC_C) */
 
 #if defined(__cplusplus)
 }

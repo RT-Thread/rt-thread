@@ -1,7 +1,7 @@
-# CAT1 (PSoC™ 6) Hardware Abstraction Layer (HAL) Release Notes
-The CAT1 Hardware Abstraction Layer (HAL) provides an implementation of the Hardware Abstraction Layer for the PSoC™ 6 family of chips. This API provides convenience methods for initializing and manipulating different hardware peripherals. Depending on the specific chip being used, not all features may be supported.
+# CAT1 Hardware Abstraction Layer (HAL) Release Notes
+The CAT1 Hardware Abstraction Layer (HAL) provides an implementation of the Hardware Abstraction Layer for the PSoC™ 6 and XMC7000/T2G-B-H families of chips. This API provides convenience methods for initializing and manipulating different hardware peripherals. Depending on the specific chip being used, not all features may be supported.
 
-This library is only supported on the Cortex-M4. It is not compatible with the Cortex-M0+. Any peripherals used by the Cortex-M0+ must be configured using the PDL and reserved on the Cortex-M4 by calling cyhal_hwmgr_reserve(). This ensures the HAL is aware the resource is in use and does not overuse it.
+On devices which contain multiple cores, this library is supported on all cores. If HAL is used on multiple cores at the same time, the application is responsible for ensuring that each peripheral is only used on one core at a given time. This can be achieved by calling cyhal_hwmgr_reserve() on the core(s) where a particular resource is not expected to be used. This ensures the HAL is aware the resource is in use and does not use it in a conflicting manner.
 
 ### What's Included?
 This release of the CAT1 HAL includes support for the following drivers:
@@ -15,8 +15,11 @@ This release of the CAT1 HAL includes support for the following drivers:
 * Flash
 * GPIO
 * Hardware Manager
+* KeyScan
 * I2C
 * I2S
+* Interconnect
+* IPC
 * LowPower Timer (LPTimer)
 * OpAmp
 * PDM/PCM
@@ -37,6 +40,17 @@ This release of the CAT1 HAL includes support for the following drivers:
 * WDT
 
 ### What Changed?
+#### v2.3.0
+* Add new SPI APIs
+* Fix incorrect base address calculation on some devices in SCB-based drivers (UART, SPI, I2C, EZI2C).
+* Extend documentation on pins and triggers to cover additional devices.
+#### v2.2.0
+* Production support for CAT1C devices
+* Improve interrupt handling when running on on CM0+ core
+* Add new I2C slave APIs
+* Add driver for inter-processor communication (IPC)
+* Add new function `cyhal_system_reset_device`
+NOTE: This version requires udb-sdio-whd 1.2.0 or later
 #### v2.1.0
 * Pre-production support for CAT1B devices
 * Fixed a few bugs in various drivers
@@ -160,10 +174,10 @@ This version of the CAT1 Hardware Abstraction Layer was validated for compatibil
 
 | Software and Tools                        | Version |
 | :---                                      | :----:  |
-| ModusToolbox™ Software Environment         | 2.4.0   |
+| ModusToolbox™ Software Environment        | 3.0.0   |
 | GCC Compiler                              | 10.3.1  |
-| IAR Compiler                              | 8.4     |
-| ARM Compiler                              | 6.11    |
+| IAR Compiler                              | 9.30.1  |
+| ARM Compiler                              | 6.16    |
 
 Minimum required ModusToolbox™ Software Environment: v2.0
 
@@ -175,4 +189,4 @@ Use the following links for more information, as needed:
 * [ModusToolbox™](https://www.cypress.com/products/modustoolbox-software-environment)
 
 ---
-© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2021.
+© Cypress Semiconductor Corporation (an Infineon company) or an affiliate of Cypress Semiconductor Corporation, 2019-2022.

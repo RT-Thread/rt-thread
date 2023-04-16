@@ -34,7 +34,7 @@
 #include "cyhal_syspm.h"
 #include "cyhal_clock.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 
 #if (CYHAL_DRIVER_AVAILABLE_USB_DEV)
 

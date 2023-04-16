@@ -111,7 +111,8 @@ Note: this field is not used for trigger 1-to-1 groups.</description>
               <name>ACTIVATE</name>
               <description>SW sets this field to '1' to activate (set to '1') a trigger as identified by TR_SEL, TR_EDGE and OUT_SEL. HW sets this field to '0' for edge sensitive triggers AFTER the selected trigger is activated for two clk_peri cycles.
 
-Note: when ACTIVATE is '1', SW should not modify the other register fields.</description>
+Note: when ACTIVATE is '1', SW should not modify the other register fields.
+SW MUST NOT set ACTIVATE bit to '1' while updating the other register bits simultaneously. At first the SW MUST update the other register bits as needed, and then set ACTIVATE to '1' with a new register write.</description>
               <bitRange>[31:31]</bitRange>
               <access>read-write</access>
             </field>
@@ -36619,7 +36620,7 @@ SDA_IN_FILT_TRIM[1] is used to enable I2CS_EC or SPIS_EC access to internal SRAM
 
 The open drain mode is supported for:
 - I2C mode, 'i2c_scl' and 'i2c_sda' IO cells.
-- UART mode, 'uart_tx' IO cell (SPI slave).
+- UART mode, 'uart_tx' IO cell.
 - SPI mode, 'spi_miso' IO cell.</description>
               <bitRange>[16:16]</bitRange>
               <access>read-write</access>
@@ -41927,7 +41928,9 @@ This field can also affect LPOSC functionality in Active Mode (see LPOSC CONFIG.
           </fields>
         </register>
         <register>
-          <name>CTBM_CLOCK_SEL</name>
+          <dim>2</dim>
+          <dimIncrement>4</dimIncrement>
+          <name>CTBM_CLOCK_SEL[%s]</name>
           <description>Clock select for CTBm</description>
           <addressOffset>0x20</addressOffset>
           <size>32</size>

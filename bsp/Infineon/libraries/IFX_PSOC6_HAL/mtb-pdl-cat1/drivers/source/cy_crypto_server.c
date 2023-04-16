@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_server.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code to the API for Crypto Server
@@ -58,28 +58,54 @@ extern "C" {
 
 typedef struct
 {
+#if defined(CY_CRYPTO_CFG_PRNG_C)
     cy_crypto_prng_init_func_t   prngInitFunc;
     cy_crypto_prng_func_t        prngFunc;
+#endif /* defined(CY_CRYPTO_CFG_PRNG_C) */
+#if defined(CY_CRYPTO_CFG_TRNG_C)
     cy_crypto_trng_func_t        trngFunc;
+#endif /* defined(CY_CRYPTO_CFG_TRNG_C) */
+#if defined(CY_CRYPTO_CFG_AES_C)
     cy_crypto_aes_init_func_t    aesInitFunc;
     cy_crypto_aes_ecb_func_t     aesEcbFunc;
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC)
     cy_crypto_aes_cbc_func_t     aesCbcFunc;
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC) */
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB)
     cy_crypto_aes_cfb_func_t     aesCfbFunc;
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB) */
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR)
     cy_crypto_aes_ctr_func_t     aesCtrFunc;
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR) */
+#if defined(CY_CRYPTO_CFG_CMAC_C)
     cy_crypto_cmac_func_t        cmacFunc;
+#endif /* defined(CY_CRYPTO_CFG_CMAC_C) */
+#endif /* defined(CY_CRYPTO_CFG_AES_C) */
+#if defined(CY_CRYPTO_CFG_SHA_C)
     cy_crypto_sha_func_t         shaFunc;
+#if defined(CY_CRYPTO_CFG_HMAC_C)
     cy_crypto_hmac_func_t        hmacFunc;
+#endif /* defined(CY_CRYPTO_CFG_HMAC_C) */
+#endif /* defined(CY_CRYPTO_CFG_SHA_C) */
     cy_crypto_memcpy_func_t      memCpyFunc;
     cy_crypto_memset_func_t      memSetFunc;
     cy_crypto_memcmp_func_t      memCmpFunc;
     cy_crypto_memxor_func_t      memXorFunc;
+#if defined(CY_CRYPTO_CFG_CRC_C)
     cy_crypto_crc_init_func_t    crcInitFunc;
     cy_crypto_crc_func_t         crcFunc;
+#endif /* defined(CY_CRYPTO_CFG_CRC_C) */
+#if defined(CY_CRYPTO_CFG_DES_C)
     cy_crypto_des_func_t         desFunc;
     cy_crypto_des_func_t         tdesFunc;
+#endif /* defined(CY_CRYPTO_CFG_DES_C) */
+#if defined(CY_CRYPTO_CFG_RSA_C)
     cy_crypto_rsa_proc_func_t    rsaProcFunc;
     cy_crypto_rsa_coef_func_t    rsaCoefFunc;
+#if defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED)
     cy_crypto_rsa_ver_func_t     rsaVerifyFunc;
+#endif /* defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) */
+#endif /* defined(CY_CRYPTO_CFG_RSA_C) */
 } cy_stc_crypto_pfn_t;
 
 static cy_stc_crypto_pfn_t const *cy_CryptoFunctionTable = NULL;
@@ -97,202 +123,137 @@ static cy_en_crypto_status_t Cy_Crypto_Core_CheckHwForErrors(cy_stc_crypto_conte
 static cy_en_crypto_status_t Cy_Crypto_Server_Start_Common(cy_stc_crypto_config_t const *config,
                                              cy_stc_crypto_server_context_t *context);
 
-cy_en_crypto_status_t Cy_Crypto_Server_Start_Base(cy_stc_crypto_config_t const *config,
+cy_en_crypto_status_t Cy_Crypto_Server_Start(cy_stc_crypto_config_t const *config,
                                              cy_stc_crypto_server_context_t *context)
 {
-    static const cy_stc_crypto_pfn_t cryptoV1BaseFuncs =
-    {
-        &Cy_Crypto_Core_V1_Prng_Init,
-        &Cy_Crypto_Core_V1_Prng,
-        &Cy_Crypto_Core_V1_Trng,
-        NULL, /* Cy_Crypto_Core_V1_Aes_Init, */
-        NULL, /* Cy_Crypto_Core_V1_Aes_Ecb,  */
-        NULL, /* Cy_Crypto_Core_V1_Aes_Cbc,  */
-        NULL, /* Cy_Crypto_Core_V1_Aes_Cfb,  */
-        NULL, /* Cy_Crypto_Core_V1_Aes_Ctr,  */
-        NULL, /* Cy_Crypto_Core_V1_Cmac,     */
-        &Cy_Crypto_Core_V1_Sha,
-        NULL, /* Cy_Crypto_Core_V1_Hmac,     */
-        &Cy_Crypto_Core_V1_MemCpy,
-        &Cy_Crypto_Core_V1_MemSet,
-        &Cy_Crypto_Core_V1_MemCmp,
-        &Cy_Crypto_Core_V1_MemXor,
-        &Cy_Crypto_Core_V1_Crc_Init,
-        &Cy_Crypto_Core_V1_Crc,
-        &Cy_Crypto_Core_V1_Des,
-        &Cy_Crypto_Core_V1_Tdes,
-        NULL, /* Cy_Crypto_Core_Rsa_Proc,  */
-        NULL, /* Cy_Crypto_Core_Rsa_Coef,  */
-        NULL, /* Cy_Crypto_Core_RsaVerify, */
-    };
+    cy_en_crypto_status_t status = CY_CRYPTO_HW_NOT_ENABLED;
 
-    static const cy_stc_crypto_pfn_t cryptoV2BaseFuncs =
-    {
-        &Cy_Crypto_Core_V2_Prng_Init,
-        &Cy_Crypto_Core_V2_Prng,
-        &Cy_Crypto_Core_V2_Trng,
-        NULL, /* Cy_Crypto_Core_V2_Aes_Init, */
-        NULL, /* Cy_Crypto_Core_V2_Aes_Ecb,  */
-        NULL, /* Cy_Crypto_Core_V2_Aes_Cbc,  */
-        NULL, /* Cy_Crypto_Core_V2_Aes_Cfb,  */
-        NULL, /* Cy_Crypto_Core_V2_Aes_Ctr,  */
-        NULL, /* Cy_Crypto_Core_V2_Cmac,     */
-        &Cy_Crypto_Core_V2_Sha,
-        NULL, /* Cy_Crypto_Core_V2_Hmac,     */
-        &Cy_Crypto_Core_V2_MemCpy,
-        &Cy_Crypto_Core_V2_MemSet,
-        &Cy_Crypto_Core_V2_MemCmp,
-        &Cy_Crypto_Core_V2_MemXor,
-        &Cy_Crypto_Core_V2_Crc_Init,
-        &Cy_Crypto_Core_V2_Crc,
-        &Cy_Crypto_Core_V2_Des,
-        &Cy_Crypto_Core_V2_Tdes,
-        NULL, /* Cy_Crypto_Core_Rsa_Proc,  */
-        NULL, /* Cy_Crypto_Core_Rsa_Coef,  */
-        NULL, /* Cy_Crypto_Core_RsaVerify, */
-    };
-
-    if (CY_CRYPTO_V1)
-    {
-        cy_CryptoFunctionTable = &cryptoV1BaseFuncs;
-    }
-    else
-    {
-        cy_CryptoFunctionTable = &cryptoV2BaseFuncs;
-    }
-    return Cy_Crypto_Server_Start_Common(config, context);
-}
-
-cy_en_crypto_status_t Cy_Crypto_Server_Start_Extra(cy_stc_crypto_config_t const *config,
-                                             cy_stc_crypto_server_context_t *context)
-{
-    static const cy_stc_crypto_pfn_t cryptoV1ExtraFuncs =
-    {
-        &Cy_Crypto_Core_V1_Prng_Init,
-        &Cy_Crypto_Core_V1_Prng,
-        &Cy_Crypto_Core_V1_Trng,
-        &Cy_Crypto_Core_V1_Aes_Init,
-        &Cy_Crypto_Core_V1_Aes_Ecb,
-        &Cy_Crypto_Core_V1_Aes_Cbc,
-        &Cy_Crypto_Core_V1_Aes_Cfb,
-        &Cy_Crypto_Core_V1_Aes_Ctr,
-        &Cy_Crypto_Core_V1_Cmac,
-        &Cy_Crypto_Core_V1_Sha,
-        &Cy_Crypto_Core_V1_Hmac,
-        &Cy_Crypto_Core_V1_MemCpy,
-        &Cy_Crypto_Core_V1_MemSet,
-        &Cy_Crypto_Core_V1_MemCmp,
-        &Cy_Crypto_Core_V1_MemXor,
-        &Cy_Crypto_Core_V1_Crc_Init,
-        &Cy_Crypto_Core_V1_Crc,
-        &Cy_Crypto_Core_V1_Des,
-        &Cy_Crypto_Core_V1_Tdes,
-        NULL, /* Cy_Crypto_Core_Rsa_Proc,  */
-        NULL, /* Cy_Crypto_Core_Rsa_Coef,  */
-        NULL, /* Cy_Crypto_Core_RsaVerify, */
-    };
-
-    static const cy_stc_crypto_pfn_t cryptoV2ExtraFuncs =
-    {
-        &Cy_Crypto_Core_V2_Prng_Init,
-        &Cy_Crypto_Core_V2_Prng,
-        &Cy_Crypto_Core_V2_Trng,
-        &Cy_Crypto_Core_V2_Aes_Init,
-        &Cy_Crypto_Core_V2_Aes_Ecb,
-        &Cy_Crypto_Core_V2_Aes_Cbc,
-        &Cy_Crypto_Core_V2_Aes_Cfb,
-        &Cy_Crypto_Core_V2_Aes_Ctr,
-        &Cy_Crypto_Core_V2_Cmac,
-        &Cy_Crypto_Core_V2_Sha,
-        &Cy_Crypto_Core_V2_Hmac,
-        &Cy_Crypto_Core_V2_MemCpy,
-        &Cy_Crypto_Core_V2_MemSet,
-        &Cy_Crypto_Core_V2_MemCmp,
-        &Cy_Crypto_Core_V2_MemXor,
-        &Cy_Crypto_Core_V2_Crc_Init,
-        &Cy_Crypto_Core_V2_Crc,
-        &Cy_Crypto_Core_V2_Des,
-        &Cy_Crypto_Core_V2_Tdes,
-        NULL, /* Cy_Crypto_Core_Rsa_Proc,  */
-        NULL, /* Cy_Crypto_Core_Rsa_Coef,  */
-        NULL, /* Cy_Crypto_Core_RsaVerify, */
-    };
-
-    if (CY_CRYPTO_V1)
-    {
-        cy_CryptoFunctionTable = &cryptoV1ExtraFuncs;
-    }
-    else
-    {
-        cy_CryptoFunctionTable = &cryptoV2ExtraFuncs;
-    }
-    return Cy_Crypto_Server_Start_Common(config, context);
-}
-
-cy_en_crypto_status_t Cy_Crypto_Server_Start_Full(cy_stc_crypto_config_t const *config,
-                                             cy_stc_crypto_server_context_t *context)
-{
+    #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
     static const cy_stc_crypto_pfn_t cryptoV1FullFuncs =
     {
+    #if defined(CY_CRYPTO_CFG_PRNG_C)
         &Cy_Crypto_Core_V1_Prng_Init,
         &Cy_Crypto_Core_V1_Prng,
-        &Cy_Crypto_Core_V1_Trng,
+    #endif /* defined(CY_CRYPTO_CFG_PRNG_C) */
+    #if defined(CY_CRYPTO_CFG_TRNG_C)
+        &Cy_Crypto_Core_Trng,
+    #endif /* defined(CY_CRYPTO_CFG_TRNG_C) */
+    #if defined(CY_CRYPTO_CFG_AES_C)
         &Cy_Crypto_Core_V1_Aes_Init,
         &Cy_Crypto_Core_V1_Aes_Ecb,
+    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC)
         &Cy_Crypto_Core_V1_Aes_Cbc,
+    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC) */
+    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB)
         &Cy_Crypto_Core_V1_Aes_Cfb,
+    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB) */
+    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR)
         &Cy_Crypto_Core_V1_Aes_Ctr,
+    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR) */
+    #if defined(CY_CRYPTO_CFG_CMAC_C)
         &Cy_Crypto_Core_V1_Cmac,
+    #endif /* defined(CY_CRYPTO_CFG_CMAC_C) */
+    #endif /* defined(CY_CRYPTO_CFG_AES_C) */
+    #if defined(CY_CRYPTO_CFG_SHA_C)
         &Cy_Crypto_Core_V1_Sha,
+    #if defined(CY_CRYPTO_CFG_HMAC_C)
         &Cy_Crypto_Core_V1_Hmac,
+    #endif /* defined(CY_CRYPTO_CFG_HMAC_C) */
+    #endif /* defined(CY_CRYPTO_CFG_SHA_C) */
         &Cy_Crypto_Core_V1_MemCpy,
         &Cy_Crypto_Core_V1_MemSet,
         &Cy_Crypto_Core_V1_MemCmp,
         &Cy_Crypto_Core_V1_MemXor,
+    #if defined(CY_CRYPTO_CFG_CRC_C)
         &Cy_Crypto_Core_V1_Crc_Init,
         &Cy_Crypto_Core_V1_Crc,
+    #endif /* defined(CY_CRYPTO_CFG_CRC_C) */
+    #if defined(CY_CRYPTO_CFG_DES_C)
         &Cy_Crypto_Core_V1_Des,
         &Cy_Crypto_Core_V1_Tdes,
+    #endif /* defined(CY_CRYPTO_CFG_DES_C) */
+    #if defined(CY_CRYPTO_CFG_RSA_C)
         &Cy_Crypto_Core_Rsa_Proc,
         &Cy_Crypto_Core_Rsa_Coef,
+    #if defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED)
         &Cy_Crypto_Core_Rsa_Verify,
+    #endif /* defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) */
+    #endif /* defined(CY_CRYPTO_CFG_RSA_C) */
     };
+    #endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
 
+    #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
     static const cy_stc_crypto_pfn_t cryptoV2FullFuncs =
     {
+    #if defined(CY_CRYPTO_CFG_PRNG_C)
         &Cy_Crypto_Core_V2_Prng_Init,
         &Cy_Crypto_Core_V2_Prng,
-        &Cy_Crypto_Core_V2_Trng,
+    #endif /* defined(CY_CRYPTO_CFG_PRNG_C) */
+    #if defined(CY_CRYPTO_CFG_TRNG_C)
+        &Cy_Crypto_Core_Trng,
+    #endif /* defined(CY_CRYPTO_CFG_TRNG_C) */
+    #if defined(CY_CRYPTO_CFG_AES_C)
         &Cy_Crypto_Core_V2_Aes_Init,
         &Cy_Crypto_Core_V2_Aes_Ecb,
+    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC)
         &Cy_Crypto_Core_V2_Aes_Cbc,
+    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC) */
+    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB)
         &Cy_Crypto_Core_V2_Aes_Cfb,
+    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB) */
+    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR)
         &Cy_Crypto_Core_V2_Aes_Ctr,
+    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR) */
+    #if defined(CY_CRYPTO_CFG_CMAC_C)
         &Cy_Crypto_Core_V2_Cmac,
+    #endif /* defined(CY_CRYPTO_CFG_CMAC_C) */
+    #endif /* defined(CY_CRYPTO_CFG_AES_C) */
+    #if defined(CY_CRYPTO_CFG_SHA_C)
         &Cy_Crypto_Core_V2_Sha,
+    #if defined(CY_CRYPTO_CFG_HMAC_C)
         &Cy_Crypto_Core_V2_Hmac,
+    #endif /* defined(CY_CRYPTO_CFG_HMAC_C) */
+    #endif /* defined(CY_CRYPTO_CFG_SHA_C) */
         &Cy_Crypto_Core_V2_MemCpy,
         &Cy_Crypto_Core_V2_MemSet,
         &Cy_Crypto_Core_V2_MemCmp,
         &Cy_Crypto_Core_V2_MemXor,
+    #if defined(CY_CRYPTO_CFG_CRC_C)
         &Cy_Crypto_Core_V2_Crc_Init,
         &Cy_Crypto_Core_V2_Crc,
+    #endif /* defined(CY_CRYPTO_CFG_CRC_C) */
+    #if defined(CY_CRYPTO_CFG_DES_C)
         &Cy_Crypto_Core_V2_Des,
         &Cy_Crypto_Core_V2_Tdes,
+    #endif /* defined(CY_CRYPTO_CFG_DES_C) */
+    #if defined(CY_CRYPTO_CFG_RSA_C)
         &Cy_Crypto_Core_Rsa_Proc,
         &Cy_Crypto_Core_Rsa_Coef,
+    #if defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED)
         &Cy_Crypto_Core_Rsa_Verify,
+    #endif /* defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) */
+    #endif /* defined(CY_CRYPTO_CFG_RSA_C) */
     };
+    #endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
 
     if (CY_CRYPTO_V1)
     {
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         cy_CryptoFunctionTable = &cryptoV1FullFuncs;
+        #endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         cy_CryptoFunctionTable = &cryptoV2FullFuncs;
+        #endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
     }
-    return Cy_Crypto_Server_Start_Common(config, context);
+
+    if (cy_CryptoFunctionTable != NULL)
+    {
+        status = Cy_Crypto_Server_Start_Common(config, context);
+    }
+    return status;
 }
 
 static cy_en_crypto_status_t Cy_Crypto_Server_Start_Common(cy_stc_crypto_config_t const *config,
@@ -312,7 +273,9 @@ static cy_en_crypto_status_t Cy_Crypto_Server_Start_Common(cy_stc_crypto_config_
     context->acquireNotifierConfig.intrSrc = config->acquireNotifierConfig.intrSrc;
     context->cryptoErrorIntrConfig.intrSrc = config->cryptoErrorIntrConfig.intrSrc;
 
+    #if !defined(CY_CRYPTO_CFG_HW_USE_MPN_SPECIFIC)
     Cy_Crypto_Core_HwInit();
+    #endif
 
     /* Initialize the interrupt controller for CM0+ and IPC Interrupt */
     if (config->userGetDataHandler != NULL)
@@ -326,7 +289,13 @@ static cy_en_crypto_status_t Cy_Crypto_Server_Start_Common(cy_stc_crypto_config_
 
     (void)Cy_SysInt_Init(&config->acquireNotifierConfig, isrHandler);
 
-    NVIC_EnableIRQ(config->acquireNotifierConfig.intrSrc);
+    #if defined (CY_IP_M7CPUSS)
+        CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum.');
+        NVIC_EnableIRQ((IRQn_Type)((config->acquireNotifierConfig.intrSrc >> 16) & 0x00FFUL));
+    #else
+        NVIC_EnableIRQ(config->acquireNotifierConfig.intrSrc);
+    #endif
+
 
     /* Do not bring up an IPC release interrupt here, only set up a notify interrupt */
     Cy_IPC_Drv_SetInterruptMask(Cy_IPC_Drv_GetIntrBaseAddr(config->acquireNotifierChannel),
@@ -344,8 +313,16 @@ static cy_en_crypto_status_t Cy_Crypto_Server_Start_Common(cy_stc_crypto_config_
 
     (void)Cy_SysInt_Init(&config->cryptoErrorIntrConfig, isrHandler);
 
-    NVIC_ClearPendingIRQ(config->cryptoErrorIntrConfig.intrSrc);
-    NVIC_EnableIRQ(config->cryptoErrorIntrConfig.intrSrc);
+    #if defined (CY_IP_M7CPUSS)
+        CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum.');
+        NVIC_ClearPendingIRQ((IRQn_Type)((config->cryptoErrorIntrConfig.intrSrc >> 16) & 0x00FFUL));
+
+        CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum.');
+        NVIC_EnableIRQ((IRQn_Type)((config->cryptoErrorIntrConfig.intrSrc >> 16) & 0x00FFUL));
+    #else
+        NVIC_ClearPendingIRQ(config->cryptoErrorIntrConfig.intrSrc);
+        NVIC_EnableIRQ(config->cryptoErrorIntrConfig.intrSrc);
+    #endif /* (CY_IP_M7CPUSS) */
 
     Cy_Crypto_Core_SetInterruptMask(CY_CRYPTO_BASE, CY_CRYPTO_INTR_MASK_ERROR_MASK);
 
@@ -360,13 +337,29 @@ cy_en_crypto_status_t Cy_Crypto_Server_Stop(void)
     {
         uint32_t interruptMask;
 
-        /* Disable the Notify interrupt from IPC */
-        NVIC_DisableIRQ(cy_crypto_serverContext->acquireNotifierConfig.intrSrc);
-        NVIC_ClearPendingIRQ(cy_crypto_serverContext->acquireNotifierConfig.intrSrc);
+        #if defined (CY_IP_M7CPUSS)
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum.');
+            NVIC_DisableIRQ((IRQn_Type)((cy_crypto_serverContext->acquireNotifierConfig.intrSrc >> 16) & 0x00FFUL));
 
-        /* Disable the Error interrupt from Crypto */
-        NVIC_DisableIRQ(cy_crypto_serverContext->cryptoErrorIntrConfig.intrSrc);
-        NVIC_ClearPendingIRQ(cy_crypto_serverContext->cryptoErrorIntrConfig.intrSrc);
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum.');
+            NVIC_ClearPendingIRQ((IRQn_Type)((cy_crypto_serverContext->acquireNotifierConfig.intrSrc >> 16) & 0x00FFUL));
+
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum.');
+            NVIC_DisableIRQ((IRQn_Type)((cy_crypto_serverContext->cryptoErrorIntrConfig.intrSrc >> 16) & 0x00FFUL));
+
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to IRQn_Type enum.');
+            NVIC_ClearPendingIRQ((IRQn_Type)((cy_crypto_serverContext->cryptoErrorIntrConfig.intrSrc >> 16) & 0x00FFUL));
+        #else
+
+            /* Disable the Notify interrupt from IPC */
+            NVIC_DisableIRQ(cy_crypto_serverContext->acquireNotifierConfig.intrSrc);
+            NVIC_ClearPendingIRQ(cy_crypto_serverContext->acquireNotifierConfig.intrSrc);
+
+            /* Disable the Error interrupt from Crypto */
+            NVIC_DisableIRQ(cy_crypto_serverContext->cryptoErrorIntrConfig.intrSrc);
+            NVIC_ClearPendingIRQ(cy_crypto_serverContext->cryptoErrorIntrConfig.intrSrc);
+        #endif /* (CY_IP_M7CPUSS) */
+
         Cy_Crypto_Core_SetInterruptMask(CY_CRYPTO_BASE, 0u);
 
         /* Disable CRYPTO IPC interrupt */
@@ -443,6 +436,7 @@ void Cy_Crypto_Server_Process(void)
                         break;
 
                     /* MEM_BUFF memory management */
+                    #if defined(CY_CRYPTO_CFG_RSA_C)
                     case CY_CRYPTO_INSTR_MEMBUF_SET:
                         {
                             cy_stc_crypto_context_str_t *cfContext = myData->xdata;
@@ -465,7 +459,9 @@ void Cy_Crypto_Server_Process(void)
                             myData->resp = CY_CRYPTO_SUCCESS;
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_RSA_C) */
 
+                    #if defined(CY_CRYPTO_CFG_PRNG_C)
                     case CY_CRYPTO_INSTR_PRNG_INIT:
                         if (NULL != cy_CryptoFunctionTable->prngInitFunc)
                         {
@@ -483,7 +479,9 @@ void Cy_Crypto_Server_Process(void)
                                 cfContext->max, cfContext->prngNum);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_PRNG_C) */
 
+                    #if defined(CY_CRYPTO_CFG_TRNG_C)
                     case CY_CRYPTO_INSTR_TRNG:
                         if (NULL != cy_CryptoFunctionTable->trngFunc)
                         {
@@ -492,14 +490,16 @@ void Cy_Crypto_Server_Process(void)
                                 cfContext->GAROPol, cfContext->FIROPol, cfContext->max, cfContext->trngNum);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_TRNG_C) */
 
+                    #if defined(CY_CRYPTO_CFG_AES_C)
                     case CY_CRYPTO_INSTR_AES_INIT:
                         if (NULL != cy_CryptoFunctionTable->aesInitFunc)
                         {
                             cy_stc_crypto_context_aes_t *cfContext = (cy_stc_crypto_context_aes_t *)myData->xdata;
                             myData->resp =
                                 (cy_CryptoFunctionTable->aesInitFunc)(CY_CRYPTO_BASE,
-                                    (uint8_t*)cfContext->key, cfContext->keyLength, &cfContext->aesState, (cy_stc_crypto_aes_buffers_t *)(Cy_Crypto_Core_GetVuMemoryAddress(CY_CRYPTO_BASE)));
+                                    (uint8_t*)cfContext->key, cfContext->keyLength, &cfContext->aesState, (cy_stc_crypto_aes_buffers_t *)((void *)(Cy_Crypto_Core_GetVuMemoryAddress(CY_CRYPTO_BASE))));
                         }
                         break;
 
@@ -516,6 +516,7 @@ void Cy_Crypto_Server_Process(void)
                         }
                         break;
 
+                    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC)
                     case CY_CRYPTO_INSTR_AES_CBC:
                         if (NULL != cy_CryptoFunctionTable->aesCbcFunc)
                         {
@@ -530,7 +531,9 @@ void Cy_Crypto_Server_Process(void)
                                     &cfContext->aesState);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC) */
 
+                    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB)
                     case CY_CRYPTO_INSTR_AES_CFB:
                         if (NULL != cy_CryptoFunctionTable->aesCfbFunc)
                         {
@@ -545,7 +548,9 @@ void Cy_Crypto_Server_Process(void)
                                     &cfContext->aesState);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB) */
 
+                    #if defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR)
                     case CY_CRYPTO_INSTR_AES_CTR:
                         if (NULL != cy_CryptoFunctionTable->aesCtrFunc)
                         {
@@ -561,7 +566,10 @@ void Cy_Crypto_Server_Process(void)
                                     &cfContext->aesState);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR) */
+                    #endif /* defined(CY_CRYPTO_CFG_AES_C) */
 
+                    #if defined(CY_CRYPTO_CFG_CMAC_C)
                     case CY_CRYPTO_INSTR_CMAC:
                         if (NULL != cy_CryptoFunctionTable->cmacFunc)
                         {
@@ -571,7 +579,9 @@ void Cy_Crypto_Server_Process(void)
                                 (uint8_t*)cfContext->dst, &cfContext->aesState);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_CMAC_C) */
 
+                    #if defined(CY_CRYPTO_CFG_SHA_C)
                     case CY_CRYPTO_INSTR_SHA:
                         if (NULL != cy_CryptoFunctionTable->shaFunc)
                         {
@@ -581,7 +591,9 @@ void Cy_Crypto_Server_Process(void)
                                 (uint8_t *)cfContext->dst, cfContext->mode);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_SHA_C) */
 
+                    #if defined(CY_CRYPTO_CFG_HMAC_C)
                     case CY_CRYPTO_INSTR_HMAC:
                         if (NULL != cy_CryptoFunctionTable->hmacFunc)
                         {
@@ -591,6 +603,7 @@ void Cy_Crypto_Server_Process(void)
                                 (uint8_t *)cfContext->key, cfContext->keyLength, cfContext->mode);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_HMAC_C) */
 
                     case CY_CRYPTO_INSTR_MEM_CPY:
                         if (NULL != cy_CryptoFunctionTable->memCpyFunc)
@@ -633,6 +646,7 @@ void Cy_Crypto_Server_Process(void)
                         }
                         break;
 
+                    #if defined(CY_CRYPTO_CFG_CRC_C)
                     case CY_CRYPTO_INSTR_CRC_INIT:
                         if (NULL != cy_CryptoFunctionTable->crcInitFunc)
                         {
@@ -650,7 +664,9 @@ void Cy_Crypto_Server_Process(void)
                                 cfContext->crc, cfContext->data, cfContext->dataSize, cfContext->lfsrInitState);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_CRC_C) */
 
+                    #if defined(CY_CRYPTO_CFG_DES_C)
                     case CY_CRYPTO_INSTR_DES:
                         if (NULL != cy_CryptoFunctionTable->desFunc)
                         {
@@ -668,7 +684,9 @@ void Cy_Crypto_Server_Process(void)
                                 cfContext->dirMode, (uint8_t const *)cfContext->key, (uint8_t *)cfContext->dst, (uint8_t  const *)cfContext->src);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_DES_C) */
 
+                    #if defined(CY_CRYPTO_CFG_RSA_C)
                     case CY_CRYPTO_INSTR_RSA_PROC:
                         if (NULL != cy_CryptoFunctionTable->rsaProcFunc)
                         {
@@ -686,6 +704,7 @@ void Cy_Crypto_Server_Process(void)
                         }
                         break;
 
+                    #if defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED)
                     case CY_CRYPTO_INSTR_RSA_VER:
                         if (NULL != cy_CryptoFunctionTable->rsaVerifyFunc)
                         {
@@ -695,7 +714,10 @@ void Cy_Crypto_Server_Process(void)
                                 (uint8_t const *)cfContext->decryptedSignature, cfContext->decryptedSignatureLength);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_RSA_VERIFY_ENABLED) */
+                    #endif /* defined(CY_CRYPTO_CFG_RSA_C) */
 
+                    #if defined(CY_CRYPTO_CFG_ECDSA_SIGN_C)
                     case CY_CRYPTO_INSTR_ECDSA_SIGN:
                         {
                             cy_stc_crypto_context_ecc_t *cfContext = myData->xdata;
@@ -704,7 +726,9 @@ void Cy_Crypto_Server_Process(void)
                                 cfContext->key, cfContext->src1);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_ECDSA_SIGN_C) */
 
+                    #if defined(CY_CRYPTO_CFG_ECDSA_VERIFY_C)
                     case CY_CRYPTO_INSTR_ECDSA_VER:
                         {
                             cy_stc_crypto_context_ecc_t *cfContext = myData->xdata;
@@ -713,6 +737,7 @@ void Cy_Crypto_Server_Process(void)
                                 cfContext->dst0, cfContext->key);
                         }
                         break;
+                    #endif /* defined(CY_CRYPTO_CFG_ECDSA_VERIFY_C) */
 
                     default:
                         myData->resp = CY_CRYPTO_NOT_SUPPORTED;

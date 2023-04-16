@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -82,9 +82,9 @@ cy_rslt_t cyhal_syspm_tickless_sleep_deepsleep(cyhal_lptimer_t *obj, uint32_t de
 
 #define cyhal_syspm_tickless_sleep(obj, desired_ms, actual_ms) cyhal_syspm_tickless_sleep_deepsleep(obj, desired_ms, actual_ms, false)
 
+
 #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
 #define cyhal_syspm_sleep()              Cy_SysPm_CpuEnterSleep(CY_SYSPM_WAIT_FOR_INTERRUPT)
-#define cyhal_syspm_deepsleep()          Cy_SysPm_CpuEnterDeepSleep(CY_SYSPM_WAIT_FOR_INTERRUPT)
 #if defined(COMPONENT_CAT1A)
 #define cyhal_syspm_get_system_state()   (Cy_SysPm_IsSystemUlp() ? CYHAL_SYSPM_SYSTEM_LOW : CYHAL_SYSPM_SYSTEM_NORMAL)
 #elif defined(COMPONENT_CAT1B)
@@ -94,7 +94,6 @@ cy_rslt_t cyhal_syspm_tickless_sleep_deepsleep(cyhal_lptimer_t *obj, uint32_t de
 #endif
 #elif defined(COMPONENT_CAT2) /* defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) */
 #define cyhal_syspm_sleep()              Cy_SysPm_CpuEnterSleep()
-#define cyhal_syspm_deepsleep()          Cy_SysPm_CpuEnterDeepSleep()
 #define cyhal_syspm_get_system_state()   (CYHAL_SYSPM_SYSTEM_NORMAL)
 #endif /* defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) */
 

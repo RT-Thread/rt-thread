@@ -1,6 +1,6 @@
 /*******************************************************************************
 * \file cy_lpcomp.c
-* \version 1.40
+* \version 1.50
 *
 * \brief
 *  This file provides the driver code to the API for the Low Power Comparator
@@ -50,9 +50,9 @@ static cy_stc_lpcomp_context_t cy_lpcomp_context;
 * This function initializes the low-power comparator and returns
 * the status of the initialization.
 *
-* \note Interrupt mode and power mode configurations are not written to the register
+* \note Interrupt edge-detect mode and drive power mode are not written to the registers
 * during the function execution. This can result in unexpected interrupts
-* when the comparator is enabled. Instead, the configuration is saved to the
+* when the comparator is enabled. Instead, the configurations are saved to the
 * context and applied in the \ref Cy_LPComp_Enable_Ext() function.
 *
 * \param *base
@@ -102,10 +102,10 @@ cy_en_lpcomp_status_t Cy_LPComp_Init_Ext(LPCOMP_Type *base, cy_en_lpcomp_channel
                               _VAL2FLD(LPCOMP_CMP1_CTRL_DSI_LEVEL1, (uint32_t)config->outputMode >> 1u);
         }
 
-        /* Save intType to use it in the Cy_LPComp_Enable() function */
+        /* Save intType to use it in the Cy_LPComp_Enable_Ext() function */
         context->intType[(uint8_t)channel - 1u] = config->intType;
 
-        /* Save power to use it in the Cy_LPComp_Enable() function */
+        /* Save power to use it in the Cy_LPComp_Enable_Ext() function */
         context->power[(uint8_t)channel - 1u] = config->power;
 
         ret = CY_LPCOMP_SUCCESS;
@@ -184,7 +184,8 @@ cy_en_lpcomp_status_t Cy_LPComp_Init(LPCOMP_Type* base, cy_en_lpcomp_channel_t c
 * Cy_LPComp_Enable_Ext() is an extended version of existing function Cy_LPComp_Enable().
 * This implementation follows the thread-safe approach and is preferable for usage.
 *
-* This function enables the low-power comparator and sets Interrupt mode.
+* This function enables the low-power comparator and sets
+* interrupt edge-detect and drive power modes.
 *
 * \param *base
 *     The low-power comparator register structure pointer.
@@ -285,13 +286,15 @@ void Cy_LPComp_Enable(LPCOMP_Type* base, cy_en_lpcomp_channel_t channel)
 * Cy_LPComp_Disable_Ext() is an extended version of existing function Cy_LPComp_Disable().
 * This implementation follows the thread-safe approach and is preferable for usage.
 *
-* This function disables the low-power comparator power and sets Interrupt mode
+* This function disables the low-power comparator power and sets interrupt edge-detect mode
 * to the disabled state.
 *
 * \note This function disables the comparator interrupt to prevent a false trigger
-* that may happen due to stop working of the comparator unpowered output.
-* The actual configuration is restored from the context in:
-* \ref Cy_LPComp_Enable_Ext().
+* that may happen due to stop working of the comparator unpowered output. \n
+*
+* \note Disabled states for comparator interrupt and drive power are not preserved in the context.
+* The actual configurations for interrupt edge-detect and drive power
+* are restored from the context in: \ref Cy_LPComp_Enable_Ext().
 *
 * \param *base
 *     The low-power comparator register structure pointer.
@@ -359,7 +362,11 @@ void Cy_LPComp_Disable(LPCOMP_Type* base, cy_en_lpcomp_channel_t channel)
 *
 * This function sets the interrupt edge-detect mode and controls the value
 * provided on the output.
-* \note  Interrupts can be enabled after the block is enabled and appropriate
+*
+* \note The interrupt edge-detect mode is preserved in the context,
+* except state CY_LPCOMP_INTR_DISABLE. \n
+*
+* \note  The mode of the interrupt is restored after the block is enabled and appropriate
 * start-up time has elapsed:
 * * 3 us is for normal power mode;
 * * 6 us for LP mode;
@@ -402,8 +409,11 @@ void Cy_LPComp_SetInterruptTriggerMode_Ext(LPCOMP_Type* base, cy_en_lpcomp_chann
         LPCOMP_CMP1_CTRL(base) = _CLR_SET_FLD32U(LPCOMP_CMP1_CTRL(base), LPCOMP_CMP1_CTRL_INTTYPE1, (uint32_t)intType);
     }
 
-    /* Save interrupt type to use it in the Cy_LPComp_Enable() function */
-    context->intType[(uint8_t)channel - 1u] = intType;
+    /* Save interrupt type to use it in the Cy_LPComp_Enable_Ext() function */
+    if (intType != CY_LPCOMP_INTR_DISABLE)
+    {
+        context->intType[(uint8_t)channel - 1u] = intType;
+    }
 }
 
 
@@ -464,7 +474,11 @@ void Cy_LPComp_SetInterruptTriggerMode(LPCOMP_Type* base, cy_en_lpcomp_channel_t
 * This implementation follows the thread-safe approach and is preferable for usage.
 *
 * This function sets the drive power and speeds to one of the four settings.
-* \note Interrupts can be enabled after the block is enabled and appropriate
+*
+* \note The drive power mode is preserved in the context,
+* except state CY_LPCOMP_MODE_OFF. \n
+*
+* \note  The mode of the interrupt is restored after the block is enabled and appropriate
 * start-up time has elapsed:
 * * 3 us for normal power mode;
 * * 6 us for LP mode;
@@ -508,8 +522,11 @@ void Cy_LPComp_SetPower_Ext(LPCOMP_Type* base, cy_en_lpcomp_channel_t channel, c
         LPCOMP_CMP1_CTRL(base) = _CLR_SET_FLD32U(LPCOMP_CMP1_CTRL(base), LPCOMP_CMP1_CTRL_MODE1, (uint32_t)power);
     }
 
-    /* Save power to use it in the Cy_LPComp_Enable() function */
-    context->power[(uint8_t)channel - 1u] = power;
+    /* Save power to use it in the Cy_LPComp_Enable_Ext() function */
+    if (power != CY_LPCOMP_MODE_OFF)
+    {
+        context->power[(uint8_t)channel - 1u] = power;
+    }
 }
 
 
@@ -977,14 +994,18 @@ void Cy_LPComp_GetTrim(LPCOMP_Type const * base, cy_en_lpcomp_channel_t channel,
     if (CY_LPCOMP_CHANNEL_0 == channel)
     {
         trim->enable =   _FLD2BOOL(LPCOMP_CMP0_OFFSET_TRIM_CMP0_EN,        LPCOMP_CMP0_OFFSET_TRIM(base));
+        CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 10.3', 2, 'Intentional typecast of uint32_t to enum');
         trim->polarity =  _FLD2VAL(LPCOMP_CMP0_OFFSET_TRIM_CMP0_POLARITY,  LPCOMP_CMP0_OFFSET_TRIM(base));
         trim->magnitude = _FLD2VAL(LPCOMP_CMP0_OFFSET_TRIM_CMP0_MAGNITUDE, LPCOMP_CMP0_OFFSET_TRIM(base));
+        CY_MISRA_BLOCK_END('MISRA C-2012 Rule 10.3');
     }
     else
     {
         trim->enable =   _FLD2BOOL(LPCOMP_CMP1_OFFSET_TRIM_CMP1_EN,        LPCOMP_CMP1_OFFSET_TRIM(base));
+        CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 10.3', 2, 'Intentional typecast of uint32_t to enum');
         trim->polarity =  _FLD2VAL(LPCOMP_CMP1_OFFSET_TRIM_CMP1_POLARITY,  LPCOMP_CMP1_OFFSET_TRIM(base));
         trim->magnitude = _FLD2VAL(LPCOMP_CMP1_OFFSET_TRIM_CMP1_MAGNITUDE, LPCOMP_CMP1_OFFSET_TRIM(base));
+        CY_MISRA_BLOCK_END('MISRA C-2012 Rule 10.3');
     }
 }
 

@@ -56,10 +56,10 @@
 #include "cy_ipc_drv.h"
 #include "cy_lin.h"
 #include "cy_keyscan.h"
-#include "cy_btss.h"
+#include "cy_syspm_btss.h"
 #include "cy_wdt.h"
 #include "cy_mcwdt.h"
 #include "cy_lvd.h"
-#include "cy_pd_pdcm.h"
+#include "cy_syspm_pdcm.h"
 
 #endif /* CY_PDL_H */

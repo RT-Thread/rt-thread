@@ -351,7 +351,7 @@ int rt_hw_spi_init(void)
         return result;
     }
 
-    result = es32f0_spi_device_attach((ES_SPI1_NSS_PIN, ES_DEVICE_NAME_SPI1_BUS, ES_DEVICE_NAME_SPI1_DEV0);
+    result = es32f0_spi_device_attach(ES_SPI1_NSS_PIN, ES_DEVICE_NAME_SPI1_BUS, ES_DEVICE_NAME_SPI1_DEV0);
     if (result != RT_EOK)
     {
         return result;

@@ -86,6 +86,7 @@ static rt_err_t at32_configure(struct rt_serial_device *serial,
     usart_data_bit_num_type data_bit;
     usart_stop_bit_num_type stop_bit;
     usart_parity_selection_type parity_mode;
+    usart_hardware_flow_control_type flow_control;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
@@ -97,8 +98,6 @@ static rt_err_t at32_configure(struct rt_serial_device *serial,
 
     usart_receiver_enable(instance->uart_x, TRUE);
     usart_transmitter_enable(instance->uart_x, TRUE);
-
-    usart_hardware_flow_control_set(instance->uart_x, USART_HARDWARE_FLOW_NONE);
 
     switch (cfg->data_bits) {
     case DATA_BITS_8:
@@ -139,12 +138,25 @@ static rt_err_t at32_configure(struct rt_serial_device *serial,
         break;
     }
 
+    switch (cfg->flowcontrol) {
+    case RT_SERIAL_FLOWCONTROL_NONE:
+        flow_control = USART_HARDWARE_FLOW_NONE;
+        break;
+    case RT_SERIAL_FLOWCONTROL_CTSRTS:
+        flow_control = USART_HARDWARE_FLOW_RTS_CTS;
+        break;
+    default:
+        flow_control = USART_HARDWARE_FLOW_NONE;
+        break;
+    }
+
 #ifdef RT_SERIAL_USING_DMA
     if (!(serial->parent.open_flag & RT_DEVICE_OFLAG_OPEN)) {
         instance->last_index = 0;
     }
 #endif
 
+    usart_hardware_flow_control_set(instance->uart_x, flow_control);
     usart_parity_selection_config(instance->uart_x, parity_mode);
     usart_init(instance->uart_x, cfg->baud_rate, data_bit, stop_bit);
     usart_enable(instance->uart_x, TRUE);

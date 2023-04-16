@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_ipc_bt.h
-* \version 1.70
+* \version 1.80
 *
 * \brief
 * Provides an API declaration for the BT IPC driver.
@@ -187,6 +187,7 @@ typedef enum
     CY_BT_IPC_HPC_BUFPROVIDE     = (0x03u),                /**<  HPC payload type provide buffer, sent from BT only */
     CY_BT_IPC_HPC_PM             = (0x04u),                /**<  HPC payload type PM control */
     CY_BT_IPC_HPC_RESACCESS      = (0x05u),                /**<  HPC payload type Resource Access */
+    CY_BT_IPC_HPC_LPO_SWITCH     = (0x06u),                /**<  HPC payload type LPO Clk switch */
     CY_BT_IPC_HPC_LONG           = (0xFFu),                /**<  HPC payload type long message */
 } cy_en_btipc_hpcpti_t;
 
@@ -246,6 +247,15 @@ typedef enum
     CY_BT_IPC_RESACC_ACCEPTED    = (0x00u),                /**< Resource access request accepted */
     CY_BT_IPC_RESACC_REJECTED    = (0x01u),                /**< Resource access request rejected */
 }cy_en_btipc_recacc_resp_t;
+
+/**
+*  This is a list of ENUMs used for LPO change indication from MCUSS to BTSS
+*/
+typedef enum
+{
+    CY_BT_IPC_LPO_PILO          = (0x00u),                /**< LPO clk type PILO */
+    CY_BT_IPC_LPO_WCO           = (0x01u),                /**< LPO clk type WCO */
+}cy_en_btipc_lpo_cmd_t;
 
 /**
 * This is a list of ENUMs used for HCI DAIG packet type.
@@ -488,8 +498,8 @@ typedef struct cy_stc_ipc_bt_context_t
     uint32_t ulChannelHPC;                                    /**< HPC Channel used to send to BLE */
     uint32_t dlChannelHPC;                                    /**< HPC Channel used to receive from BLE */
 
-    uint32_t intStuctureSelf;                                 /**< Interrupt struture for the MCU */
-    uint32_t intStucturePeer;                                 /**< Interrupt struture for the BLE */
+    uint32_t intStuctureSelf;                                 /**< Interrupt structure for the MCU */
+    uint32_t intStucturePeer;                                 /**< Interrupt structure for the BLE */
 
     uint32_t intPeerMask;                                     /**< Interrupt mask for the peer */
 
@@ -498,15 +508,15 @@ typedef struct cy_stc_ipc_bt_context_t
 
     cy_stc_sysint_t ipcIntConfig;                             /**< IPC Interrupt configuration structure */
 
-    cy_ipc_bt_irq_handler_t irqHandlerPtr;                    /**< This handler will be removed later once similations are done */
+    cy_ipc_bt_irq_handler_t irqHandlerPtr;                    /**< This handler will be removed later once simulations are done */
 
-    cy_ipc_bt_int_cb_ptr_t internal_hpc_notify_cb;            /**< This callback will be removed later once similations are done */
+    cy_ipc_bt_int_cb_ptr_t internal_hpc_notify_cb;            /**< This callback will be removed later once simulations are done */
 
-    cy_ipc_bt_callback_ptr_t dlNotifyCallbackPtr;             /**< Callback function called when the DL message is recevieved */
+    cy_ipc_bt_callback_ptr_t dlNotifyCallbackPtr;             /**< Callback function called when the DL message is received */
 
     cy_ipc_bt_relcallback_ptr_t ulReleaseCallbackPtr;         /**< Callback function called when the UL channel is released */
 
-    cy_ipc_bt_bufcallback_ptr_t bufCallbackPtr;               /**< Callback function called when there is a free bufer available */
+    cy_ipc_bt_bufcallback_ptr_t bufCallbackPtr;               /**< Callback function called when there is a free buffer available */
 
     cy_stc_ipc_hcp_cb_t hpcNotifyCallbackParam[MAX_BT_IPC_HPC_CB]; /**< Array of callback pointers registered for control channel notification */
 
@@ -518,7 +528,7 @@ typedef struct cy_stc_ipc_bt_context_t
 
     uint32_t droppedHCI;                                      /**< Count of dropped HCI messages */
     uint8_t bootType;                                         /**< Boot type */
-    uint32_t certError;                                       /**< Cerificate processing error description */
+    uint32_t certError;                                       /**< Certificate processing error description */
 
 #ifdef CY_BTIPC_STATS
     /* Following data is used for analyses */
@@ -570,18 +580,18 @@ typedef struct cy_stc_ipc_bt_config_t
     uint32_t ulChannelHPC;                                    /**< HPC Channel used to send to BLE */
     uint32_t dlChannelHPC;                                    /**< HPC Channel used to receive from BLE */
 
-    uint32_t intStuctureSelf;                                 /**< Interrupt struture for the MCU */
-    uint32_t intStucturePeer;                                 /**< Interrupt struture for the BLE */
+    uint32_t intStuctureSelf;                                 /**< Interrupt structure for the MCU */
+    uint32_t intStucturePeer;                                 /**< Interrupt structure for the BLE */
 
     cy_stc_sysint_t ipcIntConfig;                             /**< IPC Interrupt configuration structure */
 
-    cy_ipc_bt_irq_handler_t irqHandlerPtr;                    /**< This handler will be removed later once similations are done */
+    cy_ipc_bt_irq_handler_t irqHandlerPtr;                    /**< This handler will be removed later once simulations are done */
 
-    cy_ipc_bt_int_cb_ptr_t internal_hpc_notify_cb;            /**< This callback will be removed later once similations are done */
+    cy_ipc_bt_int_cb_ptr_t internal_hpc_notify_cb;            /**< This callback will be removed later once simulations are done */
 
     cy_ipc_bt_relcallback_ptr_t ulReleaseCallbackPtr;         /**< Callback function called when the UL channel is released */
 
-    cy_ipc_bt_bufcallback_ptr_t bufCallbackPtr;               /**< Callback function called when there is a free bufer available */
+    cy_ipc_bt_bufcallback_ptr_t bufCallbackPtr;               /**< Callback function called when there is a free buffer available */
 } cy_stc_ipc_bt_config_t;
 
 /**
@@ -651,6 +661,17 @@ typedef __PACKED_STRUCT cy_stc_ipc_msg_res_access_resp_t
     uint32_t result;                                /**< result of access request */
 } cy_stc_ipc_msg_res_access_resp_t;
 
+/**
+* This is the definition of HPC structure to indicate LPO change from MCU to BTSS
+*/
+typedef __PACKED_STRUCT cy_stc_ipc_msg_clklf_switch_t
+{
+    uint8_t msgId;                                  /**< Message ID for HPC message */
+    uint8_t mode;                                   /**< LPO source 0 = PILO, 1 = WCO */
+    uint8_t dummy1;                                 /**< Not used */
+    uint8_t dummy2;                                 /**< Not used */
+    uint32_t param;                                /**< WCO calibration offset in ppm */
+} cy_stc_ipc_msg_clklf_switch_t;
 /** \} group_ipc_bt_data_structures */
 
 
