@@ -3540,7 +3540,7 @@ RTM_EXPORT(rt_mq_urgent);
  * @return   Return the real length of the message. When the return value is larger than zero, the operation is successful.
  *           If the return value is any other values, it means that the mailbox release failed.
  */
-static rt_base_t _rt_mq_recv(rt_mq_t    mq,
+static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout,
@@ -3701,7 +3701,7 @@ static rt_base_t _rt_mq_recv(rt_mq_t    mq,
     return len;
 }
 
-rt_base_t rt_mq_recv(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout)
