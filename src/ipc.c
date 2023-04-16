@@ -44,7 +44,7 @@
  * 2022-04-08     Stanley      Correct descriptions
  * 2022-10-15     Bernard      add nested mutex feature
  * 2022-10-16     Bernard      add prioceiling feature in mutex
- * 2023-04-16     Xin-zheqi    add queue recv function with real message size
+ * 2023-04-16     Xin-zheqi    redesigen queue recv function return real message size
  */
 
 #include <rtthread.h>
@@ -121,7 +121,7 @@ rt_inline rt_err_t _ipc_object_init(struct rt_ipc_object *ipc)
  *           check the context.
  *           In addition, this function is generally called by the following functions:
  *           rt_sem_take(),     rt_mutex_take(),    rt_event_recv(),            rt_mb_send_wait(),
- *           rt_mb_recv(),      rt_mq_recv(),       rt_mq_recv_with_size(),     rt_mq_send_wait()
+ *           rt_mb_recv(),      rt_mq_recv(),       rt_mq_send_wait()
  */
 rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
                                        struct rt_thread *thread,
@@ -199,7 +199,7 @@ rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
  *
  * @warning  This function is generally called by the following functions:
  *           rt_sem_release(),    rt_mutex_release(),    rt_mb_send_wait(),    rt_mq_send_wait(),
- *           rt_mb_urgent(),      rt_mb_recv(),          rt_mq_urgent(),       rt_mq_recv(),        rt_mq_recv_with_size(),
+ *           rt_mb_urgent(),      rt_mb_recv(),          rt_mq_urgent(),       rt_mq_recv(),
  */
 rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
 {
@@ -3537,7 +3537,7 @@ RTM_EXPORT(rt_mq_urgent);
  *           If use macro RT_WAITING_NO to set this parameter, which means that this
  *           function is non-blocking and will return immediately.
  *
- * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ * @return   Return the real length of the message. When the return value is larger than zero, the operation is successful.
  *           If the return value is any other values, it means that the mailbox release failed.
  */
 static rt_err_t _rt_mq_recv(rt_mq_t    mq,
@@ -3666,8 +3666,10 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
+    /* get real message length */
+    rt_size_t len = size > mq->msg_size ? mq->msg_size : size;
     /* copy message */
-    rt_memcpy(buffer, msg + 1, size > mq->msg_size ? mq->msg_size : size);
+    rt_memcpy(buffer, msg + 1, len);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3687,7 +3689,7 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
 
         rt_schedule();
 
-        return RT_EOK;
+        return (long)len;
     }
 
     /* enable interrupt */
@@ -3695,208 +3697,8 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
 
-    return RT_EOK;
+    return (long)len;
 }
-
-/**
- * @brief    This function will receive a message from message queue object,
- *           if there is no message in messagequeue object, the thread shall wait for a specified time.
- *
- * @note     Only when there is mail in the mailbox, the receiving thread can get the mail immediately and return RT_EOK,
- *           otherwise the receiving thread will be suspended until timeout.
- *           If the mail is not received within the specified time, it will return -RT_ETIMEOUT.
- *
- * @param    mq is a pointer to the messagequeue object to be received.
- *
- * @param    buffer is the content of the message.
- *
- * @param    size is the required length of the message(Unit: Byte).
- *
- * @param    real_size is the real length of the message.
- *
- * @param    timeout is a timeout period (unit: an OS tick). If the message is unavailable, the thread will wait for
- *           the message in the queue up to the amount of time specified by this parameter.
- *
- *           NOTE:
- *           If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
- *           message is unavailable in the queue, the thread will be waiting forever.
- *           If use macro RT_WAITING_NO to set this parameter, which means that this
- *           function is non-blocking and will return immediately.
- *
- * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
- *           If the return value is any other values, it means that the mailbox release failed.
- */
-static rt_err_t _rt_mq_recv_with_size(rt_mq_t    mq,
-                    void      *buffer,
-                    rt_size_t  size,
-                    rt_size_t  *real_size,
-                    rt_int32_t timeout,
-                    int suspend_flag)
-{
-    struct rt_thread *thread;
-    rt_base_t level;
-    struct rt_mq_message *msg;
-    rt_uint32_t tick_delta;
-    rt_err_t ret;
-
-    /* parameter check */
-    RT_ASSERT(mq != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&mq->parent.parent) == RT_Object_Class_MessageQueue);
-    RT_ASSERT(buffer != RT_NULL);
-    RT_ASSERT(size != 0);
-
-    /* current context checking */
-    RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
-
-    /* initialize delta tick */
-    tick_delta = 0;
-    /* get current thread */
-    thread = rt_thread_self();
-    RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mq->parent.parent)));
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
-
-    /* for non-blocking call */
-    if (mq->entry == 0 && timeout == 0)
-    {
-        rt_hw_interrupt_enable(level);
-
-        return -RT_ETIMEOUT;
-    }
-
-    /* message queue is empty */
-    while (mq->entry == 0)
-    {
-        /* reset error number in thread */
-        thread->error = -RT_EINTR;
-
-        /* no waiting, return timeout */
-        if (timeout == 0)
-        {
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
-
-            thread->error = -RT_ETIMEOUT;
-
-            return -RT_ETIMEOUT;
-        }
-
-        /* suspend current thread */
-        ret = _ipc_list_suspend(&(mq->parent.suspend_thread),
-                            thread,
-                            mq->parent.parent.flag,
-                            suspend_flag);
-        if (ret != RT_EOK)
-        {
-            rt_hw_interrupt_enable(level);
-            return ret;
-        }
-
-        /* has waiting time, start thread timer */
-        if (timeout > 0)
-        {
-            /* get the start tick of timer */
-            tick_delta = rt_tick_get();
-
-            RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n",
-                                        thread->parent.name));
-
-            /* reset the timeout of thread timer and start it */
-            rt_timer_control(&(thread->thread_timer),
-                             RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
-            rt_timer_start(&(thread->thread_timer));
-        }
-
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-
-        /* re-schedule */
-        rt_schedule();
-
-        /* recv message */
-        if (thread->error != RT_EOK)
-        {
-            /* return error */
-            return thread->error;
-        }
-
-        /* disable interrupt */
-        level = rt_hw_interrupt_disable();
-
-        /* if it's not waiting forever and then re-calculate timeout tick */
-        if (timeout > 0)
-        {
-            tick_delta = rt_tick_get() - tick_delta;
-            timeout -= tick_delta;
-            if (timeout < 0)
-                timeout = 0;
-        }
-    }
-
-    /* get message from queue */
-    msg = (struct rt_mq_message *)mq->msg_queue_head;
-
-    /* move message queue head */
-    mq->msg_queue_head = msg->next;
-    /* reach queue tail, set to NULL */
-    if (mq->msg_queue_tail == msg)
-        mq->msg_queue_tail = RT_NULL;
-
-    /* decrease message entry */
-    if(mq->entry > 0)
-    {
-        mq->entry --;
-    }
-
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
-
-    /* get real size of message */
-    *real_size = size > mq->msg_size ? mq->msg_size : size;
-
-    /* copy message */
-    rt_memcpy(buffer, msg + 1, *real_size);
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
-    /* put message to free list */
-    msg->next = (struct rt_mq_message *)mq->msg_queue_free;
-    mq->msg_queue_free = msg;
-
-    /* resume suspended thread */
-    if (!rt_list_isempty(&(mq->suspend_sender_thread)))
-    {
-        _ipc_list_resume(&(mq->suspend_sender_thread));
-
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
-
-        RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
-
-        rt_schedule();
-
-        return RT_EOK;
-    }
-
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
-
-    RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
-
-    return RT_EOK;
-}
-
-rt_err_t rt_mq_recv_with_size(rt_mq_t    mq,
-                    void      *buffer,
-                    rt_size_t  size,
-                    rt_size_t  *real_size,
-                    rt_int32_t timeout)
-{
-    return _rt_mq_recv_with_size(mq, buffer, size, real_size, timeout, RT_UNINTERRUPTIBLE);
-}
-RTM_EXPORT(rt_mq_recv_with_size);
 
 rt_err_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
