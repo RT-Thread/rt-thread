@@ -131,24 +131,24 @@ typedef enum en_vc_resp_filter
  ** \brief VC P端输入
  *****************************************************************************/
 typedef enum en_vc_input_p_src
-{																					
+{
                                    //VC0                        //VC1
-    VcInPCh0 = 0u,                ///< 输入通道0 PC0		输入通道0 PA0
-    VcInPCh1 = 1u,                ///< 输入通道1 PC1		输入通道0 PA1
-    VcInPCh2 = 2u,                ///< 输入通道2 PC2		输入通道0 PA2
-    VcInPCh3 = 3u,                ///< 输入通道3 PC3		输入通道0 PA3
-    VcInPCh4 = 4u,                ///< 输入通道4 PA0		输入通道0 PA4
-    VcInPCh5 = 5u,                ///< 输入通道5 PA1		输入通道0 PA5
-    VcInPCh6 = 6u,                ///< 输入通道6 PA2		输入通道0 PB1
-    VcInPCh7 = 7u,                ///< 输入通道7 PA3		输入通道0 PB2
-    VcInPCh8 = 8u,                ///< 输入通道7 PA4		输入通道0 PB10
-    VcInPCh9 = 9u,                ///< 输入通道7 PA5		输入通道0 PB12
-    VcInPCh10 = 10u,                ///< 输入通道7 PA6		输入通道0 PB13
-    VcInPCh11 = 11u,                ///< 输入通道7 PA7		输入通道0 PB14
-    VcInPCh12 = 12u,                ///< 输入通道7 PB4		输入通道0 PB4
-    VcInPCh13 = 13u,                ///< 输入通道7 PB5		输入通道0 PB5
-    VcInPCh14 = 14u,                ///< 输入通道7 PB6		输入通道0 PB6
-    VcInPCh15 = 15u,                ///< 输入通道7 PB7		输入通道0 PB7                           
+    VcInPCh0 = 0u,                ///< 输入通道0 PC0        输入通道0 PA0
+    VcInPCh1 = 1u,                ///< 输入通道1 PC1        输入通道0 PA1
+    VcInPCh2 = 2u,                ///< 输入通道2 PC2        输入通道0 PA2
+    VcInPCh3 = 3u,                ///< 输入通道3 PC3        输入通道0 PA3
+    VcInPCh4 = 4u,                ///< 输入通道4 PA0        输入通道0 PA4
+    VcInPCh5 = 5u,                ///< 输入通道5 PA1        输入通道0 PA5
+    VcInPCh6 = 6u,                ///< 输入通道6 PA2        输入通道0 PB1
+    VcInPCh7 = 7u,                ///< 输入通道7 PA3        输入通道0 PB2
+    VcInPCh8 = 8u,                ///< 输入通道7 PA4        输入通道0 PB10
+    VcInPCh9 = 9u,                ///< 输入通道7 PA5        输入通道0 PB12
+    VcInPCh10 = 10u,                ///< 输入通道7 PA6      输入通道0 PB13
+    VcInPCh11 = 11u,                ///< 输入通道7 PA7      输入通道0 PB14
+    VcInPCh12 = 12u,                ///< 输入通道7 PB4      输入通道0 PB4
+    VcInPCh13 = 13u,                ///< 输入通道7 PB5      输入通道0 PB5
+    VcInPCh14 = 14u,                ///< 输入通道7 PB6      输入通道0 PB6
+    VcInPCh15 = 15u,                ///< 输入通道7 PB7      输入通道0 PB7
 }en_vc_input_p_src_t;
 
 /**
@@ -158,17 +158,17 @@ typedef enum en_vc_input_p_src
 typedef enum en_vc_input_n_src
 {
                                  //VC0                          //VC1
-    VcInNCh0    = 0u,         ///< 输入通道0  PA0	        输入通道0 PC0
-    VcInNCh1    = 1u,         ///< 输入通道1  PA1		输入通道0 PC1
-    VcInNCh2    = 2u,         ///< 输入通道2  PA2		输入通道0 PC2
-    VcInNCh3    = 3u,         ///< 输入通道3  PA3		输入通道0 PC3
-    VcInNCh4    = 4u,         ///< 输入通道4  PA4		输入通道0 PA0
-    VcInNCh5    = 5u,         ///< 输入通道5  PA5		输入通道0 PA1
-    VcInNCh6    = 6u,         ///< 输入通道6  PA6		输入通道0 PB0
-    VcInNCh7    = 7u,         ///< 输入通道7  PA7		输入通道0 PB1
-    VcInNCh8    = 8u,         ///< 输入通道8  PC4		输入通道0 PB2
-    VcInNCh9    = 9u,         ///< 输入通道9  PC5		输入通道0 PB3
-    VcInNCh10   = 10u,        ///< 输入通道10 PB0 		输入通道0 PB4   
+    VcInNCh0    = 0u,         ///< 输入通道0  PA0           输入通道0 PC0
+    VcInNCh1    = 1u,         ///< 输入通道1  PA1       输入通道0 PC1
+    VcInNCh2    = 2u,         ///< 输入通道2  PA2       输入通道0 PC2
+    VcInNCh3    = 3u,         ///< 输入通道3  PA3       输入通道0 PC3
+    VcInNCh4    = 4u,         ///< 输入通道4  PA4       输入通道0 PA0
+    VcInNCh5    = 5u,         ///< 输入通道5  PA5       输入通道0 PA1
+    VcInNCh6    = 6u,         ///< 输入通道6  PA6       输入通道0 PB0
+    VcInNCh7    = 7u,         ///< 输入通道7  PA7       输入通道0 PB1
+    VcInNCh8    = 8u,         ///< 输入通道8  PC4       输入通道0 PB2
+    VcInNCh9    = 9u,         ///< 输入通道9  PC5       输入通道0 PB3
+    VcInNCh10   = 10u,        ///< 输入通道10 PB0       输入通道0 PB4
     ResDivOut   = 11u,        ///< Vcc分压                      Vcc分压
     AiTs        = 12u,        ///< 温度传感器                  温度传感器
     AiBg1p2     = 13u,        ///< BGR 1.2V                    BGR 1.2V

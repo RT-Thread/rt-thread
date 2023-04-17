@@ -180,7 +180,7 @@ __STATIC_INLINE arm_status arm_mat_trans_32bit_generic_mve(
         while (blkCnt > 0U)
         {
             vecIn = vldrwq_gather_shifted_offset_u32(pDataC, vecOffs);
-            vstrwq(pDataDestR, vecIn); 
+            vstrwq(pDataDestR, vecIn);
             pDataDestR += 4;
             pDataC = pDataC + srcCols * 4;
             /*

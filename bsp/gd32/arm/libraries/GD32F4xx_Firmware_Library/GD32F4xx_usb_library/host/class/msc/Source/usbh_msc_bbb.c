@@ -10,27 +10,27 @@
 /*
     Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -78,8 +78,8 @@ usbh_status usbh_msc_bbb_process (usbh_host *uhost, uint8_t lun)
         msc->bbb.state = BBB_SEND_CBW_WAIT;
         /* send CBW */
         usbh_data_send (uhost->data,
-                        msc->bbb.cbw.CBWArray, 
-                        msc->pipe_out, 
+                        msc->bbb.cbw.CBWArray,
+                        msc->pipe_out,
                         BBB_CBW_LENGTH);
         break;
 
@@ -107,9 +107,9 @@ usbh_status usbh_msc_bbb_process (usbh_host *uhost, uint8_t lun)
         break;
 
     case BBB_DATA_IN:
-        usbh_data_recev (uhost->data, 
-                         msc->bbb.pbuf, 
-                         msc->pipe_in, 
+        usbh_data_recev (uhost->data,
+                         msc->bbb.pbuf,
+                         msc->pipe_in,
                          msc->ep_size_in);
 
         msc->bbb.state = BBB_DATA_IN_WAIT;
@@ -128,9 +128,9 @@ usbh_status usbh_msc_bbb_process (usbh_host *uhost, uint8_t lun)
             }
 
             if (msc->bbb.cbw.field.dCBWDataTransferLength > 0U) {
-                usbh_data_recev (uhost->data, 
-                                 msc->bbb.pbuf, 
-                                 msc->pipe_in, 
+                usbh_data_recev (uhost->data,
+                                 msc->bbb.pbuf,
+                                 msc->pipe_in,
                                  msc->ep_size_in);
             } else {
                 msc->bbb.state = BBB_RECEIVE_CSW;
@@ -145,8 +145,8 @@ usbh_status usbh_msc_bbb_process (usbh_host *uhost, uint8_t lun)
 
     case BBB_DATA_OUT:
         usbh_data_send (uhost->data,
-                        msc->bbb.pbuf, 
-                        msc->pipe_out, 
+                        msc->bbb.pbuf,
+                        msc->pipe_out,
                         msc->ep_size_out);
 
         msc->bbb.state = BBB_DATA_OUT_WAIT;
@@ -165,8 +165,8 @@ usbh_status usbh_msc_bbb_process (usbh_host *uhost, uint8_t lun)
 
             if (msc->bbb.cbw.field.dCBWDataTransferLength > 0) {
                 usbh_data_send (uhost->data,
-                                msc->bbb.pbuf, 
-                                msc->pipe_out, 
+                                msc->bbb.pbuf,
+                                msc->pipe_out,
                                 msc->ep_size_out);
             } else {
                 msc->bbb.state = BBB_RECEIVE_CSW;
@@ -183,8 +183,8 @@ usbh_status usbh_msc_bbb_process (usbh_host *uhost, uint8_t lun)
     case BBB_RECEIVE_CSW:
         /* BBB CSW stage */
         usbh_data_recev (uhost->data,
-                         msc->bbb.csw.CSWArray, 
-                         msc->pipe_in, 
+                         msc->bbb.csw.CSWArray,
+                         msc->pipe_in,
                          BBB_CSW_LENGTH);
 
         msc->bbb.state = BBB_RECEIVE_CSW_WAIT;
@@ -307,7 +307,7 @@ usbh_status usbh_msc_bbb_reset (usbh_host *uhost)
         };
 
         usbh_ctlstate_config (uhost, NULL, 0U);
-    } 
+    }
 
     status = usbh_ctl_handler (uhost);
 

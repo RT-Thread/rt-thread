@@ -43,7 +43,7 @@
 /** \file wdt.h
  **
  ** Headerfile for WDT functions
- **  
+ **
  **
  ** History:
  **   - 2017-05-10   Cathy     First Version
@@ -97,8 +97,8 @@ typedef enum en_wdt_status
 
 typedef struct stc_wdt_config
 {
-    uint8_t          u8LoadValue;   ///<溢出时间      
-    en_wdt_reset_t   enResetEnable;  ///<中断或复位使能       
+    uint8_t          u8LoadValue;   ///<溢出时间
+    en_wdt_reset_t   enResetEnable;  ///<中断或复位使能
     func_ptr_t       pfnWdtIrqCb;   ///<中断服务接口函数
 } stc_wdt_config_t;
 //wdt初始化

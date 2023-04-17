@@ -263,7 +263,7 @@ static ald_status_t i2c_slave_stopf(i2c_handle_t *hperh);
  */
 
 /**
- * @brief  I2C Configuration Speed function.      
+ * @brief  I2C Configuration Speed function.
  * @param  hperh: Pointer to a i2c_handle_t structure that contains.
  *                the configuration information for the I2C speed.
  * @param  clk: I2C Peripheral bus clock
@@ -271,63 +271,63 @@ static ald_status_t i2c_slave_stopf(i2c_handle_t *hperh);
  */
 ald_status_t i2c_speed_init(i2c_handle_t *hperh, uint32_t clk)
 {
-	int32_t t_scl, t_pre, tmp;
+    int32_t t_scl, t_pre, tmp;
 
-	if (hperh->init.module == I2C_MODULE_SLAVE) {
-		hperh->init.clk_speed = 450000UL;
-	}
+    if (hperh->init.module == I2C_MODULE_SLAVE) {
+        hperh->init.clk_speed = 450000UL;
+    }
 
-	if (hperh->init.clk_speed <= 100000UL) {
-		tmp = clk / 4000000UL;
-		clk = (tmp >= 16UL) ? (clk >> 4UL) : 4000000UL;
-	}
-	else {
-		tmp = clk / 8000000UL;
-		clk = (tmp >= 16UL) ? (clk >> 4UL) : 8000000UL;
-	}
+    if (hperh->init.clk_speed <= 100000UL) {
+        tmp = clk / 4000000UL;
+        clk = (tmp >= 16UL) ? (clk >> 4UL) : 4000000UL;
+    }
+    else {
+        tmp = clk / 8000000UL;
+        clk = (tmp >= 16UL) ? (clk >> 4UL) : 8000000UL;
+    }
 
-	tmp = tmp >= 16UL ? 15UL : tmp;
-	MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_PRESC_MSK, tmp << I2C_TIMINGR_PRESC_POSS);
+    tmp = tmp >= 16UL ? 15UL : tmp;
+    MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_PRESC_MSK, tmp << I2C_TIMINGR_PRESC_POSS);
 
-	t_scl = 1000000000 / hperh->init.clk_speed;
-	t_pre = 1000000000 / clk;
+    t_scl = 1000000000 / hperh->init.clk_speed;
+    t_pre = 1000000000 / clk;
 
-	tmp = (t_scl * 10) / (t_pre << 1UL);
-	tmp = (tmp % 10) >= 5 ? (tmp / 10 + 1) : tmp / 10;
-	tmp = tmp >= 255UL ? 255UL : tmp;
-	/* SCLDEL+1+SDADEL+0+SCLH+1 */
-	if ((long)(t_scl - ((tmp + 3UL) * t_pre)) < 0)
-		return ERROR;
+    tmp = (t_scl * 10) / (t_pre << 1UL);
+    tmp = (tmp % 10) >= 5 ? (tmp / 10 + 1) : tmp / 10;
+    tmp = tmp >= 255UL ? 255UL : tmp;
+    /* SCLDEL+1+SDADEL+0+SCLH+1 */
+    if ((long)(t_scl - ((tmp + 3UL) * t_pre)) < 0)
+        return ERROR;
 
-	MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, (tmp - 1UL) << I2C_TIMINGR_SCLL_POSS);	
-	if (hperh->init.clk_speed > 100000UL) {		
-		if ((tmp - 1UL) > 3UL) {
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, ((tmp - 1UL) / 3UL) << I2C_TIMINGR_SCLDEL_POSS);
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, ((((tmp - 1UL) / 3UL) >= 3) ? 3 : (((tmp - 1UL) / 3UL) % 3)) << I2C_TIMINGR_SDADEL_POSS);		
-		}
- 		else {
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 1UL << I2C_TIMINGR_SCLDEL_POSS);
-			MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 1UL << I2C_TIMINGR_SDADEL_POSS);
-		}                
-	}
-	else {
-		MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 2UL << I2C_TIMINGR_SDADEL_POSS);
-		MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 4UL << I2C_TIMINGR_SCLDEL_POSS);
-	}
+    MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, (tmp - 1UL) << I2C_TIMINGR_SCLL_POSS);
+    if (hperh->init.clk_speed > 100000UL) {
+        if ((tmp - 1UL) > 3UL) {
+            MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, ((tmp - 1UL) / 3UL) << I2C_TIMINGR_SCLDEL_POSS);
+            MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, ((((tmp - 1UL) / 3UL) >= 3) ? 3 : (((tmp - 1UL) / 3UL) % 3)) << I2C_TIMINGR_SDADEL_POSS);
+        }
+        else {
+            MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 1UL << I2C_TIMINGR_SCLDEL_POSS);
+            MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 1UL << I2C_TIMINGR_SDADEL_POSS);
+        }
+    }
+    else {
+        MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, 2UL << I2C_TIMINGR_SDADEL_POSS);
+        MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, 4UL << I2C_TIMINGR_SCLDEL_POSS);
+    }
 
-	tmp = t_scl - (tmp + READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, I2C_TIMINGR_SCLDEL_POSS) + \
+    tmp = t_scl - (tmp + READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLDEL_MSK, I2C_TIMINGR_SCLDEL_POSS) + \
                              READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SDADEL_MSK, I2C_TIMINGR_SDADEL_POSS) + 1UL) * t_pre;
-	if (tmp < 0)
-		return ERROR;
+    if (tmp < 0)
+        return ERROR;
 
-	tmp = (tmp * 10) / t_pre;
-	tmp = (tmp % 10) >= 5 ? (tmp / 10 + 1) : tmp / 10;
-	tmp = tmp >= 255UL ? 255UL : tmp;
-	/* tscll >= 3*tsclh */
-	tmp = (tmp - 1) <= (READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, I2C_TIMINGR_SCLL_POSS) / 3) ? (READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, I2C_TIMINGR_SCLL_POSS) / 3) + 1: tmp;
-	MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLH_MSK, (tmp - 1UL) << I2C_TIMINGR_SCLH_POSS);
+    tmp = (tmp * 10) / t_pre;
+    tmp = (tmp % 10) >= 5 ? (tmp / 10 + 1) : tmp / 10;
+    tmp = tmp >= 255UL ? 255UL : tmp;
+    /* tscll >= 3*tsclh */
+    tmp = (tmp - 1) <= (READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, I2C_TIMINGR_SCLL_POSS) / 3) ? (READ_BITS(hperh->perh->TIMINGR, I2C_TIMINGR_SCLL_MSK, I2C_TIMINGR_SCLL_POSS) / 3) + 1: tmp;
+    MODIFY_REG(hperh->perh->TIMINGR, I2C_TIMINGR_SCLH_MSK, (tmp - 1UL) << I2C_TIMINGR_SCLH_POSS);
 
-	return OK;
+    return OK;
 }
 /**
  * @brief  Initializes the I2C according to the specified parameters
@@ -338,60 +338,60 @@ ald_status_t i2c_speed_init(i2c_handle_t *hperh, uint32_t clk)
  */
 ald_status_t ald_i2c_init(i2c_handle_t *hperh)
 {
-	uint32_t freqrange = ald_cmu_get_pclk1_clock();
+    uint32_t freqrange = ald_cmu_get_pclk1_clock();
 
-	if (hperh == NULL)
-		return ERROR;
+    if (hperh == NULL)
+        return ERROR;
 
-	/* Check the parameters */
-	assert_param(IS_I2C_CLOCK_SPEED(hperh->init.clk_speed));
-	assert_param(IS_I2C_ADDRESSING_MODE(hperh->init.addr_mode));
-	assert_param(IS_I2C_GENERAL_CALL(hperh->init.general_call));
-	assert_param(IS_I2C_NO_STRETCH(hperh->init.no_stretch));
-	assert_param(IS_I2C_MODULE(hperh->init.module));
+    /* Check the parameters */
+    assert_param(IS_I2C_CLOCK_SPEED(hperh->init.clk_speed));
+    assert_param(IS_I2C_ADDRESSING_MODE(hperh->init.addr_mode));
+    assert_param(IS_I2C_GENERAL_CALL(hperh->init.general_call));
+    assert_param(IS_I2C_NO_STRETCH(hperh->init.no_stretch));
+    assert_param(IS_I2C_MODULE(hperh->init.module));
 
-	if (hperh->state == I2C_STATE_RESET)
-		hperh->lock = UNLOCK;
+    if (hperh->state == I2C_STATE_RESET)
+        hperh->lock = UNLOCK;
 
-	hperh->state = I2C_STATE_BUSY;
+    hperh->state = I2C_STATE_BUSY;
 
-	I2C_DISABLE(hperh);
+    I2C_DISABLE(hperh);
 
-	if (OK != i2c_speed_init(hperh, freqrange))
-		return ERROR;
+    if (OK != i2c_speed_init(hperh, freqrange))
+        return ERROR;
 
-	MODIFY_REG(hperh->perh->CON1, I2C_CON1_NOSTRETCH_MSK, (hperh->init.no_stretch) << I2C_CON1_NOSTRETCH_POS);
-	MODIFY_REG(hperh->perh->CON1, I2C_CON1_GCEN_MSK, (hperh->init.general_call) << I2C_CON1_GCEN_POS);
+    MODIFY_REG(hperh->perh->CON1, I2C_CON1_NOSTRETCH_MSK, (hperh->init.no_stretch) << I2C_CON1_NOSTRETCH_POS);
+    MODIFY_REG(hperh->perh->CON1, I2C_CON1_GCEN_MSK, (hperh->init.general_call) << I2C_CON1_GCEN_POS);
 
-	if (hperh->init.dual_addr == I2C_DUALADDR_ENABLE) {
-		CLEAR_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1EN_MSK);
-		MODIFY_REG(hperh->perh->ADDR1, I2C_ADDR1_OA1_MSK, (hperh->init.own_addr1 & 0x3FF) << I2C_ADDR1_OA1_POSS);
-		SET_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1EN_MSK);
+    if (hperh->init.dual_addr == I2C_DUALADDR_ENABLE) {
+        CLEAR_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1EN_MSK);
+        MODIFY_REG(hperh->perh->ADDR1, I2C_ADDR1_OA1_MSK, (hperh->init.own_addr1 & 0x3FF) << I2C_ADDR1_OA1_POSS);
+        SET_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1EN_MSK);
 
-		CLEAR_BIT(hperh->perh->ADDR2, I2C_ADDR2_OA2EN_MSK);
-		MODIFY_REG(hperh->perh->ADDR2, I2C_ADDR2_OA2_MSK, (hperh->init.own_addr2 & 0x7F) << I2C_ADDR2_OA2_POSS);
-		SET_BIT(hperh->perh->ADDR2, I2C_ADDR2_OA2EN_MSK);
-	} else {
-		if (hperh->init.addr_mode == I2C_ADDR_10BIT) {
-			CLEAR_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1EN_MSK);
-			SET_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1MODE_MSK);
-			MODIFY_REG(hperh->perh->ADDR1, I2C_ADDR1_OA1_MSK, (hperh->init.own_addr1 & 0x3FF) << I2C_ADDR1_OA1_POSS);
-			SET_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1EN_MSK);
-		}
-		else {
-			CLEAR_BIT(hperh->perh->ADDR2, I2C_ADDR2_OA2EN_MSK);
-			MODIFY_REG(hperh->perh->ADDR2, I2C_ADDR2_OA2_MSK, (hperh->init.own_addr2 & 0x7F) << I2C_ADDR2_OA2_POSS);
-			SET_BIT(hperh->perh->ADDR2, I2C_ADDR2_OA2EN_MSK);
-		}
-	}
+        CLEAR_BIT(hperh->perh->ADDR2, I2C_ADDR2_OA2EN_MSK);
+        MODIFY_REG(hperh->perh->ADDR2, I2C_ADDR2_OA2_MSK, (hperh->init.own_addr2 & 0x7F) << I2C_ADDR2_OA2_POSS);
+        SET_BIT(hperh->perh->ADDR2, I2C_ADDR2_OA2EN_MSK);
+    } else {
+        if (hperh->init.addr_mode == I2C_ADDR_10BIT) {
+            CLEAR_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1EN_MSK);
+            SET_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1MODE_MSK);
+            MODIFY_REG(hperh->perh->ADDR1, I2C_ADDR1_OA1_MSK, (hperh->init.own_addr1 & 0x3FF) << I2C_ADDR1_OA1_POSS);
+            SET_BIT(hperh->perh->ADDR1, I2C_ADDR1_OA1EN_MSK);
+        }
+        else {
+            CLEAR_BIT(hperh->perh->ADDR2, I2C_ADDR2_OA2EN_MSK);
+            MODIFY_REG(hperh->perh->ADDR2, I2C_ADDR2_OA2_MSK, (hperh->init.own_addr2 & 0x7F) << I2C_ADDR2_OA2_POSS);
+            SET_BIT(hperh->perh->ADDR2, I2C_ADDR2_OA2EN_MSK);
+        }
+    }
 
-	I2C_ENABLE(hperh);
+    I2C_ENABLE(hperh);
 
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->state      = I2C_STATE_READY;
-	hperh->mode       = I2C_MODE_NONE;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->state      = I2C_STATE_READY;
+    hperh->mode       = I2C_MODE_NONE;
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -402,31 +402,31 @@ ald_status_t ald_i2c_init(i2c_handle_t *hperh)
  */
 ald_status_t ald_i2c_reset(i2c_handle_t *hperh)
 {
-	if (hperh == NULL)
-		return ERROR;
+    if (hperh == NULL)
+        return ERROR;
 
-	I2C_DISABLE(hperh);
+    I2C_DISABLE(hperh);
 
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->state      = I2C_STATE_READY;
-	hperh->mode       = I2C_MODE_NONE;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->state      = I2C_STATE_READY;
+    hperh->mode       = I2C_MODE_NONE;
 
-	__UNLOCK(hperh);
+    __UNLOCK(hperh);
 
-	WRITE_REG(hperh->perh->CON1, 0);
-	WRITE_REG(hperh->perh->CON2, 0);
-	WRITE_REG(hperh->perh->ADDR1, 0);
-	WRITE_REG(hperh->perh->ADDR2, 0);
-	WRITE_REG(hperh->perh->TIMINGR, 0);
-	WRITE_REG(hperh->perh->TIMEOUTR, 0);
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
-	WRITE_REG(hperh->perh->IDR, I2C_FLAG_MASK);
-	WRITE_REG(hperh->perh->ICR, I2C_FLAG_MASK);
+    WRITE_REG(hperh->perh->CON1, 0);
+    WRITE_REG(hperh->perh->CON2, 0);
+    WRITE_REG(hperh->perh->ADDR1, 0);
+    WRITE_REG(hperh->perh->ADDR2, 0);
+    WRITE_REG(hperh->perh->TIMINGR, 0);
+    WRITE_REG(hperh->perh->TIMEOUTR, 0);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    WRITE_REG(hperh->perh->IDR, I2C_FLAG_MASK);
+    WRITE_REG(hperh->perh->ICR, I2C_FLAG_MASK);
 
-	I2C_ENABLE(hperh);
+    I2C_ENABLE(hperh);
 
-	return OK;
+    return OK;
 }
 /**
  * @}
@@ -502,87 +502,87 @@ ald_status_t ald_i2c_reset(i2c_handle_t *hperh)
 ald_status_t ald_i2c_master_send(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t *buf,
                                  uint32_t size, uint32_t timeout)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_MASTER;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_MASTER;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	i2c_master_req_write(hperh, dev_addr, timeout);
+    i2c_master_req_write(hperh, dev_addr, timeout);
 
-	if (size <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	while (size > 0) {
-		hperh->perh->TXDATA  = (*buf++);
-		size--;
-		hperh->xfer_count++;
+    while (size > 0) {
+        hperh->perh->TXDATA  = (*buf++);
+        size--;
+        hperh->xfer_count++;
 
-		if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
-			goto ERROR;
+        if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
+            goto ERROR;
 
-		if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
-			if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, I2C_TIMEOUT_FLAG) == OK) {
-				if (size > 0xFF) {
-					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-				}
-				else {
-					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-					CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-				}
-			}
-			else {
-				goto ERROR;
-			}
-		}
-	}
+        if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
+            if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, I2C_TIMEOUT_FLAG) == OK) {
+                if (size > 0xFF) {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+                }
+                else {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+                    CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+                }
+            }
+            else {
+                goto ERROR;
+            }
+        }
+    }
 
-	if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK) == SET)
-		goto SUCCESS;
+    if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK) == SET)
+        goto SUCCESS;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, I2C_TIMEOUT_FLAG) == OK) {
-		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		goto SUCCESS;
-	}
-	else {
-		goto ERROR;
-	}
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, I2C_TIMEOUT_FLAG) == OK) {
+        SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        goto SUCCESS;
+    }
+    else {
+        goto ERROR;
+    }
 
 ERROR:
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return ERROR;
+    return ERROR;
 
 SUCCESS:
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -598,82 +598,82 @@ SUCCESS:
   ald_status_t ald_i2c_master_recv(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t *buf,
                                 uint32_t size, uint32_t timeout)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_MASTER;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_MASTER;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	i2c_master_req_read(hperh, dev_addr, timeout);
+    i2c_master_req_read(hperh, dev_addr, timeout);
 
-	if (size <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	while (size > 0) {
-		if (i2c_wait_rxne_to_timeout(hperh, timeout) != OK)
-			goto ERROR;
+    while (size > 0) {
+        if (i2c_wait_rxne_to_timeout(hperh, timeout) != OK)
+            goto ERROR;
 
-		(*buf++) = hperh->perh->RXDATA;
-		size--;
-		hperh->xfer_count++;
+        (*buf++) = hperh->perh->RXDATA;
+        size--;
+        hperh->xfer_count++;
 
-		if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
-			if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, I2C_TIMEOUT_FLAG) == OK) {
-				if (size > 0xFF) {
-					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-				}
-				else {
-					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-					CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-				}
-			}
-			else {
-				goto ERROR;
-			}
-		}
-	}
+        if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
+            if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, I2C_TIMEOUT_FLAG) == OK) {
+                if (size > 0xFF) {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+                }
+                else {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+                    CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+                }
+            }
+            else {
+                goto ERROR;
+            }
+        }
+    }
 
-	if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK))
-		goto SUCCESS;
+    if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK))
+        goto SUCCESS;
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		goto SUCCESS;
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        goto SUCCESS;
 
 ERROR:
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return ERROR;
+    return ERROR;
 
 SUCCESS:
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -687,77 +687,77 @@ SUCCESS:
  */
 ald_status_t ald_i2c_slave_send(i2c_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout)
 {
-	uint8_t i = 0;
+    uint8_t i = 0;
 
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_SLAVE;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_SLAVE;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	MODIFY_REG(hperh->perh->FCON, I2C_FCON_TXFTH_MSK, 0x03 << I2C_FCON_TXFTH_POSS);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    MODIFY_REG(hperh->perh->FCON, I2C_FCON_TXFTH_MSK, 0x03 << I2C_FCON_TXFTH_POSS);
 
-	for (i = 0; i < 16; i++) {
-		if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TXF, SET, timeout) != OK)
-			goto ERROR;
+    for (i = 0; i < 16; i++) {
+        if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TXF, SET, timeout) != OK)
+            goto ERROR;
 
-		hperh->perh->TXDATA = (*buf++);
-		--size;
-		hperh->xfer_count++;
+        hperh->perh->TXDATA = (*buf++);
+        --size;
+        hperh->xfer_count++;
 
-		if (size == 0)
-			break;
-	}
+        if (size == 0)
+            break;
+    }
 
-	if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, timeout) == ERROR)
-		goto ERROR;
+    if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, timeout) == ERROR)
+        goto ERROR;
 
-	while (size > 0) {
-		if (i2c_wait_txe_to_timeout(hperh, timeout) == ERROR)
-			goto ERROR;
+    while (size > 0) {
+        if (i2c_wait_txe_to_timeout(hperh, timeout) == ERROR)
+            goto ERROR;
 
-		for (i = 0; i < 8; i++) {
-			if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TXF, SET, timeout) != OK)
-				goto ERROR;
+        for (i = 0; i < 8; i++) {
+            if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TXF, SET, timeout) != OK)
+                goto ERROR;
 
-			hperh->perh->TXDATA = (*buf++);
-			--size;
-			hperh->xfer_count++;
+            hperh->perh->TXDATA = (*buf++);
+            --size;
+            hperh->xfer_count++;
 
-			if (size == 0)
-				break;
-		}
-	}
+            if (size == 0)
+                break;
+        }
+    }
 
-	goto SUCCESS;
+    goto SUCCESS;
 
 ERROR:
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return ERROR;
+    return ERROR;
 
 SUCCESS:
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -771,55 +771,55 @@ SUCCESS:
  */
 ald_status_t ald_i2c_slave_recv(i2c_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_SLAVE;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_count = 0;
-	hperh->xfer_size  = size;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_SLAVE;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_count = 0;
+    hperh->xfer_size  = size;
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, timeout) == ERROR)
-		goto ERROR;
+    if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, timeout) == ERROR)
+        goto ERROR;
 
-	while (size > 0) {
-		if (i2c_wait_rxne_to_timeout(hperh, timeout) == ERROR)
-			goto ERROR;
+    while (size > 0) {
+        if (i2c_wait_rxne_to_timeout(hperh, timeout) == ERROR)
+            goto ERROR;
 
-		SET_BIT(hperh->perh->CON2, I2C_CON2_ACK_UPD_MSK);
-		(*buf++) = hperh->perh->RXDATA;
-		--size;
-		hperh->xfer_count++;
-	}
+        SET_BIT(hperh->perh->CON2, I2C_CON2_ACK_UPD_MSK);
+        (*buf++) = hperh->perh->RXDATA;
+        --size;
+        hperh->xfer_count++;
+    }
 
-	goto SUCCESS;
+    goto SUCCESS;
 
 ERROR:
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return ERROR;
+    return ERROR;
 
 SUCCESS:
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -833,48 +833,48 @@ SUCCESS:
  */
 ald_status_t ald_i2c_master_send_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t *buf, uint32_t size)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_MASTER;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_MASTER;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	i2c_master_req_write(hperh, dev_addr, I2C_TIMEOUT_FLAG);
+    i2c_master_req_write(hperh, dev_addr, I2C_TIMEOUT_FLAG);
 
-	if (size <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
 
-	I2C_CLEAR_IT(hperh , I2C_IT_TXTH);
-	I2C_CLEAR_IT(hperh , I2C_IT_NACK);
-	I2C_CLEAR_IT(hperh , I2C_IT_TC);
-	I2C_CLEAR_IT(hperh , I2C_IT_TCR);
+    I2C_CLEAR_IT(hperh , I2C_IT_TXTH);
+    I2C_CLEAR_IT(hperh , I2C_IT_NACK);
+    I2C_CLEAR_IT(hperh , I2C_IT_TC);
+    I2C_CLEAR_IT(hperh , I2C_IT_TCR);
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
-	I2C_ENABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK | I2C_IT_TC | I2C_IT_TCR);
+    I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
+    I2C_ENABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK | I2C_IT_TC | I2C_IT_TCR);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -888,47 +888,47 @@ ald_status_t ald_i2c_master_send_by_it(i2c_handle_t *hperh, uint16_t dev_addr, u
   */
 ald_status_t ald_i2c_master_recv_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t *buf, uint32_t size)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_MASTER;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_MASTER;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	i2c_master_req_read(hperh, dev_addr, I2C_TIMEOUT_FLAG) ;
+    i2c_master_req_read(hperh, dev_addr, I2C_TIMEOUT_FLAG) ;
 
-	if (size <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	I2C_CLEAR_IT(hperh , I2C_IT_RXTH);
-	I2C_CLEAR_IT(hperh , I2C_IT_TCR);
-	I2C_CLEAR_IT(hperh , I2C_IT_TC);
+    I2C_CLEAR_IT(hperh , I2C_IT_RXTH);
+    I2C_CLEAR_IT(hperh , I2C_IT_TCR);
+    I2C_CLEAR_IT(hperh , I2C_IT_TC);
 
-	I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
-	I2C_ENABLE_IT(hperh, I2C_IT_RXTH | I2C_IT_TCR | I2C_IT_TC);
+    I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
+    I2C_ENABLE_IT(hperh, I2C_IT_RXTH | I2C_IT_TCR | I2C_IT_TC);
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -941,36 +941,36 @@ ald_status_t ald_i2c_master_recv_by_it(i2c_handle_t *hperh, uint16_t dev_addr, u
   */
 ald_status_t ald_i2c_slave_send_by_it(i2c_handle_t *hperh, uint8_t *buf, uint32_t size)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_SLAVE;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_SLAVE;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
 
-	I2C_CLEAR_IT(hperh , I2C_IT_TXTH);
-	I2C_CLEAR_IT(hperh , I2C_IT_ADDR);
-	I2C_CLEAR_IT(hperh , I2C_IT_NACK);
-	I2C_CLEAR_IT(hperh , I2C_IT_STOP);
+    I2C_CLEAR_IT(hperh , I2C_IT_TXTH);
+    I2C_CLEAR_IT(hperh , I2C_IT_ADDR);
+    I2C_CLEAR_IT(hperh , I2C_IT_NACK);
+    I2C_CLEAR_IT(hperh , I2C_IT_STOP);
 
-	I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
-	I2C_ENABLE_IT(hperh, I2C_IT_ADDR | I2C_IT_NACK | I2C_IT_STOP | I2C_IT_TXTH);
+    I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
+    I2C_ENABLE_IT(hperh, I2C_IT_ADDR | I2C_IT_NACK | I2C_IT_STOP | I2C_IT_TXTH);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -983,35 +983,35 @@ ald_status_t ald_i2c_slave_send_by_it(i2c_handle_t *hperh, uint8_t *buf, uint32_
   */
 ald_status_t ald_i2c_slave_recv_by_it(i2c_handle_t *hperh, uint8_t *buf, uint32_t size)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_SLAVE;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_SLAVE;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	I2C_CLEAR_IT(hperh , I2C_IT_RXTH);
-	I2C_CLEAR_IT(hperh , I2C_IT_ADDR);
-	I2C_CLEAR_IT(hperh , I2C_IT_STOP);
+    I2C_CLEAR_IT(hperh , I2C_IT_RXTH);
+    I2C_CLEAR_IT(hperh , I2C_IT_ADDR);
+    I2C_CLEAR_IT(hperh , I2C_IT_STOP);
 
-	I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
-	I2C_ENABLE_IT(hperh, I2C_IT_RXTH | I2C_IT_ADDR | I2C_IT_STOP);
+    I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
+    I2C_ENABLE_IT(hperh, I2C_IT_RXTH | I2C_IT_ADDR | I2C_IT_STOP);
 
-	return OK;
+    return OK;
 }
 
 #ifdef ALD_DMA
@@ -1029,60 +1029,60 @@ ald_status_t ald_i2c_slave_recv_by_it(i2c_handle_t *hperh, uint8_t *buf, uint32_
 ald_status_t ald_i2c_master_send_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t *buf,
                                     uint8_t size, uint8_t channel)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	if (size >= 0xFF)
-		size = 0xFF;
+    if (size >= 0xFF)
+        size = 0xFF;
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_MASTER;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_MASTER;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	if (hperh->hdmatx.perh == NULL)
-		hperh->hdmatx.perh = DMA0;
+    if (hperh->hdmatx.perh == NULL)
+        hperh->hdmatx.perh = DMA0;
 
-	hperh->hdmatx.cplt_cbk = i2c_dma_master_send_cplt;
-	hperh->hdmatx.cplt_arg = hperh;
-	hperh->hdmatx.err_cbk  = i2c_dma_error;
-	hperh->hdmatx.err_arg  = hperh;
+    hperh->hdmatx.cplt_cbk = i2c_dma_master_send_cplt;
+    hperh->hdmatx.cplt_arg = hperh;
+    hperh->hdmatx.err_cbk  = i2c_dma_error;
+    hperh->hdmatx.err_arg  = hperh;
 
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	hperh->hdmatx.config.size = size;
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    hperh->hdmatx.config.size = size;
 
-	ald_dma_config_struct(&hperh->hdmatx.config);
-	hperh->hdmatx.config.burst      = ENABLE;
-	hperh->hdmatx.config.src     	 = (void *)hperh->p_buff;
-	hperh->hdmatx.config.dst     	 = (void *)&hperh->perh->TXDATA;
-	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
-	hperh->hdmatx.config.src_inc 	 = DMA_DATA_INC_BYTE;
-	hperh->hdmatx.config.dst_inc 	 = DMA_DATA_INC_NONE;
-	hperh->hdmatx.config.msel    	 = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmatx.config.msigsel 	 = DMA_MSIGSEL_I2C_TXEMPTY;
-	hperh->hdmatx.config.channel 	 = channel;
-	ald_dma_config_basic(&hperh->hdmatx);
+    ald_dma_config_struct(&hperh->hdmatx.config);
+    hperh->hdmatx.config.burst      = ENABLE;
+    hperh->hdmatx.config.src         = (void *)hperh->p_buff;
+    hperh->hdmatx.config.dst         = (void *)&hperh->perh->TXDATA;
+    hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
+    hperh->hdmatx.config.src_inc     = DMA_DATA_INC_BYTE;
+    hperh->hdmatx.config.dst_inc     = DMA_DATA_INC_NONE;
+    hperh->hdmatx.config.msel        = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+    hperh->hdmatx.config.msigsel     = DMA_MSIGSEL_I2C_TXEMPTY;
+    hperh->hdmatx.config.channel     = channel;
+    ald_dma_config_basic(&hperh->hdmatx);
 
-	i2c_master_req_write(hperh, dev_addr, I2C_TIMEOUT_FLAG);
+    i2c_master_req_write(hperh, dev_addr, I2C_TIMEOUT_FLAG);
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	__UNLOCK(hperh);
+    __UNLOCK(hperh);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -1098,57 +1098,57 @@ ald_status_t ald_i2c_master_send_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, 
 ald_status_t ald_i2c_master_recv_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t *buf,
                                     uint8_t size, uint8_t channel)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	if (size >= 0xFF)
-		size = 0xFF;
+    if (size >= 0xFF)
+        size = 0xFF;
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_MASTER;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_MASTER;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	if (hperh->hdmarx.perh == NULL)
-		hperh->hdmarx.perh = DMA0;
+    if (hperh->hdmarx.perh == NULL)
+        hperh->hdmarx.perh = DMA0;
 
-	hperh->hdmarx.cplt_cbk = i2c_dma_master_recv_cplt;
-	hperh->hdmarx.cplt_arg = (void *)hperh;
-	hperh->hdmarx.err_cbk  = i2c_dma_error;
-	hperh->hdmarx.err_arg  = (void *)hperh;
+    hperh->hdmarx.cplt_cbk = i2c_dma_master_recv_cplt;
+    hperh->hdmarx.cplt_arg = (void *)hperh;
+    hperh->hdmarx.err_cbk  = i2c_dma_error;
+    hperh->hdmarx.err_arg  = (void *)hperh;
 
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	hperh->hdmarx.config.size    	 = size;
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    hperh->hdmarx.config.size        = size;
 
-	ald_dma_config_struct(&hperh->hdmarx.config);
-	hperh->hdmarx.config.src     	 = (void *)&hperh->perh->RXDATA;
-	hperh->hdmarx.config.dst     	 = (void *)buf;
-	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
-	hperh->hdmarx.config.src_inc 	 = DMA_DATA_INC_NONE;
-	hperh->hdmarx.config.dst_inc 	 = DMA_DATA_INC_BYTE;
-	hperh->hdmarx.config.msel    	 = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmarx.config.msigsel 	 = DMA_MSIGSEL_I2C_RNR;
-	hperh->hdmarx.config.channel 	 = channel;
-	ald_dma_config_basic(&hperh->hdmarx);
+    ald_dma_config_struct(&hperh->hdmarx.config);
+    hperh->hdmarx.config.src         = (void *)&hperh->perh->RXDATA;
+    hperh->hdmarx.config.dst         = (void *)buf;
+    hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
+    hperh->hdmarx.config.src_inc     = DMA_DATA_INC_NONE;
+    hperh->hdmarx.config.dst_inc     = DMA_DATA_INC_BYTE;
+    hperh->hdmarx.config.msel        = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+    hperh->hdmarx.config.msigsel     = DMA_MSIGSEL_I2C_RNR;
+    hperh->hdmarx.config.channel     = channel;
+    ald_dma_config_basic(&hperh->hdmarx);
 
-	i2c_master_req_read(hperh, dev_addr, I2C_TIMEOUT_FLAG);
+    i2c_master_req_read(hperh, dev_addr, I2C_TIMEOUT_FLAG);
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
-	SET_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -1162,61 +1162,61 @@ ald_status_t ald_i2c_master_recv_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, 
   */
 ald_status_t ald_i2c_slave_send_by_dma(i2c_handle_t *hperh, uint8_t *buf, uint8_t size, uint8_t channel)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_SLAVE;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_SLAVE;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	if (size >= 0xFF)
-		size = 0xFF;
+    if (size >= 0xFF)
+        size = 0xFF;
 
-	if (hperh->hdmatx.perh == NULL)
-		hperh->hdmatx.perh = DMA0;
+    if (hperh->hdmatx.perh == NULL)
+        hperh->hdmatx.perh = DMA0;
 
-	hperh->hdmatx.cplt_cbk = i2c_dma_slave_send_cplt;
-	hperh->hdmatx.cplt_arg = hperh;
-	hperh->hdmatx.err_cbk  = i2c_dma_error;
-	hperh->hdmatx.err_arg  = hperh;
+    hperh->hdmatx.cplt_cbk = i2c_dma_slave_send_cplt;
+    hperh->hdmatx.cplt_arg = hperh;
+    hperh->hdmatx.err_cbk  = i2c_dma_error;
+    hperh->hdmatx.err_arg  = hperh;
 
- 	ald_dma_config_struct(&hperh->hdmatx.config);
-	hperh->hdmatx.config.burst      = ENABLE;
-	hperh->hdmatx.config.src     	= (void *)buf;
-	hperh->hdmatx.config.dst     	= (void *)&hperh->perh->TXDATA;
-	hperh->hdmatx.config.size    	= size;
-	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
-	hperh->hdmatx.config.src_inc 	= DMA_DATA_INC_BYTE;
-	hperh->hdmatx.config.dst_inc 	= DMA_DATA_INC_NONE;
-	hperh->hdmatx.config.msel    	= hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmatx.config.msigsel 	= DMA_MSIGSEL_I2C_TXEMPTY;
-	hperh->hdmatx.config.channel 	= channel;
-	ald_dma_config_basic(&hperh->hdmatx);
+    ald_dma_config_struct(&hperh->hdmatx.config);
+    hperh->hdmatx.config.burst      = ENABLE;
+    hperh->hdmatx.config.src        = (void *)buf;
+    hperh->hdmatx.config.dst        = (void *)&hperh->perh->TXDATA;
+    hperh->hdmatx.config.size       = size;
+    hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
+    hperh->hdmatx.config.src_inc    = DMA_DATA_INC_BYTE;
+    hperh->hdmatx.config.dst_inc    = DMA_DATA_INC_NONE;
+    hperh->hdmatx.config.msel       = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+    hperh->hdmatx.config.msigsel    = DMA_MSIGSEL_I2C_TXEMPTY;
+    hperh->hdmatx.config.channel    = channel;
+    ald_dma_config_basic(&hperh->hdmatx);
 
-	if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, I2C_TIMEOUT_ADDR_SLAVE) == ERROR) {
-		hperh->state = I2C_STATE_READY;
-		hperh->mode  = I2C_MODE_NONE;
-		__UNLOCK(hperh);
+    if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, I2C_TIMEOUT_ADDR_SLAVE) == ERROR) {
+        hperh->state = I2C_STATE_READY;
+        hperh->mode  = I2C_MODE_NONE;
+        __UNLOCK(hperh);
 
-		return ERROR;
-	}
+        return ERROR;
+    }
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -1230,60 +1230,60 @@ ald_status_t ald_i2c_slave_send_by_dma(i2c_handle_t *hperh, uint8_t *buf, uint8_
   */
 ald_status_t ald_i2c_slave_recv_by_dma(i2c_handle_t *hperh, uint8_t *buf, uint8_t size, uint8_t channel)
 {
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_SLAVE;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_SLAVE;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	if (size >= 0xFF)
-		size = 0xFF;
+    if (size >= 0xFF)
+        size = 0xFF;
 
-	if (hperh->hdmarx.perh == NULL)
-		hperh->hdmarx.perh = DMA0;
+    if (hperh->hdmarx.perh == NULL)
+        hperh->hdmarx.perh = DMA0;
 
-	hperh->hdmarx.cplt_cbk = i2c_dma_slave_recv_cplt;
-	hperh->hdmarx.cplt_arg = (void *)hperh;
-	hperh->hdmarx.err_cbk  = i2c_dma_error;
-	hperh->hdmarx.err_arg  = (void *)hperh;
+    hperh->hdmarx.cplt_cbk = i2c_dma_slave_recv_cplt;
+    hperh->hdmarx.cplt_arg = (void *)hperh;
+    hperh->hdmarx.err_cbk  = i2c_dma_error;
+    hperh->hdmarx.err_arg  = (void *)hperh;
 
-	ald_dma_config_struct(&hperh->hdmarx.config);
-	hperh->hdmarx.config.src     	= (void *)&hperh->perh->RXDATA;
-	hperh->hdmarx.config.dst     	= (void *)buf;
-	hperh->hdmarx.config.size    	= size;
-	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
-	hperh->hdmarx.config.src_inc 	= DMA_DATA_INC_NONE;
-	hperh->hdmarx.config.dst_inc 	= DMA_DATA_INC_BYTE;
-	hperh->hdmarx.config.msel    	= hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmarx.config.msigsel 	= DMA_MSIGSEL_I2C_RNR;
-	hperh->hdmarx.config.channel 	= channel;
-	ald_dma_config_basic(&hperh->hdmarx);
+    ald_dma_config_struct(&hperh->hdmarx.config);
+    hperh->hdmarx.config.src        = (void *)&hperh->perh->RXDATA;
+    hperh->hdmarx.config.dst        = (void *)buf;
+    hperh->hdmarx.config.size       = size;
+    hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
+    hperh->hdmarx.config.src_inc    = DMA_DATA_INC_NONE;
+    hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_BYTE;
+    hperh->hdmarx.config.msel       = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+    hperh->hdmarx.config.msigsel    = DMA_MSIGSEL_I2C_RNR;
+    hperh->hdmarx.config.channel    = channel;
+    ald_dma_config_basic(&hperh->hdmarx);
 
-	if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, I2C_TIMEOUT_ADDR_SLAVE) == ERROR) {
-		hperh->state = I2C_STATE_READY;
-		hperh->mode  = I2C_MODE_NONE;
-		__UNLOCK(hperh);
+    if (i2c_wait_master_addr_to_timeout(hperh, I2C_IT_ADDR, I2C_TIMEOUT_ADDR_SLAVE) == ERROR) {
+        hperh->state = I2C_STATE_READY;
+        hperh->mode  = I2C_MODE_NONE;
+        __UNLOCK(hperh);
 
-		return ERROR;
-	}
+        return ERROR;
+    }
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
-	SET_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
 
-	return OK;
+    return OK;
 }
 #endif
 
@@ -1302,93 +1302,93 @@ ald_status_t ald_i2c_slave_recv_by_dma(i2c_handle_t *hperh, uint8_t *buf, uint8_
 ald_status_t ald_i2c_mem_write(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr,
                            i2c_addr_size_t add_size, uint8_t *buf, uint32_t size, uint32_t timeout)
 {
-	uint32_t nbyte = 0;
+    uint32_t nbyte = 0;
 
-	assert_param(IS_I2C_MEMADD_size(add_size));
+    assert_param(IS_I2C_MEMADD_size(add_size));
 
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_MEM;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_MEM;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, timeout) != OK)
-		goto ERROR;
+    if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, timeout) != OK)
+        goto ERROR;
 
-	if (size <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
 
-	while (size > 0) {
-		hperh->perh->TXDATA = (*buf++);
-		--size;
-		hperh->xfer_count++;
+    while (size > 0) {
+        hperh->perh->TXDATA = (*buf++);
+        --size;
+        hperh->xfer_count++;
 
-		if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
-			if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, I2C_TIMEOUT_FLAG) == OK) {
-				if (size > 0xFF) {
-					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-				}
-				else {
-					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-					CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-				}
-			}
-			else {
-				goto ERROR;
-			}
-		}
+        if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
+            if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, I2C_TIMEOUT_FLAG) == OK) {
+                if (size > 0xFF) {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+                }
+                else {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+                    CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+                }
+            }
+            else {
+                goto ERROR;
+            }
+        }
 
-		if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
-			goto ERROR;
-	}
+        if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
+            goto ERROR;
+    }
 
-	if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK))
-		goto SUCCESS;
+    if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK))
+        goto SUCCESS;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, timeout))
-		goto ERROR;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, timeout))
+        goto ERROR;
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		goto SUCCESS;
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        goto SUCCESS;
 
 ERROR:
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return ERROR;
+    return ERROR;
 
 SUCCESS:
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -1406,93 +1406,93 @@ SUCCESS:
 ald_status_t ald_i2c_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr, i2c_addr_size_t add_size,
                           uint8_t *buf, uint32_t size, uint32_t timeout)
 {
-	uint32_t nbyte = 0;
+    uint32_t nbyte = 0;
 
-	assert_param(IS_I2C_MEMADD_size(add_size));
+    assert_param(IS_I2C_MEMADD_size(add_size));
 
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_MEM;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->xfer_count = 0;
-	hperh->xfer_size  = size;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_MEM;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->xfer_count = 0;
+    hperh->xfer_size  = size;
 
-	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, timeout) != OK)
-		return ERROR;
+    if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, timeout) != OK)
+        return ERROR;
 
-	if (size <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	while (size > 0) {
-		if (i2c_wait_rxne_to_timeout(hperh, timeout) != OK)
-			goto ERROR;
+    while (size > 0) {
+        if (i2c_wait_rxne_to_timeout(hperh, timeout) != OK)
+            goto ERROR;
 
-		(*buf++) = hperh->perh->RXDATA;
-		size--;
-		hperh->xfer_count++;
+        (*buf++) = hperh->perh->RXDATA;
+        size--;
+        hperh->xfer_count++;
 
-		if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
-			if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, timeout) == OK) {
-				if (size > 0xFF) {
-					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-				}
-				else {
-					MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-					CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-				}
-			}
-			else {
-				goto ERROR;
-			}
-		}
-	}
+        if (((hperh->xfer_count % 0xFF) == 0) && (READ_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK))) {
+            if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, timeout) == OK) {
+                if (size > 0xFF) {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+                }
+                else {
+                    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+                    CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+                }
+            }
+            else {
+                goto ERROR;
+            }
+        }
+    }
 
-	if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK))
-		goto SUCCESS;
+    if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK))
+        goto SUCCESS;
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		goto SUCCESS;
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        goto SUCCESS;
 
 ERROR:
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return ERROR;
+    return ERROR;
 
 SUCCESS:
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -1509,65 +1509,65 @@ SUCCESS:
 ald_status_t ald_i2c_mem_write_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr,
                               i2c_addr_size_t add_size, uint8_t *buf, uint32_t size)
 {
-	uint32_t nbyte = 0;
+    uint32_t nbyte = 0;
 
-	assert_param(IS_I2C_MEMADD_size(add_size));
+    assert_param(IS_I2C_MEMADD_size(add_size));
 
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_MEM;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_MEM;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
-		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		hperh->state = I2C_STATE_READY;
-		hperh->mode  = I2C_MODE_NONE;
-		__UNLOCK(hperh);
+    if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
+        SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        hperh->state = I2C_STATE_READY;
+        hperh->mode  = I2C_MODE_NONE;
+        __UNLOCK(hperh);
 
-		return ERROR;
-	}
-	
-	if (size <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
-	
-	I2C_CLEAR_IT(hperh , I2C_IT_TXTH);
-	I2C_CLEAR_IT(hperh , I2C_IT_NACK);
-	I2C_CLEAR_IT(hperh , I2C_IT_TC);
-	I2C_CLEAR_IT(hperh , I2C_IT_TCR);
+        return ERROR;
+    }
 
-	hperh->perh->TXDATA = (*hperh->p_buff++);
-	hperh->xfer_count++;
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
 
-	I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
-	I2C_ENABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK | I2C_IT_TC | I2C_IT_TCR);
+    I2C_CLEAR_IT(hperh , I2C_IT_TXTH);
+    I2C_CLEAR_IT(hperh , I2C_IT_NACK);
+    I2C_CLEAR_IT(hperh , I2C_IT_TC);
+    I2C_CLEAR_IT(hperh , I2C_IT_TCR);
 
-	return OK;
+    hperh->perh->TXDATA = (*hperh->p_buff++);
+    hperh->xfer_count++;
+
+    I2C_DISABLE_IT(hperh, I2C_FLAG_MASK);
+    I2C_ENABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK | I2C_IT_TC | I2C_IT_TCR);
+
+    return OK;
 }
 
 /**
@@ -1584,63 +1584,63 @@ ald_status_t ald_i2c_mem_write_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uin
 ald_status_t ald_i2c_mem_read_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr,
                              i2c_addr_size_t add_size, uint8_t *buf, uint32_t size)
 {
-	uint32_t nbyte = 0;
+    uint32_t nbyte = 0;
 
-	assert_param(IS_I2C_MEMADD_size(add_size));
+    assert_param(IS_I2C_MEMADD_size(add_size));
 
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	__LOCK(hperh);
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_MEM;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_MEM;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
-		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		hperh->state = I2C_STATE_READY;
-		hperh->mode  = I2C_MODE_NONE;
-		__UNLOCK(hperh);
+    if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
+        SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        hperh->state = I2C_STATE_READY;
+        hperh->mode  = I2C_MODE_NONE;
+        __UNLOCK(hperh);
 
-		return ERROR;
-	}
+        return ERROR;
+    }
 
-	if (size <= 0xFF) {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	}
-	else {
-		MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	}
+    if (size <= 0xFF) {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    }
+    else {
+        MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    }
 
-	I2C_CLEAR_IT(hperh , I2C_IT_RXTH);
-	I2C_CLEAR_IT(hperh , I2C_IT_TC);
-	I2C_CLEAR_IT(hperh , I2C_IT_TCR);
+    I2C_CLEAR_IT(hperh , I2C_IT_RXTH);
+    I2C_CLEAR_IT(hperh , I2C_IT_TC);
+    I2C_CLEAR_IT(hperh , I2C_IT_TCR);
 
-	I2C_ENABLE_IT(hperh, I2C_IT_RXTH | I2C_IT_TC | I2C_IT_TCR);
+    I2C_ENABLE_IT(hperh, I2C_IT_RXTH | I2C_IT_TC | I2C_IT_TCR);
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	return OK;
+    return OK;
 }
 
 #ifdef ALD_DMA
@@ -1660,69 +1660,69 @@ ald_status_t ald_i2c_mem_read_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uint
 ald_status_t ald_i2c_mem_write_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr, i2c_addr_size_t add_size,
                                uint8_t *buf, uint8_t size, uint8_t channel)
 {
-	uint32_t nbyte = 0;
+    uint32_t nbyte = 0;
 
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_MEMADD_size(add_size));
-	__LOCK(hperh);
+    assert_param(IS_I2C_MEMADD_size(add_size));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_TX;
-	hperh->mode       = I2C_MODE_MASTER;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_BUSY_TX;
+    hperh->mode       = I2C_MODE_MASTER;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = 0;
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
-	if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
-		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		hperh->state = I2C_STATE_READY;
-		hperh->mode  = I2C_MODE_NONE;
-		__UNLOCK(hperh);
+    if (i2c_req_mem_write(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
+        SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        hperh->state = I2C_STATE_READY;
+        hperh->mode  = I2C_MODE_NONE;
+        __UNLOCK(hperh);
 
-		return ERROR;
-	}
+        return ERROR;
+    }
 
-	if (hperh->hdmatx.perh == NULL)
-		hperh->hdmatx.perh = DMA0;
+    if (hperh->hdmatx.perh == NULL)
+        hperh->hdmatx.perh = DMA0;
 
-	hperh->hdmatx.cplt_cbk = i2c_dma_mem_send_cplt;
-	hperh->hdmatx.cplt_arg = hperh;
-	hperh->hdmatx.err_cbk  = i2c_dma_error;
-	hperh->hdmatx.err_arg  = hperh;
+    hperh->hdmatx.cplt_cbk = i2c_dma_mem_send_cplt;
+    hperh->hdmatx.cplt_arg = hperh;
+    hperh->hdmatx.err_cbk  = i2c_dma_error;
+    hperh->hdmatx.err_arg  = hperh;
 
-	ald_dma_config_struct(&hperh->hdmatx.config);
-	hperh->hdmatx.config.burst      = ENABLE;
-	hperh->hdmatx.config.src        = (void *)hperh->p_buff;
-	hperh->hdmatx.config.dst     	= (void *)&hperh->perh->TXDATA;
-	hperh->hdmatx.config.size       = size;
-	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
-	hperh->hdmatx.config.src_inc 	= DMA_DATA_INC_BYTE;
-	hperh->hdmatx.config.dst_inc 	= DMA_DATA_INC_NONE;
-	hperh->hdmatx.config.msel    	= hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmatx.config.msigsel 	= DMA_MSIGSEL_I2C_TXEMPTY;
-	hperh->hdmatx.config.channel 	= channel;
-	ald_dma_config_basic(&hperh->hdmatx);
+    ald_dma_config_struct(&hperh->hdmatx.config);
+    hperh->hdmatx.config.burst      = ENABLE;
+    hperh->hdmatx.config.src        = (void *)hperh->p_buff;
+    hperh->hdmatx.config.dst        = (void *)&hperh->perh->TXDATA;
+    hperh->hdmatx.config.size       = size;
+    hperh->hdmatx.config.data_width = DMA_DATA_SIZE_BYTE;
+    hperh->hdmatx.config.src_inc    = DMA_DATA_INC_BYTE;
+    hperh->hdmatx.config.dst_inc    = DMA_DATA_INC_NONE;
+    hperh->hdmatx.config.msel       = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+    hperh->hdmatx.config.msigsel    = DMA_MSIGSEL_I2C_TXEMPTY;
+    hperh->hdmatx.config.channel    = channel;
+    ald_dma_config_basic(&hperh->hdmatx);
 
-	CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	SET_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
+    CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    SET_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -1740,72 +1740,72 @@ ald_status_t ald_i2c_mem_write_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, ui
 ald_status_t ald_i2c_mem_read_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr, i2c_addr_size_t add_size,
                               uint8_t *buf, uint8_t size, uint8_t channel)
 {
-	uint32_t nbyte = 0;
+    uint32_t nbyte = 0;
 
-	if (hperh->state != I2C_STATE_READY)
-		return BUSY;
+    if (hperh->state != I2C_STATE_READY)
+        return BUSY;
 
-	if ((buf == NULL) || (size == 0))
-		return  ERROR;
+    if ((buf == NULL) || (size == 0))
+        return  ERROR;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
-		return BUSY;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_BUSY, SET, I2C_TIMEOUT_BUSY_FLAG) != OK)
+        return BUSY;
 
-	assert_param(IS_I2C_MEMADD_size(add_size));
-	__LOCK(hperh);
+    assert_param(IS_I2C_MEMADD_size(add_size));
+    __LOCK(hperh);
 
-	hperh->state      = I2C_STATE_BUSY_RX;
-	hperh->mode       = I2C_MODE_MEM;
-	hperh->error_code = I2C_ERROR_NONE;
-	hperh->p_buff     = buf;
-	hperh->xfer_size  = size;
-	hperh->xfer_count = size;
+    hperh->state      = I2C_STATE_BUSY_RX;
+    hperh->mode       = I2C_MODE_MEM;
+    hperh->error_code = I2C_ERROR_NONE;
+    hperh->p_buff     = buf;
+    hperh->xfer_size  = size;
+    hperh->xfer_count = size;
 
-	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
-	SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
+    SET_BIT(hperh->perh->FCON, I2C_FCON_RXFRST_MSK);
 
-	nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    nbyte = (add_size == I2C_MEMADD_SIZE_8BIT) ? 1 : 2;
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, nbyte << I2C_CON2_NBYTES_POSS);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
-	if (i2c_req_mem_read(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
-		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-		hperh->state = I2C_STATE_READY;
-		hperh->mode  = I2C_MODE_NONE;
-		__UNLOCK(hperh);
-	}
+    if (i2c_req_mem_read(hperh, dev_addr, mem_addr, add_size, I2C_TIMEOUT_FLAG) != OK) {
+        SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        hperh->state = I2C_STATE_READY;
+        hperh->mode  = I2C_MODE_NONE;
+        __UNLOCK(hperh);
+    }
 
-	if (hperh->hdmarx.perh == NULL)
-		hperh->hdmarx.perh = DMA0;
+    if (hperh->hdmarx.perh == NULL)
+        hperh->hdmarx.perh = DMA0;
 
-	hperh->hdmarx.cplt_cbk = i2c_dma_mem_recv_cplt;
-	hperh->hdmarx.cplt_arg = (void *)hperh;
-	hperh->hdmarx.err_cbk  = i2c_dma_error;
-	hperh->hdmarx.err_arg  = (void *)hperh;
-	
-	ald_dma_config_struct(&hperh->hdmarx.config);
-	hperh->hdmatx.config.burst       = ENABLE;
-	hperh->hdmarx.config.src     	 = (void *)&hperh->perh->RXDATA;
-	hperh->hdmarx.config.dst     	 = (void *)buf;
-	hperh->hdmarx.config.data_width	 = DMA_DATA_SIZE_BYTE;
-	hperh->hdmarx.config.size        = size;
-	hperh->hdmarx.config.src_inc 	 = DMA_DATA_INC_NONE;
-	hperh->hdmarx.config.dst_inc 	 = DMA_DATA_INC_BYTE;
-	hperh->hdmarx.config.msel    	 = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
-	hperh->hdmarx.config.msigsel 	 = DMA_MSIGSEL_I2C_RNR;
-	hperh->hdmarx.config.channel 	 = channel;
-	ald_dma_config_basic(&hperh->hdmarx);
+    hperh->hdmarx.cplt_cbk = i2c_dma_mem_recv_cplt;
+    hperh->hdmarx.cplt_arg = (void *)hperh;
+    hperh->hdmarx.err_cbk  = i2c_dma_error;
+    hperh->hdmarx.err_arg  = (void *)hperh;
 
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-	CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    ald_dma_config_struct(&hperh->hdmarx.config);
+    hperh->hdmatx.config.burst       = ENABLE;
+    hperh->hdmarx.config.src         = (void *)&hperh->perh->RXDATA;
+    hperh->hdmarx.config.dst         = (void *)buf;
+    hperh->hdmarx.config.data_width  = DMA_DATA_SIZE_BYTE;
+    hperh->hdmarx.config.size        = size;
+    hperh->hdmarx.config.src_inc     = DMA_DATA_INC_NONE;
+    hperh->hdmarx.config.dst_inc     = DMA_DATA_INC_BYTE;
+    hperh->hdmarx.config.msel        = hperh->perh == I2C0 ? DMA_MSEL_I2C0 : DMA_MSEL_I2C1;
+    hperh->hdmarx.config.msigsel     = DMA_MSIGSEL_I2C_RNR;
+    hperh->hdmarx.config.channel     = channel;
+    ald_dma_config_basic(&hperh->hdmarx);
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
-	SET_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+    CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
 
-	__UNLOCK(hperh);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
 
-	return OK;
+    __UNLOCK(hperh);
+
+    return OK;
 }
 
 #endif
@@ -1837,7 +1837,7 @@ ald_status_t ald_i2c_mem_read_by_dma(i2c_handle_t *hperh, uint16_t dev_addr, uin
  */
 i2c_state_t ald_i2c_get_state(i2c_handle_t *hperh)
 {
-	return hperh->state;
+    return hperh->state;
 }
 
 /**
@@ -1848,7 +1848,7 @@ i2c_state_t ald_i2c_get_state(i2c_handle_t *hperh)
  */
 uint32_t ald_i2c_get_error(i2c_handle_t *hperh)
 {
-	return hperh->error_code;
+    return hperh->error_code;
 }
 /**
  * @}
@@ -1866,76 +1866,76 @@ uint32_t ald_i2c_get_error(i2c_handle_t *hperh)
   */
 void ald_i2c_ev_irq_handler(i2c_handle_t *hperh)
 {
-	uint32_t size = hperh->xfer_size - hperh->xfer_count;
+    uint32_t size = hperh->xfer_size - hperh->xfer_count;
 
-	/**< Transmit FIFO threshold interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXTH) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_TXTH);
-		if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM)) {
-			i2c_master_send_txe(hperh);
-		}
-		else if (hperh->mode == I2C_MODE_SLAVE) {
-			i2c_slave_send_txe(hperh);
-		}
-	}
+    /**< Transmit FIFO threshold interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXTH) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_TXTH);
+        if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM)) {
+            i2c_master_send_txe(hperh);
+        }
+        else if (hperh->mode == I2C_MODE_SLAVE) {
+            i2c_slave_send_txe(hperh);
+        }
+    }
 
-	/**< Receive FIFO threshold interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_RXTH) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_RXTH);
-		if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM)) {
-			i2c_master_recv_rxne(hperh);
-		}
-		else if (hperh->mode == I2C_MODE_SLAVE) {
-			i2c_slave_recv_rxne(hperh);
-		}
-	}
+    /**< Receive FIFO threshold interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_RXTH) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_RXTH);
+        if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM)) {
+            i2c_master_recv_rxne(hperh);
+        }
+        else if (hperh->mode == I2C_MODE_SLAVE) {
+            i2c_slave_recv_rxne(hperh);
+        }
+    }
 
-	/**< Transmit completed interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TC) == SET) {
-		if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM)) {
-			if (I2C_MASTER_GET_DIR(hperh) == RESET) {
-				i2c_master_send_tc(hperh);
-			}
-			else {
-				i2c_master_recv_tc(hperh);
-			}
-		}
+    /**< Transmit completed interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TC) == SET) {
+        if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM)) {
+            if (I2C_MASTER_GET_DIR(hperh) == RESET) {
+                i2c_master_send_tc(hperh);
+            }
+            else {
+                i2c_master_recv_tc(hperh);
+            }
+        }
 
-		ald_i2c_clear_flag_status(hperh, I2C_IT_TC);
-	}
+        ald_i2c_clear_flag_status(hperh, I2C_IT_TC);
+    }
 
-	/**< Transmit and reload completed interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TCR) == SET) {
-		if (size > 0xFF) {
-			MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
-		}
-		else {
-			MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
-			CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-		}
+    /**< Transmit and reload completed interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TCR) == SET) {
+        if (size > 0xFF) {
+            MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, 0xFF << I2C_CON2_NBYTES_POSS);
+        }
+        else {
+            MODIFY_REG(hperh->perh->CON2, I2C_CON2_NBYTES_MSK, size << I2C_CON2_NBYTES_POSS);
+            CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+        }
 
-		ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
-	}
-	/**< Transmit FIFO empty interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXE) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_TXE);
-	}
+        ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
+    }
+    /**< Transmit FIFO empty interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXE) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_TXE);
+    }
 
-	/**< Receive FIFO full interrupt*/
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_RXF) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_RXF);
-	}
+    /**< Receive FIFO full interrupt*/
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_RXF) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_RXF);
+    }
 
-	/**< Address matching interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_ADDR) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_ADDR);
-	}
+    /**< Address matching interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_ADDR) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_ADDR);
+    }
 
-	/**< Stop detection interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_STOP) == SET) {
-		i2c_slave_stopf(hperh);
-		ald_i2c_clear_flag_status(hperh, I2C_IT_STOP);
-	}
+    /**< Stop detection interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_STOP) == SET) {
+        i2c_slave_stopf(hperh);
+        ald_i2c_clear_flag_status(hperh, I2C_IT_STOP);
+    }
 }
 
 /**
@@ -1946,81 +1946,81 @@ void ald_i2c_ev_irq_handler(i2c_handle_t *hperh)
   */
 void ald_i2c_er_irq_handler(i2c_handle_t *hperh)
 {
-	/**< Transmit FIFO overrun interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXOV) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_TXOV);
-		hperh->error_code |= I2C_ERROR_TOV;
-	}
-	/**< Transmit FIFO underrun */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXUD) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_TXUD);
-		hperh->error_code |= I2C_ERROR_TUD;
-	}
+    /**< Transmit FIFO overrun interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXOV) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_TXOV);
+        hperh->error_code |= I2C_ERROR_TOV;
+    }
+    /**< Transmit FIFO underrun */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TXUD) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_TXUD);
+        hperh->error_code |= I2C_ERROR_TUD;
+    }
 
-	/**< Receive FIFO overrun interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_RXOV) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_RXOV);
-		hperh->error_code |= I2C_ERROR_ROV;
-	}
+    /**< Receive FIFO overrun interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_RXOV) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_RXOV);
+        hperh->error_code |= I2C_ERROR_ROV;
+    }
 
-	/**< Receive FIFO underrun interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_RXUD) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_RXUD);
-		hperh->error_code |= I2C_ERROR_RUD;
-	}
+    /**< Receive FIFO underrun interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_RXUD) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_RXUD);
+        hperh->error_code |= I2C_ERROR_RUD;
+    }
 
-	/**< NACK interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_NACK) == SET) {
-		if (hperh->xfer_count != hperh->xfer_size) {
-			hperh->state |= I2C_ERROR_AF;
-		}
-		else {
-			I2C_DISABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK);
-			ald_i2c_clear_flag_status(hperh, I2C_IT_NACK);
-			return;
-		}
+    /**< NACK interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_NACK) == SET) {
+        if (hperh->xfer_count != hperh->xfer_size) {
+            hperh->state |= I2C_ERROR_AF;
+        }
+        else {
+            I2C_DISABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK);
+            ald_i2c_clear_flag_status(hperh, I2C_IT_NACK);
+            return;
+        }
 
-		if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM))
-			SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+        if ((hperh->mode == I2C_MODE_MASTER) || (hperh->mode == I2C_MODE_MEM))
+            SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
 
-		I2C_DISABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK);
-		ald_i2c_clear_flag_status(hperh, I2C_IT_NACK);
-	}
+        I2C_DISABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK);
+        ald_i2c_clear_flag_status(hperh, I2C_IT_NACK);
+    }
 
-	/**< Bus error interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_BERR) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_BERR);
-		hperh->state |= I2C_ERROR_BERR;
-	}
+    /**< Bus error interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_BERR) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_BERR);
+        hperh->state |= I2C_ERROR_BERR;
+    }
 
-	/**< Arbitration loss interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_ARLO) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_ARLO);
-		hperh->state |= I2C_ERROR_ARLO;
-	}
+    /**< Arbitration loss interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_ARLO) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_ARLO);
+        hperh->state |= I2C_ERROR_ARLO;
+    }
 
-	/**< PEC error interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_PECE) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_PECE);
-	}
+    /**< PEC error interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_PECE) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_PECE);
+    }
 
-	/**< Timeout interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TOUT) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_TOUT);
-		hperh->state |= I2C_ERROR_TIMEOUT;
-	}
+    /**< Timeout interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_TOUT) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_TOUT);
+        hperh->state |= I2C_ERROR_TIMEOUT;
+    }
 
-	/**< SMBus Alert interrupt */
-	if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_ALERT) == SET) {
-		ald_i2c_clear_flag_status(hperh, I2C_IT_ALERT);
-	}
+    /**< SMBus Alert interrupt */
+    if (ald_i2c_get_mask_flag_status(hperh, I2C_IT_ALERT) == SET) {
+        ald_i2c_clear_flag_status(hperh, I2C_IT_ALERT);
+    }
 
-	hperh->state = I2C_STATE_READY;
-	hperh->mode  = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
+    hperh->mode  = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	if (hperh->error_callback)
-		hperh->error_callback(hperh);
+    if (hperh->error_callback)
+        hperh->error_callback(hperh);
 }
 
 /**
@@ -2035,16 +2035,16 @@ void ald_i2c_er_irq_handler(i2c_handle_t *hperh)
   */
 void ald_i2c_interrupt_config(i2c_handle_t *hperh, i2c_interrupt_t it, type_func_t state)
 {
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	assert_param(IS_I2C_IT(it));
-	assert_param(IS_FUNC_STATE(state));
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    assert_param(IS_I2C_IT(it));
+    assert_param(IS_FUNC_STATE(state));
 
-	if (state == ENABLE)
-		hperh->perh->IER = it;
-	else
-		hperh->perh->IDR = it;
+    if (state == ENABLE)
+        hperh->perh->IER = it;
+    else
+        hperh->perh->IDR = it;
 
-	return;
+    return;
 }
 
 /**
@@ -2058,15 +2058,15 @@ void ald_i2c_interrupt_config(i2c_handle_t *hperh, i2c_interrupt_t it, type_func
   */
 it_status_t ald_i2c_get_it_status(i2c_handle_t *hperh, i2c_interrupt_t it)
 {
-	it_status_t status = RESET;
+    it_status_t status = RESET;
 
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	assert_param(IS_I2C_IT(it));
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    assert_param(IS_I2C_IT(it));
 
-	if (hperh->perh->IVS & it)
-		status = SET;
+    if (hperh->perh->IVS & it)
+        status = SET;
 
-	return status;
+    return status;
 }
 
 /**
@@ -2080,13 +2080,13 @@ it_status_t ald_i2c_get_it_status(i2c_handle_t *hperh, i2c_interrupt_t it)
   */
 flag_status_t ald_i2c_get_flag_status(i2c_handle_t *hperh, i2c_interrupt_t flag)
 {
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	assert_param(IS_I2C_IT(flag));
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    assert_param(IS_I2C_IT(flag));
 
-	if (hperh->perh->RIF & flag)
-		return SET;
+    if (hperh->perh->RIF & flag)
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 
@@ -2101,13 +2101,13 @@ flag_status_t ald_i2c_get_flag_status(i2c_handle_t *hperh, i2c_interrupt_t flag)
   */
 flag_status_t ald_i2c_get_mask_flag_status(i2c_handle_t *hperh, i2c_interrupt_t flag)
 {
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	assert_param(IS_I2C_IT(flag));
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    assert_param(IS_I2C_IT(flag));
 
-	if (hperh->perh->IFM & flag)
-		return SET;
+    if (hperh->perh->IFM & flag)
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /**
@@ -2118,11 +2118,11 @@ flag_status_t ald_i2c_get_mask_flag_status(i2c_handle_t *hperh, i2c_interrupt_t 
   */
 void ald_i2c_clear_flag_status(i2c_handle_t *hperh, i2c_interrupt_t flag)
 {
-	assert_param(IS_I2C_TYPE(hperh->perh));
-	assert_param(IS_I2C_IT(flag));
+    assert_param(IS_I2C_TYPE(hperh->perh));
+    assert_param(IS_I2C_IT(flag));
 
-	hperh->perh->ICR = flag;
-	return;
+    hperh->perh->ICR = flag;
+    return;
 }
 
 /**
@@ -2141,24 +2141,24 @@ void ald_i2c_clear_flag_status(i2c_handle_t *hperh, i2c_interrupt_t flag)
  */
 static ald_status_t i2c_master_send_tc(i2c_handle_t *hperh)
 {
-	I2C_DISABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK | I2C_IT_TC | I2C_IT_TCR);
+    I2C_DISABLE_IT(hperh, I2C_IT_TXTH | I2C_IT_NACK | I2C_IT_TC | I2C_IT_TCR);
 
-	if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK) == RESET)
-		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK) == RESET)
+        SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
 
-	__UNLOCK(hperh);
-	hperh->state = I2C_STATE_READY;
+    __UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
 
-	if (hperh->mode == I2C_MODE_MEM) {
-		if (hperh->mem_tx_cplt_cbk)
-			hperh->mem_tx_cplt_cbk(hperh);
-	}
-	else {
-		if (hperh->master_tx_cplt_cbk)
-			hperh->master_tx_cplt_cbk(hperh);
-	}
+    if (hperh->mode == I2C_MODE_MEM) {
+        if (hperh->mem_tx_cplt_cbk)
+            hperh->mem_tx_cplt_cbk(hperh);
+    }
+    else {
+        if (hperh->master_tx_cplt_cbk)
+            hperh->master_tx_cplt_cbk(hperh);
+    }
 
-	return OK;
+    return OK;
 }
 
 
@@ -2170,13 +2170,13 @@ static ald_status_t i2c_master_send_tc(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_master_send_txe(i2c_handle_t *hperh)
 {
-	if (hperh->xfer_count != hperh->xfer_size) {
-		while(hperh->perh->STAT & (0x1 << 1));
-		hperh->perh->TXDATA = (*hperh->p_buff++);
-		hperh->xfer_count++;
-	}
+    if (hperh->xfer_count != hperh->xfer_size) {
+        while(hperh->perh->STAT & (0x1 << 1));
+        hperh->perh->TXDATA = (*hperh->p_buff++);
+        hperh->xfer_count++;
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -2187,24 +2187,24 @@ static ald_status_t i2c_master_send_txe(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_master_recv_tc(i2c_handle_t *hperh)
 {
-	I2C_DISABLE_IT(hperh, I2C_IT_RXTH | I2C_IT_TCR | I2C_IT_TC);
+    I2C_DISABLE_IT(hperh, I2C_IT_RXTH | I2C_IT_TCR | I2C_IT_TC);
 
-	if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK) == RESET)
-		SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    if (READ_BIT(hperh->perh->CON2, I2C_CON2_AUTOEND_MSK) == RESET)
+        SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
 
-	__UNLOCK(hperh);
-	hperh->state = I2C_STATE_READY;
+    __UNLOCK(hperh);
+    hperh->state = I2C_STATE_READY;
 
-	if (hperh->mode == I2C_MODE_MEM) {
-		if (hperh->mem_rx_cplt_cbk)
-			hperh->mem_rx_cplt_cbk(hperh);
-	}
-	else {
-		if (hperh->master_rx_cplt_cbk)
-			hperh->master_rx_cplt_cbk(hperh);
-	}
+    if (hperh->mode == I2C_MODE_MEM) {
+        if (hperh->mem_rx_cplt_cbk)
+            hperh->mem_rx_cplt_cbk(hperh);
+    }
+    else {
+        if (hperh->master_rx_cplt_cbk)
+            hperh->master_rx_cplt_cbk(hperh);
+    }
 
-	return OK;
+    return OK;
 }
 /**
  * @brief  Handle receive not empty for Master Receive mode
@@ -2214,17 +2214,17 @@ static ald_status_t i2c_master_recv_tc(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_master_recv_rxne(i2c_handle_t *hperh)
 {
-	while (READ_BITS(hperh->perh->FCON, I2C_FCON_RXFLV_MSK, I2C_FCON_RXFLV_POSS) > 0) {
-		if (hperh->xfer_size - hperh->xfer_count > 0) {
-			(*hperh->p_buff++) = hperh->perh->RXDATA;
-			hperh->xfer_count++;
-		}
-		else {
-			return OK;
-		}
-	}
+    while (READ_BITS(hperh->perh->FCON, I2C_FCON_RXFLV_MSK, I2C_FCON_RXFLV_POSS) > 0) {
+        if (hperh->xfer_size - hperh->xfer_count > 0) {
+            (*hperh->p_buff++) = hperh->perh->RXDATA;
+            hperh->xfer_count++;
+        }
+        else {
+            return OK;
+        }
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -2235,13 +2235,13 @@ static ald_status_t i2c_master_recv_rxne(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_slave_send_txe(i2c_handle_t *hperh)
 {
-	if (hperh->xfer_size > hperh->xfer_count) {
-		while(hperh->perh->STAT & (0x1 << 1));
-		hperh->perh->TXDATA = (*hperh->p_buff++);
-		hperh->xfer_count++;
-	}
+    if (hperh->xfer_size > hperh->xfer_count) {
+        while(hperh->perh->STAT & (0x1 << 1));
+        hperh->perh->TXDATA = (*hperh->p_buff++);
+        hperh->xfer_count++;
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -2252,17 +2252,17 @@ static ald_status_t i2c_slave_send_txe(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_slave_recv_rxne(i2c_handle_t *hperh)
 {
-	while (READ_BITS(hperh->perh->FCON, I2C_FCON_RXFLV_MSK, I2C_FCON_RXFLV_POSS) > 0) {
-		if (hperh->xfer_size > hperh->xfer_count) {
-			(*hperh->p_buff++) = hperh->perh->RXDATA;
-			hperh->xfer_count++;
-		}
-		else {
-			return OK;
-		}
-	}
+    while (READ_BITS(hperh->perh->FCON, I2C_FCON_RXFLV_MSK, I2C_FCON_RXFLV_POSS) > 0) {
+        if (hperh->xfer_size > hperh->xfer_count) {
+            (*hperh->p_buff++) = hperh->perh->RXDATA;
+            hperh->xfer_count++;
+        }
+        else {
+            return OK;
+        }
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -2273,24 +2273,24 @@ static ald_status_t i2c_slave_recv_rxne(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_slave_stopf(i2c_handle_t *hperh)
 {
-	I2C_DISABLE_IT(hperh, I2C_IT_ADDR | I2C_IT_NACK | I2C_IT_RXTH | I2C_IT_TXTH | I2C_IT_STOP);
+    I2C_DISABLE_IT(hperh, I2C_IT_ADDR | I2C_IT_NACK | I2C_IT_RXTH | I2C_IT_TXTH | I2C_IT_STOP);
 
-	hperh->mode       = I2C_MODE_NONE;
-	hperh->error_code = I2C_ERROR_NONE;
-	__UNLOCK(hperh);
+    hperh->mode       = I2C_MODE_NONE;
+    hperh->error_code = I2C_ERROR_NONE;
+    __UNLOCK(hperh);
 
-	if (hperh->state == I2C_STATE_BUSY_TX) {
-		hperh->state = I2C_STATE_READY;
-		if ((hperh->slave_tx_cplt_cbk) && (hperh->xfer_count != 0))
-			hperh->slave_tx_cplt_cbk(hperh);
-	}
-	else if (hperh->state == I2C_STATE_BUSY_RX) {
-		hperh->state = I2C_STATE_READY;
-		if ((hperh->slave_rx_cplt_cbk) && (hperh->xfer_count != 0))
-			hperh->slave_rx_cplt_cbk(hperh);
-	}
+    if (hperh->state == I2C_STATE_BUSY_TX) {
+        hperh->state = I2C_STATE_READY;
+        if ((hperh->slave_tx_cplt_cbk) && (hperh->xfer_count != 0))
+            hperh->slave_tx_cplt_cbk(hperh);
+    }
+    else if (hperh->state == I2C_STATE_BUSY_RX) {
+        hperh->state = I2C_STATE_READY;
+        if ((hperh->slave_rx_cplt_cbk) && (hperh->xfer_count != 0))
+            hperh->slave_rx_cplt_cbk(hperh);
+    }
 
-	return OK;
+    return OK;
 }
 
 
@@ -2304,17 +2304,17 @@ static ald_status_t i2c_slave_stopf(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_master_req_write(i2c_handle_t *hperh, uint16_t dev_addr, uint32_t timeout)
 {
-	if (hperh->init.addr_mode == I2C_ADDR_7BIT) {
-		CLEAR_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
-	}
-	else {
-		SET_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
-	}
+    if (hperh->init.addr_mode == I2C_ADDR_7BIT) {
+        CLEAR_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
+    }
+    else {
+        SET_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
+    }
 
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_SADD_MSK, dev_addr << I2C_CON2_SADD_POSS);
-	CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_SADD_MSK, dev_addr << I2C_CON2_SADD_POSS);
+    CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -2327,17 +2327,17 @@ static ald_status_t i2c_master_req_write(i2c_handle_t *hperh, uint16_t dev_addr,
  */
 static ald_status_t i2c_master_req_read(i2c_handle_t *hperh, uint16_t dev_addr, uint32_t timeout)
 {
-	if (hperh->init.addr_mode == I2C_ADDR_7BIT) {
-		CLEAR_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
-	}
-	else {
-		SET_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
-	}
+    if (hperh->init.addr_mode == I2C_ADDR_7BIT) {
+        CLEAR_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
+    }
+    else {
+        SET_BIT(hperh->perh->CON2, I2C_CON2_ADD10_MSK);
+    }
 
-	MODIFY_REG(hperh->perh->CON2, I2C_CON2_SADD_MSK, dev_addr << I2C_CON2_SADD_POSS);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
+    MODIFY_REG(hperh->perh->CON2, I2C_CON2_SADD_MSK, dev_addr << I2C_CON2_SADD_POSS);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_RD_WRN_MSK);
 
-	return OK;
+    return OK;
 }
 /**
  * @brief  Master sends target device address followed by internal memory address for write request.
@@ -2352,34 +2352,34 @@ static ald_status_t i2c_master_req_read(i2c_handle_t *hperh, uint16_t dev_addr, 
 
 static ald_status_t i2c_req_mem_write(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr, uint16_t add_size, uint32_t timeout)
 {
-	i2c_master_req_write(hperh, dev_addr, timeout);
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    i2c_master_req_write(hperh, dev_addr, timeout);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	if (add_size == I2C_MEMADD_SIZE_8BIT) {
-		while(hperh->perh->STAT & (0x1 << 1));
-		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
-	}
-	else {
-		while(hperh->perh->STAT & (0x1 << 1));
-		hperh->perh->TXDATA = I2C_MEM_ADD_MSB(mem_addr);
+    if (add_size == I2C_MEMADD_SIZE_8BIT) {
+        while(hperh->perh->STAT & (0x1 << 1));
+        hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
+    }
+    else {
+        while(hperh->perh->STAT & (0x1 << 1));
+        hperh->perh->TXDATA = I2C_MEM_ADD_MSB(mem_addr);
 
-		if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
-			return ERROR;
+        if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
+            return ERROR;
 
-		while(hperh->perh->STAT & (0x1 << 1));
-		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
-	}
+        while(hperh->perh->STAT & (0x1 << 1));
+        hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
+    }
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, timeout) != OK) {
-		CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-		ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
-		return ERROR;
-	}
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TCR, RESET, timeout) != OK) {
+        CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+        ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
+        return ERROR;
+    }
 
-	CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
-	ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
-	
-	return OK;
+    CLEAR_BIT(hperh->perh->CON2, I2C_CON2_RELOAD_MSK);
+    ald_i2c_clear_flag_status(hperh, I2C_IT_TCR);
+
+    return OK;
 }
 #ifdef ALD_DMA
 /**
@@ -2394,44 +2394,44 @@ static ald_status_t i2c_req_mem_write(i2c_handle_t *hperh, uint16_t dev_addr, ui
  */
 static ald_status_t i2c_req_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t mem_addr, uint16_t add_size, uint32_t timeout)
 {
-	uint32_t tim_count = 0;
+    uint32_t tim_count = 0;
 
-	if (i2c_master_req_write(hperh, dev_addr, timeout) != OK) {
-		__UNLOCK(hperh);
-		return ERROR;
-	}
+    if (i2c_master_req_write(hperh, dev_addr, timeout) != OK) {
+        __UNLOCK(hperh);
+        return ERROR;
+    }
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
-	if (add_size == I2C_MEMADD_SIZE_8BIT) {
-		while(hperh->perh->STAT & (0x1 << 1));
-		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
-	}
-	else {
-		while(hperh->perh->STAT & (0x1 << 1));
-		hperh->perh->TXDATA = I2C_MEM_ADD_MSB(mem_addr);
+    if (add_size == I2C_MEMADD_SIZE_8BIT) {
+        while(hperh->perh->STAT & (0x1 << 1));
+        hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
+    }
+    else {
+        while(hperh->perh->STAT & (0x1 << 1));
+        hperh->perh->TXDATA = I2C_MEM_ADD_MSB(mem_addr);
 
-		if (i2c_wait_txe_to_timeout(hperh, timeout) != OK) {
-			if (hperh->error_code == I2C_ERROR_AF) {
-				SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
-				return ERROR;
-			}
-			else {
-				return TIMEOUT;
-			}
-		}
-		while(hperh->perh->STAT & (0x1 << 1));
-		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
-	}
+        if (i2c_wait_txe_to_timeout(hperh, timeout) != OK) {
+            if (hperh->error_code == I2C_ERROR_AF) {
+                SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
+                return ERROR;
+            }
+            else {
+                return TIMEOUT;
+            }
+        }
+        while(hperh->perh->STAT & (0x1 << 1));
+        hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
+    }
 
-	while (!I2C_GET_FLAG(hperh, I2C_STAT_TXE)) {
-		tim_count++;
+    while (!I2C_GET_FLAG(hperh, I2C_STAT_TXE)) {
+        tim_count++;
 
-		if (tim_count > 0xFFFF)
-			return TIMEOUT;
-	}
+        if (tim_count > 0xFFFF)
+            return TIMEOUT;
+    }
 
-	return OK;
+    return OK;
 }
 
 
@@ -2442,27 +2442,27 @@ static ald_status_t i2c_req_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uin
 */
 static void i2c_dma_master_send_cplt(void *argv)
 {
-	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+    i2c_handle_t* hperh = (i2c_handle_t*)argv;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, I2C_TIMEOUT_FLAG) == ERROR)
-		hperh->error_code |= I2C_ERROR_TIMEOUT;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, I2C_TIMEOUT_FLAG) == ERROR)
+        hperh->error_code |= I2C_ERROR_TIMEOUT;
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	CLEAR_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    CLEAR_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
 
-	hperh->xfer_count = 0;
-	hperh->state      = I2C_STATE_READY;
-	hperh->mode       = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_READY;
+    hperh->mode       = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	if (hperh->error_code != I2C_ERROR_NONE) {
-		if (hperh->error_callback)
-			hperh->error_callback(hperh);
-	}
-	else {
-		if (hperh->master_tx_cplt_cbk)
-			hperh->master_tx_cplt_cbk(hperh);
-	}
+    if (hperh->error_code != I2C_ERROR_NONE) {
+        if (hperh->error_callback)
+            hperh->error_callback(hperh);
+    }
+    else {
+        if (hperh->master_tx_cplt_cbk)
+            hperh->master_tx_cplt_cbk(hperh);
+    }
 }
 
 /**
@@ -2472,23 +2472,23 @@ static void i2c_dma_master_send_cplt(void *argv)
  */
 static void i2c_dma_slave_send_cplt(void *argv)
 {
-	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+    i2c_handle_t* hperh = (i2c_handle_t*)argv;
 
-	CLEAR_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
+    CLEAR_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
 
-	hperh->xfer_count = 0;
-	hperh->state      = I2C_STATE_READY;
-	hperh->mode       = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_READY;
+    hperh->mode       = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	if (hperh->error_code != I2C_ERROR_NONE) {
-		if (hperh->error_callback)
-			hperh->error_callback(hperh);
-	}
-	else {
-		if (hperh->slave_tx_cplt_cbk)
-			hperh->slave_tx_cplt_cbk(hperh);
-	}
+    if (hperh->error_code != I2C_ERROR_NONE) {
+        if (hperh->error_callback)
+            hperh->error_callback(hperh);
+    }
+    else {
+        if (hperh->slave_tx_cplt_cbk)
+            hperh->slave_tx_cplt_cbk(hperh);
+    }
 }
 
 /**
@@ -2498,27 +2498,27 @@ static void i2c_dma_slave_send_cplt(void *argv)
  */
 static void i2c_dma_master_recv_cplt(void *argv)
 {
-	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+    i2c_handle_t* hperh = (i2c_handle_t*)argv;
 
-	if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, I2C_TIMEOUT_FLAG) == ERROR)
-		hperh->error_code |= I2C_ERROR_TIMEOUT;
+    if (i2c_wait_flag_change_to_timeout(hperh, I2C_STAT_TC, RESET, I2C_TIMEOUT_FLAG) == ERROR)
+        hperh->error_code |= I2C_ERROR_TIMEOUT;
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	CLEAR_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    CLEAR_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
 
-	hperh->xfer_count = 0;
-	hperh->state      = I2C_STATE_READY;
-	hperh->mode       = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_READY;
+    hperh->mode       = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	if (hperh->error_code != I2C_ERROR_NONE) {
-		if (hperh->error_callback)
-			hperh->error_callback(hperh);
-	}
-	else {
-		if (hperh->master_rx_cplt_cbk)
-			hperh->master_rx_cplt_cbk(hperh);
-	}
+    if (hperh->error_code != I2C_ERROR_NONE) {
+        if (hperh->error_callback)
+            hperh->error_callback(hperh);
+    }
+    else {
+        if (hperh->master_rx_cplt_cbk)
+            hperh->master_rx_cplt_cbk(hperh);
+    }
 }
 
 /**
@@ -2528,23 +2528,23 @@ static void i2c_dma_master_recv_cplt(void *argv)
  */
 static void i2c_dma_slave_recv_cplt(void *argv)
 {
-	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+    i2c_handle_t* hperh = (i2c_handle_t*)argv;
 
-	CLEAR_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
+    CLEAR_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
 
-	hperh->xfer_count = 0;
-	hperh->state      = I2C_STATE_READY;
-	hperh->mode       = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_READY;
+    hperh->mode       = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	if (hperh->error_code != I2C_ERROR_NONE) {
-		if (hperh->error_callback)
-			hperh->error_callback(hperh);
-	}
-	else {
-		if (hperh->slave_rx_cplt_cbk)
-			hperh->slave_rx_cplt_cbk(hperh);
-	}
+    if (hperh->error_code != I2C_ERROR_NONE) {
+        if (hperh->error_callback)
+            hperh->error_callback(hperh);
+    }
+    else {
+        if (hperh->slave_rx_cplt_cbk)
+            hperh->slave_rx_cplt_cbk(hperh);
+    }
 }
 
 /**
@@ -2554,34 +2554,34 @@ static void i2c_dma_slave_recv_cplt(void *argv)
  */uint32_t ccct = 0;
 static void i2c_dma_mem_send_cplt(void *argv)
 {
-	uint32_t cnt = 0xFFFFFF;
+    uint32_t cnt = 0xFFFFFF;
 
-	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+    i2c_handle_t* hperh = (i2c_handle_t*)argv;
 ccct++;ccct = ccct;
-	while (cnt--) {
-		if ((hperh->perh->STAT & I2C_STAT_TC) != 0)
-			break;
-	}
+    while (cnt--) {
+        if ((hperh->perh->STAT & I2C_STAT_TC) != 0)
+            break;
+    }
 
-	if (cnt == 0)
-		hperh->error_code |= I2C_ERROR_TIMEOUT;
+    if (cnt == 0)
+        hperh->error_code |= I2C_ERROR_TIMEOUT;
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	CLEAR_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    CLEAR_BIT(hperh->perh->CON1, I2C_CON1_TXDMAEN_MSK);
 
-	hperh->xfer_count = 0;
-	hperh->state      = I2C_STATE_READY;
-	hperh->mode       = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->xfer_count = 0;
+    hperh->state      = I2C_STATE_READY;
+    hperh->mode       = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	if (hperh->error_code != I2C_ERROR_NONE) {
-		if (hperh->error_callback)
-			hperh->error_callback(hperh);
-	}
-	else {
-		if (hperh->mem_tx_cplt_cbk)
-			hperh->mem_tx_cplt_cbk(hperh);
-	}
+    if (hperh->error_code != I2C_ERROR_NONE) {
+        if (hperh->error_callback)
+            hperh->error_callback(hperh);
+    }
+    else {
+        if (hperh->mem_tx_cplt_cbk)
+            hperh->mem_tx_cplt_cbk(hperh);
+    }
 }
 
 /**
@@ -2591,34 +2591,34 @@ ccct++;ccct = ccct;
  */
 static void i2c_dma_mem_recv_cplt(void *argv)
 {
-	uint32_t cnt = 0xFFFFF;
+    uint32_t cnt = 0xFFFFF;
 
-	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+    i2c_handle_t* hperh = (i2c_handle_t*)argv;
 
-	while (cnt--) {
-		if ((hperh->perh->STAT & I2C_STAT_TC) != 0)
-			break;
-	}
+    while (cnt--) {
+        if ((hperh->perh->STAT & I2C_STAT_TC) != 0)
+            break;
+    }
 
-	if (cnt == 0)
-		hperh->error_code |= I2C_ERROR_TIMEOUT;
+    if (cnt == 0)
+        hperh->error_code |= I2C_ERROR_TIMEOUT;
 
-	SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
-	CLEAR_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
+    SET_BIT(hperh->perh->CON2, I2C_CON2_STOP_MSK);
+    CLEAR_BIT(hperh->perh->CON1, I2C_CON1_RXDMAEN_MSK);
 
-	hperh->xfer_count = 0;
-	hperh->state = I2C_STATE_READY;
-	hperh->mode = I2C_MODE_NONE;
-	__UNLOCK(hperh);
+    hperh->xfer_count = 0;
+    hperh->state = I2C_STATE_READY;
+    hperh->mode = I2C_MODE_NONE;
+    __UNLOCK(hperh);
 
-	if (hperh->error_code != I2C_ERROR_NONE) {
-		if (hperh->error_callback)
-			hperh->error_callback(hperh);
-	}
-	else {
-		if (hperh->mem_rx_cplt_cbk)
-			hperh->mem_rx_cplt_cbk(hperh);
-	}
+    if (hperh->error_code != I2C_ERROR_NONE) {
+        if (hperh->error_callback)
+            hperh->error_callback(hperh);
+    }
+    else {
+        if (hperh->mem_rx_cplt_cbk)
+            hperh->mem_rx_cplt_cbk(hperh);
+    }
 }
 
 /**
@@ -2628,16 +2628,16 @@ static void i2c_dma_mem_recv_cplt(void *argv)
 */
 static void i2c_dma_error(void *argv)
 {
- 	i2c_handle_t* hperh = (i2c_handle_t*)argv;
+    i2c_handle_t* hperh = (i2c_handle_t*)argv;
 
- 	hperh->xfer_count  = 0;
- 	hperh->state       = I2C_STATE_READY;
- 	hperh->mode        = I2C_MODE_NONE;
- 	hperh->error_code |= I2C_ERROR_DMA;
-	__UNLOCK(hperh);
+    hperh->xfer_count  = 0;
+    hperh->state       = I2C_STATE_READY;
+    hperh->mode        = I2C_MODE_NONE;
+    hperh->error_code |= I2C_ERROR_DMA;
+    __UNLOCK(hperh);
 
- 	if (hperh->error_callback)
- 		hperh->error_callback(hperh);
+    if (hperh->error_callback)
+        hperh->error_callback(hperh);
 }
 #endif
 
@@ -2652,27 +2652,27 @@ static void i2c_dma_error(void *argv)
  */
 static ald_status_t i2c_wait_flag_change_to_timeout(i2c_handle_t *hperh, uint32_t flag, flag_status_t status, uint32_t timeout)
 {
-	uint32_t tickstart = 0;
+    uint32_t tickstart = 0;
 
-	tickstart = ald_get_tick();
-	if (status == RESET) {
-		while (I2C_GET_FLAG(hperh, flag) == RESET) {
-			if ((timeout == 0) || ((ald_get_tick() - tickstart ) > timeout)) {
-				hperh->error_code |= I2C_ERROR_TIMEOUT;
-				return TIMEOUT;
-			}
-		}
-	}
-	else {
-		while (I2C_GET_FLAG(hperh, flag) != RESET) {
-			if ((timeout == 0) || ((ald_get_tick() - tickstart ) > timeout)) {
-				hperh->error_code |= I2C_ERROR_TIMEOUT;
-				return TIMEOUT;
-			}
-		}
-	}
+    tickstart = ald_get_tick();
+    if (status == RESET) {
+        while (I2C_GET_FLAG(hperh, flag) == RESET) {
+            if ((timeout == 0) || ((ald_get_tick() - tickstart ) > timeout)) {
+                hperh->error_code |= I2C_ERROR_TIMEOUT;
+                return TIMEOUT;
+            }
+        }
+    }
+    else {
+        while (I2C_GET_FLAG(hperh, flag) != RESET) {
+            if ((timeout == 0) || ((ald_get_tick() - tickstart ) > timeout)) {
+                hperh->error_code |= I2C_ERROR_TIMEOUT;
+                return TIMEOUT;
+            }
+        }
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -2685,17 +2685,17 @@ static ald_status_t i2c_wait_flag_change_to_timeout(i2c_handle_t *hperh, uint32_
  */
 static ald_status_t i2c_wait_master_addr_to_timeout(i2c_handle_t *hperh, uint32_t flag, uint32_t timeout)
 {
-	uint32_t tickstart = ald_get_tick();
+    uint32_t tickstart = ald_get_tick();
 
-	while (I2C_GET_IT_FLAG(hperh, flag) == RESET) {
-		if ((timeout == 0) || ((ald_get_tick() - tickstart ) > timeout)) {
-			hperh->error_code = I2C_ERROR_TIMEOUT;
+    while (I2C_GET_IT_FLAG(hperh, flag) == RESET) {
+        if ((timeout == 0) || ((ald_get_tick() - tickstart ) > timeout)) {
+            hperh->error_code = I2C_ERROR_TIMEOUT;
 
-			return ERROR;
-		}
-	}
+            return ERROR;
+        }
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -2707,26 +2707,26 @@ static ald_status_t i2c_wait_master_addr_to_timeout(i2c_handle_t *hperh, uint32_
  */
 static ald_status_t i2c_wait_txe_to_timeout(i2c_handle_t *hperh, uint32_t timeout)
 {
-	uint32_t tickstart = ald_get_tick();
+    uint32_t tickstart = ald_get_tick();
 
-	while (I2C_GET_FLAG(hperh, I2C_STAT_THTH) == RESET) {
-		if (I2C_GET_IT_FLAG(hperh, I2C_IT_ARLO)) {
-			hperh->error_code |= I2C_ERROR_ARLO;
-			return ERROR;
-		}
+    while (I2C_GET_FLAG(hperh, I2C_STAT_THTH) == RESET) {
+        if (I2C_GET_IT_FLAG(hperh, I2C_IT_ARLO)) {
+            hperh->error_code |= I2C_ERROR_ARLO;
+            return ERROR;
+        }
 
-		if (I2C_GET_IT_FLAG(hperh, I2C_IT_NACK) == SET) {
-			hperh->error_code |= I2C_ERROR_AF;
-			return ERROR;
-		}
+        if (I2C_GET_IT_FLAG(hperh, I2C_IT_NACK) == SET) {
+            hperh->error_code |= I2C_ERROR_AF;
+            return ERROR;
+        }
 
-		if ((timeout == 0) || ((ald_get_tick() - tickstart) > timeout)) {
-			hperh->error_code |= I2C_ERROR_TIMEOUT;
-			return ERROR;
-		}
-	}
+        if ((timeout == 0) || ((ald_get_tick() - tickstart) > timeout)) {
+            hperh->error_code |= I2C_ERROR_TIMEOUT;
+            return ERROR;
+        }
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -2738,16 +2738,16 @@ static ald_status_t i2c_wait_txe_to_timeout(i2c_handle_t *hperh, uint32_t timeou
  */
 static ald_status_t i2c_wait_rxne_to_timeout(i2c_handle_t *hperh, uint32_t timeout)
 {
-	uint32_t tickstart = ald_get_tick();
+    uint32_t tickstart = ald_get_tick();
 
-	while (I2C_GET_FLAG(hperh, I2C_STAT_RXTH) == RESET) {
-		if ((timeout == 0) || ((ald_get_tick() - tickstart) > timeout)) {
-			hperh->error_code |= I2C_ERROR_TIMEOUT;
-			return ERROR;
-		}
-	}
+    while (I2C_GET_FLAG(hperh, I2C_STAT_RXTH) == RESET) {
+        if ((timeout == 0) || ((ald_get_tick() - tickstart) > timeout)) {
+            hperh->error_code |= I2C_ERROR_TIMEOUT;
+            return ERROR;
+        }
+    }
 
-	return OK;
+    return OK;
 }
 
 /**

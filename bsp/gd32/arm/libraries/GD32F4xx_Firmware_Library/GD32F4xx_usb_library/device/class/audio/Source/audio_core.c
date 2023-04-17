@@ -10,27 +10,27 @@
 /*
     Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -86,9 +86,9 @@ usb_class_core usbd_audio_cb = {
 /* USB standard device descriptor */
 __ALIGN_BEGIN const usb_desc_dev audio_dev_desc __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength          = USB_DEV_DESC_LEN, 
+         .bLength          = USB_DEV_DESC_LEN,
          .bDescriptorType  = USB_DESCTYPE_DEV
      },
     .bcdUSB                = 0x0200U,
@@ -106,14 +106,14 @@ __ALIGN_BEGIN const usb_desc_dev audio_dev_desc __ALIGN_END =
 };
 
 /* USB device configuration descriptor */
-__ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END = 
+__ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
 {
-    .config = 
+    .config =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_config), 
-             .bDescriptorType = USB_DESCTYPE_CONFIG 
+             .bLength         = sizeof(usb_desc_config),
+             .bDescriptorType = USB_DESCTYPE_CONFIG
          },
         .wTotalLength         = AD_CONFIG_DESC_SET_LEN,
         .bNumInterfaces       = 0x01U + CONFIG_DESC_AS_ITF_COUNT,
@@ -123,12 +123,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
         .bMaxPower            = 0x32U
     },
 
-    .std_itf = 
+    .std_itf =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_itf), 
-             .bDescriptorType = USB_DESCTYPE_ITF 
+             .bLength         = sizeof(usb_desc_itf),
+             .bDescriptorType = USB_DESCTYPE_ITF
          },
          .bInterfaceNumber    = 0x00U,
          .bAlternateSetting   = 0x00U,
@@ -139,12 +139,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iInterface          = 0x00U
     },
 
-    .ac_itf = 
+    .ac_itf =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_AC_itf), 
-             .bDescriptorType = AD_DESCTYPE_INTERFACE 
+             .bLength         = sizeof(usb_desc_AC_itf),
+             .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = 0x01U,
          .bcdADC              = 0x0100U,
@@ -160,11 +160,11 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
     },
 
 #ifdef USE_USB_AD_MICPHONE
-    .mic_in_terminal = 
+    .mic_in_terminal =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_input_terminal), 
+             .bLength         = sizeof(usb_desc_input_terminal),
              .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = 0x02U,
@@ -177,12 +177,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iTerminal           = 0x00U
     },
 
-    .mic_feature_unit = 
+    .mic_feature_unit =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_mono_feature_unit), 
-             .bDescriptorType = AD_DESCTYPE_INTERFACE 
+             .bLength         = sizeof(usb_desc_mono_feature_unit),
+             .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_CONTROL_FEATURE_UNIT,
          .bUnitID             = AD_IN_STREAMING_CTRL,
@@ -193,11 +193,11 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iFeature            = 0x00U
     },
 
-    .mic_out_terminal = 
+    .mic_out_terminal =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_output_terminal), 
+             .bLength         = sizeof(usb_desc_output_terminal),
              .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_CONTROL_OUTPUT_TERMINAL,
@@ -210,11 +210,11 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
 #endif /* USE_USB_AD_MICPHONE */
 
 #ifdef USE_USB_AD_SPEAKER
-    .speak_in_terminal = 
+    .speak_in_terminal =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_input_terminal), 
+             .bLength         = sizeof(usb_desc_input_terminal),
              .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_CONTROL_INPUT_TERMINAL,
@@ -227,12 +227,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iTerminal           = 0x00U
     },
 
-    .speak_feature_unit = 
+    .speak_feature_unit =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_mono_feature_unit), 
-             .bDescriptorType = AD_DESCTYPE_INTERFACE 
+             .bLength         = sizeof(usb_desc_mono_feature_unit),
+             .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_CONTROL_FEATURE_UNIT,
          .bUnitID             = AD_OUT_STREAMING_CTRL,
@@ -243,11 +243,11 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iFeature            = 0x00U
     },
 
-    .speak_out_terminal = 
+    .speak_out_terminal =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_output_terminal), 
+             .bLength         = sizeof(usb_desc_output_terminal),
              .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_CONTROL_OUTPUT_TERMINAL,
@@ -260,12 +260,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
 #endif /* USE_USB_AD_SPEAKER */
 
 #ifdef USE_USB_AD_MICPHONE
-    .mic_std_as_itf_zeroband = 
+    .mic_std_as_itf_zeroband =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_itf), 
-             .bDescriptorType = USB_DESCTYPE_ITF 
+             .bLength         = sizeof(usb_desc_itf),
+             .bDescriptorType = USB_DESCTYPE_ITF
          },
          .bInterfaceNumber    = 0x01U,
          .bAlternateSetting   = 0x00U,
@@ -276,12 +276,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iInterface          = 0x00U
     },
 
-    .mic_std_as_itf_opera = 
+    .mic_std_as_itf_opera =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_itf), 
-             .bDescriptorType = USB_DESCTYPE_ITF 
+             .bLength         = sizeof(usb_desc_itf),
+             .bDescriptorType = USB_DESCTYPE_ITF
          },
          .bInterfaceNumber    = 0x01U,
          .bAlternateSetting   = 0x01U,
@@ -292,12 +292,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iInterface          = 0x00U
     },
 
-    .mic_as_itf = 
+    .mic_as_itf =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_AS_itf), 
-             .bDescriptorType = AD_DESCTYPE_INTERFACE 
+             .bLength         = sizeof(usb_desc_AS_itf),
+             .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_STREAMING_GENERAL,
          .bTerminalLink       = 0x03U,
@@ -305,12 +305,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .wFormatTag          = 0x0001U,
     },
 
-    .mic_format_typeI = 
+    .mic_format_typeI =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_format_type), 
-             .bDescriptorType = AD_DESCTYPE_INTERFACE 
+             .bLength         = sizeof(usb_desc_format_type),
+             .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_STREAMING_FORMAT_TYPE,
          .bFormatType         = AD_FORMAT_TYPE_I,
@@ -323,12 +323,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .bSamFreq[2]         = USBD_MIC_FREQ >> 16U
     },
 
-    .mic_std_endpoint = 
+    .mic_std_endpoint =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_std_ep), 
-             .bDescriptorType = USB_DESCTYPE_EP 
+             .bLength         = sizeof(usb_desc_std_ep),
+             .bDescriptorType = USB_DESCTYPE_EP
          },
          .bEndpointAddress    = AD_IN_EP,
          .bmAttributes        = USB_ENDPOINT_TYPE_ISOCHRONOUS,
@@ -338,12 +338,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .bSynchAddress       = 0x00U
     },
 
-    .mic_as_endpoint = 
+    .mic_as_endpoint =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_AS_ep), 
-             .bDescriptorType = AD_DESCTYPE_ENDPOINT 
+             .bLength         = sizeof(usb_desc_AS_ep),
+             .bDescriptorType = AD_DESCTYPE_ENDPOINT
          },
          .bDescriptorSubtype  = AD_ENDPOINT_GENERAL,
          .bmAttributes        = 0x00U,
@@ -353,12 +353,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
 #endif /* USE_USB_AD_MICPHONE */
 
 #ifdef USE_USB_AD_SPEAKER
-    .speak_std_as_itf_zeroband = 
+    .speak_std_as_itf_zeroband =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_itf), 
-             .bDescriptorType = USB_DESCTYPE_ITF 
+             .bLength         = sizeof(usb_desc_itf),
+             .bDescriptorType = USB_DESCTYPE_ITF
          },
          .bInterfaceNumber    = 0x02U,
          .bAlternateSetting   = 0x00U,
@@ -369,12 +369,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iInterface          = 0x00U
     },
 
-    .speak_std_as_itf_opera = 
+    .speak_std_as_itf_opera =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_itf), 
-             .bDescriptorType = USB_DESCTYPE_ITF 
+             .bLength         = sizeof(usb_desc_itf),
+             .bDescriptorType = USB_DESCTYPE_ITF
          },
          .bInterfaceNumber    = 0x02U,
          .bAlternateSetting   = 0x01U,
@@ -385,12 +385,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .iInterface          = 0x00U
     },
 
-    .speak_as_itf = 
+    .speak_as_itf =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_AS_itf), 
-             .bDescriptorType = AD_DESCTYPE_INTERFACE 
+             .bLength         = sizeof(usb_desc_AS_itf),
+             .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_STREAMING_GENERAL,
          .bTerminalLink       = 0x04U,
@@ -398,12 +398,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .wFormatTag          = 0x0001U,
     },
 
-    .speak_format_typeI = 
+    .speak_format_typeI =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_format_type), 
-             .bDescriptorType = AD_DESCTYPE_INTERFACE 
+             .bLength         = sizeof(usb_desc_format_type),
+             .bDescriptorType = AD_DESCTYPE_INTERFACE
          },
          .bDescriptorSubtype  = AD_STREAMING_FORMAT_TYPE,
          .bFormatType         = AD_FORMAT_TYPE_I,
@@ -416,12 +416,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .bSamFreq[2]         = USBD_SPEAKER_FREQ >> 16U
     },
 
-    .speak_std_endpoint = 
+    .speak_std_endpoint =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_std_ep), 
-             .bDescriptorType = USB_DESCTYPE_EP 
+             .bLength         = sizeof(usb_desc_std_ep),
+             .bDescriptorType = USB_DESCTYPE_EP
          },
          .bEndpointAddress    = AD_OUT_EP,
          .bmAttributes        = USB_EP_ATTR_ISO | USB_EP_ATTR_ASYNC,
@@ -431,12 +431,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .bSynchAddress       = AD_FEEDBACK_IN_EP,
     },
 
-    .speak_as_endpoint = 
+    .speak_as_endpoint =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_AS_ep), 
-             .bDescriptorType = AD_DESCTYPE_ENDPOINT 
+             .bLength         = sizeof(usb_desc_AS_ep),
+             .bDescriptorType = AD_DESCTYPE_ENDPOINT
          },
          .bDescriptorSubtype  = AD_ENDPOINT_GENERAL,
          .bmAttributes        = 0x00U,
@@ -444,12 +444,12 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
          .wLockDelay          = 0x0000U,
     },
 
-    .speak_feedback_endpoint = 
+    .speak_feedback_endpoint =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_FeedBack_ep), 
-             .bDescriptorType = USB_DESCTYPE_EP 
+             .bLength         = sizeof(usb_desc_FeedBack_ep),
+             .bDescriptorType = USB_DESCTYPE_EP
          },
          .bEndpointAddress    = AD_FEEDBACK_IN_EP,
          .bmAttributes        = USB_EP_ATTR_ISO | USB_EP_ATTR_ASYNC | USB_EP_ATTR_FEEDBACK,
@@ -462,11 +462,11 @@ __ALIGN_BEGIN const usb_desc_config_set audio_config_set __ALIGN_END =
 };
 
 /* USB language ID descriptor */
-static __ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END = 
+static __ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength         = sizeof(usb_desc_LANGID), 
+         .bLength         = sizeof(usb_desc_LANGID),
          .bDescriptorType = USB_DESCTYPE_STR
      },
 
@@ -474,39 +474,39 @@ static __ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END =
 };
 
 /* USB manufacture string */
-static __ALIGN_BEGIN const usb_desc_str manufacturer_string __ALIGN_END = 
+static __ALIGN_BEGIN const usb_desc_str manufacturer_string __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength         = USB_STRING_LEN(10), 
+         .bLength         = USB_STRING_LEN(10),
          .bDescriptorType = USB_DESCTYPE_STR,
      },
     .unicode_string = {'G', 'i', 'g', 'a', 'D', 'e', 'v', 'i', 'c', 'e'}
 };
 
 /* USB product string */
-static __ALIGN_BEGIN const usb_desc_str product_string __ALIGN_END = 
+static __ALIGN_BEGIN const usb_desc_str product_string __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength         = USB_STRING_LEN(14), 
+         .bLength         = USB_STRING_LEN(14),
          .bDescriptorType = USB_DESCTYPE_STR,
      },
     .unicode_string = {'G', 'D', '3', '2', '-', 'U', 'S', 'B', '_', 'A', 'u', 'd', 'i', 'o'}
 };
 
 /* USBD serial string */
-static __ALIGN_BEGIN usb_desc_str serial_string __ALIGN_END = 
+static __ALIGN_BEGIN usb_desc_str serial_string __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength         = USB_STRING_LEN(12), 
+         .bLength         = USB_STRING_LEN(12),
          .bDescriptorType = USB_DESCTYPE_STR,
      }
 };
 
 /* USB string descriptor */
-void *const usbd_audio_strings[] = 
+void *const usbd_audio_strings[] =
 {
     [STR_IDX_LANGID]  = (uint8_t *)&usbd_language_id_desc,
     [STR_IDX_MFC]     = (uint8_t *)&manufacturer_string,
@@ -541,7 +541,7 @@ static uint8_t audio_init (usb_dev *udev, uint8_t config_index)
         .bEndpointAddress = std_ep.bEndpointAddress,
         .bmAttributes     = std_ep.bmAttributes,
         .wMaxPacketSize   = std_ep.wMaxPacketSize,
-        .bInterval        = std_ep.bInterval 
+        .bInterval        = std_ep.bInterval
     };
 
     /* initialize TX endpoint */
@@ -561,7 +561,7 @@ static uint8_t audio_init (usb_dev *udev, uint8_t config_index)
         .bEndpointAddress = std_ep.bEndpointAddress,
         .bmAttributes     = std_ep.bmAttributes,
         .wMaxPacketSize   = SPEAKER_OUT_MAX_PACKET,
-        .bInterval        = std_ep.bInterval 
+        .bInterval        = std_ep.bInterval
     };
 
     /* initialize RX endpoint */
@@ -582,7 +582,7 @@ static uint8_t audio_init (usb_dev *udev, uint8_t config_index)
         .bEndpointAddress = feedback_ep.bEndpointAddress,
         .bmAttributes     = feedback_ep.bmAttributes,
         .wMaxPacketSize   = feedback_ep.wMaxPacketSize,
-        .bInterval        = feedback_ep.bInterval 
+        .bInterval        = feedback_ep.bInterval
     };
 
     /* initialize Tx endpoint */
@@ -847,7 +847,7 @@ static uint8_t audio_data_out (usb_dev *udev, uint8_t ep_num)
         }
     }
 
-    /* Toggle the frame index */  
+    /* Toggle the frame index */
     udev->dev.transc_out[ep_num].frame_num = (udev->dev.transc_out[ep_num].frame_num)? 0U:1U;
 
     /* prepare out endpoint to receive next audio packet */

@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * @file    system_hk32f0xx.h 
-  ****************************************************************************** 
+  * @file    system_hk32f0xx.h
+  ******************************************************************************
   */
 
 /** @addtogroup CMSIS
@@ -10,8 +10,8 @@
 
 /** @addtogroup hk32f0xx_system
   * @{
-  */  
-  
+  */
+
 /**
   * @brief Define to prevent recursive inclusion
   */
@@ -20,7 +20,7 @@
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /** @addtogroup HK32F0xx_System_Includes
   * @{
@@ -60,7 +60,7 @@ extern uint32_t SystemCoreClock;          /*!< System Clock Frequency (Core Cloc
 /** @addtogroup HK32F0xx_System_Exported_Functions
   * @{
   */
-  
+
 extern void SystemInit(void);
 extern void SystemCoreClockUpdate(void);
 /**

@@ -99,7 +99,7 @@ void SystemInit (void)
 
     /* configure system clock */
     system_clock_config();
-    
+
 #ifdef VECT_TAB_SRAM
     nvic_vector_table_set(NVIC_VECTTAB_RAM,VECT_TAB_OFFSET);
 #else
@@ -142,19 +142,19 @@ static void system_clock_8m_hxtal(void)
 
     /* enable HXTAL */
     RCU_CTL0 |= RCU_CTL0_HXTALEN;
-    
+
     /* wait until HXTAL is stable or the startup time is longer than HXTAL_STARTUP_TIMEOUT */
     do{
         timeout++;
         stab_flag = (RCU_CTL0 & RCU_CTL0_HXTALSTB);
     }
-    while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));    
+    while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
     /* if fail */
     if(0U == (RCU_CTL0 & RCU_CTL0_HXTALSTB)){
         while(1){
         }
     }
-    
+
     /* HXTAL is stable */
     /* AHB = SYSCLK */
     RCU_CFG0 |= RCU_AHB_CKSYS_DIV1;
@@ -162,11 +162,11 @@ static void system_clock_8m_hxtal(void)
     RCU_CFG0 |= RCU_APB2_CKAHB_DIV1;
     /* APB1 = AHB */
     RCU_CFG0 |= RCU_APB1_CKAHB_DIV1;
-    
+
     /* select HXTAL as system clock */
     RCU_CFG0 &= ~RCU_CFG0_SCS;
     RCU_CFG0 |= RCU_CKSYSSRC_HXTAL;
-    
+
     /* wait until HXTAL is selected as system clock */
     while(0U == (RCU_CFG0 & RCU_SCSS_HXTAL)){
     }
@@ -198,10 +198,10 @@ static void system_clock_72m_hxtal(void)
         while(1){
         }
     }
-    
+
     FMC_WS &= ~FMC_WS_WSCNT;
     FMC_WS |= WS_WSCNT_2;
-    
+
     /* HXTAL is stable */
     /* AHB = SYSCLK */
     RCU_CFG0 |= RCU_AHB_CKSYS_DIV1;
@@ -241,7 +241,7 @@ static void system_clock_72m_irc8m(void)
 {
     uint32_t timeout = 0U;
     uint32_t stab_flag = 0U;
-    
+
     /* enable IRC8M */
     RCU_CTL0 |= RCU_CTL0_IRC8MEN;
 
@@ -260,7 +260,7 @@ static void system_clock_72m_irc8m(void)
 
     FMC_WS &= ~FMC_WS_WSCNT;
     FMC_WS |= WS_WSCNT_2;
-    
+
     /* AHB = SYSCLK */
     RCU_CFG0 |= RCU_AHB_CKSYS_DIV1;
     /* APB2 = AHB */
@@ -270,7 +270,7 @@ static void system_clock_72m_irc8m(void)
     /* PLL = (IRC8M/2) * 18 = 72 MHz */
     RCU_CFG0 &= ~(RCU_CFG0_PLLSEL | RCU_CFG0_PLLMF);
     RCU_CFG0 |= (RCU_PLLSRC_IRC8M_DIV2 | RCU_PLL_MUL18);
-    
+
     /* enable PLL */
     RCU_CTL0 |= RCU_CTL0_PLLEN;
 
@@ -302,11 +302,11 @@ static void system_clock_8m_irc8m(void)
     RCU_CFG0 |= RCU_APB2_CKAHB_DIV1;
     /* APB1 = AHB */
     RCU_CFG0 |= RCU_APB1_CKAHB_DIV1;
-    
+
     /* select IRC8M as system clock */
     RCU_CFG0 &= ~RCU_CFG0_SCS;
     RCU_CFG0 |= RCU_CKSYSSRC_IRC8M;
-    
+
     /* wait until IRC8M is selected as system clock */
     while(0U != (RCU_CFG0 & RCU_SCSS_IRC8M)){
     }
@@ -349,7 +349,7 @@ void SystemCoreClockUpdate (void)
         }else{
             pllmf += 2U;
         }
-        
+
         /* PLL clock source selection, HXTAL or IRC8M/2 */
         pllsel = GET_BITS(RCU_CFG0, 16, 16);
         if(0U != pllsel){

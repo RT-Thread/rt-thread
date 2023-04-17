@@ -413,7 +413,7 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
                         // |(0x1<<28) // USART2 combined with EXTI
                         // |(0x1<<29) // USART3~8 combined with EXTI
                        );
-    // ×¢Òâ£ºÉÏ×¢ÊÍµôµÄ ADC/I2C/UART µÄ²¿·Ö, Èç¹ûÓÐÊ¹ÓÃµ½¶ÔÓ¦µÄ EXTI, ÔòÓ¦¸ÃÈ¥µô×¢ÊÍ.
+    // æ³¨æ„ï¼šä¸Šæ³¨é‡ŠæŽ‰çš„ ADC/I2C/UART çš„éƒ¨åˆ†, å¦‚æžœæœ‰ä½¿ç”¨åˆ°å¯¹åº”çš„ EXTI, åˆ™åº”è¯¥åŽ»æŽ‰æ³¨é‡Š.
     irq_systick_bakup = SysTick->CTRL; // backup systicker setting
     SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk ; // Disable Systicker IRQ
 

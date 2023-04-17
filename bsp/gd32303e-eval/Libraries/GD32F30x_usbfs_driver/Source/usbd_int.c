@@ -1,5 +1,5 @@
 /*!
-    \file  usbd_int.c 
+    \file  usbd_int.c
     \brief USB device mode interrupt routines
 */
 
@@ -598,7 +598,7 @@ static uint32_t usbd_emptytxfifo_write(usb_core_handle_struct *pudev, uint8_t ep
 
         ep->xfer_buff += len;
         ep->xfer_count += len;
-        
+
         if(ep->xfer_len == ep->xfer_count) {
             fifo_empty_mask = 0x1U << ep_num;
             USB_DIEPFEINTEN &= ~fifo_empty_mask;

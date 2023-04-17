@@ -77,7 +77,7 @@
    * ARM_MATH_CM0 or ARM_MATH_CM0PLUS depending on the target processor in the application.
    * For Armv8-M cores define preprocessor macro ARM_MATH_ARMV8MBL or ARM_MATH_ARMV8MML.
    * Set preprocessor macro __DSP_PRESENT if Armv8-M Mainline core supports DSP instructions.
-   * 
+   *
    *
    * Examples
    * --------

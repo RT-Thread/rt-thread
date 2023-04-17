@@ -10,7 +10,7 @@ void *_sbrk(ptrdiff_t incr) {
     extern char _heap_end[];
     if ((curbrk + incr < _end) || (curbrk + incr > _heap_end))
 #else
-	if ((curbrk + incr < _end) )
+    if ((curbrk + incr < _end) )
 #endif
         return NULL - 1;
 

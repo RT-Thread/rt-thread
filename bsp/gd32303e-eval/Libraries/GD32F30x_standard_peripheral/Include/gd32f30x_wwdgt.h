@@ -1,6 +1,6 @@
 /*!
     \file  gd32f30x_wwdgt.h
-    \brief definitions for the WWDGT 
+    \brief definitions for the WWDGT
 */
 
 /*

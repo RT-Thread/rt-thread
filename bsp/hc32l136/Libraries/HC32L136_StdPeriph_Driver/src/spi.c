@@ -91,25 +91,25 @@ static func_ptr_t pfnSpi1Callback = NULL; ///< callback function pointer for SPI
  ** \param [in] enCh通道
  **
  ** \retval 无
- ** 
+ **
  ******************************************************************************/
 void Spi_IRQHandler(en_spi_channel_t enCh)
 {
     if(Spi0 == enCh)
     {
-		if(NULL != pfnSpi0Callback)
-		{
-			pfnSpi0Callback();
-		}   
+        if(NULL != pfnSpi0Callback)
+        {
+            pfnSpi0Callback();
+        }
     }
     else
     {
-		if(NULL != pfnSpi1Callback)
-		{
-			pfnSpi1Callback();
-		}
- 
-    }   
+        if(NULL != pfnSpi1Callback)
+        {
+            pfnSpi1Callback();
+        }
+
+    }
 }
 /**
  ******************************************************************************
@@ -118,7 +118,7 @@ void Spi_IRQHandler(en_spi_channel_t enCh)
  ** \param [in]enCh 通道
  **
  ** \retval 请求状态
- ** 
+ **
  ******************************************************************************/
 uint8_t Spi_GetState(en_spi_channel_t enCh)
 {
@@ -141,7 +141,7 @@ uint8_t Spi_GetState(en_spi_channel_t enCh)
  ** \param [in]enCh 通道， enStatus 获取请求
  **
  ** \retval 请求状态
- ** 
+ **
  ******************************************************************************/
 boolean_t Spi_GetStatus(en_spi_channel_t enCh,en_spi_status_t enStatus)
 {
@@ -172,7 +172,7 @@ boolean_t Spi_GetStatus(en_spi_channel_t enCh,en_spi_status_t enStatus)
                 break;
             default:
                 break;
-        }   
+        }
     }
     else
     {
@@ -198,7 +198,7 @@ boolean_t Spi_GetStatus(en_spi_channel_t enCh,en_spi_status_t enStatus)
                 break;
             default:
                 break;
-        }   
+        }
     }
     return bFlag;
 }
@@ -209,7 +209,7 @@ boolean_t Spi_GetStatus(en_spi_channel_t enCh,en_spi_status_t enStatus)
  ** \param [in]enCh 通道， enStatus 获取请求
  **
  ** \retval 请求状态
- ** 
+ **
  ******************************************************************************/
 en_result_t Spi_ClearStatus(en_spi_channel_t enCh)
 {
@@ -257,7 +257,7 @@ en_result_t Spi_FuncEn(en_spi_channel_t enCh,en_spi_func_t enFunc,boolean_t bFla
                 break;
             default:
                 return ErrorInvalidParameter;
-        } 
+        }
     }
     else
     {
@@ -277,7 +277,7 @@ en_result_t Spi_FuncEn(en_spi_channel_t enCh,en_spi_func_t enFunc,boolean_t bFla
                 break;
             default:
                 return ErrorInvalidParameter;
-        }  
+        }
     }
     enRet = Ok;
     return enRet;
@@ -286,7 +286,7 @@ en_result_t Spi_FuncEn(en_spi_channel_t enCh,en_spi_func_t enFunc,boolean_t bFla
  ******************************************************************************
  ** \brief  SPI 总体初始化函数
  **
- ** \param [in] 
+ ** \param [in]
             enCh通道
             pstcSpiConfig初始化结构
  **
@@ -306,9 +306,9 @@ en_result_t Spi_Init(en_spi_channel_t enCh,stc_spi_config_t *pstcSpiConfig)
         M0P_SPI0->CR_f.CPHA = pstcSpiConfig->bCPHA;
         if(pstcSpiConfig->u8BaudRate > SpiClkDiv16)
         {
-            M0P_SPI0->CR_f.SPR2 = 1;      
+            M0P_SPI0->CR_f.SPR2 = 1;
         }
-        M0P_SPI0->CR |= (pstcSpiConfig->u8BaudRate&0x03u);    
+        M0P_SPI0->CR |= (pstcSpiConfig->u8BaudRate&0x03u);
 
         M0P_SPI0->STAT = 0x00;
 
@@ -325,7 +325,7 @@ en_result_t Spi_Init(en_spi_channel_t enCh,stc_spi_config_t *pstcSpiConfig)
         if(NULL != pstcSpiConfig->pfnSpi0IrqCb)
         {
             pfnSpi0Callback = pstcSpiConfig->pfnSpi0IrqCb;
-        } 
+        }
     }
     else
     {
@@ -336,9 +336,9 @@ en_result_t Spi_Init(en_spi_channel_t enCh,stc_spi_config_t *pstcSpiConfig)
         M0P_SPI1->CR_f.CPHA = pstcSpiConfig->bCPHA;
         if(pstcSpiConfig->u8BaudRate > SpiClkDiv16)
         {
-            M0P_SPI1->CR_f.SPR2 = 1;      
+            M0P_SPI1->CR_f.SPR2 = 1;
         }
-        M0P_SPI1->CR |= (pstcSpiConfig->u8BaudRate&0x03u);    
+        M0P_SPI1->CR |= (pstcSpiConfig->u8BaudRate&0x03u);
 
         M0P_SPI1->STAT = 0x00;
 
@@ -355,7 +355,7 @@ en_result_t Spi_Init(en_spi_channel_t enCh,stc_spi_config_t *pstcSpiConfig)
         if(NULL != pstcSpiConfig->pfnSpi1IrqCb)
         {
             pfnSpi1Callback = pstcSpiConfig->pfnSpi1IrqCb;
-        } 
+        }
     }
     return Ok;
 }
@@ -367,26 +367,26 @@ en_result_t Spi_Init(en_spi_channel_t enCh,stc_spi_config_t *pstcSpiConfig)
  ** \param [in] enCh通道
  **
  ** \retval Ok禁止设置成功
- ** 
+ **
  ******************************************************************************/
 en_result_t Spi_DeInit(en_spi_channel_t enCh)
 {
     ASSERT(IS_VALID_CH(enCh));
     if(Spi0 == enCh)
     {
-        M0P_SPI0->DATA  = 0x00;   
+        M0P_SPI0->DATA  = 0x00;
         M0P_SPI0->STAT  = 0x00;
         M0P_SPI0->CR  = 0x00;
         pfnSpi0Callback  = NULL;
-        EnableNvic(SPI0_IRQn,IrqLevel3,FALSE);  
+        EnableNvic(SPI0_IRQn,IrqLevel3,FALSE);
     }
     else
     {
-        M0P_SPI1->DATA  = 0x00;   
+        M0P_SPI1->DATA  = 0x00;
         M0P_SPI1->STAT  = 0x00;
         M0P_SPI1->CR  = 0x00;
         pfnSpi1Callback  = NULL;
-        EnableNvic(SPI1_IRQn,IrqLevel3,FALSE);  
+        EnableNvic(SPI1_IRQn,IrqLevel3,FALSE);
     }
     return Ok;
 }
@@ -397,20 +397,20 @@ en_result_t Spi_DeInit(en_spi_channel_t enCh)
  ** \param [in] 高低电平
  **
  ** \retval 无
- ** 
+ **
  ******************************************************************************/
-void Spi_SetCS(en_spi_channel_t enCh,boolean_t bFlag) 
+void Spi_SetCS(en_spi_channel_t enCh,boolean_t bFlag)
 {
     ASSERT(IS_VALID_CH(enCh));
     if(Spi0 == enCh)
     {
-       M0P_SPI0->SSN  = bFlag; 
+       M0P_SPI0->SSN  = bFlag;
     }
     else
     {
-       M0P_SPI1->SSN  = bFlag; 
-    }   
-} 
+       M0P_SPI1->SSN  = bFlag;
+    }
+}
 /**
  ******************************************************************************
  ** \brief  SPI 发送一字节函数
@@ -418,7 +418,7 @@ void Spi_SetCS(en_spi_channel_t enCh,boolean_t bFlag)
  ** \param [in] enCh通道，u8Data发送字节
  **
  ** \retval Ok发送成功
- ** 
+ **
  ******************************************************************************/
 en_result_t Spi_SendData(en_spi_channel_t enCh,uint8_t u8Data)
 {
@@ -480,7 +480,7 @@ en_result_t Spi_SendData(en_spi_channel_t enCh,uint8_t u8Data)
         {
             return ErrorTimeout;
         }
-        u8Data = M0P_SPI1->DATA; 
+        u8Data = M0P_SPI1->DATA;
     }
     return Ok;
 }
@@ -492,7 +492,7 @@ en_result_t Spi_SendData(en_spi_channel_t enCh,uint8_t u8Data)
  ** \param [in] enCh接收通道
  **
  ** \retval 接收一字节数据
- ** 
+ **
  ******************************************************************************/
 uint8_t Spi_ReceiveData(en_spi_channel_t enCh,boolean_t bMasterOrSlave)
 {
@@ -515,7 +515,7 @@ uint8_t Spi_ReceiveData(en_spi_channel_t enCh,boolean_t bMasterOrSlave)
         }
         while(0 == M0P_SPI1->STAT_f.RXNE){;}
         temp = M0P_SPI1->DATA;
-    }  
+    }
     return temp;
 }
 

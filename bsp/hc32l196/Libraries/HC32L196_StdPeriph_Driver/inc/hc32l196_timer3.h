@@ -70,7 +70,7 @@ extern "C"
   **
  ******************************************************************************/
 //@{
-    
+
 /******************************************************************************/
 /* Global pre-processor symbols/macros ('#define')                            */
 /******************************************************************************/
@@ -169,7 +169,7 @@ typedef enum en_tim3_irq_type
     Tim3CB1E     = 12u,        ///< CH1B捕获数据丢失标志(仅模式23存在)(不是中断)
     Tim3CB2E     = 13u,        ///< CH2B捕获数据丢失标志(仅模式23存在)(不是中断)
     Tim3BkIrq    = 14u,        ///< 刹车中断(仅模式23存在）
-    Tim3TrigIrq  = 15u,        ///< 触发中断(仅模式23存在）   
+    Tim3TrigIrq  = 15u,        ///< 触发中断(仅模式23存在）
 }en_tim3_irq_type_t;
 
 /**
@@ -528,7 +528,7 @@ typedef struct stc_tim3_m23_compare_cfg
     en_tim3_port_polarity_t      enCHxAPolarity;   ///< CH0A输出极性控制
     boolean_t                    bCHxACmpBufEn;    ///< 比较A缓存功能 使能/禁止
     en_tim3_m23_cisa_cisb_t      enCHxACmpIntSel;  ///< CHA比较匹配中断选择
-    
+
     en_tim3_m23_crch0_csa_csb_t  enCHxBCmpCap;     ///< CH0B比较/捕获功能选择
     en_tim3_m23_fltr_ocm_t       enCHxBCmpCtrl;    ///< CH0B通道比较控制
     en_tim3_port_polarity_t      enCHxBPolarity;   ///< CH0B输出极性控制
@@ -546,13 +546,13 @@ typedef struct stc_tim3_m23_input_cfg
     en_tim3_m23_crch0_cfx_crx_t  enCHxACapSel;     ///< CH0A捕获边沿选择
     en_tim3_flt_t                enCHxAInFlt;      ///< CH0A通道捕获滤波控制
     en_tim3_port_polarity_t      enCHxAPolarity;   ///< CH0A输入相位
-    
+
     en_tim3_m23_crch0_csa_csb_t  enCHxBCmpCap;     ///< CH0A比较/捕获功能选择
     en_tim3_m23_crch0_cfx_crx_t  enCHxBCapSel;     ///< CH0B捕获边沿选择
     en_tim3_flt_t                enCHxBInFlt;      ///< CH0B通道捕获滤波控制
     en_tim3_port_polarity_t      enCHxBPolarity;   ///< CH0B输入相位
-    
-}stc_tim3_m23_input_cfg_t;   
+
+}stc_tim3_m23_input_cfg_t;
 
 /**
  ******************************************************************************

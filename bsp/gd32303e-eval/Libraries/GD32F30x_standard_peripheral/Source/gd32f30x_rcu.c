@@ -254,7 +254,7 @@ void rcu_bkp_reset_disable(void)
 void rcu_system_clock_source_config(uint32_t ck_sys)
 {
     uint32_t reg;
-    
+
     reg = RCU_CFG0;
     /* reset the SCS bits and set according to ck_sys */
     reg &= ~RCU_CFG0_SCS;
@@ -286,7 +286,7 @@ uint32_t rcu_system_clock_source_get(void)
 void rcu_ahb_clock_config(uint32_t ck_ahb)
 {
     uint32_t reg;
-    
+
     reg = RCU_CFG0;
 
     /* reset the AHBPSC bits and set according to ck_ahb */
@@ -309,7 +309,7 @@ void rcu_ahb_clock_config(uint32_t ck_ahb)
 void rcu_apb1_clock_config(uint32_t ck_apb1)
 {
     uint32_t reg;
-    
+
     reg = RCU_CFG0;
 
     /* reset the APB1PSC and set according to ck_apb1 */
@@ -332,7 +332,7 @@ void rcu_apb1_clock_config(uint32_t ck_apb1)
 void rcu_apb2_clock_config(uint32_t ck_apb2)
 {
     uint32_t reg;
-    
+
     reg = RCU_CFG0;
 
     /* reset the APB2PSC and set according to ck_apb2 */
@@ -359,7 +359,7 @@ void rcu_apb2_clock_config(uint32_t ck_apb2)
 void rcu_ckout0_config(uint32_t ckout0_src)
 {
     uint32_t reg;
-    
+
     reg = RCU_CFG0;
 
     /* reset the CKOUT0SRC, set according to ckout0_src */
@@ -368,7 +368,7 @@ void rcu_ckout0_config(uint32_t ckout0_src)
 }
 
 /*!
-    \brief      configure the main PLL clock 
+    \brief      configure the main PLL clock
     \param[in]  pll_src: PLL clock source selection
       \arg        RCU_PLLSRC_IRC8M_DIV2: IRC8M/2 clock selected as source clock of PLL
       \arg        RCU_PLLSRC_HXTAL_IRC48M: HXTAL or IRC48M selected as source clock of PLL
@@ -447,7 +447,7 @@ void rcu_predv0_config(uint32_t predv0_div)
 void rcu_predv0_config(uint32_t predv0_source, uint32_t predv0_div)
 {
     uint32_t reg = 0U;
-    
+
     reg = RCU_CFG1;
     /* reset PREDV0SEL and PREDV0 bits */
     reg &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV0);
@@ -467,7 +467,7 @@ void rcu_predv0_config(uint32_t predv0_source, uint32_t predv0_div)
 void rcu_predv1_config(uint32_t predv1_div)
 {
     uint32_t reg = 0U;
-    
+
     reg = RCU_CFG1;
     /* reset the PREDV1 bits */
     reg &= ~RCU_CFG1_PREDV1;
@@ -478,7 +478,7 @@ void rcu_predv1_config(uint32_t predv1_div)
 }
 
 /*!
-    \brief      configure the PLL1 clock 
+    \brief      configure the PLL1 clock
     \param[in]  pll_mul: PLL clock multiplication factor
       \arg        RCU_PLL1_MULx (x = 8..16, 20)
     \param[out] none
@@ -491,7 +491,7 @@ void rcu_pll1_config(uint32_t pll_mul)
 }
 
 /*!
-    \brief      configure the PLL2 clock 
+    \brief      configure the PLL2 clock
     \param[in]  pll_mul: PLL clock multiplication factor
       \arg        RCU_PLL2_MULx (x = 8..16, 18..32, 40)
     \param[out] none
@@ -500,7 +500,7 @@ void rcu_pll1_config(uint32_t pll_mul)
 void rcu_pll2_config(uint32_t pll_mul)
 {
     RCU_CFG1 &= ~RCU_CFG1_PLL2MF;
-    RCU_CFG1 |= pll_mul; 
+    RCU_CFG1 |= pll_mul;
 }
 #endif /* GD32F30X_HD and GD32F30X_XD */
 
@@ -553,7 +553,7 @@ void rcu_adc_clock_config(uint32_t adc_psc)
             reg0 |= (adc_psc << 14);
             reg1 |= RCU_CFG1_ADCPSC_3;
             break;
-         
+
         default:
             break;
     }
@@ -579,7 +579,7 @@ void rcu_adc_clock_config(uint32_t adc_psc)
 void rcu_usb_clock_config(uint32_t usb_psc)
 {
     uint32_t reg;
-    
+
     reg = RCU_CFG0;
 
     /* configure the USBD/USBFS prescaler factor */
@@ -606,8 +606,8 @@ void rcu_usb_clock_config(uint32_t usb_psc)
 void rcu_rtc_clock_config(uint32_t rtc_clock_source)
 {
     uint32_t reg;
-    
-    reg = RCU_BDCTL; 
+
+    reg = RCU_BDCTL;
     /* reset the RTCSRC bits and set according to rtc_clock_source */
     reg &= ~RCU_BDCTL_RTCSRC;
     RCU_BDCTL = (reg | rtc_clock_source);
@@ -626,8 +626,8 @@ void rcu_rtc_clock_config(uint32_t rtc_clock_source)
 void rcu_i2s1_clock_config(uint32_t i2s_clock_source)
 {
     uint32_t reg;
-    
-    reg = RCU_CFG1; 
+
+    reg = RCU_CFG1;
     /* reset the I2S1SEL bit and set according to i2s_clock_source */
     reg &= ~RCU_CFG1_I2S1SEL;
     RCU_CFG1 = (reg | i2s_clock_source);
@@ -645,8 +645,8 @@ void rcu_i2s1_clock_config(uint32_t i2s_clock_source)
 void rcu_i2s2_clock_config(uint32_t i2s_clock_source)
 {
     uint32_t reg;
-    
-    reg = RCU_CFG1; 
+
+    reg = RCU_CFG1;
     /* reset the I2S2SEL bit and set according to i2s_clock_source */
     reg &= ~RCU_CFG1_I2S2SEL;
     RCU_CFG1 = (reg | i2s_clock_source);
@@ -665,7 +665,7 @@ void rcu_i2s2_clock_config(uint32_t i2s_clock_source)
 void rcu_ck48m_clock_config(uint32_t ck48m_clock_source)
 {
     uint32_t reg;
-    
+
     reg = RCU_ADDCTL;
     /* reset the CK48MSEL bit and set according to ck48m_clock_source */
     reg &= ~RCU_ADDCTL_CK48MSEL;
@@ -815,9 +815,9 @@ void rcu_interrupt_disable(rcu_int_enum stab_int)
 void rcu_lxtal_drive_capability_config(uint32_t lxtal_dricap)
 {
     uint32_t reg;
-    
+
     reg = RCU_BDCTL;
-    
+
     /* reset the LXTALDRI bits and set according to lxtal_dricap */
     reg &= ~RCU_BDCTL_LXTALDRI;
     RCU_BDCTL = (reg | lxtal_dricap);
@@ -843,7 +843,7 @@ ErrStatus rcu_osci_stab_wait(rcu_osci_type_enum osci)
     uint32_t stb_cnt = 0U;
     ErrStatus reval = ERROR;
     FlagStatus osci_stat = RESET;
-    
+
     switch(osci){
     /* wait HXTAL stable */
     case RCU_HXTAL:
@@ -1050,7 +1050,7 @@ void rcu_osci_bypass_mode_enable(rcu_osci_type_enum osci)
 void rcu_osci_bypass_mode_disable(rcu_osci_type_enum osci)
 {
     uint32_t reg;
-    
+
     switch(osci){
     /* disable HXTAL to bypass mode */
     case RCU_HXTAL:
@@ -1110,7 +1110,7 @@ void rcu_hxtal_clock_monitor_disable(void)
 void rcu_irc8m_adjust_value_set(uint32_t irc8m_adjval)
 {
     uint32_t reg;
-    
+
     reg = RCU_CTL;
     /* reset the IRC8MADJ bits and set according to irc8m_adjval */
     reg &= ~RCU_CTL_IRC8MADJ;
@@ -1129,7 +1129,7 @@ void rcu_irc8m_adjust_value_set(uint32_t irc8m_adjval)
     \retval     none
 */
 void rcu_deepsleep_voltage_set(uint32_t dsvol)
-{    
+{
     dsvol &= RCU_DSV_DSLPVS;
     RCU_DSV = dsvol;
 }
@@ -1177,7 +1177,7 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         if(RCU_PLLSRC_HXTAL_IRC48M == pllsel) {
             /* PLL clock source is HXTAL or IRC48M */
             pllpresel = (RCU_CFG1 & RCU_CFG1_PLLPRESEL);
-            
+
             if(RCU_PLLPRESRC_HXTAL == pllpresel){
                 /* PLL clock source is HXTAL */
                 ck_src = HXTAL_VALUE;
@@ -1244,17 +1244,17 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
     idx = GET_BITS(RCU_CFG0, 4, 7);
     clk_exp = ahb_exp[idx];
     ahb_freq = cksys_freq >> clk_exp;
-    
+
     /* calculate APB1 clock frequency */
     idx = GET_BITS(RCU_CFG0, 8, 10);
     clk_exp = apb1_exp[idx];
     apb1_freq = ahb_freq >> clk_exp;
-    
+
     /* calculate APB2 clock frequency */
     idx = GET_BITS(RCU_CFG0, 11, 13);
     clk_exp = apb2_exp[idx];
     apb2_freq = ahb_freq >> clk_exp;
-    
+
     /* return the clocks frequency */
     switch(clock){
     case CK_SYS:

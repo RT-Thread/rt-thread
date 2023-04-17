@@ -386,7 +386,7 @@ void TMR_SelectOnePulseMode(TMR_T* TMRx, TMR_OPMODE_T OPMode)
 /*!
  * @brief     Sets the Clock Division value
  *
- * @param     TMRx: x can be can be 1£¬2£¬3, 14, 15, 16 and 17 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3, 14, 15, 16 and 17 to select Timer
  *
  * @param     clockDivision: clock division value
  *
@@ -547,7 +547,7 @@ void TMR_OC1Config(TMR_T* TMRx, TMR_OCConfig_T* OCcongigStruct)
 /*!
  * @brief     Configure channel 2 according to parameters
  *
- * @param     TMRx: x can be can be 1£¬2£¬3  and 15 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3  and 15 to select Timer
  *
  * @param     OCcongigStruct: Channel configuration structure
  *
@@ -712,7 +712,7 @@ void TMR_OCConfigStructInit(TMR_OCConfig_T* OCcongigStruct)
 /*!
  * @brief     Selects the Output Compare Mode.
  *
- * @param     TMRx: x can be can be 1£¬2£¬3, 14, 15, 16 and 17 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3, 14, 15, 16 and 17 to select Timer
  *
  * @param     channel: specifies the TMR Channel
  *                    This parameter can be one of the following values:
@@ -760,7 +760,7 @@ void TMR_SelectOCxMode(TMR_T* TMRx, TMR_CHANNEL_T channel, TMR_OC_MODE_T mode)
 /*!
  * @brief     Sets the Capture Compare1 Register value
  *
- * @param     TMRx: x can be can be 1£¬2£¬3, 14, 15, 16 and 17 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3, 14, 15, 16 and 17 to select Timer
  *
  * @param     compare: specifies the Capture Compare1 register new value
  *
@@ -776,7 +776,7 @@ void TMR_SetCompare1(TMR_T* TMRx, uint32_t compare)
 /*!
  * @brief     Sets the Capture Compare2 Register value
  *
- * @param     TMRx: x can be can be 1£¬2£¬3 and 15 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3 and 15 to select Timer
  *
  * @param     compare: specifies the Capture Compare1 register new value
  *
@@ -824,7 +824,7 @@ void TMR_SetCompare4(TMR_T* TMRx, uint32_t compare)
 /*!
  * @brief     Forces the output 1 waveform to active or inactive level
  *
- * @param     TMRx: x can be can be 1£¬2£¬3, 14, 15, 16 and 17 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3, 14, 15, 16 and 17 to select Timer
  *
  * @param     action: forced Action to be set to the output waveform
  *                  This parameter can be one of the following values:
@@ -842,7 +842,7 @@ void TMR_ForcedOC1Config(TMR_T* TMRx, TMR_FORCED_ACTION_T action)
 /*!
  * @brief     Forces the output 2 waveform to active or inactive level
  *
- * @param     TMRx: x can be can be 1£¬2£¬3 and 15 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3 and 15 to select Timer
  *
  * @param     action: forced Action to be set to the output waveform
  *                  This parameter can be one of the following values:
@@ -897,7 +897,7 @@ void TMR_ForcedOC4Config(TMR_T* TMRx, TMR_FORCED_ACTION_T action)
 /*!
  * @brief     Sets Capture Compare Preload Control bit
  *
- * @param     TMRx: x can be can be 1£¬2£¬3 and 15 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3 and 15 to select Timer
  *
  * @retval    None
  *
@@ -911,7 +911,7 @@ void TMR_EnableCCPreload(TMR_T* TMRx)
 /*!
  * @brief     Resets Capture Compare Preload Control bit
  *
- * @param     TMRx: x can be can be 1£¬2£¬3 and 15 to select Timer
+ * @param     TMRx: x can be can be 1Â£Â¬2Â£Â¬3 and 15 to select Timer
  *
  * @retval    None
  *
@@ -1806,7 +1806,7 @@ void TMR_DisableInterrupt(TMR_T* TMRx, uint16_t interrupt)
 /*!
  * @brief     Configures the TMRx event to be generate by software
  *
- * @param     TMRx: where x can be 1£¬2£¬3, 14, 15, 16 and 17 to select the TMR peripheral
+ * @param     TMRx: where x can be 1Â£Â¬2Â£Â¬3, 14, 15, 16 and 17 to select the TMR peripheral
  *
  * @param     event:   specifies the TMR generate event
  *                     The parameter can be any combination of following values:

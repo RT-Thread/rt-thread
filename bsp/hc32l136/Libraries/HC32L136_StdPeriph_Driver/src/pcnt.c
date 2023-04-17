@@ -104,14 +104,14 @@ static func_ptr_t pfnPcntCallback = NULL; ///< callback function pointer for PCN
 
 void Pcnt_IRQHandler(void)
 {
-	if(NULL != pfnPcntCallback)
-	{
-		pfnPcntCallback();
-	}	
+    if(NULL != pfnPcntCallback)
+    {
+        pfnPcntCallback();
+    }
 }
 
 /**
- * \brief   
+ * \brief
  *          PCNT 初始化
  *
  * \param   无
@@ -123,33 +123,33 @@ void Pcnt_IRQHandler(void)
 en_result_t PCNT_Init(stc_pcnt_config_t*  pstcPcntConfig)
 {
 
-	
-	  M0P_SYSCTRL->PERI_CLKEN_f.PCNT = 1; 
-  
-    M0P_PCNT->CR_f.S1P = pstcPcntConfig->bS1Sel; 
+
+      M0P_SYSCTRL->PERI_CLKEN_f.PCNT = 1;
+
+    M0P_PCNT->CR_f.S1P = pstcPcntConfig->bS1Sel;
     M0P_PCNT->CR_f.S0P = pstcPcntConfig->bS0Sel;
     M0P_PCNT->CR_f.DIR = pstcPcntConfig->u8Direc;   //计数方式
     M0P_PCNT->CR_f.CLKSEL = pstcPcntConfig->u8Clk;
     M0P_PCNT->CR_f.MODE = pstcPcntConfig->u8Mode;
-    
+
     M0P_PCNT->FLT_f.CLKDIV = pstcPcntConfig->u8FLTClk;
-    
+
     if(pstcPcntConfig->bFLTEn)
     {
-      if(pstcPcntConfig->u8FLTDep == 0)	
-    	{
-    	 	M0P_PCNT->FLT_f.DEBTOP = 2;
-    	}
-    	else
-    	{
-    		M0P_PCNT->FLT_f.DEBTOP = pstcPcntConfig->u8FLTDep;
-    	}
+      if(pstcPcntConfig->u8FLTDep == 0)
+        {
+            M0P_PCNT->FLT_f.DEBTOP = 2;
+        }
+        else
+        {
+            M0P_PCNT->FLT_f.DEBTOP = pstcPcntConfig->u8FLTDep;
+        }
     }
     M0P_PCNT->FLT_f.EN = pstcPcntConfig->bFLTEn;
-    
+
     M0P_PCNT->TOCR_f.TH = pstcPcntConfig->u16TODep;
-    M0P_PCNT->TOCR_f.EN = pstcPcntConfig->bTOEn;    
-    
+    M0P_PCNT->TOCR_f.EN = pstcPcntConfig->bTOEn;
+
     if (TRUE == pstcPcntConfig->bIrqEn)
     {
         M0P_PCNT->IEN = pstcPcntConfig->u8IrqStatus;
@@ -157,7 +157,7 @@ en_result_t PCNT_Init(stc_pcnt_config_t*  pstcPcntConfig)
     }
     else
     {
-    	  M0P_PCNT->IEN = 0x00;
+          M0P_PCNT->IEN = 0x00;
         EnableNvic(PCNT_IRQn,IrqLevel3,FALSE);
     }
     if(NULL != pstcPcntConfig->pfnIrqCb)
@@ -168,7 +168,7 @@ en_result_t PCNT_Init(stc_pcnt_config_t*  pstcPcntConfig)
 }
 
 /**
- * \brief   
+ * \brief
  *          PCNT 去初始化
  *
  * \param   无
@@ -181,12 +181,12 @@ void PCNT_DeInit(void)
 {
    M0P_PCNT->CR = 0;
    M0P_PCNT->RUN = 0;
-   M0P_SYSCTRL->PERI_CLKEN_f.PCNT = 0; 
+   M0P_SYSCTRL->PERI_CLKEN_f.PCNT = 0;
 
 }
 
 /**
- * \brief   
+ * \brief
  *          PCNT 脉冲计数设置
  *
  * \param   [in]  start  开始计数设置
@@ -197,12 +197,12 @@ void PCNT_DeInit(void)
 en_result_t PCNT_Parameter(uint8_t start,uint8_t end)
 {
   uint32_t u32TimeOut;
-    
+
    u32TimeOut = 1000;
    M0P_PCNT->BUF = end;     //加载结束溢出值
-	 M0P_PCNT->CMD_f.B2T = 1;
-	
-	  while(u32TimeOut--)
+     M0P_PCNT->CMD_f.B2T = 1;
+
+      while(u32TimeOut--)
     {
         if(FALSE == M0P_PCNT->SR2_f.B2T)
         {
@@ -216,9 +216,9 @@ en_result_t PCNT_Parameter(uint8_t start,uint8_t end)
 
    u32TimeOut = 1000;
    M0P_PCNT->BUF = start;     //加载初始值
-	 M0P_PCNT->CMD_f.B2C = 1;
-	
-	  while(u32TimeOut--)
+     M0P_PCNT->CMD_f.B2C = 1;
+
+      while(u32TimeOut--)
     {
         if(FALSE == M0P_PCNT->SR2_f.B2C)
         {
@@ -229,13 +229,13 @@ en_result_t PCNT_Parameter(uint8_t start,uint8_t end)
     {
         return ErrorTimeout;
     }
-   return Ok;   
+   return Ok;
 }
 
 /**
- * \brief   
+ * \brief
  *          获取PCNT计数方向
- * \param   [in]  
+ * \param   [in]
  *
  * \retval  无
  */
@@ -245,9 +245,9 @@ en_pcnt_direcsel_t PCNT_Direction(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          获取PCNT计数值
- * \param   [in]  
+ * \param   [in]
  *
  * \retval  无
  */
@@ -257,9 +257,9 @@ uint16_t PCNT_Count(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          获取PCNT溢出值
- * \param   [in]  
+ * \param   [in]
  *
  * \retval  无
  */
@@ -269,19 +269,19 @@ uint16_t PCNT_TopCount(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          PCNT使能
- * \param   [in]  
+ * \param   [in]
  *
  * \retval  无
  */
 void PCNT_Run(boolean_t work)
 {
-   M0P_PCNT->RUN_f.RUN = work; 
+   M0P_PCNT->RUN_f.RUN = work;
 }
 
 /**
- * \brief   
+ * \brief
  *          PCNT 读取状态
   * \param  [in]  en_pcnt_status_t  PCNT状态
  *
@@ -290,7 +290,7 @@ void PCNT_Run(boolean_t work)
 boolean_t PCNT_GetStatus(en_pcnt_status_t enStatus)
 {
     boolean_t bFlag = FALSE;
-    
+
     ASSERT(IS_VALID_STAT(enStatus));
 
     switch (enStatus)
@@ -318,14 +318,14 @@ boolean_t PCNT_GetStatus(en_pcnt_status_t enStatus)
             break;
         case PCNT_UF:
             bFlag = M0P_PCNT->IFR_f.UF;
-            break;             
+            break;
         default:
             break;
     }
     return bFlag;
 }
 /**
- * \brief   
+ * \brief
  *          PCNT 清除状态
   * \param  [in]  en_pcnt_status_t  PCNT状态
  *
@@ -361,13 +361,13 @@ void PCNT_ClrStatus(en_pcnt_status_t enStatus)
             break;
         case PCNT_UF:
             M0P_PCNT->ICR_f.UF = 0;
-            break;             
+            break;
         default:
             break;
     }
 }
 /**
- * \brief   
+ * \brief
  *          PCNT 中断设置
   * \param  [in]  en_pcnt_status_t  PCNT状态
  *
@@ -382,28 +382,28 @@ void PCNT_SetIrqStatus(en_pcnt_status_t enStatus)
     {
         case PCNT_S1E:
             M0P_PCNT->IEN_f.S1E = 1;
-            break;                
-        case PCNT_S0E:            
+            break;
+        case PCNT_S0E:
             M0P_PCNT->IEN_f.S0E = 1;
-            break;                
-        case PCNT_BB:            
+            break;
+        case PCNT_BB:
              M0P_PCNT->IEN_f.BB = 1;
-            break;                
-        case PCNT_FE:             
+            break;
+        case PCNT_FE:
             M0P_PCNT->IEN_f.FE =  1;
-            break;                
-        case PCNT_DIR:            
+            break;
+        case PCNT_DIR:
             M0P_PCNT->IEN_f.DIR = 1;
-            break;                
-        case PCNT_TO:             
+            break;
+        case PCNT_TO:
             M0P_PCNT->IEN_f.TO =  1;
-            break;                
-        case PCNT_OV:             
+            break;
+        case PCNT_OV:
             M0P_PCNT->IEN_f.OV =  1;
-            break;                
-        case PCNT_UF:             
+            break;
+        case PCNT_UF:
             M0P_PCNT->IEN_f.UF =  1;
-            break;             
+            break;
         default:
             break;
     }

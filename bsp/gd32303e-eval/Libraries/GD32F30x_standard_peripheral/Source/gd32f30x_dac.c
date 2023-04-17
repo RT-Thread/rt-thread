@@ -37,7 +37,7 @@ void dac_enable(uint32_t dac_periph)
     }else{
         DAC_CTL |= DAC_CTL_DEN1;
     }
-} 
+}
 
 /*!
     \brief      disable DAC
@@ -379,7 +379,7 @@ void dac_concurrent_software_trigger_enable(void)
 {
     uint32_t swt = 0U;
     swt = DAC_SWT_SWTR0 | DAC_SWT_SWTR1;
-    DAC_SWT |= (swt); 
+    DAC_SWT |= (swt);
 }
 
 /*!

@@ -263,7 +263,7 @@ hpm_stat_t adc16_set_seq_config(ADC16_Type *ptr, adc16_seq_config_t *config)
         }
 
         ptr->SEQ_QUE[i] = ADC16_SEQ_QUE_SEQ_INT_EN_SET(config->queue[i].seq_int_en)
-				        | ADC16_SEQ_QUE_CHAN_NUM_4_0_SET(config->queue[i].ch);
+                        | ADC16_SEQ_QUE_CHAN_NUM_4_0_SET(config->queue[i].ch);
     }
 
     return status_success;

@@ -122,12 +122,12 @@ void DBG_DisableDebugMode(uint32_t mode)
  *                        @arg DBG_APB1_PER_TMR2_STOP:    TMR2  counter stopped when Core is halted, Not for APM32F030 devices
  *                        @arg DBG_APB1_PER_TMR3_STOP:    TMR3  counter stopped when Core is halted
  *                        @arg DBG_APB1_PER_TMR6_STOP:    TMR6  counter stopped when Core is halted
- *                        @arg DBG_APB1_PER_TMR7_STOP:    TMR7  counter stopped when Core is halted£¬Only for APM32F072 and APM32F091 devices
+ *                        @arg DBG_APB1_PER_TMR7_STOP:    TMR7  counter stopped when Core is haltedÂ£Â¬Only for APM32F072 and APM32F091 devices
  *                        @arg DBG_APB1_PER_TMR14_STOP:   TMR14 counter stopped when Core is halted
  *                        @arg DBG_APB1_PER_RTC_STOP:     RTC   counter stopped when Core is halted
  *                        @arg DBG_APB1_PER_WWDT_STOP:    Debug WWDT stopped when Core is halted
  *                        @arg DBG_APB1_PER_IWDT_STOP:    Debug IWDT stopped when Core is halted
- *                        @arg DBG_APB1_PER_CAN_STOP:     Debug CAN stopped when Core is halted£¬Only for APM32F072 and APM32F091 devices
+ *                        @arg DBG_APB1_PER_CAN_STOP:     Debug CAN stopped when Core is haltedÂ£Â¬Only for APM32F072 and APM32F091 devices
  *                        @arg DBG_APB1_PER_I2C1_SMBUS_TIMEOUT: I2C1 SMBUS timeout mode stopped when Core is halted
  * @retval      None
  */
@@ -144,12 +144,12 @@ void DBG_EnableAPB1Periph(uint32_t peripheral)
  *                        @arg DBG_APB1_PER_TMR2_STOP:    TMR2  counter stopped when Core is halted, Not for APM32F030 devices
  *                        @arg DBG_APB1_PER_TMR3_STOP:    TMR3  counter stopped when Core is halted
  *                        @arg DBG_APB1_PER_TMR6_STOP:    TMR6  counter stopped when Core is halted
- *                        @arg DBG_APB1_PER_TMR7_STOP:    TMR7  counter stopped when Core is halted£¬Only for APM32F072 and APM32F091 devices
+ *                        @arg DBG_APB1_PER_TMR7_STOP:    TMR7  counter stopped when Core is haltedÂ£Â¬Only for APM32F072 and APM32F091 devices
  *                        @arg DBG_APB1_PER_TMR14_STOP:   TMR14 counter stopped when Core is halted
  *                        @arg DBG_APB1_PER_RTC_STOP:     RTC   counter stopped when Core is halted
  *                        @arg DBG_APB1_PER_WWDT_STOP:    Debug WWDT stopped when Core is halted
  *                        @arg DBG_APB1_PER_IWDT_STOP:    Debug IWDT stopped when Core is halted
- *                        @arg DBG_APB1_PER_CAN_STOP:     Debug CAN stopped when Core is halted£¬Only for APM32F072 and APM32F091 devices
+ *                        @arg DBG_APB1_PER_CAN_STOP:     Debug CAN stopped when Core is haltedÂ£Â¬Only for APM32F072 and APM32F091 devices
  *                        @arg DBG_APB1_PER_I2C1_SMBUS_TIMEOUT: I2C1 SMBUS timeout mode stopped when Core is halted
  * @retval      None
  */

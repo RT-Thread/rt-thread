@@ -295,12 +295,12 @@ int32_t dw_usart_putchar(usart_handle_t handle, uint8_t ch)
 
     while ((!(addr->LSR & DW_LSR_TRANS_EMPTY)));
 
-	if (ch == '\n')
-	{
-		addr->THR = '\r';
+    if (ch == '\n')
+    {
+        addr->THR = '\r';
 
-		while ((!(addr->LSR & DW_LSR_TRANS_EMPTY))) ;
-	}
+        while ((!(addr->LSR & DW_LSR_TRANS_EMPTY))) ;
+    }
 
     addr->THR = ch;
 

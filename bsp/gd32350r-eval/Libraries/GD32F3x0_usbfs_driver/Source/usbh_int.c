@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -66,7 +66,7 @@ uint32_t usbh_isr (usb_core_handle_struct *pudev)
         if (!int_flag) {
             return 0U;
         }
-        
+
         /* start of frame interrupt handle */
         if (int_flag & GINTF_SOF) {
             retval |= usbh_intf_sof (pudev);
@@ -215,7 +215,7 @@ static uint32_t usbh_intf_ptxfifo_empty (usb_core_handle_struct *pudev)
 {
     uint8_t channel_num = 0U;
     uint32_t dword_len = 0U, len = 0U;
-    usb_hostchannel_struct *puhc; 
+    usb_hostchannel_struct *puhc;
 
     channel_num = (uint8_t)((USB_HPTFQSTAT & HPTFQSTAT_CNUM) >> 27U);
     puhc = &pudev->host.host_channel[channel_num];
@@ -378,7 +378,7 @@ static uint32_t usbh_intf_hc_out (usb_core_handle_struct *pudev, uint8_t channel
                 puhc->urb_state = URB_DONE;
 
                 if (USB_EPTYPE_BULK == ((USB_HCHxCTL((uint16_t)channel_num) & HCHCTL_EPTYPE) >> 18)) {
-                    puhc->data_tg_out ^= 1U; 
+                    puhc->data_tg_out ^= 1U;
                 }
                 break;
             case HC_NAK:
@@ -444,7 +444,7 @@ static uint32_t usbh_intf_hc_in (usb_core_handle_struct *pudev, uint8_t channel_
         USB_HCHxINTEN((uint16_t)channel_num) |= HCHINTEN_CHIE;
         usb_hostchannel_halt(pudev, channel_num);
         USB_HCHxINTF((uint16_t)channel_num) = HCHINTF_NAK;
-        puhc->status = HC_DTGERR; 
+        puhc->status = HC_DTGERR;
         USB_HCHxINTF((uint16_t)channel_num) = HCHINTF_DTER;
     } else {
         /* no operation */

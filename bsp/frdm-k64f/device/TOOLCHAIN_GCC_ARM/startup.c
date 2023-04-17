@@ -44,8 +44,8 @@ void init_data_bss(void)
 
     uint8_t * bss_start, * bss_end;
 
-	bss_start = (uint8_t *)__bss_start;
-	bss_end = (uint8_t *)__bss_end;
+    bss_start = (uint8_t *)__bss_start;
+    bss_end = (uint8_t *)__bss_end;
 
     /* Clear the zero-initialized data section */
     n = bss_end - bss_start;

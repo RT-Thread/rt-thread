@@ -52,7 +52,7 @@ Input:
              operation         --  AES_ENCRYPTION,AES_DECRYPTION
              mode              --  AES_ECB_MODE, AES_CBC_MODE,
              iv                --  initial vector for CBC mode
-             security_mode     --  AES_NORMAL_MODE, AES_SECURITY_MDOE，
+             security_mode     --  AES_NORMAL_MODE, AES_SECURITY_MDOEï¼Œ
 Return:      None
 
 *******************************************************************************/

@@ -89,16 +89,16 @@ static func_ptr_t pfnLpTimCallback = NULL;
  ** \brief Low Power Timer 中断标志获取
  **
  **
- ** 
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 boolean_t Lpt_GetIntFlag(void)
 {
     boolean_t bRetVal = FALSE;
-    
+
     bRetVal = M0P_LPTIMER->IFR_f.TF ? TRUE : FALSE;
-    
+
     return bRetVal;
 }
 
@@ -107,9 +107,9 @@ boolean_t Lpt_GetIntFlag(void)
  ** \brief Low Power Timer 中断标志清除
  **
  **
- ** 
- ** 
- ** \retval Ok or Error                                      
+ **
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Lpt_ClearIntFlag(void)
 {
@@ -127,7 +127,7 @@ en_result_t Lpt_ClearIntFlag(void)
  **
  **
  ** \param [in] u8Param         == 0
- **                                      
+ **
  *****************************************************************************/
 void LpTim_IRQHandler(uint8_t u8Param)
 {
@@ -142,17 +142,17 @@ void LpTim_IRQHandler(uint8_t u8Param)
  ** \brief Low Power Timer 中断使能
  **
  **
- ** 
- ** 
- ** \retval Ok or Error                                      
+ **
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Lpt_EnableIrq (void)
 {
     en_result_t enResult = Error;
-    
+
     M0P_LPTIMER->CR_f.IE = TRUE;
     enResult = Ok;
-   
+
     return enResult;
 }
 
@@ -161,9 +161,9 @@ en_result_t Lpt_EnableIrq (void)
  ** \brief Low Power Timer 中断禁止
  **
  **
- ** 
- ** 
- ** \retval Ok or Error                                      
+ **
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Lpt_DisableIrq(void)
 {
@@ -181,12 +181,12 @@ en_result_t Lpt_DisableIrq(void)
  **
  **
  ** \param [in]  pstcConfig       初始化配置结构体指针
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Lpt_Init(stc_lpt_config_t* pstcConfig)
 {
-    en_result_t enResult = Error;  
+    en_result_t enResult = Error;
 
     M0P_LPTIMER->CR_f.GATE_P  = pstcConfig->enGateP;
     M0P_LPTIMER->CR_f.GATE    = pstcConfig->enGate;
@@ -194,11 +194,11 @@ en_result_t Lpt_Init(stc_lpt_config_t* pstcConfig)
     M0P_LPTIMER->CR_f.TOG_EN  = pstcConfig->enTog;
     M0P_LPTIMER->CR_f.CT      = pstcConfig->enCT;
     M0P_LPTIMER->CR_f.MD      = pstcConfig->enMD;
-    
+
     pfnLpTimCallback          = pstcConfig->pfnLpTimCb;
-    
+
     enResult = Ok;
-    
+
     return enResult;
 }
 
@@ -207,17 +207,17 @@ en_result_t Lpt_Init(stc_lpt_config_t* pstcConfig)
  ** \brief Low Power Timer 启动运行
  **
  **
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Lpt_Run(void)
 {
     en_result_t enResult = Error;
-    
+
     M0P_LPTIMER->CR_f.TR = TRUE;
     enResult = Ok;
-    
-    return enResult;    
+
+    return enResult;
 }
 
 /**
@@ -225,16 +225,16 @@ en_result_t Lpt_Run(void)
  ** \brief Low Power Timer 停止运行
  **
  **
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Lpt_Stop(void)
 {
     en_result_t enResult = Error;
-    
+
     M0P_LPTIMER->CR_f.TR = FALSE;
     enResult = Ok;
-    
+
     return enResult;
 }
 
@@ -244,25 +244,25 @@ en_result_t Lpt_Stop(void)
  **
  **
  ** \param [in]  u16Data          16bits重载值
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Lpt_ARRSet(uint16_t u16Data)
 {
     en_result_t enResult = Error;
     boolean_t bRetVal = FALSE;
-    
+
     bRetVal = M0P_LPTIMER->CR_f.WT_FLAG ? TRUE : FALSE;
     if(TRUE == bRetVal)
     {
         M0P_LPTIMER->ARR_f.ARR = u16Data;
         enResult = Ok;
     }
-    else  
+    else
     {
         enResult = Error;
     }
-    return enResult; 
+    return enResult;
 }
 
 /**
@@ -270,16 +270,16 @@ en_result_t Lpt_ARRSet(uint16_t u16Data)
  ** \brief Low Power Timer 16位计数值获取
  **
  **
- ** 
- ** \retval 16bits计数值                                      
+ **
+ ** \retval 16bits计数值
  *****************************************************************************/
 uint16_t Lpt_Cnt16Get(void)
 {
     uint16_t    u16CntData = 0;
-  
+
     u16CntData = M0P_LPTIMER->CNT_f.CNT;
-    
-    return u16CntData; 
+
+    return u16CntData;
 }
 
 //@} // LptGroup

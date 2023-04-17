@@ -181,7 +181,7 @@ typedef struct
     uint32_t StopBits;                  /*!< Specifies the number of stop bits transmitted.
                                              This parameter can be a value of @ref UART_Stop_Bits. */
 
-    uint32_t Parity;                    /*!< Specifies the parity mode. 
+    uint32_t Parity;                    /*!< Specifies the parity mode.
                                              This parameter can be a value of @ref UART_Parity. */
 
     uint32_t Mode;                      /*!< Specifies whether the Receive or Transmit mode is enabled or disabled.
@@ -204,20 +204,20 @@ typedef struct
     uint32_t                 lu32_TxSize;             /*!< UART Transmit parameters in interrupt  */
     __IO uint32_t            lu32_TxCount;
     uint8_t                 *lu8_TxData;
-    
-    uint32_t                 lu32_RxSize;             /*!< UART Receive parameters in interrupt  */
-    __IO uint32_t            lu32_RxCount; 
-    uint32_t                 lu32_fifo_level_minus1;   
-    uint8_t                 *lu8_RxData;  
-    
-    
-    __IO uint8_t             lu8_TxBusy;  
-    __IO uint8_t             lu8_RxBusy;  
-    
-    DMA_HandleTypeDef       *HDMA_Tx;                 /*!< UART Tx DMA handle parameters */
-    DMA_HandleTypeDef       *HDMA_Rx;                 /*!< UART Rx DMA handle parameters */ 
 
-	__IO uint32_t           ErrorCode;                /*!<UART Error Code */
+    uint32_t                 lu32_RxSize;             /*!< UART Receive parameters in interrupt  */
+    __IO uint32_t            lu32_RxCount;
+    uint32_t                 lu32_fifo_level_minus1;
+    uint8_t                 *lu8_RxData;
+
+
+    __IO uint8_t             lu8_TxBusy;
+    __IO uint8_t             lu8_RxBusy;
+
+    DMA_HandleTypeDef       *HDMA_Tx;                 /*!< UART Tx DMA handle parameters */
+    DMA_HandleTypeDef       *HDMA_Rx;                 /*!< UART Rx DMA handle parameters */
+
+    __IO uint32_t           ErrorCode;                /*!<UART Error Code */
 
 }UART_HandleTypeDef;
 
@@ -247,7 +247,7 @@ typedef struct
                                            ((__MODE__) == UART_MODE_TX_RX)       || \
                                            ((__MODE__) == UART_MODE_TX_RX_DEBUG) || \
                                            ((__MODE__) == UART_MODE_HALF_DUPLEX))
-                                           
+
 #define IS_UART_HARDWARE_FLOW_CONTROL(__CONTROL__)    (((__CONTROL__) == UART_HWCONTROL_NONE) || \
                                                        ((__CONTROL__) == UART_HWCONTROL_RTS)  || \
                                                        ((__CONTROL__) == UART_HWCONTROL_CTS)  || \

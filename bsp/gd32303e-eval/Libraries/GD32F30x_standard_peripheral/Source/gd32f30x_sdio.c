@@ -563,7 +563,7 @@ void sdio_interrupt_disable(uint32_t int_flag)
     \retval     FlagStatus: SET or RESET
 */
 FlagStatus sdio_interrupt_flag_get(uint32_t int_flag)
-{    
+{
     uint32_t state = 0U;
     state = SDIO_STAT;
     if(state & int_flag){

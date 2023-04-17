@@ -1,7 +1,7 @@
 /*!
     \file  gd32f3x0_cec.c
     \brief CEC driver
-    
+
     \version 2017-06-06, V1.0.0, firmware for GD32F3x0
     \version 2019-06-01, V2.0.0, firmware for GD32F3x0
 */
@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -50,7 +50,7 @@ void cec_deinit(void)
 }
 
 /*!
-    \brief      configure signal free time,the signal free time counter start option,own address 
+    \brief      configure signal free time,the signal free time counter start option,own address
     \param[in]  sftmopt: signal free time counter start option
                 only one parameter can be selected which is shown as below:
       \arg        CEC_SFT_START_STAOM: signal free time counter starts counting when STAOM is asserted
@@ -149,7 +149,7 @@ void cec_disable(void)
 }
 
 /*!
-    \brief      start CEC message transmission 
+    \brief      start CEC message transmission
     \param[in]  none
     \param[out] none
     \retval     none
@@ -193,7 +193,7 @@ void cec_listen_mode_disable(void)
 }
 
 /*!
-    \brief      configure and clear own address.the controller can be configured to multiple own address 
+    \brief      configure and clear own address.the controller can be configured to multiple own address
     \param[in]  address: own address
                 one or more parameters can be selected which are shown as below:
       \arg        CEC_OWN_ADDRESS_CLEAR: own address is cleared
@@ -211,7 +211,7 @@ void cec_own_address_config(uint32_t address)
 }
 
 /*!
-    \brief      configure signal free time and the signal free time counter start option 
+    \brief      configure signal free time and the signal free time counter start option
     \param[in]  sftmopt: signal free time counter start option
                 only one parameter can be selected which is shown as below:
       \arg        CEC_SFT_START_STAOM: signal free time counter starts counting when STAOM is asserted
@@ -346,7 +346,7 @@ uint8_t cec_data_receive(void)
       \arg        CEC_INT_TBR: enable Tx-byte data request interrupt
       \arg        CEC_INT_TEND: enable transmission successfully end interrupt
       \arg        CEC_INT_TU: enable Tx data buffer underrun interrupt
-      \arg        CEC_INT_TERR: enable Tx-error interrupt 
+      \arg        CEC_INT_TERR: enable Tx-error interrupt
       \arg        CEC_INT_TAERR: enable Tx ACK error interrupt
     \param[out] none
     \retval     none
@@ -371,7 +371,7 @@ void cec_interrupt_enable(uint32_t flag)
       \arg        CEC_INT_TBR: disable Tx-byte data request interrupt
       \arg        CEC_INT_TEND: disable transmission successfully end interrupt
       \arg        CEC_INT_TU: disable Tx data buffer underrun interrupt
-      \arg        CEC_INT_TERR: disable Tx-error interrupt 
+      \arg        CEC_INT_TERR: disable Tx-error interrupt
       \arg        CEC_INT_TAERR: disable Tx ACK error  interrupt
 
     \param[out] none

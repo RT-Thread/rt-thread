@@ -36,7 +36,7 @@ void nvic_priority_group_set(uint32_t nvic_prigroup)
     \param[out] none
     \retval     none
 */
-void nvic_irq_enable(uint8_t nvic_irq, uint8_t nvic_irq_pre_priority, 
+void nvic_irq_enable(uint8_t nvic_irq, uint8_t nvic_irq_pre_priority,
                      uint8_t nvic_irq_sub_priority)
 {
     uint32_t temp_priority = 0x00U, temp_pre = 0x00U, temp_sub = 0x00U;
@@ -96,10 +96,10 @@ void nvic_vector_table_set(uint32_t nvic_vict_tab, uint32_t offset)
 /*!
     \brief      set the state of the low power mode
     \param[in]  lowpower_mode: the low power mode state
-      \arg        SCB_LPM_SLEEP_EXIT_ISR: if chose this para, the system always enter low power 
+      \arg        SCB_LPM_SLEEP_EXIT_ISR: if chose this para, the system always enter low power
                     mode by exiting from ISR
       \arg        SCB_LPM_DEEPSLEEP: if chose this para, the system will enter the DEEPSLEEP mode
-      \arg        SCB_LPM_WAKE_BY_ALL_INT: if chose this para, the lowpower mode can be woke up 
+      \arg        SCB_LPM_WAKE_BY_ALL_INT: if chose this para, the lowpower mode can be woke up
                     by all the enable and disable interrupts
     \param[out] none
     \retval     none
@@ -112,10 +112,10 @@ void system_lowpower_set(uint8_t lowpower_mode)
 /*!
     \brief      reset the state of the low power mode
     \param[in]  lowpower_mode: the low power mode state
-      \arg        SCB_LPM_SLEEP_EXIT_ISR: if chose this para, the system will exit low power 
+      \arg        SCB_LPM_SLEEP_EXIT_ISR: if chose this para, the system will exit low power
                     mode by exiting from ISR
       \arg        SCB_LPM_DEEPSLEEP: if chose this para, the system will enter the SLEEP mode
-      \arg        SCB_LPM_WAKE_BY_ALL_INT: if chose this para, the lowpower mode only can be 
+      \arg        SCB_LPM_WAKE_BY_ALL_INT: if chose this para, the lowpower mode only can be
                     woke up by the enable interrupts
     \param[out] none
     \retval     none

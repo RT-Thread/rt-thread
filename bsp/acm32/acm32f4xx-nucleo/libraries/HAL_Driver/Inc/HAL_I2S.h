@@ -136,13 +136,13 @@ typedef struct
 {
     uint32_t u32_Mode;            /*!< Specifies the I2S operating mode.
                                        This parameter can be a value of @ref I2S_Mode */
-    
+
     uint32_t u32_Standard;        /*!< Specifies the standard used for the I2S communication.
                                        This parameter can be a value of @ref I2S_Standard */
-    
+
     uint32_t u32_DataFormat;      /*!< Specifies the data format for the I2S communication.
                                        This parameter can be a value of @ref I2S_Data_Format */
-    
+
     uint32_t u32_MCLKOutput;      /*!< Specifies whether the I2S MCLK output is enabled or not.
                                        This parameter can be a value of @ref I2S_MCLK_Output */
 
@@ -171,10 +171,10 @@ typedef struct
 
     uint32_t              *u32_Rx_Buffer;        /* I2S Rx Buffer */
     uint32_t              *u32_Tx_Buffer;        /* I2S Tx Buffer */
-    
+
     uint32_t               u32_Rx_Size;          /* I2S Rx Size */
     uint32_t               u32_Tx_Size;          /* I2S Tx Size */
-    
+
     uint32_t               u32_Rx_Count;         /* I2S RX Count */
     uint32_t               u32_Tx_Count;         /* I2S TX Count */
 
@@ -197,7 +197,7 @@ typedef struct
                                            ((__STANDARD__) == I2S_STANDARD_LSB)       || \
                                            ((__STANDARD__) == I2S_STANDARD_PCM_SHORT) || \
                                            ((__STANDARD__) == I2S_STANDARD_PCM_LONG))
-                                           
+
 #define IS_I2S_DATAFORMAT(__DATAFORMAT__)       (((__DATAFORMAT__) == I2S_DATAFORMAT_16B)           || \
                                                  ((__DATAFORMAT__) == I2S_DATAFORMAT_16B_EXTENDED)  || \
                                                  ((__DATAFORMAT__) == I2S_DATAFORMAT_24B)           || \

@@ -28,18 +28,18 @@
 /* TODO: refactor this really not good code */
 typedef struct
 {
-	volatile uint32_t saddr; /**< RX/TX/CMD Channel uDMA transfer address of associated buffer */
-	volatile uint32_t size; /**< RX/TX/CMD Channel uDMA transfer size of buffer */
-	volatile uint32_t cfg; /**< RX/TX/CMD Channel uDMA transfer configuration */
-	volatile uint32_t initcfg; /**< Not used. */
+    volatile uint32_t saddr; /**< RX/TX/CMD Channel uDMA transfer address of associated buffer */
+    volatile uint32_t size; /**< RX/TX/CMD Channel uDMA transfer size of buffer */
+    volatile uint32_t cfg; /**< RX/TX/CMD Channel uDMA transfer configuration */
+    volatile uint32_t initcfg; /**< Not used. */
 } udma_channel_t;
 
 
 typedef enum
 {
-	RX_CHANNEL      = 0,
-	TX_CHANNEL      = 1,
-	COMMAND_CHANNEL = 2
+    RX_CHANNEL      = 0,
+    TX_CHANNEL      = 1,
+    COMMAND_CHANNEL = 2
 } udma_channel_e;
 
 /* ----------------------------------------------------------------------------

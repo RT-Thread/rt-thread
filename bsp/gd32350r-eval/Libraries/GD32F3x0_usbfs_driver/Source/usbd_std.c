@@ -1,5 +1,5 @@
 /*!
-    \file  usbd_std.c 
+    \file  usbd_std.c
     \brief USB 2.0 standard handler driver
 
     \version 2017-06-06, V1.0.0, firmware for GD32F3x0
@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -77,7 +77,7 @@ static void (*StandardDeviceRequest[])(usb_core_handle_struct *pudev, usb_device
 };
 
 /* get standard descriptor handler */
-static uint8_t* (*standard_descriptor_get[])(usb_core_handle_struct *pudev, uint8_t index, uint16_t *pLen) = 
+static uint8_t* (*standard_descriptor_get[])(usb_core_handle_struct *pudev, uint8_t index, uint16_t *pLen) =
 {
     usbd_device_descriptor_get,
     usbd_configuration_descriptor_get,
@@ -135,9 +135,9 @@ usbd_status_enum usbd_out_transaction (usb_core_handle_struct *pudev, uint8_t en
             if (pudev->dev.remain_len > ep->endp_mps) {
                 pudev->dev.remain_len -= ep->endp_mps;
 
-                usbd_ep_rx (pudev, 
-                            0U, 
-                            ep->xfer_buff, 
+                usbd_ep_rx (pudev,
+                            0U,
+                            ep->xfer_buff,
                             (uint16_t)USB_MIN(pudev->dev.remain_len, ep->endp_mps));
             } else {
                 if (USB_STATUS_CONFIGURED == pudev->dev.status) {
@@ -175,7 +175,7 @@ usbd_status_enum usbd_in_transaction (usb_core_handle_struct *pudev, uint8_t end
                 pudev->dev.remain_len -= ep->endp_mps;
 
                 usbd_ep_tx (pudev, 0U, ep->xfer_buff, pudev->dev.remain_len);
-                
+
                 usbd_ep_rx (pudev, 0U, NULL, 0U);
             } else {
                 /* last packet is MPS multiple, so send ZLP packet */
@@ -184,7 +184,7 @@ usbd_status_enum usbd_in_transaction (usb_core_handle_struct *pudev, uint8_t end
                       (pudev->dev.sum_len < pudev->dev.ctl_len)) {
                     usbd_ep_tx (pudev, 0U, NULL, 0U);
                     pudev->dev.ctl_len = 0U;
-                        
+
                     usbd_ep_rx (pudev, 0U, NULL, 0U);
                 } else {
                     if (USB_STATUS_CONFIGURED == pudev->dev.status) {
@@ -429,7 +429,7 @@ static void  usbd_setfeature (usb_core_handle_struct *pudev, usb_device_req_stru
                         pudev->dev.class_req_handler(pudev, req);
 
                         usbd_ctlstatus_tx(pudev);
-                    } else if ((req->wValue == USB_FEATURE_TEST_MODE) && 
+                    } else if ((req->wValue == USB_FEATURE_TEST_MODE) &&
                                 (0U == (req->wIndex & 0xFFU))) {
                         DctlrStatus = USB_DCTL;
 
@@ -693,7 +693,7 @@ static void  usbd_synchframe (usb_core_handle_struct *pudev, usb_device_req_stru
 static void usbd_setup_request_parse(usb_core_handle_struct *pudev, usb_device_req_struct *req)
 {
     uint8_t *psetup = pudev->dev.setup_packet;
-  
+
     req->bmRequestType = *psetup;
     req->bRequest      = *(uint8_t *)(psetup + 1U);
     req->wValue        = SWAPBYTE (psetup + 2U);

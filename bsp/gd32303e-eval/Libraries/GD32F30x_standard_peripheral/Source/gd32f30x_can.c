@@ -12,9 +12,9 @@
 #include "gd32f30x_can.h"
 
 /*!
-    \brief      deinitialize CAN 
+    \brief      deinitialize CAN
     \param[in]  can_periph
-    \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+    \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     none
 */
@@ -39,7 +39,7 @@ void can_deinit(uint32_t can_periph)
 /*!
     \brief      initialize CAN
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  can_parameter_init: parameters for CAN initializtion
       \arg        working_mode: CAN_NORMAL_MODE, CAN_LOOPBACK_MODE, CAN_SILENT_MODE, CAN_SILENT_LOOPBACK_MODE
       \arg        resync_jump_width: CAN_BT_SJW_xTQ(x=1, 2, 3, 4)
@@ -59,7 +59,7 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct* can_parameter_init
 {
     uint32_t timeout = CAN_TIMEOUT;
     ErrStatus flag = ERROR;
-    
+
     /* disable sleep mode */
     CAN_CTL(can_periph) &= ~CAN_CTL_SLPWMOD;
     /* enable initialize mode */
@@ -102,18 +102,18 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct* can_parameter_init
         }else{
             CAN_CTL(can_periph) &= ~CAN_CTL_ARD;
         }
-        /* receive fifo overwrite mode */        
+        /* receive fifo overwrite mode */
         if(ENABLE == can_parameter_init->rec_fifo_overwrite){
             CAN_CTL(can_periph) |= CAN_CTL_RFOD;
         }else{
             CAN_CTL(can_periph) &= ~CAN_CTL_RFOD;
-        } 
+        }
         /* transmit fifo order */
         if(ENABLE == can_parameter_init->trans_fifo_order){
             CAN_CTL(can_periph) |= CAN_CTL_TFO;
         }else{
             CAN_CTL(can_periph) &= ~CAN_CTL_TFO;
-        }  
+        }
         /* disable initialize mode */
         CAN_CTL(can_periph) &= ~CAN_CTL_IWMOD;
         timeout = CAN_TIMEOUT;
@@ -125,21 +125,21 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct* can_parameter_init
         if(CAN_STAT_IWS == (CAN_STAT(can_periph) & CAN_STAT_IWS)){
             flag = SUCCESS;
         }
-    }  
+    }
     return flag;
 }
 
 /*!
-    \brief      initialize CAN filter 
+    \brief      initialize CAN filter
     \param[in]  can_filter_parameter_init: struct for CAN filter initialization
       \arg        filter_list_high: 0x0000 - 0xFFFF
       \arg        filter_list_low: 0x0000 - 0xFFFF
       \arg        filter_mask_high: 0x0000 - 0xFFFF
       \arg        filter_mask_low: 0x0000 - 0xFFFF
-      \arg        filter_fifo_number: CAN_FIFO0, CAN_FIFO1 
+      \arg        filter_fifo_number: CAN_FIFO0, CAN_FIFO1
       \arg        filter_number: 0 - 27
       \arg        filter_mode: CAN_FILTERMODE_MASK, CAN_FILTERMODE_LIST
-      \arg        filter_bits: CAN_FILTERBITS_32BIT, CAN_FILTERBITS_16BIT 
+      \arg        filter_bits: CAN_FILTERBITS_32BIT, CAN_FILTERBITS_16BIT
       \arg        filter_enable: ENABLE or DISABLE
     \param[out] none
     \retval     none
@@ -147,13 +147,13 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct* can_parameter_init
 void can_filter_init(can_filter_parameter_struct* can_filter_parameter_init)
 {
     uint32_t val = 0U;
-    
+
     val = ((uint32_t)1) << (can_filter_parameter_init->filter_number);
     /* filter lock disable */
     CAN_FCTL(CAN0) |= CAN_FCTL_FLD;
     /* disable filter */
     CAN_FW(CAN0) &= ~(uint32_t)val;
-    
+
     /* filter 16 bits */
     if(CAN_FILTERBITS_16BIT == can_filter_parameter_init->filter_bits){
         /* set filter 16 bits */
@@ -180,7 +180,7 @@ void can_filter_init(can_filter_parameter_struct* can_filter_parameter_init)
                                 FDATA_MASK_HIGH((can_filter_parameter_init->filter_mask_high) & CAN_FILTER_MASK_16BITS) |
                                 FDATA_MASK_LOW((can_filter_parameter_init->filter_mask_low) & CAN_FILTER_MASK_16BITS);
     }
-    
+
     /* filter mode */
     if(CAN_FILTERMODE_MASK == can_filter_parameter_init->filter_mode){
         /* mask mode */
@@ -189,7 +189,7 @@ void can_filter_init(can_filter_parameter_struct* can_filter_parameter_init)
         /* list mode */
         CAN_FMCFG(CAN0) |= (uint32_t)val;
     }
-    
+
     /* filter FIFO */
     if(CAN_FIFO0 == (can_filter_parameter_init->filter_fifo_number)){
         /* FIFO0 */
@@ -198,13 +198,13 @@ void can_filter_init(can_filter_parameter_struct* can_filter_parameter_init)
         /* FIFO1 */
         CAN_FAFIFO(CAN0) |= (uint32_t)val;
     }
-    
+
     /* filter working */
     if(ENABLE == can_filter_parameter_init->filter_enable){
-        
+
         CAN_FW(CAN0) |= (uint32_t)val;
     }
-    
+
     /* filter lock enable */
     CAN_FCTL(CAN0) &= ~CAN_FCTL_FLD;
 }
@@ -230,7 +230,7 @@ void can1_filter_start_bank(uint8_t start_bank)
 /*!
     \brief      enable CAN debug freeze
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     none
 */
@@ -253,7 +253,7 @@ void can_debug_freeze_enable(uint32_t can_periph)
 /*!
     \brief      disable CAN debug freeze
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     none
 */
@@ -276,14 +276,14 @@ void can_debug_freeze_disable(uint32_t can_periph)
 /*!
     \brief      enable CAN time trigger mode
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     none
 */
 void can_time_trigger_mode_enable(uint32_t can_periph)
 {
     uint8_t mailbox_number;
-    
+
     /* enable the tcc mode */
     CAN_CTL(can_periph) |= CAN_CTL_TTC;
     /* enable time stamp */
@@ -295,14 +295,14 @@ void can_time_trigger_mode_enable(uint32_t can_periph)
 /*!
     \brief      disable CAN time trigger mode
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     none
 */
 void can_time_trigger_mode_disable(uint32_t can_periph)
 {
-    uint8_t mailbox_number; 
-    
+    uint8_t mailbox_number;
+
     /* disable the TCC mode */
     CAN_CTL(can_periph) &= ~CAN_CTL_TTC;
     /* reset TSEN bits */
@@ -314,7 +314,7 @@ void can_time_trigger_mode_disable(uint32_t can_periph)
 /*!
     \brief       transmit CAN message
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  transmit_message: struct for CAN transmit message
       \arg        tx_sfid: 0x00000000 - 0x000007FF
       \arg        tx_efid: 0x00000000 - 0x1FFFFFFF
@@ -342,7 +342,7 @@ uint8_t can_message_transmit(uint32_t can_periph, can_trasnmit_message_struct* t
     if(CAN_NOMAILBOX == mailbox_number){
         return CAN_NOMAILBOX;
     }
-    
+
     CAN_TMI(can_periph, mailbox_number) &= CAN_TMI_TEN;
     if(CAN_FF_STANDARD == transmit_message->tx_ff){
         /* set transmit mailbox standard identifier */
@@ -373,9 +373,9 @@ uint8_t can_message_transmit(uint32_t can_periph, can_trasnmit_message_struct* t
 }
 
 /*!
-    \brief      get CAN transmit state 
+    \brief      get CAN transmit state
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  mailbox_number
       \arg        CAN_MAILBOX(x=0,1,2)
     \param[out] none
@@ -385,7 +385,7 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
 {
     can_transmit_state_enum state = CAN_TRANSMIT_FAILED;
     uint32_t val = 0U;
-     
+
     switch(mailbox_number){
     case CAN_MAILBOX0:
         val = CAN_TSTAT(can_periph) & (CAN_TSTAT_MTF0 | CAN_TSTAT_MTFNERR0 | CAN_TSTAT_TME0);
@@ -402,7 +402,7 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
     }
     switch(val){
         /* transmit pending */
-    case (CAN_STATE_PENDING): 
+    case (CAN_STATE_PENDING):
         state = CAN_TRANSMIT_PENDING;
         break;
         /* transmit succeeded */
@@ -415,7 +415,7 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
     case (CAN_TSTAT_MTF2 | CAN_TSTAT_MTFNERR2 | CAN_TSTAT_TME2):
         state = CAN_TRANSMIT_OK;
         break;
-    default: 
+    default:
         state = CAN_TRANSMIT_FAILED;
         break;
     }
@@ -425,7 +425,7 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
 /*!
     \brief      stop CAN transmission
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  mailbox_number
                 only one parameter can be selected which is shown as below:
       \arg        CAN_MAILBOXx(x=0,1,2)
@@ -448,7 +448,7 @@ void can_transmission_stop(uint32_t can_periph, uint8_t mailbox_number)
 /*!
     \brief      CAN receive message
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  fifo_number
       \arg        CAN_FIFOx(x=0,1)
     \param[out] receive_message: struct for CAN receive message
@@ -472,14 +472,14 @@ void can_message_receive(uint32_t can_periph, uint8_t fifo_number, can_receive_m
         /* get extended identifier */
         receive_message -> rx_efid = (uint32_t)(RFIFOMI_EFID(CAN_RFIFOMI(can_periph, fifo_number)));
     }
-    
+
     /* get frame type */
     receive_message -> rx_ft = (uint8_t)(CAN_RFIFOMI_FT & CAN_RFIFOMI(can_periph, fifo_number));
     /* get recevie data length */
-    receive_message -> rx_dlen = (uint8_t)(RFIFOMP_DLENC(CAN_RFIFOMP(can_periph, fifo_number)));        
+    receive_message -> rx_dlen = (uint8_t)(RFIFOMP_DLENC(CAN_RFIFOMP(can_periph, fifo_number)));
     /* filtering index */
-    receive_message -> rx_fi = (uint8_t)(RFIFOMP_FI(CAN_RFIFOMP(can_periph, fifo_number)));     
-    
+    receive_message -> rx_fi = (uint8_t)(RFIFOMP_FI(CAN_RFIFOMP(can_periph, fifo_number)));
+
     /* receive data */
     receive_message -> rx_data[0] = (uint8_t)(RFIFOMDATA0_DB0(CAN_RFIFOMDATA0(can_periph, fifo_number)));
     receive_message -> rx_data[1] = (uint8_t)(RFIFOMDATA0_DB1(CAN_RFIFOMDATA0(can_periph, fifo_number)));
@@ -489,7 +489,7 @@ void can_message_receive(uint32_t can_periph, uint8_t fifo_number, can_receive_m
     receive_message -> rx_data[5] = (uint8_t)(RFIFOMDATA1_DB5(CAN_RFIFOMDATA1(can_periph, fifo_number)));
     receive_message -> rx_data[6] = (uint8_t)(RFIFOMDATA1_DB6(CAN_RFIFOMDATA1(can_periph, fifo_number)));
     receive_message -> rx_data[7] = (uint8_t)(RFIFOMDATA1_DB7(CAN_RFIFOMDATA1(can_periph, fifo_number)));
-    
+
     /* release FIFO */
     if(CAN_FIFO0 == fifo_number){
         CAN_RFIFO0(can_periph) |= CAN_RFIFO0_RFD0;
@@ -501,7 +501,7 @@ void can_message_receive(uint32_t can_periph, uint8_t fifo_number, can_receive_m
 /*!
     \brief      release FIFO0
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  fifo_number
       \arg        CAN_FIFOx(x=0,1)
     \param[out] none
@@ -521,16 +521,16 @@ void can_fifo_release(uint32_t can_periph, uint8_t fifo_number)
 /*!
     \brief      CAN receive message length
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  fifo_number
-      \arg        CAN_FIFOx(x=0,1) 
+      \arg        CAN_FIFOx(x=0,1)
     \param[out] none
     \retval     message length
 */
 uint8_t can_receive_message_length_get(uint32_t can_periph, uint8_t fifo_number)
 {
     uint8_t val = 0U;
-    
+
     if(CAN_FIFO0 == fifo_number){
         val = (uint8_t)(CAN_RFIFO0(can_periph) & CAN_RFIF_RFL_MASK);
     }else if(CAN_FIFO1 == fifo_number){
@@ -544,7 +544,7 @@ uint8_t can_receive_message_length_get(uint32_t can_periph, uint8_t fifo_number)
 /*!
     \brief      set CAN working mode
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  can_working_mode
       \arg        CAN_MODE_INITIALIZE
       \arg        CAN_MODE_NORMAL
@@ -556,8 +556,8 @@ ErrStatus can_working_mode_set(uint32_t can_periph, uint8_t working_mode)
 {
     ErrStatus flag = ERROR;
     /* timeout for IWS or also for SLPWS bits */
-    uint32_t timeout = CAN_TIMEOUT; 
-    
+    uint32_t timeout = CAN_TIMEOUT;
+
     if(CAN_MODE_INITIALIZE == working_mode){
         /* disable sleep mode */
         CAN_CTL(can_periph) &= (~(uint32_t)CAN_CTL_SLPWMOD);
@@ -607,7 +607,7 @@ ErrStatus can_working_mode_set(uint32_t can_periph, uint8_t working_mode)
 /*!
     \brief      wake up CAN
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     ErrStatus: SUCCESS or ERROR
 */
@@ -615,10 +615,10 @@ ErrStatus can_wakeup(uint32_t can_periph)
 {
     ErrStatus flag = ERROR;
     uint32_t timeout = CAN_TIMEOUT;
-    
+
     /* wakeup */
     CAN_CTL(can_periph) &= ~CAN_CTL_SLPWMOD;
-    
+
     while((0U != (CAN_STAT(can_periph) & CAN_STAT_SLPWS)) && (0x00U != timeout)){
         timeout--;
     }
@@ -633,7 +633,7 @@ ErrStatus can_wakeup(uint32_t can_periph)
 /*!
     \brief      get CAN error type
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     can_error_enum
 */
@@ -641,7 +641,7 @@ can_error_enum can_error_get(uint32_t can_periph)
 {
     can_error_enum error;
     error = CAN_ERROR_NONE;
-    
+
     /* get error type */
     error = (can_error_enum)((CAN_ERR(can_periph) & CAN_ERR_ERRN) >> 4U);
     return error;
@@ -650,14 +650,14 @@ can_error_enum can_error_get(uint32_t can_periph)
 /*!
     \brief      get CAN receive error number
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     error number
 */
 uint8_t can_receive_error_number_get(uint32_t can_periph)
 {
     uint8_t val;
-    
+
     val = (uint8_t)((CAN_ERR(can_periph) & CAN_ERR_RECNT) >> 24U);
     return val;
 }
@@ -665,23 +665,23 @@ uint8_t can_receive_error_number_get(uint32_t can_periph)
 /*!
     \brief      get CAN transmit error number
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[out] none
     \retval     error number
 */
 uint8_t can_transmit_error_number_get(uint32_t can_periph)
 {
     uint8_t val;
-    
+
     val = (uint8_t)((CAN_ERR(can_periph) & CAN_ERR_TECNT) >> 16U);
     return val;
 }
 
 /*!
-    \brief      enable CAN interrupt 
+    \brief      enable CAN interrupt
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
-    \param[in]  interrupt 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
+    \param[in]  interrupt
       \arg        CAN_INT_TME: transmit mailbox empty interrupt enable
       \arg        CAN_INT_RFNE0: receive FIFO0 not empty interrupt enable
       \arg        CAN_INT_RFF0: receive FIFO0 full interrupt enable
@@ -705,9 +705,9 @@ void can_interrupt_enable(uint32_t can_periph, uint32_t interrupt)
 }
 
 /*!
-    \brief      disable CAN interrupt 
+    \brief      disable CAN interrupt
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  interrupt
       \arg        CAN_INT_TME: transmit mailbox empty interrupt enable
       \arg        CAN_INT_RFNE0: receive FIFO0 not empty interrupt enable
@@ -734,7 +734,7 @@ void can_interrupt_disable(uint32_t can_periph, uint32_t interrupt)
 /*!
     \brief      get CAN flag state
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  flag: CAN flags, refer to can_flag_enum
                 only one parameter can be selected which is shown as below:
       \arg        CAN_FLAG_MTE2: mailbox 2 transmit error
@@ -754,7 +754,7 @@ void can_interrupt_disable(uint32_t can_periph, uint32_t interrupt)
     \retval     FlagStatus: SET or RESET
 */
 FlagStatus can_flag_get(uint32_t can_periph, can_flag_enum flag)
-{  
+{
     if(RESET != (CAN_REG_VAL(can_periph, flag) & BIT(CAN_BIT_POS(flag)))){
         return SET;
     }else{
@@ -765,7 +765,7 @@ FlagStatus can_flag_get(uint32_t can_periph, can_flag_enum flag)
 /*!
     \brief      clear CAN flag state
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  flag: CAN flags, refer to can_flag_enum
                 only one parameter can be selected which is shown as below:
       \arg        CAN_FLAG_MTE2: mailbox 2 transmit error
@@ -789,7 +789,7 @@ void can_flag_clear(uint32_t can_periph, can_flag_enum flag)
 /*!
     \brief      get CAN interrupt flag state
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  flag: CAN interrupt flags, refer to can_interrupt_flag_enum
                 only one parameter can be selected which is shown as below:
       \arg        CAN_INT_FLAG_SLPIF: status change interrupt flag of sleep working mode entering
@@ -806,10 +806,10 @@ void can_flag_clear(uint32_t can_periph, can_flag_enum flag)
     \retval     FlagStatus: SET or RESET
 */
 FlagStatus can_interrupt_flag_get(uint32_t can_periph, can_interrupt_flag_enum flag)
-{  
+{
     FlagStatus ret1 = RESET;
     FlagStatus ret2 = RESET;
-    
+
     /* get the staus of interrupt flag */
     ret1 = (FlagStatus)(CAN_REG_VALS(can_periph, flag) & BIT(CAN_BIT_POS0(flag)));
     /* get the staus of interrupt enale bit */
@@ -824,7 +824,7 @@ FlagStatus can_interrupt_flag_get(uint32_t can_periph, can_interrupt_flag_enum f
 /*!
     \brief      clear CAN interrupt flag state
     \param[in]  can_periph
-      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL 
+      \arg        CANx(x=0,1),the CAN1 only for GD32F30X_CL
     \param[in]  flag: CAN interrupt flags, refer to can_interrupt_flag_enum
                 only one parameter can be selected which is shown as below:
       \arg        CAN_INT_FLAG_SLPIF: status change interrupt flag of sleep working mode entering

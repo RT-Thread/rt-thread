@@ -128,10 +128,10 @@ OF SUCH DAMAGE.
 #define USART_BIT_POS2(val)                  (((uint32_t)(val) & (0x001F0000U)) >> 16)
 
 /* register offset */
-#define USART_STAT_REG_OFFSET                     (0x00000000U)        	/*!< STAT register offset */
-#define USART_CTL0_REG_OFFSET                     (0x0000000CU)        	/*!< CTL0 register offset */
-#define USART_CTL1_REG_OFFSET                     (0x00000010U)        	/*!< CTL1 register offset */
-#define USART_CTL2_REG_OFFSET                     (0x00000014U)        	/*!< CTL2 register offset */
+#define USART_STAT_REG_OFFSET                     (0x00000000U)         /*!< STAT register offset */
+#define USART_CTL0_REG_OFFSET                     (0x0000000CU)         /*!< CTL0 register offset */
+#define USART_CTL1_REG_OFFSET                     (0x00000010U)         /*!< CTL1 register offset */
+#define USART_CTL2_REG_OFFSET                     (0x00000014U)         /*!< CTL2 register offset */
 
 /* USART flags */
 typedef enum

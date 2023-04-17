@@ -43,7 +43,7 @@
 /** \file trim.h
  **
  ** TRIM 数据结构及API声明
- **  
+ **
  **
  ** History:
  **   - 2018-04-21   Lux     V1.0
@@ -72,7 +72,7 @@ extern "C"
 //@{
 
 /******************************************************************************
- ** Global pre-processor symbols/macros ('#define')                            
+ ** Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
 
 /******************************************************************************
@@ -87,8 +87,8 @@ typedef enum en_trim_monitor
 {
     TrimMonDisable = 0u,            ///< 禁止
     TrimMonEnable  = 1u,            ///< 使能
-}en_trim_monitor_t; 
- 
+}en_trim_monitor_t;
+
  /**
  ******************************************************************************
  ** \brief 待校准/监测时钟选择枚举重定义 (CALCLK_SEL)
@@ -131,7 +131,7 @@ typedef enum en_trim_inttype
 
 /**
  ******************************************************************************
- ** \brief TRIM 配置结构体定义 
+ ** \brief TRIM 配置结构体定义
  *****************************************************************************/
 typedef struct stc_trim_config
 {
@@ -140,7 +140,7 @@ typedef struct stc_trim_config
     uint32_t             u32CalCon;     ///< 校准计数器溢出值配置
     en_trim_refclksel_t  enREFCLK;      ///< 参考时钟选择
     uint32_t             u32RefCon;     ///< 参考计数器初值配置
-    
+
     func_ptr_t           pfnTrimCb;     ///< TRIM 中断服务回调函数[void function(void)]
 }stc_trim_config_t;
 
@@ -162,7 +162,7 @@ en_result_t Trim_Stop(void);
 uint32_t Trim_RefCntGet(void);
 ///<校准计数器计数值获取
 uint32_t Trim_CalCntGet(void);
- 
+
 ///<中断操作相关函数
 ///中断使能/禁止
 en_result_t Trim_EnableIrq(void);

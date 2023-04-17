@@ -10,27 +10,27 @@
 /*
     Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -62,7 +62,7 @@ static void dfu_abort(usb_dev *udev, usb_req *req);
 
 static void string_to_unicode (uint8_t *str, uint16_t *pbuf);
 
-static void (*dfu_request_process[])(usb_dev *udev, usb_req *req) = 
+static void (*dfu_request_process[])(usb_dev *udev, usb_req *req) =
 {
     [DFU_DETACH]    = dfu_detach,
     [DFU_DNLOAD]    = dfu_dnload,
@@ -77,9 +77,9 @@ static void (*dfu_request_process[])(usb_dev *udev, usb_req *req) =
 /* USB standard device descriptor */
 __ALIGN_BEGIN const usb_desc_dev dfu_dev_desc __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength          = USB_DEV_DESC_LEN, 
+         .bLength          = USB_DEV_DESC_LEN,
          .bDescriptorType  = USB_DESCTYPE_DEV
      },
     .bcdUSB                = 0x0200U,
@@ -97,14 +97,14 @@ __ALIGN_BEGIN const usb_desc_dev dfu_dev_desc __ALIGN_END =
 };
 
 /* USB device configuration descriptor */
-__ALIGN_BEGIN const usb_dfu_desc_config_set dfu_config_desc __ALIGN_END = 
+__ALIGN_BEGIN const usb_dfu_desc_config_set dfu_config_desc __ALIGN_END =
 {
-    .config = 
+    .config =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_config), 
-             .bDescriptorType = USB_DESCTYPE_CONFIG 
+             .bLength         = sizeof(usb_desc_config),
+             .bDescriptorType = USB_DESCTYPE_CONFIG
          },
         .wTotalLength         = sizeof(usb_dfu_desc_config_set),
         .bNumInterfaces       = 0x01U,
@@ -114,12 +114,12 @@ __ALIGN_BEGIN const usb_dfu_desc_config_set dfu_config_desc __ALIGN_END =
         .bMaxPower            = 0x32U
     },
 
-    .dfu_itf0 = 
+    .dfu_itf0 =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_itf), 
-             .bDescriptorType = USB_DESCTYPE_ITF 
+             .bLength         = sizeof(usb_desc_itf),
+             .bDescriptorType = USB_DESCTYPE_ITF
          },
         .bInterfaceNumber     = 0x00U,
         .bAlternateSetting    = 0x00U,
@@ -130,12 +130,12 @@ __ALIGN_BEGIN const usb_dfu_desc_config_set dfu_config_desc __ALIGN_END =
         .iInterface           = STR_IDX_ALT_ITF0
     },
 
-    .dfu_itf1 = 
+    .dfu_itf1 =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_itf), 
-             .bDescriptorType = USB_DESCTYPE_ITF 
+             .bLength         = sizeof(usb_desc_itf),
+             .bDescriptorType = USB_DESCTYPE_ITF
          },
         .bInterfaceNumber     = 0x00U,
         .bAlternateSetting    = 0x01U,
@@ -146,12 +146,12 @@ __ALIGN_BEGIN const usb_dfu_desc_config_set dfu_config_desc __ALIGN_END =
         .iInterface           = STR_IDX_ALT_ITF1
     },
 
-    .dfu_itf2 = 
+    .dfu_itf2 =
     {
-        .header = 
+        .header =
          {
-             .bLength         = sizeof(usb_desc_itf), 
-             .bDescriptorType = USB_DESCTYPE_ITF 
+             .bLength         = sizeof(usb_desc_itf),
+             .bDescriptorType = USB_DESCTYPE_ITF
          },
         .bInterfaceNumber     = 0x00U,
         .bAlternateSetting    = 0x02U,
@@ -162,12 +162,12 @@ __ALIGN_BEGIN const usb_dfu_desc_config_set dfu_config_desc __ALIGN_END =
         .iInterface           = STR_IDX_ALT_ITF2
     },
 
-    .dfu_func= 
+    .dfu_func=
     {
-        .header = 
+        .header =
          {
-            .bLength          = sizeof(usb_desc_dfu_func), 
-            .bDescriptorType  = DFU_DESC_TYPE 
+            .bLength          = sizeof(usb_desc_dfu_func),
+            .bDescriptorType  = DFU_DESC_TYPE
          },
         .bmAttributes         = USB_DFU_CAN_DOWNLOAD | USB_DFU_CAN_UPLOAD | USB_DFU_WILL_DETACH,
         .wDetachTimeOut       = 0x00FFU,
@@ -177,90 +177,90 @@ __ALIGN_BEGIN const usb_dfu_desc_config_set dfu_config_desc __ALIGN_END =
 };
 
 /* USB language ID descriptor */
-static __ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END = 
+static __ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END =
 {
-    .header = 
+    .header =
     {
-         .bLength         = sizeof(usb_desc_LANGID), 
+         .bLength         = sizeof(usb_desc_LANGID),
          .bDescriptorType = USB_DESCTYPE_STR
     },
     .wLANGID              = ENG_LANGID
 };
 
 /* USB manufacture string */
-static __ALIGN_BEGIN const usb_desc_str manufacturer_string __ALIGN_END = 
+static __ALIGN_BEGIN const usb_desc_str manufacturer_string __ALIGN_END =
 {
-    .header = 
+    .header =
     {
-         .bLength         = USB_STRING_LEN(10U), 
+         .bLength         = USB_STRING_LEN(10U),
          .bDescriptorType = USB_DESCTYPE_STR,
      },
     .unicode_string = {'G', 'i', 'g', 'a', 'D', 'e', 'v', 'i', 'c', 'e'}
 };
 
 /* USB product string */
-static __ALIGN_BEGIN const usb_desc_str product_string __ALIGN_END = 
+static __ALIGN_BEGIN const usb_desc_str product_string __ALIGN_END =
 {
-    .header = 
+    .header =
     {
-         .bLength         = USB_STRING_LEN(12U), 
+         .bLength         = USB_STRING_LEN(12U),
          .bDescriptorType = USB_DESCTYPE_STR,
     },
     .unicode_string = {'G', 'D', '3', '2', '-', 'U', 'S', 'B', '_', 'D', 'F', 'U'}
 };
 
 /* USB serial string */
-static __ALIGN_BEGIN usb_desc_str serial_string __ALIGN_END = 
+static __ALIGN_BEGIN usb_desc_str serial_string __ALIGN_END =
 {
-    .header = 
+    .header =
     {
-         .bLength         = USB_STRING_LEN(2U), 
+         .bLength         = USB_STRING_LEN(2U),
          .bDescriptorType = USB_DESCTYPE_STR,
     }
 };
 
 /* USB configure string */
-static __ALIGN_BEGIN const usb_desc_str config_string __ALIGN_END = 
+static __ALIGN_BEGIN const usb_desc_str config_string __ALIGN_END =
 {
-    .header = 
+    .header =
     {
-         .bLength         = USB_STRING_LEN(15U), 
+         .bLength         = USB_STRING_LEN(15U),
          .bDescriptorType = USB_DESCTYPE_STR,
     },
     .unicode_string = {'G', 'D', '3', '2', ' ', 'U', 'S', 'B', ' ', 'C', 'O', 'N', 'F', 'I', 'G'}
 };
 
 /* alternate interface 0 string */
-static __ALIGN_BEGIN usb_desc_str interface_string0 __ALIGN_END = 
+static __ALIGN_BEGIN usb_desc_str interface_string0 __ALIGN_END =
 {
-    .header = 
+    .header =
     {
-         .bLength         = USB_STRING_LEN(2U), 
+         .bLength         = USB_STRING_LEN(2U),
          .bDescriptorType = USB_DESCTYPE_STR,
     },
 };
 
 /* alternate interface 1 string */
-static __ALIGN_BEGIN usb_desc_str interface_string1 __ALIGN_END = 
+static __ALIGN_BEGIN usb_desc_str interface_string1 __ALIGN_END =
 {
-    .header = 
+    .header =
     {
-         .bLength         = USB_STRING_LEN(2U), 
+         .bLength         = USB_STRING_LEN(2U),
          .bDescriptorType = USB_DESCTYPE_STR,
     },
 };
 
 /* alternate interface 2 string */
-static __ALIGN_BEGIN usb_desc_str interface_string2 __ALIGN_END = 
+static __ALIGN_BEGIN usb_desc_str interface_string2 __ALIGN_END =
 {
-    .header = 
+    .header =
     {
-         .bLength         = USB_STRING_LEN(2U), 
+         .bLength         = USB_STRING_LEN(2U),
          .bDescriptorType = USB_DESCTYPE_STR,
     },
 };
 
-void *const usbd_dfu_strings[] = 
+void *const usbd_dfu_strings[] =
 {
     [STR_IDX_LANGID]   = (uint8_t *)&usbd_language_id_desc,
     [STR_IDX_MFC]      = (uint8_t *)&manufacturer_string,
@@ -478,7 +478,7 @@ static void dfu_detach(usb_dev *udev, usb_req *req)
         dfu->block_num = 0U;
         dfu->data_len = 0U;
         break;
- 
+
     default:
         break;
     }

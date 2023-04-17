@@ -1,43 +1,43 @@
 /*************************************************************************************
-* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.    
+* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Huada Semiconductor Co.,Ltd ("HDSC").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with HDSC 
-* components. This software is licensed by HDSC to be adapted only 
-* for use in systems utilizing HDSC components. HDSC shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein. HDSC is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with HDSC
+* components. This software is licensed by HDSC to be adapted only
+* for use in systems utilizing HDSC components. HDSC shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein. HDSC is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * Disclaimer:
 * HDSC MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.                        
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /******************************************************************************/
 /** \file lpuart.c
@@ -64,18 +64,18 @@
 
 #define IS_VALID_CH(x)          ((LPUART0 == (x)) ||\
                                  (LPUART1 == (x)))
-                                 
+
 #define IS_VALID_CLK(x)         ((LPUart_Pclk==(x))||\
                                 (LPUart_Pclk_1==(x))||\
                                 (LPUart_Xtl==(x))||\
-                                (LPUart_Rcl==(x))) 
+                                (LPUart_Rcl==(x)))
 
 #define IS_VALID_IRQSEL(x)      ((LPUartTxIrq == (x)) ||\
                                  (LPUartRxIrq == (x)) ||\
                                  (LPUartFEIrq == (x)) ||\
                                  (LPUartCtsIrq == (x))||\
                                  (LPUartPEIrq == (x)) ||\
-                                 (LPUartTxEIrq == (x))) 
+                                 (LPUartTxEIrq == (x)))
 
 #define IS_VALID_MODE(x)        ((LPUartMode0==(x))||\
                                  (LPUartMode1==(x))||\
@@ -103,12 +103,12 @@ static stc_lpuart_instance_data_t m_astcLPUartInstanceDataLut[] =
     {
         LPUART0,
         M0P_LPUART0,       /* pstcInstance */
-        {NULL,NULL,NULL,NULL,NULL},     
+        {NULL,NULL,NULL,NULL,NULL},
     },
     {
         LPUART1,
         M0P_LPUART1,       /* pstcInstance */
-       {NULL,NULL,NULL,NULL,NULL},    
+       {NULL,NULL,NULL,NULL,NULL},
     },
 };
 /**
@@ -162,7 +162,7 @@ en_result_t LPUart_EnableIrq(uint8_t u8Idx,
             break;
         case  LPUartRxIrq:
             pstcData->pstcInstance->SCON_f.RCIE  = 1u;
-            break; 
+            break;
         case  LPUartFEIrq:
             pstcData->pstcInstance->SCON_f.FEIE  = 1u;
             break;
@@ -176,7 +176,7 @@ en_result_t LPUart_EnableIrq(uint8_t u8Idx,
             pstcData->pstcInstance->SCON_f.TXEIE = 1u;
             break;
         default:
-            return (ErrorInvalidParameter);       
+            return (ErrorInvalidParameter);
     }
     return Ok;
 }
@@ -189,14 +189,14 @@ en_result_t LPUart_EnableIrq(uint8_t u8Idx,
  ** \retval OK配置成功
  **\retval ErrorInvalidParameter配置失败
  ******************************************************************************/
-en_result_t LPUart_DisableIrq(uint8_t u8Idx, 
+en_result_t LPUart_DisableIrq(uint8_t u8Idx,
                             en_lpuart_irq_sel_t enIrqSel)
 {
     stc_lpuart_instance_data_t *pstcData = NULL;
 
     ASSERT(IS_VALID_CH(u8Idx));
     ASSERT(IS_VALID_IRQSEL(enIrqSel));
-        
+
     pstcData = LPUartGetInternDataPtr(u8Idx);
     if (NULL == pstcData)
     {
@@ -209,7 +209,7 @@ en_result_t LPUart_DisableIrq(uint8_t u8Idx,
             break;
         case  LPUartRxIrq:
             pstcData->pstcInstance->SCON_f.RCIE  = 0u;
-            break; 
+            break;
         case  LPUartFEIrq:
             pstcData->pstcInstance->SCON_f.FEIE  = 0u;
             break;
@@ -223,9 +223,9 @@ en_result_t LPUart_DisableIrq(uint8_t u8Idx,
             pstcData->pstcInstance->SCON_f.TXEIE = 0u;
             break;
         default:
-            return (ErrorInvalidParameter);       
+            return (ErrorInvalidParameter);
     }
-    
+
     return Ok;
 }
 /**
@@ -267,7 +267,7 @@ en_result_t LPUart_SelSclk(uint8_t u8Idx,en_lpuart_sclksel_t enClk)
  ** \param [in] u8Idx通道号
  **
  ** \retval Ok 设置成功
- **\retval 
+ **\retval
  ******************************************************************************/
 uint32_t LPUart_GetSclk(uint8_t u8Idx)
 {
@@ -292,7 +292,7 @@ uint32_t LPUart_GetSclk(uint8_t u8Idx)
             break;
         case 0x03:
             u32Sclk = 38400;//此处必须使能内部38.4k
-            break; 
+            break;
         default:
             return 0;
     }
@@ -316,7 +316,7 @@ en_result_t LPUart_SetMode(uint8_t u8Idx,en_lpuart_mode_t enMode)
     if (NULL == pstcData)
     {
         return ErrorInvalidParameter;
-    } 
+    }
     pstcData->pstcInstance->SCON_f.SM = enMode;
     return Ok;
 }
@@ -430,7 +430,7 @@ en_result_t LPUart_SetSaddrEn(uint8_t u8Idx,uint8_t u8Addren)
         return ErrorInvalidParameter;
     }
     pstcData->pstcInstance->SADEN = u8Addren;
-    return Ok;  
+    return Ok;
 }
 /**
  ******************************************************************************
@@ -485,7 +485,7 @@ en_result_t LPUart_SetClkDiv(uint8_t u8Idx,en_lpuart_clkdiv_t enClkDiv)
 uint16_t LPUart_CalScnt(uint8_t u8Idx,stc_lpuart_baud_t *pstcBaud)
 {
     stc_lpuart_instance_data_t *pstcData = NULL;
-	uint16_t u16Scnt = 0;
+    uint16_t u16Scnt = 0;
     uint8_t u8Over = 0;
     ASSERT(IS_VALID_CH(u8Idx));
 
@@ -494,21 +494,21 @@ uint16_t LPUart_CalScnt(uint8_t u8Idx,stc_lpuart_baud_t *pstcBaud)
     if(u8Over == 3)
     {
         return 0;//test
-    } 
+    }
     if(LPUartMode0 == pstcBaud->enRunMode)
     {
         return 0;//test
     }
     if((LPUartMode1 == pstcBaud->enRunMode)||(LPUartMode3 == pstcBaud->enRunMode))
     {
-        u8Over = 1<<(4-u8Over);            
+        u8Over = 1<<(4-u8Over);
         u16Scnt = pstcBaud->u32Sclk/(pstcBaud->u32Baud*u8Over);
     }
     else
     {
         u8Over = 1<<(5-u8Over);
-        u16Scnt = pstcBaud->u32Sclk/u8Over; 
-    }   
+        u16Scnt = pstcBaud->u32Sclk/u8Over;
+    }
     return u16Scnt;
 }
 /**
@@ -553,11 +553,11 @@ uint32_t LPUart_GetBaud(uint8_t u8Idx,uint8_t u8Mode,uint32_t u32Pclk)
         case LPUartMode1:
         case LPUartMode3:
             u16Scnt = pstcData->pstcInstance->SCNT;
-            u8Over = 1<<(4-u8Over); 
+            u8Over = 1<<(4-u8Over);
             u32Baud = u32Pclk/(u8Over*u16Scnt);
             break;
         case LPUartMode2:
-            u8Over = 1<<(5-u8Over); 
+            u8Over = 1<<(5-u8Over);
             u32Baud = u32Pclk/u8Over;
             break;
         default:
@@ -712,15 +712,15 @@ boolean_t LPUart_GetStatus(uint8_t u8Idx,en_lpuart_status_t enStatus)
             break;
         case LPUartFE:
             bStatus = (pstcData->pstcInstance->ISR_f.FE == 1) ? TRUE : FALSE;
-            break; 
+            break;
         case LPUartCtsIf:
             bStatus = (pstcData->pstcInstance->ISR_f.CTSIF == 1) ? TRUE : FALSE;
             break;
         case LPUartTxe:
             bStatus = (pstcData->pstcInstance->ISR_f.TXE == 1) ? TRUE : FALSE;
-            break;        
+            break;
         default:
-            break; 
+            break;
     }
     return bStatus;
 }
@@ -759,9 +759,9 @@ en_result_t LPUart_ClrStatus(uint8_t u8Idx,en_lpuart_status_t enStatus)
             break;
         case LPUartFE:
             pstcData->pstcInstance->ICR_f.FECF = 0;
-            break;   
+            break;
         default:
-            break; 
+            break;
     }
     return Ok;
 }
@@ -783,11 +783,11 @@ en_result_t LPUart_SendData(uint8_t u8Idx, uint8_t u8Data)
     {
         return ErrorInvalidParameter;
     }
-    LPUart_ClrStatus(u8Idx,LPUartTC); 
+    LPUart_ClrStatus(u8Idx,LPUartTC);
     pstcData->pstcInstance->SBUF_f.DATA = u8Data;
     while(FALSE == LPUart_GetStatus(u8Idx,LPUartTC))
     {}
-    LPUart_ClrStatus(u8Idx,LPUartTC);       
+    LPUart_ClrStatus(u8Idx,LPUartTC);
     return Ok;
 }
 /**
@@ -882,13 +882,13 @@ void LpUart_IRQHandler(uint8_t u8Param)
 static void LPUartInitNvic(uint8_t u8Idx)
 {
     IRQn_Type enIrqIndex;
-    
+
     ASSERT(IS_VALID_CH(u8Idx));;
     enIrqIndex = (IRQn_Type)(LPUART0_IRQn + u8Idx);
     NVIC_ClearPendingIRQ(enIrqIndex);
     NVIC_SetPriority(enIrqIndex,IrqLevel3);
     NVIC_EnableIRQ(enIrqIndex);
-    
+
 }
 /**
  ******************************************************************************
@@ -908,7 +908,7 @@ static void LPUartDeInitNvic(uint8_t u8Idx)
     NVIC_ClearPendingIRQ(enIrqIndex);
     NVIC_SetPriority(enIrqIndex,IrqLevel3);
     NVIC_DisableIRQ(enIrqIndex);
-    
+
 }
 /**
  ******************************************************************************
@@ -963,4 +963,4 @@ en_result_t LPUart_Init(uint8_t u8Idx,stc_lpuart_config_t* pstcConfig)
     enRet = Ok;
     return enRet;
 }
-//@} // LPUartGroup      
+//@} // LPUartGroup

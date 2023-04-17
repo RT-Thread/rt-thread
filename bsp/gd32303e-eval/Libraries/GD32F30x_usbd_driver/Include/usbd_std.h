@@ -1,6 +1,6 @@
 /*!
     \file  usbd_std.h
-    \brief USB standard definitions 
+    \brief USB standard definitions
 */
 
 /*

@@ -176,7 +176,7 @@ int bflb_sdio2_send_data(struct bflb_device_s *dev, int qos, uintptr_t *buff, in
 {
     uint32_t reg_base = dev->reg_base;
     uint16_t rd_bit_map = getreg16(reg_base + SDIO2_RD_BIT_MAP_OFFSET);
-    static uint8_t curr_upld_port = 0; 
+    static uint8_t curr_upld_port = 0;
 
     if (rd_bit_map & (1 << curr_upld_port)) {
         return -1;
@@ -189,7 +189,7 @@ int bflb_sdio2_send_data(struct bflb_device_s *dev, int qos, uintptr_t *buff, in
     putreg16(1 << curr_upld_port, reg_base + SDIO2_RD_BIT_MAP_OFFSET);
 #if SDU_INT_HOST
     putreg8(SDIO2_CCR_CS_UpLdRdy, reg_base + SDIO2_CARD_TO_HOST_EVENT_OFFSET);
-#endif     
+#endif
     curr_upld_port++;
     if(curr_upld_port == SDIO2_MAX_PORT_NUM){
         curr_upld_port = 0;
@@ -212,7 +212,7 @@ int bflb_sdio2_recv_data(struct bflb_device_s *dev, int qos, uintptr_t *buff, in
 {
     static uint16_t curr_dnld_port = 0;
     uint32_t reg_base = dev->reg_base;
-    uint16_t wr_bit_map = getreg16(reg_base + SDIO2_WR_BIT_MAP_OFFSET);    
+    uint16_t wr_bit_map = getreg16(reg_base + SDIO2_WR_BIT_MAP_OFFSET);
     uint8_t crcerror = 0;
 #if 0
     uint8_t card_status = 0;

@@ -61,14 +61,14 @@
 extern "C"
 {
 #endif
-  
+
   /**
   *******************************************************************************
   ** \defgroup DmacGroup Direct Memory Access Control(DMAC)
   **
   ******************************************************************************/
   //@{
-  
+
   /*******************************************************************************
   * Global type definitions ('typedef')
   ******************************************************************************/
@@ -93,7 +93,7 @@ extern "C"
     DmaPriorityFix                          = 0U,    ///< DMA channel priority fix (CH0>CH1)
     DmaPriorityLoop                         = 1U,    ///< DMA channel priority loop
   } en_dma_priority_t;
-  
+
   /**
   *******************************************************************************
   ** \brief DMA transfer data width
@@ -105,7 +105,7 @@ extern "C"
     Dma16Bit                        = 1U,    ///< 16 bit transfer via DMA
     Dma32Bit                        = 2U     ///< 32 bit transfer via DMA
   } en_dma_transfer_width_t;
-  
+
   /**
   *******************************************************************************
   ** \brief DMA transfer mode
@@ -116,7 +116,7 @@ extern "C"
     DmaBlock                        = 0U,    ///< block transfer via DMA
     DmaBurst                        = 1U,    ///< burst transfer via DMA
   } en_dma_transfer_mode_t;
-  
+
   /**
   *******************************************************************************
   ** \brief DMA flag
@@ -124,26 +124,26 @@ extern "C"
   ******************************************************************************/
   typedef enum en_dma_stat
   {
-    DEFAULT							            = 0U,    ///< Reserve
-    DmaAddOverflow									= 1U,   ///< DMA address overflow
+    DEFAULT                                     = 0U,    ///< Reserve
+    DmaAddOverflow                                  = 1U,   ///< DMA address overflow
     DmaHALT                         = 2U,    ///< DMA HALT
     DmaAccSCRErr                    = 3U,    ///< DMA access source address error
     DmaAccDestErr                   = 4U,    ///< DMA access dest address error
     DmaTransferComplete             = 5U,    ///< DMA transfer complete
-    DmaTransferPause                = 7U,    ///< DMA transfer pause      
+    DmaTransferPause                = 7U,    ///< DMA transfer pause
   } en_dma_stat_t;
-  
+
   /**
   *******************************************************************************
   ** \brief DMA address mode
   **
   ******************************************************************************/
   typedef enum en_address_mode
-  {    
+  {
     AddressIncrease                 = 0U,    ///< Address increased
     AddressFix                      = 1U,    ///< Address fixed
   } en_address_mode_t;
-  
+
   /**
   *******************************************************************************
   ** \brief DMA repeat tranfer
@@ -152,16 +152,16 @@ extern "C"
   typedef enum en_dma_msk
   {
     OneTranfer                      = 0U,    ///< One Tranfer
-    ContinuousTranfer               = 1U,    ///< Continuous Tranfer 
+    ContinuousTranfer               = 1U,    ///< Continuous Tranfer
   } en_dma_msk_t;
   /**
   *******************************************************************************
   ** \brief DMA trigger selection
   **
-  ******************************************************************************/  
+  ******************************************************************************/
   typedef enum stc_dma_trig_sel
   {
-    SWTrig                         = 0U,     ///< Select DMA software trig 
+    SWTrig                         = 0U,     ///< Select DMA software trig
     SPI0RXTrig                     = 32U,    ///< Select DMA hardware trig 0
     SPI0TXTrig                     = 33U,    ///< Select DMA hardware trig 1
     SPI1RXTrig                     = 34U,    ///< Select DMA hardware trig 2
@@ -170,7 +170,7 @@ extern "C"
     ADCSQRTrig                     = 37U,    ///< Select DMA hardware trig 5
     LCDTxTrig                      = 38U,    ///< Select DMA hardware trig 6
     Uart0RxTrig                    = 40U,    ///< Select DMA hardware trig 8
-    Uart0TxTrig                    = 41U,    ///< Select DMA hardware trig 9             
+    Uart0TxTrig                    = 41U,    ///< Select DMA hardware trig 9
     Uart1RxTrig                    = 42U,    ///< Select DMA hardware trig 10
     Uart1TxTrig                    = 43U,    ///< Select DMA hardware trig 11
     LpUart0RxTrig                  = 44U,    ///< Select DMA hardware trig 12
@@ -181,17 +181,17 @@ extern "C"
     TIM0BTrig                      = 51U,    ///< Select DMA hardware trig 19
     TIM1ATrig                      = 52U,    ///< Select DMA hardware trig 20
     TIM1BTrig                      = 53U,    ///< Select DMA hardware trig 21
-    TIM2ATrig                      = 54U,    ///< Select DMA hardware trig 22   
-    TIM2BTrig                      = 55U,    ///< Select DMA hardware trig 23   
-    TIM3ATrig                      = 56U,    ///< Select DMA hardware trig 24    
-    TIM3BTrig                      = 57U,    ///< Select DMA hardware trig 25   
-    TIM4ATrig                      = 58U,    ///< Select DMA hardware trig 26    
-    TIM4BTrig                      = 59U,    ///< Select DMA hardware trig 27   
-    TIM5ATrig                      = 60U,    ///< Select DMA hardware trig 28    
-    TIM5BTrig                      = 61U,    ///< Select DMA hardware trig 29   
-    TIM6ATrig                      = 62U,    ///< Select DMA hardware trig 30    
-    TIM6BTrig                      = 63U,    ///< Select DMA hardware trig 31   
-  }en_dma_trig_sel_t;  
+    TIM2ATrig                      = 54U,    ///< Select DMA hardware trig 22
+    TIM2BTrig                      = 55U,    ///< Select DMA hardware trig 23
+    TIM3ATrig                      = 56U,    ///< Select DMA hardware trig 24
+    TIM3BTrig                      = 57U,    ///< Select DMA hardware trig 25
+    TIM4ATrig                      = 58U,    ///< Select DMA hardware trig 26
+    TIM4BTrig                      = 59U,    ///< Select DMA hardware trig 27
+    TIM5ATrig                      = 60U,    ///< Select DMA hardware trig 28
+    TIM5BTrig                      = 61U,    ///< Select DMA hardware trig 29
+    TIM6ATrig                      = 62U,    ///< Select DMA hardware trig 30
+    TIM6BTrig                      = 63U,    ///< Select DMA hardware trig 31
+  }en_dma_trig_sel_t;
   /**
   *******************************************************************************
   ** \brief DMA interrupt selection
@@ -202,9 +202,9 @@ typedef struct stc_dma_irq
     boolean_t TrnErrIrq;                        ///< Select DMA transfer error interrupt
     boolean_t TrnCpltIrq;                      ///< Select DMA transfer completion interrupt
   }stc_dma_irq_sel_t;
-  
- 
-  
+
+
+
   /**
   *******************************************************************************
   ** \brief DMA configuration
@@ -213,21 +213,21 @@ typedef struct stc_dma_irq
   typedef struct stc_dma_config
   {
     en_dma_transfer_mode_t enMode;
-    
+
     uint16_t u16BlockSize;                      ///< Transfer Block counter
     uint16_t u16TransferCnt;                    ///< Transfer counter
     en_dma_transfer_width_t enTransferWidth;    ///< DMA transfer width (see #en_dma_transfer_width_t for details)
-    
+
     en_address_mode_t enSrcAddrMode;            ///< Source address mode(see #en_source_address_mode_t for details)
-    en_address_mode_t enDstAddrMode;            ///< Destination address mode(see #en_dest_address_mode_t for details)  
-    
+    en_address_mode_t enDstAddrMode;            ///< Destination address mode(see #en_dest_address_mode_t for details)
+
     boolean_t bSrcAddrReloadCtl;  ///< Source address reload(TRUE: reload;FALSE: reload forbidden)
     boolean_t bDestAddrReloadCtl;  ///< Dest address reload(TRUE: reload;FALSE: reload forbidden)
     boolean_t bSrcBcTcReloadCtl;  ///< Bc/Tc address reload(TRUE: reload;FALSE: reload forbidden)
     uint32_t u32SrcAddress;           ///< Source address>
     uint32_t u32DstAddress;           ///< Dest address>
     boolean_t bMsk;                   ///0: clear the bit (CONFA:ENS) after tarnfer;1: remain the bit (CONFA:ENS) after tarnfer
-    
+
     en_dma_trig_sel_t enRequestNum;     ///< DMA trigger request number
   } stc_dma_config_t;
   /**
@@ -248,74 +248,74 @@ typedef struct stc_dma_irq_calbakfn_pt
   /*******************************************************************************
   * Global pre-processor symbols/macros ('#define')
   ******************************************************************************/
-  
+
   /*******************************************************************************
   * Global variable definitions ('extern')
   ******************************************************************************/
-  
+
   /*******************************************************************************
   * Global function prototypes (definition in C source)
   ******************************************************************************/
   en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_config_t* pstcConfig);
-  
+
   void Dma_SwTrigger(en_dma_channel_t enCh);
-  
+
   void Dma_Enable(void);
   void Dma_Disable(void);
-  
+
   void Dma_Start(en_dma_channel_t enCh);
   void Dma_Stop(en_dma_channel_t enCh);
-  
+
   en_result_t Dma_EnableChannel(en_dma_channel_t enCh);
   en_result_t Dma_DisableChannel(en_dma_channel_t enCh);
-  
+
   en_result_t Dma_SetTriggerSel(en_dma_channel_t enCh, en_dma_trig_sel_t enTrgSel);
-  
+
   en_result_t Dma_SetSourceAddress(en_dma_channel_t enCh, uint32_t u32Address);
   en_result_t Dma_SetDestinationAddress(en_dma_channel_t enCh, uint32_t u32Address);
-  
+
   en_result_t Dma_SetBlockSize(en_dma_channel_t enCh, uint16_t u16BlkSize);
   en_result_t Dma_SetTransferCnt(en_dma_channel_t enCh, uint16_t u16TrnCnt);
-  
-  
+
+
   en_result_t Dma_SetSourceIncMode(en_dma_channel_t enCh, en_address_mode_t enMode);
   en_result_t Dma_SetDestinationIncMode(en_dma_channel_t enCh, en_address_mode_t enMode);
-  
+
   en_result_t Dma_EnableSourceRload(en_dma_channel_t enCh);
   en_result_t Dma_DisableSourceRload(en_dma_channel_t enCh);
-  
+
   en_result_t Dma_EnableDestinationRload(en_dma_channel_t enCh);
   en_result_t Dma_DisableDestinationRload(en_dma_channel_t enCh);
-  
+
   en_result_t Dma_EnableContinusTranfer(en_dma_channel_t enCh);
   en_result_t Dma_DisableContinusTranfer(en_dma_channel_t enCh);
-  
+
   en_result_t Dma_EnableBcTcReload(en_dma_channel_t enCh);
   en_result_t Dma_DisableBcTcReload(en_dma_channel_t enCh);
-  
+
   void Dma_HaltTranfer(void);
   void Dma_RecoverTranfer(void);
   en_result_t Dma_PauseChannelTranfer(en_dma_channel_t enCh);
   en_result_t Dma_RecoverChannelTranfer(en_dma_channel_t enCh);
 
   en_result_t Dma_SetTransferWidth(en_dma_channel_t enCh, en_dma_transfer_width_t enWidth);
-  
+
   en_result_t Dma_SetChPriority(en_dma_priority_t enPrio);
-  
+
   en_result_t Dma_EnableChannelIrq(en_dma_channel_t enCh);
   en_result_t Dma_DisableChannelIrq(en_dma_channel_t enCh);
-  
+
   en_result_t Dma_EnableChannelErrIrq(en_dma_channel_t enCh);
   en_result_t Dma_DisableChannelErrIrq(en_dma_channel_t enCh);
-  
+
   en_result_t Dma_ConfigIrq(en_dma_channel_t enCh,stc_dma_irq_sel_t* stcDmaIrqCfg,stc_dma_irq_calbakfn_pt_t* pstcDmaIrqCalbaks);
 
-  
+
   en_dma_stat_t Dma_GetStat(en_dma_channel_t enCh);
-  
+
   void Dma_ClrStat(en_dma_channel_t enCh);
   //@} // DmacGroup
-  
+
 #ifdef __cplusplus
 }
 #endif

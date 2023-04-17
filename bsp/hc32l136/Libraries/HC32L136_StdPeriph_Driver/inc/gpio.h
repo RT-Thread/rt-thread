@@ -87,30 +87,30 @@ typedef enum en_gpio_port
     GpioPortC = 0x80u,                 ///< GPIO PORT C
     GpioPortD = 0xc0u,                 ///< GPIO PORT D
 }en_gpio_port_t;
- 
+
 /**
  *******************************************************************************
  ** \brief GPIO PIN类型定义
  ******************************************************************************/
 typedef enum en_gpio_pin
 {
-    GpioPin0  = 0u,                 ///< GPIO PIN0 
-    GpioPin1  = 1u,                 ///< GPIO PIN1 
-    GpioPin2  = 2u,                 ///< GPIO PIN2 
-    GpioPin3  = 3u,                 ///< GPIO PIN3 
-    GpioPin4  = 4u,                 ///< GPIO PIN4 
-    GpioPin5  = 5u,                 ///< GPIO PIN5 
-    GpioPin6  = 6u,                 ///< GPIO PIN6 
-    GpioPin7  = 7u,                 ///< GPIO PIN7 
-    GpioPin8  = 8u,                 ///< GPIO PIN8 
-    GpioPin9  = 9u,                 ///< GPIO PIN9 
+    GpioPin0  = 0u,                 ///< GPIO PIN0
+    GpioPin1  = 1u,                 ///< GPIO PIN1
+    GpioPin2  = 2u,                 ///< GPIO PIN2
+    GpioPin3  = 3u,                 ///< GPIO PIN3
+    GpioPin4  = 4u,                 ///< GPIO PIN4
+    GpioPin5  = 5u,                 ///< GPIO PIN5
+    GpioPin6  = 6u,                 ///< GPIO PIN6
+    GpioPin7  = 7u,                 ///< GPIO PIN7
+    GpioPin8  = 8u,                 ///< GPIO PIN8
+    GpioPin9  = 9u,                 ///< GPIO PIN9
     GpioPin10 = 10u,                ///< GPIO PIN10
     GpioPin11 = 11u,                ///< GPIO PIN11
     GpioPin12 = 12u,                ///< GPIO PIN12
     GpioPin13 = 13u,                ///< GPIO PIN13
     GpioPin14 = 14u,                ///< GPIO PIN14
     GpioPin15 = 15u,                ///< GPIO PIN15
-}en_gpio_pin_t; 
+}en_gpio_pin_t;
 
 /**
  *******************************************************************************
@@ -119,43 +119,43 @@ typedef enum en_gpio_pin
 typedef enum en_gpio_af
 {
     GpioAf0  = 0u,      ///< GPIO功能
-    GpioAf1  = 1u,      ///< GPIO AF1: 
-                        ///< PA:UART1/SPI0/UART0/IR                             
-                        ///< PB:PCA/LPTIM/SPI0/I2C0/I2C1/SPI1 
+    GpioAf1  = 1u,      ///< GPIO AF1:
+                        ///< PA:UART1/SPI0/UART0/IR
+                        ///< PB:PCA/LPTIM/SPI0/I2C0/I2C1/SPI1
                         ///< PC:LPTIM/SPI1/LPUART0/PCA/LPUART1
-                        ///< PD:I2C0/PCA/I2C1 
+                        ///< PD:I2C0/PCA/I2C1
     GpioAf2  = 2u,      ///< GPIO AF2:
-                        ///< PA:LPUART1/TIM0/UART1/PCA/TIM3                             
-                        ///< PB:TIM3/PCLK_OUT/PCA/TIM0/UART0/TIM1/IR/SPI1/I2C1 
+                        ///< PA:LPUART1/TIM0/UART1/PCA/TIM3
+                        ///< PB:TIM3/PCLK_OUT/PCA/TIM0/UART0/TIM1/IR/SPI1/I2C1
                         ///< PC:PCNT/TIM5/LPTIM/TIM2/TIM6/TIM4/LPUART0/LPUART1/RTC
                         ///< PD:TIM4/LPUART0/LPUART1
     GpioAf3  = 3u,      ///< GPIO AF3:
-                        ///< PA:TIM0/VC1/TIM1/PCA/TIM3/HCLK_OUT/TIM0/TIM2/I2C1/LVD/LPUART1                             
-                        ///< PB:LPUART0/TIM3/LPUART1/TIM1/TIM2/SPI1/TIM0 
+                        ///< PA:TIM0/VC1/TIM1/PCA/TIM3/HCLK_OUT/TIM0/TIM2/I2C1/LVD/LPUART1
+                        ///< PB:LPUART0/TIM3/LPUART1/TIM1/TIM2/SPI1/TIM0
                         ///< PC:UART1/PCNT/LPTIM/IR/PCA/TIM2/TIM1/TIM3
-                        ///< PD:UART1/TIM1/UART0    
+                        ///< PD:UART1/TIM1/UART0
     GpioAf4  = 4u,      ///< GPIO AF4:
-                        ///< PA:VC0/TIM1/TIM2/TIM0/TIM3/I2C0/LVD                             
-                        ///< PB:TIM5/TIM6/TIM4/TIM3/UART0/PCA/TIM0/LPUART1/TIM2/LPUART0 
+                        ///< PA:VC0/TIM1/TIM2/TIM0/TIM3/I2C0/LVD
+                        ///< PB:TIM5/TIM6/TIM4/TIM3/UART0/PCA/TIM0/LPUART1/TIM2/LPUART0
                         ///< PC:RESERVED
-                        ///< PD:RESERVED   
+                        ///< PD:RESERVED
     GpioAf5  = 5u,      ///< GPIO AF5:
-                        ///< PA:TIM1/TIM2/SPI1/TIM5/VC0/VC1/RTC/RCH_OUT/TIM0                            
-                        ///< PB:RCH_OUT/LPUART0/TIM1/LPTIM/TIM2/TIM0/TIM3/TIM6/RTC 
+                        ///< PA:TIM1/TIM2/SPI1/TIM5/VC0/VC1/RTC/RCH_OUT/TIM0
+                        ///< PB:RCH_OUT/LPUART0/TIM1/LPTIM/TIM2/TIM0/TIM3/TIM6/RTC
                         ///< PC:RESERVED
-                        ///< PD:RESERVED    
+                        ///< PD:RESERVED
     GpioAf6  = 6u,      ///< GPIO AF6:
-                        ///< PA:TIM3/HCLK_OUT/PCLK_OUT/LVD/XTL_OUT/VC1/TIM4/SPI0/PCNT/RCL_OUT                             
-                        ///< PB:TIM0/XTL_OUT/TIM3/PCNT/LPTIM/TIM2/LPUART1/LPUART0/TIM1/RTC 
+                        ///< PA:TIM3/HCLK_OUT/PCLK_OUT/LVD/XTL_OUT/VC1/TIM4/SPI0/PCNT/RCL_OUT
+                        ///< PB:TIM0/XTL_OUT/TIM3/PCNT/LPTIM/TIM2/LPUART1/LPUART0/TIM1/RTC
                         ///< PC:RESERVED
-                        ///< PD:RESERVED    
+                        ///< PD:RESERVED
     GpioAf7  = 7u,      ///< GPIO AF7:
-                        ///< PA:TIM0/SPI1/TIM5/TIM3/XTH_OUT/LPUART0/TIM4/TIM6/PCNT/PLL_OUT                             
+                        ///< PA:TIM0/SPI1/TIM5/TIM3/XTH_OUT/LPUART0/TIM4/TIM6/PCNT/PLL_OUT
                         ///< PB:PLL_OUT/TIM2/XTH_OUT/LPTIM/UART0/PCNT/UART1/TIM6/TIM1/LPUART1
                         ///< PC:RESERVED
-                        ///< PD:RESERVED    
-}en_gpio_af_t;  
- 
+                        ///< PD:RESERVED
+}en_gpio_af_t;
+
 /**
  *******************************************************************************
  ** \brief GPIO输入输出配置数据类型定义
@@ -163,7 +163,7 @@ typedef enum en_gpio_af
 typedef enum en_gpio_dir
 {
     GpioDirOut = 0u,                ///< GPIO 输出
-    GpioDirIn  = 1u,                ///< GPIO 输入            
+    GpioDirIn  = 1u,                ///< GPIO 输入
 }en_gpio_dir_t;
 
 /**
@@ -174,7 +174,7 @@ typedef enum en_gpio_pupd
 {
     GpioNoPuPd = 0u,                ///< GPIO无上拉下拉
     GpioPu     = 1u,                ///< GPIO上拉
-    GpioPd     = 2u,                ///< GPIO下拉            
+    GpioPd     = 2u,                ///< GPIO下拉
 }en_gpio_pupd_t;
 
 /**
@@ -184,7 +184,7 @@ typedef enum en_gpio_pupd
 typedef enum en_gpio_drv
 {
     GpioDrvH = 0u,                  ///< GPIO高驱动能力
-    GpioDrvL = 1u,                  ///< GPIO低驱动能力          
+    GpioDrvL = 1u,                  ///< GPIO低驱动能力
 }en_gpio_drv_t;
 
 /**
@@ -193,7 +193,7 @@ typedef enum en_gpio_drv
  ******************************************************************************/
 typedef enum en_gpio_od
 {
-    GpioOdDisable = 0u,             ///< GPIO开漏输出关闭          
+    GpioOdDisable = 0u,             ///< GPIO开漏输出关闭
     GpioOdEnable  = 1u,             ///< GPIO开漏输出使能
 }en_gpio_od_t;
 
@@ -203,7 +203,7 @@ typedef enum en_gpio_od
  ******************************************************************************/
 typedef enum en_gpio_ctrl_mode
 {
-    GpioFastIO = 0u,             ///< FAST IO 总线控制模式          
+    GpioFastIO = 0u,             ///< FAST IO 总线控制模式
     GpioAHB  = 1u,               ///< AHB 总线控制模式
 }en_gpio_ctrl_mode_t;
 
@@ -288,7 +288,7 @@ typedef enum en_gpio_sf_irpol
  ******************************************************************************/
 typedef enum en_gpio_sf_ssnspi
 {
-    GpioSpi0 = 0u,                   ///< SPI0 SSN 
+    GpioSpi0 = 0u,                   ///< SPI0 SSN
     GpioSpi1 = 1u,                   ///< SPI1 SSN
 }en_gpio_sf_ssnspi_t;
 
@@ -313,7 +313,7 @@ typedef enum en_gpio_sf_ssn_extclk
     GpioSfSsnExtClkPB09 = 12u,       ///< PB09
     GpioSfSsnExtClkPB10 = 13u,       ///< PB10
     GpioSfSsnExtClkPB12 = 14u,       ///< PB12
-    GpioSfSsnExtClkPB14 = 15u,       ///< PB14       
+    GpioSfSsnExtClkPB14 = 15u,       ///< PB14
 }en_gpio_sf_ssn_extclk_t;
 
 /**
@@ -366,11 +366,11 @@ typedef enum en_gpio_sf
  ******************************************************************************/
 typedef enum en_gpio_sf_tim_g
 {
-    GpioSfTim0G  = 0u,                   ///<Tim0定时器GATE输入选择 
-    GpioSfTim1G  = 3u,                   ///<Tim1定时器GATE输入选择 
-    GpioSfTim2G  = 6u,                   ///<Tim2定时器GATE输入选择 
-    GpioSfTim3G  = 9u,                   ///<Tim3定时器GATE输入选择 
-    GpioSfLpTimG = 12u,                  ///<LPTim定时器GATE输入选择 
+    GpioSfTim0G  = 0u,                   ///<Tim0定时器GATE输入选择
+    GpioSfTim1G  = 3u,                   ///<Tim1定时器GATE输入选择
+    GpioSfTim2G  = 6u,                   ///<Tim2定时器GATE输入选择
+    GpioSfTim3G  = 9u,                   ///<Tim3定时器GATE输入选择
+    GpioSfLpTimG = 12u,                  ///<LPTim定时器GATE输入选择
 }en_gpio_sf_tim_g_t;
 
 /**
@@ -379,11 +379,11 @@ typedef enum en_gpio_sf_tim_g
  ******************************************************************************/
 typedef enum en_gpio_sf_tim_e
 {
-    GpioSfTim0E  = 0u,                   ///<Tim0定时器ETR输入选择 
-    GpioSfTim1E  = 3u,                   ///<Tim1定时器ETR输入选择 
-    GpioSfTim2E  = 6u,                   ///<Tim2定时器ETR输入选择 
-    GpioSfTim3E  = 9u,                   ///<Tim3定时器ETR输入选择 
-    GpioSfLpTimE = 12u,                  ///<LPTim定时器ETR输入选择 
+    GpioSfTim0E  = 0u,                   ///<Tim0定时器ETR输入选择
+    GpioSfTim1E  = 3u,                   ///<Tim1定时器ETR输入选择
+    GpioSfTim2E  = 6u,                   ///<Tim2定时器ETR输入选择
+    GpioSfTim3E  = 9u,                   ///<Tim3定时器ETR输入选择
+    GpioSfLpTimE = 12u,                  ///<LPTim定时器ETR输入选择
 }en_gpio_sf_tim_e_t;
 
 /**
@@ -392,11 +392,11 @@ typedef enum en_gpio_sf_tim_e
  ******************************************************************************/
 typedef enum en_gpio_sf_tim_c
 {
-    GpioSfTim0CA = 0u,                   ///<Tim0定时器CHA输入选择 
-    GpioSfTim1CA = 3u,                   ///<Tim1定时器CHA输入选择 
-    GpioSfTim2CA = 6u,                   ///<Tim2定时器CHA输入选择 
-    GpioSfTim3CA = 9u,                   ///<Tim3定时器CH0A输入选择 
-    GpioSfTim3CB = 12u,                  ///<Tim3定时器CH0B输入选择 
+    GpioSfTim0CA = 0u,                   ///<Tim0定时器CHA输入选择
+    GpioSfTim1CA = 3u,                   ///<Tim1定时器CHA输入选择
+    GpioSfTim2CA = 6u,                   ///<Tim2定时器CHA输入选择
+    GpioSfTim3CA = 9u,                   ///<Tim3定时器CH0A输入选择
+    GpioSfTim3CB = 12u,                  ///<Tim3定时器CH0B输入选择
 }en_gpio_sf_tim_c_t;
 
 /**
@@ -405,8 +405,8 @@ typedef enum en_gpio_sf_tim_c
  ******************************************************************************/
 typedef enum en_gpio_sf_pca
 {
-    GpioSfPcaCH0 = 0u,                   ///<PCA_CH0捕获口输入选择 
-    GpioSfPcaECI = 3u,                   ///<PCA ECI时钟输入选择 
+    GpioSfPcaCH0 = 0u,                   ///<PCA_CH0捕获口输入选择
+    GpioSfPcaECI = 3u,                   ///<PCA ECI时钟输入选择
 }en_gpio_sf_pca_t;
 
 /**
@@ -425,7 +425,7 @@ typedef struct
 /*******************************************************************************
  * Global definitions
  ******************************************************************************/
- 
+
 /******************************************************************************
  * Local type definitions ('typedef')
  ******************************************************************************/
@@ -439,7 +439,7 @@ typedef struct
 *******************************************************************************/
  ///< GPIO IO初始化/去初始化
 en_result_t Gpio_Init(en_gpio_port_t enPort, en_gpio_pin_t enPin, stc_gpio_config_t *pstcGpioCfg);
- 
+
 ///< GPIO 获取端口输入电平
 boolean_t   Gpio_GetInputIO(en_gpio_port_t enPort, en_gpio_pin_t enPin);
 uint16_t    Gpio_GetInputData(en_gpio_port_t enPort);

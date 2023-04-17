@@ -43,7 +43,7 @@
 /** \file lpuart.h
  **
  ** Headerfile for LPUART functions
- **  
+ **
  **
  ** History:
  **   - 2017-05-10   Cathy     First Version
@@ -101,8 +101,8 @@ typedef enum en_lpuart_sclk_sel
 typedef enum en_lpuart_mmdorck
 {
     LPUartDataOrAddr = 0u, ///<多机模式时，通过读写SBUF[8]决定帧为数据帧或地址帧
-    LPUartEven       = 0x4u, ///<非多机模式偶校验   
-    LPUartOdd        = 0x8u, ///<非多机模式奇校验    
+    LPUartEven       = 0x4u, ///<非多机模式偶校验
+    LPUartOdd        = 0x8u, ///<非多机模式奇校验
 }en_lpuart_mmdorck_t;
 
 /**
@@ -123,7 +123,7 @@ typedef struct stc_lpuart_multimode
 
 typedef enum en_lpuart_mode
 {
-    LPUartMskMode0 = 0x00u, ///<模式0    
+    LPUartMskMode0 = 0x00u, ///<模式0
     LPUartMskMode1 = 0x40u, ///<模式1
     LPUartMskMode2 = 0x80u, ///<模式2
     LPUartMskMode3 = 0xc0u, ///<模式3
@@ -135,7 +135,7 @@ typedef enum en_lpuart_mode
 
 typedef enum en_lpuart_stop
 {
-    LPUart1bit  = 0x0000u,  ///<1位停止位 
+    LPUart1bit  = 0x0000u,  ///<1位停止位
     LPUart1_5bit = 0x4000u, ///<1.5位停止位
     LPUart2bit  = 0x8000u,  ///<2位停止位
 } en_lpuart_stop_t;
@@ -145,12 +145,12 @@ typedef enum en_lpuart_stop
  ******************************************************************************/
 typedef enum en_lpuart_func
 {
-    LPUartRenFunc    = 4u,    ///<0-TX; ///<1-非mode0模式代表RX&TX ,mode0模式代表RX;       
-    LPUartDmaRxFunc  = 16u,   ///<DMA接收功能   
+    LPUartRenFunc    = 4u,    ///<0-TX; ///<1-非mode0模式代表RX&TX ,mode0模式代表RX;
+    LPUartDmaRxFunc  = 16u,   ///<DMA接收功能
     LPUartDmaTxFunc  = 17u,   ///<DMA发送功能
     LPUartRtsFunc    = 18u,   ///<硬件流RTS功能
     LPUartCtsFunc    = 19u,   ///<硬件流CTS功能
-    LPUartHdFunc     = 22u,   ///<单线半双工功能    
+    LPUartHdFunc     = 22u,   ///<单线半双工功能
 }en_lpuart_func_t;
 /**
  ******************************************************************************
@@ -159,11 +159,11 @@ typedef enum en_lpuart_func
 typedef enum en_lpuart_irq_sel
 {
     LPUartRxIrq  = 0u,    ///<接收中断使能
-    LPUartTxIrq  = 1u,    ///<发送中断使能        
+    LPUartTxIrq  = 1u,    ///<发送中断使能
     LPUartTxEIrq = 8u,    ///<TX空中断使能
     LPUartPEIrq  = 13u,   ///<奇偶校验中断使能
-    LPUartCtsIrq = 20u,   ///<CTS信号翻转中断使能    
-    LPUartFEIrq  = 21u,   ///<帧错误中断使能 
+    LPUartCtsIrq = 20u,   ///<CTS信号翻转中断使能
+    LPUartFEIrq  = 21u,   ///<帧错误中断使能
 }en_lpuart_irq_sel_t;
 
 /**
@@ -175,7 +175,7 @@ typedef enum en_lpuart_status
     LPUartRC    = 0u,  ///<接收数据完成标记
     LPUartTC    = 1u,  ///<发送数据完成标记
     LPUartFE    = 2u,  ///<帧错误标记
-    LPUartTxe   = 3u,  ///<TXbuff空标记    
+    LPUartTxe   = 3u,  ///<TXbuff空标记
     LPUartPE    = 4u,  ///<奇偶校验错误标记
     LPUartCtsIf = 5u,  ///<CTS中断标记
     LPUartCts   = 6u,  ///<CTS信号标记
@@ -199,7 +199,7 @@ typedef enum en_lpuart_clkdiv
 typedef struct stc_lpuart_baud
 {
     en_lpuart_sclksel_t  enSclkSel;      ///<传输时钟源选择
-    en_lpuart_clkdiv_t   enSclkDiv;     ///<采样分频选择 
+    en_lpuart_clkdiv_t   enSclkDiv;     ///<采样分频选择
     uint32_t             u32Sclk;        ///<sclk
     uint32_t             u32Baud;        ///< 波特率
 } stc_lpuart_baud_t;
@@ -211,8 +211,8 @@ typedef struct stc_lpuart_cfg
 {
     en_lpuart_mode_t       enRunMode;      ///<四种模式配置
     en_lpuart_mmdorck_t    enMmdorCk;      ///<校验模式
-    en_lpuart_stop_t       enStopBit;      ///<停止位长度    
-    stc_lpuart_baud_t      stcBaud;        ///<Mode1/3波特率配置                                                        
+    en_lpuart_stop_t       enStopBit;      ///<停止位长度
+    stc_lpuart_baud_t      stcBaud;        ///<Mode1/3波特率配置
 } stc_lpuart_cfg_t;
 
 // 总初始化处理

@@ -11,27 +11,27 @@
 /*
     Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -113,7 +113,7 @@ OF SUCH DAMAGE.
 #define TIMER_SMCFG_ETPSC                BITS(12,13)         /*!< external trigger prescaler */
 #define TIMER_SMCFG_SMC1                 BIT(14)             /*!< part of SMC for enable external clock mode 1 */
 #define TIMER_SMCFG_ETP                  BIT(15)             /*!< external trigger polarity */
- 
+
 /* TIMER_DMAINTEN */
 #define TIMER_DMAINTEN_UPIE              BIT(0)              /*!< update interrupt enable */
 #define TIMER_DMAINTEN_CH0IE             BIT(1)              /*!< channel 0 capture/compare interrupt enable */
@@ -266,7 +266,7 @@ OF SUCH DAMAGE.
 /* constants definitions */
 /* TIMER init parameter struct definitions*/
 typedef struct
-{ 
+{
     uint16_t prescaler;                         /*!< prescaler value */
     uint16_t alignedmode;                       /*!< aligned mode */
     uint16_t counterdirection;                  /*!< counter direction */
@@ -277,7 +277,7 @@ typedef struct
 
 /* break parameter struct definitions*/
 typedef struct
-{ 
+{
     uint16_t runoffstate;                       /*!< run mode off-state */
     uint16_t ideloffstate;                      /*!< idle mode off-state */
     uint16_t deadtime;                          /*!< dead time */
@@ -289,7 +289,7 @@ typedef struct
 
 /* channel output parameter struct definitions */
 typedef struct
-{ 
+{
     uint16_t outputstate;                       /*!< channel output state */
     uint16_t outputnstate;                      /*!< channel complementary output state */
     uint16_t ocpolarity;                        /*!< channel output polarity */
@@ -300,7 +300,7 @@ typedef struct
 
 /* channel input parameter struct definitions */
 typedef struct
-{ 
+{
     uint16_t icpolarity;                        /*!< channel input polarity */
     uint16_t icselection;                       /*!< channel input mode selection */
     uint16_t icprescaler;                       /*!< channel input capture prescaler */
@@ -350,7 +350,7 @@ typedef struct
 #define TIMER_DMA_CMTD                      ((uint16_t)TIMER_DMAINTEN_CMTDEN)       /*!< commutation DMA request enable */
 #define TIMER_DMA_TRGD                      ((uint16_t)TIMER_DMAINTEN_TRGDEN)       /*!< trigger DMA enable */
 
-/* channel DMA request source selection */ 
+/* channel DMA request source selection */
 #define TIMER_DMAREQUEST_UPDATEEVENT        ((uint8_t)0x00U)                        /*!< DMA request of channel y is sent when update event occurs */
 #define TIMER_DMAREQUEST_CHANNELEVENT       ((uint8_t)0x01U)                        /*!< DMA request of channel y is sent when channel y event occurs */
 
@@ -441,7 +441,7 @@ typedef struct
 #define TIMER_ROS_STATE_ENABLE              ((uint16_t)TIMER_CCHP_ROS)              /*!< when POEN bit is set, the channel output signals (CHx_O/CHx_ON) are enabled, with relationship to CHxEN/CHxNEN bits */
 #define TIMER_ROS_STATE_DISABLE             ((uint16_t)0x0000U)                     /*!< when POEN bit is set, the channel output signals (CHx_O/CHx_ON) are disabled */
 
-/* idle mode off-state configure */                                                 
+/* idle mode off-state configure */
 #define TIMER_IOS_STATE_ENABLE              ((uint16_t)TIMER_CCHP_IOS)              /*!< when POEN bit is reset, the channel output signals (CHx_O/CHx_ON) are enabled, with relationship to CHxEN/CHxNEN bits */
 #define TIMER_IOS_STATE_DISABLE             ((uint16_t)0x0000U)                     /*!< when POEN bit is reset, the channel output signals (CHx_O/CHx_ON) are disabled */
 
@@ -486,11 +486,11 @@ typedef struct
 #define TIMER_OCN_POLARITY_HIGH             ((uint16_t)0x0000U)                     /*!< channel complementary output polarity is high */
 #define TIMER_OCN_POLARITY_LOW              ((uint16_t)0x0008U)                     /*!< channel complementary output polarity is low */
 
-/* idle state of channel output */ 
+/* idle state of channel output */
 #define TIMER_OC_IDLE_STATE_HIGH            ((uint16_t)0x0100)                      /*!< idle state of channel output is high */
 #define TIMER_OC_IDLE_STATE_LOW             ((uint16_t)0x0000)                      /*!< idle state of channel output is low */
 
-/* idle state of channel complementary output */ 
+/* idle state of channel complementary output */
 #define TIMER_OCN_IDLE_STATE_HIGH           ((uint16_t)0x0200U)                     /*!< idle state of channel complementary output is high */
 #define TIMER_OCN_IDLE_STATE_LOW            ((uint16_t)0x0000U)                     /*!< idle state of channel complementary output is low */
 
@@ -516,7 +516,7 @@ typedef struct
 #define TIMER_OC_CLEAR_ENABLE               ((uint16_t)0x0080U)                     /*!< channel output clear function enable */
 #define TIMER_OC_CLEAR_DISABLE              ((uint16_t)0x0000U)                     /*!< channel output clear function disable */
 
-/* channel control shadow register update control */ 
+/* channel control shadow register update control */
 #define TIMER_UPDATECTL_CCU                 ((uint32_t)0x00000000U)                 /*!< the shadow registers are updated when CMTG bit is set */
 #define TIMER_UPDATECTL_CCUTRI              ((uint32_t)0x00000001U)                        /*!< the shadow registers update by when CMTG bit is set or an rising edge of TRGI occurs */
 
@@ -559,7 +559,7 @@ typedef struct
 #define TIMER_TRI_OUT_SRC_O3CPRE            CTL1_MMC(7)                             /*!< O3CPRE as trigger output */
 
 /* slave mode control */
-#define SMCFG_SMC(regval)                   (BITS(0, 2) & ((uint32_t)(regval) << 0U)) 
+#define SMCFG_SMC(regval)                   (BITS(0, 2) & ((uint32_t)(regval) << 0U))
 #define TIMER_SLAVE_MODE_DISABLE            SMCFG_SMC(0)                            /*!< slave mode disable */
 #define TIMER_QUAD_DECODER_MODE0            SMCFG_SMC(1)                            /*!< quadrature decoder mode 0 */
 #define TIMER_QUAD_DECODER_MODE1            SMCFG_SMC(2)                            /*!< quadrature decoder mode 1 */
@@ -569,7 +569,7 @@ typedef struct
 #define TIMER_SLAVE_MODE_EVENT              SMCFG_SMC(6)                            /*!< event mode */
 #define TIMER_SLAVE_MODE_EXTERNAL0          SMCFG_SMC(7)                            /*!< external clock mode 0 */
 
-/* master slave mode selection */ 
+/* master slave mode selection */
 #define TIMER_MASTER_SLAVE_MODE_ENABLE      ((uint32_t)0x00000000U)                 /*!< master slave mode enable */
 #define TIMER_MASTER_SLAVE_MODE_DISABLE     ((uint32_t)0x00000001U)                 /*!< master slave mode disable */
 
@@ -584,19 +584,19 @@ typedef struct
 #define TIMER_ETP_FALLING                   TIMER_SMCFG_ETP                         /*!< active low or falling edge active */
 #define TIMER_ETP_RISING                    ((uint32_t)0x00000000U)                 /*!< active high or rising edge active */
 
-/* channel 0 trigger input selection */ 
+/* channel 0 trigger input selection */
 #define TIMER_HALLINTERFACE_ENABLE          ((uint32_t)0x00000000U)                 /*!< TIMER hall sensor mode enable */
 #define TIMER_HALLINTERFACE_DISABLE         ((uint32_t)0x00000001U)                 /*!< TIMER hall sensor mode disable */
 
 /* timer1 internal trigger input1 remap */
-#define TIMER1_IRMP(regval)                 (BITS(10, 11) & ((uint32_t)(regval) << 10U))       
+#define TIMER1_IRMP(regval)                 (BITS(10, 11) & ((uint32_t)(regval) << 10U))
 #define TIMER1_ITI1_RMP_TIMER7_TRGO         TIMER1_IRMP(0)                          /*!< timer1 internal trigger input 1 remap to TIMER7_TRGO */
 #define TIMER1_ITI1_RMP_ETHERNET_PTP        TIMER1_IRMP(1)                          /*!< timer1 internal trigger input 1 remap to ethernet PTP */
 #define TIMER1_ITI1_RMP_USB_FS_SOF          TIMER1_IRMP(2)                          /*!< timer1 internal trigger input 1 remap to USB FS SOF */
 #define TIMER1_ITI1_RMP_USB_HS_SOF          TIMER1_IRMP(3)                          /*!< timer1 internal trigger input 1 remap to USB HS SOF */
 
 /* timer4 channel 3 input remap */
-#define TIMER4_IRMP(regval)                 (BITS(6, 7) & ((uint32_t)(regval) << 6U))          
+#define TIMER4_IRMP(regval)                 (BITS(6, 7) & ((uint32_t)(regval) << 6U))
 #define TIMER4_CI3_RMP_GPIO                 TIMER4_IRMP(0)                          /*!< timer4 channel 3 input remap to GPIO pin */
 #define TIMER4_CI3_RMP_IRC32K               TIMER4_IRMP(1)                          /*!< timer4 channel 3 input remap to IRC32K */
 #define TIMER4_CI3_RMP_LXTAL                TIMER4_IRMP(2)                          /*!< timer4 channel 3 input remap to  LXTAL */

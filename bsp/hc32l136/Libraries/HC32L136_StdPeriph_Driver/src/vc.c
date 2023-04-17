@@ -112,7 +112,7 @@ static func_ptr_t pfnVc1IrqCb = NULL;
  *****************************************************************************/
 
 /**
- * \brief   
+ * \brief
  *          指定VC通道中断使能/除能
  *
  * \param   [in]  enChannel  VC通道号
@@ -158,7 +158,7 @@ static en_result_t VcEnableIrq(en_vc_channel_t enChannel, boolean_t bFlag)
 }
 
 /**
- * \brief   
+ * \brief
  *          使能NVIC中VC中断
  *
  * \param   [in]  enIrqn  中断号
@@ -173,7 +173,7 @@ static void VcEnableNvic(IRQn_Type enIrqn)
 }
 
 /**
- * \brief   
+ * \brief
  *          除能NVIC中VC中断
  *
  * \param   [in]  enIrqn  中断号
@@ -188,7 +188,7 @@ static void VcDisableNvic(IRQn_Type enIrqn)
 }
 
 /**
- * \brief   
+ * \brief
  *          VC中断服务程序
  *
  * \param   [in]  u8Param  VC通道号
@@ -222,11 +222,11 @@ void Vc_IRQHandler(uint8_t u8Param)
     else
     {
         ;    // just return
-    }    
+    }
 }
 
 /**
- * \brief   
+ * \brief
  *          配置VC中断触发方式
  *
  * \param   [in]  enChannel  VC通道号
@@ -274,7 +274,7 @@ en_result_t Vc_ConfigIrq(en_vc_channel_t enChannel, en_vc_irq_sel_t enSel)
 }
 
 /**
- * \brief   
+ * \brief
  *          获取VC状态
  *
  * \param   [in]  enChannel  VC通道号
@@ -323,7 +323,7 @@ boolean_t Vc_GetStat(en_vc_channel_t enChannel, en_vc_stat_t enStat)
 }
 
 /**
- * \brief   
+ * \brief
  *          清除VC中断标志
  *
  * \param   [in]  enChannel  VC通道号
@@ -345,7 +345,7 @@ void Vc_ClearIrq(en_vc_channel_t enChannel)
 }
 
 /**
- * \brief   
+ * \brief
  *          指定VC通道中断使能
  *
  * \param   [in]  enChannel  VC通道号
@@ -359,7 +359,7 @@ en_result_t Vc_EnableIrq(en_vc_channel_t enChannel)
 }
 
 /**
- * \brief   
+ * \brief
  *          指定VC通道中断除能
  *
  * \param   [in]  enChannel  VC通道号
@@ -373,7 +373,7 @@ en_result_t Vc_DisableIrq(en_vc_channel_t enChannel)
 }
 
 /**
- * \brief   
+ * \brief
  *          VC模块初始化
  *
  * \param   [in]  pstcGeneralConfig  VC模块配置指针
@@ -404,7 +404,7 @@ en_result_t Vc_DACInit(stc_vc_dac_config_t *pstcDacConfig)
 }
 
 /**
- * \brief   
+ * \brief
  *          VC模块deinit
  *
  * \param   无
@@ -419,7 +419,7 @@ void Vc_DACDeInit(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          VC通道初始化
  *
  * \param   [in]  enChannel  VC通道号
@@ -507,7 +507,7 @@ en_result_t Vc_ChannelInit(en_vc_channel_t enChannel,
 }
 
 /**
- * \brief   
+ * \brief
  *          VC通道Deinit
  *
  * \param   [in]  enChannel  VC通道号
@@ -558,7 +558,7 @@ en_result_t Vc_ChannelDeInit(en_vc_channel_t enChannel)
 }
 
 /**
- * \brief   
+ * \brief
  *          VC通道使能
  *
  * \param   [in]  enChannel  VC通道号
@@ -585,7 +585,7 @@ en_result_t Vc_EnableChannel(en_vc_channel_t enChannel)
 }
 
 /**
- * \brief   
+ * \brief
  *          VC通道除能
  *
  * \param   [in]  enChannel  VC通道号
@@ -612,7 +612,7 @@ en_result_t Vc_DisableChannel(en_vc_channel_t enChannel)
 }
 
 /**
- * \brief   
+ * \brief
  *          VC输出滤波使能
  *
  * \param   [in]  enChannel  VC通道号
@@ -639,7 +639,7 @@ en_result_t Vc_EnableFilter(en_vc_channel_t enChannel)
 }
 
 /**
- * \brief   
+ * \brief
  *          VC输出滤波除能
  *
  * \param   [in]  enChannel  VC通道号

@@ -70,7 +70,7 @@ extern "C"
   **
  ******************************************************************************/
 //@{
-    
+
 /******************************************************************************/
 /* Global pre-processor symbols/macros ('#define')                            */
 /******************************************************************************/
@@ -161,7 +161,7 @@ typedef enum en_bt_irq_type
     BtCA0E     = 8u,         ///< CH0A捕获数据丢失标志(仅模式23存在),不是中断
     BtCB0E     = 11u,        ///< CH0B捕获数据丢失标志(仅模式23存在),不是中断
     BtBkIrq    = 14u,        ///< 刹车中断(仅模式23存在)
-    BtTrigIrq  = 15u,        ///< 触发中断(仅模式23存在)   
+    BtTrigIrq  = 15u,        ///< 触发中断(仅模式23存在)
 }en_bt_irq_type_t;
 
 /**
@@ -449,7 +449,7 @@ typedef struct stc_bt_mode0_config
     boolean_t             bEnTog;           ///< 翻转输出使能
     en_bt_cr_ct_t         enCT;             ///< 定时/计数功能选择
     en_bt_m0cr_md_t       enCntMode;        ///< 计数模式配置
-    
+
     func_ptr_t            pfnTim0Cb;        ///< Timer0中断服务回调函数[void function(void)]
     func_ptr_t            pfnTim1Cb;        ///< Timer1中断服务回调函数[void function(void)]
     func_ptr_t            pfnTim2Cb;        ///< Timer2中断服务回调函数[void function(void)]
@@ -465,8 +465,8 @@ typedef struct stc_bt_mode1_config
     en_bt_cr_timclkdiv_t  enPRS;            ///< 预除频配置
     en_bt_cr_ct_t         enCT;             ///< 定时/计数功能选择
     en_bt_m1cr_oneshot_t  enOneShot;        ///< 单次测量/循环测量选择
-    
-    
+
+
     func_ptr_t          pfnTim0Cb;        ///< Timer0中断服务回调函数[void function(void)]
     func_ptr_t          pfnTim1Cb;        ///< Timer1中断服务回调函数[void function(void)]
     func_ptr_t          pfnTim2Cb;        ///< Timer2中断服务回调函数[void function(void)]
@@ -501,7 +501,7 @@ typedef struct stc_bt_mode23_config
     en_bt_m23cr_pwm2s_t       enPWM2sSel;       ///< OCREFA双点比较功能选择
     boolean_t                 bOneShot;         ///< 单次触发模式使能/禁止
     boolean_t                 bURSSel;          ///< 更新源选择
-    
+
     func_ptr_t                pfnTim0Cb;        ///< Timer0中断服务回调函数[void function(void)]
     func_ptr_t                pfnTim1Cb;        ///< Timer1中断服务回调函数[void function(void)]
     func_ptr_t                pfnTim2Cb;        ///< Timer2中断服务回调函数[void function(void)]
@@ -529,7 +529,7 @@ typedef struct stc_bt_m23_compare_config
     en_bt_port_polarity_t      enCH0APolarity;   ///< CH0A输出极性控制
     boolean_t                  bCh0ACmpBufEn;    ///< 比较A缓存功能 使能/禁止
     en_bt_m23_cisa_cisb_t      enCh0ACmpIntSel;  ///< CHA比较匹配中断选择
-    
+
     en_bt_m23_crch0_csa_csb_t  enCh0BCmpCap;     ///< CH0B比较/捕获功能选择
     en_bt_m23_fltr_ocm_t       enCH0BCmpCtrl;    ///< CH0B通道比较控制
     en_bt_port_polarity_t      enCH0BPolarity;   ///< CH0B输出极性控制
@@ -547,13 +547,13 @@ typedef struct stc_bt_m23_input_config
     en_bt_m23_crch0_cfx_crx_t  enCH0ACapSel;     ///< CH0A捕获边沿选择
     en_bt_flt_t                enCH0AInFlt;      ///< CH0A通道捕获滤波控制
     en_bt_port_polarity_t      enCH0APolarity;   ///< CH0A输入相位
-    
+
     en_bt_m23_crch0_csa_csb_t  enCh0BCmpCap;     ///< CH0B比较/捕获功能选择
     en_bt_m23_crch0_cfx_crx_t  enCH0BCapSel;     ///< HC0B捕获边沿选择
     en_bt_flt_t                enCH0BInFlt;      ///< CH0B通道捕获滤波控制
     en_bt_port_polarity_t      enCH0BPolarity;   ///< CH0B输入相位
-    
-}stc_bt_m23_input_config_t;   
+
+}stc_bt_m23_input_config_t;
 
 /**
  ******************************************************************************

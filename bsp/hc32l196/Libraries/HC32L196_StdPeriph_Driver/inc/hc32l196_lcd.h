@@ -236,7 +236,7 @@ extern void Lcd_FullDisp(void);
 extern void Lcd_ClearDisp(void);
 extern en_result_t Lcd_WriteRam(uint8_t u8Row,uint32_t u32Data);
 
- 
+
 //@} // LCDGroup
 
 #ifdef __cplusplus

@@ -183,4 +183,4 @@ ATTR_ALWAYS_INLINE static inline void __plic_complete_irq(uint32_t base,
 /**
  * @}
  */
-#endif	/* HPM_PLIC_DRV_H */
+#endif  /* HPM_PLIC_DRV_H */

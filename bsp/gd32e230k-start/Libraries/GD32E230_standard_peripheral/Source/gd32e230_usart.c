@@ -1,7 +1,7 @@
 /*!
     \file    gd32e230_usart.c
     \brief   USART driver
-    
+
     \version 2018-06-19, V1.0.0, firmware for GD32E230
 */
 
@@ -10,27 +10,27 @@
 
     All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -66,7 +66,7 @@ void usart_deinit(uint32_t usart_periph)
     \param[in]  baudval: baud rate value
     \param[out] none
     \retval     none
-*/ 
+*/
 void usart_baudrate_set(uint32_t usart_periph, uint32_t baudval)
 {
     uint32_t uclk = 0U, intdiv = 0U, fradiv = 0U, udiv = 0U;
@@ -114,7 +114,7 @@ void usart_parity_config(uint32_t usart_periph, uint32_t paritycfg)
     /* disable USART */
     USART_CTL0(usart_periph) &= ~(USART_CTL0_UEN);
     /* clear USART_CTL0 PM,PCEN bits */
-    USART_CTL0(usart_periph) &= ~(USART_CTL0_PM | USART_CTL0_PCEN); 
+    USART_CTL0(usart_periph) &= ~(USART_CTL0_PM | USART_CTL0_PCEN);
     /* configure USART parity mode */
     USART_CTL0(usart_periph) |= paritycfg;
 }
@@ -343,7 +343,7 @@ void usart_sample_bit_config(uint32_t usart_periph, uint32_t osb)
 {
     /* disable USART */
     USART_CTL0(usart_periph) &= ~(USART_CTL0_UEN);
-    
+
     USART_CTL2(usart_periph) &= ~(USART_CTL2_OSB);
     USART_CTL2(usart_periph) |= osb;
 }
@@ -1018,7 +1018,7 @@ void usart_reception_error_dma_disable(uint32_t usart_periph)
 }
 
 /*!
-    \brief      enable DMA on reception error 
+    \brief      enable DMA on reception error
     \param[in]  usart_periph: USARTx(x=0,1)
     \param[out] none
     \retval     none
@@ -1132,7 +1132,7 @@ uint8_t usart_receive_fifo_counter_number(uint32_t usart_periph)
       \arg        USART_FLAG_RWU: receiver wakeup from mute mode.
       \arg        USART_FLAG_WU: wakeup from deep-sleep mode flag
       \arg        USART_FLAG_TEA: transmit enable acknowledge flag
-      \arg        USART_FLAG_REA: receive enable acknowledge flag 
+      \arg        USART_FLAG_REA: receive enable acknowledge flag
       \arg        USART_FLAG_EPERR: early parity error flag
       \arg        USART_FLAG_RFE: receive FIFO empty flag
       \arg        USART_FLAG_RFF: receive FIFO full flag
@@ -1244,7 +1244,7 @@ void usart_interrupt_disable(uint32_t usart_periph, usart_interrupt_enum inttype
 */
 void usart_command_enable(uint32_t usart_periph, uint32_t cmdtype)
 {
-    USART_CMD(usart_periph) |= (cmdtype);   
+    USART_CMD(usart_periph) |= (cmdtype);
 }
 
 /*!
@@ -1254,14 +1254,14 @@ void usart_command_enable(uint32_t usart_periph, uint32_t cmdtype)
                 only one parameter can be selected which is shown as below:
       \arg        USART_INT_FLAG_EB: end of block interrupt and flag
       \arg        USART_INT_FLAG_RT: receiver timeout interrupt and flag
-      \arg        USART_INT_FLAG_AM: address match interrupt and flag 
-      \arg        USART_INT_FLAG_PERR: parity error interrupt and flag 
-      \arg        USART_INT_FLAG_TBE: transmitter buffer empty interrupt and flag 
+      \arg        USART_INT_FLAG_AM: address match interrupt and flag
+      \arg        USART_INT_FLAG_PERR: parity error interrupt and flag
+      \arg        USART_INT_FLAG_TBE: transmitter buffer empty interrupt and flag
       \arg        USART_INT_FLAG_TC: transmission complete interrupt and flag
       \arg        USART_INT_FLAG_RBNE: read data buffer not empty interrupt and flag
       \arg        USART_INT_FLAG_RBNE_ORERR: read data buffer not empty interrupt and overrun error flag
       \arg        USART_INT_FLAG_IDLE: IDLE line detected interrupt and flag
-      \arg        USART_INT_FLAG_LBD: LIN break detected interrupt and flag 
+      \arg        USART_INT_FLAG_LBD: LIN break detected interrupt and flag
       \arg        USART_INT_FLAG_WU: wakeup from deep-sleep mode interrupt and flag
       \arg        USART_INT_FLAG_CTS: CTS interrupt and flag
       \arg        USART_INT_FLAG_ERR_NERR: error interrupt and noise error flag
@@ -1282,7 +1282,7 @@ FlagStatus usart_interrupt_flag_get(uint32_t usart_periph, usart_interrupt_flag_
     if(flagstatus && intenable){
         return SET;
     }else{
-        return RESET; 
+        return RESET;
     }
 }
 

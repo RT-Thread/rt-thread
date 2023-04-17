@@ -161,7 +161,7 @@
 /* constants definitions */
 /* EXTI line number */
 typedef enum
-{ 
+{
     EXTI_0      = BIT(0),                                     /*!< EXTI line 0 */
     EXTI_1      = BIT(1),                                     /*!< EXTI line 1 */
     EXTI_2      = BIT(2),                                     /*!< EXTI line 2 */
@@ -193,7 +193,7 @@ typedef enum
 
 /* interrupt trigger mode */
 typedef enum
-{ 
+{
     EXTI_TRIG_RISING = 0,                                     /*!< EXTI rising edge trigger */
     EXTI_TRIG_FALLING,                                        /*!< EXTI falling edge trigger */
     EXTI_TRIG_BOTH                                            /*!< EXTI rising and falling edge trigger */

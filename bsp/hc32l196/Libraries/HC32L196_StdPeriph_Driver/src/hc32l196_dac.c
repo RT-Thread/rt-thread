@@ -86,7 +86,7 @@
 /**
 ******************************************************************************
     ** \brief  使能相关通道的DMA DMA_CR0中的DMAEN0
-    ** 
+    **
   ** @param  NewState  :   TRUE 或者 FALSE
     ** \retval 无
     **
@@ -99,7 +99,7 @@ void Dac_DmaCmd(boolean_t NewState)
 /**
 ******************************************************************************
     ** \brief  配置DAC的DMA下溢中断， DMA_CR0中的DMAUDRIE0
-    ** 
+    **
   ** @param  NewState  :   TRUE 或者 FALSE
     ** \retval 无
     **
@@ -112,20 +112,20 @@ void Dac_DmaITCfg(boolean_t NewState)
 /**
 ******************************************************************************
     ** \brief  获取DAC的DMA下溢中断标志位状态， DMA_SR中的DMAUDR0
-    ** 
+    **
     ** @param  无
     ** \retval TRUE 或 FALSE
     **
 ******************************************************************************/
 boolean_t Dac_GetITStatus(void)
-{  
+{
     return GetBit((uint32_t)(&(M0P_DAC->SR)), 13);
 }
 
 /**
 ******************************************************************************
     ** \brief  配置DAC的使能与禁止， DMA_CR0中的EN0
-    ** 
+    **
   ** @param  NewState  :   TRUE 或者 FALSE
     ** \retval 无
     **
@@ -138,7 +138,7 @@ void Dac_Cmd(boolean_t NewState)
 /**
 ******************************************************************************
     ** \brief  软件触发寄存器，触发DAC转换 DMA_SWTRIGR中的SWTRIG0
-    ** 
+    **
     ** @param  无
     ** \retval 无
     **
@@ -147,11 +147,11 @@ void Dac_SoftwareTriggerCmd(void)
 {
     SetBit((uint32_t)(&(M0P_DAC->SWTRIGR)), 0, 1);
 }
-    
+
 /**
 ******************************************************************************
 ** \brief  初始化DAC0
-    ** 
+    **
     ** @param  DAC_InitStruct  :   用于初始化DAC0的结构体
     ** \retval 无
     **
@@ -164,7 +164,7 @@ void Dac_Init(stc_dac_cfg_t* DAC_InitStruct)
     M0P_DAC->CR0_f.WAVE0 = DAC_InitStruct->wave_t;
     M0P_DAC->CR0_f.MAMP0 = DAC_InitStruct->mamp_t;
     M0P_DAC->CR0_f.SREF0 = DAC_InitStruct->sref_t;
-    
+
     if(DAC_InitStruct->align == DacLeftAlign)
     {
         M0P_DAC->DHR12L0_f.DHR0 = DAC_InitStruct->dhr12;
@@ -182,7 +182,7 @@ void Dac_Init(stc_dac_cfg_t* DAC_InitStruct)
 /**
 ******************************************************************************
 ** \brief  向DAC0的数据保持寄存器写数据
-    ** 
+    **
     ** @param  DAC_Channel:   Dac_0
     ** @param  DAC_Align  :   Right_Align 与Left_Align
     ** @param  DAC_Bit    :   Bit8 与Bit12
@@ -191,7 +191,7 @@ void Dac_Init(stc_dac_cfg_t* DAC_InitStruct)
     **
 ******************************************************************************/
 void Dac_SetChannelData(en_align_t DAC_Align, en_bitno_t DAC_Bit, uint16_t Data)
-{  
+{
     if(DAC_Align == DacRightAlign)
     {
         if(DAC_Bit == DacBit8)
@@ -233,7 +233,7 @@ void Dac_SetChannelData(en_align_t DAC_Align, en_bitno_t DAC_Bit, uint16_t Data)
 /**
 ******************************************************************************
     ** \brief  获取DAC数据输出寄存器DAC_DOR0
-    ** 
+    **
     ** @param  无
     ** \retval DAC_DOR0的值
     **

@@ -15,7 +15,7 @@
 * not be responsible for issues arising from incorrect user implementation
 * of the software.
 *
-* Disclaimer: 
+* Disclaimer:
 * HDSC MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
 * REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
 * ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
@@ -43,7 +43,7 @@
 /** \file sysctrl.h
  **
  ** Headerfile for SYSCTRL functions
- ** @link SYSCTRL Group Some description @endlink 
+ ** @link SYSCTRL Group Some description @endlink
  **
  ** History:
  **   - 2018-04-15   Lux     First Version
@@ -81,7 +81,7 @@ extern "C"
  ******************************************************************************/
 #define SYSTEM_XTH            32*1000*1000u     //默认32MHz,具体值应根据实际系统修改
 #define SYSTEM_XTL            32768u            //默认32768Hz,具体值应根据实际系统修改
- 
+
 /**
  *******************************************************************************
  ** \brief 系统时钟输入源类型定义
@@ -204,7 +204,7 @@ typedef enum en_sysctrl_pll_cycle
     SysctrlPllStableCycle2048  = 4u,                  ///< 2048个周期数
     SysctrlPllStableCycle4096  = 5u,                  ///< 4096个周期数
     SysctrlPllStableCycle8192  = 6u,                  ///< 8192个周期数
-    SysctrlPllStableCycle16384 = 7u,                  ///< 16384个周期数    
+    SysctrlPllStableCycle16384 = 7u,                  ///< 16384个周期数
 }en_sysctrl_pll_cycle_t;
 
 /**
@@ -216,7 +216,7 @@ typedef enum en_sysctrl_pll_infreq
     SysctrlPllInFreq4_6MHz   = 0u,                  ///< 4~16MHz
     SysctrlPllInFreq6_12MHz  = 1u,                  ///< 6~12MHz
     SysctrlPllInFreq12_20MHz = 2u,                  ///< 12~20MHz
-    SysctrlPllInFreq20_24MHz = 3u,                  ///< 20~24MHz  
+    SysctrlPllInFreq20_24MHz = 3u,                  ///< 20~24MHz
 }en_sysctrl_pll_infreq_t;
 
 /**
@@ -390,7 +390,7 @@ typedef struct
 /******************************************************************************
  * Global function prototypes (definition in C source)
  ******************************************************************************/
-///< 系统时钟初始化API:用于上电后，系统工作之前对主频及外设时钟进行初始化； 
+///< 系统时钟初始化API:用于上电后，系统工作之前对主频及外设时钟进行初始化；
 ///< 注意1：使用该初始化函数前需要根据系统，必须优先设置目标内部时钟源的TRIM值或外部时钟源的频率范围，
 ///< 注意2：XTH、XTL的频率范围设定，需要根据外部晶振决定，
 ///< 注意3：本驱动默认宏定义：SYSTEM_XTH=32MHz,SYSTEM_XTL=32768Hz,如使用其它外部晶振，必须修改这两个宏定义的值。

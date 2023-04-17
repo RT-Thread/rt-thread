@@ -1,5 +1,5 @@
 /*!
-    \file  usbh_core.c 
+    \file  usbh_core.c
     \brief this file implements the functions for the core state machine process
 
     \version 2017-06-06, V1.0.0, firmware for GD32F3x0
@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -47,7 +47,7 @@ uint8_t usbh_sof          (usb_core_handle_struct *pudev);
 uint8_t usbh_connected    (usb_core_handle_struct *pudev);
 uint8_t usbh_disconnected (usb_core_handle_struct *pudev);
 
-usbh_hcd_int_cb_struct usbh_hcd_int_cb = 
+usbh_hcd_int_cb_struct usbh_hcd_int_cb =
 {
     usbh_sof,
     usbh_connected,
@@ -87,7 +87,7 @@ void (*host_state_handle[]) (usb_core_handle_struct *pudev, usbh_host_struct *pu
 };
 
 /* the host state handle table */
-state_table_struct host_handle_table[HOST_HANDLE_TABLE_SIZE] = 
+state_table_struct host_handle_table[HOST_HANDLE_TABLE_SIZE] =
 {
     /* the current state  the current event        the next state        the event function */
     {HOST_IDLE,           HOST_EVENT_ATTACHED,     HOST_DEV_ATTACHED,    only_state_move     },
@@ -109,8 +109,8 @@ state_table_struct host_handle_table[HOST_HANDLE_TABLE_SIZE] =
     \param[out] none
     \retval     none
 */
-usbh_status_enum host_state_polling_fun (usb_core_handle_struct *pudev, 
-                                         usbh_host_struct *puhost, 
+usbh_status_enum host_state_polling_fun (usb_core_handle_struct *pudev,
+                                         usbh_host_struct *puhost,
                                          void *pustate)
 {
     usbh_state_handle_struct *p_state = (usbh_state_handle_struct *)pustate;
@@ -153,8 +153,8 @@ usbh_status_enum host_state_polling_fun (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_idle_handle (usb_core_handle_struct *pudev, 
-                              usbh_host_struct *puhost, 
+static void host_idle_handle (usb_core_handle_struct *pudev,
+                              usbh_host_struct *puhost,
                               usbh_state_handle_struct *pustate)
 {
     if (hcd_is_device_connected(pudev)) {
@@ -174,8 +174,8 @@ static void host_idle_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_dev_attached_handle (usb_core_handle_struct *pudev, 
-                                      usbh_host_struct *puhost, 
+static void host_dev_attached_handle (usb_core_handle_struct *pudev,
+                                      usbh_host_struct *puhost,
                                       usbh_state_handle_struct *pustate)
 {
     puhost->usr_cb->device_connected();
@@ -220,16 +220,16 @@ static void host_dev_attached_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_enum_handle (usb_core_handle_struct *pudev, 
-                              usbh_host_struct *puhost, 
+static void host_enum_handle (usb_core_handle_struct *pudev,
+                              usbh_host_struct *puhost,
                               usbh_state_handle_struct *pustate)
 {
     if (USBH_OK == enum_state_polling_fun(pudev, puhost, pustate)) {
         puhost->usr_cb->enumeration_finish();
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         HOST_EVENT_USER_INPUT, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         HOST_EVENT_USER_INPUT,
                          pustate->usbh_current_state);
     }
 }
@@ -242,16 +242,16 @@ static void host_enum_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_user_input_handle (usb_core_handle_struct *pudev, 
-                                    usbh_host_struct *puhost, 
+static void host_user_input_handle (usb_core_handle_struct *pudev,
+                                    usbh_host_struct *puhost,
                                     usbh_state_handle_struct *pustate)
 {
     if (USBH_USER_RESP_OK == puhost->usr_cb->user_input()) {
         if (USBH_OK == (puhost->class_init(pudev, puhost))) {
-            scd_event_handle(pudev, 
-                             puhost, 
-                             pustate, 
-                             HOST_EVENT_CLASS_REQ, 
+            scd_event_handle(pudev,
+                             puhost,
+                             pustate,
+                             HOST_EVENT_CLASS_REQ,
                              pustate->usbh_current_state);
         }
     }
@@ -265,8 +265,8 @@ static void host_user_input_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_class_request_handle (usb_core_handle_struct *pudev, 
-                                       usbh_host_struct *puhost, 
+static void host_class_request_handle (usb_core_handle_struct *pudev,
+                                       usbh_host_struct *puhost,
                                        usbh_state_handle_struct *pustate)
 {
     if (USBH_OK == class_req_state_polling_fun(pudev, puhost, pustate)) {
@@ -282,8 +282,8 @@ static void host_class_request_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_class_handle (usb_core_handle_struct *pudev, 
-                               usbh_host_struct *puhost, 
+static void host_class_handle (usb_core_handle_struct *pudev,
+                               usbh_host_struct *puhost,
                                usbh_state_handle_struct *pustate)
 {
     class_state_polling_fun(pudev, puhost, pustate);
@@ -297,8 +297,8 @@ static void host_class_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_suspended_handle (usb_core_handle_struct *pudev, 
-                                   usbh_host_struct *puhost, 
+static void host_suspended_handle (usb_core_handle_struct *pudev,
+                                   usbh_host_struct *puhost,
                                    usbh_state_handle_struct *pustate)
 {
     /* no operation */
@@ -312,8 +312,8 @@ static void host_suspended_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_error_handle (usb_core_handle_struct *pudev, 
-                               usbh_host_struct *puhost, 
+static void host_error_handle (usb_core_handle_struct *pudev,
+                               usbh_host_struct *puhost,
                                usbh_state_handle_struct *pustate)
 {
     /* re-initilaize host for new enumeration */
@@ -331,8 +331,8 @@ static void host_error_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_dev_detached_handle (usb_core_handle_struct *pudev, 
-                                      usbh_host_struct *puhost, 
+static void host_dev_detached_handle (usb_core_handle_struct *pudev,
+                                      usbh_host_struct *puhost,
                                       usbh_state_handle_struct *pustate)
 {
     /* manage user disconnect operations*/
@@ -354,15 +354,15 @@ static void host_dev_detached_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void host_detect_dev_speed_handle (usb_core_handle_struct *pudev, 
-                                          usbh_host_struct *puhost, 
+static void host_detect_dev_speed_handle (usb_core_handle_struct *pudev,
+                                          usbh_host_struct *puhost,
                                           usbh_state_handle_struct *pustate)
 {
     /* no operation */
 }
 
 /*!
-    \brief      usb connect callback function from the interrupt. 
+    \brief      usb connect callback function from the interrupt.
     \param[in]  pudev: pointer to usb device
     \param[out] none
     \retval     operation status
@@ -375,7 +375,7 @@ uint8_t usbh_connected (usb_core_handle_struct *pudev)
 }
 
 /*!
-    \brief      usb disconnect callback function from the interrupt. 
+    \brief      usb disconnect callback function from the interrupt.
     \param[in]  pudev: pointer to usb device
     \param[out] none
     \retval     operation status
@@ -388,7 +388,7 @@ uint8_t usbh_disconnected (usb_core_handle_struct *pudev)
 }
 
 /*!
-    \brief      usb sof callback function from the interrupt. 
+    \brief      usb sof callback function from the interrupt.
     \param[in]  pudev: pointer to usb device
     \param[out] none
     \retval     operation status
@@ -450,7 +450,7 @@ uint32_t hcd_is_device_connected(usb_core_handle_struct *pudev)
     \param[out] none
     \retval     urb_state_enum
 */
-urb_state_enum hcd_urb_state_get (usb_core_handle_struct *pudev, uint8_t channel_num) 
+urb_state_enum hcd_urb_state_get (usb_core_handle_struct *pudev, uint8_t channel_num)
 {
     return pudev->host.host_channel[channel_num].urb_state;
 }
@@ -462,7 +462,7 @@ urb_state_enum hcd_urb_state_get (usb_core_handle_struct *pudev, uint8_t channel
     \param[out] none
     \retval     No. of data bytes transferred
 */
-uint32_t hcd_xfer_count_get (usb_core_handle_struct *pudev, uint8_t channel_num) 
+uint32_t hcd_xfer_count_get (usb_core_handle_struct *pudev, uint8_t channel_num)
 {
     return pudev->host.host_channel[channel_num].xfer_count;
 }
@@ -474,8 +474,8 @@ uint32_t hcd_xfer_count_get (usb_core_handle_struct *pudev, uint8_t channel_num)
     \param[out] none
     \retval     host status
 */
-usbh_status_enum usbh_deinit(usb_core_handle_struct *pudev, 
-                             usbh_host_struct *puhost, 
+usbh_status_enum usbh_deinit(usb_core_handle_struct *pudev,
+                             usbh_host_struct *puhost,
                              usbh_state_handle_struct* pustate)
 {
     /* software init */
@@ -487,12 +487,12 @@ usbh_status_enum usbh_deinit(usb_core_handle_struct *pudev,
 
     usbh_channel_free(pudev, puhost->control.hc_in_num);
     usbh_channel_free(pudev, puhost->control.hc_out_num);
-    
+
     scd_init(pustate);
     scd_table_regist(pustate, host_handle_table, HOST_FSM_ID, HOST_HANDLE_TABLE_SIZE);
     scd_table_regist(pustate, enum_handle_table, ENUM_FSM_ID, ENUM_HANDLE_TABLE_SIZE);
     scd_table_regist(pustate, ctrl_handle_table, CTRL_FSM_ID, CTRL_HANDLE_TABLE_SIZE);
-  
+
     scd_begin(pustate,HOST_FSM_ID);
     scd_state_move(pustate, HOST_IDLE);
 
@@ -511,17 +511,17 @@ void scd_init(usbh_state_handle_struct* pustate)
     pustate->usbh_current_state = 0U;
     pustate->usbh_current_state_table = NULL;
     pustate->usbh_current_state_table_size = 0U;
-  
+
     pustate->usbh_current_state_stack_top = -1;
     pustate->stack->state = 0U;
     pustate->stack->table_size = 0U;
     pustate->stack->table = NULL;
-  
+
     pustate->usbh_regist_state_table_num = 0U;
     pustate->usbh_regist_state_table->table = NULL;
     pustate->usbh_regist_state_table->table_size = 0U;
     pustate->usbh_regist_state_table->id = 0U;
-  
+
     /* init the control and the enumeration polling handle flag */
     ctrl_polling_handle_flag = 0U;
     enum_polling_handle_flag = 0U;
@@ -536,9 +536,9 @@ void scd_init(usbh_state_handle_struct* pustate)
     \param[out] none
     \retval     none
 */
-void scd_table_regist (usbh_state_handle_struct* pustate, 
-                       state_table_struct* pstate_table, 
-                       uint8_t table_id, 
+void scd_table_regist (usbh_state_handle_struct* pustate,
+                       state_table_struct* pstate_table,
+                       uint8_t table_id,
                        uint8_t current_table_size)
 {
     usbh_state_regist_table_struct *cur_state_reg_table;
@@ -597,10 +597,10 @@ void scd_state_move(usbh_state_handle_struct* pustate, uint8_t state)
     \param[out] none
     \retval     host status
 */
-usbh_status_enum scd_event_handle (usb_core_handle_struct *pudev, 
-                                   usbh_host_struct *puhost, 
-                                   usbh_state_handle_struct* pustate, 
-                                   uint8_t event, 
+usbh_status_enum scd_event_handle (usb_core_handle_struct *pudev,
+                                   usbh_host_struct *puhost,
+                                   usbh_state_handle_struct* pustate,
+                                   uint8_t event,
                                    uint8_t state)
 {
     uint8_t i = 0U;

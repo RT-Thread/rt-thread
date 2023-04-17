@@ -88,7 +88,7 @@ void exmc_norsram_deinit(uint32_t exmc_norsram_region)
     \param[in]  exmc_norsram_parameter_struct: configure the EXMC NOR/SRAM parameter
                   norsram_region: EXMC_BANK0_NORSRAM_REGIONx,x=0..3
                   write_mode: EXMC_ASYN_WRITE,EXMC_SYN_WRITE
-                  extended_mode: ENABLE or DISABLE 
+                  extended_mode: ENABLE or DISABLE
                   asyn_wait: ENABLE or DISABLE
                   nwait_signal: ENABLE or DISABLE
                   memory_write: ENABLE or DISABLE
@@ -112,9 +112,9 @@ void exmc_norsram_init(exmc_norsram_parameter_struct* exmc_norsram_init_struct)
     snctl = EXMC_SNCTL(exmc_norsram_init_struct->norsram_region);
 
     /* clear relative bits */
-    snctl &= ((uint32_t)~(EXMC_SNCTL_NRMUX | EXMC_SNCTL_NRTP | EXMC_SNCTL_NRW | EXMC_SNCTL_SBRSTEN | 
-                          EXMC_SNCTL_NREN | EXMC_SNCTL_NRWTPOL | EXMC_SNCTL_WRAPEN | EXMC_SNCTL_NRWTCFG | 
-                          EXMC_SNCTL_WREN | EXMC_SNCTL_NRWTEN | EXMC_SNCTL_EXMODEN | EXMC_SNCTL_ASYNCWAIT | 
+    snctl &= ((uint32_t)~(EXMC_SNCTL_NRMUX | EXMC_SNCTL_NRTP | EXMC_SNCTL_NRW | EXMC_SNCTL_SBRSTEN |
+                          EXMC_SNCTL_NREN | EXMC_SNCTL_NRWTPOL | EXMC_SNCTL_WRAPEN | EXMC_SNCTL_NRWTCFG |
+                          EXMC_SNCTL_WREN | EXMC_SNCTL_NRWTEN | EXMC_SNCTL_EXMODEN | EXMC_SNCTL_ASYNCWAIT |
                           EXMC_SNCTL_SYNCWR ));
 
     snctl |= (uint32_t)(exmc_norsram_init_struct->address_data_mux << SNCTL_NRMUX_OFFSET) |
@@ -280,7 +280,7 @@ void exmc_nand_deinit(uint32_t exmc_nand_bank)
 void exmc_nand_init(exmc_nand_parameter_struct* exmc_nand_init_struct)
 {
     uint32_t npctl = 0x00000000U, npctcfg = 0x00000000U, npatcfg = 0x00000000U;
-    
+
     npctl = (uint32_t)(exmc_nand_init_struct->wait_feature << NPCTL_NDWTEN_OFFSET)|
                        EXMC_NPCTL_NDTP |
                        exmc_nand_init_struct->databus_width |
@@ -418,7 +418,7 @@ void exmc_pccard_init(exmc_pccard_parameter_struct* exmc_pccard_init_struct)
 {
     /* configure the EXMC bank3 PC card control register */
     EXMC_NPCTL3 = (uint32_t)(exmc_pccard_init_struct->wait_feature << NPCTL_NDWTEN_OFFSET) |
-                             EXMC_NAND_DATABUS_WIDTH_16B |  
+                             EXMC_NAND_DATABUS_WIDTH_16B |
                              exmc_pccard_init_struct->ctr_latency |
                              exmc_pccard_init_struct->atr_latency ;
 
@@ -509,7 +509,7 @@ FlagStatus exmc_flag_get(uint32_t exmc_bank,uint32_t flag)
 
     /* NAND bank1,bank2 or PC card bank3 */
     status = EXMC_NPINTEN(exmc_bank);
-    
+
     if ((status & flag) != (uint32_t)flag ){
         /* flag is reset */
         return RESET;

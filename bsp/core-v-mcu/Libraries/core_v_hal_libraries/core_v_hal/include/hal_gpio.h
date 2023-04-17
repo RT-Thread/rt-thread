@@ -20,18 +20,18 @@
 #define HAL_INCLUDE_HAL_GPIO_H_
 
 typedef enum {
-	CLEAR,
-	SET,
-	TOGGLE
+    CLEAR,
+    SET,
+    TOGGLE
 }efpgaio_enum_typedef;
 
 typedef struct {
-	uint8_t		mode;
-	uint32_t	int_type;
-	uint8_t		in_val;
-	uint8_t		out_val;
-	uint32_t	int_en;
-	uint32_t	number;
+    uint8_t     mode;
+    uint32_t    int_type;
+    uint8_t     in_val;
+    uint8_t     out_val;
+    uint32_t    int_en;
+    uint32_t    number;
 }gpio_hal_typedef;
 
 void hal_write_gpio(uint8_t gpio_num, uint8_t value);

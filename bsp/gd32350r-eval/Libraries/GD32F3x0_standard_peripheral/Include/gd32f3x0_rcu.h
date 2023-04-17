@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -296,7 +296,7 @@ typedef enum
     RCU_GPIOD   = RCU_REGIDX_BIT(IDX_AHBEN, 20U),                 /*!< GPIOD clock */
     RCU_GPIOF   = RCU_REGIDX_BIT(IDX_AHBEN, 22U),                 /*!< GPIOF clock */
     RCU_TSI     = RCU_REGIDX_BIT(IDX_AHBEN, 24U),                 /*!< TSI clock */
-    
+
     /* APB2 peripherals */
     RCU_CFGCMP  = RCU_REGIDX_BIT(IDX_APB2EN, 0U),                 /*!< CFGCMP clock */
     RCU_ADC     = RCU_REGIDX_BIT(IDX_APB2EN, 9U),                 /*!< ADC clock */
@@ -306,7 +306,7 @@ typedef enum
     RCU_TIMER14 = RCU_REGIDX_BIT(IDX_APB2EN, 16U),                /*!< TIMER14 clock */
     RCU_TIMER15 = RCU_REGIDX_BIT(IDX_APB2EN, 17U),                /*!< TIMER15 clock */
     RCU_TIMER16 = RCU_REGIDX_BIT(IDX_APB2EN, 18U),                /*!< TIMER16 clock */
-    
+
     /* APB1 peripherals */
     RCU_TIMER1  = RCU_REGIDX_BIT(IDX_APB1EN, 0U),                 /*!< TIMER1 clock */
     RCU_TIMER2  = RCU_REGIDX_BIT(IDX_APB1EN, 1U),                 /*!< TIMER2 clock */
@@ -324,7 +324,7 @@ typedef enum
     RCU_USBFS   = RCU_REGIDX_BIT(IDX_AHBEN, 12U),                 /*!< USBFS clock */
 #endif /* GD32F350 */
     RCU_RTC     = RCU_REGIDX_BIT(IDX_BDCTL, 15U),                 /*!< RTC clock */
-    
+
     /* RCU_ADDAPB1EN */
     RCU_CTC     = RCU_REGIDX_BIT(IDX_ADDAPB1EN, 27U)              /*!< CTC clock */
 }rcu_periph_enum;
@@ -347,7 +347,7 @@ typedef enum
     RCU_GPIODRST   = RCU_REGIDX_BIT(IDX_AHBRST, 20U),             /*!< GPIOD reset */
     RCU_GPIOFRST   = RCU_REGIDX_BIT(IDX_AHBRST, 22U),             /*!< GPIOF reset */
     RCU_TSIRST     = RCU_REGIDX_BIT(IDX_AHBRST, 24U),             /*!< TSI reset */
-    
+
     /* APB2 peripherals reset */
     RCU_CFGCMPRST  = RCU_REGIDX_BIT(IDX_APB2RST, 0U),             /*!< CFGCMP reset */
     RCU_ADCRST     = RCU_REGIDX_BIT(IDX_APB2RST, 9U),             /*!< ADC reset */
@@ -357,7 +357,7 @@ typedef enum
     RCU_TIMER14RST = RCU_REGIDX_BIT(IDX_APB2RST, 16U),            /*!< TIMER14 reset */
     RCU_TIMER15RST = RCU_REGIDX_BIT(IDX_APB2RST, 17U),            /*!< TIMER15 reset */
     RCU_TIMER16RST = RCU_REGIDX_BIT(IDX_APB2RST, 18U),            /*!< TIMER16 reset */
-    
+
     /* APB1 peripherals reset */
     RCU_TIMER1RST  = RCU_REGIDX_BIT(IDX_APB1RST, 0U),             /*!< TIMER1 reset */
     RCU_TIMER2RST  = RCU_REGIDX_BIT(IDX_APB1RST, 1U),             /*!< TIMER2 reset */
@@ -689,7 +689,7 @@ typedef enum
 #define RCU_ADC_IRC28M_DIV2         ((uint32_t)0x00000000U)               /*!< IRC28M/2 select to ADC clock */
 #define RCU_ADC_IRC28M_DIV1         RCU_CFG2_IRC28MDIV                    /*!< IRC28M select to ADC clock */
 
-/* CK48M clock source selection */ 
+/* CK48M clock source selection */
 #define RCU_CK48MSRC_PLL48M         ((uint32_t)0x00000000U)               /*!< CK48M source clock select PLL48M */
 #define RCU_CK48MSRC_IRC48M         RCU_ADDCTL_CK48MSEL                   /*!< CK48M source clock select IRC48M */
 

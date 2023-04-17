@@ -121,7 +121,7 @@
 #define BKP_INT_FLAG_TAMPER             BKP_TPCS_TIF             /*!< tamper interrupt flag */
 
 /* BKP data register number */
-typedef enum 
+typedef enum
 {
     BKP_DATA_0 = 1,                         /*!< BKP data register 0 */
     BKP_DATA_1,                             /*!< BKP data register 1 */

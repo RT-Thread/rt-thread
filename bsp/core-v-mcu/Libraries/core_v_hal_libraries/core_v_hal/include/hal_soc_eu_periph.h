@@ -104,96 +104,96 @@ extern "C" {
 
 static inline void soc_eu_fc_write(uint32_t val, uint32_t reg)
 {
-	writew(val, (uintptr_t)(SOC_EU_ADDR + SOC_FC_MASK0_OFFSET + reg));
+    writew(val, (uintptr_t)(SOC_EU_ADDR + SOC_FC_MASK0_OFFSET + reg));
 }
 
 static inline uint32_t soc_eu_fc_read(uint32_t reg)
 {
-	return readw((uintptr_t)(SOC_EU_ADDR + SOC_FC_MASK0_OFFSET + reg));
+    return readw((uintptr_t)(SOC_EU_ADDR + SOC_FC_MASK0_OFFSET + reg));
 }
 
 static inline void soc_eu_cl_write(uint32_t val, uint32_t reg)
 {
-	writew(val, (uintptr_t)(SOC_EU_ADDR + SOC_CL_MASK0_OFFSET + reg));
+    writew(val, (uintptr_t)(SOC_EU_ADDR + SOC_CL_MASK0_OFFSET + reg));
 }
 
 static inline uint32_t soc_eu_cl_read(uint32_t reg)
 {
-	return readw((uintptr_t)(SOC_EU_ADDR + SOC_CL_MASK0_OFFSET + reg));
+    return readw((uintptr_t)(SOC_EU_ADDR + SOC_CL_MASK0_OFFSET + reg));
 }
 
 static inline void soc_eu_pr_write(uint32_t val, uint32_t reg)
 {
-	writew(val, (uintptr_t)(SOC_EU_ADDR + SOC_PR_MASK0_OFFSET + reg));
+    writew(val, (uintptr_t)(SOC_EU_ADDR + SOC_PR_MASK0_OFFSET + reg));
 }
 
 static inline uint32_t soc_eu_pr_read(uint32_t reg)
 {
-	return readw((uintptr_t)(SOC_EU_ADDR + SOC_PR_MASK0_OFFSET + reg));
+    return readw((uintptr_t)(SOC_EU_ADDR + SOC_PR_MASK0_OFFSET + reg));
 }
 
 static inline void hal_soc_eu_set_fc_mask(int evt) {
-	if (evt >= 256 || evt < 0)
-		return;
+    if (evt >= 256 || evt < 0)
+        return;
 
-	int shift = evt % 32;
-	uint32_t reg_offset = evt/32 * 4;
-	soc_eu_fc_write(soc_eu_fc_read(reg_offset) & ~(1 << shift), reg_offset);
+    int shift = evt % 32;
+    uint32_t reg_offset = evt/32 * 4;
+    soc_eu_fc_write(soc_eu_fc_read(reg_offset) & ~(1 << shift), reg_offset);
 }
 
 static inline void hal_soc_eu_set_pr_mask(int evt) {
-	if (evt >= 256 || evt < 0)
-		return;
+    if (evt >= 256 || evt < 0)
+        return;
 
-	int shift = evt % 32;
-	uint32_t reg_offset = evt/32 * 4;
-	soc_eu_pr_write(soc_eu_pr_read(reg_offset) & ~(1 << shift), reg_offset);
+    int shift = evt % 32;
+    uint32_t reg_offset = evt/32 * 4;
+    soc_eu_pr_write(soc_eu_pr_read(reg_offset) & ~(1 << shift), reg_offset);
 }
 
 static inline void hal_soc_eu_set_cl_mask(int clusterId, int evt) {
-	if (evt >= 256 || evt < 0)
-		return;
+    if (evt >= 256 || evt < 0)
+        return;
 
-	int shift = evt % 32;
-	uint32_t reg_offset = evt/32 * 4;
-	soc_eu_cl_write(soc_eu_cl_read(reg_offset) & ~(1 << shift), reg_offset);
+    int shift = evt % 32;
+    uint32_t reg_offset = evt/32 * 4;
+    soc_eu_cl_write(soc_eu_cl_read(reg_offset) & ~(1 << shift), reg_offset);
 }
 
 static inline void hal_soc_eu_clear_fc_mask(int evt) {
-	if (evt >= 256 || evt < 0)
-		return;
+    if (evt >= 256 || evt < 0)
+        return;
 
-	int shift = evt % 32;
-	uint32_t reg_offset = evt/32 * 4;
-	soc_eu_fc_write(soc_eu_fc_read(reg_offset) | (1 << shift), reg_offset);
+    int shift = evt % 32;
+    uint32_t reg_offset = evt/32 * 4;
+    soc_eu_fc_write(soc_eu_fc_read(reg_offset) | (1 << shift), reg_offset);
 }
 
 static inline void hal_soc_eu_clear_pr_mask(int evt) {
-	if (evt >= 256 || evt < 0)
-		return;
+    if (evt >= 256 || evt < 0)
+        return;
 
-	int shift = evt % 32;
-	uint32_t reg_offset = evt/32 * 4;
-	soc_eu_pr_write(soc_eu_pr_read(reg_offset) | (1 << shift), reg_offset);
+    int shift = evt % 32;
+    uint32_t reg_offset = evt/32 * 4;
+    soc_eu_pr_write(soc_eu_pr_read(reg_offset) | (1 << shift), reg_offset);
 }
 
 static inline void hal_soc_eu_clear_cl_mask(int clusterId, int evt) {
-	if (evt >= 256 || evt < 0)
-		return;
+    if (evt >= 256 || evt < 0)
+        return;
 
-	int shift = evt % 32;
-	uint32_t reg_offset = evt/32 * 4;
-	soc_eu_cl_write(soc_eu_cl_read(reg_offset) | (1 << shift), reg_offset);
+    int shift = evt % 32;
+    uint32_t reg_offset = evt/32 * 4;
+    soc_eu_cl_write(soc_eu_cl_read(reg_offset) | (1 << shift), reg_offset);
 }
 
 
 static inline void hal_soc_eu_set_mask(uint32_t mask) {
-	writew(mask, (uintptr_t)(SOC_EU_ADDR + SOC_EVENT_OFFSET));
+    writew(mask, (uintptr_t)(SOC_EU_ADDR + SOC_EVENT_OFFSET));
 }
 
 static inline void hal_soc_eu_configure(int cluster, int event, int active) {
-	abort();
-	/* TODO: implement this */
+    abort();
+    /* TODO: implement this */
 /* #if SOC_SW_EVENT0 < 32 */
 /*     uint32_t mask = (cluster == FC_CLUSTER_ID) ? (SOCEU->FC_MASK_LSB) : (SOCEU->CL_MASK_LSB); */
 /*     int fullEvent = event - SOC_SW_EVENT0; */

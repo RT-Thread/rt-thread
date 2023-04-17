@@ -1,20 +1,20 @@
 /***********************************************************************
  * Filename    : hal_lpuart.c
  * Description : lpuart driver source file
- * Author(s)   : xwl  
+ * Author(s)   : xwl
  * version     : V1.0
  * Modify date : 2021-04-02
  ***********************************************************************/
-#include "ACM32Fxx_HAL.h"  
+#include "ACM32Fxx_HAL.h"
 
 
 /*********************************************************************************
-* Function    : HAL_TIMER_ConfigBreakDeadTime  
-* Description : configure deadtime parameter   
-* Input       : timer handler, break and deadtime configuration  
-* Output      : none  
-* Author      : xwl                       
-**********************************************************************************/  
+* Function    : HAL_TIMER_ConfigBreakDeadTime
+* Description : configure deadtime parameter
+* Input       : timer handler, break and deadtime configuration
+* Output      : none
+* Author      : xwl
+**********************************************************************************/
 void HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim, TIM_BreakDeadTimeConfigTypeDef * sBreakDeadTimeConfig)
 {
   /* Keep this variable initialized to 0 as it is used to configure BDTR register */
@@ -29,21 +29,21 @@ void HAL_TIMEx_ConfigBreakDeadTime(TIM_HandleTypeDef *htim, TIM_BreakDeadTimeCon
     MODIFY_REG(break_deadtime_reg, TIM_BDTR_BKP, sBreakDeadTimeConfig->BreakPolarity);
     MODIFY_REG(break_deadtime_reg, TIM_BDTR_AOE, sBreakDeadTimeConfig->AutomaticOutput);
     MODIFY_REG(break_deadtime_reg, TIM_BDTR_BKF, (sBreakDeadTimeConfig->BreakFilter << TIM_BDTR_BKF_Pos));
-  
+
     /* Set TIMx_BDTR */
-    htim->Instance->BDTR = break_deadtime_reg;  
+    htim->Instance->BDTR = break_deadtime_reg;
 
 }
-  
+
 /*********************************************************************************
-* Function    : HAL_TIMEx_ConfigBreakInput  
-* Description : Configures the break input source.  
+* Function    : HAL_TIMEx_ConfigBreakInput
+* Description : Configures the break input source.
 * Input       :
-              htim: timer handler 
-              BreakInput: TIM_BREAKINPUT_BRK  
-              sBreakInputConfig: Break input source configuration   
-* Output      :   
-* Author      : xwl                       
+              htim: timer handler
+              BreakInput: TIM_BREAKINPUT_BRK
+              sBreakInputConfig: Break input source configuration
+* Output      :
+* Author      : xwl
 **********************************************************************************/
 HAL_StatusTypeDef HAL_TIMEx_ConfigBreakInput(TIM_HandleTypeDef *htim, uint32_t BreakInput,
                                              TIMEx_BreakInputConfigTypeDef *sBreakInputConfig)
@@ -52,7 +52,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakInput(TIM_HandleTypeDef *htim, uint32_t B
     uint32_t bkin_enable_mask;
     uint32_t bkin_polarity_mask;
     uint32_t bkin_enable_bitpos;
-    uint32_t bkin_polarity_bitpos;   
+    uint32_t bkin_polarity_bitpos;
 
     switch(sBreakInputConfig->Source)
     {
@@ -64,7 +64,7 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakInput(TIM_HandleTypeDef *htim, uint32_t B
             bkin_polarity_bitpos = TIM1_AF1_BKINP_Pos;
             break;
         }
-#ifdef HAL_COMP_MODULE_ENABLED  
+#ifdef HAL_COMP_MODULE_ENABLED
         case TIM_BREAKINPUTSOURCE_COMP1:
         {
             bkin_enable_mask = TIM1_AF1_BKCMP1E;
@@ -92,24 +92,24 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakInput(TIM_HandleTypeDef *htim, uint32_t B
             break;
         }
     }
-  
+
     switch(BreakInput)
     {
         case TIM_BREAKINPUT_BRK:
         {
             /* Get the TIMx_AF1 register value */
             tmporx = htim->Instance->AF1;
-        
+
             /* Enable the break input */
             tmporx &= ~bkin_enable_mask;
             tmporx |= (sBreakInputConfig->Enable << bkin_enable_bitpos) & bkin_enable_mask;
-        
+
             /* Set the break input polarity */
             tmporx &= ~bkin_polarity_mask;
             tmporx |= (sBreakInputConfig->Polarity << bkin_polarity_bitpos) & bkin_polarity_mask;
-        
+
             /* Set TIMx_AF1 */
-            htim->Instance->AF1 = tmporx;        
+            htim->Instance->AF1 = tmporx;
             break;
     }
 
@@ -117,21 +117,21 @@ HAL_StatusTypeDef HAL_TIMEx_ConfigBreakInput(TIM_HandleTypeDef *htim, uint32_t B
       break;
     }
 
-    return HAL_OK;  
-}   
+    return HAL_OK;
+}
 
 
 /*********************************************************************************
-* Function    : HAL_TIMEx_ConfigCommutEvent  
-* Description : Configure the TIM commutation event sequence. This function is mandatory to use the commutation event 
+* Function    : HAL_TIMEx_ConfigCommutEvent
+* Description : Configure the TIM commutation event sequence. This function is mandatory to use the commutation event
                 in order to update the configuration at each commutation detection on the TRGI input of the Timer.
 * Input       :
-              htim: timer handler 
-              InputTrigger: TIM_TRIGGER_SOURCE_ITR0, TIM_TRIGGER_SOURCE_ITR1...   
-              CommutationSource: TIM_COMMUTATION_TRGI, TIM_COMMUTATION_SOFTWARE  
-* Output      :   
-* Author      : xwl                       
-**********************************************************************************/ 
+              htim: timer handler
+              InputTrigger: TIM_TRIGGER_SOURCE_ITR0, TIM_TRIGGER_SOURCE_ITR1...
+              CommutationSource: TIM_COMMUTATION_TRGI, TIM_COMMUTATION_SOFTWARE
+* Output      :
+* Author      : xwl
+**********************************************************************************/
 void HAL_TIMEx_ConfigCommutEvent(TIM_HandleTypeDef *htim, uint32_t  InputTrigger, uint32_t  CommutationSource)
 {
 

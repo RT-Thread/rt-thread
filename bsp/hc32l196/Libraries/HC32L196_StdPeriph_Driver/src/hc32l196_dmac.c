@@ -202,13 +202,13 @@ en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_cfg_t* pstcCfg)
     ASSERT(IS_VALID_DST_ADDR_MODE(pstcCfg->enDstAddrMode));
     ASSERT(IS_VALID_PRIO_MODE(pstcCfg->enPriority));
     ASSERT(IS_VALID_TRANSFER_MODE(pstcCfg->enTransferMode));
-      
+
     /* 检查通道值有效性和pstcCfg是否空指针 */
     if (NULL == pstcCfg)
     {
       return ErrorInvalidParameter;
     }
-  
+
   *(&M0P_DMAC->CONFB0+enCh) = 0;
     *(&M0P_DMAC->CONFB0+enCh) = (uint32_t)pstcCfg->enMode             |
                                   (uint32_t)pstcCfg->enTransferWidth    |
@@ -223,13 +223,13 @@ en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_cfg_t* pstcCfg)
     *(&M0P_DMAC->CONFA0+enCh) &= ((uint32_t)~(DMA_TRI_SEL_Msk | DMA_BC_SEL_Msk | DMA_TC_SEL_Msk));
     *(&M0P_DMAC->CONFA0+enCh)    |= (uint32_t)(pstcCfg->u16TransferCnt - 1)    |
                                    ((uint32_t)(pstcCfg->u16BlockSize - 1)<<16)|
-                                   (uint32_t)(pstcCfg->enRequestNum<<22);        
+                                   (uint32_t)(pstcCfg->enRequestNum<<22);
 
-    M0P_DMAC->CONF |= (uint32_t)(pstcCfg->enPriority);                           
-    
+    M0P_DMAC->CONF |= (uint32_t)(pstcCfg->enPriority);
+
   *(&M0P_DMAC->SRCADR0+enCh) = (uint32_t)(pstcCfg->u32SrcAddress);
     *(&M0P_DMAC->DSTADR0+enCh) = (uint32_t)(pstcCfg->u32DstAddress);
-    
+
   return Ok;
 }
 /**
@@ -307,7 +307,7 @@ void Dma_SwStop(en_dma_channel_t enCh)
 ******************************************************************************/
 void Dma_EnableChannelIrq(en_dma_channel_t enCh)
 {
-  *(&M0P_DMAC->CONFB0+enCh) |= DMA_FIS_IE_Msk; 
+  *(&M0P_DMAC->CONFB0+enCh) |= DMA_FIS_IE_Msk;
 }
 
 /**
@@ -404,7 +404,7 @@ void Dma_DisableChannel(en_dma_channel_t enCh)
 void Dma_SetBlockSize(en_dma_channel_t enCh, uint16_t u16BlkSize)
 {
   volatile uint32_t *pReg = (&M0P_DMAC->CONFA0+enCh);
-    
+
   *pReg = ((*pReg) & ((uint32_t)~DMA_BC_SEL_Msk)) | ((((uint32_t)u16BlkSize-1)&0x0f)<<DMA_BC_SEL_Pos);
 }
 
@@ -423,7 +423,7 @@ void Dma_SetBlockSize(en_dma_channel_t enCh, uint16_t u16BlkSize)
 void Dma_SetTransferCnt(en_dma_channel_t enCh, uint16_t u16TrnCnt)
 {
   volatile uint32_t *pReg = (&M0P_DMAC->CONFA0+enCh);
-    
+
   *pReg = ((*pReg)&((uint32_t)~DMA_TC_SEL_Msk))|(((uint32_t)(u16TrnCnt-1)<<DMA_TC_SEL_Pos));
 }
 
@@ -533,7 +533,7 @@ void Dma_RecoverChannelTranfer(en_dma_channel_t enCh)
 void Dma_SetTransferWidth(en_dma_channel_t enCh, en_dma_transfer_width_t enWidth)
 {
   volatile uint32_t *pReg = (&M0P_DMAC->CONFA0+enCh);
-    
+
   *pReg = ((*pReg)&((uint32_t)~DMA_TRANSFER_WIDTH_Msk))|((uint32_t)enWidth);
 }
 /**

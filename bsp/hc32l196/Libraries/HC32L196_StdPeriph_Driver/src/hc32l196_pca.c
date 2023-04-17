@@ -170,7 +170,7 @@ void Pca_ConfModulexIt(en_pca_module_t Modulex, boolean_t NewStatus)
             break;
         case PcaModule1:
             SetBit((uint32_t)(&(M0P_PCA->CCAPM1)), 0, NewStatus);
-            break;        
+            break;
         case PcaModule2:
             SetBit((uint32_t)(&(M0P_PCA->CCAPM2)), 0, NewStatus);
             break;
@@ -210,7 +210,7 @@ void Pca_M0Init(stc_pcacfg_t* InitStruct)
     }
     else
     {
-        M0P_PCA->CCAP0_f.CCAP0 = InitStruct->pca_ccap;        
+        M0P_PCA->CCAP0_f.CCAP0 = InitStruct->pca_ccap;
     }
     M0P_PCA->CARR_f.CARR    = InitStruct->pca_carr;
 }
@@ -240,7 +240,7 @@ void Pca_M1Init(stc_pcacfg_t* InitStruct)
     }
     else
     {
-        M0P_PCA->CCAP1_f.CCAP1 = InitStruct->pca_ccap;        
+        M0P_PCA->CCAP1_f.CCAP1 = InitStruct->pca_ccap;
     }
     M0P_PCA->CARR_f.CARR    = InitStruct->pca_carr;
 }
@@ -270,7 +270,7 @@ void Pca_M2Init(stc_pcacfg_t* InitStruct)
     }
     else
     {
-        M0P_PCA->CCAP2_f.CCAP2 = InitStruct->pca_ccap;        
+        M0P_PCA->CCAP2_f.CCAP2 = InitStruct->pca_ccap;
     }
     M0P_PCA->CARR_f.CARR    = InitStruct->pca_carr;
 }
@@ -300,7 +300,7 @@ void Pca_M3Init(stc_pcacfg_t* InitStruct)
     }
     else
     {
-        M0P_PCA->CCAP3_f.CCAP3 = InitStruct->pca_ccap;        
+        M0P_PCA->CCAP3_f.CCAP3 = InitStruct->pca_ccap;
     }
     M0P_PCA->CARR_f.CARR    = InitStruct->pca_carr;
 }
@@ -330,7 +330,7 @@ void Pca_M4Init(stc_pcacfg_t* InitStruct)
     }
     else
     {
-        M0P_PCA->CCAP4_f.CCAP4 = InitStruct->pca_ccap;        
+        M0P_PCA->CCAP4_f.CCAP4 = InitStruct->pca_ccap;
     }
     M0P_PCA->CARR_f.CARR    = InitStruct->pca_carr;
 }
@@ -359,8 +359,8 @@ void Pca_SetCnt(uint16_t cnt)
     if(GetBit((uint32_t)(&(M0P_PCA->CCON)), 6)==TRUE)
     {
         Pca_StartPca(FALSE);
-        M0P_PCA->CNT_f.CNT = cnt;        
-        Pca_StartPca(TRUE);        
+        M0P_PCA->CNT_f.CNT = cnt;
+        Pca_StartPca(TRUE);
     }
     else
     {
@@ -410,7 +410,7 @@ void Pca_SetCcap(en_pca_module_t Modulex, uint16_t Value)
             break;
         default:
             break;
-    }    
+    }
 }
 
 /**
@@ -543,7 +543,7 @@ void Pca_GetCcapHL(en_pca_module_t Modulex, uint8_t *ValueH, uint8_t *ValueL)
             break;
         default:
             break;
-    }    
+    }
 }
 /******************************************************************************
  * EOF (not truncated)

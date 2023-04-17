@@ -43,7 +43,7 @@
 /** \file wdt.h
  **
  ** Headerfile for WDT functions
- **  
+ **
  **
  ** History:
  **   - 2017-05-10   Cathy     First Version

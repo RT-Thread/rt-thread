@@ -43,7 +43,7 @@
 /** \file uart.h
  **
  ** Headerfile for UART functions
- **  
+ **
  **
  ** History:
  **   - 2017-05-10   Cathy     First Version
@@ -89,8 +89,8 @@ extern "C"
 typedef enum en_uart_mmdorck
 {
     UartMskDataOrAddr = 0u,     ///<多机模式时，通过读写SBUF[8]决定帧为数据帧或地址帧
-    UartMskEven       = 0x4u,   ///<非多机模式偶校验   
-    UartMskOdd        = 0x8u,   ///<非多机模式奇校验    
+    UartMskEven       = 0x4u,   ///<非多机模式偶校验
+    UartMskOdd        = 0x8u,   ///<非多机模式奇校验
 }en_uart_mmdorck_t;
 
 /**
@@ -110,7 +110,7 @@ typedef struct stc_uart_multimode
 
 typedef enum en_uart_mode
 {
-    UartMskMode0 = 0x00u, ///<模式0    
+    UartMskMode0 = 0x00u, ///<模式0
     UartMskMode1 = 0x40u, ///<模式1
     UartMskMode2 = 0x80u, ///<模式2
     UartMskMode3 = 0xc0u, ///<模式3
@@ -122,7 +122,7 @@ typedef enum en_uart_mode
 
 typedef enum en_uart_stop
 {
-    UartMsk1bit   = 0x0000u, ///<1位停止位 
+    UartMsk1bit   = 0x0000u, ///<1位停止位
     UartMsk1_5bit = 0x4000u, ///<1.5位停止位
     UartMsk2bit   = 0x8000u, ///<2位停止位
 } en_uart_stop_t;
@@ -132,12 +132,12 @@ typedef enum en_uart_stop
  ******************************************************************************/
 typedef enum en_uart_func
 {
-    UartRenFunc    = 4u,    ///<0-TX; ///<1-非mode0模式代表RX&TX ,mode0模式代表RX;       
-    UartDmaRxFunc  = 16u,   ///<DMA接收功能   
+    UartRenFunc    = 4u,    ///<0-TX; ///<1-非mode0模式代表RX&TX ,mode0模式代表RX;
+    UartDmaRxFunc  = 16u,   ///<DMA接收功能
     UartDmaTxFunc  = 17u,   ///<DMA发送功能
     UartRtsFunc    = 18u,   ///<硬件流RTS功能
     UartCtsFunc    = 19u,   ///<硬件流CTS功能
-    UartHdFunc     = 22u,   ///<单线半双工功能    
+    UartHdFunc     = 22u,   ///<单线半双工功能
 }en_uart_func_t;
 /**
  ******************************************************************************
@@ -146,11 +146,11 @@ typedef enum en_uart_func
 typedef enum en_uart_irq_sel
 {
     UartRxIrq  = 0u,    ///<接收中断使能
-    UartTxIrq  = 1u,    ///<发送中断使能        
+    UartTxIrq  = 1u,    ///<发送中断使能
     UartTxEIrq = 8u,    ///<TX空中断使能
     UartPEIrq  = 13u,   ///<奇偶校验中断使能
-    UartCtsIrq = 20u,   ///<CTS信号翻转中断使能    
-    UartFEIrq  = 21u,   ///<帧错误中断使能 
+    UartCtsIrq = 20u,   ///<CTS信号翻转中断使能
+    UartFEIrq  = 21u,   ///<帧错误中断使能
 }en_uart_irq_sel_t;
 
 /**
@@ -162,7 +162,7 @@ typedef enum en_uart_status
     UartRC    = 0u,  ///<接收数据完成标记
     UartTC    = 1u,  ///<发送数据完成标记
     UartFE    = 2u,  ///<帧错误标记
-    UartTxe   = 3u,  ///<TXbuff空标记    
+    UartTxe   = 3u,  ///<TXbuff空标记
     UartPE    = 4u,  ///<奇偶校验错误标记
     UartCtsIf = 5u,  ///<CTS中断标记
     UartCts   = 6u,  ///<CTS信号标记
@@ -218,12 +218,12 @@ boolean_t Uart_GetRb8(M0P_UART_TypeDef* UARTx);
 //中断相关设置函数
 en_result_t Uart_EnableIrq(M0P_UART_TypeDef* UARTx, en_uart_irq_sel_t enIrqSel);
 en_result_t Uart_DisableIrq(M0P_UART_TypeDef* UARTx, en_uart_irq_sel_t enIrqSel);
-                             
+
 //功能使能和禁止
 en_result_t Uart_EnableFunc(M0P_UART_TypeDef* UARTx, en_uart_func_t enFunc);
 en_result_t Uart_DisableFunc(M0P_UART_TypeDef* UARTx, en_uart_func_t enFunc);
 
-//状态位的获取和清除 
+//状态位的获取和清除
 uint8_t Uart_GetIsr(M0P_UART_TypeDef* UARTx);
 boolean_t Uart_GetStatus(M0P_UART_TypeDef* UARTx,en_uart_status_t enStatus);
 en_result_t Uart_ClrIsr(M0P_UART_TypeDef* UARTx);

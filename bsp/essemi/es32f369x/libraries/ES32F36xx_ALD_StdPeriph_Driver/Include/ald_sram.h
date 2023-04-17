@@ -52,29 +52,29 @@
   * @{
   */
 
-/** 
-  * @brief  ALD SRAM State structures definition  
-  */ 
+/**
+  * @brief  ALD SRAM State structures definition
+  */
 typedef enum {
-	ALD_SRAM_STATE_RESET     = 0x00U,	/**< SRAM not yet initialized or disabled */
-	ALD_SRAM_STATE_READY     = 0x01U,	/**< SRAM initialized and ready for use */
-	ALD_SRAM_STATE_BUSY      = 0x02U,	/**< SRAM internal process is ongoing */
-	ALD_SRAM_STATE_ERROR     = 0x03U,	/**< SRAM error state */
-	ALD_SRAM_STATE_PROTECTED = 0x04U	/**< SRAM peripheral NORSRAM device write protected */
+    ALD_SRAM_STATE_RESET     = 0x00U,   /**< SRAM not yet initialized or disabled */
+    ALD_SRAM_STATE_READY     = 0x01U,   /**< SRAM initialized and ready for use */
+    ALD_SRAM_STATE_BUSY      = 0x02U,   /**< SRAM internal process is ongoing */
+    ALD_SRAM_STATE_ERROR     = 0x03U,   /**< SRAM error state */
+    ALD_SRAM_STATE_PROTECTED = 0x04U    /**< SRAM peripheral NORSRAM device write protected */
 } ald_sram_state_t;
 
-/** 
-  * @brief  SRAM handle Structure definition  
-  */ 
+/**
+  * @brief  SRAM handle Structure definition
+  */
 typedef struct {
-	EBI_NOR_SRAM_TypeDef *instance;		/**< Register base address */ 
-	EBI_NOR_SRAM_EXTENDED_TypeDef *ext;	/**< Extended mode register base address */
-	ald_ebi_nor_sram_init_t init;		/**< SRAM device control configuration parameters */
-	lock_state_t lock;			/**< SRAM locking object */ 
-	__IO ald_sram_state_t state;		/**< SRAM device access state */
+    EBI_NOR_SRAM_TypeDef *instance;     /**< Register base address */
+    EBI_NOR_SRAM_EXTENDED_TypeDef *ext; /**< Extended mode register base address */
+    ald_ebi_nor_sram_init_t init;       /**< SRAM device control configuration parameters */
+    lock_state_t lock;          /**< SRAM locking object */
+    __IO ald_sram_state_t state;        /**< SRAM device access state */
 
-	dma_handle_t hdma;			/**< SRAM DMA Handle parameters */
-	void(*cplt_cbk)(void *arg);             /**< DMA transmit completely callback function */
+    dma_handle_t hdma;          /**< SRAM DMA Handle parameters */
+    void(*cplt_cbk)(void *arg);             /**< DMA transmit completely callback function */
 
 } sram_handle_t;
 /**
@@ -87,7 +87,7 @@ typedef struct {
 /** @addtogroup SRAM_Public_Functions_Group1
   * @{
   */
-/* Initialization functions */  
+/* Initialization functions */
 ald_status_t ald_sram_init(sram_handle_t *hperh, ald_ebi_nor_sram_timing_t *timing, ald_ebi_nor_sram_timing_t *ext_timing);
 ald_status_t  ald_sram_deinit(sram_handle_t *hperh);
 /**
@@ -135,7 +135,7 @@ ald_sram_state_t ald_sram_get_state(sram_handle_t *hperh);
   */
 /**
   * @}
-  */ 
+  */
 #ifdef __cplusplus
 }
 #endif

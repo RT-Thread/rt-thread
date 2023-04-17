@@ -71,7 +71,7 @@
 #define IS_VALID_SLEEPDEEP(x)           (SlpDpDisable  == (x) ||\
                                          SlpDpEnable   == (x))
 #define IS_VALID_SLEEPONEXIT(x)         (SlpExtDisable == (x) ||\
-                                         SlpExtEnable  == (x))                                         
+                                         SlpExtEnable  == (x))
 
 /*******************************************************************************
  * Local type definitions ('typedef')
@@ -94,23 +94,23 @@
  **
  **
  ** \param [in]  pstcConfig           低功耗模式配置结构体指针
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Lpm_Config(stc_lpm_config_t* pstcConfig)
 {
     en_result_t enResult = Error;
-  
+
     ASSERT(IS_VALID_SEVONPEND(pstcConfig->enSEVONPEND));
     ASSERT(IS_VALID_SLEEPDEEP(pstcConfig->enSLEEPDEEP));
     ASSERT(IS_VALID_SLEEPONEXIT(pstcConfig->enSLEEPONEXIT));
-    
+
     SCB->SCR = pstcConfig->enSEVONPEND   ? (SCB->SCR | SCB_SCR_SEVONPEND_Msk)   : (SCB->SCR & ~SCB_SCR_SEVONPEND_Msk);
     SCB->SCR = pstcConfig->enSLEEPDEEP   ? (SCB->SCR | SCB_SCR_SLEEPDEEP_Msk)   : (SCB->SCR & ~SCB_SCR_SLEEPDEEP_Msk);
     SCB->SCR = pstcConfig->enSLEEPONEXIT ? (SCB->SCR | SCB_SCR_SLEEPONEXIT_Msk) : (SCB->SCR & ~SCB_SCR_SLEEPONEXIT_Msk);
-       
+
     enResult = Ok;
-    
+
     return enResult;
 }
 
@@ -119,15 +119,15 @@ en_result_t Lpm_Config(stc_lpm_config_t* pstcConfig)
  ** \brief 进入睡眠模式
  **
  **
- ** 
- ** \retval NULL                                     
+ **
+ ** \retval NULL
  *****************************************************************************/
 void Lpm_GotoLpmMode(void)
 {
     __WFI();
 }
-                        
-//@} // LpmGroup                                                                           
+
+//@} // LpmGroup
 
 /*******************************************************************************
  * EOF (not truncated)

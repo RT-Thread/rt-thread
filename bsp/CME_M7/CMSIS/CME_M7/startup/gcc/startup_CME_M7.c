@@ -199,8 +199,8 @@ static void Reset_Handler(void)
           "        strlt   r2, [r0], #4\n"
           "        blt     zero_loop");
 
-    // call system init.	
-	SystemInit();
+    // call system init.
+    SystemInit();
 
     //
     // Call the application's entry point.

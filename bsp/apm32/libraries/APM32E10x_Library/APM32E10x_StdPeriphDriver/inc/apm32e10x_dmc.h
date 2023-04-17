@@ -148,7 +148,7 @@ typedef enum
 }DMC_PRECHARGE_T;
 
 /**
- * @brief   Last Data Next Precharge For Write Time Select 
+ * @brief   Last Data Next Precharge For Write Time Select
  */
 typedef enum
 {
@@ -235,7 +235,7 @@ typedef enum
 }DMC_MEMORY_SIZE_T;
 
 /**
- * @brief    Open Banks Of Number 
+ * @brief    Open Banks Of Number
  */
 typedef enum
 {

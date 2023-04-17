@@ -28,7 +28,7 @@ void HAL_WDT_Feed(WDT_HandleTypeDef* hwdt)
 void HAL_WDT_IRQHandler(WDT_HandleTypeDef* hwdt)
 {
 #ifdef __GNUC__
-    #pragma GCC diagnostic push   
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
     volatile uint32_t wdt_ris = 0;

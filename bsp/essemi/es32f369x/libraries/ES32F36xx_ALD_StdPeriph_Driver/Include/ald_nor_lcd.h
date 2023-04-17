@@ -45,7 +45,7 @@
 
 /** @addtogroup NOR_LCD
   * @{
-  */ 
+  */
 
 /**
   * @defgroup NOR_LCD_Private_Constants NOR LCD Private Constants
@@ -107,10 +107,10 @@
 /** @defgroup NOR_LCD_Private_Macros NOR_LCD Private Macros
   * @{
   */
-#define NOR_ADDR_SHIFT(NOR_ADDR, NOR_MEMORY_WIDTH_, ADDRESS)	\
-	((uint32_t)(((NOR_MEMORY_WIDTH_) == NOR_MEMORY_16B) ? 	\
-	((uint32_t)((NOR_ADDR) + (2U * (ADDRESS)))):		\
-	((uint32_t)((NOR_ADDR) + (ADDRESS)))))
+#define NOR_ADDR_SHIFT(NOR_ADDR, NOR_MEMORY_WIDTH_, ADDRESS)    \
+    ((uint32_t)(((NOR_MEMORY_WIDTH_) == NOR_MEMORY_16B) ?   \
+    ((uint32_t)((NOR_ADDR) + (2U * (ADDRESS)))):        \
+    ((uint32_t)((NOR_ADDR) + (ADDRESS)))))
 #define NOR_WRITE(ADDR, DATA)  (*(__IO uint16_t *)((uint32_t)(ADDR)) = (DATA))
 /**
   * @}
@@ -118,57 +118,57 @@
 
 /** @defgroup NOR_LCD_Public_Types NOR_LCD Public Types
   * @{
-  */ 
-/** 
-  * @brief  ALD SRAM State structures definition  
-  */ 
+  */
+/**
+  * @brief  ALD SRAM State structures definition
+  */
 typedef enum {
-	ALD_NOR_STATE_RESET     = 0x00U,	/**< NOR not yet initialized or disabled */
-	ALD_NOR_STATE_READY     = 0x01U,	/**< NOR initialized and ready for use */
-	ALD_NOR_STATE_BUSY      = 0x02U,	/**< NOR internal processing is ongoing */
-	ALD_NOR_STATE_ERROR     = 0x03U,	/**< NOR error state */ 
-	ALD_NOR_STATE_PROTECTED = 0x04U		/**< NOR NORSRAM device write protected */
+    ALD_NOR_STATE_RESET     = 0x00U,    /**< NOR not yet initialized or disabled */
+    ALD_NOR_STATE_READY     = 0x01U,    /**< NOR initialized and ready for use */
+    ALD_NOR_STATE_BUSY      = 0x02U,    /**< NOR internal processing is ongoing */
+    ALD_NOR_STATE_ERROR     = 0x03U,    /**< NOR error state */
+    ALD_NOR_STATE_PROTECTED = 0x04U     /**< NOR NORSRAM device write protected */
 } ald_nor_state_t;
 
 /**
   * @brief  EBI NOR Status typedef
   */
 typedef enum {
-	ALD_NOR_STATUS_SUCCESS = 0U,	/**< NOR status success */
-	ALD_NOR_STATUS_ONGOING,		/**< NOR status ongoing */
-	ALD_NOR_STATUS_ERROR,		/**< NOR status error */
-	ALD_NOR_STATUS_TIMEOUT,		/**< NOR status timeout */
+    ALD_NOR_STATUS_SUCCESS = 0U,    /**< NOR status success */
+    ALD_NOR_STATUS_ONGOING,     /**< NOR status ongoing */
+    ALD_NOR_STATUS_ERROR,       /**< NOR status error */
+    ALD_NOR_STATUS_TIMEOUT,     /**< NOR status timeout */
 } nor_status_t;
 
 /**
   * @brief  EBI NOR ID typedef
   */
 typedef struct {
-	uint16_t m_code;	/**< Defines the device's manufacturer code used to identify the memory */
-	uint16_t device_code1;	/**< DEVICE_CODE1_ADDR code1 */
-	uint16_t device_code2;	/**< DEVICE_CODE1_ADDR code2 */
-	uint16_t device_code3;	/**< DEVICE_CODE1_ADDR code3 */
+    uint16_t m_code;    /**< Defines the device's manufacturer code used to identify the memory */
+    uint16_t device_code1;  /**< DEVICE_CODE1_ADDR code1 */
+    uint16_t device_code2;  /**< DEVICE_CODE1_ADDR code2 */
+    uint16_t device_code3;  /**< DEVICE_CODE1_ADDR code3 */
 } nor_id_t;
 
 /**
   * @brief  EBI NOR CFI typedef
   */
 typedef struct {
-	uint16_t cfi_1;  /**< NOR CFI 1 */
-	uint16_t cfi_2;  /**< NOR CFI 2 */
-	uint16_t cfi_3;  /**< NOR CFI 3 */
-	uint16_t cfi_4;  /**< NOR CFI 4 */
+    uint16_t cfi_1;  /**< NOR CFI 1 */
+    uint16_t cfi_2;  /**< NOR CFI 2 */
+    uint16_t cfi_3;  /**< NOR CFI 3 */
+    uint16_t cfi_4;  /**< NOR CFI 4 */
 } nor_cfi_t;
 
-/** 
-  * @brief  NOR handle Structure definition  
-  */ 
+/**
+  * @brief  NOR handle Structure definition
+  */
 typedef struct {
-	EBI_NOR_SRAM_TypeDef *instance;		/**< Register base address */ 
-	EBI_NOR_SRAM_EXTENDED_TypeDef *ext;	/**< Extended mode register base address */
-	ald_ebi_nor_sram_init_t init;		/**< NOR device control configuration parameters */
-	lock_state_t lock;			/**< NOR locking object */ 
-	__IO ald_nor_state_t state;		/**< NOR device access state */
+    EBI_NOR_SRAM_TypeDef *instance;     /**< Register base address */
+    EBI_NOR_SRAM_EXTENDED_TypeDef *ext; /**< Extended mode register base address */
+    ald_ebi_nor_sram_init_t init;       /**< NOR device control configuration parameters */
+    lock_state_t lock;          /**< NOR locking object */
+    __IO ald_nor_state_t state;     /**< NOR device access state */
 } nor_handle_t;
 /**
   * @}
@@ -180,7 +180,7 @@ typedef struct {
 /** @addtogroup NOR_Public_Functions_Group1
  *  @{
  */
-/* Initialization/de-initialization functions */  
+/* Initialization/de-initialization functions */
 ald_status_t ald_nor_init(nor_handle_t *hperh, ald_ebi_nor_sram_timing_t *timing, ald_ebi_nor_sram_timing_t *ext_timing);
 ald_status_t ald_nor_deinit(nor_handle_t *hperh);
 /**
@@ -225,7 +225,7 @@ nor_status_t ald_nor_get_status(nor_handle_t *hperh, uint32_t addr, uint32_t tim
   */
 /**
   * @}
-  */ 
+  */
 /**
   * @}
   */

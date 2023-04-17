@@ -117,10 +117,10 @@ rv_hart_switch_mode_from_M(uintptr_t arg0, uintptr_t arg1,
         WRITE_CSR(satp, 0);
     } else if (next_mode == PRV_U) {
         /* un-implemented
-		        WRITE_CSR(utvec, next_addr);
-		        WRITE_CSR(uscratch, 0);
-		        WRITE_CSR(uie, 0);
-		*/
+                WRITE_CSR(utvec, next_addr);
+                WRITE_CSR(uscratch, 0);
+                WRITE_CSR(uie, 0);
+        */
     }
 
     register unsigned long a0 __asm("a0") = arg0;

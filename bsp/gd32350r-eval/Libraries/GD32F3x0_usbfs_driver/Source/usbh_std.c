@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -69,7 +69,7 @@ void (*enum_state_handle[]) (usb_core_handle_struct *pudev, usbh_host_struct *pu
 };
 
 /* the enumeration state handle table */
-state_table_struct enum_handle_table[ENUM_HANDLE_TABLE_SIZE] = 
+state_table_struct enum_handle_table[ENUM_HANDLE_TABLE_SIZE] =
 {
     /* the current state             the current event                     the next state                   the event function */
     {ENUM_IDLE,                      ENUM_EVENT_SET_ADDR,                  ENUM_SET_ADDR,                   only_state_move     },
@@ -103,10 +103,10 @@ usbh_status_enum enum_state_polling_fun (usb_core_handle_struct *pudev, usbh_hos
         scd_table_push(p_state);
         scd_state_move(p_state, ENUM_IDLE);
     }
-    
+
     /* start the enumeration state handle */
     scd_begin(p_state,ENUM_FSM_ID);
-    
+
     if (0 == p_state->usbh_current_state_stack_top) {
         enum_state_handle[p_state->usbh_current_state](pudev, puhost, p_state);
     } else {
@@ -136,11 +136,11 @@ static void enum_idle_handle (usb_core_handle_struct *pudev, usbh_host_struct *p
     puhost->usbh_backup_state.enum_backup_state = ENUM_IDLE;
 
     if (CTRL_IDLE == puhost->usbh_backup_state.ctrl_backup_state) {
-        usbh_enum_desc_get(pudev, 
-                           puhost, 
-                           pudev->host.rx_buffer, 
-                           USB_REQTYPE_DEVICE | USB_STANDARD_REQ, 
-                           USB_DEVDESC, 
+        usbh_enum_desc_get(pudev,
+                           puhost,
+                           pudev->host.rx_buffer,
+                           USB_REQTYPE_DEVICE | USB_STANDARD_REQ,
+                           USB_DEVDESC,
                            8U);
         if ((void *)0 != pudev->mdelay) {
             pudev->mdelay(100U);
@@ -169,10 +169,10 @@ static void enum_idle_handle (usb_core_handle_struct *pudev, usbh_host_struct *p
                              0U,
                              (uint16_t)puhost->control.ep0_size);
 
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         ENUM_EVENT_SET_ADDR, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         ENUM_EVENT_SET_ADDR,
                          pustate->usbh_current_state);
     }
 }
@@ -185,29 +185,29 @@ static void enum_idle_handle (usb_core_handle_struct *pudev, usbh_host_struct *p
     \param[out] none
     \retval     none
 */
-static void enum_get_full_dev_desc_handle (usb_core_handle_struct *pudev, 
-                                           usbh_host_struct *puhost, 
+static void enum_get_full_dev_desc_handle (usb_core_handle_struct *pudev,
+                                           usbh_host_struct *puhost,
                                            usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.enum_backup_state = ENUM_GET_FULL_DEV_DESC;
 
     if (CTRL_IDLE == puhost->usbh_backup_state.ctrl_backup_state) {
-        usbh_enum_desc_get(pudev, 
-                           puhost, 
-                           pudev->host.rx_buffer, 
-                           USB_REQTYPE_DEVICE | USB_STANDARD_REQ, 
-                           USB_DEVDESC, 
+        usbh_enum_desc_get(pudev,
+                           puhost,
+                           pudev->host.rx_buffer,
+                           USB_REQTYPE_DEVICE | USB_STANDARD_REQ,
+                           USB_DEVDESC,
                            USB_DEVDESC_SIZE);
     }
-    
+
     if(USBH_OK == ctrl_state_polling_fun(pudev, puhost, pustate)){
         usbh_device_desc_parse(&puhost->device.dev_desc, pudev->host.rx_buffer, USB_DEVDESC_SIZE);
         puhost->usr_cb->device_desc_available(&puhost->device.dev_desc);
 
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         ENUN_EVENT_GET_CFG_DESC, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         ENUN_EVENT_GET_CFG_DESC,
                          pustate->usbh_current_state);
     }
 }
@@ -220,8 +220,8 @@ static void enum_get_full_dev_desc_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void enum_set_addr_handle (usb_core_handle_struct *pudev, 
-                                  usbh_host_struct *puhost, 
+static void enum_set_addr_handle (usb_core_handle_struct *pudev,
+                                  usbh_host_struct *puhost,
                                   usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.enum_backup_state = ENUM_SET_ADDR;
@@ -232,7 +232,7 @@ static void enum_set_addr_handle (usb_core_handle_struct *pudev,
             pudev->mdelay(100U);
         }
     }
-    
+
     if (USBH_OK == ctrl_state_polling_fun(pudev, puhost, pustate)) {
         if ((void *)0 != pudev->mdelay) {
             pudev->mdelay(2U);
@@ -257,10 +257,10 @@ static void enum_set_addr_handle (usb_core_handle_struct *pudev,
                              0U,
                              0U);
 
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         ENUN_EVENT_GET_FULL_DEV_DESC, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         ENUN_EVENT_GET_FULL_DEV_DESC,
                          pustate->usbh_current_state);
     }
 }
@@ -273,8 +273,8 @@ static void enum_set_addr_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void enum_get_cfg_desc_handle (usb_core_handle_struct *pudev, 
-                                      usbh_host_struct *puhost, 
+static void enum_get_cfg_desc_handle (usb_core_handle_struct *pudev,
+                                      usbh_host_struct *puhost,
                                       usbh_state_handle_struct *pustate)
 {
     uint16_t index = 0U;
@@ -282,14 +282,14 @@ static void enum_get_cfg_desc_handle (usb_core_handle_struct *pudev,
     puhost->usbh_backup_state.enum_backup_state = ENUM_GET_CFG_DESC;
 
     if (CTRL_IDLE == puhost->usbh_backup_state.ctrl_backup_state) {
-        usbh_enum_desc_get(pudev, 
-                           puhost, 
-                           pudev->host.rx_buffer, 
-                           USB_REQTYPE_DEVICE | USB_STANDARD_REQ, 
-                           USB_CFGDESC, 
+        usbh_enum_desc_get(pudev,
+                           puhost,
+                           pudev->host.rx_buffer,
+                           USB_REQTYPE_DEVICE | USB_STANDARD_REQ,
+                           USB_CFGDESC,
                            USB_CFGDESC_SIZE);
     }
-    
+
     if (USBH_OK == ctrl_state_polling_fun(pudev, puhost, pustate)) {
         /* save configuration descriptor for class parsing usage */
         for (; index < USB_CFGDESC_SIZE; index ++) {
@@ -299,14 +299,14 @@ static void enum_get_cfg_desc_handle (usb_core_handle_struct *pudev,
         /* commands successfully sent and response received */
         usbh_cfg_desc_parse (&puhost->device.cfg_desc,
                               puhost->device.itf_desc,
-                              puhost->device.ep_desc, 
+                              puhost->device.ep_desc,
                               pudev->host.rx_buffer,
                               USB_CFGDESC_SIZE);
 
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         ENUN_EVENT_GET_FULL_CFG_DESC, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         ENUN_EVENT_GET_FULL_CFG_DESC,
                          pustate->usbh_current_state);
     }
 }
@@ -319,8 +319,8 @@ static void enum_get_cfg_desc_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void enum_get_full_cfg_desc_handle (usb_core_handle_struct *pudev, 
-                                           usbh_host_struct *puhost, 
+static void enum_get_full_cfg_desc_handle (usb_core_handle_struct *pudev,
+                                           usbh_host_struct *puhost,
                                            usbh_state_handle_struct *pustate)
 {
 
@@ -329,12 +329,12 @@ static void enum_get_full_cfg_desc_handle (usb_core_handle_struct *pudev,
     puhost->usbh_backup_state.enum_backup_state = ENUM_GET_FULL_CFG_DESC;
 
     if (CTRL_IDLE == puhost->usbh_backup_state.ctrl_backup_state) {
-        usbh_enum_desc_get (pudev, puhost, pudev->host.rx_buffer, 
-                            USB_REQTYPE_DEVICE | USB_STANDARD_REQ, 
+        usbh_enum_desc_get (pudev, puhost, pudev->host.rx_buffer,
+                            USB_REQTYPE_DEVICE | USB_STANDARD_REQ,
                             USB_CFGDESC, puhost->device.cfg_desc.wTotalLength);
     }
 
-    
+
     if (USBH_OK == ctrl_state_polling_fun(pudev, puhost, pustate)) {
         /* save configuration descriptor for class parsing usage */
         for (; index < puhost->device.cfg_desc.wTotalLength; index ++) {
@@ -342,10 +342,10 @@ static void enum_get_full_cfg_desc_handle (usb_core_handle_struct *pudev,
         }
 
         /* commands successfully sent and response received */
-        usbh_cfg_desc_parse (&puhost->device.cfg_desc, 
-                              puhost->device.itf_desc, 
-                              puhost->device.ep_desc, 
-                              pudev->host.rx_buffer, 
+        usbh_cfg_desc_parse (&puhost->device.cfg_desc,
+                              puhost->device.itf_desc,
+                              puhost->device.ep_desc,
+                              pudev->host.rx_buffer,
                               puhost->device.cfg_desc.wTotalLength);
 
         /* User callback for configuration descriptors available */
@@ -353,10 +353,10 @@ static void enum_get_full_cfg_desc_handle (usb_core_handle_struct *pudev,
                                                       puhost->device.itf_desc,
                                                       puhost->device.ep_desc[0]);
 
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         ENUN_EVENT_GET_MFC_STRING_DESC, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         ENUN_EVENT_GET_MFC_STRING_DESC,
                          pustate->usbh_current_state);
     }
 }
@@ -369,30 +369,30 @@ static void enum_get_full_cfg_desc_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void enum_get_mfc_string_desc_handle (usb_core_handle_struct *pudev, 
-                                             usbh_host_struct *puhost, 
+static void enum_get_mfc_string_desc_handle (usb_core_handle_struct *pudev,
+                                             usbh_host_struct *puhost,
                                              usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.enum_backup_state = ENUM_GET_MFC_STRING_DESC;
 
     if (0U != puhost->device.dev_desc.iManufacturer) {
         if(CTRL_IDLE == puhost->usbh_backup_state.ctrl_backup_state) {
-            usbh_enum_desc_get(pudev, 
-                               puhost, 
-                               pudev->host.rx_buffer, 
-                               USB_REQTYPE_DEVICE | USB_STANDARD_REQ, 
+            usbh_enum_desc_get(pudev,
+                               puhost,
+                               pudev->host.rx_buffer,
+                               USB_REQTYPE_DEVICE | USB_STANDARD_REQ,
                                USB_STRDESC | puhost->device.dev_desc.iManufacturer,
                                0xffU);
         }
-        
+
         if (USBH_OK == ctrl_state_polling_fun(pudev, puhost, pustate)) {
             usbh_string_desc_parse(pudev->host.rx_buffer, local_buffer, 0xffU);
             puhost->usr_cb->manufacturer_string(local_buffer);
-            
-            scd_event_handle(pudev, 
-                             puhost, 
-                             pustate, 
-                             ENUN_EVENT_GET_PRODUCT_STRING_DESC, 
+
+            scd_event_handle(pudev,
+                             puhost,
+                             pustate,
+                             ENUN_EVENT_GET_PRODUCT_STRING_DESC,
                              pustate->usbh_current_state);
         }
     } else {
@@ -409,40 +409,40 @@ static void enum_get_mfc_string_desc_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void enum_get_product_string_desc_handle (usb_core_handle_struct *pudev, 
-                                                 usbh_host_struct *puhost, 
+static void enum_get_product_string_desc_handle (usb_core_handle_struct *pudev,
+                                                 usbh_host_struct *puhost,
                                                  usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.enum_backup_state = ENUM_GET_PRODUCT_STRING_DESC;
 
     if (0U != puhost->device.dev_desc.iProduct) {
         if (CTRL_IDLE == puhost->usbh_backup_state.ctrl_backup_state) {
-            usbh_enum_desc_get(pudev, 
-                               puhost, 
+            usbh_enum_desc_get(pudev,
+                               puhost,
                                pudev->host.rx_buffer,
-                               USB_REQTYPE_DEVICE | USB_STANDARD_REQ, 
+                               USB_REQTYPE_DEVICE | USB_STANDARD_REQ,
                                USB_STRDESC | puhost->device.dev_desc.iProduct,
                                0xffU);
         }
-        
+
         if (USBH_OK == ctrl_state_polling_fun(pudev, puhost, pustate)) {
             usbh_string_desc_parse(pudev->host.rx_buffer, local_buffer, 0xffU);
-          
+
             /* user callback for product string */
             puhost->usr_cb->product_string(local_buffer);
-          
-            scd_event_handle(pudev, 
-                             puhost, 
-                             pustate, 
-                             ENUN_EVENT_GET_SERIALNUM_STRING_DESC, 
+
+            scd_event_handle(pudev,
+                             puhost,
+                             pustate,
+                             ENUN_EVENT_GET_SERIALNUM_STRING_DESC,
                              pustate->usbh_current_state);
         }
     } else {
         puhost->usr_cb->product_string("N/A");
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         ENUN_EVENT_GET_SERIALNUM_STRING_DESC, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         ENUN_EVENT_GET_SERIALNUM_STRING_DESC,
                          pustate->usbh_current_state);
     }
 }
@@ -455,39 +455,39 @@ static void enum_get_product_string_desc_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void enum_get_serialnum_string_desc_handle (usb_core_handle_struct *pudev, 
-                                                   usbh_host_struct *puhost, 
+static void enum_get_serialnum_string_desc_handle (usb_core_handle_struct *pudev,
+                                                   usbh_host_struct *puhost,
                                                    usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.enum_backup_state = ENUM_GET_SERIALNUM_STRING_DESC;
 
     if (0U != puhost->device.dev_desc.iSerialNumber) {
         if (CTRL_IDLE == puhost->usbh_backup_state.ctrl_backup_state) {
-            usbh_enum_desc_get(pudev, 
-                               puhost, 
-                               pudev->host.rx_buffer, 
-                               USB_REQTYPE_DEVICE | USB_STANDARD_REQ, 
+            usbh_enum_desc_get(pudev,
+                               puhost,
+                               pudev->host.rx_buffer,
+                               USB_REQTYPE_DEVICE | USB_STANDARD_REQ,
                                USB_STRDESC | puhost->device.dev_desc.iSerialNumber,
                                0xffU);
         }
-        
+
         if (USBH_OK == ctrl_state_polling_fun(pudev, puhost, pustate)){
             usbh_string_desc_parse(pudev->host.rx_buffer, local_buffer, 0xffU);
-          
+
             /* user callback for product string */
             puhost->usr_cb->serial_num_string(local_buffer);
-            scd_event_handle(pudev, 
-                             puhost, 
-                             pustate, 
-                             ENUN_EVENT_SET_CONFIGURATION, 
+            scd_event_handle(pudev,
+                             puhost,
+                             pustate,
+                             ENUN_EVENT_SET_CONFIGURATION,
                              pustate->usbh_current_state);
         }
     } else {
         puhost->usr_cb->serial_num_string("N/A");
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         ENUN_EVENT_SET_CONFIGURATION, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         ENUN_EVENT_SET_CONFIGURATION,
                          pustate->usbh_current_state);
     }
 }
@@ -500,8 +500,8 @@ static void enum_get_serialnum_string_desc_handle (usb_core_handle_struct *pudev
     \param[out] none
     \retval     none
 */
-static void enum_set_configuration_handle (usb_core_handle_struct *pudev, 
-                                           usbh_host_struct *puhost, 
+static void enum_set_configuration_handle (usb_core_handle_struct *pudev,
+                                           usbh_host_struct *puhost,
                                            usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.enum_backup_state = ENUM_SET_CONFIGURATION;
@@ -509,12 +509,12 @@ static void enum_set_configuration_handle (usb_core_handle_struct *pudev,
     if (CTRL_IDLE == puhost->usbh_backup_state.ctrl_backup_state ) {
         usbh_enum_cfg_set(pudev, puhost, (uint16_t)puhost->device.cfg_desc.bConfigurationValue);
     }
-    
+
     if (USBH_OK == ctrl_state_polling_fun(pudev, puhost, pustate)) {
-        scd_event_handle(pudev, 
-                         puhost, 
-                         pustate, 
-                         ENUN_EVENT_DEV_CONFIGURED, 
+        scd_event_handle(pudev,
+                         puhost,
+                         pustate,
+                         ENUN_EVENT_DEV_CONFIGURED,
                          pustate->usbh_current_state);
     }
 }
@@ -527,8 +527,8 @@ static void enum_set_configuration_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void enum_dev_configured_handle (usb_core_handle_struct *pudev, 
-                                        usbh_host_struct *puhost, 
+static void enum_dev_configured_handle (usb_core_handle_struct *pudev,
+                                        usbh_host_struct *puhost,
                                         usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.enum_backup_state = ENUM_DEV_CONFIGURED;
@@ -546,11 +546,11 @@ static void enum_dev_configured_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-void usbh_enum_desc_get(usb_core_handle_struct *pudev, 
-                        usbh_host_struct *puhost, 
-                        uint8_t *buf, 
-                        uint8_t  req_type, 
-                        uint16_t value_idx, 
+void usbh_enum_desc_get(usb_core_handle_struct *pudev,
+                        usbh_host_struct *puhost,
+                        uint8_t *buf,
+                        uint8_t  req_type,
+                        uint16_t value_idx,
                         uint16_t len)
 {
     usb_setup_union *pSetup = &(puhost->control.setup);
@@ -566,10 +566,10 @@ void usbh_enum_desc_get(usb_core_handle_struct *pudev,
     }
 
     pSetup->b.wLength = len;
-    
+
     puhost->control.buff = buf;
     puhost->control.length = len;
-    
+
 }
 
 /*!
@@ -580,7 +580,7 @@ void usbh_enum_desc_get(usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-void usbh_enum_addr_set(usb_core_handle_struct *pudev, 
+void usbh_enum_addr_set(usb_core_handle_struct *pudev,
                         usbh_host_struct *puhost,
                         uint8_t device_address)
 {
@@ -603,7 +603,7 @@ void usbh_enum_addr_set(usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-void usbh_enum_cfg_set(usb_core_handle_struct *pudev, 
+void usbh_enum_cfg_set(usb_core_handle_struct *pudev,
                        usbh_host_struct *puhost,
                        uint16_t cfg_idx)
 {
@@ -620,7 +620,7 @@ void usbh_enum_cfg_set(usb_core_handle_struct *pudev,
 
 /*!
     \brief      parse the device descriptor
-    \param[in]  dev_desc: device_descriptor destinaton address 
+    \param[in]  dev_desc: device_descriptor destinaton address
     \param[in]  buf: buffer where the source descriptor is available
     \param[in]  len: length of the descriptor
     \param[out] none
@@ -663,7 +663,7 @@ void  usbh_cfg_desc_parse (usb_descriptor_configuration_struct *cfg_desc,
                            usb_descriptor_endpoint_struct ep_desc[][USBH_MAX_EP_NUM],
                            uint8_t *buf,
                            uint16_t len)
-{  
+{
     usb_descriptor_interface_struct *pitf = NULL;
     usb_descriptor_interface_struct temp_pitf;
     usb_descriptor_endpoint_struct *pep = NULL;
@@ -732,7 +732,7 @@ void  usbh_cfg_desc_parse (usb_descriptor_configuration_struct *cfg_desc,
         }
 
         prev_ep_size = 0U;
-        prev_itf = 0U; 
+        prev_itf = 0U;
     }
 }
 
@@ -795,7 +795,7 @@ void usbh_string_desc_parse (uint8_t* psrc, uint8_t* pdest, uint16_t len)
     if (USB_DESCTYPE_STRING == psrc[1]){
         /* make sure the descriptor is string type */
 
-        /* psrc[0] contains size of descriptor, subtract 2 to get the length of string */      
+        /* psrc[0] contains size of descriptor, subtract 2 to get the length of string */
         strlength = ((((uint16_t)psrc[0] - 2U) <= len) ? ((uint16_t)psrc[0] - 2U) : len);
         psrc += 2; /* adjust the offset ignoring the string len and descriptor type */
 
@@ -805,7 +805,7 @@ void usbh_string_desc_parse (uint8_t* psrc, uint8_t* pdest, uint16_t len)
             pdest++;
         }
 
-        *pdest = 0U; /* mark end of string */  
+        *pdest = 0U; /* mark end of string */
     }
 }
 

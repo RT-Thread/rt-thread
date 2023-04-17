@@ -1,7 +1,7 @@
 /*!
     \file  gd32e230_adc.h
     \brief definitions for the ADC
-    
+
     \version 2018-06-19, V1.0.0, firmware for GD32E230
 */
 
@@ -10,27 +10,27 @@
 
     All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -156,7 +156,7 @@ OF SUCH DAMAGE.
 #define ADC_DATAALIGN_LEFT               ADC_CTL1_DAL                                /*!< left alignment */
 
 /* external trigger select for regular  channel */
-#define CTL1_ETSRC(regval)               (BITS(17,19) & ((uint32_t)(regval) << 17))  
+#define CTL1_ETSRC(regval)               (BITS(17,19) & ((uint32_t)(regval) << 17))
 #define ADC_EXTTRIG_REGULAR_T0_CH0       CTL1_ETSRC(0)                               /*!< TIMER0 CH0 event select */
 #define ADC_EXTTRIG_REGULAR_T0_CH1       CTL1_ETSRC(1)                               /*!< TIMER0 CH1 event select */
 #define ADC_EXTTRIG_REGULAR_T0_CH2       CTL1_ETSRC(2)                               /*!< TIMER0 CH2 event select */
@@ -166,7 +166,7 @@ OF SUCH DAMAGE.
 #define ADC_EXTTRIG_REGULAR_NONE         CTL1_ETSRC(7)                               /*!< software trigger */
 
 /* external trigger select for inserted channel */
-#define CTL1_ETSIC(regval)               (BITS(12,14) & ((uint32_t)(regval) << 12))  
+#define CTL1_ETSIC(regval)               (BITS(12,14) & ((uint32_t)(regval) << 12))
 #define ADC_EXTTRIG_INSERTED_T0_TRGO     CTL1_ETSIC(0)                               /*!< TIMER0 TRGO event select */
 #define ADC_EXTTRIG_INSERTED_T0_CH3      CTL1_ETSIC(1)                               /*!< TIMER0 CH3 event select */
 #define ADC_EXTTRIG_INSERTED_T2_CH3      CTL1_ETSIC(4)                               /*!< TIMER2 CH3 event select */
@@ -175,7 +175,7 @@ OF SUCH DAMAGE.
 #define ADC_EXTTRIG_INSERTED_NONE        CTL1_ETSIC(7)                               /*!< software trigger */
 
 /* adc_samptx register value */
-#define SAMPTX_SPT(regval)               (BITS(0,2) & ((uint32_t)(regval) << 0))     
+#define SAMPTX_SPT(regval)               (BITS(0,2) & ((uint32_t)(regval) << 0))
 #define ADC_SAMPLETIME_1POINT5           SAMPTX_SPT(0)                               /*!< 1.5 sampling cycles */
 #define ADC_SAMPLETIME_7POINT5           SAMPTX_SPT(1)                               /*!< 7.5 sampling cycles */
 #define ADC_SAMPLETIME_13POINT5          SAMPTX_SPT(2)                               /*!< 13.5 sampling cycles */
@@ -186,19 +186,19 @@ OF SUCH DAMAGE.
 #define ADC_SAMPLETIME_239POINT5         SAMPTX_SPT(7)                               /*!< 239.5 sampling cycles */
 
 /* ADC data offset for inserted channel x*/
-#define IOFFX_IOFF(regval)               (BITS(0,11) & ((uint32_t)(regval) << 0))    
+#define IOFFX_IOFF(regval)               (BITS(0,11) & ((uint32_t)(regval) << 0))
 
 /* ADC analog watchdog high threshold  */
-#define WDHT_WDHT(regval)                (BITS(0,11) & ((uint32_t)(regval) << 0))    
+#define WDHT_WDHT(regval)                (BITS(0,11) & ((uint32_t)(regval) << 0))
 
 /* ADC analog watchdog low  threshold */
-#define WDLT_WDLT(regval)                (BITS(0,11) & ((uint32_t)(regval) << 0))    
+#define WDLT_WDLT(regval)                (BITS(0,11) & ((uint32_t)(regval) << 0))
 
 /* ADC regular channel group length */
-#define RSQ0_RL(regval)                  (BITS(20,23) & ((uint32_t)(regval) << 20))  
+#define RSQ0_RL(regval)                  (BITS(20,23) & ((uint32_t)(regval) << 20))
 
 /* ADC inserted channel group length */
-#define ISQ_IL(regval)                   (BITS(20,21) & ((uint32_t)(regval) << 20))  
+#define ISQ_IL(regval)                   (BITS(20,21) & ((uint32_t)(regval) << 20))
 
 /* ADC resolution definitions */
 #define CTL0_DRES(regval)                (BITS(24,25) & ((regval) << 24))            /*!< ADC resolution */
@@ -208,7 +208,7 @@ OF SUCH DAMAGE.
 #define ADC_RESOLUTION_6B                CTL0_DRES(3)                                /*!< 6-bit ADC resolution */
 
 /* ADC oversampling shift */
-#define OVSAMPCTL_OVSS(regval)           (BITS(5,8) & ((uint32_t)(regval) << 5))     
+#define OVSAMPCTL_OVSS(regval)           (BITS(5,8) & ((uint32_t)(regval) << 5))
 #define ADC_OVERSAMPLING_SHIFT_NONE      OVSAMPCTL_OVSS(0)                           /*!< no oversampling shift */
 #define ADC_OVERSAMPLING_SHIFT_1B        OVSAMPCTL_OVSS(1)                           /*!< 1-bit oversampling shift */
 #define ADC_OVERSAMPLING_SHIFT_2B        OVSAMPCTL_OVSS(2)                           /*!< 2-bit oversampling shift */
@@ -220,7 +220,7 @@ OF SUCH DAMAGE.
 #define ADC_OVERSAMPLING_SHIFT_8B        OVSAMPCTL_OVSS(8)                           /*!< 8-bit oversampling shift */
 
 /* ADC oversampling ratio */
-#define OVSAMPCTL_OVSR(regval)           (BITS(2,4) & ((uint32_t)(regval) << 2))     
+#define OVSAMPCTL_OVSR(regval)           (BITS(2,4) & ((uint32_t)(regval) << 2))
 #define ADC_OVERSAMPLING_RATIO_MUL2      OVSAMPCTL_OVSR(0)                           /*!< oversampling ratio multiple 2 */
 #define ADC_OVERSAMPLING_RATIO_MUL4      OVSAMPCTL_OVSR(1)                           /*!< oversampling ratio multiple 4 */
 #define ADC_OVERSAMPLING_RATIO_MUL8      OVSAMPCTL_OVSR(2)                           /*!< oversampling ratio multiple 8 */

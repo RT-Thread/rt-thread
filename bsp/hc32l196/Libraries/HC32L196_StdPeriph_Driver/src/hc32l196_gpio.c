@@ -302,7 +302,7 @@ en_result_t Gpio_SetAfMode(en_gpio_port_t enPort, en_gpio_pin_t enPin, en_gpio_a
  ** \brief GPIO IO复用功能设置
  **
  ** \param [in]  PinMux    复用功能宏定义
- ** \retval Null           
+ ** \retval Null
  **
  ******************************************************************************/
 void Gpio_SetAfMode_Lite(GpioPinMux PinMux)

@@ -136,14 +136,14 @@
 #define GPIO_PADDIR_DIR_MASK  0xffffffff
 
 // GPIO[31:0] clock enable configuration bitfield: - bit[i]=1'b0: disable clock for GPIO[i] - bit[i]=1'b1: enable clock for GPIO[i] GPIOs are gathered by groups of 4. The clock gating of one group is done only if all 4 GPIOs are disabled.  Clock must be enabled for a GPIO if it's direction is configured in input mode. (access: R/W)
-#define GPIO_GPIOEN_GPIOEN_BIT	 0
+#define GPIO_GPIOEN_GPIOEN_BIT   0
 #define GPIO_GPIOEN_GPIOEN_WIDTH 32
-#define GPIO_GPIOEN_GPIOEN_MASK	 0xffffffff
+#define GPIO_GPIOEN_GPIOEN_MASK  0xffffffff
 
 // GPIO[31:0] input data read bitfield. DATA_IN[i] corresponds to input data of GPIO[i]. (access: R)
-#define GPIO_PADIN_DATA_IN_BIT	 0
+#define GPIO_PADIN_DATA_IN_BIT   0
 #define GPIO_PADIN_DATA_IN_WIDTH 32
-#define GPIO_PADIN_DATA_IN_MASK	 0xffffffff
+#define GPIO_PADIN_DATA_IN_MASK  0xffffffff
 
 // GPIO[31:0] output data read bitfield. DATA_OUT[i] corresponds to output data set on GPIO[i]. (access: R/W)
 #define GPIO_PADOUT_DATA_OUT_BIT   0
@@ -156,9 +156,9 @@
 #define GPIO_PADOUTSET_DATA_SET_MASK  0xffffffff
 
 // GPIO[31:0] clear bitfield: - bit[i]=1'b0: No change for GPIO[i] - bit[i]=1'b1: Clears GPIO[i] (access: W)
-#define GPIO_PADOUTCLR_DATA_CLEAR_BIT	0
+#define GPIO_PADOUTCLR_DATA_CLEAR_BIT   0
 #define GPIO_PADOUTCLR_DATA_CLEAR_WIDTH 32
-#define GPIO_PADOUTCLR_DATA_CLEAR_MASK	0xffffffff
+#define GPIO_PADOUTCLR_DATA_CLEAR_MASK  0xffffffff
 
 // GPIO[31:0] interrupt enable configuration bitfield: - bit[i]=1'b0: disable interrupt for GPIO[i] - bit[i]=1'b1: enable interrupt for GPIO[i] (access: R/W)
 #define GPIO_INTEN_INTEN_BIT   0
@@ -246,9 +246,9 @@
 #define GPIO_PADIN_32_63_DATA_IN_MASK  0xffffffff
 
 // GPIO[63:32] output data read bitfield. DATA_OUT[i] corresponds to output data set on GPIO[i]. (access: R/W)
-#define GPIO_PADOUT_32_63_DATA_OUT_BIT	 0
+#define GPIO_PADOUT_32_63_DATA_OUT_BIT   0
 #define GPIO_PADOUT_32_63_DATA_OUT_WIDTH 32
-#define GPIO_PADOUT_32_63_DATA_OUT_MASK	 0xffffffff
+#define GPIO_PADOUT_32_63_DATA_OUT_MASK  0xffffffff
 
 // GPIO[63:32] set bitfield: - bit[i]=1'b0: No change for GPIO[i] - bit[i]=1'b1: Sets GPIO[i] to 1 (access: W)
 #define GPIO_PADOUTSET_32_63_DATA_SET_BIT   0
@@ -266,12 +266,12 @@
 #define GPIO_INTEN_32_63_INTEN_MASK  0xffffffff
 
 // GPIO[47:32] interrupt type configuration bitfield: - bit[2*i+1:2*i]=2'b00: interrupt on falling edge for GPIO[i] - bit[2*i+1:2*i]=2'b01: interrupt on rising edge for GPIO[i] - bit[2*i+1:2*i]=2'b10: interrupt on rising and falling edge for GPIO[i] - bit[2*i+1:2*i]=2'b11: RFU (access: R/W)
-#define GPIO_INTTYPE_32_47_INTTYPE0_BIT	  0
+#define GPIO_INTTYPE_32_47_INTTYPE0_BIT   0
 #define GPIO_INTTYPE_32_47_INTTYPE0_WIDTH 32
 #define GPIO_INTTYPE_32_47_INTTYPE0_MASK  0xffffffff
 
 // GPIO[63:48] interrupt type configuration bitfield: - bit[2*i+1:2*i]=2'b00: interrupt on falling edge for GPIO[16+i] - bit[2*i+1:2*i]=2'b01: interrupt on rising edge for GPIO[16+i] - bit[2*i+1:2*i]=2'b10: interrupt on rising and falling edge for GPIO[16+i] - bit[2*i+1:2*i]=2'b11: RFU (access: R/W)
-#define GPIO_INTTYPE_48_63_INTTYPE1_BIT	  0
+#define GPIO_INTTYPE_48_63_INTTYPE1_BIT   0
 #define GPIO_INTTYPE_48_63_INTTYPE1_WIDTH 32
 #define GPIO_INTTYPE_48_63_INTTYPE1_MASK  0xffffffff
 
@@ -282,9 +282,9 @@
 
 /* required for gpio_pin_conf_pad() */
 static_assert((GPIO_PADCFG0_OFFSET + 0x4 == GPIO_PADCFG1_OFFSET) &&
-		      (GPIO_PADCFG1_OFFSET + 0x4 == GPIO_PADCFG2_OFFSET) &&
-		      (GPIO_PADCFG2_OFFSET + 0x4 == GPIO_PADCFG3_OFFSET),
-	      "GPIO_PADCFG*_OFFSET has unexpected addresses (spacing)");
+              (GPIO_PADCFG1_OFFSET + 0x4 == GPIO_PADCFG2_OFFSET) &&
+              (GPIO_PADCFG2_OFFSET + 0x4 == GPIO_PADCFG3_OFFSET),
+          "GPIO_PADCFG*_OFFSET has unexpected addresses (spacing)");
 
 /* this API is from gpio.h of zephyr */
 
@@ -324,10 +324,10 @@ static_assert((GPIO_PADCFG0_OFFSET + 0x4 == GPIO_PADCFG1_OFFSET) &&
 #define GPIO_OUTPUT_HIGH (GPIO_OUTPUT | GPIO_OUTPUT_INIT_HIGH)
 /** Configures GPIO pin as output and initializes it to a logic 0. */
 #define GPIO_OUTPUT_INACTIVE                                                   \
-	(GPIO_OUTPUT | GPIO_OUTPUT_INIT_LOW | GPIO_OUTPUT_INIT_LOGICAL)
+    (GPIO_OUTPUT | GPIO_OUTPUT_INIT_LOW | GPIO_OUTPUT_INIT_LOGICAL)
 /** Configures GPIO pin as output and initializes it to a logic 1. */
 #define GPIO_OUTPUT_ACTIVE                                                     \
-	(GPIO_OUTPUT | GPIO_OUTPUT_INIT_HIGH | GPIO_OUTPUT_INIT_LOGICAL)
+    (GPIO_OUTPUT | GPIO_OUTPUT_INIT_HIGH | GPIO_OUTPUT_INIT_LOGICAL)
 
 int gpio_pin_conf_pad(int pin, uint32_t flags);
 

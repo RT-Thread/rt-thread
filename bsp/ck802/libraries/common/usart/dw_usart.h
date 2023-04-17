@@ -30,7 +30,7 @@
 #define UART_BUSY_TIMEOUT      1000000
 #define UART_RECEIVE_TIMEOUT   1000
 #define UART_TRANSMIT_TIMEOUT  1000
-#define UART_MAX_FIFO		   0x10
+#define UART_MAX_FIFO          0x10
 /* UART register bit definitions */
 
 #define USR_UART_BUSY           0x01
@@ -43,7 +43,7 @@
 #define IIR_NO_ISQ_PEND         0x01
 
 #define LCR_SET_DLAB            0x80   /* enable r/w DLR to set the baud rate */
-#define LCR_PARITY_ENABLE	    0x08   /* parity enabled */
+#define LCR_PARITY_ENABLE       0x08   /* parity enabled */
 #define LCR_PARITY_EVEN         0x10   /* Even parity enabled */
 #define LCR_PARITY_ODD          0xef   /* Odd parity enabled */
 #define LCR_WORD_SIZE_5         0xfc   /* the data length is 5 bits */
@@ -56,11 +56,11 @@
 #define DW_LSR_PFE              0x80
 #define DW_LSR_TEMT             0x40
 #define DW_LSR_THRE             0x40
-#define	DW_LSR_BI               0x10
-#define	DW_LSR_FE               0x08
-#define	DW_LSR_PE               0x04
-#define	DW_LSR_OE               0x02
-#define	DW_LSR_DR               0x01
+#define DW_LSR_BI               0x10
+#define DW_LSR_FE               0x08
+#define DW_LSR_PE               0x04
+#define DW_LSR_OE               0x02
+#define DW_LSR_DR               0x01
 #define DW_LSR_TRANS_EMPTY      0x20
 
 #define DW_FCR_FIFOE            0x01

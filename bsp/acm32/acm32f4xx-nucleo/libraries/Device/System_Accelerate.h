@@ -11,7 +11,7 @@
 
 
 
-/* System_EnableIAccelerate */ 
+/* System_EnableIAccelerate */
 void System_EnableIAccelerate(void);
 
 /* System_DisableIAccelerate */

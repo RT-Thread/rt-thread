@@ -23,7 +23,7 @@
 #include <FreeRTOS.h>
 #include <semphr.h>
 #include <task.h>
-#endif 
+#endif
 /*!
  * @addtogroup FC_EventHandler
  * @{
@@ -50,7 +50,7 @@ void pi_fc_event_handler_init(uint32_t fc_event_irq);
  */
 void fc_soc_event_handler(void);
 #ifdef PKG_USING_FREERTOS_WRAPPER
-void pi_fc_event_handler_set(uint32_t event_id, pi_fc_event_handler_t event_handler, SemaphoreHandle_t semaphoreHandle);//This function based on  freertos 
+void pi_fc_event_handler_set(uint32_t event_id, pi_fc_event_handler_t event_handler, SemaphoreHandle_t semaphoreHandle);//This function based on  freertos
 #endif
 void user_pi_fc_event_handler_set(uint32_t event_id,pi_fc_event_handler_t event_handler);
 

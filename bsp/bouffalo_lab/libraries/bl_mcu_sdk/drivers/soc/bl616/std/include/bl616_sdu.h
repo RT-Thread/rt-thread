@@ -4,11 +4,11 @@
 #include "bl616.h"
 #include "bl616_common.h"
 
-#define NUM_FUNC         1        
-#define FUNC_WIFI        0  
+#define NUM_FUNC         1
+#define FUNC_WIFI        0
 
 // SDIO I/O Enable
-#define BL_SDIO_IO_ENABLE           SDU_BASE + 0x00000002 
+#define BL_SDIO_IO_ENABLE           SDU_BASE + 0x00000002
 //CCCR (Fn0) Registers
 
 // SDIO Device Sleep
@@ -175,7 +175,7 @@ typedef enum
 
 
  /* HID IOCTLs*/
-  IOCTL_HID_GET_BLOCK_SIZE,		/*!< Get Block size */
+  IOCTL_HID_GET_BLOCK_SIZE,     /*!< Get Block size */
 
 } SDIO_CMD_TYPE;
 

@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    hk32f0xx_rcc.h 
+  * @file    hk32f0xx_rcc.h
   *  @version V1.0.1
   * @date    2019-08-15
   ******************************************************************************
@@ -36,7 +36,7 @@ typedef struct
   uint32_t CECCLK_Frequency;
   uint32_t I2C1CLK_Frequency;
   uint32_t USART1CLK_Frequency;
-  uint32_t USART2CLK_Frequency; 
+  uint32_t USART2CLK_Frequency;
 }RCC_ClocksTypeDef;
 
 /* Exported constants --------------------------------------------------------*/
@@ -45,7 +45,7 @@ typedef struct
   * @{
   */
 
-/** @defgroup RCC_HSE_configuration 
+/** @defgroup RCC_HSE_configuration
   * @{
   */
 
@@ -57,16 +57,16 @@ typedef struct
 
 /**
   * @}
-  */ 
- 
-/** @defgroup RCC_PLL_Clock_Source 
+  */
+
+/** @defgroup RCC_PLL_Clock_Source
   * @{
   */
 
 #define RCC_PLLSource_HSI_Div2           RCC_CFGR_PLLSRC_HSI_Div2
 #define RCC_PLLSource_PREDIV1            RCC_CFGR_PLLSRC_HSE_PREDIV /* Old HSEPREDIV1 bit definition, maintained for legacy purpose */
-#define RCC_PLLSource_HSE                RCC_CFGR_PLLSRC_HSE_PREDIV 
-#define RCC_PLLSource_HSI                RCC_CFGR_PLLSRC_HSI_PREDIV 
+#define RCC_PLLSource_HSE                RCC_CFGR_PLLSRC_HSE_PREDIV
+#define RCC_PLLSource_HSI                RCC_CFGR_PLLSRC_HSI_PREDIV
 
 #define IS_RCC_PLL_SOURCE(SOURCE) (((SOURCE) == RCC_PLLSource_HSI_Div2) || \
                                    ((SOURCE) == RCC_PLLSource_HSI)      || \
@@ -74,9 +74,9 @@ typedef struct
                                    ((SOURCE) == RCC_PLLSource_PREDIV1))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RCC_PLL_Multiplication_Factor 
+/** @defgroup RCC_PLL_Multiplication_Factor
   * @{
   */
 
@@ -138,8 +138,8 @@ typedef struct
 /**
   * @}
   */
- 
-/** @defgroup RCC_System_Clock_Source 
+
+/** @defgroup RCC_System_Clock_Source
   * @{
   */
 
@@ -174,7 +174,7 @@ typedef struct
                            ((HCLK) == RCC_SYSCLK_Div512))
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup RCC_APB_Clock_Source
   * @{
@@ -191,8 +191,8 @@ typedef struct
 /**
   * @}
   */
-  
-/** @defgroup RCC_ADC_clock_source 
+
+/** @defgroup RCC_ADC_clock_source
   * @{
   */
 /* These defines are obsolete and kept for legacy purpose only.
@@ -208,7 +208,7 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
   * @}
   */
 
-/** @defgroup RCC_CEC_clock_source 
+/** @defgroup RCC_CEC_clock_source
   * @{
   */
 
@@ -221,7 +221,7 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
   * @}
   */
 
-/** @defgroup RCC_I2C_clock_source 
+/** @defgroup RCC_I2C_clock_source
   * @{
   */
 
@@ -236,7 +236,7 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
 
 
 
-/** @defgroup RCC_USART_clock_source 
+/** @defgroup RCC_USART_clock_source
   * @{
   */
 
@@ -245,10 +245,10 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
 #define RCC_USART1CLK_LSE                   ((uint32_t)0x10000002)
 #define RCC_USART1CLK_HSI                   ((uint32_t)0x10000003)
 
-#define RCC_USART2CLK_PCLK                  ((uint32_t)0x20000000) 
-#define RCC_USART2CLK_SYSCLK                ((uint32_t)0x20010000) 
-#define RCC_USART2CLK_LSE                   ((uint32_t)0x20020000) 
-#define RCC_USART2CLK_HSI                   ((uint32_t)0x20030000) 
+#define RCC_USART2CLK_PCLK                  ((uint32_t)0x20000000)
+#define RCC_USART2CLK_SYSCLK                ((uint32_t)0x20010000)
+#define RCC_USART2CLK_LSE                   ((uint32_t)0x20020000)
+#define RCC_USART2CLK_HSI                   ((uint32_t)0x20030000)
 
 
 #define IS_RCC_USARTCLK(USARTCLK) (((USARTCLK) == RCC_USART1CLK_PCLK)   || \
@@ -263,8 +263,8 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
 /**
   * @}
   */
-         
-/** @defgroup RCC_Interrupt_Source 
+
+/** @defgroup RCC_Interrupt_Source
   * @{
   */
 
@@ -288,8 +288,8 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
 /**
   * @}
   */
-  
-/** @defgroup RCC_LSE_Configuration 
+
+/** @defgroup RCC_LSE_Configuration
   * @{
   */
 
@@ -317,7 +317,7 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
   * @}
   */
 
-/** @defgroup RCC_LSE_Drive_Configuration 
+/** @defgroup RCC_LSE_Drive_Configuration
   * @{
   */
 
@@ -330,8 +330,8 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
 /**
   * @}
   */
-  
-/** @defgroup RCC_AHB_Peripherals 
+
+/** @defgroup RCC_AHB_Peripherals
   * @{
   */
 
@@ -354,7 +354,7 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
   * @}
   */
 
-/** @defgroup RCC_APB2_Peripherals 
+/** @defgroup RCC_APB2_Peripherals
   * @{
   */
 
@@ -375,13 +375,13 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RCC_APB1_Peripherals 
+/** @defgroup RCC_APB1_Peripherals
   * @{
   */
 
-#define RCC_APB1Periph_TIM2              RCC_APB1ENR_TIM2EN   
+#define RCC_APB1Periph_TIM2              RCC_APB1ENR_TIM2EN
 #define RCC_APB1Periph_TIM3              RCC_APB1ENR_TIM3EN
 #define RCC_APB1Periph_TIM6              RCC_APB1ENR_TIM6EN
 #define RCC_APB1Periph_TIM14             RCC_APB1ENR_TIM14EN
@@ -418,7 +418,7 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
                                    ((SOURCE) == RCC_MCOSource_PLLCLK)  || ((SOURCE) == RCC_MCOSource_LSE))
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup RCC_MCOPrescaler
   * @{
@@ -441,12 +441,12 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
                                          ((PRESCALER) == RCC_MCOPrescaler_32) || \
                                          ((PRESCALER) == RCC_MCOPrescaler_64) || \
                                          ((PRESCALER) == RCC_MCOPrescaler_128))
-#endif /* HK32F030x8 */                                         
+#endif /* HK32F030x8 */
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RCC_Flag 
+/** @defgroup RCC_Flag
   * @{
   */
 #define RCC_FLAG_HSIRDY                  ((uint8_t)0x01)
@@ -462,7 +462,7 @@ Proper ADC clock selection is done within ADC driver by mean of the ADC_ClockMod
 #define RCC_FLAG_IWDGRST                 ((uint8_t)0x5D)
 #define RCC_FLAG_WWDGRST                 ((uint8_t)0x5E)
 #define RCC_FLAG_LPWRRST                 ((uint8_t)0x5F)
-#define RCC_FLAG_HSI14RDY                ((uint8_t)0x61) 
+#define RCC_FLAG_HSI14RDY                ((uint8_t)0x61)
 
 #define IS_RCC_FLAG(FLAG) (((FLAG) == RCC_FLAG_HSIRDY)  || ((FLAG) == RCC_FLAG_HSERDY)  || \
                            ((FLAG) == RCC_FLAG_PLLRDY)  || ((FLAG) == RCC_FLAG_LSERDY)  || \
@@ -556,5 +556,5 @@ void RCC_ClearITPendingBit(uint8_t RCC_IT);
 
 /**
   * @}
-  */ 
- 
+  */
+

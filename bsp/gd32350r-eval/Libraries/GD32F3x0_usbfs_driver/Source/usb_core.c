@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -132,7 +132,7 @@ void *usb_fifo_read (uint8_t *dest, uint16_t len)
 
     for (i = 0U; i < count32b; i++) {
         *(__packed uint32_t *)dest = *fifo;
-        
+
         dest += 4U;
     }
 
@@ -182,7 +182,7 @@ usb_status_enum usb_core_select (usb_core_handle_struct *pudev, usb_core_id_enum
 }
 
 /*!
-    \brief      initializes the USB controller registers and 
+    \brief      initializes the USB controller registers and
                 prepares the core device mode or host mode operation
     \param[in]  pudev: pointer to usb device
     \param[out] none
@@ -329,7 +329,7 @@ usb_status_enum usb_hostcore_init (usb_core_handle_struct *pudev)
 
     /* initialize host configuration register */
     if (USB_CORE_ULPI_PHY == pudev->cfg.phy_interface) {
-        USB_FSLSCLOCK_INIT(HCTLR_30_60_MHZ); 
+        USB_FSLSCLOCK_INIT(HCTLR_30_60_MHZ);
     } else {
         USB_FSLSCLOCK_INIT(HCTLR_48_MHZ);
     }
@@ -711,7 +711,7 @@ void usb_host_stop(usb_core_handle_struct *pudev)
 #ifdef USE_DEVICE_MODE
 
 /* USB endpoint Tx FIFO size */
-static uint16_t USBFS_TX_FIFO_SIZE[USBFS_MAX_DEV_EPCOUNT] = 
+static uint16_t USBFS_TX_FIFO_SIZE[USBFS_MAX_DEV_EPCOUNT] =
 {
     (uint16_t)TX0_FIFO_FS_SIZE,
     (uint16_t)TX1_FIFO_FS_SIZE,
@@ -956,4 +956,4 @@ void usb_device_stop (usb_core_handle_struct *pudev)
     usb_rxfifo_flush(pudev);
     usb_txfifo_flush(pudev, 0x10U);
 }
-#endif /* USE_DEVICE_MODE */ 
+#endif /* USE_DEVICE_MODE */

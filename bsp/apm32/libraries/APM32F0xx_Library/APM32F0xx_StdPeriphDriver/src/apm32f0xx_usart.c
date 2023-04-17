@@ -182,7 +182,7 @@ void USART_Config(USART_T* uart, USART_Config_T* configStruct)
 /*!
  * @brief       Fills each USART_InitStruct member with its default value
  *
- * @param       configStruct£º  pointer to a USART_Config_T structure which will be initialized
+ * @param       configStructÂ£Âº  pointer to a USART_Config_T structure which will be initialized
  *
  * @retval      None
  */
@@ -1559,7 +1559,7 @@ void USART_ConfigOverrunDetection(USART_T* usart, USART_OVER_DETECTION_T overDet
  *                      @arg USART_FLAG_RXTOF:  Receive time out flag
  *                      @arg USART_FLAG_CTSF:   CTS Change flag
  *                      @arg USART_FLAG_CTSIF:  CTS interrupt flag
- *                      @arg USART_FLAG_LBDF£º  LIN Break Detection Flag (Not for APM32F030 devices)
+ *                      @arg USART_FLAG_LBDFÂ£Âº  LIN Break Detection Flag (Not for APM32F030 devices)
  *                      @arg USART_FLAG_TXBE:   Transmit data register empty flag
  *                      @arg USART_FLAG_TXC:    Transmission Complete flag
  *                      @arg USART_FLAG_RXBNE:  Receive data buffer not empty flag
@@ -1598,7 +1598,7 @@ uint8_t USART_ReadStatusFlag(USART_T* usart, USART_FLAG_T flag)
  *                      @arg USART_FLAG_EOBF:   End of block flag (Not for APM32F030 devices)
  *                      @arg USART_FLAG_RXTOF:  Receive time out flag
  *                      @arg USART_FLAG_CTSIF:  CTS interrupt flag
- *                      @arg USART_FLAG_LBDF£º  LIN Break Detection Flag (Not for APM32F030 devices)
+ *                      @arg USART_FLAG_LBDFÂ£Âº  LIN Break Detection Flag (Not for APM32F030 devices)
  *                      @arg USART_FLAG_TXC:    Transmission Complete flag
  *                      @arg USART_FLAG_IDLEF:  Idle Line detection flag
  *                      @arg USART_FLAG_OVRE:   OverRun Error flag

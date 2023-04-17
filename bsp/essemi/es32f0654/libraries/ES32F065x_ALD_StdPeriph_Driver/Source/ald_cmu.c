@@ -157,12 +157,12 @@ uint32_t __system_clock  = 24000000U;
 
 static void cmu_clock_update(uint32_t clock)
 {
-	__system_clock = clock;
+    __system_clock = clock;
 
-	if (clock > 1000000)
-		ald_tick_init(TICK_INT_PRIORITY);
+    if (clock > 1000000)
+        ald_tick_init(TICK_INT_PRIORITY);
 
-	return;
+    return;
 }
 
 /**
@@ -171,61 +171,61 @@ static void cmu_clock_update(uint32_t clock)
   */
 void ald_cmu_irq_handler(void)
 {
-	/* HOSC stop */
-	if (READ_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIF_MSK) && READ_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIE_MSK)) {
-		SYSCFG_UNLOCK();
-		SET_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIF_MSK);
-		SYSCFG_LOCK();
+    /* HOSC stop */
+    if (READ_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIF_MSK) && READ_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIE_MSK)) {
+        SYSCFG_UNLOCK();
+        SET_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIF_MSK);
+        SYSCFG_LOCK();
 
-		if ((READ_BIT(CMU->HOSMCR, CMU_HOSMCR_CLKS_MSK))
-				&& ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 1)
-				|| ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 5))))
-			cmu_clock_update(READ_BIT(CMU->CFGR, CMU_CFGR_HRCFST_MSK) ? 2000000 : 24000000);
-		ald_cmu_irq_cbk(CMU_HOSC_STOP);
-	}
+        if ((READ_BIT(CMU->HOSMCR, CMU_HOSMCR_CLKS_MSK))
+                && ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 1)
+                || ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 5))))
+            cmu_clock_update(READ_BIT(CMU->CFGR, CMU_CFGR_HRCFST_MSK) ? 2000000 : 24000000);
+        ald_cmu_irq_cbk(CMU_HOSC_STOP);
+    }
 
-	/* HOSC start */
-	if (READ_BIT(CMU->HOSMCR, CMU_HOSMCR_STRIF_MSK) && READ_BIT(CMU->HOSMCR, CMU_HOSMCR_STRIE_MSK)) {
-		SYSCFG_UNLOCK();
-		SET_BIT(CMU->HOSMCR, CMU_HOSMCR_STRIF_MSK);
-		SYSCFG_LOCK();
+    /* HOSC start */
+    if (READ_BIT(CMU->HOSMCR, CMU_HOSMCR_STRIF_MSK) && READ_BIT(CMU->HOSMCR, CMU_HOSMCR_STRIE_MSK)) {
+        SYSCFG_UNLOCK();
+        SET_BIT(CMU->HOSMCR, CMU_HOSMCR_STRIF_MSK);
+        SYSCFG_LOCK();
 
-		if (!(READ_BIT(CMU->HOSMCR, CMU_HOSMCR_CLKS_MSK))
-				&& ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 5)))
-			cmu_clock_update((READ_BITS(CMU->HOSCCFG, CMU_HOSCCFG_FREQ_MSK, CMU_HOSCCFG_FREQ_POSS) + 1) * 1000000);
-		ald_cmu_irq_cbk(CMU_HOSC_START);
-	}
+        if (!(READ_BIT(CMU->HOSMCR, CMU_HOSMCR_CLKS_MSK))
+                && ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 5)))
+            cmu_clock_update((READ_BITS(CMU->HOSCCFG, CMU_HOSCCFG_FREQ_MSK, CMU_HOSCCFG_FREQ_POSS) + 1) * 1000000);
+        ald_cmu_irq_cbk(CMU_HOSC_START);
+    }
 
-	/* LOSC stop */
-	if (READ_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIF_MSK) && READ_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIE_MSK)) {
-		SYSCFG_UNLOCK();
-		SET_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIF_MSK);
-		SYSCFG_LOCK();
-		ald_cmu_irq_cbk(CMU_LOSC_STOP);
-	}
+    /* LOSC stop */
+    if (READ_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIF_MSK) && READ_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIE_MSK)) {
+        SYSCFG_UNLOCK();
+        SET_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIF_MSK);
+        SYSCFG_LOCK();
+        ald_cmu_irq_cbk(CMU_LOSC_STOP);
+    }
 
-	/* LOSC start */
-	if (READ_BIT(CMU->LOSMCR, CMU_LOSMCR_STRIF_MSK) && READ_BIT(CMU->LOSMCR, CMU_LOSMCR_STRIE_MSK)) {
-		SYSCFG_UNLOCK();
-		SET_BIT(CMU->LOSMCR, CMU_LOSMCR_STRIF_MSK);
-		SYSCFG_LOCK();
-		ald_cmu_irq_cbk(CMU_LOSC_START);
-	}
+    /* LOSC start */
+    if (READ_BIT(CMU->LOSMCR, CMU_LOSMCR_STRIF_MSK) && READ_BIT(CMU->LOSMCR, CMU_LOSMCR_STRIE_MSK)) {
+        SYSCFG_UNLOCK();
+        SET_BIT(CMU->LOSMCR, CMU_LOSMCR_STRIF_MSK);
+        SYSCFG_LOCK();
+        ald_cmu_irq_cbk(CMU_LOSC_START);
+    }
 
-	/* PLL1 lose */
-	if (READ_BIT(CMU->PULMCR, CMU_PULMCR_ULKIF_MSK) && READ_BIT(CMU->PULMCR, CMU_PULMCR_ULKIE_MSK)) {
-		SYSCFG_UNLOCK();
-		SET_BIT(CMU->PULMCR, CMU_PULMCR_ULKIF_MSK);
-		SYSCFG_LOCK();
+    /* PLL1 lose */
+    if (READ_BIT(CMU->PULMCR, CMU_PULMCR_ULKIF_MSK) && READ_BIT(CMU->PULMCR, CMU_PULMCR_ULKIE_MSK)) {
+        SYSCFG_UNLOCK();
+        SET_BIT(CMU->PULMCR, CMU_PULMCR_ULKIF_MSK);
+        SYSCFG_LOCK();
 
-		if (READ_BIT(CMU->PULMCR, CMU_PULMCR_CLKS_MSK)
-				&& ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 1)
-				|| ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 5))))
-			cmu_clock_update(READ_BIT(CMU->CFGR, CMU_CFGR_HRCFST_MSK) ? 2000000 : 24000000);
-		ald_cmu_irq_cbk(CMU_PLL1_UNLOCK);
-	}
+        if (READ_BIT(CMU->PULMCR, CMU_PULMCR_CLKS_MSK)
+                && ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 1)
+                || ((READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) == 5))))
+            cmu_clock_update(READ_BIT(CMU->CFGR, CMU_CFGR_HRCFST_MSK) ? 2000000 : 24000000);
+        ald_cmu_irq_cbk(CMU_PLL1_UNLOCK);
+    }
 
-	return;
+    return;
 }
 /**
   * @}
@@ -260,28 +260,28 @@ void ald_cmu_irq_handler(void)
   */
 ald_status_t ald_cmu_clock_config_default(void)
 {
-	uint32_t cnt = 4000, tmp;
+    uint32_t cnt = 4000, tmp;
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	/* Select HRC */
-	MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_HRC << CMU_CSR_SYS_CMD_POSS);
-	while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
+    /* Select HRC */
+    MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_HRC << CMU_CSR_SYS_CMD_POSS);
+    while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
 
-	if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_HRC) {
-		SYSCFG_LOCK();
-		return ERROR;
-	}
+    if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_HRC) {
+        SYSCFG_LOCK();
+        return ERROR;
+    }
 
-	CLEAR_BIT(CMU->CFGR, CMU_CFGR_HRCFSW_MSK);	/* Select 24Mhz */
+    CLEAR_BIT(CMU->CFGR, CMU_CFGR_HRCFSW_MSK);  /* Select 24Mhz */
 
-	tmp = READ_REG(CMU->CLKENR);
-	/* Enable HRC/LRC/LOSC */
-	SET_BIT(tmp, CMU_CLKENR_HRCEN_MSK | CMU_CLKENR_LRCEN_MSK | CMU_CLKENR_LOSCEN_MSK);
-	WRITE_REG(CMU->CLKENR, tmp);
+    tmp = READ_REG(CMU->CLKENR);
+    /* Enable HRC/LRC/LOSC */
+    SET_BIT(tmp, CMU_CLKENR_HRCEN_MSK | CMU_CLKENR_LRCEN_MSK | CMU_CLKENR_LOSCEN_MSK);
+    WRITE_REG(CMU->CLKENR, tmp);
 
-	SYSCFG_LOCK();
-	return OK;
+    SYSCFG_LOCK();
+    return OK;
 }
 
 /**
@@ -298,132 +298,132 @@ ald_status_t ald_cmu_clock_config_default(void)
   */
 ald_status_t ald_cmu_clock_config(cmu_clock_t clk, uint32_t clock)
 {
-	uint32_t cnt = 4000;
+    uint32_t cnt = 4000;
 
-	assert_param(IS_CMU_CLOCK(clk));
-	SYSCFG_UNLOCK();
+    assert_param(IS_CMU_CLOCK(clk));
+    SYSCFG_UNLOCK();
 
-	switch (clk) {
-	case CMU_CLOCK_HRC:
-		assert_param(clock == 24000000 || clock == 2000000);
+    switch (clk) {
+    case CMU_CLOCK_HRC:
+        assert_param(clock == 24000000 || clock == 2000000);
 
-		MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_HRC << CMU_CSR_SYS_CMD_POSS);
-		while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
+        MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_HRC << CMU_CSR_SYS_CMD_POSS);
+        while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
 
-		if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_HRC) {
-			SYSCFG_LOCK();
-			return ERROR;
-		}
+        if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_HRC) {
+            SYSCFG_LOCK();
+            return ERROR;
+        }
 
-		if (clock == 24000000)
-			CLEAR_BIT(CMU->CFGR, CMU_CFGR_HRCFSW_MSK);
-		else
-			SET_BIT(CMU->CFGR, CMU_CFGR_HRCFSW_MSK);
+        if (clock == 24000000)
+            CLEAR_BIT(CMU->CFGR, CMU_CFGR_HRCFSW_MSK);
+        else
+            SET_BIT(CMU->CFGR, CMU_CFGR_HRCFSW_MSK);
 
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_HRCEN_MSK);
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_HRCEN_MSK);
 
-		for (cnt = 4000; cnt; --cnt);
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_HRCACT_MSK))) && (--cnt));
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_HRCRDY_MSK))) && (--cnt));
+        for (cnt = 4000; cnt; --cnt);
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_HRCACT_MSK))) && (--cnt));
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_HRCRDY_MSK))) && (--cnt));
 
-		cmu_clock_update(clock);
-		break;
+        cmu_clock_update(clock);
+        break;
 
-	case CMU_CLOCK_LRC:
-		/* Close SysTick interrupt in lower clock */
-		SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+    case CMU_CLOCK_LRC:
+        /* Close SysTick interrupt in lower clock */
+        SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
 
-		MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_LRC << CMU_CSR_SYS_CMD_POSS);
-		while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
+        MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_LRC << CMU_CSR_SYS_CMD_POSS);
+        while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
 
-		if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_LRC) {
-			SYSCFG_LOCK();
-			return ERROR;
-		}
+        if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_LRC) {
+            SYSCFG_LOCK();
+            return ERROR;
+        }
 
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_LRCEN_MSK);
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_LRCEN_MSK);
 
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_LRCACT_MSK))) && (--cnt));
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_LRCRDY_MSK))) && (--cnt));
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_LRCACT_MSK))) && (--cnt));
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_LRCRDY_MSK))) && (--cnt));
 
-		cmu_clock_update(32768);
-		break;
+        cmu_clock_update(32768);
+        break;
 
-	case CMU_CLOCK_LOSC:
-		/* Close SysTick interrupt in lower clock */
-		SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+    case CMU_CLOCK_LOSC:
+        /* Close SysTick interrupt in lower clock */
+        SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
 
-		MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_LOSC << CMU_CSR_SYS_CMD_POSS);
-		while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
+        MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_LOSC << CMU_CSR_SYS_CMD_POSS);
+        while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
 
-		if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_LOSC) {
-			SYSCFG_LOCK();
-			return ERROR;
-		}
+        if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_LOSC) {
+            SYSCFG_LOCK();
+            return ERROR;
+        }
 
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_LOSCEN_MSK);
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_LOSCEN_MSK);
 
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_LOSCACT_MSK))) && (--cnt));
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_LOSCRDY_MSK))) && (--cnt));
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_LOSCACT_MSK))) && (--cnt));
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_LOSCRDY_MSK))) && (--cnt));
 
-		cmu_clock_update(32768);
-		break;
+        cmu_clock_update(32768);
+        break;
 
-	case CMU_CLOCK_PLL1:
-		MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_PLL1 << CMU_CSR_SYS_CMD_POSS);
-		while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
+    case CMU_CLOCK_PLL1:
+        MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_PLL1 << CMU_CSR_SYS_CMD_POSS);
+        while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
 
-		if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_PLL1) {
-			SYSCFG_LOCK();
-			return ERROR;
-		}
+        if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_PLL1) {
+            SYSCFG_LOCK();
+            return ERROR;
+        }
 
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_PLL1EN_MSK);
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_PLL1EN_MSK);
 
-		for (cnt = 4000; cnt; --cnt);
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_PLL1ACT_MSK))) && (--cnt));
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_PLL1RDY_MSK))) && (--cnt));
+        for (cnt = 4000; cnt; --cnt);
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_PLL1ACT_MSK))) && (--cnt));
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_PLL1RDY_MSK))) && (--cnt));
 
-		cmu_clock_update(clock);
-		break;
+        cmu_clock_update(clock);
+        break;
 
-	case CMU_CLOCK_HOSC:
-		assert_param(clock <= 24000000);
+    case CMU_CLOCK_HOSC:
+        assert_param(clock <= 24000000);
 
-		MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_HOSC << CMU_CSR_SYS_CMD_POSS);
-		while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
+        MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_HOSC << CMU_CSR_SYS_CMD_POSS);
+        while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
 
-		if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_HOSC) {
-			SYSCFG_LOCK();
-			return ERROR;
-		}
+        if (READ_BITS(CMU->CSR, CMU_CSR_SYS_STU_MSK, CMU_CSR_SYS_STU_POSS) != CMU_CLOCK_HOSC) {
+            SYSCFG_LOCK();
+            return ERROR;
+        }
 
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_HOSCEN_MSK);
-		MODIFY_REG(CMU->HOSCCFG, CMU_HOSCCFG_FREQ_MSK, clock / 1000000 - 1);
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_HOSCEN_MSK);
+        MODIFY_REG(CMU->HOSCCFG, CMU_HOSCCFG_FREQ_MSK, clock / 1000000 - 1);
 
-		for (cnt = 4000; cnt; --cnt);
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_HOSCACT_MSK))) && (--cnt));
-		cnt = 4000;
-		while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_HOSCRDY_MSK))) && (--cnt));
+        for (cnt = 4000; cnt; --cnt);
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_HOSCACT_MSK))) && (--cnt));
+        cnt = 4000;
+        while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_HOSCRDY_MSK))) && (--cnt));
 
-		cmu_clock_update(clock);
-		break;
+        cmu_clock_update(clock);
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	SYSCFG_LOCK();
-	return OK;
+    SYSCFG_LOCK();
+    return OK;
 }
 
 
@@ -438,35 +438,35 @@ ald_status_t ald_cmu_clock_config(cmu_clock_t clk, uint32_t clock)
   */
 void ald_cmu_pll1_config(cmu_pll1_input_t input, cmu_pll1_output_t output)
 {
-	uint32_t cnt = 4000;
+    uint32_t cnt = 4000;
 
-	assert_param(IS_CMU_PLL1_INPUT(input));
-	assert_param(IS_CMU_PLL1_OUTPUT(output));
+    assert_param(IS_CMU_PLL1_INPUT(input));
+    assert_param(IS_CMU_PLL1_OUTPUT(output));
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	if (input == CMU_PLL1_INPUT_HRC_6) {
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_HRCEN_MSK);
-	}
-	else if (input == CMU_PLL1_INPUT_PLL2) {
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_LOSCEN_MSK);
-		CLEAR_BIT(CMU->PLLCFG, CMU_PLLCFG_PLL2RFS_MSK);
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_PLL2EN_MSK);
-	}
-	else {
-		SET_BIT(CMU->CLKENR, CMU_CLKENR_HOSCEN_MSK);
-	}
+    if (input == CMU_PLL1_INPUT_HRC_6) {
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_HRCEN_MSK);
+    }
+    else if (input == CMU_PLL1_INPUT_PLL2) {
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_LOSCEN_MSK);
+        CLEAR_BIT(CMU->PLLCFG, CMU_PLLCFG_PLL2RFS_MSK);
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_PLL2EN_MSK);
+    }
+    else {
+        SET_BIT(CMU->CLKENR, CMU_CLKENR_HOSCEN_MSK);
+    }
 
-	MODIFY_REG(CMU->PLLCFG, CMU_PLLCFG_PLL1RFS_MSK, input << CMU_PLLCFG_PLL1RFS_POSS);
-	MODIFY_REG(CMU->PLLCFG, CMU_PLLCFG_PLL1OS_MSK, output << CMU_PLLCFG_PLL1OS_POS);
-	SET_BIT(CMU->CLKENR, CMU_CLKENR_PLL1EN_MSK);
+    MODIFY_REG(CMU->PLLCFG, CMU_PLLCFG_PLL1RFS_MSK, input << CMU_PLLCFG_PLL1RFS_POSS);
+    MODIFY_REG(CMU->PLLCFG, CMU_PLLCFG_PLL1OS_MSK, output << CMU_PLLCFG_PLL1OS_POS);
+    SET_BIT(CMU->CLKENR, CMU_CLKENR_PLL1EN_MSK);
 
-	while ((READ_BIT(CMU->PLLCFG, CMU_PLLCFG_PLL1LCKN_MSK)) && (--cnt));
-	cnt = 4000;
-	while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_PLL1RDY_MSK))) && (--cnt));
+    while ((READ_BIT(CMU->PLLCFG, CMU_PLLCFG_PLL1LCKN_MSK)) && (--cnt));
+    cnt = 4000;
+    while ((!(READ_BIT(CMU->CLKSR, CMU_CLKSR_PLL1RDY_MSK))) && (--cnt));
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**
@@ -475,7 +475,7 @@ void ald_cmu_pll1_config(cmu_pll1_input_t input, cmu_pll1_output_t output)
   */
 uint32_t ald_cmu_get_clock(void)
 {
-	return __system_clock;
+    return __system_clock;
 }
 
 /**
@@ -488,36 +488,36 @@ uint32_t ald_cmu_get_clock(void)
   */
 int32_t ald_cmu_auto_calib_clock(cmu_auto_calib_input_t input, cmu_auto_calib_output_t freq)
 {
-	uint32_t cnt = 5000, tmp;
+    uint32_t cnt = 5000, tmp;
 
-	assert_param(IS_CMU_AUTO_CALIB_INPUT(input));
-	assert_param(IS_CMU_AUTO_CALIB_OUTPUT(freq));
+    assert_param(IS_CMU_AUTO_CALIB_INPUT(input));
+    assert_param(IS_CMU_AUTO_CALIB_OUTPUT(freq));
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	tmp = READ_REG(CMU->HRCACR);
+    tmp = READ_REG(CMU->HRCACR);
 
-	MODIFY_REG(tmp, CMU_HRCACR_AC_MSK, 1 << CMU_HRCACR_AC_POSS);
-	MODIFY_REG(tmp, CMU_HRCACR_RFSEL_MSK, input << CMU_HRCACR_RFSEL_POS);
-	MODIFY_REG(tmp, CMU_HRCACR_FREQ_MSK, freq << CMU_HRCACR_FREQ_POS);
-	SET_BIT(tmp, CMU_HRCACR_EN_MSK);
-	WRITE_REG(CMU->HRCACR, tmp);
+    MODIFY_REG(tmp, CMU_HRCACR_AC_MSK, 1 << CMU_HRCACR_AC_POSS);
+    MODIFY_REG(tmp, CMU_HRCACR_RFSEL_MSK, input << CMU_HRCACR_RFSEL_POS);
+    MODIFY_REG(tmp, CMU_HRCACR_FREQ_MSK, freq << CMU_HRCACR_FREQ_POS);
+    SET_BIT(tmp, CMU_HRCACR_EN_MSK);
+    WRITE_REG(CMU->HRCACR, tmp);
 
-	while (cnt--);
-	cnt = 30000;
-	while ((READ_BIT(CMU->HRCACR, CMU_HRCACR_BUSY_MSK)) && (--cnt));
+    while (cnt--);
+    cnt = 30000;
+    while ((READ_BIT(CMU->HRCACR, CMU_HRCACR_BUSY_MSK)) && (--cnt));
 
-	if (READ_BITS(CMU->HRCACR, CMU_HRCACR_STA_MSK, CMU_HRCACR_STA_POSS) != 1) {
-		CLEAR_BIT(CMU->HRCACR, CMU_HRCACR_EN_MSK);
-		SYSCFG_LOCK();
-		return -1;
-	}
+    if (READ_BITS(CMU->HRCACR, CMU_HRCACR_STA_MSK, CMU_HRCACR_STA_POSS) != 1) {
+        CLEAR_BIT(CMU->HRCACR, CMU_HRCACR_EN_MSK);
+        SYSCFG_LOCK();
+        return -1;
+    }
 
-	SET_BIT(CMU->HRCACR, CMU_HRCACR_WRTRG_MSK);
-	CLEAR_BIT(CMU->HRCACR, CMU_HRCACR_EN_MSK);
-	SYSCFG_LOCK();
+    SET_BIT(CMU->HRCACR, CMU_HRCACR_WRTRG_MSK);
+    CLEAR_BIT(CMU->HRCACR, CMU_HRCACR_EN_MSK);
+    SYSCFG_LOCK();
 
-	return 0;
+    return 0;
 }
 /**
   * @}
@@ -553,43 +553,43 @@ int32_t ald_cmu_auto_calib_clock(cmu_auto_calib_input_t input, cmu_auto_calib_ou
   */
 void ald_cmu_div_config(cmu_bus_t bus, cmu_div_t div)
 {
-	assert_param(IS_CMU_BUS(bus));
-	assert_param(IS_CMU_DIV(div));
+    assert_param(IS_CMU_BUS(bus));
+    assert_param(IS_CMU_DIV(div));
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	switch (bus) {
-	case CMU_HCLK_1:
-		MODIFY_REG(CMU->CFGR, CMU_CFGR_HCLK1DIV_MSK, div << CMU_CFGR_HCLK1DIV_POSS);
-		break;
+    switch (bus) {
+    case CMU_HCLK_1:
+        MODIFY_REG(CMU->CFGR, CMU_CFGR_HCLK1DIV_MSK, div << CMU_CFGR_HCLK1DIV_POSS);
+        break;
 
-	case CMU_SYS:
-		MODIFY_REG(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, div << CMU_CFGR_SYSDIV_POSS);
+    case CMU_SYS:
+        MODIFY_REG(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, div << CMU_CFGR_SYSDIV_POSS);
 
-		if ((__system_clock >> div) <= 1000000) {
-			/* Close SysTick interrupt in lower clock */
-			SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-		}
-		else {
-			ald_tick_init(TICK_INT_PRIORITY);
-		}
+        if ((__system_clock >> div) <= 1000000) {
+            /* Close SysTick interrupt in lower clock */
+            SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+        }
+        else {
+            ald_tick_init(TICK_INT_PRIORITY);
+        }
 
-		break;
+        break;
 
-	case CMU_PCLK_1:
-		MODIFY_REG(CMU->CFGR, CMU_CFGR_PCLK1DIV_MSK, div << CMU_CFGR_PCLK1DIV_POSS);
-		break;
+    case CMU_PCLK_1:
+        MODIFY_REG(CMU->CFGR, CMU_CFGR_PCLK1DIV_MSK, div << CMU_CFGR_PCLK1DIV_POSS);
+        break;
 
-	case CMU_PCLK_2:
-		MODIFY_REG(CMU->CFGR, CMU_CFGR_PCLK2DIV_MSK, div << CMU_CFGR_PCLK2DIV_POSS);
-		break;
+    case CMU_PCLK_2:
+        MODIFY_REG(CMU->CFGR, CMU_CFGR_PCLK2DIV_MSK, div << CMU_CFGR_PCLK2DIV_POSS);
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**
@@ -598,10 +598,10 @@ void ald_cmu_div_config(cmu_bus_t bus, cmu_div_t div)
   */
 uint32_t ald_cmu_get_hclk1_clock(void)
 {
-	uint32_t sys_div = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
-	uint32_t ahb_div = READ_BITS(CMU->CFGR, CMU_CFGR_HCLK1DIV_MSK, CMU_CFGR_HCLK1DIV_POSS);
+    uint32_t sys_div = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
+    uint32_t ahb_div = READ_BITS(CMU->CFGR, CMU_CFGR_HCLK1DIV_MSK, CMU_CFGR_HCLK1DIV_POSS);
 
-	return (__system_clock >> sys_div) >> ahb_div;
+    return (__system_clock >> sys_div) >> ahb_div;
 }
 
 /**
@@ -610,9 +610,9 @@ uint32_t ald_cmu_get_hclk1_clock(void)
   */
 uint32_t ald_cmu_get_sys_clock(void)
 {
-	uint32_t sys_div = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
+    uint32_t sys_div = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
 
-	return __system_clock >> sys_div;
+    return __system_clock >> sys_div;
 }
 
 /**
@@ -621,10 +621,10 @@ uint32_t ald_cmu_get_sys_clock(void)
   */
 uint32_t ald_cmu_get_pclk1_clock(void)
 {
-	uint32_t sys_div  = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
-	uint32_t apb1_div = READ_BITS(CMU->CFGR, CMU_CFGR_PCLK1DIV_MSK, CMU_CFGR_PCLK1DIV_POSS);
+    uint32_t sys_div  = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
+    uint32_t apb1_div = READ_BITS(CMU->CFGR, CMU_CFGR_PCLK1DIV_MSK, CMU_CFGR_PCLK1DIV_POSS);
 
-	return (__system_clock >> sys_div) >> apb1_div;
+    return (__system_clock >> sys_div) >> apb1_div;
 }
 
 /**
@@ -633,10 +633,10 @@ uint32_t ald_cmu_get_pclk1_clock(void)
   */
 uint32_t ald_cmu_get_pclk2_clock(void)
 {
-	uint32_t sys_div  = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
-	uint32_t apb2_div = READ_BITS(CMU->CFGR, CMU_CFGR_PCLK2DIV_MSK, CMU_CFGR_PCLK2DIV_POSS);
+    uint32_t sys_div  = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
+    uint32_t apb2_div = READ_BITS(CMU->CFGR, CMU_CFGR_PCLK2DIV_MSK, CMU_CFGR_PCLK2DIV_POSS);
 
-	return (__system_clock >> sys_div) >> apb2_div;
+    return (__system_clock >> sys_div) >> apb2_div;
 }
 /**
   * @}
@@ -667,29 +667,29 @@ uint32_t ald_cmu_get_pclk2_clock(void)
   */
 void ald_cmu_hosc_safe_config(cmu_hosc_range_t clock, type_func_t status)
 {
-	assert_param(IS_CMU_HOSC_RANGE(clock));
-	assert_param(IS_FUNC_STATE(status));
+    assert_param(IS_CMU_HOSC_RANGE(clock));
+    assert_param(IS_FUNC_STATE(status));
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	if (status) {
-		SET_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIF_MSK);
-		MODIFY_REG(CMU->HOSMCR, CMU_HOSMCR_FRQS_MSK, clock << CMU_HOSMCR_FRQS_POSS);
-		SET_BIT(CMU->HOSMCR, CMU_HOSMCR_EN_MSK);
-		SET_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIE_MSK);
+    if (status) {
+        SET_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIF_MSK);
+        MODIFY_REG(CMU->HOSMCR, CMU_HOSMCR_FRQS_MSK, clock << CMU_HOSMCR_FRQS_POSS);
+        SET_BIT(CMU->HOSMCR, CMU_HOSMCR_EN_MSK);
+        SET_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIE_MSK);
 
-		ald_mcu_irq_config(CMU_IRQn, 3, ENABLE);
-	}
-	else {
-		CLEAR_BIT(CMU->HOSMCR, CMU_HOSMCR_EN_MSK);
-		CLEAR_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIE_MSK);
+        ald_mcu_irq_config(CMU_IRQn, 3, ENABLE);
+    }
+    else {
+        CLEAR_BIT(CMU->HOSMCR, CMU_HOSMCR_EN_MSK);
+        CLEAR_BIT(CMU->HOSMCR, CMU_HOSMCR_STPIE_MSK);
 
-		if (READ_BIT(CMU->LOSMCR, CMU_LOSMCR_EN_MSK) == 0 && READ_BIT(CMU->PULMCR, CMU_PULMCR_EN_MSK) == 0)
-			ald_mcu_irq_config(CMU_IRQn, 3, DISABLE);
-	}
+        if (READ_BIT(CMU->LOSMCR, CMU_LOSMCR_EN_MSK) == 0 && READ_BIT(CMU->PULMCR, CMU_PULMCR_EN_MSK) == 0)
+            ald_mcu_irq_config(CMU_IRQn, 3, DISABLE);
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**
@@ -699,26 +699,26 @@ void ald_cmu_hosc_safe_config(cmu_hosc_range_t clock, type_func_t status)
   */
 void ald_cmu_losc_safe_config(type_func_t status)
 {
-	assert_param(IS_FUNC_STATE(status));
-	SYSCFG_UNLOCK();
+    assert_param(IS_FUNC_STATE(status));
+    SYSCFG_UNLOCK();
 
-	if (status) {
-		SET_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIF_MSK);
-		SET_BIT(CMU->LOSMCR, CMU_LOSMCR_EN_MSK);
-		SET_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIE_MSK);
+    if (status) {
+        SET_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIF_MSK);
+        SET_BIT(CMU->LOSMCR, CMU_LOSMCR_EN_MSK);
+        SET_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIE_MSK);
 
-		ald_mcu_irq_config(CMU_IRQn, 3, ENABLE);
-	}
-	else {
-		CLEAR_BIT(CMU->LOSMCR, CMU_LOSMCR_EN_MSK);
-		CLEAR_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIE_MSK);
+        ald_mcu_irq_config(CMU_IRQn, 3, ENABLE);
+    }
+    else {
+        CLEAR_BIT(CMU->LOSMCR, CMU_LOSMCR_EN_MSK);
+        CLEAR_BIT(CMU->LOSMCR, CMU_LOSMCR_STPIE_MSK);
 
-		if (READ_BIT(CMU->HOSMCR, CMU_HOSMCR_EN_MSK) == 0 && READ_BIT(CMU->PULMCR, CMU_PULMCR_EN_MSK) == 0)
-			ald_mcu_irq_config(CMU_IRQn, 3, DISABLE);
-	}
+        if (READ_BIT(CMU->HOSMCR, CMU_HOSMCR_EN_MSK) == 0 && READ_BIT(CMU->PULMCR, CMU_PULMCR_EN_MSK) == 0)
+            ald_mcu_irq_config(CMU_IRQn, 3, DISABLE);
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**
@@ -728,27 +728,27 @@ void ald_cmu_losc_safe_config(type_func_t status)
   */
 void ald_cmu_pll_safe_config(type_func_t status)
 {
-	assert_param(IS_FUNC_STATE(status));
-	SYSCFG_UNLOCK();
+    assert_param(IS_FUNC_STATE(status));
+    SYSCFG_UNLOCK();
 
-	if (status) {
-		SET_BIT(CMU->PULMCR, CMU_PULMCR_ULKIF_MSK);
-		MODIFY_REG(CMU->PULMCR, CMU_PULMCR_MODE_MSK, 2 << CMU_PULMCR_MODE_POSS);
-		SET_BIT(CMU->PULMCR, CMU_PULMCR_EN_MSK);
-		SET_BIT(CMU->PULMCR, CMU_PULMCR_ULKIE_MSK);
+    if (status) {
+        SET_BIT(CMU->PULMCR, CMU_PULMCR_ULKIF_MSK);
+        MODIFY_REG(CMU->PULMCR, CMU_PULMCR_MODE_MSK, 2 << CMU_PULMCR_MODE_POSS);
+        SET_BIT(CMU->PULMCR, CMU_PULMCR_EN_MSK);
+        SET_BIT(CMU->PULMCR, CMU_PULMCR_ULKIE_MSK);
 
-		ald_mcu_irq_config(CMU_IRQn, 3, ENABLE);
-	}
-	else {
-		CLEAR_BIT(CMU->PULMCR, CMU_PULMCR_EN_MSK);
-		CLEAR_BIT(CMU->PULMCR, CMU_PULMCR_ULKIE_MSK);
+        ald_mcu_irq_config(CMU_IRQn, 3, ENABLE);
+    }
+    else {
+        CLEAR_BIT(CMU->PULMCR, CMU_PULMCR_EN_MSK);
+        CLEAR_BIT(CMU->PULMCR, CMU_PULMCR_ULKIE_MSK);
 
-		if (READ_BIT(CMU->HOSMCR, CMU_HOSMCR_EN_MSK) == 0 && READ_BIT(CMU->LOSMCR, CMU_LOSMCR_EN_MSK) == 0)
-			ald_mcu_irq_config(CMU_IRQn, 3, DISABLE);
-	}
+        if (READ_BIT(CMU->HOSMCR, CMU_HOSMCR_EN_MSK) == 0 && READ_BIT(CMU->LOSMCR, CMU_LOSMCR_EN_MSK) == 0)
+            ald_mcu_irq_config(CMU_IRQn, 3, DISABLE);
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**
@@ -760,14 +760,14 @@ void ald_cmu_pll_safe_config(type_func_t status)
   */
 uint32_t ald_cmu_current_clock_source_get(cmu_clock_safe_type_t type)
 {
-	assert_param(IS_CMU_SAFE_CLOCK_TYPE(type));
+    assert_param(IS_CMU_SAFE_CLOCK_TYPE(type));
 
-	if (type == CMU_SAFE_CLK_HOSC)
-		return READ_BITS(CMU->HOSMCR, CMU_HOSMCR_CLKS_MSK, CMU_HOSMCR_CLKS_POS);
-	else if (type == CMU_SAFE_CLK_LOSC)
-		return READ_BITS(CMU->LOSMCR, CMU_LOSMCR_CLKS_MSK, CMU_LOSMCR_CLKS_POS);
-	else
-		return READ_BITS(CMU->PULMCR, CMU_PULMCR_CLKS_MSK, CMU_PULMCR_CLKS_POS);
+    if (type == CMU_SAFE_CLK_HOSC)
+        return READ_BITS(CMU->HOSMCR, CMU_HOSMCR_CLKS_MSK, CMU_HOSMCR_CLKS_POS);
+    else if (type == CMU_SAFE_CLK_LOSC)
+        return READ_BITS(CMU->LOSMCR, CMU_LOSMCR_CLKS_MSK, CMU_LOSMCR_CLKS_POS);
+    else
+        return READ_BITS(CMU->PULMCR, CMU_PULMCR_CLKS_MSK, CMU_PULMCR_CLKS_POS);
 }
 
 /**
@@ -777,12 +777,12 @@ uint32_t ald_cmu_current_clock_source_get(cmu_clock_safe_type_t type)
   */
 flag_status_t ald_cmu_get_clock_state(cmu_clock_state_t sr)
 {
-	assert_param(IS_CMU_CLOCK_STATE(sr));
+    assert_param(IS_CMU_CLOCK_STATE(sr));
 
-	if (READ_BIT(CMU->CLKSR, sr))
-		return SET;
+    if (READ_BIT(CMU->CLKSR, sr))
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /**
@@ -793,7 +793,7 @@ flag_status_t ald_cmu_get_clock_state(cmu_clock_state_t sr)
   */
 __weak void ald_cmu_irq_cbk(cmu_security_t se)
 {
-	return;
+    return;
 }
 /**
   * @}
@@ -838,25 +838,25 @@ __weak void ald_cmu_irq_cbk(cmu_security_t se)
   * @retval None
   */
 void ald_cmu_output_high_clock_config(cmu_output_high_sel_t sel,
-		cmu_output_high_div_t div, type_func_t status)
+        cmu_output_high_div_t div, type_func_t status)
 {
-	assert_param(IS_CMU_OUTPUT_HIGH_SEL(sel));
-	assert_param(IS_CMU_OUTPUT_HIGH_DIV(div));
-	assert_param(IS_FUNC_STATE(status));
+    assert_param(IS_CMU_OUTPUT_HIGH_SEL(sel));
+    assert_param(IS_CMU_OUTPUT_HIGH_DIV(div));
+    assert_param(IS_FUNC_STATE(status));
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	if (status) {
-		MODIFY_REG(CMU->CLKOCR, CMU_CLKOCR_HSCOS_MSK, sel << CMU_CLKOCR_HSCOS_POSS);
-		MODIFY_REG(CMU->CLKOCR, CMU_CLKOCR_HSCODIV_MSK, div << CMU_CLKOCR_HSCODIV_POSS);
-		SET_BIT(CMU->CLKOCR, CMU_CLKOCR_HSCOEN_MSK);
-	}
-	else {
-		CLEAR_BIT(CMU->CLKOCR, CMU_CLKOCR_HSCOEN_MSK);
-	}
+    if (status) {
+        MODIFY_REG(CMU->CLKOCR, CMU_CLKOCR_HSCOS_MSK, sel << CMU_CLKOCR_HSCOS_POSS);
+        MODIFY_REG(CMU->CLKOCR, CMU_CLKOCR_HSCODIV_MSK, div << CMU_CLKOCR_HSCODIV_POSS);
+        SET_BIT(CMU->CLKOCR, CMU_CLKOCR_HSCOEN_MSK);
+    }
+    else {
+        CLEAR_BIT(CMU->CLKOCR, CMU_CLKOCR_HSCOEN_MSK);
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**
@@ -872,21 +872,21 @@ void ald_cmu_output_high_clock_config(cmu_output_high_sel_t sel,
   */
 void ald_cmu_output_low_clock_config(cmu_output_low_sel_t sel, type_func_t status)
 {
-	assert_param(IS_CMU_OUTPUT_LOW_SEL(sel));
-	assert_param(IS_FUNC_STATE(status));
+    assert_param(IS_CMU_OUTPUT_LOW_SEL(sel));
+    assert_param(IS_FUNC_STATE(status));
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	if (status) {
-		MODIFY_REG(CMU->CLKOCR, CMU_CLKOCR_LSCOS_MSK, sel << CMU_CLKOCR_LSCOS_POSS);
-		SET_BIT(CMU->CLKOCR, CMU_CLKOCR_LSCOEN_MSK);
-	}
-	else {
-		CLEAR_BIT(CMU->CLKOCR, CMU_CLKOCR_LSCOEN_MSK);
-	}
+    if (status) {
+        MODIFY_REG(CMU->CLKOCR, CMU_CLKOCR_LSCOS_MSK, sel << CMU_CLKOCR_LSCOS_POSS);
+        SET_BIT(CMU->CLKOCR, CMU_CLKOCR_LSCOEN_MSK);
+    }
+    else {
+        CLEAR_BIT(CMU->CLKOCR, CMU_CLKOCR_LSCOEN_MSK);
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 /**
   * @}
@@ -920,22 +920,22 @@ void ald_cmu_output_low_clock_config(cmu_output_low_sel_t sel, type_func_t statu
   */
 void ald_cmu_buzz_config(cmu_buzz_div_t div, uint16_t dat, type_func_t status)
 {
-	assert_param(IS_CMU_BUZZ_DIV(div));
-	assert_param(IS_FUNC_STATE(status));
+    assert_param(IS_CMU_BUZZ_DIV(div));
+    assert_param(IS_FUNC_STATE(status));
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	if (status) {
-		MODIFY_REG(CMU->BUZZCR, CMU_BUZZCR_DIV_MSK, div << CMU_BUZZCR_DIV_POSS);
-		MODIFY_REG(CMU->BUZZCR, CMU_BUZZCR_DAT_MSK, dat << CMU_BUZZCR_DAT_POSS);
-		SET_BIT(CMU->BUZZCR, CMU_BUZZCR_EN_MSK);
-	}
-	else {
-		CLEAR_BIT(CMU->BUZZCR, CMU_BUZZCR_EN_MSK);
-	}
+    if (status) {
+        MODIFY_REG(CMU->BUZZCR, CMU_BUZZCR_DIV_MSK, div << CMU_BUZZCR_DIV_POSS);
+        MODIFY_REG(CMU->BUZZCR, CMU_BUZZCR_DAT_MSK, dat << CMU_BUZZCR_DAT_POSS);
+        SET_BIT(CMU->BUZZCR, CMU_BUZZCR_EN_MSK);
+    }
+    else {
+        CLEAR_BIT(CMU->BUZZCR, CMU_BUZZCR_EN_MSK);
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**
@@ -957,13 +957,13 @@ void ald_cmu_buzz_config(cmu_buzz_div_t div, uint16_t dat, type_func_t status)
   */
 void ald_cmu_lptim0_clock_select(cmu_lp_perh_clock_sel_t clock)
 {
-	assert_param(IS_CMU_LP_PERH_CLOCK_SEL(clock));
+    assert_param(IS_CMU_LP_PERH_CLOCK_SEL(clock));
 
-	SYSCFG_UNLOCK();
-	MODIFY_REG(CMU->PERICR, CMU_PERICR_LPTIM0_MSK, clock << CMU_PERICR_LPTIM0_POSS);
-	SYSCFG_LOCK();
+    SYSCFG_UNLOCK();
+    MODIFY_REG(CMU->PERICR, CMU_PERICR_LPTIM0_MSK, clock << CMU_PERICR_LPTIM0_POSS);
+    SYSCFG_LOCK();
 
-	return;
+    return;
 }
 
 /**
@@ -985,13 +985,13 @@ void ald_cmu_lptim0_clock_select(cmu_lp_perh_clock_sel_t clock)
   */
 void ald_cmu_lpuart0_clock_select(cmu_lp_perh_clock_sel_t clock)
 {
-	assert_param(IS_CMU_LP_PERH_CLOCK_SEL(clock));
+    assert_param(IS_CMU_LP_PERH_CLOCK_SEL(clock));
 
-	SYSCFG_UNLOCK();
-	MODIFY_REG(CMU->PERICR, CMU_PERICR_LPUART0_MSK, clock << CMU_PERICR_LPUART0_POSS);
-	SYSCFG_LOCK();
+    SYSCFG_UNLOCK();
+    MODIFY_REG(CMU->PERICR, CMU_PERICR_LPUART0_MSK, clock << CMU_PERICR_LPUART0_POSS);
+    SYSCFG_LOCK();
 
-	return;
+    return;
 }
 
 /**
@@ -1007,13 +1007,13 @@ void ald_cmu_lpuart0_clock_select(cmu_lp_perh_clock_sel_t clock)
   */
 void ald_cmu_lcd_clock_select(cmu_lcd_clock_sel_t clock)
 {
-	assert_param(IS_CMU_LCD_CLOCK_SEL(clock));
+    assert_param(IS_CMU_LCD_CLOCK_SEL(clock));
 
-	SYSCFG_UNLOCK();
-	MODIFY_REG(CMU->PERICR, CMU_PERICR_LCD_MSK, clock << CMU_PERICR_LCD_POSS);
-	SYSCFG_LOCK();
+    SYSCFG_UNLOCK();
+    MODIFY_REG(CMU->PERICR, CMU_PERICR_LCD_MSK, clock << CMU_PERICR_LCD_POSS);
+    SYSCFG_LOCK();
 
-	return;
+    return;
 }
 
 /**
@@ -1024,71 +1024,71 @@ void ald_cmu_lcd_clock_select(cmu_lcd_clock_sel_t clock)
     */
 void ald_cmu_perh_clock_config(cmu_perh_t perh, type_func_t status)
 {
-	uint32_t idx, pos;
+    uint32_t idx, pos;
 
-	assert_param(IS_CMU_PERH(perh));
-	assert_param(IS_FUNC_STATE(status));
+    assert_param(IS_CMU_PERH(perh));
+    assert_param(IS_FUNC_STATE(status));
 
-	SYSCFG_UNLOCK();
+    SYSCFG_UNLOCK();
 
-	if (perh == CMU_PERH_ALL) {
-		if (status) {
-			WRITE_REG(CMU->AHB1ENR, ~0);
-			WRITE_REG(CMU->APB1ENR, ~0);
-			WRITE_REG(CMU->APB2ENR, ~0);
-		}
-		else {
-			WRITE_REG(CMU->AHB1ENR, 0);
-			WRITE_REG(CMU->APB1ENR, 0);
-			WRITE_REG(CMU->APB2ENR, 0);
-		}
+    if (perh == CMU_PERH_ALL) {
+        if (status) {
+            WRITE_REG(CMU->AHB1ENR, ~0);
+            WRITE_REG(CMU->APB1ENR, ~0);
+            WRITE_REG(CMU->APB2ENR, ~0);
+        }
+        else {
+            WRITE_REG(CMU->AHB1ENR, 0);
+            WRITE_REG(CMU->APB1ENR, 0);
+            WRITE_REG(CMU->APB2ENR, 0);
+        }
 
-		SYSCFG_LOCK();
-		return;
-	}
+        SYSCFG_LOCK();
+        return;
+    }
 
-	idx = (perh >> 27) & 0x3;
-	pos = perh & ~(0x3 << 27);
+    idx = (perh >> 27) & 0x3;
+    pos = perh & ~(0x3 << 27);
 
-	if (status) {
-		switch (idx) {
-		case 0:
-			SET_BIT(CMU->AHB1ENR, pos);
-			break;
+    if (status) {
+        switch (idx) {
+        case 0:
+            SET_BIT(CMU->AHB1ENR, pos);
+            break;
 
-		case 1:
-			SET_BIT(CMU->APB1ENR, pos);
-			break;
+        case 1:
+            SET_BIT(CMU->APB1ENR, pos);
+            break;
 
-		case 2:
-			SET_BIT(CMU->APB2ENR, pos);
-			break;
+        case 2:
+            SET_BIT(CMU->APB2ENR, pos);
+            break;
 
-		default:
-			break;
-		}
-	}
-	else {
-		switch (idx) {
-		case 0:
-			CLEAR_BIT(CMU->AHB1ENR, pos);
-			break;
+        default:
+            break;
+        }
+    }
+    else {
+        switch (idx) {
+        case 0:
+            CLEAR_BIT(CMU->AHB1ENR, pos);
+            break;
 
-		case 1:
-			CLEAR_BIT(CMU->APB1ENR, pos);
-			break;
+        case 1:
+            CLEAR_BIT(CMU->APB1ENR, pos);
+            break;
 
-		case 2:
-			CLEAR_BIT(CMU->APB2ENR, pos);
-			break;
+        case 2:
+            CLEAR_BIT(CMU->APB2ENR, pos);
+            break;
 
-		default:
-			break;
-		}
-	}
+        default:
+            break;
+        }
+    }
 
-	SYSCFG_LOCK();
-	return;
+    SYSCFG_LOCK();
+    return;
 }
 
 /**

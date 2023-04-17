@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -72,7 +72,7 @@ OF SUCH DAMAGE.
 #define HOST_HANDLE_TABLE_SIZE          9U      /*!< the host handle table size define */
 
 /* the enum of host state */
-typedef enum 
+typedef enum
 {
     HOST_IDLE = 0,                     /* the host idle state definition */
     HOST_DEV_ATTACHED,                 /* the host device attached state definition */
@@ -87,7 +87,7 @@ typedef enum
 }host_state_enum;
 
 /* the enum of host event */
-typedef enum 
+typedef enum
 {
     HOST_EVENT_ATTACHED = 0,           /* the host attached event */
     HOST_EVENT_ENUM,                   /* the host enum event */
@@ -115,7 +115,7 @@ typedef enum
 }enum_state_enum;
 
 /* the enum of ctrl state */
-typedef enum 
+typedef enum
 {
     CTRL_IDLE = 0,                     /* the ctrl idle state definition */
     CTRL_SETUP,                        /* the ctrl setup state definition */
@@ -127,7 +127,7 @@ typedef enum
 }ctrl_state_enum;
 
 /* the enum of host status */
-typedef enum 
+typedef enum
 {
     USBH_OK = 0,                       /* the usbh ok status definition */
     USBH_BUSY,                         /* the usbh busy status definition */
@@ -139,7 +139,7 @@ typedef enum
 }usbh_status_enum;
 
 /* the state of user action */
-typedef enum 
+typedef enum
 {
     USBH_USER_NO_RESP = 0,             /* the user no response */
     USBH_USER_RESP_OK = 1,             /* the user response ok */
@@ -184,7 +184,7 @@ typedef struct
 
     void (*configuration_desc_available)(usb_descriptor_configuration_struct *cfg_desc,
                                          usb_descriptor_interface_struct *itf_desc,
-                                         usb_descriptor_endpoint_struct *ep_desc);  
+                                         usb_descriptor_endpoint_struct *ep_desc);
                                                                 /* the configuration descripter available function */
 
     void (*manufacturer_string)         (void *mfc_string);      /* the user callback manufacturer string function */
@@ -192,7 +192,7 @@ typedef struct
     void (*serial_num_string)           (void *serial_string);   /* the user callback serial number string function */
     void (*enumeration_finish)          (void);                 /* the user callback enumeration finish function */
     usbh_user_status_enum (*user_input) (void);                 /* the user callback user input function */
-    int  (*user_application)            (usb_core_handle_struct *pudev, uint8_t id);          
+    int  (*user_application)            (usb_core_handle_struct *pudev, uint8_t id);
                                                                 /* the user callback user appliction function */
     void (*device_not_supported)        (void);                 /* the user callback device not supported function */
     void (*unrecovered_error)           (void);                 /* the user callback unrecovered error function */
@@ -223,7 +223,7 @@ typedef struct
 typedef usbh_status_enum (*ACT_FUN)     (usb_core_handle_struct *pudev, usbh_host_struct *puhost, void* pustate);
 
 /* the state table struct */
-typedef struct 
+typedef struct
 {
     uint8_t                              cur_state;             /* the current state */
     uint8_t                              cur_event;             /* the current event */
@@ -248,15 +248,15 @@ typedef struct
 } usbh_state_regist_table_struct;
 
 /* the state handle struct */
-typedef struct 
+typedef struct
 {
     uint8_t                              usbh_current_state;                                 /* current state */
     uint8_t                              usbh_current_state_table_size;                      /* current state table size */
     state_table_struct*                  usbh_current_state_table;                           /* current state table */
-  
+
     usbh_state_stack_struct              stack[MAX_USBH_STATE_STACK_DEEP];                   /* the stack of state table */
     int8_t                               usbh_current_state_stack_top;                       /* the current state top */
-  
+
     usbh_state_regist_table_struct       usbh_regist_state_table[MAX_USBH_STATE_TABLE_NUM];  /* the array of regist state table */
     uint8_t                              usbh_regist_state_table_num;                        /* the number of regist state table */
 } usbh_state_handle_struct;
@@ -273,15 +273,15 @@ urb_state_enum hcd_urb_state_get (usb_core_handle_struct *pudev, uint8_t channel
 /* this function returns the last URBstate */
 uint32_t  hcd_xfer_count_get (usb_core_handle_struct *pudev, uint8_t channel_num);
 /* de-initialize host */
-usbh_status_enum usbh_deinit (usb_core_handle_struct *pudev, 
-                              usbh_host_struct *puhost, 
+usbh_status_enum usbh_deinit (usb_core_handle_struct *pudev,
+                              usbh_host_struct *puhost,
                               usbh_state_handle_struct* pustate);
 
 /* the state core driver function */
 /* state core driver init */
 void scd_init (usbh_state_handle_struct* pustate);
 /* state core driver table regist */
-void scd_table_regist (usbh_state_handle_struct* pustate, 
+void scd_table_regist (usbh_state_handle_struct* pustate,
                        state_table_struct* pstate_table,
                        uint8_t table_id,
                        uint8_t current_table_size);
@@ -293,7 +293,7 @@ void scd_state_move (usbh_state_handle_struct* pustate, uint8_t state);
 usbh_status_enum scd_event_handle (usb_core_handle_struct *pudev,
                                    usbh_host_struct *puhost,
                                    usbh_state_handle_struct* pustate,
-                                   uint8_t event, 
+                                   uint8_t event,
                                    uint8_t state);
 /* state core driver table push */
 void scd_table_push (usbh_state_handle_struct* pustate);

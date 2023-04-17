@@ -23,22 +23,22 @@
  #include "FreeRTOS.h"
  #endif
  void hal_setpullup(uint8_t io_num, uint8_t on) {
- 	SocCtrl_t*		psoc_ctrl = SOC_CTRL_START_ADDR;
+    SocCtrl_t*      psoc_ctrl = SOC_CTRL_START_ADDR;
 
- 	configASSERT (io_num < N_IO);
-	psoc_ctrl->io_ctrl_b[io_num].cfg = on;
+    configASSERT (io_num < N_IO);
+    psoc_ctrl->io_ctrl_b[io_num].cfg = on;
  }
- 
+
  void hal_setpinmux(uint8_t io_num, uint8_t mux_sel) {
- 	SocCtrl_t*		psoc_ctrl = SOC_CTRL_START_ADDR;
- 	
- 	configASSERT (io_num < N_IO);
-	psoc_ctrl->io_ctrl_b[io_num].mux = mux_sel;
+    SocCtrl_t*      psoc_ctrl = SOC_CTRL_START_ADDR;
+
+    configASSERT (io_num < N_IO);
+    psoc_ctrl->io_ctrl_b[io_num].mux = mux_sel;
  }
- 
+
  uint8_t hal_getpinmux(uint8_t io_num) {
- 	SocCtrl_t*		psoc_ctrl = SOC_CTRL_START_ADDR;
- 	
- 	configASSERT (io_num < N_IO);
-	return psoc_ctrl->io_ctrl_b[io_num].mux;
+    SocCtrl_t*      psoc_ctrl = SOC_CTRL_START_ADDR;
+
+    configASSERT (io_num < N_IO);
+    return psoc_ctrl->io_ctrl_b[io_num].mux;
  }

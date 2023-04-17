@@ -26,18 +26,18 @@
 
 void soc_eu_mask_set(uint32_t offset, uint32_t mask)
 {
-	writew(mask, (uintptr_t)(SOC_EU_ADDR + offset));
+    writew(mask, (uintptr_t)(SOC_EU_ADDR + offset));
 }
 
 uint32_t soc_eu_mask_get(uint32_t offset)
 {
-	return readw((uintptr_t)(SOC_EU_ADDR + offset));
+    return readw((uintptr_t)(SOC_EU_ADDR + offset));
 }
 
 void pulp_soc_eu_event_init()
 {
-	/* deactivate all soc events */
-	for (int i = 0; i < SOC_NB_EVENT_REGS; i++) {
-		soc_eu_mask_set(SOC_FC_FIRST_MASK + i * 4, 0xffffffff);
-	}
+    /* deactivate all soc events */
+    for (int i = 0; i < SOC_NB_EVENT_REGS; i++) {
+        soc_eu_mask_set(SOC_FC_FIRST_MASK + i * 4, 0xffffffff);
+    }
 }

@@ -83,11 +83,11 @@
 /*****************************************************************************
  * Function implementation - global ('extern') and local ('static')
  *****************************************************************************/
- 
+
 /**
 ******************************************************************************
     ** \brief  获取LCD中断标志位INTF
-    ** 
+    **
     ** @param  无
     ** \retval 无
     **
@@ -100,7 +100,7 @@ boolean_t Lcd_GetItStatus(void)
 /**
 ******************************************************************************
     ** \brief  清除中断标志位INTF
-    ** 
+    **
     ** @param  无
     ** \retval 无
     **
@@ -170,7 +170,7 @@ en_result_t Lcd_GetSegCom(stc_lcd_segcompara_t *pstcSegComPara,stc_lcd_segcom_t 
             pstcSegCom->stc_seg32_51_com0_8_t.segcom_bit.Seg38Com5 = 0;
             pstcSegCom->stc_seg32_51_com0_8_t.segcom_bit.Seg37Com6 = 0;
             pstcSegCom->stc_seg32_51_com0_8_t.segcom_bit.Seg36Com7 = 0;
-                break;            
+                break;
         default:
             return ErrorInvalidParameter;
     }
@@ -276,11 +276,11 @@ en_result_t Lcd_WriteRam(uint8_t u8Row,uint32_t u32Data)
         enRet = ErrorInvalidParameter;
         return enRet;
     }
-    
+
     ram += u8Row;
     *ram = u32Data;
     enRet = Ok;
-    return  enRet; 
+    return  enRet;
 }
 
 /******************************************************************************

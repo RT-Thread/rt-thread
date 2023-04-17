@@ -50,7 +50,7 @@ void trng_deinit(void)
 }
 
 /*!
-    \brief      enable TRNG 
+    \brief      enable TRNG
     \param[in]  none
     \param[out] none
     \retval     none
@@ -61,7 +61,7 @@ void trng_enable(void)
 }
 
 /*!
-    \brief      disable TRNG 
+    \brief      disable TRNG
     \param[in]  none
     \param[out] none
     \retval     none

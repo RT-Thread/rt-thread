@@ -81,7 +81,7 @@ typedef enum en_irq_level
     IrqLevel1  = 1u,               ///< 优先级1
     IrqLevel2  = 2u,               ///< 优先级2
     IrqLevel3  = 3u,               ///< 优先级3
-} en_irq_level_t; 
+} en_irq_level_t;
 
 
 /******************************************************************************

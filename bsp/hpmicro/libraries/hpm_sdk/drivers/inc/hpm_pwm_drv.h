@@ -62,7 +62,7 @@ typedef enum pwm_register_update {
 } pwm_shadow_register_update_trigger_t;
 
 /**
- * @brief configure the state of channel 0∼7 outputs when the forced output is in effect
+ * @brief configure the state of channel 0âˆ¼7 outputs when the forced output is in effect
  *
  */
 typedef enum pwm_fault_mode {

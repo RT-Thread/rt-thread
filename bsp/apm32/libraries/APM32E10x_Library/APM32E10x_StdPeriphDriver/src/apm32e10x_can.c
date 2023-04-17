@@ -249,7 +249,7 @@ void CAN_ConfigFilter(CAN_T* can, CAN_FilterConfig_T* filterConfig)
  */
 void CAN_ConfigStructInit(CAN_Config_T* canConfig)
 {
-    
+
     canConfig->autoBusOffManage = DISABLE;
     canConfig->autoWakeUpMode   = DISABLE;
     canConfig->nonAutoRetran    = DISABLE;
@@ -925,8 +925,8 @@ uint8_t CAN_ReadIntFlag(CAN_T* can, CAN_INT_T flag)
         switch (flag)
         {
         case CAN_INT_TXME:
-            status  = can->TXSTS_B.REQCFLG0; 
-            status |= can->TXSTS_B.REQCFLG1; 
+            status  = can->TXSTS_B.REQCFLG0;
+            status |= can->TXSTS_B.REQCFLG1;
             status |= can->TXSTS_B.REQCFLG2;
             break;
         case CAN_INT_F0MP:

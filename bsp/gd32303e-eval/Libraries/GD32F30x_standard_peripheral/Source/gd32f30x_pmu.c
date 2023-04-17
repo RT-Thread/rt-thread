@@ -181,7 +181,7 @@ void pmu_to_sleepmode(uint8_t sleepmodecmd)
 {
     /* clear sleepdeep bit of Cortex-M4 system control register */
     SCB->SCR &= ~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
-    
+
     /* select WFI or WFE command to enter sleep mode */
     if(WFI_CMD == sleepmodecmd){
         __WFI();
@@ -195,7 +195,7 @@ void pmu_to_sleepmode(uint8_t sleepmodecmd)
     \param[in]  ldo
       \arg        PMU_LDO_NORMAL: LDO normal work when pmu enter deepsleep mode
       \arg        PMU_LDO_LOWPOWER: LDO work at low power mode when pmu enter deepsleep mode
-    \param[in]  deepsleepmodecmd: 
+    \param[in]  deepsleepmodecmd:
       \arg        WFI_CMD: use WFI command
       \arg        WFE_CMD: use WFE command
     \param[out] none
@@ -205,13 +205,13 @@ void pmu_to_deepsleepmode(uint32_t ldo,uint8_t deepsleepmodecmd)
 {
     /* clear stbmod and ldolp bits */
     PMU_CTL &= ~((uint32_t)(PMU_CTL_STBMOD | PMU_CTL_LDOLP));
-    
+
     /* set ldolp bit according to pmu_ldo */
     PMU_CTL |= ldo;
-    
+
     /* set sleepdeep bit of Cortex-M4 system control register */
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-    
+
     /* select WFI or WFE command to enter deepsleep mode */
     if(WFI_CMD == deepsleepmodecmd){
         __WFI();
@@ -239,10 +239,10 @@ void pmu_to_standbymode(uint8_t standbymodecmd)
 
     /* set stbmod bit */
     PMU_CTL |= PMU_CTL_STBMOD;
-        
+
     /* reset wakeup flag */
     PMU_CTL |= PMU_CTL_WURST;
-    
+
     /* select WFI or WFE command to enter standby mode */
     if(WFI_CMD == standbymodecmd){
         __WFI();
@@ -284,7 +284,7 @@ void pmu_flag_clear(uint32_t flag_reset)
       \arg        PMU_FLAG_LDOVSRF: LDO voltage select ready flag
       \arg        PMU_FLAG_HDRF: high-driver ready flag
       \arg        PMU_FLAG_HDSRF: high-driver switch ready flag
-      \arg        PMU_FLAG_LDRF: low-driver mode ready flag 
+      \arg        PMU_FLAG_LDRF: low-driver mode ready flag
     \param[out] none
     \retval     FlagStatus SET or RESET
 */

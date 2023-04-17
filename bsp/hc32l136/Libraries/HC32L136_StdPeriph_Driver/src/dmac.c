@@ -265,18 +265,18 @@ en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_config_t* pstcConfig)
   ASSERT(IS_VALID_TRN_WIDTH(pstcConfig->enTransferWidth));
   ASSERT(IS_VALID_ADDR_MODE(pstcConfig->enSrcAddrMode));
   ASSERT(IS_VALID_ADDR_MODE(pstcConfig->enDstAddrMode));
-  
+
   /* Check for channel and NULL pointer */
   if (!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
   if(enCh == DmaCh0)
-  {   
+  {
     M0P_DMAC->CONFB0_f.FIS_IE = 0;
     M0P_DMAC->CONFB0_f.ERR_IE = 0; /* Disable DMAC interrupt */
-    
-    /*******************  SET DMA MODE   ******************/    
+
+    /*******************  SET DMA MODE   ******************/
     M0P_DMAC->CONFB0_f.MODE = pstcConfig->enMode;
     /*******************  SET DMA_TRGSELx register  ******************/
     M0P_DMAC->CONFA0_f.TRI_SEL = pstcConfig->enRequestNum;
@@ -285,17 +285,17 @@ en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_config_t* pstcConfig)
     M0P_DMAC->CONFA0_f.BC = pstcConfig->u16BlockSize - 1;
     /* Transfer count */
     M0P_DMAC->CONFA0_f.TC = pstcConfig->u16TransferCnt - 1;
-    
+
     /*******************  SET DMA_CHxCTL(x=0~7) register  ******************/
     /* Transfer width */
     M0P_DMAC->CONFB0_f.WIDTH = pstcConfig->enTransferWidth;
-    
+
     /****************************** source address contrl *******************/
     /* source address mode */
     M0P_DMAC->CONFB0_f.FS = pstcConfig->enSrcAddrMode;
     /* Source address */
     M0P_DMAC->SRCADR0_f.SRCADR = pstcConfig->u32SrcAddress;
-    
+
     /*************************** destination address contrl *******************/
     /* destination address mode */
     M0P_DMAC->CONFB0_f.FD = pstcConfig->enDstAddrMode;
@@ -303,21 +303,21 @@ en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_config_t* pstcConfig)
     M0P_DMAC->DSTADR0_f.DSTADR = pstcConfig->u32DstAddress;
     /*********************  Source address reload control  ********************/
     M0P_DMAC ->CONFB0_f.RS = pstcConfig->bSrcAddrReloadCtl;
-    
+
     /*******************  Destination address reload control  *****************/
     M0P_DMAC ->CONFB0_f.RD = pstcConfig->bDestAddrReloadCtl;
-    
+
     /*******************  Destination bc/tc reload control  *****************/
     M0P_DMAC ->CONFB0_f.RC = pstcConfig->bSrcBcTcReloadCtl;
-    
-   /*******************  MSK control  *****************/    
+
+   /*******************  MSK control  *****************/
     M0P_DMAC->CONFB0_f.MSK = pstcConfig->bMsk;
-    
+
   }
   else{
     M0P_DMAC->CONFB1_f.FIS_IE = 0;
     M0P_DMAC->CONFB1_f.ERR_IE = 0; /* Disable DMAC interrupt */
-    /*******************  SET DMA MODE   ******************/    
+    /*******************  SET DMA MODE   ******************/
     M0P_DMAC->CONFB1_f.MODE = pstcConfig->enMode;
     /*******************  SET DMA_TRGSELx register  ******************/
     M0P_DMAC->CONFA1_f.TRI_SEL = pstcConfig->enRequestNum;
@@ -326,33 +326,33 @@ en_result_t Dma_InitChannel(en_dma_channel_t enCh, stc_dma_config_t* pstcConfig)
     M0P_DMAC->CONFA1_f.BC = pstcConfig->u16BlockSize - 1;
     /* Transfer count */
     M0P_DMAC->CONFA1_f.TC = pstcConfig->u16TransferCnt - 1;
-    
+
     /*******************  SET DMA_CHxCTL(x=0~7) register  ******************/
     /* Transfer width */
     M0P_DMAC->CONFB1_f.WIDTH = pstcConfig->enTransferWidth;
-    
+
     /****************************** source address contrl *******************/
     /* source address mode */
     M0P_DMAC->CONFB1_f.FS =  pstcConfig->enSrcAddrMode;
     /* Source address */
     M0P_DMAC->SRCADR1_f.SRCADR = pstcConfig->u32SrcAddress;
-    
+
     /*************************** destination address contrl *******************/
     /* destination address mode */
     M0P_DMAC->CONFB1_f.FD = pstcConfig->enDstAddrMode;
     /* Destination address */
     M0P_DMAC->DSTADR1_f.DSTADR = pstcConfig->u32DstAddress;
-    
+
     /*********************  Source address reload control  ********************/
     M0P_DMAC ->CONFB1_f.RS = pstcConfig->bSrcAddrReloadCtl;
-    
+
     /*******************  Destination address reload control  *****************/
     M0P_DMAC ->CONFB1_f.RD = pstcConfig->bDestAddrReloadCtl;
-    
+
     /*******************  Destination bc/tc reload control  *****************/
-    M0P_DMAC ->CONFB1_f.RC = pstcConfig->bSrcBcTcReloadCtl; 
-    
-    /*******************  MSK control  *****************/    
+    M0P_DMAC ->CONFB1_f.RC = pstcConfig->bSrcBcTcReloadCtl;
+
+    /*******************  MSK control  *****************/
     M0P_DMAC->CONFB1_f.MSK = pstcConfig->bMsk;
   }
   return Ok;
@@ -377,7 +377,7 @@ void Dma_SwTrigger(en_dma_channel_t enCh)
     M0P_DMAC->CONFA0_f.TRI_SEL = 0x0000;
   }
   else{
-    M0P_DMAC->CONFA1_f.TRI_SEL = 0x0000;   	
+    M0P_DMAC->CONFA1_f.TRI_SEL = 0x0000;
   }
 }
 
@@ -425,14 +425,14 @@ void Dma_Disable(void)
 ******************************************************************************/
 void Dma_Start(en_dma_channel_t enCh)
 {
-  ASSERT(IS_VALID_CH(enCh));  
+  ASSERT(IS_VALID_CH(enCh));
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.ST = 1;
   }
   else{
-    M0P_DMAC->CONFA1_f.ST = 1;   	
-  }  
+    M0P_DMAC->CONFA1_f.ST = 1;
+  }
 }
 
 /**
@@ -448,14 +448,14 @@ void Dma_Start(en_dma_channel_t enCh)
 ******************************************************************************/
 void Dma_Stop(en_dma_channel_t enCh)
 {
-  ASSERT(IS_VALID_CH(enCh));  
+  ASSERT(IS_VALID_CH(enCh));
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.ST = 0;
   }
   else{
-    M0P_DMAC->CONFA1_f.ST = 0;   	
-  }  
+    M0P_DMAC->CONFA1_f.ST = 0;
+  }
 }
 /**
 *******************************************************************************
@@ -477,23 +477,23 @@ void Dma_Stop(en_dma_channel_t enCh)
 en_result_t Dma_EnableIrq(en_dma_channel_t enCh, stc_dma_irq_sel_t stcIrqSel)
 {
   en_result_t enRet = Ok;
-  
+
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if (TRUE == stcIrqSel.TrnCpltIrq)
   {
      Dma_EnableChannelIrq(enCh);
   }
   if(TRUE == stcIrqSel.TrnErrIrq)
   {
-    Dma_EnableChannelErrIrq(enCh);  
+    Dma_EnableChannelErrIrq(enCh);
   }
-  
+
   return enRet;
 }
 
@@ -517,23 +517,23 @@ en_result_t Dma_EnableIrq(en_dma_channel_t enCh, stc_dma_irq_sel_t stcIrqSel)
 en_result_t Dma_DisableIrq(en_dma_channel_t enCh, stc_dma_irq_sel_t stcIrqSel)
 {
   en_result_t enRet = Ok;
-  
+
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if (TRUE == stcIrqSel.TrnCpltIrq)
   {
      Dma_DisableChannelIrq(enCh);
   }
   if(TRUE == stcIrqSel.TrnErrIrq)
   {
-    Dma_DisableChannelErrIrq(enCh);  
+    Dma_DisableChannelErrIrq(enCh);
   }
-  
+
   return enRet;
 }
 
@@ -552,20 +552,20 @@ en_result_t Dma_DisableIrq(en_dma_channel_t enCh, stc_dma_irq_sel_t stcIrqSel)
 en_result_t Dma_EnableChannel(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.ENS = 1;
   }
   else{
-    M0P_DMAC->CONFA1_f.ENS = 1;  	
+    M0P_DMAC->CONFA1_f.ENS = 1;
   }
-  
+
   return Ok;
 }
 
@@ -584,20 +584,20 @@ en_result_t Dma_EnableChannel(en_dma_channel_t enCh)
 en_result_t Dma_DisableChannel(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.ENS = 0;;
   }
   else {
-    M0P_DMAC->CONFA1_f.ENS = 0;;   	
+    M0P_DMAC->CONFA1_f.ENS = 0;;
   }
-  
+
   return Ok;
 }
 
@@ -617,20 +617,20 @@ en_result_t Dma_DisableChannel(en_dma_channel_t enCh)
 en_result_t Dma_SetTriggerSel(en_dma_channel_t enCh, en_dma_trig_sel_t enTrgSel)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.TRI_SEL = enTrgSel;;
   }
   else{
-    M0P_DMAC->CONFA1_f.TRI_SEL = enTrgSel;;   	
+    M0P_DMAC->CONFA1_f.TRI_SEL = enTrgSel;;
   }
-  
+
   return Ok;
 }
 
@@ -650,21 +650,21 @@ en_result_t Dma_SetTriggerSel(en_dma_channel_t enCh, en_dma_trig_sel_t enTrgSel)
 en_result_t Dma_SetSourceAddress(en_dma_channel_t enCh, uint32_t u32Address)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->SRCADR0_f.SRCADR = u32Address;
   }
   else
   {
-    M0P_DMAC->SRCADR1_f.SRCADR = u32Address;;   	
+    M0P_DMAC->SRCADR1_f.SRCADR = u32Address;;
   }
-  
+
   return Ok;
 }
 
@@ -684,21 +684,21 @@ en_result_t Dma_SetSourceAddress(en_dma_channel_t enCh, uint32_t u32Address)
 en_result_t Dma_SetDestinationAddress(en_dma_channel_t enCh, uint32_t u32Address)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->DSTADR0_f.DSTADR = u32Address;
   }
   else
   {
-    M0P_DMAC->DSTADR1_f.DSTADR = u32Address;   	
+    M0P_DMAC->DSTADR1_f.DSTADR = u32Address;
   }
-  
+
   return Ok;
 }
 
@@ -719,19 +719,19 @@ en_result_t Dma_SetBlockSize(en_dma_channel_t enCh, uint16_t u16BlkSize)
 {
   ASSERT(IS_VALID_CH(enCh));
   ASSERT(IS_VALID_BLKSIZE(u16BlkSize));
-  
+
   if((!IS_VALID_CH(enCh)) || (!IS_VALID_BLKSIZE(u16BlkSize)))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.BC = u16BlkSize - 1;
   }
   else
   {
-    M0P_DMAC->CONFA1_f.BC = u16BlkSize - 1;   	
+    M0P_DMAC->CONFA1_f.BC = u16BlkSize - 1;
   }
   return Ok;
 }
@@ -753,21 +753,21 @@ en_result_t Dma_SetTransferCnt(en_dma_channel_t enCh, uint16_t u16TrnCnt)
 {
   ASSERT(IS_VALID_CH(enCh));
   ASSERT(IS_VALID_TRNCNT(u16TrnCnt));
-  
+
   if((!IS_VALID_CH(enCh)) || (!IS_VALID_TRNCNT(u16TrnCnt)))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.TC = u16TrnCnt - 1;
   }
   else
   {
-    M0P_DMAC->CONFA1_f.TC = u16TrnCnt - 1;   	
+    M0P_DMAC->CONFA1_f.TC = u16TrnCnt - 1;
   }
-  
+
   return Ok;
 }
 
@@ -787,7 +787,7 @@ en_result_t Dma_SetTransferCnt(en_dma_channel_t enCh, uint16_t u16TrnCnt)
 en_result_t Dma_EnableSourceRload(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if((!IS_VALID_CH(enCh)))
   {
     return ErrorInvalidParameter;
@@ -798,9 +798,9 @@ en_result_t Dma_EnableSourceRload(en_dma_channel_t enCh)
   }
   else
   {
-    M0P_DMAC ->CONFB1_f.RS = 1;   	
+    M0P_DMAC ->CONFB1_f.RS = 1;
   }
-  
+
   return Ok;
 }
 
@@ -820,20 +820,20 @@ en_result_t Dma_EnableSourceRload(en_dma_channel_t enCh)
 en_result_t Dma_DisableSourceRload(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC ->CONFB0_f.RS = 0;
   }
   else{
-    M0P_DMAC ->CONFB1_f.RS = 0;   	
+    M0P_DMAC ->CONFB1_f.RS = 0;
   }
-  
+
   return Ok;
 }
 
@@ -853,7 +853,7 @@ en_result_t Dma_DisableSourceRload(en_dma_channel_t enCh)
 en_result_t Dma_EnableDestinationRload(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if((!IS_VALID_CH(enCh)))
   {
     return ErrorInvalidParameter;
@@ -863,9 +863,9 @@ en_result_t Dma_EnableDestinationRload(en_dma_channel_t enCh)
     M0P_DMAC ->CONFB0_f.RD = 1;
   }
   else {
-    M0P_DMAC ->CONFB1_f.RD = 1;   	
+    M0P_DMAC ->CONFB1_f.RD = 1;
   }
-  
+
   return Ok;
 }
 
@@ -885,20 +885,20 @@ en_result_t Dma_EnableDestinationRload(en_dma_channel_t enCh)
 en_result_t Dma_DisableDestinationRload(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC ->CONFB0_f.RD = 0;
   }
   else{
-    M0P_DMAC ->CONFB1_f.RD = 0;   	
+    M0P_DMAC ->CONFB1_f.RD = 0;
   }
-  
+
   return Ok;
 }
 /**
@@ -917,7 +917,7 @@ en_result_t Dma_DisableDestinationRload(en_dma_channel_t enCh)
 en_result_t Dma_EnableBcTcReload(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if((!IS_VALID_CH(enCh)))
   {
     return ErrorInvalidParameter;
@@ -927,9 +927,9 @@ en_result_t Dma_EnableBcTcReload(en_dma_channel_t enCh)
     M0P_DMAC ->CONFB0_f.RC = 1;
   }
   else{
-    M0P_DMAC ->CONFB1_f.RC = 1;   	
+    M0P_DMAC ->CONFB1_f.RC = 1;
   }
-  
+
   return Ok;
 }
 
@@ -949,20 +949,20 @@ en_result_t Dma_EnableBcTcReload(en_dma_channel_t enCh)
 en_result_t Dma_DisableBcTcReload(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC ->CONFB0_f.RC = 0;
   }
   else{
-    M0P_DMAC ->CONFB1_f.RC = 0;   	
+    M0P_DMAC ->CONFB1_f.RC = 0;
   }
-  
+
   return Ok;
 }
 /**
@@ -985,21 +985,21 @@ en_result_t Dma_SetSourceIncMode(en_dma_channel_t enCh, en_address_mode_t enMode
 {
   ASSERT(IS_VALID_CH(enCh));
   ASSERT(IS_VALID_ADDR_MODE(enMode));
-  
+
   if((!IS_VALID_CH(enCh)) || (!IS_VALID_ADDR_MODE(enMode)))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFB0_f.FS = enMode;
   }
   else{
-    M0P_DMAC->CONFB1_f.FS = enMode;   	
+    M0P_DMAC->CONFB1_f.FS = enMode;
   }
-  
-  
+
+
   return Ok;
 }
 
@@ -1023,20 +1023,20 @@ en_result_t Dma_SetDestinationIncMode(en_dma_channel_t enCh, en_address_mode_t e
 {
   ASSERT(IS_VALID_CH(enCh));
   ASSERT(IS_VALID_ADDR_MODE(enMode));
-  
+
   if((!IS_VALID_CH(enCh)) || (!IS_VALID_ADDR_MODE(enMode)))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFB0_f.FD = enMode;
   }
   else{
-    M0P_DMAC->CONFB1_f.FD = enMode;   	
+    M0P_DMAC->CONFB1_f.FD = enMode;
   }
-  
+
   return Ok;
 }
 
@@ -1055,7 +1055,7 @@ en_result_t Dma_SetDestinationIncMode(en_dma_channel_t enCh, en_address_mode_t e
 en_result_t Dma_EnableContinusTranfer(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
@@ -1065,7 +1065,7 @@ en_result_t Dma_EnableContinusTranfer(en_dma_channel_t enCh)
     M0P_DMAC->CONFB0_f.MSK = 1;
   }
   else{
-    M0P_DMAC->CONFB1_f.MSK = 1;  	
+    M0P_DMAC->CONFB1_f.MSK = 1;
   }
   return Ok;
 }
@@ -1085,20 +1085,20 @@ en_result_t Dma_EnableContinusTranfer(en_dma_channel_t enCh)
 en_result_t Dma_DisableContinusTranfer(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFB0_f.MSK = 0;
   }
   else{
-    M0P_DMAC->CONFB1_f.MSK = 0;  	
+    M0P_DMAC->CONFB1_f.MSK = 0;
   }
-  
+
   return Ok;
 }
 /**
@@ -1148,18 +1148,18 @@ void Dma_RecoverTranfer(void)
 en_result_t Dma_PauseChannelTranfer(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if((!IS_VALID_CH(enCh)))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.PAS = 1;
   }
   else{
-    M0P_DMAC->CONFA1_f.PAS = 1;  	
+    M0P_DMAC->CONFA1_f.PAS = 1;
   }
   return Ok;
 }
@@ -1178,18 +1178,18 @@ en_result_t Dma_PauseChannelTranfer(en_dma_channel_t enCh)
 en_result_t Dma_RecoverChannelTranfer(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if((!IS_VALID_CH(enCh)))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFA0_f.PAS = 0;
   }
   else{
-    M0P_DMAC->CONFA1_f.PAS = 0;  	
+    M0P_DMAC->CONFA1_f.PAS = 0;
   }
   return Ok;
 }
@@ -1213,20 +1213,20 @@ en_result_t Dma_SetTransferWidth(en_dma_channel_t enCh, en_dma_transfer_width_t 
 {
   ASSERT(IS_VALID_CH(enCh));
   ASSERT(IS_VALID_TRN_WIDTH(enWidth));
-  
+
   if((!IS_VALID_CH(enCh)) || (!IS_VALID_TRN_WIDTH(enWidth)))
   {
     return ErrorInvalidParameter;
   }
-  
+
   if(enCh == DmaCh0)
   {
     M0P_DMAC->CONFB0_f.WIDTH = enWidth;
   }
   else{
-    M0P_DMAC->CONFB1_f.WIDTH = enWidth;  	
+    M0P_DMAC->CONFB1_f.WIDTH = enWidth;
   }
-  
+
   return Ok;
 }
 /**
@@ -1248,12 +1248,12 @@ en_result_t Dma_SetTransferWidth(en_dma_channel_t enCh, en_dma_transfer_width_t 
 en_result_t Dma_SetChPriority(en_dma_priority_t enPrio)
 {
   ASSERT(IS_VALID_PRIO_MODE(enPrio));
-  
+
   if(!IS_VALID_PRIO_MODE(enPrio))
   {
     return ErrorInvalidParameter;
   }
-  
+
   M0P_DMAC->CONF_f.PRIO = enPrio;
   return Ok;
 }
@@ -1272,7 +1272,7 @@ en_result_t Dma_SetChPriority(en_dma_priority_t enPrio)
 en_result_t Dma_EnableChannelIrq(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
@@ -1282,9 +1282,9 @@ en_result_t Dma_EnableChannelIrq(en_dma_channel_t enCh)
     M0P_DMAC->CONFB0_f.FIS_IE = 1;
   }
   else{
-    M0P_DMAC->CONFB1_f.FIS_IE = 1;  	
+    M0P_DMAC->CONFB1_f.FIS_IE = 1;
   }
-  
+
   return Ok;
 }
 
@@ -1303,7 +1303,7 @@ en_result_t Dma_EnableChannelIrq(en_dma_channel_t enCh)
 en_result_t Dma_DisableChannelIrq(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
@@ -1313,9 +1313,9 @@ en_result_t Dma_DisableChannelIrq(en_dma_channel_t enCh)
     M0P_DMAC->CONFB0_f.FIS_IE = 0;
   }
   else{
-    M0P_DMAC->CONFB1_f.FIS_IE = 0;  	
+    M0P_DMAC->CONFB1_f.FIS_IE = 0;
   }
-  
+
   return Ok;
 }
 /**
@@ -1333,7 +1333,7 @@ en_result_t Dma_DisableChannelIrq(en_dma_channel_t enCh)
 en_result_t Dma_EnableChannelErrIrq(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
@@ -1343,9 +1343,9 @@ en_result_t Dma_EnableChannelErrIrq(en_dma_channel_t enCh)
     M0P_DMAC->CONFB0_f.ERR_IE = 1;
   }
   else{
-    M0P_DMAC->CONFB1_f.ERR_IE = 1;  	
+    M0P_DMAC->CONFB1_f.ERR_IE = 1;
   }
-  
+
   return Ok;
 }
 
@@ -1364,7 +1364,7 @@ en_result_t Dma_EnableChannelErrIrq(en_dma_channel_t enCh)
 en_result_t Dma_DisableChannelErrIrq(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
@@ -1374,14 +1374,14 @@ en_result_t Dma_DisableChannelErrIrq(en_dma_channel_t enCh)
     M0P_DMAC->CONFB0_f.ERR_IE = 0;
   }
   else{
-    M0P_DMAC->CONFB1_f.ERR_IE = 0;  	
+    M0P_DMAC->CONFB1_f.ERR_IE = 0;
   }
-  
+
   return Ok;
 }
 
 /**
- * \brief   
+ * \brief
  *          Dma中断服务程序
  *
  * \param   [in]  u8Param  未使用
@@ -1406,7 +1406,7 @@ void Dma_IRQHandler(uint8_t u8Param)
             stcDmaIrqCalbaks.pfnDma1TranferCompleteIrq();
         }
         M0P_DMAC->CONFB1_f.STAT = 0u;
-    }	
+    }
     if(DmaTransferComplete == M0P_DMAC->CONFB0_f.STAT)
     {
         if (NULL != stcDmaIrqCalbaks.pfnDma0TranferCompleteIrq)
@@ -1422,11 +1422,11 @@ void Dma_IRQHandler(uint8_t u8Param)
             stcDmaIrqCalbaks.pfnDma1TranferCompleteIrq();
         }
         M0P_DMAC->CONFB1_f.STAT = 0u;
-    }	
-			
+    }
+
 }
 /**
- * \brief   
+ * \brief
  *          配置ADC中断函数入口
  *
  * \param   [in]  pstcAdcIrqCfg  ADC中断配置指针
@@ -1437,7 +1437,7 @@ void Dma_IRQHandler(uint8_t u8Param)
 en_result_t Dma_ConfigIrq(en_dma_channel_t enCh,stc_dma_irq_sel_t* stcDmaIrqCfg,stc_dma_irq_calbakfn_pt_t* pstcDmaIrqCalbaks)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return ErrorInvalidParameter;
@@ -1445,7 +1445,7 @@ en_result_t Dma_ConfigIrq(en_dma_channel_t enCh,stc_dma_irq_sel_t* stcDmaIrqCfg,
   if(DmaCh0 == enCh)
   {
     if (TRUE == stcDmaIrqCfg->TrnErrIrq)
-    {  
+    {
       if (NULL != pstcDmaIrqCalbaks->pfnDma0TranferCompleteIrq)
         {
             stcDmaIrqCalbaks.pfnDma0TranferErrIrq = pstcDmaIrqCalbaks->pfnDma0TranferErrIrq;
@@ -1459,10 +1459,10 @@ en_result_t Dma_ConfigIrq(en_dma_channel_t enCh,stc_dma_irq_sel_t* stcDmaIrqCfg,
         }
     }
   }
-  else if(DmaCh1 == enCh) 
+  else if(DmaCh1 == enCh)
   {
     if (TRUE == stcDmaIrqCfg->TrnErrIrq)
-    {  
+    {
       if (NULL != pstcDmaIrqCalbaks->pfnDma1TranferCompleteIrq)
         {
             stcDmaIrqCalbaks.pfnDma1TranferErrIrq = pstcDmaIrqCalbaks->pfnDma1TranferErrIrq;
@@ -1474,26 +1474,26 @@ en_result_t Dma_ConfigIrq(en_dma_channel_t enCh,stc_dma_irq_sel_t* stcDmaIrqCfg,
         {
             stcDmaIrqCalbaks.pfnDma1TranferCompleteIrq = pstcDmaIrqCalbaks->pfnDma1TranferCompleteIrq;
         }
-    }    
+    }
   }else
   {}
   return Ok;
 }
 /**
-** \brief   
+** \brief
 **          获取DMA状态
 **
 ** \param  [in] enCh                   The specified dma channel.
 **
-** \retval en_dma_stat_t              
-** 
+** \retval en_dma_stat_t
+**
 **
 ** \retval  无
 **/
 en_dma_stat_t Dma_GetStat(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(!IS_VALID_CH(enCh))
   {
     return DEFAULT;
@@ -1503,30 +1503,30 @@ en_dma_stat_t Dma_GetStat(en_dma_channel_t enCh)
     return (en_dma_stat_t)M0P_DMAC->CONFB0_f.STAT ;
   }
   else{
-    return (en_dma_stat_t)M0P_DMAC->CONFB1_f.STAT ;  	
-  }	
+    return (en_dma_stat_t)M0P_DMAC->CONFB1_f.STAT ;
+  }
 }
 /**
-** \brief   
+** \brief
 **          获取DMA状态
 **
 ** \param  [in] enCh                   The specified dma channel.
 **
-** \retval en_dma_stat_t              
-** 
+** \retval en_dma_stat_t
+**
 **
 ** \retval  无
 **/
 void Dma_ClrStat(en_dma_channel_t enCh)
 {
   ASSERT(IS_VALID_CH(enCh));
-  
+
   if(enCh == DmaCh0)
   {
      M0P_DMAC->CONFB0_f.STAT = 0x0;
   }
   else{
-     M0P_DMAC->CONFB1_f.STAT = 0x0;  	
+     M0P_DMAC->CONFB1_f.STAT = 0x0;
   }
 }
 

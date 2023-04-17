@@ -1704,7 +1704,7 @@ uint8_t RTC_ReadStatusFlag(RTC_FLAG_T flag)
  *                  @arg RTC_FLAG_TP1F: Tamper 1 event flag
  *                  @arg RTC_FLAG_TSOF: Time Stamp Overflow flag
  *                  @arg RTC_FLAG_TSF : Time Stamp event flag
- *                  @arg RTC_FLAG_WTF £ºWakeUp Timer flag  (only APM32F072 and APM32F091 devices)
+ *                  @arg RTC_FLAG_WTF Â£ÂºWakeUp Timer flag  (only APM32F072 and APM32F091 devices)
  *                  @arg RTC_FLAG_ALRF: ALRMA A flag
  *                  @arg RTC_FLAG_RSF:  Registers Synchronized flag
  */

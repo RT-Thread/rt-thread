@@ -43,7 +43,7 @@
 /** \file spi.h
  **
  ** Headerfile for SPI functions
- **  
+ **
  **
  ** History:
  **   - 2017-05-17  1.0  Devi     First Version
@@ -72,12 +72,12 @@ extern "C"
  /**
  ******************************************************************************
  ** \brief SPI 功能通道选择设置
- ******************************************************************************/ 
+ ******************************************************************************/
 
 /**
  ******************************************************************************
  ** \brief SPI 功能使能设置
- ******************************************************************************/ 
+ ******************************************************************************/
 typedef enum en_spi_en
 {
     SpiMskEnable     = 0x4u,    ///< SPI模块使能
@@ -86,7 +86,7 @@ typedef enum en_spi_en
 /**
  ******************************************************************************
  ** \brief SPI 模式配置
- ******************************************************************************/ 
+ ******************************************************************************/
 typedef enum en_spi_mode
 {
     SpiMskMaster = 0x10u,  ///<主机
@@ -95,7 +95,7 @@ typedef enum en_spi_mode
 /**
  ******************************************************************************
  ** \brief SPI 时钟极性设置
- ******************************************************************************/ 
+ ******************************************************************************/
 typedef enum en_spi_cpol
 {
     SpiMskcpollow  = 0u,       ///<极性为低
@@ -104,7 +104,7 @@ typedef enum en_spi_cpol
 /**
  ******************************************************************************
  ** \brief SPI 时钟相位设置
- ******************************************************************************/ 
+ ******************************************************************************/
 typedef enum en_spi_cpha
 {
     SpiMskCphafirst  = 0u,      ///<第一边沿采样
@@ -116,13 +116,13 @@ typedef enum en_spi_cpha
  *****************************************************************************/
 typedef enum en_spi_clk_div
 {
-    SpiClkMskDiv2   = 0x00u,   ///<PCLK 2分频       
-    SpiClkMskDiv4   = 0x01u,   ///<PCLK 4分频            
-    SpiClkMskDiv8   = 0x02u,   ///<PCLK 8分频            
-    SpiClkMskDiv16  = 0x03u,   ///<PCLK 16分频            
-    SpiClkMskDiv32  = 0x80u,   ///<PCLK 32分频            
-    SpiClkMskDiv64  = 0x81u,   ///<PCLK 64分频            
-    SpiClkMskDiv128 = 0x82u,   ///<PCLK 128分频            
+    SpiClkMskDiv2   = 0x00u,   ///<PCLK 2分频
+    SpiClkMskDiv4   = 0x01u,   ///<PCLK 4分频
+    SpiClkMskDiv8   = 0x02u,   ///<PCLK 8分频
+    SpiClkMskDiv16  = 0x03u,   ///<PCLK 16分频
+    SpiClkMskDiv32  = 0x80u,   ///<PCLK 32分频
+    SpiClkMskDiv64  = 0x81u,   ///<PCLK 64分频
+    SpiClkMskDiv128 = 0x82u,   ///<PCLK 128分频
 }en_spi_clk_div_t;
 
 /**
@@ -131,8 +131,8 @@ typedef enum en_spi_clk_div
  *****************************************************************************/
 typedef enum en_spi_cspin
 {
-    SpiCsLow  = 0u,      ///<片选低电平         
-    SpiCsHigh = 1u,      ///<片选高电平            
+    SpiCsLow  = 0u,      ///<片选低电平
+    SpiCsHigh = 1u,      ///<片选高电平
 }en_spi_cspin_t;
 
 /**
@@ -141,9 +141,9 @@ typedef enum en_spi_cspin
  *****************************************************************************/
 typedef enum en_spi_status
 {
-    SpiIf              = 0x80u,   ///<传输结束中断标志       
-    SpiSserr           = 0x20u,   ///<从机模式错误标志    
-    SpiMdf             = 0x10u,   ///<主机模式错误标志 
+    SpiIf              = 0x80u,   ///<传输结束中断标志
+    SpiSserr           = 0x20u,   ///<从机模式错误标志
+    SpiMdf             = 0x10u,   ///<主机模式错误标志
     SpiBusy            = 0x08u,   ///<SPI总线忙标志
     SpiTxe             = 0x04u,   ///<发送缓冲器器空标志
     SpiRxne            = 0x02u,   ///<接受缓冲器非空标志
@@ -154,8 +154,8 @@ typedef enum en_spi_status
  *****************************************************************************/
 typedef enum en_spi_func
 {
-    SpiMskRxNeIe          = 0x40u,   ///<接收缓冲器非空中断使能       
-    SpiMskTxEIe           = 0x20u,   ///<发送缓冲器空中断使能    
+    SpiMskRxNeIe          = 0x40u,   ///<接收缓冲器非空中断使能
+    SpiMskTxEIe           = 0x20u,   ///<发送缓冲器空中断使能
     SpiMskDmaTxEn         = 0x10u,   ///<DMA硬件访问发送使能
     SpiMskDmaRxEn         = 0x08u,   ///<DMA硬件访问接收使能
 }en_spi_func_t;
@@ -171,7 +171,7 @@ typedef struct stc_spi_cfg
     en_spi_cpha_t       enCPHA;             ///< 时钟相位选择
 }stc_spi_cfg_t;
 
-//SPI 状态获取  
+//SPI 状态获取
 boolean_t Spi_GetStatus(M0P_SPI_TypeDef* SPIx,en_spi_status_t enStatus);
 
 ///<SPI 中断使能/禁止

@@ -95,14 +95,14 @@
 
 /* constants definitions */
 /* DMA channel select */
-typedef enum 
+typedef enum
 {
     DMA_CH0 = 0,                /*!< DMA Channel0 */
-    DMA_CH1,                    /*!< DMA Channel1 */ 
-    DMA_CH2,                    /*!< DMA Channel2 */ 
-    DMA_CH3,                    /*!< DMA Channel3 */ 
-    DMA_CH4,                    /*!< DMA Channel4 */ 
-    DMA_CH5,                    /*!< DMA Channel5 */ 
+    DMA_CH1,                    /*!< DMA Channel1 */
+    DMA_CH2,                    /*!< DMA Channel2 */
+    DMA_CH3,                    /*!< DMA Channel3 */
+    DMA_CH4,                    /*!< DMA Channel4 */
+    DMA_CH5,                    /*!< DMA Channel5 */
     DMA_CH6                     /*!< DMA Channel6 */
 } dma_channel_enum;
 
@@ -155,7 +155,7 @@ typedef struct
 #define DMA_INT_FTF                         DMA_CHXCTL_FTFIE                                /*!< enable bit for channel full transfer finish interrupt */
 #define DMA_INT_HTF                         DMA_CHXCTL_HTFIE                                /*!< enable bit for channel half transfer finish interrupt */
 #define DMA_INT_ERR                         DMA_CHXCTL_ERRIE                                /*!< enable bit for channel error interrupt */
-                                     
+
 /* transfer direction */
 #define DMA_PERIPHERAL_TO_MEMORY            ((uint32_t)0x00000000U)                         /*!< read from peripheral and write to memory */
 #define DMA_MEMORY_TO_PERIPHERAL            ((uint32_t)0x00000001U)                         /*!< read from memory and write to peripheral */
@@ -199,7 +199,7 @@ typedef struct
 #define DMA_CHANNEL_CNT_MASK                DMA_CHXCNT_CNT                                  /*!< transfer counter mask */
 
 
-  
+
 /* function declarations */
 /* deinitialize DMA a channel registers */
 void dma_deinit(uint32_t dma_periph, dma_channel_enum channelx);

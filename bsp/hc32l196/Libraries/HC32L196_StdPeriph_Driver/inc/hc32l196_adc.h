@@ -70,7 +70,7 @@ extern "C"
  ** \defgroup AdcGroup AD Converter (ADC)
   **
  ******************************************************************************/
- 
+
 //@{
 
 /******************************************************************************
@@ -97,7 +97,7 @@ extern "C"
 typedef enum en_adc_mode
 {
     AdcSglMode  = 0u,           /*!< 单输入通道单次转换模式 */
-    AdcScanMode = 1u,           /*!< 多输入通道顺序/插队扫描转换模式*/   
+    AdcScanMode = 1u,           /*!< 多输入通道顺序/插队扫描转换模式*/
 }en_adc_mode_t;
 
 /**
@@ -157,7 +157,7 @@ typedef enum en_adc_samp_ch_sel
     AdcExInputCH24   =  24u,       /*!<使用PE14*/
     AdcExInputCH25   =  25u,       /*!<使用PE13*/
 
-    AdcDacInput      =  26u,       /*!<使用DAC输出(必须使用输入增益)*/                    
+    AdcDacInput      =  26u,       /*!<使用DAC输出(必须使用输入增益)*/
     AdcAVccdiv3Input =  27u,       /*!<使用1/3 AVCC(必须使用输入增益)*/
     AdcAiTsInput     =  28u,       /*!<使用内置温度传感器BGR_TS(必须使用输入增益)*/
     AdcVref1_2Input  =  29u,       /*!<使用内部基准1.2V(必须使用输入增益)*/
@@ -171,7 +171,7 @@ typedef enum en_adc_samp_ch_sel
 typedef enum en_adc_op_buf
 {
     AdcMskBufEnable  = 1u<<11,          /*!< 打开放大器BUF */
-    AdcMskBufDisable = 0u,              /*!< 关闭放大器BUF */  
+    AdcMskBufDisable = 0u,              /*!< 关闭放大器BUF */
 } en_adc_op_buf_t;
 
 /**
@@ -194,7 +194,7 @@ typedef enum en_adc_samp_cycle_sel
 typedef enum en_adc_in_ref
 {
     AdcMskInRefEnable  = 1u<<14,          /*!< 内部参考电压使能 */
-    AdcMskInRefDisable = 0u,              /*!< 内部参考电压关闭 */  
+    AdcMskInRefDisable = 0u,              /*!< 内部参考电压关闭 */
 }en_adc_in_ref_t;
 
 /**
@@ -329,13 +329,13 @@ typedef enum en_adc_irq_type
 typedef struct stc_adc_cfg
 {
     en_adc_mode_t           enAdcMode;                  /*! ADC转换模式*/
-    
+
     en_adc_clk_div_t        enAdcClkDiv;                /*! ADC时钟选择*/
     en_adc_samp_cycle_sel_t enAdcSampCycleSel;          /*! ADC采样周期选择*/
     en_adc_ref_vol_sel_t    enAdcRefVolSel;             /*! ADC参考电压选择*/
     en_adc_op_buf_t         enAdcOpBuf;                 /*! ADC输入信号放大器控制使能*/
     en_adc_in_ref_t         enInRef;                    /*! ADC内部参考电压使能*/
-    
+
     en_adc_align_t          enAdcAlign;                 /*! ADC转换结果对齐控制*/
 }stc_adc_cfg_t;
 
@@ -358,7 +358,7 @@ typedef struct stc_adc_sqr_cfg
 typedef struct stc_adc_jqr_cfg
 {
     uint8_t                 u8JqrCnt;                   /*! ADC顺序扫描转换次数*/
-    boolean_t               bJqrDmaTrig;                /*! ADC插队扫描转换完成DMA触发使能*/    
+    boolean_t               bJqrDmaTrig;                /*! ADC插队扫描转换完成DMA触发使能*/
 }stc_adc_jqr_cfg_t;
 
 
@@ -368,15 +368,15 @@ typedef struct stc_adc_jqr_cfg
  *****************************************************************************/
 typedef struct stc_adc_threshold_cfg
 {
-    boolean_t bAdcRegCmp ;                  /*!ADC区间使能*/ 
-    boolean_t bAdcHtCmp ;                   /*!ADC上超出区间使能*/ 
+    boolean_t bAdcRegCmp ;                  /*!ADC区间使能*/
+    boolean_t bAdcHtCmp ;                   /*!ADC上超出区间使能*/
     boolean_t bAdcLtCmp ;                   /*!ADC下超出区间使能*/
-    
+
     uint32_t u32AdcHighThd;                 /*!ADC比较上阈值*/
-    uint32_t u32AdcLowThd;                  /*!ADC比较下阈值*/ 
-    
+    uint32_t u32AdcLowThd;                  /*!ADC比较下阈值*/
+
     en_adc_samp_ch_sel_t    enSampChSel;    /*!ADC采样通道选择*/
-    
+
 }stc_adc_threshold_cfg_t;
 
 
@@ -410,11 +410,11 @@ en_result_t Adc_SqrModeCfg(stc_adc_sqr_cfg_t* pstcAdcSqrCfg);
 //ADC 插队扫描模式配置
 en_result_t Adc_JqrModeCfg(stc_adc_jqr_cfg_t* pstcAdcJqrCfg);
 
-//ADC Sgl 单次转换模式通道选择配置 
+//ADC Sgl 单次转换模式通道选择配置
 en_result_t Adc_CfgSglChannel( en_adc_samp_ch_sel_t enstcAdcSampCh);
-//ADC SQR 顺序扫描转换模式通道选择配置 
+//ADC SQR 顺序扫描转换模式通道选择配置
 en_result_t Adc_CfgSqrChannel(en_adc_sqr_chmux_t enstcAdcSqrChMux, en_adc_samp_ch_sel_t enstcAdcSampCh);
-//ADC JQR 插队扫描转换模式通道选择配置 
+//ADC JQR 插队扫描转换模式通道选择配置
 en_result_t Adc_CfgJqrChannel(en_adc_jqr_chmux_t enstcAdcJqrChMux, en_adc_samp_ch_sel_t enstcAdcSampCh);
 
 ///<ADC 单次转换外部触发源配置

@@ -16,15 +16,15 @@
 #define INT_TO_POINTER(x)  ((void *) (intptr_t) (x))
 
 #if !(defined (__CHAR_BIT__) && defined (__SIZEOF_LONG__))
-#	error Missing required predefined macros for BITS_PER_LONG calculation
+#   error Missing required predefined macros for BITS_PER_LONG calculation
 #endif
 
-#define BITS_PER_LONG	(__CHAR_BIT__ * __SIZEOF_LONG__)
+#define BITS_PER_LONG   (__CHAR_BIT__ * __SIZEOF_LONG__)
 /* Create a contiguous bitmask starting at bit position @l and ending at
  * position @h.
  */
 #define GENMASK(h, l) \
-	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
+    (((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
 
 /* KB, MB, GB */
 #define KB(x) ((x) << 10)
@@ -51,7 +51,7 @@
  * @param set Value 0 clears bit, any other value sets bit
  */
 #define WRITE_BIT(var, bit, set) \
-	((var) = (set) ? ((var) | BIT(bit)) : ((var) & ~BIT(bit)))
+    ((var) = (set) ? ((var) | BIT(bit)) : ((var) & ~BIT(bit)))
 
 #define BIT_MASK(n) (BIT(n) - 1)
 

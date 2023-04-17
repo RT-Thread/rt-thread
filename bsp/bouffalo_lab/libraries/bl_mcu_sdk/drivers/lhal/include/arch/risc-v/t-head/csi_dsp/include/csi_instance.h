@@ -44,8 +44,8 @@ extern "C"
 #include <stdint.h>
 #endif
 
-#define	LOW_OPTIMIZATION_ENTER
-#define	LOW_OPTIMIZATION_EXIT
+#define LOW_OPTIMIZATION_ENTER
+#define LOW_OPTIMIZATION_EXIT
 
 #define F64_MAX   ((float64_t)DBL_MAX)
 #define F32_MAX   ((float32_t)FLT_MAX)
@@ -396,9 +396,9 @@ __STATIC_FORCEINLINE uint32_t __USAT(int32_t val, uint32_t sat)
 * @brief definition to pack four 8 bit values.
 */
 #define __PACKq7(v0,v1,v2,v3) ( (((int32_t)(v0) <<  0) & (int32_t)0x000000FF) | \
-									  (((int32_t)(v1) <<  8) & (int32_t)0x0000FF00) | \
-									  (((int32_t)(v2) << 16) & (int32_t)0x00FF0000) | \
-									  (((int32_t)(v3) << 24) & (int32_t)0xFF000000)  )
+                                      (((int32_t)(v1) <<  8) & (int32_t)0x0000FF00) | \
+                                      (((int32_t)(v2) << 16) & (int32_t)0x00FF0000) | \
+                                      (((int32_t)(v3) << 24) & (int32_t)0xFF000000)  )
 
 /**
  * @brief Clips Q63 to Q31 values.

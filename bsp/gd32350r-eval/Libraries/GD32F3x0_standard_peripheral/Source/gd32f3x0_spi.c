@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -41,7 +41,7 @@ OF SUCH DAMAGE.
 #define SPI_I2SPSC_DEFAULT_VALUE        ((uint32_t)0x00000002U)  /*!< default value of SPI_I2SPSC register */
 
 /*!
-    \brief      reset SPI and I2S 
+    \brief      reset SPI and I2S
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[out] none
     \retval     none
@@ -84,7 +84,7 @@ void spi_struct_para_init(spi_parameter_struct* spi_struct)
 /*!
     \brief      initialize SPI parameter
     \param[in]  spi_periph: SPIx(x=0,1)
-    \param[in]  spi_struct: SPI parameter initialization stuct members of the structure 
+    \param[in]  spi_struct: SPI parameter initialization stuct members of the structure
                             and the member values are shown as below:
                   device_mode: SPI_MASTER, SPI_SLAVE
                   trans_mode: SPI_TRANSMODE_FULLDUPLEX, SPI_TRANSMODE_RECEIVEONLY,
@@ -99,7 +99,7 @@ void spi_struct_para_init(spi_parameter_struct* spi_struct)
     \retval     none
 */
 void spi_init(uint32_t spi_periph, spi_parameter_struct* spi_struct)
-{   
+{
     uint32_t reg = 0U;
     reg = SPI_CTL0(spi_periph);
     reg &= SPI_INIT_MASK;
@@ -138,7 +138,7 @@ void spi_enable(uint32_t spi_periph)
 }
 
 /*!
-    \brief      disable SPI 
+    \brief      disable SPI
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[out] none
     \retval     none
@@ -151,7 +151,7 @@ void spi_disable(uint32_t spi_periph)
 
 #ifdef GD32F350
 /*!
-    \brief      initialize I2S parameter 
+    \brief      initialize I2S parameter
     \param[in]  spi_periph: SPI0
     \param[in]  mode: I2S operation mode
                 only one parameter can be selected which is shown as below:
@@ -180,7 +180,7 @@ void i2s_init(uint32_t spi_periph, uint32_t mode, uint32_t standard, uint32_t ck
     reg &= I2S_INIT_MASK;
 
     /* enable I2S mode */
-    reg |= (uint32_t)SPI_I2SCTL_I2SSEL; 
+    reg |= (uint32_t)SPI_I2SCTL_I2SSEL;
     /* select I2S mode */
     reg |= (uint32_t)mode;
     /* select I2S standard */
@@ -193,7 +193,7 @@ void i2s_init(uint32_t spi_periph, uint32_t mode, uint32_t standard, uint32_t ck
 }
 
 /*!
-    \brief      configure I2S prescaler 
+    \brief      configure I2S prescaler
     \param[in]  spi_periph: SPI0
     \param[in]  audiosample: I2S audio sample rate
                 only one parameter can be selected which is shown as below:
@@ -230,7 +230,7 @@ void i2s_psc_config(uint32_t spi_periph, uint32_t audiosample, uint32_t framefor
 
     /* get system clock */
     i2sclock = rcu_clock_freq_get(CK_SYS);
-    
+
     /* config the prescaler depending on the mclk output state, the frame format and audio sample rate */
     if(I2S_MCKOUT_ENABLE == mckout){
         clks = (uint32_t)(((i2sclock / 256U) * 10U) / audiosample);
@@ -241,7 +241,7 @@ void i2s_psc_config(uint32_t spi_periph, uint32_t audiosample, uint32_t framefor
             clks = (uint32_t)(((i2sclock / 64U) *10U ) / audiosample);
         }
     }
-    
+
     /* remove the floating point */
     clks = (clks + 5U) / 10U;
     i2sof = (clks & 0x00000001U);
@@ -264,7 +264,7 @@ void i2s_psc_config(uint32_t spi_periph, uint32_t audiosample, uint32_t framefor
 }
 
 /*!
-    \brief      enable I2S 
+    \brief      enable I2S
     \param[in]  spi_periph: SPI0
     \param[out] none
     \retval     none
@@ -275,7 +275,7 @@ void i2s_enable(uint32_t spi_periph)
 }
 
 /*!
-    \brief      disable I2S 
+    \brief      disable I2S
     \param[in]  spi_periph: SPI0
     \param[out] none
     \retval     none
@@ -288,7 +288,7 @@ void i2s_disable(uint32_t spi_periph)
 #endif /* GD32F350 */
 
 /*!
-    \brief      enable SPI NSS output 
+    \brief      enable SPI NSS output
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[out] none
     \retval     none
@@ -299,7 +299,7 @@ void spi_nss_output_enable(uint32_t spi_periph)
 }
 
 /*!
-    \brief      disable SPI NSS output 
+    \brief      disable SPI NSS output
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[out] none
     \retval     none
@@ -332,7 +332,7 @@ void spi_nss_internal_low(uint32_t spi_periph)
 }
 
 /*!
-    \brief      enable SPI DMA send or receive 
+    \brief      enable SPI DMA send or receive
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[in]  dma: SPI DMA mode
                 only one parameter can be selected which is shown as below:
@@ -351,7 +351,7 @@ void spi_dma_enable(uint32_t spi_periph, uint8_t dma)
 }
 
 /*!
-    \brief      disable SPI DMA send or receive 
+    \brief      disable SPI DMA send or receive
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[in]  dma: SPI DMA mode
                 only one parameter can be selected which is shown as below:
@@ -432,7 +432,7 @@ void spi_bidirectional_transfer_config(uint32_t spi_periph, uint32_t transfer_di
 }
 
 /*!
-    \brief      set CRC polynomial 
+    \brief      set CRC polynomial
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[in]  crc_poly: CRC polynomial value
     \param[out] none
@@ -447,7 +447,7 @@ void spi_crc_polynomial_set(uint32_t spi_periph, uint16_t crc_poly)
 }
 
 /*!
-    \brief      get SPI CRC polynomial 
+    \brief      get SPI CRC polynomial
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[out] none
     \retval     16-bit CRC polynomial
@@ -458,7 +458,7 @@ uint16_t spi_crc_polynomial_get(uint32_t spi_periph)
 }
 
 /*!
-    \brief      turn on CRC function 
+    \brief      turn on CRC function
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[out] none
     \retval     none
@@ -469,7 +469,7 @@ void spi_crc_on(uint32_t spi_periph)
 }
 
 /*!
-    \brief      turn off CRC function 
+    \brief      turn off CRC function
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[out] none
     \retval     none
@@ -564,7 +564,7 @@ void qspi_enable(uint32_t spi_periph)
 }
 
 /*!
-    \brief      disable quad wire SPI 
+    \brief      disable quad wire SPI
     \param[in]  spi_periph: SPI1
     \param[out] none
     \retval     none
@@ -575,7 +575,7 @@ void qspi_disable(uint32_t spi_periph)
 }
 
 /*!
-    \brief      enable quad wire SPI write 
+    \brief      enable quad wire SPI write
     \param[in]  spi_periph: SPI1
     \param[out] none
     \retval     none
@@ -586,7 +586,7 @@ void qspi_write_enable(uint32_t spi_periph)
 }
 
 /*!
-    \brief      enable quad wire SPI read 
+    \brief      enable quad wire SPI read
     \param[in]  spi_periph: SPI1
     \param[out] none
     \retval     none
@@ -597,7 +597,7 @@ void qspi_read_enable(uint32_t spi_periph)
 }
 
 /*!
-    \brief      enable SPI_IO2 and SPI_IO3 pin output 
+    \brief      enable SPI_IO2 and SPI_IO3 pin output
     \param[in]  spi_periph: SPI1
     \param[out] none
     \retval     none
@@ -608,7 +608,7 @@ void qspi_io23_output_enable(uint32_t spi_periph)
 }
 
  /*!
-    \brief      disable SPI_IO2 and SPI_IO3 pin output 
+    \brief      disable SPI_IO2 and SPI_IO3 pin output
     \param[in]  spi_periph: SPI1
     \param[out] none
     \retval     none
@@ -619,7 +619,7 @@ void qspi_io23_output_enable(uint32_t spi_periph)
 }
 
 /*!
-    \brief      enable SPI and I2S interrupt 
+    \brief      enable SPI and I2S interrupt
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[in]  interrupt: SPI/I2S interrupt
                 only one parameter can be selected which is shown as below:
@@ -651,7 +651,7 @@ void spi_i2s_interrupt_enable(uint32_t spi_periph, uint8_t interrupt)
 }
 
 /*!
-    \brief      disable SPI and I2S interrupt 
+    \brief      disable SPI and I2S interrupt
     \param[in]  spi_periph: SPIx(x=0,1)
     \param[in]  interrupt: SPI/I2S interrupt
                 only one parameter can be selected which is shown as below:

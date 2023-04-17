@@ -267,33 +267,33 @@ static void system_clock_hxtal(void)
 {
     uint32_t timeout = 0U;
     uint32_t stab_flag = 0U;
-    
+
     /* enable HXTAL */
     RCU_CTL |= RCU_CTL_HXTALEN;
-    
+
     /* wait until HXTAL is stable or the startup time is longer than HXTAL_STARTUP_TIMEOUT */
     do{
         timeout++;
         stab_flag = (RCU_CTL & RCU_CTL_HXTALSTB);
     }while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
-    
+
     /* if fail */
     if(0U == (RCU_CTL & RCU_CTL_HXTALSTB)){
         while(1){
         }
     }
-    
+
     /* AHB = SYSCLK */
     RCU_CFG0 |= RCU_AHB_CKSYS_DIV1;
     /* APB2 = AHB/1 */
     RCU_CFG0 |= RCU_APB2_CKAHB_DIV1;
     /* APB1 = AHB/2 */
     RCU_CFG0 |= RCU_APB1_CKAHB_DIV2;
-    
+
     /* select HXTAL as system clock */
     RCU_CFG0 &= ~RCU_CFG0_SCS;
     RCU_CFG0 |= RCU_CKSYSSRC_HXTAL;
-    
+
     /* wait until HXTAL is selected as system clock */
     while(0 == (RCU_CFG0 & RCU_SCSS_HXTAL)){
     }
@@ -350,8 +350,8 @@ static void system_clock_24m_hxtal(void)
         }
 
     }else if(HXTAL_VALUE==8000000){
-		RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
-		RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
+        RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
+        RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
     }
 
     /* enable PLL */
@@ -421,8 +421,8 @@ static void system_clock_36m_hxtal(void)
         }
 
     }else if(HXTAL_VALUE==8000000){
-		RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
-		RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
+        RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
+        RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
     }
 
     /* enable PLL */
@@ -493,8 +493,8 @@ static void system_clock_48m_hxtal(void)
         }
 
     }else if(HXTAL_VALUE==8000000){
-		RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
-		RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
+        RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
+        RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
     }
 
 
@@ -567,8 +567,8 @@ static void system_clock_56m_hxtal(void)
         }
 
     }else if(HXTAL_VALUE==8000000){
-		RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
-		RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
+        RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
+        RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
     }
 
     /* enable PLL */
@@ -622,7 +622,7 @@ static void system_clock_72m_hxtal(void)
     /* APB1 = AHB/2 */
     RCU_CFG0 |= RCU_APB1_CKAHB_DIV2;
 
-    /* CK_PLL = (CK_PREDIV0) * 18 = 72 MHz */ 
+    /* CK_PLL = (CK_PREDIV0) * 18 = 72 MHz */
     RCU_CFG0 &= ~(RCU_CFG0_PLLMF | RCU_CFG0_PLLMF_4);
     RCU_CFG0 |= (RCU_PLLSRC_HXTAL | RCU_PLL_MUL18);
 
@@ -640,8 +640,8 @@ static void system_clock_72m_hxtal(void)
         }
 
     }else if(HXTAL_VALUE==8000000){
-		RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
-		RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
+        RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
+        RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
     }
 
     /* enable PLL */
@@ -715,8 +715,8 @@ static void system_clock_96m_hxtal(void)
         RCU_CFG0 &= ~(RCU_CFG0_PLLMF | RCU_CFG0_PLLMF_4);
         RCU_CFG0 |= (RCU_PLLSRC_HXTAL | RCU_PLL_MUL24);
 
-		RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
-		RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
+        RCU_CFG1 &= ~(RCU_CFG1_PREDV0SEL | RCU_CFG1_PREDV1 | RCU_CFG1_PLL1MF | RCU_CFG1_PREDV0);
+        RCU_CFG1 |= (RCU_PREDV0SRC_HXTAL | RCU_PREDV0_DIV2 );
     }
 
     /* enable PLL */
@@ -838,7 +838,7 @@ static void system_clock_48m_irc8m(void)
 {
     uint32_t timeout = 0U;
     uint32_t stab_flag = 0U;
-    
+
     /* enable IRC8M */
     RCU_CTL |= RCU_CTL_IRC8MEN;
 
@@ -894,7 +894,7 @@ static void system_clock_72m_irc8m(void)
 {
     uint32_t timeout = 0U;
     uint32_t stab_flag = 0U;
-    
+
     /* enable IRC8M */
     RCU_CTL |= RCU_CTL_IRC8MEN;
 
@@ -950,7 +950,7 @@ static void system_clock_108m_irc8m(void)
 {
     uint32_t timeout = 0U;
     uint32_t stab_flag = 0U;
-    
+
     /* enable IRC8M */
     RCU_CTL |= RCU_CTL_IRC8MEN;
 

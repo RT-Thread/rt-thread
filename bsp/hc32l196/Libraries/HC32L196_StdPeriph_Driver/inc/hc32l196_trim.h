@@ -43,7 +43,7 @@
 /** \file trim.h
  **
  ** TRIM 数据结构及API声明
- **  
+ **
  **
  ** History:
  **   - 2018-04-21   Lux     V1.0
@@ -72,7 +72,7 @@ extern "C"
 //@{
 
 /******************************************************************************
- ** Global pre-processor symbols/macros ('#define')                            
+ ** Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
 
 /******************************************************************************
@@ -87,8 +87,8 @@ typedef enum en_trim_monitor
 {
     TrimMonDisable = 0u,            ///< 禁止
     TrimMonEnable  = 0x40u,         ///< 使能
-}en_trim_monitor_t; 
- 
+}en_trim_monitor_t;
+
  /**
  ******************************************************************************
  ** \brief 待校准/监测时钟选择枚举重定义 (CALCLK_SEL)
@@ -131,7 +131,7 @@ typedef enum en_trim_inttype
 
 /**
  ******************************************************************************
- ** \brief TRIM 配置结构体定义 
+ ** \brief TRIM 配置结构体定义
  *****************************************************************************/
 typedef struct stc_trim_cfg
 {
@@ -160,7 +160,7 @@ void Trim_Stop(void);
 uint32_t Trim_RefCntGet(void);
 ///<校准计数器计数值获取
 uint32_t Trim_CalCntGet(void);
- 
+
 ///<中断操作相关函数
 ///中断使能/禁止
 void Trim_EnableIrq(void);

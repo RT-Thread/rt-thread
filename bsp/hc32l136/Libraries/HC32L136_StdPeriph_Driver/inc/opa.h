@@ -43,7 +43,7 @@
 /** \file OPA.h
  **
  ** Headerfile for OPA functions
- ** @link OPA Group Some description @endlink 
+ ** @link OPA Group Some description @endlink
  **
  ** History:
  **   - 2018-04-15   Devi     First Version
@@ -101,7 +101,7 @@ typedef enum en_opa_invert_pagagain
     Gain05_3       = 4u,               ///< 反向增益5/3倍
     Gain01         = 5u,               ///< 反向增益1倍
     Gain01_3        = 6u,               ///< 反向增益1/3倍
-    Gain11_5       = 7u,               ///< 反向增益11/5倍   
+    Gain11_5       = 7u,               ///< 反向增益11/5倍
 }en_opa_invert_pagagain_t;
 
 /**
@@ -118,7 +118,7 @@ typedef enum en_opa_noinvert_pagagain
     Gain08_3       = 4u,               ///< 正向增益8/3倍
     Gain02         = 5u,               ///< 正向增益2倍
     Gain04_3       = 6u,               ///< 正向增益4/3倍
-    Gain16_5       = 7u,               ///< 正向增益16/5倍   
+    Gain16_5       = 7u,               ///< 正向增益16/5倍
 }en_opa_noinvert_pagagain_t;
 
 /**
@@ -127,9 +127,9 @@ typedef enum en_opa_noinvert_pagagain
  ******************************************************************************/
 typedef enum opa_metergain
 {
-    OpaMeterGain3 = 0u,                        
-    OpaMeterGain1_3 = 1u,               
-    OpaMeterGain1 = 2u,                             
+    OpaMeterGain3 = 0u,
+    OpaMeterGain1_3 = 1u,
+    OpaMeterGain1 = 2u,
 }en_opa_metergain_t;
 
 
@@ -139,14 +139,14 @@ typedef enum opa_metergain
  ******************************************************************************/
 typedef enum opa_modesel
 {
-    OpaUintMode     = 0u,           ///< PGA单位增益        
-    OpaForWardMode  = 1u,           ///< 正向输入PGA            
-    OpaOppositeMode = 2u,           ///< 反向输入PGA              
+    OpaUintMode     = 0u,           ///< PGA单位增益
+    OpaForWardMode  = 1u,           ///< 正向输入PGA
+    OpaOppositeMode = 2u,           ///< 反向输入PGA
     OpaThreeOppMode = 3u,           ///< 3个OPA级联反向输入PGA
     OpaThreeForMode = 4u,           ///< 3个OPA级联正向输入PGA
     OpaDiffMode     = 5u,           ///< 两运放差分输入PGA
     OpaMeterMode    = 6u,           ///< 仪表放大器
-    OpaGpMode       = 7u,           ///< 通用运放       
+    OpaGpMode       = 7u,           ///< 通用运放
 }en_opa_modesel_t;
 
 /**
@@ -155,9 +155,9 @@ typedef enum opa_modesel
  ******************************************************************************/
 typedef enum opa_calsel
 {
-    OpaSoftMode         = 0u,           ///< 软件控制     
-    OpaSoftTriggerMode  = 1u,           ///< 软件触发      
-    OpaADCTriggerMode   = 2u,           ///< ADC触发                  
+    OpaSoftMode         = 0u,           ///< 软件控制
+    OpaSoftTriggerMode  = 1u,           ///< 软件触发
+    OpaADCTriggerMode   = 2u,           ///< ADC触发
 }en_opa_calsel_t;
 
 /**

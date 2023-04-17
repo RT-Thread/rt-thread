@@ -1,5 +1,5 @@
 /*!
-    \file  usbd_std.c 
+    \file  usbd_std.c
     \brief USB 2.0 standard handler driver
 */
 
@@ -53,7 +53,7 @@ static void (*StandardDeviceRequest[])(usb_core_handle_struct *pudev, usb_device
 };
 
 /* get standard descriptor handler */
-static uint8_t* (*standard_descriptor_get[])(usb_core_handle_struct *pudev, uint8_t index, uint16_t *pLen) = 
+static uint8_t* (*standard_descriptor_get[])(usb_core_handle_struct *pudev, uint8_t index, uint16_t *pLen) =
 {
     usbd_device_descriptor_get,
     usbd_configuration_descriptor_get,
@@ -111,9 +111,9 @@ usbd_status_enum usbd_out_transaction (usb_core_handle_struct *pudev, uint8_t en
             if (pudev->dev.remain_len > ep->endp_mps) {
                 pudev->dev.remain_len -= ep->endp_mps;
 
-                usbd_ep_rx (pudev, 
-                            0U, 
-                            ep->xfer_buff, 
+                usbd_ep_rx (pudev,
+                            0U,
+                            ep->xfer_buff,
                             (uint16_t)USB_MIN(pudev->dev.remain_len, ep->endp_mps));
             } else {
                 if (USB_STATUS_CONFIGURED == pudev->dev.status) {
@@ -151,7 +151,7 @@ usbd_status_enum usbd_in_transaction (usb_core_handle_struct *pudev, uint8_t end
                 pudev->dev.remain_len -= ep->endp_mps;
 
                 usbd_ep_tx (pudev, 0U, ep->xfer_buff, pudev->dev.remain_len);
-                
+
                 usbd_ep_rx (pudev, 0U, NULL, 0U);
             } else {
                 /* last packet is MPS multiple, so send ZLP packet */
@@ -160,7 +160,7 @@ usbd_status_enum usbd_in_transaction (usb_core_handle_struct *pudev, uint8_t end
                       (pudev->dev.sum_len < pudev->dev.ctl_len)) {
                     usbd_ep_tx (pudev, 0U, NULL, 0U);
                     pudev->dev.ctl_len = 0U;
-                        
+
                     usbd_ep_rx (pudev, 0U, NULL, 0U);
                 } else {
                     if (USB_STATUS_CONFIGURED == pudev->dev.status) {
@@ -405,7 +405,7 @@ static void  usbd_setfeature (usb_core_handle_struct *pudev, usb_device_req_stru
                         pudev->dev.class_req_handler(pudev, req);
 
                         usbd_ctlstatus_tx(pudev);
-                    } else if ((req->wValue == USB_FEATURE_TEST_MODE) && 
+                    } else if ((req->wValue == USB_FEATURE_TEST_MODE) &&
                                 (0U == (req->wIndex & 0xFFU))) {
                         DctlrStatus = USB_DCTL;
 
@@ -668,7 +668,7 @@ static void  usbd_synchframe (usb_core_handle_struct *pudev, usb_device_req_stru
 static void usbd_setup_request_parse(usb_core_handle_struct *pudev, usb_device_req_struct *req)
 {
     uint8_t *psetup = pudev->dev.setup_packet;
-  
+
     req->bmRequestType = *psetup;
     req->bRequest      = *(uint8_t *)(psetup + 1U);
     req->wValue        = SWAPBYTE (psetup + 2U);

@@ -452,7 +452,7 @@ en_result_t Adc_CfgSglChannel( en_adc_samp_ch_sel_t enstcAdcSampCh)
 en_result_t Adc_CfgSqrChannel(en_adc_sqr_chmux_t enstcAdcSqrChMux, en_adc_samp_ch_sel_t enstcAdcSampCh)
 {
     en_result_t enResult = Ok;
-    
+
     switch(enstcAdcSqrChMux)
     {
         case AdcSQRCH0MUX:
@@ -508,7 +508,7 @@ en_result_t Adc_CfgSqrChannel(en_adc_sqr_chmux_t enstcAdcSqrChMux, en_adc_samp_c
         break;
 
     }
-    
+
     return enResult;
 }
 /**
@@ -524,7 +524,7 @@ en_result_t Adc_CfgSqrChannel(en_adc_sqr_chmux_t enstcAdcSqrChMux, en_adc_samp_c
 en_result_t Adc_CfgJqrChannel(en_adc_jqr_chmux_t enstcAdcJqrChMux, en_adc_samp_ch_sel_t enstcAdcSampCh)
 {
     en_result_t enResult = Ok;
-    
+
     switch(enstcAdcJqrChMux)
     {
         case AdcJQRCH0MUX:
@@ -543,7 +543,7 @@ en_result_t Adc_CfgJqrChannel(en_adc_jqr_chmux_t enstcAdcJqrChMux, en_adc_samp_c
             enResult = ErrorInvalidParameter;
         break;
     }
-    
+
     return enResult;
 }
 

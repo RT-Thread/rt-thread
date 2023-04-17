@@ -26,16 +26,16 @@
 
 #include "bits.h"
 
-#define IRQ_REG_MASK_OFFSET	  0x000
-#define IRQ_REG_MASK_SET_OFFSET	  0x004
+#define IRQ_REG_MASK_OFFSET   0x000
+#define IRQ_REG_MASK_SET_OFFSET   0x004
 #define IRQ_REG_MASK_CLEAR_OFFSET 0x008
-#define IRQ_REG_INT_OFFSET	  0x00C
-#define IRQ_REG_INT_SET_OFFSET	  0x010
+#define IRQ_REG_INT_OFFSET    0x00C
+#define IRQ_REG_INT_SET_OFFSET    0x010
 #define IRQ_REG_INT_CLEAR_OFFSET  0x014
-#define IRQ_REG_ACK_OFFSET	  0x018
-#define IRQ_REG_ACK_SET_OFFSET	  0x01C
+#define IRQ_REG_ACK_OFFSET    0x018
+#define IRQ_REG_ACK_SET_OFFSET    0x01C
 #define IRQ_REG_ACK_CLEAR_OFFSET  0x020
-#define IRQ_REG_FIFO_OFFSET	  0x024
+#define IRQ_REG_FIFO_OFFSET   0x024
 
 /* Interrupt line masks: these interrupts directly go to the core (after being
  * serialized as reqest + id). We refer to these interrupts with the prefix IRQ.
@@ -43,24 +43,24 @@
  * signaled through (muxed) EU SoC interrupts (IRQ_FC_EVT_SOC_EVT) and need
  * additional handling by the user through the Event Unit.
  */
-#define IRQ_FC_EVT_SW0	      BIT(0)
-#define IRQ_FC_EVT_SW1	      BIT(1)
-#define IRQ_FC_EVT_SW2	      BIT(2)
-#define IRQ_FC_EVT_SW3	      BIT(3)
-#define IRQ_FC_EVT_SW4	      BIT(4)
-#define IRQ_FC_EVT_SW5	      BIT(5)
-#define IRQ_FC_EVT_SW6	      BIT(6)
-#define IRQ_FC_EVT_SW7	      BIT(7)
+#define IRQ_FC_EVT_SW0        BIT(0)
+#define IRQ_FC_EVT_SW1        BIT(1)
+#define IRQ_FC_EVT_SW2        BIT(2)
+#define IRQ_FC_EVT_SW3        BIT(3)
+#define IRQ_FC_EVT_SW4        BIT(4)
+#define IRQ_FC_EVT_SW5        BIT(5)
+#define IRQ_FC_EVT_SW6        BIT(6)
+#define IRQ_FC_EVT_SW7        BIT(7)
 #define IRQ_FC_EVT_DMA_PE_EVT BIT(8)
 #define IRQ_FC_EVT_DMA_PE_IRQ BIT(9)
 #define IRQ_FC_EVT_TIMER0_LO  BIT(10)
 #define IRQ_FC_EVT_TIMER0_HI  BIT(11)
-#define IRQ_FC_EVT_PF	      BIT(12)
+#define IRQ_FC_EVT_PF         BIT(12)
 #define IRQ_FC_EVT_CLK_REF    BIT(14)
-#define IRQ_FC_EVT_GPIO	      BIT(15)
+#define IRQ_FC_EVT_GPIO       BIT(15)
 
 /* is not in PULPissimo */
-/*#define IRQ_FC_EVT_RTC		   16 */
+/*#define IRQ_FC_EVT_RTC           16 */
 
 #define IRQ_FC_EVT_ADV_TIMER0 BIT(17)
 #define IRQ_FC_EVT_ADV_TIMER1 BIT(18)
@@ -69,8 +69,8 @@
 
 /* is not in PULPissimo */
 /* #define IRQ_FC_EVT_CLUSTER_NOT_BUSY 21 */
-/* #define IRQ_FC_EVT_CLUSTER_POK	   22 */
-/* #define IRQ_FC_EVT_CLUSTER_CG_OK	   23 */
+/* #define IRQ_FC_EVT_CLUSTER_POK      22 */
+/* #define IRQ_FC_EVT_CLUSTER_CG_OK    23 */
 /* #define IRQ_FC_EVT_PICL_OK     24 */
 /* #define IRQ_FC_EVT_SCU_OK      25 */
 

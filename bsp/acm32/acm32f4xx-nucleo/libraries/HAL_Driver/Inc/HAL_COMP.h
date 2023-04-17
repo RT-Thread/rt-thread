@@ -50,9 +50,9 @@
 typedef struct
 {
     uint8_t             Comparator;        /*!< Specify witch comparator be selected */
-    uint32_t            Crv_En;        
-    uint32_t            BlankTime;        
-    uint32_t            Crv_Sel;        
+    uint32_t            Crv_En;
+    uint32_t            BlankTime;
+    uint32_t            Crv_Sel;
     uint32_t            Crv_Cfg;
     uint32_t            WinMode;
     uint32_t            WinOut;
@@ -76,62 +76,62 @@ typedef struct
   uint8_t            OutputLevel;     /*!< COMP OutputLevel with filter */
 } COMP_HandleTypeDef;
 
-#define COMP_CR_CRV_EN_DISABLE           (0U)       
-#define COMP_CR_CRV_EN_ENABLE            (1U)   
+#define COMP_CR_CRV_EN_DISABLE           (0U)
+#define COMP_CR_CRV_EN_ENABLE            (1U)
 
-#define COMP_CR_CRV_SEL_AVDD             (0U)       
-#define COMP_CR_CRV_SEL_VREF             (1U)  
+#define COMP_CR_CRV_SEL_AVDD             (0U)
+#define COMP_CR_CRV_SEL_VREF             (1U)
 
-#define COMP_CR1_WINMODE_COMP1_INPSEL           (0U)       
-#define COMP_CR1_WINMODE_COMP2_INPSEL           (1U)   
+#define COMP_CR1_WINMODE_COMP1_INPSEL           (0U)
+#define COMP_CR1_WINMODE_COMP2_INPSEL           (1U)
 
-#define COMP_CR2_WINMODE_COMP2_INPSEL           (0U)       
-#define COMP_CR2_WINMODE_COMP1_INPSEL           (1U)   
+#define COMP_CR2_WINMODE_COMP2_INPSEL           (0U)
+#define COMP_CR2_WINMODE_COMP1_INPSEL           (1U)
 
-#define COMP_CR1_WINOUT_VCOUT1                 (0U)       
-#define COMP_CR2_WINOUT_VCOUT2                 (0U)       
-#define COMP_CR_WINOUT_VCOUT12                 (1U)   
+#define COMP_CR1_WINOUT_VCOUT1                 (0U)
+#define COMP_CR2_WINOUT_VCOUT2                 (0U)
+#define COMP_CR_WINOUT_VCOUT12                 (1U)
 
-#define COMP_CR_POLARITY_P                     (0U)   
-#define COMP_CR_POLARITY_N                     (1U)   
+#define COMP_CR_POLARITY_P                     (0U)
+#define COMP_CR_POLARITY_N                     (1U)
 
-#define COMP_CR_FLTEN_DISABLE                  (0U)       
-#define COMP_CR_FLTEN_ENABLE                   (1U)   
+#define COMP_CR_FLTEN_DISABLE                  (0U)
+#define COMP_CR_FLTEN_ENABLE                   (1U)
 
-#define COMP_CR_FLTTIME_1_CLK                  (0U)   
-#define COMP_CR_FLTTIME_2_CLK                  (1U)   
-#define COMP_CR_FLTTIME_4_CLK                  (2U)   
-#define COMP_CR_FLTTIME_16_CLK                 (3U)   
-#define COMP_CR_FLTTIME_64_CLK                 (4U)   
-#define COMP_CR_FLTTIME_256_CLK                (5U)   
-#define COMP_CR_FLTTIME_1024_CLK               (6U)   
-#define COMP_CR_FLTTIME_4095_CLK               (7U)   
+#define COMP_CR_FLTTIME_1_CLK                  (0U)
+#define COMP_CR_FLTTIME_2_CLK                  (1U)
+#define COMP_CR_FLTTIME_4_CLK                  (2U)
+#define COMP_CR_FLTTIME_16_CLK                 (3U)
+#define COMP_CR_FLTTIME_64_CLK                 (4U)
+#define COMP_CR_FLTTIME_256_CLK                (5U)
+#define COMP_CR_FLTTIME_1024_CLK               (6U)
+#define COMP_CR_FLTTIME_4095_CLK               (7U)
 
-#define COMP_CR_BLANKTIME_32_CLK               (0U)   
-#define COMP_CR_BLANKTIME_64_CLK               (1U)   
-#define COMP_CR_BLANKTIME_128_CLK              (2U)   
-#define COMP_CR_BLANKTIME_256_CLK              (3U)   
+#define COMP_CR_BLANKTIME_32_CLK               (0U)
+#define COMP_CR_BLANKTIME_64_CLK               (1U)
+#define COMP_CR_BLANKTIME_128_CLK              (2U)
+#define COMP_CR_BLANKTIME_256_CLK              (3U)
 
-#define COMP_CR_BLANKSEL_NONE                  (0U)   
-#define COMP_CR_BLANKSEL_1                     (1U)   
-#define COMP_CR_BLANKSEL_2                     (2U)   
-#define COMP_CR_BLANKSEL_3                     (4U)   
-#define COMP_CR_BLANKSEL_4                     (8U)   
+#define COMP_CR_BLANKSEL_NONE                  (0U)
+#define COMP_CR_BLANKSEL_1                     (1U)
+#define COMP_CR_BLANKSEL_2                     (2U)
+#define COMP_CR_BLANKSEL_3                     (4U)
+#define COMP_CR_BLANKSEL_4                     (8U)
 
-#define COMP_CR_INPSEL_0                      (0U)   
-#define COMP_CR_INPSEL_1                      (1U)   
-#define COMP_CR_INPSEL_2                      (2U)   
+#define COMP_CR_INPSEL_0                      (0U)
+#define COMP_CR_INPSEL_1                      (1U)
+#define COMP_CR_INPSEL_2                      (2U)
 
-#define COMP_CR_INMSEL_0                      (0U)   
-#define COMP_CR_INMSEL_1                      (1U)   
-#define COMP_CR_INMSEL_2                      (2U)   
-#define COMP_CR_INMSEL_3                      (3U)   
+#define COMP_CR_INMSEL_0                      (0U)
+#define COMP_CR_INMSEL_1                      (1U)
+#define COMP_CR_INMSEL_2                      (2U)
+#define COMP_CR_INMSEL_3                      (3U)
 
-#define COMP_CR_HYS_DISABLE                   (0U) 
-#define COMP_CR_HYS_1                         (4U) 
-#define COMP_CR_HYS_2                         (5U) 
-#define COMP_CR_HYS_3                         (6U) 
-#define COMP_CR_HYS_4                         (7U) 
+#define COMP_CR_HYS_DISABLE                   (0U)
+#define COMP_CR_HYS_1                         (4U)
+#define COMP_CR_HYS_2                         (5U)
+#define COMP_CR_HYS_3                         (6U)
+#define COMP_CR_HYS_4                         (7U)
 
 /******************************** COMP Instances *******************************/
 #define IS_COMP_ALL_INSTANCE(INSTANCE)    ((INSTANCE) == COMP)
@@ -145,16 +145,16 @@ typedef struct
                                            ((_CRV_SEL) == COMP_CR_CRV_SEL_VREF))
 
 #define IS_COMP_ALL_CRV_CFG(_CRV_CFG)      ((_CRV_CFG) <= 15U)
-                                           
+
 #define IS_COMP_ALL_WINMODE(WINMODE)       (((WINMODE) == COMP_CR1_WINMODE_COMP1_INPSEL) || \
                                            ((WINMODE) == COMP_CR1_WINMODE_COMP2_INPSEL) || \
                                            ((WINMODE) == COMP_CR2_WINMODE_COMP2_INPSEL) || \
                                            ((WINMODE) == COMP_CR2_WINMODE_COMP1_INPSEL))
-                                           
+
 #define IS_COMP_ALL_WINOUT(_WINOUT)        (((_WINOUT) == COMP_CR1_WINOUT_VCOUT1) || \
                                            ((_WINOUT) == COMP_CR2_WINOUT_VCOUT2) || \
                                            ((_WINOUT) == COMP_CR_WINOUT_VCOUT12))
-                                           
+
 #define IS_COMP_ALL_POLARITY(POLARITY)     (((POLARITY) == COMP_CR_POLARITY_N) || \
                                            ((POLARITY) == COMP_CR_POLARITY_P))
 
@@ -183,7 +183,7 @@ typedef struct
 
 #define IS_COMP_ALL_INPSEL(INPSEL)         (((INPSEL) == COMP_CR_INPSEL_0) || \
                                            ((INPSEL) == COMP_CR_INPSEL_1) || \
-                                           ((INPSEL) == COMP_CR_INPSEL_2))   
+                                           ((INPSEL) == COMP_CR_INPSEL_2))
 
 #define IS_COMP_ALL_INMSEL(INMSEL)         (((INMSEL) == COMP_CR_INMSEL_0 ) || \
                                            ((INMSEL) == COMP_CR_INMSEL_1 ) || \

@@ -228,7 +228,7 @@ uint8_t ctc_irc48m_trim_value_read(void)
 */
 void ctc_interrupt_enable(uint32_t ctc_interrupt)
 {
-    CTC_CTL0 |= (uint32_t)ctc_interrupt; 
+    CTC_CTL0 |= (uint32_t)ctc_interrupt;
 }
 
 /*!
@@ -243,18 +243,18 @@ void ctc_interrupt_enable(uint32_t ctc_interrupt)
 */
 void ctc_interrupt_disable(uint32_t ctc_interrupt)
 {
-    CTC_CTL0 &= (uint32_t)(~ctc_interrupt); 
+    CTC_CTL0 &= (uint32_t)(~ctc_interrupt);
 }
 
 /*!
     \brief      get CTC interrupt flag
     \param[in]  ctc_interrupt: the CTC interrupt flag
       \arg        CTC_INT_FLAG_CKOK: clock trim OK interrupt
-      \arg        CTC_INT_FLAG_CKWARN: clock trim warning interrupt 
-      \arg        CTC_INT_FLAG_ERR: error interrupt 
+      \arg        CTC_INT_FLAG_CKWARN: clock trim warning interrupt
+      \arg        CTC_INT_FLAG_ERR: error interrupt
       \arg        CTC_INT_FLAG_EREF: expect reference interrupt
       \arg        CTC_INT_FLAG_CKERR: clock trim error bit interrupt
-      \arg        CTC_INT_FLAG_REFMISS: reference sync pulse miss interrupt 
+      \arg        CTC_INT_FLAG_REFMISS: reference sync pulse miss interrupt
       \arg        CTC_INT_FLAG_TRIMERR: trim value error interrupt
     \param[out] none
     \retval     FlagStatus: SET or RESET
@@ -281,15 +281,15 @@ FlagStatus ctc_interrupt_flag_get(uint32_t ctc_interrupt)
     \brief      clear CTC interrupt flag
     \param[in]  ctc_interrupt: the CTC interrupt flag
       \arg        CTC_INT_FLAG_CKOK: clock trim OK interrupt
-      \arg        CTC_INT_FLAG_CKWARN: clock trim warning interrupt 
-      \arg        CTC_INT_FLAG_ERR: error interrupt 
-      \arg        CTC_INT_FLAG_EREF: expect reference interrupt 
+      \arg        CTC_INT_FLAG_CKWARN: clock trim warning interrupt
+      \arg        CTC_INT_FLAG_ERR: error interrupt
+      \arg        CTC_INT_FLAG_EREF: expect reference interrupt
       \arg        CTC_INT_FLAG_CKERR: clock trim error bit interrupt
-      \arg        CTC_INT_FLAG_REFMISS: reference sync pulse miss interrupt 
+      \arg        CTC_INT_FLAG_REFMISS: reference sync pulse miss interrupt
       \arg        CTC_INT_FLAG_TRIMERR: trim value error interrupt
     \param[out] none
     \retval     none
-*/ 
+*/
 void ctc_interrupt_flag_clear(uint32_t ctc_interrupt)
 {
     if(ctc_interrupt & CTC_FLAG_MASK){
@@ -303,8 +303,8 @@ void ctc_interrupt_flag_clear(uint32_t ctc_interrupt)
     \brief      get CTC flag
     \param[in]  ctc_flag: the CTC flag
       \arg        CTC_FLAG_CKOK: clock trim OK flag
-      \arg        CTC_FLAG_CKWARN: clock trim warning flag 
-      \arg        CTC_FLAG_ERR: error flag 
+      \arg        CTC_FLAG_CKWARN: clock trim warning flag
+      \arg        CTC_FLAG_ERR: error flag
       \arg        CTC_FLAG_EREF: expect reference flag
       \arg        CTC_FLAG_CKERR: clock trim error bit
       \arg        CTC_FLAG_REFMISS: reference sync pulse miss
@@ -325,8 +325,8 @@ FlagStatus ctc_flag_get(uint32_t ctc_flag)
     \brief      clear CTC flag
     \param[in]  ctc_flag: the CTC flag
       \arg        CTC_FLAG_CKOK: clock trim OK flag
-      \arg        CTC_FLAG_CKWARN: clock trim warning flag 
-      \arg        CTC_FLAG_ERR: error flag 
+      \arg        CTC_FLAG_CKWARN: clock trim warning flag
+      \arg        CTC_FLAG_ERR: error flag
       \arg        CTC_FLAG_EREF: expect reference flag
       \arg        CTC_FLAG_CKERR: clock trim error bit
       \arg        CTC_FLAG_REFMISS: reference sync pulse miss

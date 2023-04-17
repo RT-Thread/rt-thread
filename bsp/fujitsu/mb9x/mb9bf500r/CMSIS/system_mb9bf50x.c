@@ -5,7 +5,7 @@
 /* used for reference and in an evaluation laboratory environment.      */
 /* It is provided on an as-is basis without charge and is subject to    */
 /* alterations.                                                         */
-/* It is the user’s obligation to fully test the software in its        */
+/* It is the userâ€™s obligation to fully test the software in its        */
 /* environment and to ensure proper functionality, qualification and    */
 /* compliance with component specifications.                            */
 /*                                                                      */
@@ -33,7 +33,7 @@
 
 #include "mb9bf506r.h"
 
-/* 
+/*
  *  80MHz : Master Clock
  */
 const uint32_t SystemFrequency = 80000000UL;
@@ -73,10 +73,10 @@ static void ClockInit(void)
     while(!(FM3_CRG->SCM_STR & 0x02));
 
     /* sub CLK enable */
-    //FM3_CRG->SCM_CTL |= 0x08;				
+    //FM3_CRG->SCM_CTL |= 0x08;
     //while(!(FM3_CRG->SCM_STR & 0x08));
 
-    /*Set PLL stabilization 
+    /*Set PLL stabilization
     wait time to 512uS*/
     FM3_CRG->PSW_TMR |= 2;
     /*Set PLL to 80MHz*/
@@ -92,7 +92,7 @@ static void ClockInit(void)
     /*Wait PLL stabilizatoin end*/
     while(!(FM3_CRG->SCM_STR & 0x10));
     /*Select PLL for main clock*/
-    FM3_CRG->SCM_CTL |= 2<<5; 
+    FM3_CRG->SCM_CTL |= 2<<5;
     /*Wait PLL to be connected*/
     while((FM3_CRG->SCM_STR & 0xe0) != 0x40);
 
@@ -107,5 +107,5 @@ static void HwwdtDisable(void)
     /* UnLock (WDG_CTL) */
     FM3_HWWDT->WDG_LCK = 0xE5331AAE;
     /* Disable WDG */
-    FM3_HWWDT->WDG_CTL = 0x00;  
+    FM3_HWWDT->WDG_CTL = 0x00;
 }

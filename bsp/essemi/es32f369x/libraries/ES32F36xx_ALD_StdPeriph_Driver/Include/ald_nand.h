@@ -43,7 +43,7 @@
   * @{
   */
 
-/** @addtogroup NAND 
+/** @addtogroup NAND
   * @{
   */
 
@@ -51,60 +51,60 @@
   * @{
   */
 
-/** 
+/**
   * @brief NAND State structures definition
   */
 typedef enum {
-	ALD_NAND_STATE_RESET = 0x00U,	/**< NAND not yet initialized or disabled */
-	ALD_NAND_STATE_READY = 0x01U,	/**< NAND initialized and ready for use */
-	ALD_NAND_STATE_BUSY  = 0x02U,	/**< NAND internal process is ongoing */
-	ALD_NAND_STATE_ERROR = 0x03U	/**< NAND error state */
+    ALD_NAND_STATE_RESET = 0x00U,   /**< NAND not yet initialized or disabled */
+    ALD_NAND_STATE_READY = 0x01U,   /**< NAND initialized and ready for use */
+    ALD_NAND_STATE_BUSY  = 0x02U,   /**< NAND internal process is ongoing */
+    ALD_NAND_STATE_ERROR = 0x03U    /**< NAND error state */
 } ald_nand_state_t;
 
-/** 
+/**
   * @brief  NAND Memory electronic signature Structure definition
   */
 typedef struct {
-	uint8_t maker_id;	/**< Maker id */
-	uint8_t device_id;	/**< Device id */
-	uint8_t third_id;	/**< Third id */
-	uint8_t fourth_id;	/**< Fourth id */
+    uint8_t maker_id;   /**< Maker id */
+    uint8_t device_id;  /**< Device id */
+    uint8_t third_id;   /**< Third id */
+    uint8_t fourth_id;  /**< Fourth id */
 } nand_id_t;
 
-/** 
+/**
   * @brief  NAND Memory address Structure definition
   */
 typedef struct
 {
-	uint16_t page;	/**< NAND memory Page address */
-	uint16_t plane;	/**< NAND memory Plane address */	
-	uint16_t block;	/**< NAND memory Block address */
+    uint16_t page;  /**< NAND memory Page address */
+    uint16_t plane; /**< NAND memory Plane address */
+    uint16_t block; /**< NAND memory Block address */
 } nand_address_t;
 
-/** 
+/**
   * @brief  NAND Memory info Structure definition
-  */ 
+  */
 typedef struct
 {
-	uint32_t page_size;	/**< NAND memory page (without spare area) size measured in bytes */
-	uint32_t spare_size;	/**< NAND memory spare area size measured in bytes */
-	uint32_t block_size;	/**< NAND memory block size measured in number of pages */
-	uint32_t block_nbr;     /**< NAND memory number of total block */
-	uint32_t plane_nbr;	/**< NAND memory number of planes */	
-	uint32_t plane_size;	/**< NAND memory plane size measured in number of blocks */
-	type_func_t extra_cmd;	/**< NAND extra command needed for Page reading mode */                                        
+    uint32_t page_size; /**< NAND memory page (without spare area) size measured in bytes */
+    uint32_t spare_size;    /**< NAND memory spare area size measured in bytes */
+    uint32_t block_size;    /**< NAND memory block size measured in number of pages */
+    uint32_t block_nbr;     /**< NAND memory number of total block */
+    uint32_t plane_nbr; /**< NAND memory number of planes */
+    uint32_t plane_size;    /**< NAND memory plane size measured in number of blocks */
+    type_func_t extra_cmd;  /**< NAND extra command needed for Page reading mode */
 } nand_device_cfg_t;
 
-/** 
+/**
   * @brief  NAND handle Structure definition
-  */   
+  */
 typedef struct
 {
-	EBI_NAND_TypeDef *instance;	/**< Register base address */
-	ald_ebi_nand_init_t init;	/**< NAND device control configuration parameters */
-	lock_state_t lock;		/**< NAND locking object */
-	__IO ald_nand_state_t state;	/**< NAND device access state */
-	nand_device_cfg_t config;	/**< NAND phusical characteristic information structure */	
+    EBI_NAND_TypeDef *instance; /**< Register base address */
+    ald_ebi_nand_init_t init;   /**< NAND device control configuration parameters */
+    lock_state_t lock;      /**< NAND locking object */
+    __IO ald_nand_state_t state;    /**< NAND device access state */
+    nand_device_cfg_t config;   /**< NAND phusical characteristic information structure */
 } nand_handle_t;
 
 /**
@@ -119,8 +119,8 @@ typedef struct
 #define NAND_DEVICE1               EBI_BANK2
 #define NAND_DEVICE2               EBI_BANK3
 #define NAND_WRITE_TIMEOUT         1000U
-#define CMD_AREA                   (1U<<16U)	/* A16 = CLE high */
-#define ADDR_AREA                  (1U<<17U)	/* A17 = ALE high */
+#define CMD_AREA                   (1U<<16U)    /* A16 = CLE high */
+#define ADDR_AREA                  (1U<<17U)    /* A17 = ALE high */
 #define NAND_CMD_AREA_A            ((uint8_t)0x00U)
 #define NAND_CMD_AREA_B            ((uint8_t)0x01U)
 #define NAND_CMD_AREA_C            ((uint8_t)0x50U)
@@ -147,16 +147,16 @@ typedef struct
 /** @defgroup Nand_Private_Macros Nand Private Macros
   * @{
   */
-#define ARRAY_ADDRESS(x , y)	((x)->page +   \
-		(((x)->block + (((x)->plane) * \
-		((y)->config.plane_size))) * ((y)->config.block_size)))
-#define COLUMN_ADDRESS( x)	((x)->config.page_size)
-#define ADDR_1ST_CYCLE(x)	(uint8_t)(x)		/* 1st addressing cycle */
-#define ADDR_2ND_CYCLE(x)	(uint8_t)((x) >> 8U)	/* 2nd addressing cycle */
-#define ADDR_3RD_CYCLE(x)	(uint8_t)((x) >> 16U)	/* 3rd addressing cycle */
-#define ADDR_4TH_CYCLE(x)	(uint8_t)((x) >> 24U)	/* 4th addressing cycle */
-#define COLUMN_1ST_CYCLE(x)	(uint8_t)(x)		/* 1st Column addressing cycle */
-#define COLUMN_2ND_CYCLE(x)	(uint8_t)((x) >> 8U)	/* 2nd Column addressing cycle */
+#define ARRAY_ADDRESS(x , y)    ((x)->page +   \
+        (((x)->block + (((x)->plane) * \
+        ((y)->config.plane_size))) * ((y)->config.block_size)))
+#define COLUMN_ADDRESS( x)  ((x)->config.page_size)
+#define ADDR_1ST_CYCLE(x)   (uint8_t)(x)        /* 1st addressing cycle */
+#define ADDR_2ND_CYCLE(x)   (uint8_t)((x) >> 8U)    /* 2nd addressing cycle */
+#define ADDR_3RD_CYCLE(x)   (uint8_t)((x) >> 16U)   /* 3rd addressing cycle */
+#define ADDR_4TH_CYCLE(x)   (uint8_t)((x) >> 24U)   /* 4th addressing cycle */
+#define COLUMN_1ST_CYCLE(x) (uint8_t)(x)        /* 1st Column addressing cycle */
+#define COLUMN_2ND_CYCLE(x) (uint8_t)((x) >> 8U)    /* 2nd Column addressing cycle */
 /**
   * @}
   */

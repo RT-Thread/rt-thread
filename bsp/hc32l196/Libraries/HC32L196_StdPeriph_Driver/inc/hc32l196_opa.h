@@ -43,7 +43,7 @@
 /** \file OPA.h
  **
  ** Headerfile for OPA functions
- ** @link OPA Group Some description @endlink 
+ ** @link OPA Group Some description @endlink
  **
  ** History:
  **   - 2019-04-11       First Version
@@ -82,7 +82,7 @@ typedef enum en_opa_oenx
     OpaOen3  = 5u,            //OUT3
     OpaOen4  = 6u             //OUT4
 }en_opa_oenx_t;
- 
+
 typedef enum en_opa_clksrc    // 自动校准脉冲宽度设置
 {
     OpaM1Pclk     = 0u,       // 1个PCLK周期
@@ -116,7 +116,7 @@ typedef struct
     boolean_t         bTrigger;     // 软件触发校准设置
     boolean_t         bAdctr_en;    // ADC启动触发OPA自动校准设置
     en_opa_clksrc_t   enClksrc;     // 自动校准脉冲宽度设置
-}stc_opa_zcfg_t;    
+}stc_opa_zcfg_t;
 
 
 /******************************************************************************

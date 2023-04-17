@@ -85,15 +85,15 @@ typedef enum IRQn
 /* Configuration of the Cortex-M33 Processor and Core Peripherals */
 #define __MPU_PRESENT           1       /*!< mcu does not provide a MPU present or not       */
 #define __NVIC_PRIO_BITS        3       /*!< mcu Supports 3 Bits for the Priority Levels     */
-#define __Vendor_SysTickConfig  0       /*!< Set to 1 if different SysTick Config is used         */  
+#define __Vendor_SysTickConfig  0       /*!< Set to 1 if different SysTick Config is used         */
 
-#define   ARM_MATH_CM4          1 
-#define __TARGET_FPU_VFP        1 
-#define __FPU_PRESENT           1 
-#define __DSP_PRESENT           1 
-#define __ARM_COMPAT_H          1 
-#define __ACCELERATE_PRESENT    1  
-#define __ACCELERATE_EH_PRESENT 0         
+#define   ARM_MATH_CM4          1
+#define __TARGET_FPU_VFP        1
+#define __FPU_PRESENT           1
+#define __DSP_PRESENT           1
+#define __ARM_COMPAT_H          1
+#define __ACCELERATE_PRESENT    1
+#define __ACCELERATE_EH_PRESENT 0
 
 #include "core_cm33.h"         /* Processor and core peripherals */
 
@@ -197,7 +197,7 @@ typedef struct
 }TIM_TypeDef;
 
 
-///*------------------- RTC和PMU Registers ----------------------*/
+///*------------------- RTCå’ŒPMU Registers ----------------------*/
 typedef struct
 {
     __IO uint32_t WP;
@@ -304,7 +304,7 @@ typedef struct
     __IO uint32_t RSV[5];
 }Filter_typedef;
 
-typedef union 
+typedef union
 {
     __IO uint32_t  DATABUF[13];
     Filter_typedef FILTER;
@@ -527,7 +527,7 @@ typedef struct
 typedef struct
 {
     __IO uint32_t DIR;
-    __IO uint32_t RSV0; 
+    __IO uint32_t RSV0;
     __IO uint32_t SET;
     __IO uint32_t CLR;
     __IO uint32_t ODATA;
@@ -604,13 +604,13 @@ typedef struct
 ///*------------------- FAU Registers ----------------------*/
 typedef struct
 {
-	__IO uint32_t CTRL1;            //0x00
-	__IO uint32_t STAUTS;           //0x04
+    __IO uint32_t CTRL1;            //0x00
+    __IO uint32_t STAUTS;           //0x04
 
-	__IO uint32_t CORDIC_X_DATAIN;  //0x08  
-	__IO uint32_t CORDIC_Y_DATAIN;  //0x0c	
-	__IO uint32_t RESULT1;          //0x10  
-	__IO uint32_t RESULT2;          //0x14  
+    __IO uint32_t CORDIC_X_DATAIN;  //0x08
+    __IO uint32_t CORDIC_Y_DATAIN;  //0x0c
+    __IO uint32_t RESULT1;          //0x10
+    __IO uint32_t RESULT2;          //0x14
 }FAU_TypeDef;
 
 
@@ -636,7 +636,7 @@ typedef struct
 typedef struct
 {
     __IO uint32_t WORKING_MODE;
-    __IO uint32_t EPxCSR[5]; 
+    __IO uint32_t EPxCSR[5];
     __IO uint32_t USB_ADDR;
     __IO uint32_t SETIP_0_3_DATA;
     __IO uint32_t SETIP_4_7_DATA;
@@ -653,11 +653,11 @@ typedef struct
 ///*------------------- USB interrupt access Registers ----------------------*/
 typedef struct
 {
-    __IO uint32_t INT_STAT_RAW;    
-    __IO uint32_t INT_EN;  
-    __IO uint32_t RSV;  
-    __IO uint32_t INT_CLR;       
-}USB_INTTypeDef;  
+    __IO uint32_t INT_STAT_RAW;
+    __IO uint32_t INT_EN;
+    __IO uint32_t RSV;
+    __IO uint32_t INT_CLR;
+}USB_INTTypeDef;
 
 /**
   * @}
@@ -683,42 +683,42 @@ typedef struct
 #define EFLASH_REG_BASE   (EFLASH_BASE + 0x00100000)
 
 ///*---------------------- APB1 peripherals ------------------------*/
-#define TIM2_BASE         (APB1PERIPH_BASE + 0x00000000UL) 
-#define TIM3_BASE         (APB1PERIPH_BASE + 0x00000400UL) 
-#define TIM4_BASE         (APB1PERIPH_BASE + 0x00000800UL) 
-#define TIM6_BASE         (APB1PERIPH_BASE + 0x00001000UL) 
-#define TIM7_BASE         (APB1PERIPH_BASE + 0x00001400UL) 
-#define TIM14_BASE        (APB1PERIPH_BASE + 0x00002000UL) 
-#define PMU_BASE          (APB1PERIPH_BASE + 0x00002400UL) 
-#define RTC_BASE          (APB1PERIPH_BASE + 0x00002800UL) 
-#define WDT_BASE          (APB1PERIPH_BASE + 0x00002C00UL) 
-#define IWDT_BASE         (APB1PERIPH_BASE + 0x00003000UL) 
-#define UART2_BASE        (APB1PERIPH_BASE + 0x00004400UL) 
-#define UART3_BASE        (APB1PERIPH_BASE + 0x00004800UL) 
-#define UART4_BASE        (APB1PERIPH_BASE + 0x00004C00UL) 
-#define I2C1_BASE         (APB1PERIPH_BASE + 0x00005400UL) 
-#define I2C2_BASE         (APB1PERIPH_BASE + 0x00005800UL) 
-#define CAN1_BASE         (APB1PERIPH_BASE + 0x00006400UL) 
-#define CAN2_BASE         (APB1PERIPH_BASE + 0x00006800UL) 
-#define DAC_BASE          (APB1PERIPH_BASE + 0x00007400UL) 
-#define LPUART_BASE       (APB1PERIPH_BASE + 0x00008000UL) 
+#define TIM2_BASE         (APB1PERIPH_BASE + 0x00000000UL)
+#define TIM3_BASE         (APB1PERIPH_BASE + 0x00000400UL)
+#define TIM4_BASE         (APB1PERIPH_BASE + 0x00000800UL)
+#define TIM6_BASE         (APB1PERIPH_BASE + 0x00001000UL)
+#define TIM7_BASE         (APB1PERIPH_BASE + 0x00001400UL)
+#define TIM14_BASE        (APB1PERIPH_BASE + 0x00002000UL)
+#define PMU_BASE          (APB1PERIPH_BASE + 0x00002400UL)
+#define RTC_BASE          (APB1PERIPH_BASE + 0x00002800UL)
+#define WDT_BASE          (APB1PERIPH_BASE + 0x00002C00UL)
+#define IWDT_BASE         (APB1PERIPH_BASE + 0x00003000UL)
+#define UART2_BASE        (APB1PERIPH_BASE + 0x00004400UL)
+#define UART3_BASE        (APB1PERIPH_BASE + 0x00004800UL)
+#define UART4_BASE        (APB1PERIPH_BASE + 0x00004C00UL)
+#define I2C1_BASE         (APB1PERIPH_BASE + 0x00005400UL)
+#define I2C2_BASE         (APB1PERIPH_BASE + 0x00005800UL)
+#define CAN1_BASE         (APB1PERIPH_BASE + 0x00006400UL)
+#define CAN2_BASE         (APB1PERIPH_BASE + 0x00006800UL)
+#define DAC_BASE          (APB1PERIPH_BASE + 0x00007400UL)
+#define LPUART_BASE       (APB1PERIPH_BASE + 0x00008000UL)
 
 ///*---------------------- APB2 peripherals ------------------------*/
-#define COMP_BASE         (APB2PERIPH_BASE + 0x00000200UL) 
-#define OPA_BASE          (APB2PERIPH_BASE + 0x00000300UL) 
-#define EXTI_BASE         (APB2PERIPH_BASE + 0x00000400UL) 
-#define SCU_BASE          (APB2PERIPH_BASE + 0x00000800UL) 
-#define CRC_BASE          (APB2PERIPH_BASE + 0x00000C00UL) 
-#define ADC_BASE          (APB2PERIPH_BASE + 0x00002400UL) 
-#define TIM1_BASE         (APB2PERIPH_BASE + 0x00002C00UL) 
-#define I2S1_BASE         (APB2PERIPH_BASE + 0x00003000UL) 
-#define UART1_BASE        (APB2PERIPH_BASE + 0x00003800UL) 
-#define TIM15_BASE        (APB2PERIPH_BASE + 0x00004000UL) 
-#define TIM16_BASE        (APB2PERIPH_BASE + 0x00004400UL) 
-#define TIM17_BASE        (APB2PERIPH_BASE + 0x00004800UL) 
-#define GPIOAB_BASE       (APB2PERIPH_BASE + 0x0000F000UL) 
-#define GPIOCD_BASE       (APB2PERIPH_BASE + 0x0000F400UL) 
-#define GPIOEF_BASE       (APB2PERIPH_BASE + 0x0000F800UL) 
+#define COMP_BASE         (APB2PERIPH_BASE + 0x00000200UL)
+#define OPA_BASE          (APB2PERIPH_BASE + 0x00000300UL)
+#define EXTI_BASE         (APB2PERIPH_BASE + 0x00000400UL)
+#define SCU_BASE          (APB2PERIPH_BASE + 0x00000800UL)
+#define CRC_BASE          (APB2PERIPH_BASE + 0x00000C00UL)
+#define ADC_BASE          (APB2PERIPH_BASE + 0x00002400UL)
+#define TIM1_BASE         (APB2PERIPH_BASE + 0x00002C00UL)
+#define I2S1_BASE         (APB2PERIPH_BASE + 0x00003000UL)
+#define UART1_BASE        (APB2PERIPH_BASE + 0x00003800UL)
+#define TIM15_BASE        (APB2PERIPH_BASE + 0x00004000UL)
+#define TIM16_BASE        (APB2PERIPH_BASE + 0x00004400UL)
+#define TIM17_BASE        (APB2PERIPH_BASE + 0x00004800UL)
+#define GPIOAB_BASE       (APB2PERIPH_BASE + 0x0000F000UL)
+#define GPIOCD_BASE       (APB2PERIPH_BASE + 0x0000F400UL)
+#define GPIOEF_BASE       (APB2PERIPH_BASE + 0x0000F800UL)
 
 ///*---------------------- AHB peripherals ------------------------*/
 #define SPI1_BASE            (AHBPERIPH_BASE)
@@ -738,7 +738,7 @@ typedef struct
 #define FAU_BASE             (AHBPERIPH_BASE + 0x00010400UL)
 #define HRNG_BASE            (AHBPERIPH_BASE + 0x00010800UL)
 #define HASH_BASE            (AHBPERIPH_BASE + 0x00010C00UL)
-#define USB_BASE             (AHBPERIPH_BASE + 0x00020000UL)   
+#define USB_BASE             (AHBPERIPH_BASE + 0x00020000UL)
 
 ///*---------------------- QSPI Memory ------------------------*/
 #define QSPI3_BASE           (QSPI_BASE)
@@ -751,7 +751,7 @@ typedef struct
 
 /** @addtogroup Peripheral_declaration
   * @{
-  */  
+  */
 #define EFC                 ((EFC_TypeDef *)EFLASH_REG_BASE)
 #define TIM2                ((TIM_TypeDef *)TIM2_BASE)
 #define TIM3                ((TIM_TypeDef *)TIM3_BASE)
@@ -782,8 +782,8 @@ typedef struct
 #define I2S1                ((I2S_TypeDef *)I2S1_BASE)
 #define UART1               ((UART_TypeDef *)UART1_BASE)
 #define TIM15               ((TIM_TypeDef *)TIM15_BASE)
-#define TIM16               ((TIM_TypeDef *)TIM16_BASE) 
-#define TIM17               ((TIM_TypeDef *)TIM17_BASE)    
+#define TIM16               ((TIM_TypeDef *)TIM16_BASE)
+#define TIM17               ((TIM_TypeDef *)TIM17_BASE)
 #define GPIOAB              ((GPIO_TypeDef *)GPIOAB_BASE)
 #define GPIOCD              ((GPIO_TypeDef *)GPIOCD_BASE)
 #define GPIOEF              ((GPIO_TypeDef *)GPIOEF_BASE)
@@ -835,7 +835,7 @@ typedef   signed           int  INT32;
     /* exact-width unsigned integer types */
 typedef unsigned           char UINT8;
 typedef unsigned short     int  UINT16;
-typedef unsigned           int  UINT32;  
+typedef unsigned           int  UINT32;
 
 /**
   * @}

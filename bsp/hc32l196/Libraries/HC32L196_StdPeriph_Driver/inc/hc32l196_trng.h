@@ -43,7 +43,7 @@
 /** \file trng.h
  **
  ** Headerfile for RNG functions
- ** @link RNG Group Some description @endlink 
+ ** @link RNG Group Some description @endlink
  **
  ** History:
  **   - 2018-04-15   Lux     First Version

@@ -112,7 +112,7 @@
 /**
   * @}
   */
-  
+
  /** @defgroup I2C_Memory_Address_Size I2C Memory Address Size
   * @{
   */
@@ -121,7 +121,7 @@
 /**
   * @}
   */
- 
+
 
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup I2C_Private_Macros I2C Private Macros
@@ -129,29 +129,29 @@
   */
 #define I2C_MEM_ADD_MSB(__ADDRESS__)                       ((uint8_t)((uint16_t)(((uint16_t)((__ADDRESS__) & (uint16_t)0xFF00)) >> 8)))
 #define I2C_MEM_ADD_LSB(__ADDRESS__)                       ((uint8_t)((uint16_t)((__ADDRESS__) & (uint16_t)0x00FF)))
- 
+
 /**
   * @brief  I2C Configuration Structure definition
   */
-  
-#define __HAL_I2C_GET_FLAG(__HANDLE__, __FLAG__)   (((((__HANDLE__)->Instance->SR) & (__FLAG__))  == (__FLAG__) ) ? 1 : 0) 
 
-typedef enum 
+#define __HAL_I2C_GET_FLAG(__HANDLE__, __FLAG__)   (((((__HANDLE__)->Instance->SR) & (__FLAG__))  == (__FLAG__) ) ? 1 : 0)
+
+typedef enum
 {
-  RESET = 0, 
+  RESET = 0,
   SET = !RESET
 } FlagStatus, ITStatus;
 
 typedef struct
 {
     uint32_t  I2C_Mode;               /* This parameter can be a value of @ref I2C_MODE */
-    
+
     uint32_t  Tx_Auto_En;             /* This parameter can be a value of @ref TX_AUTO_EN */
-    
+
     uint32_t  No_Stretch_Mode;        /* This parameter can be a value of @ref NO_STRETCH_MODE */
-    
+
     uint32_t  Own_Address;            /* This parameter can be a 7-bit address */
-    
+
     uint32_t  Clock_Speed;            /* This parameter can be a value of @ref CLOCK_SPEED */
 } I2C_InitTypeDef;
 
@@ -175,16 +175,16 @@ typedef struct
     I2C_TypeDef         *Instance;         /* I2C registers base address */
 
     I2C_InitTypeDef      Init;             /* I2C communication parameters */
-    
+
     uint32_t               Slave_RxState;    /* I2C Slave state machine */
     uint32_t               Slave_TxState;    /* I2C Slave state machine */
-    
+
     uint8_t               *Rx_Buffer;        /* I2C Rx Buffer */
     uint8_t               *Tx_Buffer;        /* I2C Tx Buffer */
-    
+
     uint32_t               Rx_Size;          /* I2C Rx Size */
     uint32_t               Tx_Size;          /* I2C Tx Size */
-    
+
     uint32_t               Rx_Count;         /* I2C Rx Count */
     uint32_t               Tx_Count;         /* I2C Tx Count */
 
@@ -224,7 +224,7 @@ HAL_StatusTypeDef HAL_I2C_Slave_Transmit(I2C_HandleTypeDef *hi2c, uint8_t *pData
 
 /* Function : HAL_I2C_Slave_Receive */
 HAL_StatusTypeDef HAL_I2C_Slave_Receive(I2C_HandleTypeDef *hi2c, uint8_t *pData, uint32_t Size, uint32_t Timeout);
- 
+
 /* Function : HAL_I2C_Slave_Transmit_IT */
 HAL_StatusTypeDef HAL_I2C_Slave_Transmit_IT(I2C_HandleTypeDef *hi2c, uint8_t *pData, uint32_t Size);
 

@@ -29,13 +29,13 @@
 #define EFC_STATUS_NVR1_LOCK            (1 << 1)
 #define EFC_STATUS_EFLASH_RDY           (1 << 0)
 
-#define RD_WAIT_ENSURE_OK   8 
-#define SET_EFC_RD_WAIT(wait)     {EFC->CTRL   = (EFC->CTRL & ~(0x1F << 7)) | (wait << 7);}     
+#define RD_WAIT_ENSURE_OK   8
+#define SET_EFC_RD_WAIT(wait)     {EFC->CTRL   = (EFC->CTRL & ~(0x1F << 7)) | (wait << 7);}
 
-/* Exported functions --------------------------------------------------------*/  
+/* Exported functions --------------------------------------------------------*/
 
-/* HAL_EFlash_Init */  
-void HAL_EFlash_Init(uint32_t fu32_freq);  
+/* HAL_EFlash_Init */
+void HAL_EFlash_Init(uint32_t fu32_freq);
 /* HAL_EFlash_ErasePage */
 bool HAL_EFlash_ErasePage(uint32_t fu32_Addr);
 

@@ -156,7 +156,7 @@
 /**
   * @}
   */
-  
+
  /** @defgroup DMA_MODE DMA MODE
  *  @{
  */
@@ -185,7 +185,7 @@ typedef enum
 /**
   * @brief  DMA Configuration Structure definition
   */
-typedef struct 
+typedef struct
 {
     uint32_t Mode;                  /* This parameter can be a value of @ref DMA_MODE */
 
@@ -207,16 +207,16 @@ typedef struct
 /**
   * @brief  DMA handle Structure definition
   */
-typedef struct 
+typedef struct
 {
     DMA_Channel_TypeDef    *Instance;    /* DMA registers base address */
 
     DMA_InitParaTypeDef     Init;        /* DMA initialization parameters */
 
     void (*DMA_ITC_Callback)(void);      /* DMA transfer complete callback */
-    
+
     void (*DMA_IE_Callback)(void);       /* DMA error complete callback */
-    
+
 }DMA_HandleTypeDef;
 
 /**
@@ -239,7 +239,7 @@ typedef struct DMA_NextLink
   * @{
   */
 #define IS_DMA_MODE(MODE) (((MODE) == DMA_NORMAL )  || \
-                           ((MODE) == DMA_CIRCULAR)) 
+                           ((MODE) == DMA_CIRCULAR))
 
 #define IS_DMA_ALL_INSTANCE(INSTANCE)    (((INSTANCE) == DMA_Channel0) || \
                                           ((INSTANCE) == DMA_Channel1) || \
@@ -263,7 +263,7 @@ typedef struct DMA_NextLink
 #define IS_DMA_DST_WIDTH(WIDTH)     (((WIDTH) == DMA_DST_WIDTH_BYTE)      || \
                                      ((WIDTH) == DMA_DST_WIDTH_HALF_WORD) || \
                                      ((WIDTH) == DMA_DST_WIDTH_WORD))
-                                     
+
 /**
   * @}
   */

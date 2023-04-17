@@ -65,7 +65,7 @@
 
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
- ******************************************************************************/                                     
+ ******************************************************************************/
 
 /*******************************************************************************
  * Local type definitions ('typedef')
@@ -89,8 +89,8 @@
  **
  ** \input bOnExit - TRUE:当退出异常处理后，自动再次进入休眠；
  **                  FALSE：唤醒后不再自动进入休眠
- ** 
- ** \retval NULL                                     
+ **
+ ** \retval NULL
  *****************************************************************************/
 void Lpm_GotoDeepSleep(boolean_t bOnExit)
 {
@@ -105,8 +105,8 @@ void Lpm_GotoDeepSleep(boolean_t bOnExit)
  **
  ** \input bOnExit - TRUE:当退出异常处理后，自动再次进入休眠；
  **                  FALSE：唤醒后不再自动进入休眠
- ** 
- ** \retval NULL                                     
+ **
+ ** \retval NULL
  *****************************************************************************/
 void Lpm_GotoSleep(boolean_t bOnExit)
 {
@@ -114,8 +114,8 @@ void Lpm_GotoSleep(boolean_t bOnExit)
     SCB->SCR |= 1u<<bOnExit;
     __WFI();
 }
-                        
-//@} // LpmGroup                                                                           
+
+//@} // LpmGroup
 
 /*******************************************************************************
  * EOF (not truncated)

@@ -185,7 +185,7 @@ typedef struct
                                            ((__FUNCTION__) == GPIO_FUNCTION_7) ||\
                                            ((__FUNCTION__) == GPIO_FUNCTION_8) ||\
                                            ((__FUNCTION__) == GPIO_FUNCTION_9))
-                                     
+
 /**
   * @}
   */

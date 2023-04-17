@@ -75,7 +75,7 @@ typedef enum IRQn
     SVC_IRQn            = -5,  /* 11 SV Call                                 */
     PendSV_IRQn         = -2,  /* 14 Pend SV                                 */
     SysTick_IRQn        = -1,  /* 15 System Tick                             */
-    
+
     PORTA_IRQn          = 0 ,
     PORTB_IRQn          = 1 ,
     PORTC_IRQn          = 2 ,
@@ -108,8 +108,8 @@ typedef enum IRQn
     LCD_IRQn            = 29,
     FLASH_RAM_IRQn      = 30,
     CLK_TRIM_IRQn       = 31,
-    
-    
+
+
 } IRQn_Type;
 
 

@@ -109,7 +109,7 @@ extern "C"
  ******************************************************************************
  ** \brief IRQ name definition for all type MCUs
  ******************************************************************************/
-    
+
     #define PORTA_IRQHandler(void)              IRQ000_Handler(void)
     #define PORTB_IRQHandler(void)              IRQ001_Handler(void)
     #define PORTC_IRQHandler(void)              IRQ002_Handler(void)

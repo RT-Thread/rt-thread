@@ -43,7 +43,7 @@
 /** \file uart.h
  **
  ** Headerfile for UART functions
- **  
+ **
  **
  ** History:
  **   - 2017-05-10   Cathy     First Version
@@ -94,8 +94,8 @@ typedef enum en_uart_channel
 typedef enum en_uart_mmdorck
 {
     UartDataOrAddr = 0u, ///<多主机模式时，通过读写SBUF[8]决定帧为数据帧或地址帧
-    UartEven       = 1u, ///<非多主机模式偶校验   
-    UartOdd        = 2u, ///<非多主机模式奇校验    
+    UartEven       = 1u, ///<非多主机模式偶校验
+    UartOdd        = 2u, ///<非多主机模式奇校验
 }en_uart_mmdorck_t;
 
 /**
@@ -126,7 +126,7 @@ typedef struct stc_uart_multimode
 
 typedef enum en_uart_mode
 {
-    UartMode0 = 0u, ///<模式0    
+    UartMode0 = 0u, ///<模式0
     UartMode1 = 1u, ///<模式1
     UartMode2 = 2u, ///<模式2
     UartMode3 = 3u, ///<模式3
@@ -138,7 +138,7 @@ typedef enum en_uart_mode
 
 typedef enum en_uart_stop
 {
-    Uart1bit  = 0u, ///<1位停止位 
+    Uart1bit  = 0u, ///<1位停止位
     Uart15bit = 1u, ///<1.5位停止位
     Uart2bit  = 2u, ///<2位停止位
 } en_uart_stop_t;
@@ -148,8 +148,8 @@ typedef enum en_uart_stop
  ******************************************************************************/
 typedef enum en_uart_func
 {
-    UartTx     = 0u, ///<mode0模式代表TX    
-    UartRx     = 1u, ///<非mode0模式代表RX and TX ,mode0模式代表RX  
+    UartTx     = 0u, ///<mode0模式代表TX
+    UartRx     = 1u, ///<非mode0模式代表RX and TX ,mode0模式代表RX
     UartDmaTx  = 3u, ///<DMA发送使能
     UartDmaRx  = 4u, ///<DMA接收使能
     UartCtsRts = 5u, ///<硬件流使能
@@ -160,12 +160,12 @@ typedef enum en_uart_func
  ******************************************************************************/
 typedef enum en_uart_irq_sel
 {
-    UartTxIrq  = 0u,  ///<发送中断使能        
+    UartTxIrq  = 0u,  ///<发送中断使能
     UartRxIrq  = 1u,  ///<接收中断使能
     UartFEIrq  = 3u,  ///<帧错误中断使能
     UartCtsIrq = 4u,  ///<CTS信号翻转中断使能
     UartPEIrq  = 5u,  ///<奇偶校验中断使能
-    UartTxEIrq = 6u,  ///<TX空中断使能   
+    UartTxEIrq = 6u,  ///<TX空中断使能
 }en_uart_irq_sel_t;
 /**
  ******************************************************************************
@@ -174,11 +174,11 @@ typedef enum en_uart_irq_sel
 
 typedef struct stc_uart_irq_cb
 {
-    func_ptr_t pfnTxIrqCb;    ///<发送中断服务函数     
+    func_ptr_t pfnTxIrqCb;    ///<发送中断服务函数
     func_ptr_t pfnRxFEIrqCb;  ///<接收帧错误中断服务函数
-    func_ptr_t pfnRxIrqCb;    ///<接收中断服务函数 
-    func_ptr_t pfnCtsIrqCb;   ///<CTS信号翻转中断服务函数 
-    func_ptr_t pfnPEIrqCb;    ///<奇偶校验错误中断服务函数 
+    func_ptr_t pfnRxIrqCb;    ///<接收中断服务函数
+    func_ptr_t pfnCtsIrqCb;   ///<CTS信号翻转中断服务函数
+    func_ptr_t pfnPEIrqCb;    ///<奇偶校验错误中断服务函数
 }stc_uart_irq_cb_t;
 /**
  ******************************************************************************
@@ -190,7 +190,7 @@ typedef enum en_uart_status
     UartRC    = 1u,  ///<接收数据完成标记
     UartTC    = 2u,  ///<发送数据完成标记
     UartPE    = 3u,  ///<奇偶校验错误标记
-    UartFE    = 4u,  ///<帧错误标记  
+    UartFE    = 4u,  ///<帧错误标记
     UartCtsIf = 5u,  ///<CTS中断标记
     UartTxe   = 6u,  ///<TXbuff空标记
 }en_uart_status_t;
@@ -199,7 +199,7 @@ typedef enum en_uart_status
  ** \brief uart 通道地址及中断函数地址结构
  ******************************************************************************/
 typedef struct stc_uart_instance_data
-{   
+{
     uint32_t               u32Idx;               ///< 通道号
     M0P_UART_TypeDef       *pstcInstance;        ///< 通道寄存器地址
     stc_uart_irq_cb_t      stcUartInternIrqCb;   ///< 通道中断服务函数
@@ -233,8 +233,8 @@ typedef struct stc_uart_config
     en_uart_mode_t       enRunMode;      ///< 四种模式配置
     en_uart_stop_t       enStopBit;      ///<停止位长度
     stc_uart_multimode_t* pstcMultiMode; ///<多主机模式配置
-    stc_uart_irq_cb_t*  pstcIrqCb;       ///<中断服务函数          
-    boolean_t           bTouchNvic;      ///<NVIC中断使能    
+    stc_uart_irq_cb_t*  pstcIrqCb;       ///<中断服务函数
+    boolean_t           bTouchNvic;      ///<NVIC中断使能
 } stc_uart_config_t;
 //中断相关设置函数
 en_result_t Uart_EnableIrq(uint8_t u8Idx,
@@ -243,7 +243,7 @@ en_result_t Uart_DisableIrq(uint8_t u8Idx,
                             en_uart_irq_sel_t enIrqSel);
 //void Uart_IrqHandler(uint8_t u8Idx);
 // 总初始化处理
-en_result_t Uart_Init(uint8_t u8Idx, 
+en_result_t Uart_Init(uint8_t u8Idx,
                       stc_uart_config_t* pstcConfig);
 en_result_t Uart_DeInit(uint8_t u8Idx, boolean_t bTouchNvic);
 //UART模块工作模式设置函数
@@ -269,11 +269,11 @@ uint16_t Uart_CalScnt(uint8_t u8Idx,stc_uart_baud_t *pstcBaud);
 en_result_t Uart_SetBaud(uint8_t u8Idx,uint16_t u16Scnt);
 //获取波特率
 uint32_t Uart_GetBaud(uint8_t u8Idx,uint8_t u8Mode,uint32_t u32Pclk);
-                             
+
 // 功能使能和禁止
 en_result_t Uart_EnableFunc(uint8_t u8Idx, en_uart_func_t enFunc);
 en_result_t Uart_DisableFunc(uint8_t u8Idx, en_uart_func_t enFunc);
-//状态位的获取和清除 
+//状态位的获取和清除
 uint8_t Uart_GetIsr(uint8_t u8Idx);
 boolean_t Uart_GetStatus(uint8_t u8Idx,en_uart_status_t enStatus);
 en_result_t Uart_ClrIsr(uint8_t u8Idx);

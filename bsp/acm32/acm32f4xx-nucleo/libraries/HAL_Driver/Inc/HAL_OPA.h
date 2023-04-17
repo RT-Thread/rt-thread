@@ -88,14 +88,14 @@
 /** @defgroup OPA VINM0 enable.
   * @{
   */
-#define OPA_CSR_VINM0_DISABLE           (0U)   
+#define OPA_CSR_VINM0_DISABLE           (0U)
 #define OPA_CSR_VINM0_ENABLE            (1U)
 
 /** @defgroup OPA trim enable.
   * @{
   */
-#define OPA_CSR_TRIM_DISABLE           (0U)   
-#define OPA_CSR_TRIM_ENABLE            (1U)   
+#define OPA_CSR_TRIM_DISABLE           (0U)
+#define OPA_CSR_TRIM_ENABLE            (1U)
 
 /**
   * @brief  OPA Configuration Structure definition
@@ -106,11 +106,11 @@ typedef struct
     uint8_t             Hsm;        /*!< Specify the opa HSM driver mode:OPA_HSM_LOW or OPA_HSM_HIGH */
     uint8_t             Gain;       /*!< Specify the opa gain select */
     uint8_t             PolSel;     /*!< Specify the opa Polarity select */
-    uint8_t             VinM0En;    /*!< Specify the opa VinM0 enable */     
+    uint8_t             VinM0En;    /*!< Specify the opa VinM0 enable */
     uint8_t             OpaMode;    /*!< Specify the opa work mode select */
-    uint8_t             VinPSel;    /*!< Specify the opa VINP vin p select */       
-    uint8_t             OutSel;     /*!< Specify the opa output select */  
-    uint8_t             TrimEn;     /*!< Specify if the opa auto trim */  
+    uint8_t             VinPSel;    /*!< Specify the opa VINP vin p select */
+    uint8_t             OutSel;     /*!< Specify the opa output select */
+    uint8_t             TrimEn;     /*!< Specify if the opa auto trim */
 }OPA_InitTypeDef;
 
 /**
@@ -151,13 +151,13 @@ typedef struct
                                         ((_MODE) == OPA_MODE_UG) || \
                                         ((_MODE) == OPA_MODE_PGA) || \
                                         ((_MODE) == OPA_MODE_SA1))
-                                        
+
 /******************************** OPA VINP select definition*******************************/
 #define IS_OPA_ALL_VINP(_VINP)         (((_VINP) == OPA_VINP_0) || \
                                         ((_VINP) == OPA_VINP_1) || \
                                         ((_VINP) == OPA_VINP_2) || \
                                         ((_VINP) == OPA_VINP_3))
-                                        
+
 /******************************** OPA OUT select definition*******************************/
 #define IS_OPA_ALL_OUT(_OUT)           (((_OUT) == OPA_OUT_GPIO) || \
                                         ((_OUT) == OPA_OUT_INTERNAL))
@@ -165,7 +165,7 @@ typedef struct
 /******************************** OPA VINM0 enable definition*******************************/
 #define IS_OPA_ALL_VINM0(_VINM0)       (((_VINM0) == OPA_CSR_VINM0_DISABLE) || \
                                         ((_VINM0) == OPA_CSR_VINM0_ENABLE))
-                                        
+
 /******************************** OPA trim enable definition*******************************/
 #define IS_OPA_ALL_TRIM(_TRIM)         (((_TRIM) == OPA_CSR_TRIM_DISABLE) || \
                                         ((_TRIM) == OPA_CSR_TRIM_ENABLE))

@@ -96,7 +96,7 @@
  * Function implementation - global ('extern') and local ('static')
  *****************************************************************************/
 /**
- * \brief   
+ * \brief
  *          使能LVD中断
  *
  * \param   [in]  enType  LVD中断类型
@@ -110,7 +110,7 @@ void Lvd_EnableIrq(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          除能LVD中断
  *
  * \param   无
@@ -123,7 +123,7 @@ void Lvd_DisableIrq(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          LVD初始化
  *
  * \param   [in]  pstcCfg  LVD配置指针
@@ -143,7 +143,7 @@ void Lvd_Init(stc_lvd_cfg_t *pstcCfg)
 }
 
 /**
- * \brief   
+ * \brief
  *          使能LVD
  *
  * \param   无
@@ -157,7 +157,7 @@ void Lvd_Enable(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          除能LVD
  *
  * \param   无
@@ -170,7 +170,7 @@ void Lvd_Disable(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          获取LVD中断标志
  *
  * \param   无
@@ -184,7 +184,7 @@ boolean_t Lvd_GetIrqStat(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          清除LVD中断标志
  *
  * \param   无
@@ -197,7 +197,7 @@ void Lvd_ClearIrq(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          获取Filter结果
  *
  * \param   无

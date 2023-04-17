@@ -27,53 +27,53 @@
 #include "g2d_driver.h"
 #include <hal_mem.h>
 
-#define G2D_FINISH_IRQ		(1<<8)
-#define G2D_ERROR_IRQ			(1<<9)
+#define G2D_FINISH_IRQ      (1<<8)
+#define G2D_ERROR_IRQ           (1<<9)
 
 extern __u32 dbg_info;
 
 #define G2D_INFO_MSG(fmt, ...) \
-	do {\
-		if (dbg_info)\
-			hal_log_info("g2d: [%s %d]"fmt, __func__, __LINE__, ##__VA_ARGS__);\
-	} while (0)
+    do {\
+        if (dbg_info)\
+            hal_log_info("g2d: [%s %d]"fmt, __func__, __LINE__, ##__VA_ARGS__);\
+    } while (0)
 
 #define G2D_ERR_MSG(fmt, ...) \
-	do {\
-			hal_log_err("g2d: [%s %d]"fmt, __func__, __LINE__, ##__VA_ARGS__);\
-	} while (0)
+    do {\
+            hal_log_err("g2d: [%s %d]"fmt, __func__, __LINE__, ##__VA_ARGS__);\
+    } while (0)
 
 typedef struct {
-	unsigned long g2d_base;
+    unsigned long g2d_base;
 } g2d_init_para;
 
 typedef struct {
-	g2d_init_para init_para;
+    g2d_init_para init_para;
 } g2d_dev_t;
 
 typedef enum {
-	G2D_RGB2YUV_709,
-	G2D_YUV2RGB_709,
-	G2D_RGB2YUV_601,
-	G2D_YUV2RGB_601,
-	G2D_RGB2YUV_2020,
-	G2D_YUV2RGB_2020,
+    G2D_RGB2YUV_709,
+    G2D_YUV2RGB_709,
+    G2D_RGB2YUV_601,
+    G2D_YUV2RGB_601,
+    G2D_RGB2YUV_2020,
+    G2D_YUV2RGB_2020,
 } g2d_csc_sel;
 
 typedef enum {
-	VSU_FORMAT_YUV422 = 0x00,
-	VSU_FORMAT_YUV420 = 0x01,
-	VSU_FORMAT_YUV411 = 0x02,
-	VSU_FORMAT_RGB = 0x03,
-	VSU_FORMAT_BUTT = 0x04,
+    VSU_FORMAT_YUV422 = 0x00,
+    VSU_FORMAT_YUV420 = 0x01,
+    VSU_FORMAT_YUV411 = 0x02,
+    VSU_FORMAT_RGB = 0x03,
+    VSU_FORMAT_BUTT = 0x04,
 } vsu_pixel_format;
 
-#define VSU_ZOOM0_SIZE	1
-#define VSU_ZOOM1_SIZE	8
-#define VSU_ZOOM2_SIZE	4
-#define VSU_ZOOM3_SIZE	1
-#define VSU_ZOOM4_SIZE	1
-#define VSU_ZOOM5_SIZE	1
+#define VSU_ZOOM0_SIZE  1
+#define VSU_ZOOM1_SIZE  8
+#define VSU_ZOOM2_SIZE  4
+#define VSU_ZOOM3_SIZE  1
+#define VSU_ZOOM4_SIZE  1
+#define VSU_ZOOM5_SIZE  1
 
 #define VSU_PHASE_NUM            32
 #define VSU_PHASE_FRAC_BITWIDTH  19
@@ -84,5 +84,5 @@ typedef enum {
 #define UI_LAYER_NUMBER 3
 
 
-#endif	/* __G2D_BSP_H */
+#endif  /* __G2D_BSP_H */
 

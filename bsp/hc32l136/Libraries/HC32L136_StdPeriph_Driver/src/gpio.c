@@ -99,7 +99,7 @@ en_result_t Gpio_Init(en_gpio_port_t enPort, en_gpio_pin_t enPin, stc_gpio_confi
 {
     //配置为默认值,GPIO功能
     *((uint32_t*)(((uint32_t)(&(M0P_GPIO->PA00_SEL)) + enPort) + (((uint32_t)enPin)<<2))) = GpioAf0;
-    
+
     //方向配置
     if(GpioDirIn == pstcGpioCfg->enDir)
     {
@@ -109,7 +109,7 @@ en_result_t Gpio_Init(en_gpio_port_t enPort, en_gpio_pin_t enPin, stc_gpio_confi
     {
         setBit(((uint32_t)&M0P_GPIO->PADIR + enPort), enPin, FALSE);
     }
-    
+
     //驱动能力配置
     if(GpioDrvH == pstcGpioCfg->enDrv)
     {
@@ -119,7 +119,7 @@ en_result_t Gpio_Init(en_gpio_port_t enPort, en_gpio_pin_t enPin, stc_gpio_confi
     {
         setBit(((uint32_t)&M0P_GPIO->PADR + enPort), enPin, TRUE);
     }
-    
+
     //上拉下拉配置
     if(GpioPu == pstcGpioCfg->enPuPd)
     {
@@ -136,7 +136,7 @@ en_result_t Gpio_Init(en_gpio_port_t enPort, en_gpio_pin_t enPin, stc_gpio_confi
         setBit(((uint32_t)&M0P_GPIO->PAPU + enPort), enPin, FALSE);
         setBit(((uint32_t)&M0P_GPIO->PAPD + enPort), enPin, FALSE);
     }
-    
+
     //开漏输出功能
     if(GpioOdDisable == pstcGpioCfg->enOD)
     {
@@ -146,7 +146,7 @@ en_result_t Gpio_Init(en_gpio_port_t enPort, en_gpio_pin_t enPin, stc_gpio_confi
     {
         setBit(((uint32_t)&M0P_GPIO->PAOD + enPort), enPin, TRUE);
     }
-    
+
     M0P_GPIO->CTRL2_f.AHB_SEL = pstcGpioCfg->enCtrlMode;
 
     return Ok;
@@ -176,7 +176,7 @@ boolean_t Gpio_GetInputIO(en_gpio_port_t enPort, en_gpio_pin_t enPin)
  ******************************************************************************/
 uint16_t    Gpio_GetInputData(en_gpio_port_t enPort)
 {
-    return (uint16_t)(*((uint32_t *)((uint32_t)&M0P_GPIO->PAIN + enPort))); 
+    return (uint16_t)(*((uint32_t *)((uint32_t)&M0P_GPIO->PAIN + enPort)));
 }
 
 /**
@@ -193,7 +193,7 @@ uint16_t    Gpio_GetInputData(en_gpio_port_t enPort)
 en_result_t Gpio_WriteOutputIO(en_gpio_port_t enPort, en_gpio_pin_t enPin, boolean_t bVal)
 {
     setBit(((uint32_t)&M0P_GPIO->PAOUT + enPort), enPin, bVal);
-    
+
     return Ok;
 }
 
@@ -216,7 +216,7 @@ boolean_t   Gpio_ReadOutputIO(en_gpio_port_t enPort, en_gpio_pin_t enPin)
  ** \brief GPIO IO Port设置，可同时设置一组Port中的多个PIN
  **
  ** \param [in]  enPort          IO Port
- ** \param [in]  u16ValMsk       该Port的16个PIN掩码值,将需要设置的PIN对应的bit写1有效   
+ ** \param [in]  u16ValMsk       该Port的16个PIN掩码值,将需要设置的PIN对应的bit写1有效
  **
  ** \retval boolean_t            IO Port数据
  ******************************************************************************/
@@ -239,7 +239,7 @@ en_result_t Gpio_SetPort(en_gpio_port_t enPort, uint16_t u16ValMsk)
 en_result_t Gpio_SetIO(en_gpio_port_t enPort, en_gpio_pin_t enPin)
 {
     setBit(((uint32_t)&M0P_GPIO->PABSET + enPort), enPin, TRUE);
-    
+
     return Ok;
 }
 
@@ -255,7 +255,7 @@ en_result_t Gpio_SetIO(en_gpio_port_t enPort, en_gpio_pin_t enPin)
 en_result_t Gpio_ClrPort(en_gpio_port_t enPort, uint16_t u16ValMsk)
 {
     *((uint16_t*)(((uint32_t)&(M0P_GPIO->PABCLR)) + enPort)) = u16ValMsk;
-    
+
     return Ok;
 }
 
@@ -272,7 +272,7 @@ en_result_t Gpio_ClrPort(en_gpio_port_t enPort, uint16_t u16ValMsk)
 en_result_t Gpio_ClrIO(en_gpio_port_t enPort, en_gpio_pin_t enPin)
 {
     setBit(((uint32_t)&M0P_GPIO->PABCLR + enPort), enPin, TRUE);
-    
+
     return Ok;
 }
 
@@ -283,7 +283,7 @@ en_result_t Gpio_ClrIO(en_gpio_port_t enPort, en_gpio_pin_t enPin)
  ** \param [in]  enPort       IO Port
 ** \param [in]  u32ValMsk     高16bits表示该Port的16个PIN置位掩码值,
  **                           低16bits表示该Port的16个PIN清零掩码值,
-**                            将需要设置的PIN对应的bit写1,同一个PIN的掩码同时为1,则该PIN清零。                              
+**                            将需要设置的PIN对应的bit写1,同一个PIN的掩码同时为1,则该PIN清零。
  **
  ** \retval en_result_t       Ok      设置成功
  **                           其他值  设置失败
@@ -291,7 +291,7 @@ en_result_t Gpio_ClrIO(en_gpio_port_t enPort, en_gpio_pin_t enPin)
 en_result_t Gpio_SetClrPort(en_gpio_port_t enPort, uint32_t u32ValMsk)
 {
     *((uint32_t*)(((uint32_t)&(M0P_GPIO->PABSETCLR)) + enPort)) = u32ValMsk;
-    
+
     return Ok;
 }
 
@@ -325,7 +325,7 @@ en_result_t Gpio_SetAnalogMode(en_gpio_port_t enPort, en_gpio_pin_t enPin)
 en_result_t Gpio_SetAfMode(en_gpio_port_t enPort, en_gpio_pin_t enPin, en_gpio_af_t enAf)
 {
     *((uint32_t*)(((uint32_t)(&(M0P_GPIO->PA00_SEL)) + enPort) + (((uint32_t)enPin)<<2))) = enAf;
-    
+
     return Ok;
 }
 
@@ -372,7 +372,7 @@ static en_result_t _GpioEnableIrq(en_gpio_port_t enPort,
 en_result_t Gpio_EnableIrq(en_gpio_port_t enPort, en_gpio_pin_t enPin, en_gpio_irqtype_t enType)
 {
     _GpioEnableIrq(enPort, enPin, enType, TRUE);
-    
+
     return Ok;
 }
 
@@ -389,7 +389,7 @@ en_result_t Gpio_EnableIrq(en_gpio_port_t enPort, en_gpio_pin_t enPin, en_gpio_i
 en_result_t Gpio_DisableIrq(en_gpio_port_t enPort, en_gpio_pin_t enPin, en_gpio_irqtype_t enType)
 {
     _GpioEnableIrq(enPort, enPin, enType, FALSE);
-    
+
     return Ok;
 }
 
@@ -435,7 +435,7 @@ en_result_t Gpio_ClearIrq(en_gpio_port_t enPort, en_gpio_pin_t enPin)
 en_result_t Gpio_SfIrqModeConfig(en_gpio_sf_irqmode_t enIrqMode)
 {
     M0P_GPIO->CTRL0_f.IESEL = enIrqMode;
-    
+
     return Ok;
 }
 
@@ -450,7 +450,7 @@ en_result_t Gpio_SfIrqModeConfig(en_gpio_sf_irqmode_t enIrqMode)
 en_result_t Gpio_SfIrPolConfig(en_gpio_sf_irpol_t enIrPolMode)
 {
     M0P_GPIO->CTRL1_f.IR_POL = enIrPolMode;
-    
+
     return Ok;
 }
 
@@ -467,7 +467,7 @@ en_result_t Gpio_SfHClkOutputConfig(en_gpio_sf_hclkout_g_t enGate, en_gpio_sf_hc
 {
     M0P_GPIO->CTRL1_f.HCLK_EN  = enGate;
     M0P_GPIO->CTRL1_f.HCLK_SEL = enDiv;
-    
+
     return Ok;
 }
 
@@ -484,7 +484,7 @@ en_result_t Gpio_SfPClkOutputConfig(en_gpio_sf_pclkout_g_t enGate, en_gpio_sf_pc
 {
     M0P_GPIO->CTRL1_f.PCLK_EN  = enGate;
     M0P_GPIO->CTRL1_f.PCLK_SEL = enDiv;
-    
+
     return Ok;
 }
 
@@ -499,7 +499,7 @@ en_result_t Gpio_SfPClkOutputConfig(en_gpio_sf_pclkout_g_t enGate, en_gpio_sf_pc
 en_result_t Gpio_SfExtClkConfig(en_gpio_sf_ssn_extclk_t enExtClk)
 {
     M0P_GPIO->CTRL1_f.EXT_CLK_SEL  = enExtClk;
-    
+
     return Ok;
 }
 
@@ -524,7 +524,7 @@ en_result_t Gpio_SfSsnConfig(en_gpio_sf_ssnspi_t enSpi, en_gpio_sf_ssn_extclk_t 
     {
         M0P_GPIO->CTRL2_f.SSN1_SEL = enSsn;
     }
-    
+
     return Ok;
 }
 
@@ -541,7 +541,7 @@ en_result_t Gpio_SfTimGConfig(en_gpio_sf_tim_g_t enTimG, en_gpio_sf_t enSf)
 {
     M0P_GPIO->TIMGS &= (uint32_t)(~(0x07U<<enTimG));
     M0P_GPIO->TIMGS |= (uint32_t)(enSf<<enTimG);
-    
+
     return Ok;
 }
 
@@ -558,7 +558,7 @@ en_result_t Gpio_SfTimEConfig(en_gpio_sf_tim_e_t enTimE, en_gpio_sf_t enSf)
 {
     M0P_GPIO->TIMES &= (uint32_t)(~(0x07U<<enTimE));
     M0P_GPIO->TIMES |= (uint32_t)(enSf<<enTimE);
-    
+
     return Ok;
 }
 
@@ -575,7 +575,7 @@ en_result_t Gpio_SfTimCConfig(en_gpio_sf_tim_c_t enTimC, en_gpio_sf_t enSf)
 {
     M0P_GPIO->TIMCPS &= (uint32_t)(~(0x07u<<enTimC));
     M0P_GPIO->TIMCPS |= (uint32_t)(enSf<<enTimC);
-    
+
     return Ok;
 }
 
@@ -594,12 +594,12 @@ en_result_t Gpio_SfPcaConfig(en_gpio_sf_pca_t enPca, en_gpio_sf_t enSf)
     {
         M0P_GPIO->PCAS_f.PCA_CH0 = enSf;
     }
-    
+
     if(GpioSfPcaECI == enPca)
     {
         M0P_GPIO->PCAS_f.PCA_ECI = enSf;
     }
-    
+
     return Ok;
 }
 

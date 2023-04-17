@@ -107,7 +107,7 @@ int ATTR_TCM_SECTION bflb_xip_sflash_state_save_ext(spi_flash_cfg_type *p_flash_
     /* XIP_SFlash_Delay */
     volatile uint32_t i=32*2;
     while(i--);
-    
+
     bflb_sf_ctrl_set_owner(SF_CTRL_OWNER_SAHB);
     /* Exit form continous read for accepting command */
     bflb_sflash_reset_continue_read(p_flash_cfg);
@@ -521,7 +521,7 @@ int ATTR_TCM_SECTION bflb_xip_sflash_init(spi_flash_cfg_type *p_flash_cfg)
     }else{
         memcpy(&flash_cfg,p_flash_cfg,sizeof(flash_cfg));
     }
-    
+
     return 0;
 }
 

@@ -210,14 +210,14 @@
     #define __FPU_PRESENT             0U
     #warning "__FPU_PRESENT not defined in device header file; using default!"
   #endif
-  
+
   #if __FPU_PRESENT != 0U
     #ifndef __FPU_DP
       #define __FPU_DP             0U
       #warning "__FPU_DP not defined in device header file; using default!"
     #endif
   #endif
-  
+
   #ifndef __MPU_PRESENT
     #define __MPU_PRESENT             0U
     #warning "__MPU_PRESENT not defined in device header file; using default!"
@@ -232,7 +232,7 @@
     #define __DCACHE_PRESENT          0U
     #warning "__DCACHE_PRESENT not defined in device header file; using default!"
   #endif
-  
+
   #ifndef __PMU_PRESENT
     #define __PMU_PRESENT             0U
     #warning "__PMU_PRESENT not defined in device header file; using default!"
@@ -261,7 +261,7 @@
     #define __VTOR_PRESENT             1U
     #warning "__VTOR_PRESENT not defined in device header file; using default!"
   #endif
-  
+
   #ifndef __NVIC_PRIO_BITS
     #define __NVIC_PRIO_BITS          3U
     #warning "__NVIC_PRIO_BITS not defined in device header file; using default!"

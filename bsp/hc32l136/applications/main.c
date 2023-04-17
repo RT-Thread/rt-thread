@@ -64,7 +64,7 @@ int32_t main(void)
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
     rt_pin_attach_irq(KEY_PIN, PIN_IRQ_MODE_FALLING, key_handler, RT_NULL);
     rt_pin_irq_enable(KEY_PIN, PIN_IRQ_ENABLE);
-    
+
     while(1)
     {
         if (flag == 0)

@@ -10,27 +10,27 @@
 /*
     Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -39,7 +39,7 @@ OF SUCH DAMAGE.
 #include "usbd_msc_scsi.h"
 
 /* USB mass storage page 0 inquiry data */
-const uint8_t msc_page00_inquiry_data[] = 
+const uint8_t msc_page00_inquiry_data[] =
 {
     0x00U,
     0x00U,
@@ -51,7 +51,7 @@ const uint8_t msc_page00_inquiry_data[] =
 };
 
 /* USB mass storage sense 6 data */
-const uint8_t msc_mode_sense6_data[] = 
+const uint8_t msc_mode_sense6_data[] =
 {
     0x00U,
     0x00U,
@@ -64,7 +64,7 @@ const uint8_t msc_mode_sense6_data[] =
 };
 
 /* USB mass storage sense 10 data */
-const uint8_t msc_mode_sense10_data[] = 
+const uint8_t msc_mode_sense10_data[] =
 {
     0x00U,
     0x06U,
@@ -138,7 +138,7 @@ int8_t scsi_process_cmd(usb_core_driver *udev, uint8_t lun, uint8_t *params)
         return scsi_read_capacity10 (udev, lun, params);
 
     case SCSI_READ10:
-        return scsi_read10 (udev, lun, params); 
+        return scsi_read10 (udev, lun, params);
 
     case SCSI_WRITE10:
         return scsi_write10 (udev, lun, params);
@@ -584,9 +584,9 @@ static int8_t scsi_write10 (usb_core_driver *udev, uint8_t lun, uint8_t *params)
         /* prepare endpoint to receive first data packet */
         msc->bbb_state = BBB_DATA_OUT;
 
-        usbd_ep_recev (udev, 
-                       MSC_OUT_EP, 
-                       msc->bbb_data, 
+        usbd_ep_recev (udev,
+                       MSC_OUT_EP,
+                       msc->bbb_data,
                        USB_MIN (msc->scsi_blk_len, MSC_MEDIA_PACKET_SIZE));
     } else { /* write process ongoing */
         return scsi_process_write (udev, lun);
@@ -658,12 +658,12 @@ static int8_t scsi_process_read (usb_core_driver *udev, uint8_t lun)
     uint32_t len = USB_MIN(msc->scsi_blk_len, MSC_MEDIA_PACKET_SIZE);
 
     if (usbd_mem_fops->mem_read(lun,
-                                msc->bbb_data, 
-                                msc->scsi_blk_addr, 
+                                msc->bbb_data,
+                                msc->scsi_blk_addr,
                                 (uint16_t)(len / msc->scsi_blk_size[lun])) < 0) {
         scsi_sense_code(udev, lun, HARDWARE_ERROR, UNRECOVERED_READ_ERROR);
 
-        return -1; 
+        return -1;
     }
 
     usbd_ep_send (udev, MSC_IN_EP, msc->bbb_data, len);
@@ -695,8 +695,8 @@ static int8_t scsi_process_write (usb_core_driver *udev, uint8_t lun)
     uint32_t len = USB_MIN(msc->scsi_blk_len, MSC_MEDIA_PACKET_SIZE);
 
     if (usbd_mem_fops->mem_write (lun,
-                                  msc->bbb_data, 
-                                  msc->scsi_blk_addr, 
+                                  msc->bbb_data,
+                                  msc->scsi_blk_addr,
                                   (uint16_t)(len / msc->scsi_blk_size[lun])) < 0) {
         scsi_sense_code(udev, lun, HARDWARE_ERROR, WRITE_FAULT);
 
@@ -713,9 +713,9 @@ static int8_t scsi_process_write (usb_core_driver *udev, uint8_t lun)
         msc_bbb_csw_send (udev, CSW_CMD_PASSED);
     } else {
         /* prepare endpoint to receive next packet */
-        usbd_ep_recev (udev, 
-                       MSC_OUT_EP, 
-                       msc->bbb_data, 
+        usbd_ep_recev (udev,
+                       MSC_OUT_EP,
+                       msc->bbb_data,
                        USB_MIN (msc->scsi_blk_len, MSC_MEDIA_PACKET_SIZE));
     }
 

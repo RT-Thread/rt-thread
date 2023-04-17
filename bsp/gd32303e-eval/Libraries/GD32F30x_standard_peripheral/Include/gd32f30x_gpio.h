@@ -49,7 +49,7 @@
 
 /* bits definitions */
 /* GPIO_CTL0 */
-#define GPIO_CTL0_MD0              BITS(0,1)                 /*!< port 0 mode bits */ 
+#define GPIO_CTL0_MD0              BITS(0,1)                 /*!< port 0 mode bits */
 #define GPIO_CTL0_CTL0             BITS(2,3)                 /*!< pin 0 configuration bits */
 #define GPIO_CTL0_MD1              BITS(4,5)                 /*!< port 1 mode bits */
 #define GPIO_CTL0_CTL1             BITS(6,7)                 /*!< pin 1 configuration bits */
@@ -67,7 +67,7 @@
 #define GPIO_CTL0_CTL7             BITS(30,31)               /*!< pin 7 configuration bits */
 
 /* GPIO_CTL1 */
-#define GPIO_CTL1_MD8              BITS(0,1)                 /*!< port 8 mode bits */ 
+#define GPIO_CTL1_MD8              BITS(0,1)                 /*!< port 8 mode bits */
 #define GPIO_CTL1_CTL8             BITS(2,3)                 /*!< pin 8 configuration bits */
 #define GPIO_CTL1_MD9              BITS(4,5)                 /*!< port 9 mode bits */
 #define GPIO_CTL1_CTL9             BITS(6,7)                 /*!< pin 9 configuration bits */
@@ -237,7 +237,7 @@
 #define AFIO_PCF0_TIMER1ITR0_REMAP       BIT(29)             /*!< TIMER1 internal trigger 0 remapping */
 #define AFIO_PCF0_PTP_PPS_REMAP          BIT(30)             /*!< ethernet PTP PPS remapping */
 
-#else 
+#else
 /* memory map and bit definitions for GD32F30X_HD devices and GD32F30X_XD devices */
 #define AFIO_PCF0_SPI0_REMAP             BIT(0)              /*!< SPI0 remapping */
 #define AFIO_PCF0_I2C0_REMAP             BIT(1)              /*!< I2C0 remapping */
@@ -497,7 +497,7 @@ void gpio_ethernet_phy_select(uint32_t enet_sel);
 void gpio_pin_remap_config(uint32_t gpio_remap, ControlStatus newvalue);
 
 /* configure the I/O compensation cell */
-void gpio_compensation_config(uint32_t compensation); 
+void gpio_compensation_config(uint32_t compensation);
 /* check the I/O compensation cell is ready or not */
 FlagStatus gpio_compensation_flag_get(void);
 
