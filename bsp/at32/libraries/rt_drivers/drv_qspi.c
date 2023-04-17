@@ -449,7 +449,7 @@ rt_err_t at32_qspi_bus_attach_device(const char *bus_name, const char *device_na
         goto __exit;
     }
     cs_pin = (struct at32_hw_spi_cs *)rt_malloc(sizeof(struct at32_hw_spi_cs));
-    if (qspi_device == RT_NULL)
+    if (cs_pin == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!");
         result = -RT_ENOMEM;
