@@ -9,7 +9,7 @@ Before STM32U575-NUCLEO driver RW007 runs, the following preparations are essent
 > 1.STM32U575-NUCLEO   
 2.RW007 WiFi module  
 3.Mini-USB Connecting cable (connecting the development board with the computer)  
-4.ENV Compile build environment（[Installation instructions](https://www.rt-thread.org/document/site/programming-manual/env/env/)）  
+4.ENV Compile build environment（[Installation instructions](https://www.rt-thread.org/document/site/#/development-tools/env/env)）  
 5.common software（git,Keil5,STM32CubeMX,Serial debugging, etc）  
 
 ##Start on the Road
