@@ -397,7 +397,7 @@ STATIC INLINE uint32_t Chip_DMA_GetActiveChannels(LPC_DMA_T *pDMA)
  *			that the channel for that bit (bit 0 = channel 0, bit 1 -
  *			channel 1, etc.) is busy. A low state is not busy. A DMA
  *			channel is considered busy when there is any operation
- *			related to that channel in the DMA controller�s internal
+ *			related to that channel in the DMA controller's internal
  *			pipeline.
  */
 STATIC INLINE uint32_t Chip_DMA_GetBusyChannels(LPC_DMA_T *pDMA)

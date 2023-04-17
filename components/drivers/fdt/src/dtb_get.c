@@ -724,6 +724,7 @@ struct dtb_memreserve *dtb_node_get_dtb_memreserve(struct dtb_node *dtb_node, in
             }
             dtb_node_root = dtb_node_root->parent;
         }
+        if(dtb_node_root == NULL) return NULL;
 
         *memreserve_size = dtb_node_root->header->memreserve_sz;
 

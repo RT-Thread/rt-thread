@@ -1091,12 +1091,13 @@ static void _cyhal_pdm_pcm_arrays_init( void )
 
 static cy_rslt_t _cyhal_pdm_pcm_init_hw(cyhal_pdm_pcm_t *obj, int paired_channel, cyhal_pdm_pcm_t* existing_obj,
 #if defined(CY_IP_MXAUDIOSS_INSTANCES)
-                                        const cy_stc_pdm_pcm_config_t* pdl_struct)
+                                        const cy_stc_pdm_pcm_config_t* pdl_struct
 #elif defined(CY_IP_MXTDM_INSTANCES)
                                         const cy_stc_pdm_pcm_config_v2_t* pdl_struct,
                                         const cy_stc_pdm_pcm_channel_config_t* pdl_chan_struct,
-                                        const cy_stc_pdm_pcm_channel_config_t* pdl_chan_struct_paired)
-#endif
+                                        const cy_stc_pdm_pcm_channel_config_t* pdl_chan_struct_paired
+#endif 
+)
 {
     cy_rslt_t result = CY_RSLT_SUCCESS;
     obj->base = _cyhal_pdm_pcm_base[obj->resource.block_num];

@@ -4654,7 +4654,7 @@ typedef struct
 #define  RB_ETH_EIE_RXIE        0x40                  /* RW Receive complete interrupt enable */
 #define  RB_ETH_EIE_LINKIE      0x10                  /* RW Link Change Interrupt Enable */
 #define  RB_ETH_EIE_TXIE        0x08                  /* RW send complete interrupt enable */
-#define  RB_ETH_EIE_R_EN50      0x04                  /* RW TX 50�� resistor adjustment. 1: On-chip 50�� connected 0: On-chip 50�� disconnected */
+#define  RB_ETH_EIE_R_EN50      0x04                  /* RW TX 50Ω resistor adjustment. 1: On-chip 50Ω connected 0: On-chip 50Ω disconnected */
 #define  RB_ETH_EIE_TXERIE      0x02                  /* RW Transmit Error Interrupt Enable */
 #define  RB_ETH_EIE_RXERIE      0x01                  /* RW1 receive error flag */
 #define R8_ETH_EIR              (*((volatile uint8_t *)(0x40028000+4))) /* Interrupt Flag Register */
