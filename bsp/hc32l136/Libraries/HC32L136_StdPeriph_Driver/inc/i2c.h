@@ -43,7 +43,7 @@
 /** \file i2c.h
  **
  ** Headerfile for I2C functions
- **  
+ **
  **
  ** History:
  **   - 2018-03-1   CJ    First Version
@@ -77,7 +77,7 @@
  typedef enum en_i2c_channel
  {
     I2C0 = 0,///<通道0
-    I2C1 = 1,///<通道1  
+    I2C1 = 1,///<通道1
  }en_i2c_channel_t;
  /**
  ******************************************************************************
@@ -91,7 +91,7 @@ typedef enum en_i2c_func
     I2cAck_En   = 3, ///<应答信号
     I2cHlm_En   = 4, ///<高速使能
     I2cBaud_En  = 5, ///<波特率使能
-}en_i2c_func_t; 
+}en_i2c_func_t;
 /**
  ******************************************************************************
  ** \brief I2C从机地址配置
@@ -153,7 +153,7 @@ typedef struct stc_i2c_config
  en_result_t I2C_SlaveReadData(en_i2c_channel_t enCh,uint8_t *pu8Data,uint32_t *pu32Len);
   //字节读函数
 uint8_t I2C_ReadByte(en_i2c_channel_t enCh);
- 
+
 //@} // I2cGroup
 
 #ifdef __cplusplus

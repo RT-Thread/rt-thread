@@ -108,7 +108,7 @@ typedef volatile unsigned long *VP32;
 
 ////////////////////////////////////////////////////////////////////////////////
 // EMI
-#define HW_EMI_SCONR          0x80700000    
+#define HW_EMI_SCONR          0x80700000
 #define HW_EMI_STMG0R         0x80700004
 #define HW_EMI_STMG1R         0x80700008
 #define HW_EMI_SCTLR          0x8070000C
@@ -218,13 +218,13 @@ typedef volatile unsigned long *VP32;
 #define HW_GPIO_IC1           0x50018070
 #define HW_GPIO_IC2           0x50028070
 #define HW_GPIO_IC3           0x50038070
-#define HW_GPIO_IC4           0x50048070 
+#define HW_GPIO_IC4           0x50048070
 
 #define HW_GPIO_DATAMASK0     0x50008080
 #define HW_GPIO_DATAMASK1     0x50018080
 #define HW_GPIO_DATAMASK2     0x50028080
 #define HW_GPIO_DATAMASK3     0x50038080
-#define HW_GPIO_DATAMASK4     0x50048080 
+#define HW_GPIO_DATAMASK4     0x50048080
 
 ////////////////////////////////////////////////////////////////////////////////
 // Quad-SPI0
@@ -246,8 +246,8 @@ typedef volatile unsigned long *VP32;
 #define HW_DMA0_CTL0           0x80100018
 #define HW_DMA0_SSTAT0         0x80100020
 #define HW_DMA0_DSTAT0         0x80100028
-#define HW_DMA0_SSTATAR0       0x80100030      
-#define HW_DMA0_DSTATAR0       0x80100038 
+#define HW_DMA0_SSTATAR0       0x80100030
+#define HW_DMA0_DSTATAR0       0x80100038
 #define HW_DMA0_CFG0           0x80100040
 #define HW_DMA0_SGR0           0x80100048
 #define HW_DMA0_DSR0           0x80100050
@@ -258,8 +258,8 @@ typedef volatile unsigned long *VP32;
 #define HW_DMA0_CTL1           0x80100070
 #define HW_DMA0_SSTAT1         0x80100078
 #define HW_DMA0_DSTAT1         0x80100080
-#define HW_DMA0_SSTATAR1       0x80100088      
-#define HW_DMA0_DSTATAR1       0x80100090 
+#define HW_DMA0_SSTATAR1       0x80100088
+#define HW_DMA0_DSTATAR1       0x80100090
 #define HW_DMA0_CFG1           0x80100098
 #define HW_DMA0_SGR1           0x801000a0
 #define HW_DMA0_DSR1           0x801000a8
@@ -270,8 +270,8 @@ typedef volatile unsigned long *VP32;
 #define HW_DMA0_CTL2           0x801000c8
 #define HW_DMA0_SSTAT2         0x801000d0
 #define HW_DMA0_DSTAT2         0x801000d8
-#define HW_DMA0_SSTATAR2       0x801000e0      
-#define HW_DMA0_DSTATAR2       0x801000e8 
+#define HW_DMA0_SSTATAR2       0x801000e0
+#define HW_DMA0_DSTATAR2       0x801000e8
 #define HW_DMA0_CFG2           0x801000f0
 #define HW_DMA0_SGR2           0x801000f8
 #define HW_DMA0_DSR2           0x80100100
@@ -282,8 +282,8 @@ typedef volatile unsigned long *VP32;
 #define HW_DMA0_CTL3           0x80100120
 #define HW_DMA0_SSTAT3         0x80100128
 #define HW_DMA0_DSTAT3         0x80100130
-#define HW_DMA0_SSTATAR3       0x80100138      
-#define HW_DMA0_DSTATAR3       0x80100140 
+#define HW_DMA0_SSTATAR3       0x80100138
+#define HW_DMA0_DSTATAR3       0x80100140
 #define HW_DMA0_CFG3           0x80100148
 #define HW_DMA0_SGR3           0x80100150
 #define HW_DMA0_DSR3           0x80100158
@@ -294,8 +294,8 @@ typedef volatile unsigned long *VP32;
 #define HW_DMA0_CTL4           0x80100178
 #define HW_DMA0_SSTAT4         0x80100180
 #define HW_DMA0_DSTAT4         0x80100188
-#define HW_DMA0_SSTATAR4       0x80100190      
-#define HW_DMA0_DSTATAR4       0x80100198 
+#define HW_DMA0_SSTATAR4       0x80100190
+#define HW_DMA0_DSTATAR4       0x80100198
 #define HW_DMA0_CFG4           0x801001a0
 #define HW_DMA0_SGR4           0x801001a8
 #define HW_DMA0_DSR4           0x801001b0
@@ -306,8 +306,8 @@ typedef volatile unsigned long *VP32;
 #define HW_DMA0_CTL5           0x801001d0
 #define HW_DMA0_SSTAT5         0x801001d8
 #define HW_DMA0_DSTAT5         0x801001e0
-#define HW_DMA0_SSTATAR5       0x801001e8      
-#define HW_DMA0_DSTATAR5       0x801001f0 
+#define HW_DMA0_SSTATAR5       0x801001e8
+#define HW_DMA0_DSTATAR5       0x801001f0
 #define HW_DMA0_CFG5           0x801001f8
 #define HW_DMA0_SGR5           0x80100200
 #define HW_DMA0_DSR5           0x80100208
@@ -318,8 +318,8 @@ typedef volatile unsigned long *VP32;
 #define HW_DMA0_CTL6           0x80100228
 #define HW_DMA0_SSTAT6         0x80100230
 #define HW_DMA0_DSTAT6         0x80100238
-#define HW_DMA0_SSTATAR6       0x80100240      
-#define HW_DMA0_DSTATAR6       0x80100248 
+#define HW_DMA0_SSTATAR6       0x80100240
+#define HW_DMA0_DSTATAR6       0x80100248
 #define HW_DMA0_CFG6           0x80100250
 #define HW_DMA0_SGR6           0x80100258
 #define HW_DMA0_DSR6           0x80100260
@@ -330,8 +330,8 @@ typedef volatile unsigned long *VP32;
 #define HW_DMA0_CTL7           0x80100280
 #define HW_DMA0_SSTAT7         0x80100288
 #define HW_DMA0_DSTAT7         0x80100290
-#define HW_DMA0_SSTATAR7       0x80100298      
-#define HW_DMA0_DSTATAR7       0x801002a0 
+#define HW_DMA0_SSTATAR7       0x80100298
+#define HW_DMA0_DSTATAR7       0x801002a0
 #define HW_DMA0_CFG7           0x801002a8
 #define HW_DMA0_SGR7           0x801002b0
 #define HW_DMA0_DSR7           0x801002b8

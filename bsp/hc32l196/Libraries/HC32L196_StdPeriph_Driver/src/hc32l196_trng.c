@@ -87,8 +87,8 @@
  *****************************************************************************
  ** \brief 随机数初始化(上电第一次生成随机数）
  **
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 en_result_t Trng_Init(void)
 {
@@ -104,7 +104,7 @@ en_result_t Trng_Init(void)
     {
         ;
     }
-    
+
     //模式配置1
     M0P_TRNG->MODE_f.LOAD    = 0;
     M0P_TRNG->MODE_f.FDBK    = 0;
@@ -118,7 +118,7 @@ en_result_t Trng_Init(void)
 
     //关闭随机源电路，节省功耗
     M0P_TRNG->CR_f.RNGCIR_EN = 0;
-    
+
     return Ok;
 }
 
@@ -126,14 +126,14 @@ en_result_t Trng_Init(void)
  *****************************************************************************
  ** \brief 生成随机数（非上电第一次生成随机数）
  **
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 en_result_t Trng_Generate(void)
 {
     //==>>生成64bits随机数（非上电第一次生成）
     M0P_TRNG->CR_f.RNGCIR_EN = 1;
-    
+
     //模式配置0
     M0P_TRNG->MODE_f.LOAD    = 0;
     M0P_TRNG->MODE_f.FDBK    = 1;
@@ -144,7 +144,7 @@ en_result_t Trng_Generate(void)
     {
         ;
     }
-    
+
     //模式配置1
     M0P_TRNG->MODE_f.FDBK    = 0;
     M0P_TRNG->MODE_f.CNT     = 4;
@@ -157,16 +157,16 @@ en_result_t Trng_Generate(void)
     }
 
     //关闭随机源电路，节省功耗
-    M0P_TRNG->CR_f.RNGCIR_EN = 0;    
-    
+    M0P_TRNG->CR_f.RNGCIR_EN = 0;
+
     return Ok;
 }
 
 /**
  *****************************************************************************
  ** \brief 随机数获取
- ** 
- ** \retval data0                                     
+ **
+ ** \retval data0
  *****************************************************************************/
 uint32_t Trng_GetData0(void)
 {
@@ -176,8 +176,8 @@ uint32_t Trng_GetData0(void)
 /**
  *****************************************************************************
  ** \brief 随机数获取
- ** 
- ** \retval data1                                     
+ **
+ ** \retval data1
  *****************************************************************************/
 uint32_t Trng_GetData1(void)
 {

@@ -64,7 +64,7 @@
  ******************************************************************************/
 #define FLASH_END_ADDR              (0x0003FFFFu)
 #define FLASH_BYPASS()              M0P_FLASH->BYPASS = 0x5A5A;\
-                                    M0P_FLASH->BYPASS = 0xA5A5; 
+                                    M0P_FLASH->BYPASS = 0xA5A5;
 #define FLASH_IE_TRUE               (0x03)
 #define FLASH_IE_FALSE              (0x00)
 
@@ -84,8 +84,8 @@
 /**
  ******************************************************************************
  ** \brief FLASH OP
- ** 
- ** Flash 操作控制数据类型重定义 
+ **
+ ** Flash 操作控制数据类型重定义
  ******************************************************************************/
 typedef enum en_flash_op
 {
@@ -98,18 +98,18 @@ typedef enum en_flash_op
 /**
  ******************************************************************************
  ** \brief FLASH 编程时间参数配置
- ** 
+ **
  ** FLASH编程时间参数配置数组定义 (4MHz)
  ******************************************************************************/
-const uint32_t pu32PcgTimer4M[] = { 
-                                    0x20u,          //Tnvs   
-                                    0x17u,          //Tpgs   
-                                    0x1Bu,          //Tprog  
+const uint32_t pu32PcgTimer4M[] = {
+                                    0x20u,          //Tnvs
+                                    0x17u,          //Tpgs
+                                    0x1Bu,          //Tprog
                                     0x4650u,        //Tserase
                                     0x222E0u,       //Tmerase
-                                    0x18u,          //Tprcv  
-                                    0xF0u,          //Tsrcv  
-                                    0x3E8u          //Tmrcv  
+                                    0x18u,          //Tprcv
+                                    0xF0u,          //Tsrcv
+                                    0x3E8u          //Tmrcv
                                   };
 /*******************************************************************************
  * Local variable definitions ('static')
@@ -129,18 +129,18 @@ const uint32_t pu32PcgTimer4M[] = {
  **
  **
  ** \param [in]  enFlashIntType          Flash中断类型
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 boolean_t Flash_GetIntFlag(en_flash_int_type_t enFlashIntType)
 {
     boolean_t bRetVal = FALSE;
-    
+
     if(M0P_FLASH->IFR & enFlashIntType)
     {
         bRetVal =  TRUE;
     }
-    
+
     return bRetVal;
 }
 
@@ -150,8 +150,8 @@ boolean_t Flash_GetIntFlag(en_flash_int_type_t enFlashIntType)
  **
  **
  ** \param [in]  enFlashIntType          Flash中断类型
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Flash_ClearIntFlag(en_flash_int_type_t enFlashIntType)
 {
@@ -159,7 +159,7 @@ en_result_t Flash_ClearIntFlag(en_flash_int_type_t enFlashIntType)
 
     M0P_FLASH->ICLR &= ~(uint32_t)enFlashIntType;
     enResult = Ok;
-    
+
     return enResult;
 }
 
@@ -169,8 +169,8 @@ en_result_t Flash_ClearIntFlag(en_flash_int_type_t enFlashIntType)
  **
  **
  ** \param [in]  enFlashIntType          Flash中断类型
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Flash_EnableIrq (en_flash_int_type_t enFlashIntType)
 {
@@ -178,7 +178,7 @@ en_result_t Flash_EnableIrq (en_flash_int_type_t enFlashIntType)
 
     FLASH_BYPASS();
     M0P_FLASH->CR_f.IE |= enFlashIntType;
-    
+
     enResult = Ok;
 
     return enResult;
@@ -190,8 +190,8 @@ en_result_t Flash_EnableIrq (en_flash_int_type_t enFlashIntType)
  **
  **
  ** \param [in]  enFlashIntType          Flash中断类型
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Flash_DisableIrq(en_flash_int_type_t enFlashIntType)
 {
@@ -199,7 +199,7 @@ en_result_t Flash_DisableIrq(en_flash_int_type_t enFlashIntType)
 
     FLASH_BYPASS();
     M0P_FLASH->CR_f.IE &= ~(uint32_t)enFlashIntType;
-    
+
     enResult = Ok;
 
     return enResult;
@@ -221,7 +221,7 @@ en_result_t Flash_DisableIrq(en_flash_int_type_t enFlashIntType)
  **                               other   -  无效值
  ** \param [in] bDpstbEn          TRUE  - 当系统进入DeepSleep模式，FLASH进入低功耗模式;
  **                               FALSE - 当系统进入DeepSleep模式，FLASH不进入低功耗模式;
- ** 
+ **
  ** \retval Ok                    操作成功.
  ** \retval ErrorInvalidParameter 参数无效.
  ** \retval ErrorUninitialized    初始化失败。
@@ -231,9 +231,9 @@ en_result_t Flash_Init(uint8_t u8FreqCfg, boolean_t bDpstbEn)
     uint32_t                u32Index  = 0;
     volatile uint32_t       u32TimeOut = FLASH_TIMEOUT_INIT;
     en_result_t             enResult  = Ok;
-    uint32_t                u32PrgTimer[8] = {0}; 
+    uint32_t                u32PrgTimer[8] = {0};
     volatile uint32_t       *pu32PrgTimerReg = (volatile uint32_t*)M0P_FLASH;
-    
+
     if ((1  != u8FreqCfg) && (2  != u8FreqCfg) &&
         (4  != u8FreqCfg) && (6  != u8FreqCfg) &&
         (8  != u8FreqCfg) && (12 != u8FreqCfg))
@@ -241,15 +241,15 @@ en_result_t Flash_Init(uint8_t u8FreqCfg, boolean_t bDpstbEn)
         enResult = ErrorInvalidParameter;
         return (enResult);
     }
-    
+
     M0P_FLASH->CR_f.DPSTB_EN = bDpstbEn;
-    
+
     //flash时间参数配置值计算
     for(u32Index=0; u32Index<8; u32Index++)
     {
         u32PrgTimer[u32Index] = u8FreqCfg * pu32PcgTimer4M[u32Index];
-    } 
-    
+    }
+
     //flash时间参数寄存器配置
     for(u32Index=0; u32Index<8; u32Index++)
     {
@@ -267,7 +267,7 @@ en_result_t Flash_Init(uint8_t u8FreqCfg, boolean_t bDpstbEn)
             }
         }
     }
-    
+
     return (enResult);
 }
 
@@ -279,22 +279,22 @@ en_result_t Flash_Init(uint8_t u8FreqCfg, boolean_t bDpstbEn)
  **
  ** \param [in]  u32Addr          Flash地址
  ** \param [in]  u8Data           1字节数据
- ** 
+ **
  ** \retval Ok                    写入成功.
  ** \retval ErrorInvalidParameter FLASH地址无效
  ** \retval ErrorTimeout          操作超时
  *****************************************************************************/
 en_result_t Flash_WriteByte(uint32_t u32Addr, uint8_t u8Data)
 {
-    en_result_t             enResult = Ok;    
+    en_result_t             enResult = Ok;
     volatile uint32_t       u32TimeOut = FLASH_TIMEOUT_PGM;
-    
+
     if (FLASH_END_ADDR < u32Addr)
     {
         enResult = ErrorInvalidParameter;
         return (enResult);
     }
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -304,7 +304,7 @@ en_result_t Flash_WriteByte(uint32_t u32Addr, uint8_t u8Data)
             return ErrorTimeout;
         }
     }
-    
+
     //set OP
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while(Program != M0P_FLASH->CR_f.OP)
@@ -319,13 +319,13 @@ en_result_t Flash_WriteByte(uint32_t u32Addr, uint8_t u8Data)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 解锁
     Flash_UnlockAll();
-    
+
     //write data
     *((volatile uint8_t*)u32Addr) = u8Data;
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -335,10 +335,10 @@ en_result_t Flash_WriteByte(uint32_t u32Addr, uint8_t u8Data)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 加锁
     Flash_LockAll();
-    
+
     return (enResult);
 }
 
@@ -350,22 +350,22 @@ en_result_t Flash_WriteByte(uint32_t u32Addr, uint8_t u8Data)
  **
  ** \param [in]  u32Addr         Flash地址
  ** \param [in]  u16Data        半字（2字节）数据
- ** 
+ **
  ** \retval Ok                    写入成功.
  ** \retval ErrorInvalidParameter FLASH地址无效
  ** \retval ErrorTimeout          操作超时
  *****************************************************************************/
 en_result_t Flash_WriteHalfWord(uint32_t u32Addr, uint16_t u16Data)
 {
-    en_result_t             enResult = Ok;    
+    en_result_t             enResult = Ok;
     volatile uint32_t       u32TimeOut = FLASH_TIMEOUT_PGM;
-    
+
     if (FLASH_END_ADDR < u32Addr)
     {
         enResult = ErrorInvalidParameter;
         return (enResult);
     }
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -375,7 +375,7 @@ en_result_t Flash_WriteHalfWord(uint32_t u32Addr, uint16_t u16Data)
             return ErrorTimeout;
         }
     }
-    
+
     //set OP
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while(Program != M0P_FLASH->CR_f.OP)
@@ -390,13 +390,13 @@ en_result_t Flash_WriteHalfWord(uint32_t u32Addr, uint16_t u16Data)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 解锁
     Flash_UnlockAll();
-    
+
     //write data
     *((volatile uint16_t*)u32Addr) = u16Data;
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -406,10 +406,10 @@ en_result_t Flash_WriteHalfWord(uint32_t u32Addr, uint16_t u16Data)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 加锁
     Flash_LockAll();
-    
+
     return (enResult);
 }
 
@@ -421,22 +421,22 @@ en_result_t Flash_WriteHalfWord(uint32_t u32Addr, uint16_t u16Data)
  **
  ** \param [in]  u32Addr         Flash地址
  ** \param [in]  u32Data         1个字数据
- ** 
+ **
  ** \retval Ok                    写入成功.
  ** \retval ErrorInvalidParameter FLASH地址无效
  ** \retval ErrorTimeout          操作超时
  *****************************************************************************/
 en_result_t Flash_WriteWord(uint32_t u32Addr, uint32_t u32Data)
 {
-    en_result_t             enResult = Ok;    
+    en_result_t             enResult = Ok;
     volatile uint32_t       u32TimeOut = FLASH_TIMEOUT_PGM;
-    
+
     if (FLASH_END_ADDR < u32Addr)
     {
         enResult = ErrorInvalidParameter;
         return (enResult);
     }
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -446,10 +446,10 @@ en_result_t Flash_WriteWord(uint32_t u32Addr, uint32_t u32Data)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 解锁
     Flash_UnlockAll();
-    
+
     //set OP
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while(Program != M0P_FLASH->CR_f.OP)
@@ -464,10 +464,10 @@ en_result_t Flash_WriteWord(uint32_t u32Addr, uint32_t u32Data)
             return ErrorTimeout;
         }
     }
-    
+
     //write data
     *((volatile uint32_t*)u32Addr) = u32Data;
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_PGM;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -477,10 +477,10 @@ en_result_t Flash_WriteWord(uint32_t u32Addr, uint32_t u32Data)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 加锁
     Flash_LockAll();
-    
+
     return (enResult);
 }
 
@@ -491,22 +491,22 @@ en_result_t Flash_WriteWord(uint32_t u32Addr, uint32_t u32Data)
  ** FLASH 扇区擦除.
  **
  ** \param [in]  u32SectorAddr    所擦除扇区内的地址
- ** 
+ **
  ** \retval Ok                    擦除成功.
- ** \retval ErrorInvalidParameter FLASH地址无效 
+ ** \retval ErrorInvalidParameter FLASH地址无效
  ** \retval ErrorTimeout          操作超时
  *****************************************************************************/
 en_result_t Flash_SectorErase(uint32_t u32SectorAddr)
 {
-    en_result_t             enResult = Ok;    
+    en_result_t             enResult = Ok;
     volatile uint32_t       u32TimeOut = FLASH_TIMEOUT_ERASE;
-    
+
     if (FLASH_END_ADDR < u32SectorAddr)
     {
         enResult = ErrorInvalidParameter;
         return (enResult);
     }
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_ERASE;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -516,10 +516,10 @@ en_result_t Flash_SectorErase(uint32_t u32SectorAddr)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 解锁
     Flash_UnlockAll();
-    
+
     //set OP
     u32TimeOut = FLASH_TIMEOUT_ERASE;
     while(SectorErase != M0P_FLASH->CR_f.OP)
@@ -534,10 +534,10 @@ en_result_t Flash_SectorErase(uint32_t u32SectorAddr)
             return ErrorTimeout;
         }
     }
-    
+
     //write data
     *((volatile uint8_t*)u32SectorAddr) = 0;
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_ERASE;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -547,10 +547,10 @@ en_result_t Flash_SectorErase(uint32_t u32SectorAddr)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 加锁
     Flash_LockAll();
-    
+
     return (enResult);
 }
 
@@ -560,16 +560,16 @@ en_result_t Flash_SectorErase(uint32_t u32SectorAddr)
  **
  ** FLASH 全片擦除.
  **
- ** 
+ **
  ** \retval Ok              擦除成功.
  ** \retval ErrorTimeout    操作超时
  **
  *****************************************************************************/
 en_result_t Flash_ChipErase(void)
 {
-    en_result_t             enResult = Ok;    
-    volatile uint32_t       u32TimeOut = FLASH_TIMEOUT_ERASE; 
-    
+    en_result_t             enResult = Ok;
+    volatile uint32_t       u32TimeOut = FLASH_TIMEOUT_ERASE;
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_ERASE;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -579,7 +579,7 @@ en_result_t Flash_ChipErase(void)
             return ErrorTimeout;
         }
     }
-    
+
     //set OP
     u32TimeOut = FLASH_TIMEOUT_ERASE;
     while(ChipErase != M0P_FLASH->CR_f.OP)
@@ -594,13 +594,13 @@ en_result_t Flash_ChipErase(void)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 解锁
     Flash_UnlockAll();
-    
+
     //write data
     *((volatile uint8_t*)0) = 0;
-    
+
     //busy?
     u32TimeOut = FLASH_TIMEOUT_ERASE;
     while (TRUE == M0P_FLASH->CR_f.BUSY)
@@ -610,10 +610,10 @@ en_result_t Flash_ChipErase(void)
             return ErrorTimeout;
         }
     }
-    
+
     //Flash 加锁
     Flash_LockAll();
-    
+
     return (enResult);
 }
 
@@ -621,15 +621,15 @@ en_result_t Flash_ChipErase(void)
  *****************************************************************************
  ** \brief FLASH 编程保护加锁
  **
- ** 
- ** \retval Null                               
+ **
+ ** \retval Null
  *****************************************************************************/
 void Flash_LockAll(void)
-{ 
+{
     FLASH_BYPASS();
     M0P_FLASH->SLOCK0 = FLASH_LOCK_ALL;
     FLASH_BYPASS();
-    M0P_FLASH->SLOCK1 = FLASH_LOCK_ALL;    
+    M0P_FLASH->SLOCK1 = FLASH_LOCK_ALL;
     FLASH_BYPASS();
     M0P_FLASH->SLOCK2 = FLASH_LOCK_ALL;
     FLASH_BYPASS();
@@ -641,12 +641,12 @@ void Flash_LockAll(void)
  *****************************************************************************
  ** \brief FLASH 编程保护解锁
  **
- ** 
- ** \retval Null                             
+ **
+ ** \retval Null
  *****************************************************************************/
 void Flash_UnlockAll(void)
 {
-   
+
     FLASH_BYPASS();
     M0P_FLASH->SLOCK0 = FLASH_UNLOCK_ALL;
     FLASH_BYPASS();
@@ -663,17 +663,17 @@ void Flash_UnlockAll(void)
  ** \brief FLASH 读等待周期设置
  **
  ** \param [in]  enWaitCycle  插入FLASH读等待周期数枚举类型
- ** 
+ **
  ** \retval Ok                    解锁成功
- ** \retval ErrorInvalidParameter 参数错误                                
+ ** \retval ErrorInvalidParameter 参数错误
  *****************************************************************************/
 en_result_t Flash_WaitCycle(en_flash_waitcycle_t enWaitCycle)
 {
     en_result_t enResult = Ok;
-    
+
     FLASH_BYPASS();
     M0P_FLASH->CR_f.WAIT = enWaitCycle;
-    
+
     return enResult;
 }
 
@@ -688,13 +688,13 @@ en_result_t Flash_WaitCycle(en_flash_waitcycle_t enWaitCycle)
  **        例如：enLock = FlashLock1, u32LockValue = 0x00000002,
  **              则加解锁范围为：[Sector128,Sector131]
  ** \retval Ok                    解锁成功
- ** \retval ErrorInvalidParameter 参数错误                                
+ ** \retval ErrorInvalidParameter 参数错误
  *****************************************************************************/
 en_result_t Flash_LockSet(en_flash_lock_t enLock, uint32_t u32LockValue)
 {
     FLASH_BYPASS();
     *((&M0P_FLASH->SLOCK0) + enLock) = u32LockValue;
-    
+
     return Ok;
 }
 //@} // FlashGroup

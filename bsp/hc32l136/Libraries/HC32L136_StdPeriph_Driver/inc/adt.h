@@ -804,7 +804,7 @@ en_result_t Adt_GetIrqFlag(en_adt_unit_t enAdtUnit,
                            boolean_t* pbFlag);
 en_result_t Adt_ClearIrqFlag(en_adt_unit_t enAdtUnit,
                              en_adt_irq_type_t enAdtIrq);
-en_result_t Adt_ConfigZMask(en_adt_unit_t enAdtUnit, 
+en_result_t Adt_ConfigZMask(en_adt_unit_t enAdtUnit,
                             stc_adt_zmask_cfg_t* pstcAdtZMaskCfg);
 
 //@} // ADT Group

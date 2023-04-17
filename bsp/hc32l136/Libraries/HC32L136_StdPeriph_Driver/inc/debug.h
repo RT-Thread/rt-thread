@@ -43,7 +43,7 @@
 /** \file debug.h
  **
  ** Headerfile for DEBUG functions
- ** @link Debug Group Some description @endlink 
+ ** @link Debug Group Some description @endlink
  **
  ** History:
  **   - 2018-04-15   Lux     First Version
@@ -78,7 +78,7 @@ extern "C"
 
 /******************************************************************************
  * Global type definitions
- ******************************************************************************/ 
+ ******************************************************************************/
 /**
  *******************************************************************************
  ** \brief 调试模式下各模块工作状态类型定义
@@ -86,20 +86,20 @@ extern "C"
  ******************************************************************************/
 typedef enum en_debug_module_active
 {
-    DebugTim0  = 0x001u,               ///< TIM0 
-    DebugTim1  = 0x002u,               ///< TIM1 
-    DebugTim2  = 0x004u,               ///< TIM2 
+    DebugTim0  = 0x001u,               ///< TIM0
+    DebugTim1  = 0x002u,               ///< TIM1
+    DebugTim2  = 0x004u,               ///< TIM2
     DebugLpTim = 0x008u,               ///< LPTIM
-    DebugTim4  = 0x010u,               ///< TIM4 
-    DebugTim5  = 0x020u,               ///< TIM5 
-    DebugTim6  = 0x040u,               ///< TIM6 
-    DebugPca   = 0x080u,               ///< PCA  
-    DebugWdt   = 0x100u,               ///< WDT  
-    DebugRtc   = 0x200u,               ///< RTC  
-    DebugTick  = 0x400u,               ///< TICK 
-    DebugTim3  = 0x800u,               ///< TIM3 
-}en_debug_module_active_t; 
- 
+    DebugTim4  = 0x010u,               ///< TIM4
+    DebugTim5  = 0x020u,               ///< TIM5
+    DebugTim6  = 0x040u,               ///< TIM6
+    DebugPca   = 0x080u,               ///< PCA
+    DebugWdt   = 0x100u,               ///< WDT
+    DebugRtc   = 0x200u,               ///< RTC
+    DebugTick  = 0x400u,               ///< TICK
+    DebugTim3  = 0x800u,               ///< TIM3
+}en_debug_module_active_t;
+
 /*******************************************************************************
  * Global definitions
  ******************************************************************************/

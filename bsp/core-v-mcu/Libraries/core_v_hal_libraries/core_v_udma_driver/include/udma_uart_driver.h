@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
- 
+
 #ifndef __UDMA_UART_DRIVER_H_
 #define __UDMA_UART_DRIVER_H_
 
@@ -24,7 +24,7 @@
 #include "hal_udma_ctrl_reg_defs.h"
 
 typedef enum {
-		kUartDataValid
+        kUartDataValid
 } udma_uart_control_type_t;
 
 uint16_t udma_uart_open (uint8_t uart_id, uint32_t xbaudrate);

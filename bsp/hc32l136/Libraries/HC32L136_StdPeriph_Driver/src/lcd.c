@@ -1,43 +1,43 @@
 /*************************************************************************************
-* Copyright (C) 2018, Huada Semiconductor Co.,Ltd All rights reserved.    
+* Copyright (C) 2018, Huada Semiconductor Co.,Ltd All rights reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Huada Semiconductor Co.,Ltd ("HDSC").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with HDSC 
-* components. This software is licensed by HDSC to be adapted only 
-* for use in systems utilizing HDSC components. HDSC shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein. HDSC is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with HDSC
+* components. This software is licensed by HDSC to be adapted only
+* for use in systems utilizing HDSC components. HDSC shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein. HDSC is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * Disclaimer:
 * HDSC MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.                        
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /******************************************************************************/
 /** \file lcd.c
@@ -123,7 +123,7 @@ en_result_t LCD_SetDuty(en_lcd_duty_t enDuty)
             return ErrorInvalidParameter;
     }
     enRet = Ok;
-    return enRet; 
+    return enRet;
 }
 /**
  ******************************************************************************
@@ -147,7 +147,7 @@ en_result_t LCD_SetDuty(en_lcd_duty_t enDuty)
             return ErrorInvalidParameter;
     }
     enRet = Ok;
-    return enRet;     
+    return enRet;
  }
  /**
  ******************************************************************************
@@ -173,7 +173,7 @@ en_result_t LCD_SelCpClk(en_lcd_cpclk_t enCpClk)
             return ErrorInvalidParameter;
     }
     enRet = Ok;
-    return enRet;  
+    return enRet;
 }
  /**
  ******************************************************************************
@@ -199,7 +199,7 @@ en_result_t LCD_SelScanClk(en_lcd_scanclk_t enScanClk)
             return ErrorInvalidParameter;
     }
     enRet = Ok;
-    return enRet;    
+    return enRet;
 }
  /**
  ******************************************************************************
@@ -249,7 +249,7 @@ en_result_t LCD_SelScanClk(en_lcd_scanclk_t enScanClk)
             return ErrorInvalidParameter;
     }
     enRet = Ok;
-    return enRet; 
+    return enRet;
  }
  /**
  ******************************************************************************
@@ -281,7 +281,7 @@ en_result_t LCD_SelScanClk(en_lcd_scanclk_t enScanClk)
     en_result_t enRet = Error;
     M0P_LCD->CR1_f.BLINKCNT = u8BlinkCnt;
     enRet = Ok;
-    return enRet;   
+    return enRet;
  }
   /**
  ******************************************************************************
@@ -294,10 +294,10 @@ en_result_t LCD_SelScanClk(en_lcd_scanclk_t enScanClk)
  ******************************************************************************/
 en_result_t LCD_ClrIntState(void)
 {
-	en_result_t enRet = Error;
-	M0P_LCD->INTCLR_f.INTF = 0;
+    en_result_t enRet = Error;
+    M0P_LCD->INTCLR_f.INTF = 0;
     enRet = Ok;
-    return enRet;  
+    return enRet;
 }
   /**
  ******************************************************************************
@@ -369,7 +369,7 @@ en_result_t LCD_ClrIntState(void)
             }
             pstcSegCom->u8Com0_3 = 0xf0;//只取低4bit
             pstcSegCom->Seg32_39VLcdCom7_4_t.SegVLcdCom &= 0xf0;
-            break;            
+            break;
         default:
         return ErrorInvalidParameter;
     }
@@ -389,7 +389,7 @@ en_result_t LCD_ClrIntState(void)
     en_result_t enRet = Error;
     M0P_LCD->POEN0 = pstcSegCom->u32Seg0_31;
     M0P_LCD->POEN1 = (uint32_t)(pstcSegCom->Seg32_39VLcdCom7_4_t.SegVLcdCom);
-	M0P_LCD->POEN1_f.MUX = pstcSegCom->bMux;
+    M0P_LCD->POEN1_f.MUX = pstcSegCom->bMux;
     M0P_LCD->POEN1_f.C0 = pstcSegCom->u8Com0_3&0x01;
     M0P_LCD->POEN1_f.C1 = pstcSegCom->u8Com0_3&0x02;
     M0P_LCD->POEN1_f.C2 = pstcSegCom->u8Com0_3&0x04;
@@ -410,8 +410,8 @@ en_result_t LCD_ClrIntState(void)
   {
     en_result_t enRet=Error;
     uint8_t i;
-	uint32_t volatile *p = NULL;
-	p = &M0P_LCD->RAM0;
+    uint32_t volatile *p = NULL;
+    p = &M0P_LCD->RAM0;
     for(i=0;i<8;i++)
     {
         *p = 0xffffffffu;
@@ -421,7 +421,7 @@ en_result_t LCD_ClrIntState(void)
     {
         *p = 0xffu;
         p++;
-    } 
+    }
     enRet = Ok;
     return enRet;
   }
@@ -476,19 +476,19 @@ en_result_t LCD_ClrIntState(void)
         enRet = ErrorInvalidParameter;
         return enRet;
     }
-    
+
     ptemp += u16Row;
 
     if (bData == TRUE)
     {
         *ptemp |= (uint32_t)(1 << u32List);
-    } 
+    }
     else
     {
         *ptemp &= (uint32_t)(0 << u32List);
     }
     enRet = Ok;
-    return  enRet; 
+    return  enRet;
   }
 /**
  ******************************************************************************
@@ -510,11 +510,11 @@ en_result_t LCD_WriteRam0_7Int32(uint8_t u8Row,uint32_t u32Data)
         enRet = ErrorInvalidParameter;
         return enRet;
     }
-    
+
     ptemp += u8Row;
     *ptemp = u32Data;
     enRet = Ok;
-    return  enRet; 
+    return  enRet;
 }
 /**
  ******************************************************************************
@@ -536,11 +536,11 @@ en_result_t LCD_WriteRam8_FInt8(uint8_t u8Row,uint8_t u8Data)
         enRet = ErrorInvalidParameter;
         return enRet;
     }
-    
+
     ptemp += u8Row;
     *ptemp = u8Data;
     enRet = Ok;
-    return  enRet;  
+    return  enRet;
 }
 /**
  ******************************************************************************

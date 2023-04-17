@@ -1,7 +1,7 @@
 /*!
     \file    gd32f4xx_can.h
     \brief   definitions for the CAN
-    
+
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2019-11-27, V2.0.1, firmware for GD32F4xx

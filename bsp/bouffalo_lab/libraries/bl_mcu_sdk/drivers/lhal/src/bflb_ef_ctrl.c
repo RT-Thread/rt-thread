@@ -107,7 +107,7 @@ static void ATTR_TCM_SECTION bflb_ef_ctrl_switch_ahb_clk_r1(struct bflb_device_s
     }
 
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	   so we select it(them) in ef_if_ctrl_0 */
+       so we select it(them) in ef_if_ctrl_0 */
     reg_val = (EF_CTRL_EFUSE_CTRL_PROTECT) |
               (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
               (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -209,7 +209,7 @@ static void ATTR_TCM_SECTION bflb_ef_ctrl_program_efuse_r1(struct bflb_device_s 
 
     /* Select auto mode and select ef clock */
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	   so we select it(them) in ef_if_ctrl_0 */
+       so we select it(them) in ef_if_ctrl_0 */
     reg_val = (EF_CTRL_EFUSE_CTRL_PROTECT) |
               (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
               (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -232,7 +232,7 @@ static void ATTR_TCM_SECTION bflb_ef_ctrl_program_efuse_r1(struct bflb_device_s 
 
     /* Program */
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	so we select it(them) in ef_if_ctrl_0 */
+    so we select it(them) in ef_if_ctrl_0 */
     reg_val = (EF_CTRL_EFUSE_CTRL_PROTECT) |
               (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
               (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -402,7 +402,7 @@ static void ATTR_TCM_SECTION bflb_ef_ctrl_load_efuse_r1(struct bflb_device_s *de
 
     /* Trigger read */
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	so we select it(them) in ef_if_ctrl_0 */
+    so we select it(them) in ef_if_ctrl_0 */
     reg_val = (EF_CTRL_EFUSE_CTRL_PROTECT) |
               (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
               (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |
@@ -445,7 +445,7 @@ static void ATTR_TCM_SECTION bflb_ef_ctrl_load_efuse_r1(struct bflb_device_s *de
 
     /* Switch to AHB clock since often read efuse data after load */
     /* Note:ef_if_ctrl_1 has no EF_CTRL_EF_CLK_SAHB_DATA_SEL_POS bit as ef_if_ctrl_0,
-	   so we select it(them) in ef_if_ctrl_0 */
+       so we select it(them) in ef_if_ctrl_0 */
     reg_val = (EF_CTRL_EFUSE_CTRL_PROTECT) |
               (EF_CTRL_OP_MODE_AUTO << EF_CTRL_EF_IF_0_MANUAL_EN_POS) |
               (EF_CTRL_PARA_DFT << EF_CTRL_EF_IF_0_CYC_MODIFY_POS) |

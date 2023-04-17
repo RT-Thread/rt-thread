@@ -8,9 +8,9 @@ static void bflb_csi_phy_config(struct bflb_device_s *dev, uint32_t tx_clk_escap
 {
     uint32_t reg_base;
     uint32_t regval;
-    
+
     /* Unit: ns */
-    float TD_TERM_EN_MAX = 35 + 4 * (1e3) / data_rate; 
+    float TD_TERM_EN_MAX = 35 + 4 * (1e3) / data_rate;
     uint32_t TD_TERM_EN = (TD_TERM_EN_MAX * data_rate / 2 / (1e3)) - 1;
     float THS_SETTLE_MAX = 145 + 10 * (1e3) / data_rate;
     /* THS_SETTLE = reg_time_hs_settle + reg_time_hs_term_en */
@@ -22,14 +22,14 @@ static void bflb_csi_phy_config(struct bflb_device_s *dev, uint32_t tx_clk_escap
     uint32_t TCLK_SETTLE = ((TCLK_SETTLE_MAX - TCLK_TERM_EN * (1e3) / tx_clk_escape) * tx_clk_escape / (1e3)) - 1;
 
     uint32_t ANA_TERM_EN = 0x8;
-    
+
     reg_base = dev->reg_base;
     regval = TD_TERM_EN  << CSI_REG_TIME_HS_TERM_EN_SHIFT & CSI_REG_TIME_HS_TERM_EN_MASK;
     regval |= THS_SETTLE << CSI_REG_TIME_HS_SETTLE_SHIFT & CSI_REG_TIME_HS_SETTLE_MASK;
     regval |= TCLK_TERM_EN << CSI_REG_TIME_CK_TERM_EN_SHIFT & CSI_REG_TIME_CK_TERM_EN_MASK;
     regval |= TCLK_SETTLE << CSI_REG_TIME_CK_SETTLE_SHIFT & CSI_REG_TIME_CK_SETTLE_MASK;
     putreg32(regval, reg_base + CSI_DPHY_CONFIG_1_OFFSET);
-    
+
     regval = getreg32(DTSRC_BASE + CSI_DPHY_CONFIG_2_OFFSET);
     regval &= ~CSI_REG_ANA_TERM_EN_MASK;
     regval |= ANA_TERM_EN << CSI_REG_ANA_TERM_EN_SHIFT & CSI_REG_ANA_TERM_EN_MASK;
@@ -45,13 +45,13 @@ void bflb_csi_init(struct bflb_device_s *dev, const struct bflb_csi_config_s *co
     regval = getreg32(DTSRC_BASE + DTSRC_CONFIG_OFFSET);
     regval |= DTSRC_CR_SNSR_EN;
     putreg32(regval, DTSRC_BASE + DTSRC_CONFIG_OFFSET);
-    
+
     regval = getreg32(reg_base + CSI_DPHY_CONFIG_0_OFFSET);
     regval &= ~(CSI_DL0_ENABLE | CSI_DL1_ENABLE | CSI_CL_ENABLE | CSI_DL0_FORCERXMODE | CSI_DL1_FORCERXMODE | CSI_RESET_N);
     putreg32(regval, reg_base + CSI_DPHY_CONFIG_0_OFFSET);
     regval |= CSI_RESET_N;
     putreg32(regval, reg_base + CSI_DPHY_CONFIG_0_OFFSET);
-    
+
     regval = getreg32(reg_base + CSI_MIPI_CONFIG_OFFSET);
     if (config->lane_number) {
         regval |= CSI_CR_LANE_NUM;
@@ -60,16 +60,16 @@ void bflb_csi_init(struct bflb_device_s *dev, const struct bflb_csi_config_s *co
     }
     regval |= CSI_CR_UNPACK_EN | CSI_CR_SYNC_SP_EN;
     putreg32(regval, reg_base + CSI_MIPI_CONFIG_OFFSET);
-    
+
     bflb_csi_phy_config(dev, config->tx_clk_escape / 1000000, config->data_rate / 1000000);
-    
+
     regval = getreg32(reg_base + CSI_DPHY_CONFIG_0_OFFSET);
     regval |= CSI_DL0_ENABLE | CSI_CL_ENABLE | CSI_DL0_FORCERXMODE;
     if (config->lane_number) {
         regval |= CSI_DL1_ENABLE | CSI_DL1_FORCERXMODE;
     }
     putreg32(regval, reg_base + CSI_DPHY_CONFIG_0_OFFSET);
-    
+
     regval = getreg32(DTSRC_BASE + DTSRC_CONFIG_OFFSET);
     regval |= DTSRC_CR_ENABLE;
     putreg32(regval, DTSRC_BASE + DTSRC_CONFIG_OFFSET);
@@ -100,7 +100,7 @@ void bflb_csi_stop(struct bflb_device_s *dev)
 void bflb_csi_set_line_threshold(struct bflb_device_s *dev, uint16_t resolution_x, uint32_t pixel_clock, uint32_t dsp_clock)
 {
     uint32_t threshold;
-    
+
     threshold = (dsp_clock - pixel_clock) / 1000 * resolution_x / (dsp_clock / 1000) + 10;
     putreg32(threshold, DTSRC_BASE + DTSRC_SNSR2DVP_WAIT_POS_OFFSET);
 }

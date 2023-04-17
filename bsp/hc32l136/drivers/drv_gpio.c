@@ -41,7 +41,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
-    
+
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
@@ -58,7 +58,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
-    
+
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
@@ -75,7 +75,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
-    
+
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
@@ -92,7 +92,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
-    
+
 };
 
 static void pin_irq_handler(en_gpio_port_t port, en_gpio_pin_t pin)
@@ -110,7 +110,7 @@ void Gpio_IRQHandler(uint8_t u8Param)
 {
     en_gpio_pin_t i;
     en_gpio_port_t enPort;
-    
+
     enPort = (en_gpio_port_t)(GpioPortA + (GpioPortB - GpioPortA) * u8Param);
     rt_interrupt_enter();
     for (i=GpioPin0; i<=GpioPin15; i++)
@@ -122,7 +122,7 @@ void Gpio_IRQHandler(uint8_t u8Param)
         }
 
     }
-    rt_interrupt_leave();  
+    rt_interrupt_leave();
 }
 
 static void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
@@ -179,7 +179,7 @@ static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     {
         return;
     }
-    
+
     switch (mode)
     {
     case PIN_MODE_OUTPUT:
@@ -227,7 +227,7 @@ static rt_err_t _pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
-    
+
     if (pin >= PIN_MAX_NUM)
     {
         return -RT_ENOSYS;
@@ -316,7 +316,7 @@ static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint
         pstcGpioCfg.enCtrlMode = GpioAHB;
         Gpio_Init(gpio_port, gpio_pin, &pstcGpioCfg);
         Gpio_ClearIrq(gpio_port, gpio_pin);
-        
+
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
         case PIN_IRQ_MODE_RISING:
@@ -348,7 +348,7 @@ static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint
             Gpio_DisableIrq(gpio_port, gpio_pin, GpioIrqFalling);
             break;
         case PIN_IRQ_MODE_RISING_FALLING:
-            
+
             break;
         case PIN_IRQ_MODE_LOW_LEVEL:
             Gpio_DisableIrq(gpio_port, gpio_pin, GpioIrqLow);
@@ -373,7 +373,7 @@ static const struct rt_pin_ops _pin_ops =
 int rt_hw_pin_init(void)
 {
     Sysctrl_SetPeripheralGate(SysctrlPeripheralGpio, TRUE);
-    
+
     return rt_device_pin_register("pin", &_pin_ops, RT_NULL);
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);

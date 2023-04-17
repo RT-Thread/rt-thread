@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
  * Copyright (c) 2022, xiaoxiaolisunny
  *

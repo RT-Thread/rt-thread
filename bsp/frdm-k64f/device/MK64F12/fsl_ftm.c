@@ -270,12 +270,12 @@ status_t FTM_Init(FTM_Type *base, const ftm_config_t *config)
 #endif /* FSL_FEATURE_FTM_HAS_RELOAD_INITIALIZATION_TRIGGER */
 
     /* FTM deadtime insertion control */
-    base->DEADTIME = (0u | 
+    base->DEADTIME = (0u |
 #if defined(FSL_FEATURE_FTM_HAS_EXTENDED_DEADTIME_VALUE) && (FSL_FEATURE_FTM_HAS_EXTENDED_DEADTIME_VALUE)
                         /* Has extended deadtime value register) */
-                        FTM_DEADTIME_DTVALEX(config->deadTimeValue >> 6) | 
+                        FTM_DEADTIME_DTVALEX(config->deadTimeValue >> 6) |
 #endif /* FSL_FEATURE_FTM_HAS_EXTENDED_DEADTIME_VALUE */
-                        FTM_DEADTIME_DTPS(config->deadTimePrescale) | 
+                        FTM_DEADTIME_DTPS(config->deadTimePrescale) |
                         FTM_DEADTIME_DTVAL(config->deadTimeValue));
 
     /* FTM fault filter value */

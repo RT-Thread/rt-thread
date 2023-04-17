@@ -24,22 +24,22 @@
 
 #include "hal_udma_ctrl_reg_defs.h"
 
-#define SEMAPHORE_WAIT_TIME_IN_MS	10
+#define SEMAPHORE_WAIT_TIME_IN_MS   10
 
 typedef enum {
-		kI2cmReset
+        kI2cmReset
 } udma_i2cm_control_type_t;
 
 typedef enum {
-	kI2cmCmdStart 	= 0x00,
-	kI2cmCmdStop	= 0x20,
-	kI2cmCmdRdAck	= 0x40,
-	kI2cmCmdRdNack	= 0x60,
-	kI2cmCmdWr		= 0x80,
-	kI2cmCmdWait	= 0xA0,
-	kI2cmCmdRpt		= 0xC0,
-	kI2cmCmdCfg		= 0xE0,
-	kI2cmCmdWaitEvt	= 0x10,
+    kI2cmCmdStart   = 0x00,
+    kI2cmCmdStop    = 0x20,
+    kI2cmCmdRdAck   = 0x40,
+    kI2cmCmdRdNack  = 0x60,
+    kI2cmCmdWr      = 0x80,
+    kI2cmCmdWait    = 0xA0,
+    kI2cmCmdRpt     = 0xC0,
+    kI2cmCmdCfg     = 0xE0,
+    kI2cmCmdWaitEvt = 0x10,
 } i2cm_cmd_t;
 
 uint16_t udma_i2cm_open (uint8_t i2c_id, uint32_t i2c_clk_freq);

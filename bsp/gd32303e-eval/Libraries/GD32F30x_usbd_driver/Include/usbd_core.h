@@ -127,7 +127,7 @@ typedef struct
     uint8_t  config_num;      /*!< the number of the USB device configuration */
     uint8_t  status;          /*!< USB device status */
     uint8_t  prev_status;     /*!< the previous USB device status */
-    uint8_t  remote_wakeup;   /*!< the flag that point out the device whether support the 
+    uint8_t  remote_wakeup;   /*!< the flag that point out the device whether support the
                                    remte wakeup function */
 
     /* the parameters which needs in control transfer */

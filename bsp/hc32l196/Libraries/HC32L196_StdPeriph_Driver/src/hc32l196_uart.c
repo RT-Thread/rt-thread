@@ -1,43 +1,43 @@
 /*************************************************************************************
-* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.    
+* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Huada Semiconductor Co.,Ltd ("HDSC").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with HDSC 
-* components. This software is licensed by HDSC to be adapted only 
-* for use in systems utilizing HDSC components. HDSC shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein. HDSC is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with HDSC
+* components. This software is licensed by HDSC to be adapted only
+* for use in systems utilizing HDSC components. HDSC shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein. HDSC is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * Disclaimer:
 * HDSC MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.                        
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /******************************************************************************/
 /** \file uart.c
@@ -97,7 +97,7 @@ en_result_t Uart_EnableIrq(M0P_UART_TypeDef* UARTx, en_uart_irq_sel_t enIrqSel)
 en_result_t Uart_DisableIrq(M0P_UART_TypeDef* UARTx, en_uart_irq_sel_t enIrqSel)
 {
     SetBit((uint32_t)(&(UARTx->SCON)), enIrqSel, FALSE);
-    
+
     return Ok;
 }
 
@@ -114,7 +114,7 @@ en_result_t Uart_SetMultiMode(M0P_UART_TypeDef* UARTx, stc_uart_multimode_t* pst
 {
     if(NULL != pstcMultiCfg)
     {
-        UARTx->SCON_f.ADRDET = TRUE;   
+        UARTx->SCON_f.ADRDET = TRUE;
         UARTx->SADDR = pstcMultiCfg->u8SlaveAddr;
         UARTx->SADEN = pstcMultiCfg->u8SaddEn;
 
@@ -123,7 +123,7 @@ en_result_t Uart_SetMultiMode(M0P_UART_TypeDef* UARTx, stc_uart_multimode_t* pst
     {
         return ErrorInvalidParameter;
     }
-    
+
     return Ok;
 }
 
@@ -165,7 +165,7 @@ void Uart_HdModeDisable(M0P_UART_TypeDef* UARTx)
 void Uart_SetTb8(M0P_UART_TypeDef* UARTx, boolean_t bTB8Value)
 {
     UARTx->SCON_f.B8CONT = bTB8Value;
-    
+
 }
 
 /**
@@ -193,7 +193,7 @@ boolean_t Uart_GetRb8(M0P_UART_TypeDef* UARTx)
 en_result_t Uart_SetSaddr(M0P_UART_TypeDef* UARTx,uint8_t u8Addr)
 {
     UARTx->SADDR = u8Addr;
-    
+
     return Ok;
 }
 
@@ -207,9 +207,9 @@ en_result_t Uart_SetSaddr(M0P_UART_TypeDef* UARTx,uint8_t u8Addr)
  ** \retval ErrorInvalidParameter配置失败
  ******************************************************************************/
 en_result_t Uart_EnableFunc(M0P_UART_TypeDef* UARTx, en_uart_func_t enFunc)
-{    
+{
     SetBit((uint32_t)(&(UARTx->SCON)), enFunc, TRUE);
-    
+
     return Ok;
 }
 /**
@@ -224,7 +224,7 @@ en_result_t Uart_EnableFunc(M0P_UART_TypeDef* UARTx, en_uart_func_t enFunc)
 en_result_t Uart_DisableFunc(M0P_UART_TypeDef* UARTx, en_uart_func_t enFunc)
 {
     SetBit((uint32_t)(&(UARTx->SCON)), enFunc, FALSE);
-    
+
     return Ok;
 }
 /**
@@ -252,11 +252,11 @@ boolean_t Uart_GetStatus(M0P_UART_TypeDef* UARTx, en_uart_status_t enStatus)
 {
     boolean_t bStatus = FALSE;
 
-     
+
     ASSERT(IS_VALID_STATUS(enStatus));
 
     bStatus =  GetBit((uint32_t)(&(UARTx->ISR)), enStatus);
-    
+
     return bStatus;
 }
 /**
@@ -287,7 +287,7 @@ en_result_t Uart_ClrStatus(M0P_UART_TypeDef* UARTx,en_uart_status_t enStatus)
     ASSERT(IS_VALID_STATUS(enStatus));
 
     SetBit((uint32_t)(&(UARTx->ICR)), enStatus, FALSE);
-    
+
     return Ok;
 }
 /**
@@ -306,7 +306,7 @@ en_result_t Uart_SendDataPoll(M0P_UART_TypeDef* UARTx, uint8_t u8Data)
     UARTx->SBUF_f.DATA = u8Data;
     while(FALSE == Uart_GetStatus(UARTx,UartTC))
     {}
-    Uart_ClrStatus(UARTx,UartTC);       
+    Uart_ClrStatus(UARTx,UartTC);
     return Ok;
 }
 
@@ -320,9 +320,9 @@ en_result_t Uart_SendDataPoll(M0P_UART_TypeDef* UARTx, uint8_t u8Data)
  ** \retval ErrorInvalidParameter发送失败
  ******************************************************************************/
 en_result_t Uart_SendDataIt(M0P_UART_TypeDef* UARTx, uint8_t u8Data)
-{ 
-    UARTx->SBUF_f.DATA = u8Data; 
-    
+{
+    UARTx->SBUF_f.DATA = u8Data;
+
     return Ok;
 }
 
@@ -354,30 +354,30 @@ en_result_t Uart_Init(M0P_UART_TypeDef* UARTx, stc_uart_cfg_t* pstcCfg)
     uint32_t u32Over[2] = {0x4, 0x3};
     uint16_t u16OverShift;
     float32_t f32Scnt=0;
-    
+
     if(NULL == pstcCfg)
     {
         return ErrorInvalidParameter;
     }
-    
+
     UARTx->SCON = 0;
-    
+
     UARTx->SCON = (uint32_t)pstcCfg->enStopBit |
                   (uint32_t)pstcCfg->enMmdorCk |
                   (uint32_t)pstcCfg->stcBaud.enClkDiv |
                   (uint32_t)pstcCfg->enRunMode;
-    
+
     if((UartMskMode1 == pstcCfg->enRunMode) || (UartMskMode3 == pstcCfg->enRunMode))
     {
         u16OverShift = u32Over[pstcCfg->stcBaud.enClkDiv/UartMsk8Or16Div];
-        f32Scnt = (float32_t)(pstcCfg->stcBaud.u32Pclk)/(float32_t)(pstcCfg->stcBaud.u32Baud<<u16OverShift);        
+        f32Scnt = (float32_t)(pstcCfg->stcBaud.u32Pclk)/(float32_t)(pstcCfg->stcBaud.u32Baud<<u16OverShift);
         UARTx->SCNT = (uint16_t)(float32_t)(f32Scnt + 0.5f);
         Uart_EnableFunc(UARTx,UartRenFunc);       ///<使能收发
     }
-    
-    
- 
+
+
+
     enRet = Ok;
     return enRet;
 }
-//@} // UartGroup      
+//@} // UartGroup

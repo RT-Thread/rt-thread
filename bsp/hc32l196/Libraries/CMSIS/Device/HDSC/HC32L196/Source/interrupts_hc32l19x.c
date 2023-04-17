@@ -290,19 +290,19 @@ void EnableNvic(IRQn_Type enIrq, en_irq_level_t enLevel, boolean_t bEn)
 /**
  *******************************************************************************
  ** \brief NVIC hardware fault 中断实现
- **        
+ **
  **
  ** \retval
  ******************************************************************************/
 //void HardFault_Handler(void)
-//{    
+//{
 //    volatile int a = 0;
 
 //    while( 0 == a)
 //    {
 //        ;
 //    }
-//    
+//
 //}
 
 
@@ -320,85 +320,85 @@ void EnableNvic(IRQn_Type enIrq, en_irq_level_t enLevel, boolean_t bEn)
 /**
  *******************************************************************************
  ** \brief GPIO PortA 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void PORTA_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_PORTA)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_PORTA)
     PortA_IRQHandler();
-#endif    
+#endif
 }
 
 /**
  *******************************************************************************
  ** \brief GPIO PortB 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void PORTB_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_PORTB)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_PORTB)
     PortB_IRQHandler();
-#endif    
+#endif
 }
 
 /**
  *******************************************************************************
  ** \brief GPIO PortC/E 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void PORTC_E_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_PORTC)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_PORTC)
     PortC_IRQHandler();
 #endif
-    
-#if (INT_CALLBACK_ON == INT_CALLBACK_PORTE)    
+
+#if (INT_CALLBACK_ON == INT_CALLBACK_PORTE)
     PortE_IRQHandler();
-#endif    
+#endif
 }
 
 /**
  *******************************************************************************
  ** \brief GPIO PortD/F 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void PORTD_F_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_PORTD)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_PORTD)
     PortD_IRQHandler();
 #endif
-    
-#if (INT_CALLBACK_ON == INT_CALLBACK_PORTF)    
+
+#if (INT_CALLBACK_ON == INT_CALLBACK_PORTF)
     PortF_IRQHandler();
-#endif    
+#endif
 }
 
 /**
  *******************************************************************************
  ** \brief DMAC  中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void DMAC_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_DMAC)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_DMAC)
     Dmac_IRQHandler();
-#endif    
+#endif
 }
 
 /**
  *******************************************************************************
  ** \brief TIM3 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void TIM3_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_TIM3)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_TIM3)
     Tim3_IRQHandler();
 #endif
 }
@@ -406,16 +406,16 @@ void TIM3_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief UART0/2 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void UART0_2_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_UART0)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_UART0)
     Uart0_IRQHandler();
-#endif 
-    
-#if (INT_CALLBACK_ON == INT_CALLBACK_UART2)    
+#endif
+
+#if (INT_CALLBACK_ON == INT_CALLBACK_UART2)
     Uart2_IRQHandler();
 #endif
 }
@@ -423,16 +423,16 @@ void UART0_2_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief UART1/3 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void UART1_3_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_UART1)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_UART1)
     Uart1_IRQHandler();
-#endif  
-    
-#if (INT_CALLBACK_ON == INT_CALLBACK_UART3)    
+#endif
+
+#if (INT_CALLBACK_ON == INT_CALLBACK_UART3)
     Uart3_IRQHandler();
 #endif
 }
@@ -440,25 +440,25 @@ void UART1_3_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief LPUART0 低功耗串口0 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void LPUART0_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_LPUART0)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_LPUART0)
     LpUart0_IRQHandler();
-#endif    
+#endif
 }
 
 /**
  *******************************************************************************
  ** \brief LPUART1 低功耗串口1 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void LPUART1_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_LPUART1)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_LPUART1)
     LpUart1_IRQHandler();
 #endif
 }
@@ -466,12 +466,12 @@ void LPUART1_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief SPI0 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void SPI0_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_SPI0)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_SPI0)
     Spi0_IRQHandler();
 #endif
 }
@@ -479,12 +479,12 @@ void SPI0_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief SPI1 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void SPI1_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_SPI1)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_SPI1)
     Spi1_IRQHandler();
 #endif
 }
@@ -492,25 +492,25 @@ void SPI1_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief I2C0 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void I2C0_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_I2C0)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_I2C0)
     I2c0_IRQHandler();
-#endif    
+#endif
 }
 
 /**
  *******************************************************************************
  ** \brief I2C1 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void I2C1_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_I2C1)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_I2C1)
     I2c1_IRQHandler();
 #endif
 }
@@ -518,12 +518,12 @@ void I2C1_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief TIM0 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void TIM0_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_TIM0)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_TIM0)
     Tim0_IRQHandler();
 #endif
 }
@@ -531,12 +531,12 @@ void TIM0_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief TIM1 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void TIM1_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_TIM1)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_TIM1)
     Tim1_IRQHandler();
 #endif
 }
@@ -544,12 +544,12 @@ void TIM1_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief TIM2 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void TIM2_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_TIM2)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_TIM2)
     Tim2_IRQHandler();
 #endif
 }
@@ -557,7 +557,7 @@ void TIM2_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief LPTIM0/1 低功耗时钟 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void LPTIM0_1_IRQHandler(void)
@@ -565,7 +565,7 @@ void LPTIM0_1_IRQHandler(void)
 #if (INT_CALLBACK_ON == INT_CALLBACK_LPTIM0)
     LpTim0_IRQHandler();
 #endif
-    
+
 #if (INT_CALLBACK_ON == INT_CALLBACK_LPTIM1)
     LpTim1_IRQHandler();
 #endif
@@ -574,12 +574,12 @@ void LPTIM0_1_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief TIM4 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void TIM4_IRQHandler(void)
 {
-#if (INT_CALLBACK_ON == INT_CALLBACK_TIM4)    
+#if (INT_CALLBACK_ON == INT_CALLBACK_TIM4)
     Tim4_IRQHandler();
 #endif
 }
@@ -587,7 +587,7 @@ void TIM4_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief TIM5 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void TIM5_IRQHandler(void)
@@ -600,7 +600,7 @@ void TIM5_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief TIM6 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void TIM6_IRQHandler(void)
@@ -613,7 +613,7 @@ void TIM6_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief PCA 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void PCA_IRQHandler(void)
@@ -626,7 +626,7 @@ void PCA_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief WDT 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void WDT_IRQHandler(void)
@@ -639,7 +639,7 @@ void WDT_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief RTC 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void RTC_IRQHandler(void)
@@ -652,7 +652,7 @@ void RTC_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief ADC/DAC 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void ADC_DAC_IRQHandler(void)
@@ -660,16 +660,16 @@ void ADC_DAC_IRQHandler(void)
 #if (INT_CALLBACK_ON == INT_CALLBACK_ADC)
     Adc_IRQHandler();
 #endif
-    
+
 #if (INT_CALLBACK_ON == INT_CALLBACK_DAC)
-    Dac_IRQHandler();    
+    Dac_IRQHandler();
 #endif
 }
 
 /**
  *******************************************************************************
  ** \brief PCNT 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void PCNT_IRQHandler(void)
@@ -682,7 +682,7 @@ void PCNT_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief VC0 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void VC0_IRQHandler(void)
@@ -695,7 +695,7 @@ void VC0_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief VC1/2 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void VC1_2_IRQHandler(void)
@@ -703,7 +703,7 @@ void VC1_2_IRQHandler(void)
 #if (INT_CALLBACK_ON == INT_CALLBACK_VC1)
     Vc1_IRQHandler();
 #endif
-    
+
 #if (INT_CALLBACK_ON == INT_CALLBACK_VC2)
     Vc2_IRQHandler();
 #endif
@@ -712,20 +712,20 @@ void VC1_2_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief LVD 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void LVD_IRQHandler(void)
 {
 #if (INT_CALLBACK_ON == INT_CALLBACK_LVD)
-    Lvd_IRQHandler();    
+    Lvd_IRQHandler();
 #endif
 }
 
 /**
  *******************************************************************************
  ** \brief LCD 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void LCD_IRQHandler(void)
@@ -738,15 +738,15 @@ void LCD_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief FLASH/RAM 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void FLASH_RAM_IRQHandler(void)
 {
 #if (INT_CALLBACK_ON == INT_CALLBACK_FLASH)
     Flash_IRQHandler();
-#endif    
-    
+#endif
+
 #if (INT_CALLBACK_ON == INT_CALLBACK_RAM)
     Ram_IRQHandler();
 #endif
@@ -755,7 +755,7 @@ void FLASH_RAM_IRQHandler(void)
 /**
  *******************************************************************************
  ** \brief CLKTRIM 中断处理函数
- ** 
+ **
  ** \retval
  ******************************************************************************/
 void CLKTRIM_IRQHandler(void)

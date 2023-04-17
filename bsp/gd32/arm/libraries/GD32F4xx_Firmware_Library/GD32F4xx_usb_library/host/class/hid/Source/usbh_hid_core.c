@@ -10,27 +10,27 @@
 /*
     Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -52,7 +52,7 @@ static usbh_status usbh_hid_desc_get (usbh_host *uhost, uint16_t len);
 static usbh_status usbh_set_idle (usbh_host *uhost, uint8_t duration, uint8_t report_ID);
 static usbh_status usbh_set_protocol (usbh_host *uhost, uint8_t protocol);
 
-usbh_class usbh_hid = 
+usbh_class usbh_hid =
 {
     USB_HID_CLASS,
     usbh_hid_itf_init,
@@ -108,7 +108,7 @@ usbh_status usbh_get_report (usbh_host *uhost,
     \param[out] none
     \retval     operation status
 */
-usbh_status usbh_set_report (usb_core_driver *udev, 
+usbh_status usbh_set_report (usb_core_driver *udev,
                              usbh_host *uhost,
                              uint8_t  report_type,
                              uint8_t  report_ID,
@@ -273,7 +273,7 @@ static usbh_status usbh_hid_itf_init (usbh_host *uhost)
 
                 /* open channel for IN endpoint */
                 usbh_pipe_create (uhost->data,
-                                  &uhost->dev_prop, 
+                                  &uhost->dev_prop,
                                   hid_handler.pipe_in,
                                   USB_EPTYPE_INTR,
                                   hid_handler.len);
@@ -319,7 +319,7 @@ static usbh_status usbh_hid_class_req (usbh_host *uhost)
     switch (hid->ctl_state) {
     case HID_REQ_INIT:
     case HID_REQ_GET_HID_DESC:
-        /* get HID descriptor */ 
+        /* get HID descriptor */
         if (USBH_OK == usbh_hid_desc_get (uhost, USB_HID_DESC_SIZE)) {
             usbh_hiddesc_parse(&hid->hid_desc, uhost->dev_prop.data);
 
@@ -328,7 +328,7 @@ static usbh_status usbh_hid_class_req (usbh_host *uhost)
         break;
 
     case HID_REQ_GET_REPORT_DESC:
-        /* get report descriptor */ 
+        /* get report descriptor */
         if (USBH_OK == usbh_hid_reportdesc_get(uhost, hid->hid_desc.wDescriptorLength)) {
             hid->ctl_state = HID_REQ_SET_IDLE;
         }
@@ -345,7 +345,7 @@ static usbh_status usbh_hid_class_req (usbh_host *uhost)
                 hid->ctl_state = HID_REQ_SET_PROTOCOL;
             }
         }
-        break; 
+        break;
 
     case HID_REQ_SET_PROTOCOL:
         /* set protocol */
@@ -412,7 +412,7 @@ static usbh_status usbh_hid_handle (usbh_host *uhost)
         } else {
             /* check IN endpoint stall status */
             if (URB_STALL == usbh_urbstate_get (uhost->data, hid->pipe_in)) {
-                /* issue clear feature on interrupt in endpoint */ 
+                /* issue clear feature on interrupt in endpoint */
                 if (USBH_OK == (usbh_clrfeature (uhost, hid->ep_addr, hid->pipe_in))) {
                     /* change state to issue next in token */
                     hid->state = HID_GET_DATA;

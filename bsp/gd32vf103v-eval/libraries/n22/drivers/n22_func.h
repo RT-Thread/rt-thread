@@ -7,11 +7,11 @@
 #include "n22_tmr.h"
 #include "n22_eclic.h"
 
-#define	ECLIC_GROUP_LEVEL0_PRIO4	0
-#define	ECLIC_GROUP_LEVEL1_PRIO3	1
-#define	ECLIC_GROUP_LEVEL2_PRIO2	2
-#define	ECLIC_GROUP_LEVEL3_PRIO1	3
-#define	ECLIC_GROUP_LEVEL4_PRIO0	4
+#define ECLIC_GROUP_LEVEL0_PRIO4    0
+#define ECLIC_GROUP_LEVEL1_PRIO3    1
+#define ECLIC_GROUP_LEVEL2_PRIO2    2
+#define ECLIC_GROUP_LEVEL3_PRIO1    3
+#define ECLIC_GROUP_LEVEL4_PRIO0    4
 
 void switch_m2u_mode();
 uint32_t get_tmr_freq();
@@ -60,7 +60,7 @@ void eclic_set_trig(uint32_t source, uint8_t trig);
 //    until one of a number of events occurs.
 // */
 __attribute__( ( always_inline ) ) static inline void __WFI(void) {
-	__asm volatile ("wfi");
+    __asm volatile ("wfi");
 }
 //
 //

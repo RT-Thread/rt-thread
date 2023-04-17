@@ -11,4 +11,4 @@
 #define CLINT_MTIME 0xBFF8
 #define CLINT_MTIME_size 0x8
 
-#endif /* _SIFIVE_CLINT_H */ 
+#endif /* _SIFIVE_CLINT_H */

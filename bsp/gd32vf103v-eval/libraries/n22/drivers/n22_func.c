@@ -79,10 +79,10 @@ uint64_t get_cycle_value() {
 void eclic_init(uint32_t num_irq) {
     typedef volatile uint32_t vuint32_t;
 
-    //clear cfg register 
+    //clear cfg register
     *(volatile uint8_t*) (ECLIC_ADDR_BASE + ECLIC_CFG_OFFSET) = 0;
 
-    //clear minthresh register 
+    //clear minthresh register
     *(volatile uint8_t*) (ECLIC_ADDR_BASE + ECLIC_MTH_OFFSET) = 0;
 
     //clear all IP/IE/ATTR/CTRL bits for all interrupt sources

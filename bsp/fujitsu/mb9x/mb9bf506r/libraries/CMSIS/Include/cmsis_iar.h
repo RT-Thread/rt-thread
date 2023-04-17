@@ -64,7 +64,7 @@ static uint32_t __get_PSP(void)
 {
   __ASM("mrs r0, psp");
 }
- 
+
 static void __set_PSP(uint32_t topOfProcStack)
 {
   __ASM("msr psp, r0");
@@ -74,7 +74,7 @@ static uint32_t __get_MSP(void)
 {
   __ASM("mrs r0, msp");
 }
- 
+
 static void __set_MSP(uint32_t topOfMainStack)
 {
   __ASM("msr msp, r0");
@@ -181,7 +181,7 @@ static __INLINE void __CLREX(void)
 static uint32_t __get_FPSCR(void)
 {
 #if (__FPU_PRESENT == 1)   /* __FPU_PRESENT is defined in the device header file, if present in current device. */
-  __ASM("vmrs r0, fpscr"); 
+  __ASM("vmrs r0, fpscr");
 #else
   return(0);
 #endif

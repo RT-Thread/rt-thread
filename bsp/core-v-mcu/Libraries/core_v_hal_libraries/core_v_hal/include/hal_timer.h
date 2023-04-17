@@ -57,21 +57,21 @@
 
 /* Timer low enable configuration bitfield: - 1'b0: disabled - 1'b1: enabled
  * (access: R/W) */
-#define TIMER_CFG_LO_ENABLE_BIT	  0
+#define TIMER_CFG_LO_ENABLE_BIT   0
 #define TIMER_CFG_LO_ENABLE_WIDTH 1
 #define TIMER_CFG_LO_ENABLE_MASK  0x1
 
 /* Timer low counter reset command bitfield. Cleared after Timer Low reset
  * execution. (access: R/W) */
-#define TIMER_CFG_LO_RESET_BIT	 1
+#define TIMER_CFG_LO_RESET_BIT   1
 #define TIMER_CFG_LO_RESET_WIDTH 1
-#define TIMER_CFG_LO_RESET_MASK	 0x2
+#define TIMER_CFG_LO_RESET_MASK  0x2
 
 /* Timer low compare match interrupt enable configuration bitfield: - 1'b0:
  * disabled - 1'b1: enabled (access: R/W) */
-#define TIMER_CFG_LO_IRQEN_BIT	 2
+#define TIMER_CFG_LO_IRQEN_BIT   2
 #define TIMER_CFG_LO_IRQEN_WIDTH 1
-#define TIMER_CFG_LO_IRQEN_MASK	 0x4
+#define TIMER_CFG_LO_IRQEN_MASK  0x4
 
 /* Timer low input event mask configuration bitfield: - 1'b0: disabled - 1'b1:
  * enabled (access: R/W) */
@@ -83,16 +83,16 @@
  * continue incrementing Timer low counter when compare match with CMP_LO
  * occurs. - 1'b1: Cycle mode - reset Timer low counter when compare match with
  * CMP_LO occurs. (access: R/W) */
-#define TIMER_CFG_LO_MODE_BIT	4
+#define TIMER_CFG_LO_MODE_BIT   4
 #define TIMER_CFG_LO_MODE_WIDTH 1
-#define TIMER_CFG_LO_MODE_MASK	0x10
+#define TIMER_CFG_LO_MODE_MASK  0x10
 
 /* Timer low one shot configuration bitfield: - 1'b0: let Timer low enabled
  * counting when compare match with CMP_LO occurs. - 1'b1: disable Timer low
  * when compare match with CMP_LO occurs. (access: R/W) */
-#define TIMER_CFG_LO_ONE_S_BIT	 5
+#define TIMER_CFG_LO_ONE_S_BIT   5
 #define TIMER_CFG_LO_ONE_S_WIDTH 1
-#define TIMER_CFG_LO_ONE_S_MASK	 0x20
+#define TIMER_CFG_LO_ONE_S_MASK  0x20
 
 /* Timer low prescaler enable configuration bitfield:- 1'b0: disabled - 1'b1:
  * enabled (access: R/W) */
@@ -101,39 +101,39 @@
 #define TIMER_CFG_LO_PEN_MASK  0x40
 
 /* Timer low clock source configuration bitfield: - 1'b0: FLL or FLL+Prescaler - 1'b1: Reference clock at 32kHz (access: R/W) */
-#define TIMER_CFG_LO_CCFG_BIT	7
+#define TIMER_CFG_LO_CCFG_BIT   7
 #define TIMER_CFG_LO_CCFG_WIDTH 1
-#define TIMER_CFG_LO_CCFG_MASK	0x80
+#define TIMER_CFG_LO_CCFG_MASK  0x80
 
 /* Timer low prescaler value bitfield. Ftimer = Fclk / (1 + PRESC_VAL) (access:
  * R/W) */
-#define TIMER_CFG_LO_PVAL_BIT	8
+#define TIMER_CFG_LO_PVAL_BIT   8
 #define TIMER_CFG_LO_PVAL_WIDTH 8
-#define TIMER_CFG_LO_PVAL_MASK	0xff00
+#define TIMER_CFG_LO_PVAL_MASK  0xff00
 
 /* Timer low + Timer high 64bit cascaded mode configuration bitfield. (access:
  * R/W) */
-#define TIMER_CFG_LO_CASC_BIT	31
+#define TIMER_CFG_LO_CASC_BIT   31
 #define TIMER_CFG_LO_CASC_WIDTH 1
-#define TIMER_CFG_LO_CASC_MASK	0x80000000
+#define TIMER_CFG_LO_CASC_MASK  0x80000000
 
 /* Timer high enable configuration bitfield: - 1'b0: disabled - 1'b1: enabled
  * (access: R/W) */
-#define TIMER_CFG_HI_ENABLE_BIT	  0
+#define TIMER_CFG_HI_ENABLE_BIT   0
 #define TIMER_CFG_HI_ENABLE_WIDTH 1
 #define TIMER_CFG_HI_ENABLE_MASK  0x1
 
 /* Timer high counter reset command bitfield. Cleared after Timer high reset
  * execution. (access: W) */
-#define TIMER_CFG_HI_RESET_BIT	 1
+#define TIMER_CFG_HI_RESET_BIT   1
 #define TIMER_CFG_HI_RESET_WIDTH 1
-#define TIMER_CFG_HI_RESET_MASK	 0x2
+#define TIMER_CFG_HI_RESET_MASK  0x2
 
 /* Timer high compare match interrupt enable configuration bitfield: - 1'b0:
  * disabled - 1'b1: enabled (access: R/W) */
-#define TIMER_CFG_HI_IRQEN_BIT	 2
+#define TIMER_CFG_HI_IRQEN_BIT   2
 #define TIMER_CFG_HI_IRQEN_WIDTH 1
-#define TIMER_CFG_HI_IRQEN_MASK	 0x4
+#define TIMER_CFG_HI_IRQEN_MASK  0x4
 
 /* Timer high input event mask configuration bitfield: - 1'b0: disabled - 1'b1:
  * enabled (access: R/W) */
@@ -145,16 +145,16 @@
  * continue incrementing Timer high counter when compare match with CMP_LO
  * occurs. - 1'b1: Cycle mode - reset Timer high counter when compare match with
  * CMP_LO occurs. (access: R/W) */
-#define TIMER_CFG_HI_MODE_BIT	4
+#define TIMER_CFG_HI_MODE_BIT   4
 #define TIMER_CFG_HI_MODE_WIDTH 1
-#define TIMER_CFG_HI_MODE_MASK	0x10
+#define TIMER_CFG_HI_MODE_MASK  0x10
 
 /* Timer high one shot configuration bitfield: - 1'b0: let Timer high enabled
  * counting when compare match with CMP_LO occurs. - 1'b1: disable Timer high
  * when compare match with CMP_LO occurs. (access: R/W) */
-#define TIMER_CFG_HI_ONE_S_BIT	 5
+#define TIMER_CFG_HI_ONE_S_BIT   5
 #define TIMER_CFG_HI_ONE_S_WIDTH 1
-#define TIMER_CFG_HI_ONE_S_MASK	 0x20
+#define TIMER_CFG_HI_ONE_S_MASK  0x20
 
 /* Timer high prescaler enable configuration bitfield: - 1'b0: disabled - 1'b1:
  * enabled (access: R/W) */
@@ -165,27 +165,27 @@
 
 /* Timer high clock source configuration bitfield: - 1'b0: FLL or FLL+Prescaler
  * - 1'b1: Reference clock at 32kHz (access: R/W) */
-#define TIMER_CFG_HI_CCFG_BIT	  7
+#define TIMER_CFG_HI_CCFG_BIT     7
 #define TIMER_CFG_HI_CCFG_WIDTH 1
 #define TIMER_CFG_HI_CCFG_MASK  0x80
 
 /* Timer Low counter value bitfield. (access: R/W) */
-#define TIMER_CNT_LO_CNT_LO_BIT	  0
+#define TIMER_CNT_LO_CNT_LO_BIT   0
 #define TIMER_CNT_LO_CNT_LO_WIDTH 32
 #define TIMER_CNT_LO_CNT_LO_MASK  0xffffffff
 
 /* Timer High counter value bitfield. (access: R/W) */
-#define TIMER_CNT_HI_CNT_HI_BIT	  0
+#define TIMER_CNT_HI_CNT_HI_BIT   0
 #define TIMER_CNT_HI_CNT_HI_WIDTH 32
 #define TIMER_CNT_HI_CNT_HI_MASK  0xffffffff
 
 /* Timer Low comparator value bitfield. (access: R/W) */
-#define TIMER_CMP_LO_CMP_LO_BIT	  0
+#define TIMER_CMP_LO_CMP_LO_BIT   0
 #define TIMER_CMP_LO_CMP_LO_WIDTH 32
 #define TIMER_CMP_LO_CMP_LO_MASK  0xffffffff
 
 /* Timer High comparator value bitfield. (access: R/W) */
-#define TIMER_CMP_HI_CMP_HI_BIT	  0
+#define TIMER_CMP_HI_CMP_HI_BIT   0
 #define TIMER_CMP_HI_CMP_HI_WIDTH 32
 #define TIMER_CMP_HI_CMP_HI_MASK  0xffffffff
 
@@ -214,9 +214,9 @@
 #define TIMER_RESET_HI_RST_HI_MASK  0x1
 
 struct pulp_timer {
-	unsigned int current_time;
-	unsigned int flags;
-	void *base;
+    unsigned int current_time;
+    unsigned int flags;
+    void *base;
 };
 
 

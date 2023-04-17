@@ -94,13 +94,13 @@
  **
  **
  ** \param [in]  enIntType           中断类型（RefStop、CalCntOf、XTAL32KFault、XTAL32MFault）
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 boolean_t Trim_GetIntFlag(en_trim_inttype_t enIntType)
-{  
+{
     ASSERT(IS_VALID_TRIMINT(enIntType));
-    
+
     if(M0P_CLK_TRIM->IFR&enIntType)
     {
         return TRUE;
@@ -109,7 +109,7 @@ boolean_t Trim_GetIntFlag(en_trim_inttype_t enIntType)
     {
         return FALSE;
     }
-     
+
 }
 
 /**
@@ -118,17 +118,17 @@ boolean_t Trim_GetIntFlag(en_trim_inttype_t enIntType)
  **
  **
  ** \param [in]  enIntType           中断类型（RefStop、CalCntOf、XTAL32KFault、XTAL32MFault）
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Trim_ClearIntFlag(en_trim_inttype_t enIntType)
 {
     en_result_t enResult = Error;
-  
+
     ASSERT(IS_VALID_TRIMINT(enIntType));
-    
+
     M0P_CLK_TRIM->ICLR &= ~(uint32_t)enIntType;
-    
+
     return enResult;
 }
 
@@ -139,8 +139,8 @@ en_result_t Trim_ClearIntFlag(en_trim_inttype_t enIntType)
  ** \brief Trim中断使能
  **
  **
- ** 
- ** \retval Null                                      
+ **
+ ** \retval Null
  *****************************************************************************/
 void Trim_EnableIrq (void)
 {
@@ -153,8 +153,8 @@ void Trim_EnableIrq (void)
  **
  **
  **
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 void Trim_DisableIrq(void)
 {
@@ -167,24 +167,24 @@ void Trim_DisableIrq(void)
  **
  **
  ** \param [in]  pstcCfg           Trim配置结构体指针
- ** 
- ** \retval Ok or Error                                      
+ **
+ ** \retval Ok or Error
  *****************************************************************************/
 en_result_t Trim_Init(stc_trim_cfg_t* pstcCfg)
 {
     en_result_t enResult = Error;
 
     M0P_CLK_TRIM->CR = 0;
-    
+
     M0P_CLK_TRIM->CR = (uint32_t)pstcCfg->enCALCLK |
                        (uint32_t)pstcCfg->enREFCLK |
-                       (uint32_t)pstcCfg->enMON;  
-    
+                       (uint32_t)pstcCfg->enMON;
+
     M0P_CLK_TRIM->REFCON = pstcCfg->u32RefCon;
     M0P_CLK_TRIM->CALCON = pstcCfg->u32CalCon;
-    
+
     enResult = Ok;
-    
+
     return enResult;
 }
 
@@ -193,8 +193,8 @@ en_result_t Trim_Init(stc_trim_cfg_t* pstcCfg)
  ** \brief Trim校准/监测启动运行
  **
  **
- ** 
- ** \retval Null                                     
+ **
+ ** \retval Null
  *****************************************************************************/
 void Trim_Run(void)
 {
@@ -207,8 +207,8 @@ void Trim_Run(void)
  **
  **
  **
- ** 
- ** \retval Null                                      
+ **
+ ** \retval Null
  *****************************************************************************/
 void Trim_Stop(void)
 {
@@ -219,8 +219,8 @@ void Trim_Stop(void)
  *****************************************************************************
  ** \brief Trim参考计数器计数值获取
  **
- ** 
- ** \retval u32Data                参考计数器计数值                      
+ **
+ ** \retval u32Data                参考计数器计数值
  *****************************************************************************/
 uint32_t Trim_RefCntGet(void)
 {
@@ -232,9 +232,9 @@ uint32_t Trim_RefCntGet(void)
  ** \brief Trim校准计数器计数值获取
  **
  **
- ** 
- ** 
- ** \retval u32Data                校准计数器计数值                      
+ **
+ **
+ ** \retval u32Data                校准计数器计数值
  *****************************************************************************/
 uint32_t Trim_CalCntGet(void)
 {

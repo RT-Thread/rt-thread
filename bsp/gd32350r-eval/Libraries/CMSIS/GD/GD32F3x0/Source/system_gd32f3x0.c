@@ -165,7 +165,7 @@ void SystemInit (void)
 
     /* configure system clock */
     system_clock_config();
-    
+
 #ifdef VECT_TAB_SRAM
     nvic_vector_table_set(NVIC_VECTTAB_RAM,VECT_TAB_OFFSET);
 #else
@@ -222,18 +222,18 @@ static void system_clock_8m_hxtal(void)
 
     /* enable HXTAL */
     RCU_CTL0 |= RCU_CTL0_HXTALEN;
-    
+
     /* wait until HXTAL is stable or the startup time is longer than HXTAL_STARTUP_TIMEOUT */
     do{
         timeout++;
         stab_flag = (RCU_CTL0 & RCU_CTL0_HXTALSTB);
     }
-    while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));    
+    while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
     /* if fail */
     if(0U == (RCU_CTL0 & RCU_CTL0_HXTALSTB)){
         return;
     }
-    
+
     /* HXTAL is stable */
     /* AHB = SYSCLK */
     RCU_CFG0 |= RCU_AHB_CKSYS_DIV1;
@@ -241,11 +241,11 @@ static void system_clock_8m_hxtal(void)
     RCU_CFG0 |= RCU_APB2_CKAHB_DIV1;
     /* APB1 = AHB */
     RCU_CFG0 |= RCU_APB1_CKAHB_DIV1;
-    
+
     /* select HXTAL as system clock */
     RCU_CFG0 &= ~RCU_CFG0_SCS;
     RCU_CFG0 |= RCU_CKSYSSRC_HXTAL;
-    
+
     /* wait until HXTAL is selected as system clock */
     while(0U == (RCU_CFG0 & RCU_SCSS_HXTAL)){
     }
@@ -323,7 +323,7 @@ static void system_clock_72m_irc8m(void)
     /* PLL = (IRC8M/2) * 18 = 72 MHz */
     RCU_CFG0 &= ~(RCU_CFG0_PLLSEL | RCU_CFG0_PLLMF);
     RCU_CFG0 |= (RCU_PLLSRC_IRC8M_DIV2 | RCU_PLL_MUL18);
-    
+
     /* enable PLL */
     RCU_CTL0 |= RCU_CTL0_PLLEN;
 
@@ -348,7 +348,7 @@ static void system_clock_72m_irc8m(void)
     \retval     none
 */
 static void system_clock_72m_irc48m(void)
-{    
+{
     /* enable IRC48M */
     RCU_ADDCTL |= RCU_ADDCTL_IRC48MEN;
 
@@ -366,7 +366,7 @@ static void system_clock_72m_irc48m(void)
     RCU_CFG1 &= ~(RCU_CFG1_PLLPRESEL | RCU_CFG1_PLLMF5);
     RCU_CFG1 |= (RCU_PLL_PREDV2 |RCU_PLLPRESEL_IRC48M);
     RCU_CFG0 |= (RCU_PLLSRC_HXTAL_IRC48M | RCU_PLL_MUL3);
-           
+
     /* enable PLL */
     RCU_CTL0 |= RCU_CTL0_PLLEN;
 
@@ -455,7 +455,7 @@ static void system_clock_84m_irc8m(void)
     /* PLL = (IRC8M/2) * 21 = 84 MHz */
     RCU_CFG0 &= ~(RCU_CFG0_PLLSEL | RCU_CFG0_PLLMF);
     RCU_CFG0 |= (RCU_PLLSRC_IRC8M_DIV2 | RCU_PLL_MUL21);
-    
+
     /* enable PLL */
     RCU_CTL0 |= RCU_CTL0_PLLEN;
 
@@ -544,7 +544,7 @@ static void system_clock_96m_irc8m(void)
     /* PLL = (IRC8M/2) * 24 = 96 MHz */
     RCU_CFG0 &= ~(RCU_CFG0_PLLSEL | RCU_CFG0_PLLMF);
     RCU_CFG0 |= (RCU_PLLSRC_IRC8M_DIV2 | RCU_PLL_MUL24);
-    
+
     /* enable PLL */
     RCU_CTL0 |= RCU_CTL0_PLLEN;
 
@@ -569,7 +569,7 @@ static void system_clock_96m_irc8m(void)
     \retval     none
 */
 static void system_clock_96m_irc48m(void)
-{    
+{
     /* enable IRC48M */
     RCU_ADDCTL |= RCU_ADDCTL_IRC48MEN;
 
@@ -587,7 +587,7 @@ static void system_clock_96m_irc48m(void)
     RCU_CFG1 &= ~(RCU_CFG1_PLLPRESEL | RCU_CFG1_PLLMF5);
     RCU_CFG1 |= (RCU_PLL_PREDV2 |RCU_PLLPRESEL_IRC48M);
     RCU_CFG0 |= (RCU_PLLSRC_HXTAL_IRC48M | RCU_PLL_MUL4);
-           
+
     /* enable PLL */
     RCU_CTL0 |= RCU_CTL0_PLLEN;
 
@@ -677,7 +677,7 @@ static void system_clock_108m_irc8m(void)
     /* PLL = (IRC8M/2) * 27 = 108 MHz */
     RCU_CFG0 &= ~(RCU_CFG0_PLLSEL | RCU_CFG0_PLLMF);
     RCU_CFG0 |= (RCU_PLLSRC_IRC8M_DIV2 | RCU_PLL_MUL27);
-    
+
     /* enable PLL */
     RCU_CTL0 |= RCU_CTL0_PLLEN;
 
@@ -709,11 +709,11 @@ static void system_clock_8m_irc8m(void)
     RCU_CFG0 |= RCU_APB2_CKAHB_DIV1;
     /* APB1 = AHB */
     RCU_CFG0 |= RCU_APB1_CKAHB_DIV1;
-    
+
     /* select IRC8M as system clock */
     RCU_CFG0 &= ~RCU_CFG0_SCS;
     RCU_CFG0 |= RCU_CKSYSSRC_IRC8M;
-    
+
     /* wait until IRC8M is selected as system clock */
     while(0U != (RCU_CFG0 & RCU_SCSS_IRC8M)){
     }
@@ -732,7 +732,7 @@ void SystemCoreClockUpdate (void)
     uint32_t pllmf = 0U, pllmf4 = 0U, pllmf5 = 0U, pllsel = 0U, pllpresel = 0U, prediv = 0U, idx = 0U, clk_exp = 0U;
     /* exponent of AHB clock divider */
     const uint8_t ahb_exp[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
-    
+
     sws = GET_BITS(RCU_CFG0, 2, 3);
     switch(sws){
     /* IRC8M is selected as CK_SYS */

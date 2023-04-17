@@ -1,6 +1,6 @@
 /*
  * This is a generated file
- * 
+ *
  * Copyright 2021 QuickLogic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ typedef struct {
   union {
     __IO uint32_t rx_saddr;
     struct {
-      __IO uint32_t  saddr      : 32;	// 21 localparam L2_AWIDTH_NOAL = L2_ADDR_WIDTH + 2;
+      __IO uint32_t  saddr      : 32;   // 21 localparam L2_AWIDTH_NOAL = L2_ADDR_WIDTH + 2;
     } rx_saddr_b;
   };
 

@@ -2,7 +2,7 @@
  * simple_idr.c
  *
  * Copyright (c) 2007-2019 Allwinnertech Co., Ltd.
- * 
+ *
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -95,7 +95,7 @@ int id_alloc(struct id_dir *dir, void *value)
                 goto out;
             }
             tmp = (struct id_layer*)hal_malloc(sizeof(struct id_layer));
-	    memset(tmp, 0, sizeof(struct id_layer));
+        memset(tmp, 0, sizeof(struct id_layer));
             tmp->layer[0] = dir->top;
             tmp->bitmap[0] = 0x01;//0 is NO_ID
             tmp->num_layer = 1;
@@ -118,7 +118,7 @@ int id_alloc(struct id_dir *dir, void *value)
                     G2D_INFO_MSG("atomic alloc idr mem err.\n");
                     goto out;
                 }
-		memset(*cur, 0, sizeof(struct id_layer));
+        memset(*cur, 0, sizeof(struct id_layer));
                 tmp->num_layer++;
                 (*cur)->next = dir->head;
                 (*cur)->pre = NULL;
@@ -243,7 +243,7 @@ void* id_get(struct id_dir *dir, int id)
     dir->status = 0;
     out:
     hal_sem_post(dir->lock);
-	//printf("got id:%d=%08x\n",id,lu);
+    //printf("got id:%d=%08x\n",id,lu);
     return (void*)lu;
 }
 

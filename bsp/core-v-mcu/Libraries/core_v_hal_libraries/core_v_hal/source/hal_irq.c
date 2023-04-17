@@ -28,17 +28,17 @@
 /* utility functions for PULPs external interrupt controller */
 void irq_mask(uint32_t mask)
 {
-	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_OFFSET));
+    writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_OFFSET));
 }
 
 void irq_enable(uint32_t mask)
 {
-	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
+    writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
 }
 
 void irq_disable(uint32_t mask)
 {
-	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
+    writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }
 
 /* utility functions for the core level interrupt (CLINT) described in the
@@ -46,27 +46,27 @@ void irq_disable(uint32_t mask)
 
 uint32_t irq_clint_disable()
 {
-	uint32_t val = csr_read_clear(CSR_MSTATUS, MSTATUS_IE);
-	return val;
+    uint32_t val = csr_read_clear(CSR_MSTATUS, MSTATUS_IE);
+    return val;
 }
 
 uint32_t irq_clint_enable()
 {
-	uint32_t val = 0;
-	val = csr_read(CSR_MSTATUS);
+    uint32_t val = 0;
+    val = csr_read(CSR_MSTATUS);
 
-	val = csr_read_set(CSR_MSTATUS, MSTATUS_IE);
+    val = csr_read_set(CSR_MSTATUS, MSTATUS_IE);
 
-	val = csr_read(CSR_MSTATUS);
-	return val;
+    val = csr_read(CSR_MSTATUS);
+    return val;
 }
 
 /* TODO: make this a constructor? */
 void irq_init()
 {
-	/* the debug module could have enabled irq so we disable it during
-	 * initialization
-	 */
-	irq_disable(0xffffffff);
+    /* the debug module could have enabled irq so we disable it during
+     * initialization
+     */
+    irq_disable(0xffffffff);
 }
 

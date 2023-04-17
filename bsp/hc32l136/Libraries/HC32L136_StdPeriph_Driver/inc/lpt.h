@@ -43,7 +43,7 @@
 /** \file lpt.h
  **
  ** 低功耗定时器数据结构及API声明
- **  
+ **
  **
  ** History:
  **   - 2018-04-15   Husj     First version
@@ -154,7 +154,7 @@ typedef enum en_lpt_start
 
 /**
  ******************************************************************************
- ** \brief Lptimer 配置结构体定义 
+ ** \brief Lptimer 配置结构体定义
  *****************************************************************************/
 typedef struct stc_lpt_config
 {
@@ -164,7 +164,7 @@ typedef struct stc_lpt_config
     en_lpt_toggle_t   enTog;        ///< 翻转输出使能
     en_lpt_function_t enCT;         ///< 定时/计数模式选择
     en_lpt_mode_t     enMD;         ///< 工作模式选择
-    
+
     func_ptr_t pfnLpTimCb;          ///< LpTimer中断服务回调函数[void function(void)]
 }stc_lpt_config_t;
 
@@ -176,7 +176,7 @@ typedef struct stc_lpt_config
 /******************************************************************************
  * Global function prototypes (definition in C source)
  *****************************************************************************/
-//中断相关函数 
+//中断相关函数
 //中断标志获取
 boolean_t Lpt_GetIntFlag(void);
 //中断标志清除

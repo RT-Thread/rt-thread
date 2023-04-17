@@ -37,7 +37,7 @@
 #define EXTI_LINE_20               (0x100000)
 #define EXTI_LINE_21               (0x200000)
 #define EXTI_LINE_22               (0x400000)
-#define EXTI_LINE_23               (0x800000) 
+#define EXTI_LINE_23               (0x800000)
 #define EXTI_LINE_MASK             (0xFFFFFFU)
 /**
   * @}
@@ -100,7 +100,7 @@ typedef struct
 /** @defgroup  EXTI Private Macros
   * @{
   */
-#define IS_EXTI_ALL_LINE(LINE)    ( (LINE) | (EXTI_LINE_MASK) )      
+#define IS_EXTI_ALL_LINE(LINE)    ( (LINE) | (EXTI_LINE_MASK) )
 
 #define IS_EXTI_MODE(__MODE__)     (((__MODE__) == EXTI_MODE_INTERRUPT) || \
                                     ((__MODE__) == EXTI_MODE_EVENT))
@@ -119,25 +119,25 @@ typedef struct
   * @}
   */
 
-/** @brief  __HAL_EXTI_LINE_IT_ENABLE 
+/** @brief  __HAL_EXTI_LINE_IT_ENABLE
   * @param  __LINE__: EXTI line.
   *         This parameter can be a value of @ref EXTI_Line
   */
 #define __HAL_EXTI_LINE_IT_ENABLE(__LINE__)    (EXTI->IENR |= (__LINE__))
 
-/** @brief  __HAL_EXTI_LINE_IT_DISABLE 
+/** @brief  __HAL_EXTI_LINE_IT_DISABLE
   * @param  __LINE__: EXTI line.
   *         This parameter can be a value of @ref EXTI_Line
   */
 #define __HAL_EXTI_LINE_IT_DISABLE(__LINE__)    (EXTI->IENR &= ~(__LINE__))
 
-/** @brief  __HAL_EXTI_LINE_EVENT_ENABLE 
+/** @brief  __HAL_EXTI_LINE_EVENT_ENABLE
   * @param  __LINE__: EXTI line.
   *         This parameter can be a value of @ref EXTI_Line
   */
 #define __HAL_EXTI_LINE_EVENT_ENABLE(__LINE__)    (EXTI->EENR |= (__LINE__))
 
-/** @brief  __HAL_EXTI_LINE_EVENT_DISABLE 
+/** @brief  __HAL_EXTI_LINE_EVENT_DISABLE
   * @param  __LINE__: EXTI line.
   *         This parameter can be a value of @ref EXTI_Line
   */
@@ -157,10 +157,10 @@ void HAL_EXTI_SoftTrigger(EXTI_HandleTypeDef *hexti);
 bool HAL_EXTI_GetPending(EXTI_HandleTypeDef *hexti);
 
 /* HAL_EXTI_ClearPending */
-void HAL_EXTI_ClearPending(EXTI_HandleTypeDef *hexti);  
+void HAL_EXTI_ClearPending(EXTI_HandleTypeDef *hexti);
 
-/* HAL_EXTI_ClearAllPending */   
-void HAL_EXTI_ClearAllPending(void);  
+/* HAL_EXTI_ClearAllPending */
+void HAL_EXTI_ClearAllPending(void);
 
 #endif
 

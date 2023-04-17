@@ -70,24 +70,24 @@
   */
 void ald_bkpc_standby_wakeup_config(bkpc_wakeup_port_t port, bkpc_wakeup_level_t level)
 {
-	assert_param(IS_BKPC_WAKEUP_PORT(port));
-	assert_param(IS_BKPC_WAKEUP_LEVEL(level));
+    assert_param(IS_BKPC_WAKEUP_PORT(port));
+    assert_param(IS_BKPC_WAKEUP_LEVEL(level));
 
-	if (port == PMU_STANDBY_PORT_SEL_NONE) {
-		BKPC_UNLOCK();
-		CLEAR_BIT(BKPC->CR, BKPC_CR_WKPEN_MSK);
-		SET_BIT(BKPC->CR, BKPC_CR_MRST_WKPEN_MSK);
-		BKPC_LOCK();
-		return;
-	}
+    if (port == PMU_STANDBY_PORT_SEL_NONE) {
+        BKPC_UNLOCK();
+        CLEAR_BIT(BKPC->CR, BKPC_CR_WKPEN_MSK);
+        SET_BIT(BKPC->CR, BKPC_CR_MRST_WKPEN_MSK);
+        BKPC_LOCK();
+        return;
+    }
 
-	BKPC_UNLOCK();
-	SET_BIT(BKPC->CR, BKPC_CR_WKPEN_MSK | BKPC_CR_MRST_WKPEN_MSK);
-	MODIFY_REG(BKPC->CR, BKPC_CR_WKPS_MSK, port << BKPC_CR_WKPS_POSS);
-	MODIFY_REG(BKPC->CR, BKPC_CR_WKPOL_MSK, level << BKPC_CR_WKPOL_POS);
-	BKPC_LOCK();
+    BKPC_UNLOCK();
+    SET_BIT(BKPC->CR, BKPC_CR_WKPEN_MSK | BKPC_CR_MRST_WKPEN_MSK);
+    MODIFY_REG(BKPC->CR, BKPC_CR_WKPS_MSK, port << BKPC_CR_WKPS_POSS);
+    MODIFY_REG(BKPC->CR, BKPC_CR_WKPOL_MSK, level << BKPC_CR_WKPOL_POS);
+    BKPC_LOCK();
 
-	return;
+    return;
 }
 
 /**
@@ -97,13 +97,13 @@ void ald_bkpc_standby_wakeup_config(bkpc_wakeup_port_t port, bkpc_wakeup_level_t
   */
 void ald_bkpc_rtc_clock_config(bkpc_preh_clk_t clock)
 {
-	assert_param(IS_BKPC_PREH_CLOCK(clock));
+    assert_param(IS_BKPC_PREH_CLOCK(clock));
 
-	BKPC_UNLOCK();
-	MODIFY_REG(BKPC->PCCR, BKPC_PCCR_RTCCS_MSK, clock << BKPC_PCCR_RTCCS_POSS);
-	BKPC_LOCK();
+    BKPC_UNLOCK();
+    MODIFY_REG(BKPC->PCCR, BKPC_PCCR_RTCCS_MSK, clock << BKPC_PCCR_RTCCS_POSS);
+    BKPC_LOCK();
 
-	return;
+    return;
 }
 
 /**
@@ -113,13 +113,13 @@ void ald_bkpc_rtc_clock_config(bkpc_preh_clk_t clock)
   */
 void ald_bkpc_tsense_clock_config(bkpc_preh_clk_t clock)
 {
-	assert_param(IS_BKPC_PREH_CLOCK(clock));
+    assert_param(IS_BKPC_PREH_CLOCK(clock));
 
-	BKPC_UNLOCK();
-	MODIFY_REG(BKPC->PCCR, BKPC_PCCR_TSENSECS_MSK, clock << BKPC_PCCR_TSENSECS_POSS);
-	BKPC_LOCK();
+    BKPC_UNLOCK();
+    MODIFY_REG(BKPC->PCCR, BKPC_PCCR_TSENSECS_MSK, clock << BKPC_PCCR_TSENSECS_POSS);
+    BKPC_LOCK();
 
-	return;
+    return;
 }
 /**
   * @}
@@ -148,13 +148,13 @@ void ald_bkpc_tsense_clock_config(bkpc_preh_clk_t clock)
   */
 void ald_bkpc_write_ram(uint8_t idx, uint32_t value)
 {
-	assert_param(IS_BKPC_RAM_IDX(idx));
+    assert_param(IS_BKPC_RAM_IDX(idx));
 
-	RTC_UNLOCK();
-	WRITE_REG(RTC->BKPR[idx], value);
-	RTC_LOCK();
+    RTC_UNLOCK();
+    WRITE_REG(RTC->BKPR[idx], value);
+    RTC_LOCK();
 
-	return;
+    return;
 }
 
 /**
@@ -164,9 +164,9 @@ void ald_bkpc_write_ram(uint8_t idx, uint32_t value)
   */
 uint32_t ald_bkpc_read_ram(uint8_t idx)
 {
-	assert_param(IS_BKPC_RAM_IDX(idx));
+    assert_param(IS_BKPC_RAM_IDX(idx));
 
-	return READ_REG(RTC->BKPR[idx]);
+    return READ_REG(RTC->BKPR[idx]);
 }
 /**
   * @}

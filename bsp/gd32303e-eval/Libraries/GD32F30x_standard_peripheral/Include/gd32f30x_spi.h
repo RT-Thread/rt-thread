@@ -104,7 +104,7 @@
 /* constants definitions */
 /* SPI and I2S parameter struct definitions */
 typedef struct
-{   
+{
     uint32_t device_mode;                                                       /*!< SPI master or slave */
     uint32_t trans_mode;                                                        /*!< SPI transtype */
     uint32_t frame_size;                                                        /*!< SPI frame size */
@@ -198,7 +198,7 @@ typedef struct
 #define I2S_CKPL_LOW                    ((uint32_t)0x00000000U)                 /*!< I2S clock polarity low level */
 #define I2S_CKPL_HIGH                   SPI_I2SCTL_CKPL                         /*!< I2S clock polarity high level */
 
-/* SPI DMA constants definitions */                                    
+/* SPI DMA constants definitions */
 #define SPI_DMA_TRANSMIT                ((uint8_t)0x00U)                        /*!< SPI transmit data use DMA */
 #define SPI_DMA_RECEIVE                 ((uint8_t)0x01U)                        /*!< SPI receive data use DMA */
 
@@ -220,7 +220,7 @@ typedef struct
 #define I2S_INT_FLAG_TXURERR            ((uint8_t)0x05U)                        /*!< underrun error interrupt flag */
 #define SPI_I2S_INT_FLAG_FERR           ((uint8_t)0x06U)                        /*!< format error interrupt flag */
 
-/* SPI/I2S flag definitions */                                                  
+/* SPI/I2S flag definitions */
 #define SPI_FLAG_RBNE                   SPI_STAT_RBNE                           /*!< receive buffer not empty flag */
 #define SPI_FLAG_TBE                    SPI_STAT_TBE                            /*!< transmit buffer empty flag */
 #define SPI_FLAG_CRCERR                 SPI_STAT_CRCERR                         /*!< CRC error flag */

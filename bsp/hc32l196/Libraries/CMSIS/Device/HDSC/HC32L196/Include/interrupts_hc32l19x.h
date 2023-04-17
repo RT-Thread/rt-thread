@@ -115,8 +115,8 @@ extern "C"
 #define INT_CALLBACK_FLASH                       INT_CALLBACK_ON
 #define INT_CALLBACK_RAM                         INT_CALLBACK_ON
 #define INT_CALLBACK_CLKTRIM                     INT_CALLBACK_ON
- 
- 
+
+
 /**
  *******************************************************************************
  ** \brief 中断优先级数据类型定义
@@ -128,7 +128,7 @@ typedef enum en_irq_level
     IrqLevel1  = 1u,               ///< 优先级1
     IrqLevel2  = 2u,               ///< 优先级2
     IrqLevel3  = 3u,               ///< 优先级3
-} en_irq_level_t; 
+} en_irq_level_t;
 
 
 /******************************************************************************

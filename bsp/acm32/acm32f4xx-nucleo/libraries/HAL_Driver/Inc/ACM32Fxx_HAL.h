@@ -9,8 +9,8 @@
 #ifndef __ACM32FXX_HAL_H__
 #define __ACM32FXX_HAL_H__
 
-/* 
-    Uncomment the line below according to the target device used in your application 
+/*
+    Uncomment the line below according to the target device used in your application
 */
 /* #define ACM32F3XX */    /*!< ACM32F303xx */
    #define ACM32F4XX       /*!< ACM32F403xx */
@@ -78,15 +78,15 @@ typedef enum
 #define HAL_CAN_MODULE_ENABLED
 #endif
 #define HAL_LPUART_MODULE_ENABLED
-#define HAL_WDT_MODULE_ENABLED 
+#define HAL_WDT_MODULE_ENABLED
 #define HAL_FSUSB_MODULE_ENABLED
 #define HAL_SYSTICK_ENABLED
-#define HAL_CRC_ENABLED  
-#define HAL_FAU_ENABLED  
-#define HAL_AES_ENABLED  
-#define HAL_HASH_SHA1_ENABLED 
-#define HAL_HASH_SHA256_ENABLED 
-#define HAL_HRNG_ENABLED  
+#define HAL_CRC_ENABLED
+#define HAL_FAU_ENABLED
+#define HAL_AES_ENABLED
+#define HAL_HASH_SHA1_ENABLED
+#define HAL_HASH_SHA256_ENABLED
+#define HAL_HRNG_ENABLED
 
 #if defined(ACM32F3XX)
     #include "System_ACM32F3.h"
@@ -171,37 +171,37 @@ typedef enum
 #endif
 
 #ifdef HAL_TIMER_MODULE_ENABLED
-    #include "HAL_TIMER.h"  
+    #include "HAL_TIMER.h"
     #include "HAL_TIMER_EX.h"
-#endif  
+#endif
 
 #ifdef HAL_FSUSB_MODULE_ENABLED
     #include "HAL_FSUSB.h"
 #endif
 
-#ifdef HAL_CRC_ENABLED  
+#ifdef HAL_CRC_ENABLED
 #include  "HAL_CRC.h"
-#endif  
+#endif
 
 #ifdef  HAL_AES_ENABLED
-#include  "HAL_AES.h"  
-#endif    
+#include  "HAL_AES.h"
+#endif
 
-#ifdef HAL_FAU_ENABLED    
-#include  "HAL_FAU.h"       
-#endif 
+#ifdef HAL_FAU_ENABLED
+#include  "HAL_FAU.h"
+#endif
 
-#ifdef HAL_HASH_SHA1_ENABLED 
-#include "HAL_SHA1.h"  
-#endif 
+#ifdef HAL_HASH_SHA1_ENABLED
+#include "HAL_SHA1.h"
+#endif
 
-#ifdef HAL_HASH_SHA256_ENABLED 
-#include "HAL_SHA256.h"  
-#endif  
+#ifdef HAL_HASH_SHA256_ENABLED
+#include "HAL_SHA256.h"
+#endif
 
-#ifdef HAL_HRNG_ENABLED     
-#include "HAL_HRNG.h"    
-#endif    
+#ifdef HAL_HRNG_ENABLED
+#include "HAL_HRNG.h"
+#endif
 
 
 #endif

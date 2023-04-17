@@ -98,15 +98,15 @@
 #define MIP_HEIP            (1 << IRQ_H_EXT)
 #define MIP_MEIP            (1 << IRQ_M_EXT)
 
-#define MIE_SSIE            MIP_SSIP 
-#define MIE_HSIE            MIP_HSIP 
-#define MIE_MSIE            MIP_MSIP 
-#define MIE_STIE            MIP_STIP 
-#define MIE_HTIE            MIP_HTIP 
-#define MIE_MTIE            MIP_MTIP 
-#define MIE_SEIE            MIP_SEIP 
-#define MIE_HEIE            MIP_HEIP 
-#define MIE_MEIE            MIP_MEIP 
+#define MIE_SSIE            MIP_SSIP
+#define MIE_HSIE            MIP_HSIP
+#define MIE_MSIE            MIP_MSIP
+#define MIE_STIE            MIP_STIP
+#define MIE_HTIE            MIP_HTIP
+#define MIE_MTIE            MIP_MTIP
+#define MIE_SEIE            MIP_SEIP
+#define MIE_HEIE            MIP_HEIP
+#define MIE_MEIE            MIP_MEIP
 
 #define SIP_SSIP MIP_SSIP
 #define SIP_STIP MIP_STIP

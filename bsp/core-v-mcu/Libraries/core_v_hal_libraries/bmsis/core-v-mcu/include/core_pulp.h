@@ -52,7 +52,7 @@
 #define __PULP_CMSIS_VERSION_MAIN  ( 5U)                                  /*!< [31:16] CMSIS HAL main version */
 #define __PULP_CMSIS_VERSION_SUB   ( 0U)                                  /*!< [15:0]  CMSIS HAL sub version */
 #define __PULP_CMSIS_VERSION       ((__PULP_CMSIS_VERSION_MAIN << 16U) | \
-				    __PULP_CMSIS_VERSION_SUB           )  /*!< CMSIS HAL version number */
+                    __PULP_CMSIS_VERSION_SUB           )  /*!< CMSIS HAL version number */
 
 #define __PULP_V                   (1U)                                   /*!< PULP Core Version */
 
@@ -149,7 +149,7 @@
  */
 #define MSTATUS_ADDR    0x300             /*!< Machine Status Register */
 #define MISA_ADDR       0x301             /*!< ISA and Extensions Register */
-#define MIE_ADDR	0x304             /*!< Machine interrupt enable Register */
+#define MIE_ADDR    0x304             /*!< Machine interrupt enable Register */
 #define MTVEC_ADDR      0x305             /*!< Machine Trap-handler Base Address Register */
 #define MSCRATCH_ADDR   0x340             /*!< Machine Scratch Register */
 #define MEPC_ADDR       0x341             /*!< Machine Exception Program Counter Register */
@@ -540,16 +540,16 @@ typedef struct
 }  NVIC_Type;
 /*@} end of group CMSIS_NVIC */
 
-#define IRQ_REG_MASK_OFFSET	  0x000
-#define IRQ_REG_MASK_SET_OFFSET	  0x004
+#define IRQ_REG_MASK_OFFSET   0x000
+#define IRQ_REG_MASK_SET_OFFSET   0x004
 #define IRQ_REG_MASK_CLEAR_OFFSET 0x008
-#define IRQ_REG_INT_OFFSET	  0x00C
-#define IRQ_REG_INT_SET_OFFSET	  0x010
+#define IRQ_REG_INT_OFFSET    0x00C
+#define IRQ_REG_INT_SET_OFFSET    0x010
 #define IRQ_REG_INT_CLEAR_OFFSET  0x014
-#define IRQ_REG_ACK_OFFSET	  0x018
-#define IRQ_REG_ACK_SET_OFFSET	  0x01C
+#define IRQ_REG_ACK_OFFSET    0x018
+#define IRQ_REG_ACK_SET_OFFSET    0x01C
 #define IRQ_REG_ACK_CLEAR_OFFSET  0x020
-#define IRQ_REG_FIFO_OFFSET	  0x024
+#define IRQ_REG_FIFO_OFFSET   0x024
 
 /* Interrupt line masks: these interrupts directly go to the core (after being
  * serialized as reqest + id). We refer to these interrupts with the prefix IRQ.
@@ -557,31 +557,31 @@ typedef struct
  * signaled through (muxed) EU SoC interrupts (IRQ_FC_EVT_SOC_EVT) and need
  * additional handling by the user through the Event Unit.
  */
-#define IRQ_FC_EVT_SW0	      BIT(0)
-#define IRQ_FC_EVT_SW1	      BIT(1)
-#define IRQ_FC_EVT_SW2	      BIT(2)
-#define IRQ_FC_EVT_SW3	      BIT(3)
-#define IRQ_FC_EVT_SW4	      BIT(4)
-#define IRQ_FC_EVT_SW5	      BIT(5)
-#define IRQ_FC_EVT_SW6	      BIT(6)
-#define IRQ_FC_EVT_SW7	      BIT(7)
+#define IRQ_FC_EVT_SW0        BIT(0)
+#define IRQ_FC_EVT_SW1        BIT(1)
+#define IRQ_FC_EVT_SW2        BIT(2)
+#define IRQ_FC_EVT_SW3        BIT(3)
+#define IRQ_FC_EVT_SW4        BIT(4)
+#define IRQ_FC_EVT_SW5        BIT(5)
+#define IRQ_FC_EVT_SW6        BIT(6)
+#define IRQ_FC_EVT_SW7        BIT(7)
 #define IRQ_FC_EVT_DMA_PE_EVT BIT(8)
 #define IRQ_FC_EVT_DMA_PE_IRQ BIT(9)
 #define IRQ_FC_EVT_TIMER0_LO  BIT(10)
 #define IRQ_FC_EVT_TIMER0_HI  BIT(11)
-#define IRQ_FC_EVT_PF	      BIT(12)
+#define IRQ_FC_EVT_PF         BIT(12)
 #define IRQ_FC_EVT_CLK_REF    BIT(14)
-#define IRQ_FC_EVT_GPIO	      BIT(15)
+#define IRQ_FC_EVT_GPIO       BIT(15)
 /* doesn't exist in pulp */
-/*#define IRQ_FC_EVT_RTC		   16 */
+/*#define IRQ_FC_EVT_RTC           16 */
 #define IRQ_FC_EVT_ADV_TIMER0 BIT(17)
 #define IRQ_FC_EVT_ADV_TIMER1 BIT(18)
 #define IRQ_FC_EVT_ADV_TIMER2 BIT(19)
 #define IRQ_FC_EVT_ADV_TIMER3 BIT(20)
 /* doesn't exist in pulp */
 /* #define IRQ_FC_EVT_CLUSTER_NOT_BUSY 21 */
-/* #define IRQ_FC_EVT_CLUSTER_POK	   22 */
-/* #define IRQ_FC_EVT_CLUSTER_CG_OK	   23 */
+/* #define IRQ_FC_EVT_CLUSTER_POK      22 */
+/* #define IRQ_FC_EVT_CLUSTER_CG_OK    23 */
 /* #define IRQ_FC_EVT_PICL_OK     24 */
 /* #define IRQ_FC_EVT_SCU_OK      25 */
 /*
@@ -634,13 +634,13 @@ typedef struct
 typedef struct
 {
   __IOM uint32_t CTRL;                         /*!< Offset: 0x000 (R/W)  TIMERL Configuration Register for lower 32-bits */
-	uint32_t _reserved0;                   /*!< Offset: 0x004 (R/W)  Empty Registers */
+    uint32_t _reserved0;                   /*!< Offset: 0x004 (R/W)  Empty Registers */
   __IOM uint32_t VALUE;                        /*!< Offset: 0x008 (R/W)  TIMERL Timer Value Register for low 32-bits */
-	uint32_t _reserved1;                   /*!< Offset: 0x00C (R/W)  Empty Registers */
+    uint32_t _reserved1;                   /*!< Offset: 0x00C (R/W)  Empty Registers */
   __IOM uint32_t COMPARE;                      /*!< Offset: 0x010 (R/W)  TIMERL Timer comparator Register for low 32-bits */
-	uint32_t _reserved2;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
+    uint32_t _reserved2;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
   __OM  uint32_t START;                        /*!< Offset: 0x014 (R/W)  SysTick Timer start Register for low 32-bits */
-	uint32_t _reserved3;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
+    uint32_t _reserved3;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
   __OM  uint32_t RESET;                        /*!< Offset: 0x014 (R/W)  SysTick Timer reset Register for low 32-bits */
 } TimerL_Type;
 
@@ -649,15 +649,15 @@ typedef struct
  */
 typedef struct
 {
-	uint32_t _reserved0;                   /*!< Offset: 0x000 (R/W)  Empty Registers */
+    uint32_t _reserved0;                   /*!< Offset: 0x000 (R/W)  Empty Registers */
   __IOM uint32_t CTRL;                         /*!< Offset: 0x004 (R/W)  TIMERH Configuration Register for high 32-bits */
-	uint32_t _reserved1;                   /*!< Offset: 0x008 (R/W)  Empty Registers */
+    uint32_t _reserved1;                   /*!< Offset: 0x008 (R/W)  Empty Registers */
   __IOM uint32_t VALUE;                        /*!< Offset: 0x00C (R/W)  TIMERH Timer Value Register for high 32-bits */
-	uint32_t _reserved2;                   /*!< Offset: 0x010 (R/W)  Empty Registers */
+    uint32_t _reserved2;                   /*!< Offset: 0x010 (R/W)  Empty Registers */
   __IOM uint32_t COMPARE;                      /*!< Offset: 0x014 (R/W)  TIMERH Timer comparator Register for high 32-bits */
-	uint32_t _reserved3;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
+    uint32_t _reserved3;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
   __OM  uint32_t START;                        /*!< Offset: 0x014 (R/W)  SysTick Timer start Register for high 32-bits */
-	uint32_t _reserved4;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
+    uint32_t _reserved4;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
   __OM  uint32_t RESET;                        /*!< Offset: 0x014 (R/W)  SysTick Timer reset Register for high 32-bits */
 } TimerH_Type;
 
@@ -1290,9 +1290,9 @@ __STATIC_INLINE uint32_t __irq_forge_it_vect(uint32_t ItBaseAddr, uint32_t ItInd
 /**
   \brief   Set Interrupt Vector
   \details Sets an interrupt vector in SRAM based interrupt vector table.
-	   The interrupt number can be positive to specify a device specific interrupt,
-	   or negative to specify a processor exception.
-	   VTOR must been relocated to SRAM before.
+       The interrupt number can be positive to specify a device specific interrupt,
+       or negative to specify a processor exception.
+       VTOR must been relocated to SRAM before.
   \param [in]   IRQn      Interrupt number
   \param [in]   vector    Address of interrupt handler function
  */
@@ -1314,8 +1314,8 @@ __STATIC_INLINE void __irq_set_vector(IRQn_Type IRQn, uint32_t vector)
 /**
   \brief   Get Interrupt Vector
   \details Reads an interrupt vector from interrupt vector table.
-	   The interrupt number can be positive to specify a device specific interrupt,
-	   or negative to specify a processor exception.
+       The interrupt number can be positive to specify a device specific interrupt,
+       or negative to specify a processor exception.
   \param [in]   IRQn      Interrupt number.
   \return                 Address of interrupt handler function
  */

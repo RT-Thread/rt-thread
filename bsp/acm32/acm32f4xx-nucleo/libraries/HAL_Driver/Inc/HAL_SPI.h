@@ -9,7 +9,7 @@
 #ifndef __HAL_SPI_H__
 #define __HAL_SPI_H__
 
-#include  "ACM32Fxx_HAL.h" 
+#include  "ACM32Fxx_HAL.h"
 
 /****************  Bit definition for SPI_CTL register  **************************/
 #define SPI_CTL_CS_TIME                       (BIT11|BIT12|BIT13|BIT14|BIT15|BIT16|BIT17|BIT18)
@@ -185,13 +185,13 @@
 typedef struct
 {
     uint32_t  SPI_Mode;              /* This parameter can be a value of @ref SPI_MODE */
-    
+
     uint32_t  SPI_Work_Mode;         /* This parameter can be a value of @ref SPI_WORK_MODE */
-    
+
     uint32_t  X_Mode;                /* This parameter can be a value of @ref X_MODE */
-    
+
     uint32_t  First_Bit;             /* This parameter can be a value of @ref SPI_MSB_LSB_FIRST */
-    
+
     uint32_t  BaudRate_Prescaler;    /* This parameter can be a value of @ref BAUDRATE_PRESCALER */
 }SPI_InitTypeDef;
 
@@ -227,19 +227,19 @@ typedef struct
     SPI_TypeDef         *Instance;         /* SPI registers base address */
 
     SPI_InitTypeDef      Init;             /* SPI communication parameters */
-    
+
     uint32_t               RxState;          /* SPI state machine */
     uint32_t               TxState;          /* SPI state machine */
-    
+
     uint8_t               *Rx_Buffer;        /* SPI Rx Buffer */
     uint8_t               *Tx_Buffer;        /* SPI Tx Buffer */
-    
+
     uint32_t               Rx_Size;          /* SPI Rx Size */
     uint32_t               Tx_Size;          /* SPI Tx Size */
-    
+
     uint32_t               Rx_Count;         /* SPI RX Count */
     uint32_t               Tx_Count;         /* SPI TX Count */
-    
+
     DMA_HandleTypeDef   *HDMA_Rx;          /* SPI Rx DMA handle parameters */
     DMA_HandleTypeDef   *HDMA_Tx;          /* SPI Tx DMA handle parameters */
 

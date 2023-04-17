@@ -85,7 +85,7 @@ static stc_adc_irq_calbakfn_pt_t stcAdcIrqCalbaks = {NULL, NULL, NULL, NULL,NULL
  *****************************************************************************/
 
 /**
- * \brief   
+ * \brief
  *          ADC中断服务程序
  *
  * \param   [in]  u8Param  未使用
@@ -137,7 +137,7 @@ void Adc_IRQHandler(uint8_t u8Param)
             stcAdcIrqCalbaks.pfnAdcSQRIrq();
         }
         M0P_ADC->ICR_f.SQRIC = 0u;
-    }			
+    }
     if(TRUE == M0P_ADC->IFR_f.JQRIF)
     {
         if (NULL != stcAdcIrqCalbaks.pfnAdcJQRIrq)
@@ -145,11 +145,11 @@ void Adc_IRQHandler(uint8_t u8Param)
             stcAdcIrqCalbaks.pfnAdcJQRIrq();
         }
         M0P_ADC->ICR_f.JQRIC = 0u;
-    }			
+    }
 }
 
 /**
- * \brief   
+ * \brief
  *          配置ADC中断函数入口
  *
  * \param   [in]  pstcAdcIrqCfg  ADC中断配置指针
@@ -180,7 +180,7 @@ void Adc_ConfigIrq(stc_adc_irq_t* pstcAdcIrqCfg,
         {
             stcAdcIrqCalbaks.pfnAdcSQRIrq = pstcAdcIrqCalbaks->pfnAdcSQRIrq;
         }
-    }    
+    }
     if (TRUE == pstcAdcIrqCfg->bAdcRegCmp)
     {
         if (NULL != pstcAdcIrqCalbaks->pfnAdcRegIrq)
@@ -204,11 +204,11 @@ void Adc_ConfigIrq(stc_adc_irq_t* pstcAdcIrqCfg,
             stcAdcIrqCalbaks.pfnAdcLltIrq = pstcAdcIrqCalbaks->pfnAdcLltIrq;
         }
     }
-    
+
 }
 
 /**
- * \brief   
+ * \brief
  *          获取ADC中断状态
  *
  * \param   [in]  pstcAdcIrqState  ADC中断状态指针
@@ -225,7 +225,7 @@ void Adc_GetIrqState(stc_adc_irq_t* pstcAdcIrqState)
     pstcAdcIrqState->bAdcSQRIrq = M0P_ADC->IFR_f.SQRIF;
 }
 /**
- * \brief   
+ * \brief
  *          清除ADC SGL中断状态
  *
  * \param   无
@@ -237,7 +237,7 @@ void Adc_ClrSglIrqState(void)
     M0P_ADC->ICR_f.SGLIC = 0;
 }
 /**
- * \brief   
+ * \brief
  *          清除ADC JQR中断状态
  *
  * \param   无
@@ -249,7 +249,7 @@ void Adc_ClrJqrIrqState(void)
     M0P_ADC->ICR_f.JQRIC = 0;
 }
 /**
- * \brief   
+ * \brief
  *          清除ADC SQR中断状态
  *
  * \param   无
@@ -262,7 +262,7 @@ void Adc_ClrSqrIrqState(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          清除ADC REG中断状态
  *
  * \param   无
@@ -275,7 +275,7 @@ void Adc_ClrRegIrqState(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          清除ADC HT中断状态
  *
  * \param   无
@@ -288,7 +288,7 @@ void Adc_ClrHtIrqState(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          清除ADC LT中断状态
  *
  * \param   无
@@ -302,7 +302,7 @@ void Adc_ClrLtIrqState(void)
 
 
 /**
- * \brief   
+ * \brief
  *          ADC中断使能
  *
  * \param   无
@@ -315,7 +315,7 @@ void Adc_EnableIrq(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC比较使能(比较中断)
  *
  * \param   [in]  pstcAdcIrqCfg  ADC比较配置
@@ -325,12 +325,12 @@ void Adc_EnableIrq(void)
 
 void Adc_ThresholdCfg(stc_adc_threshold_cfg_t* stcAdcThrCfg)
 {
-  
+
     M0P_ADC->HT_f.HT = stcAdcThrCfg->u32AdcRegHighThd;               //使用比较
     M0P_ADC->LT_f.LT = stcAdcThrCfg->u32AdcRegLowThd;               //使用比较
-    
+
     M0P_ADC->CR1_f.THCH = stcAdcThrCfg->enThCh;         //阈值比较通道选择
-    
+
         if (TRUE == stcAdcThrCfg->bAdcRegCmp)
     {
         M0P_ADC->CR1_f.REGCMP = 1u;
@@ -361,7 +361,7 @@ void Adc_ThresholdCfg(stc_adc_threshold_cfg_t* stcAdcThrCfg)
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC中断除能
  *
  * \param   无
@@ -371,16 +371,16 @@ void Adc_ThresholdCfg(stc_adc_threshold_cfg_t* stcAdcThrCfg)
 void Adc_DisableIrq(void)
 {
     uint32_t u32Cr1;
-    
+
     M0P_ADC->CR0_f.IE = 0u;
-    
+
     u32Cr1 = M0P_ADC->CR1 | (1<<15);    // must write 1 to bit 15 to avoid clear ADC_result_acc
     u32Cr1 &= ~((1u<<12)|(1u<<13)|(1u<<14));
     M0P_ADC->CR1 = u32Cr1;
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC初始化
  *
  * \param   [in]  pstcAdcConfig  ADC配置指针
@@ -406,7 +406,7 @@ en_result_t Adc_Init(stc_adc_cfg_t* pstcAdcConfig)
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC外部中断触发源配置
  *
  * \param   [in]  pstcAdcConfig  ADC配置指针
@@ -432,12 +432,12 @@ en_result_t Adc_ExtTrigCfg(stc_adc_ext_trig_cfg_t* pstcExtTrigConfig)
     {
         return ErrorInvalidParameter;
     }
-    
+
     return Ok;
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC Deinit
  *
  * \param   无
@@ -456,10 +456,10 @@ void Adc_DeInit(void)
 
     M0P_ADC->ICR_f.SGLIC = 0u;
     M0P_ADC->ICR_f.LTIC = 0u;
-    M0P_ADC->ICR_f.HTIC = 0u; 
-    M0P_ADC->ICR_f.REGIC = 0u;   
-    M0P_ADC->ICR_f.SQRIC = 0u;  
-    M0P_ADC->ICR_f.JQRIC = 0u;   
+    M0P_ADC->ICR_f.HTIC = 0u;
+    M0P_ADC->ICR_f.REGIC = 0u;
+    M0P_ADC->ICR_f.SQRIC = 0u;
+    M0P_ADC->ICR_f.JQRIC = 0u;
 
     M0P_ADC->CR0_f.CLKDIV = 0u;
     M0P_ADC->CR0_f.SAM = 0x2u;
@@ -471,7 +471,7 @@ void Adc_DeInit(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC 单次转换开始
  *
  * \param   无
@@ -485,7 +485,7 @@ void Adc_SGL_Start(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC 单次转换停止
  *
  * \param   无
@@ -497,7 +497,7 @@ void Adc_SGL_Stop(void)
     M0P_ADC->SGLSTART_f.START = 0u;
 }
 /**
- * \brief   
+ * \brief
  *          ADC 顺序转换开始
  *
  * \param   无
@@ -511,7 +511,7 @@ void Adc_SQR_Start(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC 顺序转换停止
  *
  * \param   无
@@ -523,7 +523,7 @@ void Adc_SQR_Stop(void)
     M0P_ADC->SQRSTART_f.START = 0u;
 }
 /**
- * \brief   
+ * \brief
  *          ADC 插队转换开始
  *
  * \param   无
@@ -537,7 +537,7 @@ void Adc_JQR_Start(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC 插队转换停止
  *
  * \param   无
@@ -549,7 +549,7 @@ void Adc_JQR_Stop(void)
     M0P_ADC->JQRSTART_f.START = 0u;
 }
 /**
- * \brief   
+ * \brief
  *          ADC使能
  *
  * \param   无
@@ -562,7 +562,7 @@ void Adc_Enable(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          ADC除能
  *
  * \param   无
@@ -575,7 +575,7 @@ void Adc_Disable(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          配置单次转换模式
  *
  * \param   [in]  pstcAdcConfig   ADC配置指针
@@ -591,12 +591,12 @@ en_result_t Adc_ConfigSglMode(stc_adc_cfg_t* pstcAdcConfig)
     }
 
     M0P_ADC->CR1_f.MODE = pstcAdcConfig->enAdcOpMode;
-    
+
     return Ok;
 }
 
 /**
- * \brief   
+ * \brief
  *          配置顺序扫描转换模式
  *
  * \param   [in]  pstcAdcConfig   ADC配置指针
@@ -625,7 +625,7 @@ en_result_t Adc_ConfigSqrMode(stc_adc_cfg_t* pstcAdcConfig, uint8_t u8AdcSampCnt
 }
 
 /**
- * \brief   
+ * \brief
  *          配置插队扫描转换模式
  *
  * \param   [in]  pstcAdcConfig   ADC配置指针
@@ -648,26 +648,26 @@ en_result_t Adc_ConfigJqrMode(stc_adc_cfg_t* pstcAdcConfig, uint8_t u8AdcSampCnt
     return Ok;
 }
 /**
- * \brief   
+ * \brief
  *          配置单次转换通道
  *
- * \param   [in]enstcAdcSampCh 转换通道 
+ * \param   [in]enstcAdcSampCh 转换通道
  *
  * \retval  en_result_t  Ok:  成功
  * \retval  en_result_t  ErrorInvalidParameter: 无效参数
  */
 en_result_t Adc_ConfigSglChannel( en_adc_samp_ch_sel_t enstcAdcSampCh)
 {
-	M0P_ADC->CR0_f.SGLMUX = enstcAdcSampCh;	
-	return Ok;
+    M0P_ADC->CR0_f.SGLMUX = enstcAdcSampCh;
+    return Ok;
 }
 
 /**
- * \brief   
+ * \brief
  *          配置顺序扫描转换通道
  *
  * \param   [in]enstcAdcSqrChMux 顺序扫描转换通道顺序
- * \param   [in]enstcAdcSampCh   转换通道 
+ * \param   [in]enstcAdcSampCh   转换通道
  *
  * \retval  en_result_t  Ok:  成功
  * \retval  en_result_t  ErrorInvalidParameter: 无效参数
@@ -722,7 +722,7 @@ en_result_t Adc_ConfigSqrChannel(en_adc_sqr_chmux_t enstcAdcSqrChMux, en_adc_sam
             M0P_ADC->SQR2_f.CH14MUX = enstcAdcSampCh;
         break;
         case CH15MUX:
-            M0P_ADC->SQR2_f.CH15MUX = enstcAdcSampCh;			
+            M0P_ADC->SQR2_f.CH15MUX = enstcAdcSampCh;
         break;
         default:
         break;
@@ -731,11 +731,11 @@ en_result_t Adc_ConfigSqrChannel(en_adc_sqr_chmux_t enstcAdcSqrChMux, en_adc_sam
     return Ok;
 }
 /**
- * \brief   
+ * \brief
  *          配置插队扫描转换通道
  *
  * \param   [in]enstcAdcSqrChMux 插队扫描转换通道顺序
- * \param   [in]enstcAdcSampCh   转换通道 
+ * \param   [in]enstcAdcSampCh   转换通道
  *
  * \retval  en_result_t  Ok:  成功
  * \retval  en_result_t  ErrorInvalidParameter: 无效参数
@@ -762,7 +762,7 @@ en_result_t Adc_ConfigJqrChannel(en_adc_jqr_chmux_t enstcAdcJqrChMux, en_adc_sam
     return Ok;
 }
 /**
- * \brief   
+ * \brief
  *          配置触发DMA读取控制
  *
  * \param   [in]enAdcDmaTrig 触发DMA读取控制
@@ -777,13 +777,13 @@ en_result_t Adc_ConfigDmaTrig(en_adc_dmatrig_t enAdcDmaTrig)
       M0P_ADC->CR1_f.DMAJQR = 1;
   }else
   {
-      M0P_ADC->CR1_f.DMASQR = 1;   
+      M0P_ADC->CR1_f.DMASQR = 1;
   }
   return Ok;
 }
 
 /**
- * \brief   
+ * \brief
  *          查询ADC单次转换状态
  *
  * \param   none
@@ -798,7 +798,7 @@ boolean_t Adc_PollSglBusyState(void)
 
 
 /**
- * \brief   
+ * \brief
  *          查询ADC顺序扫描转换状态
  *
  * \retval  boolean_t  TRUE:  ADC转换完成
@@ -812,7 +812,7 @@ boolean_t Adc_PollSqrBusyState(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          查询ADC插队扫描转换状态
  *
  * \param   none
@@ -826,7 +826,7 @@ boolean_t Adc_PollJqrBusyState(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          获取采样值
  *
  * \param   [out] pu16AdcResult  采样值指针
@@ -847,7 +847,7 @@ en_result_t Adc_GetSglResult(uint16_t* pu16AdcResult)
 }
 
 /**
- * \brief   
+ * \brief
  *          查询ADC结果比较区间状态
  *
  * \retval  boolean_t  TRUE:  ADC转换完成
@@ -860,7 +860,7 @@ boolean_t Adc_PollRegBusyState(void)
     return M0P_ADC->IFR_f.REGIF;
 }
 /**
- * \brief   
+ * \brief
  *          查询ADC结果比较上阈值状态
  *
  * \retval  boolean_t  TRUE:  ADC转换完成
@@ -873,7 +873,7 @@ boolean_t Adc_PollHTBusyState(void)
     return M0P_ADC->IFR_f.HTIF;
 }
 /**
- * \brief   
+ * \brief
  *          查询ADC结果比较区间状态
  *
  * \retval  boolean_t  TRUE:  ADC转换完成
@@ -886,7 +886,7 @@ boolean_t Adc_PollLtBusyState(void)
     return M0P_ADC->IFR_f.LTIF;
 }
 /**
- * \brief   
+ * \brief
  *          获取采样值
  *
  * \param   [out] pu16AdcResult  采样值指针
@@ -908,14 +908,14 @@ en_result_t Adc_GetSqrResult(uint16_t* pu16AdcResult,uint8_t SQRChannelIndex)
     {
         return ErrorInvalidParameter;
     }
-    
+
     *pu16AdcResult = (uint16_t)(*(BaseSqrResultAddress + SQRChannelIndex));
 
     return Ok;
 }
 
 /**
- * \brief   
+ * \brief
  *          获取插队扫描采样值
  *
  * \param   [out] pu16AdcResult  采样值指针
@@ -926,21 +926,21 @@ en_result_t Adc_GetSqrResult(uint16_t* pu16AdcResult,uint8_t SQRChannelIndex)
  */
 en_result_t Adc_GetJqrResult(uint16_t* pu16AdcResult,uint8_t JQRChannelIndex)
 {
-	  volatile uint32_t *BaseJqrResultAddress =(volatile uint32_t *) &(M0P_ADC->JQRRESULT0);
-	  if (NULL == pu16AdcResult)
+      volatile uint32_t *BaseJqrResultAddress =(volatile uint32_t *) &(M0P_ADC->JQRRESULT0);
+      if (NULL == pu16AdcResult)
     {
         return ErrorInvalidParameter;
     }
 
-	  if(JQRChannelIndex > 3)
-	  {
-	  	return ErrorInvalidParameter;
-	  }
-	  *pu16AdcResult = (uint16_t)(*(BaseJqrResultAddress + JQRChannelIndex));
-	  return Ok;
+      if(JQRChannelIndex > 3)
+      {
+        return ErrorInvalidParameter;
+      }
+      *pu16AdcResult = (uint16_t)(*(BaseJqrResultAddress + JQRChannelIndex));
+      return Ok;
 }
 /**
- * \brief   
+ * \brief
  *          获取累加采样值
  *
  * \param   [out] pu32AdcAccResult  累加采样值指针
@@ -961,7 +961,7 @@ en_result_t Adc_GetAccResult(uint32_t* pu32AdcAccResult)
 }
 
 /**
- * \brief   
+ * \brief
  *          清零累加采样值
  *
  * \param   无
@@ -975,7 +975,7 @@ void Adc_ClrAccResult(void)
 
 
 /**
- * \brief   
+ * \brief
  *          设置ADC参考电压
  *
  * \param   [in]  enAdcRefVolSel  ADC参考电压
@@ -1000,7 +1000,7 @@ en_result_t Adc_SetVref(en_adc_ref_vol_sel_t enAdcRefVolSel)
     return Ok;
 }
 /**
- * \brief   
+ * \brief
  *          设置ADC结果对齐方式
  *
  * \param   [in]  enAlign  ADC结果对齐方式

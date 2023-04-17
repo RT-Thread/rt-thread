@@ -481,7 +481,7 @@ void GPIO_ConfigPinRemap(GPIO_REMAP_T remap)
     {
         regVal |= 0x0F000000;
     }
-    
+
     mask <<= bitOffset;
     regVal &= (uint32_t)~mask;
     val <<= bitOffset;

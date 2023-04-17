@@ -12,7 +12,7 @@
 
 /** @defgroup CRC POLY Reverse
   * @{
-  */ 
+  */
  #define CRC_POLY_REV_EN                    (0x00000400U)    /*!< Poly Reverse Enable */
  #define CRC_POLY_REV_DIS                   (0x00000000U)    /*!< Poly Reverse Disable */
 /**
@@ -21,25 +21,25 @@
 
 /** @defgroup CRC OUTXOR Reverse
   * @{
-  */ 
+  */
  #define CRC_OUTXOR_REV_EN                   (0x00000200U)    /*!< OUTXOR Reverse Enable */
  #define CRC_OUTXOR_REV_DIS                  (0x00000000U)    /*!< OUTXOR Reverse Disable */
 /**
   * @}
   */
- 
+
 /** @defgroup CRC INIT Reverse
   * @{
-  */ 
+  */
  #define CRC_INIT_REV_EN                     (0x00000100U)    /*!< INIT Reverse Enable */
  #define CRC_INIT_REV_DIS                    (0x00000000U)    /*!< INIT Reverse Disable */
 /**
   * @}
   */
-  
+
 /** @defgroup CRC RSLT Reverse
   * @{
-  */ 
+  */
  #define CRC_RSLT_REV_EN                     (0x00000080U)    /*!< RSLT Reverse Enable */
  #define CRC_RSLT_REV_DIS                    (0x00000000U)    /*!< RSLT Reverse Disable */
 /**
@@ -48,7 +48,7 @@
 
 /** @defgroup CRC DATA Reverse
   * @{
-  */ 
+  */
  #define CRC_DATA_REV_DISABLE                (0x00000000U)    /*!< DATA Reverse Disable */
  #define CRC_DATA_REV_BY_BYTE                (0x00000020U)    /*!< DATA Reverse By Byte */
  #define CRC_DATA_REV_BY_HALFWORD            (0x00000040U)    /*!< DATA Reverse By HalfWord */
@@ -59,7 +59,7 @@
 
 /** @defgroup CRC Poly Len
   * @{
-  */ 
+  */
  #define CRC_POLTY_LEN_32                    (0x00000000U)    /*!< POLY len = 32bit */
  #define CRC_POLTY_LEN_16                    (0x00000008U)    /*!< POLY len = 16bit */
  #define CRC_POLTY_LEN_8                     (0x00000010U)    /*!< POLY len = 8bit  */
@@ -70,7 +70,7 @@
 
 /** @defgroup CRC Data Len
   * @{
-  */ 
+  */
  #define CRC_DATA_LEN_1B                    (0x00000000U)    /*!< DATA len = 1 Byte */
  #define CRC_DATA_LEN_2B                    (0x00000002U)    /*!< DATA len = 2 Byte */
  #define CRC_DATA_LEN_3B                    (0x00000004U)    /*!< DATA len = 3 Byte */
@@ -81,14 +81,14 @@
 
 /** @defgroup CRC RST
   * @{
-  */ 
+  */
  #define CRC_RST_EN                          (0x00000001U)    /*!< RST CRC_DATA To CRC_INIT */
  #define CRC_RST_DIS                         (0x00000000U)    /*!< RST CRC_DATA To CRC_INIT */
 
 /**
   * @}
   */
-  
+
 /*
  * @brief CRC Init Structure definition
  */
@@ -110,15 +110,15 @@ typedef struct
                                             This parameter can be a value of @ref CRC Data Len. */
     uint32_t RST;                      /*!< Specifies if CRC is reset
                                             This parameter can be a value of @ref CRC RST. */
-	
+
     uint32_t InitData;                 /*!< This member configures the InitData. */
-	
+
     uint32_t OutXorData;               /*!< This member configures the OutXorData. */
-	
+
     uint32_t PolyData;                 /*!< This member configures the PolyData. */
-	
+
     uint32_t FData;                    /*!< This member configures the FData. */
-	
+
 }CRC_InitTypeDef;
 
 /*
@@ -129,22 +129,22 @@ typedef struct
     CRC_TypeDef           *Instance;                /*!< CRC registers base address  */
 
     CRC_InitTypeDef        Init;                    /*!< CRC calculate parameters  */
-	
+
     uint8_t* CRC_Data_Buff;                         /*!< CRC databuff base address */
-	
+
     uint32_t CRC_Data_Len;                          /*!< amount of CRC data to be calculated */
-    
-}CRC_HandleTypeDef;  
-  
- 
+
+}CRC_HandleTypeDef;
+
+
 /*********************************************************************************
 * Function    : HAL_CRC_Calculate
 * Description : Calculate the crc calue of input data.
 * Input       : hcrc: CRC handle.
 * Output      : CRC value
-* Author      : cl                        Data : 2021 
+* Author      : cl                        Data : 2021
 **********************************************************************************/
-uint32_t HAL_CRC_Calculate(CRC_HandleTypeDef *hcrc);  
+uint32_t HAL_CRC_Calculate(CRC_HandleTypeDef *hcrc);
 
 
 #endif

@@ -80,7 +80,7 @@
 #define ADC_DIFF_DIFF3_B                       BIT3
 #define ADC_DIFF_DIFF2_A                       BIT2
 #define ADC_DIFF_DIFF1_9                       BIT1
-#define ADC_DIFF_DIFF0_8                       BIT0 
+#define ADC_DIFF_DIFF0_8                       BIT0
 
 /****************  Bit definition for ADC_HTR register  ***********************/
 #define ADC_HTR_DHT                           (BIT27|BIT26|BIT25|BIT24|BIT23|BIT22|BIT21|BIT20|BIT19|BIT18|BIT17|BIT16)
@@ -110,7 +110,7 @@
 #define ADC_SIGN_SIGN3_B                       BIT3
 #define ADC_SIGN_SIGN2_A                       BIT2
 #define ADC_SIGN_SIGN1_9                       BIT1
-#define ADC_SIGN_SIGN0_8                       BIT0 
+#define ADC_SIGN_SIGN0_8                       BIT0
 
 /****************  Bit definition for ADC_TSREF register  ***********************/
 #define ADC_TSREF_HIZ_EN                       BIT27
@@ -135,19 +135,19 @@
 /**************** Enable the specified ADC. **************************/
 #define __HAL_ADC_ENABLE(__HANDLE__)                                           \
   (SET_BIT((__HANDLE__)->Instance->CR2, (ADC_CR2_ADC_EN)))
-    
+
 /**************** Disable the specified ADC. **************************/
 #define __HAL_ADC_DISABLE(__HANDLE__)                                          \
   (CLEAR_BIT((__HANDLE__)->Instance->CR2, (ADC_CR2_ADC_EN)))
-    
+
 /**************** Enable the specified ADC interrupt source. **************************/
 #define __HAL_ADC_ENABLE_IT(__HANDLE__, __INTERRUPT__)                         \
   (SET_BIT((__HANDLE__)->Instance->IE, (__INTERRUPT__)))
-    
+
 /**************** Disable the specified ADC interrupt source. **************************/
 #define __HAL_ADC_DISABLE_IT(__HANDLE__, __INTERRUPT__)                        \
   (CLEAR_BIT((__HANDLE__)->Instance->IE, (__INTERRUPT__)))
-  
+
 /**************** Checks if the specified ADC interrupt source is enabled or disabled. **************************/
 #define __HAL_ADC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)                     \
   (((__HANDLE__)->Instance->IE & (__INTERRUPT__)) == (__INTERRUPT__))
@@ -155,7 +155,7 @@
 /**************** Get the selected ADC's flag status. **************************/
 #define __HAL_ADC_GET_FLAG(__HANDLE__, __FLAG__)                               \
   ((((__HANDLE__)->Instance->SR) & (__FLAG__)) == (__FLAG__))
-    
+
 /**************** Clear the selected ADC's flag status. **************************/
 #define __HAL_ADC_CLEAR_FLAG(__HANDLE__, __FLAG__)                             \
   (SET_BIT((__HANDLE__)->Instance->SR, (__FLAG__)))
@@ -167,12 +167,12 @@
 /**************** Checks if the ADC injected channel trig source is the specified source. **************************/
 #define __HAL_ADC_CHECK_TRIG_INJECTED(__HANDLE__, __TRIGSOURCE__)                     \
   ((((__HANDLE__)->Instance->CR1 & ADC_CR1_JEXTSEL_MASK) >> ADC_CR1_JEXTSEL_POS) == (__TRIGSOURCE__))
-  
+
 /****************  Bit definition for ADC_SMPR3 register  **************************/
 #define ADC_SMPR3_CONV_PLUS_POS               (20U)
 #define ADC_SMPR3_CONV_PLUS_MASK              (BIT21|BIT20)
 
-/** 
+/**
   * @brief  ADC ExTigger structure definition
   */
 typedef struct
@@ -181,7 +181,7 @@ typedef struct
   uint32_t JExTrigSel;                    /*!< Configures the inject channel trig mode. */
 }ADC_ExTrigTypeDef;
 
-/** 
+/**
   * @brief  ADC group regular oversampling structure definition
   */
 typedef struct
@@ -193,7 +193,7 @@ typedef struct
                                                This parameter can be a value of @ref ADC_CR2_OVSS_0 */
 
   uint32_t TriggeredMode;                 /*!< Selects the regular triggered oversampling mode.
-                                               This parameter can be a value of 
+                                               This parameter can be a value of
                                                0 : trig 1 time; other: trig N times, N refer to the oversampling Ratio*/
 }ADC_OversamplingTypeDef;
 
@@ -231,21 +231,21 @@ typedef struct
   */
 typedef struct
 {
-    uint32_t ClockDiv;              /*!< Specify the ADC clock div from the PCLK. 
+    uint32_t ClockDiv;              /*!< Specify the ADC clock div from the PCLK.
                                       This parameter can be set to ADC_CLOCK_DIV1 | ADC_CLOCK_DIV2 |... ADC_CLOCK_DIV16 */
 
     uint32_t ConConvMode;           /*!< Specify whether the conversion is performed in single mode (one conversion) or continuous mode for ADC group regular,
                                        after the first ADC conversion start trigger occurred (software start or external trigger).
                                        This parameter can be set to ADC_CONCONVMODE_DISABLE or ADC_CONCONVMODE_ENABLE. */
     uint32_t JChannelMode;          /*!< Specify if support inject channel. This parameter can be set to ADC_JCHANNELMODE_DISABLE or ADC_JCHANNELMODE_ENABLE*/
-    uint32_t DiffMode;              /*!< Specify the differential parameters. 
-                                       ADC_DIFFMODE_DISABLE:single end mode, 
+    uint32_t DiffMode;              /*!< Specify the differential parameters.
+                                       ADC_DIFFMODE_DISABLE:single end mode,
                                        ADC_DIFFMODE_ENABLE:differential end mode */
-    uint32_t ChannelEn;             /*!< Specify the enable ADC channels. 
+    uint32_t ChannelEn;             /*!< Specify the enable ADC channels.
                                        This parameter can be set to ADC_CHANNEL_0_EN | ADC_CHANNEL_1_EN |... ADC_CHANNEL_15_EN*/
 
     ADC_ExTrigTypeDef ExTrigMode;    /*!< ADC ExTigger structure, config the regular and inject channel trig mode */
-                                                                                                        
+
     uint32_t DMAMode;                /*!< Specify whether the DMA requests are performed in one shot mode (DMA transfer stops when number of conversions is reached)
                                        or in continuous mode (DMA transfer unlimited, whatever number of conversions).
                                        This parameter can be set to ADC_DMAMODE_ENABLE or ADC_DMAMODE_DISABLE.
@@ -257,7 +257,7 @@ typedef struct
                                            This parameter can be set to ADC_OVERSAMPMODE_ENABLE or ADC_OVERSAMPMODE_DISABLE.
                                            Note: This parameter can be modified only if there is no conversion is ongoing on ADC group regular. */
     ADC_OversamplingTypeDef Oversampling;   /*!< Specify ADC group regular oversampling structure. */
-    
+
     uint32_t AnalogWDGEn;
 }ADC_InitTypeDef;
 
@@ -281,7 +281,7 @@ typedef struct
                                         This parameter can be a value of @ref ADC_SEQUENCE_SQ1 */
 
     uint32_t Smp;                    /*!< Sampling time value to be set for the selected channel.
-                                        Unit: ADC clock cycles 
+                                        Unit: ADC clock cycles
                                         This parameter can be a value of @ref ADC_SMP_CLOCK_3 */
 }ADC_ChannelConfTypeDef;
 
@@ -346,22 +346,22 @@ typedef struct
 
 
 /******************************** ADC ClockPrescale define *******************************/
-#define  ADC_CLOCK_DIV1                              (0U)    
-#define  ADC_CLOCK_DIV2                              (1U)    
-#define  ADC_CLOCK_DIV3                              (2U)    
-#define  ADC_CLOCK_DIV4                              (3U)    
-#define  ADC_CLOCK_DIV5                              (4U)    
-#define  ADC_CLOCK_DIV6                              (5U)    
-#define  ADC_CLOCK_DIV7                              (6U)    
-#define  ADC_CLOCK_DIV8                              (7U)    
-#define  ADC_CLOCK_DIV9                              (8U)    
-#define  ADC_CLOCK_DIV10                             (9U)    
-#define  ADC_CLOCK_DIV11                             (10U)    
-#define  ADC_CLOCK_DIV12                             (11U)    
-#define  ADC_CLOCK_DIV13                             (12U)    
-#define  ADC_CLOCK_DIV14                             (13U)    
-#define  ADC_CLOCK_DIV15                             (14U)    
-#define  ADC_CLOCK_DIV16                             (15U) 
+#define  ADC_CLOCK_DIV1                              (0U)
+#define  ADC_CLOCK_DIV2                              (1U)
+#define  ADC_CLOCK_DIV3                              (2U)
+#define  ADC_CLOCK_DIV4                              (3U)
+#define  ADC_CLOCK_DIV5                              (4U)
+#define  ADC_CLOCK_DIV6                              (5U)
+#define  ADC_CLOCK_DIV7                              (6U)
+#define  ADC_CLOCK_DIV8                              (7U)
+#define  ADC_CLOCK_DIV9                              (8U)
+#define  ADC_CLOCK_DIV10                             (9U)
+#define  ADC_CLOCK_DIV11                             (10U)
+#define  ADC_CLOCK_DIV12                             (11U)
+#define  ADC_CLOCK_DIV13                             (12U)
+#define  ADC_CLOCK_DIV14                             (13U)
+#define  ADC_CLOCK_DIV15                             (14U)
+#define  ADC_CLOCK_DIV16                             (15U)
 
 /************************ADC_AnalogWDGConfTypeDef->WatchdogMode define********************/
 #define  ADC_ANALOGWATCHDOG_RCH_ALL                 (1U)   //All regular channels
@@ -390,50 +390,50 @@ typedef struct
 #define  ADC_SEQUENCE_SQ16                          (16U)
 
 /******************************** ADC channel number define *******************************/
-#define  ADC_CHANNEL_0                              (0U)    
-#define  ADC_CHANNEL_1                              (1U)    
-#define  ADC_CHANNEL_2                              (2U)    
-#define  ADC_CHANNEL_3                              (3U)    
-#define  ADC_CHANNEL_4                              (4U)    
-#define  ADC_CHANNEL_5                              (5U)    
-#define  ADC_CHANNEL_6                              (6U)    
-#define  ADC_CHANNEL_7                              (7U)    
-#define  ADC_CHANNEL_8                              (8U)    
-#define  ADC_CHANNEL_9                              (9U)    
-#define  ADC_CHANNEL_10                             (10U)    
-#define  ADC_CHANNEL_11                             (11U)    
-#define  ADC_CHANNEL_12                             (12U)    
-#define  ADC_CHANNEL_13                             (13U)    
-#define  ADC_CHANNEL_14                             (14U)    
-#define  ADC_CHANNEL_15                             (15U)    
-#define  ADC_CHANNEL_TEMP                           (16U)    
-#define  ADC_CHANNEL_VBAT                           (17U)    
-#define  ADC_CHANNEL_VBGR                           (18U)    
-#define  ADC_CHANNEL_EXT2                           (19U)    
-#define  ADC_CHANNEL_EXT3                           (20U)    
+#define  ADC_CHANNEL_0                              (0U)
+#define  ADC_CHANNEL_1                              (1U)
+#define  ADC_CHANNEL_2                              (2U)
+#define  ADC_CHANNEL_3                              (3U)
+#define  ADC_CHANNEL_4                              (4U)
+#define  ADC_CHANNEL_5                              (5U)
+#define  ADC_CHANNEL_6                              (6U)
+#define  ADC_CHANNEL_7                              (7U)
+#define  ADC_CHANNEL_8                              (8U)
+#define  ADC_CHANNEL_9                              (9U)
+#define  ADC_CHANNEL_10                             (10U)
+#define  ADC_CHANNEL_11                             (11U)
+#define  ADC_CHANNEL_12                             (12U)
+#define  ADC_CHANNEL_13                             (13U)
+#define  ADC_CHANNEL_14                             (14U)
+#define  ADC_CHANNEL_15                             (15U)
+#define  ADC_CHANNEL_TEMP                           (16U)
+#define  ADC_CHANNEL_VBAT                           (17U)
+#define  ADC_CHANNEL_VBGR                           (18U)
+#define  ADC_CHANNEL_EXT2                           (19U)
+#define  ADC_CHANNEL_EXT3                           (20U)
 
 /******************************** ADC channel enable define *******************************/
-#define  ADC_CHANNEL_0_EN                              (BIT0)    
-#define  ADC_CHANNEL_1_EN                              (BIT1)    
-#define  ADC_CHANNEL_2_EN                              (BIT2)    
-#define  ADC_CHANNEL_3_EN                              (BIT3)    
-#define  ADC_CHANNEL_4_EN                              (BIT4)    
-#define  ADC_CHANNEL_5_EN                              (BIT5)    
-#define  ADC_CHANNEL_6_EN                              (BIT6)    
-#define  ADC_CHANNEL_7_EN                              (BIT7)    
-#define  ADC_CHANNEL_8_EN                              (BIT8)    
-#define  ADC_CHANNEL_9_EN                              (BIT9)    
-#define  ADC_CHANNEL_10_EN                             (BIT10)    
-#define  ADC_CHANNEL_11_EN                             (BIT11)    
-#define  ADC_CHANNEL_12_EN                             (BIT12)    
-#define  ADC_CHANNEL_13_EN                             (BIT13)    
-#define  ADC_CHANNEL_14_EN                             (BIT14)    
-#define  ADC_CHANNEL_15_EN                             (BIT15)    
-#define  ADC_CHANNEL_TEMP_EN                           (BIT16)    
-#define  ADC_CHANNEL_VBAT_EN                           (BIT17)    
-#define  ADC_CHANNEL_VBGR_EN                           (BIT18)    
-#define  ADC_CHANNEL_EXT2_EN                           (BIT19)    
-#define  ADC_CHANNEL_EXT3_EN                           (BIT20)    
+#define  ADC_CHANNEL_0_EN                              (BIT0)
+#define  ADC_CHANNEL_1_EN                              (BIT1)
+#define  ADC_CHANNEL_2_EN                              (BIT2)
+#define  ADC_CHANNEL_3_EN                              (BIT3)
+#define  ADC_CHANNEL_4_EN                              (BIT4)
+#define  ADC_CHANNEL_5_EN                              (BIT5)
+#define  ADC_CHANNEL_6_EN                              (BIT6)
+#define  ADC_CHANNEL_7_EN                              (BIT7)
+#define  ADC_CHANNEL_8_EN                              (BIT8)
+#define  ADC_CHANNEL_9_EN                              (BIT9)
+#define  ADC_CHANNEL_10_EN                             (BIT10)
+#define  ADC_CHANNEL_11_EN                             (BIT11)
+#define  ADC_CHANNEL_12_EN                             (BIT12)
+#define  ADC_CHANNEL_13_EN                             (BIT13)
+#define  ADC_CHANNEL_14_EN                             (BIT14)
+#define  ADC_CHANNEL_15_EN                             (BIT15)
+#define  ADC_CHANNEL_TEMP_EN                           (BIT16)
+#define  ADC_CHANNEL_VBAT_EN                           (BIT17)
+#define  ADC_CHANNEL_VBGR_EN                           (BIT18)
+#define  ADC_CHANNEL_EXT2_EN                           (BIT19)
+#define  ADC_CHANNEL_EXT3_EN                           (BIT20)
 
 /******************************** ADC Trig source define*******************************
  *  |     Trig Source           |     ACM32FXXX/FPXXX    |      ACM32F0X0          | *
@@ -495,7 +495,7 @@ typedef struct __ADC_HandleTypeDef
 
 #define IS_ADC_ALL_OVERSAMPMODE(OVERSAMPMODE)    (((OVERSAMPMODE) == ADC_OVERSAMPMODE_DISABLE) || \
                                                   ((OVERSAMPMODE) == ADC_OVERSAMPMODE_ENABLE))
-                                                  
+
 #define IS_ADC_ALL_OVSS(_OVSS)             (((_OVSS) == ADC_CR2_OVSS_0) || \
                                             ((_OVSS) == ADC_CR2_OVSS_1) || \
                                             ((_OVSS) == ADC_CR2_OVSS_2) || \
@@ -505,7 +505,7 @@ typedef struct __ADC_HandleTypeDef
                                             ((_OVSS) == ADC_CR2_OVSS_6) || \
                                             ((_OVSS) == ADC_CR2_OVSS_7) || \
                                             ((_OVSS) == ADC_CR2_OVSS_8))
-                                            
+
 #define IS_ADC_ALL_OVSR(_OVSR)             (((_OVSR) == ADC_CR2_OVSR_2X) || \
                                             ((_OVSR) == ADC_CR2_OVSR_4X) || \
                                             ((_OVSR) == ADC_CR2_OVSR_8X) || \
@@ -514,7 +514,7 @@ typedef struct __ADC_HandleTypeDef
                                             ((_OVSR) == ADC_CR2_OVSR_64X) || \
                                             ((_OVSR) == ADC_CR2_OVSR_128X) || \
                                             ((_OVSR) == ADC_CR2_OVSR_256X))
-                                            
+
 #define IS_ADC_ALL_ANALOGWDGEN(ANALOGWDGEN)      (((ANALOGWDGEN) == ADC_ANALOGWDGEN_DISABLE) || \
                                                   ((ANALOGWDGEN) == ADC_ANALOGWDGEN_ENABLE))
 
@@ -592,7 +592,7 @@ typedef struct __ADC_HandleTypeDef
                                             ((SMPCLOCK) == ADC_SMP_CLOCK_320) || \
                                             ((SMPCLOCK) == ADC_SMP_CLOCK_480) || \
                                             ((SMPCLOCK) == ADC_SMP_CLOCK_640))
-                                            
+
 #define IS_ADC_ALL_TRIG(_TRIG)             (((_TRIG) == ADC_SOFTWARE_START) || \
                                             ((_TRIG) == ADC_EXTERNAL_TIG1) || \
                                             ((_TRIG) == ADC_EXTERNAL_TIG2) || \

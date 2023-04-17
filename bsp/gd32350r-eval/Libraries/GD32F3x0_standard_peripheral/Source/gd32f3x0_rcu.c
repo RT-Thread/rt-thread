@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -373,25 +373,25 @@ void rcu_adc_clock_config(rcu_adc_clock_enum ck_adc)
         RCU_CFG0 |= RCU_ADC_CKAPB2_DIV4;
         RCU_CFG2 |= RCU_CFG2_ADCSEL;
         break;
-    case RCU_ADCCK_AHB_DIV5: 
+    case RCU_ADCCK_AHB_DIV5:
         RCU_CFG0 |= RCU_ADC_CKAPB2_DIV4;
         RCU_CFG2 |= RCU_CFG2_ADCPSC2;
         RCU_CFG2 |= RCU_CFG2_ADCSEL;
         break;
-    case RCU_ADCCK_APB2_DIV6: 
+    case RCU_ADCCK_APB2_DIV6:
         RCU_CFG0 |= RCU_ADC_CKAPB2_DIV6;
         RCU_CFG2 |= RCU_CFG2_ADCSEL;
         break;
-    case RCU_ADCCK_AHB_DIV7: 
+    case RCU_ADCCK_AHB_DIV7:
         RCU_CFG0 |= RCU_ADC_CKAPB2_DIV6;
         RCU_CFG2 |= RCU_CFG2_ADCPSC2;
         RCU_CFG2 |= RCU_CFG2_ADCSEL;
         break;
-    case RCU_ADCCK_APB2_DIV8: 
+    case RCU_ADCCK_APB2_DIV8:
         RCU_CFG0 |= RCU_ADC_CKAPB2_DIV8;
         RCU_CFG2 |= RCU_CFG2_ADCSEL;
         break;
-    case RCU_ADCCK_AHB_DIV9: 
+    case RCU_ADCCK_AHB_DIV9:
         RCU_CFG0 |= RCU_ADC_CKAPB2_DIV8;
         RCU_CFG2 |= RCU_CFG2_ADCPSC2;
         RCU_CFG2 |= RCU_CFG2_ADCSEL;
@@ -437,7 +437,7 @@ void rcu_usbfs_clock_config(uint32_t ck_usbfs)
       \arg        RCU_CKOUTSRC_HXTAL: HXTAL selected
       \arg        RCU_CKOUTSRC_CKPLL_DIV1: CK_PLL selected
       \arg        RCU_CKOUTSRC_CKPLL_DIV2: CK_PLL/2 selected
-    \param[in]  ckout_div: CK_OUT divider 
+    \param[in]  ckout_div: CK_OUT divider
       \arg        RCU_CKOUT_DIVx(x=1,2,4,8,16,32,64,128): CK_OUT is divided by x
     \param[out] none
     \retval     none
@@ -550,7 +550,7 @@ void rcu_rtc_clock_config(uint32_t rtc_clock_source)
 void rcu_ck48m_clock_config(uint32_t ck48m_clock_source)
 {
     uint32_t reg;
-    
+
     reg = RCU_ADDCTL;
     /* reset the CK48MSEL bit and set according to ck48m_clock_source */
     reg &= ~RCU_ADDCTL_CK48MSEL;
@@ -823,7 +823,7 @@ ErrStatus rcu_osci_stab_wait(rcu_osci_type_enum osci)
             reval = SUCCESS;
         }
         break;
-   
+
     default:
         break;
     }
@@ -1070,15 +1070,15 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
             pllmf += 17U;
         }else{
             if(pllmf == 15U){
-                pllmf += 1U; 
-            }else{                
+                pllmf += 1U;
+            }else{
                 pllmf += 2U;
             }
         }
         if(1U == pllmf5){
             pllmf += 31U;
         }
-            
+
         /* PLL clock source selection, HXTAL or IRC48M or IRC8M/2 */
         pllsel = GET_BITS(RCU_CFG0, 16, 16);
         pllpresel = GET_BITS(RCU_CFG1, 30, 30);
@@ -1102,17 +1102,17 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
     idx = GET_BITS(RCU_CFG0, 4, 7);
     clk_exp = ahb_exp[idx];
     ahb_freq = cksys_freq >> clk_exp;
-    
+
     /* calculate APB1 clock frequency */
     idx = GET_BITS(RCU_CFG0, 8, 10);
     clk_exp = apb1_exp[idx];
     apb1_freq = ahb_freq >> clk_exp;
-    
+
     /* calculate APB2 clock frequency */
     idx = GET_BITS(RCU_CFG0, 11, 13);
     clk_exp = apb2_exp[idx];
     apb2_freq = ahb_freq >> clk_exp;
-    
+
     /* return the clocks frequency */
     switch(clock){
     case CK_SYS:

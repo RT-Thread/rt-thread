@@ -14,7 +14,7 @@
 /**
   * @}
   */
-	
+
 /******************************************************************************/
 /*                    Peripheral Registers Bits Definition                    */
 /******************************************************************************/
@@ -44,105 +44,105 @@
 #define CAN_SR_ES                       BIT6
 #define CAN_SR_BS                       BIT7
 /****************  Bit definition for CAN IR register  ***********************/
-#define CAN_IR_RI                       BIT0  
-#define CAN_IR_TI                       BIT1 
-#define CAN_IR_EI                       BIT2 
-#define CAN_IR_DOI                      BIT3 
-#define CAN_IR_WUI                      BIT4 
-#define CAN_IR_EPI                      BIT5 
-#define CAN_IR_ALI                      BIT6 
-#define CAN_IR_BEI                      BIT7 
+#define CAN_IR_RI                       BIT0
+#define CAN_IR_TI                       BIT1
+#define CAN_IR_EI                       BIT2
+#define CAN_IR_DOI                      BIT3
+#define CAN_IR_WUI                      BIT4
+#define CAN_IR_EPI                      BIT5
+#define CAN_IR_ALI                      BIT6
+#define CAN_IR_BEI                      BIT7
 /****************  Bit definition for CAN IER register  ***********************/
-#define CAN_IER_RIE                     BIT0  
-#define CAN_IER_TIE                     BIT1 
-#define CAN_IER_EIE                     BIT2 
-#define CAN_IER_DOIE                    BIT3 
-#define CAN_IER_WUIE                    BIT4 
-#define CAN_IER_EPIE                    BIT5 
-#define CAN_IER_ALIE                    BIT6 
-#define CAN_IER_BEIE                    BIT7 
+#define CAN_IER_RIE                     BIT0
+#define CAN_IER_TIE                     BIT1
+#define CAN_IER_EIE                     BIT2
+#define CAN_IER_DOIE                    BIT3
+#define CAN_IER_WUIE                    BIT4
+#define CAN_IER_EPIE                    BIT5
+#define CAN_IER_ALIE                    BIT6
+#define CAN_IER_BEIE                    BIT7
 
-/** 
+/**
   * @brief  CAN  init structure definition
   */
 typedef struct
 {
     uint32_t CAN_Mode;         /*!< Specifies the CAN operating mode.
-                                This parameter can be a value of 
-                                @ref CAN_mode  e.g:CAN_Mode_Normal   CAN_Mode_Normal*/ 
-    
-    uint32_t CAN_SJW;          /*!< Specifies the maximum number of time quanta 
-                                the CAN hardware is allowed to lengthen or 
+                                This parameter can be a value of
+                                @ref CAN_mode  e.g:CAN_Mode_Normal   CAN_Mode_Normal*/
+
+    uint32_t CAN_SJW;          /*!< Specifies the maximum number of time quanta
+                                the CAN hardware is allowed to lengthen or
                                 shorten a bit to perform resynchronization.
-                                This parameter can be a value of 
+                                This parameter can be a value of
                                 @ref CAN_SJW  e.g:CAN_SJW_1tq--CAN_SJW_4tq*/
-    
-    uint32_t CAN_BRP ;          /*!< Specifies the number of time quanta in Bit 
+
+    uint32_t CAN_BRP ;          /*!< Specifies the number of time quanta in Bit
                                 Segment 1. This parameter can be a value between 0 and 63 */
-    
-    uint32_t CAN_TSEG1;          /*!< Specifies the number of time quanta in Bit 
-                                Segment 1. This parameter can be a value of 
+
+    uint32_t CAN_TSEG1;          /*!< Specifies the number of time quanta in Bit
+                                Segment 1. This parameter can be a value of
                                 @ref CAN_TSEG1  e.g: CAN_TSEG1_1tq-CAN_TSEG1_16tq*/
-    
-    uint32_t CAN_TSEG2;          /*!< Specifies the number of time quanta in Bit 
-                                Segment 2.This parameter can be a value of 
+
+    uint32_t CAN_TSEG2;          /*!< Specifies the number of time quanta in Bit
+                                Segment 2.This parameter can be a value of
                                 @ref CAN_TSEG2  e.g:CAN_TSEG1_1tq-CAN_TSEG16_tq*/
-    
+
     uint32_t CAN_SAM ;           /*!< Specifies the CAN operating mode.
-                                This parameter can be a value of 
+                                This parameter can be a value of
                                 @ref CAN_SAM e.g:CAN_SAM_1time  CAN_SAM_3time*/
 } CAN_InitTypeDef;
 
 
-/** 
+/**
   * @brief  CAN filter init structure definition
   */
 
 typedef struct
 {
     uint32_t CAN_FilterMode;            /*!< Specifies the filter mode to be initialized.
-                                        This parameter can be a value of 
+                                        This parameter can be a value of
                                         @ref CAN_filter_mode  e.g:CAN_FilterMode_Dual    CAN_FilterMode_Single*/
-    
-    uint32_t CAN_FilterId1;             /*!< Specifies the filter identification number 
+
+    uint32_t CAN_FilterId1;             /*!< Specifies the filter identification number
                                         This parameter can be a value between 0x0000 and 0x1FFFFFFF */
-    
-    uint32_t CAN_FilterId2;             /*!< Specifies the filter identification number 
+
+    uint32_t CAN_FilterId2;             /*!< Specifies the filter identification number
                                         only CAN_FilterMode=CAN_FilterMode_Dual Enable
                                         This parameter can be a value between 0x0000 and 0x1FFFFFFF */
-    
-    uint32_t CAN_FilterMaskId1;         /*!< Specifies the filter identification mask number 
+
+    uint32_t CAN_FilterMaskId1;         /*!< Specifies the filter identification mask number
                                         This parameter can be a value between 0x0000 and 0x1FFFFFFF */
-    
-    uint32_t CAN_FilterMaskId2;         /*!< Specifies the filter identification mask number 
+
+    uint32_t CAN_FilterMaskId2;         /*!< Specifies the filter identification mask number
                                         only CAN_FilterMode=CAN_FilterMode_Dual Enable
                                         This parameter can be a value between 0x0000 and 0x1FFFFFFF */
 } CAN_FilterInitTypeDef;
 
 
 
-/** 
+/**
   * @brief  CAN RxTxMessege structure definition
   */
 typedef struct
 {
     uint32_t StdId;                     /*!< Specifies the standard identifier.
                                         This parameter can be a value between 0 to 0x7FF. */
-    
+
     uint32_t ExtId;                     /*!< Specifies the extended identifier.
                                         This parameter can be a value between 0 to 0x1FFFFFFF. */
-    
-    uint32_t IDE;                        /*!< Specifies the type of identifier for the message that 
-                                        will be transmitted. This parameter can be a value 
+
+    uint32_t IDE;                        /*!< Specifies the type of identifier for the message that
+                                        will be transmitted. This parameter can be a value
                                         of @ref CAN_identifier_type  e.g: CAN_Id_Standard  CAN_Id_Extended*/
-    
-    uint32_t RTR;                        /*!< Specifies the type of frame for the message that will 
-                                        be transmitted. This parameter can be a value of 
+
+    uint32_t RTR;                        /*!< Specifies the type of frame for the message that will
+                                        be transmitted. This parameter can be a value of
                                         @ref CAN_remote_transmission    e.g: CAN_RTR_Data  CAN_RTR_Remote */
-    
-    uint32_t DLC;                        /*!< Specifies the length of the frame that will be 
+
+    uint32_t DLC;                        /*!< Specifies the length of the frame that will be
                                         transmitted. This parameter can be a value between 0 to 8 */
-    
+
     uint8_t Data[8];                    /*!< Contains the data to be transmitted. It ranges from 0 to 0xFF. */
 } CanTxRxMsg;
 
@@ -153,15 +153,15 @@ typedef struct
 typedef struct __CAN_HandleTypeDef
 {
     CAN_TypeDef         *Instance;                 /*!< Register base address */
-    
+
     CAN_InitTypeDef      Init;                      /*!< CAN required parameters */
-    
+
     CanTxRxMsg          *RxMessage;                 /*!< CAN RxMessage */
-    
-    void (*CAN_ReceiveIT_Callback)(struct __CAN_HandleTypeDef *hcan);     /* CAN  ReceiveIT complete callback */ 
-    
-    void (*CAN_TransmitIT_Callback)(struct __CAN_HandleTypeDef *hcan);     /* CAN TransmitIT complete callback */ 
-    
+
+    void (*CAN_ReceiveIT_Callback)(struct __CAN_HandleTypeDef *hcan);     /* CAN  ReceiveIT complete callback */
+
+    void (*CAN_TransmitIT_Callback)(struct __CAN_HandleTypeDef *hcan);     /* CAN TransmitIT complete callback */
+
 } CAN_HandleTypeDef;
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
@@ -171,7 +171,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_CAN_ALL_PERIPH(PERIPH) (((PERIPH) == CAN1) || \
                                    ((PERIPH) == CAN2))
 
-/** @defgroup CAN_identifier_type 
+/** @defgroup CAN_identifier_type
   * @{
   */
 
@@ -193,7 +193,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 /**
   * @}
   */
-/** @defgroup CAN_TxRxMessege 
+/** @defgroup CAN_TxRxMessege
   * @{
   */
 
@@ -205,14 +205,14 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_CAN_GET_FLAG(FLAG) (((FLAG) == CAN_SR_RBS)  || ((FLAG) == CAN_SR_DOS)   || \
                                ((FLAG) == CAN_SR_TBS)  || ((FLAG) == CAN_SR_TCS)   || \
                                ((FLAG) == CAN_SR_RS)  || ((FLAG) == CAN_SR_TS)  || \
-                               ((FLAG) == CAN_SR_ES)  || ((FLAG) == CAN_SR_BS))	
+                               ((FLAG) == CAN_SR_ES)  || ((FLAG) == CAN_SR_BS))
 
-#define IS_CAN_BRP(BRP) 	(((BRP) >= 0) && ((BRP) <= 63))
+#define IS_CAN_BRP(BRP)     (((BRP) >= 0) && ((BRP) <= 63))
 
 /**
-  * @defgroup CAN_Mode 
+  * @defgroup CAN_Mode
   * @{
-  */  
+  */
 #define CAN_Mode_Normal         ((uint8_t)0x00) /*!< Normal mode */
 #define CAN_Mode_SlefTest       ((uint8_t)0x01) /*!< SlefTest mode */
 
@@ -223,9 +223,9 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   */
 
 /**
-  * @defgroup CAN_Operating_Mode 
+  * @defgroup CAN_Operating_Mode
   * @{
-  */  
+  */
 #define CAN_OperatingMode_Normal           ((uint8_t)0x00) /*!< Initialization mode */
 #define CAN_OperatingMode_Initialization   ((uint8_t)0x01) /*!< Normal mode */
 #define CAN_OperatingMode_Listen           ((uint8_t)0x02) /*!< Listen mode */
@@ -242,7 +242,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   * @}
   */
 
-/** @defgroup CAN_SAM 
+/** @defgroup CAN_SAM
   * @{
   */
 
@@ -255,7 +255,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   */
 
 
-/** @defgroup CAN_synchronisation_jump_width 
+/** @defgroup CAN_synchronisation_jump_width
   * @{
   */
 
@@ -269,8 +269,8 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 /**
   * @}
   */
-	
-	/** @defgroup CAN_time_quantum_in_bit_segment_1 
+
+    /** @defgroup CAN_time_quantum_in_bit_segment_1
   * @{
   */
 
@@ -296,7 +296,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   * @}
   */
 
-/** @defgroup CAN_time_quantum_in_bit_segment_2 
+/** @defgroup CAN_time_quantum_in_bit_segment_2
   * @{
   */
 
@@ -313,8 +313,8 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   * @}
   */
 
-	  
-/** @defgroup CAN_filter_mode 
+
+/** @defgroup CAN_filter_mode
   * @{
   */
 #define CAN_FilterMode_Dual         ((uint8_t)0x00)  /*!< identifier list mode */
@@ -322,16 +322,16 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_CAN_FILTER_MODE(MODE) (((MODE) == CAN_FilterMode_Dual) || \
                                   ((MODE) == CAN_FilterMode_Single))
 
-	/**
+    /**
   * @}
   */
 
-/** @defgroup CAN_ErrorCode 
+/** @defgroup CAN_ErrorCode
   * @{
   */
 #define CAN_ErrorType_ErrCode         ((uint8_t)0xC0)  /*!< identifier list mode */
 #define CAN_ErrorType_Direction       ((uint8_t)0x20)  /*!< identifier/mask mode */
-#define CAN_ErrorType_SegCode      		 ((uint8_t)0x1F)  /*!< identifier/mask mode */
+#define CAN_ErrorType_SegCode            ((uint8_t)0x1F)  /*!< identifier/mask mode */
 #define IS_CAN_ErrorType(ErrorType) (((ErrorType) == CAN_ErrorType_ErrCode) || \
                                     ((ErrorType) == CAN_ErrorType_Direction)|| \
                                     ((ErrorType) == CAN_ErrorType_SegCode))

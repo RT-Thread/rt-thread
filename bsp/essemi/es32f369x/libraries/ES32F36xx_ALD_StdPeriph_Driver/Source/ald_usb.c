@@ -56,7 +56,7 @@
   */
 uint32_t ald_usb_frame_number_get(void)
 {
-	return USB0->FRAME;
+    return USB0->FRAME;
 }
 
 /**
@@ -66,10 +66,10 @@ uint32_t ald_usb_frame_number_get(void)
   */
 void ald_usb_otg_session_request(bool start)
 {
-	if (start)
-		USB0->DEVCTL |= USB_DEVCTL_SESSION;
-	else
-		USB0->DEVCTL &= ~(USB_DEVCTL_SESSION);
+    if (start)
+        USB0->DEVCTL |= USB_DEVCTL_SESSION;
+    else
+        USB0->DEVCTL &= ~(USB_DEVCTL_SESSION);
 }
 
 /**
@@ -78,8 +78,8 @@ void ald_usb_otg_session_request(bool start)
   */
 uint32_t ald_usb_mode_get(void)
 {
-	return USB0->DEVCTL & (USB_DEVCTL_DEV | USB_DEVCTL_HOST
-			 | USB_DEVCTL_SESSION | USB_DEVCTL_VBUS_M);
+    return USB0->DEVCTL & (USB_DEVCTL_DEV | USB_DEVCTL_HOST
+             | USB_DEVCTL_SESSION | USB_DEVCTL_VBUS_M);
 }
 
 /**
@@ -89,10 +89,10 @@ uint32_t ald_usb_mode_get(void)
   */
 void ald_usb_high_speed_enable(bool enable)
 {
-	if (enable)
-		USB0->POWER |= USB_POWER_HS_EN;
-	else
-		USB0->POWER &= ~(USB_POWER_HS_EN);
+    if (enable)
+        USB0->POWER |= USB_POWER_HS_EN;
+    else
+        USB0->POWER &= ~(USB_POWER_HS_EN);
 }
 
 /**
@@ -101,10 +101,10 @@ void ald_usb_high_speed_enable(bool enable)
   */
 uint32_t ald_usb_device_speed_get(void)
 {
-	if (USB0->POWER & USB_POWER_HS_EN)
-		return USB_HIGH_SPEED;
+    if (USB0->POWER & USB_POWER_HS_EN)
+        return USB_HIGH_SPEED;
 
-	return USB_FULL_SPEED;
+    return USB_FULL_SPEED;
 }
 
 /**
@@ -113,7 +113,7 @@ uint32_t ald_usb_device_speed_get(void)
   */
 uint32_t ald_usb_num_ep_get( void)
 {
-	return NUM_USB_EP;
+    return NUM_USB_EP;
 }
 
 /**
@@ -122,7 +122,7 @@ uint32_t ald_usb_num_ep_get( void)
   */
 void ald_usb_control_reset(void)
 {
-	ald_rmu_reset_periperal(RMU_PERH_USB);
+    ald_rmu_reset_periperal(RMU_PERH_USB);
 }
 
 /**
@@ -131,12 +131,12 @@ void ald_usb_control_reset(void)
   */
 void ald_usb_clock_output(void)
 {
-	SYSCFG_UNLOCK();
-	SYSCFG->TESTKEY = 0x5A962814;
-	SYSCFG->TESTKEY = 0xE7CB69A5;
-	SYSCFG->USBTEST = 0x43;
+    SYSCFG_UNLOCK();
+    SYSCFG->TESTKEY = 0x5A962814;
+    SYSCFG->TESTKEY = 0xE7CB69A5;
+    SYSCFG->USBTEST = 0x43;
 
-	return;
+    return;
 }
 
 /**
@@ -147,15 +147,15 @@ void ald_usb_clock_output(void)
   */
 int ald_usb_eye_diagram_start(uint8_t *buf, uint16_t len)
 {
-	if (len < 53)
-		return -1;
+    if (len < 53)
+        return -1;
 
-	ald_usb_ep_data_put(0, buf, 53);
-	USB0->TEST = 0x08 | 0x90;
-	ald_delay_ms(20);
-	USB0->CSR0L = USB_CSRL0_TXRDY;
+    ald_usb_ep_data_put(0, buf, 53);
+    USB0->TEST = 0x08 | 0x90;
+    ald_delay_ms(20);
+    USB0->CSR0L = USB_CSRL0_TXRDY;
 
-	return 0;
+    return 0;
 }
 /**
   * @}
@@ -172,7 +172,7 @@ int ald_usb_eye_diagram_start(uint8_t *buf, uint16_t len)
   */
 uint8_t ald_usb_dev_get_addr(void)
 {
-	return USB0->FADDR;
+    return USB0->FADDR;
 }
 
 /**
@@ -182,7 +182,7 @@ uint8_t ald_usb_dev_get_addr(void)
   */
 void ald_usb_dev_set_addr(uint8_t addr)
 {
-	USB0->FADDR = addr;
+    USB0->FADDR = addr;
 }
 
 /**
@@ -191,7 +191,7 @@ void ald_usb_dev_set_addr(uint8_t addr)
   */
 void ald_usb_dev_connect(void)
 {
-	USB0->POWER |= USB_POWER_SOFTCONN;
+    USB0->POWER |= USB_POWER_SOFTCONN;
 }
 
 /**
@@ -200,7 +200,7 @@ void ald_usb_dev_connect(void)
   */
 void ald_usb_dev_disconnect(void)
 {
-	USB0->POWER &= ~(USB_POWER_SOFTCONN);
+    USB0->POWER &= ~(USB_POWER_SOFTCONN);
 }
 
 /**
@@ -212,31 +212,31 @@ void ald_usb_dev_disconnect(void)
   */
 void ald_usb_dev_ep_config(uint32_t ep_idx, uint32_t p_max, uint32_t flags)
 {
-	uint32_t tmp = 0;
+    uint32_t tmp = 0;
 
-	if (flags & USB_EP_DEV_IN) {
-		USB0->CSR[ep_idx - 1].TXxMAXP = p_max;
-		if (flags & USB_EP_AUTO_SET)
-			tmp |= USB_TXCSRH1_AUTOSET;
-		if ((flags & USB_EP_MODE_MASK) == USB_EP_MODE_ISOC)
-			tmp |= USB_TXCSRH1_ISO;
+    if (flags & USB_EP_DEV_IN) {
+        USB0->CSR[ep_idx - 1].TXxMAXP = p_max;
+        if (flags & USB_EP_AUTO_SET)
+            tmp |= USB_TXCSRH1_AUTOSET;
+        if ((flags & USB_EP_MODE_MASK) == USB_EP_MODE_ISOC)
+            tmp |= USB_TXCSRH1_ISO;
 
-		USB0->CSR[ep_idx - 1].TXxCSRH = (uint8_t)tmp;
-		USB0->CSR[ep_idx - 1].TXxCSRL = USB_TXCSRL1_CLRDT;
-	}
-	else {
-		USB0->CSR[ep_idx - 1].RXxMAXP = p_max;
-		if (flags & USB_EP_AUTO_CLEAR)
-			tmp = USB_RXCSRH1_AUTOCL;
-		if (flags & USB_EP_DIS_NYET)
-			tmp |= USB_RXCSRH1_DISNYET;
+        USB0->CSR[ep_idx - 1].TXxCSRH = (uint8_t)tmp;
+        USB0->CSR[ep_idx - 1].TXxCSRL = USB_TXCSRL1_CLRDT;
+    }
+    else {
+        USB0->CSR[ep_idx - 1].RXxMAXP = p_max;
+        if (flags & USB_EP_AUTO_CLEAR)
+            tmp = USB_RXCSRH1_AUTOCL;
+        if (flags & USB_EP_DIS_NYET)
+            tmp |= USB_RXCSRH1_DISNYET;
 
-		if ((flags & USB_EP_MODE_MASK) == USB_EP_MODE_ISOC)
-			tmp |= USB_RXCSRH1_ISO;
+        if ((flags & USB_EP_MODE_MASK) == USB_EP_MODE_ISOC)
+            tmp |= USB_RXCSRH1_ISO;
 
-		USB0->CSR[ep_idx - 1].RXxCSRH = (uint8_t)tmp;
-		USB0->CSR[ep_idx - 1].RXxCSRL = USB_RXCSRL1_CLRDT;
-	}
+        USB0->CSR[ep_idx - 1].RXxCSRH = (uint8_t)tmp;
+        USB0->CSR[ep_idx - 1].RXxCSRL = USB_RXCSRL1_CLRDT;
+    }
 }
 
 /**
@@ -248,32 +248,32 @@ void ald_usb_dev_ep_config(uint32_t ep_idx, uint32_t p_max, uint32_t flags)
   */
 void ald_usb_dev_ep_get_config(uint32_t ep_idx, uint32_t *p_max, uint32_t *flags)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	if (*flags & USB_EP_DEV_IN) {
-		*flags = USB_EP_DEV_IN;
-		*p_max = (uint32_t)USB0->CSR[ep_idx - 1].TXxMAXP;
-		tmp    = (uint32_t)USB0->CSR[ep_idx - 1].TXxCSRH;
+    if (*flags & USB_EP_DEV_IN) {
+        *flags = USB_EP_DEV_IN;
+        *p_max = (uint32_t)USB0->CSR[ep_idx - 1].TXxMAXP;
+        tmp    = (uint32_t)USB0->CSR[ep_idx - 1].TXxCSRH;
 
-		if (tmp & USB_TXCSRH1_AUTOSET)
-			*flags |= USB_EP_AUTO_SET;
-		if (tmp & USB_TXCSRH1_ISO)
-			*flags |= USB_EP_MODE_ISOC;
-		else
-			*flags |= USB_EP_MODE_BULK;
-	}
-	else {
-		*flags = USB_EP_DEV_OUT;
-		*p_max = (uint32_t)USB0->CSR[ep_idx - 1].RXxMAXP;
-		tmp    = (uint32_t)USB0->CSR[ep_idx - 1].RXxCSRH;
+        if (tmp & USB_TXCSRH1_AUTOSET)
+            *flags |= USB_EP_AUTO_SET;
+        if (tmp & USB_TXCSRH1_ISO)
+            *flags |= USB_EP_MODE_ISOC;
+        else
+            *flags |= USB_EP_MODE_BULK;
+    }
+    else {
+        *flags = USB_EP_DEV_OUT;
+        *p_max = (uint32_t)USB0->CSR[ep_idx - 1].RXxMAXP;
+        tmp    = (uint32_t)USB0->CSR[ep_idx - 1].RXxCSRH;
 
-		if (tmp & USB_RXCSRH1_AUTOCL)
-			*flags |= USB_EP_AUTO_CLEAR;
-		if (tmp & USB_RXCSRH1_ISO)
-			*flags |= USB_EP_MODE_ISOC;
-		else
-			*flags |= USB_EP_MODE_BULK;
-	}
+        if (tmp & USB_RXCSRH1_AUTOCL)
+            *flags |= USB_EP_AUTO_CLEAR;
+        if (tmp & USB_RXCSRH1_ISO)
+            *flags |= USB_EP_MODE_ISOC;
+        else
+            *flags |= USB_EP_MODE_BULK;
+    }
 }
 
 /**
@@ -284,10 +284,10 @@ void ald_usb_dev_ep_get_config(uint32_t ep_idx, uint32_t *p_max, uint32_t *flags
   */
 void ald_usb_dev_ep_data_ack(uint32_t ep_idx, bool last)
 {
-	if (ep_idx == USB_EP_0)
-		USB0->CSR0L = USB_CSRL0_RXRDYC | (last ? USB_CSRL0_DATAEND : 0);
-	else
-		USB0->CSR[ep_idx - 1].RXxCSRL &= ~(USB_RXCSRL1_RXRDY);
+    if (ep_idx == USB_EP_0)
+        USB0->CSR0L = USB_CSRL0_RXRDYC | (last ? USB_CSRL0_DATAEND : 0);
+    else
+        USB0->CSR[ep_idx - 1].RXxCSRL &= ~(USB_RXCSRL1_RXRDY);
 }
 
 /**
@@ -298,12 +298,12 @@ void ald_usb_dev_ep_data_ack(uint32_t ep_idx, bool last)
   */
 void ald_usb_dev_ep_stall(uint32_t ep_idx, uint32_t flags)
 {
-	if (ep_idx == USB_EP_0)
-		USB0->CSR0L |= (USB_CSRL0_STALL | USB_CSRL0_RXRDYC);
-	else if (flags == USB_EP_DEV_IN)
-		USB0->CSR[ep_idx - 1].TXxCSRL |= USB_TXCSRL1_STALL;
-	else
-		USB0->CSR[ep_idx - 1].RXxCSRL |= USB_RXCSRL1_STALL;
+    if (ep_idx == USB_EP_0)
+        USB0->CSR0L |= (USB_CSRL0_STALL | USB_CSRL0_RXRDYC);
+    else if (flags == USB_EP_DEV_IN)
+        USB0->CSR[ep_idx - 1].TXxCSRL |= USB_TXCSRL1_STALL;
+    else
+        USB0->CSR[ep_idx - 1].RXxCSRL |= USB_RXCSRL1_STALL;
 }
 
 /**
@@ -314,16 +314,16 @@ void ald_usb_dev_ep_stall(uint32_t ep_idx, uint32_t flags)
   */
 void ald_usb_dev_ep_stall_clear(uint32_t ep_idx, uint32_t flags)
 {
-	if (ep_idx == USB_EP_0)
-		USB0->CSR0L &= ~USB_CSRL0_STALLED;
-	else if (flags == USB_EP_DEV_IN) {
-		USB0->CSR[ep_idx - 1].TXxCSRL &= ~(USB_TXCSRL1_STALL | USB_TXCSRL1_STALLED);
-		USB0->CSR[ep_idx - 1].TXxCSRL |= USB_TXCSRL1_CLRDT;
-	}
-	else {
-		USB0->CSR[ep_idx - 1].RXxCSRL &= ~(USB_RXCSRL1_STALL | USB_RXCSRL1_STALLED);
-		USB0->CSR[ep_idx - 1].RXxCSRL |= USB_RXCSRL1_CLRDT;
-	}
+    if (ep_idx == USB_EP_0)
+        USB0->CSR0L &= ~USB_CSRL0_STALLED;
+    else if (flags == USB_EP_DEV_IN) {
+        USB0->CSR[ep_idx - 1].TXxCSRL &= ~(USB_TXCSRL1_STALL | USB_TXCSRL1_STALLED);
+        USB0->CSR[ep_idx - 1].TXxCSRL |= USB_TXCSRL1_CLRDT;
+    }
+    else {
+        USB0->CSR[ep_idx - 1].RXxCSRL &= ~(USB_RXCSRL1_STALL | USB_RXCSRL1_STALLED);
+        USB0->CSR[ep_idx - 1].RXxCSRL |= USB_RXCSRL1_CLRDT;
+    }
 }
 
 /**
@@ -334,19 +334,19 @@ void ald_usb_dev_ep_stall_clear(uint32_t ep_idx, uint32_t flags)
   */
 void ald_usb_dev_ep_status_clear(uint32_t ep_idx, uint32_t flags)
 {
-	if (ep_idx == USB_EP_0) {
-		if (flags & USB_DEV_EP0_OUT_PKTRDY)
-			USB0->CSR0L |= USB_CSRL0_RXRDYC;
-		if (flags & USB_DEV_EP0_SETUP_END)
-			USB0->CSR0L |= USB_CSRL0_SETENDC;
-		if (flags & USB_DEV_EP0_SENT_STALL)
-			USB0->CSR0L &= ~(USB_DEV_EP0_SENT_STALL);
-	}
-	else {
-		USB0->CSR[ep_idx - 1].TXxCSRL &= ~(flags & (USB_DEV_TX_SENT_STALL | USB_DEV_TX_UNDERRUN));
-		USB0->CSR[ep_idx - 1].RXxCSRL &= ~((flags & (USB_DEV_RX_SENT_STALL | USB_DEV_RX_DATA_ERROR
-						 | USB_DEV_RX_OVERRUN)) >> USB_RX_EPSTATUS_SHIFT);
-	}
+    if (ep_idx == USB_EP_0) {
+        if (flags & USB_DEV_EP0_OUT_PKTRDY)
+            USB0->CSR0L |= USB_CSRL0_RXRDYC;
+        if (flags & USB_DEV_EP0_SETUP_END)
+            USB0->CSR0L |= USB_CSRL0_SETENDC;
+        if (flags & USB_DEV_EP0_SENT_STALL)
+            USB0->CSR0L &= ~(USB_DEV_EP0_SENT_STALL);
+    }
+    else {
+        USB0->CSR[ep_idx - 1].TXxCSRL &= ~(flags & (USB_DEV_TX_SENT_STALL | USB_DEV_TX_UNDERRUN));
+        USB0->CSR[ep_idx - 1].RXxCSRL &= ~((flags & (USB_DEV_RX_SENT_STALL | USB_DEV_RX_DATA_ERROR
+                         | USB_DEV_RX_OVERRUN)) >> USB_RX_EPSTATUS_SHIFT);
+    }
 }
 /**
   * @}
@@ -364,10 +364,10 @@ void ald_usb_dev_ep_status_clear(uint32_t ep_idx, uint32_t flags)
   */
 uint32_t ald_usb_host_addr_get(uint32_t ep_idx, uint32_t flags)
 {
-	if (flags & USB_EP_HOST_OUT)
-		return USB0->ADDR[ep_idx].TXxFUNCADDR;
-	else
-		return USB0->ADDR[ep_idx].RXxFUNCADDR;
+    if (flags & USB_EP_HOST_OUT)
+        return USB0->ADDR[ep_idx].TXxFUNCADDR;
+    else
+        return USB0->ADDR[ep_idx].RXxFUNCADDR;
 }
 
 /**
@@ -379,10 +379,10 @@ uint32_t ald_usb_host_addr_get(uint32_t ep_idx, uint32_t flags)
   */
 void ald_usb_host_addr_set(uint32_t ep_idx, uint32_t addr, uint32_t flags)
 {
-	if (flags & USB_EP_HOST_OUT)
-		USB0->ADDR[ep_idx].TXxFUNCADDR = addr;
-	else
-		USB0->ADDR[ep_idx].RXxFUNCADDR = addr;
+    if (flags & USB_EP_HOST_OUT)
+        USB0->ADDR[ep_idx].TXxFUNCADDR = addr;
+    else
+        USB0->ADDR[ep_idx].RXxFUNCADDR = addr;
 }
 
 /**
@@ -396,70 +396,70 @@ void ald_usb_host_addr_set(uint32_t ep_idx, uint32_t addr, uint32_t flags)
   */
 void ald_usb_host_ep_config(uint32_t ep_idx, uint32_t p_max, uint32_t nak_val, uint32_t t_ep, uint32_t flags)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	if (ep_idx == USB_EP_0) {
-		USB0->NACK = nak_val;
+    if (ep_idx == USB_EP_0) {
+        USB0->NACK = nak_val;
 
-		if (flags & USB_EP_SPEED_HIGH)
-			USB0->TYPE0 = USB_TYPE0_SPEED_HIGH;
-		else if (flags & USB_EP_SPEED_FULL)
-			USB0->TYPE0 = USB_TYPE0_SPEED_FULL;
-		else
-			USB0->TYPE0 = USB_TYPE0_SPEED_LOW;
-	}
-	else {
-		tmp = t_ep;
+        if (flags & USB_EP_SPEED_HIGH)
+            USB0->TYPE0 = USB_TYPE0_SPEED_HIGH;
+        else if (flags & USB_EP_SPEED_FULL)
+            USB0->TYPE0 = USB_TYPE0_SPEED_FULL;
+        else
+            USB0->TYPE0 = USB_TYPE0_SPEED_LOW;
+    }
+    else {
+        tmp = t_ep;
 
-		if (flags & USB_EP_SPEED_HIGH)
-			tmp |= USB_TXTYPE1_SPEED_HIGH;
-		else if (flags & USB_EP_SPEED_FULL)
-			tmp |= USB_TXTYPE1_SPEED_FULL;
-		else
-			tmp |= USB_TXTYPE1_SPEED_LOW;
+        if (flags & USB_EP_SPEED_HIGH)
+            tmp |= USB_TXTYPE1_SPEED_HIGH;
+        else if (flags & USB_EP_SPEED_FULL)
+            tmp |= USB_TXTYPE1_SPEED_FULL;
+        else
+            tmp |= USB_TXTYPE1_SPEED_LOW;
 
-		switch (flags & USB_EP_MODE_MASK) {
-		case USB_EP_MODE_BULK:
-			tmp |= USB_TXTYPE1_PROTO_BULK;
-			break;
+        switch (flags & USB_EP_MODE_MASK) {
+        case USB_EP_MODE_BULK:
+            tmp |= USB_TXTYPE1_PROTO_BULK;
+            break;
 
-		case USB_EP_MODE_ISOC:
-			tmp |= USB_TXTYPE1_PROTO_ISOC;
-			break;
+        case USB_EP_MODE_ISOC:
+            tmp |= USB_TXTYPE1_PROTO_ISOC;
+            break;
 
-		case USB_EP_MODE_INT:
-			tmp |= USB_TXTYPE1_PROTO_INT;
-			break;
+        case USB_EP_MODE_INT:
+            tmp |= USB_TXTYPE1_PROTO_INT;
+            break;
 
-		case USB_EP_MODE_CTRL:
-			tmp |= USB_TXTYPE1_PROTO_CTRL;
-			break;
-		}
+        case USB_EP_MODE_CTRL:
+            tmp |= USB_TXTYPE1_PROTO_CTRL;
+            break;
+        }
 
-		if (flags & USB_EP_HOST_OUT) {
-			USB0->CSR[ep_idx - 1].TXxTYPE     = tmp;
-			USB0->CSR[ep_idx - 1].TXxINTERVAL = nak_val;
-			USB0->CSR[ep_idx - 1].TXxMAXP     = p_max;
+        if (flags & USB_EP_HOST_OUT) {
+            USB0->CSR[ep_idx - 1].TXxTYPE     = tmp;
+            USB0->CSR[ep_idx - 1].TXxINTERVAL = nak_val;
+            USB0->CSR[ep_idx - 1].TXxMAXP     = p_max;
 
-			tmp = 0;
-			if (flags & USB_EP_AUTO_SET)
-				tmp |= USB_TXCSRH1_AUTOSET;
-			USB0->CSR[ep_idx - 1].TXxCSRH = (uint8_t)tmp;
-		}
-		else {
-			USB0->CSR[ep_idx - 1].RXxTYPE     = tmp;
-			USB0->CSR[ep_idx - 1].RXxINTERVAL = nak_val;
-			USB0->CSR[ep_idx - 1].RXxMAXP     = p_max;
+            tmp = 0;
+            if (flags & USB_EP_AUTO_SET)
+                tmp |= USB_TXCSRH1_AUTOSET;
+            USB0->CSR[ep_idx - 1].TXxCSRH = (uint8_t)tmp;
+        }
+        else {
+            USB0->CSR[ep_idx - 1].RXxTYPE     = tmp;
+            USB0->CSR[ep_idx - 1].RXxINTERVAL = nak_val;
+            USB0->CSR[ep_idx - 1].RXxMAXP     = p_max;
 
-			tmp = 0;
-			if (flags & USB_EP_AUTO_CLEAR)
-				tmp |= USB_RXCSRH1_AUTOCL;
-			if (flags & USB_EP_AUTO_REQUEST)
-				tmp |= USB_RXCSRH1_AUTORQ;
+            tmp = 0;
+            if (flags & USB_EP_AUTO_CLEAR)
+                tmp |= USB_RXCSRH1_AUTOCL;
+            if (flags & USB_EP_AUTO_REQUEST)
+                tmp |= USB_RXCSRH1_AUTORQ;
 
-			USB0->CSR[ep_idx - 1].RXxCSRH = (uint8_t)tmp;
-		}
-	}
+            USB0->CSR[ep_idx - 1].RXxCSRH = (uint8_t)tmp;
+        }
+    }
 }
 
 /**
@@ -469,10 +469,10 @@ void ald_usb_host_ep_config(uint32_t ep_idx, uint32_t p_max, uint32_t nak_val, u
   */
 void ald_usb_host_ep_data_ack(uint32_t ep_idx)
 {
-	if (ep_idx == USB_EP_0)
-		USB0->CSR0L &= ~(USB_CSRL0_RXRDY);
-	else
-		USB0->CSR[ep_idx - 1].RXxCSRL &= ~(USB_RXCSRL1_RXRDY);
+    if (ep_idx == USB_EP_0)
+        USB0->CSR0L &= ~(USB_CSRL0_RXRDY);
+    else
+        USB0->CSR[ep_idx - 1].RXxCSRL &= ~(USB_RXCSRL1_RXRDY);
 }
 
 /**
@@ -484,31 +484,31 @@ void ald_usb_host_ep_data_ack(uint32_t ep_idx)
   */
 void ald_usb_host_ep_data_toggle(uint32_t ep_idx, bool toggle, uint32_t flags)
 {
-	uint32_t tmp = 0;
+    uint32_t tmp = 0;
 
-	if (toggle) {
-		if (ep_idx == USB_EP_0)
-			tmp = USB_CSRH0_DT;
-		else if (flags == USB_EP_HOST_IN)
-			tmp = USB_RXCSRH1_DT;
-		else
-			tmp = USB_TXCSRH1_DT;
-	}
+    if (toggle) {
+        if (ep_idx == USB_EP_0)
+            tmp = USB_CSRH0_DT;
+        else if (flags == USB_EP_HOST_IN)
+            tmp = USB_RXCSRH1_DT;
+        else
+            tmp = USB_TXCSRH1_DT;
+    }
 
-	if (ep_idx == USB_EP_0) {
-		USB0->CSR0H = (uint8_t)((USB0->CSR0H  & ~(USB_CSRH0_DTWE | USB_CSRH0_DT)) |
-						(tmp | USB_CSRH0_DTWE));
-	}
-	else if (flags == USB_EP_HOST_IN) {
-		USB0->CSR[ep_idx - 1].RXxCSRH = (uint8_t)((USB0->CSR[ep_idx - 1].RXxCSRH &
-							~(USB_RXCSRH1_DTWE | USB_RXCSRH1_DT)) |
-							(tmp | USB_RXCSRH1_DTWE));
-	}
-	else {
-		USB0->CSR[ep_idx - 1].TXxCSRH = (uint8_t)((USB0->CSR[ep_idx - 1].TXxCSRH &
-							~(USB_TXCSRH1_DTWE | USB_TXCSRH1_DT)) |
-							(tmp | USB_TXCSRH1_DTWE));
-	}
+    if (ep_idx == USB_EP_0) {
+        USB0->CSR0H = (uint8_t)((USB0->CSR0H  & ~(USB_CSRH0_DTWE | USB_CSRH0_DT)) |
+                        (tmp | USB_CSRH0_DTWE));
+    }
+    else if (flags == USB_EP_HOST_IN) {
+        USB0->CSR[ep_idx - 1].RXxCSRH = (uint8_t)((USB0->CSR[ep_idx - 1].RXxCSRH &
+                            ~(USB_RXCSRH1_DTWE | USB_RXCSRH1_DT)) |
+                            (tmp | USB_RXCSRH1_DTWE));
+    }
+    else {
+        USB0->CSR[ep_idx - 1].TXxCSRH = (uint8_t)((USB0->CSR[ep_idx - 1].TXxCSRH &
+                            ~(USB_TXCSRH1_DTWE | USB_TXCSRH1_DT)) |
+                            (tmp | USB_TXCSRH1_DTWE));
+    }
 }
 
 /**
@@ -519,13 +519,13 @@ void ald_usb_host_ep_data_toggle(uint32_t ep_idx, bool toggle, uint32_t flags)
   */
 void ald_usb_host_ep_status_clear(uint32_t ep_idx, uint32_t flags)
 {
-	if (ep_idx == USB_EP_0) {
-		USB0->CSR0L &= ~flags;
-	}
-	else {
-		USB0->CSR[ep_idx - 1].TXxCSRL &= ~flags;
-		USB0->CSR[ep_idx - 1].RXxCSRL &= ~flags;
-	}
+    if (ep_idx == USB_EP_0) {
+        USB0->CSR0L &= ~flags;
+    }
+    else {
+        USB0->CSR[ep_idx - 1].TXxCSRL &= ~flags;
+        USB0->CSR[ep_idx - 1].RXxCSRL &= ~flags;
+    }
 }
 
 /**
@@ -536,10 +536,10 @@ void ald_usb_host_ep_status_clear(uint32_t ep_idx, uint32_t flags)
   */
 uint32_t ald_usb_host_hub_addr_get(uint32_t ep_idx, uint32_t flags)
 {
-	if (flags & USB_EP_HOST_OUT)
-		return USB0->ADDR[ep_idx].TXxHUBADDR;
-	else
-		return USB0->ADDR[ep_idx].RXxHUBADDR;
+    if (flags & USB_EP_HOST_OUT)
+        return USB0->ADDR[ep_idx].TXxHUBADDR;
+    else
+        return USB0->ADDR[ep_idx].RXxHUBADDR;
 }
 
 /**
@@ -551,19 +551,19 @@ uint32_t ald_usb_host_hub_addr_get(uint32_t ep_idx, uint32_t flags)
   */
 void ald_usb_host_hub_addr_set(uint32_t ep_idx, uint32_t addr, uint32_t flags)
 {
-	if (flags & USB_EP_HOST_OUT)
-		USB0->ADDR[ep_idx].TXxHUBADDR = addr;
-	else
-		USB0->ADDR[ep_idx].RXxHUBADDR = addr;
+    if (flags & USB_EP_HOST_OUT)
+        USB0->ADDR[ep_idx].TXxHUBADDR = addr;
+    else
+        USB0->ADDR[ep_idx].RXxHUBADDR = addr;
 
-	if (ep_idx == USB_EP_0) {
-		if (flags & USB_EP_SPEED_FULL)
-			USB0->TYPE0 |= USB_TYPE0_SPEED_FULL;
-		else if (flags & USB_EP_SPEED_HIGH)
-			USB0->TYPE0 |= USB_TYPE0_SPEED_HIGH;
-		else
-			USB0->TYPE0 |= USB_TYPE0_SPEED_LOW;
-	}
+    if (ep_idx == USB_EP_0) {
+        if (flags & USB_EP_SPEED_FULL)
+            USB0->TYPE0 |= USB_TYPE0_SPEED_FULL;
+        else if (flags & USB_EP_SPEED_HIGH)
+            USB0->TYPE0 |= USB_TYPE0_SPEED_HIGH;
+        else
+            USB0->TYPE0 |= USB_TYPE0_SPEED_LOW;
+    }
 }
 
 /**
@@ -572,7 +572,7 @@ void ald_usb_host_hub_addr_set(uint32_t ep_idx, uint32_t addr, uint32_t flags)
   */
 void ald_usb_host_pwr_disable(void)
 {
-	return;
+    return;
 }
 
 /**
@@ -581,7 +581,7 @@ void ald_usb_host_pwr_disable(void)
   */
 void ald_usb_host_pwr_enable(void)
 {
-	return;
+    return;
 }
 
 /**
@@ -591,7 +591,7 @@ void ald_usb_host_pwr_enable(void)
   */
 void ald_usb_host_pwr_config(uint32_t flags)
 {
-	return;
+    return;
 }
 
 /**
@@ -600,7 +600,7 @@ void ald_usb_host_pwr_config(uint32_t flags)
   */
 void ald_usb_host_pwr_fault_disable(void)
 {
-	return;
+    return;
 }
 
 /**
@@ -609,7 +609,7 @@ void ald_usb_host_pwr_fault_disable(void)
   */
 void ald_usb_host_pwr_fault_enable(void)
 {
-	return;
+    return;
 }
 
 /**
@@ -619,10 +619,10 @@ void ald_usb_host_pwr_fault_enable(void)
   */
 void ald_usb_host_request_in(uint32_t ep_idx)
 {
-	if (ep_idx == USB_EP_0)
-		USB0->CSR0L = USB_RXCSRL1_REQPKT;
-	else
-		USB0->CSR[ep_idx - 1].RXxCSRL = USB_RXCSRL1_REQPKT;
+    if (ep_idx == USB_EP_0)
+        USB0->CSR0L = USB_RXCSRL1_REQPKT;
+    else
+        USB0->CSR[ep_idx - 1].RXxCSRL = USB_RXCSRL1_REQPKT;
 }
 
 /**
@@ -632,10 +632,10 @@ void ald_usb_host_request_in(uint32_t ep_idx)
   */
 void ald_usb_host_request_in_clear(uint32_t ep_idx)
 {
-	if (ep_idx == USB_EP_0)
-		USB0->CSR0L &= ~(USB_RXCSRL1_REQPKT);
-	else
-		USB0->CSR[ep_idx - 1].RXxCSRL &= ~(USB_RXCSRL1_REQPKT);
+    if (ep_idx == USB_EP_0)
+        USB0->CSR0L &= ~(USB_RXCSRL1_REQPKT);
+    else
+        USB0->CSR[ep_idx - 1].RXxCSRL &= ~(USB_RXCSRL1_REQPKT);
 }
 
 /**
@@ -644,7 +644,7 @@ void ald_usb_host_request_in_clear(uint32_t ep_idx)
   */
 void ald_usb_host_request_status(void)
 {
-	USB0->CSR0L = USB_CSRL0_REQPKT | USB_CSRL0_STATUS;
+    USB0->CSR0L = USB_CSRL0_REQPKT | USB_CSRL0_STATUS;
 }
 
 /**
@@ -654,10 +654,10 @@ void ald_usb_host_request_status(void)
   */
 void ald_usb_host_reset(bool start)
 {
-	if (start)
-		USB0->POWER |= USB_POWER_RESET;
-	else
-		USB0->POWER &= ~(USB_POWER_RESET);
+    if (start)
+        USB0->POWER |= USB_POWER_RESET;
+    else
+        USB0->POWER &= ~(USB_POWER_RESET);
 }
 
 /**
@@ -667,10 +667,10 @@ void ald_usb_host_reset(bool start)
   */
 void ald_usb_host_resume(bool start)
 {
-	if (start)
-		USB0->POWER |= USB_POWER_RESUME;
-	else
-		USB0->POWER &= ~(USB_POWER_RESUME);
+    if (start)
+        USB0->POWER |= USB_POWER_RESUME;
+    else
+        USB0->POWER &= ~(USB_POWER_RESUME);
 }
 
 /**
@@ -679,7 +679,7 @@ void ald_usb_host_resume(bool start)
   */
 void ald_usb_host_suspend(void)
 {
-	USB0->POWER |= USB_POWER_SUSPEND;
+    USB0->POWER |= USB_POWER_SUSPEND;
 }
 
 /**
@@ -688,16 +688,16 @@ void ald_usb_host_suspend(void)
   */
 uint32_t ald_usb_host_speed_get(void)
 {
-	if (USB0->POWER & USB_POWER_HS_M)
-		return USB_HIGH_SPEED;
+    if (USB0->POWER & USB_POWER_HS_M)
+        return USB_HIGH_SPEED;
 
-	if (USB0->DEVCTL & USB_DEVCTL_FSDEV)
-		return USB_FULL_SPEED;
+    if (USB0->DEVCTL & USB_DEVCTL_FSDEV)
+        return USB_FULL_SPEED;
 
-	if (USB0->DEVCTL & USB_DEVCTL_LSDEV)
-		return USB_LOW_SPEED;
+    if (USB0->DEVCTL & USB_DEVCTL_LSDEV)
+        return USB_LOW_SPEED;
 
-	return USB_UNDEF_SPEED;
+    return USB_UNDEF_SPEED;
 }
 
 /**
@@ -708,21 +708,21 @@ uint32_t ald_usb_host_speed_get(void)
   */
 void ald_usb_host_ep_speed_set(uint32_t ep_idx, uint32_t flags)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	if (flags & USB_EP_SPEED_HIGH)
-		tmp = USB_TYPE0_SPEED_HIGH;
-	else if (flags & USB_EP_SPEED_FULL)
-		tmp = USB_TYPE0_SPEED_FULL;
-	else
-		tmp = USB_TYPE0_SPEED_LOW;
+    if (flags & USB_EP_SPEED_HIGH)
+        tmp = USB_TYPE0_SPEED_HIGH;
+    else if (flags & USB_EP_SPEED_FULL)
+        tmp = USB_TYPE0_SPEED_FULL;
+    else
+        tmp = USB_TYPE0_SPEED_LOW;
 
-	if (ep_idx == USB_EP_0)
-		USB0->TYPE0 |= tmp;
-	else if (flags & USB_EP_HOST_OUT)
-		USB0->CSR[ep_idx - 1].TXxTYPE |= tmp;
-	else
-		USB0->CSR[ep_idx - 1].RXxTYPE |= tmp;
+    if (ep_idx == USB_EP_0)
+        USB0->TYPE0 |= tmp;
+    else if (flags & USB_EP_HOST_OUT)
+        USB0->CSR[ep_idx - 1].TXxTYPE |= tmp;
+    else
+        USB0->CSR[ep_idx - 1].RXxTYPE |= tmp;
 }
 
 /**
@@ -733,10 +733,10 @@ void ald_usb_host_ep_speed_set(uint32_t ep_idx, uint32_t flags)
   */
 void ald_usb_host_ep_ping(uint32_t ep_idx, bool enable)
 {
-	if (enable)
-		USB0->CSR0H &= ~(USB_CSRH0_DISPING);
-	else
-		USB0->CSR0H |= USB_CSRH0_DISPING;
+    if (enable)
+        USB0->CSR0H &= ~(USB_CSRH0_DISPING);
+    else
+        USB0->CSR0H |= USB_CSRH0_DISPING;
 }
 /**
   * @}
@@ -753,18 +753,18 @@ void ald_usb_host_ep_ping(uint32_t ep_idx, bool enable)
   */
 uint32_t ald_usb_ep_data_avail(uint32_t ep_idx)
 {
-	if (ep_idx == USB_EP_0) {
-		if ((USB0->CSR0L & USB_CSRL0_RXRDY) == 0)
-			return 0;
+    if (ep_idx == USB_EP_0) {
+        if ((USB0->CSR0L & USB_CSRL0_RXRDY) == 0)
+            return 0;
 
-		return USB0->COUNT0;
-	}
-	else {
-		if ((USB0->CSR[ep_idx - 1].RXxCSRL & USB_CSRL0_RXRDY) == 0)
-			return 0;
+        return USB0->COUNT0;
+    }
+    else {
+        if ((USB0->CSR[ep_idx - 1].RXxCSRL & USB_CSRL0_RXRDY) == 0)
+            return 0;
 
-		return USB0->CSR[ep_idx - 1].RXxCOUNT;
-	}
+        return USB0->CSR[ep_idx - 1].RXxCOUNT;
+    }
 }
 
 /**
@@ -776,30 +776,30 @@ uint32_t ald_usb_ep_data_avail(uint32_t ep_idx)
   */
 int32_t ald_usb_ep_data_get(uint32_t ep_idx, uint8_t *data, uint32_t *size)
 {
-	uint32_t i;
+    uint32_t i;
 
-	if (ep_idx == USB_EP_0) {
-		if ((USB0->CSR0L & USB_CSRL0_RXRDY) == 0) {
-			*size = 0;
-			return -1;
-		}
-		i = USB0->COUNT0;
-	}
-	else {
-		if ((USB0->CSR[ep_idx - 1].RXxCSRL & USB_CSRL0_RXRDY) == 0) {
-			*size = 0;
-			return -1;
-		}
-		i = USB0->CSR[ep_idx - 1].RXxCOUNT;
-	}
+    if (ep_idx == USB_EP_0) {
+        if ((USB0->CSR0L & USB_CSRL0_RXRDY) == 0) {
+            *size = 0;
+            return -1;
+        }
+        i = USB0->COUNT0;
+    }
+    else {
+        if ((USB0->CSR[ep_idx - 1].RXxCSRL & USB_CSRL0_RXRDY) == 0) {
+            *size = 0;
+            return -1;
+        }
+        i = USB0->CSR[ep_idx - 1].RXxCOUNT;
+    }
 
-	i     = (i < *size) ? i : *size;
-	*size = i;
+    i     = (i < *size) ? i : *size;
+    *size = i;
 
-	for (; i > 0; i--)
-		*data++ = USB0->FIFO[ep_idx].Byte[0];
+    for (; i > 0; i--)
+        *data++ = USB0->FIFO[ep_idx].Byte[0];
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -811,19 +811,19 @@ int32_t ald_usb_ep_data_get(uint32_t ep_idx, uint8_t *data, uint32_t *size)
   */
 int32_t ald_usb_ep_data_put(uint32_t ep_idx, uint8_t *data, uint32_t size)
 {
-	if (ep_idx == USB_EP_0) {
-		if (USB0->CSR0L & USB_CSRL0_TXRDY)
-			return -1;
-	}
-	else {
-		if (USB0->CSR[ep_idx - 1].TXxCSRL & USB_TXCSRL1_TXRDY)
-			return -1;
-	}
+    if (ep_idx == USB_EP_0) {
+        if (USB0->CSR0L & USB_CSRL0_TXRDY)
+            return -1;
+    }
+    else {
+        if (USB0->CSR[ep_idx - 1].TXxCSRL & USB_TXCSRL1_TXRDY)
+            return -1;
+    }
 
-	for (; size > 0; size--)
-		USB0->FIFO[ep_idx].Byte[0] = *data++;
+    for (; size > 0; size--)
+        USB0->FIFO[ep_idx].Byte[0] = *data++;
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -834,24 +834,24 @@ int32_t ald_usb_ep_data_put(uint32_t ep_idx, uint8_t *data, uint32_t size)
   */
 int32_t ald_usb_ep_data_send(uint32_t ep_idx, uint32_t tx_type)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	if (ep_idx == USB_EP_0) {
-		if (USB0->CSR0L & USB_CSRL0_TXRDY)
-			return -1;
+    if (ep_idx == USB_EP_0) {
+        if (USB0->CSR0L & USB_CSRL0_TXRDY)
+            return -1;
 
-		tmp = tx_type & 0xff;
-		USB0->CSR0L = tmp;
-	}
-	else {
-		if (USB0->CSR[ep_idx - 1].TXxCSRL & USB_TXCSRL1_TXRDY)
-			return -1;
+        tmp = tx_type & 0xff;
+        USB0->CSR0L = tmp;
+    }
+    else {
+        if (USB0->CSR[ep_idx - 1].TXxCSRL & USB_TXCSRL1_TXRDY)
+            return -1;
 
-		tmp = (tx_type >> 8) & 0xff;
-		USB0->CSR[ep_idx - 1].TXxCSRL = tmp;
-	}
+        tmp = (tx_type >> 8) & 0xff;
+        USB0->CSR[ep_idx - 1].TXxCSRL = tmp;
+    }
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -862,10 +862,10 @@ int32_t ald_usb_ep_data_send(uint32_t ep_idx, uint32_t tx_type)
   */
 void ald_usb_ep_data_toggle_clear(uint32_t ep_idx, uint32_t flags)
 {
-	if (flags & (USB_EP_HOST_OUT | USB_EP_DEV_IN))
-		USB0->CSR[ep_idx - 1].TXxCSRL |= USB_TXCSRL1_CLRDT;
-	else
-		USB0->CSR[ep_idx - 1].RXxCSRL |= USB_RXCSRL1_CLRDT;
+    if (flags & (USB_EP_HOST_OUT | USB_EP_DEV_IN))
+        USB0->CSR[ep_idx - 1].TXxCSRL |= USB_TXCSRL1_CLRDT;
+    else
+        USB0->CSR[ep_idx - 1].RXxCSRL |= USB_RXCSRL1_CLRDT;
 }
 
 /**
@@ -876,7 +876,7 @@ void ald_usb_ep_data_toggle_clear(uint32_t ep_idx, uint32_t flags)
   */
 void ald_usb_ep_req_packet_count(uint32_t ep_idx, uint32_t count)
 {
-	USB0->EP_RQPKTCOUNT[ep_idx - 1] = count;
+    USB0->EP_RQPKTCOUNT[ep_idx - 1] = count;
 }
 
 /**
@@ -886,20 +886,20 @@ void ald_usb_ep_req_packet_count(uint32_t ep_idx, uint32_t count)
   */
 uint32_t ald_usb_ep_status(uint32_t ep_idx)
 {
-	uint32_t status;
+    uint32_t status;
 
-	if (ep_idx == USB_EP_0) {
-		status  = USB0->CSR0L;
-		status |= (USB0->CSR0H) << USB_RX_EPSTATUS_SHIFT;
-	}
-	else {
-		status  = USB0->CSR[ep_idx - 1].TXxCSRL;
-		status |= USB0->CSR[ep_idx - 1].TXxCSRH << 8;
-		status |= USB0->CSR[ep_idx - 1].RXxCSRL << 16;
-		status |= USB0->CSR[ep_idx - 1].RXxCSRH << 24;
-	}
+    if (ep_idx == USB_EP_0) {
+        status  = USB0->CSR0L;
+        status |= (USB0->CSR0H) << USB_RX_EPSTATUS_SHIFT;
+    }
+    else {
+        status  = USB0->CSR[ep_idx - 1].TXxCSRL;
+        status |= USB0->CSR[ep_idx - 1].TXxCSRH << 8;
+        status |= USB0->CSR[ep_idx - 1].RXxCSRL << 16;
+        status |= USB0->CSR[ep_idx - 1].RXxCSRH << 24;
+    }
 
-	return status;
+    return status;
 }
 
 /**
@@ -911,41 +911,41 @@ uint32_t ald_usb_ep_status(uint32_t ep_idx)
   */
 void ald_usb_ep_dma_config(uint32_t ep_idx, uint32_t flag, type_func_t en)
 {
-	if (ep_idx == USB_EP_0)
-		return;
+    if (ep_idx == USB_EP_0)
+        return;
 
-	if (en) {
-		switch (flag) {
-		case USB_DMA_EP_CFG_TX:
-			USB0->CSR[ep_idx - 1].TXxCSRH |= USB_DMA_EP_TX_MSK;
-			break;
-		case USB_DMA_EP_CFG_RX_DEV:
-			USB0->CSR[ep_idx - 1].RXxCSRH |= USB_DMA_EP_RX_DEV_MSK;
-			break;
-		case USB_DMA_EP_CFG_RX_HOST:
-			USB0->CSR[ep_idx - 1].RXxCSRH |= USB_DMA_EP_RX_HOST_MSK;
-			break;
-		default:
-			break;
-		}
-	}
-	else {
-		switch (flag) {
-		case USB_DMA_EP_CFG_TX:
-			USB0->CSR[ep_idx - 1].TXxCSRH &= ~(USB_DMA_EP_TX_MSK);
-			break;
-		case USB_DMA_EP_CFG_RX_DEV:
-			USB0->CSR[ep_idx - 1].RXxCSRH &= ~(USB_DMA_EP_RX_DEV_MSK);
-			break;
-		case USB_DMA_EP_CFG_RX_HOST:
-			USB0->CSR[ep_idx - 1].RXxCSRH &= ~(USB_DMA_EP_RX_HOST_MSK);
-			break;
-		default:
-			break;
-		}
-	}
+    if (en) {
+        switch (flag) {
+        case USB_DMA_EP_CFG_TX:
+            USB0->CSR[ep_idx - 1].TXxCSRH |= USB_DMA_EP_TX_MSK;
+            break;
+        case USB_DMA_EP_CFG_RX_DEV:
+            USB0->CSR[ep_idx - 1].RXxCSRH |= USB_DMA_EP_RX_DEV_MSK;
+            break;
+        case USB_DMA_EP_CFG_RX_HOST:
+            USB0->CSR[ep_idx - 1].RXxCSRH |= USB_DMA_EP_RX_HOST_MSK;
+            break;
+        default:
+            break;
+        }
+    }
+    else {
+        switch (flag) {
+        case USB_DMA_EP_CFG_TX:
+            USB0->CSR[ep_idx - 1].TXxCSRH &= ~(USB_DMA_EP_TX_MSK);
+            break;
+        case USB_DMA_EP_CFG_RX_DEV:
+            USB0->CSR[ep_idx - 1].RXxCSRH &= ~(USB_DMA_EP_RX_DEV_MSK);
+            break;
+        case USB_DMA_EP_CFG_RX_HOST:
+            USB0->CSR[ep_idx - 1].RXxCSRH &= ~(USB_DMA_EP_RX_HOST_MSK);
+            break;
+        default:
+            break;
+        }
+    }
 
-	return;
+    return;
 }
 /**
   * @}
@@ -962,7 +962,7 @@ void ald_usb_ep_dma_config(uint32_t ep_idx, uint32_t flag, type_func_t en)
   */
 uint32_t ald_usb_fifo_addr_get(uint32_t ep_idx)
 {
-	return (uint32_t)&USB0->FIFO[ep_idx].Word;
+    return (uint32_t)&USB0->FIFO[ep_idx].Word;
 }
 
 /**
@@ -975,21 +975,21 @@ uint32_t ald_usb_fifo_addr_get(uint32_t ep_idx)
   */
 void ald_usb_fifo_config_get(uint32_t ep_idx, uint32_t *addr, uint32_t *size, uint32_t flags)
 {
-	uint32_t tmp = USB0->INDEX;
+    uint32_t tmp = USB0->INDEX;
 
-	USB0->INDEX = ep_idx;
+    USB0->INDEX = ep_idx;
 
-	if (flags & (USB_EP_HOST_OUT | USB_EP_DEV_IN)) {
-		*addr = (USB0->TXFIFOADD << 3);
-		*size = (USB0->TXFIFOSIZE & 0xF);
-	}
-	else {
-		*addr = (USB0->RXFIFOADD << 3);
-		*size = (USB0->RXFIFOSIZE & 0xF);
-	}
+    if (flags & (USB_EP_HOST_OUT | USB_EP_DEV_IN)) {
+        *addr = (USB0->TXFIFOADD << 3);
+        *size = (USB0->TXFIFOSIZE & 0xF);
+    }
+    else {
+        *addr = (USB0->RXFIFOADD << 3);
+        *size = (USB0->RXFIFOSIZE & 0xF);
+    }
 
-	USB0->INDEX = tmp;
-	return;
+    USB0->INDEX = tmp;
+    return;
 }
 
 /**
@@ -1002,21 +1002,21 @@ void ald_usb_fifo_config_get(uint32_t ep_idx, uint32_t *addr, uint32_t *size, ui
   */
 void ald_usb_fifo_config_set(uint32_t ep_idx, uint32_t addr, uint32_t size, uint32_t flags)
 {
-	uint32_t tmp = USB0->INDEX;
+    uint32_t tmp = USB0->INDEX;
 
-	USB0->INDEX = ep_idx;
+    USB0->INDEX = ep_idx;
 
-	if (flags & (USB_EP_HOST_OUT | USB_EP_DEV_IN)) {
-		USB0->TXFIFOADD  = (addr >> 3);
-		USB0->TXFIFOSIZE = (size & 0xF);
-	}
-	else {
-		USB0->RXFIFOADD  = (addr >> 3);
-		USB0->RXFIFOSIZE = (size & 0xF);
-	}
+    if (flags & (USB_EP_HOST_OUT | USB_EP_DEV_IN)) {
+        USB0->TXFIFOADD  = (addr >> 3);
+        USB0->TXFIFOSIZE = (size & 0xF);
+    }
+    else {
+        USB0->RXFIFOADD  = (addr >> 3);
+        USB0->RXFIFOSIZE = (size & 0xF);
+    }
 
-	USB0->INDEX = tmp;
-	return;
+    USB0->INDEX = tmp;
+    return;
 }
 
 /**
@@ -1027,20 +1027,20 @@ void ald_usb_fifo_config_set(uint32_t ep_idx, uint32_t addr, uint32_t size, uint
   */
 void ald_usb_fifo_flush(uint32_t ep_idx, uint32_t flags)
 {
-	if (ep_idx == USB_EP_0) {
-		if ((USB0->CSR0L & (USB_CSRL0_RXRDY | USB_CSRL0_TXRDY)) != 0)
-			USB0->CSR0H |= USB_CSRH0_FLUSH;
-	}
-	else {
-		if (flags & (USB_EP_HOST_OUT | USB_EP_DEV_IN)) {
-			if (USB0->CSR[ep_idx - 1].TXxCSRL & USB_TXCSRL1_TXRDY)
-				USB0->CSR[ep_idx - 1].TXxCSRL |= USB_TXCSRL1_FLUSH;
-		}
-		else {
-			if (USB0->CSR[ep_idx - 1].RXxCSRL & USB_RXCSRL1_RXRDY)
-				USB0->CSR[ep_idx - 1].RXxCSRL |= USB_RXCSRL1_FLUSH;
-		}
-	}
+    if (ep_idx == USB_EP_0) {
+        if ((USB0->CSR0L & (USB_CSRL0_RXRDY | USB_CSRL0_TXRDY)) != 0)
+            USB0->CSR0H |= USB_CSRH0_FLUSH;
+    }
+    else {
+        if (flags & (USB_EP_HOST_OUT | USB_EP_DEV_IN)) {
+            if (USB0->CSR[ep_idx - 1].TXxCSRL & USB_TXCSRL1_TXRDY)
+                USB0->CSR[ep_idx - 1].TXxCSRL |= USB_TXCSRL1_FLUSH;
+        }
+        else {
+            if (USB0->CSR[ep_idx - 1].RXxCSRL & USB_RXCSRL1_RXRDY)
+                USB0->CSR[ep_idx - 1].RXxCSRL |= USB_RXCSRL1_FLUSH;
+        }
+    }
 }
 /**
   * @}
@@ -1057,8 +1057,8 @@ void ald_usb_fifo_flush(uint32_t ep_idx, uint32_t flags)
   */
 void ald_usb_int_disable(uint32_t flags)
 {
-	if (flags & USB_INTCTRL_STATUS)
-		USB0->USBIE &= ~(flags & USB_INTCTRL_STATUS);
+    if (flags & USB_INTCTRL_STATUS)
+        USB0->USBIE &= ~(flags & USB_INTCTRL_STATUS);
 }
 
 /**
@@ -1068,8 +1068,8 @@ void ald_usb_int_disable(uint32_t flags)
   */
 void ald_usb_int_enable(uint32_t flags)
 {
-	if (flags & USB_INTCTRL_STATUS)
-		USB0->USBIE |= flags ;
+    if (flags & USB_INTCTRL_STATUS)
+        USB0->USBIE |= flags ;
 }
 
 /**
@@ -1078,7 +1078,7 @@ void ald_usb_int_enable(uint32_t flags)
   */
 uint32_t ald_usb_int_status_get(void)
 {
-	return USB0->USBIS;
+    return USB0->USBIS;
 }
 
 /**
@@ -1088,8 +1088,8 @@ uint32_t ald_usb_int_status_get(void)
   */
 void ald_usb_int_disable_ep(uint32_t flags)
 {
-	USB0->TXIE &= ~(flags & (USB_INTEP_HOST_OUT | USB_INTEP_DEV_IN | USB_INTEP_0));
-	USB0->RXIE &= ~((flags & (USB_INTEP_HOST_IN | USB_INTEP_DEV_OUT)) >> USB_INTEP_RX_SHIFT);
+    USB0->TXIE &= ~(flags & (USB_INTEP_HOST_OUT | USB_INTEP_DEV_IN | USB_INTEP_0));
+    USB0->RXIE &= ~((flags & (USB_INTEP_HOST_IN | USB_INTEP_DEV_OUT)) >> USB_INTEP_RX_SHIFT);
 }
 
 /**
@@ -1100,8 +1100,8 @@ void ald_usb_int_disable_ep(uint32_t flags)
 void ald_usb_int_enable_ep(uint32_t flags)
 {
 
-	USB0->TXIE |= flags & (USB_INTEP_HOST_OUT | USB_INTEP_DEV_IN | USB_INTEP_0);
-	USB0->RXIE |= ((flags & (USB_INTEP_HOST_IN | USB_INTEP_DEV_OUT)) >> USB_INTEP_RX_SHIFT);
+    USB0->TXIE |= flags & (USB_INTEP_HOST_OUT | USB_INTEP_DEV_IN | USB_INTEP_0);
+    USB0->RXIE |= ((flags & (USB_INTEP_HOST_IN | USB_INTEP_DEV_OUT)) >> USB_INTEP_RX_SHIFT);
 }
 
 /**
@@ -1110,12 +1110,12 @@ void ald_usb_int_enable_ep(uint32_t flags)
   */
 uint32_t ald_usb_int_status_ep_get(void)
 {
-	uint32_t status;
+    uint32_t status;
 
-	status = USB0->TXIS;
-	status |= (USB0->RXIS << USB_INTEP_RX_SHIFT);
+    status = USB0->TXIS;
+    status |= (USB0->RXIS << USB_INTEP_RX_SHIFT);
 
-	return status;
+    return status;
 }
 
 /**
@@ -1124,7 +1124,7 @@ uint32_t ald_usb_int_status_ep_get(void)
   */
 void ald_usb_int_register(void)
 {
-	ald_mcu_irq_config(USB_INT_IRQn, 2, 2, ENABLE);
+    ald_mcu_irq_config(USB_INT_IRQn, 2, 2, ENABLE);
 
 }
 
@@ -1134,7 +1134,7 @@ void ald_usb_int_register(void)
   */
 void ald_usb_int_unregister(void)
 {
-	ald_mcu_irq_config(USB_INT_IRQn, 2, 2, DISABLE);
+    ald_mcu_irq_config(USB_INT_IRQn, 2, 2, DISABLE);
 }
 
 /**
@@ -1143,7 +1143,7 @@ void ald_usb_int_unregister(void)
   */
 uint32_t ald_usb_int_num_get(void)
 {
-	return USB_INT_IRQn;
+    return USB_INT_IRQn;
 }
 /**
   * @}
@@ -1163,10 +1163,10 @@ uint32_t ald_usb_int_num_get(void)
   */
 void ald_usb_dma_channel_config(uint8_t ch, uint32_t addr, uint32_t count, uint32_t ctrl)
 {
-	USB0->DMA_CH[ch].DMA_ADDR  = addr;
-	USB0->DMA_CH[ch].DMA_COUNT = count;
-	USB0->DMA_CH[ch].DMA_CNTL  = ctrl;
-	return;
+    USB0->DMA_CH[ch].DMA_ADDR  = addr;
+    USB0->DMA_CH[ch].DMA_COUNT = count;
+    USB0->DMA_CH[ch].DMA_CNTL  = ctrl;
+    return;
 }
 
 /**
@@ -1176,8 +1176,8 @@ void ald_usb_dma_channel_config(uint8_t ch, uint32_t addr, uint32_t count, uint3
   */
 void ald_usb_dma_mult_recv_start(uint32_t ep_idx)
 {
-	USB0->CSR[ep_idx - 1].RXxCSRH &= ~(USB_RXCSRH1_DMAMOD);
-	return;
+    USB0->CSR[ep_idx - 1].RXxCSRH &= ~(USB_RXCSRH1_DMAMOD);
+    return;
 }
 
 
@@ -1188,8 +1188,8 @@ void ald_usb_dma_mult_recv_start(uint32_t ep_idx)
   */
 void ald_usb_dma_channel_start(uint8_t ch)
 {
-	USB0->DMA_CH[ch].DMA_CNTL |= 0x1;
-	return;
+    USB0->DMA_CH[ch].DMA_CNTL |= 0x1;
+    return;
 }
 
 /**
@@ -1199,8 +1199,8 @@ void ald_usb_dma_channel_start(uint8_t ch)
   */
 void ald_usb_dma_channel_stop(uint8_t ch)
 {
-	USB0->DMA_CH[ch].DMA_CNTL &= (uint32_t)(~0x1);
-	return;
+    USB0->DMA_CH[ch].DMA_CNTL &= (uint32_t)(~0x1);
+    return;
 }
 
 /**
@@ -1209,7 +1209,7 @@ void ald_usb_dma_channel_stop(uint8_t ch)
   */
 uint32_t ald_usb_dma_get_interrupt_flag(void)
 {
-	return USB0->DMA_INTR;
+    return USB0->DMA_INTR;
 }
 
 /**
@@ -1219,10 +1219,10 @@ uint32_t ald_usb_dma_get_interrupt_flag(void)
   */
 uint32_t ald_usb_dma_get_channel_error(uint8_t ch)
 {
-	if (USB0->DMA_CH[ch].DMA_CNTL & USB_DMA_CH_ERR_MSK)
-		return 1;
+    if (USB0->DMA_CH[ch].DMA_CNTL & USB_DMA_CH_ERR_MSK)
+        return 1;
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -1232,7 +1232,7 @@ uint32_t ald_usb_dma_get_channel_error(uint8_t ch)
   */
 void ald_usb_dma_clear_channel_error(uint8_t ch)
 {
-	USB0->DMA_CH[ch].DMA_CNTL &= ~(USB_DMA_CH_ERR_MSK);
+    USB0->DMA_CH[ch].DMA_CNTL &= ~(USB_DMA_CH_ERR_MSK);
 }
 /**
   * @}
@@ -1250,15 +1250,15 @@ void ald_usb_dma_clear_channel_error(uint8_t ch)
   */
 void ald_usb_host_lpm_send(uint32_t addr, uint32_t ep_idx)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	USB0->LPM_FADDR = addr;
+    USB0->LPM_FADDR = addr;
 
-	tmp = USB0->LPM_ATTR & ~(USB_LPMATTR_ENDPT_M);
-	tmp |= ep_idx << USB_LPMATTR_ENDPT_S;
+    tmp = USB0->LPM_ATTR & ~(USB_LPMATTR_ENDPT_M);
+    tmp |= ep_idx << USB_LPMATTR_ENDPT_S;
 
-	USB0->LPM_ATTR = tmp;
-	USB0->LPM_CNTRL |= USB_LPMCNTRL_LPMXMT;
+    USB0->LPM_ATTR = tmp;
+    USB0->LPM_CNTRL |= USB_LPMCNTRL_LPMXMT;
 }
 
 /**
@@ -1269,13 +1269,13 @@ void ald_usb_host_lpm_send(uint32_t addr, uint32_t ep_idx)
   */
 void ald_usb_host_lpm_config(uint32_t resume_time, uint32_t config)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	tmp  = USB0->LPM_ATTR;
-	tmp &= ~(USB_LPMATTR_HIRD_M);
-	tmp |= ((((resume_time - 50) / 75) & 0xF) << USB_LPMATTR_HIRD_S);
-	tmp |= config;
-	USB0->LPM_ATTR = tmp;
+    tmp  = USB0->LPM_ATTR;
+    tmp &= ~(USB_LPMATTR_HIRD_M);
+    tmp |= ((((resume_time - 50) / 75) & 0xF) << USB_LPMATTR_HIRD_S);
+    tmp |= config;
+    USB0->LPM_ATTR = tmp;
 }
 
 /**
@@ -1284,10 +1284,10 @@ void ald_usb_host_lpm_config(uint32_t resume_time, uint32_t config)
   */
 uint32_t ald_usb_lpm_remote_wake_is_enable(void)
 {
-	if (USB0->LPM_ATTR & USB_LPMATTR_RMTWAK)
-		return 1;
+    if (USB0->LPM_ATTR & USB_LPMATTR_RMTWAK)
+        return 1;
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -1296,7 +1296,7 @@ uint32_t ald_usb_lpm_remote_wake_is_enable(void)
   */
 void ald_usb_host_lpm_resume(void)
 {
-	USB0->LPM_CNTRL |= USB_LPMCNTRL_LPMRES;
+    USB0->LPM_CNTRL |= USB_LPMCNTRL_LPMRES;
 }
 
 /**
@@ -1305,7 +1305,7 @@ void ald_usb_host_lpm_resume(void)
   */
 void ald_usb_dev_lpm_remote_wake(void)
 {
-	USB0->LPM_CNTRL |= USB_LPMCNTRL_LPMRES;
+    USB0->LPM_CNTRL |= USB_LPMCNTRL_LPMRES;
 }
 
 /**
@@ -1314,7 +1314,7 @@ void ald_usb_dev_lpm_remote_wake(void)
   */
 void ald_usb_dev_lpm_config(uint32_t config)
 {
-	USB0->LPM_CNTRL = config;
+    USB0->LPM_CNTRL = config;
 }
 
 /**
@@ -1323,7 +1323,7 @@ void ald_usb_dev_lpm_config(uint32_t config)
   */
 void ald_usb_dev_lpm_enable(void)
 {
-	USB0->LPM_CNTRL |= (USB_LPMCNTRL_LPMXMT | USB_LPMCNTRL_ENABLE);
+    USB0->LPM_CNTRL |= (USB_LPMCNTRL_LPMXMT | USB_LPMCNTRL_ENABLE);
 }
 
 /**
@@ -1332,7 +1332,7 @@ void ald_usb_dev_lpm_enable(void)
   */
 void ald_usb_dev_lpm_disable(void)
 {
-	USB0->LPM_CNTRL &= ~(USB_LPMCNTRL_LPMXMT);
+    USB0->LPM_CNTRL &= ~(USB_LPMCNTRL_LPMXMT);
 }
 
 /**
@@ -1341,7 +1341,7 @@ void ald_usb_dev_lpm_disable(void)
   */
 uint32_t ald_usb_lpm_link_status_get(void)
 {
-	return (USB0->LPM_ATTR & USB_LPMATTR_LS_M);
+    return (USB0->LPM_ATTR & USB_LPMATTR_LS_M);
 }
 
 /**
@@ -1350,13 +1350,13 @@ uint32_t ald_usb_lpm_link_status_get(void)
   */
 uint32_t ald_usb_lpm_ep_get(void)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	tmp  = USB0->LPM_ATTR;
-	tmp &= USB_LPMATTR_ENDPT_M;
-	tmp  = tmp >> USB_LPMATTR_ENDPT_S;
+    tmp  = USB0->LPM_ATTR;
+    tmp &= USB_LPMATTR_ENDPT_M;
+    tmp  = tmp >> USB_LPMATTR_ENDPT_S;
 
-	return tmp;
+    return tmp;
 }
 
 /**
@@ -1365,7 +1365,7 @@ uint32_t ald_usb_lpm_ep_get(void)
   */
 uint32_t ald_usb_lpm_int_status_get(void)
 {
-	return USB0->LPM_INTR;
+    return USB0->LPM_INTR;
 }
 
 /**
@@ -1374,7 +1374,7 @@ uint32_t ald_usb_lpm_int_status_get(void)
   */
 void ald_usb_lpm_int_disable(uint32_t ints)
 {
-	USB0->LPM_INTREN &= ~ints;
+    USB0->LPM_INTREN &= ~ints;
 }
 
 /**
@@ -1383,7 +1383,7 @@ void ald_usb_lpm_int_disable(uint32_t ints)
   */
 void ald_usb_lpm_int_enable(uint32_t ints)
 {
-	USB0->LPM_INTREN |= ints;
+    USB0->LPM_INTREN |= ints;
 }
 /**
   * @}

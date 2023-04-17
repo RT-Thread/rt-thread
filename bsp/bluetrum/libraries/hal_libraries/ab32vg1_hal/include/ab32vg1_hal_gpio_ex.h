@@ -33,7 +33,7 @@
  * G1: tx:PA7 rx:PA6
  * G2: tx:PA4 rx:PA3
  * G3: tx:PF2 rx:map to tx
- * 
+ *
  * UART2:
  * G1: tx:PE3 rx:PE2
  * G2: tx:PB2 rx:PB1

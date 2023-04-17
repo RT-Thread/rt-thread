@@ -87,16 +87,16 @@
  *****************************************************************************
  ** \brief BGR 使能
  **
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 en_result_t Bgr_BgrEnable(void)
 {
     Sysctrl_SetPeripheralGate(SysctrlPeripheralAdcBgr, TRUE);
     M0P_BGR->CR_f.BGR_EN = TRUE;
-    
+
     delay10us(2);
-    
+
     return Ok;
 }
 
@@ -104,14 +104,14 @@ en_result_t Bgr_BgrEnable(void)
  *****************************************************************************
  ** \brief BGR 禁止
  **
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 en_result_t Bgr_BgrDisable(void)
 {
     Sysctrl_SetPeripheralGate(SysctrlPeripheralAdcBgr, TRUE);
     M0P_BGR->CR_f.BGR_EN = FALSE;
-    
+
     return Ok;
 }
 
@@ -119,16 +119,16 @@ en_result_t Bgr_BgrDisable(void)
  *****************************************************************************
  ** \brief BGR 温度传感器使能
  **
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 en_result_t Bgr_TempSensorEnable(void)
 {
     Sysctrl_SetPeripheralGate(SysctrlPeripheralAdcBgr, TRUE);
     M0P_BGR->CR_f.TS_EN = TRUE;
-    
+
     delay10us(2);
-    
+
     return Ok;
 }
 
@@ -136,14 +136,14 @@ en_result_t Bgr_TempSensorEnable(void)
  *****************************************************************************
  ** \brief BGR 温度传感器禁止
  **
- ** 
- ** \retval TRUE or FALSE                                      
+ **
+ ** \retval TRUE or FALSE
  *****************************************************************************/
 en_result_t Bgr_TempSensorDisable(void)
 {
     Sysctrl_SetPeripheralGate(SysctrlPeripheralAdcBgr, TRUE);
     M0P_BGR->CR_f.TS_EN = FALSE;
-    
+
     return Ok;
 }
 

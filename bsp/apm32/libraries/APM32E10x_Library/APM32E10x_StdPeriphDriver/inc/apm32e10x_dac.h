@@ -60,7 +60,7 @@ typedef enum
  */
 typedef enum
 {
-    DAC_TRIGGER_NONE       = 0x00000000,     
+    DAC_TRIGGER_NONE       = 0x00000000,
     DAC_TRIGGER_TMR6_TRGO  = 0x00000004,
     DAC_TRIGGER_TMR8_TRGO  = 0x0000000C,
     DAC_TRIGGER_TMR7_TRGO  = 0x00000014,

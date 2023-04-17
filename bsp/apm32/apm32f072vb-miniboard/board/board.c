@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-12-21     zylx         first version
  */
- 
+
 #include "board.h"
 
 void apm32_usart_init(void)
@@ -17,13 +17,13 @@ void apm32_usart_init(void)
 #ifdef BSP_USING_UART1
     RCM_EnableAHBPeriphClock(RCM_AHB_PERIPH_GPIOA);
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_USART1);
-    
+
     /* Connect PXx to USARTx_Tx */
     GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_9, GPIO_AF_PIN1);
-    
+
     /* Connect PXx to USARRX_Rx */
     GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_10, GPIO_AF_PIN1);
-    
+
     /* Configure USART Tx/Rx as alternate function push-pull */
     GPIO_ConfigStruct.mode = GPIO_MODE_AF;
     GPIO_ConfigStruct.pin = GPIO_PIN_9;
@@ -39,13 +39,13 @@ void apm32_usart_init(void)
 #ifdef BSP_USING_UART2
     RCM_EnableAHBPeriphClock(RCM_AHB_PERIPH_GPIOA);
     RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_USART2);
-    
+
     /* Connect PXx to USARTx_Tx */
     GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_2, GPIO_AF_PIN1);
-    
+
     /* Connect PXx to USARRX_Rx */
     GPIO_ConfigPinAF(GPIOA, GPIO_PIN_SOURCE_3, GPIO_AF_PIN1);
-    
+
     /* Configure USART Tx/Rx as alternate function push-pull */
     GPIO_ConfigStruct.mode = GPIO_MODE_AF;
     GPIO_ConfigStruct.pin = GPIO_PIN_2;
@@ -64,14 +64,14 @@ void apm32_msp_spi_init(void *Instance)
 #ifdef BSP_USING_SPI
     GPIO_Config_T GPIO_InitStructure;
     SPI_T *spi_x = (SPI_T *)Instance;
-    
+
     if(spi_x == SPI1)
     {
         /* Enable related Clock */
         RCM_EnableAHBPeriphClock(RCM_AHB_PERIPH_GPIOE);
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_SPI1);
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_SYSCFG);
-        
+
         /* Config SPI PinAF */
         GPIO_ConfigPinAF(GPIOE, GPIO_PIN_SOURCE_15, GPIO_AF_PIN1);
         GPIO_ConfigPinAF(GPIOE, GPIO_PIN_SOURCE_14, GPIO_AF_PIN1);
@@ -94,11 +94,11 @@ void apm32_msp_timer_init(void *Instance)
 #ifdef BSP_USING_PWM
     GPIO_Config_T gpio_config;
     TMR_T *tmr_x = (TMR_T *)Instance;
-    
+
     if (tmr_x == TMR3)
     {
         RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_TMR3);
-        
+
         /* TMR3 channel 1 gpio init */
         GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_6, GPIO_AF_PIN0);
         gpio_config.pin = GPIO_PIN_6;
@@ -107,17 +107,17 @@ void apm32_msp_timer_init(void *Instance)
         gpio_config.pupd = GPIO_PUPD_NO;
         gpio_config.speed = GPIO_SPEED_50MHz;
         GPIO_Config(GPIOC, &gpio_config);
-        
+
         /* TMR3 channel 2 gpio init */
         GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_7, GPIO_AF_PIN0);
         gpio_config.pin = GPIO_PIN_7;
         GPIO_Config(GPIOC, &gpio_config);
-        
+
         /* TMR3 channel 3 gpio init */
         GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_8, GPIO_AF_PIN0);
         gpio_config.pin = GPIO_PIN_8;
         GPIO_Config(GPIOC, &gpio_config);
-        
+
         /* TMR3 channel 4 gpio init */
         GPIO_ConfigPinAF(GPIOC, GPIO_PIN_SOURCE_9, GPIO_AF_PIN0);
         gpio_config.pin = GPIO_PIN_9;

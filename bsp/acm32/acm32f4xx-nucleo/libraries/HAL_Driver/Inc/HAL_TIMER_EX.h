@@ -1,14 +1,14 @@
 /***********************************************************************
  * Filename    : hal_timer_ex.h
  * Description : timer driver header file
- * Author(s)   : xwl  
+ * Author(s)   : xwl
  * version     : V1.0
  * Modify date : 2021-03-24
  ***********************************************************************/
 #ifndef __HAL_TIMER_EX_H__
-#define __HAL_TIMER_EX_H__  
+#define __HAL_TIMER_EX_H__
 
-#include "ACM32Fxx_HAL.h"     
+#include "ACM32Fxx_HAL.h"
 
 
 #define TIM_BDTR_DTG_Pos          (0U)
@@ -21,13 +21,13 @@
 #define TIM_BDTR_DTG_4            (0x10UL << TIM_BDTR_DTG_Pos)                 /*!< 0x00000010 */
 #define TIM_BDTR_DTG_5            (0x20UL << TIM_BDTR_DTG_Pos)                 /*!< 0x00000020 */
 #define TIM_BDTR_DTG_6            (0x40UL << TIM_BDTR_DTG_Pos)                 /*!< 0x00000040 */
-#define TIM_BDTR_DTG_7            (0x80UL << TIM_BDTR_DTG_Pos)    
+#define TIM_BDTR_DTG_7            (0x80UL << TIM_BDTR_DTG_Pos)
 
 #define TIM_BDTR_LOCK_Pos         (8U)
 #define TIM_BDTR_LOCK_Msk         (0x3UL << TIM_BDTR_LOCK_Pos)                 /*!< 0x00000300 */
 #define TIM_BDTR_LOCK             TIM_BDTR_LOCK_Msk                            /*!<LOCK[1:0] bits (Lock Configuration) */
 #define TIM_BDTR_LOCK_0           (0x1UL << TIM_BDTR_LOCK_Pos)                 /*!< 0x00000100 */
-#define TIM_BDTR_LOCK_1           (0x2UL << TIM_BDTR_LOCK_Pos)    
+#define TIM_BDTR_LOCK_1           (0x2UL << TIM_BDTR_LOCK_Pos)
 
 #define TIM_BDTR_OSSI_Pos         (10U)
 #define TIM_BDTR_OSSI_Msk         (0x1UL << TIM_BDTR_OSSI_Pos)                 /*!< 0x00000400 */
@@ -50,15 +50,15 @@
 
 #define TIM_BDTR_BKF_Pos          (16U)
 #define TIM_BDTR_BKF_Msk          (0xFUL << TIM_BDTR_BKF_Pos)                  /*!< 0x000F0000 */
-#define TIM_BDTR_BKF              TIM_BDTR_BKF_Msk       
+#define TIM_BDTR_BKF              TIM_BDTR_BKF_Msk
 
 #define TIM_BREAKINPUTSOURCE_BKIN     0x00000001U                               /* !< An external source (GPIO) is connected to the BKIN pin  */
-#ifdef HAL_COMP_MODULE_ENABLED  
+#ifdef HAL_COMP_MODULE_ENABLED
 #define TIM_BREAKINPUTSOURCE_COMP1    0x00000002U                               /* !< The COMP1 output is connected to the break input */
 #define TIM_BREAKINPUTSOURCE_COMP2    0x00000004U                               /* !< The COMP2 output is connected to the break input */
 #endif /* COMP1 && COMP2 */
 
-#define TIM_BREAKINPUT_BRK     0x00000001U     
+#define TIM_BREAKINPUT_BRK     0x00000001U
 
 #define TIM1_AF1_BKINE_Pos        (0U)
 #define TIM1_AF1_BKINE_Msk        (0x1UL << TIM1_AF1_BKINE_Pos)                /*!< 0x00000001 */
@@ -77,7 +77,7 @@
 #define TIM1_AF1_BKCMP1P          TIM1_AF1_BKCMP1P_Msk                         /*!<BRK COMP1 input polarity */
 #define TIM1_AF1_BKCMP2P_Pos      (11U)
 #define TIM1_AF1_BKCMP2P_Msk      (0x1UL << TIM1_AF1_BKCMP2P_Pos)              /*!< 0x00000800 */
-#define TIM1_AF1_BKCMP2P          TIM1_AF1_BKCMP2P_Msk  
+#define TIM1_AF1_BKCMP2P          TIM1_AF1_BKCMP2P_Msk
 
 
 typedef struct
@@ -89,8 +89,8 @@ typedef struct
   uint32_t BreakState;                // TIM Break State
   uint32_t BreakPolarity;             // TIM Break input polarity
   uint32_t BreakFilter;               // Specifies the break input filter.
-  uint32_t AutomaticOutput;           // TIM Automatic Output Enable state   
-} TIM_BreakDeadTimeConfigTypeDef;     
+  uint32_t AutomaticOutput;           // TIM Automatic Output Enable state
+} TIM_BreakDeadTimeConfigTypeDef;
 
 typedef struct
 {
@@ -118,10 +118,10 @@ TIMEx_BreakInputConfigTypeDef;
 #define TIM_TISEL_TI2SEL_0        (0x1UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000100 */
 #define TIM_TISEL_TI2SEL_1        (0x2UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000200 */
 #define TIM_TISEL_TI2SEL_2        (0x4UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000400 */
-#define TIM_TISEL_TI2SEL_3        (0x8UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000800 */    
+#define TIM_TISEL_TI2SEL_3        (0x8UL << TIM_TISEL_TI2SEL_Pos)              /*!< 0x00000800 */
 
 
-#endif  
+#endif
 
 
 

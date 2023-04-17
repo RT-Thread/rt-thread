@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -93,7 +93,7 @@ void adc_calibration_enable(void)
 }
 
 /*!
-    \brief      enable DMA request 
+    \brief      enable DMA request
     \param[in]  none
     \param[out] none
     \retval     none
@@ -104,7 +104,7 @@ void adc_dma_mode_enable(void)
 }
 
 /*!
-    \brief      disable DMA request 
+    \brief      disable DMA request
     \param[in]  none
     \param[out] none
     \retval     none
@@ -163,7 +163,7 @@ void adc_vbat_disable(void)
 }
 
 /*!
-    \brief      configure ADC discontinuous mode 
+    \brief      configure ADC discontinuous mode
     \param[in]  channel_group: select the channel group
                 only one parameter can be selected which is shown as below:
       \arg        ADC_REGULAR_CHANNEL: regular channel group
@@ -177,7 +177,7 @@ void adc_vbat_disable(void)
 void adc_discontinuous_mode_config(uint8_t channel_group, uint8_t length)
 {
     ADC_CTL0 &= ~((uint32_t)(ADC_CTL0_DISRC | ADC_CTL0_DISIC));
-    
+
     switch(channel_group){
     case ADC_REGULAR_CHANNEL:
         /* configure the number of conversions in discontinuous mode */
@@ -237,7 +237,7 @@ void adc_special_function_config(uint32_t function, ControlStatus newvalue)
 }
 
 /*!
-    \brief      configure ADC data alignment 
+    \brief      configure ADC data alignment
     \param[in]  data_alignment: data alignment select
                 only one parameter can be selected which is shown as below:
       \arg        ADC_DATAALIGN_RIGHT: right alignment
@@ -306,7 +306,7 @@ void adc_channel_length_config(uint8_t channel_group, uint32_t length)
 void adc_regular_channel_config(uint8_t rank, uint8_t channel, uint32_t sample_time)
 {
     uint32_t rsq,sampt;
-    
+
     /* configure ADC regular sequence */
     if(rank < 6U){
         rsq = ADC_RSQ2;
@@ -325,7 +325,7 @@ void adc_regular_channel_config(uint8_t rank, uint8_t channel, uint32_t sample_t
         ADC_RSQ0 = rsq;
     }else{
     }
-    
+
     /* configure ADC sampling time */
     if(channel < 10U){
         sampt = ADC_SAMPT1;
@@ -343,7 +343,7 @@ void adc_regular_channel_config(uint8_t rank, uint8_t channel, uint32_t sample_t
 }
 
 /*!
-    \brief      configure ADC inserted channel 
+    \brief      configure ADC inserted channel
     \param[in]  rank: the inserted group sequencer rank,this parameter must be between 0 to 3
     \param[in]  channel: the selected ADC channel
                 only one parameter can be selected which is shown as below:
@@ -367,7 +367,7 @@ void adc_inserted_channel_config(uint8_t rank, uint8_t channel, uint32_t sample_
     uint32_t isq,sampt;
 
     inserted_length = (uint8_t)GET_BITS(ADC_ISQ , 20U , 21U);
-  
+
     isq = ADC_ISQ;
     isq &= ~((uint32_t)(ADC_ISQ_ISQN << (15U - (inserted_length - rank)*5U)));
     isq |= ((uint32_t)channel << (15U - (inserted_length - rank)*5U));
@@ -408,7 +408,7 @@ void adc_inserted_channel_offset_config(uint8_t inserted_channel, uint16_t offse
 
     inserted_length = (uint8_t)GET_BITS(ADC_ISQ, 20U, 21U);
     num = 3U - (inserted_length - inserted_channel);
-    
+
     if(num <= 3U){
         /* calculate the offset of the register */
         num = num * 4U;
@@ -418,7 +418,7 @@ void adc_inserted_channel_offset_config(uint8_t inserted_channel, uint16_t offse
 }
 
 /*!
-    \brief      enable or disable ADC external trigger 
+    \brief      enable or disable ADC external trigger
     \param[in]  channel_group: select the channel group
                 one or more parameters can be selected which is shown as below:
       \arg        ADC_REGULAR_CHANNEL: regular channel group
@@ -451,7 +451,7 @@ void adc_external_trigger_config(uint8_t channel_group, ControlStatus newvalue)
 }
 
 /*!
-    \brief      configure ADC external trigger source 
+    \brief      configure ADC external trigger source
     \param[in]  channel_group: select the channel group
                 only one parameter can be selected which is shown as below:
       \arg        ADC_REGULAR_CHANNEL: regular channel group
@@ -459,28 +459,28 @@ void adc_external_trigger_config(uint8_t channel_group, ControlStatus newvalue)
     \param[in]  external_trigger_source: regular or inserted group trigger source
                 only one parameter can be selected which is shown as below:
                 for regular channel:
-      \arg        ADC_EXTTRIG_REGULAR_T0_CH0: TIMER0 CH0 event select 
-      \arg        ADC_EXTTRIG_REGULAR_T0_CH1: TIMER0 CH1 event select 
+      \arg        ADC_EXTTRIG_REGULAR_T0_CH0: TIMER0 CH0 event select
+      \arg        ADC_EXTTRIG_REGULAR_T0_CH1: TIMER0 CH1 event select
       \arg        ADC_EXTTRIG_REGULAR_T0_CH2: TIMER0 CH2 event select
       \arg        ADC_EXTTRIG_REGULAR_T1_CH1: TIMER1 CH1 event select
-      \arg        ADC_EXTTRIG_REGULAR_T2_TRGO: TIMER2 TRGO event select 
-      \arg        ADC_EXTTRIG_REGULAR_T14_CH0:  TIMER14 CH0 event select 
+      \arg        ADC_EXTTRIG_REGULAR_T2_TRGO: TIMER2 TRGO event select
+      \arg        ADC_EXTTRIG_REGULAR_T14_CH0:  TIMER14 CH0 event select
       \arg        ADC_EXTTRIG_REGULAR_EXTI_11: external interrupt line 11
       \arg        ADC_EXTTRIG_REGULAR_NONE: software trigger
                 for inserted channel:
       \arg        ADC_EXTTRIG_INSERTED_T0_TRGO: TIMER0 TRGO event select
-      \arg        ADC_EXTTRIG_INSERTED_T0_CH3: TIMER0 CH3 event select 
-      \arg        ADC_EXTTRIG_INSERTED_T1_TRGO: TIMER1 TRGO event select 
-      \arg        ADC_EXTTRIG_INSERTED_T1_CH0: TIMER1 CH0 event select 
-      \arg        ADC_EXTTRIG_INSERTED_T2_CH3: TIMER2 CH3 event select 
-      \arg        ADC_EXTTRIG_INSERTED_T14_TRGO: TIMER14 TRGO event select 
-      \arg        ADC_EXTTRIG_INSERTED_EXTI_15: external interrupt line 15 
+      \arg        ADC_EXTTRIG_INSERTED_T0_CH3: TIMER0 CH3 event select
+      \arg        ADC_EXTTRIG_INSERTED_T1_TRGO: TIMER1 TRGO event select
+      \arg        ADC_EXTTRIG_INSERTED_T1_CH0: TIMER1 CH0 event select
+      \arg        ADC_EXTTRIG_INSERTED_T2_CH3: TIMER2 CH3 event select
+      \arg        ADC_EXTTRIG_INSERTED_T14_TRGO: TIMER14 TRGO event select
+      \arg        ADC_EXTTRIG_INSERTED_EXTI_15: external interrupt line 15
       \arg        ADC_EXTTRIG_INSERTED_NONE: software trigger
     \param[out] none
     \retval     none
 */
 void adc_external_trigger_source_config(uint8_t channel_group, uint32_t external_trigger_source)
-{   
+{
     switch(channel_group){
     case ADC_REGULAR_CHANNEL:
         /* external trigger select for regular channel */
@@ -498,7 +498,7 @@ void adc_external_trigger_source_config(uint8_t channel_group, uint32_t external
 }
 
 /*!
-    \brief      enable ADC software trigger 
+    \brief      enable ADC software trigger
     \param[in]  channel_group: select the channel group
                 one or more parameters can be selected which is shown as below:
       \arg        ADC_REGULAR_CHANNEL: regular channel group
@@ -519,7 +519,7 @@ void adc_software_trigger_enable(uint8_t channel_group)
 }
 
 /*!
-    \brief      read ADC regular group data register 
+    \brief      read ADC regular group data register
     \param[in]  none
     \param[out] none
     \retval     the conversion value
@@ -530,7 +530,7 @@ uint16_t adc_regular_data_read(void)
 }
 
 /*!
-    \brief      read ADC inserted group data register 
+    \brief      read ADC inserted group data register
     \param[in]  inserted_channel: inserted channel select
                 only one parameter can be selected which is shown as below:
       \arg        ADC_INSERTED_CHANNEL_0: ADC inserted channel 0
@@ -579,7 +579,7 @@ uint16_t adc_inserted_data_read(uint8_t inserted_channel)
 FlagStatus adc_flag_get(uint32_t flag)
 {
     FlagStatus reval = RESET;
-    
+
     if(ADC_STAT & flag){
         reval = SET;
     }
@@ -587,8 +587,8 @@ FlagStatus adc_flag_get(uint32_t flag)
 }
 
 /*!
-    \brief      clear the ADC flag 
-    \param[in]  flag: the adc flag 
+    \brief      clear the ADC flag
+    \param[in]  flag: the adc flag
                 one or more parameters can be selected which is shown as below:
       \arg        ADC_FLAG_WDE: analog watchdog event flag
       \arg        ADC_FLAG_EOC: end of group conversion flag
@@ -660,12 +660,12 @@ void adc_interrupt_flag_clear(uint32_t flag)
 }
 
 /*!
-    \brief      enable ADC interrupt 
+    \brief      enable ADC interrupt
     \param[in]  interrupt: the adc interrupt
                 one or more parameters can be selected which is shown as below:
-      \arg        ADC_INT_WDE: analog watchdog interrupt 
-      \arg        ADC_INT_EOC: end of group conversion interrupt 
-      \arg        ADC_INT_EOIC: end of inserted group conversion interrupt 
+      \arg        ADC_INT_WDE: analog watchdog interrupt
+      \arg        ADC_INT_EOC: end of group conversion interrupt
+      \arg        ADC_INT_EOIC: end of inserted group conversion interrupt
     \param[out] none
     \retval     none
 */
@@ -674,12 +674,12 @@ void adc_interrupt_enable(uint32_t interrupt)
     /* enable analog watchdog interrupt */
     if(RESET != (interrupt & ADC_INT_WDE)){
         ADC_CTL0 |= (uint32_t)ADC_CTL0_WDEIE;
-    }  
+    }
 
     /* enable end of group conversion interrupt */
     if(RESET != (interrupt & ADC_INT_EOC)){
         ADC_CTL0 |= (uint32_t)ADC_CTL0_EOCIE;
-    }  
+    }
 
     /* enable end of inserted group conversion interrupt */
     if(RESET != (interrupt & ADC_INT_EOIC)){
@@ -688,27 +688,27 @@ void adc_interrupt_enable(uint32_t interrupt)
 }
 
 /*!
-    \brief      disable ADC interrupt 
+    \brief      disable ADC interrupt
     \param[in]  interrupt: the adc interrupt flag
                 one or more parameters can be selected which is shown as below:
-      \arg        ADC_INT_WDE: analog watchdog interrupt 
-      \arg        ADC_INT_EOC: end of group conversion interrupt 
-      \arg        ADC_INT_EOIC: end of inserted group conversion interrupt 
+      \arg        ADC_INT_WDE: analog watchdog interrupt
+      \arg        ADC_INT_EOC: end of group conversion interrupt
+      \arg        ADC_INT_EOIC: end of inserted group conversion interrupt
     \param[out] none
     \retval     none
 */
 void adc_interrupt_disable(uint32_t interrupt)
-{  
+{
     /* disable analog watchdog interrupt */
     if(RESET != (interrupt & ADC_INT_WDE)){
         ADC_CTL0 &= ~(uint32_t)ADC_CTL0_WDEIE;
     }
-    
+
     /* disable end of group conversion interrupt */
     if(RESET != (interrupt & ADC_INT_EOC)){
         ADC_CTL0 &= ~(uint32_t)ADC_CTL0_EOCIE;
     }
-    
+
     /* disable end of inserted group conversion interrupt */
     if(RESET != (interrupt & ADC_INT_EOIC)){
         ADC_CTL0 &= ~(uint32_t)ADC_CTL0_EOICIE;
@@ -716,7 +716,7 @@ void adc_interrupt_disable(uint32_t interrupt)
 }
 
 /*!
-    \brief      configure ADC analog watchdog single channel 
+    \brief      configure ADC analog watchdog single channel
     \param[in]  channel: the selected ADC channel
                 only one parameter can be selected which is shown as below:
       \arg        ADC_CHANNEL_x(x=0..18): ADC Channelx
@@ -732,7 +732,7 @@ void adc_watchdog_single_channel_enable(uint8_t channel)
 }
 
 /*!
-    \brief      configure ADC analog watchdog group channel 
+    \brief      configure ADC analog watchdog group channel
     \param[in]  channel_group: the channel group use analog watchdog
                 only one parameter can be selected which is shown as below:
       \arg        ADC_REGULAR_CHANNEL: regular channel group
@@ -762,7 +762,7 @@ void adc_watchdog_group_channel_enable(uint8_t channel_group)
 }
 
 /*!
-    \brief      disable ADC analog watchdog 
+    \brief      disable ADC analog watchdog
     \param[in]  none
     \param[out] none
     \retval     none
@@ -773,7 +773,7 @@ void adc_watchdog_disable(void)
 }
 
 /*!
-    \brief      configure ADC analog watchdog threshold 
+    \brief      configure ADC analog watchdog threshold
     \param[in]  low_threshold: analog watchdog low threshold,0..4095
     \param[in]  high_threshold: analog watchdog high threshold,0..4095
     \param[out] none
@@ -786,7 +786,7 @@ void adc_watchdog_threshold_config(uint16_t low_threshold, uint16_t high_thresho
 }
 
 /*!
-    \brief      configure ADC resolution 
+    \brief      configure ADC resolution
     \param[in]  resolution: ADC resolution
                 only one parameter can be selected which is shown as below:
       \arg        ADC_RESOLUTION_12B: 12-bit ADC resolution
@@ -803,7 +803,7 @@ void adc_resolution_config(uint32_t resolution)
 }
 
 /*!
-    \brief      configure ADC oversample mode 
+    \brief      configure ADC oversample mode
     \param[in]  mode: ADC oversampling mode
                 only one parameter can be selected which is shown as below:
       \arg        ADC_OVERSAMPLING_ALL_CONVERT: all oversampled conversions for a channel are done consecutively after a trigger
@@ -840,14 +840,14 @@ void adc_oversample_mode_config(uint8_t mode, uint16_t shift, uint8_t ratio)
     }else{
         ADC_OVSAMPCTL &= ~((uint32_t)ADC_OVSAMPCTL_TOVS);
     }
-    
+
     /* configure the shift and ratio */
     ADC_OVSAMPCTL &= ~((uint32_t)(ADC_OVSAMPCTL_OVSR | ADC_OVSAMPCTL_OVSS));
     ADC_OVSAMPCTL |= ((uint32_t)shift | (uint32_t)ratio);
 }
 
 /*!
-    \brief      enable ADC oversample mode 
+    \brief      enable ADC oversample mode
     \param[in]  none
     \param[out] none
     \retval     none
@@ -858,7 +858,7 @@ void adc_oversample_mode_enable(void)
 }
 
 /*!
-    \brief      disable ADC oversample mode 
+    \brief      disable ADC oversample mode
     \param[in]  none
     \param[out] none
     \retval     none

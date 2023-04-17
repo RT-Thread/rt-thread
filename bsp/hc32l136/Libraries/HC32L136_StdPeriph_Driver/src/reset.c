@@ -90,8 +90,8 @@
  *******************************************************************************
  ** \brief 获取复位源类型.
  **
- ** \param [out]  pstcOut  复位源类型列表     
- ** 
+ ** \param [out]  pstcOut  复位源类型列表
+ **
  ** \retval  Ok         操作成功
  **          其他       操作失败
  ******************************************************************************/
@@ -102,9 +102,9 @@ en_result_t Reset_GetCause(stc_reset_cause_t *pstcOut)
     {
         return ErrorInvalidParameter;
     }
-    
+
     u8val = M0P_RESET->RESET_FLAG;
-    
+
     *pstcOut = *((stc_reset_cause_t*)&u8val);
     return Ok;
 }
@@ -114,7 +114,7 @@ en_result_t Reset_GetCause(stc_reset_cause_t *pstcOut)
  ** \brief 清除复位源类型.
  **
  ** \param [in]  stcval  复位源类型列表,每种类型对应的比特位写“0”清除，写“1”无效
- ** 
+ **
  ** \retval  Ok         操作成功
  **          其他       操作失败
  ******************************************************************************/
@@ -133,7 +133,7 @@ en_result_t Reset_Clear(stc_reset_cause_t stcval)
  **
  ** \param [in]  enPeri  复位源类型列表
  ** \param [in]  bFlag   复位开关
- ** 
+ **
  ** \retval  Ok         操作成功
  **          其他       操作失败
  ******************************************************************************/
@@ -150,7 +150,7 @@ en_result_t Reset_SetPeripheralReset(en_reset_peripheral_t enPeri, boolean_t bFl
     {
         M0P_RESET->PREI_RESET &= ~(uint32_t)enPeri;
     }
-       
+
     return Ok;
 }
 

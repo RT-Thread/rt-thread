@@ -113,7 +113,7 @@ void exmc_norsram_init(exmc_norsram_parameter_struct* exmc_norsram_init_struct)
     snctl = EXMC_SNCTL(exmc_norsram_init_struct->norsram_region);
 
     /* clear relative bits */
-    snctl &= ((uint32_t)~(EXMC_SNCTL_NREN | EXMC_SNCTL_NRTP | EXMC_SNCTL_NRW | EXMC_SNCTL_NRWTPOL | 
+    snctl &= ((uint32_t)~(EXMC_SNCTL_NREN | EXMC_SNCTL_NRTP | EXMC_SNCTL_NRW | EXMC_SNCTL_NRWTPOL |
                           EXMC_SNCTL_WREN | EXMC_SNCTL_NRWTEN | EXMC_SNCTL_ASYNCWAIT | EXMC_SNCTL_NRMUX));
 
     snctl |= (uint32_t)(exmc_norsram_init_struct->address_data_mux << SNCTL_NRMUX_OFFSET) |

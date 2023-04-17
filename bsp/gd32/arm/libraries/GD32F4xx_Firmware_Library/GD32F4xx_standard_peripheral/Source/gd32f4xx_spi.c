@@ -544,7 +544,7 @@ void i2s_full_duplex_mode_config(uint32_t i2s_add_periph, uint32_t i2s_mode, uin
 /*!
     \brief      clear SPI/I2S format error flag status
     \param[in]  spi_periph: SPIx(x=0,1,2,3,4,5)
-    \param[in]  flag: SPI/I2S frame format error flag 
+    \param[in]  flag: SPI/I2S frame format error flag
       \arg        SPI_FLAG_FERR: only for SPI work in TI mode
       \arg        I2S_FLAG_FERR: for I2S
     \param[out] none

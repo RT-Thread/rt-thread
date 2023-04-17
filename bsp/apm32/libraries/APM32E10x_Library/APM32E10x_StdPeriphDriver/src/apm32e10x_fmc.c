@@ -277,9 +277,9 @@ FMC_STATUS_T FMC_ProgramWord(uint32_t address, uint32_t data)
         }
     }
 
-    
+
     __set_PRIMASK(0);
-    
+
 
     return status;
 }
@@ -301,9 +301,9 @@ FMC_STATUS_T FMC_ProgramHalfWord(uint32_t address, uint16_t data)
 {
     FMC_STATUS_T status = FMC_STATUS_COMPLETE;
 
-   
+
     __set_PRIMASK(1);
-   
+
 
     status = FMC_WaitForLastOperation(0x000B0000);
 
@@ -315,9 +315,9 @@ FMC_STATUS_T FMC_ProgramHalfWord(uint32_t address, uint16_t data)
         FMC->CTRL2_B.PG = BIT_RESET;
     }
 
-   
+
     __set_PRIMASK(0);
-   
+
 
     return status;
 }

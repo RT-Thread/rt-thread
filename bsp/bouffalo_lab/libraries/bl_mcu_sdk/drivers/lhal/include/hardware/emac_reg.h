@@ -175,7 +175,7 @@
 #define EMAC_TXPAUSERQ_SHIFT (16U)
 #define EMAC_TXPAUSERQ_MASK  (0x1 << EMAC_TXPAUSETV_SHIFT)
 
-/* 0x400 ：EAMC DMA BD DESC */
+/* 0x400 ï¼šEAMC DMA BD DESC */
 /* EMAC TX BD DESC BASE: (TX_BD_NUM * 8) */
 #define EMAC_BD_TX_CS_SHIFT   (0) /*!< Carrier Sense Lost */
 #define EMAC_BD_TX_CS_MASK    (1 << EMAC_BD_TX_CS_SHIFT)

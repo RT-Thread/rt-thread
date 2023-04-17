@@ -1,6 +1,6 @@
 /*!
     \file  gd32f3x0_rtc.h
-    \brief definitions for the RTC 
+    \brief definitions for the RTC
 
     \version 2017-06-06, V1.0.0, firmware for GD32F3x0
     \version 2019-06-01, V2.0.0, firmware for GD32F3x0
@@ -9,27 +9,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -256,7 +256,7 @@ typedef struct
     ControlStatus rtc_tamper_precharge_enable;                                         /*!< RTC tamper precharge feature during a voltage level detection */
     uint32_t rtc_tamper_precharge_time;                                                /*!< RTC tamper precharge duration if precharge feature is enabled */
     ControlStatus rtc_tamper_with_timestamp;                                           /*!< RTC tamper time-stamp feature */
-}rtc_tamper_struct; 
+}rtc_tamper_struct;
 
 /* time register value */
 #define TIME_SC(regval)                    (BITS(0,6) & ((uint32_t)(regval) << 0U))     /*!< write value to RTC_TIME_SC bit field */
@@ -318,7 +318,7 @@ typedef struct
 
 #define RTC_TIMESTAMP_RISING_EDGE          ((uint32_t)0x00000000U)                     /*!< rising edge is valid event edge for time-stamp event */
 #define RTC_TIMESTAMP_FALLING_EDGE         RTC_CTL_TSEG                                /*!< falling edge is valid event edge for time-stamp event */
- 
+
 /* psc register value */
 #define PSC_FACTOR_S(regval)               (BITS(0,14) & ((uint32_t)(regval) << 0U))    /*!< write value to RTC_PSC_FACTOR_S bit field */
 #define GET_PSC_FACTOR_S(regval)           GET_BITS((regval),0,14)                     /*!< get value of RTC_PSC_FACTOR_S bit field */

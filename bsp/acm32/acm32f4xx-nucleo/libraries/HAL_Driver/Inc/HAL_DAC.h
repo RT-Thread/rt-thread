@@ -14,7 +14,7 @@
 /**
   * @}
   */
-	
+
 /******************************************************************************/
 /*                    Peripheral Registers Bits Definition                    */
 /******************************************************************************/
@@ -293,7 +293,7 @@ typedef struct
 
   uint32_t DAC_OutputBuffer;             /*!< Specifies whether the DAC channel output buffer is enabled or disabled.
                                                This parameter can be a value of @ref DAC_output_buffer */
-  
+
 
   uint32_t DAC_ConnectOnChipPeripheral ; /*!< Specifies whether the DAC output is connected or not to on chip peripheral .
                                               This parameter can be a value of @ref DAC_ConnectOnChipPeripheral */
@@ -313,14 +313,14 @@ typedef struct
 /**
   * @brief  CAN handle Structure definition
   */
-typedef struct 
+typedef struct
 {
   DAC_TypeDef                 *Instance;     /*!< Register base address             */
-    
+
   DMA_HandleTypeDef           *DMA_Handle1;  /*!< Pointer DMA handler for channel 1 */
 
   DMA_HandleTypeDef           *DMA_Handle2;  /*!< Pointer DMA handler for channel 2 */
-    
+
 
 } DAC_HandleTypeDef;
 
@@ -337,7 +337,7 @@ typedef struct
 #define IS_DAC_REFRESHTIME(TIME)                 ((TIME) <= 0x000000FFU)
 
 
-/** @defgroup DAC_CHANNEL 
+/** @defgroup DAC_CHANNEL
   * @{
   */
 
@@ -351,17 +351,17 @@ typedef struct
   * @}
   */
 
-  /** @defgroup DAC_trigger 
+  /** @defgroup DAC_trigger
   * @{
-  */                                             
-#define DAC_TRIGGER_T6_TRGO          (0x00000000U| DAC_CR_TEN1)      
-#define DAC_TRIGGER_T3_TRGO         ( DAC_CR_TSEL1_0| DAC_CR_TEN1)  
-#define DAC_TRIGGER_T7_TRGO         ( DAC_CR_TSEL1_1| DAC_CR_TEN1 )  
-#define DAC_TRIGGER_T15_TRGO        ( DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0| DAC_CR_TEN1) 
-#define DAC_TRIGGER_T2_TRGO         ( DAC_CR_TSEL1_2 | DAC_CR_TEN1)   
-#define DAC_TRIGGER_T1_TRGO         ( DAC_CR_TSEL1_2  | DAC_CR_TSEL1_0| DAC_CR_TEN1)   
-#define DAC_TRIGGER_EXT_IT9         ( DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1| DAC_CR_TEN1 )   
-#define DAC_TRIGGER_SOFTWARE        ( DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0| DAC_CR_TEN1)   
+  */
+#define DAC_TRIGGER_T6_TRGO          (0x00000000U| DAC_CR_TEN1)
+#define DAC_TRIGGER_T3_TRGO         ( DAC_CR_TSEL1_0| DAC_CR_TEN1)
+#define DAC_TRIGGER_T7_TRGO         ( DAC_CR_TSEL1_1| DAC_CR_TEN1 )
+#define DAC_TRIGGER_T15_TRGO        ( DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0| DAC_CR_TEN1)
+#define DAC_TRIGGER_T2_TRGO         ( DAC_CR_TSEL1_2 | DAC_CR_TEN1)
+#define DAC_TRIGGER_T1_TRGO         ( DAC_CR_TSEL1_2  | DAC_CR_TSEL1_0| DAC_CR_TEN1)
+#define DAC_TRIGGER_EXT_IT9         ( DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1| DAC_CR_TEN1 )
+#define DAC_TRIGGER_SOFTWARE        ( DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0| DAC_CR_TEN1)
 #define IS_DAC_TRIGGER(TRIGGER)     (((TRIGGER) == DAC_TRIGGER_T6_TRGO) || \
                                     ((TRIGGER) == DAC_TRIGGER_T3_TRGO) || \
                                     ((TRIGGER) == DAC_TRIGGER_T7_TRGO) || \
@@ -373,8 +373,8 @@ typedef struct
 /**
   * @}
   */
-  
-/** @defgroup DAC_wave_generation 
+
+/** @defgroup DAC_wave_generation
   * @{
   */
 
@@ -442,7 +442,7 @@ typedef struct
 /**
   * @}
   */
-  
+
   /** @defgroup DAC_MODE
   * @{
   */
@@ -467,7 +467,7 @@ typedef struct
 /**
   * @}
   */
-  
+
   /** @defgroup DAC_SampleAndHold DAC power mode
   * @{
   */
@@ -479,7 +479,7 @@ typedef struct
   * @}
   */
 
-                                    
+
   /** @defgroup DAC_UserTrimming DAC User Trimming
 * @{
 */
@@ -492,8 +492,8 @@ typedef struct
 /**
   * @}
   */
-  
-  /** @defgroup DAC_Calibration 
+
+  /** @defgroup DAC_Calibration
   * @{
   */
 
@@ -501,8 +501,8 @@ typedef struct
 #define DAC_Calibration_Enable                   0x00000001U
 #define IS_DAC_Calibration(Calibration)         (((Calibration) == DAC_Calibration_Disable) || \
                                                 ((Calibration) == DAC_Calibration_Enable))
-                                    
-#define IS_DAC_Calibration_TRIM(TRIM)            ((TRIM) <= 0x1FU)                                  
+
+#define IS_DAC_Calibration_TRIM(TRIM)            ((TRIM) <= 0x1FU)
 /**
   * @}
   */
@@ -522,12 +522,12 @@ typedef struct
 #define DAC_CHIPCONNECT_DISABLE    0x00000000U
 #define DAC_CHIPCONNECT_ENABLE     (DAC_MCR_MODE1_0)
 #define IS_DAC_CHIP_CONNECTION(CONNECT) (((CONNECT) == DAC_CHIPCONNECT_DISABLE) || \
-                                         ((CONNECT) == DAC_CHIPCONNECT_ENABLE))     
+                                         ((CONNECT) == DAC_CHIPCONNECT_ENABLE))
 /**
   * @}
   */
-                          
-                                           
+
+
   /** @defgroup DAC_data_alignment DAC data alignment
   * @{
   */
@@ -548,22 +548,22 @@ typedef struct
 /**
   * @}
   */
-  
-  
-  
-  
+
+
+
+
 /* Initialization/de-initialization functions *********************************/
 void HAL_DAC_IRQHandler(DAC_HandleTypeDef *hdac);
 
 void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac);
 void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac);
 
-HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef *hdac);  
-HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac); 
+HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef *hdac);
+HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac);
 
 HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConfTypeDef* sConfig, uint32_t Channel);
 
-/* I/O operation functions ****************************************************/ 
+/* I/O operation functions ****************************************************/
 HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel);
 HAL_StatusTypeDef HAL_DAC_Stop(DAC_HandleTypeDef* hdac, uint32_t Channel);
 
@@ -579,11 +579,11 @@ uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef *hdac);
 
 HAL_StatusTypeDef HAL_DACEx_TriangleWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude);
 HAL_StatusTypeDef HAL_DACEx_NoiseWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude) ;
- 
- 
+
+
 HAL_StatusTypeDef HAL_DACEx_SelfCalibrate(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel);
 HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel, uint32_t NewTrimmingValue);
 uint32_t HAL_DACEx_GetTrimOffset(DAC_HandleTypeDef *hdac, uint32_t Channel);
 
- 
+
 #endif

@@ -35,8 +35,8 @@
 #define G2D_CLK_NUM 3
 
 #define G2DALIGN(value, align) ((align == 0) ? \
-				value : \
-				(((value) + ((align) - 1)) & ~((align) - 1)))
+                value : \
+                (((value) + ((align) - 1)) & ~((align) - 1)))
 
 
 
@@ -49,37 +49,37 @@ int i;
 };
 
 struct info_mem {
-	unsigned long phy_addr;
-	void *virt_addr;
-	__u32 b_used;
-	__u32 mem_len;
+    unsigned long phy_addr;
+    void *virt_addr;
+    __u32 b_used;
+    __u32 mem_len;
 };
 
 typedef struct {
-	__u32 io;
-	__u32 irq;
-	 hal_sem_t mutex;
-	bool opened;
-	__u32 user_cnt;
-	hal_clk_t clk[G2D_CLK_NUM];
-	hal_clk_t clk_parent;
-	struct reset_control *reset;
-	u32 clk_rate;
+    __u32 io;
+    __u32 irq;
+     hal_sem_t mutex;
+    bool opened;
+    __u32 user_cnt;
+    hal_clk_t clk[G2D_CLK_NUM];
+    hal_clk_t clk_parent;
+    struct reset_control *reset;
+    u32 clk_rate;
 } __g2d_info_t;
 
 typedef struct {
-	__u32 mid;
-	__u32 used;
-	__u32 status;
-	hal_sem_t queue_sem;
-	__u32 finish_flag;
+    __u32 mid;
+    __u32 used;
+    __u32 status;
+    hal_sem_t queue_sem;
+    __u32 finish_flag;
 } __g2d_drv_t;
 
 struct g2d_alloc_struct {
-	__u32 address;
-	__u32 size;
-	__u32 u_size;
-	struct g2d_alloc_struct *next;
+    __u32 address;
+    __u32 size;
+    __u32 u_size;
+    struct g2d_alloc_struct *next;
 };
 
 /* g2d_format_attr - g2d format attribute
@@ -97,16 +97,16 @@ struct g2d_alloc_struct {
  * @trd_addr[out]: address for each plane of right eye buffer
  */
 struct g2d_format_attr {
-	g2d_fmt_enh format;
-	unsigned int bits;
-	unsigned int hor_rsample_u;
-	unsigned int hor_rsample_v;
-	unsigned int ver_rsample_u;
-	unsigned int ver_rsample_v;
-	unsigned int uvc;
-	unsigned int interleave;
-	unsigned int factor;
-	unsigned int div;
+    g2d_fmt_enh format;
+    unsigned int bits;
+    unsigned int hor_rsample_u;
+    unsigned int hor_rsample_v;
+    unsigned int ver_rsample_u;
+    unsigned int ver_rsample_v;
+    unsigned int uvc;
+    unsigned int interleave;
+    unsigned int factor;
+    unsigned int div;
 };
 
 

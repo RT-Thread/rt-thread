@@ -43,7 +43,7 @@
 /** \file rtc.h
  **
  ** Headerfile for RTC functions
- **  
+ **
  **
  ** History:
  **   - 2017-05-10   Cathy     First Version
@@ -84,9 +84,9 @@ extern "C"
  *****************************************************************************/
 typedef enum en_rtc_clk
 {
-    RtcClk32768   = 0u, ///<外部32.768k    
+    RtcClk32768   = 0u, ///<外部32.768k
     RtcClk32768_1 = 1u, ///<外部32.768k
-    RtcClk32      = 2u, ///<内部RC32   
+    RtcClk32      = 2u, ///<内部RC32
     RtcClk32_1    = 3u, ///<内部RC32
     RtcClkHxt128  = 4u, ///<外部晶振4M
     RtcClkHxt256  = 5u, ///<外部晶振8M
@@ -198,11 +198,11 @@ typedef enum en_rtc_status_irq
  *****************************************************************************/
 typedef struct stc_rtc_time
 {
-    uint8_t  u8Second;      ///<秒    
+    uint8_t  u8Second;      ///<秒
     uint8_t  u8Minute;      ///<分
     uint8_t  u8Hour;        ///<时
     uint8_t  u8DayOfWeek;   ///<周
-    uint8_t  u8Day;         ///<日    
+    uint8_t  u8Day;         ///<日
     uint8_t  u8Month;       ///<月
     uint8_t  u8Year;        ///<年
 } stc_rtc_time_t;
@@ -223,7 +223,7 @@ typedef enum en_rtc_func
  *****************************************************************************/
 typedef struct stc_rtc_irq_cb
 {
-    func_ptr_t               pfnAlarmIrqCb; ///<闹钟中断服务函数     
+    func_ptr_t               pfnAlarmIrqCb; ///<闹钟中断服务函数
     func_ptr_t               pfnTimerIrqCb; ///<周期中断服务函数
 }stc_rtc_irq_cb_t, stc_rtc_intern_cb_t;
 /**
@@ -237,7 +237,7 @@ typedef struct stc_rtc_config
     stc_rtc_cyc_sel_t*   pstcCycSel;   ///<周期配置
     stc_rtc_time_t*      pstcTimeDate; ///<时间日期初值配置
     stc_rtc_irq_cb_t*     pstcIrqCb;   ///<中断服务函数
-    boolean_t            bTouchNvic;   ///<NVIC中断配置                   
+    boolean_t            bTouchNvic;   ///<NVIC中断配置
 } stc_rtc_config_t;
 
 //rtc 计数时钟源选择
@@ -293,6 +293,6 @@ en_result_t Rtc_DeInit(void);
 #endif /* __RTC_H__ */
 /******************************************************************************
  * EOF (not truncated)
- *****************************************************************************/    
+ *****************************************************************************/
 
 

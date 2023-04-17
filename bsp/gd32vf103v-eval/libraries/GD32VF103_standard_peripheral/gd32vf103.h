@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -37,7 +37,7 @@ OF SUCH DAMAGE.
 
 #ifdef cplusplus
  extern "C" {
-#endif 
+#endif
 
  /* IO definitions (access restrictions to peripheral registers) */
  /**
@@ -63,7 +63,7 @@ OF SUCH DAMAGE.
 #endif /* high speed crystal oscillator startup timeout */
 
 /* define value of internal 8MHz RC oscillator (IRC8M) in Hz */
-#if !defined  (IRC8M_VALUE) 
+#if !defined  (IRC8M_VALUE)
 #define IRC8M_VALUE  ((uint32_t)8000000)
 #endif /* internal 8MHz RC oscillator value */
 
@@ -73,23 +73,23 @@ OF SUCH DAMAGE.
 #endif /* internal 8MHz RC oscillator startup timeout */
 
 /* define value of internal 40KHz RC oscillator(IRC40K) in Hz */
-#if !defined  (IRC40K_VALUE) 
+#if !defined  (IRC40K_VALUE)
 #define IRC40K_VALUE  ((uint32_t)40000)
 #endif /* internal 40KHz RC oscillator value */
 
 /* define value of low speed crystal oscillator (LXTAL)in Hz */
-#if !defined  (LXTAL_VALUE) 
+#if !defined  (LXTAL_VALUE)
 #define LXTAL_VALUE  ((uint32_t)32768)
 #endif /* low speed crystal oscillator value */
 
 /* define interrupt number */
 typedef enum IRQn
 {
-	CLIC_INT_RESERVED        	 = 0,      			/*!< RISC-V reserved		*/
-	CLIC_INT_SFT         		 = 3,				/*!< Software interrupt		*/
-	CLIC_INT_TMR         		 = 7,				/*!< CPU Timer interrupt	*/
-	CLIC_INT_BWEI        		 = 17,				/*!< Bus Error interrupt	*/
-	CLIC_INT_PMOVI       		 = 18,				/*!< Performance Monitor	*/
+    CLIC_INT_RESERVED            = 0,               /*!< RISC-V reserved        */
+    CLIC_INT_SFT                 = 3,               /*!< Software interrupt     */
+    CLIC_INT_TMR                 = 7,               /*!< CPU Timer interrupt    */
+    CLIC_INT_BWEI                = 17,              /*!< Bus Error interrupt    */
+    CLIC_INT_PMOVI               = 18,              /*!< Performance Monitor    */
 
     /* interruput numbers */
     WWDGT_IRQn                   = 19,      /*!< window watchDog timer interrupt                          */
@@ -156,7 +156,7 @@ typedef enum IRQn
     CAN1_EWMC_IRQn               = 85,     /*!< CAN1 EWMC interrupt                                      */
     USBFS_IRQn                   = 86,     /*!< USBFS global interrupt                                   */
 
-	ECLIC_NUM_INTERRUPTS
+    ECLIC_NUM_INTERRUPTS
 } IRQn_Type;
 
 /* includes */
@@ -174,7 +174,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 #define REG16(addr)                  (*(volatile uint16_t *)(uint32_t)(addr))
 #define REG8(addr)                   (*(volatile uint8_t *)(uint32_t)(addr))
 #define BIT(x)                       ((uint32_t)((uint32_t)0x01U<<(x)))
-#define BITS(start, end)             ((0xFFFFFFFFUL << (start)) & (0xFFFFFFFFUL >> (31U - (uint32_t)(end)))) 
+#define BITS(start, end)             ((0xFFFFFFFFUL << (start)) & (0xFFFFFFFFUL >> (31U - (uint32_t)(end))))
 #define GET_BITS(regval, start, end) (((regval) & BITS((start),(end))) >> (start))
 
 /* main flash and SRAM memory map */
@@ -219,7 +219,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 /* define marco USE_STDPERIPH_DRIVER */
 #if !defined  USE_STDPERIPH_DRIVER
 #define USE_STDPERIPH_DRIVER
-#endif 
+#endif
 #ifdef USE_STDPERIPH_DRIVER
 #include "gd32vf103_libopt.h"
 #endif /* USE_STDPERIPH_DRIVER */
@@ -227,4 +227,4 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 #ifdef cplusplus
 }
 #endif
-#endif 
+#endif

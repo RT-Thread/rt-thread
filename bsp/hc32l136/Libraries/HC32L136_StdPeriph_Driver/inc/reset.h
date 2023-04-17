@@ -43,7 +43,7 @@
 /** \file reset.h
  **
  ** Headerfile for reset functions
- **  
+ **
  **
  ** History:
  **   - 2018-04-21   Lux     First Version
@@ -93,29 +93,29 @@ typedef enum
     ResetLpUart0 = 0x00000004u,             ///< 低功耗串口0
     ResetLpUart1 = 0x00000008u,             ///< 低功耗串口1
     ResetI2c0    = 0x00000010u,             ///< I2C0
-    ResetI2c1    = 0x00000020u,             ///< I2C1    
-    ResetSpi0    = 0x00000040u,             ///< SPI0   
-    ResetSpi1    = 0x00000080u,             ///< SPI1   
+    ResetI2c1    = 0x00000020u,             ///< I2C1
+    ResetSpi0    = 0x00000040u,             ///< SPI0
+    ResetSpi1    = 0x00000080u,             ///< SPI1
     ResetBaseTim = 0x00000100u,             ///< BASETIM
-    ResetLpTim   = 0x00000200u,             ///< LPTIM  
-    ResetAdvTim  = 0x00000400u,             ///< ADVTIM 
-    ResetTim3    = 0x00000800u,             ///< TIM3   
-    ResetOpa     = 0x00002000u,             ///< OPA    
-    ResetPca     = 0x00004000u,             ///< PCA    
-    ResetAdc     = 0x00010000u,             ///< ADC    
-    ResetVc      = 0x00020000u,             ///< VC     
-    ResetRng     = 0x00040000u,             ///< RNG    
-    ResetPcnt    = 0x00080000u,             ///< PCNT   
-    ResetRtc     = 0x00100000u,             ///< RTC                    
-    ResetTrim    = 0x00200000u,             ///< TRIM                   
-    ResetLcd     = 0x00400000u,             ///< LCD                    
-    ResetTick    = 0x01000000u,             ///< TICK                   
-    ResetSwd     = 0x02000000u,             ///< SWD                    
-    ResetCrc     = 0x04000000u,             ///< CRC                    
-    ResetAes     = 0x08000000u,             ///< AES                    
-    ResetGpio    = 0x10000000u,             ///< GPIO                   
-    ResetDma     = 0x20000000u,             ///< DMA                    
-    ResetDiv     = 0x40000000u,             ///< DIV                    
+    ResetLpTim   = 0x00000200u,             ///< LPTIM
+    ResetAdvTim  = 0x00000400u,             ///< ADVTIM
+    ResetTim3    = 0x00000800u,             ///< TIM3
+    ResetOpa     = 0x00002000u,             ///< OPA
+    ResetPca     = 0x00004000u,             ///< PCA
+    ResetAdc     = 0x00010000u,             ///< ADC
+    ResetVc      = 0x00020000u,             ///< VC
+    ResetRng     = 0x00040000u,             ///< RNG
+    ResetPcnt    = 0x00080000u,             ///< PCNT
+    ResetRtc     = 0x00100000u,             ///< RTC
+    ResetTrim    = 0x00200000u,             ///< TRIM
+    ResetLcd     = 0x00400000u,             ///< LCD
+    ResetTick    = 0x01000000u,             ///< TICK
+    ResetSwd     = 0x02000000u,             ///< SWD
+    ResetCrc     = 0x04000000u,             ///< CRC
+    ResetAes     = 0x08000000u,             ///< AES
+    ResetGpio    = 0x10000000u,             ///< GPIO
+    ResetDma     = 0x20000000u,             ///< DMA
+    ResetDiv     = 0x40000000u,             ///< DIV
 }en_reset_peripheral_t;
 
 

@@ -31,44 +31,44 @@ struct g2d_mixer_task;
  * mixer frame
  */
 struct g2d_mixer_frame {
-	struct ovl_v_submodule *ovl_v;
-	struct ovl_u_submodule *ovl_u;
-	struct blender_submodule *bld;
-	struct scaler_submodule *scal;
-	struct wb_submodule *wb;
-	__u32 frame_id;
-	u8 *g2d_base;
-	struct dmabuf_item *src_item;
-	struct dmabuf_item *dst_item;
-	struct dmabuf_item *ptn_item;
-	struct dmabuf_item *mask_item;
-	__s32 (*destory)(struct g2d_mixer_frame *p_frame);
-	__s32 (*apply)(struct g2d_mixer_frame *p_frame,
-		     struct mixer_para *p_para);
-	__s32 (*frame_mem_setup)(struct g2d_mixer_frame *p_frame,
-				 struct mixer_para *p_para,
-				 struct g2d_mixer_task *p_task);
-	__u32 (*frame_get_reg_block_num)(struct g2d_mixer_frame *p_frame);
-	__u32 (*frame_get_rcq_mem_size)(struct g2d_mixer_frame *p_frame);
+    struct ovl_v_submodule *ovl_v;
+    struct ovl_u_submodule *ovl_u;
+    struct blender_submodule *bld;
+    struct scaler_submodule *scal;
+    struct wb_submodule *wb;
+    __u32 frame_id;
+    u8 *g2d_base;
+    struct dmabuf_item *src_item;
+    struct dmabuf_item *dst_item;
+    struct dmabuf_item *ptn_item;
+    struct dmabuf_item *mask_item;
+    __s32 (*destory)(struct g2d_mixer_frame *p_frame);
+    __s32 (*apply)(struct g2d_mixer_frame *p_frame,
+             struct mixer_para *p_para);
+    __s32 (*frame_mem_setup)(struct g2d_mixer_frame *p_frame,
+                 struct mixer_para *p_para,
+                 struct g2d_mixer_task *p_task);
+    __u32 (*frame_get_reg_block_num)(struct g2d_mixer_frame *p_frame);
+    __u32 (*frame_get_rcq_mem_size)(struct g2d_mixer_frame *p_frame);
 };
 
 /**
  * mixer task
  */
 struct g2d_mixer_task {
-	struct g2d_mixer_task *next;
-	int task_id;
-	__u32 frame_cnt;
-	bool en_split_mem;
-	struct g2d_mixer_frame *frame;
-	struct g2d_rcq_mem_info *p_rcq_info;
-	struct mixer_para *p_para;
-	__g2d_info_t *p_g2d_info;
-	__s32 (*mixer_mem_setup)(struct g2d_mixer_task *p_task,
-				 struct mixer_para *p_para);
-	__s32 (*apply)(struct g2d_mixer_task *p_task,
-		     struct mixer_para *p_para);
-	__s32 (*destory)(struct g2d_mixer_task *p_task);
+    struct g2d_mixer_task *next;
+    int task_id;
+    __u32 frame_cnt;
+    bool en_split_mem;
+    struct g2d_mixer_frame *frame;
+    struct g2d_rcq_mem_info *p_rcq_info;
+    struct mixer_para *p_para;
+    __g2d_info_t *p_g2d_info;
+    __s32 (*mixer_mem_setup)(struct g2d_mixer_task *p_task,
+                 struct mixer_para *p_para);
+    __s32 (*apply)(struct g2d_mixer_task *p_task,
+             struct mixer_para *p_para);
+    __s32 (*destory)(struct g2d_mixer_task *p_task);
 };
 
 
@@ -81,7 +81,7 @@ struct g2d_mixer_task {
  * @return     :0 if success, -1 else
  */
 __s32 mixer_task_process(__g2d_info_t *p_g2d_info, struct mixer_para *p_para,
-			 unsigned int frame_len);
+             unsigned int frame_len);
 
 /**
  * @name       :create_mixer_task
@@ -92,7 +92,7 @@ __s32 mixer_task_process(__g2d_info_t *p_g2d_info, struct mixer_para *p_para,
  * @return     :task_id >= 1, else fail
  */
 int create_mixer_task(__g2d_info_t *p_g2d_info, struct mixer_para *p_para,
-			 unsigned int frame_len);
+             unsigned int frame_len);
 
 /**
  * @name       :g2d_mixer_get_inst

@@ -1,43 +1,43 @@
 /*************************************************************************************
-* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.    
+* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Huada Semiconductor Co.,Ltd ("HDSC").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with HDSC 
-* components. This software is licensed by HDSC to be adapted only 
-* for use in systems utilizing HDSC components. HDSC shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein. HDSC is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with HDSC
+* components. This software is licensed by HDSC to be adapted only
+* for use in systems utilizing HDSC components. HDSC shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein. HDSC is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * Disclaimer:
 * HDSC MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.                        
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /******************************************************************************/
 /** \file rtc.c
@@ -81,7 +81,7 @@
                               Rtc_1H == (x)||\
                               Rtc_1Day == (x)||\
                               Rtc_1Mon == (x)||\
-                              Rtc_1Mon_1 == (x))  
+                              Rtc_1Mon_1 == (x))
 
 #define     IS_VALID_IRQ_SEL(x)      (RtcPrdf == (x) ||\
                                       RtcAlmf == (x))
@@ -196,10 +196,10 @@ boolean_t Rtc_GetHourMode(void)
  ******************************************************************************
  ** \brief  RTC闹钟中断设置
  **
- ** \param [in] pstcAlarmTime闹钟时间时、分、周 
+ ** \param [in] pstcAlarmTime闹钟时间时、分、周
  **
  ** \retval Ok  设置正常
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_SetAlarmTime(stc_rtc_alarmset_t* pstcAlarmTime)
 {
@@ -225,7 +225,7 @@ en_result_t Rtc_SetAlarmTime(stc_rtc_alarmset_t* pstcAlarmTime)
    // enRet = Check_BCD_Format(pstcAlarmTime->u8Week,0x00,0x06);
     if(enRet != Ok)
     {
-        return enRet; 
+        return enRet;
     }
     M0P_RTC->ALMHOUR = pstcAlarmTime->u8Hour;
     M0P_RTC->ALMMIN = pstcAlarmTime->u8Minute;
@@ -237,15 +237,15 @@ en_result_t Rtc_SetAlarmTime(stc_rtc_alarmset_t* pstcAlarmTime)
  ******************************************************************************
  ** \brief  RTC闹钟中断时间获取
  **
- ** \param [in] pstcAlarmTime闹钟时间时、分、周 
+ ** \param [in] pstcAlarmTime闹钟时间时、分、周
  **
  ** \retval Ok  设置正常
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_GetAlarmTime(stc_rtc_alarmset_t* pstcAlarmTime)
 {
     en_result_t enRet = Error;
-    ASSERT(NULL != pstcAlarmTime); 
+    ASSERT(NULL != pstcAlarmTime);
     pstcAlarmTime->u8Minute = M0P_RTC->ALMMIN;
     pstcAlarmTime->u8Hour = M0P_RTC->ALMHOUR;
     pstcAlarmTime->u8Week = M0P_RTC->ALMWEEK;
@@ -259,7 +259,7 @@ en_result_t Rtc_GetAlarmTime(stc_rtc_alarmset_t* pstcAlarmTime)
  ** \param [in] bmode 高精度和普通精度
  **
  ** \retval Ok  设置正常
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_Set1HzMode(boolean_t bMode)
 {
@@ -275,7 +275,7 @@ en_result_t Rtc_Set1HzMode(boolean_t bMode)
  ** \param [in] u16Cr 补偿值
  **
  ** \retval Ok  设置正常
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_SetCompCr(uint16_t u16Cr)
 {
@@ -387,7 +387,7 @@ uint8_t Rtc_CheckLeapYear(uint8_t u8year)
  ** \param [in] pu8Date日期
  **
  ** \retval week  周数
- ** 
+ **
  ******************************************************************************/
 uint8_t Rtc_CalWeek(uint8_t* pu8Date)
 {
@@ -409,12 +409,12 @@ uint8_t Rtc_CalWeek(uint8_t* pu8Date)
  ** \param [in] u8month月份，u8year年份
  **
  ** \retval u8day天数
- ** 
+ **
  ******************************************************************************/
 uint8_t Get_Month_Max_Day(uint8_t u8month, uint8_t u8year)
 {
     uint8_t u8day = 0;
-    
+
     u8day = Cnst_Month_Tbl[u8month - 1];
     if((u8month == 2) && ((u8year % 4) == 0))
     {
@@ -429,7 +429,7 @@ uint8_t Get_Month_Max_Day(uint8_t u8month, uint8_t u8year)
  ** \param [in] pu8buf日期时间数据，u8len检查数据长度，u8limit_min最小值，u8limit_max最大值
  **
  ** \retval Error 错误，Ok校验正确
- ** 
+ **
  ******************************************************************************/
 en_result_t Check_BCD_Format(uint8_t u8data,uint8_t u8limit_min, uint8_t u8limit_max)
 {
@@ -448,7 +448,7 @@ en_result_t Check_BCD_Format(uint8_t u8data,uint8_t u8limit_min, uint8_t u8limit
  ** \param [in] pu8TimeDate日期时间数据，u8Mode检测模式
  **
  ** \retval enRet校验结果
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_CheckDateTimeFormat(uint8_t* pu8TimeDate,uint8_t u8Mode)
 {
@@ -529,7 +529,7 @@ en_result_t Rtc_CheckDateTimeFormat(uint8_t* pu8TimeDate,uint8_t u8Mode)
         }
     }
     enRet = Ok;
-    return(enRet); 
+    return(enRet);
 }
 /**
  ******************************************************************************
@@ -605,8 +605,8 @@ en_result_t Rtc_WriteDateTime(stc_rtc_time_t* pstcTimeDate,boolean_t bUpdateTime
  ******************************************************************************/
 boolean_t Rtc_RDAmPm(void)
 {
-	boolean_t bRet; 
-		
+    boolean_t bRet;
+
     bRet = M0P_RTC->HOUR&0x20;
     bRet>>=5;
     return bRet;
@@ -625,7 +625,7 @@ en_result_t Rtc_ReadDateTime(stc_rtc_time_t* pstcTimeDate)
     uint32_t u32TimeOut;
     uint8_t  u8DayOfWeek, u8BcdSec, u8BcdMin, u8BcdHour, u8Day, u8Month, u8Year;
 
-    ASSERT(NULL != pstcTimeDate);  
+    ASSERT(NULL != pstcTimeDate);
     u32TimeOut = RTC_TIMEOUT;
     if(1 == M0P_RTC->CR0_f.START)
     {
@@ -650,20 +650,20 @@ en_result_t Rtc_ReadDateTime(stc_rtc_time_t* pstcTimeDate)
     u8Year    = M0P_RTC->YEAR;
     u8DayOfWeek = M0P_RTC->WEEK;
 
-	pstcTimeDate->u8Second = u8BcdSec;
-	pstcTimeDate->u8Minute = u8BcdMin;
-	if(1 == M0P_RTC->CR0_f.AMPM)
-	{
-		pstcTimeDate->u8Hour   = u8BcdHour;
-	}
-	else
-	{
-		pstcTimeDate->u8Hour   = u8BcdHour&0x1f;
-	}
-	pstcTimeDate->u8Day    = u8Day;
-	pstcTimeDate->u8Month  = u8Month;
-	pstcTimeDate->u8Year  = u8Year;
-	pstcTimeDate->u8DayOfWeek = u8DayOfWeek;
+    pstcTimeDate->u8Second = u8BcdSec;
+    pstcTimeDate->u8Minute = u8BcdMin;
+    if(1 == M0P_RTC->CR0_f.AMPM)
+    {
+        pstcTimeDate->u8Hour   = u8BcdHour;
+    }
+    else
+    {
+        pstcTimeDate->u8Hour   = u8BcdHour&0x1f;
+    }
+    pstcTimeDate->u8Day    = u8Day;
+    pstcTimeDate->u8Month  = u8Month;
+    pstcTimeDate->u8Year  = u8Year;
+    pstcTimeDate->u8DayOfWeek = u8DayOfWeek;
 
     M0P_RTC->CR1_f.WAIT = 0;
     if(1 == M0P_RTC->CR0_f.START)
@@ -671,7 +671,7 @@ en_result_t Rtc_ReadDateTime(stc_rtc_time_t* pstcTimeDate)
         while(M0P_RTC->CR1_f.WAITF)
         {}
     }
-    
+
     return Ok;
 }
 /**
@@ -681,11 +681,11 @@ en_result_t Rtc_ReadDateTime(stc_rtc_time_t* pstcTimeDate)
  ** \param [in] 无
  **
  ** \retval 计数or读写状态
- ** 
+ **
  ******************************************************************************/
 boolean_t Rtc_RDStatus(void)
 {
-    boolean_t bRet; 
+    boolean_t bRet;
     bRet = M0P_RTC->CR1_f.WAITF;
     return bRet;
 }
@@ -696,7 +696,7 @@ boolean_t Rtc_RDStatus(void)
  ** \param [in] enordis中断使能or禁止
  **
  ** \retval Ok设置成功
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_EnAlarmIrq(en_rtc_alarmirq_t enIrqEn)
 {
@@ -713,7 +713,7 @@ en_result_t Rtc_EnAlarmIrq(en_rtc_alarmirq_t enIrqEn)
  ** \param [in] enIrqSel获取哪种中断请求
  **
  ** \retval 中断请求状态
- ** 
+ **
  ******************************************************************************/
 boolean_t Rtc_GetIrqStatus(en_rtc_status_irq_t enIrqSel)
 {
@@ -765,9 +765,9 @@ en_result_t Rtc_ClrIrqStatus(en_rtc_status_irq_t enIrqSel)
  ** \param [in] 无
  **
  ** \retval 接口函数地址
- ** 
+ **
  ******************************************************************************/
-static stc_rtc_intern_cb_t* RtcGetInternDataCb(void) 
+static stc_rtc_intern_cb_t* RtcGetInternDataCb(void)
 {
     return &stcRtcIrqCb;
 }
@@ -799,7 +799,7 @@ en_result_t Rtc_Init(stc_rtc_config_t* pstcRtcConfig)
     {
         if(Ok != Rtc_SetCyc(pstcRtcConfig->pstcCycSel))
         {
-            return Error;   
+            return Error;
         }
     }
     if(NULL != pstcRtcConfig->pstcTimeDate)
@@ -831,7 +831,7 @@ en_result_t Rtc_Init(stc_rtc_config_t* pstcRtcConfig)
  ** \param [in] 无
  **
  ** \retval Ok禁止设置成功
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_DeInit(void)
 {
@@ -849,7 +849,7 @@ en_result_t Rtc_DeInit(void)
  ** \param [in] 无
  **
  ** \retval 无
- ** 
+ **
  ******************************************************************************/
 void Rtc_IRQHandler(void)
 {

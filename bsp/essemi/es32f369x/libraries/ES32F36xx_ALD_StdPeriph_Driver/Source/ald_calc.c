@@ -64,10 +64,10 @@
   */
 uint32_t ald_calc_sqrt(uint32_t data)
 {
-	WRITE_REG(CALC->RDCND, data);
-	while (READ_BIT(CALC->SQRTSR, CALC_SQRTSR_BUSY_MSK));
+    WRITE_REG(CALC->RDCND, data);
+    while (READ_BIT(CALC->SQRTSR, CALC_SQRTSR_BUSY_MSK));
 
-	return READ_REG(CALC->SQRTRES);
+    return READ_REG(CALC->SQRTRES);
 }
 /**
   * @}

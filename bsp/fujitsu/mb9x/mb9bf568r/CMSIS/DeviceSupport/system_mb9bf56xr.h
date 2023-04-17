@@ -1,42 +1,42 @@
 /*******************************************************************************
-* Copyright (C) 2013 Spansion LLC. All Rights Reserved. 
+* Copyright (C) 2013 Spansion LLC. All Rights Reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Spansion LLC, 915 DeGuigne Dr. Sunnyvale, CA  94088-3453 ("Spansion").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with Spansion 
-* components. This software is licensed by Spansion to be adapted only 
-* for use in systems utilizing Spansion components. Spansion shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein.  Spansion is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with Spansion
+* components. This software is licensed by Spansion to be adapted only
+* for use in systems utilizing Spansion components. Spansion shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein.  Spansion is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * SPANSION MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* SPANSION SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF SPANSION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* SPANSION SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF SPANSION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.  
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 
 /******************************************************************************/
@@ -44,7 +44,7 @@
  **
  ** Headerfile for FM4 system parameters
  **
- ** History: 
+ ** History:
  ** 2013-01-21  0.1  MWi  AI: Unification to be done
  ** 2013-02-06  0.2  MWi  CMSIS coding restored; unifying still to be done
  ** 2013-06-28  0.3  EH   Added Trace Buffer enable definition
@@ -56,7 +56,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 /******************************************************************************/
 /* Include files                                                              */
@@ -66,11 +66,11 @@ extern "C" {
 /******************************************************************************/
 /* Global pre-processor symbols/macros ('define')                             */
 /******************************************************************************/
-   
+
 /******************************************************************************/
 /*                                                                            */
 /*                      START OF USER SETTINGS HERE                           */
-/*                      ===========================                           */   
+/*                      ===========================                           */
 /*                                                                            */
 /*                 All lines with '<<<' can be set by user.                   */
 /*                                                                            */
@@ -83,28 +83,28 @@ extern "C" {
  **
  ** - 0 = No clock setup done by system_mb9xfxxx.c
  ** - 1 = Clock setup done by system_mb9xfxxx.c
- ******************************************************************************/ 
+ ******************************************************************************/
 #define CLOCK_SETUP               1   // <<< Define clock setup here
 
 /**
  ******************************************************************************
  ** \brief External Main Clock Frequency (in Hz, [value]ul)
  **        <i>(USER SETTING)</i>
- ******************************************************************************/    
+ ******************************************************************************/
 #define __CLKMO        ( 4000000ul)   // <<< External   4MHz Crystal
 
 /**
  ******************************************************************************
  ** \brief External Sub Clock Frequency (in Hz, [value]ul)
  **        <i>(USER SETTING)</i>
- ******************************************************************************/  
+ ******************************************************************************/
 #define __CLKSO        (   32768ul)   // <<<  External  32KHz Crystal
 
 /**
  ******************************************************************************
  ** \brief System Clock Mode Control Register value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** SCM_CTL
  **
  ** Bit#7-5 : RCS[2:0]
@@ -129,10 +129,10 @@ extern "C" {
  **
  ** Bit#1 : MOSCE
  ** - 0 = Disable main oscillation (default)
- ** - 1 = Enable main oscillation  
+ ** - 1 = Enable main oscillation
  **
- ** Bit#0 : (reserved)  
- ******************************************************************************/ 
+ ** Bit#0 : (reserved)
+ ******************************************************************************/
 #define SCM_CTL_Val           0x00000052ul    // <<< Define SCM_CTL here
 
 /**
@@ -153,31 +153,31 @@ extern "C" {
  ** - 5 = HCLK = Master Clock / 8
  ** - 6 = HCLK = Master Clock / 16
  ** - 7 = (reserved)
- ******************************************************************************/    
+ ******************************************************************************/
 #define BSC_PSR_Val           0x00000000ul    // <<< Define BSC_PSR here
- 
+
 /**
  ******************************************************************************
  ** \brief APB0 Prescaler Register value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** APBC0_PSR
  **
  ** Bit#7-2 : (reserved)
  **
- ** Bit#1-0 : BSR[2:0] 
+ ** Bit#1-0 : BSR[2:0]
  ** - 0 = PCLK0 = HCLK
  ** - 1 = PCLK0 = HCLK / 2
  ** - 2 = PCLK0 = HCLK / 4
  ** - 3 = PCLK0 = HCLK / 8
- ******************************************************************************/    
+ ******************************************************************************/
 #define APBC0_PSR_Val         0x00000001UL     // <<< Define APBC0_PSR here
-   
+
 /**
  ******************************************************************************
  ** \brief APB1 Prescaler Register value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** APBC1_PSR
  **
  ** Bit#7 : APBC1EN
@@ -188,7 +188,7 @@ extern "C" {
  **
  ** Bit#4 : APBC1RST
  ** - 0 = APB1 bus reset, inactive (default)
- ** - 1 = APB1 bus reset, active  
+ ** - 1 = APB1 bus reset, active
  **
  ** Bit#3-2 : (reserved)
  **
@@ -197,14 +197,14 @@ extern "C" {
  ** - 1 = PCLK1 = HCLK / 2
  ** - 2 = PCLK1 = HCLK / 4
  ** - 3 = PCLK1 = HCLK / 8
- ******************************************************************************/     
+ ******************************************************************************/
 #define APBC1_PSR_Val         0x00000080ul    // <<< Define APBC1_PSR here
-   
+
 /**
  ******************************************************************************
  ** \brief APB2 Prescaler Register value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** APBC2_PSR
  **
  ** Bit#7 : APBC2EN
@@ -212,10 +212,10 @@ extern "C" {
  ** - 1 = Enables PCLK2 (default)
  **
  ** Bit#6-5 : (reserved)
- ** 
+ **
  ** Bit#4 : APBC2RST
  ** - 0 = APB2 bus reset, inactive (default)
- ** - 1 = APB2 bus reset, active  
+ ** - 1 = APB2 bus reset, active
  **
  ** Bit#3-2 : (reserved)
  **
@@ -224,14 +224,14 @@ extern "C" {
  ** - 1 = PCLK2 = HCLK / 2
  ** - 2 = PCLK2 = HCLK / 4
  ** - 3 = PCLK2 = HCLK / 8
- ******************************************************************************/    
+ ******************************************************************************/
 #define APBC2_PSR_Val         0x00000081ul    // <<< Define APBC2_PSR here
 
 /**
  ******************************************************************************
  ** \brief Software Watchdog Clock Prescaler Register value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** SWC_PSR
  **
  ** Bit#7 : TESTB
@@ -245,14 +245,14 @@ extern "C" {
  ** - 1 = SWDGOGCLK = PCLK0 / 2
  ** - 2 = SWDGOGCLK = PCLK0 / 4
  ** - 3 = SWDGOGCLK = PCLK0 / 8
- ******************************************************************************/  
+ ******************************************************************************/
 #define SWC_PSR_Val           0x00000003ul    // <<< Define SWC_PSR here
 
 /**
  ******************************************************************************
  ** \brief Trace Clock Prescaler Register value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** TTC_PSR
  **
  ** Bit#7-1 : (reserved)
@@ -260,14 +260,14 @@ extern "C" {
  ** Bit#0 : TTC
  ** - 0 = TPIUCLK = HCLK
  ** - 1 = TPIUCLK = HCLK / 2
- ******************************************************************************/  
+ ******************************************************************************/
 #define TTC_PSR_Val           0x00000000ul    // <<< Define TTC_PSR here
- 
+
 /**
  ******************************************************************************
  ** \brief Clock Stabilization Wait Time Register value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** CSW_TMR
  **
  ** Bit#7 : (reserved)
@@ -280,7 +280,7 @@ extern "C" {
  ** - 4 = ~164 ms
  ** - 5 = ~327 ms
  ** - 6 = ~655 ms
- ** - 7 = ~1.31 s 
+ ** - 7 = ~1.31 s
  **
  ** Bit#3-0 : MOWT[3:0]
  ** - 0 = ~500 ns (default)
@@ -299,14 +299,14 @@ extern "C" {
  ** - 13 = ~131 ms
  ** - 14 = ~524 ms
  ** - 15 = ~2.0 s
- ******************************************************************************/     
+ ******************************************************************************/
 #define CSW_TMR_Val           0x0000005Cul    // <<< Define CSW_TMR here
 
 /**
  ******************************************************************************
  ** \brief PLL Clock Stabilization Wait Time Setup Register value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** PSW_TMR
  **
  ** Bit#7-5 : (reserved)
@@ -318,7 +318,7 @@ extern "C" {
  ** Bit#3 : (reserved)
  **
  ** Bit#2-0 : POWT[2:0]
- ** - 0 = ~128 us (default) 
+ ** - 0 = ~128 us (default)
  ** - 1 = ~256 us
  ** - 2 = ~512 us
  ** - 3 = ~1.02 ms
@@ -326,14 +326,14 @@ extern "C" {
  ** - 5 = ~4.10 ms
  ** - 6 = ~8.20 ms
  ** - 7 = ~16.40 ms
- ******************************************************************************/    
+ ******************************************************************************/
 #define PSW_TMR_Val           0x00000000ul    // <<< Define PSW_TMR here
 
 /**
  ******************************************************************************
  ** \brief PLL Control Register 1 value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** PLL_CTL1
  **
  ** Bit#7-4 : PLLK[3:0]
@@ -349,14 +349,14 @@ extern "C" {
  ** - 2 = Division(PLLM) = 1/3
  ** - . . .
  ** - 15 = Division(PLLM) = 1/16
- ******************************************************************************/    
+ ******************************************************************************/
 #define PLL_CTL1_Val          0x00000001ul    // <<< Define PLL_CTL1 here
 
 /**
  ******************************************************************************
  ** \brief PLL Control Register 2 value definition
  **        <i>(USER SETTING)</i>
- ** 
+ **
  ** PLL_CTL2
  **
  ** Bit#7-6 : (reserved)
@@ -367,9 +367,9 @@ extern "C" {
  ** - 2 = Division(PLLN) = 1/3
  ** - . . .
  ** - 63 = Division(PLLN) = 1/64
- ******************************************************************************/    
+ ******************************************************************************/
 #define PLL_CTL2_Val          0x00000027ul    // <<< Define PLL_CTL2 here
-   
+
 /**
  ******************************************************************************
  ** \brief Hardware Watchdog disable definition
@@ -377,7 +377,7 @@ extern "C" {
  **
  ** - 0 = Hardware Watchdog enable
  ** - 1 = Hardware Watchdog disable
- ******************************************************************************/  
+ ******************************************************************************/
 #define HWWD_DISABLE          1   // <<< Define HW Watach dog enable here
 
 /**
@@ -387,7 +387,7 @@ extern "C" {
  **
  ** - 0 = CR is not trimmed at startup
  ** - 1 = CR is trimmed at startup
- ******************************************************************************/  
+ ******************************************************************************/
 #define CR_TRIM_SETUP         1   // <<< Define CR trimming at startup enable here
 
 /**
@@ -397,14 +397,14 @@ extern "C" {
  **
  ** - 0 = Trace Buffer disable
  ** - 1 = Trace Buffer enable
- ******************************************************************************/  
+ ******************************************************************************/
 #define TRACE_BUFFER_ENABLE   1   // <<< Define Trace Buffer enable here
 
-   
+
 /******************************************************************************/
 /*                                                                            */
 /*                         END OF USER SETTINGS HERE                          */
-/*                         =========================                          */ 
+/*                         =========================                          */
 /*                                                                            */
 /******************************************************************************/
 
@@ -416,77 +416,77 @@ extern "C" {
  ******************************************************************************
  ** \brief Internal High-Speed CR Oscillator Frequency (in Hz, [value]ul)
  **        <i>(USER SETTING)</i>
- ******************************************************************************/    
+ ******************************************************************************/
 #define __CLKHC        ( 4000000ul)         /* Internal   4MHz CR Oscillator  */
-   
+
 /**
  ******************************************************************************
  ** \brief Internal Low-Speed CR Oscillator Frequency (in Hz, [value]ul)
  **        <i>(USER SETTING)</i>
- ******************************************************************************/ 
-#define __CLKLC        (  100000ul)         /* Internal 100KHz CR Oscillator  */  
+ ******************************************************************************/
+#define __CLKLC        (  100000ul)         /* Internal 100KHz CR Oscillator  */
 
 /**
  ******************************************************************************
  ** \brief Any case minimum Main Clock frequency (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __CLKMOMIN    (  4000000ul)
-   
+
 /**
  ******************************************************************************
  ** \brief Maximum Main Clock frequency using external clock (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __CLKMOMAX    ( 48000000ul)
 
 /**
  ******************************************************************************
  ** \brief Any case minimum Sub Clock frequency (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __CLKSOMIN    (    32000ul)
-   
+
 /**
  ******************************************************************************
  ** \brief Maximum Sub Clock frequency using external clock (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __CLKSOMAX    (   100000ul)
-   
+
 /**
  ******************************************************************************
  ** \brief Absolute minimum PLL input frequency (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __PLLCLKINMIN (  4000000ul)
-   
+
 /**
  ******************************************************************************
  ** \brief Absolute maximum PLL input frequency (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __PLLCLKINMAX ( 16000000ul)
 
 /**
  ******************************************************************************
  ** \brief Absolute minimum PLL oscillation frequency (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __PLLCLKMIN   (200000000ul)
-   
+
 /**
  ******************************************************************************
  ** \brief Absolute maximum PLL oscillation  frequency (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __PLLCLKMAX   (320000000ul)
 
 /**
  ******************************************************************************
  ** \brief Absolute maximum System Clock frequency (HCLK) (in Hz, [value]ul)
  **        <i>(DEVICE DEPENDENT SETTING)</i>
- ******************************************************************************/ 
+ ******************************************************************************/
 #define __HCLKMAX     (160000000ul)
 
 /**
@@ -495,9 +495,9 @@ extern "C" {
  **
  ** \return 0    Within range
  ** \return 1    Out of range
- ******************************************************************************/ 
+ ******************************************************************************/
 #define CHECK_RANGE(val, min, max)          (((val) < (min)) || ((val) > (max)))
-   
+
 /**
  ******************************************************************************
  ** \brief Preprocessor macro for checking bits with mask (clock settings).
@@ -505,7 +505,7 @@ extern "C" {
  **
  ** \return 0    All bits within mask
  ** \return 1    One or more bits out of mask
- ******************************************************************************/ 
+ ******************************************************************************/
 #define CHECK_RSVD(val, mask)                ((val) & (mask))
 
 
@@ -639,30 +639,30 @@ extern "C" {
 /******************************************************************************/
 #if (CHECK_RANGE(__CLKMO, __CLKMOMIN, __CLKMOMAX))
   #error "Main Oscillator Clock (CLKMO) out of range!"
-#endif   
+#endif
 
 #if (CHECK_RANGE(__CLKSO, __CLKSOMIN, __CLKSOMAX))
   #error "Sub Oscillator Clock (CLKMO) out of range!"
-#endif   
+#endif
 
 #if (CHECK_RANGE((__CLKMO / __PLLK), __PLLCLKINMIN, __PLLCLKINMAX))
   #error "PLL input frequency out of range!"
-#endif  
+#endif
 
 #if (CHECK_RANGE(((__CLKMO * __PLLN * __PLLM) / __PLLK), __PLLCLKMIN, __PLLCLKMAX))
   #error "PLL oscillation frequency out of range!"
-#endif  
-   
+#endif
+
 #if (CHECK_RANGE(__HCLK, 0UL, __HCLKMAX))
   #error "System Clock (HCLK) out of range!"
 #endif
-   
+
 /******************************************************************************/
 /* Global function prototypes ('extern', definition in C source)              */
 /******************************************************************************/
 
 extern uint32_t SystemCoreClock;          // System Clock Frequency (Core Clock)
-   
+
 extern void SystemInit (void);            // Initialize the system
 
 extern void SystemCoreClockUpdate (void); // Update SystemCoreClock variable

@@ -81,7 +81,7 @@ void SystemCoreClockUpdate (void) // Update SystemCoreClock variable
 void SystemInit(void)
 {
     SystemCoreClockUpdate();
-    
+
 }
 
 

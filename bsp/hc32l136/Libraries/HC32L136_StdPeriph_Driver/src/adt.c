@@ -87,7 +87,7 @@ static func_ptr_t    pfnAdtIrqCbk[3][16] = {NULL};
  *****************************************************************************/
 
 /*************************************************
- * \brief   
+ * \brief
  *          使能NVIC中ADT中断
  *
  * \param   [in]  enIrqn  中断号
@@ -102,7 +102,7 @@ static void AdtEnableNvic(IRQn_Type enIrqn)
 }
 
 /**************************************************
- * \brief   
+ * \brief
  *          除能NVIC中ADT中断
  *
  * \param   [in]  enIrqn  中断号
@@ -117,7 +117,7 @@ static void AdtDisableNvic(IRQn_Type enIrqn)
 }
 
 /***************************************************
- * \brief   
+ * \brief
  *          ADT中断服务程序
  *
  * \param   [in]  u8Param  未使用
@@ -191,7 +191,7 @@ void Adt_IRQHandler(uint8_t u8Param)
         }
         pstcM0PAdt->ICLR = ~(1<<AdtDTEIrq);
     }
- 
+
     if (TRUE == pstcM0PAdt->IFR_f.SAMLF)
     {
         if (NULL != pfnAdtIrqCbk[u8Adt][AdtSAMLIrq])
@@ -200,7 +200,7 @@ void Adt_IRQHandler(uint8_t u8Param)
         }
         pstcM0PAdt->ICLR = ~(1<<AdtSAMLIrq);
     }
- 
+
     if (TRUE == pstcM0PAdt->IFR_f.SAMHF)
     {
         if (NULL != pfnAdtIrqCbk[u8Adt][AdtSAMHIrq])
@@ -212,7 +212,7 @@ void Adt_IRQHandler(uint8_t u8Param)
 }
 
 /*****************************************************************
- * \brief   
+ * \brief
  *          配置中断
  *
  * \param   [in]  enAdtUnit     ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -252,7 +252,7 @@ en_result_t Adt_ConfigIrq(en_adt_unit_t enAdtUnit,
 }
 
 /*******************************************************************
- * \brief   
+ * \brief
  *          获取中断标志
  *
  * \param   [in]  enAdtUnit     ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -281,7 +281,7 @@ en_result_t Adt_GetIrqFlag(en_adt_unit_t enAdtUnit,
 }
 
 /****************************************************************
- * \brief   
+ * \brief
  *          清除中断标志
  *
  * \param   [in]  enAdtUnit     ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -306,7 +306,7 @@ en_result_t Adt_ClearIrqFlag(en_adt_unit_t enAdtUnit,
 
 
 /**************************************************************
- * \brief   
+ * \brief
  *          配置硬件递加事件
  *
  * \param   [in]  enAdtUnit     ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -331,7 +331,7 @@ en_result_t Adt_ConfigHwCntUp(en_adt_unit_t enAdtUnit, en_adt_hw_cnt_t enAdtHwCn
 }
 
 /**************************************************************
- * \brief   
+ * \brief
  *          清除硬件递加事件
  *
  * \param   [in]  enAdtUnit     ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -353,7 +353,7 @@ en_result_t Adt_ClearHwCntUp(en_adt_unit_t enAdtUnit)
 
 
 /**
- * \brief   
+ * \brief
  *          配置硬件递减事件
  *
  * \param   [in]  enAdtUnit     ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -378,7 +378,7 @@ en_result_t Adt_ConfigHwCntDwn(en_adt_unit_t enAdtUnit, en_adt_hw_cnt_t enAdtHwC
 }
 
 /******************************************************************
- * \brief   
+ * \brief
  *          清除硬件递减事件
  *
  * \param   [in]  enAdtUnit     ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -400,7 +400,7 @@ en_result_t Adt_ClearHwCntDwn(en_adt_unit_t enAdtUnit)
 }
 
 /******************************************************************
- * \brief   
+ * \brief
  *          配置硬件启动事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -424,7 +424,7 @@ en_result_t Adt_ConfigHwStart(en_adt_unit_t enAdtUnit, en_adt_hw_trig_t enAdtHwS
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          清除硬件启动事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -446,7 +446,7 @@ en_result_t Adt_ClearHwStart(en_adt_unit_t enAdtUnit)
 }
 
 /*********************************************************************
- * \brief   
+ * \brief
  *          使能硬件启动
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -470,7 +470,7 @@ en_result_t Adt_EnableHwStart(en_adt_unit_t enAdtUnit)
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          除能硬件启动
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -494,7 +494,7 @@ en_result_t Adt_DisableHwStart(en_adt_unit_t enAdtUnit)
 }
 
 /****************************************************************
- * \brief   
+ * \brief
  *          配置硬件停止事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -518,7 +518,7 @@ en_result_t Adt_ConfigHwStop(en_adt_unit_t enAdtUnit, en_adt_hw_trig_t enAdtHwSt
 }
 
 /***************************************************************
- * \brief   
+ * \brief
  *          清除硬件停止事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -540,7 +540,7 @@ en_result_t Adt_ClearHwStop(en_adt_unit_t enAdtUnit)
 }
 
 /*************************************************************
- * \brief   
+ * \brief
  *          使能硬件停止
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -564,7 +564,7 @@ en_result_t Adt_EnableHwStop(en_adt_unit_t enAdtUnit)
 }
 
 /*****************************************************************************
- * \brief   
+ * \brief
  *          除能硬件停止
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -588,7 +588,7 @@ en_result_t Adt_DisableHwStop(en_adt_unit_t enAdtUnit)
 }
 
 /**************************************************************************
- * \brief   
+ * \brief
  *          配置硬件清零事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -612,7 +612,7 @@ en_result_t Adt_ConfigHwClear(en_adt_unit_t enAdtUnit, en_adt_hw_trig_t enAdtHwC
 }
 
 /**************************************************************************
- * \brief   
+ * \brief
  *          清除硬件清零事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -634,7 +634,7 @@ en_result_t Adt_ClearHwClear(en_adt_unit_t enAdtUnit)
 }
 
 /***************************************************************************
- * \brief   
+ * \brief
  *          使能硬件清零
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -658,7 +658,7 @@ en_result_t Adt_EnableHwClear(en_adt_unit_t enAdtUnit)
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          除能硬件清零
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -682,7 +682,7 @@ en_result_t Adt_DisableHwClear(en_adt_unit_t enAdtUnit)
 }
 
 /*******************************************************************
- * \brief   
+ * \brief
  *          配置硬件捕获A事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -708,7 +708,7 @@ en_result_t Adt_ConfigHwCaptureA(en_adt_unit_t enAdtUnit, en_adt_hw_trig_t enAdt
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          清除硬件捕获A事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -730,7 +730,7 @@ en_result_t Adt_ClearHwCaptureA(en_adt_unit_t enAdtUnit)
 }
 
 /*********************************************************************
- * \brief   
+ * \brief
  *          配置硬件捕获B事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -756,7 +756,7 @@ en_result_t Adt_ConfigHwCaptureB(en_adt_unit_t enAdtUnit, en_adt_hw_trig_t enAdt
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          清除硬件捕获B事件
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -778,7 +778,7 @@ en_result_t Adt_ClearHwCaptureB(en_adt_unit_t enAdtUnit)
 }
 
 /*****************************************************************
- * \brief   
+ * \brief
  *          软件同步开始
  *
  * \param   [in]  pstcAdtSwSyncStart    软件同步开始指针
@@ -813,7 +813,7 @@ en_result_t Adt_SwSyncStart(stc_adt_sw_sync_t* pstcAdtSwSyncStart)
 }
 
 /***************************************************************
- * \brief   
+ * \brief
  *          软件同步停止
  *
  * \param   [in]  pstcAdtSwSyncStop     软件同步停止指针
@@ -848,7 +848,7 @@ en_result_t Adt_SwSyncStop(stc_adt_sw_sync_t* pstcAdtSwSyncStop)
 }
 
 /*****************************************************************
- * \brief   
+ * \brief
  *          软件同步清零
  *
  * \param   [in]  pstcAdtSwSyncClear    软件同步清零指针
@@ -883,7 +883,7 @@ en_result_t Adt_SwSyncClear(stc_adt_sw_sync_t* pstcAdtSwSyncClear)
 }
 
 /*******************************************************************
- * \brief   
+ * \brief
  *          获取软件同步运行状态
  *
  * \param   [in]  pstcAdtSwSyncState    ADV Timer软件同步运行状态指针
@@ -926,7 +926,7 @@ en_result_t Adt_GetSwSyncState(stc_adt_sw_sync_t* pstcAdtSwSyncState)
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          AOS触发配置
  *
  * \param   [in]  pstcAdtAosTrigCfg 触发配置指针
@@ -949,7 +949,7 @@ en_result_t Adt_AosTrigConfig(stc_adt_aos_trig_cfg_t* pstcAdtAosTrigCfg)
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          中断触发配置
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -967,7 +967,7 @@ en_result_t Adt_IrqTrigConfig(en_adt_unit_t enAdtUnit,
     {
         return ErrorInvalidParameter;
     }
-    
+
     pstcM0PAdt->CR_f.CMAE = pstcAdtIrqTrigCfg->bAdtCntMatchATrigEn;
     pstcM0PAdt->CR_f.CMBE = pstcAdtIrqTrigCfg->bAdtCntMatchBTrigEn;
     pstcM0PAdt->CR_f.CMCE = pstcAdtIrqTrigCfg->bAdtCntMatchCTrigEn;
@@ -982,12 +982,12 @@ en_result_t Adt_IrqTrigConfig(en_adt_unit_t enAdtUnit,
     pstcM0PAdt->CR_f.DMA_G_UDF = pstcAdtIrqTrigCfg->bAdtUnderFlowTrigDmaEn;
     pstcM0PAdt->CR_f.DMA_S_CMA = pstcAdtIrqTrigCfg->bAdtSpecilMatchATrigDmaEn;
     pstcM0PAdt->CR_f.DMA_S_CMB = pstcAdtIrqTrigCfg->bAdtSpecilMatchBTrigDmaEn;
-    
+
     return Ok;
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          端口触发配置
  *
  * \param   [in]  enAdtTrigPort         触发端口
@@ -1038,7 +1038,7 @@ en_result_t Adt_PortTrigConfig(en_adt_trig_port_t enAdtTrigPort,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          CHxX端口配置
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1097,7 +1097,7 @@ en_result_t Adt_CHxXPortConfig(en_adt_unit_t enAdtUnit,
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          使能端口刹车
  *
  * \param   [in]  port              端口
@@ -1114,11 +1114,11 @@ en_result_t Adt_EnableBrakePort(uint8_t port, stc_adt_break_port_cfg_t* pstcAdtB
     {
         return ErrorInvalidParameter;
     }
-    
+
     u32Val = M0P_TIM4->PTBKP;
     u32Val &= ~(1u<<port);
     M0P_TIM4->PTBKP = u32Val | (pstcAdtBrkPtCfg->enPol<<port);
-    
+
     u32Val = M0P_TIM4->PTBKS;
     M0P_TIM4->PTBKS = u32Val | (1u<<port);
 
@@ -1126,7 +1126,7 @@ en_result_t Adt_EnableBrakePort(uint8_t port, stc_adt_break_port_cfg_t* pstcAdtB
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          清除端口刹车
  *
  * \param   none
@@ -1139,7 +1139,7 @@ void Adt_ClearBrakePort(void)
 }
 
 /*********************************************************************
- * \brief   
+ * \brief
  *          无效条件3配置
  *
  * \param   [in]  pstcAdtDisable3   无效条件3配置指针
@@ -1173,7 +1173,7 @@ en_result_t Adt_Disable3Cfg(stc_adt_disable_3_cfg_t* pstcAdtDisable3)
 }
 
 /*******************************************************************
- * \brief   
+ * \brief
  *          获取端口刹车标志
  *
  * \param   none
@@ -1186,7 +1186,7 @@ boolean_t Adt_GetPortBrakeFlag(void)
 }
 
 /******************************************************************
- * \brief   
+ * \brief
  *          清除端口刹车标志
  *
  * \param   none
@@ -1199,7 +1199,7 @@ void Adt_ClearPortBrakeFlag(void)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          无效条件1配置
  *
  * \param   [in]  pstcAdtDisable1   无效条件1配置指针
@@ -1226,7 +1226,7 @@ en_result_t Adt_Disable1Cfg(stc_adt_disable_1_cfg_t* pstcAdtDisable1)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          获取同高同低刹车标志
  *
  * \param   none
@@ -1239,7 +1239,7 @@ boolean_t Adt_GetSameBrakeFlag(void)
 }
 
 /*********************************************************************
- * \brief   
+ * \brief
  *          清除同高同低刹车标志
  *
  * \param   none
@@ -1252,7 +1252,7 @@ void Adt_ClearSameBrakeFlag(void)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          PWM展频配置
  *
  * \param   [in]  pstcAdtPwmDitherCfg   PWM展频配置指针
@@ -1263,7 +1263,7 @@ void Adt_ClearSameBrakeFlag(void)
 en_result_t Adt_PwmDitherConfig(en_adt_unit_t enAdtUnit, stc_adt_pwm_dither_cfg_t* pstcAdtPwmDitherCfg)
 {
     volatile M0P_TIM4_TypeDef *pstcM0PAdt = (M0P_TIM4_TypeDef *)((uint32_t)M0P_TIM4+0x400*enAdtUnit);
-    
+
     if (NULL == pstcAdtPwmDitherCfg)
     {
         return ErrorInvalidParameter;
@@ -1272,12 +1272,12 @@ en_result_t Adt_PwmDitherConfig(en_adt_unit_t enAdtUnit, stc_adt_pwm_dither_cfg_
     pstcM0PAdt->CR_f.DITENS = pstcAdtPwmDitherCfg->enAdtPDType;
     pstcM0PAdt->CR_f.DITENB = pstcAdtPwmDitherCfg->bTimxBPDEn;
     pstcM0PAdt->CR_f.DITENA = pstcAdtPwmDitherCfg->bTimxAPDEn;
-    
+
     return Ok;
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          ADT初始化
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1316,7 +1316,7 @@ en_result_t Adt_Init(en_adt_unit_t enAdtUnit, stc_adt_basecnt_cfg_t* pstcAdtBase
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          ADT Deinit
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1347,7 +1347,7 @@ en_result_t Adt_DeInit(en_adt_unit_t enAdtUnit)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          开始计数
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1370,7 +1370,7 @@ en_result_t Adt_StartCount(en_adt_unit_t enAdtUnit)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          停止计数
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1393,7 +1393,7 @@ en_result_t Adt_StopCount(en_adt_unit_t enAdtUnit)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          设置计数值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1416,7 +1416,7 @@ en_result_t Adt_SetCount(en_adt_unit_t enAdtUnit, uint16_t u16Value)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          获取计数值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1428,7 +1428,7 @@ en_result_t Adt_SetCount(en_adt_unit_t enAdtUnit, uint16_t u16Value)
 uint16_t Adt_GetCount(en_adt_unit_t enAdtUnit)
 {
     uint16_t u16Value;
-    
+
     volatile M0P_TIM4_TypeDef *pstcM0PAdt = (M0P_TIM4_TypeDef *)((uint32_t)M0P_TIM4+0x400*enAdtUnit);
 
     if (AdtTIM6 < enAdtUnit)
@@ -1437,12 +1437,12 @@ uint16_t Adt_GetCount(en_adt_unit_t enAdtUnit)
     }
 
     u16Value = pstcM0PAdt->CNTER_f.CNT;
-    
+
     return u16Value;
 }
 
 /**************************************************************************
- * \brief   
+ * \brief
  *          清除计数值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1465,11 +1465,11 @@ en_result_t Adt_ClearCount(en_adt_unit_t enAdtUnit)
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          获取计数状态
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
- * \param   [in]  pstcAdtCntState   计数状态指针 
+ * \param   [in]  pstcAdtCntState   计数状态指针
  *
  * \retval  en_result_t  Ok:  配置成功
  * \retval  en_result_t  ErrorInvalidParameter: 无效参数
@@ -1502,7 +1502,7 @@ en_result_t Adt_GetCntState(en_adt_unit_t enAdtUnit, stc_adt_cntstate_cfg_t* pst
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          配置计数周期
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1526,7 +1526,7 @@ en_result_t Adt_SetPeriod(en_adt_unit_t enAdtUnit, uint16_t u16Period)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          配置计数周期缓冲
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1551,7 +1551,7 @@ en_result_t Adt_SetPeriodBuf(en_adt_unit_t enAdtUnit, uint16_t u16PeriodBuf)
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          清除计数周期缓冲
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1575,7 +1575,7 @@ en_result_t Adt_ClearPeriodBuf(en_adt_unit_t enAdtUnit)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          配置有效计数周期
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1605,7 +1605,7 @@ en_result_t Adt_SetValidPeriod(en_adt_unit_t enAdtUnit,
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          配置比较输出计数基准值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1651,7 +1651,7 @@ en_result_t Adt_SetCompareValue(en_adt_unit_t enAdtUnit,
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          配置专用比较计数基准值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1689,7 +1689,7 @@ en_result_t Adt_SetSpecilCompareValue(en_adt_unit_t enAdtUnit,
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          配置通用比较值/捕获值缓存传送
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1727,7 +1727,7 @@ en_result_t Adt_EnableValueBuf(en_adt_unit_t enAdtUnit,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          清除比较输出计数值/捕获值缓存
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1765,7 +1765,7 @@ en_result_t Adt_ClearValueBuf(en_adt_unit_t enAdtUnit,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          获取捕获值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1802,7 +1802,7 @@ en_result_t Adt_GetCaptureValue(en_adt_unit_t enAdtUnit,
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          获取捕获缓存值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1839,7 +1839,7 @@ en_result_t Adt_GetCaptureBuf(en_adt_unit_t enAdtUnit,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          设置死区时间上基准值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1865,7 +1865,7 @@ en_result_t Adt_SetDTUA(en_adt_unit_t enAdtUnit,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          设置死区时间下基准值
  *
  * \param   [in]  enAdtUnit         ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1891,7 +1891,7 @@ en_result_t Adt_SetDTDA(en_adt_unit_t enAdtUnit,
 }
 
 /******************************************************************
- * \brief   
+ * \brief
  *          配置死区时间功能
  *
  * \param   [in]  enAdtUnit     ADV Timer通道选择（TIM4、TIM5、TIM6）
@@ -1919,7 +1919,7 @@ en_result_t Adt_ConfigDT(en_adt_unit_t enAdtUnit,
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          Z相输入屏蔽设置
  *
  * \param   [in]  enAdtUnit           ADV Timer通道选择（TIM4、TIM5、TIM6）

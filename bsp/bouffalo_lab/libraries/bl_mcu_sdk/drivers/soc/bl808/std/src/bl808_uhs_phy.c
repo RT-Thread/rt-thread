@@ -9,7 +9,7 @@
 #define bl808_DBG_RF (0)    // 0 is for commit with only err log, 1 is for all debug log, 2 is for key debug log
 #if bl808_DBG_RF == 1
     #define uhs_phy_printf_debug printf  // debug mode
-    #define uhs_phy_printf printf 
+    #define uhs_phy_printf printf
     #define uhs_phy_printfe printf
 #elif bl808_DBG_RF == 2
     #define uhs_phy_printf_debug(...)
@@ -46,7 +46,7 @@ static uint8_t reg_write_err = 0;
 static uint8_t init_array_write_err = 0;
 static uint8_t array_read_err = 0;
 static uint32_t addr_dump = 0x3000F000;
-// 
+//
 static uint32_t addr_rarray = 0x50000000;
 static uint32_t data0_rarray = 0x12345678;
 static uint32_t data1_rarray = 0x87654321;
@@ -414,7 +414,7 @@ void power_up_uhspll(void)
 
 void power_up_ldo12uhs(void)
 {
-    // use internal LDO 
+    // use internal LDO
     uint32_t tmpVal = 0;
     tmpVal = BL_RD_REG(GLB_BASE,GLB_LDO12UHS);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,GLB_PU_LDO12UHS,0x1);
@@ -447,7 +447,7 @@ void set_cen_ck_ckn(void)
 void set_or_uhs(void)
 {
     uint32_t tmpVal = 0;
-    
+
     if (cfg_glb->psramMemSize == PSRAM_MEM_SIZE_32MB){
         tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_48);
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_PSRAM_TYPE,0x1);
@@ -597,7 +597,7 @@ void set_or_uhs(void)
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS0_DIFF_DLY_RX,0x3);
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_28,tmpVal);
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_2C);
-    tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1_DLY_RX,0x0); 
+    tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1_DLY_RX,0x0);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1N_DLY_RX,0x0);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQS1_DIFF_DLY_RX,0x3);
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_2C,tmpVal);
@@ -739,7 +739,7 @@ void set_uhs_phy(void)
     uint32_t tmpVal = 0;
     // set phy & controller
     // latency code=3 (1066MHz)
-    // BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,0x0f0a1323);  // if fail than use 0x0f391323 
+    // BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,0x0f0a1323);  // if fail than use 0x0f391323
     // BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,0x0f0a0313); // tDQSS -> -1
     // BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30,0x0f0a3233); // tDQSS -> 1
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_30);
@@ -756,7 +756,7 @@ void set_uhs_phy(void)
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_50,0x01333333);
 
     uhs_phy_delay_us(100);
-} 
+}
 
 uint8_t uhs_err_handler(uint8_t err)
 {
@@ -773,7 +773,7 @@ uint8_t uhs_err_handler(uint8_t err)
             break;
         case UHS_REGW_GNT_ERR:
             uhs_phy_printfe("UHS_REGW_GNT_ERR\r\n");
-            break;            
+            break;
         case UHS_REGW_DONE_ERR:
             uhs_phy_printfe("UHS_REGW_DONE_ERR\r\n");
             break;
@@ -783,7 +783,7 @@ uint8_t uhs_err_handler(uint8_t err)
         case UHS_INIT_ARRAY_WRITE_ERR:
             uhs_phy_printfe("UHS_INIT_ARRAY_WRITE_ERR = %d\r\n",init_array_write_err);
             uhs_phy_cal_res->err_sub_type = init_array_write_err;
-            break;         
+            break;
         case UHS_REG_READ_CAL_ERR:
             uhs_phy_printfe("UHS_REG_READ_CAL_ERR = %d\r\n",reg_read_err);
             uhs_phy_cal_res->err_sub_type = reg_read_err;
@@ -867,7 +867,7 @@ uint8_t uhs_reg_w(uint32_t uhs_latency,uint32_t uhs_drive,uint32_t ma,uint32_t B
     {
         tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_PSRAM_CONFIGURE);
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_LATENCY,uhs_latency);
-        tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_DRIVE_ST,uhs_drive); 
+        tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_DRIVE_ST,uhs_drive);
         BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_PSRAM_CONFIGURE,tmpVal);
     }
     else if(ma == 2)
@@ -885,7 +885,7 @@ uint8_t uhs_reg_w(uint32_t uhs_latency,uint32_t uhs_drive,uint32_t ma,uint32_t B
             tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_BL_64,0x0);
             tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_BL_32,0x0);
             tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_UHS_BL_16,0x0);
-        }  
+        }
         BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_PSRAM_CONFIGURE,tmpVal);
     }
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_BASIC);
@@ -906,9 +906,9 @@ uint8_t uhs_reg_w(uint32_t uhs_latency,uint32_t uhs_drive,uint32_t ma,uint32_t B
             uhs_phy_printf_debug("reg_w GNT pass\r\n");
             break;
         }
-        count ++;   
+        count ++;
     }
-    
+
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_REGW_PULSE,0x1);  //reg_regw_pulse
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD,tmpVal);
@@ -973,7 +973,7 @@ uint8_t uhs_reg_r(uint32_t ma,uint8_t flag)
         }
         count ++;
     }
-    
+
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD);
     tmpVal = BL_SET_REG_BITS_VAL(tmpVal,PSRAM_UHS_REG_REGR_PULSE,0x1);  //reg_regr_pulse
     BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD,tmpVal);
@@ -1017,7 +1017,7 @@ uint8_t uhs_reg_r(uint32_t ma,uint8_t flag)
                 break;
             }
             count ++;
-        }         
+        }
     }
 
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_BASIC);
@@ -1101,7 +1101,7 @@ void cfg_ck_cen_drv(uint8_t array_ck_dly_drv,uint8_t array_cen_dly_drv){
 
 void uhs_reset(uint8_t ma_rb)
 {
-	// uint32_t tmpVal = 0;
+    // uint32_t tmpVal = 0;
     // uint32_t len = 0x150;
     // uint32_t val_sr[len>>2];
     // int32_t i = 0;
@@ -1119,35 +1119,35 @@ void uhs_reset(uint8_t ma_rb)
     // BL_WR_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_BASIC,tmpVal);
     // uhs_phy_delay_us(100);
 
-	// tmpVal = BL_RD_WORD(0x30007044);
-	// tmpVal = tmpVal | 0x00008000;
-	// BL_WR_WORD(0x30007044,tmpVal);
-	// uhs_phy_delay_us(100);
-	// tmpVal = tmpVal & 0xFFFF7FFF;
-	// BL_WR_WORD(0x30007044,tmpVal);
+    // tmpVal = BL_RD_WORD(0x30007044);
+    // tmpVal = tmpVal | 0x00008000;
+    // BL_WR_WORD(0x30007044,tmpVal);
+    // uhs_phy_delay_us(100);
+    // tmpVal = tmpVal & 0xFFFF7FFF;
+    // BL_WR_WORD(0x30007044,tmpVal);
     // uhs_phy_delay_us(200);
-	
-	// BL_WR_WORD(0x3000F030,0x18090610);
 
-	// #if PSRAM_32MB
+    // BL_WR_WORD(0x3000F030,0x18090610);
+
+    // #if PSRAM_32MB
     // PSRAM_UHS_Cfg_Type psramCfg = {
-	// 	datarate,
-	// 	PSRAM_MEM_SIZE_32MB,
-	// 	PSRAM_PAGE_SIZE_2KB,
-	// 	0,
+    //  datarate,
+    //  PSRAM_MEM_SIZE_32MB,
+    //  PSRAM_PAGE_SIZE_2KB,
+    //  0,
     // };
     // #else
-	// PSRAM_UHS_Cfg_Type psramCfg = {
-	// 	datarate,
-	// 	PSRAM_MEM_SIZE_64MB,
-	// 	PSRAM_PAGE_SIZE_2KB,
-	// 	0,
+    // PSRAM_UHS_Cfg_Type psramCfg = {
+    //  datarate,
+    //  PSRAM_MEM_SIZE_64MB,
+    //  PSRAM_PAGE_SIZE_2KB,
+    //  0,
     // };
     // #endif
-	// Psram_UHS_Init_Override(cfg_glb); //controller init
-	
+    // Psram_UHS_Init_Override(cfg_glb); //controller init
+
     // set_or_uhs();
-	// set_uhs_phy();
+    // set_uhs_phy();
 
     // for( i = len ; i >= 0 ; i = i-4 ){
     //     if( i != 0x4 ){
@@ -1224,7 +1224,7 @@ uint8_t reg_read_cal(void)
         }
         uhs_phy_printf_debug("reg read cal 1st by latency= %ld\r\n",uhs_latency);
         set_uhs_latency_r(uhs_latency);
-    
+
         // sweep dqs
         cfg_dq_rx(0);
         for(i = 15; i >= 0; i --)
@@ -1237,23 +1237,23 @@ uint8_t reg_read_cal(void)
             tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
             uhs_phy_printf_debug("PSRAM_UHS_UHS_CMD>>24 1st dqs--, 0x%lx\r\n",tmpVal);
             if(tmpVal == ((2<<3)+uhs_latency_code) && (tmpVal_1 == 1)){
-                uhs_phy_printf_debug("reg read pass by dqs= %ld\r\n",i); 
+                uhs_phy_printf_debug("reg read pass by dqs= %ld\r\n",i);
                 // reg_dqs = i;
                 dqs_dq_flag = 1;
                 break;
-            }              
+            }
             else{
                 uhs_phy_printf_debug("reg read fail by dqs= %ld\r\n",i);
             }
-			// if(tmpVal_1 == 0){
-			// 	uhs_phy_printf_debug("read done not found!!!\r\n");
-			// 	// uhs_reset(datarate);
-			// 	set_uhs_latency_r(uhs_latency);
-			// 	cfg_dq_rx(0);
-			// }
+            // if(tmpVal_1 == 0){
+            //  uhs_phy_printf_debug("read done not found!!!\r\n");
+            //  // uhs_reset(datarate);
+            //  set_uhs_latency_r(uhs_latency);
+            //  cfg_dq_rx(0);
+            // }
         }
 
-        // sweep dq 
+        // sweep dq
         cfg_dqs_rx(0);
         for(i = 15; i >=0; i --)
         {
@@ -1268,18 +1268,18 @@ uint8_t reg_read_cal(void)
                 uhs_phy_printf_debug("reg read pass by dq= %ld\r\n",i);
                 // reg_dq = i;
                 dqs_dq_flag = 1;
-                break; 
-            }  
+                break;
+            }
             else{
                 uhs_phy_printf_debug("reg read fail by dq= %ld\r\n",i);
             }
-			// if(tmpVal_1 == 0){
-			// 	uhs_phy_printf_debug("read done not found!!!\r\n");
-			// 	// uhs_reset(datarate);
-			// 	set_uhs_latency_r(uhs_latency);
-			// 	cfg_dqs_rx(0);
-			// }
-        }    
+            // if(tmpVal_1 == 0){
+            //  uhs_phy_printf_debug("read done not found!!!\r\n");
+            //  // uhs_reset(datarate);
+            //  set_uhs_latency_r(uhs_latency);
+            //  cfg_dqs_rx(0);
+            // }
+        }
         if (dqs_dq_flag == 1){
             dqs_dq_flag = 0;
 
@@ -1318,13 +1318,13 @@ uint8_t reg_read_cal(void)
                     uhs_phy_printf("reg read pass by ++dqs= %ld\r\n",i);
                     reg_dqs += i;
                     dqs_dq_flag = 1;
-                    break; 
+                    break;
                 }
                 else{
                     uhs_phy_printf_debug("reg read fail by dqs= %ld\r\n",i);
                 }
             }
-            // sweep dq 
+            // sweep dq
             cfg_dqs_rx(0);
             for(i = 15; i >= 0; i --)
             {
@@ -1355,12 +1355,12 @@ uint8_t reg_read_cal(void)
                     reg_dq += i;
                     dqs_dq_flag = 1;
                     break;
-                }  
+                }
                 else{
                     uhs_phy_printf_debug("reg read fail by dq= %ld\r\n",i);
                 }
             }
-            
+
             if(dqs_dq_flag == 0)
             {
                 reg_read_err = 2;
@@ -1377,8 +1377,8 @@ uint8_t reg_read_cal(void)
                 reg_dq = (reg_dq-reg_dqs)/2;
                 reg_dqs = 0;
             }
-            
-            // set dqs & dq by register read calibration result 
+
+            // set dqs & dq by register read calibration result
             cfg_dqs_rx(reg_dqs);
             cfg_dq_rx(reg_dq);
             CHECK_ERR_FLAG(mr_read_back,());
@@ -1458,22 +1458,22 @@ uint8_t reg_write_cal(void)  //only need sweep dqs
     // sweep1 dqs
     for(i = 15; i >=0; i --)
     {
-        cfg_dqs_drv(i); 
+        cfg_dqs_drv(i);
         CHECK_ERR_FLAG(uhs_reg_w,(uhs_latency_code,2,2,1)); //uhs_latency_code==3,uhs_drive==2,ma==2,BL_32==1
         CHECK_ERR_FLAG(uhs_reg_r,(2,0));
         tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
         if(tmpVal == (16 + 32))
             {
-                uhs_phy_printf("reg write pass by -- dqs1= %ld\r\n",i); 
+                uhs_phy_printf("reg write pass by -- dqs1= %ld\r\n",i);
                 reg_dqs1 = i;
                 dqs_dq_flag1 = 1;
-                break; 
-            }              
+                break;
+            }
         else{
             uhs_phy_printf_debug("reg write fail by -- dqs1= %ld\r\n",i);
         }
-    }        
-    // sweep2 dqs 
+    }
+    // sweep2 dqs
     for(i = 0; i <=15; i ++)
     {
         cfg_dqs_drv(i);
@@ -1485,12 +1485,12 @@ uint8_t reg_write_cal(void)  //only need sweep dqs
                 uhs_phy_printf("reg write pass by ++ dqs2= %ld\r\n",i);
                 reg_dqs2 = i;
                 dqs_dq_flag2 = 1;
-                break; 
-            }              
+                break;
+            }
         else{
             uhs_phy_printf_debug("reg write fail by ++ dqs2= %ld\r\n",i);
         }
-    }           
+    }
 
     if(dqs_dq_flag1 == 1 && dqs_dq_flag2 == 1){
         reg_dqs = (reg_dqs1 + reg_dqs2) / 2 ;
@@ -1505,26 +1505,26 @@ uint8_t reg_write_cal(void)  //only need sweep dqs
     }
 
     // if ck_dly_drv = 4, fix reg_dqs to 0
-	tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_00);
-	tmpVal = (tmpVal >> 16) & 0xF;
-	if(tmpVal == 4){
-		reg_dqs = 0;
-	}
-    // set dqs by register write cal result 
+    tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_00);
+    tmpVal = (tmpVal >> 16) & 0xF;
+    if(tmpVal == 4){
+        reg_dqs = 0;
+    }
+    // set dqs by register write cal result
     cfg_dqs_drv(reg_dqs);
     CHECK_ERR_FLAG(uhs_reg_w,(uhs_latency_code,2,2,0)); //uhs_latency_code==3,uhs_drive==2,ma==2,BL_32==1
     CHECK_ERR_FLAG(uhs_reg_r,(2,0));
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_UHS_CMD)>>24;
-    if(tmpVal == 0){   
+    if(tmpVal == 0){
         tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_08);
         reg_dq = BL_GET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQ0_DLY_DRV);
         uhs_phy_printf("reg write cal pass dqs= %ld, dq= %ld\r\n",reg_dqs,reg_dq);
-    }              
+    }
     else{
         reg_write_err = 2;
         return uhs_err_handler(UHS_REG_WRITE_CAL_ERR);
-    } 
-    
+    }
+
     dqs_dq_delta = 16 + reg_dqs - reg_dq;
     uhs_phy_printf("reg_write_cal return dqs_dq_delta= %ld\r\n",dqs_dq_delta);
 
@@ -1548,7 +1548,7 @@ void array_write_fix(uint32_t addr,uint32_t len,uint32_t data0,uint32_t data1)
         else
             data = data1 + i;
 
-        BL_WR_WORD(addr_tmp,data); 
+        BL_WR_WORD(addr_tmp,data);
     }
     if (print_flag){
         uhs_phy_printf("BEFORE CACHE FUCNTION\r\n");
@@ -1688,11 +1688,11 @@ uint8_t array_read_latency_cal(void)
                 dqs_flag = array_read_fix(addr_rarray,len,data0_rarray,data1_rarray);
                 if(dqs_flag == 1)
                 {
-                    uhs_phy_printf("array_read_dqs_dq_cal pass by --dqs= %ld\r\n",i); 
+                    uhs_phy_printf("array_read_dqs_dq_cal pass by --dqs= %ld\r\n",i);
                     array_dqs += i;
                     rwindow += i;
                     uhs_phy_cal_res->rwindow_end = i;
-                    break; 
+                    break;
                 }
             }
             for(i = 0; i <= 15; i ++)
@@ -1701,11 +1701,11 @@ uint8_t array_read_latency_cal(void)
                 dqs_flag = array_read_fix(addr_rarray,len,data0_rarray,data1_rarray);
                 if(dqs_flag == 1)
                 {
-                    uhs_phy_printf("array_read_dqs_dq_cal pass by ++dqs= %ld\r\n",i); 
+                    uhs_phy_printf("array_read_dqs_dq_cal pass by ++dqs= %ld\r\n",i);
                     array_dqs += i;
                     rwindow = (i > 0) ? (rwindow - i) : (rwindow + 1);
                     uhs_phy_cal_res->rwindow_begin = i;
-                    break; 
+                    break;
                 }
             }
             // sweep dq
@@ -1716,11 +1716,11 @@ uint8_t array_read_latency_cal(void)
                 dq_flag = array_read_fix(addr_rarray,len,data0_rarray,data1_rarray);
                 if(dq_flag == 1)
                 {
-                    uhs_phy_printf("array_read_dqs_dq_cal pass by --dq= %ld\r\n",i);  
+                    uhs_phy_printf("array_read_dqs_dq_cal pass by --dq= %ld\r\n",i);
                     array_dq += i;
                     rwindow += i;
-                    break; 
-                }                  
+                    break;
+                }
             }
             for(i = 0; i <= 15; i ++)
             {
@@ -1728,11 +1728,11 @@ uint8_t array_read_latency_cal(void)
                 dq_flag = array_read_fix(addr_rarray,len,data0_rarray,data1_rarray);
                 if(dq_flag == 1)
                 {
-                    uhs_phy_printf("array_read_dqs_dq_cal pass by ++dq= %ld\r\n",i);  
+                    uhs_phy_printf("array_read_dqs_dq_cal pass by ++dq= %ld\r\n",i);
                     array_dq += i;
                     rwindow -= i;
-                    break; 
-                }                  
+                    break;
+                }
             }
 
             if(dqs_flag == 1 || dq_flag == 1){
@@ -1830,7 +1830,7 @@ uint8_t array_write_ck_cal(void)
         array_ck_dly_drv = (array_ck_dly_drv2 > 9) ? 4 : 15;
     }
     else {
-        array_ck_dly_drv = (15 + 4) / 2;         
+        array_ck_dly_drv = (15 + 4) / 2;
     }
 
     set_ck_dly_drv(array_ck_dly_drv);
@@ -1858,12 +1858,12 @@ uint8_t array_read_dqs_dq_cal(void)
         dqs_flag = array_read_fix(addr_rarray,len,data0_rarray,data1_rarray);
         if(dqs_flag == 1)
         {
-            uhs_phy_printf("array_read_dqs_dq_cal pass by dqs= %ld\r\n",i); 
+            uhs_phy_printf("array_read_dqs_dq_cal pass by dqs= %ld\r\n",i);
             array_dqs = i;
-            break; 
+            break;
         }
     }
-    // sweep dq 
+    // sweep dq
     cfg_dqs_rx(0);
     for(i = 15; i >=0; i --)
     {
@@ -1871,10 +1871,10 @@ uint8_t array_read_dqs_dq_cal(void)
         dq_flag = array_read_fix(addr_rarray,len,data0_rarray,data1_rarray);
         if(dq_flag == 1)
         {
-            uhs_phy_printf("array_read_dqs_dq_cal pass by dq= %ld\r\n",i);  
+            uhs_phy_printf("array_read_dqs_dq_cal pass by dq= %ld\r\n",i);
             array_dq = i;
-            break; 
-        }                  
+            break;
+        }
     }
     if(dqs_flag == 0 && dq_flag == 0)
     {
@@ -1915,8 +1915,8 @@ uint8_t array_write_dqs_dq_cal(void)
     uint8_t wwindow = 0;
 
     for(i = 15; i >= 0; i --)
-    {  
-        cfg_dqs_drv(i);  
+    {
+        cfg_dqs_drv(i);
         array_write_fix(addr,len,data0,data1);
         dqs_flag1 = array_read_fix(addr,len,data0,data1);
         if(dqs_flag1 == 1)
@@ -1924,8 +1924,8 @@ uint8_t array_write_dqs_dq_cal(void)
             uhs_phy_printf("array_write_dqs_dq_cal pass by -- dqs1= %ld\r\n",i);
             array_dqs_dly_drv1 = i;
             uhs_phy_cal_res->wwindow_end = i;
-            break;  
-        }              
+            break;
+        }
         else
         {
             uhs_phy_printf_debug("array_write_dqs_dq_cal fail by -- dqs1= %ld\r\n",i);
@@ -1942,13 +1942,13 @@ uint8_t array_write_dqs_dq_cal(void)
             array_dqs_dly_drv2 = i;
             uhs_phy_cal_res->wwindow_begin = i;
             break;
-        }              
+        }
         else
         {
             uhs_phy_printf_debug("array_write_dqs_dq_cal fail by ++ dqs2= %ld\r\n",i);
         }
     }
-    
+
     if(dqs_flag1 == 1 && dqs_flag2 == 1)
     {
         array_dqs_dly_drv = (array_dqs_dly_drv1 + array_dqs_dly_drv2) / 2 ;
@@ -1965,12 +1965,12 @@ uint8_t array_write_dqs_dq_cal(void)
     // array_dqs_dly_drv = 4;
 
     // if ck_dly_drv = 4, fix dqsx_dly_drv to 0
-	tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_00);
-	tmpVal = (tmpVal >> 16) & 0xF;
-	if(tmpVal == 4){
-		array_dqs_dly_drv = 0;
+    tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_00);
+    tmpVal = (tmpVal >> 16) & 0xF;
+    if(tmpVal == 4){
+        array_dqs_dly_drv = 0;
         uhs_phy_cal_res->wwindow_begin = 0;
-	}
+    }
     tmpVal = BL_RD_REG(PSRAM_UHS_BASE,PSRAM_UHS_PHY_CFG_08);
     tmpVal = BL_GET_REG_BITS_VAL(tmpVal,PSRAM_UHS_DQ0_DLY_DRV);
 
@@ -1980,7 +1980,7 @@ uint8_t array_write_dqs_dq_cal(void)
     uhs_phy_cal_res->wdqs = array_dqs_dly_drv;
     uhs_phy_cal_res->wdq = tmpVal;
     uhs_phy_printf("array_write_dqs_dq_cal pass by array_dqs_dly_drv= %ld,array_dq_dly_drv= %ld\r\n",array_dqs_dly_drv,tmpVal);
-    // set dqs by register write cal result 
+    // set dqs by register write cal result
     cfg_dqs_drv(array_dqs_dly_drv);
 
     return 0;
@@ -2077,17 +2077,17 @@ BL_Err_Type ATTR_CLOCK_SECTION GLB_Config_UHS_PLL_Freq(GLB_XTAL_Type xtalType, u
     uhsPllCfg[GLB_XTAL_40M].clkpllSdmin = factor;
     uhsPllCfg[GLB_XTAL_26M].clkpllSdmin = factor;
     uhsPllCfg[GLB_XTAL_RC32M].clkpllSdmin = factor;
-    
+
     if (xtalType == GLB_XTAL_RC32M) {
         refClk = GLB_PLL_REFCLK_RC32M;
     } else {
         refClk = GLB_PLL_REFCLK_XTAL;
     }
-    
+
     // GLB_Power_Off_MU_PLL(GLB_MU_PLL_UHSPLL);
     GLB_MU_PLL_Ref_Clk_Sel(GLB_MU_PLL_UHSPLL, refClk);
     GLB_Power_On_MU_PLL(GLB_MU_PLL_UHSPLL, &(uhsPllCfg[xtalType]), 1);
-    
+
     return SUCCESS;
 }
 
@@ -2118,16 +2118,16 @@ uint8_t init_reg_write(void){
         for (rl_i = 0; rl_i < (sizeof(rl_val)/sizeof(rl_val[0])); rl_i++){
             rl_val[rl_i] = rl_val_32[rl_i];
         }
-	}else if(cfg_glb->psramMemSize == PSRAM_MEM_SIZE_64MB){
+    }else if(cfg_glb->psramMemSize == PSRAM_MEM_SIZE_64MB){
         for (wl_i = 0; wl_i < (sizeof(wl_val)/sizeof(wl_val[0])); wl_i++){
             wl_val[wl_i] = wl_val_64[wl_i];
         }
         for (rl_i = 0; rl_i < (sizeof(rl_val)/sizeof(rl_val[0])); rl_i++){
             rl_val[rl_i] = rl_val_64[rl_i];
         }
-	}
+    }
 
-	// set to 2000Mbps
+    // set to 2000Mbps
     for (rl_i = 0; rl_i < (sizeof(rl_val)/sizeof(rl_val[0])); rl_i++){
         rl = rl_val[rl_i];
         set_uhs_latency_r(rl);
@@ -2226,10 +2226,10 @@ uint8_t init_array_write(void){
                             #endif
                             uhs_phy_cal_res->wl = wl;
                             return 0;
-                        }    
+                        }
                         else{
                             uhs_phy_printf_debug("INIT_ARRAY_WRITE_FAIL, rdqs++, wl = %ld, wdqs = %ld, wdq = %ld, rl = %ld, rdqs = %ld, rdq = %ld\r\n",wl,wdqs,wdq,rl,rdqs,rdq);
-                        }                    
+                        }
                     }
                     rdqs = 0;
                     cfg_dqs_rx(rdqs);
@@ -2247,10 +2247,10 @@ uint8_t init_array_write(void){
                             #endif
                             uhs_phy_cal_res->wl = wl;
                             return 0;
-                        }    
+                        }
                         else{
                             uhs_phy_printf_debug("INIT_ARRAY_WRITE_FAIL, rdq++, wl = %ld, wdqs = %ld, wdq = %ld, rl = %ld, rdqs = %ld, rdq = %ld\r\n",wl,wdqs,wdq,rl,rdqs,rdq);
-                        }                    
+                        }
                     }
                 }
             }
@@ -2301,7 +2301,7 @@ uint8_t init_reg_write_2kM(void){
     uint8_t wdq_i;
     uint32_t wdq;
 
-	// set to 2000Mbps
+    // set to 2000Mbps
     for (wl_i = 0; wl_i < (sizeof(wl_val)/sizeof(wl_val[0])); wl_i++){
         wl = wl_val[wl_i];
         latency_wr[0] = wl;
@@ -2351,13 +2351,13 @@ uint8_t self_cal()
         uhs_latency_code = UHS_LATENCY_CODE_200;
     }
     // #if PSRAM_32MB
-	// PSRAM_UHS_Cfg_Type psramCfg = {
+    // PSRAM_UHS_Cfg_Type psramCfg = {
     //     datarate,
     //     PSRAM_MEM_SIZE_32MB,
     //     PSRAM_PAGE_SIZE_2KB,
     //     0,
     // };
-	// #else
+    // #else
     // PSRAM_UHS_Cfg_Type psramCfg = {
     //     datarate,
     //     PSRAM_MEM_SIZE_64MB,
@@ -2546,9 +2546,9 @@ uint8_t uhs_all_addr_test(void)
         for (CA = 0x0; CA <= 0x3ff; CA = CA + 2){
             STRESS_TEST_BASE = STRESS_TEST_BASE & 0xFFFFF800;
             STRESS_TEST_BASE = STRESS_TEST_BASE | (CA<<1); // STRESS_TEST_BASE[10:2] = CA[9:1], STRESS_TEST_BASE[1:0] = 0;
-            *((volatile uint32_t*)(STRESS_TEST_BASE)) = data0; 
+            *((volatile uint32_t*)(STRESS_TEST_BASE)) = data0;
         }
-    }         
+    }
     for (RA = 0x0; RA <= RowAddr; RA++){
         STRESS_TEST_BASE = STRESS_TEST_BASE & 0xFC0007FF;
         STRESS_TEST_BASE = STRESS_TEST_BASE | (RA<<11); // STRESS_TEST_BASE[25:11] = RA[14:0]
@@ -2574,8 +2574,8 @@ uint8_t uhs_all_addr_test(void)
             *((volatile uint32_t*)(STRESS_TEST_BASE)) = data1;
         }
     }
-    // ****** X_address -> Y_address    
-    // data1 
+    // ****** X_address -> Y_address
+    // data1
     for (RA = RowAddr; RA >= 0x0; RA--){
         STRESS_TEST_BASE = STRESS_TEST_BASE & 0xFC0007FF;
         STRESS_TEST_BASE = STRESS_TEST_BASE | (RA<<11); // STRESS_TEST_BASE[25:11] = RA[14:0]
@@ -2600,7 +2600,7 @@ uint8_t uhs_all_addr_test(void)
             STRESS_TEST_BASE = STRESS_TEST_BASE | (CA<<1); // STRESS_TEST_BASE[10:2] = CA[9:1], STRESS_TEST_BASE[1:0] = 0;
             *((volatile uint32_t*)(STRESS_TEST_BASE)) = data0;
         }
-    }      
+    }
     for (RA = RowAddr; RA >= 0x0; RA--){
         STRESS_TEST_BASE = STRESS_TEST_BASE & 0xFC0007FF;
         STRESS_TEST_BASE = STRESS_TEST_BASE | (RA<<11); // STRESS_TEST_BASE[25:11] = RA[14:0]
@@ -2617,7 +2617,7 @@ uint8_t uhs_all_addr_test(void)
         }
     }
     uhs_phy_printf("uhs_all_addr_test success\r\n");
-    return 0;   
+    return 0;
 }
 
 
@@ -2703,7 +2703,7 @@ uint8_t uhs_phy_init_core(PSRAM_UHS_Cfg_Type *cfg)
     uhs_phy_printf_debug("uhs phy init\r\n");
     if (cfg->psramMemSize == PSRAM_MEM_SIZE_32MB){
         uhs_phy_printf("\r\n########## START_CAL_AT %ldMbps, PSRAM_MEM_SIZE_32MB, CACHE_EN = %ld ##########\r\n",cfg->pck_freq,cache_state);
-	}else if(cfg->psramMemSize == PSRAM_MEM_SIZE_64MB){
+    }else if(cfg->psramMemSize == PSRAM_MEM_SIZE_64MB){
         uhs_phy_printf("\r\n########## START_CAL_AT %ldMbps, PSRAM_MEM_SIZE_64MB, CACHE_EN = %ld ##########\r\n",cfg->pck_freq,cache_state);
     }
     #if CAL_MODE != 2
@@ -2714,7 +2714,7 @@ uint8_t uhs_phy_init_core(PSRAM_UHS_Cfg_Type *cfg)
 
     power_up_mm(0);
     power_up_uhspll();
-    
+
     power_up_ldo12uhs();
     set_cen_ck_ckn();
 
@@ -2754,7 +2754,7 @@ uint8_t uhs_phy_init_core(PSRAM_UHS_Cfg_Type *cfg)
         //     uhs_phy_printf_debug("register read fail at 700Mbps\r\n");
         // }
     }
-	else if(cfg->psramMemSize == PSRAM_MEM_SIZE_64MB){
+    else if(cfg->psramMemSize == PSRAM_MEM_SIZE_64MB){
         cfg->pck_freq = 1400;
         // PSRAM_UHS_Cfg_Type psramCfg = {
         //     1400,
@@ -2780,7 +2780,7 @@ uint8_t uhs_phy_init_core(PSRAM_UHS_Cfg_Type *cfg)
         //     uhs_phy_printf_debug("register read fail at 1400Mbps\r\n");
         // }
     }
-    
+
     cfg->pck_freq = pck_freq_temp;
     self_cal();
     uhs_phy_delay_ms(1);
@@ -2848,9 +2848,9 @@ uint8_t uhs_phy_init_core(PSRAM_UHS_Cfg_Type *cfg)
         return uhs_err_handler(UHS_CACHE_ENABLE_ERR);
     }
     if (dcache_original == 0)
-    {     
-            csi_dcache_disable();       
-    }  
+    {
+            csi_dcache_disable();
+    }
     #else
     if(dcache_current == 0x0)
     {
@@ -2860,10 +2860,10 @@ uint8_t uhs_phy_init_core(PSRAM_UHS_Cfg_Type *cfg)
     {
         uhs_phy_printf_debug("dcache disable fail\r\n");
         return uhs_err_handler(UHS_CACHE_DISABLE_ERR);
-    } 
+    }
     if (dcache_original == (0x1<<1))
-    {     
-        csi_dcache_enable();       
+    {
+        csi_dcache_enable();
     }
     #endif
 

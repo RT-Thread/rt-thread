@@ -180,7 +180,7 @@ typedef enum
 #define WS_WSCNT_1                 WS_WSCNT(1)                    /*!< FMC 1 wait */
 #define WS_WSCNT_2                 WS_WSCNT(2)                    /*!< FMC 2 wait */
 
-/* option bytes software/hardware free watch dog timer */  
+/* option bytes software/hardware free watch dog timer */
 #define OB_FWDGT_SW                ((uint8_t)0x01U)               /*!< software free watchdog */
 #define OB_FWDGT_HW                ((uint8_t)0x00U)               /*!< hardware free watchdog */
 

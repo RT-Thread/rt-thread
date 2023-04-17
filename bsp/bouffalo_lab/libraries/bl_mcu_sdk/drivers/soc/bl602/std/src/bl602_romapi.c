@@ -304,7 +304,7 @@ BL_Err_Type ATTR_TCM_SECTION GLB_Swap_Flash_Pin(void)
 __ALWAYS_INLINE
 BL_Err_Type ATTR_TCM_SECTION GLB_GPIO_Init(GLB_GPIO_Cfg_Type *cfg)
 {
-	return RomDriver_GLB_GPIO_Init(cfg);
+    return RomDriver_GLB_GPIO_Init(cfg);
 }
 #endif
 
@@ -336,7 +336,7 @@ uint8_t ATTR_TCM_SECTION GLB_GPIO_Get_Fun(GLB_GPIO_Type gpioPin)
 __ALWAYS_INLINE
 void ATTR_TCM_SECTION HBN_Mode_Enter(HBN_APP_CFG_Type *cfg)
 {
-	return RomDriver_HBN_Mode_Enter(cfg);
+    return RomDriver_HBN_Mode_Enter(cfg);
 }
 #endif
 
@@ -406,7 +406,7 @@ BL_Err_Type ATTR_CLOCK_SECTION HBN_Power_Off_Xtal_32K(void)
 __ALWAYS_INLINE
 BL_Err_Type ATTR_CLOCK_SECTION HBN_Power_On_RC32K(void)
 {
-	return RomDriver_HBN_Power_On_RC32K();
+    return RomDriver_HBN_Power_On_RC32K();
 }
 #endif
 
@@ -414,7 +414,7 @@ BL_Err_Type ATTR_CLOCK_SECTION HBN_Power_On_RC32K(void)
 __ALWAYS_INLINE
 BL_Err_Type ATTR_CLOCK_SECTION HBN_Power_Off_RC32K(void)
 {
-	return RomDriver_HBN_Power_Off_RC32K();
+    return RomDriver_HBN_Power_Off_RC32K();
 }
 #endif
 
@@ -774,7 +774,7 @@ int ATTR_TCM_SECTION bflb_sflash_write_reg_with_cmd(spi_flash_cfg_type *flash_cf
 __ALWAYS_INLINE
 int ATTR_TCM_SECTION bflb_sflash_restore_from_powerdown(spi_flash_cfg_type *p_flash_cfg, uint8_t flashContRead)
 {
-	return RomDriver_SFlash_Restore_From_Powerdown(p_flash_cfg, flashContRead);
+    return RomDriver_SFlash_Restore_From_Powerdown(p_flash_cfg, flashContRead);
 }
 #endif
 

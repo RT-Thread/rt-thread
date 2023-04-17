@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,7 +14,7 @@
 
 int main(void)
 {
-	rt_kprintf("\n<RT-Thread -- GD32F350R8T6>\n\n");
+    rt_kprintf("\n<RT-Thread -- GD32F350R8T6>\n\n");
 
-	return 0;
+    return 0;
 }

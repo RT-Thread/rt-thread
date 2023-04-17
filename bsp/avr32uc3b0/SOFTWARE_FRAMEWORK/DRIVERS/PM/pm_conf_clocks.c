@@ -242,15 +242,15 @@ void pm_configure_usb_clock(void)
 #else
   // Use 12MHz from OSC0 and generate 96 MHz
   pm_pll_setup(&AVR32_PM, 1,  // pll.
-	  7,   // mul.
-	  1,   // div.
-	  0,   // osc.
-	  16); // lockcount.
+      7,   // mul.
+      1,   // div.
+      0,   // osc.
+      16); // lockcount.
 
   pm_pll_set_option(&AVR32_PM, 1, // pll.
-	  1,  // pll_freq: choose the range 80-180MHz.
-	  1,  // pll_div2.
-	  0); // pll_wbwdisable.
+      1,  // pll_freq: choose the range 80-180MHz.
+      1,  // pll_div2.
+      0); // pll_wbwdisable.
 
   // start PLL1 and wait forl lock
   pm_pll_enable(&AVR32_PM, 1);

@@ -104,7 +104,7 @@
 
 
 /*****************************************************************
- * \brief   
+ * \brief
  *          配置中断
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -134,15 +134,15 @@ en_result_t Adt_CfgIrq(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /*******************************************************************
- * \brief   
+ * \brief
  *          获取中断标志
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  enAdtIrq         中断类型
- * 
+ *
  *
  * \retval  TRUE/FALSE
- * 
+ *
  *****************************************************************/
 boolean_t Adt_GetIrqFlag(M0P_ADTIM_TypeDef *ADTx,
                            en_adt_irq_type_t enAdtIrq)
@@ -159,14 +159,14 @@ boolean_t Adt_GetIrqFlag(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /****************************************************************
- * \brief   
+ * \brief
  *          清除中断标志
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  enAdtIrq         中断类型
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  ****************************************************************/
 en_result_t Adt_ClearIrqFlag(M0P_ADTIM_TypeDef *ADTx,
                              en_adt_irq_type_t enAdtIrq)
@@ -176,13 +176,13 @@ en_result_t Adt_ClearIrqFlag(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /****************************************************************
- * \brief   
+ * \brief
  *          清除所有中断标志
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  ****************************************************************/
 en_result_t Adt_ClearAllIrqFlag(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -191,19 +191,19 @@ en_result_t Adt_ClearAllIrqFlag(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /**************************************************************
- * \brief   
+ * \brief
  *          配置硬件递加事件
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  enAdtHwCntUp     硬件递加事件
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  ****************************************************************/
 en_result_t Adt_CfgHwCntUp(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_cnt_t enAdtHwCntUp)
 {
     uint32_t u32Val;
-     
+
 
     if (AdtHwCntMax <= enAdtHwCntUp)
     {
@@ -216,13 +216,13 @@ en_result_t Adt_CfgHwCntUp(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_cnt_t enAdtHwCntUp
 }
 
 /**************************************************************
- * \brief   
+ * \brief
  *          清除硬件递加事件
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  ************************************************************/
 en_result_t Adt_ClearHwCntUp(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -233,7 +233,7 @@ en_result_t Adt_ClearHwCntUp(M0P_ADTIM_TypeDef *ADTx)
 
 
 /**********************************************************
- * \brief   
+ * \brief
  *          配置硬件递减事件
  *
  * \param   [in]  ADTx               ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -245,7 +245,7 @@ en_result_t Adt_ClearHwCntUp(M0P_ADTIM_TypeDef *ADTx)
 en_result_t Adt_CfgHwCntDwn(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_cnt_t enAdtHwCntDwn)
 {
     uint32_t u32Val;
-     
+
 
     if(AdtHwCntMax <= enAdtHwCntDwn)
     {
@@ -258,13 +258,13 @@ en_result_t Adt_CfgHwCntDwn(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_cnt_t enAdtHwCntD
 }
 
 /******************************************************************
- * \brief   
+ * \brief
  *          清除硬件递减事件
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  *****************************************************************/
 en_result_t Adt_ClearHwCntDwn(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -273,7 +273,7 @@ en_result_t Adt_ClearHwCntDwn(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /******************************************************************
- * \brief   
+ * \brief
  *          配置硬件启动事件
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -285,7 +285,7 @@ en_result_t Adt_ClearHwCntDwn(M0P_ADTIM_TypeDef *ADTx)
 en_result_t Adt_CfgHwStart(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwStart)
 {
     uint32_t u32Val;
-     
+
 
     if(AdtHwTrigEnd <= enAdtHwStart)
     {
@@ -297,13 +297,13 @@ en_result_t Adt_CfgHwStart(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwStar
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          清除硬件启动事件
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  ***********************************************************************/
 en_result_t Adt_ClearHwStart(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -312,31 +312,31 @@ en_result_t Adt_ClearHwStart(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /*********************************************************************
- * \brief   
+ * \brief
  *          使能硬件启动
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  *********************************************************************/
 en_result_t Adt_EnableHwStart(M0P_ADTIM_TypeDef *ADTx)
 {
     uint32_t u32Val;
-    
+
     u32Val = ADTx->HSTAR;
     ADTx->HSTAR = u32Val | (1u<<ADTIM_HW_STASTPCLR_EN);
     return Ok;
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          除能硬件启动
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  ************************************************************************/
 en_result_t Adt_DisableHwStart(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -348,7 +348,7 @@ en_result_t Adt_DisableHwStart(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /****************************************************************
- * \brief   
+ * \brief
  *          配置硬件停止事件
  *
  * \param   [in]  ADTx            ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -360,12 +360,12 @@ en_result_t Adt_DisableHwStart(M0P_ADTIM_TypeDef *ADTx)
 en_result_t Adt_CfgHwStop(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwStop)
 {
     uint32_t u32Val;
-    
+
     if(AdtHwTrigEnd <= enAdtHwStop)
     {
         return ErrorInvalidParameter;
     }
-    
+
     u32Val = ADTx->HSTPR;
     ADTx->HSTPR = u32Val | (1u<<enAdtHwStop);
     return Ok;
@@ -378,7 +378,7 @@ en_result_t Adt_CfgHwStop(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwStop)
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  ***************************************************************/
 en_result_t Adt_ClearHwStop(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -387,31 +387,31 @@ en_result_t Adt_ClearHwStop(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /*************************************************************
- * \brief   
+ * \brief
  *          使能硬件停止
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  **********************************************************/
 en_result_t Adt_EnableHwStop(M0P_ADTIM_TypeDef *ADTx)
 {
     uint32_t u32Val;
-    
+
     u32Val = ADTx->HSTPR;
     ADTx->HSTPR = u32Val | (1u<<ADTIM_HW_STASTPCLR_EN);
     return Ok;
 }
 
 /*****************************************************************************
- * \brief   
+ * \brief
  *          除能硬件停止
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  ***************************************************************************/
 en_result_t Adt_DisableHwStop(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -423,7 +423,7 @@ en_result_t Adt_DisableHwStop(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /**************************************************************************
- * \brief   
+ * \brief
  *          配置硬件清零事件
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -435,26 +435,26 @@ en_result_t Adt_DisableHwStop(M0P_ADTIM_TypeDef *ADTx)
 en_result_t Adt_CfgHwClear(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwClear)
 {
     uint32_t u32Val;
-     
+
 
     if(AdtHwTrigEnd <= enAdtHwClear)
     {
         return ErrorInvalidParameter;
     }
-    
+
     u32Val = ADTx->HCELR;
     ADTx->HCELR = u32Val | (1u<<enAdtHwClear);
     return Ok;
 }
 
 /**************************************************************************
- * \brief   
+ * \brief
  *          清除硬件清零事件
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  **************************************************************************/
 en_result_t Adt_ClearHwClear(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -463,13 +463,13 @@ en_result_t Adt_ClearHwClear(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /***************************************************************************
- * \brief   
+ * \brief
  *          使能硬件清零
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  *************************************************************************/
 en_result_t Adt_EnableHwClear(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -481,13 +481,13 @@ en_result_t Adt_EnableHwClear(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          除能硬件清零
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  **********************************************************************/
 en_result_t Adt_DisableHwClear(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -499,7 +499,7 @@ en_result_t Adt_DisableHwClear(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /*******************************************************************
- * \brief   
+ * \brief
  *          配置硬件捕获A事件
  *
  * \param   [in]  ADTx               ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -511,7 +511,7 @@ en_result_t Adt_DisableHwClear(M0P_ADTIM_TypeDef *ADTx)
 en_result_t Adt_CfgHwCaptureA(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwCaptureA)
 {
     uint32_t u32Val;
-     
+
 
     if(AdtHwTrigEnd <= enAdtHwCaptureA)
     {
@@ -525,13 +525,13 @@ en_result_t Adt_CfgHwCaptureA(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwC
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          清除硬件捕获A事件
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  ***********************************************************************/
 en_result_t Adt_ClearHwCaptureA(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -540,7 +540,7 @@ en_result_t Adt_ClearHwCaptureA(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /*********************************************************************
- * \brief   
+ * \brief
  *          配置硬件捕获B事件
  *
  * \param   [in]  ADTx                ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -552,7 +552,7 @@ en_result_t Adt_ClearHwCaptureA(M0P_ADTIM_TypeDef *ADTx)
 en_result_t Adt_CfgHwCaptureB(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwCaptureB)
 {
     uint32_t u32Val;
-     
+
 
     if(AdtHwTrigEnd <= enAdtHwCaptureB)
     {
@@ -566,13 +566,13 @@ en_result_t Adt_CfgHwCaptureB(M0P_ADTIM_TypeDef *ADTx, en_adt_hw_trig_t enAdtHwC
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          清除硬件捕获B事件
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t    Ok:  设置成功
- * 
+ *
  *******************************************************************/
 en_result_t Adt_ClearHwCaptureB(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -581,7 +581,7 @@ en_result_t Adt_ClearHwCaptureB(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /*****************************************************************
- * \brief   
+ * \brief
  *          软件同步开始
  *
  * \param   [in]  pstcAdtSwSyncStart    软件同步开始指针
@@ -616,7 +616,7 @@ en_result_t Adt_SwSyncStart(stc_adt_sw_sync_t* pstcAdtSwSyncStart)
 }
 
 /***************************************************************
- * \brief   
+ * \brief
  *          软件同步停止
  *
  * \param   [in]  pstcAdtSwSyncStop     软件同步停止指针
@@ -651,7 +651,7 @@ en_result_t Adt_SwSyncStop(stc_adt_sw_sync_t* pstcAdtSwSyncStop)
 }
 
 /*****************************************************************
- * \brief   
+ * \brief
  *          软件同步清零
  *
  * \param   [in]  pstcAdtSwSyncClear    软件同步清零指针
@@ -686,7 +686,7 @@ en_result_t Adt_SwSyncClear(stc_adt_sw_sync_t* pstcAdtSwSyncClear)
 }
 
 /*******************************************************************
- * \brief   
+ * \brief
  *          获取软件同步运行状态
  *
  * \param   [in]  pstcAdtSwSyncState    ADV Timer软件同步运行状态指针
@@ -729,7 +729,7 @@ en_result_t Adt_GetSwSyncState(stc_adt_sw_sync_t* pstcAdtSwSyncState)
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          AOS触发配置
  *
  * \param   [in]  pstcAdtAosTrigCfg 触发配置指针
@@ -752,7 +752,7 @@ en_result_t Adt_AosTrigCfg(stc_adt_aos_trig_cfg_t* pstcAdtAosTrigCfg)
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          中断触发配置
  *
  * \param   [in]  ADTx                  ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -768,7 +768,7 @@ en_result_t Adt_IrqTrigCfg(M0P_ADTIM_TypeDef *ADTx,
     {
         return ErrorInvalidParameter;
     }
-    
+
     ADTx->CR_f.CMAE = pstcAdtIrqTrigCfg->bAdtCntMatchATrigEn;
     ADTx->CR_f.CMBE = pstcAdtIrqTrigCfg->bAdtCntMatchBTrigEn;
     ADTx->CR_f.CMCE = pstcAdtIrqTrigCfg->bAdtCntMatchCTrigEn;
@@ -783,12 +783,12 @@ en_result_t Adt_IrqTrigCfg(M0P_ADTIM_TypeDef *ADTx,
     ADTx->CR_f.DMA_G_UDF = pstcAdtIrqTrigCfg->bAdtUnderFlowTrigDmaEn;
     ADTx->CR_f.DMA_S_CMA = pstcAdtIrqTrigCfg->bAdtSpecilMatchATrigDmaEn;
     ADTx->CR_f.DMA_S_CMB = pstcAdtIrqTrigCfg->bAdtSpecilMatchBTrigDmaEn;
-    
+
     return Ok;
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          端口触发配置
  *
  * \param   [in]  enAdtTrigPort         触发端口
@@ -839,7 +839,7 @@ en_result_t Adt_PortTrigCfg(en_adt_trig_port_t enAdtTrigPort,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          CHxX端口配置
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -896,7 +896,7 @@ en_result_t Adt_CHxXPortCfg(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          使能端口刹车
  *
  * \param   [in]  port              端口
@@ -913,11 +913,11 @@ en_result_t Adt_EnableBrakePort(uint8_t port, stc_adt_break_port_cfg_t* pstcAdtB
     {
         return ErrorInvalidParameter;
     }
-    
+
     u32Val = M0P_ADTIM4->PTBKP;
     u32Val &= ~(1u<<port);
     M0P_ADTIM4->PTBKP = u32Val | (pstcAdtBrkPtCfg->enPol<<port);
-    
+
     u32Val = M0P_ADTIM4->PTBKS;
     M0P_ADTIM4->PTBKS = u32Val | (1u<<port);
 
@@ -925,7 +925,7 @@ en_result_t Adt_EnableBrakePort(uint8_t port, stc_adt_break_port_cfg_t* pstcAdtB
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          清除端口刹车
  *
  * \param   none
@@ -938,7 +938,7 @@ void Adt_ClearBrakePort(void)
 }
 
 /*********************************************************************
- * \brief   
+ * \brief
  *          无效条件3配置
  *
  * \param   [in]  pstcAdtDisable3   无效条件3配置指针
@@ -985,7 +985,7 @@ en_result_t Adt_SwBrake(boolean_t bSwBrk)
 }
 
 /*******************************************************************
- * \brief   
+ * \brief
  *          获取端口刹车标志
  *
  * \param   none
@@ -998,7 +998,7 @@ boolean_t Adt_GetPortBrakeFlag(void)
 }
 
 /******************************************************************
- * \brief   
+ * \brief
  *          清除端口刹车标志
  *
  * \param   none
@@ -1011,7 +1011,7 @@ void Adt_ClearPortBrakeFlag(void)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          无效条件1配置
  *
  * \param   [in]  pstcAdtDisable1   无效条件1配置指针
@@ -1038,7 +1038,7 @@ en_result_t Adt_Disable1Cfg(stc_adt_disable_1_cfg_t* pstcAdtDisable1)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          获取同高同低刹车标志
  *
  * \param   none
@@ -1051,7 +1051,7 @@ boolean_t Adt_GetSameBrakeFlag(void)
 }
 
 /*********************************************************************
- * \brief   
+ * \brief
  *          清除同高同低刹车标志
  *
  * \param   none
@@ -1064,7 +1064,7 @@ void Adt_ClearSameBrakeFlag(void)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          PWM展频配置
  * \param   [in]  ADTx                  ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  pstcAdtPwmDitherCfg   PWM展频配置指针
@@ -1074,8 +1074,8 @@ void Adt_ClearSameBrakeFlag(void)
  *********************************************************************/
 en_result_t Adt_PwmDitherCfg(M0P_ADTIM_TypeDef *ADTx, stc_adt_pwm_dither_cfg_t* pstcAdtPwmDitherCfg)
 {
-     
-    
+
+
     if (NULL == pstcAdtPwmDitherCfg)
     {
         return ErrorInvalidParameter;
@@ -1084,12 +1084,12 @@ en_result_t Adt_PwmDitherCfg(M0P_ADTIM_TypeDef *ADTx, stc_adt_pwm_dither_cfg_t* 
     ADTx->CR_f.DITENS = pstcAdtPwmDitherCfg->enAdtPDType;
     ADTx->CR_f.DITENB = pstcAdtPwmDitherCfg->bTimxBPDEn;
     ADTx->CR_f.DITENA = pstcAdtPwmDitherCfg->bTimxAPDEn;
-    
+
     return Ok;
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          ADT初始化
  *
  * \param   [in]  ADTx                  ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1100,7 +1100,7 @@ en_result_t Adt_PwmDitherCfg(M0P_ADTIM_TypeDef *ADTx, stc_adt_pwm_dither_cfg_t* 
  **********************************************************************/
 en_result_t Adt_Init(M0P_ADTIM_TypeDef *ADTx, stc_adt_basecnt_cfg_t* pstcAdtBaseCntCfg)
 {
-     
+
 
     if(NULL == pstcAdtBaseCntCfg)
     {
@@ -1120,13 +1120,13 @@ en_result_t Adt_Init(M0P_ADTIM_TypeDef *ADTx, stc_adt_basecnt_cfg_t* pstcAdtBase
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          ADT Deinit
  *
  * \param   [in]  ADTx                  ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  ***********************************************************************/
 en_result_t Adt_DeInit(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -1170,13 +1170,13 @@ en_result_t Adt_DeInit(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          开始计数
  *
  * \param   [in]  ADTx                  ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  ***********************************************************************/
 en_result_t Adt_StartCount(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -1187,13 +1187,13 @@ en_result_t Adt_StartCount(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          停止计数
  *
  * \param   [in]  ADTx        ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  **********************************************************************/
 en_result_t Adt_StopCount(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -1203,7 +1203,7 @@ en_result_t Adt_StopCount(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          设置计数值
  *
  * \param   [in]  ADTx           ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1219,14 +1219,14 @@ en_result_t Adt_SetCount(M0P_ADTIM_TypeDef *ADTx, uint16_t u16Value)
 }
 
 /********************************************************************
- * \brief   
+ * \brief
  *          获取计数值
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
- * 
+ *
  *
  * \retval  uint16_t  u16Value:  当前计数值
- *  
+ *
  *******************************************************************/
 uint16_t Adt_GetCount(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -1235,19 +1235,19 @@ uint16_t Adt_GetCount(M0P_ADTIM_TypeDef *ADTx)
     ASSERT(IS_VALID_ADT_UNIT(enAdtUnit));
 
     u16Value = ADTx->CNTER_f.CNT;
-    
+
     return u16Value;
 }
 
 /**************************************************************************
- * \brief   
+ * \brief
  *          清除计数值
  *
  * \param   [in]  ADTx        ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
- * 
+ *
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  **************************************************************************/
 en_result_t Adt_ClearCount(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -1256,39 +1256,39 @@ en_result_t Adt_ClearCount(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          获取有效周期计数值
  *
  * \param   [in]  ADTx             ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  uint8_t u8TempCnt:    有效周期值
- * 
+ *
  *************************************************************************/
 uint8_t Adt_GetVperNum(M0P_ADTIM_TypeDef *ADTx)
 {
     uint8_t u8TempCnt;
-     
+
 
     ASSERT(IS_VALID_ADT_UNIT(enAdtUnit));
-    
+
     u8TempCnt = ADTx->STFLR_f.VPERNUM;
 
     return u8TempCnt;
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          获取状态标志
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
-* \param    [in]  enstate           状态标志类型 
+* \param    [in]  enstate           状态标志类型
  *
  * \retval  TURE/FALSE
- * 
+ *
  *************************************************************************/
 boolean_t Adt_GetState(M0P_ADTIM_TypeDef *ADTx, en_adt_state_type_t enstate)
 {
-     
+
 
     ASSERT(IS_VALID_ADT_UNIT(enAdtUnit));
     ASSERT(IS_VALID_ADT_STATE(enstate));
@@ -1297,14 +1297,14 @@ boolean_t Adt_GetState(M0P_ADTIM_TypeDef *ADTx, en_adt_state_type_t enstate)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          配置计数周期
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  u16Period         计数周期值
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  ***********************************************************************/
 en_result_t Adt_SetPeriod(M0P_ADTIM_TypeDef *ADTx, uint16_t u16Period)
 {
@@ -1314,14 +1314,14 @@ en_result_t Adt_SetPeriod(M0P_ADTIM_TypeDef *ADTx, uint16_t u16Period)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          配置计数周期缓冲
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  u16PeriodBuf      计数周期缓冲值
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  ***********************************************************************/
 en_result_t Adt_SetPeriodBuf(M0P_ADTIM_TypeDef *ADTx, uint16_t u16PeriodBuf)
 {
@@ -1332,13 +1332,13 @@ en_result_t Adt_SetPeriodBuf(M0P_ADTIM_TypeDef *ADTx, uint16_t u16PeriodBuf)
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          清除计数周期缓冲
  *
  * \param   [in]  ADTx        ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  **********************************************************************/
 en_result_t Adt_ClearPeriodBuf(M0P_ADTIM_TypeDef *ADTx)
 {
@@ -1349,7 +1349,7 @@ en_result_t Adt_ClearPeriodBuf(M0P_ADTIM_TypeDef *ADTx)
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          配置有效计数周期
  *
  * \param   [in]  ADTx                     ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1361,7 +1361,7 @@ en_result_t Adt_ClearPeriodBuf(M0P_ADTIM_TypeDef *ADTx)
 en_result_t Adt_SetValidPeriod(M0P_ADTIM_TypeDef *ADTx,
                                stc_adt_validper_cfg_t* pstcAdtValidPerCfg)
 {
-     
+
 
     if(NULL == pstcAdtValidPerCfg)
     {
@@ -1379,7 +1379,7 @@ en_result_t Adt_SetValidPeriod(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          配置比较输出计数基准值
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1418,7 +1418,7 @@ en_result_t Adt_SetCompareValue(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /************************************************************************
- * \brief   
+ * \brief
  *          配置专用比较计数基准值
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1449,7 +1449,7 @@ en_result_t Adt_SetSpecilCompareValue(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          配置通用比较值/捕获值缓存传送
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1480,7 +1480,7 @@ en_result_t Adt_EnableValueBuf(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          清除比较输出计数值/捕获值缓存
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1509,7 +1509,7 @@ en_result_t Adt_ClearValueBuf(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          获取捕获值
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1539,7 +1539,7 @@ en_result_t Adt_GetCaptureValue(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /**********************************************************************
- * \brief   
+ * \brief
  *          获取捕获缓存值
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1569,14 +1569,14 @@ en_result_t Adt_GetCaptureBuf(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          设置死区时间上基准值
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  u16Value          死区时间上基准值
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  ************************************************************************/
 en_result_t Adt_SetDTUA(M0P_ADTIM_TypeDef *ADTx,
                         uint16_t u16Value)
@@ -1587,14 +1587,14 @@ en_result_t Adt_SetDTUA(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /***********************************************************************
- * \brief   
+ * \brief
  *          设置死区时间下基准值
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  u16Value          死区时间下基准值
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  ***********************************************************************/
 en_result_t Adt_SetDTDA(M0P_ADTIM_TypeDef *ADTx,
                         uint16_t u16Value)
@@ -1605,7 +1605,7 @@ en_result_t Adt_SetDTDA(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /******************************************************************
- * \brief   
+ * \brief
  *          配置死区时间功能
  *
  * \param   [in]  ADTx          ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
@@ -1613,7 +1613,7 @@ en_result_t Adt_SetDTDA(M0P_ADTIM_TypeDef *ADTx,
  * \param   [in]  bEqual        DTDAR的值和DTUAR的值自动相等
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  *****************************************************************/
 en_result_t Adt_CfgDT(M0P_ADTIM_TypeDef *ADTx,
                          boolean_t bDTEn,
@@ -1626,14 +1626,14 @@ en_result_t Adt_CfgDT(M0P_ADTIM_TypeDef *ADTx,
 }
 
 /*************************************************************************
- * \brief   
+ * \brief
  *          Z相输入屏蔽设置
  *
  * \param   [in]  ADTx              ADV Timer通道选择(M0P_ADTIM4、M0P_ADTIM5、M0P_ADTIM6)
  * \param   [in]  pstcAdtZMaskCfg   Z相输入屏蔽功能配置指针
  *
  * \retval  en_result_t  Ok:  配置成功
- * 
+ *
  *************************************************************************/
 en_result_t Adt_CfgZMask(M0P_ADTIM_TypeDef *ADTx, stc_adt_zmask_cfg_t* pstcAdtZMaskCfg)
 {

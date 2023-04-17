@@ -15,30 +15,30 @@
 /*********************************************************************************
 * Function    : HAL_GPIO_IRQHandler
 * Description : GPIO interrupt Handler
-* Input       : 
-* Outpu       : 
+* Input       :
+* Outpu       :
 * Author      : Chris_Kyle                         Data: 2020年
 **********************************************************************************/
 void HAL_GPIO_IRQHandler(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin)
 {
     GPIO_TypeDef *GPIOx;
-    
+
     switch (fe_GPIO)
     {
-        case GPIOA: 
-        case GPIOB: 
+        case GPIOA:
+        case GPIOB:
         {
             GPIOx = GPIOAB;
         }break;
 
-        case GPIOC: 
-        case GPIOD: 
+        case GPIOC:
+        case GPIOD:
         {
             GPIOx = GPIOCD;
         }break;
 
-        case GPIOE: 
-        case GPIOF: 
+        case GPIOE:
+        case GPIOF:
         {
             GPIOx = GPIOEF;
         }break;
@@ -51,11 +51,11 @@ void HAL_GPIO_IRQHandler(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin)
         fu32_GPIO_Pin <<= 16;
     }
 
-    if (GPIOx->RIS & fu32_GPIO_Pin) 
-    {   
+    if (GPIOx->RIS & fu32_GPIO_Pin)
+    {
         GPIOx->IC = fu32_GPIO_Pin;
-        
-        /* user can call your application process function here */ 
+
+        /* user can call your application process function here */
         /* ...... */
     }
 }
@@ -66,7 +66,7 @@ void HAL_GPIO_IRQHandler(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin)
 * Input       : fe_GPIO: to select the GPIO peripheral.
 * Input       : GPIO_Init: pointer to a GPIO_InitTypeDef structure that contains
                            the configuration information for the specified GPIO peripheral.
-* Outpu       : 
+* Outpu       :
 * Author      : Chris_Kyle                         Data : 2020年
 **********************************************************************************/
 void HAL_GPIO_Init(enum_GPIOx_t fe_GPIO, GPIO_InitTypeDef *GPIO_Init)
@@ -74,7 +74,7 @@ void HAL_GPIO_Init(enum_GPIOx_t fe_GPIO, GPIO_InitTypeDef *GPIO_Init)
     uint32_t lu32_Position = 0;
     uint32_t lu32_Current_Pin;
     uint32_t lu32_Position_Mask;
-    
+
     volatile uint32_t *lu32_SEL1 = NULL;        // 選擇器 -> 1路選擇器的選擇位1
     volatile uint32_t *lu32_SEL2 = NULL;        // 選擇器 -> 1路選擇器的選擇位2
     volatile uint32_t *lu32_PollUP   = NULL;    // 拉上阻抗 -> 上拉阻抗的選擇位
@@ -82,106 +82,106 @@ void HAL_GPIO_Init(enum_GPIOx_t fe_GPIO, GPIO_InitTypeDef *GPIO_Init)
     volatile uint32_t *lu32_ODEnable = NULL;    // 輸出使能 -> 允許輸出1的選擇位
     volatile uint32_t *lu32_ADS      = NULL;    // 輸入模式 -> 輸入模式的允許輸出選擇位
 
-    
-    
+
+
     GPIO_TypeDef *GPIOx;
 
 #if (USE_FULL_ASSERT == 1)
     /* Check the parameters */
     if (!IS_GPIO_ALL_INSTANCE(fe_GPIO))             return;
     if (!IS_GPIO_PIN(GPIO_Init->Pin))               return;
-    if (!IS_GPIO_MODE(GPIO_Init->Mode))             return;   
+    if (!IS_GPIO_MODE(GPIO_Init->Mode))             return;
 #endif
 
     switch (fe_GPIO)
     {
-        case GPIOA: 
-        case GPIOB: 
+        case GPIOA:
+        case GPIOB:
         {
             GPIOx = GPIOAB;
-            
+
             System_Module_Enable(EN_GPIOAB);
-            
+
             lu32_PollUP   = &(SCU->PABPUR);
             lu32_PollDown = &(SCU->PABPDR);
             lu32_ODEnable = &(SCU->PABODR);
             lu32_ADS      = &(SCU->PABADS);
-            
-            if (fe_GPIO == GPIOB) 
+
+            if (fe_GPIO == GPIOB)
             {
                 GPIO_Init->Pin <<= 16;
-                
+
                 lu32_SEL1 = &(SCU->PBSEL1);
                 lu32_SEL2 = &(SCU->PBSEL2);
             }
-            else 
+            else
             {
                 lu32_SEL1 = &(SCU->PASEL1);
                 lu32_SEL2 = &(SCU->PASEL2);
             }
         }break;
 
-        case GPIOC: 
-        case GPIOD: 
+        case GPIOC:
+        case GPIOD:
         {
             GPIOx = GPIOCD;
-            
+
             System_Module_Enable(EN_GPIOCD);
 
             lu32_PollUP   = &(SCU->PCDPUR);
             lu32_PollDown = &(SCU->PCDPDR);
             lu32_ODEnable = &(SCU->PCDODR);
             lu32_ADS      = &(SCU->PCDADS);
-            
-            if (fe_GPIO == GPIOD) 
+
+            if (fe_GPIO == GPIOD)
             {
                 GPIO_Init->Pin <<= 16;
-                
+
                 lu32_SEL1 = &(SCU->PDSEL1);
                 lu32_SEL2 = &(SCU->PDSEL2);
             }
-            else 
+            else
             {
                 lu32_SEL1 = &(SCU->PCSEL1);
                 lu32_SEL2 = &(SCU->PCSEL2);
             }
         }break;
 
-        case GPIOE: 
-        case GPIOF: 
+        case GPIOE:
+        case GPIOF:
         {
             GPIOx = GPIOEF;
-            
+
             System_Module_Enable(EN_GPIOEF);
 
             lu32_PollUP   = &(SCU->PEFPUR);
             lu32_PollDown = &(SCU->PEFPDR);
             lu32_ODEnable = &(SCU->PEFODR);
             lu32_ADS      = &(SCU->PEFADS);
-            
-            if (fe_GPIO == GPIOF) 
+
+            if (fe_GPIO == GPIOF)
             {
                 GPIO_Init->Pin <<= 16;
-                
+
                 lu32_SEL1 = &(SCU->PFSEL1);
             }
-            else 
+            else
             {
                 lu32_SEL1 = &(SCU->PESEL1);
                 lu32_SEL2 = &(SCU->PESEL2);
             }
         }break;
 
-        default: break; 
+        default: break;
     }
 
     /* Configure Select pins */
-    while ((GPIO_Init->Pin) >> lu32_Position != 0) 
+    while ((GPIO_Init->Pin) >> lu32_Position != 0)
     {
         /* Get current pin position */
         lu32_Current_Pin = (GPIO_Init->Pin) & (1uL << lu32_Position);
-        
-        if (lu32_Current_Pin) 
+
+        if (lu32_Current_Pin)
         {
             switch (GPIO_Init->Mode)
             {
@@ -190,10 +190,10 @@ void HAL_GPIO_Init(enum_GPIOx_t fe_GPIO, GPIO_InitTypeDef *GPIO_Init)
                 {
                     GPIOx->DIR &= ~lu32_Current_Pin;
                 }break;
-                
+
                 /* GPIO OUT Function */
-                case GPIO_MODE_OUTPUT_PP: 
-                case GPIO_MODE_OUTPUT_OD: 
+                case GPIO_MODE_OUTPUT_PP:
+                case GPIO_MODE_OUTPUT_OD:
                 {
                     GPIOx->DIR |= lu32_Current_Pin;
                 }break;
@@ -203,21 +203,21 @@ void HAL_GPIO_Init(enum_GPIOx_t fe_GPIO, GPIO_InitTypeDef *GPIO_Init)
                 case GPIO_MODE_AF_OD:
                 {
                     /* Get Position Mask */
-                    if (lu32_Position < 16) 
+                    if (lu32_Position < 16)
                     {   /* GPIOA、GPIOC、GPIOE */
                         lu32_Position_Mask = lu32_Position;
                     }
-                    else 
+                    else
                     {   /* GPIOB、GPIOD、GPIOF */
                         lu32_Position_Mask = lu32_Position - 16;
                     }
-                    
+
                     /* SET GPIO Function */
-                    if (lu32_Position_Mask < 8) 
+                    if (lu32_Position_Mask < 8)
                     {
                         *lu32_SEL1 = (*lu32_SEL1 & ~(0xF << (lu32_Position_Mask * 4))) | (GPIO_Init->Alternate << (lu32_Position_Mask * 4));
                     }
-                    else 
+                    else
                     {
                         *lu32_SEL2 = (*lu32_SEL2 & ~(0xF << ((lu32_Position_Mask - 8) * 4))) | (GPIO_Init->Alternate << ((lu32_Position_Mask - 8) * 4));
                     }
@@ -235,109 +235,109 @@ void HAL_GPIO_Init(enum_GPIOx_t fe_GPIO, GPIO_InitTypeDef *GPIO_Init)
                     GPIOx->IEN |=  lu32_Current_Pin;
 
                     /* Single edge */
-                    if (GPIO_Init->Mode == GPIO_MODE_IT_RISING || GPIO_Init->Mode == GPIO_MODE_IT_FALLING) 
+                    if (GPIO_Init->Mode == GPIO_MODE_IT_RISING || GPIO_Init->Mode == GPIO_MODE_IT_FALLING)
                     {
                         /* edge trigger */
                         GPIOx->IS  &= ~lu32_Current_Pin;
                         /* Single trigger */
                         GPIOx->IBE &= ~lu32_Current_Pin;
-                        
-                        if (GPIO_Init->Mode == GPIO_MODE_IT_RISING) 
+
+                        if (GPIO_Init->Mode == GPIO_MODE_IT_RISING)
                         {
                             GPIOx->IEV |= lu32_Current_Pin;
                         }
-                        else 
+                        else
                         {
                             GPIOx->IEV &= ~lu32_Current_Pin;
                         }
                     }
 
                     /* Double edge */
-                    if (GPIO_Init->Mode == GPIO_MODE_IT_RISING_FALLING) 
+                    if (GPIO_Init->Mode == GPIO_MODE_IT_RISING_FALLING)
                     {
                         /* edge trigger */
                         GPIOx->IS  &= ~lu32_Current_Pin;
                         /* Double trigger */
                         GPIOx->IBE |=  lu32_Current_Pin;
                     }
-                    
+
                     /* LEVEL trigger */
-                    if (GPIO_Init->Mode == GPIO_MODE_IT_HIGH_LEVEL || GPIO_Init->Mode == GPIO_MODE_IT_LOW_LEVEL) 
+                    if (GPIO_Init->Mode == GPIO_MODE_IT_HIGH_LEVEL || GPIO_Init->Mode == GPIO_MODE_IT_LOW_LEVEL)
                     {
                         /* LEVEL trigger */
                         GPIOx->IS |= lu32_Current_Pin;
 
-                        if (GPIO_Init->Mode == GPIO_MODE_IT_HIGH_LEVEL) 
+                        if (GPIO_Init->Mode == GPIO_MODE_IT_HIGH_LEVEL)
                         {
                             GPIOx->IEV |= lu32_Current_Pin;
                         }
-                        else 
+                        else
                         {
                             GPIOx->IEV &= ~lu32_Current_Pin;
                         }
                     }
                 }break;
 
-                default: break; 
+                default: break;
             }
 
             /* Set Pull UP or DOWN or NO */
-            if (GPIO_Init->Pull == GPIO_NOPULL) 
+            if (GPIO_Init->Pull == GPIO_NOPULL)
             {
                 *lu32_PollUP   &= ~lu32_Current_Pin;
                 *lu32_PollDown &= ~lu32_Current_Pin;
             }
-            else if (GPIO_Init->Pull == GPIO_PULLUP) 
+            else if (GPIO_Init->Pull == GPIO_PULLUP)
             {
                 *lu32_PollUP   |=  lu32_Current_Pin;
                 *lu32_PollDown &= ~lu32_Current_Pin;
             }
-            else if (GPIO_Init->Pull == GPIO_PULLDOWN) 
+            else if (GPIO_Init->Pull == GPIO_PULLDOWN)
             {
                 *lu32_PollUP   &= ~lu32_Current_Pin;
                 *lu32_PollDown |=  lu32_Current_Pin;
             }
 
             /* Set Open Drain Mode */
-            if (GPIO_Init->Mode & GPIO_MODE_OD_MASK) 
+            if (GPIO_Init->Mode & GPIO_MODE_OD_MASK)
             {
                 *lu32_ODEnable |= lu32_Current_Pin;
             }
-            else 
+            else
             {
                 *lu32_ODEnable &= ~lu32_Current_Pin;
             }
-            
+
             /* GPIO Function */
-            if (GPIO_Init->Mode & GPIO_MODE_IO_MASK) 
+            if (GPIO_Init->Mode & GPIO_MODE_IO_MASK)
             {
                 /* Get Position Mask */
-                if (lu32_Position < 16) 
+                if (lu32_Position < 16)
                 {   /* GOIOA、GPIOC、GPIOE */
                     lu32_Position_Mask = lu32_Position;
                 }
-                else 
+                else
                 {   /* GPIOB、GPIOD、GPIOF */
                     lu32_Position_Mask = lu32_Position - 16;
                 }
-                
+
                 /* SET GPIO Function */
-                if (lu32_Position_Mask < 8) 
+                if (lu32_Position_Mask < 8)
                 {
                     *lu32_SEL1 = (*lu32_SEL1 & ~(0xF << (lu32_Position_Mask * 4))) | (GPIO_FUNCTION_0 << (lu32_Position_Mask * 4));
                 }
-                else 
+                else
                 {
                     *lu32_SEL2 = (*lu32_SEL2 & ~(0xF << ((lu32_Position_Mask - 8) * 4))) | (GPIO_FUNCTION_0 << ((lu32_Position_Mask - 8) * 4));
                 }
             }
 
             /* SET Digital or Analog */
-            if (GPIO_Init->Mode == GPIO_MODE_ANALOG) 
+            if (GPIO_Init->Mode == GPIO_MODE_ANALOG)
             {
                 *lu32_ADS |= lu32_Current_Pin;
             }
-            else 
+            else
             {
                 *lu32_ADS &= ~lu32_Current_Pin;
             }
@@ -352,7 +352,7 @@ void HAL_GPIO_Init(enum_GPIOx_t fe_GPIO, GPIO_InitTypeDef *GPIO_Init)
 * Input       : GPIOx：to select the GPIO peripheral.
 * Input       : fu32_Pin：specifies the port bit to be written.
                 This parameter can be one of GPIO_PIN_x where x can be (0..15).
-* Output      : 
+* Output      :
 * Author      : Chris_Kyle                         Data : 2020
 **********************************************************************************/
 void HAL_GPIO_DeInit(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
@@ -360,7 +360,7 @@ void HAL_GPIO_DeInit(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
     uint32_t lu32_Position = 0;
     uint32_t lu32_Current_Pin;
     uint32_t lu32_Position_Mask;
-    
+
     volatile uint32_t *lu32_SEL1 = NULL;        // 初始化指针 -> 选择器1的内存地址
     volatile uint32_t *lu32_SEL2 = NULL;        // 初始化指针 -> 选择器2的内存地址
     volatile uint32_t *lu32_PollUP   = NULL;    // 初始化指针 -> 上拉操作的内存地址
@@ -368,7 +368,7 @@ void HAL_GPIO_DeInit(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
     volatile uint32_t *lu32_ODEnable = NULL;    // 初始化指针 -> 开启输出设备的内存地址
     volatile uint32_t *lu32_ADS      = NULL;    // 初始化指针 -> 用于存储ADS数组的内存地址
 
-    
+
     GPIO_TypeDef *GPIOx;
 
 #if (USE_FULL_ASSERT == 1)
@@ -379,93 +379,93 @@ void HAL_GPIO_DeInit(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
 
     switch (fe_GPIO)
     {
-        case GPIOA: 
-        case GPIOB: 
+        case GPIOA:
+        case GPIOB:
         {
             GPIOx = GPIOAB;
-            
+
             System_Module_Enable(EN_GPIOAB);
-            
+
             lu32_PollUP   = &(SCU->PABPUR);
             lu32_PollDown = &(SCU->PABPDR);
             lu32_ODEnable = &(SCU->PABODR);
             lu32_ADS      = &(SCU->PABADS);
-            
-            if (fe_GPIO == GPIOB) 
+
+            if (fe_GPIO == GPIOB)
             {
                 fu32_Pin <<= 16;
-                
+
                 lu32_SEL1 = &(SCU->PBSEL1);
                 lu32_SEL2 = &(SCU->PBSEL2);
             }
-            else 
+            else
             {
                 lu32_SEL1 = &(SCU->PASEL1);
                 lu32_SEL2 = &(SCU->PASEL2);
             }
         }break;
 
-        case GPIOC: 
-        case GPIOD: 
+        case GPIOC:
+        case GPIOD:
         {
             GPIOx = GPIOCD;
-            
+
             System_Module_Enable(EN_GPIOCD);
 
             lu32_PollUP   = &(SCU->PCDPUR);
             lu32_PollDown = &(SCU->PCDPDR);
             lu32_ODEnable = &(SCU->PCDODR);
             lu32_ADS      = &(SCU->PCDADS);
-            
-            if (fe_GPIO == GPIOD) 
+
+            if (fe_GPIO == GPIOD)
             {
                 fu32_Pin <<= 16;
-                
+
                 lu32_SEL1 = &(SCU->PDSEL1);
                 lu32_SEL2 = &(SCU->PDSEL2);
             }
-            else 
+            else
             {
                 lu32_SEL1 = &(SCU->PCSEL1);
                 lu32_SEL2 = &(SCU->PCSEL2);
             }
         }break;
 
-        case GPIOE: 
-        case GPIOF: 
+        case GPIOE:
+        case GPIOF:
         {
             GPIOx = GPIOEF;
-            
+
             System_Module_Enable(EN_GPIOEF);
 
             lu32_PollUP   = &(SCU->PEFPUR);
             lu32_PollDown = &(SCU->PEFPDR);
             lu32_ODEnable = &(SCU->PEFODR);
             lu32_ADS      = &(SCU->PEFADS);
-            
-            if (fe_GPIO == GPIOF) 
+
+            if (fe_GPIO == GPIOF)
             {
                 fu32_Pin <<= 16;
-                
+
                 lu32_SEL1 = &(SCU->PFSEL1);
             }
-            else 
+            else
             {
                 lu32_SEL1 = &(SCU->PESEL1);
                 lu32_SEL2 = &(SCU->PESEL2);
             }
         }break;
 
-        default: break; 
+        default: break;
     }
-    
+
     /* Configure Select pins */
-    while (fu32_Pin >> lu32_Position != 0) 
+    while (fu32_Pin >> lu32_Position != 0)
     {
         /* Get current pin position */
         lu32_Current_Pin = fu32_Pin & (1uL << lu32_Position);
-        
-        if (lu32_Current_Pin) 
+
+        if (lu32_Current_Pin)
         {
             /* GPIO IN Function */
             GPIOx->DIR &= ~lu32_Current_Pin;
@@ -481,21 +481,21 @@ void HAL_GPIO_DeInit(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
 
 
             /* Get Position Mask */
-            if (lu32_Position < 16) 
+            if (lu32_Position < 16)
             {   /* GOIOA、GPIOC、GPIOE */
                 lu32_Position_Mask = lu32_Position;
             }
-            else 
+            else
             {   /* GPIOB、GPIOD、GPIOF */
                 lu32_Position_Mask = lu32_Position - 16;
             }
 
             /* SET GPIO Function */
-            if (lu32_Position_Mask < 8) 
+            if (lu32_Position_Mask < 8)
             {
                 *lu32_SEL1 &= ~(0xF << (lu32_Position_Mask * 4));
             }
-            else 
+            else
             {
                 *lu32_SEL2 &= ~(0xF << ((lu32_Position_Mask - 8) * 4));
             }
@@ -503,7 +503,7 @@ void HAL_GPIO_DeInit(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
             /* NO Pull */
             *lu32_PollUP   &= ~lu32_Current_Pin;
             *lu32_PollDown &= ~lu32_Current_Pin;
-            
+
             /* Not Open Drain */
             *lu32_ODEnable &= ~lu32_Current_Pin;
 
@@ -521,7 +521,7 @@ void HAL_GPIO_DeInit(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
 * Input       : fe_GPIO：to select the GPIO peripheral.
 * Input       : fu32_Pin：specifies the port bit to be written.
                 This parameter can be one of GPIO_PIN_x where x can be (0..15).
-* Outpu       : 
+* Outpu       :
 * Author      : Chris_Kyle                         Data : 2020年
 **********************************************************************************/
 void HAL_GPIO_AnalogEnable(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
@@ -541,55 +541,55 @@ void HAL_GPIO_AnalogEnable(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
 
     switch (fe_GPIO)
     {
-        case GPIOA: 
-        case GPIOB: 
+        case GPIOA:
+        case GPIOB:
         {
             System_Module_Enable(EN_GPIOAB);
-            
+
             lp32_ADS = &(SCU->PABADS);
-            
-            if (fe_GPIO == GPIOB) 
+
+            if (fe_GPIO == GPIOB)
             {
                 fu32_Pin <<= 16;
             }
         }break;
 
-        case GPIOC: 
-        case GPIOD: 
+        case GPIOC:
+        case GPIOD:
         {
             System_Module_Enable(EN_GPIOCD);
 
             lp32_ADS = &(SCU->PCDADS);
-            
-            if (fe_GPIO == GPIOD) 
+
+            if (fe_GPIO == GPIOD)
             {
                 fu32_Pin <<= 16;
             }
         }break;
 
-        case GPIOE: 
-        case GPIOF: 
+        case GPIOE:
+        case GPIOF:
         {
             System_Module_Enable(EN_GPIOEF);
 
             lp32_ADS = &(SCU->PEFADS);
-            
-            if (fe_GPIO == GPIOF) 
+
+            if (fe_GPIO == GPIOF)
             {
                 fu32_Pin <<= 16;
             }
         }break;
 
-        default: break; 
+        default: break;
     }
-    
+
     /* Configure Select pins */
-    while ((fu32_Pin) >> lu32_Position != 0) 
+    while ((fu32_Pin) >> lu32_Position != 0)
     {
         /* Get current pin position */
         lu32_Current_Pin = (fu32_Pin) & (1uL << lu32_Position);
-        
-        if (lu32_Current_Pin) 
+
+        if (lu32_Current_Pin)
         {
             *lp32_ADS |= lu32_Current_Pin;
         }
@@ -601,8 +601,8 @@ void HAL_GPIO_AnalogEnable(enum_GPIOx_t fe_GPIO, uint32_t fu32_Pin)
 /*********************************************************************************
 * Function    : HAL_GPIO_WritePin
 * Description : Set or clear the selected data port bit.
-* Input       : 
-* Outpu       : 
+* Input       :
+* Outpu       :
 * Author      : Chris_Kyle                         Data : 2020年
 **********************************************************************************/
 void HAL_GPIO_WritePin(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin, enum_PinState_t fe_PinState)
@@ -618,20 +618,20 @@ void HAL_GPIO_WritePin(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin, enum_PinSta
 
     switch (fe_GPIO)
     {
-        case GPIOA: 
-        case GPIOB: 
+        case GPIOA:
+        case GPIOB:
         {
             GPIOx = GPIOAB;
         }break;
 
-        case GPIOC: 
-        case GPIOD: 
+        case GPIOC:
+        case GPIOD:
         {
             GPIOx = GPIOCD;
         }break;
 
-        case GPIOE: 
-        case GPIOF: 
+        case GPIOE:
+        case GPIOF:
         {
             GPIOx = GPIOEF;
         }break;
@@ -644,11 +644,11 @@ void HAL_GPIO_WritePin(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin, enum_PinSta
         fu32_GPIO_Pin <<= 16;
     }
 
-    if (GPIO_PIN_SET == fe_PinState) 
+    if (GPIO_PIN_SET == fe_PinState)
     {
         GPIOx->ODATA |= fu32_GPIO_Pin;
     }
-    else 
+    else
     {
         GPIOx->ODATA &= ~fu32_GPIO_Pin;
     }
@@ -657,8 +657,8 @@ void HAL_GPIO_WritePin(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin, enum_PinSta
 /*********************************************************************************
 * Function    : HAL_GPIO_ReadPin
 * Description : Read the specified input port pin.
-* Input       : 
-* Outpu       : 
+* Input       :
+* Outpu       :
 * Author      : Chris_Kyle                         Data : 2020年
 **********************************************************************************/
 enum_PinState_t HAL_GPIO_ReadPin(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin)
@@ -667,37 +667,37 @@ enum_PinState_t HAL_GPIO_ReadPin(enum_GPIOx_t fe_GPIO, uint32_t fu32_GPIO_Pin)
 
     switch (fe_GPIO)
     {
-        case GPIOA: 
-        case GPIOB: 
+        case GPIOA:
+        case GPIOB:
         {
             GPIOx = GPIOAB;
         }break;
 
-        case GPIOC: 
-        case GPIOD: 
+        case GPIOC:
+        case GPIOD:
         {
             GPIOx = GPIOCD;
         }break;
 
-        case GPIOE: 
-        case GPIOF: 
+        case GPIOE:
+        case GPIOF:
         {
             GPIOx = GPIOEF;
         }break;
 
         default: break;
     }
-    
+
     if (fe_GPIO == GPIOB || fe_GPIO == GPIOD || fe_GPIO == GPIOF)
     {
         fu32_GPIO_Pin <<= 16;
     }
-    
-    if (GPIOx->IDATA & fu32_GPIO_Pin) 
+
+    if (GPIOx->IDATA & fu32_GPIO_Pin)
     {
         return GPIO_PIN_SET;
     }
-    else 
+    else
     {
         return GPIO_PIN_CLEAR;
     }

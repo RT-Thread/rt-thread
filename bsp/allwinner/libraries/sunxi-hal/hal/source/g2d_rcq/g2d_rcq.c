@@ -20,54 +20,54 @@
 
 __s32 g2d_top_mem_pool_alloc(struct g2d_rcq_mem_info *p_rcq_info)
 {
-	int ret = 0;
+    int ret = 0;
 
-	p_rcq_info->rcq_byte_used =
-	    p_rcq_info->alloc_num * sizeof(*(p_rcq_info->vir_addr));
-	p_rcq_info->vir_addr = g2d_malloc(p_rcq_info->rcq_reg_mem_size,
-					  (__u32 *)&p_rcq_info->phy_addr);
-	if (!p_rcq_info->vir_addr)
-		ret = -1;
+    p_rcq_info->rcq_byte_used =
+        p_rcq_info->alloc_num * sizeof(*(p_rcq_info->vir_addr));
+    p_rcq_info->vir_addr = g2d_malloc(p_rcq_info->rcq_reg_mem_size,
+                      (__u32 *)&p_rcq_info->phy_addr);
+    if (!p_rcq_info->vir_addr)
+        ret = -1;
 
-	return ret;
+    return ret;
 }
 
 void *g2d_top_reg_memory_alloc(__u32 size, void *phy_addr,
-			       struct g2d_rcq_mem_info *p_rcq_info)
+                   struct g2d_rcq_mem_info *p_rcq_info)
 {
-	void *viraddr = NULL;
-	if (p_rcq_info->vir_addr) {
+    void *viraddr = NULL;
+    if (p_rcq_info->vir_addr) {
 
-		*(__u32 *)phy_addr = (unsigned long)p_rcq_info->phy_addr +
-					  p_rcq_info->rcq_byte_used;
+        *(__u32 *)phy_addr = (unsigned long)p_rcq_info->phy_addr +
+                      p_rcq_info->rcq_byte_used;
 
-		viraddr =
-		    (void *)p_rcq_info->vir_addr + p_rcq_info->rcq_byte_used;
+        viraddr =
+            (void *)p_rcq_info->vir_addr + p_rcq_info->rcq_byte_used;
 
-		p_rcq_info->rcq_byte_used += G2D_RCQ_BYTE_ALIGN(size);
+        p_rcq_info->rcq_byte_used += G2D_RCQ_BYTE_ALIGN(size);
 
-		if (p_rcq_info->rcq_byte_used > p_rcq_info->rcq_reg_mem_size) {
-			G2D_ERR_MSG("Malloc %ld byte fail, out of total "
-				    "memory %ld bytes, current used byte:%ld\n",
-				    G2D_RCQ_BYTE_ALIGN(size),
-				    p_rcq_info->rcq_reg_mem_size,
-				    p_rcq_info->rcq_byte_used);
-			viraddr = NULL;
-			*(__u32 *)phy_addr = (unsigned long)NULL;
-		}
-		return viraddr;
-	} else {
-		G2D_ERR_MSG("Null pointer!\n");
-		*(__u32 *)phy_addr = (unsigned long)NULL;
-		return NULL;
-	}
+        if (p_rcq_info->rcq_byte_used > p_rcq_info->rcq_reg_mem_size) {
+            G2D_ERR_MSG("Malloc %ld byte fail, out of total "
+                    "memory %ld bytes, current used byte:%ld\n",
+                    G2D_RCQ_BYTE_ALIGN(size),
+                    p_rcq_info->rcq_reg_mem_size,
+                    p_rcq_info->rcq_byte_used);
+            viraddr = NULL;
+            *(__u32 *)phy_addr = (unsigned long)NULL;
+        }
+        return viraddr;
+    } else {
+        G2D_ERR_MSG("Null pointer!\n");
+        *(__u32 *)phy_addr = (unsigned long)NULL;
+        return NULL;
+    }
 }
 
 void g2d_top_mem_pool_free(struct g2d_rcq_mem_info *p_rcq_info)
 {
-	if (p_rcq_info->vir_addr) {
-		g2d_free((void *)p_rcq_info->vir_addr,
-			 (void *)p_rcq_info->phy_addr,
-			 p_rcq_info->rcq_reg_mem_size);
-	}
+    if (p_rcq_info->vir_addr) {
+        g2d_free((void *)p_rcq_info->vir_addr,
+             (void *)p_rcq_info->phy_addr,
+             p_rcq_info->rcq_reg_mem_size);
+    }
 }

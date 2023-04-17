@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -155,7 +155,7 @@ int gd32_usart_getc(struct rt_serial_device *serial)
 
 rt_size_t gd32_usart_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static struct rt_uart_ops usart_ops =

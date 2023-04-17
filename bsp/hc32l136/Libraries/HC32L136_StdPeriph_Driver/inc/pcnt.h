@@ -43,7 +43,7 @@
 /** \file pcnt.h
  **
  ** Headerfile for PCNT functions
- ** @link PCNT Group Some description @endlink 
+ ** @link PCNT Group Some description @endlink
  **
  ** History:
  **   - 2018-04-15   Devi     First Version
@@ -117,7 +117,7 @@ typedef enum en_pcnt_clksel
 {
     CLK_Pclk   = 1u, ///<<PCLK
     CLK_Xtl    = 2u, ///<<XTL
-    CLK_Rcl    = 3u, ///<<RCL     
+    CLK_Rcl    = 3u, ///<<RCL
 }en_pcnt_clksel_t;
 
 /**
@@ -129,7 +129,7 @@ typedef enum en_pcnt_modesel
 {
     Single_Mode   = 1u, ///<<单通道脉冲计数模式
     Special_Mode  = 2u, ///<<双通道非正交脉冲计数模式
-    Double_Mode   = 3u, ///<<双通道正交脉冲计数模式  
+    Double_Mode   = 3u, ///<<双通道正交脉冲计数模式
 }en_pcnt_modesel_t;
 
 /**
@@ -139,13 +139,13 @@ typedef enum en_pcnt_modesel
 typedef enum en_pcnt_status
 {
     PCNT_S1E            = 0x80,   ///<S1通道脉冲解码错误
-    PCNT_S0E            = 0x40,   ///<S0通道脉冲解码错误   
-    PCNT_BB             = 0x20,   ///<脉冲解码错误    
+    PCNT_S0E            = 0x40,   ///<S0通道脉冲解码错误
+    PCNT_BB             = 0x20,   ///<脉冲解码错误
     PCNT_FE             = 0x10,   ///<采样周期脉冲解码错误
-    PCNT_DIR            = 0x08,   ///<反向改变中断    
-    PCNT_TO             = 0x04,   ///<超时中断标识   
+    PCNT_DIR            = 0x08,   ///<反向改变中断
+    PCNT_TO             = 0x04,   ///<超时中断标识
     PCNT_OV             = 0x02,   ///<上溢中断标识
-    PCNT_UF             = 0x01,   ///<下溢中断标识     
+    PCNT_UF             = 0x01,   ///<下溢中断标识
 }en_pcnt_status_t;
 
 /**
@@ -155,16 +155,16 @@ typedef enum en_pcnt_status
 typedef struct stc_pcnt_config
 {
     en_pcnt_s1sel_t     bS1Sel;          ///< S1通道极性选择
-	  en_pcnt_s0sel_t     bS0Sel;          ///< S0通道极性选择
-    en_pcnt_direcsel_t  u8Direc;         ///< 计数方向选择    	
-	  en_pcnt_clksel_t    u8Clk;           ///< 计数时钟选择
+      en_pcnt_s0sel_t     bS0Sel;          ///< S0通道极性选择
+    en_pcnt_direcsel_t  u8Direc;         ///< 计数方向选择
+      en_pcnt_clksel_t    u8Clk;           ///< 计数时钟选择
     en_pcnt_modesel_t   u8Mode;          ///< 脉冲计数模式选择
     boolean_t           bFLTEn;          ///< 滤波控制使能
     uint8_t             u8FLTDep;        ///< 滤波阀值
     uint8_t             u8FLTClk;        ///< 滤波时钟
     boolean_t           bTOEn;           ///< 超时使能
     uint16_t            u16TODep;         ///< 超时阀值
-	  uint8_t             u8IrqStatus;     ///< 中断方式
+      uint8_t             u8IrqStatus;     ///< 中断方式
     boolean_t           bIrqEn;           ///< 中断使能
     func_ptr_t          pfnIrqCb;         ///< 中断回调函数
 }stc_pcnt_config_t;

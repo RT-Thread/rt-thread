@@ -43,7 +43,7 @@
 /** \file pca.h
  **
  ** PCA（可编程计数阵列）数据结构及API声明
- **  
+ **
  **
  ** History:
  **   - 2017-04-15   Husj     First version
@@ -109,7 +109,7 @@ typedef enum en_pca_start
 typedef enum en_pca_cidl
 {
     IdleGoOn = 0u,            ///< 休眠模式下 PCA继续工作
-    IdleStop = 1u,            ///< 休眠模式下 PCA停止工作 
+    IdleStop = 1u,            ///< 休眠模式下 PCA停止工作
 }en_pca_cidl_t;
 
 /**
@@ -210,20 +210,20 @@ typedef enum en_pca_pwm_16_bit
 
 /**
  ******************************************************************************
- ** \brief PCA 配置结构体定义 
+ ** \brief PCA 配置结构体定义
  *****************************************************************************/
 typedef struct stc_pca_config
 {
     en_pca_cidl_t     enCIDL;       ///< 模式下启/停控制
     en_pca_wdte_t     enWDTE;       ///< WDT功能控制
     en_pca_clksel_t   enCPS;        ///< 时钟分频及时钟源选择功能
-    
+
     func_ptr_t        pfnPcaCb;     ///< Pca中断服务回调函数[void function(void)]
 }stc_pca_config_t;
 
 /**
  ******************************************************************************
- ** \brief PCA 捕获模式配置结构体定义 
+ ** \brief PCA 捕获模式配置结构体定义
  *****************************************************************************/
 typedef struct stc_pca_capmodconfig
 {

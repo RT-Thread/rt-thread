@@ -90,12 +90,12 @@
  *******************************************************************************
  ** \brief 获取复位源类型.
  **
- ** \param [out]  enRstFlg  @ref en_reset_flag_t     
- ** 
- ** \retval  TRUE or FALSE 
+ ** \param [out]  enRstFlg  @ref en_reset_flag_t
+ **
+ ** \retval  TRUE or FALSE
  ******************************************************************************/
 boolean_t Reset_GetFlag(en_reset_flag_t enRstFlg)
-{    
+{
     if(M0P_RESET->RESET_FLAG&enRstFlg)
     {
         return TRUE;
@@ -103,7 +103,7 @@ boolean_t Reset_GetFlag(en_reset_flag_t enRstFlg)
     else
     {
         return FALSE;
-    }     
+    }
 }
 
 /**
@@ -111,7 +111,7 @@ boolean_t Reset_GetFlag(en_reset_flag_t enRstFlg)
  ** \brief 清除复位源类型.
  **
  ** \param [in]  pstcFlag  @ref en_reset_flag_t
- ** 
+ **
  ** \retval  Null
  ******************************************************************************/
 void Reset_ClearFlag(en_reset_flag_t enRstFlg)
@@ -124,7 +124,7 @@ void Reset_ClearFlag(en_reset_flag_t enRstFlg)
  ** \brief 清除所有复位源类型.
  **
  ** \param Null
- ** 
+ **
  ** \retval  Null
  ******************************************************************************/
 void Reset_ClearFlagAll(void)
@@ -136,15 +136,15 @@ void Reset_ClearFlagAll(void)
  *******************************************************************************
  ** \brief 所有模块进行一次复位.
  **
- ** 
+ **
  ** \retval  Null
  ******************************************************************************/
 void Reset_RstPeripheralAll(void)
 {
     M0P_RESET->PERI_RESET0 = 0u;
-    M0P_RESET->PERI_RESET0 = 0xFFFFFFFFu;    
+    M0P_RESET->PERI_RESET0 = 0xFFFFFFFFu;
     M0P_RESET->PERI_RESET1 = 0u;
-    M0P_RESET->PERI_RESET1 = 0xFFFFFFFFu;    
+    M0P_RESET->PERI_RESET1 = 0xFFFFFFFFu;
 }
 
 /**
@@ -152,7 +152,7 @@ void Reset_RstPeripheralAll(void)
  ** \brief 对外设源0模块进行一次复位.
  **
  ** \param [in]  enPeri  @ref en_reset_peripheral0_t
- ** 
+ **
  ** \retval  Null
  ******************************************************************************/
 void Reset_RstPeripheral0(en_reset_peripheral0_t enPeri)
@@ -166,7 +166,7 @@ void Reset_RstPeripheral0(en_reset_peripheral0_t enPeri)
  ** \brief 对外设源1模块进行一次复位.
  **
  ** \param [in]  enPeri  @ref en_reset_peripheral1_t
- ** 
+ **
  ** \retval  Null
  ******************************************************************************/
 void Reset_RstPeripheral1(en_reset_peripheral1_t enPeri)

@@ -437,7 +437,7 @@ static inline uint32_t hall_get_w_history1(HALL_Type *hall_x)
 
 /**
  * @brief load ucnt, vcnt, wcnt and tmrcnt into their read registers.
- *   Hardware auto-clear;
+ *   Hardware auto-clearÍ¾
  *
  * @param[in] hall_x HALL base address HPM_HALLx(x=0..n)
  */

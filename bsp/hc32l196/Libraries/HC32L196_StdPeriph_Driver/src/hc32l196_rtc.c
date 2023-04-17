@@ -1,43 +1,43 @@
 /*************************************************************************************
-* Copyright (C) 2019, Huada Semiconductor Co.,Ltd All rights reserved.    
+* Copyright (C) 2019, Huada Semiconductor Co.,Ltd All rights reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Huada Semiconductor Co.,Ltd ("HDSC").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with HDSC 
-* components. This software is licensed by HDSC to be adapted only 
-* for use in systems utilizing HDSC components. HDSC shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein. HDSC is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with HDSC
+* components. This software is licensed by HDSC to be adapted only
+* for use in systems utilizing HDSC components. HDSC shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein. HDSC is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * Disclaimer:
 * HDSC MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.                        
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /******************************************************************************/
 /** \file rtc.c
@@ -45,7 +45,7 @@
  ** RTC function driver API.
  ** @link SampleGroup Some description @endlink
  **
- **   - 2019-04-10    First version 
+ **   - 2019-04-10    First version
  **
  ******************************************************************************/
 
@@ -80,15 +80,15 @@ const uint8_t Cnst_Month_Tbl[12]={0x31,0x28,0x31,0x30,0x31,0x30,0x31,0x31,0x30,0
 /*****************************************************************************
  * Function implementation - global ('extern') and local ('static')
  *****************************************************************************/
- 
+
 /**
 ******************************************************************************
     ** \brief  RTC计数器的使能或停止
-    ** 
+    **
     ** @param  NewState : TRUE 或 FALSE
     ** \retval 无
     **
-******************************************************************************/ 
+******************************************************************************/
 void Rtc_Cmd(boolean_t NewState)
 {
     SetBit((uint32_t)(&(M0P_RTC->CR0)), 7, NewState);
@@ -98,11 +98,11 @@ void Rtc_Cmd(boolean_t NewState)
 ******************************************************************************
     ** \brief  RTC计数器启动等待函数，如启动RTC计数器后立即进入低功耗模式，
     **         进入低功耗模式之前需执行此函数，以确保RTC已启动完成
-    ** 
+    **
     ** @param  NewState : TRUE 或 FALSE
     ** \retval 无
     **
-******************************************************************************/ 
+******************************************************************************/
 void Rtc_StartWait(void)
 {
     M0P_RTC->CR1_f.WAIT = 1;
@@ -111,12 +111,12 @@ void Rtc_StartWait(void)
         ;
     }
     M0P_RTC->CR1_f.WAIT = 0;
-    while (M0P_RTC->CR1_f.WAITF != 0)  //等待直到WAITF=0 
+    while (M0P_RTC->CR1_f.WAITF != 0)  //等待直到WAITF=0
     {
         ;
     }
 }
- 
+
 /**
 ******************************************************************************
     ** \brief  RTC的1Hz输出的使能或停止
@@ -124,28 +124,28 @@ void Rtc_StartWait(void)
     ** @param  NewState : Hz1o_Disable 或 HZ1o_Enable
     ** \retval 无
     **
-******************************************************************************/ 
+******************************************************************************/
 void Rtc_Hz1Cmd(en_rtc_hz1sel_t pricision, boolean_t NewState)
 {
     SetBit((uint32_t)(&(M0P_RTC->CR0)), 6, pricision);  //设置普通精度或者高精度1Hz输出
     SetBit((uint32_t)(&(M0P_RTC->CR0)), 5, NewState);   //设置1Hz输出使能或禁止
-}    
+}
 
 /**
 ******************************************************************************
     ** \brief  设置周期中断的类型(PRDSEL)及其所选类型的时间(PRDS或PRDX)
-    ** 
+    **
   ** @param   pstCyc: 根据结构体的定义设置PRDSEL、PRDS与PRDX
     ** \retval  Ok、Error 或 ErrorInvalidParameter
     **
-******************************************************************************/ 
+******************************************************************************/
 en_result_t Rtc_SetCyc(stc_rtc_cyccfg_t* pstCyc)
 {
     en_result_t enRet = Error;
     M0P_RTC->CR0_f.PRDSEL = pstCyc->rtcPrdsel;
     if(pstCyc->rtcPrdsel == RtcPrds)
     {
-        M0P_RTC->CR0_f.PRDS = pstCyc->rtcPrds; 
+        M0P_RTC->CR0_f.PRDS = pstCyc->rtcPrds;
     }
     else if(pstCyc->rtcPrdsel == RtcPrdx)
     {
@@ -162,12 +162,12 @@ en_result_t Rtc_SetCyc(stc_rtc_cyccfg_t* pstCyc)
     }
     enRet = Ok;
     return enRet;
-}    
+}
 
 /**
 ******************************************************************************
     ** \brief  RTC闹钟中断的使能或停止
-    ** 
+    **
     ** @param  NewState : TRUE 或 FALSE
     ** \retval 无
     **
@@ -178,15 +178,15 @@ void Rtc_AlmIeCmd(boolean_t NewState)
     SetBit((uint32_t)(&(M0P_RTC->CR1)), 4, 0);        //清除周期中断标志位
     SetBit((uint32_t)(&(M0P_RTC->CR1)), 6, NewState);
 }
- 
+
 /**
 ******************************************************************************
     ** \brief  RTC闹钟的使能或停止
-    ** 
+    **
     ** @param  NewState : Almen_Disable 或 Almen_Enable
     ** \retval 无
     **
-******************************************************************************/ 
+******************************************************************************/
 void Rtc_AlmEnCmd(boolean_t NewState)
 {
     SetBit((uint32_t)(&(M0P_RTC->CR1)), 7, NewState);
@@ -195,7 +195,7 @@ void Rtc_AlmEnCmd(boolean_t NewState)
 /**
 ******************************************************************************
     ** \brief  获取RTC闹钟中断状态位
-    ** 
+    **
     ** @param  无
     ** \retval TRUE 或 FALSE
     **
@@ -208,7 +208,7 @@ boolean_t Rtc_GetAlmfItStatus(void)
 /**
 ******************************************************************************
     ** \brief  清除RTC闹钟中断状态位
-    ** 
+    **
     ** @param  无
     ** \retval 无
     **
@@ -221,7 +221,7 @@ void Rtc_ClearAlmfItStatus(void)
 /**
 ******************************************************************************
     ** \brief  清除RTC周期中断状态位
-    ** 
+    **
     ** @param  无
     ** \retval 无
     **
@@ -234,7 +234,7 @@ void Rtc_ClearPrdfItStatus(void)
 /**
 ******************************************************************************
     ** \brief  获取RTC周期中断状态位
-    ** 
+    **
     ** @param  无
     ** \retval TRUE 或 FALSE
     **
@@ -247,7 +247,7 @@ boolean_t Rtc_GetPridItStatus(void)
 /**
 ******************************************************************************
     ** \brief  配置RTC的误差补偿寄存器
-    ** 
+    **
     ** @param  CompValue:数值的范围为：32-256
     ** @param  NewStatus: RtcCompenDisable 或 RtcAmCompenEnable
     ** \retval Ok  ErrorInvalidParameter
@@ -277,7 +277,7 @@ en_result_t Rtc_CompCfg(uint16_t CompVlue, en_rtc_compen_t NewStatus)
  ** \param u8limit_max最大值
  **
  ** \retval Error 错误，Ok校验正确
- ** 
+ **
  ******************************************************************************/
 en_result_t Check_BCD_Format(uint8_t u8data,uint8_t u8limit_min, uint8_t u8limit_max)
 {
@@ -320,12 +320,12 @@ uint8_t Rtc_CheckLeapYear(uint8_t u8year)
  ** \param [in] u8month月份，u8year年份
  **
 ** \retval u8day天数:28或29
- ** 
+ **
  ******************************************************************************/
 uint8_t Get_Month2_Day( uint8_t u8year)
 {
     uint8_t u8day = 0;
-    
+
     u8day = 28;
     if(Rtc_CheckLeapYear(u8year) == 1)
     {
@@ -346,7 +346,7 @@ uint8_t Get_Month2_Day( uint8_t u8year)
 en_result_t Rtc_ReadDateTime(stc_rtc_time_t* time)
 {
     uint32_t u32TimeOut;
-    ASSERT(NULL != pstcTimeDate);  
+    ASSERT(NULL != pstcTimeDate);
     u32TimeOut = 1000;
     if(1 == M0P_RTC->CR0_f.START)
     {
@@ -384,7 +384,7 @@ en_result_t Rtc_ReadDateTime(stc_rtc_time_t* time)
             while(M0P_RTC->CR1_f.WAITF)
             {}
     }
-    
+
     return Ok;
 }
 
@@ -395,7 +395,7 @@ en_result_t Rtc_ReadDateTime(stc_rtc_time_t* time)
  ** \param time： 存放时间的结构体，各个时间均为BCD码格式
  **
  ** \retval ErrorTimeout 或 Ok
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_SetTime(stc_rtc_time_t* time)
 {
@@ -439,10 +439,10 @@ en_result_t Rtc_SetTime(stc_rtc_time_t* time)
  ******************************************************************************
  ** \brief  RTC闹钟中断时间获取
  **
- ** \param pstcAlarmTime：存放闹钟时间寄存器数据：秒 分 时 周 
+ ** \param pstcAlarmTime：存放闹钟时间寄存器数据：秒 分 时 周
  **
  ** \retval 无
- ** 
+ **
  ******************************************************************************/
 void Rtc_GetAlarmTime(stc_rtc_alarmtime_t* pstcAlarmTime)
 {
@@ -459,7 +459,7 @@ void Rtc_GetAlarmTime(stc_rtc_alarmtime_t* pstcAlarmTime)
  ** \param [in] pstcAlarmTime闹钟时间：秒 分 时 周
  **
  ** \retval Ok  设置正常
- ** 
+ **
  ******************************************************************************/
 en_result_t Rtc_SetAlarmTime(stc_rtc_alarmtime_t* pstcAlarmTime)
 {
@@ -487,7 +487,7 @@ en_result_t Rtc_SetAlarmTime(stc_rtc_alarmtime_t* pstcAlarmTime)
 
     if(enRet != Ok)
     {
-            return enRet; 
+            return enRet;
     }
     M0P_RTC->ALMSEC  = pstcAlarmTime->RtcAlarmSec & 0x7f;
     M0P_RTC->ALMMIN  = pstcAlarmTime->RtcAlarmMinute & 0x7f;
@@ -501,7 +501,7 @@ en_result_t Rtc_SetAlarmTime(stc_rtc_alarmtime_t* pstcAlarmTime)
 /**
 ******************************************************************************
     ** \brief  初始化RTC
-    ** 
+    **
     ** @param  Rtc_InitStruct 存放stc_rtc_initstruct_t类型的结构体
     ** \retval 无
     **

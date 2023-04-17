@@ -18,7 +18,7 @@
 * Description : This function uses the interruption of DMA  underrun.
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
-* Output      : 
+* Output      :
 * Author      : CWT                         Data : 2020年
 **********************************************************************************/
 void HAL_DAC_IRQHandler(DAC_HandleTypeDef *hdac)
@@ -26,7 +26,7 @@ void HAL_DAC_IRQHandler(DAC_HandleTypeDef *hdac)
     if((hdac->Instance->SR&DAC_SR_DMAUDR1)==DAC_SR_DMAUDR1||(hdac->Instance->SR &DAC_SR_DMAUDR2)==DAC_SR_DMAUDR2)
     {
         //clear the DMA underrun
-        hdac->Instance->SR|=DAC_SR_DMAUDR1|DAC_SR_DMAUDR2;   
+        hdac->Instance->SR|=DAC_SR_DMAUDR1|DAC_SR_DMAUDR2;
     }
 }
 /*********************************************************************************
@@ -34,7 +34,7 @@ void HAL_DAC_IRQHandler(DAC_HandleTypeDef *hdac)
 * Description : Initialize the DAC MSP.
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
-* Output      : 
+* Output      :
 * Author      : CWT                         Data : 2020年
 **********************************************************************************/
 
@@ -45,20 +45,20 @@ __weak void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
     */
     /* For Example */
     if(hdac->Instance==DAC)
-    { 
+    {
         /* Enable DAC clock */
         System_Module_Enable(EN_DAC);
-        GPIO_InitTypeDef GPIO_InitStructure;   	
+        GPIO_InitTypeDef GPIO_InitStructure;
         /* Initialization GPIO */
-        /**DAC1 GPIO Configuration    
-        PB1  ------> DAC_OUT1 
-        PB0  ------> DAC_OUT2 
+        /**DAC1 GPIO Configuration
+        PB1  ------> DAC_OUT1
+        PB0  ------> DAC_OUT2
         */
-        GPIO_InitStructure.Pin = GPIO_PIN_1|GPIO_PIN_0;	
+        GPIO_InitStructure.Pin = GPIO_PIN_1|GPIO_PIN_0;
         GPIO_InitStructure.Pull=GPIO_NOPULL;
         GPIO_InitStructure.Mode = GPIO_MODE_ANALOG;
         HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
-        
+
         /* Enable the DAC DMA underrun interrupt */
         hdac->Instance->CR |= DAC_CR_DMAUDRIE1|DAC_CR_DMAUDRIE2;
         NVIC_ClearPendingIRQ(DAC_IRQn);
@@ -72,7 +72,7 @@ __weak void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
 * Description : DAC MSP De-Initialization.
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
-* Output      : 
+* Output      :
 * Author      : CWT                         Data : 2020年
 **********************************************************************************/
 void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
@@ -84,9 +84,9 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
         /* USER CODE END DAC1_MspDeInit 0 */
         /* Peripheral clock disable */
         System_Module_Disable(EN_DAC);
-        /**DAC1 GPIO Configuration    
-        PB1  ------> DAC_OUT1 
-        PB0  ------> DAC_OUT2 
+        /**DAC1 GPIO Configuration
+        PB1  ------> DAC_OUT1
+        PB0  ------> DAC_OUT2
         */
         HAL_GPIO_DeInit(GPIOB, GPIO_PIN_0);
         HAL_GPIO_DeInit(GPIOB, GPIO_PIN_1);
@@ -102,7 +102,7 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
 
 /*********************************************************************************
 * Function    : HAL_DAC_Init
-* Description :	Initializes the CAN peripheral according to the specified  parameters in the DAC_HandleTypeDef..
+* Description : Initializes the CAN peripheral according to the specified  parameters in the DAC_HandleTypeDef..
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
 * Output      : HAL status
@@ -121,7 +121,7 @@ HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef *hdac)
 
 /*********************************************************************************
 * Function    : HAL_DAC_DeInit
-* Description :	Deinitialize the DAC peripheral registers to their default reset values.
+* Description : Deinitialize the DAC peripheral registers to their default reset values.
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
 * Output      : HAL status
@@ -144,7 +144,7 @@ HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac)
 
 /*********************************************************************************
 * Function    : HAL_DAC_ConfigChannel
-* Description :	Configures the selected DAC channel.
+* Description : Configures the selected DAC channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               sConfig:DAC configuration structure
@@ -189,7 +189,7 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConf
         else /* Channel 2 */
 
             hdac->Instance->SHSR2 = sConfig->DAC_SampleAndHoldConfig.DAC_SampleTime;
-    
+
         /* HoldTime */
         MODIFY_REG(hdac->Instance->SHHR, DAC_SHHR_THOLD1 << (Channel & 0x10UL), (sConfig->DAC_SampleAndHoldConfig.DAC_HoldTime) << (Channel & 0x10UL));
         /* RefreshTime */
@@ -219,7 +219,7 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConf
         if (OTRIM_low==((~OTRIM_high)&0xffff))
             {
                 tmpreg1=(OTRIM_low&0x1f)|(((OTRIM_low&0x3E0)>>5)<<16);
-                hdac->Instance->CCR = tmpreg1;  
+                hdac->Instance->CCR = tmpreg1;
             }
     }
 
@@ -234,7 +234,7 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConf
     {
         ConnectOnChipPeripheral=(!ConnectOnChipPeripheral);
     }
-    tmpreg2 = (sConfig->DAC_SampleAndHold | sConfig->DAC_OutputBuffer | ConnectOnChipPeripheral); 
+    tmpreg2 = (sConfig->DAC_SampleAndHold | sConfig->DAC_OutputBuffer | ConnectOnChipPeripheral);
     /* Calculate MCR register value depending on DAC_Channel */
     tmpreg1 |= tmpreg2 << (Channel & 0x10UL);
     /* Write to DAC MCR */
@@ -260,12 +260,12 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConf
 
 
     /* Return function status */
-    return HAL_OK;  
+    return HAL_OK;
 }
 
 /*********************************************************************************
 * Function    : HAL_DAC_Start
-* Description :	 Enables DAC and starts conversion of channel.
+* Description :  Enables DAC and starts conversion of channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2
@@ -276,12 +276,12 @@ HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel)
 {
     /* Check the parameters */
     if(!IS_DAC_ALL_PERIPH(hdac->Instance)) return HAL_ERROR;
-    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR; 
+    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR;
       uint32_t tmp1 = 0U, tmp2 = 0U;
-    
+
     if (Channel == DAC_CHANNEL_1)
     {
-        hdac->Instance->CR|=DAC_CR_EN1;  
+        hdac->Instance->CR|=DAC_CR_EN1;
         tmp1 = hdac->Instance->CR & DAC_CR_TEN1;
         tmp2 = hdac->Instance->CR & DAC_CR_TSEL1;
          /* Check if software trigger enabled */
@@ -293,9 +293,9 @@ HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel)
     }
     else
     {
-        hdac->Instance->CR|=DAC_CR_EN2; 
+        hdac->Instance->CR|=DAC_CR_EN2;
         tmp1 = hdac->Instance->CR & DAC_CR_TEN2;
-        tmp2 = hdac->Instance->CR & DAC_CR_TSEL2;    
+        tmp2 = hdac->Instance->CR & DAC_CR_TSEL2;
          /* Check if software trigger enabled */
     if((tmp1 == DAC_CR_TEN2) && (tmp2 == DAC_CR_TSEL2))
     {
@@ -309,7 +309,7 @@ HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel)
 
 /*********************************************************************************
 * Function    : HAL_DAC_Stop
-* Description :	Disables DAC and stop conversion of channel.
+* Description : Disables DAC and stop conversion of channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2
@@ -320,32 +320,32 @@ HAL_StatusTypeDef HAL_DAC_Stop(DAC_HandleTypeDef* hdac, uint32_t Channel)
 {
     /* Check the parameters */
     if(!IS_DAC_ALL_PERIPH(hdac->Instance)) return HAL_ERROR;
-    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR; 
-  
+    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR;
+
     /* Disable the Peripheral */
     if (Channel == DAC_CHANNEL_1)
     {
-        hdac->Instance->CR&=~DAC_CR_EN1;  
+        hdac->Instance->CR&=~DAC_CR_EN1;
     }
     else
     {
-        hdac->Instance->CR&=~DAC_CR_EN2;  
+        hdac->Instance->CR&=~DAC_CR_EN2;
     }
- 
+
     /* Return function status */
     return HAL_OK;
 }
 
 /*********************************************************************************
 * Function    : HAL_DAC_Start_DMA
-* Description :	Enables DAC and starts conversion of channel.
+* Description : Enables DAC and starts conversion of channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2 @arg DAC_CHANNEL_Dual
 *               pData: The destination peripheral Buffer address.
 *               Length: The length of data to be transferred from memory to DAC peripheral
 *               Alignment: Specifies the data alignment for DAC channel.This parameter can be one of the following values:
-                            @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R  
+                            @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R
 * Output      : HAL status
 * Author      : CWT                         Data : 2020年
 **********************************************************************************/
@@ -355,14 +355,14 @@ HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, u
     uint32_t DstAddr = 0U;
     /* Check the parameters */
     if(!IS_DAC_ALL_PERIPH(hdac->Instance)) return HAL_ERROR;
-    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR; 
-    if(!IS_DAC_ALIGN(Alignment)) return HAL_ERROR;  
-    
+    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR;
+    if(!IS_DAC_ALIGN(Alignment)) return HAL_ERROR;
+
     if (Channel == DAC_CHANNEL_1)
     {
         /* Enable the DAC DMA underrun interrupt */
         /* Enable the selected DAC channel2 DMA request */
-        hdac->Instance->CR |= DAC_CR_EN1|DAC_CR_DMAEN1|DAC_CR_DMAUDRIE1;   
+        hdac->Instance->CR |= DAC_CR_EN1|DAC_CR_DMAEN1|DAC_CR_DMAUDRIE1;
         /* Case of use of channel 1 */
         switch (Alignment)
         {
@@ -381,14 +381,14 @@ HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, u
             default:
             break;
         }
-        status = HAL_DMA_Start_IT(hdac->DMA_Handle1, (uint32_t)pData, DstAddr, Length); 
+        status = HAL_DMA_Start_IT(hdac->DMA_Handle1, (uint32_t)pData, DstAddr, Length);
     }
     else if(Channel == DAC_CHANNEL_2)
     {
         /* Enable the DAC DMA underrun interrupt */
         /* Enable the selected DAC channel2 DMA request */
-        hdac->Instance->CR |= DAC_CR_EN2|DAC_CR_DMAEN2|DAC_CR_DMAUDRIE2;   
-      
+        hdac->Instance->CR |= DAC_CR_EN2|DAC_CR_DMAEN2|DAC_CR_DMAUDRIE2;
+
         /* Case of use of channel 1 */
         switch (Alignment)
         {
@@ -407,11 +407,11 @@ HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, u
             default:
             break;
         }
-        status = HAL_DMA_Start_IT(hdac->DMA_Handle2, (uint32_t)pData, DstAddr, Length); 
+        status = HAL_DMA_Start_IT(hdac->DMA_Handle2, (uint32_t)pData, DstAddr, Length);
     }
     else/* DualChannel */
     {
-        hdac->Instance->CR |= DAC_CR_EN1|DAC_CR_DMAEN1|DAC_CR_DMAUDRIE1|DAC_CR_EN2 ;   
+        hdac->Instance->CR |= DAC_CR_EN1|DAC_CR_DMAEN1|DAC_CR_DMAUDRIE1|DAC_CR_EN2 ;
         /* Case of use of channel_1 DMA change two DAC channel */
         switch (Alignment)
         {
@@ -430,7 +430,7 @@ HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, u
             default:
             break;
         }
-        status = HAL_DMA_Start_IT(hdac->DMA_Handle1, (uint32_t)pData, DstAddr, Length); 
+        status = HAL_DMA_Start_IT(hdac->DMA_Handle1, (uint32_t)pData, DstAddr, Length);
     }
     /* Return function status */
     return status;
@@ -438,7 +438,7 @@ HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, u
 
 /*********************************************************************************
 * Function    : HAL_DAC_Stop_DMA
-* Description :	Disables DAC and stop conversion of channel.
+* Description : Disables DAC and stop conversion of channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2 @arg DAC_CHANNEL_Dual
@@ -451,24 +451,24 @@ HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel)
 
     /* Check the parameters */
     if(!IS_DAC_ALL_PERIPH(hdac->Instance)) return HAL_ERROR;
-    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR; 
-  
+    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR;
+
     /* Disable the selected DAC channel DMA request */
     /* Disable the DMA Channel */
     /* Channel1 is used */
     if(Channel == DAC_CHANNEL_1)
-    { 
+    {
         hdac->Instance->CR &= ~DAC_CR_DMAEN1;
         /* Disable the Peripheral */
         hdac->Instance->CR&=~DAC_CR_EN1;
         status = HAL_DMA_Abort(hdac->DMA_Handle1);
     }
-  
+
     else if(Channel == DAC_CHANNEL_2) /* Channel2 is used for */
-    { 
+    {
         hdac->Instance->CR &= ~DAC_CR_DMAEN2;
         hdac->Instance->CR&=~DAC_CR_EN2;
-        status = HAL_DMA_Abort(hdac->DMA_Handle2); 
+        status = HAL_DMA_Abort(hdac->DMA_Handle2);
     }
     else
     {
@@ -479,20 +479,20 @@ HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel)
         hdac->Instance->CR&=~DAC_CR_EN2;
         status = HAL_DMA_Abort(hdac->DMA_Handle1)|HAL_DMA_Abort(hdac->DMA_Handle2);
     }
-  
+
     /* Return function status */
     return status;
 }
 
 /*********************************************************************************
 * Function    : HAL_DAC_SetChannelValue
-* Description :	Set the specified data holding register value for DAC channel.
+* Description : Set the specified data holding register value for DAC channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2
 *               Alignment: Specifies the data alignment for DAC channel.This parameter can be one of the following values:
-*                             @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R  
-*                 Data:The destination peripheral Buffer address.          
+*                             @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R
+*                 Data:The destination peripheral Buffer address.
 * Output      : HAL status
 * Author      : CWT                         Data : 2020年
 **********************************************************************************/
@@ -502,9 +502,9 @@ HAL_StatusTypeDef HAL_DAC_SetValue(DAC_HandleTypeDef *hdac, uint32_t Channel, ui
 
     /* Check the parameters */
     if(!IS_DAC_ALL_PERIPH(hdac->Instance)) return HAL_ERROR;
-    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR; 
-    if(!IS_DAC_ALIGN(Alignment)) return HAL_ERROR; 
-    
+    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR;
+    if(!IS_DAC_ALIGN(Alignment)) return HAL_ERROR;
+
     tmp = (uint32_t)hdac->Instance;
     if (Channel == DAC_CHANNEL_1)
     {
@@ -514,13 +514,13 @@ HAL_StatusTypeDef HAL_DAC_SetValue(DAC_HandleTypeDef *hdac, uint32_t Channel, ui
     {
         tmp += DAC_DHR12R2_ALIGNMENT(Alignment);
     }
-    
+
     /* Calculate and set dual DAC data holding register value */
     if (Alignment == DAC_ALIGN_12B_L)
     {
         Data = (uint32_t)Data << 4;
     }
-  
+
     /* Set the DAC channel selected data holding register */
     *(__IO uint32_t *) tmp = Data;
 
@@ -530,12 +530,12 @@ HAL_StatusTypeDef HAL_DAC_SetValue(DAC_HandleTypeDef *hdac, uint32_t Channel, ui
 
 /*********************************************************************************
 * Function    : HAL_DACEx_DualSetValue
-* Description :	Set the specified data holding register value for dual DAC channel.
+* Description : Set the specified data holding register value for dual DAC channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Alignment: Specifies the data alignment for DAC channel.This parameter can be one of the following values:
-*                             @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R  
-*               Datax:The destination peripheral Buffer address.          
+*                             @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R
+*               Datax:The destination peripheral Buffer address.
 * Output      : HAL status
 * Author      : CWT                         Data : 2020年
 **********************************************************************************/
@@ -544,7 +544,7 @@ HAL_StatusTypeDef HAL_DACEx_DualSetValue(DAC_HandleTypeDef *hdac, uint32_t Align
     uint32_t data, tmp;
     /* Check the parameters */
     if(!IS_DAC_ALL_PERIPH(hdac->Instance)) return HAL_ERROR;
-    if(!IS_DAC_ALIGN(Alignment)) return HAL_ERROR; 
+    if(!IS_DAC_ALIGN(Alignment)) return HAL_ERROR;
 
     /* Calculate and set dual DAC data holding register value */
     if (Alignment == DAC_ALIGN_12B_L)
@@ -568,10 +568,10 @@ HAL_StatusTypeDef HAL_DACEx_DualSetValue(DAC_HandleTypeDef *hdac, uint32_t Align
 
 /*********************************************************************************
 * Function    : HAL_DAC_GetValue
-* Description :	Returns the last data output value of the selected DAC channel.
+* Description : Returns the last data output value of the selected DAC channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
-*               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @arg DAC_CHANNEL_2     
+*               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @arg DAC_CHANNEL_2
 * Output      : The selected DAC channel data output value.
 * Author      : CWT                         Data : 2020年
 **********************************************************************************/
@@ -579,8 +579,8 @@ uint32_t HAL_DAC_GetValue(DAC_HandleTypeDef* hdac, uint32_t Channel)
 {
     /* Check the parameters */
     if(!IS_DAC_ALL_PERIPH(hdac->Instance)) return HAL_ERROR;
-    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR; 
-  
+    if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR;
+
     /* Returns the DAC channel data output register value */
     if(Channel == DAC_CHANNEL_1)
     {
@@ -596,9 +596,9 @@ uint32_t HAL_DAC_GetValue(DAC_HandleTypeDef* hdac, uint32_t Channel)
 
 /*********************************************************************************
 * Function    : HAL_DACEx_DualGetValue
-* Description :	Return the last data output value of the selected DAC channel.
+* Description : Return the last data output value of the selected DAC channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
-*                     the configuration information for the specified DAC.      
+*                     the configuration information for the specified DAC.
 * Output      : The selected DAC channel data output value.
 * Author      : CWT                         Data : 2020年
 **********************************************************************************/
@@ -618,7 +618,7 @@ uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef *hdac)
 
 /*********************************************************************************
 * Function    :HAL_DACEx_TriangleWaveGenerate
-* Description :	Enable or disable the selected DAC channel wave generation.
+* Description : Enable or disable the selected DAC channel wave generation.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Channel:The selected DAC channel.   This parameter can be one of the following values:
@@ -655,10 +655,10 @@ HAL_StatusTypeDef HAL_DACEx_TriangleWaveGenerate(DAC_HandleTypeDef *hdac, uint32
 }
 
 
-  
+
   /*********************************************************************************
 * Function    : HAL_DACEx_NoiseWaveGenerate
-* Description :	Enable or disable the selected DAC channel wave generation
+* Description : Enable or disable the selected DAC channel wave generation
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Channel:The selected DAC channel.   This parameter can be one of the following values:
@@ -696,7 +696,7 @@ HAL_StatusTypeDef HAL_DACEx_NoiseWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t 
 
 /*********************************************************************************
 * Function    : HAL_DACEx_SelfCalibrate
-* Description :	SRun the self calibration of one DAC channel.
+* Description : SRun the self calibration of one DAC channel.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               sConfig:sConfig DAC channel configuration structure
@@ -718,7 +718,7 @@ HAL_StatusTypeDef HAL_DACEx_SelfCalibrate(DAC_HandleTypeDef *hdac, DAC_ChannelCo
     uint32_t trimmingvalue;
     uint32_t laststatus=0;
     uint32_t nowstatus=0;
-    
+
     SET_BIT((hdac->Instance->CR), (DAC_CR_EN1 << (Channel & 0x10UL)));
     tmp = (uint32_t)hdac->Instance;
     if (Channel == DAC_CHANNEL_1)
@@ -752,7 +752,7 @@ HAL_StatusTypeDef HAL_DACEx_SelfCalibrate(DAC_HandleTypeDef *hdac, DAC_ChannelCo
             break;
         }
     }
-    
+
     /* Disable the selected DAC channel calibration */
     /* i.e. clear DAC_CR_CENx bit */
     CLEAR_BIT((hdac->Instance->CR), (DAC_CR_CEN1 << (Channel & 0x10UL)));
@@ -769,7 +769,7 @@ HAL_StatusTypeDef HAL_DACEx_SelfCalibrate(DAC_HandleTypeDef *hdac, DAC_ChannelCo
 
 /*********************************************************************************
 * Function    : HAL_DACEx_SetUserTrimming
-* Description :	Set the trimming mode and trimming value (user trimming mode applied).
+* Description : Set the trimming mode and trimming value (user trimming mode applied).
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               sConfig:sConfig DAC channel configuration structure
@@ -788,7 +788,7 @@ HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_Channel
     if(!IS_DAC_ALL_PERIPH(hdac->Instance)) return HAL_ERROR;
     if(!IS_DAC_CHANNEL(Channel)) return HAL_ERROR;
     if(!IS_DAC_Calibration_TRIM(NewTrimmingValue)) return HAL_ERROR;
-    
+
     /* Check the DAC handle allocation */
     if (hdac == NULL)
     {
@@ -808,7 +808,7 @@ HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_Channel
 
 /*********************************************************************************
 * Function    : HAL_DACEx_GetTrimOffset
-* Description :	Return the DAC trimming value.
+* Description : Return the DAC trimming value.
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.
 *               Channel:The selected DAC channel.   This parameter can be one of the following values:

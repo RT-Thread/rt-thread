@@ -3,7 +3,7 @@
   * @file    hk32f0xx_divsqrt.h
   * @brief   hk32f0xx divsqrt  file.
   *          The file is the unique include file that the application programmer
-	*          is using in the C source code.it is a patch file 
+    *          is using in the C source code.it is a patch file
   ******************************************************************************
 **/
 
@@ -15,15 +15,15 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
- 
+
 /* Includes ------------------------------------------------------------------*/
 #include "hk32f0xx.h"
 
 
 #define DVSQ_BUSY_WAIT_EN                           1                                     /* 为1的话在读取DVSQ运算结果寄存器前都会判断并等待DVSQ空闲 */
-  
+
 // DVSQ寄存器访问指针
-#define DVSQ                                        DIVSQRT   
+#define DVSQ                                        DIVSQRT
 
 // DVSQ外设时钟操作
 #define RCC_AHBPeriph_DVSQ                          ((uint32_t)0x00000001)
@@ -57,9 +57,9 @@
 
 /* DVSQ等待空闲 */
 #if (DVSQ_BUSY_WAIT_EN == 1)
-#define DVSQ_Wait()                                 while(DVSQ_IsBusy())   
+#define DVSQ_Wait()                                 while(DVSQ_IsBusy())
 #else
-#define DVSQ_Wait()    
+#define DVSQ_Wait()
 #endif
 
 
@@ -68,7 +68,7 @@
 void HK_Dvsq_Init(void);
 uint32_t HK_Dvsq_Sqrt(uint32_t u32Radicand, FlagStatus eIsHighPres);
 uint32_t HK_Dvsq_Divsion(uint32_t u32Dividend, uint32_t u32Divisor, uint32_t *u32pRemainder, FlagStatus eIsUnsigned, FlagStatus eIsFastStart);
-             
+
 #ifdef __cplusplus
 }
 #endif

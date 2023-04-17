@@ -1,43 +1,43 @@
 /*************************************************************************************
-* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.    
+* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Huada Semiconductor Co.,Ltd ("HDSC").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with HDSC 
-* components. This software is licensed by HDSC to be adapted only 
-* for use in systems utilizing HDSC components. HDSC shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein. HDSC is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with HDSC
+* components. This software is licensed by HDSC to be adapted only
+* for use in systems utilizing HDSC components. HDSC shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein. HDSC is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * Disclaimer:
 * HDSC MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.                        
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /******************************************************************************/
 /** \file I2C.c
@@ -79,13 +79,13 @@ static func_ptr_t pfnI2c1tCallback = NULL;
      en_result_t enRet = Error;
      if(I2C0 == enCh)
      {
-        M0P_I2C0->TM = u8Tm; 
+        M0P_I2C0->TM = u8Tm;
      }
      else
      {
         M0P_I2C1->TM = u8Tm;
      }
-     
+
      enRet = Ok;
      return enRet;
  }
@@ -125,7 +125,7 @@ en_result_t I2C_SetFunc(en_i2c_channel_t enCh,en_i2c_func_t enFunc)
                 break;
             default:
                 return ErrorInvalidParameter;
-        }  
+        }
     }
     else
     {
@@ -151,7 +151,7 @@ en_result_t I2C_SetFunc(en_i2c_channel_t enCh,en_i2c_func_t enFunc)
                 break;
             default:
                 return ErrorInvalidParameter;
-        }  
+        }
     }
 
     enRet = Ok;
@@ -193,7 +193,7 @@ en_result_t I2C_SetFunc(en_i2c_channel_t enCh,en_i2c_func_t enFunc)
                 break;
             default:
                 return ErrorInvalidParameter;
-        }  
+        }
     }
     else
     {
@@ -219,10 +219,10 @@ en_result_t I2C_SetFunc(en_i2c_channel_t enCh,en_i2c_func_t enFunc)
                 break;
             default:
                 return ErrorInvalidParameter;
-        }   
+        }
     }
     enRet = Ok;
-    return enRet; 
+    return enRet;
  }
  /**
  ******************************************************************************
@@ -238,14 +238,14 @@ boolean_t I2C_GetIrq(en_i2c_channel_t enCh)
     boolean_t bIrq = FALSE;
     if(I2C0 == enCh)
     {
-        bIrq = M0P_I2C0->CR_f.SI; 
+        bIrq = M0P_I2C0->CR_f.SI;
     }
     else
     {
-        bIrq = M0P_I2C1->CR_f.SI; 
+        bIrq = M0P_I2C1->CR_f.SI;
     }
-    
-    return bIrq;  
+
+    return bIrq;
 }
 /**
  ******************************************************************************
@@ -261,14 +261,14 @@ en_result_t I2C_ClearIrq(en_i2c_channel_t enCh)
     en_result_t enRet = Error;
     if(I2C0 == enCh)
     {
-       M0P_I2C0->CR_f.SI = 0; 
+       M0P_I2C0->CR_f.SI = 0;
     }
     else
     {
-       M0P_I2C1->CR_f.SI = 0;  
-    }  
+       M0P_I2C1->CR_f.SI = 0;
+    }
     enRet = Ok;
-    return enRet; 
+    return enRet;
 }
  /**
  ******************************************************************************
@@ -284,11 +284,11 @@ uint8_t I2C_GetState(en_i2c_channel_t enCh)
     uint8_t u8State = 0;
     if(I2C0 == enCh)
     {
-        u8State = M0P_I2C0->STAT;  
+        u8State = M0P_I2C0->STAT;
     }
     else
     {
-        u8State = M0P_I2C1->STAT;  
+        u8State = M0P_I2C1->STAT;
     }
     return u8State;
 }
@@ -312,11 +312,11 @@ uint8_t I2C_GetState(en_i2c_channel_t enCh)
     else
     {
         M0P_I2C1->ADDR_f.ADR = pstcSlaveAddr->Addr;
-        M0P_I2C1->ADDR_f.GC = pstcSlaveAddr->Gc;   
+        M0P_I2C1->ADDR_f.GC = pstcSlaveAddr->Gc;
     }
 
     enRet = Ok;
-    return enRet;     
+    return enRet;
 }
 /**
  ******************************************************************************
@@ -332,11 +332,11 @@ en_result_t I2C_WriteByte(en_i2c_channel_t enCh,uint8_t u8Data)
     en_result_t enRet = Error;
     if(I2C0 == enCh)
     {
-        M0P_I2C0->DATA = u8Data;  
+        M0P_I2C0->DATA = u8Data;
     }
     else
     {
-        M0P_I2C1->DATA = u8Data;   
+        M0P_I2C1->DATA = u8Data;
     }
     enRet = Ok;
     return enRet;
@@ -355,12 +355,12 @@ uint8_t I2C_ReadByte(en_i2c_channel_t enCh)
     uint8_t u8Data = 0;
     if(I2C0 == enCh)
     {
-       u8Data = M0P_I2C0->DATA; 
+       u8Data = M0P_I2C0->DATA;
     }
     else
     {
-       u8Data = M0P_I2C1->DATA; 
-    } 
+       u8Data = M0P_I2C1->DATA;
+    }
     return u8Data;
 }
  /**
@@ -376,43 +376,43 @@ en_result_t I2C_MasterWriteData(en_i2c_channel_t enCh,uint8_t u8DevAddr,uint8_t 
 {
     en_result_t enRet = Error;
     uint8_t u8i=0,u8State;
-    
+
     I2C_SetFunc(enCh,I2cStart_En);
-	while(1)
-	{
-		while(0 == I2C_GetIrq(enCh))
-		{}
-		u8State = I2C_GetState(enCh);
-		switch(u8State)
-		{
-			case 0x08:
-				I2C_ClearFunc(enCh,I2cStart_En);
-				I2C_WriteByte(enCh,u8DevAddr);//从设备地址发送
-				break;
-			case 0x18:
-				I2C_WriteByte(enCh,u8Addr);//从设备内存地址发送
-				break;
-			case 0x28:	
-				I2C_WriteByte(enCh,pu8Data[u8i++]);
-				break;
-			case 0x20:
-			case 0x38:
-				I2C_SetFunc(enCh,I2cStart_En);
-				break;
-			case 0x30:
-				I2C_SetFunc(enCh,I2cStop_En);
-				break;
-			default:
-				break;
-		}			
-		if(u8i>u32Len)
-		{
-			I2C_SetFunc(enCh,I2cStop_En);//此顺序不能调换，出停止条件
-			I2C_ClearIrq(enCh);
-			break;
-		}
-		I2C_ClearIrq(enCh);			
-	}
+    while(1)
+    {
+        while(0 == I2C_GetIrq(enCh))
+        {}
+        u8State = I2C_GetState(enCh);
+        switch(u8State)
+        {
+            case 0x08:
+                I2C_ClearFunc(enCh,I2cStart_En);
+                I2C_WriteByte(enCh,u8DevAddr);//从设备地址发送
+                break;
+            case 0x18:
+                I2C_WriteByte(enCh,u8Addr);//从设备内存地址发送
+                break;
+            case 0x28:
+                I2C_WriteByte(enCh,pu8Data[u8i++]);
+                break;
+            case 0x20:
+            case 0x38:
+                I2C_SetFunc(enCh,I2cStart_En);
+                break;
+            case 0x30:
+                I2C_SetFunc(enCh,I2cStop_En);
+                break;
+            default:
+                break;
+        }
+        if(u8i>u32Len)
+        {
+            I2C_SetFunc(enCh,I2cStop_En);//此顺序不能调换，出停止条件
+            I2C_ClearIrq(enCh);
+            break;
+        }
+        I2C_ClearIrq(enCh);
+    }
     enRet = Ok;
     return enRet;
 }
@@ -441,19 +441,19 @@ en_result_t I2C_MasterWriteData(en_i2c_channel_t enCh,uint8_t u8DevAddr,uint8_t 
             case 0xB0:
                 I2C_WriteByte(enCh,pu8Data[u8i++]);
                 break;
-            case 0xB8: 
-            case 0xC8:               
-                I2C_WriteByte(enCh,pu8Data[u8i++]);            
-                break;          
+            case 0xB8:
+            case 0xC8:
+                I2C_WriteByte(enCh,pu8Data[u8i++]);
+                break;
             case 0xF8:
                 *u32Len = u8i;
-                break;   
+                break;
             default:
-                
-                return ErrorInvalidParameter; 
+
+                return ErrorInvalidParameter;
         }
-		I2C_ClearIrq(enCh);
-    } 
+        I2C_ClearIrq(enCh);
+    }
  }
  /**
  ******************************************************************************
@@ -482,22 +482,22 @@ en_result_t I2C_SlaveReadData(en_i2c_channel_t enCh,uint8_t *pu8Data,uint32_t *p
             case 0x78:
               break;
             case 0x80:
-            case 0x90:               
-                pu8Data[u8i++] = I2C_ReadByte(enCh);               
+            case 0x90:
+                pu8Data[u8i++] = I2C_ReadByte(enCh);
                 break;
-            case 0xA0:      
+            case 0xA0:
                 *pu32Len = u8i;
                 break;
             default:
-                return ErrorInvalidParameter; 
+                return ErrorInvalidParameter;
         }
-		I2C_ClearIrq(enCh);
+        I2C_ClearIrq(enCh);
         if(0xA0 == u8State)
         {
           return Ok;
         }
    }
-} 
+}
 
 /**
  ******************************************************************************
@@ -512,66 +512,66 @@ en_result_t I2C_SlaveReadData(en_i2c_channel_t enCh,uint8_t *pu8Data,uint32_t *p
 {
     en_result_t enRet = Error;
     uint8_t u8i=0,u8State;
-    
+
     I2C_SetFunc(enCh,I2cStart_En);
-    
-	while(1)
-	{
-		while(0 == I2C_GetIrq(enCh))
+
+    while(1)
+    {
+        while(0 == I2C_GetIrq(enCh))
         {}
-		u8State = I2C_GetState(enCh);
-		switch(u8State)
-		{
-			case 0x08:
-				I2C_ClearFunc(enCh,I2cStart_En);
-				I2C_WriteByte(enCh,u8DevAddr);
-				break;
-			case 0x18:
-				I2C_WriteByte(enCh,u8Addr);
-				break;
-			case 0x28:
-				I2C_SetFunc(enCh,I2cStart_En);
-				break;
-			case 0x10:
-				I2C_ClearFunc(enCh,I2cStart_En);
-				I2C_WriteByte(enCh,u8DevAddr|0x01);//从机地址发送OK
-				break;
-			case 0x40:
-				if(u32Len>1)
-				{
-					I2C_SetFunc(enCh,I2cAck_En);
-				}
-				break;
-			case 0x50:
-				pu8Data[u8i++] = I2C_ReadByte(enCh);
-				if(u8i==u32Len-1)
-				{
-					I2C_ClearFunc(enCh,I2cAck_En);
-				}
-				break;
-			case 0x58:
-				pu8Data[u8i++] = I2C_ReadByte(enCh);
-				I2C_SetFunc(enCh,I2cStop_En);
-				break;	
-			case 0x38:
-				I2C_SetFunc(enCh,I2cStart_En);
-				break;
-			case 0x48:
-				I2C_SetFunc(enCh,I2cStop_En);
-				I2C_SetFunc(enCh,I2cStart_En);
-				break;
-			default:
-				I2C_SetFunc(enCh,I2cStart_En);//其他错误状态，重新发送起始条件
-				break;
-		}
-		I2C_ClearIrq(enCh);
-		if(u8i==u32Len)
-		{
-			break;
-		}
-	}
-	enRet = Ok;
-	return enRet;
+        u8State = I2C_GetState(enCh);
+        switch(u8State)
+        {
+            case 0x08:
+                I2C_ClearFunc(enCh,I2cStart_En);
+                I2C_WriteByte(enCh,u8DevAddr);
+                break;
+            case 0x18:
+                I2C_WriteByte(enCh,u8Addr);
+                break;
+            case 0x28:
+                I2C_SetFunc(enCh,I2cStart_En);
+                break;
+            case 0x10:
+                I2C_ClearFunc(enCh,I2cStart_En);
+                I2C_WriteByte(enCh,u8DevAddr|0x01);//从机地址发送OK
+                break;
+            case 0x40:
+                if(u32Len>1)
+                {
+                    I2C_SetFunc(enCh,I2cAck_En);
+                }
+                break;
+            case 0x50:
+                pu8Data[u8i++] = I2C_ReadByte(enCh);
+                if(u8i==u32Len-1)
+                {
+                    I2C_ClearFunc(enCh,I2cAck_En);
+                }
+                break;
+            case 0x58:
+                pu8Data[u8i++] = I2C_ReadByte(enCh);
+                I2C_SetFunc(enCh,I2cStop_En);
+                break;
+            case 0x38:
+                I2C_SetFunc(enCh,I2cStart_En);
+                break;
+            case 0x48:
+                I2C_SetFunc(enCh,I2cStop_En);
+                I2C_SetFunc(enCh,I2cStart_En);
+                break;
+            default:
+                I2C_SetFunc(enCh,I2cStart_En);//其他错误状态，重新发送起始条件
+                break;
+        }
+        I2C_ClearIrq(enCh);
+        if(u8i==u32Len)
+        {
+            break;
+        }
+    }
+    enRet = Ok;
+    return enRet;
 }
 /**
  ******************************************************************************
@@ -594,11 +594,11 @@ en_result_t I2C_Init(en_i2c_channel_t enCh,stc_i2c_config_t *pstcI2CCfg)
    }
    if(NULL!=pstcI2CCfg->pfnI2c0Cb)
    {
-		pfnI2c0tCallback = pstcI2CCfg->pfnI2c0Cb;
+        pfnI2c0tCallback = pstcI2CCfg->pfnI2c0Cb;
    }
    if(NULL!=pstcI2CCfg->pfnI2c1Cb)
    {
-		pfnI2c1tCallback = pstcI2CCfg->pfnI2c1Cb;
+        pfnI2c1tCallback = pstcI2CCfg->pfnI2c1Cb;
    }
    if(TRUE == pstcI2CCfg->bTouchNvic)
    {
@@ -609,8 +609,8 @@ en_result_t I2C_Init(en_i2c_channel_t enCh,stc_i2c_config_t *pstcI2CCfg)
         else
         {
             EnableNvic(I2C1_IRQn,IrqLevel3,TRUE);
-        }  
-   }  
+        }
+   }
    return enRet;
 }
 /**
@@ -627,12 +627,12 @@ en_result_t I2C_Init(en_i2c_channel_t enCh,stc_i2c_config_t *pstcI2CCfg)
     en_result_t enRet = Error;
     if(I2C0 == enCh)
     {
-        M0P_I2C0->CR = 0x00; 
+        M0P_I2C0->CR = 0x00;
     }
     else
     {
-        M0P_I2C1->CR = 0x00; 
-    } 
+        M0P_I2C1->CR = 0x00;
+    }
     enRet = Ok;
     return enRet;
  }
@@ -649,18 +649,18 @@ void I2c_IRQHandler(uint8_t u8Param)
 {
     if(I2C0 == u8Param)
     {
-		if(NULL != pfnI2c0tCallback)
-		{
-			pfnI2c0tCallback();
-		}    
+        if(NULL != pfnI2c0tCallback)
+        {
+            pfnI2c0tCallback();
+        }
     }
     else
     {
-		if(NULL != pfnI2c1tCallback)
-		{
-			pfnI2c1tCallback(); 
-		}
-	}   
+        if(NULL != pfnI2c1tCallback)
+        {
+            pfnI2c1tCallback();
+        }
+    }
 }
 
 //@} // I2cGroup

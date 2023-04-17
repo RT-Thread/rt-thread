@@ -177,7 +177,7 @@ void  usbd_ep_deinit (usbd_core_handle_struct *pudev, uint8_t ep_addr)
         USBD_DTG_TX_CLEAR(ep_num);
 
         /* configure the endpoint status as DISABLED */
-        USBD_ENDP_TX_STATUS_SET(ep_num, EPTX_DISABLED); 
+        USBD_ENDP_TX_STATUS_SET(ep_num, EPTX_DISABLED);
     } else {
         USBD_DTG_RX_CLEAR(ep_num);
 
@@ -279,7 +279,7 @@ void  usbd_ep_stall (usbd_core_handle_struct *pudev, uint8_t ep_addr)
 
     if (0U == ep_num) {
         /* control endpoint need to be stalled in two directions */
-        USBD_ENDP_RX_TX_STATUS_SET(ep_num, EPRX_STALL, EPTX_STALL); 
+        USBD_ENDP_RX_TX_STATUS_SET(ep_num, EPRX_STALL, EPTX_STALL);
     }
 }
 

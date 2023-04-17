@@ -43,7 +43,7 @@
 /** \file lcd.h
  **
  ** Headerfile for LCD functions
- **  
+ **
  **
  ** History:
  **   - 2018-05-03   CJ    First Version
@@ -68,8 +68,8 @@
 /* Global pre-processor symbols/macros ('#define')                            */
 /******************************************************************************/
 #define LCDFULLWRITE  0XFFFFFFFF ///<LCD全显
-#define LCDFULLCLEAR  0X00000000 ///<LCD全清 
-#define LCDRAM0_7SIZE 31 
+#define LCDFULLCLEAR  0X00000000 ///<LCD全清
+#define LCDRAM0_7SIZE 31
 #define LCDRAM8_FSIZE 7
 #define LCDRAMSIZE    0x0F
 /******************************************************************************
@@ -82,8 +82,8 @@
  typedef enum en_lcd_biassrc
  {
     LcdInRes_High = 6,///<内部电阻分压，大功耗模式
-    LcdInRes_Low  = 4,///<内部电阻分压，小功耗模式 
-    LcdInRes_Mid  = 2,///<内部电阻分压，中功耗模式 
+    LcdInRes_Low  = 4,///<内部电阻分压，小功耗模式
+    LcdInRes_Mid  = 2,///<内部电阻分压，中功耗模式
     LcdExtCap     = 1,///<外部电容分压模式
     LcdExtRes     = 0,///<外部电阻模式
  }en_lcd_biassrc_t;
@@ -95,7 +95,7 @@
  {
     LcdStatic   = 0,///<静态
     LcdDuty2  = 1,///<1/2duty
-    LcdDuty3  = 2,///<1/3duty 
+    LcdDuty3  = 2,///<1/3duty
     LcdDuty4  = 3,///<1/4duty
     LcdDuty6  = 5,///<1/6duty
     LcdDuty8  = 7,///<1/8duty
@@ -180,7 +180,7 @@ typedef struct stc_lcd_segcom
             uint8_t Seg34Lcd3   :1;
             uint8_t Seg33Lcd2   :1;
             uint8_t Seg32Lcd1   :1;
-            
+
         }Bits;
     }Seg32_39VLcdCom7_4_t;
 }stc_lcd_segcom_t;
@@ -256,7 +256,7 @@ typedef struct stc_lcd_config
  en_result_t LCD_WriteRam0_7Int32(uint8_t u8Row,uint32_t u32Data);
  en_result_t LCD_WriteRam8_FInt8(uint8_t u8Row,uint8_t u8Data);
 
- 
+
 //@} // LCDGroup
 
 #ifdef __cplusplus

@@ -85,7 +85,7 @@
 * Function implementation - global ('extern') and local ('static')
 ******************************************************************************/
 /**
-* \brief   
+* \brief
 *          HDIV 有符号除法
 *
 * \param   [in]   Dividend      被除数
@@ -104,25 +104,25 @@ en_result_t Hdiv_Unsigned(uint32_t Dividend,uint16_t Divisor,stc_div_unsigned_re
   }
   (M0P_HDIV ->DIVIDEND) = Dividend;
   (M0P_HDIV ->DIVISOR) = Divisor;
-  
+
   if(Hdiv_GetZeroState() == TRUE)
   {
     return ErrorInvalidParameter;
   }
-  
+
   while(Hdiv_GetEndState() != TRUE)
   {
     ;
   }
-  
+
   stcDivResult->Quotient = M0P_HDIV->QUOTIENT_f.QUOTIENT;
-  stcDivResult->Remainder = M0P_HDIV ->REMAINDER_f.REMAINDER; 		
+  stcDivResult->Remainder = M0P_HDIV ->REMAINDER_f.REMAINDER;
   return Ok;
 }
 
 
 /**
-* \brief   
+* \brief
 *          HDIV 无符号除法
 *
 * \param   [in]   Dividend      被除数
@@ -144,19 +144,19 @@ en_result_t Hdiv_Signed(int32_t Dividend,int16_t Divisor,stc_div_signed_result_t
   M0P_HDIV->SIGN_f.SIGN = 1;
   *(__IO int32_t *)pDivdend = Dividend;
   *(__IO int16_t *)pDivsor = Divisor;
-  
+
   if(Hdiv_GetZeroState() == TRUE)
   {
     return ErrorInvalidParameter;
   }
-  
+
   while(Hdiv_GetEndState() != TRUE)
   {
     ;
   }
-  
+
   stcDivResult->Quotient = M0P_HDIV->QUOTIENT_f.QUOTIENT;
-  stcDivResult->Remainder = M0P_HDIV ->REMAINDER_f.REMAINDER; 		
+  stcDivResult->Remainder = M0P_HDIV ->REMAINDER_f.REMAINDER;
   return Ok;
 }
 

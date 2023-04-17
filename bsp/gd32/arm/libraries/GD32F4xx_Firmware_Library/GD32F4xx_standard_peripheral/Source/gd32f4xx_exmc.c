@@ -618,9 +618,9 @@ void exmc_sdram_init(exmc_sdram_parameter_struct *exmc_sdram_init_struct)
                                                      exmc_sdram_init_struct->cas_latency |
                                                     (exmc_sdram_init_struct->write_protection << SDCTL_WPEN_OFFSET) |
                                                      exmc_sdram_init_struct->sdclock_config |
-                                                    (exmc_sdram_init_struct->burst_read_switch << SDCTL_BRSTRD_OFFSET) | 
+                                                    (exmc_sdram_init_struct->burst_read_switch << SDCTL_BRSTRD_OFFSET) |
                                                      exmc_sdram_init_struct->pipeline_read_delay);
-        
+
         /* configure EXMC_SDTCFG0 */
         EXMC_SDTCFG(EXMC_SDRAM_DEVICE0) = (uint32_t)((exmc_sdram_init_struct->timing->load_mode_register_delay) - 1U) |
                                           (((exmc_sdram_init_struct->timing->exit_selfrefresh_delay) - 1U) << SDTCFG_XSRD_OFFSET) |
@@ -635,9 +635,9 @@ void exmc_sdram_init(exmc_sdram_parameter_struct *exmc_sdram_init_struct)
         sdctl0 = EXMC_SDCTL(EXMC_SDRAM_DEVICE0) & (~(EXMC_SDCTL_PIPED | EXMC_SDCTL_BRSTRD | EXMC_SDCTL_SDCLK));
 
         sdctl0 |= (uint32_t)(exmc_sdram_init_struct->sdclock_config |
-                             (exmc_sdram_init_struct->burst_read_switch << SDCTL_BRSTRD_OFFSET) | 
+                             (exmc_sdram_init_struct->burst_read_switch << SDCTL_BRSTRD_OFFSET) |
                              exmc_sdram_init_struct->pipeline_read_delay);
-        
+
         sdctl1 = (uint32_t)(exmc_sdram_init_struct->column_address_width |
                             exmc_sdram_init_struct->row_address_width |
                             exmc_sdram_init_struct->data_width |

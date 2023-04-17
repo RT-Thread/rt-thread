@@ -77,7 +77,7 @@ extern "C" {
  ** \brief Clock Setup macro definition
  **
  ** - 0: CLOCK_SETTING_NONE  - User provides own clock setting in application
- ** - 1: CLOCK_SETTING_CMSIS - 
+ ** - 1: CLOCK_SETTING_CMSIS -
  ******************************************************************************/
 #define CLOCK_SETTING_NONE  0u
 #define CLOCK_SETTING_CMSIS 1u

@@ -98,7 +98,7 @@ static func_ptr_t    pfnLvdIrqCbk = NULL;
  *****************************************************************************/
 
  /**
- * \brief   
+ * \brief
  *          LVD中断服务程序
  *
  * \param   [in]  u8Param  未使用
@@ -115,7 +115,7 @@ void Lvd_IRQHandler(uint8_t u8Param)
 }
 
 /**
- * \brief   
+ * \brief
  *          使能NVIC中LVD中断
  *
  * \param   无
@@ -130,7 +130,7 @@ static void LvdEnableNvic(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          除能NVIC中LVD中断
  *
  * \param   无
@@ -145,7 +145,7 @@ static void LvdDisableNvic(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          使能LVD中断
  *
  * \param   [in]  enType  LVD中断类型
@@ -190,7 +190,7 @@ en_result_t Lvd_EnableIrq(en_lvd_irq_type_t enType)
 }
 
 /**
- * \brief   
+ * \brief
  *          除能LVD中断
  *
  * \param   无
@@ -207,7 +207,7 @@ void Lvd_DisableIrq(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          LVD初始化
  *
  * \param   [in]  pstcConfig  LVD配置指针
@@ -237,7 +237,7 @@ void Lvd_Init(stc_lvd_config_t *pstcConfig)
 }
 
 /**
- * \brief   
+ * \brief
  *          LVD deinit
  *
  * \param   无
@@ -254,7 +254,7 @@ void Lvd_DeInit(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          使能LVD
  *
  * \param   无
@@ -268,7 +268,7 @@ void Lvd_Enable(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          除能LVD
  *
  * \param   无
@@ -281,7 +281,7 @@ void Lvd_Disable(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          获取LVD中断标志
  *
  * \param   无
@@ -295,7 +295,7 @@ boolean_t Lvd_GetIrqStat(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          清除LVD中断标志
  *
  * \param   无
@@ -308,7 +308,7 @@ void Lvd_ClearIrq(void)
 }
 
 /**
- * \brief   
+ * \brief
  *          获取Filter结果
  *
  * \param   无

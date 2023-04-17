@@ -45,7 +45,7 @@ typedef struct
 /*
  *  以BPK为4，每256为一单元格编号，用于多单元格写入
  *  SSC_BPKAccessCtrBlock_0为初始0地址。
- */ 
+ */
 #define SSC_BPKAccessCtrBlock_0             (0x01)
 #define SSC_BPKAccessCtrBlock_1             (0x02)
 #define SSC_BPKAccessCtrBlock_All           (0x03)

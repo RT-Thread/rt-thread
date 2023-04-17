@@ -858,11 +858,11 @@ FLASH_Status FLASH_OB_Erase(void)
   /* Get the actual read protection Option Byte value */
   if(FLASH_OB_GetRDP() != RESET)
   {
-    rdptmp = 0x0000 | 0xff00;               //��������1
+    rdptmp = 0x0000 | 0xff00;               //读保护级别1
   }
     else
     {
-        rdptmp = OB_RDP_Level_0 | 0x5500;   //��������0
+        rdptmp = OB_RDP_Level_0 | 0x5500;   //读保护级别0
     }
 
     /*Get iwdg value */

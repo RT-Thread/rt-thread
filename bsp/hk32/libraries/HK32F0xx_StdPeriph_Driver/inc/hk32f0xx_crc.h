@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
-  * @file    hk32f0xx_crc.h 
+  * @file    hk32f0xx_crc.h
   * @version V1.0.1
   * @date    2019-08-15
-  ***************************************************************************** 
+  *****************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -46,7 +46,7 @@
   */
 
 /** @defgroup CRC_PolynomialSize
-  * @brief    Only applicable for HK32F042 and HK32F072 devices 
+  * @brief    Only applicable for HK32F042 and HK32F072 devices
   * @{
   */
 #define CRC_PolSize_7                       CRC_CR_POLSIZE        /*!< 7-bit polynomial for CRC calculation */
@@ -70,7 +70,7 @@ void CRC_DeInit(void);
 void CRC_ResetDR(void);
 void CRC_ReverseInputDataSelect(uint32_t CRC_ReverseInputData);
 void CRC_ReverseOutputDataCmd(FunctionalState NewState);
-void CRC_SetInitRegister(uint32_t CRC_InitValue); 
+void CRC_SetInitRegister(uint32_t CRC_InitValue);
 
 /* CRC computation ************************************************************/
 uint32_t CRC_CalcCRC(uint32_t CRC_Data);

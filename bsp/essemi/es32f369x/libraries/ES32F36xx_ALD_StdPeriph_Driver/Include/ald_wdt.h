@@ -55,10 +55,10 @@ extern "C" {
   * @brief Wwdt no dog window
   */
 typedef enum {
-	WWDT_WIN_25 = 0x0U,	/**< No dog window size: 25% */
-	WWDT_WIN_50 = 0x1U,	/**< No dog window size: 50% */
-	WWDT_WIN_75 = 0x2U,	/**< No dog window size: 75% */
-	WWDT_WIN_00 = 0x3U,	/**< No dog window size: 0% */
+    WWDT_WIN_25 = 0x0U, /**< No dog window size: 25% */
+    WWDT_WIN_50 = 0x1U, /**< No dog window size: 50% */
+    WWDT_WIN_75 = 0x2U, /**< No dog window size: 75% */
+    WWDT_WIN_00 = 0x3U, /**< No dog window size: 0% */
 } wwdt_win_t;
 
 /**
@@ -86,8 +86,8 @@ typedef enum {
                                  (x == WWDT_WIN_50) || \
                                  (x == WWDT_WIN_75) || \
                                  (x == WWDT_WIN_00))
-#define IS_FUNC_STATE(x)	(((x) == DISABLE) || \
-				 ((x) == ENABLE))
+#define IS_FUNC_STATE(x)    (((x) == DISABLE) || \
+                 ((x) == ENABLE))
 /**
  * @}
  */

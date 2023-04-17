@@ -29,7 +29,7 @@ uint8_t usbh_allchannel_dealloc (usb_core_handle_struct *pudev);
 /* free the usb host channel */
 uint8_t usbh_channel_free (usb_core_handle_struct *pudev, uint8_t index);
 /* open a channel */
-uint8_t usbh_channel_open (usb_core_handle_struct *pudev, 
+uint8_t usbh_channel_open (usb_core_handle_struct *pudev,
                            uint8_t  channel_num,
                            uint8_t  dev_addr,
                            uint8_t  dev_speed,

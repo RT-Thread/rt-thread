@@ -21,7 +21,7 @@ extern state_table_struct        ctrl_handle_table[CTRL_HANDLE_TABLE_SIZE];
 extern uint8_t                   ctrl_polling_handle_flag;
 
 /* the enum of CTRL event */
-typedef enum 
+typedef enum
 {
     CTRL_EVENT_IDLE = 0,   /* the ctrl idle event */
     CTRL_EVENT_SETUP,      /* the ctrl setup event */

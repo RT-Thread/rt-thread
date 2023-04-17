@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@
 #define LOG_TAG  "drv.sdio"
 #include "drv_log.h"
 
-#define SDIO_DMA_USE_IPC     0//1:Ê¹ÓÃipc×öÍ¬²½
+#define SDIO_DMA_USE_IPC     0//1:ä½¿ç”¨ipcåšåŒæ­¥
 
 /* card status of R1 definitions */
 #define SD_R1_OUT_OF_RANGE                  BIT(31)                   /* command's argument was out of the allowed range */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -92,7 +92,7 @@ FL_ErrorStatus FL_SPI_GPIO_Init(SPI_Type *SPIx)
         GPIO_InitStruct.outputType = FL_GPIO_OUTPUT_PUSHPULL;
         GPIO_InitStruct.pull = FL_DISABLE;
         GPIO_InitStruct.remapPin = FL_DISABLE;
-        
+
         status=FL_GPIO_Init(GPIOC, &GPIO_InitStruct);
     }
 

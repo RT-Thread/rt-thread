@@ -164,8 +164,8 @@ typedef struct
     uint16_t total_xferred_bytes; /* number of bytes xferred until a qtd with ioc bit set */
     uint8_t reserved2[2];
 
-    hcd_qtd_t * volatile p_qtd_list_head;	/* head of the scheduled TD list */
-    hcd_qtd_t * volatile p_qtd_list_tail;	/* tail of the scheduled TD list */
+    hcd_qtd_t * volatile p_qtd_list_head;   /* head of the scheduled TD list */
+    hcd_qtd_t * volatile p_qtd_list_tail;   /* tail of the scheduled TD list */
 } hcd_qhd_t;
 
 typedef struct

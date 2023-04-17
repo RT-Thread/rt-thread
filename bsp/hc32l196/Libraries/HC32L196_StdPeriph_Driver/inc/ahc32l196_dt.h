@@ -492,14 +492,14 @@ typedef enum en_adt_state_type
     AdtCMAF = 0,           ///< 计数匹配A标志
     AdtCMBF = 1,           ///< 计数匹配B标志
     AdtCMCF = 2,           ///< 计数匹配C标志
-    AdtCMDF = 3,           ///< 计数匹配D标志    
+    AdtCMDF = 3,           ///< 计数匹配D标志
     AdtOVFF = 6,           ///< 上溢匹配标志
-    AdtUDFF = 7,           ///< 下溢匹配标志    
+    AdtUDFF = 7,           ///< 下溢匹配标志
     AdtDTEF = 8,           ///< 死区时间错误标志
     AdtCMSAUF = 9,         ///< 向上计数专用比较基准值匹配A标志
-    AdtCMSADF = 10,        ///< 向下计数专用比较基准值匹配B标志    
-    AdtCMSBUF = 11,        ///< 向上计数专用比较基准值匹配A标志  
-    AdtCMSBDF = 12,        ///< 向下计数专用比较基准值匹配B标志    
+    AdtCMSADF = 10,        ///< 向下计数专用比较基准值匹配B标志
+    AdtCMSBUF = 11,        ///< 向上计数专用比较基准值匹配A标志
+    AdtCMSBDF = 12,        ///< 向下计数专用比较基准值匹配B标志
     AdtCntDir = 31,        ///< 计数方向
 }en_adt_state_type_t;
 
@@ -863,7 +863,7 @@ en_result_t Adt_ClearIrqFlag(M0P_ADTIM_TypeDef *ADTx,
 //清除所有中断标志
 en_result_t Adt_ClearAllIrqFlag(M0P_ADTIM_TypeDef *ADTx);
 //Z相输入屏蔽设置
-en_result_t Adt_CfgZMask(M0P_ADTIM_TypeDef *ADTx, 
+en_result_t Adt_CfgZMask(M0P_ADTIM_TypeDef *ADTx,
                             stc_adt_zmask_cfg_t* pstcAdtZMaskCfg);
 
 //@} // ADT Group

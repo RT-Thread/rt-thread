@@ -53,17 +53,17 @@
   */
 ald_status_t ald_dac_reset(dac_handle_t *hperh)
 {
-	assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_TYPE(hperh->perh));
 
-	hperh->perh->CON      = 0;
-	hperh->perh->CH0CTRL  = 0;
-	hperh->perh->CH1CTRL  = 0;
-	hperh->perh->IES      = 0;
-	hperh->perh->IEC      = 0xFF;
-	hperh->perh->IFC      = 0xFF;
-	hperh->perh->CAL      = 0;
+    hperh->perh->CON      = 0;
+    hperh->perh->CH0CTRL  = 0;
+    hperh->perh->CH1CTRL  = 0;
+    hperh->perh->IES      = 0;
+    hperh->perh->IEC      = 0xFF;
+    hperh->perh->IFC      = 0xFF;
+    hperh->perh->CAL      = 0;
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -74,46 +74,46 @@ ald_status_t ald_dac_reset(dac_handle_t *hperh)
   */
 ald_status_t ald_dac_init(dac_handle_t *hperh)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_DAC_CONVERT_TYPE(hperh->init.conv_mode));
-	assert_param(IS_DAC_OUTPUT_TYPE(hperh->init.out_mode));
-	assert_param(IS_DAC_NEG_REFRESH_TYPE(hperh->init.n_ref));
-	assert_param(IS_DAC_POS_REFRESH_TYPE(hperh->init.p_ref));
-	assert_param(IS_DAC_REFRESH_TYPE(hperh->init.refresh));
-	assert_param(IS_DAC_PRESCALE_TYPE(hperh->init.div));
-	assert_param(IS_FUNC_STATE(hperh->init.ch0_reset));
-	assert_param(IS_FUNC_STATE(hperh->init.o_ctrl_pis));
-	assert_param(IS_FUNC_STATE(hperh->init.sine));
-	assert_param(IS_FUNC_STATE(hperh->init.diff));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_CONVERT_TYPE(hperh->init.conv_mode));
+    assert_param(IS_DAC_OUTPUT_TYPE(hperh->init.out_mode));
+    assert_param(IS_DAC_NEG_REFRESH_TYPE(hperh->init.n_ref));
+    assert_param(IS_DAC_POS_REFRESH_TYPE(hperh->init.p_ref));
+    assert_param(IS_DAC_REFRESH_TYPE(hperh->init.refresh));
+    assert_param(IS_DAC_PRESCALE_TYPE(hperh->init.div));
+    assert_param(IS_FUNC_STATE(hperh->init.ch0_reset));
+    assert_param(IS_FUNC_STATE(hperh->init.o_ctrl_pis));
+    assert_param(IS_FUNC_STATE(hperh->init.sine));
+    assert_param(IS_FUNC_STATE(hperh->init.diff));
 
-	__LOCK(hperh);
-	ald_dac_reset(hperh);
-	DAC_CH0_DISABLE();
-	DAC_CH1_DISABLE();
+    __LOCK(hperh);
+    ald_dac_reset(hperh);
+    DAC_CH0_DISABLE();
+    DAC_CH1_DISABLE();
 
-	MODIFY_REG(ADC0->CCR, ADC_CCR_VREFEN_MSK, 1 << ADC_CCR_VREFEN_POS);
+    MODIFY_REG(ADC0->CCR, ADC_CCR_VREFEN_MSK, 1 << ADC_CCR_VREFEN_POS);
 
-	if (hperh->init.p_ref == DAC_POS_REF_VREEFP_BUF || hperh->init.p_ref == DAC_POS_REF_2V)
-		SET_BIT(ADC0->CCR, (ADC_CCR_IREFEN_MSK | ADC_CCR_VRBUFEN_MSK | ADC_CCR_VCMBUFEN_MSK));
+    if (hperh->init.p_ref == DAC_POS_REF_VREEFP_BUF || hperh->init.p_ref == DAC_POS_REF_2V)
+        SET_BIT(ADC0->CCR, (ADC_CCR_IREFEN_MSK | ADC_CCR_VRBUFEN_MSK | ADC_CCR_VCMBUFEN_MSK));
 
-	MODIFY_REG(ADC0->CCR, ADC_CCR_VRNSEL_MSK, hperh->init.n_ref << ADC_CCR_VRNSEL_POS);
-	MODIFY_REG(ADC0->CCR, ADC_CCR_VRPSEL_MSK, hperh->init.p_ref << ADC_CCR_VRPSEL_POSS);
+    MODIFY_REG(ADC0->CCR, ADC_CCR_VRNSEL_MSK, hperh->init.n_ref << ADC_CCR_VRNSEL_POS);
+    MODIFY_REG(ADC0->CCR, ADC_CCR_VRPSEL_MSK, hperh->init.p_ref << ADC_CCR_VRPSEL_POSS);
 
-	tmp = ((hperh->init.refresh << DAC_CON_RCYCLSEL_POSS) | (hperh->init.div << DAC_CON_PRES_POSS) |
-	       (hperh->init.ch0_reset << DAC_CON_CH0PRESRST_POS) | ( hperh->init.o_ctrl_pis << DAC_CON_OUTENPIS_POS) |
-	       (hperh->init.out_mode << DAC_CON_OUTMD_POSS) | (hperh->init.conv_mode << DAC_CON_CONVMD_POSS) |
-	       (hperh->init.sine << DAC_CON_SINEMD_POS) | (hperh->init.diff << DAC_CON_DIFEN_POS));
-	hperh->perh->CON = tmp;
+    tmp = ((hperh->init.refresh << DAC_CON_RCYCLSEL_POSS) | (hperh->init.div << DAC_CON_PRES_POSS) |
+           (hperh->init.ch0_reset << DAC_CON_CH0PRESRST_POS) | ( hperh->init.o_ctrl_pis << DAC_CON_OUTENPIS_POS) |
+           (hperh->init.out_mode << DAC_CON_OUTMD_POSS) | (hperh->init.conv_mode << DAC_CON_CONVMD_POSS) |
+           (hperh->init.sine << DAC_CON_SINEMD_POS) | (hperh->init.diff << DAC_CON_DIFEN_POS));
+    hperh->perh->CON = tmp;
 
-	/* Automatic calibration */
-	SET_BIT(hperh->perh->CAL, DAC_CAL_SELF_CALEN_MSK);
-	for (tmp = 0; tmp < 1000; ++tmp);
-	CLEAR_BIT(hperh->perh->CAL, DAC_CAL_SELF_CALEN_MSK);
+    /* Automatic calibration */
+    SET_BIT(hperh->perh->CAL, DAC_CAL_SELF_CALEN_MSK);
+    for (tmp = 0; tmp < 1000; ++tmp);
+    CLEAR_BIT(hperh->perh->CAL, DAC_CAL_SELF_CALEN_MSK);
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -127,36 +127,36 @@ ald_status_t ald_dac_init(dac_handle_t *hperh)
   */
 ald_status_t ald_dac_channel_config(dac_handle_t *hperh, dac_channel_config_t *config, dac_channel_t ch)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	if ((hperh == NULL) || (config == NULL))
-		return ERROR;
+    if ((hperh == NULL) || (config == NULL))
+        return ERROR;
 
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_FUNC_STATE(config->enable));
-	assert_param(IS_DAC_TRIGGER_TYPE(config->trigger));
-	assert_param(IS_FUNC_STATE(config->refresh_en));
-	assert_param(IS_DAC_PISSEL_CH_TYPE(config->pis_ch));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_FUNC_STATE(config->enable));
+    assert_param(IS_DAC_TRIGGER_TYPE(config->trigger));
+    assert_param(IS_FUNC_STATE(config->refresh_en));
+    assert_param(IS_DAC_PISSEL_CH_TYPE(config->pis_ch));
 
-	__LOCK(hperh);
-	tmp = ((config->pis_ch << DAC_CH0CTRL_PISSEL_POSS) | (config->trigger << DAC_CH0CTRL_PISEN_POS) |
-	       (config->refresh_en << DAC_CH0CTRL_RCYCLEN_POS) | (config->enable << DAC_CH0CTRL_EN_POS));
+    __LOCK(hperh);
+    tmp = ((config->pis_ch << DAC_CH0CTRL_PISSEL_POSS) | (config->trigger << DAC_CH0CTRL_PISEN_POS) |
+           (config->refresh_en << DAC_CH0CTRL_RCYCLEN_POS) | (config->enable << DAC_CH0CTRL_EN_POS));
 
-	switch (ch) {
-	case DAC_CHANNEL_0:
-		hperh->perh->CH0CTRL = tmp;
-		break;
+    switch (ch) {
+    case DAC_CHANNEL_0:
+        hperh->perh->CH0CTRL = tmp;
+        break;
 
-	case DAC_CHANNEL_1:
-		hperh->perh->CH1CTRL = tmp;
-		break;
+    case DAC_CHANNEL_1:
+        hperh->perh->CH1CTRL = tmp;
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	__UNLOCK(hperh);
-	return OK;
+    __UNLOCK(hperh);
+    return OK;
 }
 
 /**
@@ -169,27 +169,27 @@ ald_status_t ald_dac_channel_config(dac_handle_t *hperh, dac_channel_config_t *c
   */
 void ald_dac_output_set(dac_handle_t *hperh, dac_channel_t ch, uint32_t value)
 {
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_DAC_CHANNEL_TYPE(ch));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_CHANNEL_TYPE(ch));
 
-	switch (ch) {
-	case DAC_CHANNEL_0:
-		hperh->perh->CH0DATA = value;
-		break;
+    switch (ch) {
+    case DAC_CHANNEL_0:
+        hperh->perh->CH0DATA = value;
+        break;
 
-	case DAC_CHANNEL_1:
-		hperh->perh->CH1DATA = value;
-		break;
+    case DAC_CHANNEL_1:
+        hperh->perh->CH1DATA = value;
+        break;
 
-	case DAC_CHANNEL_COMB:
-		hperh->perh->COMBDATA = value;
-		break;
+    case DAC_CHANNEL_COMB:
+        hperh->perh->COMBDATA = value;
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	return;
+    return;
 }
 
 /**
@@ -201,10 +201,10 @@ void ald_dac_output_set(dac_handle_t *hperh, dac_channel_t ch, uint32_t value)
   */
 flag_status_t ald_dac_get_status(dac_handle_t *hperh, dac_status_t status)
 {
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_DAC_STATUS_TYPE(status));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_STATUS_TYPE(status));
 
-	return hperh->perh->STAT & status ? SET : RESET;
+    return hperh->perh->STAT & status ? SET : RESET;
 }
 
 /**
@@ -222,16 +222,16 @@ flag_status_t ald_dac_get_status(dac_handle_t *hperh, dac_status_t status)
   */
 void ald_dac_interrupt_config(dac_handle_t *hperh, dac_it_t it, type_func_t state)
 {
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_DAC_INTERRUPT_TYPE(it));
-	assert_param(IS_FUNC_STATE(state));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_INTERRUPT_TYPE(it));
+    assert_param(IS_FUNC_STATE(state));
 
-	if (state)
-		hperh->perh->IES |= it;
-	else
-		hperh->perh->IEC = it;
+    if (state)
+        hperh->perh->IES |= it;
+    else
+        hperh->perh->IEC = it;
 
-	return;
+    return;
 }
 
 /**
@@ -245,10 +245,10 @@ void ald_dac_interrupt_config(dac_handle_t *hperh, dac_it_t it, type_func_t stat
   */
 it_status_t ald_dac_get_it_status(dac_handle_t *hperh, dac_it_t it)
 {
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_DAC_INTERRUPT_TYPE(it));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_INTERRUPT_TYPE(it));
 
-	return hperh->perh->IEV & it ? SET : RESET;
+    return hperh->perh->IEV & it ? SET : RESET;
 }
 
 /**
@@ -260,10 +260,10 @@ it_status_t ald_dac_get_it_status(dac_handle_t *hperh, dac_it_t it)
   */
 flag_status_t ald_dac_get_flag_status(dac_handle_t *hperh, dac_flag_t flag)
 {
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_DAC_FLAG_TYPE(flag));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_FLAG_TYPE(flag));
 
-	return hperh->perh->RIF & flag ? SET : RESET;
+    return hperh->perh->RIF & flag ? SET : RESET;
 }
 
 /**
@@ -277,10 +277,10 @@ flag_status_t ald_dac_get_flag_status(dac_handle_t *hperh, dac_flag_t flag)
   */
 flag_status_t ald_dac_get_mask_flag_status(dac_handle_t *hperh, dac_flag_t flag)
 {
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_DAC_FLAG_TYPE(flag));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_FLAG_TYPE(flag));
 
-	return hperh->perh->IFM & flag ? SET : RESET;
+    return hperh->perh->IFM & flag ? SET : RESET;
 }
 
 /**
@@ -292,11 +292,11 @@ flag_status_t ald_dac_get_mask_flag_status(dac_handle_t *hperh, dac_flag_t flag)
   */
 void ald_dac_clear_flag_status(dac_handle_t *hperh, dac_flag_t flag)
 {
-	assert_param(IS_DAC_TYPE(hperh->perh));
-	assert_param(IS_DAC_FLAG_TYPE(flag));
+    assert_param(IS_DAC_TYPE(hperh->perh));
+    assert_param(IS_DAC_FLAG_TYPE(flag));
 
-	hperh->perh->IFC = flag;
-	return;
+    hperh->perh->IFC = flag;
+    return;
 }
 
 /**
@@ -307,35 +307,35 @@ void ald_dac_clear_flag_status(dac_handle_t *hperh, dac_flag_t flag)
   */
 void ald_dac_irq_handler(dac_handle_t *hperh)
 {
-	if (ald_dac_get_mask_flag_status(hperh, DAC_FLAG_CH0)) {
-		ald_dac_clear_flag_status(hperh, DAC_FLAG_CH0);
+    if (ald_dac_get_mask_flag_status(hperh, DAC_FLAG_CH0)) {
+        ald_dac_clear_flag_status(hperh, DAC_FLAG_CH0);
 
-		if (hperh->cbk)
-			hperh->cbk(hperh, DAC_EVENT_CH0_CPLT);
-	}
+        if (hperh->cbk)
+            hperh->cbk(hperh, DAC_EVENT_CH0_CPLT);
+    }
 
-	if (ald_dac_get_mask_flag_status(hperh, DAC_FLAG_CH1)) {
-		ald_dac_clear_flag_status(hperh, DAC_FLAG_CH1);
+    if (ald_dac_get_mask_flag_status(hperh, DAC_FLAG_CH1)) {
+        ald_dac_clear_flag_status(hperh, DAC_FLAG_CH1);
 
-		if (hperh->cbk)
-			hperh->cbk(hperh, DAC_EVENT_CH1_CPLT);
-	}
+        if (hperh->cbk)
+            hperh->cbk(hperh, DAC_EVENT_CH1_CPLT);
+    }
 
-	if (ald_dac_get_mask_flag_status(hperh, DAC_FLAG_CH0_UF)) {
-		ald_dac_clear_flag_status(hperh, DAC_FLAG_CH0_UF);
+    if (ald_dac_get_mask_flag_status(hperh, DAC_FLAG_CH0_UF)) {
+        ald_dac_clear_flag_status(hperh, DAC_FLAG_CH0_UF);
 
-		if (hperh->cbk)
-			hperh->cbk(hperh, DAC_EVENT_CH0_UF);
-	}
+        if (hperh->cbk)
+            hperh->cbk(hperh, DAC_EVENT_CH0_UF);
+    }
 
-	if (ald_dac_get_mask_flag_status(hperh, DAC_FLAG_CH1_UF)) {
-		ald_dac_clear_flag_status(hperh, DAC_FLAG_CH1_UF);
+    if (ald_dac_get_mask_flag_status(hperh, DAC_FLAG_CH1_UF)) {
+        ald_dac_clear_flag_status(hperh, DAC_FLAG_CH1_UF);
 
-		if (hperh->cbk)
-			hperh->cbk(hperh, DAC_EVENT_CH1_UF);
-	}
+        if (hperh->cbk)
+            hperh->cbk(hperh, DAC_EVENT_CH1_UF);
+    }
 
-	return;
+    return;
 }
 /**
   *@}

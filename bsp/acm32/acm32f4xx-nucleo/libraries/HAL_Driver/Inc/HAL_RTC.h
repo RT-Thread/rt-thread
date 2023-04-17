@@ -21,7 +21,7 @@
 #define RTC_IE_STP2FIE       (BIT15)
 #define RTC_IE_STP1RIE       (BIT14)
 #define RTC_IE_STP1FIE       (BIT13)
-#define RTC_IE_ADJ32         (BIT12)    
+#define RTC_IE_ADJ32         (BIT12)
 #define RTC_IE_ALM           (BIT11)
 #define RTC_IE_1KHZ          (BIT10)
 #define RTC_IE_256HZ         (BIT9)
@@ -40,7 +40,7 @@
 #define RTC_SR_STP2FIE       (BIT15)
 #define RTC_SR_STP1RIE       (BIT14)
 #define RTC_SR_STP1FIE       (BIT13)
-#define RTC_SR_ADJ32         (BIT12)    
+#define RTC_SR_ADJ32         (BIT12)
 #define RTC_SR_ALM           (BIT11)
 #define RTC_SR_1KHZ          (BIT10)
 #define RTC_SR_256HZ         (BIT9)
@@ -311,11 +311,11 @@ typedef enum
 {
     RTC_WAKEUP_RTC_INT = 0,
     RTC_WAKEUP_WKUP1  = 0x00010000,  // PA0
-    RTC_WAKEUP_WKUP2  = 0x00020000,  // PC13   
-    RTC_WAKEUP_WKUP3  = 0x00040000,  // PA2 
-    RTC_WAKEUP_WKUP4  = 0x00080000,  // PC5  
-    RTC_WAKEUP_WKUP5  = 0x00100000,  // PB5  
-    RTC_WAKEUP_WKUP6  = 0x00200000,  // PB15  
+    RTC_WAKEUP_WKUP2  = 0x00020000,  // PC13
+    RTC_WAKEUP_WKUP3  = 0x00040000,  // PA2
+    RTC_WAKEUP_WKUP4  = 0x00080000,  // PC5
+    RTC_WAKEUP_WKUP5  = 0x00100000,  // PB5
+    RTC_WAKEUP_WKUP6  = 0x00200000,  // PB15
     RTC_WAKEUP_STAMP2 = (RTC_IE_STP2RIE | RTC_IE_STP2FIE),
     RTC_WAKEUP_STAMP1 = (RTC_IE_STP1RIE | RTC_IE_STP1FIE),
     RTC_WAKEUP_32S    = RTC_IE_ADJ32,
@@ -324,10 +324,10 @@ typedef enum
     RTC_WAKEUP_MIN    = RTC_IE_MIN,
     RTC_WAKEUP_HOUR   = RTC_IE_HOUR,
     RTC_WAKEUP_DATE   = RTC_IE_DATE,
-}enum_WKUP_t; 
+}enum_WKUP_t;
 
-#define STANDBY_WAKEUP_RISING     0  
-#define STANDBY_WAKEUP_FALLING    1     
+#define STANDBY_WAKEUP_RISING     0
+#define STANDBY_WAKEUP_FALLING    1
 
 /**
   * @}
@@ -355,13 +355,13 @@ typedef enum
   */
 typedef struct
 {
-    uint32_t u32_ClockSource;           /*!< The RTC Clock Source to be configured. 
+    uint32_t u32_ClockSource;           /*!< The RTC Clock Source to be configured.
                                              This parameter can be a value of @ref ClockSource */
 
-    uint32_t u32_Compensation;          /*!< The RTC Clock Compensation to be configured. 
+    uint32_t u32_Compensation;          /*!< The RTC Clock Compensation to be configured.
                                              This parameter can be a value of @ref Clock_Compensation */
 
-    uint32_t u32_CompensationValue;     /*!< The RTC Clock Compensation Value to be configured. 
+    uint32_t u32_CompensationValue;     /*!< The RTC Clock Compensation Value to be configured.
                                              This parameter must be a number between Min_Data = 0x000 and Max_Data = 0x1FF */
 }RTC_ConfigTypeDef;
 
@@ -413,21 +413,21 @@ typedef struct
     uint32_t u32_AlarmInterrupt;    /*!< Specifies the RTC alarm interrupt Enable or Disable.
                                          This parameter can be a value of @ref RTC_AlarmInterrupt */
 
-    uint32_t u32_DayMask;           /*!< Specifies the RTC alarm Day/Week Mask. 
+    uint32_t u32_DayMask;           /*!< Specifies the RTC alarm Day/Week Mask.
                                          This parameter can be a value of @ref RTC_DayMask */
-    
-    uint32_t u32_HourMask;          /*!< Specifies the RTC alarm Hour Mask. 
+
+    uint32_t u32_HourMask;          /*!< Specifies the RTC alarm Hour Mask.
                                          This parameter can be a value of @ref RTC_HourMask */
-    
-    uint32_t u32_MinMask;           /*!< Specifies the RTC alarm Min Mask. 
+
+    uint32_t u32_MinMask;           /*!< Specifies the RTC alarm Min Mask.
                                          This parameter can be a value of @ref RTC_MinMask */
-    
+
     uint32_t u32_AlarmWeek;         /*!< Specifies the RTC alarm week select(Select WeekMode this parameter is valid).
                                          This parameter can be a value of @ref RTC_Alarm_WeekSelect */
-    
+
     uint32_t u32_AlarmDay;          /*!< Specifies the RTC alarm day  select(Select DayMode this parameter is valid).
                                          This parameter must be a number between Min_Data = 0x01 and Max_Data = 0x31 */
-    
+
     uint32_t u32_Hours;             /*!< Specifies the RTC alarm Hour.
                                          This parameter must be a number between Min_Data = 0x00 and Max_Data = 0x23 */
 
@@ -442,7 +442,7 @@ typedef struct
 /**
   * @brief  RTC Temper structure definition
   */
-typedef struct 
+typedef struct
 {
     uint32_t u32_TemperEdge;      /*!< Specifies the RTC Temper edge select.
                                        This parameter can be a value of @ref RTC_Temper_edge */
@@ -458,36 +458,36 @@ typedef struct
 }RTC_TemperTypeDef;
 
 
-/** @brief  PC13 function select 
+/** @brief  PC13 function select
   * @param  __FUNC__: PC13 function select.
   *         This parameter can be 0: GPIO0/1/RTC Fout/2/RTC tamper/3/PC13 Value
   */
 #define __HAL_RTC_PC13_SEL(__FUNC__)    (PMU->IOSEL |= (PMU->IOSEL & ~(0x3)) | (__FUNC__))
 
-/** @brief  PC14 function select 
+/** @brief  PC14 function select
   * @param  __FUNC__: PC14 function select.
   *         This parameter can be 0: GPIO_1_PC14 Value  */
 #define __HAL_RTC_PC14_SEL(__FUNC__)    (PMU->IOSEL |= (PMU->IOSEL & ~(0x3 << 3)) | (__FUNC__ << 3))
 
-/** @brief  PC15 function select 
+/** @brief  PC15 function select
   * @param  __FUNC__: PC15 function select.
   *         This parameter can be 0: GPIO_1_PC15 Value
   */
 #define __HAL_RTC_PC15_SEL(__FUNC__)    (PMU->IOSEL |= (PMU->IOSEL & ~(0x3 << 5)) | (__FUNC__ << 5))
 
-/** @brief  PC13 Value set 
+/** @brief  PC13 Value set
   * @param  __FUNC__: PC13 Value set.
   *         This parameter can be 0: set to 1 to clear
   */
 #define __HAL_RTC_PC13_VALUE(__VALUE__)    (PMU->IOSEL |= (PMU->IOSEL & ~(1 << 8)) | (__VALUE__ << 8))
 
-/** @brief  PC14 Value set 
+/** @brief  PC14 Value set
   * @param  __FUNC__: PC14 Value set.
 *         This parameter can be 0: set to 1 to clear
   */
 #define __HAL_RTC_PC14_VALUE(__VALUE__)    (PMU->IOSEL |= (PMU->IOSEL & ~(1 << 9)) | (__VALUE__ << 9))
 
-/** @brief  PC15 Value set 
+/** @brief  PC15 Value set
   * @param  __FUNC__: PC15 Value set.
   *         This parameter can be 0: set to 1 to clear
   */
@@ -569,7 +569,7 @@ typedef struct
 
 #define IS_RTC_ALARM_DAY_MASK(__MASKD__)     (((__MASKD__) == RTC_ALARM_DAY_MASK_ENABLE) || \
                                               ((__MASKD__) == RTC_ALARM_DAY_MASK_DISABLE))
-                                              
+
 #define IS_RTC_ALARM_HOUR_MASK(__MASKH__)    (((__MASKH__) == RTC_ALARM_HOUR_MASK_ENABLE) || \
                                               ((__MASKH__) == RTC_ALARM_HOUR_MASK_DISABLE))
 

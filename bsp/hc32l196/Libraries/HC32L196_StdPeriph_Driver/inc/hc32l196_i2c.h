@@ -43,7 +43,7 @@
 /** \file i2c.h
  **
  ** Headerfile for I2C functions
- **  
+ **
  **
  ** History:
  **   - 2018-03-1   CJ    First Version
@@ -82,7 +82,7 @@ typedef enum en_i2c_func
     I2cStop_En   = 4u, ///<结束信号
     I2cAck_En    = 2u, ///<应答信号
     I2cHlm_En    = 0u, ///<高速使能
-}en_i2c_func_t; 
+}en_i2c_func_t;
 
  /**
  ******************************************************************************
@@ -134,7 +134,7 @@ typedef struct stc_i2c_cfg
 
 //字节读函数
 uint8_t I2C_ReadByte(M0P_I2C_TypeDef* I2Cx);
- 
+
 //@} // I2cGroup
 
 #ifdef __cplusplus

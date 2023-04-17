@@ -15,21 +15,21 @@
 //
 // Copyright (c) 2017, Ambiq Micro
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 // this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright
 // notice, this list of conditions and the following disclaimer in the
 // documentation and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its
 // contributors may be used to endorse or promote products derived from this
 // software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -310,7 +310,7 @@ typedef struct
     //! Select the SPI clock polarity (unused in I2C mode).
     //
     bool bSPOL;
-    
+
     //
     //! @brief Select the FIFO write threshold.
     //!
@@ -326,7 +326,7 @@ typedef struct
     //! of entries in the FIFO grows *larger* than this number.
     //
     uint8_t ui8ReadThreshold;
-    
+
 }
 am_hal_iom_config_t;
 
@@ -470,7 +470,7 @@ extern am_hal_iom_status_e am_hal_iom_spi_read(uint32_t ui32Module, uint32_t ui3
                                     uint32_t *pui32Data, uint32_t ui32NumBytes,
                                     uint32_t ui32Options);
 extern am_hal_iom_status_e am_hal_iom_spi_fullduplex(uint32_t ui32Module, uint32_t ui32ChipSelect,
-                                                     uint32_t *pui32TxData, uint32_t *pui32RxData, 
+                                                     uint32_t *pui32TxData, uint32_t *pui32RxData,
                                                      uint32_t ui32NumBytes, uint32_t ui32Options);
 
 extern am_hal_iom_status_e am_hal_iom_spi_write_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
@@ -480,7 +480,7 @@ extern am_hal_iom_status_e am_hal_iom_spi_read_nq(uint32_t ui32Module, uint32_t 
                                        uint32_t *pui32Data, uint32_t ui32NumBytes,
                                        uint32_t ui32Options);
 extern am_hal_iom_status_e am_hal_iom_spi_fullduplex_nq(uint32_t ui32Module, uint32_t ui32ChipSelect,
-                                                        uint32_t *pui32TxData, uint32_t *pui32RxData, 
+                                                        uint32_t *pui32TxData, uint32_t *pui32RxData,
                                                         uint32_t ui32NumBytes, uint32_t ui32Options);
 extern am_hal_iom_status_e am_hal_iom_spi_write_nb(uint32_t ui32Module, uint32_t ui32ChipSelect,
                                         uint32_t *pui32Data, uint32_t ui32NumBytes,

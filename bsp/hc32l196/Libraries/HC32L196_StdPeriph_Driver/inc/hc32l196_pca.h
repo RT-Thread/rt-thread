@@ -43,7 +43,7 @@
 /** \file pca.h
  **
  ** PCA（可编程计数阵列）数据结构及API声明
- **  
+ **
  **
  ** History:
  **   - 2019-04-09        First version
@@ -80,7 +80,7 @@ extern "C"
 /**
  *******************************************************************************
  ** \brief PCA  模块选择
- ** \note 
+ ** \note
  ******************************************************************************/
 typedef enum
 {
@@ -203,11 +203,11 @@ typedef enum
 /**
  *******************************************************************************
  ** \brief PCA  初始化配置的结构体
- ** \note       
+ ** \note
  ******************************************************************************/
 typedef struct
 {
-    en_pca_clksrc_t     pca_clksrc;           // PCA_CMOD CPS[2:0] 
+    en_pca_clksrc_t     pca_clksrc;           // PCA_CMOD CPS[2:0]
     boolean_t           pca_cidl;             // PCA_CMOD CIDL
     en_pca_ecom_t       pca_ecom;             // PCA_CCAPMx ECOM
     en_pca_capp_t       pca_capp;             // PCA_CCAPMx CAPP

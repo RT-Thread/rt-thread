@@ -198,7 +198,7 @@
     #define __VTOR_PRESENT             1U
     #warning "__VTOR_PRESENT not defined in device header file; using default!"
   #endif
-  
+
   #ifndef __NVIC_PRIO_BITS
     #define __NVIC_PRIO_BITS          3U
     #warning "__NVIC_PRIO_BITS not defined in device header file; using default!"

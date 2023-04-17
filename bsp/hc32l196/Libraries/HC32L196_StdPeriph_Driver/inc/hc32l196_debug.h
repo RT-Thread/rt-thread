@@ -43,7 +43,7 @@
 /** \file debug.h
  **
  ** Headerfile for DEBUG functions
- ** @link Debug Group Some description @endlink 
+ ** @link Debug Group Some description @endlink
  **
  ** History:
  **   - 2018-04-15   Lux     First Version
@@ -78,7 +78,7 @@ extern "C"
 
 /******************************************************************************
  * Global type definitions
- ******************************************************************************/ 
+ ******************************************************************************/
 /**
  *******************************************************************************
  ** \brief 调试模式下各模块工作状态类型定义
@@ -86,20 +86,20 @@ extern "C"
  ******************************************************************************/
 typedef enum en_debug_module_active
 {
-    DebugMskTim0   = 0x0001u,               ///< TIM0 
-    DebugMskTim1   = 0x0002u,               ///< TIM1 
-    DebugMskTim2   = 0x0004u,               ///< TIM2 
+    DebugMskTim0   = 0x0001u,               ///< TIM0
+    DebugMskTim1   = 0x0002u,               ///< TIM1
+    DebugMskTim2   = 0x0004u,               ///< TIM2
     DebugMskLpTim0 = 0x0008u,               ///< LPTIM0
-    DebugMskTim4   = 0x0010u,               ///< TIM4 
-    DebugMskTim5   = 0x0020u,               ///< TIM5 
-    DebugMskTim6   = 0x0040u,               ///< TIM6 
-    DebugMskPca    = 0x0080u,               ///< PCA  
-    DebugMskWdt    = 0x0100u,               ///< WDT  
-    DebugMskRtc    = 0x0200u,               ///< RTC  
-    DebugMskTim3   = 0x0800u,               ///< TIM3 
-    DebugMskLpTim1 = 0x1000u,               ///< LPTIM1 
-}en_debug_module_active_t; 
- 
+    DebugMskTim4   = 0x0010u,               ///< TIM4
+    DebugMskTim5   = 0x0020u,               ///< TIM5
+    DebugMskTim6   = 0x0040u,               ///< TIM6
+    DebugMskPca    = 0x0080u,               ///< PCA
+    DebugMskWdt    = 0x0100u,               ///< WDT
+    DebugMskRtc    = 0x0200u,               ///< RTC
+    DebugMskTim3   = 0x0800u,               ///< TIM3
+    DebugMskLpTim1 = 0x1000u,               ///< LPTIM1
+}en_debug_module_active_t;
+
 /*******************************************************************************
  * Global definitions
  ******************************************************************************/

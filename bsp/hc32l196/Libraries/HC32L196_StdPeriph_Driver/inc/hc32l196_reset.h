@@ -43,7 +43,7 @@
 /** \file reset.h
  **
  ** Headerfile for reset functions
- **  
+ **
  **
  ** History:
  **   - 2018-04-21   Lux     First Version
@@ -122,7 +122,7 @@ typedef enum en_sysctrl_peripheral1
     ResetMskDac        = 1u<<3u,      ///< DAC
     ResetMskLpTim1     = 1u<<4u,      ///< 低功耗定时器1
     ResetMskUart2      = 1u<<8u,      ///< UART2
-    ResetMskUart3      = 1u<<9u,      ///< UART3 
+    ResetMskUart3      = 1u<<9u,      ///< UART3
 }en_reset_peripheral1_t;
 
 /**

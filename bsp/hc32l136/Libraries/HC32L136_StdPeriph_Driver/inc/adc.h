@@ -70,7 +70,7 @@ extern "C"
  ** \defgroup AdcGroup AD Converter (ADC)
   **
  ******************************************************************************/
- 
+
 //@{
 
 /******************************************************************************
@@ -97,7 +97,7 @@ extern "C"
 typedef enum en_adc_op_mode
 {
     AdcSglMode  = 0u,        /*!< 单输入通道单次采样模式 */
-    AdcSCanMode     = 1u,        /*!< 多输入通道顺序扫描采样模式,多输入通道插队扫描采样模式*/   
+    AdcSCanMode     = 1u,        /*!< 多输入通道顺序扫描采样模式,多输入通道插队扫描采样模式*/
 } en_adc_op_mode_t;
 
 /**
@@ -155,10 +155,10 @@ typedef enum en_adc_samp_ch_sel
     AdcExInputCH20   =  20u,       /*!<使用通道7输入PB13*/
     AdcExInputCH21   =  21u,       /*!<使用通道8输入PB14*/
     AdcExInputCH22   =  22u,       /*!<使用通道8输入PB15*/
-    AdcExInputCH23   =  23u,       /*!<使用通道8输入PC06*/  
+    AdcExInputCH23   =  23u,       /*!<使用通道8输入PC06*/
     AdcOPA0Input     =  24u,       /*!<使用通道8输入OPA0*/
     AdcOPA1Input     =  25u,       /*!<使用通道8输入OPA1*/
-    AdcOPA2Input     =  26u,       /*!<使用通道8输入OPA2*/                     
+    AdcOPA2Input     =  26u,       /*!<使用通道8输入OPA2*/
     AdcAVccDiV3Input =  27u,       /*!<使用1/3 AVCC(必须使用输入增益)*/
     AdcAiTsInput     =  28u,       /*!<使用BGR_TS(必须使用输入增益)*/
     AdcVref1P2Input  =  29u,       /*!<使用Vref1P2(必须使用输入增益)*/
@@ -269,7 +269,7 @@ typedef enum en_adc_jqr_chmux
 typedef enum en_adc_align
 {
      AlignRight  = 0u,
-     AlignLeft = 1u,    
+     AlignLeft = 1u,
 }en_adc_align_t;
 /******************************************************************************
  * Extern type definitions ('typedef')                                        *
@@ -303,10 +303,10 @@ typedef struct stc_adc_cfg
  *****************************************************************************/
 typedef enum en_adc_dmatrig
 {
-   /*!插队扫描触发DMA读取控制*/ 
-  DmaJqr = 0, 
-   /*!顺序扫描触发DMA读取控制*/   
-  DmaSqr = 1   
+   /*!插队扫描触发DMA读取控制*/
+  DmaJqr = 0,
+   /*!顺序扫描触发DMA读取控制*/
+  DmaSqr = 1
 }en_adc_dmatrig_t;
  /**
  ******************************************************************************
@@ -316,7 +316,7 @@ typedef struct stc_adc_ext_trig_cfg
 {
     /*! 外部触发源寄存器选择*/
     en_adc_ext_trig_sel_t   enAdcExtTrigRegSel;
-    
+
     /*! ADC单次及顺序转换触发选择*/
     en_adc_trig_sel_t       enAdcTrig0Sel;
 
@@ -332,34 +332,34 @@ typedef struct stc_adc_ext_trig_cfg
 typedef struct stc_adc_irq
 {
     /*!<ADC插队扫描完成中断*/
-    boolean_t  bAdcJQRIrq;   
+    boolean_t  bAdcJQRIrq;
     /*!<ADC顺序扫描完成中断*/
-    boolean_t  bAdcSQRIrq;  
+    boolean_t  bAdcSQRIrq;
     /*! ADC区间中断*/
     boolean_t  bAdcRegCmp;
     /*! ADC上超出区间中断*/
     boolean_t  bAdcHhtCmp;
     /*! ADC下超出区间中断*/
-    boolean_t  bAdcLltCmp;    
+    boolean_t  bAdcLltCmp;
     /*!<ADC单次转换完成中断*/
     boolean_t  bAdcIrq;
 }stc_adc_irq_t;
 
 typedef struct stc_adc_threshold_cfg
 {
-   
-    boolean_t bAdcRegCmp ;      /*!ADC区间使能*/ 
 
-    boolean_t bAdcHhtCmp ;     /*!ADC上超出区间使能*/ 
+    boolean_t bAdcRegCmp ;      /*!ADC区间使能*/
+
+    boolean_t bAdcHhtCmp ;     /*!ADC上超出区间使能*/
 
     boolean_t bAdcLltCmp ;     /*!ADC下超出区间使能*/
-    
+
     uint32_t u32AdcRegHighThd; /*!ADC下超出区间*/
-    
-    uint32_t u32AdcRegLowThd; /*!ADC下超出区间*/ 
-    
+
+    uint32_t u32AdcRegLowThd; /*!ADC下超出区间*/
+
     en_adc_samp_ch_sel_t enThCh; /*!阈值比较通道选择*/
-    
+
 }stc_adc_threshold_cfg_t;
 /**
  ******************************************************************************
@@ -370,7 +370,7 @@ typedef struct stc_adc_irq_calbakfn_pt
     /*! ADC插队扫描中断回调函数指针*/
     func_ptr_t  pfnAdcJQRIrq;
     /*! ADC顺序扫描中断回调函数指针*/
-    func_ptr_t  pfnAdcSQRIrq;    
+    func_ptr_t  pfnAdcSQRIrq;
     /*! ADC区间中断回调函数指针*/
     func_ptr_t  pfnAdcRegIrq;
     /*! ADC上超出区间中断回调函数指针*/
@@ -378,7 +378,7 @@ typedef struct stc_adc_irq_calbakfn_pt
     /*! ADC下超出区间中断回调函数指针*/
     func_ptr_t  pfnAdcLltIrq;
     /*! ADC单次转换中断回调函数指针*/
-    func_ptr_t  pfnAdcIrq; 
+    func_ptr_t  pfnAdcIrq;
 }stc_adc_irq_calbakfn_pt_t;
 
 /******************************************************************************
@@ -422,13 +422,13 @@ en_result_t Adc_ConfigSqrMode(stc_adc_cfg_t* pstcAdcConfig, uint8_t u8AdcSampCnt
 //ADC JQR mode configuration
 en_result_t Adc_ConfigJqrMode(stc_adc_cfg_t* pstcAdcConfig, uint8_t u8AdcSampCnt,boolean_t  bAdcResultAccEn);
 
-//ADC single covert mode channel configuraion 
+//ADC single covert mode channel configuraion
 en_result_t Adc_ConfigSglChannel( en_adc_samp_ch_sel_t enstcAdcSampCh);
-//ADC SQR mode channel configuraion 
+//ADC SQR mode channel configuraion
 en_result_t Adc_ConfigSqrChannel(en_adc_sqr_chmux_t enstcAdcSqrChMux, en_adc_samp_ch_sel_t enstcAdcSampCh);
-//ADC JQR mode channel configuraion 
+//ADC JQR mode channel configuraion
 en_result_t Adc_ConfigJqrChannel(en_adc_jqr_chmux_t enstcAdcJqrChMux, en_adc_samp_ch_sel_t enstcAdcSampCh);
-//ADC DMA Trigger 
+//ADC DMA Trigger
 en_result_t Adc_ConfigDmaTrig(en_adc_dmatrig_t enAdcDmaTrig);
 //ADC IRQ configuration
 void Adc_ConfigIrq(stc_adc_irq_t* pstcAdcIrqCfg,

@@ -270,7 +270,7 @@ static rt_err_t hc32_configure(struct rt_serial_device *serial,
     stcBaud.u32Baud = cfg->baud_rate;
     u16Scnt = Uart_CalScnt(uart->config->idx, &stcBaud);
     Uart_SetBaud(uart->config->idx, u16Scnt);
-    
+
     Uart_ClrStatus(uart->config->idx, UartTC);
     Uart_ClrStatus(uart->config->idx, UartRC);
     Uart_DisableIrq(uart->config->idx, UartTxIrq);
@@ -315,7 +315,7 @@ static int hc32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(RT_NULL != serial);
 
     uart = rt_container_of(serial, struct hc32_uart, serial);
-    
+
     if(serial->parent.open_flag & RT_DEVICE_FLAG_INT_TX)
     {
         if (Uart_GetStatus(uart->config->idx, UartTC) == FALSE)

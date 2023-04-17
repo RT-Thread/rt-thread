@@ -14,7 +14,7 @@ volatile pHidSdio_RegMap_t SdioFuncReg[] =
 /* if flag_mport = 0, then it supports mport
  *    flag_mport = 1, then mport disabled
  */
-uint8_t flag_mport[NUM_FUNC] = 
+uint8_t flag_mport[NUM_FUNC] =
 {
     0,
 #if NUM_FUNC == 2
@@ -53,12 +53,12 @@ uint32_t sdio_ioctl(uint32_t port_id, SDIO_CMD_TYPE cmd, void *arg)
     switch(cmd)
     {
     case IOCTL_HID_GET_BLOCK_SIZE:
-	{
+    {
         if (port_id == FUNC_WIFI)
         {
             uint32_t blockSize = BL_REGS8(SDIO_FN1_BLK_SIZE_0);
 
-            blockSize |= ((BL_REGS8(SDIO_FN1_BLK_SIZE_1) & 
+            blockSize |= ((BL_REGS8(SDIO_FN1_BLK_SIZE_1) &
                            SDIO_FN1_BLK_SIZE_1_MASK ) << 8);
 
             if(blockSize == 0)
@@ -68,7 +68,7 @@ uint32_t sdio_ioctl(uint32_t port_id, SDIO_CMD_TYPE cmd, void *arg)
             return(blockSize);
         }
         break;
-	}
+    }
     default:
         break;
     }

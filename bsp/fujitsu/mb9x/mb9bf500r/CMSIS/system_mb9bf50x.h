@@ -36,12 +36,12 @@
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 #include <stdint.h>
 
 extern uint32_t SystemCoreClock;     /*!< System Clock Frequency (Core Clock)  */
-   
+
 /**
  * Initialize the system
  *
@@ -59,7 +59,7 @@ extern void SystemInit (void);
  * @param  none
  * @return none
  *
- * @brief  Updates the SystemCoreClock with current core Clock 
+ * @brief  Updates the SystemCoreClock with current core Clock
  *         retrieved from cpu registers.
  */
 extern void SystemCoreClockUpdate (void);

@@ -1,6 +1,6 @@
 /*
  * This is a generated file
- * 
+ *
  * Copyright 2021 QuickLogic
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,25 +20,25 @@
 
 #ifndef __CORE_V_MCU_CONFIG_H_
 #define __CORE_V_MCU_CONFIG_H_
-#define NEW_BIT_FILE	1
-#define OLD_BIT_FILE	0
+#define NEW_BIT_FILE    1
+#define OLD_BIT_FILE    0
 
 #if (NEW_BIT_FILE == 1 )
 #define BUILD_DATE 0x20220127
 #define BUILD_TIME 0x00215431
 
-#define FAKE_PLL		0
-#define PERCEPTIA_PLL	1
+#define FAKE_PLL        0
+#define PERCEPTIA_PLL   1
 //  SOC options
 #define N_IO                 48
 #define N_SYSIO              3
-#define N_GPIO               32  
+#define N_GPIO               32
 #define N_APBIO              51
 #define NBIT_PADCFG          6
 #define NBIT_PADMUX          2
 #define N_UART               2
-#define N_QSPIM              2      // two QSPI  master 
-#define N_I2CM               2          // two I2C master  
+#define N_QSPIM              2      // two QSPI  master
+#define N_I2CM               2          // two I2C master
 #define N_I2SC               0
 #define N_CSI2               0
 #define N_HYPER              0
@@ -157,8 +157,8 @@
 #define BUILD_DATE 0x20210623
 #define BUILD_TIME 0x00111431
 
-#define FAKE_PLL		0
-#define PERCEPTIA_PLL	1
+#define FAKE_PLL        0
+#define PERCEPTIA_PLL   1
 
 //  SOC options
 #define N_IO                 48

@@ -406,7 +406,7 @@ void RCM_ConfigAPB2(RCM_APB_DIV_T APB2Div)
  *                     @arg RCM_USB_DIV_1_5 : USBCLK = PLL clock /1.5
  *                     @arg RCM_USB_DIV_1   : USBCLK = PLL clock
  *                     @arg RCM_USB_DIV_2   : USBCLK = PLL clock / 2
- *                     @arg RCM_USB_DIV_2_5 : USBCLK = PLL clock / 2.5 
+ *                     @arg RCM_USB_DIV_2_5 : USBCLK = PLL clock / 2.5
  *
  * @retval    None
  */
@@ -623,14 +623,14 @@ uint32_t RCM_ReadADCCLKFreq(void)
  * @param    AHBPeriph : Enable the specifies clock of AHB peripheral.
  *                       This parameter can be any combination of the following values:
  *                       @arg RCM_AHB_PERIPH_DMA1 : Enable DMA1 clock
- *                       @arg RCM_AHB_PERIPH_DMA2 : Enable DMA2 clock 
+ *                       @arg RCM_AHB_PERIPH_DMA2 : Enable DMA2 clock
  *                       @arg RCM_AHB_PERIPH_SRAM : Enable SRAM clock
  *                       @arg RCM_AHB_PERIPH_FPU  : Enable FPU clock
  *                       @arg RCM_AHB_PERIPH_FMC  : Enable FMC clock
  *                       @arg RCM_AHB_PERIPH_QSPI : Enable QSPI clock
  *                       @arg RCM_AHB_PERIPH_CRC  : Enable CRC clock
- *                       @arg RCM_AHB_PERIPH_EMMC : Enable EMMC clock 
- *                       @arg RCM_AHB_PERIPH_SDIO : Enable SDIO clock 
+ *                       @arg RCM_AHB_PERIPH_EMMC : Enable EMMC clock
+ *                       @arg RCM_AHB_PERIPH_SDIO : Enable SDIO clock
  *
  * @retval   None
  */
@@ -645,14 +645,14 @@ void RCM_EnableAHBPeriphClock(uint32_t AHBPeriph)
  * @param    AHBPeriph : Disable the specifies clock of AHB peripheral.
  *                       This parameter can be any combination of the following values:
  *                       @arg RCM_AHB_PERIPH_DMA1 : Disable DMA1 clock
- *                       @arg RCM_AHB_PERIPH_DMA2 : Disable DMA2 clock 
+ *                       @arg RCM_AHB_PERIPH_DMA2 : Disable DMA2 clock
  *                       @arg RCM_AHB_PERIPH_SRAM : Disable SRAM clock
  *                       @arg RCM_AHB_PERIPH_FPU  : Disable FPU clock
  *                       @arg RCM_AHB_PERIPH_FMC  : Disable FMC clock
  *                       @arg RCM_AHB_PERIPH_QSPI : Disable QSPI clock
  *                       @arg RCM_AHB_PERIPH_CRC  : Disable CRC clock
- *                       @arg RCM_AHB_PERIPH_EMMC : Disable EMMC clock 
- *                       @arg RCM_AHB_PERIPH_SDIO : Disable SDIO clock 
+ *                       @arg RCM_AHB_PERIPH_EMMC : Disable EMMC clock
+ *                       @arg RCM_AHB_PERIPH_SDIO : Disable SDIO clock
  *
  * @retval   None
  */
@@ -672,15 +672,15 @@ void RCM_DisableAHBPeriphClock(uint32_t AHBPeriph)
  *                        @arg RCM_APB2_PERIPH_GPIOC  : Enable GPIOC clock
  *                        @arg RCM_APB2_PERIPH_GPIOD  : Enable GPIOD clock
  *                        @arg RCM_APB2_PERIPH_GPIOE  : Enable GPIOE clock
- *                        @arg RCM_APB2_PERIPH_GPIOF  : Enable GPIOF clock 
- *                        @arg RCM_APB2_PERIPH_GPIOG  : Enable GPIOG clock 
+ *                        @arg RCM_APB2_PERIPH_GPIOF  : Enable GPIOF clock
+ *                        @arg RCM_APB2_PERIPH_GPIOG  : Enable GPIOG clock
  *                        @arg RCM_APB2_PERIPH_ADC1   : Enable ADC1 clock
  *                        @arg RCM_APB2_PERIPH_ADC2   : Enable ADC2 clock
  *                        @arg RCM_APB2_PERIPH_TMR1   : Enable TMR1 clock
  *                        @arg RCM_APB2_PERIPH_SPI1   : Enable SPI1 clock
- *                        @arg RCM_APB2_PERIPH_TMR8   : Enable TMR8 clock 
+ *                        @arg RCM_APB2_PERIPH_TMR8   : Enable TMR8 clock
  *                        @arg RCM_APB2_PERIPH_USART1 : Enable USART1 clock
- *                        @arg RCM_APB2_PERIPH_ADC3   : Enable ADC3 clock 
+ *                        @arg RCM_APB2_PERIPH_ADC3   : Enable ADC3 clock
  *
  * @retval   None
  */
@@ -700,15 +700,15 @@ void RCM_EnableAPB2PeriphClock(uint32_t APB2Periph)
  *                        @arg RCM_APB2_PERIPH_GPIOC  : Disable GPIOC clock
  *                        @arg RCM_APB2_PERIPH_GPIOD  : Disable GPIOD clock
  *                        @arg RCM_APB2_PERIPH_GPIOE  : Disable GPIOE clock
- *                        @arg RCM_APB2_PERIPH_GPIOF  : Disable GPIOF clock 
- *                        @arg RCM_APB2_PERIPH_GPIOG  : Disable GPIOG clock 
+ *                        @arg RCM_APB2_PERIPH_GPIOF  : Disable GPIOF clock
+ *                        @arg RCM_APB2_PERIPH_GPIOG  : Disable GPIOG clock
  *                        @arg RCM_APB2_PERIPH_ADC1   : Disable ADC1 clock
  *                        @arg RCM_APB2_PERIPH_ADC2   : Disable ADC2 clock
  *                        @arg RCM_APB2_PERIPH_TMR1   : Disable TMR1 clock
  *                        @arg RCM_APB2_PERIPH_SPI1   : Disable SPI1 clock
- *                        @arg RCM_APB2_PERIPH_TMR8   : Disable TMR8 clock 
+ *                        @arg RCM_APB2_PERIPH_TMR8   : Disable TMR8 clock
  *                        @arg RCM_APB2_PERIPH_USART1 : Disable USART1 clock
- *                        @arg RCM_APB2_PERIPH_ADC3   : Disable ADC3 clock 
+ *                        @arg RCM_APB2_PERIPH_ADC3   : Disable ADC3 clock
  *
  * @retval   None
  */
@@ -725,24 +725,24 @@ void RCM_DisableAPB2PeriphClock(uint32_t APB2Periph)
  *                        @arg RCM_APB1_PERIPH_TMR2   : Enable TMR2 clock
  *                        @arg RCM_APB1_PERIPH_TMR3   : Enable TMR3 clock
  *                        @arg RCM_APB1_PERIPH_TMR4   : Enable TMR4 clock
- *                        @arg RCM_APB1_PERIPH_TMR5   : Enable TMR5 clock 
- *                        @arg RCM_APB1_PERIPH_TMR6   : Enable TMR6 clock 
- *                        @arg RCM_APB1_PERIPH_TMR7   : Enable TMR7 clock 
+ *                        @arg RCM_APB1_PERIPH_TMR5   : Enable TMR5 clock
+ *                        @arg RCM_APB1_PERIPH_TMR6   : Enable TMR6 clock
+ *                        @arg RCM_APB1_PERIPH_TMR7   : Enable TMR7 clock
  *                        @arg RCM_APB1_PERIPH_WWDT   : Enable WWDT clock
  *                        @arg RCM_APB1_PERIPH_SPI2   : Enable SPI2 clock
- *                        @arg RCM_APB1_PERIPH_SPI3   : Enable SPI3 clock 
+ *                        @arg RCM_APB1_PERIPH_SPI3   : Enable SPI3 clock
  *                        @arg RCM_APB1_PERIPH_USART2 : Enable USART2 clock
  *                        @arg RCM_APB1_PERIPH_USART3 : Enable USART3 clock
- *                        @arg RCM_APB1_PERIPH_UART4  : Enable UART4 clock 
- *                        @arg RCM_APB1_PERIPH_UART5  : Enable UART5 clock 
+ *                        @arg RCM_APB1_PERIPH_UART4  : Enable UART4 clock
+ *                        @arg RCM_APB1_PERIPH_UART5  : Enable UART5 clock
  *                        @arg RCM_APB1_PERIPH_I2C1   : Enable I2C1 clock
  *                        @arg RCM_APB1_PERIPH_I2C2   : Enable I2C2 clock
  *                        @arg RCM_APB1_PERIPH_USB    : Enable USB clock
  *                        @arg RCM_APB1_PERIPH_CAN1   : Enable CAN1 clock
- *                        @arg RCM_APB1_PERIPH_CAN2   : Enable CAN2 clock 
+ *                        @arg RCM_APB1_PERIPH_CAN2   : Enable CAN2 clock
  *                        @arg RCM_APB1_PERIPH_BAKR   : Enable BAKR clock
  *                        @arg RCM_APB1_PERIPH_PMU    : Enable PMU clock
- *                        @arg RCM_APB1_PERIPH_DAC    : Enable DAC clock 
+ *                        @arg RCM_APB1_PERIPH_DAC    : Enable DAC clock
  *
  * @retval   None
  */
@@ -759,24 +759,24 @@ void RCM_EnableAPB1PeriphClock(uint32_t APB1Periph)
  *                        @arg RCM_APB1_PERIPH_TMR2   : Disable TMR2 clock
  *                        @arg RCM_APB1_PERIPH_TMR3   : Disable TMR3 clock
  *                        @arg RCM_APB1_PERIPH_TMR4   : Disable TMR4 clock
- *                        @arg RCM_APB1_PERIPH_TMR5   : Disable TMR5 clock 
- *                        @arg RCM_APB1_PERIPH_TMR6   : Disable TMR6 clock 
- *                        @arg RCM_APB1_PERIPH_TMR7   : Disable TMR7 clock 
+ *                        @arg RCM_APB1_PERIPH_TMR5   : Disable TMR5 clock
+ *                        @arg RCM_APB1_PERIPH_TMR6   : Disable TMR6 clock
+ *                        @arg RCM_APB1_PERIPH_TMR7   : Disable TMR7 clock
  *                        @arg RCM_APB1_PERIPH_WWDT   : Disable WWDT clock
  *                        @arg RCM_APB1_PERIPH_SPI2   : Disable SPI2 clock
- *                        @arg RCM_APB1_PERIPH_SPI3   : Disable SPI3 clock 
+ *                        @arg RCM_APB1_PERIPH_SPI3   : Disable SPI3 clock
  *                        @arg RCM_APB1_PERIPH_USART2 : Disable USART2 clock
  *                        @arg RCM_APB1_PERIPH_USART3 : Disable USART3 clock
- *                        @arg RCM_APB1_PERIPH_UART4  : Disable UART4 clock 
- *                        @arg RCM_APB1_PERIPH_UART5  : Disable UART5 clock 
+ *                        @arg RCM_APB1_PERIPH_UART4  : Disable UART4 clock
+ *                        @arg RCM_APB1_PERIPH_UART5  : Disable UART5 clock
  *                        @arg RCM_APB1_PERIPH_I2C1   : Disable I2C1 clock
  *                        @arg RCM_APB1_PERIPH_I2C2   : Disable I2C2 clock
  *                        @arg RCM_APB1_PERIPH_USB    : Disable USB clock
  *                        @arg RCM_APB1_PERIPH_CAN1   : Disable CAN1 clock
- *                        @arg RCM_APB1_PERIPH_CAN2   : Disable CAN2 clock 
+ *                        @arg RCM_APB1_PERIPH_CAN2   : Disable CAN2 clock
  *                        @arg RCM_APB1_PERIPH_BAKR   : Disable BAKR clock
  *                        @arg RCM_APB1_PERIPH_PMU    : Disable PMU clock
- *                        @arg RCM_APB1_PERIPH_DAC    : Disable DAC clock 
+ *                        @arg RCM_APB1_PERIPH_DAC    : Disable DAC clock
  *
  * @retval   None
  */
@@ -796,15 +796,15 @@ void RCM_DisableAPB1PeriphClock(uint32_t APB1Periph)
  *                        @arg RCM_APB2_PERIPH_GPIOC  : Enable GPIOC reset
  *                        @arg RCM_APB2_PERIPH_GPIOD  : Enable GPIOD reset
  *                        @arg RCM_APB2_PERIPH_GPIOE  : Enable GPIOE reset
- *                        @arg RCM_APB2_PERIPH_GPIOF  : Enable GPIOF reset 
- *                        @arg RCM_APB2_PERIPH_GPIOG  : Enable GPIOG reset 
+ *                        @arg RCM_APB2_PERIPH_GPIOF  : Enable GPIOF reset
+ *                        @arg RCM_APB2_PERIPH_GPIOG  : Enable GPIOG reset
  *                        @arg RCM_APB2_PERIPH_ADC1   : Enable ADC1 reset
  *                        @arg RCM_APB2_PERIPH_ADC2   : Enable ADC2 reset
  *                        @arg RCM_APB2_PERIPH_TMR1   : Enable TMR1 reset
  *                        @arg RCM_APB2_PERIPH_SPI1   : Enable SPI1 reset
- *                        @arg RCM_APB2_PERIPH_TMR8   : Enable TMR8 reset 
+ *                        @arg RCM_APB2_PERIPH_TMR8   : Enable TMR8 reset
  *                        @arg RCM_APB2_PERIPH_USART1 : Enable USART1 reset
- *                        @arg RCM_APB2_PERIPH_ADC3   : Enable ADC3 reset 
+ *                        @arg RCM_APB2_PERIPH_ADC3   : Enable ADC3 reset
  *
  * @retval   None
  */
@@ -824,15 +824,15 @@ void RCM_EnableAPB2PeriphReset(uint32_t APB2Periph)
  *                        @arg RCM_APB2_PERIPH_GPIOC  : Disable GPIOC reset
  *                        @arg RCM_APB2_PERIPH_GPIOD  : Disable GPIOD reset
  *                        @arg RCM_APB2_PERIPH_GPIOE  : Disable GPIOE reset
- *                        @arg RCM_APB2_PERIPH_GPIOF  : Disable GPIOF reset 
- *                        @arg RCM_APB2_PERIPH_GPIOG  : Disable GPIOG reset 
+ *                        @arg RCM_APB2_PERIPH_GPIOF  : Disable GPIOF reset
+ *                        @arg RCM_APB2_PERIPH_GPIOG  : Disable GPIOG reset
  *                        @arg RCM_APB2_PERIPH_ADC1   : Disable ADC1 reset
  *                        @arg RCM_APB2_PERIPH_ADC2   : Disable ADC2 reset
  *                        @arg RCM_APB2_PERIPH_TMR1   : Disable TMR1 reset
  *                        @arg RCM_APB2_PERIPH_SPI1   : Disable SPI1 reset
- *                        @arg RCM_APB2_PERIPH_TMR8   : Disable TMR8 reset 
+ *                        @arg RCM_APB2_PERIPH_TMR8   : Disable TMR8 reset
  *                        @arg RCM_APB2_PERIPH_USART1 : Disable USART1 reset
- *                        @arg RCM_APB2_PERIPH_ADC3   : Disable ADC3 reset 
+ *                        @arg RCM_APB2_PERIPH_ADC3   : Disable ADC3 reset
  *
  * @retval   None
  */
@@ -849,21 +849,21 @@ void RCM_DisableAPB2PeriphReset(uint32_t APB2Periph)
  *                        @arg RCM_APB1_PERIPH_TMR2   : Enable TMR2 reset
  *                        @arg RCM_APB1_PERIPH_TMR3   : Enable TMR3 reset
  *                        @arg RCM_APB1_PERIPH_TMR4   : Enable TMR4 reset
- *                        @arg RCM_APB1_PERIPH_TMR5   : Enable TMR5 reset 
- *                        @arg RCM_APB1_PERIPH_TMR6   : Enable TMR6 reset 
- *                        @arg RCM_APB1_PERIPH_TMR7   : Enable TMR7 reset 
+ *                        @arg RCM_APB1_PERIPH_TMR5   : Enable TMR5 reset
+ *                        @arg RCM_APB1_PERIPH_TMR6   : Enable TMR6 reset
+ *                        @arg RCM_APB1_PERIPH_TMR7   : Enable TMR7 reset
  *                        @arg RCM_APB1_PERIPH_WWDT   : Enable WWDT reset
  *                        @arg RCM_APB1_PERIPH_SPI2   : Enable SPI2 reset
- *                        @arg RCM_APB1_PERIPH_SPI3   : Enable SPI3 reset 
+ *                        @arg RCM_APB1_PERIPH_SPI3   : Enable SPI3 reset
  *                        @arg RCM_APB1_PERIPH_USART2 : Enable USART2 reset
  *                        @arg RCM_APB1_PERIPH_USART3 : Enable USART3 reset
- *                        @arg RCM_APB1_PERIPH_UART4  : Enable UART4 reset 
- *                        @arg RCM_APB1_PERIPH_UART5  : Enable UART5 reset 
+ *                        @arg RCM_APB1_PERIPH_UART4  : Enable UART4 reset
+ *                        @arg RCM_APB1_PERIPH_UART5  : Enable UART5 reset
  *                        @arg RCM_APB1_PERIPH_I2C1   : Enable I2C1 reset
  *                        @arg RCM_APB1_PERIPH_I2C2   : Enable I2C2 reset
  *                        @arg RCM_APB1_PERIPH_USB    : Enable USB reset
  *                        @arg RCM_APB1_PERIPH_CAN1   : Enable CAN1 reset
- *                        @arg RCM_APB1_PERIPH_CAN2   : Enable CAN2 reset 
+ *                        @arg RCM_APB1_PERIPH_CAN2   : Enable CAN2 reset
  *                        @arg RCM_APB1_PERIPH_BAKR   : Enable BAKR reset
  *                        @arg RCM_APB1_PERIPH_PMU    : Enable PMU reset
  *                        @arg RCM_APB1_PERIPH_DAC    : Enable DAC reset
@@ -883,21 +883,21 @@ void RCM_EnableAPB1PeriphReset(uint32_t APB1Periph)
  *                        @arg RCM_APB1_PERIPH_TMR2   : Disable TMR2 reset
  *                        @arg RCM_APB1_PERIPH_TMR3   : Disable TMR3 reset
  *                        @arg RCM_APB1_PERIPH_TMR4   : Disable TMR4 reset
- *                        @arg RCM_APB1_PERIPH_TMR5   : Disable TMR5 reset 
- *                        @arg RCM_APB1_PERIPH_TMR6   : Disable TMR6 reset 
- *                        @arg RCM_APB1_PERIPH_TMR7   : Disable TMR7 reset 
+ *                        @arg RCM_APB1_PERIPH_TMR5   : Disable TMR5 reset
+ *                        @arg RCM_APB1_PERIPH_TMR6   : Disable TMR6 reset
+ *                        @arg RCM_APB1_PERIPH_TMR7   : Disable TMR7 reset
  *                        @arg RCM_APB1_PERIPH_WWDT   : Disable WWDT reset
  *                        @arg RCM_APB1_PERIPH_SPI2   : Disable SPI2 reset
- *                        @arg RCM_APB1_PERIPH_SPI3   : Disable SPI3 reset 
+ *                        @arg RCM_APB1_PERIPH_SPI3   : Disable SPI3 reset
  *                        @arg RCM_APB1_PERIPH_USART2 : Disable USART2 reset
  *                        @arg RCM_APB1_PERIPH_USART3 : Disable USART3 reset
- *                        @arg RCM_APB1_PERIPH_UART4  : Disable UART4 reset 
- *                        @arg RCM_APB1_PERIPH_UART5  : Disable UART5 reset 
+ *                        @arg RCM_APB1_PERIPH_UART4  : Disable UART4 reset
+ *                        @arg RCM_APB1_PERIPH_UART5  : Disable UART5 reset
  *                        @arg RCM_APB1_PERIPH_I2C1   : Disable I2C1 reset
  *                        @arg RCM_APB1_PERIPH_I2C2   : Disable I2C2 reset
  *                        @arg RCM_APB1_PERIPH_USB    : Disable USB reset
  *                        @arg RCM_APB1_PERIPH_CAN1   : Disable CAN1 reset
- *                        @arg RCM_APB1_PERIPH_CAN2   : Disable CAN2 reset 
+ *                        @arg RCM_APB1_PERIPH_CAN2   : Disable CAN2 reset
  *                        @arg RCM_APB1_PERIPH_BAKR   : Disable BAKR reset
  *                        @arg RCM_APB1_PERIPH_PMU    : Disable PMU reset
  *                        @arg RCM_APB1_PERIPH_DAC    : Disable DAC reset

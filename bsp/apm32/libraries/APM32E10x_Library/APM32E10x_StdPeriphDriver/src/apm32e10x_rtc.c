@@ -70,7 +70,7 @@ void RTC_DisableConfigMode(void)
  */
 uint32_t RTC_ReadCounter(void)
 {
-  uint32_t reg = 0;  
+  uint32_t reg = 0;
   reg  = (RTC->CNTH_B.CNTH) << 16;
   reg |= (RTC->CNTL_B.CNTL);
   return  (reg);

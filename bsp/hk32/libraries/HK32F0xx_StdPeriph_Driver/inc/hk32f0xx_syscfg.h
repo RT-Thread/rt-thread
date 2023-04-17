@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    hk32f0xx_syscfg.h 
+  * @file    hk32f0xx_syscfg.h
   *  @version V1.0.1
   * @date    2019-08-15
   ******************************************************************************
@@ -29,11 +29,11 @@
 
 /** @defgroup SYSCFG_Exported_Constants
   * @{
-  */ 
-  
-/** @defgroup SYSCFG_EXTI_Port_Sources 
+  */
+
+/** @defgroup SYSCFG_EXTI_Port_Sources
   * @{
-  */ 
+  */
 #define EXTI_PortSourceGPIOA       ((uint8_t)0x00)
 #define EXTI_PortSourceGPIOB       ((uint8_t)0x01)
 #define EXTI_PortSourceGPIOC       ((uint8_t)0x02)
@@ -45,14 +45,14 @@
                                          ((PORTSOURCE) == EXTI_PortSourceGPIOC) || \
                                          ((PORTSOURCE) == EXTI_PortSourceGPIOD) || \
                                          ((PORTSOURCE) == EXTI_PortSourceGPIOE) || \
-                                         ((PORTSOURCE) == EXTI_PortSourceGPIOF)) 
+                                         ((PORTSOURCE) == EXTI_PortSourceGPIOF))
 /**
   * @}
   */
 
-/** @defgroup SYSCFG_EXTI_Pin_sources 
+/** @defgroup SYSCFG_EXTI_Pin_sources
   * @{
-  */ 
+  */
 #define EXTI_PinSource0            ((uint8_t)0x00)
 #define EXTI_PinSource1            ((uint8_t)0x01)
 #define EXTI_PinSource2            ((uint8_t)0x02)
@@ -90,9 +90,9 @@
   * @}
   */
 
-/** @defgroup SYSCFG_Memory_Remap_Config 
+/** @defgroup SYSCFG_Memory_Remap_Config
   * @{
-  */ 
+  */
 #define SYSCFG_MemoryRemap_Flash                ((uint8_t)0x00)
 #define SYSCFG_MemoryRemap_SystemMemory         ((uint8_t)0x01)
 #define SYSCFG_MemoryRemap_SRAM                 ((uint8_t)0x03)
@@ -106,18 +106,18 @@
   * @}
   */
 
-/** @defgroup SYSCFG_DMA_Remap_Config 
+/** @defgroup SYSCFG_DMA_Remap_Config
   * @{
-  */ 
-                
+  */
+
 #define SYSCFG_DMARemap_USART3      SYSCFG_CFGR1_USART3_DMA_RMP    /* Remap USART3 DMA requests from channel6/7 to channel3/2 */
-                                                                    
+
 #define SYSCFG_DMARemap_TIM17       SYSCFG_CFGR1_TIM17_DMA_RMP    /* Remap TIM17 DMA requests from channel1 to channel2 */
 #define SYSCFG_DMARemap_TIM16       SYSCFG_CFGR1_TIM16_DMA_RMP    /* Remap TIM16 DMA requests from channel3 to channel4 */
 #define SYSCFG_DMARemap_USART1Rx    SYSCFG_CFGR1_USART1RX_DMA_RMP /* Remap USART1 Rx DMA requests from channel3 to channel5 */
 #define SYSCFG_DMARemap_USART1Tx    SYSCFG_CFGR1_USART1TX_DMA_RMP /* Remap USART1 Tx DMA requests from channel2 to channel4 */
 #define SYSCFG_DMARemap_ADC1        SYSCFG_CFGR1_ADC_DMA_RMP      /* Remap ADC1 DMA requests from channel1 to channel2 */
-  
+
 #define IS_SYSCFG_DMA_REMAP(REMAP) ( ((REMAP) == SYSCFG_DMARemap_USART3) || \
                                     ((REMAP) == SYSCFG_DMARemap_TIM17) || \
                                     ((REMAP) == SYSCFG_DMARemap_TIM16) || \
@@ -129,9 +129,9 @@
   * @}
   */
 
-/** @defgroup SYSCFG_I2C_FastModePlus_Config 
+/** @defgroup SYSCFG_I2C_FastModePlus_Config
   * @{
-  */ 
+  */
 #define SYSCFG_I2CFastModePlus_PB6       SYSCFG_CFGR1_I2C_FMP_PB6 /* Enable Fast Mode Plus on PB6 */
 #define SYSCFG_I2CFastModePlus_PB7       SYSCFG_CFGR1_I2C_FMP_PB7 /* Enable Fast Mode Plus on PB7 */
 #define SYSCFG_I2CFastModePlus_PB8       SYSCFG_CFGR1_I2C_FMP_PB8 /* Enable Fast Mode Plus on PB8 */
@@ -153,9 +153,9 @@
   * @}
   */
 
-/** @defgroup SYSCFG_Lock_Config 
+/** @defgroup SYSCFG_Lock_Config
   * @{
-  */ 
+  */
 #define SYSCFG_Break_PVD                     SYSCFG_CFGR2_PVD_LOCK       /*!< Connects the PVD event to the Break Input of TIM1 */
 #define SYSCFG_Break_SRAMParity              SYSCFG_CFGR2_SRAM_PARITY_LOCK  /*!< Connects the SRAM_PARITY error signal to the Break Input of TIM1 */
 #define SYSCFG_Break_Lockup                  SYSCFG_CFGR2_LOCKUP_LOCK       /*!< Connects Lockup output of CortexM0 to the break input of TIM1 */
@@ -168,7 +168,7 @@
   * @}
   */
 
-/** @defgroup SYSCFG_flags_definition 
+/** @defgroup SYSCFG_flags_definition
   * @{
   */
 
@@ -385,7 +385,7 @@
 /*  Function used to set the SYSCFG configuration to the default reset state **/
 void SYSCFG_DeInit(void);
 
-/* SYSCFG configuration functions *********************************************/ 
+/* SYSCFG configuration functions *********************************************/
 void SYSCFG_MemoryRemapConfig(uint32_t SYSCFG_MemoryRemap);
 void SYSCFG_DMAChannelRemapConfig(uint32_t SYSCFG_DMARemap, FunctionalState NewState);
 void SYSCFG_I2CFastModePlusConfig(uint32_t SYSCFG_I2CFastModePlus, FunctionalState NewState);
@@ -404,8 +404,8 @@ void SYSCFG_ClearFlag(uint32_t SYSCFG_Flag);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */  
+  */

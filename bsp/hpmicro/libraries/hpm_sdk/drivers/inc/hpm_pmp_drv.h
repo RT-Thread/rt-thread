@@ -89,7 +89,7 @@ typedef struct pmp_entry_struct {
  * @brief PMA Configuration
  * @param m - Entry address matching mode, valid value:
  *            ADDR_MATCH_MODE_OFF - This PMA entry is disabled
- *            ADDR_MATCH_NAPOT - Naturally aligned power-of-2 region， the granularity is 4K bytes
+ *            ADDR_MATCH_NAPOT - Naturally aligned power-of-2 regionï¼Œ the granularity is 4K bytes
  * @param t - Memory type attributes, valid value:
  *            MEM_TYPE_DEV_NON_BUF - Device, Non-bufferable
  *            MEM_TYPE_DEV_BUF - Device, bufferable

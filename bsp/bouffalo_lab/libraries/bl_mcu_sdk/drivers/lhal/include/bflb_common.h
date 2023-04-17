@@ -83,7 +83,7 @@ void arch_delay_ms(uint32_t cnt);
 
 /**
  * @brief
- * 
+ *
  * @param [in] in
  * @param [in] len
  * @return [in] uint16_t

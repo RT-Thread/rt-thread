@@ -68,15 +68,15 @@ ErrStatus fwdgt_config(uint16_t reload_value, uint8_t prescaler_div)
 {
     uint32_t timeout = FWDGT_PSC_TIMEOUT;
     uint32_t flag_status = RESET;
-  
+
     /* enable write access to FWDGT_PSC,and FWDGT_RLD */
     FWDGT_CTL = FWDGT_WRITEACCESS_ENABLE;
-  
+
     /* wait until the PUD flag to be reset */
     do{
        flag_status = FWDGT_STAT & FWDGT_STAT_PUD;
     }while((--timeout > 0U) && ((uint32_t)RESET != flag_status));
-    
+
     if ((uint32_t)RESET != flag_status){
         return ERROR;
     }
@@ -89,13 +89,13 @@ ErrStatus fwdgt_config(uint16_t reload_value, uint8_t prescaler_div)
     do{
        flag_status = FWDGT_STAT & FWDGT_STAT_RUD;
     }while((--timeout > 0U) && ((uint32_t)RESET != flag_status));
-   
+
     if ((uint32_t)RESET != flag_status){
         return ERROR;
     }
-    
+
     FWDGT_RLD = RLD_RLD(reload_value);
-    
+
     /* reload the counter */
     FWDGT_CTL = FWDGT_KEY_RELOAD;
 
@@ -104,7 +104,7 @@ ErrStatus fwdgt_config(uint16_t reload_value, uint8_t prescaler_div)
 
 /*!
     \brief      get flag state of FWDGT
-    \param[in]  flag: flag to get 
+    \param[in]  flag: flag to get
       \arg        FWDGT_FLAG_PUD: a write operation to FWDGT_PSC register is on going
       \arg        FWDGT_FLAG_RUD: a write operation to FWDGT_RLD register is on going
     \param[out] none

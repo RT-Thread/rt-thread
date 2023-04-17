@@ -49,43 +49,43 @@ extern "C" {
 /** @defgroup BKPC_Public_Macros BKPC Public Macros
   * @{
   */
-#define BKPC_LOCK()		(WRITE_REG(BKPC->PROT, 0U))
-#define BKPC_UNLOCK()		(WRITE_REG(BKPC->PROT, 0x9669AA55U))
-#define BKPC_LRC_ENABLE()			\
-do {						\
-	BKPC_UNLOCK();				\
-	SET_BIT(BKPC->CR, BKPC_CR_LRCEN_MSK);	\
-	BKPC_LOCK();				\
+#define BKPC_LOCK()     (WRITE_REG(BKPC->PROT, 0U))
+#define BKPC_UNLOCK()       (WRITE_REG(BKPC->PROT, 0x9669AA55U))
+#define BKPC_LRC_ENABLE()           \
+do {                        \
+    BKPC_UNLOCK();              \
+    SET_BIT(BKPC->CR, BKPC_CR_LRCEN_MSK);   \
+    BKPC_LOCK();                \
 } while (0)
-#define BKPC_LRC_DISABLE()			\
-do {						\
-	BKPC_UNLOCK();				\
-	CLEAR_BIT(BKPC->CR, BKPC_CR_LRCEN_MSK);	\
-	BKPC_LOCK();				\
+#define BKPC_LRC_DISABLE()          \
+do {                        \
+    BKPC_UNLOCK();              \
+    CLEAR_BIT(BKPC->CR, BKPC_CR_LRCEN_MSK); \
+    BKPC_LOCK();                \
 } while (0)
-#define BKPC_LOSM_ENABLE()			\
-do {						\
-	BKPC_UNLOCK();				\
-	SET_BIT(BKPC->CR, BKPC_CR_LOSMEN_MSK);	\
-	BKPC_LOCK();				\
+#define BKPC_LOSM_ENABLE()          \
+do {                        \
+    BKPC_UNLOCK();              \
+    SET_BIT(BKPC->CR, BKPC_CR_LOSMEN_MSK);  \
+    BKPC_LOCK();                \
 } while (0)
-#define BKPC_LOSM_DISABLE()			\
-do {						\
-	BKPC_UNLOCK();				\
-	CLEAR_BIT(BKPC->CR, BKPC_CR_LOSMEN_MSK);\
-	BKPC_LOCK();				\
+#define BKPC_LOSM_DISABLE()         \
+do {                        \
+    BKPC_UNLOCK();              \
+    CLEAR_BIT(BKPC->CR, BKPC_CR_LOSMEN_MSK);\
+    BKPC_LOCK();                \
 } while (0)
-#define BKPC_LOSC_ENABLE()			\
-do {						\
-	BKPC_UNLOCK();				\
-	SET_BIT(BKPC->CR, BKPC_CR_LOSCEN_MSK);	\
-	BKPC_LOCK();				\
+#define BKPC_LOSC_ENABLE()          \
+do {                        \
+    BKPC_UNLOCK();              \
+    SET_BIT(BKPC->CR, BKPC_CR_LOSCEN_MSK);  \
+    BKPC_LOCK();                \
 } while (0)
-#define BKPC_LOSC_DISABLE()			\
-do {						\
-	BKPC_UNLOCK();				\
-	CLEAR_BIT(BKPC->CR, BKPC_CR_LOSCEN_MSK);\
-	BKPC_LOCK();				\
+#define BKPC_LOSC_DISABLE()         \
+do {                        \
+    BKPC_UNLOCK();              \
+    CLEAR_BIT(BKPC->CR, BKPC_CR_LOSCEN_MSK);\
+    BKPC_LOCK();                \
 } while (0)
 /**
   * @}
@@ -98,29 +98,29 @@ do {						\
   * @brief BKPC ldo output select
   */
 typedef enum {
-	BKPC_LDO_OUTPUT_1_6 = 0x0U,	/**< 1.6V */
-	BKPC_LDO_OUTPUT_1_3 = 0x1U,	/**< 1.3V */
-	BKPC_LDO_OUTPUT_1_4 = 0x2U,	/**< 1.4V */
-	BKPC_LDO_OUTPUT_1_5 = 0x4U,	/**< 1.5V */
+    BKPC_LDO_OUTPUT_1_6 = 0x0U, /**< 1.6V */
+    BKPC_LDO_OUTPUT_1_3 = 0x1U, /**< 1.3V */
+    BKPC_LDO_OUTPUT_1_4 = 0x2U, /**< 1.4V */
+    BKPC_LDO_OUTPUT_1_5 = 0x4U, /**< 1.5V */
 } bkpc_ldo_output_t;
 
 /**
   * @brief Standby wakeup port select
   */
 typedef enum {
-	PMU_STANDBY_PORT_SEL_PA0  = 0x0U,	/**< Wakeup by PA0 */
-	PMU_STANDBY_PORT_SEL_PA1  = 0x1U,	/**< Wakeup by PA1 */
-	PMU_STANDBY_PORT_SEL_PA2  = 0x2U,	/**< Wakeup by PA2 */
-	PMU_STANDBY_PORT_SEL_PA3  = 0x3U,	/**< Wakeup by PA3 */
-	PMU_STANDBY_PORT_SEL_NONE = 0xFU,	/**< Wakeup by other source */
+    PMU_STANDBY_PORT_SEL_PA0  = 0x0U,   /**< Wakeup by PA0 */
+    PMU_STANDBY_PORT_SEL_PA1  = 0x1U,   /**< Wakeup by PA1 */
+    PMU_STANDBY_PORT_SEL_PA2  = 0x2U,   /**< Wakeup by PA2 */
+    PMU_STANDBY_PORT_SEL_PA3  = 0x3U,   /**< Wakeup by PA3 */
+    PMU_STANDBY_PORT_SEL_NONE = 0xFU,   /**< Wakeup by other source */
 } bkpc_wakeup_port_t;
 
 /**
   * @brief Standby wakeup level
   */
 typedef enum {
-	PMU_STANDBY_LEVEL_HIGH = 0x0U,	/**< High level */
-	PMU_STANDBY_LEVEL_LOW  = 0x1U,	/**< Low level */
+    PMU_STANDBY_LEVEL_HIGH = 0x0U,  /**< High level */
+    PMU_STANDBY_LEVEL_LOW  = 0x1U,  /**< Low level */
 } bkpc_wakeup_level_t;
 /**
   * @}
@@ -130,18 +130,18 @@ typedef enum {
   * @defgroup BKPC_Private_Macros BKPC Private Macros
   * @{
   */
-#define IS_BKPC_LDO_OUTPUT(x)	(((x) == BKPC_LDO_OUTPUT_1_6) || \
+#define IS_BKPC_LDO_OUTPUT(x)   (((x) == BKPC_LDO_OUTPUT_1_6) || \
                                  ((x) == BKPC_LDO_OUTPUT_1_3) || \
                                  ((x) == BKPC_LDO_OUTPUT_1_4) || \
                                  ((x) == BKPC_LDO_OUTPUT_1_5))
-#define IS_BKPC_WAKEUP_PORT(x)	(((x) == PMU_STANDBY_PORT_SEL_PA0) || \
+#define IS_BKPC_WAKEUP_PORT(x)  (((x) == PMU_STANDBY_PORT_SEL_PA0) || \
                                  ((x) == PMU_STANDBY_PORT_SEL_PA1) || \
                                  ((x) == PMU_STANDBY_PORT_SEL_PA2) || \
                                  ((x) == PMU_STANDBY_PORT_SEL_PA3) || \
                                  ((x) == PMU_STANDBY_PORT_SEL_NONE))
-#define IS_BKPC_WAKEUP_LEVEL(x)	(((x) == PMU_STANDBY_LEVEL_HIGH) || \
+#define IS_BKPC_WAKEUP_LEVEL(x) (((x) == PMU_STANDBY_LEVEL_HIGH) || \
                                  ((x) == PMU_STANDBY_LEVEL_LOW))
-#define IS_BKPC_RAM_IDX(x)	((x) < 32)
+#define IS_BKPC_RAM_IDX(x)  ((x) < 32)
 /**
   * @}
   */

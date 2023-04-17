@@ -152,12 +152,12 @@ static int mscUsbTransport(__mscDev_t *mscDev, unsigned int TimeOut)
         /* 设置buffer传输方式, 如果使用msc的buff，则不使用DMA，需要palloc分配内存 */
         mscDev->CurrentUrb->transfer_flags = URB_ASYNC_UNLINK;
     //    mscDev->CurrentUrb->transfer_flags = URB_ASYNC_UNLINK | URB_NO_SETUP_DMA_MAP;
-    
+
     //    if (mscDev->CurrentUrb->transfer_buffer == mscDev->iobuf)
     //    {
     //        mscDev->CurrentUrb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
     //    }
-    
+
 
     mscDev->CurrentUrb->transfer_dma = 0;
     mscDev->CurrentUrb->setup_dma    = 0;

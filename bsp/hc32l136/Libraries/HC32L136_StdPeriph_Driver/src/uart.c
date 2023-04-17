@@ -1,43 +1,43 @@
 /*************************************************************************************
-* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.    
+* Copyright (C) 2017, Huada Semiconductor Co.,Ltd All rights reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Huada Semiconductor Co.,Ltd ("HDSC").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with HDSC 
-* components. This software is licensed by HDSC to be adapted only 
-* for use in systems utilizing HDSC components. HDSC shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein. HDSC is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with HDSC
+* components. This software is licensed by HDSC to be adapted only
+* for use in systems utilizing HDSC components. HDSC shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein. HDSC is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * Disclaimer:
 * HDSC MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* HDSC SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF Disclaimer HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.                        
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /******************************************************************************/
 /** \file uart.c
@@ -70,7 +70,7 @@
                                  (UartFEIrq == (x)) ||\
                                  (UartCtsIrq == (x))||\
                                  (UartPEIrq == (x)) ||\
-                                 (UartTxEIrq == (x))) 
+                                 (UartTxEIrq == (x)))
 
 #define IS_VALID_MODE(x)        ((UartMode0==(x))||\
                                  (UartMode1==(x))||\
@@ -98,12 +98,12 @@ static stc_uart_instance_data_t m_astcUartInstanceDataLut[] =
     {
         UARTCH0,
         M0P_UART0,       /* pstcInstance */
-        {NULL,NULL,NULL,NULL,NULL},     
+        {NULL,NULL,NULL,NULL,NULL},
     },
     {
         UARTCH1,
         M0P_UART1,       /* pstcInstance */
-       {NULL,NULL,NULL,NULL,NULL},    
+       {NULL,NULL,NULL,NULL,NULL},
     },
 };
 /**
@@ -157,7 +157,7 @@ en_result_t Uart_EnableIrq(uint8_t u8Idx,
             break;
         case  UartRxIrq:
             pstcData->pstcInstance->SCON_f.RCIE  = 1u;
-            break; 
+            break;
         case  UartFEIrq:
             pstcData->pstcInstance->SCON_f.FEIE  = 1u;
             break;
@@ -171,7 +171,7 @@ en_result_t Uart_EnableIrq(uint8_t u8Idx,
             pstcData->pstcInstance->SCON_f.TXEIE = 1u;
             break;
         default:
-            return (ErrorInvalidParameter);       
+            return (ErrorInvalidParameter);
     }
     return Ok;
 }
@@ -184,14 +184,14 @@ en_result_t Uart_EnableIrq(uint8_t u8Idx,
  ** \retval OK配置成功
  **\retval ErrorInvalidParameter配置失败
  ******************************************************************************/
-en_result_t Uart_DisableIrq(uint8_t u8Idx, 
+en_result_t Uart_DisableIrq(uint8_t u8Idx,
                             en_uart_irq_sel_t enIrqSel)
 {
     stc_uart_instance_data_t *pstcData = NULL;
 
     ASSERT(IS_VALID_CH(u8Idx));
     ASSERT(IS_VALID_IRQSEL(enIrqSel));
-        
+
     pstcData = UartGetInternDataPtr(u8Idx);
     if (NULL == pstcData)
     {
@@ -204,7 +204,7 @@ en_result_t Uart_DisableIrq(uint8_t u8Idx,
             break;
         case  UartRxIrq:
             pstcData->pstcInstance->SCON_f.RCIE  = 0u;
-            break; 
+            break;
         case  UartFEIrq:
             pstcData->pstcInstance->SCON_f.FEIE  = 0u;
             break;
@@ -218,9 +218,9 @@ en_result_t Uart_DisableIrq(uint8_t u8Idx,
             pstcData->pstcInstance->SCON_f.TXEIE = 0u;
             break;
         default:
-            return (ErrorInvalidParameter);       
+            return (ErrorInvalidParameter);
     }
-    
+
     return Ok;
 }
 /**
@@ -241,7 +241,7 @@ en_result_t Uart_SetMode(uint8_t u8Idx,en_uart_mode_t enMode)
     if (NULL == pstcData)
     {
         return ErrorInvalidParameter;
-    } 
+    }
     pstcData->pstcInstance->SCON_f.SM = enMode;
     return Ok;
 }
@@ -355,7 +355,7 @@ en_result_t Uart_SetSaddrEn(uint8_t u8Idx,uint8_t u8Addren)
         return ErrorInvalidParameter;
     }
     pstcData->pstcInstance->SADEN = u8Addren;
-    return Ok;  
+    return Ok;
 }
 /**
  ******************************************************************************
@@ -411,7 +411,7 @@ en_result_t Uart_SetClkDiv(uint8_t u8Idx,en_uart_clkdiv_t enClkDiv)
 uint16_t Uart_CalScnt(uint8_t u8Idx,stc_uart_baud_t *pstcBaud)
 {
     stc_uart_instance_data_t *pstcData = NULL;
-	uint16_t u16Scnt = 0;
+    uint16_t u16Scnt = 0;
     uint8_t u8Over = 0;
     ASSERT(IS_VALID_CH(u8Idx));
 
@@ -431,7 +431,7 @@ uint16_t Uart_CalScnt(uint8_t u8Idx,stc_uart_baud_t *pstcBaud)
         {
             u8Over = 8;
         }
-            
+
         u16Scnt = pstcBaud->u32Pclk/(pstcBaud->u32Baud*u8Over);
     }
     else
@@ -443,9 +443,9 @@ uint16_t Uart_CalScnt(uint8_t u8Idx,stc_uart_baud_t *pstcBaud)
         else
         {
             u8Over = 16;
-        } 
-       u16Scnt = pstcBaud->u32Pclk/u8Over; 
-    }   
+        }
+       u16Scnt = pstcBaud->u32Pclk/u8Over;
+    }
     return u16Scnt;
 }
 /**
@@ -477,13 +477,13 @@ en_result_t Uart_SetBaud(uint8_t u8Idx,uint16_t u16Scnt)
 uint32_t Uart_GetBaud(uint8_t u8Idx,uint8_t u8Mode,uint32_t u32Pclk)
 {
     stc_uart_instance_data_t *pstcData = NULL;
-	uint32_t u32Baud = 0;
+    uint32_t u32Baud = 0;
     uint8_t u8Over = 0;
-	uint16_t u16Scnt = 0;
-    ASSERT(IS_VALID_CH(u8Idx)); 
-    pstcData = UartGetInternDataPtr(u8Idx);       
+    uint16_t u16Scnt = 0;
+    ASSERT(IS_VALID_CH(u8Idx));
+    pstcData = UartGetInternDataPtr(u8Idx);
     u16Scnt = pstcData->pstcInstance->SCNT;
-    
+
     switch(u8Mode)
     {
         case UartMode0:
@@ -654,7 +654,7 @@ boolean_t Uart_GetStatus(uint8_t u8Idx,en_uart_status_t enStatus)
             bStatus = (pstcData->pstcInstance->ISR_f.TXE == 1) ? TRUE : FALSE;
             break;
         default:
-            break; 
+            break;
     }
     return bStatus;
 }
@@ -709,9 +709,9 @@ en_result_t Uart_ClrStatus(uint8_t u8Idx,en_uart_status_t enStatus)
             break;
         case UartFE:
             pstcData->pstcInstance->ICR_f.FECF = 0;
-            break;   
+            break;
         default:
-            break; 
+            break;
     }
     return Ok;
 }
@@ -735,7 +735,7 @@ en_result_t Uart_SendData(uint8_t u8Idx, uint8_t u8Data)
     }
     while(FALSE == Uart_GetStatus(u8Idx, UartTxe))
     {}
-    pstcData->pstcInstance->SBUF_f.DATA = u8Data;    
+    pstcData->pstcInstance->SBUF_f.DATA = u8Data;
     return Ok;
 }
 /**
@@ -830,13 +830,13 @@ void Uart_IRQHandler(uint8_t u8Param)
 static void UartInitNvic(uint8_t u8Idx)
 {
     IRQn_Type enIrqIndex;
-    
+
     ASSERT(IS_VALID_CH(u8Idx));;
     enIrqIndex = (IRQn_Type)(UART0_IRQn + u8Idx);
     NVIC_ClearPendingIRQ(enIrqIndex);
     NVIC_SetPriority(enIrqIndex,IrqLevel3);
     NVIC_EnableIRQ(enIrqIndex);
-    
+
 }
 /**
  ******************************************************************************
@@ -856,7 +856,7 @@ static void UartDeInitNvic(uint8_t u8Idx)
     NVIC_ClearPendingIRQ(enIrqIndex);
     NVIC_SetPriority(enIrqIndex,IrqLevel3);
     NVIC_DisableIRQ(enIrqIndex);
-    
+
 }
 /**
  ******************************************************************************
@@ -867,7 +867,7 @@ static void UartDeInitNvic(uint8_t u8Idx)
  ** \retval OK配置成功
  **\retval ErrorInvalidParameter配置失败
  ******************************************************************************/
-en_result_t Uart_Init(uint8_t u8Idx, 
+en_result_t Uart_Init(uint8_t u8Idx,
                       stc_uart_config_t* pstcConfig)
 {
     en_result_t enRet = Error;
@@ -907,4 +907,4 @@ en_result_t Uart_Init(uint8_t u8Idx,
     enRet = Ok;
     return enRet;
 }
-//@} // UartGroup      
+//@} // UartGroup

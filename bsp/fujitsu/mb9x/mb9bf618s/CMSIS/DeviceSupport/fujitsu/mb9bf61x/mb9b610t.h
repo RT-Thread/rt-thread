@@ -60,7 +60,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 
 /******************************************************************************
@@ -11440,7 +11440,7 @@ typedef struct
     __IO  uint8_t GATEC12;
     stc_mft_ppg_gatec12_field_t GATEC12_f;
   };
-        uint8_t RESERVED47[39];  
+        uint8_t RESERVED47[39];
   union {
     __IO  uint8_t PPGC17;
     stc_mft_ppg_ppgc17_field_t PPGC17_f;

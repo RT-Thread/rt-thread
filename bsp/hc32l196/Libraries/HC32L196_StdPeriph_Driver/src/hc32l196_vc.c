@@ -191,7 +191,7 @@ void Vc_ClearItStatus(en_vc_ifr_t NewStatus)
 ******************************************************************************
     ** \brief  VC 配置DAC相关的内容  VC_CR中 VC_REF2P5_SEL VC_DIV_EN VC_DIV
     **
-    ** @param  pstcDacCfg : 
+    ** @param  pstcDacCfg :
     ** \retval Ok 或 ErrorInvalidParameter
     **
 ******************************************************************************/
@@ -221,7 +221,7 @@ en_result_t Vc_DacInit(stc_vc_dac_cfg_t *pstcDacCfg)
 ******************************************************************************
     ** \brief  VC通道初始化
     **
-    ** @param  pstcDacCfg : 
+    ** @param  pstcDacCfg :
     ** \retval 无
     **
 ******************************************************************************/
@@ -255,7 +255,7 @@ void Vc_Init(stc_vc_channel_cfg_t *pstcChannelCfg)
     M0P_VC->VC2_CR_f.P_SEL = pstcChannelCfg->enVcInPin_P;
     M0P_VC->VC2_CR_f.N_SEL = pstcChannelCfg->enVcInPin_N;
             M0P_VC->VC2_CR_f.FLTEN = pstcChannelCfg->bFlten;
-    M0P_VC->VC2_OUT_CFG = 1<<pstcChannelCfg->enVcOutCfg;            
+    M0P_VC->VC2_OUT_CFG = 1<<pstcChannelCfg->enVcOutCfg;
     }
     else
     {
@@ -268,7 +268,7 @@ void Vc_Init(stc_vc_channel_cfg_t *pstcChannelCfg)
     ** \brief  VC 通道使能
     **
     ** \param  enChannel :  通道号VcChannel0 VcChannel1 VcChannel2
-    ** \param  NewStatus : TRUE FALSE    
+    ** \param  NewStatus : TRUE FALSE
     ** \retval NewStatus : TRUE FALSE
     **
 ******************************************************************************/

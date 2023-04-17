@@ -25,24 +25,24 @@
 #include "hal_udma_ctrl_reg_defs.h"
 
 typedef enum {
-		kSDIOmReset
+        kSDIOmReset
 } udma_sdio_control_type_t;
 /*
 typedef enum {
-	kSPIm_Cfg 	    = (0x0 << 28),
-	kSPIm_SOT	    = (0x1 << 28),
-	kSPIm_SendCmd	= (0x2 << 28),
-	kSPIm_Dummy	    = (0x4 << 28),
-	kSPIm_Wait		= (0x5 << 28),
-	kSPIm_TxData	= (0x6 << 28),
-	kSPIm_RxData  	= (0x7 << 28),
-	kSPIm_Repeat	= (0x8 << 28),
-	kSPIm_EOT		= (0x9 << 28),
-	kSPIm_RepeatEnd = (0xa << 28),
-	kSPIm_RxCheck	= (0xb << 28),
-	kSPIm_FDX 		= (0xc << 28),
-	kSPIm_UCA 		= (0xd << 28),
-	kSPIm_UCS 		= (0xe << 28)
+    kSPIm_Cfg       = (0x0 << 28),
+    kSPIm_SOT       = (0x1 << 28),
+    kSPIm_SendCmd   = (0x2 << 28),
+    kSPIm_Dummy     = (0x4 << 28),
+    kSPIm_Wait      = (0x5 << 28),
+    kSPIm_TxData    = (0x6 << 28),
+    kSPIm_RxData    = (0x7 << 28),
+    kSPIm_Repeat    = (0x8 << 28),
+    kSPIm_EOT       = (0x9 << 28),
+    kSPIm_RepeatEnd = (0xa << 28),
+    kSPIm_RxCheck   = (0xb << 28),
+    kSPIm_FDX       = (0xc << 28),
+    kSPIm_UCA       = (0xd << 28),
+    kSPIm_UCS       = (0xe << 28)
 
 } spim_cmd_t;
 */

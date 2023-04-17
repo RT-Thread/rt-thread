@@ -84,7 +84,7 @@
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
 /**
- * \brief   
+ * \brief
  *          ADC初始化
  *
  * \param   [in]   pu32Data    待加密数据
@@ -100,19 +100,19 @@ en_result_t AES_Encrypt(uint32_t* pu32Data, uint32_t *pu32Key, uint32_t *pu32Cip
     {
         return ErrorInvalidParameter;
     }
-    
+
     //Key config
     M0P_AES->KEY0 = pu32Key[0];
     M0P_AES->KEY1 = pu32Key[1];
     M0P_AES->KEY2 = pu32Key[2];
     M0P_AES->KEY3 = pu32Key[3];
-		
+
     //Data config
     M0P_AES->DATA0 = pu32Data[0];
     M0P_AES->DATA1 = pu32Data[1];
     M0P_AES->DATA2 = pu32Data[2];
     M0P_AES->DATA3 = pu32Data[3];
-				
+
     M0P_AES->CR_f.MODE = 0;//Encry
     M0P_AES->CR_f.START = 1;
     while(M0P_AES->CR_f.START == 1)
@@ -122,13 +122,13 @@ en_result_t AES_Encrypt(uint32_t* pu32Data, uint32_t *pu32Key, uint32_t *pu32Cip
     pu32Cipher[0] = M0P_AES->DATA0;
     pu32Cipher[1] = M0P_AES->DATA1;
     pu32Cipher[2] = M0P_AES->DATA2;
-    pu32Cipher[3] = M0P_AES->DATA3;	
+    pu32Cipher[3] = M0P_AES->DATA3;
     return Ok;
 }
 
 
 /**
- * \brief   
+ * \brief
  *          ADC初始化
  *
  * \param   [in]   pu32Cipher  待解密数据
@@ -144,19 +144,19 @@ en_result_t AES_Decrypt(uint32_t *pu32Cipher,uint32_t *pu32Key, uint32_t* pu32Pl
     {
         return ErrorInvalidParameter;
     }
-    
+
     //Key config
     M0P_AES->KEY0 = pu32Key[0];
     M0P_AES->KEY1 = pu32Key[1];
     M0P_AES->KEY2 = pu32Key[2];
     M0P_AES->KEY3 = pu32Key[3];
-		
+
     //Data config
     M0P_AES->DATA0 = pu32Cipher[0];
     M0P_AES->DATA1 = pu32Cipher[1];
     M0P_AES->DATA2 = pu32Cipher[2];
     M0P_AES->DATA3 = pu32Cipher[3];
-				
+
     M0P_AES->CR_f.MODE = 1;//UnEncry
     M0P_AES->CR_f.START = 1;
     while(M0P_AES->CR_f.START == 1)
@@ -166,7 +166,7 @@ en_result_t AES_Decrypt(uint32_t *pu32Cipher,uint32_t *pu32Key, uint32_t* pu32Pl
     pu32Plaintext[0] = M0P_AES->DATA0;
     pu32Plaintext[1] = M0P_AES->DATA1;
     pu32Plaintext[2] = M0P_AES->DATA2;
-    pu32Plaintext[3] = M0P_AES->DATA3;	
+    pu32Plaintext[3] = M0P_AES->DATA3;
     return Ok;
 }
 //@} // CrcGroup

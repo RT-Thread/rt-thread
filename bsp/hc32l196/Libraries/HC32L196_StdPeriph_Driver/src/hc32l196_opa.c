@@ -90,7 +90,7 @@
 ******************************************************************************
     ** \brief  OPA 通道使能
     **
-    ** \param  NewStatus : TRUE FALSE    
+    ** \param  NewStatus : TRUE FALSE
     ** \retval 无
     **
 ******************************************************************************/
@@ -108,7 +108,7 @@ void Opa_CmdBuf(boolean_t NewStatus)
 ******************************************************************************
     ** \brief  OPA零点校准配置
     **
-    ** \param  InitZero :  
+    ** \param  InitZero :
     ** \retval 无
     **
 ******************************************************************************/
@@ -118,7 +118,7 @@ void Opa_SetZero(stc_opa_zcfg_t* InitZero)
     M0P_OPA->CR1_f.CLK_SW_SET = InitZero->bClk_sw_set;
     M0P_OPA->CR1_f.AZ_PULSE   = InitZero->bAz_pulse;
     M0P_OPA->CR1_f.TRIGGER    = InitZero->bTrigger;
-    M0P_OPA->CR1_f.ADCTR_EN   = InitZero->bAdctr_en; 
+    M0P_OPA->CR1_f.ADCTR_EN   = InitZero->bAdctr_en;
 }
 
 /**
@@ -145,7 +145,7 @@ void Opa_CmdOnex(en_opa_oenx_t onex, boolean_t NewState)
 ******************************************************************************/
 void Opa_ZeroBitCtrl(en_opa_set0ctrl_t CtrlBit, boolean_t NewState)
 {
-    SetBit((uint32_t)(&(M0P_OPA->CR1)), CtrlBit, NewState);  
+    SetBit((uint32_t)(&(M0P_OPA->CR1)), CtrlBit, NewState);
 }
 /******************************************************************************
  * EOF (not truncated)

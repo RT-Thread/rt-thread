@@ -60,73 +60,73 @@
   */
 ald_status_t ald_acmp_init(acmp_handle_t *hperh)
 {
-	uint32_t tmp = 0;
+    uint32_t tmp = 0;
 
-	assert_param(IS_ACMP_TYPE(hperh->perh));
-	assert_param(IS_ACMP_MODE_TYPE(hperh->init.mode));
-	assert_param(IS_ACMP_WARM_UP_TIME_TYPE(hperh->init.warm_time));
-	assert_param(IS_ACMP_HYSTSEL_TYPE(hperh->init.hystsel));
-	assert_param(IS_ACMP_POS_INPUT_TYPE(hperh->init.p_port));
-	assert_param(IS_ACMP_NEG_INPUT_TYPE(hperh->init.n_port));
-	assert_param(IS_ACMP_INACTVAL_TYPE(hperh->init.inactval));
-	assert_param(IS_FUNC_STATE(hperh->init.out_inv));
-	assert_param(IS_ACMP_EDGE_TYPE(hperh->init.edge));
-	assert_param(hperh->init.vdd_level < 64);
+    assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_ACMP_MODE_TYPE(hperh->init.mode));
+    assert_param(IS_ACMP_WARM_UP_TIME_TYPE(hperh->init.warm_time));
+    assert_param(IS_ACMP_HYSTSEL_TYPE(hperh->init.hystsel));
+    assert_param(IS_ACMP_POS_INPUT_TYPE(hperh->init.p_port));
+    assert_param(IS_ACMP_NEG_INPUT_TYPE(hperh->init.n_port));
+    assert_param(IS_ACMP_INACTVAL_TYPE(hperh->init.inactval));
+    assert_param(IS_FUNC_STATE(hperh->init.out_inv));
+    assert_param(IS_ACMP_EDGE_TYPE(hperh->init.edge));
+    assert_param(hperh->init.vdd_level < 64);
 
-	__LOCK(hperh);
-	tmp = ((hperh->init.mode << ACMP_CON_MODSEL_POSS) | (hperh->init.warm_time << ACMP_CON_WARMUPT_POSS) |
-		(hperh->init.inactval << ACMP_CON_INACTV_POS) | (hperh->init.hystsel << ACMP_CON_HYSTSEL_POSS));
+    __LOCK(hperh);
+    tmp = ((hperh->init.mode << ACMP_CON_MODSEL_POSS) | (hperh->init.warm_time << ACMP_CON_WARMUPT_POSS) |
+        (hperh->init.inactval << ACMP_CON_INACTV_POS) | (hperh->init.hystsel << ACMP_CON_HYSTSEL_POSS));
 
-	hperh->perh->CON = tmp;
-	
-	tmp = 0;
+    hperh->perh->CON = tmp;
 
-	tmp |= ((hperh->init.p_port << ACMP_INPUTSEL_PSEL_POSS) | (hperh->init.n_port << ACMP_INPUTSEL_NSEL_POSS) |
-		(hperh->init.vdd_level << ACMP_INPUTSEL_VDDLVL_POSS));
-	hperh->perh->INPUTSEL = tmp;
+    tmp = 0;
 
-	if (hperh->init.out_inv)
-		SET_BIT(hperh->perh->CON, ACMP_CON_OUTINV_MSK);
-	else
-		CLEAR_BIT(hperh->perh->CON, ACMP_CON_OUTINV_MSK);
+    tmp |= ((hperh->init.p_port << ACMP_INPUTSEL_PSEL_POSS) | (hperh->init.n_port << ACMP_INPUTSEL_NSEL_POSS) |
+        (hperh->init.vdd_level << ACMP_INPUTSEL_VDDLVL_POSS));
+    hperh->perh->INPUTSEL = tmp;
 
-	switch (hperh->init.edge) {
-	case ACMP_EDGE_NONE:
-		CLEAR_BIT(hperh->perh->CON, ACMP_CON_FALLEN_MSK);
-		CLEAR_BIT(hperh->perh->CON, ACMP_CON_RISEEN_MSK);
-		break;
+    if (hperh->init.out_inv)
+        SET_BIT(hperh->perh->CON, ACMP_CON_OUTINV_MSK);
+    else
+        CLEAR_BIT(hperh->perh->CON, ACMP_CON_OUTINV_MSK);
 
-	case ACMP_EDGE_FALL:
-		SET_BIT(hperh->perh->CON, ACMP_CON_FALLEN_MSK);
-		CLEAR_BIT(hperh->perh->CON, ACMP_CON_RISEEN_MSK);
-		break;
+    switch (hperh->init.edge) {
+    case ACMP_EDGE_NONE:
+        CLEAR_BIT(hperh->perh->CON, ACMP_CON_FALLEN_MSK);
+        CLEAR_BIT(hperh->perh->CON, ACMP_CON_RISEEN_MSK);
+        break;
 
-	case ACMP_EDGE_RISE:
-		CLEAR_BIT(hperh->perh->CON, ACMP_CON_FALLEN_MSK);
-		SET_BIT(hperh->perh->CON, ACMP_CON_RISEEN_MSK);
-		break;
+    case ACMP_EDGE_FALL:
+        SET_BIT(hperh->perh->CON, ACMP_CON_FALLEN_MSK);
+        CLEAR_BIT(hperh->perh->CON, ACMP_CON_RISEEN_MSK);
+        break;
 
-	case ACMP_EDGE_ALL:
-		SET_BIT(hperh->perh->CON, ACMP_CON_FALLEN_MSK);
-		SET_BIT(hperh->perh->CON, ACMP_CON_RISEEN_MSK);
-		break;
+    case ACMP_EDGE_RISE:
+        CLEAR_BIT(hperh->perh->CON, ACMP_CON_FALLEN_MSK);
+        SET_BIT(hperh->perh->CON, ACMP_CON_RISEEN_MSK);
+        break;
 
-	default:
-		break;
-	}
+    case ACMP_EDGE_ALL:
+        SET_BIT(hperh->perh->CON, ACMP_CON_FALLEN_MSK);
+        SET_BIT(hperh->perh->CON, ACMP_CON_RISEEN_MSK);
+        break;
 
-	SET_BIT(hperh->perh->CON, ACMP_CON_EN_MSK);
+    default:
+        break;
+    }
 
-	tmp = 0;
-	while (READ_BIT(hperh->perh->STAT, ACMP_STAT_ACT_MSK) == 0) {
-		if (tmp++ >= 600000) {
-			__UNLOCK(hperh);
-			return ERROR;
-		}
-	}
+    SET_BIT(hperh->perh->CON, ACMP_CON_EN_MSK);
 
-	__UNLOCK(hperh);
-	return OK;
+    tmp = 0;
+    while (READ_BIT(hperh->perh->STAT, ACMP_STAT_ACT_MSK) == 0) {
+        if (tmp++ >= 600000) {
+            __UNLOCK(hperh);
+            return ERROR;
+        }
+    }
+
+    __UNLOCK(hperh);
+    return OK;
 }
 /**
   * @}
@@ -150,16 +150,16 @@ ald_status_t ald_acmp_init(acmp_handle_t *hperh)
   */
 void ald_acmp_interrupt_config(acmp_handle_t *hperh, acmp_it_t it, type_func_t state)
 {
-	assert_param(IS_ACMP_TYPE(hperh->perh));
-	assert_param(IS_ACMP_IT_TYPE(it));
-	assert_param(IS_FUNC_STATE(state));
+    assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_ACMP_IT_TYPE(it));
+    assert_param(IS_FUNC_STATE(state));
 
-	if (state)
-		hperh->perh->IES = it;
-	else
-		hperh->perh->IEC = it;
+    if (state)
+        hperh->perh->IES = it;
+    else
+        hperh->perh->IEC = it;
 
-	return;
+    return;
 }
 
 /**
@@ -174,13 +174,13 @@ void ald_acmp_interrupt_config(acmp_handle_t *hperh, acmp_it_t it, type_func_t s
   */
 it_status_t ald_acmp_get_it_status(acmp_handle_t *hperh, acmp_it_t it)
 {
-	assert_param(IS_ACMP_TYPE(hperh->perh));
-	assert_param(IS_ACMP_IT_TYPE(it));
+    assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_ACMP_IT_TYPE(it));
 
-	if (hperh->perh->IEV & it)
-		return SET;
+    if (hperh->perh->IEV & it)
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /**
@@ -195,13 +195,13 @@ it_status_t ald_acmp_get_it_status(acmp_handle_t *hperh, acmp_it_t it)
   */
 flag_status_t ald_acmp_get_flag_status(acmp_handle_t *hperh, acmp_flag_t flag)
 {
-	assert_param(IS_ACMP_TYPE(hperh->perh));
-	assert_param(IS_ACMP_FLAG_TYPE(flag));
+    assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_ACMP_FLAG_TYPE(flag));
 
-	if (hperh->perh->RIF & flag)
-		return SET;
+    if (hperh->perh->RIF & flag)
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /**
@@ -215,13 +215,13 @@ flag_status_t ald_acmp_get_flag_status(acmp_handle_t *hperh, acmp_flag_t flag)
   */
 flag_status_t ald_acmp_get_mask_flag_status(acmp_handle_t *hperh, acmp_flag_t flag)
 {
-	assert_param(IS_ACMP_TYPE(hperh->perh));
-	assert_param(IS_ACMP_FLAG_TYPE(flag));
+    assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_ACMP_FLAG_TYPE(flag));
 
-	if (hperh->perh->IFM & flag)
-		return SET;
+    if (hperh->perh->IFM & flag)
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 
 /** @brief  Clear the specified ACMP it flags.
@@ -233,11 +233,11 @@ flag_status_t ald_acmp_get_mask_flag_status(acmp_handle_t *hperh, acmp_flag_t fl
   */
 void ald_acmp_clear_flag_status(acmp_handle_t *hperh, acmp_flag_t flag)
 {
-	assert_param(IS_ACMP_TYPE(hperh->perh));
-	assert_param(IS_ACMP_FLAG_TYPE(flag));
+    assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_ACMP_FLAG_TYPE(flag));
 
-	hperh->perh->IFC = flag;
-	return;
+    hperh->perh->IFC = flag;
+    return;
 }
 /**
   * @}
@@ -254,21 +254,21 @@ void ald_acmp_clear_flag_status(acmp_handle_t *hperh, acmp_flag_t flag)
   */
 void ald_acmp_irq_handler(acmp_handle_t *hperh)
 {
-	if ((ald_acmp_get_mask_flag_status(hperh, ACMP_FLAG_WARMUP)) == SET) {
-		ald_acmp_clear_flag_status(hperh, ACMP_FLAG_WARMUP);
+    if ((ald_acmp_get_mask_flag_status(hperh, ACMP_FLAG_WARMUP)) == SET) {
+        ald_acmp_clear_flag_status(hperh, ACMP_FLAG_WARMUP);
 
-		if (hperh->acmp_warmup_cplt_cbk)
-			hperh->acmp_warmup_cplt_cbk(hperh);
-	}
+        if (hperh->acmp_warmup_cplt_cbk)
+            hperh->acmp_warmup_cplt_cbk(hperh);
+    }
 
-	if ((ald_acmp_get_mask_flag_status(hperh, ACMP_FLAG_EDGE)) == SET) {
-		ald_acmp_clear_flag_status(hperh, ACMP_FLAG_EDGE);
+    if ((ald_acmp_get_mask_flag_status(hperh, ACMP_FLAG_EDGE)) == SET) {
+        ald_acmp_clear_flag_status(hperh, ACMP_FLAG_EDGE);
 
-		if (hperh->acmp_edge_cplt_cbk)
-			hperh->acmp_edge_cplt_cbk(hperh);
-	}
+        if (hperh->acmp_edge_cplt_cbk)
+            hperh->acmp_edge_cplt_cbk(hperh);
+    }
 
-	return;
+    return;
 }
 
 /**
@@ -280,15 +280,15 @@ void ald_acmp_irq_handler(acmp_handle_t *hperh)
   */
 void ald_acmp_out_config(acmp_handle_t *hperh, type_func_t state)
 {
-	assert_param(IS_ACMP_TYPE(hperh->perh));
-	assert_param(IS_FUNC_STATE(state));
+    assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_FUNC_STATE(state));
 
-	if (state)
-		SET_BIT(hperh->perh->PORT, ACMP_PORT_PEN_MSK);
-	else
-		CLEAR_BIT(hperh->perh->PORT, ACMP_PORT_PEN_MSK);
+    if (state)
+        SET_BIT(hperh->perh->PORT, ACMP_PORT_PEN_MSK);
+    else
+        CLEAR_BIT(hperh->perh->PORT, ACMP_PORT_PEN_MSK);
 
-	return;
+    return;
 }
 
 /**
@@ -299,9 +299,9 @@ void ald_acmp_out_config(acmp_handle_t *hperh, type_func_t state)
   */
 uint8_t ald_acmp_out_result(acmp_handle_t *hperh)
 {
-	assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_ACMP_TYPE(hperh->perh));
 
-	return (READ_BIT(hperh->perh->STAT, ACMP_STAT_OUT_MSK) >> ACMP_STAT_OUT_POS);
+    return (READ_BIT(hperh->perh->STAT, ACMP_STAT_OUT_MSK) >> ACMP_STAT_OUT_POS);
 }
 
 /** @brief  Check whether the specified ACMP flag is set or not.
@@ -315,13 +315,13 @@ uint8_t ald_acmp_out_result(acmp_handle_t *hperh)
   */
 flag_status_t ald_acmp_get_status(acmp_handle_t *hperh, acmp_status_t status)
 {
-	assert_param(IS_ACMP_TYPE(hperh->perh));
-	assert_param(IS_ACMP_STATUS_TYPE(status));
+    assert_param(IS_ACMP_TYPE(hperh->perh));
+    assert_param(IS_ACMP_STATUS_TYPE(status));
 
-	if (hperh->perh->STAT & status)
-		return SET;
+    if (hperh->perh->STAT & status)
+        return SET;
 
-	return RESET;
+    return RESET;
 }
 /**
   * @}

@@ -41,7 +41,7 @@ void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
 
     uint32_t isrflags =READ_REG(huart->Instance->RIS);
     uint32_t ieits    =READ_REG(huart->Instance->IE);
-	uint32_t errorflags =0x00U;
+    uint32_t errorflags =0x00U;
     errorflags =(isrflags & (uint32_t)(UART_ICR_PEI|UART_ICR_OEI|UART_ICR_FEI|UART_ICR_BEI));
 
     /* Enable TXI */
@@ -77,102 +77,102 @@ void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
 
     /* RXI */
     if ((huart->Instance->IE & UART_IE_RXI || huart->Instance->IE& UART_IE_RTI) && errorflags == 0)
-	{
-		if (huart->Instance->RIS & UART_RIS_RXI)
-		{
+    {
+        if (huart->Instance->RIS & UART_RIS_RXI)
+        {
             read_bytes_number = 0;
-			/* Clear RXI Status */
-			SET_BIT(huart->Instance->ICR, UART_ICR_RXI);
+            /* Clear RXI Status */
+            SET_BIT(huart->Instance->ICR, UART_ICR_RXI);
 
-			/* Receive end */
-			while(huart->lu32_RxCount <huart->lu32_RxSize )
-			{
-				if(!READ_BIT(huart->Instance->FR, UART_FR_RXFE))
-				{
-					 /* Store Data in buffer */
-					 huart->lu8_RxData[huart->lu32_RxCount++] = huart->Instance->DR;
+            /* Receive end */
+            while(huart->lu32_RxCount <huart->lu32_RxSize )
+            {
+                if(!READ_BIT(huart->Instance->FR, UART_FR_RXFE))
+                {
+                     /* Store Data in buffer */
+                     huart->lu8_RxData[huart->lu32_RxCount++] = huart->Instance->DR;
                      read_bytes_number++;
-				}
-				else
-			    {
-					break;
-			    }
+                }
+                else
+                {
+                    break;
+                }
                 if (read_bytes_number == huart->lu32_fifo_level_minus1)
                 {
                     break;
                 }
-			}
-			if(huart->lu32_RxCount ==huart->lu32_RxSize )
-			{
-				huart->lu8_RxBusy = false;
+            }
+            if(huart->lu32_RxCount ==huart->lu32_RxSize )
+            {
+                huart->lu8_RxBusy = false;
 
-				/* Disable RX and RTI interrupt */
-				CLEAR_BIT(huart->Instance->IE, (UART_IE_RXI|UART_IE_RTI));
+                /* Disable RX and RTI interrupt */
+                CLEAR_BIT(huart->Instance->IE, (UART_IE_RXI|UART_IE_RTI));
 
-				/* clear error interrupt */
-				CLEAR_BIT(huart->Instance->IE, UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI);
+                /* clear error interrupt */
+                CLEAR_BIT(huart->Instance->IE, UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI);
 
-				HAL_UART_RxCpltCallback(huart);
-		   }
-		}
-		else if(huart->Instance->RIS & UART_RIS_RTI)
-		{
-			/*clear RTI Status */
-			SET_BIT(huart->Instance->ICR ,UART_ICR_RTI);
+                HAL_UART_RxCpltCallback(huart);
+           }
+        }
+        else if(huart->Instance->RIS & UART_RIS_RTI)
+        {
+            /*clear RTI Status */
+            SET_BIT(huart->Instance->ICR ,UART_ICR_RTI);
 
-			while(!READ_BIT(huart->Instance->FR, UART_FR_RXFE))
-			{
-				huart->lu8_RxData[huart->lu32_RxCount++] = huart->Instance->DR;
-			}
+            while(!READ_BIT(huart->Instance->FR, UART_FR_RXFE))
+            {
+                huart->lu8_RxData[huart->lu32_RxCount++] = huart->Instance->DR;
+            }
 
-			huart->lu8_RxBusy = false;
+            huart->lu8_RxBusy = false;
 
-			/* Disable RX and RTI interrupt */
-			CLEAR_BIT(huart->Instance->IE, (UART_IE_RXI|UART_IE_RTI));
+            /* Disable RX and RTI interrupt */
+            CLEAR_BIT(huart->Instance->IE, (UART_IE_RXI|UART_IE_RTI));
 
-			/* clear error interrupt */
-			CLEAR_BIT(huart->Instance->IE, UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI);
+            /* clear error interrupt */
+            CLEAR_BIT(huart->Instance->IE, UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI);
 
-			HAL_UART_RxCpltCallback(huart);
-		}
-	}
-	/* if some errors occurred */
-	if(errorflags != 0 &&(ieits & (UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI)))
-	{
-		/* UART parity error interrupt occurred */
-	    if (((isrflags & UART_RIS_PEI) != 0) && ((ieits & UART_IE_PEI) != 0))
-	    {
-	    	/* Clear parity error status */
-			SET_BIT(huart->Instance->ICR, UART_ICR_PEI);
-	      	huart->ErrorCode |= HAL_UART_ERROR_PE;
-	    }
+            HAL_UART_RxCpltCallback(huart);
+        }
+    }
+    /* if some errors occurred */
+    if(errorflags != 0 &&(ieits & (UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI)))
+    {
+        /* UART parity error interrupt occurred */
+        if (((isrflags & UART_RIS_PEI) != 0) && ((ieits & UART_IE_PEI) != 0))
+        {
+            /* Clear parity error status */
+            SET_BIT(huart->Instance->ICR, UART_ICR_PEI);
+            huart->ErrorCode |= HAL_UART_ERROR_PE;
+        }
 
-	    /* UART break error interrupt occurred */
-	    if (((isrflags & UART_RIS_BEI) != 0) && ((ieits & UART_IE_BEI) != 0))
-	    {
-	    	SET_BIT(huart->Instance->ICR, UART_RIS_BEI);
-	      	huart->ErrorCode |= HAL_UART_ERROR_NE;
-	    }
+        /* UART break error interrupt occurred */
+        if (((isrflags & UART_RIS_BEI) != 0) && ((ieits & UART_IE_BEI) != 0))
+        {
+            SET_BIT(huart->Instance->ICR, UART_RIS_BEI);
+            huart->ErrorCode |= HAL_UART_ERROR_NE;
+        }
 
-	    /* UART frame error interrupt occurred */
-	    if (((isrflags & UART_RIS_FEI) != 0) && ((ieits & UART_IE_FEI) != 0))
-	    {
-	    	SET_BIT(huart->Instance->ICR, UART_RIS_FEI);
-	      	huart->ErrorCode |= HAL_UART_ERROR_FE;
-	    }
+        /* UART frame error interrupt occurred */
+        if (((isrflags & UART_RIS_FEI) != 0) && ((ieits & UART_IE_FEI) != 0))
+        {
+            SET_BIT(huart->Instance->ICR, UART_RIS_FEI);
+            huart->ErrorCode |= HAL_UART_ERROR_FE;
+        }
 
-	    /* UART Over-Run interrupt occurred */
-	    if (((isrflags & UART_RIS_OEI) != 0) && ((ieits & UART_IE_OEI) != 0))
-	    {
-	    	SET_BIT(huart->Instance->ICR, UART_RIS_OEI);
-	      	huart->ErrorCode |= HAL_UART_ERROR_ORE;
-	    }
+        /* UART Over-Run interrupt occurred */
+        if (((isrflags & UART_RIS_OEI) != 0) && ((ieits & UART_IE_OEI) != 0))
+        {
+            SET_BIT(huart->Instance->ICR, UART_RIS_OEI);
+            huart->ErrorCode |= HAL_UART_ERROR_ORE;
+        }
 
-		/* clear error interrupt */
-		CLEAR_BIT(huart->Instance->IE, UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI);
+        /* clear error interrupt */
+        CLEAR_BIT(huart->Instance->IE, UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI);
 
-		HAL_UART_ErrorCallback(huart);
-	}
+        HAL_UART_ErrorCallback(huart);
+    }
 }
 
 /*********************************************************************************
@@ -186,10 +186,10 @@ static HAL_StatusTypeDef HAL_UART_Wait_Tx_Done(UART_HandleTypeDef *huart)
 #if (USE_FULL_ASSERT == 1)
     if (!IS_UART_ALL_INSTANCE(huart->Instance))         return HAL_ERROR;
 #endif
-	/* wait FIFO empty */
-	while(READ_BIT(huart->Instance->FR, UART_FR_BUSY));
+    /* wait FIFO empty */
+    while(READ_BIT(huart->Instance->FR, UART_FR_BUSY));
 
-	return HAL_OK;
+    return HAL_OK;
 }
 
 /*********************************************************************************
@@ -286,7 +286,7 @@ HAL_StatusTypeDef HAL_UART_Init(UART_HandleTypeDef *huart)
     {
         huart->Instance->CR2 = UART_CR2_TXOE_SEL;
     }
-	return HAL_OK;
+    return HAL_OK;
 }
 
 /*********************************************************************************
@@ -310,7 +310,7 @@ __weak void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
         /* A9:Tx  A10:Rx */
         HAL_GPIO_DeInit(GPIOA,GPIO_PIN_9 | GPIO_PIN_10);
 
-		if (huart->Init.HwFlowCtl & UART_HWCONTROL_CTS)
+        if (huart->Init.HwFlowCtl & UART_HWCONTROL_CTS)
         {
             /* A11:CTS */
             HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11);
@@ -326,10 +326,10 @@ __weak void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
         NVIC_DisableIRQ(UART1_IRQn);
 
     }
-	else if(huart->Instance == UART2)
-	{
+    else if(huart->Instance == UART2)
+    {
 
-	}
+    }
 }
 
 /*********************************************************************************
@@ -349,7 +349,7 @@ HAL_StatusTypeDef HAL_UART_DeInit(UART_HandleTypeDef *huart)
     /* DeInit the low level hardware : GPIO, CLOCK, NVIC */
     HAL_UART_MspDeInit(huart);
 
-	return HAL_OK;
+    return HAL_OK;
 
 }
 
@@ -500,27 +500,27 @@ HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *fu8_D
     huart->Instance->ICR = UART_ICR_TXI;
     /* FIFO Enable */
     SET_BIT(huart->Instance->LCRH, UART_LCRH_FEN);
-	/*FIFO Select*/
-	SET_BIT(huart->Instance->IFLS,UART_TX_FIFO_1_2);
+    /*FIFO Select*/
+    SET_BIT(huart->Instance->IFLS,UART_TX_FIFO_1_2);
 
     for(;;)
     {
         /*Data Size less than 16Byte */
-	    if(fu32_Size == huart->lu32_TxCount)
-	    {
-	        huart->lu8_TxBusy = false;
+        if(fu32_Size == huart->lu32_TxCount)
+        {
+            huart->lu8_TxBusy = false;
 
-			while ((huart->Instance->FR & UART_FR_BUSY)){}
+            while ((huart->Instance->FR & UART_FR_BUSY)){}
 
-	        HAL_UART_TxCpltCallback(huart);
+            HAL_UART_TxCpltCallback(huart);
 
-	        return HAL_OK;
-	    }
-	    if(READ_BIT(huart->Instance->FR, UART_FR_TXFF))
-	    {
-	         break;
-	    }
-	    huart->Instance->DR = huart->lu8_TxData[huart->lu32_TxCount++];
+            return HAL_OK;
+        }
+        if(READ_BIT(huart->Instance->FR, UART_FR_TXFF))
+        {
+             break;
+        }
+        huart->Instance->DR = huart->lu8_TxData[huart->lu32_TxCount++];
     }
 
     /* Enable TX interrupt */
@@ -561,11 +561,11 @@ HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *fu8_Da
     huart->Instance->ICR = UART_ICR_RXI;
     /* FIFO Enable */
     SET_BIT(huart->Instance->LCRH, UART_LCRH_FEN);
-	/*FIFO Select*/
-	MODIFY_REG(huart->Instance->IFLS, UART_IFLS_RXIFLSEL, UART_RX_FIFO_1_2);
+    /*FIFO Select*/
+    MODIFY_REG(huart->Instance->IFLS, UART_IFLS_RXIFLSEL, UART_RX_FIFO_1_2);
     huart->lu32_fifo_level_minus1 = 8-1;  // 16/2 - 1
-	/* Enable the UART Errors interrupt */
-	SET_BIT(huart->Instance->IE,UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI);
+    /* Enable the UART Errors interrupt */
+    SET_BIT(huart->Instance->IE,UART_IE_OEI|UART_IE_BEI|UART_IE_PEI|UART_IE_FEI);
     /* Enable RX and RTI interrupt */
     SET_BIT(huart->Instance->IE,UART_IE_RXI|UART_IE_RTI);
 
@@ -736,12 +736,12 @@ HAL_StatusTypeDef HAL_UART_GetState(UART_HandleTypeDef *huart)
     if (!IS_UART_ALL_INSTANCE(huart->Instance))    return HAL_ERROR;
 #endif
 
-	if(huart->lu8_TxBusy || huart->lu8_RxBusy)
-	{
-		return HAL_BUSY;
-	}
+    if(huart->lu8_TxBusy || huart->lu8_RxBusy)
+    {
+        return HAL_BUSY;
+    }
 
-	return HAL_OK;
+    return HAL_OK;
 }
 
 
@@ -753,7 +753,7 @@ HAL_StatusTypeDef HAL_UART_GetState(UART_HandleTypeDef *huart)
 **********************************************************************************/
 uint32_t HAL_UART_GetError(UART_HandleTypeDef *huart)
 {
-  	return huart->ErrorCode;
+    return huart->ErrorCode;
 }
 
 /*********************************************************************************
@@ -765,57 +765,57 @@ uint32_t HAL_UART_GetError(UART_HandleTypeDef *huart)
 HAL_StatusTypeDef HAL_UART_Abort(UART_HandleTypeDef *huart)
 {
 #if (USE_FULL_ASSERT == 1)
-	if (!IS_UART_ALL_INSTANCE(huart->Instance))    return HAL_ERROR;
+    if (!IS_UART_ALL_INSTANCE(huart->Instance))    return HAL_ERROR;
 #endif
 
-	/*disble all interrupt*/
-	huart->Instance->IE  =0x00;
+    /*disble all interrupt*/
+    huart->Instance->IE  =0x00;
 
-	/* Disable the UART DMA Tx request if enable */
-	if(READ_BIT(huart->Instance->DMACR, UART_DMACR_TXDMAE))
-	{
-		CLEAR_BIT(huart->Instance->DMACR, UART_DMACR_TXDMAE);
+    /* Disable the UART DMA Tx request if enable */
+    if(READ_BIT(huart->Instance->DMACR, UART_DMACR_TXDMAE))
+    {
+        CLEAR_BIT(huart->Instance->DMACR, UART_DMACR_TXDMAE);
 
-		/* Abort the UART Tx Channel   */
-		if(huart->HDMA_Tx)
-		{
-			/*Set the UART DMA Abort callback to Null */
-			huart->HDMA_Tx->DMA_ITC_Callback =NULL;
+        /* Abort the UART Tx Channel   */
+        if(huart->HDMA_Tx)
+        {
+            /*Set the UART DMA Abort callback to Null */
+            huart->HDMA_Tx->DMA_ITC_Callback =NULL;
 
-			if(HAL_DMA_Abort(huart->HDMA_Tx)!=HAL_OK)
-			{
-				return HAL_TIMEOUT;
-			}
-		}
-	}
+            if(HAL_DMA_Abort(huart->HDMA_Tx)!=HAL_OK)
+            {
+                return HAL_TIMEOUT;
+            }
+        }
+    }
 
-	/* Disable the UART DMA Rx request if enable */
-	if(READ_BIT(huart->Instance->DMACR, UART_DMACR_RXDMAE))
-	{
-		CLEAR_BIT(huart->Instance->DMACR, UART_DMACR_RXDMAE);
+    /* Disable the UART DMA Rx request if enable */
+    if(READ_BIT(huart->Instance->DMACR, UART_DMACR_RXDMAE))
+    {
+        CLEAR_BIT(huart->Instance->DMACR, UART_DMACR_RXDMAE);
 
-		/* Abort the UART Rx Channel   */
-		if(huart->HDMA_Rx)
-		{
-			/*Set the UART DMA Abort callback to Null */
-			huart->HDMA_Rx->DMA_ITC_Callback =NULL;
+        /* Abort the UART Rx Channel   */
+        if(huart->HDMA_Rx)
+        {
+            /*Set the UART DMA Abort callback to Null */
+            huart->HDMA_Rx->DMA_ITC_Callback =NULL;
 
-			if(HAL_DMA_Abort(huart->HDMA_Rx)!=HAL_OK)
-			{
-				return HAL_TIMEOUT;
-			}
-		}
-	}
+            if(HAL_DMA_Abort(huart->HDMA_Rx)!=HAL_OK)
+            {
+                return HAL_TIMEOUT;
+            }
+        }
+    }
 
-	/*Reset Tx and Rx Transfer size*/
-	huart->lu32_TxSize = 0;
-	huart->lu32_RxSize = 0;
+    /*Reset Tx and Rx Transfer size*/
+    huart->lu32_TxSize = 0;
+    huart->lu32_RxSize = 0;
 
-	/* Restore huart->lu8_TxBusy and huart->lu8_RxBusy to Ready */
-	huart->lu8_TxBusy = false;
-	huart->lu8_RxBusy = false;
+    /* Restore huart->lu8_TxBusy and huart->lu8_RxBusy to Ready */
+    huart->lu8_TxBusy = false;
+    huart->lu8_RxBusy = false;
 
-	return HAL_OK;
+    return HAL_OK;
 }
 
 /*********************************************************************************
@@ -827,7 +827,7 @@ HAL_StatusTypeDef HAL_UART_Abort(UART_HandleTypeDef *huart)
 HAL_StatusTypeDef HAL_UART_DMAPause(UART_HandleTypeDef *huart)
 {
 #if (USE_FULL_ASSERT == 1)
-		if (!IS_UART_ALL_INSTANCE(huart->Instance))    return HAL_ERROR;
+        if (!IS_UART_ALL_INSTANCE(huart->Instance))    return HAL_ERROR;
 #endif
 
   if(READ_BIT(huart->Instance->DMACR, UART_DMACR_TXDMAE))
@@ -850,30 +850,30 @@ HAL_StatusTypeDef HAL_UART_DMAPause(UART_HandleTypeDef *huart)
 
 
 /*********************************************************************************
-* Function	  : HAL_UART_DMAResume
+* Function    : HAL_UART_DMAResume
 * Description : Resume the DMA Transfer
-* Input 	  : UART handle
-* Output	  :
+* Input       : UART handle
+* Output      :
 **********************************************************************************/
 HAL_StatusTypeDef HAL_UART_DMAResume(UART_HandleTypeDef *huart)
 {
 #if (USE_FULL_ASSERT == 1)
-		if (!IS_UART_ALL_INSTANCE(huart->Instance))    return HAL_ERROR;
+        if (!IS_UART_ALL_INSTANCE(huart->Instance))    return HAL_ERROR;
 #endif
 
   if (huart->lu8_TxBusy == false)
   {
-	/* Enable the UART DMA Tx request */
-	SET_BIT(huart->Instance->DMACR, UART_DMACR_TXDMAE);
+    /* Enable the UART DMA Tx request */
+    SET_BIT(huart->Instance->DMACR, UART_DMACR_TXDMAE);
   }
 
   if (huart->lu8_RxBusy == false)
   {
-	/* Reenable PE and ERR (Frame error, noise error, overrun error) interrupts */
-	SET_BIT(huart->Instance->IE, UART_IE_OEI|UART_IE_BEI|UART_IE_FEI);
+    /* Reenable PE and ERR (Frame error, noise error, overrun error) interrupts */
+    SET_BIT(huart->Instance->IE, UART_IE_OEI|UART_IE_BEI|UART_IE_FEI);
 
-	/* Enable the UART DMA Rx request */
-	SET_BIT(huart->Instance->DMACR, UART_DMACR_RXDMAE);
+    /* Enable the UART DMA Rx request */
+    SET_BIT(huart->Instance->DMACR, UART_DMACR_RXDMAE);
   }
 
   return HAL_OK;

@@ -21,15 +21,15 @@
  ************************************************************************/
 __weak void HAL_COMP_MspInit(COMP_HandleTypeDef* hcomp)
 {
-    /* 
+    /*
       NOTE : This function should be modified by the user.
     */
-    
+
     /* For Example */
-    GPIO_InitTypeDef GPIO_Handle; 
-    
+    GPIO_InitTypeDef GPIO_Handle;
+
     System_Module_Enable(EN_COMP);
-    
+
     if(hcomp->Init.Comparator == COMP1 )
     {
         /* COMP1 GPIO inition VINP:PC4(INP_0)*/
@@ -39,17 +39,17 @@ __weak void HAL_COMP_MspInit(COMP_HandleTypeDef* hcomp)
         GPIO_Handle.Mode           = GPIO_MODE_ANALOG;
         GPIO_Handle.Pull           = GPIO_NOPULL;
         HAL_GPIO_Init(GPIOC, &GPIO_Handle);
-        
+
         GPIO_Handle.Pin            = GPIO_PIN_4;
         GPIO_Handle.Mode           = GPIO_MODE_ANALOG;
         GPIO_Handle.Pull           = GPIO_NOPULL;
         HAL_GPIO_Init(GPIOA, &GPIO_Handle);
-        
+
         GPIO_Handle.Pin            = GPIO_PIN_0;
         GPIO_Handle.Mode           = GPIO_MODE_AF_PP;
         GPIO_Handle.Alternate      = GPIO_FUNCTION_7;
         GPIO_Handle.Pull           = GPIO_NOPULL;
-        HAL_GPIO_Init(GPIOA, &GPIO_Handle);            
+        HAL_GPIO_Init(GPIOA, &GPIO_Handle);
     }
     else if(hcomp->Init.Comparator == COMP2 )
     {
@@ -59,7 +59,7 @@ __weak void HAL_COMP_MspInit(COMP_HandleTypeDef* hcomp)
         GPIO_Handle.Mode           = GPIO_MODE_ANALOG;
         GPIO_Handle.Pull           = GPIO_NOPULL;
         HAL_GPIO_Init(GPIOA, &GPIO_Handle);
-        
+
         GPIO_Handle.Pin            = GPIO_PIN_7;
         GPIO_Handle.Mode           = GPIO_MODE_AF_PP;
         GPIO_Handle.Alternate      = GPIO_FUNCTION_7;
@@ -76,10 +76,10 @@ __weak void HAL_COMP_MspInit(COMP_HandleTypeDef* hcomp)
  ************************************************************************/
 __weak void HAL_COMP_MspDeInit(COMP_HandleTypeDef* hcomp)
 {
-    /* 
+    /*
       NOTE : This function should be modified by the user.
     */
-    
+
     /* For Example */
     System_Module_Reset(RST_COMP);
     System_Module_Enable(EN_COMP);
@@ -91,7 +91,7 @@ __weak void HAL_COMP_MspDeInit(COMP_HandleTypeDef* hcomp)
  * input      : COMP_HandleTypeDef* hcomp: pointer to comparator structure.
  ************************************************************************/
 HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef* hcomp)
-{    
+{
     uint32_t u32RegTemp;
     __IO uint32_t *gu32RegCrx;
 
@@ -100,7 +100,7 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef* hcomp)
     {
         return HAL_ERROR;
     }
-    
+
     /* Check the parameters */
     if(!IS_COMP_ALL_INSTANCE(hcomp->Instance)) return HAL_ERROR;
     if(!IS_COMP_ALL_COMP(hcomp->Init.Comparator)) return HAL_ERROR;
@@ -120,24 +120,24 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef* hcomp)
 
     /* Init the low level hardware : GPIO, CLOCK */
     HAL_COMP_MspInit(hcomp);
-                 
+
     if(hcomp->Init.Comparator == COMP1 )
         gu32RegCrx = &hcomp->Instance->CR1;
     else
         gu32RegCrx = &hcomp->Instance->CR2;
-     
+
     //Check if the register is locked
     if(READ_BIT(*gu32RegCrx , COMP_CR_LOCK))
     {
-        System_Module_Reset(RST_COMP);    
+        System_Module_Reset(RST_COMP);
     }
-    
+
     //Check if the comparetor is enable
     if(READ_BIT(*gu32RegCrx , COMP_CR_EN))
         CLEAR_BIT(*gu32RegCrx , COMP_CR_EN);
-    
+
     u32RegTemp = *gu32RegCrx ;
-    
+
     u32RegTemp = u32RegTemp | ((hcomp->Init.Crv_Cfg << COMP_CR_CRV_CFG_POS)& COMP_CR_CRV_CFG_MASK) | \
                               ((hcomp->Init.Crv_Sel << 24) & COMP_CR_CRV_SEL) | \
                               ((hcomp->Init.Crv_En << 23) & COMP_CR_CRV_EN) | \
@@ -151,7 +151,7 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef* hcomp)
                               ((hcomp->Init.InPSel << COMP_CR_INPSEL_POS)& COMP_CR_INPSEL_MASK) | \
                               ((hcomp->Init.InMSel << COMP_CR_INMSEL_POS)& COMP_CR_INMSEL_MASK) | \
                               ((hcomp->Init.HYS << COMP_CR_HYS_POS)& COMP_CR_HYS_MASK);
-    
+
     //Write the COMP_CR register .
     WRITE_REG(*gu32RegCrx,u32RegTemp);
 
@@ -168,13 +168,13 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef* hcomp)
 HAL_StatusTypeDef HAL_COMP_Enable(COMP_HandleTypeDef* hcomp)
 {
     __IO uint32_t *gu32RegCrx;
-    
+
     /* Check the COMP handle allocation */
     if (hcomp == NULL)
     {
         return HAL_ERROR;
     }
-    
+
     /* Check the parameters */
     if(!IS_COMP_ALL_INSTANCE(hcomp->Instance)) return HAL_ERROR;
     if(!IS_COMP_ALL_COMP(hcomp->Init.Comparator)) return HAL_ERROR;
@@ -185,7 +185,7 @@ HAL_StatusTypeDef HAL_COMP_Enable(COMP_HandleTypeDef* hcomp)
         gu32RegCrx = &hcomp->Instance->CR2;
 
     SET_BIT(*gu32RegCrx , COMP_CR_EN); //enable
-    
+
     /* Return function status */
     return HAL_OK;
 }
@@ -203,7 +203,7 @@ HAL_StatusTypeDef HAL_COMP_DeInit(COMP_HandleTypeDef* hcomp)
         return HAL_ERROR;
     }
 
-    HAL_COMP_MspDeInit(hcomp); 
+    HAL_COMP_MspDeInit(hcomp);
 
     memset(&hcomp->Init, 0, sizeof(hcomp->Init));
     /* Return function status */
@@ -218,13 +218,13 @@ HAL_StatusTypeDef HAL_COMP_DeInit(COMP_HandleTypeDef* hcomp)
 HAL_StatusTypeDef HAL_COMP_Disable(COMP_HandleTypeDef* hcomp)
 {
     __IO uint32_t *gu32RegCrx;
-    
+
     /* Check the COMP handle allocation */
     if (hcomp == NULL)
     {
         return HAL_ERROR;
     }
-    
+
     /* Check the parameters */
     if(!IS_COMP_ALL_INSTANCE(hcomp->Instance)) return HAL_ERROR;
     if(!IS_COMP_ALL_COMP(hcomp->Init.Comparator)) return HAL_ERROR;
@@ -235,7 +235,7 @@ HAL_StatusTypeDef HAL_COMP_Disable(COMP_HandleTypeDef* hcomp)
         gu32RegCrx = &hcomp->Instance->CR2;
 
     CLEAR_BIT(*gu32RegCrx , COMP_CR_EN); //disable
-    
+
     /* Return function status */
     return HAL_OK;
 }
@@ -253,7 +253,7 @@ HAL_StatusTypeDef HAL_COMP_GetOutputLevel(COMP_HandleTypeDef* hcomp)
     if(!IS_COMP_ALL_COMP(hcomp->Init.Comparator)) return HAL_ERROR;
 
     u32RegTemp = READ_REG(hcomp->Instance->SR);
-    
+
     if(hcomp->Init.Comparator == COMP1 )
     {
         hcomp->OutputLevel_Org = (u32RegTemp & COMP_SR_VCOUT1_ORG)? 1:0;
@@ -264,7 +264,7 @@ HAL_StatusTypeDef HAL_COMP_GetOutputLevel(COMP_HandleTypeDef* hcomp)
         hcomp->OutputLevel_Org = (u32RegTemp & COMP_SR_VCOUT2_ORG)? 1:0;
         hcomp->OutputLevel = (u32RegTemp & COMP_SR_VCOUT2)? 1:0;
     }
-     
+
     /* Return function status */
     return HAL_OK;
 }
@@ -277,13 +277,13 @@ HAL_StatusTypeDef HAL_COMP_GetOutputLevel(COMP_HandleTypeDef* hcomp)
 HAL_StatusTypeDef HAL_COMP_Lock(COMP_HandleTypeDef* hcomp)
 {
     __IO uint32_t *gu32RegCrx;
-    
+
     /* Check the COMP handle allocation */
     if (hcomp == NULL)
     {
         return HAL_ERROR;
     }
-    
+
     /* Check the parameters */
     if(!IS_COMP_ALL_INSTANCE(hcomp->Instance)) return HAL_ERROR;
     if(!IS_COMP_ALL_COMP(hcomp->Init.Comparator)) return HAL_ERROR;
@@ -292,7 +292,7 @@ HAL_StatusTypeDef HAL_COMP_Lock(COMP_HandleTypeDef* hcomp)
         gu32RegCrx = &hcomp->Instance->CR1;
     else
         gu32RegCrx = &hcomp->Instance->CR2;
-    
+
     SET_BIT(*gu32RegCrx , COMP_CR_LOCK); //lock
     /* Return function status */
     return HAL_OK;

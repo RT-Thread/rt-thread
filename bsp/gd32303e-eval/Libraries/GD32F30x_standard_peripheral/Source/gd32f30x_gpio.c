@@ -82,7 +82,7 @@ void gpio_afio_deinit(void)
 
 /*!
     \brief      GPIO parameter initialization
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[in]  mode: gpio pin mode
       \arg        GPIO_MODE_AIN: analog input mode
       \arg        GPIO_MODE_IN_FLOATING: floating input mode
@@ -109,7 +109,7 @@ void gpio_init(uint32_t gpio_periph, uint32_t mode, uint32_t speed, uint32_t pin
 
     /* GPIO mode configuration */
     temp_mode = (uint32_t)(mode & ((uint32_t)0x0FU));
-    
+
     /* GPIO speed configuration */
     if(((uint32_t)0x00U) != ((uint32_t)mode & ((uint32_t)0x10U))){
         /* output mode max speed */
@@ -127,12 +127,12 @@ void gpio_init(uint32_t gpio_periph, uint32_t mode, uint32_t speed, uint32_t pin
     for(i = 0U;i < 8U;i++){
         if((1U << i) & pin){
             reg = GPIO_CTL0(gpio_periph);
-            
+
             /* clear the specified pin mode bits */
             reg &= ~GPIO_MODE_MASK(i);
             /* set the specified pin mode bits */
             reg |= GPIO_MODE_SET(i, temp_mode);
-            
+
             /* set IPD or IPU */
             if(GPIO_MODE_IPD == mode){
                 /* reset the corresponding OCTL bit */
@@ -151,12 +151,12 @@ void gpio_init(uint32_t gpio_periph, uint32_t mode, uint32_t speed, uint32_t pin
     for(i = 8U;i < 16U;i++){
         if((1U << i) & pin){
             reg = GPIO_CTL1(gpio_periph);
-            
+
             /* clear the specified pin mode bits */
             reg &= ~GPIO_MODE_MASK(i - 8U);
             /* set the specified pin mode bits */
             reg |= GPIO_MODE_SET(i - 8U, temp_mode);
-            
+
             /* set IPD or IPU */
             if(GPIO_MODE_IPD == mode){
                 /* reset the corresponding OCTL bit */
@@ -175,7 +175,7 @@ void gpio_init(uint32_t gpio_periph, uint32_t mode, uint32_t speed, uint32_t pin
 
 /*!
     \brief      set GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     none
@@ -187,7 +187,7 @@ void gpio_bit_set(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      reset GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     none
@@ -199,7 +199,7 @@ void gpio_bit_reset(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      write data to the specified GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[in]  bit_value: SET or RESET
       \arg        RESET: clear the port pin
@@ -218,7 +218,7 @@ void gpio_bit_write(uint32_t gpio_periph,uint32_t pin,bit_status bit_value)
 
 /*!
     \brief      write data to the specified GPIO port
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[in]  data: specify the value to be written to the port output data register
     \param[out] none
     \retval     none
@@ -230,7 +230,7 @@ void gpio_port_write(uint32_t gpio_periph,uint16_t data)
 
 /*!
     \brief      get GPIO pin input status
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     input status of gpio pin: SET or RESET
@@ -238,7 +238,7 @@ void gpio_port_write(uint32_t gpio_periph,uint16_t data)
 FlagStatus gpio_input_bit_get(uint32_t gpio_periph,uint32_t pin)
 {
     if((uint32_t)RESET != (GPIO_ISTAT(gpio_periph)&(pin))){
-        return SET; 
+        return SET;
     }else{
         return RESET;
     }
@@ -246,7 +246,7 @@ FlagStatus gpio_input_bit_get(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      get GPIO port input status
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[out] none
     \retval     input status of gpio all pins
 */
@@ -257,7 +257,7 @@ uint16_t gpio_input_port_get(uint32_t gpio_periph)
 
 /*!
     \brief      get GPIO pin output status
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     output status of gpio pin: SET or RESET
@@ -273,7 +273,7 @@ FlagStatus gpio_output_bit_get(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      get GPIO port output status
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[out] none
     \retval     output status of gpio all pins
 */
@@ -284,7 +284,7 @@ uint16_t gpio_output_port_get(uint32_t gpio_periph)
 
 /*!
     \brief      lock GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     none
@@ -318,13 +318,13 @@ void gpio_event_output_config(uint8_t output_port, uint8_t output_pin)
 {
     uint32_t reg = 0U;
     reg = AFIO_EC;
-    
+
     /* clear AFIO_EC_PORT and AFIO_EC_PIN bits */
     reg &= (uint32_t)(~(AFIO_EC_PORT|AFIO_EC_PIN));
-    
+
     reg |= (uint32_t)((uint32_t)output_port << 0x04U);
     reg |= (uint32_t)output_pin;
-    
+
     AFIO_EC = reg;
 }
 
@@ -357,7 +357,7 @@ void gpio_event_output_disable(void)
       \arg        GPIO_PORT_SOURCE_GPIOB: output port source B
       \arg        GPIO_PORT_SOURCE_GPIOC: output port source C
       \arg        GPIO_PORT_SOURCE_GPIOD: output port source D
-      \arg        GPIO_PORT_SOURCE_GPIOE: output port source E 
+      \arg        GPIO_PORT_SOURCE_GPIOE: output port source E
       \arg        GPIO_PORT_SOURCE_GPIOF: output port source F
       \arg        GPIO_PORT_SOURCE_GPIOG: output port source G
     \param[in]  output_pin: GPIO_PIN_SOURCE_x(x=0..15)
@@ -417,7 +417,7 @@ void gpio_ethernet_phy_select(uint32_t enet_sel)
       \arg        GPIO_USART1_REMAP: USART1 remapping
       \arg        GPIO_USART2_PARTIAL_REMAP: USART2 partial remapping
       \arg        GPIO_USART2_FULL_REMAP: USART2 full remapping
-      \arg        GPIO_TIMER0_PARTIAL_REMAP: TIMER0 partial remapping 
+      \arg        GPIO_TIMER0_PARTIAL_REMAP: TIMER0 partial remapping
       \arg        GPIO_TIMER0_FULL_REMAP: TIMER0 full remapping
       \arg        GPIO_TIMER1_PARTIAL_REMAP1: TIMER1 partial remapping
       \arg        GPIO_TIMER1_PARTIAL_REMAP2: TIMER1 partial remapping
@@ -435,14 +435,14 @@ void gpio_ethernet_phy_select(uint32_t enet_sel)
       \arg        GPIO_ADC0_ETRGREG_REMAP: ADC0 external trigger regular conversion remapping(only for GD32F30X_HD devices and GD32F30X_XD devices)
       \arg        GPIO_ADC1_ETRGINS_REMAP: ADC1 external trigger inserted conversion remapping(only for GD32F30X_HD devices and GD32F30X_XD devices)
       \arg        GPIO_ADC1_ETRGREG_REMAP: ADC1 external trigger regular conversion remapping(only for GD32F30X_HD devices and GD32F30X_XD devices)
-      \arg        GPIO_ENET_REMAP: ENET remapping(only for GD32F30X_CL devices) 
+      \arg        GPIO_ENET_REMAP: ENET remapping(only for GD32F30X_CL devices)
       \arg        GPIO_CAN1_REMAP: CAN1 remapping(only for GD32F30X_CL devices)
       \arg        GPIO_SWJ_NONJTRST_REMAP: full SWJ(JTAG-DP + SW-DP),but without NJTRST
       \arg        GPIO_SWJ_SWDPENABLE_REMAP: JTAG-DP disabled and SW-DP enabled
       \arg        GPIO_SWJ_DISABLE_REMAP: JTAG-DP disabled and SW-DP disabled
-      \arg        GPIO_SPI2_REMAP: SPI2 remapping(only for GD32F30X_CL devices) 
-      \arg        GPIO_TIMER1ITR0_REMAP: TIMER1 internal trigger 0 remapping(only for GD32F30X_CL devices) 
-      \arg        GPIO_PTP_PPS_REMAP: ethernet PTP PPS remapping(only for GD32F30X_CL devices) 
+      \arg        GPIO_SPI2_REMAP: SPI2 remapping(only for GD32F30X_CL devices)
+      \arg        GPIO_TIMER1ITR0_REMAP: TIMER1 internal trigger 0 remapping(only for GD32F30X_CL devices)
+      \arg        GPIO_PTP_PPS_REMAP: ethernet PTP PPS remapping(only for GD32F30X_CL devices)
       \arg        GPIO_TIMER8_REMAP: TIMER8 remapping
       \arg        GPIO_TIMER9_REMAP: TIMER9 remapping
       \arg        GPIO_TIMER10_REMAP: TIMER10 remapping
@@ -482,12 +482,12 @@ void gpio_pin_remap_config(uint32_t gpio_remap, ControlStatus newvalue)
         temp_reg &= ~(remap1 << ((gpio_remap >> 0x15U)*0x10U));
         temp_reg |= ~PCF_SWJCFG_MASK;
     }
-    
+
     /* set pin remap value */
     if(DISABLE != newvalue){
         temp_reg |= (remap1 << ((gpio_remap >> 0x15U)*0x10U));
     }
-    
+
     if(AFIO_PCF1_FIELDS == (gpio_remap & AFIO_PCF1_FIELDS)){
         /* set AFIO_PCF1 regiter value */
         AFIO_PCF1 = temp_reg;

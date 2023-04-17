@@ -43,7 +43,7 @@
 /** \file rtc.h
  **
  ** Headerfile for RTC functions
- **  
+ **
  **
  ** History:
  **   - 2019-04-10        First Version
@@ -127,10 +127,10 @@ typedef enum
  ******************************************************************************
  ** \brief rtc的时钟选择                           RTC_CR1  CKSEL
  *****************************************************************************/
-typedef enum 
+typedef enum
 {
-    RtcClkXtl      = 0u, //外部低速时钟XTL  32.768k    
-    RtcClkRcl      = 2u, //内部低速时钟RCL  32k   
+    RtcClkXtl      = 0u, //外部低速时钟XTL  32.768k
+    RtcClkRcl      = 2u, //内部低速时钟RCL  32k
     RtcClkXth128   = 4u, //外部晶振4M       XTH/128
     RtcClkXth256   = 5u, //外部晶振8M       XTH/256
     RtcClkXth512   = 6u, //外部晶振16M      XTH/512
@@ -149,7 +149,7 @@ typedef enum
 
 /**
  ******************************************************************************
-** \brief 配置PRD中断使能及其周期类型                      
+** \brief 配置PRD中断使能及其周期类型
  *****************************************************************************/
 typedef struct
 {
@@ -180,11 +180,11 @@ typedef struct
  *****************************************************************************/
 typedef struct stc_rtc_time
 {
-    uint8_t  u8Second;      //时间：秒    
+    uint8_t  u8Second;      //时间：秒
     uint8_t  u8Minute;      //时间：分
     uint8_t  u8Hour;        //时间：时
     uint8_t  u8DayOfWeek;   //时间：周
-    uint8_t  u8Day;         //时间：日    
+    uint8_t  u8Day;         //时间：日
     uint8_t  u8Month;       //时间：月
     uint8_t  u8Year;        //时间：年
 } stc_rtc_time_t;
@@ -243,6 +243,6 @@ extern void Rtc_Init(stc_rtc_initstruct_t* Rtc_InitStruct);
 #endif /* __RTC_H__ */
 /******************************************************************************
  * EOF (not truncated)
- *****************************************************************************/    
+ *****************************************************************************/
 
 

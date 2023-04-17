@@ -23,18 +23,18 @@
 #endif
 /* ================================================================================ */
 
-#define PLLCLK_SRC_RC4M                      (0x00)   
-#define PLLCLK_SRC_XTH                       (0x01)  
+#define PLLCLK_SRC_RC4M                      (0x00)
+#define PLLCLK_SRC_XTH                       (0x01)
 
 #define DEFAULT_SYSTEM_CLOCK    (180000000)    // system clock frequency, 32M/64M/120M/180M
-#define PLL_SOURCE_FROM         (PLLCLK_SRC_RC4M) 
+#define PLL_SOURCE_FROM         (PLLCLK_SRC_RC4M)
 
 /* CLK source Index */
 #define SYS_CLK_SRC_RCH                      (0x00)    // CLK source from RC64M
 #define SYS_CLK_SRC_RC32K                    (0x01)    // CLK source from RC32K
 #define SYS_CLK_SRC_XTH                      (0x02)    // CLK source from XTH
 #define SYS_CLK_SRC_XTL                      (0x03)    // CLK source from XTL
-#define SYS_CLK_SRC_PLLCLK                   (0x04)    // CLK source from PLLCLK 
+#define SYS_CLK_SRC_PLLCLK                   (0x04)    // CLK source from PLLCLK
 
 /* APB Frequencey Division */
 #define APB_CLK_DIV_0                        (0 << 8)
@@ -58,64 +58,64 @@
 #define STOP_WAKEUP_GPIO_PIN11        BIT11
 #define STOP_WAKEUP_GPIO_PIN12        BIT12
 #define STOP_WAKEUP_GPIO_PIN13        BIT13
-#define STOP_WAKEUP_GPIO_PIN14        BIT14   
-#define STOP_WAKEUP_GPIO_PIN15        BIT15 
+#define STOP_WAKEUP_GPIO_PIN14        BIT14
+#define STOP_WAKEUP_GPIO_PIN15        BIT15
 #define STOP_WAKEUP_PERIPHERAL_LVD    BIT16
 #define STOP_WAKEUP_PERIPHERAL_RTC    BIT17
 #define STOP_WAKEUP_PERIPHERAL_LPUART BIT18
-#define STOP_WAKEUP_PERIPHERAL_IWDT   BIT19    
+#define STOP_WAKEUP_PERIPHERAL_IWDT   BIT19
 #define STOP_WAKEUP_PERIPHERAL_COMP1  BIT20
-#define STOP_WAKEUP_PERIPHERAL_COMP2  BIT21 
-#define STOP_WAKEUP_RESERVE           BIT22   
-#define STOP_WAKEUP_PERIPHERAL_USB    BIT23     
-#define STOP_WAKEUP_ALL               (0xFFFFFFU)   
+#define STOP_WAKEUP_PERIPHERAL_COMP2  BIT21
+#define STOP_WAKEUP_RESERVE           BIT22
+#define STOP_WAKEUP_PERIPHERAL_USB    BIT23
+#define STOP_WAKEUP_ALL               (0xFFFFFFU)
 
-#define STANDBY_WAKEUP_PINS        6              
-#define STANDBY_WAKEUP_SOURCE_IO1  BIT0   
-#define STANDBY_WAKEUP_SOURCE_IO2  BIT1  
-#define STANDBY_WAKEUP_SOURCE_IO3  BIT2   
-#define STANDBY_WAKEUP_SOURCE_IO4  BIT3  
-#define STANDBY_WAKEUP_SOURCE_IO5  BIT4   
-#define STANDBY_WAKEUP_SOURCE_IO6  BIT5 
-#define STANDBY_WAKEUP_SOURCE_RTC  BIT6    
-#define STANDBY_WAKEUP_SOURCE_ALL  0x7FU    
+#define STANDBY_WAKEUP_PINS        6
+#define STANDBY_WAKEUP_SOURCE_IO1  BIT0
+#define STANDBY_WAKEUP_SOURCE_IO2  BIT1
+#define STANDBY_WAKEUP_SOURCE_IO3  BIT2
+#define STANDBY_WAKEUP_SOURCE_IO4  BIT3
+#define STANDBY_WAKEUP_SOURCE_IO5  BIT4
+#define STANDBY_WAKEUP_SOURCE_IO6  BIT5
+#define STANDBY_WAKEUP_SOURCE_RTC  BIT6
+#define STANDBY_WAKEUP_SOURCE_ALL  0x7FU
 
-// sleep/low power mode definition  
-#define STOPENTRY_WFI   0  
-#define STOPENTRY_WFE   1 
+// sleep/low power mode definition
+#define STOPENTRY_WFI   0
+#define STOPENTRY_WFE   1
 
-#define SLEEPENTRY_WFI  0  
-#define SLEEPENTRY_WFE  1  
+#define SLEEPENTRY_WFI  0
+#define SLEEPENTRY_WFE  1
 /*
  * @brief  STOP WAKEUP EDGE structures definition
  */
-typedef enum  
+typedef enum
 {
     WAKEUP_RISING = 0,
     WAKEUP_FALLING = 1,
-    WAKEUP_RISING_FALLING = 2, // 0:rising, 1:falling, 2: rising and falling   
-}STOP_WAKEUP_EDGE;    
+    WAKEUP_RISING_FALLING = 2, // 0:rising, 1:falling, 2: rising and falling
+}STOP_WAKEUP_EDGE;
 
 typedef enum
 {
     FUNC_DISABLE = 0x00U,
-    FUNC_ENABLE  = 0x01U,  
-}FUNC_DISABLE_ENABLE;    
+    FUNC_ENABLE  = 0x01U,
+}FUNC_DISABLE_ENABLE;
 
 typedef enum
 {
     RESET_ENABLE_SOURCE_LVD   = 0x00U,
-	RESET_ENABLE_SOURCE_WDT   = 0x01U,  
-	RESET_ENABLE_SOURCE_IWDT  = 0x02U,  
-	RESET_ENABLE_SOURCE_LOCKUP  = 0x03U,          
-}RESET_ENABLE_SOURCE;   
+    RESET_ENABLE_SOURCE_WDT   = 0x01U,
+    RESET_ENABLE_SOURCE_IWDT  = 0x02U,
+    RESET_ENABLE_SOURCE_LOCKUP  = 0x03U,
+}RESET_ENABLE_SOURCE;
 
 typedef enum
 {
     RESET_SOURCE_EFC   = 0x00U,
-	RESET_SOURCE_NVIC_RESET  = 0x01U,  
-	RESET_SOFT_RESET  = 0x02U,             
-}RESET_SOURCE; 
+    RESET_SOURCE_NVIC_RESET  = 0x01U,
+    RESET_SOFT_RESET  = 0x02U,
+}RESET_SOURCE;
 
 /*
  * @brief  Peripheral Reset structures definition
@@ -129,7 +129,7 @@ typedef enum
     RST_TIM4   = 34,
     RST_CAN2   = 33,
     RST_I2S1   = 32,
-    
+
     RST_CAN1   = 31,
     RST_TIM2   = 30,
     RST_USB    = 29,
@@ -172,8 +172,8 @@ typedef enum
 #define SCU_RCR_IWDTRST_EN                  BIT2
 #define SCU_RCR_WDTRST_EN                   BIT1
 #define SCU_RCR_LVDRST_EN                   BIT0
-	
-/****************  Bit definition for SCU RSR register  ***********************/	
+
+/****************  Bit definition for SCU RSR register  ***********************/
 #define SCU_RSR_RSTFLAG_CLR                 BIT16
 #define SCU_RSR_PWRRST_F                    BIT10
 #define SCU_RSR_POR12RST_F                  BIT9
@@ -301,9 +301,9 @@ typedef enum
 #define SCU_XTHCR_XTH_BYP                   BIT1
 #define SCU_XTHCR_XTH_EN                    BIT0
 #define SCU_XTHCR_READYTIME_1024             0
-#define SCU_XTHCR_READYTIME_4096             BIT2 
+#define SCU_XTHCR_READYTIME_4096             BIT2
 #define SCU_XTHCR_READYTIME_16384            BIT3
-#define SCU_XTHCR_READYTIME_32768            (BIT3|BIT2)    
+#define SCU_XTHCR_READYTIME_32768            (BIT3|BIT2)
 
 /****************  Bit definition for SCU PLLCR register  **********************/
 #define SCU_PLLCR_PLL_LOCK_SEL              BIT31
@@ -550,7 +550,7 @@ typedef enum
     EN_UART1  = 16,
     EN_CAN2   = 15,
     EN_I2S1   = 14,
-    
+
     EN_SPI4   = 13,
     EN_GPIOEF = 12,
     EN_SPI3   = 11,
@@ -568,25 +568,25 @@ typedef enum
 
 typedef enum
 {
-    RESET_REASON_LOW_VOLTAGE   = 0x00U,   // low voltage detected, leads to reset  
-	RESET_REASON_WDT           = 0x01U,   // System WDT reset 
-	RESET_REASON_IWDT          = 0x02U,   // IWDT reset 
-	RESET_REASON_LOCKUP        = 0x03U,   // cortex-m0 lockup leads to reset  
-	RESET_REASON_SYSREQ        = 0x04U,   // system reset 
-	RESET_REASON_RSTN          = 0x05U,   // RSTN negative pulse leads to reset   
-	RESET_REASON_EFC           = 0x06U,   // efc reset leads to reset   
-    RESET_REASON_SOFT          = 0x07U,   // soft reset 
-	RESET_REASON_POR12         = 0x09U,   // core power on reset, rtc not reset, eg:wakeup from standby   
-	RESET_REASON_POR           = 0x0AU,   // chip power on reset 
-	RESET_REASON_INVALID,  
-}RESET_REASON; 
+    RESET_REASON_LOW_VOLTAGE   = 0x00U,   // low voltage detected, leads to reset
+    RESET_REASON_WDT           = 0x01U,   // System WDT reset
+    RESET_REASON_IWDT          = 0x02U,   // IWDT reset
+    RESET_REASON_LOCKUP        = 0x03U,   // cortex-m0 lockup leads to reset
+    RESET_REASON_SYSREQ        = 0x04U,   // system reset
+    RESET_REASON_RSTN          = 0x05U,   // RSTN negative pulse leads to reset
+    RESET_REASON_EFC           = 0x06U,   // efc reset leads to reset
+    RESET_REASON_SOFT          = 0x07U,   // soft reset
+    RESET_REASON_POR12         = 0x09U,   // core power on reset, rtc not reset, eg:wakeup from standby
+    RESET_REASON_POR           = 0x0AU,   // chip power on reset
+    RESET_REASON_INVALID,
+}RESET_REASON;
 
-#define NVIC_PRIORITY_GROUP_3  0x00000004U   // 3 bits for pre-emption priority, 0 bit for subpriority   
-#define NVIC_PRIORITY_GROUP_2  0x00000005U   // 2 bits for pre-emption priority, 1 bit for subpriority    
-#define NVIC_PRIORITY_GROUP_1  0x00000006U   // 1 bits for pre-emption priority, 2 bit for subpriority    
-#define NVIC_PRIORITY_GROUP_0  0x00000007U   // 0 bits for pre-emption priority, 3 bit for subpriority         
+#define NVIC_PRIORITY_GROUP_3  0x00000004U   // 3 bits for pre-emption priority, 0 bit for subpriority
+#define NVIC_PRIORITY_GROUP_2  0x00000005U   // 2 bits for pre-emption priority, 1 bit for subpriority
+#define NVIC_PRIORITY_GROUP_1  0x00000006U   // 1 bits for pre-emption priority, 2 bit for subpriority
+#define NVIC_PRIORITY_GROUP_0  0x00000007U   // 0 bits for pre-emption priority, 3 bit for subpriority
 
-#define SYSTEM_TIMEOUT  (1000000)   
+#define SYSTEM_TIMEOUT  (1000000)
 
 
 /* System_Init */
@@ -617,7 +617,7 @@ void System_Module_Enable(enum_Enable_ID_t fe_ID_Index);
 void System_Module_Disable(enum_Enable_ID_t fe_ID_Index);
 
 /* System_Delay */
-void System_Delay(volatile uint32_t fu32_Delay); 
+void System_Delay(volatile uint32_t fu32_Delay);
 
 /* System_Delay_MS */
 void System_Delay_MS(volatile uint32_t fu32_Delay);
@@ -633,38 +633,38 @@ void System_Enable_XTAL(void);
 
 /* System_Disable_XTAL */
 void System_Disable_XTAL(void);
- 
+
 /* System_Clear_Stop_Wakeup */
 void System_Clear_Stop_Wakeup(void);
 
 /* System_Enter_Standby_Mode */
-void System_Enter_Standby_Mode(void);       
+void System_Enter_Standby_Mode(void);
 
 /* System_Enter_Stop_Mode */
-void System_Enter_Stop_Mode(uint8_t STOPEntry);    
+void System_Enter_Stop_Mode(uint8_t STOPEntry);
 
-/* System_Enter_Sleep_Mode */     
-void System_Enter_Sleep_Mode(uint8_t SleepEntry);   
+/* System_Enter_Sleep_Mode */
+void System_Enter_Sleep_Mode(uint8_t SleepEntry);
 
 /* System_Enable_Disable_Reset */
-void System_Enable_Disable_Reset(RESET_ENABLE_SOURCE source, FUNC_DISABLE_ENABLE enable_disable);   
+void System_Enable_Disable_Reset(RESET_ENABLE_SOURCE source, FUNC_DISABLE_ENABLE enable_disable);
 
-/* System_Reset_MCU */   
-void System_Reset_MCU(RESET_SOURCE source);    
+/* System_Reset_MCU */
+void System_Reset_MCU(RESET_SOURCE source);
 
 /* System_Enable_Disable_RTC_Domain_Access */
-void System_Enable_Disable_RTC_Domain_Access(FUNC_DISABLE_ENABLE enable_disable);  
+void System_Enable_Disable_RTC_Domain_Access(FUNC_DISABLE_ENABLE enable_disable);
 
 /* System_Return_Last_Reset_Reason */
-RESET_REASON System_Return_Last_Reset_Reason(void) ;   
+RESET_REASON System_Return_Last_Reset_Reason(void) ;
 
-/* System_Set_Buzzer_Divider */    
-void System_Set_Buzzer_Divider(uint32_t div, FUNC_DISABLE_ENABLE enable);     
+/* System_Set_Buzzer_Divider */
+void System_Set_Buzzer_Divider(uint32_t div, FUNC_DISABLE_ENABLE enable);
 
-/* System_USB_PHY_Config */  
-uint32_t System_USB_PHY_Config(void);  
+/* System_USB_PHY_Config */
+uint32_t System_USB_PHY_Config(void);
 
-#endif  
+#endif
 
 
 
