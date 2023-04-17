@@ -231,7 +231,7 @@ static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
 }
 
 static rt_err_t ra_pin_attach_irq(struct rt_device *device, rt_base_t pin,
-                                  rt_uint32_t mode, void (*hdr)(void *args), void *args)
+                                  rt_uint8_t   mode, void (*hdr)(void *args), void *args)
 {
 #ifdef R_ICU_H
     rt_int32_t irqx = ra_pin_get_irqx(pin);
