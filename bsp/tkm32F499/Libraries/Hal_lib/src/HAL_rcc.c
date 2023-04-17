@@ -833,7 +833,7 @@ void RCC_LSICmd(FunctionalState NewState)
 
 /**
 * @brief  Configures the RTC clock (RTCCLK).
-*   Once the RTC clock is selected it can抰 be changed unless the
+*   Once the RTC clock is selected it can't be changed unless the
 *   Backup domain is reset.
 * @param RCC_RTCCLKSource: specifies the RTC clock source.
 *   This parameter can be one of the following values:
@@ -1269,7 +1269,7 @@ ITStatus RCC_GetITStatus(uint8_t RCC_IT)
 }
 
 /**
-* @brief  Clears the RCC抯 interrupt pending bits.
+* @brief  Clears the RCC's interrupt pending bits.
 * @param RCC_IT: specifies the interrupt pending bit to clear.
 *   This parameter can be any combination of the following values:
 * @arg RCC_IT_LSIRDY: LSI ready interrupt
