@@ -4,6 +4,7 @@ import os
 ARCH        ='risc-v'
 CPU         ='e9xx'
 CROSS_TOOL  ='gcc'
+BSP_LIBRARY_TYPE = 'bouffalo_lab'
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
@@ -60,3 +61,10 @@ if PLATFORM == 'gcc':
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread_m0.bin\n' + SIZE + ' $TARGET \n'
 POST_ACTION += 'sh combine.sh bl808 ./rtthread_m0.bin\n'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)
