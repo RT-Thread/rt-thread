@@ -161,8 +161,7 @@ dhcp_client_find_by_mac(struct dhcp_server *dhcpserver, const u8_t *chaddr, u8_t
 * Find a dhcp client node by ip address
 *
 * @param dhcpserver The dhcp server
-* @param chaddr Mac address
-* @param hlen   Mac address length
+* @param ip IP address
 * @return dhcp client node
 */
 static struct dhcp_client_node *
@@ -181,14 +180,7 @@ dhcp_client_find_by_ip(struct dhcp_server *dhcpserver, const ip4_addr_t *ip)
     return NULL;
 }
 
-/**
-* Find a dhcp client node by ip address
-*
-* @param dhcpserver The dhcp server
-* @param chaddr Mac address
-* @param hlen   Mac address length
-* @return dhcp client node
-*/
+
 static struct dhcp_client_node *
 dhcp_client_find(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
                  u8_t *opt_buf, u16_t len)
@@ -216,14 +208,7 @@ dhcp_client_find(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
     return NULL;
 }
 
-/**
-* Find a dhcp client node by ip address
-*
-* @param dhcpserver The dhcp server
-* @param chaddr Mac address
-* @param hlen   Mac address length
-* @return dhcp client node
-*/
+
 static struct dhcp_client_node *
 dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
                   u8_t *opt_buf, u16_t len)
