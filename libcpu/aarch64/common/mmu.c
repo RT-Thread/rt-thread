@@ -299,12 +299,12 @@ void *rt_hw_mmu_map(rt_aspace_t aspace, void *v_addr, void *p_addr, size_t size,
                 MM_PGTBL_LOCK(aspace);
                 _kenrel_unmap_4K(aspace->page_table, (void *)unmap_va);
                 MM_PGTBL_UNLOCK(aspace);
-                unmap_va += stride;
+                unmap_va = (char *)unmap_va + stride;
             }
             break;
         }
-        v_addr += stride;
-        p_addr += stride;
+        v_addr = (char *)v_addr + stride;
+        p_addr = (char *)p_addr + stride;
     }
 
     if (ret == 0)
@@ -330,7 +330,7 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
         MM_PGTBL_LOCK(aspace);
         _kenrel_unmap_4K(aspace->page_table, v_addr);
         MM_PGTBL_UNLOCK(aspace);
-        v_addr += ARCH_PAGE_SIZE;
+        v_addr = (char *)v_addr + ARCH_PAGE_SIZE;
     }
 }
 
@@ -340,7 +340,7 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     {
         void *pgtbl = aspace->page_table;
         pgtbl = rt_kmem_v2p(pgtbl);
-        uintptr_t tcr;
+        rt_ubase_t tcr;
 
         __asm__ volatile("msr ttbr0_el1, %0" ::"r"(pgtbl) : "memory");
 
@@ -432,7 +432,7 @@ static void _init_region(void *vaddr, size_t size)
 {
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
-    rt_mpr_start = rt_ioremap_start - rt_mpr_size;
+    rt_mpr_start = (char *)rt_ioremap_start - rt_mpr_size;
 
 #ifdef ARCH_ENABLE_SOFT_KASAN
     kasan_area_start = rt_mpr_start - KASAN_AREA_SIZE;
@@ -452,10 +452,10 @@ static void _init_region(void *vaddr, size_t size)
 }
 #else
 
-#define RTOS_VEND ((void *)0xfffffffff000UL)
+#define RTOS_VEND (0xfffffffff000UL)
 static inline void _init_region(void *vaddr, size_t size)
 {
-    rt_mpr_start = RTOS_VEND - rt_mpr_size;
+    rt_mpr_start = (void *)(RTOS_VEND - rt_mpr_size);
 }
 #endif
 
@@ -500,7 +500,7 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size,
     rt_aspace_init(aspace, (void *)KERNEL_VADDR_START, 0 - KERNEL_VADDR_START,
                    vtable);
 #else
-    rt_aspace_init(aspace, (void *)0x1000, RTOS_VEND - (void *)0x1000, vtable);
+    rt_aspace_init(aspace, (void *)0x1000, RTOS_VEND - 0x1000ul, vtable);
 #endif
 
     _init_region(v_address, size);
@@ -703,7 +703,7 @@ void *rt_hw_mmu_v2p(rt_aspace_t aspace, void *v_addr)
         if (pte)
         {
             paddr = *pte & MMU_ADDRESS_MASK;
-            paddr |= (uintptr_t)v_addr & ((1ul << level_shift) - 1);
+            paddr |= (rt_ubase_t)v_addr & ((1ul << level_shift) - 1);
         }
         else
         {
@@ -714,12 +714,12 @@ void *rt_hw_mmu_v2p(rt_aspace_t aspace, void *v_addr)
     return (void *)paddr;
 }
 
-static int _noncache(uintptr_t *pte)
+static int _noncache(rt_ubase_t *pte)
 {
     int err = 0;
-    const uintptr_t idx_shift = 2;
-    const uintptr_t idx_mask = 0x7 << idx_shift;
-    uintptr_t entry = *pte;
+    const rt_ubase_t idx_shift = 2;
+    const rt_ubase_t idx_mask = 0x7 << idx_shift;
+    rt_ubase_t entry = *pte;
     if ((entry & idx_mask) == (NORMAL_MEM << idx_shift))
     {
         *pte = (entry & ~idx_mask) | (NORMAL_NOCACHE_MEM << idx_shift);
@@ -732,12 +732,12 @@ static int _noncache(uintptr_t *pte)
     return err;
 }
 
-static int _cache(uintptr_t *pte)
+static int _cache(rt_ubase_t *pte)
 {
     int err = 0;
-    const uintptr_t idx_shift = 2;
-    const uintptr_t idx_mask = 0x7 << idx_shift;
-    uintptr_t entry = *pte;
+    const rt_ubase_t idx_shift = 2;
+    const rt_ubase_t idx_mask = 0x7 << idx_shift;
+    rt_ubase_t entry = *pte;
     if ((entry & idx_mask) == (NORMAL_NOCACHE_MEM << idx_shift))
     {
         *pte = (entry & ~idx_mask) | (NORMAL_MEM << idx_shift);
@@ -750,7 +750,7 @@ static int _cache(uintptr_t *pte)
     return err;
 }
 
-static int (*control_handler[MMU_CNTL_DUMMY_END])(uintptr_t *pte) = {
+static int (*control_handler[MMU_CNTL_DUMMY_END])(rt_ubase_t *pte) = {
     [MMU_CNTL_CACHE] = _cache,
     [MMU_CNTL_NONCACHE] = _noncache,
 };
@@ -760,17 +760,18 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
 {
     int level_shift;
     int err = -RT_EINVAL;
-    void *vend = vaddr + size;
+    rt_ubase_t vstart = (rt_ubase_t)vaddr;
+    rt_ubase_t vend = vstart + size;
 
-    int (*handler)(uintptr_t * pte);
+    int (*handler)(rt_ubase_t * pte);
     if (cmd >= 0 && cmd < MMU_CNTL_DUMMY_END)
     {
         handler = control_handler[cmd];
 
-        while (vaddr < vend)
+        while (vstart < vend)
         {
-            uintptr_t *pte = _query(aspace, vaddr, &level_shift);
-            void *range_end = vaddr + (1ul << level_shift);
+            rt_ubase_t *pte = _query(aspace, (void *)vstart, &level_shift);
+            rt_ubase_t range_end = vstart + (1ul << level_shift);
             RT_ASSERT(range_end <= vend);
 
             if (pte)
@@ -778,7 +779,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                 err = handler(pte);
                 RT_ASSERT(err == RT_EOK);
             }
-            vaddr = range_end;
+            vstart = range_end;
         }
     }
     else

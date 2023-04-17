@@ -63,7 +63,7 @@ static void on_shm_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg
 
     /* map all share page frames to user space in a time */
     void *page = (void *)shm->addr;
-    void *pg_paddr = page + PV_OFFSET;
+    void *pg_paddr = (char *)page + PV_OFFSET;
     err = rt_varea_map_range(varea, varea->start, pg_paddr, shm->size);
 
     if (err == RT_EOK)

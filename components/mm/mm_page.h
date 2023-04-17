@@ -33,17 +33,24 @@
 
 #define PAGE_ANY_AVAILABLE 0x1ul
 
+
+#ifdef RT_DEBUG_PAGE_LEAK
+#define DEBUG_FIELD {           \
+    /* trace list */            \
+    struct rt_page *tl_next;    \
+    struct rt_page *tl_prev;    \
+    void *caller;               \
+    size_t trace_size;          \
+}
+#else
+#define DEBUG_FIELD
+#endif
+
 DEF_PAGE_T(
     struct rt_page *next;   /* same level next */
     struct rt_page *pre;    /* same level pre  */
 
-#ifdef RT_DEBUG_PAGE_LEAK
-    /* trace list */
-    struct rt_page *tl_next;
-    struct rt_page *tl_prev;
-    void *caller;
-    size_t trace_size;
-#endif
+    DEBUG_FIELD
 
     rt_uint32_t size_bits;     /* if is ARCH_ADDRESS_WIDTH_BITS, means not free */
     rt_uint32_t ref_cnt;       /* page group ref count */

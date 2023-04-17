@@ -123,7 +123,7 @@ static void _user_do_page_fault(struct rt_varea *varea,
 
     if (lwp_objs->source)
     {
-        void *paddr = rt_hw_mmu_v2p(lwp_objs->source, msg->fault_vaddr);
+        char *paddr = rt_hw_mmu_v2p(lwp_objs->source, msg->fault_vaddr);
         if (paddr != ARCH_MAP_FAILED)
         {
             void *vaddr;
@@ -221,9 +221,9 @@ int lwp_unmap_user(struct rt_lwp *lwp, void *va)
 static void _dup_varea(rt_varea_t varea, struct rt_lwp *src_lwp,
                        rt_aspace_t dst)
 {
-    void *vaddr = varea->start;
-    void *vend = vaddr + varea->size;
-    if (vaddr < (void *)USER_STACK_VSTART || vaddr >= (void *)USER_STACK_VEND)
+    char *vaddr = varea->start;
+    char *vend = vaddr + varea->size;
+    if (vaddr < (char *)USER_STACK_VSTART || vaddr >= (char *)USER_STACK_VEND)
     {
         while (vaddr != vend)
         {
@@ -431,7 +431,7 @@ void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa,
                        size_t map_size, int cached)
 {
     int err;
-    void *va;
+    char *va;
     size_t offset = 0;
 
     if (!map_size)
@@ -459,7 +459,7 @@ void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa,
     rt_size_t attr = cached ? MMU_MAP_U_RWCB : MMU_MAP_U_RW;
 
     err =
-        rt_aspace_map_phy(lwp->aspace, &hint, attr, MM_PA_TO_OFF(map_pa), &va);
+        rt_aspace_map_phy(lwp->aspace, &hint, attr, MM_PA_TO_OFF(map_pa), (void **)&va);
     if (err != RT_EOK)
     {
         va = RT_NULL;

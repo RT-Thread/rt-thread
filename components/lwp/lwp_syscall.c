@@ -306,7 +306,7 @@ static void _crt_thread_entry(void *parameter)
     user_stack &= ~7; //align 8
 
 #ifdef ARCH_MM_MMU
-    arch_crt_start_umode(parameter, tid->user_entry, (void *)user_stack, tid->stack_addr + tid->stack_size);
+    arch_crt_start_umode(parameter, tid->user_entry, (void *)user_stack, (char *)tid->stack_addr + tid->stack_size);
 #else
     set_user_context((void*)user_stack);
     arch_start_umode(parameter, tid->user_entry, ((struct rt_lwp *)tid->lwp)->data_entry, (void*)user_stack);
@@ -2396,7 +2396,7 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
         arch_start_umode(lwp->args,
                 lwp->text_entry,
                 (void*)USER_STACK_VEND,
-                thread->stack_addr + thread->stack_size);
+                (char *)thread->stack_addr + thread->stack_size);
         /* never reach here */
     }
     return -EINVAL;
