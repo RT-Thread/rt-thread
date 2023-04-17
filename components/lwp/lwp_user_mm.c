@@ -10,6 +10,7 @@
  * 2021-02-12     lizhirui     add 64-bit support for lwp_brk
  * 2021-02-19     lizhirui     add riscv64 support for lwp_user_accessable and lwp_get_from_user
  * 2021-06-07     lizhirui     modify user space bound check
+ * 2022-12-25     wangxiaoyao  adapt to new mm
  */
 
 #include <rtthread.h>
@@ -130,7 +131,7 @@ static void _user_do_page_fault(struct rt_varea *varea,
 
             if (!(varea->flag & MMF_TEXT))
             {
-                void *cp = rt_pages_alloc(0);
+                void *cp = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
                 if (cp)
                 {
                     memcpy(cp, vaddr, ARCH_PAGE_SIZE);

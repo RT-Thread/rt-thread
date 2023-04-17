@@ -70,7 +70,7 @@ void rt_varea_pgmgr_pop(rt_varea_t varea, void *vaddr, rt_size_t size)
 static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     void *page;
-    page = rt_pages_alloc(0);
+    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
 
     if (!page)
     {

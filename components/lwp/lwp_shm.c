@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-10-12     Jesven       first version
+ * 2023-02-20     wangxiaoyao  adapt to mm
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -17,8 +18,6 @@
 
 #include <lwp_user_mm.h>
 #include <mmu.h>
-#include <mm_aspace.h>
-#include <mm_flag.h>
 
 /* the kernel structure to represent a share-memory */
 struct lwp_shm_struct
@@ -140,7 +139,7 @@ static int _lwp_shmget(size_t key, size_t size, int create)
 
         /* allocate pages up to 2's exponent to cover the required size */
         bit = rt_page_bits(size);
-        page_addr = rt_pages_alloc(bit);           /* virtual address */
+        page_addr = rt_pages_alloc_ext(bit, PAGE_ANY_AVAILABLE);   /* virtual address */
         if (!page_addr)
         {
             goto err;
