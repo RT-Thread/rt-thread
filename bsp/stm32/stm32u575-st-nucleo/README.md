@@ -204,7 +204,8 @@ In general, the pin assignment of STM32 series can open the CubeMX project corre
 
 Go to the rt-thread\ bsp\ stm32\ stm32u575-st-nucleo folder, right-click to open the ENV window (provided that the ENV environment has been built under Windows), and type menuconfig to configure the system:  
 
-3.1 The communication between the development board and the module depends on the SPI device. The SPI driver has been implemented in bsp and can be used as long as it is opened in the setting. Go to `On-chip Peripheral Drivers` under `On-chip Peripheral-> `, check the `Enable SPI BUS-- >` option, press enter to enter, and further select `Enable SPI1 BUS` to complete the configuration:  
+#### 3.1 Turn on the SPI Device
+The communication between the development board and the module depends on the SPI device. The SPI driver has been implemented in bsp and can be used as long as it is opened in the setting. Go to `On-chip Peripheral Drivers` under `On-chip Peripheral-> `, check the `Enable SPI BUS-- >` option, press enter to enter, and further select `Enable SPI1 BUS` to complete the configuration:  
 
 ![](figures/menuconfig1.png) 
 ![](figures/menuconfig2.png)
@@ -235,7 +236,7 @@ If there is no configuration for the corresponding spi in the menuconfig in the 
 				
 		endif
 
-3.2 Configure the RW007 Package.
+#### 3.2 Configure the RW007 Package.
 
 RT-Thread provides supporting driver support for RW007 modules in the form of software packages. The default options of the system do not include software packages. Users need to enable them manually: return to the Menuconfig main interface through the Esc key, enter `RT-Thread online packages-- > `, `IoT-internet of things->`, `Wi-Fi-- > `, and check the `rw007: SPI WIFI rw007 driver-- >` option:
 ![](figures/menuconfig5.png)  
@@ -244,13 +245,13 @@ RW007 package Github repository link：[RT-Thread-packages/rw007: RW007 (SPI Wi-
 Then press Enter key to further set the parameters of the software package, complete the configuration of SPI bus and IO, change the bus device name `RW007 BUS NAME` to spi1, then configure SPI to control IO, and fill in each pin number according to the serial number of the following figure:   
 ![](figures/menuconfig6.png)  
 
-3.3 Open the WiFi framework.
+#### 3.3 Open the WiFi framework.
 
 The RW007 driver uses WLAN-related APIs. Click the following options to open the WiFi framework: `RT-Thread Components-- > `, `Device Drivers-- >`, `Using WiFi-- > `, and check `Using Wi-Fi framework`:  
 
 ![](figures/menuconfig7.png)
 
-3.4 Save Menuconfig configuration.
+#### 3.4 Save Menuconfig configuration.
 
 After completing the above three steps, the bsp configuration is complete, but the most important step is not to be omitted. Save the Menuconfig configuration: press the Esc key all the way to exit, and select Yes in the Save prompt window to confirm.
 

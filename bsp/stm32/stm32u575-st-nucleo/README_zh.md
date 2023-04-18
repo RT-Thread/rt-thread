@@ -154,7 +154,8 @@ GitHub链接：[https://github.com/RT-Thread/rt-thread](https://github.com/RT-Th
 ### 3.通过menuconfig配置 RW007 软件包
 进入 rt-thread\bsp\stm32\stm32u575-st-nucleo 文件夹，右键打开 ENV 窗口（前提是已在 Windows 下搭好 ENV 环境），输入 menuconfig 进行系统配置：  
 
-3.1开发板与模块的通讯依赖 SPI 设备，在 bsp 中已经实现了 SPI 驱动，只需在设置中打开即可使用。 进入 `Hardware Drivers Config --->` 下的 `On-chip Peripheral Drivers`，勾选 `Enable SPI BUS --->` 选项，并按回车键进入，进一步选中 `Enable SPI1 BUS`，完成配置：
+#### 3.1开启 SPI 设备
+开发板与模块的通讯依赖 SPI 设备，在 bsp 中已经实现了 SPI 驱动，只需在设置中打开即可使用。 进入 `Hardware Drivers Config --->` 下的 `On-chip Peripheral Drivers`，勾选 `Enable SPI BUS --->` 选项，并按回车键进入，进一步选中 `Enable SPI1 BUS`，完成配置：
 ![](figures/menuconfig1.png) 
 ![](figures/menuconfig2.png)
 ![](figures/menuconfig3.png)
@@ -184,7 +185,7 @@ GitHub链接：[https://github.com/RT-Thread/rt-thread](https://github.com/RT-Th
 				
 		endif
 
-3.2配置 RW007 软件包
+#### 3.2配置 RW007 软件包
 RT-Thread 通过软件包的形式，对 RW007 模块提供配套驱动支持，系统默认选项不包含软件包，用户需手动开启：通过 Esc 键回到 Menuconfig 主界面，依次进入 `RT-Thread online packages  --->` 、`IoT - internet of things  --->`、`Wi-Fi  --->`，勾选 `rw007: SPI WIFI rw007 driver  --->` 选项：
 ![](figures/menuconfig5.png)  
 RW007 软件包 Github 仓库链接：[RT-Thread-packages/rw007: RW007 (SPI Wi-Fi module) driver for RT-Thread](https://github.com/RT-Thread-packages/rw007)  
@@ -192,11 +193,11 @@ RW007 软件包 Github 仓库链接：[RT-Thread-packages/rw007: RW007 (SPI Wi-F
 紧接着按下 Enter 键进一步设置软件包参数，完成 SPI 总线和 IO 的配置，更改总线设备名称 RW007 BUS NAME 为 spi1,然后配置 SPI 控制 IO，各管脚号依次按下图序号填入：   
 ![](figures/menuconfig6.png)  
 
-3.3开启 WiFi 框架  
+#### 3.3开启 WiFi 框架  
 RW007 驱动使用了 WLAN 相关的接口，按以下选项路径打开 WiFi 框架：`RT-Thread Components  --->`、`Device Drivers  --->`、`Using WiFi  --->`，勾选 `Using Wi-Fi framework`：
 ![](figures/menuconfig7.png)
 
-3.4保存 Menuconfig 配置
+#### 3.4保存 Menuconfig 配置
 完成了上面的 3 步，bsp 配置算大功告成了，但最最重要的一步不能漏，保存 Menuconfig 配置：直接一路狂按 Esc 键退出，在保存提示窗口中选择 Yes 确认即可。
 
 ### 4.修改部分工程代码
