@@ -381,6 +381,8 @@ static void shell_auto_complete(char *prefix)
     rt_kprintf("\n");
     msh_auto_complete(prefix);
 
+    msh_opt_auto_complete(prefix);
+
     rt_kprintf("%s%s", FINSH_PROMPT, prefix);
 }
 
