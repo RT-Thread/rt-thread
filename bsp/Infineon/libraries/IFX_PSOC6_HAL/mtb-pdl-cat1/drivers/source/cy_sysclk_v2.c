@@ -1820,7 +1820,7 @@ cy_en_sysclk_status_t Cy_SysClk_EcoConfigure(uint32_t freq, uint32_t cSum, uint3
 
 #if defined (CY_IP_MXS22SRSS)
 
-#define CY_SYSCLK_CTRIM_TABLE_MAX_ENTRIES 33U
+#define CY_SYSCLK_CTRIM_TABLE_MAX_ENTRIES 32U
 
 /*******************************************************************************
 * Function Name: Cy_SysClk_SelectEcoCtrim
