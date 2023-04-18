@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 #define __VECTOR_ENCODING_H__
 
 /**
- * assembler names used for vset{i}vli vtypei immediate 
+ * assembler names used for vset{i}vli vtypei immediate
  */
 
 #define VEC_IMM_SEW_8      e8
