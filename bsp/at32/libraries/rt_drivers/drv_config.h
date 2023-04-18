@@ -25,6 +25,7 @@ extern "C" {
 #include "f403a_407/uart_config.h"
 #include "f403a_407/spi_config.h"
 #include "f403a_407/usb_config.h"
+#include "f403a_407/dac_config.h"
 #elif defined(SOC_SERIES_AT32F413)
 #include "f413/dma_config.h"
 #include "f413/uart_config.h"
@@ -44,6 +45,7 @@ extern "C" {
 #include "f423/uart_config.h"
 #include "f423/spi_config.h"
 #include "f423/usb_config.h"
+#include "f423/dac_config.h"
 #elif defined(SOC_SERIES_AT32F425)
 #include "f425/dma_config.h"
 #include "f425/uart_config.h"
@@ -54,6 +56,7 @@ extern "C" {
 #include "f435_437/uart_config.h"
 #include "f435_437/spi_config.h"
 #include "f435_437/usb_config.h"
+#include "f435_437/dac_config.h"
 #endif
 
 #ifdef __cplusplus
