@@ -126,6 +126,6 @@ msh />
 [uestczyh222][4] < [lymz@foxmail.com][5] >
 
 
-  [1]: https://www.rt-thread.org/page/download.html
+  [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
   [4]: https://github.com/uestczyh222
   [5]: mailto:lymz@foxmail.com

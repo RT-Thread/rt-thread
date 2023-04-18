@@ -124,5 +124,5 @@ and drivers → the kendryte-sdk package for rt-thread中将SDK改为latest版�
 
 * 芯片[datasheet][2]
 
-  [1]: https://www.rt-thread.org/page/download.html
+  [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
   [2]: https://s3.cn-north-1.amazonaws.com.cn/dl.kendryte.com/documents/kendryte_datasheet_20180919020633.pdf
