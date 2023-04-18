@@ -40,7 +40,7 @@
 | 8    | [PWM](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/pwm/pwm) | 在特定的管脚输出 PWM 波形                        |
 | 9    | [RTC](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc) | 设置和读取时间                                   |
 | 10   | [WDT](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/watchdog/watchdog) | 看门狗驱动                                       |
-| 11   | [QSPI](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi) | 通过 SPI（1、2、4线） 收发数据                   |
+| 11   | [QSPI](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi?id=配置-qspi-设备) | 通过 SPI（1、2、4线） 收发数据                   |
 
 ### 2.2 板载外设
 

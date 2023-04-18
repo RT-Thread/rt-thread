@@ -40,7 +40,7 @@ The driver libraries currently provided by RT-Thread already support multiple se
 | [PWM](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/pwm/pwm) | Outputs a PWM waveform at a specific pin                        |
 | [RTC](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc) | Set and read times                                   |
 | [WDT](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/watchdog/watchdog) | Watchdog driver                                       |
-| [QSPI](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi) | Send and receive data via SPI (1, 2, 4-wire).                   |
+| [QSPI](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi?id=配置-qspi-设备) | Send and receive data via SPI (1, 2, 4-wire).                   |
 
 ### 2.2 On-board peripherals
 
