@@ -6,7 +6,7 @@
 
 ## 2. 前提要求
 
-- 熟练使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/rtthread-development-guide/rtthread-tool-manual/env/env-user-manual/)
+- 熟练使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 - 熟悉 Kconfig 语法
 - 熟悉 STM32CubeMX 工具
 - 对 RT-Thread 设备驱动框架有一定了解
