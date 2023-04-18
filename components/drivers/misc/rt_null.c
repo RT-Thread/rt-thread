@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, Shanghai Real-Thread Electronic Technology Co.,Ltd
+ * Copyright (c) 2011-2023, Shanghai Real-Thread Electronic Technology Co.,Ltd
  *
  * Change Logs:
  * Date           Author       Notes

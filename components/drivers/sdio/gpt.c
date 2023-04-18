@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -178,14 +178,14 @@ static gpt_header *alloc_read_gpt_header(struct rt_mmcsd_card *card, size_t lba)
         return RT_NULL;
     }
     gpt = (gpt_header *)buf;
-    
+
     return gpt;
 }
 
 static int is_gpt_valid(struct rt_mmcsd_card *card, size_t lba, gpt_header **gpt, gpt_entry **ptes)
 {
     size_t lastlba;
-    
+
     if (!ptes)
     {
         return 0;
@@ -395,7 +395,7 @@ static void compare_gpts(gpt_header *pgpt, gpt_header *agpt, size_t lastlba)
 
     if (error_found)
     {
-        LOG_I("GPT: Use GNU Parted to correct GPT errors.");        
+        LOG_I("GPT: Use GNU Parted to correct GPT errors.");
     }
     return;
 }
@@ -540,7 +540,7 @@ int gpt_get_partition_param(struct rt_mmcsd_card *card, struct dfs_partition *pa
 
     if ((part->size >> 11) == 0)
     {
-        rt_kprintf("%d%s", part->size >> 1, "KB\n"); /* KB */        
+        rt_kprintf("%d%s", part->size >> 1, "KB\n"); /* KB */
     }
     else
     {

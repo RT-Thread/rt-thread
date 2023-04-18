@@ -106,7 +106,7 @@ void tty_ldisc_kill(struct tty_struct *tty)
 {
     if (!tty->ldisc)
     {
-        return;        
+        return;
     }
 
     /*
