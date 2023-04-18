@@ -13,7 +13,7 @@
 
 #define DMA_CHANNEL_NUM     (5)
 
-/** @defgroup DMA_DATA_FLOW
+/** @defgroup DMA_DATA_FLOW DMA_DATA_FLOW
  *  @{
  */
 #define    DMA_DATA_FLOW_M2M    (0x00000000)
@@ -24,7 +24,7 @@
   */
 
 
-/** @defgroup REQUEST_ID
+/** @defgroup REQUEST_ID REQUEST_ID
  *  @{
  */
 #define    REG_M2M                        (0)
@@ -68,7 +68,7 @@
   */
 
 
-/** @defgroup DMA_SOURCE_ADDR_INCREASE
+/** @defgroup DMA_SOURCE_ADDR_INCREASE DMA_SOURCE_ADDR_INCREASE
  *  @{
  */
 #define    DMA_SOURCE_ADDR_INCREASE_DISABLE    (0x00000000)
@@ -78,7 +78,7 @@
   */
 
 
-/** @defgroup DMA_DST_ADDR_INCREASE
+/** @defgroup DMA_DST_ADDR_INCREASE DMA_DST_ADDR_INCREASE
  *  @{
  */
 #define    DMA_DST_ADDR_INCREASE_DISABLE    (0x00000000)
@@ -88,7 +88,7 @@
   */
 
 
-/** @defgroup DMA_SRC_WIDTH
+/** @defgroup DMA_SRC_WIDTH DMA_SRC_WIDTH
  *  @{
  */
 #define    DMA_SRC_WIDTH_BYTE         (0x00000000)    /*  8bit */
@@ -98,7 +98,7 @@
   * @}
   */
 
-/** @defgroup DMA_DST_WIDTH
+/** @defgroup DMA_DST_WIDTH DMA_DST_WIDTH
  *  @{
  */
 #define    DMA_DST_WIDTH_BYTE         (0x00000000)    /*  8bit */
@@ -110,7 +110,7 @@
 
 
 
- /** @defgroup DMA_MODE DMA MODE
+ /** @defgroup DMA_MODE DMA_MODE
  *  @{
  */
 #define DMA_NORMAL                    0x00000000U                  /*!< Normal mode                  */
@@ -188,7 +188,7 @@ typedef struct DMA_NextLink
 }DMA_LLI_InitTypeDef;
 
 
-/** @defgroup  GPIO Private Macros
+/** @defgroup  GPIO_Private_Macros GPIO Private Macros
   * @{
   */
 #define IS_DMA_MODE(MODE) (((MODE) == DMA_NORMAL )  || \

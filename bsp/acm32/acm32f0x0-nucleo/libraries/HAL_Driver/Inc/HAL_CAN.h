@@ -11,9 +11,6 @@
 
 #include "ACM32Fxx_HAL.h"
 
-/**
-  * @}
-  */
 
 /******************************************************************************/
 /*                    Peripheral Registers Bits Definition                    */
@@ -170,7 +167,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 #define IS_CAN_ALL_PERIPH(PERIPH) (((PERIPH) == CAN1))
 
-/** @defgroup CAN_identifier_type
+/** @defgroup CAN_identifier_type CAN_identifier_type
   * @{
   */
 
@@ -181,7 +178,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 /**
   * @}
   */
-/** @defgroup CAN_remote_transmission
+/** @defgroup CAN_remote_transmission CAN_remote_transmission
   * @{
   */
 
@@ -192,7 +189,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 /**
   * @}
   */
-/** @defgroup CAN_TxRxMessege
+/** @defgroup CAN_TxRxMessege CAN_TxRxMessege
   * @{
   */
 
@@ -209,7 +206,10 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_CAN_BRP(BRP)     (((BRP) <= 63))
 
 /**
-  * @defgroup CAN_Mode
+  * @}
+  */
+/**
+  * @defgroup CAN_Mode CAN_Mode
   * @{
   */
 #define CAN_Mode_Normal         ((uint8_t)0x00) /*!< Normal mode */
@@ -222,7 +222,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   */
 
 /**
-  * @defgroup CAN_Operating_Mode
+  * @defgroup CAN_Operating_Mode CAN_Operating_Mode
   * @{
   */
 #define CAN_OperatingMode_Normal           ((uint8_t)0x00) /*!< Initialization mode */
@@ -241,7 +241,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   * @}
   */
 
-/** @defgroup CAN_SAM
+/** @defgroup CAN_SAM CAN_SAM
   * @{
   */
 
@@ -254,7 +254,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   */
 
 
-/** @defgroup CAN_synchronisation_jump_width
+/** @defgroup CAN_synchronisation_jump_width CAN_synchronisation_jump_width
   * @{
   */
 
@@ -269,7 +269,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   * @}
   */
 
-    /** @defgroup CAN_time_quantum_in_bit_segment_1
+/** @defgroup CAN_time_quantum_in_bit_segment_1 CAN_time_quantum_in_bit_segment_1
   * @{
   */
 
@@ -295,7 +295,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   * @}
   */
 
-/** @defgroup CAN_time_quantum_in_bit_segment_2
+/** @defgroup CAN_time_quantum_in_bit_segment_2 CAN_time_quantum_in_bit_segment_2
   * @{
   */
 
@@ -313,7 +313,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
   */
 
 
-/** @defgroup CAN_filter_mode
+/** @defgroup CAN_filter_mode CAN_filter_mode
   * @{
   */
 #define CAN_FilterMode_Dual         ((uint8_t)0x00)  /*!< identifier list mode */
@@ -321,11 +321,11 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_CAN_FILTER_MODE(MODE) (((MODE) == CAN_FilterMode_Dual) || \
                                   ((MODE) == CAN_FilterMode_Single))
 
-    /**
+/**
   * @}
   */
 
-/** @defgroup CAN_ErrorCode
+/** @defgroup CAN_ErrorCode CAN_ErrorCode
   * @{
   */
 #define CAN_ErrorType_ErrCode         ((uint8_t)0xC0)  /*!< identifier list mode */
