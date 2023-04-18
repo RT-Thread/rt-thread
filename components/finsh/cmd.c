@@ -38,6 +38,7 @@
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
+#include "msh.h"
 
 #define LIST_FIND_OBJ_NR 8
 
@@ -894,116 +895,92 @@ long list_device(void)
 }
 #endif /* RT_USING_DEVICE */
 
+CMD_OPTIONS_STATEMENT(cmd_list)
 int cmd_list(int argc, char **argv)
 {
-    if(argc == 2)
+    if (argc == 2)
     {
-        if(strcmp(argv[1], "thread") == 0)
+        switch (MSH_OPT_ID_GET(cmd_list))
         {
-            list_thread();
-        }
-        else if(strcmp(argv[1], "timer") == 0)
-        {
-            list_timer();
-        }
+        case RT_Object_Class_Thread: list_thread(); break;
+        case RT_Object_Class_Timer: list_timer(); break;
 #ifdef RT_USING_SEMAPHORE
-        else if(strcmp(argv[1], "sem") == 0)
-        {
-            list_sem();
-        }
+        case RT_Object_Class_Semaphore: list_sem(); break;
 #endif /* RT_USING_SEMAPHORE */
 #ifdef RT_USING_EVENT
-        else if(strcmp(argv[1], "event") == 0)
-        {
-            list_event();
-        }
+        case RT_Object_Class_Event: list_event(); break;
 #endif /* RT_USING_EVENT */
 #ifdef RT_USING_MUTEX
-        else if(strcmp(argv[1], "mutex") == 0)
-        {
-            list_mutex();
-        }
+        case RT_Object_Class_Mutex: list_mutex(); break;
 #endif /* RT_USING_MUTEX */
 #ifdef RT_USING_MAILBOX
-        else if(strcmp(argv[1], "mailbox") == 0)
-        {
-            list_mailbox();
-        }
+        case RT_Object_Class_MailBox: list_mailbox(); break;
 #endif  /* RT_USING_MAILBOX */
 #ifdef RT_USING_MESSAGEQUEUE
-        else if(strcmp(argv[1], "msgqueue") == 0)
-        {
-            list_msgqueue();
-        }
+        case RT_Object_Class_MessageQueue: list_msgqueue(); break;
 #endif /* RT_USING_MESSAGEQUEUE */
 #ifdef RT_USING_MEMHEAP
-        else if(strcmp(argv[1], "memheap") == 0)
-        {
-            list_memheap();
-        }
+        case RT_Object_Class_MemHeap: list_memheap(); break;
 #endif /* RT_USING_MEMHEAP */
 #ifdef RT_USING_MEMPOOL
-        else if(strcmp(argv[1], "mempool") == 0)
-        {
-            list_mempool();
-        }
+        case RT_Object_Class_MemPool: list_mempool(); break;
 #endif /* RT_USING_MEMPOOL */
 #ifdef RT_USING_DEVICE
-        else if(strcmp(argv[1], "device") == 0)
-        {
-            list_device();
-        }
+        case RT_Object_Class_Device: list_device(); break;
 #endif /* RT_USING_DEVICE */
 #ifdef RT_USING_DFS
-        else if(strcmp(argv[1], "fd") == 0)
+        case 0x100:
         {
             extern int list_fd(void);
             list_fd();
+            break;
         }
 #endif /* RT_USING_DFS */
-        else
-        {
+        default:
             goto _usage;
-        }
+            break;
+        };
 
         return 0;
-    }
+        }
 
 _usage:
     rt_kprintf("Usage: list [options]\n");
     rt_kprintf("[options]:\n");
-    rt_kprintf("    %-12s - list threads\n", "thread");
-    rt_kprintf("    %-12s - list timers\n", "timer");
+    MSH_OPT_DUMP(cmd_list);
+    return 0;
+    }
+CMD_OPTIONS_NODE_START(cmd_list)
+CMD_OPTIONS_NODE(RT_Object_Class_Thread, thread, list threads)
+CMD_OPTIONS_NODE(RT_Object_Class_Timer, timer, list timers)
 #ifdef RT_USING_SEMAPHORE
-    rt_kprintf("    %-12s - list semaphores\n", "sem");
+CMD_OPTIONS_NODE(RT_Object_Class_Semaphore, sem, list semaphores)
 #endif /* RT_USING_SEMAPHORE */
-#ifdef RT_USING_MUTEX
-    rt_kprintf("    %-12s - list mutexs\n", "mutex");
-#endif /* RT_USING_MUTEX */
 #ifdef RT_USING_EVENT
-    rt_kprintf("    %-12s - list events\n", "event");
+CMD_OPTIONS_NODE(RT_Object_Class_Event, event, list events)
 #endif /* RT_USING_EVENT */
+#ifdef RT_USING_MUTEX
+CMD_OPTIONS_NODE(RT_Object_Class_Mutex, mutex, list mutexs)
+#endif /* RT_USING_MUTEX */
 #ifdef RT_USING_MAILBOX
-    rt_kprintf("    %-12s - list mailboxs\n", "mailbox");
-#endif /* RT_USING_MAILBOX */
+CMD_OPTIONS_NODE(RT_Object_Class_MailBox, mailbox, list mailboxs)
+#endif  /* RT_USING_MAILBOX */
 #ifdef RT_USING_MESSAGEQUEUE
-    rt_kprintf("    %-12s - list message queues\n", "msgqueue");
+CMD_OPTIONS_NODE(RT_Object_Class_MessageQueue, msgqueue, list message queues)
 #endif /* RT_USING_MESSAGEQUEUE */
 #ifdef RT_USING_MEMHEAP
-    rt_kprintf("    %-12s - list memory heaps\n", "memheap");
+CMD_OPTIONS_NODE(RT_Object_Class_MemHeap, memheap, list memory heaps)
 #endif /* RT_USING_MEMHEAP */
 #ifdef RT_USING_MEMPOOL
-    rt_kprintf("    %-12s - list memory pools\n", "mempool");
+CMD_OPTIONS_NODE(RT_Object_Class_MemPool, mempool, list memory pools)
 #endif /* RT_USING_MEMPOOL */
 #ifdef RT_USING_DEVICE
-    rt_kprintf("    %-12s - list devices\n", "device");
+CMD_OPTIONS_NODE(RT_Object_Class_Device, device, list devices)
 #endif /* RT_USING_DEVICE */
 #ifdef RT_USING_DFS
-    rt_kprintf("    %-12s - list file descriptors\n", "fd");
+CMD_OPTIONS_NODE(0x100, fd, list file descriptors)
 #endif /* RT_USING_DFS */
-
-    return 0;
-}
-MSH_CMD_EXPORT_ALIAS(cmd_list, list, list objects);
+CMD_OPTIONS_NODE_END
+MSH_CMD_EXPORT_ALIAS(cmd_list, list, list objects, optenable);
 
 #endif /* RT_USING_FINSH */
