@@ -1,6 +1,6 @@
 # Part I : NUCLEO-STM32U575ZI-Q- BSP Introduction
 
-[中文](README_zh.md)
+**English** | [中文](README_zh.md)
 
 ## MCU: STM32U575ZI @110MHz, 2048 KB FLASH,  786 KB RAM
 

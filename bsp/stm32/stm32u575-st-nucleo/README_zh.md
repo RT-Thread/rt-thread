@@ -1,5 +1,7 @@
 # 第一部分：NUCLEO-U575ZI-Q 开发板 BSP 说明
 
+[English](README.md) | **中文**
+
 ## 简介
 
 本文档为 liukang 为 NUCLEO-U575ZI-Q 开发板提供的 BSP (板级支持包) 说明。
