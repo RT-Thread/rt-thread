@@ -1,6 +1,6 @@
 # MIMXRT1060-EVK
 
-**中文**|[英文](README.md) 
+**中文** | [英文](README.md) 
 
 ## 1 BSP简介
 
