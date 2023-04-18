@@ -232,11 +232,6 @@ typedef struct
   * @}
   */
 
- /**
-  * @}
-  */
-
-
 /** @defgroup LCD_Bias LCD Bias
   * @{
   */
@@ -252,7 +247,7 @@ typedef struct
   * @}
   */
 
- /** @defgroup Driving_Waveform  Driving_Waveform
+/** @defgroup Driving_Waveform  Driving_Waveform
   * @{
   */
 
@@ -264,7 +259,7 @@ typedef struct
   * @}
   */
 
-  /** @defgroup BiasSrc
+/** @defgroup BiasSrc BiasSrc
   * @{
   */
 
@@ -278,7 +273,7 @@ typedef struct
   * @}
   */
 
-  /** @defgroup DisplayMode
+/** @defgroup DisplayMode DisplayMode
   * @{
   */
 
@@ -291,7 +286,7 @@ typedef struct
   */
 
 
-    /** @defgroup StaticPower
+/** @defgroup StaticPower StaticPower
   * @{
   */
 
@@ -304,7 +299,7 @@ typedef struct
   */
 
 
-/** @defgroup LCDFrequency
+/** @defgroup LCDFrequency LCDFrequency
   * @{
   */
 
@@ -320,7 +315,7 @@ typedef struct
   * @}
   */
 
- /** @defgroup BlinkEN
+/** @defgroup BlinkEN BlinkEN
   * @{
   */
 #define LCD_BlinkEN_Disable                                 ((uint32_t)0x00000000U)     /*!<LCD闪屏配置使能*/
@@ -332,7 +327,7 @@ typedef struct
   */
 #define IS_LCD_BlinkFrequency(__BlinkFrequency__)           ((__BlinkFrequency__)<= ((uint8_t)0x3F)) /*!<LCD闪屏配置*/
 
- /** @defgroup BiasRes
+/** @defgroup BiasRes BiasRes
   * @{
   */
 #define LCD_BiasRes_240k                                    ((uint32_t)0x00000000U)     /*!<LCD闪屏配置使能*/
@@ -343,7 +338,7 @@ typedef struct
   * @}
   */
 
-  /** @defgroup DriveMod
+/** @defgroup DriveMod DriveMod
   * @{
   */
 #define LCD_DriveMod_Res240k4M                                    ((uint32_t)0x00000000U)     /*!<LCD闪屏配置使能*/
@@ -357,7 +352,7 @@ typedef struct
   */
 
 
- /** @defgroup FastCharge
+/** @defgroup FastCharge FastCharge
   * @{
   */
 #define LCD_FastCharge_Disable                                 ((uint32_t)0x00000000U)     /*!<LCD闪屏配置使能*/
@@ -368,7 +363,7 @@ typedef struct
   * @}
   */
 
- /** @defgroup LCD_Contrast
+/** @defgroup LCD_Contrast LCD_Contrast
   * @{
   */
 #define LCD_Contrast_531VDD                                     ((uint32_t)0x00000000U)    /*!<LCD对比度调整*/
@@ -412,9 +407,6 @@ typedef struct
 
 #define IS_LCD_PONTime(__PONTime__)                         ((__PONTime__) <= ((uint32_t)0x3F))
 
-/**
-  * @}
-  */
 
 
 void HAL_LCD_MspInit(LCD_HandleTypeDef *hlcd);

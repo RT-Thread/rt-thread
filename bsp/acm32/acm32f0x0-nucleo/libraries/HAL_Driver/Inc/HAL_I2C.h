@@ -63,7 +63,7 @@
 #define I2C_TIMEOUT_TIMOUTEN                BIT15
 #define I2C_TOUTA_INTEN                     BIT14
 
-/** @defgroup I2C_MODE
+/** @defgroup I2C_MODE I2C_MODE
  *  @{
  */
 #define    I2C_MODE_SLAVE     (0U)
@@ -72,7 +72,7 @@
   * @}
   */
 
-/** @defgroup CLOCK_SPEED
+/** @defgroup CLOCK_SPEED CLOCK_SPEED
  *  @{
  */
 #define    CLOCK_SPEED_STANDARD     (100000U)
@@ -83,7 +83,7 @@
   */
 
 
-/** @defgroup TX_AUTO_EN
+/** @defgroup TX_AUTO_EN TX_AUTO_EN
  *  @{
  */
 #define    TX_AUTO_EN_DISABLE    (0U)
@@ -93,7 +93,7 @@
   */
 
 
-/** @defgroup NO_STRETCH_MODE
+/** @defgroup NO_STRETCH_MODE NO_STRETCH_MODE
  *  @{
  */
 #define    NO_STRETCH_MODE_STRETCH      (0U)
@@ -130,6 +130,9 @@
 #define I2C_MEM_ADD_MSB(__ADDRESS__)                       ((uint8_t)((uint16_t)(((uint16_t)((__ADDRESS__) & (uint16_t)0xFF00)) >> 8)))
 #define I2C_MEM_ADD_LSB(__ADDRESS__)                       ((uint8_t)((uint16_t)((__ADDRESS__) & (uint16_t)0x00FF)))
 
+/**
+  * @}
+  */
 /**
   * @brief  I2C Configuration Structure definition
   */

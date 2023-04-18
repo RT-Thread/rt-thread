@@ -6,7 +6,7 @@
 
 ## 2. 前提要求
 
-- 熟练使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/rtthread-development-guide/rtthread-tool-manual/env/env-user-manual/)
+- 熟练使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 - 熟悉 [Kconfig](https://www.rt-thread.org/document/site/#/development-tools/kconfig/kconfig) 语法
 - 熟悉 [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp) 工具
 - 了解 RT-Thread [设备驱动框架](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/device) 
