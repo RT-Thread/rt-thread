@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -84,9 +84,9 @@
 
 /**
  * @brief save vector extension hardware state
- * 
+ *
  * @param dst register storing bottom of storage block
- * 
+ *
  */
 .macro SAVE_VECTOR, dst
     mv      t1, \dst
@@ -117,9 +117,9 @@
 
 /**
  * @brief restore vector extension hardware states
- * 
+ *
  * @param dst register storing bottom of storage block
- * 
+ *
  */
 .macro RESTORE_VECTOR, dst
     // restore vector registers first since it will modify vector states
