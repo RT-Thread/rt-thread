@@ -56,7 +56,7 @@ RT-Thread has a number of software packages, which can be added to the project b
 
 ## 4 Networking with ESP8266 modules
 
-The ESP8266 is a cost-effective, highly integrated Wi-Fi MCU for IoT applications, and can also be used as a standalone WIFI module with the following physical diagram. ESP8266 modules usually support [AT](https://www.rt-thread.org/document/site/#/rt- thread-version/rt-thread-standard/programming-manual/at/at), RT-Thread provides an abstraction layer for these modules that support AT instructions, and this summary will use the AT group to communicate with ESP8266 and connect WIFI.
+The ESP8266 is a cost-effective, highly integrated Wi-Fi MCU for IoT applications, and can also be used as a standalone WIFI module with the following physical diagram. ESP8266 modules usually support [AT](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/at/at), RT-Thread provides an abstraction layer for these modules that support AT instructions, and this summary will use the AT group to communicate with ESP8266 and connect WIFI.
 
 <img src="./figures/7esp8266.png" style="zoom:60%;" />
 
