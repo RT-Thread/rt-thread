@@ -70,7 +70,7 @@ RT-Thread源代码目录结构如下图所示：
 
 Env 是RT-Thread推出的开发辅助工具，针对基于RT-Thread操作系统的项目工程，提供编译构建环境、图形化系统配置及软件包管理功能。其内置的 menuconfig 提供了简单易用的配置剪裁工具，可对内核、组件和软件包进行自由裁剪，使系统以搭积木的方式进行构建。
 
-[下载 Env 工具](https://www.rt-thread.org/page/download.html)
+[下载 Env 工具](https://www.rt-thread.org/download.html#download-rt-thread-env-tool)
 
 [Env 用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 
@@ -174,7 +174,7 @@ RT-Thread微信公众号：
 
 # 贡献代码
 
-如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/githubd)。
+如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
 
 ## 感谢以下小伙伴对本仓库的贡献！
 

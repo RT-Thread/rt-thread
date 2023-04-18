@@ -52,7 +52,7 @@ MM32F3270 EVB 开发板特性：
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-推荐熟悉 RT_Thread 的用户使用[env工具](https://www.rt-thread.org/page/download.html)，可以在console下进入到 `bsp/mm32l37x` 目录中，运行以下命令：
+推荐熟悉 RT_Thread 的用户使用[env工具](https://www.rt-thread.org/download.html#download-rt-thread-env-tool)，可以在console下进入到 `bsp/mm32l37x` 目录中，运行以下命令：
 
 `scons`
 
