@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_lin.h
-* \version 1.0
+* \version 1.1
 *
 * \brief
 * Provides an API declaration of the LIN driver
@@ -147,6 +147,11 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>1.1</td>
+*     <td>Fixed MISRA 2012 violations.</td>
+*     <td>MISRA 2012 compliance.</td>
+*   </tr>
+*   <tr>
 *     <td>1.0</td>
 *     <td>Initial version</td>
 *     <td></td>
@@ -194,7 +199,7 @@ extern "C" {
 #define CY_LIN_DRV_VERSION_MAJOR    1
 
 /** Driver minor version */
-#define CY_LIN_DRV_VERSION_MINOR    0
+#define CY_LIN_DRV_VERSION_MINOR    1
 
 /** LIN driver ID */
 #define CY_LIN_ID CY_PDL_DRV_ID(0x37u)
@@ -429,7 +434,7 @@ typedef struct cy_stc_lin_test_error_config
     bool txPIDStop_error;        /**< At the receiver, this should result in INTR.RX_HEADER_FRAME_ERROR activation. */
     bool txDataStop_error;        /**< At the receiver, this should result in INTR.RX_RESPONSE_FRAME_ERROR activation. */
     bool txChecksum_error;        /**< At the receiver, this should result in INTR.RX_RESPONSE_CHECKSUM_ERROR activation. */
-    bool txCheksumStop_error;    /**< At the receiver, this should result in INTR.RX_RESPONSE_FRAME_ERROR activation. */
+    bool txChecksumStop_error;    /**< At the receiver, this should result in INTR.RX_RESPONSE_FRAME_ERROR activation. */
 }cy_stc_lin_test_error_config_t;
 
 /** \} group_lin_data_structures */

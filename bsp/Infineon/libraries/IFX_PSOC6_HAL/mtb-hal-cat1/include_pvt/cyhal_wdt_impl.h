@@ -30,7 +30,7 @@
 * \addtogroup group_hal_impl_wdt WDT (Watchdog Timer)
 * \ingroup group_hal_impl
 * \{
-* The CAT1 (PSoCâ„¢ 6) WDT is only capable of supporting certain timeout ranges below its maximum timeout.
+* The CAT1 WDT is only capable of supporting certain timeout ranges below its maximum timeout.
 * As a result, any unsupported timeouts given to the HAL WDT are rounded up to the nearest supported value.
 * The following table describes the unsupported ranges and the timeout values they are rounded to.
 *

@@ -41,7 +41,7 @@ GCC开发使用 RT-Thread 官方提供的 env 工具，该工具集成 GCC 工�
 
 下载地址：[点击下载env工具](https://www.rt-thread.org/page/download.html)
 
-第一次使用env工具的开发者可以去这里查看教程：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/rtthread-development-guide/rtthread-tool-manual/env/env-user-manual/)。
+第一次使用env工具的开发者可以去这里查看教程：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)。
 
 ### 4.2 Linux/Mac 环境准备
 

@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -29,9 +29,9 @@
  * \addtogroup group_hal_impl_udb_sdio UDB SDIO (Secure Digital Input Output)
  * \ingroup group_hal_impl
  * \{
- * The UDB based SDIO interface allows for communicating between a PSoC™ 6 and a
+ * The UDB based SDIO interface allows for communicating between a CAT1 and a
  * Cypress wireless device such as the CYW4343W, CYW43438, or CYW43012. This
- * library allows PSoC™ 6 devices that do not have a dedicated SDHC hardware block,
+ * library allows CAT1 devices that do not have a dedicated SDHC hardware block,
  * but do have UDBs, to work with the
  * <a href="https://github.com/infineon/wifi-host-driver">Wi-Fi
  * Host Driver (WHD)</a> library.
@@ -72,7 +72,7 @@ extern "C"
 #include <stdlib.h>
 #include "SDIO_HOST_cfg.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_sdio.h"
 #include "cyhal_gpio.h"
 #include "cyhal_interconnect.h"
@@ -236,28 +236,6 @@ static void _cyhal_sdio_interrupts_dispatcher_IRQHandler(void)
     }
 }
 
-static void _cyhal_sdio_free_dmas()
-{
-    cyhal_resource_inst_t dmaRsc;
-    dmaRsc.type = CYHAL_RSC_DW;
-
-    dmaRsc.block_num = 0;
-    dmaRsc.channel_num = 0;
-    cyhal_hwmgr_free(&dmaRsc);
-
-    dmaRsc.block_num = 0;
-    dmaRsc.channel_num = 1;
-    cyhal_hwmgr_free(&dmaRsc);
-
-    dmaRsc.block_num = 1;
-    dmaRsc.channel_num = 1;
-    cyhal_hwmgr_free(&dmaRsc);
-
-    dmaRsc.block_num = 1;
-    dmaRsc.channel_num = 3;
-    cyhal_hwmgr_free(&dmaRsc);
-}
-
 static cy_rslt_t _cyhal_sdio_configure_pin(
     cyhal_gpio_t pin, cyhal_gpio_t *pin_ref, const cy_stc_gpio_pin_config_t* cfg)
 {
@@ -290,61 +268,8 @@ cy_rslt_t cyhal_sdio_init(cyhal_sdio_t *obj, cyhal_gpio_t cmd, cyhal_gpio_t clk,
     obj->pin_data1 = CYHAL_NC_PIN_VALUE;
     obj->pin_data2 = CYHAL_NC_PIN_VALUE;
     obj->pin_data3 = CYHAL_NC_PIN_VALUE;
-    obj->dma0Ch0.resource.type = CYHAL_RSC_INVALID;
-    obj->dma0Ch1.resource.type = CYHAL_RSC_INVALID;
-    obj->dma1Ch1.resource.type = CYHAL_RSC_INVALID;
-    obj->dma1Ch3.resource.type = CYHAL_RSC_INVALID;
 
-    /* Reserve clock */
-    obj->clock.block = CYHAL_CLOCK_BLOCK_PERIPHERAL_8BIT;
-    obj->clock.channel = 0;
-    obj->clock.reserved = false;
-
-    cy_rslt_t retVal = cyhal_clock_reserve(&(obj->clock), &(obj->clock));
-    if (retVal == CY_RSLT_SUCCESS)
-    {
-        /* Assign clock divider */
-        retVal = _cyhal_utils_peri_pclk_set_divider(PCLK_UDB_CLOCKS0, &(obj->clock), 0U);
-
-        if (CY_SYSCLK_SUCCESS == retVal)
-        {
-            retVal = _cyhal_utils_peri_pclk_enable_divider(PCLK_UDB_CLOCKS0, &(obj->clock));
-        }
-
-        if (CY_SYSCLK_SUCCESS == retVal)
-        {
-            retVal = _cyhal_utils_peri_pclk_assign_divider(PCLK_UDB_CLOCKS0, &(obj->clock));
-        }
-    }
-
-    /* The DMAs are initialized in SDIO_Init() function, so only reserve */
-    if (retVal == CY_RSLT_SUCCESS)
-    {
-        /* Reserve DMA0 CH0 */
-        cyhal_resource_inst_t dmaRsc = { CYHAL_RSC_DW, 0, 0 };
-        retVal = cyhal_hwmgr_reserve(&dmaRsc);
-    }
-
-    if (retVal == CY_RSLT_SUCCESS)
-    {
-        /* Reserve DMA0 CH1 */
-        cyhal_resource_inst_t dmaRsc = { CYHAL_RSC_DW, 0, 1 };
-        retVal = cyhal_hwmgr_reserve(&dmaRsc);
-    }
-
-    if (retVal == CY_RSLT_SUCCESS)
-    {
-        /* Reserve DMA1 CH1 */
-        cyhal_resource_inst_t dmaRsc = { CYHAL_RSC_DW, 1, 1 };
-        retVal = cyhal_hwmgr_reserve(&dmaRsc);
-    }
-
-    if (retVal == CY_RSLT_SUCCESS)
-    {
-        /* Reserve DMA1 CH3 */
-        cyhal_resource_inst_t dmaRsc = { CYHAL_RSC_DW, 1, 3 };
-        retVal = cyhal_hwmgr_reserve(&dmaRsc);
-    }
+    cy_rslt_t retVal = SDIO_ReserveResources();
 
     /* Reserve the clk, cmd & 4 data pins */
     if (retVal == CY_RSLT_SUCCESS)
@@ -453,12 +378,6 @@ void cyhal_sdio_free(cyhal_sdio_t *obj)
     _cyhal_utils_release_if_used(&(obj->pin_data2));
     _cyhal_utils_release_if_used(&(obj->pin_data3));
 
-    if (obj->clock.reserved)
-    {
-        cyhal_clock_free(&(obj->clock));
-    }
-
-    _cyhal_sdio_free_dmas();
     if (obj->resource.type != CYHAL_RSC_INVALID)
     {
         cyhal_hwmgr_free(&(obj->resource));

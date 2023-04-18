@@ -239,6 +239,9 @@ static void _enet_clk_init(void)
 //    IOMUXC_GPR->GPR1 |= 1 << 23;
         /* Set 50MHz output clock required by PHY. */
     const clock_enet_pll_config_t config = {.enableClkOutput = true, .loopDivider = 1};
+#if defined(SOC_IMXRT1020_SERIES)
+    const clock_enet_pll_config_t config = {.enableClkOutput = true, .enableClkOutput500M = true, .loopDivider = 1};
+#endif
     CLOCK_InitEnetPll(&config);
 
     /* Output 50M clock to PHY. */
@@ -1017,7 +1020,7 @@ static int rt_hw_imxrt_eth_init(void)
     imxrt_eth_device.dev_addr[4] = 0x22;
     imxrt_eth_device.dev_addr[5] = 0x33;
 
-    imxrt_eth_device.speed = kENET_MiiSpeed100M;//Ҫ֧��ǧ�ף�ֱ�ӽ���ֵ��ΪkENET_MiiSpeed1000M
+    imxrt_eth_device.speed = kENET_MiiSpeed100M;//要支持千兆，直接赋值为kENET_MiiSpeed1000M
     imxrt_eth_device.duplex = kENET_MiiFullDuplex;
 
     imxrt_eth_device.enet_base = ENET_1G;

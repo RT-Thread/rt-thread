@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_sysclk.c
-* \version 3.40
+* \version 3.50
 *
 * Provides an API implementation of the sysclk driver.
 *
@@ -29,7 +29,7 @@
 
 #include "cy_sysclk.h"
 #include "cy_syslib.h"
-#include "cy_btss.h"
+#include "cy_syspm_btss.h"
 #include <stdlib.h>
 
 cy_en_sysclk_status_t
@@ -474,6 +474,7 @@ uint8_t Cy_SysClk_ClkMemGetDivider(void)
 /* =========================    clk_pump SECTION    ========================= */
 /* ========================================================================== */
 
+#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
 void Cy_SysClk_ClkPumpSetSource(cy_en_clkpump_in_sources_t source)
 {
     CY_ASSERT_L3(source <= CY_SYSCLK_PUMP_IN_CLKPATH15);
@@ -519,7 +520,7 @@ uint32_t Cy_SysClk_ClkPumpGetFrequency(void)
             (Cy_SysClk_ClkPathGetFrequency((uint32_t)Cy_SysClk_ClkPumpGetSource()) /
              (1UL << (uint32_t)Cy_SysClk_ClkPumpGetDivider())) : 0UL);
 }
-
+#endif /* defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) */
 /* ========================================================================== */
 /* ==========================    clk_bak SECTION    ========================= */
 /* ========================================================================== */
@@ -527,10 +528,11 @@ uint32_t Cy_SysClk_ClkPumpGetFrequency(void)
 void Cy_SysClk_ClkBakSetSource(cy_en_clkbak_in_sources_t source)
 {
     CY_ASSERT_L3(source <= CY_SYSCLK_BAK_IN_PILO);
+
 #if defined (CY_IP_MXS22SRSS)
-    CY_REG32_CLR_SET(BACKUP_CTL, SRSS_CLK_WCO_CONFIG_CLK_SEL, source);
+    BACKUP_CTL = (_CLR_SET_FLD32U(BACKUP_CTL, SRSS_CLK_WCO_CONFIG_CLK_RTC_SEL, (uint32_t) source));
 #else
-    CY_REG32_CLR_SET(BACKUP_CTL, BACKUP_CTL_CLK_SEL, source);
+    BACKUP_CTL = (_CLR_SET_FLD32U(BACKUP_CTL, BACKUP_CTL_CLK_SEL, (uint32_t) source));
 #endif
 }
 
@@ -539,13 +541,12 @@ cy_en_clkbak_in_sources_t Cy_SysClk_ClkBakGetSource(void)
 {
     CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 10.8', 1, 'Intentional typecast to cy_en_clkbak_in_sources_t enum.');
 #if defined (CY_IP_MXS22SRSS)
-    return ((cy_en_clkbak_in_sources_t)_FLD2VAL(SRSS_CLK_WCO_CONFIG_CLK_SEL, BACKUP_CTL));
+    return ((cy_en_clkbak_in_sources_t)_FLD2VAL(SRSS_CLK_WCO_CONFIG_CLK_RTC_SEL, BACKUP_CTL));
 #else
     return ((cy_en_clkbak_in_sources_t)_FLD2VAL(BACKUP_CTL_CLK_SEL, BACKUP_CTL));
 #endif
     CY_MISRA_BLOCK_END('MISRA C-2012 Rule 10.8');
 }
-
 
 /* ========================================================================== */
 /* ===========================    clkLf SECTION    ========================== */
@@ -553,7 +554,7 @@ cy_en_clkbak_in_sources_t Cy_SysClk_ClkBakGetSource(void)
 
 void Cy_SysClk_ClkLfSetSource(cy_en_clklf_in_sources_t source)
 {
-    CY_ASSERT_L3(source <= CY_SYSCLK_CLKLF_IN_PILO);
+    CY_ASSERT_L3(source <= CY_SYSCLK_CLKLF_IN_MAX);
     CY_REG32_CLR_SET(SRSS_CLK_SELECT, SRSS_CLK_SELECT_LFCLK_SEL, source);
 }
 
@@ -738,18 +739,24 @@ bool Cy_SysClk_IsPeriGroupSlaveCtlSet(uint32_t groupNum,cy_en_peri_grp_sl_ctl_nu
 
 #if defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)
 
-uint32_t Cy_SysClk_ClkFastGetFrequency(uint32_t clkFastNum)
+uint32_t Cy_SysClk_ClkFastSrcGetFrequency(uint32_t clkFastNum)
 {
-    uint32_t locFreq = Cy_SysClk_ClkHfGetFrequency(CY_SYSCLK_CLK_FAST_HF_NUM); /* Get root frequency */
-    uint32_t locDiv = 1UL + (uint32_t)Cy_SysClk_ClkFastGetDivider(clkFastNum); /* fast prescaler (1-256) */
+    uint32_t freq = Cy_SysClk_ClkHfGetFrequency(CY_SYSCLK_CLK_FAST_HF_NUM); /* Get root frequency */
+    uint32_t integer = 0UL;        /* Integer part of peripheral divider */
+    uint32_t locFrac;
+    uint32_t locDiv;
+    uint64_t locFreq = freq * 32ULL;
 
-    /* Divide the path input frequency down and return the result */
-    return (CY_SYSLIB_DIV_ROUND(locFreq, locDiv));
+    Cy_SysClk_ClkFastSrcGetDivider(clkFastNum, &integer, &locFrac);
+    /* For fractional dividers, the divider is (int + 1) + frac/32 */
+    locDiv = ((1UL + integer) * 32UL) + locFrac;
+
+    return (uint32_t) CY_SYSLIB_DIV_ROUND(locFreq, (uint64_t)locDiv);
 }
 
-void Cy_SysClk_ClkFastSetDivider(uint32_t clkFastNum, uint8_t intDiv, uint8_t fracDiv)
+void Cy_SysClk_ClkFastSrcSetDivider(uint32_t clkFastNum, uint8_t intDiv, uint8_t fracDiv)
 {
-    if(0 == clkFastNum)
+    if(0UL == clkFastNum)
     {
         CY_REG32_CLR_SET(CPUSS_FAST_0_CLOCK_CTL, CPUSS_FAST_0_CLOCK_CTL_INT_DIV, intDiv);
         CY_REG32_CLR_SET(CPUSS_FAST_0_CLOCK_CTL, CPUSS_FAST_0_CLOCK_CTL_FRAC_DIV, fracDiv);
@@ -761,34 +768,21 @@ void Cy_SysClk_ClkFastSetDivider(uint32_t clkFastNum, uint8_t intDiv, uint8_t fr
     }
 }
 
-uint8_t Cy_SysClk_ClkFastGetDivider(uint32_t clkFastNum)
+void Cy_SysClk_ClkFastSrcGetDivider(uint32_t clkFastNum, uint32_t *dividerIntValue, uint32_t *dividerFracValue)
 {
-    if(0 == clkFastNum)
+    if(0UL == clkFastNum)
     {
-        return ((uint8_t)_FLD2VAL(CPUSS_FAST_0_CLOCK_CTL_INT_DIV, CPUSS_FAST_0_CLOCK_CTL));
+        *dividerIntValue = ((uint8_t)_FLD2VAL(CPUSS_FAST_0_CLOCK_CTL_INT_DIV, CPUSS_FAST_0_CLOCK_CTL));
+        *dividerFracValue = ((uint8_t)_FLD2VAL(CPUSS_FAST_0_CLOCK_CTL_FRAC_DIV, CPUSS_FAST_0_CLOCK_CTL));
     }
     else
     {
-        return ((uint8_t)_FLD2VAL(CPUSS_FAST_1_CLOCK_CTL_INT_DIV, CPUSS_FAST_1_CLOCK_CTL));
+        *dividerIntValue = ((uint8_t)_FLD2VAL(CPUSS_FAST_1_CLOCK_CTL_INT_DIV, CPUSS_FAST_1_CLOCK_CTL));
+        *dividerFracValue = ((uint8_t)_FLD2VAL(CPUSS_FAST_1_CLOCK_CTL_FRAC_DIV, CPUSS_FAST_1_CLOCK_CTL));
     }
 }
-#else
-uint32_t Cy_SysClk_ClkFastGetFrequency(void)
-{
-    return 0;
-}
 
-void Cy_SysClk_ClkFastSetDivider(uint8_t divider)
-{
-    (void) divider;
-}
-
-uint8_t Cy_SysClk_ClkFastGetDivider(void)
-{
-    return 0;
-}
-#endif
-
+#endif /* defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3) */
 
 /* ========================================================================== */
 /* =========================    clkHf[n] SECTION    ========================= */
@@ -797,11 +791,21 @@ uint8_t Cy_SysClk_ClkFastGetDivider(void)
 cy_en_sysclk_status_t Cy_SysClk_ClkHfEnable(uint32_t clkHf)
 {
     cy_en_sysclk_status_t retVal = CY_SYSCLK_BAD_PARAM;
-    if (clkHf < CY_SRSS_NUM_HFROOT)
+    uint32_t hfFreq = Cy_SysClk_ClkHfGetFrequency(clkHf);
+
+    if(clkHf < CY_SRSS_NUM_HFROOT)
     {
-        SRSS_CLK_ROOT_SELECT[clkHf] |= SRSS_CLK_ROOT_SELECT_ENABLE_Msk;
-        retVal = CY_SYSCLK_SUCCESS;
+        if (hfFreq <= CY_SYSCLK_HF_MAX_FREQ(clkHf))
+        {
+            SRSS_CLK_ROOT_SELECT[clkHf] |= SRSS_CLK_ROOT_SELECT_ENABLE_Msk;
+            retVal = CY_SYSCLK_SUCCESS;
+        }
+        else
+        {
+            retVal = CY_SYSCLK_INVALID_STATE;
+        }
     }
+
     return (retVal);
 }
 
@@ -866,6 +870,28 @@ cy_en_clkhf_dividers_t Cy_SysClk_ClkHfGetDivider(uint32_t clkHf)
     return ((cy_en_clkhf_dividers_t)(((uint32_t)_FLD2VAL(SRSS_CLK_ROOT_SELECT_ROOT_DIV, SRSS_CLK_ROOT_SELECT[clkHf]))));
 }
 
+uint32_t Cy_SysClk_ClkHfGetFrequency(uint32_t clkHf)
+{
+    /* variables holding intermediate clock frequencies, dividers and FLL/PLL settings */
+    uint32_t pDiv = 1UL << (uint32_t)Cy_SysClk_ClkHfGetDivider(clkHf); /* root prescaler (1/2/4/8) */
+    uint32_t path = (uint32_t) Cy_SysClk_ClkHfGetSource(clkHf); /* path input for root 0 (clkHf[0]) */
+    uint32_t freq = Cy_SysClk_ClkPathGetFrequency(path);
+
+    /* Divide the path input frequency down and return the result */
+#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    if(Cy_SysClk_IsClkHfDirectSelEnabled(clkHf))
+    {
+        return (CY_SYSCLK_IMO_FREQ);
+    }
+    else
+    {
+        return (CY_SYSLIB_DIV_ROUND(freq, pDiv));
+    }
+#else
+        return (CY_SYSLIB_DIV_ROUND(freq, pDiv));
+#endif
+}
+
 #if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 
 cy_en_sysclk_status_t Cy_SysClk_ClkHfDirectSel(uint32_t clkHf, bool enable)
@@ -919,7 +945,7 @@ bool Cy_SysClk_IsClkHfDirectSelEnabled(uint32_t clkHf)
 
 void Cy_SysClk_MfoEnable(bool deepSleepEnable)
 {
-#if (CY_SRSS_MFO_PRESENT)
+#if (defined(CY_SRSS_MFO_PRESENT) && (CY_SRSS_MFO_PRESENT))
 #if defined (CY_IP_MXS28SRSS)
     SRSS_CLK_MFO_CONFIG = SRSS_CLK_MFO_CONFIG_ENABLE_Msk;
 #else
@@ -931,7 +957,7 @@ void Cy_SysClk_MfoEnable(bool deepSleepEnable)
 
 bool Cy_SysClk_MfoIsEnabled(void)
 {
-#if (CY_SRSS_MFO_PRESENT)
+#if (defined(CY_SRSS_MFO_PRESENT) && (CY_SRSS_MFO_PRESENT))
     return (0UL != (SRSS_CLK_MFO_CONFIG & SRSS_CLK_MFO_CONFIG_ENABLE_Msk));
 #else
     return false;
@@ -941,7 +967,7 @@ bool Cy_SysClk_MfoIsEnabled(void)
 
 void Cy_SysClk_MfoDisable(void)
 {
-#if (CY_SRSS_MFO_PRESENT)
+#if (defined(CY_SRSS_MFO_PRESENT) && (CY_SRSS_MFO_PRESENT))
     SRSS_CLK_MFO_CONFIG = 0UL;
 #endif
 }
@@ -951,7 +977,7 @@ void Cy_SysClk_MfoDisable(void)
 /* ============================    CLK_MF SECTION    ============================ */
 /* ========================================================================== */
 
-#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS28SRSS)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS28SRSS) || defined(CY_IP_MXS22SRSS)
 
 void Cy_SysClk_ClkMfEnable(void)
 {
@@ -1090,17 +1116,26 @@ void Cy_SysClk_WcoBypass(cy_en_wco_bypass_modes_t bypass)
 
 void Cy_SysClk_PiloEnable(void)
 {
-#if (CY_SRSS_PILO_PRESENT)
+#if (defined (CY_SRSS_PILO_PRESENT) && (CY_SRSS_PILO_PRESENT))
     SRSS_CLK_PILO_CONFIG |= SRSS_CLK_PILO_CONFIG_PILO_EN_Msk; /* 1 = enable */
 #endif
 }
-
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 void Cy_SysClk_PiloBackupEnable(void)
 {
-#if (CY_SRSS_PILO_PRESENT)
+#if (defined (CY_SRSS_PILO_PRESENT) && (0U != CY_SRSS_PILO_PRESENT) && (!defined (CY_IP_MXS22SRSS)))
     SRSS_CLK_PILO_CONFIG |= SRSS_CLK_PILO_CONFIG_PILO_BACKUP_Msk; /* 1 = enable */
 #endif
 }
+
+void Cy_SysClk_PiloBackupDisable(void)
+{
+#if (defined (CY_SRSS_PILO_PRESENT) && (CY_SRSS_PILO_PRESENT) && (!defined (CY_IP_MXS22SRSS)))
+    /* Clear PILO_BACKUP bitfields. */
+    SRSS_CLK_PILO_CONFIG &= (uint32_t)~(SRSS_CLK_PILO_CONFIG_PILO_BACKUP_Msk);
+#endif
+}
+#endif
 
 #if defined (CY_IP_MXS40SSRSS)
 void Cy_SysClk_PiloTcscEnable(void)
@@ -1122,7 +1157,7 @@ void Cy_SysClk_PiloTcscDisable(void)
 
 bool Cy_SysClk_PiloIsEnabled(void)
 {
-#if (CY_SRSS_PILO_PRESENT)
+#if (defined (CY_SRSS_PILO_PRESENT) && (CY_SRSS_PILO_PRESENT))
     return (_FLD2BOOL(SRSS_CLK_PILO_CONFIG_PILO_EN, SRSS_CLK_PILO_CONFIG));
 #else
     return false;
@@ -1131,17 +1166,9 @@ bool Cy_SysClk_PiloIsEnabled(void)
 
 void Cy_SysClk_PiloDisable(void)
 {
-#if (CY_SRSS_PILO_PRESENT)
+#if (defined (CY_SRSS_PILO_PRESENT) && (CY_SRSS_PILO_PRESENT))
     /* Clear PILO_EN */
     SRSS_CLK_PILO_CONFIG &= (uint32_t)~(SRSS_CLK_PILO_CONFIG_PILO_EN_Msk);
-#endif
-}
-
-void Cy_SysClk_PiloBackupDisable(void)
-{
-#if (CY_SRSS_PILO_PRESENT)
-    /* Clear PILO_BACKUP bitfields. */
-    SRSS_CLK_PILO_CONFIG &= (uint32_t)~(SRSS_CLK_PILO_CONFIG_PILO_BACKUP_Msk);
 #endif
 }
 
@@ -1214,38 +1241,13 @@ bool Cy_SysClk_AltLfIsEnabled(void)
 
 #if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
 
-void Cy_SysClk_IloEnable(void)
-{
-    SRSS_CLK_ILO0_CONFIG |= SRSS_CLK_ILO0_CONFIG_ENABLE_Msk;
-}
-
-cy_en_sysclk_status_t Cy_SysClk_IloDisable(void)
-{
-    cy_en_sysclk_status_t retVal = CY_SYSCLK_INVALID_STATE;
-    if (!_FLD2BOOL(WDT_CTL_ENABLED, SRSS_WDT_CTL)) /* if disabled */
-    {
-        SRSS_CLK_ILO0_CONFIG &= ~SRSS_CLK_ILO0_CONFIG_ENABLE_Msk;
-        retVal = CY_SYSCLK_SUCCESS;
-    }
-    return (retVal);
-}
-
-bool Cy_SysClk_IloIsEnabled(void)
-{
-    return (_FLD2BOOL(SRSS_CLK_ILO0_CONFIG_ENABLE, SRSS_CLK_ILO0_CONFIG));
-}
-
-void Cy_SysClk_IloHibernateOn(bool on)
-{
-    CY_REG32_CLR_SET(SRSS_CLK_ILO0_CONFIG, SRSS_CLK_ILO0_CONFIG_ILO0_BACKUP, ((on) ? 1UL : 0UL));
-}
 
 /* Below ILO API's are valid for both ILO0 and ILO1 */
 void Cy_SysClk_IloSrcEnable(uint32_t iloNum)
 {
     CY_ASSERT_L1(iloNum < CY_SRSS_ILO_COUNT);
 
-    if (0 == iloNum)
+    if (0UL == iloNum)
     {
         SRSS_CLK_ILO0_CONFIG |= SRSS_CLK_ILO0_CONFIG_ENABLE_Msk;
     }
@@ -1260,7 +1262,7 @@ cy_en_sysclk_status_t Cy_SysClk_IloSrcDisable(uint32_t iloNum)
     CY_ASSERT_L1(iloNum < CY_SRSS_ILO_COUNT);
     cy_en_sysclk_status_t retVal = CY_SYSCLK_INVALID_STATE;
 
-    if (0 == iloNum)
+    if (0UL == iloNum)
     {
         if (!_FLD2BOOL(WDT_CTL_ENABLED, SRSS_WDT_CTL)) /* if disabled */
         {
@@ -1280,7 +1282,7 @@ bool Cy_SysClk_IloSrcIsEnabled(uint32_t iloNum)
 {
     CY_ASSERT_L1(iloNum < CY_SRSS_ILO_COUNT);
 
-    if (0 == iloNum)
+    if (0UL == iloNum)
     {
         return (_FLD2BOOL(SRSS_CLK_ILO0_CONFIG_ENABLE, SRSS_CLK_ILO0_CONFIG));
     }
@@ -1292,7 +1294,7 @@ bool Cy_SysClk_IloSrcIsEnabled(uint32_t iloNum)
 
 void Cy_SysClk_IloSrcHibernateOn(uint32_t iloNum, bool on)
 {
-    if (0 == iloNum)
+    if (0UL == iloNum)
     {
         CY_REG32_CLR_SET(SRSS_CLK_ILO0_CONFIG, SRSS_CLK_ILO0_CONFIG_ILO0_BACKUP, ((on) ? 1UL : 0UL));
     }
@@ -1382,9 +1384,706 @@ uint32_t Cy_SysClk_ExtClkGetFrequency(void)
 /* ========================================================================== */
 /* ===========================    ECO SECTION    ============================ */
 /* ========================================================================== */
+
 #if (CY_SRSS_ECO_PRESENT)
 static uint32_t ecoFreq = 0UL; /* Internal storage for ECO frequency user setting */
 #endif
+
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_IP_MXS22SRSS)
+
+#define CY_SYSCLK_INVALID_TRIM_VALUE (0xFFFFFFFFUL)
+
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+
+#define M_PI (3.1415927f)
+
+/** \cond *********************************************************************
+* Function Name: cy_sqrt
+* Calculates square root.
+* The input is 32-bit wide.
+* The result is 16-bit wide.
+*******************************************************************************/
+static uint32_t cy_sqrt(uint32_t x);
+static uint32_t cy_sqrt(uint32_t x)
+{
+    uint32_t i;
+    uint32_t res = 0UL;
+    uint32_t add = 0x8000UL;
+
+    for(i = 0UL; i < 16UL; i++)
+    {
+        uint32_t tmp = res | add;
+
+        if (x >= (tmp * tmp))
+        {
+            res = tmp;
+        }
+
+        add >>= 1U;
+    }
+
+    return (res);
+}
+
+/*******************************************************************************
+* Function Name: Cy_SysClk_SelectEcoAtrim
+****************************************************************************//**
+*
+*   In accordance with the table below, this function Outputs proper
+*   value for ATRIM bits in register CLK_ECO_CONFIG2.
+*   max amplitude (Vp) |   ATRIM value
+*      0.50[V] <= Vp < 0.55[V]    |      0x04
+*      0.55[V] <= Vp < 0.55[V]    |      0x05
+*      0.60[V] <= Vp < 0.65[V]    |      0x06
+*      0.65[V] <= Vp < 0.65[V]    |      0x07
+*      0.70[V] <= Vp < 0.75[V]    |      0x08
+*      0.75[V] <= Vp < 0.75[V]    |      0x09
+*      0.80[V] <= Vp < 0.85[V]    |      0x0A
+*      0.85[V] <= Vp < 0.75[V]    |      0x0B
+*      0.90[V] <= Vp < 0.95[V]    |      0x0C
+*      0.95[V] <= Vp < 1.00[V]    |      0x0D
+*      1.00[V] <= Vp < 1.05[V]    |      0x0E
+*      1.05[V] <= Vp < 1.10[V]    |      0x0F
+*      1.10[V] <= Vp              |      0x00
+*
+*   \param maxAmplitude: Max amplitude (Vp) calculated by below formula.
+*         Vpp = 1,000 * sqrt(drivelevel / 2 / esr) / 3.14 / freqMHz / cLoad
+*
+*   \return : value to be set to ATRIM.
+*             It returns 0xFFFFFFFF, when there are no proper value.
+*
+*******************************************************************************/
+
+__STATIC_INLINE uint32_t Cy_SysClk_SelectEcoAtrim(float32_t maxAmplitude)
+{
+    if(maxAmplitude < 0.50f)
+    {
+        return (CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+
+    if((0.50f <= maxAmplitude) && (maxAmplitude < 0.55f))
+    {
+        return(0x04UL);
+    }
+    else if(maxAmplitude < 0.60f)
+    {
+        return(0x05UL);
+    }
+    else if(maxAmplitude < 0.65f)
+    {
+        return(0x06UL);
+    }
+    else if(maxAmplitude < 0.70f)
+    {
+        return(0x07UL);
+    }
+    else if(maxAmplitude < 0.75f)
+    {
+        return(0x08UL);
+    }
+    else if(maxAmplitude < 0.80f)
+    {
+        return(0x09UL);
+    }
+    else if(maxAmplitude < 0.85f)
+    {
+        return(0x0AUL);
+    }
+    else if(maxAmplitude < 0.90f)
+    {
+        return(0x0BUL);
+    }
+    else if(maxAmplitude < 0.95f)
+    {
+        return(0x0CUL);
+    }
+    else if(maxAmplitude < 1.00f)
+    {
+        return(0x0DUL);
+    }
+    else if(maxAmplitude < 1.05f)
+    {
+        return(0x0EUL);
+    }
+    else if(maxAmplitude < 1.10f)
+    {
+        return(0x0FUL);
+    }
+    else if(1.1f <= maxAmplitude)
+    {
+        return(0x00UL);
+    }
+    else
+    {
+        // invalid input
+        return(CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+
+}
+
+/*******************************************************************************
+* Function Name: Cy_SysClk_SelectEcoAGCEN
+****************************************************************************//**
+*
+*   In accordance with the table below, this function Outputs proper
+*   value for AGC_EN bits in register CLK_ECO_CONFIG.
+*   max amplitude (Vp) |   ATRIM value
+*      0.50[V] <= Vp < 1.10[V]    |      0x00
+*      1.10[V] <= Vp              |      0x01
+*
+*   \param maxAmplitude: Max amplitude (Vp) calculated by below formula.
+*         Vpp = 1,000 * sqrt(drivelevel / 2 / esr) / 3.14 / freqMHz / cLoad
+*
+*   \return : value to be set to AGC_EN.
+*             It returns 0xFFFFFFFF, when there are no proper value.
+*
+*******************************************************************************/
+__STATIC_INLINE uint32_t Cy_SysClk_SelectEcoAGCEN(float32_t maxAmplitude)
+{
+    if((0.50f <= maxAmplitude) && (maxAmplitude < 1.10f))
+    {
+        return(0x01UL);
+    }
+    else if(1.10f <= maxAmplitude)
+    {
+        return(0x00UL);
+    }
+    else
+    {
+        return(CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+}
+
+/*******************************************************************************
+* Function Name: Cy_SysClk_SelectEcoWDtrim
+****************************************************************************//**
+*
+*   In accordance with the table below, this function Outputs proper
+*   value for WDTRIM bits in register CLK_ECO_CONFIG2.
+*   max amplitude (Vp) |   WDTRIM value
+*      0.5[V] <= Vp <  0.6[V]    |      0x02
+*      0.6[V] <= Vp <  0.7[V]    |      0x03
+*      0.7[V] <= Vp <  0.8[V]    |      0x04
+*      0.8[V] <= Vp <  0.9[V]    |      0x05
+*      0.9[V] <= Vp <  1.0[V]    |      0x06
+*      1.0[V] <= Vp <  1.1[V]    |      0x07
+*      1.1[V] <= Vp              |      0x07
+*
+*   \param amplitude: Max amplitude (Vp) calculated by below formula.
+*         Vp = 1,000 * sqrt(drivelevel / 2 / esr) / 3.14 / freqMHz / cLoad
+*
+*   \return : value to be set to WDTRIM.
+*             It returns CY_SYSCLK_INVALID_TRIM_VALUE, when there are no proper value.
+*
+*******************************************************************************/
+__STATIC_INLINE uint32_t Cy_SysClk_SelectEcoWDtrim(float32_t amplitude)
+{
+    if(amplitude < 0.50f)
+    {
+        return (CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+
+    if( (0.50f <= amplitude) && (amplitude < 0.60f))
+    {
+        return(0x02UL);
+    }
+    else if(amplitude < 0.7f)
+    {
+        return(0x03UL);
+    }
+    else if(amplitude < 0.8f)
+    {
+        return(0x04UL);
+    }
+    else if(amplitude < 0.9f)
+    {
+        return(0x05UL);
+    }
+    else if(amplitude < 1.0f)
+    {
+        return(0x06UL);
+    }
+    else if(amplitude < 1.1f)
+    {
+        return(0x07UL);
+    }
+    else if(1.1f <= amplitude)
+    {
+        return(0x07UL);
+    }
+    else
+    {
+        // invalid input
+        return(CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+}
+
+/*******************************************************************************
+* Function Name: Cy_SysClk_SelectEcoGtrim
+****************************************************************************//**
+*
+*   The range of gm value will be defined by GTRIM value as shown in below table.
+*   We set the GTRIM value so that it is guaranteed for gm value to be more than gm_min
+*
+*    GTRIM value |  gm
+*       0x00     |  0.0[mA/V] <= gm < 2.2[mA/V]
+*       0x01     |  2.2[mA/V] <= gm < 4.4[mA/V]
+*       0x02     |  4.4[mA/V] <= gm < 6.6[mA/V]
+*       0x03     |  6.6[mA/V] <= gm < 8.8[mA/V]
+*       0x04     |  8.8[mA/V] <= gm <11.0[mA/V]
+*       0x05     | 11.0[mA/V] <= gm <13.2[mA/V]
+*       0x06     | 13.2[mA/V] <= gm <15.4[mA/V]
+*       0x07     | 15.4[mA/V] <= gm <17.6[mA/V]
+*
+*   \param gm_min: Minimum of gm (gm_min) calculated by below formula.
+*   gm_min mA/V = 5 * 4 * 3.14 * 3.14 * freqMhz^2 * cLoad^2 * 4 * esr / 1,000,000,000
+*
+*   \return : value to be set to GTRIM.
+*             It returns CY_SYSCLK_INVALID_TRIM_VALUE, when there are no proper value.
+*
+*******************************************************************************/
+__STATIC_INLINE uint32_t Cy_SysClk_SelectEcoGtrim(float32_t gm_min)
+{
+    if( (0.0f <= gm_min) && (gm_min < 2.2f))
+    {
+        return(0x00UL+1UL);
+    }
+    else if(gm_min < 4.4f)
+    {
+        return(0x01UL+1UL);
+    }
+    else if(gm_min < 6.6f)
+    {
+        return(0x02UL+1UL);
+    }
+    else if(gm_min < 8.8f)
+    {
+        return(0x03UL+1UL);
+    }
+    else if(gm_min < 11.0f)
+    {
+        return(0x04UL+1UL);
+    }
+    else if(gm_min < 13.2f)
+    {
+        return(0x05UL+1UL);
+    }
+    else if(gm_min < 15.4f)
+    {
+        return(0x06UL+1UL);
+    }
+    else if(gm_min < 17.6f)
+    {
+        // invalid input
+        return(CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+    else
+    {
+        // invalid input
+        return(CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+}
+
+/*******************************************************************************
+* Function Name: Cy_SysClk_SelectEcoRtrim
+****************************************************************************//**
+*
+*   In accordance with the table below, this function Outputs proper
+*   value for RTRIM bits in register CLK_ECO_CONFIG2.
+*         Eco freq  (F)            |   RTRIM value
+*                  F > 28.60[MHz]  |      0x00
+*    28.60[MHz] >= F > 23.33[MHz]  |      0x01
+*    23.33[MHz] >= F > 16.50[MHz]  |      0x02
+*    16.50[MHz] >= F               |      0x03
+*
+*   \param freqMHz: Operating frequency of the crystal in MHz.
+*
+*   \return : value to be set to RTRIM.
+*             It returns CY_SYSCLK_INVALID_TRIM_VALUE, when there are no proper value.
+*
+*******************************************************************************/
+__STATIC_INLINE uint32_t Cy_SysClk_SelectEcoRtrim(float32_t freqMHz)
+{
+    if(freqMHz > 28.6f)
+    {
+        return(0x00UL);
+    }
+    else if(freqMHz > 23.33f)
+    {
+        return(0x01UL);
+    }
+    else if(freqMHz > 16.5f)
+    {
+        return(0x02UL);
+    }
+    else if(freqMHz > 0.0f)
+    {
+        return(0x03UL);
+    }
+    else
+    {
+        // invalid input
+        return(CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+}
+
+/*******************************************************************************
+* Function Name: Cy_SysClk_SelectEcoFtrim
+****************************************************************************//**
+*
+*   In accordance with the table below, this function Outputs proper
+*   value for FTRIM bits in register CLK_ECO_CONFIG2.
+*
+*   \return : value to be set to FTRIM.
+*
+*   \note: This function does not check the invalid input value.
+*          It should be cared by caller program.
+*******************************************************************************/
+__STATIC_INLINE uint32_t Cy_SysClk_SelectEcoFtrim(void)
+{
+    return(0x03UL);
+}
+
+cy_en_sysclk_status_t Cy_SysClk_EcoConfigure(uint32_t freq, uint32_t cSum, uint32_t esr, uint32_t driveLevel)
+{
+    uint32_t minRneg = (5UL * esr);
+
+    /* Invalid state error if ECO is already enabled */
+    if (0UL != (SRSS_CLK_ECO_CONFIG_ECO_EN_Msk & SRSS_CLK_ECO_CONFIG))
+    {
+        return(CY_SYSCLK_INVALID_STATE);
+    }
+
+    /* calculate intermediate values */
+    float32_t freqMHz = (float32_t)freq / 1000000.0f;
+
+    uint32_t maxAmpl = CY_SYSLIB_DIV_ROUND((159155UL * /* 5 * 100000 / PI */
+           cy_sqrt(CY_SYSLIB_DIV_ROUND(2000000UL * driveLevel, esr))), /* Scaled by 2 */
+                                       (CY_SYSLIB_DIV_ROUND(freq, 1000UL)/* KHz */ * cSum)); /* The result is scaled by 10^3 */
+
+    float32_t maxAmplitude = (float32_t)maxAmpl/1000.0f;
+
+    float32_t gm_min = (157.91367042f /*4 * M_PI * M_PI * 4*/ * (float32_t)minRneg * freqMHz * freqMHz * (float32_t)cSum * (float32_t)cSum) /
+                             1000000000.0f;
+
+    /* Get trim values according to calculated values */
+    uint32_t atrim, agcen, wdtrim, gtrim, rtrim, ftrim;
+
+    atrim  = Cy_SysClk_SelectEcoAtrim(maxAmplitude);
+    if(atrim == CY_SYSCLK_INVALID_TRIM_VALUE)
+    {
+        return(CY_SYSCLK_BAD_PARAM);
+    }
+
+    agcen = Cy_SysClk_SelectEcoAGCEN(maxAmplitude);
+    if(agcen == CY_SYSCLK_INVALID_TRIM_VALUE)
+    {
+        return(CY_SYSCLK_BAD_PARAM);
+    }
+
+    wdtrim = Cy_SysClk_SelectEcoWDtrim(maxAmplitude);
+    if(wdtrim == CY_SYSCLK_INVALID_TRIM_VALUE)
+    {
+        return(CY_SYSCLK_BAD_PARAM);
+    }
+
+    gtrim  = Cy_SysClk_SelectEcoGtrim(gm_min);
+    if(gtrim == CY_SYSCLK_INVALID_TRIM_VALUE)
+    {
+        return(CY_SYSCLK_BAD_PARAM);
+    }
+
+    rtrim  = Cy_SysClk_SelectEcoRtrim(freqMHz);
+    if(rtrim == CY_SYSCLK_INVALID_TRIM_VALUE)
+    {
+        return(CY_SYSCLK_BAD_PARAM);
+    }
+
+    ftrim  = Cy_SysClk_SelectEcoFtrim();
+
+    /* Update all fields of trim control register with one write, without changing the ITRIM field */
+    SRSS_CLK_ECO_CONFIG2 =
+        _VAL2FLD(SRSS_CLK_ECO_CONFIG2_WDTRIM, wdtrim)  |
+        _VAL2FLD(SRSS_CLK_ECO_CONFIG2_ATRIM, atrim) |
+        _VAL2FLD(SRSS_CLK_ECO_CONFIG2_FTRIM, ftrim)    |
+        _VAL2FLD(SRSS_CLK_ECO_CONFIG2_RTRIM, rtrim)    |
+        _VAL2FLD(SRSS_CLK_ECO_CONFIG2_GTRIM, gtrim);
+
+    SRSS_CLK_ECO_CONFIG = _VAL2FLD(SRSS_CLK_ECO_CONFIG_AGC_EN, agcen);
+
+    ecoFreq = freq;
+
+    return(CY_SYSCLK_SUCCESS);
+}
+
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) */
+
+#if defined (CY_IP_MXS22SRSS)
+
+#define CY_SYSCLK_CTRIM_TABLE_MAX_ENTRIES 33U
+
+/*******************************************************************************
+* Function Name: Cy_SysClk_SelectEcoCtrim
+****************************************************************************//**
+*
+*    Get CTRIM value(CL- Crystal load cap configuration trim)
+*
+*    Calculations:
+*    Target Cap = (2 * Load Capacitance) - (Board Trace Cap + Chip Pad Cap)
+*    Pick CTRIM based on below table
+*
+*    CTRIM|  Condition
+*    0x1  |  Target Cap <= 2.73(pF)
+*    0x2  |  Target Cap <= 4.73(pF)
+*    0x3  |  Target Cap <= 6.57(pF)
+*    0x4  |  Target Cap <= 8.75(pF)
+*    0x5  |  Target Cap <= 10.6(pF)
+*    0x6  |  Target Cap <= 12.6(pF)
+*    0x7  |  Target Cap <= 14.4(pF)
+*    0x8  |  Target Cap <= 16.8(pF)
+*    0x9  |  Target Cap <= 18.6(pF)
+*    0xa  |  Target Cap <= 20.6(pF)
+*    0xb  |  Target Cap <= 22.5(pF)
+*    0xc  |  Target Cap <= 24.6(pF)
+*    0xd  |  Target Cap <= 26.5(pF)
+*    0xe  |  Target Cap <= 28.5(pF)
+*    0xf  |  Target Cap <= 30.3(pF)
+*    0x10 |  Target Cap <= 10.8(pF)
+*    0x11 |  Target Cap <= 12.6(pF)
+*    0x12 |  Target Cap <= 14.6(pF)
+*    0x13 |  Target Cap <= 16.4(pF)
+*    0x14 |  Target Cap <= 18.6(pF)
+*    0x15 |  Target Cap <= 20.5(pF)
+*    0x16 |  Target Cap <= 22.5(pF)
+*    0x17 |  Target Cap <= 24.3(pF)
+*    0x18 |  Target Cap <= 26.6(pF)
+*    0x19 |  Target Cap <= 28.5(pF)
+*    0x1a |  Target Cap <= 30.5(pF)
+*    0x1b |  Target Cap <= 32.3(pF)
+*    0x1c |  Target Cap <= 34.5(pF)
+*    0x1d |  Target Cap <= 36.3(pF)
+*    0x1e |  Target Cap <= 38.3(pF)
+*    0x1f |  Target Cap <= 40.2(pF)
+*    0x20 |  Target Cap <= 500(pF)
+*
+*   \param loadCap: Load Capacitance (In pF * 100)
+*   \param boardTraceCap: Board Trace Capacitance (In pF * 100)
+*   \param chipPadCap: Chip Pad Capacitance (In pF * 100)
+*
+*   \return : value to be set to CTRIM.
+*             It returns CY_SYSCLK_INVALID_TRIM_VALUE, when there are no proper value.
+*
+*******************************************************************************/
+__STATIC_INLINE uint32_t Cy_SysClk_SelectEcoCtrim(uint32_t loadCap, uint32_t boardTraceCap, uint32_t chipPadCap)
+{
+    uint32_t targetCap, idx;
+    uint32_t cTrimValue = CY_SYSCLK_INVALID_TRIM_VALUE;
+    uint32_t simCapTable[] = {   /* Simulated Capacitance are multiplied by 100 to take care of decimal values */
+        273,
+        473,
+        657,
+        875,
+        106,
+        126,
+        144,
+        168,
+        186,
+        206,
+        225,
+        246,
+        265,
+        285,
+        303,
+        108,
+        126,
+        146,
+        164,
+        186,
+        205,
+        225,
+        243,
+        266,
+        285,
+        305,
+        323,
+        345,
+        363,
+        383,
+        402,
+        5000
+    };
+
+    /* All Capacitance are multiplied by 100 to take care of the decimal values */
+    targetCap = (2 * loadCap) - (boardTraceCap + chipPadCap);
+
+    for(idx = 0; idx < CY_SYSCLK_CTRIM_TABLE_MAX_ENTRIES; idx++)
+    {
+        if(targetCap <= simCapTable[idx])
+        {
+           break;
+        }
+    }
+    if(idx != CY_SYSCLK_CTRIM_TABLE_MAX_ENTRIES)
+    {
+        cTrimValue = idx + 1U;
+    }
+
+    return cTrimValue;
+}
+
+
+/*******************************************************************************
+* Function Name: Cy_SysClk_SelectEcoGtrim
+****************************************************************************//**
+*
+*   The range of gm value will be defined by GTRIM value as shown in below table.
+*   We set the GTRIM value so that it is guaranteed for gm value to be more than gm_min
+*
+*    GTRIM value |  gm
+*       0x00     |  0.0[mA/V] <= gm < 2.2[mA/V]
+*       0x01     |  2.2[mA/V] <= gm < 4.4[mA/V]
+*       0x02     |  4.4[mA/V] <= gm < 6.6[mA/V]
+*       0x03     |  6.6[mA/V] <= gm < 8.8[mA/V]
+*       0x04     |  8.8[mA/V] <= gm <11.0[mA/V]
+*       0x05     | 11.0[mA/V] <= gm <13.2[mA/V]
+*       0x06     | 13.2[mA/V] <= gm <15.4[mA/V]
+*       0x07     | 15.4[mA/V] <= gm <17.6[mA/V]
+*
+*   \param gm_min: Minimum of gm (gm_min) calculated by below formula.
+*   gm_min mA/V = 5 * 4 * 3.14 * 3.14 * freqMhz^2 * cLoad^2 * 4 * esr / 1,000,000,000
+*
+*   \return : value to be set to GTRIM.
+*             It returns CY_SYSCLK_INVALID_TRIM_VALUE, when there are no proper value.
+*
+*******************************************************************************/
+__STATIC_INLINE uint32_t Cy_SysClk_SelectEcoGtrim(float32_t gm_min)
+{
+    if( (0.0f <= gm_min) && (gm_min < 2.2f))
+    {
+        return(0x00UL+1UL);
+    }
+    else if(gm_min < 4.4f)
+    {
+        return(0x01UL+1UL);
+    }
+    else if(gm_min < 6.6f)
+    {
+        return(0x02UL+1UL);
+    }
+    else if(gm_min < 8.8f)
+    {
+        return(0x03UL+1UL);
+    }
+    else if(gm_min < 11.0f)
+    {
+        return(0x04UL+1UL);
+    }
+    else if(gm_min < 13.2f)
+    {
+        return(0x05UL+1UL);
+    }
+    else if(gm_min < 15.4f)
+    {
+        return(0x06UL+1UL);
+    }
+    else if(gm_min < 17.6f)
+    {
+        return(0x07UL+1UL);
+    }
+    else if(gm_min < 19.8f)
+    {
+        return(0x08UL+1UL);
+    }
+    else if(gm_min < 22.0f)
+    {
+        return(0x09UL+1UL);
+    }
+    else if(gm_min < 24.2f)
+    {
+        return(0xaUL+1UL);
+    }
+    else if(gm_min < 26.4f)
+    {
+        return(0xbUL+1UL);
+    }
+    else if(gm_min < 28.6f)
+    {
+        return(0xcUL+1UL);
+    }
+    else if(gm_min < 30.2f)
+    {
+        return(0x0dUL+1UL);
+    }
+    else if(gm_min < 32.4f)
+    {
+        return(0x0eUL+1UL);
+    }
+    else if(gm_min < 34.6f)
+    {
+        // invalid input
+        return(CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+    else
+    {
+        // invalid input
+        return(CY_SYSCLK_INVALID_TRIM_VALUE);
+    }
+}
+
+cy_en_sysclk_status_t Cy_SysClk_EcoConfigure(uint32_t freq, uint32_t cSum, uint32_t esr, uint32_t driveLevel)
+{
+    uint32_t minRneg = (5UL * esr);
+
+    CY_UNUSED_PARAMETER(driveLevel);
+
+    /* Invalid state error if ECO is already enabled */
+    if (0UL != (SRSS_CLK_ECO_CONFIG_ECO_EN_Msk & SRSS_CLK_ECO_CONFIG))
+    {
+        return(CY_SYSCLK_INVALID_STATE);
+    }
+
+    /* calculate intermediate values */
+    float32_t freqMHz = (float32_t)freq / 1000000.0f;
+
+    float32_t gm_min = (157.91367042f /*4 * M_PI * M_PI * 4*/ * (float32_t)minRneg * freqMHz * freqMHz * (float32_t)cSum * (float32_t)cSum) /
+                             1000000000.0f;
+
+    uint32_t gtrim, cTrim;
+
+    gtrim  = Cy_SysClk_SelectEcoGtrim(gm_min);
+    if(gtrim == CY_SYSCLK_INVALID_TRIM_VALUE)
+    {
+        return(CY_SYSCLK_BAD_PARAM);
+    }
+
+    cTrim  = Cy_SysClk_SelectEcoCtrim((cSum * 100), 0U, 0U);
+    if(cTrim == CY_SYSCLK_INVALID_TRIM_VALUE)
+    {
+        return(CY_SYSCLK_BAD_PARAM);
+    }
+
+    SRSS_CLK_ECO_CONFIG2 =
+        _VAL2FLD(SRSS_CLK_ECO_CONFIG2_ECO_TRIM_CL, cTrim) |
+        _VAL2FLD(SRSS_CLK_ECO_CONFIG2_ECO_TRIM_GAIN, gtrim) |
+        _VAL2FLD(SRSS_CLK_ECO_CONFIG2_ECO_CTRL_AMPDETEN, 0x0U);
+
+    SRSS_CLK_TRIM_ECO_CTL =
+        _VAL2FLD(SRSS_CLK_TRIM_ECO_CTL_ECO_CTRL_IBOOSTEN, 0x0U)  |
+        _VAL2FLD(SRSS_CLK_TRIM_ECO_CTL_ECO_CTRL_CPBOOST, 0x0U) |
+        _VAL2FLD(SRSS_CLK_TRIM_ECO_CTL_ECO_CTRL_WDBOOST, 0x0U)    |
+        _VAL2FLD(SRSS_CLK_TRIM_ECO_CTL_ECO_TRIM_FBK, 0x0U)    |
+        _VAL2FLD(SRSS_CLK_TRIM_ECO_CTL_ECO_TRIM_WDHYST, 0x0U)    |
+        _VAL2FLD(SRSS_CLK_TRIM_ECO_CTL_ECO_TRIM_IREF, 0x8U);
+
+    ecoFreq = freq;
+
+    return(CY_SYSCLK_SUCCESS);
+
+}
+
+
+#endif
+
 
 void Cy_SysClk_EcoDisable(void)
 {
@@ -1406,35 +2105,6 @@ uint32_t Cy_SysClk_EcoGetStatus(void)
 #else
     return 0;
 #endif
-}
-
-
-uint32_t Cy_SysClk_EcoBleGetStatus(void)
-{
-#if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
-#if (CY_SRSS_ECO_PRESENT)
-    /* if ECO for BLE is Enabled, report 1. Otherwise report 0 */
-    return ((SRSS_CLK_ECO_STATUS_ECO_BLE_ENABLED_Msk == (SRSS_CLK_ECO_STATUS_ECO_BLE_ENABLED_Msk & SRSS_CLK_ECO_STATUS)) ?
-      CY_SYSCLK_ECOSTAT_BLE_ENABLED : CY_SYSCLK_ECOSTAT_BLE_DISABLED);
-#else
-    return 0;
-#endif
-#else
-    return 0;
-#endif
-
-}
-
-
-cy_en_sysclk_status_t Cy_SysClk_EcoConfigure(uint32_t freq, uint32_t cSum, uint32_t esr, uint32_t driveLevel)
-{
-    /* Legacy */
-    (void) freq;
-    (void) cSum;
-    (void) esr;
-    (void) driveLevel;
-
-    return CY_SYSCLK_UNSUPPORTED_STATE;
 }
 
 
@@ -1476,20 +2146,6 @@ cy_en_sysclk_status_t Cy_SysClk_EcoEnable(uint32_t timeoutus)
 #endif
 }
 
-/*******************************************************************************
-* Function Name: Cy_SysClk_EcoGetFrequency
-****************************************************************************//**
-*
-* Returns the frequency of the external crystal oscillator (ECO).
-*
-* \return The frequency of the ECO.
-*
-* \note If the ECO is not enabled or stable - a zero is returned.
-*
-* \funcusage
-* \snippet sysclk/snippet/main.c snippet_Cy_SysClk_EcoEnable
-*
-*******************************************************************************/
 uint32_t Cy_SysClk_EcoGetFrequency(void)
 {
 #if (CY_SRSS_ECO_PRESENT)
@@ -1498,6 +2154,54 @@ uint32_t Cy_SysClk_EcoGetFrequency(void)
     return 0;
 #endif
 }
+
+cy_en_sysclk_status_t Cy_SysClk_EcoPrescaleConfigure(uint32_t enable, uint32_t int_div, uint32_t frac_div)
+{
+    (void) enable;
+#if (CY_SRSS_ECO_PRESENT)
+    cy_en_sysclk_status_t retVal = CY_SYSCLK_INVALID_STATE;
+
+    if(0UL != enable) {
+        /* Invalid state error if CO_DIV_ENABLED is already enabled */
+        if (0UL == (SRSS_CLK_ECO_PRESCALE_ECO_DIV_ENABLED_Msk & SRSS_CLK_ECO_PRESCALE))
+        {
+            SRSS_CLK_ECO_PRESCALE |= (_VAL2FLD(SRSS_CLK_ECO_PRESCALE_ECO_INT_DIV, int_div) | \
+                                      _VAL2FLD(SRSS_CLK_ECO_PRESCALE_ECO_FRAC_DIV, frac_div));
+
+            SRSS_CLK_ECO_CONFIG |= SRSS_CLK_ECO_CONFIG_ECO_DIV_ENABLE_Msk;
+
+            retVal = CY_SYSCLK_SUCCESS;
+        }
+    }
+    else {
+        /* Invalid state error if CO_DIV_ENABLED is already disabled */
+        if (1UL == (SRSS_CLK_ECO_PRESCALE_ECO_DIV_ENABLED_Msk & SRSS_CLK_ECO_PRESCALE))
+        {
+            SRSS_CLK_ECO_CONFIG |= (SRSS_CLK_ECO_CONFIG_ECO_DIV_DISABLE_Msk);
+            retVal = CY_SYSCLK_SUCCESS;
+        }
+    }
+    return retVal;
+#else
+    (void) frac_div;
+    (void) int_div;
+
+    return CY_SYSCLK_UNSUPPORTED_STATE;
+#endif
+}
+
+
+bool Cy_SysClk_EcoPrescaleIsEnabled(void)
+{
+#if (CY_SRSS_ECO_PRESENT)
+    return (_FLD2BOOL(SRSS_CLK_ECO_PRESCALE_ECO_DIV_ENABLED, SRSS_CLK_ECO_PRESCALE));
+#else
+    return false;
+#endif
+}
+
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) || defined (CY_IP_MXS22SRSS) */
+
 
 #if defined (CY_IP_MXS28SRSS)
 cy_en_sysclk_status_t Cy_SysClk_EcoBleControl(cy_en_eco_for_ble_t control, uint32_t timeoutus)
@@ -1527,45 +2231,31 @@ cy_en_sysclk_status_t Cy_SysClk_EcoBleControl(cy_en_eco_for_ble_t control, uint3
 
 #endif /* defined (CY_IP_MXS28SRSS) */
 
-cy_en_sysclk_status_t Cy_SysClk_EcoPrescaleConfigure(uint32_t enable, uint32_t frac_div, uint32_t int_div)
+#if defined (CY_IP_MXS28SRSS)
+
+uint32_t Cy_SysClk_EcoBleGetStatus(void)
 {
-    (void) enable;
+#if defined (CY_IP_MXS28SRSS)
 #if (CY_SRSS_ECO_PRESENT)
-    cy_en_sysclk_status_t retVal = CY_SYSCLK_INVALID_STATE;
-
-    if(enable) {
-        /* Invalid state error if CO_DIV_ENABLED is already enabled */
-        if (0UL == (SRSS_CLK_ECO_PRESCALE_ECO_DIV_ENABLED_Msk & SRSS_CLK_ECO_PRESCALE))
-        {
-            SRSS_CLK_ECO_PRESCALE |= SRSS_CLK_ECO_PRESCALE_ECO_DIV_ENABLED_Msk;
-            SRSS_CLK_ECO_PRESCALE = _VAL2FLD(SRSS_CLK_ECO_PRESCALE_ECO_FRAC_DIV, frac_div);
-            SRSS_CLK_ECO_PRESCALE = _VAL2FLD(SRSS_CLK_ECO_PRESCALE_ECO_INT_DIV, int_div);
-            retVal = CY_SYSCLK_SUCCESS;
-        }
-    }
-    else {
-        /* Invalid state error if CO_DIV_ENABLED is already disabled */
-        if (1UL == (SRSS_CLK_ECO_PRESCALE_ECO_DIV_ENABLED_Msk & SRSS_CLK_ECO_PRESCALE))
-        {
-            SRSS_CLK_ECO_PRESCALE &= ~(SRSS_CLK_ECO_PRESCALE_ECO_DIV_ENABLED_Msk);
-            retVal = CY_SYSCLK_SUCCESS;
-        }
-    }
-    return retVal;
+    /* if ECO for BLE is Enabled, report 1. Otherwise report 0 */
+    return ((SRSS_CLK_ECO_STATUS_ECO_BLE_ENABLED_Msk == (SRSS_CLK_ECO_STATUS_ECO_BLE_ENABLED_Msk & SRSS_CLK_ECO_STATUS)) ?
+      CY_SYSCLK_ECOSTAT_BLE_ENABLED : CY_SYSCLK_ECOSTAT_BLE_DISABLED);
 #else
-    (void) frac_div;
-    (void) int_div;
-
-    return CY_SYSCLK_UNSUPPORTED_STATE;
+    return 0;
 #endif
+#else
+    return 0;
+#endif
+
 }
 
+#endif /* defined (CY_IP_MXS28SRSS) */
 
 /* ========================================================================== */
 /* ===========================    IHO SECTION    ============================ */
 /* ========================================================================== */
 
-
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 bool Cy_SysClk_IhoIsEnabled(void)
 {
 #if (CY_SRSS_IHO_PRESENT)
@@ -1588,6 +2278,8 @@ void Cy_SysClk_IhoEnable(void)
     SRSS_CLK_IHO_CONFIG |= SRSS_CLK_IHO_CONFIG_ENABLE_Msk;
 #endif
 }
+
+#endif /* defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS) */
 
 #if defined (CY_IP_MXS22SRSS)
 void Cy_SysClk_IhoDeepsleepEnable(void)
@@ -1613,6 +2305,76 @@ void Cy_SysClk_IhoDeepsleepDisable(void)
 #endif
 }
 
+void Cy_SysClk_IhoSetTrim(uint32_t trimVal)
+{
+#if (CY_SRSS_IHO_PRESENT)
+    CY_REG32_CLR_SET(SRSS_CLK_IHO_CONFIG, SRSS_CLK_IHO_CONFIG_IHO_TRIM_FREQ, trimVal);
+#endif
+}
+
+uint32_t Cy_SysClk_IhoGetTrim(void)
+{
+#if (CY_SRSS_IHO_PRESENT)
+    return (_FLD2VAL(SRSS_CLK_IHO_CONFIG_IHO_TRIM_FREQ, SRSS_CLK_IHO_CONFIG));
+#else
+    return 0U;
+#endif
+}
+
+
+#endif /* defined (CY_IP_MXS22SRSS) */
+
+
+/* ========================================================================== */
+/* ===========================    IMO SECTION    ============================ */
+/* ========================================================================== */
+#if defined (CY_IP_MXS22SRSS)
+
+void Cy_SysClk_ImoEnable(void)
+{
+#if (CY_SRSS_IMO_PRESENT)
+    SRSS_CLK_IMO_CONFIG |= SRSS_CLK_IMO_CONFIG_ENABLE_Msk;
+#endif
+}
+
+void Cy_SysClk_ImoDisable(void)
+{
+#if (CY_SRSS_IMO_PRESENT)
+    SRSS_CLK_IMO_CONFIG &= ~SRSS_CLK_IMO_CONFIG_ENABLE_Msk;
+#endif
+}
+
+bool Cy_SysClk_ImoIsEnabled(void)
+{
+#if (CY_SRSS_IMO_PRESENT)
+    return (_FLD2BOOL(SRSS_CLK_IMO_CONFIG_ENABLE, SRSS_CLK_IMO_CONFIG));
+#else
+    return false;
+#endif
+}
+
+void Cy_SysClk_ImoDeepsleepEnable(void)
+{
+#if (CY_SRSS_IMO_PRESENT)
+    SRSS_CLK_IMO_CONFIG |= SRSS_CLK_IMO_CONFIG_DPSLP_ENABLE_Msk;
+#endif
+}
+
+bool Cy_SysClk_ImoIsDeepsleepEnabled(void)
+{
+#if (CY_SRSS_IMO_PRESENT)
+    return (_FLD2BOOL(SRSS_CLK_IMO_CONFIG_DPSLP_ENABLE, SRSS_CLK_IMO_CONFIG));
+#else
+    return false;
+#endif
+}
+
+void Cy_SysClk_ImoDeepsleepDisable(void)
+{
+#if (CY_SRSS_IMO_PRESENT)
+    SRSS_CLK_IMO_CONFIG &= ~SRSS_CLK_IMO_CONFIG_DPSLP_ENABLE_Msk;
+#endif
+}
 #endif /* defined (CY_IP_MXS22SRSS) */
 
 /* ========================================================================== */
@@ -1672,25 +2434,15 @@ uint32_t Cy_SysClk_ClkPathMuxGetFrequency(uint32_t clkPath)
             break;
 
         case CY_SYSCLK_CLKPATH_IN_ECO:
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
             freq = Cy_SysClk_EcoGetFrequency();
+#endif
             break;
 
 #if defined (CY_IP_MXS28SRSS) || defined (CY_IP_MXS40SSRSS)
 
         case CY_SYSCLK_CLKPATH_IN_ALTHF:
             freq = Cy_SysClk_AltHfGetFrequency();
-            break;
-
-        case CY_SYSCLK_CLKPATH_IN_ILO:
-            freq = (0UL != (SRSS_CLK_ILO_CONFIG & SRSS_CLK_ILO_CONFIG_ENABLE_Msk)) ? CY_SYSCLK_ILO_FREQ : 0UL;
-            break;
-
-        case CY_SYSCLK_CLKPATH_IN_WCO:
-            freq = (Cy_SysClk_WcoOkay()) ? CY_SYSCLK_WCO_FREQ : 0UL;
-            break;
-
-        case CY_SYSCLK_CLKPATH_IN_IHO:
-            freq = (Cy_SysClk_IhoIsEnabled()) ? CY_SYSCLK_IHO_FREQ : 0UL;
             break;
 
         case CY_SYSCLK_CLKPATH_IN_PILO:
@@ -1701,6 +2453,31 @@ uint32_t Cy_SysClk_ClkPathMuxGetFrequency(uint32_t clkPath)
             freq = Cy_SysClk_AltLfGetFrequency();
             break;
 #endif
+
+#if defined (CY_IP_MXS40SSRSS)
+        case CY_SYSCLK_CLKPATH_IN_IHO:
+            freq = (Cy_SysClk_IhoIsEnabled()) ? CY_SYSCLK_IHO_FREQ : 0UL;
+            break;
+#endif
+
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+        case CY_SYSCLK_CLKPATH_IN_ILO0:
+#else
+        case CY_SYSCLK_CLKPATH_IN_ILO:
+#endif
+            freq = (0UL != (SRSS_CLK_ILO_CONFIG & SRSS_CLK_ILO_CONFIG_ENABLE_Msk)) ? CY_SYSCLK_ILO_FREQ : 0UL;
+            break;
+
+        case CY_SYSCLK_CLKPATH_IN_WCO:
+            freq = (Cy_SysClk_WcoOkay()) ? CY_SYSCLK_WCO_FREQ : 0UL;
+            break;
+
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+        case CY_SYSCLK_CLKPATH_IN_ILO1:
+            freq = (0UL != (SRSS_CLK_ILO_CONFIG & SRSS_CLK_ILO_CONFIG_ENABLE_Msk)) ? CY_SYSCLK_ILO_FREQ : 0UL;
+            break;
+#endif
+
         default:
             /* Don't know the frequency of dsi_out, leave freq = 0UL */
             break;
@@ -1734,6 +2511,10 @@ uint32_t Cy_SysClk_ClkPathGetFrequency(uint32_t clkPath)
     uint32_t rDiv = 1UL;    /* FLL/PLL reference divider */
     uint32_t oDiv = 1UL;    /* FLL/PLL output divider */
     bool  enabled = false;  /* FLL or PLL enable status; n/a for direct */
+#if CY_SRSS_PLL400M_PRESENT
+    uint32_t fracDiv = 1UL;    /* PLL fractional divider */
+    bool     fracEn  = false;  /* PLL fractional divider enable*/
+#endif
 
     if (clkPath == (uint32_t)CY_SYSCLK_CLKHF_IN_CLKPATH0) /* FLL? (always path 0) */
     {
@@ -1746,14 +2527,22 @@ uint32_t Cy_SysClk_ClkPathGetFrequency(uint32_t clkPath)
     }
 
 #if (CY_SRSS_PLL_PRESENT) || (CY_SRSS_PLL400M_PRESENT)
-    else if (clkPath <= (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M)) /* PLL? (always path 1...N)*/
+    else if (clkPath <= (CY_SRSS_NUM_PLL)) /* PLL? (always path 1...N)*/
     {
-        cy_stc_pll_manual_config_t pllcfg;
+#if CY_SRSS_PLL400M_PRESENT
+        cy_stc_pll_manual_config_t pllcfg = {0U,0U,0U,false,CY_SYSCLK_FLLPLL_OUTPUT_AUTO, 0, false, false, 0 , 0 , false};
+#else
+        cy_stc_pll_manual_config_t pllcfg = {0U,0U,0U,false,CY_SYSCLK_FLLPLL_OUTPUT_AUTO};
+#endif
         (void)Cy_SysClk_PllGetConfiguration(clkPath, &pllcfg);
         enabled = (Cy_SysClk_PllIsEnabled(clkPath)) && (CY_SYSCLK_FLLPLL_OUTPUT_INPUT != pllcfg.outputMode);
         fDiv = pllcfg.feedbackDiv;
         rDiv = pllcfg.referenceDiv;
         oDiv = pllcfg.outputDiv;
+#if CY_SRSS_PLL400M_PRESENT
+        fracEn  = pllcfg.fracEn;
+        fracDiv = pllcfg.fracDiv;
+#endif
     }
 #endif /* CY_SRSS_PLL_PRESENT */
 
@@ -1765,10 +2554,18 @@ uint32_t Cy_SysClk_ClkPathGetFrequency(uint32_t clkPath)
     if (enabled && /* If FLL or PLL is enabled and not bypassed */
         (0UL != rDiv)) /* to avoid division by zero */
     {
-        freq = (uint32_t)CY_SYSLIB_DIV_ROUND(((uint64_t)freq * (uint64_t)fDiv),
-                                             ((uint64_t)rDiv * (uint64_t)oDiv));
+#if CY_SRSS_PLL400M_PRESENT
+        if(fracEn)
+        {
+            freq = (uint32_t)((((uint64_t)freq * (((uint64_t)fDiv << SRSS_PLL400M_FRAC_BIT_COUNT) + (uint64_t)fracDiv)) / ((uint64_t)rDiv * (uint64_t)oDiv)) >> SRSS_PLL400M_FRAC_BIT_COUNT);
+        }
+        else
+#endif
+        {
+            freq = (uint32_t)CY_SYSLIB_DIV_ROUND(((uint64_t)freq * (uint64_t)fDiv),
+                                                 ((uint64_t)rDiv * (uint64_t)oDiv));
+        }
     }
-
     return (freq);
 }
 
@@ -1779,7 +2576,6 @@ uint32_t Cy_SysClk_ClkPathGetFrequency(uint32_t clkPath)
 /* min and max FLL output frequencies, in Hz */
 #define  CY_SYSCLK_FLL_MIN_CCO_OUTPUT_FREQ (48000000UL)
 #define  CY_SYSCLK_FLL_MIN_OUTPUT_FREQ     (CY_SYSCLK_FLL_MIN_CCO_OUTPUT_FREQ / 2U)
-#define  CY_SYSCLK_FLL_MAX_OUTPUT_FREQ     (100000000UL)
 
 #define  CY_SYSCLK_FLL_IS_CCO_RANGE_VALID(range) (((range) == CY_SYSCLK_FLL_CCO_RANGE0) || \
                                                   ((range) == CY_SYSCLK_FLL_CCO_RANGE1) || \
@@ -2205,7 +3001,7 @@ uint32_t Cy_SysClk_FllGetFrequency(void)
 #define CY_SYSCLK_PLL_MIN_IN_FREQ  (4000000UL)
 #define CY_SYSCLK_PLL_MAX_IN_FREQ  (64000000UL)
 #define CY_SYSCLK_PLL_MIN_OUT_FREQ (CY_SYSCLK_PLL_MIN_FVCO / CY_SYSCLK_PLL_MAX_OUTPUT_DIV)
-#define CY_SYSCLK_PLL_MAX_OUT_FREQ (150000000UL)
+#define CY_SYSCLK_PLL_MAX_OUT_FREQ (200000000UL)
 
 /* PLL400M */
 
@@ -2316,7 +3112,7 @@ cy_en_sysclk_status_t Cy_SysClk_Pll400MConfigure(uint32_t pllNum, const cy_stc_p
     }
     else
     {
-        cy_stc_pll_manual_config_t manualConfig;
+        cy_stc_pll_manual_config_t manualConfig = {0U,0U,0U,false,CY_SYSCLK_FLLPLL_OUTPUT_AUTO, 0, false, false, 0 , 0 , false};
 
         /* If output mode is not bypass (input routed directly to output), then
            calculate new parameters. */
@@ -2341,9 +3137,13 @@ cy_en_sysclk_status_t Cy_SysClk_Pll400MConfigure(uint32_t pllNum, const cy_stc_p
                         /* OUTPUT_DIV selection */
                         for (out = CY_SYSCLK_PLL400M_MIN_OUTPUT_DIV; out <= CY_SYSCLK_PLL400M_MAX_OUTPUT_DIV; out++)
                         {
+                            uint64_t tempVco = ((uint64_t)config->outputFreq) * ((uint64_t)out);
+                            uint64_t tempFeedBackDivLeftShifted = ((tempVco << (uint64_t)SRSS_PLL400M_FRAC_BIT_COUNT) * (uint64_t)q) / (uint64_t)config->inputFreq;
+                            volatile uint32_t feedBackFracDiv  = (uint32_t)(tempFeedBackDivLeftShifted & ((1ULL << (uint64_t)SRSS_PLL400M_FRAC_BIT_COUNT) - 1ULL));
                             /* Calculate what output frequency will actually be produced.
                                If it's closer to the target than what we have so far, then save it. */
-                            uint32_t fout = ((p * config->inputFreq) / q) / out;
+                            uint32_t fout = (uint32_t)((((uint64_t)config->inputFreq * (((uint64_t)p << SRSS_PLL400M_FRAC_BIT_COUNT) + (uint64_t)feedBackFracDiv)) / ((uint64_t)q * (uint64_t)out)) >> SRSS_PLL400M_FRAC_BIT_COUNT);
+
                             if ((uint32_t)abs((int32_t)fout - (int32_t)(config->outputFreq)) <
                                 (uint32_t)abs((int32_t)foutBest - (int32_t)(config->outputFreq)))
                             {
@@ -2356,6 +3156,8 @@ cy_en_sysclk_status_t Cy_SysClk_Pll400MConfigure(uint32_t pllNum, const cy_stc_p
                                 manualConfig.feedbackDiv  = (uint8_t)p;
                                 manualConfig.referenceDiv = (uint8_t)q;
                                 manualConfig.outputDiv    = (uint8_t)out;
+                                manualConfig.fracEn       = true;
+                                manualConfig.fracDiv      = feedBackFracDiv;
                             }
                         }
                     }
@@ -2451,6 +3253,9 @@ cy_en_sysclk_status_t Cy_SysClk_Pll400MGetConfiguration(uint32_t pllNum, cy_stc_
 
     CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL400M);
 
+    /* Initialize config structure to 0 */
+    *config = (cy_stc_pll_manual_config_t){0};
+
     uint32_t tempReg = SRSS_CLK_PLL_400M_CONFIG(pllNum);
     config->feedbackDiv  = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG_FEEDBACK_DIV,  tempReg);
     config->referenceDiv = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG_REFERENCE_DIV, tempReg);
@@ -2458,14 +3263,14 @@ cy_en_sysclk_status_t Cy_SysClk_Pll400MGetConfiguration(uint32_t pllNum, cy_stc_
     config->outputMode   = (cy_en_fll_pll_output_mode_t)((uint32_t)_FLD2VAL(CLK_PLL400M_CONFIG_BYPASS_SEL, tempReg));
 
     tempReg = SRSS_CLK_PLL_400M_CONFIG2(pllNum);
-    config->fracDiv  = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG2_FRAC_DIV,  tempReg);
-    config->fracDitherEn = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG2_FRAC_DITHER_EN, tempReg);
-    config->fracEn    = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG2_FRAC_EN,    tempReg);
+    config->fracDiv      = _FLD2VAL(CLK_PLL400M_CONFIG2_FRAC_DIV,  tempReg);
+    config->fracDitherEn = (bool)_FLD2VAL(CLK_PLL400M_CONFIG2_FRAC_DITHER_EN, tempReg);
+    config->fracEn       = (bool)_FLD2VAL(CLK_PLL400M_CONFIG2_FRAC_EN,    tempReg);
 
     tempReg = SRSS_CLK_PLL_400M_CONFIG3(pllNum);
     config->sscgDepth  = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG3_SSCG_DEPTH,  tempReg);
-    config->sscgRate = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG3_SSCG_RATE, tempReg);
-    config->sscgEn    = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG3_SSCG_EN,    tempReg);
+    config->sscgRate   = (uint8_t)_FLD2VAL(CLK_PLL400M_CONFIG3_SSCG_RATE, tempReg);
+    config->sscgEn     = (bool)_FLD2VAL(CLK_PLL400M_CONFIG3_SSCG_EN,    tempReg);
 
     retVal = CY_SYSCLK_SUCCESS;
 
@@ -2524,23 +3329,53 @@ cy_en_sysclk_status_t Cy_SysClk_Pll400MEnable(uint32_t pllNum, uint32_t timeoutu
 #endif
 }
 
+uint32_t Cy_SysClk_Pll400MGetFrequency(uint32_t pllNum)
+{
+    uint32_t fDiv;    /* PLL multiplier/feedback divider */
+    uint32_t rDiv;    /* PLL reference divider */
+    uint32_t oDiv;    /* PLL output divider */
+    uint32_t fracDiv; /* PLL Fractional divider */
+    bool  enabled;    /* PLL enable status; n/a for direct */
+    uint32_t freq=0UL;    /* PLL Frequency */
+
+
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL400M);
+
+    cy_stc_pll_manual_config_t pllcfg = {0U,0U,0U,false,CY_SYSCLK_FLLPLL_OUTPUT_AUTO, 0, false, false, 0 , 0 , false};
+    (void)Cy_SysClk_Pll400MGetConfiguration(pllNum, &pllcfg);
+    enabled = (Cy_SysClk_Pll400MIsEnabled(pllNum)) && (CY_SYSCLK_FLLPLL_OUTPUT_INPUT != pllcfg.outputMode);
+    fDiv    = pllcfg.feedbackDiv;
+    rDiv    = pllcfg.referenceDiv;
+    oDiv    = pllcfg.outputDiv;
+    fracDiv = pllcfg.fracDiv;
+
+    if (enabled && /* If PLL is enabled and not bypassed */
+    (0UL != rDiv) && (0UL != oDiv)) /* to avoid division by zero */
+    {
+        freq = Cy_SysClk_ClkPathMuxGetFrequency(pllNum + 1UL);
+        freq = (uint32_t)((((uint64_t)freq * (((uint64_t)fDiv << SRSS_PLL400M_FRAC_BIT_COUNT) + (uint64_t)fracDiv)) / ((uint64_t)rDiv * (uint64_t)oDiv)) >> SRSS_PLL400M_FRAC_BIT_COUNT);
+    }
+
+    return (freq);
+}
+
 bool Cy_SysClk_Pll200MIsEnabled(uint32_t pllNum)
 {
-    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL);
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
 
     return (_FLD2BOOL(SRSS_CLK_PLL_CONFIG_ENABLE, SRSS_CLK_PLL_CONFIG[pllNum]));
 }
 
 bool Cy_SysClk_Pll200MLocked(uint32_t pllNum)
 {
-    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL);
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
 
     return (_FLD2BOOL(SRSS_CLK_PLL_STATUS_LOCKED, SRSS_CLK_PLL_STATUS[pllNum]));
 }
 
 bool Cy_SysClk_Pll200MLostLock(uint32_t pllNum)
 {
-    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL);
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
 
     bool retVal = _FLD2BOOL(SRSS_CLK_PLL_STATUS_UNLOCK_OCCURRED, SRSS_CLK_PLL_STATUS[pllNum]);
     /* write a 1 to clear the unlock occurred bit */
@@ -2553,7 +3388,7 @@ cy_en_sysclk_status_t Cy_SysClk_Pll200MDisable(uint32_t pllNum)
 {
     cy_en_sysclk_status_t retVal = CY_SYSCLK_BAD_PARAM;
 
-    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL);
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
 
     /* First bypass PLL */
     CY_REG32_CLR_SET(SRSS_CLK_PLL_CONFIG[pllNum], SRSS_CLK_PLL_CONFIG_BYPASS_SEL, CY_SYSCLK_FLLPLL_OUTPUT_INPUT);
@@ -2571,7 +3406,7 @@ cy_en_sysclk_status_t Cy_SysClk_Pll200MConfigure(uint32_t pllNum, const cy_stc_p
 {
     cy_en_sysclk_status_t retVal = CY_SYSCLK_SUCCESS;
 
-    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL);
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
 
     if (((config->inputFreq)  < CY_SYSCLK_PLL_MIN_IN_FREQ)  || (CY_SYSCLK_PLL_MAX_IN_FREQ  < (config->inputFreq)) ||
         ((config->outputFreq) < CY_SYSCLK_PLL_MIN_OUT_FREQ) || (CY_SYSCLK_PLL_MAX_OUT_FREQ < (config->outputFreq)))
@@ -2651,7 +3486,7 @@ cy_en_sysclk_status_t Cy_SysClk_Pll200MManualConfigure(uint32_t pllNum, const cy
 {
     cy_en_sysclk_status_t retVal = CY_SYSCLK_SUCCESS;
 
-    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL);
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
 
     if (Cy_SysClk_Pll200MIsEnabled(pllNum))
     {
@@ -2688,7 +3523,10 @@ cy_en_sysclk_status_t Cy_SysClk_Pll200MGetConfiguration(uint32_t pllNum, cy_stc_
 {
     cy_en_sysclk_status_t retVal = CY_SYSCLK_BAD_PARAM;
 
-    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL);
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
+
+    /* Initialize config structure to 0 */
+    *config = (cy_stc_pll_manual_config_t){0};
 
     uint32_t tempReg = SRSS_CLK_PLL_CONFIG[pllNum];
     config->feedbackDiv  = (uint8_t)_FLD2VAL(SRSS_CLK_PLL_CONFIG_FEEDBACK_DIV,  tempReg);
@@ -2706,7 +3544,7 @@ cy_en_sysclk_status_t Cy_SysClk_Pll200MEnable(uint32_t pllNum, uint32_t timeoutu
     cy_en_sysclk_status_t retVal = CY_SYSCLK_BAD_PARAM;
     bool zeroTimeout = (timeoutus == 0UL);
 
-    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL);
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
 
     /* first set the PLL enable bit */
     SRSS_CLK_PLL_CONFIG[pllNum] |= SRSS_CLK_PLL_CONFIG_ENABLE_Msk;
@@ -2743,10 +3581,41 @@ cy_en_sysclk_status_t Cy_SysClk_Pll200MEnable(uint32_t pllNum, uint32_t timeoutu
     return (retVal);
 }
 
+
+uint32_t Cy_SysClk_Pll200MGetFrequency(uint32_t pllNum)
+{
+    uint32_t fDiv;    /* PLL multiplier/feedback divider */
+    uint32_t rDiv;    /* PLL reference divider */
+    uint32_t oDiv;    /* PLL output divider */
+    bool  enabled;    /* PLL enable status; n/a for direct */
+    uint32_t freq=0UL;    /* PLL Frequency */
+
+
+    CY_ASSERT_L1(pllNum < CY_SRSS_NUM_PLL200M);
+
+    cy_stc_pll_manual_config_t pllcfg = {0U,0U,0U,false,CY_SYSCLK_FLLPLL_OUTPUT_AUTO, 0, false, false, 0 , 0 , false};
+    (void)Cy_SysClk_Pll200MGetConfiguration(pllNum, &pllcfg);
+    enabled = (Cy_SysClk_Pll200MIsEnabled(pllNum)) && (CY_SYSCLK_FLLPLL_OUTPUT_INPUT != pllcfg.outputMode);
+    fDiv = pllcfg.feedbackDiv;
+    rDiv = pllcfg.referenceDiv;
+    oDiv = pllcfg.outputDiv;
+
+    if (enabled && /* If PLL is enabled and not bypassed */
+    (0UL != rDiv) && (0UL != oDiv)) /* to avoid division by zero */
+    {
+        freq = Cy_SysClk_ClkPathMuxGetFrequency((pllNum + 1UL) + CY_SRSS_NUM_PLL400M);
+
+        freq = (uint32_t)CY_SYSLIB_DIV_ROUND(((uint64_t)freq * (uint64_t)fDiv),
+                                             ((uint64_t)rDiv * (uint64_t)oDiv));
+    }
+
+    return (freq);
+}
+
 bool Cy_SysClk_PllIsEnabled(uint32_t clkPath)
 {
     clkPath--; /* to correctly access PLL config and status registers structures */
-    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M));
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
 
     if(clkPath < CY_SRSS_NUM_PLL400M)
     {
@@ -2761,7 +3630,7 @@ bool Cy_SysClk_PllIsEnabled(uint32_t clkPath)
 bool Cy_SysClk_PllLocked(uint32_t clkPath)
 {
     clkPath--; /* to correctly access PLL config and status registers structures */
-    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M));
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
 
     if(clkPath < CY_SRSS_NUM_PLL400M)
     {
@@ -2776,7 +3645,7 @@ bool Cy_SysClk_PllLocked(uint32_t clkPath)
 bool Cy_SysClk_PllLostLock(uint32_t clkPath)
 {
     clkPath--; /* to correctly access PLL config and status registers structures */
-    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M));
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
 
     if(clkPath < CY_SRSS_NUM_PLL400M)
     {
@@ -2791,7 +3660,7 @@ bool Cy_SysClk_PllLostLock(uint32_t clkPath)
 cy_en_sysclk_status_t Cy_SysClk_PllDisable(uint32_t clkPath)
 {
     clkPath--; /* to correctly access PLL config and status registers structures */
-    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M));
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
 
     if(clkPath < CY_SRSS_NUM_PLL400M)
     {
@@ -2807,7 +3676,7 @@ cy_en_sysclk_status_t Cy_SysClk_PllDisable(uint32_t clkPath)
 cy_en_sysclk_status_t Cy_SysClk_PllConfigure(uint32_t clkPath, const cy_stc_pll_config_t *config)
 {
     clkPath--; /* to correctly access PLL config and status registers structures */
-    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M));
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
 
     if(clkPath < CY_SRSS_NUM_PLL400M)
     {
@@ -2822,7 +3691,7 @@ cy_en_sysclk_status_t Cy_SysClk_PllConfigure(uint32_t clkPath, const cy_stc_pll_
 cy_en_sysclk_status_t Cy_SysClk_PllManualConfigure(uint32_t clkPath, const cy_stc_pll_manual_config_t *config)
 {
     clkPath--; /* to correctly access PLL config and status registers structures */
-    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M));
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
 
     if(clkPath < CY_SRSS_NUM_PLL400M)
     {
@@ -2837,7 +3706,7 @@ cy_en_sysclk_status_t Cy_SysClk_PllManualConfigure(uint32_t clkPath, const cy_st
 cy_en_sysclk_status_t Cy_SysClk_PllGetConfiguration(uint32_t clkPath, cy_stc_pll_manual_config_t *config)
 {
     clkPath--; /* to correctly access PLL config and status registers structures */
-    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M));
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
 
     if(clkPath < CY_SRSS_NUM_PLL400M)
     {
@@ -2852,7 +3721,7 @@ cy_en_sysclk_status_t Cy_SysClk_PllGetConfiguration(uint32_t clkPath, cy_stc_pll
 cy_en_sysclk_status_t Cy_SysClk_PllEnable(uint32_t clkPath, uint32_t timeoutus)
 {
     clkPath--; /* to correctly access PLL config and status registers structures */
-    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL + CY_SRSS_NUM_PLL400M));
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
 
     if(clkPath < CY_SRSS_NUM_PLL400M)
     {
@@ -2864,17 +3733,27 @@ cy_en_sysclk_status_t Cy_SysClk_PllEnable(uint32_t clkPath, uint32_t timeoutus)
     }
 }
 
-#else
+uint32_t Cy_SysClk_PllGetFrequency(uint32_t clkPath)
+{
+    clkPath--; /* to correctly access PLL config and status registers structures */
+    CY_ASSERT_L1(clkPath < (CY_SRSS_NUM_PLL));
+
+    if(clkPath < CY_SRSS_NUM_PLL400M)
+    {
+        return Cy_SysClk_Pll400MGetFrequency(clkPath);
+    }
+    else
+    {
+        return Cy_SysClk_Pll200MGetFrequency(clkPath - CY_SRSS_NUM_PLL400M);
+    }
+}
+
+#elif defined (CY_IP_MXS22SRSS)
 
 bool Cy_SysClk_PllIsEnabled(uint32_t clkPath)
 {
-#if defined (CY_IP_MXS28SRSS)
-    CY_ASSERT_L1(clkPath < CY_SRSS_NUM_PLL);
-    return (_FLD2BOOL(CLK_LP_PLL_PLL28LP_STRUCT_CONFIG_PLL_ENABLE, SRSS_CLK_LP_PLL_CONFIG(clkPath)));
-#else
     (void) clkPath;
     return false;
-#endif
 }
 
 
@@ -2934,7 +3813,14 @@ cy_en_sysclk_status_t Cy_SysClk_PllEnable(uint32_t clkPath, uint32_t timeoutus)
     return CY_SYSCLK_UNSUPPORTED_STATE;
 }
 
-#endif
+uint32_t Cy_SysClk_PllGetFrequency(uint32_t clkPath)
+{
+    (void) clkPath;
+
+    return 0;
+}
+
+#endif /* (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)) */
 
 /* ========================================================================== */
 /* ====================    Clock Measurement section    ===================== */
@@ -3238,6 +4124,7 @@ int32_t Cy_SysClk_IloTrim(uint32_t iloFreq)
 #endif
 }
 
+#if  defined (CY_IP_MXS40SSRSS)
 void Cy_SysClk_IloSetTrim(uint32_t trimVal)
 {
 #if defined (CY_IP_MXS40SSRSS)
@@ -3248,7 +4135,6 @@ void Cy_SysClk_IloSetTrim(uint32_t trimVal)
     CY_UNUSED_PARAMETER(clkCounting); /* Suppress a compiler warning about unused variables */
 #endif
 }
-
 
 uint32_t Cy_SysClk_IloGetTrim(void)
 {
@@ -3262,6 +4148,7 @@ uint32_t Cy_SysClk_IloGetTrim(void)
     return 0;
 #endif
 }
+#endif /* defined (CY_IP_MXS40SSRSS) */
 
 /* ========================================================================== */
 /* ======================    POWER MANAGEMENT SECTION    ==================== */
@@ -3281,7 +4168,6 @@ cy_en_syspm_status_t Cy_SysClk_DeepSleepCallback(cy_stc_syspm_callback_params_t 
     CY_UNUSED_PARAMETER(callbackParams);
     CY_UNUSED_PARAMETER(clkCounting);
 
-#if defined (CY_IP_MXS40SSRSS)
     switch (mode)
     {
         case CY_SYSPM_CHECK_READY:
@@ -3304,94 +4190,21 @@ cy_en_syspm_status_t Cy_SysClk_DeepSleepCallback(cy_stc_syspm_callback_params_t 
             break;
 
         case CY_SYSPM_BEFORE_TRANSITION:
-            {
-                /* If FLL is enabled */
-                if (Cy_SysClk_FllIsEnabled())
-                {
-                    CY_REG32_CLR_SET(SRSS_CLK_FLL_CONFIG3, SRSS_CLK_FLL_CONFIG3_BYPASS_SEL, CY_SYSCLK_FLLPLL_OUTPUT_INPUT);
-                }
-                else
-                {
-                    /* Do nothing */
-                }
-
-                retVal = CY_SYSPM_SUCCESS;
-            }
+            retVal = CY_SYSPM_SUCCESS;
             break;
 
         case CY_SYSPM_AFTER_TRANSITION:
-            {
-                /* After return from Deep Sleep, for FLL,
-                 * block until the FLL has regained its frequency lock.
-                 */
-                uint32_t timeout = TIMEOUT;
-                retVal = CY_SYSPM_TIMEOUT;
-
-                if (Cy_SysClk_FllIsEnabled())
-                {
-                    /* Timeout wait for FLL to regain lock */
-                    while ((!Cy_SysClk_FllLocked()) && (0UL != timeout))
-                    {
-                        timeout--;
-                    }
-
-                    if (0UL != timeout)
-                    {
-                        /* Undo bypass the FLL */
-                        CY_REG32_CLR_SET(SRSS_CLK_FLL_CONFIG3, SRSS_CLK_FLL_CONFIG3_BYPASS_SEL, CY_SYSCLK_FLLPLL_OUTPUT_OUTPUT);
-                        retVal = CY_SYSPM_SUCCESS;
-                    }
-                }
-                else
-                {
-                    retVal = CY_SYSPM_SUCCESS;
-                }
-
-                preventCounting = false; /* Allow clock measurement */
-            }
+            preventCounting = false; /* Allow clock measurement */
             break;
 
         default: /* Unsupported mode, return CY_SYSPM_FAIL */
             break;
     }
-#else
-    CY_UNUSED_PARAMETER(mode); /* Suppress a compiler warning about unused variables */
-#endif
+
     CY_UNUSED_PARAMETER(clkCounting); /* Suppress a compiler warning about unused variables */
 
     return (retVal);
 
-}
-
-
-
-
-/* ========================================================================== */
-/* =========================    clkHf[n] SECTION    ========================= */
-/* ========================================================================== */
-
-uint32_t Cy_SysClk_ClkHfGetFrequency(uint32_t clkHf)
-{
-    /* variables holding intermediate clock frequencies, dividers and FLL/PLL settings */
-    uint32_t pDiv = 1UL << (uint32_t)Cy_SysClk_ClkHfGetDivider(clkHf); /* root prescaler (1/2/4/8) */
-    uint32_t path = (uint32_t) Cy_SysClk_ClkHfGetSource(clkHf); /* path input for root 0 (clkHf[0]) */
-    uint32_t freq = Cy_SysClk_ClkPathGetFrequency(path);
-
-    CY_UNUSED_PARAMETER(clkCounting); /* Suppress a compiler warning about unused variables */
-
-    /* Divide the path input frequency down and return the result */
-#if defined (CY_IP_MXS40SSRSS) || (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
-    if(Cy_SysClk_IsClkHfDirectSelEnabled(clkHf))
-    {
-        return (CY_SYSCLK_IMO_FREQ);
-    }
-    else
-    {
-        return (CY_SYSLIB_DIV_ROUND(freq, pDiv));
-    }
-#else
-        return (CY_SYSLIB_DIV_ROUND(freq, pDiv));
-#endif
 }
 
 
@@ -3408,11 +4221,22 @@ uint32_t Cy_SysClk_PeriphGetFrequency(cy_en_divider_types_t dividerType, uint32_
     return Cy_SysClk_PeriPclkGetFrequency((en_clk_dst_t)PERI_PCLK_PERIPHERAL_GROUP_NUM, dividerType, dividerNum);
 }
 
+/** \cond INTERNAL */
+/* Value to indicate invalid HF NUM */
+#define CY_SYSCLK_INVALID_HF_NUM (0xFFFFFFFFUL)
+/** \endcond */
+
 uint32_t Cy_Sysclk_PeriPclkGetClkHfNum(uint32_t grpNum)
 {
     uint32_t instNum = (uint8_t)(((uint32_t)grpNum & PERI_GR_INST_NUM_Msk )>>PERI_GR_INST_NUM_Pos);
 
     CY_ASSERT_L1(grpNum < PERI_PCLK_GR_NUM(instNum));
+
+    /* Additional check incase Asserts are disabled */
+    if(grpNum >= PERI_PCLK_GR_NUM(instNum))
+    {
+        return CY_SYSCLK_INVALID_HF_NUM;
+    }
 
 #if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
         uint32_t peri0GrpToHfArray[] = { PERI0_PCLK_GR_NUM_0_CLK_HF_NUM,
@@ -3462,7 +4286,7 @@ uint32_t Cy_Sysclk_PeriPclkGetClkHfNum(uint32_t grpNum)
 uint32_t Cy_SysClk_PeriPclkGetFrequency(en_clk_dst_t ipBlock, cy_en_divider_types_t dividerType, uint32_t dividerNum)
 {
     uint32_t integer = 0UL;        /* Integer part of peripheral divider */
-    uint32_t freq;
+    uint32_t freq = 0UL;
     uint32_t grpNum = (((uint32_t)ipBlock) & PERI_PCLK_GR_NUM_Msk )>>PERI_PCLK_GR_NUM_Pos;
     uint32_t instNum = (uint8_t)(((uint32_t)ipBlock & PERI_PCLK_INST_NUM_Msk )>>PERI_PCLK_INST_NUM_Pos);
     uint32_t hfNum = Cy_Sysclk_PeriPclkGetClkHfNum(grpNum | (instNum << PERI_GR_INST_NUM_Pos));
@@ -3476,33 +4300,36 @@ uint32_t Cy_SysClk_PeriPclkGetFrequency(en_clk_dst_t ipBlock, cy_en_divider_type
                  ((dividerType == CY_SYSCLK_DIV_16_5_BIT) && (dividerNum < PERI_DIV_16_5_NR(instNum , grpNum))) || \
                  ((dividerType == CY_SYSCLK_DIV_24_5_BIT) && (dividerNum < PERI_DIV_24_5_NR(instNum , grpNum))));
 
-    freq = Cy_SysClk_ClkHfGetFrequency(hfNum); /* Get CLK_HF* frequency */
-
-    /* get the divider value for clk_peri to the selected peripheral clock */
-    switch(dividerType)
+    if(hfNum != CY_SYSCLK_INVALID_HF_NUM)
     {
-        case CY_SYSCLK_DIV_8_BIT:
-        case CY_SYSCLK_DIV_16_BIT:
-            integer = 1UL + Cy_SysClk_PeriPclkGetDivider(ipBlock, dividerType, dividerNum);
-            freq = CY_SYSLIB_DIV_ROUND(freq, integer);
-            break;
+        freq = Cy_SysClk_ClkHfGetFrequency(hfNum); /* Get CLK_HF* frequency */
 
-        case CY_SYSCLK_DIV_16_5_BIT:
-        case CY_SYSCLK_DIV_24_5_BIT:
-            {
-                uint32_t locFrac;
-                uint32_t locDiv;
-                uint64_t locFreq = freq * 32ULL;
-                Cy_SysClk_PeriPclkGetFracDivider(ipBlock, dividerType, dividerNum, &integer, &locFrac);
-                /* For fractional dividers, the divider is (int + 1) + frac/32 */
-                locDiv = ((1UL + integer) * 32UL) + locFrac;
-                freq = (uint32_t) CY_SYSLIB_DIV_ROUND(locFreq, (uint64_t)locDiv);
-            }
-            break;
+        /* get the divider value for clk_peri to the selected peripheral clock */
+        switch(dividerType)
+        {
+            case CY_SYSCLK_DIV_8_BIT:
+            case CY_SYSCLK_DIV_16_BIT:
+                integer = 1UL + Cy_SysClk_PeriPclkGetDivider(ipBlock, dividerType, dividerNum);
+                freq = CY_SYSLIB_DIV_ROUND(freq, integer);
+                break;
 
-        default:
-            /* Unknown Divider */
-            break;
+            case CY_SYSCLK_DIV_16_5_BIT:
+            case CY_SYSCLK_DIV_24_5_BIT:
+                {
+                    uint32_t locFrac;
+                    uint32_t locDiv;
+                    uint64_t locFreq = freq * 32ULL;
+                    Cy_SysClk_PeriPclkGetFracDivider(ipBlock, dividerType, dividerNum, &integer, &locFrac);
+                    /* For fractional dividers, the divider is (int + 1) + frac/32 */
+                    locDiv = ((1UL + integer) * 32UL) + locFrac;
+                    freq = (uint32_t) CY_SYSLIB_DIV_ROUND(locFreq, (uint64_t)locDiv);
+                }
+                break;
+
+            default:
+                /* Unknown Divider */
+                break;
+        }
     }
     CY_UNUSED_PARAMETER(clkCounting); /* Suppress a compiler warning about unused variables */
 

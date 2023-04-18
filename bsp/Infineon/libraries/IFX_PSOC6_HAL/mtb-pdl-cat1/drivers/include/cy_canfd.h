@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_canfd.h
-* \version 1.20
+* \version 1.30
 *
 *  This file provides constants and parameter values for
 *  the CAN FD driver.
@@ -144,7 +144,7 @@
 * \snippet canfd/snippet/main.c snippet_Cy_CANFD_ISR
 *
 * Setup the interrupt handler to be called with the CAN FD events. The CAN FD block
-* has two interupt lines, which can be assigned to different interrupt
+* has two interrupt lines, which can be assigned to different interrupt
 * sources using Cy_CANFD_SetInterruptLine(): canfd_0_interrupts0_0_IRQn
 * and canfd_0_interrupts1_0_IRQn. Also, the CAN FD block has a consolidated interrupt
 * canfd_0_interrupt0_IRQn. The following code shows how to set up the interrupt
@@ -214,6 +214,11 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>1.30</td>
+*     <td>Updated \ref Cy_CANFD_Init() and \ref Cy_CANFD_DeInit() functions. Added volatile qualifier to prevent loop optimization.</td>
+*     <td>Code Enhancement.</td>
+*   </tr>
+*   <tr>
 *     <td>1.20</td>
 *     <td>Added const modifier to the functions parameters where needed.
 *         Improved error handling in \ref Cy_CANFD_Init() and
@@ -223,13 +228,13 @@
 *   </tr>
 *   <tr>
 *     <td>1.10</td>
-*     <td>Updated of the \ref Cy_CANFD_Init() functions</td>
-*     <td>Allow initing CANFD with 0 number of SID/XID filters</td>
+*     <td>Updated \ref Cy_CANFD_Init() functions.</td>
+*     <td>Allow initing CANFD with 0 number of SID/XID filters.</td>
 *   </tr>
 *   <tr>
 *     <td>1.0.1</td>
-*     <td>Updated description of the \ref Cy_CANFD_Init() and \ref Cy_CANFD_DeInit() functions</td>
-*     <td>Documentation update and clarification </td>
+*     <td>Updated description of the \ref Cy_CANFD_Init() and \ref Cy_CANFD_DeInit() functions.</td>
+*     <td>Documentation update and clarification.</td>
 *   </tr>
 *   <tr>
 *     <td>1.0</td>
@@ -277,7 +282,7 @@ extern "C" {
 #define CY_CANFD_DRV_VERSION_MAJOR       1U
 
 /** Driver minor version */
-#define CY_CANFD_DRV_VERSION_MINOR       20U
+#define CY_CANFD_DRV_VERSION_MINOR       30U
 
 /** CAN FD driver ID */
 #define CY_CANFD_ID CY_PDL_DRV_ID(0x45U)

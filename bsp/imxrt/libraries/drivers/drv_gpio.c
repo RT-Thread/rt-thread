@@ -519,7 +519,7 @@ void GPIO13_Combined_0_31_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
-static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     gpio_pin_config_t gpio;
     rt_int8_t port, pin_num;
@@ -622,7 +622,7 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_PinInit(mask_tab[port].gpio, pin_num, &gpio);
 }
 
-static int imxrt_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t imxrt_pin_read(rt_device_t dev, rt_base_t pin)
 {
     int value;
     rt_int8_t port, pin_num;
@@ -640,7 +640,7 @@ static int imxrt_pin_read(rt_device_t dev, rt_base_t pin)
     return GPIO_PinReadPadStatus(mask_tab[port].gpio, pin_num);
 }
 
-static void imxrt_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void imxrt_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     rt_int8_t port, pin_num;
 
@@ -656,8 +656,8 @@ static void imxrt_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     GPIO_PinWrite(mask_tab[port].gpio, pin_num, value);
 }
 
-static rt_err_t imxrt_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t imxrt_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                     rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
     rt_int8_t port, pin_num;
@@ -690,7 +690,7 @@ static rt_err_t imxrt_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t imxrt_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t imxrt_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     rt_int8_t port, pin_num;
@@ -719,7 +719,7 @@ static rt_err_t imxrt_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t imxrt_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t imxrt_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     gpio_interrupt_mode_t int_mode;
     rt_int8_t port, pin_num, irq_index;

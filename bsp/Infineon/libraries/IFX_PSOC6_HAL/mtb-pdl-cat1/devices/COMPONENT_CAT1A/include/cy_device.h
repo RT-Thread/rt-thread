@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2020 Cypress Semiconductor Corporation
+* Copyright 2018-2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -209,7 +209,7 @@ void Cy_PDL_Init(const cy_stc_device_t * device);
 /*******************************************************************************
 *               Register Access Helper Macros
 *******************************************************************************/
-
+#define CY_DEVICE_CAT1A            /* Device Category */
 #define CY_CRYPTO_V1                        (0x20U > cy_device->cryptoVersion) /* true if the mxcrypto version is 1.x */
 
 #define CY_SRSS_V1_3                        (0x13U == cy_device->srssVersion)
@@ -220,9 +220,7 @@ void Cy_PDL_Init(const cy_stc_device_t * device);
 #define CY_SRSS_NUM_CLKPATH                 ((uint32_t)(cy_device->srssNumClkpath))
 #define CY_SRSS_NUM_PLL                     ((uint32_t)(cy_device->srssNumPll))
 #define CY_SRSS_NUM_HFROOT                  ((uint32_t)(cy_device->srssNumHfroot))
-
 #define CY_SRSS_PLL400M_PRESENT             0
-#define CY_SRSS_NUM_PLL400M                 0
 
 #define SRSS_PWR_CTL                        (((SRSS_V1_Type *) SRSS)->PWR_CTL)
 #define SRSS_PWR_HIBERNATE                  (((SRSS_V1_Type *) SRSS)->PWR_HIBERNATE)
@@ -293,6 +291,7 @@ void Cy_PDL_Init(const cy_stc_device_t * device);
 #define BACKUP_RTC_TIME                     (((BACKUP_V1_Type *) BACKUP)->RTC_TIME)
 #define BACKUP_RTC_DATE                     (((BACKUP_V1_Type *) BACKUP)->RTC_DATE)
 #define BACKUP_RTC_RW                       (((BACKUP_V1_Type *) BACKUP)->RTC_RW)
+#define BACKUP_CAL_CTL                      (((BACKUP_V1_Type *) BACKUP)->CAL_CTL)
 #define BACKUP_ALM1_TIME                    (((BACKUP_V1_Type *) BACKUP)->ALM1_TIME)
 #define BACKUP_ALM1_DATE                    (((BACKUP_V1_Type *) BACKUP)->ALM1_DATE)
 #define BACKUP_ALM2_TIME                    (((BACKUP_V1_Type *) BACKUP)->ALM2_TIME)
@@ -478,16 +477,16 @@ void Cy_PDL_Init(const cy_stc_device_t * device);
 *                MCWDT
 *******************************************************************************/
 
-#define MCWDT_STRUCT_MCWDT_CNTLOW(base)      (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_CNTLOW)
-#define MCWDT_STRUCT_MCWDT_CNTHIGH(base)     (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_CNTHIGH)
-#define MCWDT_STRUCT_MCWDT_MATCH(base)       (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_MATCH)
-#define MCWDT_STRUCT_MCWDT_CONFIG(base)      (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_CONFIG)
-#define MCWDT_STRUCT_MCWDT_LOCK(base)        (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_LOCK)
-#define MCWDT_STRUCT_MCWDT_CTL(base)         (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_CTL)
-#define MCWDT_STRUCT_MCWDT_INTR(base)        (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_INTR)
-#define MCWDT_STRUCT_MCWDT_INTR_SET(base)    (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_INTR_SET)
-#define MCWDT_STRUCT_MCWDT_INTR_MASK(base)   (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_INTR_MASK)
-#define MCWDT_STRUCT_MCWDT_INTR_MASKED(base) (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_INTR_MASKED)
+#define MCWDT_CNTLOW(base)      (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_CNTLOW)
+#define MCWDT_CNTHIGH(base)     (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_CNTHIGH)
+#define MCWDT_MATCH(base)       (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_MATCH)
+#define MCWDT_CONFIG(base)      (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_CONFIG)
+#define MCWDT_LOCK(base)        (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_LOCK)
+#define MCWDT_CTL(base)         (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_CTL)
+#define MCWDT_INTR(base)        (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_INTR)
+#define MCWDT_INTR_SET(base)    (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_INTR_SET)
+#define MCWDT_INTR_MASK(base)   (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_INTR_MASK)
+#define MCWDT_INTR_MASKED(base) (((MCWDT_STRUCT_V1_Type *)(base))->MCWDT_INTR_MASKED)
 
 
 /*******************************************************************************
@@ -769,7 +768,7 @@ void Cy_PDL_Init(const cy_stc_device_t * device);
 *                DMAC
 *******************************************************************************/
 
-#define CY_DMAC_CH_NR                       (4UL)
+#define CY_DMAC_CH_NR                       CPUSS_DMAC_CH_NR
 #define DMAC_CTL(base)                      (((DMAC_V2_Type*)(base))->CTL)
 #define DMAC_ACTIVE(base)                   (((DMAC_V2_Type const*)(base))->ACTIVE)
 #define DMAC_CH(base, chan)                 (&(((DMAC_V2_Type*)(base))->CH[(chan)]))
@@ -1010,6 +1009,9 @@ void Cy_PDL_Init(const cy_stc_device_t * device);
 #define CY_IPC_STRUCT_PTR(ipcIndex)            ((IPC_STRUCT_Type*)(cy_device->ipcBase + (cy_device->ipcStructSize * (ipcIndex))))
 #define CY_IPC_INTR_STRUCT_PTR(ipcIntrIndex)   &(((IPC_Type *)cy_device->ipcBase)->INTR_STRUCT[ipcIntrIndex])
 
+#define CY_IPC_STRUCT_PTR_FOR_IP(ipcIndex, base)            ((IPC_STRUCT_Type*)((uint32_t)(base) + (sizeof(IPC_STRUCT_Type) * (ipcIndex))))
+#define CY_IPC_INTR_STRUCT_PTR_FOR_IP(ipcIntrIndex, base)   &(((IPC_Type *)base)->INTR_STRUCT[ipcIntrIndex])
+
 #define CY_IPC_CHANNELS                        (uint32_t)(cy_device->cpussIpcNr)
 #define CY_IPC_INTERRUPTS                      (uint32_t)(cy_device->cpussIpcIrqNr)
 
@@ -1085,11 +1087,16 @@ void Cy_PDL_Init(const cy_stc_device_t * device);
 #define CY_PASS_V1                          (0x20U > cy_device->passVersion)
 #define CY_PASS_ADDR                        ((PASS_Type*)cy_device->passBase)
 #define CY_PASS_V2_ADDR                     ((PASS_V2_Type*)cy_device->passBase)
-#define CY_PASS_BASE(sarBase)               ((NULL != (sarBase)) ? ((PASS_V2_Type*) cy_device->passBase) : NULL) /* temporary solution for single pass instance */
+
+#define CY_SAR_PASS_BASE(sarBase)           ((NULL != (sarBase)) ? ((PASS_V2_Type*) cy_device->passBase) : NULL) /* temporary solution for single pass instance */
+#define CY_CTB_PASS_BASE(ctbBase)           ((NULL != (ctbBase)) ? ((PASS_V2_Type*) cy_device->passBase) : NULL) /* temporary solution for single ctb instance */
+#define CY_CTB_INST(ctbBase)                ((NULL != (ctbBase)) ? 0UL : 0UL) /* temporary solution for single ctb instance */
 
 #define PASS_AREF_AREF_CTRL                 (((PASS_V1_Type*) CY_PASS_ADDR)->AREF.AREF_CTRL)
 #define PASS_INTR_CAUSE(passBase)           (((PASS_V1_Type*) (passBase))->INTR_CAUSE)
-#define PASS_CTBM_CLOCK_SEL(passBase)       (((PASS_V2_Type*) (passBase))->CTBM_CLOCK_SEL)
+
+#define PASS_CTBM_CLOCK_SEL(ctbBase)        (CY_CTB_PASS_BASE(ctbBase)->CTBM_CLOCK_SEL[CY_CTB_INST(ctbBase)])
+
 #define PASS_DPSLP_CLOCK_SEL(passBase)      (((PASS_V2_Type*) (passBase))->DPSLP_CLOCK_SEL)
 #define PASS_LPOSC_CTRL(passBase)           (((PASS_V2_Type*) (passBase))->LPOSC.CTRL)
 #define PASS_LPOSC_CONFIG(passBase)         (((PASS_V2_Type*) (passBase))->LPOSC.CONFIG)

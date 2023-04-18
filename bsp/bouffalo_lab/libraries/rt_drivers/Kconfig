@@ -158,5 +158,22 @@ menu "General Drivers Configuration"
                 default n
         endif
 
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_TIMER0
+                bool "Enable TIMER0"
+                default n
+            config BSP_USING_TIMER1
+                bool "Enable TIMER1"
+                default n
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+    
 endmenu
 

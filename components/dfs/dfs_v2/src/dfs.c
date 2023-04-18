@@ -39,9 +39,8 @@ static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 
 /**
  * @addtogroup DFS
+ * @{
  */
-
-/*@{*/
 
 /**
  * this function will initialize device file system.
@@ -967,5 +966,5 @@ MSH_CMD_EXPORT(lsof, list open files);
 #endif /* RT_USING_SMART */
 
 #endif
-/*@}*/
+/**@}*/
 

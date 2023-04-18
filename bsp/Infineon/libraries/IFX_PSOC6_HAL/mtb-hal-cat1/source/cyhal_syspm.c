@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -62,6 +62,12 @@
 #include "cy_syspm.h"
 #include "cy_utils.h"
 #include "cyhal_utils.h"
+#if (defined(CY_RTOS_AWARE) || defined(COMPONENT_RTOS_AWARE)) && defined(CY_IP_MXS40SSRSS)
+#include "cyabs_rtos_dsram.h"
+#endif
+#if defined(COMPONENT_CAT1B)
+#include "system_cat1b.h"
+#endif
 
 #if (CYHAL_DRIVER_AVAILABLE_LPTIMER != 0)
 #include "cyhal_lptimer.h"
@@ -224,11 +230,11 @@ static cy_en_syspm_status_t _cyhal_syspm_cb_sleep(cy_stc_syspm_callback_params_t
 }
 static cy_en_syspm_status_t _cyhal_syspm_cb_deepsleep(cy_stc_syspm_callback_params_t *callback_params, cy_en_syspm_callback_mode_t mode)
 {
-    CY_UNUSED_PARAMETER(callback_params);
-    if ((mode == CY_SYSPM_CHECK_READY) && (_cyhal_deep_sleep_lock != 0))
+    if((mode == CY_SYSPM_CHECK_READY) && (_cyhal_deep_sleep_lock != 0))
     {
         return CY_SYSPM_FAIL;
     }
+    CY_UNUSED_PARAMETER(callback_params);
     return _cyhal_syspm_cb_sleep_deepsleep(mode, CYHAL_SYSPM_CB_CPU_DEEPSLEEP);
 }
 static cy_en_syspm_status_t _cyhal_syspm_cb_hibernate(cy_stc_syspm_callback_params_t *callback_params, cy_en_syspm_callback_mode_t mode)
@@ -268,6 +274,10 @@ static cy_en_syspm_status_t _cyhal_syspm_cb_lp(cy_stc_syspm_callback_params_t *c
 static cy_en_syspm_status_t _cyhal_syspm_cb_deepsleep_ram(cy_stc_syspm_callback_params_t *callback_params, cy_en_syspm_callback_mode_t mode)
 {
     CY_UNUSED_PARAMETER(callback_params);
+    if ((mode == CY_SYSPM_CHECK_READY) && (_cyhal_deep_sleep_lock != 0))
+    {
+        return CY_SYSPM_FAIL;
+    }
     return _cyhal_syspm_common_cb(mode, CYHAL_SYSPM_CB_CPU_DEEPSLEEP/*_RAM*/);
 }
 static cy_en_syspm_status_t _cyhal_syspm_cb_deepsleep_off(cy_stc_syspm_callback_params_t *callback_params, cy_en_syspm_callback_mode_t mode)
@@ -296,15 +306,15 @@ static void _cyhal_syspm_add_callback_to_list(cyhal_syspm_callback_data_t **list
     cyhal_system_critical_section_exit(intr_status);
 }
 
-static void _cyhal_syspm_remove_callback_from_list(cyhal_syspm_callback_data_t **list, cyhal_syspm_callback_data_t *remove)
+static void _cyhal_syspm_remove_callback_from_list(cyhal_syspm_callback_data_t **list, cyhal_syspm_callback_data_t *rmv)
 {
     uint32_t intr_status = cyhal_system_critical_section_enter();
     while(*list != CYHAL_SYSPM_END_OF_LIST)
     {
-        if (*list == remove)
+        if (*list == rmv)
         {
-            *list = remove->next;
-            remove->next = NULL;
+            *list = rmv->next;
+            rmv->next = NULL;
             break;
         }
         list = &((*list)->next);
@@ -462,6 +472,53 @@ void cyhal_syspm_unlock_deepsleep(void)
     cyhal_system_critical_section_exit(intr_status);
 }
 
+
+#if defined(CY_IP_MXS40SSRSS) && (defined(CY_RTOS_AWARE) || defined(COMPONENT_RTOS_AWARE))
+cy_rslt_t _cyhal_syspm_enter_deepsleep_ram(void)
+{
+    cy_rslt_t retVal;
+    uint32_t dsramIntState;
+
+    retVal = Cy_SysPm_SetupDeepSleepRAM(CY_SYSPM_PRE_DSRAM, &dsramIntState); /* Pre DSRAM checks */
+    if(retVal == CY_RSLT_SUCCESS)
+    {
+        System_Store_NVIC_Reg();
+        cyabs_rtos_enter_dsram(); /* Enter WFI with context saved */
+        System_Restore_NVIC_Reg();
+
+        Cy_SysPm_SetupDeepSleepRAM(CY_SYSPM_POST_DSRAM, &dsramIntState); /* Post DSRAM Checks */
+    }
+    return retVal;
+}
+#endif
+
+
+cy_rslt_t cyhal_syspm_deepsleep(void)
+{
+    if(_cyhal_deep_sleep_lock != 0)
+    {
+        return CYHAL_SYSPM_RSLT_DEEPSLEEP_LOCKED;
+    }
+    else
+    {
+#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+#if defined(CY_IP_MXS40SSRSS) && (defined(CY_RTOS_AWARE) || defined(COMPONENT_RTOS_AWARE))
+        if(Cy_SysPm_GetDeepSleepMode() == CY_SYSPM_MODE_DEEPSLEEP_RAM)
+        {
+            return _cyhal_syspm_enter_deepsleep_ram();
+        }
+        else
+#endif
+        {
+            return Cy_SysPm_CpuEnterDeepSleep(CY_SYSPM_WAIT_FOR_INTERRUPT);
+        }
+#elif defined(COMPONENT_CAT2)
+        return Cy_SysPm_CpuEnterDeepSleep();
+#endif
+    }
+}
+
+
 cy_rslt_t cyhal_syspm_tickless_sleep_deepsleep(cyhal_lptimer_t *obj, uint32_t desired_ms, uint32_t *actual_ms, bool deep_sleep)
 {
     cy_rslt_t result = CY_RSLT_SUCCESS;
@@ -479,10 +536,10 @@ cy_rslt_t cyhal_syspm_tickless_sleep_deepsleep(cyhal_lptimer_t *obj, uint32_t de
         cyhal_lptimer_get_info(obj, &timer_info);
 
         //lp_ticks = ms * lp_rate_khz
-        sleep_ticks = ((desired_ms - 1) * timer_info.frequency_hz) / _CYHAL_HZ_TO_KHZ_CONVERSION_FACTOR;
-        initial_ticks = cyhal_lptimer_read(obj);
+        sleep_ticks = (uint32_t)(((uint64_t)(desired_ms - 1) * timer_info.frequency_hz) / _CYHAL_HZ_TO_KHZ_CONVERSION_FACTOR);
 
         result = cyhal_lptimer_set_delay(obj, sleep_ticks);
+        initial_ticks = cyhal_lptimer_read(obj);
         if(result == CY_RSLT_SUCCESS)
         {
             /* Disabling and enabling the system timer is handled in _cyhal_syspm_common_cb in order
@@ -494,13 +551,14 @@ cy_rslt_t cyhal_syspm_tickless_sleep_deepsleep(cyhal_lptimer_t *obj, uint32_t de
             cyhal_lptimer_enable_event(obj, CYHAL_LPTIMER_COMPARE_MATCH, CYHAL_ISR_PRIORITY_DEFAULT, true);
 
             result = deep_sleep ? cyhal_syspm_deepsleep() : cyhal_syspm_sleep();
+
             if(result == CY_RSLT_SUCCESS)
             {
                 uint32_t final_ticks = cyhal_lptimer_read(obj);
                 uint32_t ticks = (final_ticks < initial_ticks)
                                 ? (timer_info.max_counter_value - initial_ticks) + final_ticks
                                 : final_ticks - initial_ticks;
-                *actual_ms = (ticks * _CYHAL_HZ_TO_KHZ_CONVERSION_FACTOR) / timer_info.frequency_hz;
+                *actual_ms = (uint32_t)(((uint64_t)ticks * _CYHAL_HZ_TO_KHZ_CONVERSION_FACTOR) / timer_info.frequency_hz);
             }
 
             cyhal_lptimer_enable_event(obj, CYHAL_LPTIMER_COMPARE_MATCH, CYHAL_ISR_PRIORITY_DEFAULT, false);

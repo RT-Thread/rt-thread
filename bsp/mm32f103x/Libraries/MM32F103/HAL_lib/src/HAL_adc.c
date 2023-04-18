@@ -752,7 +752,7 @@ ITStatus ADC_GetITStatus(ADC_TypeDef* ADCx, uint16_t ADC_IT)
 }
 
 /**
-* @brief  Clears the ADCx’s interrupt pending bits.
+* @brief  Clears the ADCx's interrupt pending bits.
 * @param ADCx: where x can be 1, 2 or 3 to select the ADC peripheral.
 * @param ADC_IT: specifies the ADC interrupt pending bit to clear.
 *   This parameter can be any combination of the following values:

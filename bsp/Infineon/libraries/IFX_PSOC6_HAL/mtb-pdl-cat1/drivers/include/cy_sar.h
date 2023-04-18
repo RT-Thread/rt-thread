@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_sar.h
-* \version 2.0.1
+* \version 2.10
 *
 * Header file for the SAR driver.
 *
@@ -77,6 +77,10 @@
 * To configure the SAR subsystem, call \ref Cy_SAR_Init. Pass in a pointer to the \ref SAR_Type
 * structure for the base hardware register address and pass in the configuration structure,
 * \ref cy_stc_sar_config_t.
+*
+* \note Make sure to choose correct hardware identifiers, taking into account the indexing in the used device:
+* \snippet sar/snippet/main.c SNIPPET_SAR_HW_COMPATIBILITY
+*
 *
 * After initialization, call \ref Cy_SAR_Enable to enable the hardware.
 *
@@ -559,6 +563,11 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>2.10</td>
+*     <td>The FIFO level validation in debug mode is fixed in the Cy_SAR_FifoSetLevel().</td>
+*     <td>Bug fixing.</td>
+*   </tr>
+*   <tr>
 *     <td>2.0.1</td>
 *     <td>Minor documentation updates.</td>
 *     <td>Documentation enhancement.</td>
@@ -644,7 +653,7 @@
 *       \defgroup group_sar_functions_switches      SARMUX Switch Control Functions
 *       \defgroup group_sar_functions_helper        Useful Configuration Query Functions
 *       \defgroup group_sar_functions_lp            Low Power features control Functions
-*       \defgroup group_sar_functions_fifo          FIFO buffer contlol Functions
+*       \defgroup group_sar_functions_fifo          FIFO buffer control Functions
 *       \defgroup group_sar_functions_trig          Common triggering Functions for multiple SAR instances
 *   \}
 * \defgroup group_sar_data_structures Data Structures
@@ -687,7 +696,7 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 11.3', 27, \
 #define CY_SAR_DRV_VERSION_MAJOR        2
 
 /** Driver minor version */
-#define CY_SAR_DRV_VERSION_MINOR        0
+#define CY_SAR_DRV_VERSION_MINOR        10
 
 /** SAR driver identifier */
 #define CY_SAR_ID                       CY_PDL_DRV_ID(0x01u)
@@ -699,7 +708,7 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 11.3', 27, \
 /** Number of sequencer channels */
 #define CY_SAR_SEQ_NUM_CHANNELS         (PASS_SAR_SAR_CHANNELS)
 
-/** Number of all channels including the injection chennel */
+/** Number of all channels including the injection channel */
 #define CY_SAR_NUM_CHANNELS             (CY_SAR_SEQ_NUM_CHANNELS + 1UL)
 
 /** Injection channel index */
@@ -2711,7 +2720,7 @@ __STATIC_INLINE void Cy_SAR_FifoSetLevel(const SAR_Type *base, uint32_t level)
     if(!CY_PASS_V1)
     {
         uint32_t locLevel = level - 1UL; /* Convert the user value into the machine value */
-        CY_ASSERT_L2(CY_SAR_IS_FIFO_LEVEL_VALID(level));
+        CY_ASSERT_L2(CY_SAR_IS_FIFO_LEVEL_VALID(locLevel));
         PASS_FIFO_LEVEL(base) = _VAL2FLD(PASS_FIFO_V2_LEVEL_LEVEL, locLevel);
     }
 }

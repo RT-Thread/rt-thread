@@ -1,13 +1,13 @@
 /***************************************************************************//**
 * \file cy_dmac.c
-* \version 1.30
+* \version 1.30.1
 *
 * \brief
 * The source code file for the DMAC driver.
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2020 Cypress Semiconductor Corporation
+* Copyright 2018-2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -339,6 +339,7 @@ void Cy_DMAC_Descriptor_SetXloopDataCount(cy_stc_dmac_descriptor_t * descriptor,
 *
 * \param nextDescriptor
 * The pointer to the next descriptor.
+* For CAT1C devices this pointer needs to point to 32 byte aligned structure.
 *
 * \funcusage
 * \snippet dmac/snippet/main.c snippet_Cy_DMAC_Descriptor_SetterFunctions

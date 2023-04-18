@@ -32,7 +32,7 @@ static void _cputime_timeout_callback(void *parameter)
     _cputimer_nowtimer = RT_NULL;
     rt_list_remove(&(timer->row));
     rt_hw_interrupt_enable(level);
-    timer->timeout_func(&(timer->sem));
+    timer->timeout_func(timer->parameter);
 }
 
 static void _set_next_timeout()
@@ -204,7 +204,7 @@ rt_err_t rt_cputimer_control(rt_cputimer_t timer, int cmd, void *arg)
 
     case RT_TIMER_CTRL_SET_TIME:
         RT_ASSERT((*(rt_uint64_t *)arg) < 0x7fffffffffffffff);
-        timer->init_tick = *(rt_uint64_t *)arg;
+        timer->init_tick = *(rt_uint64_t *)arg + clock_cpu_gettime();
         break;
 
     case RT_TIMER_CTRL_SET_ONESHOT:
