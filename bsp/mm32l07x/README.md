@@ -53,7 +53,7 @@ MM32L073PF 是一款面向电机驱动、工业应用、消费电子、白色家
 
 > 工程默认配置使用 Jlink 仿真器下载程序，在通过 Jlink 连接开发板到 PC 的基础上，点击下载按钮即可下载程序到开发板
 
-推荐熟悉 RT_Thread 的用户使用[env工具](https://www.rt-thread.org/page/download.html)，可以在console下进入到 `bsp/mm32l07x` 目录中，运行以下命令：
+推荐熟悉 RT_Thread 的用户使用[env工具](https://www.rt-thread.org/download.html#download-rt-thread-env-tool)，可以在console下进入到 `bsp/mm32l07x` 目录中，运行以下命令：
 
 `scons`
 
