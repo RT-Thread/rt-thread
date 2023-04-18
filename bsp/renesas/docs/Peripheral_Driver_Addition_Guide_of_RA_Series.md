@@ -6,7 +6,7 @@ This document is intended for developers who need to add more peripheral drivers
 
 ## 2. Prerequisites
 
-- Proficiency in using ENV tools, reference: [RT-Thread env tools user manual](https://www.rt-thread.org/document/site/rtthread-development-guide/rtthread-tool-manual/env/env-user-manual/)
+- Proficiency in using ENV tools, reference: [RT-Thread env tools user manual](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 - Familiar with [Kconfig](https://www.rt-thread.org/document/site/#/development-tools/kconfig/kconfig) programmer
 - Familiar with  [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp) tool
 - Understanding RT-Thread [Device Driver Framework](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/device)
