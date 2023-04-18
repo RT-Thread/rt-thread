@@ -43,6 +43,7 @@ AT32F423-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | IIC       | 支持     | GPIO模拟I2C                |
 | SPI       | 支持     | SPI1/2                     |
 | ADC       | 支持     | ADC1                       |
+| DAC       | 支持     | DAC1                       |
 | PWM       | 支持     | TMR1/2                     |
 | HWTIMER   | 支持     | TMR3                       |
 | CAN       | 支持     | CAN1/2                     |
@@ -84,6 +85,8 @@ AT32F423-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PC3  | ADC1_IN13      |
 | PC4  | ADC1_IN14      |
 | PC5  | ADC1_IN15      |
+| PA4  | DAC_OUT1       |
+| PA5  | DAC_OUT2       |
 | PB8  | CAN1_RX        |
 | PB9  | CAN1_TX        |
 | PB5  | CAN2_RX        |
