@@ -1,5 +1,7 @@
 # CH32V208W-R0 BSP 说明
 
+**中文**|[英文](CH32V208W-R0 Getting Started Guide.md) 
+
 ## 1 开发板简介
 
 CH32V208W-R0 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主频为 144Mhz。比较适合入门学习 RISC-V 架构。

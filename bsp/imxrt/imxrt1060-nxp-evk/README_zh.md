@@ -1,5 +1,7 @@
 # MIMXRT1060-EVK
 
+**中文**|[英文](README.md) 
+
 ## 1 BSP简介
 
 本文档为 MIMXRT1060-EVK 开发板的 BSP (板级支持包) 说明。
