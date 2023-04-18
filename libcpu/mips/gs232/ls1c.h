@@ -17,6 +17,7 @@
 #define LS1C_ACPI_IRQ    0
 #define LS1C_HPET_IRQ    1
 //#define LS1C_UART0_IRQ    3  // linux使用3，v1.4版本之前1c分配有问题，建议使用2，以确保正确
+#define LS1C_UART1_IRQ   4
 #define LS1C_UART2_IRQ   5
 #define LS1C_CAN0_IRQ    6
 #define LS1C_CAN1_IRQ    7
