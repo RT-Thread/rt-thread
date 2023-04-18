@@ -1303,7 +1303,7 @@ void RTC_TimeStampCmd(uint32_t RTC_TimeStampEdge, FunctionalState NewState)
 {
   uint32_t tmpreg = 0;
 
-    /*��Edge�ĸ��û�д�λ�Ķ���*/
+    /* 设置Edge的边缘触发，没有特定位的情况 */
   /* Check the parameters */
   assert_param(IS_RTC_TIMESTAMP_EDGE(RTC_TimeStampEdge));
   assert_param(IS_FUNCTIONAL_STATE(NewState));

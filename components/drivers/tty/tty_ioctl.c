@@ -85,8 +85,8 @@ int n_tty_ioctl_extend(struct tty_struct *tty, int cmd, void *args)
         if (tio == RT_NULL)
         {
             return -RT_EINVAL;
-        } 
-        
+        }
+
         rt_memcpy(tio, &real_tty->init_termios, sizeof(real_tty->init_termios));
         return ret;
     }

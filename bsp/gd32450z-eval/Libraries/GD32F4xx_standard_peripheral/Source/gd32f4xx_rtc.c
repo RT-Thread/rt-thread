@@ -68,7 +68,7 @@ ErrStatus rtc_deinit(void)
     error_status = rtc_init_mode_enter();
 
     if(ERROR != error_status){
-        /* reset RTC_CTL register, but RTC_CTL[2��0] */
+        /* reset RTC_CTL register, but RTC_CTL[2:0] */
         RTC_CTL &= (RTC_REGISTER_RESET | RTC_CTL_WTCS);
         /* before reset RTC_TIME and RTC_DATE, BPSHAD bit in RTC_CTL should be reset as the condition.
            in order to read calendar from shadow register, not the real registers being reset */
@@ -76,7 +76,7 @@ ErrStatus rtc_deinit(void)
         RTC_DATE = RTC_DATE_RESET;
 
         RTC_PSC = RTC_PSC_RESET;
-        /* only when RTC_CTL_WTEN=0 and RTC_STAT_WTWF=1 can write RTC_CTL[2��0] */
+        /* only when RTC_CTL_WTEN=0 and RTC_STAT_WTWF=1 can write RTC_CTL[2:0] */
         /* wait until the WTWF flag to be set */
         do{
            flag_status = RTC_STAT & RTC_STAT_WTWF;
@@ -1096,7 +1096,7 @@ ErrStatus rtc_wakeup_clock_set(uint8_t wakeup_clock)
     /* disable the write protection */
     RTC_WPK = RTC_UNLOCK_KEY1;
     RTC_WPK = RTC_UNLOCK_KEY2;
-    /* only when RTC_CTL_WTEN=0 and RTC_STAT_WTWF=1 can write RTC_CTL[2��0] */
+    /* only when RTC_CTL_WTEN=0 and RTC_STAT_WTWF=1 can write RTC_CTL[2:0] */
     /* wait until the WTWF flag to be set */
     do{
         flag_status = RTC_STAT & RTC_STAT_WTWF;
