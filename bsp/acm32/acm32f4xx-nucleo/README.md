@@ -51,6 +51,6 @@ ACM32F4xx芯片是上海爱信诺航芯电子科技有限公司(后续简称上�
 * 板子[数据手册][2]
 * 芯片[数据手册][3]
 
-  [1]: https://www.rt-thread.org/page/download.html
+  [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
   [2]: www.aisinochip.com/index.php/product/detail/id/50.html
   [3]: www.aisinochip.com/index.php/product/detail/id/50.html

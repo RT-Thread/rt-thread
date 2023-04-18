@@ -99,7 +99,7 @@ Die wichtigsten von RT-Thread unterstützten IDEs/Compiler sind:
 
 ## RT-Thread Studio IDE
 
-[User Manual](https://www.rt-thread.io/document/site/rtthread-studio/um/studio-user-manual/) | [Tutorial Videos](https://youtu.be/ucq5eJgZIQg)
+[User Manual](https://www.rt-thread.io/document/site/rtthread-studio/um/studio-user-manual/) | [Tutorial Videos](https://www.youtube.com/watch?v=ucq5eJgZIQg)
 
 RT-Thread Studio IDE (auch bekannt als RT-Studio) ist eine integrierte Entwicklungsumgebung aus einer Hand, die vom RT-Thread-Team entwickelt wurde. Es verfügt über ein einfach zu bedienendes grafisches Konfigurationssystem und eine Fülle von Software-Paketen und Komponenten Ressourcen. RT-Studio verfügt über Funktionen zur Projekterstellung, -konfiguration und -verwaltung sowie zur Code-Bearbeitung, SDK-Verwaltung, Build-Konfiguration, Debugging-Konfiguration, Programm-Download und Debugging. Wir sind bestrebt, die Nutzung von RT-Studio so intuitiv wie möglich zu gestalten, Doppelarbeit zu reduzieren und die Effizienz der Entwicklung zu verbessern.
 

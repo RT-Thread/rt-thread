@@ -151,7 +151,7 @@ msh />
 
 维护人：[bernard][5]
 
-[1]: https://www.rt-thread.org/page/download.html
+[1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
 [2]: https://launchpad.net/gcc-arm-embedded/4.8/4.8-2014-q1-update/+download/gcc-arm-none-eabi-4_8-2014q1-20140314-linux.tar.bz2
 [3]: https://downloads.raspberrypi.org/raspbian_lite_latest
 [4]: https://etcher.io
