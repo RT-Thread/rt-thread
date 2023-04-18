@@ -38,7 +38,7 @@
     BANK_PIN(0, 5) means GPIO0_A5
     BANK_PIN(1, 8) means GPIO1_B0
 
- See more information, click [here](http://www.rt-thread.org/document/site/programming-manual/device/pin/pin/)
+ See more information, click [here](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/pin/pin)
 
  @} */
 
