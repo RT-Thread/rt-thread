@@ -1,6 +1,6 @@
 # NXP MIMXRT1060-EVK BSP Introduction
 
-**英文**|[中文](README_zh.md) 
+**英文** | [中文](README_zh.md) 
 
 This document records the instruction of the BSP (board support package) that provided by the RT-Thread development team for the MIMXRT1060-EVK development board.
 
