@@ -308,11 +308,11 @@ EXIT:
 }
 
 #ifdef RT_USING_WDT
-#define WDT_DEVICE_NAME    "wdg"    /* 鐪嬮棬鐙楄澶囧悕绉� */
-static rt_device_t wdg_dev;         /* 鐪嬮棬鐙楄澶囧彞鏌� */
+#define WDT_DEVICE_NAME    "wdg"    /* the name of the watchdog device */
+static rt_device_t wdg_dev;         /* handle of the watchdog device */
 static void idle_hook(void)
 {
-    /* 鍦ㄧ┖闂茬嚎绋嬬殑鍥炶皟鍑芥暟閲屽杺鐙� */
+    /* Feed the dog in the callback function of the idle thread */
     rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, NULL);
     //rt_kprintf("feed the dog!\n ");
 }
@@ -321,38 +321,38 @@ rt_err_t test_wdt(void)
 {
     rt_kprintf("Hello Test WDT!\n");
     rt_err_t ret = RT_EOK;
-    rt_uint32_t timeout = 1;        /* 婧㈠嚭鏃堕棿锛屽崟浣嶏細绉� */
+    rt_uint32_t timeout = 1;        /* the overflow time */
     char device_name[RT_NAME_MAX];
     rt_strncpy(device_name, WDT_DEVICE_NAME, RT_NAME_MAX);
-    /* 鏍规嵁璁惧鍚嶇О鏌ユ壘鐪嬮棬鐙楄澶囷紝鑾峰彇璁惧鍙ユ焺 */
+    /* find the watchdog device based on the device's name and obtain the device handle */
     wdg_dev = rt_device_find(device_name);
     if (!wdg_dev)
     {
         rt_kprintf("find %s failed!\n", device_name);
         return -RT_ERROR;
     }
-    /* 鍒濆鍖栬澶� */
+    /* initialize the device */
     ret = rt_device_init(wdg_dev);
     if (ret != RT_EOK)
     {
         rt_kprintf("initialize %s failed!\n", device_name);
         return -RT_ERROR;
     }
-    /* 璁剧疆鐪嬮棬鐙楁孩鍑烘椂闂� */
+    /* set the overflow time of the watch dog */
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_SET_TIMEOUT, &timeout);
     if (ret != RT_EOK)
     {
         rt_kprintf("set %s timeout failed!\n", device_name);
         return -RT_ERROR;
     }
-    /* 鍚姩鐪嬮棬鐙� */
+    /* start the watchdog */
     ret = rt_device_control(wdg_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
     if (ret != RT_EOK)
     {
         rt_kprintf("start %s failed!\n", device_name);
         return -RT_ERROR;
     }
-    /* 璁剧疆绌洪棽绾跨▼鍥炶皟鍑芥暟 */
+    /* set idle thread callback function */
     rt_thread_idle_sethook(idle_hook);
 
     return ret;

@@ -80,4 +80,4 @@ msh />
 * 芯片[数据手册](https://github.com/open-isa-org/open-isa.org/blob/master/Reference%20Manual%20and%20Data%20Sheet/RV32M1DS_Rev.1.1.pdf)
 * [open-isa链接](https://github.com/open-isa-org/open-isa.org)
 
-  [1]: https://www.rt-thread.org/page/download.html
+  [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool

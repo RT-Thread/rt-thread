@@ -124,8 +124,8 @@ void invalidate_writeback_dcache(unsigned long addr, int size)
 {
     unsigned long start, end;
 
-    start = (addr +pcacheinfo->dcacheline_size -1) & (- pcacheinfo->dcacheline_size);
-    end = (end + size + pcacheinfo->dcacheline_size -1) & ( -pcacheinfo->dcacheline_size);
+    start = (addr + pcacheinfo->dcacheline_size -1) & (- pcacheinfo->dcacheline_size);
+    end = (addr + size + pcacheinfo->dcacheline_size -1) & ( -pcacheinfo->dcacheline_size);
 
     while (start <end)
     {

@@ -43,6 +43,7 @@ AT32F437-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | IIC       | 支持     | GPIO模拟I2C                |
 | SPI       | 支持     | SPI1/2                     |
 | ADC       | 支持     | ADC1/2                     |
+| DAC       | 支持     | DAC1                       |
 | PWM       | 支持     | TMR1/2                     |
 | HWTIMER   | 支持     | TMR3/4/5                   |
 | SDIO      | 支持     | SDIO1                      |
@@ -94,6 +95,8 @@ AT32F437-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PC3  | ADC1/2_IN13       |
 | PC4  | ADC1/2_IN14       |
 | PC5  | ADC1/2_IN15       |
+| PA4  | DAC_OUT1          |
+| PA5  | DAC_OUT2          |
 | PB8  | CAN1_RX           |
 | PB9  | CAN1_TX           |
 | PB5  | CAN2_RX           |

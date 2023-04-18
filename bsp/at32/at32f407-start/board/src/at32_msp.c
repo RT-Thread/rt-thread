@@ -422,6 +422,29 @@ void at32_msp_usb_init(void *instance)
         }
     }
 }
-
 #endif /* BSP_USING_USBD */
 
+#ifdef BSP_USING_DAC
+void at32_msp_dac_init(void *instance)
+{
+    gpio_init_type gpio_init_struct;
+    dac_type *dac_x = (dac_type *)instance;
+
+    gpio_default_para_init(&gpio_init_struct);
+    gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_STRONGER;
+#ifdef BSP_USING_DAC1
+    if(dac_x == DAC)
+    {
+        /* dac & gpio clock enable */
+        crm_periph_clock_enable(CRM_DAC_PERIPH_CLOCK, TRUE);
+        crm_periph_clock_enable(CRM_GPIOA_PERIPH_CLOCK, TRUE);
+
+        /* configure adc channel as analog output */
+        gpio_init_struct.gpio_pins = GPIO_PINS_4 | GPIO_PINS_5;
+        gpio_init_struct.gpio_mode = GPIO_MODE_ANALOG;
+        gpio_init_struct.gpio_out_type = GPIO_OUTPUT_PUSH_PULL;
+        gpio_init(GPIOA, &gpio_init_struct);
+    }
+#endif
+}
+#endif /* BSP_USING_DAC */

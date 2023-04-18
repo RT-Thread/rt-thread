@@ -243,7 +243,7 @@ msh />QEMU: Terminated
 维护人：[bernard][4]  [recan-li][5]
 
 [1]: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.subset.boards.express/index.html
-[2]: https://www.rt-thread.org/page/download.html
+[2]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
 [3]: https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
 [4]: https://github.com/BernardXiong
 [5]: https://github.com/recan-li

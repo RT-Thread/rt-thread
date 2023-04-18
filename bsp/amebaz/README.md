@@ -39,9 +39,9 @@ IAR 开发环境需要开发者自己安装软件，安装过程这里就不特�
 
 GCC开发使用 RT-Thread 官方提供的 env 工具，该工具集成 GCC 工具链，还具有编译构建环境、图形化系统配置及软件包管理功能。
 
-下载地址：[点击下载env工具](https://www.rt-thread.org/page/download.html)
+下载地址：[点击下载env工具](https://www.rt-thread.org/download.html#download-rt-thread-env-tool)
 
-第一次使用env工具的开发者可以去这里查看教程：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/rtthread-development-guide/rtthread-tool-manual/env/env-user-manual/)。
+第一次使用env工具的开发者可以去这里查看教程：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)。
 
 ### 4.2 Linux/Mac 环境准备
 
@@ -291,6 +291,6 @@ dns server #1: 223.5.5.5
 维护人:
 [flyingcys][4] < [flyingcys@163.com][5] >
 
-  [1]: https://www.rt-thread.org/page/download.html
+  [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
   [4]: https://github.com/flyingcys
   [5]: mailto:flyingcys@163.com
