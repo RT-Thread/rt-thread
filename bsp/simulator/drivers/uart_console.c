@@ -117,10 +117,10 @@ static void * ThreadforKeyGet(void * lpParam)
 #endif /* not _WIN32*/
 {
  /*
- * left  key(��)�� 0xe04b
- * up    key(��)�� 0xe048
- * right key(��)�� 0xe04d
- * down  key(��)�� 0xe050
+ * left  key(左)： 0xe04b
+ * up    key(上)： 0xe048
+ * right key(右)： 0xe04d
+ * down  key(下)： 0xe050
  */
     unsigned char key;
 

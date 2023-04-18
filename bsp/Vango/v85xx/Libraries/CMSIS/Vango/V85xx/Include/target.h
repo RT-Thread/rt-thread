@@ -1089,7 +1089,7 @@ typedef struct
 //#define ANA_REGA_PSLSEL                ANA_REGA_PSLSEL_Msk                     /*!< power switch level selection */ 
 //#define ANA_REGA_PD_PORH_Pos          (5U)                                     
 //#define ANA_REGA_PD_PORH_Msk          (0x1U << ANA_REGA_PD_PORH_Pos)           /*!< 0x00000020 */
-//#define ANA_REGA_PD_PORH               ANA_REGA_PD_PORH_Msk                    /*!< PD POR_H module, output ��1�� when PD */ 
+//#define ANA_REGA_PD_PORH               ANA_REGA_PD_PORH_Msk                    /*!< PD POR_H module, output '1' when PD */ 
 //#define ANA_REGA_PD_RCL_Pos           (6U)                                     
 //#define ANA_REGA_PD_RCL_Msk           (0x1U << ANA_REGA_PD_RCL_Pos)            /*!< 0x00000040 */
 //#define ANA_REGA_PD_RCL                ANA_REGA_PD_RCL_Msk                     /*!< PD 32K RC module */ 
