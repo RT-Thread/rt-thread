@@ -244,7 +244,7 @@ static int ra_uart_getc(struct rt_serial_device *serial)
     return RT_EOK;
 }
 
-static rt_size_t ra_uart_transmit(struct rt_serial_device     *serial,
+static rt_ssize_t ra_uart_transmit(struct rt_serial_device     *serial,
                                   rt_uint8_t           *buf,
                                   rt_size_t             size,
                                   rt_uint32_t           tx_flag)
