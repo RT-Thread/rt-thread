@@ -423,32 +423,12 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
     rt_page_cleanup();
 }
 
-#ifdef ARCH_ENABLE_SOFT_KASAN
-#include "kasan.h"
-#endif /* ARCH_ENABLE_SOFT_KASAN */
-
 #ifdef RT_USING_SMART
 static void _init_region(void *vaddr, size_t size)
 {
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = (char *)rt_ioremap_start - rt_mpr_size;
-
-#ifdef ARCH_ENABLE_SOFT_KASAN
-    kasan_area_start = rt_mpr_start - KASAN_AREA_SIZE;
-    int ret;
-    ret = rt_aspace_map_static(&rt_kernel_space, &kasan_area, (void **)&kasan_area_start,
-                               KASAN_AREA_SIZE, MMU_MAP_K_RWCB, 0, &kasan_mapper, 0);
-
-    if (ret)
-    {
-        LOG_W("kasan area map failed");
-    }
-    else
-    {
-        kasan_init();
-    }
-#endif /* ARCH_ENABLE_SOFT_KASAN */
 }
 #else
 
