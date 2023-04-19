@@ -183,6 +183,7 @@ jobs:
                 - "xplorer4330/M4"
                 - "renesas/ra6m3-ek"
                 - "renesas/ra6m4-cpk"
+                - "renesas/ra6m3-hmi-board"
          -  RTT_BSP: "gd32_n32_apm32"   
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:             

@@ -1,0 +1,3 @@
+# RASC version and installation file
+3.5.0
+C:\Renesas\RA\sc_v2021-10_fsp_v3.5.0\eclipse\rasc.exe
