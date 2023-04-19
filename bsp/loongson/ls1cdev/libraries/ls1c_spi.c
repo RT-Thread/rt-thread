@@ -245,7 +245,7 @@ void ls1c_spi_clear(void *spi_base)
     val = reg_read_8(spi_base + LS1C_SPI_SPSR_OFFSET);
     if (LS1C_SPI_SPSR_WCOL_MASK & val)
     {
-        printf("[%s] clear register SPSR's wcol!\r\n");       // 手册和linux源码中不一样，加个打印看看
+        printf("[%s] clear register SPSR's wcol!\r\n", __FUNCTION__);       // 手册和linux源码中不一样，加个打印看看
         reg_write_8(val & ~LS1C_SPI_SPSR_WCOL_MASK, spi_base + LS1C_SPI_SPSR_OFFSET);   // 写0，linux源码中是写0
 //        reg_write_8(val | LS1C_SPI_SPSR_WCOL_MASK, spi_base + LS1C_SPI_SPSR_OFFSET);  // 写1，按照1c手册，应该写1
     }
