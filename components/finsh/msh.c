@@ -170,36 +170,6 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
     return argc;
 }
 
-static msh_cmd_opt_t *msh_get_cmd_opt(char *opt_str)
-{
-    struct finsh_syscall *index;
-    msh_cmd_opt_t *opt = RT_NULL;
-    char *ptr;
-    int len;
-
-    if ((ptr = strchr(opt_str, ' ')))
-    {
-        len = ptr - opt_str;
-    }
-    else
-    {
-        len = strlen(opt_str);
-    }
-
-    for (index = _syscall_table_begin;
-            index < _syscall_table_end;
-            FINSH_NEXT_SYSCALL(index))
-    {
-        if (strncmp(index->name, opt_str, len) == 0 && index->name[len] == '\0')
-        {
-            opt = index->opt;
-            break;
-        }
-    }
-
-    return opt;
-}
-
 static cmd_function_t msh_get_cmd(char *cmd, int size)
 {
     struct finsh_syscall *index;
@@ -809,6 +779,37 @@ void msh_auto_complete(char *prefix)
     return;
 }
 
+#ifdef FINSH_OPTION_COMPLETION_ENABLED
+static msh_cmd_opt_t *msh_get_cmd_opt(char *opt_str)
+{
+    struct finsh_syscall *index;
+    msh_cmd_opt_t *opt = RT_NULL;
+    char *ptr;
+    int len;
+
+    if ((ptr = strchr(opt_str, ' ')))
+    {
+        len = ptr - opt_str;
+    }
+    else
+    {
+        len = strlen(opt_str);
+    }
+
+    for (index = _syscall_table_begin;
+            index < _syscall_table_end;
+            FINSH_NEXT_SYSCALL(index))
+    {
+        if (strncmp(index->name, opt_str, len) == 0 && index->name[len] == '\0')
+        {
+            opt = index->opt;
+            break;
+        }
+    }
+
+    return opt;
+}
+
 static int msh_get_argc(char *prefix, char **last_argv)
 {
     int argc = 0;
@@ -907,6 +908,7 @@ void msh_opt_auto_complete(char *prefix)
         }
     }
 }
+#endif /* FINSH_OPTION_COMPLETION_ENABLED */
 
 int msh_cmd_opt_id_get(int argc, char *argv[], void *options)
 {
