@@ -79,4 +79,6 @@ jobs:
         scons --dist-ide -C $TEST_BSP_ROOT
         ls $TEST_BSP_ROOT
         ls $TEST_BSP_ROOT/dist
-        scons -C $TEST_BSP_ROOT/dist/project -j8
+        scons -C $TEST_BSP_ROOT/dist/project
+        scons -C $TEST_BSP_ROOT/rt-studio-project
+        
