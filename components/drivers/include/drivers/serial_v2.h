@@ -178,7 +178,7 @@ struct rt_uart_ops
     int (*putc)(struct rt_serial_device *serial, char c);
     int (*getc)(struct rt_serial_device *serial);
 
-    rt_size_t (*transmit)(struct rt_serial_device       *serial,
+    rt_ssize_t (*transmit)(struct rt_serial_device       *serial,
                                  rt_uint8_t             *buf,
                                  rt_size_t               size,
                                  rt_uint32_t             tx_flag);

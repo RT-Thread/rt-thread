@@ -455,6 +455,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 {
     struct rt_serial_device *serial;
     struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
+    rt_ssize_t rst;
 
     RT_ASSERT(dev != RT_NULL);
     if (size == 0) return 0;
@@ -476,14 +477,14 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 
     tx_fifo->activated = RT_TRUE;
     /* Call the transmit interface for transmission */
-    serial->ops->transmit(serial,
-                          (rt_uint8_t *)buffer,
-                          size,
-                          RT_SERIAL_TX_BLOCKING);
+    rst = serial->ops->transmit(serial,
+                                (rt_uint8_t *)buffer,
+                                size,
+                                RT_SERIAL_TX_BLOCKING);
     /* Waiting for the transmission to complete */
     rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
 
-    return size;
+    return rst;
 }
 
 /**
