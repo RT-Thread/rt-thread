@@ -104,23 +104,26 @@ typedef long (*syscall_func)(void);
 #endif /* end of FINSH_USING_DESCRIPTION */
 #endif /* end of FINSH_USING_SYMTAB */
 
-#define GET_MACRO(_1, _2, _3, _FUN, ...)  _FUN
-#define GET_EXPORT_MACRO(_1, _2, _3, _4, _FUN, ...) _FUN
-
-#define GET_MSH_OPT1(cmd)    cmd##msh_options
-#define GET_MSH_OPT(cmd)    GET_MSH_OPT1(cmd)
+#define __MSH_GET_MACRO(_1, _2, _3, _FUN, ...)  _FUN
+#define __MSH_GET_EXPORT_MACRO(_1, _2, _3, _4, _FUN, ...) _FUN
 
 #define _MSH_FUNCTION_CMD2(a0, a1)       \
         MSH_FUNCTION_EXPORT_CMD(a0, a0, a1, 0)
 
-#define _MSH_FUNCTION_CMD3(a0, a1, a2)       \
+#define _MSH_FUNCTION_CMD3_OPT(a0, a1, a2)       \
         MSH_FUNCTION_EXPORT_CMD(a0, a0, a1, a0##_msh_options)
+
+#define _MSH_FUNCTION_CMD3_NO_OPT(a0, a1, a2)       \
+        MSH_FUNCTION_EXPORT_CMD(a0, a0, a1, 0)
 
 #define _MSH_FUNCTION_EXPORT_CMD3(a0, a1, a2)       \
         MSH_FUNCTION_EXPORT_CMD(a0, a1, a2, 0)
 
-#define _MSH_FUNCTION_EXPORT_CMD4(a0, a1, a2, a3)   \
+#define _MSH_FUNCTION_EXPORT_CMD4_OPT(a0, a1, a2, a3)   \
         MSH_FUNCTION_EXPORT_CMD(a0, a1, a2, a0##_msh_options)
+
+#define _MSH_FUNCTION_EXPORT_CMD4_NO_OPT(a0, a1, a2, a3)   \
+        MSH_FUNCTION_EXPORT_CMD(a0, a1, a2, 0)
 
 /**
  * @ingroup finsh
@@ -153,9 +156,15 @@ typedef long (*syscall_func)(void);
  * @param opt This is an option, enter any content to enable option completion
  */
 /* MSH_CMD_EXPORT(command, desc) or MSH_CMD_EXPORT(command, desc, opt) */
-#define MSH_CMD_EXPORT(...)                    \
-    GET_MACRO(__VA_ARGS__, _MSH_FUNCTION_CMD3, \
+#ifdef FINSH_OPTION_COMPLETION_ENABLED
+#define MSH_CMD_EXPORT(...)                              \
+    __MSH_GET_MACRO(__VA_ARGS__, _MSH_FUNCTION_CMD3_OPT, \
         _MSH_FUNCTION_CMD2)(__VA_ARGS__)
+#else
+#define MSH_CMD_EXPORT(...)                                 \
+    __MSH_GET_MACRO(__VA_ARGS__, _MSH_FUNCTION_CMD3_NO_OPT, \
+        _MSH_FUNCTION_CMD2)(__VA_ARGS__)
+#endif /* FINSH_OPTION_COMPLETION_ENABLED */
 
 /**
  * @ingroup msh
@@ -169,9 +178,15 @@ typedef long (*syscall_func)(void);
  */
 /* #define MSH_CMD_EXPORT_ALIAS(command, alias, desc) or
    #define MSH_CMD_EXPORT_ALIAS(command, alias, desc, opt) */
-#define MSH_CMD_EXPORT_ALIAS(...)     \
-    GET_EXPORT_MACRO(__VA_ARGS__, _MSH_FUNCTION_EXPORT_CMD4, \
+#ifdef FINSH_OPTION_COMPLETION_ENABLED
+#define MSH_CMD_EXPORT_ALIAS(...)                                       \
+    __MSH_GET_EXPORT_MACRO(__VA_ARGS__, _MSH_FUNCTION_EXPORT_CMD4_OPT,  \
             _MSH_FUNCTION_EXPORT_CMD3)(__VA_ARGS__)
+#else
+#define MSH_CMD_EXPORT_ALIAS(...)                                          \
+    __MSH_GET_EXPORT_MACRO(__VA_ARGS__, _MSH_FUNCTION_EXPORT_CMD4_NO_OPT,  \
+            _MSH_FUNCTION_EXPORT_CMD3)(__VA_ARGS__)
+#endif /* FINSH_OPTION_COMPLETION_ENABLED */
 
 /* system call table */
 struct finsh_syscall
