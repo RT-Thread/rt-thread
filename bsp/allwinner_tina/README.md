@@ -6,7 +6,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
 包括如下硬件特性：
 
 | 硬件 | 描述 | 
-| :--:| :--:|
+| -- | -- |
 |芯片型号| tina系列 |
 |CPU| ARM9 |
 |主频| 408MHz |
@@ -16,7 +16,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
 ## 2. 编译说明
 
 | 环境 | 说明 |
-| :---: | :---: |
+| --- | --- |
 |PC操作系统|Linux/MacOS|
 |编译器|arm-none-eabi-gcc version 6.3.1 20170620 (release)|
 |构建工具|scons|
@@ -26,6 +26,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
     git clone https://github.com/RT-Thread/rt-thread.git
 ```
 ### 2.2 配置工程并准备env
+先下载安装 RT-Thread 的env工具([env工具下载链接][1]),再执行下面命令设置 RT-Thread 操作系统的开发环境
 ```
     cd rt-thread/bsp/allwinner_tina
     scons --menuconfig
@@ -101,7 +102,7 @@ msh />
 ## 4. 驱动支持情况及计划
 
 | 驱动 | 支持情况  |  备注  |
-| :------: | :----:  | :------:  |
+| ------ | ----  | ------  |
 | UART | 支持 | UART0/1/2 |
 | GPIO | 支持 | / |
 | clock | 支持 | / |
@@ -111,7 +112,7 @@ msh />
 ### 4.1 IO在板级支持包中的映射情况
 
 | IO号 | 板级包中的定义 |
-| :--: | :--: |
+| -- | -- |
 | PE8 | USART2 RX |
 | PE7 | USART2 TX |
 | PA3 | USART1 RX |
@@ -123,9 +124,9 @@ msh />
 ## 5. 联系人信息
 
 维护人:
-[uestczyh222][4] < [lymz@foxmail.com][5] >
+[lymzzyh][2] < [lymz@foxmail.com][3] >
 
 
   [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
-  [4]: https://github.com/uestczyh222
-  [5]: mailto:lymz@foxmail.com
+  [2]: https://github.com/lymzzyh
+  [3]: mailto:lymz@foxmail.com
