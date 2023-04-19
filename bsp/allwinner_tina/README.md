@@ -5,7 +5,7 @@
 Allwinner tina 是由全志公司推出的ARM9内核的SOC
 包括如下硬件特性：
 
-| 硬件 | 描述 |
+| 硬件 | 描述 | 
 | -- | -- |
 |芯片型号| tina系列 |
 |CPU| ARM9 |
@@ -20,12 +20,13 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
 |PC操作系统|Linux/MacOS|
 |编译器|arm-none-eabi-gcc version 6.3.1 20170620 (release)|
 |构建工具|scons|
-1) 下载源码
+### 2.1 下载源码
 
 ```
     git clone https://github.com/RT-Thread/rt-thread.git
 ```
-2) 配置工程并准备env
+### 2.2 配置工程并准备env
+先下载安装 RT-Thread 的env工具([env工具下载链接][1]),再执行下面命令设置 RT-Thread 操作系统的开发环境
 ```
     cd rt-thread/bsp/allwinner_tina
     scons --menuconfig
@@ -33,7 +34,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
     pkgs --upgrade
     
 ```
-3) 编译安装下载工具
+### 2.3 编译安装下载工具
 ```
     pushd /tmp
     git clone https://github.com/Icenowy/sunxi-tools.git
@@ -44,7 +45,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
     popd
     popd
 ```
-4) 编译
+### 2.4 编译
 ```
     scons
 ```
@@ -54,7 +55,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
 **烧写工具目前仅支持Linux/MacOS环境,请在Linux/MaxOS环境下进行烧写操作**
 当正确编译产生出rtthread.bin映像文件后可以使用下面的方式来烧写到设备中。
 
-1)编译初始化引导文件
+### 3.1 编译初始化引导文件
 编译依赖 arm-eabi-gcc
 ```
     pushd ../../..
@@ -65,14 +66,14 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
     popd
     popd
 ```
-2)下载并运行
+### 3.2 下载并运行
 
-```
-1.短接flash 1、4脚(当flash中无可引导代码时无需此步骤)
-2.连接USB
-3.松开短接的引脚
-4.输入下列指令
-```
+
+1. 短接flash 1、4脚(当flash中无可引导代码时无需此步骤)
+2. 连接USB
+3. 松开短接的引脚
+4. 输入下列指令
+
 
 ```
     sudo sunxi-fel -p write  0x00000000 tina-spl.bin
@@ -81,7 +82,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
     sudo sunxi-fel exec 0x80000000
 ```
 
-### 3.1 运行结果
+### 3.3 运行结果
 
 如果编译 & 烧写无误，会在串口0上看到RT-Thread的启动logo信息：
 
@@ -101,7 +102,7 @@ msh />
 ## 4. 驱动支持情况及计划
 
 | 驱动 | 支持情况  |  备注  |
-| ------ | :----:  | :------:  |
+| ------ | ----  | ------  |
 | UART | 支持 | UART0/1/2 |
 | GPIO | 支持 | / |
 | clock | 支持 | / |
@@ -123,9 +124,9 @@ msh />
 ## 5. 联系人信息
 
 维护人:
-[uestczyh222][4] < [lymz@foxmail.com][5] >
+[lymzzyh][2] < [lymz@foxmail.com][3] >
 
 
   [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
-  [4]: https://github.com/uestczyh222
-  [5]: mailto:lymz@foxmail.com
+  [2]: https://github.com/lymzzyh
+  [3]: mailto:lymz@foxmail.com
