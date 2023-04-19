@@ -1,7 +1,7 @@
 /*
  * File      : dhcp_server_raw.c
  *             A simple DHCP server implementation
- * COPYRIGHT (C) 2011-2018, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2011-2023, Shanghai Real-Thread Technology Co., Ltd
  * http://www.rt-thread.com
  * All rights reserved.
  *
@@ -180,7 +180,15 @@ dhcp_client_find_by_ip(struct dhcp_server *dhcpserver, const ip4_addr_t *ip)
     return NULL;
 }
 
-
+/**
+* Find a dhcp client node by dhcp message
+*
+* @param dhcpserver is the dhcp server
+* @param msg is the dhcp message
+* @param opt_buf is the optional buffer
+* @param len is the buffer length
+* @return dhcp client node
+*/
 static struct dhcp_client_node *
 dhcp_client_find(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
                  u8_t *opt_buf, u16_t len)
@@ -208,7 +216,15 @@ dhcp_client_find(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
     return NULL;
 }
 
-
+/**
+* Allocate a dhcp client node by dhcp message
+*
+* @param dhcpserver is the dhcp server
+* @param msg is the dhcp message
+* @param opt_buf is the optional buffer
+* @param len is the buffer length
+* @return dhcp client node
+*/
 static struct dhcp_client_node *
 dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
                   u8_t *opt_buf, u16_t len)
@@ -589,7 +605,7 @@ free_pbuf_and_return:
 *
 * @param netif The netif which use dhcp server
 * @param start The Start IP address
-* @param end The netif which use dhcp server
+* @param end The End IP address
 * @return lwIP error code
 * - ERR_OK - No error
 * - ERR_MEM - Out of memory
