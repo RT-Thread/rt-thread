@@ -53,7 +53,7 @@ void *ls1c_spi_get_base(unsigned char SPIx)
 void ls1c_spi_print_all_regs_info(void *spi_base)
 {
     printf("[%s] SPCR=0x%x, SPSR=0x%x, SPER=0x%x, SFC_PARAM=0x%x, SFC_SOFTCS=0x%x, SFC_TIMING=0x%x\r\n",
-              __FUNCTION__, 
+              __FUNCTION__,
               reg_read_8(spi_base + LS1C_SPI_SPCR_OFFSET),
               reg_read_8(spi_base + LS1C_SPI_SPSR_OFFSET),
               reg_read_8(spi_base + LS1C_SPI_SPER_OFFSET),
