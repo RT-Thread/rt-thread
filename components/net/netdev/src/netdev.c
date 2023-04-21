@@ -211,7 +211,7 @@ struct netdev *netdev_get_first_by_flags(uint16_t flags)
  * This function will get the first network interface device
  * in network interface device list by IP address.
  *
- * @param addr the network interface device IP address
+ * @param ip_addr the network interface device IP address
  *
  * @return != NULL: network interface device object
  *            NULL: get failed
@@ -456,7 +456,7 @@ int netdev_dhcp_enabled(struct netdev *netdev, rt_bool_t is_enabled)
  * This function will set network interface device IP address.
  *
  * @param netdev the network interface device to change
- * @param ipaddr the new IP address
+ * @param ip_addr the new IP address
  *
  * @return  0: set IP address successfully
  *         -1: set IP address failed
@@ -516,7 +516,7 @@ int netdev_set_netmask(struct netdev *netdev, const ip_addr_t *netmask)
  * This function will set network interface device gateway address.
  *
  * @param netdev the network interface device to change
- * @param gateway the new gateway address
+ * @param gw the new gateway address
  *
  * @return  0: set gateway address successfully
  *         -1: set gateway address failed
@@ -546,6 +546,7 @@ int netdev_set_gw(struct netdev *netdev, const ip_addr_t *gw)
  * This function will set network interface device DNS server address.
  *
  * @param netdev the network interface device to change
+ * @param dns_num the number of the DNS server
  * @param dns_server the new DNS server address
  *
  * @return  0: set netmask address successfully
@@ -606,7 +607,7 @@ void netdev_set_addr_callback(struct netdev *netdev, netdev_callback_fn addr_cal
  * @NOTE it can only be called in the network interface device driver.
  *
  * @param netdev the network interface device to change
- * @param ipaddr the new IP address
+ * @param ip_addr the new IP address
  */
 void netdev_low_level_set_ipaddr(struct netdev *netdev, const ip_addr_t *ip_addr)
 {
@@ -669,7 +670,7 @@ void netdev_low_level_set_netmask(struct netdev *netdev, const ip_addr_t *netmas
  * @NOTE it can only be called in the network interface device driver.
  *
  * @param netdev the network interface device to change
- * @param gateway the new gateway address
+ * @param gw the new gateway address
  */
 void netdev_low_level_set_gw(struct netdev *netdev, const ip_addr_t *gw)
 {
@@ -701,6 +702,7 @@ void netdev_low_level_set_gw(struct netdev *netdev, const ip_addr_t *gw)
  * @NOTE it can only be called in the network interface device driver.
  *
  * @param netdev the network interface device to change
+ * @param dns_num the number of the DNS server
  * @param dns_server the new DNS server address
  *
  */
