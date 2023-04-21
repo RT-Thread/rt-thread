@@ -752,7 +752,6 @@ ip_nat_cmn_init(ip_nat_conf_t *nat_config, const struct ip_hdr *iphdr, ip_nat_en
  * This function checks for incoming packets if we already have a NAT entry.
  * If yes a pointer to the NAT entry is returned. Otherwise NULL.
  *
- * @param nat_config NAT configuration.
  * @param iphdr The IP header.
  * @param udphdr The UDP header.
  * @return A pointer to an existing NAT entry or
@@ -783,6 +782,7 @@ ip_nat_udp_lookup_incoming(const struct ip_hdr *iphdr, const struct udp_hdr *udp
  * This function checks if we already have a NAT entry for this UDP connection.
  * If yes the a pointer to this NAT entry is returned.
  *
+ * @param nat_config NAT config entry
  * @param iphdr The IP header.
  * @param udphdr The UDP header.
  * @param allocate If no existing NAT entry is found and this flag is true
@@ -837,7 +837,6 @@ ip_nat_udp_lookup_outgoing(ip_nat_conf_t *nat_config, const struct ip_hdr *iphdr
  * This function checks for incoming packets if we already have a NAT entry.
  * If yes a pointer to the NAT entry is returned. Otherwise NULL.
  *
- * @param nat_config NAT configuration.
  * @param iphdr The IP header.
  * @param tcphdr The TCP header.
  * @return A pointer to an existing NAT entry or NULL if none is found.
@@ -868,6 +867,7 @@ ip_nat_tcp_lookup_incoming(const struct ip_hdr *iphdr, const struct tcp_hdr *tcp
  * This function checks if we already have a NAT entry for this TCP connection.
  * If yes the a pointer to this NAT entry is returned.
  *
+ * @param nat_config NAT config entry
  * @param iphdr The IP header.
  * @param tcphdr The TCP header.
  * @param allocate If no existing NAT entry is found and this flag is true
