@@ -9,16 +9,16 @@ static int fclose_entry(void)
         perror("fopen fail");
         return -1;
     }
-    if(fclose(stream))
+    if(fclose(stream) == 0)
+    {
+       printf("fclose sucess \n");
+       return 0;
+    }
+    else
     {
         perror("fclose fail");
+    }
         return -1;
-    }
-    if(fclose(stream))
-    {
-        printf("fclose sucess \n");
-    }
-    return 0;
 }
 
 #include <utest.h>
