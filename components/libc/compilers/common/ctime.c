@@ -627,10 +627,11 @@ int clock_getres(clockid_t clockid, struct timespec *res)
     switch (clockid)
     {
     case CLOCK_REALTIME:
+#ifndef RT_USING_CPUTIME
         res->tv_sec = 0;
         res->tv_nsec = NANOSECOND_PER_SECOND/RT_TICK_PER_SECOND;
         break;
-
+#endif
 #ifdef RT_USING_CPUTIME
     case CLOCK_CPUTIME_ID:
         res->tv_sec  = 0;
@@ -668,6 +669,7 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     switch (clockid)
     {
     case CLOCK_REALTIME:
+#ifndef RT_USING_CPUTIME
         {
             rt_tick_t tick;
             rt_base_t level;
@@ -679,7 +681,7 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
             rt_hw_interrupt_enable(level);
         }
         break;
-
+#endif
 #ifdef RT_USING_CPUTIME
     case CLOCK_MONOTONIC:
     case CLOCK_CPUTIME_ID:
