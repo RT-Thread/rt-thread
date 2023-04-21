@@ -59,7 +59,7 @@ Allwinner tina 是由全志公司推出的ARM9内核的SOC
 编译依赖 arm-eabi-gcc
 ```
     pushd ../../..
-    git clone https://github.com/uestczyh222/tina-spl.git
+    git clone https://github.com/lymzzyh/tina-spl.git
     pushd tina-spl
     make
     cp output/f1c100s.bin ../rt-thread/bsp/tina/tina-spl.bin
