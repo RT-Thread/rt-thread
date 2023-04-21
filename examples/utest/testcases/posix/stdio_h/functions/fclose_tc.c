@@ -9,7 +9,7 @@ static int fclose_entry(void)
         perror("fopen fail");
         return -1;
     }
-    if(fclose(stream))
+    if(fclose(stream) == NULL)
     {
         perror("fclose fail");
         return -1;
