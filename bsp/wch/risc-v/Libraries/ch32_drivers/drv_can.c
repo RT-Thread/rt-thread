@@ -68,7 +68,7 @@ struct ch32v307x_can_obj
 * sample = 80%    at baud > 500K
 * sample = 75%    at baud > 800K
 */
-#if defined(CH32V30x_D8C) /* APB1 (PCLK1 72MHz) */
+#if (defined CH32V30x_D8C) ||  (defined SOC_CH32V208WBU6) /* APB1 (PCLK1 72MHz) */
 static const struct ch32v307x_can_baud_info  can_baud_rate_tab[] =
 {
     CH32V307X_CAN_BAUD_DEF(  CAN1MBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 4),
@@ -91,13 +91,14 @@ static struct ch32v307x_can_obj  drv_can1 =
 };
 #endif
 
-#ifdef BSP_USING_CAN2
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)
 static struct ch32v307x_can_obj  drv_can2 =
 {
     .name = "can2",
     .can_base = CAN2,
 };
 #endif
+
 
 #ifdef BSP_USING_CAN
 rt_weak void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
@@ -132,7 +133,7 @@ rt_weak void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
         */
     }
 #endif
-#ifdef BSP_USING_CAN2
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)
     if (CAN2 == can_base)
     {
         RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE );
@@ -203,10 +204,12 @@ static rt_err_t _can_filter_config(struct ch32v307x_can_obj *drv_can_obj)
     {
         CAN_FilterInit( &(drv_can_obj->can_filter_init) );
     }
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)   
     else if (drv_can_obj->can_base == CAN2)
     {
         CAN_FilterInit( &(drv_can_obj->can_filter_init) );
     }
+#endif
     else
     {
         LOG_E("can filter config error");
@@ -234,10 +237,12 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     {
         ch32v307x_can_gpio_init(CAN1);
     }
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)  
     else if (drv_can_obj->can_base == CAN2)
     {
         ch32v307x_can_gpio_init(CAN2);
     }
+#endif
     else
     {
         LOG_E("can gpio init error");
@@ -300,11 +305,13 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);
                 NVIC_DisableIRQ(CAN1_RX1_IRQn);
             }
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)  
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_DisableIRQ(CAN2_RX0_IRQn);
                 NVIC_DisableIRQ(CAN2_RX1_IRQn);
             }
+ #endif
 //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FMP0 );
 //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FF0 );
 //            CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_FOV0 );
@@ -325,10 +332,12 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 NVIC_DisableIRQ(USB_HP_CAN1_TX_IRQn);
             }
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)  
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_DisableIRQ(CAN2_TX_IRQn);
             }
+#endif
             CAN_ITConfig(drv_can_obj->can_base, CAN_IT_TME, DISABLE); /*!< Transmit mailbox empty Interrupt*/
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)
@@ -337,10 +346,12 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 NVIC_DisableIRQ(CAN1_SCE_IRQn);
             }
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)  
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_DisableIRQ(CAN2_SCE_IRQn);
             }
+ #endif
             CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_EWG );
             CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_EPV );
             CAN_ClearITPendingBit( drv_can_obj->can_base, CAN_IT_BOF );
@@ -379,6 +390,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_SetPriority(CAN1_RX1_IRQn, 1);
                 NVIC_EnableIRQ(CAN1_RX1_IRQn);
             }
+  #if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C) 
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_SetPriority(CAN2_RX0_IRQn, 1);
@@ -386,6 +398,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_SetPriority(CAN2_RX1_IRQn, 1);
                 NVIC_EnableIRQ(CAN2_RX1_IRQn);
             }
+  #endif
         }
         else if (argval == RT_DEVICE_FLAG_INT_TX)
         {
@@ -397,11 +410,13 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_SetPriority(USB_HP_CAN1_TX_IRQn, 1);
                 NVIC_EnableIRQ(USB_HP_CAN1_TX_IRQn);
             }
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C) 
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_SetPriority(CAN2_TX_IRQn, 1);
                 NVIC_EnableIRQ(CAN2_TX_IRQn);
             }
+#endif
         }
         else if (argval == RT_DEVICE_CAN_INT_ERR)
         {
@@ -416,11 +431,13 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_SetPriority(CAN1_SCE_IRQn, 1);
                 NVIC_EnableIRQ(CAN1_SCE_IRQn);
             }
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C) 
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_SetPriority(CAN2_SCE_IRQn, 1);
                 NVIC_EnableIRQ(CAN2_SCE_IRQn);
             }
+#endif
         }
         break;
     case RT_CAN_CMD_SET_FILTER:
@@ -730,10 +747,12 @@ static int _can_recv_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_ui
     {
         pmsg->hdr_index = (RxMessage->FMI + 1) >> 1;
     }
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)  
     else if (can_base == CAN2)
     {
         pmsg->hdr_index = (RxMessage->FMI >> 1) + 14;
     }
+#endif
     /* Release FIFO */
     CAN_FIFORelease(can_base,FIFONum);
     return RT_EOK;
@@ -955,7 +974,7 @@ void CAN1_SCE_IRQHandler(void)
 }
 #endif /* BSP_USING_CAN1 */
 
-#ifdef BSP_USING_CAN2
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)
 /**
  * @brief This function handles CAN2 TX interrupts.
  */
@@ -1132,7 +1151,7 @@ int rt_hw_can_init(void)
     rt_hw_can_register(&drv_can1.device, drv_can1.name, &_can_ops, &drv_can1);
 #endif /* BSP_USING_CAN1 */
 
-#ifdef BSP_USING_CAN2
+#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)
 
     CAN_SlaveStartBank(14);
 
