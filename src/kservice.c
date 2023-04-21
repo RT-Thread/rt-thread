@@ -665,6 +665,13 @@ RTM_EXPORT(rt_strdup);
 #endif /* RT_USING_HEAP */
 
 /**
+ * This function is a hook for user to display user version information
+ */
+RT_WEAK void rt_version_hook(rt_int32_t version, rt_int32_t sub, rt_int32_t revision)
+{
+}
+
+/**
  * This function will show the version of rt-thread rtos
  */
 void rt_show_version(void)
@@ -678,6 +685,7 @@ void rt_show_version(void)
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
                (rt_int32_t)RT_VERSION_MAJOR, (rt_int32_t)RT_VERSION_MINOR, (rt_int32_t)RT_VERSION_PATCH, __DATE__, __TIME__);
     rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
+    rt_version_hook(RT_VERSION, RT_SUBVERSION, RT_REVISION);
 }
 RTM_EXPORT(rt_show_version);
 
