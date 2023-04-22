@@ -28,7 +28,7 @@
 
 static int _fetch_page(rt_varea_t varea, struct rt_aspace_fault_msg *msg)
 {
-    int err;
+    int err = UNRECOVERABLE;
     msg->response.status = MM_FAULT_STATUS_UNRECOVERABLE;
     msg->response.vaddr = 0;
     msg->response.size = 0;
