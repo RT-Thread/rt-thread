@@ -56,21 +56,21 @@ void rt_varea_pgmgr_pop_all(rt_varea_t varea)
 
 void rt_varea_pgmgr_pop(rt_varea_t varea, void *vaddr, rt_size_t size)
 {
-    void *vend = vaddr + size;
+    void *vend = (char *)vaddr + size;
     while (vaddr != vend)
     {
         rt_page_t page = rt_page_addr2page(vaddr);
         page->pre->next = page->next;
         page->next->pre = page->pre;
         rt_pages_free(vaddr, 0);
-        vaddr += ARCH_PAGE_SIZE;
+        vaddr = (char *)vaddr + ARCH_PAGE_SIZE;
     }
 }
 
 static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     void *page;
-    page = rt_pages_alloc(0);
+    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
 
     if (!page)
     {

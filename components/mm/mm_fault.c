@@ -104,7 +104,7 @@ int rt_aspace_fault_try_fix(struct rt_aspace_fault_msg *msg)
         if (varea)
         {
             void *pa = rt_hw_mmu_v2p(aspace, msg->fault_vaddr);
-            msg->off = (msg->fault_vaddr - varea->start) >> ARCH_PAGE_SHIFT;
+            msg->off = ((char *)msg->fault_vaddr - (char *)varea->start) >> ARCH_PAGE_SHIFT;
 
             /* permission checked by fault op */
             switch (msg->fault_op)
