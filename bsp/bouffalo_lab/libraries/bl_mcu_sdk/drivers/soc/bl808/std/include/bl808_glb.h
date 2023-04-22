@@ -956,7 +956,6 @@ typedef enum {
  */
 typedef enum {
     GLB_UART2_IO_SEL_UART2,    /*!< Select UART2 function */
-    GLB_UART2_IO_SEL_ISO11898, /*!< Select ISO11898 function */
 } GLB_UART2_IO_SEL_Type;
 
 /**
@@ -1991,8 +1990,7 @@ typedef enum {
 /** @defgroup  GLB_UART2_IO_SEL_TYPE
  *  @{
  */
-#define IS_GLB_UART2_IO_SEL_TYPE(type) (((type) == GLB_UART2_IO_SEL_UART2) || \
-                                        ((type) == GLB_UART2_IO_SEL_ISO11898))
+#define IS_GLB_UART2_IO_SEL_TYPE(type) (((type) == GLB_UART2_IO_SEL_UART2))
 
 /** @defgroup  GLB_UART_SIG_TYPE
  *  @{

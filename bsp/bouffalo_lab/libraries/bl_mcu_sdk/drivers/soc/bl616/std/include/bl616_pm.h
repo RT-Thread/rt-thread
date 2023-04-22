@@ -30,7 +30,7 @@ void pm_pds_mask_all_wakeup_src(void);
 BL_Err_Type pm_pds_wakeup_src_en(uint32_t WakeupType);
 BL_Sts_Type pm_pds_get_wakeup_src(uint32_t WakeupType);
 void pm_pds_mode_enter(enum pm_pds_sleep_level pds_level, uint32_t sleep_time);
-void pm_hbn_mode_enter(enum pm_hbn_sleep_level hbn_level, uint8_t sleep_time);
+void pm_hbn_mode_enter(enum pm_hbn_sleep_level hbn_level, uint64_t sleep_time);
 void pm_set_wakeup_callback(void (*wakeup_callback)(void));
 void pm_set_boot2_app_jump_para(uint32_t para);
 void pm_hbn_out0_irq_register(void);

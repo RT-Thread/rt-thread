@@ -35,7 +35,7 @@
   */
 
 #include "bl616_hbn.h"
-#include "bl616_acomp.h"
+#include "bflb_acomp.h"
 #include "bl616_glb.h"
 #include "bl616_xip_sflash.h"
 

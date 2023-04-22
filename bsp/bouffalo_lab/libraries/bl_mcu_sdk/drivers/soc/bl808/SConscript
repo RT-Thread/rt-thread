@@ -29,34 +29,29 @@ elif GetDepend('BL808_CORE_LP'):
         std/startup/lp/interrupt.c
     """)
     CPPDEFINES += ['CPU_LP']
-
-elif GetDepend('BL808_CORE_D0'):
-    src += Split("""
-        std/startup/d0/start.S
-        std/startup/d0/vector.S
-        std/startup/d0/riscv_fpu.S
-        std/startup/d0/start_load.c
-        std/startup/d0/system_bl808.c
-        std/startup/d0/interrupt.c
-    """)
-    CPPDEFINES += ['CPU_D0']
     
-src += Split("""
-    std/src/bl808_aon.c
-    std/src/bl808_clock.c
-    std/src/bl808_common.c
-    std/src/bl808_ef_cfg.c
-    std/src/bl808_glb.c
-    std/src/bl808_glb_gpio.c
-    std/src/bl808_hbn.c
-    std/src/bl808_l1c.c
-    std/src/bl808_pds.c
-    std/src/bl808_sdh.c
-    std/src/bl808_tzc_sec.c
-    std/src/bl808_psram_uhs.c
-    std/src/bl808_uhs_phy.c
-    std/port/bl808_clock.c
-""")
+elif GetDepend('BL808_CORE_D0'):
+    CPPDEFINES += ['CPU_D0']
+    if GetDepend('RT_USING_SMART'):
+        LOCAL_CFLAGS += ' -DRT_USING_SMART'
+
+if GetDepend('BL808_CORE_M0') or GetDepend('BL808_CORE_LP'):
+    src += Split("""
+        std/src/bl808_aon.c
+        std/src/bl808_clock.c
+        std/src/bl808_common.c
+        std/src/bl808_ef_cfg.c
+        std/src/bl808_glb.c
+        std/src/bl808_glb_gpio.c
+        std/src/bl808_hbn.c
+        std/src/bl808_l1c.c
+        std/src/bl808_pds.c
+        std/src/bl808_sdh.c
+        std/src/bl808_tzc_sec.c
+        std/src/bl808_psram_uhs.c
+        std/src/bl808_uhs_phy.c
+        std/port/bl808_clock.c
+    """)
 
 CPPPATH += [cwd + r'/std/include',
         cwd + r'/std/include/hardware']

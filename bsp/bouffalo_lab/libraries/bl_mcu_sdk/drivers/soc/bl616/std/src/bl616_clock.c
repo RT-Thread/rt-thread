@@ -655,35 +655,6 @@ static inline uint8_t Clock_Get_SPI_Div_Val(void)
     return BL_GET_REG_BITS_VAL(tmpVal, GLB_SPI_CLK_DIV);
 }
 
-static inline uint32_t Clock_PEC_Clk_Mux_Output(uint8_t sel)
-{
-    if (sel == 0) {
-        /* mux 160Mkz */
-        return Clock_160M_Clk_Mux_Output(Clock_Get_Muxpll_160M_Sel_Val());
-    } else {
-        /* xclk */
-        return Clock_System_Clock_Get(BL_SYSTEM_CLOCK_XCLK);
-    }
-}
-
-static inline uint8_t Clock_Get_PEC_Clk_Sel_Val(void)
-{
-    uint32_t tmpVal;
-
-    tmpVal = BL_RD_REG(GLB_BASE, GLB_PEC_CFG0);
-
-    return BL_GET_REG_BITS_VAL(tmpVal, GLB_PEC_CLK_SEL);
-}
-
-static inline uint8_t Clock_Get_PEC_Div_Val(void)
-{
-    uint32_t tmpVal;
-
-    tmpVal = BL_RD_REG(GLB_BASE, GLB_PEC_CFG0);
-
-    return BL_GET_REG_BITS_VAL(tmpVal, GLB_PEC_CLK_DIV);
-}
-
 static inline uint32_t Clock_DBI_Clk_Mux_Output(uint8_t sel)
 {
     if (sel == 0) {
@@ -971,12 +942,6 @@ uint32_t Clock_Peripheral_Clock_Get(BL_Peripheral_Type type)
         case BL_PERIPHERAL_CLOCK_SPI:
             clock = Clock_SPI_Clk_Mux_Output(Clock_Get_SPI_Clk_Sel_Val());
             div = Clock_Get_SPI_Div_Val();
-            return clock / (div + 1);
-
-        /*!< pec clock */
-        case BL_PERIPHERAL_CLOCK_PEC:
-            clock = Clock_PEC_Clk_Mux_Output(Clock_Get_PEC_Clk_Sel_Val());
-            div = Clock_Get_PEC_Div_Val();
             return clock / (div + 1);
 
         /*!< dbi clock */

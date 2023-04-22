@@ -102,7 +102,9 @@ int config_uhs_phy(uint32_t datarate)
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal, PSRAM_UHS_PHY_WL_CEN_ANA, 1);
         BL_WR_REG(PSRAM_UHS_BASE, PSRAM_UHS_PHY_CFG_50, tmpVal);
 
-    } else if (datarate > 1600) {
+    }
+#ifndef CONIFG_DISABLE_ALL_PSRAM_FRQ_EXCEPT_2000    
+    else if (datarate > 1600) {
         BL_WR_WORD(PSRAM_UHS_BASE + PSRAM_UHS_PHY_CFG_30_OFFSET, 0x0F283203);
         BL_WR_WORD(PSRAM_UHS_BASE + PSRAM_UHS_PHY_CFG_34_OFFSET, 0x0a020303);
         BL_WR_WORD(PSRAM_UHS_BASE + PSRAM_UHS_PHY_CFG_38_OFFSET, 0x040d0416);
@@ -165,6 +167,7 @@ int config_uhs_phy(uint32_t datarate)
         tmpVal = BL_SET_REG_BITS_VAL(tmpVal, PSRAM_UHS_PHY_WL_CEN_ANA, 0);
         BL_WR_REG(PSRAM_UHS_BASE, PSRAM_UHS_PHY_CFG_50, tmpVal);
     }
+#endif    
     return 0;
 }
 

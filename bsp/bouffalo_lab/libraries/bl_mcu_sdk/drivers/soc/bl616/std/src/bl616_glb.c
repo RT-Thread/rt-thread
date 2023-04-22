@@ -245,7 +245,6 @@ const GLB_SLAVE_GRP_0_TBL_Type ATTR_CLOCK_CONST_SECTION glb_slave_grp_0_table[GL
     { GLB_IR_CFG0_OFFSET, GLB_IR_CLK_EN_POS, 0, GLB_IR_CLK_DIV_POS, GLB_IR_CLK_EN_LEN, 0, GLB_IR_CLK_DIV_LEN },
     { GLB_I2C_CFG0_OFFSET, GLB_I2C_CLK_EN_POS, GLB_I2C_CLK_SEL_POS, GLB_I2C_CLK_DIV_POS, GLB_I2C_CLK_EN_LEN, GLB_I2C_CLK_SEL_LEN, GLB_I2C_CLK_DIV_LEN },
     { GLB_SPI_CFG0_OFFSET, GLB_SPI_CLK_EN_POS, GLB_SPI_CLK_SEL_POS, GLB_SPI_CLK_DIV_POS, GLB_SPI_CLK_EN_LEN, GLB_SPI_CLK_SEL_LEN, GLB_SPI_CLK_DIV_LEN },
-    { GLB_PEC_CFG0_OFFSET, GLB_PEC_CLK_EN_POS, GLB_PEC_CLK_SEL_POS, GLB_PEC_CLK_DIV_POS, GLB_PEC_CLK_EN_LEN, GLB_PEC_CLK_SEL_LEN, GLB_PEC_CLK_DIV_LEN },
     { GLB_DBI_CFG0_OFFSET, GLB_DBI_CLK_EN_POS, GLB_DBI_CLK_SEL_POS, GLB_DBI_CLK_DIV_POS, GLB_DBI_CLK_EN_LEN, GLB_DBI_CLK_SEL_LEN, GLB_DBI_CLK_DIV_LEN },
     { GLB_AUDIO_CFG0_OFFSET, GLB_REG_AUDIO_AUTO_DIV_EN_POS, 0, 0, GLB_REG_AUDIO_AUTO_DIV_EN_LEN, 0, 0 },
     { GLB_AUDIO_CFG0_OFFSET, GLB_REG_AUDIO_ADC_CLK_EN_POS, 0, GLB_REG_AUDIO_ADC_CLK_DIV_POS, GLB_REG_AUDIO_ADC_CLK_EN_LEN, 0, GLB_REG_AUDIO_ADC_CLK_DIV_LEN },
@@ -1640,47 +1639,6 @@ BL_Err_Type GLB_SPI_Sig_Swap_Set(GLB_SPI_SIG_SWAP_GRP_Type group, uint8_t swap)
 }
 
 /****************************************************************************/ /**
- * @brief  set PEC clock
- *
- * @param  enable: Enable or disable PEC clock
- * @param  clkSel: clock selection
- * @param  div: divider
- *
- * @return SUCCESS or ERROR
- *
-*******************************************************************************/
-BL_Err_Type GLB_Set_PEC_CLK(uint8_t enable, GLB_PEC_CLK_Type clkSel, uint8_t div)
-{
-#ifndef BOOTROM
-    uint32_t tmpVal = 0;
-
-    CHECK_PARAM(IS_GLB_PEC_CLK_TYPE(clkSel));
-    CHECK_PARAM((div <= 0x1F));
-
-    tmpVal = BL_RD_REG(GLB_BASE, GLB_PEC_CFG0);
-    tmpVal >>= 1;
-    tmpVal = BL_CLR_REG_BIT(tmpVal, GLB_PEC_CLK_EN);
-    BL_WR_REG(GLB_BASE, GLB_PEC_CFG0, tmpVal);
-
-    tmpVal = BL_RD_REG(GLB_BASE, GLB_PEC_CFG0);
-    tmpVal >>= 1;
-    tmpVal = BL_SET_REG_BITS_VAL(tmpVal, GLB_PEC_CLK_DIV, div);
-    tmpVal = BL_SET_REG_BITS_VAL(tmpVal, GLB_PEC_CLK_SEL, clkSel);
-    BL_WR_REG(GLB_BASE, GLB_PEC_CFG0, tmpVal);
-
-    tmpVal = BL_RD_REG(GLB_BASE, GLB_PEC_CFG0);
-    tmpVal >>= 1;
-    if (enable) {
-        tmpVal = BL_SET_REG_BIT(tmpVal, GLB_PEC_CLK_EN);
-    } else {
-        tmpVal = BL_CLR_REG_BIT(tmpVal, GLB_PEC_CLK_EN);
-    }
-    BL_WR_REG(GLB_BASE, GLB_PEC_CFG0, tmpVal);
-#endif
-    return SUCCESS;
-}
-
-/****************************************************************************/ /**
  * @brief  set PWM1 clock
  *
  * @param  ioSel: io select
@@ -2896,12 +2854,6 @@ BL_Err_Type GLB_PER_Clock_Gate(uint64_t ips)
                 case GLB_AHB_CLOCK_IP_DBI:
                     tmpValCfg1 &= ~(1 << 24);
                     break;
-                case GLB_AHB_CLOCK_IP_PEC:
-                    tmpValCfg2 &= ~(1 << 25);
-                    break;
-                case GLB_AHB_CLOCK_IP_ISO11898:
-                    tmpValCfg1 &= ~(1 << 26);
-                    break;
                 case GLB_AHB_CLOCK_IP_AUSOLO_TOP:
                     tmpValCfg1 &= ~(1 << 28);
                     break;
@@ -3084,12 +3036,6 @@ BL_Err_Type GLB_PER_Clock_UnGate(uint64_t ips)
                     break;
                 case GLB_AHB_CLOCK_IP_DBI:
                     tmpValCfg1 |= (1 << 24);
-                    break;
-                case GLB_AHB_CLOCK_IP_PEC:
-                    tmpValCfg2 |= (1 << 25);
-                    break;
-                case GLB_AHB_CLOCK_IP_ISO11898:
-                    tmpValCfg1 |= (1 << 26);
                     break;
                 case GLB_AHB_CLOCK_IP_AUSOLO_TOP:
                     tmpValCfg1 |= (1 << 28);

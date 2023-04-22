@@ -70,8 +70,8 @@ typedef enum {
 } BL_System_Clock_Type;
 
 typedef enum {
-    BL_MTIMER_SOURCE_CLOCK_MCU_XCLK,     /*!< MCU xclk clock */
-    BL_MTIMER_SOURCE_CLOCK_MCU_CLK,      /*!< MCU root clock */
+    BL_MTIMER_SOURCE_CLOCK_MCU_XCLK, /*!< MCU xclk clock */
+    BL_MTIMER_SOURCE_CLOCK_MCU_CLK,  /*!< MCU root clock */
 } BL_MTimer_Source_Clock_Type;
 
 /**
@@ -100,26 +100,26 @@ typedef enum {
  *  @brief Peripheral clock type definition
  */
 typedef enum {
-    BL_PERIPHERAL_CLOCK_UART0,       /*!< UART0 clock */
-    BL_PERIPHERAL_CLOCK_UART1,       /*!< UART1 clock */
-    BL_PERIPHERAL_CLOCK_UART2,       /*!< UART2 clock */
-    BL_PERIPHERAL_CLOCK_SPI,         /*!< SPI clock */
-    BL_PERIPHERAL_CLOCK_PEC,         /*!< PEC clock */
-    BL_PERIPHERAL_CLOCK_DBI,         /*!< DBI clock */
-    BL_PERIPHERAL_CLOCK_EMI,         /*!< EMI clock */
-    BL_PERIPHERAL_CLOCK_ISP,         /*!< ISP clock */
-    BL_PERIPHERAL_CLOCK_I2C0,        /*!< I2C0 clock */
-    BL_PERIPHERAL_CLOCK_I2C1,        /*!< I2C1 clock */
-    BL_PERIPHERAL_CLOCK_PSRAMB,      /*!< PSRAMB clock */
-    BL_PERIPHERAL_CLOCK_FLASH,       /*!< FLASH clock */
-    BL_PERIPHERAL_CLOCK_I2S,         /*!< I2S clock */
-    BL_PERIPHERAL_CLOCK_IR,          /*!< IR clock */
-    BL_PERIPHERAL_CLOCK_ADC,         /*!< ADC clock */
-    BL_PERIPHERAL_CLOCK_GPADC,       /*!< GPADC clock */
-    BL_PERIPHERAL_CLOCK_GPDAC,       /*!< GPDAC clock */
-    BL_PERIPHERAL_CLOCK_CAM,         /*!< CAM clock */
-    BL_PERIPHERAL_CLOCK_SDH,         /*!< SDH clock */
-    BL_PERIPHERAL_CLOCK_PKA,         /*!< PKA clock */
+    BL_PERIPHERAL_CLOCK_UART0,    /*!< UART0 clock */
+    BL_PERIPHERAL_CLOCK_UART1,    /*!< UART1 clock */
+    BL_PERIPHERAL_CLOCK_UART2,    /*!< UART2 clock */
+    BL_PERIPHERAL_CLOCK_SPI,      /*!< SPI clock */
+    BL_PERIPHERAL_CLOCK_RESERVED, /*!< reserved clock */
+    BL_PERIPHERAL_CLOCK_DBI,      /*!< DBI clock */
+    BL_PERIPHERAL_CLOCK_EMI,      /*!< EMI clock */
+    BL_PERIPHERAL_CLOCK_ISP,      /*!< ISP clock */
+    BL_PERIPHERAL_CLOCK_I2C0,     /*!< I2C0 clock */
+    BL_PERIPHERAL_CLOCK_I2C1,     /*!< I2C1 clock */
+    BL_PERIPHERAL_CLOCK_PSRAMB,   /*!< PSRAMB clock */
+    BL_PERIPHERAL_CLOCK_FLASH,    /*!< FLASH clock */
+    BL_PERIPHERAL_CLOCK_I2S,      /*!< I2S clock */
+    BL_PERIPHERAL_CLOCK_IR,       /*!< IR clock */
+    BL_PERIPHERAL_CLOCK_ADC,      /*!< ADC clock */
+    BL_PERIPHERAL_CLOCK_GPADC,    /*!< GPADC clock */
+    BL_PERIPHERAL_CLOCK_GPDAC,    /*!< GPDAC clock */
+    BL_PERIPHERAL_CLOCK_CAM,      /*!< CAM clock */
+    BL_PERIPHERAL_CLOCK_SDH,      /*!< SDH clock */
+    BL_PERIPHERAL_CLOCK_PKA,      /*!< PKA clock */
     BL_PERIPHERAL_CLOCK_MAX,
 } BL_Peripheral_Type;
 
