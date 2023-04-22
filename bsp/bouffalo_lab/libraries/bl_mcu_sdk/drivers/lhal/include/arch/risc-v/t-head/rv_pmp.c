@@ -13,7 +13,7 @@ static void rvpmp_reg_write(uintptr_t i, uintptr_t attr, uintptr_t pa)
                            :
                            : "r"(pa));
             break;
-
+#ifndef CONIFG_DISABLE_ALL_PMP_EXCEPT_PMPADDR0
         case 1:
             __asm volatile("csrw pmpaddr1, %0"
                            :
@@ -103,7 +103,7 @@ static void rvpmp_reg_write(uintptr_t i, uintptr_t attr, uintptr_t pa)
                            :
                            : "r"(pa));
             break;
-
+#endif
         default:
             break;
     }
@@ -121,7 +121,7 @@ static void rvpmp_reg_write(uintptr_t i, uintptr_t attr, uintptr_t pa)
                            :
                            : "r"(cfg));
             break;
-
+#ifndef CONIFG_DISABLE_ALL_PMP_EXCEPT_PMPADDR0
         case 4 ... 7:
             __asm volatile("csrr %0, pmpcfg1"
                            : "=r"(cfg));
@@ -154,7 +154,7 @@ static void rvpmp_reg_write(uintptr_t i, uintptr_t attr, uintptr_t pa)
                            :
                            : "r"(cfg));
             break;
-
+#endif
         default:
             break;
     }
@@ -172,7 +172,7 @@ static void rvpmp_reg_write(uintptr_t i, uintptr_t attr, uintptr_t pa)
                            :
                            : "r"(cfg));
             break;
-
+#ifndef CONIFG_DISABLE_ALL_PMP_EXCEPT_PMPADDR0
         case 8 ... 15:
             __asm volatile("csrr %0, pmpcfg2"
                            : "=r"(cfg));
@@ -183,7 +183,7 @@ static void rvpmp_reg_write(uintptr_t i, uintptr_t attr, uintptr_t pa)
                            :
                            : "r"(cfg));
             break;
-
+#endif
         default:
             break;
     }
@@ -205,7 +205,7 @@ static uint32_t pmp_get_config(uintptr_t e)
             __asm volatile("csrr %0, pmpcfg0"
                            : "=r"(cfg));
             break;
-
+#ifndef CONIFG_DISABLE_ALL_PMP_EXCEPT_PMPADDR0
         case 4 ... 7:
             __asm volatile("csrr %0, pmpcfg1"
                            : "=r"(cfg));
@@ -220,7 +220,7 @@ static uint32_t pmp_get_config(uintptr_t e)
             __asm volatile("csrr %0, pmpcfg3"
                            : "=r"(cfg));
             break;
-
+#endif
         default:
             break;
     }
@@ -232,12 +232,12 @@ static uint32_t pmp_get_config(uintptr_t e)
             __asm volatile("csrr %0, pmpcfg0"
                            : "=r"(cfg));
             break;
-
+#ifndef CONIFG_DISABLE_ALL_PMP_EXCEPT_PMPADDR0
         case 8 ... 15:
             __asm volatile("csrr %0, pmpcfg2"
                            : "=r"(cfg));
             break;
-
+#endif
         default:
             break;
     }

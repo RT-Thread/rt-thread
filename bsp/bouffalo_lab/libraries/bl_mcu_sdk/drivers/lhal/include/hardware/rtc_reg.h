@@ -51,8 +51,16 @@
 /* Register Bitfield definitions *****************************************************/
 
 /* 0x0 : HBN_CTL */
-#define HBN_RTC_CTL_SHIFT            (0U)
-#define HBN_RTC_CTL_MASK             (0x7f << HBN_RTC_CTL_SHIFT)
+#define HBN_RTC_ENABLE               (1 << 0U)
+#define HBN_RTC_CTL_SHIFT            (1U)
+#if defined(BL602) || defined(BL702)
+#define HBN_RTC_CTL_MASK             (0x3f << HBN_RTC_CTL_SHIFT)
+#define HBN_RTC_DLY_OPTION           (1 << 24U)
+#elif  defined(BL808) || defined(BL606P) || defined(BL616) || defined(BL702L) || defined(BL628)
+#define HBN_RTC_CTL_MASK             (0x7 << HBN_RTC_CTL_SHIFT)
+#define HBN_RTC_DLY_OPTION           (1 << 4U)
+#endif
+#define HBN_RTC_BIT39_0_COMPARE      (1 << HBN_RTC_CTL_SHIFT)
 #define HBN_MODE                     (1 << 7U)
 #define HBN_TRAP_MODE                (1 << 8U)
 #define HBN_PWRDN_HBN_CORE           (1 << 9U)
@@ -65,7 +73,6 @@
 #define HBN_LDO11_AON_VOUT_SEL_SHIFT (19U)
 #define HBN_LDO11_AON_VOUT_SEL_MASK  (0xf << HBN_LDO11_AON_VOUT_SEL_SHIFT)
 #define HBN_PU_DCDC18_AON            (1 << 23U)
-#define HBN_RTC_DLY_OPTION           (1 << 24U)
 #define HBN_PWR_ON_OPTION            (1 << 25U)
 #define HBN_SRAM_SLP_OPTION          (1 << 26U)
 #define HBN_SRAM_SLP                 (1 << 27U)

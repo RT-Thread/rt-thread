@@ -31,10 +31,12 @@ src     = Split("""
     src/flash/bflb_xip_sflash.c
     src/flash/bflb_sflash.c
     src/flash/bflb_sf_ctrl.c
-    src/bflb_irq.c
     src/bflb_l1c.c
     src/bflb_mtimer.c
 """)
+
+if not GetDepend('BL808_CORE_D0'):
+    src += ['src/bflb_irq.c']
 
 if not GetDepend('BSP_USING_ROMAPI'):
     src += ['src/bflb_common.c']
@@ -50,9 +52,9 @@ if GetDepend('BSP_USING_BL61X'):
         src/bflb_mjpeg.c
         src/bflb_pwm_v2.c
         src/bflb_cam.c
-        src/bflb_iso11898.c
         src/bflb_i2s.c
         src/bflb_common.c
+        src/bflb_platform_dma.c
         include/arch/risc-v/t-head/rv_hart.c
         include/arch/risc-v/t-head/rv_pmp.c
     """)
@@ -93,7 +95,6 @@ elif GetDepend('BSP_USING_BL628'):
         src/bflb_emac.c
         src/bflb_clock.c
         src/bflb_pwm_v2.c
-        src/bflb_iso11898.c
         include/arch/risc-v/t-head/rv_hart.c
         include/arch/risc-v/t-head/rv_pmp.c
    """)
@@ -106,7 +107,6 @@ elif GetDepend('BSP_USING_BL808'):
         src/bflb_mjpeg.c
         src/bflb_pwm_v2.c
         src/bflb_cam.c
-        src/bflb_iso11898.c
         src/bflb_csi.c
         src/bflb_i2s.c
         include/arch/risc-v/t-head/rv_hart.c

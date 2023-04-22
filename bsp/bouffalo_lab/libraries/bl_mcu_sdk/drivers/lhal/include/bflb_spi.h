@@ -110,6 +110,15 @@
 #define SPI_CMD_CLEAR_RX_FIFO        (0x04)
 #define SPI_CMD_SET_CS_INTERVAL      (0x05)
 #define SPI_CMD_RX_IGNORE            (0x06)
+#define SPI_CMD_SET_MODE             (0x07)
+#define SPI_CMD_GET_MODE             (0x08)
+#define SPI_CMD_SET_FREQ             (0x09)
+#define SPI_CMD_GET_FREQ             (0x0A)
+#define SPI_CMD_SET_BIT_ORDER        (0x0B)
+#define SPI_CMD_GET_BIT_ORDER        (0x0C)
+#define SPI_CMD_SET_BYTE_ORDER       (0x0E)
+#define SPI_CMD_GET_BYTE_ORDER       (0x0F)
+
 /**
   * @}
   */

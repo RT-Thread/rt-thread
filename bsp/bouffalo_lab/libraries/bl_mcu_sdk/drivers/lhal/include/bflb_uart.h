@@ -14,10 +14,10 @@
 /** @defgroup UART_DIRECTION uart direction enable definition
   * @{
   */
-#define UART_DIRECTION_TX   (1 << 0)
-#define UART_DIRECTION_RX   (1 << 1)
-#define UART_DIRECTION_TXRX (UART_DIRECTION_TX | UART_DIRECTION_RX)
-#define UART_DIRECTION_MASK UART_DIRECTION_TXRX
+#define UART_DIRECTION_TX     (1 << 0)
+#define UART_DIRECTION_RX     (1 << 1)
+#define UART_DIRECTION_TXRX   (UART_DIRECTION_TX | UART_DIRECTION_RX)
+#define UART_DIRECTION_MASK   UART_DIRECTION_TXRX
 /**
   * @}
   */
@@ -25,10 +25,10 @@
 /** @defgroup UART_DATABITS uart data bits definition
   * @{
   */
-#define UART_DATA_BITS_5 0
-#define UART_DATA_BITS_6 1
-#define UART_DATA_BITS_7 2
-#define UART_DATA_BITS_8 3
+#define UART_DATA_BITS_5      0
+#define UART_DATA_BITS_6      1
+#define UART_DATA_BITS_7      2
+#define UART_DATA_BITS_8      3
 /**
   * @}
   */
@@ -36,10 +36,10 @@
 /** @defgroup UART_STOPBITS uart stop bits definition
   * @{
   */
-#define UART_STOP_BITS_0_5 0
-#define UART_STOP_BITS_1   1
-#define UART_STOP_BITS_1_5 2
-#define UART_STOP_BITS_2   3
+#define UART_STOP_BITS_0_5    0
+#define UART_STOP_BITS_1      1
+#define UART_STOP_BITS_1_5    2
+#define UART_STOP_BITS_2      3
 /**
   * @}
   */
@@ -47,11 +47,11 @@
 /** @defgroup UART_PARITY uart parity definition
   * @{
   */
-#define UART_PARITY_NONE  0
-#define UART_PARITY_ODD   1
-#define UART_PARITY_EVEN  2
-#define UART_PARITY_MARK  3
-#define UART_PARITY_SPACE 4
+#define UART_PARITY_NONE      0
+#define UART_PARITY_ODD       1
+#define UART_PARITY_EVEN      2
+#define UART_PARITY_MARK      3
+#define UART_PARITY_SPACE     4
 /**
   * @}
   */
@@ -59,8 +59,8 @@
 /** @defgroup UART_BITORDER uart bitorder definition
   * @{
   */
-#define UART_LSB_FIRST 0
-#define UART_MSB_FIRST 1
+#define UART_LSB_FIRST        0
+#define UART_MSB_FIRST        1
 /**
   * @}
   */
@@ -79,14 +79,14 @@
 /** @defgroup UART_INTSTS uart interrupt status definition
   * @{
   */
-#define UART_INTSTS_TX_END  (1 << 0)
-#define UART_INTSTS_RX_END  (1 << 1)
-#define UART_INTSTS_TX_FIFO (1 << 2)
-#define UART_INTSTS_RX_FIFO (1 << 3)
-#define UART_INTSTS_RTO     (1 << 4)
-#define UART_INTSTS_PCE     (1 << 5)
-#define UART_INTSTS_TX_FER  (1 << 6)
-#define UART_INTSTS_RX_FER  (1 << 7)
+#define UART_INTSTS_TX_END    (1 << 0)
+#define UART_INTSTS_RX_END    (1 << 1)
+#define UART_INTSTS_TX_FIFO   (1 << 2)
+#define UART_INTSTS_RX_FIFO   (1 << 3)
+#define UART_INTSTS_RTO       (1 << 4)
+#define UART_INTSTS_PCE       (1 << 5)
+#define UART_INTSTS_TX_FER    (1 << 6)
+#define UART_INTSTS_RX_FER    (1 << 7)
 #if !defined(BL602)
 #define UART_INTSTS_RX_LSE (1 << 8)
 #endif
@@ -136,7 +136,7 @@
 #define UART_CMD_SET_BREAK_VALUE         (0x0d)
 #define UART_CMD_SET_TX_LIN_VALUE        (0x0e)
 #define UART_CMD_SET_RX_LIN_VALUE        (0x0f)
-#define UART_CMD_SET_TX_RX_EN            (0x10)
+#define UART_CMD_SET_GLITCH_VALUE        (0x10)
 #define UART_CMD_SET_TX_RS485_EN         (0x11)
 #define UART_CMD_SET_TX_RS485_POLARITY   (0x12)
 #define UART_CMD_SET_ABR_ALLOWABLE_ERROR (0x13)
@@ -150,12 +150,16 @@
 #define UART_CMD_SET_TX_EN               (0x21)
 #define UART_CMD_SET_BCR_END_INTERRUPT   (0x22)
 #define UART_CMD_GET_BCR_COUNT           (0x23)
+#define UART_CMD_SET_CTS_EN              (0x24)
+#define UART_CMD_SET_TX_FIFO_THREHOLD    (0x25)
+#define UART_CMD_SET_RX_FIFO_THREHOLD    (0x26)
+
 /**
   * @}
   */
 
-#define UART_AUTO_BAUD_START 0
-#define UART_AUTO_BAUD_0X55  1
+#define UART_AUTO_BAUD_START             0
+#define UART_AUTO_BAUD_0X55              1
 
 struct bflb_uart_ir_config_s {
     bool tx_en;
@@ -341,7 +345,6 @@ uint32_t bflb_uart_get_intstatus(struct bflb_device_s *dev);
  * @param [in] int_clear clear value, use @ref UART_INTCLR
  */
 void bflb_uart_int_clear(struct bflb_device_s *dev, uint32_t int_clear);
-
 
 /**
  * @brief Control uart feature.

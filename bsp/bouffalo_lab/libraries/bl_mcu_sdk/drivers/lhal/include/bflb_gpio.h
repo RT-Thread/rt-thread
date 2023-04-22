@@ -122,7 +122,6 @@
 #define GPIO_FUNC_DBI_QSPI  (24 << GPIO_FUNC_SHIFT)
 #define GPIO_FUNC_AUDAC_PWM (25 << GPIO_FUNC_SHIFT)
 #define GPIO_FUNC_JTAG      (26 << GPIO_FUNC_SHIFT)
-#define GPIO_FUNC_PEC       (27 << GPIO_FUNC_SHIFT)
 #define GPIO_FUNC_CLKOUT    (31 << GPIO_FUNC_SHIFT)
 #elif defined(BL606P) || defined(BL808)
 #define GPIO_FUNC_SDH     (0 << GPIO_FUNC_SHIFT)
@@ -160,7 +159,6 @@
 #define GPIO_FUNC_PWM0   (16 << GPIO_FUNC_SHIFT)
 #define GPIO_FUNC_DBI_B  (22 << GPIO_FUNC_SHIFT)
 #define GPIO_FUNC_DBI_C  (23 << GPIO_FUNC_SHIFT)
-#define GPIO_FUNC_PEC    (27 << GPIO_FUNC_SHIFT)
 #define GPIO_FUNC_CLKOUT (31 << GPIO_FUNC_SHIFT)
 #endif
 
@@ -228,17 +226,6 @@
 #define GPIO_UART_FUNC_UART2_CTS 9
 #define GPIO_UART_FUNC_UART2_TX  10
 #define GPIO_UART_FUNC_UART2_RX  11
-#endif
-/**
-  * @}
-  */
-
-/** @defgroup GPIO_ISO11898_FUNC gpio iso11898 function definition
-  * @{
-  */
-#if defined(BL808) || defined(BL606P)|| defined(BL616)|| defined(BL628)
-#define GPIO_ISO11898_FUNC_TX 10
-#define GPIO_ISO11898_FUNC_RX 11
 #endif
 /**
   * @}
@@ -373,15 +360,6 @@ void bflb_gpio_int_clear(struct bflb_device_s *dev, uint8_t pin);
  * @param [in] uart_func uart function, use @ref GPIO_UART_FUNC
  */
 void bflb_gpio_uart_init(struct bflb_device_s *dev, uint8_t pin, uint8_t uart_func);
-
-/**
- * @brief Config gpio pin with iso11898 function.
- *
- * @param [in] dev device handle
- * @param [in] pin gpio pin, use @ref GPIO_PIN
- * @param [in] iso11898_func iso11898 function, use @ref GPIO_ISO11898_FUNC
- */
-void bflb_gpio_iso11898_init(struct bflb_device_s *dev, uint8_t pin, uint8_t iso11898_func);
 
 /**
  * @brief Control gpio feature.
