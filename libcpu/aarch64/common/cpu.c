@@ -132,7 +132,10 @@ static rt_uint64_t _read_be_number(void *start, int size)
 {
     rt_uint64_t buf = 0;
     for (; size > 0; size--)
-        buf = (buf << 32) | fdt32_to_cpu(*(uint32_t *)start++);
+    {
+        buf = (buf << 32) | fdt32_to_cpu(*(uint32_t *)start);
+        start = (uint32_t *)start + 1;
+    }
     return buf;
 }
 
