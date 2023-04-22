@@ -70,10 +70,10 @@ static int g_stdio_uart_init_done = 0;
 /*==============================================================================
  * sendchar()
  */
-int sendchar(int ch)  
+int sendchar(int ch)
 {
     uint32_t tx_ready;
-	//第一次调用时，初始化串口
+    //绗竴娆¤皟鐢ㄦ椂锛屽垵濮嬪寲涓插彛
     if(!g_stdio_uart_init_done)
     {
         MSS_UART_init(gp_my_uart,
@@ -89,7 +89,7 @@ int sendchar(int ch)
 }
 
 /*==============================================================================
- * 
+ *
  */
 struct __FILE { int handle; /* Add whatever you need here */ };
 FILE __stdout;
@@ -111,7 +111,7 @@ int fgetc(FILE *f)
 {
     uint8_t rx_size;
     uint8_t rx_byte;
-    
+
     do {
         rx_size = MSS_UART_get_rx(gp_my_uart, &rx_byte, 1);
     } while(0u == rx_size);
