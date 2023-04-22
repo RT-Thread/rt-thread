@@ -93,7 +93,7 @@ msh >
 
 ### 7. 参考资料
 
-- [学习路线 - RT-Thread 文档中心](https://www.rt-thread.org/document/site/#/)
+- [学习路线 - RT-Thread 文档中心](https://www.rt-thread.org/document/site/)
 - [Microsemi Libero系列中文教程](https://blog.csdn.net/whik1194/article/details/102901710)
 
 ### 8. 联系我
