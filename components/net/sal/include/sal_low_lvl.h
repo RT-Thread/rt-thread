@@ -80,7 +80,7 @@ struct sal_socket_ops
     int (*getsockname)(int s, struct sockaddr *name, socklen_t *namelen);
     int (*ioctlsocket)(int s, long cmd, void *arg);
 #ifdef SAL_USING_POSIX
-    int (*poll)       (struct dfs_fd *file, struct rt_pollreq *req);
+    int (*poll)       (struct dfs_file *file, struct rt_pollreq *req);
 #endif
 };
 

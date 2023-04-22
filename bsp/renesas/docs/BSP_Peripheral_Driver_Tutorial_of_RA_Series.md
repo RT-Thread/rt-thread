@@ -11,7 +11,7 @@ The main contents are following:
 
 ## 2. Prerequisites
 
-- Learn how to use the ENV tool, refer to: [RT-Thread env programming  manual](https://www.rt-thread.org/document/site/programming-manual/env/env/)
+- Learn how to use the ENV tool, refer to: [RT-Thread env programming  manual](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 - Familiar with the use of the [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp)  configuration tool
 
 ## 3. How to Use More Peripheral Resources

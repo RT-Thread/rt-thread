@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -25,13 +25,13 @@
 #include <sys/ioctl.h>
 #include <dfs_file.h>
 
-static int bus_fops_open(struct dfs_fd *fd)
+static int bus_fops_open(struct dfs_file *fd)
 {
     LOG_D("bus fops open");
     return 0;
 }
 
-static int bus_fops_close(struct dfs_fd *fd)
+static int bus_fops_close(struct dfs_file *fd)
 {
     LOG_D("bus fops close");
     return 0;

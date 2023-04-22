@@ -571,6 +571,7 @@ typedef enum {
 #include "gpio_psoc6_02_124_bga.h"
 
 #define CY_DEVICE_PSOC6A2M
+#define CY_DEVICE_SERIES_PSOC_64
 #define CY_DEVICE_SECURE
 #define CY_SILICON_ID                   0xE4A01202UL
 #define CY_HF_CLK_MAX_FREQ              150000000UL

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_aes_v1.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code fro the API for the AES method
@@ -27,15 +27,17 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_aes_v1.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_AES == 1)
+#if (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C)
 
 #include "cy_crypto_core_hw_v1.h"
 #include "cy_crypto_core_mem_v1.h"
@@ -289,6 +291,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Ecb(CRYPTO_Type *base,
     return (CY_CRYPTO_SUCCESS);
 }
 
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_V1_Aes_Cbc
 ****************************************************************************//**
@@ -396,7 +399,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Cbc(CRYPTO_Type *base,
 
     return (tmpResult);
 }
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CBC) */
 
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_V1_Aes_Cfb
 ********************************************************************************
@@ -486,7 +491,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Cfb(CRYPTO_Type *base,
 
     return (tmpResult);
 }
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CFB) */
 
+#if defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_V1_Aes_Ctr
 ********************************************************************************
@@ -581,14 +588,17 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Aes_Ctr(CRYPTO_Type *base,
 
     return (CY_CRYPTO_SUCCESS);
 }
+#endif /* defined(CY_CRYPTO_CFG_CIPHER_MODE_CTR) */
 
-#endif /* #if (CPUSS_CRYPTO_AES == 1) */
+#endif /* (CPUSS_CRYPTO_AES == 1) && defined(CY_CRYPTO_CFG_AES_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

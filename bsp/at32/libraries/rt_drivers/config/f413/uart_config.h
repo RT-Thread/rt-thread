@@ -18,6 +18,12 @@
 extern "C" {
 #endif
 
+#define UART1_IRQHandler      USART1_IRQHandler
+#define UART2_IRQHandler      USART2_IRQHandler
+#define UART3_IRQHandler      USART3_IRQHandler
+#define UART4_IRQHandler      UART4_IRQHandler
+#define UART5_IRQHandler      UART5_IRQHandler
+
 #if defined(BSP_USING_UART1)
 #define UART1_CONFIG                                                \
     {                                                               \
@@ -134,33 +140,6 @@ extern "C" {
         .irqn = UART5_IRQn,                                         \
     }
 #endif /* BSP_USING_UART5 */
-
-#if defined(BSP_USING_UART6)
-#define UART6_CONFIG                                                \
-    {                                                               \
-        .name = "usart6",                                           \
-        .uart_x = UART6,                                            \
-        .irqn = USART6_IRQn,                                        \
-    }
-#endif /* BSP_USING_UART6 */
-
-#if defined(BSP_USING_UART7)
-#define UART7_CONFIG                                                \
-    {                                                               \
-        .name = "uart7",                                            \
-        .uart_x = UART7,                                            \
-        .irqn = UART7_IRQn,                                         \
-    }
-#endif /* BSP_USING_UART7 */
-
-#if defined(BSP_USING_UART8)
-#define UART8_CONFIG                                                \
-    {                                                               \
-        .name = "uart8",                                            \
-        .uart_x = UART8,                                            \
-        .irqn = UART8_IRQn,                                         \
-    }
-#endif /* BSP_USING_UART8 */
 
 #ifdef __cplusplus
 }

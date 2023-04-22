@@ -20,9 +20,8 @@
 
 /**
  * @addtogroup FsPosixApi
+ * @{
  */
-
-/*@{*/
 
 /**
  * this function is a POSIX compliant version, which will open a file and
@@ -36,7 +35,7 @@
 int open(const char *file, int flags, ...)
 {
     int fd, result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* allocate a fd */
     fd = fd_new();
@@ -89,7 +88,7 @@ RTM_EXPORT(creat);
 int close(int fd)
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     d = fd_get(fd);
     if (d == NULL)
@@ -132,7 +131,7 @@ ssize_t read(int fd, void *buf, size_t len)
 #endif
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fd);
@@ -172,7 +171,7 @@ ssize_t write(int fd, const void *buf, size_t len)
 #endif
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fd);
@@ -208,7 +207,7 @@ RTM_EXPORT(write);
 off_t lseek(int fd, off_t offset, int whence)
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     d = fd_get(fd);
     if (d == NULL)
@@ -260,8 +259,8 @@ RTM_EXPORT(lseek);
  * this function is a POSIX compliant version, which will rename old file name
  * to new file name.
  *
- * @param old the old file name.
- * @param new the new file name.
+ * @param old_file the old file name.
+ * @param new_file the new file name.
  *
  * @return 0 on successful, -1 on failed.
  *
@@ -342,7 +341,7 @@ RTM_EXPORT(stat);
  */
 int fstat(int fildes, struct stat *buf)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fildes);
@@ -370,7 +369,7 @@ RTM_EXPORT(fstat);
 int fsync(int fildes)
 {
     int ret;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fildes);
@@ -392,7 +391,7 @@ RTM_EXPORT(fsync);
  *
  * @param fildes the file description
  * @param cmd the specified command
- * @param data represents the additional information that is needed by this
+ * @param ... represents the additional information that is needed by this
  * specific device to perform the requested function.
  *
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
@@ -401,7 +400,7 @@ RTM_EXPORT(fsync);
 int fcntl(int fildes, int cmd, ...)
 {
     int ret = -1;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fildes);
@@ -434,7 +433,7 @@ RTM_EXPORT(fcntl);
  *
  * @param fildes the file description
  * @param cmd the specified command
- * @param data represents the additional information that is needed by this
+ * @param ... represents the additional information that is needed by this
  * specific device to perform the requested function.
  *
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
@@ -467,7 +466,7 @@ RTM_EXPORT(ioctl);
 int ftruncate(int fd, off_t length)
 {
     int result;
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     d = fd_get(fd);
     if (d == NULL)
@@ -531,7 +530,7 @@ RTM_EXPORT(statfs);
  */
 int fstatfs(int fildes, struct statfs *buf)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
 
     /* get the fd */
     d = fd_get(fildes);
@@ -557,7 +556,7 @@ RTM_EXPORT(fstatfs);
 int mkdir(const char *path, mode_t mode)
 {
     int fd;
-    struct dfs_fd *d;
+    struct dfs_file *d;
     int result;
 
     fd = fd_new();
@@ -619,7 +618,7 @@ RTM_EXPORT(rmdir);
  */
 DIR *opendir(const char *name)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
     int fd, result;
     DIR *t;
 
@@ -675,7 +674,7 @@ RTM_EXPORT(opendir);
 struct dirent *readdir(DIR *d)
 {
     int result;
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
 
     fd = fd_get(d->fd);
     if (fd == NULL)
@@ -722,7 +721,7 @@ RTM_EXPORT(readdir);
  */
 long telldir(DIR *d)
 {
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
     long result;
 
     fd = fd_get(d->fd);
@@ -748,7 +747,7 @@ RTM_EXPORT(telldir);
  */
 void seekdir(DIR *d, long offset)
 {
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
 
     fd = fd_get(d->fd);
     if (fd == NULL)
@@ -772,7 +771,7 @@ RTM_EXPORT(seekdir);
  */
 void rewinddir(DIR *d)
 {
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
 
     fd = fd_get(d->fd);
     if (fd == NULL)
@@ -799,7 +798,7 @@ RTM_EXPORT(rewinddir);
 int closedir(DIR *d)
 {
     int result;
-    struct dfs_fd *fd;
+    struct dfs_file *fd;
 
     fd = fd_get(d->fd);
     if (fd == NULL)
@@ -921,8 +920,6 @@ int access(const char *path, int amode)
  * working directory.
  *
  * @param buf the current directory.
- *
- * @return null.
  */
 void setcwd(char *buf)
 {
@@ -979,4 +976,4 @@ char *getcwd(char *buf, size_t size)
 }
 RTM_EXPORT(getcwd);
 
-/* @} */
+/**@}*/

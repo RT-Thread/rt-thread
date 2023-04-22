@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_des.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constant and parameters for the API for the DES method
@@ -39,7 +39,7 @@
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_DES == 1)
+#if (CPUSS_CRYPTO_DES == 1) && defined(CY_CRYPTO_CFG_DES_C)
 
 #include "cy_crypto_core_des_v1.h"
 #include "cy_crypto_core_des_v2.h"
@@ -82,6 +82,9 @@ typedef cy_en_crypto_status_t (*cy_crypto_des_func_t)(CRYPTO_Type *base,
 * \return
 * \ref cy_en_crypto_status_t
 *
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCoreDesUse
+*
 *******************************************************************************/
 __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Des(CRYPTO_Type *base,
                                         cy_en_crypto_dir_mode_t dirMode,
@@ -89,15 +92,19 @@ __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Des(CRYPTO_Type *base,
                                         uint8_t *dst,
                                         uint8_t const *src)
 {
-    cy_en_crypto_status_t tmpResult;
+    cy_en_crypto_status_t tmpResult = CY_CRYPTO_NOT_SUPPORTED;
 
     if (CY_CRYPTO_V1)
     {
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         tmpResult = Cy_Crypto_Core_V1_Des(base, dirMode, key, dst, src);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         tmpResult = Cy_Crypto_Core_V2_Des(base, dirMode, key, dst, src);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
     }
 
     return tmpResult;
@@ -130,6 +137,9 @@ __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Des(CRYPTO_Type *base,
 * \return
 * \ref cy_en_crypto_status_t
 *
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCoreTdesUse
+#
 *******************************************************************************/
 __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Tdes(CRYPTO_Type *base,
                                         cy_en_crypto_dir_mode_t dirMode,
@@ -137,15 +147,19 @@ __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Tdes(CRYPTO_Type *base,
                                         uint8_t *dst,
                                         uint8_t const *src)
 {
-    cy_en_crypto_status_t tmpResult;
+    cy_en_crypto_status_t tmpResult = CY_CRYPTO_NOT_SUPPORTED;
 
     if (CY_CRYPTO_V1)
     {
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         tmpResult = Cy_Crypto_Core_V1_Tdes(base, dirMode, key, dst, src);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         tmpResult = Cy_Crypto_Core_V2_Tdes(base, dirMode, key, dst, src);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
     }
 
     return tmpResult;
@@ -153,7 +167,7 @@ __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Tdes(CRYPTO_Type *base,
 
 /** \} group_crypto_lld_symmetric_functions */
 
-#endif /* #if (CPUSS_CRYPTO_DES == 1) */
+#endif /* (CPUSS_CRYPTO_DES == 1) && defined(CY_CRYPTO_CFG_DES_C) */
 
 #if defined(__cplusplus)
 }

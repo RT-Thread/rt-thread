@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_scb_ezi2c.h
-* \version 2.90
+* \version 3.0
 *
 * Provides EZI2C API declarations of the SCB driver.
 *
@@ -247,7 +247,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXSCB)
+#if (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB))
 
 #include "cy_scb_common.h"
 
@@ -495,7 +495,7 @@ cy_en_syspm_status_t Cy_SCB_EZI2C_HibernateCallback(cy_stc_syspm_callback_params
 
 /** \cond INTERNAL */
 /* Default registers values */
-#if (CY_IP_MXSCB_VERSION>=2)
+#if ((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB))
 #define CY_SCB_EZI2C_I2C_CTRL   (SCB_I2C_CTRL_S_GENERAL_IGNORE_Msk | SCB_I2C_CTRL_SLAVE_MODE_Msk | \
                                  SCB_I2C_CTRL_S_READY_ADDR_ACK_Msk | SCB_I2C_CTRL_S_READY_DATA_ACK_Msk)
 #elif (CY_IP_MXSCB_VERSION==1)
@@ -590,7 +590,7 @@ __STATIC_INLINE void Cy_SCB_SetEzI2CMode(CySCB_Type *base, bool ezMode)
 
 /** \} group_scb_ezi2c */
 
-#endif /* (CY_IP_MXSCB) */
+#endif /* (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB)) */
 
 #endif /* (CY_SCB_EZI2C_H) */
 /* [] END OF FILE */

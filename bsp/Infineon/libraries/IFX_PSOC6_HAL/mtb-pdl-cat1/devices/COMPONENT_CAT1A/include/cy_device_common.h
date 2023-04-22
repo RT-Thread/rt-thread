@@ -180,6 +180,7 @@ typedef enum
 #define CY_IP_M4CPUSS_DMAC              1u
 #define CY_IP_M4CPUSS_DMA               1u
 #define CY_IP_MXCRYPTO                  1u
+#define CY_IP_MXCRYPTO_VERSION          2u
 #define CY_IP_MXBLESS                   1u
 #define CY_IP_MXSDHC                    1u
 #define CY_IP_MXTTCANFD                 1u
@@ -344,7 +345,7 @@ extern uint32_t cy_BleEcoClockFreqHz;
 extern uint32_t cy_Hfclk0FreqHz;
 extern uint32_t cy_delayFreqKhz;
 extern uint8_t  cy_delayFreqMhz;
-extern uint32_t cy_delay32kMs;
+extern uint32_t cy_AhbFreqHz;
 
 extern void SystemCoreClockUpdate(void);
 extern uint32_t Cy_SysGetCM4Status(void);
@@ -427,7 +428,8 @@ extern uint32_t Cy_SysGetCM4Status(void);
 #define CPUSS_RAMC2_MACRO_NR            16u
 /* System ROM size in KB */
 #define CPUSS_ROM_SIZE                  128u
-
+/* Number of DMAC channels */
+#define CPUSS_DMAC_CH_NR                4u
 
 /*******************************************************************************
 *           Access Definitions for IP Blocks
@@ -445,6 +447,8 @@ extern uint32_t Cy_SysGetCM4Status(void);
 #define BLE                                     ((BLE_Type*) BLE_BASE)
 #define CRYPTO_BASE                             0x40110000UL
 #define CRYPTO                                  ((CRYPTO_Type*) CRYPTO_BASE)                                      /* 0x40110000 */
+#define CTBM0_BASE                              0x40900000UL                                            /* for the PASS_v2 only */
+#define CTBM0                                   ((CTBM_Type*) CTBM0_BASE)                                         /* 0x40900000 */
 #endif /* _CY_DEVICE_COMMON_H_ */
 
 

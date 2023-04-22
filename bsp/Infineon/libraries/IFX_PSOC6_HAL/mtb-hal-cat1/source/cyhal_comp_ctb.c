@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -29,7 +29,7 @@
 #include "cyhal_gpio.h"
 #include "cyhal_analog_common.h"
 #include "cyhal_hwmgr.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 
 #if (_CYHAL_DRIVER_AVAILABLE_COMP_CTB)
 
@@ -63,7 +63,8 @@ static const cy_stc_ctb_opamp_config_t _cyhal_comp_ctb_default_config =
 #endif
 };
 
-static cyhal_comp_t* _cyhal_comp_ctb_config_structs[_CYHAL_CTB_INSTANCES * _CYHAL_OPAMP_PER_CTB] = { NULL };
+static bool _cyhal_comp_ctb_arrays_initialized = false;
+CY_NOINIT static cyhal_comp_t* _cyhal_comp_ctb_config_structs[_CYHAL_CTB_INSTANCES * _CYHAL_OPAMP_PER_CTB];
 
 static const _cyhal_system_irq_t _cyhal_ctb_irq_n[] =
 {
@@ -163,6 +164,18 @@ static void _cyhal_comp_ctb_irq_handler(void)
     }
 }
 
+static void _cyhal_comp_ctb_cfg_init(void)
+{
+    if (!_cyhal_comp_ctb_arrays_initialized)
+    {
+        for (uint8_t i = 0; i < _CYHAL_CTB_INSTANCES * _CYHAL_OPAMP_PER_CTB; i++)
+        {
+            _cyhal_comp_ctb_config_structs[i] = NULL;
+        }
+        _cyhal_comp_ctb_arrays_initialized = true;
+    }
+}
+
 cy_rslt_t _cyhal_comp_ctb_init_hw(cyhal_comp_t *obj, const cy_stc_ctb_opamp_config_t* cfg)
 {
     obj->base_ctb = _cyhal_ctb_base[obj->resource.block_num];
@@ -192,6 +205,9 @@ cy_rslt_t _cyhal_comp_ctb_init(cyhal_comp_t *obj, cyhal_gpio_t vin_p, cyhal_gpio
     cy_rslt_t result = CY_RSLT_SUCCESS;
     memset(obj, 0, sizeof(cyhal_comp_t));
     obj->resource.type = CYHAL_RSC_INVALID;
+
+    /* CTB configuration objects initialization */
+    _cyhal_comp_ctb_cfg_init();
 
     /* Validate pins. vin_p and vin_m are mandatory pins, vout is optional. */
     if ((NC == vin_p) || (NC == vin_m))
@@ -240,6 +256,9 @@ cy_rslt_t _cyhal_comp_ctb_init(cyhal_comp_t *obj, cyhal_gpio_t vin_p, cyhal_gpio
 
 cy_rslt_t _cyhal_comp_ctb_init_cfg(cyhal_comp_t *obj, const cyhal_comp_configurator_t *cfg)
 {
+    /* CTB configuration objects initialization */
+    _cyhal_comp_ctb_cfg_init();
+
     cy_rslt_t result = _cyhal_comp_ctb_init_hw(obj, cfg->opamp);
     if(CY_RSLT_SUCCESS != result)
     {
@@ -252,6 +271,7 @@ cy_rslt_t _cyhal_comp_ctb_init_cfg(cyhal_comp_t *obj, const cyhal_comp_configura
 void _cyhal_comp_ctb_free(cyhal_comp_t *obj)
 {
     CY_ASSERT(NULL != obj);
+    CY_ASSERT(_cyhal_comp_ctb_arrays_initialized); /* Should not be freeing if we never initialized anything */
 
     if(CYHAL_RSC_INVALID != obj->resource.type)
     {

@@ -564,7 +564,7 @@ static int dfs_cromfs_unmount(struct dfs_filesystem *fs)
     return RT_EOK;
 }
 
-static int dfs_cromfs_ioctl(struct dfs_fd *file, int cmd, void *args)
+static int dfs_cromfs_ioctl(struct dfs_file *file, int cmd, void *args)
 {
     return -EIO;
 }
@@ -718,7 +718,7 @@ end:
     return ret;
 }
 
-static int dfs_cromfs_read(struct dfs_fd *file, void *buf, size_t count)
+static int dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count)
 {
     rt_err_t result = RT_EOK;
     struct dfs_filesystem *fs = NULL;
@@ -788,7 +788,7 @@ static int dfs_cromfs_read(struct dfs_fd *file, void *buf, size_t count)
     return length;
 }
 
-static int dfs_cromfs_lseek(struct dfs_fd *file, off_t offset)
+static int dfs_cromfs_lseek(struct dfs_file *file, off_t offset)
 {
     if (offset <= file->vnode->size)
     {
@@ -890,7 +890,7 @@ static void deref_file_info(cromfs_info *ci, uint32_t partition_pos)
     }
 }
 
-static int dfs_cromfs_close(struct dfs_fd *file)
+static int dfs_cromfs_close(struct dfs_file *file)
 {
     file_info *fi = NULL;
     struct dfs_filesystem *fs = NULL;
@@ -918,7 +918,7 @@ static int dfs_cromfs_close(struct dfs_fd *file)
     return RT_EOK;
 }
 
-static int dfs_cromfs_open(struct dfs_fd *file)
+static int dfs_cromfs_open(struct dfs_file *file)
 {
     int ret = 0;
     struct dfs_filesystem *fs = NULL;
@@ -1047,7 +1047,7 @@ static int dfs_cromfs_stat(struct dfs_filesystem *fs, const char *path, struct s
     return RT_EOK;
 }
 
-static int dfs_cromfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
+static int dfs_cromfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
 {
     uint32_t index = 0;
     uint8_t *name = NULL;

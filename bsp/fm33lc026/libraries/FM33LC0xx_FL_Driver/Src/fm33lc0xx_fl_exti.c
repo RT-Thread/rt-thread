@@ -186,7 +186,7 @@ FL_ErrorStatus FL_EXTI_Init(uint32_t extiLineX, FL_EXTI_InitTypeDef *EXTI_InitSt
     /* 设置中断线触发边沿 */
     setTrigEdgeFuncs[extiLineId / 16](GPIO, extiLineX, EXTI_InitStruct->triggerEdge);
     /* 延时需要大于3个32K的周期 */
-        for(uint16_t i;i<1000;++i)
+        for(uint16_t i=0; i<1000; ++i)
         {
             __NOP();
         }

@@ -107,7 +107,7 @@ int win_getsockname(int s, struct sal_type_sockaddr* name, sal_type_socklen_t* n
 int win_ioctlsocket(int s, long cmd, void* arg);
 
 #ifdef SAL_USING_POSIX
-int inet_poll(struct dfs_fd* file, struct rt_pollreq* req);
+int inet_poll(struct dfs_file* file, struct rt_pollreq* req);
 #endif /* SAL_USING_POSIX */
 
 

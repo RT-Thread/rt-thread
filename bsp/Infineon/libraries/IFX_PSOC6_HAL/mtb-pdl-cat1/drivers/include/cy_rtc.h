@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_rtc.h
-* \version 2.60
+* \version 2.70
 *
 * This file provides constants and parameter values for the APIs for the
 * Real-Time Clock (RTC).
@@ -226,6 +226,11 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>2.70</td>
+*     <td>Enhanced API's : Cy_RTC_SetDateAndTime(), Cy_RTC_SetDateAndTimeDirect(), Cy_RTC_SetAlarmDateAndTime(), Cy_RTC_SetAlarmDateAndTimeDirect().</td>
+*     <td>Minor Enhancements to the Driver.</td>
+*   </tr>
+*   <tr>
 *     <td>2.60</td>
 *     <td>CAT1B, CAT1C, CAT1D devices support.<br>Newly added API's Cy_RTC_WriteEnable() to Set/Clear writeable option for RTC user registers,
 *         Cy_RTC_EnableDstTime() to set the DST time and configure the ALARM2 interrupt register
@@ -359,13 +364,13 @@ extern "C" {
 #define CY_RTC_DRV_VERSION_MAJOR                    2
 
 /** Driver minor version */
-#define CY_RTC_DRV_VERSION_MINOR                    60
+#define CY_RTC_DRV_VERSION_MINOR                    70
 
 /** RTC driver retry macros */
 #define CY_RTC_ACCESS_BUSY_RETRY_COUNT    (200u)
 
 /** RTC driver retry delay value */
-#define CY_RTC_BUSY_RETRY_DELAY_MS         (5u)     /* 5 msec   */
+#define CY_RTC_BUSY_RETRY_DELAY_US         (1u)     /* 1 usec */
 
 /** \} group_rtc_macros */
 
@@ -449,7 +454,26 @@ typedef enum
     CY_RTC_CLK_SELECT_ILO               =        2U, /**< Select ILO as input to RTC */
     CY_RTC_CLK_SELECT_LPECO_PRESCALER   =        3U, /**< Select LPECO_PRESCALER as input to RTC */
     CY_RTC_CLK_SELECT_PILO              =        4U, /**< Select PILO as input to RTC */
-} cy_rtc_clk_select_sources_t;
+} cy_en_rtc_clk_select_sources_t;
+
+/** Enumeration to select the sign of calibration for RTC */
+/**
+**/
+typedef enum
+{
+    CY_RTC_CALIB_SIGN_NEGATIVE = 0, /**< Negative sign: remove pulses  */
+    CY_RTC_CALIB_SIGN_POSITIVE = 1, /**< Positive sign: add pulses */
+} cy_en_rtc_calib_sign_t;
+
+/** Enumeration to select the calibration wave output signal */
+/**
+**/
+typedef enum
+{
+    CY_RTC_CAL_SEL_CAL512 = 0, /**< 512Hz wave, not affected by calibration setting, (not supported for 50/60Hz input clock: CTL.PRESCALER!=0) */
+    CY_RTC_CAL_SEL_CAL2   = 2, /**< 2Hz wave, includes the effect of the calibration setting, (not supported for 50/60Hz input clock: CTL.PRESCALER!=0) */
+    CY_RTC_CAL_SEL_CAL1   = 3, /**< 1Hz wave, includes the effect of the calibration setting (supported for all input clocks) */
+} cy_en_rtc_calib_sel_t;
 
 /** \} group_rtc_enums */
 
@@ -584,10 +608,12 @@ void   Cy_RTC_GetDateAndTime(cy_stc_rtc_config_t *dateTime);
 cy_en_rtc_status_t Cy_RTC_SetDateAndTimeDirect(uint32_t sec, uint32_t min, uint32_t hour,
                                                uint32_t date, uint32_t month, uint32_t year);
 cy_en_rtc_status_t Cy_RTC_SetHoursFormat(cy_en_rtc_hours_format_t hoursFormat);
-#if defined (CY_IP_MXS40SRSS_RTC) || defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS40SRSS_RTC) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 void Cy_RTC_SelectFrequencyPrescaler(cy_en_rtc_clock_freq_t clkSel);
 #endif
-void Cy_RTC_SelectClockSource(cy_rtc_clk_select_sources_t clkSel);
+void Cy_RTC_SelectClockSource(cy_en_rtc_clk_select_sources_t clkSel);
+cy_en_rtc_status_t Cy_RTC_CalibrationControlEnable(uint8_t calib_val, cy_en_rtc_calib_sign_t calib_sign, cy_en_rtc_calib_sel_t calib_sel);
+cy_en_rtc_status_t Cy_RTC_CalibrationControlDisable(void);
 
 /** \} group_rtc_general_functions */
 
@@ -676,6 +702,7 @@ __STATIC_INLINE void Cy_RTC_SyncToRtcAhbAlarm(uint32_t alarmTimeBcd, uint32_t al
 #define CY_RTC_THURSDAY                                 (5UL) /**< Sequential number of Thursday in the week */
 #define CY_RTC_FRIDAY                                   (6UL) /**< Sequential number of Friday in the week */
 #define CY_RTC_SATURDAY                                 (7UL) /**< Sequential number of Saturday in the week */
+#define CY_RTC_DAY_AUTO                                 (8UL) /**< Calculate the day of the week for the provided date, month, year automatically */
 /** \} group_rtc_day_of_the_week */
 
 /**
@@ -787,7 +814,7 @@ __STATIC_INLINE void Cy_RTC_SyncToRtcAhbAlarm(uint32_t alarmTimeBcd, uint32_t al
 #define CY_RTC_TRYES_TO_SETUP_DST                    (24U)
 
 /** RTC AM/PM bit for 12H hour mode */
-#if defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)
 #define CY_RTC_12HRS_PM_BIT                          (0x10UL)
 #else
 #define CY_RTC_12HRS_PM_BIT                          (0x20UL)
@@ -808,11 +835,8 @@ __STATIC_INLINE void Cy_RTC_SyncToRtcAhbAlarm(uint32_t alarmTimeBcd, uint32_t al
 /** Internal define of hundred degree for BCD values converting */
 #define CY_RTC_BCD_HUNDRED_DEGRE                     (100UL)
 
-/** Definition of six WCO clocks in microseconds */
-#define CY_RTC_DELAY_WHILE_READING_US                (183U)
-
-/** Definition of two WCO clocks in microseconds */
-#define CY_RTC_DELAY_WRITE_US                        (62U)
+/** Definition of forty two AHB clocks in microseconds */
+#define CY_RTC_DELAY_WHILE_READING_US               ((42000000UL / cy_AhbFreqHz) + 1UL)
 
 /** Definition of two WCO clocks in microseconds */
 #define CY_RTC_DELAY_FOR_NEXT_DST                    (2000U)
@@ -824,7 +848,7 @@ __STATIC_INLINE void Cy_RTC_SyncToRtcAhbAlarm(uint32_t alarmTimeBcd, uint32_t al
 #define CY_RTC_TWENTY_ONE_HUNDRED_YEARS              (2100UL)
 
 /** Mask for reading RTC hour for 12H mode  */
-#if defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3)
 #define CY_RTC_BACKUP_RTC_TIME_RTC_12HOUR            (0xf0000UL)
 #else
 #define CY_RTC_BACKUP_RTC_TIME_RTC_12HOUR            (0x1f0000UL)
@@ -842,14 +866,11 @@ __STATIC_INLINE void Cy_RTC_SyncToRtcAhbAlarm(uint32_t alarmTimeBcd, uint32_t al
 /** Internal definition for DST GetDstStatus() function */
 #define CY_RTC_DST_DAY_OF_MONTH_POSITION             (5UL)
 
-/** Definition of delay in microseconds after try to set DST */
-#define CY_RTC_DELAY_AFTER_DST_US                    (62U)
-
 /** RTC days in months table */
 extern uint8_t const cy_RTC_daysInMonthTbl[CY_RTC_MONTHS_PER_YEAR];
 
 /* Internal macro to validate parameters in Cy_RTC_SelectFrequencyPrescaler() function */
-#if defined (CY_IP_MXS40SRSS_RTC) || defined (CY_IP_MXS40SSRSS)
+#if defined (CY_IP_MXS40SRSS_RTC) || defined (CY_IP_MXS40SSRSS) || defined (CY_IP_MXS22SRSS)
 #define CY_RTC_IS_CLK_VALID(clkSel)               (((clkSel) == CY_RTC_FREQ_WCO_32768_HZ) || \
                                                    ((clkSel) == CY_RTC_FREQ_60_HZ) || \
                                                    ((clkSel) == CY_RTC_FREQ_50_HZ))
@@ -895,14 +916,19 @@ extern uint8_t const cy_RTC_daysInMonthTbl[CY_RTC_MONTHS_PER_YEAR];
 /* Internal macro to validate RTC hour parameter */
 #define CY_RTC_IS_HOUR_VALID(hour)          ((hour) <= CY_RTC_MAX_HOURS_24H)
 
-/* Internal macro to validate RTC day of the week parameter */
-#define CY_RTC_IS_DOW_VALID(dayOfWeek)      (((dayOfWeek) > 0U) && ((dayOfWeek) <= CY_RTC_DAYS_PER_WEEK))
+/* Internal macro to validate RTC day of the week parameter, To support CY_RTC_DAY_AUTO feature incremented the valid case by 1 */
+#define CY_RTC_IS_DOW_VALID(dayOfWeek)      (((dayOfWeek) > 0U) && ((dayOfWeek) <= (CY_RTC_DAYS_PER_WEEK + 1UL)))
 
 /* Internal macro to validate RTC day parameter */
 #define CY_RTC_IS_DAY_VALID(day)            (((day) > 0U) && ((day) <= CY_RTC_MAX_DAYS_IN_MONTH))
 
 /* Internal macro to validate RTC month parameter */
 #define CY_RTC_IS_MONTH_VALID(month)        (((month) > 0U) && ((month) <= CY_RTC_MONTHS_PER_YEAR))
+
+#define CY_RTC_IS_DATE_VALID(date, DaysInMonth)          ((date > 0U) && (date <= DaysInMonth))
+
+/* Internal macro to validate RTC week day parameter */
+#define CY_RTC_IS_WEEK_DAY_VALID(dayOfWeek, validDay)       ((dayOfWeek == CY_RTC_DAY_AUTO) ? true : (dayOfWeek == validDay))
 
 /* Internal macro to validate RTC year parameter */
 #define CY_RTC_IS_YEAR_SHORT_VALID(year)         ((year) <= CY_RTC_MAX_YEAR)
@@ -1095,7 +1121,7 @@ __STATIC_INLINE void Cy_RTC_SyncFromRtc(void)
     while((Cy_RTC_GetSyncStatus() == CY_RTC_BUSY) && (rtcAccessRetry != 0U))
     {
         rtcAccessRetry--;
-        Cy_SysLib_Delay(CY_RTC_BUSY_RETRY_DELAY_MS);
+        Cy_SysLib_DelayUs(CY_RTC_BUSY_RETRY_DELAY_US);
     }
 
     if ((rtcAccessRetry != 0U) && (!_FLD2BOOL(BACKUP_RTC_RW_WRITE, BACKUP_RTC_RW)))
@@ -1104,7 +1130,7 @@ __STATIC_INLINE void Cy_RTC_SyncFromRtc(void)
         BACKUP_RTC_RW = BACKUP_RTC_RW_READ_Msk;
 
         /* Delay to guarantee RTC data reading */
-        Cy_SysLib_DelayUs(CY_RTC_DELAY_WHILE_READING_US);
+        Cy_SysLib_DelayUs((uint16_t)CY_RTC_DELAY_WHILE_READING_US);
 
         /* Clearing RTC Read bit */
         BACKUP_RTC_RW = 0U;
@@ -1149,7 +1175,7 @@ __STATIC_INLINE cy_en_rtc_status_t Cy_RTC_WriteEnable(cy_en_rtc_write_status_t w
         while((Cy_RTC_GetSyncStatus() == CY_RTC_BUSY) && (rtcAccessRetry != 0U))
         {
             rtcAccessRetry--;
-            Cy_SysLib_Delay(CY_RTC_BUSY_RETRY_DELAY_MS);
+            Cy_SysLib_DelayUs(CY_RTC_BUSY_RETRY_DELAY_US);
         }
 
         if((rtcAccessRetry != 0U) && (!_FLD2BOOL(BACKUP_RTC_RW_READ, BACKUP_RTC_RW)))
@@ -1163,8 +1189,6 @@ __STATIC_INLINE cy_en_rtc_status_t Cy_RTC_WriteEnable(cy_en_rtc_write_status_t w
         /* Clearing Write Bit to complete write procedure */
         BACKUP_RTC_RW &= ((uint32_t) ~BACKUP_RTC_RW_WRITE_Msk);
 
-        /* Delay to guarantee data write after clearing write bit */
-        Cy_SysLib_DelayUs(CY_RTC_DELAY_WRITE_US);
         retVal = CY_RTC_SUCCESS;
     }
 
@@ -1229,7 +1253,11 @@ __STATIC_INLINE cy_en_rtc_hours_format_t Cy_RTC_GetHoursFormat(void)
 *******************************************************************************/
 __STATIC_INLINE bool Cy_RTC_IsExternalResetOccurred(void)
 {
+#if (defined (CY_IP_MXS40SRSS) && (CY_IP_MXS40SRSS_VERSION >= 3))
+    return(0u != ((CY_SYSLIB_RESET_XRES | CY_SYSLIB_RESET_PORVDDD) & Cy_SysLib_GetResetReason()));
+#else
     return(0u == Cy_SysLib_GetResetReason());
+#endif
 }
 
 
@@ -1431,7 +1459,7 @@ __STATIC_INLINE uint32_t Cy_RTC_ConvertDecToBcd(uint32_t decNum)
 }
 #endif
 
-#endif /* CY_IP_MXS40SRSS_RTC, CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS */
+#endif /* CY_IP_MXS40SRSS_RTC, CY_IP_MXS28SRSS, CY_IP_MXS40SSRSS. CY_IP_MXS22SRSS */
 
 #endif /* CY_RTC_H */
 

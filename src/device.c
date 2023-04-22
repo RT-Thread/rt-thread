@@ -461,8 +461,8 @@ RTM_EXPORT(rt_device_set_tx_complete);
 /**
  * This function  bind drvier and device
  *
- * @param driver the pointer of driver structure
  * @param device the pointer of device structure
+ * @param driver the pointer of driver structure
  * @param node the pointer of fdt node structure
  *
  * @return the error code, RT_EOK on successfully.

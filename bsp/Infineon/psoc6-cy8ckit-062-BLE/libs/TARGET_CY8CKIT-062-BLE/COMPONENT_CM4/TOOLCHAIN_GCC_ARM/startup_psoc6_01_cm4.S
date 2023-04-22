@@ -257,10 +257,10 @@ __ramVectors:
     .thumb_func
     .align  2
 
-    /* 
-     * Device startup customization 
+    /*
+     * Device startup customization
      *
-     * Note. The global resources are not yet initialized (for example global variables, peripherals, clocks) 
+     * Note. The global resources are not yet initialized (for example global variables, peripherals, clocks)
      * because this function is executed as the first instruction in the ResetHandler.
      * The PDL is also not initialized to use the proper register offsets.
      * The user of this function is responsible for initializing the PDL and resources before using them.
@@ -452,7 +452,7 @@ Default_Handler:
 
     .weak    Cy_SysLib_FaultHandler
     .type    Cy_SysLib_FaultHandler, %function
-    
+
 Cy_SysLib_FaultHandler:
     b    .
     .size    Cy_SysLib_FaultHandler, . - Cy_SysLib_FaultHandler
@@ -469,9 +469,9 @@ Fault_Handler:
     b .L_API_call
 .L_MSP:
     mrs r0, MSP
-.L_API_call:
     /* Compensation of stack pointer address due to pushing 4 bytes of LR */
     adds r0, r0, #4
+.L_API_call:
     bl Cy_SysLib_FaultHandler
     b   .
     .size    Fault_Handler, . - Fault_Handler

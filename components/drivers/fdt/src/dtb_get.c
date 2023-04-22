@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -724,6 +724,7 @@ struct dtb_memreserve *dtb_node_get_dtb_memreserve(struct dtb_node *dtb_node, in
             }
             dtb_node_root = dtb_node_root->parent;
         }
+        if(dtb_node_root == NULL) return NULL;
 
         *memreserve_size = dtb_node_root->header->memreserve_sz;
 

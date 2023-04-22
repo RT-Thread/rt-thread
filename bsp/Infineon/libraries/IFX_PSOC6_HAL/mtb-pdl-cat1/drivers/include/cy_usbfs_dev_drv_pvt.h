@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_usbfs_dev_drv_pvt.h
-* \version 2.20.2
+* \version 2.20.3
 *
 * Provides API declarations of the USBFS driver.
 *
@@ -135,7 +135,7 @@ cy_en_usbfs_dev_drv_status_t DynamicEndpointReConfiguration(USBFS_Type *base,
 /* Conversion macros */
 #define IS_EP_VALID(endpoint)       CY_USBFS_DEV_DRV_IS_EP_VALID(endpoint)
 #define EP2PHY(endpoint)            CY_USBFS_DEV_DRV_EP2PHY(endpoint)
-#define EP2MASK(endpont)            CY_USBFS_DEV_DRV_EP2MASK(endpoint)
+#define EP2MASK(endpoint)            CY_USBFS_DEV_DRV_EP2MASK(endpoint)
 
 #define EPADDR2EP(endpointAddr)     CY_USBFS_DEV_DRV_EPADDR2EP(endpointAddr)
 #define EPADDR2PHY(endpointAddr)    CY_USBFS_DEV_DRV_EPADDR2PHY(endpointAddr)

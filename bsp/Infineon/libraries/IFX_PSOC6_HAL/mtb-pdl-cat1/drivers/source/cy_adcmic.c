@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_adcmic.c
-* \version 0.1
+* \version 1.0
 *
 * Provides an API implementation of the ADCMic driver.
 *
@@ -29,15 +29,9 @@
 #include "cy_adcmic.h"
 
 /** \cond */
-
-
-#define CY_ADCMIC_SR8M        (2UL) /* The sample rate 8ksps modifier */
-
-#define CY_ADCMIC_DC_480_FAST ((uint32_t)CY_ADCMIC_DC_CONV_TIME_10_US)
-#define CY_ADCMIC_DC_480_MED  ((uint32_t)CY_ADCMIC_DC_CONV_TIME_15_US)
-#define CY_ADCMIC_DC_480_SLOW ((uint32_t)CY_ADCMIC_DC_CONV_TIME_20_US)
 #define CY_ADCMIC_MIC_16      ((uint32_t)CY_ADCMIC_MIC)
 #define CY_ADCMIC_PDM_16      ((uint32_t)CY_ADCMIC_PDM)
+#define CY_ADCMIC_SR8M        (2UL) /* The sample rate 8ksps modifier */
 #define CY_ADCMIC_MIC_8       ((uint32_t)CY_ADCMIC_MIC + CY_ADCMIC_SR8M)
 #define CY_ADCMIC_PDM_8       ((uint32_t)CY_ADCMIC_PDM + CY_ADCMIC_SR8M)
 
@@ -51,58 +45,35 @@
                                MXS40ADCMIC_ADC_PD_CTRL_MICBIAS_PWRUP_Msk | \
                                MXS40ADCMIC_ADC_PD_CTRL_ADC_MODE_Msk)
 
+#define MXS40ADCMIC_ADCMIC_CTRL_ADC_DIV_RATIO_2             (0x02UL << MXS40ADCMIC_ADCMIC_CTRL_ADC_DIV_RATIO_Pos)   /* Default adc_div_ratio value */
+#define MXS40ADCMIC_ADCMIC_CTRL_PDM_DIV_RATIO_10            (0x0AUL << MXS40ADCMIC_ADCMIC_CTRL_PDM_DIV_RATIO_Pos)   /* Default pdm_div_ratio value */
 #define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_OFF         (0x00UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_Pos) /* No clocks selected - clock is gated off */
-#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_DIV     (0x01UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_Pos) /* clk_adc from local clk_divder is selected */
-#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_DIV_INV (0x02UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_Pos) /* Inverted clk_adc from local clk_divder is selected */
+#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_DIV     (0x01UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_Pos) /* clk_adc from local clk_divider is selected */
+#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_DIV_INV (0x02UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_Pos) /* Inverted clk_adc from local clk_divider is selected */
 #define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_ADC     (0x04UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_Pos) /* clk_adc received from adc is used */
 #define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_ADC_INV (0x08UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_Pos) /* Inverted clk_adc received from adc is used */
 #define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_PDM     (0x10UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_Pos) /* clk_pdm_int is used as clk_adc */
 
 #define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_OFF         (0x0UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* No clocks selected - clock is gated off */
-#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_DIV     (0x1UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* clk_pdm from local clk_divder is selected for external clk_pdm */
-#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_DIV_INV (0x2UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* Inverted clk_pdm from local clk_divder is selected for external clk_pdm */
-#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_ADC     (0x4UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* clk_pdm from local clk_divder is selected as internal clk_adc to latch pdm_data */
-#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_ADC_INV (0x8UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* Inverted clk_pdm from local clk_divder is selected as internal clk_adc to latch pdm_data */
+#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_DIV     (0x1UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* clk_pdm from local clk_divider is selected for external clk_pdm */
+#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_DIV_INV (0x2UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* Inverted clk_pdm from local clk_divider is selected for external clk_pdm */
+#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_ADC     (0x4UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* clk_pdm from local clk_divider is selected as internal clk_adc to latch pdm_data */
+#define MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_ADC_INV (0x8UL << MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_Pos) /* Inverted clk_pdm from local clk_divider is selected as internal clk_adc to latch pdm_data */
 
 #define MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_HF              (0x1UL << MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_Pos) /* Controls clk_hf clock gate */
 #define MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_ADC             (0x2UL << MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_Pos) /* Controls the clk_adc_syn from the ADC block */
 
-#define CY_ADCMIC_SOURCE_VALID(src) ((CY_ADCMIC_DC  == (src)) || \
-                                     (CY_ADCMIC_MIC == (src)) || \
-                                     (CY_ADCMIC_PDM == (src)))
+#define CY_ADCMIC_MODE_VALID(mode)  ((CY_ADCMIC_DC  == (mode)) || \
+                                     (CY_ADCMIC_MIC == (mode)) || \
+                                     (CY_ADCMIC_PDM == (mode)))
 
 #define CY_ADCMIC_SAMPLE_RATE_VALID(sr) ((CY_ADCMIC_8KSPS   == (sr)) || \
-                                         (CY_ADCMIC_16KSPS  == (sr)) || \
-                                         (CY_ADCMIC_480KSPS == (sr)))
-
-#define CY_ADCMIC_CONV_TIME_VALID(time) ((CY_ADCMIC_DC_480_FAST == (uint32_t)(time)) || \
-                                         (CY_ADCMIC_DC_480_MED  == (uint32_t)(time)) || \
-                                         (CY_ADCMIC_DC_480_SLOW == (uint32_t)(time)))
+                                         (CY_ADCMIC_16KSPS  == (sr)))
 
 #define CY_ADCMIC_DC_CHAN_VALID(dc)     ((CY_ADCMIC_REFGND == (dc)) || \
                                          (CY_ADCMIC_BGREF  == (dc)) || \
                                          (CY_ADCMIC_VDDC   == (dc)) || \
                                          (CY_ADCMIC_VDDIO  == (dc)) || \
-                                         (CY_ADCMIC_GPIO27 == (dc)) || \
-                                         (CY_ADCMIC_GPIO26 == (dc)) || \
-                                         (CY_ADCMIC_GPIO25 == (dc)) || \
-                                         (CY_ADCMIC_GPIO24 == (dc)) || \
-                                         (CY_ADCMIC_GPIO23 == (dc)) || \
-                                         (CY_ADCMIC_GPIO22 == (dc)) || \
-                                         (CY_ADCMIC_GPIO21 == (dc)) || \
-                                         (CY_ADCMIC_GPIO20 == (dc)) || \
-                                         (CY_ADCMIC_GPIO19 == (dc)) || \
-                                         (CY_ADCMIC_GPIO18 == (dc)) || \
-                                         (CY_ADCMIC_GPIO17 == (dc)) || \
-                                         (CY_ADCMIC_GPIO16 == (dc)) || \
-                                         (CY_ADCMIC_GPIO15 == (dc)) || \
-                                         (CY_ADCMIC_GPIO14 == (dc)) || \
-                                         (CY_ADCMIC_GPIO13 == (dc)) || \
-                                         (CY_ADCMIC_GPIO12 == (dc)) || \
-                                         (CY_ADCMIC_GPIO11 == (dc)) || \
-                                         (CY_ADCMIC_GPIO10 == (dc)) || \
-                                         (CY_ADCMIC_GPIO9  == (dc)) || \
-                                         (CY_ADCMIC_GPIO8  == (dc)) || \
                                          (CY_ADCMIC_GPIO7  == (dc)) || \
                                          (CY_ADCMIC_GPIO6  == (dc)) || \
                                          (CY_ADCMIC_GPIO5  == (dc)) || \
@@ -112,6 +83,9 @@
                                          (CY_ADCMIC_GPIO1  == (dc)) || \
                                          (CY_ADCMIC_GPIO0  == (dc)))
 
+#define CY_ADCMIC_RETMODE_VALID(retMode) ((CY_ADCMIC_RETURN_STATUS   == (retMode)) || \
+                                          (CY_ADCMIC_WAIT_FOR_RESULT == (retMode)))
+
 #define CY_ADCMIC_DC_RANGE(base) (_FLD2BOOL(MXS40ADCMIC_ADC_CORE_CTRL_ADC_DCINPUT_RANGE, (base)->ADC_CORE_CTRL) ? CY_ADCMIC_DC_RANGE_1_8V : CY_ADCMIC_DC_RANGE_3_6V)
 #define CY_ADCMIC_DC_GAIN(base)  ((CY_ADCMIC_DC_RANGE_3_6V == CY_ADCMIC_DC_RANGE(base)) ? CY_ADCMIC_DC_3_6_GAIN : CY_ADCMIC_DC_1_8_GAIN)
 #define CY_ADCMIC_INST(base)     ((CY_IP_MXS40ADCMIC_INSTANCES == 1U) ? 0U : (MXS40ADCMIC0 == (base)) ? 0U : 1U)
@@ -119,57 +93,120 @@
 #define CY_ADCMIC_UV  (1000000L)   /* 1 Volt in microvolts */
 /** \endcond */
 
-
-cy_en_adcmic_status_t Cy_ADCMic_Init(MXS40ADCMIC_Type * base, cy_stc_adcmic_config_t const * config)
+cy_en_adcmic_status_t Cy_ADCMic_Init(MXS40ADCMIC_Type * base, cy_stc_adcmic_config_t const * config, cy_en_adcmic_mode_t mode)
 {
     cy_en_adcmic_status_t retVal = CY_ADCMIC_BAD_PARAM;
 
     if ((NULL != base) &&
         (NULL != config) &&
-        CY_ADCMIC_SOURCE_VALID(config->source) &&
-        CY_ADCMIC_SAMPLE_RATE_VALID(config->sampleRate) &&
-        ((NULL == config->dcConfig) || CY_ADCMIC_CONV_TIME_VALID(config->dcConfig->time)))
+        CY_ADCMIC_MODE_VALID(mode))
     {
-        switch (config->source)
+        base->ADCMIC_PAD_CTRL = 0UL;
+        base->ADC_PD_CTRL = 0UL;
+        CY_REG32_CLR_SET(base->AUXADC_CTRL, MXS40ADCMIC_AUXADC_CTRL_DFMODE, mode);
+
+        switch (mode)
         {
             case CY_ADCMIC_MIC:
-                if ((NULL != config->anaConfig) && (CY_ADCMIC_480KSPS != config->sampleRate))
+                if (NULL != config->micConfig)
                 {
-                    base->ADCMIC_CTRL = MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_ADC | MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_ADC;
-                    base->ADC_MIC_BIAS_PGA_CTRL = _VAL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_BIAS_CTRL, config->anaConfig->micBias) |
-                                                 _BOOL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_BIAS_LZ, config->anaConfig->micBiasLz) |
-                                                  _VAL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_PGA_GAIN_CTRL, config->anaConfig->pgaGain) |
-                                                  _VAL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_PGA_INCM_CTRL, config->anaConfig->pgaInCm) |
-                                                  _VAL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_PGA_OUTCM_CTRL, config->anaConfig->pgaOutCm);
-                    CY_REG32_CLR_SET(base->ADC_PD_CTRL, MXS40ADCMIC_ADC_PD_CTRL_ADC_MIC_PDSLT, (config->anaConfig->micPd) ? 0UL : 1UL);
+                    cy_stc_adcmic_mic_config_t const * locMicCgf = config->micConfig;
 
-                    retVal = CY_ADCMIC_SUCCESS;
+                    base->ADCMIC_CTRL = MXS40ADCMIC_ADCMIC_CTRL_ADC_DIV_RATIO_2 |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_ADC |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_ADC |
+                                        MXS40ADCMIC_ADCMIC_CTRL_ADC_RESET_Msk |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_HF |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_DIV |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_ADC;
+                    base->ADC_MIC_BIAS_PGA_CTRL = _VAL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_BIAS_CTRL, locMicCgf->micBias) |
+                                                 _BOOL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_BIAS_LZ, locMicCgf->micBiasLz) |
+                                                  _VAL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_PGA_GAIN_CTRL, locMicCgf->pgaGain) |
+                                                  _VAL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_PGA_INCM_CTRL, locMicCgf->pgaInCm) |
+                                                  _VAL2FLD(MXS40ADCMIC_ADC_MIC_BIAS_PGA_CTRL_MIC_PGA_OUTCM_CTRL, locMicCgf->pgaOutCm);
+                    base->ADC_PD_CTRL = _BOOL2FLD(MXS40ADCMIC_ADC_PD_CTRL_MIC_CLAMP_EN, locMicCgf->micClamp);
+                    base->AUXADC_CIC_STATUS = 0UL;
+                    base->ADCMIC_TRIGGER_MASK = _BOOL2FLD(MXS40ADCMIC_ADCMIC_TRIGGER_TR_DATA, locMicCgf->fifoTrigger);
+                    base->ADCMIC_FIFO_CTRL = MXS40ADCMIC_ADCMIC_FIFO_CTRL_FIFO_RESET_Msk |
+                                    _VAL2FLD(MXS40ADCMIC_ADCMIC_FIFO_CTRL_PGMBLE_FULL,  locMicCgf->fifoFull) |
+                                    _VAL2FLD(MXS40ADCMIC_ADCMIC_FIFO_CTRL_PGMBLE_EMPTY, locMicCgf->fifoEmpty);
+                    base->ADC_CLK_CTRL = MXS40ADCMIC_ADC_CLK_CTRL_ADC_CLK_GATE_EN_Msk;
+
+                    if (NULL != locMicCgf->biQuadConfig)
+                    {
+                        Cy_ADCMic_InitBiquad(base, locMicCgf->biQuadConfig);
+                        Cy_ADCMic_BiquadBypass(base, false); /* Unbypass the biquad filter */
+                    }
+                    else
+                    {
+                        Cy_ADCMic_BiquadBypass(base, true); /* Bypass the biquad filter */
+                    }
+
+                    retVal = Cy_ADCMic_SetSampleRate(base, locMicCgf->sampleRate);
                 }
                 break;
 
             case CY_ADCMIC_PDM:
-                if ((NULL != config->digConfig) && (CY_ADCMIC_480KSPS != config->sampleRate))
+                if (NULL != config->pdmConfig)
                 {
-                    base->ADCMIC_CTRL = _VAL2FLD(MXS40ADCMIC_ADCMIC_CTRL_PDM_DIV_RATIO,      config->digConfig->clockDiv) |
-                                       _BOOL2FLD(MXS40ADCMIC_ADCMIC_CTRL_PDM_LATCH_NEG_EDGE, config->digConfig->clockInv) |
-                                        _VAL2FLD(MXS40ADCMIC_ADCMIC_CTRL_PDM_LATCH_DELAY,    config->digConfig->latchDelay) |
-                                                 MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_DIV;
+                    cy_stc_adcmic_pdm_config_t const * locPdmCgf = config->pdmConfig;
 
-                    retVal = CY_ADCMIC_SUCCESS;
+                    base->ADCMIC_CTRL = MXS40ADCMIC_ADCMIC_CTRL_ADC_DIV_RATIO_2 |
+                                        MXS40ADCMIC_ADCMIC_CTRL_PDM_DIV_RATIO_10 |
+                              _BOOL2FLD(MXS40ADCMIC_ADCMIC_CTRL_PDM_LATCH_NEG_EDGE, locPdmCgf->clockInv) |
+                               _VAL2FLD(MXS40ADCMIC_ADCMIC_CTRL_PDM_LATCH_DELAY,    locPdmCgf->latchDelay) |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_DIV |
+                                        MXS40ADCMIC_ADCMIC_CTRL_ADC_RESET_Msk |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_HF |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_DIV |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_ADC;
+                    base->AUXADC_CIC_STATUS = 0UL;
+                    base->ADCMIC_TRIGGER_MASK = _BOOL2FLD(MXS40ADCMIC_ADCMIC_TRIGGER_TR_DATA, locPdmCgf->fifoTrigger);
+                    base->ADCMIC_FIFO_CTRL = MXS40ADCMIC_ADCMIC_FIFO_CTRL_FIFO_RESET_Msk |
+                                    _VAL2FLD(MXS40ADCMIC_ADCMIC_FIFO_CTRL_PGMBLE_FULL,  locPdmCgf->fifoFull) |
+                                    _VAL2FLD(MXS40ADCMIC_ADCMIC_FIFO_CTRL_PGMBLE_EMPTY, locPdmCgf->fifoEmpty);
+                    base->ADC_CLK_CTRL = 0UL;
+                    base->ADCMIC_PAD_CTRL = MXS40ADCMIC_ADCMIC_PAD_CTRL_CLK_PDM_OE_Msk;
+
+                    if (NULL != locPdmCgf->biQuadConfig)
+                    {
+                        Cy_ADCMic_InitBiquad(base, locPdmCgf->biQuadConfig);
+                        Cy_ADCMic_BiquadBypass(base, false); /* Unbypass the biquad filter */
+                    }
+                    else
+                    {
+                        Cy_ADCMic_BiquadBypass(base, true); /* Bypass the biquad filter */
+                    }
+
+                    retVal = Cy_ADCMic_SetSampleRate(base, locPdmCgf->sampleRate);
                 }
                 break;
 
             default: /* CY_ADCMIC_DC */
-                if ((NULL != config->dcConfig) && (CY_ADCMIC_480KSPS == config->sampleRate))
+                if (NULL != config->dcConfig)
                 {
-                    base->ADCMIC_CTRL = MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_ADC | MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_ADC;
-                    base->ADC_CORE_CTRL = _VAL2FLD(MXS40ADCMIC_ADC_CORE_CTRL_ADC_DCINPUT_RANGE, config->dcConfig->range);
-                    base->ADC_GPIO_CTRL = _VAL2FLD(MXS40ADCMIC_ADC_GPIO_CTRL_ADC_DCIN_MUX, config->dcConfig->input);
+                    cy_stc_adcmic_dc_config_t const * locDcCgf = config->dcConfig;
 
-                    CY_REG32_CLR_SET(base->AUXADC_CIC_STATUS, MXS40ADCMIC_AUXADC_CIC_STATUS_LATCH_ON_TIMER, (config->dcConfig->tmrLatch) ? 1UL : 0UL);
+                    base->ADCMIC_CTRL = MXS40ADCMIC_ADCMIC_CTRL_ADC_DIV_RATIO_2 |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_ADC_CLK_ADC |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_ADC |
+                                        MXS40ADCMIC_ADCMIC_CTRL_ADC_RESET_Msk |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_HF |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_DIV |
+                                        MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_ADC;
+                    base->ADC_CORE_CTRL = _VAL2FLD(MXS40ADCMIC_ADC_CORE_CTRL_ADC_DCINPUT_RANGE, locDcCgf->range);
+                    base->ADC_GPIO_CTRL = _VAL2FLD(MXS40ADCMIC_ADC_GPIO_CTRL_ADC_DCIN_MUX, locDcCgf->channel);
 
-                    Cy_ADCMic_SetDcOffset(base, CY_ADCMIC_DC_OFFSET);
-                    Cy_ADCMic_SetDcGain(base, CY_ADCMIC_DC_GAIN(base));
+                    base->AUXADC_CIC_STATUS = MXS40ADCMIC_AUXADC_CIC_STATUS_LATCH_ON_TIMER_Msk;
+                    base->ADCMIC_TRIGGER_MASK = MXS40ADCMIC_ADCMIC_TRIGGER_TR_DC_Msk;
+                    base->ADCMIC_FIFO_CTRL &= ~MXS40ADCMIC_ADCMIC_FIFO_CTRL_FIFO_RESET_Msk;
+                    base->ADCMIC_TRIG_INTRPT_TIMER_CTRL = MXS40ADCMIC_ADCMIC_TRIG_INTRPT_TIMER_CTRL_TIMER_CLR_Msk |
+                                                 _VAL2FLD(MXS40ADCMIC_ADCMIC_TRIG_INTRPT_TIMER_CTRL_TIMER_LIMIT, locDcCgf->timerPeriod) |
+                                                 _VAL2FLD(MXS40ADCMIC_ADCMIC_TRIG_INTRPT_TIMER_CTRL_TIMER_INC,   locDcCgf->timerInput);
+                    base->ADC_CLK_CTRL = MXS40ADCMIC_ADC_CLK_CTRL_ADC_CLK_GATE_EN_Msk;
+
+                    Cy_ADCMic_SetDcOffset(CY_ADCMIC_DC_OFFSET, locDcCgf->context);
+                    Cy_ADCMic_SetDcGain(CY_ADCMIC_DC_GAIN(base), locDcCgf->context);
 
                     retVal = CY_ADCMIC_SUCCESS;
                 }
@@ -178,58 +215,12 @@ cy_en_adcmic_status_t Cy_ADCMic_Init(MXS40ADCMIC_Type * base, cy_stc_adcmic_conf
 
         if (CY_ADCMIC_SUCCESS == retVal)
         {
-            base->ADCMIC_CTRL |= _VAL2FLD(MXS40ADCMIC_ADCMIC_CTRL_ADC_DIV_RATIO, config->clockDiv) |
-                                          MXS40ADCMIC_ADCMIC_CTRL_ADC_RESET_Msk |
-                                          MXS40ADCMIC_ADCMIC_CTRL_CLK_GATE_EN_HF |
-                                          MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_DIV |
-                                          MXS40ADCMIC_ADCMIC_CTRL_CLKS_ACTIVE_PDM_CLK_ADC;
 
-            (void) Cy_ADCMic_SelectSource(base, config->source);
-
-            if (CY_ADCMIC_DC != config->source)
-            {
-                (void) Cy_ADCMic_SetSampleRate(base, config->sampleRate);
-            }
-            else
-            {
-                (void) Cy_ADCMic_SetDcConvTime(base, config->dcConfig->time);
-            }
-
-            if (NULL != config->biQuadConfig)
-            {
-                Cy_ADCMic_InitBiquad(base, config->biQuadConfig);
-                Cy_ADCMic_BiquadBypass(base, false); /* Unbypass the biquad filter */
-            }
-            else
-            {
-                Cy_ADCMic_BiquadBypass(base, true); /* Bypass the biquad filter */
-            }
-
-            if (NULL != config->fifoConfig)
-            {
-                base->ADCMIC_FIFO_CTRL = MXS40ADCMIC_ADCMIC_FIFO_CTRL_FIFO_RESET_Msk |
-                                _VAL2FLD(MXS40ADCMIC_ADCMIC_FIFO_CTRL_PGMBLE_FULL,  config->fifoConfig->full) |
-                                _VAL2FLD(MXS40ADCMIC_ADCMIC_FIFO_CTRL_PGMBLE_EMPTY, config->fifoConfig->empty);
-            }
-            else
-            {
-                base->ADCMIC_FIFO_CTRL &= ~MXS40ADCMIC_ADCMIC_FIFO_CTRL_FIFO_RESET_Msk;
-            }
-
-            if (NULL != config->tmrTrgConfig)
-            {
-                base->ADCMIC_TRIGGER_MASK = _BOOL2FLD(MXS40ADCMIC_ADCMIC_TRIGGER_TR_DC,  config->tmrTrgConfig->timerTrigger) |
-                                            _BOOL2FLD(MXS40ADCMIC_ADCMIC_TRIGGER_TR_DATA, config->tmrTrgConfig->fifoTrigger);
-
-                base->ADCMIC_TRIG_INTRPT_TIMER_CTRL = _VAL2FLD(MXS40ADCMIC_ADCMIC_TRIG_INTRPT_TIMER_CTRL_TIMER_LIMIT, config->tmrTrgConfig->period) |
-                                                      _VAL2FLD(MXS40ADCMIC_ADCMIC_TRIG_INTRPT_TIMER_CTRL_TIMER_INC,   config->tmrTrgConfig->input);
-            }
         }
     }
 
     return (retVal);
 }
-
 
 void Cy_ADCMic_InitBiquad(MXS40ADCMIC_Type * base, cy_stc_adcmic_biquad_config_t const * biQuadConfig)
 {
@@ -258,13 +249,11 @@ void Cy_ADCMic_InitBiquad(MXS40ADCMIC_Type * base, cy_stc_adcmic_biquad_config_t
     base->AUXADC_BIQUAD4_COEFF_1 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_1_BQ4_NUM3_COEFF, biQuadConfig->bq4_num3_coeff);
     base->AUXADC_BIQUAD4_COEFF_2 = _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_2_BQ4_DEN2_COEFF, biQuadConfig->bq4_den2_coeff) |
                                    _VAL2FLD(MXS40ADCMIC_AUXADC_BIQUAD4_COEFF_2_BQ4_DEN3_COEFF, biQuadConfig->bq4_den3_coeff);
-    base->AUXADC_CTRL &= ~MXS40ADCMIC_AUXADC_CTRL_BIQUAD_BYPASS_Msk;
 }
 
-
-cy_en_adcmic_status_t  Cy_ADCMic_IsEndConversion (MXS40ADCMIC_Type * base, cy_en_adcmic_return_mode_t retMode)
+cy_en_adcmic_status_t Cy_ADCMic_IsEndConversion(MXS40ADCMIC_Type * base, cy_en_adcmic_return_mode_t retMode)
 {
-    /* CY_ASSERT_L3(CY_ADCMIC_RETURN(retMode)); */
+    CY_ASSERT_L3(CY_ADCMIC_RETMODE_VALID(retMode));
 
     cy_en_adcmic_status_t result;
 
@@ -299,7 +288,6 @@ cy_en_adcmic_status_t  Cy_ADCMic_IsEndConversion (MXS40ADCMIC_Type * base, cy_en
     return result;
 }
 
-
 void Cy_ADCMic_EnableInterrupt(MXS40ADCMIC_Type * base, uint32_t intrMask)
 {
     uint32_t interruptState = Cy_SysLib_EnterCriticalSection();
@@ -307,14 +295,12 @@ void Cy_ADCMic_EnableInterrupt(MXS40ADCMIC_Type * base, uint32_t intrMask)
     Cy_SysLib_ExitCriticalSection(interruptState);
 }
 
-
 void Cy_ADCMic_DisableInterrupt(MXS40ADCMIC_Type * base, uint32_t intrMask)
 {
     uint32_t interruptState = Cy_SysLib_EnterCriticalSection();
     Cy_ADCMic_SetInterruptMask(base, (~intrMask & CY_ADCMIC_INTR) & Cy_ADCMic_GetInterruptMask(base));
     Cy_SysLib_ExitCriticalSection(interruptState);
 }
-
 
 cy_en_adcmic_status_t Cy_ADCMic_SetPgaGain(MXS40ADCMIC_Type *  base, cy_en_adcmic_pga_gain_t gain)
 {
@@ -329,54 +315,36 @@ cy_en_adcmic_status_t Cy_ADCMic_SetPgaGain(MXS40ADCMIC_Type *  base, cy_en_adcmi
     return (retVal);
 }
 
-
-cy_en_adcmic_status_t Cy_ADCMic_SelectSource(MXS40ADCMIC_Type * base, cy_en_adcmic_source_t source)
+void Cy_ADCMic_Enable (MXS40ADCMIC_Type * base)
 {
-    cy_en_adcmic_status_t retVal = CY_ADCMIC_BAD_PARAM;
+    uint32_t locDfMode = _FLD2VAL(MXS40ADCMIC_AUXADC_CTRL_DFMODE, base->AUXADC_CTRL);
 
-    if (CY_ADCMIC_SOURCE_VALID(source))
+    base->ADC_PD_CTRL &= MXS40ADCMIC_ADC_PD_CTRL_MIC_CLAMP_EN_Msk; /* Clear all except clamp to save its value */
+
+    if ((uint32_t)CY_ADCMIC_DC == locDfMode)
     {
-        CY_REG32_CLR_SET(base->AUXADC_CTRL, MXS40ADCMIC_AUXADC_CTRL_DFMODE, source);
-        retVal = CY_ADCMIC_SUCCESS;
-
-        switch (source)
-        {
-            case CY_ADCMIC_MIC:
-                base->ADCMIC_PAD_CTRL = 0UL;
-                base->ADC_PD_CTRL |= CY_ADCMIC_PD_MIC;
-                base->ADC_CLK_CTRL |= MXS40ADCMIC_ADC_CLK_CTRL_ADC_CLK_GATE_EN_Msk;
-                break;
-
-            case CY_ADCMIC_PDM:
-                base->ADCMIC_PAD_CTRL = MXS40ADCMIC_ADCMIC_PAD_CTRL_CLK_PDM_OE_Msk;
-                base->ADC_PD_CTRL = 0UL;
-                base->ADC_CLK_CTRL = 0UL;
-                break;
-
-            default: /* CY_ADCMIC_DC */
-                base->ADCMIC_PAD_CTRL = 0UL;
-                base->ADC_PD_CTRL &= ~CY_ADCMIC_PD_MIC;
-                base->ADC_PD_CTRL |= CY_ADCMIC_PD_DC;
-                base->ADC_CLK_CTRL |= MXS40ADCMIC_ADC_CLK_CTRL_ADC_CLK_GATE_EN_Msk;
-                break;
-        }
+        base->ADC_PD_CTRL |= CY_ADCMIC_PD_DC;
+    }
+    else if (((uint32_t)CY_ADCMIC_MIC_8  == locDfMode) ||
+             ((uint32_t)CY_ADCMIC_MIC_16 == locDfMode))
+    {
+        base->ADC_PD_CTRL |= CY_ADCMIC_PD_MIC;
+    }
+    else /* PDM */
+    {
+        /* Do nothing */
     }
 
-    return (retVal);
+    base->ADCMIC_CTRL |= MXS40ADCMIC_ADCMIC_CTRL_ADCMIC_EN_Msk;
+    base->AUXADC_CTRL |= MXS40ADCMIC_AUXADC_CTRL_EN_Msk;
 }
 
-
-static inline uint32_t Cy_ADCMic_GetDfMode(MXS40ADCMIC_Type const * base)
+void Cy_ADCMic_Disable(MXS40ADCMIC_Type * base)
 {
-    return (_FLD2VAL(MXS40ADCMIC_AUXADC_CTRL_DFMODE, base->AUXADC_CTRL));
+    base->AUXADC_CTRL &= ~MXS40ADCMIC_AUXADC_CTRL_EN_Msk;
+    base->ADCMIC_CTRL &= ~MXS40ADCMIC_ADCMIC_CTRL_ADCMIC_EN_Msk;
+    base->ADC_PD_CTRL &=  MXS40ADCMIC_ADC_PD_CTRL_MIC_CLAMP_EN_Msk; /* Clear all except clamp to save its value */
 }
-
-
-static inline void Cy_ADCMic_SetDfMode(MXS40ADCMIC_Type * base, uint32_t dfMode)
-{
-    CY_REG32_CLR_SET(base->AUXADC_CTRL, MXS40ADCMIC_AUXADC_CTRL_DFMODE, dfMode);
-}
-
 
 cy_en_adcmic_status_t Cy_ADCMic_SetSampleRate(MXS40ADCMIC_Type * base, cy_en_adcmic_sample_rate_t sampleRate)
 {
@@ -384,54 +352,22 @@ cy_en_adcmic_status_t Cy_ADCMic_SetSampleRate(MXS40ADCMIC_Type * base, cy_en_adc
 
     if (CY_ADCMIC_SAMPLE_RATE_VALID(sampleRate))
     {
-        uint32_t locDfMode = Cy_ADCMic_GetDfMode(base);
+        uint32_t locDfMode = _FLD2VAL(MXS40ADCMIC_AUXADC_CTRL_DFMODE, base->AUXADC_CTRL);
 
-        if (((uint32_t)CY_ADCMIC_DC_480_SLOW >= locDfMode) && (CY_ADCMIC_480KSPS == sampleRate))
-        {
-            retVal = CY_ADCMIC_SUCCESS;
-        }
-        else if (((uint32_t)CY_ADCMIC_DC_480_SLOW < locDfMode) && (CY_ADCMIC_480KSPS != sampleRate))
+        if (CY_ADCMIC_MIC_16 <= locDfMode)
         {
             if (CY_ADCMIC_8KSPS == sampleRate)
             {
                 locDfMode += CY_ADCMIC_SR8M;
             }
 
-            Cy_ADCMic_SetDfMode(base, locDfMode);
-            retVal = CY_ADCMIC_SUCCESS;
-        }
-        else
-        {
-            /* Return CY_ADCMIC_BAD_PARAM */
-        }
-    }
-
-    return (retVal);
-}
-
-
-cy_en_adcmic_status_t Cy_ADCMic_SetDcConvTime(MXS40ADCMIC_Type * base, cy_en_adcmic_dc_conv_time_t time)
-{
-    cy_en_adcmic_status_t retVal = CY_ADCMIC_BAD_PARAM;
-
-    if (CY_ADCMIC_CONV_TIME_VALID(time))
-    {
-        uint32_t locDfMode = Cy_ADCMic_GetDfMode(base);
-
-        if (CY_ADCMIC_CONV_TIME_VALID(locDfMode))
-        {
-            if (locDfMode != (uint32_t)time)
-            {
-                Cy_ADCMic_SetDfMode(base, (uint32_t)time);
-            }
-
+            CY_REG32_CLR_SET(base->AUXADC_CTRL, MXS40ADCMIC_AUXADC_CTRL_DFMODE, locDfMode);
             retVal = CY_ADCMIC_SUCCESS;
         }
     }
 
     return (retVal);
 }
-
 
 uint8_t Cy_ADCMic_ReadFifoAll(MXS40ADCMIC_Type const * base, uint16_t * data)
 {
@@ -447,41 +383,43 @@ uint8_t Cy_ADCMic_ReadFifoAll(MXS40ADCMIC_Type const * base, uint16_t * data)
     return (retVal);
 }
 
-
-void Cy_ADCMic_SelectDcChannel(MXS40ADCMIC_Type * base, cy_en_adcmic_dc_channel_t dcChannel)
+void Cy_ADCMic_SelectDcChannel(MXS40ADCMIC_Type * base, cy_en_adcmic_dc_channel_t channel)
 {
-    CY_ASSERT_L3(CY_ADCMIC_DC_CHAN_VALID(dcChannel));
-    CY_REG32_CLR_SET(base->ADC_GPIO_CTRL, MXS40ADCMIC_ADC_GPIO_CTRL_ADC_DCIN_MUX, dcChannel);
+    CY_ASSERT_L3(CY_ADCMIC_DC_CHAN_VALID(channel));
+    CY_REG32_CLR_SET(base->ADC_GPIO_CTRL, MXS40ADCMIC_ADC_GPIO_CTRL_ADC_DCIN_MUX, channel);
 }
 
 
 /* DC voltage calculation / calibration */
-static int16_t Cy_ADCMic_offset[CY_IP_MXS40ADCMIC_INSTANCES]; /* The storage for offset calibration values */
-static int16_t Cy_ADCMic_gain[CY_IP_MXS40ADCMIC_INSTANCES];   /* The storage for gain calibration values */
-
-void Cy_ADCMic_SetDcOffset(MXS40ADCMIC_Type const * base, int16_t offset)
+void Cy_ADCMic_SetDcOffset(int16_t offset, cy_stc_adcmic_context_t * context)
 {
-    Cy_ADCMic_offset[CY_ADCMIC_INST(base)] = offset;
+    if (NULL != context)
+    {
+        context->offset = offset;
+    }
 }
 
-void Cy_ADCMic_SetDcGain(MXS40ADCMIC_Type const * base, int16_t gain)
+void Cy_ADCMic_SetDcGain(int16_t gain, cy_stc_adcmic_context_t * context)
 {
-    Cy_ADCMic_gain[CY_ADCMIC_INST(base)] = gain;
+    if (NULL != context)
+    {
+        context->gain = gain;
+    }
 }
 
-int32_t Cy_ADCMic_CountsTo_uVolts(MXS40ADCMIC_Type const * base, int16_t adcCounts)
+int32_t Cy_ADCMic_CountsTo_uVolts(int16_t adcCounts, cy_stc_adcmic_context_t const * context)
 {
-    return ((int32_t)(((int64_t)adcCounts - (int64_t)Cy_ADCMic_offset[CY_ADCMIC_INST(base)]) * CY_ADCMIC_UV / (int64_t)Cy_ADCMic_gain[CY_ADCMIC_INST(base)]));
+    return ((int32_t)(((int64_t)adcCounts - (int64_t)context->offset) * CY_ADCMIC_UV / (int64_t)context->gain));
 }
 
-int16_t Cy_ADCMic_CountsTo_mVolts(MXS40ADCMIC_Type const * base, int16_t adcCounts)
+int16_t Cy_ADCMic_CountsTo_mVolts(int16_t adcCounts, cy_stc_adcmic_context_t const * context)
 {
-    return ((int16_t)(((int32_t)adcCounts - (int32_t)Cy_ADCMic_offset[CY_ADCMIC_INST(base)]) * CY_ADCMIC_MV / (int32_t)Cy_ADCMic_gain[CY_ADCMIC_INST(base)]));
+    return ((int16_t)(((int32_t)adcCounts - (int32_t)context->offset) * CY_ADCMIC_MV / (int32_t)context->gain));
 }
 
-float Cy_ADCMic_CountsTo_Volts (MXS40ADCMIC_Type const * base, int16_t adcCounts)
+float Cy_ADCMic_CountsTo_Volts (int16_t adcCounts, cy_stc_adcmic_context_t const * context)
 {
-    return (((float)adcCounts - (float)Cy_ADCMic_offset[CY_ADCMIC_INST(base)]) / (float)Cy_ADCMic_gain[CY_ADCMIC_INST(base)]);
+    return (((float)adcCounts - (float)context->offset) / (float)context->gain);
 }
 
 #endif /* CY_IP_MXS40ADCMIC */

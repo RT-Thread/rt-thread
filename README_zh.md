@@ -70,7 +70,7 @@ RT-Thread源代码目录结构如下图所示：
 
 Env 是RT-Thread推出的开发辅助工具，针对基于RT-Thread操作系统的项目工程，提供编译构建环境、图形化系统配置及软件包管理功能。其内置的 menuconfig 提供了简单易用的配置剪裁工具，可对内核、组件和软件包进行自由裁剪，使系统以搭积木的方式进行构建。
 
-[下载 Env 工具](https://www.rt-thread.org/page/download.html)
+[下载 Env 工具](https://www.rt-thread.org/download.html#download-rt-thread-env-tool)
 
 [Env 用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 
@@ -131,9 +131,9 @@ RT-Thread BSP可以直接编译并下载到相应的开发板使用。此外，R
 
 ## 文档
 
-[文档中心](https://www.rt-thread.org/document/site/ ) | [编程指南](https://www.rt-thread.org/document/site/programming-manual/basic/basic/ )
+[文档中心](https://www.rt-thread.org/document/site/ ) | [编程指南](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/basic/basic )
 
-[应用 RT-Thread 实现蜂鸣器播放器教程](https://www.rt-thread.org/document/site/tutorial/beep-player/) | [分布式温度监控系统教程](https://www.rt-thread.org/document/site/tutorial/temperature-system/ ) | [智能车连载教程](https://www.rt-thread.org/document/site/tutorial/smart-car/ )
+[应用 RT-Thread 实现蜂鸣器播放器教程](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/beep-player/README?id=%e5%ba%94%e7%94%a8-rt-thread-%e5%ae%9e%e7%8e%b0%e8%9c%82%e9%b8%a3%e5%99%a8%e6%92%ad%e6%94%be%e5%99%a8) | [分布式温度监控系统教程](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/temperature-system/README?id=%e5%88%86%e5%b8%83%e5%bc%8f%e6%b8%a9%e5%ba%a6%e7%9b%91%e6%8e%a7%e7%b3%bb%e7%bb%9f ) | [智能车连载教程](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/smart-car/README?id=%e6%99%ba%e8%83%bd%e8%bd%a6%e8%bf%9e%e8%bd%bd%e6%95%99%e7%a8%8b%e7%ae%80%e4%bb%8b )
 
 ## 例程
 
@@ -174,7 +174,7 @@ RT-Thread微信公众号：
 
 # 贡献代码
 
-如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/githubd)。
+如果您对RT-Thread感兴趣，并希望参与RT-Thread的开发并成为代码贡献者，请参阅[代码贡献指南](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
 
 ## 感谢以下小伙伴对本仓库的贡献！
 

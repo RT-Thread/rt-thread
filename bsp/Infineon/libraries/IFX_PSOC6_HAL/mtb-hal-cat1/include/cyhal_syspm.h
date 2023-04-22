@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -180,6 +180,9 @@ extern "C" {
 /** Functionality not supported on the current platform */
 #define CYHAL_SYSPM_RSLT_ERR_NOT_SUPPORTED           \
     (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_SYSPM, 4))
+/** Deepsleep has been locked */
+#define CYHAL_SYSPM_RSLT_DEEPSLEEP_LOCKED           \
+    (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_SYSPM, 5))
 
 /**
  * \}
@@ -235,6 +238,7 @@ typedef enum
     CYHAL_VOLTAGE_SUPPLY_VDDA = 0u,                       //!< VDDA - Analog supply voltage
     CYHAL_VOLTAGE_SUPPLY_MAX  = CYHAL_VOLTAGE_SUPPLY_VDDA //!< Alias for the highest value in this enum
 } cyhal_syspm_voltage_supply_t;
+
 
 /**
  * Performs any system wide power management initialization that is needed for future operations.

@@ -13,7 +13,6 @@
  */
 
 #include <rtdevice.h>
-#include "dfs_fs.h"
 #include "drv_pin.h"
 
 /* defined the LED pin: GPIO1_IO4 */

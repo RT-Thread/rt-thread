@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_prng.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides provides constant and parameters for the API of the PRNG
@@ -39,7 +39,7 @@
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_PR == 1)
+#if (CPUSS_CRYPTO_PR == 1) && defined(CY_CRYPTO_CFG_PRNG_C)
 
 #include "cy_crypto_core_prng_v1.h"
 #include "cy_crypto_core_prng_v2.h"
@@ -80,21 +80,28 @@ typedef cy_en_crypto_status_t (*cy_crypto_prng_func_t)(CRYPTO_Type *base,
 * \return
 * \ref cy_en_crypto_status_t
 *
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCorePrngUse
+*
 *******************************************************************************/
 __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Prng_Init(CRYPTO_Type *base,
                                                   uint32_t lfsr32InitState,
                                                   uint32_t lfsr31InitState,
                                                   uint32_t lfsr29InitState)
 {
-    cy_en_crypto_status_t tmpResult;
+    cy_en_crypto_status_t tmpResult = CY_CRYPTO_NOT_SUPPORTED;
 
     if (CY_CRYPTO_V1)
     {
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         tmpResult = Cy_Crypto_Core_V1_Prng_Init(base, lfsr32InitState, lfsr31InitState, lfsr29InitState);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         tmpResult = Cy_Crypto_Core_V2_Prng_Init(base, lfsr32InitState, lfsr31InitState, lfsr29InitState);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
     }
 
     return tmpResult;
@@ -118,20 +125,27 @@ __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Prng_Init(CRYPTO_Type *base
 * \return
 * \ref cy_en_crypto_status_t
 *
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCorePrngUse
+*
 *******************************************************************************/
 __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Prng(CRYPTO_Type *base,
                                              uint32_t max,
                                              uint32_t *randomNum)
 {
-    cy_en_crypto_status_t tmpResult;
+    cy_en_crypto_status_t tmpResult = CY_CRYPTO_NOT_SUPPORTED;
 
     if (CY_CRYPTO_V1)
     {
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         tmpResult = Cy_Crypto_Core_V1_Prng(base, max, randomNum);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         tmpResult = Cy_Crypto_Core_V2_Prng(base, max, randomNum);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
     }
 
     return tmpResult;
@@ -139,7 +153,7 @@ __STATIC_INLINE cy_en_crypto_status_t Cy_Crypto_Core_Prng(CRYPTO_Type *base,
 
 /** \} group_crypto_lld_rng_functions */
 
-#endif /* #if (CPUSS_CRYPTO_PR == 1) */
+#endif /* (CPUSS_CRYPTO_PR == 1) && defined(CY_CRYPTO_CFG_PRNG_C) */
 
 #if defined(__cplusplus)
 }

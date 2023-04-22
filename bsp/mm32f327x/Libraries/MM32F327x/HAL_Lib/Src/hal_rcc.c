@@ -687,7 +687,7 @@ ITStatus RCC_GetITStatus(RCC_IT_TypeDef it)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief  Clears the RCC�?interrupt pending bits.
+/// @brief  Clears the RCC's interrupt pending bits.
 /// @param  it: specifies the interrupt pending bit to clear.
 ///   This parameter can be any combination of the following values:
 /// @arg RCC_IT_LSIRDY: LSI ready interrupt

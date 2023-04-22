@@ -213,16 +213,16 @@ int dtb_node_get_addr_and_size_by_index(const struct dtb_node *node, int index, 
     int onesize, na, ns;
 
     na = dtb_node_n_addr_cells(node);
-	ns = dtb_node_n_size_cells(node);
+    ns = dtb_node_n_size_cells(node);
 
     prop = dtb_node_get_dtb_node_property_value(node, "reg", &psize);
-	if (prop == NULL)
+    if (prop == NULL)
     {
-		return -1;
+        return -1;
     }
 
-	psize /= 4;
-	onesize = na + ns;
+    psize /= 4;
+    onesize = na + ns;
 
     if (psize >= (index + 1) * onesize)
     {

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_sysint.h
-* \version 1.70
+* \version 1.80
 *
 * \brief
 * Provides an API declaration of the SysInt driver
@@ -204,6 +204,15 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td>1.80</td>
+*     <td>API's Cy_SysInt_SetInterruptSource(), Cy_SysInt_GetInterruptSource(), Cy_SysInt_DisconnectInterruptSource(),
+*         Cy_SysInt_SetNmiSource(), Cy_SysInt_GetNmiSource(), Cy_SysInt_SoftwareTrig(), Cy_SysInt_GetNvicConnection(),
+*         Cy_SysInt_GetInterruptActive(), Cy_SysInt_InitExtIRQ(), Cy_SysInt_InitIntIRQ(), Cy_SysInt_Init(),
+*         Cy_SysInt_SetVector(), Cy_SysInt_GetVector(), Cy_SysInt_SetSystemIrqVector(), Cy_SysInt_EnableSystemInt(), Cy_SysInt_DisableSystemInt()
+*         modified.</td>
+*     <td>New device support, Fix Coverity issues, Documentation enhancement.</td>
+*   </tr>
+*   <tr>
 *     <td>1.70</td>
 *     <td>Support for CAT1C, CAT1D.<br>Newly added API's Cy_SysInt_SetSystemIrqVector() to set the user ISR vector for the System Interrupt,
 *         Cy_SysInt_GetSystemIrqVector() to get the address of the current user ISR vector for the System Interrupt,
@@ -346,7 +355,7 @@ CY_MISRA_BLOCK_END('MISRA C-2012 Rule 8.6');
 #define CY_SYSINT_DRV_VERSION_MAJOR    1
 
 /** Driver minor version */
-#define CY_SYSINT_DRV_VERSION_MINOR    70
+#define CY_SYSINT_DRV_VERSION_MINOR    80
 
 /** SysInt driver ID */
 #define CY_SYSINT_ID CY_PDL_DRV_ID     (0x15U)
@@ -474,12 +483,12 @@ typedef struct {
 *
 * \brief Initializes the referenced interrupt by setting the priority and the
 * interrupt vector.
-* In case of CM33 with Security Extension eanbled, if this function is called
+* In case of CM33 with Security Extension enabled, if this function is called
 * from secure world then, the parameters are used to configure secure interrupt.
 * If it is called form non-secure world then the parameters are used to configure
 * non-secure interrupt. In case of CM33 without Security Extension, this function
-* alwasys configures the non-secure interrupt.
-* In case of CM55, this function alwasys configures the non-secure interrupt.
+* always configures the non-secure interrupt.
+* In case of CM55, this function always configures the non-secure interrupt.
 * In case of CM7/CM0+ it initializes the external system interrupt, maps it to CPU interrupt and
 * registers the User ISR vector for the System Interrupt.
 *
@@ -525,6 +534,13 @@ cy_en_sysint_status_t Cy_SysInt_Init(const cy_stc_sysint_t* config, cy_israddres
 * relocated to __ramVectors[RAM_VECTORS_SIZE] in SRAM. Otherwise it will
 * return the address of the default ISR location in the flash vector table.
 *
+* CM0+/CM7:<br/>
+* This function relies on the assumption that the vector table is
+* relocated to __ramVectors[RAM_VECTORS_SIZE] in SRAM. Otherwise it will
+* return the address of the default ISR location in the flash vector table.
+* This function is applicable only to User Interrupts (NvicMux0_IRQn - NvicMux7_IRQn)
+* and System Interrupts (Internal0_IRQn - Internal0_IRQn).
+*
 * CM33:<br/>
 * When called from secure world. this function relies on the assumption that the
 * vector table is relocated to __s_vector_table_rw[] in secure SRAM. Otherwise it will
@@ -554,7 +570,7 @@ cy_en_sysint_status_t Cy_SysInt_Init(const cy_stc_sysint_t* config, cy_israddres
 * \note For CM0+, this function sets the interrupt vector for the interrupt
 * channel on the NVIC.
 *
-* \note In case of CM33 with Security Extension eanbled, if this function is called
+* \note In case of CM33 with Security Extension enabled, if this function is called
 * from secure world then, it sets the interrupt vector for the secure world.
 * If it is called form non-secure world then it sets the interrupt vector for the
 * non-secure world.
@@ -577,6 +593,13 @@ cy_israddress Cy_SysInt_SetVector(IRQn_Type IRQn, cy_israddress userIsr);
 * relocated to __ramVectors[RAM_VECTORS_SIZE] in SRAM. Otherwise it will
 * return the address of the default ISR location in the flash vector table.
 *
+* CM0+/CM7:<br/>
+* This function relies on the assumption that the vector table is
+* relocated to __ramVectors[RAM_VECTORS_SIZE] in SRAM. Otherwise it will
+* return the address of the default ISR location in the flash vector table.
+* This function is applicable only to User Interrupts (NvicMux0_IRQn - NvicMux7_IRQn)
+* and System Interrupts (Internal0_IRQn - Internal0_IRQn).
+*
 * CM33:<br/>
 * When called from the secure world, this function relies on the assumption that
 * the vector table is relocated to __ns_vector_table_rw[] in non-secure SRAM.
@@ -598,7 +621,7 @@ cy_israddress Cy_SysInt_SetVector(IRQn_Type IRQn, cy_israddress userIsr);
 * \note CM0+:<br/> This function returns the interrupt vector for the interrupt
 * channel on the NVIC.
 *
-* \note CM33:<br/>In case of CM33 with Security Extension eanbled, if this function is called
+* \note CM33:<br/>In case of CM33 with Security Extension enabled, if this function is called
 * from secure world then, it returns the interrupt vector for the secure world.
 * If it is called form non-secure world then it returns the interrupt vector
 * for the non-secure world.
@@ -610,7 +633,7 @@ cy_israddress Cy_SysInt_SetVector(IRQn_Type IRQn, cy_israddress userIsr);
 cy_israddress Cy_SysInt_GetVector(IRQn_Type IRQn);
 
 
-#if (CY_CPU_CORTEX_M0P) || defined (CY_IP_M7CPUSS) || defined (CY_DOXYGEN)
+#if (((CY_CPU_CORTEX_M0P) || defined (CY_IP_M7CPUSS) || defined (CY_DOXYGEN)) && !defined(CY_IP_M0SECCPUSS))
 /*******************************************************************************
 * Function Name: Cy_SysInt_SetInterruptSource
 ****************************************************************************//**
@@ -634,7 +657,7 @@ cy_israddress Cy_SysInt_GetVector(IRQn_Type IRQn);
 *******************************************************************************/
 void Cy_SysInt_SetInterruptSource(IRQn_Type IRQn, cy_en_intr_t devIntrSrc);
 
-#if (CY_CPU_CORTEX_M0P && CY_IP_M4CPUSS) || defined (CY_DOXYGEN)
+#if defined(CY_IP_M4CPUSS) && (CY_CPU_CORTEX_M0P) || defined (CY_DOXYGEN)
 /*******************************************************************************
 * Function Name: Cy_SysInt_GetInterruptSource
 ****************************************************************************//**
@@ -716,7 +739,8 @@ IRQn_Type Cy_SysInt_GetNvicConnection(cy_en_intr_t devIntrSrc);
 cy_en_intr_t Cy_SysInt_GetInterruptActive(IRQn_Type IRQn);
 #endif
 
-#if (CY_CPU_CORTEX_M0P && CY_IP_M4CPUSS) || defined (CY_DOXYGEN)
+
+#if defined(CY_IP_M4CPUSS) && (CY_CPU_CORTEX_M0P) || defined (CY_DOXYGEN)
 /*******************************************************************************
 * Function Name: Cy_SysInt_DisconnectInterruptSource
 ****************************************************************************//**
@@ -804,7 +828,7 @@ cy_en_sysint_status_t Cy_SysInt_InitIntIRQ(const cy_stc_sysint_t* config, cy_isr
 * \brief Sets the User ISR vector for the System Interrupt.
 *
 * \param sysIntSrc
-* Interrrupt source
+* Interrupt source
 *
 * \note This function is available for CAT1C CM0/CM7 core.
 *
@@ -842,7 +866,7 @@ cy_israddress  Cy_SysInt_GetSystemIrqVector(cy_en_intr_t sysIntSrc);
 * \brief Enable system interrupt.
 *
 * \param sysIntSrc
-* System interrrupt source to be enabled.
+* System interrupt source to be enabled.
 *
 * \note This function is available for CAT1C CM0/CM7 core.
 *
@@ -859,7 +883,7 @@ void Cy_SysInt_EnableSystemInt(cy_en_intr_t sysIntSrc);
 * \brief Disable system interrupt.
 *
 * \param sysIntSrc
-* System interrrupt source to be disabled.
+* System interrupt source to be disabled.
 *
 * \note This function is available for CAT1C CM0/CM7 core.
 *
@@ -904,7 +928,7 @@ void Cy_SysInt_DisableSystemInt(cy_en_intr_t sysIntSrc);
 CY_MISRA_FP_BLOCK_START('MISRA C-2012 Rule 8.6', 2, 'Only one prototype will be picked for compilation');
 CY_MISRA_FP_BLOCK_START('MISRA C-2012 Rule 8.5', 2, 'Only one prototype will be picked for compilation');
 CY_MISRA_FP_BLOCK_START('MISRA C-2012 Rule 8.3', 2, 'Only one prototype will be picked for compilation');
-#if (CY_CPU_CORTEX_M0P) || defined (CY_IP_M7CPUSS) || defined (CY_DOXYGEN)
+#if (((CY_CPU_CORTEX_M0P) || defined (CY_IP_M7CPUSS) || defined (CY_DOXYGEN)) && !defined(CY_IP_M0SECCPUSS))
 void Cy_SysInt_SetNmiSource(cy_en_sysint_nmi_t nmiNum, cy_en_intr_t devIntrSrc);
 #else
 void Cy_SysInt_SetNmiSource(cy_en_sysint_nmi_t nmiNum, IRQn_Type intrSrc);
@@ -930,7 +954,7 @@ void Cy_SysInt_SetNmiSource(cy_en_sysint_nmi_t nmiNum, IRQn_Type intrSrc);
 * \snippet sysint/snippet/main.c snippet_Cy_SysInt_SetNmiSource
 *
 *******************************************************************************/
-#if (CY_CPU_CORTEX_M0P) || defined(CY_IP_M7CPUSS) || defined (CY_DOXYGEN)
+#if (((CY_CPU_CORTEX_M0P) || defined(CY_IP_M7CPUSS) || defined (CY_DOXYGEN)) && !defined(CY_IP_M0SECCPUSS))
 cy_en_intr_t Cy_SysInt_GetNmiSource(cy_en_sysint_nmi_t nmiNum);
 #else
 IRQn_Type Cy_SysInt_GetNmiSource(cy_en_sysint_nmi_t nmiNum);
@@ -939,6 +963,8 @@ CY_MISRA_BLOCK_END('MISRA C-2012 Rule 8.3');
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 8.5');
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 8.6');
 
+
+#if !(defined(CY_CPU_CORTEX_M0P) && (CY_CPU_CORTEX_M0P)) && !(defined(CY_IP_M7CPUSS))
 /*******************************************************************************
 * Function Name: Cy_SysInt_SoftwareTrig
 ****************************************************************************//**
@@ -952,10 +978,12 @@ CY_MISRA_BLOCK_END('MISRA C-2012 Rule 8.6');
 * \snippet sysint/snippet/main.c snippet_Cy_SysInt_SoftwareTrig
 *
 * \note Only privileged software can enable unprivileged access to the
-* Software Trigger Interrupt Register (STIR).
+* Software Trigger Interrupt Register (STIR). This function is available for CAT1A, CAT1B and CAT1D devices.
+*
 *
 *******************************************************************************/
 void Cy_SysInt_SoftwareTrig(IRQn_Type IRQn);
+#endif
 
 
 /** \} group_sysint_functions */

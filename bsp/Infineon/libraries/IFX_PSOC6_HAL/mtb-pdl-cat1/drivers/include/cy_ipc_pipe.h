@@ -1,13 +1,15 @@
 /***************************************************************************//**
 * \file cy_ipc_pipe.h
-* \version 1.70
+* \version 1.80
 *
 *  Description:
 *   IPC Pipe Driver - This header file contains all the function prototypes,
 *   structure definitions, pipe constants, and pipe endpoint address definitions.
 *
 ********************************************************************************
-* Copyright 2016-2020 Cypress Semiconductor Corporation
+* \copyright
+* Copyright (c) (2020-2022), Cypress Semiconductor Corporation (an Infineon company) or
+* an affiliate of Cypress Semiconductor Corporation.
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -169,10 +171,12 @@ typedef struct
 /** The Pipe channel configuration structure. */
 typedef struct
 {
-    /** Specifies the notify interrupt number for the first endpoint */
+    /** Specifies the notify interrupt number for the receiver endpoint.
+     *  Only for CAT1A device, it is used as first endpoint. */
     cy_stc_ipc_pipe_ep_config_t ep0ConfigData;
 
-    /** Specifies the notify interrupt number for the second endpoint */
+    /** Specifies the notify interrupt number for the send endpoint.
+     *  Only for CAT1A device, it is used as second endpoint. */
     cy_stc_ipc_pipe_ep_config_t ep1ConfigData;
 
     /** Client count and size of MsgCallback array */

@@ -174,6 +174,8 @@ struct rt_thread main_thread;
  * @brief  The system main thread. In this thread will call the rt_components_init()
  *         for initialization of RT-Thread Components and call the user's programming
  *         entry main().
+ *
+ * @param  parameter is the arg of the thread.
  */
 void main_thread_entry(void *parameter)
 {
@@ -228,6 +230,8 @@ void rt_application_init(void)
 /**
  * @brief  This function will call all levels of initialization functions to complete
  *         the initialization of the system, and finally start the scheduler.
+ *
+ * @return Normally never returns. If 0 is returned, the scheduler failed.
  */
 int rtthread_startup(void)
 {

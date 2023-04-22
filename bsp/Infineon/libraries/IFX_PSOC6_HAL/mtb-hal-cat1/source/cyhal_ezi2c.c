@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -33,7 +33,7 @@
 #include "cyhal_system_impl.h"
 #include "cyhal_hwmgr.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_clock.h"
 
 #if (CYHAL_DRIVER_AVAILABLE_EZI2C)
@@ -66,10 +66,17 @@ static inline cyhal_ezi2c_status_t _cyhal_ezi2c_convert_activity_status(uint32_t
     return hal_status;
 }
 
-/* Implement ISR for EZI2C */
+#if defined (COMPONENT_CAT5)
+static void _cyhal_ezi2c_irq_handler(_cyhal_system_irq_t irqn)
+#else
 static void _cyhal_ezi2c_irq_handler(void)
+#endif
 {
+#if defined (COMPONENT_CAT5)
+    cyhal_ezi2c_t *obj = (cyhal_ezi2c_t*) _cyhal_scb_get_irq_obj(irqn);
+#else
     cyhal_ezi2c_t *obj = (cyhal_ezi2c_t*) _cyhal_scb_get_irq_obj();
+#endif
     Cy_SCB_EZI2C_Interrupt(obj->base, &(obj->context));
 
     /* Check if callback is registered */
@@ -84,6 +91,25 @@ static void _cyhal_ezi2c_irq_handler(void)
         }
     }
 }
+
+#if defined (COMPONENT_CAT5)
+static void _cyhal_ezi2c0_irq_handler(void)
+{
+    _cyhal_ezi2c_irq_handler(scb_0_interrupt_IRQn);
+}
+
+static void _cyhal_ezi2c1_irq_handler(void)
+{
+    _cyhal_ezi2c_irq_handler(scb_1_interrupt_IRQn);
+}
+
+static void _cyhal_ezi2c2_irq_handler(void)
+{
+    _cyhal_ezi2c_irq_handler(scb_2_interrupt_IRQn);
+}
+
+static CY_SCB_IRQ_THREAD_CB_t _cyhal_irq_cb[3] = {_cyhal_ezi2c0_irq_handler, _cyhal_ezi2c1_irq_handler, _cyhal_ezi2c2_irq_handler};
+#endif
 
 static bool _cyhal_ezi2c_pm_callback_instance(void *obj_ptr, cyhal_syspm_callback_state_t state, cy_en_syspm_callback_mode_t pdl_mode)
 {
@@ -121,23 +147,50 @@ static cy_rslt_t _cyhal_ezi2c_setup_resources(cyhal_ezi2c_t *obj, cyhal_gpio_t s
     obj->is_clock_owned = false;
     obj->two_addresses = false;
 
+    // pins_blocks will contain bit representation of blocks, that are connected to specified pin
+    // 1 block - 1 bit, so, for example, pin_blocks = 0x00000006 means that certain pin
+    // can belong to next non-reserved blocks SCB2 and SCB1
+    uint32_t pins_blocks = _CYHAL_SCB_AVAILABLE_BLOCKS_MASK;
+    if (NC != sda)
+    {
+        pins_blocks &= _CYHAL_SCB_CHECK_AFFILIATION(sda, cyhal_pin_map_scb_i2c_sda);
+    }
+    if (NC != scl)
+    {
+        pins_blocks &= _CYHAL_SCB_CHECK_AFFILIATION(scl, cyhal_pin_map_scb_i2c_scl);
+    }
+
+    // One (or more) pin does not belong to any SCB instance or all corresponding SCB instances
+    // are reserved
+    if (0 == pins_blocks)
+    {
+        return CYHAL_EZI2C_RSLT_ERR_INVALID_PIN;
+    }
+
+    uint8_t found_block_idx = 0;
+    while(((pins_blocks >> found_block_idx) & 0x1) == 0)
+    {
+        found_block_idx++;
+    }
+
+    cyhal_resource_inst_t i2c_rsc = { CYHAL_RSC_SCB, found_block_idx, 0 };
+
     /* Reserve the I2C */
-    const cyhal_resource_pin_mapping_t *sda_map = _CYHAL_SCB_FIND_MAP(sda, cyhal_pin_map_scb_i2c_sda);
-    const cyhal_resource_pin_mapping_t *scl_map = _CYHAL_SCB_FIND_MAP(scl, cyhal_pin_map_scb_i2c_scl);
+    const cyhal_resource_pin_mapping_t *sda_map = _CYHAL_SCB_FIND_MAP_BLOCK(sda, cyhal_pin_map_scb_i2c_sda, &i2c_rsc);
+    const cyhal_resource_pin_mapping_t *scl_map = _CYHAL_SCB_FIND_MAP_BLOCK(scl, cyhal_pin_map_scb_i2c_scl, &i2c_rsc);
     if ((NULL == sda_map) || (NULL == scl_map) || !_cyhal_utils_map_resources_equal(sda_map, scl_map))
     {
         return CYHAL_EZI2C_RSLT_ERR_INVALID_PIN;
     }
 
-    cyhal_resource_inst_t rsc = { CYHAL_RSC_SCB, scl_map->block_num, scl_map->channel_num };
-    cy_rslt_t result = cyhal_hwmgr_reserve(&rsc);
+    cy_rslt_t result = cyhal_hwmgr_reserve(&i2c_rsc);
 
     /* Reserve the SDA pin */
     if (result == CY_RSLT_SUCCESS)
     {
-        obj->resource = rsc;
+        obj->resource = i2c_rsc;
 
-        result = _cyhal_utils_reserve_and_connect(sda_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_I2C_SDA);
+        result = _cyhal_utils_reserve_and_connect(sda_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_I2C_SDA);
         if (result == CY_RSLT_SUCCESS)
             obj->pin_sda = sda;
     }
@@ -145,7 +198,7 @@ static cy_rslt_t _cyhal_ezi2c_setup_resources(cyhal_ezi2c_t *obj, cyhal_gpio_t s
     /* Reserve the SCL pin */
     if (result == CY_RSLT_SUCCESS)
     {
-        result = _cyhal_utils_reserve_and_connect(scl_map, CYHAL_PIN_MAP_DRIVE_MODE_SCB_I2C_SCL);
+        result = _cyhal_utils_reserve_and_connect(scl_map, (uint8_t)CYHAL_PIN_MAP_DRIVE_MODE_SCB_I2C_SCL);
         if (result == CY_RSLT_SUCCESS)
             obj->pin_scl = scl;
     }
@@ -154,7 +207,7 @@ static cy_rslt_t _cyhal_ezi2c_setup_resources(cyhal_ezi2c_t *obj, cyhal_gpio_t s
     {
         if (clk == NULL)
         {
-            result = _cyhal_utils_allocate_clock(&(obj->clock), &rsc, CYHAL_CLOCK_BLOCK_PERIPHERAL_16BIT, true);
+            result = _cyhal_utils_allocate_clock(&(obj->clock), &i2c_rsc, CYHAL_CLOCK_BLOCK_PERIPHERAL_16BIT, true);
             obj->is_clock_owned = (CY_RSLT_SUCCESS == result);
         }
         else
@@ -168,7 +221,8 @@ static cy_rslt_t _cyhal_ezi2c_setup_resources(cyhal_ezi2c_t *obj, cyhal_gpio_t s
 
 static cy_rslt_t _cyhal_ezi2c_init_hw(cyhal_ezi2c_t *obj, const cy_stc_scb_ezi2c_config_t* pdl_cfg)
 {
-    obj->base = _CYHAL_SCB_BASE_ADDRESSES[obj->resource.block_num];
+    uint8_t scb_arr_index = _cyhal_scb_get_block_index(obj->resource.block_num);
+    obj->base = _CYHAL_SCB_BASE_ADDRESSES[scb_arr_index];
     obj->two_addresses = (pdl_cfg->numberOfAddresses == CY_SCB_EZI2C_TWO_ADDRESSES);
 
     /* Configure I2C to operate */
@@ -181,7 +235,11 @@ static cy_rslt_t _cyhal_ezi2c_init_hw(cyhal_ezi2c_t *obj, const cy_stc_scb_ezi2c
         obj->callback_data.callback_arg = NULL;
         obj->irq_cause = 0;
 
-        _cyhal_irq_register(_CYHAL_SCB_IRQ_N[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_ezi2c_irq_handler);
+        #if defined (COMPONENT_CAT5)
+            Cy_SCB_RegisterInterruptCallback(obj->base, _cyhal_irq_cb[_CYHAL_SCB_IRQ_N[scb_arr_index]]);
+        #endif
+
+        _cyhal_irq_register(_CYHAL_SCB_IRQ_N[scb_arr_index], CYHAL_ISR_PRIORITY_DEFAULT, (cy_israddress)_cyhal_ezi2c_irq_handler);
     }
 
     return result;
@@ -192,6 +250,8 @@ static void _cyhal_ezi2c_setup_and_enable(cyhal_ezi2c_t *obj, const cyhal_ezi2c_
     CY_ASSERT(NULL != obj);
     CY_ASSERT(NULL != slave1_cfg);
 
+    uint8_t scb_arr_index = _cyhal_scb_get_block_index(obj->resource.block_num);
+
     /* Configure buffer for communication with master */
     Cy_SCB_EZI2C_SetBuffer1(obj->base, slave1_cfg->buf, slave1_cfg->buf_size, slave1_cfg->buf_rw_boundary, &(obj->context));
     /* Check if user set one or two addresses */
@@ -200,7 +260,11 @@ static void _cyhal_ezi2c_setup_and_enable(cyhal_ezi2c_t *obj, const cyhal_ezi2c_
         Cy_SCB_EZI2C_SetBuffer2(obj->base, slave2_cfg->buf, slave2_cfg->buf_size, slave2_cfg->buf_rw_boundary, &(obj->context));
     }
 
-    _cyhal_irq_enable(_CYHAL_SCB_IRQ_N[obj->resource.block_num]);
+    #if defined (COMPONENT_CAT5)
+        Cy_SCB_EnableInterrupt(obj->base);
+    #endif
+
+    _cyhal_irq_enable(_CYHAL_SCB_IRQ_N[scb_arr_index]);
     /* Enable EZI2C to operate */
     Cy_SCB_EZI2C_Enable(obj->base);
 }
@@ -269,8 +333,9 @@ void cyhal_ezi2c_free(cyhal_ezi2c_t *obj)
 
     if (CYHAL_RSC_INVALID != obj->resource.type)
     {
+        uint8_t scb_arr_index = _cyhal_scb_get_block_index(obj->resource.block_num);
         _cyhal_scb_update_instance_data(obj->resource.block_num, NULL, NULL);
-        _cyhal_system_irq_t irqn = _CYHAL_SCB_IRQ_N[obj->resource.block_num];
+        _cyhal_system_irq_t irqn = _CYHAL_SCB_IRQ_N[scb_arr_index];
         _cyhal_irq_free(irqn);
 
         if (!obj->dc_configured)
@@ -307,6 +372,7 @@ void cyhal_ezi2c_register_callback(cyhal_ezi2c_t *obj, cyhal_ezi2c_event_callbac
 
 void cyhal_ezi2c_enable_event(cyhal_ezi2c_t *obj, cyhal_ezi2c_status_t event, uint8_t intr_priority, bool enable)
 {
+    uint8_t scb_arr_index = _cyhal_scb_get_block_index(obj->resource.block_num);
     if (enable)
     {
         obj->irq_cause |= event;
@@ -316,7 +382,7 @@ void cyhal_ezi2c_enable_event(cyhal_ezi2c_t *obj, cyhal_ezi2c_status_t event, ui
         obj->irq_cause &= ~event;
     }
 
-    _cyhal_system_irq_t irqn = _CYHAL_SCB_IRQ_N[obj->resource.block_num];
+    _cyhal_system_irq_t irqn = _CYHAL_SCB_IRQ_N[scb_arr_index];
     _cyhal_irq_set_priority(irqn, intr_priority);
 }
 

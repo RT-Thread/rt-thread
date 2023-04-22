@@ -1059,7 +1059,7 @@ void lwp_cleanup(struct rt_thread *tid)
 
 static void lwp_copy_stdio_fdt(struct rt_lwp *lwp)
 {
-    struct dfs_fd *d;
+    struct dfs_file *d;
     struct dfs_fdtable *lwp_fdt;
 
     lwp_fdt = &lwp->fdt;

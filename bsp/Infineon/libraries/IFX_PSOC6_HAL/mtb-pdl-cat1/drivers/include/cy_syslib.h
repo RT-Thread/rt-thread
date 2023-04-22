@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_syslib.h
-* \version 3.10
+* \version 3.20
 *
 * Provides an API declaration of the SysLib driver.
 *
@@ -55,7 +55,7 @@
 * Use the CY_ASSERT() macro to check expressions that must be true if the
 * program is running correctly. It is a convenient way to insert sanity checks.
 * The CY_ASSERT() macro is defined in the cy_utils.h file, which is part of the
-* <a href="https://github.com/cypresssemiconductorco/core-lib">Cypress Core Library (core-lib)</a>.
+* <a href="https://github.com/Infineon/core-lib">Cypress Core Library (core-lib)</a>.
 * The macro behavior is as follows: if the expression passed
 *  to the macro is false, the CPU is halted. \n
 *
@@ -68,7 +68,7 @@
 * The PDL source code uses this assert mechanism extensively. It is recommended
 * that you enable asserts when debugging firmware. \n
 * <b> Assertion Classes and Levels </b> <br />
-* The <a href="https://github.com/cypresssemiconductorco/core-lib">Cypress Core Library</a>
+* The <a href="https://github.com/Infineon/core-lib">Cypress Core Library</a>
 * defines three assert classes, which correspond to different
 * kinds of parameters. There is a corresponding assert "level" for each class.
 * <table class="doxtable">
@@ -118,6 +118,15 @@
 * \section group_syslib_changelog Changelog
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
+*   <tr>
+*     <td>3.20</td>
+*     <td>Updated Cy_SysLib_Delay() to perform correctly, enable Cy_SysLib_GetUniqueId() API for CAT1B,
+*         coverity fixes and documentation enhancements. \n
+*         Added CY_SECTION_INIT_CODECOPY_START and CY_SECTION_INIT_CODECOPY_END macro
+*         to move block of code from flash to sram during startup init. Currently
+*         it only supports in IAR build.</td>
+*     <td>Bug Fixes and Enhancements.</td>
+*   </tr>
 *   <tr>
 *     <td>3.10</td>
 *     <td>CAT1B, CAT1C, CAT1D devices support.<br>Added new API Cy_Syslib_SetWarmBootEntryPoint()
@@ -175,7 +184,7 @@
 *     <td>2.60.1</td>
 *     <td>Updated the Configuration Considerations section with the information that
 *         CY_ASSERT() macro is defined in the cy_utils.h file, which is part of the
-*         <a href="https://github.com/cypresssemiconductorco/core-lib">Cypress Core Library (core-lib)</a>
+*         <a href="https://github.com/Infineon/core-lib">Cypress Core Library (core-lib)</a>
 *     <td>Documentation update and clarification.</td>
 *   </tr>
 *   <tr>
@@ -209,7 +218,7 @@
 *         CY_REG8_CLR_SET,_BOOL2FLD,_FLD2BOOL,CY_SYSLIB_DIV_ROUND,
 *         CY_SYSLIB_DIV_ROUNDUP,CY_NOINIT,CY_SECTION,CY_UNUSED,CY_NOINLINE,
 *         CY_ALIGN,CY_RAMFUNC_BEGIN,CY_RAMFUNC_END.
-*         Use at least version 1.1 of the core library: https://github.com/cypresssemiconductorco/core-lib.
+*         Use at least version 1.1 of the core library: https://github.com/Infineon/core-lib.
 *     <td>Improve PDL code base.</td>
 *   </tr>
 *   <tr>
@@ -339,93 +348,33 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 8.6', 3, \
 * Macros
 *****************************************************************************/
 
-#ifdef CY_IP_M4CPUSS
+/** The macro for ARM CORTEX CM0P */
+#define CY_CPU_CORTEX_M0P   (__CORTEX_M == 0U)    /**< CM0+ core CPU Code */
+/** The macro for ARM CORTEX CM4 */
+#define CY_CPU_CORTEX_M4    (__CORTEX_M == 4U)    /**< CM4  core CPU Code */
+/** The macro for ARM CORTEX CM7 */
+#define CY_CPU_CORTEX_M7    (__CORTEX_M == 7U)    /**< CM7  core CPU Code */
+/** The macro for ARM CORTEX CM55 */
+#define CY_CPU_CORTEX_M55    (__CORTEX_M == 55U)  /**< CM55 core CPU Code */
+/** The macro for ARM CORTEX CM33 */
+#define CY_CPU_CORTEX_M33    (__CORTEX_M == 33U)  /**< CM33 core CPU Code */
 
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
-#define CY_CPU_CORTEX_M0P   (__CORTEX_M == 0)    /**< CM0+ core CPU Code */
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
-#define CY_CPU_CORTEX_M4    (__CORTEX_M == 4)    /**< CM4  core CPU Code */
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
-/** The macro to disable the Fault Handler */
-#define CY_ARM_FAULT_DEBUG_DISABLED    (0U)
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
 /** The macro to enable the Fault Handler */
 #define CY_ARM_FAULT_DEBUG_ENABLED     (1U)
 
 #if !defined (CY_ARM_FAULT_DEBUG)
-    /**
-    * \note
-    * This macro is available for devices having M4CPUSS IP.
-    **/
-    /** The macro defines if the Fault Handler is enabled. Enabled by default. */
-    #define CY_ARM_FAULT_DEBUG         (CY_ARM_FAULT_DEBUG_ENABLED)
+/** The macro defines if the Fault Handler is enabled. Enabled by default. */
+#define CY_ARM_FAULT_DEBUG         (CY_ARM_FAULT_DEBUG_ENABLED)
 #endif /* CY_ARM_FAULT_DEBUG */
 
-#else
-
-/** \cond INTERNAL */
-/**
-* \note
-* This macro is defined as false for all CAT1B devices.
-**/
-#define CY_CPU_CORTEX_M0P   (__CORTEX_M == 0)    /**< CM0+ core CPU Code */
-/**
-* \note
-* This macro is defined as false for all CAT1B devices.
-**/
-#define CY_CPU_CORTEX_M4    (__CORTEX_M == 4)    /**< CM4  core CPU Code */
-
-/**
-* \note
-* This macro is available for devices having M7CPUSS IP.
-**/
-#define CY_CPU_CORTEX_M7    (__CORTEX_M == 7)    /**< CM7  core CPU Code */
-/**
-* \note
-* This macro is available for devices having M55APPCPUSS IP.
-**/
-#define CY_CPU_CORTEX_M55    (__CORTEX_M == 55)    /**< CM55 core CPU Code */
-
-/** \endcond */
-
-#endif /* CY_IP_M4CPUSS */
-
-#if defined (CY_IP_M33SYSCPUSS)
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
-/** The macro to disable the Fault Handler */
-#define CY_ARM_FAULT_DEBUG_DISABLED    (1U)
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
-/** The macro to enable the Fault Handler */
-#define CY_ARM_FAULT_DEBUG_ENABLED     (0U)
-
-#if !defined (CY_ARM_FAULT_DEBUG)
-    /**
-    * \note
-    * This macro is available for devices having M4CPUSS IP.
-    **/
-    /** The macro defines if the Fault Handler is enabled. Enabled by default. */
-    #define CY_ARM_FAULT_DEBUG         (CY_ARM_FAULT_DEBUG_ENABLED)
-#endif /* CY_ARM_FAULT_DEBUG */
-
-#endif /* CY_IP_M33SYSCPUSS */
+/** This macro is to be enabled and set appropriately for the CPU's which has
+ * branch prediction enabled, so the delay can work accurately.
+ * CY_SYSLIB_DELAY_CALIBRATION_FACTOR = 1 for CM0P, CM33 and CM4.
+ * CY_SYSLIB_DELAY_CALIBRATION_FACTOR = 2 for CM7_0 and CM7_1.
+ */
+#ifndef CY_SYSLIB_DELAY_CALIBRATION_FACTOR
+#define CY_SYSLIB_DELAY_CALIBRATION_FACTOR     1U
+#endif
 
 /**
 * \defgroup group_syslib_macros_status_codes Status codes
@@ -434,57 +383,15 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 8.6', 3, \
 */
 /** \cond INTERNAL */
 
-#if defined (CY_IP_M4CPUSS) || defined (CY_IP_M7CPUSS)
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
 #define CY_PDL_STATUS_CODE_Pos  (CY_RSLT_CODE_POSITION)     /**< The module status code position in the status code */
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
 #define CY_PDL_STATUS_TYPE_Pos  (CY_RSLT_TYPE_POSITION)     /**< The status type position in the status code */
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
 #define CY_PDL_MODULE_ID_Pos    (CY_RSLT_MODULE_POSITION)   /**< The software module ID position in the status code */
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
 #define CY_PDL_STATUS_INFO      ((uint32_t)CY_RSLT_TYPE_INFO << CY_PDL_STATUS_TYPE_Pos)     /**< The information status type */
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
 #define CY_PDL_STATUS_WARNING   ((uint32_t)CY_RSLT_TYPE_WARNING << CY_PDL_STATUS_TYPE_Pos)  /**< The warning status type */
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
 #define CY_PDL_STATUS_ERROR     ((uint32_t)CY_RSLT_TYPE_ERROR << CY_PDL_STATUS_TYPE_Pos)    /**< The error status type */
-/**
-* \note
-* This macro is available for devices having M4CPUSS IP.
-**/
 #define CY_PDL_MODULE_ID_Msk    (CY_RSLT_MODULE_MASK)       /**< The software module ID mask */
-#endif /* CY_IP_M4CPUSS */
 
 /** \endcond */
-
-#if defined (CY_IP_M33SYSCPUSS) || defined (CY_IP_M55APPCPUSS)
-
-#define CY_PDL_STATUS_CODE_Pos  (0U)        /**< The module status code position in the status code */
-#define CY_PDL_STATUS_TYPE_Pos  (16U)       /**< The status type position in the status code */
-#define CY_PDL_MODULE_ID_Pos    (18U)       /**< The software module ID position in the status code */
-#define CY_PDL_STATUS_INFO      (0UL << CY_PDL_STATUS_TYPE_Pos)    /**< The information status type */
-#define CY_PDL_STATUS_WARNING   (1UL << CY_PDL_STATUS_TYPE_Pos)    /**< The warning status type */
-#define CY_PDL_STATUS_ERROR     (2UL << CY_PDL_STATUS_TYPE_Pos)    /**< The error status type */
-#define CY_PDL_MODULE_ID_Msk    (0x3FFFU)   /**< The software module ID mask */
-
-#endif
 
 /** Get the software PDL module ID */
 #define CY_PDL_DRV_ID(id)       ((uint32_t)((uint32_t)((id) & CY_PDL_MODULE_ID_Msk) << CY_PDL_MODULE_ID_Pos))
@@ -515,7 +422,7 @@ typedef enum
 */
 
 #if (CY_ARM_FAULT_DEBUG == CY_ARM_FAULT_DEBUG_ENABLED)
-    #if (CY_CPU_CORTEX_M4)
+    #if (CY_CPU_CORTEX_M4 || (defined (CY_CPU_CORTEX_M7) && CY_CPU_CORTEX_M7))
         /** Configurable Fault Status Register - CFSR */
         typedef struct
         {
@@ -580,7 +487,7 @@ typedef enum
             uint32_t usgFaultEna    :  1;   /**< SHCSR - The UsageFault enable bit, set to 1 to enable */
             uint32_t reserved4      : 13;   /**< Reserved */
         } cy_stc_fault_shcsr_t;
-    #endif /* CY_CPU_CORTEX_M4 */
+    #endif /* CY_CPU_CORTEX_M4, CY_CPU_CORTEX_M7*/
 
     /** The fault configuration structure. */
     typedef struct
@@ -593,7 +500,7 @@ typedef enum
         uint32_t lr;       /**< LR register content */
         uint32_t pc;       /**< PC register content */
         uint32_t psr;      /**< PSR register content */
-        #if (CY_CPU_CORTEX_M4)
+        #if (CY_CPU_CORTEX_M4 || (defined (CY_CPU_CORTEX_M7) && CY_CPU_CORTEX_M7))
             union
             {
                 uint32_t cfsrReg;              /**< CFSR register content as a word */
@@ -631,7 +538,7 @@ typedef enum
                 uint32_t s15;      /**< FPU S15 register content */
                 uint32_t fpscr;    /**< FPU FPSCR register content */
             #endif /* __FPU_PRESENT */
-        #endif /* CY_CPU_CORTEX_M4 */
+        #endif /* CY_CPU_CORTEX_M4, CY_CPU_CORTEX_M7*/
     } cy_stc_fault_frame_t;
 #endif /* (CY_ARM_FAULT_DEBUG == CY_ARM_FAULT_DEBUG_ENABLED) */
 
@@ -646,7 +553,7 @@ typedef enum
 #define CY_SYSLIB_DRV_VERSION_MAJOR    3
 
 /** The driver minor version */
-#define CY_SYSLIB_DRV_VERSION_MINOR    10
+#define CY_SYSLIB_DRV_VERSION_MINOR    20
 
 /** Define start of the function placed to the SRAM area by the linker */
 #ifndef CY_SECTION_RAMFUNC_BEGIN
@@ -663,6 +570,24 @@ typedef enum
 #define CY_SECTION_RAMFUNC_END CY_PRAGMA(diag_default = Ta023)
 #else
 #define CY_SECTION_RAMFUNC_END
+#endif
+#endif
+
+/** Define start of the code block to be copied to SRAM by the linker during init */
+#ifndef CY_SECTION_INIT_CODECOPY_BEGIN
+#if defined (__ICCARM__)
+#define CY_SECTION_INIT_CODECOPY_BEGIN CY_PRAGMA(default_function_attributes = @ "code_in_RAM")
+#else
+#define CY_SECTION_INIT_CODECOPY_BEGIN
+#endif
+#endif
+
+/** Define end of the code block to be copied to SRAM by the linker during init */
+#ifndef CY_SECTION_INIT_CODECOPY_END
+#if defined (__ICCARM__)
+#define CY_SECTION_INIT_CODECOPY_END CY_PRAGMA(default_function_attributes =)
+#else
+#define CY_SECTION_INIT_CODECOPY_END
 #endif
 #endif
 
@@ -685,7 +610,7 @@ typedef enum
 #endif
 #endif
 
-/** Placed initialized global valiable to the bootstrap data area by the linker */
+/** Placed initialized global variable to the bootstrap data area by the linker */
 #ifndef CY_SECTION_BOOTSTRAP_DATA
 #if defined (__GNUC__)
 #define CY_SECTION_BOOTSTRAP_DATA CY_SECTION(".cy_l1data")
@@ -727,7 +652,7 @@ typedef double   float64_t; /**< Specific-length typedef for the basic numerical
     #define CY_LR_Pos             (5U)     /**< The position of the LR  content in a fault structure */
     #define CY_PC_Pos             (6U)     /**< The position of the PC  content in a fault structure */
     #define CY_PSR_Pos            (7U)     /**< The position of the PSR content in a fault structure */
-    #if (CY_CPU_CORTEX_M4) && ((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && \
+    #if (CY_CPU_CORTEX_M4 || (defined (CY_CPU_CORTEX_M7) && CY_CPU_CORTEX_M7)) && ((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && \
                                (defined (__FPU_USED   ) && (__FPU_USED    == 1U)))
         #define CY_FPSCR_IXC_Msk  (0x00000010U)    /**< The cumulative exception bit for floating-point exceptions */
         #define CY_FPSCR_IDC_Msk  (0x00000080U)    /**< The cumulative exception bit for floating-point exceptions */
@@ -748,11 +673,10 @@ typedef double   float64_t; /**< Specific-length typedef for the basic numerical
         #define CY_S14_Pos        (22U)    /**< The position of the FPU S14 content in a fault structure */
         #define CY_S15_Pos        (23U)    /**< The position of the FPU S15 content in a fault structure */
         #define CY_FPSCR_Pos      (24U)    /**< The position of the FPU FPSCR content in a fault structure */
-    #endif /* CY_CPU_CORTEX_M4 && __FPU_PRESENT */
+    #endif /* (CY_CPU_CORTEX_M4 || CY_CPU_CORTEX_M7) && __FPU_PRESENT */
 
     extern CY_NOINIT cy_stc_fault_frame_t cy_faultFrame;    /**< Fault frame structure */
 #endif /* (CY_ARM_FAULT_DEBUG == CY_ARM_FAULT_DEBUG_ENABLED) */
-
 
 /**
 * \defgroup group_syslib_macros_assert Assert Classes and Levels
@@ -825,8 +749,6 @@ typedef double   float64_t; /**< Specific-length typedef for the basic numerical
 /******************************************************************************
 * Constants
 *****************************************************************************/
-/** Defines a 32-kHz clock delay */
-#define CY_DELAY_MS_OVERFLOW            (0x8000U)
 
 /**
 * \defgroup group_syslib_macros_reset_cause Reset cause
@@ -860,11 +782,11 @@ typedef double   float64_t; /**< Specific-length typedef for the basic numerical
 /** The Multi-Counter Watchdog timer #3 reset has occurred since the last power cycle. */
 #define CY_SYSLIB_RESET_SWWDT3          (0x0100U)
 /** The reset has occurred on a loss of high-frequency clock. */
-#define CY_SYSLIB_RESET_CSV_LOSS_WAKEUP      (0x10000UL)
+#define CY_SYSLIB_RESET_CSV_LOSS_WAKEUP      (0x10000U)
 /** The reset has occurred due to frequency error of high-frequency clock. */
-#define CY_SYSLIB_RESET_CSV_ERROR_WAKEUP      (0x20000UL)
+#define CY_SYSLIB_RESET_CSV_ERROR_WAKEUP      (0x20000U)
 /** The reset has occurred on a wakeup from Hibernate power mode. */
-#define CY_SYSLIB_RESET_HIB_WAKEUP      (0x40000UL)
+#define CY_SYSLIB_RESET_HIB_WAKEUP      (0x80000000U)
 
 #ifdef CY_IP_M7CPUSS
 /**
@@ -874,31 +796,31 @@ typedef double   float64_t; /**< Specific-length typedef for the basic numerical
 /** External XRES pin was asserted. This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. */
 #define CY_SYSLIB_RESET_XRES             (0x10000U)
 /** External VDDD supply crossed brown-out limit.  Note that this cause will only be observable as long as the VDDD supply does not go below the POR (power on reset) detection limit. */
-#define CY_SYSLIB_RESET_BODVDDD          (0x20000)
+#define CY_SYSLIB_RESET_BODVDDD          (0x20000U)
 /** External VDDA supply crossed the brown-out limit.  This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. */
-#define CY_SYSLIB_RESET_BODVDDA          (0x40000)
+#define CY_SYSLIB_RESET_BODVDDA          (0x40000U)
 /** Internal VCCD core supply crossed the brown-out limit.  Note that this detector will detect gross issues with the internal core supply, but may not catch all brown-out conditions. */
-#define CY_SYSLIB_RESET_BODVCCD          (0x80000)
+#define CY_SYSLIB_RESET_BODVCCD          (0x80000U)
 /** Overvoltage detection on the external VDDD supply.  This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. */
-#define CY_SYSLIB_RESET_OVDVDDD          (0x100000)
+#define CY_SYSLIB_RESET_OVDVDDD          (0x100000U)
 /** Overvoltage detection on the external VDDA supply.  This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. */
-#define CY_SYSLIB_RESET_OVDVDDA          (0x200000)
+#define CY_SYSLIB_RESET_OVDVDDA          (0x200000U)
 /** Overvoltage detection on the internal core VCCD supply.  This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. */
-#define CY_SYSLIB_RESET_OVDVCCD          (0x400000)
+#define CY_SYSLIB_RESET_OVDVCCD          (0x400000U)
 /** Overcurrent detection on the internal VCCD supply when supplied by the ACTIVE power mode linear regulator. This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD.  */
-#define CY_SYSLIB_RESET_OCD_ACT_LINREG   (0x800000)
+#define CY_SYSLIB_RESET_OCD_ACT_LINREG   (0x800000U)
 /** Overcurrent detection on the internal VCCD supply when supplied by the DEEPSLEEP power mode linear regulator. This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. */
-#define CY_SYSLIB_RESET_OCD_DPSLP_LINREG (0x1000000)
+#define CY_SYSLIB_RESET_OCD_DPSLP_LINREG (0x1000000U)
 /** Overcurrent detection from REGHC (if present).  If REGHC is not present, hardware will never set this bit.This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. */
-#define CY_SYSLIB_RESET_OCD_REGHC        (0x2000000)
+#define CY_SYSLIB_RESET_OCD_REGHC        (0x2000000U)
 /** PMIC status triggered a reset.  If PMIC control is not present, hardware will never set this bit. This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. */
-#define CY_SYSLIB_RESET_PMIC             (0x4000000)
+#define CY_SYSLIB_RESET_PMIC             (0x4000000U)
 /** PXRES triggered.  This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. Hardware clears this bit during POR. */
-#define CY_SYSLIB_RESET_PXRES            (0x10000000)
+#define CY_SYSLIB_RESET_PXRES            (0x10000000U)
 /** Structural reset was asserted.  This is a high-voltage cause bit that blocks recording of other high-voltage cause bits, except RESET_PORVDDD. Hardware clears this bit during POR. */
-#define CY_SYSLIB_RESET_STRUCT_XRES      (0x20000000)
+#define CY_SYSLIB_RESET_STRUCT_XRES      (0x20000000U)
 /** Indicator that a POR occurred.  This is a high-voltage cause bit, and hardware clears the other bits when this one is set. It does not block further recording of other high-voltage causes. */
-#define CY_SYSLIB_RESET_PORVDDD          (0x40000000)
+#define CY_SYSLIB_RESET_PORVDDD          (0x40000000U)
 
 #endif
 
@@ -914,6 +836,9 @@ typedef double   float64_t; /**< Specific-length typedef for the basic numerical
 * This macro is available for devices having M4CPUSS IP.
 **/
 #define CY_IPC_DATA_FOR_CM4_SOFT_RESET  (0x1B000002UL)
+#endif
+
+#if defined(CY_IP_M4CPUSS) || defined (CY_IP_M33SYSCPUSS)
 
 /**
 * \defgroup group_syslib_macros_unique_id Unique ID
@@ -922,47 +847,47 @@ typedef double   float64_t; /**< Specific-length typedef for the basic numerical
 */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_YEAR_Pos       (57U)    /**< The position of the DIE_YEAR  field in the silicon Unique ID */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_MINOR_Pos      (56U)    /**< The position of the DIE_MINOR field in the silicon Unique ID */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_SORT_Pos       (48U)    /**< The position of the DIE_SORT  field in the silicon Unique ID */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_Y_Pos          (40U)    /**< The position of the DIE_Y     field in the silicon Unique ID */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_X_Pos          (32U)    /**< The position of the DIE_X     field in the silicon Unique ID */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_WAFER_Pos      (24U)    /**< The position of the DIE_WAFER field in the silicon Unique ID */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_LOT_2_Pos      (16U)    /**< The position of the DIE_LOT_2 field in the silicon Unique ID */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_LOT_1_Pos      (8U)     /**< The position of the DIE_LOT_1 field in the silicon Unique ID */
 /**
 * \note
-* This macro is available for devices having M4CPUSS IP.
+* This macro is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
 **/
 #define CY_UNIQUE_ID_DIE_LOT_0_Pos      (0U)     /**< The position of the DIE_LOT_0 field in the silicon Unique ID */
 
@@ -1042,7 +967,7 @@ void Cy_SysLib_Rtos_Delay(uint32_t milliseconds);
 ****************************************************************************//**
 *
 * The function is same as \ref Cy_SysLib_DelayUs. However, this API is declared WEAK
-* providing option for user to overwrite the imlementation based on target RTOS.
+* providing option for user to overwrite the implementation based on target RTOS.
 *
 * \param microseconds  The number of microseconds to delay.
 *
@@ -1050,10 +975,22 @@ void Cy_SysLib_Rtos_Delay(uint32_t milliseconds);
 void Cy_SysLib_Rtos_DelayUs(uint16_t microseconds);
 
 
-/** Delays for the specified number of cycles.
- *  The function is implemented in the assembler for each supported compiler.
- *  \param cycles  The number of cycles to delay.
- */
+/*******************************************************************************
+* Function Name: Cy_SysLib_DelayCycles
+****************************************************************************//**
+* Delays for the specified number of cycles.
+*  The function is implemented in the assembler for each supported compiler.
+*
+*  \param cycles  The number of cycles to delay.
+*
+* \note While using for CAT1C devices, where the CPU supports branch prediction,
+*  this API needs to be called as below
+* Cy_SysLib_DelayCycles(cycles * CY_SYSLIB_DELAY_CALIBRATION_FACTOR);
+* For Example:-
+* CY_SYSLIB_DELAY_CALIBRATION_FACTOR = 1 for CM0P, CM33 and CM4.
+* CY_SYSLIB_DELAY_CALIBRATION_FACTOR = 2 for CM7_0 and CM7_1.
+*
+*******************************************************************************/
 void Cy_SysLib_DelayCycles(uint32_t cycles);
 
 
@@ -1082,13 +1019,12 @@ void Cy_SysLib_DelayCycles(uint32_t cycles);
 *       \ref Cy_SysLib_ProcessingFault() function.
 *
 *******************************************************************************/
-#ifdef CY_IP_M4CPUSS
+#if defined (CY_IP_M33SYSCPUSS) || defined (CY_IP_M55APPCPUSS) || defined (CY_DOXYGEN)
+    void Cy_SysLib_Halt(uint32_t reason);
+#else
 /** \cond INTERNAL */
 __NO_RETURN void Cy_SysLib_Halt(uint32_t reason);
 /** \endcond */
-#endif
-#if defined (CY_IP_M33SYSCPUSS) || defined (CY_IP_M55APPCPUSS) || defined (CY_DOXYGEN)
-    void Cy_SysLib_Halt(uint32_t reason);
 #endif
 
 
@@ -1131,33 +1067,6 @@ void Cy_SysLib_AssertFailed(const char_t * file, uint32_t line);
 *******************************************************************************/
 void Cy_SysLib_ClearFlashCacheAndBuffer(void);
 
-
-/*******************************************************************************
-* Function Name: Cy_SysLib_GetUniqueId
-****************************************************************************//**
-*
-* This function returns the silicon unique ID.
-* The ID includes Die lot[3]#, Die Wafer#, Die X, Die Y, Die Sort#, Die Minor
-* and Die Year.
-*
-* \return  A combined 64-bit unique ID.
-*          [63:57] - DIE_YEAR
-*          [56:56] - DIE_MINOR
-*          [55:48] - DIE_SORT
-*          [47:40] - DIE_Y
-*          [39:32] - DIE_X
-*          [31:24] - DIE_WAFER
-*          [23:16] - DIE_LOT[2]
-*          [15: 8] - DIE_LOT[1]
-*          [ 7: 0] - DIE_LOT[0]
-*
-* \note
-* This API is available for devices having M4CPUSS IP.
-*
-*******************************************************************************/
-uint64_t Cy_SysLib_GetUniqueId(void);
-
-
 #if (CY_CPU_CORTEX_M0P) || defined (CY_DOXYGEN)
 /*******************************************************************************
 * Function Name: Cy_SysLib_SoftResetCM4
@@ -1181,6 +1090,37 @@ void Cy_SysLib_SoftResetCM4(void);
 #endif /* CY_CPU_CORTEX_M0P */
 #endif
 
+#if defined(CY_IP_M4CPUSS) || (defined (CY_IP_M33SYSCPUSS) && defined(CY_IP_MXEFUSE)) || defined (CY_DOXYGEN)
+
+/*******************************************************************************
+* Function Name: Cy_SysLib_GetUniqueId
+****************************************************************************//**
+*
+* This function returns the silicon unique ID.
+* The ID includes Die lot[3]#, Die Wafer#, Die X, Die Y, Die Sort#, Die Minor
+* and Die Year.
+*
+* \return  A combined 64-bit unique ID.
+*          [63:57] - DIE_YEAR
+*          [56:56] - DIE_MINOR
+*          [55:48] - DIE_SORT
+*          [47:40] - DIE_Y
+*          [39:32] - DIE_X
+*          [31:24] - DIE_WAFER
+*          [23:16] - DIE_LOT[2]
+*          [15: 8] - DIE_LOT[1]
+*          [ 7: 0] - DIE_LOT[0]
+*
+* \note
+* This API is available for devices having M4CPUSS and CY_IP_M33SYSCPUSS IP.
+*
+* \note
+* For CY_IP_M33SYSCPUSS IP, EFUSE must be in enabled state before
+* calling this API.
+*
+*******************************************************************************/
+uint64_t Cy_SysLib_GetUniqueId(void);
+#endif
 
 /*******************************************************************************
 * Function Name: Cy_SysLib_ResetBackupDomain
@@ -1237,9 +1177,16 @@ cy_en_syslib_status_t Cy_SysLib_ResetBackupDomain(void);
 * | CY_SYSLIB_RESET_SWWDT1        | CY_SYSLIB_RESET_SWWDT1       | CY_SYSLIB_RESET_SWWDT1           | 0x00040    (bit6)
 * | CY_SYSLIB_RESET_SWWDT2        | CY_SYSLIB_RESET_SWWDT2       | CY_SYSLIB_RESET_SWWDT2           | 0x00080    (bit7)
 * | CY_SYSLIB_RESET_SWWDT3        | CY_SYSLIB_RESET_SWWDT3       | CY_SYSLIB_RESET_SWWDT3           | 0x00100    (bit8)
+* |                               |                              |                                  | 0x00200    (bit9)
+* |                               |                              |                                  | 0x00400    (bit10)
+* |                               |                              |                                  | 0x00800    (bit11)
+* |                               |                              |                                  | 0x01000    (bit12)
+* |                               |                              |                                  | 0x02000    (bit13)
+* |                               |                              |                                  | 0x04000    (bit14)
+* |                               |                              |                                  | 0x08000    (bit15)
 * |                               | CY_SYSLIB_RESET_HFCLK_LOSS   | CY_SYSLIB_RESET_XRES             | 0x10000    (bit16)
 * |                               | CY_SYSLIB_RESET_HFCLK_ERR    | CY_SYSLIB_RESET_BODVDDD          | 0x20000    (bit17)
-* | CY_SYSLIB_RESET_HIB_WAKEUP    | CY_SYSLIB_RESET_HIB_WAKEUP   | CY_SYSLIB_RESET_BODVDDA          | 0x40000    (bit18)
+* |                               |                              | CY_SYSLIB_RESET_BODVDDA          | 0x40000    (bit18)
 * |                               |                              | CY_SYSLIB_RESET_BODVCCD          | 0x80000    (bit19)
 * |                               |                              | CY_SYSLIB_RESET_OVDVDDD          | 0x100000   (bit20)
 * |                               |                              | CY_SYSLIB_RESET_OVDVDDA          | 0x200000   (bit21)
@@ -1248,9 +1195,11 @@ cy_en_syslib_status_t Cy_SysLib_ResetBackupDomain(void);
 * |                               |                              | CY_SYSLIB_RESET_OCD_DPSLP_LINREG | 0x1000000  (bit24)
 * |                               |                              | CY_SYSLIB_RESET_OCD_REGHC        | 0x2000000  (bit25)
 * |                               |                              | CY_SYSLIB_RESET_PMIC             | 0x4000000  (bit26)
+* |                               |                              |                                  | 0x8000000  (bit27)
 * |                               |                              | CY_SYSLIB_RESET_PXRES            | 0x10000000 (bit28)
 * |                               |                              | CY_SYSLIB_RESET_STRUCT_XRES      | 0x20000000 (bit29)
 * |                               |                              | CY_SYSLIB_RESET_PORVDDD          | 0x40000000 (bit30)
+* | CY_SYSLIB_RESET_HIB_WAKEUP    | CY_SYSLIB_RESET_HIB_WAKEUP   | CY_SYSLIB_RESET_HIB_WAKEUP       | 0x80000000 (bit31)
 * \note This not is available for devices having M33SYSCPUSS IP
 *       CY_SYSLIB_RESET_CSV_WCO_LOSS, CY_SYSLIB_RESET_HFCLK_LOSS and
 *       CY_SYSLIB_RESET_HFCLK_ERR causes of a system reset available only if
@@ -1271,6 +1220,9 @@ uint32_t Cy_SysLib_GetResetReason(void);
 void Cy_SysLib_ClearResetReason(void);
 
 
+#if defined(CY_INIT_CODECOPY_ENABLE)
+CY_SECTION_INIT_CODECOPY_BEGIN
+#endif
 /*******************************************************************************
 * Function Name: Cy_SysLib_GetResetStatus
 ****************************************************************************//**
@@ -1347,6 +1299,9 @@ __STATIC_INLINE void Cy_SysLib_SetWcoTrim (uint32_t wcoTrim)
 }
 #endif /* CY_IP_MXS40SRSS */
 
+#if defined(CY_INIT_CODECOPY_ENABLE)
+CY_SECTION_INIT_CODECOPY_END
+#endif
 
 #if (CY_ARM_FAULT_DEBUG == CY_ARM_FAULT_DEBUG_ENABLED) || defined(CY_DOXYGEN)
 
@@ -1395,7 +1350,6 @@ __STATIC_INLINE void Cy_SysLib_SetWcoTrim (uint32_t wcoTrim)
 *******************************************************************************/
     void Cy_SysLib_ProcessingFault(void);
 #endif /* (CY_ARM_FAULT_DEBUG == CY_ARM_FAULT_DEBUG_ENABLED) */
-
 
 /*******************************************************************************
 * Function Name: Cy_SysLib_SetWaitStates
@@ -1513,6 +1467,11 @@ void Cy_Syslib_SetWarmBootEntryPoint(uint32_t *entryPoint, bool enable);
 /** \cond INTERNAL */
 #define CY_SYSLIB_DEVICE_REV_0A       (0x21U)  /**< The device TO *A Revision ID */
 #define CY_SYSLIB_DEVICE_PSOC6ABLE2   (0x100U) /**< The PSoC6 BLE2 device Family ID */
+
+/* For CAT1B Devices */
+#define CY_SYSLIB_DEVICE_PID_20829A0  (0x11U) /**< 20829A0 PRODUCT ID(8 bits)<Minor Revision(4 bits): Major Revision(4 bits)> */
+#define CY_SYSLIB_DEVICE_PID_20829A1  (0x21U) /**< 20829A1 PRODUCT ID(8 bits)<Minor Revision(4 bits): Major Revision(4 bits)> */
+
 
 typedef uint32_t cy_status;
 /** The ARM 32-bit status value for backward compatibility with the UDB components. Do not use it in your code. */

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_scb_uart.h
-* \version 2.90
+* \version 3.0
 *
 * Provides UART API declarations of the SCB driver.
 *
@@ -291,7 +291,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXSCB)
+#if (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB))
 
 #include "cy_scb_common.h"
 
@@ -498,14 +498,14 @@ typedef struct stc_scb_uart_config
 
     /** Specifies the number of bits to detect a break condition */
     uint32_t    breakWidth;
-#if(CY_IP_MXSCB_VERSION>=2) || defined (CY_DOXYGEN)
+#if(((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB)) || defined (CY_DOXYGEN))
     /** Specifies the low or high level pulse detection for break condition */
     /**
     * \note
     * This parameter is available for CAT1B and CAT1C devices.
     **/
     bool        breaklevel;
-#endif /* CY_IP_MXSCB_VERSION */
+#endif /* (((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB)) || defined (CY_DOXYGEN)) */
     /**
     * When there are more entries in the RX FIFO than this level
     * the RX trigger output goes high. This output can be connected
@@ -1692,7 +1692,7 @@ __STATIC_INLINE void Cy_SCB_UART_RegisterCallback(CySCB_Type const *base,
 
 /** \} group_scb_uart */
 
-#endif /* (CY_IP_MXSCB) */
+#endif /* (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB)) */
 
 #endif /* (CY_SCB_UART_H) */
 /* [] END OF FILE */
