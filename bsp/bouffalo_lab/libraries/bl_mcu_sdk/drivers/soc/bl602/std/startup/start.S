@@ -78,7 +78,7 @@ __start:
     /* start load code to itcm like. */
     jal start_load
 
-    jal System_Post_Init
+    call System_Post_Init
 
     /* At this point we can enter the C runtime's startup file.  The arguments
      * to this function are designed to match those provided to the SEE, just
@@ -86,7 +86,7 @@ __start:
     csrr a0, mhartid
     li a1, 0
     li a2, 0
-    jal entry
+    call entry
 
     csrci mstatus, (1 << 3)
 

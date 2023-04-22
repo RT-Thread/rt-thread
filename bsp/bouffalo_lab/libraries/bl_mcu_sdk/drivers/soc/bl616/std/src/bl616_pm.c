@@ -783,7 +783,7 @@ void ATTR_TCM_SECTION pm_pds_mode_enter(enum pm_pds_sleep_level pds_level,
  * @param hbn_level
  */
 ATTR_TCM_SECTION void pm_hbn_mode_enter(enum pm_hbn_sleep_level hbn_level,
-                                        uint8_t sleep_time)
+                                        uint64_t sleep_time)
 {
     uint32_t tmpVal;
 
@@ -798,7 +798,7 @@ ATTR_TCM_SECTION void pm_hbn_mode_enter(enum pm_hbn_sleep_level hbn_level,
 
     if (sleep_time) {
         struct bflb_device_s *rtc_dev = NULL;
-        bflb_rtc_set_time(rtc_dev,sleep_time); // sleep time,unit is second
+        bflb_rtc_set_time(rtc_dev,sleep_time); // sleep time,unit is cycle
     }
 
     if (hbn_level >= PM_HBN_LEVEL_2) {

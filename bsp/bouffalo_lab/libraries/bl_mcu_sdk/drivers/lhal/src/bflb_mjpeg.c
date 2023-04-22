@@ -545,6 +545,26 @@ void bflb_mjpeg_set_yuv420sp_cam_input(struct bflb_device_s *dev, uint8_t yy, ui
     putreg32(regval, reg_base + MJPEG_CONTROL_2_OFFSET);
 }
 
+void bflb_mjpeg_update_input_output_buff(struct bflb_device_s *dev, void *input_buf0, void *input_buf1, void *output_buff, size_t output_buff_size)
+{
+    uint32_t reg_base;
+
+    reg_base = dev->reg_base;
+
+    if (input_buf0 != NULL) {
+        putreg32((uint32_t)input_buf0, reg_base + MJPEG_YY_FRAME_ADDR_OFFSET);
+    }
+
+    if (input_buf1 != NULL) {
+        putreg32((uint32_t)input_buf1, reg_base + MJPEG_UV_FRAME_ADDR_OFFSET);
+    }
+
+    if (output_buff != NULL) {
+        putreg32((uint32_t)output_buff, reg_base + MJPEG_JPEG_FRAME_ADDR_OFFSET);
+        putreg32((uint32_t)output_buff_size / 128, reg_base + MJPEG_JPEG_STORE_MEMORY_OFFSET);
+    }
+}
+
 int bflb_mjpeg_feature_control(struct bflb_device_s *dev, int cmd, size_t arg)
 {
     int ret = 0;

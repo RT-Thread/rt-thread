@@ -593,6 +593,24 @@ int usb_dc_init(void)
 
 int usb_dc_deinit(void)
 {
+    uint32_t regval;
+
+    /* disable global irq */
+    regval = getreg32(BLFB_USB_BASE + USB_DEV_CTL_OFFSET);
+    regval &= ~USB_GLINT_EN_HOV;
+    putreg32(regval, BLFB_USB_BASE + USB_DEV_CTL_OFFSET);
+
+    regval = getreg32(BLFB_USB_BASE + USB_PHY_TST_OFFSET);
+    regval |= USB_UNPLUG;
+    putreg32(regval, BLFB_USB_BASE + USB_PHY_TST_OFFSET);
+
+    regval = getreg32(BLFB_USB_BASE + USB_DEV_CTL_OFFSET);
+    regval |= USB_SFRST_HOV;
+    putreg32(regval, BLFB_USB_BASE + USB_DEV_CTL_OFFSET);
+
+    while (getreg32(BLFB_USB_BASE + USB_DEV_CTL_OFFSET) & USB_SFRST_HOV) {
+    }
+
     return 0;
 }
 
@@ -847,24 +865,21 @@ int usbd_ep_start_read(const uint8_t ep, uint8_t *data, uint32_t data_len)
         return -2;
     }
 
+    if (data_len == 0) {
+        return 0;
+    }
+
     g_bl_udc.out_ep[ep_idx].xfer_buf = (uint8_t *)data;
     g_bl_udc.out_ep[ep_idx].xfer_len = data_len;
     g_bl_udc.out_ep[ep_idx].actual_xfer_len = 0;
     g_bl_udc.out_ep[ep_idx].ep_active = true;
 
     if (ep_idx == 0) {
-        if (data_len == 0) {
-            g_bl_udc.out_ep[ep_idx].ep_active = false;
-        } else {
-            data_len = MIN(data_len, g_bl_udc.out_ep[ep_idx].ep_mps);
-            g_bl_udc.in_ep[ep_idx].xfer_len = data_len;
-            bflb_usb_vdma_start_read(USB_FIFO_CXF, data, data_len);
-        }
+        data_len = MIN(data_len, g_bl_udc.out_ep[ep_idx].ep_mps);
+        g_bl_udc.out_ep[ep_idx].xfer_len = data_len;
+        bflb_usb_vdma_start_read(USB_FIFO_CXF, data, data_len);
     } else {
-        if (data_len == 0) {
-        } else {
-            bflb_usb_vdma_start_read(usb_get_transfer_fifo(ep_idx), data, data_len);
-        }
+        bflb_usb_vdma_start_read(usb_get_transfer_fifo(ep_idx), data, data_len);
     }
     return 0;
 }
@@ -897,6 +912,13 @@ void USBD_IRQHandler(int irq, void *arg)
 
             if (subgroup_intstatus & USB_SUSP_INT) {
                 bflb_usb_source_group_int_clear(2, USB_SUSP_INT);
+                bflb_usb_reset_fifo(USB_FIFO_F0);
+                bflb_usb_reset_fifo(USB_FIFO_F1);
+                bflb_usb_reset_fifo(USB_FIFO_F2);
+                bflb_usb_reset_fifo(USB_FIFO_F3);
+                bflb_usb_reset_fifo(USB_FIFO_CXF);
+
+                memset(&g_bl_udc, 0, sizeof(g_bl_udc));
                 usbd_event_suspend_handler();
             }
             if (subgroup_intstatus & USB_RESM_INT) {
@@ -970,7 +992,7 @@ void USBD_IRQHandler(int irq, void *arg)
                         g_bl_udc.in_ep[ep_idx].ep_active = 0;
                         g_bl_udc.in_ep[ep_idx].actual_xfer_len = g_bl_udc.in_ep[ep_idx].xfer_len - bflb_usb_vdma_get_remain_size(i);
                         usbd_event_ep_in_complete_handler(ep_idx | 0x80, g_bl_udc.in_ep[ep_idx].actual_xfer_len);
-                    } else {
+                    } else if (g_bl_udc.out_ep[ep_idx].ep_active) {
                         g_bl_udc.out_ep[ep_idx].ep_active = 0;
                         g_bl_udc.out_ep[ep_idx].actual_xfer_len = g_bl_udc.out_ep[ep_idx].xfer_len - bflb_usb_vdma_get_remain_size(i);
                         usbd_event_ep_out_complete_handler(ep_idx & 0x7f, g_bl_udc.out_ep[ep_idx].actual_xfer_len);

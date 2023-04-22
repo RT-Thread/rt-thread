@@ -82,8 +82,6 @@ uint32_t ATTR_CLOCK_SECTION bflb_clk_get_peripheral_clock(uint8_t type, uint8_t 
             return bflb_clock_get_cam();
         case BFLB_DEVICE_TYPE_DBI:
             return bflb_clock_get_dbi();
-        case BFLB_DEVICE_TYPE_PEC:
-            return bflb_clock_get_pec();
         case BFLB_DEVICE_TYPE_I2S:
             return bflb_clock_get_i2s();
         default:

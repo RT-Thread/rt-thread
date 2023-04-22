@@ -409,13 +409,6 @@ void bflb_gpio_uart_init(struct bflb_device_s *dev, uint8_t pin, uint8_t uart_fu
     bflb_gpio_init(dev, pin, (7 << GPIO_FUNC_SHIFT) | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
 }
 
-#if defined(BL616) || defined(BL808) || defined(BL606P) || defined(BL628)
-void bflb_gpio_iso11898_init(struct bflb_device_s *dev, uint8_t pin, uint8_t iso11898_func)
-{
-    bflb_gpio_uart_init(dev, pin, iso11898_func);
-}
-#endif
-
 int bflb_gpio_feature_control(struct bflb_device_s *dev, int cmd, size_t arg)
 {
     int ret = 0;

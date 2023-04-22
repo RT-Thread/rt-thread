@@ -669,6 +669,7 @@ const GLB_MU_PLL_Cfg_Type ATTR_CLOCK_CONST_SECTION uhsPllCfg_1066M[GLB_XTAL_MAX]
     { &uhsPll1066BasicCfg_32M, 0x31F80 },   /*!< XTAL is RC32M */
 };
 
+#ifndef CONIFG_DISABLE_ALL_UHS_EXCEPT_40M
 /* uhs PLL 2000 Config*/
 const GLB_MU_PLL_CFG_BASIC_Type ATTR_CLOCK_CONST_SECTION uhsPll2000BasicCfg_24M = {
     .clkpllRefdivRatio = 1,          /*!< pll_refdiv_ratio */
@@ -714,7 +715,24 @@ const GLB_MU_PLL_Cfg_Type ATTR_CLOCK_CONST_SECTION uhsPllCfg_2000M[GLB_XTAL_MAX]
     { &uhsPll2000BasicCfg_26M, 0x26762 },   /*!< XTAL is 26M */
     { &uhsPll2000BasicCfg_32M, 0x3E800 },   /*!< XTAL is RC32M */
 };
-
+#else
+const GLB_MU_PLL_CFG_BASIC_Type ATTR_CLOCK_CONST_SECTION uhsPll2000BasicCfg_40M = {
+    .clkpllRefdivRatio = 2,          /*!< pll_refdiv_ratio */
+    .clkpllSelSampleClk = 2,         /*!< pll_sel_sample_clk */
+    .clkpllVcoSpeed = 7,             /*!< pll_vco_speed */
+    .clkpllEvenDivEn = 1,            /*!< pll_even_div_en */
+    .clkpllEvenDivRatio = 2000 / 50, /*!< pll_even_div_ratio */
+};
+const GLB_MU_PLL_Cfg_Type ATTR_CLOCK_CONST_SECTION uhsPllCfg_2000M[GLB_XTAL_MAX] = {
+    { NULL, 0x0 },                          /*!< XTAL is None */
+    { NULL, 0x0 },   /*!< XTAL is 24M */
+    { NULL, 0x0 },   /*!< XTAL is 32M */
+    { NULL, 0x0 }, /*!< XTAL is 38.4M */
+    { &uhsPll2000BasicCfg_40M, 0x32000 },   /*!< XTAL is 40M */
+    { NULL, 0x0 },   /*!< XTAL is 26M */
+    { NULL, 0x0 },   /*!< XTAL is RC32M */
+};
+#endif
 /*@} end of group GLB_Private_Variables */
 
 /** @defgroup  GLB_Global_Variables

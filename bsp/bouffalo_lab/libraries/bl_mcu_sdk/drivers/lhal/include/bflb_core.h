@@ -59,7 +59,6 @@ void assert_func(uint8_t *file, uint32_t line, uint8_t *function, uint8_t *strin
 #define BFLB_DEVICE_TYPE_IR       10
 #define BFLB_DEVICE_TYPE_TIMER    11
 #define BFLB_DEVICE_TYPE_PWM      12
-#define BFLB_DEVICE_TYPE_ISO11898 13
 #define BFLB_DEVICE_TYPE_CAMERA   14
 #define BFLB_DEVICE_TYPE_FLASH    15
 #define BFLB_DEVICE_TYPE_QSPI     16
@@ -83,11 +82,11 @@ void assert_func(uint8_t *file, uint32_t line, uint8_t *function, uint8_t *strin
 #define BFLB_DEVICE_TYPE_MJPEG    34
 #define BFLB_DEVICE_TYPE_KYS      35
 #define BFLB_DEVICE_TYPE_DBI      36
-#define BFLB_DEVICE_TYPE_PEC      37
-#define BFLB_DEVICE_TYPE_WDT      38
-#define BFLB_DEVICE_TYPE_EF_CTRL  39
+#define BFLB_DEVICE_TYPE_WDT      37
+#define BFLB_DEVICE_TYPE_EF_CTRL  38
+#define BFLB_DEVICE_TYPE_SDIO2    39
 #define BFLB_DEVICE_TYPE_SDIO3    40
-#define BFLB_DEVICE_TYPE_SDIO2    41
+#define BFLB_DEVICE_TYPE_PLFMDMA  41
 
 struct bflb_device_s {
     const char *name;
