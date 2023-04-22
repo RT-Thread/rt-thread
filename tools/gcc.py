@@ -98,19 +98,28 @@ def GetMuslVersion(rtconfig):
     # print(root)
     return version
 
+def GetMlibcVersion(rtconfig):
+    version = '1.0.0'
+    return version
+
 # return libc name and version
 def GetGCCLibcNameVersion(rtconfig):
     if rtconfig.PLATFORM != 'gcc':
         return ('unknown', 'unknown')
 
+    mlibc_version = GetMlibcVersion()
+    if mlibc_version != 'unknown':
+        return ('mlibc', mlibc_version)
+
     newlib_version = GetNewLibVersion(rtconfig)
     if newlib_version != 'unknown':
         return ('newlib', newlib_version) # libc: newlib, version: newlib_version
-    elif CheckMUSLLibc(rtconfig) == True:
+
+    if CheckMUSLLibc(rtconfig) == True:
         GetMuslVersion(rtconfig)
         return ('musl', 'unknown') #libc: musl, version: unknown
-    else:
-        return ('unknown', 'unknown') # libc: unknown, version: unknown
+
+    return ('unknown', 'unknown') # libc: unknown, version: unknown
 
 def GCCResult(rtconfig, str):
     import subprocess
