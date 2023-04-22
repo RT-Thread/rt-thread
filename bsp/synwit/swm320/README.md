@@ -164,6 +164,6 @@ msh />
 
 ## 参考资料
 
-* [RT-Thread 文档中心](https://www.rt-thread.org/document/site/#/)
+* [RT-Thread 文档中心](https://www.rt-thread.org/document/site/)
 
 * [SWM320数据手册](https://www.synwit.cn/col.jsp?id=155)
