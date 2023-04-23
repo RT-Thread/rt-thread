@@ -306,7 +306,7 @@ static void _crt_thread_entry(void *parameter)
     user_stack &= ~7; //align 8
 
 #ifdef ARCH_MM_MMU
-    arch_crt_start_umode(parameter, tid->user_entry, (void *)user_stack, tid->stack_addr + tid->stack_size);
+    arch_crt_start_umode(parameter, tid->user_entry, (void *)user_stack, (char *)tid->stack_addr + tid->stack_size);
 #else
     set_user_context((void*)user_stack);
     arch_start_umode(parameter, tid->user_entry, ((struct rt_lwp *)tid->lwp)->data_entry, (void*)user_stack);
@@ -1861,7 +1861,7 @@ static char *_insert_args(int new_argc, char *new_argv[], struct lwp_args_info *
     {
         goto quit;
     }
-    page = rt_pages_alloc(0); /* 1 page */
+    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE); /* 1 page */
     if (!page)
     {
         goto quit;
@@ -2065,7 +2065,7 @@ int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *con
         }
     }
 
-    page = rt_pages_alloc(0); /* 1 page */
+    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE); /* 1 page */
     if (!page)
     {
         SET_ERRNO(ENOMEM);
@@ -2252,7 +2252,7 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
         SET_ERRNO(EINVAL);
         goto quit;
     }
-    page = rt_pages_alloc(0); /* 1 page */
+    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE); /* 1 page */
     if (!page)
     {
         SET_ERRNO(ENOMEM);
@@ -2396,7 +2396,7 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
         arch_start_umode(lwp->args,
                 lwp->text_entry,
                 (void*)USER_STACK_VEND,
-                thread->stack_addr + thread->stack_size);
+                (char *)thread->stack_addr + thread->stack_size);
         /* never reach here */
     }
     return -EINVAL;

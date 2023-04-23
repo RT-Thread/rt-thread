@@ -42,7 +42,7 @@
 #include "bl616_aon.h"
 #include "bl616_hbn.h"
 #include "bl616_common.h"
-#include "bl616_acomp.h"
+#include "bflb_acomp.h"
 #include "bflb_sflash.h"
 #include "bflb_sf_ctrl.h"
 

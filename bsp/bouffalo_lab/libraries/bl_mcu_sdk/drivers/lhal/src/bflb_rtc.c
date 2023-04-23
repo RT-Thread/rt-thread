@@ -9,17 +9,34 @@
 #define BFLB_RTC_BASE 0x2008F000
 #endif
 
-void bflb_rtc_set_time(struct bflb_device_s *dev, uint64_t time)
+void bflb_rtc_disable(struct bflb_device_s *dev)
 {
     uint32_t reg_base;
     uint32_t regval;
-    uint32_t comp_l, comp_h;
 
     reg_base = BFLB_RTC_BASE;
 
     /* Clear & Disable RTC counter */
     regval = getreg32(reg_base + HBN_CTL_OFFSET);
+    regval &=~ HBN_RTC_ENABLE;
+    putreg32(regval, reg_base + HBN_CTL_OFFSET);
+}
+
+void bflb_rtc_set_time(struct bflb_device_s *dev, uint64_t time)
+{
+    uint32_t reg_base;
+    uint32_t regval;
+    uint64_t rtc_cnt;
+
+    reg_base = BFLB_RTC_BASE;
+
+    /* Clear RTC Control */
+    regval = getreg32(reg_base + HBN_CTL_OFFSET);
     regval &= ~HBN_RTC_CTL_MASK;
+    putreg32(regval, reg_base + HBN_CTL_OFFSET);
+
+    regval |= HBN_RTC_DLY_OPTION;
+    regval |= HBN_RTC_BIT39_0_COMPARE;
     putreg32(regval, reg_base + HBN_CTL_OFFSET);
 
     /* Tigger RTC val read */
@@ -30,25 +47,20 @@ void bflb_rtc_set_time(struct bflb_device_s *dev, uint64_t time)
     putreg32(regval, reg_base + HBN_RTC_TIME_H_OFFSET);
 
     /* Read RTC val */
-    comp_l = getreg32(reg_base + HBN_RTC_TIME_L_OFFSET);
-    comp_h = getreg32(reg_base + HBN_RTC_TIME_H_OFFSET) & 0xff;
+    rtc_cnt = getreg32(reg_base + HBN_RTC_TIME_H_OFFSET) & 0xff;
+    rtc_cnt <<= 32;
+    rtc_cnt |= getreg32(reg_base + HBN_RTC_TIME_L_OFFSET);
 
     /* calculate RTC Comp time */
-    comp_l += (uint32_t)(time & 0xFFFFFFFF);
-    comp_h += (uint32_t)((time >> 32) & 0xFFFFFFFF);
+    rtc_cnt += time;
 
     /* Set RTC Comp time  */
-    putreg32(comp_l, reg_base + HBN_TIME_L_OFFSET);
-    putreg32(comp_h, reg_base + HBN_TIME_H_OFFSET);
-
-    regval = getreg32(reg_base + HBN_CTL_OFFSET);
-    regval |= HBN_RTC_DLY_OPTION;
-    regval |= (0x01 << 1);
-    putreg32(regval, reg_base + HBN_CTL_OFFSET);
+    putreg32((uint32_t)rtc_cnt, reg_base + HBN_TIME_L_OFFSET);
+    putreg32((uint32_t)(rtc_cnt >> 32) & 0xff, reg_base + HBN_TIME_H_OFFSET);
 
     /* Enable RTC Counter */
     regval = getreg32(reg_base + HBN_CTL_OFFSET);
-    regval |= (1 << 0);
+    regval |= HBN_RTC_ENABLE;
     putreg32(regval, reg_base + HBN_CTL_OFFSET);
 }
 

@@ -16,7 +16,7 @@
 
 #define LS1C_ACPI_IRQ    0
 #define LS1C_HPET_IRQ    1
-//#define LS1C_UART0_IRQ    3  // linux����3��v1.4�汾��1c�ֲ�����2�������Σ���ȷ��
+//#define LS1C_UART0_IRQ    3  // linux使用3，v1.4版本之前1c分配有问题，建议使用2，以确保正确
 #define LS1C_UART1_IRQ   4
 #define LS1C_UART2_IRQ   5
 #define LS1C_CAN0_IRQ    6
@@ -69,11 +69,11 @@
 #define LS1C_LAST_IRQ 159
 #define LS1C_INTREG_BASE 0xbfd01040
 
-// ��о1c���жϷ�Ϊ���飬ÿ��32��
+// 将1c的中断分为五组，每组32个
 #define LS1C_NR_IRQS    (32*5)
 
 
-// GPIO��ź��жϺ�֮��Ļ���ת��
+// GPIO引脚到中断号之间的转换
 #define LS1C_GPIO_TO_IRQ(GPIOn)     (LS1C_GPIO_FIRST_IRQ + (GPIOn))
 #define LS1C_IRQ_TO_GPIO(IRQn)      ((IRQn) - LS1C_GPIO_FIRST_IRQ)
 

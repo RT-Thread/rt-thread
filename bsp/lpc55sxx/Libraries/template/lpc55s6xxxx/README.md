@@ -213,6 +213,6 @@ msh />
 
 [AlexYang][2] < [alex.yang@nxp.com][3] >
 
-[1]: https://www.rt-thread.org/page/download.html
+[1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
 [2]: https://github.com/Magicoe
 [3]: mailto:magicoe@163.com

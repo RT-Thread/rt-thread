@@ -73,7 +73,9 @@
 #endif
 
 #if defined(BL628) || defined(BL616) || defined(BL808) || defined(BL606P)
+#ifndef CONFIG_DISABLE_SBUS2_ENABLE_SUPPORT
 #define BFLB_SF_CTRL_SBUS2_ENABLE
+#endif
 #define BFLB_SF_CTRL_32BITS_ADDR_ENABLE
 #define BFLB_SF_CTRL_AES_XTS_ENABLE
 #endif

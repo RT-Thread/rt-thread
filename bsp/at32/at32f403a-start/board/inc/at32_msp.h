@@ -20,5 +20,6 @@ void at32_msp_adc_init(void *instance);
 void at32_msp_hwtmr_init(void *instance);
 void at32_msp_can_init(void *instance);
 void at32_msp_usb_init(void *instance);
+void at32_msp_dac_init(void *instance);
 
 #endif /* __AT32_MSP_H__ */

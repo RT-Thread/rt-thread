@@ -1,108 +1,143 @@
-# CH32V208W-R0 BSP 说明
+# CH32V208W-R0 User Guide
 
-**中文**
+**英文** | [中文](./README_ZN.md)
 
-## 1 开发板简介
+The CH32V208W-R0 supports RT-Studio projects, and this tutorial gives an example of development instructions for the RT-Studio environment.
 
-CH32V208W-R0 是 WCH 推出的一款基于 RISC-V 内核的开发板，最高主频为 144Mhz。比较适合入门学习 RISC-V 架构。
+## 1 Preparation Stage
 
-![board](./figures/ch32v208.png)
+- Pull the github repository for rt-thread locally, [link address](https://github.com/RT-Thread/rt-thread).
+- Download and install RT-Thread Studio, [link to address](https://www.rt-thread.org/studio.html).
+- Prepare the ESP8266 module.
 
-**基本特性：**
+## 2 BSP Start Stage
 
-- MCU：CH32V208WBU6，主频 144MHz，FLASH和RAM可配置
-- LED：2个。
-- 按键：3个 Download  ,Reset， User 。
-- USB：2个，Tpye-C。
-- 网口：1个，内置 10M PHY。
-- 板上无 WCH-Link 下载调试工具，需外接。
+### 2.1 Click on the file and select the import option.
 
-## 2 编译说明
+<img src="./figures_en/1import_en.png" style="zoom:80%;" />
 
-板级包支持 RISC-V GCC 开发环境，以下是具体版本信息：
+### 2.2 Select to import RT-Thread BSP into the workspace
 
-| IDE/编译器 | 已测试版本           |
-| ---------- | -------------------- |
-| GCC        | WCH RISC-V GCC 8.2.0 |
+<img src="./figures_en/2workspace_en.png" style="zoom:80%;" />
 
-## 3 使用说明
+<div STYLE="page-break-after: always;"></div>
 
->本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+### 2.3 Fill in the project information according to the example
 
-### 3.1 使用Env编译BSP
+<img src="./figures_en/3info_en.png" style="zoom:80%;" />
 
-本节讲解如何使用Env工具来编译BSP工程。
+### 2.4 Configuration Engineering
 
-#### 3.1.1 编译BSP
+After importing the project, there is a reference document readme in the root directory of the project, first of all, follow the readme.md for basic configuration
 
-1. [下载WCH编译工具链](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH/archive/refs/tags/V1.0.0.zip)
-2. 下载Env工具[最新版本](https://github.com/RT-Thread/env-windows/releases)
-3. 下载RT-Thread[最新源码](https://github.com/RT-Thread/rt-thread/archive/refs/heads/master.zip)
-4. 并在当前BSP根目录下打开Env工具并执行 `scons --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin` 命令，在指定工具链位置的同时直接编译。
-5. 编译完成之后会生成 **rtthread.bin** 文件。
+In order to reduce the memory increase caused by the standard library added during linking, we can choose to use the relatively small memory consumption of newlib, as follows：
 
-![sconscompile](./figures/sconscompile.jpg)
+<img src="./figures/13newlib.png" style="zoom:67%;" />
 
-#### 3.1.2 硬件连接
+### 2.5 Compiling the project
 
-使用数据线连接板载 wch-link 到 PC，打开电源开关。
+Click on the compile option:
 
-#### 3.1.3 下载
+![](./figures_en/4build_en.png)
 
-打开 WCH RISC-V MCU ProgrammerTool 下载软件，选择刚刚生成的 **rtthread.bin**  文件，进行下载。
+Compile result:
 
-![tool](./figures/tool.png)
+![](./figures/5result.png)
 
-#### 3.1.4 运行结果
+The project compiles and passes, and thus the preparation phase is completed.
 
-在终端工具里打开板载 wch-link 串口（WCHDapLink SERIAL，默认115200-8-1-N），复位设备后，在串口上可以看到 RT-Thread 的输出信息：
+## 3 Configuring the BSP driver with RT-Studio
 
-![end](./figures/end.png)
+Each BSP of RT-Thread has been configured with several on-chip peripheral drivers and onboard peripheral drivers by default, use RT-Studio to turn on the corresponding switches directly and configure the corresponding parameters according to the usage environment to use. Due to the multiplexing function of each pin, not all on-chip peripheral drivers and onboard peripheral drivers can be used at the same time, so you need to combine them with the schematic to enable the corresponding peripheral drivers.
 
-### 3.2 使用VSCode编译工程
+RT-Thread has a number of software packages, which can be added to the project by turning on the corresponding package switch using RT-Studio.
 
-在Env终端中敲入命令 `scons --target=vsc` 来生成VSCode工程. 接着敲入命令 `code .` 来打开VSCode.
+<img src="./figures_en/6pkgs_en.png" style="zoom:80%;" />
 
-使用 **VSCode 终端** 敲入命令 `scons -j12 --exec-path=D:\sdk-toolchain-RISC-V-GCC-WCH-1.0.0bin` 来编译工程。
+## 4 Networking with ESP8266 modules
 
-![vscode-terminal](./figures/vscode-terminal.png)
+The ESP8266 is a cost-effective, highly integrated Wi-Fi MCU for IoT applications, and can also be used as a standalone WIFI module with the following physical diagram. ESP8266 modules usually support [AT](https://www.rt-thread.org/document/site/#/rt- thread-version/rt-thread-standard/programming-manual/at/at), RT-Thread provides an abstraction layer for these modules that support AT instructions, and this summary will use the AT group to communicate with ESP8266 and connect WIFI.
 
-### 3.3 导入 RT-Thread Studio 工程
+<img src="./figures/7esp8266.png" style="zoom:60%;" />
 
-#### 3.3.1 导入
+### 4.1 Configuring Onboard UART Peripherals
 
-打开 RT-Thread Studio 后点击：文件->导入：
+Using the AT component to communicate with the ESP8266 module using serial communication, so we need to enable one more serial port, here we use UART2, the serial driver is already supported by default, we just need to open it in RT-Studio when we use it, as follows:
 
-![import](./figures/import.png)
+![](./figures_en/8setting_en.png)
 
-选择“RT-Thread Bsp 到工作空间中”：
+After turning on the option, `ctrl + s` saves the settings and serial port 2 is initialized.
 
-![windows](./figures/windows.png)
+### 4.2 Configuring AT components with RT-Studio
 
-填写项目信息，Bsp 根目录为 `\rt-thread\bsp\wch\risc-v\ch32v307v-r1` 目录：
+Click on the RT-Thread Settings option on the left, the configuration menu on the right pops up, type AT in the search field, select `AT device` and enable the AT device: 
 
-![config](./figures/config.png)
+<img src="./figures_en/9AT_en.png" style="zoom: 50%;" />
 
-#### 3.3.2 配置环境
+Select the ESP8266 and configure the appropriate parameters, as shown in the example below.
 
-工程导入后进行编译环境的设置，首先点击“打开构建设置”进入设置界面：
+<img src="./figures_en/10wifinfo_en.png" style="zoom:80%;" />
 
-![set](./figures/set.png)
+### 4.3 ESP8266 module connection
 
-将编译链路径复制到 Toolchain path 中：
+Connect the `PA2` pin on the board to the `RX` pin of the module, connect the `PA3` pin to the `TX` pin of the module, and power the module using the power supply pinout from the development board.
 
-![toolchain](./figures/toolchain.png)
+<img src="./figures/11board.png" style="zoom: 25%;" />
 
-如图更改 Prefix ：
+### 4.4 Enabling kernel debugging.
 
-![prefix](./figures/prefix.png)
+For a more intuitive understanding of the component initialization process, we can enable the kernel debugging feature to observe it (you can turn it off when not needed) by doing the following:
 
-进行工具设置：
+![](./figures_en/12kdebug_en.png)
 
-![toolset](./figures/toolset.png)
+Recompile and burn the firmware, the shell output is as follows:
 
-#### 3.3.3 编译
+![](./figures/14shellinfo.png)
 
-编译结果如下：
+### 4.5 wifi networking test
 
-![success](./figures/success.png)
+My door has configured the WIFI ID and password when using AT, enter the `ping www.baidu.com` command in the shell to test the WIFI connection.
+
+![](./figures/15ping.png)
+
+Output similar content, the ESP8266 module is connected successfully!
+
+### 5 RTduino components
+
+[RTduino](https://github.com/Yaochenger/RTduino) is the Arduino eco-compatible layer of the RT-Thread real-time operating system, and is a sub-community of the [RT-Thread community](https://github.com/RT-Thread/rt- thread), the downstream project of the Arduino open source project, aims to be compatible with the Arduino community ecology to enrich the RT-Thread community package ecology (such as thousands of different Arduino libraries, as well as the excellent open source projects of the Arduino community), and to reduce the learning threshold of the RT-Thread operating system and the chips compatible with RT-Thread. and RT-Thread-adapted chips.
+
+#### 5.1 Configuring RTduino
+
+Turn on the RTduino option in the onboard device driver.
+
+![](./figures_en/16rtduino_en.png)
+
+After turning on the option, `ctrl + s` saves the settings and the RTduino package can be added to the project.
+
+#### 5.2 Using RTduino
+
+In `arduino_main.cpp` you will see the familiar `void setup(void)` and `void loop(void)`, so we can use the BSP here like the official arduino board, the sample code is as follows:
+
+```c++
+#include <Arduino.h>
+
+void setup(void)
+ {
+     /* put your setup code here, to run once: */
+    pinMode(LED_BUILTIN, OUTPUT).
+ }
+
+void loop(void)
+{
+    /* put your main code here, to run repeatedly: */
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)).
+    delay(100).
+}
+
+```
+
+ By default, the project performs a blinking LED function. ch32v208w-r0, the default on-board LED is not directly connected to the pin, the user needs to manually connect the LED to the control pin using a duplex cable, the phenomenon is shown below:
+
+<img src="./figures/17led.png" style="zoom: 25%;" />
+
+So the basic environment of ch32v208w-r0 is built and tested!

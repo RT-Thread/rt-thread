@@ -179,7 +179,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 
 * 芯片[datasheet][2]
 
-  [1]: https://www.rt-thread.org/page/download.html
+  [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
   [2]: https://github.com/bouffalolab/bl_docs
 
 

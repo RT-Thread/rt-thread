@@ -111,7 +111,7 @@ static void ra_pin_map_init(void)
 }
 #endif  /* R_ICU_H */
 
-static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     fsp_err_t err;
     /* Initialize the IOPORT module and configure the pins */
@@ -154,7 +154,7 @@ static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static void ra_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void ra_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     bsp_io_level_t level = BSP_IO_LEVEL_HIGH;
 
@@ -168,7 +168,7 @@ static void ra_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     R_BSP_PinAccessDisable();
 }
 
-static int ra_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t ra_pin_read(rt_device_t dev, rt_base_t pin)
 {
     if ((pin > RA_MAX_PIN_VALUE) || (pin < RA_MIN_PIN_VALUE))
     {
@@ -178,7 +178,7 @@ static int ra_pin_read(rt_device_t dev, rt_base_t pin)
     return R_BSP_PinRead(pin);
 }
 
-static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
 #ifdef R_ICU_H
     rt_err_t err;
@@ -230,8 +230,8 @@ static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
 #endif
 }
 
-static rt_err_t ra_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                  rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t ra_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                  rt_uint8_t   mode, void (*hdr)(void *args), void *args)
 {
 #ifdef R_ICU_H
     rt_int32_t irqx = ra_pin_get_irqx(pin);
@@ -264,7 +264,7 @@ static rt_err_t ra_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 #endif
 }
 
-static rt_err_t ra_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t ra_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
 #ifdef R_ICU_H
     rt_int32_t irqx = ra_pin_get_irqx(pin);

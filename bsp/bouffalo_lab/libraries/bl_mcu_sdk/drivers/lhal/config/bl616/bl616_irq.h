@@ -52,7 +52,6 @@
 #define BL616_IRQ_SPI0                              (BL616_IRQ_NUM_BASE + 27)
 #define BL616_IRQ_UART0                             (BL616_IRQ_NUM_BASE + 28)
 #define BL616_IRQ_UART1                             (BL616_IRQ_NUM_BASE + 29)
-#define BL616_IRQ_ISO11898                          (BL616_IRQ_NUM_BASE + 30)
 #define BL616_IRQ_GPIO_DMA                          (BL616_IRQ_NUM_BASE + 31)
 #define BL616_IRQ_I2C0                              (BL616_IRQ_NUM_BASE + 32)
 #define BL616_IRQ_PWM                               (BL616_IRQ_NUM_BASE + 33)

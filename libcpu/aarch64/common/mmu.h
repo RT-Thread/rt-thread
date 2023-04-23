@@ -97,6 +97,28 @@ static inline void *rt_hw_mmu_tbl_get()
     return (void *)(tbl & ((1ul << 48) - 2));
 }
 
+static inline void *rt_hw_mmu_kernel_v2p(void *v_addr)
+{
+    rt_ubase_t par;
+    void *paddr;
+    asm volatile("at s1e1w, %0"::"r"(v_addr):"memory");
+    asm volatile("mrs %0, par_el1":"=r"(par)::"memory");
+
+    if (par & 0x1)
+    {
+        paddr = ARCH_MAP_FAILED;
+    }
+    else
+    {
+        #define MMU_ADDRESS_MASK 0x0000fffffffff000UL
+        par &= MMU_ADDRESS_MASK;
+        par |= (rt_ubase_t)v_addr & ARCH_PAGE_MASK;
+        paddr =  (void *)par;
+    }
+
+    return paddr;
+}
+
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd);
 

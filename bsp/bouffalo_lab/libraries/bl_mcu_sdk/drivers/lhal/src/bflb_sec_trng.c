@@ -134,7 +134,7 @@ int bflb_trng_readlen(uint8_t *data, uint32_t len)
     return 0;
 }
 
-long random(void)
+__WEAK long random(void)
 {
     uint32_t data[8];
     struct bflb_device_s *trng;

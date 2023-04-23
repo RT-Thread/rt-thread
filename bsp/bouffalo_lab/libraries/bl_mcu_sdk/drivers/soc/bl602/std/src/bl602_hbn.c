@@ -179,7 +179,7 @@ void ATTR_TCM_SECTION HBN_Power_Down_Flash(SPI_Flash_Cfg_Type *flashCfg)
     SFlash_Powerdown();
 }
 #endif
-#if 0
+#if 1
 /****************************************************************************/ /**
  * @brief  Enable HBN mode
  *
@@ -261,8 +261,8 @@ void ATTR_TCM_SECTION HBN_Enable_Ext(uint8_t aGPIOIeCfg, HBN_LDO_LEVEL_Type ldoL
     tmpVal = BL_CLR_REG_BIT(tmpVal, HBN_PWR_ON_OPTION);
     BL_WR_REG(HBN_BASE, HBN_CTL, tmpVal);
 
-    *(volatile uint8_t *)(CLIC_HART0_ADDR + CLIC_INTIP + HBN_OUT0_IRQn) = 0;
-    *(volatile uint8_t *)(CLIC_HART0_ADDR + CLIC_INTIP + HBN_OUT1_IRQn) = 0;
+    bflb_irq_clear_pending(HBN_OUT0_IRQn);
+    bflb_irq_clear_pending(HBN_OUT1_IRQn);
 
     BL_WR_REG(HBN_BASE, HBN_IRQ_CLR, 0xffffffff);
     BL_WR_REG(HBN_BASE, HBN_IRQ_CLR, 0);

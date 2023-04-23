@@ -11,6 +11,8 @@
 #define ATTR_DTCM_SECTION               __attribute__((section(".tcm_data")))
 #define ATTR_HSRAM_SECTION              __attribute__((section(".hsram_code")))
 #define ATTR_DMA_RAM_SECTION            __attribute__((section(".system_ram")))
+#define ATTR_WIFI_RAM_SECTION           __attribute__((section(".wifi_ram")))
+#define ATTR_NOINIT_PSRAM_SECTION       __attribute__((section(".psram_noinit")))
 #define ATTR_NOCACHE_RAM_SECTION        __attribute__((section(".nocache_ram")))
 #define ATTR_NOCACHE_NOINIT_RAM_SECTION __attribute__((section(".nocache_noinit_ram")))
 #define ATTR_HBN_RAM_SECTION            __attribute__((section(".hbn_ram_code")))

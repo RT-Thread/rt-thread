@@ -26,7 +26,7 @@ int arch_user_space_init(struct rt_lwp *lwp)
 {
     size_t *mmu_table;
 
-    mmu_table = (size_t *)rt_pages_alloc(0);
+    mmu_table = (size_t *)rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
     if (!mmu_table)
     {
         return -RT_ENOMEM;

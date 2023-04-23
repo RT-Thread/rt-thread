@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -103,7 +103,7 @@ struct fb_fix_screeninfo
     /* (physical address) */
     uint32_t mmio_len;         /* Length of Memory Mapped I/O */
     uint32_t accel;            /* Indicate to driver which */
-    /*  specific chip/card we have	*/
+    /*  specific chip/card we have  */
     uint16_t capabilities;     /* see FB_CAP_* */
     uint16_t reserved[2];      /* Reserved for future compatibility */
 };
