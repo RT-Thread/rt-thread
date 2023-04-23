@@ -10,8 +10,8 @@
 /*
  * 程序清单：消息队列例程
  *
- * 
- * 
+ * 发送消息长度为3
+ * 接收函数返回消息实际长度
  */
 #include <rtthread.h>
 #define THREAD_PRIORITY      25
