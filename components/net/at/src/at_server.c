@@ -399,7 +399,7 @@ static rt_err_t at_cmd_get_name(const char *cmd_buffer, char *cmd_name)
     RT_ASSERT(cmd_name);
     RT_ASSERT(cmd_buffer);
 
-    for (i = 0; i < strlen(cmd_buffer) + 1; i++)
+    for (i = 0; i < strlen(cmd_buffer); i++)
     {
         if (*(cmd_buffer + i) == AT_CMD_QUESTION_MARK || *(cmd_buffer + i) == AT_CMD_EQUAL_MARK
                 || *(cmd_buffer + i) == AT_CMD_CR
