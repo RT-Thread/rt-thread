@@ -54,6 +54,7 @@ static struct rt_thread thread2;
 static void thread2_entry(void *parameter)
 {
     int result;
+    /* 实际发送3字节消息 */
     char buf[10] = "ABC";
 
     rt_uint8_t cnt = 0;
@@ -62,7 +63,7 @@ static void thread2_entry(void *parameter)
         if (cnt == 8)
         {
             /* 发送紧急消息到消息队列中 */
-            result = rt_mq_urgent(&mq, buf1, 3);
+            result = rt_mq_urgent(&mq, buf, 3);
             if (result != RT_EOK)
             {
                 rt_kprintf("rt_mq_urgent ERR\n");
@@ -101,7 +102,7 @@ int msgq_sample(void)
     result = rt_mq_init(&mq,
                         "mqt",
                         &msg_pool[0],               /* 内存池指向msg_pool */
-                        3,                          /* 每个消息的大小是 3 字节 */
+                        5,                          /* 每个消息的大小是 5 字节 */
                         sizeof(msg_pool),           /* 内存池的大小是msg_pool的大小 */
                         RT_IPC_FLAG_FIFO);          /* 如果有多个线程等待，按照先来先得到的方法分配消息 */
     if (result != RT_EOK)
