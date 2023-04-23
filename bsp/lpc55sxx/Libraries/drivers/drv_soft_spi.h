@@ -14,6 +14,19 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include <spi-bit-ops.h>
+#include <drv_pin.h>
+
+/* Notice: PIO1_11(sck) --> 93; PIO0_15(miso) --> 22; PIO1_8(mosi) --> 24 */
+
+#define BSP_S_SPI1_SCK_PIN  GET_PINS(1,11)
+#define BSP_S_SPI1_MISO_PIN GET_PINS(0,15)
+#define BSP_S_SPI1_MOSI_PIN GET_PINS(1,8)
+
+/* Notice: PIO1_9(sck) --> 10; PIO0_18(miso) --> 56; PIO1_10(mosi) --> 40 */
+
+#define BSP_S_SPI2_SCK_PIN 	GET_PINS(1,9)
+#define BSP_S_SPI2_MISO_PIN GET_PINS(0,18)
+#define BSP_S_SPI2_MOSI_PIN GET_PINS(1,10)
 
 /* lpc soft spi config */
 struct lpc_soft_spi_config

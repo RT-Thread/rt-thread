@@ -202,6 +202,12 @@ void BOARD_InitBootPins(void);
  * @brief Selects pin function.: Alternative connection 3. */
 #define PIO1_4_FUNC_ALT3 0x03u
 /*!
+ * @brief Select Digital mode.: Enable Digital mode. Digital input is enabled. */
+#define PIO1_5_DIGIMODE_DIGITAL 0x01u
+/*!
+ * @brief Selects pin function.: Alternative connection 0. */
+#define PIO1_5_FUNC_ALT0 0x00u
+/*!
  * @brief Select Digital mode.: Digital mode, digital input is enabled. */
 #define PIO1_6_DIGIMODE_DIGITAL 0x01u
 /*!
