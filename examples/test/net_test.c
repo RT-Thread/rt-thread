@@ -336,6 +336,7 @@ void net_test(void)
                                               RT_NULL,
                                               512,
                                               RT_THREAD_PRIORITY_MAX/2 + 3, 5);
+    }
     if (tcpecho_socket_tid != RT_NULL)
     {
         rt_thread_startup(tcpecho_socket_tid);
