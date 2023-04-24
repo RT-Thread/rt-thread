@@ -115,4 +115,4 @@ msh >
 
 维护人:
 
--  [王强](https://github.com/xfwangqiang, https://gitee.com/xfwangqiang), 邮箱：<164877907@qq.com>
+-  [王强](https://github.com/xfwangqiang), 邮箱：<164877907@qq.com>
