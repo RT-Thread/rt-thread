@@ -68,7 +68,7 @@ struct ch32v307x_can_obj
 * sample = 80%    at baud > 500K
 * sample = 75%    at baud > 800K
 */
-#if (defined CH32V30x_D8C) ||  (defined SOC_CH32V208WBU6) /* APB1 (PCLK1 72MHz) */
+#if (defined CH32V30x_D8C) ||  (defined CH32V30x_D8C) /* APB1 (PCLK1 72MHz) */
 static const struct ch32v307x_can_baud_info  can_baud_rate_tab[] =
 {
     CH32V307X_CAN_BAUD_DEF(  CAN1MBaud, CAN_SJW_1tq, CAN_BS1_15tq, CAN_BS2_2tq, 4),
