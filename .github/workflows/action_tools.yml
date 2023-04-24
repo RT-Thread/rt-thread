@@ -77,3 +77,8 @@ jobs:
         echo "Test to dist project"
         scons --dist -C $TEST_BSP_ROOT
         scons --dist-ide -C $TEST_BSP_ROOT
+        ls $TEST_BSP_ROOT
+        ls $TEST_BSP_ROOT/dist
+        scons -C $TEST_BSP_ROOT/dist/project
+        scons -C $TEST_BSP_ROOT/rt-studio-project
+        
