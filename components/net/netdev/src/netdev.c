@@ -389,7 +389,7 @@ void netdev_set_default(struct netdev *netdev)
         netdev_default = netdev;
 
         /* execture the default network interface device in the current network stack */
-        if (netdev->ops->set_default)
+        if (netdev->ops && netdev->ops->set_default)
         {
             netdev->ops->set_default(netdev);
         }
