@@ -11,6 +11,11 @@ config BL808_CORE_M0
     bool
     default y
 
+config BSP_USING_TRIPLECORE
+    bool "Enable Triplecore"
+    default y
+    select BSP_USING_PSRAM
+
 config BSP_USING_PSRAM
     bool "Enable PSRAM"
     default n
