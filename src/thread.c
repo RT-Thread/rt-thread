@@ -588,8 +588,8 @@ rt_err_t rt_thread_yield(void)
     level = rt_hw_interrupt_disable();
     thread->remaining_tick = thread->init_tick;
     thread->stat |= RT_THREAD_STAT_YIELD;
-    rt_schedule();
     rt_hw_interrupt_enable(level);
+    rt_schedule();
 
     return RT_EOK;
 }
