@@ -998,17 +998,17 @@ rt_sem_t sys_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
     return sem;
 }
 
-rt_err_t sys_sem_delete(rt_sem_t sem)
+sysret_t sys_sem_delete(rt_sem_t sem)
 {
     return lwp_user_object_delete(lwp_self(), (rt_object_t)sem);
 }
 
-rt_err_t sys_sem_take(rt_sem_t sem, rt_int32_t time)
+sysret_t sys_sem_take(rt_sem_t sem, rt_int32_t time)
 {
     return rt_sem_take_interruptible(sem, time);
 }
 
-rt_err_t sys_sem_release(rt_sem_t sem)
+sysret_t sys_sem_release(rt_sem_t sem)
 {
     return rt_sem_release(sem);
 }
@@ -1026,17 +1026,17 @@ rt_mutex_t sys_mutex_create(const char *name, rt_uint8_t flag)
     return mutex;
 }
 
-rt_err_t sys_mutex_delete(rt_mutex_t mutex)
+sysret_t sys_mutex_delete(rt_mutex_t mutex)
 {
     return lwp_user_object_delete(lwp_self(), (rt_object_t)mutex);
 }
 
-rt_err_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time)
+sysret_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
     return rt_mutex_take_interruptible(mutex, time);
 }
 
-rt_err_t sys_mutex_release(rt_mutex_t mutex)
+sysret_t sys_mutex_release(rt_mutex_t mutex)
 {
     return rt_mutex_release(mutex);
 }
@@ -1082,17 +1082,17 @@ rt_event_t sys_event_create(const char *name, rt_uint8_t flag)
     return event;
 }
 
-rt_err_t sys_event_delete(rt_event_t event)
+sysret_t sys_event_delete(rt_event_t event)
 {
     return lwp_user_object_delete(lwp_self(), (rt_object_t)event);
 }
 
-rt_err_t sys_event_send(rt_event_t event, rt_uint32_t set)
+sysret_t sys_event_send(rt_event_t event, rt_uint32_t set)
 {
     return rt_event_send(event, set);
 }
 
-rt_err_t sys_event_recv(rt_event_t   event,
+sysret_t sys_event_recv(rt_event_t   event,
                        rt_uint32_t  set,
                        rt_uint8_t   opt,
                        rt_int32_t   timeout,
@@ -1116,24 +1116,24 @@ rt_mailbox_t sys_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
     return mb;
 }
 
-rt_err_t sys_mb_delete(rt_mailbox_t mb)
+sysret_t sys_mb_delete(rt_mailbox_t mb)
 {
     return lwp_user_object_delete(lwp_self(), (rt_object_t)mb);
 }
 
-rt_err_t sys_mb_send(rt_mailbox_t mb, rt_ubase_t value)
+sysret_t sys_mb_send(rt_mailbox_t mb, rt_ubase_t value)
 {
     return rt_mb_send(mb, value);
 }
 
-rt_err_t sys_mb_send_wait(rt_mailbox_t mb,
+sysret_t sys_mb_send_wait(rt_mailbox_t mb,
                          rt_ubase_t  value,
                          rt_int32_t   timeout)
 {
     return rt_mb_send_wait(mb, value, timeout);
 }
 
-rt_err_t sys_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
+sysret_t sys_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
     if (!lwp_user_accessable((void *)value, sizeof(rt_ubase_t *)))
     {
@@ -1156,12 +1156,12 @@ rt_mq_t sys_mq_create(const char *name,
     return mq;
 }
 
-rt_err_t sys_mq_delete(rt_mq_t mq)
+sysret_t sys_mq_delete(rt_mq_t mq)
 {
     return lwp_user_object_delete(lwp_self(), (rt_object_t)mq);
 }
 
-rt_err_t sys_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
+sysret_t sys_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
 {
     if (!lwp_user_accessable((void *)buffer, size))
     {
@@ -1170,7 +1170,7 @@ rt_err_t sys_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
     return rt_mq_send(mq, buffer, size);
 }
 
-rt_err_t sys_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
+sysret_t sys_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
 {
     if (!lwp_user_accessable((void *)buffer, size))
     {
@@ -1179,7 +1179,7 @@ rt_err_t sys_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
     return rt_mq_urgent(mq, buffer, size);
 }
 
-rt_err_t sys_mq_recv(rt_mq_t    mq,
+sysret_t sys_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout)
@@ -1211,22 +1211,22 @@ rt_timer_t sys_rt_timer_create(const char *name,
     return timer;
 }
 
-rt_err_t sys_rt_timer_delete(rt_timer_t timer)
+sysret_t sys_rt_timer_delete(rt_timer_t timer)
 {
     return lwp_user_object_delete(lwp_self(), (rt_object_t)timer);
 }
 
-rt_err_t sys_rt_timer_start(rt_timer_t timer)
+sysret_t sys_rt_timer_start(rt_timer_t timer)
 {
     return rt_timer_start(timer);
 }
 
-rt_err_t sys_rt_timer_stop(rt_timer_t timer)
+sysret_t sys_rt_timer_stop(rt_timer_t timer)
 {
     return rt_timer_stop(timer);
 }
 
-rt_err_t sys_rt_timer_control(rt_timer_t timer, int cmd, void *arg)
+sysret_t sys_rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 {
     return rt_timer_control(timer, cmd, arg);
 }
@@ -1243,7 +1243,7 @@ struct ksigevent
 /* to protect unsafe implementation in current rt-smart toolchain */
 RT_CTASSERT(sigevent_compatible, offsetof(struct ksigevent, sigev_tid) == offsetof(struct sigevent, sigev_notify_function));
 
-rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, timer_t *restrict timerid)
+sysret_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, timer_t *restrict timerid)
 {
     int ret = 0;
 #ifdef ARCH_MM_MMU
@@ -1285,13 +1285,13 @@ rt_err_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, tim
     return ret;
 }
 
-rt_err_t sys_timer_delete(timer_t timerid)
+sysret_t sys_timer_delete(timer_t timerid)
 {
     int ret = timer_delete(timerid);
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-rt_err_t sys_timer_settime(timer_t timerid, int flags,
+sysret_t sys_timer_settime(timer_t timerid, int flags,
                            const struct itimerspec *restrict new_value,
                            struct itimerspec *restrict old_value)
 {
@@ -1315,7 +1315,7 @@ rt_err_t sys_timer_settime(timer_t timerid, int flags,
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-rt_err_t sys_timer_gettime(timer_t timerid, struct itimerspec *curr_value)
+sysret_t sys_timer_gettime(timer_t timerid, struct itimerspec *curr_value)
 {
     int ret = 0;
 #ifdef ARCH_MM_MMU
@@ -1330,7 +1330,7 @@ rt_err_t sys_timer_gettime(timer_t timerid, struct itimerspec *curr_value)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-rt_err_t sys_timer_getoverrun(timer_t timerid)
+sysret_t sys_timer_getoverrun(timer_t timerid)
 {
     int ret = 0;
     ret = timer_getoverrun(timerid);
@@ -1662,7 +1662,7 @@ sysret_t _sys_fork(void)
 {
     rt_base_t level;
     int tid = 0;
-    rt_err_t falival = 0;
+    sysret_t falival = 0;
     struct rt_lwp *lwp = RT_NULL;
     struct rt_lwp *self_lwp = RT_NULL;
     rt_thread_t thread = RT_NULL;
@@ -2413,12 +2413,12 @@ quit:
 }
 #endif /* ARCH_MM_MMU */
 
-rt_err_t sys_thread_delete(rt_thread_t thread)
+sysret_t sys_thread_delete(rt_thread_t thread)
 {
 #ifdef ARCH_MM_MMU
     return rt_thread_delete(thread);
 #else
-    rt_err_t ret = 0;
+    sysret_t ret = 0;
 
     if(thread->parent.type != RT_Object_Class_Thread)
     {
@@ -2438,7 +2438,7 @@ __exit:
 #endif
 }
 
-rt_err_t sys_thread_startup(rt_thread_t thread)
+sysret_t sys_thread_startup(rt_thread_t thread)
 {
     return rt_thread_startup(thread);
 }
@@ -2455,27 +2455,27 @@ sysret_t sys_channel_open(const char *name, int flags)
     return lwp_channel_open(FDT_TYPE_LWP, name, flags);
 }
 
-rt_err_t sys_channel_close(int fd)
+sysret_t sys_channel_close(int fd)
 {
     return lwp_channel_close(FDT_TYPE_LWP, fd);
 }
 
-rt_err_t sys_channel_send(int fd, rt_channel_msg_t data)
+sysret_t sys_channel_send(int fd, rt_channel_msg_t data)
 {
     return lwp_channel_send(FDT_TYPE_LWP, fd, data);
 }
 
-rt_err_t sys_channel_send_recv_timeout(int fd, rt_channel_msg_t data, rt_channel_msg_t data_ret, rt_int32_t time)
+sysret_t sys_channel_send_recv_timeout(int fd, rt_channel_msg_t data, rt_channel_msg_t data_ret, rt_int32_t time)
 {
     return lwp_channel_send_recv_timeout(FDT_TYPE_LWP, fd, data, data_ret, time);
 }
 
-rt_err_t sys_channel_reply(int fd, rt_channel_msg_t data)
+sysret_t sys_channel_reply(int fd, rt_channel_msg_t data)
 {
     return lwp_channel_reply(FDT_TYPE_LWP, fd, data);
 }
 
-rt_err_t sys_channel_recv_timeout(int fd, rt_channel_msg_t data, rt_int32_t time)
+sysret_t sys_channel_recv_timeout(int fd, rt_channel_msg_t data, rt_int32_t time)
 {
     return lwp_channel_recv_timeout(FDT_TYPE_LWP, fd, data, time);
 }
@@ -2640,17 +2640,17 @@ sysret_t sys_shm_free(void *mem)
 #endif
 
 /* device interfaces */
-rt_err_t sys_device_init(rt_device_t dev)
+sysret_t sys_device_init(rt_device_t dev)
 {
     return rt_device_init(dev);
 }
 
-rt_err_t sys_device_register(rt_device_t dev, const char *name, rt_uint16_t flags)
+sysret_t sys_device_register(rt_device_t dev, const char *name, rt_uint16_t flags)
 {
     return rt_device_register(dev, name, flags);
 }
 
-rt_err_t sys_device_control(rt_device_t dev, int cmd, void *arg)
+sysret_t sys_device_control(rt_device_t dev, int cmd, void *arg)
 {
     return rt_device_control(dev, cmd, arg);
 }
@@ -2660,12 +2660,12 @@ rt_device_t sys_device_find(const char* name)
     return rt_device_find(name);
 }
 
-rt_err_t sys_device_open(rt_device_t dev, rt_uint16_t oflag)
+sysret_t sys_device_open(rt_device_t dev, rt_uint16_t oflag)
 {
     return rt_device_open(dev, oflag);
 }
 
-rt_err_t sys_device_close(rt_device_t dev)
+sysret_t sys_device_close(rt_device_t dev)
 {
     return rt_device_close(dev);
 }
@@ -3128,7 +3128,7 @@ rt_tick_t sys_tick_get(void)
     return rt_tick_get();
 }
 
-rt_err_t sys_thread_mdelay(rt_int32_t ms)
+sysret_t sys_thread_mdelay(rt_int32_t ms)
 {
     return rt_thread_mdelay(ms);
 }
@@ -3778,7 +3778,7 @@ sysret_t sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
     return ret;
 }
 
-rt_err_t sys_get_errno(void)
+sysret_t sys_get_errno(void)
 {
     return rt_get_errno();
 }
@@ -4355,7 +4355,7 @@ sysret_t sys_fsync(int fd)
 mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr)
 {
     mqd_t mqdes;
-    rt_err_t ret = 0;
+    sysret_t ret = 0;
 #ifdef ARCH_MM_MMU
     char *kname = RT_NULL;
     int a_err = 0;
