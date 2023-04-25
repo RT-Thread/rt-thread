@@ -176,4 +176,3 @@ rt_weak rt_tick_t rt_tick_get_millisecond(void)
 }
 
 /**@}*/
-
