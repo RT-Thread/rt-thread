@@ -32,6 +32,8 @@ config RT_USING_SMART
     select RT_USING_RTC
     select RT_USING_POSIX_TIMER
     select RT_USING_POSIX_CLOCK
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_TERMIOS
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
