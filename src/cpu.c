@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@ static struct rt_cpu _cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
 
 /*
- * disable scheduler
+ * @brief   disable scheduler
  */
 static void _cpu_preempt_disable(void)
 {
@@ -44,7 +44,7 @@ static void _cpu_preempt_disable(void)
 }
 
 /*
- * enable scheduler
+ * @brief   enable scheduler
  */
 static void _cpu_preempt_enable(void)
 {
