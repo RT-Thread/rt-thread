@@ -58,7 +58,8 @@ static void _set_next_timeout()
     }
     else
     {
-        _cputimer_nowtimer = NULL;
+        _cputimer_nowtimer = RT_NULL;
+        clock_cpu_settimeout(RT_NULL, RT_NULL, RT_NULL);
     }
 }
 
