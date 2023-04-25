@@ -216,7 +216,8 @@ rt_err_t rt_cputimer_control(rt_cputimer_t timer, int cmd, void *arg)
 
     case RT_TIMER_CTRL_SET_TIME:
         RT_ASSERT((*(rt_uint64_t *)arg) < 0x7fffffffffffffff);
-        timer->init_tick = *(rt_uint64_t *)arg + clock_cpu_gettime();
+        timer->init_tick    = *(rt_uint64_t *)arg;
+        timer->timeout_tick = *(rt_uint64_t *)arg + clock_cpu_gettime();
         break;
 
     case RT_TIMER_CTRL_SET_ONESHOT:
