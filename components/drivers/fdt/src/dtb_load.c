@@ -52,6 +52,7 @@ void *dtb_node_load_from_fs(char *dtb_filename)
         if (dtb_node_check(fdt) == RT_FALSE)
         {
             free(fdt);
+            fdt=NULL;
         }
     }
 
