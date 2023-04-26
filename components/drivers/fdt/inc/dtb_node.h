@@ -61,6 +61,12 @@ struct dtb_property
     struct dtb_property *next;
 };
 
+struct fdt_gpio
+{
+    int pin;
+    int active;
+};
+
 struct dtb_node
 {
     union
@@ -353,7 +359,7 @@ int dtb_node_set_enabled(const struct dtb_node *node, rt_bool_t value);
 int dtb_node_irq_get(struct dtb_node *dev, int index);
 int dtb_node_irq_get_byname(struct dtb_node *dev, const char *name);
 int dtb_node_irq_count(struct dtb_node *dev);
-
+int dtb_node_gpio_get(struct dtb_node *node, const char *propname, struct fdt_gpio* gpio);
 /**
  * dtb_node_for_each_subnode() - iterate over all subnodes of a parent
  *

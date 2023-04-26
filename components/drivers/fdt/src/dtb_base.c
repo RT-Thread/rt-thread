@@ -572,3 +572,42 @@ int dtb_node_irq_count(struct dtb_node *device)
 
     return nr;
 }
+
+int dtb_node_gpio_get(struct dtb_node *node, const char *propname, struct fdt_gpio *gpio)
+{
+    struct dtb_node *gpio_node;
+    uint32_t array[3];
+    uint32_t ranges_array[4];
+    uint32_t cells;
+    int ret, rc = -EINVAL;
+
+    ret = dtb_node_read_u32_array(node, propname, (uint32_t *) &array, 1);
+    if (ret)
+        goto out;
+
+    gpio_node = dtb_node_get_by_phandle(array[0]);
+    if (dtb_node_get(gpio_node) == NULL)
+        goto out;
+
+    ret = dtb_node_read_u32_array(gpio_node, "#gpio-cells", &cells, 1);
+    if (ret || (cells > 2) || (cells == 0))
+        goto out;
+
+    ret = dtb_node_read_u32_array(gpio_node, "gpio-ranges", (uint32_t *) &ranges_array, 4);
+    if (ret)
+        goto out;
+
+    ret = dtb_node_read_u32_array(node, propname, (uint32_t *) &array, 1 + cells);
+    if (ret)
+        goto out;
+
+    gpio->pin = array[1] - ranges_array[1] + ranges_array[2];
+    gpio->active = -1;
+    if (cells == 2)
+        gpio->active = array[2];
+
+    rc = 0;
+out:
+    dtb_node_put(gpio_node);
+    return rc;
+}
