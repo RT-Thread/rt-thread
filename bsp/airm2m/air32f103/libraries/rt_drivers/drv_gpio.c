@@ -113,11 +113,11 @@ static rt_base_t air32_pin_get(const char *name)
 
     if ((name_len < 4) || (name_len >= 6))
     {
-        return -RT_EINVAL;
+        goto out;
     }
     if ((name[0] != 'P') || (name[2] != '.'))
     {
-        return -RT_EINVAL;
+        goto out;
     }
 
     if ((name[1] >= 'A') && (name[1] <= 'Z'))
@@ -126,7 +126,7 @@ static rt_base_t air32_pin_get(const char *name)
     }
     else
     {
-        return -RT_EINVAL;
+        goto out;
     }
 
     for (i = 3; i < name_len; i++)
@@ -138,6 +138,9 @@ static rt_base_t air32_pin_get(const char *name)
     pin = PIN_NUM(hw_port_num, hw_pin_num);
 
     return pin;
+out:
+    rt_kprintf("Px.y   x:A~Z  y:0~15\n");
+    return -RT_EINVAL;
 }
 
 static void air32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)

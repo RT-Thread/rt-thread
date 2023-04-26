@@ -444,11 +444,11 @@ static rt_base_t swm_pin_get(const char *name)
 
     if ((name_len < 4) || (name_len >= 6))
     {
-        return -RT_EINVAL;
+        goto out;
     }
     if ((name[0] != 'P') || (name[2] != '.'))
     {
-        return -RT_EINVAL;
+        goto out;
     }
 
     switch(name[1])
@@ -472,7 +472,7 @@ static rt_base_t swm_pin_get(const char *name)
             pin = 76;
         break;
         default:
-            return -RT_EINVAL;
+            goto out;
     }
 
     for (i = 3; i < name_len; i++)
@@ -486,10 +486,13 @@ static rt_base_t swm_pin_get(const char *name)
     }
     else
     {
-        return -RT_EINVAL;
+        goto out;
     }
 
     return pin;
+out:
+    rt_kprintf("PA0~PA12, PB0~PB12, PC0~PC7, PM0~PM21, PN0~PN19, PP0~PP23\n");
+    return -RT_EINVAL;
 }
 
 const static struct rt_pin_ops swm_pin_ops =
