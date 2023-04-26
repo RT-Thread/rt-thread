@@ -1623,6 +1623,7 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     dst->sa_flags = src->sa_flags;
     dst->signal_mask = src->signal_mask;
     rt_memcpy(dst->signal_handler, src->signal_handler, sizeof dst->signal_handler);
+    rt_strcpy(dst->working_directory, src->working_directory);
 }
 
 static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
