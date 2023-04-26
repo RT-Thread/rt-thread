@@ -25,7 +25,7 @@
 #define __LDREXW(ptr)          _Pragma("push") _Pragma("diag_suppress 3731") ((rt_atomic_t ) __ldrex(ptr))  _Pragma("pop")
 #endif
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
-_Pragma("inline=forced") __intrinsic rt_atomic_t __LDREXW(volatile rt_atomic_t volatile *ptr)
+_Pragma("inline=forced") __intrinsic rt_atomic_t __LDREXW(volatile rt_atomic_t *ptr)
 {
     return __LDREX((unsigned long *)ptr);
 }
