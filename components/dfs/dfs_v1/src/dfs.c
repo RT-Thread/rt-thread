@@ -359,6 +359,11 @@ void fdt_fd_release(struct dfs_fdtable* fdt, int fd)
         if (vnode)
         {
             vnode->ref_count--;
+            if(vnode->ref_count == 0)
+            {
+                rt_free(vnode);
+                fd_slot->vnode = RT_NULL;
+            }
         }
         rt_free(fd_slot);
     }
