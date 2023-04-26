@@ -90,7 +90,7 @@ void assert_func(uint8_t *file, uint32_t line, uint8_t *function, uint8_t *strin
 
 struct bflb_device_s {
     const char *name;
-    uint32_t reg_base;
+    size_t reg_base;
     uint8_t irq_num;
     uint8_t idx;
     uint8_t sub_idx;
