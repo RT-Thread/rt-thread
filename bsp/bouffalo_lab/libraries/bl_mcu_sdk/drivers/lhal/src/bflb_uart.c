@@ -7,7 +7,7 @@ void bflb_uart_init(struct bflb_device_s *dev, const struct bflb_uart_config_s *
     uint32_t div = 0;
     uint32_t tx_cfg;
     uint32_t rx_cfg;
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t regval;
 
     reg_base = dev->reg_base;
@@ -119,7 +119,7 @@ void bflb_uart_init(struct bflb_device_s *dev, const struct bflb_uart_config_s *
 
 void bflb_uart_deinit(struct bflb_device_s *dev)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t tx_cfg;
     uint32_t rx_cfg;
 
@@ -134,7 +134,7 @@ void bflb_uart_deinit(struct bflb_device_s *dev)
 
 void bflb_uart_enable(struct bflb_device_s *dev)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t tx_cfg;
     uint32_t rx_cfg;
 
@@ -149,7 +149,7 @@ void bflb_uart_enable(struct bflb_device_s *dev)
 
 void bflb_uart_disable(struct bflb_device_s *dev)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t tx_cfg;
     uint32_t rx_cfg;
 
@@ -164,7 +164,7 @@ void bflb_uart_disable(struct bflb_device_s *dev)
 
 void bflb_uart_link_txdma(struct bflb_device_s *dev, bool enable)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t regval;
 
     reg_base = dev->reg_base;
@@ -179,7 +179,7 @@ void bflb_uart_link_txdma(struct bflb_device_s *dev, bool enable)
 
 void bflb_uart_link_rxdma(struct bflb_device_s *dev, bool enable)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t regval;
 
     reg_base = dev->reg_base;
@@ -195,14 +195,14 @@ void bflb_uart_link_rxdma(struct bflb_device_s *dev, bool enable)
 ATTR_TCM_SECTION int bflb_uart_putchar(struct bflb_device_s *dev, int ch)
 {
     uint64_t start_time;
-    uint32_t reg_base;
+    size_t reg_base;
 
     reg_base = dev->reg_base;
-    start_time = bflb_mtimer_get_time_ms();
+    // start_time = bflb_mtimer_get_time_ms();
     while ((getreg32(reg_base + UART_FIFO_CONFIG_1_OFFSET) & UART_TX_FIFO_CNT_MASK) == 0) {
-        if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
-            return -ETIMEDOUT;
-        }
+        // if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
+        //     return -ETIMEDOUT;
+        // }
     }
     putreg8(ch, reg_base + UART_FIFO_WDATA_OFFSET);
     return 0;
@@ -211,7 +211,7 @@ ATTR_TCM_SECTION int bflb_uart_putchar(struct bflb_device_s *dev, int ch)
 ATTR_TCM_SECTION int bflb_uart_getchar(struct bflb_device_s *dev)
 {
     int ch = -1;
-    uint32_t reg_base;
+    size_t reg_base;
 
     reg_base = dev->reg_base;
     if ((getreg32(reg_base + UART_FIFO_CONFIG_1_OFFSET) & UART_RX_FIFO_CNT_MASK) != 0) {
@@ -250,7 +250,7 @@ ATTR_TCM_SECTION int bflb_uart_get(struct bflb_device_s *dev, uint8_t *data, uin
 
 bool bflb_uart_txready(struct bflb_device_s *dev)
 {
-    uint32_t reg_base;
+    size_t reg_base;
 
     reg_base = dev->reg_base;
     if ((getreg32(reg_base + UART_FIFO_CONFIG_1_OFFSET) & UART_TX_FIFO_CNT_MASK) != 0) {
@@ -262,7 +262,7 @@ bool bflb_uart_txready(struct bflb_device_s *dev)
 
 bool bflb_uart_txempty(struct bflb_device_s *dev)
 {
-    uint32_t reg_base;
+    size_t reg_base;
 
     reg_base = dev->reg_base;
     if ((getreg32(reg_base + UART_FIFO_CONFIG_1_OFFSET) & UART_TX_FIFO_CNT_MASK) == (UART_TX_FIFO_CNT_MASK >> 1) + 1) {
@@ -274,7 +274,7 @@ bool bflb_uart_txempty(struct bflb_device_s *dev)
 
 bool bflb_uart_rxavailable(struct bflb_device_s *dev)
 {
-    uint32_t reg_base;
+    size_t reg_base;
 
     reg_base = dev->reg_base;
     return ((getreg32(reg_base + UART_FIFO_CONFIG_1_OFFSET) & UART_RX_FIFO_CNT_MASK) != 0);
@@ -282,7 +282,7 @@ bool bflb_uart_rxavailable(struct bflb_device_s *dev)
 
 void bflb_uart_txint_mask(struct bflb_device_s *dev, bool mask)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t int_mask;
 
     reg_base = dev->reg_base;
@@ -297,7 +297,7 @@ void bflb_uart_txint_mask(struct bflb_device_s *dev, bool mask)
 
 void bflb_uart_rxint_mask(struct bflb_device_s *dev, bool mask)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t int_mask;
 
     reg_base = dev->reg_base;
@@ -314,7 +314,7 @@ void bflb_uart_rxint_mask(struct bflb_device_s *dev, bool mask)
 
 void bflb_uart_errint_mask(struct bflb_device_s *dev, bool mask)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t int_mask;
 
     reg_base = dev->reg_base;
@@ -339,7 +339,7 @@ void bflb_uart_errint_mask(struct bflb_device_s *dev, bool mask)
 
 uint32_t bflb_uart_get_intstatus(struct bflb_device_s *dev)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t int_status;
     uint32_t int_mask;
 
@@ -351,7 +351,7 @@ uint32_t bflb_uart_get_intstatus(struct bflb_device_s *dev)
 
 void bflb_uart_int_clear(struct bflb_device_s *dev, uint32_t int_clear)
 {
-    uint32_t reg_base;
+    size_t reg_base;
 
     reg_base = dev->reg_base;
     putreg32(int_clear, reg_base + UART_INT_CLEAR_OFFSET);
@@ -360,7 +360,7 @@ void bflb_uart_int_clear(struct bflb_device_s *dev, uint32_t int_clear)
 int bflb_uart_feature_control(struct bflb_device_s *dev, int cmd, size_t arg)
 {
     int ret = 0;
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t tmp;
     uint32_t tx_tmp;
     uint32_t rx_tmp;

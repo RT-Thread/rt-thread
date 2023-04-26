@@ -6,7 +6,8 @@
 
 /* RT-Thread Kernel */
 
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 20
+#define RT_USING_SMART
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -16,15 +17,17 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 1024
+#define IDLE_THREAD_STACK_SIZE 16384
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 512
+#define RT_TIMER_THREAD_STACK_SIZE 16384
 
 /* kservice optimization */
 
 #define RT_KSERVICE_USING_STDLIB
+#define RT_KPRINTF_USING_LONGLONG
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -36,35 +39,39 @@
 
 /* Memory Management */
 
+#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
+#define RT_USING_MEMTRACE
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_CONSOLEBUF_SIZE 256
+#define RT_CONSOLE_DEVICE_NAME "uart3"
 #define RT_VER_NUM 0x50001
+#define ARCH_CPU_64BIT
+#define RT_USING_CACHE
+#define ARCH_MM_MMU
+#define KERNEL_VADDR_START 0x50000000
 #define ARCH_RISCV
-#define ARCH_RISCV_FPU
-#define ARCH_RISCV_FPU_S
-#define ARCH_RISCV32
+#define ARCH_RISCV64
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_STACK_SIZE 16384
 #define RT_MAIN_THREAD_PRIORITY 10
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_THREAD_STACK_SIZE 8192
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
@@ -75,6 +82,21 @@
 
 /* DFS: device virtual file system */
 
+#define RT_USING_DFS
+#define DFS_USING_POSIX
+#define DFS_USING_WORKDIR
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_V1
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_DEVFS
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
+#define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
 
@@ -84,10 +106,11 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_PIN
-#define RT_USING_PWM
+#define RT_USING_TTY
+#define RT_USING_NULL
+#define RT_USING_ZERO
+#define RT_USING_RANDOM
 #define RT_USING_RTC
-#define RT_USING_WDT
 
 /* Using USB */
 
@@ -98,9 +121,20 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+#define RT_USING_POSIX_FS
+#define RT_USING_POSIX_DEVIO
+#define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_POLL
+#define RT_USING_POSIX_SELECT
+#define RT_USING_POSIX_TERMIOS
+#define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
+#define RT_USING_POSIX_PIPE
+#define RT_USING_POSIX_PIPE_SIZE 512
 
 /* Socket is in the 'Network' category */
 
@@ -110,6 +144,7 @@
 
 /* Utilities */
 
+#define RT_USING_ADT
 
 /* RT-Thread Utestcases */
 
@@ -228,18 +263,16 @@
 /* Uncategorized */
 
 #define BSP_USING_BL808
-#define BL808_CORE_M0
-#define BSP_USING_TRIPLECORE
-#define BSP_USING_PSRAM
+#define BL808_CORE_D0
+#define C906_PLIC_PHY_ADDR 0xe0000000
+#define IRQ_MAX_NR 64
+#define TIMER_CLK_FREQ 1000000
 
 /* General Drivers Configuration */
 
-#define BSP_USING_GPIO
-
-/* General Purpose UARTs */
-
-#define BSP_USING_UART0
-#define UART0_TX_USING_GPIO14
-#define UART0_RX_USING_GPIO15
+#define BSP_USING_UART3
+#define UART3_TX_USING_GPIO16
+#define UART3_RX_USING_GPIO17
+#define __STACKSIZE__ 16384
 
 #endif
