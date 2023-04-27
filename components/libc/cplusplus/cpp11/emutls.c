@@ -188,7 +188,7 @@ emutls_get_address_array(uintptr_t index)
     {
         uintptr_t orig_size = array->size;
         uintptr_t new_size = emutls_new_data_array_size(index);
-        array = realloc(array, (new_size + 1) * sizeof(void *));
+        array = (emutls_address_array *)realloc(array, (new_size + 1) * sizeof(void *));
         if (array)
             memset(array->data + orig_size, 0,
                    (new_size - orig_size) * sizeof(void *));
