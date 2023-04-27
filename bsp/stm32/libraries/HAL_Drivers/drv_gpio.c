@@ -199,7 +199,7 @@ static rt_base_t stm32_pin_get(const char *name)
     return pin;
 
 out:
-    rt_kprintf("Px.y  x:A~Z  y:0-15\n");
+    rt_kprintf("Px.y  x:A~Z  y:0-15, e.g. PA.0\n");
     return -RT_EINVAL;
 }
 

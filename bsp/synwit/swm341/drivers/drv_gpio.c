@@ -516,7 +516,7 @@ static rt_base_t swm_pin_get(const char *name)
 
     return pin;
 out:
-    rt_kprintf("Px.y  x:A/B/C/D/E/M/N  y:0~15\n");
+    rt_kprintf("Px.y  x:A/B/C/D/E/M/N  y:0~15, e.g. PA.0\n");
     return -RT_EINVAL;
 }
 
