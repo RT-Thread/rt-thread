@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/8    init version
+ * 1.0   zhugengyu  2022/2/8    init version
  */
 
 /***************************** Include Files *********************************/

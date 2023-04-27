@@ -14,15 +14,16 @@
  * FilePath: fadc_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:28:45
- * Description:  This files is for
+ * Description:  This file is for adc interrupt handler implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/25   init commit
  */
+
 #include "fparameters.h"
 #include "fassert.h"
-#include "finterrupt.h"
 #include "fadc.h"
 #include "fadc_hw.h"
 
@@ -68,7 +69,6 @@ void FAdcIntrHandler(s32 vector, void *args)
     FAdcCtrl *pctrl = (FAdcCtrl *)args;
     u32 status = 0;
     u32 intrmask = 0;
-    u32 cfg = 0;
     u32 channel = 0;
     uintptr base_addr = pctrl->config.base_addr;
 

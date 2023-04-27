@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,7 +11,7 @@
 
 SECTIONS
 {
-    . = 0x80100000;
+    . = 0x80010000 ;
     . = ALIGN(4096);
     .text :
     {
@@ -108,7 +108,7 @@ SECTIONS
         PROVIDE(__heap_start = .);
         . = ALIGN(8);
         PROVIDE(end = .);
-    }
+    } 
 
     _end = .;
 

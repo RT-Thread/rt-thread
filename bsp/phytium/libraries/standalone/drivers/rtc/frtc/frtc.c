@@ -12,14 +12,14 @@
  *
  *
  * FilePath: frtc.c
- * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-18 09:02:33
- * Description:  This files is for
+ * Date: 2021-08-25 14:53:42
+ * LastEditTime: 2021-08-26 09:02:33
+ * Description:  This file is for user API implmentation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Wangxiaodong   2021/11/5   init
+ * 1.0   Wangxiaodong   2021/8/26  first commit
  */
 
 #include <string.h>
@@ -60,19 +60,21 @@ static FError FRtcCheckDateTime(const FRtcDateTime *date_time)
 
     /* 闰年2月+1天 */
     if ((w_month == 2) && (FRTC_IS_LEAP_YEAR(w_year)))
+    {
         days_of_month[w_month - 1] += 1;
+    }
 
     /* 判断月份日期是否合法 */
     if ((w_month > 12) || (w_month < 1) || (w_day > days_of_month[w_month - 1]) || (w_day < 1))
     {
-        FRTC_ERROR("invalid input date: month: %d, day: %d", w_month, w_day);
+        FRTC_ERROR("Invalid input date: month: %d, day: %d", w_month, w_day);
         return FRTC_ERR_DATE_INVALID;
     }
 
     /* 判断时分秒是否合法 */
     if ((w_hour > 23) || (w_minute > 59) || (w_second > 59))
     {
-        FRTC_ERROR("invalid input time: hour: %d, minute: %d, second: %d",
+        FRTC_ERROR("Invalid input time: hour: %d, minute: %d, second: %d",
                    w_hour, w_minute, w_second);
         return FRTC_ERR_TIME_INVALID;
     }
@@ -188,10 +190,14 @@ void FRtcReadTimeStamp(FRtcCtrl *pctrl, time_t *sec_p, time_t *msec_p)
     msec = ((tick * 1000) >> FRTC_COUNTER_HB_OFFSET);
 
     if (sec_p)
+    {
         *sec_p = sec;
+    }
 
     if (msec_p)
+    {
         *msec_p = msec;
+    }
 
     return;
 }

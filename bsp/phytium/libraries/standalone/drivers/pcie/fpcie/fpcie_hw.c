@@ -13,12 +13,13 @@
  *
  * FilePath: fpcie_hw.c
  * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:58:12
- * Description:  This files is for
+ * LastEditTime: 2022-08-18 08:58:12
+ * Description: This file is for pcie register operation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
 #include "fpcie_hw.h"
@@ -116,7 +117,9 @@ FError FPcieSkipDevice(uintptr ecam_addr, s32 bdf)
     {
         pos = FPCIE_READREG_BYTE(addr, pos) ;
         if (pos < 0x40)/* 超过Capability Pointer所代表的空间offset最大范围 */
+        {
             break;
+        }
         pos &= ~3 ; /* offset 第两位对齐 */
         id = FPCIE_READREG_BYTE(addr, pos) ;  /* PCI Express Cap ID */
         if (id == 0xff)
@@ -151,12 +154,12 @@ static s32 FPcieGetFf(enum FPcieSize size)
 {
     switch (size)
     {
-    case FPCIE_SIZE_8:
-        return 0xff;
-    case FPCIE_SIZE_16:
-        return 0xffff;
-    default:
-        return 0xffffffff;
+        case FPCIE_SIZE_8:
+            return 0xff;
+        case FPCIE_SIZE_16:
+            return 0xffff;
+        default:
+            return 0xffffffff;
     }
 }
 

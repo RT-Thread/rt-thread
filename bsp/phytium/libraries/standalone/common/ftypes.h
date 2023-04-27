@@ -14,24 +14,26 @@
  * FilePath: ftypes.h
  * Date: 2021-05-27 13:30:03
  * LastEditTime: 2022-02-18 08:24:15
- * Description:  This files is for
+ * Description:  This file is for variable type definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu   2021/05/27  init
+ * 1.1  zhugengyu   2022/02/18  add some typedef
  */
 
 
-#ifndef _BSP_COMMON_FT_TYPE_H
-#define _BSP_COMMON_FT_TYPE_H
+#ifndef FTYPES_H
+#define FTYPES_H
+
+#include <stdint.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include <stdint.h>
-#include <stddef.h>
 
 #define FT_COMPONENT_IS_READY 0x11111111U
 #define FT_COMPONENT_IS_STARTED 0x22222222U

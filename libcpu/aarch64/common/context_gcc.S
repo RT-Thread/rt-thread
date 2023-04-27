@@ -24,7 +24,7 @@ rt_hw_cpu_id_set:
 /*
 int rt_hw_cpu_id(void)
 */
-.global rt_hw_cpu_id
+.weak rt_hw_cpu_id
 .type rt_hw_cpu_id, @function
 rt_hw_cpu_id:
    mrs x0, tpidr_el1           /* MPIDR_EL1: Multi-Processor Affinity Register */

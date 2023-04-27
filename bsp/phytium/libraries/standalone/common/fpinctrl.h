@@ -14,15 +14,15 @@
  * FilePath: fpinctrl.h
  * Date: 2022-03-28 14:16:09
  * LastEditTime: 2022-03-28 14:16:10
- * Description:  This files is for IO pin ctrl API definition
+ * Description:  This file is for IO pin ctrl API definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   zhugengyu   2022/3/28   init commit
  */
-#ifndef  COMMON_FPINCTRL_H
-#define  COMMON_FPINCTRL_H
+#ifndef  FPINCTRL_H
+#define  FPINCTRL_H
 
 #ifdef __cplusplus
 extern "C"
@@ -39,7 +39,7 @@ extern "C"
 #endif
 #endif
 
-#if defined(CONFIG_TARGET_E2000)
+#if defined(CONFIG_TARGET_E2000) || defined(CONFIG_TARGET_TARDIGRADE)
 #ifndef FPIN_IO_PAD
 #define FPIN_IO_PAD
 #endif

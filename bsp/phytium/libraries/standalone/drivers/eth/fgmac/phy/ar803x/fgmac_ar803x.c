@@ -14,11 +14,12 @@
  * FilePath: fgmac_ar803x.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for  ar803x PHYs chip
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
 
@@ -78,7 +79,9 @@ static FError FGmacAr803xDebugRegRead(FGmac *instance_p, u32 phy_address, u16 de
 
     ret = FGmacWritePhyReg(instance_p, phy_address, FGMAC_AR803X_DEBUG_ADDR, debug_reg & FGMAC_AR803X_DEBUG_DATA_MASK);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     ret = FGmacReadPhyReg(instance_p, phy_address, FGMAC_AR803X_DEBUG_DATA, reg_data_p);
     return ret;
@@ -92,7 +95,9 @@ static FError FGmacAr803xMaskReg(FGmac *instance_p, u32 phy_address, u16 reg, u3
 
     ret = FGmacReadPhyReg(instance_p, phy_address, reg, &val);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     val &= ~clear;
     val |= set;
@@ -115,14 +120,16 @@ FError FGmacAr803xDisableHibernate(FGmac *instance_p)
 
     ret = FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_DEBUG_HIB_CTRL_REG, &reg_val);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     reg_val &= ~FGMAC_AR803X_PS_HIB_EN;
     ret = FGmacWritePhyReg(instance_p, instance_p->phy_addr, FGMAC_AR803X_DEBUG_DATA, reg_val);
 
     reg_val = 0;
     FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_DEBUG_HIB_CTRL_REG, &reg_val);
-    FGMAC_INFO("debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
+    FGMAC_INFO("Debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
 
     return ret;
 }
@@ -142,7 +149,9 @@ FError FFmacAr803xRxClockDelayControl(FGmac *instance_p, u32 enable_setting)
 
     ret = FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_RX_CLOCK_CTRL_REG, &reg_val);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     if (enable_setting == FGMAC_RX_CLOCK_ENABLE)
     {
@@ -157,7 +166,7 @@ FError FFmacAr803xRxClockDelayControl(FGmac *instance_p, u32 enable_setting)
 
     reg_val = 0;
     FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_RX_CLOCK_CTRL_REG, &reg_val);
-    FGMAC_INFO("debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
+    FGMAC_INFO("Debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
 
     return ret;
 }
@@ -177,7 +186,9 @@ FError FFmacAr803xTxClockDelayControl(FGmac *instance_p, u32 enable_setting)
 
     ret = FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_TX_CLOCK_CTRL_REG, &reg_val);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     if (enable_setting == FGMAC_TX_CLOCK_ENABLE)
     {
@@ -192,7 +203,7 @@ FError FFmacAr803xTxClockDelayControl(FGmac *instance_p, u32 enable_setting)
 
     reg_val = 0;
     FGmacAr803xDebugRegRead(instance_p, instance_p->phy_addr, FGMAC_AR803X_TX_CLOCK_CTRL_REG, &reg_val);
-    FGMAC_INFO("debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
+    FGMAC_INFO("Debug reg: 0x%lx, ret: 0x%lx", reg_val, ret);
 
     return ret;
 }

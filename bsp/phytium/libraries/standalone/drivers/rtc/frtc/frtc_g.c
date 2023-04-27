@@ -12,14 +12,14 @@
  *
  *
  * FilePath: frtc_g.c
- * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-18 09:01:26
- * Description:  This files is for
+ * Date: 2021-08-25 14:53:42
+ * LastEditTime: 2021-08-26 09:01:26
+ * Description:  This file is for rtc static configuration
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Wangxiaodong   2021/8/25   init
+ * 1.0   Wangxiaodong   2021/8/26 first commit
  */
 
 #include "fparameters.h"

@@ -14,11 +14,12 @@
  * FilePath: fnand_option.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:51
- * Description:  This files is for
+ * Description:  This file is for options functions for the fnand component.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 
@@ -44,13 +45,13 @@ FError FNandSetOption(FNand *instance_p, u32 options, u32 value)
 
     switch (options)
     {
-    case FNAND_OPS_INTER_MODE_SELECT:
-        FASSERT(FNAND_TOG_ASYN_DDR >= value) ;
-        FNAND_CLEARBIT(config_p->base_address, FNAND_CTRL0_OFFSET, FNAND_CTRL0_INTER_MODE(3UL)) ;
-        FNAND_SETBIT(config_p->base_address, FNAND_CTRL0_OFFSET, FNAND_CTRL0_INTER_MODE((unsigned long)value)) ;
-        break;
-    default:
-        return FNAND_ERR_INVAILD_PARAMETER;
+        case FNAND_OPS_INTER_MODE_SELECT:
+            FASSERT(FNAND_TOG_ASYN_DDR >= value) ;
+            FNAND_CLEARBIT(config_p->base_address, FNAND_CTRL0_OFFSET, FNAND_CTRL0_INTER_MODE(3UL)) ;
+            FNAND_SETBIT(config_p->base_address, FNAND_CTRL0_OFFSET, FNAND_CTRL0_INTER_MODE((unsigned long)value)) ;
+            break;
+        default:
+            return FNAND_ERR_INVAILD_PARAMETER;
     }
 
     return FT_SUCCESS;

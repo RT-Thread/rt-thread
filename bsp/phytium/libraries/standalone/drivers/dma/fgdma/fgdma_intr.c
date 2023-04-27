@@ -14,13 +14,13 @@
  * FilePath: fgdma_intr.c
  * Date: 2022-05-16 17:01:48
  * LastEditTime: 2022-05-16 17:01:49
- * Description:  This files is for interrupt api implmentation
+ * Description:  This file is for interrupt api implmentation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   huanghe    2021-11-5    init commit
- * 1.1   zhugengyu  2022-5-16    modify according to tech manual.
+ * 1.0   huanghe    2021/11/5    init commit
+ * 1.1   zhugengyu  2022/5/16    modify according to tech manual.
  */
 
 /***************************** Include Files *********************************/
@@ -103,7 +103,7 @@ static void FGdmaChanIrqHandler(FGdmaChan *const chan_p)
 
 /**
  * @name: FGdmaIrqHandler
- * @msg: GDMA中断处理函数
+ * @msg: 当instance_p->config.caps 具有FGDMA_IRQ1_MASK特性时,此函数作为GDMA中断处理函数
  * @return {void} 无
  * @param {s32} vector, 中断号
  * @param {void} *args, 中断参数
@@ -113,6 +113,7 @@ void FGdmaIrqHandler(s32 vector, void *args)
     FASSERT(args);
     FGdma *const instance_p = (FGdma * const)args;
     FASSERT(FT_COMPONENT_IS_READY == instance_p->is_ready);
+    FASSERT(FGDMA_IRQ1_MASK & instance_p->config.caps);
     uintptr base_addr = instance_p->config.base_addr;
     u32 chan_id;
 
@@ -120,19 +121,57 @@ void FGdmaIrqHandler(s32 vector, void *args)
     FGDMA_INFO("status: 0x%x", status);
 
     FGdmaIrqDisable(base_addr);
-    for (chan_id = FGDMA_CHAN0_INDEX; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
+    for (chan_id = 0; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
     {
-        if (!(FGDMA_CHX_INTR_STATE(chan_id) & status))
+        if (!(FGDMA_CHX_INTR_STATE(chan_id) & status)) 
+        {
             continue;
+        }
 
         /* channel interrupt happens */
         FASSERT_MSG((NULL != instance_p->chans[chan_id]), "invalid chan interrupt event !!!");
         FGdmaChanIrqHandler(instance_p->chans[chan_id]);
     }
     FGdmaIrqEnable(base_addr);
-
+    status = FGdmaReadStatus(base_addr);
+    FGDMA_INFO("after status: 0x%x", status);
     return;
 }
+
+/**
+ * @name: FGdmaIrqHandlerPrivateChannel
+ * @msg: 当instance_p->config.caps 具有FGDMA_IRQ2_MASK特性时,此函数作为GDMA中断处理函数
+ * @return {void} 无
+ * @param {s32} vector, 中断号
+ * @param {void} *args, 中断参数
+ */
+void FGdmaIrqHandlerPrivateChannel(s32 vector, void *args)
+{
+    FASSERT(args);
+    FGdmaChan *gdma_chan = (FGdmaChan *)args;
+    FASSERT(gdma_chan);
+    FGdma *const instance_p = (FGdma *const)gdma_chan->gdma;
+    FASSERT(FT_COMPONENT_IS_READY == instance_p->is_ready);
+    FASSERT(FGDMA_IRQ2_MASK & instance_p->config.caps);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 chan_id;
+    FGDMA_INFO("FGdmaIrqHandlerPrivateChannel is here %d \r\n",vector);
+    chan_id = gdma_chan->config.chan_id ;
+    FASSERT(chan_id <= FGDMA_NUM_OF_CHAN);
+    u32 status = FGdmaReadStatus(base_addr);
+    FGDMA_INFO("status: 0x%x", status);
+    if(!(FGDMA_CHX_INTR_STATE(chan_id) & status))
+    {
+        FGDMA_WARN("The interrupt state does not match the interrupt chan_id ,chan_id is %d, interrupt state is 0x%x ",chan_id,status);
+    }
+    
+    FASSERT_MSG((NULL != instance_p->chans[chan_id]), "invalid chan interrupt event !!!");
+    FGdmaChanIrqHandler(instance_p->chans[chan_id]);
+    status = FGdmaReadStatus(base_addr);
+    FGDMA_INFO("after status: 0x%x", status);
+    return;
+}
+
 
 /**
  * @name: FGdmaChanRegisterEvtHandler

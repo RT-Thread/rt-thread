@@ -38,14 +38,14 @@ menu "Standalone Setting"
     config TARGET_ARMV8_AARCH32
         bool "Armv8 Aarch32"
         default y
-
+    
     config USE_AARCH64_L1_TO_AARCH32
         bool
         prompt "Use Aarch64 L1 to Aarch32 code"
         default y
         help
             Use the Aarch64 to Aarch32 mode function
-
+    
     source "$STANDALONE_DIR/board/Kconfig"
     source "$STANDALONE_DIR/drivers/Kconfig"
     source "$STANDALONE_DIR/common/Kconfig"

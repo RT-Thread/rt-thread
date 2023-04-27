@@ -12,13 +12,15 @@
  *
  *
  * FilePath: fpl011_sinit.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:07:00
- * Description:  This files is for uart static init
+ * Description:  This file is for uart static init
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18  add file head 
  */
 
 /***************************** Include Files *********************************/

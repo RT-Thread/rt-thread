@@ -2,7 +2,7 @@
 config ENABLE_FGDMA
     bool
     prompt "Use FGDMA"
-    default n
+    default n    
 
 config ENABLE_FDDMA
     bool

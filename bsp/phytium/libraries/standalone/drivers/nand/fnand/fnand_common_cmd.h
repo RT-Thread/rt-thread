@@ -14,11 +14,12 @@
  * FilePath: fnand_common_cmd.h
  * @Date: 2022-07-05 19:01:01
  * @LastEditTime: 2022-07-05 19:01:02
- * @Description:  This file is for
+ * @Description:  This file is for nand generic command documentation
  *
  * @Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 #ifndef DRIVERS_NAND_COMMON_CMD_H
@@ -27,6 +28,10 @@
 #include "ftypes.h"
 #include "fnand.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /*
  * Mandatory commands
  */
@@ -36,31 +41,31 @@
 
 #define NAND_CMD_CHANGE_READ_COLUMN1 0x05 /* NAND Random data Read \
                       Column command (1st                         \
-                      cycle) */
+cycle) */
 #define NAND_CMD_CHANGE_READ_COLUMN2 0xE0 /* NAND Random data Read \
                       Column command (2nd                         \
-                      cycle) */
+cycle) */
 #define NAND_CMD_BLOCK_ERASE1 0x60        /* NAND Block Erase \
-                          (1st cycle) */
+(1st cycle) */
 #define NAND_CMD_BLOCK_ERASE2 0xD0        /* NAND Block Erase \
-                          (2nd cycle) */
+(2nd cycle) */
 
 #define NAND_CMD_PAGE_PROG1 0x80          /* NAND Page Program \
                           command (1st cycle)                      \
-                          */
+*/
 #define NAND_CMD_PAGE_PROG2 0x10          /* NAND Page Program \
                           command (2nd cycle)                      \
-                          */
+*/
 
 #define NAND_CMD_CHANGE_WRITE_COLUMN 0x85 /* NAND Change Write \
-                         Column command */
+Column command */
 #define NAND_CMD_READ_ID 0x90             /* NAND Read ID \
-                              command */
+command */
 #define NAND_CMD_READ_PARAM_PAGE 0xEC     /* NAND Read \
                           Parameter Page                   \
-                          command */
+command */
 #define NAND_CMD_RESET 0xFF               /* NAND Reset \
-                          command */
+command */
 
 #define NAND_END_CMD_NONE 0xfff /* No End command */
 
@@ -69,6 +74,10 @@
 FError FNandFlashReset(FNand *instance_p, u32 chip_addr) ;
 FError FNandFlashReadId(FNand *instance_p, u8 address, u8 *id_buffer, u32 buffer_length, u32 chip_addr);
 void FNandFlashFuncRegister(FNand *instance_p);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

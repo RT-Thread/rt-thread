@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include "fdebug.h"
@@ -47,7 +47,9 @@ void FUsbDumpAllDescriptors(FUsbDev *dev)
 {
     FError ret = FUSB_SUCCESS;
     if ((NULL == dev) || (NULL == dev->configuration))
+    {
         return;
+    }
 
     const FUsbDeviceDescriptor *dev_desc = NULL;
     const FUsbConfigurationDescriptor *config_desc = NULL;
@@ -65,27 +67,35 @@ void FUsbDumpAllDescriptors(FUsbDev *dev)
     ret = FUsbSetupConfigParser(dev, config_desc, config_desc->wTotalLength);
     FUsbSetupStringParser(dev);
     if (FUSB_SUCCESS != ret)
+    {
         return;
+    }
 
     if (FUsbIsValidStringIndex(dev_desc->iManufacturer))
     {
         ret = FUsbSearchStringDescriptor(instance, dev, dev_desc->iManufacturer);
         if (FUSB_SUCCESS == ret)
+        {
             printf("	Manufacturer: %s\r\n", FUsbGetString(dev));
+        }
     }
 
     if (FUsbIsValidStringIndex(dev_desc->iProduct))
     {
         ret = FUsbSearchStringDescriptor(instance, dev, dev_desc->iProduct);
         if (FUSB_SUCCESS == ret)
+        {
             printf("	Product: %s\r\n", FUsbGetString(dev));
+        }
     }
 
     if (FUsbIsValidStringIndex(dev_desc->iSerialNumber))
     {
         ret = FUsbSearchStringDescriptor(instance, dev, dev_desc->iSerialNumber);
         if (FUSB_SUCCESS == ret)
+        {
             printf("	Serial No.: %s\r\n", FUsbGetString(dev));
+        }
     }
 
     while (NULL != (if_desc = (const FUsbInterfaceDescriptor *)FUsbGetDescriptorFromParser(parser, FUSB_DESC_TYPE_INTERFACE)))
@@ -105,7 +115,9 @@ void FUsbDumpAllDescriptors(FUsbDev *dev)
         {
             ret = FUsbSearchStringDescriptor(instance, dev, if_desc->iInterface);
             if (FUSB_SUCCESS == ret)
+            {
                 printf("	Interface: %s\r\n", FUsbGetString(dev));
+            }
         }
 
     }

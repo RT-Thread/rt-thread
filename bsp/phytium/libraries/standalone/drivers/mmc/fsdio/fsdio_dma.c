@@ -14,7 +14,7 @@
  * FilePath: fsdio_dma.c
  * Date: 2022-06-01 14:21:41
  * LastEditTime: 2022-06-01 14:21:42
- * Description:  This files is for DMA related function implementation
+ * Description:  This file is for DMA related function implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -29,7 +29,6 @@
 #include "fassert.h"
 #include "ftypes.h"
 
-#include "fcache.h"
 
 #include "fsdio_hw.h"
 #include "fsdio.h"
@@ -47,6 +46,7 @@
 
 /************************** Function Prototypes ******************************/
 extern FError FSdioTransferCmd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p);
+extern FError FSdioPollWaitBusyCard(FSdio *const instance_p);
 
 /*****************************************************************************/
 /**
@@ -101,7 +101,7 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
 
     if (buf_num > instance_p->desc_list.desc_num)
     {
-        FSDIO_ERROR("descriptor is short for transfer %d < %d",
+        FSDIO_ERROR("Descriptor is too short to transfer %d < %d.",
                     instance_p->desc_list.desc_num, buf_num);
         return FSDIO_ERR_SHORT_BUF;
     }
@@ -109,7 +109,7 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
     memset((void *)instance_p->desc_list.first_desc, 0,
            sizeof(FSdioIDmaDesc) * instance_p->desc_list.desc_num);
 
-    FSDIO_INFO("%d of descriptor in use", buf_num);
+    FSDIO_INFO("%d of descriptor is in using.", buf_num);
     for (loop = 0U; loop < buf_num; loop++)
     {
         cur_desc = &(instance_p->desc_list.first_desc[loop]);
@@ -127,6 +127,12 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
 
         /* set data buffer for transfer */
         buff_addr = (uintptr)data_p->buf + (uintptr)(loop * data_p->blksz);
+        if (buff_addr % data_p->blksz) /* make sure buffer aligned and not cross page boundary */
+        {
+            FSDIO_ERROR("Data buffer 0x%x do not align.", buff_addr);
+            return FSDIO_ERR_DMA_BUF_UNALIGN;
+        }
+
 #ifdef __aarch64__
         cur_desc->addr_hi = UPPER_32_BITS(buff_addr);
         cur_desc->addr_lo = LOWER_32_BITS(buff_addr);
@@ -137,6 +143,12 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
 
         /* set address of next descriptor entry, NULL for last entry */
         desc_addr = is_last ? 0U : (uintptr)&instance_p->desc_list.first_desc[loop + 1];
+        if (desc_addr % sizeof(FSdioIDmaDesc)) /* make sure dma descriptor aligned and not cross page boundary */
+        {
+            FSDIO_ERROR("dma descriptor 0x%x do not align.", desc_addr);
+            return FSDIO_ERR_DMA_BUF_UNALIGN;
+        }
+
 #ifdef __aarch64__
         cur_desc->desc_hi = UPPER_32_BITS(desc_addr);
         cur_desc->desc_lo = LOWER_32_BITS(desc_addr);
@@ -147,8 +159,7 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
     }
 
     /* flush cache of descripor list and transfer buffer */
-    FCacheDCacheFlushRange((uintptr)instance_p->desc_list.first_desc, sizeof(FSdioIDmaDesc) * instance_p->desc_list.desc_num);
-    FCacheDCacheFlushRange((uintptr)data_p->buf, data_p->datalen);
+    FSDIO_DATA_BARRIER();
 
     FSdioDumpDMADescriptor(instance_p, buf_num);
     return FSDIO_SUCCESS;
@@ -174,9 +185,13 @@ static FError FSdioDMATransferData(FSdio *const instance_p, FSdioData *data_p)
     /* fill transfer buffer to DMA descriptor */
     ret = FSdioSetupDMADescriptor(instance_p, data_p);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
-    FSDIO_INFO("descriptor@%p, trans bytes: %d, block size: %d",
+    FSDIO_DATA_BARRIER();
+
+    FSDIO_INFO("Descriptor@%p, trans bytes: %d, block size: %d",
                instance_p->desc_list.first_desc,
                data_p->datalen,
                data_p->blksz);
@@ -207,29 +222,40 @@ FError FSdioDMATransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FSDIO_ERROR("device is not yet initialized!!!");
+        FSDIO_ERROR("Device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
     if (FSDIO_IDMA_TRANS_MODE != instance_p->config.trans_mode)
     {
-        FSDIO_ERROR("device is not configure in DMA transfer mode");
+        FSDIO_ERROR("Device is not configure in DMA transfer mode.");
         return FSDIO_ERR_INVALID_STATE;
     }
 
     /* for removable media, check if card exists */
     if ((FALSE == instance_p->config.non_removable) &&
-            (FALSE == FSdioCheckIfCardExists(base_addr)))
+        (FALSE == FSdioCheckIfCardExists(base_addr)))
     {
-        FSDIO_ERROR("card not detected !!!");
+        FSDIO_ERROR("Card is not detected !!!");
         return FSDIO_ERR_NO_CARD;
     }
 
+    /* wait previous command finished and card not busy */
+    ret = FSdioPollWaitBusyCard(instance_p);
+    if (FSDIO_SUCCESS != ret)
+    {
+        return ret;
+    }
+
+    FSDIO_WRITE_REG(base_addr, FSDIO_RAW_INTS_OFFSET, 0xffffe);
+
     /* reset fifo and DMA before transfer */
-    FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_FIFO_RESET | FSDIO_CNTRL_DMA_RESET);
+
     ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET | FSDIO_CNTRL_DMA_RESET);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* enable use of DMA */
     FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_USE_INTERNAL_DMAC);
@@ -257,7 +283,7 @@ FError FSdioDMATransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
  * @param {FSdioCmdData} *cmd_data_p, contents of transfer command and data
  * @param {FSdioRelaxHandler} relax, handler of relax when wait busy
  */
-FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p, FSdioRelaxHandler relax)
+FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
 {
     FASSERT(instance_p);
     FASSERT(cmd_data_p);
@@ -266,64 +292,55 @@ FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
     int delay;
     const boolean read = cmd_data_p->flag & FSDIO_CMD_FLAG_READ_DATA;
     uintptr base_addr = instance_p->config.base_addr;
+    const u32 wait_bits = (NULL == cmd_data_p->data_p) ? FSDIO_INT_CMD_BIT : (FSDIO_INT_CMD_BIT | FSDIO_INT_DTO_BIT);
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FSDIO_ERROR("device is not yet initialized!!!");
+        FSDIO_ERROR("Device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
     if (FSDIO_IDMA_TRANS_MODE != instance_p->config.trans_mode)
     {
-        FSDIO_ERROR("device is not configure in DMA transfer mode");
+        FSDIO_ERROR("Device is not configure in DMA transfer mode.");
         return FSDIO_ERR_INVALID_STATE;
     }
 
-    /* wait command done or timeout */
+    /* wait command done or data timeout */
     delay = FSDIO_TIMEOUT;
     do
     {
         reg_val = FSdioGetRawStatus(base_addr);
-        if (relax)
-            relax();
-    }
-    while (!(FSDIO_INT_CMD_BIT & reg_val) && (--delay > 0));
 
-    if (!(FSDIO_INT_CMD_BIT & reg_val) && (delay <= 0))
+        if (delay % 1000 == 0)
+        {
+            FSDIO_DEBUG("reg_val = 0x%x", reg_val);
+        }
+
+        if (instance_p->relax_handler)
+        {
+            instance_p->relax_handler();
+        }
+    }
+    while (((wait_bits & reg_val) != wait_bits) && (--delay > 0));
+
+    /* clear status to ack data done */
+    FSdioClearRawStatus(base_addr);
+
+    if (((wait_bits & reg_val) != wait_bits) && (delay <= 0))
     {
-        FSDIO_ERROR("wait cmd done timeout, raw ints: 0x%x", reg_val);
+        FSDIO_ERROR("Wait cmd done timeout, raw ints: 0x%x.", reg_val);
         return FSDIO_ERR_CMD_TIMEOUT;
     }
 
     if (NULL != cmd_data_p->data_p) /* wait data transfer done or timeout */
     {
-        delay = FSDIO_TIMEOUT;
-        do
-        {
-            reg_val = FSDIO_READ_REG(base_addr, FSDIO_RAW_INTS_OFFSET);
-            if (relax)
-                relax();
-        }
-        while (!(FSDIO_INT_DTO_BIT & reg_val) && (--delay > 0));
-
-        /* clear status to ack data done */
-        FSdioClearRawStatus(base_addr);
-
-        if (!(FSDIO_INT_DTO_BIT & reg_val) && (delay <= 0))
-        {
-            FSDIO_ERROR("wait DMA transfer timeout, raw ints: 0x%x", reg_val);
-            return FSDIO_ERR_TRANS_TIMEOUT;
-        }
-
         /* invalidate cache of transfer buffer */
         if (read)
         {
-            FCacheDCacheInvalidateRange((uintptr)cmd_data_p->data_p, cmd_data_p->data_p->datalen);
+            FSDIO_DATA_BARRIER();
         }
     }
-
-    /* clear status to ack cmd done */
-    FSdioClearRawStatus(base_addr);
 
     if (FSDIO_SUCCESS == ret)
     {
@@ -349,13 +366,13 @@ FError FSdioSetIDMAList(FSdio *const instance_p, volatile FSdioIDmaDesc *desc, u
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FSDIO_ERROR("device is not yet initialized!!!");
+        FSDIO_ERROR("Device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
     if (FSDIO_IDMA_TRANS_MODE != instance_p->config.trans_mode)
     {
-        FSDIO_ERROR("device is not configure in DMA transfer mode");
+        FSDIO_ERROR("Device is not configure in DMA transfer mode.");
         return FSDIO_ERR_INVALID_STATE;
     }
 

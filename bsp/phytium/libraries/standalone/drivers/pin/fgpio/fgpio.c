@@ -19,7 +19,8 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2022-3-1     init commit
+ * 1.0   zhugengyu  2022/3/1     init commit
+ * 2.0   zhugengyu  2022/7/1     support e2000
  */
 
 
@@ -59,7 +60,7 @@ FError FGpioCfgInitialize(FGpio *const instance, const FGpioConfig *const config
 
     if (0 == config->base_addr)
     {
-        FGPIO_ERROR("invalid base address !!!");
+        FGPIO_ERROR("Invalid base address !!!");
         return FGPIO_ERR_INVALID_PARA;
     }
 
@@ -67,6 +68,9 @@ FError FGpioCfgInitialize(FGpio *const instance, const FGpioConfig *const config
     {
         instance->config = *config;
     }
+
+    /* mask interrupt for all pins */
+    FGpioWriteReg32(instance->config.base_addr, FGPIO_INTMASK_OFFSET, FGPIO_INTR_PORTA_MASKALL);
 
     instance->is_ready = FT_COMPONENT_IS_READY;
     return FGPIO_SUCCESS;
@@ -113,12 +117,12 @@ FError FGpioPinInitialize(FGpio *const instance, FGpioPin *const pin_instance,
                           const FGpioPinId index)
 {
     FASSERT(instance && pin_instance);
-    FASSERT_MSG(index.port < FGPIO_PORT_NUM, "invalid gpio port %d", index);
-    FASSERT_MSG(index.pin < FGPIO_PIN_NUM, "invalid gpio pin %d", index);
+    FASSERT_MSG(index.port < FGPIO_PORT_NUM, "Invalid gpio port %d", index);
+    FASSERT_MSG(index.pin < FGPIO_PIN_NUM, "Invalid gpio pin %d", index);
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FGPIO_ERROR("gpio instance not yet init !!!");
+        FGPIO_ERROR("gpio instance is not yet inited !!!");
         return FGPIO_ERR_NOT_INIT;
     }
 
@@ -151,14 +155,16 @@ void FGpioPinDeInitialize(FGpioPin *const pin)
     FGpio *const instance = pin->instance;
 
     if ((NULL == instance) || (FT_COMPONENT_IS_READY != instance->is_ready) ||
-            (FT_COMPONENT_IS_READY != pin->is_ready))
+        (FT_COMPONENT_IS_READY != pin->is_ready))
     {
-        FGPIO_ERROR("gpio instance not yet init !!!");
+        FGPIO_ERROR("gpio instance is not yet inited !!!");
         return;
     }
 
     if (FGPIO_DIR_INPUT == FGpioGetDirection(pin))
-        FGpioSetInterruptMask(pin, FALSE); /* 关闭引脚中断 */
+    {
+        FGpioSetInterruptMask(pin, FALSE);    /* 关闭引脚中断 */
+    }
 
     FGpioPinId index = pin->index;
     FASSERT_MSG(instance->pins[index.port][index.pin] == pin, "invalid pin instance");
@@ -269,7 +275,7 @@ void FGpioSetDirection(FGpioPin *const pin, FGpioDirection dir)
     FASSERT(pin);
     FGpio *const instance = pin->instance;
     FASSERT(instance);
-    FASSERT_MSG(instance->is_ready == FT_COMPONENT_IS_READY, "gpio instance not yet init !!!");
+    FASSERT_MSG(instance->is_ready == FT_COMPONENT_IS_READY, "gpio instance not is yet inited !!!");
     u32 reg_val;
     FGpioPinId index = pin->index;
     uintptr base_addr = instance->config.base_addr;
@@ -384,7 +390,7 @@ FError FGpioSetOutputValue(FGpioPin *const pin, const FGpioPinVal output)
     FASSERT(pin);
     FGpio *const instance = pin->instance;
     FASSERT(instance);
-    FASSERT_MSG(instance->is_ready == FT_COMPONENT_IS_READY, "gpio instance not yet init !!!");
+    FASSERT_MSG(instance->is_ready == FT_COMPONENT_IS_READY, "gpio instance is not yet inited !!!");
 
     FGpioPinId index = pin->index;
     u32 base_addr = instance->config.base_addr;
@@ -392,7 +398,7 @@ FError FGpioSetOutputValue(FGpioPin *const pin, const FGpioPinVal output)
 
     if (FGPIO_DIR_OUTPUT != FGpioGetDirection(pin))
     {
-        FGPIO_ERROR("need to set GPIO direction as OUTPUT first !!!");
+        FGPIO_ERROR("Need to set GPIO direction as OUTPUT first !!!");
         return FGPIO_ERR_INVALID_STATE;
     }
 
@@ -411,9 +417,9 @@ FError FGpioSetOutputValue(FGpioPin *const pin, const FGpioPinVal output)
         FASSERT(0);
     }
 
-    FGPIO_INFO("output val 0x%x", reg_val);
+    FGPIO_INFO("Output val 0x%x", reg_val);
     FGpioWriteRegVal(base_addr, index.port, reg_val);
-    FGPIO_INFO("output val 0x%x", FGpioReadRegVal(base_addr, index.port));
+    FGPIO_INFO("Output val 0x%x", FGpioReadRegVal(base_addr, index.port));
     return FGPIO_SUCCESS;
 }
 
@@ -436,7 +442,7 @@ FGpioPinVal FGpioGetInputValue(FGpioPin *const pin)
 
     if (FGPIO_DIR_INPUT != FGpioGetDirection(pin))
     {
-        FGPIO_ERROR("need to set GPIO direction as INPUT first !!!");
+        FGPIO_ERROR("Need to set GPIO direction as INPUT first !!!");
         return FGPIO_PIN_LOW;
     }
 
@@ -455,6 +461,6 @@ FGpioPinVal FGpioGetInputValue(FGpioPin *const pin)
         FASSERT(0);
     }
 
-    FGPIO_INFO("input val: 0x%x", reg_val);
+    FGPIO_INFO("Input val: 0x%x.", reg_val);
     return (BIT(index.pin) & reg_val) ? FGPIO_PIN_HIGH : FGPIO_PIN_LOW;
 }

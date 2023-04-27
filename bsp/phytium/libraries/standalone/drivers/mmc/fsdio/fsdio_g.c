@@ -14,7 +14,7 @@
  * FilePath: fsdio_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:37:44
- * Description:  This files is for static init
+ * Description:  This file is for static init
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -40,26 +40,28 @@
 
 /************************** Variable Definitions *****************************/
 
-const FSdioConfig FSDIO_CONFIG_TBL[FSDIO_HOST_INSTANCE_NUM] =
+const FSdioConfig FSDIO_CONFIG_TBL[FSDIO_NUM] =
 {
-    [FSDIO_HOST_INSTANCE_0] =
+    [FSDIO0_ID] =
     {
-        .instance_id  = FSDIO_HOST_INSTANCE_0,
-        .base_addr    = FSDIO_HOST_0_BASE_ADDR,
-        .irq_num      = FSDIO_HOST_0_IRQ_NUM,
+        .instance_id  = FSDIO0_ID,
+        .base_addr    = FSDIO0_BASE_ADDR,
+        .irq_num      = FSDIO0_IRQ_NUM,
         .trans_mode   = FSDIO_IDMA_TRANS_MODE,
         .voltage      = FSDIO_SD_3_3V_VOLTAGE,
-        .non_removable  = FALSE
+        .non_removable  = FALSE,
+        .filp_resp_byte_order = FALSE
     },
 
-    [FSDIO_HOST_INSTANCE_1] =
+    [FSDIO1_ID] =
     {
-        .instance_id = FSDIO_HOST_INSTANCE_1,
-        .base_addr   = FSDIO_HOST_1_BASE_ADDR,
-        .irq_num     = FSDIO_HOST_1_IRQ_NUM,
+        .instance_id = FSDIO1_ID,
+        .base_addr   = FSDIO1_BASE_ADDR,
+        .irq_num     = FSDIO1_IRQ_NUM,
         .trans_mode  = FSDIO_IDMA_TRANS_MODE,
         .voltage     = FSDIO_SD_3_3V_VOLTAGE,
-        .non_removable  = FALSE
+        .non_removable  = FALSE,
+        .filp_resp_byte_order = FALSE
     }
 };
 

@@ -14,16 +14,23 @@
  * FilePath: fadc_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * Description: This file is for adc register implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/15   init commit
  */
 
 #include "fparameters.h"
 #include "fadc_hw.h"
 #include "stdio.h"
+
+#define FADC_DEBUG_TAG "FT_ADC_HW"
+#define FADC_DEBUG(format, ...)     FT_DEBUG_PRINT_D(FADC_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FADC_INFO(format, ...)      FT_DEBUG_PRINT_I(FADC_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FADC_WARN(format, ...)      FT_DEBUG_PRINT_W(FADC_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FADC_ERROR(format, ...)     FT_DEBUG_PRINT_E(FADC_DEBUG_TAG, format, ##__VA_ARGS__)
 
 /**
  * @name: FAdcDump
@@ -34,15 +41,15 @@
  */
 void FAdcDump(uintptr base_addr, u8 channel)
 {
-    printf("Off[0x%02x]: = 0x%08x\r\n", FADC_CTRL_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_CTRL_REG_OFFSET));
-    printf("Off[0x%02x]: = 0x%08x\r\n", FADC_INTER_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_INTER_REG_OFFSET));
-    printf("Off[0x%02x]: = 0x%08x\r\n", FADC_STATE_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_STATE_REG_OFFSET));
-    printf("Off[0x%02x]: = 0x%08x\r\n", FADC_INTRMASK_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_INTRMASK_REG_OFFSET));
-    printf("Off[0x%02x]: = 0x%08x\r\n", FADC_INTR_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_INTR_REG_OFFSET));
-    printf("Off[0x%02x]: = 0x%08x\r\n", FADC_COV_RESULT_REG_OFFSET(channel), FADC_READ_REG32(base_addr, FADC_COV_RESULT_REG_OFFSET(channel)));
-    printf("Off[0x%02x]: = 0x%08x\r\n", FADC_FINISH_CNT_REG_OFFSET(channel), FADC_READ_REG32(base_addr, FADC_FINISH_CNT_REG_OFFSET(channel)));
-    printf("Off[0x%02x]: = 0x%08x\r\n", FADC_HIS_LIMIT_REG_OFFSET(channel), FADC_READ_REG32(base_addr, FADC_HIS_LIMIT_REG_OFFSET(channel)));
+    FADC_INFO("Off[0x%02x]: = 0x%08x", FADC_CTRL_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_CTRL_REG_OFFSET));
+    FADC_INFO("Off[0x%02x]: = 0x%08x", FADC_INTER_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_INTER_REG_OFFSET));
+    FADC_INFO("Off[0x%02x]: = 0x%08x", FADC_STATE_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_STATE_REG_OFFSET));
+    FADC_INFO("Off[0x%02x]: = 0x%08x", FADC_INTRMASK_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_INTRMASK_REG_OFFSET));
+    FADC_INFO("Off[0x%02x]: = 0x%08x", FADC_INTR_REG_OFFSET, FADC_READ_REG32(base_addr, FADC_INTR_REG_OFFSET));
+    FADC_INFO("Off[0x%02x]: = 0x%08x", FADC_COV_RESULT_REG_OFFSET(channel), FADC_READ_REG32(base_addr, FADC_COV_RESULT_REG_OFFSET(channel)));
+    FADC_INFO("Off[0x%02x]: = 0x%08x", FADC_FINISH_CNT_REG_OFFSET(channel), FADC_READ_REG32(base_addr, FADC_FINISH_CNT_REG_OFFSET(channel)));
+    FADC_INFO("Off[0x%02x]: = 0x%08x", FADC_HIS_LIMIT_REG_OFFSET(channel), FADC_READ_REG32(base_addr, FADC_HIS_LIMIT_REG_OFFSET(channel)));
 
-    printf("\r\n");
+    FADC_INFO("");
 
 }

@@ -1,0 +1,7 @@
+menu "Scmi Configuration"
+    config ENABLE_SCMI_MHU
+        bool
+        prompt "Use Scmi MHU"
+        default n
+        
+endmenu

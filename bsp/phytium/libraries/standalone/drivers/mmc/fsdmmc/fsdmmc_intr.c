@@ -14,7 +14,8 @@
  * FilePath: fsdmmc_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:54:53
- * Description:  This files is for
+ * Description:  This file contains the functions that are related to interrupt processing
+ * for the fsdmmc device.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -40,11 +41,11 @@
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
-static void FSdmmcCallEvtHandler(FSdmmcEventHandler handler, FSdmmc *instance_p)
+static void FSdmmcCallEvtHandler(FSdmmcEventHandler handler, void *arg)
 {
     if (NULL != handler)
     {
-        handler((void *)instance_p);
+        handler(arg);
     }
 }
 
@@ -70,18 +71,18 @@ u32 FSdmmcGetInterruptMask(uintptr base_addr, u32 intr_type)
 
     switch (intr_type)
     {
-    case FSDMMC_CMD_INTR:
-        mask = FSDMMC_READ_REG(base_addr, FSDMMC_NORMAL_INT_EN_REG_OFFSET);
-        break;
-    case FSDMMC_ERROR_INTR:
-        mask = FSDMMC_READ_REG(base_addr, FSDMMC_ERROR_INT_EN_REG_OFFSET);
-        break;
-    case FSDMMC_DMA_BD_INTR:
-        mask = FSDMMC_READ_REG(base_addr, FSDMMC_BD_ISR_EN_REG_OFFSET);
-        break;
-    default:
-        FASSERT(0);
-        break;
+        case FSDMMC_CMD_INTR:
+            mask = FSDMMC_READ_REG(base_addr, FSDMMC_NORMAL_INT_EN_REG_OFFSET);
+            break;
+        case FSDMMC_ERROR_INTR:
+            mask = FSDMMC_READ_REG(base_addr, FSDMMC_ERROR_INT_EN_REG_OFFSET);
+            break;
+        case FSDMMC_DMA_BD_INTR:
+            mask = FSDMMC_READ_REG(base_addr, FSDMMC_BD_ISR_EN_REG_OFFSET);
+            break;
+        default:
+            FASSERT(0);
+            break;
     }
 
     return mask;
@@ -102,24 +103,28 @@ void FSdmmcSetInterruptMask(uintptr base_addr, u32 intr_type, u32 mask, boolean 
     u32 new_mask = 0;
 
     if (TRUE == enable)
+    {
         new_mask = old_mask | mask;
+    }
     else
+    {
         new_mask = old_mask & (~mask);
+    }
 
     switch (intr_type)
     {
-    case FSDMMC_CMD_INTR:
-        FSDMMC_WRITE_REG(base_addr, FSDMMC_NORMAL_INT_EN_REG_OFFSET, new_mask);
-        break;
-    case FSDMMC_ERROR_INTR:
-        FSDMMC_WRITE_REG(base_addr, FSDMMC_ERROR_INT_EN_REG_OFFSET, new_mask);
-        break;
-    case FSDMMC_DMA_BD_INTR:
-        FSDMMC_WRITE_REG(base_addr, FSDMMC_BD_ISR_EN_REG_OFFSET, new_mask);
-        break;
-    default:
-        FASSERT(0);
-        break;
+        case FSDMMC_CMD_INTR:
+            FSDMMC_WRITE_REG(base_addr, FSDMMC_NORMAL_INT_EN_REG_OFFSET, new_mask);
+            break;
+        case FSDMMC_ERROR_INTR:
+            FSDMMC_WRITE_REG(base_addr, FSDMMC_ERROR_INT_EN_REG_OFFSET, new_mask);
+            break;
+        case FSDMMC_DMA_BD_INTR:
+            FSDMMC_WRITE_REG(base_addr, FSDMMC_BD_ISR_EN_REG_OFFSET, new_mask);
+            break;
+        default:
+            FASSERT(0);
+            break;
     }
 
     return;
@@ -145,17 +150,20 @@ void FSdmmcCmdInterrupHandler(s32 vector, void *param)
 
     if (status & FSDMMC_NORMAL_INT_STATUS_CR) /* 卡移除中断 */
     {
-        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_CARD_REMOVED], instance_p);
+        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_CARD_REMOVED],
+                             instance_p->evt_args[FSDMMC_EVT_CARD_REMOVED]);
     }
 
     if (status & FSDMMC_NORMAL_INT_STATUS_CC) /* 命令完成中断 */
     {
-        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_CMD_DONE], instance_p);
+        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_CMD_DONE],
+                             instance_p->evt_args[FSDMMC_EVT_CMD_DONE]);
     }
 
     if (status & FSDMMC_NORMAL_INT_STATUS_EI) /* 命令错误中断 */
     {
-        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_CMD_ERROR], instance_p);
+        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_CMD_ERROR],
+                             instance_p->evt_args[FSDMMC_EVT_CMD_ERROR]);
     }
 
     FSdmmcClearNormalInterruptStatus(base_addr);
@@ -181,12 +189,14 @@ void FSdmmcDmaInterrupHandler(s32 vector, void *param)
 
     if (status & FSDMMC_BD_ISR_REG_DAIS) /* DMA 错误中断 */
     {
-        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_DATA_ERROR], instance_p);
+        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_DATA_ERROR],
+                             instance_p->evt_args[FSDMMC_EVT_DATA_ERROR]);
     }
 
     if (status & FSDMMC_BD_ISR_REG_RESPE) /* 读 SD 卡操作，AXI BR 通道完成中断 */
     {
-        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_DATA_READ_DONE], instance_p);
+        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_DATA_READ_DONE],
+                             instance_p->evt_args[FSDMMC_EVT_DATA_READ_DONE]);
     }
 
     if (status & FSDMMC_BD_ISR_REG_DATFRAX) /* AXI 总线强制释放中断*/
@@ -216,7 +226,8 @@ void FSdmmcDmaInterrupHandler(s32 vector, void *param)
 
     if (status & FSDMMC_BD_ISR_REG_TRS) /* DMA 传输完成中断*/
     {
-        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_DATA_WRITE_DONE], instance_p);
+        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_DATA_WRITE_DONE],
+                             instance_p->evt_args[FSDMMC_EVT_DATA_WRITE_DONE]);
     }
 
     FSdmmcClearBDInterruptStatus(base_addr);
@@ -241,7 +252,8 @@ void FSdmmcErrInterrupHandler(s32 vector, void *param)
 
     if (status & FSDMMC_ERROR_INT_STATUS_CNR) /* 命令响应错误中断 */
     {
-        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_CMD_RESP_ERROR], instance_p);
+        FSdmmcCallEvtHandler(instance_p->evt_handler[FSDMMC_EVT_CMD_RESP_ERROR],
+                             instance_p->evt_args[FSDMMC_EVT_CMD_RESP_ERROR]);
     }
 
     if (status & FSDMMC_ERROR_INT_STATUS_CIR) /* 命令索引错误中断 */
@@ -273,10 +285,11 @@ void FSdmmcErrInterrupHandler(s32 vector, void *param)
  * @note 此函数用于设置FSDMMC中断时注册，被注册的函数被FSdmmcCmdInterrupHandler、FSdmmcErrInterrupHandler
  * 和FSdmmcDmaInterrupHandler调用
  */
-void FSdmmcRegisterInterruptHandler(FSdmmc *instance_p, u32 event, FSdmmcEventHandler handler)
+void FSdmmcRegisterInterruptHandler(FSdmmc *instance_p, u32 event, FSdmmcEventHandler handler, void *args)
 {
     FASSERT(instance_p);
     instance_p->evt_handler[event] = handler;
+    instance_p->evt_args[event] = args;
 }
 
 /**
@@ -295,7 +308,7 @@ FError FSdmmcInterruptTransfer(FSdmmc *instance_p, FSdmmcCmd *cmd_data_p)
 
     if (FALSE == FSdmmcCheckIfCardExists(base_addr))
     {
-        FSDMMC_ERROR("card not found !!! fsdio ctrl base 0x%x", base_addr);
+        FSDMMC_ERROR("Card not found !!! fsdio ctrl base 0x%x", base_addr);
         return FSDMMC_ERR_CARD_NO_FOUND;
     }
 
