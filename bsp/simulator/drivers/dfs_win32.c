@@ -358,7 +358,7 @@ static int dfs_win32_getdents(struct dfs_file *file, struct dirent *dirp, rt_uin
         {
             char* old_start = wdirp->start;
             long name_len = strlen(wdirp->finddata.name) + 1;
-            wdirp->start = realloc(wdirp->start, wdirp->end - wdirp->start + name_len);
+            wdirp->start = (WINDIR *)realloc(wdirp->start, wdirp->end - wdirp->start + name_len);
             wdirp->curr = wdirp->start + (wdirp->curr - old_start);
             wdirp->end = wdirp->curr + name_len;
             rt_strcpy(wdirp->curr, wdirp->finddata.name);
