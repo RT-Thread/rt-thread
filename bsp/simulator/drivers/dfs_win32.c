@@ -180,7 +180,7 @@ static int dfs_win32_open(struct dfs_file *file)
         strcat(file_path, "*.*");
         /* _findfirst will get '.' */
         /* save this pointer,will used by  dfs_win32_getdents*/
-        wdirp = rt_malloc(sizeof(WINDIR));
+        wdirp = (WINDIR *)rt_malloc(sizeof(WINDIR));
         RT_ASSERT(wdirp != NULL);
         if ((handle = _findfirst(file_path, &wdirp->finddata)) == -1)
         {
