@@ -896,7 +896,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 
         case RT_THREAD_CTRL_CLOSE:
         {
-            rt_err_t rt_err;
+            rt_err_t rt_err=RT_EOK;
 
             if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
             {
