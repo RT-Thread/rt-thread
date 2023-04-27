@@ -255,9 +255,6 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_CAN1
                     bool "Using CAN1"
                     default n
-                config BSP_USING_CAN2
-                    bool "Using CAN2"
-                    default n
             endif
 
     config BSP_USING_TIM
