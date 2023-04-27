@@ -3,7 +3,6 @@ config ENABLE_FSDMMC
     prompt "Use FSdmmc"
     default n
     depends on USE_SDMMC
-    depends on TARGET_F2000_4 || TARGET_D2000
     help
         Select FSdmmc driver component
 
@@ -12,8 +11,7 @@ config ENABLE_FSDIO
     prompt "Use FSdio"
     default n
     depends on USE_SDMMC
-    depends on TARGET_E2000S || TARGET_E2000D || TARGET_E2000Q
     help
         Select FSdio driver component
-
-
+	
+	

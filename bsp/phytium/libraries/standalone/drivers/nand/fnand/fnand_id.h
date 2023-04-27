@@ -14,22 +14,28 @@
  * FilePath: fnand_id.h
  * Date: 2022-07-06 14:19:15
  * LastEditTime: 2022-07-06 14:19:15
- * Description:  This file is for
+ * Description:  This file is for functions in this file are the read id required functions
+ * for this driver. 
  *
  * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 
-#ifndef DRIVERS_NAND_DRIVER_FNAND
-#define DRIVERS_NAND_DRIVER_FNAND
+#ifndef FNAND_ID_H
+#define FNAND_ID_H
 
 
 #include "ftypes.h"
 #include "fnand.h"
 
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 
 struct FNandManuFacturerOps
@@ -49,5 +55,8 @@ typedef struct
 
 FError FNandDetect(FNand *instance_p);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

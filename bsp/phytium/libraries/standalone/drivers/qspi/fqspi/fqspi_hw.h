@@ -14,12 +14,14 @@
  * FilePath: fqspi_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:00:23
- * Description:  This files is for
+ * Description:  This files is for the qspi register related definition
  *
  * Modify History:
- *  Ver   Who        Date         Changes
- * ----- ------     --------    --------------------------------------
- * 1.1    wangxiaodong  2021.11.12  re-construct
+ *  Ver   Who        Date        Changes
+ * ----- ------      --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/3/29  first release
+ * 1.1   wangxiaodong  2022/9/9   improve functions
+ * 1.2   zhangyan      2022/12/7  improve functions
  */
 
 #ifndef BSP_DRIVERS_FQSPI_HW_H
@@ -49,22 +51,22 @@ extern "C"
 
 /* FQSPI_CAP */
 #define FQSPI_CAP_FLASH_NUM(data)   ((data) << 3) /* Flash number */
-#define FQSPI_CAP_FLASH_CAP(data)   ((data) << 0) /*  The flash capacity */
+#define FQSPI_CAP_FLASH_CAP(data)   ((data) << 0) /* The flash capacity */
 
 #define FQSPI_CAP_FLASH_NUM_MASK   GENMASK(4, 3)
 #define FQSPI_CAP_FLASH_CAP_MASK   GENMASK(2, 0)
 
 /* RD_CFG */
-#define FQSPI_RD_CFG_CMD(data)          ((data) << 24)       /* Read Command */
-#define FQSPI_RD_CFG_THROUGH(data)      ((data) << 23)   /* The programming flag in the status register */
+#define FQSPI_RD_CFG_CMD(data)          ((data) << 24)  /* Read Command */
+#define FQSPI_RD_CFG_THROUGH(data)      ((data) << 23)  /* The programming flag in the status register */
 #define FQSPI_RD_CFG_TRANSFER(data)     ((data) << 20)  /* rd_tranfer region */
 #define FQSPI_RD_CFG_ADDR_SEL(data)     ((data) << 19)  /* rd_addr_sel region*/
-#define FQSPI_RD_CFG_LATENCY(data)      ((data) << 18)   /* rd_latency region*/
-#define FQSPI_RD_CFG_MODE_BYTE(data)    ((data) << 17) /* mode byte region*/
+#define FQSPI_RD_CFG_LATENCY(data)      ((data) << 18)  /* rd_latency region*/
+#define FQSPI_RD_CFG_MODE_BYTE(data)    ((data) << 17)  /* mode byte region*/
 #define FQSPI_RD_CFG_CMD_SIGN(data)     ((data) << 9)   /* cmd_sign region*/
-#define FQSPI_RD_CFG_DUMMY(data)        ((data-1) << 4)      /* dummy region*/
+#define FQSPI_RD_CFG_DUMMY(data)        ((data-1) << 4) /* dummy region*/
 #define FQSPI_RD_CFG_D_BUFFER(data)     ((data) << 3)   /* d_buffer region*/
-#define FQSPI_RD_CFG_SCK_SEL(data)      ((data) << 0)    /* rd_sck_sel region*/
+#define FQSPI_RD_CFG_SCK_SEL(data)      ((data) << 0)   /* rd_sck_sel region*/
 
 #define FQSPI_RD_CFG_CMD_MASK        GENMASK(31, 24)
 #define FQSPI_RD_CFG_SCK_SEL_MASK    GENMASK(2, 0)
@@ -131,7 +133,6 @@ extern "C"
 #define FQSPI_QUAD_READ_MODE_ENABLE     0xF0A0 /* enable FLASH XIP MODE */
 #define FQSPI_QUAD_READ_MODE_DISABLE    0xF0BF /* disable FLASH XIP MODE */
 #define FQSPI_QUAD_READ_MODE_CMD        0xA0  /* FLASH XIP MODE CMD SIGN */
-
 
 typedef enum
 {

@@ -14,11 +14,13 @@
  * FilePath: fgmac_g.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for configuration table that specifies the configuration of
+ * ethernet devices .
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
 /*  - This file contains a configuration table that specifies the configuration
@@ -28,29 +30,32 @@
 
 #include "fparameters.h"
 #include "fgmac.h"
+#include "fgmac_phy.h"
 
 /************************** Constant Definitions *****************************/
 
-const FGmacConfig FGMAC_CONFIG_TBL[GMAC_INSTANCE_NUM] =
+const FGmacConfig FGMAC_CONFIG_TBL[FGMAC_NUM] =
 {
-    [GMAC_INSTANCE_0] =
+    [FGMAC0_ID] =
     {
-        .instance_id  = GMAC_INSTANCE_0,
-        .base_addr = GMAC_INSTANCE_0_BASE_ADDR,
-        .irq_num = GMAC_INSTANC_0_IRQ,
+        .instance_id  = FGMAC0_ID,
+        .base_addr = FGMAC0_BASE_ADDR,
+        .irq_num = FGMAC0_IRQ_NUM,
         .irq_prority = 0,
         .cheksum_mode = FGMAC_CHECKSUM_BY_SOFTWARE,
-        .max_packet_size = GMAC_MAX_PACKET_SIZE
+        .max_packet_size = FGMAC_MAX_PACKET_SIZE,
+        .mdc_clk_hz = FGMAC_PHY_MII_ADDR_CR_250_300MHZ,
     },
 
-    [GMAC_INSTANCE_1] =
+    [FGMAC1_ID] =
     {
-        .instance_id  = GMAC_INSTANCE_1,
-        .base_addr = GMAC_INSTANCE_1_BASE_ADDR,
-        .irq_num = GMAC_INSTANC_1_IRQ,
+        .instance_id  = FGMAC1_ID,
+        .base_addr = FGMAC1_BASE_ADDR,
+        .irq_num =  FGMAC1_IRQ_NUM,
         .irq_prority = 0,
         .cheksum_mode = FGMAC_CHECKSUM_BY_SOFTWARE,
-        .max_packet_size = GMAC_MAX_PACKET_SIZE
+        .max_packet_size = FGMAC_MAX_PACKET_SIZE,
+        .mdc_clk_hz = FGMAC_PHY_MII_ADDR_CR_250_300MHZ,
     }
 };
 

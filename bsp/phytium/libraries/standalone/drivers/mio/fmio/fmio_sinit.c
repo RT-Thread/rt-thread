@@ -14,12 +14,12 @@
  * FilePath: fmio_sinit.c
  * Date: 2022-06-20 20:33:25
  * LastEditTime: 2022-06-20 20:33:25
- * Description:  This file is for mio
+ * Description:  This file is for mio static initialization functionality
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 0.1.0  liushengming  2022.06.20  init
+ * 1.0  liushengming  2022/06/20  first commit
  */
 #include "ftypes.h"
 #include "fparameters.h"
@@ -28,7 +28,7 @@
 #include "fmio_hw.h"
 
 
-extern FMioConfig FMioConfigTbl[MIO_INSTANCE_NUM];
+extern FMioConfig FMioConfigTbl[FMIO_NUM];
 
 /***************** Macros (Inline Functions) Definitions *********************/
 #define FMIO_DEBUG_TAG "MIO"
@@ -44,11 +44,11 @@ extern FMioConfig FMioConfigTbl[MIO_INSTANCE_NUM];
  */
 const FMioConfig *FMioLookupConfig(u32 instance_id)
 {
-    FASSERT(instance_id < MIO_INSTANCE_NUM);
+    FASSERT(instance_id < FMIO_NUM);
     const FMioConfig *pconfig = NULL;
     u32 index;
 
-    for (index = 0; index < (u32)MIO_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FMIO_NUM; index++)
     {
         if (FMioConfigTbl[index].instance_id == instance_id)
         {

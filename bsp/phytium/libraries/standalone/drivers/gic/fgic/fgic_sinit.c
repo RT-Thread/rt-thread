@@ -14,12 +14,15 @@
  * FilePath: fgic_sinit.c
  * Date: 2022-03-30 15:00:29
  * LastEditTime: 2022-03-30 15:00:29
- * Description:  This file is for
+ * Description: This file is for gic static variables implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
+
+
 #include "fgic.h"
 
 extern FGicConfig fgic_config[FGIC_NUM];

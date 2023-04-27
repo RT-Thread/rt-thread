@@ -150,7 +150,7 @@ typedef enum
 - 获取Fata控制器默认配置
 
 ```c
-const FPwmConfig *FPwmLookupConfig(FPwmInstance instance_id);
+const FPwmConfig *FPwmLookupConfig(u32 instance_id);
 ```
 
 Note:
@@ -159,7 +159,7 @@ Note:
 
 Input:
 
-- {FPwmInstance} instance_id，pwm控制器id号
+- {u32} instance_id，pwm控制器id号
 
 Return:
 

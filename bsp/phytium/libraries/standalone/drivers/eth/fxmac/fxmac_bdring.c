@@ -14,11 +14,12 @@
  * FilePath: fxmac_bdring.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file implements buffer descriptor ring related functions.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
 #include "fxmac_hw.h"
@@ -49,13 +50,13 @@ static void FXmacBdSetTxWrap(uintptr bdptr);
 #define FXMAC_RING_SEEKAHEAD(ring_ptr, bdptr, num_bd)                               \
     {                                                                               \
         uintptr addr = (uintptr)(void *)(bdptr);                                    \
-                                                                                    \
+        \
         addr += ((ring_ptr)->separation * (num_bd));                                \
         if ((addr > (ring_ptr)->high_bd_addr) || ((uintptr)(void *)(bdptr) > addr)) \
         {                                                                           \
             addr -= (ring_ptr)->length;                                             \
         }                                                                           \
-                                                                                    \
+        \
         (bdptr) = (FXmacBd *)(void *)addr;                                          \
     }
 
@@ -72,13 +73,13 @@ static void FXmacBdSetTxWrap(uintptr bdptr);
 #define FXMAC_RING_SEEKBACK(ring_ptr, bdptr, num_bd)                                \
     {                                                                               \
         uintptr addr = (uintptr)(void *)(bdptr);                                    \
-                                                                                    \
+        \
         addr -= ((ring_ptr)->separation * (num_bd));                                \
         if ((addr < (ring_ptr)->base_bd_addr) || ((uintptr)(void *)(bdptr) < addr)) \
         {                                                                           \
             addr += (ring_ptr)->length;                                             \
         }                                                                           \
-                                                                                    \
+        \
         (bdptr) = (FXmacBd *)(void *)addr;                                          \
     }
 
@@ -700,15 +701,7 @@ u32 FXmacBdRingFromHwRx(FXmacBdRing *ring_ptr, u32 bd_limit,
 
             /* Move on to next BD in work group */
             cur_bd_ptr = FXMAC_BD_RING_NEXT(ring_ptr, cur_bd_ptr);
-            // if((bd_str & FXMAC_RXBUF_EOF_MASK) != 0x00000000U)
-            // {
-            //     if(bd_str &FXMAC_RXBUF_FCS_STATUS_MASK)
-            //     {
-            //         f_printk("********** error fcs data is appear ************* \r\n");
-            //         FtDumpHexWord(FXMAC_BD_READ(cur_bd_ptr,0) &(0xfffffff8),bd_str&FXMAC_RXBUF_LEN_MASK);
-            //         f_printk("********** end ************* \r\n");
-            //     }
-            // }
+
         }
 
         /* Subtract off any partial packet BDs found */
@@ -860,7 +853,7 @@ FError FXmacBdRingCheck(FXmacBdRing *ring_ptr, u8 direction)
 
     /* Verify internal counters add up */
     if ((ring_ptr->hw_cnt + ring_ptr->pre_cnt + ring_ptr->free_cnt +
-            ring_ptr->post_cnt) != ring_ptr->all_cnt)
+         ring_ptr->post_cnt) != ring_ptr->all_cnt)
     {
         return (FError)(FXMAC_ERR_SG_LIST);
     }

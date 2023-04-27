@@ -38,7 +38,15 @@ config PHYTIUM_ARCH_AARCH64
     select RT_USING_USER_MAIN
     select ARCH_CPU_64BIT
     select TARGET_ARMV8_AARCH64
+    select ARCH_ARM_BOOTWITH_FLUSH_CACHE
     default y
+    
+
+if TARGET_E2000
+    config ARM_SPI_BIND_CPU_ID
+        int 
+        default 2
+endif
 
 menu "Standalone Setting"
     config TARGET_ARMV8_AARCH64

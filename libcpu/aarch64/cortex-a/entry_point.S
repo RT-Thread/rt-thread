@@ -117,20 +117,23 @@ __start:
 .L__jump_to_entry:          /* jump to C code, should not return */        
     bl mmu_tcr_init
 
-    adr x1, __start         /* install early page table */
-    ldr x0, =~0x1fffff
+    adr x1, __start         /* 0x40080000  */  /* install early page table */
+    ldr x0, =~0x1fffff      /*  */
     and x0, x1, x0
-    add x1, x0, #0x1000
+    add x1, x0, #0x1000     /* ttbl1 0x40000000 */ /*ttbl0 0x40001000 */
 
-    msr ttbr0_el1, x0
-    msr ttbr1_el1, x1
+    msr ttbr0_el1, x0       /* 0x40000000 */
+    msr ttbr1_el1, x1       /* 0x40001000 */
     dsb sy
 
 #ifdef RT_USING_SMART
     ldr     x2, =__start
     GET_PHY x3, __start
     sub     x3, x3, x2
+#else
+    mov     x3,0
 #endif
+    
     ldr x2, =0x40000000     /* map 1G memory for kernel space */
     bl rt_hw_mem_setup_early
 

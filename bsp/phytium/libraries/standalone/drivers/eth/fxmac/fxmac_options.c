@@ -14,16 +14,18 @@
  * FilePath: fxmac_options.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for options functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
 #include "fxmac_hw.h"
 #include "fxmac.h"
 #include "fassert.h"
+#include "ftypes.h"
 
 
 /**
@@ -637,7 +639,7 @@ FError FXmacPhyWrite(FXmac *instance_p, u32 phy_address,
     /* Make sure no other PHY operation is currently in progress */
     if ((!(FXMAC_READREG32(instance_p->config.base_address,
                            FXMAC_NWSR_OFFSET) &
-            FXMAC_NWSR_MDIOIDLE_MASK)) == TRUE)
+           FXMAC_NWSR_MDIOIDLE_MASK)) == TRUE)
     {
         status = (FError)(FXMAC_ERR_PHY_BUSY);
     }
@@ -713,7 +715,7 @@ FError FXmacPhyRead(FXmac *instance_p, u32 phy_address,
     /* Make sure no other PHY operation is currently in progress */
     if ((!(FXMAC_READREG32(instance_p->config.base_address,
                            FXMAC_NWSR_OFFSET) &
-            FXMAC_NWSR_MDIOIDLE_MASK)) == TRUE)
+           FXMAC_NWSR_MDIOIDLE_MASK)) == TRUE)
     {
         status = (FError)(FXMAC_ERR_PHY_BUSY);
     }
@@ -742,4 +744,20 @@ FError FXmacPhyRead(FXmac *instance_p, u32 phy_address,
         status = (FError)(FT_SUCCESS);
     }
     return status;
+}
+
+boolean FXmacUsxLinkStatus(FXmac *instance_p)
+{
+    u32 reg = 0;
+    FASSERT(instance_p != NULL);
+
+    reg = FXMAC_READREG32(instance_p->config.base_address, FXMAC_GEM_USX_STATUS_OFFSET);
+    if (reg & FXMAC_GEM_USX_STATUS_BLOCK_LOCK)
+    {
+        return TRUE;
+    }
+    else
+    {
+        return FALSE;
+    }
 }

@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include <string.h>
@@ -73,12 +73,18 @@ void *FXhciAlign(FXhci *const xhci, const size_t min_align, const size_t size)
     FUsb *instance = xhci->usb;
 
     if (!(size & (size - 1)))
-        align = size; /* It's a power of 2 */
+    {
+        align = size;    /* It's a power of 2 */
+    }
     else
+    {
         align = 1 << ((sizeof(unsigned) << 3) - __builtin_clz(size));
+    }
 
     if (align < min_align)
+    {
         align = min_align;
+    }
 
     return FUSB_ALLOCATE(instance, size, align);
 }
@@ -91,12 +97,18 @@ void *FXhciAlignTag(FXhci *const xhci, const size_t min_align, const size_t size
     FUsb *instance = xhci->usb;
 
     if (!(size & (size - 1)))
-        align = size; /* It's a power of 2 */
+    {
+        align = size;    /* It's a power of 2 */
+    }
     else
+    {
         align = 1 << ((sizeof(unsigned) << 3) - __builtin_clz(size));
+    }
 
     if (align < min_align)
+    {
         align = min_align;
+    }
 
     return FUsbMempAllocateTag(instance, size, align, file, line, msg);
 }
@@ -163,12 +175,12 @@ static FError FXhciHandShake(FXhci *xhci, FXhciHandShakeType type, uintptr reg_o
 
     switch (type)
     {
-    case FXHCI_OP_REG:
-        ret = FXhciWaitOper32(&xhci->mmio, reg_off, mask, wait_for, timeout);
-        break;
-    default:
-        FASSERT(0);
-        break;
+        case FXHCI_OP_REG:
+            ret = FXhciWaitOper32(&xhci->mmio, reg_off, mask, wait_for, timeout);
+            break;
+        default:
+            FASSERT(0);
+            break;
     }
 
     return ret;
@@ -183,13 +195,17 @@ static FError FXhciHandShake(FXhci *xhci, FXhciHandShakeType type, uintptr reg_o
 static FError FXhciWaitReady(FXhci *const xhci)
 {
     FASSERT(xhci);
-    FUSB_INFO("Waiting for controller to be ready... ");
+    FUSB_INFO("Waiting for controller to be ready.");
     FError ret = FXhciHandShake(xhci, FXHCI_OP_REG, FXHCI_REG_OP_USBSTS, FXHCI_REG_OP_USBSTS_CNR, 0, FXHCI_TIMEOUT);
 
     if (FUSB_SUCCESS == ret)
-        FUSB_INFO("ok");
+    {
+        FUSB_INFO("Waiting for controller success.");
+    }
     else
-        FUSB_ERROR("timeout.");
+    {
+        FUSB_ERROR("Waiting for controller timeout.");
+    }
 
     return ret;
 }
@@ -210,12 +226,12 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
     u16 hc_version;
     uintptr xhci_base_addr =  base_addr + FUSB3_XHCI_OFFSET;
 
-    FUSB_DEBUG("xhci base addr: 0x%x", xhci_base_addr);
+    FUSB_DEBUG("Xhci base addr: 0x%x.", xhci_base_addr);
     /* First, allocate and initialize static controller structures */
     FUsbHc *const controller = FUsbAllocateHc(instance);
     if (NULL == controller)
     {
-        FUSB_ERROR("Out of memory ");
+        FUSB_ERROR("Out of memory.");
         return NULL;
     }
 
@@ -241,7 +257,7 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
     controller->instance = FUSB_ALLOCATE(instance, sizeof(FXhci), FUSB_DEFAULT_ALIGN);
     if (NULL == controller->instance)
     {
-        FUSB_INFO("Out of memory ");
+        FUSB_INFO("Out of memory.");
         goto _free_controller;
     }
 
@@ -261,9 +277,9 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
     xhci->er.ring = FXHCI_ALIGN(xhci, 64, FXHCI_EVENT_RING_SIZE * sizeof(FXhciTrb));
     xhci->ev_ring_table = FXHCI_ALIGN(xhci, 64, sizeof(FXhciErstEntry));
     if ((NULL == xhci->roothub) || (NULL == xhci->cr.ring) ||
-            (NULL == xhci->er.ring) || (NULL == xhci->ev_ring_table))
+        (NULL == xhci->er.ring) || (NULL == xhci->ev_ring_table))
     {
-        FUSB_INFO("Out of memory ");
+        FUSB_INFO("Out of memory.");
         goto _free_xhci;
     }
 
@@ -275,7 +291,7 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
     hc_version = FXhciReadHcVersion(mmio);
     if (hc_version < FXHCI_HC_VERSION_MIN || hc_version > FXHCI_HC_VERSION_MAX)
     {
-        FUSB_ERROR("xHCI version 0x%x not support", hc_version);
+        FUSB_ERROR("Xhci version 0x%x not support.", hc_version);
         goto _free_xhci;
     }
 
@@ -304,7 +320,7 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
     xhci->dev = FUSB_ALLOCATE(instance, (xhci->max_slots_en + 1) * sizeof(*xhci->dev), FUSB_DEFAULT_ALIGN);
     if ((NULL == xhci->dcbaa) || (NULL == xhci->dev))
     {
-        FUSB_INFO("Out of memory ");
+        FUSB_INFO("Out of memory.");
         goto _free_xhci;
     }
 
@@ -314,17 +330,17 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
      */
     reg_val = FXhciReadCap32(&xhci->mmio, FXHCI_REG_CAP_HCSPARAMS2);
     const size_t max_sp_bufs = FXHCI_REG_CAP_HCSPARAMS2_MAX_SCRATCHPAD_BUFS_GET(reg_val);
-    FUSB_INFO("max scratchpad bufs: 0x%lx reg_val : 0x%x", max_sp_bufs, reg_val);
+    FUSB_INFO("Max scratchpad bufs: 0x%lx reg_val : 0x%x.", max_sp_bufs, reg_val);
     if (0 < max_sp_bufs)
     {
-        FUSB_INFO("allocate sp_ptrs");
+        FUSB_INFO("Allocate sp_ptrs.");
         const size_t sp_ptrs_size = max_sp_bufs * sizeof(u64);
         /* allocate scratchpad bufs entry to preserve pointers of scratchpad buf */
         FASSERT(NULL == xhci->sp_ptrs);
         xhci->sp_ptrs = FXHCI_ALIGN(xhci, 64, sp_ptrs_size);
         if (NULL == xhci->sp_ptrs)
         {
-            FUSB_INFO("Out of memory ");
+            FUSB_INFO("Out of memory.");
             goto _free_xhci_structs;
         }
 
@@ -334,7 +350,7 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
             void *const page = FUSB_ALLOCATE(instance, pagesize, pagesize);
             if (NULL == page)
             {
-                FUSB_INFO("Out of memory ");
+                FUSB_INFO("Out of memory.");
                 goto _free_xhci_structs;
             }
 
@@ -346,7 +362,9 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
 
     /* Now start working on the hardware */
     if (FUSB_SUCCESS != FXhciWaitReady(xhci))
+    {
         goto _free_xhci_structs;
+    }
 
     /* TODO: Check if BIOS claims ownership (and hand over) */
 
@@ -362,7 +380,7 @@ FUsbHc *FXhciHcInit(FUsb *instance, uintptr base_addr)
     xhci->roothub->init = FXhciRootHubInit;
     xhci->roothub->init(xhci->roothub);
 
-    FUSB_INFO("init xHc@%p success", controller);
+    FUSB_INFO("Init xhc@%p success.", controller);
     return controller;
 
 _free_xhci_structs:
@@ -371,7 +389,9 @@ _free_xhci_structs:
         for (i = 0; (size_t)i < max_sp_bufs; ++i)
         {
             if (xhci->sp_ptrs[i])
+            {
                 FUSB_FREE(instance, (void *)(uintptr)(xhci->sp_ptrs[i]));
+            }
         }
     }
     FUSB_FREE(instance, xhci->sp_ptrs);
@@ -439,7 +459,9 @@ static void FXhciReinit(FUsbHc *controller)
 
     /* wait xhci ready */
     if (FUSB_SUCCESS != FXhciWaitReady(xhci))
+    {
         return;
+    }
 
     /* Enable all available slots */
     reg_val = FXhciReadOper32(&xhci->mmio, FXHCI_REG_OP_CONFIG);
@@ -496,10 +518,10 @@ static void FXhciReinit(FUsbHc *controller)
     /* run Cmd Nop to test if command ring okay */
     for (int i = 0; i < 3; ++i)
     {
-        FUSB_INFO("NOOP run #%d ", i);
+        FUSB_INFO("Noop run #%d .", i);
         if (FXHCI_CC_SUCCESS != FXhciCmdNop(xhci))
         {
-            FUSB_ERROR("noop command failed. ");
+            FUSB_ERROR("Noop command failed. ");
             break;
         }
     }
@@ -519,7 +541,9 @@ static void FXhciShutdown(FUsbHc *const controller)
     u32 reg_val;
 
     if (controller == NULL)
+    {
         return;
+    }
 
     /* detach the Hc instance */
     FUsbDetachHc(controller);
@@ -537,7 +561,9 @@ static void FXhciShutdown(FUsbHc *const controller)
         for (i = 0; (size_t)i < max_sp_bufs; ++i)
         {
             if (NULL != (void *)(uintptr)xhci->sp_ptrs[i])
+            {
                 FUSB_FREE(instance, (void *)(uintptr)(xhci->sp_ptrs[i]));
+            }
         }
     }
 
@@ -630,7 +656,7 @@ static FError FXhciResetEp(FUsbDev *const dev, FUsbEndpoint *const ep)
         const FXhciTransCode cc = FXhciCmdResetEp(xhci, slot_id, ep_id);
         if (cc != FXHCI_CC_SUCCESS)
         {
-            FUSB_INFO("Reset Endpoint Command failed: %d ", cc);
+            FUSB_INFO("Reset endpoint command failed: %d .", cc);
             return FUSB_ERR_TRANS_FAIL;
         }
     }
@@ -638,7 +664,7 @@ static FError FXhciResetEp(FUsbDev *const dev, FUsbEndpoint *const ep)
     /* Clear TT buffer for bulk and control endpoints behind a TT */
     const int hub = dev->hub;
     if (hub && dev->speed < FUSB_HIGH_SPEED &&
-            dev->controller->devices[hub]->speed == FUSB_HIGH_SPEED)
+        dev->controller->devices[hub]->speed == FUSB_HIGH_SPEED)
     {
         /* TODO */;
     }
@@ -653,7 +679,7 @@ static FError FXhciResetEp(FUsbDev *const dev, FUsbEndpoint *const ep)
                                   tr->ring, 1);
         if (cc != FXHCI_CC_SUCCESS)
         {
-            FUSB_INFO("Set TR Dequeue Command failed: %d ", cc);
+            FUSB_INFO("Set TR dequeue command failed: %d .", cc);
             return FUSB_ERR_TRANS_FAIL;
         }
 
@@ -682,7 +708,7 @@ static void FXhciEnqueueTrb(FXhciTransRing *const tr)
 
     while (FXHCI_TRB_GET(TT, tr->cur) == FXHCI_TRB_LINK)
     {
-        FUSB_DEBUG("Handling LINK pointer ");
+        FUSB_DEBUG("Handling link pointer. ");
 
         const int tc = FXHCI_TRB_GET(TC, tr->cur);
         FXHCI_TRB_SET(CH, tr->cur, chain); /* Chain Bit */
@@ -694,7 +720,9 @@ static void FXhciEnqueueTrb(FXhciTransRing *const tr)
 
         /* toggle cycle state */
         if (tc)
+        {
             tr->pcs ^= 1;
+        }
     }
 
     return;
@@ -955,7 +983,7 @@ static FXhciTransCode FXhciBulk(FUsbEndpoint *const ep, const int size, u8 *cons
     const size_t off = (size_t)data & 0xffff;
     if ((off + size) > ((FXHCI_TRANSFER_RING_SIZE - 2) << 16))
     {
-        FUSB_INFO("Unsupported transfer size ");
+        FUSB_INFO("Unsupported transfer size .");
         return FXHCI_CC_GENERAL_ERROR;
     }
 
@@ -964,7 +992,9 @@ static FXhciTransCode FXhciBulk(FUsbEndpoint *const ep, const int size, u8 *cons
     if (ep_state > FXHCI_EC_STATE_RUNNING)
     {
         if (FUSB_SUCCESS != FXhciResetEp(ep->dev, ep))
+        {
             return FXHCI_CC_GENERAL_ERROR;
+        }
     }
 
     FCacheDCacheInvalidateRange((uintptr)data, size);
@@ -1014,7 +1044,9 @@ static FXhciTrb *FXhciNextTrb(FXhciTrb *cur, int *const pcs)
     while (FXHCI_TRB_GET(TT, cur) == FXHCI_TRB_LINK)
     {
         if (pcs && FXHCI_TRB_GET(TC, cur))
+        {
             *pcs ^= 1;
+        }
 
         cur = (void *)(uintptr)(cur->ptr_low);
     }
@@ -1047,20 +1079,20 @@ static void *FXhciCreateIntrQueue(FUsbEndpoint *const ep, const int reqsize, con
 
     if (reqcount > (FXHCI_TRANSFER_RING_SIZE - 2))
     {
-        FUSB_INFO("reqcount is too high, at most %d supported ",
+        FUSB_INFO("Reqcount is too high, at most %d supported .",
                   FXHCI_TRANSFER_RING_SIZE - 2);
         return NULL;
     }
 
     if (reqsize > 0x10000)
     {
-        FUSB_INFO("reqsize is too large, at most 64KiB supported ");
+        FUSB_INFO("Reqsize is too large, at most 64KiB supported .");
         return NULL;
     }
 
     if (xhci->dev[slot_id].interrupt_queues[ep_id])
     {
-        FUSB_INFO("Only one interrupt queue per endpoint supported ");
+        FUSB_INFO("Only one interrupt queue per endpoint supported .");
         return NULL;
     }
 
@@ -1068,7 +1100,7 @@ static void *FXhciCreateIntrQueue(FUsbEndpoint *const ep, const int reqsize, con
     FXhciIntrQ *const intrq = FUSB_ALLOCATE(instance, sizeof(*intrq), FUSB_DEFAULT_ALIGN);
     if (NULL == intrq)
     {
-        FUSB_INFO("Out of memory ");
+        FUSB_INFO("Out of memory.");
         return NULL;
     }
 
@@ -1079,7 +1111,7 @@ static void *FXhciCreateIntrQueue(FUsbEndpoint *const ep, const int reqsize, con
     {
         if (FXHCI_TRB_GET(C, cur) == (unsigned int)pcs)
         {
-            FUSB_INFO("Not enough empty TRBs ");
+            FUSB_INFO("Not enough empty TRBs .");
             goto _free_return;
         }
 
@@ -1087,7 +1119,7 @@ static void *FXhciCreateIntrQueue(FUsbEndpoint *const ep, const int reqsize, con
         void *const reqdata = FXHCI_ALIGN(xhci, 1, reqsize);
         if (NULL == reqdata)
         {
-            FUSB_INFO("Out of memory ");
+            FUSB_INFO("Out of memory.");
             goto _free_return;
         }
 
@@ -1112,7 +1144,9 @@ static void *FXhciCreateIntrQueue(FUsbEndpoint *const ep, const int reqsize, con
     /* Now enqueue all the prepared TRBs but the last
        and ring the doorbell. */
     for (i = 0; i < (reqcount - 1); ++i)
+    {
         FXhciEnqueueTrb(tr);
+    }
 
     FXhciRingDoorbell(ep);
     return intrq;
@@ -1152,7 +1186,9 @@ static void FXhciDestoryIntrQueue(FUsbEndpoint *const ep, void *const q)
     {
         const FXhciTransCode cc = FXhciCmdStopEp(xhci, slot_id, ep_id);
         if (cc != FXHCI_CC_SUCCESS)
-            FUSB_INFO("Warning: Failed to stop endpoint ");
+        {
+            FUSB_INFO("Warning: Failed to stop endpoint .");
+        }
     }
 
     /* Process all remaining transfer events */
@@ -1188,7 +1224,9 @@ static void FXhciDestoryIntrQueue(FUsbEndpoint *const ep, void *const q)
 static u8 *FXhciPollIntrQueue(void *const q)
 {
     if (NULL == q)
+    {
         return NULL;
+    }
 
     FXhciIntrQ *const intrq = (FXhciIntrQ *)q;
     FUsbEndpoint *const ep = intrq->ep;
@@ -1224,15 +1262,21 @@ static u8 *FXhciPollIntrQueue(void *const q)
         /* Check if anything was transferred */
         const size_t read = FXHCI_TRB_GET(TL, intrq->next);
         if (!read)
+        {
             reqdata = NULL;
+        }
         else if (read < intrq->size)
             /* At least zero it, poll interface is rather limited */
+        {
             memset(reqdata + read, 0x00, intrq->size - read);
+        }
 
         /* Advance the interrupt queue */
         if (intrq->ready == intrq->next)
             /* This was last TRB being ready */
+        {
             intrq->ready = NULL;
+        }
         intrq->next = FXhciNextTrb(intrq->next, NULL);
     }
 

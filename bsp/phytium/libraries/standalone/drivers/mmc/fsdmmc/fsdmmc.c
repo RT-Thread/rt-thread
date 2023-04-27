@@ -14,7 +14,8 @@
  * FilePath: fsdmmc.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:55:23
- * Description:  This files is for
+ * Description:  This file is for functions in this file are the minimum required functions
+ * for this driver. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -31,7 +32,7 @@
 #include "ftypes.h"
 #include "fdebug.h"
 
-#include "fcache.h"
+
 #include "fsleep.h"
 
 #include "fsdmmc_hw.h"
@@ -83,7 +84,7 @@ FError FSdmmcCfgInitialize(FSdmmc *instance_p, const FSdmmcConfig *input_config_
     */
     if (FT_COMPONENT_IS_READY == instance_p->is_ready)
     {
-        FSDMMC_WARN("device is already initialized!!!");
+        FSDMMC_WARN("Device is already initialized!!!");
     }
 
     /*
@@ -101,7 +102,7 @@ FError FSdmmcCfgInitialize(FSdmmc *instance_p, const FSdmmcConfig *input_config_
     */
     if (!FSdmmcCheckIfCardExists(base_addr))
     {
-        FSDMMC_ERROR("storage device not found !!! 0x%x", base_addr);
+        FSDMMC_ERROR("Storage device not found !!! 0x%x", base_addr);
         return FSDMMC_ERR_CARD_NO_FOUND;
     }
 
@@ -110,7 +111,9 @@ FError FSdmmcCfgInitialize(FSdmmc *instance_p, const FSdmmcConfig *input_config_
     */
     ret = FSdmmcReset(base_addr);
     if (FSDMMC_SUCCESS == ret)
+    {
         instance_p->is_ready = FT_COMPONENT_IS_READY;
+    }
 
     return ret;
 }
@@ -149,14 +152,22 @@ u32 FSdmmcMakeRawCmd(FSdmmcCmd *cmd_p)
     raw_cmd |= FSDMMC_CMD_SETTING_CMDI(cmd_p->cmdidx);
 
     if (cmd_p->flag & FSDMMC_CMD_FLAG_ADTC)
-        raw_cmd |= FSDMMC_CMD_SETTING_TRTY(0b10); /* adtc指令 */
+    {
+        raw_cmd |= FSDMMC_CMD_SETTING_TRTY(0b10);    /* adtc指令 */
+    }
 
     if (0 == (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_RESP))
+    {
         raw_cmd |= FSDMMC_CMD_NO_RESP;
+    }
     else if (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_LONG_RESP)
+    {
         raw_cmd |= FSDMMC_CMD_RESP_136_BIT;
+    }
     else
+    {
         raw_cmd |= FSDMMC_CMD_RESP_48_BIT;
+    }
 
     return raw_cmd;
 }
@@ -175,7 +186,9 @@ static FError FSdmmcWaitCmdEnd(uintptr base_addr, FSdmmcCmd *cmd_p)
 
     ret = FSdmmcWaitStatus(base_addr, FSDMMC_TIMEOUT);
     if (FSDMMC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     if (cmd_p->flag & FSDMMC_CMD_FLAG_EXP_RESP)
     {
@@ -269,22 +282,24 @@ FError FSdmmcSendData(uintptr base_addr, boolean read, FSdmmcCmd *cmd_p)
 
     if ((dat_p->datalen >= FSDMMC_DMA_ADDR_ALIGN) && (dat_p->datalen % FSDMMC_DMA_ADDR_ALIGN != 0))
     {
-        FSDMMC_ERROR("invalid size: total = %d ", dat_p->datalen);
+        FSDMMC_ERROR("Invalid size: total = %d.", dat_p->datalen);
         return FSDMMC_ERR_INVALID_BUF;
     }
 
     if (((uintptr)(dat_p->buf) % FSDMMC_DMA_ADDR_ALIGN) != 0)
     {
-        FSDMMC_ERROR("buffer %p can not be used for DMA", dat_p->buf);
+        FSDMMC_ERROR("Buffer %p can not be used for DMA.", dat_p->buf);
         return FSDMMC_ERR_INVALID_BUF;
     }
 
     card_addr = cmd_p->cmdarg;
     blk_cnt = dat_p->datalen / dat_p->blksz;
     if (dat_p->datalen % dat_p->blksz)
+    {
         blk_cnt++;
+    }
 
-    FSDMMC_INFO("data len: %d, card addr: 0x%x, blk cnt: %d, is %s",
+    FSDMMC_INFO("Data len: %d, card addr: 0x%x, blk cnt: %d, is %s",
                 dat_p->datalen, card_addr, blk_cnt, read ? "read" : "write");
 
     if (read)
@@ -299,7 +314,7 @@ FError FSdmmcSendData(uintptr base_addr, boolean read, FSdmmcCmd *cmd_p)
     else
     {
         /* invalidate write buf */
-        FCacheDCacheInvalidateRange((uintptr)dat_p->buf, dat_p->datalen);
+        FSDMMC_DATA_BARRIER();
 
         /* write data */
         FSdmmcSetWriteDMA(base_addr, (uintptr)card_addr, blk_cnt, dat_p->buf);
@@ -324,17 +339,23 @@ static FError FSdmmcTransferDataPoll(uintptr base_addr, FSdmmcCmd *cmd_p)
 
     ret = FSdmmcSendData(base_addr, read, cmd_p);
     if (FSDMMC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     ret = FSdmmcWaitCmdEnd(base_addr, cmd_p);
     if (FSDMMC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     ret = FSdmmcWaitDMAStatus(base_addr, read, FSDMMC_TIMEOUT);
     if (FSDMMC_SUCCESS != ret)
+    {
         return ret;
+    }
 
-    FCacheDCacheInvalidateRange((uintptr)dat_p->buf, dat_p->datalen);
+    FSDMMC_DATA_BARRIER();
     return ret;
 }
 
@@ -354,7 +375,7 @@ FError FSdmmcPollTransfer(FSdmmc *instance_p, FSdmmcCmd *cmd_data_p)
 
     if (FALSE == FSdmmcCheckIfCardExists(base_addr))
     {
-        FSDMMC_ERROR("card not found !!! fsdio ctrl base 0x%x", base_addr);
+        FSDMMC_ERROR("Card not found !!! fsdio ctrl base 0x%x.", base_addr);
         return FSDMMC_ERR_CARD_NO_FOUND;
     }
 
@@ -365,7 +386,7 @@ FError FSdmmcPollTransfer(FSdmmc *instance_p, FSdmmcCmd *cmd_data_p)
         ret = FSdmmcTransferDataPoll(base_addr, cmd_data_p);
         if (FSDMMC_SUCCESS != ret)
         {
-            FSDMMC_ERROR("trans data failed 0x%x", ret);
+            FSDMMC_ERROR("Transfer data failed 0x%x.", ret);
             return ret;
         }
 
@@ -378,7 +399,7 @@ FError FSdmmcPollTransfer(FSdmmc *instance_p, FSdmmcCmd *cmd_data_p)
         ret = FSdmmcTransferCmdPoll(base_addr, cmd_data_p);
         if (FSDMMC_SUCCESS != ret)
         {
-            FSDMMC_ERROR("send cmd failed 0x%x", ret);
+            FSDMMC_ERROR("Send cmd failed 0x%x.", ret);
             return ret;
         }
 

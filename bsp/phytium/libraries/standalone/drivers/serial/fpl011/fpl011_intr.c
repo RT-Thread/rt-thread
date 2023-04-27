@@ -12,13 +12,15 @@
  *
  *
  * FilePath: fpl011_intr.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:06:30
- * Description:  This files is for uart irq functions
+ * Description:  This file is for uart irq functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18  fix bugs
  */
 
 
@@ -187,7 +189,6 @@ static void FPl011ReceiveDataHandler(FPl011 *uart_p)
     {
         (void)FPl011ReceiveBuffer(uart_p);
     }
-
     if ((u32)0 == uart_p->receive_buffer.remaining_bytes)
     {
         if (uart_p->handler)
@@ -205,7 +206,6 @@ static void FPl011ReceiveTimeoutHandler(FPl011 *uart_p)
     {
         (void)FPl011ReceiveBuffer(uart_p);
     }
-
     if ((u32)0 == uart_p->receive_buffer.remaining_bytes)
     {
         event = FPL011_EVENT_RECV_TOUT;

@@ -14,13 +14,13 @@
  * FilePath: fgdma_selftest.c
  * Date: 2022-05-20 13:39:27
  * LastEditTime: 2022-05-20 13:39:27
- * Description:  This files is for self test implementation
+ * Description:  This file is for self test implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   huanghe    2021-11-5    init commit
- * 1.1   zhugengyu  2022-5-16    modify according to tech manual.
+ * 1.0   huanghe    2021/11/5    init commit
+ * 1.1   zhugengyu  2022/5/16    modify according to tech manual.
  */
 /***************************** Include Files *********************************/
 #include <string.h>
@@ -60,7 +60,7 @@ void FGdmaDumpRegisterVals(uintptr base_addr, u32 max_chan)
     FGDMA_DEBUG("lp[0x%x] : 0x%x", FGDMA_LP_OFFSET, FGDMA_READREG(base_addr, FGDMA_LP_OFFSET));
     FGDMA_DEBUG("qos[0x%x] : 0x%x", FGDMA_QOS_CFG_OFFSET, FGDMA_READREG(base_addr, FGDMA_QOS_CFG_OFFSET));
 
-    for (u32 chan = FGDMA_CHAN0_INDEX; chan <= max_chan; chan++)
+    for (u32 chan = 0; chan <= max_chan; chan++)
     {
         FGDMA_DEBUG("chan-%d", chan);
         FGDMA_DEBUG("   ctrl[0x%x]: 0x%x", FGDMA_CHX_CTL_OFFSET(chan), FGDMA_READREG(base_addr, FGDMA_CHX_CTL_OFFSET(chan)));

@@ -14,7 +14,7 @@
  * FilePath: fsdio_selftest.c
  * Date: 2022-06-02 11:49:44
  * LastEditTime: 2022-06-02 11:49:45
- * Description:  This files is for SDIO self-test function
+ * Description:  This file is for SDIO self-test function
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -100,4 +100,33 @@ void FSdioDumpRegister(uintptr base_addr)
     FSDIO_DUMPER(base_addr, FSDIO_UHS_REG_EXT_OFFSET, "uhsregext");
     FSDIO_DUMPER(base_addr, FSDIO_EMMC_DDR_REG_OFFSET, "emmcddr");
     FSDIO_DUMPER(base_addr, FSDIO_ENABLE_SHIFT_OFFSET, "enableshift");
+}
+
+/**
+ * @name: FSdioDumpCmdInfo
+ * @msg: Dump command and data info
+ * @return {NONE}
+ * @param {FSdioCmdData *const} cmd_data, info data of SD command and data
+ */
+void FSdioDumpCmdInfo(FSdioCmdData *const cmd_data)
+{
+    FSDIO_DEBUG("cmd struct @%p", cmd_data);
+    FSDIO_DEBUG("   opcode: %d", cmd_data->cmdidx);
+    FSDIO_DEBUG("   arg: 0x%x", cmd_data->cmdarg);
+    FSDIO_DEBUG("   resp@%p: 0x%x 0x%x 0x%x 0x%x",
+                cmd_data->response,
+                cmd_data->response[0],
+                cmd_data->response[1],
+                cmd_data->response[2],
+                cmd_data->response[3]);
+    FSDIO_DEBUG("   flag: 0x%x", cmd_data->flag);
+    FSDIO_DEBUG("   data @%p", cmd_data->data_p);
+
+    if (cmd_data->data_p)
+    {
+        FSDIO_DEBUG("   buf: %p, len: %d", cmd_data->data_p->buf,
+                    cmd_data->data_p->datalen);
+        FSDIO_DEBUG("   blk sz: %d", cmd_data->data_p->blksz);
+        FSDIO_DEBUG("   blk cnt: %d", cmd_data->data_p->blkcnt);
+    }
 }

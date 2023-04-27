@@ -14,11 +14,12 @@
  * FilePath: ftimer_tacho_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:07
- * Description:  This files is for
+ * Description:  This file is for timer_tacho static configuration
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  liushengming 2022/02/18    first commit
  */
 
 /***************************** Include Files *********************************/
@@ -33,7 +34,7 @@
 /************************** Function Prototypes ******************************/
 void FTimerGetDefConfig(u32 timer_id, FTimerTachoConfig *config_p)
 {
-    FASSERT((timer_id < TIMER_NUM) && (NULL != config_p));
+    FASSERT((timer_id < FTIMER_NUM) && (NULL != config_p));
 
     memset(config_p, 0, sizeof(FTimerTachoConfig));
     config_p->id = timer_id;
@@ -47,7 +48,7 @@ void FTimerGetDefConfig(u32 timer_id, FTimerTachoConfig *config_p)
 
 void FTachoGetDefConfig(u32 tacho_id, FTimerTachoConfig *config_p)
 {
-    FASSERT((tacho_id < TACHO_NUM) && (NULL != config_p));
+    FASSERT((tacho_id < FTACHO_NUM) && (NULL != config_p));
 
     memset(config_p, 0, sizeof(FTimerTachoConfig));
     config_p->id = tacho_id;

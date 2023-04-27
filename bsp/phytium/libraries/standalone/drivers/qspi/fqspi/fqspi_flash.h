@@ -21,23 +21,27 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.1   wangxiaodong  2021.11.12  re-construct
- * 1.2   wangxiaodong  2022.3.27   re-construct
- * 1.3   wangxiaodong  2022.7.5    adapt to e2000
+ * 1.0   wangxiaodong  2021/11/12  first release
+ * 1.1   wangxiaodong  2022/3/29   improve functions
+ * 1.2   wangxiaodong  2022/7/5    adapt to e2000
+ * 1.3   wangxiaodong  2022/9/9    improve functions
+ * 1.4   zhangyan      2022/12/7   improve functions
  */
 
-#ifndef BSP_DRIVERS_FQSPI_FLASH_H
-#define BSP_DRIVERS_FQSPI_FLASH_H
+#ifndef FQSPI_FLASH_H
+#define FQSPI_FLASH_H
+
+#include "fkernel.h"
+#include "ftypes.h"
+#include "ferror_code.h"
+#include "fqspi.h"
+
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "fkernel.h"
-#include "ftypes.h"
-#include "ferror_code.h"
-#include "fqspi.h"
 
 /* qspi flash support manufacturer JEDEC ID */
 #define FQSPI_FLASH_MF_ID_CYPRESS            0x01
@@ -45,17 +49,19 @@ extern "C"
 #define FQSPI_FLASH_MF_ID_BOYA               0x68
 
 /* qspi flash supported information table */
-#define FQSPI_FLASH_INFO_TABLE                                                              \
-{                                                                                           \
-    {"S25FS256S", FQSPI_FLASH_MF_ID_CYPRESS, 0x02, 0x19, FQSPI_FLASH_CAP_32MB},             \
-    {"GD25Q32C", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x40, 0x16, FQSPI_FLASH_CAP_4MB},            \
-    {"GD25Q32E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x16, FQSPI_FLASH_CAP_4MB},            \
-    {"GD25Q64B", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x40, 0x17, FQSPI_FLASH_CAP_8MB},            \
-    {"GD25LQ128E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x40, 0x18, FQSPI_FLASH_CAP_16MB},         \
-    {"GD25QL256D", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x19, FQSPI_FLASH_CAP_32MB},         \
-    {"BY25Q64BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x17, FQSPI_FLASH_CAP_8MB},                 \
-    {"BY25Q32BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x16, FQSPI_FLASH_CAP_4MB}                  \
-}
+#define FQSPI_FLASH_INFO_TABLE                                                                  \
+    {                                                                                           \
+        {"S25FS256S", FQSPI_FLASH_MF_ID_CYPRESS, 0x02, 0x19, FQSPI_FLASH_CAP_32MB},             \
+        {"GD25Q32C", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x40, 0x16, FQSPI_FLASH_CAP_4MB},            \
+        {"GD25Q32E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x16, FQSPI_FLASH_CAP_4MB},            \
+        {"GD25Q64B", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x40, 0x17, FQSPI_FLASH_CAP_8MB},            \
+        {"GD25LQ128E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x40, 0x18, FQSPI_FLASH_CAP_16MB},         \
+    	{"GD25LQ128E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x18, FQSPI_FLASH_CAP_16MB},         \
+        {"GD25QL256D", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x19, FQSPI_FLASH_CAP_32MB},         \
+        {"BY25Q64BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x17, FQSPI_FLASH_CAP_8MB},                 \
+        {"BY25Q128BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x18, FQSPI_FLASH_CAP_16MB},               \
+        {"BY25Q32BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x16, FQSPI_FLASH_CAP_4MB}                  \
+    }
 
 #define FQSPI_FLASH_CMD_WRR 0x01        /* Write status register */
 #define FQSPI_FLASH_CMD_PP 0x02         /* Page program */
@@ -76,7 +82,9 @@ extern "C"
 #define FQSPI_FLASH_CMD_RDCR 0x35       /* Read config register */
 #define FQSPI_FLASH_CMD_BE 0x60         /* Bulk erase */
 #define FQSPI_FLASH_CMD_RDAR 0x65       /* Read Any Register  */
+#define FQSPI_FLASH_CMD_DOR 0x3B        /* Dual read data bytes*/
 #define FQSPI_FLASH_CMD_QOR 0x6B        /* Quad read data bytes */
+#define FQSPI_FLASH_CMD_QWFR 0xE7       /* Quad word fast read data bytes */
 #define FQSPI_FLASH_CMD_4QOR 0x6C       /* Quad read data bytes */
 #define FQSPI_FLASH_CMD_WRAR 0x71       /* Write Any Register  */
 #define FQSPI_FLASH_CMD_RDID 0x9F       /* Read JEDEC ID */
@@ -90,14 +98,17 @@ extern "C"
 #define FQSPI_FLASH_CMD_SFDP 0x5A       /* Read JEDEC Serial Manu ID */
 #define FQSPI_CMD_ENABLE_RESET 0x66     /* Software Reset Enable */
 #define FQSPI_CMD_RESET 0x99            /* Software Reset */
+#define FQSPI_FLASH_CMD_RDSR3 0x15      /* Read status register 3 */
 
 /* boya flash */
 #define FQSPI_FLASH_CMD_WRITE_SR2 0x31  /* Write status register 2 */
-
+#define FQSPI_FLASH_CMD_WRITE_SR3 0x11  /* Write status register 3 */
 
 #define FQSPI_BUSY_TIMEOUT_US           1000000
 #define FQSPI_NOR_FLASH_STATE_BUSY      BIT(0)
 
+#define FQSPI_FLASH_WP_ENABLE 0x7c      /* Write status register 2 */
+#define FQSPI_FLASH_WP_DISABLE 0x00     /* Write status register 2 */
 /* Read some flash information */
 FError FQspiFlashSpecialInstruction(FQspiCtrl *pctrl, u8 cmd, u8 *buf, size_t len);
 
@@ -139,6 +150,9 @@ FError FQspiFlashPortWriteData(FQspiCtrl *pctrl, u8 cmd, u32 chip_addr, u8 *buf,
 
 /* detect flash information */
 FError FQspiFlashDetect(FQspiCtrl *pctrl);
+
+/* qspi write protect set */
+FError FQspiFlashWProtectSet(FQspiCtrl *pctrl, boolean wprotect, u8 channel);
 
 #ifdef __cplusplus
 }

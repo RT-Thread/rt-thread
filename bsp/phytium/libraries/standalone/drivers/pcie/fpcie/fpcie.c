@@ -12,13 +12,14 @@
  *
  *
  * FilePath: fpcie.c
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:59:28
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:59:28
+ * Description: This file is for the minimum required function implementations for this driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
 /***************************** Include Files *********************************/
@@ -45,7 +46,6 @@
 #define FPCIE_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FPCIE_DEBUG_TAG, format, ##__VA_ARGS__)
 
 
-
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -56,13 +56,13 @@ extern int FPcieEpCleanBar(FPcie *instance_p, u32 peu_num, u32 bar_num) ;
 
 static void FPcieShowRegion(const char *name, struct FPcieRegion *region)
 {
-    FPCIE_DEBUG_I("PCI Autoconfig: Bus %s region: [%llx-%llx],\n"
-                  "\t\tPhysical Memory [%llx-%llx]", name,
+    FPCIE_DEBUG_I("Pci auto config: bus %s region: [0x%llx-0x%llx],\n"
+                  "\t\tphysical memory [0x%llx-0x%llx]", name,
                   (unsigned long long)region->bus_start,
                   (unsigned long long)(region->bus_start + region->size - 1),
                   (unsigned long long)region->phys_start,
                   (unsigned long long)(region->phys_start + region->size - 1));
-    FPCIE_DEBUG_I("bus_lower is %llx ", (unsigned long long)region->bus_lower) ;
+    FPCIE_DEBUG_I("Bus lower is 0x%llx", (unsigned long long)region->bus_lower) ;
 }
 
 /**
@@ -81,29 +81,29 @@ static void FPcieRegionConfigInit(FPcie *instance_p, struct FPcieRegion *regs, u
     {
         switch (regs[i].flags)
         {
-        case FPCIE_REGION_IO:
-            memset(&instance_p->mem_io, 0, sizeof(struct FPcieRegion)) ;
-            memcpy(&instance_p->mem_io, regs, sizeof(struct FPcieRegion)) ;
-            instance_p->mem_io.exist_flg = FPCIE_REGION_EXIST_FLG ;
-            instance_p->mem_io.bus_lower = instance_p->mem_io.phys_start;
-            FPcieShowRegion("I/O", &instance_p->mem_io);
-            break;
-        case FPCIE_REGION_MEM:
-            memset(&instance_p->mem, 0, sizeof(struct FPcieRegion)) ;
-            memcpy(&instance_p->mem, regs, sizeof(struct FPcieRegion)) ;
-            instance_p->mem.exist_flg = FPCIE_REGION_EXIST_FLG ;
-            instance_p->mem.bus_lower = instance_p->mem.phys_start;
-            FPcieShowRegion("Memory", &instance_p->mem);
-            break;
-        case (PCI_REGION_PREFETCH|FPCIE_REGION_MEM):
-            memset(&instance_p->mem_prefetch, 0, sizeof(struct FPcieRegion)) ;
-            memcpy(&instance_p->mem_prefetch, regs, sizeof(struct FPcieRegion)) ;
-            instance_p->mem_prefetch.exist_flg = FPCIE_REGION_EXIST_FLG ;
-            instance_p->mem_prefetch.bus_lower = instance_p->mem_prefetch.phys_start;
-            FPcieShowRegion("Prefetchable Mem", &instance_p->mem_prefetch);
-            break;
-        default:
-            break;
+            case FPCIE_REGION_IO:
+                memset(&instance_p->mem_io, 0, sizeof(struct FPcieRegion)) ;
+                memcpy(&instance_p->mem_io, regs, sizeof(struct FPcieRegion)) ;
+                instance_p->mem_io.exist_flg = FPCIE_REGION_EXIST_FLG ;
+                instance_p->mem_io.bus_lower = instance_p->mem_io.phys_start;
+                FPcieShowRegion("I/O", &instance_p->mem_io);
+                break;
+            case FPCIE_REGION_MEM:
+                memset(&instance_p->mem, 0, sizeof(struct FPcieRegion)) ;
+                memcpy(&instance_p->mem, regs, sizeof(struct FPcieRegion)) ;
+                instance_p->mem.exist_flg = FPCIE_REGION_EXIST_FLG ;
+                instance_p->mem.bus_lower = instance_p->mem.phys_start;
+                FPcieShowRegion("Memory", &instance_p->mem);
+                break;
+            case (PCI_REGION_PREFETCH|FPCIE_REGION_MEM):
+                memset(&instance_p->mem_prefetch, 0, sizeof(struct FPcieRegion)) ;
+                memcpy(&instance_p->mem_prefetch, regs, sizeof(struct FPcieRegion)) ;
+                instance_p->mem_prefetch.exist_flg = FPCIE_REGION_EXIST_FLG ;
+                instance_p->mem_prefetch.bus_lower = instance_p->mem_prefetch.phys_start;
+                FPcieShowRegion("Prefetchable Mem", &instance_p->mem_prefetch);
+                break;
+            default:
+                break;
         }
     }
 }
@@ -160,26 +160,6 @@ FError FPcieCfgInitialize(FPcie *instance_p, FPcieConfig *config_p) //用于从�
 
     instance_p->is_ready = FT_COMPONENT_IS_READY;
 
-    /* 关闭当前所有misc 中断  */
-    // FPcieMiscIrqDisable(instance_p, FPCIE_PEU0_C0);
-    // FPcieMiscIrqDisable(instance_p, FPCIE_PEU0_C1);
-    // FPcieMiscIrqDisable(instance_p, FPCIE_PEU0_C2);
-    // FPcieMiscIrqDisable(instance_p, FPCIE_PEU1_C0);
-    // FPcieMiscIrqDisable(instance_p, FPCIE_PEU1_C1);
-    // FPcieMiscIrqDisable(instance_p, FPCIE_PEU1_C2);
-
-    /* 清空ep模式下所有配置地址 */
-    // for (i = 0; i <= FPCIE_PEU1_C2; i++)
-    // {
-    //     /* code */
-    //     FPcieEpCleanBar(instance_p, i, FPCIE_BAR_0);
-    //     FPcieEpCleanBar(instance_p, i, FPCIE_BAR_1);
-    //     FPcieEpCleanBar(instance_p, i, FPCIE_BAR_2);
-    //     FPcieEpCleanBar(instance_p, i, FPCIE_BAR_3);
-    //     FPcieEpCleanBar(instance_p, i, FPCIE_BAR_4);
-    //     FPcieEpCleanBar(instance_p, i, FPCIE_BAR_5);
-    // }
-
     return (FT_SUCCESS);
 }
 
@@ -188,7 +168,6 @@ u32 FPcieFindCapability(FPcie *instance_p, u32 bdf, u32 cid_type, u32 cid, u32 *
 
     u32 reg_value;
     u32 next_cap_offset;
-    //u32 ret;
 
     if (cid_type == PCIE_CAP)
     {
@@ -196,7 +175,9 @@ u32 FPcieFindCapability(FPcie *instance_p, u32 bdf, u32 cid_type, u32 cid, u32 *
         /* Serach in PCIe configuration space */
         FPcieEcamReadConfig32bit(instance_p->config.ecam, bdf, FPCIE_CAPABILITY_LIST, &reg_value);
         if (reg_value == 0xffffffff)
+        {
             return -1;
+        }
 
         next_cap_offset = (reg_value & 0xff);
         while (next_cap_offset)
@@ -235,63 +216,63 @@ const char *FPcieClassStr(u8 class)
 {
     switch (class)
     {
-    case FPCI_CLASS_NOT_DEFINED:
-        return "Build before PCI Rev2.0";
-        break;
-    case FPCI_BASE_CLASS_STORAGE:
-        return "Mass storage controller";
-        break;
-    case FPCI_BASE_CLASS_NETWORK:
-        return "Network controller";
-        break;
-    case FPCI_BASE_CLASS_DISPLAY:
-        return "Display controller";
-        break;
-    case FPCI_BASE_CLASS_MULTIMEDIA:
-        return "Multimedia device";
-        break;
-    case FPCI_BASE_CLASS_MEMORY:
-        return "Memory controller";
-        break;
-    case FPCI_BASE_CLASS_BRIDGE:
-        return "Bridge device";
-        break;
-    case FPCI_BASE_CLASS_COMMUNICATION:
-        return "Simple comm. controller";
-        break;
-    case FPCI_BASE_CLASS_SYSTEM:
-        return "Base system peripheral";
-        break;
-    case FPCI_BASE_CLASS_INPUT:
-        return "Input device";
-        break;
-    case FPCI_BASE_CLASS_DOCKING:
-        return "Docking station";
-        break;
-    case FPCI_BASE_CLASS_PROCESSOR:
-        return "Processor";
-        break;
-    case FPCI_BASE_CLASS_SERIAL:
-        return "Serial bus controller";
-        break;
-    case FPCI_BASE_CLASS_INTELLIGENT:
-        return "Intelligent controller";
-        break;
-    case FPCI_BASE_CLASS_SATELLITE:
-        return "Satellite controller";
-        break;
-    case FPCI_BASE_CLASS_CRYPT:
-        return "Cryptographic device";
-        break;
-    case FPCI_BASE_CLASS_SIGNAL_PROCESSING:
-        return "DSP";
-        break;
-    case FPCI_CLASS_OTHERS:
-        return "Does not fit any class";
-        break;
-    default:
-        return  "???";
-        break;
+        case FPCI_CLASS_NOT_DEFINED:
+            return "Build before PCI Rev2.0";
+            break;
+        case FPCI_BASE_CLASS_STORAGE:
+            return "Mass storage controller";
+            break;
+        case FPCI_BASE_CLASS_NETWORK:
+            return "Network controller";
+            break;
+        case FPCI_BASE_CLASS_DISPLAY:
+            return "Display controller";
+            break;
+        case FPCI_BASE_CLASS_MULTIMEDIA:
+            return "Multimedia device";
+            break;
+        case FPCI_BASE_CLASS_MEMORY:
+            return "Memory controller";
+            break;
+        case FPCI_BASE_CLASS_BRIDGE:
+            return "Bridge device";
+            break;
+        case FPCI_BASE_CLASS_COMMUNICATION:
+            return "Simple comm. controller";
+            break;
+        case FPCI_BASE_CLASS_SYSTEM:
+            return "Base system peripheral";
+            break;
+        case FPCI_BASE_CLASS_INPUT:
+            return "Input device";
+            break;
+        case FPCI_BASE_CLASS_DOCKING:
+            return "Docking station";
+            break;
+        case FPCI_BASE_CLASS_PROCESSOR:
+            return "Processor";
+            break;
+        case FPCI_BASE_CLASS_SERIAL:
+            return "Serial bus controller";
+            break;
+        case FPCI_BASE_CLASS_INTELLIGENT:
+            return "Intelligent controller";
+            break;
+        case FPCI_BASE_CLASS_SATELLITE:
+            return "Satellite controller";
+            break;
+        case FPCI_BASE_CLASS_CRYPT:
+            return "Cryptographic device";
+            break;
+        case FPCI_BASE_CLASS_SIGNAL_PROCESSING:
+            return "DSP";
+            break;
+        case FPCI_CLASS_OTHERS:
+            return "Does not fit any class";
+            break;
+        default:
+            return  "???";
+            break;
     };
 }
 
@@ -308,7 +289,7 @@ int FPcieAutoRegionAllocate(struct FPcieRegion *res, pci_size_t size,
 
     if (!res)
     {
-        printf("No resource\n");
+        FPCIE_DEBUG_E("No resource.");
         goto error;
     }
 
@@ -316,20 +297,17 @@ int FPcieAutoRegionAllocate(struct FPcieRegion *res, pci_size_t size,
 
     if (addr - res->bus_start + size > res->size)
     {
-        printf("No room in resource");
+        FPCIE_DEBUG_E("No room in resource.");
         goto error;
     }
 
     if (upper_32_bits(addr) && !supports_64bit)
     {
-        printf("Cannot assign 64-bit address to 32-bit-only resource\n");
+        FPCIE_DEBUG_E("Cannot assign 64-bit address to 32-bit-only resource.");
         goto error;
     }
 
     res->bus_lower = addr + size;
-
-    //printf("address=0x%llx bus_lower=0x%llx\n", (unsigned long long)addr,
-    //        (unsigned long long)res->bus_lower);
 
     *bar = addr;
     return 0;
@@ -362,17 +340,21 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
               FPCIE_COMMAND_MASTER;
 
     for (bar = FPCIE_BASE_ADDRESS_0;
-            bar < FPCIE_BASE_ADDRESS_0 + (bars_num * 4); bar += 4)
+         bar < FPCIE_BASE_ADDRESS_0 + (bars_num * 4); bar += 4)
     {
         /* Tickle the BAR and get the response */
         if (!enum_only)
+        {
             FPcieEcamWriteConfig32bit(instance_p->config.ecam, bdf, bar, 0xffffffff);
+        }
 
         FPcieEcamReadConfig32bit(instance_p->config.ecam, bdf, bar, &bar_response);
 
         /* If BAR is not implemented go to the next BAR */
         if (!bar_response)
+        {
             continue;
+        }
 
         found_mem64 = 0;
 
@@ -382,15 +364,15 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
             bar_size = ((~(bar_response & FPCIE_BASE_ADDRESS_IO_MASK))
                         & 0xffff) + 1;
             if (!enum_only)
+            {
                 bar_res = io;
+            }
 
-            //printf("PCI Autoconfig: BAR %d, I/O, size=0x%llx, ",
-            //        bar_nr, (unsigned long long)bar_size);
         }
         else
         {
             if ((bar_response & FPCIE_BASE_ADDRESS_MEM_TYPE_MASK) ==
-                    FPCIE_BASE_ADDRESS_MEM_TYPE_64)
+                FPCIE_BASE_ADDRESS_MEM_TYPE_64)
             {
                 u32 bar_response_upper;
                 u64 bar64;
@@ -407,7 +389,9 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
                 bar_size = ~(bar64 & FPCIE_BASE_ADDRESS_MEM_MASK)
                            + 1;
                 if (!enum_only)
+                {
                     found_mem64 = 1;
+                }
             }
             else
             {
@@ -426,10 +410,6 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
                     bar_res = mem;
                 }
             }
-
-            //printf("PCI Autoconfig: BAR %d, %s, size=0x%llx, ",
-            //        bar_nr, bar_res == prefetch ? "Prf" : "Mem",
-            //        (unsigned long long)bar_size);
         }
 
         if (!enum_only && FPcieAutoRegionAllocate(bar_res, bar_size,
@@ -459,8 +439,6 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
         cmdstat |= (bar_response & FPCIE_BASE_ADDRESS_SPACE) ?
                    FPCIE_COMMAND_IO : FPCIE_COMMAND_MEMORY;
 
-        //printf("\n");
-
         bar_nr++;
     }
 
@@ -478,8 +456,7 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
             if (bar_response)
             {
                 bar_size = -(bar_response & ~1);
-                //printf("PCI Autoconfig: ROM, size=%#x, ",
-                //        (unsigned int)bar_size);
+                
                 if (FPcieAutoRegionAllocate(mem, bar_size,
                                             &bar_value,
                                             false) == 0)
@@ -488,7 +465,6 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
 
                 }
                 cmdstat |= FPCIE_COMMAND_MEMORY;
-                //printf("\n");
             }
         }
     }
@@ -496,7 +472,9 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
     /* PCI_COMMAND_IO must be set for VGA device */
     FPcieEcamReadConfig16bit(instance_p->config.ecam, bdf, FPCI_CLASS_DEVICE_REG, &class);
     if (class == FPCI_CLASS_DISPLAY_VGA)
+    {
         cmdstat |= FPCIE_COMMAND_IO;
+    }
 
     FPcieEcamWriteConfig16bit(instance_p->config.ecam, bdf, FPCIE_COMMAND_REG, cmdstat);
     FPcieEcamWriteConfig8bit(instance_p->config.ecam, bdf, FPCIE_CACHE_LINE_SIZE_REG,
@@ -694,35 +672,36 @@ int FPcieAutoConfigDevice(FPcie *instance_p, u32 bdf)
 
     switch (class)
     {
-    case FPCI_CLASS_BRIDGE_PCI:
-        FPcieAutoSetupDevice(instance_p, bdf, 2, pci_mem, pci_prefetch, pci_io,
-                             enum_only);
+        case FPCI_CLASS_BRIDGE_PCI:
+            FPcieAutoSetupDevice(instance_p, bdf, 2, pci_mem, pci_prefetch, pci_io,
+                                 enum_only);
 
-        n = FPcieHoseProbeBus(instance_p, bdf);
-        if (n < 0)
-            return n;
-        break;
+            n = FPcieHoseProbeBus(instance_p, bdf);
+            if (n < 0)
+            {
+                return n;
+            }
+            break;
 
-    case FPCI_CLASS_BRIDGE_CARDBUS:
-        /*
-         * just do a minimal setup of the bridge,
-         * let the OS take care of the rest
-         */
-        FPcieAutoSetupDevice(instance_p, bdf, 0, pci_mem, pci_prefetch, pci_io,
-                             enum_only);
+        case FPCI_CLASS_BRIDGE_CARDBUS:
+            /*
+             * just do a minimal setup of the bridge,
+             * let the OS take care of the rest
+             */
+            FPcieAutoSetupDevice(instance_p, bdf, 0, pci_mem, pci_prefetch, pci_io,
+                                 enum_only);
 
-        printf("PCI Autoconfig: Found P2CardBus bridge, device %d\n", FPCIE_DEV(bdf));
+            FPCIE_DEBUG_I("PCI auto config: Found P2CardBus bridge, device %d.", FPCIE_DEV(bdf));
 
-        break;
+            break;
 
-    case FPCI_CLASS_PROCESSOR_POWERPC: /* an agent or end-point */
-        printf("PCI AutoConfig: Found PowerPC device\n");
-    /* fall through */
+        case FPCI_CLASS_PROCESSOR_POWERPC: /* an agent or end-point */
+            FPCIE_DEBUG_I("PCI auto config: Found PowerPC device.");
 
-    default:
-        FPcieAutoSetupDevice(instance_p, bdf, 6, pci_mem, pci_prefetch, pci_io,
-                             enum_only);
-        break;
+        default:
+            FPcieAutoSetupDevice(instance_p, bdf, 6, pci_mem, pci_prefetch, pci_io,
+                                 enum_only);
+            break;
     }
 
     return FT_SUCCESS;
@@ -742,10 +721,12 @@ FError FPcieBindBusDevices(FPcie *instance_p, u32 bus_num, u32 parent_bdf, struc
     u32 data;
     char buf_bdf_print[20];
     found_multi = false;
-    end = FPCIE_BDF(bus_num, FT_PCIE_CFG_MAX_NUM_OF_DEV - 1,
-                    FT_PCIE_CFG_MAX_NUM_OF_FUN - 1);
-    for (bdf = FPCIE_BDF(bus_num, 0, 0); bdf <= end;    //使用bus的seq成员来进行扫描，其实相当于secondory_bus号
-            bdf += FPCIE_BDF(0, 0, 1))
+    end = FPCIE_BDF(bus_num, FPCIE_CFG_MAX_NUM_OF_DEV - 1,
+                    FPCIE_CFG_MAX_NUM_OF_FUN - 1);
+
+    /* 使用bus的seq成员来进行扫描，其实相当于secondory_bus号 */
+    for (bdf = FPCIE_BDF(bus_num, 0, 0); bdf <= end;    
+         bdf += FPCIE_BDF(0, 0, 1))
     {
         u32 class;
 
@@ -759,23 +740,32 @@ FError FPcieBindBusDevices(FPcie *instance_p, u32 bus_num, u32 parent_bdf, struc
         }
 
         if (!FPCIE_FUNC(bdf))
+        {
             found_multi = false;
+        }
         if (FPCIE_FUNC(bdf) && !found_multi)
+        {
             continue;
+        }
 
         /* Check only the first access, we don't expect problems */
         FPcieEcamReadConfig16bit(instance_p->config.ecam, bdf, FPCIE_VENDOR_REG, &vendor) ;
 
         if (vendor == 0xffff || vendor == 0x0000)
+        {
             continue;
+        }
 
         FPcieEcamReadConfig8bit(instance_p->config.ecam, bdf, FPCIE_HEADER_TYPE_REG, &header_type) ;
 
         if (!FPCIE_FUNC(bdf))
+        {
             found_multi = header_type & 0x80;
-
-        FPcieEcamReadConfig16bit(instance_p->config.ecam, bdf, FPCIE_DEVICE_ID_REG, &device) ;  //读取deviceid
-        FPcieEcamReadConfig32bit(instance_p->config.ecam, bdf, FPCI_CLASS_REVISION, &class) ; //读取classcode
+        }
+        
+        /* 读取deviceid, classcode */
+        FPcieEcamReadConfig16bit(instance_p->config.ecam, bdf, FPCIE_DEVICE_ID_REG, &device) ;  
+        FPcieEcamReadConfig32bit(instance_p->config.ecam, bdf, FPCI_CLASS_REVISION, &class) ; 
         class >>= 8;
 
         FPcieEcamReadConfig8bit(instance_p->config.ecam, bdf, FPCIE_CLASS_CODE_REG, &class_show) ;

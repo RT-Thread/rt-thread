@@ -14,25 +14,26 @@
  * FilePath: ftimer_tacho_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:15
- * Description:  This files is for
+ * Description:  This file is for timer_tacho register definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  liushengming 2022/02/18   first commit
  */
 
-#ifndef BSP_DRIVERS_E2000_TIMER_HW_H
-#define BSP_DRIVERS_E2000_TIMER_HW_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FTIMER_TACHO_HW_H
+#define FTIMER_TACHO_HW_H
 
 #include "fio.h"
 #include "ftypes.h"
 #include "fkernel.h"
 #include "fparameters.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /* register offset */
 #define FTIMER_CTRL_REG_OFFSET (0x0)                /*Timer or Tachometer 控制寄存器*/
@@ -134,7 +135,7 @@ extern "C"
 
 #define FTIMER_TIMEOUT 3000     /*超时时间*/
 
-#define FTIMER_BASE_ADDR(instance_p) TIMER_TACHO_BASE_ADDR((instance_p)->config.id)        /*获取设备基地址*/
+#define FTIMER_BASE_ADDR(instance_p) FTIMER_TACHO_BASE_ADDR((instance_p)->config.id)        /*获取设备基地址*/
 /*read and write reg value*/
 #define FTIMER_CTRL_READ(instance_p) FTIMER_READ_REG32(FTIMER_BASE_ADDR(instance_p), FTIMER_CTRL_REG_OFFSET)
 #define FTIMER_CTRL_WRITE(instance_p, regVal) FTIMER_WRITE_REG32(FTIMER_BASE_ADDR(instance_p), FTIMER_CTRL_REG_OFFSET, (regVal))

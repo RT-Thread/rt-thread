@@ -14,16 +14,25 @@
  * FilePath: fnand_timing.h
  * Date: 2022-04-28 18:53:58
  * LastEditTime: 2022-04-28 18:53:58
- * Description:  This file is for
+ * Description:  This file is for timings configuration
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
-#ifndef DRIVERS_NAND_FNAND
-#define DRIVERS_NAND_FNAND
+
+#ifndef FNAND_TIMING_H
+#define FNAND_TIMING_H
 
 #include "ftypes.h"
+
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 
 /**
  * struct FNandSdrTimings - SDR NAND chip timings
@@ -118,7 +127,9 @@ struct FNandSdrTimings
     u32 tWW_min;
 };
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

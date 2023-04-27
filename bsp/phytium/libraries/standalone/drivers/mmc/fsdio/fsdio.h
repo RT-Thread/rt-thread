@@ -14,7 +14,7 @@
  * FilePath: fsdio.h
  * Date: 2022-05-26 16:20:52
  * LastEditTime: 2022-05-26 16:20:53
- * Description:  This files is for sdio user interface definition
+ * Description:  This file is for sdio user interface definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -22,15 +22,11 @@
  * 1.0   zhugengyu  2021/12/2    init
  * 1.1   zhugengyu  2022/6/6     modify according to tech manual.
  * 1.2   zhugengyu  2022/7/15    adopt to e2000
+ * 1.3   zhugengyu  2022/11/23   fix multi-block rw issues
  */
 
-#ifndef  DRIVERS_FSDIO_H
-#define  DRIVERS_FSDIO_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef  FSDIO_H
+#define  FSDIO_H
 
 /***************************** Include Files *********************************/
 
@@ -38,19 +34,24 @@ extern "C"
 #include "ferror_code.h"
 #include "fkernel.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /************************** Constant Definitions *****************************/
 
 /* SDIO driver error code */
-#define FSDIO_SUCCESS           FT_SUCCESS
-#define FSDIO_ERR_TIMEOUT       FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 1)
-#define FSDIO_ERR_NOT_INIT      FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 2)
-#define FSDIO_ERR_SHORT_BUF     FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 3)
-#define FSDIO_ERR_NOT_SUPPORT   FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 4)
-#define FSDIO_ERR_INVALID_STATE FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 5)
-#define FSDIO_ERR_TRANS_TIMEOUT FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 6)
-#define FSDIO_ERR_CMD_TIMEOUT   FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 7)
-#define FSDIO_ERR_NO_CARD       FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 8)
-#define FSDIO_ERR_BUSY          FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 9)
+#define FSDIO_SUCCESS               FT_SUCCESS
+#define FSDIO_ERR_TIMEOUT           FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 1)
+#define FSDIO_ERR_NOT_INIT          FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 2)
+#define FSDIO_ERR_SHORT_BUF         FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 3)
+#define FSDIO_ERR_NOT_SUPPORT       FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 4)
+#define FSDIO_ERR_INVALID_STATE     FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 5)
+#define FSDIO_ERR_TRANS_TIMEOUT     FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 6)
+#define FSDIO_ERR_CMD_TIMEOUT       FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 7)
+#define FSDIO_ERR_NO_CARD           FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 8)
+#define FSDIO_ERR_BUSY              FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 9)
+#define FSDIO_ERR_DMA_BUF_UNALIGN   FT_MAKE_ERRCODE(ErrModBsp, ErrBspMmc, 10)
 
 typedef enum
 {
@@ -80,7 +81,6 @@ typedef enum
     FSDIO_NUM_OF_EVT
 } FSdioEvtType; /* SDIO event type */
 
-#define FSDIO_DEFAULT_BLOCK_SZ          512U
 #define FSDIO_SD_400KHZ                 400000U
 #define FSDIO_SD_25_MHZ                 25000000U
 #define FSDIO_SD_50_MHZ                 50000000U
@@ -88,7 +88,7 @@ typedef enum
 typedef struct _FSdio FSdio;
 
 typedef void (*FSdioRelaxHandler)(void);
-typedef void (*FSdioEvtHandler)(FSdio *const instance_p, void *args);
+typedef void (*FSdioEvtHandler)(FSdio *const instance_p, void *args, u32 status, u32 dmac_status);
 
 typedef struct
 {
@@ -155,6 +155,7 @@ typedef struct
     FSdioTransMode trans_mode;  /* Trans mode, PIO/DMA */
     FSdioVoltageType voltage;   /* Card voltage type */
     boolean        non_removable; /* No removeable media, e.g eMMC */
+    boolean        filp_resp_byte_order; /* Some SD protocol implmentation may not do byte-order filp */
 } FSdioConfig; /* SDIO intance configuration */
 
 typedef struct _FSdio
@@ -164,6 +165,8 @@ typedef struct _FSdio
     FSdioIDmaDescList   desc_list;   /* DMA descriptor list, valid in DMA trans mode */
     FSdioEvtHandler     evt_handlers[FSDIO_NUM_OF_EVT]; /* call-backs for interrupt event */
     void                *evt_args[FSDIO_NUM_OF_EVT]; /* arguments for event call-backs */
+    FSdioRelaxHandler   relax_handler;
+    u32                 prev_cmd; /* record previous command code */
 } FSdio; /* SDIO intance */
 /************************** Variable Definitions *****************************/
 
@@ -186,17 +189,20 @@ FError FSdioSetIDMAList(FSdio *const instance_p, volatile FSdioIDmaDesc *desc, u
 /* Set the Card clock freqency */
 FError FSdioSetClkFreq(FSdio *const instance_p, u32 input_clk_hz);
 
+/* Get the real Card clock freqency */
+u32 FSdioGetClkFreq(FSdio *const instance_p);
+
 /* Start command and data transfer in DMA mode */
 FError FSdioDMATransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p);
 
 /* Wait DMA transfer finished by poll */
-FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p, FSdioRelaxHandler relax);
+FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p);
 
 /* Start command and data transfer in PIO mode */
 FError FSdioPIOTransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p);
 
 /* Wait PIO transfer finished by poll */
-FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p, FSdioRelaxHandler relax);
+FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p);
 
 /* Get cmd response and received data after wait poll status or interrupt signal */
 FError FSdioGetCmdResponse(FSdio *const instance_p, FSdioCmdData *const cmd_data_p);
@@ -216,8 +222,14 @@ FError FSdioRestart(FSdio *const instance_p);
 /* Register event call-back function as handler for interrupt events */
 void FSdioRegisterEvtHandler(FSdio *const instance_p, FSdioEvtType evt, FSdioEvtHandler handler, void *handler_arg);
 
+/* Register sleep call-back function */
+void FSdioRegisterRelaxHandler(FSdio *const instance_p, FSdioRelaxHandler relax_handler);
+
 /* Dump all register value of SDIO instance */
 void FSdioDumpRegister(uintptr base_addr);
+
+/* Dump command and data info */
+void FSdioDumpCmdInfo(FSdioCmdData *const cmd_data);
 
 #ifdef __cplusplus
 }

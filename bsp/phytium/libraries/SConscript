@@ -8,66 +8,83 @@ STANDALONE_DIR = cwd + '/standalone'
 
 # common source
 src  = Glob(STANDALONE_DIR+'/common/*.c')
-
 path = [STANDALONE_DIR + '/common']
 
-# arch
-path += [STANDALONE_DIR + '/arch/common']
+# port
+src += Glob(STANDALONE_DIR+'/port/*.c')
+path += [STANDALONE_DIR + '/port'] + [STANDALONE_DIR + '/port/arch']
 
 if GetDepend(['TARGET_ARMV8_AARCH32']):
-    src += Glob(STANDALONE_DIR+'/arch/armv8/aarch32/*.c') + Glob(STANDALONE_DIR+'/arch/armv8/aarch32/gcc/*.S')
-    path += [STANDALONE_DIR + '/arch/armv8/aarch32']
+    src += Glob(STANDALONE_DIR+'/port/arch/armv8/aarch32/*.c') + Glob(STANDALONE_DIR+'/port/arch/armv8/aarch32/*.S')
+    path += [STANDALONE_DIR + '/port/arch/armv8/aarch32']
 elif GetDepend(['TARGET_ARMV8_AARCH64']):
-    src += Glob(STANDALONE_DIR+'/arch/armv8/aarch64/*.c') + Glob(STANDALONE_DIR+'/arch/armv8/aarch64/gcc/*.S')
-    path += [STANDALONE_DIR + '/arch/armv8/aarch64']
+    src += Glob(STANDALONE_DIR+'/port/arch/armv8/aarch64/*.c') + Glob(STANDALONE_DIR+'/port/arch/armv8/aarch64/*.S')
+    path += [STANDALONE_DIR + '/port/arch/armv8/aarch64']    
 
 # board
 src += Glob(STANDALONE_DIR+'/board/common/*.c') + Glob(STANDALONE_DIR+'/board/common/*.S')
-path += [STANDALONE_DIR + '/board/common']
+path += [STANDALONE_DIR + '/board/common'] 
 
 if GetDepend(['TARGET_F2000_4']):
     src += Glob(STANDALONE_DIR+'/board/ft2004/*.c')
-    path += [STANDALONE_DIR + '/board/ft2004']
+    path += [STANDALONE_DIR + '/board/ft2004'] 
 
 if GetDepend(['TARGET_E2000']):
     src += Glob(STANDALONE_DIR+'/board/e2000/*.c')
-    path += [STANDALONE_DIR + '/board/e2000']
+    path += [STANDALONE_DIR + '/board/e2000'] 
 
     if GetDepend(['TARGET_E2000Q']):
         src += Glob(STANDALONE_DIR+'/board/e2000/q/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/q']
+        path += [STANDALONE_DIR + '/board/e2000/q'] 
 
     if GetDepend(['TARGET_E2000D']):
         src += Glob(STANDALONE_DIR+'/board/e2000/d/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/d']
-
+        path += [STANDALONE_DIR + '/board/e2000/d'] 
+    
     if GetDepend(['ARGET_E2000S']):
         src += Glob(STANDALONE_DIR+'/board/e2000/s/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/s']
-
+        path += [STANDALONE_DIR + '/board/e2000/s'] 
+    
 if GetDepend(['TARGET_D2000']):
-    src += Glob(STANDALONE_DIR+'/board/d2000/*.c')
-    path += [STANDALONE_DIR + '/board/d2000']
+    path += [STANDALONE_DIR + '/board/d2000'] 
 
 # driver
 
+## spim
+if GetDepend(['BSP_USING_SPI']):
+    src += Glob(STANDALONE_DIR+'/drivers/spi/fspim/*.c')
+    path += [STANDALONE_DIR + '/drivers/spi/fspim'] 
+
 ## serial
-if GetDepend(['ENABLE_Pl011_UART']):
+if GetDepend(['BSP_USING_UART']):
     src += Glob(STANDALONE_DIR+'/drivers/serial/fpl011/*.c')
-    path += [STANDALONE_DIR + '/drivers/serial/fpl011']
+    path += [STANDALONE_DIR + '/drivers/serial/fpl011'] 
 
-## gicv3
-if GetDepend(['ENABLE_GICV3']):
-    src += Glob(STANDALONE_DIR+'/drivers/gic/fgic/*.c') + Glob(STANDALONE_DIR+'/drivers/gic/fgic/*.S')
-    path += [STANDALONE_DIR + '/drivers/gic/fgic']
+## can
+if GetDepend(['BSP_USING_CAN']):
+    src += Glob(STANDALONE_DIR+'/drivers/can/fcan/*.c') + Glob(STANDALONE_DIR+'/drivers/can/fcan/*.S')
+    path += [STANDALONE_DIR + '/drivers/can/fcan/'] 
 
+## qspi
+if GetDepend(['BSP_USING_QSPI']):
+    src += Glob(STANDALONE_DIR+'/drivers/qspi/fqspi/*.c') + Glob(STANDALONE_DIR+'/drivers/qspi/fqspi/*.S')
+    path += [STANDALONE_DIR + '/drivers/qspi/fqspi/']
 
 # phytium ports rt-thread drivers
 PORT_DRV_DIR = cwd + '/drivers'
 
 src += Glob(PORT_DRV_DIR + '/*.S')
-src += Glob(PORT_DRV_DIR + '/*.c')
+src	+= Glob(PORT_DRV_DIR + '/*.c')
 
+# phytium ports rt-thread examples
+PORT_DRV_DIR = cwd + '/examples'
+
+src	+= Glob(PORT_DRV_DIR + '/*.c')
+
+# sdkcomfig.h
+path += [cwd]
+
+# add group
 ASFLAGS = ''
 group = DefineGroup('FT_DRIVER', src, depend=[
                     ''], CPPPATH=path, ASFLAGS = ASFLAGS)

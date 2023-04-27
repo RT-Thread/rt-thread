@@ -14,11 +14,13 @@
  * FilePath: fgmac_sinit.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file contains lookup method by device ID when success, it returns
+ * pointer to config table to be used to initialize the device.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
 
@@ -39,7 +41,7 @@
 
 /************************** Variable Definitions *****************************/
 
-extern const FGmacConfig FGMAC_CONFIG_TBL[GMAC_INSTANCE_NUM];
+extern const FGmacConfig FGMAC_CONFIG_TBL[FGMAC_NUM];
 
 /************************** Function Prototypes ******************************/
 /**
@@ -55,7 +57,7 @@ const FGmacConfig *FGmacLookupConfig(u32 instance_id)
     const FGmacConfig *ptr = NULL;
     u32 index;
 
-    for (index = 0; index < (u32)GMAC_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FGMAC_NUM; index++)
     {
         if (FGMAC_CONFIG_TBL[index].instance_id == instance_id)
         {

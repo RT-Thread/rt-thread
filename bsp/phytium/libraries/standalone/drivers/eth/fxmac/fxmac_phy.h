@@ -14,20 +14,22 @@
  * FilePath: fxmac_phy.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for phy configuration.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
-#ifndef DRIVERS_ETH_FXMAC_PHY_H
-#define DRIVERS_ETH_FXMAC_PHY_H
+#ifndef FXMAC_PHY_H
+#define FXMAC_PHY_H
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
 
 #ifdef __cplusplus
 }

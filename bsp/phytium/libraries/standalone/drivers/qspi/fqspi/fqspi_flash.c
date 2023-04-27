@@ -14,11 +14,13 @@
  * FilePath: fqspi_flash.c
  * Date: 2022-07-12 15:42:55
  * LastEditTime: 2022-07-12 15:42:56
- * Description:  This file is for
+ * Description:  This file is for S25FS256, GD25Q256, GD25Q64 norflash program functions
  *
  * Modify History:
  *  Ver Who      Date        Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/3/29  first release
+ * 1.1   wangxiaodong  2022/9/9   improve functions
  */
 
 #include <string.h>
@@ -63,38 +65,57 @@ FError FQspiFlashDetect(FQspiCtrl *pctrl)
     FError ret = FQSPI_SUCCESS;
     u8 flash_id[3] = {0};
     u8 i = 0;
-
-    /* read id to flash_id */
-    ret = FQspiFlashSpecialInstruction(pctrl, FQSPI_FLASH_CMD_RDID, flash_id, sizeof(flash_id));
-    if (FQSPI_SUCCESS != ret)
+    u32 index;
+    u32 cs_number = 0;
+    u32 min_detected_cs  = FQSPI_CS_NUM ; 
+    
+    for (index = 0; index < FQSPI_CS_NUM ; index++)
     {
-        FQSPI_ERROR("read flash id failed, ret 0x%x\r\n", ret);
-        return ret;
-    }
-
-    FQSPI_INFO("flash id = 0x%x, 0x%x, 0x%x\r\n", flash_id[0], flash_id[1], flash_id[2]);
-
-    for (i = 0; i < sizeof(flash_info_table) / sizeof(FQspiFlashInfo); i++)
-    {
-        if ((flash_info_table[i].mf_id == flash_id[0]) && (flash_info_table[i].type_id == flash_id[1])
-                && (flash_info_table[i].capacity_id == flash_id[2]))
+        /* read id to flash_id */
+        pctrl->config.channel = index;
+        ret = FQspiFlashSpecialInstruction(pctrl, FQSPI_FLASH_CMD_RDID, flash_id, sizeof(flash_id));
+        if (FQSPI_SUCCESS != ret)
         {
-            pctrl->mf_id = flash_info_table[i].mf_id;
-            pctrl->config.capacity = flash_info_table[i].capacity;
-            break;
+            FQSPI_ERROR("Read flash id failed, ret 0x%x\r\n", ret);
+            return ret;
         }
+
+        if (flash_id[0] != 0xff)
+        {
+            FQSPI_INFO("CSN%d flash id = 0x%x, 0x%x, 0x%x\r\n", index, flash_id[0], flash_id[1], flash_id[2]);
+        }
+        else
+        {
+            FQSPI_ERROR("The Detected CSN%d flash is not matched", index);
+        }
+
+        for (i = 0; i < sizeof(flash_info_table) / sizeof(FQspiFlashInfo); i++)
+        {
+            if ((flash_info_table[i].mf_id == flash_id[0]) && (flash_info_table[i].type_id == flash_id[1])
+                && (flash_info_table[i].capacity_id == flash_id[2]))
+            {
+                pctrl->mf_id = flash_info_table[i].mf_id;
+                pctrl->config.capacity = flash_info_table[i].capacity;
+                cs_number++;
+                /*get the min detected flash channel*/
+                min_detected_cs = (min_detected_cs > index)?index:min_detected_cs ; 
+                FQSPI_INFO("CSN%d Find a %s flash chip.\n", index, flash_info_table[i].name);
+                break;
+            }
+        }
+        /*The default channel is the min detected flash*/
+        pctrl->config.channel = min_detected_cs;
+
+        if (i == sizeof(flash_info_table) / sizeof(FQspiFlashInfo) && flash_id[0] != 0xff)
+        {
+            FQSPI_ERROR("The Detected CSN%d flash not detected, id = 0x%x, 0x%x, 0x%x\r\n", index, flash_id[0], flash_id[1], flash_id[2]);
+        }
+
     }
 
-    if (i == sizeof(flash_info_table) / sizeof(FQspiFlashInfo))
-    {
-        FQSPI_ERROR("The Detected flash is not matched, id = 0x%x, 0x%x, 0x%x\r\n", flash_id[0], flash_id[1], flash_id[2]);
-        return FQSPI_NOT_SUPPORT;
-    }
-
+    pctrl->config.dev_num = cs_number - 1;
     /* set flash num and flash capacity */
     FQspiSetCapacityAndNum(pctrl);
-    FQSPI_INFO("Find a %s flash chip. Size is %ld bytes.\n", flash_info_table[i].name, pctrl->flash_size);
-
     return ret;
 }
 
@@ -111,14 +132,14 @@ static FError FQspiFlashReset(FQspiCtrl *pctrl)
     ret = FQspiFlashWriteReg(pctrl, FQSPI_CMD_ENABLE_RESET, NULL, 0);
     if (FQSPI_SUCCESS != ret)
     {
-        FQSPI_ERROR("failed to enable reset, test result 0x%x\r\n", ret);
+        FQSPI_ERROR("Failed to enable reset, test result 0x%x\r\n", ret);
         return ret;
     }
 
     ret = FQspiFlashWriteReg(pctrl, FQSPI_CMD_RESET, NULL, 0);
     if (FQSPI_SUCCESS != ret)
     {
-        FQSPI_ERROR("failed to reset, test result 0x%x\r\n", ret);
+        FQSPI_ERROR("Failed to reset, test result 0x%x\r\n", ret);
         return ret;
     }
 
@@ -407,117 +428,138 @@ FError FQspiFlashReadDataConfig(FQspiCtrl *pctrl, u8 command)
 
     switch (command)
     {
-    case FQSPI_FLASH_CMD_READ:
-        FQspiFlashReset(pctrl);
-        pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
-        pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_1;
-        break;
+        case FQSPI_FLASH_CMD_READ:
+            FQspiFlashReset(pctrl);
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_1;
+            break;
 
-    case FQSPI_FLASH_CMD_4READ:
-        pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_4;
-        pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_1;
-        break;
+        case FQSPI_FLASH_CMD_4READ:
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_4;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_1;
+            break;
 
-    case FQSPI_FLASH_CMD_FAST_READ:
-        pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
-        pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_1;
-        pctrl->rd_cfg.dummy = 8;
-        pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
-        break;
+        case FQSPI_FLASH_CMD_FAST_READ:
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_1;
+            pctrl->rd_cfg.dummy = 8;
+            pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+            break;
 
-    case FQSPI_FLASH_CMD_4FAST_READ:
-        pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_4;
-        pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_1;
-        pctrl->rd_cfg.dummy = 8;
-        pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
-        break;
+        case FQSPI_FLASH_CMD_4FAST_READ:
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_4;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_1;
+            pctrl->rd_cfg.dummy = 8;
+            pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+            break;
 
-    case FQSPI_FLASH_CMD_DUAL_READ:
-        pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
-        pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_2_2;
-        pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+        case FQSPI_FLASH_CMD_DOR:
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_2;
+            pctrl->rd_cfg.dummy = 8;
+            pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+            break;
 
-        if (pctrl->mf_id == FQSPI_FLASH_MF_ID_CYPRESS)
-        {
+        case FQSPI_FLASH_CMD_QOR:
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_1_4;
+            pctrl->rd_cfg.dummy = 8;
+            pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+            break;
+
+        case FQSPI_FLASH_CMD_QWFR:
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_4_4;
+            pctrl->rd_cfg.dummy = 2;
+            pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+            break;
+
+        case FQSPI_FLASH_CMD_DUAL_READ:
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_2_2;
+            pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+
+            if (pctrl->mf_id == FQSPI_FLASH_MF_ID_CYPRESS)
+            {
+                pctrl->rd_cfg.mode_byte = 0x1;
+                pctrl->rd_cfg.cmd_sign = FQSPI_QUAD_READ_MODE_CMD;
+                pctrl->rd_cfg.dummy = 8;
+            }
+            else if (pctrl->mf_id == FQSPI_FLASH_MF_ID_GIGADEVICE)
+            {
+                pctrl->rd_cfg.dummy = 4;
+            }
+            else if (pctrl->mf_id == FQSPI_FLASH_MF_ID_BOYA)
+            {
+                pctrl->rd_cfg.dummy = 4;
+            }
+            break;
+
+        case FQSPI_FLASH_CMD_QIOR:
+            /* set SR1V and CR1V */
+            FQspiFlashEnableWrite(pctrl);
+
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_4_4;
+            pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+
+            if (pctrl->mf_id == FQSPI_FLASH_MF_ID_CYPRESS)
+            {
+                pctrl->rd_cfg.dummy = 10;
+                /* use wrr write config register 1 */
+                ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRR, wrr_buf, sizeof(wrr_buf));
+                if (FQSPI_SUCCESS != ret)
+                {
+                    FQSPI_ERROR("Failed to write cmd wrr, test result 0x%x", ret);
+                    return 0;
+                }
+            }
+            else if (pctrl->mf_id == FQSPI_FLASH_MF_ID_GIGADEVICE)
+            {
+                pctrl->rd_cfg.dummy = 6;
+                /* use wrr write config register 1 */
+                ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRR, wrr_buf, sizeof(wrr_buf));
+                if (FQSPI_SUCCESS != ret)
+                {
+                    FQSPI_ERROR("Failed to write cmd wrr, test result 0x%x", ret);
+                    return 0;
+                }
+            }
+            else if (pctrl->mf_id == FQSPI_FLASH_MF_ID_BOYA)
+            {
+                pctrl->rd_cfg.dummy = 6;
+                ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRITE_SR2, &wrr_buf[1], 1);
+                if (FQSPI_SUCCESS != ret)
+                {
+                    FQSPI_ERROR("Failed to write cmd wrr, test result 0x%x", ret);
+                    return 0;
+                }
+            }
+
+            break;
+
+        case FQSPI_FLASH_CMD_4QIOR:
+            pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_4;
+            pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_4_4;
             pctrl->rd_cfg.mode_byte = 0x1;
             pctrl->rd_cfg.cmd_sign = FQSPI_QUAD_READ_MODE_CMD;
+            pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
             pctrl->rd_cfg.dummy = 8;
-        }
-        else if (pctrl->mf_id == FQSPI_FLASH_MF_ID_GIGADEVICE)
-        {
-            pctrl->rd_cfg.dummy = 4;
-        }
-        else if (pctrl->mf_id == FQSPI_FLASH_MF_ID_BOYA)
-        {
-            pctrl->rd_cfg.dummy = 4;
-        }
-        break;
 
-    case FQSPI_FLASH_CMD_QIOR:
-        /* set SR1V and CR1V */
-        FQspiFlashEnableWrite(pctrl);
-
-        pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
-        pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_4_4;
-        pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
-
-        if (pctrl->mf_id == FQSPI_FLASH_MF_ID_CYPRESS)
-        {
-            pctrl->rd_cfg.dummy = 10;
+            /* set SR1V and CR1V */
+            FQspiFlashEnableWrite(pctrl);
             /* use wrr write config register 1 */
             ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRR, wrr_buf, sizeof(wrr_buf));
             if (FQSPI_SUCCESS != ret)
             {
-                FQSPI_ERROR("failed to write cmd wrr, test result 0x%x", ret);
-                return 0;
+                FQSPI_ERROR("Failed to write cmd wrr, test result 0x%x\r\n", ret);
+                return ret;
             }
-        }
-        else if (pctrl->mf_id == FQSPI_FLASH_MF_ID_GIGADEVICE)
-        {
-            pctrl->rd_cfg.dummy = 6;
-            /* use wrr write config register 1 */
-            ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRR, wrr_buf, sizeof(wrr_buf));
-            if (FQSPI_SUCCESS != ret)
-            {
-                FQSPI_ERROR("failed to write cmd wrr, test result 0x%x", ret);
-                return 0;
-            }
-        }
-        else if (pctrl->mf_id == FQSPI_FLASH_MF_ID_BOYA)
-        {
-            pctrl->rd_cfg.dummy = 6;
-            ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRITE_SR2, &wrr_buf[1], 1);
-            if (FQSPI_SUCCESS != ret)
-            {
-                FQSPI_ERROR("failed to write cmd wrr, test result 0x%x", ret);
-                return 0;
-            }
-        }
+            break;
 
-        break;
-
-    case FQSPI_FLASH_CMD_4QIOR:
-        pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_4;
-        pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_4_4;
-        pctrl->rd_cfg.mode_byte = 0x1;
-        pctrl->rd_cfg.cmd_sign = FQSPI_QUAD_READ_MODE_CMD;
-        pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
-        pctrl->rd_cfg.dummy = 8;
-
-        /* set SR1V and CR1V */
-        FQspiFlashEnableWrite(pctrl);
-        /* use wrr write config register 1 */
-        ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRR, wrr_buf, sizeof(wrr_buf));
-        if (FQSPI_SUCCESS != ret)
-        {
-            FQSPI_ERROR("failed to write cmd wrr, test result 0x%x\r\n", ret);
-            return ret;
-        }
-        break;
-
-    default:
-        return FQSPI_INVAL_PARAM;
-        break;
+        default:
+            return FQSPI_INVAL_PARAM;
+            break;
     }
 
     ret = FQspiRdCfgConfig(pctrl);
@@ -572,18 +614,18 @@ FError FQspiFlashWriteData(FQspiCtrl *pctrl, u8 command, u32 chip_addr, const u8
     /* set addr_sel region, FQSPI_ADDR_SEL_3 or FQSPI_ADDR_SEL_4 */
     switch (command)
     {
-    case FQSPI_FLASH_CMD_PP:
-    case FQSPI_FLASH_CMD_QPP:
-        pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_3;
-        break;
-    case FQSPI_FLASH_CMD_4PP:
-    case FQSPI_FLASH_CMD_4QPP:
-        pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_4;
-        break;
-    default:
-        ret |= FQSPI_NOT_SUPPORT;
-        return ret;
-        break;
+        case FQSPI_FLASH_CMD_PP:
+        case FQSPI_FLASH_CMD_QPP:
+            pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_3;
+            break;
+        case FQSPI_FLASH_CMD_4PP:
+        case FQSPI_FLASH_CMD_4QPP:
+            pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_4;
+            break;
+        default:
+            ret |= FQSPI_NOT_SUPPORT;
+            return ret;
+            break;
     }
 
     /*write wr_cfg to Write config register 0x08 */
@@ -802,41 +844,41 @@ FError FQspiFlashErase(FQspiCtrl *pctrl, u8 command, u32 offset)
 
     switch (command)
     {
-    case FQSPI_FLASH_CMD_SE:
-        /* set addr_sel region, FQSPI_ADDR_SEL_3 or FQSPI_ADDR_SEL_4 */
-        pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_3;
+        case FQSPI_FLASH_CMD_SE:
+            /* set addr_sel region, FQSPI_ADDR_SEL_3 or FQSPI_ADDR_SEL_4 */
+            pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_3;
 
-        /* set cmd_addr region, by command, have addr transfer */
-        pctrl->cmd_def.cmd_addr = FQSPI_CMD_ADDR_ENABLE;
+            /* set cmd_addr region, by command, have addr transfer */
+            pctrl->cmd_def.cmd_addr = FQSPI_CMD_ADDR_ENABLE;
 
-        /* need some execution time  */
-        pctrl->cmd_def.wait = FQSPI_WAIT_ENABLE;
+            /* need some execution time  */
+            pctrl->cmd_def.wait = FQSPI_WAIT_ENABLE;
 
-        break;
-    case FQSPI_FLASH_CMD_4SE:
-        pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_4;
-        pctrl->cmd_def.cmd_addr = FQSPI_CMD_ADDR_ENABLE;
-        pctrl->cmd_def.wait = FQSPI_WAIT_ENABLE;
+            break;
+        case FQSPI_FLASH_CMD_4SE:
+            pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_4;
+            pctrl->cmd_def.cmd_addr = FQSPI_CMD_ADDR_ENABLE;
+            pctrl->cmd_def.wait = FQSPI_WAIT_ENABLE;
 
-        break;
-    case FQSPI_FLASH_CMD_P4E:
-        pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_3;
-        pctrl->cmd_def.cmd_addr = FQSPI_CMD_ADDR_ENABLE;
+            break;
+        case FQSPI_FLASH_CMD_P4E:
+            pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->cmd_def.cmd_addr = FQSPI_CMD_ADDR_ENABLE;
 
-        break;
-    case FQSPI_FLASH_CMD_4P4E:
-        pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_4;
-        pctrl->cmd_def.cmd_addr = FQSPI_CMD_ADDR_ENABLE;
+            break;
+        case FQSPI_FLASH_CMD_4P4E:
+            pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_4;
+            pctrl->cmd_def.cmd_addr = FQSPI_CMD_ADDR_ENABLE;
 
-        break;
-    case FQSPI_FLASH_CMD_BE:
-        pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_3;
-        break;
-    case FQSPI_FLASH_CMD_4BE:
-        pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_3;
-        break;
-    default:
-        return FQSPI_NOT_SUPPORT;
+            break;
+        case FQSPI_FLASH_CMD_BE:
+            pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_3;
+            break;
+        case FQSPI_FLASH_CMD_4BE:
+            pctrl->cmd_def.addr_sel = FQSPI_ADDR_SEL_3;
+            break;
+        default:
+            return FQSPI_NOT_SUPPORT;
     }
 
     /*write cmd_reg to Command port register 0x10 */
@@ -968,7 +1010,7 @@ FError FQspiFlashWriteReg(FQspiCtrl *pctrl, u8 command, const u8 *buf, size_t le
 
     if (len > 4)
     {
-        FQSPI_ERROR("data length exceed. commad 0x%lx, len:%d \n", command, len);
+        FQSPI_ERROR("Data length exceed. commad 0x%lx, len:%d \n", command, len);
         return FQSPI_INVAL_PARAM;
     }
     else if ((len > 0) && (buf != NULL))
@@ -1014,7 +1056,7 @@ FError FQspiFlashWaitForCmd(FQspiCtrl *pctrl)
     ret = FQspiFlashSpecialInstruction(pctrl, FQSPI_FLASH_CMD_RDSR1, &sr1, sizeof(sr1));
     if (FQSPI_SUCCESS != ret)
     {
-        FQSPI_ERROR("failed to read sr1, result 0x%x\r\n", ret);
+        FQSPI_ERROR("Failed to read sr1, result 0x%x\r\n", ret);
         return ret;
     }
 
@@ -1027,7 +1069,7 @@ FError FQspiFlashWaitForCmd(FQspiCtrl *pctrl)
 
         if (!timeout)
         {
-            FQSPI_ERROR("wait cmd timeout !!!");
+            FQSPI_ERROR("Wait cmd timeout !!!");
             ret = FQSPI_TIMEOUT;
             break;
         }
@@ -1035,5 +1077,30 @@ FError FQspiFlashWaitForCmd(FQspiCtrl *pctrl)
     }
     while (sr1 & FQSPI_NOR_FLASH_STATE_BUSY);
 
+    return ret;
+}
+
+/**
+ * @name: FQspiFlashWProtectSet
+ * @msg:  Set qspi write protection function
+ * @param {FQspiCtrl} *pctrl, instance of FQSPI controller
+ * @param {u32} Write protect function enable/disable 1:enable,0:disable
+ * @return err code information, FQSPI_SUCCESS indicates success，others indicates failed
+ */
+FError FQspiFlashWProtectSet(FQspiCtrl *pctrl, boolean wprotect, u8 channel)
+{
+    FASSERT(pctrl);
+    FError ret = FQSPI_SUCCESS;
+    u8 wp_block[2] = {FQSPI_FLASH_WP_ENABLE, FQSPI_FLASH_WP_DISABLE};
+    FQspiChannelSet(pctrl, channel);
+    ret = FQspiFlashEnableWrite(pctrl);
+    if (wprotect == TRUE)
+    {
+        ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRR, &wp_block[0], 1);
+    }
+    else if (wprotect == FALSE)
+    {
+        ret = FQspiFlashWriteReg(pctrl, FQSPI_FLASH_CMD_WRR, &wp_block[1], 1);
+    }
     return ret;
 }

@@ -19,22 +19,24 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/5/13    init commit
+ * 1.0   zhugengyu  2022/5/13    init commit
  */
 
-#ifndef  DRIVERS_FDDMA_HW_H
-#define  DRIVERS_FDDMA_HW_H
+#ifndef  FDDMA_HW_H
+#define  FDDMA_HW_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 /***************************** Include Files *********************************/
 
 #include "fassert.h"
 #include "ftypes.h"
 #include "fio.h"
 #include "fkernel.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 
 /************************** Constant Definitions *****************************/
 /** @name Register Map

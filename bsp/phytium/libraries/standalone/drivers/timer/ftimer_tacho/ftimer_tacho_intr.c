@@ -14,18 +14,18 @@
  * FilePath: ftimer_tacho_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:36
- * Description:  This files is for
+ * Description:  This file is for timer_tacho interrupt operation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  liushengming 2022/02/18    first commit
  */
 
 /***************************** Include Files *********************************/
 #include "fassert.h"
 #include "ftimer_tacho.h"
 #include "ftimer_tacho_hw.h"
-#include "finterrupt.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -99,7 +99,7 @@ void FTimerTachoIntrHandler(s32 vector, void *param)
     u32 loop;
     FTimerEventHandler evtHandler;
 
-    FTIMER_INFO("intr entered cause: 0x%x.\r\n", intr_status);
+    FTIMER_INFO("Intr entered cause: 0x%x.\r\n", intr_status);
 
     /* check intr status bit by bit */
     for (loop = 0; loop < FMAX_TIMER_TACHO_EVENT; loop++)
@@ -206,6 +206,6 @@ void FTimerTachoSetIntr(FTimerTachoCtrl *instance_p)
     {
         FASSERT(0);
     }
-    FTIMER_INFO("mask:0x%x.\r\n", FTIMER_INTR_M_READ(instance_p));
+    FTIMER_INFO("Mask:0x%x.\r\n", FTIMER_INTR_M_READ(instance_p));
     return;
 }
