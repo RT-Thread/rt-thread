@@ -176,7 +176,7 @@ struct dtb_node *dtb_node_get_dtb_list(void *fdt)
 
     if (paths_buf.ptr == NULL)
     {
-        paths_buf.ptr = malloc(FDT_DTB_ALL_NODES_PATH_SIZE);
+        paths_buf.ptr =(char *)malloc(FDT_DTB_ALL_NODES_PATH_SIZE);
         if (paths_buf.ptr == NULL)
         {
             fdt_exec_status = FDT_RET_NO_MEMORY;
