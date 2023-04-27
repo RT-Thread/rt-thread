@@ -188,7 +188,7 @@ struct dtb_node *dtb_node_get_dtb_list(void *fdt)
 
     root_off = fdt_path_offset(fdt, "/");
 
-    if ((dtb_node_head->header = malloc(sizeof(struct dtb_header))) == NULL)
+    if ((dtb_node_head->header = (struct dtb_header*)malloc(sizeof(struct dtb_header))) == NULL)
     {
         fdt_exec_status = FDT_RET_NO_MEMORY;
         goto fail;
@@ -560,7 +560,7 @@ struct dtb_node *dtb_node_get_dtb_node_by_path(struct dtb_node *dtb_node, const 
     }
 
     pathname_sz = strlen(pathname) + 1;
-    pathname_clone = malloc(pathname_sz);
+    pathname_clone = (char *)malloc(pathname_sz);
     if (pathname_clone == NULL)
     {
         return NULL;
