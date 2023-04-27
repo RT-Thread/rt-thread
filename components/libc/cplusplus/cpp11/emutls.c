@@ -181,7 +181,7 @@ emutls_get_address_array(uintptr_t index)
     if (array == NULL)
     {
         uintptr_t new_size = emutls_new_data_array_size(index);
-        array = calloc(new_size + 1, sizeof(void *));
+        array = (emutls_address_array *)calloc(new_size + 1, sizeof(void *));
         emutls_check_array_set_size(array, new_size);
     }
     else if (index > array->size)
