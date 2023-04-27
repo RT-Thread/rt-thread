@@ -91,7 +91,7 @@ static struct ch32v307x_can_obj  drv_can1 =
 };
 #endif
 
-#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)
+#ifdef BSP_USING_CAN2
 static struct ch32v307x_can_obj  drv_can2 =
 {
     .name = "can2",
@@ -204,7 +204,7 @@ static rt_err_t _can_filter_config(struct ch32v307x_can_obj *drv_can_obj)
     {
         CAN_FilterInit( &(drv_can_obj->can_filter_init) );
     }
-#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)
+#ifdef BSP_USING_CAN2
     else if (drv_can_obj->can_base == CAN2)
     {
         CAN_FilterInit( &(drv_can_obj->can_filter_init) );
@@ -305,7 +305,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);
                 NVIC_DisableIRQ(CAN1_RX1_IRQn);
             }
-#if (defined BSP_USING_CAN2) && (defined CH32V30x_D8C)
+#ifdef BSP_USING_CAN2
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_DisableIRQ(CAN2_RX0_IRQn);
