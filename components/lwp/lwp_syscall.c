@@ -1926,10 +1926,9 @@ quit:
 }
 
 #define INTERP_BUF_SIZE 128
-static char *_load_script(const char *filename, struct lwp_args_info *args)
+static char *_load_script(const char *filename, void *old_page, struct lwp_args_info *args)
 {
-    void *page = NULL;
-    char *new_page;
+    char *new_page = NULL;
     int fd = -RT_ERROR;
     int len;
     char interp[INTERP_BUF_SIZE];
@@ -1947,7 +1946,10 @@ static char *_load_script(const char *filename, struct lwp_args_info *args)
     {
         goto quit;
     }
-
+    /*
+    * match find file header the first line.
+    * eg: #!/bin/sh
+    */
     if ((interp[0] != '#') || (interp[1] != '!'))
     {
         goto quit;
@@ -2002,23 +2004,27 @@ static char *_load_script(const char *filename, struct lwp_args_info *args)
     if (i_arg)
     {
         new_page = _insert_args(1, &i_arg, args);
-        rt_pages_free(page, 0);
-        page = new_page;
-        if (!page)
+        if (!new_page)
         {
             goto quit;
         }
+        rt_pages_free(old_page, 0);
+        old_page = new_page;
     }
     new_page = _insert_args(1, &i_name, args);
-    rt_pages_free(page, 0);
-    page = new_page;
+    if (!new_page)
+    {
+        goto quit;
+    }
+    rt_pages_free(old_page, 0);
+    old_page = new_page;
 
 quit:
     if (fd >= 0)
     {
         close(fd);
     }
-    return page;
+    return new_page;
 }
 
 int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *const envp[])
@@ -2107,33 +2113,33 @@ int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *con
     args_info.size = size;
 
     new_page = _insert_args(1, &exec_name, &args_info);
-    rt_pages_free(page, 0);
-    page = new_page;
-    if (!page)
+    if (!new_page)
     {
         SET_ERRNO(ENOMEM);
         goto quit;
     }
+    rt_pages_free(page, 0);
+    page = new_page;
 
     i_arg = "-e";
     new_page = _insert_args(1, &i_arg, &args_info);
-    rt_pages_free(page, 0);
-    page = new_page;
-    if (!page)
+    if (!new_page)
     {
         SET_ERRNO(ENOMEM);
         goto quit;
     }
+    rt_pages_free(page, 0);
+    page = new_page;
 
     i_arg = "ld.so";
     new_page = _insert_args(1, &i_arg, &args_info);
-    rt_pages_free(page, 0);
-    page = new_page;
-    if (!page)
+    if (!new_page)
     {
         SET_ERRNO(ENOMEM);
         goto quit;
     }
+    rt_pages_free(page, 0);
+    page = new_page;
 
     if ((aux = lwp_argscopy(lwp, args_info.argc, args_info.argv, args_info.envp)) == NULL)
     {
@@ -2312,12 +2318,12 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
     args_info.size = size;
     while (1)
     {
-        new_page = _load_script(path, &args_info);
+        new_page = _load_script(path, page, &args_info);
         if (!new_page)
         {
             break;
         }
-        rt_pages_free(page, 0);
+
         page = new_page;
         path = args_info.argv[0];
     }
