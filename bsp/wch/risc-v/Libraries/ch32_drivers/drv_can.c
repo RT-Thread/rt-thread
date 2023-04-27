@@ -91,7 +91,7 @@ static struct ch32v307x_can_obj  drv_can1 =
 };
 #endif
 
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
 static struct ch32v307x_can_obj  drv_can2 =
 {
     .name = "can2",
