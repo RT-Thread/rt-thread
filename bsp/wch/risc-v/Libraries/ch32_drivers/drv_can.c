@@ -91,7 +91,7 @@ static struct ch32v307x_can_obj  drv_can1 =
 };
 #endif
 
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
 static struct ch32v307x_can_obj  drv_can2 =
 {
     .name = "can2",
@@ -133,7 +133,7 @@ rt_weak void ch32v307x_can_gpio_init(CAN_TypeDef *can_base)
         */
     }
 #endif
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
     if (CAN2 == can_base)
     {
         RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOB, ENABLE );
@@ -204,7 +204,7 @@ static rt_err_t _can_filter_config(struct ch32v307x_can_obj *drv_can_obj)
     {
         CAN_FilterInit( &(drv_can_obj->can_filter_init) );
     }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
     else if (drv_can_obj->can_base == CAN2)
     {
         CAN_FilterInit( &(drv_can_obj->can_filter_init) );
@@ -237,7 +237,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     {
         ch32v307x_can_gpio_init(CAN1);
     }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
     else if (drv_can_obj->can_base == CAN2)
     {
         ch32v307x_can_gpio_init(CAN2);
@@ -305,7 +305,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);
                 NVIC_DisableIRQ(CAN1_RX1_IRQn);
             }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_DisableIRQ(CAN2_RX0_IRQn);
@@ -332,7 +332,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 NVIC_DisableIRQ(USB_HP_CAN1_TX_IRQn);
             }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_DisableIRQ(CAN2_TX_IRQn);
@@ -346,7 +346,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 NVIC_DisableIRQ(CAN1_SCE_IRQn);
             }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_DisableIRQ(CAN2_SCE_IRQn);
@@ -390,7 +390,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_SetPriority(CAN1_RX1_IRQn, 1);
                 NVIC_EnableIRQ(CAN1_RX1_IRQn);
             }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_SetPriority(CAN2_RX0_IRQn, 1);
@@ -410,7 +410,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_SetPriority(USB_HP_CAN1_TX_IRQn, 1);
                 NVIC_EnableIRQ(USB_HP_CAN1_TX_IRQn);
             }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_SetPriority(CAN2_TX_IRQn, 1);
@@ -431,7 +431,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 NVIC_SetPriority(CAN1_SCE_IRQn, 1);
                 NVIC_EnableIRQ(CAN1_SCE_IRQn);
             }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
             if (CAN2 == drv_can_obj->can_base)
             {
                 NVIC_SetPriority(CAN2_SCE_IRQn, 1);
@@ -747,7 +747,7 @@ static int _can_recv_rtmsg(CAN_TypeDef *can_base, struct rt_can_msg *pmsg, rt_ui
     {
         pmsg->hdr_index = (RxMessage->FMI + 1) >> 1;
     }
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
     else if (can_base == CAN2)
     {
         pmsg->hdr_index = (RxMessage->FMI >> 1) + 14;
@@ -974,7 +974,7 @@ void CAN1_SCE_IRQHandler(void)
 }
 #endif /* BSP_USING_CAN1 */
 
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
 /**
  * @brief This function handles CAN2 TX interrupts.
  */
@@ -1151,7 +1151,7 @@ int rt_hw_can_init(void)
     rt_hw_can_register(&drv_can1.device, drv_can1.name, &_can_ops, &drv_can1);
 #endif /* BSP_USING_CAN1 */
 
-#ifdef BSP_USING_CAN2
+#ifdef CAN2
 
     CAN_SlaveStartBank(14);
 
