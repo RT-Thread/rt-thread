@@ -206,7 +206,7 @@ struct dtb_node *dtb_node_get_dtb_list(void *fdt)
             uint32_t off_mem_rsvmap = fdt_off_mem_rsvmap(fdt);
             struct fdt_reserve_entry *rsvmap = (struct fdt_reserve_entry *)((char *)fdt + off_mem_rsvmap);
 
-            ((struct dtb_header *)dtb_node_head->header)->memreserve = malloc(sizeof(struct dtb_memreserve) * memreserve_sz);
+            ((struct dtb_header *)dtb_node_head->header)->memreserve = (struct dtb_memreserve *)malloc(sizeof(struct dtb_memreserve) * memreserve_sz);
             if (dtb_node_head->header->memreserve == NULL)
             {
                 fdt_exec_status = FDT_RET_NO_MEMORY;
