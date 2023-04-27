@@ -76,18 +76,30 @@ static void bflb_i2c_set_frequence(struct bflb_device_s *dev, uint32_t freq)
     uint32_t regval;
     uint32_t reg_base;
     uint32_t phase;
+    uint32_t tmp;
 
     reg_base = dev->reg_base;
 
     phase = bflb_clk_get_peripheral_clock(BFLB_DEVICE_TYPE_I2C, dev->idx) / (freq * 4) - 1;
 
-    regval = phase << I2C_CR_I2C_PRD_S_PH_0_SHIFT;
-    regval |= phase << I2C_CR_I2C_PRD_S_PH_1_SHIFT;
-    regval |= phase << I2C_CR_I2C_PRD_S_PH_2_SHIFT;
-    regval |= phase << I2C_CR_I2C_PRD_S_PH_3_SHIFT;
+    if (freq > 100000) {
+        tmp = ((phase / 4) / 0.5);
+    } else {
+        tmp = (phase / 4);
+    }
+
+    regval = (phase - tmp) << I2C_CR_I2C_PRD_S_PH_0_SHIFT;
+    regval |= (phase + tmp) << I2C_CR_I2C_PRD_S_PH_1_SHIFT;
+    regval |= (phase) << I2C_CR_I2C_PRD_S_PH_2_SHIFT;
+    regval |= (phase) << I2C_CR_I2C_PRD_S_PH_3_SHIFT;
 
     putreg32(regval, reg_base + I2C_PRD_START_OFFSET);
     putreg32(regval, reg_base + I2C_PRD_STOP_OFFSET);
+
+    regval = (phase - tmp) << I2C_CR_I2C_PRD_D_PH_0_SHIFT;
+    regval |= (phase + tmp) << I2C_CR_I2C_PRD_D_PH_1_SHIFT;
+    regval |= (phase + tmp) << I2C_CR_I2C_PRD_D_PH_2_SHIFT;
+    regval |= (phase - tmp) << I2C_CR_I2C_PRD_D_PH_3_SHIFT;
     putreg32(regval, reg_base + I2C_PRD_DATA_OFFSET);
 }
 
@@ -117,6 +129,22 @@ static inline bool bflb_i2c_isend(struct bflb_device_s *dev)
     regval = getreg32(reg_base + I2C_INT_STS_OFFSET);
 
     if (regval & I2C_END_INT) {
+        return true;
+    }
+
+    return false;
+}
+
+static inline bool bflb_i2c_isnak(struct bflb_device_s *dev)
+{
+    uint32_t regval;
+    uint32_t reg_base;
+
+    reg_base = dev->reg_base;
+
+    regval = getreg32(reg_base + I2C_INT_STS_OFFSET);
+
+    if (regval & I2C_NAK_INT) {
         return true;
     }
 
@@ -218,7 +246,7 @@ static int bflb_i2c_write_bytes(struct bflb_device_s *dev, uint8_t *data, uint32
     }
 
     start_time = bflb_mtimer_get_time_ms();
-    while (bflb_i2c_isbusy(dev) || !bflb_i2c_isend(dev)) {
+    while (bflb_i2c_isbusy(dev) || !bflb_i2c_isend(dev) || bflb_i2c_isnak(dev)) {
         if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
             return -ETIMEDOUT;
         }

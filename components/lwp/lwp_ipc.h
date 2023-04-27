@@ -18,7 +18,8 @@ extern "C" {
 enum
 {
     RT_CHANNEL_RAW,
-    RT_CHANNEL_BUFFER
+    RT_CHANNEL_BUFFER,
+    RT_CHANNEL_FD
 };
 
 struct rt_channel_msg
@@ -32,6 +33,11 @@ struct rt_channel_msg
             void *buf;
             size_t length;
         } b;
+        struct chfd
+        {
+            void *file;
+            int fd;
+        } fd;
         void* d;
     } u;
 };

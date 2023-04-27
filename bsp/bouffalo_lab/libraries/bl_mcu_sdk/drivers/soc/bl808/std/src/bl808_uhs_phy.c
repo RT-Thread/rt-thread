@@ -19,7 +19,7 @@
 #else
     #define uhs_phy_printf_debug(...)
     #define uhs_phy_printf(...)
-    #define uhs_phy_printfe printf
+    #define uhs_phy_printfe(...)
 #endif
 
 #define ODT_EN (0)

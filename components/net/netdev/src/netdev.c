@@ -31,6 +31,9 @@
 struct netdev *netdev_list = RT_NULL;
 /* The default network interface device */
 struct netdev *netdev_default = RT_NULL;
+/* The global network register callback */
+static netdev_callback_fn g_netdev_register_callback = RT_NULL;
+static netdev_callback_fn g_netdev_default_change_callback = RT_NULL;
 
 /**
  * This function will register network interface device and
@@ -98,7 +101,6 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     if (netdev_list == RT_NULL)
     {
         netdev_list = netdev;
-        netdev_default = netdev;
     }
     else
     {
@@ -107,6 +109,17 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     }
 
     rt_hw_interrupt_enable(level);
+
+    if (netdev_default == RT_NULL)
+    {
+        netdev_set_default(netdev_list);
+    }
+
+    /* execute netdev register callback */
+    if (g_netdev_register_callback)
+    {
+        g_netdev_register_callback(netdev, NETDEV_CB_REGISTER);
+    }
 
     return RT_EOK;
 }
@@ -151,12 +164,17 @@ int netdev_unregister(struct netdev *netdev)
             }
             if (netdev_default == netdev)
             {
-                netdev_default = netdev_list;
+                netdev_default = RT_NULL;
             }
             break;
         }
     }
     rt_hw_interrupt_enable(level);
+
+    if (netdev_default == RT_NULL)
+    {
+        netdev_set_default(netdev_list);
+    }
 
     if (cur_netdev == netdev)
     {
@@ -168,6 +186,17 @@ int netdev_unregister(struct netdev *netdev)
     }
 
     return -RT_ERROR;
+}
+
+/**
+ * This function will set register callback
+ *
+ * @param register_callback the network register callback
+ *
+ */
+void netdev_set_register_callback(netdev_callback_fn register_callback)
+{
+    g_netdev_register_callback = register_callback;
 }
 
 /**
@@ -211,7 +240,7 @@ struct netdev *netdev_get_first_by_flags(uint16_t flags)
  * This function will get the first network interface device
  * in network interface device list by IP address.
  *
- * @param addr the network interface device IP address
+ * @param ip_addr the network interface device IP address
  *
  * @return != NULL: network interface device object
  *            NULL: get failed
@@ -355,17 +384,34 @@ int netdev_family_get(struct netdev *netdev)
  */
 void netdev_set_default(struct netdev *netdev)
 {
-    if (netdev)
+    if (netdev && (netdev != netdev_default))
     {
         netdev_default = netdev;
 
-        if (netdev->ops->set_default)
+        /* execture the default network interface device in the current network stack */
+        if (netdev->ops && netdev->ops->set_default)
         {
-            /* set default network interface device in the current network stack */
             netdev->ops->set_default(netdev);
+        }
+
+        /* execture application netdev default change callback */
+        if (g_netdev_default_change_callback)
+        {
+            g_netdev_default_change_callback(netdev, NETDEV_CB_DEFAULT_CHANGE);
         }
         LOG_D("Setting default network interface device name(%s) successfully.", netdev->name);
     }
+}
+
+/**
+ * This function will set defalut netdev change callback
+ *
+ * @param register_callback the network default change callback
+ *
+ */
+void netdev_set_default_change_callback(netdev_callback_fn register_callback)
+{
+    g_netdev_default_change_callback = register_callback;
 }
 
 /**
@@ -456,7 +502,7 @@ int netdev_dhcp_enabled(struct netdev *netdev, rt_bool_t is_enabled)
  * This function will set network interface device IP address.
  *
  * @param netdev the network interface device to change
- * @param ipaddr the new IP address
+ * @param ip_addr the new IP address
  *
  * @return  0: set IP address successfully
  *         -1: set IP address failed
@@ -516,7 +562,7 @@ int netdev_set_netmask(struct netdev *netdev, const ip_addr_t *netmask)
  * This function will set network interface device gateway address.
  *
  * @param netdev the network interface device to change
- * @param gateway the new gateway address
+ * @param gw the new gateway address
  *
  * @return  0: set gateway address successfully
  *         -1: set gateway address failed
@@ -546,6 +592,7 @@ int netdev_set_gw(struct netdev *netdev, const ip_addr_t *gw)
  * This function will set network interface device DNS server address.
  *
  * @param netdev the network interface device to change
+ * @param dns_num the number of the DNS server
  * @param dns_server the new DNS server address
  *
  * @return  0: set netmask address successfully
@@ -606,7 +653,7 @@ void netdev_set_addr_callback(struct netdev *netdev, netdev_callback_fn addr_cal
  * @NOTE it can only be called in the network interface device driver.
  *
  * @param netdev the network interface device to change
- * @param ipaddr the new IP address
+ * @param ip_addr the new IP address
  */
 void netdev_low_level_set_ipaddr(struct netdev *netdev, const ip_addr_t *ip_addr)
 {
@@ -669,7 +716,7 @@ void netdev_low_level_set_netmask(struct netdev *netdev, const ip_addr_t *netmas
  * @NOTE it can only be called in the network interface device driver.
  *
  * @param netdev the network interface device to change
- * @param gateway the new gateway address
+ * @param gw the new gateway address
  */
 void netdev_low_level_set_gw(struct netdev *netdev, const ip_addr_t *gw)
 {
@@ -701,6 +748,7 @@ void netdev_low_level_set_gw(struct netdev *netdev, const ip_addr_t *gw)
  * @NOTE it can only be called in the network interface device driver.
  *
  * @param netdev the network interface device to change
+ * @param dns_num the number of the DNS server
  * @param dns_server the new DNS server address
  *
  */

@@ -293,6 +293,21 @@ int usb_dc_init(void)
     return 0;
 }
 
+int usb_dc_deinit(void)
+{
+    uint32_t regval;
+
+    regval = getreg32(BL702_USB_BASE + USB_CONFIG_OFFSET);
+    regval &= ~USB_CR_USB_EN;
+    putreg32(regval, BL702_USB_BASE + USB_CONFIG_OFFSET);
+
+    regval = getreg32(BL702_GLB_BASE + GLB_USB_XCVR_OFFSET);
+    regval &= ~GLB_USB_ENUM;
+    putreg32(regval, BL702_GLB_BASE + GLB_USB_XCVR_OFFSET);
+
+    return 0;
+}
+
 int usbd_set_address(const uint8_t addr)
 {
     uint32_t regval;

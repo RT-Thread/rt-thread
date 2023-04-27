@@ -237,7 +237,7 @@ unsigned int rt_hw_interrupt_get_target_cpus(int vector)
  */
 void rt_hw_interrupt_set_triger_mode(int vector, unsigned int mode)
 {
-    arm_gic_set_configuration(0, vector, mode);
+    arm_gic_set_configuration(0, vector, mode & IRQ_MODE_MASK);
 }
 
 /**

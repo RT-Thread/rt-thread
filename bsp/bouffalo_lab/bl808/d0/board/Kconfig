@@ -1,0 +1,92 @@
+config BSP_USING_BL808
+    bool 
+    select ARCH_RISCV64
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_CACHE
+    select ARCH_MM_MMU
+    select BL808_CORE_D0
+    default y
+
+config BL808_CORE_D0
+    bool
+    default y
+
+config C906_PLIC_PHY_ADDR
+    hex
+    default 0xe0000000
+
+config IRQ_MAX_NR
+    int 
+    default 64
+
+config TIMER_CLK_FREQ
+    int
+    default 1000000
+
+menu "General Drivers Configuration"
+
+    menuconfig BSP_USING_UART3
+        bool "Enable UART3"
+        default y
+        if BSP_USING_UART3
+            choice
+                prompt "UART3 TX PIN"
+                default UART3_TX_USING_GPIO16
+
+                config UART3_TX_USING_GPIO0
+                    bool "GPIO_0"
+                config UART3_TX_USING_GPIO4
+                    bool "GPIO_4"
+                config UART3_TX_USING_GPIO8
+                    bool "GPIO_8"
+                config UART3_TX_USING_GPIO12
+                    bool "GPIO_12"
+                config UART3_TX_USING_GPIO16
+                    bool "GPIO_16"                    
+                config UART3_TX_USING_GPIO20
+                    bool "GPIO_20"
+                config UART3_TX_USING_GPIO24
+                    bool "GPIO_24"
+                config UART3_TX_USING_GPIO28
+                    bool "GPIO_28"
+                config UART3_TX_USING_GPIO32
+                    bool "GPIO_32"
+                config UART3_TX_USING_GPIO36
+                    bool "GPIO_36"
+                config UART3_TX_USING_GPIO40
+                    bool "GPIO_40"
+                config UART3_TX_USING_GPIO44
+                    bool "GPIO_44"
+            endchoice
+            choice
+                prompt "UART3 RX PIN"
+                default UART3_RX_USING_GPIO17
+
+                config UART3_RX_USING_GPIO1
+                    bool "GPIO_1"
+                config UART3_RX_USING_GPIO5
+                    bool "GPIO_5"
+                config UART3_RX_USING_GPIO9
+                    bool "GPIO_9"
+                config UART3_RX_USING_GPIO13
+                    bool "GPIO_12"
+                config UART3_RX_USING_GPIO17
+                    bool "GPIO_17"                    
+                config UART3_RX_USING_GPIO21
+                    bool "GPIO_21"
+                config UART3_RX_USING_GPIO25
+                    bool "GPIO_25"
+                config UART3_RX_USING_GPIO29
+                    bool "GPIO_29"
+                config UART3_RX_USING_GPIO33
+                    bool "GPIO_33"
+                config UART3_RX_USING_GPIO37
+                    bool "GPIO_37"
+                config UART3_RX_USING_GPIO41
+                    bool "GPIO_41"
+                config UART3_RX_USING_GPIO45
+                    bool "GPIO_45"
+            endchoice
+        endif        
+endmenu

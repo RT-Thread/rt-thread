@@ -112,7 +112,7 @@ msh >
 
 维护人：[bigmagic123][5]
 
-[1]: https://www.rt-thread.org/page/download.html
+[1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
 [2]: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads
 [3]: https://downloads.raspberrypi.org/raspbian_lite_latest
 [4]: https://etcher.io

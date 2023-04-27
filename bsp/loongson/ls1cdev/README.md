@@ -97,7 +97,7 @@ Link is with 100M Speed
 * 1C芯片[用户手册][3]
 * 1C芯片[数据手册][4]
 
-  [1]: https://www.rt-thread.org/page/download.html
+  [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
   [2]: https://sourcery.mentor.com/GNUToolchain/package13851/public/mips-sde-elf/mips-2015.05-19-mips-sde-elf.exe
   [3]: http://www.loongson.cn/uploadfile/cpu/1C/Loongson_1C300_user.pdf
   [4]: http://www.loongson.cn/uploadfile/cpu/1C/Loongson_1C300_data.pdf

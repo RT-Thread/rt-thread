@@ -308,7 +308,7 @@ void arm_gic_set_configuration(rt_uint64_t index, int irq, rt_uint32_t config)
     shift = (irq % 16) << 1;
 
     icfgr &= (~(3 << shift));
-    icfgr |= (config << shift);
+    icfgr |= (config << (shift + 1));
 
     GIC_DIST_CONFIG(_gic_table[index].dist_hw_base, irq) = icfgr;
 }

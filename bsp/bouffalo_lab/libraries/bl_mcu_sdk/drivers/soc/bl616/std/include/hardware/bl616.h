@@ -98,7 +98,7 @@ typedef enum {
     SPI0_IRQn = IRQ_NUM_BASE + 27,                              /*!< SPI0  Interrupt                                                   */
     UART0_IRQn = IRQ_NUM_BASE + 28,                             /*!< UART0 Interrupt                                                   */
     UART1_IRQn = IRQ_NUM_BASE + 29,                             /*!< UART1 Interrupt                                                   */
-    ISO11898_IRQn = IRQ_NUM_BASE + 30,                          /*!< ISO11898 Interrupt                                                */
+    RESERVED01_IRQn = IRQ_NUM_BASE + 30,                        /*!< RESERVED01 Interrupt                                                */
     GPIO_DMA_IRQn = IRQ_NUM_BASE + 31,                          /*!< GPIO DMA Interrupt                                                */
     I2C0_IRQn = IRQ_NUM_BASE + 32,                              /*!< I2C0  Interrupt                                                   */
     PWM_IRQn = IRQ_NUM_BASE + 33,                               /*!< PWM Interrupt                                                     */
@@ -214,7 +214,6 @@ typedef enum {
 #define CKS_BASE                             ((uint32_t)0x2000a700)
 #define DBI_BASE                             ((uint32_t)0x2000a800)
 #define I2C1_BASE                            ((uint32_t)0x2000a900)
-#define ISO11898_BASE                        ((uint32_t)0x2000aa00)
 #define I2S_BASE                             ((uint32_t)0x2000ab00)
 #define AUADC_BASE                           ((uint32_t)0x2000ac00)
 #define QSPI_BASE                            ((uint32_t)0x2000b000)

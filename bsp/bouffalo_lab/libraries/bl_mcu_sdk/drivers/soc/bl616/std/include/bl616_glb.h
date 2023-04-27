@@ -306,14 +306,6 @@ typedef enum {
     GLB_PERI_DMA_GAUGE    = 20, /*!< gauge    */
     GLB_PERI_DMA_GPADC    = 22, /*!< gpadc    */
     GLB_PERI_DMA_GPDAC_TX = 23, /*!< gpdac_tx */
-    GLB_PERI_DMA_PEC_RX0  = 24, /*!< pec_rx0  */
-    GLB_PERI_DMA_PEC_RX1  = 25, /*!< pec_rx1  */
-    GLB_PERI_DMA_PEC_RX2  = 26, /*!< pec_rx2  */
-    GLB_PERI_DMA_PEC_RX3  = 27, /*!< pec_rx3  */
-    GLB_PERI_DMA_PEC_TX0  = 28, /*!< pec_tx0  */
-    GLB_PERI_DMA_PEC_TX1  = 29, /*!< pec_tx1  */
-    GLB_PERI_DMA_PEC_TX2  = 30, /*!< pec_tx2  */
-    GLB_PERI_DMA_PEC_TX3  = 31, /*!< pec_tx3  */
 } GLB_PERI_DMA_Type;
 
 /**
@@ -357,14 +349,6 @@ typedef enum {
     GLB_SPI_CLK_MCU_MUXPLL_160M, /*!< Select MCU MUXPLL 160M as SPI clock */
     GLB_SPI_CLK_XCLK,            /*!< Select xclk as SPI clock */
 } GLB_SPI_CLK_Type;
-
-/**
- *  @brief GLB PEC clock type definition
- */
-typedef enum {
-    GLB_PEC_CLK_MCU_MUXPLL_160M, /*!< Select MCU MUXPLL 160M as PEC clock */
-    GLB_PEC_CLK_XCLK,            /*!< Select xclk as PEC clock */
-} GLB_PEC_CLK_Type;
 
 /**
  *  @brief GLB PWM1 io type definition
@@ -454,7 +438,6 @@ typedef enum {
     GLB_AHB_MCU_SW_D2XA = 25,
     GLB_AHB_MCU_SW_D2XB = 26,
     GLB_AHB_MCU_SW_JENC = 27,
-    GLB_AHB_MCU_SW_EXT_PEC = 28,
     GLB_AHB_MCU_SW_GLB = 32,
     GLB_AHB_MCU_SW_MIX = 33,
     GLB_AHB_MCU_SW_GPIP = 34,
@@ -481,7 +464,6 @@ typedef enum {
     GLB_AHB_MCU_SW_CHECKSUM = 55,
     GLB_AHB_MCU_SW_DBI = 56,
     GLB_AHB_MCU_SW_I2C1 = 57,
-    GLB_AHB_MCU_SW_ISO11898 = 58,
     GLB_AHB_MCU_SW_I2S = 59,
     GLB_AHB_MCU_SW_AUSOLO = 60,
     GLB_AHB_MCU_SW_RSV61 = 61,
@@ -511,7 +493,6 @@ typedef enum {
     GLB_DISRST_CHECKSUM = 23,
     GLB_DISRST_DBI = 24,
     GLB_DISRST_I2C1 = 25,
-    GLB_DISRST_ISO11898 = 26,
 } GLB_DISRST_Type;
 
 /**
@@ -710,10 +691,8 @@ typedef enum {
     GLB_UART_SIG_FUN_UART1_CTS, /*!< UART funtion: UART 1 CTS */
     GLB_UART_SIG_FUN_UART1_TXD, /*!< UART funtion: UART 1 TXD */
     GLB_UART_SIG_FUN_UART1_RXD, /*!< UART funtion: UART 1 RXD */
-    GLB_UART_SIG_FUN_N_ISO11898_TXD, /*!< UART funtion: UART 2 RTS */
-    GLB_UART_SIG_FUN_RESERVED,  /*!< UART funtion: UART 2 CTS */
-    GLB_UART_SIG_FUN_ISO11898_TXD,   /*!< UART funtion: UART 2 TXD */
-    GLB_UART_SIG_FUN_ISO11898_RXD,   /*!< UART funtion: UART 2 RXD */
+    GLB_UART_SIG_FUN_RESERVED1, /*!< UART funtion: UART 2 RTS */
+    GLB_UART_SIG_FUN_RESERVED2, /*!< UART funtion: UART 2 CTS */
 } GLB_UART_SIG_FUN_Type;
 
 /**
@@ -848,8 +827,6 @@ typedef enum {
     GLB_AHB_CLOCK_IP_AUPDM,
     GLB_AHB_CLOCK_IP_GAUGE,
     GLB_AHB_CLOCK_IP_DBI,
-    GLB_AHB_CLOCK_IP_PEC,
-    GLB_AHB_CLOCK_IP_ISO11898,
     GLB_AHB_CLOCK_IP_AUSOLO_TOP,
     GLB_AHB_CLOCK_IP_DMA_GPIO,
     GLB_AHB_CLOCK_IP_MM_MISC,
@@ -860,7 +837,6 @@ typedef enum {
     GLB_SLAVE_GRP_0_IR,
     GLB_SLAVE_GRP_0_I2C,
     GLB_SLAVE_GRP_0_SPI,
-    GLB_SLAVE_GRP_0_PEC,
     GLB_SLAVE_GRP_0_DBI,
     GLB_SLAVE_GRP_0_AUDIO_AUTO,
     GLB_SLAVE_GRP_0_AUDIO_ADC,
@@ -886,7 +862,6 @@ typedef union {
         GLB_IR_CLK_SRC_Type     irClkSel;
         GLB_I2C_CLK_Type        i2cClkSel;
         GLB_SPI_CLK_Type        spiClkSel;
-        GLB_PEC_CLK_Type        pecClkSel;
         GLB_DBI_CLK_Type        dbiClkSel;
         GLB_AUDIO_AUTO_CLK_Type audioAutoClkSel;
         GLB_AUDIO_ADC_CLK_Type  audioAdcClkSel;
@@ -1123,15 +1098,7 @@ typedef union {
                                     ((type) == GLB_PERI_DMA_PADC) ||      \
                                     ((type) == GLB_PERI_DMA_GAUGE) ||     \
                                     ((type) == GLB_PERI_DMA_GPADC) ||     \
-                                    ((type) == GLB_PERI_DMA_GPDAC_TX) ||  \
-                                    ((type) == GLB_PERI_DMA_PEC_RX0) ||   \
-                                    ((type) == GLB_PERI_DMA_PEC_RX1) ||   \
-                                    ((type) == GLB_PERI_DMA_PEC_RX2) ||   \
-                                    ((type) == GLB_PERI_DMA_PEC_RX3) ||   \
-                                    ((type) == GLB_PERI_DMA_PEC_TX0) ||   \
-                                    ((type) == GLB_PERI_DMA_PEC_TX1) ||   \
-                                    ((type) == GLB_PERI_DMA_PEC_TX2) ||   \
-                                    ((type) == GLB_PERI_DMA_PEC_TX3))
+                                    ((type) == GLB_PERI_DMA_GPDAC_TX))
 
 /** @defgroup  GLB_PERI_DMA_CN_SEL_TYPE
  *  @{
@@ -1164,12 +1131,6 @@ typedef union {
  */
 #define IS_GLB_SPI_CLK_TYPE(type) (((type) == GLB_SPI_CLK_PLL160M) || \
                                    ((type) == GLB_SPI_CLK_XCLK))
-
-/** @defgroup  GLB_PEC_CLK_TYPE
- *  @{
- */
-#define IS_GLB_PEC_CLK_TYPE(type) (((type) == GLB_PEC_CLK_PLL160M) || \
-                                   ((type) == GLB_PEC_CLK_XCLK))
 
 /** @defgroup  GLB_PWM1_IO_SEL_TYPE
  *  @{
@@ -1236,7 +1197,6 @@ typedef union {
                                       ((type) == GLB_AHB_MCU_SW_D2XA) ||        \
                                       ((type) == GLB_AHB_MCU_SW_D2XB) ||        \
                                       ((type) == GLB_AHB_MCU_SW_JENC) ||        \
-                                      ((type) == GLB_AHB_MCU_SW_EXT_PEC) ||     \
                                       ((type) == GLB_AHB_MCU_SW_GLB) ||         \
                                       ((type) == GLB_AHB_MCU_SW_MIX) ||         \
                                       ((type) == GLB_AHB_MCU_SW_GPIP) ||        \
@@ -1263,7 +1223,6 @@ typedef union {
                                       ((type) == GLB_AHB_MCU_SW_CHECKSUM) ||    \
                                       ((type) == GLB_AHB_MCU_SW_DBI) ||         \
                                       ((type) == GLB_AHB_MCU_SW_I2C1) ||        \
-                                      ((type) == GLB_AHB_MCU_SW_ISO11898) ||    \
                                       ((type) == GLB_AHB_MCU_SW_I2S) ||         \
                                       ((type) == GLB_AHB_MCU_SW_AUSOLO) ||      \
                                       ((type) == GLB_AHB_MCU_SW_RSV61) ||       \
@@ -1290,8 +1249,7 @@ typedef union {
                                   ((type) == GLB_DISRST_IR_REMOTE) || \
                                   ((type) == GLB_DISRST_CHECKSUM) ||  \
                                   ((type) == GLB_DISRST_DBI) ||       \
-                                  ((type) == GLB_DISRST_I2C1) ||      \
-                                  ((type) == GLB_DISRST_ISO11898))
+                                  ((type) == GLB_DISRST_I2C1))
 
 /** @defgroup  GLB_PKA_CLK_TYPE
  *  @{
@@ -1444,10 +1402,7 @@ typedef union {
                                         ((type) == GLB_UART_SIG_FUN_UART1_CTS) || \
                                         ((type) == GLB_UART_SIG_FUN_UART1_TXD) || \
                                         ((type) == GLB_UART_SIG_FUN_UART1_RXD) || \
-                                        ((type) == GLB_UART_SIG_FUN_N_ISO11898_TXD) || \
-                                        ((type) == GLB_UART_SIG_FUN_RESERVED)  || \
-                                        ((type) == GLB_UART_SIG_FUN_ISO11898_TXD)   || \
-                                        ((type) == GLB_UART_SIG_FUN_ISO11898_RXD))
+                                        ((type) == GLB_UART_SIG_FUN_RESERVED))
 
 /** @defgroup  GLB_XTAL_TYPE
  *  @{
@@ -1510,7 +1465,6 @@ typedef union {
                                        ((type) == GLB_SLAVE_GRP_0_IR) || \
                                        ((type) == GLB_SLAVE_GRP_0_I2C) || \
                                        ((type) == GLB_SLAVE_GRP_0_SPI) || \
-                                       ((type) == GLB_SLAVE_GRP_0_PEC) || \
                                        ((type) == GLB_SLAVE_GRP_0_DBI) || \
                                        ((type) == GLB_SLAVE_GRP_0_AUDIO_AUTO) || \
                                        ((type) == GLB_SLAVE_GRP_0_AUDIO_ADC) || \
@@ -1588,8 +1542,6 @@ typedef union {
 #define GLB_AHB_CLOCK_AUPDM             (1ULL<<GLB_AHB_CLOCK_IP_AUPDM          )
 #define GLB_AHB_CLOCK_GAUGE             (1ULL<<GLB_AHB_CLOCK_IP_GAUGE          )
 #define GLB_AHB_CLOCK_DBI               (1ULL<<GLB_AHB_CLOCK_IP_DBI            )
-#define GLB_AHB_CLOCK_PEC               (1ULL<<GLB_AHB_CLOCK_IP_PEC            )
-#define GLB_AHB_CLOCK_ISO11898          (1ULL<<GLB_AHB_CLOCK_IP_ISO11898       )
 #define GLB_AHB_CLOCK_AUSOLO_TOP        (1ULL<<GLB_AHB_CLOCK_IP_AUSOLO_TOP     )
 #define GLB_AHB_CLOCK_DMA_GPIO          (1ULL<<GLB_AHB_CLOCK_IP_DMA_GPIO       )
 #define GLB_AHB_CLOCK_MM_MISC           (1ULL<<GLB_AHB_CLOCK_IP_MM_MISC        )
@@ -1653,7 +1605,6 @@ BL_Err_Type GLB_Set_I2C_CLK(uint8_t enable, GLB_I2C_CLK_Type clkSel, uint8_t div
 BL_Err_Type GLB_Set_I2S_CLK(uint8_t refClkEn, uint8_t refClkDiv, GLB_I2S_DI_REF_CLK_Type inRef, GLB_I2S_DO_REF_CLK_Type outRef);
 BL_Err_Type GLB_Set_SPI_CLK(uint8_t enable, GLB_SPI_CLK_Type clkSel, uint8_t div);
 BL_Err_Type GLB_SPI_Sig_Swap_Set(GLB_SPI_SIG_SWAP_GRP_Type group, uint8_t swap);
-BL_Err_Type GLB_Set_PEC_CLK(uint8_t enable, GLB_PEC_CLK_Type clkSel, uint8_t div);
 BL_Err_Type GLB_Set_PWM1_IO_Sel(GLB_PWM1_IO_SEL_Type ioSel);
 BL_Err_Type GLB_Set_PDM_IO_Sel(GLB_PDM_IO_SEL_Type ioSel);
 BL_Err_Type GLB_Set_DBI_CLK(uint8_t enable, GLB_DBI_CLK_Type clkSel, uint8_t div);

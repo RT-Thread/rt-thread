@@ -103,7 +103,7 @@
 
 > 工程默认配置使用 Jlink 仿真器下载程序，在通过 Jlink 连接开发板到 PC 的基础上，点击下载按钮即可下载程序到开发板
 
-推荐熟悉 RT_Thread 的用户使用[env工具](https://www.rt-thread.org/page/download.html)，可以在console下进入到 `bsp/synwit/swm320` 目录中，运行以下命令：
+推荐熟悉 RT_Thread 的用户使用[env工具](https://www.rt-thread.org/download.html#download-rt-thread-env-tool)，可以在console下进入到 `bsp/synwit/swm320` 目录中，运行以下命令：
 
 `scons`
 
@@ -121,7 +121,7 @@
 
 将串口 1 引脚为：`[PC2/PC3]`和 USB 转串口模块 J11 相连，串口配置方式为115200-N-8-1。
 
-当使用 [env工具](https://www.rt-thread.org/page/download.html) 正确编译产生出rtthread.bin映像文件后，可以使用 ISP 的方式来烧写到设备中。
+当使用 [env工具](https://www.rt-thread.org/download.html#download-rt-thread-env-tool) 正确编译产生出rtthread.bin映像文件后，可以使用 ISP 的方式来烧写到设备中。
 
 **建议使用 keil 软件直接下载**。ISP 下载较复杂。
 
