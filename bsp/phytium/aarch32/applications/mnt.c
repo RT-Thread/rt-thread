@@ -1,33 +1,13 @@
 /*
- * @Copyright : (C) 2022 Phytium Information Technology, Inc. 
- * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
- * @FilePath: mnt.c
- * @Date: 2023-04-19 14:30:05
- * @LastEditTime: 2023-04-19 14:30:05
- * @Description:  This file is for 
- * 
- * @Modify History: 
- *  Ver   Who  Date   Changes
- * ----- ------  -------- --------------------------------------
- */
-/*
- * Copyright (c) 2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
+ * Email: opensource_embedded@phytium.com.cn
+ *
  * Change Logs:
  * Date           Author       Notes
- * 2019-09-19     Gavin        first version
+ * 2023-04-27     huanghe      first version
  *
  */
 

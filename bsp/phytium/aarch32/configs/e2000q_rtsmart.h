@@ -9,7 +9,7 @@
 #define RT_NAME_MAX 16
 #define RT_USING_SMART
 #define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -330,7 +330,7 @@
 
 /* Board Configuration */
 
-#define TARGET_E2000D
+#define TARGET_E2000Q
 #define TARGET_E2000
 #define DEFAULT_DEBUG_PRINT_UART1
 

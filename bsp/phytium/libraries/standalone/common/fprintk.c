@@ -404,7 +404,7 @@ start:
     }
 }
 
-static int f_vprintf(const char *restrict format, va_list vargs)
+static void f_vprintf(const char *restrict format, va_list vargs)
 {
     struct str_context ctx = {0};
     cbvprintf(char_out, &ctx, format, vargs);

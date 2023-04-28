@@ -62,21 +62,10 @@ void idle_wfi(void)
  */
 extern size_t MMUTable[];
 
-
-extern uintptr test_uart_base;
-
-#ifdef RT_USING_SMART
-rt_region_t init_page_region = {
-    PAGE_START,
-    PAGE_END,
-};
-#else
-
 rt_region_t init_page_region = {
     PAGE_START,
     PAGE_END
 };
-#endif
 
 #if defined(TARGET_ARMV8_AARCH64) /* AARCH64 */
 
@@ -129,7 +118,7 @@ void rt_hw_board_aarch64_init(void)
 
         /* init memory pool */
 #ifdef RT_USING_HEAP
-    rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
     rt_hw_interrupt_init();
@@ -187,7 +176,7 @@ void rt_hw_board_aarch32_init(void)
 
         /* init memory pool */
 #ifdef RT_USING_HEAP
-    rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
  
     extern int rt_hw_cpu_id(void);

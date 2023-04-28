@@ -70,8 +70,8 @@ rt_inline rt_uint32_t platform_get_gic_redist_base(void)
         break;
     }
 
-#endif
     rt_kprintf("cpu_id is %d \r\n",cpu_id);
+#endif
     rt_kprintf("offset  is %d\n", cpu_offset);
 
     return (GICV3_RD_BASE_ADDR + (cpu_offset) * GICV3_RD_OFFSET);

@@ -11,7 +11,7 @@
 
 SECTIONS
 {
-    . = 0x80010000 ;
+    . = 0x80080000 ;
     . = ALIGN(4096);
     .text :
     {
@@ -27,6 +27,12 @@ SECTIONS
         *(.gnu.linkonce.t*)
 
         *(COMMON)
+
+        /* section information for utest */
+        . = ALIGN(8);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
 
         /* section information for finsh shell */
         . = ALIGN(16);
@@ -101,14 +107,6 @@ SECTIONS
         . = ALIGN(32);
         PROVIDE(__bss_end = .);
     }
-
-    . = ALIGN(4);
-    .heap :
-    {
-        PROVIDE(__heap_start = .);
-        . = ALIGN(8);
-        PROVIDE(end = .);
-    } 
 
     _end = .;
 

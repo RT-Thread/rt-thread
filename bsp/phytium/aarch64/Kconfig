@@ -42,10 +42,16 @@ config PHYTIUM_ARCH_AARCH64
     default y
     
 
-if TARGET_E2000
+if TARGET_E2000Q
     config ARM_SPI_BIND_CPU_ID
         int 
         default 2
+endif
+
+if TARGET_E2000D
+    config ARM_SPI_BIND_CPU_ID
+        int 
+        default 0
 endif
 
 menu "Standalone Setting"

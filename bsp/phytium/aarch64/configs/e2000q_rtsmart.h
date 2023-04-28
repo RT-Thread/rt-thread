@@ -9,7 +9,7 @@
 #define RT_NAME_MAX 16
 #define RT_USING_SMART
 #define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -19,8 +19,8 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 4096
-#define SYSTEM_THREAD_STACK_SIZE 4096
+#define IDLE_THREAD_STACK_SIZE 40960
+#define SYSTEM_THREAD_STACK_SIZE 40960
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
@@ -53,18 +53,18 @@
 
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 256
+#define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50001
+#define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
-#define RT_USING_CPU_FFS
+#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xc0000000
-#define ARCH_ARM_CORTEX_A
-#define RT_USING_GIC_V3
+#define KERNEL_VADDR_START 0xffff000000000000
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
@@ -103,7 +103,6 @@
 #define RT_CH_MSG_MAX_NR 1024
 #define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
 #define LWP_TID_MAX_NR 64
-#define LWP_ENABLE_ASID
 #define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
@@ -111,12 +110,12 @@
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
-#define RT_SYSTEM_WORKQUEUE_STACKSIZE 4096
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 8192
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
-#define RT_SERIAL_RB_BUFSZ 1024
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_TTY
 #define RT_USING_NULL
 #define RT_USING_ZERO
@@ -135,20 +134,13 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
-#define RT_USING_POSIX_POLL
-#define RT_USING_POSIX_SELECT
 #define RT_USING_POSIX_TERMIOS
-#define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
 #define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
-#define RT_USING_POSIX_PIPE
-#define RT_USING_POSIX_PIPE_SIZE 512
-#define RT_USING_POSIX_MESSAGE_QUEUE
-#define RT_USING_POSIX_MESSAGE_SEMAPHORE
 
 /* Socket is in the 'Network' category */
 
@@ -160,43 +152,9 @@
 
 #define RT_USING_RYM
 #define YMODEM_USING_FILE_TRANSFER
-#define RT_USING_UTEST
-#define UTEST_THR_STACK_SIZE 4096
-#define UTEST_THR_PRIORITY 20
 #define RT_USING_ADT
 
 /* RT-Thread Utestcases */
-
-#define RT_USING_UTESTCASES
-
-/* Utest Self Testcase */
-
-#define UTEST_SELF_PASS_TC
-
-/* Kernel Testcase */
-
-#define UTEST_MEMHEAP_TC
-#define UTEST_SMALL_MEM_TC
-#define UTEST_IRQ_TC
-#define UTEST_SEMAPHORE_TC
-#define UTEST_EVENT_TC
-#define UTEST_TIMER_TC
-#define UTEST_MESSAGEQUEUE_TC
-#define UTEST_MUTEX_TC
-#define UTEST_MAILBOX_TC
-#define UTEST_THREAD_TC
-#define UTEST_ATOMIC_TC
-
-/* CPP11 Testcase */
-
-
-/* Utest Serial Testcase */
-
-
-/* RTT Posix Testcase */
-
-
-/* Memory Management Subsytem Testcase */
 
 
 /* RT-Thread online packages */
@@ -274,6 +232,9 @@
 
 /* samples: kernel and components samples */
 
+#define PKG_USING_KERNEL_SAMPLES
+#define PKG_USING_KERNEL_SAMPLES_LATEST_VERSION
+#define PKG_USING_KERNEL_SAMPLES_EN
 
 /* entertainment: terminal games and other interesting software packages */
 
@@ -321,30 +282,35 @@
 
 /* Board extended module Drivers */
 
-#define PHYTIUM_ARCH_AARCH32
+#define BSP_USING_GIC
+#define BSP_USING_GICV3
+#define PHYTIUM_ARCH_AARCH64
+#define ARM_SPI_BIND_CPU_ID 2
 
 /* Standalone Setting */
 
-#define TARGET_ARMV8_AARCH32
-#define USE_AARCH64_L1_TO_AARCH32
+#define TARGET_ARMV8_AARCH64
 
 /* Board Configuration */
 
-#define TARGET_E2000D
+#define TARGET_E2000Q
 #define TARGET_E2000
 #define DEFAULT_DEBUG_PRINT_UART1
 
 /* Components Configuration */
 
-#define USE_GIC
-#define ENABLE_GICV3
+#define USE_SPI
+#define USE_FSPIM
+#define USE_QSPI
+
+/* Qspi Configuration */
+
+#define USE_FQSPI
 #define USE_SERIAL
 
 /* Usart Configuration */
 
 #define ENABLE_Pl011_UART
 #define LOG_ERROR
-#define USE_DEFAULT_INTERRUPT_CONFIG
-#define INTERRUPT_ROLE_MASTER
 
 #endif

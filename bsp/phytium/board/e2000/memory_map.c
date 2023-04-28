@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Email: opensource_embedded@phytium.com.cn
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-04-27     huanghe      first version
+ *
+ */
+
 #include "rtconfig.h"
 #include <board.h>
 #include <mmu.h>

@@ -84,7 +84,7 @@ void rt_hw_secondary_cpu_up(void)
         /* code */
         char *entry = (char *)_secondary_cpu_entry;
         entry += PV_OFFSET;
-        PsciCpuOn(cpu_mask, entry);
+        PsciCpuOn(cpu_mask, (uintptr)entry);
         __DSB();
 #else
             /* code */
