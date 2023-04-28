@@ -324,6 +324,8 @@ ufunction_t rt_usbd_function_winusb_create(udevice_t device)
 
     /* allocate memory for cdc vcom data */
     winusb_device = (winusb_device_t)rt_malloc(sizeof(struct winusb_device));
+    if (winusb_device == NULL)
+        return RT_NULL;
     rt_memset((void *)winusb_device, 0, sizeof(struct winusb_device));
     func->user_data = (void*)winusb_device;
     /* create an interface object */
