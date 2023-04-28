@@ -23,18 +23,18 @@
 #include <WinError.h>
 #include <windows.h>
 
-/*
- * RT-Thread DFS Interface for win-directory as an disk device
- */
+ /*
+  * RT-Thread DFS Interface for win-directory as an disk device
+  */
 #define FILE_PATH_MAX           256  /* the longest file path */
 
 #define WIN32_DIRDISK_ROOT  "./disk"
 
 typedef struct {
     HANDLE handle;
-    char *start;
-    char *end;
-    char *curr;
+    char* start;
+    char* end;
+    char* curr;
     struct _finddata_t finddata;
 } WINDIR;
 
@@ -87,14 +87,14 @@ static int win32_result_to_dfs(DWORD res)
 }
 
 static int dfs_win32_mount(
-    struct dfs_filesystem *fs,
+    struct dfs_filesystem* fs,
     unsigned long rwflag,
-    const void *data)
+    const void* data)
 {
     return 0;
 }
 
-static int dfs_win32_unmount(struct dfs_filesystem *fs)
+static int dfs_win32_unmount(struct dfs_filesystem* fs)
 {
     return 0;
 }
@@ -104,15 +104,15 @@ static int dfs_win32_mkfs(rt_device_t devid)
     return -ENOSYS;
 }
 
-static int dfs_win32_statfs(struct dfs_filesystem *fs,
-                            struct statfs *buf)
+static int dfs_win32_statfs(struct dfs_filesystem* fs,
+    struct statfs* buf)
 {
     return -ENOSYS;
 }
 
-static char *winpath_dirdup(char *des, const char *src)
+static char* winpath_dirdup(char* des, const char* src)
 {
-    char *path;
+    char* path;
     int i = 0;
 
     path = rt_malloc(FILE_PATH_MAX);
@@ -137,24 +137,24 @@ static char *winpath_dirdup(char *des, const char *src)
 }
 
 /* This function can convert the path in rt-thread/dfs to the path in windows */
-char * dfs_win32_dirdup(char * path)
+char* dfs_win32_dirdup(char* path)
 {
-    char * file_path;
+    char* file_path;
     file_path = winpath_dirdup(WIN32_DIRDISK_ROOT, path);
     return file_path;
 }
 
-static int dfs_win32_open(struct dfs_file *file)
+static int dfs_win32_open(struct dfs_file* file)
 {
     int fd;
     uint32_t oflag, mode;
-    char *file_path;
+    char* file_path;
     int res;
 
     oflag = file->flags;
     if (oflag & O_DIRECTORY)   /* operations about dir */
     {
-        WINDIR *wdirp;
+        WINDIR* wdirp;
         HANDLE handle;
         int len;
 
@@ -191,12 +191,12 @@ static int dfs_win32_open(struct dfs_file *file)
         len = strlen(wdirp->finddata.name) + 1;
         wdirp->handle = handle;
         //wdirp->nfiles = 1;
-        wdirp = (WINDIR *)rt_malloc(sizeof(WINDIR));
+        wdirp->start = (char *)malloc(len); //not rt_malloc!
         wdirp->end = wdirp->curr = wdirp->start;
         wdirp->end += len;
         rt_strncpy(wdirp->curr, wdirp->finddata.name, len);
 
-        file->vnode->data = (void *)wdirp;
+        file->vnode->data = (void*)wdirp;
         rt_free(file_path);
         return 0;
     }
@@ -221,8 +221,8 @@ static int dfs_win32_open(struct dfs_file *file)
 
     /* save this pointer, it will be used when calling read(), write(),
      * flush(), seek(), and will be free when calling close()*/
-    file->data = (void *)fd;
-    file->pos  = 0;
+    file->data = (void*)fd;
+    file->pos = 0;
     file->vnode->size = _lseek(fd, 0, SEEK_END);
 
     if (oflag & O_APPEND)
@@ -239,11 +239,11 @@ __err:
     return win32_result_to_dfs(res);
 }
 
-static int dfs_win32_close(struct dfs_file *file)
+static int dfs_win32_close(struct dfs_file* file)
 {
     if (file->flags & O_DIRECTORY)
     {
-        WINDIR *wdirp = (WINDIR*)(file->vnode->data);
+        WINDIR* wdirp = (WINDIR*)(file->vnode->data);
         RT_ASSERT(wdirp != RT_NULL);
         if (_findclose((intptr_t)wdirp->handle) == 0) {
             free(wdirp->start); /* NOTE: here we don't use rt_free! */
@@ -260,12 +260,12 @@ static int dfs_win32_close(struct dfs_file *file)
     return win32_result_to_dfs(GetLastError());
 }
 
-static int dfs_win32_ioctl(struct dfs_file *file, int cmd, void *args)
+static int dfs_win32_ioctl(struct dfs_file* file, int cmd, void* args)
 {
     return -ENOSYS;
 }
 
-static int dfs_win32_read(struct dfs_file *file, void *buf, size_t len)
+static int dfs_win32_read(struct dfs_file* file, void* buf, size_t len)
 {
     int fd;
     int char_read;
@@ -280,7 +280,7 @@ static int dfs_win32_read(struct dfs_file *file, void *buf, size_t len)
     return char_read;
 }
 
-static int dfs_win32_write(struct dfs_file *file, const void *buf, size_t len)
+static int dfs_win32_write(struct dfs_file* file, const void* buf, size_t len)
 {
     int fd;
     int char_write;
@@ -296,13 +296,13 @@ static int dfs_win32_write(struct dfs_file *file, const void *buf, size_t len)
     return char_write;
 }
 
-static int dfs_win32_flush(struct dfs_file *file)
+static int dfs_win32_flush(struct dfs_file* file)
 {
     return 0;
 }
 
-static int dfs_win32_seek(struct dfs_file *file,
-                          rt_off_t offset)
+static int dfs_win32_seek(struct dfs_file* file,
+    rt_off_t offset)
 {
     int result;
 
@@ -325,10 +325,10 @@ static int dfs_win32_seek(struct dfs_file *file,
 }
 
 /* return the size of struct dirent*/
-static int dfs_win32_getdents(struct dfs_file *file, struct dirent *dirp, rt_uint32_t count)
+static int dfs_win32_getdents(struct dfs_file* file, struct dirent* dirp, rt_uint32_t count)
 {
-    WINDIR *wdirp;
-    struct dirent *d = dirp;
+    WINDIR* wdirp;
+    struct dirent* d = dirp;
     int result;
 
     /* make integer count */
@@ -358,7 +358,7 @@ static int dfs_win32_getdents(struct dfs_file *file, struct dirent *dirp, rt_uin
         {
             char* old_start = wdirp->start;
             long name_len = strlen(wdirp->finddata.name) + 1;
-            wdirp->start = (WINDIR *)realloc(wdirp->start, wdirp->end - wdirp->start + name_len);
+            wdirp->start = realloc(wdirp->start, wdirp->end - wdirp->start + name_len);
             wdirp->curr = wdirp->start + (wdirp->curr - old_start);
             wdirp->end = wdirp->curr + name_len;
             rt_strcpy(wdirp->curr, wdirp->finddata.name);
@@ -375,10 +375,10 @@ static int dfs_win32_getdents(struct dfs_file *file, struct dirent *dirp, rt_uin
     return sizeof(struct dirent);
 }
 
-static int dfs_win32_unlink(struct dfs_filesystem *fs, const char *path)
+static int dfs_win32_unlink(struct dfs_filesystem* fs, const char* path)
 {
     int result;
-    char *fp;
+    char* fp;
     fp = winpath_dirdup(WIN32_DIRDISK_ROOT, path);
     if (fp == RT_NULL)
     {
@@ -409,12 +409,12 @@ __err:
 }
 
 static int dfs_win32_rename(
-    struct dfs_filesystem *fs,
-    const char *oldpath,
-    const char *newpath)
+    struct dfs_filesystem* fs,
+    const char* oldpath,
+    const char* newpath)
 {
     int result;
-    char *op, *np;
+    char* op, * np;
     op = winpath_dirdup(WIN32_DIRDISK_ROOT, oldpath);
     np = winpath_dirdup(WIN32_DIRDISK_ROOT, newpath);
     if (op == RT_NULL || np == RT_NULL)
@@ -435,11 +435,11 @@ static int dfs_win32_rename(
     return 0;
 }
 
-static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+static int dfs_win32_stat(struct dfs_filesystem* fs, const char* path, struct stat* st)
 {
     WIN32_FIND_DATA fileInfo;
     HANDLE hFind;
-    char *fp;
+    char* fp;
     fp = winpath_dirdup(WIN32_DIRDISK_ROOT, path);
     if (fp == RT_NULL)
     {
@@ -454,7 +454,7 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
         goto __err;
 
     st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-                  S_IWUSR | S_IWGRP | S_IWOTH;
+        S_IWUSR | S_IWGRP | S_IWOTH;
 
     /* convert file info to dfs stat structure */
     if (fileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
@@ -463,7 +463,7 @@ static int dfs_win32_stat(struct dfs_filesystem *fs, const char *path, struct st
         st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
-    st->st_dev  = 0;
+    st->st_dev = 0;
     st->st_size = fileInfo.nFileSizeLow;
 
     /* get st_mtime. */
@@ -538,28 +538,28 @@ static rt_err_t nop_close(rt_device_t dev)
 }
 
 static rt_ssize_t nop_read(rt_device_t dev,
-                          rt_off_t    pos,
-                          void       *buffer,
-                          rt_size_t   size)
+    rt_off_t    pos,
+    void* buffer,
+    rt_size_t   size)
 {
     return size;
 }
 
 static rt_ssize_t nop_write(rt_device_t dev,
-                           rt_off_t    pos,
-                           const void *buffer,
-                           rt_size_t   size)
+    rt_off_t    pos,
+    const void* buffer,
+    rt_size_t   size)
 {
     return size;
 }
 
-static rt_err_t nop_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t nop_control(rt_device_t dev, int cmd, void* args)
 {
     return RT_EOK;
 }
 
 static struct rt_device win_sharedir_dev;
-rt_err_t rt_win_sharedir_init(const char *name)
+rt_err_t rt_win_sharedir_init(const char* name)
 {
     rt_device_t dev;
 
@@ -567,13 +567,13 @@ rt_err_t rt_win_sharedir_init(const char *name)
     RT_ASSERT(dev != RT_NULL);
 
     /* set device class and generic device interface */
-    dev->type        = RT_Device_Class_Block;
-    dev->init        = nop_init;
-    dev->open        = nop_open;
-    dev->read        = nop_read;
-    dev->write       = nop_write;
-    dev->close       = nop_close;
-    dev->control     = nop_control;
+    dev->type = RT_Device_Class_Block;
+    dev->init = nop_init;
+    dev->open = nop_open;
+    dev->read = nop_read;
+    dev->write = nop_write;
+    dev->close = nop_close;
+    dev->control = nop_control;
 
     dev->rx_indicate = RT_NULL;
     dev->tx_complete = RT_NULL;
