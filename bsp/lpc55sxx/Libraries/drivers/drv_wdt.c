@@ -27,7 +27,13 @@
 #if defined(BSP_USING_WDT)
 #include "fsl_wwdt.h"
 
-static rt_watchdog_t lpc_watchdog;
+struct lpc_wdt_obj
+{
+    rt_watchdog_t watchdog;
+    rt_uint16_t is_start;
+};
+
+static struct lpc_wdt_obj lpc_wdt;
 static wwdt_config_t WWDT1_config =
 {
     /* Enable the watch dog */
@@ -118,13 +124,13 @@ static rt_err_t lpc_wwdt_init(rt_watchdog_t *wdt)
      * Set watchdog window time to 1s
      */
     /* The WDT divides the input frequency into it by 4 */
-    WWDT1_config.timeoutValue = (CLOCK_GetFreq(kCLOCK_WdtClk) / 4) * 4;
+    WWDT1_config.timeoutValue = (CLOCK_GetWdtClkFreq() / 4) * 4;
     WWDT1_config.warningValue = 512;
-    WWDT1_config.windowValue  = (CLOCK_GetFreq(kCLOCK_WdtClk) / 4) * 1;
+    WWDT1_config.windowValue  = (CLOCK_GetWdtClkFreq() / 4) * 1;
     /* Configure WWDT to reset on timeout */
     WWDT1_config.enableWatchdogReset = true;
     /* Setup watchdog clock frequency(Hz). */
-    WWDT1_config.clockFreq_Hz = CLOCK_GetFreq(kCLOCK_WdtClk);
+    WWDT1_config.clockFreq_Hz = CLOCK_GetWdtClkFreq();
 
     WWDT_Init(base, &WWDT1_config);
     lpc_wwdt_close(wdt);
@@ -176,9 +182,9 @@ static rt_err_t lpc_wwdt_control(rt_watchdog_t *wdt, int cmd, void *args)
     {
         RT_ASSERT(*(uint16_t *)args != 0);
 
-        WWDT1_config.timeoutValue = (CLOCK_GetFreq(kCLOCK_WdtClk) / 4) * (*(uint16_t *)args) * 2;
+        WWDT1_config.timeoutValue = (CLOCK_GetWdtClkFreq() / 4) * (*(uint16_t *)args) * 2;
         WWDT1_config.warningValue = 512;
-        WWDT1_config.windowValue  = (CLOCK_GetFreq(kCLOCK_WdtClk) / 4) * (*(uint16_t *)args) * 2 / 4;
+        WWDT1_config.windowValue  = (CLOCK_GetWdtClkFreq() / 4) * (*(uint16_t *)args) * 2 / 4;
 
         base->TC = WWDT_TC_COUNT(WWDT1_config.timeoutValue);
         base->WINDOW  = WWDT_WINDOW_WINDOW(WWDT1_config.windowValue);
@@ -223,9 +229,9 @@ int rt_hw_wdt_init(void)
     rt_err_t ret = RT_EOK;
 
 #if defined (BSP_USING_WDT)
-    lpc_watchdog.ops = &lpc_wwdt_ops;
+    lpc_wdt.watchdog.ops = &lpc_wwdt_ops;
 
-    ret = rt_hw_watchdog_register(&lpc_watchdog, "wdog1", RT_DEVICE_FLAG_RDWR, WWDT);
+    ret = rt_hw_watchdog_register(&lpc_wdt.watchdog, "wdt", RT_DEVICE_FLAG_RDWR, WWDT);
 
     if (ret != RT_EOK)
     {
