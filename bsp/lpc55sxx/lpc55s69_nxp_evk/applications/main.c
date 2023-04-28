@@ -20,6 +20,9 @@
 #define LEDB_PIN      GET_PINS(1, 4)
 
 
+#include "dfs_fs.h"
+
+
 int main(void)
 {
 #if defined(__CC_ARM)
