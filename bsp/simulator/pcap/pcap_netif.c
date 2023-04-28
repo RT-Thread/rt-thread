@@ -203,6 +203,13 @@ rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
     /* lock EMAC device */
     rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
+    /* check if the total length of pbuf exceeds the size of buf */
+    if(p->tot_len > 2048)
+    {
+        rt_kprintf("Error sending the packet: send data exceed max len 2048\n");
+        return -RT_ERROR;
+    }
+
     /* copy data to tx buffer */
     q = p;
     ptr = (rt_uint8_t*)buf;
