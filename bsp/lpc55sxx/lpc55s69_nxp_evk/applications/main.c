@@ -14,14 +14,11 @@
 
 #include <rtdevice.h>
 #include "drv_pin.h"
+#include "dfs_fs.h"
 
 /* defined the LED pin: GPIO1_IO4 */
 /* GPIO1_4 is Blue LED */
 #define LEDB_PIN      GET_PINS(1, 4)
-
-
-#include "dfs_fs.h"
-
 
 int main(void)
 {
