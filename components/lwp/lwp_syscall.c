@@ -2017,7 +2017,6 @@ static char *_load_script(const char *filename, void *old_page, struct lwp_args_
         goto quit;
     }
     rt_pages_free(old_page, 0);
-    old_page = new_page;
 
 quit:
     if (fd >= 0)
