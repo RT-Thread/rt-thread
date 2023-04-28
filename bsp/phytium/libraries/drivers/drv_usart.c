@@ -8,7 +8,7 @@
  * Change Logs:
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
- *
+ * 2023-04-27  huanghe      support RT-Smart
  */
 
 #include "board.h"
@@ -46,7 +46,7 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     config = *(const FPl011Config *)FPl011LookupConfig(uart->config.uart_instance);
 
 #ifdef RT_USING_SMART
-    config.base_address = rt_ioremap((void*)config.base_address, 0x1000);
+    config.base_address = (uintptr)rt_ioremap((void*)config.base_address, 0x1000);
 #endif
 
     RT_ASSERT(FPl011CfgInitialize(uart_hw, &config) == FT_SUCCESS);
@@ -208,7 +208,6 @@ int rt_hw_uart_init(void)
     config.bufsz = RT_SERIAL_RB_BUFSZ;
     _RtUart0.serial.ops = &_uart_ops;
     _RtUart0.serial.config = config;
-    // Ft_Uart0.config.instance_id = FUART0_ID;
 
     _RtUart0.handle = &Ft_Uart0;
     _RtUart0.config.uart_instance = FUART0_ID;
@@ -225,7 +224,6 @@ int rt_hw_uart_init(void)
     config.bufsz = RT_SERIAL_RB_BUFSZ;
     _RtUart1.serial.ops = &_uart_ops;
     _RtUart1.serial.config = config;
-    // Ft_Uart1.config.instance_id = FUART1_ID;
     _RtUart1.handle = &Ft_Uart1;
 
     _RtUart1.config.uart_instance = FUART1_ID;
@@ -243,7 +241,6 @@ int rt_hw_uart_init(void)
     config.bufsz = RT_SERIAL_RB_BUFSZ;
     _RtUart2.serial.ops = &_uart_ops;
     _RtUart2.serial.config = config;
-    // Ft_Uart1.config.instance_id = FUART1_ID;
     _RtUart2.handle = &Ft_Uart2;
 
     _RtUart2.config.uart_instance = FUART2_ID;

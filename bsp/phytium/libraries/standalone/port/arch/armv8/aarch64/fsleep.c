@@ -23,6 +23,8 @@
  */
 
 /***************************** Include Files *********************************/
+#include <gtimer.h>
+
 #include "fassert.h"
 #include "fsleep.h"
 #include "fkernel.h"

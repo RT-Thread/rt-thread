@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Email: opensource_embedded@phytium.com.cn
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-03-20     zhangyan     first version
+ *
+ */
+
 #include "drv_can.h"
 #include "sdkconfig.h"
 

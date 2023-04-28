@@ -10,7 +10,23 @@ LD = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)ld
 AR = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)ar rcs
 NM = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)nm
 OD = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)objdump
+RTCONFIG =
 
+include .config
+
+ifdef CONFIG_TARGET_E2000Q
+RTCONFIG := e2000q
+endif
+
+ifdef CONFIG_TARGET_E2000D
+RTCONFIG := e2000d
+endif
+
+ifdef CONFIG_RT_USING_SMART
+RTCONFIG := $(RTCONFIG)_rtsmart
+else
+RTCONFIG := $(RTCONFIG)_rtthread
+endif
 
 boot:
 	make all
@@ -32,3 +48,32 @@ clean:
 menuconfig:
 	@echo "Running menuconfig..."
 	scons --menuconfig
+
+saveconfig:
+	@echo "Save configs to" ./configs/$(RTCONFIG)
+	@cp ./.config ./configs/$(RTCONFIG) -f
+	@cp ./rtconfig.h ./configs/$(RTCONFIG).h -f
+
+load_e2000q_rtsmart:
+	@echo "Load configs from ./configs/e2000q_rtsmart"
+	@cp ./configs/e2000q_rtsmart ./.config -f
+	@cp ./configs/e2000q_rtsmart.h ./rtconfig.h -f
+	@scons -c
+
+load_e2000q_rtthread:
+	@echo "Load configs from ./configs/e2000q_rtthread"
+	@cp ./configs/e2000q_rtthread ./.config -f
+	@cp ./configs/e2000q_rtthread.h ./rtconfig.h -f
+	@scons -c
+
+load_e2000d_rtsmart:
+	@echo "Load configs from ./configs/e2000d_rtsmart"
+	@cp ./configs/e2000d_rtsmart ./.config -f
+	@cp ./configs/e2000d_rtsmart.h ./rtconfig.h -f
+	@scons -c
+
+load_e2000d_rtthread:
+	@echo "Load configs from ./configs/e2000d_rtthread"
+	@cp ./configs/e2000d_rtthread ./.config -f
+	@cp ./configs/e2000d_rtthread.h ./rtconfig.h -f
+	@scons -c

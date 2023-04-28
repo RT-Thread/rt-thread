@@ -32,18 +32,16 @@
 #endif
 
 #ifdef RT_USING_SMART
-#define HEAP_END        (void*)(KERNEL_VADDR_START + 64 * 1024 * 1024)
+#define HEAP_END        (rt_size_t)((rt_size_t)KERNEL_VADDR_START + 64 * 1024 * 1024)
 #define PAGE_START      HEAP_END + 1 * 1024 * 1024
-#define PAGE_END        (void*)(KERNEL_VADDR_START + 128 * 1024 * 1024)
+#define PAGE_END        (rt_size_t)((rt_size_t)KERNEL_VADDR_START + 128 * 1024 * 1024)
 #else
-
-#define HEAP_END        (void*)(HEAP_BEGIN + 64*1024*1024)
-#define KERNEL_VADDR_START 0x80000000
+#define HEAP_END        (rt_size_t)(HEAP_BEGIN + 64*1024*1024)
+#define KERNEL_VADDR_START (rt_size_t)0x80000000
 #define DDR_END_ADDRESS (KERNEL_VADDR_START + 1024*1024*1024 - 1 )
-#define PAGE_POOL_SIZE (8ul << 20)
-#define PAGE_START    (rt_size_t)(HEAP_END)
-#define PAGE_END    (PAGE_START +PAGE_POOL_SIZE)
-
+#define PAGE_POOL_SIZE  (8ul << 20)
+#define PAGE_START      (rt_size_t)(HEAP_END)
+#define PAGE_END        (PAGE_START +PAGE_POOL_SIZE)
 #endif
 
 void rt_hw_board_init(void);
