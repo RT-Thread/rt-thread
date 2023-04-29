@@ -779,13 +779,13 @@ cy_en_csdidac_status_t Cy_CSDIDAC_OutputEnableExt(
                 uint32_t idacCode,
                 cy_stc_csdidac_context_t * context)
 {
-    CSD_Type * ptrCsdBaseAdd = context->cfgCopy.base;
     uint32_t idacRegValue;
     uint32_t  interruptState;
     cy_en_csdidac_status_t retVal = CY_CSDIDAC_BAD_PARAM;
 
     if((NULL != context) && (CY_CSDIDAC_MAX_CODE >= idacCode))
     {
+        CSD_Type * ptrCsdBaseAdd = context->cfgCopy.base;
         if((true == Cy_CSDIDAC_IsIdacChoiceValid(outputCh, context->cfgCopy.configA, context->cfgCopy.configB)) &&
            (true == Cy_CSDIDAC_IsIdacPolarityValid(polarity)) &&
            (true == Cy_CSDIDAC_IsIdacLsbValid(lsbIndex)))
