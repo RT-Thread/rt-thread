@@ -503,8 +503,6 @@ static void start_sys_timer(void)
     struct itimerval itimer, oitimer;
     int us;
 
-    RT_ASSERT(RT_TICK_PER_SECOND <= 1000000 || RT_TICK_PER_SECOND >= 1);
-
     us = 1000000 / RT_TICK_PER_SECOND - 1;
 
     TRACE("start system tick!\n");
