@@ -26,6 +26,10 @@
 #include <rtthread.h>
 #include <netif/ethernetif.h>
 
+#define DBG_TAG    "pcap.netif"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #define MAX_ADDR_LEN 6
 
 #define NETIF_DEVICE(netif) ((struct pcap_netif*)(netif))
@@ -206,7 +210,7 @@ rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
     /* check if the total length of pbuf exceeds the size of buf */
     if(p->tot_len > 2048)
     {
-        rt_kprintf("Error sending the packet: send data exceed max len 2048\n");
+        LOG_E("Sending the packet: send data exceed max len 2048!");
         return -RT_ERROR;
     }
 
@@ -226,7 +230,7 @@ rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
 
     if (res != 0)
     {
-        rt_kprintf("Error sending the packet: \n", pcap_geterr(tap));
+        LOG_E("Sending the packet: %s", pcap_geterr(tap));
         result = -RT_ERROR;
     }
 
