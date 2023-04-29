@@ -570,6 +570,8 @@ cy_en_csdidac_status_t Cy_CSDIDAC_Restore(cy_stc_csdidac_context_t * context)
     cy_en_csdidac_status_t result = CY_CSDIDAC_HW_FAILURE;
     cy_en_csd_key_t mvKey;
     cy_en_csd_status_t initStatus = CY_CSD_LOCKED;
+    CSD_Type * ptrCsdBaseAdd = NULL;
+    cy_stc_csd_context_t * ptrCsdCxt = NULL;
     cy_stc_csd_config_t csdCfg = CY_CSDIDAC_CSD_CONFIG_DEFAULT;
 
     /* The number of cycles of one for() loop. */
@@ -579,8 +581,8 @@ cy_en_csdidac_status_t Cy_CSDIDAC_Restore(cy_stc_csdidac_context_t * context)
 
     if (NULL != context)
     {
-        CSD_Type * ptrCsdBaseAdd = context->cfgCopy.base;
-        cy_stc_csd_context_t * ptrCsdCxt = context->cfgCopy.csdCxtPtr;
+        ptrCsdBaseAdd = context->cfgCopy.base;
+        ptrCsdCxt = context->cfgCopy.csdCxtPtr;
         /* Closes the IAIB switch if IDACs joined */
         if ((CY_CSDIDAC_JOIN == context->cfgCopy.configA) || (CY_CSDIDAC_JOIN == context->cfgCopy.configB))
         {
@@ -779,13 +781,14 @@ cy_en_csdidac_status_t Cy_CSDIDAC_OutputEnableExt(
                 uint32_t idacCode,
                 cy_stc_csdidac_context_t * context)
 {
+    CSD_Type * ptrCsdBaseAdd = NULL;
     uint32_t idacRegValue;
     uint32_t  interruptState;
     cy_en_csdidac_status_t retVal = CY_CSDIDAC_BAD_PARAM;
 
     if((NULL != context) && (CY_CSDIDAC_MAX_CODE >= idacCode))
     {
-        CSD_Type * ptrCsdBaseAdd = context->cfgCopy.base;
+        ptrCsdBaseAdd = context->cfgCopy.base;
         if((true == Cy_CSDIDAC_IsIdacChoiceValid(outputCh, context->cfgCopy.configA, context->cfgCopy.configB)) &&
            (true == Cy_CSDIDAC_IsIdacPolarityValid(polarity)) &&
            (true == Cy_CSDIDAC_IsIdacLsbValid(lsbIndex)))
