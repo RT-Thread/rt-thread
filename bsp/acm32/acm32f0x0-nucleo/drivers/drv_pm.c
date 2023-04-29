@@ -134,6 +134,7 @@ static void _pm_timer_stop(struct rt_pm *pm)
 static rt_tick_t _pm_timer_get_tick(struct rt_pm *pm)
 {
     rt_tick_t tick;
+    tick = 0;
     RT_ASSERT(pm != RT_NULL);
 
     return get_os_tick_from_pm_tick(tick);
