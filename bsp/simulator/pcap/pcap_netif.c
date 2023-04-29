@@ -211,6 +211,7 @@ rt_err_t pcap_netif_tx( rt_device_t dev, struct pbuf* p)
     if(p->tot_len > 2048)
     {
         LOG_E("Sending the packet: send data exceed max len 2048!");
+        rt_sem_release(&sem_lock);
         return -RT_ERROR;
     }
 
