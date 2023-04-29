@@ -82,7 +82,7 @@ void bflb_gpio_init(struct bflb_device_s *dev, uint8_t pin, uint32_t cfgset)
     cfg |= (function << (is_odd * 16 + 8));
 #if defined(BL702L)
     /* configure output mode:set and clr mode */
-    if ((function != 22) || (function != 21)) {
+    if ((function != 22) && (function != 21)) {
         cfg |= (1 << (is_odd * 16 + 15));
     }
 #endif
