@@ -155,7 +155,7 @@ void Cy_BTIPC_IRQ_Handler(cy_stc_ipc_bt_context_t *btIpcContext)
 #endif
             channelHPC = contextPtr->dlChannelHPC;
 
-            BTIPC_LOG_L1("on ch %ld\n",channelHPC);
+            BTIPC_LOG_L1("on ch %u\n",channelHPC);
 
             ipcPtr = Cy_IPC_Drv_GetIpcBaseAddress(channelHPC);
             Cy_IPC_Drv_ReadDDataValue(ipcPtr, mesg);
@@ -209,7 +209,7 @@ void Cy_BTIPC_IRQ_Handler(cy_stc_ipc_bt_context_t *btIpcContext)
 #endif
             channelHCI = contextPtr->dlChannelHCI;
 
-            BTIPC_LOG_L1("on ch %ld\n",channelHCI);
+            BTIPC_LOG_L1("on ch %u\n",channelHCI);
 
             ipcPtr = Cy_IPC_Drv_GetIpcBaseAddress(channelHCI);
             Cy_IPC_Drv_ReadDDataValue(ipcPtr, mesg);
