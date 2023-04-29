@@ -570,8 +570,6 @@ cy_en_csdidac_status_t Cy_CSDIDAC_Restore(cy_stc_csdidac_context_t * context)
     cy_en_csdidac_status_t result = CY_CSDIDAC_HW_FAILURE;
     cy_en_csd_key_t mvKey;
     cy_en_csd_status_t initStatus = CY_CSD_LOCKED;
-    CSD_Type * ptrCsdBaseAdd = context->cfgCopy.base;
-    cy_stc_csd_context_t * ptrCsdCxt = context->cfgCopy.csdCxtPtr;
     cy_stc_csd_config_t csdCfg = CY_CSDIDAC_CSD_CONFIG_DEFAULT;
 
     /* The number of cycles of one for() loop. */
@@ -581,6 +579,8 @@ cy_en_csdidac_status_t Cy_CSDIDAC_Restore(cy_stc_csdidac_context_t * context)
 
     if (NULL != context)
     {
+        CSD_Type * ptrCsdBaseAdd = context->cfgCopy.base;
+        cy_stc_csd_context_t * ptrCsdCxt = context->cfgCopy.csdCxtPtr;
         /* Closes the IAIB switch if IDACs joined */
         if ((CY_CSDIDAC_JOIN == context->cfgCopy.configA) || (CY_CSDIDAC_JOIN == context->cfgCopy.configB))
         {
