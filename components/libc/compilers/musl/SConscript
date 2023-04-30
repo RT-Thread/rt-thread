@@ -5,10 +5,10 @@ Import('rtconfig')
 
 group = []
 
-libc_name, libc_version = GetGCCLibcNameVersion(rtconfig)
+musllibc_version = GetMuslVersion(rtconfig)
 
-if libc_name == 'musl':
-    print('Musl version: ' + libc_version)
+if musllibc_version:
+    print('Musl version: ' + musllibc_version)
 
     cwd = GetCurrentDir()
     src = Glob('*.c')
