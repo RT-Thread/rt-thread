@@ -67,7 +67,7 @@ def CheckHeader(rtconfig, filename):
     return False
 
 def GetNewLibVersion(rtconfig):
-    version = 'unknown'
+    version = None
     root = GetGCCRoot(rtconfig)
     if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
         f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
@@ -85,32 +85,12 @@ def GetNewLibVersion(rtconfig):
             f.close()
     return version
 
-# FIXME: it's not very good
-def CheckMUSLLibc(rtconfig):
-    if 'musl' in rtconfig.PREFIX:
-        return True
-    return False
-
 # FIXME: there is no musl version or musl macros can be found officially
 def GetMuslVersion(rtconfig):
-    version = 'unknown'
-    # root = GetGCCRoot(rtconfig)
-    # print(root)
+    version = None
+    if 'musl' in rtconfig.PREFIX:
+        version = 'unknown'
     return version
-
-# return libc name and version
-def GetGCCLibcNameVersion(rtconfig):
-    if rtconfig.PLATFORM != 'gcc':
-        return ('unknown', 'unknown')
-
-    newlib_version = GetNewLibVersion(rtconfig)
-    if newlib_version != 'unknown':
-        return ('newlib', newlib_version) # libc: newlib, version: newlib_version
-    elif CheckMUSLLibc(rtconfig) == True:
-        GetMuslVersion(rtconfig)
-        return ('musl', 'unknown') #libc: musl, version: unknown
-    else:
-        return ('unknown', 'unknown') # libc: unknown, version: unknown
 
 def GCCResult(rtconfig, str):
     import subprocess
