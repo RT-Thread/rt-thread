@@ -44,7 +44,6 @@ jobs:
                 - "asm9260t"
                 - "allwinner_tina"
                 - "ft32/ft32f072xb-starter"
-                - "tkm32F499"
                 - "mini2440"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "sam7x"   
