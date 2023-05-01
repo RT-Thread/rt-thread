@@ -231,7 +231,8 @@ void rt_vbus_chnx_register_disconn(rt_device_t dev,
                                    rt_vbus_event_listener indi,
                                    void *ctx)
 {
-    if (dev && dev->user_data) {
+    if (dev && dev->user_data)
+    {
         struct rt_vbus_dev *vdev = dev->user_data;
         RT_ASSERT(vdev->chnr != 0);
 
