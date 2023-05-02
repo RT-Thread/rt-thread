@@ -355,13 +355,15 @@ Reset_Handler
         STR     R1, [R0]
         LDR     R2, [R1]
         MSR     MSP, R2
-        LDR     R0, =0x400AC044
-        LDR     R1, =0x0000FAA5 ;64KBITCM, 128KBDTCM, 64KBOCRAM
+        
+        LDR     R0, =0x400AC044 ; IMUXC_GPR_GPR17
+        LDR     R1, =0x0000AA55 ; 128kbITCM 128kbOCRAM
         STR     R1, [R0]
-	LDR     R0, =0x400AC040
-        LDR     R1, [R0]
-	ORR     R1, R1, #7
+        
+        LDR     R0, =0x400AC040 ; IMUXC_GPR_GPR16
+        LDR     R1, =0x00000007
         STR     R1, [R0]
+        
         LDR     R0, =SystemInit
         BLX     R0
         CPSIE   I               ; Unmask interrupts
