@@ -4373,10 +4373,22 @@ mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr
     if (!kname)
         return (mqd_t)-ENOMEM;
 
-    lwp_get_from_user(&attr_k, (void *)attr, sizeof(struct mq_attr));
+    if (attr == NULL)
+    {
+        attr_k.mq_maxmsg = 10;
+        attr_k.mq_msgsize = 8192;
+        attr_k.mq_flags = 0;
+        attr = &attr_k;
+    }
+    else
+    {
+        if (!lwp_get_from_user(&attr_k, (void *)attr, sizeof(struct mq_attr)))
+            return -EINVAL;
+    }
+
     lwp_get_from_user(kname, (void *)name, len + 1);
     mqdes = mq_open(kname, flags, mode, &attr_k);
-    if (mqdes == RT_NULL)
+    if (mqdes == -1)
     {
         ret = GET_ERRNO();
     }
@@ -4385,7 +4397,7 @@ mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr
 #else
     mqdes = mq_open(name, flags, mode, attr);
 #endif
-    if (mqdes == RT_NULL)
+    if (mqdes == -1)
         return (mqd_t)ret;
     else
         return mqdes;
@@ -4471,9 +4483,18 @@ sysret_t sys_mq_timedreceive(mqd_t mqd, char *restrict msg, size_t len, unsigned
     if (!kmsg)
         return -ENOMEM;
 
-    lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec));
     lwp_get_from_user(kmsg, (void *)msg, len + 1);
-    ret = mq_timedreceive(mqd, kmsg, len, prio, &at_k);
+    if (at == RT_NULL)
+    {
+        ret = mq_timedreceive(mqd, kmsg, len, prio, RT_NULL);
+    }
+    else
+    {
+        if (!lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec)))
+            return -EINVAL;
+        ret = mq_timedreceive(mqd, kmsg, len, prio, &at_k);
+    }
+
     if (ret > 0)
         lwp_put_to_user(msg, kmsg, len + 1);
 
