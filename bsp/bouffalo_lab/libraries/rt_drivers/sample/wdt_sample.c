@@ -19,7 +19,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#ifdef RT_USING_WDT
+#ifdef BSP_USING_WDT
 
 #define WDT_DEVICE_NAME    "wdt"    /* 看门狗设备名称 */
 

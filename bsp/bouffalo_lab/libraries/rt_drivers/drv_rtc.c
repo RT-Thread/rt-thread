@@ -12,11 +12,11 @@
 #include "board.h"
 #include "drv_rtc.h"
 
+#ifdef BSP_USING_RTC
+
 #define DBG_TAG "DRV.RTC"
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
-
-#ifdef RT_USING_RTC
 
 static struct rt_device rtc;
 static rt_uint32_t rtc_time;
@@ -87,4 +87,4 @@ int rt_hw_rtc_init(void)
 }
 
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
-#endif /* RT_USING_RTC */
+#endif /* BSP_USING_RTC */
