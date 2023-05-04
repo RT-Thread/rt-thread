@@ -20,21 +20,21 @@
 #include <rtdbg.h>
 
 #define PTY_PTS_SIZE 10
-static struct tty_struct ptm_driver;
-static struct tty_struct pts_drivers[PTY_PTS_SIZE];
+static struct tty_struct ptm_dev;
+static struct tty_struct pts_devs[PTY_PTS_SIZE];
 static int pts_index = 0;
 
-static int pts_register(struct tty_struct *ptm_drv, struct tty_struct *pts_drv, int pts_index);
+static int pts_register(struct tty_struct *ptmx, struct tty_struct *pts, int pts_index);
 
 /* check free pts device */
 static struct tty_struct *find_freepts(void)
 {
     for(int i = 0; i < PTY_PTS_SIZE; i++)
     {
-        if (pts_drivers[i].init_flag == TTY_INIT_FLAG_NONE)
+        if (pts_devs[i].init_flag == TTY_INIT_FLAG_NONE)
         {
-            pts_drivers[i].init_flag = TTY_INIT_FLAG_ALLOCED;
-            return &pts_drivers[i];
+            pts_devs[i].init_flag = TTY_INIT_FLAG_ALLOCED;
+            return &pts_devs[i];
         }
     }
     return RT_NULL;
@@ -73,16 +73,18 @@ static int pty_get_index(struct tty_struct *tty, int *arg)
  */
 static rt_err_t pty_device_init(struct rt_device *dev)
 {
+    rt_ubase_t level = 0;
     rt_err_t result = RT_EOK;
-    int level = 0;
     struct tty_struct *tty = RT_NULL;
-    RT_ASSERT(dev != RT_NULL);
 
+    RT_ASSERT(dev != RT_NULL);
     tty = (struct tty_struct *)dev;
+
     level = rt_hw_interrupt_disable();
     RT_ASSERT(tty->init_flag == TTY_INIT_FLAG_REGED);
     tty->init_flag = TTY_INIT_FLAG_INITED;
     rt_hw_interrupt_enable(level);
+
     return result;
 }
 
@@ -138,8 +140,8 @@ static rt_ssize_t pty_device_write(struct rt_device *dev,
         const void       *buffer,
         rt_size_t         size)
 {
-    rt_base_t level = 0;
     rt_size_t len = 0;
+    rt_base_t level = 0;
     struct tty_struct *tty = RT_NULL;
     struct tty_struct *to = RT_NULL;
 
@@ -147,8 +149,8 @@ static rt_ssize_t pty_device_write(struct rt_device *dev,
     RT_ASSERT(tty != RT_NULL);
     RT_ASSERT(tty->init_flag == TTY_INIT_FLAG_INITED);
     to = tty->other_struct;
-    level = rt_hw_interrupt_disable();
 
+    level = rt_hw_interrupt_disable();
     if (to->ldisc->ops->receive_buf)
     {
         len = to->ldisc->ops->receive_buf(to, (char *)buffer, size);
@@ -179,7 +181,7 @@ static int ptmx_open(struct dfs_file *fd)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
-    struct tty_struct *pts_drv = RT_NULL;
+    struct tty_struct *pts = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
     struct rt_lwp *lwp = RT_NULL;
     struct rt_wqueue *wq = RT_NULL;
@@ -187,24 +189,25 @@ static int ptmx_open(struct dfs_file *fd)
     tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
 
-    pts_drv = find_freepts();
-    if (pts_drv == RT_NULL)
+    pts = find_freepts();
+    if (pts == RT_NULL)
     {
-        LOG_E("free pts driver find fail\n");
+        LOG_E("No free PTS device found.\n");
         return -1;
     }
-    ret = pts_register(tty, pts_drv, pts_index);
+    ret = pts_register(tty, pts, pts_index);
     if (ret < 0)
     {
         LOG_E("pts register fail\n");
-        rt_free(pts_drv);
+        rt_free(pts);
         return -1;
     }
     pts_index++;
-    lwp = (struct rt_lwp *)(rt_thread_self()->lwp);
+    lwp = lwp_self();
     wq = wait_queue_get(lwp, tty);
-    pts_drv->wait_queue = *wq;
-    tty->other_struct = pts_drv;
+    pts->wait_queue = *wq;
+    tty->other_struct = pts;
+
     ld = tty->ldisc;
     if (ld->ops->open)
     {
@@ -230,94 +233,73 @@ const static struct rt_device_ops pty_device_ops =
     pty_device_control,
 };
 #endif /* RT_USING_DEVICE_OPS */
+
 static struct dfs_file_ops pts_fops;
 static struct dfs_file_ops ptmx_fops;
-static int pts_register(struct tty_struct *ptm_drv, struct tty_struct *pts_drv, int pts_index)
+static int pts_register(struct tty_struct *ptmx, struct tty_struct *pts, int pts_index)
 {
-    rt_err_t ret = RT_EOK;
-    rt_base_t level = 0;
-    struct rt_device *device = RT_NULL;
     char name[20];
+    rt_err_t ret = RT_EOK;
+    struct rt_device *device = RT_NULL;
 
-    RT_ASSERT(ptm_drv!=RT_NULL);
-    level = rt_hw_interrupt_disable();
+    RT_ASSERT(ptmx!=RT_NULL);
 
-    if (pts_drv->init_flag != TTY_INIT_FLAG_ALLOCED)
+    if (pts->init_flag != TTY_INIT_FLAG_ALLOCED)
     {
         LOG_E("pts%d has been registered\n", pts_index);
         ret = (-RT_EBUSY);
-        goto _exit;
     }
+    else
+    {
+        tty_init(pts, TTY_DRIVER_TYPE_PTY, PTY_TYPE_SLAVE, NULL);
+        pts->index = pts_index;
+        pts->pts_lock = 1;
+        pts->other_struct = ptmx;
 
-    device = &pts_drv->parent;
-    device->type    = RT_Device_Class_Char;
+        device = &pts->parent;
+        device->type    = RT_Device_Class_Char;
 #ifdef RT_USING_DEVICE_OPS
-    device->ops     = &pty_device_ops;
+        device->ops     = &pty_device_ops;
 #else
-    device->init    = pty_device_init;
-    device->open    = pty_device_open;
-    device->close   = pty_device_close;
-    device->read    = pty_device_read;
-    device->write   = pty_device_write;
-    device->control = pty_device_control;
+        device->init    = pty_device_init;
+        device->open    = pty_device_open;
+        device->close   = pty_device_close;
+        device->read    = pty_device_read;
+        device->write   = pty_device_write;
+        device->control = pty_device_control;
 #endif /* RT_USING_DEVICE_OPS */
 
-    rt_snprintf(name, sizeof(name), "pts%d", pts_index);
-    ret = rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
-    if (ret != RT_EOK)
-    {
-        LOG_E("pts%d register failed\n", pts_index);
-        ret = -RT_EIO;
-        goto _exit;
-    }
-
+        rt_snprintf(name, sizeof(name), "pts%d", pts_index);
+        ret = rt_device_register(device, name, RT_DEVICE_FLAG_RDWR);
+        if (ret != RT_EOK)
+        {
+            LOG_E("pts%d register failed\n", pts_index);
+            ret = -RT_EIO;
+        }
+        else
+        {
 #ifdef RT_USING_POSIX_DEVIO
-    /* set fops */
-    tty_set_fops(&pts_fops);
-    device->fops = &pts_fops;
+            /* set fops */
+            memcpy(&pts_fops, tty_get_fops(), sizeof(struct dfs_file_ops));
+            device->fops = &pts_fops;
 #endif
-
-    pts_drv->type = TTY_DRIVER_TYPE_PTY;
-    pts_drv->subtype = PTY_TYPE_SLAVE;
-
-    pts_drv->pgrp = -1;
-    pts_drv->session = -1;
-    pts_drv->foreground = RT_NULL;
-    pts_drv->index = pts_index;
-    pts_drv->pts_lock = 1;
-    rt_wqueue_init(&pts_drv->wait_queue);
-
-    tty_ldisc_init(pts_drv);
-
-extern struct termios tty_std_termios;
-    pts_drv->init_termios = tty_std_termios;
-    pts_drv->init_termios.c_cflag = B38400 | CS8 | CREAD;
-    pts_drv->init_termios.c_lflag |= ECHO | ICANON;
-    pts_drv->init_termios.c_oflag |= ONLCR;
-    pts_drv->init_termios.__c_ispeed = 38400;
-    pts_drv->init_termios.__c_ospeed = 38400;
-
-    pts_drv->other_struct = ptm_drv;
-
-    pts_drv->init_flag = TTY_INIT_FLAG_REGED;
-_exit:
-    rt_hw_interrupt_enable(level);
+        }
+    }
 
     return ret;
 }
 
 static int ptmx_register(void)
 {
-    rt_base_t level = 0;
     rt_err_t ret = RT_EOK;
     struct rt_device *device = RT_NULL;
-    struct tty_struct *ptm_drv = &ptm_driver;
+    struct tty_struct *ptmx = &ptm_dev;
 
-    level = rt_hw_interrupt_disable();
-    RT_ASSERT(ptm_drv->init_flag == TTY_INIT_FLAG_NONE);
+    RT_ASSERT(ptmx->init_flag == TTY_INIT_FLAG_NONE);
 
-    device = &(ptm_drv->parent);
+    tty_init(ptmx, TTY_DRIVER_TYPE_PTY, PTY_TYPE_MASTER, NULL);
 
+    device = &(ptmx->parent);
     device->type = RT_Device_Class_Char;
 
 #ifdef RT_USING_DEVICE_OPS
@@ -336,44 +318,16 @@ static int ptmx_register(void)
     {
         LOG_E("ptmx register fail\n");
         ret = -RT_EIO;
-        goto _exit;
     }
-
-#ifdef RT_USING_POSIX_DEVIO
-    /* set fops */
-    tty_set_fops(&ptmx_fops);
-    ptmx_fops.open = ptmx_open;
-    device->fops = &ptmx_fops;
-#endif
-
-    ptm_drv->type = TTY_DRIVER_TYPE_PTY;
-    ptm_drv->subtype = PTY_TYPE_MASTER;
-    ptm_drv->head = rt_calloc(1, sizeof(struct tty_node));
-    if (!ptm_drv->head)
+    else
     {
-        return -RT_ENOMEM;
+#ifdef RT_USING_POSIX_DEVIO
+        /* set fops */
+        memcpy(&ptmx_fops, tty_get_fops(), sizeof(struct dfs_file_ops));
+        ptmx_fops.open = ptmx_open;
+        device->fops = &ptmx_fops;
+#endif
     }
-    tty_initstack(ptm_drv->head);
-
-    ptm_drv->pgrp = -1;
-    ptm_drv->session = -1;
-    ptm_drv->foreground = RT_NULL;
-    rt_wqueue_init(&ptm_drv->wait_queue);
-
-    tty_ldisc_init(ptm_drv);
-
-extern struct termios tty_std_termios;
-    ptm_drv->init_termios.c_iflag = 0;
-    ptm_drv->init_termios.c_oflag = 0;
-    ptm_drv->init_termios.c_cflag = B38400 | CS8 | CREAD;
-    ptm_drv->init_termios.c_lflag = 0;
-    ptm_drv->init_termios.__c_ispeed = 38400;
-    ptm_drv->init_termios.__c_ospeed = 38400;
-
-    ptm_drv->init_flag = TTY_INIT_FLAG_REGED;
-
-_exit:
-    rt_hw_interrupt_enable(level);
 
     return ret;
 }

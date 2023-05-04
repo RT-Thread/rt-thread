@@ -20,7 +20,7 @@
 #endif /* RT_TTY_DEBUG */
 #include <rtdbg.h>
 
-static struct tty_struct console_driver;
+static struct tty_struct console_dev;
 
 static void console_rx_notify(struct rt_device *dev)
 {
@@ -35,7 +35,7 @@ static void console_rx_notify(struct rt_device *dev)
 
     while (1)
     {
-        len = rt_device_read(console->driver, -1, &ch, 1);
+        len = rt_device_read(console->io_dev, -1, &ch, 1);
         if (len == 0)
         {
             break;
@@ -56,7 +56,7 @@ static void console_rx_notify(struct rt_device *dev)
 
 struct tty_struct *console_tty_get(void)
 {
-    return &console_driver;
+    return &console_dev;
 }
 
 static void iodev_close(struct tty_struct *console)
@@ -67,8 +67,8 @@ static void iodev_close(struct tty_struct *console)
     rx_notify.dev = RT_NULL;
 
     /* clear notify */
-    rt_device_control(console->driver, RT_DEVICE_CTRL_NOTIFY_SET, &rx_notify);
-    rt_device_close(console->driver);
+    rt_device_control(console->io_dev, RT_DEVICE_CTRL_NOTIFY_SET, &rx_notify);
+    rt_device_close(console->io_dev);
 }
 
 static rt_err_t iodev_open(struct tty_struct *console)
@@ -77,9 +77,9 @@ static rt_err_t iodev_open(struct tty_struct *console)
     struct rt_device_notify rx_notify;
     rt_uint16_t oflags = 0;
 
-    rt_device_control(console->driver, RT_DEVICE_CTRL_CONSOLE_OFLAG, &oflags);
+    rt_device_control(console->io_dev, RT_DEVICE_CTRL_CONSOLE_OFLAG, &oflags);
 
-    ret = rt_device_open(console->driver, oflags);
+    ret = rt_device_open(console->io_dev, oflags);
     if (ret != RT_EOK)
     {
         return -RT_ERROR;
@@ -87,7 +87,7 @@ static rt_err_t iodev_open(struct tty_struct *console)
 
     rx_notify.notify = console_rx_notify;
     rx_notify.dev = (struct rt_device *)console;
-    rt_device_control(console->driver, RT_DEVICE_CTRL_NOTIFY_SET, &rx_notify);
+    rt_device_control(console->io_dev, RT_DEVICE_CTRL_NOTIFY_SET, &rx_notify);
     return RT_EOK;
 }
 
@@ -97,8 +97,9 @@ struct rt_device *console_get_iodev(void)
     struct rt_device *iodev = RT_NULL;
 
     level = rt_hw_interrupt_disable();
-    iodev = console_driver.driver;
+    iodev = console_dev.io_dev;
     rt_hw_interrupt_enable(level);
+
     return iodev;
 }
 
@@ -110,14 +111,13 @@ struct rt_device *console_set_iodev(struct rt_device *iodev)
 
     RT_ASSERT(iodev != RT_NULL);
 
-    console = &console_driver;
+    console = &console_dev;
 
     level = rt_hw_interrupt_disable();
 
     RT_ASSERT(console->init_flag >= TTY_INIT_FLAG_REGED);
 
-    io_before = console->driver;
-
+    io_before = console->io_dev;
     if (iodev == io_before)
     {
         goto exit;
@@ -129,8 +129,7 @@ struct rt_device *console_set_iodev(struct rt_device *iodev)
         iodev_close(console);
     }
 
-    console->driver = iodev;
-
+    console->io_dev = iodev;
     if (console->init_flag >= TTY_INIT_FLAG_INITED)
     {
         rt_err_t ret;
@@ -218,7 +217,7 @@ static rt_ssize_t rt_console_write(struct rt_device *dev,
     RT_ASSERT(console != RT_NULL);
     RT_ASSERT(console->init_flag == TTY_INIT_FLAG_INITED);
 
-    len = rt_device_write((struct rt_device *)console->driver, -1, buffer, size);
+    len = rt_device_write((struct rt_device *)console->io_dev, -1, buffer, size);
 
     return len;
 }
@@ -232,7 +231,7 @@ static rt_err_t  rt_console_control(rt_device_t dev, int cmd, void *args)
     RT_ASSERT(console != RT_NULL);
     RT_ASSERT(console->init_flag == TTY_INIT_FLAG_INITED);
 
-    len = rt_device_control((struct rt_device *)console->driver, cmd, args);
+    len = rt_device_control((struct rt_device *)console->io_dev, cmd, args);
 
     return len;
 }
@@ -248,23 +247,24 @@ const static struct rt_device_ops console_ops =
     rt_console_control,
 };
 #endif
+
 /*
  * console register
  */
- static struct dfs_file_ops con_fops;
+static struct dfs_file_ops con_fops;
 rt_err_t console_register(const char *name, struct rt_device *iodev)
 {
-    rt_base_t level = 0;
     rt_err_t ret = RT_EOK;
     struct rt_device *device = RT_NULL;
-    struct tty_struct *console = &console_driver;
+    struct tty_struct *console = &console_dev;
 
-    level = rt_hw_interrupt_disable();
-    RT_ASSERT(console->init_flag == TTY_INIT_FLAG_NONE);
     RT_ASSERT(iodev != RT_NULL);
+    RT_ASSERT(console->init_flag == TTY_INIT_FLAG_NONE);
+
+    tty_init(console, TTY_DRIVER_TYPE_CONSOLE, SERIAL_TYPE_NORMAL, iodev);
+    console_ldata_init(console);
 
     device = &(console->parent);
-
     device->type        = RT_Device_Class_Char;
 
 #ifdef RT_USING_DEVICE_OPS
@@ -278,48 +278,20 @@ rt_err_t console_register(const char *name, struct rt_device *iodev)
     device->control     = rt_console_control;
 #endif
 
-
     /* register a character device */
     ret = rt_device_register(device, name, 0);
     if (ret != RT_EOK)
     {
         LOG_E("console driver register fail\n");
-        goto exit;
     }
-
-#ifdef RT_USING_POSIX_DEVIO
-    /* set fops */
-    console_set_fops(&con_fops);
-    device->fops = &con_fops;
-#endif
-    console->type = TTY_DRIVER_TYPE_CONSOLE;
-    console->subtype = SERIAL_TYPE_NORMAL;
-    console->driver = iodev;
-    console->head = rt_calloc(1, sizeof(struct tty_node));
-    if (!console->head)
+    else
     {
-        return -RT_ENOMEM;
+#ifdef RT_USING_POSIX_DEVIO
+        /* set fops */
+        memcpy(&con_fops, tty_get_fops(), sizeof(struct dfs_file_ops));
+        device->fops = &con_fops;
+#endif
     }
-    tty_initstack(console->head);
 
-    rt_mutex_init(&console->lock, "ttylock", RT_IPC_FLAG_PRIO);
-    console->pgrp = -1;
-    console->session = -1;
-    console->foreground = RT_NULL;
-    rt_wqueue_init(&console->wait_queue);
-
-    tty_ldisc_init(console);
-
-extern struct termios tty_std_termios;
-    console->init_termios = tty_std_termios;
-    console->init_termios.c_cflag =
-        B9600 | CS8 | CREAD | HUPCL; /* is normally B9600 default... */
-    console->init_termios.__c_ispeed = 9600;
-    console->init_termios.__c_ospeed = 9600;
-
-    console_ldata_init(console);
-    console->init_flag = TTY_INIT_FLAG_REGED;
-exit:
-    rt_hw_interrupt_enable(level);
     return ret;
 }
