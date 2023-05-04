@@ -118,12 +118,12 @@ __start:
     bl mmu_tcr_init
 
     adr x1, __start         /* install early page table */
-    ldr x0, =~0x1fffff      
+    ldr x0, =~0x1fffff
     and x0, x1, x0
-    add x1, x0, #0x1000     /* ttbl1 0x40000000 */ /*ttbl0 0x40001000 */
+    add x1, x0, #0x1000     
 
-    msr ttbr0_el1, x0       
-    msr ttbr1_el1, x1       
+    msr ttbr0_el1, x0
+    msr ttbr1_el1, x1
     dsb sy
 
 #ifdef RT_USING_SMART
