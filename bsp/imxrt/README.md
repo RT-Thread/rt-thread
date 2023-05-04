@@ -8,6 +8,7 @@ IMXRT 系列 BSP 目前支持情况如下表所示：
 | 暂无 |  |
 | **i.MX RT1020系列** |  |
 | imxrt1020-nxp-evk | 恩智浦 i.MX RT1020 EVK |
+| imxrt1020-fire-evk | 野火 RT1021 开发板 |
 | **i.MX RT1050 系列** |  |
 | imxrt1052-atk-commander | 正点原子 IMXRT 号令者 |
 | imxrt1052-fire-pro | 野火 i.MX RT1052 EVK PRO |

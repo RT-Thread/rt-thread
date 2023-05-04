@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-09-22     Bernard      add board.h to this bsp
+ * 2023-05-04     xym-ee       first version
  */
 
 // <<< Use Configuration Wizard in Context Menu >>>
