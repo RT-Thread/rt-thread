@@ -1,0 +1,29 @@
+config SOC_IMXRT1015_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select ARCH_ARM_CORTEX_FPU
+
+config SOC_IMXRT1020_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select ARCH_ARM_CORTEX_FPU
+
+config SOC_IMXRT1050_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select ARCH_ARM_CORTEX_FPU
+
+config SOC_IMXRT1060_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select ARCH_ARM_CORTEX_FPU
+
+config SOC_IMXRT1064_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select ARCH_ARM_CORTEX_FPU
+
+config SOC_IMXRT1170_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select ARCH_ARM_CORTEX_FPU

@@ -1,0 +1,307 @@
+menu "Hardware Drivers Config"
+
+
+config BSP_USING_HYPERFLASH
+    bool
+    default n
+
+config BSP_USING_4MFLASH
+    bool
+    default n
+
+config SOC_MIMXRT1062DVL6A
+    bool
+    select SOC_IMXRT1060_SERIES
+    select BSP_USING_4MFLASH
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
+    menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_NETDEV
+        select RT_USING_LWIP
+        default n
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
+            select RT_USING_PHY
+            bool "Enable ethernet phy"
+            default y
+
+        if BSP_USING_PHY
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1060EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_KSZ8081_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+                config PHY_RESET_KSZ8081_PORT
+                    int "indicate port of reset"
+                    default 1
+
+                config PHY_RESET_KSZ8081_PIN
+                    int "indicate pin of reset"
+                    default 9
+
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+        endif
+    endif
+
+    menuconfig BSP_USING_LCD
+        bool "Enable LCD"
+        default n
+        if BSP_USING_LCD
+            config LCD_WIDTH
+                int "width"
+                default 480
+
+            config LCD_HEIGHT
+                int "height"
+                default 272
+
+            config LCD_HFP
+                int "HFP"
+                default 4
+
+            config LCD_VFP
+                int "VFP"
+                default 4
+
+            config LCD_HBP
+                int "HBP"
+                default 8
+
+            config LCD_VBP
+                int "VBP"
+                default 2
+
+            config LCD_HSW
+                int "HSW"
+                default 40
+
+            config LCD_VSW
+                int "VSW"
+                default 10
+
+            config LCD_BL_PIN
+                int "Backlight ctrl pin"
+                default 63
+
+            config LCD_RST_PIN
+                int "Reset pin"
+                default 2
+        endif
+
+    menuconfig BSP_USING_TOUCHPAD
+        bool "Enable TOUCHPAD"
+        select BSP_USING_PXP
+        select BSP_USING_CACHE
+        select BSP_USING_I2C
+        select BSP_USING_LCD
+        default n
+        if BSP_USING_TOUCHPAD
+            choice
+                prompt "Select panel"
+                default DEMO_PANEL_RK043FN66HS
+
+                config DEMO_PANEL_RK043FN02H
+                    bool "RK043FN02H-CT"
+
+                config DEMO_PANEL_RK043FN66HS
+                    bool "RK043FN66HS-CTG"
+            endchoice
+        endif
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select BSP_USING_PXP
+        select BSP_USING_CACHE
+        select BSP_USING_LCD
+        select BSP_USING_TOUCHPAD
+        select PKG_USING_LVGL
+        default n
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            select PKG_USING_LV_MUSIC_DEMO
+            default y
+
+        config BSP_USING_NXP_GUIGUIDER
+            bool "Support NXP GUI Guider"
+            select PKG_USING_GUI_GUIDER_DEMO
+            default n
+    endif
+
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS_DEVFS
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select BSP_USING_SDIO
+                select RT_USING_DFS_ELMFAT
+                default n
+        endif
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        default n
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_SDIO
+            config CODE_STORED_ON_SDCARD
+                bool "Enable Code STORED On SDCARD"
+                default n
+                help
+                    "SD CARD work as boot devive"
+        endif
+
+    config BSP_USING_USB
+        bool "Enable USB"
+        select RT_USING_USB_HOST
+        default n
+
+        if BSP_USING_USB
+        config BSP_USB0_HOST
+            bool "Enable USB0"
+            default n
+
+        config BSP_USB1_HOST
+            bool "Enable USB1"
+            default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default y
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool
+                default y
+            choice
+                prompt "Select I2C1 badurate"
+                default HW_I2C1_BADURATE_100kHZ
+
+                config HW_I2C1_BADURATE_100kHZ
+                    bool "Badurate 100kHZ"
+
+                config HW_I2C1_BADURATE_400kHZ
+                    bool "Badurate 400kHZ"
+            endchoice
+        endif
+
+    menuconfig BSP_USING_LPUART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+        if BSP_USING_LPUART
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default y
+            config BSP_USING_LPUART2
+                bool "Enable LPUART2"
+                default n
+            config BSP_USING_LPUART3
+                bool "Enable LPUART3"
+                default n
+            config BSP_USING_LPUART4
+                bool "Enable LPUART4"
+                default n
+            config BSP_USING_LPUART5
+                bool "Enable LPUART5"
+                default n
+            config BSP_USING_LPUART6
+                bool "Enable LPUART6"
+                default n
+            config BSP_USING_LPUART7
+                bool "Enable LPUART7"
+                default n
+            config BSP_USING_LPUART8
+                bool "Enable LPUART8"
+                default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+            
+            config BSP_USING_BLOCKING_SPI
+                bool "Enable SPI Polling xfer"
+                default n
+        
+            config BSP_SPI1_USING_DMA
+                bool "Enable SPI1 DMA xfer"
+                depends on BSP_USING_SPI1
+                select BSP_USING_DMA
+                default n
+
+            config BSP_SPI1_RX_DMA_CHANNEL
+                depends on BSP_SPI1_USING_DMA
+                int "Set SPI1 RX DMA channel (0-32)"
+                default 0
+
+            config BSP_SPI1_TX_DMA_CHANNEL
+                depends on BSP_SPI1_USING_DMA
+                int "Set SPI1 TX DMA channel (0-32)"
+                default 1
+        endif
+
+    config BSP_USING_PXP
+        bool "Enable PXP"
+        default n
+
+    config BSP_USING_CACHE
+        bool "Enable CACHE"
+        default n
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

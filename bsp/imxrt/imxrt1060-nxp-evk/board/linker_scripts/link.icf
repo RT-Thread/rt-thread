@@ -1,0 +1,111 @@
+/*
+** ###################################################################
+**     Processors:          MIMXRT1062CVJ5A
+**                          MIMXRT1062CVL5A
+**                          MIMXRT1062DVJ6A
+**                          MIMXRT1062DVL6A
+**                          MIMXRT1062DVN6B
+**                          MIMXRT1062XVN5B
+**
+**     Compiler:            IAR ANSI C/C++ Compiler for ARM
+**     Reference manual:    IMXRT1060RM Rev.3, 07/2021 | IMXRT106XSRM Rev.0
+**     Version:             rev. 0.2, 2022-03-25
+**     Build:               b220401
+**
+**     Abstract:
+**         Linker file for the IAR ANSI C/C++ Compiler for ARM
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2022 NXP
+**     All rights reserved.
+**
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+define symbol __ram_vector_table_size__        =  isdefinedsymbol(__ram_vector_table__) ? 0x00000400 : 0;
+define symbol __ram_vector_table_offset__      =  isdefinedsymbol(__ram_vector_table__) ? 0x000003FF : 0;
+
+define symbol m_interrupts_start       = 0x60002000;
+define symbol m_interrupts_end         = 0x600023FF;
+
+define symbol m_text_start             = 0x60002400;
+define symbol m_text_end               = 0x607FFFFF;
+
+define symbol m_interrupts_ram_start   = 0x20000000;
+define symbol m_interrupts_ram_end     = 0x20000000 + __ram_vector_table_offset__;
+
+define symbol m_data_start             = m_interrupts_ram_start + __ram_vector_table_size__;
+define symbol m_data_end               = 0x2001FFFF;
+
+define symbol m_data2_start            = 0x20200000;
+define symbol m_data2_end              = 0x202BFFFF;
+
+define symbol m_qacode_start           = 0x00000000;
+define symbol m_qacode_end             = 0x0001FFFF;
+
+define exported symbol m_boot_hdr_conf_start = 0x60000000;
+define symbol m_boot_hdr_ivt_start           = 0x60001000;
+define symbol m_boot_hdr_boot_data_start     = 0x60001020;
+define symbol m_boot_hdr_dcd_data_start      = 0x60001030;
+
+/* Sizes */
+if (isdefinedsymbol(__stack_size__)) {
+  define symbol __size_cstack__        = __stack_size__;
+} else {
+  define symbol __size_cstack__        = 0x2000;
+}
+
+if (isdefinedsymbol(__heap_size__)) {
+  define symbol __size_heap__          = __heap_size__;
+} else {
+  define symbol __size_heap__          = 0x2000;
+}
+
+define exported symbol __NCACHE_REGION_START   = m_data2_start;
+define exported symbol __NCACHE_REGION_SIZE    = 0x0;
+
+define exported symbol __VECTOR_TABLE          = m_interrupts_start;
+define exported symbol __VECTOR_RAM            = isdefinedsymbol(__ram_vector_table__) ? m_interrupts_ram_start : m_interrupts_start;
+define exported symbol __RAM_VECTOR_TABLE_SIZE = __ram_vector_table_size__;
+define exported symbol __RTT_HEAP_END = m_data2_end;
+
+define memory mem with size = 4G;
+define region TEXT_region = mem:[from m_interrupts_start to m_interrupts_end]
+                          | mem:[from m_text_start to m_text_end];
+define region QACODE_region = mem:[from m_qacode_start to m_qacode_end];
+define region DATA_region = mem:[from m_data_start to m_data_end-__size_cstack__];
+define region DATA2_region = mem:[from m_data2_start to m_data2_end];
+define region CSTACK_region = mem:[from m_data_end-__size_cstack__+1 to m_data_end];
+
+define block CSTACK    with alignment = 8, size = __size_cstack__   { };
+define block HEAP      with alignment = 8, size = __size_heap__     { };
+define block RW        { readwrite };
+define block ZI        { zi };
+define block NCACHE_VAR    { section NonCacheable , section NonCacheable.init };
+define block QACCESS_CODE  { section CodeQuickAccess };
+define block QACCESS_DATA  { section DataQuickAccess };
+
+initialize by copy { readwrite, section .textrw, section CodeQuickAccess, section DataQuickAccess};
+do not initialize  { section .noinit };
+
+place at address mem: m_interrupts_start    { readonly section .intvec };
+place at address mem: m_boot_hdr_conf_start { section .boot_hdr.conf };
+place at address mem: m_boot_hdr_ivt_start { section .boot_hdr.ivt };
+place at address mem: m_boot_hdr_boot_data_start { readonly section .boot_hdr.boot_data };
+place at address mem: m_boot_hdr_dcd_data_start { readonly section .boot_hdr.dcd_data };
+
+keep{ section .boot_hdr.conf, section .boot_hdr.ivt, section .boot_hdr.boot_data, section .boot_hdr.dcd_data };
+
+place in TEXT_region                        { readonly };
+place in DATA_region                        { block RW };
+place in DATA_region                        { block ZI };
+place in DATA_region                        { last block HEAP };
+place in DATA_region                        { block NCACHE_VAR };
+place in CSTACK_region                      { block CSTACK };
+place in QACODE_region                      { block QACCESS_CODE };
+place in DATA_region                        { block QACCESS_DATA };

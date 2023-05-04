@@ -1,0 +1,85 @@
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+path = [cwd + '/CMSIS/Include',cwd + '/MIMXRT1064', cwd + '/MIMXRT1064/drivers']
+src = Split('''
+MIMXRT1064/system_MIMXRT1064.c
+MIMXRT1064/drivers/fsl_common.c
+MIMXRT1064/drivers/fsl_clock.c
+MIMXRT1064/drivers/fsl_cache.c
+''')
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += ['MIMXRT1064/gcc/startup_MIMXRT1064.S']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += ['MIMXRT1064/arm/startup_MIMXRT1064.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += ['MIMXRT1064/iar/startup_MIMXRT1064.s']
+
+if GetDepend(['BSP_USING_GPIO']):
+    src += ['MIMXRT1064/drivers/fsl_gpio.c']
+
+if GetDepend(['BSP_USING_LPUART']):
+    src += ['MIMXRT1064/drivers/fsl_lpuart.c']
+
+if GetDepend(['BSP_USING_I2C']):
+    src += ['MIMXRT1064/drivers/fsl_lpi2c.c']
+
+if GetDepend(['BSP_USING_SPI']):
+    src += ['MIMXRT1064/drivers/fsl_lpspi.c']
+
+if GetDepend(['BSP_USING_HWTIMER']) or GetDepend(['BSP_USING_PWM']):
+    src += ['MIMXRT1064/drivers/fsl_gpt.c']
+
+if GetDepend(['BSP_USING_PWM']):
+    src += ['MIMXRT1064/drivers/fsl_pwm.c']
+
+if GetDepend(['BSP_USING_RTC']):
+    src += ['MIMXRT1064/drivers/fsl_snvs_hp.c']
+    src += ['MIMXRT1064/drivers/fsl_snvs_lp.c']
+
+if GetDepend(['BSP_USING_WDT']):
+    src += ['MIMXRT1064/drivers/fsl_wdog.c']
+    src += ['MIMXRT1064/drivers/fsl_rtwdog.c']
+
+if GetDepend(['BSP_USING_ADC']):
+    src += ['MIMXRT1064/drivers/fsl_adc.c']
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ['MIMXRT1064/drivers/fsl_semc.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['MIMXRT1064/drivers/fsl_flexcan.c']
+
+if GetDepend(['BSP_USING_ETH']):
+    src += ['MIMXRT1064/drivers/fsl_enet.c']
+
+if GetDepend(['RT_USING_SDIO']):
+    src += ['MIMXRT1064/drivers/']
+
+if GetDepend(['RT_USING_AUDIO']):
+    src += ['MIMXRT1064/drivers/fsl_sai.c']
+
+if GetDepend(['BSP_USING_LTDC']):
+    src += ['MIMXRT1064/drivers/']
+
+if GetDepend(["BSP_USING_LCD"]):
+    src += ['MIMXRT1064/drivers/fsl_elcdif.c']
+
+if GetDepend(['BSP_USING_DMA']):
+    src += ['MIMXRT1064/drivers/fsl_dmamux.c']
+    src += ['MIMXRT1064/drivers/fsl_edma.c']
+
+if GetDepend(['RT_SERIAL_USING_DMA']):
+    src += ['MIMXRT1064/drivers/fsl_dmamux.c']
+    src += ['MIMXRT1064/drivers/fsl_edma.c']
+    src += ['MIMXRT1064/drivers/fsl_lpuart_edma.c']
+    src += ['MIMXRT1064/drivers/fsl_lpspi_edma.c']
+
+if rtconfig.PLATFORM in ['gcc']:
+    group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')
+else:
+    group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+
+Return('group')

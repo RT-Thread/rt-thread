@@ -1,0 +1,238 @@
+menu "Hardware Drivers"
+
+config BSP_USING_QSPIFLASH
+    bool
+    default y
+
+config SOC_IMXRT1021DAG5A
+    bool
+    select SOC_MIMXRT1020_SERIES
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select SOC_IMXRT1020_SERIES
+    default y
+
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        default n
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        select RT_USING_CAN
+        default n
+
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "Enable CAN1"
+                default y
+        endif
+
+    menuconfig BSP_USING_LPUART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_LPUART
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default y
+
+                config BSP_LPUART1_RX_USING_DMA
+                    bool "Enable LPUART1 RX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_RX_DMA_CHANNEL
+                        depends on BSP_LPUART1_RX_USING_DMA
+                        int "Set LPUART1 RX DMA channel (0-32)"
+                        default 0
+
+                config BSP_LPUART1_TX_USING_DMA
+                    bool "Enable LPUART1 TX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_TX_DMA_CHANNEL
+                        depends on BSP_LPUART1_TX_USING_DMA
+                        int "Set LPUART1 TX DMA channel (0-32)"
+                        default 1
+        endif
+    menuconfig BSP_USING_HWTIMER
+            bool "Enable GPT"
+            default n
+            select RT_USING_HWTIMER
+            if BSP_USING_TIM
+                config BSP_USING_HWTIMER1
+                    bool "Enable GPT1"
+                    default n
+
+                config BSP_USING_HWTIMER2
+                    bool "Enable GPT2"
+                    default n
+            endif
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM1
+                bool "Enable output pwm1"
+                default n
+                if BSP_USING_PWM1
+                    config BSP_USING_PWM1_CH3
+                        bool "Enable PWM1 channel3"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM4
+                bool "Enable output pwm4"
+                default n
+                if BSP_USING_PWM4
+                    config BSP_USING_PWM4_CH0
+                        bool "Enable PWM4 channel0"
+                        default n
+
+                    config BSP_USING_PWM4_CH1
+                        bool "Enable PWM4 channel1"
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+            choice
+                prompt "Select I2C1 badurate"
+                default HW_I2C1_BADURATE_100kHZ
+
+                config HW_I2C1_BADURATE_100kHZ
+                    bool "Badurate 100kHZ"
+
+                config HW_I2C1_BADURATE_400kHZ
+                    bool "Badurate 400kHZ"
+            endchoice
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+	config BSP_USING_CACHE
+        bool "Enable CACHE"
+        default n	
+
+endmenu
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_RGB
+            bool "Enable RGB LED (PWM1_CH3A, PWM4_CH0A and PWM4_CH1A)"
+            select BSP_USING_PWM1
+            select BSP_USING_PWM4
+            select BSP_USING_PWM1_CH3
+            select BSP_USING_PWM4_CH0
+            select BSP_USING_PWM4_CH1
+            default n
+
+        config BSP_USING_MPU6050
+            bool "Enable MPU6050 (I2C1:J11 --> SCL; K11 --> SDA)"
+            select BSP_USING_I2C1
+            select PKG_USING_MPU6XXX
+            default n
+
+        menuconfig BSP_USING_AP3216C
+            bool "Enable AP3216C (I2C1:J11 --> SCL; K11 --> SDA)"
+            select BSP_USING_I2C1
+            select PKG_USING_AP3216C
+            default n
+            if BSP_USING_AP3216C
+                config AP3216C_USING_HW_INT
+                bool "Enable interrupt"
+                default n
+            endif
+
+        config BSP_USING_EEPROM
+            bool "Enable I2C EEPROM (I2C1:J11 --> SCL; K11 --> SDA)"
+            select BSP_USING_I2C1
+            select  PKG_USING_AT24CXX
+            default n
+
+        config BSP_USING_RS232
+            bool "Enable RS232"
+            select BSP_USING_LPUART2
+            default n
+
+        config BSP_USING_RS485
+            bool "Enable RS485"
+            select BSP_USING_LPUART5
+            default n
+	menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_NETDEV
+        select RT_USING_LWIP
+        default n
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
+            select RT_USING_PHY
+            bool "Enable ethernet phy"
+            default y
+
+        if BSP_USING_PHY
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1020EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_KSZ8081_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+                config PHY_RESET_KSZ8081_PORT
+                    int "indicate port of reset"
+                    default 1
+
+                config PHY_RESET_KSZ8081_PIN
+                    int "indicate pin of reset"
+                    default 4
+
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+        endif
+    endif					
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

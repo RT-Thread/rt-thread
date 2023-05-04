@@ -1,0 +1,164 @@
+menu "Hardware Drivers Config"
+
+
+config BSP_USING_HYPERFLASH
+    bool
+    default n
+
+config BSP_USING_4MFLASH
+    bool
+    default n
+
+config SOC_MIMXRT1064DVL6A
+    bool
+    select SOC_IMXRT1060_SERIES
+    select BSP_USING_4MFLASH
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_LPUART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+        if BSP_USING_LPUART
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default y
+            config BSP_USING_LPUART2
+                bool "Enable LPUART2"
+                default n
+            config BSP_USING_LPUART3
+                bool "Enable LPUART3"
+                default n
+            config BSP_USING_LPUART4
+                bool "Enable LPUART4"
+                default n
+            config BSP_USING_LPUART5
+                bool "Enable LPUART5"
+                default n
+            config BSP_USING_LPUART6
+                bool "Enable LPUART6"
+                default n
+            config BSP_USING_LPUART7
+                bool "Enable LPUART7"
+                default n
+            config BSP_USING_LPUART8
+                bool "Enable LPUART8"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable LPI2C1"
+                default n
+            config BSP_USING_I2C3
+                bool "Enable LPI2C3"
+                default n
+            config BSP_USING_I2C4
+                bool "Enable LPI2C4"
+                default n
+        endif
+
+    menuconfig BSP_USING_LCD
+        bool "Enable LCD"
+        default n
+        if BSP_USING_LCD
+            config LCD_WIDTH
+                int "width"
+                default 480
+
+            config LCD_HEIGHT
+                int "height"
+                default 272
+
+            config LCD_HFP
+                int "HFP"
+                default 4
+            config LCD_VFP
+                int "VFP"
+                default 4
+            config LCD_HBP
+                int "HBP"
+                default 8
+            config LCD_VBP
+                int "VBP"
+                default 2
+            config LCD_HSW
+                int "HSW"
+                default 40
+            config LCD_VSW
+                int "VSW"
+                default 10
+            config LCD_BL_PIN
+                int "Backlight ctrl pin"
+                default 63
+            config LCD_RST_PIN
+                int "Reset pin"
+                default 2
+        endif
+
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
+    menuconfig BSP_USING_ETH
+    bool "Enable Ethernet"
+    select RT_USING_NETDEV
+    default n
+
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
+            select RT_USING_PHY
+            bool "Enable ethernet phy"
+            default y
+
+        if BSP_USING_PHY
+            config PHY_DEVICE_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1064EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_RESET_PORT
+                    int "indicate port of reset"
+                    default 1
+
+                config PHY_RESET_PIN
+                    int "indicate pin of reset"
+                    default 9
+
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+
+        endif
+    endif
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
