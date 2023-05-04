@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -87,6 +87,7 @@ rt_err_t ra_can_configure(struct rt_can_device *can_dev, struct can_configure *c
 
     can = rt_container_of(can_dev, struct ra_can, can_dev);
     RT_ASSERT(can != RT_NULL);
+
     err = R_CAN_Open(can->config->p_api_ctrl, can->config->p_cfg);
     if (FSP_SUCCESS != err)
     {
@@ -249,6 +250,7 @@ void can0_callback(can_callback_args_t *p_args)
     case CAN_EVENT_ERR_BUS_LOCK:            //error bus lock
     case CAN_EVENT_ERR_CHANNEL:             //error channel
     case CAN_EVENT_ERR_GLOBAL:              //error global
+    case CAN_EVENT_TX_FIFO_EMPTY:           //error transmit FIFO is empty
     {
         break;
     }
