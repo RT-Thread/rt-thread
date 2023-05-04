@@ -1,17 +1,6 @@
 menu "General Drivers Configuration"
 
-    config BSP_USING_GPIO
-        bool "Enable GPIO"
-        select RT_USING_PIN
-        default y
-
-     config BSP_USING_ADC
-        bool "Enable ADC"
-        select RT_USING_ADC
-        default n
-
     menu "General Purpose UARTs"
-
     menuconfig BSP_USING_UART0
         bool "Enable UART0"
         default y
@@ -126,7 +115,17 @@ menu "General Drivers Configuration"
 
     endmenu
 
-    menuconfig BSP_USING_RTC
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default n
+
+    config BSP_USING_ADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
+    config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         default n
@@ -171,11 +170,7 @@ menu "General Drivers Configuration"
                 default n
         endif
 
-    config BSP_USING_ON_CHIP_FLASH
-        bool "Enable on-chip FLASH"
-        default n
     menu "General Purpose I2C"
-
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1"
         default n
@@ -225,5 +220,314 @@ menu "General Drivers Configuration"
         endif
     endmenu
 
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
+
+        if BSP_USING_SPI
+            choice
+                prompt "SPI SCK PIN"
+                default SPI_SCK_USING_GPIO3 if BSP_USING_BL60X
+                default SPI_SCK_USING_GPIO13 if BSP_USING_BL61X
+                default SPI_SCK_USING_GPIO15 if BSP_USING_BL70X
+                default SPI_SCK_USING_GPIO19 if BSP_USING_BL808
+
+                config SPI_SCK_USING_GPIO1
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_1"
+                config SPI_SCK_USING_GPIO3
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_3" 
+                config SPI_SCK_USING_GPIO5
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_5"                    
+                config SPI_SCK_USING_GPIO7
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_7"   
+                config SPI_SCK_USING_GPIO9
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_9"   
+                config SPI_SCK_USING_GPIO11
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_11"   
+                config SPI_SCK_USING_GPIO13
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_13"
+                config SPI_SCK_USING_GPIO15
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_15"
+                config SPI_SCK_USING_GPIO17
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_17"
+                config SPI_SCK_USING_GPIO19
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_19"
+                config SPI_SCK_USING_GPIO21
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_21"
+                config SPI_SCK_USING_GPIO23
+                    depends on BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_23"
+                config SPI_SCK_USING_GPIO25
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_25"
+                config SPI_SCK_USING_GPIO27
+                    depends on BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_27"
+                config SPI_SCK_USING_GPIO29
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_29"
+                config SPI_SCK_USING_GPIO31
+                    depends on BSP_USING_BL808
+                    bool "GPIO_31"
+                config SPI_SCK_USING_GPIO33
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_33"
+                config SPI_SCK_USING_GPIO35
+                    depends on BSP_USING_BL808
+                    bool "GPIO_35"
+                config SPI_SCK_USING_GPIO39
+                    depends on BSP_USING_BL808
+                    bool "GPIO_39"
+                config SPI_SCK_USING_GPIO43
+                    depends on BSP_USING_BL808
+                    bool "GPIO_43"
+            endchoice
+
+            choice
+                prompt "SPI MISO PIN"
+                default SPI_MISO_USING_GPIO0 if BSP_USING_BL60X
+                default SPI_MISO_USING_GPIO10 if BSP_USING_BL61X
+                default SPI_MISO_USING_GPIO17 if BSP_USING_BL70X
+                default SPI_MISO_USING_GPIO22 if BSP_USING_BL808
+
+                config SPI_MISO_USING_GPIO0
+                    depends on BSP_USING_BL60X
+                    bool "GPIO_0"
+                config SPI_MISO_USING_GPIO1
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_1"
+                config SPI_MISO_USING_GPIO2
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_2"
+                config SPI_MISO_USING_GPIO4
+                    depends on BSP_USING_BL60X
+                    bool "GPIO_4"
+                config SPI_MISO_USING_GPIO5
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_5"
+                config SPI_MISO_USING_GPIO6
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_6"
+                config SPI_MISO_USING_GPIO8
+                    depends on BSP_USING_BL60X
+                    bool "GPIO_8"
+                config SPI_MISO_USING_GPIO9
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_9"
+                config SPI_MISO_USING_GPIO10
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_10"
+                config SPI_MISO_USING_GPIO12
+                    depends on BSP_USING_BL60X
+                    bool "GPIO_12"
+                config SPI_MISO_USING_GPIO13
+                    depends on BSP_USING_BL60X || BSP_USING_BL60X
+                    bool "GPIO_13"
+                config SPI_MISO_USING_GPIO14
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_14"
+                config SPI_MISO_USING_GPIO16
+                    depends on BSP_USING_BL60X
+                    bool "GPIO_16"
+                config SPI_MISO_USING_GPIO17
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_17"
+                config SPI_MISO_USING_GPIO18
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_18"
+                config SPI_MISO_USING_GPIO20
+                    depends on BSP_USING_BL60X
+                    bool "GPIO_20"
+                config SPI_MISO_USING_GPIO21
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_21"
+                config SPI_MISO_USING_GPIO22
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_22"
+                config SPI_MISO_USING_GPIO25
+                    depends on BSP_USING_BL70X
+                    bool "GPIO_25"
+                config SPI_MISO_USING_GPIO26
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_26"
+                config SPI_MISO_USING_GPIO29
+                    depends on BSP_USING_BL70X
+                    bool "GPIO_29"
+                config SPI_MISO_USING_GPIO30
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_30"
+                config SPI_MISO_USING_GPIO34
+                    depends on BSP_USING_BL808
+                    bool "GPIO_34"
+                config SPI_MISO_USING_GPIO38
+                    depends on BSP_USING_BL808
+                    bool "GPIO_38"
+                config SPI_MISO_USING_GPIO42
+                    depends on BSP_USING_BL808
+                    bool "GPIO_42"
+            endchoice
+
+            choice
+                prompt "SPI MOSI PIN"
+                default SPI_MOSI_USING_GPIO1 if BSP_USING_BL60X
+                default SPI_MOSI_USING_GPIO11 if BSP_USING_BL61X
+                default SPI_MOSI_USING_GPIO16 if BSP_USING_BL70X
+                default SPI_MOSI_USING_GPIO21 if BSP_USING_BL808
+
+                config SPI_MOSI_USING_GPIO0
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_0"
+                config SPI_MOSI_USING_GPIO1
+                    depends on BSP_USING_BL60X || BSP_USING_BL808
+                    bool "GPIO_1"
+                config SPI_MOSI_USING_GPIO3
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_3"
+                config SPI_MOSI_USING_GPIO4
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_4"
+                config SPI_MOSI_USING_GPIO5
+                    depends on BSP_USING_BL60X || BSP_USING_BL808
+                    bool "GPIO_5"
+                config SPI_MOSI_USING_GPIO7
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_7"                    
+                config SPI_MOSI_USING_GPIO8
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_8" 
+                config SPI_MOSI_USING_GPIO9
+                    depends on BSP_USING_BL60X || BSP_USING_BL808
+                    bool "GPIO_9"  
+                config SPI_MOSI_USING_GPIO11
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_11"
+                config SPI_MOSI_USING_GPIO12
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_12"
+                config SPI_MOSI_USING_GPIO13
+                    depends on BSP_USING_BL60X || BSP_USING_BL808
+                    bool "GPIO_13"
+                config SPI_MOSI_USING_GPIO15
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_15"
+                config SPI_MOSI_USING_GPIO16
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_16"
+                config SPI_MOSI_USING_GPIO17
+                    depends on BSP_USING_BL60X || BSP_USING_BL808
+                    bool "GPIO_17"
+                config SPI_MOSI_USING_GPIO19
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_19"
+                config SPI_MOSI_USING_GPIO20
+                    depends on BSP_USING_BL60X || BSP_USING_BL70X
+                    bool "GPIO_20"
+                config SPI_MOSI_USING_GPIO21
+                    depends on BSP_USING_BL60X || BSP_USING_BL808
+                    bool "GPIO_21"
+                config SPI_MOSI_USING_GPIO23
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_23"
+                config SPI_MOSI_USING_GPIO24
+                    depends on BSP_USING_BL70X
+                    bool "GPIO_24"
+                config SPI_MOSI_USING_GPIO25
+                    depends on BSP_USING_BL808
+                    bool "GPIO_25"
+                config SPI_MOSI_USING_GPIO27
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_27"
+                config SPI_MOSI_USING_GPIO28
+                    depends on BSP_USING_BL70X
+                    bool "GPIO_28"
+                config SPI_MOSI_USING_GPIO29
+                    depends on BSP_USING_BL808
+                    bool "GPIO_29"
+                config SPI_MOSI_USING_GPIO31
+                    depends on BSP_USING_BL61X
+                    bool "GPIO_31"
+                config SPI_MOSI_USING_GPIO33
+                    depends on BSP_USING_BL808
+                    bool "GPIO_33"
+                config SPI_MOSI_USING_GPIO37
+                    depends on BSP_USING_BL808
+                    bool "GPIO_37"
+                config SPI_MOSI_USING_GPIO41
+                    depends on BSP_USING_BL808
+                    bool "GPIO_41"
+                config SPI_MOSI_USING_GPIO45
+                    depends on BSP_USING_BL808
+                    bool "GPIO_45"
+            endchoice
+
+            config BSP_SPI_TX_USING_DMA
+                bool "Enable SPI TX DMA"
+                default n
+                if BSP_SPI_TX_USING_DMA
+                    config BSP_SPI_TX_DMA_CHANNEL
+                        string "SPI TX DMA Channel Name" 
+                        default "dma0_ch0"
+                        
+                    config BSP_SPI_TX_DMA_TIMEOUT
+                        int "SPI TX DMA Timeout(ms)"
+                        default 10
+                        range 5 100
+
+                    config BSP_SPI_TX_DMA_NOCACHE_BUFSIZE 
+                        depends on BSP_USING_BL61X || BSP_USING_BL808
+                        int "SPI TX DMA Nocache Buffer Size"
+                        default 512
+                        range 0 4095
+                endif
+
+            config BSP_SPI_RX_USING_DMA
+                bool "Enable SPI RX DMA"
+                default n
+                if BSP_SPI_RX_USING_DMA
+                    config BSP_SPI_RX_DMA_CHANNEL
+                        string "SPI RX DMA Channel Name" 
+                        default "dma0_ch1"
+
+                    config BSP_SPI_RX_DMA_TIMEOUT
+                        int "SPI RX DMA Timeout(ms)"
+                        default 10
+                        range 5 100
+
+                    config BSP_SPI_RX_DMA_NOCACHE_BUFSIZE 
+                        depends on BSP_USING_BL61X || BSP_USING_BL808
+                        int "SPI RX DMA Nocache Buffer Size"
+                        default 512
+                        range 0 4095
+                endif
+        endif
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable On-Chip FLASH"
+        default n
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select RT_USING_FAL
+        select FAL_DEBUG_CONFIG
+        select FAL_PART_HAS_TABLE_CFG
+        default n
+        if BSP_USING_FS
+            config BSP_USING_ON_CHIP_FLASH_FATFS
+                bool "Enable On-Chip Flash File System"
+                select BSP_USING_ON_CHIP_FLASH
+                default n
+        endif
 endmenu
 

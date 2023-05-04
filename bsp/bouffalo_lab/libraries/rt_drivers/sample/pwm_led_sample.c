@@ -16,7 +16,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#ifdef RT_USING_PWM
+#ifdef BSP_USING_PWM
 
 #define LED_PIN_NUM          8     /* LED PIN脚编号，查看驱动文件drv_gpio.c确定 */
 #define PWM_DEV_NAME        "pwm"  /* PWM设备名称 */

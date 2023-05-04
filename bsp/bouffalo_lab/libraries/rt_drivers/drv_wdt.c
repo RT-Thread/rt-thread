@@ -10,7 +10,6 @@
 
 #include "drv_wdt.h"
 
-#ifdef RT_USING_WDT
 #ifdef BSP_USING_WDT
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -94,4 +93,3 @@ int rt_hw_wdt_init(void)
 INIT_BOARD_EXPORT(rt_hw_wdt_init);
 
 #endif /* BSP_USING_WDT */
-#endif /* RT_USING_WDT */
