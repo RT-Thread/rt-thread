@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-10-19     JasonHu      first version
  * 2021-11-12     JasonHu      fix bug that not intr on f133
+ * 2023-04-22     flyingcys    add plic register ioremap
  */
 
 #include <rtthread.h>
@@ -30,13 +31,23 @@ struct plic_handler
 
 rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable);
 struct plic_handler c906_plic_handlers[C906_NR_CPUS];
+static void *c906_irq_priority[INTERRUPTS_MAX] = {RT_NULL};
 
 rt_inline void plic_irq_toggle(int hwirq, int enable)
 {
     int cpu = 0;
+    void *priority_addr;
 
     /* set priority of interrupt, interrupt 0 is zero. */
-    writel(enable, c906_plic_regs + PRIORITY_BASE + hwirq * PRIORITY_PER_ID);
+    priority_addr = (void *)((rt_size_t)c906_plic_regs + PRIORITY_BASE + hwirq * PRIORITY_PER_ID);
+#ifdef RT_USING_SMART
+    if (c906_irq_priority[hwirq] == RT_NULL)
+    {
+        c906_irq_priority[hwirq] = rt_ioremap(priority_addr, 0x1000);
+    }
+    priority_addr = c906_irq_priority[hwirq];
+#endif
+    writel(enable, priority_addr);
     struct plic_handler *handler = &c906_plic_handlers[cpu];
 
     if (handler->present)
@@ -76,7 +87,7 @@ void plic_complete(int irqno)
     int cpu = 0;
     struct plic_handler *handler = &c906_plic_handlers[cpu];
 
-    writel(irqno, handler->hart_base + CONTEXT_CLAIM);
+    writel(irqno, (void *)((rt_size_t)handler->hart_base + CONTEXT_CLAIM));
 }
 
 void plic_disable_irq(int irqno)
@@ -101,7 +112,7 @@ void plic_handle_irq(void)
     unsigned int irq;
 
     struct plic_handler *handler = &c906_plic_handlers[cpu];
-    void *claim = handler->hart_base + CONTEXT_CLAIM;
+    void *claim = (void *)((rt_size_t)handler->hart_base + CONTEXT_CLAIM);
 
     if (c906_plic_regs == RT_NULL || !handler->present)
     {
@@ -128,7 +139,7 @@ void plic_handle_irq(void)
 
 rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable)
 {
-    uint32_t  *reg = handler->enable_base + (hwirq / 32) * sizeof(uint32_t);
+    uint32_t  *reg = (uint32_t *)((rt_size_t)handler->enable_base + (hwirq / 32) * sizeof(uint32_t));
     uint32_t hwirq_mask = 1 << (hwirq % 32);
 
     if (enable)
@@ -188,11 +199,15 @@ void plic_init(void)
         }
 
         handler->present = RT_TRUE;
-        handler->hart_base = c906_plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
-        handler->enable_base = c906_plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
+        handler->hart_base = (void *)((rt_size_t)c906_plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART);
+        handler->enable_base = (void *)((rt_size_t)c906_plic_regs + ENABLE_BASE + i * ENABLE_PER_HART);
+#ifdef RT_USING_SMART
+        handler->hart_base = rt_ioremap(handler->hart_base, 0x1000);
+        handler->enable_base = rt_ioremap(handler->enable_base, 0x1000);
+#endif
 done:
         /* priority must be > threshold to trigger an interrupt */
-        writel(threshold, handler->hart_base + CONTEXT_THRESHOLD);
+        writel(threshold, (void *)((rt_size_t)handler->hart_base + CONTEXT_THRESHOLD));
         for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
         {
             plic_toggle(handler, hwirq, 0);

@@ -1,6 +1,6 @@
 /***********************************************************************************************//**
  * \copyright
- * Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -23,7 +23,10 @@
 #if defined(CY_USING_HAL)
 #include "cyhal_pin_package.h"
 #endif
-#if defined(COMPONENT_BSP_DESIGN_MODUS) || defined(COMPONENT_CUSTOM_DESIGN_MODUS)
+/* CAT4 and CAT5 do not have configurators so the BSP defines pins in a non-generated header */
+#if defined(COMPONENT_CAT4) || defined(COMPONENT_CAT5)
+#include "cybsp_pins.h"
+#else
 #include "cycfg.h"
 #endif
 

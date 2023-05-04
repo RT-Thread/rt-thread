@@ -236,7 +236,7 @@ __Vectors_Size  EQU   __Vectors_End - __Vectors
 
         SECTION .intvec_ram:DATA:REORDER:NOROOT(2)
 __ramVectors
-        DS32     __Vectors_Size
+        DS8     __Vectors_Size
 
 
         THUMB
@@ -255,7 +255,7 @@ Default_Handler
 ;;
 ;; Weak function for startup customization
 ;;
-;; Note. The global resources are not yet initialized (for example global variables, peripherals, clocks) 
+;; Note. The global resources are not yet initialized (for example global variables, peripherals, clocks)
 ;; because this function is executed as the first instruction in the ResetHandler.
 ;; The PDL is also not initialized to use the proper register offsets.
 ;; The user of this function is responsible for initializing the PDL and resources before using them.
@@ -310,7 +310,7 @@ intvec_copy
         STR r3, [r0]
         ADDS r0, r0, #4
         ADDS r1, r1, #4
-        SUBS r2, r2, #1
+        SUBS r2, r2, #4
         CMP r2, #0
         BNE intvec_copy
 
@@ -323,11 +323,11 @@ intvec_copy
         ; Initialize data sections
         LDR     R0, =__iar_data_init3
         BLX     R0
-        
+
         ; OS-specific low-level initialization
         LDR     R0, =cy_toolchain_init
         BLX     R0
-        
+
         ; --manual_dynamic_initialization
         BL      __iar_dynamic_initialization
 

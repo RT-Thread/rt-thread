@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2021-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -29,7 +29,7 @@
  * \addtogroup group_hal_impl_keyscan KeyScan
  * \ingroup group_hal_impl
  * \{
- * On PSoCâ„¢ devices, the KeyScan peripheral is clocked from the shared source CLK_MF.
+ * On CAT1 devices, the KeyScan peripheral is clocked from the shared source CLK_MF.
  * If `NULL` is passed for the `clk` argument to \ref cyhal_keyscan_init, the KeyScan
  * HAL will automatically reserve and enable CLK_MF. If the KeyScan driver needs to be
  * used in combination with another driver that also requires CLK_MF, use the Clock
@@ -45,7 +45,7 @@
 #include "cyhal_system.h"
 #include "cyhal_syspm.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_clock.h"
 
 #if (CYHAL_DRIVER_AVAILABLE_KEYSCAN)

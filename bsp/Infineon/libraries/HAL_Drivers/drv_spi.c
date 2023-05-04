@@ -180,7 +180,14 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     /* take CS */
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
-        cyhal_gpio_write(device->cs_pin, PIN_LOW);
+        if (device->config.mode & RT_SPI_CS_HIGH)
+        {
+            cyhal_gpio_write(device->cs_pin, PIN_HIGH);
+        }
+        else
+        {
+            cyhal_gpio_write(device->cs_pin, PIN_LOW);
+        }
         LOG_D("spi take cs\n");
     }
 

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_crc_v1.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code for CRC API
@@ -27,15 +27,17 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_crc_v1.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_CRC == 1)
+#if (CPUSS_CRYPTO_CRC == 1) && defined(CY_CRYPTO_CFG_CRC_C)
 
 #include "cy_crypto_core_hw_v1.h"
 #include "cy_syslib.h"
@@ -128,24 +130,33 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Crc_Init(CRYPTO_Type *base,
 *******************************************************************************/
 cy_en_crypto_status_t Cy_Crypto_Core_V1_Crc(CRYPTO_Type *base,
                                         uint32_t *crc,
-                                        void      const *data,
+                                        void const *data,
                                         uint32_t  dataSize,
                                         uint32_t  lfsrInitState)
 {
+    uint32_t *dataStart = (uint32_t *)data;
 
     /* A state of 32-bit Linear Feedback Shift Registers (LFSR) used to implement CRC. */
     REG_CRYPTO_CRC_LFSR_CTL(base) = (uint32_t)(_VAL2FLD(CRYPTO_CRC_LFSR_CTL_LFSR32, lfsrInitState));
 
-    /* Fill the FIFO with the instruction parameters */
-    Cy_Crypto_SetReg2Instr(base, (uint32_t)data, dataSize );
+    do {
+        uint32_t partSize = (dataSize <= 0xFFFFu) ? dataSize : 0xFFFFu;
 
-    /* Issue the CRC instruction */
-    Cy_Crypto_Run2ParamInstr(base, CY_CRYPTO_V1_CRC_OPC, CY_CRYPTO_RSRC0_SHIFT, CY_CRYPTO_RSRC4_SHIFT);
+        /* Fill the FIFO with the instruction parameters */
+        Cy_Crypto_SetReg2Instr(base, (uint32_t)dataStart, partSize );
 
-    /* Wait until CRC instruction is complete */
-    while(0uL != _FLD2VAL(CRYPTO_STATUS_CRC_BUSY, REG_CRYPTO_STATUS(base)))
-    {
-    }
+        /* Issue the CRC instruction */
+        Cy_Crypto_Run2ParamInstr(base, CY_CRYPTO_V1_CRC_OPC, CY_CRYPTO_RSRC0_SHIFT, CY_CRYPTO_RSRC4_SHIFT);
+
+        /* Wait until CRC instruction is complete */
+        while(0uL != _FLD2VAL(CRYPTO_STATUS_CRC_BUSY, REG_CRYPTO_STATUS(base)))
+        {
+        }
+
+        dataSize -= partSize;
+        dataStart += partSize;
+
+    } while (dataSize > 0u);
 
     /* Copy the result from the CRC_REM_RESULT register */
     *crc = (uint32_t)_FLD2VAL(CRYPTO_CRC_REM_RESULT_REM, REG_CRYPTO_CRC_REM_RESULT(base));
@@ -279,16 +290,26 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Crc_CalcStart(CRYPTO_Type *base, uint32_
 cy_en_crypto_status_t Cy_Crypto_Core_V1_Crc_CalcPartial(CRYPTO_Type *base,
                                         void const *data, uint32_t  dataSize)
 {
-    /* Fills the FIFO with the instruction parameters. */
-    Cy_Crypto_SetReg2Instr(base, (uint32_t)data, dataSize );
+    uint32_t *dataStart = (uint32_t *)data;
 
-    /* Issues the CRC instruction. */
-    Cy_Crypto_Run2ParamInstr(base, CY_CRYPTO_V1_CRC_OPC, CY_CRYPTO_RSRC0_SHIFT, CY_CRYPTO_RSRC4_SHIFT);
+    do {
+        uint32_t partSize = (dataSize <= 0xFFFFu) ? dataSize : 0xFFFFu;
 
-    /* Waits until the CRC instruction is complete. */
-    while(0uL != _FLD2VAL(CRYPTO_STATUS_CRC_BUSY, REG_CRYPTO_STATUS(base)))
-    {
-    }
+        /* Fills the FIFO with the instruction parameters. */
+        Cy_Crypto_SetReg2Instr(base, (uint32_t)dataStart, partSize );
+
+        /* Issues the CRC instruction. */
+        Cy_Crypto_Run2ParamInstr(base, CY_CRYPTO_V1_CRC_OPC, CY_CRYPTO_RSRC0_SHIFT, CY_CRYPTO_RSRC4_SHIFT);
+
+        /* Waits until the CRC instruction is complete. */
+        while(0uL != _FLD2VAL(CRYPTO_STATUS_CRC_BUSY, REG_CRYPTO_STATUS(base)))
+        {
+        }
+
+        dataSize -= partSize;
+        dataStart += partSize;
+
+    } while (dataSize > 0u);
 
     return (CY_CRYPTO_SUCCESS);
 }
@@ -392,13 +413,15 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Crc_Calc(CRYPTO_Type *base,
     return (CY_CRYPTO_SUCCESS);
 }
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 11.3');
-#endif /* #if (CPUSS_CRYPTO_CRC == 1) */
+#endif /* (CPUSS_CRYPTO_CRC == 1) && defined(CY_CRYPTO_CFG_CRC_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

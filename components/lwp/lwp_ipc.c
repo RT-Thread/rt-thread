@@ -357,6 +357,51 @@ static void sender_timeout(void *parameter)
 }
 
 /**
+ * Get file vnode from fd.
+ */
+static void *_ipc_msg_get_file(int fd)
+{
+    struct dfs_file *d;
+
+    d = fd_get(fd);
+    if (d == RT_NULL)
+        return RT_NULL;
+
+    if (!d->vnode)
+        return RT_NULL;
+
+    d->vnode->ref_count++;
+    return (void *)d->vnode;
+}
+
+/**
+ * Get fd from file vnode.
+ */
+static int _ipc_msg_fd_new(void *file)
+{
+    int fd;
+    struct dfs_file *d;
+
+    fd = fd_new();
+    if (fd < 0)
+    {
+        return -1;
+    }
+
+    d = fd_get(fd);
+    if (!d)
+    {
+        fd_release(fd);
+        return -1;
+    }
+
+    d->vnode = (struct dfs_vnode *)file;
+    d->flags = O_RDWR; /* set flags as read and write */
+
+    return fd;
+}
+
+/**
  * Send data through an IPC channel, wait for the reply or not.
  */
 static rt_err_t _rt_raw_channel_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, int need_reply, rt_channel_msg_t data_ret, rt_int32_t time)
@@ -396,6 +441,12 @@ static rt_err_t _rt_raw_channel_send_recv_timeout(rt_channel_t ch, rt_channel_ms
     {
         rt_hw_interrupt_enable(temp);
         return -RT_ENOMEM;
+    }
+
+    /* IPC message : file descriptor */
+    if (data->type == RT_CHANNEL_FD)
+    {
+        data->u.fd.file = _ipc_msg_get_file(data->u.fd.fd);
     }
 
     rt_ipc_msg_init(msg, data, need_reply);
@@ -686,6 +737,10 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
             ch->stat = RT_IPC_STAT_ACTIVE;  /* no valid suspened receivers */
         }
         *data = msg_ret->msg;      /* extract the transferred data */
+        if (data->type == RT_CHANNEL_FD)
+        {
+            data->u.fd.fd = _ipc_msg_fd_new(data->u.fd.file);
+        }
         _ipc_msg_free(msg_ret);     /* put back the message to kernel */
     }
     else
@@ -740,6 +795,10 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
         }
         /* If waked up, the received message has been store into the thread. */
         *data = ((rt_ipc_msg_t)(thread->msg_ret))->msg;    /* extract data */
+        if (data->type == RT_CHANNEL_FD)
+        {
+            data->u.fd.fd = _ipc_msg_fd_new(data->u.fd.file);
+        }
         _ipc_msg_free(thread->msg_ret);     /* put back the message to kernel */
         thread->msg_ret = RT_NULL;
     }

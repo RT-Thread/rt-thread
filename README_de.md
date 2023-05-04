@@ -107,7 +107,7 @@ RT-Thread Studio IDE (auch bekannt als RT-Studio) ist eine integrierte Entwicklu
 
 ## Env-Werkzeug
 
-[User Manual](documentation/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
+[User Manual](documentation/env/env.md) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
 
 In der Anfangsphase schuf das RT-Thread-Team auch ein Hilfswerkzeug namens Env. Dabei handelt es sich um ein Hilfstool mit einer TUI (textbasierten Benutzeroberfläche). Entwickler können das Env-Tool verwenden, um GCC, Keil MDK und IAR-Projekte zu konfigurieren und zu generieren.
 

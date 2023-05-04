@@ -70,4 +70,4 @@ finsh />
 
 ## 联系人信息
 
-维护人：[tanek](https://github.com/TanekLiang)
+维护人：[tanek](https://github.com/liangyongxiang)

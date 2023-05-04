@@ -158,5 +158,72 @@ menu "General Drivers Configuration"
                 default n
         endif
 
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_TIMER0
+                bool "Enable TIMER0"
+                default n
+            config BSP_USING_TIMER1
+                bool "Enable TIMER1"
+                default n
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+    menu "General Purpose I2C"
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1"
+        default n
+        select BSP_USING_I2C
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            choice
+                prompt "I2C1 SCL PIN"
+                default I2C1_SCL_USING_GPIO4 if BSP_USING_BL60X
+                default I2C1_SCL_USING_GPIO10 if BSP_USING_BL61X
+                default I2C1_SCL_USING_GPIO08 if BSP_USING_BL70X
+                default I2C1_SCL_USING_GPIO20 if BSP_USING_BL808
+
+                config I2C1_SCL_USING_GPIO0
+                    bool "GPIO_0"
+                config I2C1_SCL_USING_GPIO4
+                    bool "GPIO_4"
+                config I2C1_SCL_USING_GPIO8
+                    bool "GPIO_8"
+                config I2C1_SCL_USING_GPIO10
+                    bool "GPIO_10"
+                config I2C1_SCL_USING_GPIO20
+                    bool "GPIO_20"
+
+            endchoice
+            choice
+                prompt "I2C1 SDA PIN"
+                default I2C1_SDA_USING_GPIO3 if BSP_USING_BL60X
+                default I2C1_SDA_USING_GPIO11 if BSP_USING_BL61X
+                default I2C1_SDA_USING_GPIO7 if BSP_USING_BL70X
+                default I2C1_SDA_USING_GPIO21 if BSP_USING_BL808
+
+                config I2C1_SDA_USING_GPIO1
+                    bool "GPIO_1"
+                config I2C1_SDA_USING_GPIO3
+                    bool "GPIO_3"
+                config I2C1_SDA_USING_GPIO7
+                    bool "GPIO_7"
+                config I2C1_SDA_USING_GPIO11
+                    bool "GPIO_11"
+                config I2C1_SDA_USING_GPIO21
+                    bool "GPIO_21"
+
+            endchoice
+        endif
+    endmenu
+
 endmenu
 

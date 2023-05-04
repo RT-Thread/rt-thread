@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,9 @@
 #define NR_CPUS       1
 
 #define IRQ_OFFSET          16
+#ifndef IRQ_MAX_NR
 #define IRQ_MAX_NR          207
+#endif
 #define INTERRUPTS_MAX      (IRQ_OFFSET + IRQ_MAX_NR)
 
 enum {

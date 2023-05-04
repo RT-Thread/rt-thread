@@ -851,7 +851,7 @@ uint32_t ATTR_CLOCK_SECTION Clock_System_Clock_Get(BL_System_Clock_Type type)
             clock = Clock_MCU_Root_Clk_Mux_Output(Clock_Get_MCU_Root_Clk_Sel_Val());
             div = Clock_Get_MCU_HClk_Div_Val();
             return clock / (div + 1);
-
+#ifndef CONIFG_DISABLE_ALL_CLOCK_GET_EXCEPT_SYSTEM_CLOCK
         case BL_SYSTEM_CLOCK_MCU_BCLK:
             ATTR_FALLTHROUGH();
 
@@ -900,7 +900,7 @@ uint32_t ATTR_CLOCK_SECTION Clock_System_Clock_Get(BL_System_Clock_Type type)
         case BL_SYSTEM_CLOCK_XTAL:
             /*!< xtal clock */
             return Clock_Xtal_Output();
-
+#endif
         default:
             return 0;
     }

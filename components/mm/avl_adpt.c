@@ -78,7 +78,7 @@ static struct rt_varea *search(struct util_avl_root *root,
     {
         rt_varea_t varea = VAREA_ENTRY(node);
         int cmp = compare(range.start, range.end, varea->start,
-                          varea->start + varea->size - 1);
+                          (char *)varea->start + varea->size - 1);
 
         if (cmp < 0)
         {
@@ -118,7 +118,7 @@ rt_varea_t _aspace_bst_search_exceed(struct rt_aspace *aspace, void *start)
         if (cmp < 0)
         {
             /* varae exceed start */
-            ptrdiff_t off = va_s - start;
+            ptrdiff_t off = (char *)va_s - (char *)start;
             if (off < min_off)
             {
                 min_off = off;

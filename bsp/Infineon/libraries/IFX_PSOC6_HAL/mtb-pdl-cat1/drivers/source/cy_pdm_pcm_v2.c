@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_pdm_pcm_v2.c
-* \version 1.0
+* \version 1.10
 *
 * The source code file for the PDM_PCM driver.
 *
@@ -51,6 +51,9 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 10.1', 1, \
 * \param  channel_config The pointer to a configuration structure.
 * \param  channel_num The channel number to be initialized.
 * \return error / status code. See \ref cy_en_pdm_pcm_status_t.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_Init
 *
 *******************************************************************************/
 cy_en_pdm_pcm_status_t Cy_PDM_PCM_Channel_Init(PDM_Type * base, cy_stc_pdm_pcm_channel_config_t const * channel_config, uint8_t channel_num)
@@ -111,6 +114,9 @@ cy_en_pdm_pcm_status_t Cy_PDM_PCM_Channel_Init(PDM_Type * base, cy_stc_pdm_pcm_c
 * \param  base The pointer to the PDM-PCM instance address
 * \param  config The pointer to a configuration structure. \ref cy_stc_pdm_pcm_config_v2_t
 * \return error / status code. See \ref cy_en_pdm_pcm_status_t.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Init
 *
 *******************************************************************************/
 cy_en_pdm_pcm_status_t Cy_PDM_PCM_Init(PDM_Type * base, cy_stc_pdm_pcm_config_v2_t const * config)
@@ -261,6 +267,9 @@ cy_en_pdm_pcm_status_t Cy_PDM_PCM_test_Init(PDM_Type * base, cy_stc_pdm_pcm_conf
 * \param base The pointer to the PDM-PCM instance address.
 * \param channel_num channel number to be de initialized.
 *
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_Channel_DeInit
+*
 *******************************************************************************/
 void Cy_PDM_PCM_Channel_DeInit(PDM_Type * base, uint8_t channel_num)
 {
@@ -284,6 +293,9 @@ void Cy_PDM_PCM_Channel_DeInit(PDM_Type * base, uint8_t channel_num)
 * Uninitializes the PDM-PCM module.
 *
 * \param base The pointer to the PDM-PCM instance address.
+*
+* \funcusage
+* \snippet pdm_pcmv2/snippet/main.c snippet_Cy_PDM_PCM_DeInit
 *
 *******************************************************************************/
 void Cy_PDM_PCM_DeInit(PDM_Type * base)

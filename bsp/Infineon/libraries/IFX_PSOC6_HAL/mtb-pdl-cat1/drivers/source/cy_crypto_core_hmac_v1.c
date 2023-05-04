@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_hmac_v1.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code to the API for the HMAC method
@@ -27,15 +27,17 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_hmac_v1.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_SHA == 1)
+#if (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_HMAC_C)
 
 #include "cy_crypto_core_sha_v1.h"
 #include "cy_crypto_core_hw_v1.h"
@@ -60,7 +62,7 @@ typedef struct
     uint32_t ipad[CY_CRYPTO_HMAC_MAX_PAD_SIZE / 4u];
     uint32_t opad[CY_CRYPTO_HMAC_MAX_PAD_SIZE / 4u];
     uint32_t m0Key[CY_CRYPTO_SHA_MAX_BLOCK_SIZE / 4u];
-    cy_stc_crypto_v1_sha512_buffers_t shaBuffers;
+    cy_stc_crypto_v1_sha_buffers_t shaBuffers;
     cy_stc_crypto_v1_hmac_state_t hmacState;
 } cy_stc_crypto_hmac_buffers_t;
 
@@ -315,7 +317,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Hmac(CRYPTO_Type *base,
     cy_en_crypto_status_t tmpResult = CY_CRYPTO_SUCCESS;
 
     /* Allocating internal variables into the CRYPTO SRAM Buffer */
-    cy_stc_crypto_hmac_buffers_t  *hmacBuffers = (cy_stc_crypto_hmac_buffers_t *)(Cy_Crypto_Core_GetVuMemoryAddress(base));
+    cy_stc_crypto_hmac_buffers_t  *hmacBuffers = (cy_stc_crypto_hmac_buffers_t *)((void *)Cy_Crypto_Core_GetVuMemoryAddress(base));
 
     cy_stc_crypto_v1_hmac_state_t *hmacStateTmp = &hmacBuffers->hmacState;
     cy_stc_crypto_sha_state_t      hashStateLoc = { 0 };
@@ -338,13 +340,15 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Hmac(CRYPTO_Type *base,
     return (tmpResult);
 }
 
-#endif /* #if (CPUSS_CRYPTO_SHA == 1) */
+#endif /* (CPUSS_CRYPTO_SHA == 1) && defined(CY_CRYPTO_CFG_HMAC_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

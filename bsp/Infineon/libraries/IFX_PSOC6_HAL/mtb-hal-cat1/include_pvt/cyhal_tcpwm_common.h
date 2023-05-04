@@ -284,13 +284,13 @@ void _cyhal_tcpwm_register_callback(cyhal_resource_inst_t *resource, cy_israddre
 
 /** Configure TCPWM event enablement.
  *
- * @param[in] type          The type of the timer/counter or PWM
+ * @param[in] tcpwm          The shared data struct between timer/counter and PWM
  * @param[in] resource      The timer/counter or PWM resource
  * @param[in] event         The timer/counter or PWM event type
  * @param[in] intr_priority The priority for NVIC interrupt events
  * @param[in] enable        True to turn on events, False to turn off
  */
-void _cyhal_tcpwm_enable_event(TCPWM_Type *type, cyhal_resource_inst_t *resource, uint32_t event, uint8_t intr_priority, bool enable);
+void _cyhal_tcpwm_enable_event(cyhal_tcpwm_t *tcpwm, cyhal_resource_inst_t *resource, uint32_t event, uint8_t intr_priority, bool enable);
 
 /** Returns whether power management transition should be allowed.
  *

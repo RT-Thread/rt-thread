@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_des_v1.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code fro the API for the DES method
@@ -27,15 +27,17 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_des_v1.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_DES == 1)
+#if (CPUSS_CRYPTO_DES == 1) && defined(CY_CRYPTO_CFG_DES_C)
 
 #include "cy_crypto_core_mem_v1.h"
 #include "cy_crypto_core_hw_v1.h"
@@ -182,7 +184,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Des(CRYPTO_Type *base,
     uint32_t i;
     cy_en_crypto_status_t status = CY_CRYPTO_SUCCESS;
 
-    cy_stc_crypto_des_buffers_t *desBuffers = (cy_stc_crypto_des_buffers_t *)Cy_Crypto_Core_GetVuMemoryAddress(base);
+    cy_stc_crypto_des_buffers_t *desBuffers = (cy_stc_crypto_des_buffers_t *)((void *)Cy_Crypto_Core_GetVuMemoryAddress(base));
 
     /* Check weak keys */
     for (i = 0U; i < CY_CRYPTO_DES_WEAK_KEY_COUNT; i++)
@@ -190,7 +192,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Des(CRYPTO_Type *base,
         if (Cy_Crypto_Core_V1_MemCmp(base, key, (uint8_t const *)cy_desWeakKeys[i], CY_CRYPTO_DES_KEY_BYTE_LENGTH) == 0U)
         {
             status = CY_CRYPTO_DES_WEAK_KEY;
-        break;
+            break;
         }
     }
 
@@ -242,17 +244,17 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Tdes(CRYPTO_Type *base,
     uint32_t i;
     cy_en_crypto_status_t status = CY_CRYPTO_SUCCESS;
 
-    cy_stc_crypto_des_buffers_t *desBuffers = (cy_stc_crypto_des_buffers_t *)Cy_Crypto_Core_GetVuMemoryAddress(base);
+    cy_stc_crypto_des_buffers_t *desBuffers = (cy_stc_crypto_des_buffers_t *)((void *)Cy_Crypto_Core_GetVuMemoryAddress(base));
 
     /* Check weak keys */
     for (i = 0U; i < CY_CRYPTO_DES_WEAK_KEY_COUNT; i++)
     {
-    for (uint32_t keynum=0U; keynum < (CY_CRYPTO_TDES_KEY_SIZE / CY_CRYPTO_DES_KEY_SIZE); keynum++)
+        for (uint32_t keynum=0U; keynum < (CY_CRYPTO_TDES_KEY_SIZE / CY_CRYPTO_DES_KEY_SIZE); keynum++)
         {
             if (Cy_Crypto_Core_V1_MemCmp(base, &(key[keynum * CY_CRYPTO_DES_KEY_BYTE_LENGTH]), (uint8_t const *)cy_desWeakKeys[i], CY_CRYPTO_DES_KEY_BYTE_LENGTH) == 0U)
             {
                 status = CY_CRYPTO_DES_WEAK_KEY;
-        break;
+                break;
             }
         }
         if (status == CY_CRYPTO_DES_WEAK_KEY)
@@ -272,13 +274,15 @@ cy_en_crypto_status_t Cy_Crypto_Core_V1_Tdes(CRYPTO_Type *base,
     return (status);
 }
 
-#endif /* #if (CPUSS_CRYPTO_DES == 1) */
+#endif /* (CPUSS_CRYPTO_DES == 1) && defined(CY_CRYPTO_CFG_DES_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

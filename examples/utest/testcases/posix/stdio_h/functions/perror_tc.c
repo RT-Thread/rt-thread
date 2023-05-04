@@ -8,7 +8,9 @@ static int perror_entry(void)
     {
         printf("perror test:");
         perror("nulltest.txt");
+        return -1;
     }
+    fclose(stream);
     return 0;
 }
 

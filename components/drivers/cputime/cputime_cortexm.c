@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,11 +19,11 @@
 #endif
 
 /* Use Cycle counter of Data Watchpoint and Trace Register for CPU time */
-static double cortexm_cputime_getres(void)
+static uint64_t cortexm_cputime_getres(void)
 {
-    double ret = 1000UL * 1000 * 1000;
+    uint64_t ret = 1000UL * 1000 * 1000;
 
-    ret = ret / SystemCoreClock;
+    ret = (ret * (1000UL * 1000)) / SystemCoreClock;
     return ret;
 }
 

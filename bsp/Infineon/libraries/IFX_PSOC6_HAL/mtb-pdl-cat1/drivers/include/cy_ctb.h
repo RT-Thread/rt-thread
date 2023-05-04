@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_ctb.h
-* \version 2.10
+* \version 2.20
 *
 * Header file for the CTB driver
 *
@@ -285,6 +285,15 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td rowspan="2">2.20</td>
+*     <td>The \ref Cy_CTB_SetPumpClkSource implementation is changed to support the IP header update.</td>
+*     <td>API workaround.</td>
+*   </tr>
+*   <tr>
+*     <td>Fixed power level validation in debug mode.</td>
+*     <td>Bug Fixing.</td>
+*   </tr>
+*   <tr>
 *     <td>2.10</td>
 *     <td>Added new power saver modes: \ref CY_CTB_POWER_PS_LOW, \ref CY_CTB_POWER_PS_MEDIUM and \ref CY_CTB_POWER_PS_HIGH.</td>
 *     <td>API enhancement.</td>
@@ -384,7 +393,7 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 11.3', 24, \
 #define CY_CTB_DRV_VERSION_MAJOR            2
 
 /** Driver minor version */
-#define CY_CTB_DRV_VERSION_MINOR            10
+#define CY_CTB_DRV_VERSION_MINOR            20
 
 /** CTB driver identifier*/
 #define CY_CTB_ID                           CY_PDL_DRV_ID(0x0Bu)
@@ -441,7 +450,13 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 11.3', 24, \
                                              ((clkPump) == CY_CTB_CLK_PUMP_PERI) || \
                                              ((clkPump) == CY_CTB_CLK_PUMP_DEEPSLEEP))
 #define CY_CTB_DEEPSLEEP(deepSleep)         (((deepSleep) == CY_CTB_DEEPSLEEP_DISABLE) || ((deepSleep) == CY_CTB_DEEPSLEEP_ENABLE))
-#define CY_CTB_OAPOWER(power)               ((power) <= CY_CTB_POWER_HIGH)
+#define CY_CTB_OAPOWER(power)               (((power) == CY_CTB_POWER_OFF) || \
+                                             ((power) == CY_CTB_POWER_LOW) || \
+                                             ((power) == CY_CTB_POWER_MEDIUM) || \
+                                             ((power) == CY_CTB_POWER_HIGH) || \
+                                             ((power) == CY_CTB_POWER_PS_LOW) || \
+                                             ((power) == CY_CTB_POWER_PS_MEDIUM) || \
+                                             ((power) == CY_CTB_POWER_PS_HIGH))
 #define CY_CTB_OAMODE(mode)                 (((mode) == CY_CTB_MODE_OPAMP1X) \
                                             || ((mode) == CY_CTB_MODE_OPAMP10X) \
                                             || ((mode) == CY_CTB_MODE_COMP))
@@ -1478,12 +1493,15 @@ __STATIC_INLINE void Cy_CTB_SetIptatLevel(cy_en_ctb_iptat_t iptat)
 __STATIC_INLINE void Cy_CTB_SetPumpClkSource(PASS_Type * base, cy_en_ctb_clk_pump_source_t pumpClk)
 {
     CY_ASSERT_L3(CY_CTB_CLKPUMP(pumpClk));
+    CY_UNUSED_PARAMETER(base);
 
     if (CY_CTB_CLK_PUMP_DEEPSLEEP == pumpClk)
     {
         if (!CY_PASS_V1)
         {
-            CY_REG32_CLR_SET(PASS_CTBM_CLOCK_SEL(base), PASS_V2_CTBM_CLOCK_SEL_PUMP_CLOCK_SEL, pumpClk);
+            /* CTBM0 is a temporary workaround for the DRIVERS-8283 */
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 14.3','CTBM0 is a temporary workaround for the DRIVERS-8283');
+            CY_REG32_CLR_SET(PASS_CTBM_CLOCK_SEL(CTBM0), PASS_V2_CTBM_CLOCK_SEL_PUMP_CLOCK_SEL, pumpClk);
         }
         else
         {

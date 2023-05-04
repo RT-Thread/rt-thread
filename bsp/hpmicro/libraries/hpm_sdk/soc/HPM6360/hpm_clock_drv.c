@@ -368,7 +368,7 @@ hpm_stat_t clock_set_dac_source(clock_name_t clock_name, clk_src_t src)
         return status_clk_invalid;
     }
 
-    if ((src != clk_dac_src_ana) || (src != clk_dac_src_ahb)) {
+    if ((src != clk_dac_src_ana) && (src != clk_dac_src_ahb)) {
         return status_clk_src_invalid;
     }
 
@@ -388,7 +388,7 @@ hpm_stat_t clock_set_i2s_source(clock_name_t clock_name, clk_src_t src)
         return status_clk_invalid;
     }
 
-    if ((src != clk_i2s_src_aud0) || (src != clk_i2s_src_aud1)) {
+    if ((src != clk_i2s_src_aud0) && (src != clk_i2s_src_aud1)) {
         return status_clk_src_invalid;
     }
 

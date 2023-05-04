@@ -236,6 +236,18 @@ void bflb_mjpeg_set_yuv420sp_cam_input(struct bflb_device_s *dev, uint8_t yy, ui
  */
 int bflb_mjpeg_feature_control(struct bflb_device_s *dev, int cmd, size_t arg);
 
+/**
+ * @brief Control mjpeg feature.
+ *
+ * @param [in] dev device handle
+ * @param [in] input_buf0 input buffer 0
+ * @param [in] input_buf1 input buffer 1
+ * @param [in] output_buff output buffer
+ * @param [in] output_buff_size size of output buffer
+ * @return A negated errno value on failure.
+ */
+void bflb_mjpeg_update_input_output_buff(struct bflb_device_s *dev, void *input_buf0, void *input_buf1, void *output_buff, size_t output_buff_size);
+
 #ifdef __cplusplus
 }
 #endif

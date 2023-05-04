@@ -18,3 +18,20 @@ def dist_do_building(BSP_ROOT, dist_dir):
     print("=> copy bsp library")
     bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE), os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+    
+    # change RTT_ROOT in Kconfig
+    if not os.path.isfile(os.path.join(dist_dir, 'Kconfig')):
+        return
+
+    with open(os.path.join(dist_dir, 'Kconfig'), 'r') as f:
+        data = f.readlines()
+    with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
+        found = 0
+        for line in data:
+            if line.find('RTT_ROOT') != -1:
+                found = 1
+            if line.find('../Libraries') != -1 and found:
+                position = line.find('../Libraries')
+                line = line[0:position] + 'Libraries/Kconfig"\n'
+                found = 0
+            f.write(line)

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_sd_host.h
-* \version 2.0
+* \version 2.1
 *
 *  This file provides constants and parameter values for
 *  the SD Host Controller driver.
@@ -248,6 +248,11 @@
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
 *   <tr>
+*     <td> 2.1</td>
+*     <td>Updated the behaviour of \ref Cy_SD_Host_AbortTransfer function to check the R1B response. Minor documentation updates.</td>
+*     <td>Defect fixing. Documentation enhancement.</td>
+*   </tr>
+*   <tr>
 *     <td> 2.0</td>
 *     <td>Added support for DDR50 mode and modified Cy_SD_Host_InitCard() API
 *         to set highest possible bus speed mode. Minor documentation updates.</td>
@@ -256,7 +261,7 @@
 *   <tr>
 *     <td> 1.90</td>
 *     <td>Fixed the Cy_SD_Host_SoftwareReset() function behaviour.
-*         Now it waits untill corresponding reset bit gets cleared by SDHC IP block.</td>
+*         Now it waits until corresponding reset bit gets cleared by SDHC IP block.</td>
 *     <td>Defect fixing.</td>
 *   </tr>
 *   <tr>
@@ -421,7 +426,7 @@ extern "C"
 #define CY_SD_HOST_DRV_VERSION_MAJOR       2
 
 /** Driver minor version */
-#define CY_SD_HOST_DRV_VERSION_MINOR       0
+#define CY_SD_HOST_DRV_VERSION_MINOR       1
 
 /******************************************************************************
 * API Constants
@@ -1131,6 +1136,14 @@ extern "C"
 #define CY_SD_HOST_DAT_3_0                 (0x00F00000UL)
 
 /**
+* DAT[0] Line Signal Level.
+* This bit is used to check the DAT0 line level to check R1b
+* response. This bit reflects the value of the sd_dat_in[0]
+* signal.
+*/
+#define CY_SD_HOST_DAT_0_Msk                   (0x00100000UL)
+
+/**
 * Command-Line Signal Level.
 * This bit is used to check the CMD line level to recover from
 * errors and for debugging. These bits reflect the value of the
@@ -1367,6 +1380,36 @@ typedef enum
     CY_SD_HOST_ENABLE_TEMPORARY  = 1U, /**< The temporary write protect. */
     CY_SD_HOST_DISABLE_TEMPORARY = 2U  /**< Clear the temporary write protect. */
 } cy_en_sd_host_write_protect_t;
+
+/** Card status in R1 response type enum. */
+typedef enum
+{
+    CY_SD_HOST_AKE_SEQ_ERROR_R1_RESP         = 3U, /**< Error in the sequence of the authentication process. */
+    CY_SD_HOST_APP_CMD_R1_RESP               = 5U, /**< The card will expect ACMD, or an indication that the command has been interpreted as ACMD. */
+    CY_SD_HOST_FX_EVENT_R1_RESP              = 6U, /**< Extension Functions may set this bit to get host to deal with events. */
+    CY_SD_HOST_READY_FOR_DATA_R1_RESP        = 8U, /**< Corresponds to buffer empty signaling on the bus. */
+    CY_SD_HOST_CURRENT_STATE_0_R1_RESP       = 9U, /**< The state of the card when receiving the command. The four bits are interpreted as a binary coded number between 0 and 15. It is 0th bit. */
+    CY_SD_HOST_CURRENT_STATE_1_R1_RESP       = 10U, /**< The state of the card when receiving the command. The four bits are interpreted as a binary coded number between 0 and 15. It is 1st bit. */
+    CY_SD_HOST_CURRENT_STATE_2_R1_RESP       = 11U, /**< The state of the card when receiving the command. The four bits are interpreted as a binary coded number between 0 and 15. It is 2nd bit. */
+    CY_SD_HOST_CURRENT_STATE_3_R1_RESP       = 12U, /**< The state of the card when receiving the command. The four bits are interpreted as a binary coded number between 0 and 15. It is 3rd bit. */
+    CY_SD_HOST_ERASE_RESET_R1_RESP           = 13U, /**< It indicates if an erase sequence was cleared before executing because an out of erase sequence command was received. */
+    CY_SD_HOST_CARD_ECC_DISABLED_R1_RESP     = 14U, /**< It indicates if the command has been executed without using the internal ECC. */
+    CY_SD_HOST_WP_ERASE_SKIP_R1_RESP         = 15U, /**< It is set when only partial address space was erased due to existing write protected blocks or the temporary or permanent write protected card was erased. */
+    CY_SD_HOST_CSD_OVERWRITE_R1_RESP         = 16U, /**< It indicates read only section of the CSD does not match the card content or there was an attempt to reverse the copy or permanent WP bits was made. */
+    CY_SD_HOST_ERROR_R1_RESP                 = 19U, /**< A general or an unknown error occurred during the operation. */
+    CY_SD_HOST_CC_ERROR_R1_RESP              = 20U, /**< Internal card controller error. */
+    CY_SD_HOST_CARD_ECC_FAILED_R1_RESP       = 21U, /**< Card internal ECC was applied but failed to correct the data. */
+    CY_SD_HOST_ILLEGAL_COMMAND_R1_RESP       = 22U, /**< Command  not  legal  for  the  card. */
+    CY_SD_HOST_COM_CRC_ERROR_R1_RESP         = 23U, /**< The CRC check of the previous command failed. */
+    CY_SD_HOST_LOCK_UNLOCK_FAILED_R1_RESP    = 24U, /**< Set when a sequence or password error has been detected in lock/unlock card command. */
+    CY_SD_HOST_CARD_IS_LOCKED_R1_RESP        = 25U, /**< When set, signals that the card is locked by the host. */
+    CY_SD_HOST_WP_VIOLATION_R1_RESP          = 26U, /**< Set when the host attempts to write to a protected block or to the temporary or permanent write protected card. */
+    CY_SD_HOST_ERASE_PARAM_R1_RESP           = 27U, /**< An invalid selection of write-blocks for erase occurred. */
+    CY_SD_HOST_ERASE_SEQ_ERROR_R1_RESP       = 28U, /**< An error in the sequence of erase commands occurred. */
+    CY_SD_HOST_BLOCK_LEN_ERROR_R1_RESP       = 29U, /**< The transferred block length is not allowed for this card, or the number of transferred bytes does not match the block length. */
+    CY_SD_HOST_ADDRESS_ERROR_R1_RESP         = 30U, /**< A misaligned address which did not match the block length was used in the command. */
+    CY_SD_HOST_OUT_OF_RANGE_R1_RESP          = 31U, /**< The command's argument was out of the allowed range for this card. */
+} cy_en_sd_host_r1_response_t;
 
 /** \} group_sd_host_enums */
 

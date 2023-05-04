@@ -4,8 +4,8 @@
 void bflb_gpio_init(struct bflb_device_s *dev, uint8_t pin, uint32_t cfgset)
 {
     uint32_t cfg = 0;
-    uint32_t reg_base;
-    uint32_t cfg_address;
+    size_t reg_base;
+    size_t cfg_address;
     uint8_t drive;
     uint8_t function;
     uint16_t mode;
@@ -202,7 +202,7 @@ uint32_t bflb_gpio_pin32_63_read(struct bflb_device_s *dev)
 
 void bflb_gpio_int_init(struct bflb_device_s *dev, uint8_t pin, uint8_t trig_mode)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t cfg_address;
     uint32_t regval;
 
@@ -234,7 +234,7 @@ void bflb_gpio_int_init(struct bflb_device_s *dev, uint8_t pin, uint8_t trig_mod
 
 void bflb_gpio_int_mask(struct bflb_device_s *dev, uint8_t pin, bool mask)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t cfg_address;
     uint32_t regval;
 
@@ -272,7 +272,7 @@ bool bflb_gpio_get_intstatus(struct bflb_device_s *dev, uint8_t pin)
 
 void bflb_gpio_int_clear(struct bflb_device_s *dev, uint8_t pin)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t cfg_address;
     uint32_t regval;
 
@@ -298,7 +298,7 @@ void bflb_gpio_int_clear(struct bflb_device_s *dev, uint8_t pin)
 
 void bflb_gpio_uart_init(struct bflb_device_s *dev, uint8_t pin, uint8_t uart_func)
 {
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t regval;
     uint8_t sig;
     uint8_t sig_pos;
@@ -409,17 +409,10 @@ void bflb_gpio_uart_init(struct bflb_device_s *dev, uint8_t pin, uint8_t uart_fu
     bflb_gpio_init(dev, pin, (7 << GPIO_FUNC_SHIFT) | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
 }
 
-#if defined(BL616) || defined(BL808) || defined(BL606P) || defined(BL628)
-void bflb_gpio_iso11898_init(struct bflb_device_s *dev, uint8_t pin, uint8_t iso11898_func)
-{
-    bflb_gpio_uart_init(dev, pin, iso11898_func);
-}
-#endif
-
 int bflb_gpio_feature_control(struct bflb_device_s *dev, int cmd, size_t arg)
 {
     int ret = 0;
-    uint32_t reg_base;
+    size_t reg_base;
     uint32_t regval;
     uint8_t pin = arg;
 

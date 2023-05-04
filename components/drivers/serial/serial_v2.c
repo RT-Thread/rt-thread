@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -455,6 +455,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 {
     struct rt_serial_device *serial;
     struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
+    rt_ssize_t rst;
 
     RT_ASSERT(dev != RT_NULL);
     if (size == 0) return 0;
@@ -476,14 +477,14 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 
     tx_fifo->activated = RT_TRUE;
     /* Call the transmit interface for transmission */
-    serial->ops->transmit(serial,
-                          (rt_uint8_t *)buffer,
-                          size,
-                          RT_SERIAL_TX_BLOCKING);
+    rst = serial->ops->transmit(serial,
+                                (rt_uint8_t *)buffer,
+                                size,
+                                RT_SERIAL_TX_BLOCKING);
     /* Waiting for the transmission to complete */
     rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
 
-    return size;
+    return rst;
 }
 
 /**
@@ -1316,12 +1317,12 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     rt_memset(row_s,0,4);
                     rt_memset(col_s,0,4);
                     cnt1 = 0;
-                    while(_tio_buf[cnt1] != ';' && cnt1 < _TIO_BUFLEN)
+                    while(cnt1 < _TIO_BUFLEN && _tio_buf[cnt1] != ';')
                     {
                         cnt1++;
                     }
                     cnt2 = ++cnt1;
-                    while(_tio_buf[cnt2] != ';' && cnt2 < _TIO_BUFLEN)
+                    while(cnt2 < _TIO_BUFLEN && _tio_buf[cnt2] != ';')
                     {
                         cnt2++;
                     }

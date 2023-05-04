@@ -57,7 +57,7 @@
 * * Pseudo random PWM (PWMPR)
 * * Shift Register
 *
-* The TCPWM driver is structured to map these seven fuctional modes to four
+* The TCPWM driver is structured to map these seven functional modes to four
 * high level operating modes:
 * * Timer/Counter (includes Timer, Capture modes)
 * * PWM (PWM, PWMDT, PWMPR)

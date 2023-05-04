@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_adcmic.h
-* \version 0.1
+* \version 1.0
 *
 * Provides an API declaration of the ADCMic driver.
 *
@@ -36,15 +36,15 @@
 * \image html ADCMicBlockDiagram.png
 *
 * Consult the datasheet of your device for details of the
-* clock system.
+* clocking system.
 *
 * The high level features of the subsystem are:
 *   - Analog (MIC) and digital (PDM) microphones support.
-*   - Sample rate 8/16 ksps for audio (microphones) and 480 ksps for DC measurement.
+*   - Sample rate 8/16 ksps for audio (MIC and PDM modes).
 *   - Configurable biquad filter for custom audio equalization.
 *   - Selectable DC measurement range.
-*   - interrupt & trigger generation.
-*   - built-in FIFO buffer (for audio only).
+*   - Interrupt & trigger generation.
+*   - Built-in FIFO buffer (for audio only).
 *
 * \section group_adcmic_usage Usage
 *
@@ -55,36 +55,37 @@
 *   -# \ref group_adcmic_trigger
 *   -# \ref group_adcmic_timer
 *   -# \ref group_adcmic_interrupt
-*   -# \ref group_adcmic_dc_result
+*   -# \ref group_adcmic_dc_measurement
 *   -# \ref group_adcmic_fifo
 *
 * \section group_adcmic_initialization Initialization and Enabling
 *
 * To configure the ADCMic subsystem call \ref Cy_ADCMic_Init.
-* Pass in a pointer to the \ref MXS40ADCMIC_Type structure for the base hardware register address and
-* pass in the configuration structure \ref cy_stc_adcmic_config_t.
+* Pass in a pointer to the \ref MXS40ADCMIC_Type structure for the base hardware register address,
+* pass in the configuration structure \ref cy_stc_adcmic_config_t, and
+* pass in the operation mode.
 *
 * After initialization, call \ref Cy_ADCMic_Enable to enable the block.
 *
+* The configuration can be defined as follows:
+* \snippet adcmic_snippet/snippet.c SNIPPET_ADCMIC_CFG
+*
 * \subsection group_adcmic_mic Analog Microphone (MIC) Mode
 *
-* \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_MIC
 * \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_MIC_OP
 *
 * Usually the MIC mode is used with FIFO, see \ref group_adcmic_fifo
 *
 * \subsection group_adcmic_pdm Digital Microphone (PDM) Mode
 *
-* \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_PDM
 * \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_PDM_OP
 *
 * Usually the MIC mode is used with FIFO, see \ref group_adcmic_fifo
 *
 * \subsection group_adcmic_dc DC Measurement (DC) Mode
 *
-* \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_DC
 * \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_DC_OP
-
+*
 * \subsection group_adcmic_biquad Biquad filter Initialization
 *
 * The biquad filter usually is used to the audio stream equalization (in MIC or PDM modes):
@@ -94,31 +95,29 @@
 * \section group_adcmic_clock Clocks
 *
 * The ADCMic requires two input clocks:
-* - clk_sys - recommended frequency is 96MHz, usually is routed from one of the \ref group_sysclk_clk_hf
-* - clk_hf - recommended frequency is 24MHz, usually is routed from one of the \ref group_sysclk_clk_hf
+* - clk_sys - recommended frequency is 96MHz, input for the \ref group_adcmic_timer, usually is routed from one of the \ref group_sysclk_clk_hf
+* - clk_hf - recommended frequency is 24MHz, the audio (MIC and PDM modes) reference clock, usually is routed from one of the \ref group_sysclk_clk_hf
 *
 * For more exact information on the ADCMic clock routing, refer to the datasheet for your device.
-*
-* The internal dividers are configured by \ref cy_stc_adcmic_config_t::clockDiv for general ADC functional and
-* \ref cy_stc_adcmic_audio_digital_path_config_t::clockDiv for the PDM data latching.
 *
 * \section group_adcmic_trigger Triggering
 *
 * The ADCMic subsystem has two output triggers: from the timer and from the FIFO,
-* they could be configured by the \ref cy_stc_adcmic_timer_trigger_config_t::timerTrigger and
-* \ref cy_stc_adcmic_timer_trigger_config_t::fifoTrigger fields.
+* the timer generates trigger always if enabled, the FIFO trigger could be
+* configured separately for MIC and PDM modes by the \ref cy_stc_adcmic_mic_config_t::fifoTrigger and
+* \ref cy_stc_adcmic_pdm_config_t::fifoTrigger respectively.
 *
 * Also, they could be routed to any periphery using \ref group_trigmux driver, e.g. to DW block:
 * \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_TRIGGER
 *
 * \section group_adcmic_timer Timer
 *
-* The Timer can be used for two purposes:
+* The Timer is used for DC measurement for two purposes:
 * - generate periodic events based on ADCMic clk_sys clock.
 * - count the CIC data update events.
 *
-* The timer period and input signal source are configured by the \ref cy_stc_adcmic_timer_trigger_config_t::period and
-* \ref cy_stc_adcmic_timer_trigger_config_t::input fields correspondingly.
+* The timer period and input signal source are configured by the \ref cy_stc_adcmic_dc_config_t::timerPeriod and
+* \ref cy_stc_adcmic_dc_config_t::timerInput fields correspondingly.
 *
 * \section group_adcmic_interrupt Handling Interrupts
 *
@@ -143,19 +142,59 @@
 * Alternately, instead of handling the interrupts, the \ref Cy_ADCMic_IsEndConversion function
 * allows for firmware polling of the end of DC conversion status.
 *
-* \section group_adcmic_dc_result Retrieve DC Measurement Results
-*
-* Retrieve the ADC result by calling \ref Cy_ADCMic_GetDcResult with the desired channel.
-* To convert the result to a voltage, pass the ADC result to \ref Cy_ADCMic_CountsTo_Volts, \ref Cy_ADCMic_CountsTo_mVolts, or
-* \ref Cy_ADCMic_CountsTo_uVolts.
-*
 * \section group_adcmic_fifo FIFO Usage
-*
-* The ADCMic subsystem in MIC and PDM modes stores the audio data into the FIFO
-* It can be configured using \ref cy_stc_adcmic_fifo_config_t, and served either by ISR:
+* The ADCMic subsystem in the MIC and PDM modes stores the audio data into the FIFO.
+* It can be configured separately for the MIC and PDM modes using
+* \ref cy_stc_adcmic_mic_config_t::fifoFull,
+* \ref cy_stc_adcmic_mic_config_t::fifoEmpty and
+* \ref cy_stc_adcmic_pdm_config_t::fifoFull,
+* \ref cy_stc_adcmic_pdm_config_t::fifoEmpty
+* respectively and served either by ISR:
 * \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_ISR
 * Or by DMA:
 * \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_TRIGGER
+*
+* \section group_adcmic_dc_measurement DC Voltage Measurement Accuracy
+*
+* * The Offset is practically a raw count of the measured Ground voltage.
+* * The Gain is essentially an amount of raw counts per 1 Volt of input voltage.
+*   It depends on the DC measurement range \ref cy_en_adcmic_dc_range_t.
+*
+* The default Offset \ref CY_ADCMIC_DC_OFFSET and
+* Gain for both ranges \ref CY_ADCMIC_DC_1_8_GAIN and \ref CY_ADCMIC_DC_3_6_GAIN are precalculated
+* based on the theory of the ADCMic operation \ref group_adcmic_macros_dc_measurement.
+*
+* So basically the raw count retrieved using \ref Cy_ADCMic_GetDcResult for the desired DC input
+* can be directly feed into any of the \ref Cy_ADCMic_CountsTo_Volts, \ref Cy_ADCMic_CountsTo_mVolts,
+* or \ref Cy_ADCMic_CountsTo_uVolts functions and have for some extend accurate result.
+*
+* However, to increase the accuracy the real ADCMic Gain and Offset can be defined by physically
+* measuring the Reference Ground \ref CY_ADCMIC_REFGND and the Reference BandGap \ref CY_ADCMIC_BGREF.
+*
+* For example:
+* \snippet adcmic_snippet/snippet.c SNIPPET_ADCMIC_DC_MEASURE_AVG
+* \note this code snippet is not the only valid way to use this driver - it is just one possible example how it can be used.
+*
+* \subsection group_adcmic_dc_vbg_calib BandGap Calibration
+* For further increase the measurement accuracy, the real BandGap voltage can be defined
+* using external precise reference with exact known voltage:
+*
+* Real BandGap voltage = external reference exact voltage * (BandGap counts - GND counts) / (external reference counts - GND counts).
+*
+* And then use it in the Gain calculation as shown above instead of the nominal BandGap voltage \ref CY_ADCMIC_DC_VBG.
+*
+* \subsection group_adcmic_dc_double_sampling Correlated Double Sampling
+* To further improve the DC measurement accuracy, the low frequency Noise could be dynamically
+* removed by performing two measurements for each input channel sequentially:
+* one measuring the desired DC input and the other one measuring the \ref CY_ADCMIC_REFGND.
+* The second measurement of the\ref CY_ADCMIC_REFGND contains only the low frequency Noise (Flick Noise) information.
+* It is important to perform these two measurements one after another as close as possible.
+* The final true ADC output value is then obtained by subtracting the ADC output of the
+* second measurement from the ADC output of the first measurement.
+*
+* For example:
+* \snippet adcmic_snippet/snippet.c SNIPPET_ADCMIC_DC_MEASURE_DS
+* \note this code snippet is not the only valid way to use this driver - it is just one possible example how it can be used.
 *
 * \section group_adcmic_more_information More Information
 * For more information on the ADCMic ADC subsystem, refer to the datasheet of your device.
@@ -163,6 +202,74 @@
 * \section group_adcmic_changelog Changelog
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
+*   <tr>
+*     <td>1.0</td>
+*     <td>
+*       The cy_en_adcmic_source_t is renamed to \ref cy_en_adcmic_mode_t.<br>
+*       The CY_ADCMIC_480KSPS item is removed from the \ref cy_en_adcmic_sample_rate_t.<br>
+*       The cy_en_adcmic_dc_conv_time_t is removed.<br>
+*       The cy_stc_adcmic_fifo_config_t is removed.<br>
+*       The cy_en_adcmic_dc_result_latch_mode_t is removed.<br>
+*       The cy_stc_adcmic_audio_analog_path_config_t is renamed to \ref cy_stc_adcmic_mic_config_t.<br>
+*       The cy_stc_adcmic_audio_digital_path_config_t is renamed to \ref cy_stc_adcmic_pdm_config_t.<br>
+*       The cy_stc_adcmic_dc_path_config_t is renamed to \ref cy_stc_adcmic_dc_config_t.<br>
+*
+*       The micPd parameter is removed from the \ref cy_stc_adcmic_mic_config_t<br>
+*
+*       The next parameters are added into \ref cy_stc_adcmic_mic_config_t :<br>
+*       * \ref cy_stc_adcmic_mic_config_t::sampleRate,<br>
+*       * \ref cy_stc_adcmic_mic_config_t::biQuadConfig,<br>
+*       * \ref cy_stc_adcmic_mic_config_t::fifoTrigger,<br>
+*       * \ref cy_stc_adcmic_mic_config_t::fifoFull,<br>
+*       * \ref cy_stc_adcmic_mic_config_t::fifoEmpty.<br>
+*
+*       The clockDiv parameter is removed from the \ref cy_stc_adcmic_pdm_config_t<br>
+*
+*       The next parameters are added into \ref cy_stc_adcmic_pdm_config_t :<br>
+*       * \ref cy_stc_adcmic_pdm_config_t::sampleRate,<br>
+*       * \ref cy_stc_adcmic_pdm_config_t::biQuadConfig,<br>
+*       * \ref cy_stc_adcmic_pdm_config_t::fifoTrigger,<br>
+*       * \ref cy_stc_adcmic_pdm_config_t::fifoFull,<br>
+*       * \ref cy_stc_adcmic_pdm_config_t::fifoEmpty.<br>
+*
+*       The next parameters are removed from the \ref cy_stc_adcmic_dc_config_t :<br>
+*       * tmrLatch,<br>
+*       * time.<br>
+*
+*       The next parameter is renamed in the \ref cy_stc_adcmic_dc_config_t :<br>
+*       * input -> \ref cy_stc_adcmic_dc_config_t::channel.<br>
+*
+*       The next parameters are added into \ref cy_stc_adcmic_dc_config_t :<br>
+*       * \ref cy_stc_adcmic_dc_config_t::timerPeriod,<br>
+*       * \ref cy_stc_adcmic_dc_config_t::timerInput,<br>
+*       * \ref cy_stc_adcmic_dc_config_t::context.<br>
+*
+*       The next parameters are removed from the cy_stc_adcmic_config_t :<br>
+*       * clockDiv,<br>
+*       * source,<br>
+*       * sampleRate,<br>
+*       * biQuadConfig,<br>
+*       * fifoConfig,<br>
+*       * tmrTrgConfig.<br>
+*
+*       The next parameters are renamed in the cy_stc_adcmic_config_t :<br>
+*       * anaConfig -> \ref cy_stc_adcmic_config_t::micConfig,<br>
+*       * digConfig -> \ref cy_stc_adcmic_config_t::pdmConfig.<br>
+*
+*       The new parameter 'mode' is added to the \ref Cy_ADCMic_Init.<br>
+*       The \ref Cy_ADCMic_Init functions if fixed to proper process the \ref cy_stc_adcmic_mic_config_t::micClamp setting.<br>
+*       The Cy_ADCMic_StartConvert and Cy_ADCMic_StopConvert API functions are removed.<br>
+*       The \ref Cy_ADCMic_Enable and \ref Cy_ADCMic_Disable are updated to inherit the Start/StopConvert functionality.<br>
+*       The Cy_ADCMic_SleepMic and Cy_ADCMic_WakeUpMic API functions are removed.<br>
+*       The \ref Cy_ADCMic_Enable and \ref Cy_ADCMic_Disable are updated to power down all the analog subsystems at disabling and power up them at enabling.<br>
+*       The parameter dcChannel of the \ref Cy_ADCMic_SelectDcChannel is renamed to channel.<br>
+*       The function Cy_ADCMic_SetDcConvTime is removed.<br>
+*       The interface of \ref Cy_ADCMic_SetDcOffset, \ref Cy_ADCMic_SetDcGain, \ref Cy_ADCMic_CountsTo_mVolts, \ref Cy_ADCMic_CountsTo_uVolts,<br>
+*       and \ref Cy_ADCMic_CountsTo_Volts functions is changed: the 'base' parameters are removed, and the 'context' parameters are added.<br>
+*       The documentation is enhanced with code snippets: \ref group_adcmic_dc_measurement, \ref group_adcmic_dc_double_sampling.
+*     </td>
+*     <td>Usability review</td>
+*   </tr>
 *   <tr>
 *     <td>0.1</td>
 *     <td>This is a pre-production driver release. The driver is not recommended for production use, unless the functionality is delivered in Cypress-provided applications.</td>
@@ -210,10 +317,10 @@ extern "C" {
 * \{
 */
 /** Driver major version */
-#define CY_ADCMIC_DRV_VERSION_MAJOR            0
+#define CY_ADCMIC_DRV_VERSION_MAJOR            1
 
 /** Driver minor version */
-#define CY_ADCMIC_DRV_VERSION_MINOR            1
+#define CY_ADCMIC_DRV_VERSION_MINOR            0
 
 /** ADCMic PDL ID */
 #define CY_ADCMIC_ID                           CY_PDL_DRV_ID(0x48U)
@@ -299,8 +406,8 @@ extern "C" {
 #define CY_ADCMIC_DC_3_6_GAIN   ((int16_t)CY_SYSLIB_DIV_ROUND(CY_ADCMIC_DC_FS_CNT, 36U))
 /** The default amount of raw counts per 1 volt for 1.8V range */
 #define CY_ADCMIC_DC_1_8_GAIN   ((int16_t)CY_SYSLIB_DIV_ROUND(CY_ADCMIC_DC_FS_CNT, 18U))
-/** The BandGap reference voltage in millivolts */
-#define CY_ADCMIC_DC_VBG        (850)
+/** The BandGap reference nominal voltage in millivolts */
+#define CY_ADCMIC_DC_VBG        (850L)
 /** \} group_adcmic_macros_dc_measurement */
 /** \} group_adcmic_macros */
 
@@ -367,49 +474,30 @@ typedef enum
     CY_ADCMIC_PGA_GAIN_42 = 42U  /**< 42 db */
 } cy_en_adcmic_pga_gain_t;
 
-/** The signal source */
+/** The operation mode */
 typedef enum
 {
-    CY_ADCMIC_DC = 0U,  /**< DC voltage measurement */
+    CY_ADCMIC_DC  = 1U, /**< DC voltage measurement */
     CY_ADCMIC_MIC = 3U, /**< Analog microphone with PGA */
     CY_ADCMIC_PDM = 4U  /**< PDM digital microphone */
-} cy_en_adcmic_source_t;
+} cy_en_adcmic_mode_t;
 
-/** The sample rate */
+/** The sample rate for MIC and PDM modes */
 typedef enum
 {
     CY_ADCMIC_8KSPS,  /**< 8 ksps, for microphone only */
-    CY_ADCMIC_16KSPS, /**< 16 ksps, for microphone only */
-    CY_ADCMIC_480KSPS /**< 480 ksps, for DC measurement only */
+    CY_ADCMIC_16KSPS  /**< 16 ksps, for microphone only */
 } cy_en_adcmic_sample_rate_t;
 
-/** The DC channel */
+/** The DC channel
+ * \note Some options may be unavailable on particular devices.
+ */
 typedef enum
 {
     CY_ADCMIC_REFGND = 0x0FU, /**< ADC reference ground */
     CY_ADCMIC_BGREF  = 0x0EU, /**< ADC BG REF */
     CY_ADCMIC_VDDC   = 0x0DU, /**< Core supply */
     CY_ADCMIC_VDDIO  = 0x0CU, /**< Battery/IO supply */
-    CY_ADCMIC_GPIO27 = 0x0BU, /**< GPIO 27 */
-    CY_ADCMIC_GPIO26 = 0x0AU, /**< GPIO 26 */
-    CY_ADCMIC_GPIO25 = 0x09U, /**< GPIO 25 */
-    CY_ADCMIC_GPIO24 = 0x08U, /**< GPIO 24 */
-    CY_ADCMIC_GPIO23 = 0x07U, /**< GPIO 23 */
-    CY_ADCMIC_GPIO22 = 0x06U, /**< GPIO 22 */
-    CY_ADCMIC_GPIO21 = 0x05U, /**< GPIO 21 */
-    CY_ADCMIC_GPIO20 = 0x04U, /**< GPIO 20 */
-    CY_ADCMIC_GPIO19 = 0x03U, /**< GPIO 19 */
-    CY_ADCMIC_GPIO18 = 0x02U, /**< GPIO 18 */
-    CY_ADCMIC_GPIO17 = 0x01U, /**< GPIO 17 */
-    CY_ADCMIC_GPIO16 = 0x00U, /**< GPIO 16 */
-    CY_ADCMIC_GPIO15 = 0x1FU, /**< GPIO 15 */
-    CY_ADCMIC_GPIO14 = 0x1EU, /**< GPIO 14 */
-    CY_ADCMIC_GPIO13 = 0x1DU, /**< GPIO 13 */
-    CY_ADCMIC_GPIO12 = 0x1CU, /**< GPIO 12 */
-    CY_ADCMIC_GPIO11 = 0x1BU, /**< GPIO 11 */
-    CY_ADCMIC_GPIO10 = 0x1AU, /**< GPIO 10 */
-    CY_ADCMIC_GPIO9  = 0x19U, /**< GPIO 9  */
-    CY_ADCMIC_GPIO8  = 0x18U, /**< GPIO 8  */
     CY_ADCMIC_GPIO7  = 0x17U, /**< GPIO 7  */
     CY_ADCMIC_GPIO6  = 0x16U, /**< GPIO 6  */
     CY_ADCMIC_GPIO5  = 0x15U, /**< GPIO 5  */
@@ -419,14 +507,6 @@ typedef enum
     CY_ADCMIC_GPIO1  = 0x11U, /**< GPIO 1  */
     CY_ADCMIC_GPIO0  = 0x10U  /**< GPIO 0  */
 } cy_en_adcmic_dc_channel_t;
-
-/** The DC convergence time */
-typedef enum
-{
-    CY_ADCMIC_DC_CONV_TIME_10_US = 0U,    /**< DC convergence time of 10us */
-    CY_ADCMIC_DC_CONV_TIME_15_US = 1U,    /**< DC convergence time of 15us */
-    CY_ADCMIC_DC_CONV_TIME_20_US = 2U     /**< DC convergence time of 20us */
-} cy_en_adcmic_dc_conv_time_t;
 
 /** Definitions for the return mode used in \ref Cy_ADCMic_IsEndConversion */
 typedef enum
@@ -469,13 +549,6 @@ typedef enum
     CY_ADCMIC_DC_RANGE_1_8V      = 1U     /**< DC range 0..1.8V */
 } cy_en_adcmic_dc_range_t;
 
-/** Definitions for the DC result latching mode settings */
-typedef enum
-{
-    CY_ADCMIC_DC_MODE_LATCH_CONTINUOULSY  = 0U, /**< unknown */
-    CY_ADCMIC_DC_MODE_LATCH_TIMER_TRIGGER = 1U  /**< unknown */
-} cy_en_adcmic_dc_result_latch_mode_t;
-
 /** Definitions for the timer count input settings */
 typedef enum
 {
@@ -488,44 +561,6 @@ typedef enum
 /** \addtogroup group_adcmic_data_structures
 * \{
 */
-
-/** The analog microphone configuration structure */
-typedef struct
-{
-    cy_en_adcmic_bias_t      micBias;    /**< MIC bias selection */
-    bool                     micBiasLz;  /**< MIC bias output impedance during power down: false - hight Z, true - low Z */
-    bool                     micPd;      /**< MIC bias power when DC path is activated:
-                                          *   true - Power down MIC Bias and PGA in DC measurement Mode
-                                          *   false - MIC path power up/down controlled by its power down signal
-                                          */
-    bool                     micClamp;   /**< Enable MIC PGA clamping */
-    cy_en_adcmic_pga_gain_t  pgaGain;    /**< PGA gain 0...42 dB */
-    cy_en_adcmic_pga_incm_t  pgaInCm;    /**< PGA input common mode voltage selection */
-    cy_en_adcmic_pga_outcm_t pgaOutCm;   /**< PGA output common mode voltage selection */
-} cy_stc_adcmic_audio_analog_path_config_t;
-
-/** The PDM path configuration structure */
-typedef struct
-{
-    uint8_t clockDiv;   /**< Sets the PDM clock divider */
-    bool clockInv;      /**< Inverts the clock */
-    uint8_t latchDelay; /**< the PDM data latch delay,
-                         *   when clockInv is false, the valid range is 1...8
-                         *   when clockInv is true, the valid range is 2...9
-                         */
-} cy_stc_adcmic_audio_digital_path_config_t;
-
-/** The DC measurement path configuration structure */
-typedef struct
-{
-    cy_en_adcmic_dc_range_t    range; /**< Selects the measurement range in DC mode */
-    cy_en_adcmic_dc_channel_t  input; /**< DC channel to be measured */
-    bool                    tmrLatch; /**< Result latching mode
-                                       *   true - latching on timer trigger
-                                       *   false - latching continuously
-                                       */
-    cy_en_adcmic_dc_conv_time_t time; /**< The DC conversion time */
-} cy_stc_adcmic_dc_path_config_t;
 
 /** The biquad filter configuration structure */
 typedef struct
@@ -557,35 +592,65 @@ typedef struct
     uint16_t bq4_den3_coeff; /**< The denominator 3 for biquad filter stage 4 */
 } cy_stc_adcmic_biquad_config_t;
 
-/** The FIFO configuration structure */
+/** The analog microphone configuration structure */
 typedef struct
 {
-    uint8_t full; /**< Count for FIFO full condition */
-    uint8_t empty; /**< Count for FIFO empty condition */
-} cy_stc_adcmic_fifo_config_t;
+    cy_en_adcmic_sample_rate_t        sampleRate; /**< Sample rate */
+    cy_en_adcmic_bias_t                  micBias; /**< MIC bias selection */
+    bool                               micBiasLz; /**< MIC bias output impedance during power down: false - hight Z, true - low Z */
+    bool                                micClamp; /**< Enable MIC PGA clamping */
+    cy_en_adcmic_pga_gain_t              pgaGain; /**< PGA gain 0...42 dB */
+    cy_en_adcmic_pga_incm_t              pgaInCm; /**< PGA input common mode voltage selection */
+    cy_en_adcmic_pga_outcm_t            pgaOutCm; /**< PGA output common mode voltage selection */
+    cy_stc_adcmic_biquad_config_t * biQuadConfig; /**< The pointer to the biquad filter configuration structure */
+    bool                             fifoTrigger; /**< Trigger out on valid FIFO data */
+    uint8_t                             fifoFull; /**< Count for FIFO full condition */
+    uint8_t                            fifoEmpty; /**< Count for FIFO empty condition */
+} cy_stc_adcmic_mic_config_t;
 
-/** The timer and trigger configuration structure */
+/** The PDM path configuration structure */
 typedef struct
 {
-    bool                      timerTrigger; /**< Trigger out on Timer terminal count */
-    bool                       fifoTrigger; /**< Trigger out on valid FIFO data */
-    uint16_t                        period; /**< Timer period */
-    cy_en_adcmic_timer_count_input_t input; /**< Timer count input */
-} cy_stc_adcmic_timer_trigger_config_t;
+    cy_en_adcmic_sample_rate_t        sampleRate; /**< Sample rate */
+    bool                                clockInv; /**< Inverts the clock */
+    uint8_t                           latchDelay; /**< the PDM data latch delay,
+                                                   *   when clockInv is false, the valid range is 1...8
+                                                   *   when clockInv is true, the valid range is 2...9
+                                                   */
+    cy_stc_adcmic_biquad_config_t * biQuadConfig; /**< The pointer to the biquad filter configuration structure */
+    bool                             fifoTrigger; /**< Trigger out on valid FIFO data */
+    uint8_t                             fifoFull; /**< Count for FIFO full condition */
+    uint8_t                            fifoEmpty; /**< Count for FIFO empty condition */
+} cy_stc_adcmic_pdm_config_t;
 
+/** The ADCMic driver context structure - it stores the gain and offset values for DC voltage measurement. */
+typedef struct
+{
+    int16_t offset; /**< The storage for the offset calibration value */
+    int16_t gain;   /**< The storage for the gain calibration value */
+} cy_stc_adcmic_context_t;
+
+/** The DC measurement path configuration structure */
+typedef struct
+{
+    cy_en_adcmic_dc_range_t               range; /**< Selects the DC measurement range */
+    cy_en_adcmic_dc_channel_t           channel; /**< DC channel to be measured */
+    uint16_t                        timerPeriod; /**< Timer period */
+    cy_en_adcmic_timer_count_input_t timerInput; /**< Timer count input */
+    cy_stc_adcmic_context_t           * context; /**< The pointer to the context structure.
+                                                  *   If none of the \ref Cy_ADCMic_CountsTo_uVolts,
+                                                  *                  \ref Cy_ADCMic_CountsTo_mVolts,
+                                                  *              nor \ref Cy_ADCMic_CountsTo_Volts
+                                                  *   functions is used, this pointer can be NULL.
+                                                  */
+} cy_stc_adcmic_dc_config_t;
 
 /** The ADCMic driver configuration structure. */
 typedef struct
 {
-    uint8_t                                           clockDiv;     /**< Sets the ADC clock divider */
-    cy_en_adcmic_source_t                             source;       /**< Selects the input to be measured - dc path, analog microphone or digital PDM microphone */
-    cy_en_adcmic_sample_rate_t                        sampleRate;   /**< Sample rate */
-    cy_stc_adcmic_audio_analog_path_config_t  const * anaConfig;    /**< The pointer to the audio analog path configuration structure */
-    cy_stc_adcmic_audio_digital_path_config_t const * digConfig;    /**< The pointer to the audio digital path configuration structure */
-    cy_stc_adcmic_dc_path_config_t            const * dcConfig;     /**< The pointer to the DC measurement path configuration structure */
-    cy_stc_adcmic_biquad_config_t             const * biQuadConfig; /**< The pointer to the biquad filter configuration structure */
-    cy_stc_adcmic_fifo_config_t               const * fifoConfig;   /**< The pointer to the FIFO configuration structure */
-    cy_stc_adcmic_timer_trigger_config_t      const * tmrTrgConfig; /**< The pointer to the timer/trigger configuration structure */
+    cy_stc_adcmic_mic_config_t * micConfig; /**< The pointer to the audio analog path configuration structure */
+    cy_stc_adcmic_pdm_config_t * pdmConfig; /**< The pointer to the audio digital path configuration structure */
+    cy_stc_adcmic_dc_config_t  * dcConfig;  /**< The pointer to the DC measurement path configuration structure */
 } cy_stc_adcmic_config_t;
 
 /** \} group_adcmic_data_structures */
@@ -611,15 +676,17 @@ typedef struct
 * \param config
 * The pointer to the configuration structure \ref cy_stc_adcmic_config_t.
 *
+* \param mode
+* The ADCMic operation mode /ref cy_en_adcmic_mode_t.
+*
 * \return
 * The status \ref cy_en_adcmic_status_t.
 *
 * \funcusage
-* \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_MIC
 * \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_MIC_OP
 *
 *******************************************************************************/
-cy_en_adcmic_status_t Cy_ADCMic_Init(MXS40ADCMIC_Type * base, cy_stc_adcmic_config_t const * config);
+cy_en_adcmic_status_t Cy_ADCMic_Init(MXS40ADCMIC_Type * base, cy_stc_adcmic_config_t const * config, cy_en_adcmic_mode_t mode);
 
 
 /*******************************************************************************
@@ -665,7 +732,7 @@ __STATIC_INLINE void Cy_ADCMic_BiquadBypass(MXS40ADCMIC_Type * base, bool bypass
 * Function Name: Cy_ADCMic_Enable
 ****************************************************************************//**
 *
-* Enables the ADCMic block clocking.
+* Enables the ADCMic block operation.
 *
 * \param base
 * The pointer to the hardware ADCMic block.
@@ -673,17 +740,14 @@ __STATIC_INLINE void Cy_ADCMic_BiquadBypass(MXS40ADCMIC_Type * base, bool bypass
 * \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_MIC_OP
 *
 *******************************************************************************/
-__STATIC_INLINE void Cy_ADCMic_Enable (MXS40ADCMIC_Type * base)
-{
-    base->ADCMIC_CTRL |= MXS40ADCMIC_ADCMIC_CTRL_ADCMIC_EN_Msk;
-}
+void Cy_ADCMic_Enable(MXS40ADCMIC_Type * base);
 
 
 /*******************************************************************************
 * Function Name: Cy_ADCMic_Disable
 ****************************************************************************//**
 *
-* Disables the ADCMic block clocking.
+* Disables the ADCMic block operation.
 *
 * \param base
 * The pointer to the hardware ADCMic block.
@@ -691,56 +755,20 @@ __STATIC_INLINE void Cy_ADCMic_Enable (MXS40ADCMIC_Type * base)
 * \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_STOP
 *
 *******************************************************************************/
-__STATIC_INLINE void Cy_ADCMic_Disable(MXS40ADCMIC_Type * base)
-{
-    base->ADCMIC_CTRL &= ~MXS40ADCMIC_ADCMIC_CTRL_ADCMIC_EN_Msk;
-}
-
-
-/*******************************************************************************
-* Function Name: Cy_ADCMic_SelectSource
-****************************************************************************//**
-*
-* Selects the specified ADC source.
-*
-* \param base
-* The pointer to the hardware ADCMic block.
-*
-* \param source
-* The source value \ref cy_en_adcmic_source_t.
-*
-* \note When the source is switched, the sample rate and the DC conversion
-*       time (in case of switching to DC) are also reset accordingly:
-*       - if switch to \ref CY_ADCMIC_DC the sample rate
-*         is reset to \ref CY_ADCMIC_480KSPS and the DC conversion time
-*         is reset to \ref CY_ADCMIC_DC_CONV_TIME_10_US.
-*       - if switch to \ref CY_ADCMIC_MIC or \ref CY_ADCMIC_PDM the sample rate
-*         is reset to \ref CY_ADCMIC_16KSPS.
-*
-* \return
-* The status \ref cy_en_adcmic_status_t.
-*
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_SS
-*
-*******************************************************************************/
-cy_en_adcmic_status_t Cy_ADCMic_SelectSource(MXS40ADCMIC_Type * base, cy_en_adcmic_source_t source);
+void Cy_ADCMic_Disable(MXS40ADCMIC_Type * base);
 
 
 /*******************************************************************************
 * Function Name: Cy_ADCMic_SetSampleRate
 ****************************************************************************//**
 *
-* Sets the specified ADC sample rate.
+* Sets the specified ADC sample rate. Applicable for MIC/PDM modes only.
 *
 * \param base
 * The pointer to the hardware ADCMic block.
 *
 * \param sampleRate
 * The source value \ref cy_en_adcmic_sample_rate_t.
-*
-* \note \ref CY_ADCMIC_480KSPS is the only valid value for the \ref CY_ADCMIC_DC input,
-*       \ref CY_ADCMIC_8KSPS and \ref CY_ADCMIC_16KSPS are the only valid values for
-*       the audio/mic inputs (\ref CY_ADCMIC_MIC or \ref CY_ADCMIC_PDM).
 *
 * \return
 * The status \ref cy_en_adcmic_status_t.
@@ -749,42 +777,6 @@ cy_en_adcmic_status_t Cy_ADCMic_SelectSource(MXS40ADCMIC_Type * base, cy_en_adcm
 *
 *******************************************************************************/
 cy_en_adcmic_status_t Cy_ADCMic_SetSampleRate(MXS40ADCMIC_Type * base, cy_en_adcmic_sample_rate_t sampleRate);
-
-
-/*******************************************************************************
-* Function Name: Cy_ADCMic_StartConvert
-****************************************************************************//**
-*
-* Starts the conversion process.
-*
-* \param base
-* The pointer to the hardware ADCMic block.
-*
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_DC_OP
-*
-*******************************************************************************/
-__STATIC_INLINE void Cy_ADCMic_StartConvert(MXS40ADCMIC_Type * base)
-{
-    base->AUXADC_CTRL |= MXS40ADCMIC_AUXADC_CTRL_EN_Msk;
-}
-
-
-/*******************************************************************************
-* Function Name: Cy_ADCMic_StopConvert
-****************************************************************************//**
-*
-* Stops the conversion process.
-*
-* \param base
-* The pointer to the hardware ADCMic block.
-*
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_STOP
-*
-*******************************************************************************/
-__STATIC_INLINE void Cy_ADCMic_StopConvert(MXS40ADCMIC_Type * base)
-{
-    base->AUXADC_CTRL &= ~MXS40ADCMIC_AUXADC_CTRL_EN_Msk;
-}
 
 
 /*******************************************************************************
@@ -834,41 +826,6 @@ __STATIC_INLINE void Cy_ADCMic_ClearTrigger(MXS40ADCMIC_Type * base, uint32_t tr
 *******************************************************************************/
 cy_en_adcmic_status_t Cy_ADCMic_SetPgaGain(MXS40ADCMIC_Type * base, cy_en_adcmic_pga_gain_t gain);
 
-
-/*******************************************************************************
-* Function Name: Cy_ADCMic_SleepMic
-****************************************************************************//**
-*
-* Shuts down the MIC bias and PGA.
-*
-* \param base
-* The pointer to the hardware ADCMic block.
-*
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_AP
-*
-*******************************************************************************/
-__STATIC_INLINE void Cy_ADCMic_SleepMic(MXS40ADCMIC_Type * base)
-{
-    base->ADC_PD_CTRL &= ~MXS40ADCMIC_ADC_PD_CTRL_MIC_PWRUP_Msk;
-}
-
-
-/*******************************************************************************
-* Function Name: Cy_ADCMic_WakeUpMic
-****************************************************************************//**
-*
-* Turns on the MIC bias and PGA.
-*
-* \param base
-* The pointer to the hardware ADCMic block.
-*
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_AP
-*
-*******************************************************************************/
-__STATIC_INLINE void Cy_ADCMic_WakeUpMic(MXS40ADCMIC_Type * base)
-{
-    base->ADC_PD_CTRL |= MXS40ADCMIC_ADC_PD_CTRL_MIC_PWRUP_Msk;
-}
 /** \} group_adcmic_functions_mic */
 
 /** \addtogroup group_adcmic_functions_timer
@@ -949,7 +906,7 @@ __STATIC_INLINE void Cy_ADCMic_SetTimerPeriod(MXS40ADCMIC_Type * base, uint16_t 
 * \param base
 * The pointer to the hardware ADCMic block.
 *
-* \param dcChannel
+* \param channel
 * The DC measurement channel \ref cy_en_adcmic_dc_channel_t.
 *
 * \note This function is useful for DC measurement only.
@@ -957,31 +914,7 @@ __STATIC_INLINE void Cy_ADCMic_SetTimerPeriod(MXS40ADCMIC_Type * base, uint16_t 
 * \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_DC_OP
 *
 *******************************************************************************/
-void Cy_ADCMic_SelectDcChannel(MXS40ADCMIC_Type * base, cy_en_adcmic_dc_channel_t dcChannel);
-
-
-/*******************************************************************************
-* Function Name: Cy_ADCMic_SetDcConvTime
-****************************************************************************//**
-*
-* Sets the specified DC conversion time.
-*
-* \param base
-* The pointer to the hardware ADCMic block.
-*
-* \param time
-* The source value \ref cy_en_adcmic_dc_conv_time_t.
-*
-* \note This function call is useful for DC measurement only.
-*       For other ADC sources \ref CY_ADCMIC_BAD_PARAM is returned.
-*
-* \return
-* The status \ref cy_en_adcmic_status_t.
-*
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_SS
-*
-*******************************************************************************/
-cy_en_adcmic_status_t Cy_ADCMic_SetDcConvTime(MXS40ADCMIC_Type * base, cy_en_adcmic_dc_conv_time_t time);
+void Cy_ADCMic_SelectDcChannel(MXS40ADCMIC_Type * base, cy_en_adcmic_dc_channel_t channel);
 
 
 /*******************************************************************************
@@ -1039,6 +972,38 @@ __STATIC_INLINE int16_t Cy_ADCMic_GetDcResult(MXS40ADCMIC_Type * base)
 
 
 /*******************************************************************************
+* Function Name: Cy_ADCMic_SetDcOffset
+****************************************************************************//**
+*
+* Sets the offset value for DC measurement calibration.
+*
+* \param offset
+* The offset value.
+*
+* \param context
+* The pointer to the context structure \ref cy_stc_adcmic_context_t.
+*
+*******************************************************************************/
+void Cy_ADCMic_SetDcOffset(int16_t offset, cy_stc_adcmic_context_t * context);
+
+
+/*******************************************************************************
+* Function Name: Cy_ADCMic_SetDcGain
+****************************************************************************//**
+*
+* Sets the gain value for DC measurement calibration.
+*
+* \param gain
+* The gain value.
+*
+* \param context
+* The pointer to the context structure \ref cy_stc_adcmic_context_t.
+*
+*******************************************************************************/
+void Cy_ADCMic_SetDcGain(int16_t gain, cy_stc_adcmic_context_t * context);
+
+
+/*******************************************************************************
 * Function Name: Cy_ADCMic_CountsTo_mVolts
 ****************************************************************************//**
 *
@@ -1060,19 +1025,19 @@ __STATIC_INLINE int16_t Cy_ADCMic_GetDcResult(MXS40ADCMIC_Type * base)
 * \note
 * This function is for DC measurement only.
 *
-* \param base
-* Pointer to structure describing registers
-*
 * \param adcCounts
 * Conversion result from \ref Cy_ADCMic_GetDcResult
+*
+* \param context
+* The pointer to the context structure \ref cy_stc_adcmic_context_t.
 *
 * \return
 * Result in millivolts.
 *
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_COUNTS_TO_MVOLTS
+* \funcusage \snippet adcmic_snippet/snippet.c SNIPPET_ADCMIC_DC_MEASURE
 *
 *******************************************************************************/
-int16_t Cy_ADCMic_CountsTo_mVolts(MXS40ADCMIC_Type const * base, int16_t adcCounts);
+int16_t Cy_ADCMic_CountsTo_mVolts(int16_t adcCounts, cy_stc_adcmic_context_t const * context);
 
 
 /*******************************************************************************
@@ -1097,19 +1062,19 @@ int16_t Cy_ADCMic_CountsTo_mVolts(MXS40ADCMIC_Type const * base, int16_t adcCoun
 * \note
 * This function is for DC measurement only.
 *
-* \param base
-* Pointer to structure describing registers
-*
 * \param adcCounts
 * Conversion result from \ref Cy_ADCMic_GetDcResult
+*
+* \param context
+* The pointer to the context structure \ref cy_stc_adcmic_context_t.
 *
 * \return
 * Result in microvolts.
 *
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_COUNTS_TO_UVOLTS
+* \funcusage \snippet adcmic_snippet/snippet.c SNIPPET_ADCMIC_DC_MEASURE
 *
 *******************************************************************************/
-int32_t Cy_ADCMic_CountsTo_uVolts(MXS40ADCMIC_Type const * base, int16_t adcCounts);
+int32_t Cy_ADCMic_CountsTo_uVolts(int16_t adcCounts, cy_stc_adcmic_context_t const * context);
 
 
 /*******************************************************************************
@@ -1133,19 +1098,19 @@ int32_t Cy_ADCMic_CountsTo_uVolts(MXS40ADCMIC_Type const * base, int16_t adcCoun
 * \note
 * This function is for DC measurement only.
 *
-* \param base
-* Pointer to structure describing registers
-*
 * \param adcCounts
 * Conversion result from \ref Cy_ADCMic_GetDcResult
+*
+* \param context
+* The pointer to the context structure \ref cy_stc_adcmic_context_t.
 *
 * \return
 * Result in volts.
 *
-* \funcusage \snippet adcmic/snippet/adcmic_snippet.c SNIPPET_ADCMIC_COUNTS_TO_VOLTS
+* \funcusage \snippet adcmic_snippet/snippet.c SNIPPET_ADCMIC_DC_MEASURE
 *
 *******************************************************************************/
-float Cy_ADCMic_CountsTo_Volts(MXS40ADCMIC_Type const * base, int16_t adcCounts);
+float Cy_ADCMic_CountsTo_Volts(int16_t adcCounts, cy_stc_adcmic_context_t const * context);
 /** \} group_adcmic_functions_dc */
 
 /** \addtogroup group_adcmic_functions_interrupt
@@ -1400,38 +1365,6 @@ __STATIC_INLINE uint32_t Cy_ADCMic_ReadFifo(MXS40ADCMIC_Type const * base)
 {
     return (base->ADCMIC_DATA);
 }
-
-
-/*******************************************************************************
-* Function Name: Cy_ADCMic_SetDcOffset
-****************************************************************************//**
-*
-* Sets the offset value for DC measurement calibration.
-*
-* \param base
-* The pointer to the hardware ADCMic block.
-*
-* \param offset
-* The offset value.
-*
-*******************************************************************************/
-void Cy_ADCMic_SetDcOffset(MXS40ADCMIC_Type const * base, int16_t offset);
-
-
-/*******************************************************************************
-* Function Name: Cy_ADCMic_SetDcGain
-****************************************************************************//**
-*
-* Sets the gain value for DC measurement calibration.
-*
-* \param base
-* The pointer to the hardware ADCMic block.
-*
-* \param gain
-* The gain value.
-*
-*******************************************************************************/
-void Cy_ADCMic_SetDcGain(MXS40ADCMIC_Type const * base, int16_t gain);
 
 /** \} group_adcmic_functions_fifo */
 

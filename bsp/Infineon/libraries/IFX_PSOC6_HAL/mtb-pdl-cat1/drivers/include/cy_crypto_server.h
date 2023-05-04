@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_server.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the prototypes for common API
@@ -44,68 +44,7 @@ extern "C" {
 */
 
 /*******************************************************************************
-* Function Name: Cy_Crypto_Server_Start_Base
-****************************************************************************//**
-*
-* This function starts the Basic functionality for the Crypto server on the
-* server side core, sets up an interrupt for the IPC Crypto channel, sets up an
-* interrupt to catch Crypto HW errors.
-*
-* This function available for Server side only.
-*
-* \note
-* The Crypto server can be run as singleton (not multi-instance) application on
-* the one of available cores at the same time.
-*
-* \param config
-* The Crypto configuration structure.
-*
-* \param context
-* The pointer to the \ref cy_stc_crypto_server_context_t structure that stores
-* the Crypto server context.
-*
-* \return
-* \ref cy_en_crypto_status_t
-*
-* \funcusage
-* \snippet crypto/snippet/main.c snippet_myCryptoServerStartBase
-*
-*******************************************************************************/
-cy_en_crypto_status_t Cy_Crypto_Server_Start_Base(cy_stc_crypto_config_t const *config,
-                                             cy_stc_crypto_server_context_t *context);
-
-/*******************************************************************************
-* Function Name: Cy_Crypto_Server_Start_Extra
-****************************************************************************//**
-*
-* This function starts the Extra functionality for the Crypto server on the
-* server side core, sets up an interrupt for the IPC Crypto channel, sets up an
-* interrupt to catch Crypto HW errors.
-*
-* This function available for Server side only.
-*
-* \note
-* The Crypto server can be run as singleton (not multi-instance) application on
-* the one of available cores at the same time.
-*
-* \param config
-* The Crypto configuration structure.
-*
-* \param context
-* The pointer to the \ref cy_stc_crypto_server_context_t structure that stores
-* the Crypto server context.
-*
-* \return
-* \ref cy_en_crypto_status_t
-*
-* Refer to \ref Cy_Crypto_Server_Start_Base for the function usage example.
-*
-*******************************************************************************/
-cy_en_crypto_status_t Cy_Crypto_Server_Start_Extra(cy_stc_crypto_config_t const *config,
-                                             cy_stc_crypto_server_context_t *context);
-
-/*******************************************************************************
-* Function Name: Cy_Crypto_Server_Start_Full
+* Function Name: Cy_Crypto_Server_Start
 ****************************************************************************//**
 *
 * This function starts the Full functionality for the Crypto server on the
@@ -128,10 +67,11 @@ cy_en_crypto_status_t Cy_Crypto_Server_Start_Extra(cy_stc_crypto_config_t const 
 * \return
 * \ref cy_en_crypto_status_t
 *
-* Refer to \ref Cy_Crypto_Server_Start_Base for the function usage example.
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoServerStart
 *
 *******************************************************************************/
-cy_en_crypto_status_t Cy_Crypto_Server_Start_Full(cy_stc_crypto_config_t const *config,
+cy_en_crypto_status_t Cy_Crypto_Server_Start(cy_stc_crypto_config_t const *config,
                                              cy_stc_crypto_server_context_t *context);
 
 /*******************************************************************************
@@ -189,11 +129,13 @@ void Cy_Crypto_Server_GetDataHandler(void);
 *******************************************************************************/
 void Cy_Crypto_Server_ErrorHandler(void);
 
-/** Backward compatibility macro for the Server Start function -
-    it starts the Server with Full functionality configuration */
-#define Cy_Crypto_Server_Start               Cy_Crypto_Server_Start_Full
-
 /** \} group_crypto_srv_functions */
+
+/** Backward compatibility macro for the Server Start_xx functions -
+    it starts the Server with common functionality configuration */
+#define Cy_Crypto_Server_Start_Base               Cy_Crypto_Server_Start
+#define Cy_Crypto_Server_Start_Extra              Cy_Crypto_Server_Start
+#define Cy_Crypto_Server_Start_Full               Cy_Crypto_Server_Start
 
 #if defined(__cplusplus)
 }

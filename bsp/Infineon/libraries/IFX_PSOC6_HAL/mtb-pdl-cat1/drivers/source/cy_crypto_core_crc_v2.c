@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_crc_v2.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code for CRC API
@@ -27,15 +27,17 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_crc_v2.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_CRC == 1)
+#if (CPUSS_CRYPTO_CRC == 1) && defined(CY_CRYPTO_CFG_CRC_C)
 
 #include "cy_crypto_core_hw_v2.h"
 #include "cy_syslib.h"
@@ -107,11 +109,14 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_Init(CRYPTO_Type *base,
 *
 * Performs CRC calculation on a message.
 *
+* For CAT1C devices when D-Cache is enabled parameter data must align and end in 32 byte boundary.
+* For CAT1A and CAT1C devices with DCache disabled, crc must be 4-Byte aligned.
+*
 * \param base
 * The pointer to the CRYPTO instance.
 *
 * \param crc
-* The pointer to a computed CRC value. Must be 4-byte aligned.
+* The pointer to a computed CRC value.
 *
 * \param data
 * The pointer to the message whose CRC is being computed.
@@ -132,6 +137,10 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc(CRYPTO_Type *base,
                                         uint32_t  dataSize,
                                         uint32_t  lfsrInitState)
 {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)data,(int32_t)dataSize);
+#endif
     /* Fill the FIFO with the instruction parameters */
     Cy_Crypto_Core_V2_FFStart(base, CY_CRYPTO_V2_RB_FF_LOAD0, (uint8_t const *)data, dataSize);
 
@@ -258,6 +267,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_CalcStart(CRYPTO_Type *base, uint32_
 *
 * Performs the CRC calculation of a message part.
 *
+* For CAT1C devices when D-Cache is enabled parameter data must align and end in 32 byte boundary.
+*
 * \param base
 * The pointer to the CRYPTO instance.
 *
@@ -274,6 +285,11 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_CalcStart(CRYPTO_Type *base, uint32_
 cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_CalcPartial(CRYPTO_Type *base,
                                         void const *data, uint32_t  dataSize)
 {
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    /* Flush the cache */
+    SCB_CleanDCache_by_Addr((volatile void *)data,(int32_t)dataSize);
+#endif
+
     /* Fills the FIFO with the instruction parameters. */
     Cy_Crypto_Core_V2_FFStart(base, CY_CRYPTO_V2_RB_FF_LOAD0, (uint8_t const *)data, dataSize);
 
@@ -292,6 +308,8 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_CalcPartial(CRYPTO_Type *base,
 *
 * Finalizes the CRC calculation.
 *
+* For CAT1A and CAT1C devices with DCache disabled, crc must be 4-Byte aligned.
+*
 * \param base
 * The pointer to the CRYPTO instance.
 *
@@ -299,7 +317,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_CalcPartial(CRYPTO_Type *base,
 * The CRC width in bits.
 *
 * \param crc
-* The pointer to a computed CRC value. Must be 4-byte aligned.
+* The pointer to a computed CRC value.
 *
 * \return
 * \ref cy_en_crypto_status_t
@@ -331,6 +349,10 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_CalcFinish(CRYPTO_Type *base, uint32
 *
 * Performs the CRC calculation on a message.
 *
+* For CAT1C devices when D-Cache is enabled parameter data must align and end in 32 byte boundary.
+* For CAT1A and CAT1C devices with DCache disabled, crc must be 4-Byte aligned.
+*
+*
 * \param base
 * The pointer to the CRYPTO instance.
 *
@@ -338,7 +360,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_CalcFinish(CRYPTO_Type *base, uint32
 * The CRC width in bits.
 *
 * \param crc
-* The pointer to a computed CRC value. Must be 4-byte aligned.
+* The pointer to a computed CRC value.
 *
 * \param data
 * The pointer to the message whose CRC is being computed.
@@ -359,6 +381,10 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_Calc(CRYPTO_Type *base,
     CY_ASSERT_L1((width >= 1U) && (width <= CY_CRYPTO_HW_REGS_WIDTH));
 
     uint32_t calculatedCrc;
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+        /* Flush the cache */
+        SCB_CleanDCache_by_Addr((volatile void *)data,(int32_t)dataSize);
+#endif
 
     /* Fills the FIFO with the instruction parameters. */
     Cy_Crypto_Core_V2_FFStart(base, CY_CRYPTO_V2_RB_FF_LOAD0, (uint8_t const *)data, dataSize);
@@ -384,13 +410,15 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Crc_Calc(CRYPTO_Type *base,
 }
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 11.3');
 
-#endif /* #if (CPUSS_CRYPTO_CRC == 1) */
+#endif /* (CPUSS_CRYPTO_CRC == 1) && defined(CY_CRYPTO_CFG_CRC_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

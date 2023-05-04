@@ -178,6 +178,11 @@ msh />
 | SDIO       | yes | Operate the SD card  |
 | I2S        | no |       |
 
+## 5.Notes
+
+- Please use env (v1.3.5) [download](https://github.com/RT-Thread/env-windows/releases/tag/v1.3.5)
+- Please use the version is higher than 5.3 keil
+
 ## 6. Maintained By
 
 * magicoe@163.com

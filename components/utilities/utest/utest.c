@@ -51,6 +51,18 @@ static struct utest local_utest = {UTEST_PASSED, 0, 0};
 
 #if defined(__ICCARM__) || defined(__ICCRX__)         /* for IAR compiler */
 #pragma section="UtestTcTab"
+#elif defined(_MSC_VER)
+#pragma section("UtestTcTab$a", read)
+__declspec(allocate("UtestTcTab$a")) const struct utest_tc_export __tc_export_begin =
+{
+    "__start",
+};
+
+#pragma section("UtestTcTab$z", read)
+__declspec(allocate("UtestTcTab$z")) const struct utest_tc_export __tc_export_end =
+{
+    "__end",
+};
 #endif
 
 #define TC_FAIL_LIST_SIZE                (RT_ALIGN(tc_num, 8) / 8)
@@ -81,6 +93,28 @@ int utest_init(void)
     extern const int __rt_utest_tc_tab_end;
     tc_table = (utest_tc_export_t)&__rt_utest_tc_tab_start;
     tc_num = (utest_tc_export_t) &__rt_utest_tc_tab_end - tc_table;
+#elif defined(_MSC_VER)
+    unsigned int* ptr_begin, * ptr_end;
+
+    ptr_begin = (unsigned int*)&__tc_export_begin;
+    ptr_begin += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
+    while (*ptr_begin == 0) ptr_begin++;
+
+    ptr_end = (unsigned int*)&__tc_export_end;
+    ptr_end--;
+    while (*ptr_end == 0) ptr_end--;
+    /* copy tc_table from rodata section to ram */
+    for (unsigned int *ptr = ptr_begin; ptr < ptr_end;)
+    {
+        if (!tc_table)
+            tc_table = (utest_tc_export_t)rt_malloc(sizeof(struct utest_tc_export));
+        else
+            tc_table = (utest_tc_export_t)rt_realloc(tc_table, (tc_num + 1)* sizeof(struct utest_tc_export));
+        RT_ASSERT(tc_table);
+        tc_table[tc_num++] = *((utest_tc_export_t)ptr);
+        ptr += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
+        while (*ptr == 0) ptr++;
+    }
 #endif
 
     LOG_I("utest is initialize success.");

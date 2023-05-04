@@ -89,9 +89,8 @@ static struct dfs_vnode *dfs_vnode_find(const char *path, rt_list_t **hash_head)
 
 /**
  * @addtogroup FileApi
+ * @{
  */
-
-/*@{*/
 
 /**
  * This function will return whether this file has been opend.
@@ -1091,5 +1090,5 @@ FINSH_FUNCTION_EXPORT(copy, copy file or dir)
 #endif /* DFS_USING_POSIX */
 
 #endif /* RT_USING_FINSH */
-/* @} */
+/**@}*/
 

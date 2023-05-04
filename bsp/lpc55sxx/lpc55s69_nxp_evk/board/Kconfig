@@ -116,6 +116,23 @@ menu "On-chip Peripheral Drivers"
                         endchoice
                     endif
             endif
+    
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable I2C Bus"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_SOFT_I2C
+            config BSP_USING_SOFT_I2C1
+                bool "Enable I2C1 Bus (software simulation)"
+                default n
+
+            config BSP_USING_SOFT_I2C2
+                bool "Enable I2C2 Bus (software simulation)"
+                default n
+        endif
 
     menuconfig BSP_USING_SPI
         config BSP_USING_SPI
@@ -133,6 +150,22 @@ menu "On-chip Peripheral Drivers"
                     default y
             endif
 
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable soft SPI BUS"
+        default n
+        select RT_USING_PIN
+        select RT_USING_SPI_BITOPS
+        select RT_USING_SPI
+        if BSP_USING_SOFT_SPI
+            menuconfig BSP_USING_SOFT_SPI1
+                bool "Enable soft SPI1 BUS (software simulation)"
+                default n
+
+            menuconfig BSP_USING_SOFT_SPI2
+                bool "Enable soft SPI2 BUS (software simulation)"
+                default n
+        endif
+            
     menuconfig BSP_USING_ADC
         config BSP_USING_ADC
             bool "Enable ADC Channel"
@@ -191,10 +224,6 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_CTIMER0
                     bool "Enable CIMER0"
                     default y
-
-                config BSP_USING_CTIMER1
-                    bool "Enable CIMER1"
-                    default n
 
                 config BSP_USING_CTIMER3
                     bool "Enable CIMER3"

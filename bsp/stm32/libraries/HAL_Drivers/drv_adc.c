@@ -271,7 +271,12 @@ static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
     ret = rt_adc_disable(device, RT_ADC_INTERN_CH_VREF);
     if (ret != RT_EOK) return (rt_int16_t)ret;
 
+#ifdef SOC_SERIES_STM32U5
+    vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(stm32_adc_handler->Instance, vref_value, stm32_adc_handler->Init.Resolution);
+#else
     vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(vref_value, stm32_adc_handler->Init.Resolution);
+#endif
+
 #else
     vref_mv = 3300;
 #endif /* __LL_ADC_CALC_VREFANALOG_VOLTAGE */

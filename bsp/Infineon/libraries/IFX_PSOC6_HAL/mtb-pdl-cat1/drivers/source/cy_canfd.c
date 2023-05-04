@@ -1,6 +1,6 @@
 /*******************************************************************************
 * \file cy_canfd.c
-* \version 1.20
+* \version 1.30
 *
 * \brief
 *  Provides an API implementation of the CAN FD driver.
@@ -261,7 +261,7 @@ cy_en_canfd_status_t Cy_CANFD_Init(CANFD_Type *base, uint32_t chan,
                                    cy_stc_canfd_context_t *context)
 {
     cy_en_canfd_status_t ret = CY_CANFD_BAD_PARAM;
-    uint32_t* address;
+    volatile uint32_t* address;
     uint32_t  count;
     uint32_t  sizeInWord;
 
@@ -431,7 +431,7 @@ cy_en_canfd_status_t Cy_CANFD_Init(CANFD_Type *base, uint32_t chan,
                                                                       CY_CANFD_SIZE_OF_TXEVENT_FIFO_IN_WORD));
 
             /* Initialize the Message RAM area (Entire region zeroing) for channel */
-            address = (uint32_t *)(config->messageRAMaddress);
+            address = (volatile uint32_t *)(config->messageRAMaddress);
             sizeInWord = config->messageRAMsize >> CY_CANFD_MRAM_SIGNIFICANT_BYTES_SHIFT;
             for(count = 0UL; count < sizeInWord; count++)
             {
@@ -563,7 +563,7 @@ cy_en_canfd_status_t Cy_CANFD_Init(CANFD_Type *base, uint32_t chan,
 *******************************************************************************/
 cy_en_canfd_status_t Cy_CANFD_DeInit(CANFD_Type *base, uint32_t chan, cy_stc_canfd_context_t *context)
 {
-    uint32_t* address;
+    volatile uint32_t* address;
     uint32_t  retry = CY_CANFD_RETRY_COUNT;
     uint32_t  count;
     uint32_t  sizeInWord;
@@ -622,7 +622,7 @@ cy_en_canfd_status_t Cy_CANFD_DeInit(CANFD_Type *base, uint32_t chan, cy_stc_can
         CANFD_TXBC(base, chan) = 0UL;
 
         /* Initialize the Message RAM area (Entire region zeroing) for the channel */
-        address = (uint32_t *)(context->messageRAMaddress);
+        address = (volatile uint32_t *)(context->messageRAMaddress);
         sizeInWord = context->messageRAMsize >> CY_CANFD_MRAM_SIGNIFICANT_BYTES_SHIFT;
         for(count = 0UL; count < sizeInWord; count++)
         {

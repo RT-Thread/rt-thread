@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_dma.c
-* \version 2.50
+* \version 2.60
 *
 * \brief
 * The source code file for the DMA driver.
@@ -57,6 +57,7 @@ cy_en_dma_status_t Cy_DMA_Crc_Init(DW_Type * base, cy_stc_dma_crc_config_t const
 #ifdef CY_IP_MXDW
     if((NULL != base) && (NULL != crcConfig) )
 #else
+    CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 14.3','Intentional check for the macro CY_DW_CRC.');
     if((NULL != base) && (NULL != crcConfig) && (CY_DW_CRC == 1UL))
 #endif /* CY_IP_MXDW */
     {
@@ -319,6 +320,7 @@ void Cy_DMA_Channel_DeInit(DW_Type * base, uint32_t channel)
 *
 * \param nextDescriptor
 * The pointer to the next descriptor.
+* For CAT1C devices this pointer needs to point to 32 byte aligned structure.
 *
 * \funcusage
 * \snippet dma/snippet/main.c snippet_Cy_DMA_Descriptor_SetterFunctions

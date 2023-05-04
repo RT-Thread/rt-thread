@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file system_psoc6_cm0plus.c
-* \version 2.91
+* \version 2.95.1
 *
 * The device system-source file.
 *
@@ -59,8 +59,9 @@
 #define CY_CLK_SYSTEM_FREQ_HZ_DEFAULT       (4000000UL)
 
 
+/** \cond */
 /**
-* Holds the system core clock,
+* Holds the SlowClk (Cortex-M0+) or FastClk (Cortex-M4) system core clock,
 * which is the system clock frequency supplied to the SysTick timer and the
 * processor core clock.
 * This variable implements CMSIS Core global variable.
@@ -83,6 +84,10 @@ uint32_t cy_PeriClkFreqHz = CY_CLK_PERICLK_FREQ_HZ_DEFAULT;
 
 /** Holds the Alternate high frequency clock in Hz. Updated by \ref Cy_BLE_EcoConfigure(). */
 uint32_t cy_BleEcoClockFreqHz = 0UL;
+
+/** Holds the AHB frequency. Updated by \ref SystemCoreClockUpdate(). */
+uint32_t cy_AhbFreqHz = CY_CLK_SYSTEM_FREQ_HZ_DEFAULT;
+/** \endcond */
 
 
 /*******************************************************************************
@@ -109,9 +114,6 @@ uint32_t cy_delayFreqKhz  = CY_SYSLIB_DIV_ROUNDUP(CY_CLK_SYSTEM_FREQ_HZ_DEFAULT,
 
 uint8_t cy_delayFreqMhz  = (uint8_t)CY_SYSLIB_DIV_ROUNDUP(CY_CLK_SYSTEM_FREQ_HZ_DEFAULT, CY_DELAY_1M_THRESHOLD);
 
-uint32_t cy_delay32kMs    = CY_DELAY_MS_OVERFLOW_THRESHOLD *
-                            CY_SYSLIB_DIV_ROUNDUP(CY_CLK_SYSTEM_FREQ_HZ_DEFAULT, CY_DELAY_1K_THRESHOLD);
-
 
 /*******************************************************************************
 * Cy_SysEnableCM4(), Cy_SysRetainCM4(), and Cy_SysResetCM4()
@@ -121,19 +123,6 @@ uint32_t cy_delay32kMs    = CY_DELAY_MS_OVERFLOW_THRESHOLD *
 #define CY_SYS_CM4_VECTOR_TABLE_VALID_ADDR  (0x000003FFUL)
 
 
-/*******************************************************************************
-* Function Name: SystemInit
-****************************************************************************//**
-*
-* Initializes the system on CAT1A:
-* - Restores FLL registers to the default state.
-* - Unlocks and disables WDT.
-* - Calls Cy_PDL_Init() function to define the driver library.
-* - Calls the Cy_SystemInit() function, if compiled from PSoC Creator.
-* - Calls \ref Cy_PRA_Init() for PSoC 64 devices.
-* - Calls \ref SystemCoreClockUpdate().
-*
-*******************************************************************************/
 void SystemInit(void)
 {
     Cy_PDL_Init(CY_DEVICE_CFG);
@@ -254,16 +243,6 @@ __WEAK void Cy_SystemInit(void)
 }
 
 
-/*******************************************************************************
-* Function Name: SystemCoreClockUpdate
-****************************************************************************//**
-*
-* Gets core clock frequency and updates \ref SystemCoreClock.
-*
-* Updates global variables used by the \ref Cy_SysLib_Delay(), \ref
-* Cy_SysLib_DelayUs(), and \ref Cy_SysLib_DelayCycles().
-*
-*******************************************************************************/
 void SystemCoreClockUpdate (void)
 {
     uint32 locHf0Clock = Cy_SysClk_ClkHfGetFrequency(0UL);
@@ -277,7 +256,9 @@ void SystemCoreClockUpdate (void)
         /* Sets clock frequency for Delay API */
         cy_delayFreqMhz = (uint8_t)CY_SYSLIB_DIV_ROUNDUP(SystemCoreClock, CY_DELAY_1M_THRESHOLD);
         cy_delayFreqKhz = CY_SYSLIB_DIV_ROUNDUP(SystemCoreClock, CY_DELAY_1K_THRESHOLD);
-        cy_delay32kMs   = CY_DELAY_MS_OVERFLOW_THRESHOLD * cy_delayFreqKhz;
+
+        /* Get the frequency of AHB source, CLK HF0 is the source for AHB*/
+        cy_AhbFreqHz = Cy_SysClk_ClkHfGetFrequency(0UL);
     }
 }
 

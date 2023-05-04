@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -86,6 +86,9 @@
 #include <stdbool.h>
 #include "cy_result.h"
 #include "cyhal_hw_types.h"
+#if defined(COMPONENT_CAT5)
+#include "cyhal_t2timer.h"
+#endif
 
 #if defined(__cplusplus)
 extern "C" {
@@ -109,6 +112,9 @@ extern "C" {
 /** Cannot change the timer frequency when a shared clock divider is in use */
 #define CYHAL_TIMER_RSLT_ERR_SHARED_CLOCK               \
     (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_TIMER, 3))
+/** Feature unsupported with this Timer */
+#define CYHAL_TIMER_RSLT_ERR_UNSUPPORTED                \
+    (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_TIMER, 4))
 
 /**
  * \}

@@ -183,7 +183,7 @@ uint_8 USB_DCI_Init(
     printf_info("%s\n", __func__);
 
     g_dci_controller_Id[controller_ID] = controller_ID;
-    memset(qh_buf, 0x0, sizeof(qh_buf));
+    memset(qh_buf, 0x0, TOTAL_QHD_SIZE);
 
     // Initialize hardware
     status = usbd_mx6_dev_init(controller_ID);
