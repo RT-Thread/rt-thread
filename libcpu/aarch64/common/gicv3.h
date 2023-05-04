@@ -18,6 +18,11 @@
 
 #if defined(BSP_USING_GIC) && defined(BSP_USING_GICV3)
 
+
+#ifndef ARM_GIC_CPU_NUM
+#define ARM_GIC_CPU_NUM RT_CPUS_NR 
+#endif
+
 #define GICV3_ROUTED_TO_ALL   1UL
 #define GICV3_ROUTED_TO_SPEC  0UL
 

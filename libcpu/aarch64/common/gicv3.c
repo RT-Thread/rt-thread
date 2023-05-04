@@ -42,11 +42,6 @@ extern int rt_hw_cpu_id(void);
 extern rt_uint64_t rt_cpu_mpidr_early[];
 #endif /* RT_USING_SMP */
 
-
-#ifndef ARM_GIC_CPU_NUM
-#define ARM_GIC_CPU_NUM RT_CPUS_NR 
-#endif
-
 struct arm_gic
 {
     rt_uint64_t offset;                     /* the first interrupt index in the vector table */

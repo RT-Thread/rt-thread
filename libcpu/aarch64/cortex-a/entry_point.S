@@ -117,13 +117,13 @@ __start:
 .L__jump_to_entry:          /* jump to C code, should not return */        
     bl mmu_tcr_init
 
-    adr x1, __start         /* 0x40080000  */  /* install early page table */
-    ldr x0, =~0x1fffff      /*  */
+    adr x1, __start         /* install early page table */
+    ldr x0, =~0x1fffff      
     and x0, x1, x0
     add x1, x0, #0x1000     /* ttbl1 0x40000000 */ /*ttbl0 0x40001000 */
 
-    msr ttbr0_el1, x0       /* 0x40000000 */
-    msr ttbr1_el1, x1       /* 0x40001000 */
+    msr ttbr0_el1, x0       
+    msr ttbr1_el1, x1       
     dsb sy
 
 #ifdef RT_USING_SMART
