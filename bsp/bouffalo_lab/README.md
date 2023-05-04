@@ -2,7 +2,7 @@
 
 ## 1. 简介
 
-bouffalo_lab bsp针对bouffalo_lab的系列AIoT芯片，采用bouffalo_lab最新**LHAL** 驱动库，驱动库与[bl_mcu_sdk](https://github.com/bouffalolab/bl_mcu_sdk) 代码同步，当前commitid:`47c662afae69309fd49d2721b5c9b93219a91af7`
+bouffalo_lab bsp针对bouffalo_lab的系列AIoT芯片，采用bouffalo_lab最新**LHAL** 驱动库，驱动库与[bouffalo_sdk](https://github.com/bouffalolab/bouffalo_sdk)(原bl_mcu_sdk)代码同步，当前commitid:`e6e8da79a50aeb4fcb67ac380c3bd8885cd56faf`
 
 目前支持以下芯片：
 
@@ -50,9 +50,9 @@ bouffalo_lab bsp针对bouffalo_lab的系列AIoT芯片，采用bouffalo_lab最新
 
 ## 2.  环境搭建及编译
 
-bl60x/bl70x/bl61x可在对应芯片直接编译；bl808是多核异构架构，分为m0、lp、d0（适配中，敬请期待），每个核需要单独编译并烧录到对应的位置。
+bl60x/bl70x/bl61x可在对应芯片直接编译；bl808是多核异构架构，分为m0、lp、d0，每个核需要单独编译并烧录到对应的位置，bl808三核使用详细参考[bl808三核使用指南](./bl808/README.md)。
 
-以下操作以bl61x为例，其他芯片操作类同。
+以下操作以单核bl61x为例，其他芯片操作类同。
 
 ### 2.1. 下载
 
@@ -106,17 +106,40 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 
 脚本会自动采用curl命令行方式下载`bflb_fw_post_proc`，如自动下载失败，可采用手工方式下载对应操作系统文件后保存至`libraries/bl_mcu_sdk/tools/bflb_tools/bflb_fw_post_proc`
 
-[windows](https://raw.githubusercontent.com/bouffalolab/bl_mcu_sdk/master/tools/bflb_tools/bflb_fw_post_proc/bflb_fw_post_proc.exe)
+| 下载地址1 | [windows](https://raw.githubusercontent.com/bouffalolab/bl_mcu_sdk/master/tools/bflb_tools/bflb_fw_post_proc/bflb_fw_post_proc.exe)/[Linux](https://raw.githubusercontent.com/bouffalolab/bl_mcu_sdk/master/tools/bflb_tools/bflb_fw_post_proc/bflb_fw_post_proc-ubuntu)/[macos](https://raw.githubusercontent.com/bouffalolab/bl_mcu_sdk/master/tools/bflb_tools/bflb_fw_post_proc/bflb_fw_post_proc-macos) |
+| --------- | ------------------------------------------------------------ |
+| 下载地址2 | [bflb_fw_post_proc-win.tar.gz](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bflb_fw_post_proc-win.tar.gz)/[bflb_fw_post_proc-linux.tar.gz](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bflb_fw_post_proc-linux.tar.gz)/[bflb_fw_post_proc-macos.tar.gz](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bflb_fw_post_proc-macos.tar.gz) |
+| 下载地址3 | [bflb_fw_post_proc-win.tar.gz](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bflb_fw_post_proc-win.tar.gz)/[bflb_fw_post_proc-linux.tar.gz](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bflb_fw_post_proc-linux.tar.gz)/[bflb_fw_post_proc-macos.tar.gz](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bflb_fw_post_proc-macos.tar.gz) |
 
-[Linux](https://raw.githubusercontent.com/bouffalolab/bl_mcu_sdk/master/tools/bflb_tools/bflb_fw_post_proc/bflb_fw_post_proc-ubuntu)
 
-[macos](https://raw.githubusercontent.com/bouffalolab/bl_mcu_sdk/master/tools/bflb_tools/bflb_fw_post_proc/bflb_fw_post_proc-macos)
 
 ## 3. 下载烧录
 
-### 3.1. GUI方式下载
+### 3.1. 烧录工具下载
 
-当前bsp必须使用[bouffalo_flash_cube-1.0.4](https://pan.baidu.com/s/1eG9pkxf3riAqQAu9aXiOjw?pwd=miv1)工具进行烧录，否则无法正常运行。
+当前bsp必须使用`bouffalo_flash_cube-1.0.4`工具进行烧录，使用其他工作无法正常运行。
+
+- 烧录工具下载地址1：[百度网盘](https://pan.baidu.com/s/1eG9pkxf3riAqQAu9aXiOjw?pwd=miv1)
+
+- 烧录工具下载地址2：
+
+[bouffalo_flash_cube-win.zip](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-win.zip)/[bouffalo_flash_cube-win.tar.gz](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-win.tar.gz)
+
+[bouffalo_flash_cube-linux.zip](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-linux.zip)/[bouffalo_flash_cube-linux.tar.gz](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-linux.tar.gz)
+
+[bouffalo_flash_cube-macos.zip](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-macos.zip)/[bouffalo_flash_cube-macos.tar.gz](https://gitee.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-macos.tar.gz)
+
+- 烧录工具下载地址3：
+
+[bouffalo_flash_cube-win.zip](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-win.zip)/[bouffalo_flash_cube-win.tar.gz](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-win.tar.gz)
+
+[bouffalo_flash_cube-linux.zip](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-linux.zip)/[bouffalo_flash_cube-linux.tar.gz](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-linux.tar.gz)
+
+[bouffalo_flash_cube-macos.zip](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-macos.zip)/[bouffalo_flash_cube-macos.tar.gz](https://github.com/flyingcys/bflb_tools/releases/download/v1.0.4/bouffalo_flash_cube-macos.tar.gz)
+
+
+
+### 3.2. GUI方式下载
 
 1. 连接好串口并在工具上选择对应的串口号
 
@@ -128,9 +151,13 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 
 ![Flash Download](figures/bouffalo_flash_cube.jpg)
 
+
+
 ### 3.2. 命令行下载
 
-或者可使用`bsp/bouffalo_lab`目录下的`bouffalo_flash_cube.sh`脚本通过命令行下载，输入`./`bouffalo_flash_cube.sh bl616 /dev/ttyUSB1`，使用前先确定脚本中bouffalo_flash_cube工具路径，需手工修改为工具所在目录。
+命令行下载可使用`bsp/bouffalo_lab`目录下的`bouffalo_flash_cube.sh`脚本，输入`./bouffalo_flash_cube.sh bl616 /dev/ttyUSB1`，脚本会自动采用curl命令行方式下载`bouffalo_flash_cube`。
+
+如自动下载失败，可采用手工方式下载对应操作系统文件后保存至`libraries/bl_mcu_sdk/tools/bflb_tools/bouffalo_flash_cube`目录。
 
 其中：
 
@@ -153,7 +180,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 | ----- | ---------------------- |
 | bl602 | BL602-IoT-3S/BL-HWC-G1 |
 | bl702 | Maix Zero Sense        |
-| bl616 | M0S Dock               |
+| bl616/bl618 | M0S Dock/M0P Dock               |
 | bl808 | M1s Dock               |
 
 
@@ -164,8 +191,14 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 | :--- | :------- | :---------------- |
 | UART | 支持     | 默认波特率2000000 |
 | GPIO | 支持     |                   |
-| I2C  | 开发中   |                   |
-| SPI  | 开发中   |                   |
+| I2C  | 支持     |                   |
+| SPI  | 支持     | 支持DMA            |
+| PWM  | 支持     |                   |
+| ADC  | 支持     |                   |
+| RTC  | 支持     |                   |
+| WDT  | 支持     |                   |
+| HWTIMER  | 支持     |                   |
+| FLASH  | 支持     |                   |
 
 
 
@@ -181,13 +214,4 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 
   [1]: https://www.rt-thread.org/download.html#download-rt-thread-env-tool
   [2]: https://github.com/bouffalolab/bl_docs
-
-
-
-## 9. FAQ
-
-|      | M1s Dock                                                     |
-| ---- | :----------------------------------------------------------- |
-| 1    | 在 windows 环境下，通过 UART 接口将开发板连接至电脑时，仅能识别到两个 USB converter 设备，但是识别不到对应的串口设备。  <br>进入到设备管理器中，右击对应的 USB converter 设备，进入到属性中的高级设置，钩选 vcp 选项，刷新后即可看到对应的串口设备。<br> 也可通过安装以下驱动解决问题： https://dl.sipeed.com/shareURL/MAIX/tools/ftdi_vcp_driver |
-| 2    | 使用 TypeC 数据线将电脑与板子的 UART 口连接起来，此时电脑上会出现两个串口 （如果出现鼠标不能动的现象请拔掉 USB 并且查看 [更新板载 bl702 固件](https://wiki.sipeed.com/hardware/zh/maix/m1s/other/start.html#给板载-bl702-进行烧录) 相关内容来修复问题)。 |
 

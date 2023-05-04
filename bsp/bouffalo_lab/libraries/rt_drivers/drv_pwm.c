@@ -12,11 +12,11 @@
 #include <rtdevice.h>
 #include "drv_pwm.h"
 
+#ifdef BSP_USING_PWM
+
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
 #define LOG_TAG "DRV.PWM"
-
-#ifdef BSP_USING_PWM
 
 static rt_err_t _pwm_set(rt_uint8_t channel, struct rt_pwm_configuration *configuration)
 {

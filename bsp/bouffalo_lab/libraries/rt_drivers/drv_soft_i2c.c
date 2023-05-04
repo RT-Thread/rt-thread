@@ -12,7 +12,8 @@
 #include "bflb_gpio.h"
 #include "bflb_common.h"
 
-#ifdef RT_USING_I2C
+#ifdef BSP_USING_I2C
+
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
 #define LOG_TAG "DRV.I2C"
@@ -208,4 +209,4 @@ int rt_hw_i2c_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_i2c_init);
 
-#endif /* RT_USING_I2C */
+#endif /* BSP_USING_I2C */
