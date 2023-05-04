@@ -16,7 +16,8 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#ifdef RT_USING_HWTIMER
+
+#ifdef BSP_USING_HWTIMER
 
 #define HWTIMER_DEV_NAME   "timer0"     /* 定时器名称 */
 

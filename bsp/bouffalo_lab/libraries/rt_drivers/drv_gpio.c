@@ -12,11 +12,12 @@
 #include "drv_gpio.h"
 #include <stdbool.h>
 
+#ifdef BSP_USING_PIN
+
 #define DBG_TAG              "drv.gpio"
 #define DBG_LVL               DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_PIN
 static struct bflb_device_s *gpio;
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[GPIO_MAX];
@@ -226,4 +227,4 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-#endif /*RT_USING_PIN */
+#endif /*BSP_USING_PIN */
