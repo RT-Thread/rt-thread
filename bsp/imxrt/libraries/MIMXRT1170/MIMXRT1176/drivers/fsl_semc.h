@@ -313,7 +313,7 @@ typedef enum _semc_ipcmd_nand_addrmode
     kSEMC_NANDAM_RawRA0RA1RA2      /*!< Address mode: row address only(3 Byte-RA0).  */
 } semc_ipcmd_nand_addrmode_t;
 
-/*! @brief SEMC IP command for NANDï¼š command mode. */
+/*! @brief SEMC IP command for NAND： command mode. */
 typedef enum _semc_ipcmd_nand_cmdmode
 {
     kSEMC_NANDCM_Command = 0x2U,      /*!< command. */
