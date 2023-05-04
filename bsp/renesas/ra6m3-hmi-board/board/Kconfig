@@ -75,6 +75,28 @@ menu "Hardware Drivers Config"
                     endif
             endif
 
+        menuconfig BSP_USING_SCI_SPI
+            bool "Enable SCI SPI BUS"
+            default n
+            select RT_USING_SPI
+            if BSP_USING_SCI_SPI 
+                config BSP_USING_SCI_SPI0
+                    bool "Enable SCI SPI0 BUS"
+                    default n
+                config BSP_USING_SCI_SPI1
+                    bool "Enable SCI SPI1 BUS"
+                    default n
+                config BSP_USING_SCI_SPI2
+                    bool "Enable SCI SPI2 BUS"
+                    default n
+                config BSP_USING_SCI_SPI3
+                    bool "Enable SCI SPI3 BUS"
+                    default n
+                config BSP_USING_SCI_SPI6
+                    bool "Enable SCI SPI6 BUS"
+                    default n
+            endif
+
         menuconfig BSP_USING_SPI
             bool "Enable SPI BUS"
             default n
@@ -83,17 +105,8 @@ menu "Hardware Drivers Config"
                 config BSP_USING_SPI0
                     bool "Enable SPI0 BUS"
                     default n
-        
                 config BSP_USING_SPI1
                     bool "Enable SPI1 BUS"
-                    default n
-
-                config BSP_USING_SCI_SPI0
-                    bool "Enable SCI SPI0 BUS"
-                    default n
-
-                config BSP_USING_SCI_SPI6
-                    bool "Enable SCI SPI6 BUS"
                     default n
             endif
 
@@ -135,6 +148,16 @@ menu "Hardware Drivers Config"
             if BSP_USING_PWM
                 config BSP_USING_PWM12
                     bool "Enable GPT12 (16-Bits) output PWM"
+                    default n
+            endif
+
+        menuconfig BSP_USING_CAN
+            bool "Enable CAN"
+            default n
+            select RT_USING_CAN
+            if BSP_USING_CAN
+                config BSP_USING_CAN0
+                    bool "Enable CAN0"
                     default n
             endif
 
