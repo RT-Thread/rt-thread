@@ -15,9 +15,6 @@
 
 #ifdef BSP_USING_JPEG
 
-#define DCODE_BUFFER_SIZE           (35 * 1024)
-#define JPEG_TIMEOUT                (100)
-
 static rt_sem_t _SemaphoreJPEG = RT_NULL;
 volatile static jpeg_status_t g_jpeg_status = JPEG_STATUS_NONE;
 
