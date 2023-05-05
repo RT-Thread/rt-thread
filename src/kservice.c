@@ -1370,8 +1370,7 @@ rt_device_t rt_console_set_device(const char *name)
 {
 #ifdef RT_USING_SMART
     rt_device_t new_iodev = RT_NULL, old_iodev = RT_NULL;
-extern void console_init();
-    console_init(); /*add line discipline*/
+
     /* find new console device */
     new_iodev = rt_device_find(name);
     if (new_iodev != RT_NULL)
