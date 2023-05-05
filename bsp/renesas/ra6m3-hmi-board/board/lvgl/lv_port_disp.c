@@ -46,6 +46,11 @@ static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
 }
 #endif
 
+void _ra_port_display_callback(display_callback_args_t *p_args)
+{
+    /* TFT-Callback */
+}
+
 static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
 #ifdef PKG_USING_ILI9341

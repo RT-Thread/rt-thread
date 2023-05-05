@@ -12,6 +12,8 @@
 #define PLAYER_H
 
 #include <rtthread.h>
+#include <rthw.h>
+
 #include "drv_jpeg.h"
 
 #define PLAYER_SOUND_SIZE_DEFAULT     0
@@ -21,12 +23,12 @@
 enum PLAYER_STATUS
 {
     PLAYER_IDLE,
-    PLAYER_READY,   //准备播放
-    PLAYER_RUNNING, //正在播放
-    PLAYER_STOP,    //播放停止
-    PLAYER_DELETE,  //删除资源
-    PLAYER_LAST,    //播放上一首
-    PLAYER_NEXT,    //播放下一首
+    PLAYER_READY,
+    PLAYER_RUNNING,
+    PLAYER_STOP,
+    PLAYER_DELETE,
+    PLAYER_LAST,
+    PLAYER_NEXT,
 };
 enum PLAYER_CMD
 {
@@ -60,27 +62,27 @@ struct audio_ops
 
 struct player
 {
-    enum PLAYER_STATUS  status;             //当前播放状态
-    int16_t             volume;             //声音大小
-    uint8_t             song_current;       //正在播放的视频
-    uint8_t             video_num;          //视频总数
-    uint16_t            song_time_pass;     //已经播放的时间
-    uint16_t            song_time_all;      //总播放时间
-    char  *             video_list[PLAYER_SONG_NUM_MAX];    //列表
+    enum PLAYER_STATUS  status;             /*state*/
+    int16_t             volume;             /*Sound Size*/
+    uint8_t             song_current;       /*Playing video*/
+    uint8_t             video_num;          /*Total number of videos*/
+    uint16_t            song_time_pass;     /*Played time*/
+    uint16_t            song_time_all;      /*Played all time*/
+    char  *             video_list[PLAYER_SONG_NUM_MAX];
     char                video_name[PLAYER_SONG_NAME_LEN_MAX];
 
-    rt_sem_t            sem_play;           //用于播放状态控制的信号量
-    rt_thread_t         play_thread;        //播放的线程
+    rt_sem_t            sem_play;
+    rt_thread_t         play_thread;
 
     struct audio_ops    *audio;
     decode_drv_t        *decode;
 };
 typedef struct player *player_t;
 
-int player_add_song(player_t player, void *song);   //添加歌曲到歌曲列表
-int player_start(player_t player);                  //初始化
+int player_add_song(player_t player, void *song);
+int player_start(player_t player);
 int player_control(player_t player, int cmd, void *arg);
-int player_show(player_t player);                   //打印歌单和当前进度
+int player_show(player_t player);
 int player_delete(player_t player);
 
 #endif
