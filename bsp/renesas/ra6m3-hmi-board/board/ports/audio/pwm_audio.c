@@ -79,7 +79,6 @@ static rt_err_t rb_destroy(ringbuf_handle_t rb)
     }
 
     rt_free(rb);
-    rb = NULL;
     return RT_EOK;
 }
 
@@ -648,10 +647,7 @@ rt_err_t pwm_audio_stop(void)
     /**< just disable timer ,keep pwm output to reduce switching nosie */
     /**< timer disable interrupt */
     int level = rt_hw_interrupt_disable();
-    //
-//    R_GPT_Stop(handle->pwm_timer_ctrl);
     R_GPT_Stop(handle->gen_timer_ctrl);
-    //
     rt_hw_interrupt_enable(level);
 
     rb_flush(handle->ringbuf);  /**< flush ringbuf, avoid play noise */
@@ -665,10 +661,8 @@ rt_err_t pwm_audio_deinit(void)
     RT_ASSERT(handle != NULL);
 
     handle->status = PWM_AUDIO_STATUS_UN_INIT;
-    //
     R_GPT_Close(handle->pwm_timer_ctrl);
     R_GPT_Close(handle->gen_timer_ctrl);
-    //
     rt_sem_delete(handle->sem_complete);
     rb_destroy(handle->ringbuf);
     rt_free(handle);
