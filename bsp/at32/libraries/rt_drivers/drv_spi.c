@@ -232,6 +232,8 @@ static rt_err_t configure(struct rt_spi_device* device,
     spi_init_struct.transmission_mode = SPI_TRANSMIT_FULL_DUPLEX;
     spi_init_struct.master_slave_mode = SPI_MODE_MASTER;
     spi_init_struct.cs_mode_selection = SPI_CS_SOFTWARE_MODE;
+    /* disable spi to change transfer size */
+    spi_enable(instance->config->spi_x, FALSE);
     /* init spi */
     spi_init(instance->config->spi_x, &spi_init_struct);
 
