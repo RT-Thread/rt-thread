@@ -2,12 +2,12 @@
 #include "avifile.h"
 #include "pwm_audio.h"
 
-#include <rthw.h>
 #include <dfs_file.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
 #include "lv_demo_video.h"
+#include "drv_jpeg.h"
 
 #define DBG_TAG    "player"
 #define DBG_LVL    DBG_INFO
@@ -161,11 +161,10 @@ static uint8_t add_video_player(player_t player)
     else
     {
         rt_bool_t flag = RT_FALSE;
-        /* 遍历播放列表，若不存在则添加进去 */
+        /* find in list*/
         for (int index = 0; index < player->video_num; index++)
         {
             char *video_name = player->video_list[index];
-            /* 不等于则查找下一个 */
             if (rt_strcmp(player->video_name, video_name))
             {
                 flag = RT_TRUE;
@@ -314,8 +313,6 @@ static int player_last(player_t player)
         player->song_current = player->video_num;
     }
 
-//    player->song_time_pass = 0;
-
     rt_hw_interrupt_enable(level);
 
     player->status = PLAYER_LAST;
@@ -341,8 +338,6 @@ static int player_next(player_t player)
     {
         player->song_current = 1;
     }
-
-//    player->song_time_pass = 0;
 
     rt_hw_interrupt_enable(level);
 
@@ -442,7 +437,6 @@ static void player_entry(void *parameter)
             if (avi_file.BytesRD >= AVI_file.movi_size)
             {
                 set_audio_wave_value(0);
-                //------------------------------
                 player_show(player);
                 player_next(player);
             }
