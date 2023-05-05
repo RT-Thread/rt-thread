@@ -378,6 +378,8 @@ typedef struct ip_mreq {
 #define SIOCGHIWAT  _IOR('s',  1, unsigned long)  /* get high watermark */
 #define SIOCSLOWAT  _IOW('s',  2, unsigned long)  /* set low watermark */
 #define SIOCGLOWAT  _IOR('s',  3, unsigned long)  /* get low watermark */
+#endif
+#ifndef SIOCATMARK
 #define SIOCATMARK  _IOR('s',  7, unsigned long)  /* at oob mark? */
 #endif
 
