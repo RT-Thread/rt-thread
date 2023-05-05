@@ -19,7 +19,6 @@
 
 #define JPEG_WIDTH  400
 #define JPEG_HEIGHT 240
-#define DCODE_BUFFER_SIZE   (35 * 1024)
 
 #define MY_CLASS &lv_media_class
 
@@ -33,6 +32,9 @@ lv_obj_t *ui_ImgButton2;
 lv_obj_t *ui_ImgButton3;
 lv_obj_t *ui_Indicator_Left;
 lv_obj_t *ui_Audio_Wave;
+
+static decode_drv_t decode;
+static uint8_t *jpeg_outbuffer;
 
 const lv_obj_class_t lv_media_class =
 {
@@ -379,6 +381,21 @@ static void auto_run_video_timer_cb(lv_timer_t *timer)
     lv_timer_del(timer);
 }
 
+int player_init(void)
+{
+    jpeg_outbuffer = rt_malloc_align(DCODE_BUFFER_SIZE, 8);
+    RT_ASSERT(jpeg_outbuffer != NULL)
+    rt_memset(jpeg_outbuffer, 0x00, DCODE_BUFFER_SIZE);
+
+    v_player.decode = &decode;
+    v_player.decode->jpeg_out_buf = jpeg_outbuffer;
+    v_player.decode->decode_read = lv_avi_player_draw;
+
+    player_start(&v_player);
+
+    return 0;
+}
+
 void lv_video_gui_init(void)
 {
     win_obj = lv_media_page_create(lv_scr_act());
@@ -390,19 +407,6 @@ void lv_video_gui_init(void)
 
     lv_timer_t *t = lv_timer_create(auto_run_video_timer_cb, 2000, NULL);
     lv_timer_ready(t);
+
+    player_init();
 }
-
-static uint8_t jpeg_outbuffer[DCODE_BUFFER_SIZE] BSP_ALIGN_VARIABLE(8);
-static decode_drv_t decode;
-
-int player_init(void)
-{
-    v_player.decode = &decode;
-    v_player.decode->jpeg_out_buf = &jpeg_outbuffer;
-    v_player.decode->decode_read = lv_avi_player_draw;
-
-    player_start(&v_player);
-
-    return 0;
-}
-INIT_APP_EXPORT(player_init);
