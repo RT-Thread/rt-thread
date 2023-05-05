@@ -4,6 +4,9 @@
 #include <rtthread.h>
 #include "hal_data.h"
 
+#define DCODE_BUFFER_SIZE           (30 * 1024)
+#define JPEG_TIMEOUT                (100)
+
 typedef struct _decode_drv_t
 {
     void *jpeg_out_buf;

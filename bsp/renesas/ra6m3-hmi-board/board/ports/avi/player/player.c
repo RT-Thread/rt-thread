@@ -19,8 +19,6 @@
 #define __Map(x, in_min, in_max, out_min, out_max) \
     (((x) - (in_min)) * ((out_max) - (out_min)) / ((in_max) - (in_min)) + (out_min))
 
-#define v_pbuffer_size 35 * 1024
-
 struct avi_file_info
 {
     uint32_t Strsize;
@@ -101,7 +99,7 @@ static int video_start_parser(player_t player, int fd, char *filename)
     LOG_I("video total time:%02d:%02d:%02d\n", alltime / 3600, (alltime % 3600) / 60, alltime % 60);
 
     lseek(fd, AVI_file.movi_start, SEEK_SET);
-    avi_file.Strsize = read_video_frame(fd, v_pbuffer, v_pbuffer_size, &avi_file.Strtype);
+    avi_file.Strsize = read_video_frame(fd, v_pbuffer, DCODE_BUFFER_SIZE, &avi_file.Strtype);
     avi_file.BytesRD = avi_file.Strsize + 8;
 
     return fd;
@@ -426,7 +424,7 @@ static void player_entry(void *parameter)
             }
 
             /* read frame */
-            avi_file.Strsize = read_video_frame(fd, v_pbuffer, v_pbuffer_size, &avi_file.Strtype);
+            avi_file.Strsize = read_video_frame(fd, v_pbuffer, DCODE_BUFFER_SIZE, &avi_file.Strtype);
             avi_file.BytesRD += avi_file.Strsize + 8;
             player->song_time_pass = ((double)avi_file.BytesRD / AVI_file.movi_size) * player->song_time_all;
 
@@ -488,9 +486,9 @@ int player_start(player_t player)
         return -RT_ERROR;
     }
 
-    v_pbuffer = rt_malloc(v_pbuffer_size);
+    v_pbuffer = rt_malloc(DCODE_BUFFER_SIZE);
     RT_ASSERT(v_pbuffer != NULL)
-    rt_memset(v_pbuffer, 0x00, v_pbuffer_size);
+    rt_memset(v_pbuffer, 0x00, DCODE_BUFFER_SIZE);
 
     /* read filesystem */
     search_files(player, "/", ".avi");
