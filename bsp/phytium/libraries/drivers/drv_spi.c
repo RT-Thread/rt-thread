@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
  * 2022-11-10  liqiaozhong  first commit
@@ -81,10 +81,10 @@ static FError FSpimSetupInterrupt(FSpim *instance_p)
     rt_hw_interrupt_set_priority(config_p->irq_num, config_p->irq_prority);
 
     /* register intr callback */
-    rt_hw_interrupt_install(config_p->irq_num, 
-					FSpimInterruptHandler, 
-					instance_p,
-					NULL);
+    rt_hw_interrupt_install(config_p->irq_num,
+                    FSpimInterruptHandler,
+                    instance_p,
+                    NULL);
 
     /* enable tx fifo overflow / rx overflow / rx full */
     FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS);
@@ -92,7 +92,7 @@ static FError FSpimSetupInterrupt(FSpim *instance_p)
     /* enable irq */
     rt_hw_interrupt_umask(config_p->irq_num);
 
-    return FSPIM_SUCCESS;    
+    return FSPIM_SUCCESS;
 }
 
 static void rt_ft_send_event_done(void *instance_p, void *param)
@@ -119,7 +119,7 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     FSpimConfig *set_input_cfg = &input_cfg;
 
     /* set fspim device according to configuration */
-    if (configuration->mode & RT_SPI_CPOL)  
+    if (configuration->mode & RT_SPI_CPOL)
     {
         set_input_cfg->cpol = FSPIM_CPOL_HIGH;
     }
@@ -135,7 +135,7 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     {
         set_input_cfg->cpha = FSPIM_CPHA_1_EDGE;
     }
-    
+
     if (configuration->data_width == 8)
     {
         set_input_cfg->n_bytes = FSPIM_1_BYTE;
@@ -206,7 +206,7 @@ static rt_uint32_t spim_xfer(struct rt_spi_device *device, struct rt_spi_message
         rt_kprintf("FSpimTransferByInterrupt() fail!!!");
         message_length = 0;
     }
-    
+
     if (rt_event_recv(&rx_done_event, (EVENT_RX_DONE),
                       (RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR),
                       RT_WAITING_FOREVER, RT_NULL) != RT_EOK)
@@ -288,8 +288,8 @@ int ft_spi_init(void)
         }
         rt_kprintf("Spi master device spi03 init.\n");
     #endif
-    
-    
+
+
     return result;
 }
 INIT_DEVICE_EXPORT(ft_spi_init);
@@ -328,7 +328,7 @@ static void fspim_test_sample(int argc, char *argv[])
         /* send the command to read the ID using rt_spi_send_then_recv() */
         rt_spi_send_then_recv(spi_device, &send_to_flash_id, 1, recv_from_falsh_id1, 5);
         rt_kprintf("use rt_spi_send_then_recv() read flash ID is:0x%x 0x%x 0x%x 0x%x 0x%x\n", recv_from_falsh_id1[0], recv_from_falsh_id1[1], recv_from_falsh_id1[2], recv_from_falsh_id1[3], recv_from_falsh_id1[4]);
-        
+
         /* send the command to read the ID using rt_spi_transfer_message() */
         rt_spi_transfer_message(spi_device, &msg1);
         rt_kprintf("use rt_spi_transfer_message() read flash ID is:0x%x 0x%x 0x%x 0x%x 0x%x\n", recv_from_falsh_id2[0], recv_from_falsh_id2[1], recv_from_falsh_id2[2], recv_from_falsh_id2[3], recv_from_falsh_id2[4]);

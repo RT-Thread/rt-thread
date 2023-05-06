@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -91,7 +91,7 @@ void rt_hw_secondary_cpu_up(void)
         PsciCpuOn(cpu_mask, (uintptr)rt_secondary_cpu_entry);
         __asm__ volatile("dsb" ::: "memory");
 #endif
-        
+
     }
 }
 

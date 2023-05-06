@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
- * 2022-11-20  liqiaozhong  first commit 
+ * 2022-11-20  liqiaozhong  first commit
  * 2022-03-08  liqiaozhong  add format function and mount table
  */
 #include <rtthread.h>
@@ -57,7 +57,7 @@ static int spi_flash_sfud_init(void)
         return RT_ERROR;
     }
     rt_kprintf("Spi flash device flash2 init\n");
-    rt_kprintf("Flash device: flash2 info\nmf_id: 0x%x\ntype_id: 0x%x\ncapacity_id: 0x%x\nerase granularity: %lu\n", 
+    rt_kprintf("Flash device: flash2 info\nmf_id: 0x%x\ntype_id: 0x%x\ncapacity_id: 0x%x\nerase granularity: %lu\n",
     spim_flash->chip.mf_id,
     spim_flash->chip.type_id,
     spim_flash->chip.capacity_id,

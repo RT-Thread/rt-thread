@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 #include <mmu.h>
 
 /* mmu config */
-struct mem_desc platform_mem_desc[] = 
+struct mem_desc platform_mem_desc[] =
 {
     {
         0x80000000,

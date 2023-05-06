@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -113,7 +113,7 @@ void rt_hw_board_aarch64_init(void)
         rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
     #endif
     rt_page_init(init_page_region);
-    
+
     rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
         /* init memory pool */
@@ -126,7 +126,7 @@ void rt_hw_board_aarch64_init(void)
     rt_hw_gtimer_init();
 
 
-    
+
     /* compoent init */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -157,9 +157,9 @@ void rt_hw_board_aarch32_init(void)
 
     /* set io map range is 0xf0000000 ~ 0x10000000  , Memory Protection start address is 0xf0000000  - rt_mpr_size */
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
-    
+
     rt_page_init(init_page_region);
-    
+
     /* rt_kernel_space 在start_gcc.S 中被初始化，此函数将iomap 空间放置在kernel space 上 */
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0xf0000000, 0x10000000);
     /*  */
@@ -171,14 +171,14 @@ void rt_hw_board_aarch32_init(void)
          0x80100000 ~ __bss_end: kernel code and data
     */
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
-    rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0x80000000, 0x10000000);    
+    rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0x80000000, 0x10000000);
 #endif
 
         /* init memory pool */
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
- 
+
     extern int rt_hw_cpu_id(void);
 
     u32 cpu_id, cpu_offset = 0;

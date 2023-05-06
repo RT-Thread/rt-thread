@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -48,7 +48,7 @@ static int filesystem_mount(void)
     {
         rt_thread_mdelay(1);
     }
-  
+
     int ret = dfs_mount("sd0", "/", "elm", 0, 0);
     if (ret != 0)
     {

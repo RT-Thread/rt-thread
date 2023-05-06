@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,7 +60,7 @@ rt_err_t FQspiInit(FQspiCtrl *fqspi)
     {
         FQSPI_DEBUG("Qspi init failed.\n");
         return RT_ERROR;
-    } 
+    }
     else
     {
         FQSPI_DEBUG("Qspi init successfully.\n");
@@ -72,7 +72,7 @@ rt_err_t FQspiInit(FQspiCtrl *fqspi)
     {
         FQSPI_DEBUG("Qspi flash detect failed.\n");
         return RT_ERROR;
-    } 
+    }
     else
     {
         FQSPI_DEBUG("Qspi flash detect successfully.\n");
@@ -112,7 +112,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
     rt_uint8_t *rcvb = message->recv_buf;
     rt_uint8_t *sndb = message->send_buf;
     FError ret = FT_SUCCESS;
-    
+
     qspi_bus = (struct phytium_qspi_bus *) device->bus->parent.user_data;
 
     /*Distinguish the write mode according to different commands*/
@@ -122,7 +122,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
         rt_uint8_t len = strlen(strs) + 1;
         rt_uint8_t *wr_buf = NULL;
         wr_buf = (rt_uint8_t *)rt_malloc(DAT_LENGTH * sizeof(rt_uint8_t));
-        
+
         rt_memcpy(wr_buf, strs, len);
         message->length = len;
         ret = FQspiFlashErase(&(qspi_bus->fqspi), FQSPI_FLASH_CMD_SE, flash_addr);
@@ -133,7 +133,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
         }
         /* write norflash data */
         ret = FQspiFlashWriteData(&(qspi_bus->fqspi), cmd, flash_addr, wr_buf, len);
-        
+
         if (FT_SUCCESS != ret)
         {
             FQSPI_DEBUG("Failed to write mem, test result 0x%x.\r\n", ret);
@@ -147,7 +147,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
 
         return RT_EOK;
     }
-    
+
     /*Distinguish the read mode according to different commands*/
     if (cmd == FQSPI_FLASH_CMD_READ||cmd == FQSPI_FLASH_CMD_4READ||cmd == FQSPI_FLASH_CMD_FAST_READ||cmd == FQSPI_FLASH_CMD_4FAST_READ||
         cmd == FQSPI_FLASH_CMD_DUAL_READ||cmd == FQSPI_FLASH_CMD_QIOR||cmd == FQSPI_FLASH_CMD_4QIOR)
@@ -156,7 +156,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
         rd_buf = (rt_uint8_t *)rt_malloc(DAT_LENGTH * sizeof(rt_uint8_t));
 
         ret |= FQspiFlashReadDataConfig(&(qspi_bus->fqspi), cmd);
-            
+
         if (FT_SUCCESS != ret)
         {
             FQSPI_DEBUG("Failed to config read, test result 0x%x.\r\n", ret);
@@ -228,7 +228,7 @@ rt_err_t phytium_qspi_bus_attach_device(const char *bus_name, const char *device
     rt_err_t result = RT_EOK;
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
-    
+
     qspi_device = (struct rt_qspi_device *)rt_malloc(sizeof(struct rt_qspi_device));
     if (qspi_device == RT_NULL)
     {
@@ -246,7 +246,7 @@ __exit:
             rt_free(qspi_device);
 
         }
-        
+
     return  result;
 }
 }
@@ -266,7 +266,7 @@ int rt_hw_qspi_init(void)
         FQSPI_DEBUG("Qspi bus register Failed!!!\n");
         result = -RT_ERROR;
     }
-    
+
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_qspi_init);
@@ -341,7 +341,7 @@ rt_err_t qspi_sample(int argc, char *argv[])
     RT_ASSERT(res==RT_EOK);
 
     return res;
-    
+
 }
 /* Enter qspi_sample command for testing */
 MSH_CMD_EXPORT(qspi_sample, qspi sample);

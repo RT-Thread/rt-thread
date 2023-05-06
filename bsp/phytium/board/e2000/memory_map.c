@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,18 +20,18 @@
 #if defined(TARGET_ARMV8_AARCH64)
 struct mem_desc platform_mem_desc[] =
 {
-    {   KERNEL_VADDR_START, 
-        KERNEL_VADDR_START + 0x0fffffff, 
-        (rt_size_t)ARCH_MAP_FAILED, 
+    {   KERNEL_VADDR_START,
+        KERNEL_VADDR_START + 0x0fffffff,
+        (rt_size_t)ARCH_MAP_FAILED,
         NORMAL_MEM
     }
 };
 #else
 struct mem_desc platform_mem_desc[] =
 {
-    {   KERNEL_VADDR_START, 
-        KERNEL_VADDR_START + 0x10000000, 
-        (rt_size_t)ARCH_MAP_FAILED, 
+    {   KERNEL_VADDR_START,
+        KERNEL_VADDR_START + 0x10000000,
+        (rt_size_t)ARCH_MAP_FAILED,
         NORMAL_MEM
     }
 };
@@ -92,8 +92,8 @@ struct mem_desc platform_mem_desc[] =
 #endif
 };
 
-#endif 
+#endif
 
-#endif 
+#endif
 
 const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]);
