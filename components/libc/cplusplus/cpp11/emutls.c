@@ -188,11 +188,20 @@ emutls_get_address_array(uintptr_t index)
     {
         uintptr_t orig_size = array->size;
         uintptr_t new_size = emutls_new_data_array_size(index);
-        array = (emutls_address_array *)realloc(array, (new_size + 1) * sizeof(void *));
+        emutls_address_array *array_temp = (emutls_address_array *)realloc(array, (new_size + 1) * sizeof(void *));
 
-        if (array)
+        if (array_temp)
+        {
+            array = array_temp;
             memset(array->data + orig_size, 0,
                    (new_size - orig_size) * sizeof(void *));
+        }
+        else
+        {
+            free(array);
+            array = null;
+        }
+        
         emutls_check_array_set_size(array, new_size);
     }
     return array;
