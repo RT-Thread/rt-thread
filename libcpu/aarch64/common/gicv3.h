@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 
 
 #ifndef ARM_GIC_CPU_NUM
-#define ARM_GIC_CPU_NUM RT_CPUS_NR 
+#define ARM_GIC_CPU_NUM RT_CPUS_NR
 #endif
 
 #define GICV3_ROUTED_TO_ALL   1UL
