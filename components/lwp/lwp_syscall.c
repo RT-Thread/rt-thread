@@ -40,6 +40,9 @@
 #include <poll.h>
 #include <sys/select.h>
 #include <dfs_file.h>
+#ifdef RT_USING_DFS_V2
+#include <dfs_dentry.h>
+#endif
 #include <unistd.h>
 #include <stdio.h> /* rename() */
 #include <sys/stat.h>
@@ -480,6 +483,7 @@ sysret_t sys_open(const char *name, int flag, ...)
     int ret = -1;
     rt_size_t len = 0;
     char *kname = RT_NULL;
+    mode_t mode = 0;
 
     if (!lwp_user_accessable((void *)name, 1))
     {
@@ -498,8 +502,16 @@ sysret_t sys_open(const char *name, int flag, ...)
         return -ENOMEM;
     }
 
+    if ((flag & O_CREAT) || (flag & O_TMPFILE) == O_TMPFILE)
+    {
+        va_list ap;
+        va_start(ap, flag);
+        mode = va_arg(ap, mode_t);
+        va_end(ap);
+    }
+
     lwp_get_from_user(kname, (void *)name, len + 1);
-    ret = open(kname, flag, 0);
+    ret = open(kname, flag, mode);
     if (ret < 0)
     {
         ret = GET_ERRNO();
@@ -509,11 +521,23 @@ sysret_t sys_open(const char *name, int flag, ...)
 
     return ret;
 #else
+    int ret;
+    mode_t mode = 0;
+
     if (!lwp_user_accessable((void *)name, 1))
     {
         return -EFAULT;
     }
-    int ret = open(name, flag, 0);
+
+    if ((flag & O_CREAT) || (flag & O_TMPFILE) == O_TMPFILE)
+    {
+        va_list ap;
+        va_start(ap, flag);
+        mode = va_arg(ap, mode_t);
+        va_end(ap);
+    }
+
+    ret = open(name, flag, mode);
     return (ret < 0 ? GET_ERRNO() : ret);
 #endif
 }
@@ -3712,10 +3736,10 @@ sysret_t sys_rmdir(const char *path)
     {
         return -EFAULT;
     }
-    err = unlink(path);
+    err = rmdir(path);
     return (err < 0 ? GET_ERRNO() : err);
 #else
-    int ret = unlink(path);
+    int ret = rmdir(path);
     return (ret < 0 ? GET_ERRNO() : ret);
 #endif
 }
@@ -4224,6 +4248,26 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
         return -EBADF;
     }
 
+#ifdef RT_USING_DFS_V2
+    {
+        char *fullpath = dfs_dentry_full_path(d->dentry);
+        if (fullpath)
+        {
+            copy_len = strlen(fullpath);
+            if (copy_len > bufsz)
+            {
+                copy_len = bufsz;
+            }
+
+            bufsz = lwp_put_to_user(buf, fullpath, copy_len);
+            rt_free(fullpath);
+        }
+        else
+        {
+            bufsz = 0;
+        }
+    }
+#else
     copy_len = strlen(d->vnode->fullpath);
     if (copy_len > bufsz)
     {
@@ -4231,6 +4275,7 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
     }
 
     bufsz = lwp_put_to_user(buf, d->vnode->fullpath, copy_len);
+#endif
 
     return bufsz;
 }
@@ -4780,6 +4825,60 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
     return ret;
 }
 
+sysret_t sys_link(const char *existing, const char *new)
+{
+    int ret = -1;
+
+#ifdef ARCH_MM_MMU
+    int err;
+
+    lwp_user_strlen(existing, &err);
+    if (err)
+    {
+        return -EFAULT;
+    }
+
+    lwp_user_strlen(new, &err);
+    if (err)
+    {
+        return -EFAULT;
+    }
+#endif
+#ifdef RT_USING_DFS_V2
+    ret = dfs_file_link(existing, new);
+#else
+    SET_ERRNO(EFAULT);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_symlink(const char *existing, const char *new)
+{
+    int ret = -1;
+
+#ifdef ARCH_MM_MMU
+    int err;
+
+    lwp_user_strlen(existing, &err);
+    if (err)
+    {
+        return -EFAULT;
+    }
+
+    lwp_user_strlen(new, &err);
+    if (err)
+    {
+        return -EFAULT;
+    }
+#endif
+#ifdef RT_USING_DFS_V2
+    ret = dfs_file_symlink(existing, new);
+#else
+    SET_ERRNO(EFAULT);
+#endif
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
 const static struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -4995,6 +5094,8 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_statfs64),
     SYSCALL_SIGN(sys_fstatfs),
     SYSCALL_SIGN(sys_fstatfs64),
+    SYSCALL_SIGN(sys_link),
+    SYSCALL_SIGN(sys_symlink),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

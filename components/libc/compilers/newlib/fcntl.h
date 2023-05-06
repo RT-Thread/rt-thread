@@ -13,12 +13,16 @@
 
 #include <sys/_default_fcntl.h>
 
-#ifndef O_DIRECTORY
-#define O_DIRECTORY 0x200000
-#endif
-
 #ifndef O_BINARY
 #define O_BINARY 0x10000
+#endif
+
+#ifndef O_NOFOLLOW
+#define O_NOFOLLOW 0x100000
+#endif
+
+#ifndef O_DIRECTORY
+#define O_DIRECTORY 0x200000
 #endif
 
 #endif

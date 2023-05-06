@@ -946,15 +946,8 @@ static int channel_fops_close(struct dfs_file *file)
 
 static const struct dfs_file_ops channel_fops =
 {
-    NULL,    /* open     */
-    channel_fops_close,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,    /* lseek    */
-    NULL,    /* getdents */
-    channel_fops_poll,
+    .close = channel_fops_close,    /* close */
+    .poll = channel_fops_poll,      /* poll */
 };
 
 int lwp_channel_open(int fdt_type, const char *name, int flags)
@@ -981,16 +974,15 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     if (ch)
     {
         rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
+#ifndef RT_USING_DFS_V2
         rt_list_init(&d->vnode->list);
+#endif
         d->vnode->type = FT_USER;
-        d->vnode->path = NULL;
-        d->vnode->fullpath = NULL;
 
         d->vnode->fops = &channel_fops;
 
         d->flags = O_RDWR; /* set flags as read and write */
         d->vnode->size = 0;
-        d->pos = 0;
         d->vnode->ref_count = 1;
 
         /* set socket to the data of dfs_file */

@@ -50,16 +50,14 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
                 return -1;
             }
             rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
+#ifndef RT_USING_DFS_V2
             rt_list_init(&d->vnode->list);
-
+#endif
             d->vnode->type = FT_SOCKET;
-            d->vnode->path = NULL;
-            d->vnode->fullpath = NULL;
             d->vnode->ref_count = 1;
             d->vnode->fops = dfs_net_get_fops();
             d->flags = O_RDWR; /* set flags as read and write */
             d->vnode->size = 0;
-            d->pos = 0;
 
             /* set socket to the data of dfs_file */
             d->vnode->data = (void *)(size_t)new_socket;
@@ -259,17 +257,16 @@ int socket(int domain, int type, int protocol)
     if (socket >= 0)
     {
         rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
+#ifndef RT_USING_DFS_V2
         rt_list_init(&d->vnode->list);
+#endif
         /* this is a socket fd */
         d->vnode->type = FT_SOCKET;
-        d->vnode->path = NULL;
-        d->vnode->fullpath = NULL;
         d->vnode->ref_count = 1;
         d->vnode->fops = dfs_net_get_fops();
 
         d->flags = O_RDWR; /* set flags as read and write */
         d->vnode->size = 0;
-        d->pos = 0;
 
         /* set socket to the data of dfs_file */
         d->vnode->data = (void *)(size_t)socket;

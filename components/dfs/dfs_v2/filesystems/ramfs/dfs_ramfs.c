@@ -54,7 +54,7 @@ int dfs_ramfs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
     return RT_EOK;
 }
 
-int dfs_ramfs_ioctl(struct dfs_file *file, int cmd, void *args)
+int dfs_ramfs_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
     return -EIO;
 }
@@ -92,7 +92,7 @@ struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs *ramfs,
     return NULL;
 }
 
-int dfs_ramfs_read(struct dfs_file *file, void *buf, size_t count)
+int dfs_ramfs_read(struct dfs_fd *file, void *buf, size_t count)
 {
     rt_size_t length;
     struct ramfs_dirent *dirent;
@@ -442,7 +442,7 @@ int dfs_ramfs_init(void)
 
     return 0;
 }
-INIT_COMPONENT_EXPORT(dfs_ramfs_init);
+INIT_PREV_EXPORT(dfs_ramfs_init);
 
 struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
 {

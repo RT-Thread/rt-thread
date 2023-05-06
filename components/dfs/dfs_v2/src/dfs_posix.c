@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,14 +7,17 @@
  * Date           Author       Notes
  * 2009-05-27     Yi.qiu       The first version
  * 2018-02-07     Bernard      Change the 3rd parameter of open/fcntl/ioctl to '...'
- * 2022-01-19     Meco Man     add creat()
+ * 2021-08-26     linzhenxing  add setcwd and modify getcwd\chdir
  */
 
-#include <dfs_file.h>
-#include <dfs_private.h>
-#include <sys/errno.h>
+#include <dfs.h>
+#include <dfs_posix.h>
 
-#ifdef RT_USING_SMART
+#include <dfs_dentry.h>
+#include <dfs_mnt.h>
+#include "dfs_private.h"
+
+#ifdef RT_USING_LWP
 #include <lwp.h>
 #endif
 
@@ -35,26 +38,42 @@
 int open(const char *file, int flags, ...)
 {
     int fd, result;
-    struct dfs_file *d;
+    struct dfs_file *df = RT_NULL;
+    mode_t mode = 0;
 
-    /* allocate a fd */
-    fd = fd_new();
-    if (fd < 0)
+    if (file == NULL)
     {
-        rt_set_errno(-ENOMEM);
-
+        rt_set_errno(-EBADF);
         return -1;
     }
-    d = fd_get(fd);
 
-    result = dfs_file_open(d, file, flags);
+    if ((flags & O_CREAT) || (flags & O_TMPFILE) == O_TMPFILE)
+    {
+        va_list ap;
+        va_start(ap, flags);
+        mode = va_arg(ap, mode_t);
+        va_end(ap);
+    }
+
+    fd = fd_new();
+    if (fd >= 0)
+    {
+        df = fd_get(fd);
+    }
+    else
+    {
+        rt_set_errno(-RT_ERROR);
+        return RT_NULL;
+    }
+
+    dfs_file_init(df);
+
+    result = dfs_file_open(df, file, flags, mode);
     if (result < 0)
     {
-        /* release the ref-count of fd */
+        dfs_file_unref(df);
         fd_release(fd);
-
         rt_set_errno(result);
-
         return -1;
     }
 
@@ -88,18 +107,17 @@ RTM_EXPORT(creat);
 int close(int fd)
 {
     int result;
-    struct dfs_file *d;
+    struct dfs_file *file;
 
-    d = fd_get(fd);
-    if (d == NULL)
+    file = fd_get(fd);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
         return -1;
     }
 
-    result = dfs_file_close(d);
-
+    result = dfs_file_close(file);
     if (result < 0)
     {
         rt_set_errno(result);
@@ -124,25 +142,30 @@ RTM_EXPORT(close);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
-#ifdef _READ_WRITE_RETURN_TYPE
-_READ_WRITE_RETURN_TYPE read(int fd, void *buf, size_t len) /* some gcc tool chains will use different data structure */
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
+_READ_WRITE_RETURN_TYPE _EXFUN(read, (int fd, void *buf, size_t len))
 #else
 ssize_t read(int fd, void *buf, size_t len)
 #endif
 {
-    int result;
-    struct dfs_file *d;
+    ssize_t result;
+    struct dfs_file *file;
 
-    /* get the fd */
-    d = fd_get(fd);
-    if (d == NULL)
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    file = fd_get(fd);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
         return -1;
     }
 
-    result = dfs_file_read(d, buf, len);
+    result = dfs_file_read(file, buf, len);
     if (result < 0)
     {
         rt_set_errno(result);
@@ -164,25 +187,30 @@ RTM_EXPORT(read);
  *
  * @return the actual written data buffer length.
  */
-#ifdef _READ_WRITE_RETURN_TYPE
-_READ_WRITE_RETURN_TYPE write(int fd, const void *buf, size_t len) /* some gcc tool chains will use different data structure */
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
+_READ_WRITE_RETURN_TYPE _EXFUN(write, (int fd, const void *buf, size_t len))
 #else
 ssize_t write(int fd, const void *buf, size_t len)
 #endif
 {
-    int result;
-    struct dfs_file *d;
+    ssize_t result;
+    struct dfs_file *file;
 
-    /* get the fd */
-    d = fd_get(fd);
-    if (d == NULL)
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    file = fd_get(fd);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
         return -1;
     }
 
-    result = dfs_file_write(d, buf, len);
+    result = dfs_file_write(file, buf, len);
     if (result < 0)
     {
         rt_set_errno(result);
@@ -206,43 +234,18 @@ RTM_EXPORT(write);
  */
 off_t lseek(int fd, off_t offset, int whence)
 {
-    int result;
-    struct dfs_file *d;
+    off_t result;
+    struct dfs_file *file;
 
-    d = fd_get(fd);
-    if (d == NULL)
+    file = fd_get(fd);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
         return -1;
     }
 
-    switch (whence)
-    {
-    case SEEK_SET:
-        break;
-
-    case SEEK_CUR:
-        offset += d->pos;
-        break;
-
-    case SEEK_END:
-        offset += d->vnode->size;
-        break;
-
-    default:
-        rt_set_errno(-EINVAL);
-
-        return -1;
-    }
-
-    if (offset < 0)
-    {
-        rt_set_errno(-EINVAL);
-
-        return -1;
-    }
-    result = dfs_file_lseek(d, offset);
+    result = dfs_file_lseek(file, offset, whence);
     if (result < 0)
     {
         rt_set_errno(result);
@@ -250,11 +253,10 @@ off_t lseek(int fd, off_t offset, int whence)
         return -1;
     }
 
-    return offset;
+    return result;
 }
 RTM_EXPORT(lseek);
 
-#ifndef _WIN32
 /**
  * this function is a POSIX compliant version, which will rename old file name
  * to new file name.
@@ -270,6 +272,12 @@ int rename(const char *old_file, const char *new_file)
 {
     int result;
 
+    if (old_file == NULL || new_file == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
     result = dfs_file_rename(old_file, new_file);
     if (result < 0)
     {
@@ -281,7 +289,6 @@ int rename(const char *old_file, const char *new_file)
     return 0;
 }
 RTM_EXPORT(rename);
-#endif
 
 /**
  * this function is a POSIX compliant version, which will unlink (remove) a
@@ -294,6 +301,21 @@ RTM_EXPORT(rename);
 int unlink(const char *pathname)
 {
     int result;
+    struct stat stat;
+
+    if (pathname == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    result = dfs_file_stat(pathname, &stat);
+    if (result == 0 && S_ISDIR(stat.st_mode))
+    {
+        rt_set_errno(-RT_ERROR);
+
+        return -1;
+    }
 
     result = dfs_file_unlink(pathname);
     if (result < 0)
@@ -307,6 +329,7 @@ int unlink(const char *pathname)
 }
 RTM_EXPORT(unlink);
 
+#ifndef _WIN32 /* we can not implement these functions */
 /**
  * this function is a POSIX compliant version, which will get file information.
  *
@@ -318,6 +341,12 @@ RTM_EXPORT(unlink);
 int stat(const char *file, struct stat *buf)
 {
     int result;
+
+    if (file == NULL || buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
 
     result = dfs_file_stat(file, buf);
     if (result < 0)
@@ -341,20 +370,30 @@ RTM_EXPORT(stat);
  */
 int fstat(int fildes, struct stat *buf)
 {
-    struct dfs_file *d;
+    int ret = 0;
+    struct dfs_file *file;
+
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
 
     /* get the fd */
-    d = fd_get(fildes);
-    if (d == NULL)
+    file = fd_get(fildes);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
         return -1;
     }
 
-    return stat(d->vnode->fullpath, buf);
+    ret = file->dentry->mnt->fs_ops->stat(file->dentry, buf);
+
+    return ret;
 }
 RTM_EXPORT(fstat);
+#endif
 
 /**
  * this function is a POSIX compliant version, which shall request that all data
@@ -369,17 +408,17 @@ RTM_EXPORT(fstat);
 int fsync(int fildes)
 {
     int ret;
-    struct dfs_file *d;
+    struct dfs_file *file;
 
-    /* get the fd */
-    d = fd_get(fildes);
-    if (d == NULL)
+    file = fd_get(fildes);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
+
         return -1;
     }
 
-    ret = dfs_file_flush(d);
+    ret = dfs_file_fsync(file);
 
     return ret;
 }
@@ -400,11 +439,10 @@ RTM_EXPORT(fsync);
 int fcntl(int fildes, int cmd, ...)
 {
     int ret = -1;
-    struct dfs_file *d;
+    struct dfs_file *file;
 
-    /* get the fd */
-    d = fd_get(fildes);
-    if (d)
+    file = fd_get(fildes);
+    if (file)
     {
         void *arg;
         va_list ap;
@@ -413,9 +451,16 @@ int fcntl(int fildes, int cmd, ...)
         arg = va_arg(ap, void *);
         va_end(ap);
 
-        ret = dfs_file_ioctl(d, cmd, arg);
+        ret = dfs_file_ioctl(file, cmd, arg);
+        if (ret < 0)
+        {
+            ret = dfs_file_fcntl(fildes, cmd, (unsigned long)arg);
+        }
     }
-    else ret = -EBADF;
+    else
+    {
+        ret = -EBADF;
+    }
 
     if (ret < 0)
     {
@@ -466,10 +511,10 @@ RTM_EXPORT(ioctl);
 int ftruncate(int fd, off_t length)
 {
     int result;
-    struct dfs_file *d;
+    struct dfs_file *file;
 
-    d = fd_get(fd);
-    if (d == NULL)
+    file = fd_get(fd);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
@@ -482,7 +527,8 @@ int ftruncate(int fd, off_t length)
 
         return -1;
     }
-    result = dfs_file_ftruncate(d, length);
+
+    result = dfs_file_ftruncate(file, length);
     if (result < 0)
     {
         rt_set_errno(result);
@@ -507,6 +553,12 @@ int statfs(const char *path, struct statfs *buf)
 {
     int result;
 
+    if (path == NULL || buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
     result = dfs_statfs(path, buf);
     if (result < 0)
     {
@@ -530,18 +582,27 @@ RTM_EXPORT(statfs);
  */
 int fstatfs(int fildes, struct statfs *buf)
 {
-    struct dfs_file *d;
+    int ret = 0;
+    struct dfs_file *file;
+
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
 
     /* get the fd */
-    d = fd_get(fildes);
-    if (d == NULL)
+    file = fd_get(fildes);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
         return -1;
     }
 
-    return statfs(d->vnode->fullpath, buf);
+    ret = file->dentry->mnt->fs_ops->statfs(file->dentry->mnt, buf);
+
+    return ret;
 }
 RTM_EXPORT(fstatfs);
 
@@ -555,36 +616,42 @@ RTM_EXPORT(fstatfs);
  */
 int mkdir(const char *path, mode_t mode)
 {
-    int fd;
-    struct dfs_file *d;
     int result;
+    struct stat stat;
+    struct dfs_file file;
 
-    fd = fd_new();
-    if (fd == -1)
+    if (path == NULL)
     {
-        rt_set_errno(-ENOMEM);
-
+        rt_set_errno(-EBADF);
         return -1;
     }
 
-    d = fd_get(fd);
+    if (path && dfs_file_stat(path, &stat) == 0)
+    {
+        rt_set_errno(-RT_ERROR);
+        return -1;
+    }
 
-    result = dfs_file_open(d, path, O_DIRECTORY | O_CREAT);
+    dfs_file_init(&file);
 
+    result = dfs_file_open(&file, path, O_DIRECTORY | O_CREAT, mode);
     if (result < 0)
     {
-        fd_release(fd);
+        dfs_file_unref(&file);
         rt_set_errno(result);
-
         return -1;
     }
 
-    dfs_file_close(d);
-    fd_release(fd);
+    dfs_file_close(&file);
 
     return 0;
 }
 RTM_EXPORT(mkdir);
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+FINSH_FUNCTION_EXPORT(mkdir, create a directory);
+#endif
 
 /**
  * this function is a POSIX compliant version, which will remove a directory.
@@ -596,6 +663,49 @@ RTM_EXPORT(mkdir);
 int rmdir(const char *pathname)
 {
     int result;
+    DIR *dir = RT_NULL;
+    struct stat stat;
+
+    if (!pathname)
+    {
+        rt_set_errno(-RT_ERROR);
+        return -1;
+    }
+
+    dir = opendir(pathname);
+    if (dir)
+    {
+        struct dirent *dirent;
+
+        while (1)
+        {
+            dirent = readdir(dir);
+            if (dirent == RT_NULL)
+                break;
+            if (rt_strcmp(".", dirent->d_name) != 0 &&
+                rt_strcmp("..", dirent->d_name) != 0)
+            {
+                break;
+            }
+        }
+
+        closedir(dir);
+
+        if (dirent)
+        {
+            rt_set_errno(-RT_ERROR);
+            return -1;
+        }
+    }
+
+    if (dfs_file_stat(pathname, &stat) == 0)
+    {
+        if (S_ISLNK(stat.st_mode))
+        {
+            rt_set_errno(-RT_ERROR);
+            return -1;
+        }
+    }
 
     result = dfs_file_unlink(pathname);
     if (result < 0)
@@ -618,30 +728,37 @@ RTM_EXPORT(rmdir);
  */
 DIR *opendir(const char *name)
 {
-    struct dfs_file *d;
+    DIR *t = RT_NULL;
     int fd, result;
-    DIR *t;
+    struct dfs_file *file = RT_NULL;
 
-    t = NULL;
-
-    /* allocate a fd */
-    fd = fd_new();
-    if (fd == -1)
+    if (!name || dfs_file_isdir(name) != 0)
     {
-        rt_set_errno(-ENOMEM);
-
-        return NULL;
+        rt_set_errno(-RT_ERROR);
+        return RT_NULL;
     }
-    d = fd_get(fd);
 
-    result = dfs_file_open(d, name, O_RDONLY | O_DIRECTORY);
+    fd = fd_new();
+    if (fd >= 0)
+    {
+        file = fd_get(fd);
+    }
+    else
+    {
+        rt_set_errno(-RT_ERROR);
+        return RT_NULL;
+    }
+
+    dfs_file_init(file);
+
+    result = dfs_file_open(file, name, O_RDONLY | O_DIRECTORY, 0);
     if (result >= 0)
     {
         /* open successfully */
         t = (DIR *) rt_malloc(sizeof(DIR));
         if (t == NULL)
         {
-            dfs_file_close(d);
+            dfs_file_close(file);
             fd_release(fd);
         }
         else
@@ -654,7 +771,7 @@ DIR *opendir(const char *name)
         return t;
     }
 
-    /* open failed */
+    dfs_file_unref(file);
     fd_release(fd);
     rt_set_errno(result);
 
@@ -674,40 +791,49 @@ RTM_EXPORT(opendir);
 struct dirent *readdir(DIR *d)
 {
     int result;
-    struct dfs_file *fd;
+    struct dirent *dirent = NULL;
 
-    fd = fd_get(d->fd);
-    if (fd == NULL)
+    if (d == NULL)
     {
         rt_set_errno(-EBADF);
         return NULL;
     }
 
-    if (d->num)
+    do
     {
-        struct dirent *dirent_ptr;
-        dirent_ptr = (struct dirent *)&d->buf[d->cur];
-        d->cur += dirent_ptr->d_reclen;
-    }
-
-    if (!d->num || d->cur >= d->num)
-    {
-        /* get a new entry */
-        result = dfs_file_getdents(fd,
-                                   (struct dirent *)d->buf,
-                                   sizeof(d->buf) - 1);
-        if (result <= 0)
+        if (d->num)
         {
-            rt_set_errno(result);
-
-            return NULL;
+            struct dirent *dirent_ptr;
+            dirent_ptr = (struct dirent *)&d->buf[d->cur];
+            d->cur += dirent_ptr->d_reclen;
         }
 
-        d->num = result;
-        d->cur = 0; /* current entry index */
-    }
+        if (!d->num || d->cur >= d->num)
+        {
+            /* get a new entry */
+            result = dfs_file_getdents(fd_get(d->fd),
+                                       (struct dirent *)d->buf,
+                                       sizeof(d->buf) - 1);
+            if (result <= 0)
+            {
+                rt_set_errno(result);
 
-    return (struct dirent *)(d->buf + d->cur);
+                return NULL;
+            }
+
+            d->num = result;
+            d->cur = 0; /* current entry index */
+        }
+
+        dirent = (struct dirent *)(d->buf + d->cur);
+        if (rt_strcmp(".", dirent->d_name) != 0 &&
+            rt_strcmp("..", dirent->d_name) != 0)
+        {
+            break;
+        }
+    } while (dirent);
+
+    return dirent;
 }
 RTM_EXPORT(readdir);
 
@@ -721,18 +847,24 @@ RTM_EXPORT(readdir);
  */
 long telldir(DIR *d)
 {
-    struct dfs_file *fd;
+    struct dfs_file *file;
     long result;
 
-    fd = fd_get(d->fd);
-    if (fd == NULL)
+    if (d == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    file = fd_get(d->fd);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
         return 0;
     }
 
-    result = fd->pos - d->num + d->cur;
+    result = file->fpos - d->num + d->cur;
 
     return result;
 }
@@ -745,21 +877,41 @@ RTM_EXPORT(telldir);
  * @param d the directory stream.
  * @param offset the offset in directory stream.
  */
-void seekdir(DIR *d, long offset)
+void seekdir(DIR *d, off_t offset)
 {
-    struct dfs_file *fd;
+    struct dfs_file *file;
 
-    fd = fd_get(d->fd);
-    if (fd == NULL)
+    if (d == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return;
+    }
+
+    file = fd_get(d->fd);
+    if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
-        return ;
+        return;
     }
 
-    /* seek to the offset position of directory */
-    if (dfs_file_lseek(fd, offset) >= 0)
-        d->num = d->cur = 0;
+    if (d && d->fd > 0)
+    {
+        if (file->fpos > offset)
+        {
+            /* seek to the offset position of directory */
+            if (dfs_file_lseek(fd_get(d->fd), 0, SEEK_SET) >= 0)
+                d->num = d->cur = 0;
+        }
+
+        while(file->fpos < offset)
+        {
+            if (!readdir(d))
+            {
+                break;
+            }
+        }
+    }
 }
 RTM_EXPORT(seekdir);
 
@@ -771,19 +923,12 @@ RTM_EXPORT(seekdir);
  */
 void rewinddir(DIR *d)
 {
-    struct dfs_file *fd;
-
-    fd = fd_get(d->fd);
-    if (fd == NULL)
+    if (d && d->fd > 0)
     {
-        rt_set_errno(-EBADF);
-
-        return ;
+        /* seek to the beginning of directory */
+        if (dfs_file_lseek(fd_get(d->fd), 0, SEEK_SET) >= 0)
+            d->num = d->cur = 0;
     }
-
-    /* seek to the beginning of directory */
-    if (dfs_file_lseek(fd, 0) >= 0)
-        d->num = d->cur = 0;
 }
 RTM_EXPORT(rewinddir);
 
@@ -798,21 +943,22 @@ RTM_EXPORT(rewinddir);
 int closedir(DIR *d)
 {
     int result;
-    struct dfs_file *fd;
+    struct dfs_file *file;
 
-    fd = fd_get(d->fd);
-    if (fd == NULL)
+    if (d == NULL)
     {
         rt_set_errno(-EBADF);
-
         return -1;
     }
 
-    result = dfs_file_close(fd);
-    fd_release(d->fd);
+    file = fd_get(d->fd);
+    if (file == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
 
-    rt_free(d);
-
+    result = dfs_file_close(file);
     if (result < 0)
     {
         rt_set_errno(result);
@@ -820,7 +966,12 @@ int closedir(DIR *d)
         return -1;
     }
     else
-        return 0;
+    {
+        fd_release(d->fd);
+        rt_free(d);
+    }
+
+    return 0;
 }
 RTM_EXPORT(closedir);
 
@@ -846,7 +997,8 @@ int chdir(const char *path)
 #endif
         dfs_unlock();
 
-        return 0;
+        rt_set_errno(-ENOTDIR);
+        return -1;
     }
 
     if (strlen(path) > DFS_PATH_MAX)
@@ -877,7 +1029,7 @@ int chdir(const char *path)
 
     /* close directory stream */
     closedir(d);
-#ifdef RT_USING_SMART
+#ifdef RT_USING_LWP
     /* copy full path to working directory */
     lwp_setcwd(fullpath);
 #else
@@ -908,12 +1060,52 @@ FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
  */
 int access(const char *path, int amode)
 {
+    int fd, ret = -1, flags = 0;
     struct stat sb;
-    if (stat(path, &sb) < 0)
-        return -1; /* already sets errno */
+
+    if (path == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    if (amode == F_OK)
+    {
+        if (stat(path, &sb) < 0)
+            return -1; /* already sets errno */
+        else
+            return 0;
+    }
 
     /* ignore R_OK,W_OK,X_OK condition */
-    return 0;
+    if (dfs_file_isdir(path) == 0)
+    {
+        flags |= O_DIRECTORY;
+    }
+
+    if (amode & R_OK)
+    {
+        flags |= O_RDONLY;
+    }
+
+    if (amode & W_OK)
+    {
+        flags |= O_WRONLY;
+    }
+
+    if (amode & X_OK)
+    {
+        flags |= O_EXEC;
+    }
+
+    fd = open(path, flags, 0);
+    if (fd >= 0)
+    {
+        ret = 0;
+        close(fd);
+    }
+
+    return ret;
 }
 /**
  * this function is a POSIX compliant version, which will set current
@@ -923,9 +1115,15 @@ int access(const char *path, int amode)
  */
 void setcwd(char *buf)
 {
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return;
+    }
+
 #ifdef DFS_USING_WORKDIR
     dfs_lock();
-#ifdef RT_USING_SMART
+#ifdef RT_USING_LWP
     lwp_setcwd(buf);
 #else
     rt_strncpy(working_directory, buf, DFS_PATH_MAX);
@@ -950,12 +1148,18 @@ RTM_EXPORT(setcwd);
  */
 char *getcwd(char *buf, size_t size)
 {
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return NULL;
+    }
+    
 #ifdef DFS_USING_WORKDIR
     char *dir_buf = RT_NULL;
 
     dfs_lock();
 
-#ifdef RT_USING_SMART
+#ifdef RT_USING_LWP
     dir_buf = lwp_getcwd();
 #else
     dir_buf = &working_directory[0];

@@ -43,7 +43,7 @@ int libc_system_init(void)
 #endif /* RT_USING_POSIX_STDIO */
     return 0;
 }
-INIT_COMPONENT_EXPORT(libc_system_init);
+INIT_ENV_EXPORT(libc_system_init);
 
 #if defined(RT_USING_POSIX_STDIO) && defined(RT_USING_NEWLIBC)
 
