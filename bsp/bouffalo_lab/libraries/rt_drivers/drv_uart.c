@@ -285,11 +285,6 @@ int rt_hw_uart_init(void)
     static struct device_uart bl_uart3;
     bl_uart3.bflb_device = bflb_device_get_by_name("uart3");
 
-#ifdef RT_USING_SMART
-    gpio->reg_base = (size_t)rt_ioremap((void *)gpio->reg_base, 0x1000);
-    bl_uart3.bflb_device->reg_base = (size_t)rt_ioremap((void *)bl_uart3.bflb_device->reg_base, 0x1000);
-#endif
-
     bflb_gpio_init(gpio, UART3_GPIO_TX, 21 | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
     bflb_gpio_init(gpio, UART3_GPIO_RX, 21 | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
 

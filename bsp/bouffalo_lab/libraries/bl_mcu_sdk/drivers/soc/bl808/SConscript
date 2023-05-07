@@ -55,7 +55,6 @@ if GetDepend('BL808_CORE_M0') or GetDepend('BL808_CORE_LP'):
     """)
 elif GetDepend('BL808_CORE_D0'):
     src += Split("""
-        std/src/bl808_ioremap.c
         std/src/bl808_clock.c
         std/src/bl808_hbn.c
         std/port/bl808_clock.c
