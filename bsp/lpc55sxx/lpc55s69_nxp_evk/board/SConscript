@@ -10,7 +10,7 @@ MCUX_Config/board/pin_mux.c
 """)
 
 if GetDepend(['PKG_USING_RW007']):
-    src += Glob('ports/rw007_lpc55sxx_port.c')
+    src += Glob('ports/rw007_port.c')
 
 CPPPATH = [cwd,cwd + '/MCUX_Config/board']
 CPPDEFINES = ['DEBUG']
