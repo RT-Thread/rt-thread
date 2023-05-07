@@ -11,6 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <drv_pin.h>
+#include <drv_spi.h>
 #include <board.h>
 #include <spi_wifi_rw007.h>
 

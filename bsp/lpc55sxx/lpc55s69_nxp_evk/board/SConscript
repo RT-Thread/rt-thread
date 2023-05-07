@@ -10,9 +10,9 @@ MCUX_Config/board/pin_mux.c
 """)
 
 if GetDepend(['PKG_USING_RW007']):
-    src += Glob('ports/rw007_port.c')
+    src += ['ports/rw007_port.c']
 
-CPPPATH = [cwd,cwd + '/MCUX_Config/board']
+CPPPATH = [cwd, cwd + '/MCUX_Config/board']
 CPPDEFINES = ['DEBUG']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
