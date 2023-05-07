@@ -33,6 +33,17 @@ static void _cputime_timeout_callback(void *parameter)
     rt_list_remove(&(timer->row));
     rt_hw_interrupt_enable(level);
     timer->timeout_func(timer->parameter);
+
+    if (&_cputimer_list != _cputimer_list.prev)
+    {
+        struct rt_cputimer *t;
+        t = rt_list_entry(_cputimer_list.next, struct rt_cputimer, row);
+        clock_cpu_settimeout(t->timeout_tick, _cputime_timeout_callback, t);
+    }
+    else
+    {
+        clock_cpu_settimeout(RT_NULL, RT_NULL, RT_NULL);
+    }
 }
 
 static void _set_next_timeout()
@@ -58,7 +69,8 @@ static void _set_next_timeout()
     }
     else
     {
-        _cputimer_nowtimer = NULL;
+        _cputimer_nowtimer = RT_NULL;
+        clock_cpu_settimeout(RT_NULL, RT_NULL, RT_NULL);
     }
 }
 
@@ -204,7 +216,8 @@ rt_err_t rt_cputimer_control(rt_cputimer_t timer, int cmd, void *arg)
 
     case RT_TIMER_CTRL_SET_TIME:
         RT_ASSERT((*(rt_uint64_t *)arg) < 0x7fffffffffffffff);
-        timer->init_tick = *(rt_uint64_t *)arg + clock_cpu_gettime();
+        timer->init_tick    = *(rt_uint64_t *)arg;
+        timer->timeout_tick = *(rt_uint64_t *)arg + clock_cpu_gettime();
         break;
 
     case RT_TIMER_CTRL_SET_ONESHOT:
