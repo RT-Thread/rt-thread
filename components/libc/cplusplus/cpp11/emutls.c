@@ -181,26 +181,18 @@ emutls_get_address_array(uintptr_t index)
     if (array == NULL)
     {
         uintptr_t new_size = emutls_new_data_array_size(index);
-        array = (emutls_address_array *)calloc(new_size + 1, sizeof(emutls_address_array *));
+        array = (emutls_address_array *)calloc(new_size + 1, sizeof(void *));
         emutls_check_array_set_size(array, new_size);
     }
     else if (index > array->size)
     {
         uintptr_t orig_size = array->size;
         uintptr_t new_size = emutls_new_data_array_size(index);
-        emutls_address_array *array_temp = (emutls_address_array *)realloc(array, (new_size + 1) * sizeof(void *));
+        array = (emutls_address_array *)realloc(array, (new_size + 1) * sizeof(void *));
 
-        if (array_temp)
-        {
-            array = array_temp;
+        if (array)
             memset(array->data + orig_size, 0,
                    (new_size - orig_size) * sizeof(void *));
-        }
-        else
-        {
-            free(array);
-            array = NULL;
-        }
         emutls_check_array_set_size(array, new_size);
     }
     return array;
