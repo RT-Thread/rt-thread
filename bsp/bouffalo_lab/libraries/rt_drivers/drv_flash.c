@@ -8,9 +8,9 @@
  * 2023-04-08     wcx1024979076     first version
  */
 
-#include "drv_flash.h"
 #include <rtthread.h>
 #include <rtdevice.h>
+#include "drv_flash.h"
 
 #ifdef BSP_USING_ON_CHIP_FLASH
 
