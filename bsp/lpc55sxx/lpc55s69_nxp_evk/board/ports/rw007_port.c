@@ -73,5 +73,3 @@ void spi_wifi_hw_init(void)
     rt_pin_attach_irq(RW007_INT_BUSY_PIN, PIN_IRQ_MODE_FALLING, int_wifi_irq, 0);
     rt_pin_irq_enable(RW007_INT_BUSY_PIN, RT_TRUE);
 }
-
-
