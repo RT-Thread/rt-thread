@@ -30,7 +30,7 @@
 #define PIN_MCU_PORT(pin)  PIN_PORT(pin)
 #define PIN_MCU_PIN(pin) ((uint32_t)(1u << PIN_NO(pin)))
 
-static void mcu_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void mcu_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     gpio_cfg_t tmp_gpio_cfg;
     tmp_gpio_cfg.port = PIN_PORT(pin);
@@ -46,9 +46,9 @@ static void mcu_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 
 }
 
-static int mcu_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t mcu_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_int8_t value;
     gpio_cfg_t tmp_gpio_cfg;
     tmp_gpio_cfg.port = PIN_PORT(pin);
     tmp_gpio_cfg.mask = PIN_MCU_PIN(pin);
@@ -65,7 +65,7 @@ static int mcu_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     gpio_cfg_t tmp_gpio_cfg;
     int ret = 0;
@@ -103,8 +103,8 @@ static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 }
 
 
-static rt_err_t mcu_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                   rt_uint32_t irq_mode, void (*hdr)(void *args), void *args)
+static rt_err_t mcu_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                   rt_uint8_t irq_mode, void (*hdr)(void *args), void *args)
 {
     gpio_cfg_t tmp_gpio_cfg;
     tmp_gpio_cfg.port = PIN_MCU_PORT(pin);
@@ -149,7 +149,7 @@ static rt_err_t mcu_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t mcu_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t mcu_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     gpio_cfg_t tmp_gpio_cfg;
     tmp_gpio_cfg.port = PIN_MCU_PORT(pin);
@@ -163,7 +163,7 @@ static rt_err_t mcu_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t mcu_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                   rt_uint32_t enabled)
+                                   rt_uint8_t enabled)
 {
     gpio_cfg_t tmp_gpio_cfg;
     tmp_gpio_cfg.port = PIN_MCU_PORT(pin);

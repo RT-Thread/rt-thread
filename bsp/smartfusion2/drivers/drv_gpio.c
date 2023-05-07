@@ -53,7 +53,7 @@ static struct rt_pin_irq_hdr sf2_pin_irq_hdr_tab[] =
 };
 
 /* configure an individual GPIO port */
-static void sf2_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void sf2_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     uint32_t config;
     switch (mode)
@@ -71,14 +71,14 @@ static void sf2_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     MSS_GPIO_config((mss_gpio_id_t )pin, config);
 }
 
-static int sf2_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t sf2_pin_read(rt_device_t dev, rt_base_t pin)
 {
     uint32_t value;
     value = MSS_GPIO_get_inputs() & (1<<pin);
     return ((value) ? PIN_HIGH : PIN_LOW);
 }
 
-static void sf2_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void sf2_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     if (value == PIN_HIGH)
         MSS_GPIO_set_output((mss_gpio_id_t )pin, 1);
@@ -86,8 +86,8 @@ static void sf2_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         MSS_GPIO_set_output((mss_gpio_id_t )pin, 0);
 }
 
-static rt_err_t sf2_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                        rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t sf2_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                        rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
 
@@ -116,7 +116,7 @@ static rt_err_t sf2_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t sf2_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t sf2_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
 
@@ -138,7 +138,7 @@ static rt_err_t sf2_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t sf2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t sf2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     uint32_t mode = 0;
     rt_base_t level;

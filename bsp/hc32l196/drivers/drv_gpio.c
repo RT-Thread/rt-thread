@@ -32,7 +32,7 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[PIN_MAX_NUM];
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
-static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     en_gpio_port_t gpio_port;
     en_gpio_pin_t gpio_pin;
@@ -80,7 +80,7 @@ static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     Gpio_Init(gpio_port, gpio_pin, &gpio_cfg);
 }
 
-static void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void _pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     en_gpio_port_t gpio_port;
     en_gpio_pin_t gpio_pin;
@@ -103,7 +103,7 @@ static void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-static int _pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t _pin_read(rt_device_t dev, rt_base_t pin)
 {
     en_gpio_port_t gpio_port;
     en_gpio_pin_t gpio_pin;
@@ -120,8 +120,8 @@ static int _pin_read(rt_device_t dev, rt_base_t pin)
 }
 
 static rt_err_t _pin_attach_irq(struct rt_device *device,
-                                    rt_int32_t pin,
-                                    rt_uint32_t mode,
+                                    rt_base_t pin,
+                                    rt_uint8_t mode,
                                     void (*hdr)(void *args),
                                     void *args)
 {
@@ -149,7 +149,7 @@ static rt_err_t _pin_attach_irq(struct rt_device *device,
     return RT_EOK;
 }
 
-static rt_err_t _pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t _pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
 
@@ -200,7 +200,7 @@ static IRQn_Type get_irqn(rt_base_t pin)
 
 static rt_err_t _pin_irq_enable(struct rt_device *device,
                                     rt_base_t pin,
-                                    rt_uint32_t enabled)
+                                    rt_uint8_t enabled)
 {
     rt_base_t level = 0;
     en_gpio_port_t gpio_port;

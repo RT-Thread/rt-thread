@@ -288,7 +288,7 @@ static IRQn_Type vega_get_irqnum(GPIO_Type *gpio, rt_uint32_t gpio_pin)
     return irq_num; 
 }
 
-static void vega_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void vega_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     clock_ip_name_t clock;
     gpio_pin_config_t gpio; 
@@ -355,7 +355,7 @@ static void vega_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_PinInit(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin, &gpio); 
 }
 
-static int vega_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t vega_pin_read(rt_device_t dev, rt_base_t pin)
 {
     uint32_t value;
 
@@ -365,7 +365,7 @@ static int vega_pin_read(rt_device_t dev, rt_base_t pin)
     return PIN_LOW;
 }
 
-static void vega_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void vega_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     if (value == PIN_HIGH)
         GPIO_SetPinsOutput(vega_pin_map[pin].gpio, 1U << vega_pin_map[pin].gpio_pin);
@@ -373,8 +373,8 @@ static void vega_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         GPIO_ClearPinsOutput(vega_pin_map[pin].gpio, 1U << vega_pin_map[pin].gpio_pin);
 }
 
-static rt_err_t vega_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-    rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t vega_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+    rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     const struct vega_pin* pin_map = RT_NULL; 
     struct vega_irq* irq_map = RT_NULL; 
@@ -400,7 +400,7 @@ static rt_err_t vega_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t vega_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t vega_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     const struct vega_pin* pin_map = RT_NULL; 
     struct vega_irq* irq_map = RT_NULL; 
@@ -426,7 +426,7 @@ static rt_err_t vega_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t vega_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t vega_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     gpio_pin_config_t gpio; 
     IRQn_Type irq_num;
