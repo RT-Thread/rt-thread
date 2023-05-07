@@ -201,7 +201,6 @@ emutls_get_address_array(uintptr_t index)
             free(array);
             array = NULL;
         }
-            
         emutls_check_array_set_size(array, new_size);
     }
     return array;
