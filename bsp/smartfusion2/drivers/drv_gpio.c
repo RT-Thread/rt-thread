@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -58,14 +58,14 @@ static void sf2_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     uint32_t config;
     switch (mode)
     {
-        case PIN_MODE_OUTPUT: 
+        case PIN_MODE_OUTPUT:
             config = MSS_GPIO_OUTPUT_MODE;
             break;
-        case PIN_MODE_INPUT: 
+        case PIN_MODE_INPUT:
             config = MSS_GPIO_INPUT_MODE;
             break;
-        default: 
-            config = MSS_GPIO_INOUT_MODE;     
+        default:
+            config = MSS_GPIO_INOUT_MODE;
             break;
     }
     MSS_GPIO_config((mss_gpio_id_t )pin, config);
@@ -92,7 +92,7 @@ static rt_err_t sf2_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
-    
+
     if (sf2_pin_irq_hdr_tab[pin].pin == pin   &&
         sf2_pin_irq_hdr_tab[pin].hdr == hdr   &&
         sf2_pin_irq_hdr_tab[pin].mode == mode &&
@@ -110,7 +110,7 @@ static rt_err_t sf2_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     sf2_pin_irq_hdr_tab[pin].hdr = hdr;
     sf2_pin_irq_hdr_tab[pin].mode = mode;
     sf2_pin_irq_hdr_tab[pin].args = args;
-    
+
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -121,18 +121,18 @@ static rt_err_t sf2_pin_detach_irq(struct rt_device *device, rt_base_t pin)
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
-    
+
     if (sf2_pin_irq_hdr_tab[pin].pin == -1)
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
-    
+
     sf2_pin_irq_hdr_tab[pin].pin = -1;
     sf2_pin_irq_hdr_tab[pin].hdr = RT_NULL;
     sf2_pin_irq_hdr_tab[pin].mode = 0;
     sf2_pin_irq_hdr_tab[pin].args = RT_NULL;
-    
+
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -171,7 +171,7 @@ static rt_err_t sf2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
         }
         MSS_GPIO_config((mss_gpio_id_t )pin, MSS_GPIO_INPUT_MODE | mode);
         MSS_GPIO_enable_irq((mss_gpio_id_t )pin);
-        
+
         rt_hw_interrupt_enable(level);
     }
     else if (enabled == PIN_IRQ_DISABLE)
@@ -185,7 +185,7 @@ static rt_err_t sf2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     return RT_EOK;
 }
 
-static const struct rt_pin_ops sf2_pin_ops = 
+static const struct rt_pin_ops sf2_pin_ops =
 {
     sf2_pin_mode,
     sf2_pin_write,
@@ -198,13 +198,13 @@ static const struct rt_pin_ops sf2_pin_ops =
 
 int rt_hw_pin_init(void)
 {
-    rt_err_t result = RT_EOK; 
+    rt_err_t result = RT_EOK;
     MSS_GPIO_init();
     result = rt_device_pin_register("pin", &sf2_pin_ops, RT_NULL);
     RT_ASSERT(result == RT_EOK);
     return result;
 }
-INIT_BOARD_EXPORT(rt_hw_pin_init); 
+INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 rt_inline void pin_irq_hdr(int pin)
 {
