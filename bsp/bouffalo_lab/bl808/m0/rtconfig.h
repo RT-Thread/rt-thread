@@ -234,12 +234,13 @@
 
 /* General Drivers Configuration */
 
-#define BSP_USING_GPIO
-
 /* General Purpose UARTs */
 
 #define BSP_USING_UART0
 #define UART0_TX_USING_GPIO14
 #define UART0_RX_USING_GPIO15
+
+/* General Purpose I2C */
+
 
 #endif

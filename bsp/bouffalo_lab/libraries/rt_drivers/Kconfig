@@ -12,13 +12,113 @@ menu "General Drivers Configuration"
                 default UART0_TX_USING_GPIO14 if BSP_USING_BL70X
                 default UART0_TX_USING_GPIO14 if BSP_USING_BL808
 
+                config UART0_TX_USING_GPIO0
+                    bool "GPIO_0"
+                config UART0_TX_USING_GPIO1
+                    bool "GPIO_1"
+                config UART0_TX_USING_GPIO2
+                    bool "GPIO_2"
+                config UART0_TX_USING_GPIO3
+                    bool "GPIO_3"
+                config UART0_TX_USING_GPIO4
+                    bool "GPIO_4"
+                config UART0_TX_USING_GPIO5
+                    bool "GPIO_5"
+                config UART0_TX_USING_GPIO6
+                    bool "GPIO_6"
+                config UART0_TX_USING_GPIO7
+                    bool "GPIO_7"
+                config UART0_TX_USING_GPIO8
+                    bool "GPIO_8"
+                config UART0_TX_USING_GPIO9
+                    bool "GPIO_9"
+                config UART0_TX_USING_GPIO10
+                    bool "GPIO_10"
+                config UART0_TX_USING_GPIO11
+                    bool "GPIO_11"
+                config UART0_TX_USING_GPIO12
+                    bool "GPIO_12"
+                config UART0_TX_USING_GPIO13
+                    bool "GPIO_13"
+                config UART0_TX_USING_GPIO13
+                    bool "GPIO_13"
                 config UART0_TX_USING_GPIO14
                     bool "GPIO_14"
+                config UART0_TX_USING_GPIO15
+                    bool "GPIO_15"
                 config UART0_TX_USING_GPIO16
                     bool "GPIO_16"
+                config UART0_TX_USING_GPIO17
+                    bool "GPIO_17"
+                config UART0_TX_USING_GPIO18
+                    bool "GPIO_18"
+                config UART0_TX_USING_GPIO19
+                    bool "GPIO_19"
+                config UART0_TX_USING_GPIO20
+                    bool "GPIO_20"
                 config UART0_TX_USING_GPIO21
                     bool "GPIO_21"
+                config UART0_TX_USING_GPIO22
+                    bool "GPIO_22"
+                config UART0_TX_USING_GPIO23
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_23"
+                config UART0_TX_USING_GPIO24
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_24"
+                config UART0_TX_USING_GPIO25
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_25"
+                config UART0_TX_USING_GPIO26
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_26"
+                config UART0_TX_USING_GPIO27
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_27"
+                config UART0_TX_USING_GPIO28
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_28"
+                config UART0_TX_USING_GPIO29
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_29"
+                config UART0_TX_USING_GPIO30
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_30"
+                config UART0_TX_USING_GPIO31
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_31"
+                config UART0_TX_USING_GPIO32
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_32"
+                config UART0_TX_USING_GPIO33
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_33"
+                config UART0_TX_USING_GPIO34
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_34"
+                config UART0_TX_USING_GPIO35
+                    depends on BSP_USING_BL808
+                    bool "GPIO_35"
+                config UART0_TX_USING_GPIO36
+                    depends on BSP_USING_BL808
+                    bool "GPIO_36"
+                config UART0_TX_USING_GPIO37
+                    depends on BSP_USING_BL808
+                    bool "GPIO_37"
+                config UART0_TX_USING_GPIO38
+                    depends on BSP_USING_BL808
+                    bool "GPIO_38"
+                config UART0_TX_USING_GPIO39
+                    depends on BSP_USING_BL808
+                    bool "GPIO_39"
+                config UART0_TX_USING_GPIO44
+                    depends on BSP_USING_BL808
+                    bool "GPIO_44"
+                config UART0_TX_USING_GPIO45
+                    depends on BSP_USING_BL808
+                    bool "GPIO_45"
             endchoice
+
             choice
                 prompt "UART0 RX PIN"
                 default UART0_RX_USING_GPIO7 if BSP_USING_BL60X
@@ -26,14 +126,110 @@ menu "General Drivers Configuration"
                 default UART0_RX_USING_GPIO23 if BSP_USING_BL70X
                 default UART0_RX_USING_GPIO15 if BSP_USING_BL808
 
+                config UART0_RX_USING_GPIO0
+                    bool "GPIO_0"
+                config UART0_RX_USING_GPIO1
+                    bool "GPIO_1"
+                config UART0_RX_USING_GPIO2
+                    bool "GPIO_2"
+                config UART0_RX_USING_GPIO3
+                    bool "GPIO_3"
+                config UART0_RX_USING_GPIO4
+                    bool "GPIO_4"
+                config UART0_RX_USING_GPIO5
+                    bool "GPIO_5"
+                config UART0_RX_USING_GPIO6
+                    bool "GPIO_6"
                 config UART0_RX_USING_GPIO7
                     bool "GPIO_7"
+                config UART0_RX_USING_GPIO8
+                    bool "GPIO_8"
+                config UART0_RX_USING_GPIO9
+                    bool "GPIO_9"
+                config UART0_RX_USING_GPIO10
+                    bool "GPIO_10"
+                config UART0_RX_USING_GPIO11
+                    bool "GPIO_11"
+                config UART0_RX_USING_GPIO12
+                    bool "GPIO_12"
+                config UART0_RX_USING_GPIO13
+                    bool "GPIO_13"
+                config UART0_RX_USING_GPIO14
+                    bool "GPIO_14"
                 config UART0_RX_USING_GPIO15
                     bool "GPIO_15"
+                config UART0_RX_USING_GPIO16
+                    bool "GPIO_16"
+                config UART0_RX_USING_GPIO17
+                    bool "GPIO_17"
+                config UART0_RX_USING_GPIO18
+                    bool "GPIO_18"
+                config UART0_RX_USING_GPIO19
+                    bool "GPIO_19"
+                config UART0_RX_USING_GPIO20
+                    bool "GPIO_20"
+                config UART0_RX_USING_GPIO21
+                    bool "GPIO_21"
                 config UART0_RX_USING_GPIO22
                     bool "GPIO_22"
                 config UART0_RX_USING_GPIO23
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
                     bool "GPIO_23"
+                config UART0_RX_USING_GPIO24
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_24"
+                config UART0_RX_USING_GPIO25
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_25"
+                config UART0_RX_USING_GPIO26
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_26"
+                config UART0_RX_USING_GPIO27
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_27"
+                config UART0_RX_USING_GPIO28
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_28"
+                config UART0_RX_USING_GPIO29
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_29"
+                config UART0_RX_USING_GPIO30
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_30"
+                config UART0_RX_USING_GPIO31
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_31"
+                config UART0_RX_USING_GPIO32
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_32"
+                config UART0_RX_USING_GPIO33
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_33"
+                config UART0_RX_USING_GPIO34
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_34"
+                config UART0_RX_USING_GPIO35
+                    depends on BSP_USING_BL808
+                    bool "GPIO_35"
+                config UART0_RX_USING_GPIO36
+                    depends on BSP_USING_BL808
+                    bool "GPIO_36"
+                config UART0_RX_USING_GPIO37
+                    depends on BSP_USING_BL808
+                    bool "GPIO_37"
+                config UART0_RX_USING_GPIO38
+                    depends on BSP_USING_BL808
+                    bool "GPIO_38"
+                config UART0_RX_USING_GPIO39
+                    depends on BSP_USING_BL808
+                    bool "GPIO_39"
+                config UART0_RX_USING_GPIO44
+                    depends on BSP_USING_BL808
+                    bool "GPIO_44"
+                config UART0_RX_USING_GPIO45
+                    depends on BSP_USING_BL808
+                    bool "GPIO_45"
+
             endchoice
         endif
         
@@ -48,15 +244,111 @@ menu "General Drivers Configuration"
                 default UART1_TX_USING_GPIO26 if BSP_USING_BL70X
                 default UART1_TX_USING_GPIO18 if BSP_USING_BL808
 
+                config UART1_TX_USING_GPIO0
+                    bool "GPIO_0"
+                config UART1_TX_USING_GPIO1
+                    bool "GPIO_1"
+                config UART1_TX_USING_GPIO2
+                    bool "GPIO_2"
+                config UART1_TX_USING_GPIO3
+                    bool "GPIO_3"
                 config UART1_TX_USING_GPIO4
                     bool "GPIO_4"
+                config UART1_TX_USING_GPIO5
+                    bool "GPIO_5"
+                config UART1_TX_USING_GPIO6
+                    bool "GPIO_6"
+                config UART1_TX_USING_GPIO7
+                    bool "GPIO_7"
+                config UART1_TX_USING_GPIO8
+                    bool "GPIO_8"
+                config UART1_TX_USING_GPIO9
+                    bool "GPIO_9"
+                config UART1_TX_USING_GPIO10
+                    bool "GPIO_10"
+                config UART1_TX_USING_GPIO11
+                    bool "GPIO_11"
+                config UART1_TX_USING_GPIO12
+                    bool "GPIO_12"
+                config UART1_TX_USING_GPIO13
+                    bool "GPIO_13"
+                config UART1_TX_USING_GPIO14
+                    bool "GPIO_14"
+                config UART1_TX_USING_GPIO15
+                    bool "GPIO_15"
                 config UART1_TX_USING_GPIO16
                     bool "GPIO_16"
+                config UART1_TX_USING_GPIO17
+                    bool "GPIO_17"
                 config UART1_TX_USING_GPIO18
                     bool "GPIO_18"
+                config UART1_TX_USING_GPIO19
+                    bool "GPIO_19"
+                config UART1_TX_USING_GPIO20
+                    bool "GPIO_20"
+                config UART1_TX_USING_GPIO21
+                    bool "GPIO_21"
+                config UART1_TX_USING_GPIO22
+                    bool "GPIO_22"
+                config UART1_TX_USING_GPIO23
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_23"
+                config UART1_TX_USING_GPIO24
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_24"
+                config UART1_TX_USING_GPIO25
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_25"
                 config UART1_TX_USING_GPIO26
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
                     bool "GPIO_26"
+                config UART1_TX_USING_GPIO27
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_27"
+                config UART1_TX_USING_GPIO28
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_28"
+                config UART1_TX_USING_GPIO29
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_29"
+                config UART1_TX_USING_GPIO30
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_30"
+                config UART1_TX_USING_GPIO31
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_31"
+                config UART1_TX_USING_GPIO32
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_32"
+                config UART1_TX_USING_GPIO33
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_33"
+                config UART1_TX_USING_GPIO34
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_34"
+                config UART1_TX_USING_GPIO35
+                    depends on BSP_USING_BL808
+                    bool "GPIO_35"
+                config UART1_TX_USING_GPIO36
+                    depends on BSP_USING_BL808
+                    bool "GPIO_36"
+                config UART1_TX_USING_GPIO37
+                    depends on BSP_USING_BL808
+                    bool "GPIO_37"
+                config UART1_TX_USING_GPIO38
+                    depends on BSP_USING_BL808
+                    bool "GPIO_38"
+                config UART1_TX_USING_GPIO39
+                    depends on BSP_USING_BL808
+                    bool "GPIO_39"
+                config UART1_TX_USING_GPIO44
+                    depends on BSP_USING_BL808
+                    bool "GPIO_44"
+                config UART1_TX_USING_GPIO45
+                    depends on BSP_USING_BL808
+                    bool "GPIO_45"
             endchoice
+
             choice
                 prompt "UART1 RX PIN"
                 default UART1_RX_USING_GPIO3 if BSP_USING_BL60X
@@ -64,16 +356,109 @@ menu "General Drivers Configuration"
                 default UART1_RX_USING_GPIO27 if BSP_USING_BL70X
                 default UART1_RX_USING_GPIO19 if BSP_USING_BL808
 
+                config UART1_RX_USING_GPIO0
+                    bool "GPIO_0"
+                config UART1_RX_USING_GPIO1
+                    bool "GPIO_1"
+                config UART1_RX_USING_GPIO2
+                    bool "GPIO_2"
                 config UART1_RX_USING_GPIO3
                     bool "GPIO_3"
+                config UART1_RX_USING_GPIO4
+                    bool "GPIO_4"
                 config UART1_RX_USING_GPIO5
                     bool "GPIO_5"
+                config UART1_RX_USING_GPIO6
+                    bool "GPIO_6"
+                config UART1_RX_USING_GPIO7
+                    bool "GPIO_7"
+                config UART1_RX_USING_GPIO8
+                    bool "GPIO_8"
+                config UART1_RX_USING_GPIO9
+                    bool "GPIO_9"
+                config UART1_RX_USING_GPIO10
+                    bool "GPIO_10"
+                config UART1_RX_USING_GPIO11
+                    bool "GPIO_11"
+                config UART1_RX_USING_GPIO12
+                    bool "GPIO_12"
+                config UART1_RX_USING_GPIO13
+                    bool "GPIO_13"
+                config UART1_RX_USING_GPIO14
+                    bool "GPIO_14"
+                config UART1_RX_USING_GPIO15
+                    bool "GPIO_15"
+                config UART1_RX_USING_GPIO16
+                    bool "GPIO_16"
                 config UART1_RX_USING_GPIO17
                     bool "GPIO_17"
+                config UART1_RX_USING_GPIO18
+                    bool "GPIO_18"
                 config UART1_RX_USING_GPIO19
                     bool "GPIO_19"
+                config UART1_RX_USING_GPIO20
+                    bool "GPIO_20"
+                config UART1_RX_USING_GPIO21
+                    bool "GPIO_21"
+                config UART1_RX_USING_GPIO22
+                    bool "GPIO_22"
+                config UART1_RX_USING_GPIO23
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_23"
+                config UART1_RX_USING_GPIO24
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_24"
+                config UART1_RX_USING_GPIO25
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_25"
+                config UART1_RX_USING_GPIO26
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_26"
                 config UART1_RX_USING_GPIO27
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
                     bool "GPIO_27"
+                config UART1_RX_USING_GPIO28
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_28"
+                config UART1_RX_USING_GPIO29
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_29"
+                config UART1_RX_USING_GPIO30
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_30"
+                config UART1_RX_USING_GPIO31
+                    depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                    bool "GPIO_31"
+                config UART1_RX_USING_GPIO32
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_32"
+                config UART1_RX_USING_GPIO33
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_33"
+                config UART1_RX_USING_GPIO34
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "GPIO_34"
+                config UART1_RX_USING_GPIO35
+                    depends on BSP_USING_BL808
+                    bool "GPIO_35"                    
+                config UART1_RX_USING_GPIO36
+                    depends on BSP_USING_BL808
+                    bool "GPIO_36"           
+                config UART1_RX_USING_GPIO37
+                    depends on BSP_USING_BL808
+                    bool "GPIO_37"    
+                config UART1_RX_USING_GPIO38
+                    depends on BSP_USING_BL808
+                    bool "GPIO_38"    
+                config UART1_RX_USING_GPIO39
+                    depends on BSP_USING_BL808
+                    bool "GPIO_39"    
+                config UART1_RX_USING_GPIO44
+                    depends on BSP_USING_BL808
+                    bool "GPIO_44"    
+                config UART1_RX_USING_GPIO45
+                    depends on BSP_USING_BL808
+                    bool "GPIO_45"  
             endchoice
         endif
 
@@ -86,29 +471,181 @@ menu "General Drivers Configuration"
                     prompt "UART2 TX PIN"
                     default UART2_TX_USING_GPIO20
 
+                    config UART2_TX_USING_GPIO0
+                        bool "GPIO_0"
+                    config UART2_TX_USING_GPIO1
+                        bool "GPIO_1"
+                    config UART2_TX_USING_GPIO2
+                        bool "GPIO_2"
+                    config UART2_TX_USING_GPIO3
+                        bool "GPIO_3"
                     config UART2_TX_USING_GPIO4
                         bool "GPIO_4"
+                    config UART2_TX_USING_GPIO5
+                        bool "GPIO_5"
+                    config UART2_TX_USING_GPIO6
+                        bool "GPIO_6"
+                    config UART2_TX_USING_GPIO7
+                        bool "GPIO_7"
+                    config UART2_TX_USING_GPIO8
+                        bool "GPIO_8"
+                    config UART2_TX_USING_GPIO9
+                        bool "GPIO_9"
+                    config UART2_TX_USING_GPIO10
+                        bool "GPIO_10"
+                    config UART2_TX_USING_GPIO11
+                        bool "GPIO_11"
+                    config UART2_TX_USING_GPIO12
+                        bool "GPIO_12"
+                    config UART2_TX_USING_GPIO13
+                        bool "GPIO_13"
+                    config UART2_TX_USING_GPIO14
+                        bool "GPIO_14"
+                    config UART2_TX_USING_GPIO15
+                        bool "GPIO_15"
                     config UART2_TX_USING_GPIO16
                         bool "GPIO_16"
+                    config UART2_TX_USING_GPIO17
+                        bool "GPIO_17"
                     config UART2_TX_USING_GPIO18
                         bool "GPIO_18"
+                    config UART2_TX_USING_GPIO19
+                        bool "GPIO_19"
                     config UART2_TX_USING_GPIO20
                         bool "GPIO_20"
+                    config UART2_TX_USING_GPIO21
+                        bool "GPIO_21"
+                    config UART2_TX_USING_GPIO22
+                        bool "GPIO_22"
+                    config UART2_TX_USING_GPIO23
+                        bool "GPIO_23"
+                    config UART2_TX_USING_GPIO24
+                        bool "GPIO_24"
+                    config UART2_TX_USING_GPIO25
+                        bool "GPIO_25"
+                    config UART2_TX_USING_GPIO26
+                        bool "GPIO_26"
+                    config UART2_TX_USING_GPIO27
+                        bool "GPIO_27"
+                    config UART2_TX_USING_GPIO28
+                        bool "GPIO_28"
+                    config UART2_TX_USING_GPIO29
+                        bool "GPIO_29"
+                    config UART2_TX_USING_GPIO30
+                        bool "GPIO_30"
+                    config UART2_TX_USING_GPIO31
+                        bool "GPIO_31"
+                    config UART2_TX_USING_GPIO32
+                        bool "GPIO_32"
+                    config UART2_TX_USING_GPIO33
+                        bool "GPIO_33"
+                    config UART2_TX_USING_GPIO34
+                        bool "GPIO_34"
+                    config UART2_TX_USING_GPIO35
+                        bool "GPIO_35"
+                    config UART2_TX_USING_GPIO36
+                        bool "GPIO_36"
+                    config UART2_TX_USING_GPIO37
+                        bool "GPIO_37"
+                    config UART2_TX_USING_GPIO38
+                        bool "GPIO_38"
+                    config UART2_TX_USING_GPIO39
+                        bool "GPIO_39"
+                    config UART2_TX_USING_GPIO44
+                        bool "GPIO_44"
+                    config UART2_TX_USING_GPIO45
+                        bool "GPIO_45"
                 endchoice
                 choice
                     prompt "UART2 RX PIN"
                     default UART2_RX_USING_GPIO21
 
+                    config UART2_RX_USING_GPIO0
+                        bool "GPIO_0"
+                    config UART2_RX_USING_GPIO1
+                        bool "GPIO_1"
+                    config UART2_RX_USING_GPIO2
+                        bool "GPIO_2"
                     config UART2_RX_USING_GPIO3
                         bool "GPIO_3"
+                    config UART2_RX_USING_GPIO4
+                        bool "GPIO_4"
                     config UART2_RX_USING_GPIO5
                         bool "GPIO_5"
+                    config UART2_RX_USING_GPIO6
+                        bool "GPIO_6"
+                    config UART2_RX_USING_GPIO7
+                        bool "GPIO_7"
+                    config UART2_RX_USING_GPIO8
+                        bool "GPIO_8"
+                    config UART2_RX_USING_GPIO9
+                        bool "GPIO_9"
+                    config UART2_RX_USING_GPIO10
+                        bool "GPIO_10"
+                    config UART2_RX_USING_GPIO11
+                        bool "GPIO_11"
+                    config UART2_RX_USING_GPIO12
+                        bool "GPIO_12"
+                    config UART2_RX_USING_GPIO13
+                        bool "GPIO_13"
+                    config UART2_RX_USING_GPIO13
+                        bool "GPIO_13"
+                    config UART2_RX_USING_GPIO14
+                        bool "GPIO_14"
+                    config UART2_RX_USING_GPIO15
+                        bool "GPIO_15"
+                    config UART2_RX_USING_GPIO16
+                        bool "GPIO_16"
                     config UART2_RX_USING_GPIO17
                         bool "GPIO_17"
+                    config UART2_RX_USING_GPIO18
+                        bool "GPIO_18"
                     config UART2_RX_USING_GPIO19
                         bool "GPIO_19"
+                    config UART2_RX_USING_GPIO20
+                        bool "GPIO_20"
                     config UART2_RX_USING_GPIO21
                         bool "GPIO_21"
+                    config UART2_RX_USING_GPIO22
+                        bool "GPIO_22"
+                    config UART2_RX_USING_GPIO23
+                        bool "GPIO_23"
+                    config UART2_RX_USING_GPIO24
+                        bool "GPIO_24"
+                    config UART2_RX_USING_GPIO25
+                        bool "GPIO_25"
+                    config UART2_RX_USING_GPIO26
+                        bool "GPIO_26"
+                    config UART2_RX_USING_GPIO27
+                        bool "GPIO_27"
+                    config UART2_RX_USING_GPIO28
+                        bool "GPIO_28"
+                    config UART2_RX_USING_GPIO29
+                        bool "GPIO_29"
+                    config UART2_RX_USING_GPIO30
+                        bool "GPIO_30"
+                    config UART2_RX_USING_GPIO31
+                        bool "GPIO_31"
+                    config UART2_RX_USING_GPIO32
+                        bool "GPIO_32"
+                    config UART2_RX_USING_GPIO33
+                        bool "GPIO_33"
+                    config UART2_RX_USING_GPIO34
+                        bool "GPIO_34"
+                    config UART2_RX_USING_GPIO35
+                        bool "GPIO_35"
+                    config UART2_RX_USING_GPIO36
+                        bool "GPIO_36"
+                    config UART2_RX_USING_GPIO37
+                        bool "GPIO_37"
+                    config UART2_RX_USING_GPIO38
+                        bool "GPIO_38"
+                    config UART2_RX_USING_GPIO39
+                        bool "GPIO_39"
+                    config UART2_RX_USING_GPIO44
+                        bool "GPIO_44"
+                    config UART2_RX_USING_GPIO45
+                        bool "GPIO_45"
                 endchoice
             endif
         endif

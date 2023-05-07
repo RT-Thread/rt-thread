@@ -399,9 +399,6 @@ typedef enum {
 /*@} end of group Memory_Map_Section */
 
 /* BL808 peripherals base address */
-
-#ifndef RT_USING_SMART
-
 /* WLSYS */
 #define GLB_BASE         ((uint32_t)0x20000000)
 #define MIX_BASE         ((uint32_t)0x20001000)
@@ -503,12 +500,6 @@ typedef enum {
 #define HBN_RAM_BASE ((uint32_t)0x20010000)
 
 #define RF_BASE ((uint32_t)0x20001000)
-
-#else
-
-#include "bl808_ioremap.h"
-
-#endif
 
 typedef enum {
     BL_AHB_MASTER_CPU = 0x00,
