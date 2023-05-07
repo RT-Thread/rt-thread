@@ -199,7 +199,7 @@ emutls_get_address_array(uintptr_t index)
         else
         {
             free(array);
-            array = null;
+            array = NULL;
         }
         
         emutls_check_array_set_size(array, new_size);
