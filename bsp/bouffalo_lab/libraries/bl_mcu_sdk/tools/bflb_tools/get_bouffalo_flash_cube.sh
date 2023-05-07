@@ -2,8 +2,6 @@
 CHIPNAME=$1
 BIN_FILE=$2
 
-set -e
-
 SYSTEM=`uname -s`
 echo "system: $SYSTEM"
 
@@ -33,14 +31,32 @@ else
     echo "bouffalo_flash_cube not exist, try download... "
     echo "url:$DOWNLOAD_URL/$FILE_NAME"
 
-    # 连接超时30s 下载超时300s
-    curl -LjO --connect-timeout 30 -m 300 $DOWNLOAD_URL/$FILE_NAME
+    download_finish=0
+    for i in 1 2 3
+    do
+        timeout=$(expr $i \* 300)
+        for url in $URL_GITEE $URL_GITHUB 
+        do       
+            # 连接超时30s 下载超时300s
+            curl -C - -LjO --connect-timeout 30 -m $timeout $url/$FILE_NAME
+            if [ $? -ne 0 ];then
+                echo "download failed, try again..."
+            else
+                tar zxvf $FILE_NAME -C $TOOL_DIR
+                rm -rf $FILE_NAME
+                if [ $SYSTEM = "Darwin" ]; then
+                    chmod +x $TOOL_DIR/bouffalo_flash_cube/$TOOL_NAME
+                elif [ $SYSTEM = "Linux" ]; then
+                    chmod +x $TOOL_DIR/bouffalo_flash_cube/$TOOL_NAME
+                fi
 
-    tar zxvf $FILE_NAME -C $TOOL_DIR
-    rm -rf $FILE_NAME
-    if [ $SYSTEM = "Darwin" ]; then
-        chmod +x $TOOL_DIR/bouffalo_flash_cube/$TOOL_NAME
-    elif [ $SYSTEM = "Linux" ]; then
-        chmod +x $TOOL_DIR/bouffalo_flash_cube/$TOOL_NAME
-    fi
+                download_finish=1
+                break
+            fi
+        done
+
+        if [ $download_finish -ne 0 ]; then
+            break
+        fi
+    done
 fi

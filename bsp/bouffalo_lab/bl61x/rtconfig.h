@@ -36,7 +36,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -48,7 +47,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_S
@@ -73,6 +72,9 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+
+/* DFS: device virtual file system */
+
 
 /* Device Drivers */
 
@@ -227,15 +229,13 @@
 
 /* General Drivers Configuration */
 
-#define BSP_USING_GPIO
-
 /* General Purpose UARTs */
 
 #define BSP_USING_UART0
 #define UART0_TX_USING_GPIO21
 #define UART0_RX_USING_GPIO22
-#define BSP_USING_UART1
-#define UART1_TX_USING_GPIO16
-#define UART1_RX_USING_GPIO17
+
+/* General Purpose I2C */
+
 
 #endif

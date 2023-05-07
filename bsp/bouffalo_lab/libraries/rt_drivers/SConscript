@@ -20,7 +20,7 @@ if GetDepend('BSP_USING_RTC'):
 
 if GetDepend('BSP_USING_PWM'):
     src += ['drv_pwm.c']
-    src += ['src/pwm_led_sample.c']
+    src += ['sample/pwm_led_sample.c']
 
 if GetDepend('BSP_USING_WDT'):
     src += ['drv_wdt.c']
