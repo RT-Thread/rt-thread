@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -198,8 +198,11 @@ emutls_get_address_array(uintptr_t index)
         }
         else
         {
+            array_temp = (emutls_address_array *)calloc(new_size + 1, sizeof(void *));
+            emutls_check_array_set_size(array_temp, new_size);
+            memcpy(array_temp, array, (orig_size + 1) * sizeof(void *));
             free(array);
-            array = NULL;
+            array = array_temp;
         }
         emutls_check_array_set_size(array, new_size);
     }
