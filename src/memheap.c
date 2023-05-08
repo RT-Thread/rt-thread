@@ -312,7 +312,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 
 #ifdef RT_USING_MEMTRACE
             if (rt_thread_self())
-                rt_memcpy(header_ptr->owner_thread_name, rt_thread_self()->name, sizeof(header_ptr->owner_thread_name));
+                rt_memcpy(header_ptr->owner_thread_name, rt_thread_self()->parent.name, sizeof(header_ptr->owner_thread_name));
             else
                 rt_memcpy(header_ptr->owner_thread_name, "NONE", sizeof(header_ptr->owner_thread_name));
 #endif /* RT_USING_MEMTRACE */

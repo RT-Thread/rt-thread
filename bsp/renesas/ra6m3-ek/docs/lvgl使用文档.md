@@ -68,6 +68,10 @@
 
 ![](picture/lvgl/01.png)
 
+接着在 `RT-Thread online packages → peripheral libraries and drivers → TFT-LCD ILI9341 SPI screen driver software package` 路径下配置 `ILI9341` 屏幕参数
+
+![](picture/lvgl/ili9341.png)
+
 接下来退出菜单界面，输入 `pkgs --update` 命令手动联网获取 lvgl 的软件包到 `packages` 文件夹下
 
 ![](picture/lvgl/02.png)

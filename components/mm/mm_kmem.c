@@ -17,13 +17,13 @@
 #include "mm_private.h"
 #include <mmu.h>
 
-static void list_kernel_space(void)
+static void list_kmem(void)
 {
     rt_aspace_print_all(&rt_kernel_space);
 }
-MSH_CMD_EXPORT(list_kernel_space, List varea in kernel space);
+MSH_CMD_EXPORT(list_kmem, List varea in kernel virtual memory space);
 
-void rt_kmem_list_varea(void) __attribute__((alias("list_kernel_space")));
+void rt_kmem_list(void) __attribute__((alias("list_kmem")));
 
 static rt_ubase_t rt_pv_offset;
 

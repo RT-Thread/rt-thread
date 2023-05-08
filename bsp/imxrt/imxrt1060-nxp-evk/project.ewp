@@ -231,6 +231,7 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
+          <state>_DLIB_THREAD_SUPPORT</state>
           <state>CPU_MIMXRT1062DVL6A</state>
           <state>SKIP_SYSCLK_INIT</state>
           <state>EVK_MCIMXRM</state>
@@ -366,13 +367,11 @@
           <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\board\MCUX_Config</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\posix</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\core</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\class</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
@@ -381,23 +380,19 @@
           <state>$PROJ_DIR$\..\libraries\MIMXRT1060\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\xip</state>
-          <state>$PROJ_DIR$\..\..\..\components\utilities\libadt</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\board\ports</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\class</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\port</state>
           <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\..\components\net\netdev\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1122,18 +1117,12 @@
     </settings>
   </configuration>
   <group>
-    <name>ADT</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\utilities\libadt\avl.c</name>
-    </file>
-  </group>
-  <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\mnt.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\applications\mnt.c</name>
     </file>
   </group>
   <group>
@@ -1186,6 +1175,9 @@
   </group>
   <group>
     <name>CPU</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
@@ -1241,24 +1233,6 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\phy\phy.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\sdio\block_dev.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\sdio\gpt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\sdio\mmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\sdio\mmcsd_core.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\sdio\sd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\sdio\sdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
     </file>
   </group>
@@ -1280,19 +1254,7 @@
       <name>$PROJ_DIR$\..\libraries\drivers\drv_common.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\drivers\drv_eth.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\drivers\drv_ksz8081.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\drivers\drv_mdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\drivers\drv_sdio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\drivers\drv_sdram.c</name>
@@ -1397,7 +1359,7 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
@@ -1421,16 +1383,13 @@
       <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_usdhc.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_xbarb.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_enet.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers\generic_list.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers\fsl_common.c</name>
@@ -1450,123 +1409,6 @@
     <file>
       <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\iar\startup_MIMXRT1062.s</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\MIMXRT1060\MIMXRT1060\drivers\generic_list.c</name>
-    </file>
-  </group>
-  <group>
-    <name>lwIP</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\api_lib.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\api_msg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\err.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\netbuf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\netdb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\netifapi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\sockets.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\api\tcpip.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\apps\ping\ping.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\def.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\dns.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\inet_chksum.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\init.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ip.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\autoip.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\dhcp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\etharp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\icmp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\igmp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_addr.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_frag.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\memp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\netif.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\pbuf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\raw.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\stats.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\sys.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_in.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_out.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\timeouts.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\core\udp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\netif\ethernet.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\lwip-2.0.3\src\netif\lowpan6.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\port\ethernetif.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\lwip\port\sys_arch.c</name>
-    </file>
   </group>
   <group>
     <name>POSIX</name>
@@ -1574,19 +1416,19 @@
   <group>
     <name>rt_usbh</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\class\mass.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\core\hub.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\core\usbhost.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\core\usbhost_core.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\class\udisk.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\class\mass.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\core\usbhost_core.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbhost\core\driver.c</name>
@@ -1595,10 +1437,10 @@
   <group>
     <name>SAL</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\net\netdev\src\netdev.c</name>
     </file>
   </group>
   <group>

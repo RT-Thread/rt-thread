@@ -96,7 +96,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     RT_ASSERT(configuration != RT_NULL);
     rt_uint32_t spi_id = device->bus->parent.user_data;
     rt_uint8_t mode = configuration->mode & (RT_SPI_CPHA | RT_SPI_CPOL);
-    if (configuration->mode & RT_SPI_SLAVE) return RT_EINVAL;
+    if (configuration->mode & RT_SPI_SLAVE) return -RT_EINVAL;
     switch(spi_id)
     {
     case 0:

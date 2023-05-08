@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2019-05-20     tyustli      the first version
  */
 
-#include "touch.h"
+#include <rtdevice.h>
 #include <string.h>
 
 #define DBG_TAG  "touch"

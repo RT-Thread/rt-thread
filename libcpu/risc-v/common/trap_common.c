@@ -41,21 +41,26 @@ rt_weak void rt_hw_interrupt_init(void)
  * @param handler Break-in function requiring binding
  * @param param   NULL
  * @param name    NULL
- * @return NULL
+ * @return old handler
  */
 rt_weak rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
+    rt_isr_handler_t old_handler = RT_NULL;
     void *user_param = param;
     char *user_name = name;
+
     if(vector < ISR_NUMBER)
     {
+        old_handler = rv32irq_table[vector].handler;
         if (handler != RT_NULL)
         {
             rv32irq_table[vector].handler = (rt_isr_handler_t)handler;
             rv32irq_table[vector].param = param;
         }
     }
+
+    return old_handler;
 }
 
 /**
@@ -96,10 +101,12 @@ rt_weak void rt_show_stack_frame(void)
     rt_kprintf("a3      : 0x%08x\r\n", s_stack_frame->a3);
     rt_kprintf("a4      : 0x%08x\r\n", s_stack_frame->a4);
     rt_kprintf("a5      : 0x%08x\r\n", s_stack_frame->a5);
+#ifndef __riscv_32e
     rt_kprintf("a6      : 0x%08x\r\n", s_stack_frame->a6);
     rt_kprintf("a7      : 0x%08x\r\n", s_stack_frame->a7);
     rt_kprintf("t3      : 0x%08x\r\n", s_stack_frame->t3);
     rt_kprintf("t4      : 0x%08x\r\n", s_stack_frame->t4);
     rt_kprintf("t5      : 0x%08x\r\n", s_stack_frame->t5);
     rt_kprintf("t6      : 0x%08x\r\n", s_stack_frame->t6);
+#endif
 }

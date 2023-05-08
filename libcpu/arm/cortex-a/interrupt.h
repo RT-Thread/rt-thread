@@ -19,6 +19,7 @@
 
 #define IRQ_MODE_TRIG_LEVEL         (0x00) /* Trigger: level triggered interrupt */
 #define IRQ_MODE_TRIG_EDGE          (0x01) /* Trigger: edge triggered interrupt */
+#define IRQ_MODE_MASK               (0x01)
 
 void rt_hw_vector_init(void);
 

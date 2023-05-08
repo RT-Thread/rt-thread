@@ -16,13 +16,9 @@
 
 #include "drv_gpio.h"
 
-#define SPI_FREQ_HZ         (10000000UL)
-
-/* gd32 spi dirver class */
-struct ifx_spi
+struct ifx_spi_handle
 {
-    char *bus_name;
-    struct rt_spi_bus *spi_bus;
+    const char *bus_name;
     cyhal_spi_t *spi_obj;
 
     uint16_t sck_pin;
@@ -31,6 +27,18 @@ struct ifx_spi
     uint32_t freq;
 };
 
-rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint16_t cs_gpio_pin);
+/* ifx spi dirver class */
+struct ifx_spi
+{
+    rt_uint32_t cs_pin;
+
+    struct ifx_spi_handle       *spi_handle_t;
+    struct rt_spi_configuration *rt_spi_cfg_t;
+    struct rt_spi_bus spi_bus;
+
+    struct rt_completion cpt;
+};
+
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin);
 
 #endif

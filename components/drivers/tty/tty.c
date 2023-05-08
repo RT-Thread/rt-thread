@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -27,7 +27,7 @@
 #endif /* RT_TTY_DEBUG */
 #include <rtdbg.h>
 
-struct termios tty_std_termios = {  /* for the benefit of tty drivers  */
+const struct termios tty_std_termios = {  /* for the benefit of tty drivers  */
     .c_iflag = IMAXBEL | IUCLC | INLCR | ICRNL | IGNPAR,
     .c_oflag = OPOST,
     .c_cflag = B38400 | CS8 | CREAD | HUPCL,
@@ -210,7 +210,7 @@ int tty_check_change(struct tty_struct *tty)
     return __tty_check_change(tty, SIGTTOU);
 }
 
-static int tty_open(struct dfs_fd *fd)
+static int tty_open(struct dfs_file *fd)
 {
     int ret = 0;
     int noctty = 0;
@@ -219,6 +219,7 @@ static int tty_open(struct dfs_fd *fd)
 
     tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
+
     ld = tty->ldisc;
     if (ld->ops->open)
     {
@@ -251,7 +252,7 @@ static int tty_open(struct dfs_fd *fd)
     return ret;
 }
 
-static int tty_close(struct dfs_fd *fd)
+static int tty_close(struct dfs_file *fd)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -304,7 +305,7 @@ static int tiocsctty(struct tty_struct *tty, int arg)
     return 0;
 }
 
-static int tty_ioctl(struct dfs_fd *fd, int cmd, void *args)
+static int tty_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -322,11 +323,13 @@ static int tty_ioctl(struct dfs_fd *fd, int cmd, void *args)
     {
         real_tty = tty;
     }
+
     switch (cmd)
     {
     case TIOCSCTTY:
         return tiocsctty(real_tty, 1);
     }
+
     ld = tty->ldisc;
     if (ld->ops->ioctl)
     {
@@ -335,7 +338,7 @@ static int tty_ioctl(struct dfs_fd *fd, int cmd, void *args)
     return ret;
 }
 
-static int tty_read(struct dfs_fd *fd, void *buf, size_t count)
+static int tty_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -343,15 +346,16 @@ static int tty_read(struct dfs_fd *fd, void *buf, size_t count)
 
     tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
+
     ld = tty->ldisc;
-    if (ld->ops->read)
+    if (ld && ld->ops->read)
     {
         ret = ld->ops->read(fd, buf, count);
     }
     return ret;
 }
 
-static int tty_write(struct dfs_fd *fd, const void *buf, size_t count)
+static int tty_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -359,15 +363,17 @@ static int tty_write(struct dfs_fd *fd, const void *buf, size_t count)
 
     tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
+
     ld = tty->ldisc;
-    if (ld->ops->write)
+    if (ld && ld->ops->write)
     {
         ret = ld->ops->write(fd, buf, count);
     }
+
     return ret;
 }
 
-static int tty_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+static int tty_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int ret = 0;
     struct tty_struct *tty = RT_NULL;
@@ -395,30 +401,40 @@ static const struct dfs_file_ops tty_fops =
     RT_NULL, /* getdents */
     tty_poll,
 };
-static const struct dfs_file_ops console_fops =
-{
-    tty_open,
-    tty_close,
-    tty_ioctl,
-    tty_read,
-    tty_write,
-    RT_NULL, /* flush */
-    RT_NULL, /* lseek */
-    RT_NULL, /* getdents */
-    tty_poll,
-};
 
-void console_init()
+const struct dfs_file_ops *tty_get_fops(void)
 {
-    n_tty_init();
+    return &tty_fops;
 }
 
-void tty_set_fops(struct dfs_file_ops *fops)
+int tty_init(struct tty_struct *tty, int type, int subtype, struct rt_device *iodev)
 {
-    *fops = tty_fops;
-}
+    if (tty)
+    {
+        struct tty_node *node = NULL;
 
-void console_set_fops(struct dfs_file_ops *fops)
-{
-    *fops = console_fops;
+        node = rt_calloc(1, sizeof(struct tty_node));
+        if (node)
+        {
+            tty->type = type;
+            tty->subtype = subtype;
+            tty->io_dev = iodev;
+
+            tty->head = node;
+            tty_initstack(tty->head);
+
+            tty->pgrp = -1;
+            tty->session = -1;
+            tty->foreground = RT_NULL;
+
+            rt_mutex_init(&tty->lock, "ttyLock", RT_IPC_FLAG_PRIO);
+            rt_wqueue_init(&tty->wait_queue);
+
+            tty_ldisc_init(tty);
+            tty->init_termios = tty_std_termios;
+            tty->init_flag = TTY_INIT_FLAG_REGED;
+        }
+    }
+
+    return 0;
 }

@@ -88,7 +88,7 @@ static rt_err_t raspi_rtc_control(rt_device_t dev, int cmd, void *args)
         raspi_set_timestamp(*(time_t *)args);
         break;
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     return RT_EOK;
 }

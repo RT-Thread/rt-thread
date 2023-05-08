@@ -222,7 +222,7 @@ static rt_err_t _hash_update(struct hwcrypto_hash *ctx, const rt_uint8_t *in, rt
     {
         if (rt_tick_get() - tickstart > 0xFFFF)
         {
-            result = RT_ETIMEOUT;
+            result = -RT_ETIMEOUT;
             goto _exit;
         }
     }
@@ -348,7 +348,7 @@ static rt_err_t _cryp_crypt(struct hwcrypto_symmetric *ctx,
     else
     {
         rt_kprintf("error cryp mode : %02x!\n", info->mode);
-        result = RT_ERROR;
+        result = -RT_ERROR;
         goto _exit;
     }
 
@@ -362,7 +362,7 @@ static rt_err_t _cryp_crypt(struct hwcrypto_symmetric *ctx,
     {
         if (rt_tick_get() - tickstart > 0xFFFF)
         {
-            result = RT_ETIMEOUT;
+            result = -RT_ETIMEOUT;
             goto _exit;
         }
     }

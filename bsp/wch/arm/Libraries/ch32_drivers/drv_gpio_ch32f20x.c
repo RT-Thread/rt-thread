@@ -249,7 +249,7 @@ static struct exti_line_irq *exti_line_irq_list_find(rt_int16_t pin)
 
 static rt_err_t exti_line_irq_list_bind(struct rt_pin_irq_hdr *irq_hdr)
 {
-    rt_err_t ret = RT_EFULL;
+    rt_err_t ret = -RT_EFULL;
     rt_base_t level;
     struct exti_line_irq *item;
     int index;
@@ -280,7 +280,7 @@ static rt_err_t exti_line_irq_list_bind(struct rt_pin_irq_hdr *irq_hdr)
 
 static rt_err_t exti_line_irq_list_unbind(rt_int16_t pin)
 {
-    rt_err_t ret = RT_EEMPTY;
+    rt_err_t ret = -RT_EEMPTY;
     rt_base_t level;
     struct exti_line_irq *item;
 
@@ -398,12 +398,12 @@ rt_err_t ch32f2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8
     find = exti_line_irq_list_find(pin);
 
     if (find == RT_NULL)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     item = pin_info_list_find(pin);
 
     if (item == RT_NULL)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (enabled == PIN_IRQ_ENABLE)
     {

@@ -111,7 +111,7 @@ static rt_err_t ch32f1_spi_configure(struct rt_spi_device *device, struct rt_spi
     }
     else
     {
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     if (configuration->max_hz >= spi_clock / 2)

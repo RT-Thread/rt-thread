@@ -39,7 +39,7 @@ enum
 
 /* Private functions ------------------------------------------------------------*/
 static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
-static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
+static rt_ssize_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
 static int nu_qspi_register_bus(struct nu_spi *qspi_bus, const char *name);
 
 /* Public functions -------------------------------------------------------------*/
@@ -101,7 +101,7 @@ static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
         u32SPIMode = SPI_MODE_3;
         break;
     default:
-        ret = RT_EIO;
+        ret = -RT_EIO;
         goto exit_nu_qspi_bus_configure;
     }
 
@@ -111,7 +111,7 @@ static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
             configuration->data_width == 24 ||
             configuration->data_width == 32))
     {
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_qspi_bus_configure;
     }
 
@@ -197,7 +197,7 @@ static int nu_qspi_mode_config(struct nu_spi *qspi_bus, rt_uint8_t *tx, rt_uint8
     return qspi_lines;
 }
 
-static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     struct nu_spi *qspi_bus;
     struct rt_qspi_configuration *qspi_configuration;
@@ -205,7 +205,7 @@ static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     rt_uint8_t u8last = 1;
     rt_uint8_t bytes_per_word;
     QSPI_T *qspi_base;
-    rt_uint32_t u32len = 0;
+    rt_ssize_t u32len = 0;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(message != RT_NULL);

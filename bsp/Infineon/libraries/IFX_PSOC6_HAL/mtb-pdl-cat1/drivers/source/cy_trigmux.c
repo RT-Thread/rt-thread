@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_trigmux.c
-* \version 1.40
+* \version 1.50
 *
 * \brief Trigger mux API.
 *
@@ -50,7 +50,7 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 14.3', 4, \
 
 #define CY_TRIGMUX_ONETRIG_MASK                 (PERI_V2_TR_CMD_OUT_SEL_Msk | PERI_V2_TR_CMD_GROUP_SEL_Msk | CY_PERI_TR_CTL_SEL_Msk)
 
-#if defined (CY_IP_MXSPERI)
+#if defined (CY_IP_MXSPERI) || (CY_IP_MXPERI_VERSION >= 3)
 #define CY_TRIGMUX_ONETRIG_GR_START                0x10UL /* trigger 1-1 group [16-31] */
 #define CY_TRIGMUX_IS_ONETRIG_VALID(oneTrg)     ((0UL == ((oneTrg) & (uint32_t)~CY_TRIGMUX_ONETRIG_MASK)) && \
                                                  (0UL != ((oneTrg) & PERI_V2_TR_CMD_OUT_SEL_Msk)) && \

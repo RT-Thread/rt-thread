@@ -124,7 +124,7 @@ static rt_err_t gd32_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
     }
     break;
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;

@@ -74,7 +74,7 @@ static rt_ssize_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct 
     struct hpm_i2c *i2c_info = (struct hpm_i2c *)bus;
 
     hpm_stat_t i2c_stat = status_success;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     rt_uint32_t i;
 
     for (i = 0; i < num; i++)

@@ -15,7 +15,7 @@
 
 APM32F051R8 EVAL BOARD，采用标准JTAG/SWD调试接口，引出了全部的IO。开发板外观如下图所示：
 
-![image-20230114161253327](../../../../../abc/rt-thread/bsp/apm32/apm32f051r8-evalboard/figures/APM32F051R8-EVAL.png)
+![APM32F051R8-EVAL](figures/APM32F051R8-EVAL.png)
 
 - 有关开发板和芯片的详情可至极海官网查阅。[官网开发板链接 ](https://www.geehy.com/support/apm32?id=192)
 

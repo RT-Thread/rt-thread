@@ -73,6 +73,7 @@
 
 #define MMU_MAP_K_DEVICE        (PTE_G | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_K_RWCB          (PTE_G | PTE_X | PTE_W | PTE_R | PTE_V)
+#define MMU_MAP_K_RW            (PTE_G | PTE_X | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_U_RWCB          (PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_U_RWCB_XN       (PTE_U | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_U_RW            (PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)

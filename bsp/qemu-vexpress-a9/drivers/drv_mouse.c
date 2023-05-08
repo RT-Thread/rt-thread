@@ -278,14 +278,14 @@ int rt_hw_mouse_init(void)
     if(((id >> 12) & 0xff) != 0x41 || (id & 0xfff) != 0x050)
     {
         LOG_E("read id fail id:0x%08x", id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     pdat = rt_malloc(sizeof(struct mouse_pl050_pdata_t));
     if(!pdat)
     {
         LOG_E("malloc memory failed");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_memset(pdat, 0, sizeof(struct mouse_pl050_pdata_t));
 

@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -25,9 +25,9 @@
 *******************************************************************************/
 
 /**
-* \addtogroup group_hal_impl CAT1 (PSoC™ 6) Implementation Specific
+* \addtogroup group_hal_impl CAT1 Implementation Specific
 * \{
-* This section provides details about the CAT1 (PSoC™ 6) implementation of the Cypress HAL.
+* This section provides details about the CAT1 implementation of the Cypress HAL.
 * All information within this section is platform specific and is provided for reference.
 * Portable application code should depend only on the APIs and types which are documented
 * in the @ref group_hal section.
@@ -88,9 +88,6 @@
 #pragma once
 
 #include "cy_pdl.h"
-#if defined(COMPONENT_CAT1C)
-#include "cy_mcwdt_b.h"
-#endif /* defined(COMPONENT_CAT1C) */
 #include "cyhal_general_types.h"
 #include "cyhal_hw_resources.h"
 #include "cyhal_pin_package.h"
@@ -113,11 +110,11 @@ extern "C" {
 /** Priority that is applied by default to all drivers when initialized. Priorities can be
  * overridden on each driver as part of enabling events.
  */
-#if (defined(COMPONENT_CAT1C) && (CORE == CM0P))
+#if (CORE == CM0P)
 #define CYHAL_ISR_PRIORITY_DEFAULT  (3)
-#else  // (defined(COMPONENT_CAT1C) && (CORE == CM0P))
+#else  // (CORE == CM0P)
 #define CYHAL_ISR_PRIORITY_DEFAULT  (7)
-#endif // (defined(COMPONENT_CAT1C) && (CORE == CM0P))
+#endif // (CORE == CM0P)
 #endif
 
 /**
@@ -143,6 +140,10 @@ extern "C" {
 #define CYHAL_TRNG_IMPL_HEADER          "cyhal_trng_impl.h"     //!< Implementation specific header for TRNG
 #endif
 
+#if defined(CYHAL_DRIVER_AVAILABLE_IPC)
+#define CYHAL_IPC_IMPL_HEADER          "cyhal_ipc_impl.h"       //!< Implementation specific header for IPC
+#endif
+
 //TODO REMOVE this once PDL provides the missing items
 #if defined(COMPONENT_CAT1B)
 #include "cyhal_missing_pdl.h"
@@ -160,6 +161,24 @@ typedef struct {
 } cyhal_event_callback_data_t;
 
 /**
+  * @brief Store information about buffer
+  *
+  * Application code should not rely on the specific contents of this struct.
+  * They are considered an implementation detail which is subject to change
+  * between platforms and/or HAL releases.
+  */
+typedef struct {
+    union
+    {
+        void     *v;
+        uint8_t  *u8;
+        uint16_t *u16;
+        uint32_t *u32;
+    } addr;
+    uint32_t size;
+} _cyhal_buffer_info_t;
+
+/**
  * @brief Shared data between timer/counter and PWM
  *
  * Application code should not rely on the specific content of this struct.
@@ -169,12 +188,15 @@ typedef struct {
 typedef struct {
 #ifdef CY_IP_MXTCPWM
     bool                                owned_by_configurator;
+    bool                                presleep_state;
     TCPWM_Type*                         base;
     cyhal_resource_inst_t               resource;
     cyhal_clock_t                       clock;
     bool                                dedicated_clock;
     uint32_t                            clock_hz;
     cyhal_event_callback_data_t         callback_data;
+    /* Bits to clear from the interrupt mask during the next ISR */
+    uint32_t                            clear_intr_mask;
 #if defined(CY_IP_MXPERI_TR) || defined(CY_IP_MXSPERI)
     cyhal_source_t                      inputs[5];
 #endif
@@ -192,32 +214,47 @@ typedef struct {
   * between platforms and/or HAL releases.
   */
 typedef struct {
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M7CPUSS_DMA) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXDW)
+#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M7CPUSS_DMA) || defined(CY_IP_MXAHBDMAC) || defined(CY_IP_MXDW) || defined(CY_IP_MXSAXIDMAC)
     cyhal_resource_inst_t               resource;
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    CY_ALIGN(__SCB_DCACHE_LINE_SIZE)
+    #endif
     union
     {
 #if defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M7CPUSS_DMA) || defined(CY_IP_MXDW)
         cy_stc_dma_channel_config_t     dw;
 #endif
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_MXSAXIDMAC)
+        cy_stc_axidmac_channel_config_t dmac;
+#elif defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
         cy_stc_dmac_channel_config_t    dmac;
 #endif
     } channel_config;
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    CY_ALIGN(__SCB_DCACHE_LINE_SIZE)
+    #endif
     union
     {
 #if defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M7CPUSS_DMA) || defined(CY_IP_MXDW)
         cy_stc_dma_descriptor_config_t  dw;
 #endif
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_MXSAXIDMAC)
+        cy_stc_axidmac_descriptor_config_t dmac;
+#elif defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
         cy_stc_dmac_descriptor_config_t dmac;
 #endif
     } descriptor_config;
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    CY_ALIGN(__SCB_DCACHE_LINE_SIZE)
+    #endif
     union
     {
 #if defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M7CPUSS_DMA) || defined(CY_IP_MXDW)
         cy_stc_dma_descriptor_t         dw;
 #endif
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_MXSAXIDMAC)
+        cy_stc_axidmac_descriptor_t     dmac;
+#elif defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
         cy_stc_dmac_descriptor_t        dmac;
 #endif
     } descriptor;
@@ -251,7 +288,9 @@ typedef struct
 #if defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M7CPUSS_DMA) || defined(CY_IP_MXDW)
             cy_stc_dma_channel_config_t const*      dw_channel_config;
 #endif
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_MXSAXIDMAC)
+            cy_stc_axidmac_channel_config_t const*  dmac_channel_config;
+#elif defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
             cy_stc_dmac_channel_config_t const*     dmac_channel_config;
 #endif
         };
@@ -260,7 +299,9 @@ typedef struct
 #if defined(CY_IP_M4CPUSS_DMA) || defined(CY_IP_M7CPUSS_DMA) || defined(CY_IP_MXDW)
             cy_stc_dma_descriptor_config_t const*   dw_descriptor_config;
 #endif
-#if defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
+#if defined(CY_IP_MXSAXIDMAC)
+            cy_stc_axidmac_descriptor_config_t const*  dmac_descriptor_config;
+#elif defined(CY_IP_M4CPUSS_DMAC) || defined(CY_IP_M7CPUSS_DMAC) || defined(CY_IP_MXAHBDMAC)
             cy_stc_dmac_descriptor_config_t const*  dmac_descriptor_config;
 #endif
         };
@@ -398,6 +439,20 @@ typedef struct
 
 struct _cyhal_adc_channel_s;
 
+/* Maximum number of channels across all ADC instances. For CAT1A this is provided by the PDL, for CAT1C we have to compute this */
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    #if (((CY_IP_MXS40EPASS_ESAR_INSTANCES < 2) || (PASS_SAR_SLICE_NR0_SAR_SAR_CHAN_NR > PASS_SAR_SLICE_NR1_SAR_SAR_CHAN_NR)) \
+      && ((CY_IP_MXS40EPASS_ESAR_INSTANCES < 3) || (PASS_SAR_SLICE_NR0_SAR_SAR_CHAN_NR > PASS_SAR_SLICE_NR2_SAR_SAR_CHAN_NR)))
+        #define CY_SAR_MAX_NUM_CHANNELS (PASS_SAR_SLICE_NR0_SAR_SAR_CHAN_NR)
+    #elif ((CY_IP_MXS40EPASS_ESAR_INSTANCES < 2) /* If we got to this point, we know neither 0 isn't the max */ \
+      && (CY_IP_MXS40EPASS_ESAR_INSTANCES < 3 || (PASS_SAR_SLICE_NR1_SAR_SAR_CHAN_NR > PASS_SAR_SLICE_NR2_SAR_SAR_CHAN_NR)))
+        #define CY_SAR_MAX_NUM_CHANNELS (PASS_SAR_SLICE_NR1_SAR_SAR_CHAN_NR)
+    #elif (CY_IP_MXS40EPASS_ESAR_INSTANCES < 4) /* If we got to this point, we know neither 0 nor 1 is the max */
+        #define CY_SAR_MAX_NUM_CHANNELS (PASS_SAR_SLICE_NR2_SAR_SAR_CHAN_NR)
+    #else
+        #error "Unhandled ADC instance count"
+    #endif
+#endif
 /**
   * @brief ADC object
   *
@@ -406,10 +461,16 @@ struct _cyhal_adc_channel_s;
   * between platforms and/or HAL releases.
   */
 typedef struct {
-#if defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40ADCMIC_INSTANCES)
+#if defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40EPASS_ESAR) || defined(CY_IP_MXS40ADCMIC_INSTANCES)
     bool                                owned_by_configurator;
+#if defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40EPASS_ESAR)
 #if defined(CY_IP_MXS40PASS_SAR)
     SAR_Type*                           base;
+#else
+    PASS_SAR_Type*                      base;
+    uint16_t                            average_count; /* This is set per channel on this hardware */
+    bool                                average_is_accumulate;
+#endif
     struct _cyhal_adc_channel_s*        channel_config[CY_SAR_MAX_NUM_CHANNELS];
 #elif defined(CY_IP_MXS40ADCMIC_INSTANCES)
     MXS40ADCMIC_Type*                   base;
@@ -418,13 +479,16 @@ typedef struct {
     /* We implement multi-channel sequencing in firmware; there's no fixed channel count specified
      * in hardware. So size the array based on the number of input pins that are connected */
     struct _cyhal_adc_channel_s*        channel_config[sizeof(cyhal_pin_map_adcmic_gpio_adc_in) / sizeof(cyhal_pin_map_adcmic_gpio_adc_in[0])];
+    cy_stc_adcmic_context_t             pdl_context;
 #endif
     cyhal_resource_inst_t               resource;
     cyhal_clock_t                       clock;
     bool                                dedicated_clock;
     /* Has at least one conversion completed since the last configuration change */
     volatile bool                       conversion_complete;
+#if defined(CY_IP_MXS40PASS_SAR)
     bool                                stop_after_scan;
+#endif
     uint8_t                             user_enabled_events;
     cyhal_event_callback_data_t         callback_data;
     /* Always updated to contain the location where the next result should be stored */
@@ -432,17 +496,21 @@ typedef struct {
     bool                                async_transfer_in_uv; /* Default is counts */
     /* Only decremented after all elements from a scan have been copied into async_buff */
     size_t                              async_scans_remaining;
-#if defined(CY_IP_MXS40PASS_SAR)
+#if defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40EPASS_ESAR)
     /* ADCMIC is always continuously scanning and only supports SW-based async transfers */
     bool                                continuous_scanning;
     cyhal_async_mode_t                  async_mode;
     cyhal_dma_t                         dma;
     cyhal_source_t                      source; /* SAR-only; ADCMIC has no useful triggers in DC mode */
     int32_t                             *async_buff_orig;
+#if defined(CY_IP_MXS40EPASS_ESAR)
+    bool                                vbg_chan_inited;
+    uint16_t                            vbg_last_value;
+#endif /* defined(CY_IP_MXS40EPASS_ESAR) */
 #endif
 #else
     void *empty;
-#endif /* defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40ADCMIC_INSTANCES) */
+#endif /* defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40EPASS_ESAR) || defined(CY_IP_MXS40ADCMIC_INSTANCES) */
 } cyhal_adc_t;
 
 /**
@@ -459,6 +527,8 @@ typedef struct
     const cyhal_resource_inst_t*        resource;
 #if defined(CY_IP_MXS40PASS_SAR)
     cy_stc_sar_config_t const*          config;
+#elif defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    cy_stc_sar2_config_t const*          config;
 #elif defined(CY_IP_MXS40ADCMIC_INSTANCES)
     cy_stc_adcmic_config_t const*       config;
 #endif
@@ -482,16 +552,21 @@ typedef struct
   * between platforms and/or HAL releases.
   */
 typedef struct _cyhal_adc_channel_s { /* Struct given an explicit name to make the forward declaration above work */
-#if defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40ADCMIC_INSTANCES)
+#if defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40EPASS_ESAR) || defined(CY_IP_MXS40ADCMIC_INSTANCES)
     cyhal_adc_t*                        adc;
     cyhal_gpio_t                        vplus;
     uint8_t                             channel_idx;
 #if defined(CY_IP_MXS40ADCMIC_INSTANCES)
+    /* ADCMIC only supports single-ended channels at a fixed sample rate */
     cy_en_adcmic_dc_channel_t           channel_sel;
     bool                                enabled;
-#elif defined(CY_IP_MXS40PASS_SAR)
-    /* ADCMIC only supports single-ended channels at a fixed sample rate */
+#elif defined(CY_IP_MXS40PASS_SAR) || defined(CY_IP_MXS40EPASS_ESAR)
+#if defined(CY_IP_MXS40PASS_SAR)
     cyhal_gpio_t                        vminus;
+#elif defined(CY_IP_MXS40EPASS_ESAR_INSTANCES)
+    bool                                avg_enabled;
+#endif
+    /* EPASS only supports single-ended channels */
     uint32_t                            minimum_acquisition_ns;
 #endif
 #else
@@ -667,7 +742,7 @@ typedef struct {
   * between platforms and/or HAL releases.
   */
 typedef struct {
-#ifdef CY_IP_MXSCB
+#if defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB)
     CySCB_Type*                         base;
     cyhal_resource_inst_t               resource;
     cyhal_gpio_t                        pin_sda;
@@ -678,8 +753,13 @@ typedef struct {
     cy_stc_scb_i2c_master_xfer_config_t rx_config;
     cy_stc_scb_i2c_master_xfer_config_t tx_config;
     uint32_t                            irq_cause;
+    uint8_t                             addr_irq_cause;
     uint16_t                            pending;
+    bool                                op_in_callback;
+    _cyhal_buffer_info_t                rx_slave_buff;
+    _cyhal_buffer_info_t                tx_slave_buff;
     cyhal_event_callback_data_t         callback_data;
+    cyhal_event_callback_data_t         addr_callback_data;
     bool                                dc_configured;
 #else
     void *empty;
@@ -695,13 +775,13 @@ typedef struct {
   * and/or HAL releases.
   */
 typedef struct {
-#if defined(CY_IP_MXSCB)
+#if defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB)
     const cyhal_resource_inst_t*            resource;
     const cy_stc_scb_i2c_config_t*          config;
     const cyhal_clock_t*                    clock;
 #else
     void *empty;
-#endif /* defined(CY_IP_MXSCB) */
+#endif /* defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB) */
 } cyhal_i2c_configurator_t;
 
 /**
@@ -712,7 +792,7 @@ typedef struct {
   * between platforms and/or HAL releases.
   */
 typedef struct {
-#ifdef CY_IP_MXSCB
+#if defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB)
     CySCB_Type*                         base;
     cyhal_resource_inst_t               resource;
     cyhal_gpio_t                        pin_sda;
@@ -738,13 +818,13 @@ typedef struct {
   * and/or HAL releases.
   */
 typedef struct {
-#if defined(CY_IP_MXSCB)
+#if defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB)
     const cyhal_resource_inst_t*            resource;
     const cy_stc_scb_ezi2c_config_t*        config;
     const cyhal_clock_t*                    clock;
 #else
     void *empty;
-#endif /* defined(CY_IP_MXSCB) */
+#endif /* defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB) */
 } cyhal_ezi2c_configurator_t;
 
 /**
@@ -765,6 +845,25 @@ typedef _cyhal_audioss_t cyhal_i2s_t;
   * and/or HAL releases.
   */
 typedef _cyhal_audioss_configurator_t cyhal_i2s_configurator_t;
+
+/** @brief IPC object */
+typedef struct cyhal_ipc_s {
+#if defined(IPC) || defined(CY_IP_MXIPC)
+    bool                                sema_preemptable;
+    uint32_t                            sema_number;
+    struct cyhal_ipc_queue_s*           queue_obj;
+    uint16_t                            user_events;
+    /* events, that were already processed in callback */
+    uint32_t                            processed_events;
+    cyhal_event_callback_data_t         callback_data;
+    struct cyhal_ipc_s*                 prev_object;
+#if defined(CY_RTOS_AWARE) || defined(COMPONENT_RTOS_AWARE)
+    void*                               rtos_sema;
+#endif /* defined(CY_RTOS_AWARE) || defined(COMPONENT_RTOS_AWARE) */
+#else
+    void *empty;
+#endif
+} cyhal_ipc_t;
 
 /**
   * @brief KeyScan object
@@ -828,7 +927,7 @@ typedef struct {
     cyhal_resource_inst_t               resource;
     cyhal_event_callback_data_t         callback_data;
     bool                                clear_int_mask;
-    bool                                isr_call_user_cb;
+    uint8_t                             isr_instruction;
 } cyhal_lptimer_t;
 
 /**
@@ -892,7 +991,7 @@ typedef struct {
     const cyhal_clock_t*                    clock;
 #else
     void *empty;
-#endif /* defined(CY_IP_MXSCB) */
+#endif
 #else
     void *empty;
 #endif
@@ -1236,13 +1335,6 @@ typedef struct {
     bool                                dc_configured;
     bool                                clock_owned;
 #elif defined(CYHAL_UDB_SDIO)
-    cyhal_dma_t                         dma0Ch0;
-    cyhal_dma_t                         dma0Ch1;
-    cyhal_dma_t                         dma1Ch1;
-    cyhal_dma_t                         dma1Ch3;
-    stc_sdio_irq_cb_t*                  pfuCb;
-
-    cyhal_clock_t                       clock;
     cyhal_resource_inst_t               resource;
     cyhal_gpio_t                        pin_clk;
     cyhal_gpio_t                        pin_cmd;
@@ -1301,7 +1393,7 @@ typedef struct {
   * between platforms and/or HAL releases.
   */
 typedef struct {
-#if defined(CY_IP_MXSCB)
+#if defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB)
     CySCB_Type*                         base;
     cyhal_resource_inst_t               resource;
     cyhal_gpio_t                        pin_miso;
@@ -1321,6 +1413,7 @@ typedef struct {
     cy_stc_scb_spi_context_t            context;
     uint32_t                            irq_cause;
     uint16_t volatile                   pending;
+    bool                                op_in_callback;
     uint8_t                             write_fill;
     void                                *rx_buffer;
     uint32_t                            rx_buffer_size;
@@ -1343,7 +1436,7 @@ typedef struct {
   * and/or HAL releases.
   */
 typedef struct {
-#if defined(CY_IP_MXSCB)
+#if defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB)
     const cyhal_resource_inst_t*            resource;
     const cy_stc_scb_spi_config_t*          config;
     const cyhal_clock_t*                    clock;
@@ -1356,7 +1449,7 @@ typedef struct {
     } gpios;
 #else
     void *empty;
-#endif /* defined(CY_IP_MXSCB) */
+#endif /* defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB) */
 } cyhal_spi_configurator_t;
 
 /**
@@ -1421,7 +1514,7 @@ typedef struct
   * between platforms and/or HAL releases.
   */
 typedef struct {
-#ifdef CY_IP_MXSCB
+#if defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB)
     CySCB_Type*                         base;
     cyhal_resource_inst_t               resource;
     cyhal_gpio_t                        pin_rx;
@@ -1453,7 +1546,7 @@ typedef struct {
   * and/or HAL releases.
   */
 typedef struct {
-#ifdef CY_IP_MXSCB
+#if defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB)
     const cyhal_resource_inst_t*            resource;
     const cy_stc_scb_uart_config_t*         config;
     const cyhal_clock_t*                    clock;
@@ -1465,7 +1558,7 @@ typedef struct {
     } gpios;
 #else
     void *empty;
-#endif /* CY_IP_MXSCB */
+#endif /* defined(CY_IP_MXSCB) || defined(CY_IP_MXS22SCB) */
 } cyhal_uart_configurator_t;
 
 /**

@@ -11,13 +11,12 @@
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pArmCC>6160000::V6.16::ARMCLANG</pArmCC>
-      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>CY8C624ALQI-S2D42:Cortex-M4</Device>
           <Vendor>Infineon</Vendor>
-          <PackID>Infineon.PSoC6_DFP.1.3.0</PackID>
+          <PackID>Infineon.PSoC6_DFP.1.4.0</PackID>
           <PackURL>https://github.com/Infineon/cmsis-packs/raw/master/PSoC6_DFP/</PackURL>
           <Cpu>IRAM(0x08000000,0x00100000) IROM(0x10000000,0x00200000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -340,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>COMPONENT_CAT1A, RT_USING_LIBC, RT_USING_ARMLIBC, CY_USING_HAL, __CLK_TCK=RT_TICK_PER_SECOND, COMPONENT_BSP_DESIGN_MODUS, __STDC_LIMIT_MACROS, __RTTHREAD__, COMPONENT_CAT1, CY8C624ALQI_S2D42</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\finsh;..\libraries\HAL_Drivers\config;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource;..\..\..\components\utilities\libadt;..\..\..\libcpu\arm\cortex-m4;..\libraries\HAL_Drivers;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;applications;..\..\..\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\..\..\components\libc\posix\io\poll;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;libs\TARGET_RTT-062S2;..\..\..\libcpu\arm\common;..\libraries\IFX_PSOC6_HAL\retarget-io;board\ports;board;..\..\..\components\libc\posix\io\stdio;.;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\capsense;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\include</IncludePath>
+              <IncludePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource;..\..\..\components\libc\posix\io\poll;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;applications;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\libraries\HAL_Drivers\config;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;..\..\..\include;packages\ili9341-latest;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\..\..\components\libc\compilers\common\include;board;..\..\..\components\libc\compilers\common\extension;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\IFX_PSOC6_HAL\capsense;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\retarget-io;libs\TARGET_RTT-062S2;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\..\..\components\finsh;..\..\..\libcpu\arm\cortex-m4;.;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\..\..\components\drivers\include;board\ports;..\libraries\HAL_Drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,16 +380,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>ADT</GroupName>
-          <Files>
-            <File>
-              <FileName>avl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\utilities\libadt\avl.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -450,9 +439,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
             <File>
               <FileName>div0.c</FileName>
@@ -635,9 +624,9 @@
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
             <File>
               <FileName>thread.c</FileName>
@@ -655,6 +644,11 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
+            </File>
+            <File>
               <FileName>cy_sysint.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</FilePath>
@@ -670,9 +664,9 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\retarget-io\cy_retarget_io.c</FilePath>
             </File>
             <File>
-              <FileName>psoc6_01_cm0p_sleep.c</FileName>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
             </File>
             <File>
               <FileName>cy_scb_i2c.c</FileName>
@@ -735,6 +729,11 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils.c</FilePath>
             </File>
             <File>
+              <FileName>psoc6_01_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
+            </File>
+            <File>
               <FileName>cy_ipc_drv.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_drv.c</FilePath>
@@ -755,11 +754,6 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_pipe.c</FilePath>
             </File>
             <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
-            </File>
-            <File>
               <FileName>cyhal_lptimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_lptimer.c</FilePath>
@@ -778,11 +772,6 @@
               <FileName>cy_sysclk.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysclk.c</FilePath>
-            </File>
-            <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
             </File>
             <File>
               <FileName>cyhal_syspm.c</FileName>
@@ -835,49 +824,14 @@
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cycfg_pins.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_psoc6_02_cm4.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_02_cm4.S</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg_qspi_memslot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
-            </File>
-            <File>
               <FileName>cycfg_clocks.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</FilePath>
             </File>
             <File>
-              <FileName>cycfg_system.c</FileName>
+              <FileName>system_psoc6_cm4.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg_routing.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</FilePath>
-            </File>
-            <File>
-              <FileName>cybsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\cybsp.c</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg_capsense.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_capsense.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
             </File>
             <File>
               <FileName>cycfg_connectivity_bt.c</FileName>
@@ -890,14 +844,49 @@
               <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_peripherals.c</FilePath>
             </File>
             <File>
-              <FileName>system_psoc6_cm4.c</FileName>
+              <FileName>cycfg_routing.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_capsense.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_capsense.c</FilePath>
             </File>
             <File>
               <FileName>cycfg_dmas.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_dmas.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_psoc6_02_cm4.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_02_cm4.S</FilePath>
+            </File>
+            <File>
+              <FileName>cybsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\cybsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_pins.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
             </File>
           </Files>
         </Group>

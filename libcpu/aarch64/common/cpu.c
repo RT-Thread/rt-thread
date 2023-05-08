@@ -132,7 +132,10 @@ static rt_uint64_t _read_be_number(void *start, int size)
 {
     rt_uint64_t buf = 0;
     for (; size > 0; size--)
-        buf = (buf << 32) | fdt32_to_cpu(*(uint32_t *)start++);
+    {
+        buf = (buf << 32) | fdt32_to_cpu(*(uint32_t *)start);
+        start = (uint32_t *)start + 1;
+    }
     return buf;
 }
 
@@ -347,6 +350,11 @@ rt_weak void rt_hw_secondary_cpu_idle_exec(void)
  * @addtogroup ARM CPU
  */
 /*@{*/
+
+const char *rt_hw_cpu_arch(void)
+{
+    return "aarch64";
+}
 
 /** shutdown CPU */
 rt_weak void rt_hw_cpu_shutdown()

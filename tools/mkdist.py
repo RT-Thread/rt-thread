@@ -22,9 +22,10 @@
 # 2017-10-04     Bernard      The first version
 
 import os
+import subprocess
 import shutil
-
 from shutil import ignore_patterns
+from SCons.Script import *
 
 def do_copy_file(src, dst):
     # check source file
@@ -188,7 +189,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
 
     dist_name = os.path.basename(BSP_ROOT)
     dist_dir  = os.path.join(BSP_ROOT, 'dist-strip', dist_name)
-    target_path = os.path.join(dist_dir, 'rt-thread')
+    rtt_dir_path = os.path.join(dist_dir, 'rt-thread')
 
     print('=> %s' % os.path.basename(BSP_ROOT))
     bsp_copy_files(BSP_ROOT, dist_dir)
@@ -266,34 +267,34 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
             dst = dst[1:]
 
         print('=> %s' % dst)
-        dst = os.path.join(target_path, dst)
+        dst = os.path.join(rtt_dir_path, dst)
         do_copy_file(src, dst)
 
     # copy tools directory
     print('=> tools')
-    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(target_path, 'tools'), ignore_patterns('*.pyc'))
-    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
-    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(target_path, 'README_zh.md'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(rtt_dir_path, 'tools'), ignore_patterns('*.pyc'))
+    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(rtt_dir_path, 'Kconfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(rtt_dir_path, 'AUTHORS'))
+    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(rtt_dir_path, 'COPYING'))
+    do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(rtt_dir_path, 'README.md'))
+    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(rtt_dir_path, 'README_zh.md'))
 
     print('=> %s' % os.path.join('components', 'libc', 'compilers'))
-    do_copy_folder(os.path.join(RTT_ROOT, 'components', 'libc', 'compilers'), os.path.join(target_path, 'components', 'libc', 'compilers'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'components', 'libc', 'compilers'), os.path.join(rtt_dir_path, 'components', 'libc', 'compilers'))
 
     if sources_include_sal:
         print('=> %s' % os.path.join('components', 'net', 'sal_socket'))
-        do_copy_folder(os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket'), os.path.join(target_path, 'components', 'net', 'sal_socket'))
+        do_copy_folder(os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket'), os.path.join(rtt_dir_path, 'components', 'net', 'sal_socket'))
 
     # copy all libcpu/ARCH directory
     import rtconfig
     print('=> %s' % (os.path.join('libcpu', rtconfig.ARCH, rtconfig.CPU)))
-    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, rtconfig.CPU), os.path.join(target_path, 'libcpu', rtconfig.ARCH, rtconfig.CPU))
+    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, rtconfig.CPU), os.path.join(rtt_dir_path, 'libcpu', rtconfig.ARCH, rtconfig.CPU))
     if os.path.exists(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common')):
         print('=> %s' % (os.path.join('libcpu', rtconfig.ARCH, 'common')))
-        do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common'), os.path.join(target_path, 'libcpu', rtconfig.ARCH, 'common'))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(target_path, 'libcpu', 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
+        do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common'), os.path.join(rtt_dir_path, 'libcpu', rtconfig.ARCH, 'common'))
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(rtt_dir_path, 'libcpu', 'Kconfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(rtt_dir_path, 'libcpu', 'SConscript'))
 
     print('Update configuration files...')
     # change RTT_ROOT in SConstruct
@@ -316,7 +317,7 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     else:
         dist_dir = project_path
 
-    target_path = os.path.join(dist_dir, 'rt-thread')
+    rtt_dir_path = os.path.join(dist_dir, 'rt-thread')
 
     # copy BSP files
     print('=> %s' % os.path.basename(BSP_ROOT))
@@ -330,35 +331,35 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
 
     # copy tools directory
     print('=> components')
-    do_copy_folder(os.path.join(RTT_ROOT, 'components'), os.path.join(target_path, 'components'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'components'), os.path.join(rtt_dir_path, 'components'))
 
     # skip documentation directory
     # skip examples
 
     # copy include directory
     print('=> include')
-    do_copy_folder(os.path.join(RTT_ROOT, 'include'), os.path.join(target_path, 'include'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'include'), os.path.join(rtt_dir_path, 'include'))
 
     # copy all libcpu/ARCH directory
     print('=> libcpu')
     import rtconfig
-    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH), os.path.join(target_path, 'libcpu', rtconfig.ARCH))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(target_path, 'libcpu', 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(target_path, 'libcpu', 'SConscript'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH), os.path.join(rtt_dir_path, 'libcpu', rtconfig.ARCH))
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(rtt_dir_path, 'libcpu', 'Kconfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(rtt_dir_path, 'libcpu', 'SConscript'))
 
     # copy src directory
     print('=> src')
-    do_copy_folder(os.path.join(RTT_ROOT, 'src'), os.path.join(target_path, 'src'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'src'), os.path.join(rtt_dir_path, 'src'))
 
     # copy tools directory
     print('=> tools')
-    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(target_path, 'tools'), ignore_patterns('*.pyc'))
+    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(rtt_dir_path, 'tools'), ignore_patterns('*.pyc'))
 
-    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(target_path, 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(target_path, 'AUTHORS'))
-    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(target_path, 'COPYING'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(target_path, 'README.md'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(target_path, 'README_zh.md'))
+    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(rtt_dir_path, 'Kconfig'))
+    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(rtt_dir_path, 'AUTHORS'))
+    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(rtt_dir_path, 'COPYING'))
+    do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(rtt_dir_path, 'README.md'))
+    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(rtt_dir_path, 'README_zh.md'))
 
     print('Update configuration files...')
     # change RTT_ROOT in SConstruct
@@ -373,5 +374,15 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     if project_path == None:
         zip_dist(dist_dir, project_name)
 
-    print('done!')
+    target_project_type = GetOption('target')
+    if target_project_type:
+        child = subprocess.Popen('scons --target={} --project-name={}'.format(target_project_type, project_name), cwd=dist_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = child.communicate()
+        if child.returncode == 0:
+            print(stdout)
+        else:
+            print(stderr)
+    else:
+        print('suggest to use command scons --dist [--target=xxx] [--project-name=xxx] [--project-path=xxx]')
 
+    print('dist project successfully!')

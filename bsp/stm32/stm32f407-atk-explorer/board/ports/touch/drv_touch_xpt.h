@@ -13,7 +13,6 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "touch.h"
 
 #ifdef BSP_USING_TOUCH_RES
 

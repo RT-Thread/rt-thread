@@ -1996,9 +1996,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -2041,10 +2038,10 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\drivers\drv_eth.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_eth.c</name>
+      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
   </group>
   <group>
@@ -2098,7 +2095,7 @@
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\thread.c</name>
@@ -2110,40 +2107,16 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\ssi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\pwm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\tiva_timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\aes.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\epi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\sysctl.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\udma.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\cpu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\crc.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\mpu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\hibernate.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\onewire.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\ssi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\des.c</name>
@@ -2152,61 +2125,85 @@
       <name>$PROJ_DIR$\libraries\driverlib\interrupt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\watchdog.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\eeprom.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\startup\startup_ewarm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\sysexc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\systick.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\fpu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\comp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\mpu.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\pwm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\fpu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\lcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\cpu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\qei.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\usb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\can.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\crc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\sw_crc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\emac.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\tiva_timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\sysctl.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\usb.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\qei.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\eeprom.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\onewire.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\startup\startup_ewarm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\aes.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\hibernate.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\systick.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\epi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\sysexc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\shamd5.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\emac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\watchdog.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\udma.c</name>
     </file>
   </group>
   <group>

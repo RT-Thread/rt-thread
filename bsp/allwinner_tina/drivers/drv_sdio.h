@@ -63,7 +63,7 @@ typedef struct tina_mmc *tina_mmc_t;
 #define MMC1    ((tina_mmc_t)MMC1_BASE_ADDR)
 
 
-#define BIT(x)              (1<<(x))
+#define BIT(x)              (1UL<<(x))
 /* Struct for Intrrrupt Information */
 #define SDXC_RespErr        BIT(1)  //0x2
 #define SDXC_CmdDone        BIT(2)  //0x4

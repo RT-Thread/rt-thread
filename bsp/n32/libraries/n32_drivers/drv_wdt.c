@@ -151,7 +151,7 @@ static rt_err_t n32_wdt_control(rt_watchdog_t *wdt, int cmd, void *args)
             break;
 
         default:
-            return RT_EINVAL;
+            return -RT_EINVAL;
     }
 
     return RT_EOK;

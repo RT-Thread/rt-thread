@@ -187,7 +187,7 @@ static rt_err_t zrec_files(struct zfile *zf)
 /* receive file */
 static rt_err_t zrec_file(rt_uint8_t *rxbuf, struct zfile *zf)
 {
-    rt_err_t res = - RT_ERROR;
+    rt_err_t res = -RT_ERROR;
     rt_uint16_t err_cnt = 0;
 
     do

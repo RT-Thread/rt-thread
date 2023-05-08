@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -26,7 +26,7 @@
 
 #include "cyhal_hwmgr.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_syspm.h"
 #include "cyhal_system.h"
 #include "cyhal_tcpwm_common.h"
@@ -38,10 +38,18 @@
 extern "C" {
 #endif
 
-#if defined(COMPONENT_CAT1B)
+#if defined(COMPONENT_CAT1B) || (COMPONENT_CAT1D)
 #define TCPWM_CLOCK(block, channel)     (PCLK_TCPWM##block##_CLOCK_COUNTER_EN##channel)
+#elif defined(COMPONENT_CAT5)
+/* Note: PCLK is not used on this device */
+#define TCPWM_CLOCK(block, channel)     (0)
 #else
 #define TCPWM_CLOCK(block, channel)     (PCLK_TCPWM##block##_CLOCKS##channel)
+#endif
+
+#if defined(COMPONENT_CAT5)
+/* Used to calculate which TCPWM_INTR_MASK_t to use when enabling interrupts */
+#define _GET_TCPWM_INTR_MASK(group, counter) (1 << (((group) * 2) + counter))
 #endif
 
 #if defined(CY_IP_MXTCPWM_INSTANCES)
@@ -185,6 +193,7 @@ const _cyhal_tcpwm_data_t _CYHAL_TCPWM_DATA[] =
 #endif
 };
 
+
 // There are some number of input trigger indices (starting at 0) that are
 // reserved for various purposes. Here we are dealing with inputs from the
 // trigmux which start after the reserved inputs so we must always offset the
@@ -235,11 +244,12 @@ const _cyhal_tcpwm_data_t _CYHAL_TCPWM_DATA[] =
 /** Callback array for TCPWM interrupts */
 static cyhal_tcpwm_t *_cyhal_tcpwm_data_structs[_CYHAL_TCPWM_CHANNELS];
 
+#if (CYHAL_DRIVER_AVAILABLE_SYSPM)
 static bool _cyhal_tcpwm_pm_has_enabled(void)
 {
     for (uint8_t i = 0; i < _CYHAL_TCPWM_CHANNELS; i++)
     {
-        if (_cyhal_tcpwm_data_structs[i])
+        if (NULL != _cyhal_tcpwm_data_structs[i])
         {
             return true;
         }
@@ -265,6 +275,42 @@ static bool _cyhal_tcpwm_pm_callback(cyhal_syspm_callback_state_t state, cyhal_s
             _cyhal_tcpwm_pm_transition_pending_value = false;
             break;
         }
+        case CYHAL_SYSPM_BEFORE_TRANSITION:
+        {
+            for (uint8_t i = 0; i < _CYHAL_TCPWM_INSTANCES; i++)
+            {
+                TCPWM_Type* base = _CYHAL_TCPWM_DATA[i].base;
+                for (uint8_t j = 0; j < _CYHAL_TCPWM_DATA[i].num_channels; j++)
+                {
+                    // Not using _CYHAL_TCPWM_GET_ARRAY_INDEX macro since we've already compressed the indexing (skipping empty groups),
+                    // and the macro would compress it again
+                    if (NULL != _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j])
+                    {
+                        #if defined(CY_IP_M0S8TCPWM) || (CY_IP_MXTCPWM_VERSION == 1)
+                        uint32_t mask = ((uint32_t)1u << j);
+                        if((((TCPWM_Type *)(base))->CTRL) & mask)
+                        {
+                            _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j]->presleep_state = true;
+                        }
+                        else
+                        {
+                            _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j]->presleep_state = false;
+                        }
+                        #else
+                        if(_FLD2BOOL(TCPWM_GRP_CNT_V2_CTRL_ENABLED, TCPWM_GRP_CNT_CTRL(base, TCPWM_GRP_CNT_GET_GRP(j), j)))
+                        {
+                            _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j]->presleep_state = true;
+                        }
+                        else
+                        {
+                            _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j]->presleep_state = false;
+                        }
+                        #endif
+                    }
+                }
+            }
+            break;
+        }
         case CYHAL_SYSPM_AFTER_TRANSITION:
         {
             for (uint8_t i = 0; i < _CYHAL_TCPWM_INSTANCES; i++)
@@ -277,13 +323,17 @@ static bool _cyhal_tcpwm_pm_callback(cyhal_syspm_callback_state_t state, cyhal_s
                 {
                     // Not using _CYHAL_TCPWM_GET_ARRAY_INDEX macro since we've already compressed the indexing (skipping empty groups),
                     // and the macro would compress it again
-                    if (_cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j])
+                    if (NULL != _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j])
                     {
-                        #if defined(CY_IP_M0S8TCPWM) || (CY_IP_MXTCPWM_VERSION == 1)
-                        enable_flag |= 1u << j;
-                        #else
-                        Cy_TCPWM_Enable_Single(base, j);
-                        #endif
+
+                        if(_cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j]->presleep_state)
+                        {
+                            #if defined(CY_IP_M0S8TCPWM) || (CY_IP_MXTCPWM_VERSION == 1)
+                            enable_flag |= 1u << j;
+                            #else
+                            Cy_TCPWM_Enable_Single(base, j);
+                            #endif
+                        }
                     }
                 }
                 #if defined(CY_IP_M0S8TCPWM) || (CY_IP_MXTCPWM_VERSION == 1)
@@ -306,7 +356,7 @@ static bool _cyhal_tcpwm_pm_callback(cyhal_syspm_callback_state_t state, cyhal_s
                     // Not using _CYHAL_TCPWM_GET_ARRAY_INDEX macro since we've already compressed the indexing (skipping empty groups),
                     // and the macro would compress it again
                     cyhal_tcpwm_t* obj = _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_DATA[i].channel_offset + j];
-                    if (obj && (CY_TCPWM_PWM_STATUS_COUNTER_RUNNING & Cy_TCPWM_PWM_GetStatus(obj->base, _CYHAL_TCPWM_CNT_NUMBER(obj->resource))))
+                    if ((NULL != obj) && (CY_TCPWM_PWM_STATUS_COUNTER_RUNNING & Cy_TCPWM_PWM_GetStatus(obj->base, _CYHAL_TCPWM_CNT_NUMBER(obj->resource))))
                     {
                         return false;
                     }
@@ -330,8 +380,16 @@ static cyhal_syspm_callback_data_t _cyhal_tcpwm_syspm_callback_data =
     .states = (cyhal_syspm_callback_state_t)(CYHAL_SYSPM_CB_CPU_DEEPSLEEP | CYHAL_SYSPM_CB_SYSTEM_HIBERNATE),
     .next = NULL,
     .args = NULL,
-    .ignore_modes = (cyhal_syspm_callback_mode_t)(CYHAL_SYSPM_BEFORE_TRANSITION | CYHAL_SYSPM_AFTER_DS_WFI_TRANSITION),
+    .ignore_modes = (cyhal_syspm_callback_mode_t)(CYHAL_SYSPM_AFTER_DS_WFI_TRANSITION),
 };
+
+#else   /* !(CYHAL_DRIVER_AVAILABLE_SYSPM) */
+/* If SysPm driver is not available redefine function for TCPWM to return a bad value */
+bool _cyhal_tcpwm_pm_transition_pending(void)
+{
+    return false;
+}
+#endif /* (CYHAL_DRIVER_AVAILABLE_SYSPM) */
 
 void _cyhal_tcpwm_init_data(cyhal_tcpwm_t *tcpwm)
 {
@@ -341,14 +399,21 @@ void _cyhal_tcpwm_init_data(cyhal_tcpwm_t *tcpwm)
         tcpwm->inputs[i] = CYHAL_TRIGGER_CPUSS_ZERO;
     }
 #endif
-
+    #if (CYHAL_DRIVER_AVAILABLE_SYSPM)
     if (!_cyhal_tcpwm_pm_has_enabled())
     {
         _cyhal_syspm_register_peripheral_callback(&_cyhal_tcpwm_syspm_callback_data);
     }
+    #endif
     _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_GET_ARRAY_INDEX(tcpwm->resource.block_num, tcpwm->resource.channel_num)] = tcpwm;
 }
 
+#if defined (COMPONENT_CAT5)
+static void _cyhal_tcpwm_irq_handler(UINT8 group_id, UINT8 counter_id)
+{
+    uint8_t block = group_id;
+    uint8_t channel = counter_id;
+#else
 static void _cyhal_tcpwm_irq_handler(void)
 {
     _cyhal_system_irq_t irqn = _cyhal_irq_get_active();
@@ -362,13 +427,27 @@ static void _cyhal_tcpwm_irq_handler(void)
             break;
         }
     }
+#endif
 
     if (block < _CYHAL_TCPWM_INSTANCES)
     {
         TCPWM_Type *blockAddr = _CYHAL_TCPWM_DATA[_CYHAL_TCPWM_ADJUST_BLOCK_INDEX(block)].base;
         cyhal_tcpwm_t *tcpwm = _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_GET_ARRAY_INDEX(block, channel)];
+        #if (_CYHAL_IRQ_MUXING)
+        /* Disable any interrupts that couldn't be disabled from enable_event */
+        uint32_t saved_intr_status = cyhal_system_critical_section_enter();
+        if(0u != tcpwm->clear_intr_mask)
+        {
+            uint32_t cnt_num = _CYHAL_TCPWM_CNT_NUMBER(tcpwm->resource);
+            uint32_t old_mask = Cy_TCPWM_GetInterruptMask(blockAddr, cnt_num);
+            Cy_TCPWM_SetInterruptMask(blockAddr, cnt_num, (old_mask & ~(tcpwm->clear_intr_mask)));
+            tcpwm->clear_intr_mask = 0u;
+        }
+        cyhal_system_critical_section_exit(saved_intr_status);
+        #endif
         uint32_t intrCause = Cy_TCPWM_GetInterruptStatusMasked(blockAddr, _CYHAL_TCPWM_CNT_NUMBER(tcpwm->resource));
-        if (tcpwm->callback_data.callback != NULL)
+        /* The masked status can be 0 if we updated the mask above */
+        if (0u != intrCause && tcpwm->callback_data.callback != NULL)
         {
             _cyhal_tcpwm_event_callback_t callback = (_cyhal_tcpwm_event_callback_t) tcpwm->callback_data.callback;
             /* Call registered callbacks here */
@@ -376,6 +455,11 @@ static void _cyhal_tcpwm_irq_handler(void)
         }
 
         Cy_TCPWM_ClearInterrupt(blockAddr, _CYHAL_TCPWM_CNT_NUMBER(tcpwm->resource), intrCause);
+
+        #if defined(COMPONENT_CAT5)
+        // CAT5 interrupt disables itself after firing, re-enable it
+        Cy_TCPWM_EnableInterrupt(_GET_TCPWM_INTR_MASK(group_id, counter_id));
+        #endif
     }
     else
     {
@@ -396,11 +480,13 @@ void _cyhal_tcpwm_free(cyhal_tcpwm_t *obj)
 
     if (NULL != obj->base)
     {
-        _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_GET_ARRAY_INDEX(_CYHAL_TCPWM_ADJUST_BLOCK_INDEX(obj->resource.block_num), obj->resource.channel_num)] = NULL;
+        _cyhal_tcpwm_data_structs[_CYHAL_TCPWM_GET_ARRAY_INDEX(obj->resource.block_num, obj->resource.channel_num)] = NULL;
+        #if (CYHAL_DRIVER_AVAILABLE_SYSPM)
         if (!_cyhal_tcpwm_pm_has_enabled())
         {
             _cyhal_syspm_unregister_peripheral_callback(&_cyhal_tcpwm_syspm_callback_data);
         }
+        #endif
 
 #if defined(CY_IP_M0S8PERI_TR) || defined(CY_IP_MXPERI_TR) || defined(CY_IP_MXSPERI)
         for (uint8_t i = 0; i < _CYHAL_TCPWM_OUTPUTS; i++)
@@ -454,20 +540,40 @@ void _cyhal_tcpwm_register_callback(cyhal_resource_inst_t *resource, cy_israddre
     /* Only enable if it's not already enabled */
     if (false == _cyhal_irq_is_enabled(irqn))
     {
-        _cyhal_irq_register(irqn, CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_tcpwm_irq_handler);
+        #if defined (COMPONENT_CAT5)
+            Cy_TCPWM_RegisterInterruptCallback(_cyhal_tcpwm_irq_handler);
+            Cy_TCPWM_EnableInterrupt(_GET_TCPWM_INTR_MASK(resource->block_num, resource->channel_num));
+        #endif
+
+        _cyhal_irq_register(irqn, CYHAL_ISR_PRIORITY_DEFAULT, (cy_israddress)_cyhal_tcpwm_irq_handler);
         _cyhal_irq_enable(irqn);
     }
 }
 
-void _cyhal_tcpwm_enable_event(TCPWM_Type *type, cyhal_resource_inst_t *resource, uint32_t event, uint8_t intr_priority, bool enable)
+void _cyhal_tcpwm_enable_event(cyhal_tcpwm_t *tcpwm, cyhal_resource_inst_t *resource, uint32_t event, uint8_t intr_priority, bool enable)
 {
-    uint32_t old_mask = Cy_TCPWM_GetInterruptMask(type, _CYHAL_TCPWM_CNT_NUMBER(*resource));
+    uint32_t old_mask = Cy_TCPWM_GetInterruptMask(tcpwm->base, _CYHAL_TCPWM_CNT_NUMBER(*resource));
     if (enable)
     {
         // Clear any newly enabled events so that old IRQs don't trigger ISRs
-        Cy_TCPWM_ClearInterrupt(type, _CYHAL_TCPWM_CNT_NUMBER(*resource), ~old_mask & event);
+        Cy_TCPWM_ClearInterrupt(tcpwm->base, _CYHAL_TCPWM_CNT_NUMBER(*resource), ~old_mask & event);
     }
-    Cy_TCPWM_SetInterruptMask(type, _CYHAL_TCPWM_CNT_NUMBER(*resource), enable ? (old_mask | event) : (old_mask & ~event));
+#if (_CYHAL_IRQ_MUXING)
+    /* We may be in a critical section. Only clear the interrupt status if there isn't a pending interrupt */
+    if (Cy_TCPWM_GetInterruptStatus(tcpwm->base, _CYHAL_TCPWM_CNT_NUMBER(*resource)) == 0 || enable)
+#endif
+    {
+        Cy_TCPWM_SetInterruptMask(tcpwm->base, _CYHAL_TCPWM_CNT_NUMBER(*resource), enable ? (old_mask | event) : (old_mask & ~event));
+    }
+#if (_CYHAL_IRQ_MUXING)
+    else
+    {
+        /* Note that this interrupt cause should be cleared the next time an interrupt is triggered */
+        uint32_t saved_intr_status = cyhal_system_critical_section_enter();
+        tcpwm->clear_intr_mask |= event;
+        cyhal_system_critical_section_exit(saved_intr_status);
+    }
+#endif
 
     _cyhal_system_irq_t irqn = (_cyhal_system_irq_t) (_CYHAL_TCPWM_DATA[_CYHAL_TCPWM_ADJUST_BLOCK_INDEX(resource->block_num)].isr_offset + resource->channel_num);
     _cyhal_irq_set_priority(irqn, intr_priority);
@@ -619,26 +725,45 @@ cy_rslt_t _cyhal_tcpwm_connect_digital(cyhal_tcpwm_t *obj, cyhal_source_t source
 
     if(CY_RSLT_SUCCESS == rslt)
     {
-        // Find free input trigger index
-        uint32_t saved_intr_status = cyhal_system_critical_section_enter();
-        for(trig_index = 0; trig_index < (_CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[_CYHAL_TCPWM_GET_IP_BLOCK(block)]) ; trig_index++)
-        {
-            cyhal_dest_t dest = _cyhal_tpwm_calculate_dest(block, trig_index);
-
-            /* On some devices, not all triggers connect uniformly to all sources, so make sure the trigger
-             * we're trying to use can actually connect to the source we want to use */
-            rslt = _cyhal_connect_signal(source, dest);
-            if (rslt == CY_RSLT_SUCCESS)
+        #if defined (COMPONENT_CAT5)
+            // Note: Only applicable for Quaddec on this device. Triggers are hardcoded.
+            switch(signal)
             {
-                break;
+                case CYHAL_TCPWM_INPUT_COUNT: /* phiA */
+                    trig_index = 0;
+                    break;
+                case CYHAL_TCPWM_INPUT_START: /* phiB */
+                    trig_index = 1;
+                    break;
+                case CYHAL_TCPWM_INPUT_RELOAD: /* index */
+                    trig_index = 2;
+                    break;
+                default:
+                    rslt = CYHAL_TCPWM_RSLT_ERR_BAD_ARGUMENT;
+                    break;
             }
-        }
-        cyhal_system_critical_section_exit(saved_intr_status);
+        #else
+            // Find free input trigger index
+            uint32_t saved_intr_status = cyhal_system_critical_section_enter();
+            for(trig_index = 0; trig_index < (_CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[_CYHAL_TCPWM_GET_IP_BLOCK(block)]) ; trig_index++)
+            {
+                cyhal_dest_t dest = _cyhal_tpwm_calculate_dest(block, trig_index);
 
-        if(trig_index == (_CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[_CYHAL_TCPWM_GET_IP_BLOCK(block)]))
-        {
-            rslt = CYHAL_TCPWM_RSLT_ERR_NO_FREE_INPUT_SIGNALS;
-        }
+                /* On some devices, not all triggers connect uniformly to all sources, so make sure the trigger
+                * we're trying to use can actually connect to the source we want to use */
+                rslt = _cyhal_connect_signal(source, dest);
+                if (rslt == CY_RSLT_SUCCESS)
+                {
+                    break;
+                }
+            }
+            cyhal_system_critical_section_exit(saved_intr_status);
+
+            if(trig_index == (_CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[_CYHAL_TCPWM_GET_IP_BLOCK(block)]))
+            {
+                rslt = CYHAL_TCPWM_RSLT_ERR_NO_FREE_INPUT_SIGNALS;
+            }
+        #endif
     }
 
     if(CY_RSLT_SUCCESS == rslt)

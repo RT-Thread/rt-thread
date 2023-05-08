@@ -243,7 +243,7 @@ int inet_ioctlsocket(int socket, long cmd, void *arg)
 }
 
 #ifdef SAL_USING_POSIX
-static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
+static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     int mask = 0;
     struct lwip_sock *sock;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -804,7 +804,7 @@ rt_err_t enc28j60_attach(const char *spi_device_name)
             NET_DEBUG("phy_rev:%02X\r\n", enc28j60_dev.phy_rev);
             NET_DEBUG("phy_pn:%02X\r\n", enc28j60_dev.phy_pn);
             NET_DEBUG("phy_id:%08X\r\n", enc28j60_dev.phy_id);
-            return RT_EIO;
+            return -RT_EIO;
         }
     }
 

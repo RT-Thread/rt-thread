@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -558,7 +558,7 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
             {
                 rt_kprintf("unknown interface request\n");
                 rt_usbd_ep0_set_stall(device);
-                return - RT_ERROR;
+                return -RT_ERROR;
             }
             else
                 break;

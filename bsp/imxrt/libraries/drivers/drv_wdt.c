@@ -139,7 +139,7 @@ static rt_err_t imxrt_hp_wdog3_control(rt_watchdog_t *wdt, int cmd, void *args)
     }
     break;
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;
@@ -274,7 +274,7 @@ static rt_err_t imxrt_hp_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
     }
     break;
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;

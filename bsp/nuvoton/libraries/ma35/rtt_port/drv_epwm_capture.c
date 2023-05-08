@@ -189,7 +189,7 @@ static rt_err_t nu_epwmcap_get_pulsewidth(struct rt_inputcapture_device *inputca
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
     return -(ret);
 }

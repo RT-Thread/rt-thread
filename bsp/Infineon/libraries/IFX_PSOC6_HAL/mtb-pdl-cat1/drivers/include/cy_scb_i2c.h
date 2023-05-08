@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_scb_i2c.h
-* \version 2.90
+* \version 3.0
 *
 * Provides I2C API declarations of the SCB driver.
 *
@@ -315,7 +315,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXSCB)
+#if (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB))
 
 #include "cy_scb_common.h"
 
@@ -667,7 +667,7 @@ __STATIC_INLINE bool Cy_SCB_I2C_IsBusBusy(CySCB_Type const *base);
 
 __STATIC_INLINE void Cy_SCB_I2C_MasterSetLowPhaseDutyCycle (CySCB_Type *base, uint32_t clockCycles);
 __STATIC_INLINE void Cy_SCB_I2C_MasterSetHighPhaseDutyCycle(CySCB_Type *base, uint32_t clockCycles);
-#if (CY_IP_MXSCB_VERSION>=3) || defined (CY_DOXYGEN)
+#if (((CY_IP_MXSCB_VERSION>=3) || defined (CY_IP_MXS22SCB)) || defined (CY_DOXYGEN))
 void Cy_SCB_I2C_SetStretchThreshold(CySCB_Type const *base, uint32_t value);
 uint32_t Cy_SCB_I2C_GetStretchCount(CySCB_Type const *base);
 bool Cy_SCB_I2C_IsStretchDetected(CySCB_Type const *base);
@@ -1110,7 +1110,7 @@ cy_en_syspm_status_t Cy_SCB_I2C_HibernateCallback(cy_stc_syspm_callback_params_t
 #define CY_SCB_I2C_IS_TIMEOUT_VALID(timeoutMs)              ( (timeoutMs) <= (0xFFFFFFFFUL / 1000UL) )
 #define CY_SCB_I2C_IS_LOW_PHASE_CYCLES_VALID(clockCycles)   ( ((clockCycles) >= 7UL) && ((clockCycles) <= 16UL) )
 #define CY_SCB_I2C_IS_HIGH_PHASE_CYCLES_VALID(clockCycles)  ( ((clockCycles) >= 5UL) && ((clockCycles) <= 16UL) )
-#if(CY_IP_MXSCB_VERSION>=3)
+#if((CY_IP_MXSCB_VERSION>=3) || defined (CY_IP_MXS22SCB))
 #define CY_SCB_I2C_STRETCH_THRESHOLD_VALUE_VALID(value)      ( (value) <= SCB_I2C_STRETCH_CTRL_STRETCH_THRESHOLD_Msk )
 #endif /* CY_IP_MXSCB_VERSION */
 
@@ -1395,7 +1395,7 @@ __STATIC_INLINE void Cy_SCB_I2C_RegisterAddrCallback(CySCB_Type const *base,
 
 /** \} group_scb_i2c */
 
-#endif /* (CY_IP_MXSCB) */
+#endif /* (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB)) */
 
 #endif /* (CY_SCB_I2C_H) */
 

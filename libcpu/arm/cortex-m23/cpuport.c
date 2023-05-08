@@ -109,7 +109,7 @@ void rt_hw_hard_fault_exception(struct exception_stack_frame *contex)
     rt_kprintf("r01: 0x%08x\n", contex->r1);
     rt_kprintf("r00: 0x%08x\n", contex->r0);
 
-    rt_kprintf("hard fault on thread: %s\n", rt_current_thread->name);
+    rt_kprintf("hard fault on thread: %s\n", rt_current_thread->parent.name);
 
 #if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();

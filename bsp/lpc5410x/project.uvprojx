@@ -345,9 +345,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, CORE_M4, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, CORE_M4</Define>
               <Undefine />
-              <IncludePath>applications;.;Libraries\CMSIS\Include;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;Libraries\lpc_chip\chip_common;Libraries\lpc_chip\chip_5410x;Libraries\lpc_chip\chip_5410x\config;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>Libraries\lpc_chip\chip_5410x\config;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\include;.;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\components\libc\posix\io\stdio;..\..\components\finsh;..\..\components\libc\compilers\common\include;..\..\libcpu\arm\cortex-m4;Libraries\CMSIS\Include;..\..\components\drivers\include;Libraries\lpc_chip\chip_5410x;applications;..\..\libcpu\arm\common;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\ipc;Libraries\lpc_chip\chip_common;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -396,6 +396,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>demo_thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\demo_thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
@@ -406,13 +413,6 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>demo_thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\demo_thread.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -494,13 +494,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -711,9 +704,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

@@ -410,7 +410,7 @@ static rt_err_t vega_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     
     if(pin_map == RT_NULL || irq_map == RT_NULL) 
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     if(irq_map->enable == PIN_IRQ_DISABLE)
@@ -452,7 +452,7 @@ static rt_err_t vega_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
 
         if(irq_map->irq_info.pin != pin)
         {
-            return RT_EIO; 
+            return -RT_EIO;
         }
 
         irq_map->enable = PIN_IRQ_ENABLE; 

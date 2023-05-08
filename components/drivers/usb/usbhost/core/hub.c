@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -75,7 +75,7 @@ static rt_err_t root_hub_ctrl(struct uhcd *hcd, rt_uint16_t port, rt_uint8_t cmd
         }
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }
@@ -576,7 +576,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
             pipe_in = rt_usb_instance_find_pipe(device,ep_desc->bEndpointAddress);
             if(pipe_in == RT_NULL)
             {
-                return RT_ERROR;
+                return -RT_ERROR;
             }
             rt_usb_pipe_add_callback(pipe_in,rt_usbh_hub_irq);
         }

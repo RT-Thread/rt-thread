@@ -445,7 +445,7 @@ static rt_err_t efm_spiSd_writeBlock(void *buffer, rt_uint8_t token)
     rt_uint8_t buf_res[8];      /* Expect a byte for data response */
     rt_uint8_t i;
 
-    ret = RT_ERROR;
+    ret = -RT_ERROR;
     sdcard_debug("SPISD: Write block\n");
     do
     {

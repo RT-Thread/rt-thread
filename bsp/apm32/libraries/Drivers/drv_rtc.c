@@ -1,13 +1,15 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2022-07-15     Aligagago         add APM32F4 series MCU support
+ * 2022-12-26     luobeihai         add APM32F0 series MCU support
+ * 2023-03-18     luobeihai         fix RT-Thread Studio compile error bug
+ * 2023-03-27     luobeihai         add APM32E1/S1 series MCU support
  */
 
 #include "board.h"
@@ -39,14 +41,14 @@ static rt_uint8_t rtc_init_flag = RESET;
 static rt_err_t apm32_rtc_init(void)
 {
     volatile rt_uint32_t counter = 0;
-    
+
     /* Enable RTC Clock */
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_PMU | RCM_APB1_PERIPH_BAKR);
 #elif defined(SOC_SERIES_APM32F0) || defined(SOC_SERIES_APM32F4)
     RCM_EnableAPB1PeriphClock(RCM_APB1_PERIPH_PMU);
 #endif
-    
+
     PMU_EnableBackupAccess();
 
     /* Config RTC clock */
@@ -56,18 +58,18 @@ static rt_err_t apm32_rtc_init(void)
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     RCM_ConfigRTCCLK(RCM_RTCCLK_LSI);
-#else
+#elif defined(BSP_RTC_USING_LSE)
     RCM_DisableLSI();
     RCM_ConfigLSE(RCM_LSE_OPEN);
     while (!RCM_ReadStatusFlag(RCM_FLAG_LSERDY))
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     RCM_ConfigRTCCLK(RCM_RTCCLK_LSE);
@@ -76,13 +78,13 @@ static rt_err_t apm32_rtc_init(void)
     RCM_EnableRTCCLK();
     RTC_WaitForSynchro();
 
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     counter = 0;
     while (!RTC_ReadStatusFlag(RTC_FLAG_OC))
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -92,7 +94,7 @@ static rt_err_t apm32_rtc_init(void)
 
 #ifdef BSP_RTC_USING_LSI
     RTC_ConfigPrescaler(LSI_VALUE - 1);
-#else
+#elif defined(BSP_RTC_USING_LSE)
     RTC_ConfigPrescaler(LSE_VALUE - 1);
 #endif /* BSP_RTC_USING_LSI */
 
@@ -101,12 +103,12 @@ static rt_err_t apm32_rtc_init(void)
     RTC_Config_T rtcConfig;
     RTC_ConfigStructInit(&rtcConfig);
     RTC_Config(&rtcConfig);
-    
+
 #elif defined(SOC_SERIES_APM32F0)
     RTC_EnableInit();
     RTC_Config_T rtcConfig;
     RTC_ConfigStructInit(&rtcConfig);
-    
+
 #ifdef BSP_RTC_USING_LSI
     rtcConfig.AsynchPrediv = 0x63;
     rtcConfig.SynchPrediv  = 0x18F;
@@ -116,7 +118,7 @@ static rt_err_t apm32_rtc_init(void)
 #endif /* BSP_RTC_USING_LSI */
     RTC_Config(&rtcConfig);
 
-#endif /* SOC_SERIES_APM32F1 */
+#endif /* SOC_SERIES_APM32F1 || SOC_SERIES_APM32E1 || SOC_SERIES_APM32S1 */
 
     if (!rtc_init_flag)
     {
@@ -125,7 +127,7 @@ static rt_err_t apm32_rtc_init(void)
     return RT_EOK;
 }
 
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
 /**
  * @brief    This function will initialize the rtc on chip.
  *
@@ -139,11 +141,11 @@ static rt_err_t apm32_rtc_get_secs(time_t *sec)
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
-    *(timer_t *) sec = RTC_ReadCounter();
+    *(time_t *) sec = RTC_ReadCounter();
 
     return RT_EOK;
 }
@@ -161,7 +163,7 @@ static rt_err_t apm32_rtc_set_secs(time_t *sec)
     {
         if (++counter > DRV_RTC_TIME_OUT)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
 
@@ -170,8 +172,10 @@ static rt_err_t apm32_rtc_set_secs(time_t *sec)
     return RT_EOK;
 }
 #elif defined(SOC_SERIES_APM32F0) || defined(SOC_SERIES_APM32F4)
-static rt_err_t apm32_rtc_get_timeval(struct timeval *tv)
+static rt_err_t apm32_rtc_get_timeval(void *args)
 {
+    struct timeval *tv = (struct timeval *) args;
+
 #if defined(SOC_SERIES_APM32F0)
     RTC_TIME_T timeConfig;
     RTC_DATE_T dateConfig;
@@ -179,7 +183,7 @@ static rt_err_t apm32_rtc_get_timeval(struct timeval *tv)
     RTC_TimeConfig_T timeConfig;
     RTC_DateConfig_T dateConfig;
 #endif
-    
+
     struct tm tm_new = {0};
 
     RTC_ReadTime(RTC_FORMAT_BIN, &timeConfig);
@@ -191,9 +195,9 @@ static rt_err_t apm32_rtc_get_timeval(struct timeval *tv)
     tm_new.tm_mday = dateConfig.date;
     tm_new.tm_mon  = dateConfig.month - 1;
     tm_new.tm_year = dateConfig.year + 100;
-    
+
     tv->tv_sec = timegm(&tm_new);
-    
+
     return RT_EOK;
 }
 
@@ -232,11 +236,10 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     dateConfig.weekday = tm.tm_wday + 1;
 #endif
     dateConfig.year    = tm.tm_year - 100;
-    
 
     RTC_ConfigTime(RTC_FORMAT_BIN, &timeConfig);
     RTC_ConfigDate(RTC_FORMAT_BIN, &dateConfig);
-    
+
     /* wait for set time completed */
     for (int i = 0; i < 0xFFFF; i++);
 
@@ -248,27 +251,27 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
  *
  * @return   RT_EOK indicates successful initialize, other value indicates failed;
  */
-static rt_err_t apm32_rtc_get_secs(time_t *sec)
+static rt_err_t apm32_rtc_get_secs(void *args)
 {
     struct timeval tv;
     apm32_rtc_get_timeval(&tv);
-    *(time_t *) sec = tv.tv_sec;
+    *(rt_uint32_t *) args = tv.tv_sec;
 
     return RT_EOK;
 }
 
-static rt_err_t apm32_rtc_set_secs(time_t *sec)
+static rt_err_t apm32_rtc_set_secs(void *args)
 {
     rt_err_t result = RT_EOK;
 
-    if (set_rtc_time_stamp(*sec))
+    if (set_rtc_time_stamp(*(rt_uint32_t *)args))
     {
         result = -RT_ERROR;
     }
 
     return result;
 }
-#endif
+#endif /* SOC_SERIES_APM32F1 || SOC_SERIES_APM32E1 || SOC_SERIES_APM32S1 */
 
 static const struct rt_rtc_ops apm32_rtc_ops =
 {
@@ -299,7 +302,7 @@ static int rt_hw_rtc_init(void)
     if (rt_hw_rtc_register(&apm32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL) != RT_EOK)
     {
         LOG_E("rtc init failed");
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
     else
     {

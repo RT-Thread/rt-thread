@@ -262,7 +262,7 @@ int is_enough_desc_available(struct dma_desc *entry)
     if(desc->desc0.tx.own != 0)
     {
         printf("desc %08x desc0 %08x desc1 %08x\n",desc,desc->desc0,desc->desc1);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -284,7 +284,7 @@ int wait_tx_completed(struct dma_desc *entry)
         if(timeout_cnt > 1000)
         {
             printf("emac send data timeout \n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
     desc_tag_clean(desc);
@@ -307,13 +307,13 @@ static rt_err_t rt_geth_xmit(rt_device_t dev, struct pbuf *p)
     unsigned int i = 0;
     unsigned int copy_offset = 0;
 
-    if (!rt_geth_dev.phy_link_status) return RT_ERROR;
+    if (!rt_geth_dev.phy_link_status) return -RT_ERROR;
 
     first = rt_geth_dev.get_buffer_config.dma_desc_tx + tx_dirty;
     ret = is_enough_desc_available(first);
     if(ret < 0)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     copy_offset = 0;
@@ -326,7 +326,7 @@ static rt_err_t rt_geth_xmit(rt_device_t dev, struct pbuf *p)
         if(copy_offset >= ((1 << 11) - 1))
         {
             printf("send data exceed max len copy_offset %d\n",copy_offset);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
     }
 

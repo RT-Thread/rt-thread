@@ -17,7 +17,7 @@
 * Description : Handle EXTI interrupt request.
 * Input       : huart: EXTI handle.
 * Output      :
-* Author      : Chris_Kyle                         Data : 2020��
+* Author      : Chris_Kyle                         Data : 2020年
 **********************************************************************************/
 void HAL_EXTI_IRQHandler(EXTI_HandleTypeDef *hexti)
 {

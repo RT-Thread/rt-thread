@@ -1,0 +1,35 @@
+if RT_USING_DFS_V2
+    config RT_USING_DFS_DEVFS
+        bool "Using devfs for device objects"
+        default y
+
+    config RT_USING_DFS_ROMFS
+        bool "Enable ReadOnly file system on flash"
+        default n
+
+    config RT_USING_DFS_CROMFS
+        bool "Enable ReadOnly compressed file system on flash"
+        default n
+        # select PKG_USING_ZLIB
+
+    config RT_USING_DFS_RAMFS
+        bool "Enable RAM file system"
+        select RT_USING_MEMHEAP
+        default n
+
+    config RT_USING_DFS_TMPFS
+        bool "Enable TMP file system"
+        default n
+
+    config RT_USING_DFS_NFS
+        bool "Using NFS v3 client file system"
+        depends on RT_USING_LWIP
+        default n
+
+    if RT_USING_DFS_NFS
+        config RT_NFS_HOST_EXPORT
+            string "NFSv3 host export"
+            default "192.168.1.5:/"
+    endif
+
+endif

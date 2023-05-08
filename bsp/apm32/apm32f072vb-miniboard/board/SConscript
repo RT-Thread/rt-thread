@@ -12,6 +12,7 @@ board.c
 ''')
 
 path =  [cwd]
+path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
 

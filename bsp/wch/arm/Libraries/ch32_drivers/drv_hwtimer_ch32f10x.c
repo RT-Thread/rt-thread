@@ -210,13 +210,13 @@ static rt_err_t ch32f1_hwtimer_control(struct rt_hwtimer_device *device, rt_uint
         }
         else
         {
-            result = RT_EINVAL;
+            result = -RT_EINVAL;
         }
     }
     break;
 
     default:
-        result = RT_ENOSYS;
+        result = -RT_ENOSYS;
         break;
     }
 

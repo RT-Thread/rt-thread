@@ -25,7 +25,7 @@
  * @param bus_name     spi bus name  "spi0"/"spi1"/"spi2"
  * @param device_name  spi device name "spi0x"/"spi1x"/"spi2x"
  * @param ss_pin       spi ss pin number
- * @retval  RT_ERROR / RT_EOK
+ * @retval  -RT_ERROR / RT_EOK
 */
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t ss_pin);
 
@@ -97,7 +97,7 @@ struct nrfx_drv_spi_pin_config
  * @param bus_name     spi bus name  "spi0"/"spi1"/"spi2"
  * @param device_name  spi device name "spi0x"/"spi1x"/"spi2x"
  * @param ss_pin       spi ss pin number
- * @retval  RT_ERROR / RT_EOK
+ * @retval  -RT_ERROR / RT_EOK
 */
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t ss_pin);
 

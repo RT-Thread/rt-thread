@@ -25,7 +25,7 @@
 /*********************************************************
 **   IO
 *********************************************************/
-int gpio_set_func(enum gpio_port port, enum gpio_pin pin, rt_uint8_t func)
+rt_err_t gpio_set_func(enum gpio_port port, enum gpio_pin pin, rt_uint8_t func)
 {
     rt_uint32_t addr;
     rt_uint32_t offset;
@@ -37,7 +37,7 @@ int gpio_set_func(enum gpio_port port, enum gpio_pin pin, rt_uint8_t func)
     if (func & 0x8)
     {
         LOG_W("[line]:%d There is a warning with parameter input", __LINE__);
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     addr = GPIOn_CFG_ADDR(port) + (pin / 8) * 4;
@@ -64,7 +64,7 @@ int gpio_set_value(enum gpio_port port, enum gpio_pin pin, rt_uint8_t value)
     if (value & 0xE)
     {
         LOG_W("[line]:%d There is a warning with parameter input", __LINE__);
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     addr = GPIOn_DATA_ADDR(port);
@@ -109,7 +109,7 @@ int gpio_set_pull_mode(enum gpio_port port,  enum gpio_pin pin, enum gpio_pull p
     if (pull & 0xC)
     {
         LOG_W("[line]:%d There is a warning with parameter input", __LINE__);
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     addr = GPIOn_PUL_ADDR(port);
@@ -137,7 +137,7 @@ int gpio_set_drive_level(enum gpio_port port, enum gpio_pin pin, enum gpio_drv_l
     if (level & 0xC)
     {
         LOG_W("[line]:%d There is a warning with parameter input", __LINE__);
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     addr = GPIOn_DRV_ADDR(port);
@@ -431,7 +431,7 @@ static struct _pin_index pin_index[] =
     {66, GPIO_PORT_A, GPIO_PIN_0, PIN_MAGIC},
 };
 
-static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
+static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -442,7 +442,7 @@ static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
     gpio_set_func(pin_index[pin].pin_port, pin_index[pin].pin, mode);
 }
 
-static void pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
+static void pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -453,7 +453,7 @@ static void pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
     gpio_set_value(pin_index[pin].pin_port, pin_index[pin].pin, value);
 }
 
-static int pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t pin_read(struct rt_device *device, rt_base_t pin)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
@@ -464,24 +464,24 @@ static int pin_read(struct rt_device *device, rt_base_t pin)
     return gpio_get_value(pin_index[pin].pin_port, pin_index[pin].pin);
 }
 
-static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t pin_attach_irq(struct rt_device *device, rt_base_t pin, rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
         LOG_E("pin:%d value wrongful", pin);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     gpio_set_irq_callback(pin_index[pin].pin_port, pin_index[pin].pin, hdr, args);
     gpio_set_irq_type(pin_index[pin].pin_port, pin_index[pin].pin, mode);
     return RT_EOK;
 }
-static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
         LOG_E("pin:%d value wrongful", pin);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     gpio_clear_irq_callback(pin_index[pin].pin_port, pin_index[pin].pin);
@@ -489,12 +489,12 @@ static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-rt_err_t pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
         LOG_E("pin:%d value wrongful", pin);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (enabled)

@@ -9,7 +9,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -137,6 +137,10 @@ extern "C" {
 /** Unsupported by this device */
 #define CYHAL_SPI_RSLT_ERR_UNSUPPORTED                  \
     (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_ERROR, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_SPI, 11))
+
+/** Timeout warning */
+#define CYHAL_SPI_RSLT_WARN_TIMEOUT                     \
+    (CY_RSLT_CREATE_EX(CY_RSLT_TYPE_WARNING, CY_RSLT_MODULE_ABSTRACTION_HAL, CYHAL_RSLT_MODULE_SPI, 20))
 
 /**
  * \}
@@ -318,6 +322,43 @@ cy_rslt_t cyhal_spi_recv(cyhal_spi_t *obj, uint32_t* value);
  */
 cy_rslt_t cyhal_spi_send(cyhal_spi_t *obj, uint32_t value);
 
+/** Wait for master send data to RX buffer and store them to the user-defined buffer.
+ * NOTE: If size of actual data is less then expected the function copy only available data.
+ *
+ * @param[in]     obj        The SPI object
+ * @param[in]     dst_buff   Pointer on memory to store the data from the slave RX buffer.
+ * @param[in,out] size       [in] The number of bytes to read, [out] number actually read.
+ * @param[in]     timeout    Timeout in millisecond, set this value to 0 if you don't want to wait at all.
+ * @return  The status of the read request
+ * */
+cy_rslt_t cyhal_spi_slave_read(cyhal_spi_t *obj, uint8_t *dst_buff, uint16_t *size, uint32_t timeout);
+
+/** Write data from the user-defined buffer to TX buffer.
+ * NOTE: If size of actual data is less then expected the function copy only available data.
+ *
+ * @param[in]     obj        The SPI object
+ * @param[in]     src_buff   Pointer on memory to copy the data to the slave TX buffer.
+ * @param[in,out] size       [in] The number of bytes to send, [out] number actually sent.
+ * @param[in]     timeout    Timeout in millisecond,  set this value to 0 if you don't want to wait at all.
+ * @return  The status of the write request
+ * */
+cy_rslt_t cyhal_spi_slave_write(cyhal_spi_t *obj, const uint8_t *src_buff, uint16_t *size, uint32_t timeout);
+
+
+/** Returns the number of bytes that can be read from the RX buffer.
+ *
+ * @param[in]  obj          The SPI object
+ * @return  The number of bytes in the RX buffer.
+ * */
+uint32_t cyhal_spi_readable(cyhal_spi_t *obj);
+
+/** Returns the number of bytes that can be written to the TX buffer.
+ *
+ * @param[in]  obj          The SPI object
+ * @return  The number of bytes that can be written
+ * */
+uint32_t cyhal_spi_writable(cyhal_spi_t *obj);
+
 /** Synchronously Write a block out and receive a value
  *
  *  The total number of bytes sent and received will be the maximum of tx_length
@@ -430,6 +471,13 @@ cy_rslt_t cyhal_spi_disable_output(cyhal_spi_t *obj, cyhal_spi_output_t output);
  * @return The status of the operation
  */
 cy_rslt_t cyhal_spi_init_cfg(cyhal_spi_t *obj, const cyhal_spi_configurator_t *cfg);
+
+/** Clear the SPI buffers
+ *
+ * @param[in]  obj        The SPI object
+ * @return The status of the clear request
+ * */
+cy_rslt_t cyhal_spi_clear(cyhal_spi_t *obj);
 
 #if defined(__cplusplus)
 }

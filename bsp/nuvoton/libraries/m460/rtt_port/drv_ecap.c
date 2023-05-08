@@ -202,7 +202,7 @@ static rt_err_t nu_ecap_get_pulsewidth(struct rt_inputcapture_device *inputcaptu
     if (psNuEcap->bfirstData)
     {
         psNuEcap->bfirstData = RT_FALSE;
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
 
         return -(ret);
     }

@@ -12,7 +12,7 @@
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
@@ -25,6 +25,7 @@
 
 /* kservice optimization */
 
+#define RT_KSERVICE_USING_STDLIB
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -47,9 +48,10 @@
 
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
+#define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -68,33 +70,16 @@
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_CMD_SIZE 80
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-#define RT_USING_DFS
-#define DFS_USING_POSIX
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 16
-#define RT_USING_DFS_ELMFAT
 
-/* elm-chan's FatFs, Generic FAT Filesystem Module */
+/* DFS: device virtual file system */
 
-#define RT_DFS_ELM_CODE_PAGE 437
-#define RT_DFS_ELM_WORD_ACCESS
-#define RT_DFS_ELM_USE_LFN_3
-#define RT_DFS_ELM_USE_LFN 3
-#define RT_DFS_ELM_LFN_UNICODE_0
-#define RT_DFS_ELM_LFN_UNICODE 0
-#define RT_DFS_ELM_MAX_LFN 255
-#define RT_DFS_ELM_DRIVES 2
-#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
-#define RT_DFS_ELM_REENTRANT
-#define RT_DFS_ELM_MUTEX_TIMEOUT 3000
-#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
@@ -104,16 +89,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_I2C
 #define RT_USING_PIN
-#define RT_USING_RTC
-#define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
-#define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
-#define RT_MMCSD_THREAD_PREORITY 22
-#define RT_MMCSD_MAX_PARTITION 16
-#define RT_USING_SPI
 
 /* Using USB */
 
@@ -173,9 +149,6 @@
 
 
 /* u8g2: a monochrome graphic library */
-
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -266,21 +239,11 @@
 #define BSP_USING_UART
 #define BSP_USING_UART0
 #define HW_UART0_BAUDRATE_115200
-#define BSP_USING_I2C
-#define BSP_USING_I2C4
-#define HW_I2C4_BAUDRATE_100kHZ
-#define BSP_USING_SPI
-#define BSP_USING_SPI3
-#define BSP_USING_SPI8
-#define BSP_USING_SDIO
-#define BSP_USING_RTC
 
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_LED
 #define BSP_USING_KEY
-#define BSP_USING_MMA8562
-#define BSP_USING_MMA8562I2C "i2c4"
 
 /* Board extended module Drivers */
 

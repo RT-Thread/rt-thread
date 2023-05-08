@@ -3,6 +3,7 @@ config SOC_K210
     select ARCH_RISCV64
     select ARCH_RISCV_FPU_S
     select PKG_USING_K210_SDK
+    select RT_USING_HW_ATOMIC
 
 config BOARD_K210_EVB
     bool

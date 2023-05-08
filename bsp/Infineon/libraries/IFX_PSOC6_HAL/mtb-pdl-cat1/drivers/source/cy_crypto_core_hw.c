@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_hw.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code to the API for the utils
@@ -42,8 +42,10 @@ extern "C" {
 
 CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 11.3', 4, \
 'CRYPTO_Type will typecast to either CRYPTO_V1_Type or CRYPTO_V2_Type but not both on PDL initialization based on the target device at compile time.');
+CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 14.3', 2, \
+'Since value of CY_CRYPTO_V1 is decided by PDL device agnostic / hardware specific model, controlling expression will not have an invariant value.');
 
-#if !defined (CY_CRYPTO_SERVICE_LIBRARY_LEVEL)
+#if !defined(CY_CRYPTO_SERVICE_LIBRARY_LEVEL)
     #define CY_CRYPTO_SERVICE_LIBRARY_LEVEL CY_CRYPTO_FULL_LIBRARY
 #endif
 
@@ -51,12 +53,13 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 11.3', 4, \
 *                   Global Variables
 *******************************************************************************/
 
+static uint32_t  cy_cryptoVuMemSize = 0u;
+
+#if !defined(CY_CRYPTO_CFG_HW_USE_MPN_SPECIFIC)
 /* This is set in Cy_Crypto_Core_Enable() to the device information relevant
  * for the current target.
  */
 const cy_stc_cryptoIP_t * cy_cryptoIP = NULL;
-
-static uint32_t  cy_cryptoVuMemSize = 0u;
 
 /* Platform and peripheral crypto block configuration */
 const cy_stc_cryptoIP_t cy_cryptoIpBlockCfgPSoC6_01 =
@@ -110,6 +113,7 @@ const cy_stc_cryptoIP_t cy_cryptoIpBlockCfgPSoC6_02 =
     /* cryptoIntrMaskedOffset    */ offsetof(CRYPTO_V2_Type, INTR_MASKED),
     /* cryptoMemBufOffset        */ offsetof(CRYPTO_V2_Type, MEM_BUFF),
 };
+#endif
 
 /* The defines of the power modes of the CRYPTO */
 #define CY_CRYPTO_PWR_MODE_OFF               (0UL)
@@ -168,37 +172,28 @@ void Cy_Crypto_Core_Vu_RunInstr(CRYPTO_Type *base, bool blockingMode, uint32_t i
 *******************************************************************************/
 void Cy_Crypto_Core_ClearVuRegisters(CRYPTO_Type *base)
 {
-    /* Clear whole register file */
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG14, 0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG13, 0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG12, 0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG11, 0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG10, 0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG9,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG8,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG7,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG6,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG5,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG4,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG3,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG2,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG1,  0u, 1u);
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG0,  0u, 1u);
+    if (Cy_Crypto_Core_IsEnabled(base))
+    {
+        /* Clear whole register file */
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG14, 0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG13, 0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG12, 0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG11, 0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG10, 0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG9,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG8,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG7,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG6,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG5,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG4,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG3,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG2,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG1,  0u, 1u);
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG0,  0u, 1u);
 
-    /* Set the stack pointer to the Crypto buff size, in words */
-    CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG15, cy_cryptoVuMemSize / 4u, 1u);
-}
-
-/*******************************************************************************
-* Function Name: Cy_Crypto_Core_HwInit
-****************************************************************************//**
-*
-* The function to initialize the Crypto hardware.
-*
-*******************************************************************************/
-void Cy_Crypto_Core_HwInit(void)
-{
-    cy_cryptoIP = (CY_CRYPTO_V1) ? &cy_cryptoIpBlockCfgPSoC6_01 : &cy_cryptoIpBlockCfgPSoC6_02;
+        /* Set the stack pointer to the Crypto buff size, in words */
+        CY_CRYPTO_VU_SET_REG(base, CY_CRYPTO_VU_HW_REG15, cy_cryptoVuMemSize / 4u, 1u);
+    }
 }
 
 /*******************************************************************************
@@ -233,8 +228,10 @@ cy_en_crypto_status_t Cy_Crypto_Core_SetVuMemoryAddress(CRYPTO_Type *base,
     uint32_t *vuMemAddr = (uint32_t *)vuMemoryAddr;
     uint32_t  vuMemSize = vuMemorySize;
 
+#if !defined(CY_CRYPTO_CFG_HW_USE_MPN_SPECIFIC)
     if (cy_cryptoIP != NULL)
     {
+#endif
         if ((vuMemAddr == NULL) && (vuMemSize == 0uL))
         {
             vuMemAddr = REG_CRYPTO_MEM_BUFF(base);
@@ -301,18 +298,22 @@ cy_en_crypto_status_t Cy_Crypto_Core_SetVuMemoryAddress(CRYPTO_Type *base,
 
             if (memFrameMask != 0xFFFFFFFFuL)
             {
+                #if !defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
                 if (!(CY_CRYPTO_V1))
                 {
                     memAlignMask = vuMemSize - 1uL;
                 }
+                #endif
 
                 /* Use the new address when it aligned to appropriate memory block size */
                 if (((uint32_t)vuMemAddr & (memAlignMask)) == 0uL)
                 {
+                    #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
                     if (!(CY_CRYPTO_V1))
                     {
                         REG_CRYPTO_VU_CTL2(base) = _VAL2FLD(CRYPTO_V2_VU_CTL2_MASK, memFrameMask);
                     }
+                    #endif
 
                     REG_CRYPTO_VU_CTL1(base) = (uint32_t)vuMemAddr;
 
@@ -325,8 +326,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_SetVuMemoryAddress(CRYPTO_Type *base,
                 }
             }
         }
+#if !defined(CY_CRYPTO_CFG_HW_USE_MPN_SPECIFIC)
     }
-
+#endif
     return resultVal;
 }
 
@@ -347,14 +349,19 @@ uint32_t Cy_Crypto_Core_GetVuMemorySize(CRYPTO_Type *base)
 {
     uint32_t memSize = CY_CRYPTO_MEM_BUFF_SIZE;
 
+#if !defined(CY_CRYPTO_CFG_HW_USE_MPN_SPECIFIC)
     if ( (cy_cryptoIP != NULL) && (cy_cryptoVuMemSize != 0uL))
     {
+#endif
         if (CY_CRYPTO_V1)
         {
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
             memSize = cy_cryptoVuMemSize;
+        #endif
         }
         else
         {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
             uint32_t memFrameMask = _FLD2VAL(CRYPTO_V2_VU_CTL2_MASK, REG_CRYPTO_VU_CTL2(base));
             /*
             Specifies the size of  the vector operand memory region.
@@ -398,8 +405,13 @@ uint32_t Cy_Crypto_Core_GetVuMemorySize(CRYPTO_Type *base)
             /* Unknown mask */
                     break;
             }
+        #endif
         }
+#if !defined(CY_CRYPTO_CFG_HW_USE_MPN_SPECIFIC)
     }
+#endif
+
+    (void)base; /* Suppress a compiler warning about unused variables */
 
     return memSize;
 }
@@ -416,19 +428,30 @@ uint32_t Cy_Crypto_Core_GetVuMemorySize(CRYPTO_Type *base)
 * \return
 * Crypto status \ref cy_en_crypto_status_t
 *
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCoreStartCryptoUse
+*
 *******************************************************************************/
 cy_en_crypto_status_t Cy_Crypto_Core_Enable(CRYPTO_Type *base)
 {
+    #if !defined(CY_CRYPTO_CFG_HW_USE_MPN_SPECIFIC)
     Cy_Crypto_Core_HwInit();
+    #endif
+
+    /* Disable Crypto HW */
+    REG_CRYPTO_CTL(base) &= ~(_VAL2FLD(CRYPTO_CTL_ENABLED,  1uL));
 
     if (CY_CRYPTO_V1)
     {
         /* Enable Crypto HW */
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         REG_CRYPTO_CTL(base) = (uint32_t)(_VAL2FLD(CRYPTO_CTL_PWR_MODE, CY_CRYPTO_PWR_MODE_ENABLED) |
                                _VAL2FLD(CRYPTO_CTL_ENABLED,  1uL));
+        #endif
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         REG_CRYPTO_CTL(base) &= ~(_VAL2FLD(CRYPTO_V2_CTL_ENABLED,  1uL) | _VAL2FLD(CRYPTO_V2_CTL_ECC_EN, 1uL));
 
         REG_CRYPTO_INSTR_FF_CTL(base) = (uint32_t)(_VAL2FLD(CRYPTO_V2_INSTR_FF_CTL_BLOCK, 1u)
@@ -438,6 +461,7 @@ cy_en_crypto_status_t Cy_Crypto_Core_Enable(CRYPTO_Type *base)
         REG_CRYPTO_CTL(base) |= _VAL2FLD(CRYPTO_V2_CTL_ENABLED,  1uL);
 
         REG_CRYPTO_RAM_PWR_CTL(base) = (uint32_t)(CY_CRYPTO_PWR_MODE_ENABLED);
+        #endif
     }
 
     /*
@@ -495,19 +519,27 @@ cy_en_crypto_status_t Cy_Crypto_Core_GetLibInfo(cy_en_crypto_lib_info_t *libInfo
 * \return
 * \ref cy_en_crypto_status_t
 *
+* \funcusage
+* \snippet crypto/snippet/main.c snippet_myCryptoCoreStopCryptoUse
+*
 *******************************************************************************/
 cy_en_crypto_status_t Cy_Crypto_Core_Disable(CRYPTO_Type *base)
 {
+    /* Power-off Crypto RAM */
     if (CY_CRYPTO_V1)
     {
         /* Disable Crypto HW */
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         REG_CRYPTO_CTL(base) = (uint32_t)(_VAL2FLD(CRYPTO_CTL_PWR_MODE, CY_CRYPTO_PWR_MODE_OFF) |
                                _VAL2FLD(CRYPTO_CTL_ENABLED, 0uL));
+        #endif
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         REG_CRYPTO_CTL(base) = (uint32_t)(_VAL2FLD(CRYPTO_V2_CTL_ENABLED,  0uL));
         REG_CRYPTO_RAM_PWR_CTL(base) = (uint32_t)(CY_CRYPTO_PWR_MODE_OFF);
+        #endif
     }
 
     cy_cryptoVuMemSize = 0uL;
@@ -566,6 +598,8 @@ void Cy_Crypto_Core_InvertEndianness(void *inArrPtr, uint32_t byteSize)
 }
 
 /** \} group_crypto_lld_hw_functions */
+
+CY_MISRA_BLOCK_END('MISRA C-2012 Rule 14.3');
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 11.3');
 
 #if defined(__cplusplus)

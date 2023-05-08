@@ -303,21 +303,21 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
-          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\libraries\gd32_drivers</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
         </option>
         <option>
@@ -1270,21 +1270,21 @@
           <state />
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
-          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\libraries\gd32_drivers</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
         </option>
         <option>
@@ -1989,9 +1989,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -2097,7 +2094,7 @@
       <name>$PROJ_DIR$\..\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\src\thread.c</name>

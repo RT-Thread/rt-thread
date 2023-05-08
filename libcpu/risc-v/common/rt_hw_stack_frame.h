@@ -31,6 +31,7 @@ typedef struct rt_hw_stack_frame
     rt_ubase_t a3;         /* x13 - a3     - function argument 3                 */
     rt_ubase_t a4;         /* x14 - a4     - function argument 4                 */
     rt_ubase_t a5;         /* x15 - a5     - function argument 5                 */
+#ifndef __riscv_32e
     rt_ubase_t a6;         /* x16 - a6     - function argument 6                 */
     rt_ubase_t a7;         /* x17 - a7     - function argument 7                 */
     rt_ubase_t s2;         /* x18 - s2     - saved register 2                    */
@@ -47,6 +48,7 @@ typedef struct rt_hw_stack_frame
     rt_ubase_t t4;         /* x29 - t4     - temporary register 4                */
     rt_ubase_t t5;         /* x30 - t5     - temporary register 5                */
     rt_ubase_t t6;         /* x31 - t6     - temporary register 6                */
+#endif
 #ifdef ARCH_RISCV_FPU
     rv_floatreg_t f0;      /* f0  */
     rv_floatreg_t f1;      /* f1  */

@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 
-void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size)
+void rt_hw_show_memory(rt_uint32_t addr, rt_size_t size)
 {
     unsigned int i = 0, j = 0;
 

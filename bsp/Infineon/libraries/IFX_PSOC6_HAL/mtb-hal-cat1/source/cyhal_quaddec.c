@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2020-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2020-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -73,7 +73,8 @@ extern "C" {
 
 #define _CYHAL_CNT_NUM _CYHAL_TCPWM_CNT_NUMBER(obj->tcpwm.resource)
 
-#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || \
+    defined(COMPONENT_CAT1D) || defined(COMPONENT_CAT5)
 static cyhal_tcpwm_input_t _cyhal_quaddec_translate_input_signal(cyhal_quaddec_input_t signal);
 #endif
 
@@ -81,32 +82,51 @@ static inline cy_rslt_t _cyhal_quaddec_configure_clock(cyhal_tcpwm_t *tcpwm, en_
 {
     cy_rslt_t rslt;
 
+    #if !defined(COMPONENT_CAT5)
     const cyhal_clock_tolerance_t tolerance = {
         .type = CYHAL_TOLERANCE_PERCENT,
         .value = 2,
     };
+    #endif
 
-    #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
-    rslt = _cyhal_utils_allocate_clock(&tcpwm->clock, &tcpwm->resource, CYHAL_CLOCK_BLOCK_PERIPHERAL_16BIT, true);
+    #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || defined(COMPONENT_CAT1D)
+        rslt = _cyhal_utils_allocate_clock(&tcpwm->clock, &tcpwm->resource, CYHAL_CLOCK_BLOCK_PERIPHERAL_16BIT, true);
     #elif defined(COMPONENT_CAT2)
-    rslt = cyhal_clock_allocate(&tcpwm->clock, CYHAL_CLOCK_BLOCK_PERIPHERAL_16BIT);
+        rslt = cyhal_clock_allocate(&tcpwm->clock, CYHAL_CLOCK_BLOCK_PERIPHERAL_16BIT);
+    #elif defined(COMPONENT_CAT5)
+        rslt = CY_RSLT_SUCCESS; // No need to allocate the TCPWM clock as it is a shared resource
     #else
-    #warning "No clock allocated for QuadDec"
-    rslt = CYHAL_QUADDEC_RSLT_ERR_CLOCK_INIT;
+        #warning "No clock allocated for QuadDec"
+        rslt = CYHAL_QUADDEC_RSLT_ERR_CLOCK_INIT;
     #endif
 
     if (rslt == CY_RSLT_SUCCESS)
     {
         tcpwm->dedicated_clock = true;
 
-        if (cyhal_clock_set_frequency(&tcpwm->clock, frequency, &tolerance) == CY_RSLT_SUCCESS)
-        {
-            if (_cyhal_utils_peri_pclk_assign_divider(pclk, &(tcpwm->clock)) == CY_SYSCLK_SUCCESS)
+        #if defined(COMPONENT_CAT5)
+            uint32_t current_freq = _cyhal_utils_get_peripheral_clock_frequency(&(tcpwm->resource));
+            if (frequency <= current_freq)
             {
-                cyhal_clock_set_enabled(&tcpwm->clock, true, false);
-                return CY_RSLT_SUCCESS;
+                uint32_t divider = ((current_freq + frequency - 1) / frequency);
+                // _set_divider doesn't use this with CAT5, but to avoid warnings here is what it would use
+                en_clk_dst_t clk_dst = (en_clk_dst_t)(_CYHAL_TCPWM_DATA[_CYHAL_TCPWM_ADJUST_BLOCK_INDEX(tcpwm->resource.block_num)].clock_dst + tcpwm->resource.channel_num);
+
+                if (_cyhal_utils_peri_pclk_set_divider(clk_dst, &tcpwm->clock, (divider - 1)) == CY_RSLT_SUCCESS)
+                {
+                    return CY_RSLT_SUCCESS;
+                }
             }
-        }
+        #else
+            if (cyhal_clock_set_frequency(&tcpwm->clock, frequency, &tolerance) == CY_RSLT_SUCCESS)
+            {
+                if (_cyhal_utils_peri_pclk_assign_divider(pclk, &(tcpwm->clock)) == CY_SYSCLK_SUCCESS)
+                {
+                    cyhal_clock_set_enabled(&tcpwm->clock, true, false);
+                    return CY_RSLT_SUCCESS;
+                }
+            }
+        #endif
     }
 
     return CYHAL_QUADDEC_RSLT_ERR_CLOCK_INIT;
@@ -191,21 +211,36 @@ cy_rslt_t _cyhal_quaddec_connect_pin(cyhal_quaddec_input_t signal, cyhal_gpio_t 
 }
 #endif
 
-static cy_rslt_t _cyhal_quadec_pin_init(cyhal_quaddec_t *obj, cyhal_gpio_t pin, cyhal_gpio_t *obj_pin, cyhal_signal_type_t signal_type, cyhal_quaddec_input_t input)
+static cy_rslt_t _cyhal_quaddec_pin_init(cyhal_quaddec_t *obj, cyhal_gpio_t pin, cyhal_gpio_t *obj_pin, cyhal_signal_type_t signal_type, cyhal_quaddec_input_t input)
 {
     if (NC == pin)
     {
         return CYHAL_QUADDEC_RSLT_ERR_BAD_ARGUMENT;
     }
 
-    cy_rslt_t rslt = cyhal_gpio_init(pin, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);
+    #if defined (COMPONENT_CAT5)
+        cy_rslt_t rslt = CYHAL_QUADDEC_RSLT_ERR_BAD_ARGUMENT;
+        const cyhal_resource_pin_mapping_t* pinMap = _CYHAL_UTILS_GET_RESOURCE(pin, cyhal_pin_map_tcpwm_tr_all_cnt_in);
+
+        if (pinMap != NULL)
+            rslt = _cyhal_utils_reserve_and_connect(pinMap, CYHAL_PIN_MAP_DRIVE_MODE_TCPWM_TR_IN);
+        else
+            rslt = CYHAL_HWMGR_RSLT_ERR_INVALID; // Note: Intentional to match PSoC behavior
+    #else
+        cy_rslt_t rslt = cyhal_gpio_init(pin, CYHAL_GPIO_DIR_INPUT, CYHAL_GPIO_DRIVE_NONE, false);
+    #endif
 
     if (rslt == CY_RSLT_SUCCESS)
     {
         *obj_pin = pin;
-        #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+        #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || \
+            defined(COMPONENT_CAT1D) || defined(COMPONENT_CAT5)
         uint8_t idx = (uint8_t)_cyhal_quaddec_translate_input_signal(input);
-        rslt = cyhal_gpio_enable_output(pin, signal_type, &(obj->tcpwm.inputs[idx]));
+
+        #if !defined(COMPONENT_CAT5)
+            // Already taken care of in cyhal_connect_pin() for CAT5
+            rslt = cyhal_gpio_enable_output(pin, signal_type, &(obj->tcpwm.inputs[idx]));
+        #endif
 
         if (rslt == CY_RSLT_SUCCESS)
         {
@@ -220,18 +255,25 @@ static cy_rslt_t _cyhal_quadec_pin_init(cyhal_quaddec_t *obj, cyhal_gpio_t pin, 
         rslt = _cyhal_quaddec_connect_pin(input, pin, obj->tcpwm.base,
                                           obj->tcpwm.resource.channel_num);
         #else
-        #warning "_cyhal_quadec_pin_init encountered unsupported architecture"
+        #warning "_cyhal_quaddec_pin_init encountered unsupported architecture"
         #endif
     }
     return rslt;
 }
 
-#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || defined(COMPONENT_CAT1D)
 static uint8_t _cyhal_quaddec_get_phy_a_input_dest_trig_idx;
 static cyhal_dest_t _cyhal_quaddec_get_phy_a_input_dest(uint8_t block_num, uint8_t channel_num)
 {
     CY_UNUSED_PARAMETER(channel_num);
-    return _cyhal_tpwm_calculate_dest(block_num, _cyhal_quaddec_get_phy_a_input_dest_trig_idx);
+    uint8_t trig_idx = _cyhal_quaddec_get_phy_a_input_dest_trig_idx;
+    if (trig_idx >= _CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[_CYHAL_TCPWM_GET_IP_BLOCK(block_num)])
+    {
+        /* We cannot use unexisting for current block number index, so this is rather incorrect param situation.
+        There is no possibility to return warning/error code, setting trig index to default 0. */
+        trig_idx = 0;
+    }
+    return _cyhal_tpwm_calculate_dest(block_num, trig_idx);
 }
 #endif
 
@@ -296,7 +338,8 @@ cy_rslt_t cyhal_quaddec_init(cyhal_quaddec_t *obj, cyhal_gpio_t phi_a, cyhal_gpi
     obj->tcpwm.resource.type = CYHAL_RSC_INVALID;
 
     // Allocate TCPWM resource
-    #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+    #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)  || \
+        defined(COMPONENT_CAT1D)
     if (NC == phi_a)
     {
         return CYHAL_QUADDEC_RSLT_ERR_BAD_ARGUMENT;
@@ -311,6 +354,15 @@ cy_rslt_t cyhal_quaddec_init(cyhal_quaddec_t *obj, cyhal_gpio_t phi_a, cyhal_gpi
         obj->phi_a = phi_a;
         rslt = cyhal_gpio_enable_output(phi_a, CYHAL_SIGNAL_TYPE_LEVEL, &phy_a_src);
 
+        uint16_t max_trig_cnt = 0;
+        for (size_t idx = 0; idx < (sizeof(_CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK) / sizeof(_CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[0])); ++idx)
+        {
+            if (max_trig_cnt < _CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[idx])
+            {
+                max_trig_cnt = _CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[idx];
+            }
+        }
+
         if (rslt == CY_RSLT_SUCCESS)
         {
             _cyhal_quaddec_get_phy_a_input_dest_trig_idx = 0;
@@ -319,13 +371,11 @@ cy_rslt_t cyhal_quaddec_init(cyhal_quaddec_t *obj, cyhal_gpio_t phi_a, cyhal_gpi
                 rslt = _cyhal_hwmgr_allocate_with_connection(CYHAL_RSC_TCPWM, &phy_a_src,
                     NULL, NULL, _cyhal_quaddec_get_phy_a_input_dest, &obj->tcpwm.resource);
                 _cyhal_quaddec_get_phy_a_input_dest_trig_idx++;
-            } while (CY_RSLT_SUCCESS != rslt &&
-                    _cyhal_quaddec_get_phy_a_input_dest_trig_idx
-                    < _CYHAL_TCPWM_TRIGGER_INPUTS_PER_BLOCK[obj->tcpwm.resource.block_num]);
+            } while (CY_RSLT_SUCCESS != rslt && _cyhal_quaddec_get_phy_a_input_dest_trig_idx < max_trig_cnt);
         }
     }
     #else
-    rslt = cyhal_hwmgr_allocate(CYHAL_RSC_TCPWM, &obj->tcpwm.resource);
+        rslt = cyhal_hwmgr_allocate(CYHAL_RSC_TCPWM, &obj->tcpwm.resource);
     #endif
 
     // Basic configuration of TCPWM for quadrature functionality
@@ -353,26 +403,30 @@ cy_rslt_t cyhal_quaddec_init(cyhal_quaddec_t *obj, cyhal_gpio_t phi_a, cyhal_gpi
     // Pin configuration
     if (rslt == CY_RSLT_SUCCESS)
     {
-        #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) // already initialized above
-        obj->tcpwm.inputs[phy_a_idx] = phy_a_src;;
-        rslt = cyhal_quaddec_connect_digital(obj, obj->tcpwm.inputs[phy_a_idx], CYHAL_QUADDEC_INPUT_PHI_A);
+        // See note above about CAT5 triggers
+        #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || \
+            defined(COMPONENT_CAT1D) // already initialized above
+            obj->tcpwm.inputs[phy_a_idx] = phy_a_src;;
+            rslt = cyhal_quaddec_connect_digital(obj, obj->tcpwm.inputs[phy_a_idx], CYHAL_QUADDEC_INPUT_PHI_A);
         #else
-        rslt = _cyhal_quadec_pin_init(obj, phi_a, &(obj->phi_a), CYHAL_SIGNAL_TYPE_LEVEL, CYHAL_QUADDEC_INPUT_PHI_A);
+            rslt = _cyhal_quaddec_pin_init(obj, phi_a, &(obj->phi_a), CYHAL_SIGNAL_TYPE_LEVEL, CYHAL_QUADDEC_INPUT_PHI_A);
         #endif
 
         if (rslt == CY_RSLT_SUCCESS)
         {
-            rslt = _cyhal_quadec_pin_init(obj, phi_b, &(obj->phi_b), CYHAL_SIGNAL_TYPE_LEVEL, CYHAL_QUADDEC_INPUT_PHI_B);
+            rslt = _cyhal_quaddec_pin_init(obj, phi_b, &(obj->phi_b), CYHAL_SIGNAL_TYPE_LEVEL, CYHAL_QUADDEC_INPUT_PHI_B);
         }
 
         if (index != NC)
         {
             if (rslt == CY_RSLT_SUCCESS)
             {
-                rslt = _cyhal_quadec_pin_init(obj, index, &(obj->index), CYHAL_SIGNAL_TYPE_EDGE, CYHAL_QUADDEC_INPUT_INDEX);
+                rslt = _cyhal_quaddec_pin_init(obj, index, &(obj->index), CYHAL_SIGNAL_TYPE_EDGE, CYHAL_QUADDEC_INPUT_INDEX);
             }
         }
-        #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+        // See note above about CAT5 triggers
+        #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || \
+            defined(COMPONENT_CAT1D)
         else
         {
             uint8_t idx = (uint8_t)_cyhal_quaddec_translate_input_signal(CYHAL_QUADDEC_INPUT_INDEX);
@@ -422,7 +476,8 @@ cy_rslt_t cyhal_quaddec_init_cfg(cyhal_quaddec_t *obj, const cyhal_quaddec_confi
 void cyhal_quaddec_free(cyhal_quaddec_t *obj)
 {
     CY_ASSERT(obj != NULL);
-    #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+    #if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || \
+        defined(COMPONENT_CAT1D) || defined(COMPONENT_CAT5)
     uint8_t idx_phi_a = (uint8_t)_cyhal_quaddec_translate_input_signal(CYHAL_QUADDEC_INPUT_PHI_A);
     if ((obj->phi_a != NC) && (obj->tcpwm.inputs[idx_phi_a] != CYHAL_TRIGGER_CPUSS_ZERO))
     {
@@ -522,7 +577,8 @@ uint32_t cyhal_quaddec_read_capture(const cyhal_quaddec_t *obj)
     #endif
 }
 
-#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C)
+#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || \
+    defined(COMPONENT_CAT1D) || defined(COMPONENT_CAT5)
 
 static cyhal_tcpwm_input_t _cyhal_quaddec_translate_input_signal(cyhal_quaddec_input_t signal)
 {

@@ -47,7 +47,7 @@ static rt_err_t read_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint8
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /* i2c write reg */
@@ -71,7 +71,7 @@ static rt_err_t write_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /**
@@ -286,7 +286,7 @@ static uint32_t cs42l51_read_id(void)
         (temp != CS42L51_MK_CHIP_REV(CS42L51_CHIP_ID, CS42L51_CHIP_REV_B)))
     {
       LOG_E("device id : 0x%02x", temp);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     LOG_D("device id : 0x%02x", temp);

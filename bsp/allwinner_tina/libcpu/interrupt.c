@@ -70,7 +70,7 @@ void rt_hw_interrupt_init(void)
 void rt_hw_interrupt_mask(int vector)
 {
     int index;
-    if ((vector < 0) || (vector > INTERRUPTS_MAX))
+    if ((vector < 0) || (vector >= INTERRUPTS_MAX))
     {
         return;
     }
@@ -89,7 +89,7 @@ void rt_hw_interrupt_mask(int vector)
 void rt_hw_interrupt_umask(int vector)
 {
     int index;
-    if ((vector < 0) || (vector > INTERRUPTS_MAX))
+    if ((vector < 0) || (vector >= INTERRUPTS_MAX))
     {
         return;
     }
@@ -114,7 +114,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     rt_isr_handler_t old_handler = RT_NULL;
     int index;
 
-    if ((vector < 0) || (vector > INTERRUPTS_MAX))
+    if ((vector < 0) || (vector >= INTERRUPTS_MAX))
     {
         return old_handler;
     }

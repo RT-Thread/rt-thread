@@ -60,7 +60,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt_device, int cmd, void *arg)
             /* Initialize the WDT */
             int result = cyhal_wdt_init(cfg->WDTx, (rt_uint32_t)timeout_ms);
             /* WDT initialization failed. Stop program execution */
-            RT_ASSERT(result != RT_ERROR);
+            RT_ASSERT(result == RT_EOK);
         }
         break;
 

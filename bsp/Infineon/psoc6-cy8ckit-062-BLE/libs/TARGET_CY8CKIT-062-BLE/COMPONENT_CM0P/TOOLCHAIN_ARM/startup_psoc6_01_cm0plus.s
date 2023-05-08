@@ -35,7 +35,7 @@
 
                 IMPORT |Image$$ARM_LIB_STACK$$ZI$$Base|
                 IMPORT |Image$$ARM_LIB_STACK$$ZI$$Length|
-                
+
 __Vectors       DCD    |Image$$ARM_LIB_STACK$$ZI$$Base| + |Image$$ARM_LIB_STACK$$ZI$$Length| ; Top of Stack
 
                 DCD     Reset_Handler             ; Reset Handler
@@ -56,38 +56,38 @@ __Vectors       DCD    |Image$$ARM_LIB_STACK$$ZI$$Base| + |Image$$ARM_LIB_STACK$
                 DCD     SysTick_Handler           ; SysTick Handler
 
                 ; External interrupts                           Description
-                DCD     NvicMux0_IRQHandler                   ; CM0+ NVIC Mux input 0 
-                DCD     NvicMux1_IRQHandler                   ; CM0+ NVIC Mux input 1 
-                DCD     NvicMux2_IRQHandler                   ; CM0+ NVIC Mux input 2 
-                DCD     NvicMux3_IRQHandler                   ; CM0+ NVIC Mux input 3 
-                DCD     NvicMux4_IRQHandler                   ; CM0+ NVIC Mux input 4 
-                DCD     NvicMux5_IRQHandler                   ; CM0+ NVIC Mux input 5 
-                DCD     NvicMux6_IRQHandler                   ; CM0+ NVIC Mux input 6 
-                DCD     NvicMux7_IRQHandler                   ; CM0+ NVIC Mux input 7 
-                DCD     NvicMux8_IRQHandler                   ; CM0+ NVIC Mux input 8 
-                DCD     NvicMux9_IRQHandler                   ; CM0+ NVIC Mux input 9 
-                DCD     NvicMux10_IRQHandler                  ; CM0+ NVIC Mux input 10 
-                DCD     NvicMux11_IRQHandler                  ; CM0+ NVIC Mux input 11 
-                DCD     NvicMux12_IRQHandler                  ; CM0+ NVIC Mux input 12 
-                DCD     NvicMux13_IRQHandler                  ; CM0+ NVIC Mux input 13 
-                DCD     NvicMux14_IRQHandler                  ; CM0+ NVIC Mux input 14 
-                DCD     NvicMux15_IRQHandler                  ; CM0+ NVIC Mux input 15 
-                DCD     NvicMux16_IRQHandler                  ; CM0+ NVIC Mux input 16 
-                DCD     NvicMux17_IRQHandler                  ; CM0+ NVIC Mux input 17 
-                DCD     NvicMux18_IRQHandler                  ; CM0+ NVIC Mux input 18 
-                DCD     NvicMux19_IRQHandler                  ; CM0+ NVIC Mux input 19 
-                DCD     NvicMux20_IRQHandler                  ; CM0+ NVIC Mux input 20 
-                DCD     NvicMux21_IRQHandler                  ; CM0+ NVIC Mux input 21 
-                DCD     NvicMux22_IRQHandler                  ; CM0+ NVIC Mux input 22 
-                DCD     NvicMux23_IRQHandler                  ; CM0+ NVIC Mux input 23 
-                DCD     NvicMux24_IRQHandler                  ; CM0+ NVIC Mux input 24 
-                DCD     NvicMux25_IRQHandler                  ; CM0+ NVIC Mux input 25 
-                DCD     NvicMux26_IRQHandler                  ; CM0+ NVIC Mux input 26 
-                DCD     NvicMux27_IRQHandler                  ; CM0+ NVIC Mux input 27 
-                DCD     NvicMux28_IRQHandler                  ; CM0+ NVIC Mux input 28 
-                DCD     NvicMux29_IRQHandler                  ; CM0+ NVIC Mux input 29 
-                DCD     NvicMux30_IRQHandler                  ; CM0+ NVIC Mux input 30 
-                DCD     NvicMux31_IRQHandler                  ; CM0+ NVIC Mux input 31 
+                DCD     NvicMux0_IRQHandler                   ; CM0+ NVIC Mux input 0
+                DCD     NvicMux1_IRQHandler                   ; CM0+ NVIC Mux input 1
+                DCD     NvicMux2_IRQHandler                   ; CM0+ NVIC Mux input 2
+                DCD     NvicMux3_IRQHandler                   ; CM0+ NVIC Mux input 3
+                DCD     NvicMux4_IRQHandler                   ; CM0+ NVIC Mux input 4
+                DCD     NvicMux5_IRQHandler                   ; CM0+ NVIC Mux input 5
+                DCD     NvicMux6_IRQHandler                   ; CM0+ NVIC Mux input 6
+                DCD     NvicMux7_IRQHandler                   ; CM0+ NVIC Mux input 7
+                DCD     NvicMux8_IRQHandler                   ; CM0+ NVIC Mux input 8
+                DCD     NvicMux9_IRQHandler                   ; CM0+ NVIC Mux input 9
+                DCD     NvicMux10_IRQHandler                  ; CM0+ NVIC Mux input 10
+                DCD     NvicMux11_IRQHandler                  ; CM0+ NVIC Mux input 11
+                DCD     NvicMux12_IRQHandler                  ; CM0+ NVIC Mux input 12
+                DCD     NvicMux13_IRQHandler                  ; CM0+ NVIC Mux input 13
+                DCD     NvicMux14_IRQHandler                  ; CM0+ NVIC Mux input 14
+                DCD     NvicMux15_IRQHandler                  ; CM0+ NVIC Mux input 15
+                DCD     NvicMux16_IRQHandler                  ; CM0+ NVIC Mux input 16
+                DCD     NvicMux17_IRQHandler                  ; CM0+ NVIC Mux input 17
+                DCD     NvicMux18_IRQHandler                  ; CM0+ NVIC Mux input 18
+                DCD     NvicMux19_IRQHandler                  ; CM0+ NVIC Mux input 19
+                DCD     NvicMux20_IRQHandler                  ; CM0+ NVIC Mux input 20
+                DCD     NvicMux21_IRQHandler                  ; CM0+ NVIC Mux input 21
+                DCD     NvicMux22_IRQHandler                  ; CM0+ NVIC Mux input 22
+                DCD     NvicMux23_IRQHandler                  ; CM0+ NVIC Mux input 23
+                DCD     NvicMux24_IRQHandler                  ; CM0+ NVIC Mux input 24
+                DCD     NvicMux25_IRQHandler                  ; CM0+ NVIC Mux input 25
+                DCD     NvicMux26_IRQHandler                  ; CM0+ NVIC Mux input 26
+                DCD     NvicMux27_IRQHandler                  ; CM0+ NVIC Mux input 27
+                DCD     NvicMux28_IRQHandler                  ; CM0+ NVIC Mux input 28
+                DCD     NvicMux29_IRQHandler                  ; CM0+ NVIC Mux input 29
+                DCD     NvicMux30_IRQHandler                  ; CM0+ NVIC Mux input 30
+                DCD     NvicMux31_IRQHandler                  ; CM0+ NVIC Mux input 31
 
 __Vectors_End
 
@@ -132,7 +132,7 @@ Vectors_Copy
                 STR r3, [r0]
                 ADDS r0, r0, #4
                 ADDS r1, r1, #4
-                SUBS r2, r2, #1
+                SUBS r2, r2, #4
                 CMP r2, #0
                 BNE Vectors_Copy
 

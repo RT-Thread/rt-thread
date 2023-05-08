@@ -16,7 +16,7 @@ config RT_USING_USER_MAIN
 
         config RT_MAIN_THREAD_PRIORITY
             int "Set main thread priority"
-            default 4  if RT_THREAD_PRIORITY_8
+            default 4   if RT_THREAD_PRIORITY_8
             default 10  if RT_THREAD_PRIORITY_32
             default 85  if RT_THREAD_PRIORITY_256
     endif

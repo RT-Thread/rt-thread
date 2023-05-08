@@ -332,9 +332,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
-              <Define>EVK_MCIMXRM, __STDC_LIMIT_MACROS, XIP_BOOT_HEADER_DCD_ENABLE=1, SKIP_SYSCLK_INIT, RT_USING_LIBC, __FPU_PRESENT=1, CPU_MIMXRT1064DVL6A, __RTTHREAD__, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARM_LIBC</Define>
+              <Define>EVK_MCIMXRM, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, XIP_BOOT_HEADER_DCD_ENABLE=1, SKIP_SYSCLK_INIT, RT_USING_LIBC, __FPU_PRESENT=1, CPU_MIMXRT1064DVL6A, __RTTHREAD__, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MIMXRT1064\CMSIS\Include;..\libraries\MIMXRT1064\MIMXRT1064;..\libraries\MIMXRT1064\MIMXRT1064\drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;xip</IncludePath>
+              <IncludePath>board\MCUX_Config;applications;board;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\..\..\libcpu\arm\cortex-m7;.;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;board\ports;..\libraries\MIMXRT1064\CMSIS\Include;..\libraries\MIMXRT1064\MIMXRT1064\drivers;..\libraries\MIMXRT1064\MIMXRT1064;..\libraries\drivers;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;xip;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,9 +448,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -491,13 +491,6 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
-          <Files>
-            <File>
-              <FileName>cputime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\cputime\cputime.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -583,6 +576,13 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\drivers\drv_common.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -705,9 +705,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -781,6 +781,13 @@
           <GroupName>xip</GroupName>
           <Files>
             <File>
+              <FileName>fsl_flexspi_nor_boot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>evkmimxrt1064_sdram_ini_dcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>xip\evkmimxrt1064_sdram_ini_dcd.c</FilePath>
@@ -791,13 +798,6 @@
               <FileName>evkmimxrt1064_flexspi_nor_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>xip\evkmimxrt1064_flexspi_nor_config.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fsl_flexspi_nor_boot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
             </File>
           </Files>
         </Group>

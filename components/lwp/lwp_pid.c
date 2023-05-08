@@ -135,7 +135,7 @@ static void __exit_files(struct rt_lwp *lwp)
 
     while (fd >= 0)
     {
-        struct dfs_fd *d;
+        struct dfs_file *d;
 
         d = lwp->fdt.fds[fd];
         if (d)
@@ -709,11 +709,11 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
 
 #ifdef RT_USING_SMP
     if (thread->oncpu != RT_CPU_DETACHED)
-        rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->name, thread->oncpu, thread->current_priority);
+        rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->oncpu, thread->current_priority);
     else
-        rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+        rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
 #else
-    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
 #endif /*RT_USING_SMP*/
 
     stat = (thread->stat & RT_THREAD_STAT_MASK);
@@ -787,7 +787,7 @@ long list_process(void)
 
                     thread = threads[index];
                     level = rt_hw_interrupt_disable();
-                    if ((thread->type & ~RT_Object_Class_Static) != RT_Object_Class_Thread)
+                    if ((thread->parent.type & ~RT_Object_Class_Static) != RT_Object_Class_Thread)
                     {
                         rt_hw_interrupt_enable(level);
                         continue;

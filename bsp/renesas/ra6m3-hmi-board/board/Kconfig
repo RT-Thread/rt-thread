@@ -1,0 +1,219 @@
+menu "Hardware Drivers Config"
+
+    config SOC_R7FA6M4AF
+        bool
+        select SOC_SERIES_R7FA6M3
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        default y
+
+    menu "Onboard Peripheral Drivers"
+
+    endmenu
+
+    menu "On-chip Peripheral Drivers"
+
+        source "../libraries/HAL_Drivers/Kconfig"
+
+        menuconfig BSP_USING_UART
+            bool "Enable UART"
+            default y
+            select RT_USING_SERIAL
+            select RT_USING_SERIAL_V2
+            if BSP_USING_UART
+                menuconfig BSP_USING_UART4
+                    bool "Enable UART4"
+                    default n
+                    if BSP_USING_UART4
+                        config BSP_UART4_RX_USING_DMA
+                            bool "Enable UART4 RX DMA"
+                            depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART4_TX_USING_DMA
+                            bool "Enable UART4 TX DMA"
+                            depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART4_RX_BUFSIZE
+                            int "Set UART4 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART4_TX_BUFSIZE
+                            int "Set UART4 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+                menuconfig BSP_USING_UART9
+                    bool "Enable UART9"
+                    default n
+                    if BSP_USING_UART9
+                        config BSP_UART9_RX_USING_DMA
+                            bool "Enable UART9 RX DMA"
+                            depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART9_TX_USING_DMA
+                            bool "Enable UART9 TX DMA"
+                            depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART9_RX_BUFSIZE
+                            int "Set UART9 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART9_TX_BUFSIZE
+                            int "Set UART9 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+            endif
+
+        menuconfig BSP_USING_SCI_SPI
+            bool "Enable SCI SPI BUS"
+            default n
+            select RT_USING_SPI
+            if BSP_USING_SCI_SPI 
+                config BSP_USING_SCI_SPI0
+                    bool "Enable SCI SPI0 BUS"
+                    default n
+                config BSP_USING_SCI_SPI1
+                    bool "Enable SCI SPI1 BUS"
+                    default n
+                config BSP_USING_SCI_SPI2
+                    bool "Enable SCI SPI2 BUS"
+                    default n
+                config BSP_USING_SCI_SPI3
+                    bool "Enable SCI SPI3 BUS"
+                    default n
+                config BSP_USING_SCI_SPI6
+                    bool "Enable SCI SPI6 BUS"
+                    default n
+            endif
+
+        menuconfig BSP_USING_SPI
+            bool "Enable SPI BUS"
+            default n
+            select RT_USING_SPI
+            if BSP_USING_SPI 
+                config BSP_USING_SPI0
+                    bool "Enable SPI0 BUS"
+                    default n
+                config BSP_USING_SPI1
+                    bool "Enable SPI1 BUS"
+                    default n
+            endif
+
+        menuconfig BSP_USING_FS
+            bool "Enable filesystem"
+            default n
+            if BSP_USING_FS
+                config BSP_USING_SDCARD_FS
+                    bool "Enable SDCARD filesystem"
+                    select BSP_USING_SDHI
+                    select RT_USING_DFS_ELMFAT
+                    default n
+                config BSP_USING_SPICARD_FS
+                    bool "Enable SPI FLASH filesystem"
+                    select BSP_USING_SPI
+                    select BSP_USING_SCI_SPI6
+                    select RT_USING_SPI_MSD
+                    select RT_USING_DFS_ELMFAT
+                    default n
+            endif
+
+        menuconfig BSP_USING_SDHI
+            bool "Enable SDHI"
+            default n
+            select RT_USING_SDIO
+            select RT_USING_DFS
+            select RT_LIBC_USING_FILEIO
+            select RT_USING_POSIX_DEVIO
+            if BSP_USING_SDHI
+                config SDHI_USING_1_BIT
+                    bool "Use 1-bit Mode(4-bit when disable)"
+                    default y
+            endif
+
+        menuconfig BSP_USING_PWM
+            bool "Enable PWM"
+            default n
+            select RT_USING_PWM
+            if BSP_USING_PWM
+                config BSP_USING_PWM12
+                    bool "Enable GPT12 (16-Bits) output PWM"
+                    default n
+            endif
+
+        menuconfig BSP_USING_CAN
+            bool "Enable CAN"
+            default n
+            select RT_USING_CAN
+            if BSP_USING_CAN
+                config BSP_USING_CAN0
+                    bool "Enable CAN0"
+                    default n
+            endif
+
+        config BSP_USING_LCD
+            bool "Enable LCD"
+            select BSP_USING_GPIO
+            default n
+
+        config BSP_USING_SPI_LCD
+            bool "Enable SPI LCD"
+            select BSP_USING_GPIO
+            select BSP_USING_SPI
+            select BSP_USING_SPI0
+            default n
+
+        config BSP_USING_G2D
+            bool "Enable G2D"
+            default n
+
+        config BSP_USING_JPEG
+            bool "Enable JPEG"
+            default n
+
+        config BSP_USING_ETH
+            bool "Enable Ethernet"
+            select RT_USING_SAL
+            select RT_USING_LWIP
+            select RT_USING_NETDEV
+            default n
+
+        menuconfig BSP_USING_LVGL
+            bool "Enable LVGL for LCD"
+            select PKG_USING_LVGL
+            default n
+            if BSP_USING_LVGL      
+                config BSP_USING_LCD_ILI9431
+                    bool "Enable LVGL for LCD_ILI9431"
+                    select PKG_USING_ILI9341
+                    select BSP_USING_SPI_LCD
+                    default n
+                config BSP_USING_LCD_RGB
+                    bool "Enable LVGL for LCD_RGB565"
+                    select BSP_USING_LCD
+                    default n
+            endif
+
+        if BSP_USING_LVGL
+            config BSP_USING_LVGL_DEMO
+                bool "Enable LVGL demo"
+                select PKG_USING_LV_MUSIC_DEMO
+                default y
+        endif
+
+    endmenu
+
+    menu "Board extended module Drivers"
+
+    endmenu
+endmenu

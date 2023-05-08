@@ -14,7 +14,7 @@ static const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
     {
         if (s[0] == '0')
         {
-            if (tolower(s[1]) == 'x' && isxdigit(s[2]))
+            if (tolower(s[1]) == 'x' && isxdigit((int)s[2]))
                 *base = 16;
             else
                 *base = 8;
@@ -35,7 +35,7 @@ unsigned long simple_strtoul(const char *cp, char **endp,
 
     cp = _parse_integer_fixup_radix(cp, &base);
 
-    while (isxdigit(*cp) && (value = isdigit(*cp) ? *cp-'0' : (islower(*cp)
+    while (isxdigit((int)*cp) && (value = isdigit((int)*cp) ? *cp-'0' : (islower((int)*cp)
         ? toupper(*cp) : *cp)-'A'+10) < base)
     {
         result = result*base + value;
@@ -213,16 +213,16 @@ int dtb_node_get_addr_and_size_by_index(const struct dtb_node *node, int index, 
     int onesize, na, ns;
 
     na = dtb_node_n_addr_cells(node);
-	ns = dtb_node_n_size_cells(node);
+    ns = dtb_node_n_size_cells(node);
 
     prop = dtb_node_get_dtb_node_property_value(node, "reg", &psize);
-	if (prop == NULL)
+    if (prop == NULL)
     {
-		return -1;
+        return -1;
     }
 
-	psize /= 4;
-	onesize = na + ns;
+    psize /= 4;
+    onesize = na + ns;
 
     if (psize >= (index + 1) * onesize)
     {
@@ -401,7 +401,7 @@ int dtb_node_write_prop(const struct dtb_node *node, const char *propname, int l
         return -ENOENT;
 
     /* Property does not exist -> append new property */
-    new = malloc(sizeof(struct dtb_property));
+    new = (struct dtb_property *)malloc(sizeof(struct dtb_property));
     if (!new)
         return -ENOMEM;
 

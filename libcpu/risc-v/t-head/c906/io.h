@@ -40,13 +40,13 @@ static inline uint32_t readl(const volatile void *addr)
 static inline void write_reg(
     uint32_t val, volatile void *addr, unsigned offset)
 {
-    writel(val, addr + offset);
+    writel(val, (void *)((rt_size_t)addr + offset));
 }
 
 static inline uint32_t read_reg(
     const volatile void *addr, unsigned offset)
 {
-    return readl(addr + offset);
+    return readl((void *)((rt_size_t)addr + offset));
 }
 
 #endif // ARCH_IO_H

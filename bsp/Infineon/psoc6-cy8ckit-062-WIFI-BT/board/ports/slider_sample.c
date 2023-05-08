@@ -234,7 +234,7 @@ int Slider_ctrl_sample(void)
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;

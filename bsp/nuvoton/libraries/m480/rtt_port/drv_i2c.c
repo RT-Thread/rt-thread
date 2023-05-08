@@ -365,7 +365,7 @@ static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 /* Public functions -------------------------------------------------------------*/
 int rt_hw_i2c_init(void)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
 
     SYS_UnlockReg();
 

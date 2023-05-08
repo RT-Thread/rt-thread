@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -610,7 +610,8 @@ at_client_t at_client_get(const char *dev_name)
 
     for (idx = 0; idx < AT_CLIENT_NUM_MAX; idx++)
     {
-        if (rt_strcmp(at_client_table[idx].device->parent.name, dev_name) == 0)
+        if (at_client_table[idx].device &&
+        (rt_strcmp(at_client_table[idx].device->parent.name, dev_name) == 0))
         {
             return &at_client_table[idx];
         }

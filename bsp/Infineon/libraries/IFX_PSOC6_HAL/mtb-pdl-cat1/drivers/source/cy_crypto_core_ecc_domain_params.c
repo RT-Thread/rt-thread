@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_ecc_domain_params.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constant and parameters for the API for the ECC
@@ -35,6 +35,8 @@
 extern "C" {
 #endif
 
+#if defined (CY_CRYPTO_CFG_ECP_C)
+
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_ECC_GetCurveParams
 ****************************************************************************//**
@@ -50,6 +52,7 @@ extern "C" {
 *******************************************************************************/
 cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_curve_id_t curveId)
 {
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
     /* P192 CURVE PARAMETERS */
     CY_ALIGN(4) static const uint8_t  eccP192Polynomial[CY_CRYPTO_ECC_P192_BYTE_SIZE] =
     {
@@ -96,7 +99,9 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
         0xd5u, 0xcdu, 0x24u, 0x6bu, 0xedu, 0x11u, 0x10u, 0x63u,
         0x78u, 0xdau, 0xc8u, 0xffu, 0x95u, 0x2bu, 0x19u, 0x07u
     };
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
     /* P224 CURVE PARAMETERS */
     CY_ALIGN(4) static const uint8_t  eccP224Polynomial[CY_CRYPTO_ECC_P224_BYTE_SIZE] =
     {
@@ -147,8 +152,10 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
         0xe6u, 0xdfu, 0x22u, 0x4cu, 0xfbu, 0x23u, 0xf7u, 0xb5u,
         0x88u, 0x63u, 0x37u, 0xbdu
     };
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
 
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
     /* P256 CURVE PARAMETERS */
     /* prime: "FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF" */
     CY_ALIGN(4) static const uint8_t  eccP256Polynomial[CY_CRYPTO_ECC_P256_BYTE_SIZE] =
@@ -205,7 +212,9 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
         0x16u, 0x9eu, 0x0fu, 0x7cu, 0x4au, 0xebu, 0xe7u, 0x8eu,
         0x9bu, 0x7fu, 0x1au, 0xfeu, 0xe2u, 0x42u, 0xe3u, 0x4fu,
     };
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
     /* prime: "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFF0000000000000000FFFFFFFF" */
     CY_ALIGN(4) static const uint8_t  eccP384Polynomial[CY_CRYPTO_ECC_P384_BYTE_SIZE] =
     {
@@ -273,7 +282,9 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
         0x29u, 0xdcu, 0x92u, 0x92u, 0xbfu, 0x98u, 0x9eu, 0x5du,
         0x6fu, 0x2cu, 0x26u, 0x96u, 0x4au, 0xdeu, 0x17u, 0x36u
     };
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
 
+#if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
     CY_ALIGN(4) static const uint8_t  eccP521Polynomial[CY_CRYPTO_ECC_P521_BYTE_SIZE] =
     {
        0xffu, 0xffu, 0xffu, 0xffu, 0xffu, 0xffu, 0xffu, 0xffu,
@@ -354,6 +365,7 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
         0x04u, 0xc0u, 0x3bu, 0x9au, 0x78u, 0x6au, 0x29u, 0x39u,
         0x18u, 0x01u
     };
+#endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
 
     static const cy_stc_crypto_ecc_dp_type eccDomainParams[] =
     {
@@ -368,7 +380,9 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
             NULL,
             NULL,
             NULL
-        },
+        }
+        #if defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED)
+        ,
         {
             CY_CRYPTO_ECC_ECP_SECP192R1,
             CY_CRYPTO_ECC_P192_SIZE,
@@ -386,7 +400,10 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
             eccP192BasePointX,
             /* base point y: "07192B95FFC8DA78631011ED6B24CDD573F977A11E794811" */
             eccP192BasePointY
-        },
+        }
+        #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP192R1_ENABLED) */
+        #if defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED)
+        ,
         {
             CY_CRYPTO_ECC_ECP_SECP224R1,
             CY_CRYPTO_ECC_P224_SIZE,
@@ -404,7 +421,10 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
             eccP224BasePointX,
             /* Gy - base point y: "BD376388B5F723FB4C22DFE6CD4375A05A07476444D5819985007E34" */
             eccP224BasePointY
-        },
+        }
+        #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP224R1_ENABLED) */
+        #if defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED)
+        ,
         {
             CY_CRYPTO_ECC_ECP_SECP256R1,
             CY_CRYPTO_ECC_P256_SIZE,
@@ -422,7 +442,10 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
             eccP256BasePointX,
             /* Gy - base point y: "4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5" */
             eccP256BasePointY
-        },
+        }
+        #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP256R1_ENABLED) */
+        #if defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED)
+        ,
         {
             CY_CRYPTO_ECC_ECP_SECP384R1,
             CY_CRYPTO_ECC_P384_SIZE,
@@ -440,7 +463,10 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
             eccP384BasePointX,
             /* base point y: "3617DE4A96262C6F5D9E98BF9292DC29F8F41DBD289A147CE9DA3113B5F0B8C00A60B1CE1D7E819D7A431D7C90EA0E5F" */
             eccP384BasePointY
-        },
+        }
+        #endif /*defined(CY_CRYPTO_CFG_ECP_DP_SECP384R1_ENABLED) */
+        #if defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED)
+        ,
         {
             CY_CRYPTO_ECC_ECP_SECP521R1,
             CY_CRYPTO_ECC_P521_SIZE,
@@ -459,6 +485,7 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
             /* base point y: "11839296A789A3BC0045C8A5FB42C7D1BD998F54449579B446817AFBD17273E662C97EE72995EF42640C550B9013FAD0761353C7086A272C24088BE94769FD16650" */
             eccP521BasePointY
         }
+        #endif /* defined(CY_CRYPTO_CFG_ECP_DP_SECP521R1_ENABLED) */
     };
 
     cy_stc_crypto_ecc_dp_type *tmpResult = NULL;
@@ -470,6 +497,8 @@ cy_stc_crypto_ecc_dp_type *Cy_Crypto_Core_ECC_GetCurveParams(cy_en_crypto_ecc_cu
 
     return tmpResult;
 }
+
+#endif /* defined (CY_CRYPTO_CFG_ECP_C) */
 
 #if defined(__cplusplus)
 }

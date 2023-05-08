@@ -31,7 +31,7 @@
 
 void rt_hw_cpu_dcache_clean_local(void *addr, int size);
 void rt_hw_cpu_dcache_invalidate_local(void *addr, int size);
-void rt_hw_cpu_dcache_clean_invalidate_local(void *addr, int size);
+void rt_hw_cpu_dcache_clean_and_invalidate_local(void *addr, int size);
 
 void rt_hw_cpu_icache_invalidate_local(void *addr, int size);
 
@@ -49,7 +49,7 @@ ALWAYS_INLINE void rt_hw_cpu_dcache_invalidate_all_local(void)
     rt_hw_cpu_sync();
 }
 
-ALWAYS_INLINE void rt_hw_cpu_dcache_clean_invalidate_all_local(void)
+ALWAYS_INLINE void rt_hw_cpu_dcache_clean_and_invalidate_all_local(void)
 {
     __asm__ volatile(OPC_DCACHE_CIALL ::
                          : "memory");
@@ -76,11 +76,11 @@ ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_all_local(void)
 
 void rt_hw_cpu_dcache_clean(void *addr, int size);
 void rt_hw_cpu_dcache_invalidate(void *addr, int size);
-void rt_hw_cpu_dcache_clean_invalidate(void *addr, int size);
+void rt_hw_cpu_dcache_clean_and_invalidate(void *addr, int size);
 
 void rt_hw_cpu_dcache_clean_all(void);
 void rt_hw_cpu_dcache_invalidate_all(void);
-void rt_hw_cpu_dcache_clean_invalidate_all(void);
+void rt_hw_cpu_dcache_clean_and_invalidate_all(void);
 
 void rt_hw_cpu_icache_invalidate(void *addr, int size);
 void rt_hw_cpu_icache_invalidate_all(void);
@@ -89,11 +89,11 @@ void rt_hw_cpu_icache_invalidate_all(void);
 
 #define rt_hw_cpu_dcache_clean rt_hw_cpu_dcache_clean_local
 #define rt_hw_cpu_dcache_invalidate rt_hw_cpu_dcache_invalidate_local
-#define rt_hw_cpu_dcache_clean_invalidate rt_hw_cpu_dcache_clean_invalidate_local
+#define rt_hw_cpu_dcache_clean_and_invalidate rt_hw_cpu_dcache_clean_and_invalidate_local
 
 #define rt_hw_cpu_dcache_clean_all rt_hw_cpu_dcache_clean_all_local
 #define rt_hw_cpu_dcache_invalidate_all rt_hw_cpu_dcache_invalidate_all_local
-#define rt_hw_cpu_dcache_clean_invalidate_all rt_hw_cpu_dcache_clean_invalidate_all_local
+#define rt_hw_cpu_dcache_clean_and_invalidate_all rt_hw_cpu_dcache_clean_and_invalidate_all_local
 
 #define rt_hw_cpu_icache_invalidate rt_hw_cpu_icache_invalidate_local
 #define rt_hw_cpu_icache_invalidate_all rt_hw_cpu_icache_invalidate_all_local

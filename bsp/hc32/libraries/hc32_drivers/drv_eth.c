@@ -219,7 +219,7 @@ static rt_err_t rt_hc32_eth_control(rt_device_t dev, int cmd, void *args)
 /* transmit data*/
 rt_err_t rt_hc32_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-    rt_err_t errval = RT_ERROR;
+    rt_err_t errval = -RT_ERROR;
     struct pbuf *q;
     uint8_t *txBuffer;
     __IO stc_eth_dma_desc_t *DmaTxDesc;

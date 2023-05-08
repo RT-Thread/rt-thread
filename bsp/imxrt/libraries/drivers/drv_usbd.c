@@ -220,7 +220,7 @@ static rt_err_t drv_ehci0_usbd_init(rt_device_t device)
     else
     {
         rt_kprintf("USB_DeviceInit ehci0 error\r\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }

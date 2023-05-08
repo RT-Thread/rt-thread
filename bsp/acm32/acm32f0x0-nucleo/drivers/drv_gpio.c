@@ -175,7 +175,7 @@ static const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-static void acm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void acm32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_index *index;
 
@@ -188,7 +188,7 @@ static void acm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     HAL_GPIO_WritePin(index->gpio, index->pin, (enum_PinState_t)value);
 }
 
-static int acm32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t acm32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     int value;
     const struct pin_index *index;
@@ -206,7 +206,7 @@ static int acm32_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-static void acm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void acm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_index *index;
     GPIO_InitTypeDef GPIO_InitStruct;
@@ -308,8 +308,8 @@ static void acm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 #define     PIN2INDEX(pin)      ((pin) % 16)
 
-static rt_err_t acm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t acm32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                     rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -318,7 +318,7 @@ static rt_err_t acm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irqindex = PIN2INDEX(pin);
@@ -336,7 +336,7 @@ static rt_err_t acm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
 
     pin_irq_hdr_tab[irqindex].pin = pin;
@@ -348,7 +348,7 @@ static rt_err_t acm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t acm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t acm32_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -357,7 +357,7 @@ static rt_err_t acm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irqindex = PIN2INDEX(pin);
@@ -378,7 +378,7 @@ static rt_err_t acm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t acm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                     rt_uint32_t enabled)
+                                     rt_uint8_t enabled)
 {
     const struct pin_index *index;
     struct pin_irq_map *irqmap;
@@ -389,7 +389,7 @@ static rt_err_t acm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irqindex = PIN2INDEX(pin);
@@ -402,7 +402,7 @@ static rt_err_t acm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         System_Module_Enable(EN_EXTI);
@@ -444,7 +444,7 @@ static rt_err_t acm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     {
         if ((pin_irq_enable_mask & (1 << irqindex)) == 0)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();

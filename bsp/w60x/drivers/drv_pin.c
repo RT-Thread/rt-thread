@@ -78,7 +78,7 @@ static rt_err_t wm_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     gpio_pin = wm_get_pin(pin);
     if (gpio_pin < 0)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -102,7 +102,7 @@ static rt_err_t wm_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
         break;
     default:
         rt_hw_interrupt_enable(level);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     tls_gpio_isr_register((enum tls_io_name)gpio_pin, hdr, args);
@@ -123,7 +123,7 @@ static rt_err_t wm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
     gpio_pin = wm_get_pin(pin);
     if (gpio_pin < 0)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     level = rt_hw_interrupt_disable();
     if (enabled == PIN_IRQ_ENABLE)
@@ -142,7 +142,7 @@ static rt_err_t wm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
     else
     {
         rt_hw_interrupt_enable(level);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 }
 

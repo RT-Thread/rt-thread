@@ -9,6 +9,7 @@
  * 2018/12/27     Jesven       Add SMP support
  * 2020/11/20     BalanceTWK   Add FPU support
  * 2022/12/28     WangShun     Add macro to distinguish whether FPU is supported
+ * 2023/03/19     Flyingcys    Add riscv_32e support
  */
 
 #define __ASSEMBLY__
@@ -115,7 +116,12 @@ rt_hw_context_switch:
     FSTORE  f31, 31 * FREGBYTES(sp)
 
 #endif
+#ifndef __riscv_32e
     addi  sp,  sp, -32 * REGBYTES
+#else
+    addi  sp,  sp, -16 * REGBYTES
+#endif
+
     STORE sp,  (a0)
 
     STORE x1,   0 * REGBYTES(sp)
@@ -140,6 +146,7 @@ save_mpie:
     STORE x13, 13 * REGBYTES(sp)
     STORE x14, 14 * REGBYTES(sp)
     STORE x15, 15 * REGBYTES(sp)
+#ifndef __riscv_32e
     STORE x16, 16 * REGBYTES(sp)
     STORE x17, 17 * REGBYTES(sp)
     STORE x18, 18 * REGBYTES(sp)
@@ -156,7 +163,7 @@ save_mpie:
     STORE x29, 29 * REGBYTES(sp)
     STORE x30, 30 * REGBYTES(sp)
     STORE x31, 31 * REGBYTES(sp)
-
+#endif
     /* restore to thread context
      * sp(0) -> epc;
      * sp(1) -> ra;
@@ -237,6 +244,7 @@ rt_hw_context_switch_exit:
     LOAD x13, 13 * REGBYTES(sp)
     LOAD x14, 14 * REGBYTES(sp)
     LOAD x15, 15 * REGBYTES(sp)
+#ifndef __riscv_32e
     LOAD x16, 16 * REGBYTES(sp)
     LOAD x17, 17 * REGBYTES(sp)
     LOAD x18, 18 * REGBYTES(sp)
@@ -255,6 +263,9 @@ rt_hw_context_switch_exit:
     LOAD x31, 31 * REGBYTES(sp)
 
     addi sp,  sp, 32 * REGBYTES
+#else
+    addi sp,  sp, 16 * REGBYTES
+#endif
 
 #ifdef ARCH_RISCV_FPU
     FLOAD   f0, 0 * FREGBYTES(sp)

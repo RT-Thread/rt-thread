@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_cryptolite_hw.h
-* \version 1.0.0
+* \version 2.0
 *
 * \brief
 *  This file provides common constants and macros
@@ -35,20 +35,26 @@
 extern "C" {
 #endif
 
-#include "ip/cyip_crypto.h"
+#include "ip/cyip_cryptolite.h"
 
-#define REG_CRYPTOLITE_CTL(base)                         (((CRYPTO_Type*)(base))->CTL)
-#define REG_CRYPTOLITE_STATUS(base)                      (((CRYPTO_Type*)(base))->STATUS)
-#define REG_CRYPTOLITE_SHA_DESCR(base)                   (((CRYPTO_Type*)(base))->SHA_DESCR)
-#define REG_CRYPTOLITE_SHA_INTR_ERROR(base)              (((CRYPTO_Type*)(base))->INTR_ERROR)
-#define REG_CRYPTOLITE_SHA_INTR_ERROR_SET(base)          (((CRYPTO_Type*)(base))->INTR_ERROR_SET)
-#define REG_CRYPTOLITE_SHA_INTR_ERROR_MASK(base)         (((CRYPTO_Type*)(base))->INTR_ERROR_MASK)
-#define REG_CRYPTOLITE_SHA_INTR_ERROR_MASKED(base)       (((CRYPTO_Type*)(base))->INTR_ERROR_MASKED)
+#define REG_CRYPTOLITE_CTL(base)                         (((CRYPTOLITE_Type*)(base))->CTL)
+#define REG_CRYPTOLITE_STATUS(base)                      (((CRYPTOLITE_Type*)(base))->STATUS)
+#define REG_CRYPTOLITE_SHA_DESCR(base)                   (((CRYPTOLITE_Type*)(base))->SHA_DESCR)
+#define REG_CRYPTOLITE_SHA_INTR_ERROR(base)              (((CRYPTOLITE_Type*)(base))->INTR_ERROR)
+#define REG_CRYPTOLITE_SHA_INTR_ERROR_SET(base)          (((CRYPTOLITE_Type*)(base))->INTR_ERROR_SET)
+#define REG_CRYPTOLITE_SHA_INTR_ERROR_MASK(base)         (((CRYPTOLITE_Type*)(base))->INTR_ERROR_MASK)
+#define REG_CRYPTOLITE_SHA_INTR_ERROR_MASKED(base)       (((CRYPTOLITE_Type*)(base))->INTR_ERROR_MASKED)
+
+#define REG_CRYPTOLITE_DESCR(base)                      (((CRYPTOLITE_Type*)(base))->SHA_DESCR)
+#define REG_CRYPTOLITE_INTR_ERROR(base)                 (((CRYPTOLITE_Type*)(base))->INTR_ERROR)
+#define REG_CRYPTOLITE_INTR_ERROR_SET(base)             (((CRYPTOLITE_Type*)(base))->INTR_ERROR_SET)
+#define REG_CRYPTOLITE_INTR_ERROR_MASK(base)            (((CRYPTOLITE_Type*)(base))->INTR_ERROR_MASK)
+#define REG_CRYPTOLITE_INTR_ERROR_MASKED(base)          (((CRYPTOLITE_Type*)(base))->INTR_ERROR_MASKED)
 
 #define CY_CRYPTOLITE_MSG_SCH_CTLWD                      ((uint32_t)(0UL << 28UL))
 #define CY_CRYPTOLITE_PROCESS_CTLWD                      ((uint32_t)(1UL << 28UL))
 /*bus error interrupt mask*/
-#define CY_CRYPTOLITE_INTR_BUS_ERROR_MASK                ((uint32_t)CRYPTO_INTR_ERROR_BUS_ERROR_Msk)
+#define CY_CRYPTOLITE_INTR_BUS_ERROR_MASK                ((uint32_t)CRYPTOLITE_INTR_ERROR_BUS_ERROR_Msk)
 
 #if defined(__cplusplus)
 }

@@ -160,7 +160,7 @@ static rt_err_t nu_uspi_bus_configure(struct rt_spi_device *device,
         u32SPIMode = USPI_MODE_3;
         break;
     default:
-        ret = RT_EIO;
+        ret = -RT_EIO;
         goto exit_nu_uspi_bus_configure;
     }
 
@@ -168,7 +168,7 @@ static rt_err_t nu_uspi_bus_configure(struct rt_spi_device *device,
     if (!(configuration->data_width == 8  ||
             configuration->data_width == 16))
     {
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uspi_bus_configure;
     }
 

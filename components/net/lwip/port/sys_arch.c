@@ -525,7 +525,7 @@ void sys_arch_unprotect(sys_prot_t pval)
 void sys_arch_assert(const char *file, int line)
 {
     rt_kprintf("\nAssertion: %d in %s, thread %s\n",
-               line, file, rt_thread_self()->name);
+               line, file, rt_thread_self()->parent.name);
     RT_ASSERT(0);
 }
 

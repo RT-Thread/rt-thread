@@ -6,6 +6,7 @@
  * Change Logs:
  * Date         Author         Notes
  * 2022-05-16   shelton        first version
+ * 2023-04-08   shelton        add support f423
  */
 
 #include <rtthread.h>
@@ -25,7 +26,7 @@ static time_t get_rtc_timestamp(void)
 {
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
-    defined (SOC_SERIES_AT32F425)
+    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423)
     struct tm tm_new;
     ertc_time_type ertc_time_struct;
 
@@ -50,7 +51,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
-    defined (SOC_SERIES_AT32F425)
+    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423)
     struct tm now;
 
     gmtime_r(&time_stamp, &now);
@@ -95,7 +96,7 @@ static rt_err_t rt_rtc_config(void)
 
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
-    defined (SOC_SERIES_AT32F425)
+    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423)
 
     /* select rtc clock source */
 #ifdef BSP_RTC_USING_LICK

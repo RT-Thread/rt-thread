@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_seglcd.c
-* \version 1.10
+* \version 1.10.1
 *
 * \brief
 * Provides an API implementation of the SegLCD driver

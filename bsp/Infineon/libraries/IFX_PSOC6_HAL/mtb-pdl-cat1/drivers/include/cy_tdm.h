@@ -144,7 +144,7 @@
 * </table>
 *
 
-* \defgroup group_tdm_i2s_macros_intrerrupt_masks Interrupt Masks
+* \defgroup group_tdm_i2s_macros_interrupt_masks Interrupt Masks
 * \defgroup group_tdm_data_structures Data Structures
 * \defgroup group_tdm_enums Enumerated Types
 * \defgroup group_tdm_macros Macros
@@ -195,7 +195,7 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 10.1', 14, \
 /** \} group_tdm_macros */
 
 /**
-* \addtogroup group_tdm_i2s_macros_intrerrupt_masks
+* \addtogroup group_tdm_i2s_macros_interrupt_masks
 * \{
 */
 
@@ -217,7 +217,7 @@ CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 10.1', 14, \
 /** Bit 8: Interface frequency is higher than PCM sample frequency. */
 #define CY_TDM_INTR_RX_IF_UNDERFLOW         (TDM_TDM_STRUCT_TDM_RX_STRUCT_INTR_RX_IF_OVERFLOW_Msk)
 
-/** \} group_tdm_i2s_macros_intrerrupt_masks */
+/** \} group_tdm_i2s_macros_interrupt_masks */
 
 
 /**

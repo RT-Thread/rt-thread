@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* (c) (2016-2021), Cypress Semiconductor Corporation (an Infineon company) or
+* (c) (2016-2022), Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -197,7 +197,7 @@ typedef struct {
 #define MXS40ADCMIC_ADCMIC_TP_TEST_POINT_OBSERVE_DATA_Msk 0xFFFF0000UL
 /* MXS40ADCMIC.ADCMIC_DATA */
 #define MXS40ADCMIC_ADCMIC_DATA_FIFO_DATA_Pos   0UL
-#define MXS40ADCMIC_ADCMIC_DATA_FIFO_DATA_Msk   0xFFFFUL
+#define MXS40ADCMIC_ADCMIC_DATA_FIFO_DATA_Msk   0xFFFFFFFFUL
 /* MXS40ADCMIC.ADC_CLK_CTRL */
 #define MXS40ADCMIC_ADC_CLK_CTRL_ADC_SYN_CLK_PHASE_Pos 0UL
 #define MXS40ADCMIC_ADC_CLK_CTRL_ADC_SYN_CLK_PHASE_Msk 0x1UL

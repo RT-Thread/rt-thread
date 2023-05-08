@@ -16,10 +16,10 @@ src = Split('''
             mtb-hal-cat1/source/cyhal_gpio.c
             mtb-hal-cat1/source/cyhal_scb_common.c
             mtb-hal-cat1/source/cyhal_interconnect.c
-            mtb-hal-cat1/source/cyhal_utils_psoc.c
             mtb-hal-cat1/source/cyhal_utils.c
             mtb-hal-cat1/source/cyhal_lptimer.c
-            mtb-hal-cat1/source/cyhal_irq_psoc.c
+            mtb-hal-cat1/source/cyhal_utils_impl.c
+            mtb-hal-cat1/source/cyhal_irq_impl.c
             mtb-pdl-cat1/drivers/source/cy_sysclk.c
             mtb-pdl-cat1/drivers/source/cy_systick.c
             mtb-pdl-cat1/drivers/source/cy_gpio.c

@@ -52,9 +52,9 @@
           <OutputName>rtthread</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\build\keil\List\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -338,8 +338,13 @@
             <VariousControls>
               <MiscControls></MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, APM32F10X_HD</Define>
+<<<<<<< Updated upstream
+              <Undefine />
+              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\..\..\include;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;applications;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;.;..\libraries\APM32F10x_Library\CMSIS\Include;..\..\..\components\dfs\filesystems\elmfat;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\components\drivers\include;board;..\..\..\components\dfs\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;board\ports;..\libraries\Drivers\config;..\libraries\Drivers;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh</IncludePath>
+=======
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;..\libraries\APM32F10x_Library\CMSIS\Include;..\libraries\Drivers;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\stdio;applications;..\..\..\components\dfs\include;..\libraries\Drivers\config;..\..\..\components\drivers\include;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;.</IncludePath>
+              <IncludePath>.;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\..\..\libcpu\arm\common;..\libraries\Drivers;..\..\..\components\drivers\include;board;..\..\..\components\libc\posix\io\stdio;..\..\..\components\finsh;..\libraries\APM32F10x_Library\Device\Geehy\APM32F10x\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\Drivers\config;..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\inc;..\libraries\APM32F10x_Library\CMSIS\Include;..\..\..\components\drivers\include;applications;..\libraries\APM32F10x_Library\APM32F10x_ETH_Driver\inc;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;board\ports</IncludePath>
+>>>>>>> Stashed changes
             </VariousControls>
           </Cads>
           <Aads>
@@ -438,6 +443,16 @@
         <Group>
           <GroupName>CPU</GroupName>
           <Files>
+            <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+<<<<<<< Updated upstream
+          </Files>
+          <Files>
+=======
+>>>>>>> Stashed changes
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
@@ -541,31 +556,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
@@ -587,11 +577,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -649,9 +634,9 @@
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
             <File>
               <FileName>thread.c</FileName>
@@ -697,6 +682,11 @@
               <FileName>apm32f10x_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>apm32f10x_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\APM32F10x_Library\APM32F10x_StdPeriphDriver\src\apm32f10x_dma.c</FilePath>
             </File>
           </Files>
         </Group>

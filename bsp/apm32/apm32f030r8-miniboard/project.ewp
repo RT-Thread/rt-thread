@@ -2297,7 +2297,7 @@
       <name>$PROJ_DIR$\board\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Source\iar\startup_apm32f030.S</name>
+      <name>$PROJ_DIR$\..\libraries\APM32F0xx_Library\Device\Geehy\APM32F0xx\Source\iar\startup_apm32f030.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\Drivers\drv_common.c</name>
@@ -2357,7 +2357,7 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>

@@ -455,7 +455,7 @@ int lwp_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *oset)
                 newset = *sigset;
                 break;
             default:
-                ret = RT_EINVAL;
+                ret = -RT_EINVAL;
                 goto out;
         }
 

@@ -176,7 +176,7 @@ static rt_err_t drv_pwm_set(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configuration 
             if (u64val < 0xFFFF) break;
             u64val /= 2;
         }
-        if (div_bit > 10) return RT_ERROR;
+        if (div_bit > 10) return -RT_ERROR;
         //
         TMRA_SetClockDiv(TMRAx, div_bit << TMRA_BCSTR_CKDIV_POS);
         u32clkFreq = get_tmra_clk_freq(TMRAx);
@@ -209,7 +209,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
     case PWM_CMD_GET:
         return drv_pwm_get(TMRAx, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 

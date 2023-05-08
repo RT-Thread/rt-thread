@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_scb_spi.h
-* \version 2.90
+* \version 3.0
 *
 * Provides SPI API declarations of the SCB driver.
 *
@@ -47,7 +47,7 @@
 *     just for each byte
 * * Master supports late sampling for better timing margin
 * * Master supports continuous SPI clock
-* * Data frame size programmable from 4 bits to 16 bits
+* * Data frame size programmable from 4 bits to 32 bits
 * * Programmable oversampling
 * * MSb or LSb first
 * * Median filter available for inputs
@@ -292,7 +292,7 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXSCB)
+#if (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB))
 
 #include "cy_scb_common.h"
 
@@ -382,7 +382,7 @@ typedef enum
 } cy_en_scb_spi_polarity_t;
 
 /** SPI Parity */
-#if(CY_IP_MXSCB_VERSION>=2) || defined (CY_DOXYGEN)
+#if(((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB)) || defined (CY_DOXYGEN))
 /**
 * \note
 * This enum is available for CAT1B and CAT1C devices.
@@ -429,7 +429,7 @@ typedef struct cy_stc_scb_spi_config
     * other submodes
     */
     cy_en_scb_spi_sclk_mode_t    sclkMode;
-#if(CY_IP_MXSCB_VERSION>=2) || defined (CY_DOXYGEN)
+#if(((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB)) || defined (CY_DOXYGEN))
     /** Configures the SPI parity */
     /**
     * \note
@@ -457,13 +457,13 @@ typedef struct cy_stc_scb_spi_config
     uint32_t    oversample;
 
     /**
-    * The width of RX data (valid range 4-16). It must be the same as
+    * The width of RX data (valid range 4-32). It must be the same as
     * \ref txDataWidth except in National sub-mode.
     */
     uint32_t    rxDataWidth;
 
     /**
-    * The width of TX data (valid range 4-16). It must be the same as
+    * The width of TX data (valid range 4-32). It must be the same as
     * \ref rxDataWidth except in National sub-mode.
     */
     uint32_t    txDataWidth;
@@ -506,7 +506,7 @@ typedef struct cy_stc_scb_spi_config
     */
     uint32_t    ssPolarity;
 
-#if(CY_IP_MXSCB_VERSION>=2) || defined (CY_DOXYGEN)
+#if(((CY_IP_MXSCB_VERSION>=2) || defined (CY_IP_MXS22SCB)) || defined (CY_DOXYGEN))
     /**
     * Indicates the SPI SELECT setup delay (between SELECT activation and SPI clock).
     * '0': With this setting the same timing is generated as in SCB v1 block.
@@ -902,7 +902,7 @@ cy_en_syspm_status_t Cy_SCB_SPI_HibernateCallback(cy_stc_syspm_callback_params_t
                                                   (CY_SCB_SPI_SLAVE_SELECT3 == (ss)) )
 
 #define CY_SCB_SPI_IS_OVERSAMPLE_VALID(ovs, mode)   ( (CY_SCB_SPI_MASTER == (mode)) ? (((ovs) >= 2UL) && ((ovs) <= 16UL)) : true )
-#define CY_SCB_SPI_IS_DATA_WIDTH_VALID(width)       ( ((width) >= 4UL) && ((width) <= 16UL) )
+#define CY_SCB_SPI_IS_DATA_WIDTH_VALID(width)       ( ((width) >= 4UL) && ((width) <= 32UL) )
 #define CY_SCB_SPI_IS_SS_POLARITY_VALID(polarity)   ( (0UL == ((polarity) & (~0x0FUL))) )
 #define CY_SCB_SPI_IS_BUFFER_VALID(txBuffer, rxBuffer, size)  ( ((size) > 0UL)  && \
                                                                  (false == ((NULL == (txBuffer)) && (NULL == (rxBuffer)))) )
@@ -1580,7 +1580,7 @@ __STATIC_INLINE uint32_t CY_SCB_SPI_GetSclkMode(cy_en_scb_spi_sub_mode_t subMode
 
 /** \} group_scb_spi */
 
-#endif /* (CY_IP_MXSCB) */
+#endif /* (defined (CY_IP_MXSCB) || defined (CY_IP_MXS22SCB)) */
 
 #endif /* (CY_SCB_SPI_H) */
 

@@ -33,12 +33,10 @@ if GetDepend(['BSP_USING_I2C', 'BSP_USING_HW_I2C']):
         src += ['drv_i2c.c']
 
 if GetDepend(['BSP_USING_SPI']):
-    if GetDepend('BSP_USING_SCI_SPI0') or GetDepend('BSP_USING_SCI_SPI1')   \
-    or GetDepend('BSP_USING_SCI_SPI2') or GetDepend('BSP_USING_SCI_SPI3')   \
-    or GetDepend('BSP_USING_SCI_SPI4') or GetDepend('BSP_USING_SCI_SPI9'):  \
-        src += ['drv_sci_spi.c']
-    else:
-        src += ['drv_spi.c']
+    src += ['drv_spi.c']
+
+if GetDepend(['BSP_USING_SCI_SPI']):
+    src += ['drv_sci_spi.c']
 
 if GetDepend(['BSP_USING_ADC']):
     src += ['drv_adc.c']
@@ -51,6 +49,9 @@ if GetDepend(['BSP_USING_ONCHIP_FLASH']):
 
 if GetDepend(['BSP_USING_PWM']):
     src += ['drv_pwm.c']
+
+if GetDepend(['BSP_USING_ETH']):
+    src += ['drv_eth.c']
 
 if GetDepend(['BSP_USING_CAN']):
     src += ['drv_can.c']

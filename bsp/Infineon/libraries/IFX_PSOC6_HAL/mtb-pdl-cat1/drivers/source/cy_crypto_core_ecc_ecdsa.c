@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_ecc_ecdsa.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constant and parameters for the API for the ECC ECDSA
@@ -35,15 +35,20 @@
 extern "C" {
 #endif
 
+#if defined(CY_CRYPTO_CFG_ECDSA_C)
+
 #include "cy_crypto_core_ecc_nist_p.h"
 #include "cy_crypto_core_mem.h"
 #include "cy_crypto_core_vu.h"
 
+#if defined(CY_CRYPTO_CFG_ECDSA_SIGN_C)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_ECC_SignHash
 ****************************************************************************//**
 *
 * Sign a message digest.
+*
+* For CAT1C devices when D-Cache is enabled parameters hash, sign, messageKey and key( k, x&y of pubkey) must align and end in 32 byte boundary.
 *
 * \param base
 * The pointer to a Crypto instance.
@@ -72,14 +77,25 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_SignHash(CRYPTO_Type *base, const uint8
     cy_en_crypto_status_t tmpResult = CY_CRYPTO_BAD_PARAMS;
 
     cy_stc_crypto_ecc_key ephKey;
+
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    CY_SECTION_SHAREDMEM
+    CY_ALIGN(__SCB_DCACHE_LINE_SIZE) static uint8_t myKGX[CY_CRYPTO_ECC_MAX_BYTE_SIZE];
+    CY_SECTION_SHAREDMEM
+    CY_ALIGN(__SCB_DCACHE_LINE_SIZE) static uint8_t myKGY[CY_CRYPTO_ECC_MAX_BYTE_SIZE];
+#else
     uint8_t myKGX[CY_CRYPTO_ECC_MAX_BYTE_SIZE];
     uint8_t myKGY[CY_CRYPTO_ECC_MAX_BYTE_SIZE];
+#endif
+
+
 
     const cy_stc_crypto_ecc_dp_type *eccDp;
     uint32_t mallocMask = 0U;
 
+
     /* NULL parameters checking */
-    if ((hash != NULL) && (sig != NULL) && (key != NULL) && (messageKey != NULL))
+    if ((hash != NULL) && (0u != hashlen) && (sig != NULL) && (key != NULL) && (messageKey != NULL))
     {
         tmpResult = CY_CRYPTO_NOT_SUPPORTED;
 
@@ -90,6 +106,13 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_SignHash(CRYPTO_Type *base, const uint8
             uint32_t bitsize  = eccDp->size;
             uint32_t bytesize = CY_CRYPTO_BYTE_SIZE_OF_BITS(eccDp->size);
             uint32_t datasize = hashlen;
+
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+            /* Flush the cache */
+            SCB_CleanDCache_by_Addr((volatile void *)hash,(int32_t)hashlen);
+            SCB_CleanDCache_by_Addr((volatile void *)key->k, (int32_t)bytesize);
+            SCB_CleanDCache_by_Addr((volatile void *)messageKey,(int32_t)bytesize);
+#endif
 
             /* make ephemeral key pair */
             ephKey.pubkey.x = myKGX;
@@ -106,7 +129,11 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_SignHash(CRYPTO_Type *base, const uint8
                 uint32_t p_r      =  9U;
                 uint32_t p_s      = 10U;
                 uint32_t p_d      = 11U;
-
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+                /* Flush the cache */
+                SCB_CleanDCache_by_Addr((volatile void *)ephKey.pubkey.x,(int32_t)bytesize);
+                SCB_CleanDCache_by_Addr((volatile void *)ephKey.pubkey.y, (int32_t)bytesize);
+#endif
                 /* load values needed for reduction modulo order of the base point */
                 CY_CRYPTO_VU_ALLOC_MEM (base, VR_P, bitsize);
                 Cy_Crypto_Core_Vu_SetMemValue (base, VR_P, (uint8_t *)eccDp->order, bitsize);
@@ -217,19 +244,26 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_SignHash(CRYPTO_Type *base, const uint8
                 }
 
                 CY_CRYPTO_VU_FREE_MEM(base, mallocMask);
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+                CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to int32_t.');
+                SCB_InvalidateDCache_by_Addr(sig, (int32_t)(bytesize*2U));
+#endif
             }
         }
     }
 
     return (tmpResult);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_SIGN_C) */
 
-
+#if defined(CY_CRYPTO_CFG_ECDSA_VERIFY_C)
 /*******************************************************************************
 * Function Name: Cy_Crypto_Core_ECC_VerifyHash
 ****************************************************************************//**
 *
 * Verify an ECC signature.
+*
+* For CAT1C devices when D-Cache is enabled parameters sig, hash and key( x&y of pubkey) must align and end in 32 byte boundary.
 *
 * \param base
 * The pointer to a Crypto instance.
@@ -263,8 +297,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_VerifyHash(CRYPTO_Type *base,
     uint32_t mallocMask = 0U;
     bool isHashZero = false;
 
+
     /* NULL parameters checking */
-    if ((sig != NULL) && (hash != NULL) && (stat != NULL) && (key != NULL))
+    if ((sig != NULL) && (hash != NULL) && (0u != hashlen) && (stat != NULL) && (key != NULL))
     {
         tmpResult = CY_CRYPTO_NOT_SUPPORTED;
 
@@ -288,7 +323,22 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_VerifyHash(CRYPTO_Type *base,
             uint32_t p_gy = 10U;
             uint32_t p_qx = 11U;
             uint32_t p_qy = 12U;
-
+#if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+            /* Flush the cache */
+            SCB_CleanDCache_by_Addr((volatile void *)hash,(int32_t)hashlen);
+            SCB_CleanDCache_by_Addr((volatile void *)key->pubkey.x, (int32_t)bytesize);
+            SCB_CleanDCache_by_Addr((volatile void *)key->pubkey.y, (int32_t)bytesize);
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to int32_t.');
+            SCB_CleanDCache_by_Addr((volatile void *)sig,(int32_t)(2u*bytesize));
+            SCB_CleanDCache_by_Addr((volatile void *)eccDp->order,(int32_t)bytesize);
+            SCB_CleanDCache_by_Addr((volatile void *)eccDp->Gx,(int32_t)bytesize);
+            SCB_CleanDCache_by_Addr((volatile void *)eccDp->Gy,(int32_t)bytesize);
+            SCB_CleanDCache_by_Addr((volatile void *)eccDp->prime,(int32_t)bytesize);
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to int32_t.');
+            SCB_CleanDCache_by_Addr((volatile void *)eccDp->barrett_o,(int32_t)(bytesize+1u));
+            CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 10.8','Intentional typecast to int32_t.');
+            SCB_CleanDCache_by_Addr((volatile void *)eccDp->barrett_p,(int32_t)(bytesize+1u));
+#endif
             /* use Barrett reduction algorithm for operations modulo n (order of the base point) */
             Cy_Crypto_Core_EC_NistP_SetRedAlg(CY_CRYPTO_NIST_P_BARRETT_RED_ALG);
             Cy_Crypto_Core_EC_NistP_SetMode(bitsize);
@@ -454,6 +504,9 @@ cy_en_crypto_status_t Cy_Crypto_Core_ECC_VerifyHash(CRYPTO_Type *base,
 
     return (tmpResult);
 }
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_VERIFY_C) */
+
+#endif /* defined(CY_CRYPTO_CFG_ECDSA_C) */
 
 #if defined(__cplusplus)
 }

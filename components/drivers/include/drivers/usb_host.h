@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -236,7 +236,7 @@ rt_inline rt_err_t rt_usb_hcd_alloc_pipe(uhcd_t hcd, upipe_t* pipe, uinst_t inst
     *pipe = (upipe_t)rt_malloc(sizeof(struct upipe));
     if(*pipe == RT_NULL)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rt_memset(*pipe,0,sizeof(struct upipe));
     (*pipe)->inst = inst;

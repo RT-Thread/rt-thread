@@ -93,7 +93,7 @@ static rt_err_t sam_i2c_bus_control(struct rt_i2c_bus_device *bus,
                                     rt_uint32_t cmd,
                                     rt_uint32_t arg)
 {
-    return RT_ERROR;
+    return -RT_ERROR;
     struct sam_i2c_bus *sam_i2c = (struct sam_i2c_bus *)bus;
 
     RT_ASSERT(bus != RT_NULL);

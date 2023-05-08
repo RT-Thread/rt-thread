@@ -3,6 +3,7 @@ menu "Hardware Drivers Config"
 config SOC_GD32VF103V
     bool
     select SOC_SERIES_GD32VF103V
+    select RT_USING_HW_ATOMIC
     default y
 
 menu "Onboard Peripheral Drivers"

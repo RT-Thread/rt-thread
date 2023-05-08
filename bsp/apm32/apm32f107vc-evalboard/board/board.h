@@ -44,6 +44,12 @@
 #if defined(BSP_USING_ETH)
     #include "apm32f10x_eth.h"
 #endif
+#if defined(BSP_USING_ON_CHIP_FLASH)
+    #include "apm32f10x_fmc.h"
+#endif
+#if defined(RT_USING_CAN)
+    #include "apm32f10x_can.h"
+#endif
 
 #include "drv_common.h"
 #include "drv_gpio.h"

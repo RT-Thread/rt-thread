@@ -253,9 +253,9 @@ void rt_hw_hard_fault_exception(struct exception_stack_frame *contex)
 
 #ifdef RT_USING_SMP
     rt_thread_t rt_current_thread = rt_thread_self();
-    rt_kprintf("hard fault on cpu : %d on thread: %s\n", rt_current_thread->oncpu, rt_current_thread->name);
+    rt_kprintf("hard fault on cpu : %d on thread: %s\n", rt_current_thread->oncpu, rt_current_thread->parent.name);
 #else
-    rt_kprintf("hard fault on thread: %s\n", rt_current_thread->name);
+    rt_kprintf("hard fault on thread: %s\n", rt_current_thread->parent.name);
 #endif
 #if defined(RT_USING_FINSH) && defined(MSH_USING_BUILT_IN_COMMANDS)
     list_thread();

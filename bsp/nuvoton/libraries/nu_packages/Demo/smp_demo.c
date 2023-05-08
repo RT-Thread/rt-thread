@@ -151,6 +151,12 @@ static int go_happy_mutex(void)
     rt_thread_t thread;
     rt_mutex_t  sem = rt_mutex_create("mutexsem", RT_IPC_FLAG_PRIO);
 
+    if(sem == RT_NULL)
+    {
+        rt_kprintf("create mutex failed");
+        return (int)-RT_ERROR;
+    }
+
     thread = rt_thread_create("mutex0", happy_mutex, (void *)sem, 2048, 25, 20);
     if (thread != RT_NULL)
     {

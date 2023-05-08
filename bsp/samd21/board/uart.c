@@ -162,7 +162,7 @@ static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
         break;
 
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

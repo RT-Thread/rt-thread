@@ -16,8 +16,8 @@
 
 /**
  * @addtogroup Kernel
+ * @{
  */
-/*@{*/
 
 /**
  * @defgroup Thread Thread Management
@@ -41,7 +41,7 @@
 
 /**
  * @defgroup Clock Clock and Timer Management
- *  * @brief clock and system timer management
+ * @brief clock and system timer management
  *
  * RT-Thread uses clock tick to implement shared time-slice scheduling.
  *
@@ -157,4 +157,4 @@
  * bad things happen, the current thread's errno will be set. see @ref _rt_errno
  */
 
-/*@}*/
+/**@}*/

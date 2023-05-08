@@ -301,7 +301,7 @@ static rt_err_t es32f3_hwtimer_control(rt_hwtimer_t *timer,
         break;
 
     default:
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         break;
     }
 

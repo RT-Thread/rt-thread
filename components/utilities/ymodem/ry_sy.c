@@ -199,7 +199,7 @@ static rt_err_t rym_download_file(rt_device_t idev,const char *file_path)
     if (!ctx)
     {
         rt_kprintf("rt_malloc failed\n");
-        return RT_ENOMEM;
+        return -RT_ENOMEM;
     }
     ctx->fd = -1;
     rt_strncpy(ctx->fpath, file_path, DFS_PATH_MAX);
@@ -219,7 +219,7 @@ static rt_err_t rym_upload_file(rt_device_t idev, const char *file_path)
     if (!ctx)
     {
         rt_kprintf("rt_malloc failed\n");
-        return RT_ENOMEM;
+        return -RT_ENOMEM;
     }
     ctx->fd = -1;
     rt_strncpy(ctx->fpath, file_path, DFS_PATH_MAX);

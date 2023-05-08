@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -208,6 +208,20 @@ void imxrt_dma_init(void)
     DMAMUX_Init(DMAMUX);
     EDMA_GetDefaultConfig(&config);
     EDMA_Init(DMA0, &config);
+}
+#endif
+
+#ifdef BSP_USING_SPI
+void imxrt_spi_pins_init(void) {
+  CLOCK_EnableClock(kCLOCK_Iomuxc);
+
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_00_LPSPI1_SCK, 0U);
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_02_LPSPI1_SDO, 0U);
+  IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B0_03_LPSPI1_SDI, 0U);
+
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_00_LPSPI1_SCK,0x10B0);
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_02_LPSPI1_SDO,0x10B0);
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B0_03_LPSPI1_SDI,0x10B0);
 }
 #endif
 
@@ -1209,6 +1223,10 @@ void rt_hw_board_init()
 
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
+
+#ifdef BSP_USING_SPI
+    imxrt_spi_pins_init();
 #endif
 
 #ifdef RT_USING_COMPONENTS_INIT

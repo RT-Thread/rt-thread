@@ -319,7 +319,7 @@ rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name,
     if (qspi_device == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!");
-        result = RT_ENOMEM;
+        result = -RT_ENOMEM;
         goto __exit;
     }
 

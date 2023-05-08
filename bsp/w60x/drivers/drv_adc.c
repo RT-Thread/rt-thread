@@ -22,7 +22,7 @@
 static rt_err_t wm_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
     if (channel < 1 || channel > 8)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     if (enabled == RT_TRUE)
     {
@@ -38,7 +38,7 @@ static rt_err_t wm_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel
 static rt_err_t wm_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     if (channel < 1 || channel > 8)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     *value = adc_get_inputVolt(channel - 1) ;
 
