@@ -45,8 +45,6 @@ int wifi_spi_device_init(void)
 {
     char sn_version[32];
 
-    rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t pin);
-
     rw007_gpio_init();
     rt_hw_spi_device_attach("spi8", "wspi", GET_PINS(1, 1));
     rt_hw_wifi_init("wspi");
