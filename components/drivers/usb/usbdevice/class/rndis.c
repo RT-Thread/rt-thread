@@ -1331,6 +1331,13 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     cdc = rt_usbd_function_new(device, &_dev_desc, &ops);
     rt_usbd_device_set_qualifier(device, &dev_qualifier);
     _rndis= rt_malloc(sizeof(struct rt_rndis_eth));
+
+    if(resp == RT_NULL)
+    {
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
+        return RT_NULL;
+    }
+
     rt_memset(_rndis, 0, sizeof(struct rt_rndis_eth));
     cdc->user_data = _rndis;
 
