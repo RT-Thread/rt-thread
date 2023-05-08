@@ -18,7 +18,7 @@ It is a wrapper tool for build-in menuconfig; an open source GUI tool which is d
 
   Env tool come with source code builder, compilation enviornment and package management system.
 
-- [Download the Env tool]().
+- [Download the Env tool](https://www.rt-thread.io/download.html?download=Env).
 - Install Git (download link - https://git-scm.com/downloads). Follow git installation instructions and configure environment variable to add git.
 - Take a note for working environment, all paths are not allowed to have Chinese characters or Spaces.
 
