@@ -9,6 +9,7 @@
  */
 
 #include "rtconfig.h"
+#include "asm-generic.h"
 
 #define  Mode_USR       0x10
 #define  Mode_FIQ       0x11
@@ -153,7 +154,7 @@ lwp_exec_user:
  */
 .global vector_swi
 .type vector_swi, % function
-vector_swi:
+START_POINT(vector_swi)
     push {lr}
     mrs lr, spsr
     push {r4, r5, lr}
@@ -179,6 +180,7 @@ vector_swi:
     pop {r0 - r3, r12}
     beq arch_syscall_exit
     blx lr
+START_POINT_END(vector_swi)
 
 .global arch_syscall_exit
 arch_syscall_exit:
