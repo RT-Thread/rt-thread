@@ -1332,7 +1332,7 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     rt_usbd_device_set_qualifier(device, &dev_qualifier);
     _rndis= rt_malloc(sizeof(struct rt_rndis_eth));
 
-    if(resp == RT_NULL)
+    if(_rndis == RT_NULL)
     {
         LOG_E("%s,%d: no memory!", __func__, __LINE__);
         return RT_NULL;
