@@ -22,4 +22,5 @@ START_POINT(_rt_thread_entry)
     mv      s1, ra
     jalr    t0
     jalr    s1
+    j       .           /* never here */
 START_POINT_END(_rt_thread_entry)

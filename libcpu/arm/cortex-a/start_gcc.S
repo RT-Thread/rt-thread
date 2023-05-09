@@ -668,8 +668,9 @@ after_enable_mmu_n:
 
 START_POINT(_thread_start)
     mov     r10, lr
-    blx     r12
-    bx      r10
+    blx     r1
+    blx     r10
+    b       .   /* never here */
 START_POINT_END(_thread_start)
 
 .bss

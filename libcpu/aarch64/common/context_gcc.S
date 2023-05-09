@@ -82,6 +82,7 @@ START_POINT(_thread_start)
     blr x19
     mov x29, #0
     blr x20
+    b   .   /* never here */
 START_POINT_END(_thread_start)
 
 .macro SAVE_CONTEXT

@@ -12,13 +12,15 @@
 
 /* use to mark a start point where every task start from */
 #define START_POINT(funcname)               \
-    .cfi_sections .debug_frame, .eh_frame;  \
     .global funcname;                       \
-    .cfi_startproc;                         \
+    .type funcname, %function;	            \
     funcname:                               \
+    .cfi_sections .debug_frame, .eh_frame;  \
+    .cfi_startproc;                         \
     .cfi_undefined x30
 
-#define START_POINT_END(name) \
-    .cfi_endproc
+#define START_POINT_END(name)   \
+    .cfi_endproc;               \
+    .size name, .-name;
 
 #endif /* __ASM_GENERIC_H__ */
