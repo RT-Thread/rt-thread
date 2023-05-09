@@ -167,37 +167,6 @@
 
 /* RT-Thread Utestcases */
 
-#define RT_USING_UTESTCASES
-
-/* Utest Self Testcase */
-
-#define UTEST_SELF_PASS_TC
-
-/* Kernel Testcase */
-
-#define UTEST_MEMHEAP_TC
-#define UTEST_SMALL_MEM_TC
-#define UTEST_IRQ_TC
-#define UTEST_SEMAPHORE_TC
-#define UTEST_EVENT_TC
-#define UTEST_TIMER_TC
-#define UTEST_MESSAGEQUEUE_TC
-#define UTEST_MUTEX_TC
-#define UTEST_MAILBOX_TC
-#define UTEST_THREAD_TC
-#define UTEST_ATOMIC_TC
-
-/* CPP11 Testcase */
-
-
-/* Utest Serial Testcase */
-
-
-/* RTT Posix Testcase */
-
-
-/* Memory Management Subsytem Testcase */
-
 
 /* RT-Thread online packages */
 

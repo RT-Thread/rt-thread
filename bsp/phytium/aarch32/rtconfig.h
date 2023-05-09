@@ -7,9 +7,8 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
-#define RT_USING_SMART
 #define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -62,7 +61,6 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xc0000000
 #define ARCH_ARM_CORTEX_A
 #define RT_USING_GIC_V3
 
@@ -97,14 +95,6 @@
 #define DFS_FILESYSTEM_TYPES_MAX 4
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_RAMFS
-#define RT_USING_LWP
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
-#define LWP_TID_MAX_NR 64
-#define LWP_ENABLE_ASID
-#define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
 
@@ -117,7 +107,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
-#define RT_USING_TTY
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -166,37 +155,6 @@
 #define RT_USING_ADT
 
 /* RT-Thread Utestcases */
-
-#define RT_USING_UTESTCASES
-
-/* Utest Self Testcase */
-
-#define UTEST_SELF_PASS_TC
-
-/* Kernel Testcase */
-
-#define UTEST_MEMHEAP_TC
-#define UTEST_SMALL_MEM_TC
-#define UTEST_IRQ_TC
-#define UTEST_SEMAPHORE_TC
-#define UTEST_EVENT_TC
-#define UTEST_TIMER_TC
-#define UTEST_MESSAGEQUEUE_TC
-#define UTEST_MUTEX_TC
-#define UTEST_MAILBOX_TC
-#define UTEST_THREAD_TC
-#define UTEST_ATOMIC_TC
-
-/* CPP11 Testcase */
-
-
-/* Utest Serial Testcase */
-
-
-/* RTT Posix Testcase */
-
-
-/* Memory Management Subsytem Testcase */
 
 
 /* RT-Thread online packages */
@@ -330,7 +288,7 @@
 
 /* Board Configuration */
 
-#define TARGET_E2000D
+#define TARGET_E2000Q
 #define TARGET_E2000
 #define DEFAULT_DEBUG_PRINT_UART1
 
