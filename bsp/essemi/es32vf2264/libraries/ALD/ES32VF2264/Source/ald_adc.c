@@ -824,17 +824,17 @@ ald_status_t ald_adc_normal_channel_config(ald_adc_handle_t *hperh, ald_adc_nch_
         hperh->perh->NCHS4 |= (config->ch << (uint32_t)((config->idx - 13) << 3));
     }
 
-    if (config->ch < 8) {
-        hperh->perh->SMPT1 &= ~(0x0f << (uint32_t)(config->ch << 2));
+    if (config->ch < ALD_ADC_CHANNEL_8) {
+        hperh->perh->SMPT1 &= ~(0xf << (uint32_t)(config->ch << 2));
         hperh->perh->SMPT1 |= config->samp << (uint32_t)(config->ch << 2);
     }
-    else if (config->ch < 16) {
-        hperh->perh->SMPT2 &= ~(0x0f << (uint32_t)((config->ch - 8) << 2));
-        hperh->perh->SMPT2 |= config->samp << (uint32_t)((config->ch - 8) << 2);
+    else if (config->ch < ALD_ADC_CHANNEL_16) {
+        hperh->perh->SMPT2 &= ~(0xf << (uint32_t)((config->ch - ALD_ADC_CHANNEL_8) << 2));
+        hperh->perh->SMPT2 |= config->samp << (uint32_t)((config->ch - ALD_ADC_CHANNEL_8) << 2);
     }
     else {
-        hperh->perh->SMPT3 &= ~(0x0f << (uint32_t)((config->ch - 16) << 2));
-        hperh->perh->SMPT3 |= config->samp << (uint32_t)((config->ch - 16) << 2);
+        hperh->perh->SMPT3 &= ~(0xf << (uint32_t)((config->ch - ALD_ADC_CHANNEL_16) << 2));
+        hperh->perh->SMPT3 |= config->samp << (uint32_t)((config->ch - ALD_ADC_CHANNEL_16) << 2);
     }
 
     return ALD_OK;
