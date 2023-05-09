@@ -1,0 +1,195 @@
+menu "UART Drivers"
+
+    config BSP_USING_EUART0
+        bool "Register EUART0 "
+        select RT_USING_SERIAL
+        default y
+
+    if BSP_USING_EUART0
+        config BSP_EUART0_TX_USING_DMA
+            bool "EUART0 using DMA TX"
+            select RT_SERIAL_USING_DMA
+            default n
+        config BSP_EUART0_RX_USING_DMA
+            bool "EUART0 using DMA RX"
+            select RT_SERIAL_USING_DMA
+            default n
+    endif
+
+    config BSP_USING_EUART1
+        bool "Register EUART1 "
+        select RT_USING_SERIAL
+        default n
+
+    if BSP_USING_EUART1
+        config BSP_EUART1_TX_USING_DMA
+            bool "EUART1 using DMA TX"
+            select RT_SERIAL_USING_DMA
+            default n
+        config BSP_EUART1_RX_USING_DMA
+            bool "EUART1 using DMA RX"
+            select RT_SERIAL_USING_DMA
+            default n
+    endif
+
+    config BSP_USING_CUART0
+        bool "Register CUART0 "
+        select RT_USING_SERIAL
+        default y
+
+    if BSP_USING_CUART0
+        config BSP_CUART0_TX_USING_DMA
+            bool "CUART0 using DMA TX"
+            select RT_SERIAL_USING_DMA
+            default n
+        config BSP_CUART0_RX_USING_DMA
+            bool "CUART0 using DMA RX"
+            select RT_SERIAL_USING_DMA
+            default n
+    endif
+
+    config BSP_USING_CUART1
+        bool "Register CUART1 "
+        select RT_USING_SERIAL
+        default n
+
+    if BSP_USING_CUART1
+        config BSP_CUART1_TX_USING_DMA
+            bool "CUART1 using DMA TX"
+            select RT_SERIAL_USING_DMA
+            default n
+        config BSP_CUART1_RX_USING_DMA
+            bool "CUART1 using DMA RX"
+            select RT_SERIAL_USING_DMA
+            default n
+    endif
+
+    config BSP_USING_CUART2
+        bool "Register CUART2 "
+        select RT_USING_SERIAL
+        default n
+
+    if BSP_USING_CUART2
+        config BSP_CUART2_TX_USING_DMA
+            bool "CUART2 using DMA TX"
+            select RT_SERIAL_USING_DMA
+            default n
+        config BSP_CUART2_RX_USING_DMA
+            bool "CUART2 using DMA RX"
+            select RT_SERIAL_USING_DMA
+            default n
+    endif
+
+endmenu
+
+menu "SPI Drivers"
+
+    config BSP_USING_SPI0
+        bool "Register SPI0 "
+        select RT_USING_SPI
+        select RT_USING_PIN
+        default n
+
+    config BSP_USING_SPI1
+        bool "Register SPI1 "
+        select RT_USING_SPI
+        select RT_USING_PIN
+        default n
+
+endmenu
+
+menu "I2C Drivers"
+
+    config BSP_USING_I2C0
+        bool "Register I2C0 "
+        select RT_USING_I2C
+        default n
+
+    config BSP_USING_I2C1
+        bool "Register I2C1 "
+        select RT_USING_I2C
+        default n
+
+endmenu
+
+menu "ADC Drivers"
+
+    config BSP_USING_ADC0
+        bool "Register ADC0 "
+        select RT_USING_ADC
+        default n
+
+endmenu
+
+menu "HWTIMER Drivers"
+
+    config BSP_USING_AD16C4T0_HWTIMER
+        bool "Register HWTIMER0 "
+        select RT_USING_HWTIMER
+        default n
+
+    config BSP_USING_GP16C4T0_HWTIMER
+        bool "Register HWTIMER1 "
+        select RT_USING_HWTIMER
+        default n
+
+    config BSP_USING_GP16C4T1_HWTIMER
+        bool "Register HWTIMER2 "
+        select RT_USING_HWTIMER
+        default n
+
+    config BSP_USING_GP16C4T2_HWTIMER
+        bool "Register HWTIMER3 "
+        select RT_USING_HWTIMER
+        default n
+
+    config BSP_USING_BS16T0_HWTIMER
+        bool "Register HWTIMER4 "
+        select RT_USING_HWTIMER
+        default n
+
+endmenu
+
+menu "PWM Drivers"
+
+    config BSP_USING_AD16C4T0_PWM
+        bool "Register PWM0 "
+        select RT_USING_PWM
+        default n
+        depends on !BSP_USING_AD16C4T0_HWTIMER
+
+    config BSP_USING_GP16C4T0_PWM
+        bool "Register PWM1 "
+        select RT_USING_PWM
+        default n
+        depends on !BSP_USING_GP16C4T0_HWTIMER
+
+    config BSP_USING_GP16C4T1_PWM
+        bool "Register PWM2 "
+        select RT_USING_PWM
+        default n
+        depends on !BSP_USING_GP16C4T1_HWTIMER
+
+    config BSP_USING_GP16C4T2_PWM
+        bool "Register PWM3 "
+        select RT_USING_PWM
+        default n
+        depends on !BSP_USING_GP16C4T1_HWTIMER
+
+endmenu
+
+menu "PM Drivers"
+
+    config BSP_USING_PM
+        bool "Register PM "
+        select RT_USING_PM
+        default n
+
+endmenu
+
+menu "DMA Drivers"
+    config BSP_USING_DMA0
+        bool "Using DMA0 "
+        select ES_CONF_DMA_ENABLE
+        default n
+endmenu
