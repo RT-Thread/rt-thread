@@ -163,7 +163,7 @@ SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_Z, gpioz_isr)
 #endif
 
 
-static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;
@@ -213,16 +213,16 @@ static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static int hpm_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t hpm_pin_read(rt_device_t dev, rt_base_t pin)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;
     uint32_t pin_idx = pin & 0x1FU;
 
-    return (int) gpio_read_pin(HPM_GPIO0, gpio_idx, pin_idx);
+    return (rt_int8_t) gpio_read_pin(HPM_GPIO0, gpio_idx, pin_idx);
 }
 
-static void hpm_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void hpm_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;
@@ -231,7 +231,7 @@ static void hpm_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     gpio_write_pin(HPM_GPIO0, gpio_idx, pin_idx, value);
 }
 
-static rt_err_t hpm_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode,
+static rt_err_t hpm_pin_attach_irq(struct rt_device *device, rt_base_t pin, rt_uint8_t mode,
         void (*hdr)(void *args), void *args)
 {
 
@@ -246,7 +246,7 @@ static rt_err_t hpm_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_
     return RT_EOK;
 }
 
-static rt_err_t hpm_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t hpm_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     level = rt_hw_interrupt_disable();
@@ -259,7 +259,7 @@ static rt_err_t hpm_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;

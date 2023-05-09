@@ -148,7 +148,7 @@ void prev_raspi_pin_write(GPIO_PIN pin, int pin_value)
     }
 }
 
-static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
+static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
     GPIO_FUNC raspi_mode = OUTPUT;
 
@@ -175,15 +175,15 @@ static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
     prev_raspi_pin_mode((GPIO_PIN)pin, raspi_mode);
 }
 
-static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
+static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
 {
     prev_raspi_pin_write(pin, value);
 }
 
-static int raspi_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t raspi_pin_read(struct rt_device *device, rt_base_t pin)
 {
     uint32_t num = pin / 32;
-    uint32_t pin_level = 0;
+    rt_int8_t pin_level = 0;
 
     if(num == 0)
     {
@@ -212,7 +212,7 @@ static int raspi_pin_read(struct rt_device *device, rt_base_t pin)
     return pin_level;
 }
 
-static rt_err_t raspi_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t raspi_pin_attach_irq(struct rt_device *device, rt_base_t pin, rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_uint8_t index;
     rt_uint32_t  reg_value;
@@ -300,7 +300,7 @@ static rt_err_t raspi_pin_attach_irq(struct rt_device *device, rt_int32_t pin, r
     return RT_EOK;
 }
 
-static rt_err_t raspi_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t raspi_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_uint8_t index;
     if (pin <= 27)
@@ -318,7 +318,7 @@ static rt_err_t raspi_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-rt_err_t raspi_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t raspi_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     rt_uint8_t index;
     if (pin <= 27)

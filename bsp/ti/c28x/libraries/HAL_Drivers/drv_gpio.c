@@ -24,11 +24,11 @@
 #define PIN_c28x_PORT_MAX 6 /* gpioA to GPIOF in total*/
 #define PIN_IRQ_MAX 5   /* XINT1 to XINT5 in total */
 
-static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args);
-static rt_err_t c28x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin);
+static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                     rt_uint8_t mode, void (*hdr)(void *args), void *args);
+static rt_err_t c28x_pin_dettach_irq(struct rt_device *device, rt_base_t pin);
 static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                     rt_uint32_t enabled);
+                                     rt_uint8_t enabled);
 
 static rt_base_t c28x_pin_get(const char *name)
 {
@@ -57,7 +57,7 @@ static rt_base_t c28x_pin_get(const char *name)
     return hw_pin_num;
 }
 
-static void c28x_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void c28x_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     volatile Uint32 *gpioDataReg;
     Uint32 pinMask;
@@ -76,10 +76,10 @@ static void c28x_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-static int c28x_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t c28x_pin_read(rt_device_t dev, rt_base_t pin)
 {
     volatile Uint32 *gpioDataReg;
-    int value = PIN_LOW;
+    rt_int8_t value = PIN_LOW;
 
     if (PIN_PORT(pin) < PIN_c28x_PORT_MAX)
     {
@@ -90,7 +90,7 @@ static int c28x_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-static void c28x_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void c28x_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     volatile Uint32 *gpioBaseAddr;
     volatile Uint32 *dir, *pud, *odr;
@@ -183,8 +183,8 @@ rt_inline rt_int32_t get_irq_index(rt_uint32_t pin)
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
-static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                     rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -217,7 +217,7 @@ static rt_err_t c28x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t c28x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t c28x_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -250,7 +250,7 @@ static rt_err_t c28x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t c28x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                     rt_uint32_t enabled)
+                                     rt_uint8_t enabled)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
