@@ -235,7 +235,7 @@ const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-void es32f0_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void es32f0_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_index *index;
     index = get_pin(pin);
@@ -246,9 +246,9 @@ void es32f0_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     ald_gpio_write_pin(index->gpio, index->pin, value);
 }
 
-int es32f0_pin_read(rt_device_t dev, rt_base_t pin)
+rt_int8_t es32f0_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_int8_t value;
     const struct pin_index *index;
     value = PIN_LOW;
     index = get_pin(pin);
@@ -260,7 +260,7 @@ int es32f0_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-void es32f0_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void es32f0_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_index *index;
     gpio_init_t gpio_initstruct;
@@ -328,8 +328,8 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
     return &pin_irq_map[map_index];
 };
 
-rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                               rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                               rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -373,7 +373,7 @@ rt_err_t es32f0_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-rt_err_t es32f0_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t es32f0_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -403,7 +403,7 @@ rt_err_t es32f0_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                               rt_uint32_t enabled)
+                               rt_uint8_t enabled)
 {
     const struct pin_index *index;
     const struct pin_irq_map *irqmap;

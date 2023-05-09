@@ -93,7 +93,7 @@ static struct gpio_px_regs *_gpio_px_regbase(rt_base_t pin)
         return RT_NULL;
 }
 
-static void gpio_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static void gpio_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     volatile struct gpio_px_regs *px;
 
@@ -132,7 +132,7 @@ static void gpio_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mod
     }
 }
 
-static void gpio_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void gpio_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     volatile struct gpio_px_regs *px;
 
@@ -150,7 +150,7 @@ static void gpio_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t va
         BITS_SET(px->OUT, bitpos);
 }
 
-static int gpio_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t gpio_pin_read(struct rt_device *device, rt_base_t pin)
 {
     volatile struct gpio_px_regs *px;
 
@@ -194,8 +194,8 @@ static rt_base_t gpio_pin_get(const char *name)
     return -1;
 }
 
-static rt_err_t gpio_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t gpio_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
 
@@ -243,7 +243,7 @@ static rt_err_t gpio_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t gpio_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t gpio_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
 
@@ -268,7 +268,7 @@ static rt_err_t gpio_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t gpio_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                    rt_uint32_t enabled)
+                                    rt_uint8_t enabled)
 {
     volatile struct gpio_registers *gpio;
 

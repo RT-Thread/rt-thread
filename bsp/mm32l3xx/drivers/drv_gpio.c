@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -140,10 +140,10 @@ const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-void mm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void mm32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_index *index;
-	
+
     index = get_pin(pin);
     if (index == RT_NULL)
     {
@@ -155,14 +155,14 @@ void mm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
     else
     {
-	
+
         GPIO_SetBits(index->gpio, index->pin);
     }
 }
 
-int mm32_pin_read(rt_device_t dev, rt_base_t pin)
+rt_int8_t mm32_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_int8_t value;
     const struct pin_index *index;
 
     value = PIN_LOW;
@@ -182,7 +182,7 @@ int mm32_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-void mm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void mm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_index *index;
     GPIO_InitTypeDef  GPIO_InitStructure;
@@ -246,8 +246,8 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
     }
     return &mm32_pin_irq_map[mapindex];
 };
-rt_err_t mm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                             rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t mm32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                             rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -287,7 +287,7 @@ rt_err_t mm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     return RT_EOK;
 }
-rt_err_t mm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t mm32_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -319,7 +319,7 @@ rt_err_t mm32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 rt_err_t mm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                             rt_uint32_t enabled)
+                             rt_uint8_t enabled)
 {
     const struct pin_index *index;
     const struct pin_irq_map *irqmap;

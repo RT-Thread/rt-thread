@@ -137,7 +137,7 @@ static const rt_isr_handler_t GPIO_ISRx[] =
     am33xx_gpio3_isr,
 };
 
-static void am33xx_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static void am33xx_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
     RT_ASSERT(mode != PIN_MODE_INPUT_PULLUP); /* Mode not supported */
@@ -154,7 +154,7 @@ static void am33xx_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t m
     }
 }
 
-static void am33xx_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void am33xx_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
     rt_base_t gpiox     = pin >> 5;
@@ -170,7 +170,7 @@ static void am33xx_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t 
     }
 }
 
-static int am33xx_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t am33xx_pin_read(struct rt_device *device, rt_base_t pin)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
     rt_base_t gpiox     = pin >> 5;
@@ -179,8 +179,8 @@ static int am33xx_pin_read(struct rt_device *device, rt_base_t pin)
     return reg(GPIO_BASE[gpiox] + GPIO_DATAIN) & (1 << pinNumber) ? 1 : 0;
 }
 
-static rt_err_t am33xx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                      rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t am33xx_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                      rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
     rt_base_t gpiox     = pin >> 5;
@@ -273,7 +273,7 @@ static rt_err_t am33xx_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return 0;
 }
 
-static rt_err_t am33xx_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t am33xx_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
     rt_base_t gpiox     = pin >> 5;
@@ -290,7 +290,7 @@ static rt_err_t am33xx_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return 0;
 }
 
-static rt_err_t am33xx_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t am33xx_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
     rt_base_t gpiox     = pin >> 5;
