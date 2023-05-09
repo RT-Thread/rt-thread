@@ -122,7 +122,7 @@ rt_ssize_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
 
     ret = rt_i2c_transfer(bus, &msg, 1);
 
-    return ret;
+    return (ret == 1) ? count : ret;
 }
 
 rt_ssize_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
@@ -142,5 +142,5 @@ rt_ssize_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
 
     ret = rt_i2c_transfer(bus, &msg, 1);
 
-    return ret;
+    return (ret == 1) ? count : ret;
 }
