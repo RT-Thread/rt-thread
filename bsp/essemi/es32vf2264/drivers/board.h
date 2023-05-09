@@ -48,7 +48,7 @@
 extern int __bss_end__;
 #define HEAP_BEGIN  ((void *)&__bss_end__)
 
-#define HEAP_END    (0x20040000)
+#define HEAP_END    (0x20008000)
 
 void rt_hw_board_init(void);
 

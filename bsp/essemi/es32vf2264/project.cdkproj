@@ -5,12 +5,12 @@ Chip: smartl_rv32
 Board: smartl_rv32_evb
 BareMetal: Without RTOS
   </Description>
-  <Dependencies Name="Debug"/>
+  <Dependencies Name="Debug" />
   <MonitorProgress>
     <FlashOperate>96</FlashOperate>
     <DebugLaunch>106</DebugLaunch>
   </MonitorProgress>
-  <Dependencies Name="BuildSet"/>
+  <Dependencies Name="BuildSet" />
   <VendorInfo>
     <VendorName>NULL</VendorName>
   </VendorInfo>
@@ -20,65 +20,75 @@ BareMetal: Without RTOS
       <Version>latest</Version>
     </Compiler>
   </ToolsConfig>
+  <DebugSessions>
+    <watchExpressions>g_rx_buf:0</watchExpressions>
+    <memoryExpressions>0;;;</memoryExpressions>
+    <statistics>;;32;;MHZ;</statistics>
+    <peripheralTabs />
+    <WatchDisplayFormat>1</WatchDisplayFormat>
+    <LocalDisplayFormat>0</LocalDisplayFormat>
+    <debugLayout />
+    <memoryTabColSizeExpressions>100:4;100:8;100:8;100:8;</memoryTabColSizeExpressions>
+  </DebugSessions>
   <BuildConfigs>
     <BuildConfig Name="BuildSet">
       <Target>
         <ROMBank Selected="1">
           <ROM1>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
           </ROM1>
           <ROM2>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
           </ROM2>
           <ROM3>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
           </ROM3>
           <ROM4>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
           </ROM4>
           <ROM5>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
           </ROM5>
         </ROMBank>
         <RAMBank>
           <RAM1>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
             <Init>yes</Init>
           </RAM1>
           <RAM2>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
             <Init>yes</Init>
           </RAM2>
           <RAM3>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
             <Init>yes</Init>
           </RAM3>
           <RAM4>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
             <Init>yes</Init>
           </RAM4>
           <RAM5>
             <InUse>no</InUse>
-            <Start/>
-            <Size/>
+            <Start />
+            <Size />
             <Init>yes</Init>
           </RAM5>
         </RAMBank>
@@ -103,25 +113,25 @@ BareMetal: Without RTOS
       <User>
         <BeforeCompile>
           <RunUserProg>no</RunUserProg>
-          <UserProgName/>
+          <UserProgName />
         </BeforeCompile>
         <BeforeMake>
           <RunUserProg>no</RunUserProg>
-          <UserProgName/>
+          <UserProgName />
         </BeforeMake>
         <AfterMake>
           <RunUserProg>no</RunUserProg>
-          <UserProgName/>
+          <UserProgName />
         </AfterMake>
-        <Tools/>
+        <Tools />
       </User>
       <Compiler>
         <Define>__SYS_SELECT_H__, __RTTHREAD__, ES32VF2264</Define>
-        <Undefine/>
+        <Undefine />
         <Optim>None (-O0)</Optim>
         <DebugLevel>Maximum (-g3)</DebugLevel>
         <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\risc-v\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;drivers\ES;..\..\..\components\finsh;.;..\..\..\include;libraries\RV_CORE\Device\EastSoft\ES32VF2264\Include;libraries\RV_CORE\Include;libraries\ALD\ES32VF2264\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
-        <OtherFlags/>
+        <OtherFlags />
         <Verbose>no</Verbose>
         <Ansi>no</Ansi>
         <Syntax>no</Syntax>
@@ -135,21 +145,21 @@ BareMetal: Without RTOS
         <Fstrict>no</Fstrict>
       </Compiler>
       <Asm>
-        <Define/>
-        <Undefine/>
+        <Define />
+        <Undefine />
         <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\risc-v\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;drivers\ES;..\..\..\components\finsh;.;..\..\..\include;libraries\RV_CORE\Device\EastSoft\ES32VF2264\Include;libraries\RV_CORE\Include;libraries\ALD\ES32VF2264\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc</IncludePath>
-        <OtherFlags/>
+        <OtherFlags />
         <DebugLevel>gdwarf2</DebugLevel>
       </Asm>
       <Linker>
         <Garbage>yes</Garbage>
         <Garbage2>yes</Garbage2>
-        <LDFile>$(ProjectPath)/es32vf2264.ld</LDFile>
+        <LDFile>$(ProjectPath)drivers/es32vf2264.ld</LDFile>
         <LibName>m</LibName>
-        <LibPath/>
-        <OtherFlags/>
+        <LibPath />
+        <OtherFlags />
         <AutoLDFile>no</AutoLDFile>
-        <LinkType/>
+        <LinkType />
         <IncludeAllLibs>no</IncludeAllLibs>
       </Linker>
       <Debug>
@@ -157,14 +167,14 @@ BareMetal: Without RTOS
         <Connector>ICE</Connector>
         <StopAt>yes</StopAt>
         <StopAtText>main</StopAtText>
-        <InitFile/>
-        <PreInit/>
-        <AfterLoadFile/>
+        <InitFile />
+        <PreInit />
+        <AfterLoadFile />
         <AutoRun>yes</AutoRun>
         <ResetType>Hard Reset</ResetType>
         <SoftResetVal>1</SoftResetVal>
         <ResetAfterLoad>no</ResetAfterLoad>
-        <AfterResetFile/>
+        <AfterResetFile />
         <Dumpcore>no</Dumpcore>
         <DumpcoreText>$(ProjectPath)/$(ProjectName).cdkcore</DumpcoreText>
         <ConfigICE>
@@ -185,7 +195,7 @@ BareMetal: Without RTOS
           <RTOSType>Bare Metal</RTOSType>
           <DownloadToFlash>yes</DownloadToFlash>
           <ResetAfterConnect>yes</ResetAfterConnect>
-          <GDBName/>
+          <GDBName />
           <GDBServerType>Local</GDBServerType>
           <OtherFlags>-vid 0x30cc -pid 0x9528 -prereset</OtherFlags>
           <ICEEnablePCSampling>no</ICEEnablePCSampling>
@@ -197,27 +207,27 @@ BareMetal: Without RTOS
         </ConfigICE>
         <ConfigSIM>
           <SIMTarget>soccfg/riscv32/smartl_902_cfg.xml</SIMTarget>
-          <OtherFlags/>
+          <OtherFlags />
           <NoGraphic>yes</NoGraphic>
           <Log>no</Log>
           <SimTrace>no</SimTrace>
           <Version>latest</Version>
         </ConfigSIM>
         <ConfigOpenOCD>
-          <OpenOCDExecutablePath/>
+          <OpenOCDExecutablePath />
           <OpenOCDTelnetPortEnable>no</OpenOCDTelnetPortEnable>
           <OpenOCDTelnetPort>4444</OpenOCDTelnetPort>
           <OpenOCDTclPortEnable>no</OpenOCDTclPortEnable>
           <OpenOCDTclPort>6666</OpenOCDTclPort>
-          <OpenOCDConfigOptions/>
+          <OpenOCDConfigOptions />
           <OpenOCDTimeout>5000</OpenOCDTimeout>
           <PluginID>openocd-sifive</PluginID>
           <Version>latest</Version>
         </ConfigOpenOCD>
       </Debug>
       <Flash>
-        <InitFile/>
-        <PreInit/>
+        <InitFile />
+        <PreInit />
         <Erase>Erase Sectors</Erase>
         <Algorithms Path="">es32vf2264.elf</Algorithms>
         <Program>yes</Program>
@@ -226,215 +236,85 @@ BareMetal: Without RTOS
         <ResetType>Soft Reset</ResetType>
         <SoftResetVal>1</SoftResetVal>
         <External>no</External>
-        <Command/>
-        <Arguments/>
+        <Command />
+        <Arguments />
       </Flash>
     </BuildConfig>
   </BuildConfigs>
   <VirtualDirectory Name="Applications">
-    <File Name="applications/main.c">
-      <FileOption/>
-    </File>
+    <File Name="applications\main.c" />
   </VirtualDirectory>
   <VirtualDirectory Name="Compiler">
-    <File Name="../../../components/libc/compilers/common/cstdio.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/libc/compilers/common/cstring.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/libc/compilers/common/cwchar.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/libc/compilers/common/ctime.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/libc/compilers/common/cstdlib.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/libc/compilers/common/cctype.c">
-      <FileOption/>
-    </File>
+    <File Name="..\..\..\components\libc\compilers\common\cstring.c" />
+    <File Name="..\..\..\components\libc\compilers\common\ctime.c" />
+    <File Name="..\..\..\components\libc\compilers\common\cwchar.c" />
+    <File Name="..\..\..\components\libc\compilers\common\cstdlib.c" />
+    <File Name="..\..\..\components\libc\compilers\common\cctype.c" />
+    <File Name="..\..\..\components\libc\compilers\common\cstdio.c" />
   </VirtualDirectory>
   <VirtualDirectory Name="CPU">
-    <File Name="../../../libcpu/risc-v/common/trap_common.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../libcpu/risc-v/common/context_gcc.S">
-      <FileOption/>
-    </File>
-    <File Name="../../../libcpu/risc-v/common/interrupt_gcc.S">
-      <FileOption/>
-    </File>
-    <File Name="../../../libcpu/risc-v/common/cpuport.c">
-      <FileOption/>
-    </File>
+    <File Name="..\..\..\libcpu\risc-v\common\context_gcc.S" />
+    <File Name="..\..\..\libcpu\risc-v\common\interrupt_gcc.S" />
+    <File Name="..\..\..\libcpu\risc-v\common\trap_common.c" />
+    <File Name="..\..\..\libcpu\risc-v\common\cpuport.c" />
   </VirtualDirectory>
   <VirtualDirectory Name="DeviceDrivers">
-    <File Name="../../../components/drivers/ipc/completion.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/drivers/ipc/dataqueue.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/drivers/ipc/pipe.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/drivers/ipc/ringblk_buf.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/drivers/ipc/ringbuffer.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/drivers/ipc/waitqueue.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/drivers/ipc/workqueue.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/drivers/misc/pin.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/drivers/serial/serial.c">
-      <FileOption/>
-    </File>
+    <File Name="..\..\..\components\drivers\ipc\completion.c" />
+    <File Name="..\..\..\components\drivers\ipc\dataqueue.c" />
+    <File Name="..\..\..\components\drivers\ipc\pipe.c" />
+    <File Name="..\..\..\components\drivers\ipc\ringblk_buf.c" />
+    <File Name="..\..\..\components\drivers\ipc\ringbuffer.c" />
+    <File Name="..\..\..\components\drivers\ipc\waitqueue.c" />
+    <File Name="..\..\..\components\drivers\ipc\workqueue.c" />
+    <File Name="..\..\..\components\drivers\misc\pin.c" />
+    <File Name="..\..\..\components\drivers\serial\serial.c" />
   </VirtualDirectory>
   <VirtualDirectory Name="Drivers">
-    <File Name="drivers/drv_gpio.c">
-      <FileOption/>
-    </File>
-    <File Name="drivers/drv_uart.c">
-      <FileOption/>
-    </File>
-    <File Name="drivers/board.c">
-      <FileOption/>
-    </File>
+    <File Name="drivers\drv_gpio.c" />
+    <File Name="drivers\drv_uart.c" />
+    <File Name="drivers\board.c" />
   </VirtualDirectory>
   <VirtualDirectory Name="Finsh">
-    <File Name="../../../components/finsh/shell.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/finsh/msh.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/finsh/msh_parse.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../components/finsh/cmd.c">
-      <FileOption/>
-    </File>
+    <File Name="..\..\..\components\finsh\shell.c" />
+    <File Name="..\..\..\components\finsh\msh.c" />
+    <File Name="..\..\..\components\finsh\msh_parse.c" />
+    <File Name="..\..\..\components\finsh\cmd.c" />
   </VirtualDirectory>
   <VirtualDirectory Name="Kernel">
-    <File Name="../../../src/clock.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/components.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/device.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/idle.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/ipc.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/irq.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/kservice.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/mem.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/mempool.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/object.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/scheduler_up.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/signal.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/thread.c">
-      <FileOption/>
-    </File>
-    <File Name="../../../src/timer.c">
-      <FileOption/>
-    </File>
+    <File Name="..\..\..\src\clock.c" />
+    <File Name="..\..\..\src\components.c" />
+    <File Name="..\..\..\src\device.c" />
+    <File Name="..\..\..\src\idle.c" />
+    <File Name="..\..\..\src\ipc.c" />
+    <File Name="..\..\..\src\irq.c" />
+    <File Name="..\..\..\src\kservice.c" />
+    <File Name="..\..\..\src\mem.c" />
+    <File Name="..\..\..\src\mempool.c" />
+    <File Name="..\..\..\src\object.c" />
+    <File Name="..\..\..\src\scheduler_up.c" />
+    <File Name="..\..\..\src\signal.c" />
+    <File Name="..\..\..\src\thread.c" />
+    <File Name="..\..\..\src\timer.c" />
   </VirtualDirectory>
   <VirtualDirectory Name="Libraries">
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_dma.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/RV_CORE/Device/EastSoft/ES32VF2264/Svc/es32vf2264.svc">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_rmu.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_adc.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_pis.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_timer.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_gpio.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_wdt.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_i2s.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/RV_CORE/Device/EastSoft/ES32VF2264/Startup/startup_es32vf2264.S">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_spi.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_utils.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_pmu.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_cmu.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_crc.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_usb.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/RV_CORE/Device/EastSoft/ES32VF2264/Startup/trap_c.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_i2c.c">
-      <FileOption/>
-    </File>
-    <File Name="libraries/ALD/ES32VF2264/Source/ald_uart.c">
-      <FileOption/>
-    </File>
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_wdt.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_gpio.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_uart.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_utils.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_dma.c" />
+    <File Name="libraries\RV_CORE\Device\EastSoft\ES32VF2264\Svc\es32vf2264.svc" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_i2s.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_adc.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_pmu.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_cmu.c" />
+    <File Name="libraries\RV_CORE\Device\EastSoft\ES32VF2264\Startup\startup_es32vf2264.S" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_crc.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_usb.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_timer.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_spi.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_pis.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_rmu.c" />
+    <File Name="libraries\ALD\ES32VF2264\Source\ald_i2c.c" />
+    <File Name="libraries\RV_CORE\Device\EastSoft\ES32VF2264\Startup\trap_c.c" />
   </VirtualDirectory>
-  <DebugSessions>
-    <watchExpressions>g_rx_buf:0</watchExpressions>
-    <memoryExpressions>0;;;</memoryExpressions>
-    <statistics>;;32;;MHZ;</statistics>
-    <peripheralTabs/>
-    <WatchDisplayFormat>1</WatchDisplayFormat>
-    <LocalDisplayFormat>0</LocalDisplayFormat>
-    <debugLayout/>
-    <memoryTabColSizeExpressions>100:4;100:8;100:8;100:8;</memoryTabColSizeExpressions>
-  </DebugSessions>
 </Project>

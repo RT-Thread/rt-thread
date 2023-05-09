@@ -154,7 +154,7 @@ BareMetal: Without RTOS
       <Linker>
         <Garbage>yes</Garbage>
         <Garbage2>yes</Garbage2>
-        <LDFile>$(ProjectPath)/es32vf2264.ld</LDFile>
+        <LDFile>$(ProjectPath)drivers/es32vf2264.ld</LDFile>
         <LibName>m</LibName>
         <LibPath/>
         <OtherFlags>-Wl,-zmax-page-size=1024 -specs=nosys.specs -mccrt</OtherFlags>
