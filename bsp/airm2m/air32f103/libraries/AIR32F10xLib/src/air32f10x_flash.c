@@ -581,7 +581,7 @@ FLASH_Status FLASH_EraseAllBank2Pages(void)
 #if defined(__CC_ARM)
 __ASM void SetStrt(void)
 {
-    LDR     R0, [PC,#0]
+    MOV     R0, PC
     LDR     R1, [R0,#16]
     LDR     R1, [R0,#32]
     LDR     R0, =0x40022010
@@ -623,6 +623,29 @@ void SetStrt(void)
           "CMP      R2, #0x00\n"
           "BNE      FLAGLABLE\n"
           "BX       lr");
+}
+#elif defined(__clang__)
+__STATIC_INLINE void SetStrt(void)
+{
+    __ASM("MOV      R0, PC");
+    __ASM("LDR      R1, [R0,#16]");
+    __ASM("LDR      R1, [R0,#32]");
+    __ASM("LDR      R0, =0x40022010");
+    __ASM("LDR      R1, =0x60");
+    __ASM("STR      R1,[R0]");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("FLAGLABLE:");
+    __ASM("LDR      R1, =0x4002200C");
+    __ASM("LDR      R2, [R1]");
+    __ASM("AND      R2, #0x01");
+    __ASM("CMP      R2, #0x00");
+    __ASM("BNE      FLAGLABLE");
+    __ASM("BX       lr");
 }
 #elif defined(__GNUC__)
 void SetStrt(void)
