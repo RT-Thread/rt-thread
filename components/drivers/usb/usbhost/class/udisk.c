@@ -311,6 +311,11 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
         if (ret == RT_EOK)
         {
             struct ustor_data* data = rt_malloc(sizeof(struct ustor_data));
+            if (data == RT_NULL)
+            {
+                rt_kprintf("allocate partition data buffer failed\n");
+                continue;
+            }
             rt_memset(data, 0, sizeof(struct ustor_data));
             data->intf = intf;
             data->udisk_id = udisk_get_id();
@@ -349,6 +354,11 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
             if(i == 0)
             {
                 struct ustor_data* data = rt_malloc(sizeof(struct ustor_data));
+                if (data == RT_NULL)
+                {
+                    rt_kprintf("allocate partition data buffer failed\n");
+                    break;
+                }
                 rt_memset(data, 0, sizeof(struct ustor_data));
                 data->udisk_id = udisk_get_id();
 
