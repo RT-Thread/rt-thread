@@ -45,8 +45,6 @@ jobs:
                 - "allwinner_tina"
                 - "ft32/ft32f072xb-starter"
                 - "mini2440"
-                - "mm32/mm32f3270-100ask-pitaya"
-                - "sam7x"   
                 - "at91/at91sam9g45"
                 - "at91/at91sam9260"
                 - "wch/arm/ch32f103c8-core"
@@ -68,6 +66,8 @@ jobs:
                 - "hc32/ev_hc32f460_lqfp100_v2"
                 - "hc32l196"
                 - "tae32f5300"
+                - "mm32/mm32f3270-100ask-pitaya"
+                - "sam7x"   
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -157,8 +157,6 @@ jobs:
          -  RTT_BSP: "nxp_renesas" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
-                - "lpc43xx/M4"
-                - "lpc176x"
                 - "lpc55sxx/lpc55s69_nxp_evk"
                 - "lpc55sxx/lpc55s28_nxp_evk"
                 - "lpc55sxx/lpc55s06_nxp_evk"
@@ -179,7 +177,9 @@ jobs:
                 - "imxrt/imxrt1060-nxp-evk"
                 - "imxrt/imxrt1064-nxp-evk"
                 - "frdm-k64f"
+                - "lpc176x"
                 - "xplorer4330/M4"
+                - "lpc43xx/M4"
                 - "renesas/ra6m3-ek"
                 - "renesas/ra6m4-cpk"
                 - "renesas/ra6m3-hmi-board"
@@ -356,13 +356,14 @@ jobs:
           for bsp in $(echo $SRTT_BSP | tr ',' '\n'); do
             count=$((count+1))
             echo "::group::Compiling BSP: ==$count=== $bsp ===="
-            pushd bsp/$bsp && scons --pyconfig-silent && pkgs --update && popd
+            echo bsp/$bsp
+            ls bsp/$bsp/Kconfig && scons -C bsp/$bsp --pyconfig-silent
+            pushd bsp/$bsp && pkgs --update && popd
             scons -C bsp/$bsp -j$(nproc) --debug=time | tee output.log || \
             { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
               failed=$((failed+1)) ; echo "::endgroup::" ; echo "::error::build $bsp failed" ; \
               echo "- ❌ build $bsp failed in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; } && \
             { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
               echo "- ✅ build $bsp success in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; echo "::endgroup::" ; }
-            cat output.log
           done
           exit $failed
