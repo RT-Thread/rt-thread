@@ -363,5 +363,6 @@ jobs:
               echo "- ❌ build $bsp failed in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; } && \
             { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
               echo "- ✅ build $bsp success in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; echo "::endgroup::" ; }
+            cat output.log
           done
           exit $failed
