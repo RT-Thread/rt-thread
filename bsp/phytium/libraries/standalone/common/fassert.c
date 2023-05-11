@@ -11,16 +11,16 @@
  * See the Phytium Public License for more details.
  *
  *
- * FilePath: ft_assert.c
+ * FilePath: fassert.c
  * Date: 2021-04-07 09:53:07
  * LastEditTime: 2022-02-17 18:04:28
- * Description:  This files is for assertion implmentation
+ * Description:  This file is for assertion implmentation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   huanghe    2021.4       init commit
- * 1.1   zhugengyu  2022.3       re-define assert macro
+ * 1.0   huanghe    2021/4/5       init commit
+ * 1.1   zhugengyu  2022/3/7       re-define assert macro
  */
 
 /***************************** Include Files *********************************/
@@ -92,7 +92,9 @@ static void FAssertCallback(const char *file, s32 line, int ret)
 void FAssertSetCB(FAssertCB cb)
 {
     if (NULL != cb)
+    {
         assert_info.cb = cb;
+    }
 }
 
 /**

@@ -14,11 +14,12 @@
  * FilePath: fusb_hid.c
  * Date: 2022-09-28 18:26:42
  * LastEditTime: 2022-09-29 14:50:09
- * Description:  This files is for
+ * Description:  This files is for usb hid class implmentation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   zhugengyu  2022/9/28   init commit
  */
 
 #include <string.h>
@@ -93,11 +94,17 @@ static void FUsbHidDestory(FUsbDev *dev)
         for (i = 0; i <= dev->num_endp; i++)
         {
             if (dev->endpoints[i].endpoint == 0)
+            {
                 continue;
+            }
             if (dev->endpoints[i].type != FUSB_INTERRUPT_EP)
+            {
                 continue;
+            }
             if (dev->endpoints[i].direction != FUSB_IN)
+            {
                 continue;
+            }
             break;
         }
         dev->controller->destroy_intr_queue(
@@ -278,7 +285,9 @@ static void FUsbHidKeyboardQueue(int ch)
 {
     /* ignore key presses if buffer full */
     if (keycount < KEYBOARD_BUFFER_SIZE)
+    {
         keybuffer[keycount++] = ch;
+    }
 }
 
 /* handle hid received data */
@@ -292,22 +301,34 @@ static void FUsbHidProcessKeyboardEvent(FUsbHid *const inst,
     modifiers = 0;
 
     if (current->modifiers & 0x01) /* Left-Ctrl */
+    {
         modifiers |= KB_MOD_CTRL;
+    }
     if (current->modifiers & 0x02) /* Left-Shift */
+    {
         modifiers |= KB_MOD_SHIFT;
+    }
     if (current->modifiers & 0x04) /* Left-Alt */
+    {
         modifiers |= KB_MOD_ALT;
+    }
     if (current->modifiers & 0x08) /* Left-GUI */
     {
 
     }
 
     if (current->modifiers & 0x10) /* Right-Ctrl */
+    {
         modifiers |= KB_MOD_CTRL;
+    }
     if (current->modifiers & 0x20) /* Right-Shift */
+    {
         modifiers |= KB_MOD_SHIFT;
+    }
     if (current->modifiers & 0x40) /* Right-AltGr */
+    {
         modifiers |= KB_MOD_ALT;
+    }
     if (current->modifiers & 0x80) /* Right-GUI */
     {
 
@@ -321,7 +342,7 @@ static void FUsbHidProcessKeyboardEvent(FUsbHid *const inst,
 
     /* Did the event change at all? */
     if (inst->lastkeypress &&
-            !memcmp(current, previous, sizeof(*current)))
+        !memcmp(current, previous, sizeof(*current)))
     {
         /* No. Then it's a key repeat event. */
         if (inst->repeat_delay)
@@ -345,7 +366,9 @@ static void FUsbHidProcessKeyboardEvent(FUsbHid *const inst,
         int skip = 0;
         /* No more keys? skip */
         if (current->keys[i] == 0)
+        {
             return;
+        }
 
         for (j = 0; j < 6; j++)
         {
@@ -357,7 +380,9 @@ static void FUsbHidProcessKeyboardEvent(FUsbHid *const inst,
         }
 
         if (skip)
+        {
             continue;
+        }
 
         /* Mask off KB_MOD_CTRL */
         keypress = map->map[modifiers & 0x03][current->keys[i]];
@@ -366,11 +391,11 @@ static void FUsbHidProcessKeyboardEvent(FUsbHid *const inst,
         {
             switch (keypress)
             {
-            case 'a' ... 'z':
-                keypress &= 0x1f;
-                break;
-            default:
-                continue;
+                case 'a' ... 'z':
+                    keypress &= 0x1f;
+                    break;
+                default:
+                    continue;
             }
         }
 
@@ -441,7 +466,9 @@ static int FUsbHidSetLayout(const char *country)
     {
         if (strncmp(keyboard_layouts[i].country, country,
                     strlen(keyboard_layouts[i].country)))
+        {
             continue;
+        }
 
         /* Found, changing keyboard layout */
         map = &keyboard_layouts[i];
@@ -471,62 +498,68 @@ void FUsbHidInit(FUsbDev *dev)
                    boot_protos[interface->bInterfaceProtocol]);
         switch (interface->bInterfaceProtocol)
         {
-        case FUSB_HID_BOOT_PROTOCOL_KEYBOARD:
-            dev->data = FUSB_ALLOCATE(instance, sizeof(FUsbHid), FUSB_DEFAULT_ALIGN);
-            FUSB_DEBUG("  configuring...\n");
-            FUsbHidSetProtocol(dev, interface, FUSB_HID_PROTOCOL_BOOT);
-            FUsbHidSetIdle(dev, interface, KEYBOARD_REPEAT_MS);
-            FUSB_DEBUG("  activating...\n");
+            case FUSB_HID_BOOT_PROTOCOL_KEYBOARD:
+                dev->data = FUSB_ALLOCATE(instance, sizeof(FUsbHid), FUSB_DEFAULT_ALIGN);
+                FUSB_DEBUG("  configuring...\n");
+                FUsbHidSetProtocol(dev, interface, FUSB_HID_PROTOCOL_BOOT);
+                FUsbHidSetIdle(dev, interface, KEYBOARD_REPEAT_MS);
+                FUSB_DEBUG("  activating...\n");
 
-            FUsbHidDescriptor *desc = FUSB_ALLOCATE(instance, sizeof(FUsbHidDescriptor), FUSB_DEFAULT_ALIGN);
-            if (!desc || FUsbGetDescriptor(dev, FUsbGenerateReqType(
-                                               FUSB_REQ_DEVICE_TO_HOST, FUSB_REQ_TYPE_STANDARD, FUSB_REQ_RECP_IF),
-                                           0x21, 0, desc, sizeof(*desc)) != sizeof(*desc))
-            {
-                FUSB_DEBUG("FUsbGetDescriptor(HID) failed\n");
-                FUsbDetachDev(dev->controller, dev->address);
-                return;
-            }
-            FUSB_HID_INST(dev)->descriptor = desc;
-            countrycode = desc->bCountryCode;
-            /* 35 countries defined: */
-            if (countrycode >= ARRAY_SIZE(countries))
-                countrycode = 0;
-            printf("  Keyboard has %s layout (country code %02x)\n",
-                   countries[countrycode][0], countrycode);
+                FUsbHidDescriptor *desc = FUSB_ALLOCATE(instance, sizeof(FUsbHidDescriptor), FUSB_DEFAULT_ALIGN);
+                if (!desc || FUsbGetDescriptor(dev, FUsbGenerateReqType(
+                                                   FUSB_REQ_DEVICE_TO_HOST, FUSB_REQ_TYPE_STANDARD, FUSB_REQ_RECP_IF),
+                                               0x21, 0, desc, sizeof(*desc)) != sizeof(*desc))
+                {
+                    FUSB_DEBUG("FUsbGetDescriptor(HID) failed\n");
+                    FUsbDetachDev(dev->controller, dev->address);
+                    return;
+                }
+                FUSB_HID_INST(dev)->descriptor = desc;
+                countrycode = desc->bCountryCode;
+                /* 35 countries defined: */
+                if (countrycode >= ARRAY_SIZE(countries))
+                {
+                    countrycode = 0;
+                }
+                FUSB_INFO("  Keyboard has %s layout (country code %02x)\n",
+                       countries[countrycode][0], countrycode);
 
-            /* Set keyboard layout accordingly */
-            FUsbHidSetLayout(countries[countrycode][1]);
+                /* Set keyboard layout accordingly */
+                FUsbHidSetLayout(countries[countrycode][1]);
 
-            // only add here, because we only support boot-keyboard HID devices
-            dev->destroy = FUsbHidDestory;
-            dev->poll = FUsbHidPoll;
-            int i;
-            for (i = 1; i < dev->num_endp; i++)
-            {
-                if (dev->endpoints[i].type != FUSB_INTERRUPT_EP)
-                    continue;
-                if (dev->endpoints[i].direction != FUSB_IN)
-                    continue;
+                // only add here, because we only support boot-keyboard HID devices
+                dev->destroy = FUsbHidDestory;
+                dev->poll = FUsbHidPoll;
+                int i;
+                for (i = 1; i < dev->num_endp; i++)
+                {
+                    if (dev->endpoints[i].type != FUSB_INTERRUPT_EP)
+                    {
+                        continue;
+                    }
+                    if (dev->endpoints[i].direction != FUSB_IN)
+                    {
+                        continue;
+                    }
+                    break;
+                }
+
+                if (i >= dev->num_endp)
+                {
+                    FUSB_DEBUG("Could not find HID endpoint\n");
+                    FUsbDetachDev(dev->controller, dev->address);
+                    return;
+                }
+
+                FUSB_DEBUG("  found endpoint %x for interrupt-in\n", i);
+                /* 20 buffers of 8 bytes, for every 10 msecs */
+                FUSB_HID_INST(dev)->queue = dev->controller->create_intr_queue(&dev->endpoints[i], 8, 20, 10);
+                keycount = 0;
+                FUSB_DEBUG("  configuration done.\n");
                 break;
-            }
-
-            if (i >= dev->num_endp)
-            {
-                FUSB_DEBUG("Could not find HID endpoint\n");
-                FUsbDetachDev(dev->controller, dev->address);
-                return;
-            }
-
-            FUSB_DEBUG("  found endpoint %x for interrupt-in\n", i);
-            /* 20 buffers of 8 bytes, for every 10 msecs */
-            FUSB_HID_INST(dev)->queue = dev->controller->create_intr_queue(&dev->endpoints[i], 8, 20, 10);
-            keycount = 0;
-            FUSB_DEBUG("  configuration done.\n");
-            break;
-        case FUSB_HID_BOOT_PROTOCOL_MOUSE:
-            FUSB_DEBUG("NOTICE: USB mice are not supported.\n");
-            break;
+            case FUSB_HID_BOOT_PROTOCOL_MOUSE:
+                FUSB_DEBUG("NOTICE: USB mice are not supported.\n");
+                break;
         }
     }
 }
@@ -544,11 +577,11 @@ int FUsbHidCheckInput(FUsbDev *dev, int times)
         {
             ret = keybuffer[0];
             memmove(keybuffer, keybuffer + 1, --keycount);
-            printf("%c", ret);
+            FUSB_INFO("%c", ret);
         }
 
         fsleep_millisec(10);
     }
 
-    printf("\r\n");
+    FUSB_INFO("\r\n");
 }

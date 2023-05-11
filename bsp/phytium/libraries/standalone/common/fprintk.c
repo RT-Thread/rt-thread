@@ -11,14 +11,15 @@
  * See the Phytium Public License for more details.
  *
  *
- * FilePath: f_printk.c
+ * FilePath: fprintk.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-17 18:01:29
- * Description:  This files is for
+ * Description:  This file is for creating custom print interface for standlone sdk.
  *
  * Modify History:
- *  Ver   Who        Date         Changes
- * ----- ------     --------    --------------------------------------
+ *  Ver     Who           Date                  Changes
+ * -----   ------       --------     --------------------------------------
+ *  1.0    huanghe      2022/7/23            first release
  */
 
 
@@ -140,228 +141,228 @@ start:
     {
         switch (*fmt)
         {
-        case 0:
-            return count;
+            case 0:
+                return count;
 
-        case '%':
-            OUTC('%');
-            goto start;
+            case '%':
+                OUTC('%');
+                goto start;
 
-        case '-':
-            padding_mode = PAD_TAIL;
-            continue;
-
-        case '.':
-            precision = 0;
-            padding_mode &= (char)~PAD_ZERO;
-            continue;
-
-        case '0':
-            if (min_width < 0 && precision < 0 && !padding_mode)
-            {
-                padding_mode = PAD_ZERO;
+            case '-':
+                padding_mode = PAD_TAIL;
                 continue;
-            }
-            __fallthrough;
 
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            if (precision >= 0)
-            {
-                precision = 10 * precision + *fmt - '0';
-            }
-            else
-            {
-                if (min_width < 0)
+            case '.':
+                precision = 0;
+                padding_mode &= (char)~PAD_ZERO;
+                continue;
+
+            case '0':
+                if (min_width < 0 && precision < 0 && !padding_mode)
                 {
-                    min_width = 0;
+                    padding_mode = PAD_ZERO;
+                    continue;
                 }
-                min_width = 10 * min_width + *fmt - '0';
-            }
-            continue;
+                __fallthrough;
 
-        case '*':
-            if (precision >= 0)
-            {
-                precision = va_arg(ap, int);
-            }
-            else
-            {
-                min_width = va_arg(ap, int);
-                if (min_width < 0)
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                if (precision >= 0)
                 {
-                    min_width = -min_width;
-                    padding_mode = PAD_TAIL;
+                    precision = 10 * precision + *fmt - '0';
                 }
-            }
-            continue;
+                else
+                {
+                    if (min_width < 0)
+                    {
+                        min_width = 0;
+                    }
+                    min_width = 10 * min_width + *fmt - '0';
+                }
+                continue;
 
-        case '+':
-        case ' ':
-        case '#':
-            special = *fmt;
-            continue;
+            case '*':
+                if (precision >= 0)
+                {
+                    precision = va_arg(ap, int);
+                }
+                else
+                {
+                    min_width = va_arg(ap, int);
+                    if (min_width < 0)
+                    {
+                        min_width = -min_width;
+                        padding_mode = PAD_TAIL;
+                    }
+                }
+                continue;
 
-        case 'h':
-        case 'l':
-        case 'z':
-            if (*fmt == 'h' && length_mod == 'h')
+            case '+':
+            case ' ':
+            case '#':
+                special = *fmt;
+                continue;
+
+            case 'h':
+            case 'l':
+            case 'z':
+                if (*fmt == 'h' && length_mod == 'h')
+                {
+                    length_mod = 'H';
+                }
+                else if (*fmt == 'l' && length_mod == 'l')
+                {
+                    length_mod = 'L';
+                }
+                else if (length_mod == '\0')
+                {
+                    length_mod = *fmt;
+                }
+                else
+                {
+                    OUTC('%');
+                    OUTC(*fmt);
+                    goto start;
+                }
+                continue;
+
+            case 'd':
+            case 'i':
+            case 'u':
             {
-                length_mod = 'H';
+                uint_value_type d;
+
+                if (length_mod == 'z')
+                {
+                    d = va_arg(ap, ssize_t);
+                }
+                else if (length_mod == 'l')
+                {
+                    d = va_arg(ap, long);
+                }
+                else if (length_mod == 'L')
+                {
+                    long long lld = va_arg(ap, long long);
+
+                    if (sizeof(int_value_type) < 8U &&
+                        lld != (int_value_type)lld)
+                    {
+                        data = "ERR";
+                        data_len = 3;
+                        precision = 0;
+                        break;
+                    }
+                    d = (uint_value_type)lld;
+                }
+                else if (*fmt == 'u')
+                {
+                    d = va_arg(ap, unsigned int);
+                }
+                else
+                {
+                    d = va_arg(ap, int);
+                }
+
+                if (*fmt != 'u' && (int_value_type)d < 0)
+                {
+                    d = -d;
+                    prefix = "-";
+                    min_width--;
+                }
+                else if (special == ' ')
+                {
+                    prefix = " ";
+                    min_width--;
+                }
+                else if (special == '+')
+                {
+                    prefix = "+";
+                    min_width--;
+                }
+                else
+                {
+                    ;
+                }
+                data_len = convert_value(d, 10, 0, buf + sizeof(buf));
+                data = buf + sizeof(buf) - data_len;
+                break;
             }
-            else if (*fmt == 'l' && length_mod == 'l')
+
+            case 'p':
+            case 'x':
+            case 'X':
             {
-                length_mod = 'L';
+                uint_value_type x;
+
+                if (*fmt == 'p')
+                {
+                    x = (uintptr_t)va_arg(ap, void *);
+                    if (x == (uint_value_type)0)
+                    {
+                        data = "(nil)";
+                        data_len = 5;
+                        precision = 0;
+                        break;
+                    }
+                    special = '#';
+                }
+                else if (length_mod == 'l')
+                {
+                    x = va_arg(ap, unsigned long);
+                }
+                else if (length_mod == 'L')
+                {
+                    x = va_arg(ap, unsigned long long);
+                }
+                else
+                {
+                    x = va_arg(ap, unsigned int);
+                }
+                if (special == '#')
+                {
+                    prefix = (*fmt & 0x20) ? "0x" : "0x";
+                    min_width -= 2;
+                }
+                data_len = convert_value(x, 16, ALPHA(*fmt),
+                                         buf + sizeof(buf));
+                data = buf + sizeof(buf) - data_len;
+                break;
             }
-            else if (length_mod == '\0')
+
+            case 's':
             {
-                length_mod = *fmt;
+                data = va_arg(ap, char *);
+                data_len = strlen(data);
+                if (precision >= 0 && data_len > precision)
+                {
+                    data_len = precision;
+                }
+                precision = 0;
+                break;
             }
-            else
+
+            case 'c':
             {
+                int c = va_arg(ap, int);
+
+                buf[0] = c;
+                data = buf;
+                data_len = 1;
+                precision = 0;
+                break;
+            }
+
+            default:
                 OUTC('%');
                 OUTC(*fmt);
                 goto start;
-            }
-            continue;
-
-        case 'd':
-        case 'i':
-        case 'u':
-        {
-            uint_value_type d;
-
-            if (length_mod == 'z')
-            {
-                d = va_arg(ap, ssize_t);
-            }
-            else if (length_mod == 'l')
-            {
-                d = va_arg(ap, long);
-            }
-            else if (length_mod == 'L')
-            {
-                long long lld = va_arg(ap, long long);
-
-                if (sizeof(int_value_type) < 8U &&
-                        lld != (int_value_type)lld)
-                {
-                    data = "ERR";
-                    data_len = 3;
-                    precision = 0;
-                    break;
-                }
-                d = (uint_value_type)lld;
-            }
-            else if (*fmt == 'u')
-            {
-                d = va_arg(ap, unsigned int);
-            }
-            else
-            {
-                d = va_arg(ap, int);
-            }
-
-            if (*fmt != 'u' && (int_value_type)d < 0)
-            {
-                d = -d;
-                prefix = "-";
-                min_width--;
-            }
-            else if (special == ' ')
-            {
-                prefix = " ";
-                min_width--;
-            }
-            else if (special == '+')
-            {
-                prefix = "+";
-                min_width--;
-            }
-            else
-            {
-                ;
-            }
-            data_len = convert_value(d, 10, 0, buf + sizeof(buf));
-            data = buf + sizeof(buf) - data_len;
-            break;
-        }
-
-        case 'p':
-        case 'x':
-        case 'X':
-        {
-            uint_value_type x;
-
-            if (*fmt == 'p')
-            {
-                x = (uintptr_t)va_arg(ap, void *);
-                if (x == (uint_value_type)0)
-                {
-                    data = "(nil)";
-                    data_len = 5;
-                    precision = 0;
-                    break;
-                }
-                special = '#';
-            }
-            else if (length_mod == 'l')
-            {
-                x = va_arg(ap, unsigned long);
-            }
-            else if (length_mod == 'L')
-            {
-                x = va_arg(ap, unsigned long long);
-            }
-            else
-            {
-                x = va_arg(ap, unsigned int);
-            }
-            if (special == '#')
-            {
-                prefix = (*fmt & 0x20) ? "0x" : "0x";
-                min_width -= 2;
-            }
-            data_len = convert_value(x, 16, ALPHA(*fmt),
-                                     buf + sizeof(buf));
-            data = buf + sizeof(buf) - data_len;
-            break;
-        }
-
-        case 's':
-        {
-            data = va_arg(ap, char *);
-            data_len = strlen(data);
-            if (precision >= 0 && data_len > precision)
-            {
-                data_len = precision;
-            }
-            precision = 0;
-            break;
-        }
-
-        case 'c':
-        {
-            int c = va_arg(ap, int);
-
-            buf[0] = c;
-            data = buf;
-            data_len = 1;
-            precision = 0;
-            break;
-        }
-
-        default:
-            OUTC('%');
-            OUTC(*fmt);
-            goto start;
         }
 
         if (precision < 0 && (padding_mode & PAD_ZERO))
@@ -403,7 +404,7 @@ start:
     }
 }
 
-static int f_vprintf(const char *restrict format, va_list vargs)
+static void f_vprintf(const char *restrict format, va_list vargs)
 {
     struct str_context ctx = {0};
     cbvprintf(char_out, &ctx, format, vargs);

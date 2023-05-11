@@ -14,26 +14,30 @@
  * FilePath: fnand_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:40
- * Description:  This files is for
+ * Description:  This file contains macros that can be used to access the device.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 
-#ifndef DRIVERS_NAND_FNAND_HW_H
-#define DRIVERS_NAND_FNAND_HW_H
+#ifndef FNAND_HW_H
+#define FNAND_HW_H
+
+
+#include "fkernel.h"
+#include "ftypes.h"
+#include "fio.h"
+#include "fkernel.h"
+
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "fkernel.h"
-#include "ftypes.h"
-#include "fio.h"
-#include "fkernel.h"
 
 #define FNAND_CTRL0_OFFSET 0x00000000U
 #define FNAND_CTRL1_OFFSET 0x00000004U

@@ -12,27 +12,28 @@
  *
  *
  * FilePath: frtc_hw.h
- * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-18 09:01:54
- * Description:  This files is for
+ * Date: 2021-08-25 14:53:42
+ * LastEditTime: 2021-08-26 09:01:54
+ * Description:  This file is for rtc register definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   wangxiaodong 2021/11/5   init
+ * 1.0   wangxiaodong 2021/8/26 first commit
  */
 
-#ifndef BSP_DRIVERS_FRTC_HW_H
-#define BSP_DRIVERS_FRTC_HW_H
+#ifndef DRIVERS_RTC_FRTC_HW_H
+#define DRIVERS_RTC_FRTC_HW_H
+
+
+#include "fkernel.h"
+#include "ftypes.h"
+#include "fio.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "fkernel.h"
-#include "ftypes.h"
-#include "fio.h"
 
 /* Rtc register definitions */
 

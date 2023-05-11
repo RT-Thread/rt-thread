@@ -14,7 +14,7 @@
  * FilePath: fsemaphore_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:09
- * Description:  This files is for semaphore static variables
+ * Description:  This file is for semaphore static variables
  *
  * Modify History:
  *  Ver   Who        Date         Changes

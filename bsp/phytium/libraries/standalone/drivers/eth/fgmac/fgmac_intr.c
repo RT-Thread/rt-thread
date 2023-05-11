@@ -14,11 +14,13 @@
  * FilePath: fgmac_intr.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  Functions in this file implement general purpose interrupt processing related
+ * functionality.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
 /***************************** Include Files *********************************/

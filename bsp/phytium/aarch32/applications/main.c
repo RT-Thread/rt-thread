@@ -70,7 +70,7 @@ void demo_core(void)
 int main(void)
 {
 #ifdef RT_USING_SMP
-    demo_core();
+    // demo_core();
 #endif
     return RT_EOK;
 }

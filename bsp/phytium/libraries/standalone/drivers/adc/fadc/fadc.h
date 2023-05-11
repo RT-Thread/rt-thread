@@ -14,26 +14,28 @@
  * FilePath: fadc.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:29:10
- * Description:  This files is for
+ * Description: This file is for detailed description of the device configuration and driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/15   init commit
  */
 
-#ifndef FT_ADC_H
-#define FT_ADC_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FADC_H
+#define FADC_H
 
 #include "ftypes.h"
 #include "fdebug.h"
 #include "ferror_code.h"
 #include "fkernel.h"
 #include "fparameters.h"
+
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 
 #define FADC_SUCCESS                FT_SUCCESS
@@ -125,7 +127,7 @@ typedef struct
 } FAdcCtrl;
 
 /* get default configuration of specific adc id */
-const FAdcConfig *FAdcLookupConfig(FAdcInstance instance_id);
+const FAdcConfig *FAdcLookupConfig(u32 instance_id);
 
 /* DeInitialization function for the device instance */
 void FAdcDeInitialize(FAdcCtrl *pctrl);

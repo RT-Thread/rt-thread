@@ -14,16 +14,19 @@
  * FilePath: fcan.h
  * Date: 2021-04-27 15:08:44
  * LastEditTime: 2022-02-18 08:29:25
- * Description:  This files is for
+ * Description:  This files is for the can function related definitions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/5/26  first release
+ * 1.1   wangxiaodong  2022/9/23  improve functions
+ * 1.2   zhangyan      2022/12/7  improve functions
  */
 
 
-#ifndef FT_CAN_H
-#define FT_CAN_H
+#ifndef FCAN_H
+#define FCAN_H
 
 #include "ftypes.h"
 #include "ferror_code.h"
@@ -31,11 +34,21 @@
 #include "fkernel.h"
 #include "fcan_hw.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef enum
 {
-    FCAN_INTR_EVENT_SEND = 0,    /* Handler type for frame sending interrupt */
-    FCAN_INTR_EVENT_RECV = 1,    /* Handler type for frame reception interrupt */
-    FCAN_INTR_EVENT_ERROR,       /* Handler type for error interrupt */
+    FCAN_INTR_EVENT_SEND = 0,     /* Handler type for frame sending interrupt */
+    FCAN_INTR_EVENT_RECV = 1,     /* Handler type for frame reception interrupt */
+    FCAN_INTR_EVENT_ERROR = 2,    /* Handler type for error interrupt */
+    FCAN_INTR_EVENT_BUSOFF = 3,   /* Handler type for bus off interrupt */
+    FCAN_INTR_EVENT_PERROE = 4,   /* Handler type for passion error interrupt */
+    FCAN_INTR_EVENT_PWARN = 5,    /* Handler type for passion warn interrupt */
+    FCAN_INTR_EVENT_FIFOFULL = 6, /* Handler type for rx fifo register full */
+    FCAN_INTR_EVENT_FIFOEMPTY = 7,/* Handler type for tx fifo register empty */
     FCAN_INTR_EVENT_NUM
 } FCanIntrEventType;
 
@@ -74,6 +87,10 @@ typedef enum
 /* Bit timing calculate */
 #define CAN_CALC_MAX_ERROR  50 /* in one-tenth of a percent */
 #define CAN_CALC_SYNC_SEG   1
+
+/*Transmit mode*/
+#define FCAN_PROBE_MONITOR_MODE 0 /* Monitor mode */
+#define FCAN_PROBE_NORMAL_MODE  1 /* Normal mode */
 
 /* can segment type */
 typedef enum
@@ -199,7 +216,7 @@ typedef struct
 } FCanCtrl;
 
 /* get default configuration of specific can id */
-const FCanConfig *FCanLookupConfig(FCanInstance instance_id);
+const FCanConfig *FCanLookupConfig(u32 instance_id);
 
 /* reset a specific can instance */
 void FCanReset(FCanCtrl *instance_p);
@@ -245,5 +262,12 @@ FError FCanInterruptEnable(FCanCtrl *instance_p, FCanIntrEventType event_type);
 
 /* Enable or disable can fd */
 FError FCanFdEnable(FCanCtrl *instance_p, boolean enable);
+
+/* Set the transmit mode  */
+FError FCanSetMode(FCanCtrl *instance_p, u32 tran_mode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // !FT_CAN_H

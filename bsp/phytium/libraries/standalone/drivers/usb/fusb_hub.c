@@ -20,7 +20,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include "fkernel.h"
@@ -84,8 +84,10 @@ static FUsbEndpoint *FUsbHubIntrEp(FUsbDev *const dev)
     for (i = 0; i < dev->num_endp; ++i)
     {
         if (dev->endpoints[i].type == FUSB_INTERRUPT_EP &&
-                dev->endpoints[i].direction == FUSB_IN)
+            dev->endpoints[i].direction == FUSB_IN)
+        {
             return &dev->endpoints[i];
+        }
     }
 
     return NULL;
@@ -151,7 +153,9 @@ static FUsbTransCode FUsbHubPortInReset(FUsbDev *const dev, const int port)
     FUsbTransCode ret = FUsbGetStatus(dev, port, DR_PORT, sizeof(buf), buf);
 
     if (ret >= FUSB_CC_ZERO_BYTES)
+    {
         ret = buf[FUSB_HUB_PORT_STATUS] & FUSB_HUB_STATUS_PORT_RESET;
+    }
 
     return ret;
 }
@@ -170,7 +174,9 @@ static FUsbTransCode FUsbHubPortEnabled(FUsbDev *const dev, const int port)
     FUsbTransCode ret = FUsbGetStatus(dev, port, DR_PORT, sizeof(buf), buf);
 
     if (ret >= FUSB_CC_ZERO_BYTES)
+    {
         ret = buf[FUSB_HUB_PORT_STATUS] & FUSB_HUB_STATUS_PORT_ENABLE;
+    }
 
     return ret;
 }
@@ -193,7 +199,9 @@ static FUsbSpeed FUsbHubPortSpeed(FUsbDev *const dev, const int port)
     {
         /* SuperSpeed hubs can only have SuperSpeed devices. */
         if (FUsbIsSuperSpeed(dev->speed))
+        {
             return dev->speed;
+        }
 
         /*[bit] 10  9  (USB 2.0 port status word)
          *      0   0  full speed
@@ -203,7 +211,9 @@ static FUsbSpeed FUsbHubPortSpeed(FUsbDev *const dev, const int port)
          */
         speed = (buf[FUSB_HUB_PORT_STATUS] >> 9) & 0x3;
         if (speed != 0x3) /* high-speed device */
+        {
             return speed;
+        }
     }
 
     return FUSB_UNKNOWN_SPEED;
@@ -290,14 +300,18 @@ static void FUsbHubPortInit(FUsbDev *const dev, const int port)
     FUsbTransCode ret = FUsbGetStatus(dev, port, DR_PORT, sizeof(buf), buf);
 
     if (ret < FUSB_CC_ZERO_BYTES)
+    {
         return;
+    }
 
     if (buf[FUSB_HUB_PORT_CHANGE] & FUSB_HUB_STATUS_PORT_CONNECTION)
+    {
         FUsbClearFeature(dev, port, FUSB_HUB_SEL_C_PORT_CONNECTION, DR_PORT);
+    }
 
     if (buf[FUSB_HUB_PORT_STATUS] & FUSB_HUB_STATUS_PORT_CONNECTION)
     {
-        FUSB_INFO("usbhub: Port coldplug at %d ", port);
+        FUSB_INFO("Usb hub: Port coldplug at %d ", port);
         FUsbGenericHubScanPort(dev, port);
     }
 
@@ -337,7 +351,9 @@ static FUsbTransCode FUsbHubHandlePortChange(FUsbDev *const dev, const int port)
 
     ret = FUsbGetStatus(dev, port, DR_PORT, sizeof(buf), buf);
     if (ret < FUSB_CC_ZERO_BYTES)
+    {
         return ret;
+    }
 
     /*
      * Second word holds the change bits. The interrupt transfer shows
@@ -355,7 +371,9 @@ static FUsbTransCode FUsbHubHandlePortChange(FUsbDev *const dev, const int port)
     }
 
     if (buf[FUSB_HUB_PORT_CHANGE] & ~checked_bits)
+    {
         FUSB_DEBUG("Spurious change bit at port %d ", port);
+    }
 
     /* Now, handle connection changes. */
     if (buf[FUSB_HUB_PORT_CHANGE] & FUSB_HUB_STATUS_PORT_CONNECTION)
@@ -387,7 +405,9 @@ static void FUsbHubPoll(FUsbDev *const dev)
     while (NULL != (ibuf = dev->controller->poll_intr_queue(FUSB_GEN_HUB_GET(dev)->data)))
     {
         for (i = 0; (size_t)i < port_bytes; ++i)
+        {
             buf[i] |= ibuf[i];
+        }
     }
 
     for (port = 1; port <= FUSB_GEN_HUB_GET(dev)->num_ports; ++port)
@@ -396,7 +416,9 @@ static void FUsbHubPoll(FUsbDev *const dev)
         if (buf[port / 8] & (1 << (port % 8)))
         {
             if (FUsbHubHandlePortChange(dev, port) < 0)
+            {
                 return;
+            }
         }
     }
 

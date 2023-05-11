@@ -14,7 +14,7 @@
  * FilePath: fsdio_intr.c
  * Date: 2022-06-01 15:08:58
  * LastEditTime: 2022-06-01 15:08:58
- * Description:  This files is for SDIO interrupt related function implementation
+ * Description:  This file is for SDIO interrupt related function implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -42,18 +42,18 @@
 #define FSDIO_INFO(format, ...)    FT_DEBUG_PRINT_I(FSDIO_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FSDIO_DEBUG(format, ...)   FT_DEBUG_PRINT_D(FSDIO_DEBUG_TAG, format, ##__VA_ARGS__)
 
-#define FSDIO_CALL_EVT_HANDLER(instance_p, evt)                   \
+#define FSDIO_CALL_EVT_HANDLER(instance_p, evt, status, dmac_status)                   \
     if (instance_p->evt_handlers[evt])                            \
     {                                                             \
-        instance_p->evt_handlers[evt](instance_p, instance_p->evt_args[evt]); \
+        instance_p->evt_handlers[evt](instance_p, instance_p->evt_args[evt], status, dmac_status); \
     }
 
 static const u32 cmd_err_ints_mask = FSDIO_INT_RTO_BIT | FSDIO_INT_RCRC_BIT | FSDIO_INT_RE_BIT |
                                      FSDIO_INT_DCRC_BIT | FSDIO_INT_DRTO_BIT |
-                                     FSDIO_INT_SBE_BCI_BIT | FSDIO_INT_HLE_BIT;
+                                     FSDIO_INT_SBE_BCI_BIT;
 
 static const u32 dmac_err_ints_mask = FSDIO_DMAC_INT_ENA_FBE | FSDIO_DMAC_INT_ENA_DU |
-                                      FSDIO_DMAC_INT_ENA_AIS;
+                                      FSDIO_DMAC_INT_ENA_NIS | FSDIO_DMAC_INT_ENA_AIS;
 /************************** Function Prototypes ******************************/
 
 /*****************************************************************************/
@@ -73,7 +73,7 @@ u32 FSdioGetInterruptMask(FSdio *const instance_p, FSdioIntrType type)
 
     if (0 == instance_p->config.base_addr)
     {
-        FSDIO_ERROR("device is not yet initialized!!!");
+        FSDIO_ERROR("Device is not yet initialized!!!");
         return mask;
     }
 
@@ -106,7 +106,7 @@ void FSdioSetInterruptMask(FSdio *const instance_p, FSdioIntrType type, u32 set_
 
     if (0 == instance_p->config.base_addr)
     {
-        FSDIO_ERROR("device is not yet initialized!!!");
+        FSDIO_ERROR("Device is not yet initialized!!!");
         return;
     }
 
@@ -153,9 +153,9 @@ void FSdioInterruptHandler(s32 vector, void *param)
     dmac_evt_mask = FSDIO_READ_REG(base_addr, FSDIO_DMAC_INT_EN_OFFSET);
 
     if (!(events & FSDIO_INT_ALL_BITS) &&
-            !(dmac_events & FSDIO_DMAC_STATUS_ALL_BITS))
+        !(dmac_events & FSDIO_DMAC_STATUS_ALL_BITS))
     {
-        FSDIO_DEBUG("irq exit with no action");
+        FSDIO_DEBUG("irq exit with no action.");
         return; /* no interrupt status */
     }
 
@@ -163,11 +163,12 @@ void FSdioInterruptHandler(s32 vector, void *param)
 
     FSDIO_DEBUG("events:0x%x,mask:0x%x,dmac_events:%x,dmac_mask:0x%x", events, event_mask, dmac_events, dmac_evt_mask);
 
+    /* clear interrupt status */
     FSDIO_WRITE_REG(base_addr, FSDIO_RAW_INTS_OFFSET, events);
     FSDIO_WRITE_REG(base_addr, FSDIO_DMAC_STATUS_OFFSET, dmac_events);
 
     if (((events & event_mask) == 0) &&
-            ((dmac_events & dmac_evt_mask == 0)))
+        ((dmac_events & dmac_evt_mask == 0)))
     {
         return; /* no need to handle interrupt */
     }
@@ -176,24 +177,7 @@ void FSdioInterruptHandler(s32 vector, void *param)
     if (((events & event_mask) & FSDIO_INT_CD_BIT) && (FALSE == instance_p->config.non_removable))
     {
         FSDIO_DEBUG("sd status changed here ! status:[%d]", FSDIO_READ_REG(base_addr, FSDIO_CARD_DETECT_OFFSET));
-        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_CARD_DETECTED);
-    }
-
-    if ((events & FSDIO_INT_DTO_BIT) && (events & FSDIO_INT_CMD_BIT)) /* handle cmd && data done */
-    {
-        FSDIO_DEBUG("cmd and data over");
-        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_CMD_DONE);
-        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_DATA_DONE);
-    }
-    else if (events & FSDIO_INT_CMD_BIT) /* handle cmd done */
-    {
-        FSDIO_DEBUG("cmd over");
-        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_CMD_DONE);
-    }
-    else if (events & FSDIO_INT_DTO_BIT) /* handle data done */
-    {
-        FSDIO_DEBUG("data over");
-        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_DATA_DONE);
+        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_CARD_DETECTED, events, dmac_events);
     }
 
     /* handle error state */
@@ -201,7 +185,24 @@ void FSdioInterruptHandler(s32 vector, void *param)
     {
         FSDIO_ERROR("ERR:events:0x%x,mask:0x%x,dmac_evts:0x%x,dmac_mask:0x%x",
                     events, event_mask, dmac_events, dmac_evt_mask);
-        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_ERR_OCCURE);
+        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_ERR_OCCURE, events, dmac_events);
+    }
+
+    if ((events & FSDIO_INT_DTO_BIT) && (events & FSDIO_INT_CMD_BIT)) /* handle cmd && data done */
+    {
+        FSDIO_DEBUG("Cmd and data over !!!");
+        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_CMD_DONE, events, dmac_events);
+        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_DATA_DONE, events, dmac_events);
+    }
+    else if (events & FSDIO_INT_CMD_BIT) /* handle cmd done */
+    {
+        FSDIO_DEBUG("Cmd over !!!");
+        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_CMD_DONE, events, dmac_events);
+    }
+    else if (events & FSDIO_INT_DTO_BIT) /* handle data done */
+    {
+        FSDIO_DEBUG("Data over !!!");
+        FSDIO_CALL_EVT_HANDLER(instance_p, FSDIO_EVT_DATA_DONE, events, dmac_events);
     }
 
     return;

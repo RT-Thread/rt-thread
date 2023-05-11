@@ -14,12 +14,14 @@
  * FilePath: fadc.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:28:45
- * Description:  This files is for
+ * Description: This file is for the minimum required function implementations for this driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/8/15   init commit
  */
+
 #include <string.h>
 #include "fgeneric_timer.h"
 #include "fkernel.h"
@@ -178,7 +180,7 @@ FError FAdcConvertSet(FAdcCtrl *pctrl, FAdcConvertConfig *convert_config)
     FASSERT(clk_div < FADC_MAX_CLOCK_PRESC);
     if (clk_div % 2 == 1)
     {
-        FADC_ERROR("clk_div is not even.");
+        FADC_ERROR("Clk_div is not even.");
         return FADC_ERR_INVAL_PARM;
     }
     reg_val &= (~FADC_CTRL_REG_CLK_DIV_MASK);
@@ -236,24 +238,24 @@ FError FAdcInterruptEnable(FAdcCtrl *pctrl, FAdcChannel channel, FAdcIntrEventTy
     reg_val = FADC_READ_REG32(base_addr, FADC_INTRMASK_REG_OFFSET);
     switch (event_type)
     {
-    case FADC_INTR_EVENT_COVFIN: /* enable channel convert complete irq */
-        reg_val &= ~(FADC_INTRMASK_REG_COVFIN_MASK(channel));
-        break;
+        case FADC_INTR_EVENT_COVFIN: /* enable channel convert complete irq */
+            reg_val &= ~(FADC_INTRMASK_REG_COVFIN_MASK(channel));
+            break;
 
-    case FADC_INTR_EVENT_DLIMIT:
-        reg_val &= ~(FADC_INTRMASK_REG_DLIMIT_MASK(channel));
-        break;
+        case FADC_INTR_EVENT_DLIMIT:
+            reg_val &= ~(FADC_INTRMASK_REG_DLIMIT_MASK(channel));
+            break;
 
-    case FADC_INTR_EVENT_ULIMIT:
-        reg_val &= ~(FADC_INTRMASK_REG_ULIMIT_MASK(channel));
-        break;
+        case FADC_INTR_EVENT_ULIMIT:
+            reg_val &= ~(FADC_INTRMASK_REG_ULIMIT_MASK(channel));
+            break;
 
-    case FADC_INTR_EVENT_ERROR:
-        reg_val &= ~(FADC_INTRMASK_REG_ERR_MASK);
-        break;
+        case FADC_INTR_EVENT_ERROR:
+            reg_val &= ~(FADC_INTRMASK_REG_ERR_MASK);
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     FADC_WRITE_REG32(base_addr, FADC_INTRMASK_REG_OFFSET, reg_val);
@@ -281,24 +283,24 @@ FError FAdcInterruptDisable(FAdcCtrl *pctrl, FAdcChannel channel, FAdcIntrEventT
     reg_val = FADC_READ_REG32(base_addr, FADC_INTRMASK_REG_OFFSET);
     switch (event_type)
     {
-    case FADC_INTR_EVENT_COVFIN: /* enable channel convert complete irq */
-        reg_val |= (FADC_INTRMASK_REG_COVFIN_MASK(channel));
-        break;
+        case FADC_INTR_EVENT_COVFIN: /* enable channel convert complete irq */
+            reg_val |= (FADC_INTRMASK_REG_COVFIN_MASK(channel));
+            break;
 
-    case FADC_INTR_EVENT_DLIMIT:
-        reg_val |= (FADC_INTRMASK_REG_DLIMIT_MASK(channel));
-        break;
+        case FADC_INTR_EVENT_DLIMIT:
+            reg_val |= (FADC_INTRMASK_REG_DLIMIT_MASK(channel));
+            break;
 
-    case FADC_INTR_EVENT_ULIMIT:
-        reg_val |= (FADC_INTRMASK_REG_ULIMIT_MASK(channel));
-        break;
+        case FADC_INTR_EVENT_ULIMIT:
+            reg_val |= (FADC_INTRMASK_REG_ULIMIT_MASK(channel));
+            break;
 
-    case FADC_INTR_EVENT_ERROR:
-        reg_val |= (FADC_INTRMASK_REG_ERR_MASK);
-        break;
+        case FADC_INTR_EVENT_ERROR:
+            reg_val |= (FADC_INTRMASK_REG_ERR_MASK);
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     FADC_WRITE_REG32(base_addr, FADC_INTRMASK_REG_OFFSET, reg_val);
@@ -430,7 +432,7 @@ FError FAdcReadConvertResult(FAdcCtrl *pctrl, FAdcChannel channel, u16 *val)
 
     if (0 >= timeout)
     {
-        FADC_ERROR("timeout when read adc data, convert is not completed.");
+        FADC_ERROR("Timeout when reading adc-data, the conversion is not finished.");
         *val = 0;
         return FADC_ERR_TIMEOUT;
     }
@@ -521,7 +523,7 @@ FError FAdcCfgInitialize(FAdcCtrl *pctrl, const FAdcConfig *input_config_p)
     */
     if (FT_COMPONENT_IS_READY == pctrl->is_ready)
     {
-        FADC_WARN("device is already initialized!!!");
+        FADC_WARN("The device was already initialized!");
     }
 
     /*Set default values and configuration data */

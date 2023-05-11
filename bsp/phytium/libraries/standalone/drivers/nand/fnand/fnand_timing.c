@@ -14,11 +14,12 @@
  * FilePath: fnand_timing.c
  * Date: 2022-05-09 14:53:42
  * LastEditTime: 2022-05-09 08:56:27
- * Description:  This files is for
+ * Description:   This file is for timings configuration
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 #include "ferror_code.h"
 #include "fnand.h"
@@ -339,92 +340,92 @@ FError FNandTimingInterfaceUpdate(FNand *instance_p, u32 chip_addr)
     FNAND_CLEARBIT(config_p->base_address, FNAND_CTRL1_OFFSET, FNAND_CTRL1_SAMPL_PHASE_MAKE(0xffffUL)); /* clear sampl_phase */
     switch (instance_p->inter_mode[chip_addr])
     {
-    case FNAND_ASYN_SDR:
-        if (FNAND_TIMING_MODE4 == (instance_p->timing_mode[chip_addr] & 0xf))
-        {
-            target_timming_data = fnand_timing_asy_mode4;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(4UL) ;
-        }
-        else if (FNAND_TIMING_MODE3 == (instance_p->timing_mode[chip_addr] & 0xf))
-        {
-            target_timming_data = fnand_timing_asy_mode3;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(5UL) ;
-        }
-        else if (FNAND_TIMING_MODE2 == (instance_p->timing_mode[chip_addr] & 0xf))
-        {
-            target_timming_data = fnand_timing_asy_mode2;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(6UL) ;
-        }
-        else if (FNAND_TIMING_MODE1 == (instance_p->timing_mode[chip_addr] & 0xf))
-        {
-            target_timming_data = fnand_timing_asy_mode1;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(5UL) ;
-        }
-        else
-        {
-            target_timming_data = fnand_timing_asy_mode0;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(1UL) ;
-        }
-        ret = FNandMemcpyToReg16(instance_p, FNAND_ASY_TIMING0_OFFSET, 4, target_timming_data, FNAND_TIMING_ASY_NUM);
-        if (ret != FT_SUCCESS)
-        {
-            return  ret;
-        }
-        FNAND_SETBIT(config_p->base_address, FNAND_CTRL1_OFFSET, value);
-        FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 1);
-        break;
-    case FNAND_ONFI_DDR:
-        if (FNAND_TIMING_MODE4 == (instance_p->timing_mode[chip_addr] & 0xf))
-        {
-            FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x30);
-            target_timming_data = fnand_timing_syn_mode4;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(0xdUL) ;
-        }
-        else if (FNAND_TIMING_MODE3 == (instance_p->timing_mode[chip_addr] & 0xf))
-        {
-            FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x18);
-            target_timming_data = fnand_timing_syn_mode3;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(5UL) ;
-        }
-        else if (FNAND_TIMING_MODE2 == (instance_p->timing_mode[chip_addr] & 0xf))
-        {
-            FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x20);
-            target_timming_data = fnand_timing_syn_mode2;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(0x8UL) ;
-        }
-        else if (FNAND_TIMING_MODE1 == (instance_p->timing_mode[chip_addr] & 0xf))
-        {
-            FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x40);
-            target_timming_data = fnand_timing_syn_mode1;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(0x12UL) ;
-        }
-        else
-        {
-            FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x40);
-            target_timming_data = fnand_timing_syn_mode0;
-            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(0x12UL) ;
-        }
-        ret =  FNandMemcpyToReg16(instance_p, FNAND_SYN_TIMING6_OFFSET, 4, target_timming_data, FNAND_TIMING_SYN_NUM);
-        if (ret != FT_SUCCESS)
-        {
-            return  ret;
-        }
-        FNAND_SETBIT(config_p->base_address, FNAND_CTRL1_OFFSET, value);
-        break;
-    case FNAND_TOG_ASYN_DDR:
-        value = FNAND_CTRL1_SAMPL_PHASE_MAKE(8UL);
-        target_timming_data = fnand_timing_tog_ddr_mode0;
-        ret = FNandMemcpyToReg16(instance_p, FNAND_TOG_TIMING13_OFFSET, 4, target_timming_data, FNAND_TIMING_SYN_NUM);
-        if (ret != FT_SUCCESS)
-        {
-            return  ret;
-        }
-        FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0xc8);
-        FNAND_SETBIT(config_p->base_address, FNAND_CTRL1_OFFSET, value);
-        break;
-    default:
-        FNAND_TIMING_DEBUG_E("Error inter_mode is %x", instance_p->inter_mode[chip_addr]);
-        return  FNAND_ERR_INVAILD_PARAMETER;
+        case FNAND_ASYN_SDR:
+            if (FNAND_TIMING_MODE4 == (instance_p->timing_mode[chip_addr] & 0xf))
+            {
+                target_timming_data = fnand_timing_asy_mode4;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(4UL) ;
+            }
+            else if (FNAND_TIMING_MODE3 == (instance_p->timing_mode[chip_addr] & 0xf))
+            {
+                target_timming_data = fnand_timing_asy_mode3;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(5UL) ;
+            }
+            else if (FNAND_TIMING_MODE2 == (instance_p->timing_mode[chip_addr] & 0xf))
+            {
+                target_timming_data = fnand_timing_asy_mode2;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(6UL) ;
+            }
+            else if (FNAND_TIMING_MODE1 == (instance_p->timing_mode[chip_addr] & 0xf))
+            {
+                target_timming_data = fnand_timing_asy_mode1;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(5UL) ;
+            }
+            else
+            {
+                target_timming_data = fnand_timing_asy_mode0;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(1UL) ;
+            }
+            ret = FNandMemcpyToReg16(instance_p, FNAND_ASY_TIMING0_OFFSET, 4, target_timming_data, FNAND_TIMING_ASY_NUM);
+            if (ret != FT_SUCCESS)
+            {
+                return  ret;
+            }
+            FNAND_SETBIT(config_p->base_address, FNAND_CTRL1_OFFSET, value);
+            FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 1);
+            break;
+        case FNAND_ONFI_DDR:
+            if (FNAND_TIMING_MODE4 == (instance_p->timing_mode[chip_addr] & 0xf))
+            {
+                FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x30);
+                target_timming_data = fnand_timing_syn_mode4;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(0xdUL) ;
+            }
+            else if (FNAND_TIMING_MODE3 == (instance_p->timing_mode[chip_addr] & 0xf))
+            {
+                FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x18);
+                target_timming_data = fnand_timing_syn_mode3;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(5UL) ;
+            }
+            else if (FNAND_TIMING_MODE2 == (instance_p->timing_mode[chip_addr] & 0xf))
+            {
+                FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x20);
+                target_timming_data = fnand_timing_syn_mode2;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(0x8UL) ;
+            }
+            else if (FNAND_TIMING_MODE1 == (instance_p->timing_mode[chip_addr] & 0xf))
+            {
+                FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x40);
+                target_timming_data = fnand_timing_syn_mode1;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(0x12UL) ;
+            }
+            else
+            {
+                FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0x40);
+                target_timming_data = fnand_timing_syn_mode0;
+                value = FNAND_CTRL1_SAMPL_PHASE_MAKE(0x12UL) ;
+            }
+            ret =  FNandMemcpyToReg16(instance_p, FNAND_SYN_TIMING6_OFFSET, 4, target_timming_data, FNAND_TIMING_SYN_NUM);
+            if (ret != FT_SUCCESS)
+            {
+                return  ret;
+            }
+            FNAND_SETBIT(config_p->base_address, FNAND_CTRL1_OFFSET, value);
+            break;
+        case FNAND_TOG_ASYN_DDR:
+            value = FNAND_CTRL1_SAMPL_PHASE_MAKE(8UL);
+            target_timming_data = fnand_timing_tog_ddr_mode0;
+            ret = FNandMemcpyToReg16(instance_p, FNAND_TOG_TIMING13_OFFSET, 4, target_timming_data, FNAND_TIMING_SYN_NUM);
+            if (ret != FT_SUCCESS)
+            {
+                return  ret;
+            }
+            FNAND_WRITEREG(config_p->base_address, FNAND_INTERVAL_OFFSET, 0xc8);
+            FNAND_SETBIT(config_p->base_address, FNAND_CTRL1_OFFSET, value);
+            break;
+        default:
+            FNAND_TIMING_DEBUG_E("Error inter_mode is %x", instance_p->inter_mode[chip_addr]);
+            return  FNAND_ERR_INVAILD_PARAMETER;
     }
 
     return FT_SUCCESS;

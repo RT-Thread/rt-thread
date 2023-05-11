@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include "fdebug.h"
@@ -39,7 +39,7 @@ FXhciTrb *FXhciNextCmdTrb(FXhci *const xhci)
 
 void FXhciPostCmd(FXhci *const xhci)
 {
-    FUSB_INFO("Command %d (@%p) ", FXHCI_TRB_GET(TT, xhci->cr.cur), xhci->cr.cur);
+    FUSB_INFO("Command %d (@%p).", FXHCI_TRB_GET(TT, xhci->cr.cur), xhci->cr.cur);
 
     FXHCI_TRB_SET(C, xhci->cr.cur, xhci->cr.pcs); /* Cycle Bit */
     ++xhci->cr.cur;
@@ -52,12 +52,14 @@ void FXhciPostCmd(FXhci *const xhci)
 
     while (FXHCI_TRB_GET(TT, xhci->cr.cur) == FXHCI_TRB_LINK)
     {
-        FUSB_DEBUG("Handling LINK pointer (@%p) ", xhci->cr.cur);
+        FUSB_DEBUG("Handling link pointer (@%p).", xhci->cr.cur);
         const int tc = FXHCI_TRB_GET(TC, xhci->cr.cur); /* Completion Code */
         FXHCI_TRB_SET(C, xhci->cr.cur, xhci->cr.pcs); /* Cycle Bit */
         xhci->cr.cur = (void *)(uintptr)(xhci->cr.cur->ptr_low);
         if (tc)
+        {
             xhci->cr.pcs ^= 1;
+        }
     }
 }
 
@@ -70,10 +72,12 @@ static FXhciTransCode FXhciWaitForCmd(FXhci *const xhci,
 
     cc = FXhciWaitForCmdDone(xhci, cmd_trb, clear_event);
     if (cc != FXHCI_CC_TIMEOUT)
+    {
         return cc;
+    }
 
     /* Abort command on timeout */
-    FUSB_ERROR("Aborting command (@%p), CRCR: 0x%x ", cmd_trb, FXhciReadOper64(&xhci->mmio, FXHCI_REG_OP_CRCR));
+    FUSB_ERROR("Aborting command (@%p), CRCR: 0x%x.", cmd_trb, FXhciReadOper64(&xhci->mmio, FXHCI_REG_OP_CRCR));
 
     /*
      * Ref. xHCI Specification Revision 1.2, May 2019.
@@ -88,7 +92,9 @@ static FXhciTransCode FXhciWaitForCmd(FXhci *const xhci,
     cc = FXhciWaitForCmdAborted(xhci, cmd_trb);
 
     if ((FXhciReadOper64(&xhci->mmio, FXHCI_REG_OP_CRCR) & FXHCI_REG_OP_CRCR_CRR))
-        FUSB_ERROR("xhci_wait_for_command: Command ring still running");
+    {
+        FUSB_ERROR("FXhciWaitForCmd: Command ring still running.");
+    }
 
     return cc;
 }
@@ -103,12 +109,14 @@ FXhciTransCode FXhciCmdNop(FXhci *const xhci)
     /* wait for result in event ring */
     FXhciTransCode cc = FXhciWaitForCmdDone(xhci, cmd, 1);
 
-    FUSB_INFO("Command ring is %srunning: cc: %d",
+    FUSB_INFO("Command ring is %srunning: cc: %d.",
               (FXhciReadOper64(&xhci->mmio, FXHCI_REG_OP_CRCR) & FXHCI_REG_OP_CRCR_CRR) ? "" : "not ", /* check if cmd ring is running */
               cc);
 
     if (cc != FXHCI_CC_SUCCESS)
-        FUSB_ERROR("noop command failed. ");
+    {
+        FUSB_ERROR("Noop command failed.");
+    }
 
     return cc;
 }
@@ -131,7 +139,9 @@ FXhciTransCode FXhciCmdEnableSlot(FXhci *const xhci, int *const slot_id)
         {
             *slot_id = FXHCI_TRB_GET(ID, xhci->er.cur);
             if (*slot_id > xhci->max_slots_en)
+            {
                 cc = FXHCI_CC_CONTROLLER_ERROR;
+            }
         }
 
         FXhciAdvanceEvtRing(xhci);
@@ -178,7 +188,9 @@ FXhciTransCode FXhciCmdConfigureEp(FXhci *const xhci,
     cmd->ptr_low = (uintptr)(ic->raw);
 
     if (config_id == 0)
-        FXHCI_TRB_SET(DC, cmd, 1); /* Deconfigure */
+    {
+        FXHCI_TRB_SET(DC, cmd, 1);    /* Deconfigure */
+    }
 
     FXhciPostCmd(xhci);
 

@@ -14,11 +14,12 @@
  * FilePath: fnand_ecc.c
  * Date: 2022-05-12 14:17:42
  * LastEditTime: 2022-05-12 15:56:27
- * Description:  This files is for
+ * Description:  This file is for ecc validation related api
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 
@@ -45,59 +46,99 @@ u32 FNandGetEccTotalLength(u32 bytes_per_page, u32 ecc_strength)
     int ecc_total = 0;
     switch (bytes_per_page)
     {
-    case 0x200:
-        if (ecc_strength == 8)
-            ecc_total = 0x0D;
-        else if (ecc_strength == 4)
-            ecc_total = 7;
-        else if (ecc_strength == 2)
-            ecc_total = 4;
-        else
+        case 0x200:
+            if (ecc_strength == 8)
+            {
+                ecc_total = 0x0D;
+            }
+            else if (ecc_strength == 4)
+            {
+                ecc_total = 7;
+            }
+            else if (ecc_strength == 2)
+            {
+                ecc_total = 4;
+            }
+            else
+            {
+                ecc_total = 0;
+            }
+            break;
+        case 0x800:
+            if (ecc_strength == 8)
+            {
+                ecc_total = 0x34;
+            }
+            else if (ecc_strength == 4)
+            {
+                ecc_total = 0x1a;
+            }
+            else if (ecc_strength == 2)
+            {
+                ecc_total = 0xd;
+            }
+            else
+            {
+                ecc_total = 0;
+            }
+            break;
+        case 0x1000:
+            if (ecc_strength == 8)
+            {
+                ecc_total = 0x68;
+            }
+            else if (ecc_strength == 4)
+            {
+                ecc_total = 0x34;
+            }
+            else if (ecc_strength == 2)
+            {
+                ecc_total = 0x1a;
+            }
+            else
+            {
+                ecc_total = 0;
+            }
+            break;
+        case 0x2000:
+            if (ecc_strength == 8)
+            {
+                ecc_total = 0xD0;
+            }
+            else if (ecc_strength == 4)
+            {
+                ecc_total = 0x68;
+            }
+            else if (ecc_strength == 2)
+            {
+                ecc_total = 0x34;
+            }
+            else
+            {
+                ecc_total = 0;
+            }
+            break;
+        case 0x4000:
+            if (ecc_strength == 8)
+            {
+                ecc_total = 0x1A0;
+            }
+            if (ecc_strength == 4)
+            {
+                ecc_total = 0xD0;
+            }
+            else if (ecc_strength == 2)
+            {
+                ecc_total = 0x68;
+            }
+            else
+            {
+                ecc_total = 0;
+            }
+            break;
+        default:
             ecc_total = 0;
-        break;
-    case 0x800:
-        if (ecc_strength == 8)
-            ecc_total = 0x34;
-        else if (ecc_strength == 4)
-            ecc_total = 0x1a;
-        else if (ecc_strength == 2)
-            ecc_total = 0xd;
-        else
-            ecc_total = 0;
-        break;
-    case 0x1000:
-        if (ecc_strength == 8)
-            ecc_total = 0x68;
-        else if (ecc_strength == 4)
-            ecc_total = 0x34;
-        else if (ecc_strength == 2)
-            ecc_total = 0x1a;
-        else
-            ecc_total = 0;
-        break;
-    case 0x2000:
-        if (ecc_strength == 8)
-            ecc_total = 0xD0;
-        else if (ecc_strength == 4)
-            ecc_total = 0x68;
-        else if (ecc_strength == 2)
-            ecc_total = 0x34;
-        else
-            ecc_total = 0;
-        break;
-    case 0x4000:
-        if (ecc_strength == 8)
-            ecc_total = 0x1A0;
-        if (ecc_strength == 4)
-            ecc_total = 0xD0;
-        else if (ecc_strength == 2)
-            ecc_total = 0x68;
-        else
-            ecc_total = 0;
-        break;
-    default:
-        ecc_total = 0;
-        break;
+            break;
     }
 
     FNAND_ECC_DEBUG_I("[%s %d]writesize: 0x%x, ecc strength: %d, ecc_total: 0x%x\n", __func__, __LINE__, bytes_per_page, ecc_strength, ecc_total);
@@ -202,7 +243,7 @@ s32 FNandCorrectEcc(uintptr_t base_address, u32 ecc_step_size, u32 hw_ecc_steps,
     int stat = 0;
     if (!buf)
     {
-        FNAND_ECC_DEBUG_E("page buffer is null");
+        FNAND_ECC_DEBUG_E("Page buffer is null");
         return -1;
     }
 
@@ -210,18 +251,9 @@ s32 FNandCorrectEcc(uintptr_t base_address, u32 ecc_step_size, u32 hw_ecc_steps,
     for (i = 0; i < hw_ecc_steps; i++)
     {
         for (j = 0; j < 4; j++)
-        {
-            // value = FNAND_READREG(base_address, 0xB8 + 4 * (2 * i + j));
+        {        
             value = FNAND_READREG(base_address, 0xB8 + 0x10 * i + 4 * j);
-            // FNAND_ECC_DEBUG_W("index:%x i is %d ,j is %d ",
-            //       0xB8 + 0x10 * i + 4*j,i,j);
-            if (value)
-            {
-                // FNAND_ECC_DEBUG_W("offset:%x value:0x%08x\n",
-                //   0xB8 + 0x10 * i + 4*j, value);
-                //phytium_nfc_data_dump2(nfc, nfc->dma_buf + (ecc_step_size * i + tmp/8)/512, 512);
-            }
-
+         
             tmp = value & 0xFFFF;
             if (tmp && (tmp <= 4096))
             {

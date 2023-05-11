@@ -8,10 +8,13 @@
  * Change Logs:
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
- *
+ * 2023-04-27  huanghe      support RT-Smart
  */
 
 #include "board.h"
+
+#include <mmu.h>
+
 #include "drv_usart.h"
 #include "interrupt.h"
 #include "fpl011.h"
@@ -41,6 +44,10 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     uart = rt_container_of(serial, struct drv_usart, serial);
     uart_hw = uart->handle;
     config = *(const FPl011Config *)FPl011LookupConfig(uart->config.uart_instance);
+
+#ifdef RT_USING_SMART
+    config.base_address = (uintptr)rt_ioremap((void*)config.base_address, 0x1000);
+#endif
 
     RT_ASSERT(FPl011CfgInitialize(uart_hw, &config) == FT_SUCCESS);
     FPl011SetHandler(uart_hw, Ft_Os_Uart_Callback, serial);
@@ -129,13 +136,13 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
-u8 FPl011RecvByteNoBlocking(u32 addr)
+u32 FPl011RecvByteNoBlocking(uintptr addr)
 {
     u32 recieved_byte;
 
-    while (FUART_ISRECEIVEDATA(addr))
+    while (FUART_RECEIVEDATAEMPTY(addr))
     {
-        return 0xff;
+        return 0xffff;
     }
     recieved_byte = FUART_READREG32(addr, FPL011DR_OFFSET);
     return recieved_byte;
@@ -152,14 +159,13 @@ static int uart_getc(struct rt_serial_device *serial)
     uart_ptr = uart->handle;
 
     ch = FPl011RecvByteNoBlocking(uart_ptr->config.base_address);
-    if (ch == 0xff)
+    if (ch == 0xffff)
     {
         ch = -1;
-        rt_kprintf("") ;
     }
     else
     {
-        //
+        ch &= 0xff;
     }
 
     return ch;
@@ -176,6 +182,7 @@ static const struct rt_uart_ops _uart_ops =
 
 #define RT_USING_UART0
 #define RT_USING_UART1
+#define RT_USING_UART2
 
 
 #ifdef RT_USING_UART0
@@ -188,6 +195,11 @@ static const struct rt_uart_ops _uart_ops =
     static struct drv_usart _RtUart1;
 #endif
 
+#ifdef RT_USING_UART2
+    static FPl011 Ft_Uart2;
+    static struct drv_usart _RtUart2;
+#endif
+
 int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
@@ -196,7 +208,6 @@ int rt_hw_uart_init(void)
     config.bufsz = RT_SERIAL_RB_BUFSZ;
     _RtUart0.serial.ops = &_uart_ops;
     _RtUart0.serial.config = config;
-    // Ft_Uart0.config.instance_id = FUART0_ID;
 
     _RtUart0.handle = &Ft_Uart0;
     _RtUart0.config.uart_instance = FUART0_ID;
@@ -213,7 +224,6 @@ int rt_hw_uart_init(void)
     config.bufsz = RT_SERIAL_RB_BUFSZ;
     _RtUart1.serial.ops = &_uart_ops;
     _RtUart1.serial.config = config;
-    // Ft_Uart1.config.instance_id = FUART1_ID;
     _RtUart1.handle = &Ft_Uart1;
 
     _RtUart1.config.uart_instance = FUART1_ID;
@@ -225,6 +235,24 @@ int rt_hw_uart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           &_RtUart1);
 #endif
+
+
+#ifdef RT_USING_UART2
+    config.bufsz = RT_SERIAL_RB_BUFSZ;
+    _RtUart2.serial.ops = &_uart_ops;
+    _RtUart2.serial.config = config;
+    _RtUart2.handle = &Ft_Uart2;
+
+    _RtUart2.config.uart_instance = FUART2_ID;
+    _RtUart2.config.isr_priority = 0xd0;
+    _RtUart2.config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK | RTOS_UART_ISR_BEIM_MASK | RTOS_UART_ISR_PEIM_MASK | RTOS_UART_ISR_FEIM_MASK | RTOS_UART_ISR_RTIM_MASK | RTOS_UART_ISR_RXIM_MASK);
+    _RtUart2.config.uart_baudrate = 115200;
+
+    rt_hw_serial_register(&_RtUart2.serial, "uart2",
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          &_RtUart2);
+#endif
+
 
     return 0;
 }

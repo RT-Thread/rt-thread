@@ -14,22 +14,24 @@
  * FilePath: fnand_dma.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:27
- * Description:  This files is for
+ * Description:  This file is dma descriptor management API. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
-#ifndef DRIVERS_NAND_FNAND_DMA_H
-#define DRIVERS_NAND_FNAND_DMA_H
+#ifndef FNAND_DMA_H
+#define FNAND_DMA_H
+
+#include "ftypes.h"
+
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "ftypes.h"
 
 #define FNAND_CMDCTRL_TYPE_RESET 0x00    /* reset */
 #define FNAND_CMDCTRL_TYPE_SET_FTR 0x01  /* Set features */

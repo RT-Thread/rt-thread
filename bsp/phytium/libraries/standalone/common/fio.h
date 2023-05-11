@@ -14,15 +14,17 @@
  * FilePath: fio.h
  * Date: 2021-04-07 09:53:07
  * LastEditTime: 2022-02-18 08:24:01
- * Description:  This files is for general reigster io functions
+ * Description:  This file is for general reigster io functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu   2021/04/07  init
+ * 1.1  zhugengyu   2022/02/18  add Phytium Public License 1.0
  */
 
-#ifndef FT_IO_H
-#define FT_IO_H
+#ifndef FIO_H
+#define FIO_H
 
 #ifdef __cplusplus
 extern "C"

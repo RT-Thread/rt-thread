@@ -12,19 +12,15 @@
  *
  *
  * FilePath: fi2c_sinit.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-01 14:53:42
  * LastEditTime: 2022-02-18 08:36:52
- * Description:  This files is for
+ * Description:  This file is for implementation of driver's static initialization functionality
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu 2021/11/1  first commit
  */
-
-
-
-/* - This file contains the implementation of driver's static initialization functionality.
-- 驱动静态初始化  */
 
 /***************************** Include Files *********************************/
 
@@ -40,7 +36,7 @@
 
 /************************** Variable Definitions *****************************/
 
-extern const FI2cConfig FI2C_CONFIG_TBL[I2C_INSTANCE_NUM];
+extern const FI2cConfig FI2C_CONFIG_TBL[FI2C_NUM];
 /************************** Function Prototypes ******************************/
 /**
  * @name: FI2cLookupConfig
@@ -53,7 +49,7 @@ const FI2cConfig *FI2cLookupConfig(u32 instance_id)
     const FI2cConfig *ptr = NULL;
     u32 index;
 
-    for (index = 0; index < (u32)I2C_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FI2C_NUM; index++)
     {
         if (FI2C_CONFIG_TBL[index].instance_id == instance_id)
         {

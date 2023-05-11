@@ -14,11 +14,13 @@
  * FilePath: fnand.c
  * Date: 2022-05-10 14:53:42
  * LastEditTime: 2022-05-10 08:56:27
- * Description:  This files is for
+ * Description:  This file is for  functions in this file are the minimum required functions
+ * for this driver. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 #include "fnand.h"
 #include "fnand_hw.h"
@@ -130,7 +132,7 @@ FError FNandSendCmd(FNand *instance_p, struct FNandDmaDescriptor *descriptor_p, 
         }
         else
         {
-            FNAND_DEBUG_E("The lack of wait_irq_fun_p");
+            FNAND_DEBUG_E("The member wait_irq_fun_p of instance_p is null");
             FNAND_WRITEREG(config_p->base_address, FNAND_INTRMASK_OFFSET, FNAND_INTRMASK_ALL_INT_MASK);
             return FNAND_ERR_IRQ_LACK_OF_CALLBACK;
         }
@@ -145,7 +147,7 @@ FError FNandSendCmd(FNand *instance_p, struct FNandDmaDescriptor *descriptor_p, 
             {
                 if (timeout_cnt++ >= 0xffffff)
                 {
-                    FNAND_DEBUG_E("FNAND_CMD_TYPE is send timeout");
+                    FNAND_DEBUG_E("FNAND_CMD_TYPE is sending timeout");
                     return FNAND_OP_TIMEOUT;
                 }
             }
@@ -156,7 +158,7 @@ FError FNandSendCmd(FNand *instance_p, struct FNandDmaDescriptor *descriptor_p, 
             {
                 if (timeout_cnt++ >= 0xffffff)
                 {
-                    FNAND_DEBUG_E("FNAND_CMD_TYPE is send timeout");
+                    FNAND_DEBUG_E("FNAND_CMD_TYPE is sending timeout");
                     return FNAND_OP_TIMEOUT;
                 }
             }
@@ -167,7 +169,7 @@ FError FNandSendCmd(FNand *instance_p, struct FNandDmaDescriptor *descriptor_p, 
             {
                 if (timeout_cnt++ >= 0xffffff)
                 {
-                    FNAND_DEBUG_E("FNAND_CMD_TYPE is send timeout");
+                    FNAND_DEBUG_E("FNAND_CMD_TYPE is sending timeout");
                     return FNAND_OP_TIMEOUT;
                 }
             }
@@ -178,7 +180,7 @@ FError FNandSendCmd(FNand *instance_p, struct FNandDmaDescriptor *descriptor_p, 
             {
                 if (timeout_cnt++ >= 0xffffff)
                 {
-                    FNAND_DEBUG_E("FNAND_CMD_TYPE is send timeout");
+                    FNAND_DEBUG_E("FNAND_CMD_TYPE is sending timeout");
                     return FNAND_OP_TIMEOUT;
                 }
             }

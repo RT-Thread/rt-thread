@@ -14,13 +14,14 @@
  * FilePath: fspim_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:08:00
- * Description:  This files is for
+ * Description:  This file is for providing spim Hardware interaction func.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2021-12-3   init commit
- * 1.1   zhugengyu  2022-4-15   support test mode
+ * 1.0   zhugengyu  2021/12/3   init commit
+ * 1.1   zhugengyu  2022/4/15   support test mode
+ * 1.2  liqiaozhong 2023/1/4    add data get func
  */
 
 
@@ -60,7 +61,7 @@ u32 FSpimGetTxFifoDepth(uintptr base_addr)
         FSpimSetTxFifoThreshold(base_addr, fifo_depth);
         if (fifo_depth != FSpimGetTxFifoThreshold(base_addr))
         {
-            FSPIM_INFO("Tx fifo threshold is %d", fifo_depth);
+            FSPIM_INFO("The Tx fifo threshold is %d", fifo_depth);
             break;
         }
     }
@@ -83,7 +84,7 @@ u32 FSpimGetRxFifoDepth(uintptr base_addr)
         FSpimSetRxFifoThreshold(base_addr, fifo_depth);
         if (fifo_depth != FSpimGetRxFifoThreshold(base_addr))
         {
-            FSPIM_INFO("Rx fifo threshold is %d", fifo_depth);
+            FSPIM_INFO("The Rx fifo threshold is %d", fifo_depth);
             break;
         }
 
@@ -118,21 +119,46 @@ void FSpimSelSlaveDev(uintptr base_addr, u32 slave_dev_id)
  * @param {u32} speed, SPI传输速度设置
  */
 FError FSpimSetSpeed(uintptr base_addr, u32 speed)
-{
+{   
+    FASSERT(speed != 0);
     u32 clk_div;
     boolean enabled = FSpimGetEnable(base_addr);
 
     if (enabled)
+    {
         FSpimSetEnable(base_addr, FALSE);
+    }
 
-    clk_div = FSPI_FREQ / speed;
-    FSPIM_INFO("set clk div as %d", clk_div);
+    clk_div = FSPI_CLK_FREQ_HZ / speed;
+    if (clk_div < FSPIM_BAUD_R_SCKDV_MIN || clk_div > FSPIM_BAUD_R_SCKDV_MAX)
+    {
+        FSPIM_ERROR("Clk div is %d => do not support, this parameter should be set as an even from 2 to 65534.", clk_div);
+        return FSPIM_ERR_NOT_SUPPORT;
+    }
+    FSPIM_INFO("Set clk div as %d", clk_div);
     FSPIM_WRITE_REG32(base_addr, FSPIM_BAUD_R_OFFSET, clk_div);
 
     if (enabled)
+    {
         FSpimSetEnable(base_addr, TRUE);
+    }
 
     return FSPIM_SUCCESS;
+}
+
+/**
+ * @name: FSpimGetSpeed
+ * @msg: 获取SPI传输速度
+ * @return {u32}FSPIM传输频率
+ * @param {uintptr} base_addr, SPI控制器基地址
+ * @param {u32} speed, SPI传输速度设置
+ */
+u32 FSpimGetSpeed(uintptr base_addr)
+{
+    u32 clk_div;
+    u32 spim_speed;
+    
+    return FSPIM_READ_REG32(base_addr, FSPIM_BAUD_R_OFFSET);
 }
 
 /**
@@ -149,33 +175,37 @@ void FSpimSetTransMode(uintptr base_addr, u32 trans_mode)
     boolean enabled = FSpimGetEnable(base_addr);
 
     if (enabled)
+    {
         FSpimSetEnable(base_addr, FALSE);
+    }
 
     reg_val = FSpimGetCtrlR0(base_addr);
     reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK; /* clear trans mode bits */
     switch (trans_mode)
     {
-    case FSPIM_TRANS_MODE_RX_TX:
-        reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
-        break;
-    case FSPIM_TRANS_MODE_TX_ONLY:
-        reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_TX_ONLY);
-        break;
-    case FSPIM_TRANS_MODE_RX_ONLY:
-        reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_ONLY);
-        break;
-    case FSPIM_TRANS_MODE_READ_EEPROM:
-        reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RD_EEPROM);
-        break;
-    default:
-        FASSERT(0);
-        break;
+        case FSPIM_TRANS_MODE_RX_TX:
+            reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+            break;
+        case FSPIM_TRANS_MODE_TX_ONLY:
+            reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_TX_ONLY);
+            break;
+        case FSPIM_TRANS_MODE_RX_ONLY:
+            reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_ONLY);
+            break;
+        case FSPIM_TRANS_MODE_READ_EEPROM:
+            reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RD_EEPROM);
+            break;
+        default:
+            FASSERT(0);
+            break;
     }
 
     FSpimSetCtrlR0(base_addr, reg_val);
 
     if (enabled)
+    {
         FSpimSetEnable(base_addr, TRUE);
+    }
 
     return;
 }
@@ -193,13 +223,39 @@ void FSpimSetCpha(uintptr base_addr, u32 cpha_mode)
 
     reg_val &= ~FSPIM_CTRL_R0_SCPHA_MASK; /* clear bits */
     if (FSPIM_CPHA_1_EDGE == cpha_mode)
+    {
         reg_val |= FSPIM_CTRL_R0_SCPHA(FSPIM_SCPHA_SWITCH_DATA_MID);
+    }
     else if (FSPIM_CPHA_2_EDGE == cpha_mode)
+    {
         reg_val |= FSPIM_CTRL_R0_SCPHA(FSPIM_SCPHA_SWITCH_DATA_BEG);
+    }
     else
+    {
         FASSERT(0);
+    }
 
     FSpimSetCtrlR0(base_addr, reg_val);
+}
+
+/**
+ * @name: FSpimGetCpha
+ * @msg: 获取串行时钟相位
+ * @return {FSpimCphaType}串行时钟相位
+ * @param {uintptr} base_addr, SPI控制器基地址
+ */
+FSpimCphaType FSpimGetCpha(uintptr base_addr)
+{
+    u32 reg_val = FSpimGetCtrlR0(base_addr);
+
+    if (reg_val &= FSPIM_CTRL_R0_SCPHA(FSPIM_SCPHA_SWITCH_DATA_BEG))
+    {
+        return FSPIM_CPHA_2_EDGE;
+    }
+    else 
+    {
+        return FSPIM_CPHA_1_EDGE;
+    }
 }
 
 /**
@@ -215,13 +271,39 @@ void FSpimSetCpol(uintptr base_addr, u32 cpol_mode)
 
     reg_val &= ~FSPIM_CTRL_R0_SCPOL_MASK; /* clear bits */
     if (FSPIM_CPOL_LOW == cpol_mode)
+    {
         reg_val |= FSPIM_CTRL_R0_SCPOL(FSPIM_SCPOL_INACTIVE_LOW);
+    }
     else if (FSPIM_CPOL_HIGH == cpol_mode)
+    {
         reg_val |= FSPIM_CTRL_R0_SCPOL(FSPIM_SCPOL_INACTIVE_HIGH);
+    }
     else
+    {
         FASSERT(0);
+    }
 
     FSpimSetCtrlR0(base_addr, reg_val);
+}
+
+/**
+ * @name: FSpimGetCpol
+ * @msg: 获取串行时钟极性
+ * @return {无}
+ * @param {uintptr} base_addr, SPI控制器基地址
+ */
+FSpimCpolType FSpimGetCpol(uintptr base_addr)
+{
+    u32 reg_val = FSpimGetCtrlR0(base_addr);
+
+    if (reg_val &= FSPIM_CTRL_R0_SCPOL(FSPIM_SCPOL_INACTIVE_HIGH))
+    {
+        return FSPIM_CPOL_HIGH;
+    }
+    else
+    {
+        return FSPIM_CPOL_LOW;
+    }
 }
 
 /**
@@ -237,20 +319,28 @@ void FSpimSetSlaveEnable(uintptr base_addr, boolean enable)
     boolean enabled = FSpimGetEnable(base_addr);
 
     if (enabled)
+    {
         FSpimSetEnable(base_addr, FALSE);
+    }
 
     reg_val = FSpimGetCtrlR0(base_addr);
 
     reg_val &= ~FSPIM_CTRL_R0_SLV_OE_MASK;
     if (enable)
+    {
         reg_val |= FSPIM_CTRL_R0_SLV_OE(FSPIM_SLAVE_TX_ENABLE);
+    }
     else
+    {
         reg_val |= FSPIM_CTRL_R0_SLV_OE(FSPIM_SLAVE_TX_DISALE);
+    }
 
     FSpimSetCtrlR0(base_addr, reg_val);
 
     if (enabled)
+    {
         FSpimSetEnable(base_addr, TRUE);
+    }
 
     return;
 }

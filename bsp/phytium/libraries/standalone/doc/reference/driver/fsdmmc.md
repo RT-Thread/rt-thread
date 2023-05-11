@@ -58,6 +58,7 @@ typedef struct
     FSdmmcConfig config;      /* Current active configs */
     u32          is_ready;    /* Device is initialized and ready */
     FSdmmcEventHandler evt_handler[FSDMMC_EVT_NUM];
+    void         *evt_args[FSDMMC_EVT_NUM];
 } FSdmmc; /* Device instance */
 ```
 
@@ -364,7 +365,7 @@ Return:
 - 注册中断事件响应函数
 
 ```c
-void FSdmmcRegisterInterruptHandler(FSdmmc *instance_p, u32 event, FSdmmcEventHandler handler);
+void FSdmmcRegisterInterruptHandler(FSdmmc *instance_p, u32 event, FSdmmcEventHandler handler, void *args);
 ```
 
 Note:

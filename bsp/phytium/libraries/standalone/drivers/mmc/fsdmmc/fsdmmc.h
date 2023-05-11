@@ -14,7 +14,8 @@
  * FilePath: fsdmmc.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:55:57
- * Description:  This files is for
+ * Description:  This file is for functions in this file are the minimum required functions
+ * for this driver. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -22,19 +23,18 @@
  * 1.0   zhugengyu  2021/12/2    init
  */
 
-#ifndef  DRIVERS_MMC_FSDMMC_H
-#define  DRIVERS_MMC_FSDMMC_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
+#ifndef  FSDMMC_H
+#define  FSDMMC_H
 /***************************** Include Files *********************************/
 
 #include "ftypes.h"
 #include "ferror_code.h"
 #include "fkernel.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 #define FSDMMC_SUCCESS           FT_SUCCESS
@@ -112,7 +112,7 @@ typedef struct
     u32     irq_num[FSDMMC_INTR_NUM];
 } FSdmmcConfig;
 
-typedef void (*FSdmmcEventHandler)(void *instance_p);
+typedef void (*FSdmmcEventHandler)(void *args);
 
 /**
  * This typedef contains driver instance data. The user is required to allocate a
@@ -124,6 +124,7 @@ typedef struct
     FSdmmcConfig config;      /* Current active configs */
     u32          is_ready;    /* Device is initialized and ready */
     FSdmmcEventHandler evt_handler[FSDMMC_EVT_NUM];
+    void         *evt_args[FSDMMC_EVT_NUM];
 } FSdmmc; /* Device instance */
 
 /************************** Variable Definitions *****************************/
@@ -163,7 +164,7 @@ void FSdmmcErrInterrupHandler(s32 vector, void *param);
 void FSdmmcDmaInterrupHandler(s32 vector, void *param);
 
 /* 注册中断事件响应函数 */
-void FSdmmcRegisterInterruptHandler(FSdmmc *instance_p, u32 event, FSdmmcEventHandler handler);
+void FSdmmcRegisterInterruptHandler(FSdmmc *instance_p, u32 event, FSdmmcEventHandler handler, void *args);
 
 #ifdef __cplusplus
 }

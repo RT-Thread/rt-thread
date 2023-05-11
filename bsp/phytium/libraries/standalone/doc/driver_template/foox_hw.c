@@ -14,7 +14,7 @@
  * FilePath: foox_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:47
- * Description:  This files is for
+ * Description:  This file is for
  *
  * Modify History:
  *  Ver   Who        Date         Changes

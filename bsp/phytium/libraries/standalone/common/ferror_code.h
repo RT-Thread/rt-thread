@@ -14,16 +14,21 @@
  * FilePath: ferror_code.h
  * Date: 2021-04-07 09:53:30
  * LastEditTime: 2022-02-17 18:05:27
- * Description:  This files is for error code functions
+ * Description:  This file is for error code functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  */
-#ifndef _FT_ERROR_CODE_H
-#define _FT_ERROR_CODE_H
+#ifndef FERROR_CODE_H
+#define FERROR_CODE_H
 
 #include "ftypes.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 typedef u32 FError;
 
@@ -54,6 +59,7 @@ typedef enum
 {
     ErrBspGeneral = 0,
     ErrBspClk,
+    ErrBspScmi,
     ErrBspRtc,
     ErrBspTimer,
     ErrBspUart,
@@ -78,7 +84,9 @@ typedef enum
     ErrBspAdc,
     ErrBspPwm,
     ErrSema,
-
+    ErrBspMEDIA,
+    ErrBspMhu,
+	
     ErrBspModMaxMask = 255
 } FtErrCodeBspMask;
 
@@ -102,5 +110,9 @@ typedef enum
 
 #define ERR_SUCCESS FT_MAKE_ERRCODE(ErrorModGeneral, ErrBspGeneral, 0) /* 成功 */
 #define ERR_GENERAL FT_MAKE_ERRCODE(ErrorModGeneral, ErrBspGeneral, 1) /* 一般错误 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

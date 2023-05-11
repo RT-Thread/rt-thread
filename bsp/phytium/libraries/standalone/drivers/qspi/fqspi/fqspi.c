@@ -14,13 +14,14 @@
  * FilePath: fqspi.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-03-28 09:00:41
- * Description:  This files is for
+ * Description:  This files is for the qspi specific functions implementations
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.1    wangxiaodong  2021.11.12  re-construct
- * 1.2    wangxiaodong  2022.3.27   re-construct
+ * 1.0   wangxiaodong  2022/3/29  first release
+ * 1.1   wangxiaodong  2022/9/9   improve functions
+ * 1.2   zhangyan      2022/12/7  improve functions
  */
 
 #include <string.h>
@@ -29,6 +30,7 @@
 #include "fqspi.h"
 #include "fqspi_hw.h"
 #include "fsleep.h"
+#include "fqspi_flash.h"
 
 #define FQSPI_DEBUG_TAG "FQSPI"
 #define FQSPI_ERROR(format, ...)    FT_DEBUG_PRINT_E(FQSPI_DEBUG_TAG, format, ##__VA_ARGS__)
@@ -57,7 +59,7 @@ FError FQspiCfgInitialize(FQspiCtrl *pctrl, const FQspiConfig *input_config_p)
     */
     if (FT_COMPONENT_IS_READY == pctrl->is_ready)
     {
-        FQSPI_WARN("device is already initialized!!!");
+        FQSPI_WARN("Device is already initialized!!!");
     }
 
     /*Set default values and configuration data */
@@ -101,30 +103,30 @@ void FQspiSetCapacityAndNum(FQspiCtrl *pctrl)
 
     switch (config_p->capacity)
     {
-    case FQSPI_FLASH_CAP_4MB:
-        pctrl->flash_size = SZ_4M;
-        break;
-    case FQSPI_FLASH_CAP_8MB:
-        pctrl->flash_size = SZ_8M;
-        break;
-    case FQSPI_FLASH_CAP_16MB:
-        pctrl->flash_size = SZ_16M;
-        break;
-    case FQSPI_FLASH_CAP_32MB:
-        pctrl->flash_size = SZ_32M;
-        break;
-    case FQSPI_FLASH_CAP_64MB:
-        pctrl->flash_size = SZ_64M;
-        break;
-    case FQSPI_FLASH_CAP_128MB:
-        pctrl->flash_size = SZ_128M;
-        break;
-    case FQSPI_FLASH_CAP_256MB:
-        pctrl->flash_size = SZ_256M;
-        break;
-    default:
-        pctrl->flash_size = SZ_4M;
-        break;
+        case FQSPI_FLASH_CAP_4MB:
+            pctrl->flash_size = SZ_4M;
+            break;
+        case FQSPI_FLASH_CAP_8MB:
+            pctrl->flash_size = SZ_8M;
+            break;
+        case FQSPI_FLASH_CAP_16MB:
+            pctrl->flash_size = SZ_16M;
+            break;
+        case FQSPI_FLASH_CAP_32MB:
+            pctrl->flash_size = SZ_32M;
+            break;
+        case FQSPI_FLASH_CAP_64MB:
+            pctrl->flash_size = SZ_64M;
+            break;
+        case FQSPI_FLASH_CAP_128MB:
+            pctrl->flash_size = SZ_128M;
+            break;
+        case FQSPI_FLASH_CAP_256MB:
+            pctrl->flash_size = SZ_256M;
+            break;
+        default:
+            pctrl->flash_size = SZ_4M;
+            break;
     }
 
     /* Write flash capacity and numbers information to qspi Capacity register */
@@ -133,7 +135,7 @@ void FQspiSetCapacityAndNum(FQspiCtrl *pctrl)
 
     /*write value to flash capacity register 0x00 */
     FQSPI_WRITE_REG32(base_addr, FQSPI_REG_CAP_OFFSET, reg_val);
-
+    FQSPI_INFO("The flash chip size is %ld bytes.\n",  pctrl->flash_size);
 }
 
 
@@ -184,7 +186,6 @@ FError FQspiRdCfgConfig(FQspiCtrl *pctrl)
     cmd_reg |= FQSPI_RD_CFG_SCK_SEL(rd_config.rd_sck_sel);
 
     FQSPI_WRITE_REG32(base_addr, FQSPI_REG_RD_CFG_OFFSET, cmd_reg);
-
     return ret;
 }
 
@@ -278,10 +279,10 @@ FError FQspiCommandPortConfig(FQspiCtrl *pctrl)
  * @name: FQspiChannelSet
  * @msg:  config qspi cs num
  * @param {FQspiCtrl} *pctrl, instance of FQSPI controller
- * @param {FQspiChipCS} channel, cs number
+ * @param {u32} channel, cs number
  * @return
  */
-void FQspiChannelSet(FQspiCtrl *pctrl, FQspiChipCS channel)
+void FQspiChannelSet(FQspiCtrl *pctrl, u32 channel)
 {
     FASSERT(pctrl);
     FASSERT(channel < FQSPI_CS_NUM);
@@ -310,3 +311,5 @@ void FQspiCsTimingSet(FQspiCtrl *pctrl, FQspiCsTimingCfgDef *cs_timing_cfg)
     FQSPI_WRITE_REG32(base_addr, FQSPI_REG_CS_TIMING_SET_OFFSET, cmd_reg);
 
 }
+
+

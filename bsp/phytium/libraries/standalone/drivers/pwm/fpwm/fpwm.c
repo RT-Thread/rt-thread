@@ -13,13 +13,15 @@
  *
  * FilePath: fpwm.c
  * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * LastEditTime: 2022-04-15 11:45:05
+ * Description:  This file is for the minimum required function implementations for this driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/15   init commit
  */
+
 #include <string.h>
 #include "fkernel.h"
 #include "ftypes.h"
@@ -65,7 +67,7 @@ FError FPwmReset(FPwmCtrl *pctrl, u32 channel)
 
     if (0 >= timeout)
     {
-        FPWM_ERROR("timeout when wait pwm reset complete");
+        FPWM_ERROR("Time out while waiting for pwm reset to complete");
         return FPWM_ERR_TIMEOUT;
     }
     return FPWM_SUCCESS;
@@ -136,16 +138,16 @@ static void FPwmTimCtrlModeSet(FPwmCtrl *pctrl, u32 channel, FPwmTimCtrlMode mod
 
     switch (mode)
     {
-    /* modulo */
-    case FPWM_MODULO:
-        reg_val &= (~FPWM_TIM_CTRL_MODE_UD);
-        break;
-    /* up-and-down */
-    case FPWM_UP_DOWN:
-        reg_val |= FPWM_TIM_CTRL_MODE_UD;
-        break;
-    default:
-        break;
+        /* modulo */
+        case FPWM_MODULO:
+            reg_val &= (~FPWM_TIM_CTRL_MODE_UD);
+            break;
+        /* up-and-down */
+        case FPWM_UP_DOWN:
+            reg_val |= FPWM_TIM_CTRL_MODE_UD;
+            break;
+        default:
+            break;
     }
 
     FPWM_WRITE_REG32(base_addr, FPWM_TIM_CTRL_OFFSET, reg_val);
@@ -251,16 +253,16 @@ static void FPwmDutySourceSet(FPwmCtrl *pctrl, u32 channel, FPwmDutySourceMode d
     reg_val = FPWM_READ_REG32(base_addr, FPWM_CTRL_OFFSET);
     switch (duty_source)
     {
-    /* duty from PWM_CCR */
-    case FPWM_DUTY_CCR:
-        reg_val &= (~FPWM_CTRL_DUTY_SOURCE_FIFO);
-        break;
-    /* from FIFO */
-    case FPWM_DUTY_FIFO:
-        reg_val |= FPWM_CTRL_DUTY_SOURCE_FIFO;
-        break;
-    default:
-        break;
+        /* duty from PWM_CCR */
+        case FPWM_DUTY_CCR:
+            reg_val &= (~FPWM_CTRL_DUTY_SOURCE_FIFO);
+            break;
+        /* from FIFO */
+        case FPWM_DUTY_FIFO:
+            reg_val |= FPWM_CTRL_DUTY_SOURCE_FIFO;
+            break;
+        default:
+            break;
     }
 
     FPWM_WRITE_REG32(base_addr, FPWM_CTRL_OFFSET, reg_val);
@@ -289,7 +291,7 @@ FError FPwmPulseSet(FPwmCtrl *pctrl, u32 channel, u16 pwm_ccr)
     pwm_period_ccr = (u16)FPWM_READ_REG32(base_addr, FPWM_PERIOD_OFFSET);
     if (pwm_ccr > pwm_period_ccr)
     {
-        FPWM_ERROR("pwm ccr is bigger than period");
+        FPWM_ERROR("The pwm ccr is larger than the period");
         return FPWM_ERR_INVAL_PARM;
     }
 
@@ -302,7 +304,7 @@ FError FPwmPulseSet(FPwmCtrl *pctrl, u32 channel, u16 pwm_ccr)
         state = FPWM_READ_REG32(base_addr, FPWM_STATE_OFFSET);
         if (state & FPWM_STATE_FIFO_FULL)
         {
-            FPWM_ERROR("pwm state fifo full");
+            FPWM_ERROR("The fifo of the pwm is full");
             return FPWM_ERR_CMD_FAILED;
         }
     }
@@ -386,7 +388,7 @@ static FError FPwmDbReset(FPwmCtrl *pctrl)
 
     if (0 >= timeout)
     {
-        FPWM_ERROR("timeout when wait pwm db reset complete");
+        FPWM_ERROR("Time out while waiting for pwm db reset to complete");
         return FPWM_ERR_TIMEOUT;
     }
     return FPWM_SUCCESS;
@@ -476,14 +478,14 @@ static void FPwmDbInModeSet(FPwmCtrl *pctrl, FPwmDbInMode db_in_mode)
     reg_val = FPWM_READ_REG32(base_addr, FPWM_DB_CTRL_OFFSET);
     switch (db_in_mode)
     {
-    case FPWM_DB_IN_MODE_PWM0:
-        reg_val &= (~FPWM_DB_CTRL_IN_MODE);
-        break;
-    case FPWM_DB_IN_MODE_PWM1:
-        reg_val |= FPWM_DB_CTRL_IN_MODE;
-        break;
-    default:
-        break;
+        case FPWM_DB_IN_MODE_PWM0:
+            reg_val &= (~FPWM_DB_CTRL_IN_MODE);
+            break;
+        case FPWM_DB_IN_MODE_PWM1:
+            reg_val |= FPWM_DB_CTRL_IN_MODE;
+            break;
+        default:
+            break;
     }
 
     FPWM_WRITE_REG32(base_addr, FPWM_DB_CTRL_OFFSET, reg_val);
@@ -581,7 +583,7 @@ FError FPwmDbVariableSet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
     ret = FPwmDbReset(pctrl);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("FPwmDbVariableSet FPwmDbReset failed");
+        FPWM_ERROR("%s ,The FPwmDbReset call failed",__func__);
         return FPWM_ERR_CMD_FAILED;
     }
 
@@ -592,7 +594,7 @@ FError FPwmDbVariableSet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
     ret = FPwmDbPolaritySet(pctrl, db_cfg_p->db_polarity_sel);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("FPwmDbVariableSet FPwmDbPolaritySet failed");
+        FPWM_ERROR("%s ,The FPwmDbPolaritySet call failed",__func__);
         return FPWM_ERR_CMD_FAILED;
     }
 
@@ -654,14 +656,15 @@ FError FPwmVariableSet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
     FASSERT(pwm_cfg_p != NULL);
     FError ret = FPWM_SUCCESS;
 
+#if defined(FLSD_CONFIG_BASE)
     /* enable lsd pwm syn */
     FPwmLsdEnable(FLSD_CONFIG_BASE, pctrl->config.instance_id);
-
+#endif
     /* bit[0]:set pwm_tim_ctrl SW_RST */
     ret = FPwmReset(pctrl, channel);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("FPwmVariableSet FPwmReset failed");
+        FPWM_ERROR("%s ,FPwmReset  call failed",__func__);
         return FPWM_ERR_CMD_FAILED;
     }
 
@@ -697,7 +700,7 @@ FError FPwmVariableSet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
     ret = FPwmPulseSet(pctrl, channel, pwm_cfg_p->pwm_pulse);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("FPwmVariableSet FPwmPulseSet failed");
+        FPWM_ERROR("%s , FPwmPulseSet failed",__func__);
         return FPWM_ERR_CMD_FAILED;
     }
 
@@ -787,22 +790,45 @@ FError FPwmCfgInitialize(FPwmCtrl *pctrl, const FPwmConfig *input_config_p)
     */
     if (FT_COMPONENT_IS_READY == pctrl->is_ready)
     {
-        FPWM_WARN("device is already initialized!!!");
+        FPWM_WARN("The device has been initialized!!!");
     }
 
     /*Set default values and configuration data */
     FPwmDeInitialize(pctrl);
 
     pctrl->config = *input_config_p;
-
+#if defined(CONFIG_TARGET_E2000) 
     ret = FPwmDbReset(pctrl);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("FPwmDbVariableSet FPwmDbReset failed");
+        FPWM_ERROR("%s ,The FPwmDbReset call failed");
         return FPWM_ERR_CMD_FAILED;
     }
-
+#endif
     pctrl->is_ready = FT_COMPONENT_IS_READY;
 
     return ret;
+}
+
+/**
+ * @name: FPwmGpioSet
+ * @msg:  Control gpio output
+ * @param {FPwmCtrl} *pctrl, instance of FPWM controller
+ * @param {u32} channel, pwm module's channel, 0/1
+ * @param {u32} output, set high or low level, 0-low, 1-high
+ * @return void
+ */
+void FPwmGpioSet(FPwmCtrl *pctrl, u32 channel, u32 output)
+{
+    FASSERT(pctrl != NULL);
+    u32 reg_val = 0;
+    uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
+
+    reg_val = FPWM_READ_REG32(base_addr, FPWM_CCR_OFFSET);
+    if(output)
+	    reg_val |= FPWM_CCR_GPIO;
+    else
+        reg_val &= (~FPWM_CCR_GPIO);        
+	FPWM_WRITE_REG32(base_addr, FPWM_CCR_OFFSET, reg_val);
+    
 }

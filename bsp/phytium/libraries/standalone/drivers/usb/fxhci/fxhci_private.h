@@ -19,21 +19,21 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#ifndef  DRIVERS_USB_FXHCI_PRIVATE_H
-#define  DRIVERS_USB_FXHCI_PRIVATE_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef  FXHCI_PRIVATE_H
+#define  FXHCI_PRIVATE_H
 
 /***************************** Include Files *********************************/
 #include "fusb_private.h"
 #include "fxhci_hw.h"
 #include "fxhci.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 typedef enum
@@ -284,10 +284,10 @@ typedef struct
 #define FXHCI_TRB_ID_LEN        8
 #define FXHCI_TRB_MASK(tok)     FXHCI_MASK(FXHCI_TRB_##tok##_START, FXHCI_TRB_##tok##_LEN)
 #define FXHCI_TRB_GET(tok, trb) (((trb)->FXHCI_TRB_##tok##_FIELD & FXHCI_TRB_MASK(tok)) \
-                                >> FXHCI_TRB_##tok##_START)
+                                 >> FXHCI_TRB_##tok##_START)
 #define FXHCI_TRB_SET(tok, trb, to) (trb)->FXHCI_TRB_##tok##_FIELD = \
-                                    (((trb)->FXHCI_TRB_##tok##_FIELD & ~FXHCI_TRB_MASK(tok)) | \
-                                    (((to) << FXHCI_TRB_##tok##_START) & FXHCI_TRB_MASK(tok)))
+        (((trb)->FXHCI_TRB_##tok##_FIELD & ~FXHCI_TRB_MASK(tok)) | \
+         (((to) << FXHCI_TRB_##tok##_START) & FXHCI_TRB_MASK(tok)))
 #define FXHCI_TRB_DUMP(dumper, tok, trb)    dumper(" "#tok"\t0x%04x ", FXHCI_TRB_GET(tok, trb))
 
 #define FXHCI_TRB_CYCLE     (1 << 0)
@@ -331,10 +331,10 @@ typedef struct
 #define FXHCI_SC_STATE_LEN          5
 #define FXHCI_SC_MASK(tok)          FXHCI_MASK(FXHCI_SC_##tok##_START, FXHCI_SC_##tok##_LEN)
 #define FXHCI_SC_GET(tok, sc)       (((sc)->FXHCI_SC_##tok##_FIELD & FXHCI_SC_MASK(tok)) \
-                                    >> FXHCI_SC_##tok##_START)
+                                     >> FXHCI_SC_##tok##_START)
 #define FXHCI_SC_SET(tok, sc, to)   (sc)->FXHCI_SC_##tok##_FIELD = \
-                                    (((sc)->FXHCI_SC_##tok##_FIELD & ~FXHCI_SC_MASK(tok)) | \
-                                    (((to) << FXHCI_SC_##tok##_START) & FXHCI_SC_MASK(tok)))
+        (((sc)->FXHCI_SC_##tok##_FIELD & ~FXHCI_SC_MASK(tok)) | \
+         (((to) << FXHCI_SC_##tok##_START) & FXHCI_SC_MASK(tok)))
 #define FXHCI_SC_DUMP(dumper, tok, sc)  dumper(" "#tok"\t0x%04x ", FXHCI_SC_GET(tok, sc))
 
 /* shortcut to access endpoint context */
@@ -374,10 +374,10 @@ typedef struct
 
 #define FXHCI_EC_MASK(tok)          FXHCI_MASK(FXHCI_EC_##tok##_START, FXHCI_EC_##tok##_LEN)
 #define FXHCI_EC_GET(tok, ec)       (((ec)->FXHCI_EC_##tok##_FIELD & FXHCI_EC_MASK(tok)) \
-                                    >> FXHCI_EC_##tok##_START)
+                                     >> FXHCI_EC_##tok##_START)
 #define FXHCI_EC_SET(tok, ec, to)   (ec)->FXHCI_EC_##tok##_FIELD = \
-                                    (((ec)->FXHCI_EC_##tok##_FIELD & ~FXHCI_EC_MASK(tok)) | \
-                                    (((to) << FXHCI_EC_##tok##_START) & FXHCI_EC_MASK(tok)))
+        (((ec)->FXHCI_EC_##tok##_FIELD & ~FXHCI_EC_MASK(tok)) | \
+         (((to) << FXHCI_EC_##tok##_START) & FXHCI_EC_MASK(tok)))
 #define FXHCI_EC_DUMP(dumper, tok, ec)  dumper(" "#tok"\t0x%04x ", FXHCI_EC_GET(tok, ec))
 
 /* the current operational state of the endpoint. */

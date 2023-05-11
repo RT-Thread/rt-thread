@@ -14,11 +14,12 @@
  * FilePath: fsata_hw.c
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 09:03:23
- * Description:  This files is for sata register function
+ * Description:  This file is for sata register function
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/2/10    first release
  */
 
 /***************************** Include Files *********************************/

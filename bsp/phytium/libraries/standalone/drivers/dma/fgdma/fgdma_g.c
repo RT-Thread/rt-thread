@@ -14,13 +14,13 @@
  * FilePath: fgdma_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:09
- * Description:  This files is for static variables definition
+ * Description:  This file is for static variables definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   huanghe    2021-11-5    init commit
- * 1.1   zhugengyu  2022-5-16    modify according to tech manual.
+ * 1.0   huanghe    2021/11/5    init commit
+ * 1.1   zhugengyu  2022/5/16    modify according to tech manual.
  */
 
 /***************************** Include Files *********************************/
@@ -47,10 +47,31 @@ const FGdmaConfig fgdma_cfg_tbl[FGDMA_INSTANCE_NUM] =
     {
         .instance_id = FGDMA0_ID,
         .base_addr = FGDMA0_BASE_ADDR,
-        .irq_num = FGDMA0_IRQ_NUM,
+        .irq_num ={
+                    FGDMA0_CHANNEL0_IRQ_NUM,
+                    #if defined(FGDMA0_CHANNEL1_IRQ_NUM)
+                    FGDMA0_CHANNEL1_IRQ_NUM,
+                    #endif
+                    #if defined(FGDMA0_CHANNEL2_IRQ_NUM)
+                    FGDMA0_CHANNEL2_IRQ_NUM,
+                    #endif
+                    #if defined(FGDMA0_CHANNEL3_IRQ_NUM)
+                    FGDMA0_CHANNEL3_IRQ_NUM,
+                    #endif
+                    #if defined(FGDMA0_CHANNEL4_IRQ_NUM)
+                    FGDMA0_CHANNEL4_IRQ_NUM,
+                    #endif
+                    #if defined(FGDMA0_CHANNEL5_IRQ_NUM)
+                    FGDMA0_CHANNEL5_IRQ_NUM,
+                    #endif
+                    #if defined(FGDMA0_CHANNEL6_IRQ_NUM)
+                    FGDMA0_CHANNEL6_IRQ_NUM,
+                    #endif
+                } , 
         .irq_prority = 0,
         .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,
-        .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL
+        .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,
+        .caps = FGDMA0_CAPACITY
     }
 };
 

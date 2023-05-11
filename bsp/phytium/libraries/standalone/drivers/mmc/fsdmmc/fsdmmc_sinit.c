@@ -14,8 +14,9 @@
  * FilePath: fsdmmc_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:55:09
- * Description:  This files is for
- *
+ * Description:  This file contains the implementation of the fsdmmc driver's static
+ * initialization functionality.
+ * 
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
@@ -41,7 +42,7 @@
 
 /************************** Variable Definitions *****************************/
 
-extern const FSdmmcConfig FSDMMC_CONFIG_TBL[FSDMMC_HOST_INSTANCE_NUM];
+extern const FSdmmcConfig FSDMMC_CONFIG_TBL[FSDMMC_NUM];
 
 /************************** Function Prototypes ******************************/
 /**
@@ -56,7 +57,7 @@ const FSdmmcConfig *FSdmmcLookupConfig(u32 instance_id)
     const FSdmmcConfig *ptr = NULL;
     u32 index;
 
-    for (index = 0; index < (u32)FSDMMC_HOST_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FSDMMC_NUM; index++)
     {
         if (FSDMMC_CONFIG_TBL[index].instance_id == instance_id)
         {

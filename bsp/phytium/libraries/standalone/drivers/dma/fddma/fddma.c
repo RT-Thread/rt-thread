@@ -14,12 +14,12 @@
  * FilePath: fddma.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:47
- * Description:  This files is for ddma interface implementation
+ * Description:  This file is for ddma interface implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/5/13    init commit
+ * 1.0   zhugengyu  2022/5/13    init commit
  */
 
 /***************************** Include Files *********************************/
@@ -65,7 +65,7 @@ FError FDdmaCfgInitialization(FDdma *const instance, const FDdmaConfig *input_co
 
     if (FT_COMPONENT_IS_READY == instance->is_ready)
     {
-        FDDMA_WARN("device is already initialized!!!");
+        FDDMA_WARN("The device has been initialized !!!");
     }
 
     FDdmaDeInitialization(instance);
@@ -75,7 +75,7 @@ FError FDdmaCfgInitialization(FDdma *const instance, const FDdmaConfig *input_co
     if (FDDMA_SUCCESS == ret)
     {
         instance->is_ready = FT_COMPONENT_IS_READY;
-        FDDMA_INFO("ddma@0x%x init success !!!", base_addr);
+        FDDMA_INFO("ddma@0x%x initialized successfully !!!", base_addr);
     }
 
     return ret;
@@ -95,7 +95,7 @@ FError FDdmaStart(FDdma *const instance)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FDDMA_ERROR("dma instance not init !!!");
+        FDDMA_ERROR("The Dma instance is not initialized !!!");
         return FDDMA_ERR_NOT_INIT;
     }
 
@@ -118,7 +118,7 @@ FError FDdmaStop(FDdma *const instance)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FDDMA_ERROR("dma instance not init !!!");
+        FDDMA_ERROR("The Dma instance is not initialized !!!");
         return FDDMA_ERR_NOT_INIT;
     }
 
@@ -142,7 +142,7 @@ void FDdmaDeInitialization(FDdma *const instance)
     {
         if (instance->bind_status & BIT(chan))
         {
-            FDDMA_WARN("channel %d has not been unbind", chan);
+            FDDMA_WARN("Channel %d is not yet unbound", chan);
         }
     }
 
@@ -168,34 +168,34 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FDDMA_ERROR("dma instance not init !!!");
+        FDDMA_ERROR("The Dma instance is not initialized !!!");
         return FDDMA_ERR_NOT_INIT;
     }
 
     if ((TRUE == dma_chan->is_used) || (BIT(chan_idx) & instance->bind_status))
     {
-        FDDMA_ERROR("chan-%d is already is use !!!", chan_idx);
+        FDDMA_ERROR("Channel -%d has already been used !!!", chan_idx);
         return FDDMA_ERR_CHAN_BINDED;
     }
 
     if (FDdmaIsChanRunning(base_addr, chan_idx))
     {
-        FDDMA_ERROR("chan-%d is already running !!!", chan_idx);
+        FDDMA_ERROR("Channel -%d is running !!!", chan_idx);
         return FDDMA_ERR_CHAN_BINDED;
     }
 
     if (dma_chan_config->ddr_addr % FDDMA_DDR_ADDR_ALIGMENT)
     {
-        FDDMA_ERROR("ddr addr 0x%x must align with %d bytes",
+        FDDMA_ERROR("DDR addr 0x%x must be aligned with %d bytes",
                     dma_chan_config->ddr_addr, FDDMA_DDR_ADDR_ALIGMENT);
         return FDDMA_ERR_INVALID_DDR_ADDR;
     }
 
     if ((FDDMA_MAX_TRANSFER_LEN < dma_chan_config->trans_len) ||
-            (FDDMA_MIN_TRANSFER_LEN > dma_chan_config->trans_len) ||
-            (0 != dma_chan_config->trans_len % FDDMA_MIN_TRANSFER_LEN))
+        (FDDMA_MIN_TRANSFER_LEN > dma_chan_config->trans_len) ||
+        (0 != dma_chan_config->trans_len % FDDMA_MIN_TRANSFER_LEN))
     {
-        FDDMA_ERROR("invalid transfer size %d Bytes !!!", dma_chan_config->trans_len);
+        FDDMA_ERROR("Invalid transfer size %d bytes !!!", dma_chan_config->trans_len);
         return FDDMA_ERR_INVALID_TRANS_SIZE;
     }
 
@@ -203,13 +203,15 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
     instance->chan[chan_idx] = dma_chan;
 
     if (&(dma_chan->config) != dma_chan_config)
+    {
         dma_chan->config = *dma_chan_config;
+    }
 
     FDdmaStop(instance); /* disable irq */
 
     if (FDDMA_SUCCESS != FDdmaDisableChan(base_addr, chan_idx))
     {
-        FDDMA_ERROR("disable DDMA@0x%x channel %d failed !!!", base_addr, chan_idx);
+        FDDMA_ERROR("Failed to disable DDMA@0x%x channel %d !!!", base_addr, chan_idx);
         return FDDMA_ERR_WAIT_TIMEOUT;
     }
 
@@ -235,10 +237,10 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
     FDdmaSetChanDirection(base_addr, chan_idx,
                           (FDDMA_CHAN_REQ_RX == dma_chan->config.req_mode) ? TRUE : FALSE);
 
-    FDDMA_INFO("chan-%d ddr @0x%x", chan_idx, FDDMA_CHAN_DDR_LOW_ADDR_OFFSET(chan_idx));
+    FDDMA_INFO("channel-%d ddr @0x%x", chan_idx, FDDMA_CHAN_DDR_LOW_ADDR_OFFSET(chan_idx));
     FDDMA_INFO("ddr addr: 0x%x", FDdmaReadReg(base_addr, FDDMA_CHAN_DDR_LOW_ADDR_OFFSET(chan_idx)));
     FDDMA_INFO("dev addr: 0x%x", FDdmaReadReg(base_addr, FDDMA_CHAN_DEV_ADDR_OFFSET(chan_idx)));
-    FDDMA_INFO("trans len: %d", FDdmaReadReg(base_addr, FDDMA_CHAN_TS_OFFSET(chan_idx)));
+    FDDMA_INFO("transfer len: %d", FDdmaReadReg(base_addr, FDDMA_CHAN_TS_OFFSET(chan_idx)));
 
     FDdmaSetChanTimeout(base_addr, chan_idx, 0xffff);
     FDdmaEnableChanIrq(base_addr, chan_idx);
@@ -247,7 +249,7 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
     {
         instance->bind_status |= BIT(chan_idx);
         dma_chan->is_used = TRUE;
-        FDDMA_INFO("allocate channel %d", chan_idx);
+        FDDMA_INFO("Allocate channel %d", chan_idx);
     }
 
     return ret;
@@ -269,13 +271,13 @@ FError FDdmaDellocateChan(FDdmaChan *const dma_chan)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FDDMA_ERROR("dma instance not init !!!");
+        FDDMA_ERROR("The Dma instance is not initialized !!!");
         return FDDMA_ERR_NOT_INIT;
     }
 
     if (FDDMA_SUCCESS != FDdmaDisableChan(base_addr, chan_idx))
     {
-        FDDMA_ERROR("disable DDMA@0x%x channel %d failed !!!", base_addr, chan_idx);
+        FDDMA_ERROR("Failed to disable DDMA@0x%x channel %d !!!", base_addr, chan_idx);
         return FDDMA_ERR_WAIT_TIMEOUT;
     }
 
@@ -285,7 +287,7 @@ FError FDdmaDellocateChan(FDdmaChan *const dma_chan)
     ret = FDdmaDisableChan(base_addr, chan_idx);
     if (FDDMA_SUCCESS != ret) /* disable channel */
     {
-        FDDMA_ERROR("disable ddma@%p channel %d failed !!!", base_addr, chan_idx);
+        FDDMA_ERROR("Failure to disable ddma@%p channel %d !!!", base_addr, chan_idx);
         return ret;
     }
 
@@ -294,7 +296,7 @@ FError FDdmaDellocateChan(FDdmaChan *const dma_chan)
     instance->bind_status &= ~BIT(chan_idx); /* set bind status */
     instance->chan[chan_idx] = NULL;
 
-    FDDMA_INFO("deallocate channel %d", chan_idx);
+    FDDMA_INFO("DeAllocate channels %d", chan_idx);
     memset(dma_chan, 0, sizeof(*dma_chan));
 
     return ret;
@@ -315,7 +317,7 @@ FError FDdmaActiveChan(FDdmaChan *const dma_chan)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FDDMA_ERROR("dma instance not init !!!");
+        FDDMA_ERROR("The Dma instance is not initialized !!!");
         return FDDMA_ERR_NOT_INIT;
     }
 
@@ -332,7 +334,7 @@ FError FDdmaDeactiveChan(FDdmaChan *const dma_chan)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FDDMA_ERROR("dma instance not init !!!");
+        FDDMA_ERROR("The Dma instance is not initialized !!!");
         return FDDMA_ERR_NOT_INIT;
     }
 
@@ -355,7 +357,7 @@ static FError FDdmaReset(FDdma *const instance)
 
     if (0 != instance->bind_status)
     {
-        FDDMA_WARN("some channel not yet un-bind !!!");
+        FDDMA_WARN("Some channels are not yet unbound !!!");
     }
 
     FDdmaDisable(base_addr); /* disable ddma  */
@@ -369,7 +371,7 @@ static FError FDdmaReset(FDdma *const instance)
         ret = FDdmaDisableChan(base_addr, chan);
         if (FDDMA_SUCCESS != ret)
         {
-            FDDMA_ERROR("disable ddma@%p channel %d failed !!!", base_addr, chan);
+            FDDMA_ERROR("Failure to disable ddma@%p channel %d !!!", base_addr, chan);
             break;
         }
     }

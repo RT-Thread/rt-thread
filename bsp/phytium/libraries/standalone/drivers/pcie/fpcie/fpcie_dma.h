@@ -12,24 +12,25 @@
  *
  *
  * FilePath: fpcie_dma.h
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:57:51
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:57:51
+ * Description: This file is for pcie dma definition.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
-#ifndef DRIVERS_FPCIE_DMA_H
-#define DRIVERS_FPCIE_DMA_H
+#ifndef FPCIE_DMA_H
+#define FPCIE_DMA_H
+
+#include "ftypes.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-#include "ftypes.h"
-
 
 /***************************** Include Files *********************************/
 

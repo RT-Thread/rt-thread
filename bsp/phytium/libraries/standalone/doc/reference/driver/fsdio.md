@@ -55,6 +55,8 @@ typedef struct _FSdio
     FSdioIDmaDescList   desc_list;   /* DMA descriptor list, valid in DMA trans mode */
     FSdioEvtHandler     evt_handlers[FSDIO_NUM_OF_EVT]; /* call-backs for interrupt event */
     void                *evt_args[FSDIO_NUM_OF_EVT]; /* arguments for event call-backs */
+    FSdioRelaxHandler   relax_handler;
+    u32                 prev_cmd; /* record previous command code */
 } FSdio; /* SDIO intance */
 ```
 
@@ -71,6 +73,8 @@ typedef struct
     FSdioTransMode trans_mode;  /* Trans mode, PIO/DMA */
     FSdioSpeedType speed;       /* Trans speed type */
     FSdioVoltageType voltage;   /* Card voltage type */
+    boolean        non_removable; /* No removeable media, e.g eMMC */
+    boolean        filp_resp_byte_order; /* Some SD protocol implmentation may not do byte-order filp */
 } FSdioConfig; /* SDIO intance configuration */
 ```
 #### FSdioCmdData
@@ -237,6 +241,26 @@ Return:
 
 - {None}
 
+#### FSdioGetClkFreq
+
+```c
+u32 FSdioGetClkFreq(FSdio *const instance_p)
+```
+
+Note:
+
+- Get the Card clock freqency
+
+Input:
+
+- {FSdio} *instance_p, SDIO controller instance
+
+Return:
+
+- {u32} real clock in Hz
+
+
+
 #### FSdioDMATransfer
 
 ```c
@@ -259,7 +283,7 @@ Return:
 #### FSdioPollWaitDMAEnd
 
 ```c
-FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p, FSdioRelaxHandler relax)
+FError FSdioPollWaitDMAEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
 ```
 
 Note:
@@ -270,7 +294,6 @@ Input:
 
 - {FSdio} *instance_p, SDIO controller instance
 - {FSdioCmdData} *cmd_data_p, contents of transfer command and data
-- {FSdioRelaxHandler} relax, handler of relax when wait busy
 
 Return:
 
@@ -381,7 +404,7 @@ Return:
 #### FSdioPollWaitPIOEnd
 
 ```c
-FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p, FSdioRelaxHandler relax);
+FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p);
 ```
 
 Note:
@@ -392,7 +415,6 @@ Input:
 
 - {FSdio} *instance_p, SDIO controller instance
 - {FSdioCmdData} *cmd_data_p, contents of transfer command and data
-- {FSdioRelaxHandler} relax, handler of relax when wait busy
 
 Return:
 

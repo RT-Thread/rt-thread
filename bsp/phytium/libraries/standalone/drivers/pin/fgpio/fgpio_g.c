@@ -19,7 +19,8 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2022-3-1     init commit
+ * 1.0   zhugengyu  2022/3/1     init commit
+ * 2.0   zhugengyu  2022/7/1     support e2000
  */
 
 
@@ -43,59 +44,92 @@
 #if defined(FGPIO_VERSION_1) /* FT2000-4, D2000 */
 const FGpioConfig fgpio_cfg_tbl[FGPIO_NUM] =
 {
-    [FGPIO_ID_0] =
+    [FGPIO0_ID] =
     {
-        .instance_id = FGPIO_ID_0,
-        .base_addr = FGPIO_0_BASE_ADDR,
-        .irq_num = FGPIO_0_IRQ_NUM,
+        .instance_id = FGPIO0_ID,
+        .base_addr = FGPIO0_BASE_ADDR,
+        .irq_num = FGPIO0_IRQ_NUM,
         .irq_priority = 0
     },
-    [FGPIO_ID_1] =
+    [FGPIO1_ID] =
     {
-        .instance_id = FGPIO_ID_1,
-        .base_addr = FGPIO_1_BASE_ADDR,
-        .irq_num = FGPIO_1_IRQ_NUM,
+        .instance_id = FGPIO1_ID,
+        .base_addr = FGPIO1_BASE_ADDR,
+        .irq_num = FGPIO1_IRQ_NUM,
         .irq_priority = 0
     }
 };
 #elif defined(FGPIO_VERSION_2) /* E2000 GPIO 0 ~ 5 */
 FGpioConfig fgpio_cfg_tbl[FGPIO_NUM] =
 {
-    [FGPIO_ID_0] =
+    [FGPIO0_ID] =
     {
-        .instance_id = FGPIO_ID_0,
-        .base_addr = FGPIO_0_BASE_ADDR,
+        .instance_id = FGPIO0_ID,
+        .base_addr = FGPIO0_BASE_ADDR,
         .irq_priority = 0
     },
-    [FGPIO_ID_1] =
+    [FGPIO1_ID] =
     {
-        .instance_id = FGPIO_ID_1,
-        .base_addr = FGPIO_1_BASE_ADDR,
+        .instance_id = FGPIO1_ID,
+        .base_addr = FGPIO1_BASE_ADDR,
         .irq_priority = 0
     },
-    [FGPIO_ID_2] =
+    [FGPIO2_ID] =
     {
-        .instance_id = FGPIO_ID_2,
-        .base_addr = FGPIO_2_BASE_ADDR,
+        .instance_id = FGPIO2_ID,
+        .base_addr = FGPIO2_BASE_ADDR,
         .irq_priority = 0
     },
-    [FGPIO_ID_3] =
+    [FGPIO3_ID] =
     {
-        .instance_id = FGPIO_ID_3,
-        .base_addr = FGPIO_3_BASE_ADDR,
+        .instance_id = FGPIO3_ID,
+        .base_addr = FGPIO3_BASE_ADDR,
         .irq_priority = 0
     },
-    [FGPIO_ID_4] =
+    [FGPIO4_ID] =
     {
-        .instance_id = FGPIO_ID_4,
-        .base_addr = FGPIO_4_BASE_ADDR,
+        .instance_id = FGPIO4_ID,
+        .base_addr = FGPIO4_BASE_ADDR,
         .irq_priority = 0
     },
-    [FGPIO_ID_5] =
+    [FGPIO5_ID] =
     {
-        .instance_id = FGPIO_ID_5,
-        .base_addr = FGPIO_5_BASE_ADDR,
+        .instance_id = FGPIO5_ID,
+        .base_addr = FGPIO5_BASE_ADDR,
         .irq_priority = 0
     },
+};
+#elif defined(TARDIGRADE) /* TARDIGRADE */
+const FGpioConfig fgpio_cfg_tbl[FGPIO_NUM] =
+{
+    [FGPIO0_ID] =
+    {
+        .instance_id = FGPIO0_ID,
+        .base_addr = FGPIO0_BASE_ADDR,
+        .irq_num = FGPIO0_IRQ_NUM,
+        .irq_priority = 0
+    },
+    [FGPIO1_ID] =
+    {
+        .instance_id = FGPIO1_ID,
+        .base_addr = FGPIO1_BASE_ADDR,
+        .irq_num = FGPIO1_IRQ_NUM,
+        .irq_priority = 0
+    },
+    [FGPIO2_ID] =
+    {
+        .instance_id = FGPIO2_ID,
+        .base_addr = FGPIO2_BASE_ADDR,
+        .irq_num = FGPIO2_IRQ_NUM,
+        .irq_priority = 0
+    },
+    [FGPIO3_ID] =
+    {
+        .instance_id = FGPIO3_ID,
+        .base_addr = FGPIO3_BASE_ADDR,
+        .irq_num = FGPIO3_IRQ_NUM,
+        .irq_priority = 0
+    }
+
 };
 #endif

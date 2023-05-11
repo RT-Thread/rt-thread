@@ -115,7 +115,7 @@ typedef enum
 - 获取Fata控制器默认配置
 
 ```c
-const FCanConfig *FCanLookupConfig(FCanInstance instance_id);
+const FCanConfig *FCanLookupConfig(u32 instance_id);
 ```
 
 Note:
@@ -124,7 +124,7 @@ Note:
 
 Input:
 
-- {FCanInstance} instance_id，控制器id号
+- {u32} instance_id，控制器id号
 
 Return:
 

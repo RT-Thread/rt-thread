@@ -14,7 +14,7 @@
  * FilePath: fsdmmc_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:54:02
- * Description:  This files is for
+ * Description:  This file contains macros that can be used to access the device.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -25,7 +25,6 @@
 /***************************** Include Files *********************************/
 #include "fassert.h"
 #include "fdebug.h"
-
 #include "fsdmmc_hw.h"
 #include "fsdmmc.h"
 
@@ -63,11 +62,11 @@ FError FSdmmcSoftwareReset(uintptr base_addr, int retries)
         reg_val = FSDMMC_READ_REG(base_addr, FSDMMC_STATUS_REG_OFFSET);
     }
     while (!(reg_val & FSDMMC_STATUS_IDIE) &&
-            (retries-- > 0));
+           (retries-- > 0));
 
     if (!(reg_val & FSDMMC_STATUS_IDIE) && (retries <= 0))
     {
-        FSDMMC_ERROR("software reset timeout!!! status: 0x%x", reg_val);
+        FSDMMC_ERROR("Software reset timeout!!! status: 0x%x", reg_val);
         return FSDMMC_ERR_TIMEOUT;
     }
 
@@ -96,20 +95,20 @@ static const char *FSdmmcGetRespTypeStr(u32 hw_cmd)
 
     switch (FSDMMC_CMD_RESP_MASK & hw_cmd)
     {
-    case FSDMMC_CMD_NO_RESP:
-        str = "NONE";
-        break;
-    case FSDMMC_CMD_RESP_136_BIT:
-        str = "LONG";
-        break;
-    case FSDMMC_CMD_RESP_48_BIT:
-        str = "SHORT";
-        break;
-    case FSDMMC_CMD_RESP_48_BIT_BUSY_CHECK:
-        str = "SHORT CHECK BUSY";
-        break;
-    default:
-        FASSERT(0);
+        case FSDMMC_CMD_NO_RESP:
+            str = "NONE";
+            break;
+        case FSDMMC_CMD_RESP_136_BIT:
+            str = "LONG";
+            break;
+        case FSDMMC_CMD_RESP_48_BIT:
+            str = "SHORT";
+            break;
+        case FSDMMC_CMD_RESP_48_BIT_BUSY_CHECK:
+            str = "SHORT CHECK BUSY";
+            break;
+        default:
+            FASSERT(0);
     }
 
     return str;
@@ -133,6 +132,8 @@ void FSdmmcSendPrivateCmd(uintptr base_addr, u32 cmd, u32 arg)
     /* 设置命令 */
     FSDMMC_WRITE_REG(base_addr, FSDMMC_CMD_SETTING_REG_OFFSET, cmd);
 
+    FSDMMC_DATA_BARRIER();
+
     /* 设置参数，同时触发发送命令 */
     FSDMMC_WRITE_REG(base_addr, FSDMMC_ARGUMENT_REG_OFFSET, FSDMMC_ARGUMENT_MASK & arg);
 
@@ -154,7 +155,9 @@ FError FSdmmcReset(uintptr base_addr)
 
     ret = FSdmmcSoftwareReset(base_addr, FSDMMC_TIMEOUT);
     if (FSDMMC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* set card detection */
     FSDMMC_WRITE_REG(base_addr, FSDMMC_SD_SEN_REG_OFFSET, 0x0);
@@ -207,13 +210,13 @@ FError FSdmmcWaitStatus(uintptr base_addr, int retries)
 
     if (FSDMMC_NORMAL_INT_STATUS_EI & status)
     {
-        FSDMMC_ERROR("error status: 0x%x,  remain retries: %d", status, retries);
+        FSDMMC_ERROR("Error status: 0x%x,  remain retries: %d", status, retries);
         FSdmmcReset(base_addr);
         return FSDMMC_ERR_CMD_FAILED;
     }
     else if (0 >= retries)
     {
-        FSDMMC_ERROR("wait timeout!!! status 0x%x", status);
+        FSDMMC_ERROR("Wait timeout!!! status 0x%x", status);
         return FSDMMC_ERR_TIMEOUT;
     }
 
