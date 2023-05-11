@@ -351,10 +351,17 @@ jobs:
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
         run: |
           source ~/.env/env.sh
+          failed=0
           count=0
           for bsp in $(echo $SRTT_BSP | tr ',' '\n'); do
             count=$((count+1))
-            echo "Compiling BSP: ==$count=== $bsp ===="
+            echo "::group::Compiling BSP: ==$count=== $bsp ===="
             pushd bsp/$bsp && scons --pyconfig-silent && pkgs --update && popd
-            scons -C bsp/$bsp -j8
+            scons -C bsp/$bsp -j$(nproc) --debug=time | tee output.log || \
+            { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
+              failed=$((failed+1)) ; echo "::endgroup::" ; echo "::error::build $bsp failed" ; \
+              echo "- ❌ build $bsp failed in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; } && \
+            { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
+              echo "- ✅ build $bsp success in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; echo "::endgroup::" ; }
           done
+          exit $failed
