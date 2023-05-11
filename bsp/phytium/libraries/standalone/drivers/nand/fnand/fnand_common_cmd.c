@@ -14,11 +14,12 @@
  * FilePath: fnand_common_cmd.c
  * Date: 2022-06-24 03:51:06
  * LastEditTime: 2022-06-24 03:51:07
- * Description:  This file is for
+ * Description:  This file is for nand generic command documentation
  *
  * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 #include "fnand_common_cmd.h"
@@ -79,9 +80,9 @@
  * loss).
  */
 #define __DIVIDE(dividend, divisor) ({                      \
-    (__typeof__(dividend))(sizeof(dividend) <= sizeof(unsigned long) ?  \
-                   DIV_ROUND_UP(dividend, divisor) :        \
-                   DIV_ROUND_UP_ULL(dividend, divisor));        \
+        (__typeof__(dividend))(sizeof(dividend) <= sizeof(unsigned long) ?  \
+                               DIV_ROUND_UP(dividend, divisor) :        \
+                               DIV_ROUND_UP_ULL(dividend, divisor));        \
     })
 #define PSEC_TO_NSEC(x) __DIVIDE(x, 1000)
 #define PSEC_TO_MSEC(x) __DIVIDE(x, 1000000000)
@@ -184,7 +185,7 @@ static FError FNandFlashReadStatus(FNand *instance_p, u32 chip_addr)
         return ret;
     }
 
-    FNAND_COMMON_DEBUG_I("read status is 0x%x", instance_p->dma_data_buffer.data_buffer[0]);
+    FNAND_COMMON_DEBUG_I("Read status is 0x%x", instance_p->dma_data_buffer.data_buffer[0]);
 
     return (instance_p->dma_data_buffer.data_buffer[0] == 0xe0) ? FT_SUCCESS : FNAND_IS_BUSY;
 }
@@ -379,7 +380,6 @@ static FError FNandPageWriteHwEcc(FNand *instance_p, u32 page_addr, u8 *buf, u32
     {
         nand_state = FNAND_READREG(instance_p->config.base_address, FNAND_STATE_OFFSET);
     }
-    // printf("write after nand_state 0x%x \r\n",nand_state);
     while (FNandFlashReadStatus(instance_p, chip_addr) == FNAND_IS_BUSY)
         ; /* wait i/o idle */
 

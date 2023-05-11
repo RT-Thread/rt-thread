@@ -1,3 +1,18 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2022, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Email: opensource_embedded@phytium.com.cn
+#
+#
+# Change Logs:
+# Date           Author       Notes
+# 2022-11-15     zhugengyu    The first version
+#
+
 import os
 import shutil
 import argparse

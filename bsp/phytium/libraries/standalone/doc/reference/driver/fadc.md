@@ -139,7 +139,7 @@ typedef enum
 - 获取fadc控制器默认配置
 
 ```c
-const FAdcConfig *FAdcLookupConfig(FAdcInstance instance_id);
+const FAdcConfig *FAdcLookupConfig(u32 instance_id);
 ```
 
 Note:
@@ -148,7 +148,7 @@ Note:
 
 Input:
 
-- {FAdcInstance} instance_id，adc控制器id号
+- {u32} instance_id，adc控制器id号
 
 Return:
 

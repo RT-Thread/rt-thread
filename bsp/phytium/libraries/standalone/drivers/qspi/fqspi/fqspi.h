@@ -14,12 +14,14 @@
  * FilePath: fqspi.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:00:55
- * Description:  This files is for
+ * Description:  This files is for the qspi functions related definitions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.1    wangxiaodong  2021.11.12  re-construct
+ * 1.0   wangxiaodong  2022/3/29  first release
+ * 1.1   wangxiaodong  2022/9/9   improve functions
+ * 1.2   zhangyan      2022/12/7  improve functions
  */
 
 #ifndef BSP_DRIVERS_FQSPI_H
@@ -226,7 +228,7 @@ FError FQspiRdCfgConfig(FQspiCtrl *pctrl);
 FError FQspiWrCfgConfig(FQspiCtrl *pctrl);
 
 /* qspi cs number set */
-void FQspiChannelSet(FQspiCtrl *pctrl, FQspiChipCS channel);
+void FQspiChannelSet(FQspiCtrl *pctrl, u32 channel);
 
 /* qspi cs timing set */
 void FQspiCsTimingSet(FQspiCtrl *pctrl, FQspiCsTimingCfgDef *cs_timing_cfg);

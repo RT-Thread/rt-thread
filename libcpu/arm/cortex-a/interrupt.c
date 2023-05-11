@@ -100,8 +100,7 @@ void rt_hw_interrupt_init(void)
 
     /* initialize ARM GIC */
 #ifdef RT_USING_SMART
-    gic_dist_base = (uint32_t)rt_ioremap((void*)platform_get_gic_dist_base(), 0x2000);
-    gic_cpu_base = (uint32_t)rt_ioremap((void*)platform_get_gic_cpu_base(), 0x1000);
+    gic_dist_base = (uint32_t)rt_ioremap((void*)platform_get_gic_dist_base(), 0x10000);
 #else
     gic_dist_base = platform_get_gic_dist_base();
 #endif

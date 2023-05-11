@@ -14,7 +14,7 @@
  * FilePath: fsemaphore.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:35
- * Description:  This files is for semaphore user api definition
+ * Description:  This file is for semaphore user api definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -23,17 +23,18 @@
  */
 
 
-#ifndef  DRIVERS_IPC_FSEMAPHORE_H
-#define  DRIVERS_IPC_FSEMAPHORE_H
+#ifndef  FSEMAPHORE_H
+#define  FSEMAPHORE_H
+
+/***************************** Include Files *********************************/
+
+#include "ftypes.h"
+#include "ferror_code.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-/***************************** Include Files *********************************/
-#include "ftypes.h"
-#include "ferror_code.h"
 
 /************************** Constant Definitions *****************************/
 #define FSEMA_NUM_OF_LOCKER             32U

@@ -14,7 +14,7 @@
  * FilePath: fsdmmc_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:54:24
- * Description:  This files is for
+ * Description:  This file contains macros that can be used to access the device.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -22,18 +22,25 @@
  * 1.0   zhugengyu  2021/12/2    init
  */
 
-#ifndef  DRIVERS_MMC_FSDMMC_HW_H
-#define  DRIVERS_MMC_FSDMMC_HW_H
+#ifndef  FSDMMC_HW_H
+#define  FSDMMC_HW_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 /***************************** Include Files *********************************/
 
 #include "fparameters.h"
 #include "fio.h"
 #include "fkernel.h"
+
+#ifdef __aarch64__
+#include "faarch64.h"
+#else
+#include "fcp15.h"
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 
@@ -288,6 +295,7 @@ extern "C"
 /**************************** Type Definitions *******************************/
 
 /************************** Variable Definitions *****************************/
+#define FSDMMC_DATA_BARRIER()                    WMB()
 
 /***************** Macros (Inline Functions) Definitions *********************/
 

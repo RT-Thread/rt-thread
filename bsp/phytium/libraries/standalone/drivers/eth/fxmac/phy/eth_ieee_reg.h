@@ -14,23 +14,24 @@
  * FilePath: eth_ieee_reg.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for phys chip register definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
-#ifndef DRIVERS_ETH_PHY_IEEE_REG_H
-#define DRIVERS_ETH_PHY_IEEE_REG_H
+#ifndef ETH_IEEE_REG_H
+#define ETH_IEEE_REG_H
+
+/***************************** Include Files *********************************/
+#include "ferror_code.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-/***************************** Include Files *********************************/
-
-#include "ferror_code.h"
 
 /***************** Macros (Inline Functions) Definitions *********************/
 

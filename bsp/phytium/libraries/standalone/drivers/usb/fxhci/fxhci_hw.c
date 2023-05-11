@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 /***************************** Include Files *********************************/
@@ -87,77 +87,81 @@ static void FXhciParseExtCap(FXhciMMIO *mmio, const uintptr offset, const u32 ca
 
     switch (cap_id)
     {
-    case FXHCI_EXT_CAP_ID_USB_LEGACY_SUPPORT:
-        reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBLEGSUP_OFFSET);
-        FUSB_INFO(" BIOS owned %d OS owned %d",
-                  FXHCI_USBLEGSUP_BIOS_OWNED_SEMAPHORE & reg_val,
-                  FXHCI_USBLEGSUP_OS_OWNED_SEMAPHORE & reg_val);
+        case FXHCI_EXT_CAP_ID_USB_LEGACY_SUPPORT:
+            reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBLEGSUP_OFFSET);
+            FUSB_INFO(" BIOS owned %d OS owned %d",
+                      FXHCI_USBLEGSUP_BIOS_OWNED_SEMAPHORE & reg_val,
+                      FXHCI_USBLEGSUP_OS_OWNED_SEMAPHORE & reg_val);
 
-        reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBLEGCTLSTS_OFFSET);
-        FUSB_INFO(" SMI ctrl/status 0x%x", reg_val);
-        break;
-    case FXHCI_EXT_CAP_ID_SUPPORT_PROTOCOL:
-        reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBSPCFDEF_OFFSET);
-        FUSB_INFO(" Name: %c%c%c%c",
-                  *((char *)&reg_val),  *((char *)&reg_val + 1),
-                  *((char *)&reg_val + 2),  *((char *)&reg_val + 3));
+            reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBLEGCTLSTS_OFFSET);
+            FUSB_INFO(" SMI ctrl/status 0x%x", reg_val);
+            break;
+        case FXHCI_EXT_CAP_ID_SUPPORT_PROTOCOL:
+            reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBSPCFDEF_OFFSET);
+            FUSB_INFO(" Name: %c%c%c%c",
+                      *((char *)&reg_val),  *((char *)&reg_val + 1),
+                      *((char *)&reg_val + 2),  *((char *)&reg_val + 3));
 
-        reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBSPCF_OFFSET);
-        major_ver = FXHCI_USBSPCF_MAJOR_REVERSION_GET(reg_val);
-        minor_ver = FXHCI_USBSPCF_MINOR_REVERSION_GET(reg_val);
-        FUSB_INFO(" Version: %d.%d", major_ver, minor_ver);
+            reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBSPCF_OFFSET);
+            major_ver = FXHCI_USBSPCF_MAJOR_REVERSION_GET(reg_val);
+            minor_ver = FXHCI_USBSPCF_MINOR_REVERSION_GET(reg_val);
+            FUSB_INFO(" Version: %d.%d", major_ver, minor_ver);
 
-        reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBSPCFDEF2_OFFSET);
-        FUSB_INFO(" Compatible ports: [%d-%d]",
-                  FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val),
-                  FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val) + FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_CNT_GET(reg_val) - 1);
+            reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_EXT_CAP_USBSPCFDEF2_OFFSET);
+            FUSB_INFO(" Compatible ports: [%d-%d]",
+                      FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val),
+                      FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val) + FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_CNT_GET(reg_val) - 1);
 
-        if (FXHCI_MAJOR_REVERSION_USB2 == major_ver)
-        {
-            mmio->usb2_ports.port_beg = FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val);
-            mmio->usb2_ports.port_end = FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val) + FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_CNT_GET(reg_val) - 1;
+            if (FXHCI_MAJOR_REVERSION_USB2 == major_ver)
+            {
+                mmio->usb2_ports.port_beg = FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val);
+                mmio->usb2_ports.port_end = FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val) + FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_CNT_GET(reg_val) - 1;
 
-            FUSB_INFO(" High-speed only: %d, Integrated hub: %d, Hardware LMP: %d",
-                      FXHCI_USBSPCFDEF2_USB2_HIGH_SPEED_ONLY & reg_val,
-                      FXHCI_USBSPCFDEF2_USB2_INTERGRATED_HUB & reg_val,
-                      FXHCI_USBSPCFDEF2_USB2_HW_LMP_CAP & reg_val);
-        }
-        else if (FXHCI_MAJOR_REVERSION_USB3 == major_ver)
-        {
-            mmio->usb3_ports.port_beg = FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val);
-            mmio->usb3_ports.port_end = FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val) + FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_CNT_GET(reg_val) - 1;
-        }
+                FUSB_INFO(" High-speed only: %d, Integrated hub: %d, Hardware LMP: %d",
+                          FXHCI_USBSPCFDEF2_USB2_HIGH_SPEED_ONLY & reg_val,
+                          FXHCI_USBSPCFDEF2_USB2_INTERGRATED_HUB & reg_val,
+                          FXHCI_USBSPCFDEF2_USB2_HW_LMP_CAP & reg_val);
+            }
+            else if (FXHCI_MAJOR_REVERSION_USB3 == major_ver)
+            {
+                mmio->usb3_ports.port_beg = FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val);
+                mmio->usb3_ports.port_end = FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_OFF_GET(reg_val) + FXHCI_USBSPCFDEF2_COMPATIBLE_PORT_CNT_GET(reg_val) - 1;
+            }
 
-        psic = FXHCI_USBSPCFDEF2_PROTOCOL_SPEED_ID_CNT_GET(reg_val);
-        FUSB_INFO(" PSIC: 0x%x", psic);
+            psic = FXHCI_USBSPCFDEF2_PROTOCOL_SPEED_ID_CNT_GET(reg_val);
+            FUSB_INFO(" PSIC: 0x%x", psic);
 
-        if (0 != psic)
-        {
-            reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_PROTOCOL_SPEED_ID_OFFSET(psic));
+            if (0 != psic)
+            {
+                reg_val = FXhciReadExtCap32(mmio, offset + FXHCI_REG_PROTOCOL_SPEED_ID_OFFSET(psic));
 
-            FUSB_INFO(" Protocol speed-id: %d^%d",
-                      FXHCI_PROTOCOL_SPEED_ID_VALUE_GET(reg_val),
-                      FXHCI_PROTOCOL_SPEED_ID_EXPONENT_GET(reg_val));
-            FUSB_INFO(" PSI type: %d, PSI full-duplex: %d,  Mantissa: 0x%x",
-                      FXHCI_PROTOCOL_SPEED_ID_PSI_TYPE_GET(reg_val),
-                      (FXHCI_PROTOCOL_SPEED_ID_PSI_FULL_DUPLEX & reg_val == FXHCI_PROTOCOL_SPEED_ID_PSI_FULL_DUPLEX),
-                      FXHCI_PROTOCOL_SPEED_ID_MANTISSA_GET(reg_val));
-        }
-        else
-        {
-            if (FXHCI_MAJOR_REVERSION_USB3 == major_ver)
-                FUSB_INFO("For USB3, only the default SuperSpeed bit rate is supported !!!");
-            else if (FXHCI_MAJOR_REVERSION_USB2 == major_ver)
-                FUSB_INFO("For USB2, default Full-speed, Low-speed and High-speed bit rate supported !!!");
-        }
+                FUSB_INFO(" Protocol speed-id: %d^%d",
+                          FXHCI_PROTOCOL_SPEED_ID_VALUE_GET(reg_val),
+                          FXHCI_PROTOCOL_SPEED_ID_EXPONENT_GET(reg_val));
+                FUSB_INFO(" PSI type: %d, PSI full-duplex: %d,  Mantissa: 0x%x",
+                          FXHCI_PROTOCOL_SPEED_ID_PSI_TYPE_GET(reg_val),
+                          (FXHCI_PROTOCOL_SPEED_ID_PSI_FULL_DUPLEX & reg_val == FXHCI_PROTOCOL_SPEED_ID_PSI_FULL_DUPLEX),
+                          FXHCI_PROTOCOL_SPEED_ID_MANTISSA_GET(reg_val));
+            }
+            else
+            {
+                if (FXHCI_MAJOR_REVERSION_USB3 == major_ver)
+                {
+                    FUSB_INFO("For USB3, only the default super speed bit rate is supported !!!");
+                }
+                else if (FXHCI_MAJOR_REVERSION_USB2 == major_ver)
+                {
+                    FUSB_INFO("For USB2, default full speed, low speed and high speed bit rate supported !!!");
+                }
+            }
 
-        break;
-    case FXHCI_EXT_CAP_ID_USB_DEBUG_CAPABILITY:
+            break;
+        case FXHCI_EXT_CAP_ID_USB_DEBUG_CAPABILITY:
 
-        break;
-    default:
-        FUSB_WARN("Unhandled extend capabilities %d", cap_id);
-        break;
+            break;
+        default:
+            FUSB_WARN("Unhandled extend capabilities %d", cap_id);
+            break;
     }
 
     return;
@@ -181,7 +185,7 @@ void FXhciListExtCap(FXhciMMIO *mmio)
         cap_id = FXHCI_REG_EXT_CAP_CAP_ID_GET(reg_val);
         FXhciParseExtCap(mmio, ext_cap_offset, cap_id);
 
-        FUSB_INFO("==== Capability ID: %d, Next Capability Pointer: 0x%x",
+        FUSB_INFO("Capability ID: %d, Next Capability Pointer: 0x%x",
                   cap_id, next_ext_cap_offset);
         ext_cap_offset += next_ext_cap_offset;
     }
@@ -210,7 +214,7 @@ FError FXhciWaitOper32(FXhciMMIO *mmio, u32 offset, u32 mask, u32 exp_val, u32 t
 
     if (FUSB_SUCCESS != ret)
     {
-        FUSB_ERROR("wait status 0x%x timeout, current 0x%x, tick: %ld", exp_val, mask, tick);
+        FUSB_ERROR("Waitting status 0x%x timeout, current 0x%x, tick: %ld", exp_val, mask, tick);
     }
 
     return ret;

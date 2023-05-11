@@ -12,26 +12,26 @@
  *
  *
  * FilePath: fpcie_common.h
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:57:24
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:57:24
+ * Description: This file is for pcie common features definition. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
+#ifndef FPCIE_COMMON_H
+#define FPCIE_COMMON_H
 
-#ifndef DRIVERS_FPCIE_COMMON_H
-#define DRIVERS_FPCIE_COMMON_H
+#include "fpcie_hw.h"
+#include "fkernel.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "fpcie_hw.h"
-#include "fkernel.h"
 
 /******************** Macros (Inline Functions) Definitions *******************/
 
@@ -226,12 +226,10 @@ extern "C"
 
 #define FPCIE_HEADER_TYPE_REG       0x0e    /* 8 bits */
 
-
 #define FPCIE_REVISION_ID_REG       0x08    /* Revision ID */
 #define FPCIE_CLASS_PROG_REG        0x09    /* Reg. Level Programming Interface */
 #define FPCIE_CLASS_DEVICE_REG      0x0a    /* Device class */
 #define FPCIE_CLASS_CODE_REG        0x0b    /* Device class code */
-
 
 #define FPCIE_PREF_MEMORY_BASE_REG  0x24    /* Prefetchable memory range behind */
 #define FPCIE_PREF_MEMORY_LIMIT_REG     0x26
@@ -241,17 +239,13 @@ extern "C"
 #define FPCIE_PREF_RANGE_TYPE_64    0x01
 #define FPCIE_PREF_RANGE_MASK       ~0x0f
 
-
 #define FPCI_CLASS_BRIDGE_PCI       0x0604
 #define FPCI_CLASS_BRIDGE_CARDBUS   0x0607
 #define FPCI_CLASS_PROCESSOR_POWERPC    0x0b20
 #define FPCI_CLASS_DISPLAY_VGA      0x0300
 
-
-
 #define FPCIE_CFG_FUN_NOT_IMP_MASK 0xFFFF
 #define FPCIE_CFG_HEADER_TYPE_MASK 0x007F0000
-
 
 /*
  * Base addresses specify locations in memory or I/O space.
@@ -479,10 +473,6 @@ extern "C"
 #define  FPCI_CAP_ID_EA     0x14    /* PCI Enhanced Allocation */
 #define  FPCI_CAP_ID_MAX        PCI_CAP_ID_EA
 
-/* Extended Capabilities (PCI-X 2.0 and Express) */
-//#define PCI_EXT_CAP_ID(header)        (header & 0x0000ffff)
-//#define PCI_EXT_CAP_VER(header)       ((header >> 16) & 0xf)
-//#define PCI_EXT_CAP_NEXT(header)  ((header >> 20) & 0xffc)
 
 #define FPCI_EXT_CAP_ID_ERR 0x01    /* Advanced Error Reporting */
 #define FPCI_EXT_CAP_ID_VC  0x02    /* Virtual Channel Capability */
@@ -523,8 +513,6 @@ extern "C"
 #define FPCIE_CAPABILITY_DEVICE_CAPABILITIES_2_ARI_FORWARDING   0x20
 #define FPCIE_CAPABILITY_DEVICE_CONTROL_2_OFFSET                    0x28
 #define FPCIE_CAPABILITY_DEVICE_CONTROL_2_ARI_FORWARDING            0x20
-
-
 
 /*
  * Address Translation Registers

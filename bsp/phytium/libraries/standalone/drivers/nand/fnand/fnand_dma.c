@@ -14,11 +14,12 @@
  * FilePath: fnand_dma.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:22
- * Description:  This files is for
+ * Description:  This file is dma descriptor management API.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 
@@ -46,12 +47,12 @@
 
 void FNandDmaDump(struct FNandDmaDescriptor *descriptor_p)
 {
-    FNAND_DMA_DEBUG_I("Phytium NFC cmd dump:\n");
-    FNAND_DMA_DEBUG_I("cmd0:%x, cmd1:%x, ctrl:%x, page_cnt:%d\n",
+    FNAND_DMA_DEBUG_I("Phytium NFC cmd dump: ");
+    FNAND_DMA_DEBUG_I("cmd0:%x, cmd1:%x, ctrl:%x, page_cnt:%d ",
                       descriptor_p->cmd0, descriptor_p->cmd1, descriptor_p->cmd_ctrl.ctrl, descriptor_p->page_cnt);
-    FNAND_DMA_DEBUG_I("mem_addr_first:%02x %02x %02x %02x %02x\n",
+    FNAND_DMA_DEBUG_I("mem_addr_first:%02x %02x %02x %02x %02x ",
                       descriptor_p->mem_addr_first[0], descriptor_p->mem_addr_first[1], descriptor_p->mem_addr_first[2], descriptor_p->mem_addr_first[3], descriptor_p->mem_addr_first[4]);
-    FNAND_DMA_DEBUG_I("addr:%02x %02x %02x %02x %02x\n",
+    FNAND_DMA_DEBUG_I("addr:%02x %02x %02x %02x %02x ",
                       descriptor_p->addr[0], descriptor_p->addr[1], descriptor_p->addr[2], descriptor_p->addr[3], descriptor_p->addr[4]);
 
     FNAND_DMA_DEBUG_I(" csel : 0x%x  ", descriptor_p->cmd_ctrl.nfc_ctrl.csel);
@@ -72,7 +73,7 @@ static void FNandAddrCorrect(struct FNandDmaDescriptor *descriptor_p,
     int i, j;
     if (addr_length == 0 || addr_p == NULL)
     {
-        FNAND_DMA_DEBUG_I("addr_p is null ,Calibration is not required ");
+        FNAND_DMA_DEBUG_I("The addr_p is null , Calibration is not required ");
         return;
     }
 
@@ -100,7 +101,6 @@ FError FNandDmaPack(FNandCmdFormat *cmd_format,
     u32 i;
     FASSERT(cmd_format != NULL);
     FASSERT(descriptor_p != NULL);
-    // printf(" descriptor_p is %p \r\n",descriptor_p);
     descriptor_p->cmd_ctrl.ctrl = 0;
 
     /* cmd */
@@ -119,7 +119,7 @@ FError FNandDmaPack(FNandCmdFormat *cmd_format,
     /* addr */
     FNandAddrCorrect(descriptor_p, pack_data_p->addr_p, pack_data_p->addr_length);
     descriptor_p->cmd_ctrl.nfc_ctrl.cmd_type = cmd_format->cmd_type; /* cmd type */
-    FNAND_DMA_DEBUG_I("cmd_type is %x \r\n", descriptor_p->cmd_ctrl.nfc_ctrl.cmd_type);
+    FNAND_DMA_DEBUG_I("cmd_type is %x", descriptor_p->cmd_ctrl.nfc_ctrl.cmd_type);
     if (pack_data_p->contiune_dma)
     {
         descriptor_p->cmd_ctrl.nfc_ctrl.nc = 1;
@@ -138,10 +138,14 @@ FError FNandDmaPack(FNandCmdFormat *cmd_format,
     }
 
     if (cmd_format->auto_rs)
+    {
         descriptor_p->cmd_ctrl.nfc_ctrl.auto_rs = 1;
+    }
 
     if (cmd_format->ecc_en)
+    {
         descriptor_p->cmd_ctrl.nfc_ctrl.ecc_en = 1;
+    }
 
     /* invalid descriptor and buffer */
     FCacheDCacheInvalidateRange((intptr)descriptor_p, sizeof(struct FNandDmaDescriptor));

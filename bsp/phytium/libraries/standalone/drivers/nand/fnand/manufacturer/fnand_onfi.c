@@ -14,11 +14,12 @@
  * FilePath: fnand_onfi.c
  * Date: 2022-07-05 19:10:40
  * LastEditTime: 2022-07-05 19:10:41
- * Description:  This file is for
+ * Description:  This file is for onfi type nand
  *
  * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 
@@ -83,9 +84,9 @@
  * loss).
  */
 #define __DIVIDE(dividend, divisor) ({                      \
-    (__typeof__(dividend))(sizeof(dividend) <= sizeof(unsigned long) ?  \
-                   DIV_ROUND_UP(dividend, divisor) :        \
-                   DIV_ROUND_UP_ULL(dividend, divisor));        \
+        (__typeof__(dividend))(sizeof(dividend) <= sizeof(unsigned long) ?  \
+                               DIV_ROUND_UP(dividend, divisor) :        \
+                               DIV_ROUND_UP_ULL(dividend, divisor));        \
     })
 #define PSEC_TO_NSEC(x) __DIVIDE(x, 1000)
 #define PSEC_TO_MSEC(x) __DIVIDE(x, 1000000000)
@@ -115,7 +116,9 @@ static u16 FNandOnfiCrc16(u16 crc, u8 const *p, size_t len)
     {
         crc ^= *p++ << 8;
         for (i = 0; i < 8; i++)
+        {
             crc = (crc << 1) ^ ((crc & 0x8000) ? 0x8005 : 0);
+        }
     }
 
     return crc;
@@ -135,7 +138,9 @@ static void FNandSanitizeString(u8 *s, fsize_t len)
     for (i = 0; i < len - 1; i++)
     {
         if (s[i] < ' ' || s[i] > 127)
+        {
             s[i] = '?';
+        }
     }
 
 }
@@ -258,7 +263,7 @@ FError FNandOnfiInit(FNand *instance_p, u32 chip_addr)
     ret = FNandFlashReadId(instance_p, 0x20, id, sizeof(id), chip_addr);
     if (ret != FT_SUCCESS || strncmp(id, "ONFI", sizeof(id) - 1))
     {
-        FNAND_ONFI_DEBUG_E("20H read id is %s ", id);
+        FNAND_ONFI_DEBUG_E("The id value read out from 20H is %s", id);
         return FNAND_NOT_FET_TOGGLE_MODE;
     }
 
@@ -271,7 +276,7 @@ FError FNandOnfiInit(FNand *instance_p, u32 chip_addr)
     ret = FNandOnfiReadParamPage(instance_p, NULL, 0, chip_addr);
     if (ret != FT_SUCCESS)
     {
-        FNAND_ONFI_DEBUG_E("read device id table is error");
+        FNAND_ONFI_DEBUG_E("An error occured when reading device id table");
         return FNAND_NOT_FET_TOGGLE_MODE;
     }
 

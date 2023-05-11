@@ -14,11 +14,12 @@
  * FilePath: fnand_bbm.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:12
- * Description:  This files is for
+ * Description:  This file implements the bad block management (BBM) functionality.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 
@@ -137,35 +138,33 @@ static void FNandConvertBbt(FNand *instance_p, u8 *buf, u32 chip_addr)
         * Loop through the every 4 blocks in the bitmap
         */
         for (block_index = 0; block_index < FNAND_BBT_ENTRY_NUM_BLOCKS;
-                block_index++)
+             block_index++)
         {
             block_shift = FNAND_BBTBLOCKSHIFT(block_index);
             block_type = (data >> block_shift) &
                          FNAND_BLOCK_TYPE_MASK;
-            // FNAND_BBM_DEBUG_E("block_offset %d,block_shift %d",block_offset,block_shift);
-            // FNAND_BBM_DEBUG_E("block_type is %d \r\n",block_type);
             switch (block_type)
             {
-            case FNAND_FLASH_BLOCK_FACTORY_BAD:
-                /* Factory bad block */
-                instance_p->bbt_manager[chip_addr].bbt[block_offset] |=
-                    FNAND_BLOCK_FACTORY_BAD << block_shift;
-                break;
-            case FNAND_FLASH_BLOCK_RESERVED:
-                /* Reserved block */
-                instance_p->bbt_manager[chip_addr].bbt[block_offset] |=
-                    FNAND_BLOCK_RESERVED << block_shift;
-                break;
-            case FNAND_FLASH_BLOCK_BAD:
-                /* Bad block due to wear */
-                instance_p->bbt_manager[chip_addr].bbt[block_offset] |=
-                    FNAND_BLOCK_BAD << block_shift;
-                break;
-            default:
-                /* Good block */
-                /* The BBT entry already defaults to
-                        * zero */
-                break;
+                case FNAND_FLASH_BLOCK_FACTORY_BAD:
+                    /* Factory bad block */
+                    instance_p->bbt_manager[chip_addr].bbt[block_offset] |=
+                        FNAND_BLOCK_FACTORY_BAD << block_shift;
+                    break;
+                case FNAND_FLASH_BLOCK_RESERVED:
+                    /* Reserved block */
+                    instance_p->bbt_manager[chip_addr].bbt[block_offset] |=
+                        FNAND_BLOCK_RESERVED << block_shift;
+                    break;
+                case FNAND_FLASH_BLOCK_BAD:
+                    /* Bad block due to wear */
+                    instance_p->bbt_manager[chip_addr].bbt[block_offset] |=
+                        FNAND_BLOCK_BAD << block_shift;
+                    break;
+                default:
+                    /* Good block */
+                    /* The BBT entry already defaults to
+                            * zero */
+                    break;
             }
         }
     }
@@ -292,12 +291,12 @@ static FError FNandWriteBbt(FNand *instance_p,
                          FNAND_BLOCK_TYPE_MASK;
             switch (block_type)
             {
-            case FNAND_BLOCK_BAD:
-            case FNAND_BLOCK_FACTORY_BAD:
-                continue;
-            default:
-                /* Good Block */
-                break;
+                case FNAND_BLOCK_BAD:
+                case FNAND_BLOCK_FACTORY_BAD:
+                    continue;
+                default:
+                    /* Good Block */
+                    break;
             }
             desc_p->page_offset = block *
                                   instance_p->nand_geometry[chip_addr].pages_per_block;
@@ -337,7 +336,7 @@ static FError FNandWriteBbt(FNand *instance_p,
          * Calculate the bit mask for 4 blocks at a time in loop
          */
         for (block_index = 0; block_index < FNAND_BBT_ENTRY_NUM_BLOCKS;
-                block_index++)
+             block_index++)
         {
             block_shift = FNAND_BBTBLOCKSHIFT(block_index);
             buf[block_offset] &= ~(mask[Data &
@@ -345,15 +344,13 @@ static FError FNandWriteBbt(FNand *instance_p,
                                    << block_shift);
             Data >>= FNAND_BBT_BLOCK_SHIFT;
         }
-        // FNAND_BBM_DEBUG_I("buf[%d] 0x%x",block_offset,buf[block_offset]);
+
     }
 
     /*
      * Write the Bad Block Table(BBT) to flash
      */
-    // printf("erase_p is %p \r\n",instance_p->erase_p);
     ret = FNandEraseBlock(instance_p, block, chip_addr);
-    //instance_p->erase_p(instance_p, block, chip_addr);
     if (ret != FT_SUCCESS)
     {
         return ret;
@@ -412,8 +409,8 @@ static void FNandCreateBbt(FNand *instance_p, u32 chip_addr)
      * Scan all the blocks for factory marked bad blocks
      */
     for (block_index = 0; block_index <
-            instance_p->nand_geometry[chip_addr].num_blocks;
-            block_index++)
+         instance_p->nand_geometry[chip_addr].num_blocks;
+         block_index++)
     {
         /*
          * Block offset in Bad Block Table(BBT) entry
@@ -445,11 +442,11 @@ static void FNandCreateBbt(FNand *instance_p, u32 chip_addr)
              * pattern
              */
             for (length = 0; length <
-                    instance_p->bbt_manager[chip_addr].bb_pattern.length;
-                    length++)
+                 instance_p->bbt_manager[chip_addr].bb_pattern.length;
+                 length++)
             {
                 if (buf[instance_p->bbt_manager[chip_addr].bb_pattern.offset + length] !=
-                        instance_p->bbt_manager[chip_addr].bb_pattern.pattern[length])
+                    instance_p->bbt_manager[chip_addr].bb_pattern.pattern[length])
                 {
                     /* Bad block found */
                     instance_p->bbt_manager[chip_addr].bbt[block_offset] |=
@@ -480,14 +477,14 @@ FError FNandSearchBbt(FNand *instance_p, FNandBbtDesc *desc, u32 chip_addr)
     ver_offset = desc->ver_offset;
     max_blocks = desc->max_blocks;
     sig_length = desc->sig_length;
-    FNAND_BBM_DEBUG_I("FNandSearchBbt is start 0x%x", start_block);
-    FNAND_BBM_DEBUG_I("pages_per_block is start %d", instance_p->nand_geometry[chip_addr].pages_per_block);
+    FNAND_BBM_DEBUG_I("FNandSearchBbt starts at 0x%x", start_block);
+    FNAND_BBM_DEBUG_I("Pages_per_block starts at %d", instance_p->nand_geometry[chip_addr].pages_per_block);
     for (block = 0; block < max_blocks; block++)
     {
         pageoff = (start_block - block) *
                   instance_p->nand_geometry[chip_addr].pages_per_block;
-        FNAND_BBM_DEBUG_I("block 0x%x", block);
-        FNAND_BBM_DEBUG_I("%s, pageoff is 0x%x", __func__, pageoff);
+        FNAND_BBM_DEBUG_I("Block 0x%x", block);
+        FNAND_BBM_DEBUG_I("%s, Pageoff is 0x%x", __func__, pageoff);
         ret = FNandReadPageOOb(instance_p, pageoff, buf, 0, sizeof(buf), chip_addr);
         if (ret != FT_SUCCESS)
         {
@@ -565,11 +562,11 @@ FError FNandReadBbt(FNand *instance_p, u32 chip_addr)
             /*
             * Valid BBT & Mirror BBT found
             */
-            FNAND_BBM_DEBUG_I("desc_p->version > mirror_desc_p->version read page is %d", desc_p->page_offset);
+            FNAND_BBM_DEBUG_I("The desc_p->version > mirror_desc_p->version is not null , the page_offset is %d", desc_p->page_offset);
             ret = FNandReadPage(instance_p, desc_p->page_offset, buf, 0, bbtlen, NULL, 0, 0, chip_addr);
             if (ret != FT_SUCCESS)
             {
-                FNAND_BBM_DEBUG_I("desc_p->version > mirror_desc_p->version read page is error 0x%x", ret);
+                FNAND_BBM_DEBUG_I("The desc_p->version > mirror_desc_p->version is not null , the FNandReadPage is error 0x%x", ret);
                 return ret;
             }
             /*
@@ -590,11 +587,11 @@ FError FNandReadBbt(FNand *instance_p, u32 chip_addr)
         }
         else if (desc_p->version < mirror_desc_p->version)
         {
-            FNAND_BBM_DEBUG_I("desc_p->version < mirror_desc_p->version read page is %d", mirror_desc_p->page_offset);
+            FNAND_BBM_DEBUG_I("desc_p->version < mirror_desc_p->version is not null, the page_offset is %d", mirror_desc_p->page_offset);
             ret = FNandReadPage(instance_p, mirror_desc_p->page_offset, buf, 0, bbtlen, NULL, 0, 0, chip_addr);
             if (ret != FT_SUCCESS)
             {
-                FNAND_BBM_DEBUG_I("desc_p->version < mirror_desc_p->version read page is error 0x%x", ret);
+                FNAND_BBM_DEBUG_I("desc_p->version < mirror_desc_p->version is not null, the FNandReadPage is error 0x%x", ret);
                 return ret;
             }
             /*
@@ -616,12 +613,12 @@ FError FNandReadBbt(FNand *instance_p, u32 chip_addr)
         else
         {
             /* Both are up-to-date */
-            FNAND_BBM_DEBUG_I("Both are up-to-date read page is %d", desc_p->page_offset);
+            FNAND_BBM_DEBUG_I("Both are up-to-date, the page_offset is %d", desc_p->page_offset);
 
             ret = FNandReadPage(instance_p, desc_p->page_offset, buf, 0, bbtlen, NULL, 0, 0, chip_addr);
             if (ret != FT_SUCCESS)
             {
-                FNAND_BBM_DEBUG_I("Both are up-to-date read page is error 0x%x", ret);
+                FNAND_BBM_DEBUG_I("Both are up-to-date, the FNandReadPage is error 0x%x", ret);
                 return ret;
             }
 
@@ -702,7 +699,7 @@ FError FNandReadBbt(FNand *instance_p, u32 chip_addr)
 static void FNandBbtDumpDebug(FNand *instance_p)
 {
     int i;
-    FNAND_BBM_DEBUG_W("/********************* master bbt descriptor **********************/");
+    FNAND_BBM_DEBUG_W("/********************* Master bbt descriptor **********************/");
 
     FNAND_BBM_DEBUG_I("page_offset 0x%x", instance_p->bbt_manager[0].bbt_desc.page_offset);  /* Page offset where BBT resides */
     FNAND_BBM_DEBUG_I("sig_offset 0x%x", instance_p->bbt_manager[0].bbt_desc.sig_offset);   /* Signature offset in Spare area */
@@ -711,12 +708,12 @@ static void FNandBbtDumpDebug(FNand *instance_p)
     FNAND_BBM_DEBUG_I("max_blocks 0x%x", instance_p->bbt_manager[0].bbt_desc.max_blocks);   /* Max blocks to search for BBT */
     for (i = 0; i < 4; i++)
     {
-        FNAND_BBM_DEBUG_I("signature[%d] %c", i, instance_p->bbt_manager[0].bbt_desc.signature[i]);
+        FNAND_BBM_DEBUG_I("Signature[%d] %c", i, instance_p->bbt_manager[0].bbt_desc.signature[i]);
     }
     FNAND_BBM_DEBUG_I("version 0x%x", instance_p->bbt_manager[0].bbt_desc.version);       /* BBT version */
     FNAND_BBM_DEBUG_I("valid 0x%x", instance_p->bbt_manager[0].bbt_desc.valid);        /* BBT descriptor is valid or not */
 
-    FNAND_BBM_DEBUG_W("/********************* mirror bbt descriptor **********************/");
+    FNAND_BBM_DEBUG_W("/********************* Mirror bbt descriptor **********************/");
     FNAND_BBM_DEBUG_I("page_offset 0x%x", instance_p->bbt_manager[0].bbt_mirror_desc.page_offset);  /* Page offset where BBT resides */
     FNAND_BBM_DEBUG_I("sig_offset 0x%x", instance_p->bbt_manager[0].bbt_mirror_desc.sig_offset);   /* Signature offset in Spare area */
     FNAND_BBM_DEBUG_I("ver_offset 0x%x", instance_p->bbt_manager[0].bbt_mirror_desc.ver_offset);   /* Offset of BBT version */
@@ -730,7 +727,7 @@ static void FNandBbtDumpDebug(FNand *instance_p)
     FNAND_BBM_DEBUG_I("valid 0x%x", instance_p->bbt_manager[0].bbt_mirror_desc.valid);        /* BBT descriptor is valid or not */
 
 
-    FNAND_BBM_DEBUG_W("/********************* bbt info **********************/");
+    FNAND_BBM_DEBUG_W("/********************* Bbt info **********************/");
     FtDumpHexWord((const u32 *)instance_p->bbt_manager[0].bbt, instance_p->nand_geometry[0].num_blocks >>
                   FNAND_BBT_BLOCK_SHIFT);
 }
@@ -791,7 +788,7 @@ FError FNandScanBbt(FNand *instance_p, u32 chip_addr)
     }
     else
     {
-        FNAND_BBM_DEBUG_I("old bbt is valid");
+        FNAND_BBM_DEBUG_I("Old bbt is valid");
         FNandBbtDumpDebug(instance_p) ;
     }
 
@@ -825,9 +822,13 @@ FError FNandIsBlockBad(FNand *instance_p, u32 block, u32 chip_addr)
     BlockType = (data >> block_shift) & FNAND_BLOCK_TYPE_MASK;
 
     if (BlockType != FNAND_BLOCK_GOOD)
+    {
         return FT_SUCCESS;
+    }
     else
+    {
         return FNAND_VALUE_FAILURE;
+    }
 }
 
 

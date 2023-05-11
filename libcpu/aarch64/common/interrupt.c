@@ -109,11 +109,11 @@ void rt_hw_interrupt_init(void)
 
     /* initialize ARM GIC */
 #ifdef RT_USING_SMART
-    gic_dist_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_dist_base(), 0x2000);
+    gic_dist_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_dist_base(), 0x40000);
     gic_cpu_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_cpu_base(), 0x1000);
 #ifdef BSP_USING_GICV3
     gic_rdist_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_redist_base(),
-            RT_CPUS_NR * (2 << 16));
+            ARM_GIC_CPU_NUM * (2 << 16));
 #endif
 #else
     gic_dist_base = platform_get_gic_dist_base();

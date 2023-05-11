@@ -14,12 +14,14 @@
  * FilePath: fgic_g.c
  * Date: 2022-03-30 14:57:43
  * LastEditTime: 2022-03-30 14:57:43
- * Description:  This file is for
+ * Description:  This file is for gic static configuration implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
+
 #include "fparameters.h"
 #include "fgic.h"
 
@@ -27,6 +29,6 @@ FGicConfig fgic_config[FGIC_NUM] =
 {
     {
         .instance_id = 0,                          /* Id of device */
-        .dis_base = GICV3_DISTRIBUTOR_BASEADDRESS, /* Distributor base address      */
+        .dis_base = GICV3_DISTRIBUTOR_BASE_ADDR, /* Distributor base address      */
     }
 };

@@ -14,29 +14,27 @@
  * FilePath: fassert.h
  * Date: 2021-04-07 09:53:07
  * LastEditTime: 2022-02-17 18:04:35
- * Description:  This files is for assertion defintion
+ * Description:  This file is for assertion defintion.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   huanghe    2021.4       init commit
- * 1.1   zhugengyu  2022.3       re-define assert macro
+ * 1.0   huanghe    2021/4/5       init commit
+ * 1.1   zhugengyu  2022/3/7       re-define assert macro
  */
 
-#ifndef FT_ASSERT_H
-#define FT_ASSERT_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FASSERT_H
+#define FASSERT_H
 
 /***************************** Include Files *********************************/
 #include "fprintk.h"
 #include "ferror_code.h"
 #include "ftypes.h"
 
-/************************** Constant Definitions *****************************/
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /**************************** Type Definitions *******************************/
 typedef enum

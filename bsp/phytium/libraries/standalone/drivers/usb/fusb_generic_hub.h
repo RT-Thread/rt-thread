@@ -19,18 +19,18 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#ifndef  DRIVERS_FUSB_GENERIC_HUB_H
-#define  DRIVERS_FUSB_GENERIC_HUB_H
+#ifndef  FUSB_GENERIC_HUB_H
+#define  FUSB_GENERIC_HUB_H
+
+#include "fusb_private.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "fusb_private.h"
 
 typedef struct
 {

@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include "fsleep.h"
@@ -38,7 +38,9 @@ void FUsbGenericHubDestory(FUsbDev *const dev)
     FUsbGenericHub *const hub = FUSB_GEN_HUB_GET(dev);
     FUsb *instace = dev->controller->usb;
     if (!hub)
+    {
         return;
+    }
 
     /* First, detach all devices behind this hub */
     int port;
@@ -46,7 +48,7 @@ void FUsbGenericHubDestory(FUsbDev *const dev)
     {
         if (hub->ports[port] >= 0)
         {
-            FUSB_INFO("generic_hub: Detachment at port %d ", port);
+            FUSB_INFO("Generic hub: Detachment at port %d ", port);
             FUsbDetachDev(dev->controller, hub->ports[port]);
             hub->ports[port] = FUSB_NO_DEV_ADDR;
         }
@@ -56,7 +58,9 @@ void FUsbGenericHubDestory(FUsbDev *const dev)
     if (hub->ops->disable_port)
     {
         for (port = 1; port <= hub->num_ports; ++port)
+        {
             hub->ops->disable_port(dev, port);
+        }
     }
 
     FUSB_FREE(instace, hub->ports); // free(hub->ports);
@@ -80,7 +84,9 @@ static int FUsbGenericHubDebounce(FUsbDev *const dev, const int port)
         const int changed = hub->ops->port_status_changed(dev, port);
         const int connected = hub->ops->port_connected(dev, port);
         if (changed < 0 || connected < 0)
+        {
             return -1;
+        }
 
         if (!changed && connected)
         {
@@ -88,14 +94,16 @@ static int FUsbGenericHubDebounce(FUsbDev *const dev, const int port)
         }
         else
         {
-            FUSB_INFO("generic_hub: Unstable connection at %d ",
+            FUSB_INFO("Generic hub: Unstable connection at %d ",
                       port);
             stable_ms = 0;
         }
         total_ms += step_ms;
     }
     if (total_ms >= timeout_ms)
-        FUSB_INFO("generic_hub: Debouncing timed out at %d ", port);
+    {
+        FUSB_INFO("Generic hub: Debouncing timed out at %d ", port);
+    }
     return 0; /* ignore timeouts, try to always go on */
 }
 
@@ -109,9 +117,13 @@ int FUsbGenericHubWaitForPort(FUsbDev *const dev, const int port,
     {
         state = port_op(dev, port);
         if (state < 0)
+        {
             return -1;
+        }
         else if (!!state == wait_for)
+        {
             return timeout_steps;
+        }
         fsleep_microsec(step_us);
         --timeout_steps;
     }
@@ -125,7 +137,9 @@ int FUsbGenericHubResetPort(FUsbDev *const dev, const int port)
     FUsbGenericHub *const hub = FUSB_GEN_HUB_GET(dev);
 
     if (hub->ops->start_port_reset(dev, port) < 0)
+    {
         return -1;
+    }
 
     /* wait for 10ms (usb20 spec 11.5.1.5: reset should take 10 to 20ms) */
     fsleep_millisec(10);
@@ -135,9 +149,13 @@ int FUsbGenericHubResetPort(FUsbDev *const dev, const int port)
                         /* time out after 120 * 100us = 12ms */
                         dev, port, 0, hub->ops->port_in_reset, 120, 100);
     if (ret < 0)
+    {
         return -1;
+    }
     else if (!ret)
-        FUSB_INFO("generic_hub: Reset timed out at port %d ", port);
+    {
+        FUSB_INFO("Generic hub: Reset timed out at port %d ", port);
+    }
 
     return 0; /* ignore timeouts, try to always go on */
 }
@@ -157,17 +175,21 @@ static int FUsbGenericHubAttachDev(FUsbDev *const dev, const int port)
     FUsbGenericHub *const hub = FUSB_GEN_HUB_GET(dev);
 
     if (FUsbGenericHubDebounce(dev, port) < 0)
+    {
         return -1;
+    }
 
     if (hub->ops->reset_port)
     {
         if (hub->ops->reset_port(dev, port) < 0)
+        {
             return -1;
+        }
 
         if (!hub->ops->port_connected(dev, port))
         {
             FUSB_INFO(
-                "generic_hub: Port %d disconnected after "
+                "Generic hub: Port %d disconnected after "
                 "reset. Possibly upgraded, rescan required. ",
                 port);
             return 0;
@@ -178,9 +200,11 @@ static int FUsbGenericHubAttachDev(FUsbDev *const dev, const int port)
                             /* time out after 1,000 * 10us = 10ms */
                             dev, port, 1, hub->ops->port_enabled, 1000, 10);
         if (ret < 0)
+        {
             return -1;
+        }
         else if (!ret)
-            FUSB_INFO("generic_hub: Port %d still "
+            FUSB_INFO("Generic hub: Port %d still "
                       "disabled after 10ms ",
                       port);
     }
@@ -188,9 +212,11 @@ static int FUsbGenericHubAttachDev(FUsbDev *const dev, const int port)
     const FUsbSpeed speed = hub->ops->port_speed(dev, port);
     if (speed >= 0)
     {
-        FUSB_DEBUG("generic_hub: Success at port %d ", port);
+        FUSB_DEBUG("Generic hub: Success at port %d ", port);
         if (hub->ops->reset_port)
-            fsleep_millisec(10); /* Reset recovery time
+        {
+            fsleep_millisec(10);
+        } /* Reset recovery time
                        (usb20 spec 7.1.7.5) */
         hub->ports[port] = FUsbAttachDev(
                                dev->controller, dev->address, port, speed);
@@ -204,15 +230,17 @@ int FUsbGenericHubScanPort(FUsbDev *const dev, const int port)
 
     if (hub->ports[port] >= 0)
     {
-        FUSB_INFO("generic_hub: Detachment at port %d ", port);
+        FUSB_INFO("Generic hub: Detachment at port %d ", port);
         const int ret = FUsbGenericHubDetachDev(dev, port);
         if (ret < 0)
+        {
             return ret;
+        }
     }
 
     if (hub->ops->port_connected(dev, port))
     {
-        FUSB_INFO("generic_hub: Attachment at port %d ", port);
+        FUSB_INFO("Generic hub: Attachment at port %d ", port);
         return FUsbGenericHubAttachDev(dev, port);
     }
 
@@ -223,10 +251,12 @@ static void FUsbGenericHubPoll(FUsbDev *const dev)
 {
     FUsbGenericHub *const hub = FUSB_GEN_HUB_GET(dev);
     if (!hub)
+    {
         return;
+    }
 
     if (hub->ops->hub_status_changed &&
-            hub->ops->hub_status_changed(dev) != FUSB_CC_SUCCESS)
+        hub->ops->hub_status_changed(dev) != FUSB_CC_SUCCESS)
     {
         return;
     }
@@ -242,9 +272,11 @@ static void FUsbGenericHubPoll(FUsbDev *const dev)
         }
         else if (ret == FUSB_CC_SUCCESS)
         {
-            FUSB_INFO("generic_hub: Port change at %d ", port);
+            FUSB_INFO("Generic hub: Port change at %d ", port);
             if (FUsbGenericHubScanPort(dev, port) < 0)
+            {
                 return;
+            }
         }
     }
 }
@@ -261,7 +293,7 @@ int FUsbGenericHubInit(FUsbDev *const dev, const int num_ports,
     dev->data = FUSB_ALLOCATE(instance, sizeof(FUsbGenericHub), FUSB_DEFAULT_ALIGN);
     if (NULL == dev->data)
     {
-        FUSB_ERROR("generic_hub: ERROR: Out of memory ");
+        FUSB_ERROR("Generic hub: Out of memory ");
         return -1;
     }
 
@@ -272,20 +304,24 @@ int FUsbGenericHubInit(FUsbDev *const dev, const int num_ports,
     hub->ops = ops;
     if (NULL == hub->ports)
     {
-        FUSB_ERROR("generic_hub: ERROR: Out of memory ");
+        FUSB_ERROR("Generic hub: Out of memory ");
         FUSB_FREE(instance, dev->data);
         dev->data = NULL;
         return -1;
     }
 
     for (port = 1; port <= num_ports; ++port)
+    {
         hub->ports[port] = FUSB_NO_DEV_ADDR;
+    }
 
     /* Enable all ports */
     if (ops->enable_port)
     {
         for (port = 1; port <= num_ports; ++port)
+        {
             ops->enable_port(dev, port);
+        }
 
         /* wait once for all ports */
         fsleep_millisec(20);

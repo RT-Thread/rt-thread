@@ -13,21 +13,17 @@
  *
  * FilePath: fpwm.h
  * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * LastEditTime: 2022-04-15 11:45:05
+ * Description: This file is for detailed description of the device configuration and driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/15   init commit
  */
 
-#ifndef BSP_DRIVERS_FPWM_H
-#define BSP_DRIVERS_FPWM_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FPWM_H
+#define FPWM_H
 
 #include "ftypes.h"
 #include "fdebug.h"
@@ -35,6 +31,11 @@ extern "C"
 #include "fkernel.h"
 #include "fassert.h"
 #include "fparameters.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define FPWM_SUCCESS          FT_SUCCESS
 #define FPWM_ERR_INVAL_PARM   FT_MAKE_ERRCODE(ErrModBsp, ErrBspPwm, 1)
@@ -181,7 +182,7 @@ void FPwmIntrHandler(s32 vector, void *args);
 void FPwmRegisterInterruptHandler(FPwmCtrl *instance_p, FPwmIntrEventType event_type, FPwmIntrEventHandler handler, void *param);
 
 /* get pwm configs by id */
-const FPwmConfig *FPwmLookupConfig(FPwmInstance instance_id);
+const FPwmConfig *FPwmLookupConfig(u32 instance_id);
 
 /* DeInitialization function for the device instance */
 void FPwmDeInitialize(FPwmCtrl *pctrl);
@@ -212,6 +213,9 @@ void FPwmEnable(FPwmCtrl *pctrl, u32 channel);
 
 /* dump some pwm registers value */
 void FPwmDump(uintptr base_addr);
+
+/* control gpio output */
+void FPwmGpioSet(FPwmCtrl *pctrl, u32 channel, u32 output);
 
 #ifdef __cplusplus
 }

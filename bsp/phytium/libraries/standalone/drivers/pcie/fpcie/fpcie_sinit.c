@@ -12,20 +12,20 @@
  *
  *
  * FilePath: fpcie_sinit.c
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:59:22
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:59:22
+ * Description: This file is for pcie static variables implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
-
 
 #include "fpcie.h"
 #include "fparameters.h"
 
-extern FPcieConfig FPcieConfigTable[FT_PCIE_NUM];
+extern FPcieConfig FPcieConfigTable[FPCIE_NUM];
 
 
 FPcieConfig *FPcieLookupConfig(u32 instance_id)
@@ -33,7 +33,7 @@ FPcieConfig *FPcieLookupConfig(u32 instance_id)
     FPcieConfig *ptr = NULL;
     u32 index;
 
-    for (index = 0; index < (u32)FT_PCIE_NUM; index++)
+    for (index = 0; index < (u32)FPCIE_NUM; index++)
     {
         if (FPcieConfigTable[index].instance_id == instance_id)
         {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,16 @@
 #include "fparameters.h"
 
 #define ARM_GIC_MAX_NR 1
+
+#if defined(TARGET_FT2000_4) || defined(TARGET_D2000)
 #define MAX_HANDLERS 160
+#endif
+
+#if defined(TARGET_E2000)
+#define MAX_HANDLERS 270
+#define ARM_GIC_CPU_NUM 4
+#endif
+
 #define GIC_IRQ_START 0
 #define GIC_ACK_INTID_MASK 0x000003ff
 
@@ -28,7 +37,7 @@ rt_uint64_t get_main_cpu_affval(void);
 
 rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 {
-    return GICV3_DISTRIBUTOR_BASEADDRESS;
+    return GICV3_DISTRIBUTOR_BASE_ADDR;
 }
 
 #if defined(TARGET_ARMV8_AARCH64)
@@ -38,6 +47,7 @@ rt_inline rt_uint32_t platform_get_gic_redist_base(void)
 {
     extern int phytium_cpu_id(void);
 
+#if RT_CPUS_NR <= 2
     s32 cpu_offset = 0;
 #if defined(FT_GIC_REDISTRUBUTIOR_OFFSET)
     cpu_offset = FT_GIC_REDISTRUBUTIOR_OFFSET ;
@@ -59,10 +69,15 @@ rt_inline rt_uint32_t platform_get_gic_redist_base(void)
     default:
         break;
     }
-#endif
 
-    rt_kprintf("offset  is %x\n",  cpu_offset);
-    return (GICV3_RD_BASEADDRESS + (cpu_offset) * GICV3_RD_OFFSET);
+    rt_kprintf("cpu_id is %d \r\n",cpu_id);
+#endif
+    rt_kprintf("offset  is %d\n", cpu_offset);
+
+    return (GICV3_RD_BASE_ADDR + (cpu_offset) * GICV3_RD_OFFSET);
+#else
+    return (GICV3_RD_BASE_ADDR);
+#endif
 }
 
 rt_inline rt_uint32_t platform_get_gic_cpu_base(void)

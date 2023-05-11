@@ -14,23 +14,24 @@
  * FilePath: phy_yt.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for yt PHYs chip.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
 #ifndef PHY_YT_H
 #define PHY_YT_H
 
+#include "ferror_code.h"
+#include "eth_ieee_reg.h"
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "ferror_code.h"
-#include "eth_ieee_reg.h"
 
 #define FETH_PHY_ERR_READ FT_MAKE_ERRCODE(ErrModBsp, ErrEthPhy, 0x1u)
 
@@ -38,6 +39,7 @@ FError PhyYtSetLoopBack(void *instance_p, u32 phy_addr, EthPhyWrite write_p, Eth
 FError PhyYtCheckConnectStatus(void *instance_p, u32 phy_addr, EthPhyWrite write_p, EthPhyRead read_p);
 FError PhyChangeModeToSds(void *instance_p, u32 phy_addr, EthPhyWrite write_p, EthPhyRead read_p);
 FError PhyChangeModeToSgmii(void *instance_p, u32 phy_addr, EthPhyWrite write_p, EthPhyRead read_p);
+
 #ifdef __cplusplus
 }
 #endif

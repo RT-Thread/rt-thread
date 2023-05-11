@@ -34,48 +34,48 @@ FError GetCpuId(u32 *cpu_id_p)
     switch (affinity & 0xfff)
     {
 #ifdef CORE0_AFF
-    case CORE0_AFF:
-        *cpu_id_p = 0 ;
-        break;
+        case CORE0_AFF:
+            *cpu_id_p = 0 ;
+            break;
 #endif
 #ifdef CORE1_AFF
-    case CORE1_AFF:
-        *cpu_id_p = 1 ;
-        break;
+        case CORE1_AFF:
+            *cpu_id_p = 1 ;
+            break;
 #endif
 #ifdef CORE2_AFF
-    case CORE2_AFF:
-        *cpu_id_p = 2;
-        break;
+        case CORE2_AFF:
+            *cpu_id_p = 2;
+            break;
 #endif
 #ifdef CORE3_AFF
-    case CORE3_AFF:
-        *cpu_id_p = 3 ;
-        break;
+        case CORE3_AFF:
+            *cpu_id_p = 3 ;
+            break;
 #endif
 #ifdef CORE4_AFF
-    case CORE4_AFF:
-        *cpu_id_p = 4 ;
-        break;
+        case CORE4_AFF:
+            *cpu_id_p = 4 ;
+            break;
 #endif
 #ifdef CORE5_AFF
-    case CORE5_AFF:
-        *cpu_id_p = 5 ;
-        break;
+        case CORE5_AFF:
+            *cpu_id_p = 5 ;
+            break;
 #endif
 #ifdef CORE6_AFF
-    case CORE6_AFF:
-        *cpu_id_p = 6 ;
-        break;
+        case CORE6_AFF:
+            *cpu_id_p = 6 ;
+            break;
 #endif
 #ifdef CORE7_AFF
-    case CORE7_AFF:
-        *cpu_id_p = 7 ;
-        break;
+        case CORE7_AFF:
+            *cpu_id_p = 7 ;
+            break;
 #endif
-    default:
-        ret = ERR_GENERAL ;
-        break;
+        default:
+            ret = ERR_GENERAL ;
+            break;
     }
     return ret;
 }
@@ -95,48 +95,48 @@ FError GetCpuAffinityByMask(u32 cpu_id_mask, u64 *affinity_level_p)
     switch (cpu_id_mask)
     {
 #ifdef CORE0_AFF
-    case (1<<0):
-        *affinity_level_p = CORE0_AFF;
-        break ;
+        case (1<<0):
+            *affinity_level_p = CORE0_AFF;
+            break ;
 #endif
 #ifdef CORE1_AFF
-    case (1<<1):
-        *affinity_level_p = CORE1_AFF;
-        break ;
+        case (1<<1):
+            *affinity_level_p = CORE1_AFF;
+            break ;
 #endif
 #ifdef CORE2_AFF
-    case (1<<2):
-        *affinity_level_p = CORE2_AFF;
-        break ;
+        case (1<<2):
+            *affinity_level_p = CORE2_AFF;
+            break ;
 #endif
 #ifdef CORE3_AFF
-    case (1<<3):
-        *affinity_level_p = CORE3_AFF;
-        break ;
+        case (1<<3):
+            *affinity_level_p = CORE3_AFF;
+            break ;
 #endif
 #ifdef CORE4_AFF
-    case (1<<4):
-        *affinity_level_p = CORE4_AFF;
-        break ;
+        case (1<<4):
+            *affinity_level_p = CORE4_AFF;
+            break ;
 #endif
 #ifdef CORE5_AFF
-    case (1<<5):
-        *affinity_level_p = CORE5_AFF;
-        break ;
+        case (1<<5):
+            *affinity_level_p = CORE5_AFF;
+            break ;
 #endif
 #ifdef CORE6_AFF
-    case (1<<6):
-        *affinity_level_p = CORE6_AFF;
-        break ;
+        case (1<<6):
+            *affinity_level_p = CORE6_AFF;
+            break ;
 #endif
 #ifdef CORE7_AFF
-    case (1<<7):
-        *affinity_level_p = CORE7_AFF;
-        break ;
+        case (1<<7):
+            *affinity_level_p = CORE7_AFF;
+            break ;
 #endif
-    default:
-        ret = ERR_GENERAL;
-        break;
+        default:
+            ret = ERR_GENERAL;
+            break;
     }
     return ret;
 }
@@ -157,48 +157,48 @@ FError GetCpuAffinity(u32 cpu_id, u64 *affinity_level_p)
     switch (cpu_id)
     {
 #ifdef CORE0_AFF
-    case (0):
-        *affinity_level_p = CORE0_AFF;
-        break ;
+        case (0):
+            *affinity_level_p = CORE0_AFF;
+            break ;
 #endif
 #ifdef CORE1_AFF
-    case (1):
-        *affinity_level_p = CORE1_AFF;
-        break ;
+        case (1):
+            *affinity_level_p = CORE1_AFF;
+            break ;
 #endif
 #ifdef CORE2_AFF
-    case (2):
-        *affinity_level_p = CORE2_AFF;
-        break ;
+        case (2):
+            *affinity_level_p = CORE2_AFF;
+            break ;
 #endif
 #ifdef CORE3_AFF
-    case (3):
-        *affinity_level_p = CORE3_AFF;
-        break ;
+        case (3):
+            *affinity_level_p = CORE3_AFF;
+            break ;
 #endif
 #ifdef CORE4_AFF
-    case (4):
-        *affinity_level_p = CORE4_AFF;
-        break ;
+        case (4):
+            *affinity_level_p = CORE4_AFF;
+            break ;
 #endif
 #ifdef CORE5_AFF
-    case (5):
-        *affinity_level_p = CORE5_AFF;
-        break ;
+        case (5):
+            *affinity_level_p = CORE5_AFF;
+            break ;
 #endif
 #ifdef CORE6_AFF
-    case (6):
-        *affinity_level_p = CORE6_AFF;
-        break ;
+        case (6):
+            *affinity_level_p = CORE6_AFF;
+            break ;
 #endif
 #ifdef CORE7_AFF
-    case (7):
-        *affinity_level_p = CORE7_AFF;
-        break ;
+        case (7):
+            *affinity_level_p = CORE7_AFF;
+            break ;
 #endif
-    default:
-        ret = ERR_GENERAL;
-        break;
+        default:
+            ret = ERR_GENERAL;
+            break;
     }
     return ret;
 }
@@ -217,48 +217,48 @@ FError UseAffinityGetCpuId(u64 affinity_level, u32 *cpu_id_p)
     switch (affinity_level)
     {
 #ifdef CORE0_AFF
-    case CORE0_AFF:
-        *cpu_id_p = 0;
-        break ;
+        case CORE0_AFF:
+            *cpu_id_p = 0;
+            break ;
 #endif
 #ifdef CORE1_AFF
-    case CORE1_AFF:
-        *cpu_id_p = 1;
-        break ;
+        case CORE1_AFF:
+            *cpu_id_p = 1;
+            break ;
 #endif
 #ifdef CORE2_AFF
-    case CORE2_AFF:
-        *cpu_id_p = 2;
-        break ;
+        case CORE2_AFF:
+            *cpu_id_p = 2;
+            break ;
 #endif
 #ifdef CORE3_AFF
-    case CORE3_AFF:
-        *cpu_id_p = 3;
-        break ;
+        case CORE3_AFF:
+            *cpu_id_p = 3;
+            break ;
 #endif
 #ifdef CORE4_AFF
-    case CORE4_AFF:
-        *cpu_id_p = 4;
-        break ;
+        case CORE4_AFF:
+            *cpu_id_p = 4;
+            break ;
 #endif
 #ifdef CORE5_AFF
-    case CORE5_AFF:
-        *cpu_id_p = 5;
-        break ;
+        case CORE5_AFF:
+            *cpu_id_p = 5;
+            break ;
 #endif
 #ifdef CORE6_AFF
-    case CORE6_AFF:
-        *cpu_id_p = 6;
-        break ;
+        case CORE6_AFF:
+            *cpu_id_p = 6;
+            break ;
 #endif
 #ifdef CORE7_AFF
-    case CORE7_AFF:
-        *cpu_id_p = 7;
-        break ;
+        case CORE7_AFF:
+            *cpu_id_p = 7;
+            break ;
 #endif
-    default:
-        ret = ERR_GENERAL;
-        break;
+        default:
+            ret = ERR_GENERAL;
+            break;
     }
     return ret;
 }

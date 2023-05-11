@@ -14,16 +14,24 @@
  * FilePath: fgmac_phy.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file implements functionalities to:
+ * Detect the available PHYs connected to a MAC
+ * Negotiate speed
+ * Configure speed
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ *  1.0   huanghe    2021/07/13    first release
  */
 
+#ifndef  FGMAC_PHY_H
+#define  FGMAC_PHY_H
 
-#ifndef  DRIVERS_ETH_FGMAC_PHY_H
-#define  DRIVERS_ETH_FGMAC_PHY_H
+#include "ftypes.h"
+#include "fassert.h"
+#include "fkernel.h"
+#include "fgmac.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -31,11 +39,6 @@ extern "C"
 #endif
 
 /***************************** Include Files *********************************/
-
-#include "ftypes.h"
-#include "fassert.h"
-#include "fkernel.h"
-#include "fgmac.h"
 
 /************************** Constant Definitions *****************************/
 #define FGMAC_PHY_MAX_NUM                         32U
@@ -205,6 +208,7 @@ FError FGmacReadPhyReg(FGmac *instance_p, u32 phy_address, u16 phy_reg, u16 *phy
 FError FGmacPhyCfgDeInitialize(FGmac *instance_p);
 
 FError FGmacPhyAwaken(FGmac *instance_p);
+
 #ifdef __cplusplus
 }
 #endif

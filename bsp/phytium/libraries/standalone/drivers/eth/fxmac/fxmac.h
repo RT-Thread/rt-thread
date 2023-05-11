@@ -14,28 +14,29 @@
  * FilePath: fxmac.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for gmac driver .Functions in this file are the minimum required functions
+ * for this driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
-#ifndef DRIVERS_ETH_F_XMAC_H
-#define DRIVERS_ETH_F_XMAC_H
+#ifndef FXMAC_H
+#define FXMAC_H
+
+#include "ftypes.h"
+#include "fassert.h"
+#include "ferror_code.h"
+#include "fxmac_hw.h"
+#include "fxmac_bdring.h"
+#include "fparameters.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "ftypes.h"
-#include "fassert.h"
-#include "ferror_code.h"
-
-#include "fxmac_hw.h"
-#include "fxmac_bdring.h"
-#include "fparameters.h"
 
 #define FXMAC_ERR_INVALID_PARAM FT_MAKE_ERRCODE(ErrModBsp, ErrBspEth, 0x1u)
 #define FXMAC_ERR_SG_LIST FT_MAKE_ERRCODE(ErrModBsp, ErrBspEth, 0x2u)
@@ -159,7 +160,7 @@ typedef enum
 #define FXMAC_MAX_VLAN_FRAME_SIZE (FXMAC_MTU + FXMAC_HDR_SIZE + \
                                    FXMAC_HDR_VLAN_SIZE + FXMAC_TRL_SIZE)
 #define FXMAC_MAX_VLAN_FRAME_SIZE_JUMBO (FXMAC_MTU_JUMBO + FXMAC_HDR_SIZE + \
-                                         FXMAC_HDR_VLAN_SIZE + FXMAC_TRL_SIZE)
+        FXMAC_HDR_VLAN_SIZE + FXMAC_TRL_SIZE)
 
 #define FXMAC_MAX_FRAME_SIZE_JUMBO (FXMAC_MTU_JUMBO + FXMAC_HDR_SIZE + FXMAC_TRL_SIZE)
 
@@ -185,6 +186,10 @@ typedef enum
 #define FXMAC_SPEED_5000 5000U
 #define FXMAC_SPEED_10000 10000U
 #define FXMAC_SPEED_25000 25000U
+
+/*  Capability mask bits */
+#define FXMAC_CAPS_ISR_CLEAR_ON_WRITE   0x00000001 /* irq status parameters need to be written to clear after they have been read */
+
 
 /** @name Direction identifiers
  *
@@ -226,6 +231,8 @@ typedef enum
     FXMAC_PHY_INTERFACE_MODE_RGMII,
     FXMAC_PHY_INTERFACE_MODE_XGMII,
     FXMAC_PHY_INTERFACE_MODE_USXGMII,
+    FXMAC_PHY_INTERFACE_MODE_5GBASER ,
+    FXMAC_PHY_INTERFACE_MODE_2500BASEX
 } FXmacPhyInterface;
 
 typedef struct
@@ -240,12 +247,13 @@ typedef struct
     u32 auto_neg; /* Enable auto-negotiation - when set active high, autonegotiation operation is enabled. */
     u32 pclk_hz;
     u32 max_queue_num; /* Number of Xmac Controller Queues  */
-    u32 tx_queue_id;   /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
-    u32 rx_queue_id;   /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
+    u32 tx_queue_id;   /* 0 ~ FXMAC_QUEUE_MAX_NUM ,Index queue number */
+    u32 rx_queue_id;   /* 0 ~ FXMAC_QUEUE_MAX_NUM ,Index queue number */
     u32 hotplug_irq_num;
     u32 dma_brust_length; /*  burst length */
     u32 network_default_config;
-    u32 queue_irq_num[FT_XMAC_QUEUE_MAX_NUM]; /* mac0 8个 ，其他的 4个 */
+    u32 queue_irq_num[FXMAC_QUEUE_MAX_NUM]; /* mac0 8个 ，其他的 4个 */
+    u32 caps; /*  */
 } FXmacConfig;
 
 typedef struct
@@ -261,6 +269,7 @@ typedef struct
     u32 is_started;
     u32 link_status; /* indicates link status ,FXMAC_LINKUP is link up ,FXMAC_LINKDOWN is link down,FXMAC_NEGOTIATING is need to negotiating*/
     u32 options;
+    u32 caps;   /*  Capability mask bits */
 
     FXmacQueue tx_bd_queue; /* Transmit Queue */
     FXmacQueue rx_bd_queue; /* Receive Queue */
@@ -302,6 +311,7 @@ FError FXmacSetMacAddress(FXmac *instance_p, u8 *address_ptr, u8 index);
 
 FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num);
 FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num);
+boolean FXmacUsxLinkStatus(FXmac *instance_p);
 
 void FXmacStart(FXmac *instance_p);
 void FXmacStop(FXmac *instance_p);
@@ -324,6 +334,12 @@ FError FXmacSetHandler(FXmac *instance_p, u32 handler_type, void *func_pointer, 
 void FXmacIntrHandler(s32 vector, void *args);
 
 void FXmacClearHash(FXmac *instance_p);
+
+
+/* debug */
+void FXmacDebugTxPrint(FXmac *instance_p);
+void FXmacDebugRxPrint(FXmac *instance_p);
+void FXmacDebugUsxPrint(FXmac *instance_p);
 
 #ifdef __cplusplus
 }

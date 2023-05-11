@@ -14,13 +14,13 @@
  * FilePath: fspim_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:08:10
- * Description:  This files is for
+ * Description:  This file is for providing spim interrupt func.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2021-12-3   init commit
- * 1.1   zhugengyu  2022-4-15   support test mode
+ * 1.0   zhugengyu  2021/12/3   init commit
+ * 1.1   zhugengyu  2022/4/15   support test mode
  */
 
 /***************************** Include Files *********************************/

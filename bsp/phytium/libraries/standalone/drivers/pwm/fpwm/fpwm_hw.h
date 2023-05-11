@@ -14,28 +14,29 @@
  * FilePath: fpwm_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * Description:  This file is for pwm register definition.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/15   init commit
  */
 
-#ifndef BSP_DRIVERS_FPWM_HW_H
-#define BSP_DRIVERS_FPWM_HW_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FPWM_HW_H
+#define FPWM_HW_H
 
 #include "fkernel.h"
 #include "ftypes.h"
 #include "fio.h"
 #include "fparameters.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* pwm register definitions */
-#define FPWM_BASE_ADR(n)        ((FPWM_CONTROL_BASE)+(n<<12)) /* 0<=n<=7 */
+#define FPWM_BASE_ADR(n)        ((FPWM_BASE_ADDR)+(n<<12)) /* 0<=n<=7 */
 
 #define FPWM0_BASE_ADR           FPWM_BASE_ADR(0)     /* PWM 0 base address */
 #define FPWM1_BASE_ADR           FPWM_BASE_ADR(1)     /* PWM 1 base address */
@@ -113,6 +114,7 @@ extern "C"
 
 /* pwm_ccr field */
 #define FPWM_CCR_MASK           GENMASK(15, 0)
+#define FPWM_CCR_GPIO	        BIT(16)
 
 /* pwm lsd cfg, lsd pwm sync control */
 #define FLSD_MIO_PWM_SYN_OFFSET 0x20

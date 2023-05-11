@@ -14,23 +14,26 @@
  * FilePath: fnand_toggle.h
  * Date: 2022-07-05 20:00:45
  * LastEditTime: 2022-07-05 20:00:45
- * Description:  This file is for
+ * Description:  This file is for toggle nand
  *
  * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 #ifndef DRIVERS_NAND_FNAND_TOGGLE_H
 #define DRIVERS_NAND_FNAND_TOGGLE_H
 
+
+#include "ftypes.h"
+#include "fnand.h"
+
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "ftypes.h"
-#include "fnand.h"
 
 
 /*
@@ -42,31 +45,31 @@ extern "C"
 
 #define TOGGLE_CMD_CHANGE_READ_COLUMN1 0x05 /* TOGGLE Change Read \
                       Column command (1st                         \
-                      cycle) */
+cycle) */
 #define TOGGLE_CMD_CHANGE_READ_COLUMN2 0xE0 /* TOGGLE Change Read \
                       Column command (2nd                         \
-                      cycle) */
+cycle) */
 #define TOGGLE_CMD_BLOCK_ERASE1 0x60        /* TOGGLE Block Erase \
-                          (1st cycle) */
+(1st cycle) */
 #define TOGGLE_CMD_BLOCK_ERASE2 0xD0        /* TOGGLE Block Erase \
-                          (2nd cycle) */
+(2nd cycle) */
 #define TOGGLE_CMD_READ_STATUS 0x70         /* TOGGLE Read status \
-                          command */
+command */
 #define TOGGLE_CMD_PAGE_PROG1 0x80          /* TOGGLE Page Program \
                           command (1st cycle)                      \
-                          */
+*/
 #define TOGGLE_CMD_PAGE_PROG2 0x10          /* TOGGLE Page Program \
                           command (2nd cycle)                      \
-                          */
+*/
 #define TOGGLE_CMD_CHANGE_WRITE_COLUMN 0x85 /* TOGGLE Change Write \
-                         Column command */
+Column command */
 #define TOGGLE_CMD_READ_ID 0x90             /* TOGGLE Read ID \
-                              command */
+command */
 #define TOGGLE_CMD_READ_PARAM_PAGE 0xEC     /* TOGGLE Read \
                           Parameter Page                   \
-                          command */
+command */
 #define TOGGLE_CMD_RESET 0xFF               /* TOGGLE Reset \
-                          command */
+command */
 
 #define TOGGLE_END_CMD_NONE 0xfff /* No End command */
 

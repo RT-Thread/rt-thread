@@ -5,20 +5,53 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART"
         default y
         select USE_SERIAL # sdk serial component
-        select ENABLE_Pl011_UART # select sdk pl011 driver
         select RT_USING_SERIAL
         if BSP_USING_UART
             config RT_USING_UART1
                 bool "Enable UART1"
                 default y
-
+            
             config RT_USING_UART0
                 bool "Enable UART0"
                 default n
 
         endif
 
+    menuconfig BSP_USING_SPI
+        bool "Enable Spi"
+        default y
+        select USE_SPI # sdk spi component
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config RT_USING_SPIM0
+                bool "Enable spim0"
+                default n
 
+            config RT_USING_SPIM1
+                bool "Enable spim1"
+                default n
+            
+            config RT_USING_SPIM2
+                bool "Enable spim2"
+                default y
+
+            config RT_USING_SPIM3
+                bool "Enable spim3"
+                default n
+        endif
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default y
+        select RT_USING_CAN
+        select RT_CAN_USING_HDR
+        select RT_CAN_USING_CANFD
+
+    menuconfig BSP_USING_QSPI
+        bool "Enable QSPI"
+        default y
+        select RT_USING_QSPI
+        select RT_USING_SPI
 
 endmenu
 

@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include "fdebug.h"
@@ -122,7 +122,7 @@ static int FXhciRootHubResetPort(FUsbDev *const dev, const int port)
     if (FUsbGenericHubWaitForPort(dev, port, 0, FXhciRootHubPortInReset,
                                   150, 1000) == 0)
     {
-        FUSB_INFO("xhci_rh: Reset timed out at port %d ", port);
+        FUSB_INFO("Xhci root hub: Reset timed out at port %d ", port);
     }
     else
     {
@@ -189,5 +189,5 @@ void FXhciRootHubInit(FUsbDev *dev)
 
     FUsbGenericHubInit(dev, num_ports, &FXHCI_ROOTHUB_OPS);
 
-    FUSB_INFO("xHCI: root hub init done ");
+    FUSB_INFO("Xhci: root hub init done. ");
 }

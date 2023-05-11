@@ -14,7 +14,7 @@
  * FilePath: fsdmmc_dma.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:51:25
- * Description:  This files is for
+ * Description:  This file is dma descriptormanagement API.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -22,15 +22,15 @@
  * 1.0   zhugengyu  2021/12/2    init
  */
 
-#ifndef  DRIVERS_MMC_FSDMMC_DMA_H
-#define  DRIVERS_MMC_FSDMMC_DMA_H
+#ifndef  FSDMMC_DMA_H
+#define  FSDMMC_DMA_H
+/***************************** Include Files *********************************/
+#include "ftypes.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-/***************************** Include Files *********************************/
-#include "ftypes.h"
 
 /************************** Constant Definitions *****************************/
 

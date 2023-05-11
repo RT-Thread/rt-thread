@@ -14,16 +14,22 @@
  * FilePath: fgmac.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for gmac driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
 
-#ifndef  DRIVERS_ETH_FGMAC_H
-#define  DRIVERS_ETH_FGMAC_H
+#ifndef  FGMAC_H
+#define  FGMAC_H
+
+#include "ftypes.h"
+#include "fassert.h"
+#include "ferror_code.h"
+#include "fkernel.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -31,11 +37,6 @@ extern "C"
 #endif
 
 /***************************** Include Files *********************************/
-
-#include "ftypes.h"
-#include "fassert.h"
-#include "ferror_code.h"
-#include "fkernel.h"
 
 #define FGMAC_PHY_MAX_NUM                         32U
 

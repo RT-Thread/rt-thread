@@ -102,12 +102,12 @@ XMAC 驱动程序的源文件包括，
         u32 auto_neg; /* Enable auto-negotiation - when set active high, autonegotiation operation is enabled. */
         u32 pclk_hz;
         u32 max_queue_num; /* Number of Xmac Controller Queues  */
-        u32 tx_queue_id;   /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
-        u32 rx_queue_id;   /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
+        u32 tx_queue_id;   /* 0 ~ FXMAC_QUEUE_MAX_NUM ,Index queue number */
+        u32 rx_queue_id;   /* 0 ~ FXMAC_QUEUE_MAX_NUM ,Index queue number */
         u32 hotplug_irq_num;
         u32 dma_brust_length; /*  burst length */
         u32 network_default_config; /* mac 控制器默认配置 */
-        u32 queue_irq_num[FT_XMAC_QUEUE_MAX_NUM]; /* mac0 8个 ，其他的 4个 */
+        u32 queue_irq_num[FXMAC_QUEUE_MAX_NUM]; /* mac0 8个 ，其他的 4个 */
     } FXmacConfig;
 ```
 

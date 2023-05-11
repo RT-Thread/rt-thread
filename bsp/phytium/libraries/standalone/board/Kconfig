@@ -11,19 +11,22 @@ menu "Board Configuration"
 
         config TARGET_D2000
             bool "D2000"
-
+            
         config TARGET_E2000Q
             bool "E2000Q"
             select TARGET_E2000
-
+        
         config TARGET_E2000D
             bool "E2000D"
             select TARGET_E2000
-
+        
         config TARGET_E2000S
             bool "E2000S"
             select TARGET_E2000
 
+#       config TARGET_TARDIGRADE
+#           bool "TARDIGRADE"
+                   
     endchoice # BUILD_TARGET_CHIP_TYPE
 
     # an invisible config to define common code of E2000 Q/D/S
@@ -43,7 +46,7 @@ menu "Board Configuration"
     config DEFAULT_DEBUG_PRINT_UART2
         bool "Use uart2"
     endchoice # DEBUG_PRINT_UART
-
+    
 
 endmenu
 

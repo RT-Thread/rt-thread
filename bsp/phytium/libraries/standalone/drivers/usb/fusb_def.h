@@ -19,20 +19,21 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#ifndef  DRIVERS_FUSB_DEF_H
-#define  DRIVERS_FUSB_DEF_H
+#ifndef  FUSB_DEF_H
+#define  FUSB_DEF_H
+
+/***************************** Include Files *********************************/
+
+#include "ftypes.h"
+
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-/***************************** Include Files *********************************/
-
-#include "ftypes.h"
 
 /************************** Constant Definitions *****************************/
 typedef enum

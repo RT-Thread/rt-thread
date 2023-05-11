@@ -19,7 +19,8 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2022-3-1     init commit
+ * 1.0   zhugengyu  2022/3/1     init commit
+ * 2.0   zhugengyu  2022/7/1     support e2000
  */
 
 
@@ -121,6 +122,7 @@ void FGpioSetInterruptMask(FGpioPin *const pin, boolean enable)
 
     FGpioWriteReg32(base_addr, FGPIO_INTMASK_OFFSET, mask_bits);
     FGpioWriteReg32(base_addr, FGPIO_INTEN_OFFSET, enable_bits);
+
     return;
 }
 
@@ -183,24 +185,24 @@ void FGpioSetInterruptType(FGpioPin *const pin, const FGpioIrqType type)
 
     switch (type)
     {
-    case FGPIO_IRQ_TYPE_EDGE_FALLING:
-        level |= BIT(index.pin); /* 边沿敏感型 */
-        polarity &= ~BIT(index.pin); /* 下降沿或低电平 */
-        break;
-    case FGPIO_IRQ_TYPE_EDGE_RISING:
-        level |= BIT(index.pin); /* 边沿敏感型 */
-        polarity |= BIT(index.pin); /* 上升沿或高电平 */
-        break;
-    case FGPIO_IRQ_TYPE_LEVEL_LOW:
-        level &= ~BIT(index.pin); /* 电平敏感型 */
-        polarity &= ~BIT(index.pin); /* 下降沿或低电平 */
-        break;
-    case FGPIO_IRQ_TYPE_LEVEL_HIGH:
-        level &= ~BIT(index.pin); /* 电平敏感型 */
-        polarity |= BIT(index.pin); /* 上升沿或高电平 */
-        break;
-    default:
-        break;
+        case FGPIO_IRQ_TYPE_EDGE_FALLING:
+            level |= BIT(index.pin); /* 边沿敏感型 */
+            polarity &= ~BIT(index.pin); /* 下降沿或低电平 */
+            break;
+        case FGPIO_IRQ_TYPE_EDGE_RISING:
+            level |= BIT(index.pin); /* 边沿敏感型 */
+            polarity |= BIT(index.pin); /* 上升沿或高电平 */
+            break;
+        case FGPIO_IRQ_TYPE_LEVEL_LOW:
+            level &= ~BIT(index.pin); /* 电平敏感型 */
+            polarity &= ~BIT(index.pin); /* 下降沿或低电平 */
+            break;
+        case FGPIO_IRQ_TYPE_LEVEL_HIGH:
+            level &= ~BIT(index.pin); /* 电平敏感型 */
+            polarity |= BIT(index.pin); /* 上升沿或高电平 */
+            break;
+        default:
+            break;
     }
 
     FGpioWriteReg32(base_addr, FGPIO_INTTYPE_LEVEL_OFFSET, level);
@@ -228,17 +230,19 @@ void FGpioInterruptHandler(s32 vector, void *param)
     u32 raw_status = FGpioReadReg32(base_addr, FGPIO_RAW_INTSTATUS_OFFSET);
 
 #if defined(FGPIO_VERSION_2) /* E2000 gpio 3 ~ 5 */
-    FASSERT_MSG(FGPIO_WITH_PIN_IRQ < instance->config.instance_id, "handle interrupt through pin !!!")
+    FASSERT_MSG(FGPIO_WITH_PIN_IRQ < instance->config.instance_id, "Handle interrupt through pin !!!")
 #endif
 
-    FGPIO_INFO("status: 0x%x, raw_status: 0x%x", status, raw_status);
+    FGPIO_INFO("status: 0x%x, raw_status: 0x%x.", status, raw_status);
     for (loop = FGPIO_PIN_0; loop < FGPIO_PIN_NUM; loop++)
     {
         if (status & BIT(loop))
         {
             pin = instance->pins[FGPIO_PORT_A][loop];
             if (NULL == pin)
+            {
                 continue;
+            }
 
             if (pin->irq_cb)
             {
@@ -252,7 +256,7 @@ void FGpioInterruptHandler(s32 vector, void *param)
             }
             else
             {
-                FGPIO_WARN("no irq handler callback for GPIO-%d-A-%d",
+                FGPIO_WARN("No irq handler callback for GPIO-%d-A-%d.",
                            instance->config.instance_id,
                            loop);
             }
@@ -283,7 +287,7 @@ void FGpioPinInterruptHandler(s32 vector, void *param)
     u32 status = FGpioReadReg32(base_addr, FGPIO_INTSTATUS_OFFSET);
     u32 raw_status = FGpioReadReg32(base_addr, FGPIO_RAW_INTSTATUS_OFFSET);
 
-    FGPIO_INFO("status: 0x%x, raw_status: 0x%x", status, raw_status);
+    FGPIO_INFO("status: 0x%x, raw_status: 0x%x.", status, raw_status);
     if (pin->irq_cb)
     {
         pin->irq_cb(0U, pin->irq_cb_params);
@@ -296,7 +300,7 @@ void FGpioPinInterruptHandler(s32 vector, void *param)
     }
     else
     {
-        FGPIO_WARN("no irq handler callback for GPIO-%d-A-%d",
+        FGPIO_WARN("No irq handler callback for GPIO-%d-A-%d.",
                    pin->index.ctrl,
                    pin->index.pin);
     }

@@ -12,13 +12,14 @@
  *
  *
  * FilePath: fpcie_misc.c
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:59:17
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:59:17
+ * Description: This file is for pcie miscellaneous interrupt operation. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
 
@@ -43,8 +44,6 @@
 #define FPCIE_INTR_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FPCIE_INTR_DEBUG_TAG, format, ##__VA_ARGS__)
 /************************** Function Prototypes ******************************/
 
-
-
 FError FPcieMiscSetHandler(FPcie *instance_p, u32 handler_type,
                            void *func_pointer, void *call_back_ref)
 {
@@ -55,29 +54,29 @@ FError FPcieMiscSetHandler(FPcie *instance_p, u32 handler_type,
 
     switch (handler_type)
     {
-    case FPCIE_HANDLER_DMASEND:
-        status = FT_SUCCESS;
-        instance_p->fpcie_dma_tx_cb = ((FPcieIrqCallBack)(void *)func_pointer);
-        instance_p->dma_tx_args = call_back_ref;
-        break;
-    case FPCIE_HANDLER_DMARECV:
-        status = FT_SUCCESS;
-        instance_p->fpcie_dma_rx_cb = ((FPcieIrqCallBack)(void *)func_pointer);
-        instance_p->dma_rx_args = call_back_ref;
-        break;
-    case FPCIE_HANDLER_DMASEND_ERROR:
-        status = FT_SUCCESS;
-        instance_p->fpcie_dma_tx_error_cb = ((FPcieIrqCallBack)(void *)func_pointer);
-        instance_p->dma_tx_error_args = call_back_ref;
-        break;
-    case FPCIE_HANDLER_DMARECV_ERROR:
-        status = FT_SUCCESS;
-        instance_p->fpcie_dma_rx_error_cb = ((FPcieIrqCallBack)(void *)func_pointer);
-        instance_p->dma_rx_error_args = call_back_ref;
-        break;
-    default:
-        status = FPCIE_ERR_INVALID_PARAM;
-        break;
+        case FPCIE_HANDLER_DMASEND:
+            status = FT_SUCCESS;
+            instance_p->fpcie_dma_tx_cb = ((FPcieIrqCallBack)(void *)func_pointer);
+            instance_p->dma_tx_args = call_back_ref;
+            break;
+        case FPCIE_HANDLER_DMARECV:
+            status = FT_SUCCESS;
+            instance_p->fpcie_dma_rx_cb = ((FPcieIrqCallBack)(void *)func_pointer);
+            instance_p->dma_rx_args = call_back_ref;
+            break;
+        case FPCIE_HANDLER_DMASEND_ERROR:
+            status = FT_SUCCESS;
+            instance_p->fpcie_dma_tx_error_cb = ((FPcieIrqCallBack)(void *)func_pointer);
+            instance_p->dma_tx_error_args = call_back_ref;
+            break;
+        case FPCIE_HANDLER_DMARECV_ERROR:
+            status = FT_SUCCESS;
+            instance_p->fpcie_dma_rx_error_cb = ((FPcieIrqCallBack)(void *)func_pointer);
+            instance_p->dma_rx_error_args = call_back_ref;
+            break;
+        default:
+            status = FPCIE_ERR_INVALID_PARAM;
+            break;
     }
     return status;
 }
@@ -121,8 +120,8 @@ void FPcieMiscIrq(s32 vector, void *args)
         control_address = instance_p->config.control_c5_address;
     }
 
-    FPCIE_INTR_DEBUG_I("pcie misc irq!");
-    FPCIE_INTR_DEBUG_I("pcie dma irq status : 0x%08lx", FPCIE_READREG(control_address, FPCIE_REG_DMA_INT_STATUS_OFFSET));
+    FPCIE_INTR_DEBUG_I("Pcie misc irq!");
+    FPCIE_INTR_DEBUG_I("Pcie dma irq status : 0x%08lx", FPCIE_READREG(control_address, FPCIE_REG_DMA_INT_STATUS_OFFSET));
 
     reg_value = FPCIE_READREG(control_address, FPCIE_REG_DMA_INT_STATUS_OFFSET);
 
