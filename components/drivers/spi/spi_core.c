@@ -90,7 +90,7 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
 rt_err_t rt_spi_configure(struct rt_spi_device        *device,
                           struct rt_spi_configuration *cfg)
 {
-    rt_err_t result;
+    rt_err_t result = -RT_ERROR;
 
     RT_ASSERT(device != RT_NULL);
 
