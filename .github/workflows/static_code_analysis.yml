@@ -1,6 +1,9 @@
 name: Static code analysis
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
     branches:
       - master
@@ -10,13 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     name: Static code analysis
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: master #${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: 3.8
-      
-      - name: cppcheck
+
+      - name: CPP Check
         shell: bash
         run: |
           sudo apt-get update
@@ -28,4 +36,4 @@ jobs:
           ls
           git branch -a
           python3 ${GITHUB_WORKSPACE}/tools/format_ignore.py ${GITHUB_WORKSPACE}
-          python3 ${GITHUB_WORKSPACE}/tools/cppcheck.py
+          python3 ${GITHUB_WORKSPACE}/tools/cppcheck.py ${GITHUB_WORKSPACE}

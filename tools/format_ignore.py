@@ -12,9 +12,11 @@ import argparse
 
 IGNORE_FORMAT_FILENAME = ".ignore_format.yml"
 OUTPUT_FILENAME = "ignore_files.txt"
+REPO_PATH  = ""
 
 def add_file(path):
 	with open(OUTPUT_FILENAME, 'a') as output_file:
+		path = path.strip()[len(REPO_PATH):]
 		output_file.write(path + '\n')
 
 def add_dir(path):
@@ -22,6 +24,7 @@ def add_dir(path):
 		for file in files:
 			abs_file_path = os.path.abspath(os.path.join(root, file))
 			with open(OUTPUT_FILENAME, 'a') as output_file:
+				abs_file_path = abs_file_path[len(REPO_PATH):]
 				output_file.write(abs_file_path + '\n')
 
 def process_ignore_format_file(ignore_file_path, root_path):
@@ -30,7 +33,7 @@ def process_ignore_format_file(ignore_file_path, root_path):
 		for path in ignore_data.get('dir_path', []):
 			abs_path = os.path.abspath(os.path.join(root_path, path))
 			if os.path.isfile(abs_path):
-				add_file(abs_path)
+				add_file(path)
 			elif os.path.isdir(abs_path):
 				add_dir(abs_path)
 
@@ -38,8 +41,14 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Process a path and find ignore_format.yml files')
 	parser.add_argument('path', type=str, help='path to process')
 	args = parser.parse_args()
+	REPO_PATH = args.path 
+ 
+	print("repo path is " + REPO_PATH)
+	print("In the file that is generating the list of files to be ignored by cppcheck!")
 
-	for root, dirs, files in os.walk(args.path):
+	for root, dirs, files in os.walk(REPO_PATH):
 		if IGNORE_FORMAT_FILENAME in files:
 			ignore_file_path = os.path.abspath(os.path.join(root, IGNORE_FORMAT_FILENAME))
 			process_ignore_format_file(ignore_file_path, args.path)
+   
+	print("Complete generation")
