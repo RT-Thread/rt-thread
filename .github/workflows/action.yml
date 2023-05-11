@@ -355,6 +355,6 @@ jobs:
           for bsp in $(echo $SRTT_BSP | tr ',' '\n'); do
             count=$((count+1))
             echo "Compiling BSP: ==$count=== $bsp ===="
-            pushd bsp/$bsp && scons --pyconfig-silent && pkgs --update && popd
+            pushd bsp/$bsp && pkgs --update && popd
             scons -C bsp/$bsp -j8
           done
