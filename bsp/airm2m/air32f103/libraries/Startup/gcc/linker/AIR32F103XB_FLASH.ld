@@ -4,14 +4,14 @@
 **  File        : AIR32F103XB_FLASH.ld
 **
 **  Abstract    : Linker script for AIR32F103xB Device with
-**                128KByte FLASH, 20KByte RAM
+**                128KByte FLASH, 96KByte RAM
 **
 **                Set heap size, stack size and stack location according
 **                to application requirements.
 **
 **                Set memory bank area and size if external memory is used.
 **
-**  Target      : STMicroelectronics AIR32
+**  Target      : AIR32
 **
 **
 **  Distribution: The file is distributed as is, without any warranty
