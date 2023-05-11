@@ -13,6 +13,10 @@
 #include <drivers/usb_host.h>
 #include "mass.h"
 
+#define DBG_TAG    "udisk"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #ifdef RT_USBH_MSTORAGE
 
 #define UDISK_MAX_COUNT        8
@@ -313,7 +317,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
             struct ustor_data* data = rt_malloc(sizeof(struct ustor_data));
             if (data == RT_NULL)
             {
-                rt_kprintf("allocate partition data buffer failed\n");
+                LOG_E("ERROR: Allocate partition data buffer failed.");
                 continue;
             }
             rt_memset(data, 0, sizeof(struct ustor_data));
@@ -356,7 +360,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
                 struct ustor_data* data = rt_malloc(sizeof(struct ustor_data));
                 if (data == RT_NULL)
                 {
-                    rt_kprintf("allocate partition data buffer failed\n");
+                    LOG_E("ERROR: Allocate partition data buffer failed.");
                     break;
                 }
                 rt_memset(data, 0, sizeof(struct ustor_data));
