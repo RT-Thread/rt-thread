@@ -116,7 +116,6 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
             {
                 /* current device is using, re-configure SPI bus */
                 result = device->bus->ops->configure(device, &device->config);
-
                 if (result != RT_EOK)
                 {
                     /* configure SPI bus failed */
