@@ -114,15 +114,26 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
         {
             if (device->bus->owner == device)
             {
-                device->bus->ops->configure(device, &device->config);
+                /* current device is using, re-configure SPI bus */
+                result = device->bus->ops->configure(device, &device->config);
+
+                if (result != RT_EOK)
+                {
+                    /* configure SPI bus failed */
+                    LOG_E("SPI device %s configuration failed", device->parent.parent.name);
+                }
             }
 
             /* release lock */
             rt_mutex_release(&(device->bus->lock));
         }
     }
+    else
+    {
+        result = RT_EOK;
+    }
 
-    return RT_EOK;
+    return result;
 }
 
 rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
