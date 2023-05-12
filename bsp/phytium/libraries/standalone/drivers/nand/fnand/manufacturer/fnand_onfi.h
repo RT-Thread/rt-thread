@@ -14,11 +14,12 @@
  * FilePath: fnand_onfi.h
  * Date: 2022-07-05 19:10:47
  * LastEditTime: 2022-07-05 19:10:47
- * Description:  This file is for
+ * Description:  This file is for onfi type nand
  *
  * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 #ifndef DRIVERS_NAND_FNAND_ONFI_H
 #define DRIVERS_NAND_FNAND_ONFI_H
@@ -26,12 +27,16 @@
 #include "ftypes.h"
 #include "fnand.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define ONFI_CMD_READ_ID 0x90             /* ONFI Read ID \
-                              command */
+command */
 #define ONFI_CMD_READ_PARAM_PAGE 0xEC     /* ONFI Read \
                           Parameter Page                   \
-                          command */
+command */
 
 
 #define ONFI_END_CMD_NONE 0xfff /* No End command */
@@ -103,5 +108,8 @@ struct OnfiNandGeometry
     u16 crc;
 } __attribute__((__packed__));
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif // !1

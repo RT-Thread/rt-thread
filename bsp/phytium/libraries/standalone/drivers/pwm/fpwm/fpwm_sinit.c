@@ -13,12 +13,13 @@
  *
  * FilePath: fpwm_sinit.c
  * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * LastEditTime: 2022-04-25 11:45:05
+ * Description:  This file is for pwm static variables implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/25   init commit
  */
 
 
@@ -28,7 +29,7 @@
 #include "fparameters.h"
 #include "fassert.h"
 
-extern FPwmConfig FPwmConfigTbl[FPWM_INSTANCE_NUM];
+extern FPwmConfig FPwmConfigTbl[FPWM_NUM];
 
 /************************** Constant Definitions *****************************/
 
@@ -46,14 +47,14 @@ extern FPwmConfig FPwmConfigTbl[FPWM_INSTANCE_NUM];
  * @return {*}
  * @param {u32} instanceId, id of pwm ctrl
  */
-const FPwmConfig *FPwmLookupConfig(FPwmInstance instance_id)
+const FPwmConfig *FPwmLookupConfig(u32 instance_id)
 {
     const FPwmConfig *pconfig = NULL;
-    FASSERT(instance_id < FPWM_INSTANCE_NUM);
+    FASSERT(instance_id < FPWM_NUM);
 
     u32 index = 0;
 
-    for (index = 0; index < (u32)FPWM_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FPWM_NUM; index++)
     {
         if (FPwmConfigTbl[index].instance_id == instance_id)
         {

@@ -14,11 +14,12 @@
  * FilePath: fadc_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * Description: This file is for adc static variables implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/25   init commit
  */
 
 
@@ -29,7 +30,7 @@
 #include "fadc.h"
 #include "fassert.h"
 
-extern FAdcConfig FAdcConfigTbl[FADC_INSTANCE_NUM];
+extern FAdcConfig FAdcConfigTbl[FADC_NUM];
 
 /************************** Constant Definitions *****************************/
 
@@ -44,17 +45,17 @@ extern FAdcConfig FAdcConfigTbl[FADC_INSTANCE_NUM];
 /**
  * @name: FAdcLookupConfig
  * @msg:  get default configuration of specific adc id.
- * @param {FAdcInstance} instance_id, instance id of FADC controller
+ * @param {u32} instance_id, instance id of FADC controller
  * @return {FAdcConfig*} Default configuration parameters of FADC
  */
-const FAdcConfig *FAdcLookupConfig(FAdcInstance instance_id)
+const FAdcConfig *FAdcLookupConfig(u32 instance_id)
 {
     const FAdcConfig *pconfig = NULL;
-    FASSERT(instance_id < FADC_INSTANCE_NUM);
+    FASSERT(instance_id < FADC_NUM);
 
     u32 index = 0;
 
-    for (index = 0; index < (u32)FADC_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FADC_NUM; index++)
     {
         if (FAdcConfigTbl[index].instance_id == instance_id)
         {

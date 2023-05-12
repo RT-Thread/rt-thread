@@ -5,17 +5,24 @@ ENTRY(_boot)
 
 SECTIONS
 {
-    . = 0x80100000;
+    . = 0x80080000;
 
     .text :
     {
 
         *(.boot)
         . = ALIGN(64);
-
+        
         *(.vectors)
         *(.text)
         *(.text.*)
+
+        /* section information for utest */
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+
 
         /* section information for finsh shell */
         . = ALIGN(4);
@@ -41,6 +48,13 @@ SECTIONS
         __rt_init_end = .;
     } =0
     __text_end = .;
+
+    .ARM.exidx   :
+    {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
+    }
 
     __rodata_start = .;
     .rodata   : { *(.rodata) *(.rodata.*) }

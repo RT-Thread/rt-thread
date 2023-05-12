@@ -14,19 +14,16 @@
  * FilePath: fnand.h
  * Date: 2022-05-07 15:40:42
  * LastEditTime: 2022-05-07 15:40:42
- * Description:  This files is for
+ * Description:  This file is for  functions in this file are the minimum required functions
+ * for this driver. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
-#ifndef DRIVERS_NAND_FNAND_H
-#define DRIVERS_NAND_FNAND_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FNAND_H
+#define FNAND_H
 
 
 #include "ftypes.h"
@@ -35,6 +32,13 @@ extern "C"
 #include "fnand_timing.h"
 #include "fparameters.h"
 #include "fkernel.h"
+
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 
 #define FNAND_ERR_OPERATION FT_CODE_ERR(ErrModBsp, ErrNand, 0x1u)
 #define FNAND_ERR_INVAILD_PARAMETER FT_CODE_ERR(ErrModBsp, ErrNand, 0x2u)
@@ -52,9 +56,9 @@ extern "C"
 
 #define FNAND_MAX_BLOCKS 32768    /* Max number of Blocks */
 #define FNAND_MAX_PAGE_SIZE 16384 /* Max page size of NAND \
-                    flash */
+flash */
 #define FNAND_MAX_SPARE_SIZE 1024  /* Max spare bytes of a NAND \
-                    flash page */
+flash page */
 
 
 /* dma */

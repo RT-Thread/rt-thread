@@ -14,7 +14,7 @@
  * FilePath: fsdio.c
  * Date: 2022-05-26 16:27:54
  * LastEditTime: 2022-05-26 16:27:54
- * Description:  This files is for SDIO user function implementation
+ * Description:  This file is for SDIO user function implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -67,18 +67,20 @@ FError FSdioCfgInitialize(FSdio *const instance_p, const FSdioConfig *input_conf
 
     if (FT_COMPONENT_IS_READY == instance_p->is_ready)
     {
-        FSDIO_WARN("device is already initialized!!!");
+        FSDIO_WARN("Device is already initialized!!!");
     }
 
     if (&instance_p->config != input_config_p)
+    {
         instance_p->config = *input_config_p;
+    }
 
     ret = FSdioReset(instance_p); /* reset the device */
 
     if (FSDIO_SUCCESS == ret)
     {
         instance_p->is_ready = FT_COMPONENT_IS_READY;
-        FSDIO_INFO("device initialize success !!!");
+        FSDIO_INFO("Device initialize success !!!");
     }
 
     return ret;
@@ -125,7 +127,7 @@ FError FSdioSetClkFreq(FSdio *const instance_p, u32 input_clk_hz)
     u32 first_uhs_div, tmp_ext_reg, div_reg;
     FError ret = FSDIO_SUCCESS;
 
-    FSDIO_INFO("set clk as %ld", input_clk_hz);
+    FSDIO_INFO("set clk as %ld.", input_clk_hz);
 
     /* must set 2nd stage clcok first then set 1st stage clock */
     /* experimental uhs setting  --> 2nd stage clock, below setting parameters get from
@@ -149,18 +151,22 @@ FError FSdioSetClkFreq(FSdio *const instance_p, u32 input_clk_hz)
     /* update uhs setting */
     ret = FSdioUpdateExternalClk(base_addr, tmp_ext_reg);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
     FSdioSetClock(base_addr, FALSE); /* disable clock */
 
     /* send private cmd to update clock */
     ret = FSdioSendPrivateCmd(base_addr, FSDIO_CMD_UPD_CLK, 0U);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* experimental clk divide setting -- 1st stage clock */
     first_uhs_div = 1 + FSDIO_UHS_CLK_DIV_GET(tmp_ext_reg);
-    div = FSDIO_CLK_RATE_HZ / (2 * first_uhs_div * input_clk_hz);
+    div = FSDIO_CLK_FREQ_HZ / (2 * first_uhs_div * input_clk_hz);
     if (div > 2)
     {
         sample = div / 2 + 1;
@@ -179,18 +185,41 @@ FError FSdioSetClkFreq(FSdio *const instance_p, u32 input_clk_hz)
                FSDIO_READ_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET),
                FSDIO_READ_REG(base_addr, FSDIO_CLKDIV_OFFSET));
 
-    FSDIO_INFO("UHS_REG_EXT ext: 0x%x, CLKDIV: 0x%x",
-               FSDIO_READ_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET),
-               FSDIO_READ_REG(base_addr, FSDIO_CLKDIV_OFFSET));
-
     FSdioSetClock(base_addr, TRUE); /* enable clock */
 
     /* update clock for 1 stage clock */
     ret = FSdioSendPrivateCmd(base_addr, FSDIO_CMD_UPD_CLK, 0U);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
+    FSDIO_INFO("FSdioSetClkFreq done.");
     return ret;
+}
+
+/**
+ * @name: FSdioGetClkFreq
+ * @msg: Get the real Card clock freqency
+ * @return {u32} real clock freqency in Hz
+ * @param {FSdio} *instance_p, SDIO controller instance
+ */
+u32 FSdioGetClkFreq(FSdio *const instance_p)
+{
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+
+    u32 uhs_reg_val = FSDIO_READ_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET);
+    u32 first_uhs_div = 1 + FSDIO_UHS_CLK_DIV_GET(uhs_reg_val);
+
+    u32 div_reg_val = FSDIO_READ_REG(base_addr, FSDIO_CLKDIV_OFFSET);
+    u32 div = FSDIO_CLK_DIVDER_GET(div_reg_val);
+
+    FSDIO_INFO("uhs_reg_val = 0x%x, div_reg_val = 0x%x", uhs_reg_val, div_reg_val);
+    FSDIO_INFO("first_div = %d, second_div = %d", first_uhs_div, div);
+    u32 real_clk_hz = FSDIO_CLK_FREQ_HZ / (2 * first_uhs_div * div);
+
+    return real_clk_hz;
 }
 
 /**
@@ -213,7 +242,7 @@ static FError FSdioWaitClkReady(uintptr base_addr, int retries)
 
     if (!(reg_val & FSDIO_CLK_READY) && (retries <= 0))
     {
-        FSDIO_ERROR("wait clk ready timeout !!! status: 0x%x",
+        FSDIO_ERROR("Wait clk ready timeout !!! status: 0x%x",
                     reg_val);
         return FSDIO_ERR_TIMEOUT;
     }
@@ -239,7 +268,9 @@ static FError FSdioUpdateExternalClk(uintptr base_addr, u32 uhs_reg_val)
     {
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_GPIO_OFFSET);
         if (--retries <= 0)
+        {
             break;
+        }
     }
     while (!(reg_val & FSDIO_CLK_READY));
 
@@ -263,12 +294,16 @@ FError FSdioResetCtrl(uintptr base_addr, u32 reset_bits)
     {
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_CNTRL_OFFSET);
         if (--retries <= 0)
+        {
             break;
+        }
     }
     while (reset_bits & reg_val);
 
     if (retries <= 0)
+    {
         return FSDIO_ERR_TIMEOUT;
+    }
 
     return FSDIO_SUCCESS;
 }
@@ -290,11 +325,59 @@ FError FSdioResetBusyCard(uintptr base_addr)
         FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_CONTROLLER_RESET);
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_STATUS_OFFSET);
         if (--retries <= 0)
+        {
             break;
+        }
     }
     while (reg_val & FSDIO_STATUS_DATA_BUSY);
 
     return (retries <= 0) ? FSDIO_ERR_BUSY : FSDIO_SUCCESS;
+}
+
+/**
+ * @name: FSdioPollWaitBusyCard
+ * @msg: poll wait until card not busy
+ * @return {FError} FSDIO_SUCCESS if exit with card not busy
+ * @param {FSdio *const} instance_p, instance of controller
+ */
+FError FSdioPollWaitBusyCard(FSdio *const instance_p)
+{
+    FASSERT(instance_p);
+    FASSERT(instance_p->relax_handler);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 reg_val;
+    FError err = FSDIO_SUCCESS;
+    int retries = FSDIO_TIMEOUT;
+    const u32 busy_bits = FSDIO_STATUS_DATA_BUSY | FSDIO_STATUS_DATA_STATE_MC_BUSY;
+
+    reg_val = FSDIO_READ_REG(base_addr, FSDIO_STATUS_OFFSET);
+    if (reg_val & busy_bits)
+    {
+        FSDIO_WARN("Card is busy, waiting ...");
+    }
+
+    do
+    {
+        reg_val = FSDIO_READ_REG(base_addr, FSDIO_STATUS_OFFSET);
+        if (--retries <= 0)
+        {
+            break;
+        }
+
+        if (instance_p->relax_handler)
+        {
+            instance_p->relax_handler();    /* wait card busy could be time-consuming */
+        }
+    }
+    while (reg_val & busy_bits);   /* wait busy bits empty */
+
+    if (--retries <= 0)
+    {
+        FSDIO_ERROR("Wait card busy timeout !!!");
+        err = FSDIO_ERR_TIMEOUT;
+    }
+
+    return err;
 }
 
 /**
@@ -315,12 +398,16 @@ FError FSdioRestartClk(uintptr base_addr)
     {
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_CMD_OFFSET);
         if (--retries <= 0)
+        {
             break;
+        }
     }
     while (reg_val & FSDIO_CMD_START);
 
     if (retries <= 0)
+    {
         return FSDIO_ERR_TIMEOUT;
+    }
 
     /* update clock */
     FSdioSetClock(base_addr, FALSE);
@@ -330,7 +417,9 @@ FError FSdioRestartClk(uintptr base_addr)
 
     ret = FSdioUpdateExternalClk(base_addr, uhs);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
     FSDIO_WRITE_REG(base_addr, FSDIO_CLKDIV_OFFSET, clk_div);
 
@@ -376,7 +465,7 @@ static FError FSdioReset(FSdio *const instance_p)
     ret = FSdioUpdateExternalClk(base_addr, reg_val);
     if (FSDIO_SUCCESS != ret)
     {
-        FSDIO_ERROR("update extern clock failed !!!");
+        FSDIO_ERROR("Update extern clock failed !!!");
         return ret;
     }
 
@@ -387,15 +476,19 @@ static FError FSdioReset(FSdio *const instance_p)
 
     /* set voltage as 3.3v */
     if (FSDIO_SD_1_8V_VOLTAGE == instance_p->config.voltage)
+    {
         FSdioSetVoltage1_8V(base_addr, TRUE);
+    }
     else
+    {
         FSdioSetVoltage1_8V(base_addr, FALSE);
+    }
 
     /* reset controller and card */
     ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET | FSDIO_CNTRL_DMA_RESET);
     if (FSDIO_SUCCESS != ret)
     {
-        FSDIO_ERROR("reset controller failed !!!");
+        FSDIO_ERROR("Reset controller failed !!!");
         return ret;
     }
 
@@ -403,15 +496,19 @@ static FError FSdioReset(FSdio *const instance_p)
     ret = FSdioSendPrivateCmd(base_addr, FSDIO_CMD_UPD_CLK, 0U);
     if (FSDIO_SUCCESS != ret)
     {
-        FSDIO_ERROR("update clock failed !!!");
+        FSDIO_ERROR("Update clock failed !!!");
         return ret;
     }
 
     /* reset card for no-removeable media, e.g. eMMC */
     if (TRUE == instance_p->config.non_removable)
+    {
         FSDIO_SET_BIT(base_addr, FSDIO_CARD_RESET_OFFSET, FSDIO_CARD_RESET_ENABLE);
+    }
     else
+    {
         FSDIO_CLR_BIT(base_addr, FSDIO_CARD_RESET_OFFSET, FSDIO_CARD_RESET_ENABLE);
+    }
 
     /* clear interrupt status */
     FSDIO_WRITE_REG(base_addr, FSDIO_INT_MASK_OFFSET, 0U);
@@ -424,7 +521,9 @@ static FError FSdioReset(FSdio *const instance_p)
 
     /* enable card detect interrupt */
     if (FALSE == instance_p->config.non_removable)
+    {
         FSDIO_SET_BIT(base_addr, FSDIO_INT_MASK_OFFSET, FSDIO_INT_CD_BIT);
+    }
 
     /* enable controller and internal DMA */
     FSDIO_SET_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_INT_ENABLE | FSDIO_CNTRL_USE_INTERNAL_DMAC);
@@ -437,7 +536,7 @@ static FError FSdioReset(FSdio *const instance_p)
     FSdioSetDescriptor(base_addr, (uintptr)NULL); /* set decriptor list as NULL */
     FSdioResetIDMA(base_addr);
 
-    FSDIO_INFO("init hardware done !!!");
+    FSDIO_INFO("Init hardware done !!!");
     return ret;
 }
 
@@ -456,27 +555,39 @@ FError FSdioRestart(FSdio *const instance_p)
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FSDIO_ERROR("device is not yet initialized!!!");
+        FSDIO_ERROR("Device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
     /* reset controller */
     ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* reset controller if in busy state */
     ret = FSdioResetBusyCard(base_addr);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* reset clock */
     ret = FSdioRestartClk(base_addr);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* reset internal DMA */
     FSdioResetIDMA(base_addr);
 
     return ret;
+}
+
+void FSdioRegisterRelaxHandler(FSdio *const instance_p, FSdioRelaxHandler relax_handler)
+{
+    FASSERT(instance_p);
+    instance_p->relax_handler = relax_handler;
 }

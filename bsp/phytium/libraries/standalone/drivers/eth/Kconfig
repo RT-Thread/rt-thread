@@ -4,11 +4,11 @@ menu "Eth Configuration"
         bool
         prompt "Use FXMAC"
         default n
-
+    
     config ENABLE_FGMAC
         bool
         prompt "Use FGMAC"
-        default n
+        default n   
 
     if  ENABLE_FGMAC
         source "$STANDALONE_DIR/drivers/eth/fgmac/Kconfig"
@@ -17,6 +17,6 @@ menu "Eth Configuration"
     if  ENABLE_FXMAC
         source "$STANDALONE_DIR/drivers/eth/fxmac/Kconfig"
     endif
-
+    
 endmenu
 

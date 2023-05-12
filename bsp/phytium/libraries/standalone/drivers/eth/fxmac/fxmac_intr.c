@@ -14,11 +14,12 @@
  * FilePath: fxmac_intr.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file contains functions related to interrupt handling.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
 #include "fxmac.h"
@@ -61,29 +62,29 @@ FError FXmacSetHandler(FXmac *instance_p, u32 handler_type,
 
     switch (handler_type)
     {
-    case FXMAC_HANDLER_DMASEND:
-        instance_p->send_irq_handler = ((FXmacIrqHandler)(void *)func_pointer);
-        instance_p->send_args = call_back_ref;
-        break;
-    case FXMAC_HANDLER_DMARECV:
-        instance_p->recv_irq_handler = ((FXmacIrqHandler)(void *)func_pointer);
-        instance_p->recv_args = call_back_ref;
-        break;
-    case FXMAC_HANDLER_ERROR:
-        instance_p->error_irq_handler = ((FXmacErrorIrqHandler)(void *)func_pointer);
-        instance_p->error_args = call_back_ref;
-        break;
-    case FXMAC_HANDLER_LINKCHANGE:
-        instance_p->link_change_handler = ((FXmacIrqHandler)(void *)func_pointer);
-        instance_p->link_change_args = call_back_ref;
-        break;
-    case FXMAC_HANDLER_RESTART:
-        instance_p->restart_handler = ((FXmacIrqHandler)(void *)func_pointer);
-        instance_p->restart_args = call_back_ref;
-        break;
-    default:
-        status = (FError)(FXMAC_ERR_INVALID_PARAM);
-        break;
+        case FXMAC_HANDLER_DMASEND:
+            instance_p->send_irq_handler = ((FXmacIrqHandler)(void *)func_pointer);
+            instance_p->send_args = call_back_ref;
+            break;
+        case FXMAC_HANDLER_DMARECV:
+            instance_p->recv_irq_handler = ((FXmacIrqHandler)(void *)func_pointer);
+            instance_p->recv_args = call_back_ref;
+            break;
+        case FXMAC_HANDLER_ERROR:
+            instance_p->error_irq_handler = ((FXmacErrorIrqHandler)(void *)func_pointer);
+            instance_p->error_args = call_back_ref;
+            break;
+        case FXMAC_HANDLER_LINKCHANGE:
+            instance_p->link_change_handler = ((FXmacIrqHandler)(void *)func_pointer);
+            instance_p->link_change_args = call_back_ref;
+            break;
+        case FXMAC_HANDLER_RESTART:
+            instance_p->restart_handler = ((FXmacIrqHandler)(void *)func_pointer);
+            instance_p->restart_args = call_back_ref;
+            break;
+        default:
+            status = (FError)(FXMAC_ERR_INVALID_PARAM);
+            break;
     }
     return status;
 }
@@ -97,34 +98,34 @@ FError FXmacSetHandler(FXmac *instance_p, u32 handler_type,
  * @return {*}
  * @note 目前中断只支持单queue的情况
  */
+
 void FXmacIntrHandler(s32 vector, void *args)
 {
     u32 reg_isr;
     u32 reg_qx_isr;
     u32 reg_temp;
     u32 reg_ctrl;
-    u32 tx_queue_id; /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
-    u32 rx_queue_id; /* 0 ~ FT_XMAC_QUEUE_MAX_NUM ,Index queue number */
+    u32 tx_queue_id; /* 0 ~ FXMAC_QUEUE_MAX_NUM ,Index queue number */
+    u32 rx_queue_id; /* 0 ~ FXMAC_QUEUE_MAX_NUM ,Index queue number */
     FXmac *instance_p = (FXmac *)args;
     FASSERT(instance_p != NULL);
     FASSERT(instance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
 
     tx_queue_id = instance_p->tx_bd_queue.queue_id;
     rx_queue_id = instance_p->rx_bd_queue.queue_id;
-    FASSERT((rx_queue_id < FT_XMAC_QUEUE_MAX_NUM) && (tx_queue_id < FT_XMAC_QUEUE_MAX_NUM))
+    FASSERT((rx_queue_id < FXMAC_QUEUE_MAX_NUM) && (tx_queue_id < FXMAC_QUEUE_MAX_NUM))
 
     /* This ISR will try to handle as many interrupts as it can in a single
      * call. However, in most of the places where the user's error handler
      * is called, this ISR exits because it is expected that the user will
      * reset the device in nearly all instances.
      */
+    reg_isr = FXMAC_READREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET);
 
     if ((u32)vector == instance_p->config.queue_irq_num[tx_queue_id])
     {
         if (tx_queue_id == 0)
         {
-            reg_isr = FXMAC_READREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET);
-
             if ((reg_isr & FXMAC_IXR_TXCOMPL_MASK) != 0x00000000U)
             {
                 /* Clear TX status register TX complete indication but preserve
@@ -141,12 +142,15 @@ void FXmacIntrHandler(s32 vector, void *args)
                 }
 
                 /* add */
-                FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TXCOMPL_MASK);
+                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                {
+                    FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TXCOMPL_MASK);
+                }
             }
 
             /* Transmit error conditions interrupt */
             if (((reg_isr & FXMAC_IXR_TX_ERR_MASK) != 0x00000000U) &&
-                    (!(reg_isr & FXMAC_IXR_TXCOMPL_MASK) != 0x00000000U))
+                (!(reg_isr & FXMAC_IXR_TXCOMPL_MASK) != 0x00000000U))
             {
                 /* Clear TX status register */
                 reg_temp = FXMAC_READREG32(instance_p->config.base_address, FXMAC_TXSR_OFFSET);
@@ -156,21 +160,27 @@ void FXmacIntrHandler(s32 vector, void *args)
                     instance_p->error_irq_handler(instance_p->error_args, FXMAC_SEND, reg_temp);
                 }
                 /* add */
-                FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TX_ERR_MASK);
+                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                {
+                    FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TX_ERR_MASK);
+                }
             }
 
             /* add restart */
             if ((reg_isr & FXMAC_IXR_TXUSED_MASK) != 0x00000000U)
             {
                 /* add */
-                FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TXUSED_MASK);
+                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                {
+                    FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TXUSED_MASK);
+                }
 
                 if (instance_p->restart_handler)
                 {
                     instance_p->restart_handler(instance_p->restart_args);
                 }
             }
-
+            
             /* link chaged */
             if ((reg_isr & FXMAC_IXR_LINKCHANGE_MASK) != 0x00000000U)
             {
@@ -178,7 +188,11 @@ void FXmacIntrHandler(s32 vector, void *args)
                 {
                     instance_p->link_change_handler(instance_p->link_change_args);
                 }
-                FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_LINKCHANGE_MASK);
+
+                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                {
+                    FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_LINKCHANGE_MASK);
+                }
             }
         }
         else /* use queue number more than 0 */
@@ -203,7 +217,7 @@ void FXmacIntrHandler(s32 vector, void *args)
 
             /* Transmit Q1 error conditions interrupt */
             if (((reg_isr & FXMAC_INTQ1SR_TXERR_MASK) != 0x00000000U) &&
-                    ((reg_isr & FXMAC_INTQ1SR_TXCOMPL_MASK) != 0x00000000U))
+                ((reg_isr & FXMAC_INTQ1SR_TXCOMPL_MASK) != 0x00000000U))
             {
                 /* Clear Interrupt Q1 status register */
                 FXMAC_WRITEREG32(instance_p->config.base_address,
@@ -218,9 +232,6 @@ void FXmacIntrHandler(s32 vector, void *args)
     {
         if (rx_queue_id == 0)
         {
-            reg_isr = FXMAC_READREG32(instance_p->config.base_address,
-                                      FXMAC_ISR_OFFSET);
-
             /* Receive complete interrupt */
             if ((reg_isr & FXMAC_IXR_RXCOMPL_MASK) != 0x00000000U)
             {
@@ -233,8 +244,10 @@ void FXmacIntrHandler(s32 vector, void *args)
                 instance_p->recv_irq_handler(instance_p->recv_args);
 
                 /* add */
-                FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_RXCOMPL_MASK);
-
+                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                {
+                    FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_RXCOMPL_MASK);
+                }
             }
 
             /* Receive error conditions interrupt */
@@ -269,13 +282,19 @@ void FXmacIntrHandler(s32 vector, void *args)
                 /* add */
                 if ((reg_isr & FXMAC_IXR_RXOVR_MASK) != 0x00000000U)
                 {
-                    FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_RXOVR_MASK);
+                    if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                    {
+                        FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_RXOVR_MASK);
+                    }
                 }
 
                 /* add */
                 if ((reg_isr & FXMAC_IXR_HRESPNOK_MASK) != 0x00000000U)
                 {
-                    FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_HRESPNOK_MASK);
+                    if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                    {
+                        FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_HRESPNOK_MASK);
+                    }
                 }
 
                 if (reg_temp != 0)
@@ -348,7 +367,6 @@ void FXmacIntrHandler(s32 vector, void *args)
             }
         }
     }
-
 }
 
 

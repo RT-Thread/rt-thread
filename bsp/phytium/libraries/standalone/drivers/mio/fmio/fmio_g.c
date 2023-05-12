@@ -14,12 +14,12 @@
  * FilePath: fmio_g.c
  * Date: 2022-06-20 21:05:07
  * LastEditTime: 2022-06-20 21:05:07
- * Description:  This file is for mio
+ * Description:  This file is for mio static configuration
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 0.1.0  liu       2022.06.20    init
+ * 1.0  liushengming 2022/06/20    first commit
  */
 
 /***************************** Include Files *********************************/
@@ -29,102 +29,104 @@
 
 /************************** Constant Definitions *****************************/
 
-const FMioConfig FMioConfigTbl[MIO_INSTANCE_NUM] =
+const FMioConfig FMioConfigTbl[FMIO_NUM] =
 {
     {
-        .instance_id = MIO_INSTANCE_0,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_0),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_0),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_0)
+        .instance_id = FMIO0_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO0_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO0_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO0_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_1,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_1),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_1),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_1)
+        .instance_id = FMIO1_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO1_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO1_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO1_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_2,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_2),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_2),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_2)
+        .instance_id = FMIO2_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO2_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO2_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO2_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_3,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_3),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_3),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_3)
+        .instance_id = FMIO3_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO3_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO3_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO3_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_4,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_4),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_4),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_4)
+        .instance_id = FMIO4_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO4_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO4_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO4_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_5,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_5),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_5),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_5)
+        .instance_id = FMIO5_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO5_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO5_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO5_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_6,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_6),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_6),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_6)
+        .instance_id = FMIO6_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO6_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO6_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO6_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_7,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_7),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_7),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_7)
+        .instance_id = FMIO7_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO7_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO7_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO7_ID)
+    },
+#if defined(CONFIG_TARGET_E2000)
+    {
+        .instance_id = FMIO8_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO8_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO8_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO8_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_8,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_8),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_8),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_8)
+        .instance_id = FMIO9_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO9_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO9_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO9_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_9,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_9),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_9),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_9)
+        .instance_id = FMIO10_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO10_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO10_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO10_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_10,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_10),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_10),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_10)
+        .instance_id = FMIO11_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO11_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO11_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO11_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_11,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_11),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_11),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_11)
+        .instance_id = FMIO12_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO12_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO12_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO12_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_12,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_12),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_12),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_12)
+        .instance_id = FMIO13_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO13_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO13_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO13_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_13,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_13),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_13),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_13)
+        .instance_id = FMIO14_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO14_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO14_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO14_ID)
     },
     {
-        .instance_id = MIO_INSTANCE_14,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_14),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_14),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_14)
-    },
-    {
-        .instance_id = MIO_INSTANCE_15,
-        .func_base_addr = FMIO_BASE_ADDR(MIO_INSTANCE_15),
-        .irq_num = FMIO_IRQ_NUM(MIO_INSTANCE_15),
-        .mio_base_addr = FMIO_BASE_SET_ADDR(MIO_INSTANCE_15)
+        .instance_id = FMIO15_ID,
+        .func_base_addr = FMIO_BASE_ADDR(FMIO15_ID),
+        .irq_num = FMIO_IRQ_NUM(FMIO15_ID),
+        .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO15_ID)
     }
+#endif
 };

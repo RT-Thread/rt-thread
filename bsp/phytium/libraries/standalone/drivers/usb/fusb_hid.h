@@ -19,20 +19,20 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/9/28   init commit
+ * 1.0   zhugengyu  2022/9/28   init commit
  */
 
-#ifndef  DRIVERS_USB_HID_H
-#define  DRIVERS_USB_HID_H
+#ifndef  FUSB_HID_H
+#define  FUSB_HID_H
+
+/***************************** Include Files *********************************/
+
+#include "fusb.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-/***************************** Include Files *********************************/
-
-#include "fusb.h"
 
 /************************** Constant Definitions *****************************/
 /*----------------------------------------------------------------------

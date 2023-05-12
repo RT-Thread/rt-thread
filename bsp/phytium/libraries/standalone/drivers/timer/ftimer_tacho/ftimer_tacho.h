@@ -14,24 +14,25 @@
  * FilePath: ftimer_tacho.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:43
- * Description:  This files is for
+ * Description:  This file is for user ftimer_tacho API definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  liushengming 2022/02/18   first commit
  */
 
-#ifndef BSP_DRIVERS_E2000_TIMER_TACHO_H
-#define BSP_DRIVERS_E2000_TIMER_TACHO_H
+#ifndef FTIMER_TACHO_H
+#define FTIMER_TACHO_H
+
+#include "ftypes.h"
+#include "fdebug.h"
+#include "ferror_code.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "ftypes.h"
-#include "fdebug.h"
-#include "ferror_code.h"
 
 #define FTIMER_TACHO_SUCCESS          FT_SUCCESS
 #define FTIMER_TACHO_ERR_INVAL_PARM   FT_MAKE_ERRCODE(ErrModBsp, ErrBspTimer, 1)

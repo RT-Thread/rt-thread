@@ -14,11 +14,12 @@
  * FilePath: fnand_toshiba.c
  * Date: 2022-07-06 08:32:43
  * LastEditTime: 2022-07-06 08:32:44
- * Description:  This file is for
+ * Description:  This file is for toshiba nand
  *
  * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 
@@ -98,12 +99,12 @@ FError toshiba_nand_decode_id(FNand *instance_p, FNandId *id_p, u32 chip_addr)
 
     switch (id_p->data[1])
     {
-    case 0xf0:
-        return TC58NVM9S3ETAI0_CHECK(instance_p, id_p, chip_addr) ;
-        break;
-    default:
-        FNAND_T_NAND_DEBUG_E("Driver not supported 0x%x device", id_p->data[1]) ;
-        return FNAND_ERR_NOT_MATCH;
+        case 0xf0:
+            return TC58NVM9S3ETAI0_CHECK(instance_p, id_p, chip_addr) ;
+            break;
+        default:
+            FNAND_T_NAND_DEBUG_E("Driver not supported 0x%x device", id_p->data[1]) ;
+            return FNAND_ERR_NOT_MATCH;
     }
 }
 

@@ -14,11 +14,12 @@
  * FilePath: fcan_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:29:15
- * Description:  This files is for
+ * Description:  This files is for getting default configuration of specific can instance_id
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/5/26  first releases
  */
 
 
@@ -26,21 +27,21 @@
 #include "fparameters.h"
 #include "fassert.h"
 
-extern const FCanConfig FCanConfigTbl[FCAN_INSTANCE_NUM];
+extern const FCanConfig FCanConfigTbl[FCAN_NUM];
 
 /**
  * @name: FCanLookupConfig
  * @msg:  get default configuration of specific can instance_id.
- * @param {FCanInstance} instance_id, instance id of Can controller
+ * @param {u32} instance_id, instance id of Can controller
  * @return {FCanConfig*} Default configuration parameters of Can
  */
-const FCanConfig *FCanLookupConfig(FCanInstance instance_id)
+const FCanConfig *FCanLookupConfig(u32 instance_id)
 {
-    FASSERT(instance_id < FCAN_INSTANCE_NUM);
+    FASSERT(instance_id < FCAN_NUM);
     const FCanConfig *pconfig = NULL;
     u32 index;
 
-    for (index = 0; index < (u32)FCAN_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FCAN_NUM; index++)
     {
         if (FCanConfigTbl[index].instance_id == instance_id)
         {
@@ -48,5 +49,5 @@ const FCanConfig *FCanLookupConfig(FCanInstance instance_id)
             break;
         }
     }
-    return (FCanConfig *)pconfig;
+    return (const FCanConfig *)pconfig;
 }

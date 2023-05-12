@@ -12,13 +12,15 @@
  *
  *
  * FilePath: fpl011_g.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:05:41
- * Description:  This files is for uart config
+ * Description:  This file is for uart static configuration
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18 add configs
  */
 
 /***************************** Include Files *********************************/
@@ -53,6 +55,7 @@ const FPl011Config FPl011ConfigTable[FUART_NUM] =
         .irq_num = FUART1_IRQ_NUM,
         .baudrate = 115200
     },
+#ifndef TARDIGRADE
     {
         .instance_id = FUART2_ID,
         .base_address = FUART2_BASE_ADDR,
@@ -67,4 +70,6 @@ const FPl011Config FPl011ConfigTable[FUART_NUM] =
         .irq_num = FUART3_IRQ_NUM,
         .baudrate = 115200
     }
+#endif // !TARDIGRADE 
+
 };

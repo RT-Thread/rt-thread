@@ -19,10 +19,11 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#pragma once
+#ifndef  FUSB_PRIVATE_H
+#define  FUSB_PRIVATE_H
 
 /***************************** Include Files *********************************/
 #ifdef __aarch64__
@@ -35,6 +36,11 @@
 #include "fio.h"
 #include "fassert.h"
 #include "fusb.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 
@@ -102,3 +108,9 @@ void FUsbDumpInterfaceDescriptor(const FUsbInterfaceDescriptor *descriptor);
 
 /* 打印端点描述符信息 */
 void FUsbDumpEndpointDescriptor(const FUsbEndpointDescriptor *descriptor);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

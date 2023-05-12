@@ -45,9 +45,9 @@ extern rt_uint64_t rt_cpu_mpidr_early[];
 struct arm_gic
 {
     rt_uint64_t offset;                     /* the first interrupt index in the vector table */
-    rt_uint64_t redist_hw_base[RT_CPUS_NR]; /* the pointer of the gic redistributor */
+    rt_uint64_t redist_hw_base[ARM_GIC_CPU_NUM]; /* the pointer of the gic redistributor */
     rt_uint64_t dist_hw_base;               /* the base address of the gic distributor */
-    rt_uint64_t cpu_hw_base[RT_CPUS_NR];    /* the base address of the gic cpu interface */
+    rt_uint64_t cpu_hw_base[ARM_GIC_CPU_NUM];    /* the base address of the gic cpu interface */
 };
 
 /* 'ARM_GIC_MAX_NR' is the number of cores */
@@ -737,7 +737,7 @@ int arm_gic_redist_init(rt_uint64_t index, rt_uint64_t redist_base)
 
     if (master_cpu_id < 0)
     {
-        master_cpu_id = cpu_id;
+        master_cpu_id = 0;
         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, &master_cpu_id, sizeof(master_cpu_id));
     }
 

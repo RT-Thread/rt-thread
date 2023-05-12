@@ -12,21 +12,18 @@
  *
  *
  * FilePath: fpcie.h
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:59:37
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:59:37
+ * Description: This file is for detailed description of the device and driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
-
-#ifndef DRIVERS_FPCIE_H
-#define DRIVERS_FPCIE_H
-
-
-
+#ifndef FPCIE_H
+#define FPCIE_H
 
 /************************** Constant Definitions *****************************/
 
@@ -36,17 +33,17 @@
 
 /************************** Function Prototypes ******************************/
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 /***************************** Include Files *********************************/
 
 #include "ftypes.h"
 #include "fassert.h"
 #include "fpcie_dma.h"
 #include "fparameters.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #ifdef __aarch64__
 #define CONFIG_SYS_PCI_64BIT    1
@@ -174,16 +171,16 @@ typedef struct
     uintptr_t peu0_config_address;
     uintptr_t peu1_config_address;
 
-    uintptr_t control_c0_address;       //0x29900000
-    uintptr_t control_c1_address;       //0x29910000
+    uintptr_t control_c0_address;       
+    uintptr_t control_c1_address;       
     uintptr_t control_c2_address;
     uintptr_t control_c3_address;
     uintptr_t control_c4_address;
     uintptr_t control_c5_address;
 
-#ifdef FT_PCI_INTX_EOI
-    uintptr_t intx_peux_stat_address[FT_PCI_INTX_SATA_NUM] ;
-    uintptr_t intx_control_eux_cx_address[FT_PCI_INTX_CONTROL_NUM] ;
+#ifdef FPCI_INTX_EOI
+    uintptr_t intx_peux_stat_address[FPCI_INTX_SATA_NUM] ;
+    uintptr_t intx_control_eux_cx_address[FPCI_INTX_CONTROL_NUM] ;
 #endif
 
     u32 io_base_addr;

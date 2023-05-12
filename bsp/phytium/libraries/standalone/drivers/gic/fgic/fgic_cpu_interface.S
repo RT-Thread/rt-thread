@@ -14,13 +14,13 @@
  * @FilePath: fgic_cpu_interface.S
  * @Date: 2022-03-29 18:04:23
  * @LastEditTime: 2022-03-29 18:04:27
- * @Description:  This file is for 
+ * @Description:  This file is Mapping of MSR and MRS to physical and virtual CPU interface registers.
  * 
- * @Modify History: 
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
-
 
 
 #ifdef __aarch64__

@@ -14,11 +14,12 @@
  * FilePath: phy_yt.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for  yt PHYs chip
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
 #include "phy_yt.h"
@@ -42,18 +43,18 @@ FError PhyYtCheckConnectStatus(void *instance_p, u32 phy_addr, EthPhyWrite write
     status = write_p(instance_p, phy_addr, 0x1e, 0xa001);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Write 0xa001 to 0x1e failed.");
         return FETH_PHY_ERR_READ;
     }
 
     status = read_p(instance_p, phy_addr, 0x1f, &phy_reg0);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("read_p  0x1f failed");
+        PHY_YT_ERROR("Read 0x1f reg failed.");
         return FETH_PHY_ERR_READ;
     }
 
-    PHY_YT_INFO("phy_reg0 status is 0x%x", phy_reg0);
+    PHY_YT_INFO("Phy reg0 status is 0x%x", phy_reg0);
 
     return FT_SUCCESS;
 }
@@ -66,10 +67,10 @@ FError PhyYtSetLoopBack(void *instance_p, u32 phy_addr, EthPhyWrite write_p, Eth
     status = read_p(instance_p, phy_addr, 0, &phy_reg0);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("Error setup phy loopback");
+        PHY_YT_ERROR("Error setup phy loopback.");
         return FETH_PHY_ERR_READ;
     }
-    PHY_YT_INFO("0 phy_reg0 is 0x%x \r\n", phy_reg0);
+    PHY_YT_INFO("Phy reg 0 is 0x%x", phy_reg0);
     /*
      * Enable loopback
      */
@@ -79,17 +80,17 @@ FError PhyYtSetLoopBack(void *instance_p, u32 phy_addr, EthPhyWrite write_p, Eth
     status = read_p(instance_p, phy_addr, 0, &phy_reg0);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("Error setup phy loopback");
+        PHY_YT_ERROR("Error setup phy loopback.");
         return FETH_PHY_ERR_READ;
     }
 
     status = read_p(instance_p, phy_addr, 0, &phy_reg0);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("Error setup phy loopback");
+        PHY_YT_ERROR("Error setup phy loopback.");
         return FETH_PHY_ERR_READ;
     }
-    PHY_YT_INFO("after 0 phy_reg0 is 0x%x \r\n", phy_reg0);
+    PHY_YT_INFO("Phy reg 0 is 0x%x", phy_reg0);
 
     return FT_SUCCESS;
 }
@@ -104,7 +105,7 @@ FError PhyChangeModeToSgmii(void *instance_p, u32 phy_addr, EthPhyWrite write_p,
     status = write_p(instance_p, phy_addr, 0x1e, 0xa001);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Write 0xa001 to reg 0x1e failed.");
         return FETH_PHY_ERR_READ;
     }
 
@@ -112,33 +113,32 @@ FError PhyChangeModeToSgmii(void *instance_p, u32 phy_addr, EthPhyWrite write_p,
     status = read_p(instance_p, phy_addr, 0x1f, &phy_reg0);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("read_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Read reg 0x1f failed.");
         return FETH_PHY_ERR_READ;
     }
 
-    PHY_YT_INFO("default 0xa001 status is 0x%x \r\n", phy_reg0);
+    PHY_YT_INFO("Default 0x1f status is 0x%x", phy_reg0);
 
     /* change mode to sds */
     status = write_p(instance_p, phy_addr, 0x1e, 0xa001);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Write 0xa001 to reg 0x1e failed.");
         return FETH_PHY_ERR_READ;
     }
 
     status = write_p(instance_p, phy_addr, 0x1f, 0x8063);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Write 0x8063 to reg 0x1f failed.");
         return FETH_PHY_ERR_READ;
     }
-
 
     /* read changged mode */
     status = write_p(instance_p, phy_addr, 0x1e, 0xa001);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa000 to 0x1e failed");
+        PHY_YT_ERROR("Write 0xa001 to reg 0x1e failed.");
         return FETH_PHY_ERR_READ;
     }
 
@@ -146,13 +146,11 @@ FError PhyChangeModeToSgmii(void *instance_p, u32 phy_addr, EthPhyWrite write_p,
     status = read_p(instance_p, phy_addr, 0x1f, &phy_reg0);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("read_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Read reg 0x1f failed.");
         return FETH_PHY_ERR_READ;
     }
 
-    PHY_YT_INFO("changged 0xa001 status is 0x%x \r\n", phy_reg0);
-
-
+    PHY_YT_INFO("Read reg 0x1f status is 0x%x", phy_reg0);
 
     return FT_SUCCESS;
 }
@@ -162,60 +160,54 @@ FError PhyChangeModeToSds(void *instance_p, u32 phy_addr, EthPhyWrite write_p, E
     FError status;
     u16 phy_reg0 = 0;
 
-
     /* read default mode */
     status = write_p(instance_p, phy_addr, 0x1e, 0xa000);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa000 to 0x1e failed");
+        PHY_YT_ERROR("Write 0xa000 to reg 0x1e failed.");
         return FETH_PHY_ERR_READ;
     }
-
 
     status = read_p(instance_p, phy_addr, 0x1f, &phy_reg0);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("read_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Read reg 0x1f failed.");
         return FETH_PHY_ERR_READ;
     }
 
-    PHY_YT_INFO("default status is 0x%x \r\n", phy_reg0);
+    PHY_YT_INFO("Read reg 0x1f status is 0x%x \r\n", phy_reg0);
 
     /* change mode to sds */
     status = write_p(instance_p, phy_addr, 0x1e, 0xa000);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Write 0xa000 to reg 0x1e failed.");
         return FETH_PHY_ERR_READ;
     }
 
     status = write_p(instance_p, phy_addr, 0x1f, 0x2);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Write 0x02 to reg 0x1f failed.");
         return FETH_PHY_ERR_READ;
     }
-
 
     /* read changged mode */
     status = write_p(instance_p, phy_addr, 0x1e, 0xa000);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("write_p 0xa000 to 0x1e failed");
+        PHY_YT_ERROR("Write 0xa000 to reg 0x1e failed.");
         return FETH_PHY_ERR_READ;
     }
-
 
     status = read_p(instance_p, phy_addr, 0x1f, &phy_reg0);
     if (status != FT_SUCCESS)
     {
-        PHY_YT_ERROR("read_p 0xa001 to 0x1e failed");
+        PHY_YT_ERROR("Read reg 0x1f failed.");
         return FETH_PHY_ERR_READ;
     }
 
-    PHY_YT_INFO("changged status is 0x%x \r\n", phy_reg0);
-
-
+    PHY_YT_INFO("Read reg 0x1f status is 0x%x \r\n", phy_reg0);
 
     return FT_SUCCESS;
 }

@@ -14,32 +14,31 @@
  * FilePath: fxmac_hw.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is hardware definition file. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
-#ifndef BSP_DRIVERS_ETH_FMAC_HW_H
-#define BSP_DRIVERS_ETH_FMAC_HW_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FXMAC_HW_H
+#define FXMAC_HW_H
 
 #include "fparameters.h"
 #include "fio.h"
 #include "ftypes.h"
 #include "fkernel.h"
 
-#define FXMAC_RX_BUF_SIZE 1536U /* Specify the receive buffer size in \
-                                       bytes, 64, 128, ... 10240 */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#define FXMAC_RX_BUF_SIZE 1536U /* Specify the receive buffer size in bytes, 64, 128, ... 10240 */
 #define FXMAC_RX_BUF_SIZE_JUMBO 10240U
 
-#define FXMAC_RX_BUF_UNIT 64U /* Number of receive buffer bytes as a \
-                                     unit, this is HW setup */
+#define FXMAC_RX_BUF_UNIT 64U /* Number of receive buffer bytes as a unit, this is HW setup */
 
 #define FXMAC_MAX_RXBD 128U /* Size of RX buffer descriptor queues */
 #define FXMAC_MAX_TXBD 128U /* Size of TX buffer descriptor queues */
@@ -48,22 +47,17 @@ extern "C"
 
 /************************** Constant Definitions *****************************/
 
-#define FXMAC_MAX_MAC_ADDR 4U /* Maxmum number of mac address \
-                                     supported */
+#define FXMAC_MAX_MAC_ADDR 4U /* Maxmum number of mac address supported */
 #define FXMAC_MAX_TYPE_ID 4U  /* Maxmum number of type id supported */
 
 #ifdef __aarch64__
-#define FXMAC_BD_ALIGNMENT 64U /* Minimum buffer descriptor alignment \
-                                     on the local bus */
+#define FXMAC_BD_ALIGNMENT 64U /* Minimum buffer descriptor alignment on the local bus */
 #else
 
-#define FXMAC_BD_ALIGNMENT 4U /* Minimum buffer descriptor alignment \
-                                     on the local bus */
+#define FXMAC_BD_ALIGNMENT 4U /* Minimum buffer descriptor alignment on the local bus */
 #endif
-#define FXMAC_RX_BUF_ALIGNMENT 4U /* Minimum buffer alignment when using    \
-                                         options that impose alignment      \
-                                         restrictions on the buffer data on \
-                                         the local bus */
+#define FXMAC_RX_BUF_ALIGNMENT 4U /* Minimum buffer alignment when using options that impose 
+                                    alignment  restrictions on the buffer data on the local bus */
 
 #define FXMAC_NWCTRL_OFFSET 0x00000000U  /* Network Control reg */
 #define FXMAC_NWCFG_OFFSET 0x00000004U   /* Network Config reg */
@@ -107,128 +101,69 @@ extern "C"
 #define FXMAC_STRETCH_OFFSET 0x000000BCU      /* IPG Stretch reg */
 #define FXMAC_REVISION_REG_OFFSET 0x000000FCU /*   identification number and module revision */
 
-#define FXMAC_OCTTXL_OFFSET 0x00000100U /* Octects transmitted Low \
-                                               reg */
-#define FXMAC_OCTTXH_OFFSET 0x00000104U /* Octects transmitted High \
-                                               reg */
+#define FXMAC_OCTTXL_OFFSET 0x00000100U /* Octects transmitted Low reg */
+#define FXMAC_OCTTXH_OFFSET 0x00000104U /* Octects transmitted High reg */
 
-#define FXMAC_TXCNT_OFFSET 0x00000108U      /* Error-free Frmaes \
-                                                   transmitted counter */
-#define FXMAC_TXBCCNT_OFFSET 0x0000010CU    /* Error-free Broadcast \
-                                                   Frames counter*/
-#define FXMAC_TXMCCNT_OFFSET 0x00000110U    /* Error-free Multicast \
-                                                   Frame counter */
-#define FXMAC_TXPAUSECNT_OFFSET 0x00000114U /* Pause Frames Transmitted \
-                                                   Counter */
-#define FXMAC_TX64CNT_OFFSET 0x00000118U    /* Error-free 64 byte Frames \
-                                                   Transmitted counter */
-#define FXMAC_TX65CNT_OFFSET 0x0000011CU    /* Error-free 65-127 byte \
-                                                   Frames Transmitted \
-                                                   counter */
-#define FXMAC_TX128CNT_OFFSET 0x00000120U   /* Error-free 128-255 byte \
-                                                   Frames Transmitted  \
-                                                   counter*/
-#define FXMAC_TX256CNT_OFFSET 0x00000124U   /* Error-free 256-511 byte \
-                                                   Frames transmitted  \
-                                                   counter */
-#define FXMAC_TX512CNT_OFFSET 0x00000128U   /* Error-free 512-1023 byte \
-                                                   Frames transmitted   \
-                                                   counter */
-#define FXMAC_TX1024CNT_OFFSET 0x0000012CU  /* Error-free 1024-1518 byte \
-                                                   Frames transmitted    \
-                                                   counter */
-#define FXMAC_TX1519CNT_OFFSET 0x00000130U  /* Error-free larger than \
-                                                   1519 byte Frames   \
-                                                   transmitted counter */
-#define FXMAC_TXURUNCNT_OFFSET 0x00000134U  /* TX under run error \
-                                                   counter */
+#define FXMAC_TXCNT_OFFSET 0x00000108U      /* Error-free Frmaes transmitted counter */
+#define FXMAC_TXBCCNT_OFFSET 0x0000010CU    /* Error-free Broadcast Frames counter*/
+#define FXMAC_TXMCCNT_OFFSET 0x00000110U    /* Error-free Multicast Frame counter */
+#define FXMAC_TXPAUSECNT_OFFSET 0x00000114U /* Pause Frames Transmitted Counter */
+#define FXMAC_TX64CNT_OFFSET 0x00000118U    /* Error-free 64 byte Frames Transmitted counter */
+#define FXMAC_TX65CNT_OFFSET 0x0000011CU    /* Error-free 65-127 byte Frames Transmitted counter */
+#define FXMAC_TX128CNT_OFFSET 0x00000120U   /* Error-free 128-255 byte Frames Transmitted counter*/
+#define FXMAC_TX256CNT_OFFSET 0x00000124U   /* Error-free 256-511 byte Frames transmitted counter */
+#define FXMAC_TX512CNT_OFFSET 0x00000128U   /* Error-free 512-1023 byte Frames transmitted counter */
+#define FXMAC_TX1024CNT_OFFSET 0x0000012CU  /* Error-free 1024-1518 byte Frames transmitted counter */
+#define FXMAC_TX1519CNT_OFFSET 0x00000130U  /* Error-free larger than 1519 byte Frames transmitted counter */
+#define FXMAC_TXURUNCNT_OFFSET 0x00000134U  /* TX under run error counter */
 
-#define FXMAC_SNGLCOLLCNT_OFFSET 0x00000138U   /* Single Collision Frame \
-                                                      Counter */
-#define FXMAC_MULTICOLLCNT_OFFSET 0x0000013CU  /* Multiple Collision Frame \
-                                                      Counter */
-#define FXMAC_EXCESSCOLLCNT_OFFSET 0x00000140U /* Excessive Collision Frame \
-                                                      Counter */
-#define FXMAC_LATECOLLCNT_OFFSET 0x00000144U   /* Late Collision Frame \
-                                                      Counter */
-#define FXMAC_TXDEFERCNT_OFFSET 0x00000148U    /* Deferred Transmission \
-                                                      Frame Counter */
-#define FXMAC_TXCSENSECNT_OFFSET 0x0000014CU   /* Transmit Carrier Sense \
-                                                      Error Counter */
+#define FXMAC_SNGLCOLLCNT_OFFSET 0x00000138U   /* Single Collision Frame Counter */
+#define FXMAC_MULTICOLLCNT_OFFSET 0x0000013CU  /* Multiple Collision Frame Counter */
+#define FXMAC_EXCESSCOLLCNT_OFFSET 0x00000140U /* Excessive Collision Frame Counter */
+#define FXMAC_LATECOLLCNT_OFFSET 0x00000144U   /* Late Collision Frame Counter */
+#define FXMAC_TXDEFERCNT_OFFSET 0x00000148U    /* Deferred Transmission Frame Counter */
+#define FXMAC_TXCSENSECNT_OFFSET 0x0000014CU   /* Transmit Carrier Sense Error Counter */
 
-#define FXMAC_OCTRXL_OFFSET 0x00000150U /* Octects Received register \
-                                               Low */
-#define FXMAC_OCTRXH_OFFSET 0x00000154U /* Octects Received register \
-                                               High */
+#define FXMAC_OCTRXL_OFFSET 0x00000150U /* Octects Received register Low */
+#define FXMAC_OCTRXH_OFFSET 0x00000154U /* Octects Received register High */
 
-#define FXMAC_RXCNT_OFFSET 0x00000158U       /* Error-free Frames \
-                                                    Received Counter */
-#define FXMAC_RXBROADCNT_OFFSET 0x0000015CU  /* Error-free Broadcast \
-                                                    Frames Received Counter */
-#define FXMAC_RXMULTICNT_OFFSET 0x00000160U  /* Error-free Multicast \
-                                                    Frames Received Counter */
-#define FXMAC_RXPAUSECNT_OFFSET 0x00000164U  /* Pause Frames \
-                                                    Received Counter */
-#define FXMAC_RX64CNT_OFFSET 0x00000168U     /* Error-free 64 byte Frames \
-                                                    Received Counter */
-#define FXMAC_RX65CNT_OFFSET 0x0000016CU     /* Error-free 65-127 byte \
-                                                    Frames Received Counter */
-#define FXMAC_RX128CNT_OFFSET 0x00000170U    /* Error-free 128-255 byte \
-                                                    Frames Received Counter */
-#define FXMAC_RX256CNT_OFFSET 0x00000174U    /* Error-free 256-512 byte \
-                                                    Frames Received Counter */
-#define FXMAC_RX512CNT_OFFSET 0x00000178U    /* Error-free 512-1023 byte \
-                                                    Frames Received Counter */
-#define FXMAC_RX1024CNT_OFFSET 0x0000017CU   /* Error-free 1024-1518 byte \
-                                                    Frames Received Counter */
-#define FXMAC_RX1519CNT_OFFSET 0x00000180U   /* Error-free 1519-max byte \
-                                                    Frames Received Counter */
-#define FXMAC_RXUNDRCNT_OFFSET 0x00000184U   /* Undersize Frames Received \
-                                                    Counter */
-#define FXMAC_RXOVRCNT_OFFSET 0x00000188U    /* Oversize Frames Received \
-                                                    Counter */
-#define FXMAC_RXJABCNT_OFFSET 0x0000018CU    /* Jabbers Received \
-                                                    Counter */
-#define FXMAC_RXFCSCNT_OFFSET 0x00000190U    /* Frame Check Sequence \
-                                                    Error Counter */
-#define FXMAC_RXLENGTHCNT_OFFSET 0x00000194U /* Length Field Error \
-                                                    Counter */
+#define FXMAC_RXCNT_OFFSET 0x00000158U       /* Error-free Frames Received Counter */
+#define FXMAC_RXBROADCNT_OFFSET 0x0000015CU  /* Error-free Broadcast Frames Received Counter */
+#define FXMAC_RXMULTICNT_OFFSET 0x00000160U  /* Error-free Multicast Frames Received Counter */
+#define FXMAC_RXPAUSECNT_OFFSET 0x00000164U  /* Pause Frames Received Counter */
+#define FXMAC_RX64CNT_OFFSET 0x00000168U     /* Error-free 64 byte Frames Received Counter */
+#define FXMAC_RX65CNT_OFFSET 0x0000016CU     /* Error-free 65-127 byte Frames Received Counter */
+#define FXMAC_RX128CNT_OFFSET 0x00000170U    /* Error-free 128-255 byte Frames Received Counter */
+#define FXMAC_RX256CNT_OFFSET 0x00000174U    /* Error-free 256-512 byte Frames Received Counter */
+#define FXMAC_RX512CNT_OFFSET 0x00000178U    /* Error-free 512-1023 byte Frames Received Counter */
+#define FXMAC_RX1024CNT_OFFSET 0x0000017CU   /* Error-free 1024-1518 byte Frames Received Counter */
+#define FXMAC_RX1519CNT_OFFSET 0x00000180U   /* Error-free 1519-max byte Frames Received Counter */
+#define FXMAC_RXUNDRCNT_OFFSET 0x00000184U   /* Undersize Frames Received Counter */
+#define FXMAC_RXOVRCNT_OFFSET 0x00000188U    /* Oversize Frames Received Counter */
+#define FXMAC_RXJABCNT_OFFSET 0x0000018CU    /* Jabbers Received Counter */
+#define FXMAC_RXFCSCNT_OFFSET 0x00000190U    /* Frame Check Sequence Error Counter */
+#define FXMAC_RXLENGTHCNT_OFFSET 0x00000194U /* Length Field Error Counter */
 #define FXMAC_RXSYMBCNT_OFFSET 0x00000198U   /* Symbol Error Counter */
 #define FXMAC_RXALIGNCNT_OFFSET 0x0000019CU  /* Alignment Error Counter */
-#define FXMAC_RXRESERRCNT_OFFSET 0x000001A0U /* Receive Resource Error \
-                                                    Counter */
+#define FXMAC_RXRESERRCNT_OFFSET 0x000001A0U /* Receive Resource Error Counter */
 #define FXMAC_RXORCNT_OFFSET 0x000001A4U     /* Receive Overrun Counter */
-#define FXMAC_RXIPCCNT_OFFSET 0x000001A8U    /* IP header Checksum Error \
-                                                    Counter */
-#define FXMAC_RXTCPCCNT_OFFSET 0x000001ACU   /* TCP Checksum Error \
-                                                    Counter */
-#define FXMAC_RXUDPCCNT_OFFSET 0x000001B0U   /* UDP Checksum Error \
-                                                    Counter */
-#define FXMAC_LAST_OFFSET 0x000001B4U        /* Last statistic counter \
-                            offset, for clearing */
+#define FXMAC_RXIPCCNT_OFFSET 0x000001A8U    /* IP header Checksum Error Counter */
+#define FXMAC_RXTCPCCNT_OFFSET 0x000001ACU   /* TCP Checksum Error Counter */
+#define FXMAC_RXUDPCCNT_OFFSET 0x000001B0U   /* UDP Checksum Error Counter */
+#define FXMAC_LAST_OFFSET 0x000001B4U        /* Last statistic counter offset, for clearing */
 
 #define FXMAC_1588_SEC_OFFSET 0x000001D0U       /* 1588 second counter */
 #define FXMAC_1588_NANOSEC_OFFSET 0x000001D4U   /* 1588 nanosecond counter */
-#define FXMAC_1588_ADJ_OFFSET 0x000001D8U       /* 1588 nanosecond \
-                               adjustment counter */
-#define FXMAC_1588_INC_OFFSET 0x000001DCU       /* 1588 nanosecond \
-                               increment counter */
-#define FXMAC_PTP_TXSEC_OFFSET 0x000001E0U      /* 1588 PTP transmit second \
-                               counter */
-#define FXMAC_PTP_TXNANOSEC_OFFSET 0x000001E4U  /* 1588 PTP transmit \
-                               nanosecond counter */
-#define FXMAC_PTP_RXSEC_OFFSET 0x000001E8U      /* 1588 PTP receive second \
-                               counter */
-#define FXMAC_PTP_RXNANOSEC_OFFSET 0x000001ECU  /* 1588 PTP receive \
-                               nanosecond counter */
-#define FXMAC_PTPP_TXSEC_OFFSET 0x000001F0U     /* 1588 PTP peer transmit \
-                               second counter */
-#define FXMAC_PTPP_TXNANOSEC_OFFSET 0x000001F4U /* 1588 PTP peer transmit \
-                              nanosecond counter */
-#define FXMAC_PTPP_RXSEC_OFFSET 0x000001F8U     /* 1588 PTP peer receive \
-                               second counter */
-#define FXMAC_PTPP_RXNANOSEC_OFFSET 0x000001FCU /* 1588 PTP peer receive \
-                              nanosecond counter */
+#define FXMAC_1588_ADJ_OFFSET 0x000001D8U       /* 1588 nanosecond adjustment counter */
+#define FXMAC_1588_INC_OFFSET 0x000001DCU       /* 1588 nanosecond increment counter */
+#define FXMAC_PTP_TXSEC_OFFSET 0x000001E0U      /* 1588 PTP transmit second counter */
+#define FXMAC_PTP_TXNANOSEC_OFFSET 0x000001E4U  /* 1588 PTP transmit nanosecond counter */
+#define FXMAC_PTP_RXSEC_OFFSET 0x000001E8U      /* 1588 PTP receive second counter */
+#define FXMAC_PTP_RXNANOSEC_OFFSET 0x000001ECU  /* 1588 PTP receive nanosecond counter */
+#define FXMAC_PTPP_TXSEC_OFFSET 0x000001F0U     /* 1588 PTP peer transmit second counter */
+#define FXMAC_PTPP_TXNANOSEC_OFFSET 0x000001F4U /* 1588 PTP peer transmit nanosecond counter */
+#define FXMAC_PTPP_RXSEC_OFFSET 0x000001F8U     /* 1588 PTP peer receive second counter */
+#define FXMAC_PTPP_RXNANOSEC_OFFSET 0x000001FCU /* 1588 PTP peer receive nanosecond counter */
 
 #define FXMAC_PCS_CONTROL_OFFSET 0x00000200U /* All PCS registers */
 
@@ -242,29 +177,26 @@ extern "C"
 
 #define FXMAC_INTQ1_STS_OFFSET 0x00000400U /* Interrupt Q1 Status reg */
 
-#define FXMAC_TXQ1BASE_OFFSET 0x00000440U /* TX Q1 Base address \
-                       reg */
-#define FXMAC_RXQ1BASE_OFFSET 0x00000480U /* RX Q1 Base address \
-                       reg */
+#define FXMAC_TXQ1BASE_OFFSET 0x00000440U /* TX Q1 Base address reg */
+#define FXMAC_RXQ1BASE_OFFSET 0x00000480U /* RX Q1 Base address reg */
 
 #define FXMAC_RXBUFQ1_SIZE_OFFSET 0x000004a0U /* Receive Buffer Size */
 #define FXMAC_RXBUFQX_SIZE_OFFSET(x) (FXMAC_RXBUFQ1_SIZE_OFFSET + (x << 2))
 #define FXMAC_RXBUFQX_SIZE_MASK GENMASK(7, 0)
 
 #define FXMAC_MSBBUF_TXQBASE_OFFSET 0x000004C8U /* MSB Buffer TX Q Base reg */
-#define FXMAC_MSBBUF_RXQBASE_OFFSET 0x000004D4U /* MSB Buffer RX Q Base \
-                           reg */
+#define FXMAC_MSBBUF_RXQBASE_OFFSET 0x000004D4U /* MSB Buffer RX Q Base reg */
 #define FXMAC_INTQ1_IER_OFFSET 0x00000600U      /* Interrupt Q1 Enable reg */
 #define FXMAC_INTQX_IER_SIZE_OFFSET(x) (FXMAC_INTQ1_IER_OFFSET + (x << 2))
 
 #define FXMAC_INTQ1_IDR_OFFSET 0x00000620U /* Interrupt Q1 Disable reg */
 #define FXMAC_INTQX_IDR_SIZE_OFFSET(x) (FXMAC_INTQ1_IDR_OFFSET + (x << 2))
 
-#define FXMAC_INTQ1_IMR_OFFSET 0x00000640U /* Interrupt Q1 Mask \
-                        reg */
+#define FXMAC_INTQ1_IMR_OFFSET 0x00000640U /* Interrupt Q1 Mask reg */
 
 #define FXMAC_GEM_USX_CONTROL_OFFSET 0x0A80 /* High speed PCS control register */
 #define FXMAC_TEST_CONTROL_OFFSET 0X0A84    /* USXGMII Test Control Register */
+#define FXMAC_GEM_USX_STATUS_OFFSET 0x0A88    /* USXGMII Status Register */
 
 #define FXMAC_GEM_SRC_SEL_LN 0x1C04
 #define FXMAC_GEM_DIV_SEL0_LN 0x1C08
@@ -316,8 +248,7 @@ extern "C"
 #define FXMAC_IXR_RXOVR_MASK BIT(10)      /* Receive overrun occurred */
 #define FXMAC_IXR_LINKCHANGE_MASK BIT(9)   /* link status change */
 #define FXMAC_IXR_TXCOMPL_MASK BIT(7)     /* Frame transmitted ok */
-#define FXMAC_IXR_TXEXH_MASK BIT(6)       /* Transmit err occurred or \
-                                               no buffers*/
+#define FXMAC_IXR_TXEXH_MASK BIT(6)       /* Transmit err occurred or no buffers*/
 #define FXMAC_IXR_RETRY_MASK BIT(5)       /* Retry limit exceeded */
 #define FXMAC_IXR_URUN_MASK BIT(4)        /* Transmit underrun */
 #define FXMAC_IXR_TXUSED_MASK BIT(3)      /* Tx buffer used bit read */
@@ -341,21 +272,15 @@ extern "C"
 
 #define FXMAC_NWCTRL_TWO_PT_FIVE_GIG_MASK BIT(29) /* 2.5G operation selected */
 
-#define FXMAC_NWCTRL_FLUSH_DPRAM_MASK BIT(18) /* Flush a packet from \
-                          Rx SRAM */
-#define FXMAC_NWCTRL_ZEROPAUSETX_MASK BIT(11) /* Transmit zero quantum \
-                                                       pause frame */
+#define FXMAC_NWCTRL_FLUSH_DPRAM_MASK BIT(18) /* Flush a packet from Rx SRAM */
+#define FXMAC_NWCTRL_ZEROPAUSETX_MASK BIT(11) /* Transmit zero quantum pause frame */
 #define FXMAC_NWCTRL_PAUSETX_MASK BIT(11)     /* Transmit pause frame */
-#define FXMAC_NWCTRL_HALTTX_MASK BIT(10)      /* Halt transmission \
-                                                  after current frame */
+#define FXMAC_NWCTRL_HALTTX_MASK BIT(10)      /* Halt transmission after current frame */
 #define FXMAC_NWCTRL_STARTTX_MASK BIT(9)      /* Start tx (tx_go) */
 
-#define FXMAC_NWCTRL_STATWEN_MASK BIT(7) /* Enable writing to \
-                                               stat counters */
-#define FXMAC_NWCTRL_STATINC_MASK BIT(6) /* Increment statistic \
-                                               registers */
-#define FXMAC_NWCTRL_STATCLR_MASK BIT(5) /* Clear statistic \
-                                               registers */
+#define FXMAC_NWCTRL_STATWEN_MASK BIT(7) /* Enable writing to stat counters */
+#define FXMAC_NWCTRL_STATINC_MASK BIT(6) /* Increment statistic registers */
+#define FXMAC_NWCTRL_STATCLR_MASK BIT(5) /* Clear statistic registers */
 #define FXMAC_NWCTRL_MDEN_MASK BIT(4)    /* Enable MDIO port */
 #define FXMAC_NWCTRL_TXEN_MASK BIT(3)    /* Enable transmit */
 #define FXMAC_NWCTRL_RXEN_MASK BIT(2)    /* Enable receive */
@@ -379,21 +304,17 @@ extern "C"
 #define FXMAC_NWCFG_CLOCK_DIV8_MASK (0U << 18)
 
 #define FXMAC_NWCFG_FCS_REMOVE BIT(17)      /* FCS remove - setting this bit will cause received frames to be written to memory without their frame check sequence (last 4 bytes). */
+#define FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD    BIT(16)
 #define FXMAC_NWCFG_PAUSE_ENABLE BIT(13)    /* Pause enable - when set, transmission will pause if a non-zero 802.3 classic pause frame is received and PFC has not been negotiated. */
 #define FXMAC_NWCFG_PCSSEL_MASK BIT(11)     /* PCS Select */
 #define FXMAC_NWCFG_1000_MASK BIT(10)       /* Gigabit mode enable */
-#define FXMAC_NWCFG_1536RXEN_MASK BIT(8)    /* Enable 1536 byte \
-                                                  frames reception */
-#define FXMAC_NWCFG_UCASTHASHEN_MASK BIT(7) /* Receive unicast hash \
-                                                     frames */
-#define FXMAC_NWCFG_MCASTHASHEN_MASK BIT(6) /* Receive multicast hash \
-                                                     frames */
-#define FXMAC_NWCFG_BCASTDI_MASK BIT(5)     /* Do not receive \
-                                                 broadcast frames */
+#define FXMAC_NWCFG_1536RXEN_MASK BIT(8)    /* Enable 1536 byte frames reception */
+#define FXMAC_NWCFG_UCASTHASHEN_MASK BIT(7) /* Receive unicast hash frames */
+#define FXMAC_NWCFG_MCASTHASHEN_MASK BIT(6) /* Receive multicast hash frames */
+#define FXMAC_NWCFG_BCASTDI_MASK BIT(5)     /* Do not receive broadcast frames */
 #define FXMAC_NWCFG_COPYALLEN_MASK BIT(4)   /* Copy all frames */
 #define FXMAC_NWCFG_JUMBO_MASK BIT(3)       /* Jumbo frames */
-#define FXMAC_NWCFG_NVLANDISC_MASK BIT(2)   /* Receive only VLAN \
-                                                   frames */
+#define FXMAC_NWCFG_NVLANDISC_MASK BIT(2)   /* Receive only VLAN frames */
 #define FXMAC_NWCFG_FDEN_MASK BIT(1)        /* full duplex */
 #define FXMAC_NWCFG_100_MASK BIT(0)         /* 100 Mbps */
 #define FXMAC_NWCFG_RESET_MASK BIT(19)      /* reset value */
@@ -414,7 +335,7 @@ extern "C"
 #define FXMAC_RXBUF_UNIHASH_MASK BIT(29)          /* Unicast hashed frame */
 #define FXMAC_RXBUF_EXH_MASK BIT(27)              /* buffer exhausted */
 #define FXMAC_RXBUF_AMATCH_MASK GENMASK(26, 25)   /* Specific address \
-                                             matched */
+matched */
 #define FXMAC_RXBUF_IDFOUND_MASK BIT(24)          /* Type ID matched */
 #define FXMAC_RXBUF_IDMATCH_MASK GENMASK(23, 22)  /* ID matched mask */
 #define FXMAC_RXBUF_VLAN_MASK BIT(21)             /* VLAN tagged */
@@ -430,6 +351,7 @@ extern "C"
 #define FXMAC_RXBUF_WRAP_MASK BIT(1)        /* Wrap bit, last BD */
 #define FXMAC_RXBUF_NEW_MASK BIT(0)         /* Used bit.. */
 #define FXMAC_RXBUF_ADD_MASK GENMASK(31, 2) /* Mask for address */
+
 /*
  * @}
  */
@@ -459,24 +381,18 @@ extern "C"
 /** @name network configuration register bit definitions
  * @{
  */
-#define FXMAC_NWCFG_BADPREAMBEN_MASK BIT(29)       /* disable rejection of \
-                                                           non-standard preamble */
+#define FXMAC_NWCFG_BADPREAMBEN_MASK BIT(29)       /* disable rejection of non-standard preamble */
 #define FXMAC_NWCFG_IPDSTRETCH_MASK BIT(28)        /* enable transmit IPG */
 #define FXMAC_NWCFG_SGMIIEN_MASK BIT(27)           /* SGMII Enable */
-#define FXMAC_NWCFG_FCSIGNORE_MASK BIT(26)         /* disable rejection of \
-                                                         FCS error */
+#define FXMAC_NWCFG_FCSIGNORE_MASK BIT(26)         /* disable rejection of FCS error */
 #define FXMAC_NWCFG_HDRXEN_MASK BIT(25)            /* RX half duplex */
-#define FXMAC_NWCFG_RXCHKSUMEN_MASK BIT(24)        /* enable RX checksum \
-                                                          offload */
-#define FXMAC_NWCFG_PAUSECOPYDI_MASK BIT(23)       /* Do not copy pause \
-                                                           Frames to memory */
+#define FXMAC_NWCFG_RXCHKSUMEN_MASK BIT(24)        /* enable RX checksum offload */
+#define FXMAC_NWCFG_PAUSECOPYDI_MASK BIT(23)       /* Do not copy pause Frames to memory */
 #define FXMAC_NWCFG_DWIDTH_64_MASK BIT(21)         /* 64 bit Data bus width */
 #define FXMAC_NWCFG_MDC_SHIFT_MASK 18U             /* shift bits for MDC */
 #define FXMAC_NWCFG_MDCCLKDIV_MASK GENMASK(20, 18) /* MDC Mask PCLK divisor */
-#define FXMAC_NWCFG_FCSREM_MASK BIT(17)            /* Discard FCS from \
-                                                      received frames */
-#define FXMAC_NWCFG_LENERRDSCRD_MASK BIT(16)
-/* RX length error discard */
+#define FXMAC_NWCFG_FCSREM_MASK BIT(17)            /* Discard FCS from received frames */
+#define FXMAC_NWCFG_LENERRDSCRD_MASK BIT(16)    /* RX length error discard */
 #define FXMAC_NWCFG_RXOFFS_MASK GENMASK(15)  /* RX buffer offset */
 #define FXMAC_NWCFG_PAUSEEN_MASK BIT(13)     /* Enable pause RX */
 #define FXMAC_NWCFG_RETRYTESTEN_MASK BIT(12) /* Retry test */
@@ -507,12 +423,9 @@ extern "C"
 #define FXMAC_DMACR_TXEXTEND_MASK BIT(29)       /* Tx Extended desc mode */
 #define FXMAC_DMACR_RXEXTEND_MASK BIT(28)       /* Rx Extended desc mode */
 #define FXMAC_DMACR_ORCE_DISCARD_ON_ERR_MASK BIT(24) /* Auto Discard RX frames during lack of resource. */
-#define FXMAC_DMACR_RXBUF_MASK GENMASK(23, 16)  /* Mask bit for RX buffer \
-                                           size */
-#define FXMAC_DMACR_RXBUF_SHIFT 16U             /* Shift bit for RX buffer \
-                                                      size */
-#define FXMAC_DMACR_TCPCKSUM_MASK BIT(11)       /* enable/disable TX \
-                                                        checksum offload */
+#define FXMAC_DMACR_RXBUF_MASK GENMASK(23, 16)  /* Mask bit for RX buffer size */
+#define FXMAC_DMACR_RXBUF_SHIFT 16U             /* Shift bit for RX buffer size */
+#define FXMAC_DMACR_TCPCKSUM_MASK BIT(11)       /* enable/disable TX checksum offload */
 #define FXMAC_DMACR_TXSIZE_MASK BIT(10)         /* TX buffer memory size bit[10] */
 #define FXMAC_DMACR_RXSIZE_MASK GENMASK(9, 8)   /* RX buffer memory size bit[9:8] */
 #define FXMAC_DMACR_ENDIAN_MASK BIT(7)          /* endian configuration */
@@ -554,8 +467,7 @@ extern "C"
 #define FXMAC_TXSR_HRESPNOK_MASK BIT(8) /* Transmit hresp not OK */
 #define FXMAC_TXSR_URUN_MASK BIT(6)     /* Transmit underrun */
 #define FXMAC_TXSR_TXCOMPL_MASK BIT(5)  /* Transmit completed OK */
-#define FXMAC_TXSR_BUFEXH_MASK BIT(4)   /* Transmit buffs exhausted \
-                                           mid frame */
+#define FXMAC_TXSR_BUFEXH_MASK BIT(4)   /* Transmit buffs exhausted mid frame */
 #define FXMAC_TXSR_TXGO_MASK BIT(3)     /* Status of go flag */
 #define FXMAC_TXSR_RXOVR_MASK BIT(2)    /* Retry limit exceeded */
 #define FXMAC_TXSR_FRAMERX_MASK BIT(1)  /* Collision tx frame */
@@ -595,6 +507,7 @@ extern "C"
 /* Design Configuration Register 1 - The GEM has many parameterisation options to configure the IP during compilation stage. */
 
 #define FXMAC_DESIGNCFG_DEBUG1_BUS_WIDTH_MASK GENMASK(27, 25)
+#define FXMAC_DESIGNCFG_DEBUG1_BUS_IRQCOR_MASK BIT(23)
 
 /*GEM hs mac config register bitfields*/
 #define FXMAC_GEM_HSMACSPEED_OFFSET 0
@@ -611,14 +524,16 @@ extern "C"
 /** @name MAC address register word 1 mask
  * @{
  */
-#define FXMAC_GEM_SAB_MASK GENMASK(15, 0) /* Address bits[47:32] \
-                                               bit[31:0] are in BOTTOM */
+#define FXMAC_GEM_SAB_MASK GENMASK(15, 0) /* Address bits[47:32] bit[31:0] are in BOTTOM */
 
 /* USXGMII control register */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_100M (0x0 << 14) /* 100M operation */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_1G (0x1 << 14)   /* 1G operation */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_2_5G (0x2 << 14) /* 2.5G operation */
+#define FXMAC_GEM_USX_HS_MAC_SPEED_5G  (0x3 << 14)  /* 5G operation */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_10G (0x4 << 14)  /* 10G operation */
+#define FXMAC_GEM_USX_SERDES_RATE_5G    (0x0 << 12)
+#define FXMAC_GEM_USX_SERDES_RATE_10G    (0x1 << 12)
 #define FXMAC_GEM_USX_TX_SCR_BYPASS BIT(8)          /* RX Scrambler Bypass. Set high to bypass the receive descrambler. */
 #define FXMAC_GEM_USX_RX_SCR_BYPASS BIT(9)          /* TX Scrambler Bypass. Set high to bypass the transmit scrambler. */
 #define FXMAC_GEM_USX_RX_SYNC_RESET BIT(2)          /* RX Reset. Set high to reset the receive datapath. When low the receive datapath is enabled. */
@@ -641,6 +556,12 @@ extern "C"
 #define FXMAC_PCS_AN_LP_DUPLEX_OFFSET  12
 #define FXMAC_PCS_AN_LP_DUPLEX   (0x3U << FXMAC_PCS_AN_LP_DUPLEX_OFFSET) /* SGMII Bit 13: Reserved. read as 0. Bit 12 : 0 : half-duplex. 1: Full Duplex." */
 #define FXMAC_PCS_LINK_PARTNER_NEXT_PAGE_STATUS (1U<<15) /* In sgmii mode, 0 is link down . 1 is link up */
+
+
+/* USXGMII Status Register */
+
+#define FXMAC_GEM_USX_STATUS_BLOCK_LOCK BIT(0)  /* Block Lock. A value of one indicates that the PCS has achieved block synchronization. */
+
 
 /***************** Macros (Inline Functions) Definitions *********************/
 

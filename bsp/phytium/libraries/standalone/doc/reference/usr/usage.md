@@ -170,6 +170,134 @@ tftp> q
 - 将镜像文件放置在上图所示的`%PHYTIUM_IDE_PATH%\tftp`目录下，开发板即可通过`tftpboot`加载镜像
 
 > 在`template_mingw64`工程中，通过定义`USR_BOOT_DIR`可以将编译的镜像自动拷贝带tftp目录下 -->
+
+
+### 1.2.3 设置板载FLASH自动启动，避免人工干预
+
+- 此项设置是把bin镜像保存到和UBOOT相同的NOR FLASH芯片里。此芯片一般8MB。目前uboot里的flash读写命令，最大支持16MB
+- uboot固件一般4MB左右。以下命令例子，把前6MB给uboot，从6MB到7MB的空间给bin镜像使用，操作命令如下，
+
+- 通过串口或者网络下载到内存
+```
+loadx 0x90100000
+tftpboot 0x90100000 baremetal.elf
+```
+
+- 将下载的镜像写入 QSPI NOR-Flash，位置为 0x600000，镜像大小为 0x100000
+> 如果下载的 bin/elf 镜像大小超过 0x100000 字节，需要随镜像大小进行调整
+```
+flashe 0x600000   0x100000
+flashw 0x90100000 0x600000 0x100000 
+cmp.b  0x600000   0x90100000 0x100000 
+cp.b   0x600000   0x90100000 0x100000
+```
+
+- 然后就可以下电、上电启动，自动从 QSPI NOR-Flash 引导系统
+> 使用 saveenv 前，需要找 FAE 确认 u-boot 版本是否支持
+```
+csetenv bootcmd "cp.b  0x600000  0x90100000 0xa00000; bootvx32 0x90100000"
+saveenv
+```
+
+- 如果用baremetal.bin文件，则把0x90100000改成0x80100000即可
+
+### 1.2.4 将镜像放置在 SD 卡文件系统中，进行启动
+
+- 以 Windows 10为例, 首先利用读卡器或者 SD 卡套将 SD 插入 Windows10 电脑接口，找到 SD 卡对应的磁盘
+
+![](../../fig/disk_manager.png)
+
+- 在 SD 卡磁盘上创建一个分区，格式为 FAT，由于 FAT 格式限制，分区不能超过太大，我们这里创建 256 MB 分区就可以了
+
+![](../../fig/sd_segement.png)
+
+- 将编译生成的 bin 文件或者 elf 文件放置在刚刚创建的 FAT 格式分区中
+
+![](../../fig/sd_image.png)
+
+- 将 SD 卡从 Windows10 电脑中正常弹出，将 SD 卡插入开发板卡槽
+
+![](../../fig/sd_insert.png)
+
+- 启动开发板，进入 u-boot 控制台，输入下列命令找到 bin/elf 镜像文件
+> 以 E2000-Demo 板为例，SD 卡槽连接的是 SD-1 控制器，
+
+```
+mmc dev 1
+mmc info
+fatls mmc 1:1
+```
+
+![](../../fig/sd_partinfo.png)
+
+- 输入下列命令加载 elf 镜像，开始启动
+
+```
+fatload mmc 1:1 0xa0100000 baremetal.elf
+bootelf -p 0xa0100000
+```
+
+- 使用 bin 镜像启动前，需要确保刷新过 cache 
+```
+fatload mmc 1:1 0x80100000 baremetal.bin
+dcache flush
+go 0x80100000
+```
+
+- 输入下列命令，可以下电、上电启动，自动从 SD 卡介质中引导系统
+> 使用 saveenv 前，需要找 FAE 确认 u-boot 版本是否支持
+```
+setenv bootcmd "mmc dev 1; fatload mmc 1:1 0x90100000 baremetal.elf; bootelf -p 0x90100000"
+saveenv
+```
+
+
+### 1.2.5 将镜像放置在 U盘文件系统中，进行启动
+
+- 以 Windows 10为例, 首先将 U 盘插入 Windows10 电脑接口，找到 SD 卡对应的磁盘
+- 在 U 盘上创建一个分区，格式为 FAT，由于 FAT 格式限制，分区不能超过太大，我们这里创建 128 MB 分区就可以了
+
+![](../../fig/usb_disk.png)
+
+- 将编译生成的 bin 文件或者 elf 文件放置在刚刚创建的 FAT 格式分区中
+
+- 将 U 盘从 Windows10 电脑中正常弹出，将 U 盘插入开发板USB插槽
+
+![](../../fig/usb_insert.png)
+
+- 启动 USB 控制器，找到 U 盘中的
+
+```
+usb start
+usb storage
+fatls usb 0
+```
+
+![](../../fig/usb_image.png)
+
+
+- 输入下列命令加载 elf 镜像，开始启动
+
+```
+fatload usb 0 0xa0100000 baremetal.elf
+bootelf -p 0xa0100000
+```
+
+- 使用 bin 镜像启动前，需要确保刷新过 cache 
+
+```
+ffatload usb 0 0x80100000 baremetal.bin
+dcache flush
+go 0x80100000
+```
+
+- 输入下列命令，可以下电、上电启动，自动从 U盘引导系统
+> 使用 saveenv 前，需要找 FAE 确认 u-boot 版本是否支持
+```
+setenv bootcmd "usb start; fatload usb 0 0x90100000 baremetal.elf; bootelf -p 0x90100000"
+saveenv
+```
+
 ## 1.3 新建一个baremetal应用工程
 如果您希望自己建立一个应用工程，可以参考下面的流程
 ### 1.3.1 选择工程模板

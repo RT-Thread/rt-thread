@@ -14,26 +14,24 @@
  * FilePath: fqspi_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:00:41
- * Description:  
- * This file is for
- *
+ * Description:  This file is for the qspi default configuration
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.1   wangxiaodong  2021.11.12  re-construct
- * 1.2   wangxiaodong  2022.3.27   re-construct
+ * 1.0   wangxiaodong  2022/3/29  first release
+ * 1.1   wangxiaodong  2022/9/9   improve functions
  */
 
 #include "fparameters.h"
 #include "fqspi.h"
 #include "sdkconfig.h"
 
-FQspiConfig FQspiConfigTbl[FQSPI_INSTANCE_NUM] =
+FQspiConfig FQspiConfigTbl[FQSPI_NUM] =
 {
     {
-        .instance_id = FQSPI_INSTANCE_0,
-        .base_addr = FQSPI_BASEADDR,
+        .instance_id = FQSPI0_ID,
+        .base_addr = FQSPI_BASE_ADDR,
         .mem_start = FQSPI_MEM_START_ADDR,
         .capacity = 0,
         .dev_num = 0,

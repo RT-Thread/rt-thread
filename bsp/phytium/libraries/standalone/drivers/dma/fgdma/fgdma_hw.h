@@ -14,27 +14,27 @@
  * FilePath: fgdma_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
- * Description:  This files is for
+ * Description:  This file is for gdma register related defintion
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   huanghe    2021-11-5    init commit
- * 1.1   zhugengyu  2022-5-16    modify according to tech manual.
+ * 1.0   huanghe    2021/11/5    init commit
+ * 1.1   zhugengyu  2022/5/16    modify according to tech manual.
  */
 
-#ifndef DRIVERS_FGDMA_HW_H
-#define DRIVERS_FGDMA_HW_H
+#ifndef FGDMA_HW_H
+#define FGDMA_HW_H
+
+#include "fparameters.h"
+#include "fio.h"
+#include "fkernel.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 /***************************** Include Files *********************************/
-
-#include "fparameters.h"
-#include "fio.h"
-#include "fkernel.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -429,9 +429,13 @@ static inline void FGdmaSetChanClock(uintptr base_addr, u32 chan, boolean enable
 {
     u32 reg_val = FGDMA_READREG(base_addr, FGDMA_LP_OFFSET);
     if (enable)
-        reg_val &= ~FGDMA_CHX_LP_CTL(chan); /* 写0开启通道时钟 */
+    {
+        reg_val &= ~FGDMA_CHX_LP_CTL(chan);    /* 写0开启通道时钟 */
+    }
     else
-        reg_val |= FGDMA_CHX_LP_CTL(chan); /* 写1关断通道时钟 */
+    {
+        reg_val |= FGDMA_CHX_LP_CTL(chan);    /* 写1关断通道时钟 */
+    }
     FGDMA_WRITEREG(base_addr, FGDMA_LP_OFFSET, reg_val);
 
     return;

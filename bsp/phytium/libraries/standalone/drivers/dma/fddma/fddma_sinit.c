@@ -14,12 +14,12 @@
  * FilePath: fddma_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:47
- * Description:  This files is for static initialization
+ * Description:  This file is for static initialization
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/5/13    init commit
+ * 1.0   zhugengyu  2022/5/13    init commit
  */
 
 /***************************** Include Files *********************************/

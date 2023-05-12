@@ -14,17 +14,18 @@
  * FilePath: fgmac.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for gmac driver .Functions in this file are the minimum required functions
+ * for this driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
 
 /***************************** Include Files *********************************/
 #include <string.h>
-
 #include "fio.h"
 #include "ferror_code.h"
 #include "ftypes.h"
@@ -106,35 +107,35 @@ FError FGmacCfgInitialize(FGmac *instance_p, const FGmacConfig *input_config_p)
     /* indicating device is started */
     if (FT_COMPONENT_IS_READY == instance_p->is_ready)
     {
-        FGMAC_WARN("device is already initialized!!!");
+        FGMAC_WARN("Device is already initialized!!!");
     }
 
     /* de-initialize device instance */
     FGmacDeInitialize(instance_p);
     instance_p->config = *input_config_p;
 
-
-    /*Phy Awaken*/
-
+    /* Phy Awaken */
     ret = FGmacPhyAwaken(instance_p);
     if (FGMAC_SUCCESS != ret)
     {
-        FGMAC_ERROR("phy awaken failed!");
+        FGMAC_ERROR("Phy awaken failed!");
         return ret;
     }
 
 
     /* initialize the gmac controller */
-    ret = FGmacReset(instance_p); // permmit failed
+    ret = FGmacReset(instance_p);
     if (FGMAC_SUCCESS != ret)
     {
-        printf("FGmacReset failed \r\n");
+        /*permit failed*/
+        FGMAC_ERROR("Gmac reset failed.");
     }
-
 
     ret = FGmacControllerConfigure(instance_p);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* initialize the gmac dma controller */
     ret = FGmacDmaConfigure(instance_p);
@@ -200,7 +201,7 @@ static FError FGmacReset(FGmac *instance_p)
     /* recover mac address after softwate reset */
     FGmacSetMacAddr(base_addr, mac_addr);
 
-    return ret;// may return error
+    return ret;
 }
 
 /**
@@ -261,9 +262,13 @@ void FGmacControllerDuplexConfig(FGmac *instance_p, u32 duplex)
 
     /* 设置双工模式 */
     if (duplex == FGMAC_PHY_MODE_FULLDUPLEX)
+    {
         reg_val |= FGMAC_CONF_DUPLEX_MODE;
+    }
     else
+    {
         reg_val &= ~FGMAC_CONF_DUPLEX_MODE;
+    }
 
     FGMAC_WRITE_REG32(base_addr, FGMAC_CONF_OFFSET, reg_val);
 
@@ -313,15 +318,23 @@ static FError FGmacControllerConfigure(FGmac *instance_p)
 
     /* 双工模式 */
     if (instance_p->config.duplex_mode)
+    {
         reg_val |= FGMAC_CONF_DUPLEX_MODE;
+    }
     else
+    {
         reg_val &= ~FGMAC_CONF_DUPLEX_MODE;
+    }
 
     /* 使能校验和卸载IPS */
     if (FGMAC_CHECKSUM_BY_HARDWARE == instance_p->config.cheksum_mode)
+    {
         reg_val |= FGMAC_CONF_IPC;
+    }
     else
+    {
         reg_val &= ~FGMAC_CONF_IPC;
+    }
 
     /* 重发DR=1, 重发一次 */
     reg_val |= FGMAC_CONF_DISABLE_RETRY;
@@ -486,7 +499,7 @@ static FError FGmacDmaConfigure(FGmac *instance_p)
 
     if (FGMAC_SUCCESS != ret)
     {
-        printf("FGmac Flush Failed\r\n");
+        FGMAC_ERROR("Gmac flush failed.");
     }
 
     /* AXI 突发长度 BLEN 16,8,4 */

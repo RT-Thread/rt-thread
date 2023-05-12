@@ -14,9 +14,10 @@
  * FilePath: fwdt_intr.c
  * Date: 2021-11-05 10:01:59
  * LastEditTime: 2022-02-25 11:44:02
- * Description:  This files is for intrrupt function of wdt ctrl
+ * Description:  This file is for wdt interrupt handler implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/25   init commit
  */
