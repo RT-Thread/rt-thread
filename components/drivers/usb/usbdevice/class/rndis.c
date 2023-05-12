@@ -1352,10 +1352,10 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     {
         LOG_E("%s,%d: no memory!", __func__, __LINE__);
 
-        if( intf_comm != RT_NULL )
+        if(intf_comm != RT_NULL)
             rt_free(intf_comm);
 
-        if( intf_data != RT_NULL )
+        if(intf_data != RT_NULL)
             rt_free(intf_data);
 
         return RT_NULL;
