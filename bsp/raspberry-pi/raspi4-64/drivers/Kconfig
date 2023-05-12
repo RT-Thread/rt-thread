@@ -80,7 +80,6 @@ menu "Hardware Drivers Config"
 
         menuconfig BSP_USING_SYSTIMER
             bool "Enable SYSTIMER"
-            select BSP_USING_SYSTIMER
             default n
 
         if  BSP_USING_SYSTIMER
