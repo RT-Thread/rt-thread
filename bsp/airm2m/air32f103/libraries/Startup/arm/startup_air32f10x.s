@@ -13,7 +13,7 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size      EQU     0x00001000
+Stack_Size      EQU     0x00000400
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
@@ -23,7 +23,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x00001000
+Heap_Size       EQU     0x00000000
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -202,6 +202,22 @@ BOOT_RAM  		PROC
 ; Reset handler
 Reset_Handler   PROC
                 EXPORT  Reset_Handler             [WEAK]
+				LDR  R0,=0x400210F0
+                MOV R1,#0x00000001
+                STR R1,[R0]
+                LDR  R2,=0x40016C00
+                LDR R3,=0xa7d93a86
+                STR R3,[R2]
+                LDR R3,=0xab12dfcd
+                STR R3,[R2]
+                LDR R3,=0xcded3526
+                STR R3,[R2]
+                LDR R3,=0x200183FF
+                STR R3,[R2,#0x18]
+                LDR R4,=0x4002228c
+                LDR R5,=0xa5a5a5a5
+                STR R5,[R4]
+                MOV R1,#0x00000000	
                 IMPORT  __main
                 IMPORT  SystemInit
                 LDR     R0, =SystemInit
