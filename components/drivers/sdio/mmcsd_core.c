@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2011-07-25     weety         first version
+ * 2023-05-06     hpmicro       Fix the go_idle logic for SPI controller
  */
 
 #include <rtthread.h>
@@ -109,7 +110,7 @@ rt_int32_t mmcsd_go_idle(struct rt_mmcsd_host *host)
     rt_int32_t err;
     struct rt_mmcsd_cmd cmd;
 
-    if (!controller_is_spi(host))
+    if (controller_is_spi(host))
     {
         mmcsd_set_chip_select(host, MMCSD_CS_HIGH);
         rt_thread_mdelay(1);
@@ -125,7 +126,7 @@ rt_int32_t mmcsd_go_idle(struct rt_mmcsd_host *host)
 
     rt_thread_mdelay(1);
 
-    if (!controller_is_spi(host))
+    if (controller_is_spi(host))
     {
         mmcsd_set_chip_select(host, MMCSD_CS_IGNORE);
         rt_thread_mdelay(1);
@@ -778,4 +779,3 @@ int rt_mmcsd_core_init(void)
     return 0;
 }
 INIT_PREV_EXPORT(rt_mmcsd_core_init);
-
