@@ -12,45 +12,112 @@
 #include "bflb_gpio.h"
 #include "bflb_common.h"
 
-#ifdef BSP_USING_I2C
+#ifdef BSP_USING_SOFT_I2C1
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
 #define LOG_TAG "DRV.I2C"
 
-#if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2)
-#error "Please define at least one BSP_USING_I2Cx"
-/* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
-#endif
-
-// uart1
-#ifdef I2C1_SCL_USING_GPIO0
+// i2c1
+#ifdef SOFT_I2C1_SCL_USING_GPIO0
 #define BSP_I2C1_SCL_PIN           GPIO_PIN_0
-#elif defined(I2C1_SCL_USING_GPIO4)
+#elif defined(SOFT_I2C1_SCL_USING_GPIO2)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_2
+#elif defined(SOFT_I2C1_SCL_USING_GPIO4)
 #define BSP_I2C1_SCL_PIN           GPIO_PIN_4
-#elif defined(I2C1_SCL_USING_GPIO8)
+#elif defined(SOFT_I2C1_SCL_USING_GPIO6)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_6
+#elif defined(SOFT_I2C1_SCL_USING_GPIO8)
 #define BSP_I2C1_SCL_PIN           GPIO_PIN_8
-#elif defined(I2C1_SCL_USING_GPIO10)
+#elif defined(SOFT_I2C1_SCL_USING_GPIO10)
 #define BSP_I2C1_SCL_PIN           GPIO_PIN_10
-#elif defined(I2C1_SCL_USING_GPIO20)
+#elif defined(SOFT_I2C1_SCL_USING_GPIO12)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_12
+#elif defined(SOFT_I2C1_SCL_USING_GPIO14)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_14
+#elif defined(SOFT_I2C1_SCL_USING_GPIO16)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_16
+#elif defined(SOFT_I2C1_SCL_USING_GPIO18)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_18
+#elif defined(SOFT_I2C1_SCL_USING_GPIO20)
 #define BSP_I2C1_SCL_PIN           GPIO_PIN_20
+#elif defined(SOFT_I2C1_SCL_USING_GPIO22)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_22
+#elif defined(SOFT_I2C1_SCL_USING_GPIO24)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_24
+#elif defined(SOFT_I2C1_SCL_USING_GPIO26)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_26
+#elif defined(SOFT_I2C1_SCL_USING_GPIO28)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_28
+#elif defined(SOFT_I2C1_SCL_USING_GPIO30)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_30
+#elif defined(SOFT_I2C1_SCL_USING_GPIO32)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_32
+#elif defined(SOFT_I2C1_SCL_USING_GPIO34)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_34
+#elif defined(SOFT_I2C1_SCL_USING_GPIO36)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_36
+#elif defined(SOFT_I2C1_SCL_USING_GPIO38)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_38
+#elif defined(SOFT_I2C1_SCL_USING_GPIO40)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_40
+#elif defined(SOFT_I2C1_SCL_USING_GPIO42)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_42
+#elif defined(SOFT_I2C1_SCL_USING_GPIO44)
+#define BSP_I2C1_SCL_PIN           GPIO_PIN_44
 #endif
 
-#ifdef I2C1_SDA_USING_GPIO1
+#ifdef SOFT_I2C1_SDA_USING_GPIO1
 #define BSP_I2C1_SDA_PIN           GPIO_PIN_1
-#elif defined(I2C1_SDA_USING_GPIO3)
+#elif defined(SOFT_I2C1_SDA_USING_GPIO3)
 #define BSP_I2C1_SDA_PIN           GPIO_PIN_3
-#elif defined(I2C1_SDA_USING_GPIO7)
+#elif defined(SOFT_I2C1_SDA_USING_GPIO5)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_5
+#elif defined(SOFT_I2C1_SDA_USING_GPIO7)
 #define BSP_I2C1_SDA_PIN           GPIO_PIN_7
-#elif defined(I2C1_SDA_USING_GPIO11)
+#elif defined(SOFT_I2C1_SDA_USING_GPIO9)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_9
+#elif defined(SOFT_I2C1_SDA_USING_GPIO11)
 #define BSP_I2C1_SDA_PIN           GPIO_PIN_11
-#elif defined(I2C1_SDA_USING_GPIO21)
+#elif defined(SOFT_I2C1_SDA_USING_GPIO13)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_13
+#elif defined(SOFT_I2C1_SDA_USING_GPIO15)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_15
+#elif defined(SOFT_I2C1_SDA_USING_GPIO17)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_17
+#elif defined(SOFT_I2C1_SDA_USING_GPIO19)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_19
+#elif defined(SOFT_I2C1_SDA_USING_GPIO21)
 #define BSP_I2C1_SDA_PIN           GPIO_PIN_21
+#elif defined(SOFT_I2C1_SDA_USING_GPIO23)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_23
+#elif defined(SOFT_I2C1_SDA_USING_GPIO25)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_25
+#elif defined(SOFT_I2C1_SDA_USING_GPIO27)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_27
+#elif defined(SOFT_I2C1_SDA_USING_GPIO29)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_29
+#elif defined(SOFT_I2C1_SDA_USING_GPIO31)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_31
+#elif defined(SOFT_I2C1_SDA_USING_GPIO33)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_33
+#elif defined(SOFT_I2C1_SDA_USING_GPIO35)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_35
+#elif defined(SOFT_I2C1_SDA_USING_GPIO37)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_37
+#elif defined(SOFT_I2C1_SDA_USING_GPIO39)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_39
+#elif defined(SOFT_I2C1_SDA_USING_GPIO41)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_41
+#elif defined(SOFT_I2C1_SDA_USING_GPIO43)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_43
+#elif defined(SOFT_I2C1_SDA_USING_GPIO45)
+#define BSP_I2C1_SDA_PIN           GPIO_PIN_45
 #endif
 
 static const struct bl_soft_i2c_config soft_i2c_config[] =
 {
-#ifdef BSP_USING_I2C1
+#ifdef BSP_USING_SOFT_I2C1
     I2C1_BUS_CONFIG,
 #endif
 };
@@ -140,7 +207,7 @@ static rt_int32_t bl_get_scl(void *data)
  */
 static void bl_udelay(rt_uint32_t us)
 {
-    arch_delay_us(us);
+    bflb_mtimer_delay_us(us);
 }
 
 static const struct rt_i2c_bit_ops bl_bit_ops_default =
@@ -209,4 +276,4 @@ int rt_hw_i2c_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_i2c_init);
 
-#endif /* BSP_USING_I2C */
+#endif /* BSP_USING_SOFT_I2C1 */
