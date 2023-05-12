@@ -707,7 +707,6 @@ void rt_usbh_hub_init(uhcd_t hcd)
     rt_thread_t thread;
     /* create root hub for hcd */
     hcd->roothub = rt_malloc(sizeof(struct uhub));
-    /*paremeter check*/
     if(hcd->roothub == RT_NULL)
     {
         LOG_E("Allocate partition buffer failed.");
