@@ -728,5 +728,5 @@ void rt_usbh_hub_init(uhcd_t hcd)
     {
         /* startup usb host thread */
         rt_thread_startup(thread);
-    }   
+    }
 }
