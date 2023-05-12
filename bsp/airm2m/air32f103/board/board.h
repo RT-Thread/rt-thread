@@ -24,8 +24,8 @@ extern "C" {
 #define AIR32_FLASH_SIZE             (128 * 1024)
 #define AIR32_FLASH_END_ADDRESS      ((uint32_t)(AIR32_FLASH_START_ADRESS + AIR32_FLASH_SIZE))
 
-/* Internal SRAM memory size[Kbytes] , Default: 32*/
-#define AIR32_SRAM_SIZE      32
+/* Internal SRAM memory size[Kbytes] , Default: 96*/
+#define AIR32_SRAM_SIZE      96
 #define AIR32_SRAM_END       (0x20000000 + AIR32_SRAM_SIZE * 1024)
 
 #if defined(__ARMCC_VERSION)

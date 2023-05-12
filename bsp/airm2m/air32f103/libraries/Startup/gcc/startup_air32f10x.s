@@ -66,6 +66,23 @@ LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
 
+  ldr r0,=0x400210F0
+  mov r1,#0x00000001
+  str r1,[r0]
+  ldr r2,=0x40016C00
+  ldr r3,=0xa7d93a86
+  str r3,[r2]
+  ldr r3,=0xab12dfcd
+  str r3,[r2]
+  ldr r3,=0xcded3526
+  str r3,[r2]
+  ldr r3,=0x200183FF
+  str r3,[r2,#0x18]
+  ldr r4,=0x4002228c
+  ldr r5,=0xa5a5a5a5
+  str r5,[r4]
+  mov r1,#0x00000000	
+
 /* Call the clock system intitialization function.*/
     bl  SystemInit
 /* Call static constructors */
