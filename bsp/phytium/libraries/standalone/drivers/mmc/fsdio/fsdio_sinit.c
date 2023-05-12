@@ -14,7 +14,7 @@
  * FilePath: fsdio_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:48:41
- * Description:  This files is for static init
+ * Description:  This file is for static init
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -37,7 +37,7 @@
 
 /************************** Variable Definitions *****************************/
 
-extern const FSdioConfig FSDIO_CONFIG_TBL[FSDIO_HOST_INSTANCE_NUM];
+extern const FSdioConfig FSDIO_CONFIG_TBL[FSDIO_NUM];
 
 /************************** Function Prototypes ******************************/
 /**
@@ -51,7 +51,7 @@ const FSdioConfig *FSdioLookupConfig(u32 instance_id)
     const FSdioConfig *ptr = NULL;
     u32 index;
 
-    for (index = 0; index < (u32)FSDIO_HOST_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FSDIO_NUM; index++)
     {
         if (FSDIO_CONFIG_TBL[index].instance_id == instance_id)
         {

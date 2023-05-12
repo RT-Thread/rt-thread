@@ -12,17 +12,18 @@
  *
  *
  * FilePath: fpl011.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:07:24
- * Description:  This files is for uart functions
+ * Description:  This file is for uart functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18  fix bug
  */
 
 /***************************** Include Files ********************************/
-
 #include "fpl011.h"
 #include "fio.h"
 #include "ferror_code.h"
@@ -136,7 +137,7 @@ static void FPl011StubHandler(void *args, u32 event,
 
 /**
  * @name: FPl011SendBuffer
- * @msg: send data buffer through uart
+ * @msg: send data buffer through uart,if you close FIFO and open interrupt,recommend use FPl011BlockSend
  * @return {*}
  * @param  uart_p
  */
@@ -156,16 +157,14 @@ u32 FPl011SendBuffer(FPl011 *uart_p)
      * Otherwise put bytes into the TX FIFO unil it is full, or all of the
      * data has been put into the FIFO.
      */
-    while ((!FUART_ISTRANSMITFULL(uart_p->config.base_address)) && (uart_p->send_buffer.remaining_bytes > sent_count))
+    while ((!FUART_ISTRANSMITFULL(uart_p->config.base_address)) && (uart_p->send_buffer.remaining_bytes > 0))
     {
-        FUART_WRITEREG32(uart_p->config.base_address, FPL011DR_OFFSET, (u32)uart_p->send_buffer.byte_p[sent_count]);
-        sent_count++;
-    }
-    /* Update the buffer to reflect the bytes that were sent from it */
-    uart_p->send_buffer.byte_p += sent_count;
-    uart_p->send_buffer.remaining_bytes -= sent_count;
+        sent_count = uart_p->send_buffer.requested_bytes - uart_p->send_buffer.remaining_bytes;
+        uart_p->send_buffer.remaining_bytes--;
 
-    return sent_count;
+        FUART_WRITEREG32(uart_p->config.base_address, FPL011DR_OFFSET, (u32)uart_p->send_buffer.byte_p[sent_count]);
+    }
+    return uart_p->send_buffer.requested_bytes - uart_p->send_buffer.remaining_bytes;
 }
 
 /**
@@ -203,7 +202,7 @@ u32 FPl011ReceiveBuffer(FPl011 *uart_p)
     u32 event_data;
     u32 byte_value;
 
-    while ((received_count < uart_p->receive_buffer.remaining_bytes) && !FUART_ISRECEIVEDATA(uart_p->config.base_address))
+    while ((received_count < uart_p->receive_buffer.remaining_bytes) && !FUART_RECEIVEDATAEMPTY(uart_p->config.base_address))
     {
         byte_value = FUART_READREG32(uart_p->config.base_address, FPL011DR_OFFSET);
 

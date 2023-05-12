@@ -30,7 +30,7 @@ static char *core_thread_name[8] =
     "core6_test",
     "core7_test"
 };
-static rt_uint8_t core_stack[RT_CPUS_NR][1024];
+static rt_uint8_t core_stack[RT_CPUS_NR][4096];
 
 static void demo_core_thread(void *parameter)
 {
@@ -41,7 +41,7 @@ static void demo_core_thread(void *parameter)
         level = rt_cpus_lock();
         rt_kprintf("Hi, core%d \r\n", rt_hw_cpu_id());
         rt_cpus_unlock(level);
-        rt_thread_mdelay(2000000);
+        rt_thread_mdelay(200000);
     }
 }
 
@@ -57,7 +57,7 @@ void demo_core(void)
                        demo_core_thread,
                        RT_NULL,
                        &core_stack[i],
-                       1024,
+                       4096,
                        20,
                        32);
 

@@ -7,6 +7,7 @@ src     = []
 
 CPPPATH = [cwd]
 CPPDEFINES = []
+LOCAL_CFLAGS = ' -DARCH_RISCV'
 
 if GetDepend('BL808_CORE_M0'):
     src += Split("""
@@ -52,12 +53,17 @@ if GetDepend('BL808_CORE_M0') or GetDepend('BL808_CORE_LP'):
         std/src/bl808_uhs_phy.c
         std/port/bl808_clock.c
     """)
+elif GetDepend('BL808_CORE_D0'):
+    src += Split("""
+        std/src/bl808_clock.c
+        std/src/bl808_hbn.c
+        std/port/bl808_clock.c
+    """)
 
 CPPPATH += [cwd + r'/std/include',
         cwd + r'/std/include/hardware']
 
 CPPDEFINES += ['CONFIG_IRQ_NUM=80', 'BFLB_USE_HAL_DRIVER', 'BL808', 'default_interrupt_handler=SW_handler']
-LOCAL_CFLAGS = ' -DARCH_RISCV'
 
 group = DefineGroup('bl808', src, depend = ['BSP_USING_BL808'], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LOCAL_CFLAGS = LOCAL_CFLAGS)
 

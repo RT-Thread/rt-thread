@@ -24,7 +24,7 @@
 
 /* Notice: PIO1_9(sck) --> 10; PIO0_18(miso) --> 56; PIO1_10(mosi) --> 40 */
 
-#define BSP_S_SPI2_SCK_PIN 	GET_PINS(1,9)
+#define BSP_S_SPI2_SCK_PIN  GET_PINS(1,9)
 #define BSP_S_SPI2_MISO_PIN GET_PINS(0,18)
 #define BSP_S_SPI2_MOSI_PIN GET_PINS(1,10)
 

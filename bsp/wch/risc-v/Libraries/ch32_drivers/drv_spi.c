@@ -410,8 +410,15 @@ static rt_ssize_t spi_xfer(struct rt_spi_device *device, struct rt_spi_message *
 
         /* calculate the start address */
         already_send_length = message->length - send_length - message_length;
-        send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
-        recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
+        /* avoid null pointer problems */
+        if (message->send_buf)
+        {
+            send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
+        }
+        if (message->recv_buf)
+        {
+            recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
+        }
 
          /* start once data exchange */
         if (message->send_buf && message->recv_buf)

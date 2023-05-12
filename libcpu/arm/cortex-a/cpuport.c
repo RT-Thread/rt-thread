@@ -13,7 +13,7 @@
 #include <rtthread.h>
 #include <board.h>
 
-int rt_hw_cpu_id(void)
+rt_weak int rt_hw_cpu_id(void)
 {
     int cpu_id;
     __asm__ volatile (

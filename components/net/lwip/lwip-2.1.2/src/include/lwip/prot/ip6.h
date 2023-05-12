@@ -200,7 +200,7 @@ PACK_STRUCT_END
 #define IP6_ROUT_SEG_LEFT(hdr) ((hdr)->_segments_left)
 
 /* Fragment header. */
-#define IP6_FRAG_HLEN    8
+#define IP6_FRAG_HLEN    12
 #define IP6_FRAG_OFFSET_MASK    0xfff8
 #define IP6_FRAG_MORE_FLAG      0x0001
 

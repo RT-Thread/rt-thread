@@ -2,7 +2,7 @@
 #include <rtdevice.h>
 #include <hal_gpio.h>
 
-static void hal_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static void hal_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     switch (mode)
     {
@@ -27,20 +27,20 @@ static void hal_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode
     }
 }
 
-static void hal_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void hal_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     hal_gpio_set_data(pin,value);
 }
 
-static int hal_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t hal_pin_read(struct rt_device *device, rt_base_t pin)
 {
     gpio_data_t value;
     hal_gpio_get_data(pin,&value);
-    return (int)value;
+    return (rt_int8_t)value;
 }
 
-static rt_err_t hal_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                       rt_uint32_t mode, void (*hdr)(void *args),
+static rt_err_t hal_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                       rt_uint8_t mode, void (*hdr)(void *args),
                                        void *args)
 {
     rt_base_t level = 0;
@@ -68,7 +68,7 @@ static rt_err_t hal_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t hal_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t hal_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level = 0;
     uint32_t irq;
@@ -92,7 +92,7 @@ static rt_err_t hal_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t hal_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t hal_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     uint32_t irq;
     int ret;

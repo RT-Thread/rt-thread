@@ -11,29 +11,35 @@ CPPPATH = [cwd,
         cwd + r'/include/arch/risc-v/t-head/Core/Include',
         cwd + r'/src/flash']
 
-src     = Split("""
-    src/bflb_adc.c
-    src/bflb_cks.c
-    src/bflb_ef_ctrl.c
-    src/bflb_gpio.c
-    src/bflb_i2c.c
-    src/bflb_dma.c
-    src/bflb_rtc.c
-    src/bflb_sec_aes.c
-    src/bflb_sec_sha.c
-    src/bflb_sec_trng.c
-    src/bflb_spi.c
-    src/bflb_timer.c
-    src/bflb_uart.c
-    src/bflb_wdg.c
-    src/bflb_flash.c
-    src/flash/bflb_sf_cfg.c
-    src/flash/bflb_xip_sflash.c
-    src/flash/bflb_sflash.c
-    src/flash/bflb_sf_ctrl.c
-    src/bflb_l1c.c
-    src/bflb_mtimer.c
-""")
+if GetDepend('BL808_CORE_D0'):
+    src     = Split("""
+        src/bflb_gpio.c
+        src/bflb_uart.c
+    """)
+else:
+    src     = Split("""
+        src/bflb_adc.c
+        src/bflb_cks.c
+        src/bflb_ef_ctrl.c
+        src/bflb_gpio.c
+        src/bflb_i2c.c
+        src/bflb_dma.c
+        src/bflb_rtc.c
+        src/bflb_sec_aes.c
+        src/bflb_sec_sha.c
+        src/bflb_sec_trng.c
+        src/bflb_spi.c
+        src/bflb_timer.c
+        src/bflb_uart.c
+        src/bflb_wdg.c
+        src/bflb_flash.c
+        src/flash/bflb_sf_cfg.c
+        src/flash/bflb_xip_sflash.c
+        src/flash/bflb_sflash.c
+        src/flash/bflb_sf_ctrl.c
+        src/bflb_l1c.c
+        src/bflb_mtimer.c
+    """)
 
 if not GetDepend('BL808_CORE_D0'):
     src += ['src/bflb_irq.c']

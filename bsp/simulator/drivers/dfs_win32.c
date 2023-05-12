@@ -191,7 +191,7 @@ static int dfs_win32_open(struct dfs_file *file)
         len = strlen(wdirp->finddata.name) + 1;
         wdirp->handle = handle;
         //wdirp->nfiles = 1;
-        wdirp->start = malloc(len); //not rt_malloc!
+        wdirp->start = (char *)malloc(len); //not rt_malloc!
         wdirp->end = wdirp->curr = wdirp->start;
         wdirp->end += len;
         rt_strncpy(wdirp->curr, wdirp->finddata.name, len);

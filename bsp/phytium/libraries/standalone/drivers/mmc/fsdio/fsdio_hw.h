@@ -14,7 +14,7 @@
  * FilePath: fsdio_hw.h
  * Date: 2022-05-26 15:32:34
  * LastEditTime: 2022-05-26 15:32:35
- * Description:  This files is for SDIO register function definition
+ * Description:  This file is for SDIO register function definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -23,19 +23,27 @@
  * 1.1   zhugengyu  2022/5/26    modify according to tech manual.
  */
 
-#ifndef DRIVERS_FSDIO_HW_H
-#define DRIVERS_FSDIO_HW_H
+#ifndef FSDIO_HW_H
+#define FSDIO_HW_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 /***************************** Include Files *********************************/
+
 #include "fparameters.h"
 #include "fio.h"
 #include "ftypes.h"
 #include "fassert.h"
 #include "fkernel.h"
+
+#ifdef __aarch64__
+#include "faarch64.h"
+#else
+#include "fcp15.h"
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 
@@ -118,8 +126,10 @@ extern "C"
 #define FSDIO_CLK_DRV_SET(x)     SET_REG32_BITS((x), 15, 8)
 #define FSDIO_CLK_DIVIDER_SET(x) SET_REG32_BITS((x), 7, 0) /* 分频系数 =  2 * bit[7:0] */
 #define FSDIO_CLK_DIV(samp, drv, div) FSDIO_CLK_SAMPLE_SET(samp) | \
-                                      FSDIO_CLK_DRV_SET(drv) | \
-                                      FSDIO_CLK_DIVIDER_SET(div)
+    FSDIO_CLK_DRV_SET(drv) | \
+    FSDIO_CLK_DIVIDER_SET(div)
+
+#define FSDIO_CLK_DIVDER_GET(div_reg)  GET_REG32_BITS((div_reg), 7, 0)
 
 /** @name FSDIO_CLKENA_OFFSET Register
  */
@@ -164,10 +174,10 @@ extern "C"
 
 #define FSDIO_INT_ALL_BITS GENMASK(16, 0)
 #define FSDIO_INTS_CMD_MASK (FSDIO_INT_RE_BIT | FSDIO_INT_CMD_BIT | FSDIO_INT_RCRC_BIT | \
-                            FSDIO_INT_RTO_BIT | FSDIO_INT_HTO_BIT | FSDIO_INT_HLE_BIT)
+                             FSDIO_INT_RTO_BIT | FSDIO_INT_HTO_BIT | FSDIO_INT_HLE_BIT)
 
 #define FSDIO_INTS_DATA_MASK (FSDIO_INT_DTO_BIT | FSDIO_INT_DCRC_BIT | FSDIO_INT_DRTO_BIT | \
-                             FSDIO_INT_SBE_BCI_BIT)
+                              FSDIO_INT_SBE_BCI_BIT)
 
 /** @name FSDIO_CMD_OFFSET Register
  */
@@ -362,6 +372,7 @@ enum
 #define FSDIO_CLR_BIT(addr, reg_off, bits)      FtClearBit32((addr) + (u32)(reg_off), bits)
 #define FSDIO_SET_BIT(addr, reg_off, bits)      FtSetBit32((addr) + (u32)(reg_off), bits)
 
+#define FSDIO_DATA_BARRIER()                    WMB()
 /************************** Function Prototypes ******************************/
 FError FSdioSendPrivateCmd(uintptr base_addr, u32 cmd, u32 arg);
 FError FSdioResetCtrl(uintptr base_addr, u32 reset_bits);
@@ -378,9 +389,13 @@ static inline void FSdioSetClock(uintptr base_addr, boolean enable)
 {
     u32 reg_val = FSDIO_READ_REG(base_addr, FSDIO_CLKENA_OFFSET);
     if (enable)
+    {
         reg_val |= FSDIO_CLKENA_CCLK_ENABLE;
+    }
     else
+    {
         reg_val &= ~FSDIO_CLKENA_CCLK_ENABLE;
+    }
     FSDIO_WRITE_REG(base_addr, FSDIO_CLKENA_OFFSET, reg_val);
 }
 
@@ -388,9 +403,13 @@ static inline void FSdioSetPower(uintptr base_addr, boolean enable)
 {
     u32 reg_val = FSDIO_READ_REG(base_addr, FSDIO_PWREN_OFFSET);
     if (enable)
+    {
         reg_val |= FSDIO_PWREN_ENABLE;
+    }
     else
+    {
         reg_val &= ~FSDIO_PWREN_ENABLE;
+    }
     FSDIO_WRITE_REG(base_addr, FSDIO_PWREN_OFFSET, reg_val);
 }
 
@@ -398,9 +417,13 @@ static inline void FSdioSetExtClock(uintptr base_addr, boolean enable)
 {
     u32 reg_val = FSDIO_READ_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET);
     if (enable)
+    {
         reg_val |= FSDIO_UHS_EXT_CLK_ENA;
+    }
     else
+    {
         reg_val &= ~FSDIO_UHS_EXT_CLK_ENA;
+    }
     FSDIO_WRITE_REG(base_addr, FSDIO_UHS_REG_EXT_OFFSET, reg_val);
 }
 
@@ -408,9 +431,13 @@ static inline void FSdioSetVoltage1_8V(uintptr base_addr, boolean v1_8)
 {
     u32 reg_val = FSDIO_READ_REG(base_addr, FSDIO_UHS_REG_OFFSET);
     if (v1_8)
+    {
         reg_val |= FSDIO_UHS_REG_VOLT_180;
+    }
     else
-        reg_val &= ~FSDIO_UHS_REG_VOLT_180; /* 3.3v */
+    {
+        reg_val &= ~FSDIO_UHS_REG_VOLT_180;    /* 3.3v */
+    }
     FSDIO_WRITE_REG(base_addr, FSDIO_UHS_REG_OFFSET, reg_val);
 }
 
@@ -526,18 +553,18 @@ static inline void FSdioSetBusWidth(uintptr base_addr, u32 width)
 
     switch (width)
     {
-    case 1:
-        reg_val = FSDIO_CARD0_WIDTH2_1BIT;
-        break;
-    case 4:
-        reg_val = FSDIO_CARD0_WIDTH2_4BIT;
-        break;
-    case 8:
-        reg_val = FSDIO_CARD0_WIDTH1_8BIT;
-        break;
-    default:
-        FASSERT_MSG(0, "invalid bus width %d", width);
-        break;
+        case 1:
+            reg_val = FSDIO_CARD0_WIDTH2_1BIT;
+            break;
+        case 4:
+            reg_val = FSDIO_CARD0_WIDTH2_4BIT;
+            break;
+        case 8:
+            reg_val = FSDIO_CARD0_WIDTH1_8BIT;
+            break;
+        default:
+            FASSERT_MSG(0, "invalid bus width %d", width);
+            break;
     }
 
     FSDIO_WRITE_REG(base_addr, FSDIO_CTYPE_OFFSET, reg_val);

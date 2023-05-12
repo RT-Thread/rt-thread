@@ -80,7 +80,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
 };
 
-static void yc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void yc_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     /* Configure GPIO_InitStructure */
     if (mode == PIN_MODE_OUTPUT)
@@ -110,7 +110,7 @@ static void yc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static void yc_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void yc_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     if (value)
     {
@@ -122,14 +122,14 @@ static void yc_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-static int yc_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t yc_pin_read(rt_device_t dev, rt_base_t pin)
 {
     return GPIO_IN(pin / 16) & (1 << (pin % 16)) ? 1 : 0;
 }
 
 static rt_err_t yc_pin_attach_irq(struct rt_device *device,
-                                  rt_int32_t pin,
-                                  rt_uint32_t mode,
+                                  rt_base_t pin,
+                                  rt_uint8_t mode,
                                   pin_callback_t cb,
                                   void *args)
 {
@@ -152,7 +152,7 @@ static rt_err_t yc_pin_attach_irq(struct rt_device *device,
     return RT_EOK;
 }
 
-static rt_err_t yc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t yc_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_int32_t index = -1;
     rt_base_t level;
@@ -175,7 +175,7 @@ static rt_err_t yc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
 static rt_err_t yc_pin_irq_enable(struct rt_device *device,
                                   rt_base_t pin,
-                                  rt_uint32_t enabled)
+                                  rt_uint8_t enabled)
 {
     rt_int32_t index;
     rt_base_t level = 0;

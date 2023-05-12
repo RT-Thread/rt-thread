@@ -1,0 +1,70 @@
+#!/bin/sh
+# AUTHOR: supperthomas
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=$(git hash-object -t tree /dev/null)
+fi
+
+# We only filter the file name with c or cpp file.
+changed_files=$(git diff-index --cached $against | \
+	grep -E '[MA]	.*\.(c|cpp|cc|cxx)$' | cut -d'	' -f 2)
+
+
+if which cppcheck > /dev/null; then 
+	if [ -n "$changed_files" ]; then
+		cppcheck --enable=warning,performance,portability --inline-suppr --error-exitcode=1 --platform=win64 --force $changed_files
+		err=$?
+		if [ $err -ne 0 ]; then
+			echo "[rt-thread][cppcheck] we found a obvious fault, please fix the error then commit again"
+			exit $err
+		else
+			echo "[rt-thread][cppcheck] cppcheck ok."
+		fi
+	fi
+else
+    echo "cppcheck does not exist" 
+fi
+
+# We only filter the file name with c or cpp or h file.
+# astyle only astyle the added file[because of code reivewer], if you want change modify file, please use [MA]
+changed_files=$(git diff-index --cached $against | \
+	grep -E '[MA]	.*\.(c|cpp|h)$' | cut -d'	' -f 2)
+
+if which astyle > /dev/null; then 
+	if [ -n "$changed_files" ]; then
+		astyle --style=allman --indent=spaces=4 --indent=spaces=4 --indent=spaces=4 --pad-header --pad-header --pad-header --align-pointer=name --lineend=linux --convert-tabs --verbose  $changed_files
+		err=$?
+		if [ $err -ne 0 ]; then
+			echo "[rt-thread][astyle] we found a obvious fault, please fix the error then commit again"
+			exit $err
+		else
+			echo "[rt-thread][astyle] astyle file ok"
+		fi
+	fi
+else
+    echo "astyle does not exist" 
+fi
+
+# We only filter the file name with c or cpp file.
+changed_files=$(git diff-index --cached $against | \
+	grep -E '[MA]	.*\.(c|cpp|h)$' | cut -d'	' -f 2)
+# formatting check
+# https://github.com/mysterywolf/formatting
+# formatting cmd ref https://github.com/supperthomas/git_auto_script
+if which formatting > /dev/null; then 
+	if [ -n "$changed_files" ]; then
+		formatting $changed_files
+		echo "[rt-thread] formatting $changed_files is ok"
+		git add $changed_files
+		exit 0
+	fi
+else
+    echo "formatting does not exist" 
+fi
+
+exit 0
+

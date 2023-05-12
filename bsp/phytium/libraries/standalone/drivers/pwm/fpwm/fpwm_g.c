@@ -13,113 +13,116 @@
  *
  * FilePath: fpwm_g.c
  * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * LastEditTime: 2022-04-16 11:45:05
+ * Description:  This file is for pwm static configuration implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/16   init commit
  */
 
 #include "fparameters.h"
 #include "fpwm.h"
 #include "fpwm_hw.h"
+#include "sdkconfig.h"
 
+#if defined(CONFIG_TARGET_E2000) 
 /* default configs of pwm ctrl */
-const FPwmConfig FPwmConfigTbl[FPWM_INSTANCE_NUM] =
+const FPwmConfig FPwmConfigTbl[FPWM_NUM] =
 {
-    [FPWM_INSTANCE_0] =
+    [FPWM0_ID] =
     {
-        .instance_id = FPWM_INSTANCE_0,
+        .instance_id = FPWM0_ID,
         .db_base_addr = FPWM0_BASE_ADR,
         .pwm_base_addr = FPWM0_BASE_ADR + FPWM_OFFSET,
-        .base_clk = FPWM_CLK,
-        .irq_num[FPWM_CHANNEL_0] = FPWM0_INTR_IRQ,
-        .irq_num[FPWM_CHANNEL_1] = FPWM1_INTR_IRQ,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM0_IRQ_NUM,
+        .irq_num[FPWM_CHANNEL_1] = FPWM1_IRQ_NUM,
         .irq_prority[FPWM_CHANNEL_0] = 0,
         .irq_prority[FPWM_CHANNEL_1] = 0,
         .instance_name = "PWM_CTRL0",
     },
-    [FPWM_INSTANCE_1] =
+    [FPWM1_ID] =
     {
-        .instance_id = FPWM_INSTANCE_1,
+        .instance_id = FPWM1_ID,
         .db_base_addr = FPWM1_BASE_ADR,
         .pwm_base_addr = FPWM1_BASE_ADR + FPWM_OFFSET,
-        .base_clk = FPWM_CLK,
-        .irq_num[FPWM_CHANNEL_0] = FPWM2_INTR_IRQ,
-        .irq_num[FPWM_CHANNEL_1] = FPWM3_INTR_IRQ,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM2_IRQ_NUM,
+        .irq_num[FPWM_CHANNEL_1] = FPWM3_IRQ_NUM,
         .irq_prority[FPWM_CHANNEL_0] = 0,
         .irq_prority[FPWM_CHANNEL_1] = 0,
         .instance_name = "PWM_CTRL1",
     },
-    [FPWM_INSTANCE_2] =
+    [FPWM2_ID] =
     {
-        .instance_id = FPWM_INSTANCE_2,
+        .instance_id = FPWM2_ID,
         .db_base_addr = FPWM2_BASE_ADR,
         .pwm_base_addr = FPWM2_BASE_ADR + FPWM_OFFSET,
-        .base_clk = FPWM_CLK,
-        .irq_num[FPWM_CHANNEL_0] = FPWM4_INTR_IRQ,
-        .irq_num[FPWM_CHANNEL_1] = FPWM5_INTR_IRQ,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM4_IRQ_NUM,
+        .irq_num[FPWM_CHANNEL_1] = FPWM5_IRQ_NUM,
         .irq_prority[FPWM_CHANNEL_0] = 0,
         .irq_prority[FPWM_CHANNEL_1] = 0,
         .instance_name = "PWM_CTRL2",
     },
-    [FPWM_INSTANCE_3] =
+    [FPWM3_ID] =
     {
-        .instance_id = FPWM_INSTANCE_3,
+        .instance_id = FPWM3_ID,
         .db_base_addr = FPWM3_BASE_ADR,
         .pwm_base_addr = FPWM3_BASE_ADR + FPWM_OFFSET,
-        .base_clk = FPWM_CLK,
-        .irq_num[FPWM_CHANNEL_0] = FPWM6_INTR_IRQ,
-        .irq_num[FPWM_CHANNEL_1] = FPWM7_INTR_IRQ,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM6_IRQ_NUM,
+        .irq_num[FPWM_CHANNEL_1] = FPWM7_IRQ_NUM,
         .irq_prority[FPWM_CHANNEL_0] = 0,
         .irq_prority[FPWM_CHANNEL_1] = 0,
         .instance_name = "PWM_CTRL3",
     },
-    [FPWM_INSTANCE_4] =
+    [FPWM4_ID] =
     {
-        .instance_id = FPWM_INSTANCE_4,
+        .instance_id = FPWM4_ID,
         .db_base_addr = FPWM4_BASE_ADR,
         .pwm_base_addr = FPWM4_BASE_ADR + FPWM_OFFSET,
-        .base_clk = FPWM_CLK,
-        .irq_num[FPWM_CHANNEL_0] = FPWM8_INTR_IRQ,
-        .irq_num[FPWM_CHANNEL_1] = FPWM9_INTR_IRQ,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM8_IRQ_NUM,
+        .irq_num[FPWM_CHANNEL_1] = FPWM9_IRQ_NUM,
         .irq_prority[FPWM_CHANNEL_0] = 0,
         .irq_prority[FPWM_CHANNEL_1] = 0,
         .instance_name = "PWM_CTRL4",
     },
-    [FPWM_INSTANCE_5] =
+    [FPWM5_ID] =
     {
-        .instance_id = FPWM_INSTANCE_5,
+        .instance_id = FPWM5_ID,
         .db_base_addr = FPWM5_BASE_ADR,
         .pwm_base_addr = FPWM5_BASE_ADR + FPWM_OFFSET,
-        .base_clk = FPWM_CLK,
-        .irq_num[FPWM_CHANNEL_0] = FPWM10_INTR_IRQ,
-        .irq_num[FPWM_CHANNEL_1] = FPWM11_INTR_IRQ,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM10_IRQ_NUM,
+        .irq_num[FPWM_CHANNEL_1] = FPWM11_IRQ_NUM,
         .irq_prority[FPWM_CHANNEL_0] = 0,
         .irq_prority[FPWM_CHANNEL_1] = 0,
         .instance_name = "PWM_CTRL5",
     },
-    [FPWM_INSTANCE_6] =
+    [FPWM6_ID] =
     {
-        .instance_id = FPWM_INSTANCE_6,
+        .instance_id = FPWM6_ID,
         .db_base_addr = FPWM6_BASE_ADR,
         .pwm_base_addr = FPWM6_BASE_ADR + FPWM_OFFSET,
-        .base_clk = FPWM_CLK,
-        .irq_num[FPWM_CHANNEL_0] = FPWM12_INTR_IRQ,
-        .irq_num[FPWM_CHANNEL_1] = FPWM13_INTR_IRQ,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM12_IRQ_NUM,
+        .irq_num[FPWM_CHANNEL_1] = FPWM13_IRQ_NUM,
         .irq_prority[FPWM_CHANNEL_0] = 0,
         .irq_prority[FPWM_CHANNEL_1] = 0,
         .instance_name = "PWM_CTRL6",
     },
-    [FPWM_INSTANCE_7] =
+    [FPWM7_ID] =
     {
-        .instance_id = FPWM_INSTANCE_7,
+        .instance_id = FPWM7_ID,
         .db_base_addr = FPWM7_BASE_ADR,
         .pwm_base_addr = FPWM7_BASE_ADR + FPWM_OFFSET,
-        .base_clk = FPWM_CLK,
-        .irq_num[FPWM_CHANNEL_0] = FPWM14_INTR_IRQ,
-        .irq_num[FPWM_CHANNEL_1] = FPWM15_INTR_IRQ,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM14_IRQ_NUM,
+        .irq_num[FPWM_CHANNEL_1] = FPWM15_IRQ_NUM,
         .irq_prority[FPWM_CHANNEL_0] = 0,
         .irq_prority[FPWM_CHANNEL_1] = 0,
         .instance_name = "PWM_CTRL7",
@@ -127,3 +130,21 @@ const FPwmConfig FPwmConfigTbl[FPWM_INSTANCE_NUM] =
 
 
 };
+
+#elif defined(TARDIGRADE) 
+/* default configs of pwm ctrl */
+const FPwmConfig FPwmConfigTbl[FPWM_NUM] =
+{
+    [FPWM0_ID] = 
+    {
+        .instance_id = FPWM0_ID,
+        .pwm_base_addr = FPWM0_BASE_ADR,
+        .base_clk = FPWM_CLK_FREQ_HZ,
+        .irq_num[FPWM_CHANNEL_0] = FPWM0_IRQ_NUM,
+        .irq_prority[FPWM_CHANNEL_0] = 0,
+        .instance_name = "PWM_CTRL0",
+    },
+
+};
+
+#endif

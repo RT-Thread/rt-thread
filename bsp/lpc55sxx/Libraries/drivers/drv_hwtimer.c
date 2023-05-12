@@ -21,19 +21,46 @@
 #include "drv_hwtimer.h"
 #include "fsl_ctimer.h"
 
+enum
+{
+#ifdef BSP_USING_CTIMER0
+    TIM1_INDEX,
+#endif
+#ifdef BSP_USING_CTIMER3
+    TIM2_INDEX,
+#endif
+#ifdef BSP_USING_CTIMER4
+    TIM3_INDEX,
+#endif
+};
+
+struct lpc_hwtimer
+{
+    rt_hwtimer_t     time_device;
+    CTIMER_Type*     tim_handle;
+    enum IRQn        tim_irqn;
+    char*            name;
+};
+
+static struct lpc_hwtimer lpc_hwtimer_obj[] =
+{
+#ifdef BSP_USING_CTIMER0
+    TIM1_CONFIG,
+#endif
+
+#ifdef BSP_USING_CTIMER3
+    TIM3_CONFIG,
+#endif
+
+#ifdef BSP_USING_CTIMER4
+    TIM4_CONFIG,
+#endif
+};
 
 static void NVIC_Configuration(void)
 {
 #ifdef BSP_USING_CTIMER0
     EnableIRQ(CTIMER0_IRQn);
-#endif
-
-#ifdef BSP_USING_CTIMER1
-    EnableIRQ(CTIMER1_IRQn);
-#endif
-
-#ifdef BSP_USING_CTIMER2
-    EnableIRQ(CTIMER2_IRQn);
 #endif
 
 #ifdef BSP_USING_CTIMER3
@@ -59,11 +86,9 @@ static rt_err_t lpc_ctimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *a
     {
         uint32_t clk;
         uint32_t pre;
-        if(hwtimer_dev == CTIMER0) clk = CLOCK_GetFreq(kCLOCK_Timer0);
-        if(hwtimer_dev == CTIMER1) clk = CLOCK_GetFreq(kCLOCK_Timer1);
-        if(hwtimer_dev == CTIMER2) clk = CLOCK_GetFreq(kCLOCK_Timer2);
-        if(hwtimer_dev == CTIMER3) clk = CLOCK_GetFreq(kCLOCK_Timer3);
-        if(hwtimer_dev == CTIMER4) clk = CLOCK_GetFreq(kCLOCK_Timer4);
+        if(hwtimer_dev == CTIMER0) clk = CLOCK_GetCTimerClkFreq(0U);
+        if(hwtimer_dev == CTIMER3) clk = CLOCK_GetCTimerClkFreq(3U);
+        if(hwtimer_dev == CTIMER4) clk = CLOCK_GetCTimerClkFreq(4U);
 
         pre = clk / *((uint32_t *)args) - 1;
 
@@ -100,8 +125,6 @@ static void lpc_ctimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
 
     /* Use Main clock for some of the Ctimers */
     if(hwtimer_dev == CTIMER0) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER0);
-    if(hwtimer_dev == CTIMER1) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER1);
-    if(hwtimer_dev == CTIMER2) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER2);
     if(hwtimer_dev == CTIMER3) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER3);
     if(hwtimer_dev == CTIMER4) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER4);
 
@@ -168,86 +191,28 @@ static const struct rt_hwtimer_info lpc_hwtimer_info =
     HWTIMER_CNTMODE_UP,
 };
 
-#ifdef BSP_USING_CTIMER0
-static rt_hwtimer_t CTimer0;
-#endif /* BSP_USING_HWTIMER0 */
-
-#ifdef BSP_USING_CTIMER1
-static rt_hwtimer_t CTimer1;
-#endif /* BSP_USING_HWTIMER1 */
-
-#ifdef BSP_USING_CTIMER2
-static rt_hwtimer_t CTimer2;
-#endif /* BSP_USING_HWTIMER2 */
-
-#ifdef BSP_USING_CTIMER3
-static rt_hwtimer_t CTimer3;
-#endif /* BSP_USING_HWTIMER3 */
-
-#ifdef BSP_USING_CTIMER4
-static rt_hwtimer_t CTimer4;
-#endif /* BSP_USING_HWTIMER4 */
-
 int rt_hw_hwtimer_init(void)
 {
-    int ret = RT_EOK;
+    int i = 0;
+    int result = RT_EOK;
 
-#ifdef BSP_USING_CTIMER0
-    CTimer0.info = &lpc_hwtimer_info;
-    CTimer0.ops  = &lpc_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&CTimer0, "ctimer0", CTIMER0);
-
-    if (ret != RT_EOK)
+    for (i = 0; i < sizeof(lpc_hwtimer_obj) / sizeof(lpc_hwtimer_obj[0]); i++)
     {
-        LOG_E("CTIMER0 register failed\n");
+        lpc_hwtimer_obj[i].time_device.info = &lpc_hwtimer_info;
+        lpc_hwtimer_obj[i].time_device.ops  = &lpc_hwtimer_ops;
+        if (rt_device_hwtimer_register(&lpc_hwtimer_obj[i].time_device,
+            lpc_hwtimer_obj[i].name, lpc_hwtimer_obj[i].tim_handle) == RT_EOK)
+        {
+            LOG_D("%s register success", lpc_hwtimer_obj[i].name);
+        }
+        else
+        {
+            LOG_E("%s register failed", lpc_hwtimer_obj[i].name);
+            result = -RT_ERROR;
+        }
     }
-#endif
 
-#ifdef BSP_USING_CTIMER1
-    CTimer1.info = &lpc_hwtimer_info;
-    CTimer1.ops  = &lpc_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&CTimer1, "ctimer1", CTIMER1);
-
-    if (ret != RT_EOK)
-    {
-        LOG_E("CTIMER1 register failed\n");
-    }
-#endif
-
-#ifdef BSP_USING_CTIMER2
-    CTimer2.info = &lpc_hwtimer_info;
-    CTimer2.ops  = &lpc_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&CTimer2, "ctimer2", CTIMER2);
-
-    if (ret != RT_EOK)
-    {
-        LOG_E("CTIMER2 register failed\n");
-    }
-#endif
-
-#ifdef BSP_USING_CTIMER3
-    CTimer3.info = &lpc_hwtimer_info;
-    CTimer3.ops  = &lpc_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&CTimer3, "ctimer3", CTIMER3);
-
-    if (ret != RT_EOK)
-    {
-        LOG_E("CTIMER3 register failed\n");
-    }
-#endif
-
-#ifdef BSP_USING_CTIMER4
-    CTimer4.info = &lpc_hwtimer_info;
-    CTimer4.ops  = &lpc_hwtimer_ops;
-    ret = rt_device_hwtimer_register(&CTimer4, "ctimer4", CTIMER4);
-
-    if (ret != RT_EOK)
-    {
-        LOG_E("CTIMER4 register failed\n");
-    }
-#endif
-
-    return ret;
+    return result;
 }
 
 INIT_DEVICE_EXPORT(rt_hw_hwtimer_init);
@@ -260,36 +225,10 @@ void CTIMER0_IRQHandler(void)
     int_stat = CTIMER_GetStatusFlags(CTIMER0);
     /* Clear the status flags that were set */
     CTIMER_ClearStatusFlags(CTIMER0, int_stat);
-    rt_device_hwtimer_isr(&CTimer0);
+    rt_device_hwtimer_isr(&lpc_hwtimer_obj[TIM1_INDEX].time_device);
 
 }
 #endif /* BSP_USING_HWTIMER0 */
-
-#ifdef BSP_USING_CTIMER1
-void CTIMER1_IRQHandler(void)
-{
-    uint32_t int_stat;
-    /* Get Interrupt status flags */
-    int_stat = CTIMER_GetStatusFlags(CTIMER1);
-    /* Clear the status flags that were set */
-    CTIMER_ClearStatusFlags(CTIMER1, int_stat);
-    rt_device_hwtimer_isr(&CTimer1);
-
-}
-#endif /* BSP_USING_HWTIMER1 */
-
-#ifdef BSP_USING_CTIMER2
-void CTIMER2_IRQHandler(void)
-{
-    uint32_t int_stat;
-    /* Get Interrupt status flags */
-    int_stat = CTIMER_GetStatusFlags(CTIMER2);
-    /* Clear the status flags that were set */
-    CTIMER_ClearStatusFlags(CTIMER2, int_stat);
-    rt_device_hwtimer_isr(&CTimer2);
-
-}
-#endif /* BSP_USING_HWTIMER2 */
 
 #ifdef BSP_USING_CTIMER3
 void CTIMER3_IRQHandler(void)
@@ -299,7 +238,7 @@ void CTIMER3_IRQHandler(void)
     int_stat = CTIMER_GetStatusFlags(CTIMER3);
     /* Clear the status flags that were set */
     CTIMER_ClearStatusFlags(CTIMER3, int_stat);
-    rt_device_hwtimer_isr(&CTimer3);
+    rt_device_hwtimer_isr(&lpc_hwtimer_obj[TIM2_INDEX].time_device);
 
 }
 #endif /* BSP_USING_HWTIMER3 */
@@ -312,7 +251,7 @@ void CTIMER4_IRQHandler(void)
     int_stat = CTIMER_GetStatusFlags(CTIMER4);
     /* Clear the status flags that were set */
     CTIMER_ClearStatusFlags(CTIMER4, int_stat);
-    rt_device_hwtimer_isr(&CTimer4);
+    rt_device_hwtimer_isr(&lpc_hwtimer_obj[TIM3_INDEX].time_device);
 
 }
 #endif /* BSP_USING_HWTIMER4 */

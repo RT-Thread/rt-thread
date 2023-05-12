@@ -679,7 +679,7 @@ static void _install_page(rt_page_t mpr_head, rt_region_t region, void *insert_h
     shadow.start = region.start & ~shadow_mask;
     shadow.end = FLOOR(region.end, shadow_mask + 1);
 
-    if (shadow.end > UINT32_MAX)
+    if (shadow.end + PV_OFFSET > UINT32_MAX)
         _high_page_configured = 1;
 
     rt_page_t shad_head = addr_to_page(mpr_head, (void *)shadow.start);

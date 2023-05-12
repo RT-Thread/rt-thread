@@ -14,7 +14,7 @@
  * FilePath: fsdio_cmd.c
  * Date: 2022-06-01 14:23:59
  * LastEditTime: 2022-06-01 14:24:00
- * Description:  This files is for SDIO command related function
+ * Description:  This file is for SDIO command related function
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -29,6 +29,7 @@
 #include "ftypes.h"
 
 #include "fcache.h"
+#include "fswap.h"
 
 #include "fsdio_hw.h"
 #include "fsdio.h"
@@ -36,6 +37,7 @@
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
+#define FSDIO_EXT_APP_CMD       55U
 
 /***************** Macros (Inline Functions) Definitions *********************/
 #define FSDIO_DEBUG_TAG "FSDIO-CMD"
@@ -57,14 +59,21 @@ FError FSdioSendPrivateCmd(uintptr base_addr, u32 cmd, u32 arg)
     {
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_STATUS_OFFSET);
         if (--retries <= 0)
+        {
             break;
+        }
     }
     while (FSDIO_STATUS_DATA_BUSY & reg_val);
 
     if (retries <= 0)
+    {
         return FSDIO_ERR_BUSY;
+    }
 
     FSDIO_WRITE_REG(base_addr, FSDIO_CMD_ARG_OFFSET, arg);
+
+    FSDIO_DATA_BARRIER(); /* drain writebuffer */
+
     FSDIO_WRITE_REG(base_addr, FSDIO_CMD_OFFSET, FSDIO_CMD_START | cmd);
 
     retries = FSDIO_TIMEOUT;
@@ -72,9 +81,11 @@ FError FSdioSendPrivateCmd(uintptr base_addr, u32 cmd, u32 arg)
     {
         reg_val = FSDIO_READ_REG(base_addr, FSDIO_CMD_OFFSET);
         if (--retries <= 0)
+        {
             break;
+        }
     }
-    while (FSDIO_CMD_START & reg_val);
+    while (FSDIO_CMD_START & reg_val);   /* wait until command send done */
 
     return (retries <= 0) ? FSDIO_ERR_TIMEOUT : FSDIO_SUCCESS;
 }
@@ -136,7 +147,9 @@ FError FSdioTransferCmd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
 
     raw_cmd |= FSDIO_CMD_INDX_SET(cmd_data_p->cmdidx);
 
-    FSDIO_DEBUG("============[CMD-%d]@0x%x begin ============", cmd_data_p->cmdidx, base_addr);
+    FSDIO_DEBUG("============[%s-%d]@0x%x begin ============",
+                (FSDIO_EXT_APP_CMD == instance_p->prev_cmd) ? "ACMD" : "CMD", cmd_data_p->cmdidx,
+                base_addr);
     FSDIO_DEBUG("    cmd: 0x%x", raw_cmd);
     FSDIO_DEBUG("    arg: 0x%x", cmd_data_p->cmdarg);
 
@@ -144,9 +157,29 @@ FError FSdioTransferCmd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
     FSdioSetInterruptMask(instance_p, FSDIO_GENERAL_INTR,
                           FSDIO_INTS_CMD_MASK, TRUE);
 
-    FSdioSendPrivateCmd(base_addr, raw_cmd, cmd_data_p->cmdarg);
+    ret = FSdioSendPrivateCmd(base_addr, raw_cmd, cmd_data_p->cmdarg);
     FSDIO_INFO("cmd send done ...");
     return ret;
+}
+
+static void FSdioFlipByteOrder(u32 *response, fsize_t size)
+{
+    /*
+        swap response and convert byte order
+        resp[0] = bswap32(resp[3])
+        resp[1] = bswap32(resp[2])
+        resp[2] = bswap32(resp[1])
+        resp[3] = bswap32(resp[0])
+    */
+    FASSERT(size % (2 * sizeof(u32)) == 0);
+    const fsize_t n_words = size / sizeof(uint32_t);
+    for (int i = 0; i < (int)n_words / 2; ++i)
+    {
+        u32 left = __builtin_bswap32(response[i]);
+        u32 right = __builtin_bswap32(response[n_words - i - 1]);
+        response[i] = right;
+        response[n_words - i - 1] = left;
+    }
 }
 
 /**
@@ -167,7 +200,7 @@ FError FSdioGetCmdResponse(FSdio *const instance_p, FSdioCmdData *const cmd_data
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FSDIO_ERROR("device is not yet initialized!!!");
+        FSDIO_ERROR("Device is not yet initialized!!!");
         return FSDIO_ERR_NOT_INIT;
     }
 
@@ -188,6 +221,15 @@ FError FSdioGetCmdResponse(FSdio *const instance_p, FSdioCmdData *const cmd_data
             cmd_data_p->response[1] = FSDIO_READ_REG(base_addr, FSDIO_RESP1_OFFSET);
             cmd_data_p->response[2] = FSDIO_READ_REG(base_addr, FSDIO_RESP2_OFFSET);
             cmd_data_p->response[3] = FSDIO_READ_REG(base_addr, FSDIO_RESP3_OFFSET);
+
+            /* according to SD spec. 136 bits R2 is send-back in reverse order and big-end,
+               some SD protocol will do this reverse and ntol itself, other do not,
+               filp_resp_byte_order is to compilant with those not */
+            if (instance_p->config.filp_resp_byte_order)
+            {
+                FSdioFlipByteOrder(cmd_data_p->response, sizeof(u32) * 4);
+            }
+
             FSDIO_DEBUG("    resp: 0x%x-0x%x-0x%x-0x%x",
                         cmd_data_p->response[0], cmd_data_p->response[1],
                         cmd_data_p->response[2], cmd_data_p->response[3]);
@@ -195,16 +237,23 @@ FError FSdioGetCmdResponse(FSdio *const instance_p, FSdioCmdData *const cmd_data
         else
         {
             cmd_data_p->response[0] = FSDIO_READ_REG(base_addr, FSDIO_RESP0_OFFSET);
+            cmd_data_p->response[1] = 0U;
+            cmd_data_p->response[2] = 0U;
+            cmd_data_p->response[3] = 0U;
             FSDIO_DEBUG("    resp: 0x%x", cmd_data_p->response[0]);
         }
     }
 
     cmd_data_p->success = TRUE; /* cmd / data transfer finished successful */
-    FSDIO_DEBUG("============[CMD-%d]@0x%x end  ============", cmd_data_p->cmdidx, base_addr);
+    FSDIO_DEBUG("============[%s-%d]@0x%x end  ============",
+                (FSDIO_EXT_APP_CMD == instance_p->prev_cmd) ? "ACMD" : "CMD",
+                cmd_data_p->cmdidx, base_addr);
 
     /* disable related interrupt */
     FSdioSetInterruptMask(instance_p, FSDIO_GENERAL_INTR, FSDIO_INTS_CMD_MASK | FSDIO_INTS_DATA_MASK, FALSE);
     FSdioSetInterruptMask(instance_p, FSDIO_IDMA_INTR, FSDIO_DMAC_INTS_MASK, FALSE);
+
+    instance_p->prev_cmd = cmd_data_p->cmdidx; /* record previous command */
 
     return ret;
 }

@@ -17,7 +17,7 @@
 #define     GPIO_IRQ_NUM                    (64)
 static struct gpio_irq_def _g_gpio_irq_tbl[GPIO_IRQ_NUM];
 
-static void loongson_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static void loongson_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     struct loongson_gpio *gpio;
     rt_uint64_t m;
@@ -48,7 +48,7 @@ static void loongson_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t
     }
 }
 
-static void loongson_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void loongson_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     struct loongson_gpio *gpio;
     rt_uint64_t m;
@@ -67,10 +67,10 @@ static void loongson_pin_write(struct rt_device *device, rt_base_t pin, rt_base_
     else
         gpio->GPIO0_O &= ~m;
 }
-static int loongson_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t loongson_pin_read(struct rt_device *device, rt_base_t pin)
 {
     struct loongson_gpio *gpio;
-    int rc;
+    rt_int8_t rc;
 
     gpio = (void *)device->user_data;
     rt_uint64_t m;
@@ -84,7 +84,7 @@ static int loongson_pin_read(struct rt_device *device, rt_base_t pin)
 }
 
 /* TODO: add GPIO interrupt */
-static rt_err_t loongson_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t loongson_pin_attach_irq(struct rt_device *device, rt_base_t pin, rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_uint8_t index;
     rt_uint64_t m;
@@ -115,7 +115,7 @@ static rt_err_t loongson_pin_attach_irq(struct rt_device *device, rt_int32_t pin
 
     return RT_EOK;
 }
-static rt_err_t loongson_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t loongson_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     struct loongson_gpio *gpio;
 
@@ -141,7 +141,7 @@ static rt_err_t loongson_pin_detach_irq(struct rt_device *device, rt_int32_t pin
 
     return RT_EOK;
 }
-static rt_err_t loongson_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t loongson_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     struct loongson_gpio *gpio;
 

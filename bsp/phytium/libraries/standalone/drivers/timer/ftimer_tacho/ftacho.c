@@ -14,11 +14,12 @@
  * FilePath: ftacho.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-05-20 09:08:52
- * Description:  This files is for
+ * Description:  This file is for user tacho API implmentation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  liushengming 2022/05/20    first commit
  */
 
 /***************************** Include Files *********************************/
@@ -47,7 +48,7 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
 
     if (instance_p->isready == FT_COMPONENT_IS_READY)
     {
-        FTIMER_INFO("device is already initialized.!!!\r\n");
+        FTIMER_INFO("Device is already initialized !!!\r\n");
         return FTIMER_TACHO_ERR_IS_READ;
     }
 
@@ -69,7 +70,7 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     }
     else
     {
-        FTACHO_ERROR("not support work_mode.");
+        FTACHO_ERROR("Not support work_mode.");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
@@ -84,7 +85,7 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     }
     else
     {
-        FTACHO_ERROR("invalid input 32/64bits.");
+        FTACHO_ERROR("Invalid input 32/64bits.");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
@@ -106,7 +107,7 @@ FError FTachoInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     }
     else
     {
-        FTACHO_ERROR("invalid input edge.");
+        FTACHO_ERROR("Invalid input edge.");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
@@ -142,7 +143,7 @@ FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p, u32 *rpm)
 
     if (instance_p->isready != FT_COMPONENT_IS_READY || instance_p->config.work_mode != FTIMER_WORK_MODE_TACHO)
     {
-        FTIMER_ERROR("device is not already or not work on TACHO_MODE!!!");
+        FTIMER_ERROR("Device is not ready or not work on TACHO_MODE!!!");
         return FTIMER_TACHO_ERR_NOT_READY;
     }
 
@@ -176,7 +177,7 @@ FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p, u32 *rpm)
     {
         /* calculate rpm */
         /* (60(second) * freq * tacho) / (2 * (cmp_l + 1)) cmp_l */
-        *rpm = (TIMER_CLK_FREQ_HZ * 60 * raw_dat) / (2 * (cnt_num + 1));
+        *rpm = (FTIMER_CLK_FREQ_HZ * 60 * raw_dat) / (2 * (cnt_num + 1));
     }
 
     return FTIMER_TACHO_SUCCESS;
@@ -196,7 +197,7 @@ u32 FTachoGetCaptureCnt(FTimerTachoCtrl *instance_p)
 
     if (instance_p->isready != FT_COMPONENT_IS_READY || instance_p->config.work_mode != FTIMER_WORK_MODE_CAPTURE)
     {
-        FTIMER_ERROR("device is not already or not work on CAPTURE_MODE!!!");
+        FTIMER_ERROR("Device is not ready or not work on CAPTURE_MODE!!!");
         return FTIMER_TACHO_ERR_NOT_READY;
     }
 

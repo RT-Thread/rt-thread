@@ -26,6 +26,7 @@
 #include "bl808_uhs_phy.h"
 
 #define CONFIG_D0_FLASH_ADDR             0x100000
+#define CONFIG_LP_FLASH_ADDR             0x0C0000
 
 extern uint8_t __HeapBase;
 extern uint8_t __HeapLimit;

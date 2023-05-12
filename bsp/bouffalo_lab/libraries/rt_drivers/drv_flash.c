@@ -10,22 +10,18 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-
-#ifdef BSP_USING_ON_CHIP_FLASH
 #include "drv_flash.h"
 
-#ifdef RT_USING_FAL
-    #include "fal.h"
-#endif /* RT_USING_FAL */
+#ifdef BSP_USING_ON_CHIP_FLASH
 
 #define DBG_LEVEL DBG_LOG
 #define LOG_TAG  "DRV.FLASH"
 #include <rtdbg.h>
 
-#define BFLB_FLASH_START_ADRESS 0x58000000
+#define BFLB_FLASH_START_ADRESS 0x0000000
+#define BFLB_FLASH_END_ADDRESS  0x1000000
 #define BFLB_FLASH_SIZE         16 * 1024 * 1024
 #define BFLB_FLASH_PAGE_SIZE    4 * 1024
-#define BFLB_FLASH_END_ADDRESS  0x59000000
 
 int _flash_read(rt_uint32_t addr, rt_uint8_t *buf, size_t size)
 {
@@ -107,6 +103,8 @@ int _flash_erase(rt_uint32_t addr, size_t size)
 
 #ifdef RT_USING_FAL
 
+#include "fal.h"
+
 static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase(long offset, size_t size);
@@ -140,6 +138,12 @@ static int fal_flash_erase(long offset, size_t size)
     return _flash_erase(_onchip_flash.addr + offset, size);
 }
 
-INIT_DEVICE_EXPORT(fal_init);
+static int rt_hw_on_chip_flash_init(void)
+{
+    fal_init();
+    return RT_EOK;
+}
+INIT_COMPONENT_EXPORT(rt_hw_on_chip_flash_init);
+
 #endif /* RT_USING_FAL */
 #endif /* BSP_USING_ON_CHIP_FLASH */

@@ -44,7 +44,6 @@ jobs:
                 - "asm9260t"
                 - "allwinner_tina"
                 - "ft32/ft32f072xb-starter"
-                - "tkm32F499"
                 - "mini2440"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "sam7x"   
@@ -356,6 +355,6 @@ jobs:
           for bsp in $(echo $SRTT_BSP | tr ',' '\n'); do
             count=$((count+1))
             echo "Compiling BSP: ==$count=== $bsp ===="
-            pushd bsp/$bsp && pkgs --update && popd
+            pushd bsp/$bsp && scons --pyconfig-silent && pkgs --update && popd
             scons -C bsp/$bsp -j8
           done

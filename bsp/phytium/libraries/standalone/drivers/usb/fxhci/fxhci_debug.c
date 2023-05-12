@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include <inttypes.h>
@@ -77,12 +77,16 @@ void FXhciDumpDevCtx(const FXhciDevCtx *const dc, const u32 ctx_mask)
     unsigned int i;
 
     if (ctx_mask & 1)
+    {
         FXhciDumpSlotCtx(dc->slot);
+    }
 
     for (i = 1; i <= FXHCI_SC_GET(CTXENT, dc->slot); ++i)
     {
         if (ctx_mask & (1 << i))
+        {
             FXhciDumpEpCtx(dc->ep[i]);
+        }
     }
 }
 
@@ -114,9 +118,13 @@ void FXhciDumpTransferTrb(const FXhciTrb *const cur)
 static const FXhciTrb *FXhciNextTrb(const FXhciTrb *const cur)
 {
     if (FXHCI_TRB_GET(TT, cur) == FXHCI_TRB_LINK)
+    {
         return (!cur->ptr_low) ? NULL : (void *)(uintptr)(cur->ptr_low);
+    }
     else
+    {
         return cur + 1;
+    }
 }
 
 void FXhciDumpTransferTrbs(const FXhciTrb *const first, const FXhciTrb *const last)
@@ -126,6 +134,8 @@ void FXhciDumpTransferTrbs(const FXhciTrb *const first, const FXhciTrb *const la
     {
         FXhciDumpTransferTrb(cur);
         if (cur == last)
+        {
             break;
+        }
     }
 }

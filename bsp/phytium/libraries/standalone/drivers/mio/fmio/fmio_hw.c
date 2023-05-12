@@ -14,12 +14,12 @@
  * FilePath: fmio_hw.c
  * Date: 2022-06-20 21:05:23
  * LastEditTime: 2022-06-20 21:05:23
- * Description:  This file is for mio
+ * Description:  This file is for mio hardware operation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 0.1.0    liushengming  2022.06.20    init
+ * 1.0  liushengming 2022/06/20 first commit
  */
 
 /***************************** Include Files *********************************/

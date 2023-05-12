@@ -14,19 +14,25 @@
  * FilePath: fgic_redistributor.h
  * Date: 2022-03-28 14:57:01
  * LastEditTime: 2022-03-28 14:57:01
- * Description:  This file is for
+ * Description:  This file is for gic redistributor implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
-#ifndef  DRIVERS_GIC_FGIC_REDISTRIBUTOR_H
-#define  DRIVERS_GIC_FGIC_REDISTRIBUTOR_H
+
+#ifndef  FGIC_REDISTRIBUTOR_H
+#define  FGIC_REDISTRIBUTOR_H
 
 #include "fgic.h"
 #include "fgic_hw.h"
 #include "ftypes.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 typedef enum
 {
@@ -168,6 +174,10 @@ static inline u32 FGicNonSecureAccessRead(uintptr redis_base)
 {
     return FGIC_GICR_NSACR_READ(redis_base + FGIC_GICR_SGI_BASE_OFFSET);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

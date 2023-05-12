@@ -19,23 +19,24 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2022-3-1     init commit
+ * 1.0   zhugengyu  2022/3/1     init commit
+ * 2.0   zhugengyu  2022/7/1     support e2000
  */
 
 
-#ifndef  DRIVERS_FGPIO_H
-#define  DRIVERS_FGPIO_H
+#ifndef  FGPIO_H
+#define  FGPIO_H
+
+#include "fparameters.h"
+#include "ftypes.h"
+#include "fassert.h"
+#include "ferror_code.h"
+#include "sdkconfig.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-/***************************** Include Files *********************************/
-#include "ftypes.h"
-#include "fassert.h"
-#include "ferror_code.h"
-#include "sdkconfig.h"
 
 /************************** Constant Definitions *****************************/
 #define FGPIO_SUCCESS            FT_SUCCESS
@@ -48,6 +49,8 @@ extern "C"
 #define FGPIO_VERSION_1 /* 用于FT2000/4和D2000平台的GPIO 0 ~ 1 */
 #elif defined(CONFIG_TARGET_E2000)
 #define FGPIO_VERSION_2 /* 用于E2000平台的GPIO 3 ~ 5 */
+#elif defined(TARDIGRADE)
+
 #else
 #error "Invalid target board !!!"
 #endif
@@ -72,7 +75,7 @@ typedef enum
     FGPIO_PIN_5,
     FGPIO_PIN_6,
     FGPIO_PIN_7,
-#if defined(FGPIO_VERSION_2) /* E2000 GPIO 0 ~ 5 */
+#if defined(FGPIO_VERSION_2) || defined(TARDIGRADE)/* E2000 GPIO 0 ~ 5 */
     FGPIO_PIN_8,
     FGPIO_PIN_9,
     FGPIO_PIN_10,
@@ -130,10 +133,10 @@ typedef struct
 {
     u32 instance_id; /* GPIO实例ID */
     uintptr base_addr; /* GPIO控制器基地址 */
-#if defined(FGPIO_VERSION_1) /* FT2000-4, D2000 */
+#if defined(FGPIO_VERSION_1) || defined(TARDIGRADE)  /* FT2000-4, D2000 */
     u32 irq_num; /* GPIO控制器中断号 */
 #elif defined(FGPIO_VERSION_2) /* E2000 GPIO 0 ~ 5 */
-    u32 irq_num[FGPIO_PIN_NUM]; /* GPIO各引脚的中断号 */
+    u32 irq_num[FGPIO_PIN_NUM]; /* GPIO各引脚的中断号，如果是控制器中断，则数组所有值一致 */
 #endif
     u32 irq_priority; /* 中断优先级 */
 } FGpioConfig; /* GPIO控制器配置 */

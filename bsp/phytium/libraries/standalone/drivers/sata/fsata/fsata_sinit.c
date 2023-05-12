@@ -14,11 +14,13 @@
  * FilePath: fsata_sinit.c
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 09:04:15
- * Description:  This files is for sata static init
+ * Description:  This file is for sata static init
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/2/10    first release
+ * 1.1   wangxiaodong  2022/10/21   improve functions
  */
 
 /***************************** Include Files *********************************/
@@ -41,7 +43,7 @@
 extern const FSataConfig FSataPcieConfigTbl[PLAT_AHCI_HOST_MAX_COUNT];
 
 #if defined(CONFIG_TARGET_E2000)
-    extern const FSataConfig FSataControllerConfigTbl[FSATA_INSTANCE_NUM];
+    extern const FSataConfig FSataControllerConfigTbl[FSATA_NUM];
 #endif
 
 /*****************************************************************************/
@@ -57,7 +59,7 @@ const FSataConfig *FSataLookupConfig(u32 instance_id, u8 type)
     if (type == FSATA_TYPE_CONTROLLER)
     {
 #if defined(CONFIG_TARGET_E2000)
-        FASSERT(instance_id < FSATA_INSTANCE_NUM);
+        FASSERT(instance_id < FSATA_NUM);
         pconfig = &FSataControllerConfigTbl[instance_id];
 #endif
     }

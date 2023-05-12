@@ -14,7 +14,7 @@
  * FilePath: fwdt.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:24:34
- * Description:  This files is for wdt ctrl function definition
+ * Description:  This file is for wdt ctrl function definition.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -23,19 +23,19 @@
  * 1.1   Wangxiaodong 2021/11/5    restruct
  */
 
-#ifndef BSP_DRIVERS_FWDT_H
-#define BSP_DRIVERS_FWDT_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FWDT_H
+#define FWDT_H
 
 #include "ftypes.h"
 #include "fdebug.h"
 #include "ferror_code.h"
 #include "fkernel.h"
 #include "fassert.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define FWDT_SUCCESS           FT_SUCCESS
 #define FWDT_ERR_INVAL_PARM    FT_MAKE_ERRCODE(ErrModBsp, ErrBspWdt, 1)
@@ -58,8 +58,10 @@ typedef struct
     u32 instance_id;/* wdt id */
     uintptr refresh_base_addr;/* wdt refresh base addr */
     uintptr control_base_addr;/* wdt control base addr */
-    u32 irq_num;    /* wdt ir num */
+    u32 irq_num;    /* wdt irq num */
     u32 irq_prority;/* wdt irq priority */
+    u32 irq_twice_num;    /* wdt twice irq num */
+    u32 irq_twice_prority;/* wdt twice irq priority */
     const char *instance_name;/* instance name */
 } FWdtConfig; /* wdt config */
 

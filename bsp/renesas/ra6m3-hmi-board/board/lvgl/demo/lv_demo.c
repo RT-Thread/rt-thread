@@ -12,6 +12,6 @@
 void lv_user_gui_init(void)
 {
     /* display demo; you may replace with your LVGL application at here */
-    extern void lv_demo_music(void);
-    lv_demo_music();
+    extern void lv_video_gui_init(void);
+    lv_video_gui_init();
 }

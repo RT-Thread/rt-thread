@@ -14,24 +14,27 @@
  * FilePath: fsata.h
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 09:05:24
- * Description:  This files is for sata ctrl function definition
+ * Description:  This file is for sata ctrl function definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/2/10    first release
+ * 1.1   wangxiaodong  2022/9/9     improve functions
+ * 1.2   wangxiaodong  2022/10/21   improve functions
  */
 
-#ifndef BSP_DRIVERS_FSATA_H
-#define BSP_DRIVERS_FSATA_H
+#ifndef FSATA_H
+#define FSATA_H
+
+#include "ftypes.h"
+#include "ferror_code.h"
+#include "fkernel.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-/***************************** Include Files *********************************/
-#include "ftypes.h"
-#include "ferror_code.h"
-#include "fkernel.h"
 
 #define FSATA_SUCCESS               FT_SUCCESS
 #define FSATA_ERR_INVAILD_PARAMETER FT_MAKE_ERRCODE(ErrModBsp, ErrBspSata, 1)
@@ -54,7 +57,7 @@ extern "C"
 
 #define FSATA_AHCI_CMD_TABLE_SIZE       (FSATA_AHCI_CMD_TABLE_HEADER_SIZE + (FSATA_AHCI_PRTD_ITEM_NUM * FSATA_AHCI_PRTD_ITEM_SIZE))
 #define FSATA_AHCI_PORT_PRIV_DMA_SZ     (FSATA_AHCI_CMD_LIST_HEADER_SIZE * FSATA_AHCI_CMD_LIST_HEADER_NUM + \
-                                        FSATA_AHCI_CMD_TABLE_SIZE + FSATA_AHCI_RX_FIS_SZ)
+        FSATA_AHCI_CMD_TABLE_SIZE + FSATA_AHCI_RX_FIS_SZ)
 
 #define FSATA_AHCI_CMD_ATAPI        BIT(5)
 #define FSATA_AHCI_CMD_WRITE        BIT(6)
@@ -133,9 +136,13 @@ enum
 static inline int FSataIdHasLba48(const u16 *id)
 {
     if ((id[83] & 0xC000) != 0x4000)
+    {
         return 0;
+    }
     if (!FSATA_ID_U64(id, 100))
+    {
         return 0;
+    }
     return id[83] & BIT(10);
 }
 

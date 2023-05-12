@@ -225,10 +225,6 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable CIMER0"
                     default y
 
-                config BSP_USING_CTIMER1
-                    bool "Enable CIMER1"
-                    default n
-
                 config BSP_USING_CTIMER3
                     bool "Enable CIMER3"
                     default n

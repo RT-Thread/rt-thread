@@ -373,7 +373,7 @@ extern const ip_addr_t ip_addr_broadcast;
 
 extern const ip_addr_t ip6_addr_any;
 
-/** 
+/**
  * @ingroup ip6addr
  * IP6_ADDR_ANY can be used as a fixed ip_addr_t
  * for the IPv6 wildcard address
@@ -399,6 +399,8 @@ extern const ip_addr_t ip6_addr_any;
 #else
 #define IP_ANY_TYPE    IP_ADDR_ANY
 #endif
+
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
 
 #ifdef __cplusplus
 }

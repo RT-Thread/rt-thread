@@ -14,7 +14,7 @@
  * FilePath: fsemaphore.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
- * Description:  This files is for semaphore user api implmentation
+ * Description:  This file is for semaphore user api implmentation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -62,21 +62,25 @@ FError FSemaCfgInitialize(FSema *const instance, const FSemaConfig *input_config
 {
     FASSERT(instance && input_config);
     uintptr base_addr = input_config->base_addr;
-    FASSERT_MSG((0 != base_addr), "invalid base addr");
+    FASSERT_MSG((0 != base_addr), "invalid base addr.");
     FError ret = FSEMA_SUCCESS;
 
     if (FT_COMPONENT_IS_READY == instance->is_ready)
     {
-        FSEMA_WARN("device is already initialized!!!");
+        FSEMA_WARN("Device is already initialized!!!");
     }
 
     if (&instance->config != input_config)
+    {
         instance->config = *input_config;
+    }
 
     FSemaHwResetAll(base_addr); /* 重置所有的锁 */
 
     if (FSEMA_SUCCESS == ret)
+    {
         instance->is_ready = FT_COMPONENT_IS_READY;
+    }
 
     return ret;
 }
@@ -127,7 +131,7 @@ FError FSemaCreateLocker(FSema *const instance, FSemaLocker *const locker)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FSEMA_ERROR("device@%p not yet inited !!!", instance->config.base_addr);
+        FSEMA_ERROR("Device@%p is not yet inited !!!", instance->config.base_addr);
         return FSEMA_ERR_NOT_INIT;
     }
 
@@ -136,14 +140,14 @@ FError FSemaCreateLocker(FSema *const instance, FSemaLocker *const locker)
         /* 分配一把未创建的锁 */
         if (NULL == instance->locker[locker_idx])
         {
-            FSEMA_INFO("allocate locker %d", locker_idx);
+            FSEMA_INFO("Allocate locker %d.", locker_idx);
             break;
         }
     }
 
     if (locker_idx >= FSEMA_NUM_OF_LOCKER)
     {
-        FSEMA_ERROR("no locker available !!!");
+        FSEMA_ERROR("No locker available !!!");
         return FSEMA_ERR_NO_AVAILABLE_LOCKER; /* 所有的锁都已经分配创建 */
     }
 
@@ -176,7 +180,7 @@ FError FSemaTryLock(FSemaLocker *const locker, u32 owner, u32 try_times, FSemaRe
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FSEMA_ERROR("device@%p not yet inited !!!", instance->config.base_addr);
+        FSEMA_ERROR("Device@%p is not yet inited !!!", instance->config.base_addr);
         return FSEMA_ERR_NOT_INIT;
     }
 
@@ -185,10 +189,14 @@ FError FSemaTryLock(FSemaLocker *const locker, u32 owner, u32 try_times, FSemaRe
         /* 尝试获取锁 */
         lock_success = FSemaTryLockOnce(base_addr, locker->index);
         if (TRUE == lock_success)
+        {
             break;
+        }
 
         if (relax_handler)
+        {
             relax_handler(instance);
+        }
 
         try_times--;
     }
@@ -196,12 +204,12 @@ FError FSemaTryLock(FSemaLocker *const locker, u32 owner, u32 try_times, FSemaRe
     if (FALSE == lock_success)
     {
         ret = FSEMA_ERR_LOCK_TIMEOUT;
-        FSEMA_ERROR("locker-%d has been taken by owner 0x%x", locker->index, locker->owner);
+        FSEMA_ERROR("locker-%d has been taken by owner 0x%x.", locker->index, locker->owner);
     }
     else
     {
         locker->owner = owner; /* 记录当前locker的owner */
-        FSEMA_INFO("locker-%d taken success by owner 0x%x", locker->index, owner);
+        FSEMA_INFO("locker-%d  is taken successfully by owner 0x%x.", locker->index, owner);
     }
 
     return ret;
@@ -224,7 +232,7 @@ FError FSemaUnlock(FSemaLocker *const locker, u32 owner)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FSEMA_ERROR("device@%p not yet inited !!!", instance->config.base_addr);
+        FSEMA_ERROR("Device@%p is not yet inited !!!", instance->config.base_addr);
         return FSEMA_ERR_NOT_INIT;
     }
 
@@ -263,7 +271,7 @@ FError FSemaUnlockAll(FSema *const instance)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FSEMA_ERROR("device@%p not yet inited !!!", instance->config.base_addr);
+        FSEMA_ERROR("Device@%p is not yet inited !!!", instance->config.base_addr);
         return FSEMA_ERR_NOT_INIT;
     }
 
@@ -295,17 +303,17 @@ FError FSemaDeleteLocker(FSemaLocker *const locker)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FSEMA_ERROR("device@%p not yet inited !!!", instance->config.base_addr);
+        FSEMA_ERROR("Device@%p is not yet inited !!!", instance->config.base_addr);
         return FSEMA_ERR_NOT_INIT;
     }
 
     if (TRUE == FSemaHwGetStatus(base_addr, locker_idx))
     {
-        FSEMA_WARN("caution, locker-%d has been taken by 0x%x !!!",
+        FSEMA_WARN("Caution, locker-%d has been taken by 0x%x !!!",
                    locker_idx, locker->owner);
     }
 
-    FASSERT_MSG((instance->locker[locker_idx] == locker), "invalid locker index %d", locker_idx);
+    FASSERT_MSG((instance->locker[locker_idx] == locker), "invalid locker index %d.", locker_idx);
 
     FSemaWriteReg(base_addr, FSEMA_RLOCK_X_REG_OFFSET(locker->index), FSEMA_RLOCK_X_UNLOCK); /* 写0解锁信号量 */
 
@@ -329,7 +337,7 @@ boolean FSemaIsLocked(FSemaLocker *locker)
 
     if (FT_COMPONENT_IS_READY != instance->is_ready)
     {
-        FSEMA_ERROR("device@%p not yet inited !!!", instance->config.base_addr);
+        FSEMA_ERROR("Device@%p is not yet inited !!!", instance->config.base_addr);
         return FSEMA_ERR_NOT_INIT;
     }
 

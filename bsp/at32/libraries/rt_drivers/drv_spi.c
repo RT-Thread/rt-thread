@@ -232,6 +232,8 @@ static rt_err_t configure(struct rt_spi_device* device,
     spi_init_struct.transmission_mode = SPI_TRANSMIT_FULL_DUPLEX;
     spi_init_struct.master_slave_mode = SPI_MODE_MASTER;
     spi_init_struct.cs_mode_selection = SPI_CS_SOFTWARE_MODE;
+    /* disable spi to change transfer size */
+    spi_enable(instance->config->spi_x, FALSE);
     /* init spi */
     spi_init(instance->config->spi_x, &spi_init_struct);
 
@@ -393,8 +395,15 @@ static rt_ssize_t xfer(struct rt_spi_device* device, struct rt_spi_message* mess
 
         /* calculate the start address */
         already_send_length = message->length - send_length - message_length;
-        send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
-        recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
+        /* avoid null pointer problems */
+        if (message->send_buf)
+        {
+            send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
+        }
+        if (message->recv_buf)
+        {
+            recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
+        }
 
         /* start once data exchange in dma mode */
         if (message->send_buf && message->recv_buf)

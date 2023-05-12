@@ -14,25 +14,25 @@
  * FilePath: fddma.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
- * Description:  This files is for ddma interface definition
+ * Description:  This file is for ddma interface definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/5/13    init commit
+ * 1.0   zhugengyu  2022/5/13    init commit
  */
 
-#ifndef  DRIVER_FDDMA_H
-#define  DRIVER_FDDMA_H
+#ifndef  FDDMA_H
+#define  FDDMA_H
+
+#include "ftypes.h"
+#include "ferror_code.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 /***************************** Include Files *********************************/
-
-#include "ftypes.h"
-#include "ferror_code.h"
 
 /************************** Constant Definitions *****************************/
 typedef enum

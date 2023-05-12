@@ -24,13 +24,16 @@ static int chdir_entry(void)
             printf("error\n");
         }
         ptr = getcwd(buf, size);
-        printf("ptr %s\n",ptr);
-
+        
         if (ptr == NULL)
         {
             printf("error\n");
         }
-        printf("old curr dir is %s\n", ptr);
+        else
+        {
+            printf("ptr %s\n",ptr);
+            printf("old curr dir is %s\n", ptr);
+        }
 
         mkdir(NEW_CURR_DIR, 0x777);
         chdir(NEW_CURR_DIR);
@@ -40,7 +43,11 @@ static int chdir_entry(void)
         {
             printf("error\n");
         }
-        printf("new curr dir is %s\n", ptr);
+        else
+        {
+            printf("new curr dir is %s\n", ptr);
+        }
+        
     }
     free(buf);
     return 0;

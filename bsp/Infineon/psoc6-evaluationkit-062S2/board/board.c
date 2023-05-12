@@ -14,6 +14,12 @@ void cy_bsp_all_init(void)
 {
     cy_rslt_t result;
 
+#ifdef __ARMCC_VERSION
+#ifndef __NO_SYSTEM_INIT
+    SystemInit();
+#endif
+#endif
+
     /* Initialize the device and board peripherals */
     result = cybsp_init();
 

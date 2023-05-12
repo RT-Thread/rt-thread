@@ -198,11 +198,11 @@ ATTR_TCM_SECTION int bflb_uart_putchar(struct bflb_device_s *dev, int ch)
     uint32_t reg_base;
 
     reg_base = dev->reg_base;
-    start_time = bflb_mtimer_get_time_ms();
+    // start_time = bflb_mtimer_get_time_ms();
     while ((getreg32(reg_base + UART_FIFO_CONFIG_1_OFFSET) & UART_TX_FIFO_CNT_MASK) == 0) {
-        if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
-            return -ETIMEDOUT;
-        }
+        // if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
+        //     return -ETIMEDOUT;
+        // }
     }
     putreg8(ch, reg_base + UART_FIFO_WDATA_OFFSET);
     return 0;

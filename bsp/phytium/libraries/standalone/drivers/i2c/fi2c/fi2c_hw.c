@@ -12,13 +12,15 @@
  *
  *
  * FilePath: fi2c_hw.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-01 14:53:42
  * LastEditTime: 2022-02-18 08:36:22
- * Description:  This files is for
+ * Description:  This file is for I2C register read/write operation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu 2021/11/1  first commit
+ * 1.1  liushengming 2022/02/18  support slave mode
  */
 
 /***************************** Include Files *********************************/
@@ -102,7 +104,7 @@ FError FI2cSetEnable(uintptr addr, boolean enable)
     }
     while (0 != timeout--);
 
-    FI2C_ERROR("timeout in %sabling I2C ctrl", enable ? "en" : "dis");
+    FI2C_ERROR("Timeout in %sabling I2C ctrl.", enable ? "en" : "dis");
     return FI2C_ERR_TIMEOUT;
 }
 
@@ -193,11 +195,17 @@ static FError FI2cCalcSpeedCfg(uintptr addr, u32 speed, u32 bus_clk_hz, FI2cSpee
     u32 spk_cnt = 0;
 
     if (FI2C_SPEED_FAST_RATE <= speed)
+    {
         speed_cfg_p->speed_mode = FI2C_FAST_SPEED;
+    }
     else if (FI2C_SPEED_STANDARD_RATE <= speed)
+    {
         speed_cfg_p->speed_mode = FI2C_STANDARD_SPEED;
+    }
     else
+    {
         return FI2C_ERR_INVAL_PARM;
+    }
 
     spk_cnt = FI2C_READ_REG32(addr, FI2C_FS_SPKLEN_OFFSET);
     return FI2cCalcTiming(bus_clk_hz, spk_cnt, speed_cfg_p);
@@ -218,9 +226,11 @@ FError FI2cSetSpeed(uintptr addr, u32 speed_rate)
     u32 reg_val;
 
     memset(&speed_cfg, 0, sizeof(speed_cfg));
-    ret = FI2cCalcSpeedCfg(addr, speed_rate, I2C_REF_CLK_HZ, &speed_cfg);
+    ret = FI2cCalcSpeedCfg(addr, speed_rate, FI2C_CLK_FREQ_HZ, &speed_cfg);
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* get enable setting for restore later */
     enable_status = FI2cGetEnable(addr);
@@ -229,26 +239,28 @@ FError FI2cSetSpeed(uintptr addr, u32 speed_rate)
     reg_val = ((FI2C_READ_REG32(addr, FI2C_CON_OFFSET)) & (~FI2C_CON_SPEED_MASK));
     switch (speed_cfg.speed_mode)
     {
-    case FI2C_STANDARD_SPEED:
-        reg_val |= FI2C_CON_STD_SPEED;
-        FI2C_WRITE_REG32(addr, FI2C_SS_SCL_HCNT_OFFSET, speed_cfg.scl_hcnt);
-        FI2C_WRITE_REG32(addr, FI2C_SS_SCL_LCNT_OFFSET, speed_cfg.scl_lcnt);
-        break;
-    case FI2C_FAST_SPEED:
-        reg_val |= FI2C_CON_FAST_SPEED;
-        FI2C_WRITE_REG32(addr, FI2C_FS_SCL_HCNT_OFFSET, speed_cfg.scl_hcnt);
-        FI2C_WRITE_REG32(addr, FI2C_FS_SCL_LCNT_OFFSET, speed_cfg.scl_lcnt);
-        break;
-    default:
-        ret |= FI2C_ERR_INVAL_PARM;
-        break;
+        case FI2C_STANDARD_SPEED:
+            reg_val |= FI2C_CON_STD_SPEED;
+            FI2C_WRITE_REG32(addr, FI2C_SS_SCL_HCNT_OFFSET, speed_cfg.scl_hcnt);
+            FI2C_WRITE_REG32(addr, FI2C_SS_SCL_LCNT_OFFSET, speed_cfg.scl_lcnt);
+            break;
+        case FI2C_FAST_SPEED:
+            reg_val |= FI2C_CON_FAST_SPEED;
+            FI2C_WRITE_REG32(addr, FI2C_FS_SCL_HCNT_OFFSET, speed_cfg.scl_hcnt);
+            FI2C_WRITE_REG32(addr, FI2C_FS_SCL_LCNT_OFFSET, speed_cfg.scl_lcnt);
+            break;
+        default:
+            ret |= FI2C_ERR_INVAL_PARM;
+            break;
     }
 
     FI2C_WRITE_REG32(addr, FI2C_CON_OFFSET, reg_val);
 
     /* Configure SDA Hold Time if required */
     if (0 != speed_cfg.sda_hold)
+    {
         FI2C_WRITE_REG32(addr, FI2C_SDA_HOLD_OFFSET, speed_cfg.sda_hold);
+    }
 
     /* Restore back i2c now speed set */
     if (FI2C_IC_ENABLE == enable_status)
@@ -279,7 +291,7 @@ FError FI2cWaitStatus(uintptr addr, u32 stat_bit)
 
     if (FI2C_TIMEOUT <= timeout)
     {
-        FI2C_ERROR("timeout when wait status: 0x%x", stat_bit);
+        FI2C_ERROR("Timeout when wait status: 0x%x.", stat_bit);
         return FI2C_ERR_TIMEOUT;
     }
 
@@ -298,10 +310,10 @@ FError FI2cWaitBusBusy(uintptr addr)
     u32 ret = FI2C_SUCCESS;
 
     if (((FI2C_READ_REG32(addr, FI2C_STATUS_OFFSET)) & FI2C_STATUS_MST_ACTIVITY) &&
-            (FI2C_SUCCESS != FI2cWaitStatus(addr, FI2C_STATUS_TFE)))
+        (FI2C_SUCCESS != FI2cWaitStatus(addr, FI2C_STATUS_TFE)))
     {
         ret = FI2C_ERR_TIMEOUT;
-        FI2C_ERROR("timeout when wait i2c bus busy");
+        FI2C_ERROR("Timeout when wait i2c bus busy.");
     }
 
     return ret;
@@ -321,13 +333,19 @@ FError FI2cSetTar(uintptr addr, u32 tar_addr)
     u32 reg_val = 0;
 
     if (FI2C_IC_ENABLE == enable_status)
+    {
         ret = FI2cSetEnable(addr, FALSE);
+    }
 
     if (FI2C_SUCCESS == ret)
+    {
         FI2C_WRITE_REG32(addr, FI2C_TAR_OFFSET, (tar_addr & FI2C_IC_TAR_MASK));
+    }
 
     if (FI2C_IC_ENABLE == enable_status)
+    {
         ret = FI2cSetEnable(addr, TRUE);
+    }
 
     return ret;
 }
@@ -346,13 +364,19 @@ FError FI2cSetSar(uintptr addr, u32 sar_addr)
     u32 reg_val = 0;
 
     if (FI2C_IC_ENABLE == enable_status)
+    {
         ret = FI2cSetEnable(addr, FALSE);
+    }
 
     if (FI2C_SUCCESS == ret)
+    {
         FI2C_WRITE_REG32(addr, FI2C_SAR_OFFSET, (sar_addr & FI2C_IC_SAR_MASK));
+    }
 
     if (FI2C_IC_ENABLE == enable_status)
+    {
         ret = FI2cSetEnable(addr, TRUE);
+    }
 
     return ret;
 }
@@ -377,7 +401,7 @@ FError FI2cFlushRxFifo(uintptr addr)
         if (FI2C_TIMEOUT < ++timeout)
         {
             ret = FI2C_TIMEOUT;
-            FI2C_ERROR("timeout when flush fifo");
+            FI2C_ERROR("Timeout when flush fifo.");
             break;
         }
     }
@@ -406,28 +430,44 @@ u32 FI2cClearIntrBits(uintptr addr, u32 *last_err_p)
     }
 
     if (stat & FI2C_INTR_RX_UNDER)
+    {
         FI2C_READ_REG32(addr, FI2C_CLR_RX_UNDER_OFFSET);
+    }
 
     if (stat & FI2C_INTR_RX_OVER)
+    {
         FI2C_READ_REG32(addr, FI2C_CLR_RX_OVER_OFFSET);
+    }
 
     if (stat & FI2C_INTR_TX_OVER)
+    {
         FI2C_READ_REG32(addr, FI2C_CLR_TX_OVER_OFFSET);
+    }
 
     if (stat & FI2C_INTR_RX_DONE)
+    {
         FI2C_READ_REG32(addr, FI2C_CLR_RX_DONE_OFFSET);
+    }
 
     if (stat & FI2C_INTR_ACTIVITY)
+    {
         FI2C_READ_REG32(addr, FI2C_CLR_ACTIVITY_OFFSET);
+    }
 
     if (stat & FI2C_INTR_STOP_DET)
+    {
         FI2C_READ_REG32(addr, FI2C_CLR_STOP_DET_OFFSET);
+    }
 
     if (stat & FI2C_INTR_START_DET)
+    {
         FI2C_READ_REG32(addr, FI2C_CLR_START_DET_OFFSET);
+    }
 
     if (stat & FI2C_INTR_GEN_CALL)
+    {
         FI2C_READ_REG32(addr, FI2C_CLR_GEN_CALL_OFFSET);
+    }
 
     return stat;
 }

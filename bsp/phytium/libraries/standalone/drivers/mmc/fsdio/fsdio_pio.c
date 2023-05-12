@@ -14,7 +14,7 @@
  * FilePath: fsdio_pio.c
  * Date: 2022-06-01 14:21:47
  * LastEditTime: 2022-06-01 14:21:47
- * Description:  This files is for PIO transfer related function implementation
+ * Description:  This file is for PIO transfer related function implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -27,8 +27,6 @@
 #include "fdebug.h"
 #include "fassert.h"
 #include "ftypes.h"
-
-#include "fcache.h"
 
 #include "fsdio_hw.h"
 #include "fsdio.h"
@@ -46,6 +44,7 @@
 
 /************************** Function Prototypes ******************************/
 extern FError FSdioTransferCmd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p);
+extern FError FSdioPollWaitBusyCard(FSdio *const instance_p);
 
 /*****************************************************************************/
 /**
@@ -63,13 +62,6 @@ static FError FSdioPIOWriteData(FSdio *const instance_p, FSdioData *data_p)
     uintptr base_addr = instance_p->config.base_addr;
     const u32 wr_times = data_p->datalen / sizeof(u32); /* u8 --> u32 */
     u32 *wr_buf = (u32 *)data_p->buf;
-
-    /* while in PIO mode, max data transferred is 0x800 */
-    if (data_p->datalen > FSDIO_MAX_FIFO_CNT)
-    {
-        FSDIO_ERROR("Fifo do not support write more than 0x%x", FSDIO_MAX_FIFO_CNT);
-        return FSDIO_ERR_NOT_SUPPORT;
-    }
 
     /* write fifo data */
     FSDIO_WRITE_REG(base_addr, FSDIO_CMD_OFFSET, FSDIO_CMD_DAT_WRITE);
@@ -100,7 +92,7 @@ FError FSdioPIOReadData(FSdio *const instance_p, FSdioData *data_p)
     /* while in PIO mode, max data transferred is 0x800 */
     if (data_p->datalen > FSDIO_MAX_FIFO_CNT)
     {
-        FSDIO_ERROR("Fifo do not support write more than 0x%x", FSDIO_MAX_FIFO_CNT);
+        FSDIO_ERROR("Fifo do not support writing more than 0x%x.", FSDIO_MAX_FIFO_CNT);
         return FSDIO_ERR_NOT_SUPPORT;
     }
 
@@ -138,27 +130,43 @@ FError FSdioPIOTransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
 
     if (FSDIO_PIO_TRANS_MODE != instance_p->config.trans_mode)
     {
-        FSDIO_ERROR("device is not configure in PIO transfer mode");
+        FSDIO_ERROR("device is not configure in PIO transfer mode.");
         return FSDIO_ERR_INVALID_STATE;
     }
 
     /* for removable media, check if card exists */
     if ((FALSE == instance_p->config.non_removable) &&
-            (FALSE == FSdioCheckIfCardExists(base_addr)))
+        (FALSE == FSdioCheckIfCardExists(base_addr)))
     {
-        FSDIO_ERROR("card not detected !!!");
+        FSDIO_ERROR("card is not detected !!!");
         return FSDIO_ERR_NO_CARD;
+    }
+
+    /* wait previous command finished and card not busy */
+    ret = FSdioPollWaitBusyCard(instance_p);
+    if (FSDIO_SUCCESS != ret)
+    {
+        return ret;
     }
 
     /* reset fifo and not use DMA */
     FSDIO_CLR_BIT(base_addr, FSDIO_CNTRL_OFFSET, FSDIO_CNTRL_USE_INTERNAL_DMAC);
     ret = FSdioResetCtrl(base_addr, FSDIO_CNTRL_FIFO_RESET);
     if (FSDIO_SUCCESS != ret)
+    {
         return ret;
+    }
     FSDIO_CLR_BIT(base_addr, FSDIO_BUS_MODE_OFFSET, FSDIO_BUS_MODE_DE);
 
     if (NULL != cmd_data_p->data_p)
     {
+        /* while in PIO mode, max data transferred is 0x800 */
+        if (cmd_data_p->data_p->datalen > FSDIO_MAX_FIFO_CNT)
+        {
+            FSDIO_ERROR("Fifo do not support writing more than 0x%x.", FSDIO_MAX_FIFO_CNT);
+            return FSDIO_ERR_NOT_SUPPORT;
+        }
+
         /* set transfer data length and block size */
         FSdioSetTransBytes(base_addr, cmd_data_p->data_p->datalen);
         FSdioSetBlockSize(base_addr, cmd_data_p->data_p->blksz);
@@ -166,8 +174,8 @@ FError FSdioPIOTransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
         if (FALSE == read) /* if need to write, write to fifo before send command */
         {
             /* invalide buffer for data to write */
-            FCacheDCacheInvalidateRange((uintptr)cmd_data_p->data_p->buf,
-                                        cmd_data_p->data_p->datalen);
+
+            FSDIO_DATA_BARRIER();
 
             ret = FSdioPIOWriteData(instance_p, cmd_data_p->data_p);
         }
@@ -189,7 +197,7 @@ FError FSdioPIOTransfer(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
  * @param {FSdioCmdData} *cmd_data_p, contents of transfer command and data
  * @param {FSdioRelaxHandler} relax, handler of relax when wait busy
  */
-FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p, FSdioRelaxHandler relax)
+FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data_p)
 {
     FASSERT(instance_p);
     FASSERT(cmd_data_p);
@@ -208,7 +216,7 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
 
     if (FSDIO_PIO_TRANS_MODE != instance_p->config.trans_mode)
     {
-        FSDIO_ERROR("device is not configure in PIO transfer mode");
+        FSDIO_ERROR("device is not configure in PIO transfer mode.");
         return FSDIO_ERR_INVALID_STATE;
     }
 
@@ -217,8 +225,10 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
     do
     {
         reg_val = FSdioGetRawStatus(base_addr);
-        if (relax)
-            relax();
+        if (instance_p->relax_handler)
+        {
+            instance_p->relax_handler();
+        }
     }
     while (!(FSDIO_INT_CMD_BIT & reg_val) && (--delay > 0));
 
@@ -236,8 +246,10 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
         do
         {
             reg_val = FSdioGetRawStatus(base_addr);
-            if (relax)
-                relax();
+            if (instance_p->relax_handler)
+            {
+                instance_p->relax_handler();
+            }
         }
         while (!(FSDIO_INT_DTO_BIT & reg_val) && (--delay > 0));
 
@@ -249,7 +261,7 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
 
         if (!(FSDIO_INT_DTO_BIT & reg_val) && (delay <= 0))
         {
-            FSDIO_ERROR("wait PIO transfer timeout, raw ints: 0x%x", reg_val);
+            FSDIO_ERROR("wait PIO transfer timeout, raw ints: 0x%x.", reg_val);
             return FSDIO_ERR_TRANS_TIMEOUT;
         }
     }

@@ -14,20 +14,28 @@
  * FilePath: fcan_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:29:05
- * Description:  This files is for
+ * Description:  This files is for the can register related definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/5/26  first release
+ * 1.1   zhangyan      2022/12/7  improve functions
  */
 
 
-#ifndef FT_CAN_HW_H
-#define FT_CAN_HW_H
+#ifndef FCAN_HW_H
+#define FCAN_HW_H
 
+#include "fparameters.h"
 #include "ftypes.h"
 #include "fio.h"
 #include "sdkconfig.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /***ft CAN REGISTER offset*/
 #define FCAN_CTRL_OFFSET            0x00 /* Global control register */
@@ -89,7 +97,7 @@
 #define FCAN_INTR_TFIC_MASK     BIT(20) /* TX FIFO empty interrupt clear*/
 #define FCAN_INTR_REIC_MASK     BIT(21) /* RX frame end interrupt clear*/
 #define FCAN_INTR_TEIC_MASK     BIT(22) /* TX frame end interrupt clear*/
-#define FCAN_INTR_EIC_MASK      BIT(23)  /* Error interrupt clear*/
+#define FCAN_INTR_EIC_MASK      BIT(23) /* Error interrupt clear*/
 #define FCAN_INTR_BORIS_MASK    BIT(24)
 #define FCAN_INTR_PWRIS_MASK    BIT(25)
 #define FCAN_INTR_PERIS_MASK    BIT(26)
@@ -131,7 +139,7 @@
 #define FCAN_FIFO_CNT_TFN_GET(x)     GET_REG32_BITS((x), 22, 16)
 #define FCAN_FIFO_CNT_TFN_SET(x)     SET_REG32_BITS((x), 22, 16)
 
-#define FCAN_IDR_ID1_SHIFT          21 /* Standard Messg Identifier */
+#define FCAN_IDR_ID1_SHIFT          21 /* Standard Message Identifier */
 #define FCAN_IDR_SDLC_SHIFT         14
 #define FCANFD_IDR_EDLC_SHIFT       24
 #define FCAN_IDR_EDLC_SHIFT         26
@@ -186,7 +194,7 @@
     #define FCAN_DATA_BRP_MAX   512
     #define FCAN_DATA_BRP_INC   1
 
-#elif defined(CONFIG_TARGET_E2000)
+#elif defined(CONFIG_TARGET_E2000) || defined(TARDIGRADE)
 
     #define FCAN_ARB_TSEG1_MIN  1
     #define FCAN_ARB_TSEG1_MAX  16
@@ -235,12 +243,15 @@
 
 #define FCAN_CLEARBIT(base_addr, reg_offset, data)     FtClearBit32((base_addr) + (u32)(reg_offset), (u32)(data))
 
-
 #define FCAN_TX_FIFO_FULL(instance_p) (FCAN_FIFO_DEPTH == FCAN_FIFO_CNT_TFN_GET(FCAN_READ_REG32(instance_p->config.base_address, FCAN_FIFO_CNT_OFFSET)))
 
 #define FCAN_RX_FIFO_EMPTY(instance_p) (0 == FCAN_FIFO_CNT_RFN_GET(FCAN_READ_REG32(instance_p->config.base_address, FCAN_FIFO_CNT_OFFSET)))
 
 
 void FCanDump(uintptr base_addr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // !

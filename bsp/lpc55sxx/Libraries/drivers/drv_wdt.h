@@ -14,7 +14,7 @@
 
 #include <rtdevice.h>
 
-int rt_hw_hwtimer_init(void);
+int rt_hw_wdt_init(void);
 
 #endif /* __DRV_WDT_H__ */
 

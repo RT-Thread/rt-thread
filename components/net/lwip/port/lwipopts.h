@@ -585,7 +585,7 @@
 #endif
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */
-#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + 2*PPP_SUPPORT)
+#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT + (LWIP_IPV6 ? (1 + (2*LWIP_IPV6)) : 0))
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
@@ -642,8 +642,6 @@
 #else                                /* >= v2.1.2 */
 #define LWIP_HOOK_IP4_ROUTE_SRC(src, dest)  lwip_ip4_route_src(dest, src)
 #endif
-#include "lwip/ip_addr.h"
-struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
 #endif /* RT_USING_LWIP_VER_NUM >= 0x20000 */
 
 #endif /* __LWIPOPTS_H__ */

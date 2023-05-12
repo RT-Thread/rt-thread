@@ -101,7 +101,7 @@ void gpio_irq_enable(rt_uint8_t index, bcm_gpio_pin pin)
 
 }
 
-static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
+static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
     RT_ASSERT((BCM_GPIO_PIN_0 <= pin) && (pin < BCM_GPIO_PIN_NULL));
     RT_ASSERT(!(mode & 0x8));
@@ -129,7 +129,7 @@ static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
+static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
 {
     RT_ASSERT((BCM_GPIO_PIN_0 <= pin) && (pin < BCM_GPIO_PIN_NULL));
     RT_ASSERT(!(value & 0xE));
@@ -141,13 +141,13 @@ static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t valu
 
 }
 
-static int raspi_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t raspi_pin_read(struct rt_device *device, rt_base_t pin)
 {
     RT_ASSERT((BCM_GPIO_PIN_0 <= pin) && (pin < BCM_GPIO_PIN_NULL));
     return (BCM2835_GPIO_GPLEV(pin / 32) & (1 << (pin % 32)))? PIN_HIGH : PIN_LOW;
 }
 
-static rt_err_t raspi_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t raspi_pin_attach_irq(struct rt_device *device, rt_base_t pin, rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     RT_ASSERT((BCM_GPIO_PIN_0 <= pin) && (pin < BCM_GPIO_PIN_NULL));
 
@@ -194,7 +194,7 @@ static rt_err_t raspi_pin_attach_irq(struct rt_device *device, rt_int32_t pin, r
     return RT_EOK;
 }
 
-static rt_err_t raspi_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t raspi_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     RT_ASSERT((BCM_GPIO_PIN_0 <= pin) && (pin < BCM_GPIO_PIN_NULL));
 
@@ -215,7 +215,7 @@ static rt_err_t raspi_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-rt_err_t raspi_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t raspi_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     RT_ASSERT((BCM_GPIO_PIN_0 <= pin) && (pin < BCM_GPIO_PIN_NULL));
 

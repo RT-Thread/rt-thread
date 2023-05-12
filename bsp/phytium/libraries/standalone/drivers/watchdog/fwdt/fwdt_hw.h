@@ -14,39 +14,36 @@
  * FilePath: fwdt_hw.h
  * Date: 2021-08-25 10:27:42
  * LastEditTime: 2022-02-25 11:44:33
- * Description:  This files is for ctrl of watchdog timer functions
+ * Description:  This file is for wdt register definition.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   wangxiaodong 2021/8/25   init
+ * 1.0   wangxiaodong  2022/4/15   init commit
  */
 
-#ifndef BSP_DRIVERS_FWDT_HW_H
-#define BSP_DRIVERS_FWDT_HW_H
+#ifndef FWDT_HW_H
+#define FWDT_HW_H
+
+#include "fkernel.h"
+#include "fio.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "fkernel.h"
-#include "fio.h"
-
 /* Watchdog register definitions */
 
 /* refresh frame */
 #define FWDT_GWDT_WRR       0x000
+#define FWDT_GWDT_W_IIR     0xfcc
 
 /* control frame */
 #define FWDT_GWDT_WCS       0x000  /* WCS register */
 #define FWDT_GWDT_WOR       0x008
 #define FWDT_GWDT_WCVL      0x010
 #define FWDT_GWDT_WCVH      0x014
-
-/* refresh/control frame */
-#define FWDT_GWDT_W_IIDR    0xfcc
-#define FWDT_GWDT_IDR       0xfd0
 
 /* Watchdog Control and Status Register */
 #define FWDT_GWDT_WCS_WDT_EN    BIT(0)
@@ -123,6 +120,8 @@ static inline u32 FWdtReadWCS(uintptr addr)
 {
     return FWDT_READ_REG32(addr, FWDT_GWDT_WCS);
 }
+
+void FWdtDump(uintptr base_addr);
 
 #ifdef __cplusplus
 }

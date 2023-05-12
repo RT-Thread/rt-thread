@@ -13,16 +13,17 @@
  *
  * FilePath: fpwm_intr.c
  * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * LastEditTime: 2022-04-25 11:45:05
+ * Description:  This file is for pwm interrupt handler implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/25   init commit
  */
+
 #include "fparameters.h"
 #include "fassert.h"
-#include "finterrupt.h"
 #include "fpwm.h"
 #include "fpwm_hw.h"
 
@@ -78,11 +79,15 @@ void FPwmIntrHandler(s32 vector, void *args)
 
         status = FPWM_READ_REG32(pwm_base_addr, FPWM_CTRL_OFFSET);
         if (!(status & (FPWM_CTRL_INTR_COUNTER_ENABLE | FPWM_CTRL_INTR_FIFO_EMPTY_ENABLE)))
+        {
             continue;
+        }
 
         status = FPWM_READ_REG32(pwm_base_addr, FPWM_STATE_OFFSET);
         if (0 == status)
+        {
             continue;
+        }
 
         /* Check for the type of error interrupt and Processing it */
         if (status & FPWM_STATE_OVFIF_COUNTER)

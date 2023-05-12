@@ -14,11 +14,12 @@
  * FilePath: fnand_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:46
- * Description:  This files is for
+ * Description:  This file contains functions related to fnand interrupt handling.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 

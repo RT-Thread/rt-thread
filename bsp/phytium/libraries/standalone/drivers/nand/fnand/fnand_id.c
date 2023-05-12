@@ -14,11 +14,13 @@
  * FilePath: fnand_id.c
  * Date: 2022-07-06 08:34:27
  * LastEditTime: 2022-07-06 08:34:27
- * Description:  This file is for
+ * Description:  This file is for functions in this file are the read id required functions
+ * for this driver. 
  *
  * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 #include "fdebug.h"
 #include "fnand.h"
@@ -78,7 +80,9 @@ static int FnandIdHasPeriod(u8 *id_data_p, int arrlen, int period)
     for (i = 0; i < period; i++)
         for (j = i + period; j < arrlen; j += period)
             if (id_data_p[i] != id_data_p[j])
+            {
                 return 0;
+            }
     return 1;
 }
 
@@ -88,24 +92,34 @@ static int FNandIdLen(u8 *id_data_p, int data_length)
 
     for (last_nonzero = data_length - 1; last_nonzero >= 0; last_nonzero--)
         if (id_data_p[last_nonzero])
+        {
             break;
+        }
 
     /* All zeros */
     if (last_nonzero < 0)
+    {
         return 0;
+    }
 
     /* Calculate wraparound period */
     for (period = 1; period < data_length; period++)
         if (FnandIdHasPeriod(id_data_p, data_length, period))
+        {
             break;
+        }
 
     /* There's a repeated pattern */
     if (period < data_length)
+    {
         return period;
+    }
 
     /* There are trailing zeros */
     if (last_nonzero < data_length - 1)
+    {
         return last_nonzero + 1;
+    }
 
     /* No pattern detected */
     return data_length;
@@ -167,7 +181,7 @@ static FError FNandIdDetect(FNand *instance_p, u32 chip_addr)
     /* step 5 compare ID string and device id */
     if (id_data[0] != maf_id || id_data[1] != dev_id)
     {
-        FNAND_ID_DEBUG_E("second ID read did not match %02x,%02x against %02x,%02x\n",
+        FNAND_ID_DEBUG_E("Second ID read did not match %02x,%02x against %02x,%02x\n",
                          maf_id, dev_id, id_data[0], id_data[1]);
         return FNAND_ERR_NOT_MATCH;
     }
@@ -183,15 +197,15 @@ static FError FNandIdDetect(FNand *instance_p, u32 chip_addr)
         return FNAND_ERR_NOT_MATCH;
     }
 
-    FNAND_ID_DEBUG_I("find manufacturer");
+    FNAND_ID_DEBUG_I("Find manufacturer");
     if (manufacturer_p->ops->detect)
     {
-        FNAND_ID_DEBUG_I("manufacturer_p->ops->detect");
+        FNAND_ID_DEBUG_I("manufacturer_p->ops->detect function work");
         return manufacturer_p->ops->detect(instance_p, &nand_id, chip_addr);
     }
     else
     {
-        FNAND_ID_DEBUG_E("manufacturer detect is empty");
+        FNAND_ID_DEBUG_E("Manufacturer detect is empty");
         return FNAND_ERR_NOT_MATCH;
     }
 
@@ -208,7 +222,7 @@ FError FNandDetect(FNand *instance_p)
         ret = FNandIdDetect(instance_p, i);
         if (ret != FT_SUCCESS)
         {
-            FNAND_ID_DEBUG_W("normal flash is not found");
+            FNAND_ID_DEBUG_W("Normal flash is not found");
         }
         else
         {
@@ -221,7 +235,7 @@ FError FNandDetect(FNand *instance_p)
         ret = FNandToggleInit(instance_p, i); /* toggle 1.0 */
         if (ret != FT_SUCCESS)
         {
-            FNAND_ID_DEBUG_W("toggle flash is not found");
+            FNAND_ID_DEBUG_W("Toggle flash is not found");
         }
         else
         {

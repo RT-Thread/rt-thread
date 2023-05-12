@@ -14,15 +14,16 @@
  * FilePath: fprintf.h
  * Date: 2021-08-23 16:24:02
  * LastEditTime: 2022-02-17 18:01:24
- * Description:  This files is for
+ * Description:  This file is for creating custom print interface for standlone sdk.
  *
  * Modify History:
- *  Ver   Who        Date         Changes
- * ----- ------     --------    --------------------------------------
+ *  Ver     Who           Date                  Changes
+ * -----   ------       --------     --------------------------------------
+ *  1.0    huanghe      2022/7/23            first release
  */
 
-#ifndef COMMON_F_PRINTF_H
-#define COMMON_F_PRINTF_H
+#ifndef FPRINTF_H
+#define FPRINTF_H
 
 #ifdef __cplusplus
 extern "C"

@@ -12,22 +12,16 @@
  *
  *
  * FilePath: fi2c_master.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-01 14:53:42
  * LastEditTime: 2022-02-18 08:36:46
- * Description:  This files is for
+ * Description:  This file is for i2c master drivers
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu 2021/11/1  first commit
+ * 1.1  liushengming 2022/2/18  add poll mode and intr mode
  */
-
-
-/*
-    - 一些驱动模块，直接操作硬件的I/O接口，无法实现有意义的操作，此时需要针对中间件或者用户使用习惯设计此模块 （i2c,nand,eth）
-    - 部分场景适用, 分角色的 I/O 操作
-    - 此模块的函数原型，在fooxx.h 中声明一次，方便用户或者中间件层调用
-
-*/
 
 /***************************** Include Files *********************************/
 
@@ -36,7 +30,6 @@
 #include "fdebug.h"
 #include "fi2c_hw.h"
 #include "fi2c.h"
-#include "finterrupt.h"
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -72,15 +65,21 @@ static FError FI2cMasterStartTrans(FI2c *instance_p, u32 mem_addr, u8 mem_byte_l
 
     ret = FI2cWaitBusBusy(base_addr);
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
     ret = FI2cSetTar(base_addr, instance_p->config.slave_addr); /* 设备地址 */
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
     while (addr_len)
     {
         ret = FI2cWaitStatus(base_addr, FI2C_STATUS_TFNF);
         if (FI2C_SUCCESS != ret)
+        {
             break;
+        }
         if (FI2C_GET_STATUS(base_addr) & FI2C_STATUS_TFNF)
         {
             addr_len--;
@@ -131,7 +130,9 @@ static FError FI2cMasterStopTrans(FI2c *instance_p)
 
     ret = FI2cWaitBusBusy(base_addr);
     if (FI2C_SUCCESS == ret)
+    {
         ret = FI2cFlushRxFifo(base_addr);
+    }
 
     return ret;
 }
@@ -160,19 +161,21 @@ FError FI2cMasterReadPoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FI2C_ERROR("i2c driver not ready");
+        FI2C_ERROR("i2c driver is not ready.");
         return FI2C_ERR_NOT_READY;
     }
 
     if (FI2C_MASTER != instance_p->config.work_mode)
     {
-        FI2C_ERROR("i2c work mode shall be master");
+        FI2C_ERROR("i2c work mode shall be master.");
         return FI2C_ERR_INVAL_STATE;
     }
 
     ret = FI2cMasterStartTrans(instance_p, mem_addr, mem_byte_len, FI2C_DATA_CMD_WRITE);
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
     /*for trigger rx intr*/
     while (tx_len > 0 || rx_len > 0)
     {
@@ -214,7 +217,7 @@ FError FI2cMasterReadPoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
             else if (FI2C_TIMEOUT < (++trans_timeout))
             {
                 ret = FI2C_ERR_TIMEOUT;
-                FI2C_ERROR("timeout in i2c master read");
+                FI2C_ERROR("timeout in i2c master read.");
                 break;
             }
         }
@@ -248,18 +251,20 @@ FError FI2cMasterWritePoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FI2C_ERROR("i2c driver not ready");
+        FI2C_ERROR("i2c driver is not ready.");
         return FI2C_ERR_NOT_READY;
     }
     if (FI2C_MASTER != instance_p->config.work_mode)
     {
-        FI2C_ERROR("i2c work mode shall be master");
+        FI2C_ERROR("i2c work mode shall be master.");
         return FI2C_ERR_INVAL_STATE;
     }
 
     ret = FI2cMasterStartTrans(instance_p, mem_addr, mem_byte_len, FI2C_DATA_CMD_WRITE);
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
     while (buf_idx)
     {
         tx_limit = FI2C_IIC_FIFO_MAX_LV - FI2C_READ_REG32(base_addr, FI2C_TXFLR_OFFSET);
@@ -272,7 +277,7 @@ FError FI2cMasterWritePoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
                     reg_val = (FI2C_DATA_MASK & *buf_p) |
                               FI2C_DATA_CMD_WRITE |
                               FI2C_DATA_CMD_STOP;
-                    FI2C_INFO("Write Stop Singal");
+                    FI2C_INFO("Write Stop Singal.");
                 }
                 else
                 {
@@ -288,7 +293,7 @@ FError FI2cMasterWritePoll(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
             else if (FI2C_TIMEOUT < ++trans_timeout)
             {
                 ret = FI2C_ERR_TIMEOUT;
-                FI2C_ERROR("timeout in i2c master write");
+                FI2C_ERROR("Timeout in i2c master write.");
                 break;
             }
         }
@@ -320,12 +325,12 @@ FError FI2cMasterReadIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FI2C_ERROR("i2c driver not ready");
+        FI2C_ERROR("i2c driver is not ready.");
         return FI2C_ERR_NOT_READY;
     }
     if (FI2C_MASTER != instance_p->config.work_mode)
     {
-        FI2C_ERROR("i2c work mode shall be master");
+        FI2C_ERROR("i2c work mode shall be master.");
         return FI2C_ERR_INVAL_STATE;
     }
 
@@ -336,7 +341,7 @@ FError FI2cMasterReadIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
         if (FI2C_TIMEOUT < (++trans_timeout))
         {
             ret = FI2C_ERR_TIMEOUT;
-            FI2C_ERROR("timeout in i2c master read intr.");
+            FI2C_ERROR("Timeout in i2c master read intr.");
             break;
         }
     }
@@ -348,12 +353,16 @@ FError FI2cMasterReadIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
     ret = FI2cMasterStartTrans(instance_p, mem_addr, mem_byte_len, FI2C_DATA_CMD_WRITE);
     instance_p->status = STATUS_READ_IN_PROGRESS;
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
     mask = FI2C_GET_INTRRUPT_MASK(instance_p->config.base_addr);
     mask |= FI2C_INTR_MASTER_RD_MASK;
     ret = FI2cMasterSetupIntr(instance_p, mask);
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
     return ret;
 }
 
@@ -375,13 +384,13 @@ FError FI2cMasterWriteIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
     u32 trans_timeout = 0;
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FI2C_ERROR("i2c driver not ready");
+        FI2C_ERROR("i2c driver is not ready.");
         return FI2C_ERR_NOT_READY;
     }
 
     if (FI2C_MASTER != instance_p->config.work_mode)
     {
-        FI2C_ERROR("i2c work mode shall be master");
+        FI2C_ERROR("i2c work mode shall be master.");
         return FI2C_ERR_INVAL_STATE;
     }
     while (instance_p->status != STATUS_IDLE)
@@ -391,7 +400,7 @@ FError FI2cMasterWriteIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
         if (FI2C_TIMEOUT < (++trans_timeout))
         {
             ret = FI2C_ERR_TIMEOUT;
-            FI2C_ERROR("timeout in i2c master write intr.");
+            FI2C_ERROR("Timeout in i2c master write intr.");
             break;
         }
     }
@@ -400,12 +409,16 @@ FError FI2cMasterWriteIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
     instance_p->txframe.tx_cnt = 0;
     ret = FI2cMasterStartTrans(instance_p, mem_addr, mem_byte_len, FI2C_DATA_CMD_WRITE);
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
     instance_p->status = STATUS_WRITE_IN_PROGRESS;
     mask = FI2C_GET_INTRRUPT_MASK(instance_p->config.base_addr);
     mask |= FI2C_INTR_MASTER_WR_MASK;
     ret = FI2cMasterSetupIntr(instance_p, mask);
     if (FI2C_SUCCESS != ret)
+    {
         return ret;
+    }
     return ret;
 }

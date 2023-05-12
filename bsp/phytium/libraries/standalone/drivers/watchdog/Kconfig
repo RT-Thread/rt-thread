@@ -4,7 +4,7 @@ menu "FWDT Configuration"
         bool
         prompt "Use FWDT"
         default n
-
+        
 endmenu
 
 
