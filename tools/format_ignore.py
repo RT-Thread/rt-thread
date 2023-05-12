@@ -16,7 +16,7 @@ REPO_PATH  = ""
 
 def add_file(path):
 	with open(OUTPUT_FILENAME, 'a') as output_file:
-		path = path.strip()[len(REPO_PATH):]
+		path = path.strip()[len(REPO_PATH) + 1:]
 		output_file.write(path + '\n')
 
 def add_dir(path):
@@ -24,7 +24,7 @@ def add_dir(path):
 		for file in files:
 			abs_file_path = os.path.abspath(os.path.join(root, file))
 			with open(OUTPUT_FILENAME, 'a') as output_file:
-				abs_file_path = abs_file_path[len(REPO_PATH):]
+				abs_file_path = abs_file_path[len(REPO_PATH) + 1:]
 				output_file.write(abs_file_path + '\n')
 
 def process_ignore_format_file(ignore_file_path, root_path):

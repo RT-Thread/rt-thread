@@ -23,16 +23,14 @@ def cppcheck(path):
 
 	print("In the list of files being read for this PR modification...")
 
-	result = subprocess.run(['git', 'diff', '--name-only', 'HEAD^', 'HEAD', '--diff-filter=ACMR', '--no-renames', '--full-index'], stdout=subprocess.PIPE)
+	result = subprocess.run(['pwd'], stdout = subprocess.PIPE)
+	print("current dir: " + result.stdout.decode())
+  
+	result = subprocess.run(['git', 'diff', '--name-only', 'HEAD', 'origin/master', '--diff-filter=ACMR', '--no-renames', '--full-index'], stdout = subprocess.PIPE)
 	file_list = result.stdout.decode().strip().split('\n')
 
-	# result = subprocess.run(['realpath'] + file_list, stdout=subprocess.PIPE)
-	# file_list_filtered = result.stdout.decode().strip().split('\n')
-	# print("modified files:")
-	# print(file_list_filtered)
-	# file_list_filtered = [file for file in file_list_filtered if file.endswith(('.c', '.cpp', '.cc', '.cxx'))]
 	file_list_filtered = [file for file in file_list if file.endswith(('.c', '.cpp', '.cc', '.cxx'))]
-	print("modified files include c||cpp|cc|cxx:")
+	print("modified files include c|cpp|cc|cxx:")
 	print(file_list_filtered)
 
 	print("is determining whether this modified file should ignore cppcheck...")
