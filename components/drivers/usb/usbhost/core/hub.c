@@ -14,6 +14,11 @@
 
 #define USB_THREAD_STACK_SIZE    4096
 
+#define DBG_TAG    "hub"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
+
 // static struct rt_messagequeue *usb_mq;
 static struct uclass_driver hub_driver;
 // static struct uhub root_hub;
@@ -702,6 +707,12 @@ void rt_usbh_hub_init(uhcd_t hcd)
     rt_thread_t thread;
     /* create root hub for hcd */
     hcd->roothub = rt_malloc(sizeof(struct uhub));
+    /*paremeter check*/
+    if(hcd->roothub == RT_NULL)
+    {
+        LOG_E("Allocate partition buffer failed.");
+        return;
+    }         
     rt_memset(hcd->roothub, 0, sizeof(struct uhub));
     hcd->roothub->is_roothub = RT_TRUE;
     hcd->roothub->hcd = hcd;
@@ -717,5 +728,5 @@ void rt_usbh_hub_init(uhcd_t hcd)
     {
         /* startup usb host thread */
         rt_thread_startup(thread);
-    }
+    }   
 }
