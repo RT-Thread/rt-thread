@@ -151,7 +151,7 @@ def bsp_update_kconfig_library(dist_dir):
             if line.find('../libraries') != -1 and found:
                 position = line.find('../libraries')
                 line = line[0:position] + 'libraries/Kconfig"\n'
-            found = 0
+                found = 0
             f.write(line)
 
     # change board/kconfig path
