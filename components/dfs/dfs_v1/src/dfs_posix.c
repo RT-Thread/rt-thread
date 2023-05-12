@@ -62,6 +62,9 @@ int open(const char *file, int flags, ...)
 }
 RTM_EXPORT(open);
 
+#ifndef AT_FDCWD
+#define AT_FDCWD (-100)
+#endif
 int openat(int dirfd, const char *path, int flag, ...)
 {
     struct dfs_file *d;

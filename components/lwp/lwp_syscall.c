@@ -523,11 +523,12 @@ sysret_t sys_openat(int dirfd, const char *name, int flag, mode_t mode)
 {
 #ifdef ARCH_MM_MMU
     int ret = -1;
+    int err = 0;
     rt_size_t len = 0;
     char *kname = RT_NULL;
 
-    len = lwp_user_strlen(name);
-    if (!len)
+    len = lwp_user_strlen(name, &err);
+    if (!len || err != 0)
     {
         return -EINVAL;
     }
