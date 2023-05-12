@@ -709,7 +709,7 @@ void rt_usbh_hub_init(uhcd_t hcd)
     hcd->roothub = rt_malloc(sizeof(struct uhub));
     if(hcd->roothub == RT_NULL)
     {
-        LOG_E("Allocate partition buffer failed.");
+        LOG_E("hcd->roothub: allocate buffer failed.");
         return;
     }         
     rt_memset(hcd->roothub, 0, sizeof(struct uhub));
