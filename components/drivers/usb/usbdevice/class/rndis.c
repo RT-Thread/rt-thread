@@ -1348,7 +1348,7 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     intf_comm = rt_usbd_interface_new(device, _interface_handler);
     intf_data = rt_usbd_interface_new(device, _interface_handler);
 
-    if( (intf_comm == RT_NULL) || (intf_data == RT_NULL) )
+    if((intf_comm == RT_NULL) || (intf_data == RT_NULL))
     {
         LOG_E("%s,%d: no memory!", __func__, __LINE__);
 
