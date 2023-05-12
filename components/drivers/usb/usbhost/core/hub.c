@@ -702,6 +702,8 @@ void rt_usbh_hub_init(uhcd_t hcd)
     rt_thread_t thread;
     /* create root hub for hcd */
     hcd->roothub = rt_malloc(sizeof(struct uhub));
+    /*paremeter check*/
+    RT_ASSERT(hcd->roothub != RT_NULL);
     rt_memset(hcd->roothub, 0, sizeof(struct uhub));
     hcd->roothub->is_roothub = RT_TRUE;
     hcd->roothub->hcd = hcd;
