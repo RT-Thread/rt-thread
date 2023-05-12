@@ -76,7 +76,7 @@ void rt_hw_board_init()
     }
 
     /* Configure the SysTick */
-    systick_config(frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC)*10000/RT_TICK_PER_SECOND);
+    systick_config(clock_get_hz(clk_sys)/RT_TICK_PER_SECOND);
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
