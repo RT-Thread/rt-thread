@@ -30,7 +30,7 @@ struct bl_soft_i2c_config
     const char *bus_name;
 };
 
-#ifdef BSP_USING_I2C1
+#ifdef BSP_USING_SOFT_I2C1
 #define I2C1_BUS_CONFIG                                  \
     {                                                    \
         .scl = BSP_I2C1_SCL_PIN,                         \
