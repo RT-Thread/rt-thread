@@ -14,7 +14,7 @@
 
 #define USB_THREAD_STACK_SIZE    4096
 
-#define DBG_TAG    "hub"
+#define DBG_TAG    "usbhost.hub"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
