@@ -12,7 +12,7 @@
 #define RA_IRQ_MAX  16
 
 /* PIN to IRQx table */
-#define PIN2IRQX_TABLE                      \
+#define PIN2IRQX_TABLE(pin)                 \
 {                                           \
     switch (pin)                            \
     {                                       \
