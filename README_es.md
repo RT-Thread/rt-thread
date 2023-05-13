@@ -82,7 +82,7 @@ RT-Thread es compatible con muchas arquitecturas, y ha cubierto las principales 
 - **ARM9**：manufacturers like Allwinner、Xilinx 、GOKE
 - **ARM11**：manufacturers like Fullhan
 - **MIPS32**：manufacturers like loongson、Ingenic
-- **RISC-V RV32E/RV32I[F]/RV64[D]**：manufacturers like Hifive、[Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[bouffalo_lab](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[Nuclei](https://nucleisys.com/)、[T-Head](https://www.t-head.cn/)
+- **RISC-V RV32E/RV32I[F]/RV64[D]**：manufacturers like Hifive、[Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[bouffalo_lab](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[Nuclei](https://nucleisys.com/)、[T-Head](https://www.t-head.cn/)、[HPMicro](https://github.com/RT-Thread/rt-thread/tree/master/bsp/hpmicro)
 - **ARC**：manufacturers like SYNOPSYS
 - **DSP**：manufacturers like TI
 - **C-Sky**
@@ -144,4 +144,3 @@ RT-Thread está muy agradecido por el apoyo de todos los desarrolladores de la c
 # Contribución
 
 Si estás interesado en RT-Thread y quieres unirte al desarrollo de RT-Thread y convertirte en un contribuidor de código, por favor consulta la [Guía de Contribución de Código.](documentation/contribution_guide/contribution_guide.md).
-
