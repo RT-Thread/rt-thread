@@ -161,7 +161,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
         mode = (mode_t)va_arg(arg, unsigned int);
         mode = (mode_t)mode; /* self-assignment avoids compiler optimization */
         attr = (struct mq_attr *)va_arg(arg, struct mq_attr *);
-        attr = (mode_t)attr; /* self-assignment avoids compiler optimization */
+        attr = (struct mq_attr *)attr; /* self-assignment avoids compiler optimization */
         va_end(arg);
 
         if (attr->mq_maxmsg <= 0)
