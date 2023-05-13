@@ -12,6 +12,6 @@ for d in list:
     if os.path.isfile(os.path.join(path, 'SConscript')):
         group = group + SConscript(os.path.join(d, 'SConscript'))
 
-group = group + DefineGroup('LVGL-demo', src, depend = ['BSP_USING_LVGL', 'BSP_USING_LVGL_DEMO'], CPPPATH = CPPPATH)
+group = group + DefineGroup('LVGL-demo', src, depend = ['BSP_USING_LVGL', 'BSP_USING_LVGL_VIDEO_DEMO'], CPPPATH = CPPPATH)
 
 Return('group')
