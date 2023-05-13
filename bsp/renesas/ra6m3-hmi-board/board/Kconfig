@@ -218,7 +218,6 @@ menu "Hardware Drivers Config"
                             bool "Enable LVGL video demo"
                             select BSP_USING_G2D
                             select BSP_USING_JPEG
-                            default n
                     endchoice
                 endif
 
