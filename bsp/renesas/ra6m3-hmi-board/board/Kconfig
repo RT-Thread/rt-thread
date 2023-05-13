@@ -214,7 +214,6 @@ menu "Hardware Drivers Config"
                         config BSP_USING_LVGL_MUSIC_DEMO
                             bool "Enable LVGL music demo"
                             select PKG_USING_LV_MUSIC_DEMO
-                            default y
                         config BSP_USING_LVGL_VIDEO_DEMO
                             bool "Enable LVGL video demo"
                             select BSP_USING_G2D
