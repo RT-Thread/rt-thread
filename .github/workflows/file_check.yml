@@ -1,11 +1,11 @@
-name: Check File Format and License
+name: Check File Format, License and Static Code Analysis(cppcheck)
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   scancode_job:
     runs-on: ubuntu-latest
-    name: Scan code format and license
+    name: Scan code format, license and static code analysis
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -13,8 +13,11 @@ jobs:
         with:
           python-version: 3.8
       
-      - name: Check Format and License
+      - name: Check Format, License and Static Code Analysis(cppcheck)
         shell: bash
         run: |
+          sudo apt-get update
+          sudo apt-get -qq install cppcheck
+          cppcheck --version
           pip install click chardet PyYaml
           python tools/ci/file_check.py check 'https://github.com/RT-Thread/rt-thread' 'master'
