@@ -287,7 +287,6 @@ def check(check_license, repo, branch):
 
     if not format_check_result or not cpp_check_result or not license_check_result:
         logging.error("file format check or license check or static code analysis(cppcheck) fail.")
-        logging.info("[{}] [{}] [{}]".format(format_check_result, cpp_check_result, license_check_result))
         sys.exit(1)
     logging.info("check success.")
     sys.exit(0)
