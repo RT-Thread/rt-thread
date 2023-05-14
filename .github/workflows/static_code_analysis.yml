@@ -1,6 +1,9 @@
 name: Static code analysis
 
-on: 
+on:
+  push:
+    branches:
+      - CI-format-ignore
   pull_request:
     branches:
       - master
@@ -11,26 +14,23 @@ jobs:
     name: Static code analysis
     steps:
       - uses: actions/checkout@v3
+          
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: 3.8
-      
-      - name: cppcheck
+
+      - name: CPP Check
         shell: bash
         run: |
           sudo apt-get update
           sudo apt-get -qq install cppcheck
+          pip install pyyaml
           git remote -v
           git fetch origin
           cppcheck --version
           ls
           git branch -a
-          changed_files=$(git diff --name-only HEAD origin/master | grep -E '\.(c|cpp|cc|cxx)$' || true)
-          if [ -n "$changed_files" ];then
-              cppcheck --enable=warning,performance,portability --inline-suppr --error-exitcode=1 --force $changed_files
-              err=$?
-              if [ $err -ne 0 ]; then
-                  echo "CPPCHECK REPORT, PLEASE CHECK THE WARNING !!!!!!!!!"
-              fi
-          fi
+          git checkout CI-format-ignore
+          python3 ${GITHUB_WORKSPACE}/tools/ci/format_ignore.py ${GITHUB_WORKSPACE}
+          python3 ${GITHUB_WORKSPACE}/tools/ci/cppcheck.py ${GITHUB_WORKSPACE}
