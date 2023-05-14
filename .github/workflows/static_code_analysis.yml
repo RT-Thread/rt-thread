@@ -1,9 +1,6 @@
 name: Static code analysis
 
 on:
-  push:
-    branches:
-      - CI-format-ignore
   pull_request:
     branches:
       - master
@@ -31,6 +28,5 @@ jobs:
           cppcheck --version
           ls
           git branch -a
-          git checkout CI-format-ignore
           python3 ${GITHUB_WORKSPACE}/tools/ci/format_ignore.py ${GITHUB_WORKSPACE}
           python3 ${GITHUB_WORKSPACE}/tools/ci/cppcheck.py ${GITHUB_WORKSPACE}
