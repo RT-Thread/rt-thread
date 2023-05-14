@@ -138,7 +138,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
     /* lock posix mqueue list */
     rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
     int len = rt_strlen(name);
-    if (len > PATH_MAX || len > NAME_MAX)
+    if (len > PATH_MAX || len > RT_NAME_MAX)
     {
         rt_set_errno(ENAMETOOLONG);
         goto __return;
@@ -159,9 +159,9 @@ mqd_t mq_open(const char *name, int oflag, ...)
     {
         va_start(arg, oflag);
         mode = (mode_t)va_arg(arg, unsigned int);
-        mode = mode;
+        mode = (mode_t)mode; /* self-assignment avoids compiler optimization */
         attr = (struct mq_attr *)va_arg(arg, struct mq_attr *);
-        attr = attr;
+        attr = (struct mq_attr *)attr; /* self-assignment avoids compiler optimization */
         va_end(arg);
 
         if (attr->mq_maxmsg <= 0)
