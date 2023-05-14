@@ -232,6 +232,7 @@ class CPPCheck:
         for file in file_list_filtered:
             result = subprocess.run(['cppcheck', '--enable=warning', 'performance', 'portability', '--inline-suppr', '--error-exitcode=1', '--force', file], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
             logging.info(result.stdout.decode())
+            logging.info(result.stderr.decode())
             if result.stderr:
                 check_result = False
         return check_result
