@@ -1,6 +1,6 @@
 name: Check File Format, License and Static Code Analysis(cppcheck)
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   scancode_job:
