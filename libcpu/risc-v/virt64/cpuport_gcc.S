@@ -10,13 +10,17 @@
 
 #include "cpuport.h"
 #include "stackframe.h"
+#include "asm-generic.h"
 
-.global _rt_thread_entry
-_rt_thread_entry:
-    LOAD    ra, (sp)    /* texit */
+START_POINT(_rt_thread_entry)
+    LOAD    ra, (sp)    /* thread exit */
     addi    sp, sp, 8
     LOAD    a0, (sp)    /* parameter */
     addi    sp, sp, 8
     LOAD    t0, (sp)    /* tentry */
     addi    sp, sp, 8
-    jr      t0
+    mv      s1, ra
+    jalr    t0
+    jalr    s1
+    j       .           /* never here */
+START_POINT_END(_rt_thread_entry)
