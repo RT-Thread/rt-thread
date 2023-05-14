@@ -4,3 +4,4 @@
 
 dir_path:
 - Libraries/CH32V10x_StdPeriph_Driver
+- Libraries/ch56x_driver

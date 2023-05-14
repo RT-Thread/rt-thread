@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2022, RT-Thread Development Team
+# Copyright (c) 2006-2023, RT-Thread Development Team
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -226,9 +226,10 @@ class CPPCheck:
         self.file_list = file_list
         
     def check(self):
+        file_list_filtered = [file for file in self.file_list if file.endswith(('.c', '.cpp', '.cc', '.cxx'))]
         logging.info("Start to static code analysis.")
         check_result = True
-        for file in self.file_list:
+        for file in file_list_filtered:
             result = subprocess.run(['cppcheck', '--enable=warning', 'performance', 'portability', '--inline-suppr', '--error-exitcode=1', '--force', file], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
             logging.info(result.stdout.decode())
             if result.stderr:
@@ -286,6 +287,7 @@ def check(check_license, repo, branch):
 
     if not format_check_result or not cpp_check_result or not license_check_result:
         logging.error("file format check or license check or static code analysis(cppcheck) fail.")
+        logging.info("[{}] [{}] [{}]".format(format_check_result, cpp_check_result, license_check_result))
         sys.exit(1)
     logging.info("check success.")
     sys.exit(0)
