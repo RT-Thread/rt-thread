@@ -63,7 +63,7 @@
                                         |(__STM32F0xx_HAL_VERSION_SUB2 << 8U )\
                                         |(__STM32F0xx_HAL_VERSION_RC))
 
-#define IDCODE_DEVID_MASK    (0x00000FFFU)
+#define IDCODE_DEVID_MASK    (0x00000FFFU) 
 /**
   * @}
   */
