@@ -147,7 +147,7 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_USING_SPI8
                     bool "Enable Flexcomm8 as High Speed SPI"
-                    default y
+                    default n
             endif
 
     menuconfig BSP_USING_SOFT_SPI
