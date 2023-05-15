@@ -186,7 +186,7 @@ static rt_base_t gpio_pin_get(const char *name)
             }
             if (pin < 32 && (pin_ports[port].pin_mark & (1 << pin)))
             {
-                return port * 32 + pin;			
+                return port * 32 + pin;	   
             }
         }
     }

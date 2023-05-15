@@ -63,42 +63,6 @@ class CheckOut:
 
         return 1
     
-    # def get_new_file(self):
-    #     file_list = list()
-    #     try:
-    #         os.system('git remote add rtt_repo {}'.format(self.rtt_repo))
-    #         os.system('git fetch rtt_repo')
-    #         os.system('git merge rtt_repo/{}'.format(self.rtt_branch))
-    #         os.system('git reset rtt_repo/{} --soft'.format(self.rtt_branch))
-    #         os.system('git status > git.txt')
-    #     except Exception as e:
-    #         logging.error(e)
-    #         return None
-    #     try:
-    #         with open('git.txt', 'r') as f:
-    #             file_lines = f.readlines()
-    #     except Exception as e:
-    #         logging.error(e)
-    #         return None
-    #     file_path = ''
-    #     for line in file_lines:
-    #         if 'new file' in line:
-    #             file_path = line.split('new file:')[1].strip()
-    #             logging.info('new file -> {}'.format(file_path))
-    #         elif 'deleted' in line:
-    #             logging.info('deleted file -> {}'.format(line.split('deleted:')[1].strip()))
-    #         elif 'modified' in line:
-    #             file_path = line.split('modified:')[1].strip()
-    #             logging.info('modified file -> {}'.format(file_path))
-    #         else:
-    #             continue
-
-    #         result = self.__exclude_file(file_path)
-    #         if result != 0:
-    #             file_list.append(file_path)
-
-    #     return file_list
-    
     def get_new_file(self):
         result = subprocess.run(['git', 'diff', '--name-only', 'HEAD', 'origin/master', '--diff-filter=ACMR', '--no-renames', '--full-index'], stdout = subprocess.PIPE)
         file_list = result.stdout.decode().strip().split('\n')
