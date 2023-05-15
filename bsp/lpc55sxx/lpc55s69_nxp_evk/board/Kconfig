@@ -118,7 +118,7 @@ menu "On-chip Peripheral Drivers"
             endif
     
     menuconfig BSP_USING_SOFT_I2C
-        bool "Enable SOFT I2C"
+        bool "Enable software I2C bus"
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
