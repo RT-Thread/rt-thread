@@ -691,7 +691,7 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
             serial->ops->control(serial,
                                 RT_DEVICE_CTRL_CONFIG,
                                 (void *)RT_SERIAL_TX_BLOCKING);
-                                rt_memset(&tx_fifo->rb, RT_NULL, sizeof(tx_fifo->rb));
+            rt_memset(&tx_fifo->rb, RT_NULL, sizeof(tx_fifo->rb));
         }
 
         tx_fifo->activated = RT_FALSE;
