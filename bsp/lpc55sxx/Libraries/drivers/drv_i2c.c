@@ -17,7 +17,7 @@
 #include "fsl_i2c.h"
 #include "fsl_i2c_dma.h"
 
-#ifdef RT_USING_I2C
+#ifdef BSP_USING_I2C
 
 enum
 {
@@ -184,4 +184,4 @@ int rt_hw_i2c_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_i2c_init);
 
-#endif /* RT_USING_I2C */
+#endif /* BSP_USING_I2C */
