@@ -4,9 +4,9 @@ import sys
 def usage():
     print('%s all     -- build all bsp' % os.path.basename(sys.argv[0]))
     print('%s clean   -- clean all bsp' % os.path.basename(sys.argv[0]))
-    print('%s project -- update all prject files' % os.path.basename(sys.argv[0]))
+    print('%s update  -- update all prject files' % os.path.basename(sys.argv[0]))
 
-BSP_ROOT = os.path.join("..", "bsp")
+BSP_ROOT = os.path.join("..", "..", "bsp")
 
 if len(sys.argv) != 2:
     usage()
@@ -65,9 +65,15 @@ if sys.argv[1] == 'all':
     command = ' '
 elif sys.argv[1] == 'clean':
     command = ' -c'
-elif sys.argv[1] == 'project':
+elif sys.argv[1] == 'update':
+    print('begin to update all the bsp projects')
+
+    from stm32_update import stm32_update
+    stm32_update(os.path.join(BSP_ROOT, 'stm32'))
+
     update_all_project_files(BSP_ROOT)
 
+    print('finished!')
     sys.exit(0)
 else:
     usage()
