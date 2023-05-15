@@ -518,6 +518,47 @@ sysret_t sys_open(const char *name, int flag, ...)
 #endif
 }
 
+/* syscall: "open" ret: "int" args: "const char *" "mode_t" "mode" */
+sysret_t sys_openat(int dirfd, const char *name, int flag, mode_t mode)
+{
+#ifdef ARCH_MM_MMU
+    int ret = -1;
+    int err = 0;
+    rt_size_t len = 0;
+    char *kname = RT_NULL;
+
+    len = lwp_user_strlen(name, &err);
+    if (!len || err != 0)
+    {
+        return -EINVAL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return -ENOMEM;
+    }
+
+    lwp_get_from_user(kname, (void *)name, len + 1);
+    ret = openat(dirfd, kname, flag, mode);
+    if (ret < 0)
+    {
+        ret = GET_ERRNO();
+    }
+
+    kmem_put(kname);
+
+    return ret;
+#else
+    if (!lwp_user_accessable((void *)name, 1))
+    {
+        return -EFAULT;
+    }
+    int ret = openat(dirfd, name, flag, mode);
+    return (ret < 0 ? GET_ERRNO() : ret);
+#endif
+}
+
 /* syscall: "close" ret: "int" args: "int" */
 sysret_t sys_close(int fd)
 {
@@ -4995,6 +5036,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_statfs64),
     SYSCALL_SIGN(sys_fstatfs),
     SYSCALL_SIGN(sys_fstatfs64),
+    SYSCALL_SIGN(sys_openat),                           /* 175 */
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
