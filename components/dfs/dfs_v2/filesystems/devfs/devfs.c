@@ -40,9 +40,11 @@ static int dfs_devfs_poll(struct dfs_file *file, struct rt_pollreq *req);
 
 struct dfs_dentry *dfs_devfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data);
 int dfs_devfs_umount(struct dfs_mnt *mnt);
+int dfs_devfs_unlink(struct dfs_dentry *dentry);
 int dfs_devfs_stat(struct dfs_dentry *dentry, struct stat *st);
 int dfs_devfs_statfs(struct dfs_mnt *mnt, struct statfs *buf);
 static struct dfs_vnode *dfs_devfs_lookup(struct dfs_dentry *dentry);
+struct dfs_vnode *dfs_devfs_create_vnode(struct dfs_dentry *dentry, int type, mode_t mode);
 static int dfs_devfs_free_vnode(struct dfs_vnode *vnode);
 
 static const struct dfs_file_ops _dev_fops =
@@ -64,9 +66,11 @@ static const struct dfs_filesystem_ops _devfs_ops =
     .default_fops = &_dev_fops,
     .mount = dfs_devfs_mount,
     .umount = dfs_devfs_umount,
+    .unlink = dfs_devfs_unlink,
     .stat = dfs_devfs_stat,
     .statfs = dfs_devfs_statfs,
     .lookup = dfs_devfs_lookup,
+    .create_vnode = dfs_devfs_create_vnode,
     .free_vnode = dfs_devfs_free_vnode,
 };
 
@@ -188,6 +192,22 @@ static struct dfs_vnode *dfs_devfs_lookup(struct dfs_dentry *dentry)
     }
 
     return vnode;
+}
+
+struct dfs_vnode *dfs_devfs_create_vnode(struct dfs_dentry *dentry, int type, mode_t mode)
+{
+#ifdef RT_USING_DEV_BUS
+    if (dentry && type == FT_DIRECTORY)
+    {
+        /* regester bus device */
+        if (rt_device_bus_create(&dentry->pathname[1], 0))
+        {
+            return dfs_devfs_lookup(dentry);
+        }
+    }
+#endif
+
+    return RT_NULL;
 }
 
 int dfs_devfs_free_vnode(struct dfs_vnode *vnode)
@@ -387,6 +407,25 @@ int dfs_devfs_open(struct dfs_file *file)
 
     /* open device failed. */
     return -EIO;
+}
+
+int dfs_devfs_unlink(struct dfs_dentry *dentry)
+{
+#ifdef RT_USING_DEV_BUS
+    rt_device_t dev_id;
+
+    dev_id = rt_device_find(&dentry->pathname[1]);
+    if (dev_id == RT_NULL)
+    {
+        return -1;
+    }
+    if (dev_id->type != RT_Device_Class_Bus)
+    {
+        return -1;
+    }
+    rt_device_bus_destroy(dev_id);
+#endif
+    return RT_EOK;
 }
 
 int dfs_devfs_stat(struct dfs_dentry *dentry, struct stat *st)
