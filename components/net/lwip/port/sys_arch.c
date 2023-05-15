@@ -684,15 +684,15 @@ struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src)
             /* gateway matches on a non broadcast interface? (i.e. peer in a point to point interface) */
             if (src != NULL)
             {
-                if (ip4_addr_cmp(src, netif_ip4_addr(netif)))
+                if (ip4_addr_netcmp(src, netif_ip4_addr(netif), netif_ip4_netmask(netif)))
                 {
                     return netif;
                 }
             }
         }
     }
-    netif = netif_default;
-    return netif;
+
+    return netif_default;
 }
 #endif /* LWIP_HOOK_IP4_ROUTE_SRC */
 #endif /*LWIP_VERSION_MAJOR >= 2 */
