@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2006-2023, RT-Thread Development Team
+# Copyright (c) 2006-2022, RT-Thread Development Team
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -16,7 +16,6 @@ import yaml
 import chardet
 import logging
 import datetime
-import subprocess
 
 def init_logger():
     log_format = "[%(filename)s %(lineno)d %(levelname)s] %(message)s "
@@ -221,21 +220,6 @@ class LicenseCheck:
 
         return check_result
 
-class CPPCheck:
-    def __init__(self, file_list):
-        self.file_list = file_list
-        
-    def check(self):
-        file_list_filtered = [file for file in self.file_list if file.endswith(('.c', '.cpp', '.cc', '.cxx'))]
-        logging.info("Start to static code analysis.")
-        check_result = True
-        for file in file_list_filtered:
-            result = subprocess.run(['cppcheck', '--enable=warning', 'performance', 'portability', '--inline-suppr', '--error-exitcode=1', '--force', file], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-            logging.info(result.stdout.decode())
-            logging.info(result.stderr.decode())
-            if result.stderr:
-                check_result = False
-        return check_result
 
 @click.group()
 @click.pass_context
@@ -266,7 +250,7 @@ def cli(ctx):
 )
 def check(check_license, repo, branch):
     """
-    check files license, format and static code analysis(cppcheck).
+    check files license and format.
     """
     init_logger()
     # get modified files list
@@ -279,15 +263,13 @@ def check(check_license, repo, branch):
     # check modified files format
     format_check = FormatCheck(file_list)
     format_check_result = format_check.check()
-    cpp_check = CPPCheck(file_list)
-    cpp_check_result = cpp_check.check()
     license_check_result = True
     if check_license:
         license_check = LicenseCheck(file_list)
         license_check_result = license_check.check()
 
-    if not format_check_result or not cpp_check_result or not license_check_result:
-        logging.error("file format check or license check or static code analysis(cppcheck) fail.")
+    if not format_check_result or not license_check_result:
+        logging.error("file format check or license check fail.")
         sys.exit(1)
     logging.info("check success.")
     sys.exit(0)

@@ -1,9 +1,9 @@
 name: Static code analysis
 
-on: [push]
-#   pull_request:
-#     branches:
-#       - master
+on:
+  pull_request:
+    branches:
+      - master
 
 jobs:
   scancode_job:
@@ -27,4 +27,4 @@ jobs:
           cppcheck --version
           ls
           git branch -a
-          python tools/ci/cpp_check.py check 'https://github.com/RT-Thread/rt-thread' 'master'
+          python tools/ci/cpp_check.py check

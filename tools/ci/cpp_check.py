@@ -5,7 +5,7 @@
 #
 # Change Logs:
 # Date           Author       Notes
-# 2021-04-01     LiuKang      the first version
+# 2023-05-16     dejavudwh    the first version
 #
 
 import click
@@ -36,25 +36,13 @@ def cli(ctx):
     pass
 
 @cli.command()
-@click.argument(
-    'repo',
-    nargs=1,
-    type=click.STRING,
-    default='https://github.com/RT-Thread/rt-thread',
-)
-@click.argument(
-    'branch',
-    nargs=1,
-    type=click.STRING,
-    default='master',
-)
-def check(repo, branch):
+def check():
     """
     static code analysis(cppcheck).
     """
     format_ignore.init_logger()
     # get modified files list
-    checkout = format_ignore.CheckOut(repo, branch)
+    checkout = format_ignore.CheckOut()
     file_list = checkout.get_new_file()
     if file_list is None:
         logging.error("checkout files fail")

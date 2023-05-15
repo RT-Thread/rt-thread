@@ -1,3 +1,13 @@
+#
+# Copyright (c) 2006-2023, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2023-05-16     dejavudwh    the first version
+#
+
 import yaml
 import logging
 import os
@@ -12,11 +22,9 @@ def init_logger():
                         )
 
 class CheckOut:
-    def __init__(self, rtt_repo, rtt_branch):
-        self.root = os.getcwd()
-        self.rtt_repo = rtt_repo
-        self.rtt_branch = rtt_branch
-
+    def __init__(self):
+        pass
+    
     def __exclude_file(self, file_path):
         dir_number = file_path.split('/')
         ignore_path = file_path
