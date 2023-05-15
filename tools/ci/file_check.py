@@ -17,6 +17,7 @@ import chardet
 import logging
 import datetime
 
+
 def init_logger():
     log_format = "[%(filename)s %(lineno)d %(levelname)s] %(message)s "
     date_format = '%Y-%m-%d  %H:%M:%S %a '
