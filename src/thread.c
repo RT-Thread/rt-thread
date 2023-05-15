@@ -1142,4 +1142,22 @@ rt_thread_t rt_thread_find(char *name)
 
 RTM_EXPORT(rt_thread_find);
 
+/**
+ * @brief   This function will return the name of the specified thread
+ *
+ * @note    Please don't invoke this function in interrupt status
+ *
+ * @param   thread the thread to retrieve thread name
+ * @param   name buffer to store the thread name string
+ * @param   name_size maximum size of the buffer to store the thread name
+ *
+ * @return  If the return value is RT_EOK, the function is successfully executed
+ *          If the return value is -RT_EINVAL, it means this operation failed
+ */
+rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_size_t name_size)
+{
+    return (thread == RT_NULL) ? -RT_EINVAL : rt_object_get_name(&thread->parent, name, name_size);
+}
+RTM_EXPORT(rt_thread_get_name);
+
 /**@}*/

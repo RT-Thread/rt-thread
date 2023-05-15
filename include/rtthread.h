@@ -60,6 +60,7 @@ void rt_object_delete(rt_object_t object);
 rt_bool_t rt_object_is_systemobject(rt_object_t object);
 rt_uint8_t rt_object_get_type(rt_object_t object);
 rt_object_t rt_object_find(const char *name, rt_uint8_t type);
+rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_size_t name_size);
 
 #ifdef RT_USING_HEAP
 /* custom object */
@@ -168,6 +169,8 @@ rt_err_t rt_thread_wakeup(rt_thread_t thread);
 void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data);
 #endif
 void rt_thread_timeout(void *parameter);
+
+rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_size_t name_size);
 
 #ifdef RT_USING_SIGNALS
 void rt_thread_alloc_sig(rt_thread_t tid);
