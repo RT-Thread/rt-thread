@@ -1178,37 +1178,33 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
     if (netdev_name != RT_NULL)
     {
         netdev = netdev_get_by_name(netdev_name);
-        if (netdev == RT_NULL)
-        {
-            netdev = netdev_default;
-            rt_kprintf("ping: not found specified netif, using default netdev %s.\n", netdev->name);
-        }
-    }
-    else if (NETDEV_PING_IS_COMMONICABLE(netdev_default))
-    {
-        /* using default network interface device for ping */
-        netdev = netdev_default;
-    }
-    else
-    {
-        /* using first internet up status network interface device */
-        netdev = netdev_get_first_by_flags(NETDEV_FLAG_LINK_UP);
     }
 
     if (netdev == RT_NULL)
     {
-        rt_kprintf("ping: not found available network interface device.\n");
-        return -RT_ERROR;
+        netdev = netdev_default;
+        rt_kprintf("ping: not found specified netif, using default netdev %s.\n", netdev->name);
     }
-    else if (netdev->ops == RT_NULL || netdev->ops->ping == RT_NULL)
+
+    if (!NETDEV_PING_IS_COMMONICABLE(netdev))
     {
-        rt_kprintf("ping: network interface device(%s) not support ping feature.\n", netdev->name);
-        return -RT_ERROR;
-    }
-    else if (!netdev_is_up(netdev) || !netdev_is_link_up(netdev))
-    {
-        rt_kprintf("ping: network interface device(%s) status error.\n", netdev->name);
-        return -RT_ERROR;
+        /* using first internet up status network interface device */
+        netdev = netdev_get_first_by_flags(NETDEV_FLAG_LINK_UP);
+        if (netdev == RT_NULL)
+        {
+            rt_kprintf("ping: not found available network interface device.\n");
+            return -RT_ERROR;
+        }
+        else if (netdev->ops == RT_NULL || netdev->ops->ping == RT_NULL)
+        {
+            rt_kprintf("ping: network interface device(%s) not support ping feature.\n", netdev->name);
+            return -RT_ERROR;
+        }
+        else if (!netdev_is_up(netdev) || !netdev_is_link_up(netdev))
+        {
+            rt_kprintf("ping: network interface device(%s) status error.\n", netdev->name);
+            return -RT_ERROR;
+        }
     }
 
     for (index = 0; index < times; index++)
