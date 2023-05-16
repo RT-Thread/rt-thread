@@ -235,7 +235,7 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
 
     /* device is not opened or opened by other oflag, call device_open interface */
     if (!(dev->open_flag & RT_DEVICE_OFLAG_OPEN) ||
-         ((dev->open_flag & RT_DEVICE_OFLAG_MASK) | (oflag & RT_DEVICE_OFLAG_MASK)))
+         ((dev->open_flag & RT_DEVICE_OFLAG_MASK) != (oflag & RT_DEVICE_OFLAG_MASK)))
     {
         if (device_open != RT_NULL)
         {
