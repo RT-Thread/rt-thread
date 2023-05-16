@@ -4822,8 +4822,8 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
 }
 
 sysret_t sys_mount(const char *source, const char *target,
- 		const char *filesystemtype,
- 		unsigned long mountflags, const void *data)
+        const char *filesystemtype,
+        unsigned long mountflags, const void *data)
 {
     if(strcmp(filesystemtype, "tmp") == 0)
     {
