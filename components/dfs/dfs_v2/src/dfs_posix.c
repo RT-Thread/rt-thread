@@ -90,7 +90,7 @@ int openat(int dirfd, const char *path, int flag, ...)
                 return -1;
             }
 
-            fullpath = dfs_normalize_path(d->vnode->fullpath, path);
+            fullpath = dfs_dentry_full_path(d->dentry);
             if (!fullpath)
             {
                 rt_set_errno(-ENOMEM);
