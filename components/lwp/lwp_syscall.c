@@ -4821,6 +4821,29 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
     return ret;
 }
 
+sysret_t sys_mount(const char *source, const char *target,
+		const char *filesystemtype,
+		unsigned long mountflags, const void *data)
+{
+    
+    if(strcmp(filesystemtype, "tmp") == 0)
+    {
+        return dfs_mount(NULL, target, filesystemtype, 0, 0);
+    }
+    
+    if(strcmp(filesystemtype, "ext") == 0)
+    {
+        return dfs_mount(source, target, filesystemtype, 0, 0);
+    }
+
+    return -1;
+}
+
+sysret_t sys_umount2(const char *__special_file, int __flags)
+{
+    return dfs_unmount(__special_file);
+}
+
 const static struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -5037,6 +5060,8 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_fstatfs),
     SYSCALL_SIGN(sys_fstatfs64),
     SYSCALL_SIGN(sys_openat),                           /* 175 */
+    SYSCALL_SIGN(sys_mount),
+    SYSCALL_SIGN(sys_umount2),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
