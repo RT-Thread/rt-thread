@@ -1,3 +1,79 @@
+# RT-Thread v5.0.0 released
+
+Change log since v4.1.1 released
+
+## kernel
+- Add RT-Thread Smart features, Support user-mode app.
+- Add atomic feature.
+- Add nested mutex feature.
+- Add rt_ssize_t data structure.
+- Add static name for rt_object (#6422).
+- Adopt new version macro definition version control specification: https://semver.org
+- Split scheduler.c (#7103).
+- Fix the Oz optimization problem of AC6 compiler in memheap.
+- Fix rt_memset to be word size independent.
+- Modify RT_ALIGN_SIZE as 8 by default
+
+## Components
+- Add FDT(Flattened Device Tree), TMPFS, CRomFS,
+- Libc:
+  - add musl libc support.
+  - Improve Posix support.
+- LWP:
+  - Add more syscall support.
+  - Add mm(virtual memory management layer) feature.
+  - Improve clock accuracy.
+- Network: add AF_UNIX feature.
+- Drivers Device:
+  - Improve device: sensor, spi, i2c, serial, can, usb, cpu_time, sdio, pwm, etc.
+
+## BSP
+- Add RT-Thread Smart support with some BSP: D1/D1s, raspberry, qemu-vexpress-a9, qemu-virt64-aarch64,qemu-virt64-riscv.
+- Add company readme.md under bsp dir.
+- Fix that use RT_ERROR, RT_EFULL, RT_ENOMEM, RT_EEMPTY, etc.
+- Add some new BSPs:
+  - bouffalo_lab: bl60x/bl70x/bl61x/bl808,
+  - Infineon: 062s2, 062s3-4343w, 062s4, 062-wifi-bt, 062-ble
+  - nuvoton: numaker-iot-m467, numaker-m467hj, numaker-hmi-ma35d1
+  - nxp: LPC55S16, LPC55S36, LPC55S06, LPC5528, LPC55S28
+  - nrf5xxx: nrf5340
+  - gd32: gd32470z-lckfb, GD32303C-START
+  - apm32: apm32f030r8-miniboard, apm32f051r8-evalboard, apm32f091vc-miniboard, apm32f103vb-miniboard, apm32f107vc-evalboard, apm32f407zg-evalboard,apm32f072vb-miniboard
+  - n32: n32g43xcl-stb, n32g457qel-stb, n32g45xcl-stb, n32g45xml-stb, n32g45xrl-stb, n32g45xvl-stb, n32140xcl-stb, n321436_evb, n32143xml-stb, n32143xrl-stb, n32wb45xl-evb, n32g4frml-stb.
+  - mm32: mm32f3270-100ask-pitaya
+  - at32: at32f421-start, at32f425-start
+  - stm32: stm32f723-st-disco
+  - phytium: aarch32, aarch64
+  - other: core-v-cv32e40p, air32f103, YS-F1Pro, etc.
+- Update some stm32 BSP drivers: timer, pwm, uart v2, can, etc.
+- Update BSP:
+  - qemu-vexpress-a9: play the version number of QEMU when QEMU running.
+  - tms320f28379d: fix the startup problem, implement PWM driver.
+  - simulator: fix simulator compilation warnings, fix compile error.
+  - raspberry-pico: add SMP
+  - synopsys: Fix timer call-backs, Fix print syntax, Fix GNU toolchain RTT_CC alias, Use RTT_EXEC_PATH for the toolchain location substitution.
+  - ti/c28x: add support to not disable global interrupt in context-switch to enable zero-latency isr for critical interrupts, add GPIO & pwm & ADC driver, update rt_vsnprintf for compliance with ti c28x cpus,add support to scons-based .project creation.
+  - stm32: update all bsp projects.
+  - renesas: add segger rtt function, add tft-lcd lvgl support, add ra6m4-cpk lvgl for spi-lcd support and update rt_spi_bus_attach_device_cspin function, add tft-lcd pin connection description, and fix some bugs, etc.
+  - Infineon: add capsense support, add Infineon Doc and modify file structure, update spi driver, add slider driver demo, fix spi cs problem, etc.
+  - nuvoton: modify RT_WEAK as rt_weak, fix building issue of Nuvoton porting, etc.
+  - nxp: imxrt1170 Fix usb, Fix flexcan driver, add sdio support. lpc55s69 update PWM. lpc55sxx i2c driver fix & repair, add i2s and wm8904 driver, update spi and pwm driver. etc.
+  - nrf5xxx: add spi twi drv for nrf5340, fix the Kconfig of nrf52832, etc.
+  - gd32: fix bug on spi driver
+  - apm32: fix apm32f0/apm32f1 gcc startup assembly file bug and fix apm32 drv_eth.c bug, add apm32F0 series MCU support, add apm32 rtt sdio/flash/sdram driver. etc.
+  - at32: fixed gcc compiling usb driver errors, update for including file position and adding macros, optimize emac and usart driver code, add support usb driver. etc.
+  - esp32: ESP32_C3 fix compile errors/warnings, igrate to ESP-IDF package, add I2C drivers. ESP32 support applying patch to local IDF. etc.
+  - ch32: add rt_hw_context_switch_interrupt. ch32v307 add uart/spi/adc/gpio/wdt/dac/can/pwm drivers, update readme. etc.
+
+## Libcpu
+- arm: cortex-a revert safety MMU initialization, cortex-m7 change the return type of function rt_hw_cpu_dcache_ops to rt_uint32_t, etc.
+- risc-v: support noncached normal memory, add rt_backtrace function, etc.
+- aarch64: add rt_backtrace function, stop when no page is free.
+
+## Tools
+- Improved ci function
+- Add some scons cmds: scons --exec-path=xxx, scons --exec-prefix=, scons --dist --target=xxx, scons --strict, scons --dist --project-path=xxxx, etc.
+
 # RT-Thread v4.1.1 released
 
 Change log since v4.1.0 released
