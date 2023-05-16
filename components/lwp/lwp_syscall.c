@@ -4822,15 +4822,13 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
 }
 
 sysret_t sys_mount(const char *source, const char *target,
-		const char *filesystemtype,
-		unsigned long mountflags, const void *data)
+ 		const char *filesystemtype,
+ 		unsigned long mountflags, const void *data)
 {
-    
     if(strcmp(filesystemtype, "tmp") == 0)
     {
         return dfs_mount(NULL, target, filesystemtype, 0, 0);
     }
-    
     if(strcmp(filesystemtype, "ext") == 0)
     {
         return dfs_mount(source, target, filesystemtype, 0, 0);
