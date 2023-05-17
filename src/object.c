@@ -653,7 +653,7 @@ rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_size_t name_size)
     if ((object != RT_NULL) && (name != RT_NULL) && (name_size != 0U))
     {
         const char *obj_name = object->name;
-        (void) rt_strncpy(name, obj_name, name_size);
+        (void) rt_strncpy(name, obj_name, (rt_size_t)name_size);
         result = RT_EOK;
     }
 
