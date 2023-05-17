@@ -1154,7 +1154,7 @@ RTM_EXPORT(rt_thread_find);
  * @return  If the return value is RT_EOK, the function is successfully executed
  *          If the return value is -RT_EINVAL, it means this operation failed
  */
-rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_size_t name_size)
+rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_uint8_t name_size)
 {
     return (thread == RT_NULL) ? -RT_EINVAL : rt_object_get_name(&thread->parent, name, name_size);
 }
