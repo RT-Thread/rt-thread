@@ -1,0 +1,29 @@
+import os
+from building import *
+from llvm_arm import *
+Import('rtconfig')
+
+group = []
+
+picolibc_version = GetPicoLibcVersion(rtconfig)
+
+if picolibc_version and not GetDepend('RT_USING_EXTERNAL_LIBC'):
+    print('PicoLibc version: ' + picolibc_version)
+
+    cwd = GetCurrentDir()
+    src = Glob('*.c')
+
+    CPPPATH = [cwd]
+    CPPDEFINES = ['RT_USING_PICOLIBC', 'RT_USING_LIBC', '_POSIX_C_SOURCE=1', '__PICOLIBC_ERRNO_FUNCTION=pico_get_errno'] # identify this is Newlib, and only enable POSIX.1-1990
+    # LIBS = ['c', 'm'] # link libc and libm
+    AddDepend(['RT_USING_PICOLIBC', 'RT_USING_LIBC'])
+
+    group = group + DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)#, LIBS = LIBS)
+
+    list = os.listdir(cwd)
+    for d in list:
+        path = os.path.join(cwd, d)
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            group = group + SConscript(os.path.join(d, 'SConscript'))
+
+Return('group')
