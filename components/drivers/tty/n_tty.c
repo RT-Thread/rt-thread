@@ -50,19 +50,6 @@
 #define ECHO_BLOCK      256
 #define ECHO_DISCARD_WATERMARK  RT_TTY_BUF - (ECHO_BLOCK + 32)
 
-rt_inline void tty_sigaddset(lwp_sigset_t *set, int _sig)
-{
-    unsigned long sig = _sig - 1;
-
-    if (_LWP_NSIG_WORDS == 1)
-    {
-        set->sig[0] |= 1UL << sig;
-    }
-    else
-    {
-        set->sig[sig / _LWP_NSIG_BPW] |= 1UL << (sig % _LWP_NSIG_BPW);
-    }
-}
 
 struct n_tty_data
 {
@@ -99,27 +86,197 @@ struct n_tty_data
     rt_mutex_t output_lock;
 };
 
-static inline size_t read_cnt(struct n_tty_data *ldata)
+rt_inline int set_bit(int nr,int *addr)
+{
+    int mask, retval, level;
+
+    addr += nr >> 5;
+    mask = 1 << (nr & 0x1f);
+    level = rt_hw_interrupt_disable();
+    retval = (mask & *addr) != 0;
+    *addr |= mask;
+    rt_hw_interrupt_enable(level);
+    return retval;
+}
+
+rt_inline int clear_bit(int nr, int *addr)
+{
+    int mask, retval, level;
+
+    addr += nr >> 5;
+    mask = 1 << (nr & 0x1f);
+    level = rt_hw_interrupt_disable();
+    retval = (mask & *addr) != 0;
+    *addr &= ~mask;
+    rt_hw_interrupt_enable(level);
+    return retval;
+}
+
+rt_inline int test_bit(int nr, int *addr)
+{
+    int mask;
+
+    addr += nr >> 5;
+    mask = 1 << (nr & 0x1f);
+    return ((mask & *addr) != 0);
+}
+
+rt_inline int test_and_clear_bit(int nr, volatile void *addr)
+{
+    int mask, retval, level;
+    volatile unsigned int *a = addr;
+
+    a += nr >> 5;
+    mask = 1 << (nr & 0x1f);
+    level = rt_hw_interrupt_disable();
+    retval = (mask & *a) != 0;
+    *a &= ~mask;
+    rt_hw_interrupt_enable(level);
+
+    return retval;
+}
+
+rt_inline unsigned long __ffs(unsigned long word)
+{
+    int num = 0;
+
+#if BITS_PER_LONG == 64
+    if ((word & 0xffffffff) == 0)
+    {
+        num += 32;
+        word >>= 32;
+    }
+#endif
+    if ((word & 0xffff) == 0)
+    {
+        num += 16;
+        word >>= 16;
+    }
+    if ((word & 0xff) == 0)
+    {
+        num += 8;
+        word >>= 8;
+    }
+    if ((word & 0xf) == 0)
+    {
+        num += 4;
+        word >>= 4;
+    }
+    if ((word & 0x3) == 0)
+    {
+        num += 2;
+        word >>= 2;
+    }
+    if ((word & 0x1) == 0)
+    {
+        num += 1;
+    }
+
+    return num;
+}
+
+#define BITS_PER_LONG       32
+#define BITOP_WORD(nr)      ((nr) / BITS_PER_LONG)
+
+/*
+ * Find the next set bit in a memory region.
+ */
+rt_inline unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
+                unsigned long offset)
+{
+    const unsigned long *p = addr + BITOP_WORD(offset);
+    unsigned long result = offset & ~(BITS_PER_LONG-1);
+    unsigned long tmp;
+
+    if (offset >= size)
+    {
+        return size;
+    }
+
+    size -= result;
+    offset %= BITS_PER_LONG;
+    if (offset)
+    {
+        tmp = *(p++);
+        tmp &= (~0UL << offset);
+        if (size < BITS_PER_LONG)
+        {
+            goto found_first;
+        }
+
+        if (tmp)
+        {
+            goto found_middle;
+        }
+
+        size -= BITS_PER_LONG;
+        result += BITS_PER_LONG;
+    }
+
+    while (size & ~(BITS_PER_LONG-1))
+    {
+        if ((tmp = *(p++)))
+        {
+            goto found_middle;
+        }
+
+        result += BITS_PER_LONG;
+        size -= BITS_PER_LONG;
+    }
+
+    if (!size)
+    {
+        return result;
+    }
+
+    tmp = *p;
+
+found_first:
+    tmp &= (~0UL >> (BITS_PER_LONG - size));
+    if (tmp == 0UL)     /* Are any bits set? */
+    {
+        return result + size;   /* Nope. */
+    }
+
+found_middle:
+    return result + __ffs(tmp);
+}
+
+rt_inline void tty_sigaddset(lwp_sigset_t *set, int _sig)
+{
+    unsigned long sig = _sig - 1;
+
+    if (_LWP_NSIG_WORDS == 1)
+    {
+        set->sig[0] |= 1UL << sig;
+    }
+    else
+    {
+        set->sig[sig / _LWP_NSIG_BPW] |= 1UL << (sig % _LWP_NSIG_BPW);
+    }
+}
+
+rt_inline size_t read_cnt(struct n_tty_data *ldata)
 {
     return ldata->read_head - ldata->read_tail;
 }
 
-static inline char read_buf(struct n_tty_data *ldata, size_t i)
+rt_inline char read_buf(struct n_tty_data *ldata, size_t i)
 {
     return ldata->read_buf[i & (RT_TTY_BUF - 1)];
 }
 
-static inline char *read_buf_addr(struct n_tty_data *ldata, size_t i)
+rt_inline char *read_buf_addr(struct n_tty_data *ldata, size_t i)
 {
     return &ldata->read_buf[i & (RT_TTY_BUF - 1)];
 }
 
-static inline unsigned char echo_buf(struct n_tty_data *ldata, size_t i)
+rt_inline unsigned char echo_buf(struct n_tty_data *ldata, size_t i)
 {
     return ldata->echo_buf[i & (RT_TTY_BUF - 1)];
 }
 
-static inline unsigned char *echo_buf_addr(struct n_tty_data *ldata, size_t i)
+rt_inline unsigned char *echo_buf_addr(struct n_tty_data *ldata, size_t i)
 {
     return &ldata->echo_buf[i & (RT_TTY_BUF - 1)];
 }
@@ -134,8 +291,7 @@ static inline unsigned char *echo_buf_addr(struct n_tty_data *ldata, size_t i)
  *  n_tty_receive_buf()/producer path:
  *      caller holds non-exclusive termios_rwsem
  */
-
-static inline void put_tty_queue(unsigned char c, struct n_tty_data *ldata)
+rt_inline void put_tty_queue(unsigned char c, struct n_tty_data *ldata)
 {
     *read_buf_addr(ldata, ldata->read_head) = c;
     ldata->read_head++;
@@ -173,7 +329,7 @@ static void reset_buffer_flags(struct n_tty_data *ldata)
  *  Add a character or operation byte to the echo buffer.
  */
 
-static inline void add_echo_byte(unsigned char c, struct n_tty_data *ldata)
+rt_inline void add_echo_byte(unsigned char c, struct n_tty_data *ldata)
 {
     *echo_buf_addr(ldata, ldata->echo_head++) = c;
 }
@@ -298,7 +454,7 @@ static void echo_char(unsigned char c, struct tty_struct *tty)
  *  @ldata: n_tty data
  */
 
-static inline void finish_erasing(struct n_tty_data *ldata)
+rt_inline void finish_erasing(struct n_tty_data *ldata)
 {
     if (ldata->erasing)
     {
@@ -316,7 +472,7 @@ static inline void finish_erasing(struct n_tty_data *ldata)
  *  of the character when printing
  */
 
-static inline int is_utf8_continuation(unsigned char c)
+rt_inline int is_utf8_continuation(unsigned char c)
 {
     return (c & 0xc0) == 0x80;
 }
@@ -329,7 +485,7 @@ static inline int is_utf8_continuation(unsigned char c)
  *  character and the terminal is in unicode mode.
  */
 
-static inline int is_continuation(unsigned char c, struct tty_struct *tty)
+rt_inline int is_continuation(unsigned char c, struct tty_struct *tty)
 {
     return I_IUTF8(tty) && is_utf8_continuation(c);
 }
@@ -1148,7 +1304,7 @@ static int n_tty_open(struct dfs_file *fd)
     return ret;
 }
 
-static inline int input_available_p(struct tty_struct *tty, int poll)
+rt_inline int input_available_p(struct tty_struct *tty, int poll)
 {
     struct n_tty_data *ldata = tty->disc_data;
     int amt = poll && !TIME_CHAR(tty) && MIN_CHAR(tty) ? MIN_CHAR(tty) : 1;
@@ -1570,7 +1726,7 @@ handle_newline:
     return 0;
 }
 
-static inline void n_tty_receive_char_inline(struct tty_struct *tty, unsigned char c)
+rt_inline void n_tty_receive_char_inline(struct tty_struct *tty, unsigned char c)
 {
     struct n_tty_data *ldata = tty->disc_data;
 
@@ -1695,7 +1851,7 @@ static void n_tty_receive_buf_standard(struct tty_struct *tty, char *cp, int cou
     }
 }
 
-static inline void n_tty_receive_char_fast(struct tty_struct *tty, unsigned char c)
+rt_inline void n_tty_receive_char_fast(struct tty_struct *tty, unsigned char c)
 {
     struct n_tty_data *ldata = tty->disc_data;
 
@@ -2018,19 +2174,18 @@ static int n_tty_poll(struct dfs_file *fd, struct rt_pollreq *req)
     lwp = (struct rt_lwp *)(rt_thread_self()->lwp);
     wq = wait_queue_get(lwp, tty);
     rt_poll_add(wq, req);
-    level = rt_hw_interrupt_disable();
 
+    level = rt_hw_interrupt_disable();
     if (input_available_p(tty, 1))
     {
         mask |= POLLIN;
     }
-
     rt_hw_interrupt_enable(level);
 
     return mask;
 }
 
-static struct tty_ldisc_ops n_tty_ops = {
+struct tty_ldisc_ops n_tty_ops = {
     "n_tty",
     0,
     n_tty_open,
@@ -2046,8 +2201,3 @@ static struct tty_ldisc_ops n_tty_ops = {
     n_tty_receive_buf,
     0,
 };
-
-void n_tty_init(void)
-{
-    tty_register_ldisc(N_TTY, &n_tty_ops);
-}

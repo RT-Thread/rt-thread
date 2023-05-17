@@ -14,25 +14,26 @@
  * FilePath: fsata_hw.h
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 09:03:41
- * Description:  This files is for ctrl of sata functions
+ * Description:  This file is for ctrl of sata functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/2/10    first release
+ * 1.1   wangxiaodong  2022/10/21   improve functions
  */
 
-#ifndef BSP_DRIVERS_FSATA_HW_H
-#define BSP_DRIVERS_FSATA_HW_H
+#ifndef FSATA_HW_H
+#define FSATA_HW_H
+
+#include "fkernel.h"
+#include "ftypes.h"
+#include "fio.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-/***************************** Include Files *********************************/
-#include "fkernel.h"
-#include "ftypes.h"
-#include "fio.h"
 
 /************************** Constant Definitions *****************************/
 /* SATA register definitions */
@@ -121,7 +122,7 @@ extern "C"
 #define FSATA_PORT_IRQ_D2H_REG_FIS  BIT(0) /* D2H Register FIS rx'd */
 
 #define FSATA_PORT_IRQ_FREEZE   FSATA_PORT_IRQ_CONNECT | FSATA_PORT_IRQ_SDB_FIS | \
-                                FSATA_PORT_IRQ_D2H_REG_FIS | FSATA_PORT_IRQ_PIOS_FIS
+    FSATA_PORT_IRQ_D2H_REG_FIS | FSATA_PORT_IRQ_PIOS_FIS
 
 #define FSATA_PORT_SCR_ACT_ENABLE    BIT(0) /* Port Serial ATA Active */
 #define FSATA_PORT_CMD_ISSUE_ENABLE  BIT(0) /* Port Command Issue enable */

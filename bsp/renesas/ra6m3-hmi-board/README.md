@@ -15,13 +15,29 @@
 
 开发板正面外观如下图： 
 
+![](docs/picture/front.png)
 
+开发板背面外观如下图： 
+
+![](docs/picture/back.png)
 
 该开发板常用 **板载资源** 如下：
 
+![](docs/picture/resources.png)
+
 - MCU：R7FA6M3AH，120MHz，Arm Cortex®-M4 内核，2MB 代码闪存, 640KB SRAM
-- 调试接口：板载 J-Link 接口
-- 扩展接口：两个 PMOD 连接器
+- RA6M3(R7FA6M3AH3CFB)：Cortex-M4F 内核，120Mhz 主频，具有 2MB Flash/640KB RAM，集成 TFT 控制器、2D 加速器和 JPEG 解码器。
+- 4.3 寸 LCD (RGB 888)
+- 板载仿真器
+- 以太网
+- RW007 (SPI 高速 WIFI)
+- USB-Device
+- TF Crad
+- CAN
+- 1路麦克风，1 路扬声器
+- Arduino 扩展接口
+- 2 路 PMOD 扩展接口
+- 4个按键：3个用户按键，一个复位按键
 
 **更多详细资料及工具**
 
@@ -30,10 +46,18 @@
 本 BSP 目前对外设的支持情况如下：
 
 | **片上外设** | **支持情况** | **备注** |
-| :----------------- | :----------------- | :------------- |
+| :----------------: | :----------------: | :------------- |
 | UART               | 支持               | UART9 为默认日志输出端口 |
 | GPIO               | 支持               |                |
 | LCD          | 支持         |                          |
+| SDHI | 支持 | |
+| JPEG | 支持 | |
+| G2D | 支持 | |
+| RW007 | 支持 | |
+| ETH | 支持 | |
+| SPI | 支持 | |
+| I2C | 支持 | |
+| CAN | 支持 | |
 
 * 注意：仓库刚拉下来是最小系统，若需添加/使能其他外设需参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
 

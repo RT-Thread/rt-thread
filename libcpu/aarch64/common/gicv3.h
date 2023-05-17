@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,6 +17,11 @@
 #include <rtdef.h>
 
 #if defined(BSP_USING_GIC) && defined(BSP_USING_GICV3)
+
+
+#ifndef ARM_GIC_CPU_NUM
+#define ARM_GIC_CPU_NUM RT_CPUS_NR
+#endif
 
 #define GICV3_ROUTED_TO_ALL   1UL
 #define GICV3_ROUTED_TO_SPEC  0UL

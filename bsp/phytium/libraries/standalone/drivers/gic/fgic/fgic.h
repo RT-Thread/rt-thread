@@ -14,20 +14,25 @@
  * FilePath: fgic.h
  * Date: 2022-03-28 09:30:29
  * LastEditTime: 2022-03-28 09:30:29
- * Description:  This file is for
+ * Description: This file is for detailed description of the device and driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
 
-#ifndef DRIVERS_GIC_FGIC_H
-#define DRIVERS_GIC_FGIC_H
+#ifndef FGIC_H
+#define FGIC_H
 
 #include "ftypes.h"
 #include "ferror_code.h"
 #include "fparameters.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define FGIC_RSGI_AFF1_OFFSET 16
 #define FGIC_RSGI_AFF2_OFFSET 32
@@ -105,5 +110,9 @@ void FGicSetPriorityFilter(FGic *instance_p, u32 priority_mask);
 void FGicSetPriorityGroup(FGic *instance_p, u32 binary_point);
 u32 FGicGetPriorityFilter(FGic *instance_p);
 u32 FGicGetPriorityGroup(FGic *instance_p);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

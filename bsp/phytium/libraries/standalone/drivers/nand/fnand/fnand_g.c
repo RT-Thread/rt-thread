@@ -14,11 +14,12 @@
  * FilePath: fnand_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:31
- * Description:  This files is for
+ * Description:  This file is for configuration table for devices
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/05/10    first release
  */
 
 #include "fnand.h"
@@ -31,7 +32,7 @@ FNandConfig FNandConfigTable[FNAND_NUM] =
     {
         .instance_id = FNAND_INSTANCE0,  /* Id of device*/
         .irq_num = FNAND_IRQ_NUM,     /* Irq number */
-        .base_address = FNAND_BASEADDRESS,
+        .base_address = FNAND_BASE_ADDR,
         .ecc_strength = 8, /* 每次ecc 步骤纠正的位数 */
         .ecc_step_size = 512 /* 进行读写操作时，单次ecc 的步骤的跨度 */
     },

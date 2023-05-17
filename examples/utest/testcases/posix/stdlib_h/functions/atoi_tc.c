@@ -47,7 +47,7 @@ int atoi_entry(void)
 {
     int i = 0;
     int res = 0;
-    for (i = 0; i < sizeof(test_data[0]); i++)
+    for (i = 0; i < sizeof(test_data) / sizeof(test_data[0]); i++)
     {
         res = atoi(test_data[i].string);
         uassert_int_equal(res, test_data[i].ret_num);

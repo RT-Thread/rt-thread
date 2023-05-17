@@ -329,9 +329,16 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
         /* calculate the start address */
         already_send_length = message->length - send_length - message_length;
-        send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
-        recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
-
+        /* avoid null pointer problems */
+        if (message->send_buf)
+        {
+            send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
+        }
+        if (message->recv_buf)
+        {
+            recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
+        }
+        
 #if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
         rt_uint32_t* dma_buf = RT_NULL;
         if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG) && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))

@@ -12,13 +12,15 @@
  *
  *
  * FilePath: fi2c_intr.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-01 14:53:42
  * LastEditTime: 2022-02-18 08:36:38
- * Description:  This files is for
+ * Description:  This file is for I2C interrupt operation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu 2021/11/1  first commit
+ * 1.1  liushengming 2022/02/18  add fi2c_master interrupt and support slave mode
  */
 
 /***************************** Include Files *********************************/
@@ -117,7 +119,7 @@ static void FI2cMasterIntrTxEmptyHandler(FI2c *instance_p)
                           FI2C_DATA_CMD_WRITE |
                           FI2C_DATA_CMD_STOP;
                 instance_p->txframe.data_buff++;
-                FI2C_INFO("Write Stop Singal");
+                FI2C_INFO("Write Stop Singal.");
             }
             else if (instance_p->status == STATUS_READ_IN_PROGRESS)
             {
@@ -265,7 +267,7 @@ u32 FI2cGetIntr(FI2c *instance_p)
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FI2C_ERROR("i2c driver not ready");
+        FI2C_ERROR("i2c driver is not ready.");
         return FI2C_ERR_NOT_READY;
     }
 
@@ -287,13 +289,13 @@ FError FI2cMasterSetupIntr(FI2c *instance_p, u32 mask)
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FI2C_ERROR("i2c driver not ready");
+        FI2C_ERROR("i2c driver is not ready.");
         return FI2C_ERR_NOT_READY;
     }
 
     if (FI2C_MASTER != instance_p->config.work_mode)
     {
-        FI2C_ERROR("i2c work mode shall be master");
+        FI2C_ERROR("i2c work mode shall be master.");
         return FI2C_ERR_INVAL_STATE;
     }
 
@@ -417,13 +419,13 @@ FError FI2cSlaveSetupIntr(FI2c *instance_p)
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FI2C_ERROR("i2c driver not ready");
+        FI2C_ERROR("i2c driver is not ready.");
         return FI2C_ERR_NOT_READY;
     }
 
     if (FI2C_SLAVE != instance_p->config.work_mode)
     {
-        FI2C_ERROR("i2c work mode shall be slave");
+        FI2C_ERROR("i2c work mode shall be slave.");
         return FI2C_ERR_INVAL_STATE;
     }
 

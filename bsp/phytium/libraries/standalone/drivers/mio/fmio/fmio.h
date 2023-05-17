@@ -14,15 +14,16 @@
  * FilePath: fmio.h
  * Date: 2022-06-21 15:40:06
  * LastEditTime: 2022-06-21 15:40:06
- * Description:  This file is for
+ * Description:  This file is for user external interface definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  liushengming  2022/06/21  first commit
  */
 
-#ifndef DRIVERS_MIO_FMIO_H
-#define DRIVERS_MIO_FMIO_H
+#ifndef FMIO_H
+#define FMIO_H
 
 #ifdef __cplusplus
 extern "C"
@@ -47,9 +48,9 @@ extern "C"
 
 typedef struct
 {
-    u32     instance_id;        /*mio id*/
+    u32     instance_id;    /*mio id*/
     uintptr func_base_addr; /*I2C or UART function address*/
-    u32     irq_num;     /* Device intrrupt id */
+    u32     irq_num;        /* Device intrrupt id */
     uintptr mio_base_addr;  /*MIO control address*/
 } FMioConfig;               /*mio configs*/
 

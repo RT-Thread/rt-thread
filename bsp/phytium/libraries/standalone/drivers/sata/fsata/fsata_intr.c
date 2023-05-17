@@ -14,18 +14,19 @@
  * FilePath: fsata_intr.c
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 09:03:57
- * Description:  This files is for intrrupt function of Sata ctrl
+ * Description:  This file is for intrrupt function of Sata ctrl
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/2/10    first release
+ * 1.1   wangxiaodong  2022/10/21   improve functions
  */
 
 #include "fassert.h"
 #include "fdebug.h"
 #include "fsata.h"
 #include "fsata_hw.h"
-#include "finterrupt.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -60,7 +61,9 @@ void FSataIrqEnable(FSataCtrl *instance_p, u32 int_mask)
     for (i = 0; i < instance_p->n_ports; i++)
     {
         if (!(port & BIT(i)))
+        {
             continue;
+        }
 
         uintptr port_base_addr = instance_p->port[i].port_base_addr;
         FSATA_SETBIT(port_base_addr, FSATA_PORT_IRQ_MASK, int_mask);
@@ -84,7 +87,9 @@ void FSataIrqDisable(FSataCtrl *instance_p, u32 int_mask)
     for (i = 0; i < instance_p->n_ports; i++)
     {
         if (!(port & BIT(i)))
+        {
             continue;
+        }
 
         uintptr port_base_addr = instance_p->port[i].port_base_addr;
 
@@ -110,29 +115,29 @@ FError FSataSetHandler(FSataCtrl *instance_p, u32 irq_type, void *func_pointer, 
 
     switch (irq_type)
     {
-    case FSATA_PORT_IRQ_D2H_REG_FIS:
-        instance_p->fsata_dhrs_cb = ((FSataIrqCallBack)(void *)func_pointer);
-        instance_p->dhrs_args = call_back_ref;
-        break;
+        case FSATA_PORT_IRQ_D2H_REG_FIS:
+            instance_p->fsata_dhrs_cb = ((FSataIrqCallBack)(void *)func_pointer);
+            instance_p->dhrs_args = call_back_ref;
+            break;
 
-    case FSATA_PORT_IRQ_SDB_FIS:
-        instance_p->fsata_sdbs_cb = ((FSataIrqCallBack)(void *)func_pointer);
-        instance_p->sdbs_args = call_back_ref;
-        break;
+        case FSATA_PORT_IRQ_SDB_FIS:
+            instance_p->fsata_sdbs_cb = ((FSataIrqCallBack)(void *)func_pointer);
+            instance_p->sdbs_args = call_back_ref;
+            break;
 
-    case FSATA_PORT_IRQ_CONNECT:
-        instance_p->fsata_pcs_cb = ((FSataIrqCallBack)(void *)func_pointer);
-        instance_p->pcs_args = call_back_ref;
-        break;
+        case FSATA_PORT_IRQ_CONNECT:
+            instance_p->fsata_pcs_cb = ((FSataIrqCallBack)(void *)func_pointer);
+            instance_p->pcs_args = call_back_ref;
+            break;
 
-    case FSATA_PORT_IRQ_PIOS_FIS:
-        instance_p->fsata_pss_cb = ((FSataIrqCallBack)(void *)func_pointer);
-        instance_p->pss_args = call_back_ref;
-        break;
+        case FSATA_PORT_IRQ_PIOS_FIS:
+            instance_p->fsata_pss_cb = ((FSataIrqCallBack)(void *)func_pointer);
+            instance_p->pss_args = call_back_ref;
+            break;
 
-    default:
-        status = (FSATA_ERR_OPERATION);
-        break;
+        default:
+            status = (FSATA_ERR_OPERATION);
+            break;
     }
     return status;
 }
@@ -162,7 +167,9 @@ void FSataIrqHandler(s32 vector, void *param)
     for (i = 0; i < instance_p->n_ports; i++)
     {
         if (!(port & BIT(i)))
+        {
             continue;
+        }
 
         port_base_addr = instance_p->port[i].port_base_addr;
         irq_state = FSATA_READ_REG32(base_addr, FSATA_HOST_IRQ_STAT);

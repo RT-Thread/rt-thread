@@ -62,6 +62,53 @@ int open(const char *file, int flags, ...)
 }
 RTM_EXPORT(open);
 
+#ifndef AT_FDCWD
+#define AT_FDCWD (-100)
+#endif
+int openat(int dirfd, const char *path, int flag, ...)
+{
+    struct dfs_file *d;
+    char *fullpath;
+    int fd;
+
+    if (!path)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    fullpath = (char*)path;
+
+    if (path[0] != '/')
+    {
+        if (dirfd != AT_FDCWD)
+        {
+            d = fd_get(dirfd);
+            if (!d || !d->vnode)
+            {
+                rt_set_errno(-EBADF);
+                return -1;
+            }
+
+            fullpath = dfs_dentry_full_path(d->dentry);
+            if (!fullpath)
+            {
+                rt_set_errno(-ENOMEM);
+                return -1;
+            }
+        }
+    }
+
+    fd = open(fullpath, flag, 0);
+
+    if (fullpath != path)
+    {
+        rt_free(fullpath);
+    }
+
+    return fd;
+}
+
 /**
  * this function is a POSIX compliant version,
  * which will create a new file or rewrite an existing one

@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/5/13    init commit
+ * 1.0   zhugengyu  2022/5/13    init commit
  */
 
 /***************************** Include Files *********************************/
@@ -91,14 +91,14 @@ void FDdmaSoftwareReset(uintptr base_addr)
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CTL_OFFSET);
     reg_val |= FDDMA_CTL_SRST;
     FDdmaWriteReg(base_addr, FDDMA_CTL_OFFSET, reg_val);
-    FDDMA_DEBUG("ddma @%p software reset start : 0x%x", base_addr, FDdmaReadReg(base_addr, FDDMA_CTL_OFFSET));
+    FDDMA_DEBUG("ddma @%p soft reset start : 0x%x", base_addr, FDdmaReadReg(base_addr, FDDMA_CTL_OFFSET));
 
     while (--delay > 0) /* wait a while to do reset */
         ;
 
     reg_val &= ~FDDMA_CTL_SRST;
     FDdmaWriteReg(base_addr, FDDMA_CTL_OFFSET, reg_val); /* exit from software reset */
-    FDDMA_DEBUG("ddma @%p software reset end : 0x%x", base_addr, FDdmaReadReg(base_addr, FDDMA_CTL_OFFSET));
+    FDDMA_DEBUG("ddma @%p soft reset end : 0x%x", base_addr, FDdmaReadReg(base_addr, FDDMA_CTL_OFFSET));
     return;
 }
 
@@ -139,7 +139,7 @@ void FDdmaEnableGlobalIrq(uintptr base_addr)
  */
 void FDdmaDisableChanIrq(uintptr base_addr, u32 chan)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
     reg_val |= FDDMA_MASK_EN_CHAN_INTR(chan);
     FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
@@ -155,7 +155,7 @@ void FDdmaDisableChanIrq(uintptr base_addr, u32 chan)
  */
 void FDdmaEnableChanIrq(uintptr base_addr, u32 chan)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     u32 reg_val  = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
     reg_val &= ~FDDMA_MASK_EN_CHAN_INTR(chan); /* write 0 and enable  */
     FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
@@ -171,7 +171,7 @@ void FDdmaEnableChanIrq(uintptr base_addr, u32 chan)
  */
 FError FDdmaDisableChan(uintptr base_addr, u32 chan)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     int delay = 1000;
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan));
     reg_val &= ~FDDMA_CHAN_CTL_EN;
@@ -182,11 +182,13 @@ FError FDdmaDisableChan(uintptr base_addr, u32 chan)
     {
         reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan));
         if (delay-- <= 0)
+        {
             break;
+        }
     }
     while (reg_val & FDDMA_CHAN_CTL_EN);
 
-    FDDMA_DEBUG("ddma @%p chan %d disabled : 0x%x", base_addr, chan, FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan)));
+    FDDMA_DEBUG("ddma@ %p channel %d is disabled : 0x%x", base_addr, chan, FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan)));
     return (delay > 0) ? FDDMA_SUCCESS : FDDMA_ERR_WAIT_TIMEOUT;
 }
 
@@ -199,7 +201,7 @@ FError FDdmaDisableChan(uintptr base_addr, u32 chan)
  */
 void FDdmaEnableChan(uintptr base_addr, u32 chan)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan));
     reg_val |= FDDMA_CHAN_CTL_EN;
     FDdmaWriteReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan), reg_val);
@@ -216,7 +218,7 @@ void FDdmaEnableChan(uintptr base_addr, u32 chan)
  */
 void FDdmaClearChanIrq(uintptr base_addr, u32 chan)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     /* write 1 to clear irq status of channel */
     FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_STA_CHAN_REQ_DONE(chan));
 }
@@ -230,12 +232,14 @@ void FDdmaClearChanIrq(uintptr base_addr, u32 chan)
  */
 void FDdmaResetChan(uintptr base_addr, u32 chan)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     int delay = 1000;
     u32 reg_val;
 
     if (FDdmaIsChanRunning(base_addr, chan)) /* disable channel if running */
+    {
         (void)FDdmaDisableChan(base_addr, chan);
+    }
 
     reg_val  = FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan));
     reg_val |= FDDMA_CHAN_CTL_SRST;
@@ -246,7 +250,7 @@ void FDdmaResetChan(uintptr base_addr, u32 chan)
 
     reg_val &= ~FDDMA_CHAN_CTL_SRST;
     FDdmaWriteReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan), reg_val);
-    FDDMA_DEBUG("chan reset done, ctrl: 0x%x", FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan)));
+    FDDMA_DEBUG("Channel reset done, ctrl: 0x%x", FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan)));
     return;
 }
 
@@ -259,7 +263,7 @@ void FDdmaResetChan(uintptr base_addr, u32 chan)
  */
 boolean FDdmaIsChanRunning(uintptr base_addr, u32 chan)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan));
     return (FDDMA_CHAN_CTL_EN & reg_val) ? TRUE : FALSE;
 }
@@ -274,8 +278,8 @@ boolean FDdmaIsChanRunning(uintptr base_addr, u32 chan)
  */
 void FDdmaSetChanSelection(uintptr base_addr, u32 chan, u32 slave_id)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
-    FASSERT_MSG((FDDMA_MAX_SLAVE_ID >= slave_id), "invalid slave id %d", slave_id);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
+    FASSERT_MSG((FDDMA_MAX_SLAVE_ID >= slave_id), "Invalid slave id %d", slave_id);
     u32 reg_val;
 
     if (FDDMA_CHAN_4 > chan)
@@ -285,7 +289,7 @@ void FDdmaSetChanSelection(uintptr base_addr, u32 chan, u32 slave_id)
         reg_val |= FDDMA_CHAN_0_3_SEL(chan, slave_id);
         reg_val |= FDDMA_CHAN_0_3_SEL_EN(chan);
         FDdmaWriteReg(base_addr, FDDMA_CHAN_0_3_CFG_OFFSET, reg_val);
-        FDDMA_DEBUG("ddma@%p set chan-%d slave id-%d, 0x%x", base_addr, chan, slave_id, FDdmaReadReg(base_addr, FDDMA_CHAN_0_3_CFG_OFFSET));
+        FDDMA_DEBUG("ddma%p sets the slaveid of chan-%d to %d, 0x%x", base_addr, chan, slave_id, FDdmaReadReg(base_addr, FDDMA_CHAN_0_3_CFG_OFFSET));
     }
     else
     {
@@ -294,7 +298,7 @@ void FDdmaSetChanSelection(uintptr base_addr, u32 chan, u32 slave_id)
         reg_val |= FDDMA_CHAN_4_7_SEL(chan, slave_id);
         reg_val |= FDDMA_CHAN_4_7_SEL_EN(chan);
         FDdmaWriteReg(base_addr, FDDMA_CHAN_4_7_CFG_OFFSET, reg_val);
-        FDDMA_DEBUG("ddma@%p set chan-%d slave id-%d, 0x%x", base_addr, chan, slave_id, FDdmaReadReg(base_addr, FDDMA_CHAN_4_7_CFG_OFFSET));
+        FDDMA_DEBUG("ddma%p sets the slaveid of chan-%d to %d, 0x%x", base_addr, chan, slave_id, FDdmaReadReg(base_addr, FDDMA_CHAN_4_7_CFG_OFFSET));
     }
 
     return;
@@ -310,13 +314,17 @@ void FDdmaSetChanSelection(uintptr base_addr, u32 chan, u32 slave_id)
  */
 void FDdmaSetChanBind(uintptr base_addr, u32 chan, boolean bind)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_BIND_OFFSET);
 
     if (bind)
+    {
         reg_val |= BIT(chan);
+    }
     else
+    {
         reg_val &= ~BIT(chan);
+    }
 
     FDDMA_DEBUG("ddma@%p %s chan-%d, 0x%x", base_addr, bind ? "bind" : "unbind", chan, FDdmaReadReg(base_addr, FDDMA_CHAN_BIND_OFFSET));
     FDdmaWriteReg(base_addr, FDDMA_CHAN_BIND_OFFSET, reg_val);
@@ -333,12 +341,16 @@ void FDdmaSetChanBind(uintptr base_addr, u32 chan, boolean bind)
  */
 void FDdmaSetChanDirection(uintptr base_addr, u32 chan, boolean is_rx)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan));
     if (is_rx)
-        reg_val |= FDDMA_CHAN_CTL_RX_MODE; /* device to memory */
+    {
+        reg_val |= FDDMA_CHAN_CTL_RX_MODE;    /* device to memory */
+    }
     else
-        reg_val &= ~FDDMA_CHAN_CTL_RX_MODE; /* memory to device */
+    {
+        reg_val &= ~FDDMA_CHAN_CTL_RX_MODE;    /* memory to device */
+    }
     FDdmaWriteReg(base_addr, FDDMA_CHAN_CTL_OFFSET(chan), reg_val);
     return;
 }
@@ -353,7 +365,7 @@ void FDdmaSetChanDirection(uintptr base_addr, u32 chan, boolean is_rx)
  */
 void FDdmaSetChanTimeout(uintptr base_addr, u32 chan, u32 timeout)
 {
-    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "chan %d not support", chan);
+    FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     u32 reg_val = FDdmaReadReg(base_addr, FDDMA_CHAN_TIMEOUT_CNT_OFFSET(chan));
 
     if (0 < timeout)

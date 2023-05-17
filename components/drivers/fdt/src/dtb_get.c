@@ -176,7 +176,8 @@ struct dtb_node *dtb_node_get_dtb_list(void *fdt)
 
     if (paths_buf.ptr == NULL)
     {
-        paths_buf.ptr = malloc(FDT_DTB_ALL_NODES_PATH_SIZE);
+        paths_buf.ptr = (char *)malloc(FDT_DTB_ALL_NODES_PATH_SIZE);
+
         if (paths_buf.ptr == NULL)
         {
             fdt_exec_status = FDT_RET_NO_MEMORY;
@@ -188,7 +189,8 @@ struct dtb_node *dtb_node_get_dtb_list(void *fdt)
 
     root_off = fdt_path_offset(fdt, "/");
 
-    if ((dtb_node_head->header = malloc(sizeof(struct dtb_header))) == NULL)
+    if ((dtb_node_head->header = (struct dtb_header *)malloc(sizeof(struct dtb_header))) == NULL)
+
     {
         fdt_exec_status = FDT_RET_NO_MEMORY;
         goto fail;
@@ -206,7 +208,7 @@ struct dtb_node *dtb_node_get_dtb_list(void *fdt)
             uint32_t off_mem_rsvmap = fdt_off_mem_rsvmap(fdt);
             struct fdt_reserve_entry *rsvmap = (struct fdt_reserve_entry *)((char *)fdt + off_mem_rsvmap);
 
-            ((struct dtb_header *)dtb_node_head->header)->memreserve = malloc(sizeof(struct dtb_memreserve) * memreserve_sz);
+            ((struct dtb_header *)dtb_node_head->header)->memreserve = (struct dtb_memreserve *)malloc(sizeof(struct dtb_memreserve) * memreserve_sz);
             if (dtb_node_head->header->memreserve == NULL)
             {
                 fdt_exec_status = FDT_RET_NO_MEMORY;
@@ -560,7 +562,7 @@ struct dtb_node *dtb_node_get_dtb_node_by_path(struct dtb_node *dtb_node, const 
     }
 
     pathname_sz = strlen(pathname) + 1;
-    pathname_clone = malloc(pathname_sz);
+    pathname_clone = (char *)malloc(pathname_sz);
     if (pathname_clone == NULL)
     {
         return NULL;

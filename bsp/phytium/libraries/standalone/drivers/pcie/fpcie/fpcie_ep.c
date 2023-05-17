@@ -12,13 +12,14 @@
  *
  *
  * FilePath: fpcie_ep.c
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:57:59
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:57:59
+ * Description: This file is for pcie endpoint device operation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
 #include "fpcie.h"
@@ -49,8 +50,6 @@
 
 /************************** Function Prototypes ******************************/
 
-
-
 int FPcieEpSetBar(FPcie *instance_p, u32 peu_num, u32 bar_num, u64 bar_mem_addr, u64 bar_mem_size, int flags)
 {
     u32 addr0, addr1, reg, cfg, b, aperture, ctrl;
@@ -79,19 +78,31 @@ int FPcieEpSetBar(FPcie *instance_p, u32 peu_num, u32 bar_num, u64 bar_mem_addr,
         boolean is_64bits = sz > SZ_2G;
 
         if (is_64bits && (bar_num & 1))
+        {
             return FPCIE_ERR_INVALID_PARAM;
+        }
 
         if (is_64bits && !(flags & FPCIE_BASE_ADDRESS_MEM_TYPE_64))
+        {
             flags |= FPCIE_BASE_ADDRESS_MEM_TYPE_64;
+        }
 
         if (is_64bits && is_prefetch)
+        {
             ctrl = FPCIE_LM_BAR_CFG_CTRL_PREFETCH_MEM_64BITS;
+        }
         else if (is_prefetch)
+        {
             ctrl = FPCIE_LM_BAR_CFG_CTRL_PREFETCH_MEM_32BITS;
+        }
         else if (is_64bits)
+        {
             ctrl = FPCIE_LM_BAR_CFG_CTRL_MEM_64BITS;
+        }
         else
+        {
             ctrl = FPCIE_LM_BAR_CFG_CTRL_MEM_32BITS;
+        }
     }
 
     addr0 = LOWER_32_BITS(bar_mem_addr);

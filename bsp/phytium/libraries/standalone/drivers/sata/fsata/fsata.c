@@ -14,11 +14,14 @@
  * FilePath: fsata.c
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 09:05:09
- * Description:  This files is for sata ctrl function implementation
+ * Description:  This file is for sata ctrl function implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/2/10    first release
+ * 1.1   wangxiaodong  2022/9/9     improve functions
+ * 1.2   wangxiaodong  2022/10/21   improve functions
  */
 
 #include <string.h>
@@ -116,7 +119,9 @@ static FError FSataAhciLinkUp(FSataCtrl *instance_p, u8 port)
     {
         reg_val = FSATA_READ_REG32(port_base_addr, FSATA_PORT_SCR_STAT);
         if ((reg_val & FSATA_PORT_SCR_STAT_DET_MASK) == FSATA_PORT_SCR_STAT_DET_PHYRDY)
+        {
             return FSATA_SUCCESS;
+        }
         fsleep_microsec(1000);
         i++;
     }
@@ -152,7 +157,7 @@ static FError FSataAhciInquiry(FSataCtrl *instance_p, u8 port)
                           (u8 *)tmpid, FSATA_ID_WORDS * 2, FALSE, FALSE);
     if (ret != FSATA_SUCCESS)
     {
-        FSATA_ERROR("FSataAhciInquiry: command failure. ret = %#x", ret);
+        FSATA_ERROR("FSataAhciInquiry: command failure. ret = %#x.", ret);
         return FSATA_ERR_OPERATION;
     }
 
@@ -181,18 +186,24 @@ static void FSataIdentityCopy(unsigned char *dest, unsigned char *src, u32 len)
     while (start < len)
     {
         if (src[start] != 0x20)/* character is not sapce */
+        {
             break;
+        }
         start++;
     }
     end = len - 1;
     while (end > start)
     {
         if (src[end] != 0x20)/* character is not sapce */
+        {
             break;
+        }
         end--;
     }
     for (; start <= end; start++)
+    {
         *dest ++ = src[start];
+    }
     *dest = '\0';
 }
 
@@ -207,9 +218,13 @@ static u64 FSataIdToSectors(u16 *id)
     if (FSataIdHasLba(id))
     {
         if (FSataIdHasLba48(id))
+        {
             return FSATA_ID_U64(id, FSATA_ID_LBA48_SECTORS);
+        }
         else
+        {
             return (u64)(FSATA_ID_U32(id, FSATA_ID_LBA_SECTORS));
+        }
     }
     else
     {
@@ -229,7 +244,9 @@ static void FSataIdStrCopy(u16 *dest, u16 *src, int len)
 {
     int i;
     for (i = 0; i < len / 2; i++)
+    {
         dest[i] = __swab16(src[i]);
+    }
 }
 
 /**
@@ -262,7 +279,7 @@ void FSataInfoPrint(FSataInfo *dev_desc)
 
     if (dev_desc->type == FSATA_DEV_TYPE_UNKNOWN)
     {
-        FSATA_INFO("not available");
+        FSATA_INFO("Not available.");
         return;
     }
 
@@ -310,7 +327,7 @@ void FSataInfoPrint(FSataInfo *dev_desc)
     }
     else
     {
-        FSATA_INFO("Capacity: not available");
+        FSATA_INFO("Capacity: not available.");
     }
 }
 
@@ -342,7 +359,9 @@ static FError FSataAhciReadCapacity(FSataCtrl *instance_p, u8 port,
 
     u64 cap64 = FSataIdToSectors(instance_p->ataid[port]);
     if (cap64 > 0x100000000ULL)
+    {
         cap64 = 0xffffffff;
+    }
 
     *capacity = (unsigned long)(cap64);
     if (*capacity != 0xffffffff)
@@ -353,7 +372,7 @@ static FError FSataAhciReadCapacity(FSataCtrl *instance_p, u8 port,
     }
     else
     {
-        FSATA_DEBUG("should read capacity 16?");
+        FSATA_DEBUG("Should read capacity 16?");
     }
 
     return FSATA_SUCCESS;
@@ -457,7 +476,7 @@ static FError FSataAhciReset(FSataCtrl *instance_p)
 
     if (i == 0)
     {
-        FSATA_ERROR("controller reset failed (0x%x)", reg_val);
+        FSATA_ERROR("Controller reset failed (0x%x).", reg_val);
         return FSATA_ERR_TIMEOUT;
     }
 
@@ -484,7 +503,9 @@ FError FSataAhciInit(FSataCtrl *instance_p)
     /* reset host control */
     ret = FSataAhciReset(instance_p);
     if (ret != FSATA_SUCCESS)
+    {
         return ret;
+    }
 
     /* ahci enable */
     FSATA_WRITE_REG32(base_addr, FSATA_HOST_CTL, FSATA_HOST_AHCI_EN);
@@ -502,7 +523,9 @@ FError FSataAhciInit(FSataCtrl *instance_p)
     for (i = 0; i < instance_p->n_ports; i++)
     {
         if (!(instance_p->port_map & BIT(i)))
+        {
             continue;
+        }
         /* set ports base address */
         instance_p->port[i].port_base_addr = FSataAhciPortBase(base_addr, i);
         port_base_addr = instance_p->port[i].port_base_addr;
@@ -531,7 +554,7 @@ FError FSataAhciInit(FSataCtrl *instance_p)
         ret = FSataAhciLinkUp(instance_p, i);
         if (ret)
         {
-            FSATA_DEBUG("sata host %d, port %d link timeout", instance_p->config.instance_id, i);
+            FSATA_DEBUG("sata host %d, port %d link timeout.", instance_p->config.instance_id, i);
             continue;
         }
         else
@@ -542,7 +565,9 @@ FError FSataAhciInit(FSataCtrl *instance_p)
         /* Clear error status */
         reg_val = FSATA_READ_REG32(port_base_addr, FSATA_PORT_SCR_ERR);
         if (reg_val)
+        {
             FSATA_WRITE_REG32(port_base_addr, FSATA_PORT_SCR_ERR, reg_val);
+        }
 
         /* Device presence detected but Phy communication not established, retry once more */
         reg_val = FSATA_READ_REG32(port_base_addr, FSATA_PORT_SCR_STAT) & FSATA_PORT_SCR_STAT_DET_MASK;
@@ -556,12 +581,16 @@ FError FSataAhciInit(FSataCtrl *instance_p)
         /* Clear error status */
         reg_val = FSATA_READ_REG32(port_base_addr, FSATA_PORT_SCR_ERR);
         if (reg_val)
+        {
             FSATA_WRITE_REG32(port_base_addr, FSATA_PORT_SCR_ERR, reg_val);
+        }
 
         /* clear port irq status */
         reg_val = FSATA_READ_REG32(port_base_addr, FSATA_PORT_IRQ_STAT);
         if (reg_val)
+        {
             FSATA_WRITE_REG32(port_base_addr, FSATA_PORT_IRQ_STAT, reg_val);
+        }
 
         /* clear host corresponding port interrupt status register */
         FSATA_WRITE_REG32(base_addr, FSATA_HOST_IRQ_STAT, BIT(i));
@@ -569,7 +598,9 @@ FError FSataAhciInit(FSataCtrl *instance_p)
         /* register linkup ports */
         reg_val = FSATA_READ_REG32(port_base_addr, FSATA_PORT_SCR_STAT);
         if ((reg_val & FSATA_PORT_SCR_STAT_DET_MASK) == FSATA_PORT_SCR_STAT_DET_PHYRDY)
+        {
             instance_p->link_port_map |= BIT(i);
+        }
     }
 
     /* host interrupt enable */
@@ -642,7 +673,7 @@ FError FSataAhciPortStart(FSataCtrl *instance_p, u8 port, uintptr mem)
      */
     if (FSataWaitCmdCompleted(port_base_addr + FSATA_PORT_TFDATA, WAIT_MS_TFD, FSATA_BUSY))
     {
-        FSATA_DEBUG("timeout exit!");
+        FSATA_DEBUG("Timeout exit!");
         return FSATA_ERR_TIMEOUT;
     }
 
@@ -738,7 +769,7 @@ static FError FSataAhciDataIO(FSataCtrl *instance_p, u8 port, u8 *fis,
 
     if (port >= instance_p->n_ports)
     {
-        FSATA_DEBUG("Invalid port number %d", port);
+        FSATA_DEBUG("Invalid port number %d.", port);
         return FSATA_ERR_INVAILD_PARAMETER;
     }
 
@@ -756,7 +787,7 @@ static FError FSataAhciDataIO(FSataCtrl *instance_p, u8 port, u8 *fis,
     int prdt_length = FSataAhciFillCmdTablePrdt(instance_p, port, buf, buf_len);
     if (prdt_length == -1)
     {
-        FSATA_ERROR("FSataAhciFillCmdTablePrdt failed, buf_len = %d\n", buf_len);
+        FSATA_ERROR("FSataAhciFillCmdTablePrdt failed, buf_len = %d.\n", buf_len);
         return FSATA_ERR_INVAILD_PARAMETER;
     }
 
@@ -771,14 +802,16 @@ static FError FSataAhciDataIO(FSataCtrl *instance_p, u8 port, u8 *fis,
 
     /* set tag bit in SACT register before write CI register when use native cmd */
     if (is_ncq == TRUE)
+    {
         FSATA_WRITE_REG32(port_base_addr, FSATA_PORT_SCR_ACT, FSATA_PORT_SCR_ACT_ENABLE);
+    }
 
     /* send cmd */
     FSATA_WRITE_REG32(port_base_addr, FSATA_PORT_CMD_ISSUE, FSATA_PORT_CMD_ISSUE_ENABLE);
 
     if (FSataWaitCmdCompleted(port_base_addr + FSATA_PORT_CMD_ISSUE, WAIT_MS_DATAIO, FSATA_PORT_CMD_ISSUE_ENABLE))
     {
-        FSATA_ERROR("timeout exit!");
+        FSATA_ERROR("Timeout exit!");
         return FSATA_ERR_TIMEOUT;
     }
 
@@ -816,9 +849,13 @@ FError FSataReadWrite(FSataCtrl *instance_p, u8 port, u32 start,
     fis[0] = FSATA_FIS_REG_HOST_TO_DEVICE;/* fis type */
     fis[1] = FSATA_FIS_REG_HOST_TO_DEVICE_C; /* C and PM Port */
     if (is_ncq == FALSE)
-        fis[2] = is_write ? FSATA_CMD_WRITE_EXT : FSATA_CMD_READ_EXT; /* Command */
+    {
+        fis[2] = is_write ? FSATA_CMD_WRITE_EXT : FSATA_CMD_READ_EXT;    /* Command */
+    }
     else
-        fis[2] = is_write ? FSATA_CMD_FPDMA_WRITE : FSATA_CMD_FPDMA_READ; /* Command */
+    {
+        fis[2] = is_write ? FSATA_CMD_FPDMA_WRITE : FSATA_CMD_FPDMA_READ;    /* Command */
+    }
 
     while (blk_cnt)
     {
@@ -867,7 +904,7 @@ FError FSataReadWrite(FSataCtrl *instance_p, u8 port, u32 start,
                               buffer, transfer_size, is_ncq, is_write);
         if (ret)
         {
-            FSATA_ERROR("scsi_ahci: SCSI command failure. ret = %#x", ret);
+            FSATA_ERROR("scsi_ahci: SCSI command failure. ret = %#x.", ret);
             return FSATA_ERR_OPERATION;
         }
 

@@ -14,14 +14,15 @@
  * FilePath: fcan_intr.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:29:10
- * Description:  This files is for
+ * Description:  This files is for the can interrupt functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/5/26  first release
+ * 1.1   zhangyan      2022/12/7  improve functions
  */
 
-#include "finterrupt.h"
 #include "fcan.h"
 #include "fcan_hw.h"
 #include "fassert.h"
@@ -80,7 +81,7 @@ void FCanIntrHandler(s32 vector, void *args)
         return;
     }
 
-    /* Check for the type of error interrupt and Processing it */
+    /* Check for the type of interrupt and Processing it */
     if (irq_status & FCAN_INTR_TEIS_MASK)
     {
         irq_status &= ~FCAN_INTR_REIS_MASK;
@@ -93,28 +94,55 @@ void FCanIntrHandler(s32 vector, void *args)
         FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_SEND);
     }
 
-    if (irq_status & (FCAN_INTR_EIS_MASK | FCAN_INTR_RFIS_MASK | FCAN_INTR_TFIS_MASK |
+    if (irq_status & (FCAN_INTR_EIS_MASK  | FCAN_INTR_RFIS_MASK | FCAN_INTR_TFIS_MASK |
                       FCAN_INTR_BOIS_MASK | FCAN_INTR_PEIS_MASK | FCAN_INTR_PWIS_MASK))
     {
-        FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_ERROR);
-
         FCAN_SETBIT(config_p->base_address, FCAN_INTR_OFFSET,
-                    (FCAN_INTR_EIC_MASK | FCAN_INTR_RFIC_MASK | FCAN_INTR_BOIC_MASK |
-                     FCAN_INTR_PEIC_MASK | FCAN_INTR_PWIC_MASK));
+                    (FCAN_INTR_EIC_MASK  | FCAN_INTR_RFIC_MASK | FCAN_INTR_BOIC_MASK |
+                     FCAN_INTR_PEIC_MASK | FCAN_INTR_PWIC_MASK | FCAN_INTR_TFIC_MASK));
 
         /* Check for rx fifo full interrupt and output error information */
         if (irq_status & FCAN_INTR_RFIS_MASK)
         {
+            FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_FIFOFULL);
             FCAN_ERROR("rx_fifo is full!!!");
             /* disable rx fifo full interrupt */
             FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_RFIE_MASK);
         }
-
         if (irq_status & FCAN_INTR_TFIS_MASK)
         {
+            FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_FIFOEMPTY);
             FCAN_ERROR("tx_fifo is empty!!!");
             /* disable tx fifo empty interrupt */
             FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_TFIE_MASK);
+        }
+        if (irq_status & FCAN_INTR_EIS_MASK)
+        {
+            FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_ERROR);
+            FCAN_ERROR("Error occurred!!!");
+            /* disable error interrupt */
+            FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_EIE_MASK);
+        }
+        if (irq_status & FCAN_INTR_BOIS_MASK)
+        {
+            FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_BUSOFF);
+            FCAN_ERROR("Bus off!!!");
+            /* disable busoff interrupt */
+            FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_BOIE_MASK);
+        }
+        if (irq_status & FCAN_INTR_PEIS_MASK)
+        {
+            FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_PERROE);
+            FCAN_ERROR("Passive error occurred!!!");
+            /* disable passive error interrupt */
+            FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_PEIE_MASK);
+        }
+        if (irq_status & FCAN_INTR_PWIS_MASK)
+        {
+            FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_PWARN);
+            FCAN_ERROR("Passive warning!!!");
+            /* disable passive warning interrupt */
+            FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_PWIE_MASK);
         }
     }
 
@@ -122,7 +150,6 @@ void FCanIntrHandler(s32 vector, void *args)
     {
         FCAN_SETBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_REIE_MASK);
         FCAN_SETBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_REIC_MASK);
-        FCAN_SETBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_REIE_MASK);
         FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_RECV);
     }
 }

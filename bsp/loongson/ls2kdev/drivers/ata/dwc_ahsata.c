@@ -995,7 +995,7 @@ static int ahci_init_one(int pdev)
     int rc;
     struct ahci_uc_priv *uc_priv = NULL;
 
-    uc_priv = malloc(sizeof(struct ahci_uc_priv));
+    uc_priv = (struct ahci_uc_priv *)malloc(sizeof(struct ahci_uc_priv));
     if (!uc_priv)
         return -ENOMEM;
 

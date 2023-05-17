@@ -14,18 +14,25 @@
  * FilePath: fgic_distributor.h
  * Date: 2022-03-28 15:18:56
  * LastEditTime: 2022-03-28 15:18:56
- * Description:  This file is for
+ * Description: This file is for gic distributor implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
-#ifndef  DRIVERS_GIC_FGIC_DISTRIBUTOR_H
-#define  DRIVERS_GIC_FGIC_DISTRIBUTOR_H
+
+#ifndef  FGIC_DISTRIBUTOR_H
+#define  FGIC_DISTRIBUTOR_H
 
 #include "fgic.h"
 #include "fgic_hw.h"
 #include "ftypes.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define GICD_ICFGR_MODE TRIGGER_LEVEL
 #define GICD_IRPITER_MODE SPI_ROUTING_MODE
@@ -161,5 +168,9 @@ static inline u32 FGicGetSpiSecurity(uintptr dist_base, u32 spi_id)
 
     return ((group_modifier << 1) | group_status);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // !

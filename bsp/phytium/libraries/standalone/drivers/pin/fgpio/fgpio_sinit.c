@@ -14,12 +14,13 @@
  * FilePath: fgpio_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
- * Description:  This files is for GPIO static variables
+ * Description:  This files is for GPIO static variables implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2022-3-1     init commit
+ * 1.0   zhugengyu  2022/3/1     init commit
+ * 2.0   zhugengyu  2022/7/1     support e2000
  */
 
 
@@ -38,15 +39,15 @@
 /************************** Function Prototypes ******************************/
 
 /************************** Variable Definitions *****************************/
-#if defined(FGPIO_VERSION_1) /* FT2000-4, D2000 */
-    extern const FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
+#if defined(FGPIO_VERSION_1)|| defined(TARDIGRADE) /* FT2000-4, D2000 */
+extern const FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
 #elif defined(FGPIO_VERSION_2) /* E2000 GPIO 0 ~ 5 */
-    extern FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
+extern FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
 #endif
 
 /*****************************************************************************/
 
-#if defined(FGPIO_VERSION_1) /* FT2000-4, D2000 */
+#if defined(FGPIO_VERSION_1) || defined(TARDIGRADE) /* FT2000-4, D2000 */
 /**
  * @name: FGpioLookupConfig
  * @msg: 获取GPIO控制器的默认配置
@@ -92,15 +93,15 @@ static void FGpioSetIrqNum(u32 instance_id, FGpioConfig *ptr)
     }
     else
     {
-        if (FGPIO_ID_3 == instance_id)
+        if (FGPIO3_ID == instance_id)
         {
             irq_num = FGPIO_3_IRQ_NUM;
         }
-        else if (FGPIO_4_IRQ_NUM == instance_id)
+        else if (FGPIO4_ID == instance_id)
         {
             irq_num = FGPIO_4_IRQ_NUM;
         }
-        else if (FGPIO_5_IRQ_NUM == instance_id)
+        else if (FGPIO5_ID == instance_id)
         {
             irq_num = FGPIO_5_IRQ_NUM;
         }
@@ -147,4 +148,5 @@ const FGpioConfig *FGpioLookupConfig(u32 instance_id)
 
     return ptr;
 }
+
 #endif

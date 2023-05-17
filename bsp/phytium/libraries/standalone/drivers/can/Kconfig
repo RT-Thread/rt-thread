@@ -6,13 +6,13 @@ menu "CAN Configuration"
         default n
     if  USE_FCAN
         config FCAN_USE_CANFD
-        depends on TARGET_E2000
+        depends on TARGET_E2000 || TARGET_TARDIGRADE
         bool
         prompt "Use CanFD"
         default n
         help
             use canfd protocol
     endif
-
+        
 endmenu
 

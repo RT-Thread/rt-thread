@@ -14,18 +14,34 @@
  * FilePath: fdebug.h
  * Date: 2021-04-07 09:53:07
  * LastEditTime: 2022-02-17 18:04:58
- * Description:  This files is for debug functions
+ * Description:  This file is for showing debug api.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu  2022/10/27   rename file name
  */
 
-#ifndef BSP_COMMON_FT_DEBUG_H
-#define BSP_COMMON_FT_DEBUG_H
+#ifndef FDEBUG_H
+#define FDEBUG_H
+
 #include <stdio.h>
 #include "sdkconfig.h"
 #include "ftypes.h"
+#include "fprintk.h"
+#ifdef CONFIG_USE_AMP
+#include "fsmp.h"
+#endif
+
+#if defined(CONFIG_USE_AMP)
+#include "fcpu_info.h"
+#endif
+
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 typedef enum
 {
@@ -76,7 +92,26 @@ typedef enum
 
 #define LOG_FORMAT(letter, format) LOG_COLOR_##letter " %s: " format LOG_RESET_COLOR "\r\n"
 
-#define PORT_KPRINTF printf
+#define PORT_KPRINTF f_printk
+
+#if defined(CONFIG_LOG_DISPALY_CORE_NUM)    
+    #define DISPALY_CORE_NUM() \
+        do {u32 cpu_id;                                                           \
+        GetCpuId(&cpu_id);                                                    \
+        PORT_KPRINTF("cpu%d:", cpu_id);                                      } while(0)
+#else
+#define DISPALY_CORE_NUM()
+#endif
+
+
+#ifdef CONFIG_USE_AMP
+#define LOG_SPIN_LOCK() SpinLock();
+#define LOG_SPIN_UNLOCK() SpinUnlock() ;
+#else
+#define LOG_SPIN_LOCK()
+#define LOG_SPIN_UNLOCK()
+#endif
+
 
 #ifndef CONFIG_LOG_EXTRA_INFO
 #define LOG_EARLY_IMPL(tag, format, log_level, log_tag_letter, ...)           \
@@ -84,7 +119,10 @@ typedef enum
     {                                                                         \
         if (LOG_LOCAL_LEVEL < log_level)                                      \
             break;                                                            \
+        LOG_SPIN_LOCK();                                                      \
+        DISPALY_CORE_NUM();                                                   \
         PORT_KPRINTF(LOG_FORMAT(log_tag_letter, format), tag, ##__VA_ARGS__); \
+        LOG_SPIN_UNLOCK();                                                    \
     } while (0)
 #else
 #include <string.h>
@@ -95,6 +133,7 @@ typedef enum
     {                                                                         \
         if (LOG_LOCAL_LEVEL < log_level)                                      \
             break;                                                            \
+        DISPALY_CORE_NUM()  \
         PORT_KPRINTF(LOG_FORMAT(log_tag_letter, format" @%s:%d"), tag, ##__VA_ARGS__, __FILENAME__, __LINE__); \
     } while (0)
 #endif
@@ -124,4 +163,9 @@ typedef enum
 
 void FtDumpHexWord(const u32 *ptr, u32 buflen);
 void FtDumpHexByte(const u8 *ptr, u32 buflen);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif // !

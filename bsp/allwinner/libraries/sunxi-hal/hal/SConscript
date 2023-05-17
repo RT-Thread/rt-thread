@@ -221,7 +221,7 @@ rtc_path = [cwd + '/../include/hal/rtc']
 twi_src = []
 twi_path = []
 if GetDepend('DRIVERS_TWI'):
-    twi_src += [cwd + '/source/twi/hal_twi.c']
+    twi_src += ['source/twi/hal_twi.c']
     twi_path += [cwd + '/source/twi']
 
 udc_src = Split('''

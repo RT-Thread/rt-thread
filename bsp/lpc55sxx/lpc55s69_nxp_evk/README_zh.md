@@ -178,6 +178,11 @@ msh />
 | SDIO       | 支持     | 操作SD卡                     |
 | I2S        | 不支持  | 暂不支持      |
 
+## 5.注意事项
+
+- env环境需要使用最新版本(v1.3.5) [下载地址](https://github.com/RT-Thread/env-windows/releases/tag/v1.3.5)
+- 如使用keil开发，建议5.30版本以上
+
 ## 6. 联系人信息
 
 维护人:

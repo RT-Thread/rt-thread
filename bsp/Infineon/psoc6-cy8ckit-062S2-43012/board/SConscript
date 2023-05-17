@@ -19,7 +19,7 @@ if GetDepend(['BSP_USING_SPI3_SAMPLE']):
 if GetDepend(['BSP_USING_RW007']):
     src += Glob('ports/drv_rw007.c')
 
-if GetDepend(['BSP_USING_SLIDER']):
+if GetDepend(['BSP_USING_SLIDER_SAMPLE']):
     src += Glob('ports/slider_sample.c')
 
 path = [cwd]

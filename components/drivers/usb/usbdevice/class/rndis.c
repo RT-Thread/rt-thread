@@ -1331,6 +1331,13 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     cdc = rt_usbd_function_new(device, &_dev_desc, &ops);
     rt_usbd_device_set_qualifier(device, &dev_qualifier);
     _rndis= rt_malloc(sizeof(struct rt_rndis_eth));
+
+    if(_rndis == RT_NULL)
+    {
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
+        return RT_NULL;
+    }
+
     rt_memset(_rndis, 0, sizeof(struct rt_rndis_eth));
     cdc->user_data = _rndis;
 
@@ -1340,6 +1347,19 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     /* create a cdc communication interface and a cdc data interface */
     intf_comm = rt_usbd_interface_new(device, _interface_handler);
     intf_data = rt_usbd_interface_new(device, _interface_handler);
+
+    if((intf_comm == RT_NULL) || (intf_data == RT_NULL))
+    {
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
+
+        if(intf_comm != RT_NULL)
+            rt_free(intf_comm);
+
+        if(intf_data != RT_NULL)
+            rt_free(intf_data);
+
+        return RT_NULL;
+    }
 
     /* create a communication alternate setting and a data alternate setting */
     comm_setting = rt_usbd_altsetting_new(sizeof(struct ucdc_comm_descriptor));

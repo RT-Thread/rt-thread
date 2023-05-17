@@ -19,22 +19,21 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#ifndef  DRIVERS_USB_FXHCI_HW_H
-#define  DRIVERS_USB_FXHCI_HW_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef  FXHCI_HW_H
+#define  FXHCI_HW_H
 
 /***************************** Include Files *********************************/
 #include "fio.h"
 #include "fassert.h"
 #include "fkernel.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 /** @name Register Map
@@ -244,8 +243,8 @@ enum
 #define FXHCI_REG_OP_PORTS_PORTSC_DR  (1 << 30)      /* Device Removable, 0: Device is removable. 1:  Device is non-removable */
 #define FXHCI_REG_OP_PORTS_PORTSC_WPR (1 << 31)      /* Warm Port Reset 1: follow Warm Reset sequence */
 #define FXHCI_REG_OP_PORTS_PORTSC_RW_MASK (FXHCI_REG_OP_PORTS_PORTSC_PR | FXHCI_REG_OP_PORTS_PORTSC_PLS_MASK | FXHCI_REG_OP_PORTS_PORTSC_PP \
-                                        | FXHCI_REG_OP_PORTS_PORTSC_PIC_MASK | FXHCI_REG_OP_PORTS_PORTSC_LWS | FXHCI_REG_OP_PORTS_PORTSC_WCE \
-                                        | FXHCI_REG_OP_PORTS_PORTSC_WDE | FXHCI_REG_OP_PORTS_PORTSC_WOE)
+        | FXHCI_REG_OP_PORTS_PORTSC_PIC_MASK | FXHCI_REG_OP_PORTS_PORTSC_LWS | FXHCI_REG_OP_PORTS_PORTSC_WCE \
+        | FXHCI_REG_OP_PORTS_PORTSC_WDE | FXHCI_REG_OP_PORTS_PORTSC_WOE)
 
 /***************** Host Controller Runtime Registers ***********************/
 

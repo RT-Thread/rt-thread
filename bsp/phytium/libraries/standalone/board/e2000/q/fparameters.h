@@ -14,7 +14,7 @@
  * FilePath: fparameters.h
  * Date: 2022-02-11 13:33:28
  * LastEditTime: 2022-02-17 18:00:50
- * Description:  This files is for
+ * Description:  This file is for
  *
  * Modify History:
  *  Ver   Who        Date         Changes

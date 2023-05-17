@@ -14,7 +14,7 @@
  * FilePath: fsemaphore_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:15
- * Description:  This files is for semaphore static init
+ * Description:  This file is for semaphore static init
  *
  * Modify History:
  *  Ver   Who        Date         Changes

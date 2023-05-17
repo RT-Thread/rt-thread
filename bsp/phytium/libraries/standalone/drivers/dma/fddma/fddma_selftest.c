@@ -14,12 +14,12 @@
  * FilePath: fddma_selftest.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:47
- * Description:  This files is for ddma self test
+ * Description:  This file is for ddma self test
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/5/13    init commit
+ * 1.0   zhugengyu  2022/5/13    init commit
  */
 
 /***************************** Include Files *********************************/

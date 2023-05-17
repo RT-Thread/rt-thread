@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 #define RA_SRAM_SIZE    640 /* The SRAM size of the chip needs to be modified */
-#define RA_SRAM_END     (0x20000000 + RA_SRAM_SIZE * 1024)
+#define RA_SRAM_END     (0x1FFE0000 + RA_SRAM_SIZE * 1024)
 
 #ifdef __ARMCC_VERSION
 extern int Image$$RAM_END$$ZI$$Base;

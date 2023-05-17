@@ -11,7 +11,7 @@
 #include "hal_data.h"
 
 #if DLG_LVGL_USE_GPU_RA6M3
-    #include "lv_port_gpu.h"
+    #include "drv_g2d.h"
 #endif
 
 #ifdef PKG_USING_ILI9341
@@ -31,7 +31,7 @@ static struct rt_device_graphic_info info;
 
 /*Static or global buffer(s). The second buffer is optional*/
 // 0x1FFE0000    0x20040000
-__attribute__((section(".ARM.__at_0x1FFE0000"))) lv_color_t buf_1[COLOR_BUFFER];
+lv_color_t buf_1[COLOR_BUFFER];
 
 #if !DLG_LVGL_USE_GPU_RA6M3
 static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
@@ -46,12 +46,17 @@ static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
 }
 #endif
 
+void _ra_port_display_callback(display_callback_args_t *p_args)
+{
+    /* TFT-Callback */
+}
+
 static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
 #ifdef PKG_USING_ILI9341
     lcd_fill_array_spi(area->x1, area->y1, area->x2, area->y2, color_p);
 #elif DLG_LVGL_USE_GPU_RA6M3
-    lv_port_gpu_flush();
+    lv_port_gpu_blit(area->x1, area->y1, color_p, area);
 #else
     int x1, x2, y1, y2;
 
@@ -133,7 +138,7 @@ void lv_port_disp_init(void)
 
 #if DLG_LVGL_USE_GPU_RA6M3
     /* Initialize GPU module */
-    lv_port_gpu_init();
+    G2d_Drv_HWInit();
 #endif /* LV_PORT_DISP_GPU_EN */
 
     /*Finally register the driver*/

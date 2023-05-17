@@ -19,22 +19,22 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#ifndef  DRIVERS_FUSB_H
-#define  DRIVERS_FUSB_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef  FUSB_H
+#define  FUSB_H
 
 /***************************** Include Files *********************************/
 #include "ftypes.h"
 #include "ferror_code.h"
 #include "fassert.h"
 #include "fusb_def.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 #define FUSB_SUCCESS            FT_SUCCESS

@@ -12,13 +12,14 @@
  *
  *
  * FilePath: frtc_hw.c
- * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-18 09:01:40
- * Description:  This files is for
+ * Date: 2021-08-25 14:53:42
+ * LastEditTime: 2021-08-26 09:01:40
+ * Description:  This file is for rtc register read/write operation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   Wangxiaodong   2021/8/26 first commit
  */
 
 /***************************** Include Files *********************************/

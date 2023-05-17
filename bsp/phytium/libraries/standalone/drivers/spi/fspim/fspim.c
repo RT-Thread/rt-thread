@@ -14,14 +14,15 @@
  * FilePath: fspim.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:08:32
- * Description:  This files is for spim api implementation
+ * Description:  This file is for spim api implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2021-12-3   init commit
- * 1.1   zhugengyu  2022-4-15   support test mode
- * 1.2   zhugengyu  2022-5-13   support spi dma
+ * 1.0   zhugengyu  2021/12/3   init commit
+ * 1.1   zhugengyu  2022/4/15   support test mode
+ * 1.2   zhugengyu  2022/5/13   support spi dma
+ * 1.3 liqiaozhong 2022/12/30 add check func and spim option func
  */
 
 
@@ -52,14 +53,14 @@ FError FSpimReset(FSpim *instance_p);
 /************************** Variable Definitions *****************************/
 static const char *FSPIM_ERROR_CODE_MSG[FSPIM_NUM_OF_ERR_CODE] =
 {
-    "FSPIM_SUCCESS : fspim success",
-    "FSPIM_ERR_INVAL_STATE : fspim invalid state",
-    "FSPIM_ERR_NOT_READY : fspim driver not ready",
-    "FSPIM_ERR_INVAL_PARAM : fspim invalid input parameters",
-    "FSPIM_ERR_BUS_BUSY : fspim bus is busy",
-    "FSPIM_ERR_NOT_SUPPORT : fspim not support operation",
-    "FSPIM_ERR_TIMEOUT : fspim wait timeout",
-    "FSPIM_ERR_TRANS_FAIL : fspim data transfer failed",
+    "FSPIM_SUCCESS : The fspim was successful",
+    "FSPIM_ERR_INVAL_STATE : The fspim invalid state",
+    "FSPIM_ERR_NOT_READY : The fspim driver is not ready",
+    "FSPIM_ERR_INVAL_PARAM : The fspim input parameter is invalid",
+    "FSPIM_ERR_BUS_BUSY : The fspim bus is busy",
+    "FSPIM_ERR_NOT_SUPPORT : Operations are not supported by fspim",
+    "FSPIM_ERR_TIMEOUT : The fspim waits for a timeout",
+    "FSPIM_ERR_TRANS_FAIL : The fspim data transmission failed",
 };
 
 
@@ -92,7 +93,7 @@ FError FSpimCfgInitialize(FSpim *instance_p, const FSpimConfig *input_config_p)
     */
     if (FT_COMPONENT_IS_READY == instance_p->is_ready)
     {
-        FSPIM_WARN("device is already initialized!!!");
+        FSPIM_WARN("The device has been initialized!!!");
     }
 
     /*
@@ -103,9 +104,7 @@ FError FSpimCfgInitialize(FSpim *instance_p, const FSpimConfig *input_config_p)
     FSpimDeInitialize(instance_p);
     instance_p->config = *input_config_p;
 
-    /*
-    * Reset the device.
-    */
+    /* Reset the device. */
     ret = FSpimReset(instance_p);
     if (FSPIM_SUCCESS == ret)
     {
@@ -133,7 +132,7 @@ void FSpimDeInitialize(FSpim *instance_p)
 
 /**
  * @name: FSpimReset
- * @msg: 重置FSPIM控制器
+ * @msg: Reset FSPIM controller
  * @return {FError} FSPIM_SUCCESS表示重置成功，其它返回值表示重置失败
  * @param {FSpim} *instance_p
  */
@@ -167,7 +166,7 @@ FError FSpimReset(FSpim *instance_p)
     /* 选择串行时钟极性和相位 */
     FSpimSetCpha(base_addr, instance_p->config.cpha);
     FSpimSetCpol(base_addr, instance_p->config.cpol);
-
+    
     /* 设置传输模式 */
     FSpimSetTransMode(base_addr, FSPIM_TRANS_MODE_RX_TX);
 
@@ -183,14 +182,14 @@ FError FSpimReset(FSpim *instance_p)
     {
         fifo = FSpimGetTxFifoDepth(base_addr);
         instance_p->tx_fifo_len = ((fifo == 1) ? 0 : fifo);
-        FSPIM_INFO("fifo depth %d tx_fifo_len %d", fifo, instance_p->tx_fifo_len);
+        FSPIM_INFO("The fifo depth is %d ,tx effective length bits %d", fifo, instance_p->tx_fifo_len);
     }
 
     if (0 == instance_p->rx_fifo_len)
     {
         fifo = FSpimGetRxFifoDepth(base_addr);
         instance_p->rx_fifo_len = ((fifo == 1) ? 0 : fifo);
-        FSPIM_INFO("fifo depth %d tx_fifo_len %d", fifo, instance_p->tx_fifo_len);
+        FSPIM_INFO("The fifo depth is %d ,rx effective length bits %d", fifo, instance_p->rx_fifo_len);
     }
 
     FSPIM_WRITE_REG32(base_addr, FSPIM_DMA_CR_OFFSET, 0x0); /* disable ddma */
@@ -221,16 +220,129 @@ FError FSpimReset(FSpim *instance_p)
 
     ret = FSpimSetSpeed(base_addr, instance_p->config.max_freq_hz);
     if (FSPIM_SUCCESS != ret)
+    {
         return ret;
+    }
 
     FSPIM_WRITE_REG32(base_addr, FSPIM_RX_SAMPLE_DLY_OFFSET, FSPIM_DEFAULT_RSD);
-
-    /* 使能SPI控制器 */
-    FSpimSetEnable(base_addr, TRUE);
 
     return ret;
 }
 
+/*
+ * @name: FSpimSetOption
+ * @msg:  Give user a way to set speed and polarity etc.
+ * @param {FSpim} *instance_p FSPIM驱动控制数据
+ * @param {u32} option FSPIM操作标识数
+ * @param {u32} value FSPIM用户自定参数
+ * @return 驱动初始化的错误码信息，FSPIM_SUCCESS 表示设置成功，其它返回值表示设置失败
+ */
+FError FSpimSetOption(FSpim *instance_p, u32 option, u32 value)
+{
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    FError ret = FSPIM_SUCCESS;
+    boolean enabled = FSpimGetEnable(base_addr);
+
+    if (FT_COMPONENT_IS_READY != instance_p->is_ready)
+    {
+        FSPIM_ERROR("The device is not initialized!!!");
+        return FSPIM_ERR_NOT_READY;
+    }
+
+    FSpimSetEnable(base_addr, FALSE);
+    
+    if (option == FSPIM_CPOLTYPE_OPTION)
+    {
+        if (value == FSPIM_CPOL_HIGH || value == FSPIM_CPOL_LOW)
+        {
+            FSpimSetCpol(base_addr, value);
+            instance_p->config.cpol = value;
+            FSPIM_INFO("Set cpol to %d", value);
+        }
+        else
+        {
+            FSPIM_ERROR("Input error, CPOL value should be 0 or 1.");
+            return FSPIM_ERR_INVAL_PARAM;
+        }
+    }
+
+    if (option == FSPIM_CPHATYPE_OPTION)
+    {
+        if (value == FSPIM_CPHA_2_EDGE || value == FSPIM_CPHA_1_EDGE)
+        {
+            FSpimSetCpha(base_addr, value);
+            instance_p->config.cpha = value;
+            FSPIM_INFO("Set cpha to %d", value);
+        }
+        else
+        {
+            FSPIM_ERROR("Input error, CPHA value should be 0 or 1.");
+            return FSPIM_ERR_INVAL_PARAM;
+        }
+    }
+
+    if (option == FSPIM_FREQUENCY_OPTION)
+    {
+        if (value <= (FSPI_CLK_FREQ_HZ / FSPIM_BAUD_R_SCKDV_MIN))
+        {
+            ret = FSpimSetSpeed(base_addr, value);
+            if (FSPIM_SUCCESS != ret)
+            {
+                return ret;
+            }
+            instance_p->config.max_freq_hz = value;
+            FSPIM_INFO("Set spim freqency to %d", value);
+        }
+        else
+        {
+            FSPIM_ERROR("Input error, spim freqency value should be less than 24M.");
+            return FSPIM_ERR_INVAL_PARAM;
+        }
+    }
+
+    if (enabled)
+    {
+        FSpimSetEnable(base_addr, TRUE);
+    }
+
+    return ret;
+}
+
+/*
+ * @name: FSpimGetOption
+ * @msg:  Give user a way to get speed and polarity etc.
+ * @param {FSpim} *instance_p FSPIM驱动控制数据
+ * @param {u32} option FSPIM操作标识数
+ * @return {u32} 获取到的参数值
+ */
+u32 FSpimGetOption(FSpim *instance_p, u32 option)
+{
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 value;
+
+    if (option == FSPIM_CPOLTYPE_OPTION)
+    {
+        value = FSpimGetCpol(base_addr);
+        FSPIM_INFO("Get cpol value: %d", value);
+        return value;
+    }
+
+    if (option == FSPIM_CPHATYPE_OPTION)
+    {
+        value = FSpimGetCpha(base_addr);
+        FSPIM_INFO("Get cpha value: %d", value);
+        return value;
+    }
+
+    if (option == FSPIM_FREQUENCY_OPTION)
+    {
+        value = FSpimGetSpeed(base_addr);
+        FSPIM_INFO("Get freq_clock value: 0x%x, %d", value, value);
+        return value;
+    }
+}
 /**
  * @name: FSpimGetTxRound
  * @msg: 计算当前FIFO支持的发送字节数
@@ -393,7 +505,7 @@ FError FSpimTransferPollFifo(FSpim *instance_p, const void *tx_buf, void *rx_buf
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FSPIM_ERROR("device is already initialized!!!");
+        FSPIM_ERROR("The device is not initialized!!!");
         return FSPIM_ERR_NOT_READY;
     }
 
@@ -406,11 +518,17 @@ FError FSpimTransferPollFifo(FSpim *instance_p, const void *tx_buf, void *rx_buf
 
     reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
     if (tx_buf && rx_buf)
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    }
     else if (rx_buf)
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_ONLY);
+    }
     else
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    }
 
     FSpimSetCtrlR0(base_addr, reg_val);
 
@@ -439,8 +557,8 @@ FError FSpimTransferPollFifo(FSpim *instance_p, const void *tx_buf, void *rx_buf
 
 /**
  * @name: FSpimTransferByInterrupt
- * @msg: 先发送后接收数据 (中断处理)，利用Fifo进行处理
- * @return {FError} FSPIM_SUCCESS表示处理成功，其它返回值表示处理失败
+ * @msg: 配置并打开spim中断传输，利用Fifo进行处理
+ * @return {FError} FSPIM_SUCCESS表示成功打开中断，其它返回值表示失败
  * @param {FSpim} *instance_p 驱动控制数据
  * @param {void} *tx_buf 写缓冲区
  * @param {void} *rx_buf 读缓冲区
@@ -456,7 +574,7 @@ FError FSpimTransferByInterrupt(FSpim *instance_p, const void *tx_buf, void *rx_
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FSPIM_ERROR("device is already initialized!!!");
+        FSPIM_ERROR("The device is not initialized!!!");
         return FSPIM_ERR_NOT_READY;
     }
 
@@ -469,11 +587,17 @@ FError FSpimTransferByInterrupt(FSpim *instance_p, const void *tx_buf, void *rx_
 
     reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
     if (tx_buf && rx_buf)
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    }
     else if (rx_buf)
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_ONLY);
+    }
     else
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    }
 
     FSpimSetCtrlR0(base_addr, reg_val);
 
@@ -495,7 +619,7 @@ FError FSpimTransferByInterrupt(FSpim *instance_p, const void *tx_buf, void *rx_
     return FSPIM_SUCCESS;
 }
 
-#ifdef FSPIM_VERSION_2 /* E2000 */
+#if defined(FSPIM_VERSION_2) /* E2000 */
 
 /**
  * @name: FSpimTransferDMA
@@ -527,11 +651,17 @@ FError FSpimTransferDMA(FSpim *instance_p, boolean tx, boolean rx)
 
     reg_val &= ~FSPIM_CTRL_R0_TMOD_MASK;
     if (tx && rx)
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    }
     else if (rx)
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_ONLY);
+    }
     else
+    {
         reg_val |= FSPIM_CTRL_R0_TMOD(FSPIM_TMOD_RX_TX);
+    }
 
     FSpimSetCtrlR0(base_addr, reg_val);
 
@@ -542,14 +672,22 @@ FError FSpimTransferDMA(FSpim *instance_p, boolean tx, boolean rx)
     /* enable DMA tx / rx */
     reg_val = FSPIM_READ_REG32(base_addr, FSPIM_DMA_CR_OFFSET);
     if (tx)
+    {
         reg_val |= FSPIM_DMA_CR_TDMAE;
+    }
     else
+    {
         reg_val &= ~FSPIM_DMA_CR_TDMAE;
+    }
 
     if (rx)
+    {
         reg_val |= FSPIM_DMA_CR_RDMAE;
+    }
     else
+    {
         reg_val &= ~FSPIM_DMA_CR_RDMAE;
+    }
     FSPIM_WRITE_REG32(base_addr, FSPIM_DMA_CR_OFFSET, reg_val);
 
     FSpimSelSlaveDev(base_addr, instance_p->config.slave_dev_id);

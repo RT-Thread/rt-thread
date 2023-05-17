@@ -14,11 +14,15 @@
  * FilePath: fgmac_phy.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:53
- * Description:  This file is for
+ * Description:  This file implements functionalities to:
+ * Detect the available PHYs connected to a MAC
+ * Negotiate speed
+ * Configure speed
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ *  1.0   huanghe    2021/07/13    first release
  */
 
 /***************************** Include Files *********************************/
@@ -28,16 +32,16 @@
 #include "ferror_code.h"
 #include "ftypes.h"
 #include "fdebug.h"
-
 #include "fparameters.h"
-
 #include "fgmac_hw.h"
 #include "fgmac_phy.h"
 #include "fgmac.h"
+#include "fsleep.h"
+#include "sdkconfig.h"
+
 #ifdef  CONFIG_FGMAC_PHY_AR803X
     #include "fgmac_ar803x.h"
 #endif
-#include "fsleep.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -84,20 +88,24 @@ static FError FGmacWaitPhyAutoNegotiationEnd(FGmac *instance_p, u32 phy_address)
         reg_val = 0;
         ret = FGmacReadPhyReg(instance_p, phy_address, FGMAC_PHY_MII_STATUS_REG, &reg_val);
         if (FGMAC_SUCCESS != ret)
+        {
             break;
+        }
         fsleep_millisec(20);
     }
     while ((FGMAC_PHY_MII_SR_AUTO_NEGOT_COMPLETE != (FGMAC_PHY_MII_SR_AUTO_NEGOT_COMPLETE & reg_val)) &&
-            (0 < --timeout));
+           (0 < --timeout));
 
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     if (0 >= timeout)
     {
-        FGMAC_ERROR("auto negotiation timeout, reg_val: %#x", reg_val);
+        FGMAC_ERROR("Auto negotiation timeout, reg_val: %#x", reg_val);
         ret = FGmacReadPhyReg(instance_p, phy_address, FGMAC_PHY_MII_CTRL_REG, &reg_val);
-        FGMAC_ERROR("auto negotiation timeout, FGMAC_PHY_MII_CTRL_REG reg_val: %#x", reg_val);
+        FGMAC_ERROR("Auto negotiation timeout, FGMAC_PHY_MII_CTRL_REG reg_val: %#x", reg_val);
         ret = FGMAC_ERR_TIMEOUT;
     }
 
@@ -123,7 +131,9 @@ static FError FGmacPhyAutoNegotiation(FGmac *instance_p, u32 phy_address)
         reg_val = 0;
         ret = FGmacReadPhyReg(instance_p, phy_address, FGMAC_PHY_MII_STATUS_REG, &reg_val);
         if (FGMAC_SUCCESS != ret)
+        {
             break;
+        }
         fsleep_millisec(20);
 
     }
@@ -131,17 +141,19 @@ static FError FGmacPhyAutoNegotiation(FGmac *instance_p, u32 phy_address)
 
     if (0 >= timeout)
     {
-        FGMAC_ERROR("timeout when wait phy auto negotiation ");
+        FGMAC_ERROR("Timeout when wait phy auto negotiation.");
         return FGMAC_ERR_TIMEOUT;
     }
 
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     ret = FGmacReadPhyReg(instance_p, phy_address, FGMAC_PHY_MII_CTRL_REG, &reg_val);
     if (FGMAC_SUCCESS != ret)
     {
-        FGMAC_ERROR("auto negotiation failed");
+        FGMAC_ERROR("Auto negotiation failed.");
         return ret;
     }
 
@@ -150,13 +162,15 @@ static FError FGmacPhyAutoNegotiation(FGmac *instance_p, u32 phy_address)
     ret = FGmacWritePhyReg(instance_p, phy_address, FGMAC_PHY_MII_CTRL_REG, reg_val);
     if (FGMAC_SUCCESS != ret)
     {
-        FGMAC_ERROR("auto negotiation failed");
+        FGMAC_ERROR("Auto negotiation failed.");
         return ret;
     }
 
     ret = FGmacWaitPhyAutoNegotiationEnd(instance_p, phy_address);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     return ret;
 }
@@ -177,32 +191,38 @@ static FError FGmacPhyNoneNegotiation(FGmac *instance_p, u32 phy_address)
     /* read phy control register */
     ret  = FGmacReadPhyReg(instance_p, phy_address, FGMAC_PHY_MII_CTRL_REG, &control_reg);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     /* 设置半双工模式 */
     if (FGMAC_PHY_MODE_FULLDUPLEX == instance_p->config.duplex_mode)
+    {
         control_reg |= FGMAC_PHY_MII_CR_DUPLEX_MODE;
+    }
     else
+    {
         control_reg &= ~(FGMAC_PHY_MII_CR_DUPLEX_MODE);
+    }
 
     /* 设置速度bit6|bit13, 10b-1000M, 01b-100M, 00b-10M */
     switch (instance_p->config.speed)
     {
-    case FGMAC_PHY_SPEED_1000:
-        control_reg |= FGMAC_PHY_MII_CR_SPEED_SEL_MSB;
-        control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_LSB);
-        break;
-    case FGMAC_PHY_SPEED_100:
-        control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_MSB);
-        control_reg |= FGMAC_PHY_MII_CR_SPEED_SEL_LSB;
-        break;
-    case FGMAC_PHY_SPEED_10:
-        control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_MSB);
-        control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_LSB);
-        break;
-    default:
-        FASSERT(0);
-        break;
+        case FGMAC_PHY_SPEED_1000:
+            control_reg |= FGMAC_PHY_MII_CR_SPEED_SEL_MSB;
+            control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_LSB);
+            break;
+        case FGMAC_PHY_SPEED_100:
+            control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_MSB);
+            control_reg |= FGMAC_PHY_MII_CR_SPEED_SEL_LSB;
+            break;
+        case FGMAC_PHY_SPEED_10:
+            control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_MSB);
+            control_reg &= ~(FGMAC_PHY_MII_CR_SPEED_SEL_LSB);
+            break;
+        default:
+            FASSERT(0);
+            break;
     }
 
     /* disable auto-negotiation */
@@ -213,7 +233,7 @@ static FError FGmacPhyNoneNegotiation(FGmac *instance_p, u32 phy_address)
     ret = FGmacWritePhyReg(instance_p, phy_address, FGMAC_PHY_MII_CTRL_REG, control_reg);
     if (FGMAC_SUCCESS != ret)
     {
-        FGMAC_ERROR("disable auto-negotiation failed");
+        FGMAC_ERROR("Disable auto negotiation failed.");
         return ret;
     }
 
@@ -273,13 +293,17 @@ FError FGmacReadPhyReg(FGmac *instance_p, u32 phy_address, u16 phy_reg, u16 *phy
 
     ret = FGmacPhyWaitBusBusy(base_addr, FGMAC_RETRY_TIMES);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     FGMAC_WRITE_REG32(base_addr, FGMAC_GMII_ADDR_OFFSET, cmd_reg_val);
 
     ret = FGmacPhyWaitBusBusy(base_addr, FGMAC_RETRY_TIMES);
     if (FGMAC_SUCCESS != ret)
+    {
         return ret;
+    }
 
     *phy_reg_val_p = FGMAC_MII_DATA_GD_MASK & FGMAC_READ_REG32(base_addr, FGMAC_GMII_DATA_OFFSET);
     return ret;
@@ -303,7 +327,7 @@ FError FGmacPhyDetect(FGmac *instance_p)
         ret = FGmacReadPhyReg(instance_p, phy_addr, FGMAC_PHY_MII_STATUS_REG, &phy_reg);
         if (ret != FGMAC_SUCCESS)
         {
-            FGMAC_ERROR("%s,  PHY operation is busy", __func__);
+            FGMAC_ERROR("%s, phy operation is busy.", __func__);
             return ret;
         }
 
@@ -319,7 +343,7 @@ FError FGmacPhyDetect(FGmac *instance_p)
                 instance_p->phy_valid_mask |= (1 << phy_addr);
                 instance_p->phy_id1 = phy_id1_reg;
 
-                FGMAC_INFO("phy_addr: [%d], phy_valid_mask: 0x%x, phy id: [0x%08x][0x%08x], phy_reg:0x%x",
+                FGMAC_INFO("Phy_addr: [%d], phy_valid_mask: 0x%x, phy id: [0x%08x][0x%08x], phy_reg:0x%x",
                            phy_addr, instance_p->phy_valid_mask, phy_id1_reg, phy_id2_reg, phy_reg);
 
                 return ret;
@@ -333,7 +357,7 @@ FError FGmacPhyDetect(FGmac *instance_p)
 
     if (invalid_count == FGMAC_PHY_MAX_NUM)
     {
-        FGMAC_ERROR("phy detect failed, phy address is not found!");
+        FGMAC_ERROR("Phy detect failed, phy address is not found!");
         return FGMAC_ERR_PHY_IS_NOT_FOUND;
     }
 
@@ -354,7 +378,7 @@ FError FGmacPhyReset(FGmac *instance_p, u32 phy_address)
     ret = FGmacWritePhyReg(instance_p, phy_address, FGMAC_PHY_MII_CTRL_REG, FGMAC_PHY_MII_CR_RESET);
     if (FGMAC_SUCCESS != ret)
     {
-        FGMAC_ERROR("reset phy failed");
+        FGMAC_ERROR("Reset phy failed.");
         return ret;
     }
     return FGMAC_SUCCESS;
@@ -380,23 +404,27 @@ static FError FGmacGetPhySpecialStatus(FGmac *instance_p, u32 phy_address)
 
     switch (phy_special_status & FGMAC_PHY_SPECIFIC_STATUS_SPEED_MASK)
     {
-    case FGMAC_PHY_SPECIFIC_STATUS_SPEED_1000M:
-        instance_p->config.speed = FGMAC_PHY_SPEED_1000;
-        break;
-    case FGMAC_PHY_SPECIFIC_STATUS_SPEED_100M:
-        instance_p->config.speed = FGMAC_PHY_SPEED_100;
-        break;
-    case FGMAC_PHY_SPECIFIC_STATUS_SPEED_10M:
-        instance_p->config.speed = FGMAC_PHY_SPEED_10;
-        break;
-    default:
-        break;
+        case FGMAC_PHY_SPECIFIC_STATUS_SPEED_1000M:
+            instance_p->config.speed = FGMAC_PHY_SPEED_1000;
+            break;
+        case FGMAC_PHY_SPECIFIC_STATUS_SPEED_100M:
+            instance_p->config.speed = FGMAC_PHY_SPEED_100;
+            break;
+        case FGMAC_PHY_SPECIFIC_STATUS_SPEED_10M:
+            instance_p->config.speed = FGMAC_PHY_SPEED_10;
+            break;
+        default:
+            break;
     }
 
     if (phy_special_status & FGMAC_PHY_SPECIFIC_STATUS_DUPLEX_MASK)
+    {
         instance_p->config.duplex_mode = FGMAC_PHY_MODE_FULLDUPLEX;
+    }
     else
+    {
         instance_p->config.duplex_mode = FGMAC_PHY_MODE_HALFDUPLEX;
+    }
 
     return ret;
 }
@@ -418,7 +446,7 @@ FError FGmacPhyCfgInitialize(FGmac *instance_p)
     ret = FGmacPhyDetect(instance_p);
     if (FGMAC_SUCCESS != ret)
     {
-        FGMAC_ERROR("phy detect failed!");
+        FGMAC_ERROR("Phy detect failed!");
         return ret;
     }
 
@@ -436,7 +464,7 @@ FError FGmacPhyCfgInitialize(FGmac *instance_p)
                 ret = FGmacPhyAutoNegotiation(instance_p, phy_addr);
                 if (FGMAC_SUCCESS != ret)
                 {
-                    FGMAC_ERROR("auto negotiation phy failed");
+                    FGMAC_ERROR("Auto negotiation phy failed.");
                     return ret;
                 }
             }
@@ -446,7 +474,7 @@ FError FGmacPhyCfgInitialize(FGmac *instance_p)
                 ret = FGmacPhyNoneNegotiation(instance_p, phy_addr);
                 if (FGMAC_SUCCESS != ret)
                 {
-                    FGMAC_ERROR("negotiation phy failed");
+                    FGMAC_ERROR("Negotiation phy failed.");
                     return ret;
                 }
             }
@@ -455,7 +483,7 @@ FError FGmacPhyCfgInitialize(FGmac *instance_p)
             ret = FGmacGetPhySpecialStatus(instance_p, phy_addr);
             if (FGMAC_SUCCESS != ret)
             {
-                FGMAC_ERROR("get phy special status failed");
+                FGMAC_ERROR("Get phy special status failed.");
                 return ret;
             }
 
@@ -505,7 +533,7 @@ FError  FGmacPhyAwaken(FGmac *instance_p)
     ret = FGmacPhyDetect(instance_p);
     if (FGMAC_SUCCESS != ret)
     {
-        FGMAC_ERROR("phy detect failed!");
+        FGMAC_ERROR("Phy detect failed!");
         return ret;
     }
 

@@ -33,6 +33,7 @@
 #define AT_CMD_SEMICOLON               ';'
 #define AT_CMD_CR                      '\r'
 #define AT_CMD_LF                      '\n'
+#define AT_CMD_NULL                    '\0'
 
 static at_server_t at_server_local = RT_NULL;
 static at_cmd_t cmd_table = RT_NULL;
@@ -472,6 +473,10 @@ static void server_parser(at_server_t server)
                     at_server_printf("\b \b");
                 }
 
+                continue;
+            }
+            else if (ch == AT_CMD_NULL)
+            {
                 continue;
             }
             else

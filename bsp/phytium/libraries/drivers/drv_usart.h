@@ -8,7 +8,7 @@
  * Change Logs:
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
- *
+ * 2023-04-27  huanghe      support RT-Smart
  */
 
 #ifndef __DRV_USART_H__

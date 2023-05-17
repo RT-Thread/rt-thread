@@ -14,12 +14,12 @@
  * FilePath: fusb.c
  * Date: 2022-02-11 13:33:11
  * LastEditTime: 2022-02-18 09:22:06
- * Description:  This files is for implmentation of USB user API
+ * Description:  This file is for implmentation of USB user API
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0  Zhugengyu  2022/2/8     init commit
+ * 1.0  zhugengyu  2022/2/8     init commit
  */
 
 #include <string.h>
@@ -59,13 +59,17 @@ FError FUsbCfgInitialize(FUsb *instance, const FUsbConfig *input_config)
     FError ret = FUSB_SUCCESS;
 
     if (input_config != &instance->config)
+    {
         instance->config = *input_config;
+    }
 
     instance->hc = NULL; /* non usb host attached */
 
     /* create usb hc instance, which will be add as the head of hc list */
     if (NULL == FXhciHcInit(instance, instance->config.base_addr))
+    {
         ret = FUSB_ERR_ALLOCATE_FAIL;
+    }
 
     if (FUSB_SUCCESS == ret)
     {
@@ -113,7 +117,9 @@ void FUsbPoll(FUsb *instance)
     }
 
     if (FUsbPollPrepare)
+    {
         FUsbPollPrepare(instance);
+    }
 
     FUsbHc *controller = instance->hc;
     if (controller != NULL)
@@ -148,7 +154,9 @@ void FUsbExit(FUsb *instance)
     }
 
     if (FUsbExitPrepare)
+    {
         FUsbExitPrepare(instance);
+    }
 
     FUsbHc *controller = instance->hc;
     if (controller != NULL)
@@ -232,7 +240,9 @@ void FUsbMempFreeTag(FUsb *instance, void *ptr)
 {
     FASSERT(instance);
     if (NULL != ptr)
+    {
         FMempFreeTag(&instance->memp, ptr);
+    }
 
     return;
 }
@@ -263,7 +273,9 @@ FUsbHc *FUsbAllocateHc(FUsb *instance)
 void FUsbDetachHc(FUsbHc *controller)
 {
     if (controller == NULL)
+    {
         return;
+    }
 
     FUsb *instance = controller->usb;
     FUsbDetachDev(controller, 0); /* tear down root hub tree */
@@ -289,9 +301,9 @@ static FUsbDevInitHandler FUsbFindValidInitFunc(FUsb *instance, const FUsbDevInd
     {
         func = &instance->dev_init[loop];
         if ((index->category == func->index.category) &&
-                (index->class == func->index.class) &&
-                (index->sub_class == func->index.sub_class) &&
-                (index->protocol == func->index.protocol))
+            (index->class == func->index.class) &&
+            (index->sub_class == func->index.sub_class) &&
+            (index->protocol == func->index.protocol))
         {
             handler = func->handler;
         }
@@ -312,7 +324,9 @@ FError FUsbAssignDevInitFunc(FUsb *instance, const FUsbDevIndex *index, FUsbDevI
 {
     FASSERT(instance && index && handler);
     if (FUSB_MAX_DEV_TYPE_NUM == instance->dev_init_num)
+    {
         return FUSB_ERR_INVALID_PARA;
+    }
 
     if (NULL != FUsbFindValidInitFunc(instance, index))
     {
@@ -343,13 +357,13 @@ FUsbDev *FUsbInitDevEntry(FUsbHc *controller, int slot_id)
 
     if (NULL == dev)
     {
-        FUSB_ERROR("no memory to allocate device structure ");
+        FUSB_ERROR("No memory to allocate device structure .");
         return NULL;
     }
 
     if (controller->devices[slot_id] != NULL)
     {
-        FUSB_WARN("warning: device %d reassigned? ", slot_id);
+        FUSB_WARN("Warning: device %d reassigned? ", slot_id);
     }
 
     controller->devices[slot_id] = dev;
@@ -387,7 +401,9 @@ size_t FUsbGetAllDevEntries(FUsbHc *controller, FUsbDev *devs[], size_t max_dev_
 
             /* get at most max_dev_num device entry before exit */
             if (num >= max_dev_num)
+            {
                 break;
+            }
         }
     }
 
@@ -405,43 +421,43 @@ int FUsbDecodeMaxPacketSz0(FUsbSpeed speed, u8 bMaxPacketSize0)
 {
     switch (speed)
     {
-    case FUSB_LOW_SPEED:
-        if (bMaxPacketSize0 != 8)
-        {
-            FUSB_ERROR("Invalid MPS0: 0x%02x ", bMaxPacketSize0);
-            bMaxPacketSize0 = 8;
-        }
-        return bMaxPacketSize0;
-    case FUSB_FULL_SPEED:
-        switch (bMaxPacketSize0)
-        {
-        case 8:
-        case 16:
-        case 32:
-        case 64:
+        case FUSB_LOW_SPEED:
+            if (bMaxPacketSize0 != 8)
+            {
+                FUSB_ERROR("Invalid MPS0: 0x%02x ", bMaxPacketSize0);
+                bMaxPacketSize0 = 8;
+            }
             return bMaxPacketSize0;
+        case FUSB_FULL_SPEED:
+            switch (bMaxPacketSize0)
+            {
+                case 8:
+                case 16:
+                case 32:
+                case 64:
+                    return bMaxPacketSize0;
+                default:
+                    FUSB_ERROR("Invalid MPS0: 0x%02x ", bMaxPacketSize0);
+                    return 8;
+            }
+        case FUSB_HIGH_SPEED:
+            if (bMaxPacketSize0 != 64)
+            {
+                FUSB_ERROR("Invalid MPS0: 0x%02x ", bMaxPacketSize0);
+                bMaxPacketSize0 = 64;
+            }
+            return bMaxPacketSize0;
+        case FUSB_SUPER_SPEED:
+        /* Intentional fallthrough */
+        case FUSB_SUPER_SPEED_PLUS:
+            if (bMaxPacketSize0 != 9)
+            {
+                FUSB_ERROR("Invalid MPS0: 0x%02x ", bMaxPacketSize0);
+                bMaxPacketSize0 = 9;
+            }
+            return 1 << bMaxPacketSize0;
         default:
-            FUSB_ERROR("Invalid MPS0: 0x%02x ", bMaxPacketSize0);
             return 8;
-        }
-    case FUSB_HIGH_SPEED:
-        if (bMaxPacketSize0 != 64)
-        {
-            FUSB_ERROR("Invalid MPS0: 0x%02x ", bMaxPacketSize0);
-            bMaxPacketSize0 = 64;
-        }
-        return bMaxPacketSize0;
-    case FUSB_SUPER_SPEED:
-    /* Intentional fallthrough */
-    case FUSB_SUPER_SPEED_PLUS:
-        if (bMaxPacketSize0 != 9)
-        {
-            FUSB_ERROR("Invalid MPS0: 0x%02x ", bMaxPacketSize0);
-            bMaxPacketSize0 = 9;
-        }
-        return 1 << bMaxPacketSize0;
-    default:
-        return 8;
     }
 }
 
@@ -525,7 +541,9 @@ FUsbTransCode FUsbGetDescriptor(FUsbDev *dev, int rtype, FUsbDescriptorType desc
                                        sizeof(dr), &dr, len, data);
 
         if (ret == (int)len)
+        {
             break;
+        }
 
         fsleep_microsec(10);
     }
@@ -562,7 +580,9 @@ FUsbTransCode FUsbGetStringDescriptor(FUsbDev *dev, int rtype, FUsbDescriptorTyp
 
         ret = dev->controller->control(dev, FUSB_IN, sizeof(dr), &dr, len, data);
         if (ret == (int)len)
+        {
             break;
+        }
 
         fsleep_microsec(10);
     }
@@ -624,16 +644,16 @@ int FUsbSpeedtoDefaultMaxPacketSz(FUsbSpeed speed)
 {
     switch (speed)
     {
-    case FUSB_LOW_SPEED:
-        return 8;
-    case FUSB_FULL_SPEED:
-    case FUSB_HIGH_SPEED:
-        return 64;
-    case FUSB_SUPER_SPEED:
-    /* Intentional fallthrough */
-    case FUSB_SUPER_SPEED_PLUS:
-    default:
-        return 512;
+        case FUSB_LOW_SPEED:
+            return 8;
+        case FUSB_FULL_SPEED:
+        case FUSB_HIGH_SPEED:
+            return 64;
+        case FUSB_SUPER_SPEED:
+        /* Intentional fallthrough */
+        case FUSB_SUPER_SPEED_PLUS:
+        default:
+            return 512;
     }
 }
 
@@ -651,47 +671,47 @@ static int FUsbDecodeInterval(FUsbSpeed speed, const FUsbEpType type, const unsi
 #define LOG2(a) ((sizeof(unsigned) << 3) - __builtin_clz(a) - 1)
     switch (speed)
     {
-    case FUSB_LOW_SPEED:
-        switch (type)
-        {
-        case FUSB_ISOCHRONOUS_EP:
-        case FUSB_INTERRUPT_EP:
-            return LOG2(bInterval) + 3;
+        case FUSB_LOW_SPEED:
+            switch (type)
+            {
+                case FUSB_ISOCHRONOUS_EP:
+                case FUSB_INTERRUPT_EP:
+                    return LOG2(bInterval) + 3;
+                default:
+                    return 0;
+            }
+        case FUSB_FULL_SPEED:
+            switch (type)
+            {
+                case FUSB_ISOCHRONOUS_EP:
+                    return (bInterval - 1) + 3;
+                case FUSB_INTERRUPT_EP:
+                    return LOG2(bInterval) + 3;
+                default:
+                    return 0;
+            }
+        case FUSB_HIGH_SPEED:
+            switch (type)
+            {
+                case FUSB_ISOCHRONOUS_EP:
+                case FUSB_INTERRUPT_EP:
+                    return bInterval - 1;
+                default:
+                    return LOG2(bInterval);
+            }
+        case FUSB_SUPER_SPEED:
+        /* Intentional fallthrough */
+        case FUSB_SUPER_SPEED_PLUS:
+            switch (type)
+            {
+                case FUSB_ISOCHRONOUS_EP:
+                case FUSB_INTERRUPT_EP:
+                    return bInterval - 1;
+                default:
+                    return 0;
+            }
         default:
             return 0;
-        }
-    case FUSB_FULL_SPEED:
-        switch (type)
-        {
-        case FUSB_ISOCHRONOUS_EP:
-            return (bInterval - 1) + 3;
-        case FUSB_INTERRUPT_EP:
-            return LOG2(bInterval) + 3;
-        default:
-            return 0;
-        }
-    case FUSB_HIGH_SPEED:
-        switch (type)
-        {
-        case FUSB_ISOCHRONOUS_EP:
-        case FUSB_INTERRUPT_EP:
-            return bInterval - 1;
-        default:
-            return LOG2(bInterval);
-        }
-    case FUSB_SUPER_SPEED:
-    /* Intentional fallthrough */
-    case FUSB_SUPER_SPEED_PLUS:
-        switch (type)
-        {
-        case FUSB_ISOCHRONOUS_EP:
-        case FUSB_INTERRUPT_EP:
-            return bInterval - 1;
-        default:
-            return 0;
-        }
-    default:
-        return 0;
     }
 #undef LOG2
 }
@@ -717,7 +737,7 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     FASSERT(instace);
     if (NULL == dev)
     {
-        FUSB_INFO("set_address failed ");
+        FUSB_INFO("Set address failed.");
         return FUSB_NO_DEV_ADDR;
     }
 
@@ -726,22 +746,22 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     if ((NULL == dev->descriptor) || FUsbGetDescriptor(dev, FUSB_DR_DESC, FUSB_DESC_TYPE_DEVICE, 0,
             dev->descriptor, sizeof(*dev->descriptor)) != sizeof(*dev->descriptor))
     {
-        FUSB_INFO("FUsbGetDescriptor(FUSB_DESC_TYPE_DEVICE) failed ");
+        FUSB_INFO("FUsbGetDescriptor(FUSB_DESC_TYPE_DEVICE) failed.");
         FUsbDetachDev(controller, dev->address);
         return FUSB_NO_DEV_ADDR;
     }
 
-    FUSB_INFO("* found device (0x%04x:0x%04x, USB %x.%x, MPS0: %d) ",
+    FUSB_INFO("Found device (0x%04x:0x%04x, USB %x.%x, MPS0: %d) ",
               dev->descriptor->idVendor, dev->descriptor->idProduct,
               dev->descriptor->bcdUSB >> 8, dev->descriptor->bcdUSB & 0xff,
               dev->endpoints[0].maxpacketsize);
 
-    FUSB_INFO("device has %d configurations ",
+    FUSB_INFO("Device has %d configurations.",
               dev->descriptor->bNumConfigurations);
     if (dev->descriptor->bNumConfigurations == 0)
     {
         /* device isn't usable */
-        FUSB_INFO("... no usable configuration! ");
+        FUSB_INFO("No usable configuration!");
         FUsbDetachDev(controller, dev->address);
         return FUSB_NO_DEV_ADDR;
     }
@@ -749,7 +769,7 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     u16 buf[2];
     if (FUsbGetDescriptor(dev, FUSB_DR_DESC, FUSB_DESC_TYPE_CONFIG, 0, buf, sizeof(buf)) != sizeof(buf))
     {
-        FUSB_INFO("first FUsbGetDescriptor(FUSB_DESC_TYPE_CONFIG) failed ");
+        FUSB_INFO("First FUsbGetDescriptor(FUSB_DESC_TYPE_CONFIG) failed.");
         FUsbDetachDev(controller, dev->address);
         return FUSB_NO_DEV_ADDR;
     }
@@ -761,7 +781,7 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     dev->configuration = FUSB_ALLOCATE(instace, buf[1], FUSB_DEFAULT_ALIGN);
     if (NULL == dev->configuration)
     {
-        FUSB_INFO("could not allocate %d bytes for FUSB_DESC_TYPE_CONFIG ", buf[1]);
+        FUSB_INFO("Could not allocate %d bytes for FUSB_DESC_TYPE_CONFIG.", buf[1]);
         FUsbDetachDev(controller, dev->address);
         return FUSB_NO_DEV_ADDR;
     }
@@ -769,7 +789,7 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     if (FUsbGetDescriptor(dev, FUSB_DR_DESC, FUSB_DESC_TYPE_CONFIG, 0, dev->configuration,
                           buf[1]) != buf[1])
     {
-        FUSB_INFO("FUsbGetDescriptor(FUSB_DESC_TYPE_CONFIG) failed ");
+        FUSB_INFO("FUsbGetDescriptor(FUSB_DESC_TYPE_CONFIG) failed.");
         FUsbDetachDev(controller, dev->address);
         return FUSB_NO_DEV_ADDR;
     }
@@ -777,7 +797,7 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     FUsbConfigurationDescriptor *cd = dev->configuration;
     if (cd->wTotalLength != buf[1])
     {
-        FUSB_INFO("configuration descriptor size changed, aborting ");
+        FUSB_INFO("Configuration descriptor size changed, aborting.");
         FUsbDetachDev(controller, dev->address);
         return FUSB_NO_DEV_ADDR;
     }
@@ -788,7 +808,7 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
      * else for the time being. If you need it, see the SetInterface and
      * GetInterface functions in the USB specification and set it yourself.
      */
-    FUSB_INFO("device has %x interfaces ", cd->bNumInterfaces);
+    FUSB_INFO("Device has %x interfaces.", cd->bNumInterfaces);
 
     u8 *end = (void *)dev->configuration + cd->wTotalLength;
     FUsbInterfaceDescriptor *intf;
@@ -799,22 +819,24 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     {
         if (ptr + 2 > end || !ptr[0] || ptr + ptr[0] > end)
         {
-            FUSB_INFO("Couldn't find usable FUSB_DESC_TYPE_INTERFACE ");
+            FUSB_INFO("Couldn't find usable FUSB_DESC_TYPE_INTERFACE.");
             FUsbDetachDev(controller, dev->address);
             return FUSB_NO_DEV_ADDR;
         }
 
         if (ptr[1] != FUSB_DESC_TYPE_INTERFACE)
+        {
             continue;
+        }
 
         intf = (void *)ptr;
         if (intf->bLength != sizeof(*intf))
         {
-            FUSB_INFO("Skipping broken FUSB_DESC_TYPE_INTERFACE ");
+            FUSB_INFO("Skipping broken FUSB_DESC_TYPE_INTERFACE.");
             continue;
         }
 
-        FUSB_INFO("Interface %d: class 0x%x, sub 0x%x. proto 0x%x ",
+        FUSB_INFO("Interface %d: class 0x%x, sub 0x%x. proto 0x%x.",
                   intf->bInterfaceNumber, intf->bInterfaceClass,
                   intf->bInterfaceSubClass, intf->bInterfaceProtocol);
         ptr += sizeof(*intf);
@@ -827,11 +849,15 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     for (; ptr + 2 <= end && ptr[0] && ptr + ptr[0] <= end; ptr += ptr[0])
     {
         if (ptr[1] == FUSB_DESC_TYPE_INTERFACE || ptr[1] == FUSB_DESC_TYPE_CONFIG ||
-                (size_t)dev->num_endp >= ARRAY_SIZE(dev->endpoints))
+            (size_t)dev->num_endp >= ARRAY_SIZE(dev->endpoints))
+        {
             break;
+        }
 
         if (ptr[1] != FUSB_DESC_TYPE_ENDPOINT)
+        {
             continue;
+        }
 
         FUsbEndpointDescriptor *desc = (void *)ptr;
         static const char *transfertypes[4] =
@@ -856,47 +882,49 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     }
 
     if ((controller->finish_device_config &&
-            controller->finish_device_config(dev)) ||
-            FUsbSetConfiguration(dev) < 0)
+         controller->finish_device_config(dev)) ||
+        FUsbSetConfiguration(dev) < 0)
     {
-        FUSB_INFO("Could not finalize device configuration ");
+        FUSB_INFO("Could not finalize device configuration. ");
         FUsbDetachDev(controller, dev->address);
         return FUSB_NO_DEV_ADDR;
     }
 
     int class = dev->descriptor->bDeviceClass;
     if (class == 0)
+    {
         class = intf->bInterfaceClass;
+    }
 
     switch (class)
     {
-    case FUSB_AUDIO_DEVICE:
-        FUSB_INFO("Audio Class ");
-        break;
-    case FUSB_COMM_DEVICE:
-        FUSB_INFO("Communication Class ");
-        break;
-    case FUSB_HID_DEVICE:
-        FUSB_INFO("HID Class ");
-        break;
-    case FUSB_PHYSICAL_DEVICE:
-        FUSB_INFO("Physical Class");
-        break;
-    case FUSB_IMAGE_DEVICE:
-        FUSB_INFO("Camera Class ");
-        break;
-    case FUSB_PRINTER_DEVICE:
-        FUSB_INFO("Printer Class");
-        break;
-    case FUSB_MASS_STORAGE_DEVICE:
-        FUSB_INFO("Mass Storage Class ");
-        break;
-    case FUSB_HUB_DEVICE:
-        FUSB_INFO("Hub Class ");
-        break;
-    default:
-        FUSB_ERROR("Unsupported Class %x ", class);
-        break;
+        case FUSB_AUDIO_DEVICE:
+            FUSB_INFO("Audio Class ");
+            break;
+        case FUSB_COMM_DEVICE:
+            FUSB_INFO("Communication Class ");
+            break;
+        case FUSB_HID_DEVICE:
+            FUSB_INFO("HID Class ");
+            break;
+        case FUSB_PHYSICAL_DEVICE:
+            FUSB_INFO("Physical Class");
+            break;
+        case FUSB_IMAGE_DEVICE:
+            FUSB_INFO("Camera Class ");
+            break;
+        case FUSB_PRINTER_DEVICE:
+            FUSB_INFO("Printer Class");
+            break;
+        case FUSB_MASS_STORAGE_DEVICE:
+            FUSB_INFO("Mass Storage Class ");
+            break;
+        case FUSB_HUB_DEVICE:
+            FUSB_INFO("Hub Class ");
+            break;
+        default:
+            FUSB_ERROR("Unsupported Class %x ", class);
+            break;
     }
 
     index.category = FUSB_STANDARD_INTERFACE;
@@ -904,7 +932,7 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
     index.sub_class = intf->bInterfaceSubClass;
     index.protocol = intf->bInterfaceProtocol;
 
-    FUSB_INFO("class: 0x%x sub-class: 0x%x, protocol: 0x%x",
+    FUSB_INFO("Class: 0x%x sub-class: 0x%x, protocol: 0x%x.",
               index.class, index.sub_class, index.protocol);
 
     init_handler = FUsbFindValidInitFunc(instace, &index);
@@ -942,7 +970,9 @@ void FUsbDetachDev(FUsbHc *controller, int devno)
         controller->devices[devno]->destroy(controller->devices[devno]);
 
         if (controller->destroy_device)
+        {
             controller->destroy_device(controller, devno);
+        }
 
         FUSB_FREE(instace, controller->devices[devno]->descriptor);
         controller->devices[devno]->descriptor = NULL;
@@ -975,7 +1005,9 @@ FUsbDevAddr FUsbAttachDev(FUsbHc *controller, int hubaddress, int port, FUsbSpee
               : "Unkonwn");
     FUsbDevAddr newdev = FUsbSetAddress(controller, speed, port, hubaddress);
     if (newdev == FUSB_NO_DEV_ADDR)
+    {
         return FUSB_NO_DEV_ADDR;
+    }
 
     FUsbDev *newdev_t = controller->devices[newdev];
 
@@ -995,7 +1027,9 @@ FUsbDevAddr FUsbAttachDev(FUsbHc *controller, int hubaddress, int port, FUsbSpee
 static void FUsbGenericDestory(FUsbDev *dev)
 {
     if (FUsbGenericRemove)
+    {
         FUsbGenericRemove(dev);
+    }
 
     return;
 }
@@ -1012,11 +1046,13 @@ void FUsbGenericDevInit(FUsbDev *dev)
     dev->destroy = FUsbGenericDestory;
 
     if (FUsbGenericCreate)
+    {
         FUsbGenericCreate(dev);
+    }
 
     if (dev->data == NULL)
     {
-        FUSB_INFO("Detaching device not used by payload ");
+        FUSB_INFO("Detaching device not used by payload.");
         FUsbDetachDev(dev->controller, dev->address);
     }
 

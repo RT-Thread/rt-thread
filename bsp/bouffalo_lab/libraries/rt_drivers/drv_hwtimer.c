@@ -8,16 +8,16 @@
  * 2023-04-01       wcx1024979076    first version
  */
 
+#include "drv_hwtimer.h"
 #include <rtthread.h>
 #include <rtdevice.h>
+
+#ifdef BSP_USING_HWTIMER
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
 #define LOG_TAG "DRV.HWTIMER"
 
-#ifdef RT_USING_HWTIMER
-
-#include "drv_hwtimer.h"
 
 typedef struct _gptimer
 {
@@ -196,4 +196,4 @@ int rt_hw_hwtimer_init(void)
 }
 
 INIT_DEVICE_EXPORT(rt_hw_hwtimer_init);
-#endif /* RT_USING_HWTIMER */
+#endif /* BSP_USING_HWTIMER */

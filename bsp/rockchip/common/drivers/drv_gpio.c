@@ -210,7 +210,7 @@ static rt_err_t pin_irq_enable(struct rt_device *dev, rt_base_t pin, rt_uint32_t
     return RT_EOK;
 }
 
-static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
+static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
     RT_ASSERT(PIN_BANK(pin) < GPIO_BANK_NUM);
 
@@ -242,13 +242,13 @@ static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static void pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
+static void pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
 {
     RT_ASSERT(PIN_BANK(pin) < GPIO_BANK_NUM);
     HAL_GPIO_SetPinLevel(get_st_gpio(pin), get_st_pin(pin), value);
 }
 
-static int pin_read(struct rt_device *dev, rt_base_t pin)
+static rt_int8_t pin_read(struct rt_device *dev, rt_base_t pin)
 {
     RT_ASSERT(PIN_BANK(pin) < GPIO_BANK_NUM);
     return HAL_GPIO_GetPinLevel(get_st_gpio(pin), get_st_pin(pin));;

@@ -14,16 +14,16 @@
  * FilePath: fgmac_hw.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for manipulation of hardware registers .
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
-#ifndef  DRIVERS_ETH_FGMAC_HW_H
-#define  DRIVERS_ETH_FGMAC_HW_H
-
+#ifndef  FGMAC_HW_H
+#define  FGMAC_HW_H
 
 /* - 传入模块基地址，不能复杂结构体
 - hardware interface of device || low-level driver function prototypes
@@ -37,16 +37,16 @@
 note: 本文件不能引用fooxx.h
 */
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 /***************************** Include Files *********************************/
 
 #include "fkernel.h"
 #include "fio.h"
 #include "ftypes.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /************************** Constant Definitions *****************************/
 
 /** @name Register Map
@@ -269,7 +269,7 @@ extern "C"
 #define FGMAC_DMA_BUS_SWR           BIT(0) /* 软件复位 */
 #define FGMAC_DMA_BUS_DA            BIT(1) /* 设置 8xPBL 模式 */
 #define FGMAC_DMA_BUS_DSL_MASK      GENMASK(6, 2) /* 描述符跳跃长度 */
-#define FGMAC_DMA_BUS_ATDS          BIT(7)
+#define FGMAC_DMA_BUS_ATDS          BIT(7) /* 
 #define FGMAC_DMA_BUS_PBL_MASK      GENMASK(13, 8) /* 可编程突发长度 */
 #define FGMAC_DMA_BUS_PBL(x)        ((x) << 8)
 enum

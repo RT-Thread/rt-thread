@@ -12,13 +12,15 @@
  *
  *
  * FilePath: fpl011_hw.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:05:56
- * Description:  This files is for uart register function
+ * Description:  This file is for uart register function
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18 add file head 
  */
 
 /***************************** Include Files *********************************/
@@ -43,7 +45,7 @@
  * @param  addr contains the base address of the device.
  * @param  Byte contains the byte to be sent.
  */
-void FPl011SendByte(u32 addr, u8 byte)
+void FPl011SendByte(uintptr addr, u8 byte)
 {
 
     while (FUART_ISTRANSMITFULL(addr))
@@ -59,11 +61,11 @@ void FPl011SendByte(u32 addr, u8 byte)
  * and blocks until a byte has received.
  * @param  addr contains the base address of the device.
  */
-u8 FPl011RecvByte(u32 addr)
+u8 FPl011RecvByte(uintptr addr)
 {
     u32 recieved_byte;
 
-    while (FUART_ISRECEIVEDATA(addr))
+    while (FUART_RECEIVEDATAEMPTY(addr))
     {
         ;
     }

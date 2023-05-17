@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,24 +21,24 @@
 
 struct vega_pin
 {
-    rt_uint16_t   pin; 
-    GPIO_Type    *gpio; 
-    rt_uint32_t   gpio_pin; 
-}; 
+    rt_uint16_t   pin;
+    GPIO_Type    *gpio;
+    rt_uint32_t   gpio_pin;
+};
 
 struct vega_irq
 {
-    rt_uint16_t           enable; 
-    struct rt_pin_irq_hdr irq_info; 
+    rt_uint16_t           enable;
+    struct rt_pin_irq_hdr irq_info;
 };
 
-#define __ARRAY_LEN(array) (sizeof(array)/sizeof(array[0])) 
-#define __VEGA_PIN_DEFAULT {0, 0, 0} 
-#define __VEGA_PIN(INDEX, PORT, PIN) {INDEX, PORT, PIN} 
+#define __ARRAY_LEN(array) (sizeof(array)/sizeof(array[0]))
+#define __VEGA_PIN_DEFAULT {0, 0, 0}
+#define __VEGA_PIN(INDEX, PORT, PIN) {INDEX, PORT, PIN}
 
-static const struct vega_pin vega_pin_map[] = 
+static const struct vega_pin vega_pin_map[] =
 {
-    __VEGA_PIN_DEFAULT, 
+    __VEGA_PIN_DEFAULT,
 
     /* GPIOA */
     __VEGA_PIN(1, GPIOA, 0),
@@ -209,9 +209,9 @@ static const struct vega_pin vega_pin_map[] =
     __VEGA_PIN(158, GPIOE, 29),
     __VEGA_PIN(159, GPIOE, 30),
     __VEGA_PIN(160, GPIOE, 31),
-}; 
+};
 
-static struct vega_irq vega_irq_map[] = 
+static struct vega_irq vega_irq_map[] =
 {
     {PIN_IRQ_DISABLE, {PIN_IRQ_PIN_NONE, PIN_IRQ_MODE_RISING, RT_NULL, RT_NULL} },
     {PIN_IRQ_DISABLE, {PIN_IRQ_PIN_NONE, PIN_IRQ_MODE_RISING, RT_NULL, RT_NULL} },
@@ -245,13 +245,13 @@ static struct vega_irq vega_irq_map[] =
     {PIN_IRQ_DISABLE, {PIN_IRQ_PIN_NONE, PIN_IRQ_MODE_RISING, RT_NULL, RT_NULL} },
     {PIN_IRQ_DISABLE, {PIN_IRQ_PIN_NONE, PIN_IRQ_MODE_RISING, RT_NULL, RT_NULL} },
     {PIN_IRQ_DISABLE, {PIN_IRQ_PIN_NONE, PIN_IRQ_MODE_RISING, RT_NULL, RT_NULL} }
-}; 
+};
 
 void gpio_isr(GPIO_Type* base, rt_uint32_t gpio_pin)
 {
     if((GPIO_GetPinsInterruptFlags(base) & (1 << gpio_pin)) != 0)
     {
-        GPIO_ClearPinsInterruptFlags(base, gpio_pin); 
+        GPIO_ClearPinsInterruptFlags(base, gpio_pin);
 
         if(vega_irq_map[gpio_pin].irq_info.hdr != RT_NULL)
         {
@@ -284,19 +284,19 @@ static IRQn_Type vega_get_irqnum(GPIO_Type *gpio, rt_uint32_t gpio_pin)
     {
         irq_num = PORTE_IRQn;
     }
-    
-    return irq_num; 
+
+    return irq_num;
 }
 
-static void vega_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void vega_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     clock_ip_name_t clock;
-    gpio_pin_config_t gpio; 
-    rt_uint32_t config_value = 0; 
+    gpio_pin_config_t gpio;
+    rt_uint32_t config_value = 0;
 
     if((pin > __ARRAY_LEN(vega_pin_map)) || (pin == 0))
     {
-        return; 
+        return;
     }
 
     if (vega_pin_map[pin].gpio == GPIOA)
@@ -312,50 +312,50 @@ static void vega_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
     CLOCK_EnableClock(clock);
 
-    gpio.outputLogic = 0; 
+    gpio.outputLogic = 0;
 
     switch(mode)
     {
         case PIN_MODE_OUTPUT:
         {
             config_value = 0x1030U;
-            gpio.pinDirection = kGPIO_DigitalOutput; 
+            gpio.pinDirection = kGPIO_DigitalOutput;
         }
-        break; 
-    
+        break;
+
         case PIN_MODE_INPUT:
         {
             config_value = 0x1030U;
-            gpio.pinDirection = kGPIO_DigitalInput; 
+            gpio.pinDirection = kGPIO_DigitalInput;
         }
         break;
 
         case PIN_MODE_INPUT_PULLDOWN:
         {
             config_value = 0x1030U;
-            gpio.pinDirection = kGPIO_DigitalInput; 
+            gpio.pinDirection = kGPIO_DigitalInput;
         }
-        break; 
+        break;
 
         case PIN_MODE_INPUT_PULLUP:
         {
             config_value = 0x5030U;
-            gpio.pinDirection = kGPIO_DigitalInput; 
+            gpio.pinDirection = kGPIO_DigitalInput;
         }
         break;
 
         case PIN_MODE_OUTPUT_OD:
         {
             config_value = 0x1830U;
-            gpio.pinDirection = kGPIO_DigitalOutput; 
+            gpio.pinDirection = kGPIO_DigitalOutput;
         }
         break;
     }
 
-    GPIO_PinInit(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin, &gpio); 
+    GPIO_PinInit(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin, &gpio);
 }
 
-static int vega_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t vega_pin_read(rt_device_t dev, rt_base_t pin)
 {
     uint32_t value;
 
@@ -365,7 +365,7 @@ static int vega_pin_read(rt_device_t dev, rt_base_t pin)
     return PIN_LOW;
 }
 
-static void vega_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void vega_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     if (value == PIN_HIGH)
         GPIO_SetPinsOutput(vega_pin_map[pin].gpio, 1U << vega_pin_map[pin].gpio_pin);
@@ -373,42 +373,42 @@ static void vega_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         GPIO_ClearPinsOutput(vega_pin_map[pin].gpio, 1U << vega_pin_map[pin].gpio_pin);
 }
 
-static rt_err_t vega_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-    rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t vega_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+    rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
-    const struct vega_pin* pin_map = RT_NULL; 
-    struct vega_irq* irq_map = RT_NULL; 
+    const struct vega_pin* pin_map = RT_NULL;
+    struct vega_irq* irq_map = RT_NULL;
 
-    pin_map = &vega_pin_map[pin]; 
-    irq_map = &vega_irq_map[vega_pin_map[pin].gpio_pin]; 
-    
-    if(pin_map == RT_NULL || irq_map == RT_NULL) 
+    pin_map = &vega_pin_map[pin];
+    irq_map = &vega_irq_map[vega_pin_map[pin].gpio_pin];
+
+    if(pin_map == RT_NULL || irq_map == RT_NULL)
     {
-        return -RT_ENOSYS; 
+        return -RT_ENOSYS;
     }
 
     if(irq_map->enable == PIN_IRQ_ENABLE)
     {
-        return -RT_EBUSY; 
+        return -RT_EBUSY;
     }
-    
-    irq_map->irq_info.pin  = pin; 
-    irq_map->irq_info.hdr  = hdr; 
-    irq_map->irq_info.mode = mode; 
-    irq_map->irq_info.args = args; 
-    
+
+    irq_map->irq_info.pin  = pin;
+    irq_map->irq_info.hdr  = hdr;
+    irq_map->irq_info.mode = mode;
+    irq_map->irq_info.args = args;
+
     return RT_EOK;
 }
 
-static rt_err_t vega_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t vega_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
-    const struct vega_pin* pin_map = RT_NULL; 
-    struct vega_irq* irq_map = RT_NULL; 
+    const struct vega_pin* pin_map = RT_NULL;
+    struct vega_irq* irq_map = RT_NULL;
 
-    pin_map = &vega_pin_map[pin]; 
-    irq_map = &vega_irq_map[vega_pin_map[pin].gpio_pin]; 
-    
-    if(pin_map == RT_NULL || irq_map == RT_NULL) 
+    pin_map = &vega_pin_map[pin];
+    irq_map = &vega_irq_map[vega_pin_map[pin].gpio_pin];
+
+    if(pin_map == RT_NULL || irq_map == RT_NULL)
     {
         return -RT_ENOSYS;
     }
@@ -426,28 +426,28 @@ static rt_err_t vega_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     return RT_EOK;
 }
 
-static rt_err_t vega_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t vega_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
-    gpio_pin_config_t gpio; 
+    gpio_pin_config_t gpio;
     IRQn_Type irq_num;
-    rt_uint32_t config_value = 0x1b0a0; 
+    rt_uint32_t config_value = 0x1b0a0;
 
-    const struct vega_pin* pin_map = RT_NULL; 
-    struct vega_irq* irq_map = RT_NULL; 
-    
-    pin_map = &vega_pin_map[pin]; 
-    irq_map = &vega_irq_map[vega_pin_map[pin].gpio_pin]; 
+    const struct vega_pin* pin_map = RT_NULL;
+    struct vega_irq* irq_map = RT_NULL;
 
-    if(pin_map == RT_NULL || irq_map == RT_NULL) 
+    pin_map = &vega_pin_map[pin];
+    irq_map = &vega_irq_map[vega_pin_map[pin].gpio_pin];
+
+    if(pin_map == RT_NULL || irq_map == RT_NULL)
     {
-        return -RT_ENOSYS; 
+        return -RT_ENOSYS;
     }
 
-    if(enabled == PIN_IRQ_ENABLE) 
+    if(enabled == PIN_IRQ_ENABLE)
     {
         if(irq_map->enable == PIN_IRQ_ENABLE)
         {
-            return -RT_EBUSY; 
+            return -RT_EBUSY;
         }
 
         if(irq_map->irq_info.pin != pin)
@@ -455,40 +455,40 @@ static rt_err_t vega_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
             return -RT_EIO;
         }
 
-        irq_map->enable = PIN_IRQ_ENABLE; 
+        irq_map->enable = PIN_IRQ_ENABLE;
 
-        gpio.pinDirection     = kGPIO_DigitalInput; 
-        gpio.outputLogic   = 0; 
+        gpio.pinDirection     = kGPIO_DigitalInput;
+        gpio.outputLogic   = 0;
 
-        irq_num = vega_get_irqnum(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin); 
+        irq_num = vega_get_irqnum(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin);
 
         /* TODOL enable port */
         EnableIRQ(irq_num);
 
-        GPIO_PinInit(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin, &gpio); 
-        // GPIO_EnablePinsInterruptFlags(vega_pin_map[pin].gpio, 1U << vega_pin_map[pin].gpio_pin); 
+        GPIO_PinInit(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin, &gpio);
+        // GPIO_EnablePinsInterruptFlags(vega_pin_map[pin].gpio, 1U << vega_pin_map[pin].gpio_pin);
     }
     else if(enabled == PIN_IRQ_DISABLE)
     {
         if(irq_map->enable == PIN_IRQ_DISABLE)
         {
-            return RT_EOK; 
+            return RT_EOK;
         }
 
         irq_map->enable = PIN_IRQ_DISABLE;
-        irq_num = vega_get_irqnum(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin); 
+        irq_num = vega_get_irqnum(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin);
 
         DisableIRQ(irq_num);
     }
     else
     {
-        return -RT_EINVAL; 
+        return -RT_EINVAL;
     }
-    
+
     return RT_EOK;
 }
 
-static const struct rt_pin_ops vega_pin_ops = 
+static const struct rt_pin_ops vega_pin_ops =
 {
     vega_pin_mode,
     vega_pin_write,
@@ -502,11 +502,11 @@ static const struct rt_pin_ops vega_pin_ops =
 
 int rt_hw_pin_init(void)
 {
-    int ret = RT_EOK; 
+    int ret = RT_EOK;
 
     ret = rt_device_pin_register("pin", &vega_pin_ops, RT_NULL);
     return ret;
 }
-INIT_BOARD_EXPORT(rt_hw_pin_init); 
+INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 #endif /*RT_USING_PIN */

@@ -17,10 +17,10 @@ extern "C"
 
 /***************** Macros (Inline Functions) Definitions *********************/
 #define FIOPAD_INDEX(offset) \
-   { \
+    { \
         /* reg_off */   (offset),  \
         /* reg_bit */   (0) \
-   }
+    }
 
 /*****************************************************************************/
 /* register offset of iopad function / pull / driver strength */

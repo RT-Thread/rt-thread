@@ -58,10 +58,7 @@ static void memheap_test(void)
         {
             if (operation == 0) /* free and malloc */
             {
-                if (ptr[ptr_index])
-                {
-                    rt_memheap_free(ptr[ptr_index]);
-                }
+                rt_memheap_free(ptr[ptr_index]);
                 ptr[ptr_index] = rt_memheap_alloc(&heap1, slice_size);
             }
             else /* realloc */

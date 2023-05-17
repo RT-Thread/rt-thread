@@ -12,27 +12,27 @@
  *
  *
  * FilePath: fpcie_hw.h
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:58:22
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:58:22
+ * Description: This file is for pcie register definition.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
+#ifndef FPCIE_HW_H
+#define FPCIE_HW_H
 
-#ifndef DRIVERS_FPCIE_HW_H
-#define DRIVERS_FPCIE_HW_H
+#include "ftypes.h"
+#include "fio.h"
+#include "ferror_code.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "ftypes.h"
-#include "fio.h"
-#include "ferror_code.h"
 
 /***************************** Include Files *********************************/
 
@@ -226,8 +226,6 @@ extern "C"
 #define FPCIE_ECAM_FUN_SHIFT 12 /**< Function Number Shift Value */
 #define FPCIE_ECAM_REG_SHIFT 2  /**< Register Number Shift Value */
 #define FPCIE_ECAM_BYT_SHIFT 0  /**< Byte Offset Shift Value */
-/*@}*/
-
 
 #define FPCIE_BUS(d)        (((d) >> 16) & 0xff)
 /*
@@ -318,7 +316,7 @@ void FPcieEcamWriteConfig16bit(uintptr ecam_addr, s32 bdf, u32 offset, u16 value
 
 void FPcieEcamWriteConfig32bit(uintptr ecam_addr, s32 bdf, u32 offset, u32 value);
 
-FError FPcieSkipDevice(uintptr ecam_addr, s32 bdf) ;
+FError FPcieSkipDevice(uintptr ecam_addr, s32 bdf);
 
 #ifdef __cplusplus
 }

@@ -160,7 +160,7 @@ struct tty_struct
 
     struct tty_ldisc *ldisc;
     void *disc_data;
-    struct rt_device *driver;
+    struct rt_device *io_dev;
 
     struct rt_wqueue wait_queue;
 
@@ -185,28 +185,6 @@ enum
 
 /* tty magic number */
 #define TTY_MAGIC       0x5401
-
-/*
- * These bits are used in the flags field of the tty structure.
- *
- * So that interrupts won't be able to mess up the queues,
- * copy_to_cooked must be atomic with respect to itself, as must
- * tty->write.  Thus, you must use the inline functions set_bit() and
- * clear_bit() to make things atomic.
- */
-#define TTY_THROTTLED 0
-#define TTY_IO_ERROR 1
-#define TTY_OTHER_CLOSED 2
-#define TTY_EXCLUSIVE 3
-#define TTY_DEBUG 4
-#define TTY_DO_WRITE_WAKEUP 5
-#define TTY_PUSH 6
-#define TTY_CLOSING 7
-#define TTY_DONT_FLIP 8
-#define TTY_HW_COOK_OUT 14
-#define TTY_HW_COOK_IN 15
-#define TTY_PTY_LOCK 16
-#define TTY_NO_WRITE_SPLIT 17
 
 /*
  * These bits are used in the flags field of the tty structure.
@@ -270,14 +248,6 @@ enum
 #define TIOCPKT_NOSTOP      16
 #define TIOCPKT_DOSTOP      32
 
-/* tty driver types */
-#define TTY_DRIVER_TYPE_SYSTEM      0x0001
-#define TTY_DRIVER_TYPE_CONSOLE     0x0002
-#define TTY_DRIVER_TYPE_SERIAL      0x0003
-#define TTY_DRIVER_TYPE_PTY     0x0004
-#define TTY_DRIVER_TYPE_SCC     0x0005  /* scc driver */
-#define TTY_DRIVER_TYPE_SYSCONS     0x0006
-
 /* pty subtypes */
 #define PTY_TYPE_MASTER         0x0001
 #define PTY_TYPE_SLAVE          0x0002
@@ -295,8 +265,6 @@ enum
         typeof(b) _b = b;\
         _a < _b ? _a : _b; })
 
-void tty_set_fops(struct dfs_file_ops *fops);
-void console_set_fops(struct dfs_file_ops *fops);
 void mutex_lock(rt_mutex_t mutex);
 void mutex_unlock(rt_mutex_t mutex);
 int __tty_check_change(struct tty_struct *tty, int sig);
@@ -324,167 +292,12 @@ rt_inline void tty_wakeup_check(struct tty_struct *tty)
     rt_wqueue_wakeup(wq, (void*)POLLIN);
 }
 
-rt_inline int set_bit(int nr,int *addr)
-{
-    int mask, retval, level;
+int tty_init(struct tty_struct *tty, int type, int subtype, struct rt_device *iodev);
+const struct dfs_file_ops *tty_get_fops(void);
 
-    addr += nr >> 5;
-    mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
-    retval = (mask & *addr) != 0;
-    *addr |= mask;
-    rt_hw_interrupt_enable(level);
-    return retval;
-}
-
-rt_inline int clear_bit(int nr, int *addr)
-{
-    int mask, retval, level;
-
-    addr += nr >> 5;
-    mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
-    retval = (mask & *addr) != 0;
-    *addr &= ~mask;
-    rt_hw_interrupt_enable(level);
-    return retval;
-}
-
-rt_inline int test_bit(int nr, int *addr)
-{
-    int mask;
-
-    addr += nr >> 5;
-    mask = 1 << (nr & 0x1f);
-    return ((mask & *addr) != 0);
-}
-
-rt_inline int test_and_clear_bit(int nr, volatile void *addr)
-{
-    int mask, retval, level;
-    volatile unsigned int *a = addr;
-
-    a += nr >> 5;
-    mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
-    retval = (mask & *a) != 0;
-    *a &= ~mask;
-    rt_hw_interrupt_enable(level);
-
-    return retval;
-}
-
-rt_inline unsigned long __ffs(unsigned long word)
-{
-    int num = 0;
-
-#if BITS_PER_LONG == 64
-    if ((word & 0xffffffff) == 0)
-    {
-        num += 32;
-        word >>= 32;
-    }
-#endif
-    if ((word & 0xffff) == 0)
-    {
-        num += 16;
-        word >>= 16;
-    }
-    if ((word & 0xff) == 0)
-    {
-        num += 8;
-        word >>= 8;
-    }
-    if ((word & 0xf) == 0)
-    {
-        num += 4;
-        word >>= 4;
-    }
-    if ((word & 0x3) == 0)
-    {
-        num += 2;
-        word >>= 2;
-    }
-    if ((word & 0x1) == 0)
-    {
-        num += 1;
-    }
-
-    return num;
-}
-#define BITS_PER_LONG       32
-#define BITOP_WORD(nr)      ((nr) / BITS_PER_LONG)
-
-/*
- * Find the next set bit in a memory region.
- */
-rt_inline unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
-                unsigned long offset)
-{
-    const unsigned long *p = addr + BITOP_WORD(offset);
-    unsigned long result = offset & ~(BITS_PER_LONG-1);
-    unsigned long tmp;
-
-    if (offset >= size)
-    {
-        return size;
-    }
-
-    size -= result;
-    offset %= BITS_PER_LONG;
-    if (offset)
-    {
-        tmp = *(p++);
-        tmp &= (~0UL << offset);
-        if (size < BITS_PER_LONG)
-        {
-            goto found_first;
-        }
-
-        if (tmp)
-        {
-            goto found_middle;
-        }
-
-        size -= BITS_PER_LONG;
-        result += BITS_PER_LONG;
-    }
-
-    while (size & ~(BITS_PER_LONG-1))
-    {
-        if ((tmp = *(p++)))
-        {
-            goto found_middle;
-        }
-
-        result += BITS_PER_LONG;
-        size -= BITS_PER_LONG;
-    }
-
-    if (!size)
-    {
-        return result;
-    }
-
-    tmp = *p;
-
-found_first:
-    tmp &= (~0UL >> (BITS_PER_LONG - size));
-    if (tmp == 0UL)     /* Are any bits set? */
-    {
-        return result + size;   /* Nope. */
-    }
-
-found_middle:
-    return result + __ffs(tmp);
-}
-
-/*create by tty_ioctl.c*/
 int n_tty_ioctl_extend(struct tty_struct *tty, int cmd, void *arg);
 
-/*create by n_tty.c*/
 void console_ldata_init(struct tty_struct *tty);
 int n_tty_receive_buf(struct tty_struct *tty, char *cp, int count);
-void n_tty_init(void);
 
 #endif /*__TTY_H__*/

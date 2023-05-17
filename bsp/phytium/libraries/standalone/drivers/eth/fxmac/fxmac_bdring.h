@@ -14,23 +14,25 @@
  * FilePath: fxmac_bdring.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file ontains DMA channel related structure and constant definition
+ * as well as function prototypes.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
-#ifndef DRIVERS_ETH_F_XMAC_BDRING_H
-#define DRIVERS_ETH_F_XMAC_BDRING_H
+#ifndef FXMAC_BDRING_H
+#define FXMAC_BDRING_H
+
+#include "fxmac_bd.h"
+#include "ftypes.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-#include "fxmac_bd.h"
-#include "ftypes.h"
 
 /**************************** Type Definitions *******************************/
 

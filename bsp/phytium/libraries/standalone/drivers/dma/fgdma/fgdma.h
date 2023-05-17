@@ -14,17 +14,22 @@
  * FilePath: fgdma.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:35
- * Description:  This files is for gdma user api implementation
+ * Description:  This file is for gdma user api implementation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   huanghe    2021-11-5    init commit
- * 1.1   zhugengyu  2022-5-16    modify according to tech manual.
+ * 1.0   huanghe    2021/11/5    init commit
+ * 1.1   zhugengyu  2022/5/16    modify according to tech manual.
  */
 
-#ifndef DRIVERS_FGDMA_H
-#define DRIVERS_FGDMA_H
+#ifndef FGDMA_H
+#define FGDMA_H
+
+#include "ftypes.h"
+#include "fassert.h"
+#include "ferror_code.h"
+#include "fkernel.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -33,33 +38,15 @@ extern "C"
 
 /***************************** Include Files *********************************/
 
-#include "ftypes.h"
-#include "fassert.h"
-#include "ferror_code.h"
-#include "fkernel.h"
+
 
 /************************** Constant Definitions *****************************/
-typedef enum
-{
-    FGDMA_CHAN0_INDEX = 0,
-    FGDMA_CHAN1_INDEX = 1,
-    FGDMA_CHAN2_INDEX = 2,
-    FGDMA_CHAN3_INDEX = 3,
-    FGDMA_CHAN4_INDEX = 4,
-    FGDMA_CHAN5_INDEX = 5,
-    FGDMA_CHAN6_INDEX = 6,
-    FGDMA_CHAN7_INDEX = 7,
-    FGDMA_CHAN8_INDEX = 8,
-    FGDMA_CHAN9_INDEX = 9,
-    FGDMA_CHAN10_INDEX = 10,
-    FGDMA_CHAN11_INDEX = 11,
-    FGDMA_CHAN12_INDEX = 12,
-    FGDMA_CHAN13_INDEX = 13,
-    FGDMA_CHAN14_INDEX = 14,
-    FGDMA_CHAN15_INDEX = 15,
 
-    FGDMA_NUM_OF_CHAN
-} FGdmaChanIndex; /* 16个独立通道, 0 ~ 15 */
+/* gdma capacity mask  */
+
+#define FGDMA_IRQ1_MASK BIT(0)   /* All Gdma channel share a single interrupt */
+#define FGDMA_IRQ2_MASK BIT(1)   /* Each gdma channel owns an independent interrupt */
+#define FGDMA_TRANS_NEED_RESET_MASK BIT(2) /* Gdma needs to be reset before transmission */
 
 typedef enum
 {
@@ -127,11 +114,12 @@ typedef struct _FGdmaChan FGdmaChan;
 typedef struct
 {
     u32 instance_id;               /* GDMA控制器ID */
-    u32 irq_num;                   /* GDMA控制器中断号 */
+    u32 irq_num[FGDMA_NUM_OF_CHAN];   /* GDMA控制器中断号 */
     u32 irq_prority;               /* GDMA控制器中断优先级 */
     volatile uintptr_t base_addr;  /* GDMA控制器基地址 */
     FGdmaOperPriority rd_qos;      /* 读操作优先级 */
     FGdmaOperPriority wr_qos;      /* 写操作优先级 */
+    u32 caps;                       /* driver capacity */
 } FGdmaConfig; /* GDMA控制器配置 */
 
 typedef struct
@@ -154,6 +142,8 @@ typedef struct
 
 FASSERT_STATIC(0x20U == sizeof(FGdmaBdlDesc));
 
+typedef u32 FGdmaChanIndex;
+
 typedef struct
 {
     FGdmaChanIndex      chan_id; /* DMA通道ID */
@@ -172,10 +162,11 @@ typedef struct
 
 typedef void (*FGdmaChanEvtHandler)(FGdmaChan *const chan, void *args);
 
+
 typedef struct _FGdmaChan
 {
     FGdmaChanConfig config;     /* DMA通道配置 */
-    FGdma *gdma;                /* DMA控制器实例 */
+    FGdma *gdma;                                              /* DMA控制器实例 */
     FGdmaChanEvtHandler evt_handlers[FGDMA_CHAN_NUM_OF_EVT];  /* DMA通道事件回调函数 */
     void *evt_handler_args[FGDMA_CHAN_NUM_OF_EVT];            /* DMA通道事件回调函数入参 */
 } FGdmaChan; /* GDMA通道实例 */
@@ -192,29 +183,29 @@ typedef struct _FGdma
 /***************** Macros (Inline Functions) Definitions *********************/
 /* 获取默认的通道配置 */
 #define FGDMA_DEFAULT_DIRECT_CHAN_CONFIG(_chan_id)\
-(FGdmaChanConfig){ \
-    .chan_id = (_chan_id),\
-    .rd_align = FGDMA_BURST_SIZE_4_BYTE,\
-    .wr_align = FGDMA_BURST_SIZE_4_BYTE,\
-    .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
-    .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
-    .trans_mode = FGDMA_OPER_DIRECT,\
-    .roll_back = FALSE\
-}
+    (FGdmaChanConfig){ \
+        .chan_id = (_chan_id),\
+        .rd_align = FGDMA_BURST_SIZE_4_BYTE,\
+        .wr_align = FGDMA_BURST_SIZE_4_BYTE,\
+        .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
+        .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
+        .trans_mode = FGDMA_OPER_DIRECT,\
+        .roll_back = FALSE\
+    }
 
 #define FGDMA_DEFAULT_BDL_CHAN_CONFIG(_chan_id, _bdl_descs, _bdl_desc_num)\
-(FGdmaChanConfig){ \
-    .chan_id = (_chan_id),\
-    .rd_align = FGDMA_BURST_SIZE_4_BYTE,\
-    .wr_align = FGDMA_BURST_SIZE_4_BYTE,\
-    .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
-    .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
-    .trans_mode = FGDMA_OPER_BDL,\
-    .roll_back = FALSE,\
-    .descs = _bdl_descs,\
-    .total_desc_num = _bdl_desc_num,\
-    .valid_desc_num = 0U\
-}
+    (FGdmaChanConfig){ \
+        .chan_id = (_chan_id),\
+        .rd_align = FGDMA_BURST_SIZE_4_BYTE,\
+        .wr_align = FGDMA_BURST_SIZE_4_BYTE,\
+        .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
+        .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
+        .trans_mode = FGDMA_OPER_BDL,\
+        .roll_back = FALSE,\
+        .descs = _bdl_descs,\
+        .total_desc_num = _bdl_desc_num,\
+        .valid_desc_num = 0U\
+    }
 
 /************************** Function Prototypes ******************************/
 /* 获取GDMA控制器默认配置 */
@@ -250,6 +241,7 @@ FError FGdmaStop(FGdma *const instance_p);
 
 /* GDMA中断处理函数 */
 void FGdmaIrqHandler(s32 vector, void *args);
+void FGdmaIrqHandlerPrivateChannel(s32 vector, void *args);
 
 /* 注册GDMA通道事件回调函数 */
 void FGdmaChanRegisterEvtHandler(FGdmaChan *const chan_p, FGdmaChanEvtType evt,

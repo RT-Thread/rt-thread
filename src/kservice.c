@@ -1370,8 +1370,7 @@ rt_device_t rt_console_set_device(const char *name)
 {
 #ifdef RT_USING_SMART
     rt_device_t new_iodev = RT_NULL, old_iodev = RT_NULL;
-extern void console_init();
-    console_init(); /*add line discipline*/
+
     /* find new console device */
     new_iodev = rt_device_find(name);
     if (new_iodev != RT_NULL)
@@ -1692,13 +1691,13 @@ RTM_EXPORT(rt_malloc);
 /**
  * @brief This function will change the size of previously allocated memory block.
  *
- * @param rmem is the pointer to memory allocated by rt_malloc.
+ * @param ptr is the pointer to memory allocated by rt_malloc.
  *
  * @param newsize is the required new size.
  *
  * @return the changed memory block address.
  */
-rt_weak void *rt_realloc(void *rmem, rt_size_t newsize)
+rt_weak void *rt_realloc(void *ptr, rt_size_t newsize)
 {
     rt_base_t level;
     void *nptr;
@@ -1706,7 +1705,7 @@ rt_weak void *rt_realloc(void *rmem, rt_size_t newsize)
     /* Enter critical zone */
     level = _heap_lock();
     /* Change the size of previously allocated memory block */
-    nptr = _MEM_REALLOC(rmem, newsize);
+    nptr = _MEM_REALLOC(ptr, newsize);
     /* Exit critical zone */
     _heap_unlock(level);
     return nptr;
@@ -1745,19 +1744,19 @@ RTM_EXPORT(rt_calloc);
  * @brief This function will release the previously allocated memory block by
  *        rt_malloc. The released memory block is taken back to system heap.
  *
- * @param rmem the address of memory which will be released.
+ * @param ptr the address of memory which will be released.
  */
-rt_weak void rt_free(void *rmem)
+rt_weak void rt_free(void *ptr)
 {
     rt_base_t level;
 
     /* call 'rt_free' hook */
-    RT_OBJECT_HOOK_CALL(rt_free_hook, (rmem));
+    RT_OBJECT_HOOK_CALL(rt_free_hook, (ptr));
     /* NULL check */
-    if (rmem == RT_NULL) return;
+    if (ptr == RT_NULL) return;
     /* Enter critical zone */
     level = _heap_lock();
-    _MEM_FREE(rmem);
+    _MEM_FREE(ptr);
     /* Exit critical zone */
     _heap_unlock(level);
 }

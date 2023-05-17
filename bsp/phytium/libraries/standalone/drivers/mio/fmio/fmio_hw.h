@@ -14,26 +14,26 @@
  * FilePath: fmio_hw.h
  * Date: 2022-06-20 21:05:34
  * LastEditTime: 2022-06-20 21:05:34
- * Description:  This file is for mio
+ * Description:  This file is for mio hardware define
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 0.1.0  liushengming  2022.06.20  init
+ * 1.0  liushengming  2022/06/20  init
  */
-#ifndef DRIVERS_MIO_FMIO_HW_H
-#define DRIVERS_MIO_FMIO_HW_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef FMIO_HW_H
+#define FMIO_HW_H
 
 #include "fparameters.h"
 #include "fio.h"
 #include "fkernel.h"
 #include "fdebug.h"
 #include "ferror_code.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 
 /************************** Constant Definitions *****************************/
@@ -56,7 +56,9 @@ enum
 {
     FMIO_FUNC_SET_I2C = 0b00,
     FMIO_FUNC_SET_UART = 0b01,
-
+#if defined(TARDIGRADE)
+    FMIO_FUNC_SET_PWM = 0b10,
+#endif
     FMIO_NUM_OF_MIO_FUNC
 };
 

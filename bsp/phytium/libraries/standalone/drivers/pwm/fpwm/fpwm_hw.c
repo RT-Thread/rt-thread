@@ -14,11 +14,12 @@
  * FilePath: fpwm_hw.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * Description:  This file is for pwm register implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/15   init commit
  */
 
 #include <stdio.h>
@@ -35,7 +36,7 @@
  */
 void FPwmLsdEnable(uintptr lsd_addr, u8 pwm_id)
 {
-    FASSERT(pwm_id < FPWM_INSTANCE_NUM);
+    FASSERT(pwm_id < FPWM_NUM);
     u32 reg_val = 0;
 
     reg_val = FPWM_READ_REG32(lsd_addr, FLSD_MIO_PWM_SYN_OFFSET);
@@ -54,7 +55,7 @@ void FPwmLsdEnable(uintptr lsd_addr, u8 pwm_id)
  */
 void FPwmLsdDisable(uintptr lsd_addr, u8 pwm_id)
 {
-    FASSERT(pwm_id < FPWM_INSTANCE_NUM);
+    FASSERT(pwm_id < FPWM_NUM);
     u32 reg_val = 0;
 
     reg_val = FPWM_READ_REG32(lsd_addr, FLSD_MIO_PWM_SYN_OFFSET);
@@ -94,10 +95,10 @@ void FPwmDump(uintptr base_addr)
     printf("Off[0x%x]: FPWM_PERIOD_OFFSET = 0x%08x\r\n", pwm_base_addr + FPWM_PERIOD_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_PERIOD_OFFSET));
     printf("Off[0x%x]: FPWM_CTRL_OFFSET = 0x%08x\r\n", pwm_base_addr + FPWM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CTRL_OFFSET));
     printf("Off[0x%x]: FPWM_CCR_OFFSET  = 0x%08x\r\n", pwm_base_addr + FPWM_CCR_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CCR_OFFSET));
-
-
+	
+#if defined(FLSD_CONFIG_BASE)
     printf("Off[0x%x]: FPWM_LSD_OFFSET  = 0x%08x\r\n", FLSD_CONFIG_BASE + FLSD_MIO_PWM_SYN_OFFSET, FPWM_READ_REG32(FLSD_CONFIG_BASE, FLSD_MIO_PWM_SYN_OFFSET));
-
+#endif
     printf("\r\n");
-
+   
 }

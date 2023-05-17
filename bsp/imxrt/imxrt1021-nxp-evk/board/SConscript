@@ -1,4 +1,5 @@
-
+Import('RTT_ROOT')
+Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
@@ -8,6 +9,7 @@ src = Split("""
 board.c
 MCUX_Config/clock_config.c
 MCUX_Config/pin_mux.c
+MCUX_Config/dcd.c
 """)
 
 CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']

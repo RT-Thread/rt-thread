@@ -9,7 +9,10 @@
 #endif /* RT_TTY_DEBUG */
 #include <rtdbg.h>
 
-static struct tty_ldisc_ops *tty_ldiscs[NR_LDISCS];
+extern struct tty_ldisc_ops n_tty_ops;
+static struct tty_ldisc_ops *tty_ldiscs[NR_LDISCS] = {
+    &n_tty_ops, /* N_TTY = 0 */
+};
 
 static struct tty_ldisc_ops *get_ldops(int disc)
 {
@@ -33,6 +36,7 @@ static void put_ldops(struct tty_ldisc_ops *ldops)
     ldops->refcount--;
     rt_hw_interrupt_enable(level);
 }
+
 static struct tty_ldisc *tty_ldisc_get(struct tty_struct *tty, int disc)
 {
     struct tty_ldisc *ld = RT_NULL;
@@ -70,13 +74,11 @@ static struct tty_ldisc *tty_ldisc_get(struct tty_struct *tty, int disc)
  */
 static void tty_ldisc_put(struct tty_ldisc *ld)
 {
-    if (ld == RT_NULL)
+    if (ld)
     {
-        return;
+        put_ldops(ld->ops);
+        rt_free(ld);
     }
-
-    put_ldops(ld->ops);
-    rt_free(ld);
 }
 
 /**
@@ -87,10 +89,9 @@ static void tty_ldisc_put(struct tty_ldisc *ld)
  *  A helper close method. Also a convenient debugging and check
  *  point.
  */
-
 static void tty_ldisc_close(struct tty_struct *tty, struct tty_ldisc *ld)
 {
-    if (ld->ops->close)
+    if (ld && ld->ops->close)
     {
         ld->ops->close(tty);
     }
@@ -104,18 +105,16 @@ static void tty_ldisc_close(struct tty_struct *tty, struct tty_ldisc *ld)
  */
 void tty_ldisc_kill(struct tty_struct *tty)
 {
-    if (!tty->ldisc)
+    if (tty && tty->ldisc)
     {
-        return;
+        /*
+        * Now kill off the ldisc
+        */
+        tty_ldisc_close(tty, tty->ldisc);
+        tty_ldisc_put(tty->ldisc);
+        /* Force an oops if we mess this up */
+        tty->ldisc = NULL;
     }
-
-    /*
-     * Now kill off the ldisc
-     */
-    tty_ldisc_close(tty, tty->ldisc);
-    tty_ldisc_put(tty->ldisc);
-    /* Force an oops if we mess this up */
-    tty->ldisc = NULL;
 }
 
 int tty_register_ldisc(int disc, struct tty_ldisc_ops *new_ldisc)
@@ -154,7 +153,6 @@ void tty_ldisc_release(struct tty_struct *tty)
      * Shutdown this line discipline. As this is the final close,
      * it does not race with the set_ldisc code path.
      */
-
     level = rt_hw_interrupt_disable();
     tty_ldisc_kill(tty);
     if (o_tty)
@@ -162,7 +160,6 @@ void tty_ldisc_release(struct tty_struct *tty)
         tty_ldisc_kill(o_tty);
     }
     rt_hw_interrupt_enable(level);
-
 }
 
 /**
@@ -175,7 +172,8 @@ void tty_ldisc_release(struct tty_struct *tty)
 
 void tty_ldisc_init(struct tty_struct *tty)
 {
-    struct tty_ldisc *ld = tty_ldisc_get(tty, N_TTY);
-    RT_ASSERT(ld != RT_NULL);
-    tty->ldisc = ld;
+    if (tty)
+    {
+        tty->ldisc = tty_ldisc_get(tty, N_TTY);
+    }
 }
