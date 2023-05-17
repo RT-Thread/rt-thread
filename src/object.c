@@ -647,7 +647,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
  *
  * @note this function shall not be invoked in interrupt status
  */
-rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_size_t name_size)
+rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_uint8_t name_size)
 {
     rt_err_t result = -RT_EINVAL;
     if ((object != RT_NULL) && (name != RT_NULL) && (name_size != 0U))
