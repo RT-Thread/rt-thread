@@ -636,8 +636,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 }
 
 /**
- * @brief This function will return the name of the specified object
- *        container
+ * @brief This function will return the name of the specified object container
  *
  * @param object    the specified object to be get name
  * @param name      buffer to store the object name string
