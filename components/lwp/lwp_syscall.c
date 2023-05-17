@@ -4833,6 +4833,7 @@ sysret_t sys_mount(char *source, char *target,
     size_t len_filesystemtype, copy_len_filesystemtype;
     int err_source, err_target, err_filesystemtype;
     char *tmp = NULL;
+    int ret = 0;
 
     len_source = lwp_user_strlen(source, &err_source);
     len_target = lwp_user_strlen(target, &err_target);
@@ -4847,7 +4848,7 @@ sysret_t sys_mount(char *source, char *target,
     {
         return -ENOMEM;
     }
-    copy_target = copy_source + len_source +1;
+    copy_target = copy_source + len_source + 1;
     copy_filesystemtype = copy_target + len_target + 1;
 
     copy_len_source = lwp_get_from_user(copy_source, source, len_source);
@@ -4857,17 +4858,19 @@ sysret_t sys_mount(char *source, char *target,
     copy_len_filesystemtype = lwp_get_from_user(copy_filesystemtype, filesystemtype, len_filesystemtype);
     copy_filesystemtype[copy_len_filesystemtype] = '\0';
 
-
-    if(strcmp(copy_filesystemtype, "nfs") == 0)
+    if (strcmp(copy_filesystemtype, "nfs") == 0)
     {
         tmp = copy_source;
         copy_source = NULL;
     }
-    if(strcmp(copy_filesystemtype, "tmp") == 0)
+    if (strcmp(copy_filesystemtype, "tmp") == 0)
     {
         copy_source = NULL;
     }
-    return dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
+    ret = dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
+    rt_free(copy_source);
+
+    return ret;
 }
 
 sysret_t sys_umount2(char *__special_file, int __flags)
@@ -4875,6 +4878,7 @@ sysret_t sys_umount2(char *__special_file, int __flags)
     char *copy_special_file;
     size_t len_special_file, copy_len_special_file;
     int err_special_file;
+    int ret = 0;
 
     len_special_file = lwp_user_strlen(__special_file, &err_special_file);
     if (err_special_file)
@@ -4891,7 +4895,10 @@ sysret_t sys_umount2(char *__special_file, int __flags)
     copy_len_special_file = lwp_get_from_user(copy_special_file, __special_file, len_special_file);
     copy_special_file[copy_len_special_file] = '\0';
 
-    return dfs_unmount(copy_special_file);
+    ret = dfs_unmount(copy_special_file);
+    rt_free(copy_special_file);
+
+    return ret;
 }
 
 const static struct rt_syscall_def func_table[] =
