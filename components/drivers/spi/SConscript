@@ -29,7 +29,7 @@ if GetDepend('RT_USING_SFUD'):
     if GetDepend('RT_SFUD_USING_SFDP'):
         src_device += ['sfud/src/sfud_sfdp.c']
 
-    if rtconfig.PLATFORM in ['gcc', 'armclang']:
+    if rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm']:
         LOCAL_CFLAGS += ' -std=c99'
     elif rtconfig.PLATFORM in ['armcc']:
         LOCAL_CFLAGS += ' --c99'
