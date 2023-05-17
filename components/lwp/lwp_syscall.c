@@ -4821,25 +4821,77 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
     return ret;
 }
 
-sysret_t sys_mount(const char *source, const char *target,
-        const char *filesystemtype,
-        unsigned long mountflags, const void *data)
+sysret_t sys_mount(char *source, char *target,
+        char *filesystemtype,
+        unsigned long mountflags, void *data)
 {
-    if(strcmp(filesystemtype, "tmp") == 0)
+    char *copy_source;
+    char *copy_target;
+    char *copy_filesystemtype;
+    size_t len_source, copy_len_source;
+    size_t len_target, copy_len_target;
+    size_t len_filesystemtype, copy_len_filesystemtype;
+    int err_source, err_target, err_filesystemtype;
+    char *tmp = NULL;
+
+    len_source = lwp_user_strlen(source, &err_source);
+    len_target = lwp_user_strlen(target, &err_target);
+    len_filesystemtype = lwp_user_strlen(filesystemtype, &err_filesystemtype);
+    if (err_source || err_target || err_filesystemtype)
     {
-        return dfs_mount(NULL, target, filesystemtype, 0, 0);
-    }
-    if(strcmp(filesystemtype, "ext") == 0)
-    {
-        return dfs_mount(source, target, filesystemtype, 0, 0);
+        return -EFAULT;
     }
 
-    return -1;
+    copy_source = (char*)rt_malloc(len_source + 1 + len_target + 1 + len_filesystemtype + 1);
+    if (!copy_source)
+    {
+        return -ENOMEM;
+    }
+    copy_target = copy_source + len_source +1;
+    copy_filesystemtype = copy_target + len_target + 1;
+
+    copy_len_source = lwp_get_from_user(copy_source, source, len_source);
+    copy_source[copy_len_source] = '\0';
+    copy_len_target = lwp_get_from_user(copy_target, target, len_target);
+    copy_target[copy_len_target] = '\0';
+    copy_len_filesystemtype = lwp_get_from_user(copy_filesystemtype, filesystemtype, len_filesystemtype);
+    copy_filesystemtype[copy_len_filesystemtype] = '\0';
+
+
+    if(strcmp(copy_filesystemtype, "nfs") == 0)
+    {
+        tmp = copy_source;
+        copy_source = NULL;
+    }
+    if(strcmp(copy_filesystemtype, "tmp") == 0)
+    {
+        copy_source = NULL;
+    }
+    return dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
 }
 
-sysret_t sys_umount2(const char *__special_file, int __flags)
+sysret_t sys_umount2(char *__special_file, int __flags)
 {
-    return dfs_unmount(__special_file);
+    char *copy_special_file;
+    size_t len_special_file, copy_len_special_file;
+    int err_special_file;
+
+    len_special_file = lwp_user_strlen(__special_file, &err_special_file);
+    if (err_special_file)
+    {
+        return -EFAULT;
+    }
+
+    copy_special_file = (char*)rt_malloc(len_special_file + 1);
+    if (!copy_special_file)
+    {
+        return -ENOMEM;
+    }
+
+    copy_len_special_file = lwp_get_from_user(copy_special_file, __special_file, len_special_file);
+    copy_special_file[copy_len_special_file] = '\0';
+
+    return dfs_unmount(copy_special_file);
 }
 
 const static struct rt_syscall_def func_table[] =
