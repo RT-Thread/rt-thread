@@ -4821,6 +4821,86 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
     return ret;
 }
 
+sysret_t sys_mount(char *source, char *target,
+        char *filesystemtype,
+        unsigned long mountflags, void *data)
+{
+    char *copy_source;
+    char *copy_target;
+    char *copy_filesystemtype;
+    size_t len_source, copy_len_source;
+    size_t len_target, copy_len_target;
+    size_t len_filesystemtype, copy_len_filesystemtype;
+    int err_source, err_target, err_filesystemtype;
+    char *tmp = NULL;
+    int ret = 0;
+
+    len_source = lwp_user_strlen(source, &err_source);
+    len_target = lwp_user_strlen(target, &err_target);
+    len_filesystemtype = lwp_user_strlen(filesystemtype, &err_filesystemtype);
+    if (err_source || err_target || err_filesystemtype)
+    {
+        return -EFAULT;
+    }
+
+    copy_source = (char*)rt_malloc(len_source + 1 + len_target + 1 + len_filesystemtype + 1);
+    if (!copy_source)
+    {
+        return -ENOMEM;
+    }
+    copy_target = copy_source + len_source + 1;
+    copy_filesystemtype = copy_target + len_target + 1;
+
+    copy_len_source = lwp_get_from_user(copy_source, source, len_source);
+    copy_source[copy_len_source] = '\0';
+    copy_len_target = lwp_get_from_user(copy_target, target, len_target);
+    copy_target[copy_len_target] = '\0';
+    copy_len_filesystemtype = lwp_get_from_user(copy_filesystemtype, filesystemtype, len_filesystemtype);
+    copy_filesystemtype[copy_len_filesystemtype] = '\0';
+
+    if (strcmp(copy_filesystemtype, "nfs") == 0)
+    {
+        tmp = copy_source;
+        copy_source = NULL;
+    }
+    if (strcmp(copy_filesystemtype, "tmp") == 0)
+    {
+        copy_source = NULL;
+    }
+    ret = dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
+    rt_free(copy_source);
+
+    return ret;
+}
+
+sysret_t sys_umount2(char *__special_file, int __flags)
+{
+    char *copy_special_file;
+    size_t len_special_file, copy_len_special_file;
+    int err_special_file;
+    int ret = 0;
+
+    len_special_file = lwp_user_strlen(__special_file, &err_special_file);
+    if (err_special_file)
+    {
+        return -EFAULT;
+    }
+
+    copy_special_file = (char*)rt_malloc(len_special_file + 1);
+    if (!copy_special_file)
+    {
+        return -ENOMEM;
+    }
+
+    copy_len_special_file = lwp_get_from_user(copy_special_file, __special_file, len_special_file);
+    copy_special_file[copy_len_special_file] = '\0';
+
+    ret = dfs_unmount(copy_special_file);
+    rt_free(copy_special_file);
+
+    return ret;
+}
+
 const static struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -5037,6 +5117,8 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_fstatfs),
     SYSCALL_SIGN(sys_fstatfs64),
     SYSCALL_SIGN(sys_openat),                           /* 175 */
+    SYSCALL_SIGN(sys_mount),
+    SYSCALL_SIGN(sys_umount2),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
