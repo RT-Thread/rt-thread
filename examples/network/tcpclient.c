@@ -72,7 +72,7 @@ static void tcpclient(void *arg)
     /* 创建一个socket，类型是SOCKET_STREAM，TCP类型 */
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        /* Failed on creatinf socket */
+        /* Failed on creating socket */
         /* 创建socket失败 */
         LOG_E("Create socket error");
         goto __exit;
@@ -87,7 +87,7 @@ static void tcpclient(void *arg)
     /* 连接到服务端 */
     if (connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
     {
-        /*Failed on connecting to server*/
+        /* Failed on connecting to server */
         /* 连接失败 */
         LOG_E("Connect fail!");
         goto __exit;
@@ -119,14 +119,14 @@ static void tcpclient(void *arg)
         }
         else if (bytes_received == 0)
         {
-            /* Print warning message when recv function return 0 */
+            /* Print warning message when recv function returns 0 */
             /* 打印recv函数返回值为0的警告信息 */
-            LOG_W("Received warning, recv function return 0.");
+            LOG_W("Received warning, recv function returns 0.");
             continue;
         }
         else
         {
-            /* Receive data sucessfully and append '\0' at the end of message */
+            /* Receive data successfully and append '\0' at the end of message */
             /* 有接收到数据，把末端清零 */
             recv_data[bytes_received] = '\0';
 
@@ -156,9 +156,9 @@ static void tcpclient(void *arg)
         }
         else if (ret == 0)
         {
-            /* Print warning message when send function return 0 */
+            /* Print warning message when send function returns 0 */
             /* 打印send函数返回值为0的警告信息 */
-            LOG_W("Send warning, send function return 0.");
+            LOG_W("Send warning, send function returns 0.");
         }
     }
 
