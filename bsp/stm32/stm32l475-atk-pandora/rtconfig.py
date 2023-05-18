@@ -192,6 +192,7 @@ elif PLATFORM == 'llvm-arm':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
     DEVICE = ' --config armv7em_hard_fpv4_sp_d16.cfg'
+    DEVICE += ' -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
     CFLAGS += ' -mfloat-abi=hard -march=armv7em -mfpu=fpv4-sp-d16'
     AFLAGS = ' -c' + DEVICE + ' -Wa,-mimplicit-it=thumb ' ## -x assembler-with-cpp
