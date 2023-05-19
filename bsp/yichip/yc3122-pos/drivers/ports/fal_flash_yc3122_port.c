@@ -22,9 +22,9 @@
 #define FLASH_PAGE_SIZE 256
 // #define LOGOPEN
 #ifdef LOGOPEN
-#define YC3122_FLASH_DEBUG LOG_D
+    #define YC3122_FLASH_DEBUG LOG_D
 #else
-#define YC3122_FLASH_DEBUG(...)
+    #define YC3122_FLASH_DEBUG(...)
 #endif
 static int read(long offset, uint8_t *buf, size_t size)
 {
@@ -78,11 +78,11 @@ static int erase(long offset, size_t size)
 }
 
 const struct fal_flash_dev yc3122_onchip_flash =
-    {
-        "onchip_flash",
-        FLASH_START_ADRESS,
-        FLASH_SIZE,
-        FLASH_BLOCK_SIZE,
-        {NULL, read, write, erase},
-        8,
+{
+    "onchip_flash",
+    FLASH_START_ADRESS,
+    FLASH_SIZE,
+    FLASH_BLOCK_SIZE,
+    {NULL, read, write, erase},
+    8,
 };
