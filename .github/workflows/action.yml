@@ -3,6 +3,14 @@ name: RT-Thread BSP build check
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  workflow_dispatch:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
+    inputs:
+      bsp_options:
+        description: 'Optional switches to pass to xpm install'
+        required: false
+        type: string
+        default: 'qemu-vexpress-a9'
   # Runs at 16:00 UTC (BeiJing 00:00) on the 1st of every month
   schedule:
     - cron:  '0 16 1 * *'
@@ -28,7 +36,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: ${{ matrix.legs.RTT_BSP }}
-    if: github.repository_owner == 'RT-Thread'
+    #if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix:
@@ -361,7 +369,7 @@ jobs:
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
 
       - name: Bsp Scons Compile
-        if: ${{ success() }}
+        if: ${{ matrix.legs.SUB_RTT_BSP == ${{ github.event.inputs.xpm_install_options } }}
         shell: bash
         env:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
