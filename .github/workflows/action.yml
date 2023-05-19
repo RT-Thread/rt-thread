@@ -69,6 +69,7 @@ jobs:
                 #- "tae32f5300"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "sam7x"   
+                - "hk32/hk32f030c8-mini"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
