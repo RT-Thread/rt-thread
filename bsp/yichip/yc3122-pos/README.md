@@ -18,9 +18,9 @@ YC3122-pos 开发板由易兆微提供，可满足基础测试及高端开发需
 
 YC3122-pos
 
-![YC3122-pos](figures/YC3122-pos.jpg "YC3122-pos")
+![YC3122-pos](figures/YC3122-pos.png)
 
-YC3121-pos 开发板板载资源如下：
+YC3122-pos 开发板板载资源如下：
 
 - MCU：YC3122  ARM 32-bit Cortex-M0和RISC V 双核处理器，RISC V支持浮点算法主频 192MHz，512KB/1MB/4MB FLASH ，320KB SRAM
 - 常用外设

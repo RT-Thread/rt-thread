@@ -24,9 +24,9 @@
 #include <fal.h>
 static void elmfs_sample(void)
 {
-       /* 初始化 fal 功能 */
-    fal_init(); 
-    
+    /* 初始化 fal 功能 */
+    fal_init();
+
     /* 在 spi flash 中名为 "filesystem" 的分区上创建一个块设备 */
     struct rt_device *flash_dev = fal_blk_device_create(FS_PARTITION_NAME);
     if (flash_dev == NULL)
@@ -37,7 +37,7 @@ static void elmfs_sample(void)
     {
         LOG_I("Create a block device on the %s partition of flash successful...", FS_PARTITION_NAME);
     }
-    if(dfs_mkfs("elm",flash_dev->parent.name) == 0)
+    if (dfs_mkfs("elm", flash_dev->parent.name) == 0)
     {
         LOG_I("dfs_mkfs ok!\n");
     }
@@ -45,8 +45,8 @@ static void elmfs_sample(void)
     {
         LOG_E("dfs_mkfs err!\n");
     }
-    
-        /* 挂载 spi flash 中名为 "filesystem" 的分区上的文件系统 */
+
+    /* 挂载 spi flash 中名为 "filesystem" 的分区上的文件系统 */
     if (dfs_mount(flash_dev->parent.name, "/", "elm", 0, 0) == 0)
     {
         LOG_I("Filesystem initialized!");
@@ -57,45 +57,48 @@ static void elmfs_sample(void)
         LOG_D("You should create a filesystem on the block device first!");
     }
     struct statfs elm_stat;
-    if(statfs("/", &elm_stat)==0)
+    if (statfs("/", &elm_stat) == 0)
     {
-        LOG_I("elmfat filesystem block size:0x%x,total blocks:0x%x,free blocks:0x%x\n",elm_stat.f_bsize,elm_stat.f_blocks,elm_stat.f_bfree);
+        LOG_I("elmfat filesystem block size:0x%x,total blocks:0x%x,free blocks:0x%x\n", elm_stat.f_bsize, elm_stat.f_blocks, elm_stat.f_bfree);
     }
-    
-    if(mkdir("/user",0x777) == 0)
+
+    if (mkdir("/user", 0x777) == 0)
     {
         LOG_I("make a directory: '/user'.\n");
     }
-    
+
     LOG_I("open file\n");
-    int fd = open("/user/test.txt",O_WRONLY|O_CREAT);
+    int fd = open("/user/test.txt", O_WRONLY | O_CREAT);
     LOG_I("open file ok\n");
-    char str[] = "elmfat mount";       
-    if(fd>=0)
+    char str[] = "elmfat mount";
+    if (fd >= 0)
     {
         LOG_I("write file\n");
-        if(write(fd,str,sizeof(str)) == sizeof(str))
+        if (write(fd, str, sizeof(str)) == sizeof(str))
             LOG_I("write data done.\n");
         close(fd);
     }
     int size;
     char buf[20];
-    fd = open("/user/test.txt",O_RDONLY);
-    if(fd>=0)
+    fd = open("/user/test.txt", O_RDONLY);
+    if (fd >= 0)
     {
         LOG_I("read file\n");
-        size = read(fd,buf,sizeof(buf));
+        size = read(fd, buf, sizeof(buf));
         close(fd);
-        if(size == sizeof(str))
+        if (size == sizeof(str))
         {
-            LOG_I("Read data from file test.txt(size:%d):%s\n",size,buf);
+            LOG_I("Read data from file test.txt(size:%d):%s\n", size, buf);
         }
     }
-    else{ LOG_E("open err\n"); }
-   
-    if(statfs("/", &elm_stat)==0)
+    else
     {
-        LOG_I("elmfat filesystem block size:0x%x,total blocks:0x%x,free blocks:0x%x\n",elm_stat.f_bsize,elm_stat.f_blocks,elm_stat.f_bfree);
+        LOG_E("open err\n");
+    }
+
+    if (statfs("/", &elm_stat) == 0)
+    {
+        LOG_I("elmfat filesystem block size:0x%x,total blocks:0x%x,free blocks:0x%x\n", elm_stat.f_bsize, elm_stat.f_blocks, elm_stat.f_bfree);
     }
 }
 #endif

@@ -162,15 +162,6 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define PKG_USING_LITTLEFS
-#define PKG_USING_LITTLEFS_LATEST_VERSION
-#define LFS_READ_SIZE 256
-#define LFS_PROG_SIZE 256
-#define LFS_BLOCK_SIZE 65536
-#define LFS_CACHE_SIZE 256
-#define LFS_BLOCK_CYCLES 100
-#define LFS_THREADSAFE
-#define LFS_LOOKAHEAD_MAX 128
 
 /* peripheral libraries and drivers */
 
