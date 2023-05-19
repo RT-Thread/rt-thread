@@ -13,7 +13,7 @@
 #include <rtdbg.h>
 
 /* defined the LED pin: PA12 */
-#define LED_PIN    (51)
+#define LED_PIN (51)
 #define FS_PARTITION_NAME "filesystem"
 
 #ifdef BSP_USING_INTER_FLASH
@@ -24,10 +24,8 @@
 #include <fal.h>
 static void elmfs_sample(void)
 {
-    /* 初始化 fal 功能 */
     fal_init();
 
-    /* 在 spi flash 中名为 "filesystem" 的分区上创建一个块设备 */
     struct rt_device *flash_dev = fal_blk_device_create(FS_PARTITION_NAME);
     if (flash_dev == NULL)
     {
@@ -46,7 +44,6 @@ static void elmfs_sample(void)
         LOG_E("dfs_mkfs err!\n");
     }
 
-    /* 挂载 spi flash 中名为 "filesystem" 的分区上的文件系统 */
     if (dfs_mount(flash_dev->parent.name, "/", "elm", 0, 0) == 0)
     {
         LOG_I("Filesystem initialized!");
