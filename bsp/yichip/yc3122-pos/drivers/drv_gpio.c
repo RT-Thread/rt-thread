@@ -125,7 +125,7 @@ static void yc_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 static rt_int8_t yc_pin_read(rt_device_t dev, rt_base_t pin)
 {
     //return GPIO_IN(pin / 16) & (1 << (pin % 16)) ? 1 : 0;
-    return GPIO_ReadInputDataBit((GPIO_TypeDef)(pin/16),(GPIO_Pin_TypeDef)(1 << (pin % 16)));
+    return GPIO_ReadInputDataBit((GPIO_TypeDef)(pin / 16), (GPIO_Pin_TypeDef)(1 << (pin % 16)));
 }
 
 static rt_err_t yc_pin_attach_irq(struct rt_device *device,
@@ -187,7 +187,7 @@ static rt_err_t yc_pin_irq_enable(struct rt_device *device,
     }
 
     index = pin;
-    
+
     if (enabled == PIN_IRQ_ENABLE)
     {
         switch (pin_irq_hdr_tab[index].mode)
@@ -216,13 +216,13 @@ static rt_err_t yc_pin_irq_enable(struct rt_device *device,
 
         level = rt_hw_interrupt_disable();
         NVIC_EnableIRQ(GPIO_IRQn);
-        EXTI_LineConfig((EXTI_LineTypeDef)(pin / 16),(EXTI_PIN_TypeDef)(1 << (pin % 16)),(EXTI_TriggerTypeDef)TrigMode);
+        EXTI_LineConfig((EXTI_LineTypeDef)(pin / 16), (EXTI_PIN_TypeDef)(1 << (pin % 16)), (EXTI_TriggerTypeDef)TrigMode);
         rt_hw_interrupt_enable(level);
     }
     else if (enabled == PIN_IRQ_DISABLE)
     {
         NVIC_DisableIRQ(GPIO_IRQn);
-        MGPIO->INTR.reg[pin/16] &= ~(1 << (pin % 16));
+        MGPIO->INTR.reg[pin / 16] &= ~(1 << (pin % 16));
     }
     else
     {

@@ -19,7 +19,7 @@ struct yc3122_uart
 };
 
 static rt_err_t yc3122_uart_configure(struct rt_serial_device *serial,
-                                struct serial_configure *cfg)
+                                      struct serial_configure *cfg)
 {
     struct yc3122_uart *uart;
     UART_InitTypeDef UART_initStruct;
@@ -67,7 +67,7 @@ static rt_err_t yc3122_uart_configure(struct rt_serial_device *serial,
 }
 
 static rt_err_t yc3122_uart_control(struct rt_serial_device *serial,
-                              int cmd, void *arg)
+                                    int cmd, void *arg)
 {
     struct yc3122_uart *uart;
     RT_ASSERT(serial != RT_NULL);

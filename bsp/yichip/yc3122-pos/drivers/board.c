@@ -31,7 +31,7 @@ void SysTick_Handler(void)
 }
 
 #ifdef RT_USING_SERIAL
-extern int rt_hw_uart_init(void);
+    extern int rt_hw_uart_init(void);
 #endif
 
 void rt_hw_board_init()
