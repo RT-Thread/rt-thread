@@ -38,7 +38,7 @@ jobs:
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
                 - "airm2m/air32f103"
-                - "airm2m/air105"
+                #- "airm2m/air105"
                 - "acm32/acm32f0x0-nucleo"
                 - "CME_M7"
                 - "apollo2"
