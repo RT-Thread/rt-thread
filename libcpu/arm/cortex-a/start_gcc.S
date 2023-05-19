@@ -210,10 +210,9 @@ _rtthread_startup:
 
 .weak rt_asm_cpu_id 
 rt_asm_cpu_id:
-    mov r9, lr
     mrc p15, 0, r0, c0, c0, 5
     and r0, r0, #0xf
-    mov lr, r9
+    mov pc, lr
 
 stack_setup:
 
