@@ -1,4 +1,4 @@
-name: RT-Thread
+name: RT-Thread BSP build check
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -38,6 +38,7 @@ jobs:
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
                 - "airm2m/air32f103"
+                #- "airm2m/air105"
                 - "acm32/acm32f0x0-nucleo"
                 - "CME_M7"
                 - "apollo2"
@@ -68,6 +69,7 @@ jobs:
                 #- "tae32f5300"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "sam7x"   
+                - "hk32/hk32f030c8-mini"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -256,6 +258,8 @@ jobs:
                 - "microchip/same54"
                 - "microchip/same70"
                 - "smartfusion2"
+                - "maxim/max32660-evsys"
+                - "efm32"
          -  RTT_BSP: "mips" 
             RTT_TOOL_CHAIN: "sourcery-mips"
             SUB_RTT_BSP:  
