@@ -33,6 +33,7 @@ rt_weak void _fini()
 rt_weak void *__dso_handle = 0;
 
 #endif
+
 /**
  * @brief   This function initializes the C++ runtime environment for ARM and GCC compilers.
  *
