@@ -77,6 +77,10 @@ static void list_find_init(list_get_next_t *p, rt_uint8_t type, rt_list_t **arra
     struct rt_object_information *info;
     rt_list_t *list;
 
+    if (!array || nr < 0) {
+        // Input validation: check for null array pointer and negative nr
+        return;
+    }
     info = rt_object_get_information((enum rt_object_class_type)type);
     list = &info->object_list;
 
@@ -178,6 +182,9 @@ long list_thread(void)
     do
     {
         next = list_get_next(next, &find_arg);
+        if (next == RT_NULL) {
+                                 break;
+                             }
         {
             int i;
             for (i = 0; i < find_arg.nr_out; i++)
@@ -222,7 +229,7 @@ long list_thread(void)
                     ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size - 1;
                     while (*ptr == '#')ptr --;
 
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
+                    rt_kprintf(" 0x%08lx 0x%08lx    %02d%%   0x%08lx %03d\n",
                                ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
                                thread->stack_size,
                                ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
@@ -231,7 +238,7 @@ long list_thread(void)
 #else
                     ptr = (rt_uint8_t *)thread->stack_addr;
                     while (*ptr == '#') ptr ++;
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s\n",
+                    rt_kprintf(" 0x%08lx 0x%08lx    %02d%%   0x%08lx %s\n",
                                thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
                                thread->stack_size,
                                (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
