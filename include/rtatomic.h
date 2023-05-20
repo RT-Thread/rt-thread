@@ -11,9 +11,7 @@
 #ifndef __RT_ATOMIC_H__
 #define __RT_ATOMIC_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#if !defined(__cplusplus)
 
 rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr);
 void rt_hw_atomic_store(volatile rt_atomic_t *ptr, rt_atomic_t val);
@@ -208,8 +206,6 @@ rt_inline rt_atomic_t rt_soft_atomic_compare_exchange_strong(volatile rt_atomic_
 }
 #endif /* RT_USING_STDC_ATOMIC */
 
-#ifdef __cplusplus
-}
-#endif
+#endif /* __cplusplus */
 
 #endif /* __RT_ATOMIC_H__ */
