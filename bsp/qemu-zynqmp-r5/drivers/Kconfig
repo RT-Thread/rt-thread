@@ -1,0 +1,19 @@
+menu "Hardware Drivers Config"
+
+	config SOC_ZYNQMP_R5
+		bool
+    	select RT_USING_CACHE
+    	select RT_USING_COMPONENTS_INIT
+    	select RT_USING_USER_MAIN
+    	default y
+
+    menu "On-Chip Peripheral Drivers"
+
+		config BSP_USING_UART0
+		bool "Enable UART0"
+		default y
+
+	endmenu
+
+endmenu
+
