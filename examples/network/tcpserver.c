@@ -106,7 +106,7 @@ static void tcpserv(void *arg)
         /* Accept a request from client and the function is blocking */
         /* 接受一个客户端连接socket的请求，这个函数调用是阻塞式的 */
         connected = accept(sock, (struct sockaddr *)&client_addr, &sin_size);
-        /* Return the socket connected sucessfully */
+        /* Return the socket connected successfully */
         /* 返回的是连接成功的socket */
         if (connected < 0)
         {
@@ -139,13 +139,13 @@ static void tcpserv(void *arg)
             }
             else if (bytes_received == 0)
             {
-                /* Print warning message when recv function return 0 */
+                /* Print warning message when recv function returns 0 */
                 /* 打印recv函数返回值为0的警告信息 */
-                LOG_W("Received warning, recv function return 0.");
+                LOG_W("Received warning, recv function returns 0.");
                 continue;
             }
             else
-            {   /* Receive data sucessfully and append '\0' at the end of message */
+            {   /* Receive data successfully and append '\0' at the end of message */
                 /* 有接收到数据，把末端清零 */
                 recv_data[bytes_received] = '\0';
                 if (strcmp(recv_data, "q") == 0 || strcmp(recv_data, "Q") == 0)
@@ -184,9 +184,9 @@ static void tcpserv(void *arg)
             }
             else if (ret == 0)
             {
-                /* Print warning message when send function return 0 */
+                /* Print warning message when send function returns 0 */
                 /* 打印send函数返回值为0的警告信息 */
-                LOG_W("Send warning, send function return 0.");
+                LOG_W("Send warning, send function returns 0.");
             }
         }
     }

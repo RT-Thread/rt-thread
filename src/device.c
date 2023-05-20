@@ -233,15 +233,19 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
         return -RT_EBUSY;
     }
 
-    /* call device_open interface */
-    if (device_open != RT_NULL)
+    /* device is not opened or opened by other oflag, call device_open interface */
+    if (!(dev->open_flag & RT_DEVICE_OFLAG_OPEN) ||
+         ((dev->open_flag & RT_DEVICE_OFLAG_MASK) != (oflag & RT_DEVICE_OFLAG_MASK)))
     {
-        result = device_open(dev, oflag);
-    }
-    else
-    {
-        /* set open flag */
-        dev->open_flag = (oflag & RT_DEVICE_OFLAG_MASK);
+        if (device_open != RT_NULL)
+        {
+            result = device_open(dev, oflag);
+        }
+        else
+        {
+            /* set open flag */
+            dev->open_flag = (oflag & RT_DEVICE_OFLAG_MASK);
+        }
     }
 
     /* set open flag */
@@ -251,7 +255,7 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
 
         dev->ref_count++;
         /* don't let bad things happen silently. If you are bitten by this assert,
-         * please set the ref_count to a bigger type. */
+        * please set the ref_count to a bigger type. */
         RT_ASSERT(dev->ref_count != 0);
     }
 
@@ -475,13 +479,13 @@ rt_err_t rt_device_bind_driver(rt_device_t device, rt_driver_t driver, void *nod
     }
 
     device->drv = driver;
-#ifdef RT_USING_DEVICE_OPS    
+#ifdef RT_USING_DEVICE_OPS
     device->ops = driver->dev_ops;
-#endif    
+#endif
     device->dtb_node = node;
 
     return RT_EOK;
-} 
+}
 RTM_EXPORT(rt_device_bind_driver);
 
 /**

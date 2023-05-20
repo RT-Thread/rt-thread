@@ -21,7 +21,7 @@ elif CROSS_TOOL == 'iar':
     PLATFORM     = 'iccarm'
     EXEC_PATH    = 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.0'
 else:
-    print 'Please make sure your toolchains is GNU GCC!'
+    print('Please make sure your toolchains is GNU GCC!')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):

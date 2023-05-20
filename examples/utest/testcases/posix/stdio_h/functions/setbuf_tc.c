@@ -23,8 +23,8 @@ static int setbuf_entry(void)
         printf("setbuf test:%s\n",test_data);
         ret = -1;
     }
-__exit:
     fclose(stream);
+__exit:
     return ret;
 }
 

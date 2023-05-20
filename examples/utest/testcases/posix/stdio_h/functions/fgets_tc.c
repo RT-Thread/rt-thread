@@ -19,15 +19,21 @@ static int fgets_entry(void)
     fclose(stream);
 
     stream = fopen("fopen_file.txt","r");
+    if (stream == NULL)
+    {
+        perror("fopen fail");
+        ret = -1;
+        goto __exit;
+    }
     fgets(gets, sizeof(gets), stream);
 
     if(strcmp(gets, data))
     {
         ret = -1;
     }
+    fclose(stream);
 
 __exit:
-    fclose(stream);
     return ret;
 }
 

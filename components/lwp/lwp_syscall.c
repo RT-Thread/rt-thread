@@ -542,6 +542,47 @@ sysret_t sys_open(const char *name, int flag, ...)
 #endif
 }
 
+/* syscall: "open" ret: "int" args: "const char *" "mode_t" "mode" */
+sysret_t sys_openat(int dirfd, const char *name, int flag, mode_t mode)
+{
+#ifdef ARCH_MM_MMU
+    int ret = -1;
+    int err = 0;
+    rt_size_t len = 0;
+    char *kname = RT_NULL;
+
+    len = lwp_user_strlen(name, &err);
+    if (!len || err != 0)
+    {
+        return -EINVAL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return -ENOMEM;
+    }
+
+    lwp_get_from_user(kname, (void *)name, len + 1);
+    ret = openat(dirfd, kname, flag, mode);
+    if (ret < 0)
+    {
+        ret = GET_ERRNO();
+    }
+
+    kmem_put(kname);
+
+    return ret;
+#else
+    if (!lwp_user_accessable((void *)name, 1))
+    {
+        return -EFAULT;
+    }
+    int ret = openat(dirfd, name, flag, mode);
+    return (ret < 0 ? GET_ERRNO() : ret);
+#endif
+}
+
 /* syscall: "close" ret: "int" args: "int" */
 sysret_t sys_close(int fd)
 {
@@ -4825,6 +4866,7 @@ sysret_t sys_fstatfs64(int fd, size_t sz, struct statfs *buf)
     return ret;
 }
 
+<<<<<<< HEAD
 sysret_t sys_link(const char *existing, const char *new)
 {
     int ret = -1;
@@ -4834,10 +4876,31 @@ sysret_t sys_link(const char *existing, const char *new)
 
     lwp_user_strlen(existing, &err);
     if (err)
+=======
+sysret_t sys_mount(char *source, char *target,
+        char *filesystemtype,
+        unsigned long mountflags, void *data)
+{
+    char *copy_source;
+    char *copy_target;
+    char *copy_filesystemtype;
+    size_t len_source, copy_len_source;
+    size_t len_target, copy_len_target;
+    size_t len_filesystemtype, copy_len_filesystemtype;
+    int err_source, err_target, err_filesystemtype;
+    char *tmp = NULL;
+    int ret = 0;
+
+    len_source = lwp_user_strlen(source, &err_source);
+    len_target = lwp_user_strlen(target, &err_target);
+    len_filesystemtype = lwp_user_strlen(filesystemtype, &err_filesystemtype);
+    if (err_source || err_target || err_filesystemtype)
+>>>>>>> master
     {
         return -EFAULT;
     }
 
+<<<<<<< HEAD
     lwp_user_strlen(new, &err);
     if (err)
     {
@@ -4861,10 +4924,52 @@ sysret_t sys_symlink(const char *existing, const char *new)
 
     lwp_user_strlen(existing, &err);
     if (err)
+=======
+    copy_source = (char*)rt_malloc(len_source + 1 + len_target + 1 + len_filesystemtype + 1);
+    if (!copy_source)
+    {
+        return -ENOMEM;
+    }
+    copy_target = copy_source + len_source + 1;
+    copy_filesystemtype = copy_target + len_target + 1;
+
+    copy_len_source = lwp_get_from_user(copy_source, source, len_source);
+    copy_source[copy_len_source] = '\0';
+    copy_len_target = lwp_get_from_user(copy_target, target, len_target);
+    copy_target[copy_len_target] = '\0';
+    copy_len_filesystemtype = lwp_get_from_user(copy_filesystemtype, filesystemtype, len_filesystemtype);
+    copy_filesystemtype[copy_len_filesystemtype] = '\0';
+
+    if (strcmp(copy_filesystemtype, "nfs") == 0)
+    {
+        tmp = copy_source;
+        copy_source = NULL;
+    }
+    if (strcmp(copy_filesystemtype, "tmp") == 0)
+    {
+        copy_source = NULL;
+    }
+    ret = dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
+    rt_free(copy_source);
+
+    return ret;
+}
+
+sysret_t sys_umount2(char *__special_file, int __flags)
+{
+    char *copy_special_file;
+    size_t len_special_file, copy_len_special_file;
+    int err_special_file;
+    int ret = 0;
+
+    len_special_file = lwp_user_strlen(__special_file, &err_special_file);
+    if (err_special_file)
+>>>>>>> master
     {
         return -EFAULT;
     }
 
+<<<<<<< HEAD
     lwp_user_strlen(new, &err);
     if (err)
     {
@@ -4877,6 +4982,21 @@ sysret_t sys_symlink(const char *existing, const char *new)
     SET_ERRNO(EFAULT);
 #endif
     return (ret < 0 ? GET_ERRNO() : ret);
+=======
+    copy_special_file = (char*)rt_malloc(len_special_file + 1);
+    if (!copy_special_file)
+    {
+        return -ENOMEM;
+    }
+
+    copy_len_special_file = lwp_get_from_user(copy_special_file, __special_file, len_special_file);
+    copy_special_file[copy_len_special_file] = '\0';
+
+    ret = dfs_unmount(copy_special_file);
+    rt_free(copy_special_file);
+
+    return ret;
+>>>>>>> master
 }
 
 const static struct rt_syscall_def func_table[] =
@@ -5094,8 +5214,9 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_statfs64),
     SYSCALL_SIGN(sys_fstatfs),
     SYSCALL_SIGN(sys_fstatfs64),
-    //SYSCALL_SIGN(sys_link),       todo
-    //SYSCALL_SIGN(sys_symlink),    todo
+    SYSCALL_SIGN(sys_openat),                           /* 175 */
+    SYSCALL_SIGN(sys_mount),
+    SYSCALL_SIGN(sys_umount2),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

@@ -665,7 +665,7 @@ tcp_process(struct tcp_pcb *pcb)
         pcb->nrtx = 0;
       }
 
-      /* Call the user specified function to call when sucessfully
+      /* Call the user specified function to call when successfully
        * connected. */
       TCP_EVENT_CONNECTED(pcb, ERR_OK, err);
       if (err == ERR_ABRT) {
