@@ -33,7 +33,15 @@ rt_weak void _fini()
 rt_weak void *__dso_handle = 0;
 
 #endif
-
+/**
+*@brief Resumes all suspended threads in the IPC object list, including the suspended list of IPC object
+*   and private list of mailbox etc.
+*@note This function will resume all threads in the IPC object list. By contrast, the rt_ipc_list_resume()
+*  function will only resume a single suspended thread in the list of an IPC object.
+*@param list Pointer to the suspended thread list of the IPC object.
+*@return Return code indicating the success or failure of the operation. When the return value is RT_EOK,
+*    the function has executed successfully. Any other return value indicates that the operation has failed.
+*/
 rt_weak int cplusplus_system_init(void)
 {
 #if defined(__ARMCC_VERSION)
