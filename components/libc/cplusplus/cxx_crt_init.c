@@ -34,16 +34,16 @@ rt_weak void *__dso_handle = 0;
 
 #endif
 /**
- *@brief    Resumes all suspended threads in the IPC object list, including the suspended list of IPC object
- *          and private list of mailbox etc.
+ * @brief   This function initializes the C++ runtime environment for ARM and GCC compilers.
  *
- *@note     This function will resume all threads in the IPC object list. By contrast, the rt_ipc_list_resume()
- *          function will only resume a single suspended thread in the list of an IPC object.
+ * @note    If there is no SHT$$INIT_ARRAY section, calling $Super$$__cpp_initialize__aeabi_() will cause an error
+ *          in ARMCC compiler. Therefore, this function manually iterates through the base addresses of the
+ *          SHT$$INIT_ARRAY section to call the constructor functions of each object. In GCC compiler, this function
+ *          uses the __ctors_start__ and __ctors_end__ global variables to determine the range of constructor function
+ *          pointers and calls each constructor function of every object in that range.
  *
- *@param    list Pointer to the suspended thread list of the IPC object.
- *
- *@return   Return code indicating the success or failure of the operation. When the return value is RT_EOK,
- *          the function has executed successfully. Any other return value indicates that the operation has failed.
+ * @return  Returns 0 if the initialization of the C++ runtime environment is successful. Otherwise, it returns
+ *          an error code indicating the failure of the operation.
  */
 rt_weak int cplusplus_system_init(void)
 {
