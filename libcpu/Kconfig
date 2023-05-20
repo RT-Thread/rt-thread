@@ -166,7 +166,6 @@ config ARCH_ARMV8
     bool
     select ARCH_ARM
     select ARCH_ARM_MMU
-    select RT_USING_HW_ATOMIC
 
 config ARCH_MIPS
     bool
