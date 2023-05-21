@@ -49,11 +49,15 @@
 #define D33       (33)
 #define D34       (34)
 #define D35       (35)
-#define A0        (36)
-#define A1        (37)
-#define A2        (38)
-#define A3        (39)
-#define DAC0      (40)
+#define D36       (36)
+#define D37       (37)
+#define D38       (38)
+#define D39       (39)
+#define A0        (40)
+#define A1        (41)
+#define A2        (42)
+#define A3        (43)
+#define DAC0      (44)
 
 #define F_CPU          80000000L  /* CPU:80MHz */
 
@@ -69,6 +73,20 @@
 /* spi2 - PB13-SCK  PB14-MISO  PB15-MOSI */
 #define SS      D28  /* Chip select pin of default spi */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi2"
+
+#ifndef RTDUINO_DEFAULT_SPI_BUS_NAME
+/*
+ * SPI LCD ST7789 (spi3)
+ * LCD-SPI-SDA  PB5
+ * LCD-SPI-SCK  PB3
+ * LCD-SPI-CS   PD7
+ * LCD-POWER    PB7
+ * LCD-RESET    PB6
+ * LCD-WR/DC    PB4
+ */
+#define SS      D36  /* LCD-SPI-CS PD7 */
+#define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi3" /* LCD SPI Bus */
+#endif
 
 /* Serial2 - PA2-TX  PA3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME      "uart2"
