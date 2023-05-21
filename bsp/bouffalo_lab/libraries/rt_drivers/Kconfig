@@ -662,6 +662,15 @@ menu "General Drivers Configuration"
         select RT_USING_ADC
         default n
 
+    config BSP_USING_TOUCH
+        bool "Enable TOUCH"
+        select RT_TOUCH_PIN_IRQ
+        select RT_USING_TOUCH
+        select BSP_USING_I2C
+        select BSP_USING_HW_I2C
+        select BSP_USING_I2C0
+        default n
+
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
