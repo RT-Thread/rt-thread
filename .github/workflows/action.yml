@@ -89,6 +89,7 @@ jobs:
                 - "stm32/stm32l476-st-nucleo"
                 - "stm32/stm32l496-ali-developer"
                 - "stm32/stm32l496-st-nucleo"
+                - "stm32/stm32l496-st-discovery"
                 - "stm32/stm32f072-st-nucleo"
                 - "stm32/stm32f091-st-nucleo"
                 - "stm32/stm32f103-100ask-mini"
