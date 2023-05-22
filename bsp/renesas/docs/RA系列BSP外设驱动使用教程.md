@@ -12,7 +12,7 @@
 
 ## 2. 前提要求
 
-- 学会如何使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/programming-manual/env/env/)
+- 学会如何使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
 - 熟悉 [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp) 配置工具的使用
 
 ## 3. 如何使用更多的外设资源

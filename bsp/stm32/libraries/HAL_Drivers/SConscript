@@ -100,7 +100,10 @@ if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
 
 if GetDepend(['BSP_USING_SDIO']):
-    src += ['drv_sdio.c']
+    if GetDepend('SOC_SERIES_STM32H7') or GetDepend('SOC_SERIES_STM32F7') or GetDepend('SOC_SERIES_STM32L4') or GetDepend('SOC_SERIES_STM32L5'):
+        src += ['drv_sdmmc.c']
+    else:
+        src += ['drv_sdio.c']
 
 if GetDepend(['BSP_USING_USBD']):
     src += ['drv_usbd.c']

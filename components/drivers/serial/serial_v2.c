@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -43,7 +43,7 @@ static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 }
 
 /* fops for serial */
-static int serial_fops_open(struct dfs_fd *fd)
+static int serial_fops_open(struct dfs_file *fd)
 {
     rt_err_t ret = 0;
     rt_uint16_t flags = 0;
@@ -79,7 +79,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     return ret;
 }
 
-static int serial_fops_close(struct dfs_fd *fd)
+static int serial_fops_close(struct dfs_file *fd)
 {
     rt_device_t device;
 
@@ -91,7 +91,7 @@ static int serial_fops_close(struct dfs_fd *fd)
     return 0;
 }
 
-static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
+static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     rt_device_t device;
     int flags = (int)(rt_base_t)args;
@@ -114,7 +114,7 @@ static int serial_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     return rt_device_control(device, cmd, args);
 }
 
-static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
+static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
@@ -139,7 +139,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     return size;
 }
 
-static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
+static int serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 {
     rt_device_t device;
 
@@ -147,7 +147,7 @@ static int serial_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     return rt_device_write(device, -1, buf, count);
 }
 
-static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
+static int serial_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
 {
     int mask = 0;
     int flags = 0;
@@ -455,6 +455,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 {
     struct rt_serial_device *serial;
     struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
+    rt_ssize_t rst;
 
     RT_ASSERT(dev != RT_NULL);
     if (size == 0) return 0;
@@ -476,14 +477,14 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
 
     tx_fifo->activated = RT_TRUE;
     /* Call the transmit interface for transmission */
-    serial->ops->transmit(serial,
-                          (rt_uint8_t *)buffer,
-                          size,
-                          RT_SERIAL_TX_BLOCKING);
+    rst = serial->ops->transmit(serial,
+                                (rt_uint8_t *)buffer,
+                                size,
+                                RT_SERIAL_TX_BLOCKING);
     /* Waiting for the transmission to complete */
     rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
 
-    return size;
+    return rst;
 }
 
 /**
@@ -690,11 +691,11 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
             serial->ops->control(serial,
                                 RT_DEVICE_CTRL_CONFIG,
                                 (void *)RT_SERIAL_TX_BLOCKING);
+            rt_memset(&tx_fifo->rb, RT_NULL, sizeof(tx_fifo->rb));
         }
 
         tx_fifo->activated = RT_FALSE;
         tx_fifo->put_size = 0;
-        rt_memset(&tx_fifo->rb, RT_NULL, sizeof(tx_fifo->rb));
         rt_completion_init(&(tx_fifo->tx_cpt));
         dev->open_flag |= RT_SERIAL_TX_BLOCKING;
 
@@ -1316,12 +1317,12 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     rt_memset(row_s,0,4);
                     rt_memset(col_s,0,4);
                     cnt1 = 0;
-                    while(_tio_buf[cnt1] != ';' && cnt1 < _TIO_BUFLEN)
+                    while(cnt1 < _TIO_BUFLEN && _tio_buf[cnt1] != ';')
                     {
                         cnt1++;
                     }
                     cnt2 = ++cnt1;
-                    while(_tio_buf[cnt2] != ';' && cnt2 < _TIO_BUFLEN)
+                    while(cnt2 < _TIO_BUFLEN && _tio_buf[cnt2] != ';')
                     {
                         cnt2++;
                     }

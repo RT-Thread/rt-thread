@@ -956,7 +956,7 @@ ITStatus I2C_GetITStatus(I2C_TypeDef* I2Cx, uint32_t I2C_IT)
 
 /*******************************************************************************
 * Function Name  : I2C_ClearITPendingBit
-* Description    : Clears the I2Cx’s interrupt pending bits.
+* Description    : Clears the I2Cx's interrupt pending bits.
 * Input          : I2Cx: where x can be 1 or 2 to select the I2C peripheral.
 *                  I2C_IT: specifies the interrupt pending bit to clear. 
 *                    I2C_IT_SMBALERT: SMBus Alert interrupt.

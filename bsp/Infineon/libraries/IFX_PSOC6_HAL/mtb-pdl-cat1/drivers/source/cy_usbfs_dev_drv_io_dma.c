@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_usbfs_dev_drv_io_dma.c
-* \version 2.20.2
+* \version 2.20.3
 *
 * Provides data transfer API implementation of the USBFS driver.
 *
@@ -603,7 +603,7 @@ cy_en_usbfs_dev_drv_status_t DynamicEndpointReConfiguration(USBFS_Type *base,
     uint32_t timeout = DYN_RECONFIG_TIMEOUT;
 
     /* Only enabled endpoint can be re-configured */
-    if (0U == (USBFS_DEV_EP_ACTIVE(base) & EP2MASK(endpont)))
+    if (0U == (USBFS_DEV_EP_ACTIVE(base) & EP2MASK(endpoint)))
     {
         return CY_USBFS_DEV_DRV_BUF_ALLOC_FAILED;
     }
@@ -681,7 +681,7 @@ cy_en_usbfs_dev_drv_status_t AddEndpointRamBuffer(USBFS_Type *base,
         uint32_t startBufIdx;
 
         /* Configure active endpoint */
-        context->activeEpMask    |= (uint8_t) EP2MASK(endpont);
+        context->activeEpMask    |= (uint8_t) EP2MASK(endpoint);
         USBFS_DEV_EP_ACTIVE(base) = context->activeEpMask;
 
         /* Allocate buffer for endpoint */
@@ -769,7 +769,7 @@ void RestoreEndpointRamBuffer(USBFS_Type *base,
     endpointData->state = CY_USB_DEV_EP_IDLE;
 
     /* Configure active endpoint */
-    USBFS_DEV_EP_ACTIVE(base) |= EP2MASK(endpont);
+    USBFS_DEV_EP_ACTIVE(base) |= EP2MASK(endpoint);
 
     /* Configure endpoint type: OUT - 1, IN - 0 */
     Cy_USBFS_Dev_Drv_SetEpType(base, inDirection, endpoint);

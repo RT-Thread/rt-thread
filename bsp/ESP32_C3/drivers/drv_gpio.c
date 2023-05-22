@@ -15,20 +15,20 @@
 
 #ifdef RT_USING_PIN
 
-static void mcu_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void mcu_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     gpio_set_level(pin, value);
     /*TODO:set gpio out put mode */
 }
 
-static int mcu_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t mcu_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_int8_t value;
     value = gpio_get_level(pin);
     return value;
 }
 
-static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
@@ -45,22 +45,22 @@ static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 }
 
 
-static rt_err_t mcu_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                   rt_uint32_t irq_mode, void (*hdr)(void *args), void *args)
+static rt_err_t mcu_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                   rt_uint8_t irq_mode, void (*hdr)(void *args), void *args)
 {
 
     /*TODO: start irq handle */
-    return RT_EOK;
+    return -RT_ENOSYS;
 }
 
-static rt_err_t mcu_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t mcu_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     /*TODO:disable gpio irq handle */
     return RT_EOK;
 }
 
 static rt_err_t mcu_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                   rt_uint32_t enabled)
+                                   rt_uint8_t enabled)
 {
     /*TODO:start irq handle */
     return RT_EOK;
@@ -72,7 +72,7 @@ const static struct rt_pin_ops _mcu_pin_ops =
     mcu_pin_write,
     mcu_pin_read,
     mcu_pin_attach_irq,
-    mcu_pin_dettach_irq,
+    mcu_pin_detach_irq,
     mcu_pin_irq_enable,
     RT_NULL,
 };

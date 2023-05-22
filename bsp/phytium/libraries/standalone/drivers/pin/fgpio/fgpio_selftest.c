@@ -14,11 +14,13 @@
  * FilePath: fgpio_selftest.c
  * Date: 2022-06-17 14:32:12
  * LastEditTime: 2022-06-17 14:32:12
- * Description:  This files is for
+ * Description:  This files is for dumping gpio register info 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   zhugengyu  2022/3/1     init commit
+ * 2.0   zhugengyu  2022/7/1     support e2000
  */
 /***************************** Include Files *********************************/
 #include "fdebug.h"

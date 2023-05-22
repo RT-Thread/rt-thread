@@ -41,6 +41,12 @@
     #include "apm32f0xx_iwdt.h"
     #include "apm32f0xx_wwdt.h"
 #endif
+#if defined(BSP_USING_ON_CHIP_FLASH)
+    #include "apm32f0xx_fmc.h"
+#endif
+#if defined(RT_USING_CAN)
+    #include "apm32f0xx_can.h"
+#endif
 
 #include "drv_common.h"
 #include "drv_gpio.h"

@@ -132,7 +132,7 @@ const struct pin_index *get_pin(rt_uint8_t pin)
     return index;
 };
 
-void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_index *index;
     rt_uint32_t pin_mode;
@@ -182,7 +182,7 @@ void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 }
 
-void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_index *index;
 
@@ -195,9 +195,9 @@ void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     gpio_bit_write(index->gpio_periph, index->pin, (bit_status)value);
 }
 
-int gd32_pin_read(rt_device_t dev, rt_base_t pin)
+rt_int8_t gd32_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_int8_t value;
     const struct pin_index *index;
 
     value = PIN_LOW;
@@ -235,8 +235,8 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint32_t pinbit)
     }
     return &pin_irq_map[mapindex];
 };
-rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                              rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                              rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -245,12 +245,12 @@ rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     hdr_index = bit2bitno(index->pin);
     if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     level = rt_hw_interrupt_disable();
@@ -265,7 +265,7 @@ rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[hdr_index].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EFULL;
+        return -RT_EFULL;
     }
     pin_irq_hdr_tab[hdr_index].pin = pin;
     pin_irq_hdr_tab[hdr_index].hdr = hdr;
@@ -275,7 +275,7 @@ rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     return RT_EOK;
 }
-rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -284,12 +284,12 @@ rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     hdr_index = bit2bitno(index->pin);
     if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     level = rt_hw_interrupt_disable();
@@ -306,7 +306,7 @@ rt_err_t gd32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
     return RT_EOK;
 }
-rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     const struct pin_index *index;
     const struct pin_irq_map *irqmap;
@@ -317,20 +317,20 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     if (enabled == PIN_IRQ_ENABLE)
     {
         hdr_index = bit2bitno(index->pin);
         if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
         {
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         level = rt_hw_interrupt_disable();
         if (pin_irq_hdr_tab[hdr_index].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         irqmap = &pin_irq_map[hdr_index];
 
@@ -347,7 +347,7 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
                 break;
             default:
                 rt_hw_interrupt_enable(level);
-                return RT_EINVAL;
+                return -RT_EINVAL;
         }
 
         //rcu_periph_clock_enable(RCU_AF);
@@ -369,13 +369,13 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
         irqmap = get_pin_irq_map(index->pin);
         if (irqmap == RT_NULL)
         {
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
         nvic_irq_disable(irqmap->irqno);
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;

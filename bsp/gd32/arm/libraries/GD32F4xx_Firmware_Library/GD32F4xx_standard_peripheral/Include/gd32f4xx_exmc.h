@@ -1,36 +1,38 @@
 /*!
     \file    gd32f4xx_exmc.h
     \brief   definitions for the EXMC
-
+    
     \version 2016-08-15, V1.0.0, firmware for GD32F4xx
     \version 2018-12-12, V2.0.0, firmware for GD32F4xx
     \version 2020-09-30, V2.1.0, firmware for GD32F4xx
+    \version 2022-03-09, V3.0.0, firmware for GD32F4xx
+    \version 2022-06-08, V3.0.1, firmware for GD32F4xx
 */
 
 /*
-    Copyright (c) 2020, GigaDevice Semiconductor Inc.
+    Copyright (c) 2022, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification,
+    Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this
+    1. Redistributions of source code must retain the above copyright notice, this 
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
+    2. Redistributions in binary form must reproduce the above copyright notice, 
+       this list of conditions and the following disclaimer in the documentation 
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors
-       may be used to endorse or promote products derived from this software without
+    3. Neither the name of the copyright holder nor the names of its contributors 
+       may be used to endorse or promote products derived from this software without 
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
 OF SUCH DAMAGE.
 */
 
@@ -113,13 +115,13 @@ OF SUCH DAMAGE.
 #define EXMC_SNCTL_NRWTPOL                  BIT(9)                        /*!< NWAIT signal polarity */
 #define EXMC_SNCTL_WRAPEN                   BIT(10)                       /*!< wrapped burst mode enable */
 #define EXMC_SNCTL_NRWTCFG                  BIT(11)                       /*!< NWAIT signal configuration, only work in synchronous mode */
-#define EXMC_SNCTL_WREN                     BIT(12)                       /*!< write enable */
+#define EXMC_SNCTL_WEN                      BIT(12)                       /*!< write enable */
 #define EXMC_SNCTL_NRWTEN                   BIT(13)                       /*!< NWAIT signal enable */
 #define EXMC_SNCTL_EXMODEN                  BIT(14)                       /*!< extended mode enable */
-#define EXMC_SNCTL_ASYNCWAIT                BIT(15)                       /*!< asynchronous wait enable */
+#define EXMC_SNCTL_ASYNCWTEN                BIT(15)                       /*!< asynchronous wait enable */
 #define EXMC_SNCTL_CPS                      BITS(16,18)                   /*!< CRAM page size */
-#define EXMC_SNCTL_SYNCWR                   BIT(19)                       /*!< synchronous write config */
-#define EXMC_SNCTL_CCK                      BIT(20)                       /*!< consecutive clock config */
+#define EXMC_SNCTL_SYNCWR                   BIT(19)                       /*!< synchronous write configuration */
+#define EXMC_SNCTL_CCK                      BIT(20)                       /*!< consecutive clock configuration */
 
 /* EXMC_SNTCFGx,x=0..3 */
 #define EXMC_SNTCFG_ASET                    BITS(0,3)                     /*!< asynchronous address setup time */
@@ -207,7 +209,7 @@ OF SUCH DAMAGE.
 /* EXMC_SDARI */
 #define EXMC_SDARI_REC                      BIT(0)                        /*!< refresh error flag clear */
 #define EXMC_SDARI_ARINTV                   BITS(1,13)                    /*!< auto-refresh interval */
-#define EXMC_SDARI_REIE                     BIT(14)                       /*!< interrupt refresh error enable */
+#define EXMC_SDARI_REIE                     BIT(14)                       /*!< refresh error interrupt enable */
 
 /* EXMC_SDSTAT */
 #define EXMC_SDSDAT_REIF                    BIT(0)                        /*!< refresh error interrupt flag */
@@ -273,12 +275,12 @@ typedef struct
     uint32_t databus_width;                                             /*!< specifies the databus width of external memory */
     uint32_t memory_type;                                               /*!< specifies the type of external memory */
     uint32_t address_data_mux;                                          /*!< specifies whether the data bus and address bus are multiplexed */
-    exmc_norsram_timing_parameter_struct* read_write_timing;            /*!< timing parameters for read and write if the extendedmode is not used or the timing
+    exmc_norsram_timing_parameter_struct* read_write_timing;            /*!< timing parameters for read and write if the extendedmode is not used or the timing 
                                                                              parameters for read if the extendedmode is used. */
     exmc_norsram_timing_parameter_struct* write_timing;                 /*!< timing parameters for write when the extendedmode is used. */
 }exmc_norsram_parameter_struct;
 
-/* EXMC NAND/PC card timing initialize struct */
+/* EXMC NAND/PC card timing initialize structure */
 typedef struct
 {
     uint32_t databus_hiztime;                                           /*!< configure the dadtabus HiZ time for write operation */
@@ -287,10 +289,10 @@ typedef struct
     uint32_t setuptime;                                                 /*!< configure the address setup time */
 }exmc_nand_pccard_timing_parameter_struct;
 
-/* EXMC NAND initialize struct */
+/* EXMC NAND initialize structure */
 typedef struct
 {
-    uint32_t nand_bank;                                                 /*!< select the bank of NAND */
+    uint32_t nand_bank;                                                 /*!< select the bank of NAND */ 
     uint32_t ecc_size;                                                  /*!< the page size for the ECC calculation */
     uint32_t atr_latency;                                               /*!< configure the latency of ALE low to RB low */
     uint32_t ctr_latency;                                               /*!< configure the latency of CLE low to RB low */
@@ -301,7 +303,7 @@ typedef struct
     exmc_nand_pccard_timing_parameter_struct* attribute_space_timing;   /*!< the timing parameters for NAND flash attribute space */
 }exmc_nand_parameter_struct;
 
-/* EXMC PC card initialize struct */
+/* EXMC PC card initialize structure */
 typedef struct
 {
     uint32_t atr_latency;                                               /*!< configure the latency of ALE low to RB low */
@@ -312,7 +314,7 @@ typedef struct
     exmc_nand_pccard_timing_parameter_struct*  io_space_timing;         /*!< the timing parameters for PC card IO space */
 }exmc_pccard_parameter_struct;
 
-/* EXMC SDRAM timing initialize struct */
+/* EXMC SDRAM timing initialize structure */
 typedef struct
 {
     uint32_t row_to_column_delay;                                       /*!< configure the row to column delay */
@@ -324,12 +326,12 @@ typedef struct
     uint32_t load_mode_register_delay;                                  /*!< configure the load mode register delay */
 }exmc_sdram_timing_parameter_struct;
 
-/* EXMC SDRAM initialize struct */
+/* EXMC SDRAM initialize structure */
 typedef struct
 {
     uint32_t sdram_device;                                              /*!< device of SDRAM */
     uint32_t pipeline_read_delay;                                       /*!< the delay for reading data after CAS latency in HCLK clock cycles */
-    uint32_t brust_read_switch;                                         /*!< enable or disable the burst read */
+    uint32_t burst_read_switch;                                         /*!< enable or disable the burst read */
     uint32_t sdclock_config;                                            /*!< the SDCLK memory clock for both SDRAM banks */
     uint32_t write_protection;                                          /*!< enable or disable SDRAM bank write protection function */
     uint32_t cas_latency;                                               /*!< configure the SDRAM CAS latency */
@@ -340,7 +342,7 @@ typedef struct
     exmc_sdram_timing_parameter_struct* timing;                         /*!< the timing parameters for write and read SDRAM */
 }exmc_sdram_parameter_struct;
 
-/* EXMC SDRAM command initialize struct */
+/* EXMC SDRAM command initialize structure */
 typedef struct
 {
     uint32_t mode_register_content;                                     /*!< the SDRAM mode register content */
@@ -349,7 +351,7 @@ typedef struct
     uint32_t command;                                                   /*!< the commands that will be sent to SDRAM */
 }exmc_sdram_command_parameter_struct;
 
-/* EXMC SQPISRAM initialize struct */
+/* EXMC SQPISRAM initialize structure */
 typedef struct{
     uint32_t sample_polarity;                                           /*!< read data sample polarity */
     uint32_t id_length;                                                 /*!< SPI PSRAM ID length */
@@ -357,7 +359,7 @@ typedef struct{
     uint32_t command_bits;                                              /*!< bit number of SPI PSRAM command phase */
 }exmc_sqpipsram_parameter_struct;
 
-/* EXMC_register address */
+/* EXMC register address */
 #define EXMC_SNCTL(region)                    REG32(EXMC + 0x08U*((uint32_t)(region)))                      /*!< EXMC SRAM/NOR flash control registers, region = 0,1,2,3 */
 #define EXMC_SNTCFG(region)                   REG32(EXMC + 0x04U + 0x08U*((uint32_t)(region)))              /*!< EXMC SRAM/NOR flash timing configuration registers, region = 0,1,2,3 */
 #define EXMC_SNWTCFG(region)                  REG32(EXMC + 0x104U + 0x08U*((uint32_t)(region)))             /*!< EXMC SRAM/NOR flash write timing configuration registers, region = 0,1,2,3 */
@@ -418,6 +420,7 @@ typedef struct{
 
 /* synchronous clock divide ratio */
 #define SNTCFG_CKDIV(regval)                (BITS(20,23) & ((uint32_t)(regval) << 20))
+#define EXMC_SYN_CLOCK_RATIO_DISABLE        SNTCFG_CKDIV(0)               /*!< EXMC_CLK disable */
 #define EXMC_SYN_CLOCK_RATIO_2_CLK          SNTCFG_CKDIV(1)               /*!< EXMC_CLK = 2*HCLK */
 #define EXMC_SYN_CLOCK_RATIO_3_CLK          SNTCFG_CKDIV(2)               /*!< EXMC_CLK = 3*HCLK */
 #define EXMC_SYN_CLOCK_RATIO_4_CLK          SNTCFG_CKDIV(3)               /*!< EXMC_CLK = 4*HCLK */
@@ -430,7 +433,7 @@ typedef struct{
 #define EXMC_SYN_CLOCK_RATIO_11_CLK         SNTCFG_CKDIV(10)              /*!< EXMC_CLK = 11*HCLK */
 #define EXMC_SYN_CLOCK_RATIO_12_CLK         SNTCFG_CKDIV(11)              /*!< EXMC_CLK = 12*HCLK */
 #define EXMC_SYN_CLOCK_RATIO_13_CLK         SNTCFG_CKDIV(12)              /*!< EXMC_CLK = 13*HCLK */
-#define EXMC_SYN_CLOCK_RATIO_14_CLK         SNTCFG_CKDIV(13)              /*!< EXMC_CLK = 14*HCLK */
+#define EXMC_SYN_CLOCK_RATIO_14_CLK         SNTCFG_CKDIV(13)              /*!< EXMC_CLK = 14*HCLK*/
 #define EXMC_SYN_CLOCK_RATIO_15_CLK         SNTCFG_CKDIV(14)              /*!< EXMC_CLK = 15*HCLK */
 #define EXMC_SYN_CLOCK_RATIO_16_CLK         SNTCFG_CKDIV(15)              /*!< EXMC_CLK = 16*HCLK */
 
@@ -541,7 +544,7 @@ typedef struct{
 #define EXMC_SDRAM_AUTO_REFLESH_14_SDCLK    SDCMD_NARF(13)                /*!< 14 auto-refresh cycles */
 #define EXMC_SDRAM_AUTO_REFLESH_15_SDCLK    SDCMD_NARF(14)                /*!< 15 auto-refresh cycles */
 
-/* SDRAM command select */
+/* SDRAM command selection */
 #define SDCMD_CMD(regval)                   (BITS(0,2) & ((uint32_t)(regval) << 0))
 #define EXMC_SDRAM_NORMAL_OPERATION         SDCMD_CMD(0)                  /*!< normal operation command */
 #define EXMC_SDRAM_CLOCK_ENABLE             SDCMD_CMD(1)                  /*!< clock enable command */
@@ -661,13 +664,13 @@ typedef struct{
 #define EXMC_SDRAM_2_INTER_BANK             ((uint32_t)0x00000000U)       /*!< 2 internal banks */
 #define EXMC_SDRAM_4_INTER_BANK             EXMC_SDCTL_NBK                /*!< 4 internal banks */
 
-/* SDRAM device0 select */
-#define EXMC_SDRAM_DEVICE0_UNSELECT         ((uint32_t)0x00000000U)       /*!< SDRAM device0 unselect */
-#define EXMC_SDRAM_DEVICE0_SELECT           EXMC_SDCMD_DS0                /*!< SDRAM device0 select */
+/* SDRAM device0 selection */
+#define EXMC_SDRAM_DEVICE0_UNSELECT         ((uint32_t)0x00000000U)       /*!< unselect SDRAM device0 */
+#define EXMC_SDRAM_DEVICE0_SELECT           EXMC_SDCMD_DS0                /*!< select SDRAM device0 */
 
-/* SDRAM device1 select */
-#define EXMC_SDRAM_DEVICE1_UNSELECT         ((uint32_t)0x00000000U)       /*!< SDRAM device1 unselect */
-#define EXMC_SDRAM_DEVICE1_SELECT           EXMC_SDCMD_DS1                /*!< SDRAM device1 select */
+/* SDRAM device1 selection */
+#define EXMC_SDRAM_DEVICE1_UNSELECT         ((uint32_t)0x00000000U)       /*!< unselect SDRAM device1 */
+#define EXMC_SDRAM_DEVICE1_SELECT           EXMC_SDCMD_DS1                /*!< select SDRAM device1 */
 
 /* SDRAM device status */
 #define EXMC_SDRAM_DEVICE_NORMAL            ((uint32_t)0x00000000U)       /*!< normal status */
@@ -716,7 +719,7 @@ void exmc_norsram_disable(uint32_t exmc_norsram_region);
 /* NAND */
 /* deinitialize EXMC NAND bank */
 void exmc_nand_deinit(uint32_t exmc_nand_bank);
-/* initialize exmc_norsram_parameter_struct with the default values */
+/* initialize exmc_nand_parameter_struct with the default values */
 void exmc_nand_struct_para_init(exmc_nand_parameter_struct* exmc_nand_init_struct);
 /* initialize EXMC NAND bank */
 void exmc_nand_init(exmc_nand_parameter_struct* exmc_nand_init_struct);
@@ -742,6 +745,8 @@ void exmc_sdram_deinit(uint32_t exmc_sdram_device);
 void exmc_sdram_struct_para_init(exmc_sdram_parameter_struct* exmc_sdram_init_struct);
 /* initialize EXMC SDRAM device */
 void exmc_sdram_init(exmc_sdram_parameter_struct* exmc_sdram_init_struct);
+/* initialize exmc_sdram_command_parameter_struct with the default values */
+void exmc_sdram_struct_command_para_init(exmc_sdram_command_parameter_struct *exmc_sdram_command_init_struct);
 /* SQPIPSRAM */
 /* deinitialize EXMC SQPIPSRAM */
 void exmc_sqpipsram_deinit(void);
@@ -772,7 +777,7 @@ void exmc_sdram_command_config(exmc_sdram_command_parameter_struct* exmc_sdram_c
 void exmc_sdram_refresh_count_set(uint32_t exmc_count);
 /* set the number of successive auto-refresh command */
 void exmc_sdram_autorefresh_number_set(uint32_t exmc_number);
-/* config the write protection function */
+/* configure the write protection function */
 void exmc_sdram_write_protection_config(uint32_t exmc_sdram_device, ControlStatus newvalue);
 /* get the status of SDRAM device0 or device1 */
 uint32_t exmc_sdram_bankstatus_get(uint32_t exmc_sdram_device);

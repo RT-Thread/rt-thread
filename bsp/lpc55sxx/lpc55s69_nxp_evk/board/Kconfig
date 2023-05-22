@@ -80,12 +80,12 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_I2C
             bool "Enable I2C"
             select RT_USING_I2C
-            default y
+            default n
 
             if BSP_USING_I2C
                 config BSP_USING_I2C1
                     bool "Enable Flexcomm1 I2C"
-                    default y
+                    default n
 
                     if BSP_USING_I2C1
                         choice
@@ -102,7 +102,7 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_USING_I2C4
                     bool "Enable Flexcomm4 I2C"
-                    default y
+                    default n
                     if BSP_USING_I2C4
                         choice
                             prompt "Select I2C4 badurate"
@@ -116,12 +116,29 @@ menu "On-chip Peripheral Drivers"
                         endchoice
                     endif
             endif
+    
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C bus"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_SOFT_I2C
+            config BSP_USING_SOFT_I2C1
+                bool "Enable I2C1 Bus (software simulation)"
+                default n
+
+            config BSP_USING_SOFT_I2C2
+                bool "Enable I2C2 Bus (software simulation)"
+                default n
+        endif
 
     menuconfig BSP_USING_SPI
         config BSP_USING_SPI
             bool "Enable SPI"
             select RT_USING_SPI
-            default y
+            default n
 
             if BSP_USING_SPI
                 config BSP_USING_SPI3
@@ -130,19 +147,35 @@ menu "On-chip Peripheral Drivers"
 
                 config BSP_USING_SPI8
                     bool "Enable Flexcomm8 as High Speed SPI"
-                    default y
+                    default n
             endif
 
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable soft SPI BUS"
+        default n
+        select RT_USING_PIN
+        select RT_USING_SPI_BITOPS
+        select RT_USING_SPI
+        if BSP_USING_SOFT_SPI
+            menuconfig BSP_USING_SOFT_SPI1
+                bool "Enable soft SPI1 BUS (software simulation)"
+                default n
+
+            menuconfig BSP_USING_SOFT_SPI2
+                bool "Enable soft SPI2 BUS (software simulation)"
+                default n
+        endif
+            
     menuconfig BSP_USING_ADC
         config BSP_USING_ADC
             bool "Enable ADC Channel"
             select RT_USING_ADC
-            default y
+            default n
 
             if BSP_USING_ADC
                 config BSP_USING_ADC0_CH0
                     bool "Enable ADC0 Channel0"
-                    default y
+                    default n
 
                 config BSP_USING_ADC0_CH1
                     bool "Enable ADC0 Channel1"
@@ -152,7 +185,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable ADC0 Channel8"
                     default n
 
-        
+
                 config BSP_USING_ADC0_CH13
                     bool "Enable ADC0 Channel13"
                     default n
@@ -169,12 +202,12 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
-        default y
+        default n
 
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        default y
+        default n
 
     config BSP_USING_WDT
         bool "Enable WatchDog"
@@ -185,15 +218,11 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_HWTIMER
             bool "Enable Timer"
             select RT_USING_HWTIMER
-            default y
+            default n
 
             if BSP_USING_HWTIMER
                 config BSP_USING_CTIMER0
                     bool "Enable CIMER0"
-                    default y
-
-                config BSP_USING_CTIMER1
-                    bool "Enable CIMER1"
                     default n
 
                 config BSP_USING_CTIMER3
@@ -209,12 +238,12 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_PWM
             bool "Enable PWM"
             select RT_USING_PWM
-            default y
+            default n
 
             if BSP_USING_PWM
                 config BSP_USING_CTIMER1_MAT0
                     bool "Enable CIMER1 Match0 as PWM output"
-                    default y
+                    default n
 
                 config BSP_USING_CTIMER2_MAT0
                     bool "Enable CIMER2 Match0 as PWM output"
@@ -235,20 +264,10 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Onboard Peripheral Drivers"
-    config BSP_USING_LED
-        bool "Enable RGB LED"
-        select RT_USING_LED
-        default y
-
-    config BSP_USING_KEY
-        bool "Enable Button "
-        select RT_USING_KEY
-        default y
-
     config BSP_USING_MMA8562
         bool "Enable MMA8562"
         select BSP_USING_I2C4
-        default y
+        default n
         if BSP_USING_MMA8562
             config BSP_USING_MMA8562I2C
                 string "the device name for 3-Axis Sensor"

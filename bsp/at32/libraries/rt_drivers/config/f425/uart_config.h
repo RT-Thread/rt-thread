@@ -18,6 +18,9 @@
 extern "C" {
 #endif
 
+#define UART1_IRQHandler      USART1_IRQHandler
+#define UART2_IRQHandler      USART2_IRQHandler
+
 #if defined(BSP_USING_UART1)
 #define UART1_CONFIG                                                \
     {                                                               \
@@ -115,7 +118,7 @@ extern "C" {
 #define UART4_CONFIG                                                \
     {                                                               \
         .name = "uart4",                                            \
-        .uart_x = UART4,                                            \
+        .uart_x = USART4,                                           \
         .irqn = USART4_3_IRQn,                                      \
     }
 #endif /* BSP_USING_UART4 */

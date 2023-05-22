@@ -12,26 +12,31 @@
  *
  *
  * FilePath: fpl011_hw.h
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:06:10
- * Description:  This files is for definition of uart register
+ * Description:  This file is for definition of uart register
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18  modified some defines
  */
 
-#ifndef BSP_DRIVERS_SERIAL_PL011_UART_HW_H
-#define BSP_DRIVERS_SERIAL_PL011_UART_HW_H
+#ifndef FPL011_HW_H
+#define FPL011_HW_H
+
+#include "ftypes.h"
+#include "fassert.h"
+#include "fio.h"
+
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "ftypes.h"
-#include "fassert.h"
-#include "fio.h"
+
 
 /************************** Constant Definitions *****************************/
 
@@ -218,13 +223,13 @@ extern "C"
 #define FUART_WRITEREG32(addr, reg_offset, reg_value) FtOut32(addr + (u32)reg_offset, (u32)reg_value)
 
 /**
- * @name: FUART_ISRECEIVEDATA
+ * @name: FUART_RECEIVEDATAEMPTY
  * @msg:  Used to confirm whether data has been received
  * @param addr contains the base address of the device.
- * @return {bool} true 是存在数据 ， false 是不存在数据
+ * @return {bool} true 是不存在数据 ， false 是存在数据
  *
  */
-#define FUART_ISRECEIVEDATA(addr) (FtIn32(addr + FPL011FTR_OFFSET) & FPL011FTR_RXFE)
+#define FUART_RECEIVEDATAEMPTY(addr) (FtIn32(addr + FPL011FTR_OFFSET) & FPL011FTR_RXFE)
 
 /**
  * @name: FUART_ISTRANSMITFULL
@@ -245,8 +250,8 @@ extern "C"
 
 /************************** Function Prototypes ******************************/
 
-void FPl011SendByte(u32 addr, u8 byte);
-u8 FPl011RecvByte(u32 addr);
+void FPl011SendByte(uintptr addr, u8 byte);
+u8 FPl011RecvByte(uintptr addr);
 
 #ifdef __cplusplus
 }

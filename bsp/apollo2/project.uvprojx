@@ -368,9 +368,9 @@
             <vShortWch>1</vShortWch>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, AM_PART_APOLLO2, AM_PACKAGE_BGA, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, AM_PART_APOLLO2, AM_PACKAGE_BGA</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;board;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\finsh;.;..\..\include;libraries\drivers;libraries\startup;libraries\startup\cmsis\include;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\components\drivers\include;..\..\components\dfs\filesystems\devfs;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;libraries\startup;..\..\components\finsh;..\..\components\drivers\include;libraries\drivers;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\stdio;..\..\components\drivers\spi;applications;.;..\..\components\dfs\include;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;libraries\startup\cmsis\include;board</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -483,9 +483,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -629,9 +629,23 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>gpio.c</FileName>
+              <FileName>board_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\gpio.c</FilePath>
+              <FilePath>board\rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>smbus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\smbus.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -639,6 +653,34 @@
               <FileName>pdm.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\pdm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -657,13 +699,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\led.c</FilePath>
@@ -671,44 +706,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>smbus.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\smbus.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -862,9 +862,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

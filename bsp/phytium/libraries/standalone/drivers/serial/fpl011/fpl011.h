@@ -12,17 +12,24 @@
  *
  *
  * FilePath: fpl011.h
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:07:38
- * Description:  This files is for uart functions
+ * Description:  This file is for uart functions
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18  fix bug
  */
 
-#ifndef BSP_DRIVERS_SERIAL_PL011_UART_H
-#define BSP_DRIVERS_SERIAL_PL011_UART_H
+#ifndef FPL011_H
+#define FPL011_H
+
+#include "ftypes.h"
+#include "fassert.h"
+#include "fpl011_hw.h"
+#include "sdkconfig.h"
 
 
 #ifdef __cplusplus
@@ -30,12 +37,6 @@ extern "C"
 {
 #endif
 
-/***************************** Include Files *********************************/
-
-#include "ftypes.h"
-#include "fassert.h"
-#include "fpl011_hw.h"
-#include "sdkconfig.h"
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -93,7 +94,7 @@ extern "C"
 #define FPL011_EVENT_RECV_ERROR 4U      /* A receive error detected */
 #define FPL011_EVENT_MODEM 5U           /* Modem status changed */
 #define FPL011_EVENT_PARE_FRAME_BRKE 6U /* A receive parity, frame, break \
-                                        *   error detected */
+*   error detected */
 #define FPL011_EVENT_RECV_ORERR 7U      /* A receive overrun error detected */
 
 
@@ -114,7 +115,7 @@ typedef struct
 typedef struct
 {
     u32 instance_id; /* Id of device*/
-    u32 base_address;
+    uintptr base_address;
     u32 ref_clock_hz;
     u32 irq_num;
     u32 baudrate;

@@ -25077,7 +25077,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x8: 256 transfers
 0x9:512 transfers
 0xa: 1024 transfers
-0xb �?0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
+0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>24</bitOffset>
               <bitWidth>4</bitWidth>
               <access>read-write</access>
@@ -25091,7 +25091,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>21</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -25107,7 +25107,7 @@ See field SrcBurstSize above for the definition of burst transfer byte number an
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>18</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -25388,7 +25388,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x8: 256 transfers
 0x9:512 transfers
 0xa: 1024 transfers
-0xb �?0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
+0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>24</bitOffset>
               <bitWidth>4</bitWidth>
               <access>read-write</access>
@@ -25402,7 +25402,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>21</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -25418,7 +25418,7 @@ See field SrcBurstSize above for the definition of burst transfer byte number an
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>18</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -25699,7 +25699,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x8: 256 transfers
 0x9:512 transfers
 0xa: 1024 transfers
-0xb �?0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
+0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>24</bitOffset>
               <bitWidth>4</bitWidth>
               <access>read-write</access>
@@ -25713,7 +25713,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>21</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -25729,7 +25729,7 @@ See field SrcBurstSize above for the definition of burst transfer byte number an
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>18</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -26010,7 +26010,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x8: 256 transfers
 0x9:512 transfers
 0xa: 1024 transfers
-0xb �?0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
+0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>24</bitOffset>
               <bitWidth>4</bitWidth>
               <access>read-write</access>
@@ -26024,7 +26024,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>21</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -26040,7 +26040,7 @@ See field SrcBurstSize above for the definition of burst transfer byte number an
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>18</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -26321,7 +26321,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x8: 256 transfers
 0x9:512 transfers
 0xa: 1024 transfers
-0xb �?0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
+0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>24</bitOffset>
               <bitWidth>4</bitWidth>
               <access>read-write</access>
@@ -26335,7 +26335,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>21</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -26351,7 +26351,7 @@ See field SrcBurstSize above for the definition of burst transfer byte number an
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>18</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -26632,7 +26632,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x8: 256 transfers
 0x9:512 transfers
 0xa: 1024 transfers
-0xb �?0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
+0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>24</bitOffset>
               <bitWidth>4</bitWidth>
               <access>read-write</access>
@@ -26646,7 +26646,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>21</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -26662,7 +26662,7 @@ See field SrcBurstSize above for the definition of burst transfer byte number an
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>18</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -26943,7 +26943,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x8: 256 transfers
 0x9:512 transfers
 0xa: 1024 transfers
-0xb �?0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
+0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>24</bitOffset>
               <bitWidth>4</bitWidth>
               <access>read-write</access>
@@ -26957,7 +26957,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>21</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -26973,7 +26973,7 @@ See field SrcBurstSize above for the definition of burst transfer byte number an
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>18</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -27254,7 +27254,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x8: 256 transfers
 0x9:512 transfers
 0xa: 1024 transfers
-0xb �?0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
+0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>24</bitOffset>
               <bitWidth>4</bitWidth>
               <access>read-write</access>
@@ -27268,7 +27268,7 @@ The burst transfer byte number is (SrcBurstSize * SrcWidth).
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>21</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>
@@ -27284,7 +27284,7 @@ See field SrcBurstSize above for the definition of burst transfer byte number an
 0x3: Double word transfer
 0x4: Quad word transfer
 0x5: Eight word transfer
-0x6�?x7: Reserved, setting this field with a reserved value triggers the error exception</description>
+0x6-x7: Reserved, setting this field with a reserved value triggers the error exception</description>
               <bitOffset>18</bitOffset>
               <bitWidth>3</bitWidth>
               <access>read-write</access>

@@ -14,11 +14,12 @@
  * FilePath: ftimer.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:09:49
- * Description:  This files is for
+ * Description:  This file is for user timer API implmentation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  liushengming 2022/02/18    first commit
  */
 
 /***************************** Include Files *********************************/
@@ -41,7 +42,7 @@ FError FTimerSoftwareReset(FTimerTachoCtrl *instance_p)
 
     if (instance_p->isready != FT_COMPONENT_IS_READY)
     {
-        FTIMER_ERROR("device is not already!!!");
+        FTIMER_ERROR("Device is not ready!!!");
         return FTIMER_TACHO_ERR_NOT_READY;
     }
 
@@ -149,7 +150,7 @@ static FError TimerSwithBits(FTimerTachoCtrl *instance_p)
     }
     else
     {
-        FTIMER_ERROR("invalid input");
+        FTIMER_ERROR("Invalid input");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
@@ -258,7 +259,7 @@ inline FError FTimerSetStartVal(FTimerTachoCtrl *instance_p, u32 cnt)
        otherwise the previous cmp val still work */
     TimerForceLoad(instance_p);
 
-    FTIMER_INFO("set start val 0x%x", FTIMER_STAR_READ(instance_p));
+    FTIMER_INFO("Set start val 0x%x", FTIMER_STAR_READ(instance_p));
 
     return ret;
 }
@@ -313,15 +314,15 @@ FError FTimerInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     u32 Ret = FTIMER_TACHO_SUCCESS;
 
     if ((FTIMER_ONCE_CMP == config_p->cmp_type) &&
-            (FTIMER_FREE_RUN != config_p->timer_mode))
+        (FTIMER_FREE_RUN != config_p->timer_mode))
     {
-        FTIMER_ERROR("time mode shall be free-run when use once timer!!");
+        FTIMER_ERROR("Time mode shall be free-run when use once timer!!");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
     if (instance_p->isready == FT_COMPONENT_IS_READY)
     {
-        FTIMER_INFO("device is already initialized.!!!\r\n");
+        FTIMER_INFO("Device is already initialized.!!!\r\n");
         return FTIMER_TACHO_ERR_IS_READ;
     }
 
@@ -331,7 +332,7 @@ FError FTimerInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     }
     else
     {
-        FTIMER_ERROR("not support");
+        FTIMER_ERROR("Not support");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
@@ -345,7 +346,7 @@ FError FTimerInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     }
     else
     {
-        FTIMER_ERROR("invalid input");
+        FTIMER_ERROR("Invalid input");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
@@ -359,7 +360,7 @@ FError FTimerInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     }
     else
     {
-        FTIMER_ERROR("invalid input");
+        FTIMER_ERROR("Invalid input");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
@@ -373,7 +374,7 @@ FError FTimerInit(FTimerTachoCtrl *instance_p, const FTimerTachoConfig *config_p
     }
     else
     {
-        FTIMER_ERROR("invalid input");
+        FTIMER_ERROR("Invalid input");
         return FTIMER_TACHO_ERR_INVAL_PARM;
     }
 
@@ -428,32 +429,32 @@ FError FTimeSettingDump(const FTimerTachoCtrl *instance_p)
 
     FASSERT(FT_COMPONENT_IS_READY == instance_p->isready);
 
-    printf("ctrl: \r\n");
-    printf("===%d-bit timer\r\n", is64Bit ? 64 : 32);
-    printf("===timer enabled: %d\r\n", (CtrlReg & FTIMER_REG_ENABLE) ? 1 : 0);
-    printf("===timer mode: %d\r\n", (CtrlReg & FTIMER_REG_TACHO_MODE_TIMER) ? 1 : 0);
-    printf("===once timer: %d\r\n", (CtrlReg & FTIMER_REG_MODE_ONCE) ? 1 : 0);
-    printf("===restart mode: %d\r\n", (CtrlReg & FTIMER_REG_CNT_RESTART) ? 1 : 0);
-    printf("===in reset: %d\r\n", (CtrlReg & FTIMER_REG_TACHO_RESET) ? 1 : 0);
-    printf("===force load: %d\r\n", (CtrlReg & FTIMER_REG_TACHO_FORCE_LOAD) ? 1 : 0);
-    printf("===clear cnt: %d\r\n", (CtrlReg & FTIMER_REG_CNT_CLR) ? 1 : 0);
+    FTIMER_DEBUG("ctrl: ");
+    FTIMER_DEBUG("===%d-bit timer", is64Bit ? 64 : 32);
+    FTIMER_DEBUG("===timer enabled: %d", (CtrlReg & FTIMER_REG_ENABLE) ? 1 : 0);
+    FTIMER_DEBUG("===timer mode: %d", (CtrlReg & FTIMER_REG_TACHO_MODE_TIMER) ? 1 : 0);
+    FTIMER_DEBUG("===once timer: %d", (CtrlReg & FTIMER_REG_MODE_ONCE) ? 1 : 0);
+    FTIMER_DEBUG("===restart mode: %d", (CtrlReg & FTIMER_REG_CNT_RESTART) ? 1 : 0);
+    FTIMER_DEBUG("===in reset: %d", (CtrlReg & FTIMER_REG_TACHO_RESET) ? 1 : 0);
+    FTIMER_DEBUG("===force load: %d", (CtrlReg & FTIMER_REG_TACHO_FORCE_LOAD) ? 1 : 0);
+    FTIMER_DEBUG("===clear cnt: %d", (CtrlReg & FTIMER_REG_CNT_CLR) ? 1 : 0);
 
-    printf("start cnt: 0x%08x\r\n", FTIMER_STAR_READ(instance_p));
+    FTIMER_DEBUG("start cnt: 0x%08x", FTIMER_STAR_READ(instance_p));
     if (is64Bit)
     {
-        printf("cmp low: 0x%08x", FTIMER_CMPL_READ(instance_p));
-        printf("high: 0x%08x\r\n", FTIMER_CMPU_READ(instance_p));
-        printf("cur cnt: low: 0x%08x", FTIMER_CNTL_READ(instance_p));
-        printf("high: 0x%08x\r\n", FTIMER_CNTU_READ(instance_p));
+        FTIMER_DEBUG("cmp low: 0x%08x", FTIMER_CMPL_READ(instance_p));
+        FTIMER_DEBUG("high: 0x%08x", FTIMER_CMPU_READ(instance_p));
+        FTIMER_DEBUG("cur cnt: low: 0x%08x", FTIMER_CNTL_READ(instance_p));
+        FTIMER_DEBUG("high: 0x%08x", FTIMER_CNTU_READ(instance_p));
     }
     else
     {
-        printf("cmp low: 0x%08x\r\n", FTIMER_CMPL_READ(instance_p));
-        printf("cur cnt: low: 0x%08x", FTIMER_CNTL_READ(instance_p));
+        FTIMER_DEBUG("cmp low: 0x%08x", FTIMER_CMPL_READ(instance_p));
+        FTIMER_DEBUG("cur cnt: low: 0x%08x", FTIMER_CNTL_READ(instance_p));
     }
 
-    printf("intr mask: 0x%08x\r\n", FTIMER_INTR_M_READ(instance_p));
-    printf("intr status: 0x%08x\r\n", FTIMER_INTR_S_READ(instance_p));
+    FTIMER_DEBUG("intr mask: 0x%08x", FTIMER_INTR_M_READ(instance_p));
+    FTIMER_DEBUG("intr status: 0x%08x", FTIMER_INTR_S_READ(instance_p));
 
     return FTIMER_TACHO_SUCCESS;
 }

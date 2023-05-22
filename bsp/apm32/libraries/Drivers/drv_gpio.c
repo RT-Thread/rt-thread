@@ -1,13 +1,15 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author            Notes
- * 2020-08-20     Abbcc             first version
- * 2022-07-15     Aligagago         add apm32F4 serie MCU support
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * Date           Author       Notes
+ * 2020-08-20     Abbcc        first version
+ * 2022-07-15     Aligagago    add apm32F4 series MCU support
+ * 2022-12-26     luobeihai    add apm32F0 series MCU support
+ * 2022-03-18     luobeihai    fix warning about incompatible function pointer types
+ * 2023-03-27     luobeihai    add APM32E1/S1 series MCU support
  */
 
 #include <board.h>
@@ -71,8 +73,9 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_12, EINT4_15_IRQn},
     {GPIO_PIN_13, EINT4_15_IRQn},
     {GPIO_PIN_14, EINT4_15_IRQn},
-    {GPIO_PIN_15, EINT4_15_IRQn},   
-#else
+    {GPIO_PIN_15, EINT4_15_IRQn},
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     {GPIO_PIN_0, EINT0_IRQn},
     {GPIO_PIN_1, EINT1_IRQn},
     {GPIO_PIN_2, EINT2_IRQn},
@@ -89,7 +92,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_13, EINT15_10_IRQn},
     {GPIO_PIN_14, EINT15_10_IRQn},
     {GPIO_PIN_15, EINT15_10_IRQn},
-#endif
+#endif /* SOC_SERIES_APM32F0 */
 };
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
@@ -152,7 +155,7 @@ static rt_base_t apm32_pin_get(const char *name)
     return pin;
 }
 
-static void apm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void apm32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     GPIO_T *gpio_port;
     uint16_t gpio_pin;
@@ -163,13 +166,14 @@ static void apm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         gpio_pin = PIN_APMPIN(pin);
 #if defined(SOC_SERIES_APM32F0)
         GPIO_WriteBitValue(gpio_port, gpio_pin, (GPIO_BSRET_T)value);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         GPIO_WriteBitValue(gpio_port, gpio_pin, (uint8_t)value);
 #endif
     }
 }
 
-static int apm32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t apm32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_T *gpio_port;
     uint16_t gpio_pin;
@@ -185,7 +189,7 @@ static int apm32_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-static void apm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void apm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     GPIO_Config_T gpioConfig;
 
@@ -195,7 +199,7 @@ static void apm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 
     /* Configure gpioConfigure */
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
     gpioConfig.pin = PIN_APMPIN(pin);
     gpioConfig.mode = GPIO_MODE_OUT_PP;
     gpioConfig.speed = GPIO_SPEED_50MHz;
@@ -325,8 +329,8 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
     return &pin_irq_map[mapindex];
 };
 
-static rt_err_t apm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t apm32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -339,7 +343,7 @@ static rt_err_t apm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     irqindex = bit2bitno(PIN_APMPIN(pin));
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -354,7 +358,7 @@ static rt_err_t apm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;
@@ -365,7 +369,7 @@ static rt_err_t apm32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t apm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t apm32_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -378,7 +382,7 @@ static rt_err_t apm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     irqindex = bit2bitno(PIN_APMPIN(pin));
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -397,7 +401,7 @@ static rt_err_t apm32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                rt_uint32_t enabled)
+                                rt_uint8_t enabled)
 {
     const struct pin_irq_map *irqmap;
     rt_base_t level;
@@ -415,7 +419,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqindex = bit2bitno(PIN_APMPIN(pin));
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -423,7 +427,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         irqmap = &pin_irq_map[irqindex];
@@ -449,7 +453,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             gpioConfig.pupd = GPIO_PUPD_NO;
             eintConfig.trigger = EINT_TRIGGER_ALL;
             break;
-#elif defined(SOC_SERIES_APM32F1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
         case PIN_IRQ_MODE_RISING:
             gpioConfig.mode = GPIO_MODE_IN_PD;
             eintConfig.trigger = EINT_TRIGGER_RISING;
@@ -481,11 +485,11 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 #endif
         }
         GPIO_Config(PIN_APMPORT(pin), &gpioConfig);
-        
+
 #if defined(SOC_SERIES_APM32F0)
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_SYSCFG);
         SYSCFG_EINTLine((SYSCFG_PORT_T)(((pin) >> 4) & 0xFu), (SYSCFG_PIN_T)irqindex);
-#elif defined(SOC_SERIES_APM32F1)
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
         RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_AFIO);
         GPIO_ConfigEINTLine((GPIO_PORT_SOURCE_T)(((pin) >> 4) & 0xFu), (GPIO_PIN_SOURCE_T)irqindex);
 #elif defined(SOC_SERIES_APM32F4)
@@ -496,10 +500,11 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         eintConfig.mode = EINT_MODE_INTERRUPT;
         eintConfig.lineCmd = ENABLE;
         EINT_Config(&eintConfig);
-        
+
 #if defined(SOC_SERIES_APM32F0)
         NVIC_EnableIRQRequest(irqmap->irqno, 5);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         NVIC_EnableIRQRequest(irqmap->irqno, 5, 0);
 #endif
         pin_irq_enable_mask |= irqmap->pinbit;
@@ -511,13 +516,13 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(PIN_APMPIN(pin));
         if (irqmap == RT_NULL)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
 
         pin_irq_enable_mask &= ~irqmap->pinbit;
-        
+
 #if defined(SOC_SERIES_APM32F0)
         if ((irqmap->pinbit >= GPIO_PIN_0) && (irqmap->pinbit <= GPIO_PIN_1))
         {
@@ -545,7 +550,8 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         {
             NVIC_DisableIRQRequest(irqmap->irqno);
         }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
         if ((irqmap->pinbit >= GPIO_PIN_5) && (irqmap->pinbit <= GPIO_PIN_9))
         {
             if (!(pin_irq_enable_mask & (GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9)))
@@ -564,7 +570,7 @@ static rt_err_t apm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         {
             NVIC_DisableIRQRequest(irqmap->irqno);
         }
-#endif
+#endif /* SOC_SERIES_APM32F0 */
         rt_hw_interrupt_enable(level);
     }
     else
@@ -598,7 +604,8 @@ void GPIO_EXTI_IRQHandler(uint8_t exti_line)
 {
 #if defined(SOC_SERIES_APM32F0)
     if (EINT_ReadIntFlag(1U << exti_line) != RESET)
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     if (EINT_ReadIntFlag((EINT_LINE_T)(1U << exti_line)) != RESET)
 #endif
     {
@@ -640,7 +647,8 @@ void EINT4_15_IRQHandler(void)
     GPIO_EXTI_IRQHandler(15);
     rt_interrupt_leave();
 }
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
 void EINT0_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -702,7 +710,7 @@ void EINT15_10_IRQHandler(void)
 
 int rt_hw_pin_init(void)
 {
-#if defined(SOC_SERIES_APM32F1)
+#if defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1)
 #ifdef GPIOA
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_GPIOA);
 #endif

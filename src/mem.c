@@ -91,7 +91,8 @@ struct rt_small_mem
 #define MIN_SIZE 12
 #endif /* ARCH_CPU_64BIT */
 
-#define MEM_MASK             0xfffffffe
+#define MEM_MASK ((~(rt_size_t)0) - 1)
+
 #define MEM_USED()         ((((rt_base_t)(small_mem)) & MEM_MASK) | 0x1)
 #define MEM_FREED()        ((((rt_base_t)(small_mem)) & MEM_MASK) | 0x0)
 #define MEM_ISUSED(_mem)   \
@@ -375,7 +376,7 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
             mem->pool_ptr = MEM_USED();
 #ifdef RT_USING_MEMTRACE
             if (rt_thread_self())
-                rt_smem_setname(mem, rt_thread_self()->name);
+                rt_smem_setname(mem, rt_thread_self()->parent.name);
             else
                 rt_smem_setname(mem, "NONE");
 #endif /* RT_USING_MEMTRACE */

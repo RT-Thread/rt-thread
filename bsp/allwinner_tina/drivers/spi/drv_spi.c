@@ -452,7 +452,7 @@ static rt_err_t configure(struct rt_spi_device *device,
     if (configuration->data_width != 8)
     {
         LOG_D("error: data_width is %d", configuration->data_width);
-        return RT_EIO;
+        return -RT_EIO;
     }
 
     LOG_D("%s -> %d", __FUNCTION__, __LINE__);
@@ -680,7 +680,7 @@ rt_err_t tina_spi_bus_register(SPI_T *spi, const char *spi_bus_name)
 
     LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 int rt_hw_spi_init(void)

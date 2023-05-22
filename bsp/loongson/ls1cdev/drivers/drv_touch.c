@@ -229,7 +229,7 @@ static int rt_touch_init(void)
         return rt_thread_startup(thread);
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 INIT_APP_EXPORT(rt_touch_init);
 

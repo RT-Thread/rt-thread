@@ -1,0 +1,10 @@
+*.ota
+*.xz
+*.xz.ota
+*.bin
+*.asm
+*.exe
+*-ubuntu
+*-macos
+bl_mcu_sdk/tools/bflb_tools/bflb_fw_post_proc
+bl_mcu_sdk/tools/bflb_tools/bouffalo_flash_cube

@@ -167,7 +167,7 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
             if (ptr == NULL)
             {
                 LOG_E("malloc error, no memory!");
-                return RT_ERROR;
+                return -RT_ERROR;
             }
             memset(ptr, 0x0, 1024 * 1024);
 

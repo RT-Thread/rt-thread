@@ -97,7 +97,7 @@ static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     if (pin < 0 || pin >= HAL_ARRAY_SIZE(pin_irq_hdr_tab))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -113,7 +113,7 @@ static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[pin].pin != BANK_PIN_DEFAULT && pin_irq_hdr_tab[pin].hdr != RT_NULL)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
 
     pin_irq_hdr_tab[pin].pin = pin;
@@ -132,7 +132,7 @@ static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
     if (pin < 0 || pin >= HAL_ARRAY_SIZE(pin_irq_hdr_tab))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -163,13 +163,13 @@ static rt_err_t pin_irq_enable(struct rt_device *dev, rt_base_t pin, rt_uint32_t
     {
         if (pin < 0 || pin >= HAL_ARRAY_SIZE(pin_irq_hdr_tab))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         level = rt_hw_interrupt_disable();
         if (pin_irq_hdr_tab[pin].pin == BANK_PIN_DEFAULT)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         switch (pin_irq_hdr_tab[pin].mode)
@@ -191,7 +191,7 @@ static rt_err_t pin_irq_enable(struct rt_device *dev, rt_base_t pin, rt_uint32_t
             break;
         default:
             rt_hw_interrupt_enable(level);
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
 
         HAL_GPIO_SetIntType(get_st_gpio(pin), get_st_pin(pin), mode);
@@ -204,13 +204,13 @@ static rt_err_t pin_irq_enable(struct rt_device *dev, rt_base_t pin, rt_uint32_t
     }
     else
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     return RT_EOK;
 }
 
-static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
+static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
     RT_ASSERT(PIN_BANK(pin) < GPIO_BANK_NUM);
 
@@ -242,13 +242,13 @@ static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static void pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
+static void pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
 {
     RT_ASSERT(PIN_BANK(pin) < GPIO_BANK_NUM);
     HAL_GPIO_SetPinLevel(get_st_gpio(pin), get_st_pin(pin), value);
 }
 
-static int pin_read(struct rt_device *dev, rt_base_t pin)
+static rt_int8_t pin_read(struct rt_device *dev, rt_base_t pin)
 {
     RT_ASSERT(PIN_BANK(pin) < GPIO_BANK_NUM);
     return HAL_GPIO_GetPinLevel(get_st_gpio(pin), get_st_pin(pin));;

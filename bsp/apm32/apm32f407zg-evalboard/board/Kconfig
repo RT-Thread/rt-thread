@@ -23,6 +23,18 @@ menu "Onboard Peripheral Drivers"
         select RT_SFUD_USING_SFDP
         default n
 
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        select BSP_USING_DMC
+        default n
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
@@ -242,9 +254,36 @@ menu "On-chip Peripheral Drivers"
             endif
         endif
 
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "Enable CAN1"
+                default n
+            config BSP_USING_CAN2
+                bool "Enable CAN2"
+                default n
+        endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
+        default n
+
+    config BSP_USING_DMC
+        bool
         default n
 
 endmenu

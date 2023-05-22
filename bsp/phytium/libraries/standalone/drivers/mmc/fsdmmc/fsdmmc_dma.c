@@ -14,7 +14,7 @@
  * FilePath: fsdmmc_dma.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:49:31
- * Description:  This files is for
+ * Description:  This file is dma descriptor management API.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -68,7 +68,7 @@ void FSdmmcSetReadDMA(uintptr base_addr, uintptr card_addr, u32 blk_cnt, void *b
     FSDMMC_INFO("sd card: 0x%x:0x%x ==> mem space: 0x%x:0x%x",
                 srch, srcl, dsth, dstl);
 
-    FSDMMC_INFO("read %d blks from 0x%x", blk_cnt, card_addr);
+    FSDMMC_INFO("Read %d blks from 0x%x", blk_cnt, card_addr);
 
     /* DMA 复位 */
     FSDMMC_SET_BIT(base_addr, FSDMMC_SOFTWARE_RESET_REG_OFFSET, FSDMMC_SOFTWARE_RESET_BDRST);
@@ -82,7 +82,9 @@ void FSdmmcSetReadDMA(uintptr base_addr, uintptr card_addr, u32 blk_cnt, void *b
     FSdmmcClearBDInterruptStatus(base_addr);
     FSdmmcClearNormalInterruptStatus(base_addr);
 
-    FSDMMC_INFO("base addr: 0x%x buf_p: %p", base_addr, buf_p);
+    FSDMMC_INFO("Base addr: 0x%x buf_p: %p", base_addr, buf_p);
+
+    FSDMMC_DATA_BARRIER();
 
     /* DMA 读卡地址配置：4 个 cycle
     系统低 4B-系统高 4B-SD 低 4B- SD 高 4B */
@@ -116,7 +118,7 @@ void FSdmmcSetWriteDMA(uintptr base_addr, uintptr card_addr, u32 blk_cnt, const 
     FSDMMC_INFO("mem space: 0x%x:0x%x ==> sd card: 0x%x:0x%x",
                 srch, srcl, dsth, dstl);
 
-    FSDMMC_INFO("write %d blks from 0x%x", blk_cnt, card_addr);
+    FSDMMC_INFO("Write %d blks from 0x%x", blk_cnt, card_addr);
 
     /* DMA 复位 */
     FSDMMC_SET_BIT(base_addr, FSDMMC_SOFTWARE_RESET_REG_OFFSET, FSDMMC_SOFTWARE_RESET_BDRST);
@@ -129,6 +131,8 @@ void FSdmmcSetWriteDMA(uintptr base_addr, uintptr card_addr, u32 blk_cnt, const 
     FSdmmcClearErrorInterruptStatus(base_addr);
     FSdmmcClearBDInterruptStatus(base_addr);
     FSdmmcClearNormalInterruptStatus(base_addr);
+
+    FSDMMC_DATA_BARRIER();
 
     /* DMA 写卡地址配置：4 个 cycle
     系统低 4B-系统高 4B-SD 低 4B- SD 高 4B */

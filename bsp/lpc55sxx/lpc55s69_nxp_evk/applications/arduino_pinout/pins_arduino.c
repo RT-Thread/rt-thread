@@ -45,6 +45,6 @@ const pin_map_t pin_map_table[]=
     {A3, GET_PINS(1,31)},
     {A4, GET_PINS(0,13), "i2c1"},       /* I2C-SDA (Wire) */
     {A5, GET_PINS(0,14), "i2c1"},       /* I2C-SCL (Wire) */
-    {A6, RT_NULL, "adc0", 13},          /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
-    {A7, RT_NULL, "adc0", 26},          /* ADC, On-Chip: internal temperature sensor, ADC_CHANNEL_TEMPSENSOR */
+    {A6, RT_NULL, "adc0", 13},          /* ADC, On-Chip: internal reference voltage */
+    {A7, RT_NULL, "adc0", 26},          /* ADC, On-Chip: internal temperature sensor */
 };

@@ -58,9 +58,19 @@
 
 ## SPI(ILI9431) 屏使用配置
 
+### 硬件连接
+
+硬件按照如下引脚进行连接：
+
+![](picture/lvgl/tft-pin.png)
+
 在 `Hardware Drivers Config → On-chip Peripheral Drivers → Enable LVGL for LCD` 中使能 `Enable LVGL for LCD_ILI9431` 选项
 
 ![](picture/lvgl/01.png)
+
+接着在 `RT-Thread online packages → peripheral libraries and drivers → TFT-LCD ILI9341 SPI screen driver software package` 路径下配置 `ILI9341` 屏幕参数
+
+![](picture/lvgl/ili9341.png)
 
 接下来退出菜单界面，输入 `pkgs --update` 命令手动联网获取 lvgl 的软件包到 `packages` 文件夹下
 

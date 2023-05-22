@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\cplusplus;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\arm926;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\finsh;.;..\..\..\include;platform;..\..\..\components\libc\posix\delay;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\pthreads</IncludePath>
+              <IncludePath>platform;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\pthreads;..\..\..\components\libc\cplusplus;..\..\..\libcpu\arm\arm926;..\..\..\components\dfs\include;..\..\..\components\drivers\include;.;..\..\..\components\libc\posix\delay;drivers;..\..\..\components\libc\posix\ipc;applications;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -472,16 +472,16 @@
           <GroupName>CPlusPlus</GroupName>
           <Files>
             <File>
-              <FileName>cxx_Thread.cpp</FileName>
+              <FileName>cxx_crt.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_Thread.cpp</FilePath>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cxx_crt_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
+              <FileName>cxx_Mutex.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
             </File>
           </Files>
           <Files>
@@ -493,16 +493,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cxx_crt.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
+              <FileName>cxx_crt_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cxx_Mutex.cpp</FileName>
+              <FileName>cxx_Thread.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_Thread.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -555,13 +555,6 @@
               <FileName>trap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\arm926\trap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -819,9 +812,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

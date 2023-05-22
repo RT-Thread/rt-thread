@@ -10,10 +10,88 @@ config SOC_CY8C624ALQI_S2D42
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
-        bool "Enable USB TO USART (uart0)"
+        bool "Enable USB TO USART (uart6)"
         select BSP_USING_UART
-        select BSP_USING_UART0
+        select BSP_USING_UART6
         default y
+
+    menuconfig BSP_USING_SDMMC
+        bool "Enable SDMMC (sd card)"
+        default n
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        if BSP_USING_SDMMC
+            menuconfig BSP_USING_SDCARD
+                bool "Enable SDCARD (sd card)"
+                select BSP_USING_SDCARD_PIN_CONFIG
+                default n
+                if BSP_USING_SDCARD
+                    config BSP_USING_SDCARD_EMMC_ENANBLE
+                        bool "Enable SDCARD emmc"
+                        default false
+                    config BSP_USING_SDCARD_BUS_WIDTH
+                        int "Enable SDCARD bus width"
+                        default 4
+                    config BSP_USING_SDCARD_LED_CTRL_ENANBLE
+                        bool "Enable SDCARD led control"
+                        default false
+                menuconfig BSP_USING_SDCARD_PIN_CONFIG
+                    bool "Enable SDCARD pin config"
+                    default y
+                    if BSP_USING_SDCARD_PIN_CONFIG
+                        config BSP_USING_SDCARD_CMD_PIN
+                            int "Enable SDCARD cmd pin,default:P2_4 --> 20"
+                            default 20
+                        config BSP_USING_SDCARD_CLK_PIN
+                            int "Enable SDCARD clk pin,default:P2_5 --> 21"
+                            default 21
+                        config BSP_USING_SDCARD_DAT0_PIN
+                            int "Enable SDCARD dat0 pin,default:P2_0 --> 16"
+                            default 16
+                        config BSP_USING_SDCARD_DAT1_PIN
+                            int "Enable SDCARD dat1 pin,default:P2_1 --> 17"
+                            default 17
+                        config BSP_USING_SDCARD_DAT2_PIN
+                            int "Enable SDCARD dat2 pin,default:P2_2 --> 18"
+                            default 18
+                        config BSP_USING_SDCARD_DAT3_PIN
+                            int "Enable SDCARD dat3 pin,default:P2_3 --> 19"
+                            default 19
+                        config BSP_USING_SDCARD_DAT4_PIN
+                            int "Enable SDCARD dat4 pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_DAT5_PIN
+                            int "Enable SDCARD dat5 pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_DAT6_PIN
+                            int "Enable SDCARD dat6 pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_DAT7_PIN
+                            int "Enable SDCARD dat7 pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_DETECT_PIN
+                            int "Enable SDCARD detect pin,default:P2_6 --> 22"
+                            default 22
+                        config BSP_USING_SDCARD_IO_VOLT_SEL_PIN
+                            int "Enable SDCARD io volt sel pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_CARD_IF_PWR_EN_PIN
+                            int "Enable SDCARD card if pwr en pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_CARD_MECH_WRITE_PROT_PIN
+                            int "Enable SDCARD card mech write prot pin,default:NC"
+                            default -1
+                        if BSP_USING_SDCARD_LED_CTRL_ENANBLE
+                            config BSP_USING_SDCARD_LED_CTRL_PIN
+                                int "Enable SDCARD led ctrl pin,default:NC"
+                                default -1
+                        endif
+                        config BSP_USING_SDCARD_CARD_EMMC_RESET_PIN
+                            int "Enable SDCARD card emmc reset pin,default:NC"
+                            default -1
+                    endif
+                endif
+        endif
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -46,6 +124,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
         endif
 
     menuconfig BSP_USING_PWM
@@ -57,12 +138,12 @@ menu "On-chip Peripheral Drivers"
             bool "Enable timer0 output pwm"
             default n
             if BSP_USING_PWM0
-                menuconfig BSP_USING_PWM0_CH3
-                    bool "Enable PWM0 channel3"
+                menuconfig BSP_USING_PWM0_CH0
+                    bool "Enable PWM0 channel0"
                     default n
-                    if BSP_USING_PWM0_CH3
-                        config BSP_USING_PWM0_PORT13
-                        bool "Enable PWM0-PORT13 output pwm"
+                    if BSP_USING_PWM0_CH0
+                        config BSP_USING_PWM0_PORT0
+                        bool "Enable PWM0-PORT0 output pwm"
                         default n
                     endif
                 menuconfig BSP_USING_PWM0_CH7
@@ -106,6 +187,9 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         default n
         if BSP_USING_SPI
+            menuconfig BSP_USING_SPI0
+                bool "Enable SPI0 BUS"
+                default n
             menuconfig BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
                 default n
@@ -114,6 +198,9 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable SPI3 BUS Sample"
                         default n
                 endif
+            menuconfig BSP_USING_SPI6
+                bool "Enable SPI6 BUS"
+                default n
         endif
 
     menuconfig BSP_USING_ADC
@@ -248,13 +335,90 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable TIM2"
                 default n
         endif
+
+    menuconfig BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select PKG_USING_LVGL
+        default n
+        if BSP_USING_LVGL
+            config BSP_USING_LCD_ILI9431
+                bool "Enable LVGL for LCD_ILI9431"
+                select PKG_USING_ILI9341
+                select BSP_USING_SPI
+                select BSP_USING_SPI0
+                default n
+        endif
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            select PKG_USING_LV_MUSIC_DEMO
+            default y
+    endif        
 endmenu
 
 menu "Board extended module Drivers"
 
     config BSP_USING_SLIDER
-        bool "Enable Slider Demo"
+        bool "Enable Slider"
         default n
+    if BSP_USING_SLIDER
+        config BSP_USING_SLIDER_SAMPLE
+            bool "Enable Slider Demo"
+            select BSP_USING_PWM
+            select BSP_USING_PWM0
+            select BSP_USING_PWM0_CH0
+            select BSP_USING_PWM0_PORT0
+            default n
+    endif
+
+        menuconfig BSP_USING_RW007
+            bool "Enable RW007"
+            default n
+            select PKG_USING_RW007
+            select BSP_USING_SPI
+            select BSP_USING_SPI0
+            select RW007_NOT_USE_EXAMPLE_DRIVERS
+
+        if BSP_USING_RW007
+            comment "Notice: P5_7 --> 47; P5_6 -->46; P0_5 --> 5; P0_4 --> 4"
+            config IFX_RW007_SPI_BUS_NAME
+                string "RW007 BUS NAME"
+                default "spi0"
+
+            config IFX_RW007_WIFI_SSID
+                string "Wi-Fi SSID"
+                default "realthread_VIP"
+
+            config IFX_RW007_WIFI_PASSWORD
+                string "Wi-Fi Password"
+                default "your wifi password"
+
+            config IFX_RW007_CS_PIN
+                int "(INT)CS pin index"
+                range 1 113
+                default 5
+
+            config IFX_RW007_BOOT0_PIN
+                int "(INT)BOOT0 pin index (same as spi clk pin)"
+                range 1 113
+                default 4
+
+            config IFX_RW007_BOOT1_PIN
+                int "(INT)BOOT1 pin index (same as spi cs pin)"
+                range 1 113
+                default 5
+
+            config IFX_RW007_INT_BUSY_PIN
+                int "(INT)INT/BUSY pin index"
+                range 1 113
+                default 47
+
+            config IFX_RW007_RST_PIN
+                int "(INT)RESET pin index"  
+                range 1 113
+                default 46
+        endif
 endmenu
 
 endmenu

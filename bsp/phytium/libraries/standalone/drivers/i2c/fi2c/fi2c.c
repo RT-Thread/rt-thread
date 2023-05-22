@@ -12,13 +12,15 @@
  *
  *
  * FilePath: fi2c.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-01 14:53:42
  * LastEditTime: 2022-02-18 08:36:58
- * Description:  This files is for
+ * Description:  This file is for complete user external interface
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu 2021/11/1  first commit
+ * 1.1  liushengming 2022/2/18  modified to support i2c
  */
 
 
@@ -50,19 +52,11 @@ static const char *FI2C_ERROR_CODE_MSG[FI2C_NUM_OF_ERR_CODE] =
 {
     "FI2C_SUCCESS : fi2c success",
     "FI2C_ERR_INVAL_PARM : fi2c invalid input parameters",
-    "FI2C_ERR_NOT_READY : fi2c driver not ready",
+    "FI2C_ERR_NOT_READY : fi2c driver is not ready",
     "FI2C_ERR_TIMEOUT : fi2c wait timeout",
-    "FI2C_ERR_NOT_SUPPORT : fi2c non support operation",
+    "FI2C_ERR_NOT_SUPPORT : fi2c not support operation",
     "FI2C_ERR_INVAL_STATE : fi2c invalid state"
 };
-
-/*****************************************************************************/
-
-/* 此文件主要为了完成用户对外接口，用户可以使用这些接口直接开始工作 */
-
-/* - 包括用户API的定义和实现
-   - 同时包含必要的OPTION方法，方便用户进行配置
-   - 如果驱动可以直接进行I/O操作，在此源文件下可以将API 进行实现 */
 
 /**
  * @name: FI2cCfgInitialize
@@ -86,7 +80,7 @@ FError FI2cCfgInitialize(FI2c *instance_p, const FI2cConfig *input_config_p)
     */
     if (FT_COMPONENT_IS_READY == instance_p->is_ready)
     {
-        FI2C_ERROR("device is already initialized!!!");
+        FI2C_ERROR("Device is already initialized!!!");
         return FI2C_ERR_INVAL_STATE;
     }
 
@@ -164,11 +158,15 @@ static FError FI2cReset(FI2c *instance_p)
     ret = FI2cSetSpeed(base_addr, config_p->speed_rate);
 
     if (FI2C_SUCCESS == ret)
-        ret = FI2cSetEnable(base_addr, TRUE); /* enable i2c ctrl */
+    {
+        ret = FI2cSetEnable(base_addr, TRUE);    /* enable i2c ctrl */
+    }
 
     /* if init successed, and i2c is in slave mode, set slave address */
     if ((FI2C_SUCCESS == ret) && (FI2C_SLAVE == config_p->work_mode))
+    {
         ret = FI2cSetSar(base_addr, config_p->slave_addr);
+    }
 
     return ret;
 }

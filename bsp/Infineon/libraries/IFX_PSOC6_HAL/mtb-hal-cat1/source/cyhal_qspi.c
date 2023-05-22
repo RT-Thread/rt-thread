@@ -7,7 +7,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -40,6 +40,7 @@
  *  - TX FIFO Level Trigger interrupt
  *  - RX DMA Trigger
  *  - TX DMA Trigger
+ * Note: For CAT1D devices, the QSPI SCLK connection is provided with a dedicated pin so NC should be passed for the SCLK pin when calling cyhal_qspi_init.
  *
  * \section section_hal_impl_qspi_init_clock_20829 20829 device clock limitations
  * Due to specifics of 20829 device clock tree, where multiple peripheral devices are clocked by same HF1, as
@@ -60,7 +61,7 @@
 #include <stdlib.h>
 #include "cy_smif.h"
 #include "cyhal_utils.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_qspi.h"
 #include "cyhal_hwmgr.h"
 #include "cyhal_gpio.h"
@@ -111,42 +112,64 @@ extern "C" {
 static cyhal_qspi_t *_cyhal_qspi_config_structs[CY_IP_MXSMIF_INSTANCES];
 
 /* List of available QSPI instances */
+
+#if (CY_IP_MXSMIF_VERSION >= 4)
+static SMIF_Type * const _cyhal_qspi_base_addresses[SMIF_SMIF_NR] =
+{
+#ifdef SMIF0_CORE0
+    SMIF0_CORE0,
+#endif /* ifdef SMIF0_CORE0   */
+#ifdef SMIF0_CORE1
+    SMIF0_CORE1,
+#endif /* ifdef SMIF0_CORE1 */
+};
+#else
 static SMIF_Type *const _cyhal_qspi_base_addresses[CY_IP_MXSMIF_INSTANCES] =
 {
 #ifdef SMIF0
     SMIF0,
 #endif /* ifdef SMIF0 */
 };
-
-#if (CY_IP_MXSMIF_VERSION >= 3)
-#define CYHAL_SMIF_IRQN    (smif_interrupt_normal_IRQn)
-#elif (CY_IP_MXSMIF_VERSION == 2)
-#define CYHAL_SMIF_IRQN    (smif_0_interrupt_IRQn)
-#else
-#define CYHAL_SMIF_IRQN    (smif_interrupt_IRQn)
 #endif
 
 /* List of available QSPI interrupt sources */
-static const _cyhal_system_irq_t _CYHAL_QSPI_IRQ_N[CY_IP_MXSMIF_INSTANCES] =
+#if (CY_IP_MXSMIF_VERSION >= 4)
+static const _cyhal_system_irq_t _cyhal_qspi_irq_n[SMIF_SMIF_NR] =
+{
+#ifdef SMIF0_CORE0
+    smif_0_smif0_interrupt_IRQn,
+#endif /* ifdef SMIF0_CORE0 */
+
+#ifdef SMIF0_CORE1
+    smif_0_smif1_interrupt_IRQn,
+#endif /* ifdef SMIF0_CORE1 */
+};
+#else
+static const _cyhal_system_irq_t _cyhal_qspi_irq_n[CY_IP_MXSMIF_INSTANCES] =
 {
 #ifdef SMIF0
-    CYHAL_SMIF_IRQN,
+#if (CY_IP_MXSMIF_VERSION >= 3)
+    smif_interrupt_normal_IRQn,
+#elif (CY_IP_MXSMIF_VERSION == 2)
+    smif_0_interrupt_IRQn,
+#else
+    smif_interrupt_IRQn,
+#endif
 #endif /* ifdef SMIF0 */
 };
+#endif
 
 static inline uint8_t _cyhal_qspi_get_block_from_irqn(_cyhal_system_irq_t irqn)
 {
-    switch (irqn)
+    for(uint8_t i = 0; i < (sizeof(_cyhal_qspi_irq_n)/sizeof(_cyhal_qspi_irq_n[0])) ;i++ )
     {
-#if !(CY_CPU_CORTEX_M0P)
-#ifdef SMIF0
-        case CYHAL_SMIF_IRQN: return 0;
-#endif /* ifdef SMIF0 */
-#endif /* !(CY_CPU_CORTEX_M0P) */
-        default:
-            CY_ASSERT(false); // Should never be called with a non-SMIF IRQn
-            return 0;
+        if (_cyhal_qspi_irq_n[i] == irqn)
+        {
+            return i;
+        }
     }
+    CY_ASSERT(false); // Should never be called with a non-SMIF IRQn
+    return 0;
 }
 
 static cyhal_qspi_t *_cyhal_qspi_get_irq_obj(void)
@@ -422,7 +445,7 @@ static cy_rslt_t _cyhal_qspi_command_transfer(cyhal_qspi_t *obj, const cyhal_qsp
 
         if (!command->address.disabled && !command->mode_bits.disabled)
         {
-            if (_cyhal_qspi_convert_bus_width(command->address.bus_width) != _cyhal_qspi_convert_bus_width(command->mode_bits.bus_width))
+            if (command->address.bus_width != command->mode_bits.bus_width)
             {
                 result = CYHAL_QSPI_RSLT_ERR_BUS_WIDTH;
             }
@@ -625,9 +648,8 @@ static cy_rslt_t _cyhal_qspi_slave_select_check_reserve(cyhal_qspi_t *obj, cyhal
 {
     CY_ASSERT(NULL != obj);
     const cyhal_resource_pin_mapping_t *ssel_map = _cyhal_qspi_get_slaveselect(ssel, found_idx);
-    const cyhal_resource_pin_mapping_t *sclk_map = _CYHAL_UTILS_GET_RESOURCE(obj->pin_sclk, cyhal_pin_map_smif_spi_clk);
-    /* Found ssel map is not null and belong to same block as sclk */
-    if ((NULL == ssel_map) || (NULL == sclk_map) || !_cyhal_utils_map_resources_equal(sclk_map, ssel_map))
+    /* Found ssel map is not null and belong to same block as obj->resource */
+    if ((NULL == ssel_map) || !_cyhal_utils_map_resource_equal(&obj->resource, ssel_map, true))
     {
         return CYHAL_QSPI_RSLT_ERR_CANNOT_CONFIG_SSEL;
     }
@@ -660,8 +682,11 @@ static cy_rslt_t _cyhal_qspi_process_pin_set(cyhal_qspi_t *obj, const cyhal_qspi
     cy_rslt_t result = _cyhal_qspi_check_user_pins(pin_set, &max_width);
 
     uint8_t pin_offset = 0;
-    const cyhal_resource_pin_mapping_t *sclk_map = _CYHAL_UTILS_GET_RESOURCE(obj->pin_sclk, cyhal_pin_map_smif_spi_clk);
-    const cyhal_resource_pin_mapping_t *io_maps[_CYHAL_QSPI_MAX_DATA_PINS] = { NULL };
+    const cyhal_resource_pin_mapping_t *io_maps[_CYHAL_QSPI_MAX_DATA_PINS];
+    for (uint8_t i = 0; i < _CYHAL_QSPI_MAX_DATA_PINS; i++)
+    {
+        io_maps[i] = NULL;
+    }
     const size_t data_pin_map_sizes[_CYHAL_QSPI_MAX_DATA_PINS - 1] = // Must compute sizes here since we can't get them from the map pointers
     {
         sizeof(cyhal_pin_map_smif_spi_data1) / sizeof(cyhal_resource_pin_mapping_t),
@@ -692,8 +717,8 @@ static cy_rslt_t _cyhal_qspi_process_pin_set(cyhal_qspi_t *obj, const cyhal_qspi
         const cyhal_resource_pin_mapping_t *tmp_io_map =
                 _cyhal_qspi_get_dataselect(pin_set->io[0], data_select, &pin_offset);
         io_maps[pin_offset] = tmp_io_map;
-        if (NULL == sclk_map || NULL == io_maps[pin_offset] ||
-            !_cyhal_utils_map_resources_equal(sclk_map, io_maps[pin_offset]))
+        if ( NULL == io_maps[pin_offset] ||
+            !_cyhal_utils_map_resource_equal(&obj->resource, io_maps[pin_offset],true))
         {
             result = CYHAL_QSPI_RSLT_ERR_PIN;
         }
@@ -719,7 +744,7 @@ static cy_rslt_t _cyhal_qspi_process_pin_set(cyhal_qspi_t *obj, const cyhal_qspi
         {
             io_maps[i] = _cyhal_utils_get_resource(pin_set->io[i-pin_offset], data_pin_maps[i-1], data_pin_map_sizes[i-1],
                                 NULL, false);
-            if (NULL == io_maps[i] || !_cyhal_utils_map_resources_equal(sclk_map, io_maps[i]))
+            if (NULL == io_maps[i] || !_cyhal_utils_map_resource_equal(&obj->resource, io_maps[i],true))
             {
                 result = CYHAL_QSPI_RSLT_ERR_PIN;
                 break;
@@ -800,6 +825,12 @@ static cy_rslt_t _cyhal_qspi_init_common(cyhal_qspi_t *obj, const cyhal_qspi_con
     }
 
     cy_rslt_t result = CY_RSLT_SUCCESS;
+#if (CY_IP_MXSMIF_VERSION >= 4)
+    if(cfg->gpios.sclk != NC)
+    {
+        result = CYHAL_QSPI_RSLT_ERR_PIN;
+    }
+#else
     const cyhal_resource_pin_mapping_t *sclk_map = _CYHAL_UTILS_GET_RESOURCE(cfg->gpios.sclk, cyhal_pin_map_smif_spi_clk);
     /* Can't work without sclk pin */
     if (NULL == sclk_map)
@@ -810,7 +841,7 @@ static cy_rslt_t _cyhal_qspi_init_common(cyhal_qspi_t *obj, const cyhal_qspi_con
     {
         result = _cyhal_qspi_check_pin_and_reserve(sclk_map, CYHAL_PIN_MAP_DRIVE_MODE_SMIF_SPI_CLK);
     }
-
+#endif
     if (CY_RSLT_SUCCESS == result)
     {
         obj->pin_sclk = cfg->gpios.sclk;
@@ -831,12 +862,15 @@ static cy_rslt_t _cyhal_qspi_init_common(cyhal_qspi_t *obj, const cyhal_qspi_con
     cyhal_qspi_slave_pin_config_t pin_set;
     pin_set.ssel = ssel;
     memcpy(pin_set.io, cfg->gpios.io, sizeof(cfg->gpios.io));
-
+    const cyhal_resource_pin_mapping_t *ssel_map;
     if (CY_RSLT_SUCCESS == result)
     {
-        result = _cyhal_qspi_process_pin_set(obj, &pin_set, &data_select, &found_ssel_idx, !obj->dc_configured);
+        ssel_map = _cyhal_qspi_get_slaveselect(ssel, &found_ssel_idx);
+        if(ssel_map == NULL)
+        {
+            result = CYHAL_QSPI_RSLT_ERR_PIN;
+        }
     }
-
     if (CY_RSLT_SUCCESS == result)
     {
         if (obj->dc_configured)
@@ -845,7 +879,7 @@ static cy_rslt_t _cyhal_qspi_init_common(cyhal_qspi_t *obj, const cyhal_qspi_con
         }
         else
         {
-            cyhal_resource_inst_t rsc = { CYHAL_RSC_SMIF, sclk_map->block_num, sclk_map->channel_num };
+            cyhal_resource_inst_t rsc = { CYHAL_RSC_SMIF, ssel_map->block_num, ssel_map->channel_num };
         #ifndef __MBED__
             // Mbed calls qspi_init multiple times without calling qspi_free to update the QSPI frequency/mode.
             // As a result, we won't worry about resource reservation if running through mbed.
@@ -857,6 +891,12 @@ static cy_rslt_t _cyhal_qspi_init_common(cyhal_qspi_t *obj, const cyhal_qspi_con
             }
         }
     }
+
+    if (CY_RSLT_SUCCESS == result)
+    {
+        result = _cyhal_qspi_process_pin_set(obj, &pin_set, &data_select, &found_ssel_idx, !obj->dc_configured);
+    }
+
 
     if (CY_RSLT_SUCCESS == result)
     {
@@ -948,8 +988,8 @@ static cy_rslt_t _cyhal_qspi_init_common(cyhal_qspi_t *obj, const cyhal_qspi_con
         obj->pm_callback.ignore_modes = CYHAL_SYSPM_AFTER_DS_WFI_TRANSITION;
         _cyhal_syspm_register_peripheral_callback(&(obj->pm_callback));
 
-        _cyhal_irq_register(_CYHAL_QSPI_IRQ_N[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_qspi_irq_handler);
-        _cyhal_irq_enable(_CYHAL_QSPI_IRQ_N[obj->resource.block_num]);
+        _cyhal_irq_register(_cyhal_qspi_irq_n[obj->resource.block_num], CYHAL_ISR_PRIORITY_DEFAULT, _cyhal_qspi_irq_handler);
+        _cyhal_irq_enable(_cyhal_qspi_irq_n[obj->resource.block_num]);
     }
 
     if (CY_RSLT_SUCCESS != result)
@@ -967,7 +1007,7 @@ cy_rslt_t cyhal_qspi_init(
     CY_ASSERT(NULL != obj);
     CY_ASSERT(NULL != pin_set);
 
-    /* mode (CPOL and CPHA) are not supported in CAT1 (PSoCâ„¢ 6) */
+    /* mode (CPOL and CPHA) are not supported in CAT1 */
     CY_UNUSED_PARAMETER(mode);
 
 #if defined(CY_DEVICE_CYW20829)
@@ -1024,7 +1064,7 @@ void cyhal_qspi_free(cyhal_qspi_t *obj)
 {
     if (CYHAL_RSC_SMIF == obj->resource.type)
     {
-        _cyhal_system_irq_t irqn = _CYHAL_QSPI_IRQ_N[obj->resource.block_num];
+        _cyhal_system_irq_t irqn = _cyhal_qspi_irq_n[obj->resource.block_num];
         _cyhal_irq_free(irqn);
         _cyhal_syspm_unregister_peripheral_callback(&(obj->pm_callback));
         if (obj->base != NULL)
@@ -1392,7 +1432,7 @@ void cyhal_qspi_enable_event(cyhal_qspi_t *obj, cyhal_qspi_event_t event, uint8_
         obj->irq_cause &= ~event;
     }
 
-    _cyhal_system_irq_t irqn = _CYHAL_QSPI_IRQ_N[obj->resource.block_num];
+    _cyhal_system_irq_t irqn = _cyhal_qspi_irq_n[obj->resource.block_num];
     _cyhal_irq_set_priority(irqn, intr_priority);
 }
 

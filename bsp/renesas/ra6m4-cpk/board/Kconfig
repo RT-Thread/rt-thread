@@ -329,19 +329,36 @@ menu "Hardware Drivers Config"
                 endif
             endif
 
+        menuconfig BSP_USING_SCI_SPI
+            bool "Enable SCI SPI BUS"
+            default n
+            select RT_USING_SPI
+            if BSP_USING_SCI_SPI 
+                config BSP_USING_SCI_SPI0
+                    bool "Enable SCI SPI0 BUS"
+                    default n
+                config BSP_USING_SCI_SPI1
+                    bool "Enable SCI SPI1 BUS"
+                    default n
+                config BSP_USING_SCI_SPI2
+                    bool "Enable SCI SPI2 BUS"
+                    default n
+                config BSP_USING_SCI_SPI3
+                    bool "Enable SCI SPI3 BUS"
+                    default n
+                config BSP_USING_SCI_SPI6
+                    bool "Enable SCI SPI6 BUS"
+                    default n
+            endif
+    
         menuconfig BSP_USING_SPI
             bool "Enable SPI BUS"
             default n
             select RT_USING_SPI
-            if BSP_USING_SPI
-                config BSP_SPI_USING_DTC_DMA
-                    bool "Enable SPI DTC transfers data without using the CPU."
-                    default n
-
+            if BSP_USING_SPI 
                 config BSP_USING_SPI0
                     bool "Enable SPI0 BUS"
                     default n
-
                 config BSP_USING_SPI1
                     bool "Enable SPI1 BUS"
                     default n
@@ -446,6 +463,32 @@ menu "Hardware Drivers Config"
                 config BSP_USING_CAN1
                     bool "Enable CAN1"
                     default n
+            endif
+
+        config BSP_USING_SPI_LCD
+            bool "Enable SPI LCD"
+            select BSP_USING_GPIO
+            select BSP_USING_SPI
+            select BSP_USING_SPI1
+            default n
+
+            menuconfig BSP_USING_LVGL
+                bool "Enable LVGL for LCD"
+                select PKG_USING_LVGL
+                default n
+                if BSP_USING_LVGL
+                    config BSP_USING_LCD_ILI9431
+                        bool "Enable LVGL for LCD_ILI9431"
+                        select PKG_USING_ILI9341
+                        select BSP_USING_SPI_LCD
+                        default n
+                endif
+
+            if BSP_USING_LVGL
+                config BSP_USING_LVGL_DEMO
+                    bool "Enable LVGL demo"
+                    select PKG_USING_LV_MUSIC_DEMO
+                    default y
             endif
 
     endmenu

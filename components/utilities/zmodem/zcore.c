@@ -335,7 +335,7 @@ static rt_int16_t zrec_data32(rt_uint8_t *buf, rt_int16_t len)
     rt_uint32_t crc;
     rt_err_t res = -RT_ERROR;
     rt_uint8_t *p,flag = 0;
-
+    p = buf;
     crc_cnt = 0;   crc = 0xffffffffL;
     Rxcount = 0;
     while (buf <= p+len)

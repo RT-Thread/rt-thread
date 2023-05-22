@@ -177,7 +177,7 @@ msh >
 ## 5. 联系人信息
 
 维护人：
-- [tanek](https://github.com/TanekLiang)
+- [tanek](https://github.com/liangyongxiang)
 
 ## 6. 参考
 

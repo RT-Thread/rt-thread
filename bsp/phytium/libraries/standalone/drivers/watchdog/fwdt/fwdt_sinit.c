@@ -14,11 +14,12 @@
  * FilePath: fwdt_sinit.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-25 11:45:05
- * Description:  This files is for
+ * Description:  This file is for wdt static variables implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/4/25   init commit
  */
 
 
@@ -34,7 +35,7 @@
 #define FWDT_DEBUG(format, ...) FT_DEBUG_PRINT_D(FWDT_DEBUG_TAG, format, ##__VA_ARGS__)
 
 
-extern FWdtConfig FWdtConfigTbl[FWDT_INSTANCE_NUM];
+extern FWdtConfig FWdtConfigTbl[FWDT_NUM];
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -56,13 +57,13 @@ const FWdtConfig *FWdtLookupConfig(u32 instance_id)
     const FWdtConfig *pconfig = NULL;
     u32 index;
 
-    if (instance_id >= FWDT_INSTANCE_NUM)
+    if (instance_id >= FWDT_NUM)
     {
         FWDT_ERROR("wdt id is not invalid.");
         return NULL;
     }
 
-    for (index = 0; index < (u32)FWDT_INSTANCE_NUM; index++)
+    for (index = 0; index < (u32)FWDT_NUM; index++)
     {
         if (FWdtConfigTbl[index].instance_id == instance_id)
         {

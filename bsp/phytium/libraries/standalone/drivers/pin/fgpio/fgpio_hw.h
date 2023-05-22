@@ -19,21 +19,25 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2022-3-1     init commit
+ * 1.0   zhugengyu  2022/3/1     init commit
+ * 2.0   zhugengyu  2022/7/1     support e2000
  */
 
 
-#ifndef  DRIVERS_FGPIO_HW_H
-#define  DRIVERS_FGPIO_HW_H
+#ifndef  FGPIO_HW_H
+#define  FGPIO_HW_H
+
+#include "fio.h"
+#include "fkernel.h"
+
+/***************************** Include Files *********************************/
+#include "fio.h"
+#include "fkernel.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-/***************************** Include Files *********************************/
-#include "fio.h"
-#include "fkernel.h"
 
 /************************** Constant Definitions *****************************/
 /** @name Register Map
@@ -101,6 +105,7 @@ extern "C"
 /** @name FGPIO_INTMASK_OFFSET Register
  */
 #define FGPIO_INTR_PORTA_MASK(n)          BIT(n) /* 1: disable the intr of n-th port in group-a */
+#define FGPIO_INTR_PORTA_MASKALL          GENMASK(15, 0)
 
 /** @name FGPIO_INTTYPE_LEVEL_OFFSET Register
  */
@@ -152,9 +157,13 @@ static inline void FGpioWriteReg32(uintptr base_addr, uintptr reg_off, const u32
 static inline void FGpioSetBit32(uintptr base_addr, uintptr reg_off, u32 bit)
 {
     if (0 == bit)
+    {
         FtClearBit32(base_addr + reg_off, bit);
+    }
     else if (1 == bit)
+    {
         FtSetBit32(base_addr + reg_off, bit);
+    }
 }
 
 /************************** Function Prototypes ******************************/

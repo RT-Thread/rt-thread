@@ -14,7 +14,7 @@
  * FilePath: fiopad_comm.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
- * Description:  This files is for io-pad function definition
+ * Description:  This file is for io-pad function definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -202,7 +202,7 @@ void FPinGetConfig(const FPinIndex pin, FPinFunc *func, FPinPull *pull, FPinDriv
 
     if (drive)
     {
-        *pull = FIOPAD_X_REG0_DRIVE_GET(reg_val);
+        *drive = FIOPAD_X_REG0_DRIVE_GET(reg_val);
     }
 
     return;
@@ -331,16 +331,24 @@ boolean FPinGetDelayEn(const FPinIndex pin, FPinDelayDir dir)
     if (FPIN_OUTPUT_DELAY == dir)
     {
         if (FIOPAD_X_REG1_OUT_DELAY_EN & reg_val)
+        {
             enabled = TRUE;
+        }
         else
+        {
             enabled = FALSE;
+        }
     }
     else if (FPIN_INPUT_DELAY == dir)
     {
         if (FIOPAD_X_REG1_IN_DELAY_EN & reg_val)
+        {
             enabled = TRUE;
+        }
         else
+        {
             enabled = FALSE;
+        }
     }
     else
     {
@@ -424,16 +432,24 @@ void FPinSetDelayEn(const FPinIndex pin, FPinDelayDir dir, boolean enable)
     if (FPIN_OUTPUT_DELAY == dir)
     {
         if (enable)
+        {
             reg_val |= FIOPAD_X_REG1_OUT_DELAY_EN;
+        }
         else
+        {
             reg_val &= ~FIOPAD_X_REG1_OUT_DELAY_EN;
+        }
     }
     else if (FPIN_INPUT_DELAY == dir)
     {
         if (enable)
+        {
             reg_val |= FIOPAD_X_REG1_IN_DELAY_EN;
+        }
         else
+        {
             reg_val &= ~FIOPAD_X_REG1_IN_DELAY_EN;
+        }
     }
     else
     {

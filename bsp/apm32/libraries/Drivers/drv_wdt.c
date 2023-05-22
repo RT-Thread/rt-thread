@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2022-03-04     stevetong459      first version
- * 2022-12-26     luobeihai         add apm32F0 serie MCU support
+ * 2022-12-26     luobeihai         add APM32F0 series MCU support
+ * 2023-03-28     luobeihai         add APM32E1/S1 series MCU support
  */
 
 #include <board.h>
@@ -57,7 +58,8 @@ static rt_err_t apm32_iwdt_init(rt_watchdog_t *wdt)
 
 #if defined(SOC_SERIES_APM32F0)
     while (IWDT_ReadStatusFlag(IWDT_FLAG_DIVU))
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     while (IWDT_ReadStatusFlag(IWDT_FLAG_PSCU))
 #endif
     {
@@ -67,15 +69,16 @@ static rt_err_t apm32_iwdt_init(rt_watchdog_t *wdt)
             return -RT_ERROR;
         }
     }
-    
+
     IWDT_EnableWriteAccess();
-    
+
 #if defined(SOC_SERIES_APM32F0)
     IWDT_ConfigDivider(IWDT_DIV_256);
-#else
+#elif defined(SOC_SERIES_APM32F1) || defined(SOC_SERIES_APM32E1) || defined(SOC_SERIES_APM32S1) \
+    || defined(SOC_SERIES_APM32F4)
     IWDT_ConfigDivider(IWDT_DIVIDER_256);
 #endif
-    
+
     IWDT_DisableWriteAccess();
 
     return RT_EOK;

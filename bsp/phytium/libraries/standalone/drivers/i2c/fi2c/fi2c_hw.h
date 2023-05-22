@@ -12,18 +12,20 @@
  *
  *
  * FilePath: fi2c_hw.h
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-01 14:53:42
  * LastEditTime: 2022-02-18 08:36:32
- * Description:  This files is for
+ * Description:  This file is for I2C register definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu 2021/11/1  first commit
+ * 1.1  liushengming 2022/02/18  add fi2c_slave mode
  */
 
 
-#ifndef DRIVERS_I2C_FI2C_HW_H
-#define DRIVERS_I2C_FI2C_HW_H
+#ifndef FI2C_HW_H
+#define FI2C_HW_H
 
 /* - 传入模块基地址，不能复杂结构体
 - hardware interface of device || low-level driver function prototypes
@@ -34,16 +36,17 @@
 3. 一些简单外设提供直接操作接口
 4. 可以定义一些状态的接口，用于响应驱动状态的变化 */
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 /***************************** Include Files *********************************/
 
 #include "fparameters.h"
 #include "fio.h"
 #include "ferror_code.h"
 #include "fkernel.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 

@@ -347,9 +347,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>CORE_M0, __STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_SPIFI, RT_USING_ARM_LIBC</Define>
+              <Define>CORE_M0, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, USE_SPIFI</Define>
               <Undefine />
-              <IncludePath>applications;.;..\Libraries\Device\NXP\LPC43xx\Include;..\Libraries\CMSIS\Include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\drivers;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\vbus;..\..\..\components\vbus\share_hdr</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension\fcntl\octal;applications;..\..\..\components\libc\compilers\common\extension;..\Libraries\Device\NXP\LPC43xx\Include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\include;..\..\..\components\vbus;..\..\..\components\drivers\include;..\drivers;..\..\..\components\finsh;..\..\..\libcpu\arm\common;.;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\vbus\share_hdr;..\Libraries\CMSIS\Include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -392,9 +392,9 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -413,9 +413,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\board.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -497,13 +497,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -714,9 +707,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -738,16 +731,9 @@
           <GroupName>VBus</GroupName>
           <Files>
             <File>
-              <FileName>prio_queue.c</FileName>
+              <FileName>watermark_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\vbus\prio_queue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>vbus_chnx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\vbus\vbus_chnx.c</FilePath>
+              <FilePath>..\..\..\components\vbus\watermark_queue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -759,9 +745,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>watermark_queue.c</FileName>
+              <FileName>prio_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\vbus\watermark_queue.c</FilePath>
+              <FilePath>..\..\..\components\vbus\prio_queue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>vbus_chnx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\vbus\vbus_chnx.c</FilePath>
             </File>
           </Files>
         </Group>

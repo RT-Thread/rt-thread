@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,6 +33,14 @@ struct drv_lcd_device _lcd;
 
 uint16_t screen_rotation;
 uint16_t *lcd_current_working_buffer = (uint16_t *)&fb_background[0];
+
+// jpeg and lvgl can only select one
+__WEAK void _ra_port_display_callback(display_callback_args_t *p_args)
+{
+    if (DISPLAY_EVENT_LINE_DETECTION == p_args->event)
+    {
+    }
+}
 
 void turn_on_lcd_backlight(void)
 {

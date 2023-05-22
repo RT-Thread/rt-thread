@@ -20,7 +20,7 @@ The sending process of the non-blocking mode mails can be safely used in ISR. It
 
 When a thread sends a message to a mailbox, if the mailbox is not full, the message will be copied to the mailbox. If the mailbox is full, the thread sending the message can set a timeout, and choose to wait and suspend or return directly - RT_EFULL. If the thread sending the message chooses to suspend and wait, then when the mails in the mailbox are received and space is left open again, the thread sending the message will be awaken and will continue to send.
 
-When a thread receives a message from a mailbox, if the mailbox is empty, the thread receiving the message can choose whether to set a timeout or wait and suspend until a new message is received to be awaken. When the set timeout is up and the mailbox still hasn't received the message, the thread that chose to wait till timeout will be awaken and return - RT_ETIMEOUT. If there are messages in the mailbox, then the thread receiving the message will copy the 4-byte message in the mailbox to the receiving cache.
+When a thread receives a message from a mailbox, if the mailbox is empty, the thread receiving the message can choose whether to set a timeout or wait and suspend until a new message is received to be awaken. When the set timeout is up and the mailbox still hasn't received the message, the thread that chose to wait till timeout will be awaken and return -RT_ETIMEOUT. If there are messages in the mailbox, then the thread receiving the message will copy the 4-byte message in the mailbox to the receiving cache.
 
 ### Mailbox Control Block
 

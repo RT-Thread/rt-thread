@@ -11,7 +11,6 @@
 #include <lvgl.h>
 #include <stdbool.h>
 #include <rtdevice.h>
-#include "touch.h"
 
 static lv_indev_state_t last_state = LV_INDEV_STATE_REL;
 static rt_int16_t last_x = 0;

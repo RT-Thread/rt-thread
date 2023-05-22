@@ -47,8 +47,9 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50000
+#define RT_CONSOLE_DEVICE_NAME "uart6"
+#define RT_VER_NUM 0x50001
+#define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -73,6 +74,9 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+
+/* DFS: device virtual file system */
+
 
 /* Device Drivers */
 
@@ -144,9 +148,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -166,11 +167,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -186,16 +195,36 @@
 /* Arduino libraries */
 
 
-/* Sensor libraries */
+/* Projects */
 
 
-/* Display libraries */
+/* Sensors */
 
 
-/* Timing libraries */
+/* Display */
 
 
-/* Project libraries */
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 #define SOC_FAMILY_IFX
 #define SOC_SERIES_IFX_PSOC62
@@ -212,7 +241,7 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
-#define BSP_USING_UART0
+#define BSP_USING_UART6
 
 /* Board extended module Drivers */
 

@@ -1,0 +1,22 @@
+
+
+menu "Media Configuration"
+    config ENABLE_FDC_DP
+        bool
+        prompt "USE FMEDIA"
+        default n
+        help
+            Select fdcdp driver component
+
+    config ENABLE_FDC_DP_USE_LIB
+        bool
+        prompt "USE FMEDIA LIB TO LINK"
+        default n
+        help
+            Select fdcdp driver component
+    
+
+endmenu
+
+
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,7 +23,7 @@ static struct rt_device_graphic_info info;
 
 static lv_disp_drv_t disp_drv;  /*Descriptor of a display driver*/
 
-#define DISP_BUF_SIZE        (LV_HOR_RES_MAX * LV_VER_RES_MAX / 4)
+#define DISP_BUF_SIZE        (LV_HOR_RES_MAX * LV_VER_RES_MAX / 2)
 
 static lv_disp_drv_t g_disp_drv;
 extern LTDC_HandleTypeDef  hltdc;
@@ -31,7 +31,7 @@ volatile rt_bool_t g_gpu_state = RT_FALSE;
 
 static void lvgl_dma_config(void)
 {
-    HAL_NVIC_SetPriority(DMA2D_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(DMA2D_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(DMA2D_IRQn);
     __HAL_RCC_DMA2D_CLK_ENABLE();
 }
@@ -84,7 +84,17 @@ void DMA2D_IRQHandler(void)
 void lv_port_disp_init(void)
 {
     rt_err_t result;
-    static lv_color_t  lv_disp_buf1[DISP_BUF_SIZE] = {0};
+
+    void *lv_disp_buf1 = RT_NULL;
+    void *lv_disp_buf2 = RT_NULL;
+
+    lv_disp_buf1 = rt_malloc(DISP_BUF_SIZE * sizeof(lv_color_t));
+    rt_memset(lv_disp_buf1, 0, DISP_BUF_SIZE * sizeof(lv_color_t));
+    RT_ASSERT(lv_disp_buf1 != RT_NULL);
+
+    lv_disp_buf2 = rt_malloc(DISP_BUF_SIZE * sizeof(lv_color_t));
+    rt_memset(lv_disp_buf2, 0, DISP_BUF_SIZE * sizeof(lv_color_t));
+    RT_ASSERT(lv_disp_buf2 != RT_NULL);
 
     lcd_device = rt_device_find("lcd");
 
@@ -118,7 +128,7 @@ void lv_port_disp_init(void)
     lvgl_dma_config();
 
     /*Initialize `disp_buf` with the buffer(s).*/
-    lv_disp_draw_buf_init(&disp_buf, lv_disp_buf1, RT_NULL, DISP_BUF_SIZE);
+    lv_disp_draw_buf_init(&disp_buf, lv_disp_buf1, lv_disp_buf2, DISP_BUF_SIZE);
 
     lv_disp_drv_init(&disp_drv); /*Basic initialization*/
 

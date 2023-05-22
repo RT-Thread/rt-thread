@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include <string.h>
@@ -116,7 +116,9 @@ static void FUsbMscRemoveDisk(FUsbDev *dev)
     FASSERT(dev);
 
     if (MSC_INST(dev)->usbdisk_created && FUsbDiskRemove)
+    {
         FUsbDiskRemove(dev);
+    }
 
     return;
 }
@@ -222,12 +224,14 @@ static int FUsbMscResetTransport(FUsbDev *dev)
     dr.wLength = 0;
 
     if (MSC_INST(dev)->quirks & FUSB_MSC_QUIRK_NO_RESET)
+    {
         return MSC_COMMAND_FAIL;
+    }
 
     /* if any of these fails, detach device, as we are lost */
     if (dev->controller->control(dev, FUSB_OUT, sizeof(dr), &dr, 0, 0) < 0 ||
-            FUsbClearStall(MSC_INST(dev)->bulk_in) ||
-            FUsbClearStall(MSC_INST(dev)->bulk_out))
+        FUsbClearStall(MSC_INST(dev)->bulk_in) ||
+        FUsbClearStall(MSC_INST(dev)->bulk_out))
     {
         FUSB_INFO("Detaching unresponsive device. ");
         FUsbDetachDev(dev->controller, dev->address);
@@ -253,8 +257,8 @@ static void FUsbMscInitLuns(FUsbDev *dev)
 
     /* send class-spefic request Get Max Lun */
     if ((MSC_INST(dev)->quirks & FUSB_MSC_QUIRK_NO_LUNS) ||
-            (dev->controller->control(dev, FUSB_IN, sizeof(dr), &dr,
-                                      sizeof(msc->num_luns), &msc->num_luns) < FUSB_CC_ZERO_BYTES))
+        (dev->controller->control(dev, FUSB_IN, sizeof(dr), &dr,
+                                  sizeof(msc->num_luns), &msc->num_luns) < FUSB_CC_ZERO_BYTES))
     {
         msc->num_luns = 0; /* assume only 1 lun if req fails */
     }
@@ -298,18 +302,22 @@ static int FUsbMscGetCsw(FUsbEndpoint *ep, FUsbMscCsw *csw)
     /* Some broken sticks send a zero-length packet at the end of their data
        transfer which would show up here. Skip it to get the actual CSW. */
     if (ret == 0)
+    {
         ret = ctrlr->bulk(ep, sizeof(FUsbMscCsw), (u8 *)csw, 1);
+    }
 
     if (ret < 0)
     {
         FUsbClearStall(ep);
         ret = ctrlr->bulk(ep, sizeof(FUsbMscCsw), (u8 *)csw, 1);
         if (ret < 0)
+        {
             return FUsbMscResetTransport(ep->dev);
+        }
     }
 
     if (ret != sizeof(FUsbMscCsw) || csw->dCSWTag != tag ||
-            csw->dCSWSignature != csw_signature)
+        csw->dCSWSignature != csw_signature)
     {
         FUSB_INFO("MSC: received malformed CSW ");
         return FUsbMscResetTransport(ep->dev);
@@ -343,12 +351,16 @@ static int FUsbMscExecCmd(FUsbDev *dev, FUsbMassStorageDirection dir, const u8 *
         if (dir == FUSB_DIR_DATA_IN)
         {
             if (dev->controller->bulk(MSC_INST(dev)->bulk_in, buflen, buf, 0) < 0)
+            {
                 FUsbClearStall(MSC_INST(dev)->bulk_in);
+            }
         }
         else
         {
             if (dev->controller->bulk(MSC_INST(dev)->bulk_out, buflen, buf, 0) < 0)
+            {
                 FUsbClearStall(MSC_INST(dev)->bulk_out);
+            }
         }
     }
 
@@ -372,21 +384,29 @@ static int FUsbMscExecCmd(FUsbDev *dev, FUsbMassStorageDirection dir, const u8 *
     {
         if ((csw.dCSWDataResidue == 0) || residue_ok)
             /* no error, exit */
+        {
             return MSC_COMMAND_OK;
+        }
         else
             /* missed some bytes */
+        {
             return MSC_COMMAND_FAIL;
+        }
     }
     else
     {
         if (cb[0] == 0x03)
             /* requesting sense failed, that's bad */
+        {
             return MSC_COMMAND_FAIL;
+        }
         else if (cb[0] == 0)
             /* If command was TEST UNIT READY determine if the
              * device is of removable type indicating no media
              * found. */
+        {
             return FUsbMscRequestNoMedia(dev);
+        }
         /* error "check condition" or reserved error */
         ret = FUsbMscRequestSense(dev);
         /* return fail or the status of FUsbMscRequestSense if it's worse */
@@ -510,7 +530,9 @@ static int FUsbMscRwBlks(FUsbDev *dev, int start, int n, FUsbMassStorageDirectio
         if (FUsbMscRwChunk(dev, start + (chunk * chunk_size),
                            chunk_size, dir,
                            buf + (chunk * MAX_CHUNK_BYTES)) != MSC_COMMAND_OK)
+        {
             return 1;
+        }
     }
 
     /* Read any remaining partial chunk at the end. */
@@ -519,7 +541,9 @@ static int FUsbMscRwBlks(FUsbDev *dev, int start, int n, FUsbMassStorageDirectio
         if (FUsbMscRwChunk(dev, start + (chunk * chunk_size),
                            n % chunk_size, dir,
                            buf + (chunk * MAX_CHUNK_BYTES)) != MSC_COMMAND_OK)
+        {
             return 1;
+        }
     }
 
     return 0;
@@ -553,15 +577,21 @@ static int FUsbMscRequestNoMedia(FUsbDev *dev)
                          sizeof(cb), buf, sizeof(buf), 1);
 
     if (ret)
+    {
         return ret;
+    }
 
     /* Check if sense key is set to NOT READY. */
     if ((buf[2] & 0xf) != 2)
+    {
         return MSC_COMMAND_FAIL;
+    }
 
     /* Check if additional sense code is 0x3a. */
     if (buf[12] != 0x3a)
+    {
         return MSC_COMMAND_FAIL;
+    }
 
     /* No media is present. Return MSC_COMMAND_OK while marking the disk
      * not ready. */
@@ -604,19 +634,19 @@ static int FUsbMscReadCapcity(FUsbDev *dev)
         switch (ret = FUsbMscExecCmd(dev, FUSB_DIR_DATA_IN, (u8 *)&cb,
                                      sizeof(cb), (u8 *)buf, 8, 0))
         {
-        case MSC_COMMAND_OK:
-            break;
-        case MSC_COMMAND_FAIL:
-            continue;
-        default: /* if it's worse return */
-            return ret;
+            case MSC_COMMAND_OK:
+                break;
+            case MSC_COMMAND_FAIL:
+                continue;
+            default: /* if it's worse return */
+                return ret;
         }
         break;
     }
     if (count >= 20)
     {
         /* still not successful, assume 2tb in 512byte sectors, which is just the same garbage as any other number, but probably more usable. */
-        FUSB_WARN("  assuming 2 TB with 512-byte sectors as READ CAPACITY didn't answer. ");
+        FUSB_WARN("Assuming 2 TB with 512-byte sectors as read capacity didn't answer. ");
         MSC_INST(dev)->numblocks = 0xffffffff;
         MSC_INST(dev)->blocksize = 512;
     }
@@ -655,15 +685,15 @@ static int FUsbMscWaitReady(FUsbDev *dev)
     {
         switch (FUsbMscCheckIfReady(dev))
         {
-        case MSC_COMMAND_OK:
-            break;
-        case MSC_COMMAND_FAIL:
-            fsleep_millisec(100);
-            FUSB_INFO(".");
-            continue;
-        default:
-            /* Device detached, return immediately */
-            return FUSB_MSC_DETACHED;
+            case MSC_COMMAND_OK:
+                break;
+            case MSC_COMMAND_FAIL:
+                fsleep_millisec(100);
+                FUSB_INFO(".");
+                continue;
+            default:
+                /* Device detached, return immediately */
+                return FUSB_MSC_DETACHED;
         }
         break;
     }
@@ -671,7 +701,7 @@ static int FUsbMscWaitReady(FUsbDev *dev)
 
     if (FUsbMscTimeout(start_tick, timeout_tick))
     {
-        FUSB_INFO("timeout. Device not ready. ");
+        FUSB_INFO("Timeout. Device not ready. ");
         MSC_INST(dev)->ready = FUSB_MSC_NOT_READY;
     }
 
@@ -679,28 +709,32 @@ static int FUsbMscWaitReady(FUsbDev *dev)
      * ready. This can happen when empty card readers are present.
      * Polling will pick it back up if readiness changes. */
     if (!MSC_INST(dev)->ready)
+    {
         return MSC_INST(dev)->ready;
+    }
 
     for (i = 0; i < 30; i++)
     {
         FUSB_INFO(".");
         switch (FUsbMscSpinUp(dev))
         {
-        case MSC_COMMAND_OK:
-            FUSB_INFO(" OK.");
-            break;
-        case MSC_COMMAND_FAIL:
-            fsleep_millisec(100);
-            continue;
-        default:
-            /* Device detached, return immediately */
-            return FUSB_MSC_DETACHED;
+            case MSC_COMMAND_OK:
+                FUSB_INFO(" OK.");
+                break;
+            case MSC_COMMAND_FAIL:
+                fsleep_millisec(100);
+                continue;
+            default:
+                /* Device detached, return immediately */
+                return FUSB_MSC_DETACHED;
         }
         break;
     }
 
     if (FUsbMscReadCapcity(dev) == MSC_COMMAND_DETACHED)
+    {
         return FUSB_MSC_DETACHED;
+    }
 
     return MSC_INST(dev)->ready;
 }
@@ -739,8 +773,8 @@ void FUsbMassStorageInit(FUsbDev *dev)
     }
 
     if ((interface->bInterfaceSubClass != FUSB_MSC_SUBCLASS_ATAPI_8020) && /* ATAPI 8020 */
-            (interface->bInterfaceSubClass != FUSB_MSC_SUBCLASS_ATAPI_8070) && /* ATAPI 8070 */
-            (interface->bInterfaceSubClass != FUSB_MSC_SUBCLASS_SCSI))
+        (interface->bInterfaceSubClass != FUSB_MSC_SUBCLASS_ATAPI_8070) && /* ATAPI 8070 */
+        (interface->bInterfaceSubClass != FUSB_MSC_SUBCLASS_SCSI))
     {
         /* SCSI */
         /* Other protocols, such as ATAPI don't seem to be very popular. looks like ATAPI would be really easy to add, if necessary. */
@@ -784,19 +818,27 @@ static void FUsbMassStorageForceInit(FUsbDev *dev, u32 quirks)
     for (i = 1; i <= dev->num_endp; i++)
     {
         if (dev->endpoints[i].endpoint == 0)
+        {
             continue;
+        }
         if (dev->endpoints[i].type != FUSB_BULK_EP)
+        {
             continue;
+        }
         if ((dev->endpoints[i].direction == FUSB_IN) && (MSC_INST(dev)->bulk_in == 0))
+        {
             MSC_INST(dev)->bulk_in = &dev->endpoints[i];
+        }
         if ((dev->endpoints[i].direction == FUSB_OUT) && (MSC_INST(dev)->bulk_out == 0))
+        {
             MSC_INST(dev)->bulk_out = &dev->endpoints[i];
+        }
     }
 
     /* check if non bulk-in ep */
     if (MSC_INST(dev)->bulk_in == NULL)
     {
-        FUSB_ERROR("couldn't find bulk-in endpoint. ");
+        FUSB_ERROR("Couldn't find bulk-in endpoint.");
         FUsbDetachDev(dev->controller, dev->address);
         return;
     }
@@ -804,12 +846,12 @@ static void FUsbMassStorageForceInit(FUsbDev *dev, u32 quirks)
     /* check if non bulk-out ep */
     if (MSC_INST(dev)->bulk_out == NULL)
     {
-        FUSB_ERROR("couldn't find bulk-out endpoint. ");
+        FUSB_ERROR("Couldn't find bulk-out endpoint.");
         FUsbDetachDev(dev->controller, dev->address);
         return;
     }
 
-    FUSB_INFO("using endpoint %x as in, %x as out ",
+    FUSB_INFO("Using endpoint %x as in, %x as out.",
               MSC_INST(dev)->bulk_in->endpoint,
               MSC_INST(dev)->bulk_out->endpoint);
 
@@ -817,11 +859,13 @@ static void FUsbMassStorageForceInit(FUsbDev *dev, u32 quirks)
     fsleep_microsec(50);
 
     FUsbMscInitLuns(dev);
-    FUSB_INFO("  has %d luns ", MSC_INST(dev)->num_luns);
+    FUSB_INFO("Has %d luns.", MSC_INST(dev)->num_luns);
 
     /* Test if msc is ready (nothing to do if it isn't). */
     if (FUsbMscWaitReady(dev) != FUSB_MSC_READY)
+    {
         return;
+    }
 
     /* Create the disk. */
     FUsbMscCreateDisk(dev);
@@ -835,7 +879,9 @@ static void FUsbMscPoll(FUsbDev *dev)
     int prev_ready = msc->ready;
 
     if (FUsbMscWaitReady(dev) == FUSB_MSC_DETACHED)
+    {
         return;
+    }
 
     if (!prev_ready && msc->ready)
     {

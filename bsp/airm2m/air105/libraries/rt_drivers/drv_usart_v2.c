@@ -232,7 +232,7 @@ static rt_err_t air105_control(struct rt_serial_device *serial, int cmd, void *a
         }
         break;
     default:
-        return RT_ERROR;
+        return -RT_EINVAL;
 
     }
     return RT_EOK;

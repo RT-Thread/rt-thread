@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_syspm_v2.c
-* \version 5.70
+* \version 5.91
 *
 * This driver provides the source code for API power management.
 *
@@ -30,14 +30,19 @@
 
 #include "cy_syspm.h"
 #if  defined (CY_IP_MXS40SSRSS)
-#include "cy_pd_ppu.h"
+#include "cy_syspm_ppu.h"
 #endif
+
 
 /*******************************************************************************
 *       Internal Functions
 *******************************************************************************/
-static bool Cy_SysPm_IsLpmReady(void);
 __WEAK void Cy_SysPm_Dsramoff_Entry(void);
+
+/* RAM and ROM Voltage TRIM functions */
+static void SetMemoryVoltageTrims(cy_en_syspm_sdr_voltage_t voltage);
+static bool IsVoltageChangePossible(void);
+
 /*******************************************************************************
 *       Internal Defines
 *******************************************************************************/
@@ -95,7 +100,26 @@ __WEAK void Cy_SysPm_Dsramoff_Entry(void);
 #define CY_SYSPM_CBUCK_BUSY_RETRY_COUNT         (100U)
 #define CY_SYSPM_CBUCK_BUSY_RETRY_DELAY_MS      (1U)
 
+/* Define for ROM trim for 0.9V */
+#define CPUSS_TRIM_ROM_VOLT_0_900         (0x00000012U)
 
+/* Define for ROM trim for 1.0V */
+#define CPUSS_TRIM_ROM_VOLT_1_000         (0x00000012U)
+
+/* Define for ROM trim for 1.1V */
+#define CPUSS_TRIM_ROM_VOLT_1_100         (0x00000013U)
+
+/* Define for RAM trim for 0.9V */
+#define CPUSS_TRIM_RAM_VOLT_0_900         (0x00006012U)
+
+/* Define for RAM trim for 1.0V */
+#define CPUSS_TRIM_RAM_VOLT_1_000         (0x00005012U)
+
+/* Define for RAM trim for 1.1V */
+#define CPUSS_TRIM_RAM_VOLT_1_100         (0x00004013U)
+
+/* Mask for the RAM write check bits */
+#define CPUSS_TRIM_RAM_CTL_WC_MASK        (0x3UL << 10U)
 
 /*******************************************************************************
 *       Internal Variables
@@ -118,11 +142,6 @@ void Cy_SysPm_Init(void)
 
         /* Set Default mode to DEEPSLEEP */
         (void)Cy_SysPm_SetDeepSleepMode(CY_SYSPM_MODE_DEEPSLEEP);
-
-        /* Clear Reset reason, this ensures that API:Cy_SysPm_IsSystemDeepsleep works
-         * fine to capture the DEEP SLEEP state from which system has wake up.
-         */
-        Cy_SysLib_ClearResetReason();
     }
     else
     {
@@ -245,7 +264,7 @@ cy_en_syspm_status_t Cy_SysPm_SystemLpActiveEnter(void)
             }
 
             /* Step-3: If reducing the regulator output voltage for RegSetB, perform the extra requester sequence.
-             * Call API-Cy_SysPm_LdoExtraRequester before calling this if the voltage needs to be reduced
+             * Call API-Cy_SysPm_LdoExtraRequesterConfig before calling this if the voltage needs to be reduced
              */
 
             /* Step-4: If lowest power is required; perform the following writes to PWR_CTL2 */
@@ -305,7 +324,7 @@ cy_en_syspm_status_t Cy_SysPm_SystemLpActiveExit(void)
         retVal = Cy_SysPm_SystemSetNormalRegulatorCurrent();
 
         /* Step-2: If increasing the regulator output voltage for RegSetB, perform the extra requester sequence.
-         * Call API-Cy_SysPm_LdoExtraRequester before calling this if the voltage needs to be increased
+         * Call API-Cy_SysPm_LdoExtraRequesterConfig before calling this if the voltage needs to be increased
          */
 
         /* Step-3: High Frequency clocks could be enabled */
@@ -473,8 +492,6 @@ cy_en_syspm_status_t Cy_SysPm_CpuEnterDeepSleep(cy_en_syspm_waitfor_t waitFor)
     }
     else
     {
-        //TBD Check if PDCM Dependencies are set properly
-
         /* Call the registered callback functions with the CY_SYSPM_CHECK_READY
         *  parameter
         */
@@ -539,6 +556,87 @@ cy_en_syspm_status_t Cy_SysPm_CpuEnterDeepSleep(cy_en_syspm_waitfor_t waitFor)
             if (pmCallbackRoot[cbDeepSleepRootIdx] != NULL)
             {
                 (void) Cy_SysPm_ExecuteCallback((cy_en_syspm_callback_type_t)cbDeepSleepRootIdx, CY_SYSPM_CHECK_FAIL);
+            }
+        }
+    }
+    return retVal;
+}
+
+cy_en_syspm_status_t Cy_SysPm_SetupDeepSleepRAM(cy_en_syspm_dsram_checks_t dsramCheck, uint32_t *dsramIntState)
+{
+    uint32_t cbDeepSleepRootIdx = (uint32_t) Cy_SysPm_GetDeepSleepMode();
+    cy_en_syspm_status_t retVal = CY_SYSPM_SUCCESS;
+
+    CY_ASSERT_L3(CY_SYSPM_IS_DSRAM_CHECK_VALID(dsramCheck));
+    CY_ASSERT_L3(CY_SYSPM_IS_DEEPSLEEP_MODE_VALID(cbDeepSleepRootIdx));
+
+    //Check if LPM is ready
+    if(!Cy_SysPm_IsLpmReady())
+    {
+        retVal = CY_SYSPM_FAIL;
+    }
+    else
+    {
+        if(dsramCheck == CY_SYSPM_PRE_DSRAM)
+        {
+            /* Call the registered callback functions with the CY_SYSPM_CHECK_READY
+            *  parameter
+            */
+            if (pmCallbackRoot[cbDeepSleepRootIdx] != NULL)
+            {
+                retVal = Cy_SysPm_ExecuteCallback((cy_en_syspm_callback_type_t)cbDeepSleepRootIdx, CY_SYSPM_CHECK_READY);
+            }
+
+            /* The CPU can switch into the Deep Sleep power mode only when
+            *  all executed registered callback functions with the CY_SYSPM_CHECK_READY
+            *  parameter return CY_SYSPM_SUCCESS
+            */
+            if (retVal == CY_SYSPM_SUCCESS)
+            {
+                /* Call the registered callback functions with the
+                * CY_SYSPM_BEFORE_TRANSITION parameter
+                */
+                *dsramIntState = Cy_SysLib_EnterCriticalSection();
+
+                if (pmCallbackRoot[cbDeepSleepRootIdx] != NULL)
+                {
+                    (void) Cy_SysPm_ExecuteCallback((cy_en_syspm_callback_type_t)cbDeepSleepRootIdx, CY_SYSPM_BEFORE_TRANSITION);
+                }
+                    /* The CPU enters Deep Sleep mode upon execution of WFI/WFE
+                     * use Cy_SysPm_SetDeepSleepMode to set various deepsleep modes TBD*/
+                    SCB_SCR |= SCB_SCR_SLEEPDEEP_Msk;
+
+            }
+            else
+            {
+                /* Execute callback functions with the CY_SYSPM_CHECK_FAIL parameter to
+                *  undo everything done in the callback with the CY_SYSPM_CHECK_READY
+                *  parameter
+                */
+                if (pmCallbackRoot[cbDeepSleepRootIdx] != NULL)
+                {
+                    (void) Cy_SysPm_ExecuteCallback((cy_en_syspm_callback_type_t)cbDeepSleepRootIdx, CY_SYSPM_CHECK_FAIL);
+                }
+            }
+        }
+        else
+        {
+            /* Call the registered callback functions with the CY_SYSPM_AFTER_DS_WFI_TRANSITION
+            *  parameter
+            */
+            if (pmCallbackRoot[cbDeepSleepRootIdx] != NULL)
+            {
+                (void) Cy_SysPm_ExecuteCallback((cy_en_syspm_callback_type_t)cbDeepSleepRootIdx, CY_SYSPM_AFTER_DS_WFI_TRANSITION);
+            }
+
+            Cy_SysLib_ExitCriticalSection(*dsramIntState);
+
+            /* Call the registered callback functions with the CY_SYSPM_AFTER_TRANSITION
+            *  parameter
+            */
+            if (pmCallbackRoot[cbDeepSleepRootIdx] != NULL)
+            {
+                (void) Cy_SysPm_ExecuteCallback((cy_en_syspm_callback_type_t)cbDeepSleepRootIdx, CY_SYSPM_AFTER_TRANSITION);
             }
         }
     }
@@ -716,10 +814,9 @@ cy_en_syspm_status_t Cy_SysPm_LdoSetMode(cy_en_syspm_ldo_mode_t mode)
 
         case CY_SYSPM_LDO_MODE_DISABLED:
         {
-            /* Disable the LDO, Deep Sleep, nWell, and Retention regulators */
+            /* Disable the LDO, Deep Sleep and Retention regulators */
             SRSS_PWR_CTL2 |= (_VAL2FLD(SRSS_PWR_CTL2_DPSLP_REG_DIS, 1U) |
                              _VAL2FLD(SRSS_PWR_CTL2_RET_REG_DIS, 1U) |
-                             _VAL2FLD(SRSS_PWR_CTL2_NWELL_REG_DIS, 1U) |
                              _VAL2FLD(SRSS_PWR_CTL2_LINREG_DIS, 1U));
 
             retVal = CY_SYSPM_SUCCESS;
@@ -1007,16 +1104,6 @@ void Cy_SysPm_ClearHibernateWakeupCause(void)
     SRSS_PWR_HIB_WAKE_CAUSE = temp;
 }
 
-void Cy_SysPm_NwellRegEnable(bool enable)
-{
-    CY_REG32_CLR_SET(SRSS_PWR_CTL2, SRSS_PWR_CTL2_NWELL_REG_DIS, ((enable) ? 0UL : 1UL));
-}
-
-bool Cy_SysPm_IsNwellRegEnabled(void)
-{
-    return (_FLD2BOOL(SRSS_PWR_CTL2_NWELL_REG_DIS, SRSS_PWR_CTL2)? false : true);
-}
-
 cy_en_syspm_status_t Cy_SysPm_CoreBuckSetVoltage(cy_en_syspm_core_buck_voltage_t voltage)
 {
     CY_ASSERT_L2(CY_SYSPM_IS_CORE_BUCK_VOLTAGE_VALID(voltage));
@@ -1069,7 +1156,7 @@ cy_en_syspm_status_t Cy_SysPm_CoreBuckConfig(cy_stc_syspm_core_buck_params_t *co
 
 cy_en_syspm_status_t Cy_SysPm_CoreBuckStatus(void)
 {
-    cy_en_syspm_status_t retVal = CY_SYSPM_FAIL;
+    cy_en_syspm_status_t retVal = CY_SYSPM_TIMEOUT;
     uint32_t syspmCbuckRetry = CY_SYSPM_CBUCK_BUSY_RETRY_COUNT;
 
     while((_FLD2VAL(SRSS_PWR_CBUCK_STATUS_PMU_DONE, SRSS_PWR_CBUCK_STATUS) == 0U) && (syspmCbuckRetry != 0U))
@@ -1097,6 +1184,16 @@ void Cy_SysPm_SdrConfigure(cy_en_syspm_sdr_t sdr, cy_stc_syspm_sdr_params_t *con
 
     if(sdr == CY_SYSPM_SDR_0)
     {
+        CY_ASSERT_L2(CY_SYSPM_IS_SDR_VOLTAGE_VALID(config->sdr0DpSlpVoltSel));
+        CY_ASSERT_L2(CY_SYSPM_IS_CORE_BUCK_VOLTAGE_VALID(config->coreBuckDpSlpVoltSel));
+        CY_ASSERT_L2(CY_SYSPM_IS_CORE_BUCK_MODE_VALID(config->coreBuckDpSlpMode));
+
+        if(IsVoltageChangePossible())
+        {
+            SetMemoryVoltageTrims((cy_en_syspm_sdr_voltage_t)config->sdrVoltSel);
+        }
+
+
         SRSS_PWR_SDR0_CTL =  _VAL2FLD(SRSS_PWR_SDR0_CTL_SDR0_CBUCK_VSEL, config->coreBuckVoltSel) |
                              _VAL2FLD(SRSS_PWR_SDR0_CTL_SDR0_CBUCK_MODE, config->coreBuckMode) |
                              _VAL2FLD(SRSS_PWR_SDR0_CTL_SDR0_VSEL, config->sdrVoltSel) |
@@ -1126,6 +1223,11 @@ void Cy_SysPm_SdrSetVoltage(cy_en_syspm_sdr_t sdr, cy_en_syspm_sdr_voltage_t vol
 
     if(sdr == CY_SYSPM_SDR_0)
     {
+        if(IsVoltageChangePossible())
+        {
+            SetMemoryVoltageTrims(voltage);
+        }
+
         CY_REG32_CLR_SET(SRSS_PWR_SDR0_CTL, SRSS_PWR_SDR0_CTL_SDR0_VSEL, voltage);
     }
     else
@@ -1155,11 +1257,8 @@ cy_en_syspm_sdr_voltage_t Cy_SysPm_SdrGetVoltage(cy_en_syspm_sdr_t sdr)
 void Cy_SysPm_SdrEnable(cy_en_syspm_sdr_t sdr, bool enable)
 {
     CY_ASSERT_L2(CY_SYSPM_IS_SDR_NUM_VALID(sdr));
-    if(sdr == CY_SYSPM_SDR_0)
-    {
-        CY_REG32_CLR_SET(SRSS_PWR_SDR0_CTL, SRSS_PWR_SDR0_CTL_SDR0_ALLOW_BYPASS, ((enable) ? 0UL : 1UL));
-    }
-    else
+
+    if(sdr == CY_SYSPM_SDR_1)
     {
         CY_REG32_CLR_SET(SRSS_PWR_SDR1_CTL, SRSS_PWR_SDR1_CTL_SDR1_ENABLE, ((enable) ? 1UL : 0UL));
     }
@@ -1211,11 +1310,18 @@ cy_en_syspm_hvldo_voltage_t Cy_SysPm_HvLdoGetVoltage(void)
 }
 
 
-cy_en_syspm_status_t Cy_SysPm_LdoExtraRequester(cy_stc_syspm_extraReq_params_t *extraReqConfig)
+cy_en_syspm_status_t Cy_SysPm_LdoExtraRequesterConfig(cy_stc_syspm_extraReq_params_t *extraReqConfig)
 {
     cy_en_syspm_status_t retVal = CY_SYSPM_FAIL;
 
     CY_ASSERT_L2(CY_SYSPM_IS_CORE_BUCK_VOLTAGE_VALID(extraReqConfig->coreBuckVoltSel));
+    CY_ASSERT_L2(CY_SYSPM_IS_CORE_BUCK_VOLTAGE_VALID(extraReqConfig->sdr0Config->coreBuckVoltSel));
+    CY_ASSERT_L2(CY_SYSPM_IS_CORE_BUCK_MODE_VALID(extraReqConfig->sdr0Config->coreBuckMode));
+    CY_ASSERT_L2(CY_SYSPM_IS_SDR_VOLTAGE_VALID(extraReqConfig->sdr0Config->sdrVoltSel));
+    CY_ASSERT_L2(CY_SYSPM_IS_CORE_BUCK_VOLTAGE_VALID(extraReqConfig->sdr1Config->coreBuckVoltSel));
+    CY_ASSERT_L2(CY_SYSPM_IS_CORE_BUCK_MODE_VALID(extraReqConfig->sdr1Config->coreBuckMode));
+    CY_ASSERT_L2(CY_SYSPM_IS_SDR_VOLTAGE_VALID(extraReqConfig->sdr1Config->sdrVoltSel));
+
 
     /* Extra Requester Sequence */
 
@@ -1223,7 +1329,7 @@ cy_en_syspm_status_t Cy_SysPm_LdoExtraRequester(cy_stc_syspm_extraReq_params_t *
     CY_SYSPM_CORE_BUCK_PAUSE_ENABLE(1U);
 
     /* 2. Enable PWR_CBUCK_CTL.CBUCK_COPY_SETTINGS */
-    SRSS_PWR_CBUCK_CTL2 = _VAL2FLD(SRSS_PWR_CBUCK_CTL2_CBUCK_COPY_SETTINGS, 1UL);
+    CY_SYSPM_CORE_BUCK_COPY_SETTINGS_ENABLE(1U);
 
     /* 3. If the intention is to request higher operational state
      * (eg. higher CBUCK target voltage or higher CBUCK mode), load  the
@@ -1232,20 +1338,14 @@ cy_en_syspm_status_t Cy_SysPm_LdoExtraRequester(cy_stc_syspm_extraReq_params_t *
      * settings, because the intention is that the eventual
      * composite CBUCK mode matches the extra requester
      */
-    if(extraReqConfig->coreBuckVoltSel > (uint32_t)Cy_SysPm_CoreBuckGetVoltage())
-    {
-        (void)Cy_SysPm_CoreBuckSetVoltage((cy_en_syspm_core_buck_voltage_t)extraReqConfig->coreBuckVoltSel);
-    }
+    (void)Cy_SysPm_CoreBuckSetVoltage((cy_en_syspm_core_buck_voltage_t)extraReqConfig->coreBuckVoltSel);
 
-    if(extraReqConfig->coreBuckMode > (uint32_t)Cy_SysPm_CoreBuckGetMode())
-    {
-        (void)Cy_SysPm_CoreBuckSetMode((cy_en_syspm_core_buck_mode_t)extraReqConfig->coreBuckMode);
-    }
+    (void)Cy_SysPm_CoreBuckSetMode((cy_en_syspm_core_buck_mode_t)extraReqConfig->coreBuckMode);
 
     /* 4. Override the normal harmonization logic which internally selects the
      * scratch profile using PWR_CBUCK_CTL.CBUCK_OVERRIDE).
      */
-    SRSS_PWR_CBUCK_CTL2 = _VAL2FLD(SRSS_PWR_CBUCK_CTL2_CBUCK_OVERRIDE, 1UL);
+    CY_SYSPM_CORE_BUCK_OVERRRIDE_ENABLE(1U);
 
     /* 5. Wait until the status register indicates the transition is completed.
      * See PWR_CBUCK_STATUS.PMU_DONE.
@@ -1258,18 +1358,28 @@ cy_en_syspm_status_t Cy_SysPm_LdoExtraRequester(cy_stc_syspm_extraReq_params_t *
          * not the selected profile and there is no transition in progress, so it
          * will not have any effect on a CBUCK profile.
          */
-        Cy_SysPm_SdrConfigure(CY_SYSPM_SDR_0, extraReqConfig->sdr0Config);
-        Cy_SysPm_SdrConfigure(CY_SYSPM_SDR_1, extraReqConfig->sdr1Config);
 
-        /* 7. Remove overrides by clearing CBUCK_OVERRIDE and CBUCK_PAUSE */
-        SRSS_PWR_CBUCK_CTL2 = _VAL2FLD(SRSS_PWR_CBUCK_CTL2_CBUCK_OVERRIDE, 0UL);
-        CY_SYSPM_CORE_BUCK_PAUSE_ENABLE(0U);
+        SRSS_PWR_SDR0_CTL =  _VAL2FLD(SRSS_PWR_SDR0_CTL_SDR0_CBUCK_VSEL, extraReqConfig->sdr0Config->coreBuckVoltSel) |
+                 _VAL2FLD(SRSS_PWR_SDR0_CTL_SDR0_CBUCK_MODE, extraReqConfig->sdr0Config->coreBuckMode) |
+                 _VAL2FLD(SRSS_PWR_SDR0_CTL_SDR0_VSEL, extraReqConfig->sdr0Config->sdrVoltSel) |
+                 _VAL2FLD(SRSS_PWR_SDR0_CTL_SDR0_ALLOW_BYPASS, ((extraReqConfig->sdr0Config->sdr0Allowbypass) ? 1UL : 0UL));
 
-        /* 8. Wait until the status register indicates the transition is
-         * completed. See PWR_CBUCK_STATUS.PMU_DONE.
-         */
-        retVal = Cy_SysPm_CoreBuckStatus();
+        SRSS_PWR_SDR1_CTL =  _VAL2FLD(SRSS_PWR_SDR1_CTL_SDR1_CBUCK_VSEL, extraReqConfig->sdr1Config->coreBuckVoltSel) |
+                 _VAL2FLD(SRSS_PWR_SDR1_CTL_SDR1_CBUCK_MODE, extraReqConfig->sdr1Config->coreBuckMode) |
+                 _VAL2FLD(SRSS_PWR_SDR1_CTL_SDR1_VSEL, extraReqConfig->sdr1Config->sdrVoltSel) |
+                 _VAL2FLD(SRSS_PWR_SDR1_CTL_SDR1_HW_SEL, ((extraReqConfig->sdr1Config->sdr1HwControl) ? 1UL : 0UL)) |
+                 _VAL2FLD(SRSS_PWR_SDR1_CTL_SDR1_ENABLE, ((extraReqConfig->sdr1Config->sdr1Enable) ? 1UL : 0UL));
+
     }
+
+    /* 7. Remove overrides by clearing CBUCK_OVERRIDE and CBUCK_PAUSE */
+    CY_SYSPM_CORE_BUCK_OVERRRIDE_ENABLE(0U);
+    CY_SYSPM_CORE_BUCK_PAUSE_ENABLE(0U);
+
+    /* 8. Wait until the status register indicates the transition is
+     * completed. See PWR_CBUCK_STATUS.PMU_DONE.
+     */
+    retVal = Cy_SysPm_CoreBuckStatus();
 
     return retVal;
 }
@@ -1555,19 +1665,7 @@ void Cy_SysPm_CpuSendWakeupEvent(void)
     __SEV();
 }
 
-/*******************************************************************************
-* Function Name: Cy_SysPm_IsLpmReady
-****************************************************************************//**
-*
-* Checks if the system is LPM ready.
-*
-* \return
-* - True the system is LPM Ready.
-* - False the system is LPM Ready.
-*
-*
-*******************************************************************************/
-static bool Cy_SysPm_IsLpmReady(void)
+bool Cy_SysPm_IsLpmReady(void)
 {
     return (_FLD2BOOL(SRSS_PWR_CTL_LPM_READY, SRSS_PWR_CTL)? true : false);
 }
@@ -1836,6 +1934,88 @@ void Cy_SysPm_TriggerSoftReset(void)
 {
     SRSS_RES_SOFT_CTL = SRSS_RES_SOFT_CTL_TRIGGER_SOFT_Msk;
 }
+
+
+/*******************************************************************************
+* Function Name: SetMemoryVoltageTrims
+****************************************************************************//**
+*
+* This is the internal function that updates the trim values for the
+* RAM and ROM. The trim update is done during transition of regulator voltage
+* from higher to a lower one.
+*
+*******************************************************************************/
+static void SetMemoryVoltageTrims(cy_en_syspm_sdr_voltage_t voltage)
+{
+    uint32_t ramVoltgeTrim = CPUSS_TRIM_RAM_CTL;
+    uint32_t romVoltgeTrim = CPUSS_TRIM_ROM_CTL;
+
+    CY_ASSERT_L3(CY_SYSPM_IS_SDR_TRIM_VOLTAGE_VALID(voltage));
+
+    switch(voltage)
+    {
+        case CY_SYSPM_SDR_VOLTAGE_0_900V:
+        {
+            ramVoltgeTrim = CPUSS_TRIM_RAM_VOLT_0_900;
+            romVoltgeTrim = CPUSS_TRIM_ROM_VOLT_0_900;
+        }
+        break;
+
+        case CY_SYSPM_SDR_VOLTAGE_1_000V:
+        {
+            ramVoltgeTrim = CPUSS_TRIM_RAM_VOLT_1_000;
+            romVoltgeTrim = CPUSS_TRIM_ROM_VOLT_1_000;
+        }
+        break;
+
+        case CY_SYSPM_SDR_VOLTAGE_1_100V:
+        {
+            ramVoltgeTrim = CPUSS_TRIM_RAM_VOLT_1_100;
+            romVoltgeTrim = CPUSS_TRIM_ROM_VOLT_1_100;
+        }
+        break;
+
+        default:
+        {
+            CY_ASSERT_L2(false);
+        }
+        break;
+    }
+
+    CPUSS_TRIM_RAM_CTL = ramVoltgeTrim;
+    CPUSS_TRIM_ROM_CTL = romVoltgeTrim;
+
+}
+
+
+/*******************************************************************************
+* Function Name: IsVoltageChangePossible
+****************************************************************************//**
+*
+* The internal function that checks wherever it is possible to change the core
+* voltage. The voltage change is possible only when the protection context is
+* set to zero (PC = 0), or the device supports modifying registers via syscall.
+*
+*******************************************************************************/
+static bool IsVoltageChangePossible(void)
+{
+
+    bool retVal = false;
+
+    if(Cy_SysLib_GetDeviceRevision() != CY_SYSLIB_DEVICE_PID_20829A0)
+    {
+        uint32_t trimRamCheckVal = (CPUSS_TRIM_RAM_CTL & CPUSS_TRIM_RAM_CTL_WC_MASK);
+
+
+        CPUSS_TRIM_RAM_CTL &= ~CPUSS_TRIM_RAM_CTL_WC_MASK;
+        CPUSS_TRIM_RAM_CTL |= ((~trimRamCheckVal) & CPUSS_TRIM_RAM_CTL_WC_MASK);
+
+        retVal = (trimRamCheckVal != (CPUSS_TRIM_RAM_CTL & CPUSS_TRIM_RAM_CTL_WC_MASK));
+    }
+
+    return retVal;
+}
+
 
 #endif
 /* [] END OF FILE */

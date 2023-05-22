@@ -341,9 +341,9 @@
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;.;libraries\Device\FUJISTU\MB9BF50x\Include;libraries\CMSIS\Include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;drivers;..\..\..\..\components\finsh;.;..\..\..\..\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\include;.;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\include;libraries\Device\FUJISTU\MB9BF50x\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\finsh;..\..\..\..\libcpu\arm\common;libraries\CMSIS\Include;applications;drivers;..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -477,13 +477,6 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -581,9 +574,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>led.c</FileName>
+              <FileName>nand.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\led.c</FilePath>
+              <FilePath>drivers\nand.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -595,9 +588,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>nand.c</FileName>
+              <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\nand.c</FilePath>
+              <FilePath>drivers\led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -706,9 +699,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

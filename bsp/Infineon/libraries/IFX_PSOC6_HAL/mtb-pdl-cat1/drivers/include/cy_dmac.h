@@ -1,13 +1,13 @@
 /***************************************************************************//**
 * \file cy_dmac.h
-* \version 1.30
+* \version 1.30.1
 *
 * \brief
 * The header file of the DMAC driver.
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2020 Cypress Semiconductor Corporation
+* Copyright 2018-2022 Cypress Semiconductor Corporation
 * SPDX-License-Identifier: Apache-2.0
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,6 +86,15 @@
 * For example:
 * \snippet dmac/snippet/main.c snippet_Cy_DMAC_Enable
 *
+* CM7 cores in CAT1C devices support Data Cache. Data Cache line is 32 bytes.
+* User needs to make sure that the source and destination buffer pointers and the config structure pointers passed
+* to the following functions points to 32 byte aligned data.
+* Cy_DMAC_Channel_SetDescriptor, Cy_DMAC_Descriptor_SetNextDescriptor, Cy_DMAC_Descriptor_SetSrcAddress, Cy_DMAC_Descriptor_SetDstAddress.
+* User can use CY_ALIGN(32) macro for 32 byte alignment.
+* User needs to clean the following data elements from the cache and invalidate before accessing them.
+* source and destination buffers and descriptor structure.
+* * \snippet dmac/snippet/main.c snippet_Cy_DMAC_Cache_usage
+*
 * \section group_dmac_more_information More Information.
 * See the DMAC chapter of the device technical reference manual (TRM).
 *
@@ -93,6 +102,11 @@
 *
 * <table class="doxtable">
 *   <tr><th>Version</th><th>Changes</th><th>Reason for Change</th></tr>
+*   <tr>
+*     <td>1.30.1</td>
+*     <td>Minor Documentation update for cache usage on CM7.</td>
+*     <td>Documentation enhancement.</td>
+*   </tr>
 *   <tr>
 *     <td>1.30</td>
 *     <td>Update to configure DMAC on core CM7.</td>
@@ -423,8 +437,8 @@ typedef struct
     int32_t                      srcXincrement;   /**< The address increment of the source after each X-loop transfer. Valid range is -32768...32767. */
     int32_t                      dstXincrement;   /**< The address increment of the destination after each X-loop transfer. Valid range is -32768...32767. */
     uint32_t                     xCount;          /**< The number of transfers in an X-loop. Valid range (for all descriptors except scatter transfer) is 1...65536.
-                                                   *   For memory copy descriptors, the X count is a nubmer of bytes (not a data transfer size).
-                                                   *   For scatter descriptors, the X count is a nubmer of [address, data] pairs (two words each). Valid range is 1...32768.
+                                                   *   For memory copy descriptors, the X count is a number of bytes (not a data transfer size).
+                                                   *   For scatter descriptors, the X count is a number of [address, data] pairs (two words each). Valid range is 1...32768.
                                                    */
     int32_t                      srcYincrement;   /**< The address increment of the source after each Y-loop transfer. Valid range is -32768...32767. */
     int32_t                      dstYincrement;   /**< The address increment of the destination after each Y-loop transfer. Valid range is -32768...32767. */
@@ -623,6 +637,7 @@ __STATIC_INLINE uint32_t Cy_DMAC_GetActiveChannel(DMAC_Type const * base)
 *
 * \param srcAddress
 * The source address value for the descriptor.
+* For CAT1C devices this pointer needs to point to 32 byte aligned structure.
 *
 * \funcusage
 * \snippet dmac/snippet/main.c snippet_Cy_DMAC_Descriptor_SetterFunctions
@@ -667,6 +682,7 @@ __STATIC_INLINE void * Cy_DMAC_Descriptor_GetSrcAddress(cy_stc_dmac_descriptor_t
 *
 * \param dstAddress
 * The destination address value for the descriptor.
+* For CAT1C devices this pointer needs to point to 32 byte aligned structure.
 *
 * \funcusage
 * \snippet dmac/snippet/main.c snippet_Cy_DMAC_Descriptor_SetterFunctions
@@ -1373,6 +1389,7 @@ __STATIC_INLINE int32_t Cy_DMAC_Descriptor_GetYloopDstIncrement(cy_stc_dmac_desc
 *
 * \param descriptor
 * This is the descriptor to be associated with the channel.
+* For CAT1C devices this pointer needs to point to 32 byte aligned structure.
 *
 * \funcusage
 * \snippet dmac/snippet/main.c snippet_Cy_DMAC_Enable

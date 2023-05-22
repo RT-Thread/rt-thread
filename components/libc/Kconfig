@@ -1,5 +1,8 @@
 menu "C/C++ and POSIX layer"
 
+config RT_USING_EXTERNAL_LIBC
+    bool
+
 config RT_LIBC_DEFAULT_TIMEZONE
     int "Set the default time zone (UTC+)"
     range -12 12

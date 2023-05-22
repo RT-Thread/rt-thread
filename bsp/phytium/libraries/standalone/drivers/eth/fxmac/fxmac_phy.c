@@ -14,16 +14,18 @@
  * FilePath: fxmac_phy.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for phy types.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2022/06/16    first release
  */
 
 #include "fxmac.h"
 #include "eth_ieee_reg.h"
 #include "fdebug.h"
+#include "sdkconfig.h"
 
 #if defined(CONFIG_FXMAC_PHY_YT)
     #include "phy_yt.h"
@@ -46,26 +48,26 @@ static FError FXmacDetect(FXmac *instance_p, u32 *phy_addr_p)
     FError ret;
     instance_b = instance_p;
 
-    for (phy_addr = 0; phy_addr < FT_XMAC_PHY_MAX_NUM; phy_addr++)
+    for (phy_addr = 0; phy_addr < FXMAC_PHY_MAX_NUM; phy_addr++)
     {
         ret = FXmacPhyRead(instance_p, phy_addr, PHY_STATUS_REG_OFFSET, &phy_reg);
         if (ret != FT_SUCCESS)
         {
-            FXMAC_ERROR("%s,  PHY operation is busy", __func__);
+            FXMAC_ERROR("Phy operation is busy.");
             return ret;
         }
-        FXMAC_INFO("PHY_STATUS_REG_OFFSET is %x \r\n", phy_reg);
+        FXMAC_INFO("Phy status reg is %x", phy_reg);
         if (phy_reg != 0xffff)
         {
             ret = FXmacPhyRead(instance_p, phy_addr, PHY_IDENTIFIER_1_REG, &phy_id1_reg);
             ret |= FXmacPhyRead(instance_p, phy_addr, PHY_IDENTIFIER_2_REG, &phy_id2_reg);
-            FXMAC_INFO("phy_id1_reg is 0x%x \r\n", phy_id1_reg);
-            FXMAC_INFO("phy_id2_reg is 0x%x \r\n", phy_id2_reg);
+            FXMAC_INFO("Phy id1 reg is 0x%x", phy_id1_reg);
+            FXMAC_INFO("Phy id2 reg is 0x%x", phy_id2_reg);
             if ((ret == FT_SUCCESS) && (phy_id2_reg != 0) && (phy_id1_reg != 0xffff) && (phy_id1_reg != 0xffff))
             {
                 *phy_addr_p = phy_addr;
                 phy_addr_b = phy_addr;
-                FXMAC_INFO("phy_addr is 0x%x \r\n", phy_addr);
+                FXMAC_INFO("Phy addr is 0x%x", phy_addr);
                 return FT_SUCCESS;
             }
         }
@@ -84,12 +86,12 @@ static FError FXmacGetIeeePhySpeed(FXmac *instance_p, u32 phy_addr)
     FError ret;
     volatile s32 wait;
 
-    FXMAC_INFO("Start PHY autonegotiation ");
+    FXMAC_INFO("Start phy auto negotiation.");
 
     ret = FXmacPhyRead(instance_p, phy_addr, PHY_CONTROL_REG_OFFSET, &control);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,read PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,read PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
         return ret;
     }
     control |= PHY_CONTROL_RESET_MASK;
@@ -97,16 +99,16 @@ static FError FXmacGetIeeePhySpeed(FXmac *instance_p, u32 phy_addr)
     ret = FXmacPhyWrite(instance_p, phy_addr, PHY_CONTROL_REG_OFFSET, control);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,write PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,write PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
         return ret;
     }
     for (wait = 0; wait < 100000; wait++)
         ;
-    FXMAC_INFO(" PHY reset end ");
+    FXMAC_INFO(" Phy reset end.");
     ret = FXmacPhyRead(instance_p, phy_addr, PHY_CONTROL_REG_OFFSET, &control);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,read PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,read PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
         return ret;
     }
 
@@ -115,16 +117,16 @@ static FError FXmacGetIeeePhySpeed(FXmac *instance_p, u32 phy_addr)
     ret = FXmacPhyWrite(instance_p, phy_addr, PHY_CONTROL_REG_OFFSET, control);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,write PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,write PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
         return ret;
     }
 
-    FXMAC_INFO("Waiting for PHY to complete autonegotiation.");
+    FXMAC_INFO("Waiting for phy to complete auto negotiation.");
 
     ret = FXmacPhyRead(instance_p, phy_addr, PHY_STATUS_REG_OFFSET, &status);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,read PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,read PHY_CONTROL_REG_OFFSET is error", __func__, __LINE__);
         return ret;
     }
 
@@ -136,60 +138,60 @@ static FError FXmacGetIeeePhySpeed(FXmac *instance_p, u32 phy_addr)
         ret = FXmacPhyRead(instance_p, phy_addr, PHY_STATUS_REG_OFFSET, &status);
         if (ret != FT_SUCCESS)
         {
-            FXMAC_ERROR("%s line is %d,read PHY_STATUS_REG_OFFSET is error", __func__, __LINE__);
+            FXMAC_ERROR("%s:%d,read PHY_STATUS_REG_OFFSET is error", __func__, __LINE__);
             return ret;
         }
 
 
         if (negotitation_timeout_cnt++ >= 0xfff)
         {
-            FXMAC_ERROR("autonegotiation is error ");
+            FXMAC_ERROR("Auto negotiation is error.");
             return FXMAC_PHY_AUTO_AUTONEGOTIATION_FAILED;
         }
     }
-    FXMAC_INFO("autonegotiation complete  ");
+    FXMAC_INFO("Auto negotiation complete.");
 
     ret = FXmacPhyRead(instance_p, phy_addr, PHY_SPECIFIC_STATUS_REG, &temp);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,read PHY_SPECIFIC_STATUS_REG is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,read PHY_SPECIFIC_STATUS_REG is error", __func__, __LINE__);
         return ret;
     }
 
-    FXMAC_INFO("temp is %x \r\n", temp);
+    FXMAC_INFO("Temp is 0x%x", temp);
     ret = FXmacPhyRead(instance_p, phy_addr, PHY_STATUS_REG_OFFSET, &temp2);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,read PHY_STATUS_REG_OFFSET is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,read PHY_STATUS_REG_OFFSET is error", __func__, __LINE__);
         return ret;
     }
 
-    FXMAC_INFO("temp2 is %x \r\n", temp2);
+    FXMAC_INFO("Temp2 is 0x%x", temp2);
 
     if (temp & (1 << 13))
     {
-        FXMAC_INFO("duplex is full \r\n");
+        FXMAC_INFO("Duplex is full.");
         instance_p->config.duplex = 1;
     }
     else
     {
-        FXMAC_INFO("duplex is half \r\n");
+        FXMAC_INFO("Duplex is half.");
         instance_p->config.duplex = 0;
     }
 
     if ((temp & 0xC000) == PHY_SPECIFIC_STATUS_SPEED_1000M)
     {
-        FXMAC_INFO("speed is 1000\r\n");
+        FXMAC_INFO("Speed is 1000M.");
         instance_p->config.speed = 1000;
     }
     else if ((temp & 0xC000) == PHY_SPECIFIC_STATUS_SPEED_100M)
     {
-        FXMAC_INFO("speed is 100\r\n");
+        FXMAC_INFO("Speed is 100M.");
         instance_p->config.speed = 100;
     }
     else
     {
-        FXMAC_INFO("speed is 10\r\n");
+        FXMAC_INFO("Speed is 10M.");
         instance_p->config.speed = 10;
     }
 
@@ -200,8 +202,8 @@ void FxmaxLinkupCheck(void)
 {
     u16 temp;
     FXmacPhyRead(instance_b, phy_addr_b, PHY_SPECIFIC_STATUS_REG, &temp);
-    FXMAC_INFO("0x17 value is %x \r\n", temp);
-    FXMAC_INFO("linkup status is   %x \r\n", temp & (1 << 10));
+    FXMAC_INFO("Reg 0x17 value is 0x%x", temp);
+    FXMAC_INFO("Linkup status is 0x%x", temp & (1 << 10));
 }
 
 
@@ -213,12 +215,12 @@ static FError FXmacConfigureIeeePhySpeed(FXmac *instance_p, u32 phy_addr, u32 sp
     FError ret;
     u16 specific_reg = 0;
 
-    FXMAC_INFO("manual setting ,phy_addr is %d,speed %d, duplex_mode is %d \r\n", phy_addr, speed, duplex_mode);
+    FXMAC_INFO("Manual setting ,phy_addr is %d,speed %d, duplex_mode is %d.", phy_addr, speed, duplex_mode);
 
     ret = FXmacPhyRead(instance_p, phy_addr, PHY_AUTONEGO_ADVERTISE_REG, &autonereg);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,read PHY_AUTONEGO_ADVERTISE_REG is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,read PHY_AUTONEGO_ADVERTISE_REG is error.", __func__, __LINE__);
         return ret;
     }
 
@@ -227,7 +229,7 @@ static FError FXmacConfigureIeeePhySpeed(FXmac *instance_p, u32 phy_addr, u32 sp
     ret = FXmacPhyWrite(instance_p, phy_addr, PHY_AUTONEGO_ADVERTISE_REG, autonereg);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,write PHY_AUTONEGO_ADVERTISE_REG is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,write PHY_AUTONEGO_ADVERTISE_REG is error.", __func__, __LINE__);
         return ret;
     }
 
@@ -235,10 +237,10 @@ static FError FXmacConfigureIeeePhySpeed(FXmac *instance_p, u32 phy_addr, u32 sp
     ret = FXmacPhyRead(instance_p, phy_addr, PHY_CONTROL_REG_OFFSET, &control);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,read PHY_AUTONEGO_ADVERTISE_REG is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,read PHY_AUTONEGO_ADVERTISE_REG is error.", __func__, __LINE__);
         return ret;
     }
-    FXMAC_INFO("PHY_CONTROL_REG_OFFSET is %x \r\n", control);
+    FXMAC_INFO("PHY_CONTROL_REG_OFFSET is 0x%x.", control);
 
 
     control &= ~PHY_CONTROL_LINKSPEED_1000M;
@@ -274,48 +276,48 @@ static FError FXmacConfigureIeeePhySpeed(FXmac *instance_p, u32 phy_addr, u32 sp
     ret = FXmacPhyWrite(instance_p, phy_addr, PHY_CONTROL_REG_OFFSET, control); /* Technology Ability Field */
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,write PHY_AUTONEGO_ADVERTISE_REG is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,write PHY_AUTONEGO_ADVERTISE_REG is error.", __func__, __LINE__);
         return ret;
     }
 
     for (wait = 0; wait < 100000; wait++)
         ;
 
-    FXMAC_INFO("Manual selection completed \r\n");
+    FXMAC_INFO("Manual selection completed.");
 
     ret = FXmacPhyRead(instance_p, phy_addr, PHY_SPECIFIC_STATUS_REG, &specific_reg);
     if (ret != FT_SUCCESS)
     {
-        FXMAC_ERROR("%s line is %d,read PHY_SPECIFIC_STATUS_REG is error", __func__, __LINE__);
+        FXMAC_ERROR("%s:%d,read PHY_SPECIFIC_STATUS_REG is error.", __func__, __LINE__);
         return ret;
     }
 
-    FXMAC_INFO("specific_reg is %x \r\n", specific_reg);
+    FXMAC_INFO("Specific reg is 0x%x.", specific_reg);
 
     if (specific_reg & (1 << 13))
     {
-        FXMAC_INFO("duplex is full \r\n");
+        FXMAC_INFO("Duplex is full.");
         instance_p->config.duplex = 1;
     }
     else
     {
-        FXMAC_INFO("duplex is half \r\n");
+        FXMAC_INFO("Duplex is half.");
         instance_p->config.duplex = 0;
     }
 
     if ((specific_reg & 0xC000) == PHY_SPECIFIC_STATUS_SPEED_1000M)
     {
-        FXMAC_INFO("speed is 1000\r\n");
+        FXMAC_INFO("Speed is 1000M.");
         instance_p->config.speed = 1000;
     }
     else if ((specific_reg & 0xC000) == PHY_SPECIFIC_STATUS_SPEED_100M)
     {
-        FXMAC_INFO("speed is 100\r\n");
+        FXMAC_INFO("Speed is 100M.");
         instance_p->config.speed = 100;
     }
     else
     {
-        FXMAC_INFO("speed is 10\r\n");
+        FXMAC_INFO("Speed is 10M.");
         instance_p->config.speed = 10;
     }
 
@@ -341,10 +343,10 @@ FError FXmacPhyInit(FXmac *instance_p, u32 speed, u32 duplex_mode, u32 autonegot
 
     if (FXmacDetect(instance_p, &phy_addr) != FT_SUCCESS)
     {
-        FXMAC_ERROR("phy is not found");
+        FXMAC_ERROR("Phy is not found.");
         return FXMAC_PHY_IS_NOT_FOUND;
     }
-    FXMAC_INFO("settings phy_addr is %d\n", phy_addr);
+    FXMAC_INFO("Setting phy addr is %d.", phy_addr);
     instance_p->phy_address = phy_addr;
     if (autonegotiation_en)
     {
@@ -356,11 +358,11 @@ FError FXmacPhyInit(FXmac *instance_p, u32 speed, u32 duplex_mode, u32 autonegot
     }
     else
     {
-        FXMAC_INFO("Set the communication speed manually");
+        FXMAC_INFO("Set the communication speed manually.");
         ret = FXmacConfigureIeeePhySpeed(instance_p, phy_addr, speed, duplex_mode);
         if (ret != FT_SUCCESS)
         {
-            FXMAC_ERROR("Failed to manually set the PHY");
+            FXMAC_ERROR("Failed to manually set the phy.");
             return ret;
         }
 

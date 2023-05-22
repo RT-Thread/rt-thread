@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -36,15 +36,17 @@
 #include "cy_result.h"
 #include "cyhal_hw_types.h"
 #include "cy_utils.h"
-#if defined(COMPONENT_CAT1A) || defined(COMPONENT_CAT1B) || defined(COMPONENT_CAT1C) || defined(COMPONENT_CAT1D) || defined(COMPONENT_CAT2)
-#include "cyhal_utils_psoc.h"
+#if !defined(COMPONENT_CAT4)
+#include "cyhal_utils_impl.h"
 #endif
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#define _CYHAL_UTILS_NS_PER_SECOND (1000000000)
+#define _CYHAL_UTILS_NS_PER_SECOND   (1000000000)
+#define _CYHAL_UTILS_US_PER_MS       (1000)
+#define _CYHAL_UTILS_ONE_TIME_UNIT   (1)     /**< Used to do a delay in one time unit (1 ms, 1 us) */
 
 #define _CYHAL_UTILS_IRQN_OFFSET           (16U) /**< Offset for implementation-defined ISR type numbers (IRQ0 = 16) */
 #define _CYHAL_UTILS_GET_CURRENT_IRQN()    ((IRQn_Type) (__get_IPSR() - _CYHAL_UTILS_IRQN_OFFSET)) /**< Macro to get the IRQn of the current ISR */

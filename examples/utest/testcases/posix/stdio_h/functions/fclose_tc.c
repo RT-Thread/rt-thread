@@ -9,14 +9,14 @@ static int fclose_entry(void)
         perror("fopen fail");
         return -1;
     }
-    if(fclose(stream))
+    if(fclose(stream) != 0)
     {
         perror("fclose fail");
         return -1;
     }
-    if(fclose(stream))
+    else 
     {
-        printf("fclose sucess \n");
+        printf("fclose success \n");
     }
     return 0;
 }

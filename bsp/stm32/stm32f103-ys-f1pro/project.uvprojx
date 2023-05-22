@@ -360,9 +360,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, STM32F103xE, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, STM32F103xE, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>board\CubeMX_Config\Inc;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\libc\compilers\common\include;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\finsh;applications;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\..\..\libcpu\arm\common;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\extension;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\ipc;board</IncludePath>
+              <IncludePath>board\CubeMX_Config\Inc;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;board;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\finsh;.;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;..\libraries\HAL_Drivers\CMSIS\Include;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;applications;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -475,9 +475,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -725,9 +725,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

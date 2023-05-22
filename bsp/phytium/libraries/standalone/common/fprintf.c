@@ -11,14 +11,15 @@
  * See the Phytium Public License for more details.
  *
  *
- * FilePath: f_printf.c
+ * FilePath: fprintf.c
  * Date: 2021-08-23 16:24:02
  * LastEditTime: 2022-02-17 18:01:19
- * Description:  This files is for
+ * Description:  This file is for creating custom print interface for standlone sdk.
  *
  * Modify History:
- *  Ver   Who        Date         Changes
- * ----- ------     --------    --------------------------------------
+ *  Ver     Who           Date                  Changes
+ * -----   ------       --------     --------------------------------------
+ *  1.0    huanghe      2022/7/23            first release
  */
 
 
@@ -37,7 +38,9 @@ static void printchar(char **str, int c)
         ++(*str);
     }
     else
+    {
         (void)putchar((const char)c);
+    }
 }
 
 static int prints(char **out, const char *string, int width, int pad)
@@ -49,13 +52,21 @@ static int prints(char **out, const char *string, int width, int pad)
         register int len = 0;
         register const char *ptr;
         for (ptr = string; *ptr; ++ptr)
+        {
             ++len;
+        }
         if (len >= width)
+        {
             width = 0;
+        }
         else
+        {
             width -= len;
+        }
         if (pad & PAD_ZERO)
+        {
             padchar = '0';
+        }
     }
     if (!(pad & PAD_RIGHT))
     {
@@ -109,7 +120,9 @@ static int printi(char **out, int i, int b, int sg, int width, int pad, int letb
     {
         t = u % b;
         if (t >= 10)
+        {
             t += letbase - '0' - 10;
+        }
         *--s = t + '0';
         u /= b;
     }
@@ -144,9 +157,13 @@ static int print(char **out, const char *format, va_list args)
             ++format;
             width = pad = 0;
             if (*format == '\0')
+            {
                 break;
+            }
             if (*format == '%')
+            {
                 goto out;
+            }
             if (*format == '-')
             {
                 ++format;
@@ -206,7 +223,9 @@ out:
         }
     }
     if (out)
+    {
         **out = '\0';
+    }
     va_end(args);
     return pc;
 }

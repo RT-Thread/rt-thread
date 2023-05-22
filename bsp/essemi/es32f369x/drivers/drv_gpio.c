@@ -236,7 +236,7 @@ const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-void es32f3_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void es32f3_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_index *index;
     index = get_pin(pin);
@@ -247,9 +247,9 @@ void es32f3_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     ald_gpio_write_pin(index->gpio, index->pin, value);
 }
 
-int es32f3_pin_read(rt_device_t dev, rt_base_t pin)
+rt_int8_t es32f3_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_int8_t value;
     const struct pin_index *index;
     value = PIN_LOW;
     index = get_pin(pin);
@@ -261,7 +261,7 @@ int es32f3_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-void es32f3_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void es32f3_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_index *index;
     gpio_init_t gpio_initstruct;
@@ -330,8 +330,8 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint16_t gpio_pin)
     return &pin_irq_map[map_index];
 };
 
-rt_err_t es32f3_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                               rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t es32f3_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                               rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -339,7 +339,7 @@ rt_err_t es32f3_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     /* pin no. convert to dec no. */
     for (irqindex = 0; irqindex < 16; irqindex++)
@@ -351,7 +351,7 @@ rt_err_t es32f3_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     }
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == pin &&
@@ -365,7 +365,7 @@ rt_err_t es32f3_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;
@@ -375,7 +375,7 @@ rt_err_t es32f3_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-rt_err_t es32f3_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t es32f3_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -383,7 +383,7 @@ rt_err_t es32f3_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     for (irqindex = 0; irqindex < 16; irqindex++)
@@ -395,7 +395,7 @@ rt_err_t es32f3_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     }
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     level = rt_hw_interrupt_disable();
     if (pin_irq_hdr_tab[irqindex].pin == -1)
@@ -412,7 +412,7 @@ rt_err_t es32f3_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 rt_err_t es32f3_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                               rt_uint32_t enabled)
+                               rt_uint8_t enabled)
 {
     const struct pin_index *index;
     const struct pin_irq_map *irqmap;
@@ -428,7 +428,7 @@ rt_err_t es32f3_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     if (enabled == PIN_IRQ_ENABLE)
     {
@@ -442,13 +442,13 @@ rt_err_t es32f3_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         }
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         level = rt_hw_interrupt_disable();
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         irqmap = &pin_irq_map[irqindex];
         ald_gpio_exti_init(index->gpio, index->pin, &exti_initstruct);
@@ -483,13 +483,13 @@ rt_err_t es32f3_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(index->pin);
         if (irqmap == RT_NULL)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
         NVIC_DisableIRQ(irqmap->irqno);
     }
     else
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     return RT_EOK;
 }

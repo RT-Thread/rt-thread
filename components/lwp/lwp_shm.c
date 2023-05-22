@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-10-12     Jesven       first version
+ * 2023-02-20     wangxiaoyao  adapt to mm
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -17,8 +18,6 @@
 
 #include <lwp_user_mm.h>
 #include <mmu.h>
-#include <mm_aspace.h>
-#include <mm_flag.h>
 
 /* the kernel structure to represent a share-memory */
 struct lwp_shm_struct
@@ -56,13 +55,24 @@ static void on_shm_varea_close(struct rt_varea *varea)
     shm->ref -= 1;
 }
 
-static void on_shm_page_fault(struct rt_varea *varea, struct rt_mm_fault_msg *msg)
+static void on_shm_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
 {
     struct lwp_shm_struct *shm;
+    int err;
     shm = rt_container_of(varea->mem_obj, struct lwp_shm_struct, mem_obj);
-    msg->response.status = MM_FAULT_STATUS_OK;
-    msg->response.vaddr = (void *)shm->addr;
-    msg->response.size = shm->size;
+
+    /* map all share page frames to user space in a time */
+    void *page = (void *)shm->addr;
+    void *pg_paddr = (char *)page + PV_OFFSET;
+    err = rt_varea_map_range(varea, varea->start, pg_paddr, shm->size);
+
+    if (err == RT_EOK)
+    {
+        msg->response.status = MM_FAULT_STATUS_OK_MAPPED;
+        msg->response.size = shm->size;
+        msg->response.vaddr = page;
+    }
+
     return ;
 }
 
@@ -129,7 +139,7 @@ static int _lwp_shmget(size_t key, size_t size, int create)
 
         /* allocate pages up to 2's exponent to cover the required size */
         bit = rt_page_bits(size);
-        page_addr = rt_pages_alloc(bit);           /* virtual address */
+        page_addr = rt_pages_alloc_ext(bit, PAGE_ANY_AVAILABLE);   /* virtual address */
         if (!page_addr)
         {
             goto err;
@@ -383,7 +393,7 @@ int _lwp_shmdt(void *shm_vaddr)
         return -1;
     }
 
-    ret = rt_aspace_unmap(lwp->aspace, shm_vaddr, 1);
+    ret = rt_aspace_unmap(lwp->aspace, shm_vaddr);
     if (ret != RT_EOK)
     {
         ret = -1;

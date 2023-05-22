@@ -218,7 +218,7 @@ static struct exti_line_irq *exti_line_irq_list_find(rt_int16_t pin)
 
 static rt_err_t exti_line_irq_list_bind(struct rt_pin_irq_hdr *irq_hdr)
 {
-    rt_err_t ret = RT_EFULL;
+    rt_err_t ret = -RT_EFULL;
     rt_base_t level;
     struct exti_line_irq *item;
     int index;
@@ -249,7 +249,7 @@ static rt_err_t exti_line_irq_list_bind(struct rt_pin_irq_hdr *irq_hdr)
 
 static rt_err_t exti_line_irq_list_unbind(rt_int16_t pin)
 {
-    rt_err_t ret = RT_EEMPTY;
+    rt_err_t ret = -RT_EEMPTY;
     rt_base_t level;
     struct exti_line_irq *item;
 
@@ -269,7 +269,7 @@ static rt_err_t exti_line_irq_list_unbind(rt_int16_t pin)
     return ret;
 }
 
-void ch32f1_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void ch32f1_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_info *item;
     GPIO_InitTypeDef gpio_initstruct;
@@ -309,7 +309,7 @@ void ch32f1_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_Init(item->gpio, &gpio_initstruct);
 }
 
-void ch32f1_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void ch32f1_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_info *item;
 
@@ -323,7 +323,7 @@ void ch32f1_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     GPIO_WriteBit(item->gpio, item->gpio_pin, (BitAction)value);
 }
 
-int ch32f1_pin_read(rt_device_t dev, rt_base_t pin)
+rt_int8_t ch32f1_pin_read(rt_device_t dev, rt_base_t pin)
 {
     const struct pin_info *item;
 
@@ -337,7 +337,7 @@ int ch32f1_pin_read(rt_device_t dev, rt_base_t pin)
     return GPIO_ReadInputDataBit(item->gpio, item->gpio_pin);
 }
 
-rt_err_t ch32f1_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args),
+rt_err_t ch32f1_pin_attach_irq(struct rt_device *device, rt_base_t pin, rt_uint8_t mode, void (*hdr)(void *args),
                                void *args)
 {
     struct rt_pin_irq_hdr bind_item;
@@ -350,12 +350,12 @@ rt_err_t ch32f1_pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint
     return exti_line_irq_list_bind(&bind_item);
 }
 
-rt_err_t ch32f1_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t ch32f1_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     return exti_line_irq_list_unbind(pin);
 }
 
-rt_err_t ch32f1_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+rt_err_t ch32f1_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     struct exti_line_irq *find;
     const struct pin_info *item;
@@ -367,12 +367,12 @@ rt_err_t ch32f1_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint3
     find = exti_line_irq_list_find(pin);
 
     if (find == RT_NULL)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     item = pin_info_list_find(pin);
 
     if (item == RT_NULL)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (enabled == PIN_IRQ_ENABLE)
     {

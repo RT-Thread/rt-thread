@@ -14,19 +14,18 @@
  * FilePath: fgmac_hw.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for manipulation of hardware registers .
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
 #include "fassert.h"
 #include "fdebug.h"
-
 #include "fgmac.h"
 #include "fgmac_hw.h"
-
 
 /***************************** Include Files *********************************/
 
@@ -110,7 +109,7 @@ FError FGmacSoftwareReset(uintptr base_addr, int timeout)
 
     if ((0 >= timeout) && (reg_val & FGMAC_DMA_BUS_SWR))
     {
-        FGMAC_ERROR("reset timeout, please check phy connection!!!");
+        FGMAC_ERROR("Reset timeout, please check phy connection!!!");
         return FGMAC_ERR_TIMEOUT;
     }
 
@@ -131,7 +130,7 @@ FError FGmacFlushTxFifo(uintptr base_addr, int timeout)
 
     if ((0 >= timeout) && (reg_val & FGMAC_DMA_OP_FTF))
     {
-        FGMAC_ERROR("flush tx fifo timeout !!!");
+        FGMAC_ERROR("Flush tx fifo timeout !!!");
         return FGMAC_ERR_TIMEOUT;
     }
 
@@ -158,7 +157,7 @@ FError FGmacPhyWaitBusBusy(uintptr base_addr, int timeout)
 
     if (0 >= timeout)
     {
-        FGMAC_ERROR("timeout when wait GMII timeout");
+        FGMAC_ERROR("Wait gmii timeout");
         return FGMAC_ERR_TIMEOUT;
     }
 

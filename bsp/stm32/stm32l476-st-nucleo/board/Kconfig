@@ -15,6 +15,30 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART2
         default y
 
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM3
+        select BSP_USING_PWM3_CH1
+        select BSP_USING_PWM3_CH2
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH1
+        select BSP_USING_PWM17
+        select BSP_USING_PWM17_CH1
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -45,29 +69,34 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
+
         if BSP_USING_I2C
             config BSP_USING_I2C1
-            bool "Enable I2C1 BUS (software simulation)"
-            default n
+                bool "Enable I2C1 BUS (software simulation)"
+                default n
+
             if BSP_USING_I2C1
                 config BSP_I2C1_SCL_PIN
-                    int "i2c1 scl pin number"
+                    int "i2c1 scl pin number (PB8)"
                     range 1 176
-                    default 22
+                    default 24
+
                 config BSP_I2C1_SDA_PIN
-                    int "I2C1 sda pin number"
+                    int "i2c1 sda pin number (PB9)"
                     range 1 176
-                    default 23
+                    default 25
             endif
 
             config BSP_USING_I2C2
-            bool "Enable I2C2 BUS (software simulation)"
-            default n
+                bool "Enable I2C2 BUS (software simulation)"
+                default n
+
             if BSP_USING_I2C2
                 config BSP_I2C2_SCL_PIN
                     int "i2c2 scl pin number"
                     range 1 176
                     default 26
+
                 config BSP_I2C2_SDA_PIN
                     int "I2C2 sda pin number"
                     range 1 176
@@ -75,13 +104,15 @@ menu "On-chip Peripheral Drivers"
             endif
 
             config BSP_USING_I2C3
-            bool "Enable I2C3 BUS (software simulation)"
-            default n
+                bool "Enable I2C3 BUS (software simulation)"
+                default n
+
             if BSP_USING_I2C3
                 config BSP_I2C3_SCL_PIN
                     int "i2c3 scl pin number"
                     range 1 176
                     default 32
+
                 config BSP_I2C3_SDA_PIN
                     int "I2C3 sda pin number"
                     range 1 176
@@ -156,6 +187,55 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_TIM17
                 bool "Enable TIM17"
                 default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM2
+            bool "Enable timer2 output PWM"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH2
+                    bool "Enable PWM2 channel2"
+                    default n
+                config BSP_USING_PWM2_CH3
+                    bool "Enable PWM2 channel3"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM3
+            bool "Enable timer3 output PWM"
+            default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3_CH1
+                    bool "Enable PWM3 channel1"
+                    default n
+                config BSP_USING_PWM3_CH2
+                    bool "Enable PWM3 channel2"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM4
+            bool "Enable timer4 output PWM"
+            default n
+            if BSP_USING_PWM4
+                config BSP_USING_PWM4_CH1
+                    bool "Enable PWM4 channel1"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM17
+            bool "Enable timer17 output PWM"
+            default n
+            if BSP_USING_PWM17
+                config BSP_USING_PWM17_CH1
+                    bool "Enable PWM17 channel1"
+                    default n
+            endif
+
         endif
 
     menuconfig BSP_USING_ADC

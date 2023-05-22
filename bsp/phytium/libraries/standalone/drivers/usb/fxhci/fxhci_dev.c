@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include <string.h>
@@ -39,7 +39,9 @@ static u32 FXhciGenRounte(FXhci *const xhci, const int hubport, const int hubadd
 {
     FASSERT(xhci);
     if (!hubaddr)
+    {
         return 0;
+    }
 
     u32 route_string = FXHCI_SC_GET(ROUTE, xhci->dev[hubaddr].ctx.slot);
     int i;
@@ -60,7 +62,9 @@ static int FXhciGetRoothubPort(FXhci *const xhci, const int hubport, const int h
 {
     FASSERT(xhci);
     if (!hubaddr)
+    {
         return hubport;
+    }
 
     return FXHCI_SC_GET(RHPORT, xhci->dev[hubaddr].ctx.slot);
 }
@@ -71,7 +75,9 @@ static int FXhciGetTT(FXhci *const xhci, const FUsbSpeed speed,
 {
     FASSERT(xhci);
     if (!hubaddr)
+    {
         return 0;
+    }
 
     const FXhciSlotCtx *const slot = xhci->dev[hubaddr].ctx.slot;
 
@@ -95,21 +101,31 @@ static void FXhciReapSlots(FXhci *const xhci, int skip_slot)
     int i;
     FUsb *instance = xhci->usb;
 
-    FUSB_INFO("xHC resource shortage, trying to reap old slots... ");
+    FUSB_INFO("Xhci resource shortage, trying to reap old slots.");
     for (i = 1; i <= xhci->max_slots_en; i++)
     {
         if (i == skip_slot)
-            continue; /* don't reap slot we were working on */
+        {
+            continue;    /* don't reap slot we were working on */
+        }
         if (xhci->dev[i].transfer_rings[1])
-            continue; /* slot still in use */
+        {
+            continue;    /* slot still in use */
+        }
         if (NULL == xhci->dev[i].ctx.raw)
-            continue; /* slot already disabled */
+        {
+            continue;    /* slot already disabled */
+        }
 
         const FXhciTransCode cc = FXhciCmdDisableSlot(xhci, i);
         if (cc != FXHCI_CC_SUCCESS)
-            FUSB_INFO("Failed to disable slot %d: %d ", i, cc);
+        {
+            FUSB_INFO("Failed to disable slot %d: %d.", i, cc);
+        }
         else
-            FUSB_INFO("Successfully reaped slot %d ", i);
+        {
+            FUSB_INFO("Successfully reaped slot %d.", i);
+        }
         xhci->dcbaa[i] = 0;
 
         FUSB_FREE(instance, xhci->dev[i].ctx.raw);
@@ -138,7 +154,9 @@ static FXhciInputCtx *FXhciMakeInputCtx(FXhci *xhci, const size_t ctxsize)
     ic->add = dma_buffer + 4;
     dma_buffer += ctxsize;
     for (i = 0; i < FXHCI_NUM_EPS; i++, dma_buffer += ctxsize)
+    {
         ic->dev.ep[i] = dma_buffer;
+    }
 
     return ic;
 }
@@ -173,7 +191,7 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
 
     if ((NULL == ic) || (NULL == tr) || (NULL == tr->ring))
     {
-        FUSB_INFO("Out of memory ");
+        FUSB_INFO("Out of memory.");
         goto _free_return;
     }
 
@@ -188,22 +206,26 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
 
     if (cc != FXHCI_CC_SUCCESS)
     {
-        FUSB_INFO("Enable slot failed: %d ", cc);
+        FUSB_INFO("Enable slot failed: %d.", cc);
         goto _free_return;
     }
     else
     {
-        FUSB_INFO("Enabled slot %d ", slot_id);
+        FUSB_INFO("Enabled slot %d.", slot_id);
     }
 
     di = &xhci->dev[slot_id];
     void *dma_buffer = FUSB_ALLOCATE(instance, FXHCI_NUM_EPS * ctxsize, 64);
     if (NULL == dma_buffer)
+    {
         goto _disable_return;
+    }
 
     memset(dma_buffer, 0, FXHCI_NUM_EPS * ctxsize);
     for (i = 0; i < FXHCI_NUM_EPS; i++, dma_buffer += ctxsize)
+    {
         di->ctx.ep[i] = dma_buffer;
+    }
 
     *ic->add = (1 << 0) /* Slot Context */ | (1 << 1) /* EP0 Context */;
 
@@ -215,7 +237,7 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
     int tt, tt_port;
     if (FXhciGetTT(xhci, speed, hubport, hubaddr, &tt, &tt_port))
     {
-        FUSB_INFO("TT for %d: %d[%d] ", slot_id, tt, tt_port);
+        FUSB_INFO("TT for %d: %d[%d].", slot_id, tt, tt_port);
         FXHCI_SC_SET(MTT, ic->dev.slot, FXHCI_SC_GET(MTT, xhci->dev[tt].ctx.slot));
         FXHCI_SC_SET(TTID, ic->dev.slot, tt);
         FXHCI_SC_SET(TTPORT, ic->dev.slot, tt_port);
@@ -245,12 +267,12 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
 
     if (cc != FXHCI_CC_SUCCESS)
     {
-        FUSB_INFO("Address device failed: %d ", cc);
+        FUSB_INFO("Address device failed: %d.", cc);
         goto _disable_return;
     }
     else
     {
-        FUSB_INFO("Addressed device %d (USB: %d) ",
+        FUSB_INFO("Addressed device %d (USB: %d).",
                   slot_id, FXHCI_SC_GET(UADDR, di->ctx.slot));
     }
 
@@ -258,7 +280,9 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
 
     dev = FUsbInitDevEntry(controller, slot_id);
     if (!dev)
+    {
         goto _disable_return;
+    }
 
     dev->address = slot_id;
     dev->hub = hubaddr;
@@ -273,7 +297,7 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
     u8 buf[8];
     if (FUsbGetDescriptor(dev, FUsbGenerateReqType(FUSB_REQ_DEVICE_TO_HOST, FUSB_REQ_TYPE_STANDARD, FUSB_REQ_RECP_DEV), FUSB_DESC_TYPE_DEVICE, 0, buf, sizeof(buf)) != sizeof(buf))
     {
-        FUSB_INFO("first FUsbGetDescriptor(FUSB_DESC_TYPE_DEVICE) failed ");
+        FUSB_INFO("First FUsbGetDescriptor(FUSB_DESC_TYPE_DEVICE) failed.");
         goto _disable_return;
     }
 
@@ -295,7 +319,7 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
         }
         if (cc != FXHCI_CC_SUCCESS)
         {
-            FUSB_INFO("Context evaluation failed: %d ", cc);
+            FUSB_INFO("Context evaluation failed: %d.", cc);
             goto _disable_return;
         }
     }
@@ -309,7 +333,9 @@ _disable_return:
     dev = NULL;
 _free_return:
     if (tr)
+    {
         FUSB_FREE(instance, (void *)tr->ring);
+    }
     FUSB_FREE(instance, tr);
     if (di)
     {
@@ -332,7 +358,7 @@ static int FXhciFinishHubConfig(FUsbDev *const dev, FXhciInputCtx *const ic)
 
     if (FUsbGetDescriptor(dev, FUsbGenerateReqType(FUSB_REQ_DEVICE_TO_HOST, FUSB_REQ_TYPE_CLASS, FUSB_REQ_RECP_DEV), type, 0, &desc, sizeof(desc)) != sizeof(desc))
     {
-        FUSB_INFO("Failed to fetch hub descriptor ");
+        FUSB_INFO("Failed to fetch hub descriptor.");
         return FXHCI_CC_COMMUNICATION_ERROR;
     }
 
@@ -350,26 +376,38 @@ static int FXhciFinishHubConfig(FUsbDev *const dev, FXhciInputCtx *const ic)
 static size_t FXhciBoundInterval(const FUsbEndpoint *const ep)
 {
     if ((ep->dev->speed == FUSB_LOW_SPEED &&
-            (ep->type == FUSB_ISOCHRONOUS_EP ||
-             ep->type == FUSB_INTERRUPT_EP)) ||
-            (ep->dev->speed == FUSB_FULL_SPEED &&
-             ep->type == FUSB_INTERRUPT_EP))
+         (ep->type == FUSB_ISOCHRONOUS_EP ||
+          ep->type == FUSB_INTERRUPT_EP)) ||
+        (ep->dev->speed == FUSB_FULL_SPEED &&
+         ep->type == FUSB_INTERRUPT_EP))
     {
         if (ep->interval < 3)
+        {
             return 3;
+        }
         else if (ep->interval > 11)
+        {
             return 11;
+        }
         else
+        {
             return ep->interval;
+        }
     }
     else
     {
         if (ep->interval < 0)
+        {
             return 0;
+        }
         else if (ep->interval > 15)
+        {
             return 15;
+        }
         else
+        {
             return ep->interval;
+        }
     }
 }
 
@@ -379,10 +417,12 @@ static int FXhciFinishEpConfig(const FUsbEndpoint *const ep, FXhciInputCtx *cons
     FASSERT(xhci);
     FUsb *instance = xhci->usb;
     const int ep_id = FXhciEpId(ep);
-    FUSB_INFO("ep_id: %d ", ep_id);
+    FUSB_INFO("ep_id: %d.", ep_id);
 
     if (ep_id <= 1 || 32 <= ep_id)
+    {
         return FXHCI_CC_DRIVER_ERROR;
+    }
 
     FXhciTransRing *const tr = FUSB_ALLOCATE(instance, sizeof(*tr), FUSB_DEFAULT_ALIGN);
     if (NULL != tr)
@@ -394,7 +434,7 @@ static int FXhciFinishEpConfig(const FUsbEndpoint *const ep, FXhciInputCtx *cons
     if ((NULL == tr) || (NULL == tr->ring))
     {
         FUSB_FREE(instance, tr);
-        FUSB_ERROR("Out of memory ");
+        FUSB_ERROR("Out of memory.");
         return FXHCI_CC_OUT_OF_MEMORY;
     }
 
@@ -403,11 +443,13 @@ static int FXhciFinishEpConfig(const FUsbEndpoint *const ep, FXhciInputCtx *cons
 
     *ic->add |= (1 << ep_id);
     if ((int)FXHCI_SC_GET(CTXENT, ic->dev.slot) < ep_id)
+    {
         FXHCI_SC_SET(CTXENT, ic->dev.slot, ep_id);
+    }
 
     FXhciEpCtx *const epctx = ic->dev.ep[ep_id];
 
-    FUSB_DEBUG("Filling epctx (@%p) ", epctx);
+    FUSB_DEBUG("Filling epctx (@%p).", epctx);
     epctx->tr_dq_low = (uintptr)(tr->ring);
     epctx->tr_dq_high = 0;
 
@@ -420,16 +462,16 @@ static int FXhciFinishEpConfig(const FUsbEndpoint *const ep, FXhciInputCtx *cons
     size_t avrtrb;
     switch (ep->type)
     {
-    case FUSB_BULK_EP:
-    case FUSB_ISOCHRONOUS_EP:
-        avrtrb = 3 * 1024;
-        break;
-    case FUSB_INTERRUPT_EP:
-        avrtrb = 1024;
-        break;
-    default:
-        avrtrb = 8;
-        break;
+        case FUSB_BULK_EP:
+        case FUSB_ISOCHRONOUS_EP:
+            avrtrb = 3 * 1024;
+            break;
+        case FUSB_INTERRUPT_EP:
+            avrtrb = 1024;
+            break;
+        default:
+            avrtrb = 8;
+            break;
     }
     FXHCI_EC_SET(AVRTRB, epctx, avrtrb);
     FXHCI_EC_SET(MXESIT, epctx, FXHCI_EC_GET(MPS, epctx) * FXHCI_EC_GET(MBS, epctx));
@@ -457,7 +499,7 @@ FXhciTransCode FXhciFinishDevConfig(FUsbDev *const dev)
     FXhciInputCtx *const ic = FXhciMakeInputCtx(xhci, FXhciGetCtxSize(&xhci->mmio));
     if (!ic)
     {
-        FUSB_INFO("Out of memory ");
+        FUSB_INFO("Out of memory.");
         return FXHCI_CC_OUT_OF_MEMORY;
     }
 
@@ -474,14 +516,18 @@ FXhciTransCode FXhciFinishDevConfig(FUsbDev *const dev)
     {
         ret = FXhciFinishHubConfig(dev, ic);
         if (ret)
+        {
             goto _free_return;
+        }
     }
 
     for (i = 1; i < dev->num_endp; ++i)
     {
         ret = FXhciFinishEpConfig(&dev->endpoints[i], ic);
         if (ret)
+        {
             goto _free_ep_ctx_return;
+        }
     }
 
     const int config_id = dev->configuration->bConfigurationValue;
@@ -496,13 +542,13 @@ FXhciTransCode FXhciFinishDevConfig(FUsbDev *const dev)
 
     if (cc != FXHCI_CC_SUCCESS)
     {
-        FUSB_INFO("Configure endpoint failed: %d ", cc);
+        FUSB_INFO("Configure endpoint failed: %d.", cc);
         ret = FXHCI_CC_CONTROLLER_ERROR;
         goto _free_ep_ctx_return;
     }
     else
     {
-        FUSB_INFO("Endpoints configured ");
+        FUSB_INFO("Endpoints configured.");
     }
 
     goto _free_return;
@@ -540,7 +586,9 @@ void FXhciDestoryDev(FUsbHc *const controller, const int slot_id)
     FUsb *instance = xhci->usb;
 
     if (slot_id <= 0 || slot_id > xhci->max_slots_en)
+    {
         return;
+    }
 
     FXhciInputCtx *const ic = FXhciMakeInputCtx(xhci, FXhciGetCtxSize(&xhci->mmio));
     if (NULL == ic)
@@ -565,11 +613,15 @@ void FXhciDestoryDev(FUsbHc *const controller, const int slot_id)
     }
 
     if (cc != FXHCI_CC_SUCCESS)
-        FUSB_INFO("Failed to quiesce slot %d: %d ", slot_id, cc);
+    {
+        FUSB_INFO("Failed to quiesce slot %d: %d.", slot_id, cc);
+    }
 
     cc = FXhciCmdStopEp(xhci, slot_id, FXHCI_EP0_ID);
     if (cc != FXHCI_CC_SUCCESS)
-        FUSB_INFO("Failed to stop EP0 on slot %d: %d ", slot_id, cc);
+    {
+        FUSB_INFO("Failed to stop EP0 on slot %d: %d.", slot_id, cc);
+    }
 
     int i;
     FXhciDevInfo *const di = &xhci->dev[slot_id];
@@ -590,7 +642,7 @@ void FXhciDestoryDev(FUsbHc *const controller, const int slot_id)
         di->ctx.raw = NULL;
     }
 
-    FUSB_INFO("Stopped slot %d, but not disabling it yet. ", slot_id);
+    FUSB_INFO("Stopped slot %d, but not disabling it yet.", slot_id);
     di->transfer_rings[1] = NULL;
 
     return;

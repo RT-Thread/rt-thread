@@ -639,7 +639,7 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
 
     default:
         LOG_E("Unsupported data length.");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uart_configure;
     }
 
@@ -656,7 +656,7 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
 
     default:
         LOG_E("Unsupported stop bit.");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uart_configure;
     }
 
@@ -677,7 +677,7 @@ static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial
 
     default:
         LOG_E("Unsupported parity.");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uart_configure;
     }
 
@@ -1003,7 +1003,7 @@ static rt_ssize_t nu_uart_dma_transmit(struct rt_serial_device *serial, rt_uint8
     }
     else
     {
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
 
     return result;

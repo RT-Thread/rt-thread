@@ -237,7 +237,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
     /* initialize thread timer */
     rt_timer_init(&(thread->thread_timer),
-                  thread->name,
+                  thread->parent.name,
                   _thread_timeout,
                   thread,
                   0,
@@ -274,7 +274,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #endif /* RT_USING_PTHREADS */
 
 #ifdef RT_USING_MODULE
-    thread->module_id = 0;
+    thread->parent.module_id = 0;
 #endif /* RT_USING_MODULE */
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
@@ -386,7 +386,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("startup a thread:%s with priority:%d\n",
-                                   thread->name, thread->current_priority));
+                                   thread->parent.name, thread->current_priority));
     /* change thread stat */
     thread->stat = RT_THREAD_SUSPEND;
     /* then resume it */
@@ -588,8 +588,8 @@ rt_err_t rt_thread_yield(void)
     level = rt_hw_interrupt_disable();
     thread->remaining_tick = thread->init_tick;
     thread->stat |= RT_THREAD_STAT_YIELD;
-    rt_schedule();
     rt_hw_interrupt_enable(level);
+    rt_schedule();
 
     return RT_EOK;
 }
@@ -896,7 +896,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 
         case RT_THREAD_CTRL_CLOSE:
         {
-            rt_err_t rt_err;
+            rt_err_t rt_err = -RT_EINVAL;
 
             if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
             {
@@ -983,7 +983,7 @@ rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(thread == rt_thread_self());
 
-    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->name));
+    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->parent.name));
 
     stat = thread->stat & RT_THREAD_STAT_MASK;
     if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
@@ -1046,7 +1046,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->name));
+    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->parent.name));
 
     if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
     {
@@ -1141,5 +1141,23 @@ rt_thread_t rt_thread_find(char *name)
 }
 
 RTM_EXPORT(rt_thread_find);
+
+/**
+ * @brief   This function will return the name of the specified thread
+ *
+ * @note    Please don't invoke this function in interrupt status
+ *
+ * @param   thread the thread to retrieve thread name
+ * @param   name buffer to store the thread name string
+ * @param   name_size maximum size of the buffer to store the thread name
+ *
+ * @return  If the return value is RT_EOK, the function is successfully executed
+ *          If the return value is -RT_EINVAL, it means this operation failed
+ */
+rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_uint8_t name_size)
+{
+    return (thread == RT_NULL) ? -RT_EINVAL : rt_object_get_name(&thread->parent, name, name_size);
+}
+RTM_EXPORT(rt_thread_get_name);
 
 /**@}*/

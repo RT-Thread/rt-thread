@@ -13,7 +13,7 @@
  * FilePath: fwdt.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-07-15 17:05:09
- * Description:  This files is for wdt ctrl function implementation.
+ * Description:  This file is for wdt ctrl function implementation.
  * Users can operate as a single stage watchdog or a two stages watchdog.
  * In the single stage mode, when the timeout is reached, your system will
  * be reset by WS1. The first signal (WS0) is ignored.
@@ -56,7 +56,7 @@
 #include "fwdt.h"
 #include "fwdt_hw.h"
 
-#define FWDT_DEBUG_TAG "WDT"
+#define FWDT_DEBUG_TAG "FWDT"
 #define FWDT_ERROR(format, ...)   FT_DEBUG_PRINT_E(FWDT_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FWDT_WARN(format, ...)   FT_DEBUG_PRINT_W(FWDT_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FWDT_INFO(format, ...) FT_DEBUG_PRINT_I(FWDT_DEBUG_TAG, format, ##__VA_ARGS__)
@@ -82,7 +82,7 @@ FError FWdtCfgInitialize(FWdtCtrl *pctrl, const FWdtConfig *input_config_p)
     */
     if (FT_COMPONENT_IS_READY == pctrl->is_ready)
     {
-        FWDT_WARN("device is already initialized!!!");
+        FWDT_WARN("Device is already initialized!!!");
     }
 
     /*Set default values and configuration data */
@@ -126,17 +126,17 @@ FError FWdtSetTimeout(FWdtCtrl *pctrl, u32 timeout)
     FASSERT(pctrl != NULL);
     if (pctrl->is_ready != FT_COMPONENT_IS_READY)
     {
-        FWDT_ERROR("device is not already!!!");
+        FWDT_ERROR("Device is not ready!!!");
         return FWDT_NOT_READY;
     }
     if (timeout > FWDT_MAX_TIMEOUT)
     {
-        FWDT_ERROR("timeout value is invalid");
+        FWDT_ERROR("Timeout value is invalid.");
         return FWDT_ERR_INVAL_PARM;
     }
     uintptr base_addr = pctrl->config.control_base_addr;
 
-    FWDT_WRITE_REG32(base_addr, FWDT_GWDT_WOR, (u32)(FWDT_CLK * timeout));
+    FWDT_WRITE_REG32(base_addr, FWDT_GWDT_WOR, (u32)(FWDT_CLK_FREQ_HZ * timeout));
 
     return FWDT_SUCCESS;
 }
@@ -156,7 +156,9 @@ u32 FWdtGetTimeleft(FWdtCtrl *pctrl)
 
     /* if the ws0 bit of register WCS is zero，indicates that there is one more timeout opportunity */
     if (!(FWdtReadWCS(base_addr) & FWDT_GWDT_WCS_WS0))
+    {
         timeleft += FWdtReadWOR(base_addr);
+    }
 
     u32 wcvh = (u32)FWdtReadWCVH(base_addr);
     u32 wcvl = (u32)FWdtReadWCVL(base_addr);
@@ -164,9 +166,9 @@ u32 FWdtGetTimeleft(FWdtCtrl *pctrl)
 
     timeleft += (wcv - GenericTimerRead());
 
-    // f_printk("------wcvh=%llx, wcvl=%llx, wcv=%llx, timeleft=%llx\n", wcvh, wcvl, wcv, timeleft);
+    FWDT_DEBUG("wcvh=%llx, wcvl=%llx, wcv=%llx, timeleft=%llx\n", wcvh, wcvl, wcv, timeleft);
 
-    do_div(timeleft, FWDT_CLK);
+    do_div(timeleft, FWDT_CLK_FREQ_HZ);
 
     return (u32)timeleft;
 }
@@ -182,7 +184,7 @@ FError FWdtRefresh(FWdtCtrl *pctrl)
     FASSERT(pctrl != NULL);
     if (pctrl->is_ready != FT_COMPONENT_IS_READY)
     {
-        FWDT_ERROR("device is not already!!!");
+        FWDT_ERROR("Device is not ready!!!");
         return FWDT_NOT_READY;
     }
     uintptr base_addr = pctrl->config.refresh_base_addr;
@@ -201,7 +203,7 @@ FError FWdtStart(FWdtCtrl *pctrl)
     FASSERT(pctrl != NULL);
     if (pctrl->is_ready != FT_COMPONENT_IS_READY)
     {
-        FWDT_ERROR("device is not already!!!");
+        FWDT_ERROR("Device is not ready!!!");
         return FWDT_NOT_READY;
     }
 
@@ -239,13 +241,13 @@ FError FWdtReadFWdtReadWIIDR(FWdtCtrl *pctrl, FWdtIdentifier *wdt_identify)
 
     if (pctrl->is_ready != FT_COMPONENT_IS_READY)
     {
-        FWDT_ERROR("device is not already!!!");
+        FWDT_ERROR("Device is not ready!!!");
         return FWDT_NOT_READY;
     }
 
     u32 reg_val = 0;
     uintptr base_addr = pctrl->config.refresh_base_addr;
-    reg_val =  FWDT_READ_REG32(base_addr, FWDT_GWDT_W_IIDR);
+    reg_val =  FWDT_READ_REG32(base_addr, FWDT_GWDT_W_IIR);
 
     wdt_identify->version = (u16)((reg_val & FWDT_VERSION_MASK) >> 16);
     wdt_identify->continuation_code = (u8)((reg_val & FWDT_CONTINUATION_CODE_MASK) >> 8);

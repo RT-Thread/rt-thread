@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,7 @@
 #include <rtthread.h>
 #include "board.h"
 #include "pin_mux.h"
-
+#include "fsl_iomuxc.h"
 #ifdef BSP_USING_DMA
 #include "fsl_dmamux.h"
 #include "fsl_edma.h"
@@ -33,6 +33,28 @@
 /* MPU configuration. */
 void BOARD_ConfigMPU(void)
 {
+ #if defined(__CC_ARM) || defined(__ARMCC_VERSION)
+    extern uint32_t Image$$RW_m_ncache$$Base[];
+    /* RW_m_ncache_unused is a auxiliary region which is used to get the whole size of noncache section */
+    extern uint32_t Image$$RW_m_ncache_unused$$Base[];
+    extern uint32_t Image$$RW_m_ncache_unused$$ZI$$Limit[];
+    uint32_t nonCacheStart = (uint32_t)Image$$RW_m_ncache$$Base;
+    uint32_t size          = ((uint32_t)Image$$RW_m_ncache_unused$$Base == nonCacheStart) ?
+                        0 :
+                        ((uint32_t)Image$$RW_m_ncache_unused$$ZI$$Limit - nonCacheStart);
+#elif defined(__MCUXPRESSO)
+    extern uint32_t __base_NCACHE_REGION;
+    extern uint32_t __top_NCACHE_REGION;
+    uint32_t nonCacheStart = (uint32_t)(&__base_NCACHE_REGION);
+    uint32_t size          = (uint32_t)(&__top_NCACHE_REGION) - nonCacheStart;
+#elif defined(__ICCARM__) || defined(__GNUC__)
+    extern uint32_t __NCACHE_REGION_START[];
+    extern uint32_t __NCACHE_REGION_SIZE[];
+    uint32_t nonCacheStart = (uint32_t)__NCACHE_REGION_START;
+    uint32_t size          = (uint32_t)__NCACHE_REGION_SIZE;
+#endif
+    volatile uint32_t i = 0;
+
     /* Disable I cache and D cache */
     if (SCB_CCR_IC_Msk == (SCB_CCR_IC_Msk & SCB->CCR))
     {
@@ -85,59 +107,69 @@ void BOARD_ConfigMPU(void)
      * mpu_armv7.h.
      */
 
-    /* Region 0 setting: Memory with Device type, not shareable, non-cacheable. */
-    MPU->RBAR = ARM_MPU_RBAR(0, 0xC0000000U);
+    /*
+     * Add default region to deny access to whole address space to workaround speculative prefetch.
+     * Refer to Arm errata 1013783-B for more details.
+     *
+     */
+    /* Region 0 setting: Instruction access disabled, No data access permission. */
+    MPU->RBAR = ARM_MPU_RBAR(0, 0x00000000U);
+    MPU->RASR = ARM_MPU_RASR(1, ARM_MPU_AP_NONE, 0, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_4GB);
+
+    /* Region 1 setting: Memory with Device type, not shareable, non-cacheable. */
+    MPU->RBAR = ARM_MPU_RBAR(1, 0x80000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_512MB);
 
-    /* Region 1 setting: Memory with Device type, not shareable,  non-cacheable. */
-    MPU->RBAR = ARM_MPU_RBAR(1, 0x80000000U);
-    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_1GB);
+    /* Region 2 setting: Memory with Device type, not shareable,  non-cacheable. */
+    MPU->RBAR = ARM_MPU_RBAR(2, 0x60000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_512MB);
 
-/* Region 2 setting */
 #if defined(XIP_EXTERNAL_FLASH) && (XIP_EXTERNAL_FLASH == 1)
-    /* Setting Memory with Normal type, not shareable, outer/inner write back. */
-    MPU->RBAR = ARM_MPU_RBAR(2, 0x60000000U);
+    /* Region 3 setting: Memory with Normal type, not shareable, outer/inner write back. */
+    MPU->RBAR = ARM_MPU_RBAR(3, 0x60000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_RO, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_8MB);
-#else
-    /* Setting Memory with Device type, not shareable, non-cacheable. */
-    MPU->RBAR = ARM_MPU_RBAR(2, 0x60000000U);
-    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_RO, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_8MB);
 #endif
 
-    /* Region 3 setting: Memory with Device type, not shareable, non-cacheable. */
-    MPU->RBAR = ARM_MPU_RBAR(3, 0x00000000U);
+    /* Region 4 setting: Memory with Device type, not shareable, non-cacheable. */
+    MPU->RBAR = ARM_MPU_RBAR(4, 0x00000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_1GB);
 
-    /* Region 4 setting: Memory with Normal type, not shareable, outer/inner write back */
-    MPU->RBAR = ARM_MPU_RBAR(4, 0x00000000U);
-    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_64KB);
-
     /* Region 5 setting: Memory with Normal type, not shareable, outer/inner write back */
-    MPU->RBAR = ARM_MPU_RBAR(5, 0x20000000U);
+    MPU->RBAR = ARM_MPU_RBAR(5, 0x00000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_64KB);
 
     /* Region 6 setting: Memory with Normal type, not shareable, outer/inner write back */
-    MPU->RBAR = ARM_MPU_RBAR(6, 0x20200000U);
+    MPU->RBAR = ARM_MPU_RBAR(6, 0x20000000U);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_64KB);
+
+    /* Region 7 setting: Memory with Normal type, not shareable, outer/inner write back */
+    MPU->RBAR = ARM_MPU_RBAR(7, 0x20200000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_128KB);
 
-/* The define sets the cacheable memory to shareable,
- * this suggestion is referred from chapter 2.2.1 Memory regions,
- * types and attributes in Cortex-M7 Devices, Generic User Guide */
-#if defined(SDRAM_IS_SHAREABLE)
-    /* Region 7 setting: Memory with Normal type, shareable, outer/inner write back */
-    MPU->RBAR = ARM_MPU_RBAR(7, 0x80000000U);
-    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 1, 1, 1, 0, ARM_MPU_REGION_SIZE_32MB);
-#else
-    /* Region 7 setting: Memory with Normal type, not shareable, outer/inner write back */
-    MPU->RBAR = ARM_MPU_RBAR(7, 0x80000000U);
+    /* Region 8 setting: Memory with Normal type, not shareable, outer/inner write back */
+    MPU->RBAR = ARM_MPU_RBAR(8, 0x80000000U);
     MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 0, 0, 1, 1, 0, ARM_MPU_REGION_SIZE_32MB);
-#endif
 
-    /* Region 8 setting, set last 2MB of SDRAM can't be accessed by cache, glocal variables which are not expected to be
-     * accessed by cache can be put here */
-    /* Memory with Normal type, not shareable, non-cacheable */
-    MPU->RBAR = ARM_MPU_RBAR(8, 0x81E00000U);
-    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 1, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_2MB);
+    while ((size >> i) > 0x1U)
+    {
+        i++;
+    }
+
+    if (i != 0)
+    {
+        /* The MPU region size should be 2^N, 5<=N<=32, region base should be multiples of size. */
+        assert(!(nonCacheStart % size));
+        assert(size == (uint32_t)(1 << i));
+        assert(i >= 5);
+
+        /* Region 9 setting: Memory with Normal type, not shareable, non-cacheable */
+        MPU->RBAR = ARM_MPU_RBAR(9, nonCacheStart);
+        MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 1, 0, 0, 0, 0, i - 1);
+    }
+
+    /* Region 10 setting: Memory with Device type, not shareable, non-cacheable */
+    MPU->RBAR = ARM_MPU_RBAR(10, 0x40000000);
+    MPU->RASR = ARM_MPU_RASR(0, ARM_MPU_AP_FULL, 2, 0, 0, 0, 0, ARM_MPU_REGION_SIZE_4MB);
 
     /* Enable MPU */
     ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk);
@@ -168,6 +200,221 @@ void imxrt_dma_init(void)
     EDMA_Init(DMA0, &config);
 }
 #endif
+#ifdef BSP_USING_ETH
+void imxrt_enet_pins_init(void)
+{
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_04_GPIO1_IO04,        /* GPIO_AD_B0_04 is configured as GPIO1_IO04 */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+                                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_08_ENET_REF_CLK1,     /* GPIO_AD_B0_08 is configured as ENET_REF_CLK1 */
+          1U);                                    /* Software Input On Field: Force input path of pad GPIO_AD_B0_08 */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_09_ENET_RDATA01,      /* GPIO_AD_B0_09 is configured as ENET_RDATA01 */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_10_ENET_RDATA00,      /* GPIO_AD_B0_10 is configured as ENET_RDATA00 */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_11_ENET_RX_EN,        /* GPIO_AD_B0_11 is configured as ENET_RX_EN */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_12_ENET_RX_ER,        /* GPIO_AD_B0_12 is configured as ENET_RX_ER */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_13_ENET_TX_EN,        /* GPIO_AD_B0_13 is configured as ENET_TX_EN */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_14_ENET_TDATA00,      /* GPIO_AD_B0_14 is configured as ENET_TDATA00 */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B0_15_ENET_TDATA01,      /* GPIO_AD_B0_15 is configured as ENET_TDATA01 */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_B1_06_GPIO1_IO22,        /* GPIO_AD_B1_06 is configured as GPIO1_IO22 */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_EMC_40_ENET_MDIO,           /* GPIO_EMC_40 is configured as ENET_MDIO */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+          IOMUXC_GPIO_EMC_41_ENET_MDC,            /* GPIO_EMC_41 is configured as ENET_MDC */
+          0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_04_GPIO1_IO04,        /* GPIO_AD_B0_04 PAD functional properties : */
+          0xB0A9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: medium(100MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_08_ENET_REF_CLK1,     /* GPIO_AD_B0_08 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_09_ENET_RDATA01,      /* GPIO_AD_B0_09 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_10_ENET_RDATA00,      /* GPIO_AD_B0_10 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_11_ENET_RX_EN,        /* GPIO_AD_B0_11 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_12_ENET_RX_ER,        /* GPIO_AD_B0_12 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_13_ENET_TX_EN,        /* GPIO_AD_B0_13 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_14_ENET_TDATA00,      /* GPIO_AD_B0_14 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B0_15_ENET_TDATA01,      /* GPIO_AD_B0_15 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_B1_06_GPIO1_IO22,        /* GPIO_AD_B1_06 PAD functional properties : */
+          0xB0A9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: medium(100MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_EMC_40_ENET_MDIO,           /* GPIO_EMC_40 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+    IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_EMC_41_ENET_MDC,            /* GPIO_EMC_41 PAD functional properties : */
+          0xB0E9U);                               /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: R0/5
+                                                     Speed Field: max(200MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Pull
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Up
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+}
+
+#ifndef BSP_USING_PHY
+void imxrt_enet_phy_reset_by_gpio(void)
+{
+    gpio_pin_config_t gpio_config = {kGPIO_DigitalOutput, 0, kGPIO_NoIntmode};
+
+    GPIO_PinInit(GPIO1, 9, &gpio_config);
+    GPIO_PinInit(GPIO1, 10, &gpio_config);
+    /* pull up the ENET_INT before RESET. */
+    GPIO_WritePinOutput(GPIO1, 10, 1);
+    GPIO_WritePinOutput(GPIO1, 9, 0);
+    rt_thread_delay(100);
+    GPIO_WritePinOutput(GPIO1, 9, 1);
+}
+#endif /* BSP_USING_PHY */
+
+#endif /* BSP_USING_ETH */
+
+#ifdef BSP_USING_PHY
+void imxrt_phy_pins_init( void )
+{
+//    IOMUXC_SetPinMux(
+//        IOMUXC_GPIO_AD_B0_09_GPIO1_IO09, /* GPIO_AD_B0_09 is configured as GPIO1_IO09 */
+//        0U);                             /* Software Input On Field: Input Path is determined by functionality */
+//    IOMUXC_SetPinConfig(
+//        IOMUXC_GPIO_AD_B0_09_GPIO1_IO09, /* GPIO_B0_00 PAD functional properties : */
+//        0x10B0u);                        /* Slew Rate Field: Slow Slew Rate
+//                                                 Drive Strength Field: R0/6
+//                                                 Speed Field: medium(100MHz)
+//                                                 Open Drain Enable Field: Open Drain Disabled
+//                                                 Pull / Keep Enable Field: Pull/Keeper Enabled
+//                                                 Pull / Keep Select Field: Keeper
+//                                                 Pull Up / Down Config. Field: 100K Ohm Pull Down
+//                                                 Hyst. Enable Field: Hysteresis Disabled */
+
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_B0_04_GPIO1_IO04, /* GPIO_AD_B0_09 is configured as GPIO1_IO09 */
+        0U);                             /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_B0_04_GPIO1_IO04, /* GPIO_B0_00 PAD functional properties : */
+        0x10B0u);                        /* Slew Rate Field: Slow Slew Rate
+                                                 Drive Strength Field: R0/6
+                                                 Speed Field: medium(100MHz)
+                                                 Open Drain Enable Field: Open Drain Disabled
+                                                 Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                 Pull / Keep Select Field: Keeper
+                                                 Pull Up / Down Config. Field: 100K Ohm Pull Down
+                                                 Hyst. Enable Field: Hysteresis Disabled */
+}
+#endif /* BSP_USING_PHY */
+
+
+
+
 /**
  * This function will initial rt1050 board.
  */
@@ -184,6 +431,13 @@ void rt_hw_board_init()
     imxrt_dma_init();
 #endif
 
+#ifdef BSP_USING_ETH
+    imxrt_enet_pins_init();
+#endif
+
+#ifdef BSP_USING_PHY
+    imxrt_phy_pins_init();
+#endif
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif

@@ -14,17 +14,24 @@
  * FilePath: fgic_cpu_interface.h
  * Date: 2022-03-28 14:55:27
  * LastEditTime: 2022-03-28 14:55:27
- * Description:  This file is for
+ * Description:  This file is for gic register definition and operation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/4/16   init commit
  */
 
-#ifndef DRIVERS_CPU_INTERFACE_H
-#define DRIVERS_CPU_INTERFACE_H
+
+#ifndef FGIC_CPU_INTERFACE_H
+#define FGIC_CPU_INTERFACE_H
+
 #include "ftypes.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define FGIC_ICC_SGI1R_INTID_MASK 0xFULL  /* The INTID of the SGI. */
 
@@ -99,18 +106,18 @@ void FGicSetICC_ASGI1R(u32 intnum, u32 target_list, GICC_SGIR_IRM_BITS mode, u64
 
 /* For AArch32 state,  accesses to GIC registers that are visible in the System register */
 #define FGIC_SYS_READ32(CR, Rt) __asm__ volatile("MRC " CR  \
-                                                 : "=r"(Rt) \
-                                                 :          \
-                                                 : "memory")
+        : "=r"(Rt) \
+        :          \
+        : "memory")
 #define FGIC_SYS_WRITE32(CR, Rt) __asm__ volatile("MCR " CR \
-                                                 :         \
-                                                 : "r"(Rt) \
-                                                 : "memory")
+        :         \
+        : "r"(Rt) \
+        : "memory")
 
 #define FGIC_SYS_WRITE64(cp, op1, Rt, CRm) __asm__ volatile("MCRR p" #cp ", " #op1 ", %Q0, %R0, c" #CRm \
-                                                      :                                           \
-                                                      : "r"(Rt)                                   \
-                                                      : "memory")
+        :                                           \
+        : "r"(Rt)                                   \
+        : "memory")
 
 
 #define ICC_IAR0 "p15, 0, %0, c12, c8, 0"
@@ -541,6 +548,10 @@ static inline void FGicSetICC_ASGI1R(u32 intnum_bit, u32 target_list, GICC_SGIR_
 }
 
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif

@@ -1172,9 +1172,6 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -1192,9 +1189,6 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\drivers\cputime\cputime.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
@@ -1316,7 +1310,7 @@
       <name>$PROJ_DIR$\..\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\src\thread.c</name>
@@ -1388,10 +1382,10 @@
   <group>
     <name>SAL</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev.c</name>
     </file>
   </group>
   <group>

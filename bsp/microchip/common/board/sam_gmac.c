@@ -332,7 +332,7 @@ static void rt_sam_eth_monitor(void *parameter)
  *
  * @param
  *
- * @return   RT_OK or RT_ERROR.
+ * @return   RT_OK or -RT_ERROR.
  */
 
 static int rt_hw_sam_eth_init(void)

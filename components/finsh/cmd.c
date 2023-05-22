@@ -204,12 +204,12 @@ long list_thread(void)
 
 #ifdef RT_USING_SMP
                     if (thread->oncpu != RT_CPU_DETACHED)
-                        rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX, thread->name, thread->oncpu, thread->bind_cpu, thread->current_priority);
+                        rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->oncpu, thread->bind_cpu, thread->current_priority);
                     else
-                        rt_kprintf("%-*.*s N/A %3d %4d ", maxlen, RT_NAME_MAX, thread->name, thread->bind_cpu, thread->current_priority);
+                        rt_kprintf("%-*.*s N/A %3d %4d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->bind_cpu, thread->current_priority);
 
 #else
-                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
 #endif /*RT_USING_SMP*/
                     stat = (thread->stat & RT_THREAD_STAT_MASK);
                     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
@@ -256,7 +256,7 @@ static void show_wait_queue(struct rt_list_node *list)
     for (node = list->next; node != list; node = node->next)
     {
         thread = rt_list_entry(node, struct rt_thread, tlist);
-        rt_kprintf("%.*s", RT_NAME_MAX, thread->name);
+        rt_kprintf("%.*s", RT_NAME_MAX, thread->parent.name);
 
         if (node->next != list)
             rt_kprintf("/");
@@ -439,7 +439,7 @@ long list_mutex(void)
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
-                           m->owner->name,
+                           m->owner->parent.name,
                            m->hold,
                            m->priority,
                            rt_list_len(&m->parent.suspend_thread));
@@ -452,7 +452,7 @@ long list_mutex(void)
                            maxlen, RT_NAME_MAX,
                            m->parent.parent.name,
                            RT_NAME_MAX,
-                           m->owner->name,
+                           m->owner->parent.name,
                            m->hold,
                            m->priority,
                            rt_list_len(&m->parent.suspend_thread));

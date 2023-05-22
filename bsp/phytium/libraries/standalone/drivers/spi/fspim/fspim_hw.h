@@ -14,14 +14,16 @@
  * FilePath: fspim_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:08:05
- * Description:  This files is for
+ * Description:  This file is for providing spim Hardware interaction api 
+ *               and some predefined variables.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2021-12-3   init commit
- * 1.1   zhugengyu  2022-4-15   support test mode
- * 1.2   zhugengyu  2022-5-13   support spi dma
+ * 1.0   zhugengyu  2021/12/3   init commit
+ * 1.1   zhugengyu  2022/4/15   support test mode
+ * 1.2   zhugengyu  2022/5/13   support spi dma
+ * 1.3  liqiaozhong 2023/1/4    add data get func
  */
 
 
@@ -38,6 +40,7 @@ extern "C"
 #include "fkernel.h"
 #include "fio.h"
 #include "ftypes.h"
+#include "fspim.h"
 
 /************************** Constant Definitions *****************************/
 /** @name Register Map
@@ -165,8 +168,8 @@ enum
 /** @name FSPIM_BAUD_R_OFFSET Register
  */
 #define FSPIM_BAUD_R_SCKDV(x)        (GENMASK(15, 0) & ((x) << 0)) /* SCKDV 为 2 ~ 65534 之间的任何偶数值 */
-#define FSPIM_BAUD_R_SCKDV_MIN       2
-#define FSPIM_BAUD_R_SCKDV_MAX       65534
+#define FSPIM_BAUD_R_SCKDV_MIN       2U
+#define FSPIM_BAUD_R_SCKDV_MAX       65534U
 #define FSPIM_BAUD_R_SCKDV_IS_VALID(x)  (0 == (x) % 2)
 
 /** @name FSPIM_TXFTL_R_OFFSET Register
@@ -286,7 +289,6 @@ enum
 
 #define FSPIM_TX_DMA_LEVEL             0x10
 #define FSPIM_RX_DMA_LEVEL             0xf
-
 /**************************** Type Definitions *******************************/
 
 /************************** Variable Definitions *****************************/
@@ -466,9 +468,13 @@ static inline boolean FSpimGetEnable(uintptr base_addr)
 static inline void FSpimSetEnable(uintptr base_addr, boolean enable)
 {
     if (enable)
+    {
         FSPIM_WRITE_REG32(base_addr, FSPIM_SSIENR_OFFSET, FSPIM_SSIENR_SSI_EN(1));
+    }
     else
+    {
         FSPIM_WRITE_REG32(base_addr, FSPIM_SSIENR_OFFSET, FSPIM_SSIENR_SSI_EN(0));
+    }
 }
 
 /**
@@ -572,14 +578,23 @@ void FSpimSelSlaveDev(uintptr base_addr, u32 slave_dev_id);
 /* 设置SPI传输速度 */
 FError FSpimSetSpeed(uintptr base_addr, u32 speed);
 
+/* 读取SPI传输速度 */
+u32 FSpimGetSpeed(uintptr base_addr);
+
 /* 设置SPI传输模式 */
 void FSpimSetTransMode(uintptr base_addr, u32 trans_mode);
 
 /* 设置串行时钟相位 */
 void FSpimSetCpha(uintptr base_addr, u32 cpha_mode);
 
-/* 设置串行时钟极性 */
+/* 设置串行时钟相位 */
 void FSpimSetCpol(uintptr base_addr, u32 cpol_mode);
+
+/* 读取串行时钟相位 */
+FSpimCphaType FSpimGetCpha(uintptr base_addr);
+
+/* 读取串行时钟极性 */
+FSpimCpolType FSpimGetCpol(uintptr base_addr);
 
 #ifdef __cplusplus
 }

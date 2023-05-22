@@ -121,7 +121,7 @@ static rt_base_t ft32_pin_get(const char *name)
     return pin;
 }
 
-static void ft32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void ft32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     GPIO_TypeDef *gpio_port;
     uint16_t gpio_pin;
@@ -135,11 +135,11 @@ static void ft32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-static int ft32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t ft32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_TypeDef *gpio_port;
     uint16_t gpio_pin;
-    int value = PIN_LOW;
+    rt_int8_t value = PIN_LOW;
 
     if (PIN_PORT(pin) < PIN_STPORT_MAX)
     {
@@ -151,7 +151,7 @@ static int ft32_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-static void ft32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void ft32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -220,8 +220,8 @@ rt_inline const struct pin_irq_map *get_pin_irq_map(uint32_t pinbit)
     return &pin_irq_map[mapindex];
 };
 
-static rt_err_t ft32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                    rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t ft32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                    rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -234,7 +234,7 @@ static rt_err_t ft32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     irqindex = bit2bitno(PIN_FTPIN(pin));
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -249,7 +249,7 @@ static rt_err_t ft32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;
@@ -260,7 +260,7 @@ static rt_err_t ft32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t ft32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t ft32_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -273,7 +273,7 @@ static rt_err_t ft32_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     irqindex = bit2bitno(PIN_FTPIN(pin));
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -350,7 +350,7 @@ static void rt_gpio_deinit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
 
 
 static rt_err_t ft32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                    rt_uint32_t enabled)
+                                    rt_uint8_t enabled)
 {
     const struct pin_irq_map *irqmap;
     rt_base_t level;
@@ -368,7 +368,7 @@ static rt_err_t ft32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqindex = bit2bitno(PIN_FTPIN(pin));
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -376,7 +376,7 @@ static rt_err_t ft32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         irqmap = &pin_irq_map[irqindex];
@@ -425,7 +425,7 @@ static rt_err_t ft32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = get_pin_irq_map(PIN_FTPIN(pin));
         if (irqmap == RT_NULL)
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();

@@ -119,7 +119,7 @@ Supported Microchip SAM (ARM Cortex-Mx Core) MCU is as following：
 
 About RT-Thread env tools, click [Here](https://github.com/RT-Thread/rt-thread/blob/master/documentation/env/env.md).
 
-	* Download RT-Thread env tools <https://www.rt-thread.org/page/download.html>
+	* Download RT-Thread env tools <https://www.rt-thread.org/download.html#download-rt-thread-env-tool>
 
 ![](doc/2-3-1-atmel-start-download-env-tools.png)
 

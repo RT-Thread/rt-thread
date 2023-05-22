@@ -162,7 +162,7 @@ rt_err_t spi_configure(struct rt_spi_device *device,
     return RT_EOK;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     rt_err_t res;
     spi_handle_t *hspi;
@@ -208,7 +208,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
      }
 
      if (res != RT_EOK)
-         return RT_ERROR;
+         return -RT_ERROR;
      else
          return message->length;
 
@@ -351,7 +351,7 @@ int rt_hw_spi_init(void)
         return result;
     }
 
-    result = es32f0_spi_device_attach((ES_SPI1_NSS_PIN, ES_DEVICE_NAME_SPI1_BUS, ES_DEVICE_NAME_SPI1_DEV0);
+    result = es32f0_spi_device_attach(ES_SPI1_NSS_PIN, ES_DEVICE_NAME_SPI1_BUS, ES_DEVICE_NAME_SPI1_DEV0);
     if (result != RT_EOK)
     {
         return result;

@@ -210,9 +210,9 @@ static rt_ssize_t qspixfer(struct rt_spi_device *device, struct rt_spi_message *
     rt_int32_t length = message->length;
 
 #ifdef BSP_QSPI_USING_SOFTCS
-    if (message->cs_take && (device->parent.cs_pin != PIN_NONE))
+    if (message->cs_take && (device->cs_pin != PIN_NONE))
     {
-        rt_pin_write(device->parent.cs_pin, PIN_LOW);
+        rt_pin_write(device->cs_pin, PIN_LOW);
     }
 #endif
 
@@ -264,9 +264,9 @@ static rt_ssize_t qspixfer(struct rt_spi_device *device, struct rt_spi_message *
 
 __exit:
 #ifdef BSP_QSPI_USING_SOFTCS
-    if (message->cs_release && (device->parent.cs_pin != PIN_NONE))
+    if (message->cs_release && (device->cs_pin != PIN_NONE))
     {
-        rt_pin_write(device->parent.cs_pin, PIN_HIGH);
+        rt_pin_write(device->cs_pin, PIN_HIGH);
     }
 #endif
     return result;
@@ -319,7 +319,7 @@ rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name,
     if (qspi_device == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!");
-        result = RT_ENOMEM;
+        result = -RT_ENOMEM;
         goto __exit;
     }
 

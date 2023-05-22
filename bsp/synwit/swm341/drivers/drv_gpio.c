@@ -284,7 +284,7 @@ static const struct swm_pin_device *_pin2struct(uint8_t pin)
     return gpio_obj;
 }
 
-static void swm_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void swm_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct swm_pin_device *gpio_obj;
     int dir = 0;
@@ -328,7 +328,7 @@ static void swm_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     GPIO_Init(gpio_obj->gpio, gpio_obj->pin, dir, pull_up, pull_down, open_drain);
 }
 
-static void swm_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void swm_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct swm_pin_device *gpio_obj;
 
@@ -347,7 +347,7 @@ static void swm_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-static int swm_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t swm_pin_read(rt_device_t dev, rt_base_t pin)
 {
     const struct swm_pin_device *gpio_obj;
 
@@ -356,12 +356,12 @@ static int swm_pin_read(rt_device_t dev, rt_base_t pin)
     {
         return PIN_LOW;
     }
-    return (int)GPIO_GetBit(gpio_obj->gpio, gpio_obj->pin);
+    return (rt_int8_t)GPIO_GetBit(gpio_obj->gpio, gpio_obj->pin);
 }
 
 static rt_err_t swm_pin_attach_irq(struct rt_device *device,
-                                   rt_int32_t pin,
-                                   rt_uint32_t mode,
+                                   rt_base_t pin,
+                                   rt_uint8_t mode,
                                    void (*hdr)(void *args),
                                    void *args)
 {
@@ -384,7 +384,7 @@ static rt_err_t swm_pin_attach_irq(struct rt_device *device,
     return RT_EOK;
 }
 
-static rt_err_t swm_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t swm_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
 
@@ -398,7 +398,7 @@ static rt_err_t swm_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
 static rt_err_t swm_pin_irq_enable(struct rt_device *device,
                                    rt_base_t pin,
-                                   rt_uint32_t enabled)
+                                   rt_uint8_t enabled)
 {
     const struct swm_pin_device *gpio_obj;
     rt_base_t level = 0;
@@ -406,7 +406,7 @@ static rt_err_t swm_pin_irq_enable(struct rt_device *device,
     gpio_obj = _pin2struct(pin);
     if (gpio_obj == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     if (enabled == PIN_IRQ_ENABLE)
@@ -434,7 +434,7 @@ static rt_err_t swm_pin_irq_enable(struct rt_device *device,
             EXTI_Init(gpio_obj->gpio, gpio_obj->pin, EXTI_LOW_LEVEL);
             break;
         default:
-            return RT_EINVAL;
+            return -RT_EINVAL;
         }
 
         level = rt_hw_interrupt_disable();

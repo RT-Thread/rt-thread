@@ -13,8 +13,6 @@
 
 void thread_entry(void *arg);
 
-
-
 int main(void)
 {
 
@@ -26,7 +24,6 @@ int main(void)
 
     return 0;
 }
-
 
 void thread_entry(void *arg)
 {

@@ -196,7 +196,7 @@ static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct seria
 
     default:
         rt_kprintf("Unsupported data length");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uuart_configure;
     }
 
@@ -213,7 +213,7 @@ static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct seria
 
     default:
         rt_kprintf("Unsupported stop bit\n");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uuart_configure;
     }
 
@@ -234,7 +234,7 @@ static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct seria
 
     default:
         rt_kprintf("Unsupported parity\n");
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         goto exit_nu_uuart_configure;
     }
     /* Reset this module */
@@ -433,7 +433,7 @@ static rt_ssize_t nu_uuart_dma_transmit(struct rt_serial_device *serial, rt_uint
     }
     else
     {
-        result = RT_ERROR;
+        result = -RT_ERROR;
     }
 
     return result;

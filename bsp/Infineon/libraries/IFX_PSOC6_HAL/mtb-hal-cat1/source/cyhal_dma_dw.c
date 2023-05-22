@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* Copyright 2018-2021 Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2018-2022 Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -30,7 +30,7 @@
 #include "cyhal_hwmgr_impl.h"
 #include "cyhal_interconnect.h"
 #include "cyhal_syspm.h"
-#include "cyhal_irq_psoc.h"
+#include "cyhal_irq_impl.h"
 #include "cyhal_triggers.h"
 
 #if (_CYHAL_DRIVER_AVAILABLE_DMA_DW)
@@ -105,7 +105,7 @@ static bool _cyhal_dma_dw_pm_transition_pending = false;
 static bool _cyhal_dma_dw_has_enabled(void)
 {
     for (uint8_t i = 0; i < _CYHAL_DMA_DW_NUM_CHANNELS; i++)
-        if (_cyhal_dma_dw_config_structs[i])
+        if (NULL != _cyhal_dma_dw_config_structs[i])
             return true;
     return false;
 }
@@ -160,7 +160,11 @@ static inline cyhal_dma_t* _cyhal_dma_dw_get_obj(uint8_t block, uint8_t channel)
 static inline uint8_t _cyhal_dma_dw_get_block_from_irqn(_cyhal_system_irq_t irqn)
 {
 #if (CPUSS_DW0_PRESENT==1)
+#if defined(COMPONENT_CAT1D)
+    if (irqn >= m33syscpuss_interrupts_dw0_0_IRQn && irqn < m33syscpuss_interrupts_dw0_0_IRQn + (_cyhal_system_irq_t)CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ)
+#else
     if (irqn >= cpuss_interrupts_dw0_0_IRQn && irqn < cpuss_interrupts_dw0_0_IRQn + (_cyhal_system_irq_t)CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ)
+#endif
         return 0;
 #if (CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ != CPUSS_DW0_CH_NR)
     if ((irqn >= _CYHAL_DMA_GET_CPUSS_IRQN(0, CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ)) &&
@@ -186,8 +190,13 @@ static inline uint8_t _cyhal_dma_dw_get_block_from_irqn(_cyhal_system_irq_t irqn
 static inline uint8_t _cyhal_dma_dw_get_channel_from_irqn(_cyhal_system_irq_t irqn)
 {
 #if (CPUSS_DW0_PRESENT==1)
+#if defined(COMPONENT_CAT1D)
+    if (irqn >= m33syscpuss_interrupts_dw0_0_IRQn && irqn < m33syscpuss_interrupts_dw0_0_IRQn + (_cyhal_system_irq_t)CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ)
+        return (uint8_t)(irqn - m33syscpuss_interrupts_dw0_0_IRQn);
+#else
     if (irqn >= cpuss_interrupts_dw0_0_IRQn && irqn < cpuss_interrupts_dw0_0_IRQn + (_cyhal_system_irq_t)CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ)
         return (uint8_t)(irqn - cpuss_interrupts_dw0_0_IRQn);
+#endif
 #if (CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ != CPUSS_DW0_CH_NR)
     if ((irqn >= _CYHAL_DMA_GET_CPUSS_IRQN(0, CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ)) &&
         (irqn < (_cyhal_system_irq_t)(_CYHAL_DMA_GET_CPUSS_IRQN(0, CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ) + CPUSS_DW0_CH_NR - CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ)))
@@ -214,7 +223,11 @@ static inline _cyhal_system_irq_t _cyhal_dma_dw_get_irqn(cyhal_dma_t *obj)
 #if (CPUSS_DW0_PRESENT==1)
     if (obj->resource.block_num == 0 && obj->resource.channel_num < CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ)
     {
+#if defined(COMPONENT_CAT1D)
+        return (_cyhal_system_irq_t)((uint8_t)m33syscpuss_interrupts_dw0_0_IRQn + obj->resource.channel_num);
+#else
         return (_cyhal_system_irq_t)((uint8_t)cpuss_interrupts_dw0_0_IRQn + obj->resource.channel_num);
+#endif
     }
     #if (CYHAL_DMA_DW0_MAX_CONTIGUOUS_IRQ != CPUSS_DW0_CH_NR)
     else if ((obj->resource.block_num == 0 && obj->resource.channel_num < CPUSS_DW0_CH_NR))
@@ -263,7 +276,11 @@ static inline uint32_t _cyhal_dma_dw_get_trigger_line(uint8_t block_num, uint8_t
     /* cyhal_dest_t triggers are guaranteed to be sorted by trigger type, block
      * num, then channel num, therefore, we can just directly find the proper
      * trigger by calculating an offset. */
+#if defined(COMPONENT_CAT1D)
+    cyhal_dest_t trigger = (cyhal_dest_t)(CYHAL_TRIGGER_M33SYSCPUSS_DW0_TR_IN0 + (block_num * CPUSS_DW0_CH_NR) + channel_num);
+#else
     cyhal_dest_t trigger = (cyhal_dest_t)(CYHAL_TRIGGER_CPUSS_DW0_TR_IN0 + (block_num * CPUSS_DW0_CH_NR) + channel_num);
+#endif
 
     /* One to one triggers have bit 8 set in cyhal_dest_to_mux but
      * Cy_TrigMux_SwTrigger wants the trigger group field to have bit 5 set to
@@ -342,20 +359,35 @@ static void _cyhal_dma_dw_irq_handler(void)
 
 static cyhal_source_t _cyhal_dma_dw_get_src(uint8_t block_num, uint8_t channel_num)
 {
+#if defined(COMPONENT_CAT1D)
+    return (cyhal_source_t)_CYHAL_TRIGGER_CREATE_SOURCE(_CYHAL_TRIGGER_M33SYSCPUSS_DW0_TR_OUT0 + (block_num * CPUSS_DW0_CH_NR) + channel_num, CYHAL_SIGNAL_TYPE_EDGE);
+#else
     return (cyhal_source_t)_CYHAL_TRIGGER_CREATE_SOURCE(_CYHAL_TRIGGER_CPUSS_DW0_TR_OUT0 + (block_num * CPUSS_DW0_CH_NR) + channel_num, CYHAL_SIGNAL_TYPE_EDGE);
+#endif
 }
 
 static cyhal_dest_t _cyhal_dma_dw_get_dest(uint8_t block_num, uint8_t channel_num)
 {
+#if defined(COMPONENT_CAT1D)
+    return (cyhal_dest_t)(CYHAL_TRIGGER_M33SYSCPUSS_DW0_TR_IN0 + (block_num * CPUSS_DW0_CH_NR) + channel_num);
+#else
     return (cyhal_dest_t)(CYHAL_TRIGGER_CPUSS_DW0_TR_IN0 + (block_num * CPUSS_DW0_CH_NR) + channel_num);
+#endif
 }
 
 cy_rslt_t _cyhal_dma_dw_stage(cyhal_dma_t *obj)
 {
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_CleanDCache_by_Addr((void *)&(obj->descriptor), sizeof(obj->descriptor));
+    SCB_CleanDCache_by_Addr((void *)&(obj->descriptor_config), sizeof(obj->descriptor_config));
+    #endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
     if(CY_DMA_SUCCESS != Cy_DMA_Descriptor_Init(&obj->descriptor.dw, &obj->descriptor_config.dw))
         return CYHAL_DMA_RSLT_ERR_INVALID_PARAMETER;
 
     /* Setup channel and enable */
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_CleanDCache_by_Addr((void *)&(obj->channel_config), sizeof(obj->channel_config));
+    #endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
     DW_Type* base = _cyhal_dma_dw_get_base(obj->resource.block_num);
     if(CY_DMA_SUCCESS != Cy_DMA_Channel_Init(base, obj->resource.channel_num, &obj->channel_config.dw))
         return CYHAL_DMA_RSLT_ERR_INVALID_PARAMETER;
@@ -402,12 +434,12 @@ cy_rslt_t _cyhal_dma_dw_init(cyhal_dma_t *obj, cyhal_source_t *src, cyhal_dest_t
     obj->channel_config.dw = _cyhal_dma_dw_default_channel_config;
     obj->channel_config.dw.descriptor = &obj->descriptor.dw;
     obj->channel_config.dw.priority = priority;
-
+#if CYHAL_DRIVER_AVAILABLE_SYSPM
     if (!_cyhal_dma_dw_has_enabled())
     {
         _cyhal_syspm_register_peripheral_callback(&cyhal_dma_dw_pm_callback_args);
     }
-
+#endif
     _cyhal_dma_dw_set_obj(obj);
 
     return CY_RSLT_SUCCESS;
@@ -429,10 +461,12 @@ cy_rslt_t _cyhal_dma_dw_init_cfg(cyhal_dma_t *obj, const cyhal_dma_configurator_
     obj->channel_config.dw.descriptor = &obj->descriptor.dw;
     obj->expected_bursts = cfg->dw_descriptor_config->yCount;
 
+#if CYHAL_DRIVER_AVAILABLE_SYSPM
     if (!_cyhal_dma_dw_has_enabled())
     {
         _cyhal_syspm_register_peripheral_callback(&cyhal_dma_dw_pm_callback_args);
     }
+#endif
 
     _cyhal_dma_dw_set_obj(obj);
 
@@ -447,12 +481,13 @@ void _cyhal_dma_dw_free(cyhal_dma_t *obj)
     _cyhal_irq_free(_cyhal_dma_dw_get_irqn(obj));
 
     _cyhal_dma_dw_free_obj(obj);
-
+#if CYHAL_DRIVER_AVAILABLE_SYSPM
     if (!_cyhal_dma_dw_has_enabled())
     {
         _cyhal_syspm_unregister_peripheral_callback(&cyhal_dma_dw_pm_callback_args);
         _cyhal_dma_dw_pm_transition_pending = false;
     }
+#endif
 }
 
 /* Initialize descriptor, initialize channel, enable channel, enable channel
@@ -469,6 +504,10 @@ cy_rslt_t _cyhal_dma_dw_configure(cyhal_dma_t *obj, const cyhal_dma_cfg_t *cfg)
         (cfg->burst_size > 0 && cfg->length > (cfg->burst_size * 256)))
         return CYHAL_DMA_RSLT_ERR_INVALID_TRANSFER_SIZE;
 
+    #if (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE)
+    SCB_CleanDCache_by_Addr((void *)cfg->src_addr, cfg->length * (cfg->transfer_width / 8));
+    SCB_CleanDCache_by_Addr((void *)cfg->dst_addr, cfg->length * (cfg->transfer_width / 8));
+    #endif /* (CY_CPU_CORTEX_M7) && defined (ENABLE_CM7_DATA_CACHE) */
     obj->descriptor_config.dw.srcAddress = (void*)cfg->src_addr;
     obj->descriptor_config.dw.dstAddress = (void*)cfg->dst_addr;
     obj->descriptor_config.dw.nextDescriptor = &obj->descriptor.dw;

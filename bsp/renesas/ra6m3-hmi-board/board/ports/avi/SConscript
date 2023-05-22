@@ -1,0 +1,23 @@
+from building import *
+import os
+
+group = []
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+CPPPATH = [cwd]
+LOCAL_CFLAGS = ''
+
+if rtconfig.PLATFORM in ['gcc', 'armclang']:
+    LOCAL_CFLAGS += ' -std=c99'
+elif rtconfig.PLATFORM in ['armcc']:
+    LOCAL_CFLAGS += ' --c99'
+
+list = os.listdir(cwd)
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        group = group + SConscript(os.path.join(d, 'SConscript'))
+
+group = group + DefineGroup('player', src, depend = ['BSP_USING_LVGL_VIDEO_DEMO'], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
+Return('group')

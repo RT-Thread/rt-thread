@@ -211,7 +211,7 @@ rt_err_t cpu_set_pll_clk(int clk)
     int p = 0, k = 1, m = 1, n = 0;
 
     if (clk == 0)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk > 1152000000)
     {
@@ -230,7 +230,7 @@ rt_err_t cpu_set_pll_clk(int clk)
     //PLL1 rate = ((24000000 * n * k) >> 0) / m   (p is ignored)
     CCU->pll_cpu_ctrl = (0x1 << 31) | (m << 0) | (k << 4) | (n << 8) | (p << 16);
     if (wait_pll_stable((rt_uint32_t)(&CCU->pll_cpu_ctrl)))
-        return RT_ERROR;
+        return -RT_ERROR;
 
     CCU->cpu_clk_src = cpu_src << 16;
 
@@ -244,7 +244,7 @@ rt_err_t audio_set_pll_clk(int clk)
     int m_temp = _24MHZ_ * 2;
 
     if ((clk > 200000000) || (clk < 20000000))
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk == 0)
     {
@@ -267,7 +267,7 @@ rt_err_t audio_set_pll_clk(int clk)
     n = clk / n_temp;
     m = _24MHZ_ * 2 / m_temp;
     if ((n > 128) || (m > 32) || (clk != (_24MHZ_ * n * 2) / m))
-        return RT_ERROR;
+        return -RT_ERROR;
 
     CCU->pll_audio_ctrl &= ~(0x1 << 31);
     n = (n - 1) & 0x7f;
@@ -276,7 +276,7 @@ rt_err_t audio_set_pll_clk(int clk)
     CCU->pll_audio_ctrl = (0x1 << 31) | (0x0 << 24) | (n << 8) | m;
 
     if (wait_pll_stable((rt_uint32_t)(&CCU->pll_audio_ctrl)))
-        return RT_ERROR;
+        return -RT_ERROR;
     else
         return RT_EOK;
 }
@@ -288,7 +288,7 @@ rt_err_t video_set_pll_clk(int clk)
     int m_temp = _24MHZ_;
 
     if ((clk > 600000000) || (clk < 30000000))
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk == 0)
     {
@@ -312,7 +312,7 @@ rt_err_t video_set_pll_clk(int clk)
     m = _24MHZ_ / m_temp;
 
     if ((n > 128) || (m > 16) || (clk != (_24MHZ_ * n) / m))
-        return RT_ERROR;
+        return -RT_ERROR;
 
     CCU->pll_video_ctrl &= ~(0x1 << 31);
     n = (n - 1) & 0x7f;
@@ -321,7 +321,7 @@ rt_err_t video_set_pll_clk(int clk)
     CCU->pll_video_ctrl = (0x1 << 31) | (0x0 << 30) | (0x1 << 24) | (n << 8) | m;
 
     if (wait_pll_stable((rt_uint32_t)(&CCU->pll_video_ctrl)))
-        return RT_ERROR;
+        return -RT_ERROR;
     else
         return RT_EOK;
 }
@@ -333,7 +333,7 @@ rt_err_t ve_set_pll_clk(int clk)
     int m_temp = _24MHZ_;
 
     if ((clk > 600000000) || (clk < 30000000))
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk == 0)
     {
@@ -357,7 +357,7 @@ rt_err_t ve_set_pll_clk(int clk)
     m = _24MHZ_ / m_temp;
 
     if ((n > 128) || (m > 16) || (clk != (_24MHZ_ * n) / m))
-        return RT_ERROR;
+        return -RT_ERROR;
 
     CCU->pll_ve_ctrl &= ~(0x1 << 31);
     n = (n - 1) & 0x7f;
@@ -365,7 +365,7 @@ rt_err_t ve_set_pll_clk(int clk)
     //clk = (24 * n) / m
     CCU->pll_ve_ctrl = (0x1 << 31) | (0x1 << 24) | (n << 8) | m;
     if (wait_pll_stable((rt_uint32_t)(&CCU->pll_ve_ctrl)))
-        return RT_ERROR;
+        return -RT_ERROR;
     else
         return RT_EOK;
 }
@@ -377,7 +377,7 @@ rt_err_t periph_set_pll_clk(int clk)
     int n = 0, k = 0;
 
     if ((clk > 1800000000) || (clk < 200000000) || (clk == 0) || (clk % _24MHZ_ != 0))
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     n = clk / _24MHZ_;
 
@@ -388,7 +388,7 @@ rt_err_t periph_set_pll_clk(int clk)
     }
 
     if ((n > 32) || (k > 4) || (clk != (_24MHZ_ * n * k)))
-        return RT_ERROR;
+        return -RT_ERROR;
     temp_data = CCU->ahb_apb_hclkc_cfg;
     clk_src = (temp_data >> 12) & 0x3;
     temp_data &= ~(0x3 << 12);
@@ -400,7 +400,7 @@ rt_err_t periph_set_pll_clk(int clk)
     //clk = 24 * n *k
     CCU->pll_periph_ctrl = (0x1 << 31) | (0x1 << 18) | (n << 8) | (k << 4) || (0x1);
     if (wait_pll_stable((rt_uint32_t)(&CCU->pll_periph_ctrl)))
-        return RT_ERROR;
+        return -RT_ERROR;
 
     temp_data = CCU->ahb_apb_hclkc_cfg;
     temp_data &= ~(0x3 << 12);
@@ -413,7 +413,7 @@ rt_err_t periph_set_pll_clk(int clk)
 rt_err_t cpu_set_clk(int clk)
 {
     if (clk < _24MHZ_)
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     if (clk == cpu_get_clk())
         return RT_EOK;
@@ -423,7 +423,7 @@ rt_err_t cpu_set_clk(int clk)
         return RT_EOK;
 
     if (cpu_set_pll_clk(clk))
-        return RT_ERROR;
+        return -RT_ERROR;
 
     CCU->ahb_apb_hclkc_cfg &= ~(0x3 << 16);
     CCU->cpu_clk_src = CLK_PLL_SRC << 16;
@@ -446,7 +446,7 @@ rt_err_t bus_gate_clk_enalbe(enum bus_gate bus)
     else if (gate_reg == 0x02)
         CCU->bus_clk_gating2 |= (0x1 << offset);
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     return RT_EOK;
 }
@@ -466,7 +466,7 @@ rt_err_t bus_gate_clk_disalbe(enum bus_gate bus)
     else if (gate_reg == 0x02)
         CCU->bus_clk_gating2 &= ~(0x1 << offset);
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     return RT_EOK;
 }
@@ -486,7 +486,7 @@ rt_err_t bus_software_reset_disalbe(enum bus_gate bus)
     else if (gate_reg == 0x02)
         CCU->bus_soft_rst2 |= (0x1 << offset);
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     return RT_EOK;
 }
@@ -506,7 +506,7 @@ rt_err_t bus_software_reset_enalbe(enum bus_gate bus)
     else if (gate_reg == 0x02)
         CCU->bus_soft_rst2 &= ~(0x1 << offset);
     else
-        return RT_EINVAL;
+        return -RT_EINVAL;
 
     return RT_EOK;
 }
@@ -519,7 +519,7 @@ rt_err_t mmc_set_clk(enum mmc_clk_id clk_id, int hz)
 
     if (hz < 0)
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     if (hz == 0)

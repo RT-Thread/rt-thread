@@ -21,6 +21,7 @@
 #include "cpuport.h"
 #include "encoding.h"
 #include "stackframe.h"
+#include "asm-generic.h"
 
 .section      .text.lwp
 
@@ -269,8 +270,7 @@ arch_fork_exit:
 arch_clone_exit:
     j arch_syscall_exit
 
-.global syscall_entry
-syscall_entry:
+START_POINT(syscall_entry)
 #ifndef ARCH_USING_NEW_CTX_SWITCH
     //swap to thread kernel stack
     csrr t0, sstatus
@@ -319,6 +319,7 @@ copy_context_loop:
     OPEN_INTERRUPT
     call syscall_handler
     j arch_syscall_exit
+START_POINT_END(syscall_entry)
     
 .global arch_syscall_exit
 arch_syscall_exit:

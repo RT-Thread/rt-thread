@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_vu.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code to the API for the Vector Unit helpers
@@ -44,6 +44,8 @@ extern "C" {
 
 CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 11.3', 4, \
 'CRYPTO_Type will typecast to either CRYPTO_V1_Type or CRYPTO_V2_Type but not both on PDL initialization based on the target device at compile time.');
+CY_MISRA_DEVIATE_BLOCK_START('MISRA C-2012 Rule 14.3', 4, \
+'Since value of CY_CRYPTO_V1 is decided by PDL device agnostic / hardware specific model, controlling expression will not have an invariant value.');
 
 #if !defined (CY_CRYPTO_SERVICE_LIBRARY_LEVEL)
     #define CY_CRYPTO_SERVICE_LIBRARY_LEVEL CY_CRYPTO_FULL_LIBRARY
@@ -135,11 +137,14 @@ cy_en_crypto_status_t Cy_Crypto_Core_Cleanup(CRYPTO_Type *base)
 
     if (CY_CRYPTO_V1)
     {
+        #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
         REG_CRYPTO_CRC_LFSR_CTL(base) = 0u;
         REG_CRYPTO_SHA_CTL(base)  = 0u;
+        #endif /* defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
     }
     else
     {
+        #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
         REG_CRYPTO_TR_CTL2(base)  = 0u;
         REG_CRYPTO_RESULT(base)   = 0u;
 
@@ -147,12 +152,44 @@ cy_en_crypto_status_t Cy_Crypto_Core_Cleanup(CRYPTO_Type *base)
         Cy_Crypto_Core_V2_FFStop(base, CY_CRYPTO_V2_RB_FF_LOAD1);
         Cy_Crypto_Core_V2_FFStop(base, CY_CRYPTO_V2_RB_FF_STORE);
         Cy_Crypto_Core_V2_RBClear(base);
+        #endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
     }
 
     vu_mem_address = Cy_Crypto_Core_GetVuMemoryAddress(base);
     vu_mem_size = (uint16_t)Cy_Crypto_Core_GetVuMemorySize(base);
 
     Cy_Crypto_Core_MemSet(base, vu_mem_address, 0u, vu_mem_size);
+
+    return (CY_CRYPTO_SUCCESS);
+}
+
+cy_en_crypto_status_t Cy_Crypto_Core_Shutdown(CRYPTO_Type *base)
+{
+    /* Clear all sensitive information */
+    (void)Cy_Crypto_Core_Cleanup(base);
+
+    (void)Cy_Crypto_Core_Disable(base);
+
+    /* Restores Crypto configuration registers to their default values */
+    REG_CRYPTO_CTL(base) = 0UL;
+    REG_CRYPTO_INSTR_FF_CTL(base) = 0UL;
+    REG_CRYPTO_INSTR_FF_WR(base) = 0UL;
+
+    REG_CRYPTO_CRC_CTL(base) = 0UL;
+    REG_CRYPTO_CRC_DATA_CTL(base) = 0UL;
+    REG_CRYPTO_CRC_POL_CTL(base) = 0UL;
+    REG_CRYPTO_CRC_REM_CTL(base) = 0UL;
+    #if defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
+    REG_CRYPTO_CRC_LFSR_CTL(base) = 0UL;
+    #endif
+
+    REG_CRYPTO_VU_CTL0(base) = 0UL;
+    REG_CRYPTO_VU_CTL1(base) = 0UL;
+    #if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
+    REG_CRYPTO_VU_CTL2(base) = 0UL;
+    #endif
+
+    REG_CRYPTO_INTR(base) = 0xFFFFFFFFUL; /* All bits are cleared by write to 1 */
 
     return (CY_CRYPTO_SUCCESS);
 }
@@ -223,6 +260,8 @@ void Cy_Crypto_Core_VU_RegInvertEndianness(CRYPTO_Type *base, uint32_t srcReg)
     uint32_t *dataAddr = Cy_Crypto_Core_Vu_RegMemPointer(base, srcReg);
     Cy_Crypto_Core_InvertEndianness(dataAddr, byteSize);
 }
+
+CY_MISRA_BLOCK_END('MISRA C-2012 Rule 14.3');
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 11.3');
 
 #endif /* #if (CPUSS_CRYPTO_VU == 1) */

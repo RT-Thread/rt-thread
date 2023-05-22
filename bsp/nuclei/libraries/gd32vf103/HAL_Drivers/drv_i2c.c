@@ -123,7 +123,7 @@ static rt_ssize_t gd32_i2c_xfer(struct rt_i2c_bus_device *device, struct rt_i2c_
 {
     struct rt_i2c_msg *msg;
     rt_uint32_t i;
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     rt_uint16_t last_flags;
 
     RT_ASSERT(device != RT_NULL);

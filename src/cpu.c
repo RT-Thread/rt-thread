@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@ static struct rt_cpu _cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
 
 /*
- * disable scheduler
+ * @brief   disable scheduler
  */
 static void _cpu_preempt_disable(void)
 {
@@ -44,7 +44,7 @@ static void _cpu_preempt_disable(void)
 }
 
 /*
- * enable scheduler
+ * @brief   enable scheduler
  */
 static void _cpu_preempt_enable(void)
 {
@@ -178,6 +178,8 @@ struct rt_cpu *rt_cpu_self(void)
 /**
  * @brief   This fucntion will return the cpu object corresponding to index.
  *
+ * @param   index is the index of target cpu object.
+ *
  * @return  Return a pointer to the cpu object corresponding to index.
  */
 struct rt_cpu *rt_cpu_index(int index)
@@ -242,6 +244,8 @@ RTM_EXPORT(rt_cpus_unlock);
  * This function is invoked by scheduler.
  * It will restore the lock state to whatever the thread's counter expects.
  * If target thread not locked the cpus then unlock the cpus lock.
+ *
+ * @param   thread is a pointer to the target thread.
  */
 void rt_cpus_lock_status_restore(struct rt_thread *thread)
 {

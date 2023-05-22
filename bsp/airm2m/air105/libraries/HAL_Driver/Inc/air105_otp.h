@@ -34,12 +34,12 @@ extern "C" {
 typedef enum
 {
     OTP_Complete = 0,
-    OTP_ReadOnProgramOrSleep,               //�ڱ�̡�����״̬�¶�OTP���ж�����
-    OTP_ProgramIn_HiddenOrRO_Block,         //��ֻ�������б��
-    OTP_ProgramOutOfAddr,                   //��̷�Χ����OTP��Χ
-    OTP_ProgramOnSleep,                     //������״̬���б�̲���
-    OTP_WakeUpOnNoSleep,                    //�ڷ�����״̬�½��л��Ѳ���
-    OTP_TimeOut,                            //OTP��ɱ�־λ��ʱû����λ
+    OTP_ReadOnProgramOrSleep,               //在编程或休眠状态下读取OTP数据
+    OTP_ProgramIn_HiddenOrRO_Block,         //在只读或隐藏块中编程
+    OTP_ProgramOutOfAddr,                   //超出OTP地址范围
+    OTP_ProgramOnSleep,                     //在睡眠状态下编程
+    OTP_WakeUpOnNoSleep,                    //在非睡眠状态下从唤醒
+    OTP_TimeOut,                            //OTP写入超时
     OTP_DataWrong,
 }OTP_StatusTypeDef;
 

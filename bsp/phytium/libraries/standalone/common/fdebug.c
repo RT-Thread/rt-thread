@@ -11,18 +11,19 @@
  * See the Phytium Public License for more details.
  *
  *
- * FilePath: ft_debug.c
+ * FilePath: fdebug.c
  * Date: 2021-04-25 16:44:23
  * LastEditTime: 2022-02-17 18:04:50
- * Description:  This files is for
+ * Description:  This file is for providing debug functions.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ *  1.0  zhugengyu  2022/10/27   rename file name
  */
 
 #include "fdebug.h"
-#include "fprintf.h"
+#include "fprintk.h"
 #include "stdio.h"
 
 #define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
@@ -33,19 +34,25 @@ void FtDumpHexByte(const u8 *ptr, u32 buflen)
 
     for (i = 0; i < buflen; i += 16)
     {
-        printf("%p: ", ptr + i);
+        f_printk("%p: ", ptr + i);
 
         for (j = 0; j < 16; j++)
             if (i + j < buflen)
-                printf("%02X ", buf[i + j]);
+            {
+                f_printk("%02X ", buf[i + j]);
+            }
             else
-                printf("   ");
-        printf(" ");
+            {
+                f_printk("   ");
+            }
+        f_printk(" ");
 
         for (j = 0; j < 16; j++)
             if (i + j < buflen)
-                printf("%c", (char)(__is_print(buf[i + j]) ? buf[i + j] : '.'));
-        printf("\r\n");
+            {
+                f_printk("%c", (char)(__is_print(buf[i + j]) ? buf[i + j] : '.'));
+            }
+        f_printk("\r\n");
     }
 }
 
@@ -56,19 +63,25 @@ void FtDumpHexByteDebug(const u8 *ptr, u32 buflen)
 
     for (i = 0; i < buflen; i += 16)
     {
-        f_printf("%x: ", ptr + i);
+        f_printk("%x: ", ptr + i);
 
         for (j = 0; j < 16; j++)
             if (i + j < buflen)
-                f_printf("%x ", buf[i + j]);
+            {
+                f_printk("%x ", buf[i + j]);
+            }
             else
-                f_printf("   ");
-        f_printf(" ");
+            {
+                f_printk("   ");
+            }
+        f_printk(" ");
 
         for (j = 0; j < 16; j++)
             if (i + j < buflen)
-                f_printf("%c", (char)(__is_print(buf[i + j]) ? buf[i + j] : '.'));
-        f_printf("\r\n");
+            {
+                f_printk("%c", (char)(__is_print(buf[i + j]) ? buf[i + j] : '.'));
+            }
+        f_printk("\r\n");
     }
 }
 
@@ -81,26 +94,28 @@ void FtDumpHexWord(const u32 *ptr, u32 buflen)
     buflen = buflen / 4;
     for (i = 0; i < buflen; i += 4)
     {
-        printf("%p: ", ptr + i);
+        f_printk("%p: ", ptr + i);
 
         for (j = 0; j < 4; j++)
         {
             if (i + j < buflen)
             {
-                printf("%lx ", buf[i + j]);
+                f_printk("%lx ", buf[i + j]);
             }
             else
             {
-                printf("   ");
+                f_printk("   ");
             }
         }
 
-        printf(" ");
+        f_printk(" ");
 
         for (j = 0; j < 16; j++)
             if (i + j < buflen)
-                printf("%c", (char)(__is_print(char_data[i + j]) ? char_data[i + j] : '.'));
+            {
+                f_printk("%c", (char)(__is_print(char_data[i + j]) ? char_data[i + j] : '.'));
+            }
 
-        printf("\r\n");
+        f_printk("\r\n");
     }
 }

@@ -5,7 +5,7 @@ from building import *
 cwd = os.path.join(str(Dir('#')), 'drivers')
 
 # add the general drvers.
-src = Glob("*.c")
+src = Glob("*.c") + Glob("*gcc.S")
 
 CPPPATH = [cwd]
 

@@ -14,13 +14,13 @@
  * FilePath: fspim_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:07:55
- * Description:  This files is for
+ * Description:  This file is for providing spim basic information.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   zhugengyu  2021-12-3   init commit
- * 1.1   zhugengyu  2022-4-15   support test mode
+ * 1.0   zhugengyu  2021/12/3   init commit
+ * 1.1   zhugengyu  2022/4/15   support test mode
  */
 
 /***************************** Include Files *********************************/
@@ -42,14 +42,15 @@
 
 /************************** Variable Definitions *****************************/
 
-const FSpimConfig FSPIM_CONFIG_TBL[FSPI_DEVICE_NUM] =
+const FSpimConfig FSPIM_CONFIG_TBL[FSPI_NUM] =
 {
     [FSPI0_ID] =
     {
         .instance_id  = FSPI0_ID, /* Id of device*/
-        .base_addr = FSPI0_BASE,
+        .base_addr = FSPI0_BASE_ADDR,
         .irq_num = FSPI0_IRQ_NUM,
         .irq_prority = 0,
+        .work_mode = FSPIM_DEV_MASTER_MODE,
         .slave_dev_id = FSPIM_SLAVE_DEV_0,
         .max_freq_hz  = 4000000,
         .n_bytes      = 1,
@@ -59,22 +60,24 @@ const FSpimConfig FSPIM_CONFIG_TBL[FSPI_DEVICE_NUM] =
     [FSPI1_ID] =
     {
         .instance_id  = FSPI1_ID, /* Id of device*/
-        .base_addr = FSPI1_BASE,
+        .base_addr = FSPI1_BASE_ADDR,
         .irq_num = FSPI1_IRQ_NUM,
         .irq_prority = 0,
+        .work_mode = FSPIM_DEV_MASTER_MODE,
         .slave_dev_id = FSPIM_SLAVE_DEV_0,
         .max_freq_hz  = 4000000,
         .n_bytes      = 1,
         .en_test = FALSE,
         .en_dma  = FALSE
     },
-#if defined(CONFIG_TARGET_E2000S) || defined(CONFIG_TARGET_E2000D) || defined(CONFIG_TARGET_E2000Q)
+#if defined(CONFIG_TARGET_E2000)
     [FSPI2_ID] =
     {
         .instance_id  = FSPI2_ID, /* Id of device*/
         .base_addr = FSPI2_BASE,
         .irq_num = FSPI2_IRQ_NUM,
         .irq_prority = 0,
+        .work_mode = FSPIM_DEV_MASTER_MODE,
         .slave_dev_id = FSPIM_SLAVE_DEV_0,
         .max_freq_hz  = 4000000,
         .n_bytes      = 1,
@@ -87,6 +90,7 @@ const FSpimConfig FSPIM_CONFIG_TBL[FSPI_DEVICE_NUM] =
         .base_addr = FSPI3_BASE,
         .irq_num = FSPI3_IRQ_NUM,
         .irq_prority = 0,
+        .work_mode = FSPIM_DEV_MASTER_MODE,
         .slave_dev_id = FSPIM_SLAVE_DEV_0,
         .max_freq_hz  = 4000000,
         .n_bytes      = 1,

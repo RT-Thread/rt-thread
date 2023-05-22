@@ -385,7 +385,7 @@ static rt_err_t wdt_control(rt_watchdog_t *dev, int cmd, void *args)
 
         if (args == RT_NULL)
         {
-            ret = RT_EINVAL;
+            ret = -RT_EINVAL;
             break;
         }
 
@@ -399,7 +399,7 @@ static rt_err_t wdt_control(rt_watchdog_t *dev, int cmd, void *args)
 
         if (wanted_sec == 0)
         {
-            ret = RT_EINVAL;
+            ret = -RT_EINVAL;
             break;
         }
 
@@ -410,7 +410,7 @@ static rt_err_t wdt_control(rt_watchdog_t *dev, int cmd, void *args)
 
         if (args == RT_NULL)
         {
-            ret = RT_EINVAL;
+            ret = -RT_EINVAL;
             break;
         }
 
@@ -437,7 +437,7 @@ static rt_err_t wdt_control(rt_watchdog_t *dev, int cmd, void *args)
         break;
 
     default:
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     if (u32RegLockBackup)

@@ -68,6 +68,14 @@ extern "C"
     };
 #endif
 
+#ifdef BSP_USING_UART6
+    /* UART6 device driver structure */
+    cy_stc_sysint_t UART6_SCB_IRQ_cfg =
+        {
+            .intrSrc = (IRQn_Type)scb_6_interrupt_IRQn,
+            .intrPriority = (7u),
+    };
+#endif
 #if defined(BSP_USING_UART0)
 #ifndef UART0_CONFIG
 #define UART0_CONFIG                            \
@@ -177,6 +185,21 @@ extern "C"
 #endif /* UART5_CONFIG */
 #endif /* BSP_USING_UART5 */
 
+#if defined(BSP_USING_UART6)
+#ifndef UART6_CONFIG
+#define UART6_CONFIG                            \
+    {                                           \
+        .name = "uart6",                        \
+        .tx_pin = P6_5,                         \
+        .rx_pin = P6_4,                         \
+        .usart_x = SCB6,                        \
+        .intrSrc = scb_6_interrupt_IRQn,        \
+        .userIsr = uart_isr_callback(uart6),    \
+        .UART_SCB_IRQ_cfg = &UART6_SCB_IRQ_cfg, \
+    }
+    void uart6_isr_callback(void);
+#endif /* UART6_CONFIG */
+#endif /* BSP_USING_UART6 */
 #ifdef __cplusplus
 }
 #endif

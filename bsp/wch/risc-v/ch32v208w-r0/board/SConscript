@@ -9,6 +9,7 @@ cwd = GetCurrentDir()
 # add general drivers
 src = Split('''
 board.c
+software_irq.c
 ''')
 
 path =  [cwd]

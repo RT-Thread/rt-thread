@@ -22,12 +22,12 @@ extern "C"
 #define MAX_PERIOD 65535
 
 #ifdef BSP_USING_PWM0
-#ifndef PWM0_CH3_PORT13_CONFIG
-#define PWM0_CH3_PORT13_CONFIG      \
+#ifndef PWM0_CH0_PORT0_CONFIG
+#define PWM0_CH0_PORT0_CONFIG       \
     {                               \
         .name = "pwm0",             \
-        .channel = 3,               \
-        .gpio = GET_PIN(13, 7),     \
+        .channel = 0,               \
+        .gpio = GET_PIN(0, 0),      \
     }
 #endif /* PWM0_CH7_PORT2_CONFIG */
 
@@ -84,6 +84,15 @@ extern "C"
         .gpio = GET_PIN(12, 6),     \
     }
 #endif /* PWM0_CH7_PORT12_CONFIG */
+
+#ifndef PWM0_CH3_PORT13_CONFIG
+#define PWM0_CH3_PORT13_CONFIG      \
+    {                               \
+        .name = "pwm0",             \
+        .channel = 3,               \
+        .gpio = GET_PIN(13, 7),     \
+    }
+#endif /* PWM0_CH3_PORT13_CONFIG */
 #endif /* BSP_USING_PWM0 */
 
 #ifdef __cplusplus

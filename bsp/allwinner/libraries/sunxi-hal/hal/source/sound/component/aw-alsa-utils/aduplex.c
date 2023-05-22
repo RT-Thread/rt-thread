@@ -664,6 +664,11 @@ int cmd_aduplex(int argc, char ** argv)
     }
 
     duplex_priv.xMutex = rt_mutex_create("sound_mtx", RT_IPC_FLAG_PRIO);
+    if(duplex_priv.xMutex == RT_NULL) {
+        printf("mutex create failed.\n");
+        goto err_create_mutex;
+    }
+
 //  ret = xTaskCreate(arecord_entry, (signed portCHAR *) "arecord-thread",
 //              thread_size, &duplex_priv, priority, &pxCreatedTask);
 //  if (!ret) {
@@ -694,6 +699,7 @@ err_arecord_timeout:
 //  vTaskDelete(pxCreatedTask);
 err_create_arecord:
 err_format:
+err_create_mutex:
 err_in_filename_null:
 err_out_filename_null:
 err_cmd:

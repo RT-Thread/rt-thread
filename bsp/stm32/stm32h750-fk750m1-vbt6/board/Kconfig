@@ -1,0 +1,132 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32H750VBT6
+    bool
+    select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_LCD_SPI
+        bool "Enable 1.30' 240*240 LCD(ST7789)(not support spi tx dma)"
+        select BSP_USING_GPIO
+        select BSP_USING_SPI
+        select BSP_USING_SPI4
+        # select BSP_SPI4_TX_USING_DMA
+        default n
+
+    config BSP_USING_OV2640
+        bool "Enable camera (ov2640)"
+        select BSP_USING_DCMI
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        default n
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI4
+                bool "Enable SPI4 BUS"
+                default n
+
+            config BSP_SPI4_TX_USING_DMA
+                bool "Enable SPI4 TX DMA"
+                depends on BSP_USING_SPI4
+                default n
+        endif
+
+    config BSP_USING_DCMI
+        bool "Enable DCMI"
+        default n
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS (software simulation)"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: PB8 --> 24; PB9 --> 25"
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 scl pin number"
+                        range 1 176
+                        default 24
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 1 176
+                        default 25
+                endif
+
+            menuconfig BSP_USING_I2C2
+                bool "Enable I2C2 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C2
+                    comment "Notice: PB10 --> 26; PB11 --> 27"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 scl pin number"
+                        range 1 176
+                        default 26
+                    config BSP_I2C2_SDA_PIN
+                        int "I2C2 sda pin number"
+                        range 1 176
+                        default 27
+                endif
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+    source "../libraries/HAL_Drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

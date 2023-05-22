@@ -14,11 +14,13 @@
  * FilePath: fsata_g.c
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 09:03:08
- * Description:  This files is for static config of sata ctrl
+ * Description:  This file is for static config of sata ctrl
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   wangxiaodong  2022/2/10    first release
+ * 1.1   wangxiaodong  2022/10/21   improve functions
  */
 
 #include "fparameters.h"
@@ -79,22 +81,22 @@ const FSataConfig FSataPcieConfigTbl[PLAT_AHCI_HOST_MAX_COUNT] =
 #if defined(CONFIG_TARGET_E2000)
 
 /* configs of controller ahci ctrl */
-const FSataConfig FSataControllerConfigTbl[FSATA_INSTANCE_NUM] =
+const FSataConfig FSataControllerConfigTbl[FSATA_NUM] =
 {
     [0] =
     {
-        .instance_id = FSATA_INSTANCE_0,
-        .base_addr = FSATA0_BASEADDR,
+        .instance_id = FSATA0_ID,
+        .base_addr = FSATA0_BASE_ADDR,
         .instance_name = "sata0",
-        .irq_num = FSATA0_IRQNUM     /* Irq number */
+        .irq_num = FSATA0_IRQ_NUM     /* Irq number */
 
     },
     [1] =
     {
-        .instance_id = FSATA_INSTANCE_1,
-        .base_addr = FSATA1_BASEADDR,
+        .instance_id = FSATA1_ID,
+        .base_addr = FSATA1_BASE_ADDR,
         .instance_name = "sata1",
-        .irq_num = FSATA1_IRQNUM     /* Irq number */
+        .irq_num = FSATA1_IRQ_NUM     /* Irq number */
 
     },
 

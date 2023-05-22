@@ -14,13 +14,13 @@
  * FilePath: fgdma.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:25:29
- * Description:  This files is for
+ * Description:  This file is for gdma user function implmentation
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- *  1.0   huanghe    2021-11-5    init commit
- *  1.1   zhugengyu  2022-5-16    support chan alloc. and qos setting
+ *  1.0   huanghe    2021/11/5    init commit
+ *  1.1   zhugengyu  2022/5/16    support chan alloc. and qos setting
  */
 
 
@@ -65,15 +65,17 @@ FError FGdmaCfgInitialize(FGdma *const instance_p, const FGdmaConfig *input_conf
 
     if (FT_COMPONENT_IS_READY == instance_p->is_ready)
     {
-        FGDMA_WARN("device is already initialized!!!");
+        FGDMA_WARN("The device has been initialized!!");
     }
 
     FGdmaDeInitialize(instance_p);
 
     if (&instance_p->config != input_config)
+    {
         instance_p->config = *input_config;
+    }
 
-    FASSERT_MSG((0 != base_addr), "invalid device base address");
+    FASSERT_MSG((0 != base_addr), "Invalid device base address");
     FGdmaReset(instance_p);
 
     if (FGDMA_SUCCESS == ret)
@@ -95,11 +97,11 @@ void FGdmaDeInitialize(FGdma *const instance_p)
     FASSERT(instance_p);
     u32 chan;
 
-    for (chan = FGDMA_CHAN0_INDEX; chan < FGDMA_NUM_OF_CHAN; chan++)
+    for (chan = 0; chan < FGDMA_NUM_OF_CHAN; chan++)
     {
         if (NULL != instance_p->chans[chan])
         {
-            FGDMA_WARN("chan-%d might be in use !!!", chan);
+            FGDMA_WARN("chans-% d may be used!!!", chan);
         }
     }
 
@@ -166,18 +168,26 @@ FError FGdmaAllocateChan(FGdma *const instance_p, FGdmaChan *const dma_chan,
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FGDMA_ERROR("dma instance not init !!!");
+        FGDMA_ERROR("The dma instance is not initialized !!!");
         return FGDMA_ERR_NOT_INIT;
+    }
+
+    if(chan_idx >= FGDMA_NUM_OF_CHAN)
+    {
+        FGDMA_ERROR("Channel %d is in use !!!", chan_idx);
+        return FGDMA_ERR_CHAN_IN_USE;
     }
 
     if (NULL != instance_p->chans[chan_idx])
     {
-        FGDMA_ERROR("chan %d is in use !!!", chan_idx);
+        FGDMA_ERROR("Channel %d is in use !!!", chan_idx);
         return FGDMA_ERR_CHAN_IN_USE;
     }
 
     if (&dma_chan->config != dma_chan_config)
+    {
         dma_chan->config = *dma_chan_config;
+    }
 
     /* disable and reset chan */
     FGdmaChanDisable(base_addr, chan_idx);
@@ -190,7 +200,7 @@ FError FGdmaAllocateChan(FGdma *const instance_p, FGdmaChan *const dma_chan,
     reg_val = FGDMA_READREG(base_addr, FGDMA_CHX_MODE_OFFSET(chan_idx));
     if (FGDMA_OPER_BDL == dma_chan->config.trans_mode)
     {
-        FGDMA_INFO("set as BDL mode");
+        FGDMA_INFO("Set to BDL mode");
         reg_val |= FGDMA_CHX_MODE_BDL_EN;
 
         if (dma_chan->config.roll_back)
@@ -204,7 +214,7 @@ FError FGdmaAllocateChan(FGdma *const instance_p, FGdmaChan *const dma_chan,
     }
     else
     {
-        FGDMA_INFO("set as Direct mode");
+        FGDMA_INFO("Set to Direct mode");
         reg_val &= ~FGDMA_CHX_MODE_BDL_EN;
         reg_val &= ~FGDMA_CHX_MODE_BDL_ROLL_EN;
     }
@@ -249,7 +259,7 @@ FError FGdmaDellocateChan(FGdmaChan *const dma_chan)
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FGDMA_ERROR("dma instance not init !!!");
+        FGDMA_ERROR("The dma instance is not initialized !!!");
         return FGDMA_ERR_NOT_INIT;
     }
 
@@ -291,12 +301,12 @@ FError FGdmaDirectTransfer(FGdmaChan *const chan_p, uintptr src_addr, uintptr ds
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FGDMA_ERROR("dma instance not init !!!");
+        FGDMA_ERROR("The dma instance is not initialized !!!");
         return FGDMA_ERR_NOT_INIT;
     }
 
     if ((src_addr % FGDMA_GET_BURST_SIZE(chan_p->config.rd_align)) ||
-            (dst_addr % FGDMA_GET_BURST_SIZE(chan_p->config.wr_align)))
+        (dst_addr % FGDMA_GET_BURST_SIZE(chan_p->config.wr_align)))
     {
         FGDMA_ERROR("src addr 0x%x or dst addr 0x%x not aligned with %d bytes",
                     src_addr, dst_addr, FGDMA_ADDR_ALIGMENT);
@@ -365,27 +375,27 @@ FError FGdmaDirectTransfer(FGdmaChan *const chan_p, uintptr src_addr, uintptr ds
 FError FGdmaAppendBDLEntry(FGdmaChan *const chan_p, uintptr src_addr, uintptr dst_addr, fsize_t data_len)
 {
     FASSERT(chan_p);
-    FASSERT_MSG((chan_p->config.descs) && (chan_p->config.total_desc_num > 0), "BDL descriptor list not yet assign !!!");
+    FASSERT_MSG((chan_p->config.descs) && (chan_p->config.total_desc_num > 0), "The list of BDL descriptors has not yet been assigned !!!");
     u32 desc_idx = chan_p->config.valid_desc_num;
     FGdmaBdlDesc *desc_entry = &(chan_p->config.descs[desc_idx]);
 
     if (chan_p->config.valid_desc_num >= chan_p->config.total_desc_num)
     {
-        FGDMA_ERROR("total BDL descriptor num is %d, already used up", chan_p->config.total_desc_num);
+        FGDMA_ERROR("The total BDL descriptor num is %d and has been used up", chan_p->config.total_desc_num);
         return FGDMA_ERR_BDL_NOT_ENOUGH;
     }
 
     if ((0U != (dst_addr % FGDMA_GET_BURST_SIZE(chan_p->config.wr_align))) ||
-            (0U != (src_addr % FGDMA_GET_BURST_SIZE(chan_p->config.rd_align))))
+        (0U != (src_addr % FGDMA_GET_BURST_SIZE(chan_p->config.rd_align))))
     {
-        FGDMA_ERROR("src addr 0x%x or dst addr 0x%x not aligned with %d bytes",
+        FGDMA_ERROR("SRC addr 0x%x or DST addr 0x%x are not aligned with the %d transfer size",
                     src_addr, dst_addr, FGDMA_GET_BURST_SIZE(chan_p->config.wr_align));
         return FGDMA_ERR_INVALID_ADDR;
     }
 
     if (0U != (data_len % chan_p->config.wr_align))
     {
-        FGDMA_ERROR("data length %d must be N times of burst size %d !!!",
+        FGDMA_ERROR("The data length %d must be N times the burst size %d !!!",
                     data_len, chan_p->config.wr_align);
         return FGDMA_ERR_INVALID_SIZE;
     }
@@ -438,13 +448,13 @@ FError FGdmaBDLTransfer(FGdmaChan *const chan_p)
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FGDMA_ERROR("dma instance not init !!!");
+        FGDMA_ERROR("The dma instance is not initialized !!!");
         return FGDMA_ERR_NOT_INIT;
     }
 
     if (0 == chan_p->config.valid_desc_num)
     {
-        FGDMA_WARN("need to assign BDL entry fisrt !!!");
+        FGDMA_WARN("First, the BDL entries need to be allocated !!!");
         return FGDMA_SUCCESS;
     }
 
@@ -499,13 +509,16 @@ FError FGdmaStart(FGdma *const instance_p)
     FASSERT(instance_p);
     uintptr base_addr = instance_p->config.base_addr;
     u32 reg_val;
-
+    
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FGDMA_ERROR("dma instance not init !!!");
+        FGDMA_ERROR("The dma instance is not initialized !!!");
         return FGDMA_ERR_NOT_INIT;
     }
-
+    if(FGDMA_TRANS_NEED_RESET_MASK & instance_p->config.caps)
+    {
+        FGdmaSoftwareReset(base_addr);
+    }
     FGdmaIrqEnable(base_addr);
 
     reg_val = FGDMA_READREG(base_addr, FGDMA_CTL_OFFSET);
@@ -513,6 +526,8 @@ FError FGdmaStart(FGdma *const instance_p)
     reg_val |= FGDMA_CTL_OT_SET(FGDMA_OUTSTANDING); /* 设置传输outstanding数 */
     reg_val |= FGDMA_CTL_ENABLE; /* 使能DMA传输 */
     FGDMA_WRITEREG(base_addr, FGDMA_CTL_OFFSET, reg_val);
+    
+
 
     return FGDMA_SUCCESS; // 放到初始化
 }
@@ -533,20 +548,22 @@ FError FGdmaStop(FGdma *const instance_p)
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FGDMA_ERROR("dma instance not init !!!");
+        FGDMA_ERROR("The dma instance is not initialized !!!");
         return FGDMA_ERR_NOT_INIT;
     }
 
     /* Abort 流程 */
-    for (chan_id = FGDMA_CHAN0_INDEX; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
+    for (chan_id = 0; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
     {
         if (NULL == instance_p->chans[chan_id])
-            continue; /* skip un-allocate channel */
+        {
+            continue;    /* skip un-allocate channel */
+        }
 
         chan_status = FGdmaReadChanStatus(base_addr, chan_id);
         if (FGDMA_CHX_INT_STATE_BUSY & chan_status)
         {
-            FGDMA_WARN("chan-%d has abort unfinished request !!!", chan_id);
+            FGDMA_WARN("chan-%d was forcibly closed !!!", chan_id);
             FGdmaChanDisable(base_addr, chan_id); /* 关闭通道 */
             FGdmaChanReset(base_addr, chan_id); /* 需要进行软复位，否则再次使能通道时，仍然会执行之前的请求 */
         }
@@ -559,7 +576,7 @@ FError FGdmaStop(FGdma *const instance_p)
     }
 
     FGdmaDisable(base_addr);
-
+    
     return FGDMA_SUCCESS;
 }
 
@@ -631,22 +648,22 @@ static void FGdmaReset(FGdma *const instance_p)
     u32 chan;
     u32 reg_val;
 
-    FGDMA_INFO("reset ctrl @0x%x ...", base_addr);
+    FGDMA_INFO("Controller base address is %p ...", base_addr);
 
     FGdmaDisable(base_addr);
     FGdmaSoftwareReset(base_addr);
 
     FGdmaSetQos(instance_p);
 
-    FGDMA_INFO("reset chan ...");
+    FGDMA_INFO("Reset channel");
 
-    for (chan = FGDMA_CHAN0_INDEX; chan < FGDMA_NUM_OF_CHAN; chan++)
+    for (chan = 0; chan < FGDMA_NUM_OF_CHAN; chan++)
     {
         FGdmaChanDisable(base_addr, chan);
         FGdmaChanIrqDisable(base_addr, chan);
         FGdmaChanReset(base_addr, chan);
         FGdmaSetChanClock(base_addr, chan, FALSE);
     }
-
+    
     return;
 }

@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\components\libc\posix\ipc;board;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board\MCUX_Config\board;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\..\..\components\drivers\include;..\Libraries\drivers;..\..\..\components\dfs\include;..\..\..\components\libc\posix\io\poll;.;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\libc\compilers\common\extension;..\..\..\components\finsh;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\libc\posix\io\stdio;applications;..\Libraries\CMSIS\Core\Include;..\Libraries\LPC55S6X\components\codec;..\Libraries\drivers\config;..\..\..\components\drivers\spi;..\Libraries\LPC55S6X\LPC55S6X;..\Libraries\LPC55S6X\LPC55S6X\drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;applications;..\Libraries\LPC55S6X\components\codec;board;..\Libraries\drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\Libraries\LPC55S6X\middleware\sdmmc\port;..\Libraries\drivers;board\MCUX_Config\board;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\CMSIS\Core\Include;..\Libraries\LPC55S6X\LPC55S6X;..\..\..\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\Libraries\LPC55S6X\LPC55S6X\drivers;.;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -440,6 +440,11 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+            <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
@@ -474,16 +479,6 @@
         <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
-            <File>
-              <FileName>i2c_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>i2c_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
-            </File>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
@@ -525,54 +520,9 @@
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
             </File>
             <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\rtc\rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>block_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\block_dev.c</FilePath>
-            </File>
-            <File>
-              <FileName>gpt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\gpt.c</FilePath>
-            </File>
-            <File>
-              <FileName>mmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\mmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mmcsd_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\mmcsd_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\sd.c</FilePath>
-            </File>
-            <File>
-              <FileName>sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\sdio.c</FilePath>
-            </File>
-            <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -595,11 +545,6 @@
               <FilePath>board\board.c</FilePath>
             </File>
             <File>
-              <FileName>drv_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_i2c.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_key.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_key.c</FilePath>
@@ -610,79 +555,14 @@
               <FilePath>..\Libraries\drivers\drv_led.c</FilePath>
             </File>
             <File>
-              <FileName>drv_mma8562.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_mma8562.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_pin.c</FilePath>
             </File>
             <File>
-              <FileName>drv_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_sdif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_sdif.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_spi.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\drivers\drv_uart.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>devfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_elm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
-            </File>
-            <File>
-              <FileName>ffunicode.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -708,11 +588,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -770,9 +645,9 @@
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
             <File>
               <FileName>thread.c</FileName>

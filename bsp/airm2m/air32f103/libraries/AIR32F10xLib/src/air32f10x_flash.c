@@ -581,7 +581,7 @@ FLASH_Status FLASH_EraseAllBank2Pages(void)
 #if defined(__CC_ARM)
 __ASM void SetStrt(void)
 {
-    LDR     R0, [PC,#0]
+    MOV     R0, PC
     LDR     R1, [R0,#16]
     LDR     R1, [R0,#32]
     LDR     R0, =0x40022010
@@ -623,6 +623,29 @@ void SetStrt(void)
           "CMP      R2, #0x00\n"
           "BNE      FLAGLABLE\n"
           "BX       lr");
+}
+#elif defined(__clang__)
+__STATIC_INLINE void SetStrt(void)
+{
+    __ASM("MOV      R0, PC");
+    __ASM("LDR      R1, [R0,#16]");
+    __ASM("LDR      R1, [R0,#32]");
+    __ASM("LDR      R0, =0x40022010");
+    __ASM("LDR      R1, =0x60");
+    __ASM("STR      R1,[R0]");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("NOP");
+    __ASM("FLAGLABLE:");
+    __ASM("LDR      R1, =0x4002200C");
+    __ASM("LDR      R2, [R1]");
+    __ASM("AND      R2, #0x01");
+    __ASM("CMP      R2, #0x00");
+    __ASM("BNE      FLAGLABLE");
+    __ASM("BX       lr");
 }
 #elif defined(__GNUC__)
 void SetStrt(void)
@@ -1480,8 +1503,8 @@ FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
 /**
   * @brief  Clears the FLASH's pending flags.
   * @note   This function can be used for all AIR32F103 devices.
-  *         - For AIR32F10X_XL devices, this function clears Bank1 or Bank2�s pending flags
-  *         - For other devices, it clears Bank1�s pending flags.
+  *         - For AIR32F10X_XL devices, this function clears Bank1 or Bank2’s pending flags
+  *         - For other devices, it clears Bank1’s pending flags.
   * @param  FLASH_FLAG: specifies the FLASH flags to clear.
   *   This parameter can be any combination of the following values:
   *     @arg FLASH_FLAG_PGERR: FLASH Program error flag

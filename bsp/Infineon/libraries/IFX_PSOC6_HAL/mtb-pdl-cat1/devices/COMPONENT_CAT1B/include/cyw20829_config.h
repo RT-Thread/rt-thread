@@ -6,7 +6,7 @@
 *
 ********************************************************************************
 * \copyright
-* (c) (2016-2021), Cypress Semiconductor Corporation (an Infineon company) or
+* (c) (2016-2022), Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.
 *
 * SPDX-License-Identifier: Apache-2.0
@@ -590,12 +590,12 @@ typedef enum
 #include "ip/cyip_srss.h"
 #include "ip/cyip_pwrmode.h"
 #include "ip/cyip_backup.h"
-#include "ip/cyip_crypto.h"
+#include "ip/cyip_cryptolite.h"
 #include "ip/cyip_hsiom.h"
 #include "ip/cyip_gpio.h"
 #include "ip/cyip_smartio.h"
 #include "ip/cyip_lin.h"
-#include "ip/cyip_canfd.h"
+#include "ip/cyip_canfd_v3.h"
 #include "ip/cyip_tcpwm_v2.h"
 #include "ip/cyip_mxs40adcmic.h"
 #include "ip/cyip_scb_v4.h"
@@ -934,17 +934,17 @@ typedef enum
 /* IP MMIO registers base address in the system address space (32-bit Byte address
    at a 64 kB multiple). The IP MMIO registers occupy a 64 kB memory region in
    the system address space. */
-#define CRYPTO_ADDR_BASE                1076035584u
+#define CRYPTOLITE_ADDR_BASE            1076035584u
 /* ECC present or not ('0': no, '1': yes). */
-#define CRYPTO_ECC_PRESENT              0u
+#define CRYPTOLITE_ECC_PRESENT          0u
 /* True random number generation component support ('0': no, '1': yes). */
-#define CRYPTO_TRNG_PRESENT             0u
+#define CRYPTOLITE_TRNG_PRESENT         0u
 /* Vector unit component support ('0': no, '1': yes). */
-#define CRYPTO_VU_PRESENT               0u
+#define CRYPTOLITE_VU_PRESENT           0u
 /* SHA-256 hash component support ('0': no, '1': yes). */
-#define CRYPTO_SHA_PRESENT              1u
+#define CRYPTOLITE_SHA_PRESENT          1u
 /* AES-128 block cipher component support ('0': no, '1': yes). */
-#define CRYPTO_AES_PRESENT              0u
+#define CRYPTOLITE_AES_PRESENT          0u
 /* Number of HFCLK roots present. Must be > 0. Must be same as set for SRSS */
 #define DFT_NUM_HFROOT                  4u
 /* Width of clk_occ_fast output bus (number of external OCCs) */

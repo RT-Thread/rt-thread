@@ -988,7 +988,7 @@ static int DbgConsole_PrintfFormattedData(PUTCHAR_FUNC func_ptr, const char *fmt
                     }
                     else
                     {
-                        if (0U == (flags_used & (uint32_t)kPRINTF_Pound))
+                        if (0U == (flags_used & (uint32_t)kPRINTF_Minus))
                         {
                             if (0U != (flags_used & (uint32_t)kPRINTF_Pound))
                             {

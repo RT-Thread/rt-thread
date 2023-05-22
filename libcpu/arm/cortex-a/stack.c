@@ -35,7 +35,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     stack_addr += sizeof(rt_uint32_t);
     stack_addr  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
     stk      = (rt_uint32_t *)stack_addr;
-    *(--stk) = (rt_uint32_t)tentry;         /* entry point */
+    *(--stk) = (rt_uint32_t)_thread_start;  /* entry point */
     *(--stk) = (rt_uint32_t)texit;          /* lr */
     *(--stk) = 0xdeadbeef;                  /* r12 */
     *(--stk) = 0xdeadbeef;                  /* r11 */
@@ -48,8 +48,8 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0xdeadbeef;                  /* r4 */
     *(--stk) = 0xdeadbeef;                  /* r3 */
     *(--stk) = 0xdeadbeef;                  /* r2 */
-    *(--stk) = 0xdeadbeef;                  /* r1 */
-    *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
+    *(--stk) = (rt_uint32_t)tentry;         /* r1 : argument 2 for trampoline */
+    *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument 1 */
     /* cpsr */
     if ((rt_uint32_t)tentry & 0x01)
         *(--stk) = SVCMODE | 0x20;          /* thumb mode */

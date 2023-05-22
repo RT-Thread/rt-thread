@@ -81,7 +81,7 @@ static rt_base_t lpc_pin_get(const char *name)
 }
 
 /* Configure pin mode. pin 0~63 means PIO0_0 ~ PIO1_31 */
-static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     int portx, piny, dir;
     uint32_t pin_cfg;
@@ -129,7 +129,7 @@ static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     CLOCK_DisableClock(kCLOCK_Iocon);
 }
 
-static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     int portx, piny;
     portx = get_port(pin);
@@ -141,17 +141,18 @@ static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     GPIO_PinWrite(GPIO, portx, piny, value);
 }
 
-static int lpc_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t lpc_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int  portx, piny, value;
+    int  portx, piny;
+    rt_int8_t value;
 
     if(pin > PIN_MAX_VAL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     portx = get_port(pin);
     piny  = get_pin(pin);
 
-    value = (int)(GPIO_PinRead(GPIO, portx, piny));
+    value = (rt_int8_t)(GPIO_PinRead(GPIO, portx, piny));
 
     return value;
 }
@@ -181,13 +182,13 @@ void callback(pint_pin_int_t pintr, uint32_t pmatch_status)
     pin_irq_hdr(pintr, pmatch_status);
 }
 
-static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                   rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                   rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     int portx, piny, trigger_mode, pin_initx, pintsel, pin_cfg, i;
 
     if(pin > PIN_MAX_VAL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     portx = get_port(pin);
     piny  = get_pin(pin);
@@ -228,7 +229,7 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     }
 
     if(i >= IRQ_MAX_VAL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     /* open clk */
     CLOCK_EnableClock(kCLOCK_InputMux);
@@ -253,12 +254,12 @@ static rt_err_t lpc_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     int i;
 
     if(pin > PIN_MAX_VAL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     for(i = 0; i < IRQ_MAX_VAL; i++)
     {
@@ -275,12 +276,12 @@ static rt_err_t lpc_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t lpc_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                   rt_uint32_t enabled)
+                                   rt_uint8_t enabled)
 {
     int irqn_type, i;
 
     if(pin > PIN_MAX_VAL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
     for(i = 0; i < IRQ_MAX_VAL; i++)
     {
@@ -318,7 +319,7 @@ static rt_err_t lpc_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     }
 
     if(i >= IRQ_MAX_VAL)
-        return RT_ERROR;
+        return -RT_ERROR;
 
       return RT_EOK;
 }

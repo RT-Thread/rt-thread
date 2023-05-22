@@ -37043,7 +37043,7 @@ SDA_IN_FILT_TRIM[1] is used to enable I2CS_EC or SPIS_EC access to internal SRAM
 
 The open drain mode is supported for:
 - I2C mode, 'i2c_scl' and 'i2c_sda' IO cells.
-- UART mode, 'uart_tx' IO cell (SPI slave).
+- UART mode, 'uart_tx' IO cell.
 - SPI mode, 'spi_miso' IO cell.</description>
               <bitRange>[16:16]</bitRange>
               <access>read-write</access>

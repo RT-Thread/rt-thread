@@ -22,10 +22,14 @@ struct mqdes
 
     /* RT-Thread message queue */
     rt_mq_t mq;
+
+    int mq_id;
     /* next posix mqueue */
     struct mqdes* next;
 };
-typedef struct mqdes* mqd_t;
+typedef struct mqdes* mqdes_t;
+
+typedef int mqd_t;
 
 struct mq_attr
 {

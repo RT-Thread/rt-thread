@@ -33,6 +33,7 @@
 #define AT_CMD_SEMICOLON               ';'
 #define AT_CMD_CR                      '\r'
 #define AT_CMD_LF                      '\n'
+#define AT_CMD_NULL                    '\0'
 
 static at_server_t at_server_local = RT_NULL;
 static at_cmd_t cmd_table = RT_NULL;
@@ -399,7 +400,7 @@ static rt_err_t at_cmd_get_name(const char *cmd_buffer, char *cmd_name)
     RT_ASSERT(cmd_name);
     RT_ASSERT(cmd_buffer);
 
-    for (i = 0; i < strlen(cmd_buffer) + 1; i++)
+    for (i = 0; i < strlen(cmd_buffer); i++)
     {
         if (*(cmd_buffer + i) == AT_CMD_QUESTION_MARK || *(cmd_buffer + i) == AT_CMD_EQUAL_MARK
                 || *(cmd_buffer + i) == AT_CMD_CR
@@ -474,6 +475,10 @@ static void server_parser(at_server_t server)
 
                 continue;
             }
+            else if (ch == AT_CMD_NULL)
+            {
+                continue;
+            }
             else
             {
                 at_server_printf("%c", ch);
@@ -538,7 +543,7 @@ int at_server_init(void)
     }
 
     /* initialize the AT commands table.*/
-#if defined(__CC_ARM)                                 /* ARM C Compiler */
+#if defined(__ARMCC_VERSION)                                 /* ARM C Compiler */
     extern const int RtAtCmdTab$$Base;
     extern const int RtAtCmdTab$$Limit;
     cmd_table = (at_cmd_t)&RtAtCmdTab$$Base;

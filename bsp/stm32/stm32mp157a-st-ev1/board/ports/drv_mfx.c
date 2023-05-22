@@ -49,7 +49,7 @@ static rt_err_t read_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint1
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /* i2c write reg */
@@ -72,7 +72,7 @@ static rt_err_t write_reg(struct rt_i2c_bus_device *bus, rt_uint8_t reg, rt_uint
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 void MFX_IO_Init(void)
@@ -292,6 +292,6 @@ int rt_mfx_init(void)
     }
     LOG_I("mfx init error, id: 0x%x", rt_mfx.id);
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 INIT_DEVICE_EXPORT(rt_mfx_init);

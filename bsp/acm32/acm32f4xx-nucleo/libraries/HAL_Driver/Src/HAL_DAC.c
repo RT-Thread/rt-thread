@@ -13,13 +13,13 @@
 */
 #include "ACM32Fxx_HAL.h"
 
-  /*********************************************************************************
+ /*********************************************************************************
 * Function    : HAL_DAC_IRQHandler
 * Description : This function uses the interruption of DMA  underrun.
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
 * Output      : 
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_DAC_IRQHandler(DAC_HandleTypeDef *hdac)
 {
@@ -35,7 +35,7 @@ void HAL_DAC_IRQHandler(DAC_HandleTypeDef *hdac)
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
 * Output      : 
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 
 __weak void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
@@ -73,7 +73,7 @@ __weak void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
 * Output      : 
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
 {
@@ -106,7 +106,7 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac)
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef *hdac)
 {
@@ -125,7 +125,7 @@ HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef *hdac)
 * Input       : hdac : pointer to a DAC_HandleTypeDef structure that contains
 *                      the configuration information for DAC module
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac)
 {
@@ -150,7 +150,7 @@ HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac)
 *               sConfig:DAC configuration structure
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConfTypeDef* sConfig, uint32_t Channel)
 {
@@ -270,7 +270,7 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConf
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel)
 {
@@ -314,7 +314,7 @@ HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel)
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DAC_Stop(DAC_HandleTypeDef* hdac, uint32_t Channel)
 {
@@ -347,7 +347,7 @@ HAL_StatusTypeDef HAL_DAC_Stop(DAC_HandleTypeDef* hdac, uint32_t Channel)
 *               Alignment: Specifies the data alignment for DAC channel.This parameter can be one of the following values:
                             @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R  
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData, uint32_t Length, uint32_t Alignment)
 {
@@ -443,7 +443,7 @@ HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, u
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @argDAC_CHANNEL_2 @arg DAC_CHANNEL_Dual
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel)
 {
@@ -494,7 +494,7 @@ HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel)
 *                             @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R  
 *                 Data:The destination peripheral Buffer address.          
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DAC_SetValue(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Alignment, uint32_t Data)
 {
@@ -537,7 +537,7 @@ HAL_StatusTypeDef HAL_DAC_SetValue(DAC_HandleTypeDef *hdac, uint32_t Channel, ui
 *                             @arg DAC_ALIGN_8B_R   @arg DAC_ALIGN_12B_L   @arg DAC_ALIGN_12B_R  
 *               Datax:The destination peripheral Buffer address.          
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DACEx_DualSetValue(DAC_HandleTypeDef *hdac, uint32_t Alignment, uint32_t Data1, uint32_t Data2)
 {
@@ -573,7 +573,7 @@ HAL_StatusTypeDef HAL_DACEx_DualSetValue(DAC_HandleTypeDef *hdac, uint32_t Align
 *                     the configuration information for the specified DAC.
 *               Channel:This parameter can be one of the following values:  @arg  DAC_CHANNEL_1   @arg DAC_CHANNEL_2     
 * Output      : The selected DAC channel data output value.
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 uint32_t HAL_DAC_GetValue(DAC_HandleTypeDef* hdac, uint32_t Channel)
 {
@@ -600,7 +600,7 @@ uint32_t HAL_DAC_GetValue(DAC_HandleTypeDef* hdac, uint32_t Channel)
 * Input       : hdac : hdac pointer to a DAC_HandleTypeDef structure that contains
 *                     the configuration information for the specified DAC.      
 * Output      : The selected DAC channel data output value.
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef *hdac)
 {
@@ -638,7 +638,7 @@ uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef *hdac)
 *                         @arg DAC_TRIANGLEAMPLITUDE_1023: Select max triangle amplitude of 1023
 *                         @arg DAC_TRIANGLEAMPLITUDE_2047: Select max triangle amplitude of 2047
 *                         @arg DAC_TRIANGLEAMPLITUDE_4095: Select max triangle amplitude of 4095
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 
 HAL_StatusTypeDef HAL_DACEx_TriangleWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude)
@@ -679,7 +679,7 @@ HAL_StatusTypeDef HAL_DACEx_TriangleWaveGenerate(DAC_HandleTypeDef *hdac, uint32
 *                        @arg DAC_LFSRUNMASK_BITS10_0: Unmask DAC channel LFSR bit[10:0] for noise wave generation
 *                        @arg DAC_LFSRUNMASK_BITS11_0: Unmask DAC channel LFSR bit[11:0] for noise wave generation
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DACEx_NoiseWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude)
 {
@@ -704,7 +704,7 @@ HAL_StatusTypeDef HAL_DACEx_NoiseWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t 
 *                       @arg DAC_CHANNEL_1: DAC Channel1 selected
 *                       @arg DAC_CHANNEL_2: DAC Channel2 selected
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DACEx_SelfCalibrate(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel)
 {
@@ -778,7 +778,7 @@ HAL_StatusTypeDef HAL_DACEx_SelfCalibrate(DAC_HandleTypeDef *hdac, DAC_ChannelCo
 *                       @arg DAC_CHANNEL_2: DAC Channel2 selected
 *               NewTrimmingValue: DAC new trimming value
 * Output      : HAL status
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel, uint32_t NewTrimmingValue)
 {
@@ -815,7 +815,7 @@ HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_Channel
 *                       @arg DAC_CHANNEL_1: DAC Channel1 selected
 *                       @arg DAC_CHANNEL_2: DAC Channel2 selected
 * Output      : Trimming value : range: 0->31
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 uint32_t HAL_DACEx_GetTrimOffset(DAC_HandleTypeDef *hdac, uint32_t Channel)
 {

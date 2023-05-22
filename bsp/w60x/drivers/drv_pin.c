@@ -19,7 +19,7 @@
 
 #ifdef BSP_USING_PIN
 
-static void wm_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static void wm_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     rt_int16_t gpio_pin;
     gpio_pin = wm_get_pin(pin);
@@ -46,7 +46,7 @@ static void wm_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
     return;
 }
 
-static void wm_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void wm_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     rt_int16_t gpio_pin;
     gpio_pin = wm_get_pin(pin);
@@ -58,7 +58,7 @@ static void wm_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t valu
     return;
 }
 
-static int wm_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t wm_pin_read(struct rt_device *device, rt_base_t pin)
 {
     rt_int16_t gpio_pin;
     gpio_pin = wm_get_pin(pin);
@@ -69,8 +69,8 @@ static int wm_pin_read(struct rt_device *device, rt_base_t pin)
     return tls_gpio_read((enum tls_io_name)gpio_pin);
 }
 
-static rt_err_t wm_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                  rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t wm_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                  rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_int16_t gpio_pin;
     rt_base_t level;
@@ -78,7 +78,7 @@ static rt_err_t wm_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     gpio_pin = wm_get_pin(pin);
     if (gpio_pin < 0)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -102,7 +102,7 @@ static rt_err_t wm_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
         break;
     default:
         rt_hw_interrupt_enable(level);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     tls_gpio_isr_register((enum tls_io_name)gpio_pin, hdr, args);
@@ -110,12 +110,12 @@ static rt_err_t wm_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t wm_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t wm_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     return RT_EOK;
 }
 
-static rt_err_t wm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t wm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     rt_int16_t gpio_pin;
     rt_base_t level;
@@ -123,7 +123,7 @@ static rt_err_t wm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
     gpio_pin = wm_get_pin(pin);
     if (gpio_pin < 0)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     level = rt_hw_interrupt_disable();
     if (enabled == PIN_IRQ_ENABLE)
@@ -142,7 +142,7 @@ static rt_err_t wm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_ui
     else
     {
         rt_hw_interrupt_enable(level);
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 }
 

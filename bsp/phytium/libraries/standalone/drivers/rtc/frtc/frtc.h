@@ -12,28 +12,28 @@
  *
  *
  * FilePath: frtc.h
- * Date: 2022-02-10 14:53:42
- * LastEditTime: 2022-02-18 09:02:51
- * Description:  This files is for
+ * Date: 2021-08-25 14:53:42
+ * LastEditTime: 2021-08-26 09:02:51
+ * Description:  This file is for user API definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Wangxiaodong 2021/8/26   init
+ * 1.0   Wangxiaodong 2021/8/26  first commit
  */
 
-#ifndef BSP_DRIVERS_FRTC_H
-#define BSP_DRIVERS_FRTC_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef DRIVERS_RTC_FRTC_H
+#define DRIVERS_RTC_FRTC_H
 
 #include <time.h>
 
 #include "ftypes.h"
 #include "ferror_code.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 typedef struct
 {

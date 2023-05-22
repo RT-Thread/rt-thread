@@ -234,7 +234,7 @@ uint32_t nu_pwm_config(uint32_t u32PwmBaseAddr, uint32_t u32ChannelNum, uint32_t
 static rt_err_t nu_pwm_set(struct rt_device_pwm *device, struct rt_pwm_configuration *config)
 {
     nu_pwm_t psNuPWM = (nu_pwm_t)device;
-    rt_err_t result = RT_EINVAL;
+    rt_err_t result = -RT_EINVAL;
     rt_uint32_t u32FreqInHz;   /* unit:Hz */
     rt_uint32_t u32PulseInHz;   /* unit:% */
 

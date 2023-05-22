@@ -5,10 +5,10 @@ Import('rtconfig')
 
 group = []
 
-libc_name, libc_version = GetGCCLibcNameVersion(rtconfig)
+newlib_version = GetNewLibVersion(rtconfig)
 
-if libc_name == 'newlib':
-    print('Newlib version: ' + libc_version)
+if newlib_version and not GetDepend('RT_USING_EXTERNAL_LIBC'):
+    print('Newlib version: ' + newlib_version)
 
     cwd = GetCurrentDir()
     src = Glob('*.c')

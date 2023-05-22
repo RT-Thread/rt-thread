@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_prot.c
-* \version 1.70
+* \version 1.80
 *
 * \brief
 * Provides an API implementation of the Protection Unit driver
@@ -830,8 +830,8 @@ static cy_en_prot_status_t Prot_ConfigPpuAtt(volatile uint32_t * reg, uint16_t p
                                        cy_en_prot_perm_t userPermission, cy_en_prot_perm_t privPermission, bool secure)
 {
     cy_en_prot_status_t status = CY_PROT_INVALID_STATE;
-
-    if (CY_PERI_V1 == 0U)
+    CY_MISRA_DEVIATE_LINE('MISRA C-2012 Rule 14.3','Intentional check for the macro CY_PERI_V1.');
+    if(CY_PERI_V1 == 0U)
     {
         uint32_t tmpMask = (uint32_t)pcMask << CY_PROT_PCMASK_CHECK;
         uint32_t tmpMask2;
@@ -890,8 +890,7 @@ static cy_en_prot_status_t Prot_ConfigPpuAtt(volatile uint32_t * reg, uint16_t p
             }
         }
     }
-
-    return status;
+return status;
 }
 
 /*******************************************************************************

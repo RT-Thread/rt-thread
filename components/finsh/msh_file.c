@@ -104,7 +104,7 @@ int msh_exec_script(const char *cmd_line, int size)
         int length;
 
         line_buf = (char *) rt_malloc(RT_CONSOLEBUF_SIZE);
-        if (line_buf == RT_NULL) 
+        if (line_buf == RT_NULL)
         {
             close(fd);
             return -RT_ENOMEM;
@@ -514,10 +514,17 @@ static int cmd_mount(int argc, char **argv)
         char *device = argv[1];
         char *path = argv[2];
         char *fstype = argv[3];
+        char *data = 0;
 
         /* mount a filesystem to the specified directory */
         rt_kprintf("mount device %s(%s) onto %s ... ", device, fstype, path);
-        if (dfs_mount(device, path, fstype, 0, 0) == 0)
+        if (strcmp(fstype, "nfs") == 0)
+        {
+            data = argv[1];
+            device = 0;
+        }
+
+        if (dfs_mount(device, path, fstype, 0, data) == 0)
         {
             rt_kprintf("succeed!\n");
             return 0;

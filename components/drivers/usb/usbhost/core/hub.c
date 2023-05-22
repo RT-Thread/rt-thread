@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,6 +13,11 @@
 #include <drivers/usb_host.h>
 
 #define USB_THREAD_STACK_SIZE    4096
+
+#define DBG_TAG    "usbhost.hub"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 
 // static struct rt_messagequeue *usb_mq;
 static struct uclass_driver hub_driver;
@@ -75,7 +80,7 @@ static rt_err_t root_hub_ctrl(struct uhcd *hcd, rt_uint16_t port, rt_uint8_t cmd
         }
         break;
     default:
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }
@@ -576,7 +581,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
             pipe_in = rt_usb_instance_find_pipe(device,ep_desc->bEndpointAddress);
             if(pipe_in == RT_NULL)
             {
-                return RT_ERROR;
+                return -RT_ERROR;
             }
             rt_usb_pipe_add_callback(pipe_in,rt_usbh_hub_irq);
         }
@@ -702,6 +707,11 @@ void rt_usbh_hub_init(uhcd_t hcd)
     rt_thread_t thread;
     /* create root hub for hcd */
     hcd->roothub = rt_malloc(sizeof(struct uhub));
+    if(hcd->roothub == RT_NULL)
+    {
+        LOG_E("hcd->roothub: allocate buffer failed.");
+        return;
+    }         
     rt_memset(hcd->roothub, 0, sizeof(struct uhub));
     hcd->roothub->is_roothub = RT_TRUE;
     hcd->roothub->hcd = hcd;

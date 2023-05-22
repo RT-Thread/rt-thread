@@ -605,7 +605,7 @@ void tcpclient(int argc, char**argv)
         else if (bytes_received == 0)
         {
             /* Print the recv function returns a warning message with a value of 0 */
-            rt_kprintf("\nReceived warning,recv function return 0.\r\n");
+            rt_kprintf("\nReceived warning,recv function returns 0.\r\n");
 
             continue;
         }
@@ -643,7 +643,7 @@ void tcpclient(int argc, char**argv)
         else if (ret == 0)
         {
             /* Print the send function returns a warning message with a value of 0 */
-            rt_kprintf("\n Send warning,send function return 0.\r\n");
+            rt_kprintf("\n Send warning,send function returns 0.\r\n");
         }
     }
     return;

@@ -161,7 +161,7 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
 
         /* get next suspend thread */
         thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
-        /* set error code to RT_ERROR */
+        /* set error code to -RT_ERROR */
         thread->error = -RT_ERROR;
 
         /*
@@ -281,7 +281,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 
         /* get next suspend thread */
         thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
-        /* set error code to RT_ERROR */
+        /* set error code to -RT_ERROR */
         thread->error = -RT_ERROR;
 
         /*

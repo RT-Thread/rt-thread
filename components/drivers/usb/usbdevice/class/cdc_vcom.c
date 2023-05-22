@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -240,7 +240,7 @@ rt_weak rt_err_t vcom_get_stored_serno(char *serno, int size);
 
 rt_err_t vcom_get_stored_serno(char *serno, int size)
 {
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 rt_align(4)
 const static char* _ustring[] =

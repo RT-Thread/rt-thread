@@ -14,7 +14,8 @@
  * FilePath: fsdmmc_g.c
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:53:31
- * Description:  This files is for
+ * Description:  This file contains a configuration table that specifies the configuration of
+ * the fsdmmc devices in the system.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -43,17 +44,17 @@
 
 /************************** Variable Definitions *****************************/
 
-const FSdmmcConfig FSDMMC_CONFIG_TBL[FSDMMC_HOST_INSTANCE_NUM] =
+const FSdmmcConfig FSDMMC_CONFIG_TBL[FSDMMC_NUM] =
 {
-    [FSDMMC_HOST_INSTANCE_0] =
+    [FSDMMC0_ID] =
     {
-        .instance_id = FSDMMC_HOST_INSTANCE_0, /* Id of device*/
-        .base_addr   = FSDMMC_HOST_0_BASEADDR,
+        .instance_id = FSDMMC0_ID, /* Id of device*/
+        .base_addr   = FSDMMC0_BASE_ADDR,
         .irq_num =
         {
-            [FSDMMC_CMD_INTR] = FSDMMC_HOST_0_CMD_INTR_IRQ,
-            [FSDMMC_DMA_BD_INTR] = FSDMMC_HOST_0_DMA_INTR_IRQ,
-            [FSDMMC_ERROR_INTR] = FSDMMC_HOST_0_ERR_INTR_IRQ
+            [FSDMMC_CMD_INTR] = FSDMMC0_CMD_IRQ_NUM,
+            [FSDMMC_DMA_BD_INTR] = FSDMMC0_DMA_IRQ_NUM,
+            [FSDMMC_ERROR_INTR] = FSDMMC0_ERR_IRQ_NUM
         }
     }
 };

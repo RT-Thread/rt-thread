@@ -12,24 +12,21 @@
  *
  *
  * FilePath: fi2c.h
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-01 14:53:42
  * LastEditTime: 2022-02-18 08:37:04
- * Description:  This files is for
+ * Description:  This file is for complete user external interface definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  zhugengyu 2021/11/1  first commit
+ * 1.1  liushengming 2022/2/18  modified to support i2c
  */
 
 
 
-#ifndef  DRIVERS_I2C_FI2C_H
-#define  DRIVERS_I2C_FI2C_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef  FI2C_H
+#define  FI2C_H
 
 /***************************** Include Files *********************************/
 
@@ -37,6 +34,12 @@ extern "C"
 #include "fassert.h"
 #include "ferror_code.h"
 #include "sdkconfig.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /************************** Constant Definitions *****************************/
 #define FI2C_SUCCESS          FT_SUCCESS
 #define FI2C_ERR_INVAL_PARM   FT_MAKE_ERRCODE(ErrModBsp, ErrBspI2c, 1)

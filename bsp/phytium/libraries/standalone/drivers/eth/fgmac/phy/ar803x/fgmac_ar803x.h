@@ -14,28 +14,28 @@
  * FilePath: fgmac_ar803x.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file is for This file is for  ar803x PHYs chip
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/07/13    first release
  */
 
 
-#ifndef  DRIVERS_FGMAC_PHY_AR803X_H
-#define  DRIVERS_FGMAC_PHY_AR803X_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef  FGMAC_AR803X_H
+#define  FGMAC_AR803X_H
 
 /***************************** Include Files *********************************/
 
 #include "ftypes.h"
 #include "fassert.h"
-
 #include "fgmac_phy.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 

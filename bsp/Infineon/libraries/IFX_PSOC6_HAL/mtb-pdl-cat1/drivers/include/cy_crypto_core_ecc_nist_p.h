@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_ecc_nist_p.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides constant and parameters for the API for the ECC
@@ -39,6 +39,8 @@
 extern "C" {
 #endif
 
+#if defined (CY_CRYPTO_CFG_ECP_C)
+
 #if (CPUSS_CRYPTO_VU == 1)
 
 void Cy_Crypto_Core_EC_NistP_SetMode(uint32_t bitsize);
@@ -76,6 +78,8 @@ void Cy_Crypto_Core_JacobianInvTransform(CRYPTO_Type *base, uint32_t s_x, uint32
 void Cy_Crypto_Core_EC_NistP_PointMul(CRYPTO_Type *base, uint32_t p_x, uint32_t p_y, uint32_t p_d, uint32_t p_order, uint32_t bitsize);
 
 #endif /* #if (CPUSS_CRYPTO_VU == 1) */
+
+#endif /* defined (CY_CRYPTO_CFG_ECP_C) */
 
 #if defined(__cplusplus)
 }

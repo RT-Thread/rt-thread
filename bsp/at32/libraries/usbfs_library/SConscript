@@ -15,10 +15,10 @@ if GetDepend('BSP_USING_USBFS'):
     src += ['src/usb_core.c']
 
 if GetDepend('RT_USING_USB_DEVICE'):
-	src += ['src/usbd_core.c', 'src/usbd_int.c', 'src/usbd_sdr.c']
+    src += ['src/usbd_core.c', 'src/usbd_int.c', 'src/usbd_sdr.c']
 
 if GetDepend('RT_USING_USB_HOST'):
-	src += ['src/usbh_core.c', 'src/usbh_int.c', 'src/usbh_ctrl.c']
+    src += ['src/usbh_core.c', 'src/usbh_int.c', 'src/usbh_ctrl.c']
 
 CPPPATH = [cwd + '/inc']
 

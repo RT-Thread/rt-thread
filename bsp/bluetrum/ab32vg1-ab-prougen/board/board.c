@@ -281,7 +281,7 @@ void exception_isr(void)
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_NULL);
-    rt_kprintf(stack_info, rt_thread_self()->sp, rt_thread_self()->name);
+    rt_kprintf(stack_info, rt_thread_self()->sp, rt_thread_self()->parent.name);
 #endif
 
     while (1);

@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARM_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>applications;board;CMSIS;..\..\components\libc\compilers\common\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;drivers;..\..\components\finsh;.;..\..\include;libraries\sys_config;libraries\mss_gpio;libraries\mss_uart;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>libraries\mss_uart;..\..\components\libc\compilers\common\extension\fcntl\octal;.;CMSIS;libraries\mss_gpio;applications;..\..\libcpu\arm\cortex-m3;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;..\..\include;board;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\finsh;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;libraries\sys_config;..\..\components\drivers\include;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -412,16 +412,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>core_cm3.c</FileName>
+              <FileName>system_m2sxxx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>CMSIS\core_cm3.c</FilePath>
+              <FilePath>CMSIS\system_m2sxxx.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>system_m2sxxx.c</FileName>
+              <FileName>core_cm3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>CMSIS\system_m2sxxx.c</FilePath>
+              <FilePath>CMSIS\core_cm3.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -486,13 +486,6 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -710,9 +703,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -734,6 +727,13 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
+              <FileName>mss_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\mss_gpio\mss_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>sys_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\sys_config\sys_config.c</FilePath>
@@ -744,13 +744,6 @@
               <FileName>mss_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\mss_uart\mss_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mss_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\mss_gpio\mss_gpio.c</FilePath>
             </File>
           </Files>
         </Group>

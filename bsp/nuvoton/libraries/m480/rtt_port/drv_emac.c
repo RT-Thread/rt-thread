@@ -357,7 +357,7 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
 #endif
 
     /* Return SUCCESS */
-    return (EMAC_SendPktWoCopy(offset) == 1) ? RT_EOK : RT_ERROR;
+    return (EMAC_SendPktWoCopy(offset) == 1) ? RT_EOK : -RT_ERROR;
 }
 
 static struct pbuf *nu_emac_rx(rt_device_t dev)

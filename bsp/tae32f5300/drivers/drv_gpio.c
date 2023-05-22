@@ -104,7 +104,7 @@ const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void _pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_index *index;
 
@@ -123,9 +123,9 @@ void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-int _pin_read(rt_device_t dev, rt_base_t pin)
+rt_int8_t _pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_int8_t value;
     const struct pin_index *index;
 
     value = PIN_LOW;
@@ -145,7 +145,7 @@ int _pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void _pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_index *index;
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -192,19 +192,19 @@ void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     LL_GPIO_Init(index->gpio, &GPIO_InitStructure);
 }
 
-rt_err_t _pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                              rt_uint32_t mode, void (*hdr)(void *args), void *args)
+rt_err_t _pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                              rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     return -RT_ERROR;
 }
 
-rt_err_t _pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+rt_err_t _pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     return -RT_ERROR;
 }
 
 rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                              rt_uint32_t enabled)
+                              rt_uint8_t enabled)
 {
     return -RT_ERROR;
 }

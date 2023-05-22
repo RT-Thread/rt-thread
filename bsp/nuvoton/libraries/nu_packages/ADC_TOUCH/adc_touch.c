@@ -20,7 +20,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
-#include "touch.h"
 //#include "drv_adc.h"
 #include "adc_touch.h"
 
@@ -162,7 +161,7 @@ static void nu_adc_touch_cal(int32_t *sumx, int32_t *sumy)
              g_sCalMat.e * ytemp) / g_sCalMat.div;
 }
 
-static rt_ssize_t nu_adc_touch_readpoint(struct rt_touch_device *device, void *buf, rt_size_t read_num)
+static rt_size_t nu_adc_touch_readpoint(struct rt_touch_device *device, void *buf, rt_size_t read_num)
 {
     static uint32_t last_report_x = 0, last_report_y = 0;
     struct rt_touch_data *pPoint = (struct rt_touch_data *)buf;

@@ -14,11 +14,13 @@
  * FilePath: fspim_selftest.c
  * Date: 2022-07-21 13:21:43
  * LastEditTime: 2022-07-21 13:21:44
- * Description:  This files is for
+ * Description:  This file is for providing spim self test func.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   zhugengyu  2021/12/3   init commit
+ * 1.1   zhugengyu  2022/4/15   support test mode
  */
 /***************************** Include Files *********************************/
 #include "fio.h"

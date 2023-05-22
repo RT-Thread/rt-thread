@@ -359,6 +359,7 @@
           <state>$PROJ_DIR$\board\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\libraries\usbd_library\inc</state>
           <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\libraries\AT32F413_Firmware_Library\drivers\inc</state>
@@ -1404,6 +1405,7 @@
           <state>$PROJ_DIR$\board\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\libraries\usbd_library\inc</state>
           <state>$PROJ_DIR$\..\libraries\rt_drivers</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\libraries\AT32F413_Firmware_Library\drivers\inc</state>
@@ -2147,7 +2149,7 @@
   <group>
     <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
@@ -2264,7 +2266,7 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
@@ -2347,5 +2349,8 @@
   </group>
   <group>
     <name>POSIX</name>
+  </group>
+  <group>
+    <name>usbd_library</name>
   </group>
 </project>

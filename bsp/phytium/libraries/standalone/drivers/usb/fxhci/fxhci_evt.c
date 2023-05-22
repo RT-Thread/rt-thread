@@ -19,7 +19,7 @@
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
- * 1.0   Zhugengyu  2022/2/7    init commit
+ * 1.0   zhugengyu  2022/2/7    init commit
  */
 
 #include "fsleep.h"
@@ -43,7 +43,9 @@ void FXhciResetEvtRing(FXhciEvtRing *const er)
 {
     int i;
     for (i = 0; i < FXHCI_EVENT_RING_SIZE; ++i)
+    {
         er->ring[i].control &= ~FXHCI_TRB_CYCLE;
+    }
     er->cur = er->ring;
     er->last = er->ring + FXHCI_EVENT_RING_SIZE;
     er->ccs = 1;
@@ -59,7 +61,7 @@ void FXhciUpdateEvtDQ(FXhci *const xhci)
 {
     if (xhci->er.adv)
     {
-        FUSB_DEBUG("Updating dq ptr: @0x%lx -> %p",
+        FUSB_DEBUG("Updating dq ptr: @0x%lx -> %p.",
                    FXhciReadRt64(&xhci->mmio, 0, FXHCI_REG_RT_IR_ERDP),
                    xhci->er.cur);
         FXhciWriteRt64(&xhci->mmio, 0, FXHCI_REG_RT_IR_ERDP, FXHCI_REG_RT_IR_ERDP_MASK & ((u64)(uintptr)xhci->er.cur));
@@ -73,7 +75,7 @@ void FXhciAdvanceEvtRing(FXhci *const xhci)
     xhci->er.adv = 1;
     if (xhci->er.cur == xhci->er.last)
     {
-        FUSB_DEBUG("Roll over in event ring ");
+        FUSB_DEBUG("Roll over in event ring.");
         xhci->er.cur = xhci->er.ring;
         xhci->er.ccs ^= 1;
         FXhciUpdateEvtDQ(xhci);
@@ -91,7 +93,7 @@ static void FXhciHandleTransferEvt(FXhci *const xhci)
     FXhciIntrQ *intrq;
 
     if (id && id <= xhci->max_slots_en &&
-            (intrq = xhci->dev[id].interrupt_queues[ep]))
+        (intrq = xhci->dev[id].interrupt_queues[ep]))
     {
         /* It's a running interrupt endpoint */
         intrq->ready = (void *)(uintptr)(ev->ptr_low);
@@ -102,7 +104,7 @@ static void FXhciHandleTransferEvt(FXhci *const xhci)
         }
         else
         {
-            FUSB_INFO("Interrupt Transfer failed: %d ", cc);
+            FUSB_INFO("Interrupt transfer failed: %d.", cc);
             FXHCI_TRB_SET(TL, intrq->ready, 0); /* Transfer Length */
         }
     }
@@ -146,22 +148,22 @@ static void FXhciHandleHostCtrlEvt(FXhci *const xhci)
     const FXhciTransCode cc = FXHCI_TRB_GET(CC, ev);
     switch (cc)
     {
-    case FXHCI_CC_EVENT_RING_FULL_ERROR:
-        FUSB_INFO("Event ring full! (@%p) ", xhci->er.cur);
-        /*
-         * If we get here, we have processed the whole queue:
-         * xHC pushes this event, when it sees the ring full,
-         * full of other events.
-         * IMO it's save and necessary to update the dequeue
-         * pointer here.
-         */
-        FXhciAdvanceEvtRing(xhci);
-        FXhciUpdateEvtDQ(xhci);
-        break;
-    default:
-        FUSB_INFO("Warning: Spurious host controller event: %d ", cc);
-        FXhciAdvanceEvtRing(xhci);
-        break;
+        case FXHCI_CC_EVENT_RING_FULL_ERROR:
+            FUSB_INFO("Event ring full! (@%p).", xhci->er.cur);
+            /*
+             * If we get here, we have processed the whole queue:
+             * xHC pushes this event, when it sees the ring full,
+             * full of other events.
+             * IMO it's save and necessary to update the dequeue
+             * pointer here.
+             */
+            FXhciAdvanceEvtRing(xhci);
+            FXhciUpdateEvtDQ(xhci);
+            break;
+        default:
+            FUSB_INFO("Warning: spurious host controller event: %d.", cc);
+            FXhciAdvanceEvtRing(xhci);
+            break;
     }
 }
 
@@ -178,35 +180,37 @@ static void FXhciHandleEvt(FXhci *const xhci)
     const int trb_type = FXHCI_TRB_GET(TT, ev);
     switch (trb_type)
     {
-    /* Either pass along the event or advance event ring */
-    case FXHCI_TRB_EV_TRANSFER:
-        FXhciHandleTransferEvt(xhci);
-        break;
-    case FXHCI_TRB_EV_CMD_CMPL:
-        FXhciHandleCmdCompletionEvt(xhci);
-        break;
-    case FXHCI_TRB_EV_PORTSC:
-        FUSB_INFO("Port Status Change Event for %d: %d ",
-                  FXHCI_TRB_GET(PORT, ev), FXHCI_TRB_GET(CC, ev));
-        /* We ignore the event as we look for the PORTSC
-           registers instead, at a time when it suits _us_. */
-        FXhciAdvanceEvtRing(xhci);
-        break;
-    case FXHCI_TRB_EV_HOST:
-        FXhciHandleHostCtrlEvt(xhci);
-        break;
-    default:
-        FUSB_INFO("Warning: Spurious event: %d, Completion Code: %d ",
-                  trb_type, FXHCI_TRB_GET(CC, ev));
-        FXhciAdvanceEvtRing(xhci);
-        break;
+        /* Either pass along the event or advance event ring */
+        case FXHCI_TRB_EV_TRANSFER:
+            FXhciHandleTransferEvt(xhci);
+            break;
+        case FXHCI_TRB_EV_CMD_CMPL:
+            FXhciHandleCmdCompletionEvt(xhci);
+            break;
+        case FXHCI_TRB_EV_PORTSC:
+            FUSB_INFO("Port status change event for %d: %d. ",
+                      FXHCI_TRB_GET(PORT, ev), FXHCI_TRB_GET(CC, ev));
+            /* We ignore the event as we look for the PORTSC
+               registers instead, at a time when it suits _us_. */
+            FXhciAdvanceEvtRing(xhci);
+            break;
+        case FXHCI_TRB_EV_HOST:
+            FXhciHandleHostCtrlEvt(xhci);
+            break;
+        default:
+            FUSB_INFO("Warning: spurious event: %d, completion code: %d.",
+                      trb_type, FXHCI_TRB_GET(CC, ev));
+            FXhciAdvanceEvtRing(xhci);
+            break;
     }
 }
 
 void FXhciHandleEvts(FXhci *const xhci)
 {
     while (FXhciEvtReady(&xhci->er))
+    {
         FXhciHandleEvt(xhci);
+    }
 
     FXhciUpdateEvtDQ(xhci);
     return;
@@ -230,7 +234,9 @@ static unsigned long FXhciWaitForEvtType(FXhci *const xhci,
     while (FXhciWaitForEvt(&xhci->er, timeout_us))
     {
         if (FXHCI_TRB_GET(TT, xhci->er.cur) == (unsigned int)trb_type)
+        {
             break;
+        }
 
         FXhciHandleEvt(xhci);
     }
@@ -265,7 +271,7 @@ FXhciTransCode FXhciWaitForCmdAborted(FXhci *const xhci, const FXhciTrb *const a
     while (FXhciWaitForEvtType(xhci, FXHCI_TRB_EV_CMD_CMPL, &timeout_us))
     {
         if ((xhci->er.cur->ptr_low == (uintptr)(address)) &&
-                (xhci->er.cur->ptr_high == 0))
+            (xhci->er.cur->ptr_high == 0))
         {
             cc = FXHCI_TRB_GET(CC, xhci->er.cur);
             FXhciAdvanceEvtRing(xhci);
@@ -276,8 +282,7 @@ FXhciTransCode FXhciWaitForCmdAborted(FXhci *const xhci, const FXhciTrb *const a
     }
     if (timeout_us == 0)
     {
-        FUSB_INFO("Warning: Timed out waiting for "
-                  "COMMAND_ABORTED or COMMAND_RING_STOPPED. ");
+        FUSB_INFO("Warning: timeout waiting COMMAND_ABORTED or COMMAND_RING_STOPPED.");
         goto update_and_return;
     }
     if (cc == FXHCI_CC_COMMAND_RING_STOPPED)
@@ -299,8 +304,7 @@ FXhciTransCode FXhciWaitForCmdAborted(FXhci *const xhci, const FXhciTrb *const a
         FXhciHandleCmdCompletionEvt(xhci);
     }
     if (timeout_us == 0)
-        FUSB_INFO("Warning: Timed out "
-                  "waiting for COMMAND_RING_STOPPED. ");
+        FUSB_INFO("Warning: timeout waiting for COMMAND_RING_STOPPED.");
 
 update_and_return:
     FXhciUpdateEvtDQ(xhci);
@@ -321,7 +325,7 @@ FXhciTransCode FXhciWaitForCmdDone(FXhci *const xhci,
     while (FXhciWaitForEvtType(xhci, FXHCI_TRB_EV_CMD_CMPL, &timeout_us))
     {
         if ((xhci->er.cur->ptr_low == (uintptr)(address)) &&
-                (xhci->er.cur->ptr_high == 0))
+            (xhci->er.cur->ptr_high == 0))
         {
             cc = FXHCI_TRB_GET(CC, xhci->er.cur);
             break;
@@ -332,7 +336,7 @@ FXhciTransCode FXhciWaitForCmdDone(FXhci *const xhci,
 
     if (!timeout_us)
     {
-        FUSB_INFO("Warning: Timed out waiting for FXHCI_TRB_EV_CMD_CMPL. ");
+        FUSB_INFO("Warning: timeout waiting for FXHCI_TRB_EV_CMD_CMPL.");
     }
     else if (clear_event)
     {
@@ -352,11 +356,13 @@ FXhciTransCode FXhciWaitForTransfer(FXhci *const xhci, const int slot_id, const 
     while (FXhciWaitForEvtType(xhci, FXHCI_TRB_EV_TRANSFER, &timeout_us))
     {
         if (FXHCI_TRB_GET(ID, xhci->er.cur) == (unsigned int)slot_id &&
-                FXHCI_TRB_GET(EP, xhci->er.cur) == (unsigned int)ep_id)
+            FXHCI_TRB_GET(EP, xhci->er.cur) == (unsigned int)ep_id)
         {
             ret = -FXHCI_TRB_GET(CC, xhci->er.cur);
             if (ret == -FXHCI_CC_SUCCESS || ret == -FXHCI_CC_SHORT_PACKET)
+            {
                 ret = FXHCI_TRB_GET(EVTL, xhci->er.cur);
+            }
             FXhciAdvanceEvtRing(xhci);
             break;
         }
@@ -364,7 +370,9 @@ FXhciTransCode FXhciWaitForTransfer(FXhci *const xhci, const int slot_id, const 
         FXhciHandleTransferEvt(xhci);
     }
     if (!timeout_us)
-        FUSB_INFO("Warning: Timed out waiting for FXHCI_TRB_EV_TRANSFER. ");
+    {
+        FUSB_INFO("Warning: timeout waiting for FXHCI_TRB_EV_TRANSFER. ");
+    }
 
     FXhciUpdateEvtDQ(xhci);
     return ret;

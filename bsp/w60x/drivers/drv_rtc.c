@@ -154,7 +154,7 @@ static rt_err_t wm_rtc_control(rt_device_t dev, int cmd, void *args)
         break;
 #endif
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
     return RT_EOK;
 }

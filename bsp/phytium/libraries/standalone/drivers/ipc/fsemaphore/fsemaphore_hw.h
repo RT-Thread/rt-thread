@@ -14,7 +14,7 @@
  * FilePath: fsemaphore_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:24:52
- * Description:  This files is for semaphore register definition
+ * Description:  This file is for semaphore register definition
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -23,13 +23,8 @@
  */
 
 
-#ifndef  DRIVERS_IPC_FSEMAPHORE_HW_H
-#define  DRIVERS_IPC_FSEMAPHORE_HW_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef  FSEMAPHORE_HW_H
+#define  FSEMAPHORE_HW_H
 /***************************** Include Files *********************************/
 
 #include "fparameters.h"
@@ -37,6 +32,11 @@ extern "C"
 #include "fio.h"
 #include "fassert.h"
 #include "fkernel.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 /** @name Register Map

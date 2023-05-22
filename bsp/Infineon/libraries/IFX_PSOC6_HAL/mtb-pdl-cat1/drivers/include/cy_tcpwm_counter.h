@@ -784,7 +784,7 @@ __STATIC_INLINE uint32_t Cy_TCPWM_Counter_GetCapture1BufVal (TCPWM_Type const *b
 * Function Name: Cy_TCPWM_Counter_EnableCompare1Swap
 ****************************************************************************//**
 *
-* Enables the comparison swap of compare1 and compareBuf1 when the comparision
+* Enables the comparison swap of compare1 and compareBuf1 when the comparison
 * value is true
 *
 * \param base

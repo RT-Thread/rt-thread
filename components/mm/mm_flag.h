@@ -51,6 +51,8 @@ enum mm_flag_cntl
 
     MMF_TEXT = _DEF_FLAG(5),
 
+    MMF_STATIC_ALLOC = _DEF_FLAG(6),
+
     /**
      * @brief a non-locked memory can be swapped out when required, this is
      * reserved for future
@@ -80,9 +82,9 @@ enum mm_flag_cntl
  *
  * Direct use of flag is also acceptable: (MMF_MAP_FIXED | MMF_PREFETCH)
  */
-#define MMF_CREATE(cntl, align)                                                \
-    (align ? (MMF_SET_CNTL((mm_flag_t)0, (cntl) | MMF_REQUEST_ALIGN) |         \
-              MMF_SET_ALIGN((mm_flag_t)0, align))                              \
+#define MMF_CREATE(cntl, align)                                                 \
+    ((align) ? (MMF_SET_CNTL((mm_flag_t)0, (cntl) | MMF_REQUEST_ALIGN) |        \
+              MMF_SET_ALIGN((mm_flag_t)0, (align)))                             \
            : (MMF_SET_CNTL((mm_flag_t)0, (cntl) & ~MMF_REQUEST_ALIGN)))
 
 #undef _DEF_FLAG

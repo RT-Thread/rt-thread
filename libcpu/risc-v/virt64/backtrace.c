@@ -131,7 +131,7 @@ extern struct rt_thread *rt_current_thread;
 
 static char *_get_elf_name(size_t sepc)
 {
-    return IN_USERSPACE ? rt_current_thread->name : "rtthread.elf";
+    return IN_USERSPACE ? rt_current_thread->parent.name : "rtthread.elf";
 }
 
 #endif /* RT_USING_SMART */

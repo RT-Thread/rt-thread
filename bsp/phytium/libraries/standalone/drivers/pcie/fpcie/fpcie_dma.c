@@ -12,13 +12,14 @@
  *
  *
  * FilePath: fpcie_dma.c
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:57:38
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:57:38
+ * Description: This file is for pcie dma implementation.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
 
@@ -28,7 +29,7 @@
 #include "ftypes.h"
 #include "fcache.h"
 #include "fkernel.h"
-
+#include "fdebug.h"
 /***************************** Include Files *********************************/
 
 /************************** Constant Definitions *****************************/
@@ -39,7 +40,7 @@
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
-#include "fdebug.h"
+
 #define FPCIE_DMA_DEBUG_TAG "FPCIE_DMA"
 #define FPCIE_DMA_ERROR(format, ...) FT_DEBUG_PRINT_E(FPCIE_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FPCIE_DMA_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FPCIE_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
@@ -149,15 +150,15 @@ void FPcieDmaWrite(uintptr bar_address, struct FPcieDmaDescriptor *desc)
  */
 FError FPcieDmaPollDone(struct FPcieDmaDescriptor *desc, u32 wait_cnt)
 {
-    FPCIE_DMA_DEBUG_I("desc axi_bus_status :[0x%02x]", desc->axi_bus_status);
-    FPCIE_DMA_DEBUG_I("desc pcie_bus_status:[0x%02x]", desc->pcie_bus_status);
-    FPCIE_DMA_DEBUG_I("desc channel_status :[0x%02x]", desc->channel_status);
+    FPCIE_DMA_DEBUG_I("Desc axi_bus_status :[0x%02x].", desc->axi_bus_status);
+    FPCIE_DMA_DEBUG_I("Desc pcie_bus_status:[0x%02x].", desc->pcie_bus_status);
+    FPCIE_DMA_DEBUG_I("Desc channel_status :[0x%02x].", desc->channel_status);
 
     while (wait_cnt > 0)
     {
         if (desc->channel_status == 0x1)
         {
-            FPCIE_DMA_DEBUG_I("dma channel transfer done ");
+            FPCIE_DMA_DEBUG_I("Dma channel transfer done.");
             return FT_SUCCESS;
         }
         wait_cnt--;

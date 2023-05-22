@@ -44,7 +44,7 @@ static rt_thread_t sld_thread = RT_NULL;
     #error You need enable PWM to use this sample
 #else
     #define PWM_DEV_NAME "pwm0"
-    #define PWM_DEV_CHANNEL 3
+    #define PWM_DEV_CHANNEL 0
     static struct rt_device_pwm *pwm_dev;
 #endif
 
@@ -120,7 +120,7 @@ void Slider_Init(void)
     /* Initiate first scan */
     Cy_CapSense_ScanAllWidgets(&cy_capsense_context);
 
-    trans_done_semphr = rt_sem_create("slider_sem", 1, RT_IPC_FLAG_PRIO);
+    trans_done_semphr = rt_sem_create("slider_sem", 0, RT_IPC_FLAG_PRIO);
     if (trans_done_semphr == RT_NULL)
     {
         rt_kprintf("create transform done semphr failed.\n");
@@ -128,7 +128,7 @@ void Slider_Init(void)
         return;
     }
 
-#ifdef BSP_USING_PWM0_PORT13
+#ifdef BSP_USING_PWM0_PORT0
     /* Initiate PWM*/
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
 
@@ -235,7 +235,7 @@ int Slider_ctrl_sample(void)
     }
     else
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 
     return ret;

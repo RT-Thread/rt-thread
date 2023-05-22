@@ -1,0 +1,30 @@
+name: Static code analysis
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  scancode_job:
+    runs-on: ubuntu-latest
+    name: Static code analysis
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+      
+      - name: cppcheck
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get -qq install cppcheck
+          pip install click PyYaml
+          git remote -v
+          git fetch origin
+          cppcheck --version
+          ls
+          git branch -a
+          python tools/ci/cpp_check.py check

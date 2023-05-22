@@ -14,11 +14,12 @@
  * FilePath: fgmac_dma.c
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is for
+ * Description:  This file implements dma descriptor ring related functions.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe    2021/06/04    first release
  */
 
 /***************************** Include Files *********************************/
@@ -77,7 +78,7 @@ FError FGmacSetupRxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *rx_desc_tb
         if TRUE, return error because DMA register can only hold 32 bit memory address */
     if ((FGMAC_DMA_IS_64_BIT_MEMORY(desc_end)) || (FGMAC_DMA_IS_64_BIT_MEMORY(buf_end)))
     {
-        FGMAC_ERROR("invalid rx descriptor memory %p or rx dma buf memory %p",
+        FGMAC_ERROR("Invalid rx descriptor memory %p or rx dma buf memory %p",
                     desc_end, buf_end);
         return FGMAC_ERR_INVALID_DMA_MEM;
     }
@@ -140,7 +141,7 @@ FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tb
         if TRUE, return error because DMA register can only hold 32 bit memory address */
     if ((FGMAC_DMA_IS_64_BIT_MEMORY(desc_end)) || (FGMAC_DMA_IS_64_BIT_MEMORY(buf_end)))
     {
-        FGMAC_ERROR("invalid rx descriptor memory %p or rx dma buf memory %p",
+        FGMAC_ERROR("Invalid rx descriptor memory %p or rx dma buf memory %p",
                     desc_end, buf_end);
         return FGMAC_ERR_INVALID_DMA_MEM;
     }
@@ -183,7 +184,7 @@ FError FGmacStartTrans(FGmac *instance_p)
     FASSERT(instance_p);
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FGMAC_ERROR("device is already initialized!!!");
+        FGMAC_ERROR("Device is already initialized!!!");
         return FGMAC_ERR_NOT_READY;
     }
 
@@ -203,7 +204,7 @@ FError FGmacStopTrans(FGmac *instance_p)
     FASSERT(instance_p);
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
-        FGMAC_ERROR("device is already initialized!!!");
+        FGMAC_ERROR("Device is already initialized!!!");
         return FGMAC_ERR_NOT_READY;
     }
 
@@ -227,7 +228,7 @@ FError FGmacRecvFrame(FGmac *instance_p)
     u32 flag = (FGMAC_DMA_RDES0_FIRST_DESCRIPTOR | FGMAC_DMA_RDES0_LAST_DESCRIPTOR);
 
     while ((0 == (FGMAC_DMA_RDES0_OWN & cur_rx_desc->status)) &&
-            (desc_cnt < rx_ring->desc_max_num))
+           (desc_cnt < rx_ring->desc_max_num))
     {
         desc_cnt++;
 
@@ -281,7 +282,9 @@ FError FGmacSendFrame(FGmac *instance_p, u32 frame_len)
     {
         buf_cnt = frame_len / max_packet_size;
         if (frame_len % max_packet_size)
+        {
             buf_cnt++;
+        }
     }
     else
     {

@@ -12,18 +12,18 @@
  *
  *
  * FilePath: fpcie_config.c
- * Date: 2022-02-10 14:55:11
- * LastEditTime: 2022-02-18 08:57:30
- * Description:  This files is for
+ * Date: 2022-08-10 14:55:11
+ * LastEditTime: 2022-08-18 08:57:30
+ * Description: This file is for pcie miscellaneous interrupt enable or disable. 
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0   huanghe  2022/8/18   init commit
  */
 
 #include "fpcie.h"
 #include "fpcie_hw.h"
-
 
 /***************************** Include Files *********************************/
 

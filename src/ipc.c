@@ -127,12 +127,15 @@ rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
                                        rt_uint8_t        flag,
                                        int suspend_flag)
 {
-    rt_err_t ret = rt_thread_suspend_with_flag(thread, suspend_flag);
-
-    /* suspend thread */
-    if (ret != RT_EOK)
+    if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
     {
-        return ret;
+        rt_err_t ret = rt_thread_suspend_with_flag(thread, suspend_flag);
+
+        /* suspend thread */
+        if (ret != RT_EOK)
+        {
+            return ret;
+        }
     }
 
     switch (flag)
@@ -206,7 +209,7 @@ rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
 
     thread->error = RT_EOK;
 
-    RT_DEBUG_LOG(RT_DEBUG_IPC, ("resume thread:%s\n", thread->name));
+    RT_DEBUG_LOG(RT_DEBUG_IPC, ("resume thread:%s\n", thread->parent.name));
 
     /* resume it */
     rt_thread_resume(thread);
@@ -506,8 +509,8 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
     level = rt_hw_interrupt_disable();
 
     RT_DEBUG_LOG(RT_DEBUG_IPC, ("thread %s take sem:%s, which value is: %d\n",
-                                rt_thread_self()->name,
-                                ((struct rt_object *)sem)->name,
+                                rt_thread_self()->parent.name,
+                                sem->parent.parent.name,
                                 sem->value));
 
     if (sem->value > 0)
@@ -539,8 +542,7 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
             /* reset thread error number */
             thread->error = -RT_EINTR;
 
-            RT_DEBUG_LOG(RT_DEBUG_IPC, ("sem take: suspend thread - %s\n",
-                                        thread->name));
+            RT_DEBUG_LOG(RT_DEBUG_IPC, ("sem take: suspend thread - %s\n", thread->parent.name));
 
             /* suspend thread */
             ret = _ipc_list_suspend(&(sem->parent.suspend_thread),
@@ -556,8 +558,7 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
             /* has waiting time, start thread timer */
             if (timeout > 0)
             {
-                RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n",
-                                            thread->name));
+                RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n", thread->parent.name));
 
                 /* reset the timeout of thread timer and start it */
                 rt_timer_control(&(thread->thread_timer),
@@ -652,8 +653,8 @@ rt_err_t rt_sem_release(rt_sem_t sem)
     level = rt_hw_interrupt_disable();
 
     RT_DEBUG_LOG(RT_DEBUG_IPC, ("thread %s releases sem:%s, which value is: %d\n",
-                                rt_thread_self()->name,
-                                ((struct rt_object *)sem)->name,
+                                rt_thread_self()->parent.name,
+                                sem->parent.parent.name,
                                 sem->value));
 
     if (!rt_list_isempty(&sem->parent.suspend_thread))
@@ -740,6 +741,7 @@ RTM_EXPORT(rt_sem_control);
 #endif /* RT_USING_SEMAPHORE */
 
 #ifdef RT_USING_MUTEX
+/* iterate over each suspended thread to update highest priority in pending threads */
 rt_inline rt_uint8_t _mutex_update_priority(struct rt_mutex *mutex)
 {
     struct rt_thread *thread;
@@ -757,6 +759,7 @@ rt_inline rt_uint8_t _mutex_update_priority(struct rt_mutex *mutex)
     return mutex->priority;
 }
 
+/* get highest priority inside its taken object and its init priority */
 rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
 {
     rt_list_t *node = RT_NULL;
@@ -766,20 +769,25 @@ rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
     rt_list_for_each(node, &(thread->taken_object_list))
     {
         mutex = rt_list_entry(node, struct rt_mutex, taken_list);
-        if (priority > mutex->priority)
+        rt_uint8_t mutex_prio = mutex->priority;
+        /* prio at least be priority ceiling */
+        mutex_prio = mutex_prio < mutex->ceiling_priority ? mutex_prio : mutex->ceiling_priority;
+
+        if (priority > mutex_prio)
         {
-            priority = mutex->priority;
+            priority = mutex_prio;
         }
     }
 
     return priority;
 }
 
+/* update priority of target thread and the thread suspended it if any */
 rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t priority, int suspend_flag)
 {
     rt_err_t ret;
     RT_DEBUG_LOG(RT_DEBUG_IPC,
-            ("thread:%s priority -> %d\n", thread->name, priority));
+            ("thread:%s priority -> %d\n", thread->parent.name, priority));
 
     /* change priority of the thread */
     rt_thread_control(thread,
@@ -987,8 +995,17 @@ rt_uint8_t rt_mutex_setprioceiling(rt_mutex_t mutex, rt_uint8_t priority)
 
     if ((mutex) && (priority < RT_THREAD_PRIORITY_MAX))
     {
+        /* critical section here if multiple updates to one mutex happen */
+        rt_ubase_t level = rt_hw_interrupt_disable();
         ret_priority = mutex->ceiling_priority;
         mutex->ceiling_priority = priority;
+        if (mutex->owner)
+        {
+            rt_uint8_t priority = _thread_get_mutex_priority(mutex->owner);
+            if (priority != mutex->owner->current_priority)
+                _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE);
+        }
+        rt_hw_interrupt_enable(level);
     }
     else
     {
@@ -1163,7 +1180,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
     RT_DEBUG_LOG(RT_DEBUG_IPC,
                  ("mutex_take: current thread %s, hold: %d\n",
-                  thread->name, mutex->hold));
+                  thread->parent.name, mutex->hold));
 
     /* reset thread error */
     thread->error = RT_EOK;
@@ -1197,11 +1214,9 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                 if (mutex->ceiling_priority < mutex->owner->current_priority)
                     _thread_update_priority(mutex->owner, mutex->ceiling_priority, suspend_flag);
             }
-            else
-            {
-                /* insert mutex to thread's taken object list */
-                rt_list_insert_after(&thread->taken_object_list, &mutex->taken_list);
-            }
+
+            /* insert mutex to thread's taken object list */
+            rt_list_insert_after(&thread->taken_object_list, &mutex->taken_list);
         }
         else
         {
@@ -1222,7 +1237,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                 /* mutex is unavailable, push to suspend list */
                 RT_DEBUG_LOG(RT_DEBUG_IPC, ("mutex_take: suspend thread: %s\n",
-                                            thread->name));
+                                            thread->parent.name));
 
                 /* suspend current thread */
                 ret = _ipc_list_suspend(&(mutex->parent.suspend_thread),
@@ -1253,7 +1268,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                 {
                     RT_DEBUG_LOG(RT_DEBUG_IPC,
                                  ("mutex_take: start the timer of thread:%s\n",
-                                  thread->name));
+                                  thread->parent.name));
 
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread->thread_timer),
@@ -1407,7 +1422,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     RT_DEBUG_LOG(RT_DEBUG_IPC,
                  ("mutex_release:current thread %s, hold: %d\n",
-                  thread->name, mutex->hold));
+                  thread->parent.name, mutex->hold));
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mutex->parent.parent)));
 
@@ -1454,7 +1469,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
                                    tlist);
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("mutex_release: resume thread: %s\n",
-                    next_thread->name));
+                    next_thread->parent.name));
 
             /* remove the thread from the suspended list of mutex */
             rt_list_remove(&(next_thread->tlist));
@@ -2401,7 +2416,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
             tick_delta = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("mb_send_wait: start timer of thread:%s\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
@@ -2695,7 +2710,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
             tick_delta = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("mb_recv: start timer of thread:%s\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
@@ -3242,7 +3257,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
             tick_delta = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("mq_send_wait: start timer of thread:%s\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),
@@ -3597,7 +3612,7 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
             tick_delta = rt_tick_get();
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("set thread:%s to timer list\n",
-                                        thread->name));
+                                        thread->parent.name));
 
             /* reset the timeout of thread timer and start it */
             rt_timer_control(&(thread->thread_timer),

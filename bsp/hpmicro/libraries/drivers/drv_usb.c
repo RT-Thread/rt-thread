@@ -93,7 +93,7 @@ rt_err_t hpm_usb_control(rt_device_t dev, int cmd, void *args)
         break;
 
     default:
-        ret = RT_EINVAL;
+        ret = -RT_EINVAL;
         break;
     }
 

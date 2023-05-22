@@ -455,7 +455,7 @@ static rt_err_t rt_at32_emac_control(rt_device_t dev, int cmd, void *args)
   */
 rt_err_t rt_at32_emac_tx(rt_device_t dev, struct pbuf *p)
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     struct pbuf *q;
     rt_uint32_t offset;
 

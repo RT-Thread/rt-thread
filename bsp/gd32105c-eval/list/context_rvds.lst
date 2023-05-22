@@ -5,7 +5,7 @@ ARM Macro Assembler    Page 1
 
 
     1 00000000         ;/*
-    2 00000000         ; * Copyright (c) 2006-2018, RT-Thread Development Team
+    2 00000000         ; * Copyright (c) 2006-2022, RT-Thread Development Team
     3 00000000         ; *
     4 00000000         ; * SPDX-License-Identifier: Apache-2.0
     5 00000000         ; *
@@ -95,7 +95,7 @@ ARM Macro Assembler    Page 2
    60 0000000E                 EXPORT           rt_hw_context_switch
    61 0000000E         
    62 0000000E         ; set rt_thread_switch_interrupt_flag to 1
-   63 0000000E 4A32            LDR              r2, =rt_thread_switch_interrupt
+   63 0000000E 4A34            LDR              r2, =rt_thread_switch_interrupt
 _flag
    64 00000010 6813            LDR              r3, [r2]
    65 00000012 2B01            CMP              r3, #1
@@ -103,18 +103,18 @@ _flag
    67 00000016 F04F 0301       MOV              r3, #1
    68 0000001A 6013            STR              r3, [r2]
    69 0000001C         
-   70 0000001C 4A2F            LDR              r2, =rt_interrupt_from_thread ;
+   70 0000001C 4A31            LDR              r2, =rt_interrupt_from_thread ;
                                                              set rt_interrupt_f
                                                             rom_thread
    71 0000001E 6010            STR              r0, [r2]
    72 00000020         
    73 00000020         _reswitch
-   74 00000020 4A2F            LDR              r2, =rt_interrupt_to_thread ; s
+   74 00000020 4A31            LDR              r2, =rt_interrupt_to_thread ; s
                                                             et rt_interrupt_to_
                                                             thread
    75 00000022 6011            STR              r1, [r2]
    76 00000024         
-   77 00000024 482F            LDR              r0, =NVIC_INT_CTRL ; trigger th
+   77 00000024 4831            LDR              r0, =NVIC_INT_CTRL ; trigger th
                                                             e PendSV exception 
                                                             (causes context swi
                                                             tch)
@@ -142,7 +142,7 @@ ARM Macro Assembler    Page 3
    91 00000032 B672            CPSID            I
    92 00000034         
    93 00000034         ; get rt_thread_switch_interrupt_flag
-   94 00000034 4828            LDR              r0, =rt_thread_switch_interrupt
+   94 00000034 482A            LDR              r0, =rt_thread_switch_interrupt
 _flag
    95 00000036 6801            LDR              r1, [r0]
    96 00000038 B191            CBZ              r1, pendsv_exit ; pendsv alread
@@ -152,7 +152,7 @@ _flag
    99 0000003A F04F 0100       MOV              r1, #0x00
   100 0000003E 6001            STR              r1, [r0]
   101 00000040         
-  102 00000040 4826            LDR              r0, =rt_interrupt_from_thread
+  102 00000040 4828            LDR              r0, =rt_interrupt_from_thread
   103 00000042 6801            LDR              r1, [r0]
   104 00000044 B129            CBZ              r1, switch_to_thread ; skip reg
                                                             ister save at the f
@@ -167,7 +167,7 @@ _flag
                                                             d stack pointer
   110 00000052         
   111 00000052         switch_to_thread
-  112 00000052 4923            LDR              r1, =rt_interrupt_to_thread
+  112 00000052 4925            LDR              r1, =rt_interrupt_to_thread
   113 00000054 6809            LDR              r1, [r1]
   114 00000056 6809            LDR              r1, [r1]    ; load thread stack
                                                              pointer
@@ -201,34 +201,34 @@ ARM Macro Assembler    Page 4
 
   133 0000006A                 EXPORT           rt_hw_context_switch_to
   134 0000006A         ; set to thread
-  135 0000006A 491D            LDR              r1, =rt_interrupt_to_thread
+  135 0000006A 491F            LDR              r1, =rt_interrupt_to_thread
   136 0000006C 6008            STR              r0, [r1]
   137 0000006E         
   138 0000006E         ; set from thread to 0
-  139 0000006E 491B            LDR              r1, =rt_interrupt_from_thread
+  139 0000006E 491D            LDR              r1, =rt_interrupt_from_thread
   140 00000070 F04F 0000       MOV              r0, #0x0
   141 00000074 6008            STR              r0, [r1]
   142 00000076         
   143 00000076         ; set interrupt flag to 1
-  144 00000076 4918            LDR              r1, =rt_thread_switch_interrupt
+  144 00000076 491A            LDR              r1, =rt_thread_switch_interrupt
 _flag
   145 00000078 F04F 0001       MOV              r0, #1
   146 0000007C 6008            STR              r0, [r1]
   147 0000007E         
   148 0000007E         ; set the PendSV and SysTick exception priority
-  149 0000007E 481A            LDR              r0, =NVIC_SYSPRI2
-  150 00000080 491A            LDR              r1, =NVIC_PENDSV_PRI
+  149 0000007E 481C            LDR              r0, =NVIC_SYSPRI2
+  150 00000080 491C            LDR              r1, =NVIC_PENDSV_PRI
   151 00000082 F8D0 2000       LDR.W            r2, [r0,#0x00] ; read
   152 00000086 EA41 0102       ORR              r1,r1,r2    ; modify
   153 0000008A 6001            STR              r1, [r0]    ; write-back
   154 0000008C         
   155 0000008C         ; trigger the PendSV exception (causes context switch)
-  156 0000008C 4815            LDR              r0, =NVIC_INT_CTRL
+  156 0000008C 4817            LDR              r0, =NVIC_INT_CTRL
   157 0000008E F04F 5180       LDR              r1, =NVIC_PENDSVSET
   158 00000092 6001            STR              r1, [r0]
   159 00000094         
   160 00000094         ; restore MSP
-  161 00000094 4816            LDR              r0, =SCB_VTOR
+  161 00000094 4818            LDR              r0, =SCB_VTOR
   162 00000096 6800            LDR              r0, [r0]
   163 00000098 6800            LDR              r0, [r0]
   164 0000009A F380 8808       MSR              msp, r0
@@ -237,64 +237,69 @@ _flag
   167 0000009E B661            CPSIE            F
   168 000000A0 B662            CPSIE            I
   169 000000A2         
-  170 000000A2         ; never reach here!
-  171 000000A2                 ENDP
-  172 000000A2         
-  173 000000A2         ; compatible with old version
-  174 000000A2         rt_hw_interrupt_thread_switch
+  170 000000A2         ; ensure PendSV exception taken place before subsequent 
+                       operation
+  171 000000A2 F3BF 8F4F       DSB
+  172 000000A6 F3BF 8F6F       ISB
+  173 000000AA         
+  174 000000AA         ; never reach here!
+  175 000000AA                 ENDP
+  176 000000AA         
+  177 000000AA         ; compatible with old version
+  178 000000AA         rt_hw_interrupt_thread_switch
                                PROC
-  175 000000A2                 EXPORT           rt_hw_interrupt_thread_switch
-  176 000000A2 4770            BX               lr
-  177 000000A4                 ENDP
-  178 000000A4         
-  179 000000A4                 IMPORT           rt_hw_hard_fault_exception
-  180 000000A4                 EXPORT           HardFault_Handler
-  181 000000A4         HardFault_Handler
+  179 000000AA                 EXPORT           rt_hw_interrupt_thread_switch
+  180 000000AA 4770            BX               lr
+  181 000000AC                 ENDP
+  182 000000AC         
+  183 000000AC                 IMPORT           rt_hw_hard_fault_exception
+  184 000000AC                 EXPORT           HardFault_Handler
+  185 000000AC         HardFault_Handler
                                PROC
-  182 000000A4         
-  183 000000A4         ; get current context
-  184 000000A4 F01E 0F04       TST              lr, #0x04   ; if(!EXC_RETURN[2]
-                                                            )
-  185 000000A8 BF0C            ITE              EQ
-  186 000000AA F3EF 8008       MRSEQ            r0, msp     ; [2]=0 ==> Z=1, ge
-                                                            t fault context fro
+  186 000000AC         
+  187 000000AC         ; get current context
 
 
 
 ARM Macro Assembler    Page 5 
 
 
+  188 000000AC F01E 0F04       TST              lr, #0x04   ; if(!EXC_RETURN[2]
+                                                            )
+  189 000000B0 BF0C            ITE              EQ
+  190 000000B2 F3EF 8008       MRSEQ            r0, msp     ; [2]=0 ==> Z=1, ge
+                                                            t fault context fro
                                                             m handler.
-  187 000000AE F3EF 8009       MRSNE            r0, psp     ; [2]=1 ==> Z=0, ge
+  191 000000B6 F3EF 8009       MRSNE            r0, psp     ; [2]=1 ==> Z=0, ge
                                                             t fault context fro
                                                             m thread.
-  188 000000B2         
-  189 000000B2 E920 0FF0       STMFD            r0!, {r4 - r11} ; push r4 - r11
+  192 000000BA         
+  193 000000BA E920 0FF0       STMFD            r0!, {r4 - r11} ; push r4 - r11
                                                              register
-  190 000000B6 F840 ED04       STMFD            r0!, {lr}   ; push exec_return 
+  194 000000BE F840 ED04       STMFD            r0!, {lr}   ; push exec_return 
                                                             register
-  191 000000BA         
-  192 000000BA F01E 0F04       TST              lr, #0x04   ; if(!EXC_RETURN[2]
+  195 000000C2         
+  196 000000C2 F01E 0F04       TST              lr, #0x04   ; if(!EXC_RETURN[2]
                                                             )
-  193 000000BE BF0C            ITE              EQ
-  194 000000C0 F380 8808       MSREQ            msp, r0     ; [2]=0 ==> Z=1, up
+  197 000000C6 BF0C            ITE              EQ
+  198 000000C8 F380 8808       MSREQ            msp, r0     ; [2]=0 ==> Z=1, up
                                                             date stack pointer 
                                                             to MSP.
-  195 000000C4 F380 8809       MSRNE            psp, r0     ; [2]=1 ==> Z=0, up
+  199 000000CC F380 8809       MSRNE            psp, r0     ; [2]=1 ==> Z=0, up
                                                             date stack pointer 
                                                             to PSP.
-  196 000000C8         
-  197 000000C8 B500            PUSH             {lr}
-  198 000000CA F7FF FFFE       BL               rt_hw_hard_fault_exception
-  199 000000CE F85D EB04       POP              {lr}
-  200 000000D2         
-  201 000000D2 F04E 0E04       ORR              lr, lr, #0x04
-  202 000000D6 4770            BX               lr
-  203 000000D8                 ENDP
-  204 000000D8         
-  205 000000D8                 ALIGN            4
-  206 000000D8         
-  207 000000D8                 END
+  200 000000D0         
+  201 000000D0 B500            PUSH             {lr}
+  202 000000D2 F7FF FFFE       BL               rt_hw_hard_fault_exception
+  203 000000D6 F85D EB04       POP              {lr}
+  204 000000DA         
+  205 000000DA F04E 0E04       ORR              lr, lr, #0x04
+  206 000000DE 4770            BX               lr
+  207 000000E0                 ENDP
+  208 000000E0         
+  209 000000E0                 ALIGN            4
+  210 000000E0         
+  211 000000E0                 END
               00000000 
               00000000 
               00000000 
@@ -303,12 +308,12 @@ ARM Macro Assembler    Page 5
               FFFF0000 
               E000ED08 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
-ork --depend=.\output\context_rvds.d -o.\output\context_rvds.o -IE:\code\rtt\rt
--thread\bsp\gd32105c-eval\RTE -ID:\Keil_v5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.0
-.1\Device\Include -ID:\Keil_v5\ARM\CMSIS\Include --predefine="__MICROLIB SETA 1
-" --predefine="__UVISION_VERSION SETA 514" --predefine="GD32F10X_CL SETA 1" --p
-redefine="USE_STDPERIPH_DRIVER SETA 1" --list=.\list\context_rvds.lst ..\..\lib
-cpu\arm\cortex-m3\context_rvds.S
+ork --depend=.\output\context_rvds.d -o.\output\context_rvds.o -I.\RTE\_rt-thre
+ad_gd32f105 -ID:\software\KEIL_V5_ArmPacks\GigaDevice\GD32F10x_DFP\2.0.3\Device
+\Include -ID:\software\KEIL_V5\ARM\CMSIS\Include --predefine="__MICROLIB SETA 1
+" --predefine="__UVISION_VERSION SETA 530" --predefine="GD32F10X_CL SETA 1" --p
+redefine="USE_STDPERIPH_DRIVER SETA 1" --predefine="_RTE_ SETA 1" --list=.\list
+\context_rvds.lst ..\..\libcpu\arm\cortex-m3\context_rvds.S
 
 
 
@@ -323,13 +328,13 @@ Symbol: .text
    Uses
       None
 Comment: .text unused
-HardFault_Handler 000000A4
+HardFault_Handler 000000AC
 
 Symbol: HardFault_Handler
    Definitions
-      At line 181 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
+      At line 185 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
    Uses
-      At line 180 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
+      At line 184 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
 Comment: HardFault_Handler used once
 PendSV_Handler 0000002E
 
@@ -401,13 +406,13 @@ Symbol: rt_hw_interrupt_enable
    Uses
       At line 47 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
 Comment: rt_hw_interrupt_enable used once
-rt_hw_interrupt_thread_switch 000000A2
+rt_hw_interrupt_thread_switch 000000AA
 
 Symbol: rt_hw_interrupt_thread_switch
    Definitions
-      At line 174 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
+      At line 178 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
    Uses
-      At line 175 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
+      At line 179 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
 Comment: rt_hw_interrupt_thread_switch used once
 switch_to_thread 00000052
 
@@ -477,9 +482,9 @@ rt_hw_hard_fault_exception 00000000
 
 Symbol: rt_hw_hard_fault_exception
    Definitions
-      At line 179 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
+      At line 183 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
    Uses
-      At line 198 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
+      At line 202 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
 Comment: rt_hw_hard_fault_exception used once
 rt_interrupt_from_thread 00000000
 
@@ -512,4 +517,4 @@ Symbol: rt_thread_switch_interrupt_flag
       At line 144 in file ..\..\libcpu\arm\cortex-m3\context_rvds.S
 
 4 symbols
-357 symbols in table
+358 symbols in table

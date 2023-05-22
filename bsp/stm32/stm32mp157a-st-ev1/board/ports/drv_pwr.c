@@ -72,7 +72,7 @@ rt_err_t restore_cm4_clock(void)
     /* Reconfigure Systick */
     if (HAL_InitTick(uwTickPrio) != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* Set MCU division factor */
@@ -88,7 +88,7 @@ rt_err_t restore_cm4_clock(void)
     /* Reconfigure Systick */
     if (HAL_InitTick(uwTickPrio) != HAL_OK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;

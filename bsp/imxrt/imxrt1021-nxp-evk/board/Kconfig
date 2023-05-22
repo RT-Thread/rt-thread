@@ -143,6 +143,9 @@ menu "On-chip Peripheral Drivers"
         bool "Enable RTC"
         select RT_USING_RTC
         default n
+	config BSP_USING_CACHE
+        bool "Enable CACHE"
+        default n	
 
 endmenu
 
@@ -188,6 +191,43 @@ menu "Onboard Peripheral Drivers"
             bool "Enable RS485"
             select BSP_USING_LPUART5
             default n
+	menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_NETDEV
+        select RT_USING_LWIP
+        default n
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
+            select RT_USING_PHY
+            bool "Enable ethernet phy"
+            default y
+
+        if BSP_USING_PHY
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1020EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_KSZ8081_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+                config PHY_RESET_KSZ8081_PORT
+                    int "indicate port of reset"
+                    default 1
+
+                config PHY_RESET_KSZ8081_PIN
+                    int "indicate pin of reset"
+                    default 4
+
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+        endif
+    endif					
 
 endmenu
 

@@ -116,7 +116,7 @@ rt_err_t  rt_nand_control(rt_device_t dev, int cmd, void *args)
         return RT_EOK;
     }
 
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 /*pos: sector offset   size: page count*/

@@ -12,13 +12,15 @@
  *
  *
  * FilePath: fpl011_options.c
- * Date: 2022-02-10 14:53:42
+ * Date: 2021-11-02 14:53:42
  * LastEditTime: 2022-02-18 09:06:45
- * Description:  This files is for uart option setting
+ * Description:  This file is for uart option setting
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
+ * 1.0  huanghe 2021/11/2  first commit
+ * 1.1  liushengming 2022/02/18  fix bug
  */
 
 
@@ -108,7 +110,9 @@ void FPl011SetSpecificOptions(FPl011 *uart_p, u32 options)
     for (index = 0; index < FUART_NUM_OPITIONS; index++)
     {
         if ((options & option_table[index].option) == (u32)(0))
+        {
             continue;
+        }
         reg_value = FUART_READREG32(uart_p->config.base_address, option_table[index].register_offset);
 
         /* set specific options */
@@ -118,7 +122,7 @@ void FPl011SetSpecificOptions(FPl011 *uart_p, u32 options)
 }
 
 /**
- * @name: FPl011SetSpecificOptions
+ * @name: FPl011ClearSpecificOptions
  * @msg:  Clear the options for the specified driver instance.
  * @param uart_p is a pointer to the uart instance.
  * @param options contains the options to be set which are bit masks
@@ -133,7 +137,9 @@ void FPl011ClearSpecificOptions(FPl011 *uart_p, u32 options)
     for (index = 0; index < FUART_NUM_OPITIONS; index++)
     {
         if ((options & option_table[index].option) == (u32)(0))
+        {
             continue;
+        }
         reg_value = FUART_READREG32(uart_p->config.base_address, option_table[index].register_offset);
 
         /* remove specific options */
@@ -166,8 +172,8 @@ FError FPl011SetDataFormat(FPl011 *uart_p, FPl011Format *format_p)
     config_p = &uart_p->config;
 
     if ((format_p->data_bits > ((u32)(FPL011_FORMAT_WORDLENGTH_8BIT))) ||
-            (format_p->parity > ((u32)(FPL011_FORMAT_PARITY_MASK))) ||
-            (format_p->stopbits > ((u32)(FPL011_FORMAT_PARITY_MASK)))
+        (format_p->parity > ((u32)(FPL011_FORMAT_PARITY_MASK))) ||
+        (format_p->stopbits > ((u32)(FPL011_FORMAT_PARITY_MASK)))
        )
     {
         return FPL011_ERROR_PARAM ;
@@ -299,7 +305,7 @@ void FPl011SetTxFifoThreadHold(FPl011 *uart_p, u8 trigger_level)
     fifo_trig_reg = FUART_READREG32(config_p->base_address,
                                     FPL011IFLS_OFFSET);
 
-    fifo_trig_reg &= ~(FPL011IFLS_TXIFLSEL_MASK | FPL011IFLS_RXIFLSEL_MASK);
+    fifo_trig_reg &= ~(FPL011IFLS_TXIFLSEL_MASK);
 
     fifo_trig_reg |= (u32)trigger_level;
 
@@ -467,14 +473,14 @@ void FPl011SetOperMode(FPl011 *uart_p, u8 operation_mode)
 
     switch (operation_mode)
     {
-    case FPL011_OPER_MODE_NORMAL:
-        ctrl_reg |= FPL011CR_MODE_NORMAL;
-        break;
-    case FPL011_OPER_MODE_LOCAL_LOOP:
-        ctrl_reg |= FPL011CR_LBE;
-        break;
-    default:
-        break;
+        case FPL011_OPER_MODE_NORMAL:
+            ctrl_reg |= FPL011CR_MODE_NORMAL;
+            break;
+        case FPL011_OPER_MODE_LOCAL_LOOP:
+            ctrl_reg |= FPL011CR_LBE;
+            break;
+        default:
+            break;
     }
 
     /* Setup the Control Register with the passed argument.*/

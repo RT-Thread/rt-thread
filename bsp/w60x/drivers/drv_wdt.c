@@ -50,7 +50,7 @@ static rt_err_t wm_wdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
         tls_watchdog_stop();
         break;
     default:
-        return RT_EIO;
+        return -RT_EIO;
     }
     return RT_EOK;
 }

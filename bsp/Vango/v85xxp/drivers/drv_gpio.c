@@ -121,7 +121,7 @@ static rt_base_t V85XXP_pin_get(const char *name)
     return pin;
 }
 
-static void V85XXP_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void V85XXP_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     GPIO_Type *gpio_port;
     uint16_t gpio_pin;
@@ -141,7 +141,7 @@ static void V85XXP_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     }
 }
 
-static int V85XXP_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t V85XXP_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_Type *gpio_port;
     uint16_t gpio_pin;
@@ -162,7 +162,7 @@ static int V85XXP_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-static void V85XXP_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void V85XXP_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     GPIO_InitType GPIO_InitStruct = {0};
 
@@ -220,8 +220,8 @@ rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 }
 
 
-static rt_err_t V85XXP_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                    rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t V85XXP_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                    rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -234,7 +234,7 @@ static rt_err_t V85XXP_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     irqindex = bit2bitno(PIN_V85XXPPIN(pin));
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -249,7 +249,7 @@ static rt_err_t V85XXP_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     if (pin_irq_hdr_tab[irqindex].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EBUSY;
+        return -RT_EBUSY;
     }
     pin_irq_hdr_tab[irqindex].pin = pin;
     pin_irq_hdr_tab[irqindex].hdr = hdr;
@@ -259,7 +259,7 @@ static rt_err_t V85XXP_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 
     return RT_EOK;
 }
-static rt_err_t V85XXP_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t V85XXP_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -272,7 +272,7 @@ static rt_err_t V85XXP_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
     irqindex = bit2bitno(PIN_V85XXPPIN(pin));
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     level = rt_hw_interrupt_disable();
@@ -289,7 +289,7 @@ static rt_err_t V85XXP_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
     return RT_EOK;
 }
-static rt_err_t V85XXP_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t V85XXP_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     const struct pin_irq_map *irqmap;
     rt_base_t level;
@@ -307,7 +307,7 @@ static rt_err_t V85XXP_pin_irq_enable(struct rt_device *device, rt_base_t pin, r
         irqindex = bit2bitno(PIN_V85XXPPIN(pin));
         if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
         {
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         level = rt_hw_interrupt_disable();
@@ -315,7 +315,7 @@ static rt_err_t V85XXP_pin_irq_enable(struct rt_device *device, rt_base_t pin, r
         if (pin_irq_hdr_tab[irqindex].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_ENOSYS;
+            return -RT_ENOSYS;
         }
 
         GPIO_InitStruct.GPIO_Mode = GPIO_MODE_INPUT;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +12,10 @@
 #include <dfs_fs.h>
 #include <drivers/usb_host.h>
 #include "mass.h"
+
+#define DBG_TAG    "usbhost.udisk"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 #ifdef RT_USBH_MSTORAGE
 
@@ -311,6 +315,11 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
         if (ret == RT_EOK)
         {
             struct ustor_data* data = rt_malloc(sizeof(struct ustor_data));
+            if (data == RT_NULL)
+            {
+                LOG_E("Allocate partition data buffer failed.");
+                continue;
+            }
             rt_memset(data, 0, sizeof(struct ustor_data));
             data->intf = intf;
             data->udisk_id = udisk_get_id();
@@ -349,6 +358,11 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
             if(i == 0)
             {
                 struct ustor_data* data = rt_malloc(sizeof(struct ustor_data));
+                if (data == RT_NULL)
+                {
+                    LOG_E("Allocate partition data buffer failed.");
+                    break;
+                }
                 rt_memset(data, 0, sizeof(struct ustor_data));
                 data->udisk_id = udisk_get_id();
 

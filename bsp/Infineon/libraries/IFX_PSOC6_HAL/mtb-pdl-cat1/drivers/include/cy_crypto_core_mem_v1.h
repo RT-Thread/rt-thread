@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_mem_v1.h
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the headers for the string management API
@@ -31,7 +31,7 @@
 
 #include "cy_crypto_common.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO) && defined(CY_CRYPTO_CFG_HW_V1_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
@@ -54,7 +54,7 @@ void Cy_Crypto_Core_V1_MemXor(CRYPTO_Type *base, void* dst,
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_IP_MXCRYPTO) && defined(CY_CRYPTO_CFG_HW_V1_ENABLE) */
 
 #endif /* #if !defined (CY_CRYPTO_CORE_MEM_V1_H) */
 

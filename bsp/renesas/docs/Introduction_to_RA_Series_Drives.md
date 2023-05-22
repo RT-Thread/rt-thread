@@ -30,17 +30,17 @@ The driver libraries currently provided by RT-Thread already support multiple se
 
 | Driver                                                         | Introduction                                             |
 | ------------------------------------------------------------ | ------------------------------------------------ |
-| [GPIO](https://www.rt-thread.org/document/site/programming-manual/device/pin/pin/) | Operate the GPIO pins                                   |
-| [UART](https://www.rt-thread.org/document/site/programming-manual/device/uart/uart/) | Send and receive data through serial ports                                 |
-| [I2C](https://www.rt-thread.org/document/site/programming-manual/device/i2c/i2c/) | Send and receive data via software I2C                            |
-| [SPI](https://www.rt-thread.org/document/site/programming-manual/device/spi/spi/) | Send and receive data over SPI                                |
-| [ADC](https://www.rt-thread.org/document/site/programming-manual/device/adc/adc/) | Measure the analog data on the pin                               |
+| [GPIO](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/pin/pin) | Operate the GPIO pins                                   |
+| [UART](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/uart/uart_v1/uart) | Send and receive data through serial ports                                 |
+| [I2C](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/i2c/i2c) | Send and receive data via software I2C                            |
+| [SPI](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi) | Send and receive data over SPI                                |
+| [ADC](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/adc/adc) | Measure the analog data on the pin                               |
 | SDIO                                                         | Read and write data through SDIO                               |
-| [TIMER](https://www.rt-thread.org/document/site/programming-manual/device/hwtimer/hwtimer/) | Use hardware timers to implement the function of measuring time and timing execution callback functions |
-| [PWM](https://www.rt-thread.org/document/site/programming-manual/device/pwm/pwm/) | Outputs a PWM waveform at a specific pin                        |
-| [RTC](https://www.rt-thread.org/document/site/programming-manual/device/rtc/rtc/) | Set and read times                                   |
-| [WDT](https://www.rt-thread.org/document/site/programming-manual/device/watchdog/watchdog/) | Watchdog driver                                       |
-| [QSPI](https://www.rt-thread.org/document/site/programming-manual/device/spi/spi/#qspi_1) | Send and receive data via SPI (1, 2, 4-wire).                   |
+| [TIMER](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/hwtimer/hwtimer) | Use hardware timers to implement the function of measuring time and timing execution callback functions |
+| [PWM](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/pwm/pwm) | Outputs a PWM waveform at a specific pin                        |
+| [RTC](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/rtc/rtc) | Set and read times                                   |
+| [WDT](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/watchdog/watchdog) | Watchdog driver                                       |
+| [QSPI](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/device/spi/spi?id=配置-qspi-设备) | Send and receive data via SPI (1, 2, 4-wire).                   |
 
 ### 2.2 On-board peripherals
 

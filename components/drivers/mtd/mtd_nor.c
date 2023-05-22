@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2023, Real-Thread Information Technology Ltd
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -96,14 +96,14 @@ rt_uint32_t rt_mtd_nor_read_id(struct rt_mtd_nor_device* device)
     return device->ops->read_id(device);
 }
 
-rt_size_t rt_mtd_nor_read(struct rt_mtd_nor_device* device,
-        rt_off_t offset, rt_uint8_t* data, rt_uint32_t length)
+rt_ssize_t rt_mtd_nor_read(struct rt_mtd_nor_device* device,
+        rt_off_t offset, rt_uint8_t* data, rt_size_t length)
 {
     return device->ops->read(device, offset, data, length);
 }
 
-rt_size_t rt_mtd_nor_write(struct rt_mtd_nor_device* device,
-        rt_off_t offset, const rt_uint8_t* data, rt_uint32_t length)
+rt_ssize_t rt_mtd_nor_write(struct rt_mtd_nor_device* device,
+        rt_off_t offset, const rt_uint8_t* data, rt_size_t length)
 {
     return device->ops->write(device, offset, data, length);
 }

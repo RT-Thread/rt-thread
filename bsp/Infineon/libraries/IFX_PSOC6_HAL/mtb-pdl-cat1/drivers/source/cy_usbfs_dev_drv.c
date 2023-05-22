@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_usbfs_dev_drv.c
-* \version 2.20.2
+* \version 2.20.3
 *
 * Provides general API implementation of the USBFS driver.
 *

@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_ctb.c
-* \version 2.10
+* \version 2.20
 *
 * \brief
 * Provides the public functions for the CTB driver.

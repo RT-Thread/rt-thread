@@ -101,7 +101,7 @@ static const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-static void nrf5x_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void nrf5x_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const struct pin_index *index;
 
@@ -114,9 +114,9 @@ static void nrf5x_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     nrf_gpio_pin_write(pin, value);
 }
 
-static int nrf5x_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_int8_t nrf5x_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_int8_t value;
     const struct pin_index *index;
 
     value = PIN_LOW;
@@ -132,7 +132,7 @@ static int nrf5x_pin_read(rt_device_t dev, rt_base_t pin)
     return value;
 }
 
-static void nrf5x_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void nrf5x_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_index *index;
 
@@ -193,8 +193,8 @@ static void pin_irq_hdr(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 /*  args = true : hi_accuracy(IN_EVENT)
  *  args = false: lo_accuracy(PORT_EVENT)
  */
-static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                     rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                     rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     const struct pin_index *index;
     rt_int32_t irqindex = -1;
@@ -206,7 +206,7 @@ static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
@@ -225,7 +225,7 @@ static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     }
     if(irqindex == -1)
     {
-        return RT_ENOMEM;
+        return -RT_ENOMEM;
     }
 
     level = rt_hw_interrupt_disable();
@@ -260,17 +260,17 @@ static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     switch(err_code)
     {
         case NRFX_ERROR_BUSY:
-            return RT_EBUSY;
+            return -RT_EBUSY;
         case NRFX_SUCCESS:
             return RT_EOK;
         case NRFX_ERROR_NO_MEM:
-            return RT_ENOMEM;
+            return -RT_ENOMEM;
         default:
-            return RT_ERROR;
+            return -RT_ERROR;
     }
 }
 
-static rt_err_t nrf5x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t nrf5x_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -280,7 +280,7 @@ static rt_err_t nrf5x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
@@ -300,13 +300,13 @@ static rt_err_t nrf5x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
     }
     if(i >= irq_quantity)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     return RT_EOK;
 }
 
 static rt_err_t nrf5x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                     rt_uint32_t enabled)
+                                     rt_uint8_t enabled)
 {
     const struct pin_index *index;
     rt_base_t level;
@@ -316,7 +316,7 @@ static rt_err_t nrf5x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
 
     irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
@@ -340,7 +340,7 @@ static rt_err_t nrf5x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     if(i >= irq_quantity)
     {
-        return RT_ENOSYS;
+        return -RT_ENOSYS;
     }
     return RT_EOK;
 }
@@ -356,7 +356,7 @@ const static struct rt_pin_ops _nrf5x_pin_ops =
     RT_NULL,
 };
 
-int rt_hw_pin_init(void)
+rt_err_t rt_hw_pin_init(void)
 {
     nrfx_err_t err_code;
 
@@ -366,11 +366,11 @@ int rt_hw_pin_init(void)
     switch(err_code)
     {
         case NRFX_ERROR_INVALID_STATE:
-            return RT_EINVAL;
+            return -RT_EINVAL;
         case NRFX_SUCCESS:
             return RT_EOK;
         default:
-            return RT_ERROR;;
+            return -RT_ERROR;;
     }
 
 }

@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, MM32F3277G, RT_USING_ARM_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, MM32F3277G</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\dfs\include;..\libraries\MM32F3270_HAL\CMSIS\Include;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh;.;..\..\..\include;board\ports;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;..\libraries\MM32F3270_HAL\CMSIS\Device\MM32\MM32F3277\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\config;applications;..\..\..\components\libc\posix\io\poll;..\libraries\HAL_Drivers;board;..\..\..\components\libc\posix\ipc;..\libraries\MM32F3270_HAL\MM32F3270_HAL_Driver\Inc;..\..\..\libcpu\arm\common</IncludePath>
+              <IncludePath>.;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;..\libraries\MM32F3270_HAL\CMSIS\Include;..\..\..\include;..\libraries\MM32F3270_HAL\CMSIS\Device\MM32\MM32F3277\Include;..\..\..\components\finsh;..\libraries\MM32F3270_HAL\MM32F3270_HAL_Driver\Inc;..\..\..\components\drivers\include;applications;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;..\..\..\components\drivers\include;..\..\..\components\dfs\include;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;board\ports;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;board</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -450,9 +450,9 @@
           <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>backtrace.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -606,16 +606,9 @@
           <GroupName>Filesystem</GroupName>
           <Files>
             <File>
-              <FileName>dfs_posix.c</FileName>
+              <FileName>devfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
+              <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -630,6 +623,20 @@
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -745,9 +752,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>scheduler.c</FileName>
+              <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
+              <FilePath>..\..\..\src\scheduler_up.c</FilePath>
             </File>
           </Files>
           <Files>

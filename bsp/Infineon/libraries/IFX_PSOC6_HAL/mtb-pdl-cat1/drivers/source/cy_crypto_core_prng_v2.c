@@ -1,6 +1,6 @@
 /***************************************************************************//**
 * \file cy_crypto_core_prng_v2.c
-* \version 2.50
+* \version 2.70
 *
 * \brief
 *  This file provides the source code to the API for the PRNG
@@ -27,15 +27,17 @@
 
 #include "cy_device.h"
 
-#if defined (CY_IP_MXCRYPTO)
+#if defined(CY_IP_MXCRYPTO)
 
 #include "cy_crypto_core_prng_v2.h"
+
+#if defined(CY_CRYPTO_CFG_HW_V2_ENABLE)
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-#if (CPUSS_CRYPTO_PR == 1)
+#if (CPUSS_CRYPTO_PR == 1) && defined(CY_CRYPTO_CFG_PRNG_C)
 
 #include "cy_crypto_core_hw_v2.h"
 #include "cy_syslib.h"
@@ -119,13 +121,15 @@ cy_en_crypto_status_t Cy_Crypto_Core_V2_Prng(CRYPTO_Type *base,
 
 CY_MISRA_BLOCK_END('MISRA C-2012 Rule 11.3');
 
-#endif /* #if (CPUSS_CRYPTO_PR == 1) */
+#endif /* (CPUSS_CRYPTO_PR == 1) && defined(CY_CRYPTO_CFG_PRNG_C) */
 
 #if defined(__cplusplus)
 }
 #endif
 
-#endif /* CY_IP_MXCRYPTO */
+#endif /* defined(CY_CRYPTO_CFG_HW_V2_ENABLE) */
+
+#endif /* defined(CY_IP_MXCRYPTO) */
 
 
 /* [] END OF FILE */

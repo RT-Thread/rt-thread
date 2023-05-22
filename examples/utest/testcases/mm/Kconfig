@@ -1,0 +1,17 @@
+menu "Memory Management Subsytem Testcase"
+
+    config UTEST_MM_API_TC
+    bool "Enable Utest for MM API"
+    default n
+    help
+        The test covers the Memory Management APIs under the
+        `components/mm` and `libcpu/[mmu.*|tlb.*|cache.*]`
+
+    config UTEST_MM_LWP_TC
+    bool "Enable Utest for MM API in lwp"
+    default n
+    help
+        The test covers the Memory Management APIs under the
+        `components/lwp`.
+
+endmenu
