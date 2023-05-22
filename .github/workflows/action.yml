@@ -68,6 +68,7 @@ jobs:
                 #- "tae32f5300"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "sam7x"   
+                - "yichip/yc3122-pos"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
