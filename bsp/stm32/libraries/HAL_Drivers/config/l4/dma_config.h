@@ -150,6 +150,16 @@ extern "C" {
 #define UART5_TX_DMA_REQUEST            DMA_REQUEST_2
 #endif /* DMAMUX1 */
 #define UART5_TX_DMA_IRQ                DMA2_Channel1_IRQn
+#elif defined(BSP_SPI3_RX_USING_DMA) && !defined(SPI3_RX_DMA_INSTANCE)
+#define SPI3_DMA_RX_IRQHandler          DMA2_Channel1_IRQHandler
+#define SPI3_RX_DMA_RCC                 RCC_AHB1ENR_DMA2EN
+#define SPI3_RX_DMA_INSTANCE            DMA2_Channel1
+#if defined(DMAMUX1) /* for L4+ */
+#define SPI3_RX_DMA_REQUEST             DMA_REQUEST_SPI3_RX
+#else /* for L4 */
+#define SPI3_RX_DMA_REQUEST             DMA_REQUEST_2
+#endif /* DMAMUX1 */
+#define SPI3_RX_DMA_IRQ                 DMA2_Channel1_IRQn
 #endif
 
 /* DMA2 channel2 */
