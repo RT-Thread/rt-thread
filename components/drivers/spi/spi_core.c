@@ -343,11 +343,26 @@ __exit:
     return result;
 }
 
-rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
-                           rt_uint16_t senddata,
-                           rt_uint16_t *recvdata)
+rt_err_t rt_spi_sendrecv8(struct rt_spi_device *device,
+                          rt_uint8_t            senddata,
+                          rt_uint8_t           *recvdata)
 {
-    rt_err_t result;
+    rt_ssize_t len = rt_spi_transfer(device, &senddata, recvdata, 1);
+    if (len < 0)
+    {
+        return (rt_err_t)len;
+    }
+    else
+    {
+        return RT_EOK;
+    }
+}
+
+rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                           rt_uint16_t           senddata,
+                           rt_uint16_t          *recvdata)
+{
+    rt_ssize_t len;
     rt_uint16_t tmp;
 
     if (device->config.mode & RT_SPI_MSB)
@@ -356,10 +371,10 @@ rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
         senddata = tmp;
     }
 
-    result = rt_spi_send_then_recv(device, &senddata, 2, recvdata, 2);
-    if(result != RT_EOK)
+    len = rt_spi_transfer(device, &senddata, recvdata, 2);
+    if(len < 0)
     {
-        return result;
+        return (rt_err_t)len;
     }
 
     if (device->config.mode & RT_SPI_MSB)
@@ -368,7 +383,7 @@ rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
         *recvdata = tmp;
     }
 
-    return result;
+    return RT_EOK;
 }
 
 struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
