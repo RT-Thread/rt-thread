@@ -46,6 +46,7 @@ static struct rt_page *page_list_high[RT_PAGE_MAX_ORDER];
 #define page_start ((rt_page_t)rt_mpr_start)
 
 static rt_size_t page_nr;
+static rt_size_t _high_pages_nr;
 static rt_size_t early_offset;
 
 static const char *get_name(rt_varea_t varea)
@@ -672,6 +673,28 @@ void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
     *free_nr = total_free;
 }
 
+void rt_page_high_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
+{
+    int i;
+    rt_size_t total_free = 0;
+    rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+    for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
+    {
+        struct rt_page *p = page_list_high[i];
+
+        while (p)
+        {
+            total_free += (1UL << i);
+            p = p->next;
+        }
+    }
+    rt_hw_interrupt_enable(level);
+    *total_nr = _high_pages_nr;
+    *free_nr = total_free;
+}
+
 static void _install_page(rt_page_t mpr_head, rt_region_t region, void *insert_handler)
 {
     void (*insert)(rt_page_t *page_list, rt_page_t page, int size_bits) = insert_handler;
@@ -723,6 +746,10 @@ static void _install_page(rt_page_t mpr_head, rt_region_t region, void *insert_h
 
         /* insert to list */
         rt_page_t *page_list = _get_page_list((void *)region.start);
+        if (page_list == page_list_high)
+        {
+            _high_pages_nr += 1 << (size_bits - ARCH_PAGE_SHIFT);
+        }
         insert(page_list, (rt_page_t)((char *)p - early_offset), size_bits - ARCH_PAGE_SHIFT);
         region.start += (1UL << size_bits);
     }
