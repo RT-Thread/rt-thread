@@ -57,12 +57,7 @@ static rt_size_t cst816_read_point(struct rt_touch_device *touch, void *buf, rt_
     rt_uint8_t cmd_buffer[1] = {0};
     rt_uint8_t rx_data[10] = {0};
 
-    rt_pin_write(CST816_RST_PIN, PIN_LOW);
-    rt_thread_mdelay(10);
-    rt_pin_write(CST816_RST_PIN, PIN_HIGH);
-    rt_thread_mdelay(50);
-    
-    if (rt_pin_read(touch->config.irq_pin.pin))
+    if (rt_pin_read(TOUCH_INT_PIN) == PIN_HIGH)
     {
         result->event = RT_TOUCH_EVENT_NONE;
         read_num = 0;
@@ -100,10 +95,13 @@ int rt_touch_init(void)
 {
     rt_touch_t touch_device = NULL;
     touch_device = (rt_touch_t)rt_calloc(1, sizeof(struct rt_touch_device));
-    rt_uint16_t irq_pin = CST816_INT_PIN;
-    int range_x, range_y;
 
-    rt_pin_mode(CST816_RST_PIN, PIN_MODE_OUTPUT);
+    rt_pin_mode(TOUCH_RST_PIN, PIN_MODE_OUTPUT);
+    rt_pin_write(TOUCH_RST_PIN, PIN_LOW);
+    rt_thread_mdelay(10);
+    rt_pin_write(TOUCH_RST_PIN, PIN_HIGH);
+    rt_thread_mdelay(50);
+    rt_pin_mode(TOUCH_INT_PIN, PIN_MODE_INPUT_PULLUP);
     i2c_bus = rt_i2c_bus_device_find(TOUCH_I2C_NAME);
     RT_ASSERT(i2c_bus);
 
@@ -111,17 +109,13 @@ int rt_touch_init(void)
     {
         rt_kprintf("open i2c dvice failed.\n");
         return -RT_EIO;
-    }
-
+    } 
     /* touch infomation */
     touch_device->info.type = RT_TOUCH_TYPE_CAPACITANCE;
     touch_device->info.vendor = RT_TOUCH_VENDOR_UNKNOWN;
-    // touch_device.info.range_x = 480;
-    // touch_device.info.range_y = 272;
     touch_device->ops = &touch_ops;
     touch_device->irq_handle = RT_NULL;
-    touch_device->config.irq_pin.pin = irq_pin;
-    touch_device->config.irq_pin.mode = PIN_MODE_INPUT_PULLUP;
+
     return rt_hw_touch_register(touch_device, "touch", RT_DEVICE_FLAG_INT_RX, RT_NULL);
 }
 INIT_DEVICE_EXPORT(rt_touch_init);

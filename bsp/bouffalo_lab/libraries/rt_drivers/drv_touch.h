@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2012-2022, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2012-2023, Shanghai Real-Thread Technology Co., Ltd
  * All rights reserved.
  * Change Logs:
  * Date           Author       Notes
@@ -9,13 +9,8 @@
 #ifndef __DRV_TOUCH_H__
 #define __DRV_TOUCH_H__
 
-#include <stddef.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "drv_gpio.h"
-
-#define CST816_INT_PIN     GPIO_PIN_32
-#define CST816_RST_PIN     GPIO_PIN_24
 
 /* clang-format off */
 #define CST816X_DEV_ADDR            0x15

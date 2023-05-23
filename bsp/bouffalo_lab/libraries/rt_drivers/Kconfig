@@ -669,6 +669,12 @@ menu "General Drivers Configuration"
         select BSP_USING_I2C
         select BSP_USING_HW_I2C
         select BSP_USING_I2C0
+        config TOUCH_RST_PIN
+            int "touch rst pin"
+            default 24
+        config TOUCH_INT_PIN
+            int "touch int pin"
+            default 32
         default n
 
     config BSP_USING_RTC
