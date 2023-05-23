@@ -138,7 +138,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
     /* lock posix mqueue list */
     rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
     int len = rt_strlen(name);
-    if (len > PATH_MAX || len > RT_NAME_MAX)
+    if (len > RT_NAME_MAX)
     {
         rt_set_errno(ENAMETOOLONG);
         goto __return;
