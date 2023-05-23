@@ -12,7 +12,7 @@ if GetDepend(['BSP_USING_RW007']):
 CPPPATH = [cwd]
 LOCAL_CFLAGS = ''
 
-if rtconfig.PLATFORM in ['gcc', 'armclang']:
+if rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm']:
     LOCAL_CFLAGS += ' -std=c99'
 elif rtconfig.PLATFORM in ['armcc']:
     LOCAL_CFLAGS += ' --c99'
