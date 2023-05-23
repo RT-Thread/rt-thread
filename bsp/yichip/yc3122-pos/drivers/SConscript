@@ -1,7 +1,7 @@
 # RT-Thread building script for component
 
 from building import *
-
+import os
 cwd = GetCurrentDir()
 
 # add the general drivers.
@@ -21,8 +21,8 @@ if  GetDepend('BSP_USING_UART0') or GetDepend('BSP_USING_UART1') or GetDepend('B
 if GetDepend('BSP_USING_INTER_FLASH'):
 	src += Glob('ports/*.c')
 
-
-CPPPATH = [cwd,cwd + '/ports']
+path_ports = os.path.join(cwd,'ports')
+CPPPATH = [cwd,path_ports]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

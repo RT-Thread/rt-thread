@@ -1,10 +1,15 @@
 from building import *
 import rtconfig
+import os
 cwd     = GetCurrentDir()
+path_sdk = os.path.join(cwd,'sdk')
+path_core = os.path.join(cwd,'core')
+path_cmin = os.path.join(cwd,'CMSIS','Include')
+path_cmde = os.path.join(cwd,'CMSIS','Device','YICHIP','YC3122')
 src = Glob('sdk/*.c')
-CPPPATH = [cwd + '/sdk', cwd + '/core',cwd + '/CMSIS/Include',cwd + '/CMSIS/Device/YICHIP/YC3122/Include',cwd]
+CPPPATH = [path_sdk,path_core,path_cmin,os.path.join(path_cmde,'Include'),cwd]
 
-src += Glob(cwd + '/CMSIS/Device/YICHIP/YC3122/Source/Templates/*.c')
+src += Glob(path_cmde + '/Source/Templates/*.c')
 src += ['core/system.c']
 
 if rtconfig.PLATFORM in ['gcc']:
@@ -14,11 +19,11 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 	
 
 if rtconfig.PLATFORM in ['gcc']:
-    src += [cwd + '/CMSIS/Device/YICHIP/YC3122/Source/Templates/gcc/startup_yc3122.S']
+    src += [path_cmde + '/Source/Templates/gcc/startup_yc3122.S']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    src += [cwd + '/CMSIS/Device/YICHIP/YC3122/Source/Templates/arm/startup_yc3122.s']
+    src += [path_cmde + '/Source/Templates/arm/startup_yc3122.s']
 elif rtconfig.PLATFORM in ['iccarm']:
-    src += [cwd + '/CMSIS/Device/YICHIP/YC3122/Source/Templates/iar/startup_yc3122.s']
+    src += [path_cmde + '/Source/Templates/iar/startup_yc3122.s']
 group = DefineGroup('Libraries', src, depend = [''],CPPPATH = CPPPATH, CPPDEFINES = ['__USE_YC_M0__'])
 
 Return('group')
