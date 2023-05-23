@@ -295,6 +295,25 @@ menu "Onboard Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
+    menuconfig BSP_USING_NXP_LCD
+        config BSP_USING_NXP_LCD
+            bool "Enable NXP LCD"
+            select BSP_USING_SPI
+            default n
+            if BSP_USING_NXP_LCD
+                config BSP_LCD_SPI_BUS
+                    string "the spi bus for lcd"
+                    default "spi3"
+                config BSP_LCD_CS_PIN
+                    int "the pin of lcd cs"
+                    default 5
+                config BSP_LCD_RST_PIN
+                    int "the pin of lcd rst"
+                    default 55
+                config BSP_LCD_DC_PIN
+                    int "the pin of lcd dc"
+                    default 3
+            endif
 
 endmenu
 
