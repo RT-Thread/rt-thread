@@ -28,7 +28,7 @@ static void touch_sample(void){
     static rt_device_t dev = RT_NULL;
     static struct rt_touch_data *read_data;
     read_data = (struct rt_touch_data *)rt_malloc(sizeof(struct rt_touch_data));
-    
+
     dev = rt_device_find(name);
     if (dev == RT_NULL)
     {
@@ -44,7 +44,7 @@ static void touch_sample(void){
             rt_kprintf("x: %d y:%d\r\n",pos_x,pos_y);
             }
         }
-        
+
         rt_thread_mdelay(10);
     }
 }

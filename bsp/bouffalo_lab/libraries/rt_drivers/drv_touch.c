@@ -109,7 +109,7 @@ int rt_touch_init(void)
     {
         rt_kprintf("open i2c dvice failed.\n");
         return -RT_EIO;
-    } 
+    }
     /* touch infomation */
     touch_device->info.type = RT_TOUCH_TYPE_CAPACITANCE;
     touch_device->info.vendor = RT_TOUCH_VENDOR_UNKNOWN;
