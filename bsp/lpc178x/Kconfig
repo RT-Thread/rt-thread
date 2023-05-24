@@ -18,6 +18,7 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-
-
-# source "$BSP_DIR/drivers/Kconfig"
+config SOC_LPC178
+    bool
+    select ARCH_ARM_CORTEX_M3
+    default y
