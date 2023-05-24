@@ -377,6 +377,7 @@ jobs:
             count=$((count+1))
             echo "::group::Compiling BSP: ==$count=== $bsp ===="
             echo bsp/$bsp
+            scons -C bsp/$bsp --pyconfig-silent
             pushd bsp/$bsp && pkgs --update && popd
             scons -C bsp/$bsp -j$(nproc) --debug=time | tee output.log || \
             { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
