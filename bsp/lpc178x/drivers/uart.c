@@ -32,7 +32,7 @@ struct rt_uart_lpc
 
     /* buffer for reception */
     rt_uint8_t read_index, save_index;
-    rt_uint8_t rx_buffer[RT_UART_RX_BUFFER_SIZE];
+    rt_uint8_t rx_buffer[RT_SERIAL_RB_BUFSZ];
 };
 
 #ifdef RT_USING_UART0
@@ -61,7 +61,7 @@ void UART0_IRQHandler(void)
 
         level = rt_hw_interrupt_disable();
         uart->save_index ++;
-        if (uart->save_index >= RT_UART_RX_BUFFER_SIZE)
+        if (uart->save_index >= RT_SERIAL_RB_BUFSZ)
             uart->save_index = 0;
         rt_hw_interrupt_enable(level);
 
@@ -70,7 +70,7 @@ void UART0_IRQHandler(void)
         {
             rt_size_t length;
             if (uart->read_index > uart->save_index)
-                length = RT_UART_RX_BUFFER_SIZE - uart->read_index + uart->save_index;
+                length = RT_SERIAL_RB_BUFSZ - uart->read_index + uart->save_index;
             else
                 length = uart->save_index - uart->read_index;
 
@@ -104,7 +104,7 @@ void UART1_IRQHandler(void)
 
         level = rt_hw_interrupt_disable();
         uart->save_index ++;
-        if (uart->save_index >= RT_UART_RX_BUFFER_SIZE)
+        if (uart->save_index >= RT_SERIAL_RB_BUFSZ)
             uart->save_index = 0;
         rt_hw_interrupt_enable(level);
 
@@ -113,7 +113,7 @@ void UART1_IRQHandler(void)
         {
             rt_size_t length;
             if (uart->read_index > uart->save_index)
-                length = RT_UART_RX_BUFFER_SIZE - uart->read_index + uart->save_index;
+                length = RT_SERIAL_RB_BUFSZ - uart->read_index + uart->save_index;
             else
                 length = uart->save_index - uart->read_index;
 
@@ -242,7 +242,7 @@ static rt_ssize_t rt_uart_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_s
                 *ptr = uart->rx_buffer[uart->read_index];
 
                 uart->read_index ++;
-                if (uart->read_index >= RT_UART_RX_BUFFER_SIZE)
+                if (uart->read_index >= RT_SERIAL_RB_BUFSZ)
                     uart->read_index = 0;
             }
             else
