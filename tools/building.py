@@ -238,7 +238,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     if GetOption('strict-compiling'):
         STRICT_FLAGS = ''
-        if rtconfig.PLATFORM in ['gcc']:
+        if rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm']:
             STRICT_FLAGS += ' -Werror' #-Wextra
             env.Append(CFLAGS=STRICT_FLAGS, CXXFLAGS=STRICT_FLAGS)
 
@@ -745,10 +745,9 @@ def PreBuilding():
         a()
 
 def GroupLibName(name, env):
-
     if rtconfig.PLATFORM in ['armcc']:
         return name + '_rvds'
-    elif rtconfig.PLATFORM in ['gcc']:
+    elif rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm']:
         return name + '_gcc'
 
     return name
