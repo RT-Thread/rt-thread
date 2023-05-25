@@ -5,7 +5,6 @@ config BSP_DIR
     option env="BSP_ROOT"
     default "."
 
-# default 中的内容要灵活更改
 config RTT_DIR
     string
     option env="RTT_ROOT"
