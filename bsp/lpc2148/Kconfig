@@ -19,7 +19,6 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-# SOC_型号
 config SOC_LPC2148
     bool
     select ARCH_ARM
