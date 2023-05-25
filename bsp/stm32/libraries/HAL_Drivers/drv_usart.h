@@ -57,7 +57,8 @@ struct stm32_uart
 {
     UART_HandleTypeDef handle;
     struct stm32_uart_config *config;
-
+    rt_uint32_t mask;
+    
 #ifdef RT_SERIAL_USING_DMA
     struct
     {
