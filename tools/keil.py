@@ -219,6 +219,8 @@ def MDK45Project(tree, target, script):
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
+    CXXFLAGS = ''
+    CCFLAGS = ''
     CFLAGS = ''
     ProjectFiles = []
 
@@ -251,6 +253,28 @@ def MDK45Project(tree, target, script):
             else:
                 LINKFLAGS += group['LINKFLAGS']
 
+        # get each group's CXXFLAGS flags
+        if 'CXXFLAGS' in group and group['CXXFLAGS']:
+            if CXXFLAGS:
+                CXXFLAGS += ' ' + group['CXXFLAGS']
+            else:
+                CXXFLAGS += group['CXXFLAGS']
+
+        # get each group's CCFLAGS flags
+        if 'CCFLAGS' in group and group['CCFLAGS']:
+            if CCFLAGS:
+                CCFLAGS += ' ' + group['CCFLAGS']
+            else:
+                CCFLAGS += group['CCFLAGS']
+
+        # get each group's CFLAGS flags
+        if 'CFLAGS' in group and group['CFLAGS']:
+            if CFLAGS:
+                CFLAGS += ' ' + group['CFLAGS']
+            else:
+                CFLAGS += group['CFLAGS']
+
+        # get each group's LIBS flags
         if 'LIBS' in group and group['LIBS']:
             for item in group['LIBS']:
                 lib_path = ''
@@ -273,15 +297,11 @@ def MDK45Project(tree, target, script):
     Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
     Define.text = ', '.join(set(CPPDEFINES))
 
-    if ('CCFLAGS' in group and 'c99' in group['CCFLAGS']) or \
-       ('CFLAGS' in group and 'c99' in group['CFLAGS']) or \
-       ('CXXFLAGS' in group and 'c99' in group['CXXFLAGS']):
+    if 'c99' in CXXFLAGS or 'c99' in CCFLAGS or 'c99' in CFLAGS:
         uC99 = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uC99')
         uC99.text = '1'
 
-    if ('CCFLAGS' in group and '--gnu' in group['CCFLAGS']) or \
-       ('CFLAGS' in group and '--gnu' in group['CFLAGS']) or \
-       ('CXXFLAGS' in group and '--gnu' in group['CXXFLAGS']):
+    if 'gnu' in CXXFLAGS or 'gnu' in CCFLAGS or 'gnu' in CFLAGS:
         uGnu = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uGnu')
         uGnu.text = '1'
 
