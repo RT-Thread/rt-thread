@@ -233,6 +233,7 @@ jobs:
          -  RTT_BSP: "nordic_Infineon_TI_microchip" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:  
+                - "lm4f232"
                 - "nrf5x/nrf51822"
                 - "nrf5x/nrf52832"
                 - "nrf5x/nrf52833"
@@ -253,7 +254,6 @@ jobs:
                 - "raspberry-pi/raspi4-32"
                 - "lm3s8962"
                 - "lm3s9b9x"
-                - "lm4f232"
                 - "tm4c123bsp"
                 - "tm4c129x"
                 - "microchip/samc21"
