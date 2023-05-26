@@ -22,7 +22,7 @@ static void lcd_touch_sample(void){
     static rt_uint16_t white[319*2];
     rt_uint16_t green[4*4*2];
     nxplcd_t *lcd_obj = (nxplcd_t *)rt_device_find("lcd");
-    
+
     rt_device_t dev = rt_device_find("capt");
     capt_t *capt = (capt_t*)dev->user_data;
     gt911_input_t ctp_input;
