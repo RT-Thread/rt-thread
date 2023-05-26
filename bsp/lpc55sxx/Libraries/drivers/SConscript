@@ -51,6 +51,13 @@ if GetDepend('BSP_USING_SOFT_SPI'):
 
 if GetDepend('BSP_USING_NXP_LCD'):
     src += ['drv_nxp_lcd.c']
+    src += ['sample/lcd_sample.c']
+    src += ['sample/lcd_touch_sample.c']
+
+if GetDepend('BSP_USING_NXP_TOUCH'):
+    src += ['drv_nxp_touch.c']
+    src += ['sample/touch_sample.c']
+    src += ['sample/lcd_touch_sample.c']
 
 path =  [cwd,cwd + '/config']
 

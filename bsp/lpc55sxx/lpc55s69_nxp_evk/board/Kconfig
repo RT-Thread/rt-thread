@@ -315,6 +315,17 @@ menu "Board extended module Drivers"
                     default 3
             endif
 
+    menuconfig BSP_USING_NXP_TOUCH
+        config BSP_USING_NXP_TOUCH
+            bool "Enable NXP TOUCH"
+            select BSP_USING_I2C
+            default n
+            if BSP_USING_NXP_TOUCH
+                config BSP_TOUCH_I2C_BUS
+                    string "the i2c bus for lcd"
+                    default "i2c1"
+            endif
+
 endmenu
 
 endmenu

@@ -33,7 +33,7 @@ typedef struct {
     rt_err_t (*reset_cb)(void *handle);
     rt_err_t (*backlight_cb)(void *handle, rt_uint8_t on);
     rt_err_t (*write_cmd_cb)(void *handle, rt_uint8_t *cmd, rt_uint8_t len);
-    rt_err_t (*write_data_cb)(void *handle, rt_uint8_t *data, rt_uint32_t len);
+    rt_err_t (*write_data_cb)(void *handle, void *data, rt_uint32_t len);
 } st7796_cb_t;
 
 typedef struct {
@@ -57,6 +57,8 @@ typedef struct
     struct rt_spi_device        *spi_dev;
 } nxplcd_t;
 
-rt_err_t nxp_lcd_load(st7796_lcd_t *lcd, rt_uint8_t *data, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end);
+void nxp_lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data);
+int drv_nxplcd_init(void);
 
 #endif /* DRV_NXP_LCD_H__ */
+

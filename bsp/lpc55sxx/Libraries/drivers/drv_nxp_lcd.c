@@ -29,15 +29,13 @@ static nxplcd_t lcd_spi_obj;
 static rt_err_t _st7796_init_seq(st7796_lcd_t *lcd);
 static rt_err_t _st7796_window(st7796_lcd_t *lcd, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end);
 static rt_err_t _st7796_reset(st7796_lcd_t *lcd);
-rt_err_t nxp_lcd_load(st7796_lcd_t *lcd, rt_uint8_t *data, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end);
+static rt_err_t st7796_lcd_load(st7796_lcd_t *lcd, void *data, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end);
 static rt_err_t st7796_lcd_sleep(st7796_lcd_t *lcd, rt_uint8_t sleep_mode);
 static rt_err_t st7796_lcd_display(st7796_lcd_t *lcd, rt_uint8_t display_on);
 static rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config);
+void nxp_lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data);
 
-
-
-
-rt_uint8_t st7796_init_seq_tft_480_320[] =
+static rt_uint8_t st7796_init_seq_tft_480_320[] =
 {
     0x01, 0xF0, 0xC3,                                            // Enable command part 1
     0x01, 0xF0, 0x96,                                            // Enable command part 2
@@ -50,7 +48,7 @@ rt_uint8_t st7796_init_seq_tft_480_320[] =
     0x01, 0xF0, 0x69,  // Disable command part 2
 };
 
-rt_uint8_t st7796_init_seq_ips_480_320[] =
+static rt_uint8_t st7796_init_seq_ips_480_320[] =
 {
     0x01, 0xF0, 0xC3,                                            // Enable command part 1
     0x01, 0xF0, 0x96,                                            // Enable command part 2
@@ -69,14 +67,13 @@ rt_uint8_t st7796_init_seq_ips_480_320[] =
     0x01, 0xF0, 0x69,  // Disable command part 2
 };
 
-rt_err_t _st7796_init_seq(st7796_lcd_t *lcd)
+static rt_err_t _st7796_init_seq(st7796_lcd_t *lcd)
 {
     rt_uint16_t i = 0;
 
     while (i < sizeof(ST7796_LCD_INIT_SEQ))
     {
-        if (lcd->cb.write_cmd_cb(lcd->user_data, &ST7796_LCD_INIT_SEQ[i + 1], ST7796_LCD_INIT_SEQ[i] + 1) !=
-            RT_EOK)
+        if (lcd->cb.write_cmd_cb(lcd->user_data, &ST7796_LCD_INIT_SEQ[i + 1], ST7796_LCD_INIT_SEQ[i] + 1) != RT_EOK)
         {
             return -RT_ERROR;
         };
@@ -86,7 +83,7 @@ rt_err_t _st7796_init_seq(st7796_lcd_t *lcd)
     return RT_EOK;
 }
 
-rt_err_t _st7796_window(st7796_lcd_t *lcd, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end)
+static rt_err_t _st7796_window(st7796_lcd_t *lcd, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end)
 {
     rt_uint16_t real_x_start, real_x_end, real_y_start, real_y_end;
 
@@ -141,20 +138,21 @@ rt_err_t _st7796_window(st7796_lcd_t *lcd, rt_uint16_t x_start, rt_uint16_t x_en
     return RT_EOK;
 }
 
-rt_err_t _st7796_reset(st7796_lcd_t *lcd)
+static rt_err_t _st7796_reset(st7796_lcd_t *lcd)
 {
     return lcd->cb.reset_cb(lcd->user_data);
 }
 
-rt_err_t lcd_impl_reset(void *handle){
+static rt_err_t lcd_impl_reset(void *handle){
     rt_pin_write(BSP_LCD_RST_PIN, PIN_LOW);
     rt_thread_mdelay(50);
     rt_pin_write(BSP_LCD_RST_PIN, PIN_HIGH);
     rt_thread_mdelay(50);
+
     return RT_EOK;
 }
 
-rt_err_t st7796_lcd_init(st7796_lcd_t *lcd)
+static rt_err_t st7796_lcd_init(st7796_lcd_t *lcd)
 {
     if (_st7796_reset(lcd) != RT_EOK) return -RT_ERROR;
     if (_st7796_init_seq(lcd) != RT_EOK) return -RT_ERROR;
@@ -165,7 +163,7 @@ rt_err_t st7796_lcd_init(st7796_lcd_t *lcd)
     return RT_EOK;
 }
 
-rt_err_t nxp_lcd_load(st7796_lcd_t *lcd, rt_uint8_t *data, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end)
+static rt_err_t st7796_lcd_load(st7796_lcd_t *lcd, void *data, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end)
 {
     rt_uint32_t pixel_count = (y_end - y_start + 1) * (x_end - x_start + 1);
 
@@ -208,14 +206,20 @@ rt_err_t nxp_lcd_load(st7796_lcd_t *lcd, rt_uint8_t *data, rt_uint16_t x_start, 
     return RT_EOK;
 }
 
-rt_err_t st7796_lcd_sleep(st7796_lcd_t *lcd, rt_uint8_t sleep_mode)
+void nxp_lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data)
+{
+    nxplcd_t *lcd_obj = (nxplcd_t *)rt_device_find("lcd");
+    st7796_lcd_load(&lcd_obj->st7796, data, x_start, x_end, y_start, y_end);
+}
+
+static rt_err_t st7796_lcd_sleep(st7796_lcd_t *lcd, rt_uint8_t sleep_mode)
 {
     // Write SLPIN or SLPOUT command.
     rt_uint8_t command = sleep_mode ? 0x10 : 0x11;
     return lcd->cb.write_cmd_cb(lcd->user_data, &command, 0x01);
 }
 
-rt_err_t st7796_lcd_display(st7796_lcd_t *lcd, rt_uint8_t display_on)
+static rt_err_t st7796_lcd_display(st7796_lcd_t *lcd, rt_uint8_t display_on)
 {
     // write display_on command;
     rt_uint8_t command = display_on ? 0x29 : 0x28;
@@ -232,7 +236,7 @@ rt_err_t st7796_lcd_display(st7796_lcd_t *lcd, rt_uint8_t display_on)
     return RT_EOK;
 }
 
-rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config)
+static rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config)
 {
     lcd->config.direction = config->direction;
 
@@ -274,7 +278,7 @@ rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config)
     return lcd->cb.write_cmd_cb(lcd->user_data, command, 0x02);
 }
 
-rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len) {
+static rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len) {
     nxplcd_t *nxp_lcd = (nxplcd_t*)handle;
 
     rt_pin_write(BSP_LCD_DC_PIN, PIN_LOW);
@@ -289,7 +293,7 @@ rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len) {
     return RT_EOK;
 }
 
-rt_err_t lcd_impl_write_data(void *handle, rt_uint8_t *data, rt_uint32_t len) {
+static rt_err_t lcd_impl_write_data(void *handle, void *data, rt_uint32_t len) {
     nxplcd_t *nxp_lcd = (nxplcd_t*)handle;
 
     rt_pin_write(BSP_LCD_DC_PIN, PIN_HIGH);
@@ -308,7 +312,7 @@ int drv_nxplcd_init(void)
     lcd_spi_obj.st7796.config.pix_fmt = ST7796_RGB565;
     lcd_spi_obj.st7796.config.bgr_mode = 1;
     lcd_spi_obj.st7796.config.inversion = 0;
-    lcd_spi_obj.st7796.config.mirrored = 1;
+    lcd_spi_obj.st7796.config.mirrored = 0;
     lcd_spi_obj.st7796.cb.reset_cb = lcd_impl_reset;
 
     lcd_spi_obj.st7796.cb.write_cmd_cb = lcd_impl_write_cmd;
@@ -319,8 +323,8 @@ int drv_nxplcd_init(void)
     lcd_spi_obj.spi_dev = (struct rt_spi_device *)rt_device_find(LCD_DEVICE_NAME);
     if (!lcd_spi_obj.spi_dev)
     {
-        rt_kprintf("lcd sample run failed! can't find %s device!\n", LCD_DEVICE_NAME);
-              return -RT_ERROR;
+        rt_kprintf("lcd init run failed! can't find %s device!\n", LCD_DEVICE_NAME);
+        return -RT_ERROR;
     }
     struct rt_spi_configuration cfg;
     cfg.data_width = 8;
@@ -330,6 +334,7 @@ int drv_nxplcd_init(void)
 
     st7796_lcd_init(&lcd_spi_obj.st7796);
     rt_device_register(&lcd_spi_obj.parent, "lcd", RT_DEVICE_FLAG_RDWR);
+
     return RT_EOK;
 }
 
