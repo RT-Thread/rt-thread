@@ -44,7 +44,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
 
-    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -DCPU_LPC55S69JBD100_cm33_core0'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__START=entry'
     LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/LPC55S69_cm33_core0_flash.ld'
@@ -62,7 +62,9 @@ if PLATFORM == 'gcc':
     POST_ACTION = OBJCPY + ' -O binary --remove-section=.boot_data --remove-section=.image_vertor_table --remove-section=.ncache $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
     # module setting 
-    CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
+    CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti'
+    CXXFLAGS += CFLAGS
+
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
     M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
@@ -113,8 +115,8 @@ elif PLATFORM == 'armclang':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --cpu Cortex-M33 '
-    CFLAGS = ' --target=arm-arm-none-eabi -mcpu=cortex-m33 '
-    CFLAGS += ' -mcpu=cortex-m33 '
+    CFLAGS = ' --target=arm-arm-none-eabi'
+    CFLAGS += ' -mcpu=' + CPU
     CFLAGS += ' -c -fno-rtti -funsigned-char -fshort-enums -fshort-wchar '
     CFLAGS += ' -gdwarf-3 -ffunction-sections '
     AFLAGS = DEVICE + ' --apcs=interwork '
