@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,6 +22,28 @@ void (*signal(int sig, void (*func)(int))) (int)
 {
     return rt_signal_install(sig, func);
 }
+
+/**
+ * @brief    This function will examines, changes, or examines and changes the signal mask of the calling thread.
+ *
+ * @param    how indicates the way in which the existing set of blocked signals should be changed.
+ *           The following are the possible values for option:
+ *
+ *              SIG_BLOCK       The set of blocked signals is the union of the current set and the set argument.
+ *
+ *              SIG_UNBLOCK     The signals in set are removed from the current set of blocked signals.
+ *                              It is permissible to attempt to unblock a signal which is not blocked.
+ *
+ *              SIG_SETMASK     The set of blocked signals is set to the argument set.
+ *
+ * @param    set is a pointer to a sigset_t object that specifies the new set of blocked signals.
+ *           If set is NULL, then the signal mask is unchanged (i.e., how is ignored)
+ *
+ * @param    oset is a pointer to a sigset_t object that is used to return the previous set of blocked signals.
+ *           If oset is non-NULL, the previous value of the signal mask is stored in it.
+ *
+ * @return   Returns 0 on success.
+ */
 
 int sigprocmask (int how, const sigset_t *set, sigset_t *oset)
 {
@@ -55,6 +77,14 @@ int sigprocmask (int how, const sigset_t *set, sigset_t *oset)
     return 0;
 }
 
+/**
+ * @brief    This function will examines the signal mask of the calling thread.
+ *
+ * @param    set is a pointer to a sigset_t object that is used to return the previous set of blocked signals.
+ *           If set is non-NULL, the previous value of the signal mask is stored in it.
+ *
+ * @return   Returns 0 on success.
+ */
 int sigpending (sigset_t *set)
 {
     sigprocmask(SIG_SETMASK, RT_NULL, set);
@@ -83,6 +113,18 @@ int sigsuspend (const sigset_t *set)
 
     return ret;
 }
+
+/**
+ * @brief    This function will install or confirm action for specified signal.
+ *
+ * @param    signum is the signal to be handled.
+ *
+ * @param    act is the new signal action, or NULL to restore default action.
+ *
+ * @param    oldact returns the previous signal action, or NULL if not required.
+ *
+ * @return   Returns 0 on success or -1 on failure.
+ */
 
 int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 {
@@ -136,6 +178,13 @@ int sigwaitinfo(const sigset_t *set, siginfo_t *info)
     return sigtimedwait(set, info, NULL);
 }
 
+/**
+ * @brief    This function willsend a signal to the caller
+ *
+ * @param    sig is the signal that is to be sent.
+ *
+ * @return   Returns 0 on success.
+ */
 int raise(int sig)
 {
     rt_thread_kill(rt_thread_self(), sig);

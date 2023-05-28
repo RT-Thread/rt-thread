@@ -290,6 +290,7 @@ jobs:
             RTT_TOOL_CHAIN: "llvm-arm"
             SUB_RTT_BSP:  
                 - "stm32/stm32l475-atk-pandora"
+                - "renesas/ra6m3-hmi-board"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
