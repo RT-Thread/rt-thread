@@ -233,6 +233,7 @@ jobs:
          -  RTT_BSP: "nordic_Infineon_TI_microchip" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:  
+                - "lm4f232"
                 - "nrf5x/nrf51822"
                 - "nrf5x/nrf52832"
                 - "nrf5x/nrf52833"
@@ -253,7 +254,6 @@ jobs:
                 - "raspberry-pi/raspi4-32"
                 - "lm3s8962"
                 - "lm3s9b9x"
-                - "lm4f232"
                 - "tm4c123bsp"
                 - "tm4c129x"
                 - "microchip/samc21"
@@ -290,6 +290,7 @@ jobs:
             RTT_TOOL_CHAIN: "llvm-arm"
             SUB_RTT_BSP:  
                 - "stm32/stm32l475-atk-pandora"
+                - "renesas/ra6m3-hmi-board"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -377,6 +378,7 @@ jobs:
             count=$((count+1))
             echo "::group::Compiling BSP: ==$count=== $bsp ===="
             echo bsp/$bsp
+            scons -C bsp/$bsp --pyconfig-silent
             pushd bsp/$bsp && pkgs --update && popd
             scons -C bsp/$bsp -j$(nproc) --debug=time | tee output.log || \
             { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \

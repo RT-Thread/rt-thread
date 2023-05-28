@@ -13,7 +13,7 @@ if GetDepend(['PKG_USING_RW007']):
     src += ['ports/rw007_port.c']
 
 CPPPATH = [cwd, cwd + '/MCUX_Config/board']
-CPPDEFINES = ['DEBUG']
+CPPDEFINES = ['DEBUG', 'CPU_LPC55S69JBD100_cm33_core0']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
