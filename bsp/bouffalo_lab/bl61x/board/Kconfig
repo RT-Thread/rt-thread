@@ -14,3 +14,15 @@ config BSP_USING_ROMAPI
 config BSP_USING_PSRAM
     bool "Enable PSRAM"
     default n
+
+choice
+    prompt "Choose Module"
+
+    default BSP_USING_BL61X_MODULE_DEFAULT
+
+    config BSP_USING_BL61X_MODULE_DEFAULT
+        bool "Default Module"
+    config BSP_USING_BL61X_MODULE_M0P
+        bool "M0P Module"
+        select BSP_USING_PSRAM
+endchoice

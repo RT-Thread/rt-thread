@@ -40,6 +40,9 @@ if GetDepend('BSP_USING_SPI'):
 if GetDepend('BSP_USING_ON_CHIP_FLASH'):
     src += ['drv_flash.c']
 
+if GetDepend('RT_USING_DFS'):
+    src += ['drv_sdh.c']
+
 group = DefineGroup('rt_drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 objs = [group]
