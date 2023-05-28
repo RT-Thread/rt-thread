@@ -338,7 +338,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         {
             recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
         }
-        
+
 #if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
         rt_uint32_t* dma_buf = RT_NULL;
         if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG) && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
@@ -364,6 +364,18 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             {
                 state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length);
             }
+            else if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG))
+            {
+                /* same as Tx ONLY. It will not receive SPI data any more. */
+                rt_memset((uint8_t *)recv_buf, 0xff, send_length);
+                state = HAL_SPI_Transmit_DMA(spi_handle, (uint8_t *)send_buf, send_length);
+            }
+            else if ((spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
+            {
+                state = HAL_ERROR;
+                LOG_E("It shoule be enabled both BSP_SPIx_TX_USING_DMA and BSP_SPIx_TX_USING_DMA flag, if wants to use SPI DMA Rx singly.");
+                break;
+            }
             else
             {
                 state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length, 1000);
@@ -386,9 +398,9 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 __HAL_SPI_DISABLE(spi_handle);
             }
         }
-        else
+        else if(message->recv_buf)
         {
-            memset((uint8_t *)recv_buf, 0xff, send_length);
+            rt_memset((uint8_t *)recv_buf, 0xff, send_length);
             if (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
             {
                 state = HAL_SPI_Receive_DMA(spi_handle, (uint8_t *)recv_buf, send_length);
@@ -400,12 +412,18 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 state = HAL_SPI_Receive(spi_handle, (uint8_t *)recv_buf, send_length, 1000);
             }
         }
+        else
+        {
+            state = HAL_ERROR;
+            LOG_E("message->send_buf and message->recv_buf are both NULL!");
+        }
 
         if (state != HAL_OK)
         {
-            LOG_I("spi transfer error : %d", state);
+            LOG_E("SPI transfer error: %d", state);
             message->length = 0;
             spi_handle->State = HAL_SPI_STATE_READY;
+            break;
         }
         else
         {
@@ -418,12 +436,18 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         if (spi_drv->spi_dma_flag & (SPI_USING_TX_DMA_FLAG | SPI_USING_RX_DMA_FLAG))
         {
             /* blocking the thread,and the other tasks can run */
-            rt_completion_wait(&spi_drv->cpt, RT_WAITING_FOREVER);
+            if (rt_completion_wait(&spi_drv->cpt, 1000) != RT_EOK)
+            {
+                state = HAL_ERROR;
+                LOG_E("wait for DMA interrupt overtime!");
+                break;
+            }
         }
         else
         {
             while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
         }
+
 #if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
         if(dma_buf)
         {
