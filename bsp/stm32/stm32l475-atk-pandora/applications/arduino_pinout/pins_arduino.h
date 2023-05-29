@@ -64,17 +64,29 @@
 #define LED_BUILTIN     D22  /* Default Built-in LED */
 
 /*
- * i2c1 - PC7-SDA PC6-SCL (User I2C)
- * i2c3 - ICM20608, AP3216C (On Board)
- * i2c4 - AHT10 (On Board)
+ * High accuracy timing is provided by hardware timer 7.
+ * ALL of the Cortex-M CPU don't need to provide extra hardware timer.
+ * RTduino will automatically use Cortex-M internal timer to provide the
+ * high accuracy timing.
+ * This is just an example to show how to use hardware timer to provide
+ * high accuracy timing for RTduino.
  */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c4"
+#define RTDUINO_DEFAULT_HWTIMER_DEVICE_NAME      "timer7"
 
-/* spi2 - PB13-SCK  PB14-MISO  PB15-MOSI */
-#define SS      D28  /* Chip select pin of default spi */
-#define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi2"
+/* Serial2 - PA2-TX  PA3-RX */
+#define RTDUINO_SERIAL2_DEVICE_NAME     "uart2"
 
-#ifndef RTDUINO_DEFAULT_SPI_BUS_NAME
+/* I2C */
+#if defined(BSP_USING_ARDUINO_AHT10)
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c4" /* i2c4 - AHT10 (On Board) */
+#elif defined(BSP_USING_ARDUINO_AP3216) || defined(BSP_USING_ARDUINO_ICM20608)
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c3" /* i2c3 - ICM20608, AP3216C (On Board) */
+#else
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1" /* i2c1 - PC7-SDA PC6-SCL (User I2C) */
+#endif /* BSP_USING_ARDUINO_AHT10 */
+
+/* SPI */
+#if defined(BSP_USING_ARDUINO_ST7789)
 /*
  * SPI LCD ST7789 (spi3)
  * LCD-SPI-SDA  PB5
@@ -86,11 +98,10 @@
  */
 #define SS      D36  /* LCD-SPI-CS PD7 */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi3" /* LCD SPI Bus */
-#endif
-
-/* Serial2 - PA2-TX  PA3-RX */
-#define RTDUINO_SERIAL2_DEVICE_NAME      "uart2"
-
-#define RTDUINO_DEFAULT_HWTIMER_DEVICE_NAME      "timer7"
+#else
+/* spi2 - PB13-SCK  PB14-MISO  PB15-MOSI */
+#define SS      D28  /* Chip select pin of default spi */
+#define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi2"
+#endif /* BSP_USING_ARDUINO_ST7789 */
 
 #endif /* Pins_Arduino_h */
