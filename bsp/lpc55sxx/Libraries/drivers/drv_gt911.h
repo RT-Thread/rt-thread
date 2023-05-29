@@ -23,24 +23,24 @@ typedef enum
 
 typedef struct
 {
-    uint8_t  id;
-    uint16_t pos_x;
-    uint16_t pos_y;
-    uint16_t size;
+    rt_uint8_t  id;
+    rt_uint16_t pos_x;
+    rt_uint16_t pos_y;
+    rt_uint16_t size;
 } gt911_point_t;
 
 typedef struct
 {
-    uint8_t       num_pos;
+    rt_uint8_t       num_pos;
     gt911_point_t pos[5];
 } gt911_input_t;
 
 typedef struct
 {
-    uint8_t *tx_data;
-    uint8_t *rx_data;
-    uint16_t tx_len;
-    uint16_t rx_len;
+    rt_uint8_t *tx_data;
+    rt_uint8_t *rx_data;
+    rt_uint16_t tx_len;
+    rt_uint16_t rx_len;
 } gt911_i2c_xfer_t;
 
 typedef rt_err_t (*gt911_ops_reset_t)(void *handle);
@@ -54,10 +54,10 @@ typedef struct
 
 typedef struct
 {
-    uint16_t         pos_x_max;
-    uint16_t         pos_y_max;
-    uint8_t          pos_max;
-    uint8_t          fw_version;
+    rt_uint16_t         pos_x_max;
+    rt_uint16_t         pos_y_max;
+    rt_uint8_t          pos_max;
+    rt_uint8_t          fw_version;
     gt911_int_mode_t int_mode;
     gt911_ops_t      ops;
     void            *user_data;

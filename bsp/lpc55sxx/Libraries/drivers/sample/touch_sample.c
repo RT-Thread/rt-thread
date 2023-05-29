@@ -19,7 +19,6 @@
 
 static int touch_sample(void)
 {
-    int i;
     gt911_input_t ctp_input;
 
     rt_device_t dev = rt_device_find("capt");

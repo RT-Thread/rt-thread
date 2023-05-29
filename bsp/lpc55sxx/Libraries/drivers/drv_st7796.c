@@ -33,38 +33,38 @@ static rt_err_t st7796_lcd_load(st7796_lcd_t *lcd, void *data, rt_uint16_t x_sta
 static rt_err_t st7796_lcd_sleep(st7796_lcd_t *lcd, rt_uint8_t sleep_mode);
 static rt_err_t st7796_lcd_display(st7796_lcd_t *lcd, rt_uint8_t display_on);
 static rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config);
-void nxp_lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data);
+void lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data);
 
 static rt_uint8_t st7796_init_seq_tft_480_320[] =
 {
-    0x01, 0xF0, 0xC3,                                            // Enable command part 1
-    0x01, 0xF0, 0x96,                                            // Enable command part 2
-    0x08, 0xE8, 0x40, 0x82, 0x07, 0x18, 0x27, 0x0A, 0xB6, 0x33,  // DOCA
-    0x01, 0xC5, 0x27,                                            // VCOM control
-    0x01, 0xC2, 0xA7,                                            // Power control 3
-    0x0E, 0xE0, 0xF0, 0x01, 0x06, 0x0F, 0x12, 0x1D, 0x36, 0x54, 0x44, 0x0C, 0x18, 0x16, 0x13, 0x15,  // PGC
-    0x0E, 0xE1, 0xF0, 0x01, 0x05, 0x0A, 0x0B, 0x07, 0x32, 0x44, 0x44, 0x0C, 0x18, 0x17, 0x13, 0x16,  // NGC
-    0x01, 0xF0, 0x3C,  // Disable command part 1
-    0x01, 0xF0, 0x69,  // Disable command part 2
+    0x01, 0xF0, 0xC3,                                            /* Enable command part 1 */
+    0x01, 0xF0, 0x96,                                            /* Enable command part 2*/
+    0x08, 0xE8, 0x40, 0x82, 0x07, 0x18, 0x27, 0x0A, 0xB6, 0x33,  /* DOCA */
+    0x01, 0xC5, 0x27,                                            /* VCOM control */
+    0x01, 0xC2, 0xA7,                                            /* Power control 3 */
+    0x0E, 0xE0, 0xF0, 0x01, 0x06, 0x0F, 0x12, 0x1D, 0x36, 0x54, 0x44, 0x0C, 0x18, 0x16, 0x13, 0x15,  /* PGC */
+    0x0E, 0xE1, 0xF0, 0x01, 0x05, 0x0A, 0x0B, 0x07, 0x32, 0x44, 0x44, 0x0C, 0x18, 0x17, 0x13, 0x16,  /* NGC */
+    0x01, 0xF0, 0x3C,  /* Disable command part 1 */
+    0x01, 0xF0, 0x69,  /* Disable command part 2 */
 };
 
 static rt_uint8_t st7796_init_seq_ips_480_320[] =
 {
-    0x01, 0xF0, 0xC3,                                            // Enable command part 1
-    0x01, 0xF0, 0x96,                                            // Enable command part 2
-    0x01, 0xB4, 0x01,                                            // Display inversion
-    0x02, 0xB1, 0x80, 0x10,                                      // Frame rate control 1
-    0x04, 0xB5, 0x1F, 0x50, 0x00, 0x20,                          // Blanking porch control
-    0x03, 0xB6, 0x8A, 0x07, 0x3B,                                // Display function control
-    0x02, 0xC0, 0x80, 0x64,                                      // Power control 1
-    0x01, 0xC1, 0x13,                                            // Power control 2
-    0x01, 0xC2, 0xA7,                                            // Power control 3
-    0x01, 0xC5, 0x09,                                            // VCOM control
-    0x08, 0xE8, 0x40, 0x8A, 0x00, 0x00, 0x29, 0x19, 0xA5, 0x33,  // DOCA
-    0x0E, 0xE0, 0xF0, 0x06, 0x0B, 0x07, 0x06, 0x05, 0x2E, 0x33, 0x47, 0x3A, 0x17, 0x16, 0x2E, 0x31,  // PGC
-    0x0E, 0xE1, 0xF0, 0x09, 0x0D, 0x09, 0x08, 0x23, 0x2E, 0x33, 0x46, 0x38, 0x13, 0x13, 0x2C, 0x32,  // NGC
-    0x01, 0xF0, 0x3C,  // Disable command part 1
-    0x01, 0xF0, 0x69,  // Disable command part 2
+    0x01, 0xF0, 0xC3,                                            /* Enable command part 1 */
+    0x01, 0xF0, 0x96,                                            /* Enable command part 2 */
+    0x01, 0xB4, 0x01,                                            /* Display inversion */
+    0x02, 0xB1, 0x80, 0x10,                                      /* Frame rate control 1 */
+    0x04, 0xB5, 0x1F, 0x50, 0x00, 0x20,                          /* Blanking porch control */
+    0x03, 0xB6, 0x8A, 0x07, 0x3B,                                /* Display function control */
+    0x02, 0xC0, 0x80, 0x64,                                      /* Power control 1 */
+    0x01, 0xC1, 0x13,                                            /* Power control 2 */
+    0x01, 0xC2, 0xA7,                                            /* Power control 3 */
+    0x01, 0xC5, 0x09,                                            /* VCOM control */
+    0x08, 0xE8, 0x40, 0x8A, 0x00, 0x00, 0x29, 0x19, 0xA5, 0x33,  /* DOCA */
+    0x0E, 0xE0, 0xF0, 0x06, 0x0B, 0x07, 0x06, 0x05, 0x2E, 0x33, 0x47, 0x3A, 0x17, 0x16, 0x2E, 0x31,  /* PGC */
+    0x0E, 0xE1, 0xF0, 0x09, 0x0D, 0x09, 0x08, 0x23, 0x2E, 0x33, 0x46, 0x38, 0x13, 0x13, 0x2C, 0x32,  /* NGC */
+    0x01, 0xF0, 0x3C,  /* Disable command part 1 */
+    0x01, 0xF0, 0x69,  /* Disable command part 2 */
 };
 
 static rt_err_t _st7796_init_seq(st7796_lcd_t *lcd)
@@ -86,7 +86,6 @@ static rt_err_t _st7796_init_seq(st7796_lcd_t *lcd)
 static rt_err_t _st7796_window(st7796_lcd_t *lcd, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end)
 {
     rt_uint16_t real_x_start, real_x_end, real_y_start, real_y_end;
-
     rt_uint16_t x_offset, y_offset;
     switch (lcd->config.direction)
     {
@@ -110,7 +109,6 @@ static rt_err_t _st7796_window(st7796_lcd_t *lcd, rt_uint16_t x_start, rt_uint16
             x_offset = 0;
             y_offset = 0;
     }
-
     real_x_start = x_start + x_offset;
     real_x_end   = x_end + x_offset;
     real_y_start = y_start + y_offset;
@@ -123,13 +121,11 @@ static rt_err_t _st7796_window(st7796_lcd_t *lcd, rt_uint16_t x_start, rt_uint16
     {
         return -RT_ERROR;
     }
-
     tx_buf[0] = 0x2B;
     tx_buf[1] = ((rt_uint8_t)(real_y_start >> 0x08U) & 0xFFU);
     tx_buf[2] = (real_y_start & 0xFFU);
     tx_buf[3] = ((rt_uint8_t)(real_y_end >> 0x08U) & 0xFFU);
     tx_buf[4] = (real_y_end & 0xFFU);
-
     if (lcd->cb.write_cmd_cb(lcd->user_data, tx_buf, 0x05) != RT_EOK)
     {
         return -RT_ERROR;
@@ -167,7 +163,6 @@ static rt_err_t st7796_lcd_init(st7796_lcd_t *lcd)
 static rt_err_t st7796_lcd_load(st7796_lcd_t *lcd, void *data, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end)
 {
     rt_uint32_t pixel_count = (y_end - y_start + 1) * (x_end - x_start + 1);
-
     rt_uint32_t data_len = 0;
 
     switch (lcd->config.pix_fmt)
@@ -187,19 +182,18 @@ static rt_err_t st7796_lcd_load(st7796_lcd_t *lcd, void *data, rt_uint16_t x_sta
             break;
     }
 
-    // Set cursor
+    /* Set cursor */
     if (_st7796_window(lcd, x_start, x_end, y_start, y_end) != RT_EOK)
     {
         return -RT_ERROR;
     }
 
-    rt_uint8_t command = 0x2C;  // Memory Write
+    rt_uint8_t command = 0x2C;  /* Memory Write */
     if (lcd->cb.write_cmd_cb(lcd->user_data, &command, 0x01) != RT_EOK)
     {
         return -RT_ERROR;
     }
-
-    // Write pixel data
+    /* Write pixel data */
     if (lcd->cb.write_data_cb(lcd->user_data, data, data_len) != RT_EOK)
     {
         return -RT_ERROR;
@@ -208,7 +202,7 @@ static rt_err_t st7796_lcd_load(st7796_lcd_t *lcd, void *data, rt_uint16_t x_sta
     return RT_EOK;
 }
 
-void nxp_lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data)
+void lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data)
 {
     nxplcd_t *lcd_obj = (nxplcd_t *)rt_device_find("lcd");
     st7796_lcd_load(&lcd_obj->st7796, data, x_start, x_end, y_start, y_end);
@@ -216,20 +210,19 @@ void nxp_lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, r
 
 static rt_err_t st7796_lcd_sleep(st7796_lcd_t *lcd, rt_uint8_t sleep_mode)
 {
-    // Write SLPIN or SLPOUT command.
+    /* Write SLPIN or SLPOUT command */
     rt_uint8_t command = sleep_mode ? 0x10 : 0x11;
     return lcd->cb.write_cmd_cb(lcd->user_data, &command, 0x01);
 }
 
 static rt_err_t st7796_lcd_display(st7796_lcd_t *lcd, rt_uint8_t display_on)
 {
-    // write display_on command;
+    /* write display_on command */
     rt_uint8_t command = display_on ? 0x29 : 0x28;
     if (lcd->cb.write_cmd_cb(lcd->user_data, &command, 0x01) != RT_EOK)
     {
         return -RT_ERROR;
     }
-
     if ((lcd->cb.backlight_cb != NULL) && (lcd->cb.backlight_cb(lcd->user_data, display_on) != RT_EOK))
     {
         return -RT_ERROR;
@@ -242,7 +235,7 @@ static rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config)
 {
     lcd->config.direction = config->direction;
 
-    // Write inversion command.
+    /* Write inversion command */
     rt_uint8_t command[2] = {config->inversion ? 0x20 : 0x21, 0x00};
     if (lcd->cb.write_cmd_cb(lcd->user_data, command, 0x01) != RT_EOK)
     {
@@ -287,7 +280,6 @@ static rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len
 
     rt_pin_write(BSP_LCD_DC_PIN, PIN_LOW);
     rt_spi_send(nxp_lcd->spi_dev, cmd, 1);
-
     if (len > 1)
     {
         rt_pin_write(BSP_LCD_DC_PIN, PIN_HIGH);
@@ -319,7 +311,6 @@ int drv_nxplcd_init(void)
     lcd_spi_obj.st7796.config.inversion = 0;
     lcd_spi_obj.st7796.config.mirrored = 0;
     lcd_spi_obj.st7796.cb.reset_cb = lcd_impl_reset;
-
     lcd_spi_obj.st7796.cb.write_cmd_cb = lcd_impl_write_cmd;
     lcd_spi_obj.st7796.cb.write_data_cb = lcd_impl_write_data;
     lcd_spi_obj.st7796.user_data = lcd_spi_obj.parent.user_data = &lcd_spi_obj;

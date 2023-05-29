@@ -41,28 +41,28 @@ static void lcd_sample(void)
     {
         for (rt_uint16_t i = 0; i < 159; i++)
         {
-            nxp_lcd_load(i, i, 0, 319, orange);
+            lcd_load(i, i, 0, 319, orange);
         }
         for (rt_uint16_t i = 159; i < 318; i++)
         {
-            nxp_lcd_load(i, i, 0, 319, blue);
+            lcd_load(i, i, 0, 319, blue);
         }
         for (rt_uint16_t i = 318; i < 479; i++)
         {
-            nxp_lcd_load(i, i, 0, 319, green);
+            lcd_load(i, i, 0, 319, green);
         }
 
         for (rt_uint16_t i = 479; i > 318; i--)
         {
-            nxp_lcd_load(i, i, 0, 319, blue);
+            lcd_load(i, i, 0, 319, blue);
         }
         for (rt_uint16_t i = 318; i > 159; i--)
         {
-            nxp_lcd_load(i, i, 0, 319, orange);
+            lcd_load(i, i, 0, 319, orange);
         }
         for (rt_uint16_t i = 159; i > 0; i--)
         {
-            nxp_lcd_load(i, i, 0, 319, green);
+            lcd_load(i, i, 0, 319, green);
         }
     }
 }

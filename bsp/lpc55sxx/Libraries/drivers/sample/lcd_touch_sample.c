@@ -23,7 +23,6 @@ static void lcd_touch_sample(void)
     static rt_uint16_t white[319*2];
     rt_uint16_t green[4*4*2];
     nxplcd_t *lcd_obj = (nxplcd_t *)rt_device_find("lcd");
-
     rt_device_t dev = rt_device_find("capt");
     capt_t *capt = (capt_t*)dev->user_data;
     gt911_input_t ctp_input;
@@ -38,27 +37,26 @@ static void lcd_touch_sample(void)
     }
     for (rt_uint16_t i = 0; i < 159; i++)
     {
-        nxp_lcd_load(i, i, 0, 319, white);
+        lcd_load(i, i, 0, 319, white);
     }
     for (rt_uint16_t i = 159; i < 318; i++)
     {
-        nxp_lcd_load(i, i, 0, 319, white);
+        lcd_load(i, i, 0, 319, white);
     }
     for (rt_uint16_t i = 318; i < 479; i++)
     {
-        nxp_lcd_load(i, i, 0, 319, white);
+        lcd_load(i, i, 0, 319, white);
     }
 
     while(1)
     {
         gt911_ctp_read(&capt->gt911, &ctp_input);
-
         for (uint8_t i = 0; i < ctp_input.num_pos; i++)
         {
             /* Found track ID #0 */
             if (ctp_input.pos[i].id == 0)
             {
-                nxp_lcd_load(ctp_input.pos[i].pos_y, ctp_input.pos[i].pos_y+4, ctp_input.pos[i].pos_x, ctp_input.pos[i].pos_x+4, green);
+                lcd_load(ctp_input.pos[i].pos_y, ctp_input.pos[i].pos_y+4, ctp_input.pos[i].pos_x, ctp_input.pos[i].pos_x+4, green);
                 rt_kprintf("x:%d, y:%d\r\n", ctp_input.pos[i].pos_y , ctp_input.pos[i].pos_x);
             }
         }
