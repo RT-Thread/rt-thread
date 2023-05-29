@@ -8,7 +8,7 @@
  * 2023-05-26     Chushicheng  the first version
  */
 
-#include "drv_nxp_touch.h"
+#include "drv_gt911.h"
 
 #ifndef BSP_TOUCH_I2C_BUS
 #define BSP_TOUCH_I2C_BUS       "i2c1"
@@ -203,6 +203,6 @@ int drv_capt_hw_init(void)
     return RT_EOK;
 }
 
-INIT_DEVICE_EXPORT(drv_capt_hw_init);
+INIT_COMPONENT_EXPORT(drv_capt_hw_init);
 
 

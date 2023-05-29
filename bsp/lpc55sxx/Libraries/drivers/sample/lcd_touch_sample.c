@@ -15,8 +15,8 @@
 */
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "drv_nxp_lcd.h"
-#include "drv_nxp_touch.h"
+#include "drv_st7796.h"
+#include "drv_gt911.h"
 
 static void lcd_touch_sample(void){
     static rt_uint16_t white[319*2];

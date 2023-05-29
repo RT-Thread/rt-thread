@@ -15,7 +15,7 @@
 */
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "drv_nxp_touch.h"
+#include "drv_gt911.h"
 
 static int touch_sample(void)
 {

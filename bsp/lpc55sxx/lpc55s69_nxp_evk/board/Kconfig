@@ -295,12 +295,21 @@ menu "Onboard Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
-    menuconfig BSP_USING_NXP_LCD
-        config BSP_USING_NXP_LCD
+    menuconfig BSP_USING_NXP_LCDM_S
+        config BSP_USING_NXP_LCDM_S
             bool "Enable NXP LCD"
+            select BSP_USING_LCD
+            select BSP_USING_TOUCH
+            select BSP_USING_I2C
             select BSP_USING_SPI
             default n
-            if BSP_USING_NXP_LCD
+
+    menuconfig BSP_USING_LCD
+        config BSP_USING_LCD
+            bool "Enable LCD"
+            select BSP_USING_SPI
+            default n
+            if BSP_USING_LCD
                 config BSP_LCD_SPI_BUS
                     string "the spi bus for lcd"
                     default "spi3"
@@ -315,12 +324,12 @@ menu "Board extended module Drivers"
                     default 3
             endif
 
-    menuconfig BSP_USING_NXP_TOUCH
-        config BSP_USING_NXP_TOUCH
-            bool "Enable NXP TOUCH"
+    menuconfig BSP_USING_TOUCH
+        config BSP_USING_TOUCH
+            bool "Enable TOUCH"
             select BSP_USING_I2C
             default n
-            if BSP_USING_NXP_TOUCH
+            if BSP_USING_TOUCH
                 config BSP_TOUCH_I2C_BUS
                     string "the i2c bus for lcd"
                     default "i2c1"

@@ -8,8 +8,8 @@
  * 2023-05-23     Chushicheng  the first version.
  */
 
-#ifndef DRV_NXP_LCD_H__
-#define DRV_NXP_LCD_H__
+#ifndef DRV_ST7796_H__
+#define DRV_ST7796_H__
 
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -60,5 +60,5 @@ typedef struct
 void nxp_lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data);
 int drv_nxplcd_init(void);
 
-#endif /* DRV_NXP_LCD_H__ */
+#endif /* DRV_ST7796_H__ */
 

@@ -9,7 +9,7 @@
  */
 
 #include "drv_spi.h"
-#include "drv_nxp_lcd.h"
+#include "drv_st7796.h"
 
 #ifndef ST7796_LCD_IPS_PANEL
 #define ST7796_LCD_IPS_PANEL 1

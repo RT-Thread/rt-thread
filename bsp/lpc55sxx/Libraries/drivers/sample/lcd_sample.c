@@ -15,7 +15,7 @@
 */
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "drv_nxp_lcd.h"
+#include "drv_st7796.h"
 
 static void lcd_sample(void){
     static rt_uint16_t orange[319*2];

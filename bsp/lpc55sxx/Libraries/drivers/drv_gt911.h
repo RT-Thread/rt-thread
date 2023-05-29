@@ -8,8 +8,8 @@
  * 2023-05-26     Chushicheng  the first version
  */
 
-#ifndef __DRV_LCD_FLEXIO_H
-#define __DRV_LCD_FLEXIO_H
+#ifndef __DRV_GT911_H
+#define __DRV_GT911_H
 
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -67,4 +67,4 @@ typedef struct
 rt_err_t gt911_ctp_read(gt911_t *ctp, gt911_input_t *input);
 int drv_capt_hw_init(void);
 
-#endif
+#endif /* __DRV_GT911_H */
