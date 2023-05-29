@@ -15,28 +15,32 @@
 #include <rtdevice.h>
 
 #define LCD_DEVICE_NAME  "spi_lcd"
-typedef enum {
+typedef enum
+{
     ST7796_DIR_0   = 0x08U,
     ST7796_DIR_90  = 0x68U,
     ST7796_DIR_180 = 0xC8U,
     ST7796_DIR_270 = 0xA8U,
 } st7796_direction_t;
 
-typedef enum {
+typedef enum
+{
     ST7796_RGB444 = 3,
     ST7796_RGB565 = 5,
     ST7796_RGB666 = 6,
     ST7796_RGB888 = 7
 } st7796_pixfmt_t;
 
-typedef struct {
+typedef struct
+{
     rt_err_t (*reset_cb)(void *handle);
     rt_err_t (*backlight_cb)(void *handle, rt_uint8_t on);
     rt_err_t (*write_cmd_cb)(void *handle, rt_uint8_t *cmd, rt_uint8_t len);
     rt_err_t (*write_data_cb)(void *handle, void *data, rt_uint32_t len);
 } st7796_cb_t;
 
-typedef struct {
+typedef struct
+{
     st7796_direction_t direction;
     st7796_pixfmt_t pix_fmt;
     rt_uint8_t inversion;
@@ -44,7 +48,8 @@ typedef struct {
     uint8_t mirrored;
 } st7796_config_t;
 
-typedef struct {
+typedef struct
+{
     void *user_data;
     st7796_cb_t cb;
     st7796_config_t config;

@@ -143,7 +143,8 @@ static rt_err_t _st7796_reset(st7796_lcd_t *lcd)
     return lcd->cb.reset_cb(lcd->user_data);
 }
 
-static rt_err_t lcd_impl_reset(void *handle){
+static rt_err_t lcd_impl_reset(void *handle)
+{
     rt_pin_write(BSP_LCD_RST_PIN, PIN_LOW);
     rt_thread_mdelay(50);
     rt_pin_write(BSP_LCD_RST_PIN, PIN_HIGH);
@@ -169,7 +170,8 @@ static rt_err_t st7796_lcd_load(st7796_lcd_t *lcd, void *data, rt_uint16_t x_sta
 
     rt_uint32_t data_len = 0;
 
-    switch (lcd->config.pix_fmt) {
+    switch (lcd->config.pix_fmt)
+    {
         case ST7796_RGB444:
             data_len = pixel_count * 3 / 2;
             break;
@@ -263,7 +265,8 @@ static rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config)
         command[1] &= ~0x08U;
     }
 
-    if (config->mirrored) {
+    if (config->mirrored)
+    {
         /* Invert X or Y bit */
         if (config->direction == ST7796_DIR_90 || config->direction == ST7796_DIR_270)
         {
@@ -278,7 +281,8 @@ static rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config)
     return lcd->cb.write_cmd_cb(lcd->user_data, command, 0x02);
 }
 
-static rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len) {
+static rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len)
+{
     nxplcd_t *nxp_lcd = (nxplcd_t*)handle;
 
     rt_pin_write(BSP_LCD_DC_PIN, PIN_LOW);
@@ -293,7 +297,8 @@ static rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len
     return RT_EOK;
 }
 
-static rt_err_t lcd_impl_write_data(void *handle, void *data, rt_uint32_t len) {
+static rt_err_t lcd_impl_write_data(void *handle, void *data, rt_uint32_t len)
+{
     nxplcd_t *nxp_lcd = (nxplcd_t*)handle;
 
     rt_pin_write(BSP_LCD_DC_PIN, PIN_HIGH);

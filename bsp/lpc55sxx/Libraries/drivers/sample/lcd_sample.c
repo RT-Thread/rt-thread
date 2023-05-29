@@ -17,7 +17,8 @@
 #include <rtdevice.h>
 #include "drv_st7796.h"
 
-static void lcd_sample(void){
+static void lcd_sample(void)
+{
     static rt_uint16_t orange[319*2];
     static rt_uint16_t green[319*2];
     static rt_uint16_t blue[319*2];

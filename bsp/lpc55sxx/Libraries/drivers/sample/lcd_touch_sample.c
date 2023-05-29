@@ -18,7 +18,8 @@
 #include "drv_st7796.h"
 #include "drv_gt911.h"
 
-static void lcd_touch_sample(void){
+static void lcd_touch_sample(void)
+{
     static rt_uint16_t white[319*2];
     rt_uint16_t green[4*4*2];
     nxplcd_t *lcd_obj = (nxplcd_t *)rt_device_find("lcd");

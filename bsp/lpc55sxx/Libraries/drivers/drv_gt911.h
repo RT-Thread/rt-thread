@@ -14,25 +14,29 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-typedef enum {
+typedef enum
+{
     GT911_INT_MODE_IRQ_RISE = 0x00U,
     GT911_INT_MODE_IRQ_FALL = 0x01U,
     GT911_INT_MODE_POLL     = 0x03U,
 } gt911_int_mode_t;
 
-typedef struct {
+typedef struct
+{
     uint8_t  id;
     uint16_t pos_x;
     uint16_t pos_y;
     uint16_t size;
 } gt911_point_t;
 
-typedef struct {
+typedef struct
+{
     uint8_t       num_pos;
     gt911_point_t pos[5];
 } gt911_input_t;
 
-typedef struct {
+typedef struct
+{
     uint8_t *tx_data;
     uint8_t *rx_data;
     uint16_t tx_len;
@@ -42,12 +46,14 @@ typedef struct {
 typedef rt_err_t (*gt911_ops_reset_t)(void *handle);
 typedef rt_err_t (*gt911_ops_i2c_xfer_t)(void *handle, gt911_i2c_xfer_t *xfer);
 
-typedef struct {
+typedef struct
+{
     gt911_ops_reset_t    reset;
     gt911_ops_i2c_xfer_t xfer;
 } gt911_ops_t;
 
-typedef struct {
+typedef struct
+{
     uint16_t         pos_x_max;
     uint16_t         pos_y_max;
     uint8_t          pos_max;

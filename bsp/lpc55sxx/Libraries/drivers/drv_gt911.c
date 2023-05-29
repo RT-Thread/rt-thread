@@ -46,7 +46,8 @@ static rt_err_t gt911_ctp_config_interrupt(gt911_t *ctp);
 static rt_err_t gt911_ctp_init(gt911_t *ctp);
 rt_err_t gt911_ctp_read(gt911_t *ctp, gt911_input_t *input);
 
-static rt_err_t gt911_ctp_init(gt911_t *ctp) {
+static rt_err_t gt911_ctp_init(gt911_t *ctp)
+{
     if (ctp->ops.reset)
     {
         if (ctp->ops.reset(ctp->user_data) != RT_EOK)
@@ -73,7 +74,8 @@ static rt_err_t gt911_ctp_init(gt911_t *ctp) {
     return RT_EOK;
 }
 
-rt_err_t gt911_ctp_read(gt911_t *ctp, gt911_input_t *input) {
+rt_err_t gt911_ctp_read(gt911_t *ctp, gt911_input_t *input)
+{
     uint8_t rx_data[40] = {0};
 
     if (gt911_ctp_read_reg(ctp, GT911_REG_COORD, rx_data, 1) != RT_EOK)
@@ -111,10 +113,12 @@ rt_err_t gt911_ctp_read(gt911_t *ctp, gt911_input_t *input) {
     return RT_EOK;
 }
 
-static rt_err_t gt911_ctp_read_reg(gt911_t *ctp, uint16_t reg, uint8_t *data, uint16_t len) {
+static rt_err_t gt911_ctp_read_reg(gt911_t *ctp, uint16_t reg, uint8_t *data, uint16_t len)
+{
     uint8_t tx_data[2] = {(reg >> 8U), (reg & 0xFFU)};
 
-    gt911_i2c_xfer_t xfer = {
+    gt911_i2c_xfer_t xfer =
+    {
         .tx_data = tx_data,
         .rx_data = data,
         .tx_len  = 2,
@@ -124,10 +128,12 @@ static rt_err_t gt911_ctp_read_reg(gt911_t *ctp, uint16_t reg, uint8_t *data, ui
     return ctp->ops.xfer(ctp->user_data, &xfer);
 }
 
-static rt_err_t gt911_ctp_write_reg(gt911_t *ctp, uint16_t reg, uint8_t data) {
+static rt_err_t gt911_ctp_write_reg(gt911_t *ctp, uint16_t reg, uint8_t data)
+{
     uint8_t tx_data[3] = {(reg >> 8U), (reg & 0xFFU), data};
 
-    gt911_i2c_xfer_t xfer = {
+    gt911_i2c_xfer_t xfer =
+    {
         .tx_data = tx_data,
         .rx_data = NULL,
         .tx_len  = 3,
@@ -137,11 +143,13 @@ static rt_err_t gt911_ctp_write_reg(gt911_t *ctp, uint16_t reg, uint8_t data) {
     return ctp->ops.xfer(ctp->user_data, &xfer);
 }
 
-static rt_err_t gt911_ctp_sw_reset(gt911_t *ctp) {
+static rt_err_t gt911_ctp_sw_reset(gt911_t *ctp)
+{
     return gt911_ctp_write_reg(ctp, GT911_REG_RT_CMD, (GT911_REG_RT_CMD_SW_RST_Msk));
 }
 
-static rt_err_t gt911_ctp_read_config(gt911_t *ctp) {
+static rt_err_t gt911_ctp_read_config(gt911_t *ctp)
+{
     uint8_t rx_data[7];
 
     if (gt911_ctp_read_reg(ctp, GT911_REG_CONFIG_VERSION, rx_data, 7) != RT_EOK)
@@ -157,7 +165,8 @@ static rt_err_t gt911_ctp_read_config(gt911_t *ctp) {
     return RT_EOK;
 }
 
-static rt_err_t gt911_ctp_config_interrupt(gt911_t *ctp) {
+static rt_err_t gt911_ctp_config_interrupt(gt911_t *ctp)
+{
     uint8_t mod_sw1 = 0x00U;
 
     if (gt911_ctp_read_reg(ctp, GT911_REG_MODULE_SW1, &mod_sw1, 0x01) != RT_EOK)
