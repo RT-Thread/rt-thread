@@ -281,6 +281,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_GPIO
         select BSP_USING_ADC
         select BSP_USING_ADC0
+        select BSP_USING_ADC0_CH0
         select BSP_USING_PWM
         select BSP_USING_CTIMER1_MAT0
         select BSP_USING_CTIMER2_MAT0
