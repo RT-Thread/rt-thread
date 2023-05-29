@@ -6,7 +6,11 @@ __attribute__((section(".fw_header"))) struct bootheader_t fw_header = {
     /*flash config */
     .flash_cfg.magiccode = 0x47464346,
     .flash_cfg.cfg.ioMode = 0x11,               /*!< Serail flash interface mode,bit0-3:IF mode,bit4:unwrap */
+#if defined (BSP_USING_BL61X_MODULE_DEFAULT)
     .flash_cfg.cfg.cReadSupport = 0x00,         /*!< Support continuous read mode,bit0:continuous read mode support,bit1:read mode cfg */
+#elif defined (BSP_USING_BL61X_MODULE_M0P)
+    .flash_cfg.cfg.cReadSupport = 0x01,         /*!< Support continuous read mode,bit0:continuous read mode support,bit1:read mode cfg */
+#endif
     .flash_cfg.cfg.clkDelay = 0x01,             /*!< SPI clock delay,bit0-3:delay,bit4-6:pad delay */
     .flash_cfg.cfg.clkInvert = 0x01,            /*!< SPI clock phase invert,bit0:clck invert,bit1:rx invert,bit2-4:pad delay,bit5-7:pad delay */
     .flash_cfg.cfg.resetEnCmd = 0x66,           /*!< Flash enable reset command */

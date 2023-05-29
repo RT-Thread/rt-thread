@@ -1,5 +1,9 @@
 menu "General Drivers Configuration"
 
+    config BSP_DRIVER_DEBUG
+        bool "Enable Driver Debug Log Output"
+        default n
+
     menu "General Purpose UARTs"
     menuconfig BSP_USING_UART0
         bool "Enable UART0"
@@ -1399,6 +1403,11 @@ menu "General Drivers Configuration"
         
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable On-Chip FLASH"
+        default n
+    config BSP_USING_SDH
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        bool "Enable Secure Digital Host Controller(SDH)"
         default n
     menuconfig BSP_USING_FS
         bool "Enable File System"
