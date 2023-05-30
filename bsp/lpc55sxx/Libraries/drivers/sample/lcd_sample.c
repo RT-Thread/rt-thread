@@ -13,7 +13,6 @@
  * Command invocation format: lcd_sample
  * Program function: Full screen refresh display
 */
-#include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_st7796.h"
 

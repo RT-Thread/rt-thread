@@ -63,7 +63,7 @@ typedef struct
 } nxplcd_t;
 
 void lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data);
-int drv_nxplcd_init(void);
+int drv_st7796_init(void);
 
 #endif /* DRV_ST7796_H__ */
 

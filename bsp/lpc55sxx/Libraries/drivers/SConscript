@@ -60,7 +60,7 @@ if GetDepend('BSP_USING_TOUCH'):
 if GetDepend('BSP_USING_NXP_LCDM_S'):
     src += ['sample/lcd_touch_sample.c']
 
-path =  [cwd,cwd + '/config']
+path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

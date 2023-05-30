@@ -11,6 +11,9 @@
 #include "drv_spi.h"
 #include "drv_st7796.h"
 
+#define LOG_TAG             "drv.st7796"
+#include <drv_log.h>
+
 #ifndef ST7796_LCD_IPS_PANEL
 #define ST7796_LCD_IPS_PANEL 1
 #else
@@ -299,7 +302,7 @@ static rt_err_t lcd_impl_write_data(void *handle, void *data, rt_uint32_t len)
     return RT_EOK;
 }
 
-int drv_nxplcd_init(void)
+int drv_st7796_init(void)
 {
     rt_pin_mode(BSP_LCD_RST_PIN, PIN_MODE_OUTPUT);
     rt_pin_mode(BSP_LCD_DC_PIN, PIN_MODE_OUTPUT);
@@ -319,7 +322,7 @@ int drv_nxplcd_init(void)
     lcd_spi_obj.spi_dev = (struct rt_spi_device *)rt_device_find(LCD_DEVICE_NAME);
     if (!lcd_spi_obj.spi_dev)
     {
-        rt_kprintf("lcd init run failed! can't find %s device!\n", LCD_DEVICE_NAME);
+        LOG_E("lcd init run failed! can't find %s device!\n", LCD_DEVICE_NAME);
         return -RT_ERROR;
     }
     struct rt_spi_configuration cfg;
@@ -334,4 +337,4 @@ int drv_nxplcd_init(void)
     return RT_EOK;
 }
 
-INIT_ENV_EXPORT(drv_nxplcd_init);
+INIT_ENV_EXPORT(drv_st7796_init);
