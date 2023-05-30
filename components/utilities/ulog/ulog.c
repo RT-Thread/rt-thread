@@ -403,10 +403,10 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
         else
         {
             /* recalculate the log start address and log size when backend not supported color */
-            rt_size_t color_info_len = rt_strlen(color_output_info[level]), output_size = size;
-            if (color_info_len)
+            rt_size_t output_size = size;
+            if (color_output_info[level] != RT_NULL)
             {
-                rt_size_t color_hdr_len = rt_strlen(CSI_START) + color_info_len;
+                rt_size_t color_hdr_len = rt_strlen(CSI_START) + rt_strlen(color_output_info[level]);
 
                 log += color_hdr_len;
                 output_size -= (color_hdr_len + (sizeof(CSI_END) - 1));
