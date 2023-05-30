@@ -13,7 +13,6 @@
  * Command invocation format: touch_sample
  * Program function: The terminal prints the coordinates of the touch point
 */
-#include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_gt911.h"
 
@@ -35,7 +34,7 @@ static int touch_sample(void)
             /* Found track ID #0 */
             if (ctp_input.pos[i].id == 0)
             {
-                rt_kprintf("x:%d, y:%d\r\n", ctp_input.pos[i].pos_y, ctp_input.pos[i].pos_x);
+                rt_kprintf("x:%d, y:%d\r\n", capt->gt911.pos_y_max - ctp_input.pos[i].pos_y, ctp_input.pos[i].pos_x);
             }
         }
 

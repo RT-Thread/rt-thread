@@ -312,7 +312,7 @@ int drv_st7796_init(void)
     lcd_spi_obj.st7796.config.pix_fmt = ST7796_RGB565;
     lcd_spi_obj.st7796.config.bgr_mode = 1;
     lcd_spi_obj.st7796.config.inversion = 0;
-    lcd_spi_obj.st7796.config.mirrored = 0;
+    lcd_spi_obj.st7796.config.mirrored = 1;
     lcd_spi_obj.st7796.cb.reset_cb = lcd_impl_reset;
     lcd_spi_obj.st7796.cb.write_cmd_cb = lcd_impl_write_cmd;
     lcd_spi_obj.st7796.cb.write_data_cb = lcd_impl_write_data;
@@ -336,5 +336,4 @@ int drv_st7796_init(void)
 
     return RT_EOK;
 }
-
 INIT_ENV_EXPORT(drv_st7796_init);

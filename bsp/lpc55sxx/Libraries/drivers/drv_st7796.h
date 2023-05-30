@@ -11,10 +11,9 @@
 #ifndef DRV_ST7796_H__
 #define DRV_ST7796_H__
 
-#include <rtthread.h>
 #include <rtdevice.h>
 
-#define LCD_DEVICE_NAME  "spi_lcd"
+#define LCD_DEVICE_NAME  "st7796"
 typedef enum
 {
     ST7796_DIR_0   = 0x08U,

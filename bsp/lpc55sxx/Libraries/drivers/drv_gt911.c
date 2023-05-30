@@ -195,7 +195,4 @@ int drv_capt_hw_init(void)
 
     return RT_EOK;
 }
-
 INIT_COMPONENT_EXPORT(drv_capt_hw_init);
-
-

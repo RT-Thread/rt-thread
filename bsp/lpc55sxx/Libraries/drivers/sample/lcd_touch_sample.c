@@ -13,7 +13,6 @@
  * Command invocation format: lcd_touch_sample
  * Program functions: draw the trajectory of the touch on the screen and print the coordinates of the touch point on the terminal
 */
-#include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_st7796.h"
 #include "drv_gt911.h"
@@ -56,8 +55,8 @@ static void lcd_touch_sample(void)
             /* Found track ID #0 */
             if (ctp_input.pos[i].id == 0)
             {
-                lcd_load(ctp_input.pos[i].pos_y, ctp_input.pos[i].pos_y+4, ctp_input.pos[i].pos_x, ctp_input.pos[i].pos_x+4, green);
-                rt_kprintf("x:%d, y:%d\r\n", ctp_input.pos[i].pos_y , ctp_input.pos[i].pos_x);
+                lcd_load(capt->gt911.pos_y_max - ctp_input.pos[i].pos_y, capt->gt911.pos_y_max - ctp_input.pos[i].pos_y+4, ctp_input.pos[i].pos_x, ctp_input.pos[i].pos_x+4, green);
+                rt_kprintf("x:%d, y:%d\r\n", capt->gt911.pos_y_max - ctp_input.pos[i].pos_y , ctp_input.pos[i].pos_x);
             }
         }
     }

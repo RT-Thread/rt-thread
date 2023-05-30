@@ -11,7 +11,6 @@
 #ifndef __DRV_GT911_H
 #define __DRV_GT911_H
 
-#include <rtthread.h>
 #include <rtdevice.h>
 
 typedef enum
