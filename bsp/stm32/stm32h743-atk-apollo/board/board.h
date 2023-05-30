@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
   #define LSI_VALUE  ((uint32_t)32000)
 #endif
 

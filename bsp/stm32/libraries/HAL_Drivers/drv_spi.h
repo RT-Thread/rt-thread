@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,8 +8,8 @@
  * 2018-11-5      SummerGift   first version
  */
 
-#ifndef __DRV_SPI_H_
-#define __DRV_SPI_H_
+#ifndef __DRV_SPI_H__
+#define __DRV_SPI_H__
 
 #include <rtthread.h>
 #include "rtdevice.h"
@@ -17,7 +17,15 @@
 #include <drv_common.h>
 #include "drv_dma.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef* cs_gpiox, uint16_t cs_gpio_pin);
+
+#ifdef __cplusplus
+}
+#endif
 
 struct stm32_hw_spi_cs
 {
@@ -54,9 +62,9 @@ struct stm32_spi
         DMA_HandleTypeDef handle_rx;
         DMA_HandleTypeDef handle_tx;
     } dma;
-    
+
     rt_uint8_t spi_dma_flag;
     struct rt_spi_bus spi_bus;
 };
 
-#endif /*__DRV_SPI_H_ */
+#endif /*__DRV_SPI_H__ */

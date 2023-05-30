@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -154,7 +154,7 @@ int32_t touch_get_state(struct touch_state *state)
     res = touch_read(STMPE811_TSC_CTRL, &val);
     if (res < 0) return -1;
     state->pressed = (val & (1 << 7)) ? 1 : 0;
-  
+
     if (state->pressed)
     {
         val = STMPE811_TSC_DATA;
@@ -218,7 +218,7 @@ static int rt_hw_touch_init(void)
 
     /* register touch device to RT-Thread */
     rt_device_register(&touch, "touch", RT_DEVICE_FLAG_RDWR);
-    
+
     return RT_EOK;
 }
 INIT_BOARD_EXPORT(rt_hw_touch_init);

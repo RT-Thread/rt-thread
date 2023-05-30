@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -434,18 +434,20 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
 {
     rt_err_t result = RT_EOK;
 
-    while (rt_device_read(client->device, 0, ch, 1) == 0)
+__retry:
+    result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
+    if (result != RT_EOK)
     {
-        rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
-
-        result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
-        if (result != RT_EOK)
-        {
-            return result;
-        }
+        return result;
     }
-
-    return RT_EOK;
+    if(rt_device_read(client->device, 0, ch, 1) == 1)
+    {
+        return RT_EOK;
+    }
+    else
+    {
+        goto __retry;
+    }
 }
 
 /**
@@ -577,7 +579,7 @@ int at_obj_set_urc_table(at_client_t client, const struct at_urc *urc_table, rt_
         client->urc_table[client->urc_table_size].urc = urc_table;
         client->urc_table[client->urc_table_size].urc_size = table_sz;
         client->urc_table_size++;
-        
+
         rt_free(old_urc_table);
     }
 
@@ -916,6 +918,11 @@ int at_client_init(const char *dev_name,  rt_size_t recv_bufsz)
 
     RT_ASSERT(dev_name);
     RT_ASSERT(recv_bufsz > 0);
+
+    if (at_client_get(dev_name) != RT_NULL)
+    {
+        return result;
+    }
 
     for (idx = 0; idx < AT_CLIENT_NUM_MAX && at_client_table[idx].device; idx++);
 

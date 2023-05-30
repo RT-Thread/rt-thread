@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,7 +22,7 @@ void _Mtxinit(_Rmtx *m)
     rt_mutex_t mutex;
 
     RT_ASSERT(m != RT_NULL);
-    
+
     mutex = (rt_mutex_t)m;
     rt_mutex_init(mutex, "iarMtx", RT_IPC_FLAG_FIFO);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -134,7 +134,7 @@ RTM_EXPORT(rt_mp_init);
 rt_err_t rt_mp_detach(struct rt_mempool *mp)
 {
     struct rt_thread *thread;
-    register rt_ubase_t temp;
+    register rt_ubase_t level;
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
@@ -145,7 +145,7 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
     while (!rt_list_isempty(&(mp->suspend_thread)))
     {
         /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         /* get next suspend thread */
         thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
@@ -160,7 +160,7 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
         rt_thread_resume(thread);
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
     }
 
     /* detach object */
@@ -250,7 +250,7 @@ RTM_EXPORT(rt_mp_create);
 rt_err_t rt_mp_delete(rt_mp_t mp)
 {
     struct rt_thread *thread;
-    register rt_ubase_t temp;
+    register rt_ubase_t level;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -263,7 +263,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
     while (!rt_list_isempty(&(mp->suspend_thread)))
     {
         /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         /* get next suspend thread */
         thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
@@ -278,7 +278,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
         rt_thread_resume(thread);
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
     }
 
     /* release allocated room */

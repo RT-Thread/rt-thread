@@ -1,21 +1,7 @@
 /*
- * File      : drv_clock.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -541,7 +527,7 @@ rt_err_t mmc_set_clk(enum mmc_clk_id clk_id, int hz)
         *mmc_clk &= ~(0x1 << 31);
         return RT_EOK;
     }
-    
+
     if (hz <= 24000000)
     {
         pll = (0x0 << 24);
@@ -593,7 +579,7 @@ rt_err_t mmc_set_clk(enum mmc_clk_id clk_id, int hz)
         oclk_dly = 1;
         sclk_dly = 4;
     }
-    
+
     *mmc_clk = (0x1 << 31) | pll | (sclk_dly << 20) | \
            (n << 16) | (oclk_dly << 8) | (div - 1);
 

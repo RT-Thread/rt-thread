@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author        Notes
  * 2012-02-26     weety         first version
  */
- 
+
 #ifndef __SDIO_FUNC_IDS_H__
 #define __SDIO_FUNC_IDS_H__
 

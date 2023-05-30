@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -57,7 +57,7 @@ extern struct fal_flash_dev nor_flash0;
     &nor_flash0,                                                     \
 }
 
-#define ONCHIP_FLASH_PART_TABLE 
+#define ONCHIP_FLASH_PART_TABLE
 
 #define QSPI_FLASH_PART_TABLE \
     {FAL_PART_MAGIC_WROD, "qspiflash",  FAL_USING_NOR_FLASH_DEV_NAME, 0 , (16 * 1024 * 1024), 0},
@@ -76,7 +76,7 @@ extern struct fal_flash_dev nor_flash0;
     {FAL_PART_MAGIC_WROD, "param",      "onchip_flash_64k",  0 , FLASH_SIZE_GRANULARITY_64K , 0}, \
     {FAL_PART_MAGIC_WROD, "app",        "onchip_flash_128k", 0 , FLASH_SIZE_GRANULARITY_128K, 0},
 
-#define QSPI_FLASH_PART_TABLE 
+#define QSPI_FLASH_PART_TABLE
 
 #else
 

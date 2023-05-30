@@ -44,7 +44,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal_conf.h"
-#include <rtthread.h>
 
 /** @addtogroup STM32F0xx_HAL_Driver
   * @{

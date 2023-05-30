@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 #define DEFAULT_STACK_SIZE  2048
 #define DEFAULT_PRIORITY    (RT_THREAD_PRIORITY_MAX/2 + RT_THREAD_PRIORITY_MAX/4)
 
-const pthread_attr_t pthread_default_attr = 
+const pthread_attr_t pthread_default_attr =
 {
     0,                          /* stack base */
     DEFAULT_STACK_SIZE,         /* stack size */

@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX 8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 
 /* Tick per Second*/
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug*/
@@ -58,12 +58,12 @@
 /* Using Device System*/
 #define RT_USING_DEVICE
 #define RT_USING_UART1
-#define RT_UART_RX_BUFFER_SIZE	128
+#define RT_UART_RX_BUFFER_SIZE  128
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
@@ -88,14 +88,14 @@
 /* #define RT_LWIP_DEBUG */
 
 /* LwIP tcp thread option */
-#define RT_LWIP_TCPTHREAD_PRIORITY	8
-#define RT_LWIP_TCPTHREAD_STACKSIZE	4096
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE	32
+#define RT_LWIP_TCPTHREAD_PRIORITY  8
+#define RT_LWIP_TCPTHREAD_STACKSIZE 4096
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 32
 
 /* LwIP eth thread option */
-#define RT_LWIP_ETHTHREAD_PRIORITY	15
-#define RT_LWIP_ETHTHREAD_STACKSIZE	1024
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE	8
+#define RT_LWIP_ETHTHREAD_PRIORITY  15
+#define RT_LWIP_ETHTHREAD_STACKSIZE 1024
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
@@ -110,7 +110,7 @@
 #define RT_LWIP_TCP
 
 /* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
+#define RT_LWIP_TCP_PCB_NUM 5
 
 /* Enable SNMP protocol*/
 /* #define RT_LWIP_SNMP */
@@ -130,10 +130,10 @@
 /* SECTION: DFS options */
 //#define RT_USING_DFS
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			1
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					2
-/* the max number of cached sector 		*/
-#define DFS_CACHE_MAX_NUM   		4
+#define DFS_FILESYSTEMS_MAX         1
+/* the max number of opened files       */
+#define DFS_FD_MAX                  2
+/* the max number of cached sector      */
+#define DFS_CACHE_MAX_NUM           4
 
 #endif

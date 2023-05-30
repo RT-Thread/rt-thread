@@ -32,10 +32,10 @@
  * round-robin scheduling is used for this case.
  * - The time of scheduler to choose the next highest ready thread is determinant.
  * - There are four status in thread management
- *	-# Initialization
- *	-# Running/Ready
- *	-# Blocked
- *	-# Closed
+ *  -# Initialization
+ *  -# Running/Ready
+ *  -# Blocked
+ *  -# Closed
  * - The number of threads in the system is unlimited, only related with RAM.
  */
 

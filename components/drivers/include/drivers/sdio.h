@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -174,10 +174,10 @@ rt_int32_t sdio_io_rw_extended_block(struct rt_sdio_function *func,
                               rt_int32_t               op_code,
                               rt_uint8_t              *buf,
                               rt_uint32_t              len);
-rt_uint8_t sdio_io_readb(struct rt_sdio_function *func, 
+rt_uint8_t sdio_io_readb(struct rt_sdio_function *func,
                          rt_uint32_t              reg,
                          rt_int32_t              *err);
-rt_int32_t sdio_io_writeb(struct rt_sdio_function *func, 
+rt_int32_t sdio_io_writeb(struct rt_sdio_function *func,
                           rt_uint32_t              reg,
                           rt_uint8_t               data);
 rt_uint16_t sdio_io_readw(struct rt_sdio_function *func,
@@ -192,19 +192,19 @@ rt_uint32_t sdio_io_readl(struct rt_sdio_function *func,
 rt_int32_t sdio_io_writel(struct rt_sdio_function *func,
                           rt_uint32_t              data,
                           rt_uint32_t              addr);
-rt_int32_t sdio_io_read_multi_fifo_b(struct rt_sdio_function *func, 
+rt_int32_t sdio_io_read_multi_fifo_b(struct rt_sdio_function *func,
                                      rt_uint32_t              addr,
                                      rt_uint8_t              *buf,
                                      rt_uint32_t              len);
-rt_int32_t sdio_io_write_multi_fifo_b(struct rt_sdio_function *func, 
+rt_int32_t sdio_io_write_multi_fifo_b(struct rt_sdio_function *func,
                                       rt_uint32_t              addr,
                                       rt_uint8_t              *buf,
                                       rt_uint32_t              len);
-rt_int32_t sdio_io_read_multi_incr_b(struct rt_sdio_function *func, 
+rt_int32_t sdio_io_read_multi_incr_b(struct rt_sdio_function *func,
                                      rt_uint32_t              addr,
                                      rt_uint8_t              *buf,
                                      rt_uint32_t              len);
-rt_int32_t sdio_io_write_multi_incr_b(struct rt_sdio_function *func, 
+rt_int32_t sdio_io_write_multi_incr_b(struct rt_sdio_function *func,
                                       rt_uint32_t              addr,
                                       rt_uint8_t              *buf,
                                       rt_uint32_t              len);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -101,6 +101,11 @@ int msh_exec_script(const char *cmd_line, int size)
         int length;
 
         line_buf = (char *) rt_malloc(RT_CONSOLEBUF_SIZE);
+        if (line_buf == RT_NULL)
+        {
+            close(fd);
+            return -RT_ENOMEM;
+        }
 
         /* read line by line and then exec it */
         do

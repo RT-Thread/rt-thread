@@ -118,8 +118,9 @@ config RT_USING_LWIP
             config RT_USING_LWIP202
                 bool "lwIP v2.0.2"
 
-            config RT_USING_LWIP210
-                bool "lwIP v2.1.0"
+        config RT_USING_LWIP212
+                bool "lwIP v2.1.2"
+
         endchoice
 
         if (RT_USING_LWIP210 || RT_USING_LWIP202)

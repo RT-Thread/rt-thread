@@ -28,8 +28,8 @@ _rt_hw_interrupt_enable:
      MVTIPL     #KERNEL_INTERRUPT_PRIORITY
      RTS
 
-; r0 --> swith from thread stack
-; r1 --> swith to thread stack
+; r0 --> switch from thread stack
+; r1 --> switch to thread stack
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
 ___interrupt_27:
 
@@ -73,12 +73,12 @@ ___interrupt_27:
     MOV.L    #_rt_interrupt_from_thread, R15
     MOV.L    [ R15 ], R15
     MOV.L    R0, [ R15 ]
-    BRA      swtich_to_thread
+    BRA      switch_to_thread
 need_modify_isp:
     MVFC     ISP, R15                
     ADD      #12, R15
     MVTC     R15, ISP
-swtich_to_thread:
+switch_to_thread:
     SETPSW   U
     MOV.L    #_rt_interrupt_to_thread, R15
     MOV.L    [ R15 ], R15

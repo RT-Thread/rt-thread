@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -542,6 +542,7 @@ int list_fd(void)
             else if (fd->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
             else if (fd->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
             else if (fd->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (fd->type == FT_DEVICE)   rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
             rt_kprintf("%3d ", fd->ref_count);
             rt_kprintf("%04x  ", fd->magic);

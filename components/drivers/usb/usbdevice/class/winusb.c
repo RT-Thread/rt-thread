@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,8 +8,6 @@
  * 2017-11-16     ZYH          first version
  */
 #include <rthw.h>
-#include <rtthread.h>
-#include <rtservice.h>
 #include <rtdevice.h>
 #include <drivers/usb_device.h>
 #include "winusb.h"
@@ -59,7 +57,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 ALIGN(4)
-struct winusb_descriptor _winusb_desc = 
+struct winusb_descriptor _winusb_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
@@ -119,13 +117,13 @@ const static char* _ustring[] =
 };
 
 ALIGN(4)
-struct usb_os_proerty winusb_proerty[] = 
+struct usb_os_proerty winusb_proerty[] =
 {
-    USB_OS_PROERTY_DESC(USB_OS_PROERTY_TYPE_REG_SZ,"DeviceInterfaceGUID",RT_WINUSB_GUID),
+    USB_OS_PROPERTY_DESC(USB_OS_PROPERTY_TYPE_REG_SZ,"DeviceInterfaceGUID",RT_WINUSB_GUID),
 };
 
 ALIGN(4)
-struct usb_os_function_comp_id_descriptor winusb_func_comp_id_desc = 
+struct usb_os_function_comp_id_descriptor winusb_func_comp_id_desc =
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
     .reserved1          = 0x01,
@@ -157,7 +155,7 @@ static ufunction_t cmd_func = RT_NULL;
 static rt_err_t _ep0_cmd_handler(udevice_t device, rt_size_t size)
 {
     winusb_device_t winusb_device;
-    
+
     if(cmd_func != RT_NULL)
     {
         winusb_device = (winusb_device_t)cmd_func->user_data;
@@ -193,7 +191,7 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
         _ep0_cmd_read(func, setup);
         break;
     }
-    
+
     return RT_EOK;
 }
 static rt_err_t _function_enable(ufunction_t func)
@@ -293,7 +291,7 @@ static rt_err_t rt_usb_winusb_init(ufunction_t func)
 
     winusb_device->parent.user_data = func;
 
-    
+
     return rt_device_register(&winusb_device->parent, "winusb", RT_DEVICE_FLAG_RDWR);
 }
 
@@ -354,7 +352,7 @@ ufunction_t rt_usbd_function_winusb_create(udevice_t device)
     return func;
 }
 
-struct udclass winusb_class = 
+struct udclass winusb_class =
 {
     .rt_usbd_function_create = rt_usbd_function_winusb_create
 };

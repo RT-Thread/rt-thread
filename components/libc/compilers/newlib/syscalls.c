@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,10 +15,6 @@
 
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
-#endif
-
-#ifdef RT_USING_PTHREADS
-#include <pthread.h>
 #endif
 
 #ifdef RT_USING_MODULE

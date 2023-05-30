@@ -1,8 +1,8 @@
 /***************************************************************************//**
- * @file 	dev_keys.h
- * @brief 	Keys driver of RT-Thread RTOS for EFM32
+ * @file    dev_keys.h
+ * @brief   Keys driver of RT-Thread RTOS for EFM32
  *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	onelife
+ * @author  onelife
  * @version 1.0
  *******************************************************************************
  * @section License
@@ -10,7 +10,7 @@
  *  LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
+ * Date         Author      Notes
  * 2011-12-29   onelife     Initial creation for EFM32GG_DK3750 board
  ******************************************************************************/
 #ifndef __DEV_KEYS_H__

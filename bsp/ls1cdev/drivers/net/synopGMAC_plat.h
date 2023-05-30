@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,12 +8,12 @@
  * 2017-08-24     chinesebear  first version
  */
 
- 
- 
+
+
 #ifndef SYNOP_GMAC_PLAT_H
 #define SYNOP_GMAC_PLAT_H 1
 
-/*	sw
+/*  sw
 #include <linux/kernel.h>
 #include <asm/io.h>
 #include <linux/gfp.h>
@@ -26,7 +26,7 @@
 //#include "GMAC_Pmon.h"
 //#include "synopGMAC_Host.h"
 #include <rtthread.h>
-//sw:	copy the type define into here
+//sw:   copy the type define into here
 #define IOCTL_READ_REGISTER  SIOCDEVPRIVATE+1
 #define IOCTL_WRITE_REGISTER SIOCDEVPRIVATE+2
 #define IOCTL_READ_IPSTRUCT  SIOCDEVPRIVATE+3
@@ -66,18 +66,18 @@ typedef int bool;
 #define VA_TO_PA(x)     UNCACHED_TO_PHYS(x)
 
 
-/*	sw
-#define TR0(fmt, args...) printk(KERN_CRIT "SynopGMAC: " fmt, ##args)				
+/*  sw
+#define TR0(fmt, args...) printk(KERN_CRIT "SynopGMAC: " fmt, ##args)
 
 #ifdef DEBUG
 #undef TR
 #  define TR(fmt, args...) printk(KERN_CRIT "SynopGMAC: " fmt, ##args)
 #else
-# define TR(fmt, args...) // not debugging: nothing 
+# define TR(fmt, args...) // not debugging: nothing
 #endif
 */
 /*
-#define TR0(fmt, args...) printf("SynopGMAC: " fmt, ##args)				
+#define TR0(fmt, args...) printf("SynopGMAC: " fmt, ##args)
 */
 
 /*
@@ -85,21 +85,21 @@ typedef int bool;
 #undef TR
 #  define TR(fmt, args...) printf("SynopGMAC: " fmt, ##args)
 #else
-//# define TR(fmt, args...) // not debugging: nothing 
-#define TR(fmt, args...) printf("SynopGMAC: " fmt, ##args)				
+//# define TR(fmt, args...) // not debugging: nothing
+#define TR(fmt, args...) printf("SynopGMAC: " fmt, ##args)
 #endif
 */
 
 //sw: nothing to display
-#define TR0(fmt, args...) //rt_kprintf(fmt, ##args)		
-#define TR(fmt, args...)  //rt_kprintf(fmt, ##args) 
+#define TR0(fmt, args...) //rt_kprintf(fmt, ##args)
+#define TR(fmt, args...)  //rt_kprintf(fmt, ##args)
 //#define TR rt_kprintf
 
 //typedef int bool;
 enum synopGMAC_boolean
- { 
+ {
     false = 0,
-    true = 1 
+    true = 1
  };
 
 
@@ -110,9 +110,9 @@ enum synopGMAC_boolean
  *
  */
 
-#define LE32_TO_CPU	__le32_to_cpu
-#define BE32_TO_CPU	__be32_to_cpu
-#define CPU_TO_LE32	__cpu_to_le32
+#define LE32_TO_CPU __le32_to_cpu
+#define BE32_TO_CPU __be32_to_cpu
+#define CPU_TO_LE32 __cpu_to_le32
 
 /* Error Codes */
 #define ESYNOPGMACNOERR   0
@@ -122,15 +122,15 @@ enum synopGMAC_boolean
 
 struct Network_interface_data
 {
-	u32 unit;
-	u32 addr;
-	u32 data;
+    u32 unit;
+    u32 addr;
+    u32 data;
 };
 
 
 /**
   * These are the wrapper function prototypes for OS/platform related routines
-  */ 
+  */
 
 void * plat_alloc_memory(u32 );
 void   plat_free_memory(void *);
@@ -143,10 +143,10 @@ void   plat_delay(u32);
 
 /**
  * The Low level function to read register contents from Hardware.
- * 
- * @param[in] pointer to the base of register map  
+ *
+ * @param[in] pointer to the base of register map
  * @param[in] Offset from the base
- * \return  Returns the register contents 
+ * \return  Returns the register contents
  */
 static u32  synopGMACReadReg(u32 RegBase, u32 RegOffset)
 {
@@ -166,43 +166,43 @@ static u32  synopGMACReadReg(u32 RegBase, u32 RegOffset)
 
 /**
  * The Low level function to write to a register in Hardware.
- * 
- * @param[in] pointer to the base of register map  
+ *
+ * @param[in] pointer to the base of register map
  * @param[in] Offset from the base
- * @param[in] Data to be written 
- * \return  void 
+ * @param[in] Data to be written
+ * \return  void
  */
 static void synopGMACWriteReg(u32 RegBase, u32 RegOffset, u32 RegData )
 {
 
   u32 addr;
 
-		  addr = RegBase + (u32)RegOffset;
+          addr = RegBase + (u32)RegOffset;
 //  rt_kprintf("%s RegBase = 0x%08x RegOffset = 0x%08x RegData = 0x%08x\n", __FUNCTION__,(u32) RegBase, RegOffset, RegData );
 #if SYNOP_REG_DEBUG
   TR("%s RegBase = 0x%08x RegOffset = 0x%08x RegData = 0x%08x\n", __FUNCTION__,(u32) RegBase, RegOffset, RegData );
 #endif
-	*(volatile u32 *)addr = RegData;
+    *(volatile u32 *)addr = RegData;
 
-	if(addr == 0xbfe1100c)
-		DEBUG_MES("regdata = %08x\n", RegData);
+    if(addr == 0xbfe1100c)
+        DEBUG_MES("regdata = %08x\n", RegData);
   return;
 }
 
 /**
  * The Low level function to set bits of a register in Hardware.
- * 
- * @param[in] pointer to the base of register map  
+ *
+ * @param[in] pointer to the base of register map
  * @param[in] Offset from the base
- * @param[in] Bit mask to set bits to logical 1 
- * \return  void 
+ * @param[in] Bit mask to set bits to logical 1
+ * \return  void
  */
 static void synopGMACSetBits(u32 RegBase, u32 RegOffset, u32 BitPos)
 {
   //u64 addr = (u64)RegBase + (u64)RegOffset;
   u32 data;
   data = synopGMACReadReg(RegBase, RegOffset);
-  data |= BitPos; 
+  data |= BitPos;
   synopGMACWriteReg(RegBase, RegOffset, data);
  // writel(data,(void *)addr);
 #if SYNOP_REG_DEBUG
@@ -214,17 +214,17 @@ static void synopGMACSetBits(u32 RegBase, u32 RegOffset, u32 BitPos)
 
 /**
  * The Low level function to clear bits of a register in Hardware.
- * 
- * @param[in] pointer to the base of register map  
+ *
+ * @param[in] pointer to the base of register map
  * @param[in] Offset from the base
- * @param[in] Bit mask to clear bits to logical 0 
- * \return  void 
+ * @param[in] Bit mask to clear bits to logical 0
+ * \return  void
  */
 static void  synopGMACClearBits(u32 RegBase, u32 RegOffset, u32 BitPos)
 {
   u32 data;
   data = synopGMACReadReg(RegBase, RegOffset);
-  data &= (~BitPos); 
+  data &= (~BitPos);
   synopGMACWriteReg(RegBase, RegOffset, data);
 #if SYNOP_REG_DEBUG
   TR("%s !!!!!!!!!!!!! RegOffset = 0x%08x RegData = 0x%08x\n", __FUNCTION__, RegOffset, data );
@@ -234,21 +234,21 @@ static void  synopGMACClearBits(u32 RegBase, u32 RegOffset, u32 BitPos)
 
 /**
  * The Low level function to Check the setting of the bits.
- * 
- * @param[in] pointer to the base of register map  
+ *
+ * @param[in] pointer to the base of register map
  * @param[in] Offset from the base
- * @param[in] Bit mask to set bits to logical 1 
+ * @param[in] Bit mask to set bits to logical 1
  * \return  returns TRUE if set to '1' returns FALSE if set to '0'. Result undefined there are no bit set in the BitPos argument.
- * 
+ *
  */
 static bool  synopGMACCheckBits(u32 RegBase, u32 RegOffset, u32 BitPos)
 {
 
   u32 data;
   data = synopGMACReadReg(RegBase, RegOffset);
-  data &= BitPos; 
+  data &= BitPos;
   if(data)  return true;
-  else	    return false;
+  else      return false;
 
 }
 

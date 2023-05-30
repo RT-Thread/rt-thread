@@ -1,25 +1,11 @@
 /*
- * File      : mips_asm.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ7ÈÕ     Urey         the first version
+ * 2016-9-7       Urey         the first version
  */
 
 #ifndef _MIPS_ASM_H_
@@ -61,31 +47,31 @@
  *  in makefile.
  */
 #ifdef _BSS_OLD_
-#define BSS	.##section bss
+#define BSS .##section bss
 #else
-#define BSS	.##bss
+#define BSS .##bss
 #endif
 
 #define LEAF(name)\
-  		.##text;\
-  		.##globl	name;\
-  		.##ent	name;\
+        .##text;\
+        .##globl    name;\
+        .##ent  name;\
 name:
 
 
 #define SLEAF(name)\
-  		.##text;\
-  		.##ent	name;\
+        .##text;\
+        .##ent  name;\
 name:
 
 
 #ifdef __ghs__
 #define END(name)\
-  		.##end	name
+        .##end  name
 #else
 #define END(name)\
-  		.##size name,.-name;\
-  		.##end	name
+        .##size name,.-name;\
+        .##end  name
 #endif
 
 
@@ -165,7 +151,7 @@ typedef union tunSU32
 #define True !False
 
 #ifndef NULL
-#define NULL		      	((void *)0)
+#define NULL                ((void *)0)
 #endif//NULL
 
 #ifndef MIN
@@ -173,31 +159,31 @@ typedef union tunSU32
 #endif//MIN
 
 #ifndef MAX
-#define MAX(x,y)      		((x) > (y) ? (x) : (y))
+#define MAX(x,y)            ((x) > (y) ? (x) : (y))
 #endif//MAX
 
-#define MAXUINT(w)	(\
-		((w) == sizeof(U8))  ? 0xFFU :\
-		((w) == sizeof(U16)) ? 0xFFFFU :\
-		((w) == sizeof(U32)) ? 0xFFFFFFFFU : 0\
-		        )
+#define MAXUINT(w)  (\
+        ((w) == sizeof(U8))  ? 0xFFU :\
+        ((w) == sizeof(U16)) ? 0xFFFFU :\
+        ((w) == sizeof(U32)) ? 0xFFFFFFFFU : 0\
+                )
 
-#define MAXINT(w)	(\
-		((w) == sizeof(S8))  ? 0x7F :\
-		((w) == sizeof(S16)) ? 0x7FFF :\
-		((w) == sizeof(S32)) ? 0x7FFFFFFF : 0\
-		        )
+#define MAXINT(w)   (\
+        ((w) == sizeof(S8))  ? 0x7F :\
+        ((w) == sizeof(S16)) ? 0x7FFF :\
+        ((w) == sizeof(S32)) ? 0x7FFFFFFF : 0\
+                )
 
-#define MSK(n)			  ((1 << (n)) - 1)
+#define MSK(n)            ((1 << (n)) - 1)
 
-#define KUSEG_MSK		  0x80000000
-#define KSEG_MSK		  0xE0000000
+#define KUSEG_MSK         0x80000000
+#define KSEG_MSK          0xE0000000
 
-#define KUSEGBASE		  0x00000000
-#define KSEG0BASE		  0x80000000
-#define KSEG1BASE		  0xA0000000
-#define KSSEGBASE		  0xC0000000
-#define KSEG3BASE		  0xE0000000
+#define KUSEGBASE         0x00000000
+#define KSEG0BASE         0x80000000
+#define KSEG1BASE         0xA0000000
+#define KSSEGBASE         0xC0000000
+#define KSEG3BASE         0xE0000000
 
 /*  Below macros perform the following functions :
  *
@@ -211,8 +197,8 @@ typedef union tunSU32
  *  KSEG1A   : Same as KSEG1 but operates on register rather than constant.
  *  PHYSA    : Same as PHYS  but operates on register rather than constant.
  *  CACHED   : Alias for KSEG0 macro .
- *	       (Note that KSEG0 cache attribute is determined by K0
- *	       field of Config register, but this is typically cached).
+ *         (Note that KSEG0 cache attribute is determined by K0
+ *         field of Config register, but this is typically cached).
  *  UNCACHED : Alias for KSEG1 macro .
  */
 #ifdef __ASSEMBLY__
@@ -222,117 +208,117 @@ typedef union tunSU32
 #define KSEG3(addr)     (((addr) & ~KSEG_MSK)  | KSEG3BASE)
 #define KUSEG(addr)     (((addr) & ~KUSEG_MSK) | KUSEGBASE)
 #define PHYS(addr)      ( (addr) & ~KSEG_MSK)
-#define KSEG0A(reg) 	and reg, ~KSEG_MSK; or reg, KSEG0BASE
-#define KSEG1A(reg) 	and reg, ~KSEG_MSK; or reg, KSEG1BASE
-#define PHYSA(reg)	and reg, ~KSEG_MSK
+#define KSEG0A(reg)     and reg, ~KSEG_MSK; or reg, KSEG0BASE
+#define KSEG1A(reg)     and reg, ~KSEG_MSK; or reg, KSEG1BASE
+#define PHYSA(reg)  and reg, ~KSEG_MSK
 #else
 #define KSEG0(addr)     (((U32)(addr) & ~KSEG_MSK)  | KSEG0BASE)
 #define KSEG1(addr)     (((U32)(addr) & ~KSEG_MSK)  | KSEG1BASE)
-#define KSSEG(addr)	(((U32)(addr) & ~KSEG_MSK)  | KSSEGBASE)
-#define KSEG3(addr)	(((U32)(addr) & ~KSEG_MSK)  | KSEG3BASE)
-#define KUSEG(addr)	(((U32)(addr) & ~KUSEG_MSK) | KUSEGBASE)
-#define PHYS(addr) 	((U32)(addr)  & ~KSEG_MSK)
+#define KSSEG(addr) (((U32)(addr) & ~KSEG_MSK)  | KSSEGBASE)
+#define KSEG3(addr) (((U32)(addr) & ~KSEG_MSK)  | KSEG3BASE)
+#define KUSEG(addr) (((U32)(addr) & ~KUSEG_MSK) | KUSEGBASE)
+#define PHYS(addr)  ((U32)(addr)  & ~KSEG_MSK)
 #endif
 
-#define CACHED(addr)	KSEG0(addr)
-#define UNCACHED(addr)	KSEG1(addr)
+#define CACHED(addr)    KSEG0(addr)
+#define UNCACHED(addr)  KSEG1(addr)
 
 
 #ifdef __ASSEMBLY__
 /* Macroes to access variables at constant addresses
  * Compensates for signed 16 bit displacement
- * Typical use:	li	a0, HIKSEG1(ATLAS_ASCIIWORD)
- *		sw	v1, LO_OFFS(ATLAS_ASCIIWORD)(a0)
+ * Typical use: li  a0, HIKSEG1(ATLAS_ASCIIWORD)
+ *      sw  v1, LO_OFFS(ATLAS_ASCIIWORD)(a0)
  */
-#define HIKSEG0(addr)	((KSEG0(addr) + 0x8000) & 0xffff0000)
-#define HIKSEG1(addr)	((KSEG1(addr) + 0x8000) & 0xffff0000)
-#define HI_PART(addr)	(((addr) + 0x8000) & 0xffff0000)
-#define LO_OFFS(addr)	((addr) & 0xffff)
+#define HIKSEG0(addr)   ((KSEG0(addr) + 0x8000) & 0xffff0000)
+#define HIKSEG1(addr)   ((KSEG1(addr) + 0x8000) & 0xffff0000)
+#define HI_PART(addr)   (((addr) + 0x8000) & 0xffff0000)
+#define LO_OFFS(addr)   ((addr) & 0xffff)
 #endif
 
 
 /* Most/Least significant 32 bit from 64 bit double word */
-#define HI32(data64)		  ((U32)(data64 >> 32))
-#define LO32(data64)		  ((U32)(data64 & 0xFFFFFFFF))
+#define HI32(data64)          ((U32)(data64 >> 32))
+#define LO32(data64)          ((U32)(data64 & 0xFFFFFFFF))
 
 #if ((!defined(__ASSEMBLY__)) && (!defined(__LANGUAGE_ASSEMBLY)))
-#define REG8( addr )		  (*(volatile U8 *) (addr))
-#define REG16( addr )		  (*(volatile U16 *)(addr))
-#define REG32( addr )		  (*(volatile U32 *)(addr))
-#define REG64( addr )		  (*(volatile U64 *)(addr))
+#define REG8( addr )          (*(volatile U8 *) (addr))
+#define REG16( addr )         (*(volatile U16 *)(addr))
+#define REG32( addr )         (*(volatile U32 *)(addr))
+#define REG64( addr )         (*(volatile U64 *)(addr))
 #endif
 
 /* Register field mapping */
-#define REGFIELD(reg, rfld)	  (((reg) & rfld##_MSK) >> rfld##_SHF)
+#define REGFIELD(reg, rfld)   (((reg) & rfld##_MSK) >> rfld##_SHF)
 
-/* absolute register address, access 					*/
-#define	REGA(addr)		  REG32(addr)
+/* absolute register address, access                    */
+#define REGA(addr)        REG32(addr)
 
-/* physical register address, access: base address + offsett		*/
-#define	REGP(base,phys)	REG32( (U32)(base) + (phys) )
+/* physical register address, access: base address + offsett        */
+#define REGP(base,phys) REG32( (U32)(base) + (phys) )
 
-/* relative register address, access: base address + offsett		*/
+/* relative register address, access: base address + offsett        */
 #define REG(base,offs)  REG32( (U32)(base) + offs##_##OFS )
 
-/* relative register address, access: base address + offsett		*/
+/* relative register address, access: base address + offsett        */
 #define REG_8(base,offs)  REG8( (U32)(base) + offs##_##OFS )
 
-/* relative register address, access: base address + offsett		*/
+/* relative register address, access: base address + offsett        */
 #define REG_16(base,offs)  REG16( (U32)(base) + offs##_##OFS )
 
-/* relative register address, access: base address + offsett		*/
+/* relative register address, access: base address + offsett        */
 #define REG_64(base,offs)  REG64( (U32)(base) + offs##_##OFS )
 
 /**************************************
  * Macroes not used by YAMON any more
  * (kept for backwards compatibility)
  */
-/* register read field							*/
-#define	REGARD(addr,fld)	((REGA(addr) & addr##_##fld##_##MSK) 	\
-			 >> addr##_##fld##_##SHF)
+/* register read field                          */
+#define REGARD(addr,fld)    ((REGA(addr) & addr##_##fld##_##MSK)    \
+             >> addr##_##fld##_##SHF)
 
-/* register write numeric field value					*/
-#define	REGAWRI(addr,fld,intval) ((REGA(addr) & ~(addr##_##fld##_##MSK))\
-				 | ((intval) << addr##_##fld##_##SHF))
+/* register write numeric field value                   */
+#define REGAWRI(addr,fld,intval) ((REGA(addr) & ~(addr##_##fld##_##MSK))\
+                 | ((intval) << addr##_##fld##_##SHF))
 
-/* register write enumerated field value				*/
-#define	REGAWRE(addr,fld,enumval) ((REGA(addr) & ~(addr##_##fld##_##MSK))\
-			| ((addr##_##fld##_##enumval) << addr##_##fld##_##SHF))
+/* register write enumerated field value                */
+#define REGAWRE(addr,fld,enumval) ((REGA(addr) & ~(addr##_##fld##_##MSK))\
+            | ((addr##_##fld##_##enumval) << addr##_##fld##_##SHF))
 
 
 /* Examples:
  *
- *	exccode = REGARD(CPU_CAUSE,EXC);
+ *  exccode = REGARD(CPU_CAUSE,EXC);
  *
- *	REGA(SDR_CONTROL) = REGAWRI(OSG_CONTROL,TMO,17)
- *			 | REGAWRE(OSG_CONTROL,DTYPE,PC1);
+ *  REGA(SDR_CONTROL) = REGAWRI(OSG_CONTROL,TMO,17)
+ *           | REGAWRE(OSG_CONTROL,DTYPE,PC1);
  */
 
 
-/* register read field							*/
-#define	REGRD(base,offs,fld) ((REG(base,offs) & offs##_##fld##_##MSK) 	\
-			 >> offs##_##fld##_##SHF)
+/* register read field                          */
+#define REGRD(base,offs,fld) ((REG(base,offs) & offs##_##fld##_##MSK)   \
+             >> offs##_##fld##_##SHF)
 
-/* register write numeric field value					*/
-#define	REGWRI(base,offs,fld,intval)((REG(base,offs)& ~(offs##_##fld##_##MSK))\
+/* register write numeric field value                   */
+#define REGWRI(base,offs,fld,intval)((REG(base,offs)& ~(offs##_##fld##_##MSK))\
                                  | (((intval) << offs##_##fld##_##SHF) & offs##_##fld##_##MSK))
 
-/* register write enumerated field value				*/
-#define	REGWRE(base,offs,fld,enumval)((REG(base,offs) & ~(offs##_##fld##_##MSK))\
-				| ((offs##_##fld##_##enumval) << offs##_##fld##_##SHF))
+/* register write enumerated field value                */
+#define REGWRE(base,offs,fld,enumval)((REG(base,offs) & ~(offs##_##fld##_##MSK))\
+                | ((offs##_##fld##_##enumval) << offs##_##fld##_##SHF))
 
 
-/* physical register read field							*/
-#define	REGPRD(base,phys,fld) ((REGP(base,phys) & phys##_##fld##_##MSK) 	\
-			 >> phys##_##fld##_##SHF)
+/* physical register read field                         */
+#define REGPRD(base,phys,fld) ((REGP(base,phys) & phys##_##fld##_##MSK)     \
+             >> phys##_##fld##_##SHF)
 
-/* physical register write numeric field value					*/
-#define	REGPWRI(base,phys,fld,intval)((REGP(base,phys)& ~(phys##_##fld##_##MSK))\
-				 | ((intval) << phys##_##fld##_##SHF))
+/* physical register write numeric field value                  */
+#define REGPWRI(base,phys,fld,intval)((REGP(base,phys)& ~(phys##_##fld##_##MSK))\
+                 | ((intval) << phys##_##fld##_##SHF))
 
-/* physical register write enumerated field value				*/
-#define	REGPWRE(base,phys,fld,enumval)((REGP(base,phys) & ~(phys##_##fld##_##MSK))\
-				| ((phys##_##fld##_##enumval) << phys##_##fld##_##SHF))
+/* physical register write enumerated field value               */
+#define REGPWRE(base,phys,fld,enumval)((REGP(base,phys) & ~(phys##_##fld##_##MSK))\
+                | ((phys##_##fld##_##enumval) << phys##_##fld##_##SHF))
 /*
  * End of macroes not used by YAMON any more
  *********************************************/
@@ -344,14 +330,14 @@ typedef union tunSU32
 
 /* Set byte address to little endian format */
 #ifdef EL
-#define SWAP_BYTEADDR_EL(addr) 	  addr
+#define SWAP_BYTEADDR_EL(addr)    addr
 #else
 #define SWAP_BYTEADDR_EL(addr)    SWAP_BYTEADDR32( addr )
 #endif
 
 /* Set byte address to big endian format */
 #ifdef EB
-#define SWAP_BYTEADDR_EB(addr) 	  addr
+#define SWAP_BYTEADDR_EB(addr)    addr
 #else
 #define SWAP_BYTEADDR_EB(addr)    SWAP_BYTEADDR32( addr )
 #endif

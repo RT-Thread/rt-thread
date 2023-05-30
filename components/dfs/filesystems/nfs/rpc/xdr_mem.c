@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  */
-/* @(#)xdr_mem.c	2.1 88/07/29 4.0 RPCSRC */
+/* @(#)xdr_mem.c    2.1 88/07/29 4.0 RPCSRC */
 /*
  * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
  * unrestricted use provided that this legend is included on all tape
@@ -14,23 +14,23 @@
  * may copy or modify Sun RPC without charge, but are not authorized
  * to license or distribute it to anyone else except as part of a product or
  * program developed by the user.
- * 
+ *
  * SUN RPC IS PROVIDED AS IS WITH NO WARRANTIES OF ANY KIND INCLUDING THE
  * WARRANTIES OF DESIGN, MERCHANTIBILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE, OR ARISING FROM A COURSE OF DEALING, USAGE OR TRADE PRACTICE.
- * 
+ *
  * Sun RPC is provided with no support and without any obligation on the
  * part of Sun Microsystems, Inc. to assist in its use, correction,
  * modification or enhancement.
- * 
+ *
  * SUN MICROSYSTEMS, INC. SHALL HAVE NO LIABILITY WITH RESPECT TO THE
  * INFRINGEMENT OF COPYRIGHTS, TRADE SECRETS OR ANY PATENTS BY SUN RPC
  * OR ANY PART THEREOF.
- * 
+ *
  * In no event will Sun Microsystems, Inc. be liable for any lost revenue
  * or profits or other special, indirect and consequential damages, even if
  * Sun has been advised of the possibility of such damages.
- * 
+ *
  * Sun Microsystems, Inc.
  * 2550 Garcia Avenue
  * Mountain View, California  94043
@@ -65,30 +65,30 @@ static int32_t *xdrmem_inline (XDR *, unsigned int);
 static void xdrmem_destroy (XDR *);
 
 static struct xdr_ops xdrmem_ops = {
-	xdrmem_getlong,
-	xdrmem_putlong,
-	xdrmem_getbytes,
-	xdrmem_putbytes,
-	xdrmem_getpos,
-	xdrmem_setpos,
-	xdrmem_inline,
-	xdrmem_destroy,
-	NULL,
-	NULL
+    xdrmem_getlong,
+    xdrmem_putlong,
+    xdrmem_getbytes,
+    xdrmem_putbytes,
+    xdrmem_getpos,
+    xdrmem_setpos,
+    xdrmem_inline,
+    xdrmem_destroy,
+    NULL,
+    NULL
 };
 
 
 /*
  * The procedure xdrmem_create initializes a stream descriptor for a
- * memory buffer.  
+ * memory buffer.
  */
 void
 xdrmem_create (XDR *xdrs, const char* addr, unsigned int size, enum xdr_op op)
 {
-	xdrs->x_op = op;
-	xdrs->x_ops = &xdrmem_ops;
-	xdrs->x_private = xdrs->x_base = (char*)addr;
-	xdrs->x_handy = size;
+    xdrs->x_op = op;
+    xdrs->x_ops = &xdrmem_ops;
+    xdrs->x_private = xdrs->x_base = (char*)addr;
+    xdrs->x_handy = size;
 }
 
 static void
@@ -140,7 +140,7 @@ xdrmem_putbytes (XDR *xdrs, const char *addr, unsigned int len)
 
 static unsigned int xdrmem_getpos (const XDR *xdrs)
 {
-	return ((unsigned long) xdrs->x_private - (unsigned long) xdrs->x_base);
+    return ((unsigned long) xdrs->x_private - (unsigned long) xdrs->x_base);
 }
 
 static bool_t xdrmem_setpos(XDR *xdrs, unsigned int pos)
@@ -149,9 +149,9 @@ static bool_t xdrmem_setpos(XDR *xdrs, unsigned int pos)
   register char* lastaddr = xdrs->x_private + xdrs->x_handy;
 
   if ((long) newaddr > (long) lastaddr
-	  || (UINT_MAX < LONG_MAX
-		  && (long) UINT_MAX < (long) lastaddr - (long) newaddr))
-	  return (FALSE);
+      || (UINT_MAX < LONG_MAX
+          && (long) UINT_MAX < (long) lastaddr - (long) newaddr))
+      return (FALSE);
   xdrs->x_private = newaddr;
   xdrs->x_handy = (long) lastaddr - (long) newaddr;
   return (TRUE);
@@ -160,13 +160,13 @@ static bool_t xdrmem_setpos(XDR *xdrs, unsigned int pos)
 static int32_t *
 xdrmem_inline (XDR *xdrs, unsigned int len)
 {
-	int32_t *buf = 0;
+    int32_t *buf = 0;
 
-	if (xdrs->x_handy >= len) {
-		xdrs->x_handy -= len;
-		buf = (int32_t *) xdrs->x_private;
-		xdrs->x_private += len;
-	}
-	return (buf);
+    if (xdrs->x_handy >= len) {
+        xdrs->x_handy -= len;
+        buf = (int32_t *) xdrs->x_private;
+        xdrs->x_private += len;
+    }
+    return (buf);
 }
 

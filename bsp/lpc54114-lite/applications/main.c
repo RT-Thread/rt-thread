@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,9 +14,9 @@
 
 int main(void)
 {
-    /* user app entry */ 
+    /* user app entry */
     rt_pin_mode(LED4_PIN, PIN_MODE_OUTPUT);
-    
+
     while (1)
     {
         rt_pin_write(LED4_PIN, !rt_pin_read(LED4_PIN));

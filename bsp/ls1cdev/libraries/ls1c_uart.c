@@ -1,5 +1,5 @@
  /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -53,7 +53,7 @@ void *uart_get_base(ls1c_uart_t UARTx)
         case LS1C_UART1:
             base = (void *)LS1C_UART1_BASE;
             break;
-        
+
         case LS1C_UART2:
             base = (void *)LS1C_UART2_BASE;
             break;
@@ -61,7 +61,7 @@ void *uart_get_base(ls1c_uart_t UARTx)
         case LS1C_UART3:
             base = (void *)LS1C_UART3_BASE;
             break;
-        
+
         case LS1C_UART4:
             base = (void *)LS1C_UART4_BASE;
             break;
@@ -113,10 +113,10 @@ void uart_init(ls1c_uart_info_t *uart_info_p)
 
     // 禁止所有中断
     reg_write_8(0,      uart_base + LS1C_UART_IER_OFFSET);
-    
+
     // 接收FIFO的中断申请Trigger为14字节，清空发送和接收FIFO，并复位
     reg_write_8(0xc3,   uart_base + LS1C_UART_FCR_OFFSET);
-    
+
     // 设置波特率
     reg_write_8(0x80,   uart_base + LS1C_UART_LCR_OFFSET);
     baudrate_div = clk_get_cpu_rate() / 16 / uart_info_p->baudrate / 2;
@@ -165,7 +165,7 @@ BOOL uart_is_transmit_empty(ls1c_uart_t uartx)
 void uart_putc(ls1c_uart_t uartx, unsigned char ch)
 {
     void *uart_base = uart_get_base(uartx);
-    
+
     // 等待
     while (FALSE == uart_is_transmit_empty(uartx))
         ;
@@ -205,7 +205,7 @@ void uart2_init(void)
     // 设置复用
     pin_set_remap(tx_gpio, PIN_REMAP_SECOND);
     pin_set_remap(rx_gpio, PIN_REMAP_SECOND);
-    
+
     // 初始化相关寄存器
     debug_uart_info.UARTx = LS1C_UART2;
     debug_uart_info.baudrate = 115200;
@@ -257,7 +257,7 @@ void uart_debug_putc(unsigned char ch)
 ls1c_uart_t uart_irqn_to_uartx(int IRQn)
 {
     ls1c_uart_t uartx = LS1C_UART2;
-    
+
     switch (IRQn)
     {
         /* 串口UART00和UART01的中断号还待确定
@@ -273,47 +273,47 @@ ls1c_uart_t uart_irqn_to_uartx(int IRQn)
         case LS1C_UART1_IRQ:
             uartx = LS1C_UART1;
             break;
-            
+
         case LS1C_UART2_IRQ:
             uartx = LS1C_UART2;
             break;
-        
+
         case LS1C_UART3_IRQ:
             uartx = LS1C_UART3;
             break;
-        
+
         case LS1C_UART4_IRQ:
             uartx = LS1C_UART4;
             break;
-        
+
         case LS1C_UART5_IRQ:
             uartx = LS1C_UART5;
             break;
-        
+
         case LS1C_UART6_IRQ:
             uartx = LS1C_UART6;
             break;
-        
+
         case LS1C_UART7_IRQ:
             uartx = LS1C_UART7;
             break;
-        
+
         case LS1C_UART8_IRQ:
             uartx = LS1C_UART8;
             break;
-        
+
         case LS1C_UART9_IRQ:
             uartx = LS1C_UART9;
             break;
-        
+
         case LS1C_UART10_IRQ:
             uartx = LS1C_UART10;
             break;
-        
+
         case LS1C_UART11_IRQ:
             uartx = LS1C_UART11;
             break;
-        
+
         default:
             uartx = LS1C_UART2;
             break;

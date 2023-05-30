@@ -1,21 +1,7 @@
 /*
- * File      : drv_uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -120,8 +106,8 @@ int rt_hw_uart_init(void)
         uart->irqno        = UART1_INTERRUPT; // IRQ_UART1;
         uart->gpio_rx_port = GPIO_PORT_A;
         uart->gpio_tx_port = GPIO_PORT_A;
-        uart->gpio_rx_pin  = GPIO_PIN_3;
-        uart->gpio_tx_pin  = GPIO_PIN_2;
+        uart->gpio_rx_pin  = GPIO_PIN_2;
+        uart->gpio_tx_pin  = GPIO_PIN_3;
         uart->gpio_rx_fun  = IO_FUN_4;
         uart->gpio_tx_fun  = IO_FUN_4;
 

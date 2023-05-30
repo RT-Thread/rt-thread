@@ -1,11 +1,7 @@
 /*
- * File      : rtconfig.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -16,16 +12,16 @@
 #define RTCONFIG_H_
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX 8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 
 /* Tick per Second*/
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug*/
@@ -73,7 +69,7 @@
 /* SECTION: Console options */
 /* the buffer size of console*/
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
@@ -88,21 +84,21 @@
 
 #define RT_USING_DFS_ELMFAT
 #define RT_DFS_ELM_WORD_ACCESS
-#define RT_DFS_ELM_DRIVES			2
+#define RT_DFS_ELM_DRIVES           2
 
 /* SECTION: DFS options */
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					8
-/* the max number of cached sector 		*/
-#define DFS_CACHE_MAX_NUM   		4
+#define DFS_FILESYSTEMS_MAX         2
+/* the max number of opened files       */
+#define DFS_FD_MAX                  8
+/* the max number of cached sector      */
+#define DFS_CACHE_MAX_NUM           4
 
 /* SECTION: RT-Thread/GUI */
 //#define RT_USING_RTGUI
 
 /* name length of RTGUI object */
-#define RTGUI_NAME_MAX		12
+#define RTGUI_NAME_MAX      12
 /* support 16 weight font */
 #define RTGUI_USING_FONT16
 /* support Chinese font */
@@ -116,6 +112,6 @@
 /* use mouse cursor */
 /* #define RTGUI_USING_MOUSE_CURSOR */
 /* default font size in RTGUI */
-#define RTGUI_DEFAULT_FONT_SIZE	16
+#define RTGUI_DEFAULT_FONT_SIZE 16
 
 #endif /* RTCONFIG_H_ */

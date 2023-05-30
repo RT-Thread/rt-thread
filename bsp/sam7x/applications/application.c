@@ -1,11 +1,7 @@
 /*
- * File      : app.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -44,49 +40,49 @@ void rt_init_thread_entry(void *parameter)
 {
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
-	{
-		/* init the device filesystem */
-		dfs_init();
-		/* init the efsl filesystam*/
-		efsl_init();
+    {
+        /* init the device filesystem */
+        dfs_init();
+        /* init the efsl filesystam*/
+        efsl_init();
 
-		/* mount sd card fat partition 1 as root directory */
-		if (dfs_mount("sd0", "/", "efs", 0, 0) == 0)
-			rt_kprintf("File System initialized!\n");
-		else
-			rt_kprintf("File System init failed!\n");
-	}
+        /* mount sd card fat partition 1 as root directory */
+        if (dfs_mount("sd0", "/", "efs", 0, 0) == 0)
+            rt_kprintf("File System initialized!\n");
+        else
+            rt_kprintf("File System init failed!\n");
+    }
 #endif
 
 /* LwIP Initialization */
 #ifdef RT_USING_LWIP
-	{
-		extern void lwip_sys_init(void);
+    {
+        extern void lwip_sys_init(void);
 
-		eth_system_device_init();
+        eth_system_device_init();
 
-		/* register AT91 EMAC device */
-		sam7xether_register("E0");
+        /* register AT91 EMAC device */
+        sam7xether_register("E0");
 
-		/* init lwip system */
-		lwip_sys_init();
-		rt_kprintf("TCP/IP initialized!\n");
-	}
+        /* init lwip system */
+        lwip_sys_init();
+        rt_kprintf("TCP/IP initialized!\n");
+    }
 #endif
 }
 
 int rt_application_init()
 {
-	rt_thread_t init_thread;
+    rt_thread_t init_thread;
 
-	init_thread = rt_thread_create("init",
-								rt_init_thread_entry, RT_NULL,
-								1024, 8, 5);
-	rt_thread_startup(init_thread);
+    init_thread = rt_thread_create("init",
+                                rt_init_thread_entry, RT_NULL,
+                                1024, 8, 5);
+    rt_thread_startup(init_thread);
 
-	rt_kprintf("enter list() to get function list!\n");
+    rt_kprintf("enter list() to get function list!\n");
 
-	return 0;
+    return 0;
 }
 
 /*@}*/

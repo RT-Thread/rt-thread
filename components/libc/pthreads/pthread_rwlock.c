@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,7 +60,7 @@ int pthread_rwlock_init(pthread_rwlock_t           *rwlock,
     pthread_mutex_init(&(rwlock->rw_mutex), NULL);
     pthread_cond_init(&(rwlock->rw_condreaders), NULL);
     pthread_cond_init(&(rwlock->rw_condwriters), NULL);
-    
+
     rwlock->rw_nwaitwriters = 0;
     rwlock->rw_nwaitreaders = 0;
     rwlock->rw_refcount = 0;
@@ -117,7 +117,7 @@ int pthread_rwlock_destroy (pthread_rwlock_t *rwlock)
     pthread_mutex_unlock(&rwlock->rw_mutex);
     if (result == 0)
         pthread_mutex_destroy(&rwlock->rw_mutex);
-    
+
     return result;
 }
 RTM_EXPORT(pthread_rwlock_destroy);
@@ -234,7 +234,7 @@ int pthread_rwlock_timedwrlock(pthread_rwlock_t      *rwlock,
         result = pthread_cond_timedwait(&rwlock->rw_condwriters, &rwlock->rw_mutex, abstime);
         /* rw_mutex should have been taken again when returned from waiting */
         rwlock->rw_nwaitwriters--;
-        
+
         if (result != 0)
             break;
     }
@@ -324,7 +324,7 @@ int pthread_rwlock_wrlock(pthread_rwlock_t *rwlock)
         result = pthread_cond_wait(&rwlock->rw_condwriters, &rwlock->rw_mutex);
         /* rw_mutex should have been taken again when returned from waiting */
         rwlock->rw_nwaitwriters--;
-        
+
         if (result != 0)
             break;
     }

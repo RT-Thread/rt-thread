@@ -8,12 +8,15 @@ group = []
 CPPPATH = [cwd]
 
 if GetDepend('RT_USING_LIBC'):
-        src += Glob('*.c')
+        src += Glob('*.c')      
 else:
-        if GetDepend('RT_LIBC_USING_TIME'):
+        if GetDepend('RT_LIBC_USING_TIME') and not GetDepend('RT_USING_MINILIBC'):
                 src += ['time.c']
 
-if (rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'iar') and rtconfig.ARCH != 'sim' :
-        group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
+if GetDepend('RT_USING_POSIX') == False:
+        SrcRemove(src, ['unistd.c'])
+
+if not GetDepend('RT_USING_MINILIBC') and (GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME')):
+	group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

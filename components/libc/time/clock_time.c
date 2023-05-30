@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2012-12-08     Bernard      fix the issue of _timevalue.tv_usec initialization, 
+ * 2012-12-08     Bernard      fix the issue of _timevalue.tv_usec initialization,
  *                             which found by Rob <rdent@iinet.net.au>
  */
 

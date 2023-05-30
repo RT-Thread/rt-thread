@@ -51,6 +51,9 @@ def _get_filetype(fn):
     if fn.rfind('.lib') != -1:
         return 4
 
+    if fn.rfind('.o') != -1:
+        return 3
+
     # other filetype
     return 5
 

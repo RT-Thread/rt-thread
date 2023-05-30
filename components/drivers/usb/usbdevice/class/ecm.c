@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -44,9 +44,9 @@ struct rt_ecm_eth
     ALIGN(4)
     char                    rx_buffer[USB_ETH_MTU];
     char                    tx_buffer[USB_ETH_MTU];
-    
+
     struct rt_semaphore     tx_buffer_free;
-    
+
 };
 typedef struct rt_ecm_eth * rt_ecm_eth_t;
 
@@ -207,7 +207,7 @@ static rt_err_t _cdc_send_notifi(ufunction_t func,ucdc_notification_code_t notif
     _notifi.bNotificatinCode = notifi;
     _notifi.wValue = wValue;
     _notifi.wLength = wLength;
-    
+
     eps->ep_cmd->request.buffer = (void *)&_notifi;
     eps->ep_cmd->request.size = 8;
     eps->ep_cmd->request.req_type = UIO_REQUEST_WRITE;
@@ -220,7 +220,7 @@ static rt_err_t _ecm_set_eth_packet_filter(ufunction_t func, ureq_t setup)
 {
     rt_ecm_eth_t _ecm_eth = (rt_ecm_eth_t)func->user_data;
     dcd_ep0_send_status(func->device->dcd);
-    
+
     /* send link up. */
     eth_device_linkchange(&_ecm_eth->parent, RT_TRUE);
     _cdc_send_notifi(func, UCDC_NOTIFI_NETWORK_CONNECTION, 1, 0);
@@ -292,7 +292,7 @@ static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
         ecm_device->rx_size = ecm_device->rx_offset;
         ecm_device->rx_offset = 0;
         eth_device_ready(&ecm_device->parent);
-        
+
     }else
     {
         ecm_device->eps.ep_out->request.buffer = ecm_device->eps.ep_out->buffer;
@@ -419,15 +419,15 @@ rt_err_t rt_ecm_eth_tx(rt_device_t dev, struct pbuf* p)
         p->tot_len = USB_ETH_MTU;
     }
 
-    result = rt_sem_take(&device->tx_buffer_free, rt_tick_from_millisecond(1000));
+    result = rt_sem_take(&ecm_eth_dev->tx_buffer_free, rt_tick_from_millisecond(1000));
     if(result != RT_EOK)
     {
         LOG_W("wait for buffer free timeout");
         /* if cost 1s to wait send done it said that connection is close . drop it */
-        rt_sem_release(&device->tx_buffer_free);
+        rt_sem_release(&ecm_eth_dev->tx_buffer_free);
         return result;
     }
-    
+
     pbuffer = (char *)&ecm_eth_dev->tx_buffer;
     for (q = p; q != NULL; q = q->next)
     {
@@ -480,7 +480,7 @@ static rt_err_t _function_enable(ufunction_t func)
     /* reset eth rx tx */
     ecm_device->rx_size = 0;
     ecm_device->rx_offset = 0;
-    
+
     eps->ep_out->request.buffer = (void *)eps->ep_out->buffer;
     eps->ep_out->request.size = EP_MAXPACKET(eps->ep_out);
     eps->ep_out->request.req_type = UIO_REQUEST_READ_BEST;
@@ -555,7 +555,7 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
     ualtsetting_t comm_setting, data_setting;
     ucdc_data_desc_t data_desc;
     ucdc_eth_desc_t comm_desc;
-    
+
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
 
@@ -565,7 +565,8 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
     /* create a cdc class */
     cdc = rt_usbd_function_new(device, &_dev_desc, &ops);
     rt_usbd_device_set_qualifier(device, &dev_qualifier);
-    _ecm_eth= rt_malloc(sizeof(struct rt_ecm_eth)); 
+    _ecm_eth= rt_malloc(sizeof(struct rt_ecm_eth));
+    RT_ASSERT(_ecm_eth != RT_NULL);
     rt_memset(_ecm_eth, 0, sizeof(struct rt_ecm_eth));
     cdc->user_data = _ecm_eth;
 
@@ -599,7 +600,7 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
     rt_usbd_set_altsetting(intf_comm, 0);
     /* add the communication interface to the cdc class */
     rt_usbd_function_add_interface(cdc, intf_comm);
-    
+
     /* create a bulk in and a bulk out endpoint */
     data_desc = (ucdc_data_desc_t)data_setting->desc;
     eps->ep_out = rt_usbd_endpoint_new(&data_desc->ep_out_desc, _ep_out_handler);
@@ -647,14 +648,14 @@ ufunction_t rt_usbd_function_ecm_create(udevice_t device)
     _ecm_eth->parent.eth_tx     = rt_ecm_eth_tx;
     /* register eth device */
     eth_device_init(&_ecm_eth->parent, "u0");
-    
+
     /* send link up. */
     eth_device_linkchange(&_ecm_eth->parent, RT_FALSE);
-   
+
     return cdc;
 }
 
-struct udclass ecm_class = 
+struct udclass ecm_class =
 {
     .rt_usbd_function_create = rt_usbd_function_ecm_create
 };

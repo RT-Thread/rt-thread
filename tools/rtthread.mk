@@ -55,6 +55,20 @@ $(if $(strip $(LOCALS)),$(eval $(LOCALS): $(S_SRC)
 	@$(CROSS_COMPILE)gcc $$(AFLAGS) -c $$< -o $$@))
 endef
 
+define add_s_file
+$(eval S_SRC := $(1:$(BSP_ROOT)/%=%)) \
+$(eval S_SRC := $(S_SRC:$(RTT_ROOT)/%=%)) \
+$(eval SOBJ := $(1:%.s=%.o)) \
+$(eval SOBJ := $(SOBJ:$(BSP_ROOT)/%=$(BSP_BUILD_DIR)/%)) \
+$(eval SOBJ := $(SOBJ:$(RTT_ROOT)/%=$(RTT_BUILD_DIR)/%)) \
+$(eval LOCALS := $(addprefix $(BUILD_DIR)/,$(SOBJ))) \
+$(eval OBJS += $(LOCALS)) \
+$(if $(strip $(LOCALS)),$(eval $(LOCALS): $(S_SRC)
+	@if [ ! -d $$(@D) ]; then mkdir -p $$(@D); fi
+	@echo cc $$<
+	@$(CROSS_COMPILE)gcc $$(AFLAGS) -c $$< -o $$@))
+endef
+
 add_flg = $(eval CFLAGS += $1) \
           $(eval AFLAGS += $1) \
           $(eval CXXFLAGS += $1)
@@ -88,6 +102,9 @@ $(if $(SRCS),$(foreach f,$(SRCS),$(call add_cxx_file,$(f))))
 
 SRCS := $(strip $(filter %.S,$(SRC_FILES)))
 $(if $(SRCS),$(foreach f,$(SRCS),$(call add_S_file,$(f))))
+
+SRCS := $(strip $(filter %.s,$(SRC_FILES)))
+$(if $(SRCS),$(foreach f,$(SRCS),$(call add_s_file,$(f))))
 
 CFLAGS += $(CPPPATHS)
 CXXFLAGS += $(CPPPATHS)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -106,6 +106,8 @@ extern "C" {
 #define  RT_SENSOR_CTRL_SET_POWER      (5)  /* Set power mode. args type of sensor power mode. ex. RT_SENSOR_POWER_DOWN,RT_SENSOR_POWER_NORMAL */
 #define  RT_SENSOR_CTRL_SELF_TEST      (6)  /* Take a self test */
 
+#define  RT_SENSOR_CTRL_USER_CMD_START 0x100  /* User commands should be greater than 0x100 */
+
 struct rt_sensor_info
 {
     rt_uint8_t     type;                    /* The sensor type */
@@ -151,7 +153,7 @@ struct rt_sensor_device
     const struct rt_sensor_ops  *ops;       /* The sensor ops */
 
     struct rt_sensor_module     *module;    /* The sensor module */
-    
+
     rt_err_t (*irq_handle)(rt_sensor_t sensor);             /* Called when an interrupt is generated, registered by the driver */
 };
 

@@ -1,11 +1,7 @@
 /*
- * File      : console.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -91,7 +87,7 @@ static void rt_cga_putc(int c)
         break;
     case '\n':
         crt_pos += CRT_COLS;
-        /* cascade	*/
+        /* cascade  */
     case '\r':
         crt_pos -= (crt_pos % CRT_COLS);
         break;
@@ -103,7 +99,7 @@ static void rt_cga_putc(int c)
         rt_console_putc(' ');
         break;
     default:
-        crt_buf[crt_pos++] = c;		/* write the character */
+        crt_buf[crt_pos++] = c;     /* write the character */
         break;
     }
 
@@ -218,47 +214,47 @@ static rt_size_t rt_console_read(rt_device_t dev, rt_off_t pos, void* buffer, rt
 static void rt_console_isr(int vector, void* param)
 {
     char c;
-	rt_bool_t ret;
+    rt_bool_t ret;
     rt_base_t level;
 
-	if(INTUART0_RX == vector)
-	{
-		c = rt_serial_getc();
-		ret = RT_TRUE;
-	}
-	else
-	{
-		rt_keyboard_isr();
+    if(INTUART0_RX == vector)
+    {
+        c = rt_serial_getc();
+        ret = RT_TRUE;
+    }
+    else
+    {
+        rt_keyboard_isr();
 
-		ret = rt_keyboard_getc(&c);
-	}
+        ret = rt_keyboard_getc(&c);
+    }
 
-	if(ret == RT_FALSE)
-	{
-		/* do nothing */
-	}
-	else
-	{
-		/* disable interrupt */
-		level = rt_hw_interrupt_disable();
+    if(ret == RT_FALSE)
+    {
+        /* do nothing */
+    }
+    else
+    {
+        /* disable interrupt */
+        level = rt_hw_interrupt_disable();
 
-		/* save character */
-		rx_buffer[save_index] = c;
-		save_index ++;
-		if (save_index >= CONSOLE_RX_BUFFER_SIZE)
-			save_index = 0;
+        /* save character */
+        rx_buffer[save_index] = c;
+        save_index ++;
+        if (save_index >= CONSOLE_RX_BUFFER_SIZE)
+            save_index = 0;
 
-		/* if the next position is read index, discard this 'read char' */
-		if (save_index == read_index)
-		{
-			read_index ++;
-			if (read_index >= CONSOLE_RX_BUFFER_SIZE)
-				read_index = 0;
-		}
+        /* if the next position is read index, discard this 'read char' */
+        if (save_index == read_index)
+        {
+            read_index ++;
+            if (read_index >= CONSOLE_RX_BUFFER_SIZE)
+                read_index = 0;
+        }
 
-		/* enable interrupt */
-		rt_hw_interrupt_enable(level);
-	}
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+    }
 
     /* invoke callback */
     if (console_device.rx_indicate != RT_NULL)
@@ -267,8 +263,8 @@ static void rt_console_isr(int vector, void* param)
 
         /* get rx length */
         rx_length = read_index > save_index ?
-			CONSOLE_RX_BUFFER_SIZE - read_index + save_index :
-			save_index - read_index;
+            CONSOLE_RX_BUFFER_SIZE - read_index + save_index :
+            save_index - read_index;
 
         if(rx_length > 0)
         {
@@ -288,8 +284,8 @@ static void rt_console_isr(int vector, void* param)
 void rt_hw_console_init(void)
 {
     rt_cga_init();
-	rt_serial_init();
-	init_keyboard();
+    rt_serial_init();
+    init_keyboard();
 
     /* install  keyboard isr */
     rt_hw_interrupt_install(INTKEYBOARD, rt_console_isr, RT_NULL, "kbd");
@@ -298,14 +294,14 @@ void rt_hw_console_init(void)
     rt_hw_interrupt_install(INTUART0_RX, rt_console_isr, RT_NULL, "COM1");
     rt_hw_interrupt_umask(INTUART0_RX);
 
-    console_device.type 		= RT_Device_Class_Char;
+    console_device.type         = RT_Device_Class_Char;
     console_device.rx_indicate  = RT_NULL;
     console_device.tx_complete  = RT_NULL;
-    console_device.init 		= rt_console_init;
-    console_device.open		    = rt_console_open;
-    console_device.close		= rt_console_close;
-    console_device.read 		= rt_console_read;
-    console_device.write 	    = rt_console_write;
+    console_device.init         = rt_console_init;
+    console_device.open         = rt_console_open;
+    console_device.close        = rt_console_close;
+    console_device.read         = rt_console_read;
+    console_device.write        = rt_console_write;
     console_device.control      = rt_console_control;
     console_device.user_data    = RT_NULL;
 
@@ -322,8 +318,8 @@ void rt_hw_console_init(void)
  * @param str the displayed string
  *
  * Modified:
- *	caoxl 2009-10-14
- *	the name is change to rt_hw_console_output in the v0.3.0
+ *  caoxl 2009-10-14
+ *  the name is change to rt_hw_console_output in the v0.3.0
  *
  */
 void rt_hw_console_output(const char* str)

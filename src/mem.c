@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -488,6 +488,12 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         if (mem2->next != mem_size_aligned + SIZEOF_STRUCT_MEM)
         {
             ((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
+        }
+
+        if (mem2 < lfree)
+        {
+            /* the splited struct is now the lowest */
+            lfree = mem2;
         }
 
         plug_holes(mem2);

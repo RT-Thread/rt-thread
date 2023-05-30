@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -259,7 +259,7 @@ static int m487_qspi_register_bus(struct m487_qspi *spi_bus, const char *name)
 static int rt_hw_qspi_init(void)
 {
 #ifdef USEING_QSPI0
-	m487_qspi_register_bus(&qspi0, "qspi0");
+    m487_qspi_register_bus(&qspi0, "qspi0");
 #endif
 
     return 0;

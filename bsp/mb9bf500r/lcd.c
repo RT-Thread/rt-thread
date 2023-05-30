@@ -1,11 +1,7 @@
 /*
- * File      : lcd.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -59,7 +55,7 @@ void lcd_write_cmd(unsigned char command)
             LCD_DATA_HIGH();
         else
             LCD_DATA_LOW();
-            
+
         LCD_CLK_LOW();
         delay();
         LCD_CLK_HIGH();
@@ -81,7 +77,7 @@ void lcd_write_data(unsigned char data)
             LCD_DATA_HIGH();
         else
             LCD_DATA_LOW();
-        
+
         LCD_CLK_LOW();
         delay();
         LCD_CLK_HIGH();
@@ -97,12 +93,12 @@ void lcd_write_data(unsigned char data)
 static void rt_hw_lcd_update(struct rt_device_rect_info *rect_info)
 {
     rt_uint8_t i,j = GUI_LCM_XMAX;
-    rt_uint8_t* p = (rt_uint8_t*)gui_disp_buf;  
-    
+    rt_uint8_t* p = (rt_uint8_t*)gui_disp_buf;
+
     for (i=0; i<GUI_LCM_PAGE; i++)
-    { 
-        lcd_write_cmd(SET_PAGE_ADDR_0|i);    
-        lcd_write_cmd(SET_COLH_ADDR_0);        
+    {
+        lcd_write_cmd(SET_PAGE_ADDR_0|i);
+        lcd_write_cmd(SET_COLH_ADDR_0);
         lcd_write_cmd(SET_COLL_ADDR_0);
         j = GUI_LCM_XMAX;
         while (j--)
@@ -125,7 +121,7 @@ static void rt_hw_lcd_set_pixel(rtgui_color_t *c, int x, int y)
 
     if (*c == rtgui_color_to_565(black))
         gui_disp_buf[page][x] |= 1<<(y%8);
-    else 
+    else
         if (*c == rtgui_color_to_565(white))
             gui_disp_buf[page][x] &= ~(1<<(y%8));
 }
@@ -134,7 +130,7 @@ static void rt_hw_lcd_get_pixel(rtgui_color_t *c, int x, int y)
 {
     rt_uint8_t page;
     page = y/8;
-    
+
     if (gui_disp_buf[page][x] & (1<<(y%8)))
         *c = black;
     else
@@ -144,16 +140,16 @@ static void rt_hw_lcd_get_pixel(rtgui_color_t *c, int x, int y)
 static void rt_hw_lcd_draw_hline(rtgui_color_t *c, int x1, int x2, int y)
 {
     rt_uint8_t page;
-	rt_uint8_t i;
+    rt_uint8_t i;
     page = y/8;
-  
+
     for (i=x1; i<x2; i++)
     {
         if (*c == rtgui_color_to_565(black))
             gui_disp_buf[page][i] |= 1<<(y%8);
-        else 
+        else
             if (*c == rtgui_color_to_565(white))
-                gui_disp_buf[page][i] &= ~(1<<(y%8));      
+                gui_disp_buf[page][i] &= ~(1<<(y%8));
     }
 }
 
@@ -169,13 +165,13 @@ static void rt_hw_lcd_draw_vline(rtgui_color_t *c, int x, int y1, int y2)
 
 static void rt_hw_lcd_draw_raw_hline(rt_uint8_t *pixels, int x1, int x2, int y)
 {
-    rt_uint8_t coll; 
-	rt_uint8_t colh; 
-	rt_uint8_t page;
-	rt_uint8_t i;
+    rt_uint8_t coll;
+    rt_uint8_t colh;
+    rt_uint8_t page;
+    rt_uint8_t i;
 
     page = y/8;
-  
+
     for (i=x1; i<x2; i++)
     {
         gui_disp_buf[page][i] |= 1<<(y%8);
@@ -213,7 +209,7 @@ void lcd_io_init()
     /*Select CPIO function*/
     LCD_PS_PFR &= ~LCD_PS;
     /*Make pin output*/
-    LCD_PS_DDR |= LCD_PS;    
+    LCD_PS_DDR |= LCD_PS;
     /*Select CPIO function*/
     LCD_CLK_PFR &= ~LCD_CLK;
     /*Make pin output*/
@@ -228,7 +224,7 @@ void lcd_io_init()
 static rt_err_t rt_lcd_init (rt_device_t dev)
 {
     lcd_io_init();
-    
+
     power_delay();
     lcd_write_cmd(DISPLAY_OFF);
     reset_delay();
@@ -239,19 +235,19 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
     lcd_write_cmd(SET_LCD_BIAS_9);
     reset_delay();
     // ADC selection: display from left to right
-    lcd_write_cmd(SET_ADC_NORMAL);        
+    lcd_write_cmd(SET_ADC_NORMAL);
     reset_delay();
     // Common output state selection: display from up to down
     lcd_write_cmd(COM_SCAN_DIR_REVERSE);
     reset_delay();
-      
+
     lcd_write_cmd(POWER_BOOSTER_ON);
     power_delay(); // 50ms requried
     lcd_write_cmd(POWER_REGULATOR_ON);
     power_delay(); // 50ms
     lcd_write_cmd(POWER_FOLLOWER_ON);
     power_delay(); // 50ms
-      
+
     // Setting the built-in resistance radio for regulation of the V0 voltage
     // Electronic volume control
     // Power control setting
@@ -271,7 +267,7 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
     delay();
     lcd_write_cmd(DISPLAY_ON);
     delay();
-      
+
     lcd_write_cmd(DISPLAY_ALL_ON);
     delay();
     lcd_write_cmd(DISPLAY_OFF);
@@ -280,7 +276,7 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
     delay();
     lcd_write_cmd(DISPLAY_ALL_NORMAL);
     delay();
-    
+
     return RT_EOK;
 }
 
@@ -291,15 +287,15 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void LCD_FillAll(unsigned char*	buffer)
+void LCD_FillAll(unsigned char* buffer)
 {
   unsigned char i,j = GUI_LCM_XMAX;
-  unsigned char* p = buffer;  
-	
+  unsigned char* p = buffer;
+
   for (i=0; i<GUI_LCM_PAGE; i++)
-  { 
-    lcd_write_cmd(SET_PAGE_ADDR_0|i);	
-    lcd_write_cmd(SET_COLH_ADDR_0);		
+  {
+    lcd_write_cmd(SET_PAGE_ADDR_0|i);
+    lcd_write_cmd(SET_COLH_ADDR_0);
     lcd_write_cmd(SET_COLL_ADDR_0);
     j = GUI_LCM_XMAX;
     while (j--)
@@ -322,8 +318,8 @@ void LCD_ClearSCR(void)
   unsigned char i, j;
 
   for(i=0; i<GUI_LCM_PAGE; i++)
-  { 
-    for(j = 0; j < GUI_LCM_XMAX; j++) 
+  {
+    for(j = 0; j < GUI_LCM_XMAX; j++)
       gui_disp_buf[i][j] = 0;
   }
   LCD_FillAll((unsigned char*)gui_disp_buf);
@@ -331,7 +327,7 @@ void LCD_ClearSCR(void)
 
 /****************************************************************************
 * Function Name  : LCD_UpdatePoint
-* Description    : refresh the point in screen 
+* Description    : refresh the point in screen
 * Input          : x      X-coordinate
                    y      Y-coordinate
 * Output         : None
@@ -344,16 +340,16 @@ void  LCD_UpdatePoint(unsigned int x, unsigned int y)
   page = y / 8;
   coll = x & 0x0f;
   colh = x >> 4;
-	
-  lcd_write_cmd(SET_PAGE_ADDR_0 | page);	        // page no.
-  lcd_write_cmd(SET_COLH_ADDR_0 | colh);		// fixed col first addr
+
+  lcd_write_cmd(SET_PAGE_ADDR_0 | page);            // page no.
+  lcd_write_cmd(SET_COLH_ADDR_0 | colh);        // fixed col first addr
   lcd_write_cmd(SET_COLL_ADDR_0 | coll);
   lcd_write_data(gui_disp_buf[page][x]);
 }
 
 /****************************************************************************
 * Function Name  : LCD_PutChar
-* Description    : output a char to screen 
+* Description    : output a char to screen
                   (the char only can be ' ','0'~'9','A'~'Z','a'~'z')
 * Input          : x      X-coordinate
                    y      Y-coordinate
@@ -363,13 +359,13 @@ void  LCD_UpdatePoint(unsigned int x, unsigned int y)
                    0    Fail
 ****************************************************************************/
 unsigned char  LCD_PutChar(unsigned long x, unsigned long y, unsigned char ch)
-{  
+{
    unsigned char data;
    unsigned char i, j;
 
    if( x >=(GUI_LCM_XMAX-8) ) return(0);
    if( y >=(GUI_LCM_YMAX-8) ) return(0);
-   
+
    if(ch == 0x20)
      ch -= 0x20;
      else if((ch >= 0x30)&&(ch <= 0x39))
@@ -380,30 +376,30 @@ unsigned char  LCD_PutChar(unsigned long x, unsigned long y, unsigned char ch)
           ch -= 0x3C;
           else
             return(0);
-    
+
    for(i = 0; i < 8; i++)
-   {  
+   {
       data = FONTTYPE8_8[ch][i];
-      
+
       for(j = 0; j < 8; j++)
-      {  
+      {
          if( (data&BIT_MASK[j]) == 0)
            gui_disp_buf[y / 8][x] &= (~(0x01 << ( y % 8)));
-         else  
+         else
            gui_disp_buf[y / 8][x] |= (0x01 <<( y % 8));
          LCD_UpdatePoint(x, y);
          x ++;
       }
-      x -= 8;								
-      y++;									
+      x -= 8;
+      y++;
    }
-   
+
    return(1);
 }
 
 /****************************************************************************
 * Function Name  : LCD_PutString
-* Description    : output string to screen 
+* Description    : output string to screen
 * Input          : x      X-coordinate
                    y      Y-coordinate
                   str     pointer to string
@@ -411,32 +407,32 @@ unsigned char  LCD_PutChar(unsigned long x, unsigned long y, unsigned char ch)
 * Return         : None
 ****************************************************************************/
 void  LCD_PutString(unsigned long x, unsigned long y, char *str)
-{  
+{
   while(1)
-  {  
+  {
     if( (*str)=='\0' ) break;
     if( LCD_PutChar(x, y, *str++) == 0 ) break;
-    x += 6;								
+    x += 6;
   }
 }
 
 static rt_err_t rt_lcd_control (rt_device_t dev, int cmd, void *args)
 {
-	switch (cmd)
-	{
-#ifdef RT_USING_RTGUI    
-	case RTGRAPHIC_CTRL_RECT_UPDATE:
-        rt_hw_lcd_update(args);      
-		break;
-	case RTGRAPHIC_CTRL_POWERON:
-		break;
-	case RTGRAPHIC_CTRL_POWEROFF:
-		break;
-	case RTGRAPHIC_CTRL_GET_INFO:		
-		rt_memcpy(args, &_lcd_info, sizeof(_lcd_info));
-		break;
-	case RTGRAPHIC_CTRL_SET_MODE:
-		break;
+    switch (cmd)
+    {
+#ifdef RT_USING_RTGUI
+    case RTGRAPHIC_CTRL_RECT_UPDATE:
+        rt_hw_lcd_update(args);
+        break;
+    case RTGRAPHIC_CTRL_POWERON:
+        break;
+    case RTGRAPHIC_CTRL_POWEROFF:
+        break;
+    case RTGRAPHIC_CTRL_GET_INFO:
+        rt_memcpy(args, &_lcd_info, sizeof(_lcd_info));
+        break;
+    case RTGRAPHIC_CTRL_SET_MODE:
+        break;
 #else
     case RT_DEVICE_CTRL_LCD_DISPLAY_ON:
         lcd_write_cmd(DISPLAY_ON);
@@ -450,32 +446,32 @@ static rt_err_t rt_lcd_control (rt_device_t dev, int cmd, void *args)
     case RT_DEVICE_CTRL_LCD_CLEAR_SCR:
         LCD_ClearSCR();
         break;
-#endif        
-	}
+#endif
+    }
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 void rt_hw_lcd_init(void)
 {
-	rt_device_t lcd = rt_malloc(sizeof(struct rt_device));
-	if (lcd == RT_NULL) return; /* no memory yet */
+    rt_device_t lcd = rt_malloc(sizeof(struct rt_device));
+    if (lcd == RT_NULL) return; /* no memory yet */
 
-	_lcd_info.bits_per_pixel = 16;
-	_lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
-	_lcd_info.framebuffer = RT_NULL;
-	_lcd_info.width = LCD_WIDTH;
-	_lcd_info.height = LCD_HEIGHT;
+    _lcd_info.bits_per_pixel = 16;
+    _lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
+    _lcd_info.framebuffer = RT_NULL;
+    _lcd_info.width = LCD_WIDTH;
+    _lcd_info.height = LCD_HEIGHT;
 
-	/* init device structure */
-	lcd->type = RT_Device_Class_Unknown;
-	lcd->init = rt_lcd_init;
-	lcd->open = RT_NULL;
-	lcd->close = RT_NULL;
-	lcd->control = rt_lcd_control;
+    /* init device structure */
+    lcd->type = RT_Device_Class_Unknown;
+    lcd->init = rt_lcd_init;
+    lcd->open = RT_NULL;
+    lcd->close = RT_NULL;
+    lcd->control = rt_lcd_control;
 #ifdef RT_USING_RTGUI
-	lcd->user_data = (void*)&_lcd_ops;
-#endif	
-	/* register lcd device to RT-Thread */
-	rt_device_register(lcd, "lcd", RT_DEVICE_FLAG_RDWR);
+    lcd->user_data = (void*)&_lcd_ops;
+#endif
+    /* register lcd device to RT-Thread */
+    rt_device_register(lcd, "lcd", RT_DEVICE_FLAG_RDWR);
 }

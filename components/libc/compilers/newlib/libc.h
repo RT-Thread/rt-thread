@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 #include <sys/time.h>
 
 #ifndef _EXFUN
-#define _EXFUN(name, proto)		name proto
+#define _EXFUN(name, proto)     name proto
 #endif
 
 #define MILLISECOND_PER_SECOND  1000UL

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -78,7 +78,7 @@ struct finsh_shell
     struct finsh_parser parser;
 #endif
 
-    char line[FINSH_CMD_SIZE];
+    char line[FINSH_CMD_SIZE + 1];
     rt_uint16_t line_position;
     rt_uint16_t line_curpos;
 

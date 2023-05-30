@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author		Notes
- * 2011-07-25     weety		first version
+ * Date           Author        Notes
+ * 2011-07-25     weety     first version
  */
 
 #ifndef __CMD_H__
@@ -85,9 +85,9 @@ extern "C" {
 #define SD_APP_OP_COND           41   /* bcr  [31:0] OCR         R3  */
 #define SD_APP_SEND_SCR          51   /* adtc                    R1  */
 
-#define SCR_SPEC_VER_0		0	/* Implements system specification 1.0 - 1.01 */
-#define SCR_SPEC_VER_1		1	/* Implements system specification 1.10 */
-#define SCR_SPEC_VER_2		2	/* Implements system specification 2.00 */
+#define SCR_SPEC_VER_0      0   /* Implements system specification 1.0 - 1.01 */
+#define SCR_SPEC_VER_1      1   /* Implements system specification 1.10 */
+#define SCR_SPEC_VER_2      2   /* Implements system specification 2.00 */
 
 
 /* SDIO commands                                          type  argument     response */

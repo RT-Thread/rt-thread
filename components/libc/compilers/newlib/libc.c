@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@
 #include <pthread.h>
 #endif
 
-int	_EXFUN(putenv,(char *__string));
+int _EXFUN(putenv,(char *__string));
 
 int libc_system_init(void)
 {

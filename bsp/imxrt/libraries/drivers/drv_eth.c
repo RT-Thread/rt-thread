@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -328,7 +328,7 @@ static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const ui
 #endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
 
         pbuf_copy_partial((const struct pbuf *)data, (void *)address, length, 0);
-            
+
         /* Set data length. */
         curBuffDescrip->length = length;
 #ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
@@ -433,7 +433,7 @@ static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const ui
                 address = (uint32_t)curBuffDescrip->buffer;
 #endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
                 DCACHE_CleanByRange(address, handle->txBuffSizeAlign[0]);
-#endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */                 
+#endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
                 /* Active the transmit buffer descriptor. */
                 _ENET_ActiveSend(base, 0);
 
@@ -453,8 +453,8 @@ static status_t _ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const ui
 /* transmit packet. */
 rt_err_t rt_imxrt_eth_tx(rt_device_t dev, struct pbuf *p)
 {
-	rt_err_t result = RT_EOK;
-	enet_handle_t * enet_handle = &imxrt_eth_device.enet_handle;
+    rt_err_t result = RT_EOK;
+    enet_handle_t * enet_handle = &imxrt_eth_device.enet_handle;
 
     RT_ASSERT(p != NULL);
     RT_ASSERT(enet_handle != RT_NULL);

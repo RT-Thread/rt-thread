@@ -1,11 +1,7 @@
 /*
- * File      : trap.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -135,7 +131,7 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
     rt_hw_cpu_shutdown();
 }
 
-#define GIC_ACK_INTID_MASK					0x000003ff
+#define GIC_ACK_INTID_MASK                  0x000003ff
 
 void rt_hw_trap_irq(void)
 {

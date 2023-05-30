@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,9 +9,7 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
-
 #include "audio_pipe.h"
 
 static void _rt_pipe_resume_writer(struct rt_audio_pipe *pipe)

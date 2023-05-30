@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,6 +60,17 @@ extern "C" {
     }
 #endif /* PWM5_CONFIG */
 #endif /* BSP_USING_PWM5 */
+
+#ifdef BSP_USING_PWM9
+#ifndef PWM9_CONFIG
+#define PWM9_CONFIG                             \
+    {                                           \
+       .tim_handle.Instance     = TIM9,         \
+       .name                    = "pwm9",       \
+       .channel                 = 0             \
+    }
+#endif /* PWM9_CONFIG */
+#endif /* BSP_USING_PWM9 */
 
 #ifdef BSP_USING_PWM12
 #ifndef PWM12_CONFIG

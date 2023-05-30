@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -375,7 +375,7 @@ static int can_send(struct rt_can_device *can_dev, const void *buf, rt_uint32_t 
         ret = RT_EBUSY;
         break;
     }
-    
+
     return ret;
 }
 

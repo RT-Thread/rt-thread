@@ -1,11 +1,7 @@
 /*
- * File      : usart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2014, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -32,12 +28,12 @@ static rt_err_t m05x_configure(struct rt_serial_device *serial, struct serial_co
         /* Set P3 multi-function pins for UART0 RXD and TXD */
         SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
         SYS->P3_MFP |= (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
-        
+
         /* Reset IP */
         SYS_ResetModule(UART0_RST);
         /* Configure UART0 and set UART0 Baudrate */
         UART_Open(UART0, cfg->baud_rate);
-        
+
         /* Enable Interrupt */
         UART_EnableInt(UART0, UART_IER_RDA_IEN_Msk);
     }
@@ -75,7 +71,7 @@ static int m05x_putc(struct rt_serial_device *serial, char c)
     uart = (UART_T *)serial->parent.user_data;
     if (UART_IS_TX_FULL(uart)) {
         UART_WAIT_TX_EMPTY(uart);
-        
+
     }
     UART_WRITE(uart, c);
     return 1;

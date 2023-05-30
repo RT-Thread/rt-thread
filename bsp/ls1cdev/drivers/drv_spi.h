@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -32,7 +32,7 @@ struct ls1c_spi_cs
  * 初始化并注册龙芯1c的spi总线
  * @SPI SPI总线，比如LS1C_SPI_0， LS1C_SPI_1
  * @spi_bus_name 总线名字
- * @ret 
+ * @ret
  */
 rt_err_t ls1c_spi_bus_register(rt_uint8_t SPI, const char *spi_bus_name);
 

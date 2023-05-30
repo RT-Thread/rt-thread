@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -579,7 +579,7 @@ struct pbuf *rt_eth_rx(rt_device_t device)
           if (synopGMAC_is_rx_desc_valid(status) || SYNOP_PHY_LOOPBACK)
             {
                 dma_addr1 =  plat_dma_map_single(gmacdev, (void *)data1, RX_BUF_SIZE);
-                len =  synopGMAC_get_rx_desc_frame_length(status)-4; //Not interested in Ethernet CRC bytes    
+                len =  synopGMAC_get_rx_desc_frame_length(status)-4; //Not interested in Ethernet CRC bytes
                 pbuf = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
                 if (pbuf == 0) rt_kprintf("===error in pbuf_alloc\n");
                 rt_memcpy(pbuf->payload, (char *)data1, len);

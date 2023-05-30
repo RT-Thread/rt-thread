@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -194,6 +194,40 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
 RTM_EXPORT(rt_ringbuffer_get);
 
 /**
+ *  peak data from ring buffer
+ */
+rt_size_t rt_ringbuffer_peak(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
+{
+    RT_ASSERT(rb != RT_NULL);
+
+    *ptr = RT_NULL;
+
+    /* whether has enough data  */
+    rt_size_t size = rt_ringbuffer_data_len(rb);
+
+    /* no data */
+    if (size == 0)
+        return 0;
+
+    *ptr = &rb->buffer_ptr[rb->read_index];
+
+    if(rb->buffer_size - rb->read_index > size)
+    {
+        rb->read_index += size;
+        return size;
+    }
+
+    size = rb->buffer_size - rb->read_index;
+
+    /* we are going into the other side of the mirror */
+    rb->read_mirror = ~rb->read_mirror;
+    rb->read_index = 0;
+
+    return size;
+}
+RTM_EXPORT(rt_ringbuffer_peak);
+
+/**
  * put a character into ring buffer
  */
 rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
@@ -286,8 +320,8 @@ rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
 }
 RTM_EXPORT(rt_ringbuffer_getchar);
 
-/** 
- * get the size of data in rb 
+/**
+ * get the size of data in rb
  */
 rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
 {
@@ -307,8 +341,8 @@ rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
 }
 RTM_EXPORT(rt_ringbuffer_data_len);
 
-/** 
- * empty the rb 
+/**
+ * empty the rb
  */
 void rt_ringbuffer_reset(struct rt_ringbuffer *rb)
 {
@@ -328,7 +362,7 @@ struct rt_ringbuffer* rt_ringbuffer_create(rt_uint16_t size)
     struct rt_ringbuffer *rb;
     rt_uint8_t *pool;
 
-	RT_ASSERT(size > 0);
+    RT_ASSERT(size > 0);
 
     size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 

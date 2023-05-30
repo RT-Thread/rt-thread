@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -394,22 +394,22 @@ rt_err_t mci_hw_init(const char *device_name)
         rt_kprintf("SD_Init failed!\n");
         return -RT_ERROR;
     }
-	
-	/*
-	follow the page: https://community.nxp.com/thread/454769
-	
-	The issue concerns sdmmc library bug (I finally solved) in SD_Init() in the file sdmmc/src/fsl_sd.c:SD_SelectBusTiming() 
-	calls SD_SwitchFunction() which sets block size to 64bytes (512bits).Therefore SD_SetBlockSize(card, FSL_SDMMC_DEFAULT_BLOCK_SIZE)
-	should be called again before SD_Init() exits.
-	*/
-	
-	if (kStatus_Success != SDMMC_SetBlockSize(_mci_device->card.host.base, _mci_device->card.host.transfer, FSL_SDMMC_DEFAULT_BLOCK_SIZE))
-	{
+
+    /*
+    follow the page: https://community.nxp.com/thread/454769
+
+    The issue concerns sdmmc library bug (I finally solved) in SD_Init() in the file sdmmc/src/fsl_sd.c:SD_SelectBusTiming()
+    calls SD_SwitchFunction() which sets block size to 64bytes (512bits).Therefore SD_SetBlockSize(card, FSL_SDMMC_DEFAULT_BLOCK_SIZE)
+    should be called again before SD_Init() exits.
+    */
+
+    if (kStatus_Success != SDMMC_SetBlockSize(_mci_device->card.host.base, _mci_device->card.host.transfer, FSL_SDMMC_DEFAULT_BLOCK_SIZE))
+    {
         SD_Deinit(&_mci_device->card);
         memset(&_mci_device->card, 0U, sizeof(_mci_device->card));
         rt_kprintf("SD_Init failed!\n");
-        return -RT_ERROR;		
-	}
+        return -RT_ERROR;
+    }
 
     /* initialize mutex lock */
     rt_mutex_init(&_mci_device->lock, device_name, RT_IPC_FLAG_FIFO);

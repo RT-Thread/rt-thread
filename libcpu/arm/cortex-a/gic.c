@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -74,9 +74,8 @@ void arm_gic_ack(rt_uint32_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
-    GIC_DIST_ENABLE_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
+    GIC_DIST_PENDING_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
     GIC_CPU_EOI(_gic_table[index].cpu_hw_base) = irq;
-    GIC_DIST_ENABLE_SET(_gic_table[index].dist_hw_base, irq) = mask;
 }
 
 void arm_gic_mask(rt_uint32_t index, int irq)

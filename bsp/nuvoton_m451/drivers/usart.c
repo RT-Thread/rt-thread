@@ -1,11 +1,7 @@
 /*
- * File      : usart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2014, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -24,20 +20,20 @@ static rt_err_t m451_configure(struct rt_serial_device *serial, struct serial_co
     if (uart == UART0) {
         /* Enable UART module clock */
         CLK_EnableModuleClock(UART0_MODULE);
-        
+
         /* Select UART module clock source as HXT and UART module clock divider as 1 */
         CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UARTSEL_HXT, CLK_CLKDIV0_UART(1));
-        
+
         /* Set PD multi-function pins for UART0 RXD(PD.0) and TXD(PD.1) */
         SYS->GPD_MFPL &= ~(SYS_GPD_MFPL_PD0MFP_Msk | SYS_GPD_MFPL_PD1MFP_Msk);
         SYS->GPD_MFPL |= (SYS_GPD_MFPL_PD0MFP_UART0_RXD | SYS_GPD_MFPL_PD1MFP_UART0_TXD);
-        
+
         /* Reset UART module */
         SYS_ResetModule(UART0_RST);
-        
+
         /* Configure UART0 and set UART0 Baudrate */
         UART_Open(UART0, cfg->baud_rate);
-        
+
         /* Enable Interrupt */
         UART_EnableInt(UART0, UART_INTEN_RDAIEN_Msk);
     }

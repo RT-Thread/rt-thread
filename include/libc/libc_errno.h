@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB) || defined(_WIN32)
+#if defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 /* use errno.h file in toolchains */
 #include <errno.h>
 #endif
@@ -45,7 +45,7 @@ defined in armcc/errno.h
 #define ERROR_BASE_NO    0
 #endif
 
-#if !defined(RT_USING_NEWLIB) && !defined(_WIN32)
+#if !defined(RT_USING_NEWLIB) && !defined(_WIN32) && !(defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 
 #define EPERM            (ERROR_BASE_NO + 1)
 #define ENOENT           (ERROR_BASE_NO + 2)
@@ -161,7 +161,7 @@ defined in armcc/errno.h
 #define EPROTONOSUPPORT (ERROR_BASE_NO + 93)
 #define ESOCKTNOSUPPORT (ERROR_BASE_NO + 94)
 #define EOPNOTSUPP      (ERROR_BASE_NO + 95)
-#define ENOTSUP         EOPNOTSUPP         
+#define ENOTSUP         EOPNOTSUPP
 #define EPFNOSUPPORT    (ERROR_BASE_NO + 96)
 #define EAFNOSUPPORT    (ERROR_BASE_NO + 97)
 #define EADDRINUSE      (ERROR_BASE_NO + 98)

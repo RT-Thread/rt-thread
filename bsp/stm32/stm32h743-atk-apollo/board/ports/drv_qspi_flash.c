@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-11-27     zylx         first version
  */
- 
+
 #include <board.h>
 #include <drv_qspi.h>
 #include <rtdevice.h>
@@ -63,7 +63,7 @@ void w25qxx_enter_qspi_mode(struct rt_qspi_device *device)
 static int rt_hw_qspi_flash_with_sfud_init(void)
 {
     stm32_qspi_bus_attach_device("qspi1", "qspi10", RT_NULL, 4, w25qxx_enter_qspi_mode, RT_NULL);
-    
+
     /* init W25Q256 */
     if (RT_NULL == rt_sfud_flash_probe("W25Q256", "qspi10"))
     {

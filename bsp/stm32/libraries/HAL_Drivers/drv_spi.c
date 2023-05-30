@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,12 +10,13 @@
  * 2019-01-03     zylx         modify DMA initialization and spixfer function
  */
 
+#include <rtthread.h>
+#include <rtdevice.h>
 #include "board.h"
 
 #ifdef RT_USING_SPI
 
 #if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5) || defined(BSP_USING_SPI6)
-/* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 
 #include "drv_spi.h"
 #include "drv_config.h"
@@ -136,7 +137,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     if (cfg->mode & RT_SPI_NO_CS)
     {
-        spi_handle->Init.NSS = SPI_NSS_SOFT;
+        spi_handle->Init.NSS = SPI_NSS_HARD_OUTPUT;
     }
     else
     {
@@ -147,6 +148,8 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
+#elif defined(SOC_SERIES_STM32H7)
+    SPI_APB_CLOCK = HAL_RCC_GetSysClockFreq();
 #else
     SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
 #endif
@@ -205,6 +208,20 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     spi_handle->State = HAL_SPI_STATE_RESET;
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0)
     spi_handle->Init.NSSPMode          = SPI_NSS_PULSE_DISABLE;
+#elif defined(SOC_SERIES_STM32H7)
+    spi_handle->Init.Mode                       = SPI_MODE_MASTER;
+    spi_handle->Init.NSS                        = SPI_NSS_SOFT;
+    spi_handle->Init.NSSPMode                   = SPI_NSS_PULSE_DISABLE;
+    spi_handle->Init.NSSPolarity                = SPI_NSS_POLARITY_LOW;
+    spi_handle->Init.CRCPolynomial              = 7;
+    spi_handle->Init.TxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+    spi_handle->Init.RxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+    spi_handle->Init.MasterSSIdleness           = SPI_MASTER_SS_IDLENESS_00CYCLE;
+    spi_handle->Init.MasterInterDataIdleness    = SPI_MASTER_INTERDATA_IDLENESS_00CYCLE;
+    spi_handle->Init.MasterReceiverAutoSusp     = SPI_MASTER_RX_AUTOSUSP_DISABLE;
+    spi_handle->Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_ENABLE;
+    spi_handle->Init.IOSwap                     = SPI_IO_SWAP_DISABLE;
+    spi_handle->Init.FifoThreshold              = SPI_FIFO_THRESHOLD_08DATA;
 #endif
 
     if (HAL_SPI_Init(spi_handle) != HAL_OK)
@@ -240,8 +257,6 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
     }
 
-    __HAL_SPI_ENABLE(spi_handle);
-
     LOG_D("%s init done", spi_drv->config->bus_name);
     return RT_EOK;
 }
@@ -263,7 +278,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
     struct stm32_hw_spi_cs *cs = device->parent.user_data;
 
-    if (message->cs_take)
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
     {
         HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_RESET);
     }
@@ -295,7 +310,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         already_send_length = message->length - send_length - message_length;
         send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
         recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
-        
+
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
@@ -318,6 +333,12 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             {
                 state = HAL_SPI_Transmit(spi_handle, (uint8_t *)send_buf, send_length, 1000);
             }
+
+            if (message->cs_release && (device->config.mode & RT_SPI_3WIRE))
+            {
+                /* release the CS by disable SPI when using 3 wires SPI */
+                __HAL_SPI_DISABLE(spi_handle);
+            }
         }
         else
         {
@@ -328,6 +349,8 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             }
             else
             {
+                /* clear the old error flag */
+                __HAL_SPI_CLEAR_OVRFLAG(spi_handle);
                 state = HAL_SPI_Receive(spi_handle, (uint8_t *)recv_buf, send_length, 1000);
             }
         }
@@ -349,7 +372,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
     }
 
-    if (message->cs_release)
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
     {
         HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_SET);
     }
@@ -862,23 +885,23 @@ static void stm32_get_dma_info(void)
 }
 
 #if defined(SOC_SERIES_STM32F0)
-void SPI1_DMA_RX_TX_IRQHandler(void) 
+void SPI1_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
     SPI1_DMA_TX_IRQHandler();
 #endif
-    
+
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
     SPI1_DMA_RX_IRQHandler();
 #endif
 }
 
-void SPI2_DMA_RX_TX_IRQHandler(void) 
+void SPI2_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
     SPI2_DMA_TX_IRQHandler();
 #endif
-    
+
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
     SPI2_DMA_RX_IRQHandler();
 #endif

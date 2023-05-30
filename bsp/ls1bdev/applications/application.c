@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2012, RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -24,36 +20,36 @@ extern void rt_hw_dc_init(void);
 void rt_init_thread_entry(void *parameter)
 {
 #ifdef RT_USING_RTGUI
-	{
-		rt_device_t dc;
+    {
+        rt_device_t dc;
 
-		/* init Display Controller */
-		rt_hw_dc_init();
+        /* init Display Controller */
+        rt_hw_dc_init();
 
-		/* find Display Controller device */
-		dc = rt_device_find("dc");
+        /* find Display Controller device */
+        dc = rt_device_find("dc");
 
-		/* set Display Controller device as rtgui graphic driver */
-		rtgui_graphic_set_device(dc);
-	}
+        /* set Display Controller device as rtgui graphic driver */
+        rtgui_graphic_set_device(dc);
+    }
 #endif
 
 #ifdef RT_USING_COMPONENTS_INIT
-	/* initialization RT-Thread Components */
-	rt_components_init();
+    /* initialization RT-Thread Components */
+    rt_components_init();
 #endif
 }
 
 int rt_application_init(void)
 {
-	rt_thread_t tid;
+    rt_thread_t tid;
 
-	/* create initialization thread */
-	tid = rt_thread_create("init",
-							rt_init_thread_entry, RT_NULL,
-							4096, 8, 20);
-	if (tid != RT_NULL)
-		rt_thread_startup(tid);
+    /* create initialization thread */
+    tid = rt_thread_create("init",
+                            rt_init_thread_entry, RT_NULL,
+                            4096, 8, 20);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
 
-	return 0;
+    return 0;
 }

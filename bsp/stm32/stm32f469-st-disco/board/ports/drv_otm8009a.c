@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author         Notes
  * 2019-05-23     WillianChan    first version
  */
- 
+
 #include <board.h>
 #ifdef BSP_USING_LCD_OTM8009A
 extern DSI_HandleTypeDef hdsi;
@@ -93,9 +93,9 @@ const rt_uint8_t RDS49[] = {0xF5, 0x06};
 const rt_uint8_t RDS50[] = {0x00, 0xB1};
 const rt_uint8_t RDS51[] = {0xC6, 0x06};
 
-void otm8009a_reset(void) 
+void otm8009a_reset(void)
 {
-    rt_pin_mode (GET_PIN(H, 7), PIN_MODE_OUTPUT); 
+    rt_pin_mode (GET_PIN(H, 7), PIN_MODE_OUTPUT);
     rt_pin_write(GET_PIN(H, 7), PIN_LOW);
     rt_thread_delay(rt_tick_from_millisecond(20));
     rt_pin_write(GET_PIN(H, 7), PIN_HIGH);
@@ -116,7 +116,7 @@ static void otm8009a_write_cmd(uint8_t *p, uint32_t num)
 
 static void otm8009a_delay(uint32_t d)
 {
-    rt_thread_delay(rt_tick_from_millisecond(d)); 
+    rt_thread_delay(rt_tick_from_millisecond(d));
 }
 
 static void otm8009a_config(rt_uint32_t pixel_format)
@@ -127,11 +127,11 @@ static void otm8009a_config(rt_uint32_t pixel_format)
     otm8009a_write_cmd((rt_uint8_t *)RDL02, 2);
     otm8009a_write_cmd((rt_uint8_t *)RDS02, 0);
     otm8009a_write_cmd((rt_uint8_t *)RDS03, 0);
-    otm8009a_delay(10); 
+    otm8009a_delay(10);
 
     otm8009a_write_cmd((rt_uint8_t *)RDS04, 0);
     otm8009a_write_cmd((rt_uint8_t *)RDS05, 0);
-    otm8009a_delay(10); 
+    otm8009a_delay(10);
 
     otm8009a_write_cmd((rt_uint8_t *)RDS06, 0);
     otm8009a_write_cmd((rt_uint8_t *)RDS07, 0);
@@ -215,8 +215,8 @@ static void otm8009a_config(rt_uint32_t pixel_format)
     otm8009a_write_cmd((rt_uint8_t *)RDS01, 0);
     otm8009a_write_cmd((rt_uint8_t *)RDL04, 16);
     otm8009a_write_cmd((rt_uint8_t *)RDS36, 0);
-    otm8009a_delay(120); 
-    
+    otm8009a_delay(120);
+
     switch (pixel_format)
     {
     case RTGRAPHIC_PIXEL_FORMAT_RGB565:
@@ -248,7 +248,7 @@ void stm32_mipi_lcd_init(void)
 
 void stm32_mipi_lcd_config(rt_uint32_t pixel_format)
 {
-    otm8009a_config(pixel_format); 
+    otm8009a_config(pixel_format);
 }
 
 void stm32_mipi_display_on(void)

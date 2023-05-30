@@ -1,3 +1,219 @@
+# RT-Thread v3.1.5 Change Log
+
+Change log since v3.1.4
+
+## Kernel
+
+* Fix the issue when block = NULL in rt_mp_free;
+* Fix the software issue when the system timer thread is pending
+* Fix the timer/software timer handling issue if the timeout function starts/stops/deletes this timer.
+* Fix an issue with rt_timer_start being broken and destroying the timer list
+* Fix bug of rt_memheap_detach
+* Fix the bug that the linked list is still mounted when the single timer is not modified
+* Fix the delay_until issue
+* Add mb mq value overflow-check code
+* Fix the rt_event_recv function, if the event met without blocking, assigning thread->event_set/event_info will goes well
+* Add the definition of the maximum value of ipc type
+* Fix the delay_until issue
+* fixed __rt_ffs bug on account of armclang LTO.
+* fixed rt_timer_list_next_timeout multi-task safe
+* fix the software issue when the system timer thread pending.
+* Fix the timer/software timer handling issue if the timeout function starts/stops/deletes this timer.
+* The cleanup operation is executed before the current thread exits
+* Modify cleanup to resolve the issue of unable to free memory and communication between threads
+* Fix double release for thread
+* Fix thread control bug about `RT_THREAD_CTRL_CLOSE` command
+* Fix the issue of critical protection when `rt_thread_delete` change the status of thread;
+* Fix bug in rt_realloc of mem.c, which may cause memory leak
+* Use object_find to implement thread_find/device_find
+* fix the timer code depends on c99
+
+## Components
+
+* Change rt_data_queue_peak to rt_data_queue_peek.
+* Add rt_data_queue_deinit and fix bug of dataqueue
+* Solve the issue that the do_pollfd function processing the underlying network device returns error -1
+* Fix the issue that when the network card device calls to close dhcp, the bottom layer no need to call the dhcp_stop function to close dhcp
+* Modify the spelling error of the macro definition, modify the printing error when printing the IMEI number
+* Fix the issue that the server closed the connection when web socket requests the data that comes back from the server, and the socket status is incorrectly judged at that point
+* Fix the issue of incorrect sal_getaddrinfo release when sal socket supports multiple network cards
+* Adjust where the AT socket callback function
+* Fix at_client, avoid creating the same client repeatedly and prevent working exceptions and memory leaks.
+* Fix the bug that rx_notice out of sync when the data is received after last rt_device_read() is zero
+* Change the header file included in some libc files from <rtthread.h> to <rtconfig.h> to narrow the scope of inclusion to prevent recursive compilation
+* [jffs2] modify the error check of rt_event_recv()
+* [audio] Fix compile warning, undefine var, and fixed re-include of audio
+* [serial] Fix the crash caused when the serial port receiving buffer is full and ULOG_USING_ISR_LOG is not turned on
+* [spi] Fix "response+1" causing hard fault of unaligned access to SPI memory of STM32 HAL library
+* [hwtimer] When getting the timer count, prevent overflow update due to the interruption
+* [dirver/i2c] i2c driver supports bus lock, STOP control
+* [usb] Fix bug in device descriptor that MAC OS enumeration failed
+* Fix the bug that USB cannot recognize composite device normally
+* Fix USB host core bugs
+  * Limit >4 USB ports hubs
+  * Double free intf
+  * dname buffer size is too small
+  * Reset child pointer after detaching instance
+* remove jffs
+* remove uffs
+
+## BSP and CPU porting
+
+* Add license info and code cleanup for vexpress-a9 BSP
+* Fix spelling mistakes of code
+* [allwinner_tina]Fix spi driver bug
+* Optimize BSP dist handle process
+* fixed a bug that caused system crash by changing the run_mode in low power mode
+* drv_flash_f7.c supports single bank mode
+* Optimize the pin-index algorithm for stm32
+* Fix the clock configuration issue of STM32 hardware timer
+* Adjust the interrupt priority configuration of some peripherals of the STM32 series BSP
+* Fix stm32 f1 series rtc bug
+* Fix PWM timer init about pwm
+* remove zynq7000
+* delete stm32f20x/fh8620/gkipc/realview-a8
+* update sam7x/simulator/qemu-vexpress-a9/imx6ul
+* add Copyright_Notice.md
+
+## Tools
+
+* Fixed python 2.x `cmp`
+* Rename GCC_VERSION to GCC_VERSION_STR
+* Optimize project group sort by name
+* Improve the logic of generating `rtconfig.h` files in scons with command `scons --menuconfig`
+* Fixed an issue that *.s src files couldn't be compiled
+* Fixed c99/siginfo_t issue caused by gcc_version
+
+# RT-Thread v3.1.4 Change Log
+
+Change log since v3.1.3
+
+## Kernel
+
+* Split the component automatic initialization to component automatic initialization and main funciton;
+* Fix RT_IDLE_HOOK spelling issue;
+* Add thread waiting for message queue when queue is full;
+* Fix the issue of delete mq in `rt_mq_create` in some abnormal case;
+* Remove the C++ keywords in the`rt_console_set_device`function;
+* Remove the `suspend_thread_count` member from memory_pool structure;
+* Fix the issue when block = NULL in rt_mp_free;
+* Fix the issue of critical protection when `rt_thread_delete` change the status of thread;
+
+## Components
+
+* Fix the issue of mPool size in C++ / Queue;
+* Add the error status return in C++ / Thread task join/wait function;
+* Fix compilation warning in DFS/ELM FatFS;
+* Add support for Linux NFS Server in DFS/NFS;
+* Fix mkfs issue in DFS/UFFS;
+* Add ftruncate, flock, getuid, umask APIs;
+* Fix the display issue of fd with offset in list_fd command;
+* Add `dfs_mount_device` API to mount a file system on a device which is already in mount_table;
+* Rename the C++ keywords in DFS/rename function;
+* Connnect dfs/poll, select with RT_USING_POSIX in Kconfig;
+* Optimize the part of the code of finsh to make it more simple;
+* When RT_USING_DEVICE is not used, finsh can use the `rt_hw_console_getchar()` function which is simple to implement and not using the device framework;
+* Increase the line length of the finsh shell to more than 256 characters;
+* utest can support clang compiler and C++ compiler;
+* Fix possible cross-boundary issues in ulog;
+* Fix compilation warning in `ulog/ulog_console_backend_output`;
+* Add support for file sending and receiving feature in YModem;
+* CRC16 can be calculated without the lookup talbe to reduce code size in YModem component;
+* Fix the issue that stack may be wrongly released during pthread/destory;
+* Fix the possible memory leaks issue which caused by pthread_create abnormal case;
+* The timer-related APIs under different compiler of libc are moved to the `libc\compilers\common` folder;
+* Remove redundant definitions in `dlib/sys/unistd.h` (which will cause compilation warnings);
+* Add `sys/errno.h` and`sys/signal.h` header files under dlib;
+* Freemodbus is no longer in the kernel, and split it as a standalone softwre package;
+* AT socket updated to v1.3.0:
+  - Add multi-client and multi-device function support in AT Socket, and improve the dirty data handling when AT device hardware module reboot;
+  - Support netdev network card feature, which can manage and control AT device network connection through the network card interface;
+* Improve AT Server function support in AT components, add AT Server data sending and receiving interfaces `at_server_send ()` and `at_server_recv ()`;
+* Fix the issue of `closesocket()` in SAL component when socket closing failure after `shutdown()`;
+* Improve `sal_bind ()` network card binding related function in SAL component;
+* Add IPV6 related options configuration and function support to SAL and netdev;
+* Improve ping command error handling and log display in the netdev;
+* Add hostname configuration options and functions in lwIP component;
+* Fix the assertion issue of `sys_arch_mbox_fetch()` in lwIP which may occur when a socket is closed;
+* Add network card uninstallation function and support for dhcpd service stop function to the lwip component;
+* Fix lwIP component compilation failure caused by closing FinSH component;
+* Fix the issue that the socket may not be closed during the DHCPD task in the lwIP DHCP server;
+* Add `dhcpd_stop()` interface;
+* Change log in device driver framework:
+  * Refactor audio driver framework;
+  * Fix the issue that the receiving length is 0 in CAN and the issue of returning wrong values;
+  * Add hardware encryption and decryption driver framework;
+  * Fix the flag handling issue of `rt_i2c_master_send/rt_i2c_master_recv`;
+  * Add input capture and pulse encoding driver framework;
+  * Fix the issue that partition lock is deleted when `rt_mmcsd_blk_remove`;
+  * Fix the issue that the enumerated capacity of the large-capacity card in MMC/SD exceeded the data range;
+  * When the SDIO device is initialized, the function's manufacturer and product can also use the information in CIS;
+  * Improve the interrupt mode handling in the sensor framework, and fix the issue that the memory is not released when registering the sensor;
+  * More information are provided in command line of sensor framework;
+  * Add the checking for Rx buffer size in the serial port framework, and provide a notification when RX buffer full;
+  * Remove the old Nor SPI Flash driver in SPI framework, and replace with SFUD component;
+  * Fix some judgements issue in the return value of SFUD;
+  * Fix the definition warning of `SFUD_FLASH_DEVICE_TABLE` in SFUD;
+  * Add support for W25Q64DW devices in SFUD;
+  * Fix FiFo creation failure handling when creating a pipe;
+  * Fix the issue of releasing RBB in advance in `rt_rbb_destroy()` function;
+  * Rename the new keyword using of C++ in `rt_rbb_blk_alloc` function;
+  * Unify the `struct rt_delayed_work` in workqueue to `struct rt_work`;
+  * Add touch driver framework;
+  * Add USB Audio class;
+  * Fix RNDIS plug-in/out issue in USB device stack;
+  * Add the interface callback function in USB device stack;
+  * Improve wlan framework, including command line functions, handling of AP name, password length, support for netdev, better configurability, etc.
+
+## BSP and CPU porting
+
+* Add Clang compiler support in ARM-related CPU porting;
+* Fix SCB_AIRCR definition issue in ARM Cortex-M0;
+* Unify the .data .bss section to 8bytes alignment in GCC tool chain;
+* Rerange NXP i.MXRT BSP and add related BSP documents;
+* Add i.MXRT1052 ATK Commander, Fire Pro BSP and i.MXRT1064 EVK BSP to the new i.MXRT BSP;
+* Fix I2C operation (master_xfer) in LPC54114-lite BSP;
+* Add Audio driver in LPC54114-lite BSP;
+* Refactor qemu-vexpress-a9's Audio driver and fix the issue of OS Tick accuracy;
+* Remove old STM32 BSP: stm32f4xx-HAL, stm32f10x, stm32f10x-HAL, stm32f429-apollo, stm32f429-disco, stm32h743-nucleo;
+* Fix the issue of `rt_hw_sci_init()` for opening the global interrupt in tms320f28379d BSP;
+* Add support of soft I2C and hardware encryption module to WinnerMicro W60x BSP（AES/DES/3DES/RC/SHA1/MD3/CRC);
+* Add oneshot WiFi configuration support in WinnerMicro W60x BSP;
+* Add more STM32 BSP based on new STM32 BSP framework:
+  * stm32f072-st-nucleo
+  * stm32f103-gizwits-gokitv21
+  * stm32f103-yf-ufun
+  * stm32f412-st-nucleo
+  * stm32f427-robomaster-a
+  * stm32f429-st-disco
+  * stm32f769-st-disco
+  * stm32g431-st-nucleo
+  * stm32h743-st-nucleo
+  * stm32h750-armfly-h7-tool
+  * stm32l4r5-st-nucleo
+  * stm32l452-st-nucleo
+* For the new STM32 BSP framework:
+  * Add DMAMUX support to stm32l4+;
+  * Update F7 HAL library SConscript;
+  * Open the SWD port configuration on cubemx in stm32f103-atk-warshipv3 BSP;
+  * Add support for SD card in stm32f427-robomaster-a BSP;
+  * Add USBFS driver to stm32f412-nucleo BSP;
+  * Remove use of device user data on uart driver;
+  * Add QSPI FLASH support in stm32h743-atk-apollo BSP;
+  * Optimized Ethernet driver;
+  * Add hardware encryption and decryption driver;
+  * Add MIPI LCD driver;
+  * Add pulse encoding driver;
+  * Optimize hardware timer driver;
+  * Add support for UART 7/8 in serial driver;
+  * Optimize WDT driver; 
+
+## Tools
+
+* Optimize scons script for eclipse in order to generate eclipse project better;
+* Improve rtconfig.h generator, PATH type configuration can be generated correctly;
+* Fix gcc path detection issue when using the default cross toolchain of the Linux distribution;
+
 # RT-Thread v3.1.3 Change Log
 
 ## Kernel

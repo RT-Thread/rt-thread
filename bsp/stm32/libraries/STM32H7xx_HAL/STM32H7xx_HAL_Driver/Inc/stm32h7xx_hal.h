@@ -28,7 +28,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal_conf.h"
-#include <rtthread.h>
 
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{

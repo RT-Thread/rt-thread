@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,9 +26,9 @@ int rt_hw_mpu_init(void)
 {
     uint32_t rbar;
     uint32_t rasr;
-    
+
     MPU_PRINT("\nnumber of regions: %d\n", (MPU->TYPE & MPU_TYPE_DREGION_Msk) >> MPU_TYPE_DREGION_Pos);
-    
+
     /* Disable MPU */
     ARM_MPU_Disable();
 

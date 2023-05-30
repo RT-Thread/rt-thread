@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -102,10 +102,12 @@ void rt_hw_us_delay(rt_uint32_t us)
     start = SysTick->VAL;
     reload = SysTick->LOAD;
     us_tick = SystemCoreClock / 1000000UL;
-    do {
+    do
+    {
         now = SysTick->VAL;
-        delta = start > now ? start - now : reload + start - now;
-    } while(delta < us_tick * us);
+        delta = start >= now ? start - now : reload + start - now;
+    }
+    while (delta < us_tick * us);
 }
 
 /**

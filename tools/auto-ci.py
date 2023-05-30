@@ -38,7 +38,6 @@ bsp_to_cpu = {
     'stm32f0x': 'arm',
     'stm32f107': 'arm',
     'stm32f10x': 'arm',
-    'stm32f20x': 'arm',
     'stm32f40x': 'arm',
 }
 

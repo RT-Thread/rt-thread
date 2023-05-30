@@ -1,11 +1,7 @@
 /*
- * File      : drv_spi.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -119,7 +115,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
             spi_init_struct.prescale = SPI_PSC_256;
         }
     } /* baudrate */
-    
+
     switch(configuration->mode & RT_SPI_MODE_3)
     {
     case RT_SPI_MODE_0:
@@ -135,7 +131,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_HIGH_PH_2EDGE;
         break;
     }
-    
+
     /* MSB or LSB */
     if(configuration->mode & RT_SPI_MSB)
     {
@@ -145,7 +141,7 @@ static rt_err_t configure(struct rt_spi_device* device, struct rt_spi_configurat
     {
         spi_init_struct.endian = SPI_ENDIAN_LSB;
     }
-    
+
     spi_init_struct.trans_mode = SPI_TRANSMODE_FULLDUPLEX;
     spi_init_struct.device_mode = SPI_MASTER;
     spi_init_struct.nss = SPI_NSS_SOFT;
@@ -181,7 +177,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
             const rt_uint8_t * send_ptr = message->send_buf;
             rt_uint8_t * recv_ptr = message->recv_buf;
             rt_uint32_t size = message->length;
-            
+
             DEBUG_PRINTF("spi poll transfer start: %d\n", size);
 
             while(size--)
@@ -192,7 +188,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                 {
                     data = *send_ptr++;
                 }
-                
+
                 // Todo: replace register read/write by gd32f3 lib
                 //Wait until the transmit buffer is empty
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
@@ -267,8 +263,8 @@ int gd32_hw_spi_init(void)
     rcu_periph_clock_enable(RCU_SPI0);
     /* SPI0_SCK(PA5), SPI0_MISO(PA6) and SPI0_MOSI(PA7) GPIO pin configuration */
     gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_7);
-    gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6); 
-    
+    gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
+
 #endif
 #ifdef RT_USING_SPI1
     static struct rt_spi_bus spi_bus1;
@@ -287,7 +283,7 @@ int gd32_hw_spi_init(void)
     static struct rt_spi_bus spi_bus2;
     spi_bus2.parent.user_data = (void *)SPI2;
 
-    result = rt_spi_bus_register(&spi_bus2, "spi2", &gd32_spi_ops); 
+    result = rt_spi_bus_register(&spi_bus2, "spi2", &gd32_spi_ops);
 
     rcu_periph_clock_enable(RCU_SPI2);
     rcu_periph_clock_enable(RCU_GPIOB);

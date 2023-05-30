@@ -334,7 +334,8 @@ const static struct rt_pin_ops swm320_pin_ops =
     swm320_pin_read,
     swm320_pin_attach_irq,
     swm320_pin_detach_irq,
-    swm320_pin_irq_enable
+    swm320_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

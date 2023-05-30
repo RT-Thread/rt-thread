@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,15 +12,6 @@
 #include <drv_lptim.h>
 
 static LPTIM_HandleTypeDef LptimHandle;
-
-void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef *hlptim)
-{
-    if (hlptim->Instance == LPTIM1)
-    {
-        /* Peripheral clock enable */
-        __HAL_RCC_LPTIM1_CLK_ENABLE();
-    }
-}
 
 void LPTIM1_IRQHandler(void)
 {

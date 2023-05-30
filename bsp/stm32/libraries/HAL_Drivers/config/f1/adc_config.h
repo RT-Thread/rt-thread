@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,7 +29,7 @@ extern "C" {
        .Init.DiscontinuousConvMode = DISABLE,                      \
        .Init.NbrOfDiscConversion   = 1,                            \
        .Init.ExternalTrigConv      = ADC_SOFTWARE_START,           \
-    }  
+    }
 #endif /* ADC1_CONFIG */
 #endif /* BSP_USING_ADC1 */
 
@@ -45,7 +45,7 @@ extern "C" {
        .Init.DiscontinuousConvMode = DISABLE,                      \
        .Init.NbrOfDiscConversion   = 1,                            \
        .Init.ExternalTrigConv      = ADC_SOFTWARE_START,           \
-    }  
+    }
 #endif /* ADC2_CONFIG */
 #endif /* BSP_USING_ADC2 */
 
@@ -61,7 +61,7 @@ extern "C" {
        .Init.DiscontinuousConvMode = DISABLE,                      \
        .Init.NbrOfDiscConversion   = 1,                            \
        .Init.ExternalTrigConv      = ADC_SOFTWARE_START,           \
-    }  
+    }
 #endif /* ADC3_CONFIG */
 #endif /* BSP_USING_ADC3 */
 

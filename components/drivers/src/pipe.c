@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -323,18 +323,29 @@ static const struct dfs_file_ops pipe_fops =
 rt_err_t  rt_pipe_open (rt_device_t device, rt_uint16_t oflag)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
+    rt_err_t ret = RT_EOK;
 
-    if (device == RT_NULL) return -RT_EINVAL;
+    if (device == RT_NULL)
+    {
+        ret = -RT_EINVAL;
+        goto __exit;
+    }
+
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
     if (pipe->fifo == RT_NULL)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            ret = -RT_ENOMEM;
+        }
     }
 
     rt_mutex_release(&(pipe->lock));
 
-    return RT_EOK;
+__exit:
+    return ret;
 }
 
 rt_err_t  rt_pipe_close  (rt_device_t device)
@@ -417,7 +428,7 @@ rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops pipe_ops = 
+const static struct rt_device_ops pipe_ops =
 {
     RT_NULL,
     rt_pipe_open,
@@ -496,7 +507,7 @@ int rt_pipe_delete(const char *name)
             rt_device_unregister(device);
 
             /* close fifo ringbuffer */
-            if (pipe->fifo) 
+            if (pipe->fifo)
             {
                 rt_ringbuffer_destroy(pipe->fifo);
                 pipe->fifo = RT_NULL;
@@ -553,7 +564,7 @@ int pipe(int fildes[2])
 int mkfifo(const char *path, mode_t mode)
 {
     rt_pipe_t *pipe;
-    
+
     pipe = rt_pipe_create(path, PIPE_BUFSZ);
     if (pipe == RT_NULL)
     {

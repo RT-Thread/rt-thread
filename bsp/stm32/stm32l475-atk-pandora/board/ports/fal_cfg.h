@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,15 +24,15 @@ extern struct fal_flash_dev nor_flash0;
 
 /* ========================= Device Configuration ========================== */
 #ifdef BSP_USING_ON_CHIP_FLASH
-#define ONCHIP_FLASH_DEV     &stm32_onchip_flash,  
+#define ONCHIP_FLASH_DEV     &stm32_onchip_flash,
 #else
-#define ONCHIP_FLASH_DEV    
+#define ONCHIP_FLASH_DEV
 #endif /* BSP_USING_ON_CHIP_FLASH */
 
 #ifdef BSP_USING_QSPI_FLASH
-#define SPI_FLASH_DEV        &nor_flash0,  
+#define SPI_FLASH_DEV        &nor_flash0,
 #else
-#define SPI_FLASH_DEV    
+#define SPI_FLASH_DEV
 #endif /* BSP_USING_QSPI_FLASH */
 
 /* flash device table */
@@ -55,7 +55,7 @@ extern struct fal_flash_dev nor_flash0;
 #ifdef BSP_USING_QSPI_FLASH
 #define SPI_FLASH_PARTITION            {FAL_PART_MAGIC_WROD, "filesystem", "W25Q128", 9 * 1024 * 1024, 16 * 1024 * 1024, 0},
 #else
-#define SPI_FLASH_PARTITION 
+#define SPI_FLASH_PARTITION
 #endif
 
 /* partition table */

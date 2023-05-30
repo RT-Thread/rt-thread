@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -86,7 +86,7 @@ void SAIB_config_set(struct rt_audio_configure config)
     SAIB_samplerate_set(config.samplerate);
     SAIB_samplebits_set(config.samplebits);
 }
-		
+
 static void SAIB_config_init()
 {
     _sai_b.hsai.Instance = SAI1_Block_B;

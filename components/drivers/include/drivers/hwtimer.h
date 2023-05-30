@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -70,7 +70,7 @@ typedef struct rt_hwtimer_device
 
     rt_int32_t freq;                /* counting frequency set by the user */
     rt_int32_t overflow;            /* timer overflows */
-    float period_sec;               
+    float period_sec;
     rt_int32_t cycles;              /* how many times will generate a timeout event after overflow */
     rt_int32_t reload;              /* reload cycles(using in period mode) */
     rt_hwtimer_mode_t mode;         /* timing mode(oneshot/period) */

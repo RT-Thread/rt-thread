@@ -1,11 +1,7 @@
 /*
- * File      : rtdef.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -20,7 +16,7 @@
 
 #ifdef RT_USING_MTD_NOR
 #define NOR_SIM "nor.bin"
-/* JEDEC Manufacturer¡¯s ID */
+/* JEDEC Manufacturer's ID */
 #define MF_ID           (0xBF)
 /* JEDEC Device ID : Memory Type */
 #define MT_ID           (0x25)

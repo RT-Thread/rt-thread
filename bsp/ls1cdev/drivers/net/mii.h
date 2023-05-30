@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,7 +24,7 @@
 #define MII_EXPANSION       0x06        /* Expansion register          */
 #define MII_CTRL1000        0x09        /* 1000BASE-T control          */
 #define MII_STAT1000        0x0a        /* 1000BASE-T status           */
-#define MII_ESTATUS	    0x0f	/* Extended Status */
+#define MII_ESTATUS     0x0f    /* Extended Status */
 #define MII_DCOUNTER        0x12        /* Disconnect counter          */
 #define MII_FCSCOUNTER      0x13        /* False carrier counter       */
 #define MII_NWAYTEST        0x14        /* N-way auto-neg test reg     */
@@ -39,7 +39,7 @@
 
 /* Basic mode control register. */
 #define BMCR_RESV               0x003f  /* Unused...                   */
-#define BMCR_SPEED1000		0x0040  /* MSB of Speed (1000)         */
+#define BMCR_SPEED1000      0x0040  /* MSB of Speed (1000)         */
 #define BMCR_CTST               0x0080  /* Collision test              */
 #define BMCR_FULLDPLX           0x0100  /* Full duplex                 */
 #define BMCR_ANRESTART          0x0200  /* Auto negotiation restart    */
@@ -58,9 +58,9 @@
 #define BMSR_RFAULT             0x0010  /* Remote fault detected       */
 #define BMSR_ANEGCOMPLETE       0x0020  /* Auto-negotiation complete   */
 #define BMSR_RESV               0x00c0  /* Unused...                   */
-#define BMSR_ESTATEN		0x0100	/* Extended Status in R15 */
-#define BMSR_100FULL2		0x0200	/* Can do 100BASE-T2 HDX */
-#define BMSR_100HALF2		0x0400	/* Can do 100BASE-T2 FDX */
+#define BMSR_ESTATEN        0x0100  /* Extended Status in R15 */
+#define BMSR_100FULL2       0x0200  /* Can do 100BASE-T2 HDX */
+#define BMSR_100HALF2       0x0400  /* Can do 100BASE-T2 FDX */
 #define BMSR_10HALF             0x0800  /* Can do 10mbps, half-duplex  */
 #define BMSR_10FULL             0x1000  /* Can do 10mbps, full-duplex  */
 #define BMSR_100HALF            0x2000  /* Can do 100mbps, half-duplex */
@@ -87,26 +87,26 @@
 #define ADVERTISE_NPAGE         0x8000  /* Next page bit               */
 
 #define ADVERTISE_FULL (ADVERTISE_100FULL | ADVERTISE_10FULL | \
-			ADVERTISE_CSMA)
+            ADVERTISE_CSMA)
 #define ADVERTISE_ALL (ADVERTISE_10HALF | ADVERTISE_10FULL | \
                        ADVERTISE_100HALF | ADVERTISE_100FULL)
 
 /* Indicates what features are advertised by the interface. */
-#define ADVERTISED_10baseT_Half		(1 << 0)
-#define ADVERTISED_10baseT_Full		(1 << 1)
-#define ADVERTISED_100baseT_Half	(1 << 2)
-#define ADVERTISED_100baseT_Full	(1 << 3)
-#define ADVERTISED_1000baseT_Half	(1 << 4)
-#define ADVERTISED_1000baseT_Full	(1 << 5)
-#define ADVERTISED_Autoneg		(1 << 6)
-#define ADVERTISED_TP			(1 << 7)
-#define ADVERTISED_AUI			(1 << 8)
-#define ADVERTISED_MII			(1 << 9)
-#define ADVERTISED_FIBRE		(1 << 10)
-#define ADVERTISED_BNC			(1 << 11)
-#define ADVERTISED_10000baseT_Full	(1 << 12)
-#define ADVERTISED_Pause		(1 << 13)
-#define ADVERTISED_Asym_Pause		(1 << 14)
+#define ADVERTISED_10baseT_Half     (1 << 0)
+#define ADVERTISED_10baseT_Full     (1 << 1)
+#define ADVERTISED_100baseT_Half    (1 << 2)
+#define ADVERTISED_100baseT_Full    (1 << 3)
+#define ADVERTISED_1000baseT_Half   (1 << 4)
+#define ADVERTISED_1000baseT_Full   (1 << 5)
+#define ADVERTISED_Autoneg      (1 << 6)
+#define ADVERTISED_TP           (1 << 7)
+#define ADVERTISED_AUI          (1 << 8)
+#define ADVERTISED_MII          (1 << 9)
+#define ADVERTISED_FIBRE        (1 << 10)
+#define ADVERTISED_BNC          (1 << 11)
+#define ADVERTISED_10000baseT_Full  (1 << 12)
+#define ADVERTISED_Pause        (1 << 13)
+#define ADVERTISED_Asym_Pause       (1 << 14)
 
 /* Link partner ability register. */
 #define LPA_SLCT                0x001f  /* Same as advertise selector  */
@@ -126,8 +126,8 @@
 #define LPA_LPACK               0x4000  /* Link partner acked us       */
 #define LPA_NPAGE               0x8000  /* Next page bit               */
 
-#define LPA_DUPLEX		(LPA_10FULL | LPA_100FULL)
-#define LPA_100			(LPA_100FULL | LPA_100HALF | LPA_100BASE4)
+#define LPA_DUPLEX      (LPA_10FULL | LPA_100FULL)
+#define LPA_100         (LPA_100FULL | LPA_100HALF | LPA_100BASE4)
 
 /* Expansion register for auto-negotiation. */
 #define EXPANSION_NWAY          0x0001  /* Can do N-way auto-nego      */
@@ -137,8 +137,8 @@
 #define EXPANSION_MFAULTS       0x0010  /* Multiple faults detected    */
 #define EXPANSION_RESV          0xffe0  /* Unused...                   */
 
-#define ESTATUS_1000_TFULL	0x2000	/* Can do 1000BT Full */
-#define ESTATUS_1000_THALF	0x1000	/* Can do 1000BT Half */
+#define ESTATUS_1000_TFULL  0x2000  /* Can do 1000BT Full */
+#define ESTATUS_1000_THALF  0x1000  /* Can do 1000BT Half */
 
 /* N-way test register. */
 #define NWAYTEST_RESV1          0x00ff  /* Unused...                   */
@@ -154,78 +154,78 @@
 #define LPA_1000REMRXOK         0x1000  /* Link partner remote receiver status */
 #define LPA_1000FULL            0x0800  /* Link partner 1000BASE-T full duplex */
 
-#define SUPPORTED_10baseT_Half		(1 << 0)
-#define SUPPORTED_10baseT_Full		(1 << 1)
-#define SUPPORTED_100baseT_Half		(1 << 2)
-#define SUPPORTED_100baseT_Full		(1 << 3)
-#define SUPPORTED_1000baseT_Half	(1 << 4)
-#define SUPPORTED_1000baseT_Full	(1 << 5)
-#define SUPPORTED_Autoneg		(1 << 6)
-#define SUPPORTED_TP			(1 << 7)
-#define SUPPORTED_AUI			(1 << 8)
-#define SUPPORTED_MII			(1 << 9)
-#define SUPPORTED_FIBRE			(1 << 10)
-#define SUPPORTED_BNC			(1 << 11)
-#define SUPPORTED_10000baseT_Full	(1 << 12)
-#define SUPPORTED_Pause			(1 << 13)
-#define SUPPORTED_Asym_Pause		(1 << 14)
+#define SUPPORTED_10baseT_Half      (1 << 0)
+#define SUPPORTED_10baseT_Full      (1 << 1)
+#define SUPPORTED_100baseT_Half     (1 << 2)
+#define SUPPORTED_100baseT_Full     (1 << 3)
+#define SUPPORTED_1000baseT_Half    (1 << 4)
+#define SUPPORTED_1000baseT_Full    (1 << 5)
+#define SUPPORTED_Autoneg       (1 << 6)
+#define SUPPORTED_TP            (1 << 7)
+#define SUPPORTED_AUI           (1 << 8)
+#define SUPPORTED_MII           (1 << 9)
+#define SUPPORTED_FIBRE         (1 << 10)
+#define SUPPORTED_BNC           (1 << 11)
+#define SUPPORTED_10000baseT_Full   (1 << 12)
+#define SUPPORTED_Pause         (1 << 13)
+#define SUPPORTED_Asym_Pause        (1 << 14)
 
 
 /* Which connector port. */
 #define PORT_TP         0x00
 #define PORT_AUI        0x01
-#define PORT_MII        0x02 
+#define PORT_MII        0x02
 #define PORT_FIBRE      0x03
 #define PORT_BNC        0x04
 
 /* Which transceiver to use. */
 #define XCVR_INTERNAL       0x00
 #define XCVR_EXTERNAL       0x01
-#define XCVR_DUMMY1     0x02 
-#define XCVR_DUMMY2     0x03 
+#define XCVR_DUMMY1     0x02
+#define XCVR_DUMMY2     0x03
 #define XCVR_DUMMY3     0x04
 
-#define AUTONEG_DISABLE		0x00
-#define AUTONEG_ENABLE		0x01
+#define AUTONEG_DISABLE     0x00
+#define AUTONEG_ENABLE      0x01
 
 
-#define SPEED_10		10
-#define SPEED_100		100
-#define SPEED_1000		1000
-#define SPEED_2500		2500
-#define SPEED_10000		10000
+#define SPEED_10        10
+#define SPEED_100       100
+#define SPEED_1000      1000
+#define SPEED_2500      2500
+#define SPEED_10000     10000
 
-#define DUPLEX_HALF		0x00
-#define DUPLEX_FULL		0x01
+#define DUPLEX_HALF     0x00
+#define DUPLEX_FULL     0x01
 
 struct ethtool_cmd {
-	u32	cmd;
-	u32	supported;	/* Features this interface supports */
-	u32	advertising;	/* Features this interface advertises */
-	u16	speed;		/* The forced speed, 10Mb, 100Mb, gigabit */
-	u8	duplex;		/* Duplex, half or full */
-	u8	port;		/* Which connector port */
-	u8	phy_address;
-	u8	transceiver;	/* Which transceiver to use */
-	u8	autoneg;	/* Enable or disable autonegotiation */
-	u32	maxtxpkt;	/* Tx pkts before generating tx int */
-	u32	maxrxpkt;	/* Rx pkts before generating rx int */
-	u32	reserved[4];
+    u32 cmd;
+    u32 supported;  /* Features this interface supports */
+    u32 advertising;    /* Features this interface advertises */
+    u16 speed;      /* The forced speed, 10Mb, 100Mb, gigabit */
+    u8  duplex;     /* Duplex, half or full */
+    u8  port;       /* Which connector port */
+    u8  phy_address;
+    u8  transceiver;    /* Which transceiver to use */
+    u8  autoneg;    /* Enable or disable autonegotiation */
+    u32 maxtxpkt;   /* Tx pkts before generating tx int */
+    u32 maxrxpkt;   /* Rx pkts before generating rx int */
+    u32 reserved[4];
 };
 
 struct mii_if_info {
-	int phy_id;
-	int advertising;
-	int phy_id_mask;
-	int reg_num_mask;
+    int phy_id;
+    int advertising;
+    int phy_id_mask;
+    int reg_num_mask;
 
-	unsigned int full_duplex : 1;	/* is full duplex? */
-	unsigned int force_media : 1;	/* is autoneg. disabled? */
-	unsigned int supports_gmii : 1; /* are GMII registers supported? */
+    unsigned int full_duplex : 1;   /* is full duplex? */
+    unsigned int force_media : 1;   /* is autoneg. disabled? */
+    unsigned int supports_gmii : 1; /* are GMII registers supported? */
 
-	struct synopGMACNetworkAdapter  *dev;
-	int (*mdio_read) (struct synopGMACNetworkAdapter *dev, int phy_id, int location);
-	void (*mdio_write) (struct synopGMACNetworkAdapter *dev, int phy_id, int location, int val);
+    struct synopGMACNetworkAdapter  *dev;
+    int (*mdio_read) (struct synopGMACNetworkAdapter *dev, int phy_id, int location);
+    void (*mdio_write) (struct synopGMACNetworkAdapter *dev, int phy_id, int location, int val);
 };
 
 #endif

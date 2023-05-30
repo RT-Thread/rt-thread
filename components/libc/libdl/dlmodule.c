@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,7 +14,9 @@
 #include "dlmodule.h"
 #include "dlelf.h"
 
+#if defined(RT_USING_POSIX)
 #include <dfs_posix.h>
+#endif
 
 #define DBG_TAG    "DLMD"
 #define DBG_LVL    DBG_INFO
@@ -122,7 +124,7 @@ static void _dlmodule_exit(void)
                 rt_thread_t thread = (rt_thread_t)object;
 
                 /* stop timer and suspend thread*/
-                if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE ||
+                if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE &&
                     (thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
                 {
                     rt_timer_stop(&(thread->thread_timer));
@@ -419,11 +421,14 @@ struct rt_dlmodule *rt_module_self(void)
 
 struct rt_dlmodule* dlmodule_load(const char* filename)
 {
-    int fd, length = 0;
+#if defined(RT_USING_POSIX)
+    int fd = -1, length = 0;
+#endif
     rt_err_t ret = RT_EOK;
     rt_uint8_t *module_ptr = RT_NULL;
     struct rt_dlmodule *module = RT_NULL;
 
+#if defined(RT_USING_POSIX)
     fd = open(filename, O_RDONLY, 0);
     if (fd >= 0)
     {
@@ -446,6 +451,9 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     {
         goto __exit;
     }
+#endif
+
+    if (!module_ptr) goto __exit;
 
     /* check ELF header */
     if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
@@ -512,7 +520,9 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     return module;
 
 __exit:
+#if defined(RT_USING_POSIX)
     if (fd >= 0) close(fd);
+#endif
     if (module_ptr) rt_free(module_ptr);
     if (module) dlmodule_destroy(module);
 
@@ -537,7 +547,7 @@ struct rt_dlmodule* dlmodule_exec(const char* pgname, const char* cmd, int cmd_s
             if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_MAX - 1;
             if (module->stack_size < 2048 || module->stack_size > (1024 * 32)) module->stack_size = 2048;
 
-            tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module, 
+            tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module,
                 module->stack_size, module->priority, 10);
             if (tid)
             {
@@ -570,7 +580,7 @@ void dlmodule_exit(int ret_code)
     rt_enter_critical();
 
     /* module is not running */
-    if (module->stat != RT_DLMODULE_STAT_RUNNING) 
+    if (module->stat != RT_DLMODULE_STAT_RUNNING)
     {
         /* restore scheduling */
         rt_exit_critical();

@@ -1,11 +1,7 @@
 /*
- * File      : board.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2014, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -22,7 +18,7 @@
 
 /* board configuration */
 // <o> Internal SRAM memory size[Kbytes]
-//	<i>Default: 64
+//  <i>Default: 64
 #define M451_SRAM_SIZE         32
 #define M451_SRAM_END          (0x20000000 + M451_SRAM_SIZE * 1024)
 

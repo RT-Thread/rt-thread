@@ -17,37 +17,37 @@
 static char fullpath[256];
 void list_dir(const char* path)
 {
-	DIR *dir;
+    DIR *dir;
 
-	dir = opendir(path);
-	if (dir != RT_NULL)
-	{
-		struct dirent* dirent;
-		struct stat s;
+    dir = opendir(path);
+    if (dir != RT_NULL)
+    {
+        struct dirent* dirent;
+        struct stat s;
 
-		do
-		{
-			dirent = readdir(dir);
-			if (dirent == RT_NULL) break;
-			rt_memset(&s, 0, sizeof(struct stat));
+        do
+        {
+            dirent = readdir(dir);
+            if (dirent == RT_NULL) break;
+            rt_memset(&s, 0, sizeof(struct stat));
 
-			/* build full path for each file */
-			rt_sprintf(fullpath, "%s/%s", path, dirent->d_name);
+            /* build full path for each file */
+            rt_sprintf(fullpath, "%s/%s", path, dirent->d_name);
 
-			stat(fullpath, &s);
-			if ( s.st_mode & DFS_S_IFDIR )
-			{
-				rt_kprintf("%s\t\t<DIR>\n", dirent->d_name);
-			}
-			else
-			{
-				rt_kprintf("%s\t\t%lu\n", dirent->d_name, s.st_size);
-			}
-		} while (dirent != RT_NULL);
+            stat(fullpath, &s);
+            if ( s.st_mode & DFS_S_IFDIR )
+            {
+                rt_kprintf("%s\t\t<DIR>\n", dirent->d_name);
+            }
+            else
+            {
+                rt_kprintf("%s\t\t%lu\n", dirent->d_name, s.st_size);
+            }
+        } while (dirent != RT_NULL);
 
-		closedir(dir);
-	}
-	else rt_kprintf("open %s directory failed\n", path);
+        closedir(dir);
+    }
+    else rt_kprintf("open %s directory failed\n", path);
 }
 
 #ifdef RT_USING_FINSH

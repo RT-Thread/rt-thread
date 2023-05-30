@@ -116,43 +116,6 @@ if RT_USING_DFS
         select RT_USING_MEMHEAP
         default n
 
-    config RT_USING_DFS_UFFS
-        bool "Enable UFFS file system: Ultra-low-cost Flash File System"
-        select RT_USING_MTD_NAND
-        default n
-
-    if RT_USING_DFS_UFFS
-        choice
-            prompt "UFFS ECC mode"
-            default RT_UFFS_ECC_MODE_1
-
-            config RT_UFFS_ECC_MODE_0
-                bool "0: Do not use ECC"
-
-            config RT_UFFS_ECC_MODE_1
-                bool "1: UFFS calculate the ECC"
-
-            config RT_UFFS_ECC_MODE_2
-                bool "2: Flash driver(or by hardware) calculate the ECC"
-
-            config RT_UFFS_ECC_MODE_3
-                bool "3: Hardware calculate the ECC and automatically write to spare."
-        endchoice
-
-        config RT_UFFS_ECC_MODE
-            int
-            default 0 if RT_UFFS_ECC_MODE_0
-            default 1 if RT_UFFS_ECC_MODE_1
-            default 2 if RT_UFFS_ECC_MODE_2
-            default 3 if RT_UFFS_ECC_MODE_3
-
-    endif
-
-    config RT_USING_DFS_JFFS2
-        bool "Enable JFFS2 file system"
-        select RT_USING_MTD_NOR
-        default n
-
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"
         depends on RT_USING_LWIP

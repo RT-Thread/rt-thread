@@ -20,6 +20,10 @@ from utils import xml_indent
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 
+from building import *
+
+MODULE_VER_NUM = 5
+
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm']
 
 def OSPath(path):
@@ -135,7 +139,22 @@ def IsRttEclipsePathFormat(path):
     else :
         return False
 
+# all libs added by scons should be ends with five whitespace as a flag
+rtt_lib_flag = 5 * " "
 
+
+def ConverToRttEclipseLibFormat(lib):
+    return str(lib) + str(rtt_lib_flag)
+
+
+def IsRttEclipseLibFormat(path):
+    if path.endswith(rtt_lib_flag):
+        return True
+    else:
+        return False
+    
+    
+       
 def HandleToolOption(tools, env, project, reset):
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
 
@@ -216,7 +235,7 @@ def HandleToolOption(tools, env, project, reset):
         with open('rtconfig_preinc.h', mode = 'w+') as f:
             f.write(file_header)
             for cppdef in CPPDEFINES:
-                f.write("#define " + cppdef + '\n')
+                f.write("#define " + cppdef.replace('=', ' ') + '\n')
             f.write(file_tail)
         #  change the c.compiler.include.files
         files = option.findall('listOptionValue')
@@ -276,23 +295,31 @@ def HandleToolOption(tools, env, project, reset):
         else:
             option.set('value', 'false')
     # update libs
-    if linker_libs_option is not None :
+    if linker_libs_option is not None:
         option = linker_libs_option
         # remove old libs
         for item in option.findall('listOptionValue'):
-            option.remove(item)
+            if IsRttEclipseLibFormat(item.get("value")):
+                option.remove(item)
+
         # add new libs
-        for lib in env['LIBS']:
-            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': lib})
+        if env.has_key('LIBS'):
+            for lib in env['LIBS']:
+                formatedLib = ConverToRttEclipseLibFormat(lib)
+                SubElement(option, 'listOptionValue', {
+                           'builtIn': 'false', 'value': formatedLib})
+
     # update lib paths
-    if linker_paths_option is not None :
+    if linker_paths_option is not None:
         option = linker_paths_option
         # remove old lib paths
         for item in option.findall('listOptionValue'):
-            option.remove(item)
+            if IsRttEclipsePathFormat(item.get('value')):
+                # clean old configuration
+                option.remove(item)
         # add new old lib paths
         for path in env['LIBPATH']:
-            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': path})
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': ConverToRttEclipsePathFormat(RelativeProjectPath(env, path).replace('\\', '/'))})
 
     return
 
@@ -334,12 +361,13 @@ def GenExcluding(env, project):
     rtt_root = os.path.abspath(env['RTT_ROOT'])
     bsp_root = os.path.abspath(env['BSP_ROOT'])
     coll_dirs = CollectPaths(project['DIRS'])
-    all_paths = [OSPath(path) for path in coll_dirs]
+    all_paths_temp = [OSPath(path) for path in coll_dirs]
+    all_paths = []
 
-    # remove unused path
-    for path in all_paths:
-        if not path.startswith(rtt_root) and not path.startswith(bsp_root):
-            all_paths.remove(path)
+    # add used path
+    for path in all_paths_temp:
+        if path.startswith(rtt_root) or path.startswith(bsp_root):
+            all_paths.append(path)
 
     if bsp_root.startswith(rtt_root):
         # bsp folder is in the RT-Thread root folder, such as the RT-Thread source code on GitHub

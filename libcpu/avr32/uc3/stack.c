@@ -30,28 +30,28 @@
  */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter, rt_uint8_t *stack_addr, void *texit)
 {
-	unsigned long *stk;
+    unsigned long *stk;
 
-	stk 	 = (unsigned long *)stack_addr;
-	*(stk)   = 0;							/* r8 */
-	*(--stk) = 0;							/* r9 */
-	*(--stk) = 0;							/* r10 */
-	*(--stk) = 0;							/* r11 */
-	*(--stk) = 0;							/* r12 */
-	*(--stk) = (unsigned long)texit;		/* lr */
-	*(--stk) = (unsigned long)tentry;		/* entry point, pc */
-	*(--stk) = 0x00600000;					/* sr */
-	*(--stk) = 0;							/* r0 */
-	*(--stk) = 0;							/* r1 */
-	*(--stk) = 0;							/* r2 */
-	*(--stk) = 0;							/* r3 */
-	*(--stk) = 0;							/* r4 */
-	*(--stk) = 0;							/* r5 */
-	*(--stk) = 0;							/* r6 */
-	*(--stk) = 0;							/* r7 */
+    stk      = (unsigned long *)stack_addr;
+    *(stk)   = 0;                           /* r8 */
+    *(--stk) = 0;                           /* r9 */
+    *(--stk) = 0;                           /* r10 */
+    *(--stk) = 0;                           /* r11 */
+    *(--stk) = 0;                           /* r12 */
+    *(--stk) = (unsigned long)texit;        /* lr */
+    *(--stk) = (unsigned long)tentry;       /* entry point, pc */
+    *(--stk) = 0x00600000;                  /* sr */
+    *(--stk) = 0;                           /* r0 */
+    *(--stk) = 0;                           /* r1 */
+    *(--stk) = 0;                           /* r2 */
+    *(--stk) = 0;                           /* r3 */
+    *(--stk) = 0;                           /* r4 */
+    *(--stk) = 0;                           /* r5 */
+    *(--stk) = 0;                           /* r6 */
+    *(--stk) = 0;                           /* r7 */
 
-	/* return task's current stack address */
-	return (rt_uint8_t *)stk;
+    /* return task's current stack address */
+    return (rt_uint8_t *)stk;
 }
 
 /*@}*/

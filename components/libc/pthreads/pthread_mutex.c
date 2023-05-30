@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -211,7 +211,7 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex)
     result = rt_mutex_release(&(mutex->lock));
     if (result == RT_EOK)
         return 0;
-    
+
     return EINVAL;
 }
 RTM_EXPORT(pthread_mutex_unlock);

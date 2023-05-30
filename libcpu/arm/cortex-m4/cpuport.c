@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -454,7 +454,7 @@ RT_WEAK void rt_hw_cpu_reset(void)
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-#if defined(__CC_ARM) 
+#if defined(__CC_ARM)
 __asm int __rt_ffs(int value)
 {
     CMP     r0, #0x00
@@ -472,13 +472,13 @@ int __rt_ffs(int value)
 {
     __asm volatile(
         "CMP     r0, #0x00            \n"
-        "BEQ     exit                 \n"
+        "BEQ     1f                   \n"
 
         "RBIT    r0, r0               \n"
         "CLZ     r0, r0               \n"
         "ADDS    r0, r0, #0x01        \n"
 
-        "exit:                        \n"
+        "1:                           \n"
 
         : "=r"(value)
         : "r"(value)

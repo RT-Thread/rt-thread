@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -215,7 +215,7 @@ void rt_hwcrypto_symmetric_get_ivoff(struct rt_hwcrypto_ctx *ctx, rt_int32_t *iv
  *
  * @param des       The destination symmetric crypto context
  * @param src       The symmetric crypto context to be copy
- * 
+ *
  * @return          RT_EOK on success.
  */
 rt_err_t rt_hwcrypto_symmetric_cpy(struct rt_hwcrypto_ctx *des, const struct rt_hwcrypto_ctx *src)

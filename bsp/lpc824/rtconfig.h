@@ -6,17 +6,17 @@
 // <<< Use Configuration Wizard in Context Menu >>>
 // <h>Basic Configuration
 // <o>Maximal level of thread priority <8-256>
-//	<i>Default: 32
+//  <i>Default: 32
 #define RT_THREAD_PRIORITY_MAX  8
 // <o>OS tick per second
 //  <i>Default: 1000   (1ms)
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 // <o>Alignment size for CPU architecture data access
-//	<i>Default: 4
+//  <i>Default: 4
 #define RT_ALIGN_SIZE   4
 // <o>the max length of object name<2-16>
-//	<i>Default: 8
-#define RT_NAME_MAX	   8
+//  <i>Default: 8
+#define RT_NAME_MAX    8
 // <c1>Using RT-Thread components initialization
 //  <i>Using RT-Thread components initialization
 #define RT_USING_COMPONENTS_INIT
@@ -26,7 +26,7 @@
 //#define RT_USING_USER_MAIN
 // </c>
 // <o>the size of main thread<1-4086>
-//	<i>Default: 512
+//  <i>Default: 512
 #define RT_MAIN_THREAD_STACK_SIZE     256
 
 // </h>
@@ -64,13 +64,13 @@
 #endif
 // <o>The priority level of timer thread <0-31>
 //  <i>Default: 4
-#define RT_TIMER_THREAD_PRIO		4
+#define RT_TIMER_THREAD_PRIO        4
 // <o>The stack size of timer thread <0-8192>
 //  <i>Default: 512
-#define RT_TIMER_THREAD_STACK_SIZE	512
+#define RT_TIMER_THREAD_STACK_SIZE  512
 // <o>The soft-timer tick per second <0-1000>
 //  <i>Default: 100
-#define RT_TIMER_TICK_PER_SECOND	100
+#define RT_TIMER_TICK_PER_SECOND    100
 // </e>
 
 // <h>IPC(Inter-process communication) Configuration
@@ -164,7 +164,7 @@
 // <o>the history lines of finsh thread <1-32>
 //  <i>the history lines of finsh thread
 //  <i>Default: 5
-#define FINSH_HISTORY_LINES	        1
+#define FINSH_HISTORY_LINES         1
 // <c1>Using symbol table in finsh shell
 //  <i>Using symbol table in finsh shell
 #define FINSH_USING_SYMTAB

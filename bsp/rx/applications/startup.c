@@ -90,7 +90,7 @@ int main(void)
 {
 
   rt_hw_system_freq_init();
-   
+
   __enable_interrupt();
     /* disable interrupt first */
     rt_hw_interrupt_disable();

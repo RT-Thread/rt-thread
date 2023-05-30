@@ -95,7 +95,7 @@ if GetDepend('RT_USING_MODULE'):
       dest='def',
       action='store_true',
       default=False,
-      help='create rthread.def of rtthread.dll on windows')
+      help='create rtthread.def of rtthread.dll on windows')
     if GetOption('def'):
         if rtconfig.PLATFORM == 'mingw':
             env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS

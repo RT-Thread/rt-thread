@@ -34,9 +34,9 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
 /* stack frame*/
 struct stack_frame
 {
-    rt_uint32_t ACCLO; 
+    rt_uint32_t ACCLO;
     rt_uint32_t ACCHI;
-    rt_uint32_t FPSW;   
+    rt_uint32_t FPSW;
     rt_uint32_t R1;
     rt_uint32_t R2;
     rt_uint32_t R3;
@@ -53,21 +53,21 @@ struct stack_frame
     rt_uint32_t R14;
     rt_uint32_t R15;
     //there is not R0 register,it is special for stack pointer
-    rt_uint32_t PC;  
-    rt_uint32_t PSW; 
+    rt_uint32_t PC;
+    rt_uint32_t PSW;
 };
 
 /**
- * Initilial the threah stack.
- * 
+ * Initilial the thread stack.
+ *
  * @author LXZ (2014/11/8)
- * 
- * @param void* tentry       
- * @param void* parameter    
- * @param rt_uint8_t* stack_addr 
- * @param void* texit        
- * 
- * @return rt_uint8_t* 
+ *
+ * @param void* tentry
+ * @param void* parameter
+ * @param rt_uint8_t* stack_addr
+ * @param void* texit
+ *
+ * @return rt_uint8_t*
  */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
                              rt_uint8_t *stack_addr, void *texit)
@@ -77,7 +77,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     unsigned long       i;
 
     stk      = (unsigned long *)stack_addr;
-    *(stk)   = (unsigned long)texit;        
+    *(stk)   = (unsigned long)texit;
     stack_frame = (struct stack_frame *)(stack_addr - sizeof(struct stack_frame)) ;
 
     //Initilial all register
@@ -85,12 +85,12 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     {
         ((rt_uint32_t *)stack_frame)[i] = 0xdeadbeef;
     }
-    
+
     stack_frame->PSW = (unsigned long)0x00030000 ;   /* psw */
     stack_frame->PC = (unsigned long)tentry;        /* thread entery*/
     stack_frame->R1 = (unsigned long )parameter;   /* r1 : parameter */
     stack_frame->FPSW = 0x00000100;                  /* fpsw */
-    
+
     return(rt_uint8_t *)stack_frame;
 }
 
@@ -99,16 +99,16 @@ extern void list_thread(void);
 #endif
 extern rt_thread_t rt_current_thread;
 /**
- * deal exception 
- * 
+ * deal exception
+ *
  * @author LXZ (2014/11/8)
- * 
- * @param struct stack_frame* exception_contex 
+ *
+ * @param struct stack_frame* exception_contex
  */
 void rt_hw_hard_fault_exception(struct stack_frame* exception_contex)
 {
     if (exception_contex != RT_NULL) {
-        rt_kprintf("psw: 0x%08x\n", exception_contex->PSW); 
+        rt_kprintf("psw: 0x%08x\n", exception_contex->PSW);
         rt_kprintf("pc: 0x%08x\n", exception_contex->PC);
         rt_kprintf("r0: 0x%08x\n", exception_contex->R1);
         rt_kprintf("r0: 0x%08x\n", exception_contex->R2);
@@ -134,17 +134,17 @@ void rt_hw_hard_fault_exception(struct stack_frame* exception_contex)
         list_thread();
     #endif
         while (1);
-    
+
 }
 
 
 /**
  * switch thread in interrupt
- * 
+ *
  * @author LXZ (2014/11/8)
- * 
- * @param rt_uint32_t from 
- * @param rt_uint32_t to 
+ *
+ * @param rt_uint32_t from
+ * @param rt_uint32_t to
  */
 void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to)
 {
@@ -158,12 +158,12 @@ void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to)
     ENTER_INTERRUPT();
 }
 /**
- * swithc thread out the interrupt
- * 
+ * switch thread out the interrupt
+ *
  * @author LXZ (2014/11/8)
- * 
- * @param rt_uint32_t from 
- * @param rt_uint32_t to 
+ *
+ * @param rt_uint32_t from
+ * @param rt_uint32_t to
  */
 void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
 {
@@ -179,7 +179,7 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
 
 /**
  * shut down the chip
- * 
+ *
  * @author LXZ (2014/11/8)
  */
 void rt_hw_cpu_shutdown(void)
@@ -190,10 +190,10 @@ void rt_hw_cpu_shutdown(void)
 }
 /**
  * switch to the first thread,it just call one time
- * 
+ *
  * @author LXZ (2014/11/8)
- * 
- * @param rt_uint32_t to 
+ *
+ * @param rt_uint32_t to
  */
 void rt_hw_context_switch_to(rt_uint32_t to)
 {

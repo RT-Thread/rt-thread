@@ -78,7 +78,7 @@ LoopCopyDataInit:
   adds r4, r0, r3
   cmp r4, r1
   bcc CopyDataInit
-  
+
 /* Zero fill the bss segment. */
   ldr r2, =_sbss
   ldr r4, =_ebss
@@ -96,9 +96,9 @@ LoopFillZerobss:
 /* Call the clock system intitialization function.*/
     bl  SystemInit
 /* Call static constructors */
-    bl __libc_init_array
+/*  bl __libc_init_array */
 /* Call the application's entry point.*/
-	bl	main
+    bl  entry
 
 LoopForever:
     b LoopForever

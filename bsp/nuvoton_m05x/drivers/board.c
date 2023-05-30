@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2014 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -42,11 +38,11 @@ void NVIC_Configuration(void)
 */
 static void delay(__IO uint32_t nCount)
 {
-	/* Decrement nCount value */
-	while (nCount != 0)
-	{
-		nCount--;
-	}
+    /* Decrement nCount value */
+    while (nCount != 0)
+    {
+        nCount--;
+    }
 }
 
 static void rt_hw_system_init(void)
@@ -69,7 +65,7 @@ static void rt_hw_system_init(void)
 
     /* Set SysTick clock source to HCLK source divide 2 */
     CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_HCLK_DIV2);
-    
+
     SYS_LockReg();
 }
 
@@ -79,29 +75,29 @@ static void rt_hw_system_init(void)
  */
 void SysTick_Handler(void)
 {
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_tick_increase();
+    rt_tick_increase();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 /**
  * This function will initial Nuvoton board.
  */
 void rt_hw_board_init()
 {
-	/* NVIC Configuration */
-	NVIC_Configuration();
+    /* NVIC Configuration */
+    NVIC_Configuration();
 
     /* Configure the system clock */
     rt_hw_system_init();
-	/* Configure the SysTick */
-	SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+    /* Configure the SysTick */
+    SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
-	/* Initial usart deriver, and set console device */
-	rt_hw_usart_init();
+    /* Initial usart deriver, and set console device */
+    rt_hw_usart_init();
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)M05X_SRAM_BEGIN, (void *)M05X_SRAM_END);
 #endif

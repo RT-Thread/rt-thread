@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX 8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -27,9 +27,9 @@
 
 /* Using Software Timer */
 /* #define RT_USING_TIMER_SOFT */
-#define RT_TIMER_THREAD_PRIO		4
-#define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	10
+#define RT_TIMER_THREAD_PRIO        4
+#define RT_TIMER_THREAD_STACK_SIZE  512
+#define RT_TIMER_TICK_PER_SECOND    10
 
 /* SECTION: IPC */
 /* Using Semaphore*/
@@ -72,9 +72,9 @@
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	        128
+#define RT_CONSOLEBUF_SIZE          128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
-#define RT_CONSOLE_DEVICE_NAME	    "uart2"
+#define RT_CONSOLE_DEVICE_NAME      "uart2"
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
@@ -89,17 +89,17 @@
 /* Reentrancy (thread safe) of the FatFs module.  */
 #define RT_DFS_ELM_REENTRANT
 /* Number of volumes (logical drives) to be used. */
-#define RT_DFS_ELM_DRIVES			2
-/* #define RT_DFS_ELM_USE_LFN			1 */
-/* #define RT_DFS_ELM_CODE_PAGE			936 */
-#define RT_DFS_ELM_MAX_LFN			255
+#define RT_DFS_ELM_DRIVES           2
+/* #define RT_DFS_ELM_USE_LFN           1 */
+/* #define RT_DFS_ELM_CODE_PAGE         936 */
+#define RT_DFS_ELM_MAX_LFN          255
 /* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
+#define DFS_FILESYSTEMS_MAX         2
+/* the max number of opened files       */
+#define DFS_FD_MAX                  4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* #define RT_USING_LWIP */
@@ -113,49 +113,49 @@
 #define RT_LWIP_DNS
 
 /* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
+#define RT_LWIP_TCP_PCB_NUM 5
 
 /* Using DHCP */
 /* #define RT_LWIP_DHCP */
 
 /* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	30
+#define RT_LWIP_IPADDR0 192
+#define RT_LWIP_IPADDR1 168
+#define RT_LWIP_IPADDR2 1
+#define RT_LWIP_IPADDR3 30
 
 /* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+#define RT_LWIP_GWADDR0 192
+#define RT_LWIP_GWADDR1 168
+#define RT_LWIP_GWADDR2 1
+#define RT_LWIP_GWADDR3 1
 
 /* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+#define RT_LWIP_MSKADDR0    255
+#define RT_LWIP_MSKADDR1    255
+#define RT_LWIP_MSKADDR2    255
+#define RT_LWIP_MSKADDR3    0
 
 /* tcp thread options */
-#define RT_LWIP_TCPTHREAD_PRIORITY		12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE		10
-#define RT_LWIP_TCPTHREAD_STACKSIZE		1024
+#define RT_LWIP_TCPTHREAD_PRIORITY      12
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE     10
+#define RT_LWIP_TCPTHREAD_STACKSIZE     1024
 
 /* ethernet if thread options */
-#define RT_LWIP_ETHTHREAD_PRIORITY		15
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE		10
-#define RT_LWIP_ETHTHREAD_STACKSIZE		512
+#define RT_LWIP_ETHTHREAD_PRIORITY      15
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE     10
+#define RT_LWIP_ETHTHREAD_STACKSIZE     512
 
 /* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	8192
+#define RT_LWIP_TCP_SND_BUF 8192
 /* TCP receive window. */
-#define RT_LWIP_TCP_WND		8192
+#define RT_LWIP_TCP_WND     8192
 
 /* SECTION: RT-Thread/GUI */
 /* #define RT_USING_RTGUI */
 
 /* name length of RTGUI object */
-#define RTGUI_NAME_MAX		12
+#define RTGUI_NAME_MAX      12
 /* support 16 weight font */
 #define RTGUI_USING_FONT16
 /* support Chinese font */
@@ -171,7 +171,7 @@
 /* use mouse cursor */
 /* #define RTGUI_USING_MOUSE_CURSOR */
 /* default font size in RTGUI */
-#define RTGUI_DEFAULT_FONT_SIZE	16
+#define RTGUI_DEFAULT_FONT_SIZE 16
 
 /* image support */
 /* #define RTGUI_IMAGE_XPM */

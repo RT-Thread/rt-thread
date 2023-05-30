@@ -20,7 +20,7 @@
 /* application start function */
 int rt_application_init()
 {
-	return 0;	/* empty */
+    return 0;   /* empty */
 }
 
 /** @} */

@@ -17,19 +17,19 @@ extern struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size);
 
 int mnt_init(void)
 {
-	rt_uint8_t *pool = RT_NULL;
-	rt_size_t size = 8*1024*1024;
+    rt_uint8_t *pool = RT_NULL;
+    rt_size_t size = 8*1024*1024;
 
-	pool = rt_malloc(size);
-	if (pool == RT_NULL)
-		return 0;
+    pool = rt_malloc(size);
+    if (pool == RT_NULL)
+        return 0;
 
-	if (dfs_mount(RT_NULL, "/", "ram", 0, (const void *)dfs_ramfs_create(pool, size)) == 0)
-		rt_kprintf("RAM file system initializated!\n");
-	else
-		rt_kprintf("RAM file system initializate failed!\n");
+    if (dfs_mount(RT_NULL, "/", "ram", 0, (const void *)dfs_ramfs_create(pool, size)) == 0)
+        rt_kprintf("RAM file system initializated!\n");
+    else
+        rt_kprintf("RAM file system initializate failed!\n");
 
-	return 0;
+    return 0;
 }
 INIT_ENV_EXPORT(mnt_init);
 #endif

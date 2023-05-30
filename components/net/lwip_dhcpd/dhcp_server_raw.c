@@ -1,7 +1,7 @@
 /*
  * File      : dhcp_server_raw.c
  *             A simple DHCP server implementation
- * COPYRIGHT (C) 2011-2018, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2011-2021, Shanghai Real-Thread Technology Co., Ltd
  * http://www.rt-thread.com
  * All rights reserved.
  *
@@ -26,7 +26,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  * OF SUCH DAMAGE.
- * 
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2014-04-01     Ren.Haibo    the first version

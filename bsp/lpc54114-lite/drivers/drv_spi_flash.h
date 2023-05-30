@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,6 @@
 #ifndef __DRV_SPI_FLASH_H_
 #define __DRV_SPI_FLASH_H_
 
-int rt_hw_w25qxx_init(void); 
+int rt_hw_w25qxx_init(void);
 
 #endif

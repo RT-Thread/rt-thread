@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2012-10-27     heyuanjie87       first version.
+ * 2013-05-17     aozima            initial alarm event & mutex in system init.
+ * 2020-10-15     zhangsz           add alarm flags hour minute second.
  */
 
 #ifndef __ALARM_H__
@@ -22,6 +24,9 @@
 #define RT_ALARM_WEEKLY        0x200 /* alarm weekly at Monday or Friday etc. */
 #define RT_ALARM_MONTHLY       0x400 /* alarm monthly at someday */
 #define RT_ALARM_YAERLY        0x800 /* alarm yearly at a certain date */
+#define RT_ALARM_HOUR          0x1000 /* alarm each hour at a certain min:second */
+#define RT_ALARM_MINUTE        0x2000 /* alarm each minute at a certain second */
+#define RT_ALARM_SECOND        0x4000 /* alarm each second */
 
 /* alarm control cmd */
 #define RT_ALARM_CTRL_MODIFY       1 /* modify alarm time or alarm flag */
@@ -44,6 +49,8 @@ struct rt_alarm
     rt_uint32_t flag;
     rt_alarm_callback_t callback;
     struct tm wktime;
+
+    void *user_data;
 };
 
 struct rt_alarm_setup
@@ -67,6 +74,6 @@ void rt_alarm_update(rt_device_t dev, rt_uint32_t event);
 rt_err_t rt_alarm_delete(rt_alarm_t alarm);
 rt_err_t rt_alarm_start(rt_alarm_t alarm);
 rt_err_t rt_alarm_stop(rt_alarm_t alarm);
-void rt_alarm_system_init(void);
+int rt_alarm_system_init(void);
 
 #endif /* __ALARM_H__ */

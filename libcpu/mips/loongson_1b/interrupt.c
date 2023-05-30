@@ -51,7 +51,7 @@ void rt_hw_interrupt_init(void)
     rt_int32_t idx;
 
     /* pci active low */
-    ls1b_hw0_icregs->int_pol = -1;	   //must be done here 20110802 lgnq
+    ls1b_hw0_icregs->int_pol = -1;     //must be done here 20110802 lgnq
     /* make all interrupts level triggered */
     (ls1b_hw0_icregs+0)->int_edge = 0x0000e000;
     /* mask all interrupts */

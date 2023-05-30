@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define	CODEC_I2C_NAME  ("i2c1")
+#define CODEC_I2C_NAME  ("i2c1")
 
 #define TX_DMA_FIFO_SIZE (2048)
 
@@ -49,7 +49,7 @@ void SAIA_samplerate_set(rt_uint32_t freq)
 {
     RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
     int i;
-    
+
     /* check frequence */
     for (i = 0; i < (sizeof(SAI_PSC_TBL) / sizeof(SAI_PSC_TBL[0])); i++)
     {
@@ -60,12 +60,12 @@ void SAIA_samplerate_set(rt_uint32_t freq)
         LOG_E("Can not support this frequence: %d.", freq);
         return;
     }
-    
+
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SAI_PLLI2S;
     PeriphClkInitStruct.PLLI2S.PLLI2SN = SAI_PSC_TBL[i][1];
     PeriphClkInitStruct.PLLI2S.PLLI2SQ = SAI_PSC_TBL[i][2];
     PeriphClkInitStruct.PLLI2SDivQ = SAI_PSC_TBL[i][3] + 1;
-    
+
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
     __HAL_RCC_SAI_BLOCKACLKSOURCE_CONFIG(RCC_SAIACLKSOURCE_PLLI2S);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -81,9 +81,9 @@ void rt_hw_board_init(void)
 #endif
 
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-	
-	NVIC_SetPriorityGrouping(7);
-	
+
+    NVIC_SetPriorityGrouping(7);
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif

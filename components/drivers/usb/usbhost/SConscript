@@ -3,7 +3,7 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Split("""
-core/core.c
+core/usbhost_core.c
 core/driver.c
 core/usbhost.c
 core/hub.c

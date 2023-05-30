@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -229,7 +229,7 @@ int inet_ioctlsocket(int socket, long cmd, void *arg)
     {
     case F_GETFL:
     case F_SETFL:
-        return lwip_fcntl(socket, cmd, (int) arg); 
+        return lwip_fcntl(socket, cmd, (int) arg);
 
     default:
         return lwip_ioctl(socket, cmd, arg);
@@ -320,7 +320,7 @@ static const struct sal_proto_family lwip_inet_family =
     AF_INET6,
 #else
     AF_INET,
-#endif 
+#endif
     &lwip_socket_ops,
     &lwip_netdb_ops,
 };
@@ -329,7 +329,7 @@ static const struct sal_proto_family lwip_inet_family =
 int sal_lwip_netdev_set_pf_info(struct netdev *netdev)
 {
     RT_ASSERT(netdev);
-    
+
     netdev->sal_user_data = (void *) &lwip_inet_family;
     return 0;
 }

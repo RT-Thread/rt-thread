@@ -107,7 +107,7 @@ reset:
 copy_loop:
 	ldmia	r0!, {r3-r10}	/* copy from source address [r0]    */
 	stmia	r1!, {r3-r10}	/* copy to   target address [r1]    */
-	cmp	r0, r2				/* until source end addreee [r2]    */
+	cmp	r0, r2		/* until source end address [r2]    */
 	ble	copy_loop
 #endif
 	

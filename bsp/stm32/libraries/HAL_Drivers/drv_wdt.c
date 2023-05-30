@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,12 +18,12 @@
 
 struct stm32_wdt_obj
 {
+    rt_watchdog_t watchdog;
     IWDG_HandleTypeDef hiwdg;
     rt_uint16_t is_start;
 };
 static struct stm32_wdt_obj stm32_wdt;
 static struct rt_watchdog_ops ops;
-static rt_watchdog_t watchdog;
 
 static rt_err_t wdt_init(rt_watchdog_t *wdt)
 {
@@ -116,9 +116,9 @@ int rt_wdt_init(void)
 
     ops.init = &wdt_init;
     ops.control = &wdt_control;
-    watchdog.ops = &ops;
+    stm32_wdt.watchdog.ops = &ops;
     /* register watchdog device */
-    if (rt_hw_watchdog_register(&watchdog, "wdt", RT_DEVICE_FLAG_DEACTIVATE, RT_NULL) != RT_EOK)
+    if (rt_hw_watchdog_register(&stm32_wdt.watchdog, "wdt", RT_DEVICE_FLAG_DEACTIVATE, RT_NULL) != RT_EOK)
     {
         LOG_E("wdt device register failed.");
         return -RT_ERROR;

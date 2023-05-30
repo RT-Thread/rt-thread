@@ -1,11 +1,7 @@
 /*
- * File      : enc28j60.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -197,9 +193,9 @@
 #define MACON3_FRMLNEN   0x02
 #define MACON3_FULDPX    0x01
 // ENC28J60 MACON4 Register Bit Definitions
-#define	MACON4_DEFER	(1<<6)
-#define	MACON4_BPEN		(1<<5)
-#define	MACON4_NOBKOFF	(1<<4)
+#define MACON4_DEFER    (1<<6)
+#define MACON4_BPEN     (1<<5)
+#define MACON4_NOBKOFF  (1<<4)
 // ENC28J60 MICMD Register Bit Definitions
 #define MICMD_MIISCAN    0x02
 #define MICMD_MIIRD      0x01
@@ -218,12 +214,12 @@
 #define PHSTAT1_LLSTAT   0x0004
 #define PHSTAT1_JBSTAT   0x0002
 /* ENC28J60 PHY PHSTAT2 Register Bit Definitions */
-#define PHSTAT2_TXSTAT	(1 << 13)
-#define PHSTAT2_RXSTAT	(1 << 12)
-#define PHSTAT2_COLSTAT	(1 << 11)
-#define PHSTAT2_LSTAT	(1 << 10)
-#define PHSTAT2_DPXSTAT	(1 << 9)
-#define PHSTAT2_PLRITY	(1 << 5)
+#define PHSTAT2_TXSTAT  (1 << 13)
+#define PHSTAT2_RXSTAT  (1 << 12)
+#define PHSTAT2_COLSTAT (1 << 11)
+#define PHSTAT2_LSTAT   (1 << 10)
+#define PHSTAT2_DPXSTAT (1 << 9)
+#define PHSTAT2_PLRITY  (1 << 5)
 // ENC28J60 PHY PHCON2 Register Bit Definitions
 #define PHCON2_FRCLINK   0x4000
 #define PHCON2_TXDIS     0x2000
@@ -282,13 +278,13 @@
 #define RSV_GETBIT(x, y)        (((x) & RSV_BITMASK(y)) ? 1 : 0)
 
 // SPI operation codes
-#define ENC28J60_READ_CTRL_REG 		(0x00)
-#define ENC28J60_READ_BUF_MEM 		(0x20 | 0x1A)
-#define ENC28J60_WRITE_CTRL_REG 	(0x40)
-#define ENC28J60_WRITE_BUF_MEM 		(0x60 | 0x1A)
-#define ENC28J60_BIT_FIELD_SET 		(0x80)
-#define ENC28J60_BIT_FIELD_CLR 		(0xA0)
-#define ENC28J60_SOFT_RESET 		(0xE0 | 0x1F)
+#define ENC28J60_READ_CTRL_REG      (0x00)
+#define ENC28J60_READ_BUF_MEM       (0x20 | 0x1A)
+#define ENC28J60_WRITE_CTRL_REG     (0x40)
+#define ENC28J60_WRITE_BUF_MEM      (0x60 | 0x1A)
+#define ENC28J60_BIT_FIELD_SET      (0x80)
+#define ENC28J60_BIT_FIELD_CLR      (0xA0)
+#define ENC28J60_SOFT_RESET         (0xE0 | 0x1F)
 
 // The RXSTART_INIT should be zero. See Rev. B4 Silicon Errata
 // buffer boundaries applied to internal 8K ram
@@ -296,17 +292,17 @@
 //
 
 // start with recbuf at 0/
-#define RXSTART_INIT	0x0
+#define RXSTART_INIT    0x0
 // receive buffer end
-#define RXSTOP_INIT		(0x1FFF - 0x0600 - 1)
+#define RXSTOP_INIT     (0x1FFF - 0x0600 - 1)
 // start TX buffer at 0x1FFF-0x0600, pace for one full ethernet frame (~1500 bytes)
 
-#define TXSTART_INIT	(0x1FFF - 0x0600)
+#define TXSTART_INIT    (0x1FFF - 0x0600)
 // stp TX buffer at end of mem
-#define TXSTOP_INIT		0x1FFF
+#define TXSTOP_INIT     0x1FFF
 
 // max frame length which the conroller will accept:
-#define MAX_FRAMELEN	1518
+#define MAX_FRAMELEN    1518
 
 void rt_hw_enc28j60_init(void);
 

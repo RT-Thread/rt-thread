@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -70,8 +70,8 @@ struct at_socket *at_get_socket(int socket)
                 return at_sock;
             }
         }
-    } 
-    
+    }
+
     rt_hw_interrupt_enable(level);
 
     return RT_NULL;
@@ -289,7 +289,7 @@ static int alloc_empty_socket(rt_slist_t *l)
     rt_slist_for_each(node, &_socket_list)
     {
         at_sock = rt_slist_entry(node, struct at_socket, list);
-        if(at_sock->socket != idx)  
+        if(at_sock->socket != idx)
             break;
         idx++;
         pre_node = node;
@@ -302,7 +302,7 @@ static int alloc_empty_socket(rt_slist_t *l)
     return idx;
 }
 
-static struct at_socket *alloc_socket_by_device(struct at_device *device)
+static struct at_socket *alloc_socket_by_device(struct at_device *device, enum at_socket_type type)
 {
     static rt_mutex_t at_slock = RT_NULL;
     struct at_socket *sock = RT_NULL;
@@ -323,10 +323,17 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device)
     rt_mutex_take(at_slock, RT_WAITING_FOREVER);
 
     /* find an empty at socket entry */
-    for (idx = 0; idx < device->class->socket_num && device->sockets[idx].magic; idx++);
+    if (device->class->socket_ops->at_socket != RT_NULL)
+    {
+        idx = device->class->socket_ops->at_socket(device, type);
+    }
+    else
+    {
+        for (idx = 0; idx < device->class->socket_num && device->sockets[idx].magic; idx++);
+    }
 
     /* can't find an empty protocol family entry */
-    if (idx == device->class->socket_num)
+    if (idx < 0 || idx >= device->class->socket_num)
     {
         goto __err;
     }
@@ -374,7 +381,7 @@ __err:
     return RT_NULL;
 }
 
-static struct at_socket *alloc_socket(void)
+static struct at_socket *alloc_socket(enum at_socket_type type)
 {
     extern struct netdev *netdev_default;
     struct netdev *netdev = RT_NULL;
@@ -401,8 +408,11 @@ static struct at_socket *alloc_socket(void)
         return RT_NULL;
     }
 
-    return alloc_socket_by_device(device);
+    return alloc_socket_by_device(device, type);
 }
+
+static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, const char *buff, size_t bfsz);
+static void at_closed_notice_cb(struct at_socket *sock, at_socket_evt_t event, const char *buff, size_t bfsz);
 
 int at_socket(int domain, int type, int protocol)
 {
@@ -430,13 +440,17 @@ int at_socket(int domain, int type, int protocol)
     }
 
     /* allocate and initialize a new AT socket */
-    sock = alloc_socket();
+    sock = alloc_socket(socket_type);
     if (sock == RT_NULL)
     {
         return -1;
     }
     sock->type = socket_type;
     sock->state = AT_SOCKET_OPEN;
+
+    /* set AT socket receive data callback function */
+    sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
+    sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
 
     return sock->socket;
 }
@@ -494,7 +508,7 @@ int at_closesocket(int socket)
 
     /* deal with TCP server actively disconnect */
     rt_thread_delay(rt_tick_from_millisecond(100));
-    
+
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
@@ -515,7 +529,7 @@ int at_closesocket(int socket)
         }
     }
 
-    free_socket(sock); 
+    free_socket(sock);
     return 0;
 }
 
@@ -589,7 +603,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
 
     /* input ip address is different from device ip address */
     if (ip_addr_cmp(&input_ipaddr, &local_ipaddr) == 0)
-    {   
+    {
         struct at_socket *new_sock = RT_NULL;
         struct at_device *new_device = RT_NULL;
         enum at_socket_type type = sock->type;
@@ -599,7 +613,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
         {
             return -1;
         }
-        
+
         extern struct at_device *at_device_get_by_ipaddr(ip_addr_t *ip_addr);
         new_device = at_device_get_by_ipaddr(&input_ipaddr);
         if (new_device == RT_NULL)
@@ -608,7 +622,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
         }
 
         /* allocate new socket */
-        new_sock = alloc_socket_by_device(new_device);
+        new_sock = alloc_socket_by_device(new_device, type);
         if (new_sock == RT_NULL)
         {
             return -1;
@@ -635,7 +649,7 @@ static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, con
 {
     RT_ASSERT(buff);
     RT_ASSERT(event == AT_SOCKET_EVT_RECV);
-    
+
     /* check the socket object status */
     if (sock->magic != AT_SOCKET_MAGIC)
     {
@@ -661,7 +675,7 @@ static void at_closed_notice_cb(struct at_socket *sock, at_socket_evt_t event, c
     {
         return;
     }
-    
+
     at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
     at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
 
@@ -703,10 +717,6 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 
     sock->state = AT_SOCKET_CONNECT;
 
-    /* set AT socket receive data callback function */
-    sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-    sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
-
 __exit:
 
     if (result < 0)
@@ -721,7 +731,7 @@ __exit:
     {
         at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
     }
-    
+
     return result;
 }
 
@@ -744,7 +754,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         goto __exit;
     }
 
-    /* if the socket type is UDP, nead to connect socket first */
+    /* if the socket type is UDP, need to connect socket first */
     if (from && sock->type == AT_SOCKET_UDP && sock->state == AT_SOCKET_OPEN)
     {
         ip_addr_t remote_addr;
@@ -760,9 +770,6 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             goto __exit;
         }
         sock->state = AT_SOCKET_CONNECT;
-        /* set AT socket receive data callback function */
-        sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-        sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
     }
 
     /* receive packet list last transmission of remaining data */
@@ -773,7 +780,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         goto __exit;
     }
     rt_mutex_release(sock->recv_lock);
-        
+
     /* socket passively closed, receive function return 0 */
     if (sock->state == AT_SOCKET_CLOSED)
     {
@@ -815,23 +822,16 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         }
         else
         {
-            if (sock->state == AT_SOCKET_CONNECT)
+
+            /* get receive buffer to receiver ring buffer */
+            rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
+            recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *) mem, len);
+            rt_mutex_release(sock->recv_lock);
+            if (recv_len > 0)
             {
-                /* get receive buffer to receiver ring buffer */
-                rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-                recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *) mem, len);
-                rt_mutex_release(sock->recv_lock);
-                if (recv_len > 0)
-                {
-                    break;
-                }
+                break;
             }
-            else
-            {
-                LOG_D("received data exit, current socket (%d) is closed by remote.", socket);
-                result = 0;
-                goto __exit;
-            }
+
         }
     }
 
@@ -924,9 +924,6 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
                 goto __exit;
             }
             sock->state = AT_SOCKET_CONNECT;
-            /* set AT socket receive data callback function */
-            sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-            sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
         }
 
         if ((len = sock->ops->at_send(sock, (char *) data, size, sock->type)) < 0)
@@ -948,7 +945,7 @@ __exit:
     {
         if (sock != RT_NULL)
         {
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);   
+            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
         }
     }
     else
@@ -1141,13 +1138,13 @@ struct hostent *at_gethostbyname(const char *name)
 
 #if NETDEV_IPV4 && NETDEV_IPV6
     addr.u_addr.ip4.addr = ipstr_to_u32(ipstr);
-	addr.type = IPADDR_TYPE_V4;
+    addr.type = IPADDR_TYPE_V4;
 #elif NETDEV_IPV4
     addr.addr = ipstr_to_u32(ipstr);
 #elif NETDEV_IPV6
 #error "not support IPV6."
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
- 
+
     /* fill hostent structure */
     s_hostent_addr = addr;
     s_phostent_addr[0] = &s_hostent_addr;
@@ -1246,8 +1243,8 @@ int at_getaddrinfo(const char *nodename, const char *servname,
             {
                 strncpy(ip_str, nodename, strlen(nodename));
             }
-            
-        #if NETDEV_IPV4 && NETDEV_IPV6 
+
+        #if NETDEV_IPV4 && NETDEV_IPV6
             addr.type = IPADDR_TYPE_V4;
             if ((addr.u_addr.ip4.addr = ipstr_to_u32(ip_str)) == 0)
             {
@@ -1257,7 +1254,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
             addr.addr = ipstr_to_u32(ip_str);
         #elif NETDEV_IPV6
         #error "not support IPV6."
-        #endif /* NETDEV_IPV4 && NETDEV_IPV6 */  
+        #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
         }
     }
     else

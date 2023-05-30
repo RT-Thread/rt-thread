@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,7 +17,7 @@
 
 #define AINTC_BASE  AM33XX_AINTC_REGS
 
-#define MAX_HANDLERS	128
+#define MAX_HANDLERS    128
 
 extern volatile rt_uint8_t rt_interrupt_nest;
 
@@ -59,13 +59,13 @@ extern int system_vectors;
 static void rt_hw_vector_init(void)
 {
     unsigned int *dest = (unsigned int *)AM335X_VECTOR_BASE;
-    
+
 #ifdef __ICCARM__
     unsigned int *src =  (unsigned int *)&__vector;
 #else
     unsigned int *src =  (unsigned int *)&system_vectors;
 #endif
-    
+
     rt_memcpy(dest, src, 16 * 4);
     rt_cpu_vector_set_base(AM335X_VECTOR_BASE);
 }

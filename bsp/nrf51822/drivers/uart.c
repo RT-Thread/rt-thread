@@ -1,11 +1,7 @@
 /*
- * File      : uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  */
 
@@ -189,10 +185,10 @@ void rt_hw_uart_init(void)
     rt_ringbuffer_init(&(uart->rx_rb), rx_buffer, sizeof(rx_buffer));
 
     /* device interface */
-    uart->parent.init 	    = rt_uart_init;
-    uart->parent.open 	    = rt_uart_open;
+    uart->parent.init       = rt_uart_init;
+    uart->parent.open       = rt_uart_open;
     uart->parent.close      = rt_uart_close;
-    uart->parent.read 	    = rt_uart_read;
+    uart->parent.read       = rt_uart_read;
     uart->parent.write      = rt_uart_write;
     uart->parent.control    = RT_NULL;
     uart->parent.user_data  = RT_NULL;

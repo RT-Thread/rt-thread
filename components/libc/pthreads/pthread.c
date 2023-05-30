@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -200,7 +200,7 @@ int pthread_create(pthread_t            *pid,
 
     /* allocate posix thread data */
     pth_id = _pthread_data_create();
-    if (pth_id == PTHREAD_NUM_MAX) 
+    if (pth_id == PTHREAD_NUM_MAX)
     {
         ret = ENOMEM;
         goto __exit;

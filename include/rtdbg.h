@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,6 +31,10 @@
 #define RT_DBG_H__
 
 #include <rtconfig.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* the debug log will force enable when RT_DEBUG macro is defined */
 #if defined(RT_DEBUG) && !defined(DBG_ENABLE)
@@ -91,13 +95,13 @@
 #ifdef DBG_COLOR
 #define _DBG_COLOR(n)        rt_kprintf("\033["#n"m")
 #define _DBG_LOG_HDR(lvl_name, color_n)                    \
-    rt_kprintf("\033["#color_n"m["lvl_name"/"DBG_SECTION_NAME"] ")
+    rt_kprintf("\033["#color_n"m[" lvl_name "/" DBG_SECTION_NAME "] ")
 #define _DBG_LOG_X_END                                     \
     rt_kprintf("\033[0m\n")
 #else
 #define _DBG_COLOR(n)
 #define _DBG_LOG_HDR(lvl_name, color_n)                    \
-    rt_kprintf("["lvl_name"/"DBG_SECTION_NAME"] ")
+    rt_kprintf("[" lvl_name "/" DBG_SECTION_NAME "] ")
 #define _DBG_LOG_X_END                                     \
     rt_kprintf("\n")
 #endif /* DBG_COLOR */
@@ -175,5 +179,9 @@
 #define LOG_RAW(...)         dbg_raw(__VA_ARGS__)
 
 #endif /* defined(RT_USING_ULOG) && define(DBG_ENABLE) */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* RT_DBG_H__ */

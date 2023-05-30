@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -56,7 +52,7 @@ int rt_application_init()
 {
     /* create led1 thread */
     rt_thread_init(&thread_led1,
-				   "led1",
+                   "led1",
                    rt_thread_entry_led1,
                    RT_NULL,
                    &thread_led1_stack[0],

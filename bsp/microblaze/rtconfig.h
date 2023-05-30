@@ -2,19 +2,19 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-#define IDLE_THREAD_STACK_SIZE	2048
+#define IDLE_THREAD_STACK_SIZE  2048
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	32
+#define RT_NAME_MAX 32
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 
 /* Tick per Second*/
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
 
 /* SECTION: RT_DEBUG */
@@ -61,10 +61,10 @@
 #define RT_USING_DEVICE
 
 /* buffer size for UART reception*/
-#define RT_UART_RX_BUFFER_SIZE	64
+#define RT_UART_RX_BUFFER_SIZE  64
 
 /* buffer size for UART transmission*/
-#define RT_UART_TX_BUFFER_SIZE	64
+#define RT_UART_TX_BUFFER_SIZE  64
 
 /* Using UART1*/
 #define RT_USING_UART1
@@ -78,7 +78,7 @@
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	256
+#define RT_CONSOLEBUF_SIZE  256
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
@@ -137,10 +137,10 @@
 #define RT_LWIP_TCP
 
 /* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
+#define RT_LWIP_TCP_PCB_NUM 5
 
 /* TCP sender buffer space*/
-#define RT_LWIP_TCP_SND_BUF	10240
+#define RT_LWIP_TCP_SND_BUF 10240
 
 /* Enable SNMP protocol*/
 /* #define RT_LWIP_SNMP */
@@ -149,42 +149,42 @@
 /* #define RT_LWIP_DHCP */
 
 /* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	0
-#define RT_LWIP_IPADDR3	30
+#define RT_LWIP_IPADDR0 192
+#define RT_LWIP_IPADDR1 168
+#define RT_LWIP_IPADDR2 0
+#define RT_LWIP_IPADDR3 30
 
 /* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	0
-#define RT_LWIP_GWADDR3	1
+#define RT_LWIP_GWADDR0 192
+#define RT_LWIP_GWADDR1 168
+#define RT_LWIP_GWADDR2 0
+#define RT_LWIP_GWADDR3 1
 
 /* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+#define RT_LWIP_MSKADDR0    255
+#define RT_LWIP_MSKADDR1    255
+#define RT_LWIP_MSKADDR2    255
+#define RT_LWIP_MSKADDR3    0
 
 /* the number of blocks for pbuf*/
-#define RT_LWIP_PBUF_NUM	16
+#define RT_LWIP_PBUF_NUM    16
 
 /* thread priority of tcpip thread*/
-#define RT_LWIP_TCPTHREAD_PRIORITY	128
+#define RT_LWIP_TCPTHREAD_PRIORITY  128
 
 /* mail box size of tcpip thread to wait for*/
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE	8
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
 
 /* thread stack size of tcpip thread*/
-#define RT_LWIP_TCPTHREAD_STACKSIZE	4096
+#define RT_LWIP_TCPTHREAD_STACKSIZE 4096
 
 /* thread priority of ethnetif thread*/
-#define RT_LWIP_ETHTHREAD_PRIORITY	144
+#define RT_LWIP_ETHTHREAD_PRIORITY  144
 
 /* mail box size of ethnetif thread to wait for*/
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE	32
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 32
 
 /* thread stack size of ethnetif thread*/
-#define RT_LWIP_ETHTHREAD_STACKSIZE	1024
+#define RT_LWIP_ETHTHREAD_STACKSIZE 1024
 
 #endif

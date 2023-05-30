@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -75,33 +75,33 @@ void rt_init_thread_entry(void *parameter)
 
 #ifdef RT_USING_RTGUI
     {
-    	extern void rtgui_system_server_init(void);
-		extern void application_init(void);
+        extern void rtgui_system_server_init(void);
+        extern void application_init(void);
 
-		rt_device_t lcd;
+        rt_device_t lcd;
 
-		/* init lcd */
-		rt_hw_lcd_init();
+        /* init lcd */
+        rt_hw_lcd_init();
 
-		/* find lcd device */
-		lcd = rt_device_find("lcd");
-		if (lcd != RT_NULL)
-		{
-			/* set lcd device as rtgui graphic driver */
-			rtgui_graphic_set_device(lcd);
+        /* find lcd device */
+        lcd = rt_device_find("lcd");
+        if (lcd != RT_NULL)
+        {
+            /* set lcd device as rtgui graphic driver */
+            rtgui_graphic_set_device(lcd);
 
-			/* init rtgui system server */
-			rtgui_system_server_init();
+            /* init rtgui system server */
+            rtgui_system_server_init();
 
-			/* startup rtgui in demo of RT-Thread/GUI examples */
-			application_init();
-		}
+            /* startup rtgui in demo of RT-Thread/GUI examples */
+            application_init();
+        }
     }
 #endif
 
 #ifdef RT_USING_FINSH
-	/* initialize finsh */
-	finsh_system_init();
+    /* initialize finsh */
+    finsh_system_init();
 #endif
 }
 
@@ -143,22 +143,22 @@ static void rt_thread_entry_led(void* parameter)
 
 int rt_application_init(void)
 {
-	rt_thread_t tid;
+    rt_thread_t tid;
 
-	rt_thread_init(&thread_led,
-			"led",
-			rt_thread_entry_led,
-			RT_NULL,
-			&thread_led_stack[0],
-			sizeof(thread_led_stack),11,5);
-	rt_thread_startup(&thread_led);
+    rt_thread_init(&thread_led,
+            "led",
+            rt_thread_entry_led,
+            RT_NULL,
+            &thread_led_stack[0],
+            sizeof(thread_led_stack),11,5);
+    rt_thread_startup(&thread_led);
 
-	tid = rt_thread_create("init",
-			rt_init_thread_entry, RT_NULL,
-			2048, RT_THREAD_PRIORITY_MAX/3, 20);
-	if (tid != RT_NULL) rt_thread_startup(tid);
+    tid = rt_thread_create("init",
+            rt_init_thread_entry, RT_NULL,
+            2048, RT_THREAD_PRIORITY_MAX/3, 20);
+    if (tid != RT_NULL) rt_thread_startup(tid);
 
-	return 0;
+    return 0;
 }
 
 #if defined(RT_USING_RTGUI) && defined(RT_USING_FINSH)
@@ -170,20 +170,20 @@ int rt_application_init(void)
 
 void key(rt_uint32_t key)
 {
-	struct rtgui_event_kbd ekbd;
+    struct rtgui_event_kbd ekbd;
 
-	RTGUI_EVENT_KBD_INIT(&ekbd);
-	ekbd.mod  = RTGUI_KMOD_NONE;
-	ekbd.unicode = 0;
-	ekbd.key = key;
+    RTGUI_EVENT_KBD_INIT(&ekbd);
+    ekbd.mod  = RTGUI_KMOD_NONE;
+    ekbd.unicode = 0;
+    ekbd.key = key;
 
-	ekbd.type = RTGUI_KEYDOWN;
-	rtgui_server_post_event((struct rtgui_event*)&ekbd, sizeof(ekbd));
+    ekbd.type = RTGUI_KEYDOWN;
+    rtgui_server_post_event((struct rtgui_event*)&ekbd, sizeof(ekbd));
 
-	rt_thread_delay(2);
+    rt_thread_delay(2);
 
-	ekbd.type = RTGUI_KEYUP;
-	rtgui_server_post_event((struct rtgui_event*)&ekbd, sizeof(ekbd));
+    ekbd.type = RTGUI_KEYUP;
+    rtgui_server_post_event((struct rtgui_event*)&ekbd, sizeof(ekbd));
 }
 FINSH_FUNCTION_EXPORT(key, send a key to gui server);
 #endif

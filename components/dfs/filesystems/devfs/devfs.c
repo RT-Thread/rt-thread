@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -186,6 +186,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
             result = file->fops->open(file);
             if (result == RT_EOK || result == -RT_ENOSYS)
             {
+                file->type = FT_DEVICE;
                 return 0;
             }
         }
@@ -197,6 +198,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
         if (result == RT_EOK || result == -RT_ENOSYS)
         {
             file->data = device;
+            file->type = FT_DEVICE;
             return RT_EOK;
         }
     }
@@ -269,7 +271,7 @@ int dfs_device_fs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t co
     if (count == 0)
         return -EINVAL;
 
-    for (index = 0; index < count && index + root_dirent->read_index < root_dirent->device_count; 
+    for (index = 0; index < count && index + root_dirent->read_index < root_dirent->device_count;
         index ++)
     {
         object = (rt_object_t)root_dirent->devices[root_dirent->read_index + index];
@@ -324,7 +326,7 @@ static const struct dfs_filesystem_ops _device_fs =
 
 int devfs_init(void)
 {
-    /* register rom file system */
+    /* register device file system */
     dfs_register(&_device_fs);
 
     return 0;

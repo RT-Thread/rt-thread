@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,7 +9,7 @@
  * 2019-01-03     zylx         modify dma support
  * 2019-10-03     xuzhuoyi     modify for STM32G4
  */
- 
+
 #ifndef __UART_CONFIG_H__
 #define __UART_CONFIG_H__
 
@@ -50,7 +50,7 @@ extern "C" {
         .irq_type = USART1_IRQn,                                    \
     }
 #endif /* UART1_CONFIG */
-		
+
 #if defined(BSP_UART1_RX_USING_DMA)
 #ifndef UART1_DMA_RX_CONFIG
 #define UART1_DMA_RX_CONFIG                                        \
@@ -97,7 +97,7 @@ extern "C" {
     }
 #endif /* UART2_DMA_RX_CONFIG */
 #endif /* BSP_UART2_RX_USING_DMA */
-		
+
 #if defined(BSP_UART2_TX_USING_DMA)
 #ifndef UART2_DMA_TX_CONFIG
 #define UART2_DMA_TX_CONFIG                                        \
@@ -132,7 +132,7 @@ extern "C" {
     }
 #endif /* UART3_DMA_RX_CONFIG */
 #endif /* BSP_UART3_RX_USING_DMA */
-		
+
 #if defined(BSP_UART3_TX_USING_DMA)
 #ifndef UART3_DMA_TX_CONFIG
 #define UART3_DMA_TX_CONFIG                                        \
@@ -202,7 +202,7 @@ extern "C" {
     }
 #endif /* UART5_DMA_RX_CONFIG */
 #endif /* BSP_UART5_RX_USING_DMA */
-		
+
 #if defined(BSP_UART5_TX_USING_DMA)
 #ifndef UART5_DMA_TX_CONFIG
 #define UART5_DMA_TX_CONFIG                                        \

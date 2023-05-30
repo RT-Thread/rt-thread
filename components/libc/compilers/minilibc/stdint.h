@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -223,7 +223,7 @@ typedef __UINTMAX_TYPE__ uintmax_t;
 #define WINT_MIN __WINT_MIN__
 
 #endif /* (!defined __cplusplus || __cplusplus >= 201103L
-	   || defined __STDC_LIMIT_MACROS)  */
+       || defined __STDC_LIMIT_MACROS)  */
 
 #if (!defined __cplusplus || __cplusplus >= 201103L \
      || defined __STDC_CONSTANT_MACROS)
@@ -250,7 +250,7 @@ typedef __UINTMAX_TYPE__ uintmax_t;
 #define UINTMAX_C(c) __UINTMAX_C(c)
 
 #endif /* (!defined __cplusplus || __cplusplus >= 201103L
-	   || defined __STDC_CONSTANT_MACROS) */
+       || defined __STDC_CONSTANT_MACROS) */
 
 #ifndef __INT_MAX__
 #define __INT_MAX__     2147483647
@@ -259,8 +259,8 @@ typedef __UINTMAX_TYPE__ uintmax_t;
 #define INT_MAX         (__INT_MAX__)
 #define UINT_MAX        (INT_MAX * 2U + 1U)
 
-#define LONG_MAX	((long)(~0UL>>1))
-#define LONG_MIN	(-LONG_MAX - 1)
-#define ULONG_MAX	(~0UL)
+#define LONG_MAX    ((long)(~0UL>>1))
+#define LONG_MIN    (-LONG_MAX - 1)
+#define ULONG_MAX   (~0UL)
 
 #endif

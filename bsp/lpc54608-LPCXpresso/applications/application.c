@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -47,10 +47,10 @@ void link_dump(void)
 
     extern unsigned int _sbss;
     extern unsigned int _ebss;
-    
+
     #define DUMP_VAR(__VAR) \
         rt_kprintf("%-20s %p\n", #__VAR, &__VAR)
-    
+
     DUMP_VAR(_sdata);
     DUMP_VAR(_edata);
     DUMP_VAR(_sidata);
@@ -62,10 +62,10 @@ void link_dump(void)
 int rt_application_init(void)
 {
     rt_thread_t tid;
-    
+
     build_dump();
     link_dump();
-    
+
     tid = rt_thread_create("init",
                            rt_init_thread_entry, RT_NULL,
                            2048, RT_THREAD_PRIORITY_MAX / 3, 20);

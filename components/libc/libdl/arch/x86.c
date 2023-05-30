@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
- * 
+ *
  * Change Logs:
  * Date           Author      Notes
  * 2018/09/15     parai     first version
@@ -13,9 +13,9 @@
 
 #ifdef __i386__
 
-#define R_X86_64_GLOB_DAT	6	/* Create GOT entry */
-#define R_X86_64_JUMP_SLOT	7	/* Create PLT entry */
-#define R_X86_64_RELATIVE	8	/* Adjust by program base */
+#define R_X86_64_GLOB_DAT   6   /* Create GOT entry */
+#define R_X86_64_JUMP_SLOT  7   /* Create PLT entry */
+#define R_X86_64_RELATIVE   8   /* Adjust by program base */
 int dlmodule_relocate(struct rt_dlmodule *module, Elf32_Rel *rel, Elf32_Addr sym_val)
 {
     Elf32_Addr *where, tmp;

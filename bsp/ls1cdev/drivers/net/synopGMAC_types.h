@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,4 +22,4 @@ typedef signed int s32;
 
 typedef u32 dma_addr_t;
 
-#endif	/*__TYPES__H*/
+#endif  /*__TYPES__H*/

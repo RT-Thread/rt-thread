@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#define AT_SW_VERSION                  "1.3.0"
+#define AT_SW_VERSION                  "1.3.1"
 
 #define AT_CMD_NAME_LEN                16
 #define AT_END_MARK_LEN                4

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,6 @@
 /**
  * Pipe Device
  */
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #ifndef RT_PIPE_BUFSZ
@@ -71,6 +70,6 @@ rt_err_t rt_audio_pipe_detach(struct rt_audio_pipe *pipe);
 #ifdef RT_USING_HEAP
 rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size);
 void rt_audio_pipe_destroy(struct rt_audio_pipe *pipe);
-#endif
-#endif
+#endif /* RT_USING_HEAP */
 
+#endif /* __AUDIO_PIPE_H__ */

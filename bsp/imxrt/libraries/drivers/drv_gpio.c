@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -70,7 +70,7 @@ const struct pin_mask mask_tab[5] =
 #endif
 };
 
-const rt_int8_t reg_offset[] = 
+const rt_int8_t reg_offset[] =
 {
 #if defined(SOC_IMXRT1015_SERIES)
     38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 64, 65, 66, 67, 68, 69,
@@ -559,6 +559,9 @@ static rt_err_t imxrt_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt
         case PIN_IRQ_MODE_LOW_LEVEL:
             int_mode = kGPIO_IntLowLevel;
             break;
+        default:
+            int_mode = kGPIO_IntRisingEdge;
+            break;
         }
         irq_index = (port << 1) + (pin_num >> 4);
         GPIO_PinSetInterruptConfig(mask_tab[port].gpio, pin_num, int_mode);
@@ -584,7 +587,8 @@ const static struct rt_pin_ops imxrt_pin_ops =
     imxrt_pin_read,
     imxrt_pin_attach_irq,
     imxrt_pin_detach_irq,
-    imxrt_pin_irq_enable
+    imxrt_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

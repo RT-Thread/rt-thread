@@ -1,28 +1,14 @@
 /*
- * File      : rtdef.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 #ifndef __SYNOPSYS_EMAC_H__
 #define __SYNOPSYS_EMAC_H__
 
 #include <rtthread.h>
-     
+
 
 /******************************************************************************/
 /*                Ethernet MAC Registers bits definitions                     */
@@ -48,8 +34,8 @@
 #define EMAC_MACCR_RD           ((rt_uint32_t)0x00000200)  /* Retry disable */
 #define EMAC_MACCR_APCS         ((rt_uint32_t)0x00000080)  /* Automatic Pad/CRC stripping */
 #define EMAC_MACCR_BL           ((rt_uint32_t)0x00000060)  /* Back-off limit: random integer number (r) of slot time delays before rescheduling
-															a transmission attempt during retries after a collision: 0 =< r <2^k */
-#define EMAC_MACCR_BL_10     	((rt_uint32_t)0x00000000)  /* k = min (n, 10) */
+                                                            a transmission attempt during retries after a collision: 0 =< r <2^k */
+#define EMAC_MACCR_BL_10        ((rt_uint32_t)0x00000000)  /* k = min (n, 10) */
 #define EMAC_MACCR_BL_8         ((rt_uint32_t)0x00000020)  /* k = min (n, 8) */
 #define EMAC_MACCR_BL_4         ((rt_uint32_t)0x00000040)  /* k = min (n, 4) */
 #define EMAC_MACCR_BL_1         ((rt_uint32_t)0x00000060)  /* k = min (n, 1) */
@@ -60,45 +46,45 @@
 /* Bit definition for Ethernet MAC Frame Filter Register */
 #define EMAC_MACFFR_RA          ((rt_uint32_t)0x80000000)  /* Receive all */
 #define EMAC_MACFFR_HPF         ((rt_uint32_t)0x00000400)  /* Hash or perfect filter */
-#define EMAC_MACFFR_SAF      	((rt_uint32_t)0x00000200)  /* Source address filter enable */
+#define EMAC_MACFFR_SAF         ((rt_uint32_t)0x00000200)  /* Source address filter enable */
 #define EMAC_MACFFR_SAIF        ((rt_uint32_t)0x00000100)  /* SA inverse filtering */
 #define EMAC_MACFFR_PCF         ((rt_uint32_t)0x000000C0)  /* Pass control frames: 3 cases */
 #define EMAC_MACFFR_PCF_BlockAll                ((rt_uint32_t)0x00000040)  /* MAC filters all control frames from reaching the application */
 #define EMAC_MACFFR_PCF_ForwardAll              ((rt_uint32_t)0x00000080)  /* MAC forwards all control frames to application even if they fail the Address Filter */
 #define EMAC_MACFFR_PCF_ForwardPassedAddrFilter ((rt_uint32_t)0x000000C0)  /* MAC forwards control frames that pass the Address Filter. */
 #define EMAC_MACFFR_BFD         ((rt_uint32_t)0x00000020)  /* Broadcast frame disable */
-#define EMAC_MACFFR_PAM       	((rt_uint32_t)0x00000010)  /* Pass all mutlicast */
+#define EMAC_MACFFR_PAM         ((rt_uint32_t)0x00000010)  /* Pass all mutlicast */
 #define EMAC_MACFFR_DAIF        ((rt_uint32_t)0x00000008)  /* DA Inverse filtering */
-#define EMAC_MACFFR_HM     	    ((rt_uint32_t)0x00000004)  /* Hash multicast */
-#define EMAC_MACFFR_HU     	    ((rt_uint32_t)0x00000002)  /* Hash unicast */
-#define EMAC_MACFFR_PM     	    ((rt_uint32_t)0x00000001)  /* Promiscuous mode */
+#define EMAC_MACFFR_HM          ((rt_uint32_t)0x00000004)  /* Hash multicast */
+#define EMAC_MACFFR_HU          ((rt_uint32_t)0x00000002)  /* Hash unicast */
+#define EMAC_MACFFR_PM          ((rt_uint32_t)0x00000001)  /* Promiscuous mode */
 
 /* Bit definition for Ethernet MAC Hash Table High Register */
-#define EMAC_MACHTHR_HTH   	    ((rt_uint32_t)0xFFFFFFFF)  /* Hash table high */
+#define EMAC_MACHTHR_HTH        ((rt_uint32_t)0xFFFFFFFF)  /* Hash table high */
 
 /* Bit definition for Ethernet MAC Hash Table Low Register */
-#define EMAC_MACHTLR_HTL  	    ((rt_uint32_t)0xFFFFFFFF)  /* Hash table low */
+#define EMAC_MACHTLR_HTL        ((rt_uint32_t)0xFFFFFFFF)  /* Hash table low */
 
 /* Bit definition for Ethernet MAC MII Address Register */
-#define EMAC_MACMIIAR_PA  	    ((rt_uint32_t)0x0000F800)  /* Physical layer address */
-#define EMAC_MACMIIAR_MR 	   	((rt_uint32_t)0x000007C0)  /* MII register in the selected PHY */
-#define EMAC_MACMIIAR_CR 	    ((rt_uint32_t)0x0000001C)  /* CR clock range: 6 cases */
+#define EMAC_MACMIIAR_PA        ((rt_uint32_t)0x0000F800)  /* Physical layer address */
+#define EMAC_MACMIIAR_MR        ((rt_uint32_t)0x000007C0)  /* MII register in the selected PHY */
+#define EMAC_MACMIIAR_CR        ((rt_uint32_t)0x0000001C)  /* CR clock range: 6 cases */
 #define EMAC_MACMIIAR_CR_Div42  ((rt_uint32_t)0x00000000)  /* HCLK:60-100 MHz; MDC clock= HCLK/42 */
 #define EMAC_MACMIIAR_CR_Div62  ((rt_uint32_t)0x00000004)  /* HCLK:100-150 MHz; MDC clock= HCLK/62 */
 #define EMAC_MACMIIAR_CR_Div16  ((rt_uint32_t)0x00000008)  /* HCLK:20-35 MHz; MDC clock= HCLK/16 */
 #define EMAC_MACMIIAR_CR_Div26  ((rt_uint32_t)0x0000000C)  /* HCLK:35-60 MHz; MDC clock= HCLK/26 */
 #define EMAC_MACMIIAR_CR_Div102 ((rt_uint32_t)0x00000010)  /* HCLK:150-250 MHz; MDC clock= HCLK/102 */
 #define EMAC_MACMIIAR_CR_Div122 ((rt_uint32_t)0x00000014)  /* HCLK:250-300 MHz; MDC clock= HCLK/122*/
-#define EMAC_MACMIIAR_MW   	  	((rt_uint32_t)0x00000002)  /* MII write */
-#define EMAC_MACMIIAR_MB   		((rt_uint32_t)0x00000001)  /* MII busy */
+#define EMAC_MACMIIAR_MW        ((rt_uint32_t)0x00000002)  /* MII write */
+#define EMAC_MACMIIAR_MB        ((rt_uint32_t)0x00000001)  /* MII busy */
 
 /* Bit definition for Ethernet MAC MII Data Register */
-#define EMAC_MACMIIDR_MD  	 	((rt_uint32_t)0x0000FFFF)  /* MII data: read/write data from/to PHY */
+#define EMAC_MACMIIDR_MD        ((rt_uint32_t)0x0000FFFF)  /* MII data: read/write data from/to PHY */
 
 /* Bit definition for Ethernet MAC Flow Control Register */
-#define EMAC_MACFCR_PT    		((rt_uint32_t)0xFFFF0000)  /* Pause time */
-#define EMAC_MACFCR_ZQPD   		((rt_uint32_t)0x00000080)  /* Zero-quanta pause disable */
-#define EMAC_MACFCR_PLT    		((rt_uint32_t)0x00000030)  /* Pause low threshold: 4 cases */
+#define EMAC_MACFCR_PT          ((rt_uint32_t)0xFFFF0000)  /* Pause time */
+#define EMAC_MACFCR_ZQPD        ((rt_uint32_t)0x00000080)  /* Zero-quanta pause disable */
+#define EMAC_MACFCR_PLT         ((rt_uint32_t)0x00000030)  /* Pause low threshold: 4 cases */
 #define EMAC_MACFCR_PLT_Minus4   ((rt_uint32_t)0x00000000)  /* Pause time minus 4 slot times */
 #define EMAC_MACFCR_PLT_Minus28  ((rt_uint32_t)0x00000010)  /* Pause time minus 28 slot times */
 #define EMAC_MACFCR_PLT_Minus144 ((rt_uint32_t)0x00000020)  /* Pause time minus 144 slot times */
@@ -441,7 +427,7 @@
 #define EMAC_DMACHRBAR_HRBAP  ((rt_uint32_t)0xFFFFFFFF)  /* Host receive buffer address pointer */
 
 //typedef enum {
-//	RESET = 0, SET = !RESET
+//  RESET = 0, SET = !RESET
 //} FlagStatus, ITStatus;
 //typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
@@ -450,165 +436,165 @@
  */
 typedef struct
 {
-	/**
-	 * MAC
-	 */
-	rt_uint32_t             EMAC_AutoNegotiation;           /* Selects or not the AutoNegotiation mode for the external PHY
-															The AutoNegotiation allows an automatic setting of the Speed (10/100Mbps)
-															and the mode (half/full-duplex).
-															This parameter can be a value of @ref EMAC_AutoNegotiation */
+    /**
+     * MAC
+     */
+    rt_uint32_t             EMAC_AutoNegotiation;           /* Selects or not the AutoNegotiation mode for the external PHY
+                                                            The AutoNegotiation allows an automatic setting of the Speed (10/100Mbps)
+                                                            and the mode (half/full-duplex).
+                                                            This parameter can be a value of @ref EMAC_AutoNegotiation */
 
-	rt_uint32_t             EMAC_Watchdog;                  /* Selects or not the Watchdog timer
-															When enabled, the MAC allows no more then 2048 bytes to be received.
-															When disabled, the MAC can receive up to 16384 bytes.
-															This parameter can be a value of @ref EMAC_watchdog */
+    rt_uint32_t             EMAC_Watchdog;                  /* Selects or not the Watchdog timer
+                                                            When enabled, the MAC allows no more then 2048 bytes to be received.
+                                                            When disabled, the MAC can receive up to 16384 bytes.
+                                                            This parameter can be a value of @ref EMAC_watchdog */
 
-	rt_uint32_t             EMAC_Jabber;                    /* Selects or not Jabber timer
-															When enabled, the MAC allows no more then 2048 bytes to be sent.
-															When disabled, the MAC can send up to 16384 bytes.
-															This parameter can be a value of @ref EMAC_Jabber */
+    rt_uint32_t             EMAC_Jabber;                    /* Selects or not Jabber timer
+                                                            When enabled, the MAC allows no more then 2048 bytes to be sent.
+                                                            When disabled, the MAC can send up to 16384 bytes.
+                                                            This parameter can be a value of @ref EMAC_Jabber */
 
-	rt_uint32_t             EMAC_InterFrameGap;             /* Selects the minimum IFG between frames during transmission
-															This parameter can be a value of @ref EMAC_Inter_Frame_Gap */
+    rt_uint32_t             EMAC_InterFrameGap;             /* Selects the minimum IFG between frames during transmission
+                                                            This parameter can be a value of @ref EMAC_Inter_Frame_Gap */
 
-	rt_uint32_t             EMAC_CarrierSense;              /* Selects or not the Carrier Sense
-															This parameter can be a value of @ref EMAC_Carrier_Sense */
+    rt_uint32_t             EMAC_CarrierSense;              /* Selects or not the Carrier Sense
+                                                            This parameter can be a value of @ref EMAC_Carrier_Sense */
 
-	rt_uint32_t             EMAC_Speed;                     /* Sets the Ethernet speed: 10/100 Mbps
-															This parameter can be a value of @ref EMAC_Speed */
+    rt_uint32_t             EMAC_Speed;                     /* Sets the Ethernet speed: 10/100 Mbps
+                                                            This parameter can be a value of @ref EMAC_Speed */
 
-	rt_uint32_t             EMAC_ReceiveOwn;                /* Selects or not the ReceiveOwn
-															ReceiveOwn allows the reception of frames when the TX_EN signal is asserted
-															in Half-Duplex mode
-															This parameter can be a value of @ref EMAC_Receive_Own */
+    rt_uint32_t             EMAC_ReceiveOwn;                /* Selects or not the ReceiveOwn
+                                                            ReceiveOwn allows the reception of frames when the TX_EN signal is asserted
+                                                            in Half-Duplex mode
+                                                            This parameter can be a value of @ref EMAC_Receive_Own */
 
-	rt_uint32_t             EMAC_LoopbackMode;              /* Selects or not the internal MAC MII Loopback mode
-															This parameter can be a value of @ref EMAC_Loop_Back_Mode */
+    rt_uint32_t             EMAC_LoopbackMode;              /* Selects or not the internal MAC MII Loopback mode
+                                                            This parameter can be a value of @ref EMAC_Loop_Back_Mode */
 
-	rt_uint32_t             EMAC_Mode;                      /* Selects the MAC duplex mode: Half-Duplex or Full-Duplex mode
-															This parameter can be a value of @ref EMAC_Duplex_Mode */
+    rt_uint32_t             EMAC_Mode;                      /* Selects the MAC duplex mode: Half-Duplex or Full-Duplex mode
+                                                            This parameter can be a value of @ref EMAC_Duplex_Mode */
 
-	rt_uint32_t             EMAC_ChecksumOffload;           /* Selects or not the IPv4 checksum checking for received frame payloads' TCP/UDP/ICMP headers.
-															This parameter can be a value of @ref EMAC_Checksum_Offload */
+    rt_uint32_t             EMAC_ChecksumOffload;           /* Selects or not the IPv4 checksum checking for received frame payloads' TCP/UDP/ICMP headers.
+                                                            This parameter can be a value of @ref EMAC_Checksum_Offload */
 
-	rt_uint32_t             EMAC_RetryTransmission;         /* Selects or not the MAC attempt retries transmission, based on the settings of BL,
-															when a colision occurs (Half-Duplex mode)
-															This parameter can be a value of @ref EMAC_Retry_Transmission */
+    rt_uint32_t             EMAC_RetryTransmission;         /* Selects or not the MAC attempt retries transmission, based on the settings of BL,
+                                                            when a colision occurs (Half-Duplex mode)
+                                                            This parameter can be a value of @ref EMAC_Retry_Transmission */
 
-	rt_uint32_t             EMAC_AutomaticPadCRCStrip;      /* Selects or not the Automatic MAC Pad/CRC Stripping
-															This parameter can be a value of @ref EMAC_Automatic_Pad_CRC_Strip */
+    rt_uint32_t             EMAC_AutomaticPadCRCStrip;      /* Selects or not the Automatic MAC Pad/CRC Stripping
+                                                            This parameter can be a value of @ref EMAC_Automatic_Pad_CRC_Strip */
 
-	rt_uint32_t             EMAC_BackOffLimit;              /* Selects the BackOff limit value
-															This parameter can be a value of @ref EMAC_Back_Off_Limit */
+    rt_uint32_t             EMAC_BackOffLimit;              /* Selects the BackOff limit value
+                                                            This parameter can be a value of @ref EMAC_Back_Off_Limit */
 
-	rt_uint32_t             EMAC_DeferralCheck;             /* Selects or not the deferral check function (Half-Duplex mode)
-															This parameter can be a value of @ref EMAC_Deferral_Check */
+    rt_uint32_t             EMAC_DeferralCheck;             /* Selects or not the deferral check function (Half-Duplex mode)
+                                                            This parameter can be a value of @ref EMAC_Deferral_Check */
 
-	rt_uint32_t             EMAC_ReceiveAll;                /* Selects or not all frames reception by the MAC (No fitering)
-															This parameter can be a value of @ref EMAC_Receive_All */
+    rt_uint32_t             EMAC_ReceiveAll;                /* Selects or not all frames reception by the MAC (No fitering)
+                                                            This parameter can be a value of @ref EMAC_Receive_All */
 
-	rt_uint32_t             EMAC_SourceAddrFilter;          /* Selects the Source Address Filter mode
-															This parameter can be a value of @ref EMAC_Source_Addr_Filter */
+    rt_uint32_t             EMAC_SourceAddrFilter;          /* Selects the Source Address Filter mode
+                                                            This parameter can be a value of @ref EMAC_Source_Addr_Filter */
 
-	rt_uint32_t             EMAC_PassControlFrames;         /* Sets the forwarding mode of the control frames (including unicast and multicast PAUSE frames)
-															This parameter can be a value of @ref EMAC_Pass_Control_Frames */
+    rt_uint32_t             EMAC_PassControlFrames;         /* Sets the forwarding mode of the control frames (including unicast and multicast PAUSE frames)
+                                                            This parameter can be a value of @ref EMAC_Pass_Control_Frames */
 
-	rt_uint32_t             EMAC_BroadcastFramesReception;  /* Selects or not the reception of Broadcast Frames
-															This parameter can be a value of @ref EMAC_Broadcast_Frames_Reception */
+    rt_uint32_t             EMAC_BroadcastFramesReception;  /* Selects or not the reception of Broadcast Frames
+                                                            This parameter can be a value of @ref EMAC_Broadcast_Frames_Reception */
 
-	rt_uint32_t             EMAC_DestinationAddrFilter;     /* Sets the destination filter mode for both unicast and multicast frames
-															This parameter can be a value of @ref EMAC_Destination_Addr_Filter */
+    rt_uint32_t             EMAC_DestinationAddrFilter;     /* Sets the destination filter mode for both unicast and multicast frames
+                                                            This parameter can be a value of @ref EMAC_Destination_Addr_Filter */
 
-	rt_uint32_t             EMAC_PromiscuousMode;           /* Selects or not the Promiscuous Mode
-															This parameter can be a value of @ref EMAC_Promiscuous_Mode */
+    rt_uint32_t             EMAC_PromiscuousMode;           /* Selects or not the Promiscuous Mode
+                                                            This parameter can be a value of @ref EMAC_Promiscuous_Mode */
 
-	rt_uint32_t             EMAC_MulticastFramesFilter;     /* Selects the Multicast Frames filter mode: None/HashTableFilter/PerfectFilter/PerfectHashTableFilter
-															This parameter can be a value of @ref EMAC_Multicast_Frames_Filter */
+    rt_uint32_t             EMAC_MulticastFramesFilter;     /* Selects the Multicast Frames filter mode: None/HashTableFilter/PerfectFilter/PerfectHashTableFilter
+                                                            This parameter can be a value of @ref EMAC_Multicast_Frames_Filter */
 
-	rt_uint32_t             EMAC_UnicastFramesFilter;       /* Selects the Unicast Frames filter mode: HashTableFilter/PerfectFilter/PerfectHashTableFilter
-															This parameter can be a value of @ref EMAC_Unicast_Frames_Filter */
+    rt_uint32_t             EMAC_UnicastFramesFilter;       /* Selects the Unicast Frames filter mode: HashTableFilter/PerfectFilter/PerfectHashTableFilter
+                                                            This parameter can be a value of @ref EMAC_Unicast_Frames_Filter */
 
-	rt_uint32_t             EMAC_HashTableHigh;             /* This field holds the higher 32 bits of Hash table.  */
+    rt_uint32_t             EMAC_HashTableHigh;             /* This field holds the higher 32 bits of Hash table.  */
 
-	rt_uint32_t             EMAC_HashTableLow;              /* This field holds the lower 32 bits of Hash table.  */
+    rt_uint32_t             EMAC_HashTableLow;              /* This field holds the lower 32 bits of Hash table.  */
 
-	rt_uint32_t             EMAC_PauseTime;                 /* This field holds the value to be used in the Pause Time field in the
-															transmit control frame */
+    rt_uint32_t             EMAC_PauseTime;                 /* This field holds the value to be used in the Pause Time field in the
+                                                            transmit control frame */
 
-	rt_uint32_t             EMAC_ZeroQuantaPause;           /* Selects or not the automatic generation of Zero-Quanta Pause Control frames
-															This parameter can be a value of @ref EMAC_Zero_Quanta_Pause */
+    rt_uint32_t             EMAC_ZeroQuantaPause;           /* Selects or not the automatic generation of Zero-Quanta Pause Control frames
+                                                            This parameter can be a value of @ref EMAC_Zero_Quanta_Pause */
 
-	rt_uint32_t             EMAC_PauseLowThreshold;         /* This field configures the threshold of the PAUSE to be checked for
-															automatic retransmission of PAUSE Frame
-															This parameter can be a value of @ref EMAC_Pause_Low_Threshold */
+    rt_uint32_t             EMAC_PauseLowThreshold;         /* This field configures the threshold of the PAUSE to be checked for
+                                                            automatic retransmission of PAUSE Frame
+                                                            This parameter can be a value of @ref EMAC_Pause_Low_Threshold */
 
-	rt_uint32_t             EMAC_UnicastPauseFrameDetect;   /* Selects or not the MAC detection of the Pause frames (with MAC Address0
-															unicast address and unique multicast address)
-															This parameter can be a value of @ref EMAC_Unicast_Pause_Frame_Detect */
+    rt_uint32_t             EMAC_UnicastPauseFrameDetect;   /* Selects or not the MAC detection of the Pause frames (with MAC Address0
+                                                            unicast address and unique multicast address)
+                                                            This parameter can be a value of @ref EMAC_Unicast_Pause_Frame_Detect */
 
-	rt_uint32_t             EMAC_ReceiveFlowControl;        /* Enables or disables the MAC to decode the received Pause frame and
-															disable its transmitter for a specified time (Pause Time)
-															This parameter can be a value of @ref EMAC_Receive_Flow_Control */
+    rt_uint32_t             EMAC_ReceiveFlowControl;        /* Enables or disables the MAC to decode the received Pause frame and
+                                                            disable its transmitter for a specified time (Pause Time)
+                                                            This parameter can be a value of @ref EMAC_Receive_Flow_Control */
 
-	rt_uint32_t             EMAC_TransmitFlowControl;       /* Enables or disables the MAC to transmit Pause frames (Full-Duplex mode)
-															or the MAC back-pressure operation (Half-Duplex mode)
-															This parameter can be a value of @ref EMAC_Transmit_Flow_Control */
+    rt_uint32_t             EMAC_TransmitFlowControl;       /* Enables or disables the MAC to transmit Pause frames (Full-Duplex mode)
+                                                            or the MAC back-pressure operation (Half-Duplex mode)
+                                                            This parameter can be a value of @ref EMAC_Transmit_Flow_Control */
 
-	rt_uint32_t             EMAC_VLANTagComparison;         /* Selects the 12-bit VLAN identifier or the complete 16-bit VLAN tag for
-															comparison and filtering
-															This parameter can be a value of @ref EMAC_VLAN_Tag_Comparison */
+    rt_uint32_t             EMAC_VLANTagComparison;         /* Selects the 12-bit VLAN identifier or the complete 16-bit VLAN tag for
+                                                            comparison and filtering
+                                                            This parameter can be a value of @ref EMAC_VLAN_Tag_Comparison */
 
-	rt_uint32_t             EMAC_VLANTagIdentifier;         /* Holds the VLAN tag identifier for receive frames */
+    rt_uint32_t             EMAC_VLANTagIdentifier;         /* Holds the VLAN tag identifier for receive frames */
 
-	/**
-	 * DMA
-	 */
+    /**
+     * DMA
+     */
 
-	rt_uint32_t             EMAC_DropTCPIPChecksumErrorFrame; /* Selects or not the Dropping of TCP/IP Checksum Error Frames
-															  This parameter can be a value of @ref EMAC_Drop_TCP_IP_Checksum_Error_Frame */
+    rt_uint32_t             EMAC_DropTCPIPChecksumErrorFrame; /* Selects or not the Dropping of TCP/IP Checksum Error Frames
+                                                              This parameter can be a value of @ref EMAC_Drop_TCP_IP_Checksum_Error_Frame */
 
-	rt_uint32_t             EMAC_ReceiveStoreForward;         /* Enables or disables the Receive store and forward mode
-															  This parameter can be a value of @ref EMAC_Receive_Store_Forward */
+    rt_uint32_t             EMAC_ReceiveStoreForward;         /* Enables or disables the Receive store and forward mode
+                                                              This parameter can be a value of @ref EMAC_Receive_Store_Forward */
 
-	rt_uint32_t             EMAC_FlushReceivedFrame;          /* Enables or disables the flushing of received frames
-															  This parameter can be a value of @ref EMAC_Flush_Received_Frame */
+    rt_uint32_t             EMAC_FlushReceivedFrame;          /* Enables or disables the flushing of received frames
+                                                              This parameter can be a value of @ref EMAC_Flush_Received_Frame */
 
-	rt_uint32_t             EMAC_TransmitStoreForward;        /* Enables or disables Transmit store and forward mode
-															  This parameter can be a value of @ref EMAC_Transmit_Store_Forward */
+    rt_uint32_t             EMAC_TransmitStoreForward;        /* Enables or disables Transmit store and forward mode
+                                                              This parameter can be a value of @ref EMAC_Transmit_Store_Forward */
 
-	rt_uint32_t             EMAC_TransmitThresholdControl;    /* Selects or not the Transmit Threshold Control
-															  This parameter can be a value of @ref EMAC_Transmit_Threshold_Control */
+    rt_uint32_t             EMAC_TransmitThresholdControl;    /* Selects or not the Transmit Threshold Control
+                                                              This parameter can be a value of @ref EMAC_Transmit_Threshold_Control */
 
-	rt_uint32_t             EMAC_ForwardErrorFrames;          /* Selects or not the forward to the DMA of erroneous frames
-															  This parameter can be a value of @ref EMAC_Forward_Error_Frames */
+    rt_uint32_t             EMAC_ForwardErrorFrames;          /* Selects or not the forward to the DMA of erroneous frames
+                                                              This parameter can be a value of @ref EMAC_Forward_Error_Frames */
 
-	rt_uint32_t             EMAC_ForwardUndersizedGoodFrames; /* Enables or disables the Rx FIFO to forward Undersized frames (frames with no Error
-															  and length less than 64 bytes) including pad-bytes and CRC)
-															  This parameter can be a value of @ref EMAC_Forward_Undersized_Good_Frames */
+    rt_uint32_t             EMAC_ForwardUndersizedGoodFrames; /* Enables or disables the Rx FIFO to forward Undersized frames (frames with no Error
+                                                              and length less than 64 bytes) including pad-bytes and CRC)
+                                                              This parameter can be a value of @ref EMAC_Forward_Undersized_Good_Frames */
 
-	rt_uint32_t             EMAC_ReceiveThresholdControl;     /* Selects the threshold level of the Receive FIFO
-															  This parameter can be a value of @ref EMAC_Receive_Threshold_Control */
+    rt_uint32_t             EMAC_ReceiveThresholdControl;     /* Selects the threshold level of the Receive FIFO
+                                                              This parameter can be a value of @ref EMAC_Receive_Threshold_Control */
 
-	rt_uint32_t             EMAC_SecondFrameOperate;          /* Selects or not the Operate on second frame mode, which allows the DMA to process a second
-															  frame of Transmit data even before obtaining the status for the first frame.
-															  This parameter can be a value of @ref EMAC_Second_Frame_Operate */
+    rt_uint32_t             EMAC_SecondFrameOperate;          /* Selects or not the Operate on second frame mode, which allows the DMA to process a second
+                                                              frame of Transmit data even before obtaining the status for the first frame.
+                                                              This parameter can be a value of @ref EMAC_Second_Frame_Operate */
 
-	rt_uint32_t             EMAC_AddressAlignedBeats;         /* Enables or disables the Address Aligned Beats
-															  This parameter can be a value of @ref EMAC_Address_Aligned_Beats */
+    rt_uint32_t             EMAC_AddressAlignedBeats;         /* Enables or disables the Address Aligned Beats
+                                                              This parameter can be a value of @ref EMAC_Address_Aligned_Beats */
 
-	rt_uint32_t             EMAC_FixedBurst;                  /* Enables or disables the AHB Master interface fixed burst transfers
-															  This parameter can be a value of @ref EMAC_Fixed_Burst */
+    rt_uint32_t             EMAC_FixedBurst;                  /* Enables or disables the AHB Master interface fixed burst transfers
+                                                              This parameter can be a value of @ref EMAC_Fixed_Burst */
 
-	rt_uint32_t             EMAC_RxDMABurstLength;            /* Indicates the maximum number of beats to be transferred in one Rx DMA transaction
-															  This parameter can be a value of @ref EMAC_Rx_DMA_Burst_Length */
+    rt_uint32_t             EMAC_RxDMABurstLength;            /* Indicates the maximum number of beats to be transferred in one Rx DMA transaction
+                                                              This parameter can be a value of @ref EMAC_Rx_DMA_Burst_Length */
 
-	rt_uint32_t             EMAC_TxDMABurstLength;            /* Indicates sthe maximum number of beats to be transferred in one Tx DMA transaction
-															  This parameter can be a value of @ref EMAC_Tx_DMA_Burst_Length */
+    rt_uint32_t             EMAC_TxDMABurstLength;            /* Indicates sthe maximum number of beats to be transferred in one Tx DMA transaction
+                                                              This parameter can be a value of @ref EMAC_Tx_DMA_Burst_Length */
 
-	rt_uint32_t             EMAC_DescriptorSkipLength;        /* Specifies the number of word to skip between two unchained int (Ring mode) */
+    rt_uint32_t             EMAC_DescriptorSkipLength;        /* Specifies the number of word to skip between two unchained int (Ring mode) */
 
-	rt_uint32_t             EMAC_DMAArbitration;              /* Selects the DMA Tx/Rx arbitration
-															  This parameter can be a value of @ref EMAC_DMA_Arbitration */
+    rt_uint32_t             EMAC_DMAArbitration;              /* Selects the DMA Tx/Rx arbitration
+                                                              This parameter can be a value of @ref EMAC_DMA_Arbitration */
 } EMAC_InitTypeDef;
 
 /**--------------------------------------------------------------------------**/
@@ -622,10 +608,10 @@ typedef struct
  */
 typedef struct
 {
-	rt_uint32_t   Status;                /* Status */
-	rt_uint32_t   ControlBufferSize;     /* Control and Buffer1, Buffer2 lengths */
-	rt_uint32_t   Buffer1Addr;           /* Buffer1 address pointer */
-	rt_uint32_t   Buffer2NextDescAddr;   /* Buffer2 or next descriptor address pointer */
+    rt_uint32_t   Status;                /* Status */
+    rt_uint32_t   ControlBufferSize;     /* Control and Buffer1, Buffer2 lengths */
+    rt_uint32_t   Buffer1Addr;           /* Buffer1 address pointer */
+    rt_uint32_t   Buffer2NextDescAddr;   /* Buffer2 or next descriptor address pointer */
 } EMAC_DMADESCTypeDef;
 
 /**--------------------------------------------------------------------------**/
@@ -634,14 +620,14 @@ typedef struct
  */
 /**--------------------------------------------------------------------------**/
 
-#define EMAC_MAX_PACKET_SIZE    	1520    /* EMAC_HEADER + EMAC_EXTRA + MAX_EMAC_PAYLOAD + EMAC_CRC */
-#define EMAC_HEADER               	14    	/* 6 byte Dest addr, 6 byte Src addr, 2 byte length/type */
-#define EMAC_CRC                   	4    	/* Ethernet CRC */
-#define EMAC_EXTRA                 	2    	/* Extra bytes in some cases */
-#define VLAN_TAG                  	4    	/* optional 802.1q VLAN Tag */
-#define MIN_EMAC_PAYLOAD          	46    	/* Minimum Ethernet payload size */
-#define MAX_EMAC_PAYLOAD        	1500    /* Maximum Ethernet payload size */
-#define JUMBO_FRAME_PAYLOAD    		9000    /* Jumbo frame payload size */
+#define EMAC_MAX_PACKET_SIZE        1520    /* EMAC_HEADER + EMAC_EXTRA + MAX_EMAC_PAYLOAD + EMAC_CRC */
+#define EMAC_HEADER                 14      /* 6 byte Dest addr, 6 byte Src addr, 2 byte length/type */
+#define EMAC_CRC                    4       /* Ethernet CRC */
+#define EMAC_EXTRA                  2       /* Extra bytes in some cases */
+#define VLAN_TAG                    4       /* optional 802.1q VLAN Tag */
+#define MIN_EMAC_PAYLOAD            46      /* Minimum Ethernet payload size */
+#define MAX_EMAC_PAYLOAD            1500    /* Maximum Ethernet payload size */
+#define JUMBO_FRAME_PAYLOAD         9000    /* Jumbo frame payload size */
 
 /**--------------------------------------------------------------------------**/
 /**
@@ -1098,7 +1084,7 @@ struct rt_synopsys_eth
     volatile rt_uint32_t FCR;
     volatile rt_uint32_t VTR;
                rt_uint8_t RESERVED0[8];
-    
+
     volatile rt_uint32_t RWFFR;
     volatile rt_uint32_t PMTR;
     volatile rt_uint32_t LPICSR;

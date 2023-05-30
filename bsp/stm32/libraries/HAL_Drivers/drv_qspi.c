@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -104,7 +104,7 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     {
         __HAL_RCC_DMA2_CLK_ENABLE();
     }
-    
+
     HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
     DMA_HandleTypeDef hdma_quadspi_config = QSPI_DMA_CONFIG;
     qspi_bus->hdma_quadspi = hdma_quadspi_config;

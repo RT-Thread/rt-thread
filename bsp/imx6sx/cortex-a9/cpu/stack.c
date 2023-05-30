@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,35 +28,35 @@
  * @return stack address
  */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
-	rt_uint8_t *stack_addr, void *texit)
+    rt_uint8_t *stack_addr, void *texit)
 {
-	rt_uint32_t *stk;
+    rt_uint32_t *stk;
 
-	stk 	 = (rt_uint32_t*)stack_addr;
-	*(stk) 	 = (rt_uint32_t)tentry;			/* entry point */
-	*(--stk) = (rt_uint32_t)texit;			/* lr */
-	*(--stk) = 0;							/* r12 */
-	*(--stk) = 0;							/* r11 */
-	*(--stk) = 0;							/* r10 */
-	*(--stk) = 0;							/* r9 */
-	*(--stk) = 0;							/* r8 */
-	*(--stk) = 0;							/* r7 */
-	*(--stk) = 0;							/* r6 */
-	*(--stk) = 0;							/* r5 */
-	*(--stk) = 0;							/* r4 */
-	*(--stk) = 0;							/* r3 */
-	*(--stk) = 0;							/* r2 */
-	*(--stk) = 0;							/* r1 */
-	*(--stk) = (rt_uint32_t)parameter;		/* r0 : argument */
+    stk      = (rt_uint32_t*)stack_addr;
+    *(stk)   = (rt_uint32_t)tentry;         /* entry point */
+    *(--stk) = (rt_uint32_t)texit;          /* lr */
+    *(--stk) = 0;                           /* r12 */
+    *(--stk) = 0;                           /* r11 */
+    *(--stk) = 0;                           /* r10 */
+    *(--stk) = 0;                           /* r9 */
+    *(--stk) = 0;                           /* r8 */
+    *(--stk) = 0;                           /* r7 */
+    *(--stk) = 0;                           /* r6 */
+    *(--stk) = 0;                           /* r5 */
+    *(--stk) = 0;                           /* r4 */
+    *(--stk) = 0;                           /* r3 */
+    *(--stk) = 0;                           /* r2 */
+    *(--stk) = 0;                           /* r1 */
+    *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
 
-	/* cpsr */
-	if ((rt_uint32_t)tentry & 0x01)
-		*(--stk) = SVCMODE | 0x20;			/* thumb mode */
-	else
-		*(--stk) = SVCMODE;					/* arm mode   */
+    /* cpsr */
+    if ((rt_uint32_t)tentry & 0x01)
+        *(--stk) = SVCMODE | 0x20;          /* thumb mode */
+    else
+        *(--stk) = SVCMODE;                 /* arm mode   */
 
-	/* return task's current stack address */
-	return (rt_uint8_t *)stk;
+    /* return task's current stack address */
+    return (rt_uint8_t *)stk;
 }
 
 /*@}*/

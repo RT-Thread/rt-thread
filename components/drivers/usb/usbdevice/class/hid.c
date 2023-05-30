@@ -3,7 +3,7 @@
  * COPYRIGHT (C) 2008 - 2018, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
- * 
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2017-03-13     Urey         the first version
@@ -11,13 +11,9 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>
-#include <rtservice.h>
 #include <rtdevice.h>
-
 #include "drivers/usb_common.h"
 #include "drivers/usb_device.h"
-
 #include "hid.h"
 
 #ifdef RT_USB_DEVICE_HID
@@ -29,7 +25,7 @@ struct hid_s
     uep_t ep_in;
     uep_t ep_out;
     int status;
-    rt_uint16_t protocol;
+    rt_uint8_t protocol;
     rt_uint8_t report_buf[MAX_REPORT_SIZE];
     struct rt_messagequeue hid_mq;
 };
@@ -246,7 +242,7 @@ static struct udevice_descriptor _dev_desc =
     USB_DESC_LENGTH_DEVICE,     //bLength;
     USB_DESC_TYPE_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
-    USB_CLASS_HID,              //bDeviceClass;
+    0x0,                        //bDeviceClass;
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     64,                         //bMaxPacketSize0;
@@ -266,8 +262,8 @@ static struct usb_qualifier_descriptor dev_qualifier =
     sizeof(dev_qualifier),          //bLength
     USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
-    USB_CLASS_MASS_STORAGE,         //bDeviceClass
-    0x06,                           //bDeviceSubClass
+    0x0,                            //bDeviceClass
+    0x0,                            //bDeviceSubClass
     0x50,                           //bDeviceProtocol
     64,                             //bMaxPacketSize0
     0x01,                           //bNumConfigurations
@@ -347,7 +343,7 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
         USB_DYNAMIC | USB_DIR_IN,
         USB_EP_ATTR_INT,
         0x40,
-        0x01,
+        0x0A,
     },
 
     /* Endpoint Descriptor OUT */
@@ -458,8 +454,6 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
 
     struct hid_s *data = (struct hid_s *) func->user_data;
 
-    if(setup->wIndex != 0)
-        return -RT_EIO;
 
     switch (setup->bRequest)
     {
@@ -489,7 +483,7 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
         dcd_ep0_send_status(func->device->dcd);
         break;
     case USB_HID_REQ_GET_PROTOCOL:
-        rt_usbd_ep0_write(func->device, &data->protocol,2);
+        rt_usbd_ep0_write(func->device, &data->protocol,1);
         break;
     case USB_HID_REQ_SET_REPORT:
 
@@ -627,12 +621,12 @@ static void hid_thread_entry(void* parameter)
     struct hid_report report;
     struct hid_s *hiddev;
     hiddev = (struct hid_s *)parameter;
-	while(1)
-	{
-		if(rt_mq_recv(&hiddev->hid_mq, &report, sizeof(report),RT_WAITING_FOREVER) != RT_EOK )
+    while(1)
+    {
+        if(rt_mq_recv(&hiddev->hid_mq, &report, sizeof(report),RT_WAITING_FOREVER) != RT_EOK )
             continue;
-		HID_Report_Received(&report);
-	}
+        HID_Report_Received(&report);
+    }
 }
 
 #ifdef RT_USING_DEVICE_OPS
@@ -664,7 +658,7 @@ static void rt_usb_hid_init(struct ufunction *func)
     rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
     rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
                             sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);
-                            
+
     rt_thread_init(&hid_thread, "hidd", hid_thread_entry, hiddev,
             hid_thread_stack, sizeof(hid_thread_stack), RT_USBD_THREAD_PRIO, 20);
     rt_thread_startup(&hid_thread);
@@ -695,8 +689,9 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
 
     /* create a cdc function */
     func = rt_usbd_function_new(device, &_dev_desc, &ops);
-    //not support hs
-    //rt_usbd_device_set_qualifier(device, &_dev_qualifier);
+
+    /* For high speed mode supporting */
+    rt_usbd_device_set_qualifier(device, &dev_qualifier);
 
     /* allocate memory for cdc vcom data */
     data = (struct hid_s*)rt_malloc(sizeof(struct hid_s));
@@ -735,7 +730,7 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
     rt_usb_hid_init(func);
     return func;
 }
-struct udclass hid_class = 
+struct udclass hid_class =
 {
     .rt_usbd_function_create = rt_usbd_function_hid_create
 };

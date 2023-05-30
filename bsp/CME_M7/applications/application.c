@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2014, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -32,10 +28,10 @@ int rt_application_init()
 
     tid = rt_thread_create("init",
         rt_init_thread_entry,
-		RT_NULL,
+        RT_NULL,
         2048,
-		RT_THREAD_PRIORITY_MAX/3,
-		20);
+        RT_THREAD_PRIORITY_MAX/3,
+        20);
 
     if (tid != RT_NULL)
         rt_thread_startup(tid);

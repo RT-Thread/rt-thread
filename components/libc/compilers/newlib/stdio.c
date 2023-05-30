@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 
 #define STDIO_DEVICE_NAME_MAX   32
 
-int	_EXFUN(fileno, (FILE *));
+int _EXFUN(fileno, (FILE *));
 
 static FILE* std_console = NULL;
 
@@ -48,7 +48,7 @@ int libc_stdio_set_console(const char* device_name, int mode)
         {
             _GLOBAL_REENT->_stdin  = std_console;
         }
-        else 
+        else
         {
             _GLOBAL_REENT->_stdin  = NULL;
         }

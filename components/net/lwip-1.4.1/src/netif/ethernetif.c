@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * COPYRIGHT (C) 2006-2010, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2021, RT-Thread Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -59,9 +59,9 @@
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
 
 #ifndef RT_LWIP_ETHTHREAD_PRIORITY
-#define RT_ETHERNETIF_THREAD_PREORITY	0x90
+#define RT_ETHERNETIF_THREAD_PREORITY   0x90
 #else
-#define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
+#define RT_ETHERNETIF_THREAD_PREORITY   RT_LWIP_ETHTHREAD_PRIORITY
 #endif
 
 #ifndef LWIP_NO_TX_THREAD
@@ -70,8 +70,8 @@
  */
 struct eth_tx_msg
 {
-    struct netif 	*netif;
-    struct pbuf 	*buf;
+    struct netif    *netif;
+    struct pbuf     *buf;
 };
 
 static struct rt_mailbox eth_tx_thread_mb;
@@ -156,6 +156,16 @@ static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_
 static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 {
     netdev_low_level_set_dhcp_status(netif, is_enabled);
+
+    if(RT_TRUE == is_enabled)
+    {
+        dhcp_start((struct netif *)netif->user_data);
+    }
+    else
+    {
+        dhcp_stop((struct netif *)netif->user_data);
+    }
+
     return ERR_OK;
 }
 #endif /* RT_LWIP_DHCP */
@@ -165,7 +175,7 @@ static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 extern int lwip_ping_recv(int s, int *ttl);
 extern err_t lwip_ping_send(int s, ip_addr_t *addr, int size);
 
-int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len, 
+int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
                         uint32_t timeout, struct netdev_ping_resp *ping_resp)
 {
     int s, ttl, recv_len, result = 0;
@@ -180,7 +190,7 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     struct addrinfo hint, *res = RT_NULL;
     struct sockaddr_in *h = RT_NULL;
     struct in_addr ina;
-    
+
     RT_ASSERT(netif);
     RT_ASSERT(host);
     RT_ASSERT(ping_resp);
@@ -199,7 +209,7 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
         return -RT_ERROR;
     }
     rt_memcpy(&(ping_resp->ip_addr), &target_addr, sizeof(ip_addr_t));
-    
+
     /* new a socket */
     if ((s = lwip_socket(AF_INET, SOCK_RAW, IP_PROTO_ICMP)) < 0)
     {
@@ -267,7 +277,7 @@ const struct netdev_ops lwip_netdev_ops =
     lwip_netdev_set_addr_info,
 #ifdef RT_LWIP_DNS
     lwip_netdev_set_dns_server,
-#else 
+#else
     NULL,
 #endif /* RT_LWIP_DNS */
 
@@ -315,7 +325,7 @@ static int netdev_add(struct netif *lwip_netif)
 
     rt_strncpy(name, lwip_netif->name, LWIP_NETIF_NAME_LEN);
     result = netdev_register(netdev, name, (void *)lwip_netif);
-    
+
     /* Update netdev info after registered */
     netdev->flags = lwip_netif->flags;
     netdev->mtu = lwip_netif->mtu;
@@ -325,7 +335,7 @@ static int netdev_add(struct netif *lwip_netif)
     netdev->ip_addr = lwip_netif->ip_addr;
     netdev->gw = lwip_netif->gw;
     netdev->netmask = lwip_netif->netmask;
-	
+
 #ifdef RT_LWIP_DHCP
     netdev_low_level_set_dhcp_status(netdev, RT_TRUE);
 #endif
@@ -358,7 +368,7 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
     struct eth_tx_msg msg;
     struct eth_device* enetif;
 
-	RT_ASSERT(netif != RT_NULL);
+    RT_ASSERT(netif != RT_NULL);
     enetif = (struct eth_device*)netif->state;
 
     /* send a message to eth tx thread */
@@ -372,13 +382,13 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 #else
     struct eth_device* enetif;
 
-	RT_ASSERT(netif != RT_NULL);
+    RT_ASSERT(netif != RT_NULL);
     enetif = (struct eth_device*)netif->state;
 
-	if (enetif->eth_tx(&(enetif->parent), p) != RT_EOK)
-	{
-		return ERR_IF;
-	}
+    if (enetif->eth_tx(&(enetif->parent), p) != RT_EOK)
+    {
+        return ERR_IF;
+    }
 #endif
     return ERR_OK;
 }
@@ -441,13 +451,12 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 {
     struct netif* netif;
 
-    netif = (struct netif*) rt_malloc (sizeof(struct netif));
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif));
     if (netif == RT_NULL)
     {
         rt_kprintf("malloc netif failed\n");
         return -RT_ERROR;
     }
-    rt_memset(netif, 0, sizeof(struct netif));
 
     /* set netif */
     dev->netif = netif;
@@ -465,16 +474,16 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     netif->name[1] = name[1];
 
     /* set hw address to 6 */
-    netif->hwaddr_len 	= 6;
+    netif->hwaddr_len   = 6;
     /* maximum transfer unit */
-    netif->mtu			= ETHERNET_MTU;
+    netif->mtu          = ETHERNET_MTU;
 
     /* get hardware MAC address */
     rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
 
     /* set output */
-    netif->output		= etharp_output;
-    netif->linkoutput	= ethernetif_linkoutput;
+    netif->output       = etharp_output;
+    netif->linkoutput   = ethernetif_linkoutput;
 
     /* if tcp thread has been started up, we add this netif to the system */
     if (rt_thread_find("tcpip") != RT_NULL)
@@ -556,12 +565,12 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 /* NOTE: please not use it in interrupt when no RxThread exist */
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 {
-	if (up == RT_TRUE)
-		netifapi_netif_set_link_up(dev->netif);
-	else
-		netifapi_netif_set_link_down(dev->netif);
+    if (up == RT_TRUE)
+        netifapi_netif_set_link_up(dev->netif);
+    else
+        netifapi_netif_set_link_down(dev->netif);
 
-	return RT_EOK;
+    return RT_EOK;
 }
 #endif
 
@@ -629,8 +638,8 @@ static void eth_rx_thread_entry(void* parameter)
             /* receive all of buffer */
             while (1)
             {
-            	if(device->eth_rx == RT_NULL) break;
-            	
+                if(device->eth_rx == RT_NULL) break;
+
                 p = device->eth_rx(&(device->parent));
                 if (p != RT_NULL)
                 {

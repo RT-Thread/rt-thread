@@ -1,11 +1,7 @@
 /*
- * File      : nand.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -33,7 +29,7 @@
 #define NF_ALE_OFFSET        0x00003000
 #define NF_ADDR_OFFSET       0x00002000
 #define NF_CMD_OFFSET        0x00001000
-#define NF_DATA_OFFSET       0x00000000   
+#define NF_DATA_OFFSET       0x00000000
 
 /* NAND command */
 #define NAND_CMD_READ0     0x00
@@ -47,7 +43,7 @@
 #define NAND_CMD_READID1   0x91
 #define NAND_CMD_ERASE2    0xd0
 #define NAND_CMD_RESET     0xff
-  
+
 #define FLASH_OK           0
 #define FLASH_NG           1
 
