@@ -10,7 +10,7 @@ CPPPATH = []
 if rtconfig.PLATFORM in ['iccarm']:
     print("\nThe current project does not support IAR build\n")
     Return('group')
-elif rtconfig.PLATFORM in ['gcc', 'armclang']:
+elif rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm']:
     if GetOption('target') != 'mdk5':
         src += Glob(cwd + '/fsp/src/bsp/mcu/all/*.c')
         src += [cwd + '/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c']

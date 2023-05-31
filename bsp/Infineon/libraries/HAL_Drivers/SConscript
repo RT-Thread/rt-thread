@@ -29,6 +29,9 @@ if GetDepend(['RT_USING_I2C']):
 if GetDepend(['BSP_USING_SDIO1']):
     src += Glob('drv_sdio.c')
 
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('drv_sdcard.c')
+
 if GetDepend(['BSP_USING_PWM']):
     src += ['drv_pwm.c']
 

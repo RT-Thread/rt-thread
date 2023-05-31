@@ -11,11 +11,11 @@ src += Glob('pwm_audio.c')
 CPPPATH = [cwd]
 LOCAL_CFLAGS = ''
 
-if rtconfig.PLATFORM in ['gcc', 'armclang']:
+if rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm']:
     LOCAL_CFLAGS += ' -std=c99'
 elif rtconfig.PLATFORM in ['armcc']:
     LOCAL_CFLAGS += ' --c99'
 
-group = DefineGroup('audio', src, depend = [], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
+group = DefineGroup('audio', src, depend = ['BSP_USING_LVGL_VIDEO_DEMO'], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
 
 Return('group')

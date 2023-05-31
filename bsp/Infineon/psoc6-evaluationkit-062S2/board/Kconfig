@@ -135,18 +135,6 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    config BSP_USING_SDMMC
-        bool "Enable SDMMC (sd card)"
-        default n
-        select RT_USING_SDIO
-        select RT_USING_DFS
-        select RT_USING_DFS_ELMFAT
-        if BSP_USING_SDMMC
-            config BSP_USING_SDIO1
-                bool "Enable SDIO1 (sd card)"
-                default n
-        endif
-
     menuconfig BSP_USING_HW_I2C
         bool "Enable Hardware I2C Bus"
         default n
@@ -255,6 +243,95 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_TIM2
                 bool "Enable TIM2"
+                default n
+        endif
+
+    menuconfig BSP_USING_SDMMC
+        bool "Enable SDMMC (sd card)"
+        default n
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        if BSP_USING_SDMMC
+            menuconfig BSP_USING_SDCARD
+                bool "Enable SDCARD (sd card)"
+                select BSP_USING_SDCARD_PIN_CONFIG
+                default n
+                if BSP_USING_SDCARD
+                    config BSP_USING_SDCARD_EMMC_ENANBLE
+                        bool "Enable SDCARD emmc"
+                        default false
+                    config BSP_USING_SDCARD_BUS_WIDTH
+                        int "Enable SDCARD bus width"
+                        default 4
+                    config BSP_USING_SDCARD_LED_CTRL_ENANBLE
+                        bool "Enable SDCARD led control"
+                        default false
+                menuconfig BSP_USING_SDCARD_PIN_CONFIG
+                    bool "Enable SDCARD pin config"
+                    default y
+                    if BSP_USING_SDCARD_PIN_CONFIG
+                        config BSP_USING_SDCARD_CMD_PIN
+                            int "Enable SDCARD cmd pin,default:P2_4 --> 20"
+                            default 20
+                        config BSP_USING_SDCARD_CLK_PIN
+                            int "Enable SDCARD clk pin,default:P2_5 --> 21"
+                            default 21
+                        config BSP_USING_SDCARD_DAT0_PIN
+                            int "Enable SDCARD dat0 pin,default:P2_0 --> 16"
+                            default 16
+                        config BSP_USING_SDCARD_DAT1_PIN
+                            int "Enable SDCARD dat1 pin,default:P2_1 --> 17"
+                            default 17
+                        config BSP_USING_SDCARD_DAT2_PIN
+                            int "Enable SDCARD dat2 pin,default:P2_2 --> 18"
+                            default 18
+                        config BSP_USING_SDCARD_DAT3_PIN
+                            int "Enable SDCARD dat3 pin,default:P2_3 --> 19"
+                            default 19
+                        config BSP_USING_SDCARD_DAT4_PIN
+                            int "Enable SDCARD dat4 pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_DAT5_PIN
+                            int "Enable SDCARD dat5 pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_DAT6_PIN
+                            int "Enable SDCARD dat6 pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_DAT7_PIN
+                            int "Enable SDCARD dat7 pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_DETECT_PIN
+                            int "Enable SDCARD detect pin,default:P2_6 --> 22"
+                            default 22
+                        config BSP_USING_SDCARD_IO_VOLT_SEL_PIN
+                            int "Enable SDCARD io volt sel pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_CARD_IF_PWR_EN_PIN
+                            int "Enable SDCARD card if pwr en pin,default:NC"
+                            default -1
+                        config BSP_USING_SDCARD_CARD_MECH_WRITE_PROT_PIN
+                            int "Enable SDCARD card mech write prot pin,default:NC"
+                            default -1
+                        if BSP_USING_SDCARD_LED_CTRL_ENANBLE
+                            config BSP_USING_SDCARD_LED_CTRL_PIN
+                                int "Enable SDCARD led ctrl pin,default:NC"
+                                default -1
+                        endif
+                        config BSP_USING_SDCARD_CARD_EMMC_RESET_PIN
+                            int "Enable SDCARD card emmc reset pin,default:NC"
+                            default -1
+                    endif
+                endif
+        endif
+
+    menuconfig BSP_USING_FS
+        bool "Enable filesystem"
+        default n
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FS
+                bool "Enable SDCARD filesystem"
+                select BSP_USING_SDHI
+                select RT_USING_DFS_ELMFAT
                 default n
         endif
 

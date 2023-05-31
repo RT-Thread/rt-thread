@@ -8,7 +8,7 @@ src = Glob('*.c')
 CPPPATH = [cwd]
 LOCAL_CFLAGS = ''
 
-if rtconfig.PLATFORM in ['gcc', 'armclang']:
+if rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm']:
     LOCAL_CFLAGS += ' -std=c99'
 elif rtconfig.PLATFORM in ['armcc']:
     LOCAL_CFLAGS += ' --c99'
@@ -19,5 +19,5 @@ for d in list:
     if os.path.isfile(os.path.join(path, 'SConscript')):
         group = group + SConscript(os.path.join(d, 'SConscript'))
 
-group = group + DefineGroup('avi', src, depend = [], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
+group = group + DefineGroup('player', src, depend = ['BSP_USING_LVGL_VIDEO_DEMO'], CPPPATH = CPPPATH, LOCAL_CFLAGS = LOCAL_CFLAGS)
 Return('group')

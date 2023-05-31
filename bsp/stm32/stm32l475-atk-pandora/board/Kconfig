@@ -34,26 +34,57 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM2_CH4
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH1
+        select BSP_USING_PWM4_CH2
         select BSP_USING_PWM4_CH3
         select BSP_USING_PWM4_CH4
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_I2C
         select BSP_USING_I2C1 # PC7-SDA PC6-SCL (User I2C)
-        select BSP_USING_I2C3 # ICM20608, AP3216C (On Board)
-        select BSP_USING_I2C4 # AHT10 (On Board)
         select BSP_USING_DAC
         select BSP_USING_DAC1
         select BSP_USING_SPI
         select BSP_USING_SPI2 # Wireless Interface (User SPI)
         imply BSP_SPI2_TX_USING_DMA
         imply BSP_SPI2_RX_USING_DMA
-        select BSP_USING_SPI3 # LCD ST7789
-        select BSP_SPI3_TX_USING_DMA
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         imply RTDUINO_USING_SPI
         default n
+
+    if BSP_USING_ARDUINO
+        config BSP_USING_ARDUINO_ST7789
+            bool "Enable LCD (ST7789) Arduino libraries"
+            select BSP_USING_SPI3
+            select BSP_SPI3_TX_USING_DMA
+            select PKG_USING_ARDUINO_ADAFRUIT_ST7735
+            depends on !BSP_USING_SPI_LCD
+            default n
+
+        config BSP_USING_ARDUINO_ST7789_DEMO
+            bool "Enable LCD (ST7789) Arduino demo"
+            depends on BSP_USING_ARDUINO_ST7789
+            default n
+
+        config BSP_USING_ARDUINO_AHT10
+            bool "Enable AHT10 sensor Arduino libraries"
+            select BSP_USING_I2C4
+            select PKG_USING_ARDUINO_ADAFRUIT_AHTX0
+            depends on !BSP_USING_AHT10
+            default n
+
+        config BSP_USING_ARDUINO_AP3216
+            bool
+            select BSP_USING_I2C3
+            depends on !BSP_USING_AP3216C
+            default n
+
+        config BSP_USING_ARDUINO_ICM20608
+            bool
+            select BSP_USING_I2C3
+            depends on !BSP_USING_ICM20608
+            default n
+    endif
 
     config BSP_USING_KEY
         bool "Enable onboard keys"

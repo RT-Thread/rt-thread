@@ -50,7 +50,7 @@ static void udpclient(void *arg)
     /* 创建一个socket，类型是SOCK_DGRAM，UDP类型 */
     if ((sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
-        /* Failed on creatinf socket */
+        /* Failed on creating socket */
         LOG_E("Create socket error");
         return;
     }
@@ -71,7 +71,7 @@ static void udpclient(void *arg)
         /* 发送数据到服务远端 */
         sendto(sock, send_data, rt_strlen(send_data), 0,
                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
-        /* Thread sllep for 1 second */
+        /* Thread sleep for 1 second */
         /* 线程休眠一段时间 */
         rt_thread_mdelay(1000);
         /* count decrease 1 */

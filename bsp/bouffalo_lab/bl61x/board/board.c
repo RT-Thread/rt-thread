@@ -129,7 +129,11 @@ static void systick_isr(void)
 
 void rt_hw_board_init(void)
 {
+#if defined (BSP_USING_BL61X_MODULE_DEFAULT)
     bflb_flash_init();
+#elif defined (BSP_USING_BL61X_MODULE_M0P)
+
+#endif
 
     system_clock_init();
     peripheral_clock_init();

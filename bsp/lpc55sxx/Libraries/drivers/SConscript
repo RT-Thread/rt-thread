@@ -7,12 +7,6 @@ src = []
 if GetDepend('BSP_USING_PIN'):
     src += ['drv_pin.c']
 
-if GetDepend('BSP_USING_LED'):
-    src += ['drv_led.c']
-
-if  GetDepend('BSP_USING_KEY'):
-    src += ['drv_key.c']
-
 if  GetDepend('BSP_USING_UART'):
     src += ['drv_uart.c']
 
@@ -55,7 +49,18 @@ if  GetDepend('BSP_USING_SOFT_I2C'):
 if GetDepend('BSP_USING_SOFT_SPI'):
     src += ['drv_soft_spi.c']
 
-path =  [cwd,cwd + '/config']
+if GetDepend('BSP_USING_LCD'):
+    src += ['drv_st7796.c']
+    src += ['sample/lcd_sample.c']
+
+if GetDepend('BSP_USING_TOUCH'):
+    src += ['drv_gt911.c']
+    src += ['sample/touch_sample.c']
+
+if GetDepend('BSP_USING_NXP_LCDM_S'):
+    src += ['sample/lcd_touch_sample.c']
+
+path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

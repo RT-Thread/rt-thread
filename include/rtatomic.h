@@ -6,9 +6,12 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-03-14     WangShun     first version
+ * 2023-05-20     Bernard      add stdc atomic detection.
  */
 #ifndef __RT_ATOMIC_H__
 #define __RT_ATOMIC_H__
+
+#if !defined(__cplusplus)
 
 rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr);
 void rt_hw_atomic_store(volatile rt_atomic_t *ptr, rt_atomic_t val);
@@ -20,9 +23,30 @@ rt_atomic_t rt_hw_atomic_xor(volatile rt_atomic_t *ptr, rt_atomic_t val);
 rt_atomic_t rt_hw_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val);
 void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr);
 rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr);
-rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old, rt_atomic_t new);
+rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *expected, rt_atomic_t desired);
 
-#if defined(RT_USING_STDC_ATOMIC)
+/* To detect stdatomic */
+#if !defined(RT_USING_HW_ATOMIC) && !defined(RT_USING_STDC_ATOMIC)
+#if defined(__GNUC__) && defined(RT_USING_LIBC) && !defined(__STDC_NO_ATOMICS__)
+#define RT_USING_STDC_ATOMIC
+#endif /* __GNUC__ && .. */
+#endif /* !RT_USING_HW_ATOMIC && !RT_USING_STDC_ATOMIC */
+
+#if defined(RT_USING_HW_ATOMIC)
+#define rt_atomic_load(ptr) rt_hw_atomic_load(ptr)
+#define rt_atomic_store(ptr, v) rt_hw_atomic_store(ptr, v)
+#define rt_atomic_add(ptr, v) rt_hw_atomic_add(ptr, v)
+#define rt_atomic_sub(ptr, v) rt_hw_atomic_sub(ptr, v)
+#define rt_atomic_and(ptr, v) rt_hw_atomic_and(ptr, v)
+#define rt_atomic_or(ptr, v)  rt_hw_atomic_or(ptr, v)
+#define rt_atomic_xor(ptr, v) rt_hw_atomic_xor(ptr, v)
+#define rt_atomic_exchange(ptr, v) rt_hw_atomic_exchange(ptr, v)
+#define rt_atomic_flag_clear(ptr) rt_hw_atomic_flag_clear(ptr)
+#define rt_atomic_flag_test_and_set(ptr) rt_hw_atomic_flag_test_and_set(ptr)
+#define rt_atomic_compare_exchange_strong(ptr, v,des) rt_hw_atomic_compare_exchange_strong(ptr, v ,des)
+
+#elif defined(RT_USING_STDC_ATOMIC)
+
 #ifndef __STDC_NO_ATOMICS__
 #define rt_atomic_load(ptr) atomic_load(ptr)
 #define rt_atomic_store(ptr, v) atomic_store(ptr, v)
@@ -38,18 +62,7 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
 #else
 #error "The standard library C doesn't support the atomic operation"
 #endif /* __STDC_NO_ATOMICS__ */
-#elif defined(RT_USING_HW_ATOMIC)
-#define rt_atomic_load(ptr) rt_hw_atomic_load(ptr)
-#define rt_atomic_store(ptr, v) rt_hw_atomic_store(ptr, v)
-#define rt_atomic_add(ptr, v) rt_hw_atomic_add(ptr, v)
-#define rt_atomic_sub(ptr, v) rt_hw_atomic_sub(ptr, v)
-#define rt_atomic_and(ptr, v) rt_hw_atomic_and(ptr, v)
-#define rt_atomic_or(ptr, v)  rt_hw_atomic_or(ptr, v)
-#define rt_atomic_xor(ptr, v) rt_hw_atomic_xor(ptr, v)
-#define rt_atomic_exchange(ptr, v) rt_hw_atomic_exchange(ptr, v)
-#define rt_atomic_flag_clear(ptr) rt_hw_atomic_flag_clear(ptr)
-#define rt_atomic_flag_test_and_set(ptr) rt_hw_atomic_flag_test_and_set(ptr)
-#define rt_atomic_compare_exchange_strong(ptr, v,des) rt_hw_atomic_compare_exchange_strong(ptr, v ,des)
+
 #else
 #include <rthw.h>
 #define rt_atomic_load(ptr) rt_soft_atomic_load(ptr)
@@ -192,4 +205,7 @@ rt_inline rt_atomic_t rt_soft_atomic_compare_exchange_strong(volatile rt_atomic_
     return temp;
 }
 #endif /* RT_USING_STDC_ATOMIC */
+
+#endif /* __cplusplus */
+
 #endif /* __RT_ATOMIC_H__ */

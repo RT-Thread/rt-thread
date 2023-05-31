@@ -12,7 +12,7 @@
 #include "drv_gpio.h"
 #include <stdbool.h>
 
-#ifdef BSP_USING_PIN
+#ifdef BSP_USING_GPIO
 
 #define DBG_TAG              "drv.gpio"
 #define DBG_LVL               DBG_INFO
@@ -227,4 +227,4 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-#endif /*BSP_USING_PIN */
+#endif /*BSP_USING_GPIO */

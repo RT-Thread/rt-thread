@@ -204,16 +204,60 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
-        if BSP_USING_LVGL
-            config BSP_USING_LVGL_DEMO
-                bool "Enable LVGL demo"
-                select PKG_USING_LV_MUSIC_DEMO
-                default y
-        endif
+            menuconfig BSP_USING_LVGL_DEMO
+                bool "Enable LVGL demo for LCD"
+                if BSP_USING_LVGL_DEMO     
+                    choice
+                        prompt "choice lvgl demo"
+                        default BSP_USING_LVGL_MUSIC_DEMO
+
+                        config BSP_USING_LVGL_MUSIC_DEMO
+                            bool "Enable LVGL music demo"
+                            select PKG_USING_LV_MUSIC_DEMO
+
+                        config BSP_USING_LVGL_VIDEO_DEMO
+                            bool "Enable LVGL video demo"
+                            select BSP_USING_G2D
+                            select BSP_USING_JPEG
+                    endchoice
+                endif
 
     endmenu
 
     menu "Board extended module Drivers"
+        menuconfig BSP_USING_RW007
+            bool "Enable RW007"
+            default n
+            select PKG_USING_RW007
+            select BSP_USING_SCI_SPI
+            select BSP_USING_SCI_SPI3
+            select RT_USING_MEMPOOL
+            select RW007_NOT_USE_EXAMPLE_DRIVERS
 
+        if BSP_USING_RW007
+            config RA_RW007_SPI_BUS_NAME
+                string "RW007 BUS NAME"
+                default "scpi3"
+
+            config RA_RW007_CS_PIN
+                hex "(HEX)CS pin index"
+                default 0x0308
+
+            config RA_RW007_BOOT0_PIN
+                hex "(HEX)BOOT0 pin index (same as spi clk pin)"
+                default 0x030B
+
+            config RA_RW007_BOOT1_PIN
+                hex "(HEX)BOOT1 pin index (same as spi cs pin)"
+                default 0x0308
+
+            config RA_RW007_INT_BUSY_PIN
+                hex "(HEX)INT/BUSY pin index"
+                default 0x000F
+
+            config RA_RW007_RST_PIN
+                hex "(HEX)RESET pin index"
+                default 0x030C
+        endif
     endmenu
 endmenu
