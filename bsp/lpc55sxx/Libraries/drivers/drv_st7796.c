@@ -27,7 +27,7 @@
 #define ST7796_LCD_INIT_SEQ ST7796_INIT_SEQ_NAME(tft)
 #endif
 
-static nxplcd_t lcd_spi_obj;
+static st7796_t lcd_spi_obj;
 
 static rt_err_t _st7796_init_seq(st7796_lcd_t *lcd);
 static rt_err_t _st7796_window(st7796_lcd_t *lcd, rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end);
@@ -207,7 +207,7 @@ static rt_err_t st7796_lcd_load(st7796_lcd_t *lcd, void *data, rt_uint16_t x_sta
 
 void lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data)
 {
-    nxplcd_t *lcd_obj = (nxplcd_t *)rt_device_find("lcd");
+    st7796_t *lcd_obj = (st7796_t *)rt_device_find("lcd");
     st7796_lcd_load(&lcd_obj->st7796, data, x_start, x_end, y_start, y_end);
 }
 
@@ -279,7 +279,7 @@ static rt_err_t st7796_lcd_config(st7796_lcd_t *lcd, st7796_config_t *config)
 
 static rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len)
 {
-    nxplcd_t *nxp_lcd = (nxplcd_t*)handle;
+    st7796_t *nxp_lcd = (st7796_t*)handle;
 
     rt_pin_write(BSP_LCD_DC_PIN, PIN_LOW);
     rt_spi_send(nxp_lcd->spi_dev, cmd, 1);
@@ -294,7 +294,7 @@ static rt_err_t lcd_impl_write_cmd(void *handle, rt_uint8_t *cmd, rt_uint8_t len
 
 static rt_err_t lcd_impl_write_data(void *handle, void *data, rt_uint32_t len)
 {
-    nxplcd_t *nxp_lcd = (nxplcd_t*)handle;
+    st7796_t *nxp_lcd = (st7796_t*)handle;
 
     rt_pin_write(BSP_LCD_DC_PIN, PIN_HIGH);
     rt_spi_send(nxp_lcd->spi_dev, data, len);
