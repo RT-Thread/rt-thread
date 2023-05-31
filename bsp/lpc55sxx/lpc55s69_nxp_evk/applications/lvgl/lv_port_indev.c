@@ -31,7 +31,6 @@ static void input_read(lv_indev_drv_t *indev_drv, lv_indev_data_t *data)
     {
         last_x = 480 - ctp_input.pos[0].pos_y;
         last_y = ctp_input.pos[0].pos_x;
-            rt_kprintf("x:%d y:%d\r\n",last_x,last_y);
         last_state = LV_INDEV_STATE_PR;
     }
     else
