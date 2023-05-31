@@ -59,7 +59,7 @@ typedef struct
     struct rt_device            parent;
     st7796_lcd_t                st7796;
     struct rt_spi_device        *spi_dev;
-} nxplcd_t;
+} st7796_t;
 
 void lcd_load(rt_uint16_t x_start, rt_uint16_t x_end, rt_uint16_t y_start, rt_uint16_t y_end, void *data);
 int drv_st7796_init(void);

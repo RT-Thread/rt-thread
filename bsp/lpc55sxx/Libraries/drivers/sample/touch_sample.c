@@ -29,7 +29,7 @@ static int touch_sample(void)
     {
         gt911_ctp_read(&capt->gt911, &ctp_input);
 
-        for (uint8_t i = 0; i < ctp_input.num_pos; i++)
+        for (rt_uint8_t  i = 0; i < ctp_input.num_pos; i++)
         {
             /* Found track ID #0 */
             if (ctp_input.pos[i].id == 0)

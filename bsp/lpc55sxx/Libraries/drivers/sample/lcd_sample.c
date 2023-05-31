@@ -21,7 +21,7 @@ static void lcd_sample(void)
     static rt_uint16_t orange[319*2];
     static rt_uint16_t green[319*2];
     static rt_uint16_t blue[319*2];
-    nxplcd_t *lcd_obj = (nxplcd_t *)rt_device_find("lcd");
+    st7796_t *lcd_obj = (st7796_t *)rt_device_find("lcd");
 
     for (rt_uint32_t i = 0; i < 319*2; i++)
     {

@@ -21,7 +21,7 @@ static void lcd_touch_sample(void)
 {
     static rt_uint16_t white[319*2];
     rt_uint16_t green[4*4*2];
-    nxplcd_t *lcd_obj = (nxplcd_t *)rt_device_find("lcd");
+    st7796_t *lcd_obj = (st7796_t *)rt_device_find("lcd");
     rt_device_t dev = rt_device_find("capt");
     capt_t *capt = (capt_t*)dev->user_data;
     gt911_input_t ctp_input;
@@ -50,7 +50,7 @@ static void lcd_touch_sample(void)
     while(1)
     {
         gt911_ctp_read(&capt->gt911, &ctp_input);
-        for (uint8_t i = 0; i < ctp_input.num_pos; i++)
+        for (rt_uint8_t  i = 0; i < ctp_input.num_pos; i++)
         {
             /* Found track ID #0 */
             if (ctp_input.pos[i].id == 0)
