@@ -34,7 +34,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM2_CH4
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH1
-        select BSP_USING_PWM4_CH2
         select BSP_USING_PWM4_CH3
         select BSP_USING_PWM4_CH4
         select BSP_USING_ADC
@@ -54,23 +53,30 @@ menu "Onboard Peripheral Drivers"
 
     if BSP_USING_ARDUINO
         config BSP_USING_ARDUINO_ST7789
-            bool "Enable LCD (ST7789) Arduino libraries"
+            bool "Enable Arduino LCD (ST7789) library"
             select BSP_USING_SPI3
             select BSP_SPI3_TX_USING_DMA
+            select BSP_USING_PWM4_CH2
             select PKG_USING_ARDUINO_ADAFRUIT_ST7735
             depends on !BSP_USING_SPI_LCD
             default n
 
         config BSP_USING_ARDUINO_ST7789_DEMO
-            bool "Enable LCD (ST7789) Arduino demo"
+            bool "Enable Arduino LCD (ST7789) library demo"
             depends on BSP_USING_ARDUINO_ST7789
             default n
 
         config BSP_USING_ARDUINO_AHT10
-            bool "Enable AHT10 sensor Arduino libraries"
+            bool "Enable Arduino AHT10 sensor library"
             select BSP_USING_I2C4
             select PKG_USING_ARDUINO_ADAFRUIT_AHTX0
             depends on !BSP_USING_AHT10
+            default n
+
+        config BSP_USING_ARDUINO_AHT10_DEMO
+            bool "Enable Arduino AHT10 sensor library demo"
+            select PKG_USING_ARDUINO_MSGQ_C_CPP_DEMO
+            depends on BSP_USING_ARDUINO_AHT10
             default n
 
         config BSP_USING_ARDUINO_AP3216
