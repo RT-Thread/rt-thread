@@ -55,7 +55,7 @@ struct lpc_i2c_bus lpc_obj[] =
         {
             .I2C = I2C1,
             .DMA = DMA0,
-            .dma_chl = 12,
+            .dma_chl = 7,
             .device_name = "i2c1",
             .baud = 100000U,
             .instance = 1U,
