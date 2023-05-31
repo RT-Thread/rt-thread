@@ -679,6 +679,11 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
             tp->tv_sec  = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
             tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
             rt_hw_interrupt_enable(level);
+            if(tp->tv_nsec>1000000000)
+            {
+                tp->tv_nsec%=1000000000;
+                tp->tv_sec+=1;
+            }
         }
         break;
 #endif
