@@ -367,7 +367,6 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             else if ((spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG))
             {
                 /* same as Tx ONLY. It will not receive SPI data any more. */
-                rt_memset((uint8_t *)recv_buf, 0xff, send_length);
                 state = HAL_SPI_Transmit_DMA(spi_handle, (uint8_t *)send_buf, send_length);
             }
             else if ((spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG))
