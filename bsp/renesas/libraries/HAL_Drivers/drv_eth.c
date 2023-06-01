@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -392,7 +392,7 @@ static int rt_hw_ra6m3_eth_init(void)
 
     ra6m3_eth_device.parent.eth_rx     = rt_ra6m3_eth_rx;
     ra6m3_eth_device.parent.eth_tx     = rt_ra6m3_eth_tx;
-    
+
     rt_ra6m3_eth_init();
 
     /* register eth device */

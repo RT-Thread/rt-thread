@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -265,7 +265,7 @@ static rt_size_t gt911_read_point(struct rt_touch_device *touch, void *buf, rt_s
             for (j = 0; j < touch_num; j++)                          /* this time touch num */
             {
                 read_id = read_buf[j * 8] & 0x0F;
-                
+
                 if (read_id > 0) continue;
 
                 if (pre_id[read_index] == read_id)                   /* this id is not free */
