@@ -52,9 +52,6 @@ struct rt_ra6m3_eth
 #ifndef PHY_USING_INTERRUPT_MODE
     rt_timer_t poll_link_timer;
 #endif
-
-    /* interface address info, hw address */
-    rt_uint8_t  dev_addr[MAX_ADDR_LEN];
 };
 
 static rt_uint8_t *Rx_Buff, *Tx_Buff;
@@ -89,7 +86,7 @@ static void dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
 
 extern void phy_reset(void);
 /* EMAC initialization function */
-static rt_err_t rt_ra6m3_eth_init(rt_device_t dev)
+static rt_err_t rt_ra6m3_eth_init(void)
 {
     fsp_err_t res;
 
@@ -133,7 +130,7 @@ static rt_err_t rt_ra6m3_eth_control(rt_device_t dev, int cmd, void *args)
         /* get mac address */
         if (args)
         {
-            SMEMCPY(args, ra6m3_eth_device.dev_addr, 6);
+            SMEMCPY(args, g_ether0_ctrl.p_ether_cfg->p_mac_address, 6);
         }
         else
         {
@@ -385,16 +382,7 @@ static int rt_hw_ra6m3_eth_init(void)
         goto __exit;
     }
 
-    /* OUI 00-80-E1 STMICROELECTRONICS. */
-    ra6m3_eth_device.dev_addr[0] = 0x00;
-    ra6m3_eth_device.dev_addr[1] = 0x80;
-    ra6m3_eth_device.dev_addr[2] = 0xE1;
-    /* generate MAC addr from 96bit unique ID (only for test). */
-    ra6m3_eth_device.dev_addr[3] = (10 + 4);
-    ra6m3_eth_device.dev_addr[4] = (10 + 2);
-    ra6m3_eth_device.dev_addr[5] = (10 + 0);
-
-    ra6m3_eth_device.parent.parent.init       = rt_ra6m3_eth_init;
+    ra6m3_eth_device.parent.parent.init       = NULL;
     ra6m3_eth_device.parent.parent.open       = rt_ra6m3_eth_open;
     ra6m3_eth_device.parent.parent.close      = rt_ra6m3_eth_close;
     ra6m3_eth_device.parent.parent.read       = rt_ra6m3_eth_read;
@@ -404,6 +392,8 @@ static int rt_hw_ra6m3_eth_init(void)
 
     ra6m3_eth_device.parent.eth_rx     = rt_ra6m3_eth_rx;
     ra6m3_eth_device.parent.eth_tx     = rt_ra6m3_eth_tx;
+    
+    rt_ra6m3_eth_init();
 
     /* register eth device */
     state = eth_device_init(&(ra6m3_eth_device.parent), "e0");

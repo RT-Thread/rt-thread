@@ -491,7 +491,7 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
     ra_sdhi_enable_sdio_irq(host, 1);
 
     /* ready to change */
-    mmcsd_change(host);
+//    mmcsd_change(host);
 
     return host;
 }
@@ -508,3 +508,8 @@ int rt_hw_sdhi_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdhi_init);
+
+void sdcard_change(void)
+{
+    mmcsd_change(host);
+}
