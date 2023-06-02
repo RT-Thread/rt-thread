@@ -128,10 +128,30 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SOFT_I2C1
                 bool "Enable I2C1 Bus (software simulation)"
                 default n
+                if BSP_USING_SOFT_I2C1
+                    comment "Notice: num = 32 * PORTx + PINx + 1"
+                    comment "0_15 --> 16; 1_8 --> 41"
+                    config BSP_SOFT_I2C1_SCL_PIN
+                        int "si2c1 SCL pin number"
+                        default 16
+                    config BSP_SOFT_I2C1_SDA_PIN
+                        int "si2c1 SDA pin number"
+                        default 41
+                endif
 
             config BSP_USING_SOFT_I2C2
                 bool "Enable I2C2 Bus (software simulation)"
                 default n
+                if BSP_USING_SOFT_I2C2
+                    comment "Notice: num = 32 * PORTx + PINx + 1"
+                    comment "0_18 --> 19; 1_10 --> 43"
+                    config BSP_SOFT_I2C2_SCL_PIN
+                        int "si2c2 SCL pin number"
+                        default 19
+                    config BSP_SOFT_I2C2_SDA_PIN
+                        int "si2c2 SDA pin number"
+                        default 43
+                endif
         endif
 
     menuconfig BSP_USING_SPI
@@ -157,13 +177,39 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI_BITOPS
         select RT_USING_SPI
         if BSP_USING_SOFT_SPI
-            menuconfig BSP_USING_SOFT_SPI1
+            config BSP_USING_SOFT_SPI1
                 bool "Enable soft SPI1 BUS (software simulation)"
                 default n
+                if BSP_USING_SOFT_SPI1
+                    comment "Notice: num = 32 * PORTx + PINx + 1"
+                    comment "1_11 --> 44; 0_15 --> 16; 1_8 --> 41"
+                    config BSP_S_SPI1_SCK_PIN
+                        int "sspi1 SCL pin number"
+                        default 44
+                    config BSP_S_SPI1_MOSI_PIN
+                        int "sspi1 MISO pin number"
+                        default 16
+                    config BSP_S_SPI1_MISO_PIN
+                        int "sspi1 MOSI pin number"
+                        default 41
+                endif
 
-            menuconfig BSP_USING_SOFT_SPI2
+            config BSP_USING_SOFT_SPI2
                 bool "Enable soft SPI2 BUS (software simulation)"
                 default n
+                if BSP_USING_SOFT_SPI2
+                    comment "Notice: num = 32 * PORTx + PINx + 1"
+                    comment "1_9 --> 42; 0_18 --> 19; 1_10 --> 43"
+                    config BSP_S_SPI2_SCK_PIN
+                        int "sspi2 SCL pin number"
+                        default 42
+                    config BSP_S_SPI2_MOSI_PIN
+                        int "sspi2 MISO pin number"
+                        default 19
+                    config BSP_S_SPI2_MISO_PIN
+                        int "sspi2 MOSI pin number"
+                        default 43
+                endif
         endif
             
     menuconfig BSP_USING_ADC

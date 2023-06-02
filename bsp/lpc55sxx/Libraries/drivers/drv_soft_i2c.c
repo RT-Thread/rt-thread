@@ -8,7 +8,7 @@
  * 2023-04-11     linshire     the first version
  */
 
-#include <board.h>
+#include "board.h"
 #include "drv_soft_i2c.h"
 
 #ifdef BSP_USING_SOFT_I2C
@@ -186,7 +186,7 @@ static rt_err_t lpc55s69_i2c_bus_unlock(const struct lpc55s69_soft_i2c_config *c
 }
 
 /* I2C initialization function */
-int rt_hw_i2c_init(void)
+int rt_soft_i2c_init(void)
 {
     rt_err_t result;
 
@@ -208,6 +208,6 @@ int rt_hw_i2c_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(rt_hw_i2c_init);
+INIT_BOARD_EXPORT(rt_soft_i2c_init);
 
 #endif /* BSP_USING_SOFT_I2C */
