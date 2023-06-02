@@ -32,7 +32,7 @@ struct drv_lcd_device
 struct drv_lcd_device _lcd;
 
 uint16_t screen_rotation;
-uint16_t *lcd_current_working_buffer = (uint16_t *)&fb_background[0];
+uint16_t *lcd_current_working_buffer = (uint16_t *) &fb_background[0];
 
 // jpeg and lvgl can only select one
 __WEAK void _ra_port_display_callback(display_callback_args_t *p_args)
@@ -44,6 +44,18 @@ __WEAK void _ra_port_display_callback(display_callback_args_t *p_args)
 
 void turn_on_lcd_backlight(void)
 {
+#ifdef BSP_USING_PWM5
+#define LCD_PWM_DEV_NAME    "pwm5"
+#define LCD_PWM_DEV_CHANNEL 0
+
+    struct rt_device_pwm *pwm_dev;
+
+    /* turn on the LCD backlight */
+    pwm_dev = (struct rt_device_pwm *)rt_device_find(LCD_PWM_DEV_NAME);
+    /* pwm frequency:100K = 10000ns */
+    rt_pwm_set(pwm_dev, LCD_PWM_DEV_CHANNEL, 10000, 7000);
+    rt_pwm_enable(pwm_dev, LCD_PWM_DEV_CHANNEL);
+#endif
     rt_pin_mode(LCD_BL_PIN, PIN_MODE_OUTPUT);   /* LCD_BL */
     rt_pin_write(LCD_BL_PIN, PIN_HIGH);
 }
@@ -107,7 +119,7 @@ void ra_bsp_lcd_swap_buffer(void)
 void bsp_lcd_draw_pixel(uint32_t x, uint32_t y, uint16_t color)
 {
     // Verify pixel is within LCD range
-    if ((x < LCD_WIDTH) && (y < LCD_HEIGHT))
+    if ((x <= LCD_WIDTH) && (y <= LCD_HEIGHT))
     {
         switch (screen_rotation)
         {

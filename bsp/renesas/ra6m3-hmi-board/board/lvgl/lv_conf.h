@@ -20,7 +20,7 @@
  * performance, bitmaps need to be in correct order */
 #define DLG_LVGL_CF_SUB_BYTE_SWAP   0
 
-#define DLG_LVGL_USE_GPU_RA6M3      1
+#define DLG_LVGL_USE_GPU_RA6M3      0
 
 #define LV_USE_PERF_MONITOR         1
 #define LV_COLOR_DEPTH              16
@@ -36,6 +36,7 @@
     #define LV_DPI_DEF              89
 #endif
 
+#ifdef BSP_USING_LVGL_VIDEO_DEMO
 #define LV_USE_FILE_EXPLORER    1
 #if LV_USE_FILE_EXPLORER
     /*Maximum length of path*/
@@ -50,6 +51,7 @@
     #define LV_FS_STDIO_LETTER '/'      /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
     #define LV_FS_STDIO_PATH "/"        /*Set the working directory. File/directory paths will be appended to it.*/
     #define LV_FS_STDIO_CACHE_SIZE  0   /*>0 to cache this number of bytes in lv_fs_read()*/
+#endif
 #endif
 
 #ifdef PKG_USING_LV_MUSIC_DEMO
