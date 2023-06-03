@@ -1,0 +1,36 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f3xx_hal_msp.c
+''')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/STM32F3xx_HAL/CMSIS/Device/ST/STM32F3xx/Source/Templates/gcc/startup_stm32f334x8.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/STM32F3xx_HAL/CMSIS/Device/ST/STM32F3xx/Source/Templates/arm/startup_stm32f334x8.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/STM32F3xx_HAL/CMSIS/Device/ST/STM32F3xx/Source/Templates/iar/startup_stm32f334x8.s']
+
+# (STM32F301x8) || (STM32F302x8) || (STM32F318xx)
+# (STM32F302xC) || (STM32F303xC) || (STM32F358xx)
+# (STM32F303x8) || (STM32F334x8) || (STM32F328xx)
+# (STM32F302xE) || (STM32F303xE) || (STM32F398xx)
+# (STM32F373xC) || (STM32F378xx)
+# You can select chips from the list above
+CPPDEFINES = ['STM32F334x8']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
