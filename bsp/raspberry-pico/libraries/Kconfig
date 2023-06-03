@@ -45,6 +45,50 @@ menu "On-chip Peripheral Drivers"
                         default 3
                 endif
         endif
+
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable soft SPI BUS"
+        default n
+        select RT_USING_PIN
+        select RT_USING_SPI_BITOPS
+        select RT_USING_SPI
+        if BSP_USING_SOFT_SPI
+            config BSP_USING_SOFT_SPI0
+                bool "Enable SPI0 Bus (software simulation)"
+                default n
+                if BSP_USING_SOFT_SPI0
+                    config BSP_S_SPI0_SCK_PIN
+                        int "spi0 sck pin number (GP)"
+                        range 0 28
+                        default 6
+                    config BSP_S_SPI0_MOSI_PIN
+                        int "spi0 mosi pin number (GP)"
+                        range 0 28
+                        default 7
+                    config BSP_S_SPI0_MISO_PIN
+                        int "spi0 miso pin number (GP)"
+                        range 0 28
+                        default 4
+                endif
+            config BSP_USING_SOFT_SPI1
+                bool "Enable SPI1 Bus (software simulation)"
+                default n
+                if BSP_USING_SOFT_SPI1
+                    config BSP_S_SPI1_SCK_PIN
+                        int "spi1 sck pin number (GP)"
+                        range 0 28
+                        default 10
+                    config BSP_S_SPI1_MOSI_PIN
+                        int "spi1 mosi pin number (GP)"
+                        range 0 28
+                        default 11
+                    config BSP_S_SPI1_MISO_PIN
+                        int "spi1 miso pin number (GP)"
+                        range 0 28
+                        default 12
+                endif
+
+        endif
 endmenu
 
 endmenu
