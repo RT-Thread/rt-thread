@@ -24,6 +24,16 @@ endmenu
 
 menu "On-chip Peripheral Drivers"
 
+    config BSP_USING_PIN
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_UART
+        default y
+
     menuconfig BSP_USING_SOFT_I2C
         bool "Enable I2C BUS (software simulation)"
         default n
