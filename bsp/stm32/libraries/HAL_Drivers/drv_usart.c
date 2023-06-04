@@ -229,7 +229,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     {
         return -RT_ERROR;
     }
-    uart->mask = stm32_uart_get_mask(cfg->data_bits, cfg->parity);
+    uart->DR_mask = stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
 	
     return RT_EOK;
 }
@@ -340,9 +340,9 @@ static int stm32_getc(struct rt_serial_device *serial)
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L5) \
     || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32F3) \
     || defined(SOC_SERIES_STM32U5)
-        ch = uart->handle.Instance->RDR & uart->mask;
+        ch = uart->handle.Instance->RDR & uart->DR_mask;
 #else
-        ch = uart->handle.Instance->DR & uart->mask);
+        ch = uart->handle.Instance->DR & uart->DR_mask);
 #endif
     }
     return ch;
