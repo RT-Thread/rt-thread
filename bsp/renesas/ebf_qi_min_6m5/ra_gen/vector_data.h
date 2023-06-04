@@ -1,6 +1,9 @@
 /* generated vector header file - do not edit */
         #ifndef VECTOR_DATA_H
         #define VECTOR_DATA_H
+        #ifdef __cplusplus
+        extern "C" {
+        #endif
                 /* Number of interrupts allocated */
         #ifndef VECTOR_DATA_IRQ_COUNT
         #define VECTOR_DATA_IRQ_COUNT    (4)
@@ -20,4 +23,7 @@
         #define SCI4_TEI_IRQn          ((IRQn_Type) 2) /* SCI4 TEI (Transmit end) */
         #define VECTOR_NUMBER_SCI4_ERI ((IRQn_Type) 3) /* SCI4 ERI (Receive error) */
         #define SCI4_ERI_IRQn          ((IRQn_Type) 3) /* SCI4 ERI (Receive error) */
+        #ifdef __cplusplus
+        }
+        #endif
         #endif /* VECTOR_DATA_H */

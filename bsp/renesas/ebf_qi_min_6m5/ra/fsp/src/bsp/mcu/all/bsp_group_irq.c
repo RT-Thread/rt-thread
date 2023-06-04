@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -105,7 +105,7 @@ void NMI_Handler (void)
     uint16_t nmisr = R_ICU->NMISR;
 
     /* Loop over all NMI status flags */
-    for (bsp_grp_irq_t irq = BSP_GRP_IRQ_IWDT_ERROR; irq <= BSP_GRP_IRQ_CACHE_PARITY; irq++)
+    for (bsp_grp_irq_t irq = BSP_GRP_IRQ_IWDT_ERROR; irq <= (bsp_grp_irq_t) (BSP_GRP_IRQ_TOTAL_ITEMS - 1); irq++)
     {
         /* If the current irq status register is set call the irq callback. */
         if (0U != (nmisr & (1U << irq)))
