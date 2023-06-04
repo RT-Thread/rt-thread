@@ -342,7 +342,7 @@ static int stm32_getc(struct rt_serial_device *serial)
     || defined(SOC_SERIES_STM32U5)
         ch = uart->handle.Instance->RDR & uart->DR_mask;
 #else
-        ch = uart->handle.Instance->DR & uart->DR_mask);
+        ch = uart->handle.Instance->DR & uart->DR_mask;
 #endif
     }
     return ch;
