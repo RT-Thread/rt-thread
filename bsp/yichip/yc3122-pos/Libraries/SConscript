@@ -1,0 +1,29 @@
+from building import *
+import rtconfig
+import os
+cwd     = GetCurrentDir()
+path_sdk = os.path.join(cwd,'sdk')
+path_core = os.path.join(cwd,'core')
+path_cmin = os.path.join(cwd,'CMSIS','Include')
+path_cmde = os.path.join(cwd,'CMSIS','Device','YICHIP','YC3122')
+src = Glob('sdk/*.c')
+CPPPATH = [path_sdk,path_core,path_cmin,os.path.join(path_cmde,'Include'),cwd]
+
+src += Glob(path_cmde + '/Source/Templates/*.c')
+src += ['core/system.c']
+
+if rtconfig.PLATFORM in ['gcc']:
+	src += ['sdk/libyc_qspi.a']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += ['sdk/yc_qspi.lib']
+	
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [path_cmde + '/Source/Templates/gcc/startup_yc3122.S']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [path_cmde + '/Source/Templates/arm/startup_yc3122.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [path_cmde + '/Source/Templates/iar/startup_yc3122.s']
+group = DefineGroup('Libraries', src, depend = [''],CPPPATH = CPPPATH, CPPDEFINES = ['__USE_YC_M0__'])
+
+Return('group')

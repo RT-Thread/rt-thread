@@ -1,139 +1,223 @@
-/* RT-Thread config file */
-#ifndef __RTTHREAD_CFG_H__
-#define __RTTHREAD_CFG_H__
+#ifndef RT_CONFIG_H__
+#define RT_CONFIG_H__
 
-/* RT_NAME_MAX*/
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread Project Configuration */
+
+/* RT-Thread Kernel */
+
 #define RT_NAME_MAX 8
+#define RT_ALIGN_SIZE 8
+#define RT_THREAD_PRIORITY_32
+#define RT_THREAD_PRIORITY_MAX 32
+#define RT_TICK_PER_SECOND 100
+#define RT_USING_OVERFLOW_CHECK
+#define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
+#define RT_USING_IDLE_HOOK
+#define RT_IDLE_HOOK_LIST_SIZE 4
+#define IDLE_THREAD_STACK_SIZE 256
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 512
 
-/* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE   8
+/* kservice optimization */
 
-/* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX  32
-
-/* Tick per Second*/
-#define RT_TICK_PER_SECOND  100
-
-/* SECTION: RT_DEBUG */
-/* Thread Debug */
+#define RT_KSERVICE_USING_STDLIB
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
-/* #define RT_THREAD_DEBUG */
 
-#define RT_USING_OVERFLOW_CHECK
+/* Inter-Thread communication */
 
-/* Using Hook */
-#define RT_USING_HOOK
-
-/* SECTION: IPC */
-/* Using Semaphore*/
 #define RT_USING_SEMAPHORE
-
-/* Using Mutex*/
 #define RT_USING_MUTEX
-
-/* Using Event*/
 #define RT_USING_EVENT
-
-/* Using Faset Event*/
-/* #define RT_USING_FASTEVENT */
-
-/* Using MailBox*/
 #define RT_USING_MAILBOX
-
-/* Using Message Queue*/
 #define RT_USING_MESSAGEQUEUE
 
-/* SECTION: Memory Management */
-/* Using Memory Pool Management*/
-#define RT_USING_MEMPOOL
+/* Memory Management */
 
-/* Using Dynamic Heap Management*/
+#define RT_USING_MEMPOOL
+#define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 
-/* Using Small MM*/
-#define RT_USING_SMALL_MEM
+/* Kernel Device Object */
 
-/* Using SLAB Allocator*/
-/* #define RT_USING_SLAB */
-
-/* SECTION: Device System */
-/* Using Device System*/
 #define RT_USING_DEVICE
-#define RT_USING_UART1
-#define RT_USING_UART2
-#define RT_UART_RX_BUFFER_SIZE  64
-
-/* SECTION: Console options */
 #define RT_USING_CONSOLE
-/* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE  128
+#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_VER_NUM 0x50001
+#define ARCH_ARM
 
-/* SECTION: FinSH shell options */
-/* Using FinSH as Shell*/
+/* RT-Thread Components */
+
+#define RT_USING_MSH
 #define RT_USING_FINSH
-/* Using symbol table */
+#define FINSH_USING_MSH
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
+#define FINSH_CMD_SIZE 80
+#define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
+#define FINSH_ARG_MAX 10
 
-/* SECTION: emulator options */
-/* Using QEMU or SkyEye*/
-/* #define RT_USING_EMULATOR */
+/* DFS: device virtual file system */
 
-/* SECTION: C++ support */
-/* Using C++ support*/
-/* #define RT_USING_CPLUSPLUS */
 
-/* SECTION: DFS options */
-/* #define RT_USING_DFS */
-/* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX         2
-/* the max number of opened files       */
-#define DFS_FD_MAX                  4
-/* the max number of cached sector      */
-#define DFS_CACHE_MAX_NUM           8
+/* Device Drivers */
 
-/* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* Using lighweight TCP/IP protocol stack*/
-/* #define RT_USING_LWIP */
+#define RT_USING_DEVICE_IPC
+#define RT_UNAMED_PIPE_NUMBER 64
+#define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
+#define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_PIN
 
-/* Trace LwIP protocol*/
-/* #define RT_LWIP_DEBUG */
+/* Using USB */
 
-/* Enable ICMP protocol*/
-#define RT_LWIP_ICMP
 
-/* Enable IGMP protocol*/
-#define RT_LWIP_IGMP
+/* C/C++ and POSIX layer */
 
-/* Enable UDP protocol*/
-#define RT_LWIP_UDP
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 
-/* Enable TCP protocol*/
-#define RT_LWIP_TCP
+/* POSIX (Portable Operating System Interface) layer */
 
-/* Enable SNMP protocol*/
-/* #define RT_LWIP_SNMP */
 
-/* Using DHCP*/
-/* #define RT_LWIP_DHCP */
+/* Interprocess Communication (IPC) */
 
-/* ip address of target*/
-#define RT_LWIP_IPADDR0 192
-#define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 0
-#define RT_LWIP_IPADDR3 30
 
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0 192
-#define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 0
-#define RT_LWIP_GWADDR3 1
+/* Socket is in the 'Network' category */
 
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0    255
-#define RT_LWIP_MSKADDR1    255
-#define RT_LWIP_MSKADDR2    255
-#define RT_LWIP_MSKADDR3    0
+
+/* Network */
+
+
+/* Utilities */
+
+
+/* RT-Thread Utestcases */
+
+
+/* RT-Thread online packages */
+
+/* IoT - internet of things */
+
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+
+/* Wiced WiFi */
+
+
+/* IoT Cloud */
+
+
+/* security packages */
+
+
+/* language packages */
+
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+
+/* XML: Extensible Markup Language */
+
+
+/* multimedia packages */
+
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+
+/* u8g2: a monochrome graphic library */
+
+
+/* tools packages */
+
+
+/* system packages */
+
+/* enhanced kernel services */
+
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
+/* peripheral libraries and drivers */
+
+/* sensors drivers */
+
+
+/* touch drivers */
+
+
+/* Kendryte SDK */
+
+
+/* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
+
+
+/* miscellaneous packages */
+
+/* project laboratory */
+
+/* samples: kernel and components samples */
+
+
+/* entertainment: terminal games and other interesting software packages */
+
+
+/* Arduino libraries */
+
+
+/* Projects */
+
+
+/* Sensors */
+
+
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
+
+#define SOC_LPC2148
 
 #endif

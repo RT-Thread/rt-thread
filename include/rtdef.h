@@ -48,6 +48,7 @@
  * 2022-09-12     Meco Man     define rt_ssize_t
  * 2022-12-20     Meco Man     add const name for rt_object
  * 2023-04-01     Chushicheng  change version number to v5.0.1
+ * 2023-05-20     Bernard      add stdc atomic detection.
  */
 
 #ifndef __RT_DEF_H__
@@ -126,12 +127,24 @@ typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
+#if !defined(__cplusplus)
 #if defined(RT_USING_STDC_ATOMIC)
-#include <stdatomic.h>
-typedef atomic_size_t rt_atomic_t;
+    #include <stdatomic.h>
+    typedef atomic_size_t rt_atomic_t;
+#elif defined(RT_USING_HW_ATOMIC)
+    typedef volatile rt_base_t rt_atomic_t;
 #else
-typedef volatile rt_base_t rt_atomic_t;
-#endif
+
+    /* To detect std atomic */
+    #if defined(RT_USING_LIBC) && defined(__GNUC__) && !defined(__STDC_NO_ATOMICS__)
+        #include <stdatomic.h>
+        typedef atomic_size_t rt_atomic_t;
+    #else
+        typedef volatile rt_base_t rt_atomic_t;
+    #endif /* __GNUC__ && !__STDC_NO_ATOMICS__ */
+
+#endif /* RT_USING_STDC_ATOMIC */
+#endif /* __cplusplus */
 
 /* boolean type definitions */
 #define RT_TRUE                         1               /**< boolean true  */

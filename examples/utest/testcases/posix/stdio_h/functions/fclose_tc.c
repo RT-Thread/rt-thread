@@ -16,7 +16,7 @@ static int fclose_entry(void)
     }
     else 
     {
-        printf("fclose sucess \n");
+        printf("fclose success \n");
     }
     return 0;
 }

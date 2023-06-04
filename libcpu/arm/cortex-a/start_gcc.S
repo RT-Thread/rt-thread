@@ -157,6 +157,38 @@ after_enable_mmu:
 #endif /* RT_USING_SMART */
     mcr p15, 0, r1, c1, c0, 0
 
+#ifndef RT_USING_SMART
+#ifdef RT_USING_SMP
+    /* Use spin-table to start secondary cores */
+    @ get cpu id, and subtract the offset from the stacks base address
+    bl rt_hw_cpu_id
+    mov r5, r0
+
+    cmp     r5, #0              @ cpu id == 0
+    beq     normal_setup
+
+    @ cpu id > 0, stop or wait
+#ifdef RT_SMP_AUTO_BOOT
+    ldr r0, =secondary_cpu_entry
+    mov r1, #0
+    str r1, [r0] /* clean secondary_cpu_entry */
+#endif /* RT_SMP_AUTO_BOOT */
+
+secondary_loop:
+    @ cpu core 1 goes into sleep until core 0 wakeup it
+    wfe
+#ifdef RT_SMP_AUTO_BOOT
+    ldr r1, =secondary_cpu_entry
+    ldr r0, [r1]
+    cmp r0, #0
+    blxne r0 /* if(secondary_cpu_entry) secondary_cpu_entry(); */
+#endif /* RT_SMP_AUTO_BOOT */
+    b secondary_loop
+
+normal_setup:
+#endif /* RT_USING_SMP */
+#endif /* RT_USING_SMART */
+
     /* enable I cache + branch prediction */
     mrc p15, 0, r0, c1, c0, 0
     orr     r0, r0, #(1<<12)
@@ -208,12 +240,11 @@ bss_loop:
 _rtthread_startup:
     .word rtthread_startup
 
-.weak rt_asm_cpu_id 
+.weak rt_asm_cpu_id
 rt_asm_cpu_id:
-    mov r9, lr
     mrc p15, 0, r0, c0, c0, 5
     and r0, r0, #0xf
-    mov lr, r9
+    mov pc, lr
 
 stack_setup:
 
@@ -223,7 +254,7 @@ stack_setup:
     bl rt_asm_cpu_id
     mov lr, r10
     add r0, r0, #1
-    
+
 #else
     mov r0, #1
 #endif
@@ -293,7 +324,7 @@ rt_hw_mmu_switch:
     mov r0, #0
     mcr p15, 0, r0, c8, c7, 0
     mcr p15, 0, r0, c7, c5, 0       //iciallu
-    mcr p15, 0, r0, c7, c5, 6       //bpiall 
+    mcr p15, 0, r0, c7, c5, 6       //bpiall
 
     dsb
     isb

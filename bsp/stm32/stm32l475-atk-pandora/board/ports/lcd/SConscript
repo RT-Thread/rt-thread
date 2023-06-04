@@ -1,5 +1,4 @@
 from building import *
-import os
 
 cwd = GetCurrentDir()
 src = ['drv_lcd.c']

@@ -57,6 +57,10 @@ const pin_map_t pin_map_table[]=
     {D33, GET_PIN(C,6), "i2c1"},        /* I2C-SCL (Wire) */
     {D34, GET_PIN(A,2), "uart2"},       /* Serial2-Tx */
     {D35, GET_PIN(A,3), "uart2"},       /* Serial2-Rx */
+    {D36, GET_PIN(D,7)},                /* BSP: LCD CS */
+    {D37, GET_PIN(B,6)},                /* BSP: LCD RESET */
+    {D38, GET_PIN(B,4)},                /* BSP: LCD RW/DC (data or command) */
+    {D39, GET_PIN(B,7), "pwm4", 2},     /* BSP: LCD POWER */
     {A0, GET_PIN(C,2), "adc1", 3},      /* ADC */
     {A1, GET_PIN(C,4), "adc1", 13},     /* ADC */
     {A2, RT_NULL, "adc1", RT_ADC_INTERN_CH_VREF},   /* ADC, On-Chip: internal reference voltage */

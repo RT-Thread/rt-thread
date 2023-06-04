@@ -1,4 +1,4 @@
-name: RT-Thread
+name: RT-Thread BSP build check
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -38,6 +38,7 @@ jobs:
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
                 - "airm2m/air32f103"
+                #- "airm2m/air105"
                 - "acm32/acm32f0x0-nucleo"
                 - "CME_M7"
                 - "apollo2"
@@ -62,12 +63,14 @@ jobs:
                 - "at32/at32f425-start"
                 - "at32/at32f435-start"
                 - "at32/at32f437-start"
+                - "yichip/yc3122-pos"
                 - "hc32/ev_hc32f4a0_lqfp176"
                 - "hc32/ev_hc32f460_lqfp100_v2"
                 - "hc32l196"
                 #- "tae32f5300"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "sam7x"   
+                - "hk32/hk32f030c8-mini"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -87,6 +90,7 @@ jobs:
                 - "stm32/stm32l476-st-nucleo"
                 - "stm32/stm32l496-ali-developer"
                 - "stm32/stm32l496-st-nucleo"
+                - "stm32/stm32l496-st-discovery"
                 - "stm32/stm32f072-st-nucleo"
                 - "stm32/stm32f091-st-nucleo"
                 - "stm32/stm32f103-100ask-mini"
@@ -256,6 +260,8 @@ jobs:
                 - "microchip/same54"
                 - "microchip/same70"
                 - "smartfusion2"
+                - "maxim/max32660-evsys"
+                - "efm32"
          -  RTT_BSP: "mips" 
             RTT_TOOL_CHAIN: "sourcery-mips"
             SUB_RTT_BSP:  
@@ -280,6 +286,11 @@ jobs:
                 - "bluetrum/ab32vg1-ab-prougen"
                 - "bouffalo_lab/bl60x"
                 - "bouffalo_lab/bl70x"
+         -  RTT_BSP: "llvm-arm" 
+            RTT_TOOL_CHAIN: "llvm-arm"
+            SUB_RTT_BSP:  
+                - "stm32/stm32l475-atk-pandora"
+                - "renesas/ra6m3-hmi-board"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -291,7 +302,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
+          sudo apt-get -qq install gcc-multilib libncurses5 libncurses5-dev libncursesw5-dev scons
           sudo python -m pip install --upgrade pip -qq
           pip install requests -qq
           git config --global http.postBuffer 524288000
@@ -307,6 +318,16 @@ jobs:
           sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
           /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
           echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
+
+      - name: Install LLVM-Arm ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'llvm-arm' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
+          sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+          /opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin/clang --version
+          echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
+          echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
 
       - name: Install AArch64 ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-aarch64' && success() }}
@@ -330,7 +351,7 @@ jobs:
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv64-unknown-elf' && success() }}
         run: |
           wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
-          sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+          sudo tar zxf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
           /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
 
@@ -338,7 +359,7 @@ jobs:
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv-none-embed' && success() }}
         run: |
           wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
-          sudo tar zxvf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+          sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
           /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
 

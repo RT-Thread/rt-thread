@@ -17,6 +17,7 @@
  * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  * 2021-11-14     Meco Man     add rtlegacy.h for compatibility
  * 2022-06-04     Meco Man     remove strnlen
+ * 2023-05-20     Bernard      add rtatomic.h header file to included files.
  */
 
 #ifndef __RT_THREAD_H__
@@ -27,6 +28,7 @@
 #include <rtdef.h>
 #include <rtservice.h>
 #include <rtm.h>
+#include <rtatomic.h>
 #ifdef RT_USING_LEGACY
 #include <rtlegacy.h>
 #endif
