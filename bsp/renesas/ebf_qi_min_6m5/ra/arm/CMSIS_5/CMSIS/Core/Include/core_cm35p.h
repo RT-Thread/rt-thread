@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     core_cm35p.h
  * @brief    CMSIS Cortex-M35P Core Peripheral Access Layer Header File
- * @version  V1.1.2
- * @date     04. June 2021
+ * @version  V1.1.3
+ * @date     13. October 2021
  ******************************************************************************/
 /*
  * Copyright (c) 2018-2021 Arm Limited. All rights reserved.
@@ -519,7 +519,7 @@ typedef struct
   __IOM uint32_t AFSR;                   /*!< Offset: 0x03C (R/W)  Auxiliary Fault Status Register */
   __IM  uint32_t ID_PFR[2U];             /*!< Offset: 0x040 (R/ )  Processor Feature Register */
   __IM  uint32_t ID_DFR;                 /*!< Offset: 0x048 (R/ )  Debug Feature Register */
-  __IM  uint32_t ID_ADR;                 /*!< Offset: 0x04C (R/ )  Auxiliary Feature Register */
+  __IM  uint32_t ID_AFR;                 /*!< Offset: 0x04C (R/ )  Auxiliary Feature Register */
   __IM  uint32_t ID_MMFR[4U];            /*!< Offset: 0x050 (R/ )  Memory Model Feature Register */
   __IM  uint32_t ID_ISAR[6U];            /*!< Offset: 0x060 (R/ )  Instruction Set Attributes Register */
   __IM  uint32_t CLIDR;                  /*!< Offset: 0x078 (R/ )  Cache Level ID register */
@@ -528,7 +528,10 @@ typedef struct
   __IOM uint32_t CSSELR;                 /*!< Offset: 0x084 (R/W)  Cache Size Selection Register */
   __IOM uint32_t CPACR;                  /*!< Offset: 0x088 (R/W)  Coprocessor Access Control Register */
   __IOM uint32_t NSACR;                  /*!< Offset: 0x08C (R/W)  Non-Secure Access Control Register */
-        uint32_t RESERVED3[92U];
+        uint32_t RESERVED7[21U];
+  __IOM uint32_t SFSR;                   /*!< Offset: 0x0E4 (R/W)  Secure Fault Status Register */
+  __IOM uint32_t SFAR;                   /*!< Offset: 0x0E8 (R/W)  Secure Fault Address Register */
+        uint32_t RESERVED3[69U];
   __OM  uint32_t STIR;                   /*!< Offset: 0x200 ( /W)  Software Triggered Interrupt Register */
         uint32_t RESERVED4[15U];
   __IM  uint32_t MVFR0;                  /*!< Offset: 0x240 (R/ )  Media and VFP Feature Register 0 */
@@ -2256,6 +2259,15 @@ typedef struct
 #endif /* defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U) */
 /*@} */
 
+
+/**
+  \ingroup    CMSIS_core_register
+  \defgroup   CMSIS_register_aliases     Backwards Compatibility Aliases
+  \brief      Register alias definitions for backwards compatibility.
+  @{
+ */
+#define ID_ADR  (ID_AFR)    /*!< SCB Auxiliary Feature Register */
+/*@} */
 
 
 /*******************************************************************************

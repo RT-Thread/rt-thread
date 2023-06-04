@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -32,6 +32,9 @@
  #define BSP_PRV_AIRCR_VECTKEY    (0x05FA0000U)
  #define RA_NOT_DEFINED           (0)
 
+/* Branch T3 Instruction (IMM11=-2) */
+ #define BSP_PRV_INFINITE_LOOP    (0xE7FE)
+
 /***********************************************************************************************************************
  * Typedef definitions
  **********************************************************************************************************************/
@@ -55,39 +58,34 @@ typedef BSP_CMSE_NONSECURE_CALL void (*volatile bsp_nonsecure_func_t)(void);
  #endif
 
  #if   defined(__IAR_SYSTEMS_ICC__) && BSP_TZ_SECURE_BUILD
-  #pragma section=".tz_flash_nsc_start"
+
   #pragma section=".tz_flash_ns_start"
-  #pragma section=".tz_ram_nsc_start"
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_flash = (uint32_t *) __section_begin(".tz_flash_ns_start");
+  #pragma section="Veneer$$CMSE"
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_callable_flash = (uint32_t *) __section_begin(
+    "Veneer$$CMSE");
   #pragma section=".tz_ram_ns_start"
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_ram = (uint32_t *) __section_begin(".tz_ram_ns_start");
+  #pragma section=".tz_ram_nsc_start"
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_callable_ram = (uint32_t *) __section_begin(
+    ".tz_ram_nsc_start");
   #pragma section=".tz_data_flash_ns_start"
-  #pragma section=".tz_sdram_ns_start"
-  #pragma section=".tz_qspi_flash_ns_start"
-  #pragma section=".tz_ospi_device_0_ns_start"
-  #pragma section=".tz_ospi_device_1_ns_start"
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_data_flash = (uint32_t *) __section_begin(
+    ".tz_data_flash_ns_start");
 
-/* &__tz_<REGION>_C is the address of the non-secure callable section. Must assign value to this variable or
- * linker will give error. */
-
-/* &__tz_<REGION>_N is the start address of the non-secure region. */
-BSP_DONT_REMOVE void const * const __tz_FLASH_C BSP_ALIGN_VARIABLE(1024) @".tz_flash_nsc_start" = 0;
-BSP_DONT_REMOVE void const * const __tz_FLASH_N BSP_ALIGN_VARIABLE(32768) @".tz_flash_ns_start" = 0;
-BSP_DONT_REMOVE void * __tz_RAM_C               BSP_ALIGN_VARIABLE(1024) @".tz_ram_nsc_start";
-BSP_DONT_REMOVE void * __tz_RAM_N               BSP_ALIGN_VARIABLE(8192) @".tz_ram_ns_start";
-BSP_DONT_REMOVE void * __tz_DATA_FLASH_N        BSP_ALIGN_VARIABLE(1024) @".tz_data_flash_ns_start";
-
-  #if BSP_FEATURE_SDRAM_START_ADDRESS
-BSP_DONT_REMOVE void * __tz_SDRAM_N @".tz_sdram_ns_start";
-  #endif
-BSP_DONT_REMOVE void * __tz_QSPI_FLASH_N @".tz_qspi_flash_ns_start";
-  #if BSP_FEATURE_OSPI_DEVICE_0_START_ADDRESS
-BSP_DONT_REMOVE void * __tz_OSPI_DEVICE_0_N @".tz_ospi_device_0_ns_start";
-  #endif
-  #if BSP_FEATURE_OSPI_DEVICE_1_START_ADDRESS
-BSP_DONT_REMOVE void * __tz_OSPI_DEVICE_1_N @".tz_ospi_device_1_ns_start";
-  #endif
-
-BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_flash = (uint32_t *) &__tz_FLASH_N;
  #elif defined(__ARMCC_VERSION)
+  #if BSP_FEATURE_BSP_HAS_ITCM
+extern const uint32_t Image$$__tz_ITCM_N$$Base;
+extern const uint32_t Image$$__tz_ITCM_S$$Base;
+  #endif
+  #if BSP_FEATURE_BSP_HAS_DTCM
+extern const uint32_t Image$$__tz_DTCM_N$$Base;
+extern const uint32_t Image$$__tz_DTCM_S$$Base;
+  #endif
+  #if BSP_FEATURE_BSP_HAS_STBRAMSABAR
+extern const uint32_t Image$$__tz_STANDBY_SRAM_N$$Base;
+extern const uint32_t Image$$__tz_STANDBY_SRAM_S$$Base;
+  #endif
 extern const uint32_t Image$$__tz_FLASH_N$$Base;
 extern const uint32_t Image$$__tz_FLASH_C$$Base;
 extern const uint32_t Image$$__tz_FLASH_S$$Base;
@@ -111,6 +109,18 @@ extern const uint32_t Image$$__tz_OPTION_SETTING_S_S$$Base;
 extern const uint32_t Image$$__tz_ID_CODE_N$$Base;
 extern const uint32_t Image$$__tz_ID_CODE_S$$Base;
 
+  #if BSP_FEATURE_BSP_HAS_ITCM
+   #define __tz_ITCM_N               Image$$__tz_ITCM_N$$Base
+   #define __tz_ITCM_S               Image$$__tz_ITCM_S$$Base
+  #endif
+  #if BSP_FEATURE_BSP_HAS_DTCM
+   #define __tz_DTCM_N               Image$$__tz_DTCM_N$$Base
+   #define __tz_DTCM_S               Image$$__tz_DTCM_S$$Base
+  #endif
+  #if BSP_FEATURE_BSP_HAS_STBRAMSABAR
+   #define __tz_STANDBY_SRAM_N       Image$$__tz_STANDBY_SRAM_N$$Base
+   #define __tz_STANDBY_SRAM_S       Image$$__tz_STANDBY_SRAM_S$$Base
+  #endif
   #define __tz_FLASH_N               Image$$__tz_FLASH_N$$Base
   #define __tz_FLASH_C               Image$$__tz_FLASH_C$$Base
   #define __tz_FLASH_S               Image$$__tz_FLASH_S$$Base
@@ -136,6 +146,18 @@ extern const uint32_t Image$$__tz_ID_CODE_S$$Base;
 
 /* Assign region addresses to pointers so that AC6 includes symbols that can be used to determine the
  * start addresses of Secure, Non-secure and Non-secure Callable regions. */
+  #if BSP_FEATURE_BSP_HAS_ITCM
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_itcm = &__tz_ITCM_N;
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_secure_itcm    = &__tz_ITCM_S;
+  #endif
+  #if BSP_FEATURE_BSP_HAS_DTCM
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_dtcm = &__tz_DTCM_N;
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_secure_dtcm    = &__tz_DTCM_S;
+  #endif
+  #if BSP_FEATURE_BSP_HAS_STBRAMSABAR
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_standby_sram = &__tz_STANDBY_SRAM_N;
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_secure_standby_sram    = &__tz_STANDBY_SRAM_S;
+  #endif
 BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_flash          = &__tz_FLASH_N;
 BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_callable_flash = &__tz_FLASH_C;
 BSP_DONT_REMOVE uint32_t const * const gp_start_of_secure_flash             = &__tz_FLASH_S;
@@ -165,8 +187,19 @@ BSP_DONT_REMOVE uint32_t const * const gp_start_of_secure_id_code             = 
   #endif
 
  #elif defined(__GNUC__)
+
 extern const uint32_t FLASH_NS_IMAGE_START;
-BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_flash = &FLASH_NS_IMAGE_START;
+extern const uint32_t __tz_FLASH_C;
+extern const uint32_t __tz_DATA_FLASH_N;
+extern const uint32_t __tz_RAM_N;
+extern const uint32_t __tz_RAM_C;
+
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_flash          = &FLASH_NS_IMAGE_START;
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_callable_flash = (uint32_t *) &__tz_FLASH_C;
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_data_flash     = (uint32_t *) &__tz_DATA_FLASH_N;
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_ram            = (uint32_t *) &__tz_RAM_N;
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_callable_ram   = (uint32_t *) &__tz_RAM_C;
+
  #endif
 
  #if BSP_TZ_SECURE_BUILD
@@ -192,6 +225,31 @@ void R_BSP_NonSecureEnter (void)
     uint32_t const     * p_ns_reset_address = (uint32_t const *) ((uint32_t) p_ns_vector_table + sizeof(uint32_t));
     bsp_nonsecure_func_t p_ns_reset         = (bsp_nonsecure_func_t) (*p_ns_reset_address);
 
+  #if BSP_TZ_CFG_NON_SECURE_APPLICATION_FALLBACK
+
+    /* Check if the NS application exists. If the address of the Reset_Handler is all '1's, then assume that
+     * the NS application has not been programmed.
+     *
+     * If the secure application attempts to jump to an invalid instruction, a HardFault will occur. If the
+     * MCU is in NSECSD state, then the debugger will be unable to connect and program the NS Application. Jumping to
+     * a valid instruction ensures that the debugger will be able to connect.
+     */
+    if (UINT32_MAX == *p_ns_reset_address)
+    {
+        p_ns_reset = (bsp_nonsecure_func_t) gp_start_of_nonsecure_ram;
+
+        /* Write an infinite loop into start of NS RAM (Branch T3 Instruction (b.n <gp_start_of_nonsecure_ram>)). */
+        uint16_t * infinite_loop = (uint16_t *) gp_start_of_nonsecure_ram;
+        *infinite_loop = BSP_PRV_INFINITE_LOOP;
+
+        /* Set the NS stack pointer to a valid location in NS RAM. */
+        __TZ_set_MSP_NS((uint32_t) gp_start_of_nonsecure_ram + 0x20U);
+
+        /* Jump to the infinite loop. */
+        p_ns_reset();
+    }
+  #endif
+
     /* Set the NS vector table address */
     SCB_NS->VTOR = (uint32_t) p_ns_vector_table;
 
@@ -213,6 +271,19 @@ void R_BSP_NonSecureEnter (void)
  **********************************************************************************************************************/
 void R_BSP_SecurityInit (void)
 {
+    /* Disable PRCR for SARs. */
+    R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_SAR);
+
+  #if 0 == BSP_FEATURE_TZ_HAS_DLM
+
+    /* If DLM is not implemented, then the TrustZone partitions must be set at run-time. */
+    R_PSCU->CFSAMONA = (uint32_t) gp_start_of_nonsecure_flash & R_PSCU_CFSAMONA_CFS2_Msk;
+    R_PSCU->CFSAMONB = (uint32_t) gp_start_of_nonsecure_callable_flash & R_PSCU_CFSAMONB_CFS1_Msk;
+    R_PSCU->DFSAMON  = (uint32_t) gp_start_of_nonsecure_data_flash & R_PSCU_DFSAMON_DFS_Msk;
+    R_PSCU->SSAMONA  = (uint32_t) gp_start_of_nonsecure_ram & R_PSCU_SSAMONA_SS2_Msk;
+    R_PSCU->SSAMONB  = (uint32_t) gp_start_of_nonsecure_callable_ram & R_PSCU_SSAMONB_SS1_Msk;
+  #endif
+
     /* Setting SAU_CTRL.ALLNS to 1 allows the security attribution of all addresses to be set by the IDAU in the
      * system. */
     SAU->CTRL = SAU_CTRL_ALLNS_Msk;
@@ -247,11 +318,11 @@ void R_BSP_SecurityInit (void)
                  ((FPU_FPCCR_CLRONRET_VAL << FPU_FPCCR_CLRONRET_Pos) & FPU_FPCCR_CLRONRET_Msk);
   #endif
 
-    /* Disable PRCR for SARs. */
-    R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_SAR);
+  #if BSP_FEATURE_BSP_HAS_TZFSAR
 
     /* Set TrustZone filter to Secure. */
     R_TZF->TZFSAR = ~R_TZF_TZFSAR_TZFSA0_Msk;
+  #endif
 
     /* Set TrustZone filter exception response. */
     R_TZF->TZFPT  = BSP_PRV_TZ_REG_KEY + 1U;
@@ -266,7 +337,9 @@ void R_BSP_SecurityInit (void)
     R_PSCU->MSSAR = BSP_TZ_CFG_MSSAR;
 
     /* Initialize Type 2 SARs. */
-    R_CPSCU->CSAR    = BSP_TZ_CFG_CSAR;        /* Cache Security Attribution. */
+  #ifdef BSP_TZ_CFG_CSAR
+    R_CPSCU->CSAR = BSP_TZ_CFG_CSAR;           /* Cache Security Attribution. */
+  #endif
     R_SYSTEM->RSTSAR = BSP_TZ_CFG_RSTSAR;      /* RSTSRn Security Attribution. */
     R_SYSTEM->LVDSAR = BSP_TZ_CFG_LVDSAR;      /* LVD Security Attribution. */
     R_SYSTEM->CGFSAR = BSP_TZ_CFG_CGFSAR;      /* CGC Security Attribution. */
@@ -277,11 +350,21 @@ void R_BSP_SecurityInit (void)
   #endif
     R_CPSCU->ICUSARA = BSP_TZ_CFG_ICUSARA;     /* External IRQ Security Attribution. */
     R_CPSCU->ICUSARB = BSP_TZ_CFG_ICUSARB;     /* NMI Security Attribution. */
+  #ifdef BSP_TZ_CFG_ICUSARC
     R_CPSCU->ICUSARC = BSP_TZ_CFG_ICUSARC;     /* DMAC Channel Security Attribution. */
+  #endif
+  #ifdef BSP_TZ_CFG_DMASARA
+    R_CPSCU->DMASARA = BSP_TZ_CFG_DMASARA;     /* DMAC Channel Security Attribution. */
+  #endif
+  #ifdef BSP_TZ_CFG_ICUSARD
     R_CPSCU->ICUSARD = BSP_TZ_CFG_ICUSARD;     /* SELSR0 Security Attribution. */
+  #endif
     R_CPSCU->ICUSARE = BSP_TZ_CFG_ICUSARE;     /* WUPEN0 Security Attribution. */
   #ifdef BSP_TZ_CFG_ICUSARF
     R_CPSCU->ICUSARF = BSP_TZ_CFG_ICUSARF;     /* WUPEN1 Security Attribution. */
+  #endif
+  #ifdef BSP_TZ_CFG_TEVTRCR
+    R_CPSCU->TEVTRCR = BSP_TZ_CFG_TEVTRCR;     /* Trusted Event Route Enable. */
   #endif
     R_FCACHE->FSAR     = BSP_TZ_CFG_FSAR;      /* FLWT and FCKMHZ Security Attribution. */
     R_CPSCU->SRAMSAR   = BSP_TZ_CFG_SRAMSAR;   /* SRAM Security Attribution. */
@@ -290,7 +373,9 @@ void R_BSP_SecurityInit (void)
     R_CPSCU->BUSSARA   = BSP_TZ_CFG_BUSSARA;   /* Security Attribution Register A for the BUS Control Registers. */
     R_CPSCU->BUSSARB   = BSP_TZ_CFG_BUSSARB;   /* Security Attribution Register B for the BUS Control Registers. */
 
-  #if BSP_TZ_CFG_ICUSARC != UINT32_MAX
+  #if (defined(BSP_TZ_CFG_ICUSARC) && (BSP_TZ_CFG_ICUSARC != UINT32_MAX)) || \
+    (defined(BSP_TZ_CFG_DMASARA) && (BSP_TZ_CFG_DMASARA != UINT32_MAX))
+
     R_BSP_MODULE_START(FSP_IP_DMAC, 0);
 
     /* If any DMAC channels are required by secure program, disable nonsecure write access to DMAST

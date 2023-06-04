@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -23,6 +23,10 @@
 
 /** Common macro for FSP header files. There is also a corresponding FSP_FOOTER macro at the end of this file. */
 FSP_HEADER
+
+#if __has_include("internal/bsp_module_stop_internal.h")
+ #include "internal/bsp_module_stop_internal.h"
+#endif
 
 /*******************************************************************************************************************//**
  * @addtogroup BSP_MCU
@@ -48,7 +52,7 @@ FSP_HEADER
 #define R_BSP_MODULE_START(ip, channel)         {FSP_CRITICAL_SECTION_DEFINE;                                   \
                                                  FSP_CRITICAL_SECTION_ENTER;                                    \
                                                  BSP_MSTP_REG_ ## ip(channel) &= ~BSP_MSTP_BIT_ ## ip(channel); \
-                                                 BSP_MSTP_REG_ ## ip(channel);                                  \
+                                                 FSP_REGISTER_READ(BSP_MSTP_REG_ ## ip(channel));               \
                                                  FSP_CRITICAL_SECTION_EXIT;}
 
 /*******************************************************************************************************************//**
@@ -60,7 +64,7 @@ FSP_HEADER
 #define R_BSP_MODULE_STOP(ip, channel)          {FSP_CRITICAL_SECTION_DEFINE;                                  \
                                                  FSP_CRITICAL_SECTION_ENTER;                                   \
                                                  BSP_MSTP_REG_ ## ip(channel) |= BSP_MSTP_BIT_ ## ip(channel); \
-                                                 BSP_MSTP_REG_ ## ip(channel);                                 \
+                                                 FSP_REGISTER_READ(BSP_MSTP_REG_ ## ip(channel));              \
                                                  FSP_CRITICAL_SECTION_EXIT;}
 
 /** @} (end addtogroup BSP_MCU) */
@@ -69,20 +73,35 @@ FSP_HEADER
  #define BSP_MSTP_REG_FSP_IP_GPT(channel)       R_MSTP->MSTPCRD
  #define BSP_MSTP_BIT_FSP_IP_GPT(channel)       ((BSP_FEATURE_BSP_MSTP_GPT_MSTPD5_MAX_CH >= \
                                                   channel) ? (1U << 5U) : (1U << 6U));
- #define BSP_MSTP_REG_FSP_IP_AGT(channel)       R_MSTP->MSTPCRD
- #define BSP_MSTP_BIT_FSP_IP_AGT(channel)       (1U << (3U - channel));
+
+ #ifndef BSP_MSTP_REG_FSP_IP_AGT
+  #define BSP_MSTP_REG_FSP_IP_AGT(channel)      R_MSTP->MSTPCRD
+ #endif
+ #ifndef BSP_MSTP_BIT_FSP_IP_AGT
+  #define BSP_MSTP_BIT_FSP_IP_AGT(channel)      (1U << (3U - channel));
+ #endif
+
  #define BSP_MSTP_REG_FSP_IP_POEG(channel)      R_MSTP->MSTPCRD
  #define BSP_MSTP_BIT_FSP_IP_POEG(channel)      (1U << (14U));
 #else
  #if (2U == BSP_FEATURE_ELC_VERSION)
-  #define BSP_MSTP_REG_FSP_IP_GPT(channel)      R_MSTP->MSTPCRE
-  #define BSP_MSTP_BIT_FSP_IP_GPT(channel)      (1U << 31);
-  #define BSP_MSTP_REG_FSP_IP_AGT(channel)      R_MSTP->MSTPCRD
-  #define BSP_MSTP_BIT_FSP_IP_AGT(channel)      (1U << (3U - channel));
+  #if BSP_MCU_GROUP_RA6T2
+   #define BSP_MSTP_REG_FSP_IP_GPT(channel)     R_MSTP->MSTPCRE
+   #define BSP_MSTP_BIT_FSP_IP_GPT(channel)     (1U << 31);
+   #define BSP_MSTP_REG_FSP_IP_AGT(channel)     R_MSTP->MSTPCRD
+   #define BSP_MSTP_BIT_FSP_IP_AGT(channel)     (1U << (3U - channel));
+  #else
+   #define BSP_MSTP_REG_FSP_IP_GPT(channel)     R_MSTP->MSTPCRE
+   #define BSP_MSTP_BIT_FSP_IP_GPT(channel)     (1U << (31 - channel));
+   #define BSP_MSTP_REG_FSP_IP_AGT(channel)     R_MSTP->MSTPCRD
+   #define BSP_MSTP_BIT_FSP_IP_AGT(channel)     (1U << (5U - channel));
+  #endif
   #define BSP_MSTP_REG_FSP_IP_KEY(channel)      R_MSTP->MSTPCRE
   #define BSP_MSTP_BIT_FSP_IP_KEY(channel)      (1U << 4U);
   #define BSP_MSTP_REG_FSP_IP_POEG(channel)     R_MSTP->MSTPCRD
   #define BSP_MSTP_BIT_FSP_IP_POEG(channel)     (1U << (14U - channel));
+  #define BSP_MSTP_REG_FSP_IP_ULPT(channel)     R_MSTP->MSTPCRE
+  #define BSP_MSTP_BIT_FSP_IP_ULPT(channel)     (1U << (9U - channel));
  #else
   #define BSP_MSTP_REG_FSP_IP_GPT(channel)      R_MSTP->MSTPCRE
   #define BSP_MSTP_BIT_FSP_IP_GPT(channel)      (1U << (31 - channel));
@@ -104,6 +123,8 @@ FSP_HEADER
 #define BSP_MSTP_BIT_FSP_IP_CAN(channel)        (1U << (2U - channel));
 #define BSP_MSTP_REG_FSP_IP_CEC(channel)        R_MSTP->MSTPCRB
 #define BSP_MSTP_BIT_FSP_IP_CEC(channel)        (1U << (3U));
+#define BSP_MSTP_REG_FSP_IP_I3C(channel)        R_MSTP->MSTPCRB
+#define BSP_MSTP_BIT_FSP_IP_I3C(channel)        (1U << (BSP_FEATURE_I3C_MSTP_OFFSET - channel));
 #define BSP_MSTP_REG_FSP_IP_IRDA(channel)       R_MSTP->MSTPCRB
 #define BSP_MSTP_BIT_FSP_IP_IRDA(channel)       (1U << (5U - channel));
 #define BSP_MSTP_REG_FSP_IP_QSPI(channel)       R_MSTP->MSTPCRB
@@ -150,12 +171,14 @@ FSP_HEADER
 #define BSP_MSTP_BIT_FSP_IP_DOC(channel)        (1U << (13U - channel));
 #define BSP_MSTP_REG_FSP_IP_ELC(channel)        R_MSTP->MSTPCRC
 #define BSP_MSTP_BIT_FSP_IP_ELC(channel)        (1U << (14U - channel));
+#define BSP_MSTP_REG_FSP_IP_CEU(channel)        R_MSTP->MSTPCRC
+#define BSP_MSTP_BIT_FSP_IP_CEU(channel)        (1U << (16U - channel));
 #define BSP_MSTP_REG_FSP_IP_TFU(channel)        R_MSTP->MSTPCRC
 #define BSP_MSTP_BIT_FSP_IP_TFU(channel)        (1U << (20U - channel));
 #define BSP_MSTP_REG_FSP_IP_IIRFA(channel)      R_MSTP->MSTPCRC
 #define BSP_MSTP_BIT_FSP_IP_IIRFA(channel)      (1U << (21U - channel));
 #define BSP_MSTP_REG_FSP_IP_CANFD(channel)      R_MSTP->MSTPCRC
-#define BSP_MSTP_BIT_FSP_IP_CANFD(channel)      (1U << (27U));
+#define BSP_MSTP_BIT_FSP_IP_CANFD(channel)      (1U << (27U - channel));
 #define BSP_MSTP_REG_FSP_IP_TRNG(channel)       R_MSTP->MSTPCRC
 #define BSP_MSTP_BIT_FSP_IP_TRNG(channel)       (1U << (28U - channel));
 #define BSP_MSTP_REG_FSP_IP_SCE(channel)        R_MSTP->MSTPCRC
