@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -16,8 +16,7 @@
  * WITHOUT LIMITATION, ANY DIRECT, CONSEQUENTIAL, SPECIAL, INDIRECT, PUNITIVE, OR INCIDENTAL DAMAGES; ANY LOST PROFITS,
  * OTHER ECONOMIC DAMAGE, PROPERTY DAMAGE, OR PERSONAL INJURY; AND EVEN IF RENESAS HAS BEEN ADVISED OF THE POSSIBILITY
  * OF SUCH LOSS, DAMAGES, CLAIMS OR COSTS.
- **********************************************************************************************************************/
-
+ **********************************************************************************************************************/ 
 /*******************************************************************************************************************//**
  * @ingroup RENESAS_INTERFACES
  * @defgroup IOPORT_API I/O Port Interface
@@ -70,6 +69,12 @@ typedef enum e_ioport_peripheral
 
     /** Pin will function as an AGT peripheral pin */
     IOPORT_PERIPHERAL_AGT = (0x01UL << IOPORT_PRV_PFS_PSEL_OFFSET),
+	
+	 /** Pin will function as an AGT peripheral pin */
+    IOPORT_PERIPHERAL_AGTW = (0x01UL << IOPORT_PRV_PFS_PSEL_OFFSET),
+	
+	 /** Pin will function as an AGT peripheral pin */
+    IOPORT_PERIPHERAL_AGT1 = (0x18UL << IOPORT_PRV_PFS_PSEL_OFFSET),
 
     /** Pin will function as a GPT peripheral pin */
     IOPORT_PERIPHERAL_GPT0 = (0x02UL << IOPORT_PRV_PFS_PSEL_OFFSET),
@@ -119,6 +124,9 @@ typedef enum e_ioport_peripheral
     /** Pin will function as an SCI DEn peripheral pin */
     IOPORT_PERIPHERAL_DE_SCI0_2_4_6_8 = (0x0EUL << IOPORT_PRV_PFS_PSEL_OFFSET),
 
+    /** Pin will function as a CEU peripheral pin */
+    IOPORT_PERIPHERAL_CEU = (0x0FUL << IOPORT_PRV_PFS_PSEL_OFFSET),
+    
     /** Pin will function as a CAN peripheral pin */
     IOPORT_PERIPHERAL_CAN = (0x10UL << IOPORT_PRV_PFS_PSEL_OFFSET),
 
@@ -175,23 +183,13 @@ typedef enum e_ioport_peripheral
 
     /** Pin will function as a PGAOUT peripheral pin */
     IOPORT_PERIPHERAL_PGAOUT1 = (0x1EUL << IOPORT_PRV_PFS_PSEL_OFFSET),
+
+    /** Pin will function as a MIPI peripheral pin */
+    IOPORT_PERIPHERAL_MIPI = (0x1FUL << IOPORT_PRV_PFS_PSEL_OFFSET),
+
+    /** Pin will function as a ULPT peripheral pin */
+    IOPORT_PERIPHERAL_ULPT = (0x1EUL << IOPORT_PRV_PFS_PSEL_OFFSET),
 } ioport_peripheral_t;
-
-/* DEPRECATED Superset of Ethernet channels. */
-typedef enum e_ioport_eth_ch
-{
-    IOPORT_ETHERNET_CHANNEL_0 = 0x10,  ///< Used to select Ethernet channel 0
-    IOPORT_ETHERNET_CHANNEL_1 = 0x20,  ///< Used to select Ethernet channel 1
-    IOPORT_ETHERNET_CHANNEL_END        ///< Marks end of enum - used by parameter checking
-} ioport_ethernet_channel_t;
-
-/* DEPRECATED Superset of Ethernet PHY modes. */
-typedef enum e_ioport_eth_mode
-{
-    IOPORT_ETHERNET_MODE_RMII = 0x00,  ///< Ethernet PHY mode set to MII
-    IOPORT_ETHERNET_MODE_MII  = 0x10,  ///< Ethernet PHY mode set to RMII
-    IOPORT_ETHERNET_MODE_END           ///< Marks end of enum - used by parameter checking
-} ioport_ethernet_mode_t;
 
 /** Options to configure pin functions  */
 typedef enum e_ioport_cfg_options
@@ -293,15 +291,6 @@ typedef struct st_ioport_api
      * @param[in]  pin_value            Level to be written to pin output event.
      */
     fsp_err_t (* pinEventOutputWrite)(ioport_ctrl_t * const p_ctrl, bsp_io_port_pin_t pin, bsp_io_level_t pin_value);
-
-    /* DEPRECATED Configure the PHY mode of the Ethernet channels.
-     * @par Implemented as
-     * - @ref R_IOPORT_EthernetModeCfg()
-     * @param[in]  channel              Channel configuration will be set for.
-     * @param[in]  mode                 PHY mode to set the channel to.
-     */
-    fsp_err_t (* pinEthernetModeCfg)(ioport_ctrl_t * const p_ctrl, ioport_ethernet_channel_t channel,
-                                     ioport_ethernet_mode_t mode);
 
     /** Read level of a pin.
      * @par Implemented as
