@@ -677,9 +677,21 @@ void msh_auto_complete_path(char *path)
             if (multi == 1)
             {
                 struct stat buffer = {0};
-                if ((stat(path, &buffer) == 0) && (S_ISDIR(buffer.st_mode)))
+                if ((stat(path, &buffer) == 0))
                 {
-                    strcat(path, "/");
+                    if (S_ISDIR(buffer.st_mode))
+                    {
+                        strcat(path, "/");
+                    }
+                    else if (S_ISLNK(buffer.st_mode))
+                    {
+                        DIR *dir = opendir(path);
+                        if (dir)
+                        {
+                            closedir(dir);
+                            strcat(path, "/");
+                        }
+                    }
                 }
             }
         }
