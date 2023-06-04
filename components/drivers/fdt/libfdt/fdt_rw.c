@@ -97,7 +97,7 @@ static int _fdt_splice(void *fdt, void *splicepoint, int oldlen, int newlen)
     char *p = splicepoint;
     char *end = (char *)fdt + _fdt_data_size(fdt);
     
-    if (oldlen <= 0) 
+    if (oldlen <= 0)
         return -FDT_ERR_BADOFFSET;
     if (((p + oldlen) < p) || ((p + oldlen) > end))
         return -FDT_ERR_BADOFFSET;
