@@ -11,6 +11,7 @@ pico-sdk/src/rp2_common/hardware_flash/flash.c
 pico-sdk/src/rp2_common/pico_multicore/multicore.c
 pico-sdk/src/rp2_common/pico_stdlib/stdlib.c
 pico-sdk/src/rp2_common/hardware_gpio/gpio.c
+pico-sdk/src/rp2_common/hardware_adc/adc.c
 pico-sdk/src/rp2_common/hardware_claim/claim.c
 pico-sdk/src/rp2_common/hardware_sync/sync.c
 pico-sdk/src/rp2_common/pico_platform/platform.c
@@ -65,6 +66,7 @@ path = [
     cwd + '/pico-sdk/src/rp2_common/pico_multicore/include',
     cwd + '/pico-sdk/src/common/pico_stdlib/include',
     cwd + '/pico-sdk/src/rp2_common/hardware_gpio/include',
+    cwd + '/pico-sdk/src/rp2_common/hardware_adc/include',
     cwd + '/pico-sdk/src/common/pico_base/include',
     cwd + '/pico-sdk/src/boards/include',
     cwd + '/pico-sdk/src/rp2_common/pico_platform/include',

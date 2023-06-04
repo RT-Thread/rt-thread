@@ -97,7 +97,22 @@ menu "On-chip Peripheral Drivers"
                         range 0 28
                         default 12
                 endif
+        endif
 
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC0
+                bool "Enable ADC0 (GP26)"
+                default n
+            config BSP_USING_ADC1
+                bool "Enable ADC1 (GP27)"
+                default n
+            config BSP_USING_ADC2
+                bool "Enable ADC2 (GP28)"
+                default n
         endif
 endmenu
 
