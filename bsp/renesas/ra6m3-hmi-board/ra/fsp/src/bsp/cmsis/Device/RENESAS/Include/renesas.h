@@ -16883,7 +16883,7 @@ typedef struct                         /*!< (@ 0x40083000) R_I3C0 Structure     
             __IOM uint32_t PNDINT : 4; /*!< [3..0] Pending Interrupt                                                  */
             uint32_t              : 1;
             __IOM uint32_t PRTE   : 1; /*!< [5..5] Protocol Error                                                     */
-            __IOM uint32_t ACTMD  : 2; /*!< [7..6] Slave Device’s current Activity Mode                             */
+            __IOM uint32_t ACTMD  : 2; /*!< [7..6] Slave Deviceâ€™s current Activity Mode                             */
             __IOM uint32_t VDRSV  : 8; /*!< [15..8] Vendor Reserved                                                   */
             uint32_t              : 16;
         } CGDVST_b;

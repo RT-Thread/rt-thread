@@ -46,7 +46,7 @@ const lv_obj_class_t lv_media_class =
 
 static rt_bool_t btn_state_change = RT_FALSE;
 static rt_bool_t play_state_change = RT_FALSE;
-static uint16_t lv_show_buffer[JPEG_WIDTH * JPEG_HEIGHT] BSP_ALIGN_VARIABLE(16);
+static uint16_t lv_show_buffer[JPEG_WIDTH * JPEG_HEIGHT] BSP_ALIGN_VARIABLE(16) BSP_PLACE_IN_SECTION(".bss");
 struct player v_player;
 
 static void func_button_create(lv_obj_t *parent);
