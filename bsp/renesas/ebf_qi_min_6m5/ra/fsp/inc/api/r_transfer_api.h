@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -213,7 +213,8 @@ typedef struct st_transfer_info
 
             /** Select mode from @ref transfer_mode_t. */
             transfer_mode_t mode : 2;
-        };
+        } transfer_settings_word_b;
+
         uint32_t transfer_settings_word;
     };
 

@@ -2,6 +2,7 @@
 #ifndef BSP_MCU_DEVICE_PN_CFG_H_
 #define BSP_MCU_DEVICE_PN_CFG_H_
 #define BSP_MCU_R7FA6M5BH3CFC
+      #define BSP_MCU_FEATURE_SET ('B')
       #define BSP_ROM_SIZE_BYTES (2097152)
       #define BSP_RAM_SIZE_BYTES (524288)
       #define BSP_DATA_FLASH_SIZE_BYTES (8192)
