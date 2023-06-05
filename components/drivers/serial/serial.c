@@ -349,14 +349,14 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
         {
             if (serial->ops->putc(serial, '\r') == -1)
             {
-                rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
+                rt_completion_wait(tx->completion, RT_WAITING_FOREVER);
                 continue;
             }
         }
 
         if (serial->ops->putc(serial, *(char*)data) == -1)
         {
-            rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
+            rt_completion_wait(tx->completion, RT_WAITING_FOREVER);
             continue;
         }
 
@@ -556,7 +556,7 @@ rt_inline int _serial_dma_tx(struct rt_serial_device *serial, const rt_uint8_t *
 
     tx_dma = (struct rt_serial_tx_dma*)(serial->serial_tx);
 
-    result = rt_data_queue_push(&(tx_dma->data_queue), data, length, RT_WAITING_FOREVER);
+    result = rt_data_queue_push(tx_dma->data_queue, data, length, RT_WAITING_FOREVER);
     if (result == RT_EOK)
     {
         level = rt_hw_interrupt_disable();
@@ -709,7 +709,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             tx_fifo = (struct rt_serial_tx_fifo*) rt_malloc(sizeof(struct rt_serial_tx_fifo));
             RT_ASSERT(tx_fifo != RT_NULL);
 
-            rt_completion_init(&(tx_fifo->completion));
+            rt_completion_init(tx_fifo->completion);
             serial->serial_tx = tx_fifo;
 
             dev->open_flag |= RT_DEVICE_FLAG_INT_TX;
@@ -725,7 +725,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             RT_ASSERT(tx_dma != RT_NULL);
             tx_dma->activated = RT_FALSE;
 
-            rt_data_queue_init(&(tx_dma->data_queue), 8, 4, RT_NULL);
+            rt_data_queue_init(tx_dma->data_queue, 8, 4, RT_NULL);
             serial->serial_tx = tx_dma;
 
             dev->open_flag |= RT_DEVICE_FLAG_DMA_TX;
@@ -836,7 +836,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
         tx_dma = (struct rt_serial_tx_dma*)serial->serial_tx;
         RT_ASSERT(tx_dma != RT_NULL);
 
-        rt_data_queue_deinit(&(tx_dma->data_queue));
+        rt_data_queue_deinit(tx_dma->data_queue);
 
         rt_free(tx_dma);
         serial->serial_tx = RT_NULL;
@@ -1380,7 +1380,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             struct rt_serial_tx_fifo* tx_fifo;
 
             tx_fifo = (struct rt_serial_tx_fifo*)serial->serial_tx;
-            rt_completion_done(&(tx_fifo->completion));
+            rt_completion_done(tx_fifo->completion);
             break;
         }
 #ifdef RT_SERIAL_USING_DMA
@@ -1393,8 +1393,8 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 
             tx_dma = (struct rt_serial_tx_dma*) serial->serial_tx;
 
-            rt_data_queue_pop(&(tx_dma->data_queue), &last_data_ptr, &data_size, 0);
-            if (rt_data_queue_peek(&(tx_dma->data_queue), &data_ptr, &data_size) == RT_EOK)
+            rt_data_queue_pop(tx_dma->data_queue, &last_data_ptr, &data_size, 0);
+            if (rt_data_queue_peek(tx_dma->data_queue, &data_ptr, &data_size) == RT_EOK)
             {
                 /* transmit next data node */
                 tx_dma->activated = RT_TRUE;
