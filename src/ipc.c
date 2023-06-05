@@ -120,8 +120,8 @@ rt_inline rt_err_t _ipc_object_init(struct rt_ipc_object *ipc)
  * @warning  This function can ONLY be called in the thread context, you can use RT_DEBUG_IN_THREAD_CONTEXT to
  *           check the context.
  *           In addition, this function is generally called by the following functions:
- *           rt_sem_take(),     rt_mutex_take(),    rt_event_recv(),            rt_mb_send_wait(),
- *           rt_mb_recv(),      rt_mq_recv(),       rt_mq_send_wait()
+ *           rt_sem_take(),  rt_mutex_take(),  rt_event_recv(),   rt_mb_send_wait(),
+ *           rt_mb_recv(),   rt_mq_recv(),     rt_mq_send_wait()
  */
 rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
                                        struct rt_thread *thread,
