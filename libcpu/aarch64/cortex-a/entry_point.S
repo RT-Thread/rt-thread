@@ -21,15 +21,17 @@ __start:
     mrs     x0, tpidr_el1
     cbz     x0, .L__cpu_0           /* .L prefix is the local label in ELF */
 
+#ifndef RT_AMP_SLAVE
     /* cpu id > 0, stop */
     /* cpu id == 0 will also goto here after returned from entry() if possible */
 .L__current_cpu_idle:
     wfe
     b       .L__current_cpu_idle
+#endif
 
 .L__cpu_0:
     /* set stack before our code, Define stack pointer for current exception level */
-    adr     x1, __start
+    adr     x1, .el_stack_top
 
     /* set up EL1 */
     mrs     x0, CurrentEL           /* CurrentEL Register. bit 2, 3. Others reserved */
@@ -114,13 +116,11 @@ __start:
     sub     x3, x3, #1
     b       .L__clean_bss_loop_1
 
-.L__jump_to_entry:          /* jump to C code, should not return */        
+.L__jump_to_entry:          /* jump to C code, should not return */
     bl mmu_tcr_init
 
-    adr x1, __start         /* install early page table */
-    ldr x0, =~0x1fffff
-    and x0, x1, x0
-    add x1, x0, #0x1000     
+    adr x0, .early_mmu_table         /* install early page table */
+    add x1, x0, #0x1000
 
     msr ttbr0_el1, x0
     msr ttbr1_el1, x1
@@ -133,8 +133,8 @@ __start:
 #else
     mov     x3,0
 #endif
-    
-    ldr x2, =0x40000000     /* map 1G memory for kernel space */
+
+    ldr x2, =0x01000000     /* map 16M memory for kernel space */
     bl rt_hw_mem_setup_early
 
     ldr x30, =after_mmu_enable  /* set LR to after_mmu_enable function, it's a v_addr */
@@ -168,7 +168,7 @@ after_mmu_enable:
 
     mov     x0, #1
     msr     spsel, x0
-    adr     x1, __start
+    adr     x1, .el_stack_top
     mov     sp, x1           /* sp_el1 set to _start */
 
     b  rtthread_startup
@@ -181,7 +181,7 @@ after_mmu_enable:
 .global _secondary_cpu_entry
 _secondary_cpu_entry:
     bl      rt_hw_cpu_id_set
-    adr     x1, __start
+    adr     x1, .el_stack_top
 
     /* set up EL1 */
     mrs     x0, CurrentEL           /* CurrentEL Register. bit 2, 3. Others reserved */
@@ -203,7 +203,7 @@ _secondary_cpu_entry:
 .L__not_in_el3_cpux:                     /* running at EL2 or EL1 */
     cmp     x0, #4                  /* 0x04  0100 EL1 */
     beq     .L__in_el1_cpux              /* EL1 -> 5: */
- 
+
     mrs     x0, hcr_el2
     bic     x0, x0, #0xff
     msr     hcr_el2, x0
@@ -246,9 +246,7 @@ _secondary_cpu_entry:
 
     bl mmu_tcr_init
 
-    adr x1, __start             /* GET & setup early page table */
-    ldr x0, =~0x1fffff
-    and x0, x1, x0
+    adr x0, .early_mmu_table             /* GET & setup early page table */
     add x1, x0, #0x1000
 
     msr ttbr0_el1, x0
@@ -288,9 +286,18 @@ after_mmu_enable_cpux:
     msr     spsel, x0
     mrs     x0, tpidr_el1
     /* each cpu init stack is 8k */
-    adr     x1, __start
+    adr     x1, .el_stack_top
     sub     x1, x1, x0, lsl #13
     mov     sp, x1                  /* in EL1. Set sp to _start */
 
     b rt_hw_secondary_cpu_bsp_start
 #endif
+
+.align 12
+.early_mmu_table:
+.space (4096 * 2)
+
+.align 12
+.el_stack:
+.space (8192)
+.el_stack_top:
