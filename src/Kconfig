@@ -38,6 +38,22 @@ config RT_USING_SMART
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
 
+config RT_USING_AMP
+    bool "Enable AMP(Asymmetric Multi-Processing)"
+    default n
+    if RT_USING_AMP
+        choice
+            prompt "Select the AMP role"
+            default RT_AMP_SLAVE
+
+            config RT_AMP_MASTER
+            bool "amp role MASTER"
+
+            config RT_AMP_SLAVE
+            bool "amp role SLAVE"
+        endchoice
+    endif
+
 config RT_USING_SMP
     bool "Enable SMP(Symmetric multiprocessing)"
     default n
@@ -50,7 +66,7 @@ config RT_USING_SMP
 config RT_CPUS_NR
     int "Number of CPUs"
     default 2
-    depends on RT_USING_SMP
+    depends on RT_USING_SMP || RT_USING_AMP
     help
         Number of CPUs in the system
 
