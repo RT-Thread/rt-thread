@@ -3306,7 +3306,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     /* add the length */
     *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
-    rt_memcpy(((rt_size_t *)(msg + 1)) + 1, buffer, size);
+    rt_memcpy(rt_get_messagebyte_addr(msg), buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3475,7 +3475,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     /* add the length */
     *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
-    rt_memcpy(((rt_size_t *)(msg + 1)) + 1, buffer, size);
+    rt_memcpy(rt_get_messagebyte_addr(msg), buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3676,7 +3676,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
     /* get real message length */
     len = *(rt_size_t *)(msg + 1);
     /* copy message */
-    rt_memcpy(buffer, ((rt_size_t *)(msg + 1)) + 1, len);
+    rt_memcpy(buffer, rt_get_messagebyte_addr(msg), len);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
