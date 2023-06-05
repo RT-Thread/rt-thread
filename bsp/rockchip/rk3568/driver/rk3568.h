@@ -13,7 +13,11 @@
 
 #include <rtthread.h>
 
-/* UART */
+#define GRF_PMU_BASE    0xFDC20000
+#define GRF_SYS_BASE    0xFDC60000
+#define CRU_BASE        0xFDD20000
+
+ /* UART */
 #define UART_MMIO_BASE  0xfe650000
 #define UART0_MMIO_BASE 0xfdd50000
 #define UART1_MMIO_BASE (UART_MMIO_BASE + 0)

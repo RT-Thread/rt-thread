@@ -16,13 +16,11 @@
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;
 
-#define RT_HW_HEAP_BEGIN    (void *)&__bss_end
-#define RT_HW_HEAP_END      (void *)(RT_HW_HEAP_BEGIN + 64 * 1024 * 1024)
+#define RT_HW_PAGE_START    RT_ALIGN((unsigned long)&__bss_end, 0x1000)
+#define RT_HW_PAGE_END      (RT_HW_PAGE_START + 0x100000)
 
-#ifndef RT_USING_SMART
-#define PV_OFFSET 0
-#define KERNEL_VADDR_START 0
-#endif
+#define RT_HW_HEAP_BEGIN    (void *)(RT_HW_PAGE_END)
+#define RT_HW_HEAP_END      (void *)(RT_HW_HEAP_BEGIN + 64 * 1024 * 1024)
 
 void rt_hw_board_init(void);
 
