@@ -535,10 +535,8 @@ unsigned long get_free_page(void)
 {
     if (!__init_page_array)
     {
-        unsigned long temp_page_start;
-        asm volatile("mov %0, sp" : "=r"(temp_page_start));
-        __init_page_array =
-            (struct page_table *)(temp_page_start & ~(ARCH_SECTION_MASK));
+        extern unsigned char __bss_end;
+        __init_page_array = (struct page_table *) RT_ALIGN((unsigned long) &__bss_end, 0x1000);
         __page_off = 2; /* 0, 1 for ttbr0, ttrb1 */
     }
     __page_off++;
@@ -778,7 +776,13 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
     /* setup pv off */
     rt_kmem_pvoff_set(pv_off);
 
+#ifdef RT_USING_SMART
     unsigned long va = KERNEL_VADDR_START;
+#else
+    extern unsigned char __start;
+    unsigned long va = (unsigned long) &__start;
+#endif
+
     unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
     unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);
 
