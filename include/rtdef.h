@@ -48,7 +48,6 @@
  * 2022-09-12     Meco Man     define rt_ssize_t
  * 2022-12-20     Meco Man     add const name for rt_object
  * 2023-04-01     Chushicheng  change version number to v5.0.1
- * 2023-06-05     Xin-zheqi    add define rt_get_messagebyte_addr(msg)
  */
 
 #ifndef __RT_DEF_H__
@@ -984,8 +983,6 @@ struct rt_messagequeue
     rt_list_t            suspend_sender_thread;         /**< sender thread suspended on this message queue */
 };
 typedef struct rt_messagequeue *rt_mq_t;
-
-#define rt_get_messagebyte_addr(msg)          (((rt_size_t *)((msg) + 1)) + 1)          /* The first block is message head and the next four bytes are message's length, thus this is the first byte of the real message */
 #endif /* RT_USING_MESSAGEQUEUE */
 
 /**@}*/
