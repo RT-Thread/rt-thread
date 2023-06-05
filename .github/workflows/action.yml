@@ -112,6 +112,7 @@ jobs:
             SUB_RTT_BSP: 
                 - "stm32/stm32f207-st-nucleo"
                 - "stm32/stm32f302-st-nucleo"
+                - "stm32/stm32f334-st-nucleo"
                 - "stm32/stm32f401-st-nucleo"
                 - "stm32/stm32f401-weact-blackpill"
                 - "stm32/stm32f405-smdz-breadfruit"
