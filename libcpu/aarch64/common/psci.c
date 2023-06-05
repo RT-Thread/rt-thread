@@ -43,6 +43,7 @@ struct psci_ops_t psci_ops;
 
 #ifdef RT_USING_FDT
 #include "dtb_node.h"
+#endif /* RT_USING_FDT */
 
 #if __SIZE_WIDTH__ == 64
 #define PSCI_FN_NATIVE(version, name) PSCI_##version##_FN64_##name
@@ -66,13 +67,14 @@ static rt_uint32_t psci_call(unsigned long a0, unsigned long a1, unsigned long a
     return res.a0;
 }
 
-static int _psci_probe_version(char *version, int *major, int *minor);
 static int _psci_init_with_version(int major, int minor);
 
-static struct dtb_node *psci_node;
+#ifdef RT_USING_FDT
+static int _psci_probe_version(char *version, int *major, int *minor);
 
 static int psci_ver_major;
 static int psci_ver_minor;
+static struct dtb_node *psci_node;
 
 /**
  * @brief init psci operations.
@@ -81,7 +83,7 @@ static int psci_ver_minor;
  *
  * @return int 0 on success
  */
-int psci_init()
+int psci_init(void)
 {
     void *root = get_dtb_node_head();
     psci_node = dtb_node_get_dtb_node_by_path(root, "/psci");
@@ -158,6 +160,14 @@ static int psci_0_1_init()
     PROBE_AND_SET(migrate);
     return 0;
 }
+#else
+int psci_init(void)
+{
+    smccc_call = arm_smccc_smc;
+    _psci_init_with_version(0, 2);
+    return 0;
+}
+#endif /* RT_USING_FDT */
 
 COMMON_PSCI_OPS_TEMPLATE(0_2, PSCI_FN_NATIVE(0_2, CPU_SUSPEND), PSCI_0_2_FN_CPU_OFF, PSCI_FN_NATIVE(0_2, CPU_ON), PSCI_FN_NATIVE(0_2, MIGRATE));
 
@@ -230,6 +240,7 @@ static int psci_1_0_init()
     return 0;
 }
 
+#ifdef RT_USING_FDT
 /* probe psci version from fdt or SMC call */
 static int _psci_probe_version(char *version, int *major, int *minor)
 {
@@ -255,6 +266,7 @@ static int _psci_probe_version(char *version, int *major, int *minor)
     LOG_D("Using PSCI v%d.%d", *major, *minor);
     return retval;
 }
+#endif /* RT_USING_FDT */
 
 /* init psci ops with version info */
 static int _psci_init_with_version(int major, int minor)
@@ -265,7 +277,9 @@ static int _psci_init_with_version(int major, int minor)
         // for v0.1, psci function id was provided fdt
         if (minor == 1)
         {
+#ifdef RT_USING_FDT
             retval = psci_0_1_init();
+#endif
         }
         else if (minor == 2)
         {
@@ -284,5 +298,3 @@ static int _psci_init_with_version(int major, int minor)
     }
     return retval;
 }
-
-#endif /* RT_USING_FDT */
