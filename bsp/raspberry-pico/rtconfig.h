@@ -33,7 +33,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -45,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M0
@@ -69,6 +68,9 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+
+/* DFS: device virtual file system */
+
 
 /* Device Drivers */
 
@@ -218,11 +220,25 @@
 
 /* Uncategorized */
 
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
+
 /* Hardware Drivers Config */
 
 #define SOC_RP2040
 
 /* Onboard Peripheral Drivers */
 
+
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_PIN
+#define BSP_USING_UART
 
 #endif
