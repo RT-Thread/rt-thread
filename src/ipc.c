@@ -59,6 +59,9 @@
 #ifndef __on_rt_object_put_hook
     #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
 #endif
+#ifdef RT_USING_MESSAGEQUEUE
+    #define GET_MESSAGEBYTE_ADDR(msg)               (((rt_size_t *)((msg) + 1)) + 1)          /* The first block is message head and the next four bytes are message's length, thus this is the first byte of the real message */
+#endif
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
@@ -3306,7 +3309,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     /* add the length */
     *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
-    rt_memcpy(rt_get_messagebyte_addr(msg), buffer, size);
+    rt_memcpy(GET_MESSAGEBYTE_ADDR(msg), buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3475,7 +3478,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     /* add the length */
     *(rt_size_t *)(msg + 1) = size;
     /* copy buffer */
-    rt_memcpy(rt_get_messagebyte_addr(msg), buffer, size);
+    rt_memcpy(GET_MESSAGEBYTE_ADDR(msg), buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3676,7 +3679,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
     /* get real message length */
     len = *(rt_size_t *)(msg + 1);
     /* copy message */
-    rt_memcpy(buffer, rt_get_messagebyte_addr(msg), len);
+    rt_memcpy(buffer, GET_MESSAGEBYTE_ADDR(msg), len);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
