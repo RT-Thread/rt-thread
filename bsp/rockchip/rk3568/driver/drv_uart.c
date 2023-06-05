@@ -302,10 +302,12 @@ static void rt_hw_uart_isr(int irqno, void *param)
 
 int rt_hw_uart_init(void)
 {
-    struct hw_uart_device *uart;
+    rt_uint32_t value;
+    struct hw_uart_device* uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    RT_UNUSED(value);
 
-    config.baud_rate = 1500000;
+    config.baud_rate = 115200;
 
 #define BSP_INSTALL_UART_DEVICE(no)     \
     uart = &_uart##no##_device;         \
@@ -331,6 +333,12 @@ int rt_hw_uart_init(void)
 #endif
 
 #ifdef RT_USING_UART4
+    HWREG32(CRU_BASE + 0x370) = 0xFFFF0000 | (0x600) |(HWREG32(CRU_BASE + 0x370) & 0xF0FF);
+    value = HWREG32(0xFDC60000 + 0x48);
+    value &= ~((7 << 8) | (7 << 4));
+    value |= 0xFFFF0000 | (4 << 8) | (4 << 4);
+    HWREG32(0xFDC60000 + 0x48) = value;
+    HWREG32(0xFDC60000 + 0x30C) = 0xFFFF0000 | (1 << 14) | HWREG32(0xFDC60000 + 0x30C);
     BSP_INSTALL_UART_DEVICE(4);
 #endif
 
