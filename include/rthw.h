@@ -160,6 +160,15 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context));
  */
 void rt_hw_us_delay(rt_uint32_t us);
 
+int rt_hw_cpu_id(void);
+
+#if defined(RT_USING_SMP) || defined(RT_USING_AMP)
+/**
+ *  ipi function
+ */
+void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
+#endif
+
 #ifdef RT_USING_SMP
 #include <cpuport.h> /* for spinlock from arch */
 
@@ -172,8 +181,6 @@ void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock);
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock);
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock);
 
-int rt_hw_cpu_id(void);
-
 extern rt_hw_spinlock_t _cpus_lock;
 extern rt_hw_spinlock_t _rt_critical_lock;
 
@@ -184,11 +191,6 @@ extern rt_hw_spinlock_t _rt_critical_lock;
 
 #define RT_DEFINE_SPINLOCK(x)  rt_hw_spinlock_t x = __RT_HW_SPIN_LOCK_UNLOCKED(x)
 #define RT_DECLARE_SPINLOCK(x)
-
-/**
- *  ipi function
- */
-void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
 
 /**
  * boot secondary cpu
