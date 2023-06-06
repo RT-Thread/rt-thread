@@ -135,6 +135,21 @@ def bsp_update_kconfig(dist_dir):
                 line = line[0:position] + 'default "rt-thread"\n'
                 found = 0
             f.write(line)
+def bsp_update_project(dist_dir,project_name):
+    # change RTT_ROOT in *.ewp
+    source_ext=['.ewp','.uvprojx']
+    for  file_type in  source_ext:
+        file_path=os.path.join(dist_dir, project_name+file_type)
+        if not os.path.isfile(file_path):
+            continue
+
+        with open(file_path, 'r') as f:
+            data = f.readlines()
+        with open(file_path, 'w') as f:
+            for line in data:
+                if line.find('..\\..\\') != -1:
+                    line = line.replace('..\\..\\','rt-thread\\')
+                f.write(line)
 
 def bsp_update_kconfig_library(dist_dir):
     # change RTT_ROOT in Kconfig
@@ -369,6 +384,8 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     bsp_update_kconfig_library(dist_dir)
     # delete testcases in Kconfig
     bsp_update_kconfig_testcases(dist_dir)
+    # change RTT_ROOT in project
+    bsp_update_project(dist_dir,project_name)
 
     # make zip package
     if project_path == None:
