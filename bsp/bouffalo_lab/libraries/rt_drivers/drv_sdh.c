@@ -45,10 +45,10 @@
 #include "bflb_mtimer.h"
 #include "bflb_l1c.h"
 
-#define SDIO_BUFF_SIZE                         4096
-static uint8_t sdh_buffer[SDIO_BUFF_SIZE];
+#define SDIO_BUFF_SIZE                         512
+static uint8_t sdh_buffer[SDIO_BUFF_SIZE] __attribute__ ((aligned (8)));
 
-#define SDIO_CMDTIMEOUT_MS   (2000)
+#define SDIO_CMDTIMEOUT_MS   (1000)
 
 static uint32_t sdhClockInit = 100ul;
 static uint32_t sdhClockSrc = 100ul;
@@ -290,7 +290,7 @@ static rt_err_t SDH_CardTransferNonBlocking(SDH_DMA_Cfg_Type *dmaCfg, SDH_Trans_
         }
         else if ((uint32_t)bflb_mtimer_get_time_ms() - time_node > SDIO_CMDTIMEOUT_MS)
         {
-            LOG_E("SDH read data timeout: %ld ms", (uint32_t)bflb_mtimer_get_time_ms() - time_node);
+            LOG_E("SDH Transfer data timeout: %ld ms", (uint32_t)bflb_mtimer_get_time_ms() - time_node);
             return -RT_ETIMEOUT;
         }
         BL_DRV_DUMMY;
@@ -303,6 +303,7 @@ static rt_err_t SDH_CardTransferNonBlocking(SDH_DMA_Cfg_Type *dmaCfg, SDH_Trans_
         LOG_E("sd_status :%d", sd_status);
         return -RT_ERROR;
     }
+    LOG_D("Transfer data used time: %ld ms", (uint32_t)bflb_mtimer_get_time_ms() - time_node);
 
     return RT_EOK;
 }
@@ -311,16 +312,8 @@ static rt_err_t rt_hw_sdh_data_transfer(struct rt_mmcsd_host *host, struct rt_mm
 {
     rt_err_t ret = RT_EOK;
     SDH_Data_Cfg_Type SDH_Data_Cfg_TypeInstance;
-    SDH_CMD_Cfg_Type SDH_CMD_Cfg_TypeInstance = {0};
+    SDH_CMD_Cfg_Type SDH_CMD_Cfg_TypeInstance;
     SDH_Trans_Cfg_Type SDH_Trans_Cfg_TypeInstance = { &SDH_Data_Cfg_TypeInstance, &SDH_CMD_Cfg_TypeInstance };
-
-#if defined(BL808) || defined(BL606P)
-    /* BL808/BL606 supports only 8-byte aligned addresses */
-    if ((uintptr_t)data->buf % 8 != 0)
-    {
-        return -RT_EINVAL;
-    }
-#endif
 
     SDH_CMD_Cfg_TypeInstance.index = cmd->cmd_code;
     SDH_CMD_Cfg_TypeInstance.argument = cmd->arg;
@@ -357,20 +350,13 @@ static rt_err_t rt_hw_sdh_data_transfer(struct rt_mmcsd_host *host, struct rt_mm
     /*set parameters for SDH_DMA_Cfg_TypeInstance*/
     SDH_DMA_Cfg_TypeInstance.dmaMode = SDH_DMA_MODE_ADMA2;
     SDH_DMA_Cfg_TypeInstance.burstSize = SDH_BURST_SIZE_128_BYTES;
-
-    if (cmd->cmd_code == READ_SINGLE_BLOCK || cmd->cmd_code == READ_MULTIPLE_BLOCK)
-    {
-            SDH_DMA_Cfg_TypeInstance.fifoThreshold = SDH_BURST_SIZE_128_BYTES;
-    }
-    else
-        SDH_DMA_Cfg_TypeInstance.fifoThreshold = SDH_FIFO_THRESHOLD_256_BYTES;
-
+    SDH_DMA_Cfg_TypeInstance.fifoThreshold = SDH_FIFO_THRESHOLD_256_BYTES;
     SDH_DMA_Cfg_TypeInstance.admaEntries = (rt_uint32_t *)adma2Entries;
     SDH_DMA_Cfg_TypeInstance.maxEntries = sizeof(adma2Entries) / sizeof(adma2Entries[0]);
 
     if (data->flags & DATA_DIR_WRITE)
     {
-        bflb_l1c_dcache_clean_range((void *)(data->buf), data->blksize * data->blks);
+        bflb_l1c_dcache_clean_range((void *)(sdh_buffer), data->blksize * data->blks);
     }
 
     ret = SDH_CardTransferNonBlocking(&SDH_DMA_Cfg_TypeInstance, &SDH_Trans_Cfg_TypeInstance);
@@ -400,7 +386,7 @@ static rt_err_t rt_hw_sdh_cmd_transfer(struct rt_mmcsd_host *host, struct rt_mmc
     rt_err_t ret = RT_EOK;
     SDH_Stat_Type stat = SDH_STAT_SUCCESS;
     SDH_Data_Cfg_Type SDH_Data_Cfg_TypeInstance;
-    SDH_CMD_Cfg_Type SDH_CMD_Cfg_TypeInstance = {0};
+    SDH_CMD_Cfg_Type SDH_CMD_Cfg_TypeInstance;
 
     if (data != RT_NULL)
     {
@@ -425,7 +411,9 @@ static rt_err_t rt_hw_sdh_cmd_transfer(struct rt_mmcsd_host *host, struct rt_mmc
         SDH_CMD_Cfg_TypeInstance.flag = SDH_TRANS_FLAG_DATA_PRESENT;
     }
     else
+    {
         SDH_CMD_Cfg_TypeInstance.flag = SDH_TRANS_FLAG_NONE;
+    }
 
     SDH_CMD_Cfg_TypeInstance.index = cmd->cmd_code;
     SDH_CMD_Cfg_TypeInstance.argument = cmd->arg;
@@ -548,6 +536,36 @@ static void rt_hw_sdh_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
         else
         {
             cmd->err = rt_hw_sdh_cmd_transfer(host, cmd, data);
+            if (cmd->cmd_code == SD_SEND_IF_COND && cmd->err != RT_EOK)
+            {
+                LOG_D("retry cmd: %d", SD_SEND_IF_COND);
+                struct rt_mmcsd_cmd user_cmd;
+                rt_uint8_t retries = 0;
+                rt_err_t ret = RT_EOK;
+
+                do
+                {
+                    rt_memset(&user_cmd, 0, sizeof(struct rt_mmcsd_cmd));
+
+                    user_cmd.cmd_code = GO_IDLE_STATE;
+                    user_cmd.arg = 0;
+                    user_cmd.flags = RESP_SPI_R1 | RESP_NONE | CMD_BC;
+
+                    rt_hw_sdh_cmd_transfer(host, &user_cmd, RT_NULL);
+
+                    rt_thread_mdelay(1);
+
+                    cmd->err = rt_hw_sdh_cmd_transfer(host, cmd, data);
+                    if(cmd->err == RT_EOK)
+                    {
+                        break;
+                    }
+
+                    retries ++;
+                    LOG_D("cmd: %d retries: %d", SD_SEND_IF_COND, retries);
+                }
+                while (retries < 3);
+            }
         }
     }
 
