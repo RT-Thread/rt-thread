@@ -11,7 +11,7 @@
 
 ## 开发板介绍
 
-基于瑞萨 RA6M3 MCU 开发的 EK-RA6M3 MCU 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA6M3 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
+基于瑞萨 RA6M3 MCU 开发的 HMI-Board 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA6M3 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
 
 开发板正面外观如下图： 
 
@@ -76,10 +76,6 @@
 
 本 BSP 目前仅提供 MDK5 工程。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
-**硬件连接**
-
-使用 USB 数据线连接开发板到 PC，使用 J-link 接口下载和 DEBUG 程序。使用 USB 转串口工具连接 UART7：P401(TXD)、P402(RXD)。
-
 **编译下载**
 
 - 编译：双击 project.uvprojx 文件，打开 MDK5 工程，编译程序。
@@ -112,7 +108,7 @@ msh >
 
 **应用入口函数**
 
-应用层的入口函数在 **bsp\ra6m3-ek\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
+应用层的入口函数在 **bsp\renesas\ra6m3-hmi-board\src\hal_entry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
 
 ```c
 void hal_entry(void)
