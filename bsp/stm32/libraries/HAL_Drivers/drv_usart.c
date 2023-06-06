@@ -100,7 +100,7 @@ static struct stm32_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] 
 
 rt_uint32_t stm32_uart_get_mask(rt_uint32_t word_length, rt_uint32_t parity)
 {
-    rt_uint32_t mask;
+    rt_uint32_t mask = 0x00FFU;
     if (word_length == UART_WORDLENGTH_8B)
     {
         if (parity == UART_PARITY_NONE)
@@ -230,7 +230,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
         return -RT_ERROR;
     }
     uart->DR_mask = stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
-	
+
     return RT_EOK;
 }
 
