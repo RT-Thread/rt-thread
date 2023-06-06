@@ -114,6 +114,11 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable ADC2 (GP28)"
                 default n
         endif
+
+    config BSP_USING_WDT
+        bool "Enable WDT"
+        select RT_USING_WDT
+        default n
 endmenu
 
 endmenu

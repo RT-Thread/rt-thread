@@ -19,6 +19,9 @@ if GetDepend('BSP_USING_SOFT_SPI'):
 if GetDepend('BSP_USING_ADC'):
     src += ['drv_adc.c']
 
+if GetDepend('BSP_USING_WDT'):
+    src += ['drv_wdt.c']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
