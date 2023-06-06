@@ -9,7 +9,7 @@
  */
 
 #include "drv_wdt.h"
-#include "hardware/watchdog.h"
+#include <hardware/watchdog.h>
 
 #define DBG_TAG              "drv.wdt"
 #define DBG_LVL               DBG_INFO
