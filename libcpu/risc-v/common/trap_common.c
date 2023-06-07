@@ -48,7 +48,6 @@ rt_weak rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t ha
 {
     rt_isr_handler_t old_handler = RT_NULL;
     void *user_param = param;
-    char *user_name = name;
 
     if(vector < ISR_NUMBER)
     {
