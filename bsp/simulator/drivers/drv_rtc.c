@@ -42,6 +42,7 @@ static void soft_rtc_alarm_update(struct rt_rtc_wkalarm *palarm)
 
 static void get_rtc_timeval(struct timeval *tv)
 {
+#ifdef _WIN32
     struct tm newtime = { 0 };
     SYSTEMTIME sys_time;
 
@@ -56,6 +57,10 @@ static void get_rtc_timeval(struct timeval *tv)
 
     tv->tv_sec = timegm(&newtime);
     tv->tv_usec = sys_time.wMilliseconds * 1000UL;
+#else
+    tv->tv_sec = 0;
+    tv->tv_usec = 0;
+#endif
 }
 
 static rt_err_t pc_rtc_control(rt_device_t dev, int cmd, void *args)
