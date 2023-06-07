@@ -50,12 +50,12 @@ const pin_map_t pin_map_table[]=
     {D22, GET_PIN(B,6)}, /* KEY_LEFT */
     {D23, GET_PIN(B,8)}, /* KEY_RIGHT */
     {D24, GET_PIN(D,2)}, /* KEY_CENTER */
+    {D25, GET_PIN(B,15)},        /* GPIO/SPI1_MOSI */
+    {D26, GET_PIN(B,14)},         /* GPIO/SPI1_MISO */
+    {D27, GET_PIN(B,13)},        /* GPIO/SPI1_SCK */
+    {D28, GET_PIN(B,12)},        /* GPIO/SPI1_NSS */
 
 
     {A0, GET_PIN(C,1),"adc0",1}, /* ADC0 */
     {A1, GET_PIN(C,2),"adc0",2}, /* ADC0 */
-    {D25, GET_PIN(B,15)},        /* GPIO/SPI1_MOSI */
-    {D26, GET_PIN(B,14},         /* GPIO/SPI1_MISO */
-    {D27, GET_PIN(B,13)},        /* GPIO/SPI1_SCK */
-    {D28, GET_PIN(B,12)},        /* GPIO/SPI1_NSS */
 };

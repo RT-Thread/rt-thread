@@ -45,10 +45,6 @@
 
 #define A0   (25)
 #define A1   (26)
-#define A2   (27)
-#define A3   (28)
-#define A4   (29)
-#define A5   (30)
 
 #define F_CPU  72000000L /* CPU: 72MHz */
 
