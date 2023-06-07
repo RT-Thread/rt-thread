@@ -1,12 +1,18 @@
 import os
+import sys
 import SCons.Tool.MSCommon.vc
 
 # toolchains options
 ARCH='sim'
+ASAN = False
 #CROSS_TOOL='msvc' or 'gcc' or 'mingw'
 #'msvc' and 'mingw' are both for windows
 # 'gcc' is for linux
-CROSS_TOOL='msvc'
+if sys.platform == 'win32':
+    CROSS_TOOL='msvc'
+else:
+    CROSS_TOOL='gcc'
+    ASAN = True
 
 if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
@@ -16,7 +22,7 @@ if os.getenv('RTT_CC'):
 if  CROSS_TOOL == 'gcc' or CROSS_TOOL == 'clang-analyze':
     CPU       = 'posix'
     PLATFORM  = 'gcc'
-    EXEC_PATH = ''
+    EXEC_PATH = '/usr/bin'
 
 elif  CROSS_TOOL == 'mingw':
     CPU       = 'win32'
@@ -67,11 +73,11 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -ffunction-sections -fdata-sections'
-    DEVICE = '  '
+    # DEVICE = ' -m32 ' # open this when build 32bit target on 64bit PC
     CFLAGS = DEVICE + ' -I/usr/include -w -D_REENTRANT -D_LINUX -DHAVE_SYS_SIGNALS'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    #LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-linux.map -lpthread'
-    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-linux.map -pthread -T gcc.ld'
+    # LFLAGS = DEVICE + ' -Wl,-Map=rtthread-linux.map -pthread -T gcc.ld' # open this when build 32bit target
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-linux.map -pthread -T gcc_elf64.ld' # open this when build 64bit target
 
     CPATH = ''
     LPATH = ''
@@ -82,6 +88,8 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
+    if ASAN == True:
+        CFLAGS += ' -Wall -g -O0 -fsanitize=address -fsanitize-recover=address,all -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined -fdiagnostics-color'
     POST_ACTION = ''
 
 elif PLATFORM == 'mingw':
