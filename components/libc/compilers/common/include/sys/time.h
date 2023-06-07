@@ -48,6 +48,33 @@ struct timezone
     int tz_dsttime;       /* type of dst correction */
 };
 
+#if defined(_GNU_SOURCE) && (defined(__x86_64__) || defined(__i386__))
+/* linux x86 platform gcc use! */
+#define _TIMEVAL_DEFINED
+/* Values for the first argument to `getitimer' and `setitimer'.  */
+enum __itimer_which
+{
+    /* Timers run in real time.  */
+    ITIMER_REAL = 0,
+#define ITIMER_REAL ITIMER_REAL
+    /* Timers run only when the process is executing.  */
+    ITIMER_VIRTUAL = 1,
+#define ITIMER_VIRTUAL ITIMER_VIRTUAL
+    /* Timers run when the process is executing and when
+       the system is executing on behalf of the process.  */
+    ITIMER_PROF = 2
+#define ITIMER_PROF ITIMER_PROF
+};
+
+struct itimerval
+{
+    /* Value to put into `it_value' when the timer expires.  */
+    struct timeval it_interval;
+    /* Time to the next timer expiration.  */
+    struct timeval it_value;
+};
+#endif /* defined(_GNU_SOURCE) && (defined(__x86_64__) || defined(__i386__)) */
+
 #ifndef _TIMEVAL_DEFINED
 #define _TIMEVAL_DEFINED
 struct timeval

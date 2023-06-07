@@ -11,6 +11,8 @@ if rtconfig.PLATFORM in ['armcc', 'armclang']:
     CPPDEFINES += ['__CLK_TCK=RT_TICK_PER_SECOND']
 elif rtconfig.PLATFORM in ['iccarm']:
     CPPDEFINES += ['CLOCKS_PER_SEC=RT_TICK_PER_SECOND'] # forcly revert to 1 by IAR
+elif rtconfig.PLATFORM in ['gcc'] and rtconfig.CPU in ['posix']:
+    CPPDEFINES += ['_GNU_SOURCE'] # linux x86 platform gcc use!
 
 src += Glob('*.c')
 
