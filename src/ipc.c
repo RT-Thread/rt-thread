@@ -3164,7 +3164,7 @@ RTM_EXPORT(rt_mq_delete);
  *           thread will be resumed and an error code will be returned. By
  *           contrast, the rt_mq_send() function will return an error code
  *           immediately without waiting when the messagequeue if fully used.
- *           The front four Bytes are the length of the message
+ *           The front four bytes are the length of the message
  *
  * @see      rt_mq_send()
  *
