@@ -9,7 +9,6 @@
  * 2021-11-28     GuEe-GUI     first version
  * 2022-12-10     WangXiaoyao  porting to MM
  */
-#include <board.h>
 #include <rthw.h>
 #include <rtthread.h>
 #include <stddef.h>
