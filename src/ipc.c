@@ -59,9 +59,8 @@
 #ifndef __on_rt_object_put_hook
     #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
 #endif
-#ifdef RT_USING_MESSAGEQUEUE
-    #define GET_MESSAGEBYTE_ADDR(msg)               (((rt_size_t *)((msg) + 1)) + 1)          /* The first block is message head and the next four bytes are message's length, thus this is the first byte of the real message */
-#endif
+
+#define GET_MESSAGEBYTE_ADDR(msg)               (((rt_size_t *)((msg) + 1)) + 1)          /* The first block is message head and the next four bytes are message's length, thus this is the first byte of the real message */
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
