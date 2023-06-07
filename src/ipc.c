@@ -60,8 +60,7 @@
     #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
 #endif
 
-#define GET_MESSAGEBYTE_ADDR(msg)               ((struct rt_mq_message *) msg + 1)         /* The first block is message head and the next four bytes are message's length, thus this is the first byte of the real message */
-
+#define GET_MESSAGEBYTE_ADDR(msg)               ((struct rt_mq_message *) msg + 1)
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);
@@ -3164,7 +3163,6 @@ RTM_EXPORT(rt_mq_delete);
  *           thread will be resumed and an error code will be returned. By
  *           contrast, the rt_mq_send() function will return an error code
  *           immediately without waiting when the messagequeue if fully used.
- *           The front four bytes are the length of the message
  *
  * @see      rt_mq_send()
  *
