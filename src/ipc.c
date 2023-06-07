@@ -60,7 +60,7 @@
     #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
 #endif
 
-#define GET_MESSAGEBYTE_ADDR(msg)               (((rt_size_t *)((msg) + 1)) + 1)          /* The first block is message head and the next four bytes are message's length, thus this is the first byte of the real message */
+#define GET_MESSAGEBYTE_ADDR(msg)               ((struct rt_mq_message *) msg + 1)         /* The first block is message head and the next four bytes are message's length, thus this is the first byte of the real message */
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
@@ -2864,6 +2864,7 @@ RTM_EXPORT(rt_mb_control);
 struct rt_mq_message
 {
     struct rt_mq_message *next;
+    rt_ssize_t length;
 };
 
 
@@ -2937,8 +2938,8 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     mq->msg_pool = msgpool;
 
     /* get correct message size */
-    msg_align_size = RT_ALIGN(msg_size + sizeof(rt_size_t), RT_ALIGN_SIZE);
-    mq->msg_size = msg_size + sizeof(rt_size_t);
+    msg_align_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
+    mq->msg_size = msg_size;
     mq->max_msgs = pool_size / (msg_align_size + sizeof(struct rt_mq_message));
 
     if (0 == mq->max_msgs)
@@ -3069,8 +3070,8 @@ rt_mq_t rt_mq_create(const char *name,
     /* initialize message queue */
 
     /* get correct message size */
-    msg_align_size = RT_ALIGN(msg_size + sizeof(rt_size_t), RT_ALIGN_SIZE);
-    mq->msg_size = msg_size + sizeof(rt_size_t);
+    msg_align_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
+    mq->msg_size = msg_size;
     mq->max_msgs = max_msgs;
 
     /* allocate message pool */
@@ -3204,7 +3205,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     RT_DEBUG_SCHEDULER_AVAILABLE(timeout != 0);
 
     /* greater than one message size */
-    if (size + sizeof(size) > mq->msg_size)
+    if (size > mq->msg_size)
         return -RT_ERROR;
 
     /* initialize delta tick */
@@ -3306,7 +3307,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     msg->next = RT_NULL;
 
     /* add the length */
-    *(rt_size_t *)(msg + 1) = size;
+    ((struct rt_mq_message *)msg)->length = size;
     /* copy buffer */
     rt_memcpy(GET_MESSAGEBYTE_ADDR(msg), buffer, size);
 
@@ -3450,7 +3451,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     RT_ASSERT(size != 0);
 
     /* greater than one message size */
-    if (size + sizeof(size) > mq->msg_size)
+    if (size > mq->msg_size)
         return -RT_ERROR;
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mq->parent.parent)));
@@ -3475,7 +3476,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     rt_hw_interrupt_enable(level);
 
     /* add the length */
-    *(rt_size_t *)(msg + 1) = size;
+    ((struct rt_mq_message *)msg)->length = size;
     /* copy buffer */
     rt_memcpy(GET_MESSAGEBYTE_ADDR(msg), buffer, size);
 
@@ -3676,7 +3677,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
     rt_hw_interrupt_enable(level);
 
     /* get real message length */
-    len = *(rt_size_t *)(msg + 1);
+    len = ((struct rt_mq_message *)msg)->length;
     /* copy message */
     rt_memcpy(buffer, GET_MESSAGEBYTE_ADDR(msg), len);
 
