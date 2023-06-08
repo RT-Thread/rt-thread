@@ -140,8 +140,8 @@ BareMetal: Without RTOS
         <InhibitWarn>no</InhibitWarn>
         <AllWarn>yes</AllWarn>
         <WarnErr>no</WarnErr>
-        <OneElfS>no</OneElfS>
-        <OneElfSPerData>no</OneElfSPerData>
+        <OneElfS>yes</OneElfS>
+        <OneElfSPerData>yes</OneElfSPerData>
         <Fstrict>no</Fstrict>
       </Compiler>
       <Asm>

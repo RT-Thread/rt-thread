@@ -22,6 +22,7 @@ config SOC_ES32VF2264
     bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select ARCH_RISCV32
     default y
 
 source "drivers/Kconfig"

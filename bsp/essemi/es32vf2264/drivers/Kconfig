@@ -8,6 +8,23 @@ menu "Hardware Drivers Config"
 
     source "drivers/ES/Kconfig"    
 
+        config BSP_USING_ARDUINO
+            bool "Compatible with Arduino Ecosystem (RTduino)"
+            select PKG_USING_RTDUINO
+            select BSP_USING_GPIO
+            select BSP_USING_CUART1
+            select BSP_USING_CUART2
+            select BSP_USING_SPI0
+            select BSP_USING_SPI1
+            select BSP_USING_I2C0
+            select BSP_USING_ADC0
+            select BSP_USING_AD16C4T0_PWM
+            select BSP_USING_GP16C4T1_PWM
+            select BSP_USING_GP16C4T2_PWM
+            imply RTDUINO_USING_SERVO
+            imply RTDUINO_USING_WIRE
+            imply RTDUINO_USING_SPI
+            default n
     endmenu
 
     menu "Onboard Peripheral Drivers"
