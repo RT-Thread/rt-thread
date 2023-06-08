@@ -173,6 +173,7 @@ endif
         bool "Enable TMP file system"
         default n
 
+if RT_USING_DFS_V1
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"
         depends on RT_USING_LWIP
@@ -183,6 +184,7 @@ endif
             string "NFSv3 host export"
             default "192.168.1.5:/"
     endif
+endif
 
 endif
 

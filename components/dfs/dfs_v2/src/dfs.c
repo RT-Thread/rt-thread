@@ -24,7 +24,7 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #include <lwp.h>
 #endif
 
@@ -380,7 +380,7 @@ exit:
 struct dfs_fdtable *dfs_fdtable_get(void)
 {
     struct dfs_fdtable *fdt;
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     struct rt_lwp *lwp;
 
     lwp = (struct rt_lwp *)rt_thread_self()->lwp;
@@ -395,7 +395,7 @@ struct dfs_fdtable *dfs_fdtable_get(void)
     return fdt;
 }
 
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 struct dfs_fdtable *dfs_fdtable_get_pid(int pid)
 {
     struct rt_lwp *lwp = RT_NULL;
@@ -561,7 +561,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 #ifdef DFS_USING_WORKDIR
     if (directory == NULL) /* shall use working directory */
     {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
         directory = lwp_getcwd();
 #else
         directory = &working_directory[0];
