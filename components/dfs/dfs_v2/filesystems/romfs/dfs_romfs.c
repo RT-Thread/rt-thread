@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -25,7 +25,7 @@ static const struct dfs_file_ops _rom_fops;
 static const mode_t romfs_modemap[] =
 {
     S_IFREG  | 0644,    /* regular file */
-    S_IFDIR  | 0644,    /* directory */	
+    S_IFDIR  | 0644,    /* directory */
     0,                  /* hard link */
     S_IFLNK  | 0777,    /* symlink */
     S_IFBLK  | 0600,    /* blockdev */

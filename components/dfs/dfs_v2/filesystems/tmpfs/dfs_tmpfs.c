@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -545,7 +545,7 @@ static struct dfs_vnode *_dfs_tmpfs_lookup(struct dfs_dentry *dentry)
     rt_size_t size;
     struct tmpfs_sb *superblock;
     struct tmpfs_file *d_file;
-    
+
     if (dentry == NULL || dentry->mnt == NULL || dentry->mnt->data == NULL)
     {
         return NULL;
@@ -569,7 +569,7 @@ static struct dfs_vnode *_dfs_tmpfs_lookup(struct dfs_dentry *dentry)
                 vnode->mode = S_IFREG | S_IRUSR | S_IWUSR | S_IXUSR;
                 vnode->type = FT_REGULAR;
             }
-            
+
             vnode->mnt = dentry->mnt;
             vnode->data = d_file;
             vnode->size = d_file->size;
@@ -588,7 +588,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
     char parent_path[DFS_PATH_MAX], file_name[TMPFS_NAME_MAX];
 
     RT_DEFINE_SPINLOCK(lock);
-    
+
     if (dentry == NULL || dentry->mnt == NULL || dentry->mnt->data == NULL)
     {
         return NULL;
