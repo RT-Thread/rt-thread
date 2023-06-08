@@ -91,7 +91,7 @@ int dfs_unregister(struct dfs_filesystem_type *fs)
  *    mnt_parent <- - - - - - -  +
  *         |                     |
  *         |- mnt_child <- - - - - -+ (1 refcount)
- *                 |             | 
+ *                 |             |
  *                 |- parent - - + (1 refcount)
  */
 int dfs_mount(const char *device_name,
@@ -129,7 +129,7 @@ int dfs_mount(const char *device_name,
         /* open specific device */
         if (device_name) dev_id = rt_device_find(device_name);
 
-        if (!(type->fs_ops->flags & FS_NEED_DEVICE) || 
+        if (!(type->fs_ops->flags & FS_NEED_DEVICE) ||
             ((type->fs_ops->flags & FS_NEED_DEVICE) && dev_id))
         {
             DLOG(msg, "dfs", "mnt", DLOG_MSG, "mnt_parent = dfs_mnt_lookup(%s)", fullpath);

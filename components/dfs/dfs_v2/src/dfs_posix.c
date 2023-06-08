@@ -1196,7 +1196,7 @@ char *getcwd(char *buf, size_t size)
         rt_set_errno(-EBADF);
         return NULL;
     }
-    
+
 #ifdef DFS_USING_WORKDIR
     char *dir_buf = RT_NULL;
 

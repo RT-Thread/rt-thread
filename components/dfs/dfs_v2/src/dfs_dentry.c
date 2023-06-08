@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -37,7 +37,7 @@ static uint32_t _dentry_hash(struct dfs_mnt *mnt, const char *path)
             val = ((val << 5) + val) + *path++;
         }
     }
-    return (val ^ (unsigned long) mnt) & (DFS_DENTRY_HASH_NR - 1);    
+    return (val ^ (unsigned long) mnt) & (DFS_DENTRY_HASH_NR - 1);
 }
 
 struct dfs_dentry *dfs_dentry_create(struct dfs_mnt *mnt, char *fullpath)
@@ -99,7 +99,7 @@ struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry)
     {
         ret = dfs_file_lock();
         if (ret == RT_EOK)
-        { 
+        {
             if (dentry->flags & DENTRY_IS_ALLOCED)
             {
                 rt_atomic_sub(&(dentry->ref_count), 1);
@@ -159,7 +159,7 @@ static struct dfs_dentry *_dentry_hash_lookup(struct dfs_mnt *mnt, const char *p
         rt_list_for_each_entry(entry, &hash_head.head[_dentry_hash(mnt, path)], hashlist)
         {
             if (entry->mnt == mnt && !strncmp(entry->pathname, path, path_len))
-            {   
+            {
                 dfs_dentry_ref(entry);
                 dfs_file_unlock();
                 return entry;
@@ -221,7 +221,7 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
                     dentry->flags |= DENTRY_IS_ADDHASH;
                     dfs_file_unlock();
 
-                    if (dentry->flags & (DENTRY_IS_ALLOCED | DENTRY_IS_ADDHASH) 
+                    if (dentry->flags & (DENTRY_IS_ALLOCED | DENTRY_IS_ADDHASH)
                         && !(dentry->flags & DENTRY_IS_OPENED))
                     {
                         rt_err_t ret = dfs_file_lock();
@@ -296,12 +296,12 @@ char* dfs_dentry_pathname(struct dfs_dentry* dentry)
         {
             if (dentry->pathname[0] == '/')
             {
-                rt_snprintf(pathname, path_length - 1, "%s%.*s", dentry->mnt->fullpath, 
+                rt_snprintf(pathname, path_length - 1, "%s%.*s", dentry->mnt->fullpath,
                     length, dentry->pathname);
             }
             else
             {
-                rt_snprintf(pathname, path_length - 1, "%s/%.*s", dentry->mnt->fullpath, 
+                rt_snprintf(pathname, path_length - 1, "%s/%.*s", dentry->mnt->fullpath,
                     length, dentry->pathname);
             }
         }
@@ -321,7 +321,7 @@ uint32_t dfs_dentry_full_path_crc32(struct dfs_dentry* dentry)
     if (fullpath)
     {
         int i = 0;
-        
+
         while(fullpath[i] != '\0')
         {
             for (uint8_t b = 1; b; b <<= 1)

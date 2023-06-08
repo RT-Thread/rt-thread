@@ -741,13 +741,13 @@ int dfs_fd_dump(int argc, char** argv)
             char* fullpath = dfs_dentry_full_path(file->dentry);
             if (fullpath)
             {
-                printf("[%d] - %s, ref_count %zd\n", index, 
+                printf("[%d] - %s, ref_count %zd\n", index,
                     fullpath, (size_t)rt_atomic_load(&(file->ref_count)));
                 rt_free(fullpath);
             }
             else
             {
-                printf("[%d] - %s, ref_count %zd\n", index, 
+                printf("[%d] - %s, ref_count %zd\n", index,
                     file->dentry->pathname, (size_t)rt_atomic_load(&(file->ref_count)));
             }
         }

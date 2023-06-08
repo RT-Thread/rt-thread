@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -644,7 +644,7 @@ static int cmd_df(int argc, char **argv)
 {
 #ifndef RT_USING_DFS_V2
     extern int df(const char *path);
-    
+
     if (argc != 2)
     {
         df("/");

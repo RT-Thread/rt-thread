@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,7 +31,7 @@ int libc_system_init(void)
     if (dev_console)
     {
         int fd = libc_stdio_set_console(dev_console->parent.name, O_RDWR);
-        if (fd < 0) 
+        if (fd < 0)
         {
             return -1;
         }
