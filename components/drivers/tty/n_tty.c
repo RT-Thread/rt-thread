@@ -1436,7 +1436,7 @@ static int canon_copy_from_read_buf(struct tty_struct *tty, char *b, size_t nr)
 
     size_t buf_size = RT_TTY_BUF - tail;
     const void *from = read_buf_addr(ldata, tail);
-    int temp_n = n;
+    size_t temp_n = n;
     if (n > buf_size)
     {
         rt_memcpy(b, from, buf_size);
