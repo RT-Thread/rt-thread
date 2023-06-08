@@ -4318,7 +4318,28 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
         }
         else
         {
+#ifdef RT_USING_DFS_V2
+            char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
+            if (link_fn)
+            {
+                err = dfs_file_readlink(copy_path, link_fn, DFS_PATH_MAX);
+                if (err > 0)
+                {
+                    rtn = lwp_put_to_user(buf, link_fn, bufsz > err ? err : bufsz - 1);
+                }
+                else
+                {
+                    rtn = -EIO;
+                }
+                rt_free(link_fn);
+            }
+            else
+            {
+                rtn = -ENOMEM;
+            }
+#else
             rtn = lwp_put_to_user(buf, copy_path, copy_len);
+#endif
         }
         rt_free(copy_path);
         return rtn;

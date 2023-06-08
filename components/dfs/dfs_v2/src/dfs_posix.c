@@ -66,12 +66,9 @@ int open(const char *file, int flags, ...)
         return RT_NULL;
     }
 
-    dfs_file_init(df);
-
     result = dfs_file_open(df, file, flags, mode);
     if (result < 0)
     {
-        dfs_file_unref(df);
         fd_release(fd);
         rt_set_errno(result);
         return -1;
@@ -356,7 +353,7 @@ int unlink(const char *pathname)
         return -1;
     }
 
-    result = dfs_file_stat(pathname, &stat);
+    result = dfs_file_lstat(pathname, &stat);
     if (result == 0 && S_ISDIR(stat.st_mode))
     {
         rt_set_errno(-RT_ERROR);
@@ -391,16 +388,14 @@ int stat(const char *file, struct stat *buf)
 
     if (file == NULL || buf == NULL)
     {
-        rt_set_errno(-EBADF);
+        rt_set_errno(EBADF);
         return -1;
     }
 
     result = dfs_file_stat(file, buf);
     if (result < 0)
     {
-        rt_set_errno(result);
-
-        return -1;
+        rt_set_errno(-result);
     }
 
     return result;
@@ -673,7 +668,7 @@ int mkdir(const char *path, mode_t mode)
         return -1;
     }
 
-    if (path && dfs_file_stat(path, &stat) == 0)
+    if (path && dfs_file_lstat(path, &stat) == 0)
     {
         rt_set_errno(-RT_ERROR);
         return -1;
@@ -682,16 +677,20 @@ int mkdir(const char *path, mode_t mode)
     dfs_file_init(&file);
 
     result = dfs_file_open(&file, path, O_DIRECTORY | O_CREAT, mode);
-    if (result < 0)
+    if (result >= 0)
     {
-        dfs_file_unref(&file);
+        dfs_file_close(&file);
+        result = 0;
+    }
+    else
+    {
         rt_set_errno(result);
-        return -1;
+        result = -1;
     }
 
-    dfs_file_close(&file);
+    dfs_file_deinit(&file);
 
-    return 0;
+    return result;
 }
 RTM_EXPORT(mkdir);
 
@@ -745,7 +744,7 @@ int rmdir(const char *pathname)
         }
     }
 
-    if (dfs_file_stat(pathname, &stat) == 0)
+    if (dfs_file_lstat(pathname, &stat) == 0)
     {
         if (S_ISLNK(stat.st_mode))
         {
@@ -796,8 +795,6 @@ DIR *opendir(const char *name)
         return RT_NULL;
     }
 
-    dfs_file_init(file);
-
     result = dfs_file_open(file, name, O_RDONLY | O_DIRECTORY, 0);
     if (result >= 0)
     {
@@ -818,7 +815,6 @@ DIR *opendir(const char *name)
         return t;
     }
 
-    dfs_file_unref(file);
     fd_release(fd);
     rt_set_errno(result);
 

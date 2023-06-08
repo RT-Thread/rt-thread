@@ -26,7 +26,6 @@ struct dfs_filesystem_ops;
 struct dfs_mnt
 {
     struct dfs_mnt *parent;         /* the parent mounted file system */
-    struct dfs_dentry *root;        /* the dentry of the root entry for this file system */
 
     rt_list_t sibling;              /* the sibling node for mounted list */
     rt_list_t child;                /* the child node for mounted list */
@@ -37,7 +36,6 @@ struct dfs_mnt
 #define MNT_IS_ALLOCED 0x1          /* the mnt struct is allocated */
 #define MNT_IS_ADDLIST 0x2          /* the mnt struct is added into list */
 #define MNT_IS_MOUNTED 0x4          /* the mnt struct is mounted */
-    struct dfs_dentry *mountpoint;  /* the dentry for mount point */
 
     rt_atomic_t ref_count;          /* reference count */
 

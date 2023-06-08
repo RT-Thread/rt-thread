@@ -63,7 +63,6 @@ int dfs_vnode_destroy(struct dfs_vnode* vnode)
                 {
                     DLOG(msg, "vnode", vnode->mnt->fs_ops->name, DLOG_MSG, "fs_ops->free_vnode");
                     vnode->mnt->fs_ops->free_vnode(vnode);
-                    dfs_mnt_unref(vnode->mnt);
                 }
                 else
                 {
@@ -117,7 +116,6 @@ void dfs_vnode_unref(struct dfs_vnode *vnode)
                 {
                     DLOG(msg, "vnode", vnode->mnt->fs_ops->name, DLOG_MSG, "fs_ops->free_vnode");
                     vnode->mnt->fs_ops->free_vnode(vnode);
-                    dfs_mnt_unref(vnode->mnt);
                 }
 
                 dfs_file_unlock();

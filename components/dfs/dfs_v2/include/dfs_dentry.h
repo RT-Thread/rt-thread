@@ -43,6 +43,7 @@ struct dfs_dentry
 struct dfs_dentry *dfs_dentry_create(struct dfs_mnt *mnt, char *fullpath);
 struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry);
 struct dfs_dentry *dfs_dentry_ref(struct dfs_dentry *dentry);
+void dfs_dentry_insert(struct dfs_dentry *dentry);
 struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint32_t flags);
 
 /* get full path of a dentry */
@@ -50,6 +51,9 @@ char* dfs_dentry_full_path(struct dfs_dentry* dentry);
 
 /* get pathname (with mnt path) of a dentry */
 char* dfs_dentry_pathname(struct dfs_dentry* dentry);
+
+/* get full path crc32 */
+uint32_t dfs_dentry_full_path_crc32(struct dfs_dentry* dentry);
 
 int dfs_dentry_init(void);
 

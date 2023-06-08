@@ -76,7 +76,16 @@ struct dfs_dentry * dfs_dentry_ref(struct dfs_dentry *dentry)
 {
     if (dentry)
     {
-        rt_atomic_add(&(dentry->ref_count), 1);
+        int ret = dfs_file_lock();
+        if (ret == RT_EOK)
+        {
+            rt_atomic_add(&(dentry->ref_count), 1);
+            if (dentry->vnode)
+            {
+                rt_atomic_add(&(dentry->vnode->ref_count), 1);
+            }
+            dfs_file_unlock();
+        }
     }
 
     return dentry;
@@ -125,6 +134,10 @@ struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry)
             }
             else
             {
+                if (dentry->vnode)
+                {
+                    rt_atomic_sub(&(dentry->vnode->ref_count), 1);
+                }
                 dfs_file_unlock();
                 DLOG(note, "dentry", "dentry ref_count=%d", rt_atomic_load(&(dentry->ref_count)));
             }
@@ -159,6 +172,14 @@ static struct dfs_dentry *_dentry_hash_lookup(struct dfs_mnt *mnt, const char *p
     return RT_NULL;
 }
 
+void dfs_dentry_insert(struct dfs_dentry *dentry)
+{
+    dfs_file_lock();
+    rt_list_insert_after(&hash_head.head[_dentry_hash(dentry->mnt, dentry->pathname)], &dentry->hashlist);
+    dentry->flags |= DENTRY_IS_ADDHASH;
+    dfs_file_unlock();
+}
+
 /*
  * lookup a dentry, return this dentry and increase refcount if exist, otherwise return NULL
  */
@@ -173,10 +194,8 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
         path += mntpoint_len;
         if ((*path) == '\0')
         {
-            /* root file system */
-            DLOG(note, "dentry", "return root dentry");
-            DLOG(msg, "dentry", "dentry", DLOG_MSG, "dfs_dentry_ref(mnt->root(%d))", mnt->root->ref_count + 1);
-            return dfs_dentry_ref(mnt->root);
+            /* root */
+            path = "/";
         }
     }
 
@@ -197,8 +216,10 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
                 {
                     DLOG(msg, mnt->fs_ops->name, "dentry", DLOG_MSG_RET, "return vnode");
                     dentry->vnode = vnode; /* the refcount of created vnode is 1. no need to reference */
+                    dfs_file_lock();
                     rt_list_insert_after(&hash_head.head[_dentry_hash(mnt, path)], &dentry->hashlist);
                     dentry->flags |= DENTRY_IS_ADDHASH;
+                    dfs_file_unlock();
 
                     if (dentry->flags & (DENTRY_IS_ALLOCED | DENTRY_IS_ADDHASH) 
                         && !(dentry->flags & DENTRY_IS_OPENED))
@@ -291,6 +312,28 @@ char* dfs_dentry_pathname(struct dfs_dentry* dentry)
     }
 
     return pathname;
+}
+
+uint32_t dfs_dentry_full_path_crc32(struct dfs_dentry* dentry)
+{
+    uint32_t crc32 = 0xFFFFFFFF;
+    char *fullpath = dfs_dentry_full_path(dentry);
+    if (fullpath)
+    {
+        int i = 0;
+        
+        while(fullpath[i] != '\0')
+        {
+            for (uint8_t b = 1; b; b <<= 1)
+            {
+                crc32 ^= (fullpath[i] & b) ? 1 : 0;
+                crc32 = (crc32 & 1) ? crc32 >> 1 ^ 0xEDB88320 : crc32 >> 1;
+            }
+            i ++;
+        }
+        rt_free(fullpath);
+    }
+    return crc32;
 }
 
 int dfs_dentry_init(void)

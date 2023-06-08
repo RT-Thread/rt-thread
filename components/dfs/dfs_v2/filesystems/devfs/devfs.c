@@ -37,7 +37,7 @@ int dfs_devfs_ioctl(struct dfs_file *file, int cmd, void *args);
 int dfs_devfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count);
 static int dfs_devfs_poll(struct dfs_file *file, struct rt_pollreq *req);
 
-struct dfs_dentry *dfs_devfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data);
+int dfs_devfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data);
 int dfs_devfs_umount(struct dfs_mnt *mnt);
 int dfs_devfs_unlink(struct dfs_dentry *dentry);
 int dfs_devfs_stat(struct dfs_dentry *dentry, struct stat *st);
@@ -158,7 +158,7 @@ static struct dfs_vnode *dfs_devfs_lookup(struct dfs_dentry *dentry)
             vnode->size = count;
             vnode->nlink = 1;
             vnode->fops = &_dev_fops;
-            vnode->mnt = dfs_mnt_ref(dentry->mnt);
+            vnode->mnt = dentry->mnt;
             vnode->type = FT_DIRECTORY;
         }
         else
@@ -184,7 +184,7 @@ static struct dfs_vnode *dfs_devfs_lookup(struct dfs_dentry *dentry)
                     vnode->fops = &_dev_fops;
                 }
                 vnode->data = device;
-                vnode->mnt = dfs_mnt_ref(dentry->mnt);
+                vnode->mnt = dentry->mnt;
                 vnode->type = FT_DEVICE;
             }
         }
@@ -229,30 +229,10 @@ int dfs_devfs_free_vnode(struct dfs_vnode *vnode)
     return 0;
 }
 
-struct dfs_dentry *dfs_devfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
+int dfs_devfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
 {
-    struct dfs_dentry *root;
-    struct dfs_vnode *vnode;
-
     RT_ASSERT(mnt != RT_NULL);
-
-    DLOG(msg, "devfs", "dentry", DLOG_MSG, "dfs_dentry_create(/)");
-    root = dfs_dentry_create(mnt, "/");
-    if (!root)
-    {
-        return RT_NULL;
-    }
-
-    vnode = dfs_devfs_lookup(root);
-    if (!vnode)
-    {
-        dfs_dentry_unref(root);
-        return RT_NULL;
-    }
-    DLOG(msg, "devfs", "devfs", DLOG_MSG, "root->vnode = vnode");
-    root->vnode = vnode;
-
-    return root;
+    return RT_EOK;
 }
 
 int dfs_devfs_umount(struct dfs_mnt *mnt)
@@ -510,6 +490,7 @@ int dfs_devfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t coun
         d->d_namlen = RT_NAME_MAX;
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
         rt_strncpy(d->d_name, object->name, RT_NAME_MAX);
+        d->d_name[RT_NAME_MAX] = '\0';
     }
 
     file->fpos += index;
@@ -528,6 +509,10 @@ int dfs_devfs_init(void)
 {
     /* register devfs file system */
     dfs_register(&_devfs);
+
+    dfs_mount(RT_NULL, "/dev", "devfs", 0, RT_NULL);
+
     return 0;
 }
-INIT_PREV_EXPORT(dfs_devfs_init);
+INIT_COMPONENT_EXPORT(dfs_devfs_init);
+

@@ -48,7 +48,7 @@ struct dfs_filesystem_ops
 
     const struct dfs_file_ops *default_fops;
 
-    struct dfs_dentry* (*mount)(struct dfs_mnt *mnt, unsigned long rwflag, const void *data);
+    int (*mount)(struct dfs_mnt *mnt, unsigned long rwflag, const void *data);
     int (*umount)(struct dfs_mnt *mnt);
 
     int (*mkfs)(rt_device_t devid, const char *fs_name);

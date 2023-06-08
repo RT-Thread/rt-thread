@@ -88,16 +88,11 @@ int dfs_unregister(struct dfs_filesystem_type *fs)
 
 /*
  *    parent(mount path)
- *    mnt_parent <- - - - - - - - - - - +
- *    mntpoint_dentry                   |
- *              \_                      |
- *                mnt_child <- - - - - -)-+
- *                   |                  | |
- *                   +-mntpoint(dentry) | |
- *                   |   \-mnt - - - - -+ |
- *                   +-root(dentry£©      |
- *                       \-mnt - - - - - -| (1 refcount) 
- *                       \-vnode -> mnt - - (1 refcount)
+ *    mnt_parent <- - - - - - -  +
+ *         |                     |
+ *         |- mnt_child <- - - - - -+ (1 refcount)
+ *                 |             | 
+ *                 |- parent - - + (1 refcount)
  */
 int dfs_mount(const char *device_name,
               const char *path,
@@ -109,7 +104,7 @@ int dfs_mount(const char *device_name,
     char *fullpath = RT_NULL;
     rt_device_t dev_id = RT_NULL;
     struct dfs_mnt *mnt_parent = RT_NULL, *mnt_child = RT_NULL;
-    struct dfs_dentry *mntpoint_dentry = RT_NULL, *root_dentry = RT_NULL;
+    struct dfs_dentry *mntpoint_dentry = RT_NULL;
     struct dfs_filesystem_type *type = *_find_filesystem(filesystemtype);
 
     if (type)
@@ -139,7 +134,8 @@ int dfs_mount(const char *device_name,
         {
             DLOG(msg, "dfs", "mnt", DLOG_MSG, "mnt_parent = dfs_mnt_lookup(%s)", fullpath);
             mnt_parent = dfs_mnt_lookup(fullpath);
-            if (!mnt_parent)
+            if ((!mnt_parent && (strcmp(fullpath, "/") == 0 || strcmp(fullpath, "/dev") == 0))
+                || (mnt_parent && strcmp(fullpath, "/") == 0 && strcmp(mnt_parent->fullpath, fullpath) != 0))
             {
                 LOG_D("no mnt found @ mount point %s, should be root.", fullpath);
                 DLOG(msg, "mnt", "dfs", DLOG_MSG_RET, "no mnt");
@@ -158,49 +154,26 @@ int dfs_mount(const char *device_name,
                     if (mnt_parent->fs_ops->mount)
                     {
                         DLOG(msg, "dfs", type->fs_ops->name, DLOG_MSG, "fs_ops->mount(mnt_parent, rwflag, data)");
-                        root_dentry = mnt_parent->fs_ops->mount(mnt_parent, rwflag, data);
-                        if (root_dentry) /* root_dentry->ref_count should be 1 */
+                        ret = mnt_parent->fs_ops->mount(mnt_parent, rwflag, data);
+                        if (ret == RT_EOK)
                         {
                             DLOG(msg, type->fs_ops->name, "dfs", DLOG_MSG_RET, "mount OK, ret root_dentry");
 
-                            /* the mount point dentry is the same as root dentry. */
-                            DLOG(msg, "dfs", "dentry", DLOG_MSG, "dfs_dentry_ref(root_dentry)");
-                            mntpoint_dentry = dfs_dentry_ref(root_dentry);
-
-                            // LOG_D("mount %s sucessfully, mount point %p, dentry %p", path, mnt_parent, root_dentry);
-                            mnt_parent->mountpoint = mntpoint_dentry;
-                            mnt_parent->root = root_dentry;
                             mnt_child = mnt_parent;
                             DLOG(note_right, "mnt", "mount sucessfully");
                             DLOG(msg, "dfs", "mnt", DLOG_MSG, "dfs_mnt_insert(, mnt_child)");
                             dfs_mnt_insert(RT_NULL, mnt_child);
 
-                            DLOG(note_right, "mnt", "set mnt->flags as mounted");
-                            dfs_file_lock(); /* TODO: should use spinlock */
-                            mntpoint_dentry->flags |= DENTRY_IS_MOUNTED;
-                            dfs_file_unlock();
-
-                            /* unref it, because the ref_count =1 when create */
+                            /* unref it, because the ref_count = 1 when create */
                             DLOG(msg, "dfs", "mnt", DLOG_MSG, "dfs_mnt_unref(mnt_parent)");
                             dfs_mnt_unref(mnt_parent);
 
                             /*
                              * About root mnt:
-                             * There are three ref_count:
+                             * There are two ref_count:
                              * 1. the gobal root reference.
-                             * 1. the root_dentry->mnt reference.
-                             * 1. the root_dentry->vnode->mnt reference.
+                             * 1. the mnt->parent reference.
                              */
-
-                            /* try to mount devfs */
-                            ret = dfs_mount(RT_NULL, "/dev", "devfs", O_RDWR, RT_NULL);
-                            if (ret != 0)
-                            {
-                                LOG_W("mount devfs failed.\n");
-                            }
-
-                            /* restore return value */
-                            ret = RT_EOK;
                         }
                         else
                         {
@@ -208,6 +181,7 @@ int dfs_mount(const char *device_name,
                             DLOG(msg, "dfs", "mnt", DLOG_MSG, "dfs_mnt_destroy(mnt_parent)");
                             dfs_mnt_destroy(mnt_parent);
                             mnt_parent = RT_NULL;
+                            rt_set_errno(EPERM);
                             ret = -1;
                         }
                     }
@@ -217,26 +191,22 @@ int dfs_mount(const char *device_name,
                         DLOG(msg, "dfs", "mnt", DLOG_MSG, "dfs_mnt_destroy(mnt_parent), no mount method");
                         dfs_mnt_destroy(mnt_parent);
                         mnt_parent = RT_NULL;
+                        rt_set_errno(EIO);
                         ret = -1;
                     }
                 }
                 else
                 {
+                    LOG_E("create a mnt point failed.");
+                    rt_set_errno(ENOMEM);
                     ret = -1;
                 }
             }
-            else
+            else if (strcmp(mnt_parent->fullpath, fullpath) != 0)
             {
-                DLOG(msg, "mnt", "dfs", DLOG_MSG_RET, "with mnt_parent");
-                if (strcmp(mnt_parent->fullpath, fullpath) == 0)
-                {
-                    /* mount on old mount_point */
-                    mnt_parent = mnt_parent->mountpoint->mnt;
-                }
-
                 DLOG(msg, "dfs", "dentry", DLOG_MSG, "mntpoint_dentry = dfs_dentry_lookup(mnt_parent, %s, 0)", fullpath);
                 mntpoint_dentry = dfs_dentry_lookup(mnt_parent, fullpath, 0);
-                if (mntpoint_dentry && !(mntpoint_dentry->flags & DENTRY_IS_MOUNTED))
+                if (mntpoint_dentry)
                 {
                     DLOG(msg, "dentry", "dfs", DLOG_MSG_RET, "dentry exist");
                     DLOG(msg, "dfs", "mnt", DLOG_MSG, "mnt_child = dfs_mnt_create(path)");
@@ -247,30 +217,29 @@ int dfs_mount(const char *device_name,
 
                         mnt_child->fs_ops = type->fs_ops;
                         mnt_child->dev_id = dev_id;
-                        mnt_child->mountpoint = dfs_dentry_ref(mntpoint_dentry);
+
                         if (mnt_child->fs_ops->mount)
                         {
                             DLOG(msg, "dfs", type->fs_ops->name, DLOG_MSG, "root_dentry = fs_ops->mount(mnt_child, rwflag, data)");
-                            root_dentry = mnt_child->fs_ops->mount(mnt_child, rwflag, data);
-                            if (root_dentry)
+                            ret = mnt_child->fs_ops->mount(mnt_child, rwflag, data);
+                            if (ret == RT_EOK)
                             {
-                                LOG_D("mount %s sucessfully, mount point dentry %p", fullpath, root_dentry);
+                                LOG_D("mount %s sucessfully", fullpath);
                                 DLOG(msg, mnt_child->fs_ops->name, "dfs", DLOG_MSG_RET, "mount OK");
 
-                                mnt_child->root = root_dentry;
                                 DLOG(msg, "dfs", "mnt", DLOG_MSG, "dfs_mnt_insert(mnt_parent, mnt_child)");
                                 dfs_mnt_insert(mnt_parent, mnt_child);
 
-                                DLOG(note_right, "mnt", "set mnt->flags as mounted");
-                                dfs_file_lock(); /* TODO: should use spinlock */
-                                mntpoint_dentry->flags |= DENTRY_IS_MOUNTED;
-                                dfs_file_unlock();
+                                /* unref it, because the ref_count = 1 when create */
+                                DLOG(msg, "dfs", "mnt", DLOG_MSG, "dfs_mnt_unref(mnt_child)");
+                                dfs_mnt_unref(mnt_child);
                             }
                             else
                             {
                                 LOG_W("mount %s failed with file system type: %s", fullpath, type->fs_ops->name);
                                 DLOG(msg, mnt_child->fs_ops->name, "dfs", DLOG_MSG_RET, "mount failed");
                                 dfs_mnt_destroy(mnt_child);
+                                rt_set_errno(EPERM);
                                 ret = -1;
                             }
                         }
@@ -278,22 +247,30 @@ int dfs_mount(const char *device_name,
                         {
                             LOG_W("no mount method on file system type: %s", type->fs_ops->name);
                             dfs_mnt_destroy(mnt_child);
+                            rt_set_errno(EIO);
                             ret = -1;
                         }
-                        dfs_mnt_unref(mnt_child);
                     }
                     else
                     {
                         LOG_E("create a mnt point failed.");
+                        rt_set_errno(ENOMEM);
                         ret = -1;
                     }
                     dfs_dentry_unref(mntpoint_dentry);
                 }
                 else
                 {
-                    LOG_W("no mount point dentry(%s) in file system: %s", fullpath, mnt_parent->mountpoint->pathname);
+                    LOG_W("no mount point (%s) in file system: %s", fullpath, mnt_parent->fullpath);
+                    rt_set_errno(ENOTDIR);
                     ret = -1;
                 }
+            }
+            else
+            {
+                LOG_E("mount point (%s) already mounted!", fullpath);
+                rt_set_errno(EEXIST);
+                ret = -1;
             }
         }
         else
@@ -325,12 +302,7 @@ int dfs_umount(const char *specialfile)
             {
                 /* is the mount point */
 
-                /*
-                 * the refcount of mnt:
-                 * 1 is the mnt->root->mnt;
-                 * 1 is the mnt->root->vnode->mnt.
-                 */
-                if (rt_atomic_load(&(mnt->ref_count)) == 2 && rt_list_isempty(&mnt->child))
+                if (rt_atomic_load(&(mnt->ref_count)) == 1 && rt_list_isempty(&mnt->child))
                 {
                     DLOG(msg, "dfs", mnt->fs_ops->name, DLOG_MSG, "fs_ops->umount(mnt)");
                     ret = mnt->fs_ops->umount(mnt);

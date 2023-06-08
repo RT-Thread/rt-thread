@@ -344,7 +344,7 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
                 rt_strcmp("..", dirent->d_name) != 0)
         {
             rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
-            if (dirent->d_type == DT_REG)
+            if (dirent->d_type != DT_DIR)
             {
                 if (unlink(full_path) != 0)
                 {
@@ -356,7 +356,7 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
                     rt_kprintf("removed '%s'\n", full_path);
                 }
             }
-            else if (dirent->d_type == DT_DIR)
+            else
             {
                 directory_delete_for_msh(full_path, f, v);
             }
@@ -416,7 +416,11 @@ static int cmd_rm(int argc, char **argv)
     for (index = 1; index < argc; index ++)
     {
         struct stat s;
+#ifdef RT_USING_DFS_V2
+        if (dfs_file_lstat(argv[index], &s) == 0)
+#else
         if (stat(argv[index], &s) == 0)
+#endif
         {
             if (s.st_mode & S_IFDIR)
             {

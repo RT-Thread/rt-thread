@@ -40,6 +40,9 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         d = fd_get(fd);
         if(d)
         {
+#ifdef RT_USING_DFS_V2
+            d->fops = dfs_net_get_fops();
+#endif
             /* this is a socket fd */
             d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
             if (!d->vnode)
@@ -229,6 +232,11 @@ int socket(int domain, int type, int protocol)
         return -1;
     }
     d = fd_get(fd);
+
+#ifdef RT_USING_DFS_V2
+    d->fops = dfs_net_get_fops();
+#endif
+
     d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
     if (!d->vnode)
     {

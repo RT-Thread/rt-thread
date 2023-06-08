@@ -111,48 +111,33 @@ static int _free_subdir(struct tmpfs_file *dfile)
     return 0;
 }
 
-static struct dfs_dentry *dfs_tmpfs_mount(struct dfs_mnt    *mnt,
+static int dfs_tmpfs_mount(struct dfs_mnt    *mnt,
                                             unsigned long   rwflag,
                                             const void      *data)
 {
-    struct dfs_dentry *root;
-    struct dfs_vnode *vnode;
     struct tmpfs_sb *superblock;
 
     superblock = rt_calloc(1, sizeof(struct tmpfs_sb));
-    superblock->df_size = sizeof(struct tmpfs_sb);
-    superblock->magic = TMPFS_MAGIC;
-    rt_list_init(&superblock->sibling);
-
-    superblock->root.name[0] = '/';
-    superblock->root.sb = superblock;
-    superblock->root.type = TMPFS_TYPE_DIR;
-    rt_list_init(&superblock->root.sibling);
-    rt_list_init(&superblock->root.subdirs);
-
-    DLOG(msg, "tmpfs", "dentry", DLOG_MSG, "dfs_dentry_create(/)");
-    root = dfs_dentry_create(mnt, "/");
-    if (!root)
+    if (superblock)
     {
-        return RT_NULL;
+        superblock->df_size = sizeof(struct tmpfs_sb);
+        superblock->magic = TMPFS_MAGIC;
+        rt_list_init(&superblock->sibling);
+
+        superblock->root.name[0] = '/';
+        superblock->root.sb = superblock;
+        superblock->root.type = TMPFS_TYPE_DIR;
+        rt_list_init(&superblock->root.sibling);
+        rt_list_init(&superblock->root.subdirs);
+
+        mnt->data = superblock;
+    }
+    else
+    {
+        return -1;
     }
 
-    mnt->data = superblock;
-
-    DLOG(msg, "tmpfs", "tmpfs", DLOG_MSG, "fs_ops->lookup(root)");
-    vnode = mnt->fs_ops->lookup(root);
-    if (!vnode)
-    {
-        dfs_dentry_unref(root);
-        return RT_NULL;
-    }
-
-    vnode->mode = S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
-    vnode->type = FT_DIRECTORY;
-
-    root->vnode = vnode;
-
-    return root;
+    return 0;
 }
 
 static int dfs_tmpfs_unmount(struct dfs_mnt *mnt)
@@ -380,6 +365,8 @@ int dfs_tmpfs_open(struct dfs_file *file)
     if (file->flags & O_TRUNC)
     {
         d_file->size = 0;
+        file->vnode->size = d_file->size;
+        file->fpos = file->vnode->size;
         if (d_file->data != NULL)
         {
             /* ToDo: fix for rt-smart. */
@@ -412,7 +399,9 @@ static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
     if (d_file == NULL)
         return -ENOENT;
 
-    st->st_dev = 0;
+    st->st_dev = (dev_t)(dentry->mnt->dev_id);
+    st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
+
     st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
                   S_IWUSR | S_IWGRP | S_IWOTH;
     if (d_file->type == TMPFS_TYPE_DIR)
@@ -581,7 +570,7 @@ static struct dfs_vnode *_dfs_tmpfs_lookup(struct dfs_dentry *dentry)
                 vnode->type = FT_REGULAR;
             }
             
-            vnode->mnt = dfs_mnt_ref(dentry->mnt);
+            vnode->mnt = dentry->mnt;
             vnode->data = d_file;
             vnode->size = d_file->size;
         }
@@ -659,7 +648,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         rt_list_insert_after(&(p_file->subdirs), &(d_file->sibling));
         rt_hw_spin_unlock(&lock);
 
-        vnode->mnt = dfs_mnt_ref(dentry->mnt);
+        vnode->mnt = dentry->mnt;
         vnode->data = d_file;
         vnode->size = d_file->size;
     }
@@ -719,4 +708,4 @@ int dfs_tmpfs_init(void)
 
     return 0;
 }
-INIT_PREV_EXPORT(dfs_tmpfs_init);
+INIT_COMPONENT_EXPORT(dfs_tmpfs_init);

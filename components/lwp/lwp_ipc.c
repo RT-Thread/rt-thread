@@ -381,6 +381,7 @@ static int _ipc_msg_fd_new(void *file)
 {
     int fd;
     struct dfs_file *d;
+    struct dfs_vnode *vnode = (struct dfs_vnode *)file;
 
     fd = fd_new();
     if (fd < 0)
@@ -395,7 +396,11 @@ static int _ipc_msg_fd_new(void *file)
         return -1;
     }
 
-    d->vnode = (struct dfs_vnode *)file;
+#ifdef RT_USING_DFS_V2
+    d->fops = vnode->fops;
+#endif
+
+    d->vnode = vnode;
     d->flags = O_RDWR; /* set flags as read and write */
 
     return fd;

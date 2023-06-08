@@ -1167,4 +1167,4 @@ int dfs_cromfs_init(void)
     dfs_register(&_cromfs);
     return 0;
 }
-INIT_PREV_EXPORT(dfs_cromfs_init);
+INIT_COMPONENT_EXPORT(dfs_cromfs_init);

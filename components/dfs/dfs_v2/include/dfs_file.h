@@ -135,7 +135,7 @@ struct dfs_mmap2_args
 };
 
 void dfs_file_init(struct dfs_file *file);
-void dfs_file_unref(struct dfs_file *file);
+void dfs_file_deinit(struct dfs_file *file);
 
 int dfs_file_open(struct dfs_file *file, const char *path, int flags, mode_t mode);
 int dfs_file_close(struct dfs_file *file);
@@ -145,6 +145,7 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len);
 int generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);
 off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece);
 int dfs_file_stat(const char *path, struct stat *buf);
+int dfs_file_lstat(const char *path, struct stat *buf);
 int dfs_file_setattr(const char *path, struct dfs_attr *attr);
 int dfs_file_fstat(struct dfs_file *file, struct stat *buf);
 int dfs_file_ioctl(struct dfs_file *file, int cmd, void *args);

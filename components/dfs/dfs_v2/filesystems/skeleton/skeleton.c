@@ -93,5 +93,4 @@ int dfs_skt_init(void)
     dfs_register(&_skt_fs);
     return 0;
 }
-INIT_PREV_EXPORT(dfs_skt_init);
-
+INIT_COMPONENT_EXPORT(dfs_skt_init);

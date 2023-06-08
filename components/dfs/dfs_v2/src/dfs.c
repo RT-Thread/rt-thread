@@ -211,6 +211,8 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
         if (file)
         {
             file->magic = DFS_FD_MAGIC;
+            file->ref_count = 1;
+            rt_mutex_init(&file->pos_lock, "fpos", RT_IPC_FLAG_PRIO);
             RT_ASSERT(fdt->fds[idx] == NULL);
             fdt->fds[idx] = file;
             LOG_D("allocate a new fd @ %d", idx);
@@ -291,9 +293,14 @@ void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
     if (fd < fdt->maxfd)
     {
         struct dfs_file *file = fdt_fd_get(fdt, fd);
-        if (file && file->ref_count == 0)
+        if (file && file->ref_count == 1)
         {
+            rt_mutex_detach(&file->pos_lock);
             rt_free(file);
+        }
+        else
+        {
+            rt_atomic_sub(&(file->ref_count), 1);
         }
         fdt->fds[fd] = RT_NULL;
     }
@@ -554,7 +561,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 #ifdef DFS_USING_WORKDIR
     if (directory == NULL) /* shall use working directory */
     {
-#ifdef RT_USING_SMART
+#ifdef RT_USING_LWP
         directory = lwp_getcwd();
 #else
         directory = &working_directory[0];
@@ -731,8 +738,18 @@ int dfs_fd_dump(int argc, char** argv)
         struct dfs_file *file = _fdtab.fds[index];
         if (file)
         {
-            printf("[%d] - %s, ref_count %zd\n", index, 
-                file->dentry->pathname, (size_t)rt_atomic_load(&(file->ref_count)));
+            char* fullpath = dfs_dentry_full_path(file->dentry);
+            if (fullpath)
+            {
+                printf("[%d] - %s, ref_count %zd\n", index, 
+                    fullpath, (size_t)rt_atomic_load(&(file->ref_count)));
+                rt_free(fullpath);
+            }
+            else
+            {
+                printf("[%d] - %s, ref_count %zd\n", index, 
+                    file->dentry->pathname, (size_t)rt_atomic_load(&(file->ref_count)));
+            }
         }
     }
     dfs_file_unlock();

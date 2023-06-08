@@ -63,13 +63,28 @@ int dfs_mnt_insert(struct dfs_mnt* mnt, struct dfs_mnt* child)
         {
             /* insert into root */
             mnt = dfs_mnt_lookup(child->fullpath);
-            if (mnt == RT_NULL)
+            if (mnt == RT_NULL || (strcmp(child->fullpath, "/") == 0))
             {
                 /* it's root mnt */
                 mnt = child;
 
                 /* ref to gobal root */
-                _root_mnt = dfs_mnt_ref(mnt);
+                if (_root_mnt)
+                {
+                    child = _root_mnt;
+                    rt_atomic_sub(&(_root_mnt->parent->ref_count), 1);
+                    rt_atomic_sub(&(_root_mnt->ref_count), 1);
+
+                    _root_mnt = dfs_mnt_ref(mnt);
+                    mnt->parent = dfs_mnt_ref(mnt);
+                    mnt->flags |= MNT_IS_ADDLIST;
+
+                    mkdir("/dev", 0777);
+                }
+                else
+                {
+                    _root_mnt = dfs_mnt_ref(mnt);
+                }
             }
         }
 
@@ -80,8 +95,11 @@ int dfs_mnt_insert(struct dfs_mnt* mnt, struct dfs_mnt* child)
             {
                 /* not the root, insert into the child list */
                 rt_list_insert_before(&mnt->child, &child->sibling);
+                /* child ref self */
+                dfs_mnt_ref(child);
             }
-            child->parent = mnt;
+            /* parent ref parent */
+            child->parent = dfs_mnt_ref(mnt);
         }
     }
 
@@ -96,6 +114,12 @@ int dfs_mnt_remove(struct dfs_mnt* mnt)
     if (rt_list_isempty(&mnt->child))
     {
         rt_list_remove(&mnt->sibling);
+        if (mnt->parent)
+        {
+            /* parent unref parent */
+            rt_atomic_sub(&(mnt->parent->ref_count), 1);
+        }
+
         ret = RT_EOK;
     }
     else
@@ -197,20 +221,7 @@ int dfs_mnt_destroy(struct dfs_mnt* mnt)
         ret = dfs_lock();
         if (ret == RT_EOK)
         {
-            /* release mount point dentry */
-            if (mnt->mountpoint)
-            {
-                DLOG(msg, "mnt", "dentry", DLOG_MSG, "dfs_dentry_unref(mountpoint)");
-                dfs_dentry_unref(mnt->mountpoint);
-            }
-            /* release root dentry, which should have two refcount */
-            if (mnt->root)
-            {   
-                DLOG(msg, "mnt", "dentry", DLOG_MSG, "dfs_dentry_unref(mnt->root)");
-                dfs_dentry_unref(mnt->root);
-            }
-
-            if (rt_atomic_load(&(mnt->ref_count)) != 0)
+            if (rt_atomic_load(&(mnt->ref_count)) != 1)
             {
                 LOG_W("bug on mnt(%s) ref_count(%d).", mnt->fullpath, mnt->ref_count);
             }

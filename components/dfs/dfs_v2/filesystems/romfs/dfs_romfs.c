@@ -34,35 +34,17 @@ static const mode_t romfs_modemap[] =
     S_IFIFO  | 0644     /* FIFO */
 };
 
-static struct dfs_dentry *dfs_romfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
+static int dfs_romfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
 {
     struct romfs_dirent *root_dirent;
-    struct dfs_dentry *root;
-    struct dfs_vnode *vnode;
 
     if (data == NULL)
-        return RT_NULL;
-
-    DLOG(msg, "rom", "dentry", DLOG_MSG, "dfs_dentry_create(/)");
-    root = dfs_dentry_create(mnt, "/");
-    if (!root)
-    {
-        return RT_NULL;
-    }
+        return -1;
 
     root_dirent = (struct romfs_dirent *)data;
     mnt->data = root_dirent;
-    DLOG(msg, "rom", "rom", DLOG_MSG, "fs_ops->lookup(root)");
-    vnode = mnt->fs_ops->lookup(root);
-    if (!vnode)
-    {
-        dfs_dentry_unref(root);
-        return RT_NULL;
-    }
 
-    root->vnode = vnode;
-
-    return root;
+    return 0;
 }
 
 static int dfs_romfs_umount(struct dfs_mnt *fs)
@@ -220,7 +202,7 @@ static struct dfs_vnode *dfs_romfs_lookup (struct dfs_dentry *dentry)
 
                 DLOG(msg, "rom", "rom", DLOG_MSG, "vnode->data = dirent");
                 vnode->data = dirent;
-                vnode->mnt = dfs_mnt_ref(dentry->mnt);
+                vnode->mnt = dentry->mnt;
             }
             else
             {
@@ -412,4 +394,4 @@ int dfs_romfs_init(void)
 
     return 0;
 }
-INIT_PREV_EXPORT(dfs_romfs_init);
+INIT_COMPONENT_EXPORT(dfs_romfs_init);
