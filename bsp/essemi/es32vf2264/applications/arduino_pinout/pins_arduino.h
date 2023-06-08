@@ -57,5 +57,4 @@
 
 #define LED_BUILTIN D16
 
-#define ARCH_RISCV
 #endif /* Pins_Arduino_h */
