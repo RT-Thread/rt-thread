@@ -389,6 +389,16 @@ typedef int (*init_fn_t)(void);
 /**
  * @ingroup BasicDef
  *
+ * @def RT_IS_ALIGN(addr, align)
+ * Return true(1) or false(0).
+ *     RT_IS_ALIGN(128, 4) is judging whether 128 aligns with 4.
+ *     The result is 1, which means 128 aligns with 4.
+ */
+#define RT_IS_ALIGN(addr, align) (!(addr & (align - 1)))
+
+/**
+ * @ingroup BasicDef
+ *
  * @def RT_ALIGN(size, align)
  * Return the most contiguous size aligned at specified width. RT_ALIGN(13, 4)
  * would return 16.
