@@ -22,6 +22,7 @@ config SOC_ES32F0654LT
     bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select ARCH_ARM_CORTEX_M0
     default y
 
 source "drivers/Kconfig"

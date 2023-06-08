@@ -44,6 +44,13 @@ SECTIONS
   *(.jcr)
   KEEP (*(.init))
   KEEP (*(.fini))
+  
+  . = ALIGN (4) ;
+  PROVIDE(__ctors_start__ = .);
+  KEEP (*(SORT(.init_array.*)))
+  KEEP (*(.init_array))
+  PROVIDE(__ctors_end__ = .);
+  
   . = ALIGN(0x40) ;
   KEEP(*startup_es32vf2264.o(*.vectors*))
 
@@ -105,14 +112,6 @@ SECTIONS
   *(.rodata.str1.4)
   *(.srodata*)
   . = ALIGN(0x4) ;
-  __ctor_start__ = .;
-  KEEP (*(SORT(.ctors.*)))
-  KEEP (*(.ctors))
-  __ctor_end__ = .;
-  KEEP (*(SORT(.dtors.*)))
-  KEEP (*(.dtors))
-  __dtor_end__ = .;
-  . = ALIGN(0x4) ;
   __erodata = .;
   __rodata_end__ = .;
  } > REGION_RODATA
@@ -141,6 +140,10 @@ SECTIONS
   __start_cmd = .;
   *(.bootloaddata.cmd)
   . = ALIGN(4) ;
+  PROVIDE(__dtors_start__ = .);
+  KEEP(*(SORT(.dtors.*)))
+  KEEP(*(.dtors))
+  PROVIDE(__dtors_end__ = .);
   __stop_cmd = .;
   __global_pointer$ = .;
   *(.sdata)

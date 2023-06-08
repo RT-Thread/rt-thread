@@ -72,8 +72,11 @@ CPPPATH = CPPPATH + [cwd + '/ES']
 #__SYS_SELECT_H__ 用来规避冲突
 #cdkrepo\toolchain\xtgccelfnewlib\v2.6.1\r\riscv64-unknown-elf\include\sys\select.h
 #components/libc/compilers/common/include/sys/select.h
-CPPDEFINES = ['__SYS_SELECT_H__']
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+CPPDEFINES = ['__SYS_SELECT_H__','__RT_ATOMIC_H__']
+CCFLAGS='-fno-exceptions'
+#LINKFLAGS='-lstdc++'
+LIBS=['stdc++']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES,CCFLAGS=CCFLAGS,LIBS=LIBS)
 objs = objs + group
 
 Return('objs')
