@@ -22,6 +22,11 @@ on:
           - "sourcery-mips"
           - "sourcery-riscv-none-embed"
           - "sourcery-riscv64-unknown-elf"
+      bsp_config:
+        description: 'Type a config you want mannual test in .config, like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT '
+        required: false
+        type: string
+        default: 'CONFIG_BSP_USING_GPIO'
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -112,6 +117,7 @@ jobs:
           source ~/.env/env.sh
           echo $RTT_BSP
           ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
+          sed -i "s/# ${{ github.event.inputs.bsp_config }} is not set/${{ github.event.inputs.bsp_config }}=y/g" bsp/$RTT_BSP/.config
           pushd bsp/$RTT_BSP && pkgs --update && popd
           scons -C bsp/$RTT_BSP -j$(nproc) 
           mkdir -p ${{ github.workspace }}/$RTT_BSP 
@@ -124,5 +130,6 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: $RTT_BSP
+          name: ${{ github.event.inputs.bsp_options }}
           path: ${{ github.workspace }}/${{ github.event.inputs.bsp_options }}/*
+
