@@ -302,7 +302,7 @@ void rt_schedule(void)
     }
 #endif /* RT_USING_SIGNALS */
 
-    if (current_thread->scheduler_lock_nest == 1) /* whether lock scheduler */
+    if (current_thread->scheduler_lock_nest == 0) /* whether lock scheduler */
     {
         rt_ubase_t highest_ready_priority;
 
@@ -433,7 +433,7 @@ void rt_scheduler_do_irq_switch(void *context)
         return;
     }
 
-    if (current_thread->scheduler_lock_nest == 1 && pcpu->irq_nest == 0)
+    if (current_thread->scheduler_lock_nest == 0 && pcpu->irq_nest == 0)
     {
         rt_ubase_t highest_ready_priority;
 
@@ -486,7 +486,6 @@ void rt_scheduler_do_irq_switch(void *context)
 
                 RT_ASSERT(current_thread->cpus_lock_nest > 0);
                 current_thread->cpus_lock_nest--;
-                current_thread->scheduler_lock_nest--;
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
 
@@ -680,12 +679,9 @@ void rt_enter_critical(void)
         RT_ASSERT(current_thread->cpus_lock_nest != 0);
         if (lock_nest == 0)
         {
-            current_thread->scheduler_lock_nest ++;
             rt_hw_spin_lock(&_cpus_lock);
         }
     }
-    /* critical for local cpu */
-    current_thread->critical_lock_nest ++;
 
     /* lock scheduler for local cpu */
     current_thread->scheduler_lock_nest ++;
@@ -715,13 +711,10 @@ void rt_exit_critical(void)
 
     current_thread->scheduler_lock_nest --;
 
-    current_thread->critical_lock_nest --;
-
     RT_ASSERT(current_thread->cpus_lock_nest > 0);
     current_thread->cpus_lock_nest--;
     if (current_thread->cpus_lock_nest == 0)
     {
-        current_thread->scheduler_lock_nest --;
         rt_hw_spin_unlock(&_cpus_lock);
     }
 
@@ -750,7 +743,7 @@ rt_uint16_t rt_critical_level(void)
 {
     struct rt_thread *current_thread = rt_cpu_self()->current_thread;
 
-    return current_thread->critical_lock_nest;
+    return current_thread->scheduler_lock_nest;
 }
 RTM_EXPORT(rt_critical_level);
 

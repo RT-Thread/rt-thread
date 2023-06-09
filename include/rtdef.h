@@ -778,7 +778,6 @@ struct rt_thread
 
     rt_uint16_t scheduler_lock_nest;                    /**< scheduler lock count */
     rt_uint16_t cpus_lock_nest;                         /**< cpus lock count */
-    rt_uint16_t critical_lock_nest;                     /**< critical lock count */
 #endif /*RT_USING_SMP*/
 
     /* priority */
