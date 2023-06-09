@@ -63,6 +63,7 @@ def _CDKProject(tree, target, script):
     CPPDEFINES = []
     LINKFLAGS = ''
     CCFLAGS = ''
+    LIBS = []
     ProjectFiles = []
 
     for child in root:
@@ -101,6 +102,8 @@ def _CDKProject(tree, target, script):
                 LINKFLAGS += group['LINKFLAGS']
 
         # todo: cdk add lib
+        if 'LIBS' in group and group['LIBS']:
+            LIBS += group['LIBS']
 
     # write include path, definitions and link flags
     text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH])
@@ -110,14 +113,20 @@ def _CDKProject(tree, target, script):
     IncludePath.text = text
 
     Define = tree.find('BuildConfigs/BuildConfig/Compiler/Define')
-    Define.text = ', '.join(set(CPPDEFINES))
+    Define.text = '; '.join(set(CPPDEFINES))
 
     CC_Misc = tree.find('BuildConfigs/BuildConfig/Compiler/OtherFlags')
     CC_Misc.text = CCFLAGS
 
     LK_Misc = tree.find('BuildConfigs/BuildConfig/Linker/OtherFlags')
     LK_Misc.text = LINKFLAGS
-
+    
+    LibName = tree.find('BuildConfigs/BuildConfig/Linker/LibName')
+    if LibName.text:
+        LibName.text=LibName.text+';'+';'.join(LIBS)
+    else:
+        LibName.text=';'.join(LIBS)
+        
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8'))
     out.close()
