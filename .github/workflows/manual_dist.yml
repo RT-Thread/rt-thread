@@ -114,7 +114,7 @@ jobs:
           ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           scons -C bsp/$RTT_BSP -j$(nproc) 
-          mkdir ${{ github.workspace }}/$RTT_BSP 
+          mkdir -p ${{ github.workspace }}/$RTT_BSP 
           cp -r bsp/$RTT_BSP ${{ github.workspace }}/$RTT_BSP/
           scons --dist -C bsp/$RTT_BSP
           cp bsp/$RTT_BSP/dist/project.zip ${{ github.workspace }}/$RTT_BSP/
