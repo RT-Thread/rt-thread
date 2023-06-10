@@ -1574,8 +1574,13 @@ rt_inline void _heap_unlock(rt_base_t level)
 
 #ifdef RT_USING_UTESTCASES
 /* export to utest to observe the inner statements */
+#ifdef _MSC_VER
+#define rt_heap_lock() _heap_lock()
+#define rt_heap_unlock() _heap_unlock()
+#else
 rt_base_t rt_heap_lock(void) __attribute__((alias("_heap_lock")));
 void rt_heap_unlock(rt_base_t level) __attribute__((alias("_heap_unlock")));
+#endif /* _MSC_VER */
 #endif
 
 #if defined(RT_USING_SMALL_MEM_AS_HEAP)
