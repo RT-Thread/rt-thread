@@ -94,11 +94,20 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
 
     RT_ASSERT(device != RT_NULL);
 
+    /* If the configurations are the same, we don't need to set again. */
+    if(device->config.data_width == cfg->data_width &&
+       device->config.mode       == (cfg->mode & RT_SPI_MODE_MASK) &&
+       device->config.max_hz     == cfg->max_hz)
+    {
+        return RT_EOK;
+    }
+
     /* set configuration */
     device->config.data_width = cfg->data_width;
-    device->config.mode       = cfg->mode & RT_SPI_MODE_MASK ;
-    device->config.max_hz     = cfg->max_hz ;
+    device->config.mode       = cfg->mode & RT_SPI_MODE_MASK;
+    device->config.max_hz     = cfg->max_hz;
 
+    /* reset the CS pin */
     if (device->cs_pin != PIN_NONE)
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
