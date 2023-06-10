@@ -93,9 +93,9 @@ int sigpending (sigset_t *set)
  * @brief    This function will temporarily replace the signal mask of the calling thread
  *           with the mask given and then suspends the thread until delivery of an expected signal
  *           or a signal whose action is to terminate a process.
- * 
+ *
  * @param    set is a pointer of a sigset_t object that is used to replace the original mask of the calling thread.
- * 
+ *
  * @return   Returns 0 on success.
  *           If the return value is any other values, it means that the signal wait failed.
  */
@@ -153,16 +153,16 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
     return 0;
 }
 /**
- * @brief    This function will suspends execution of the calling thread until one of 
+ * @brief    This function will suspends execution of the calling thread until one of
  *           the signals in the given set is pending. If none of the signals specified
  *           are pending, it will wait for the specified time interval.
- * 
- * @param    set is the set of signal values to be waited for. 
- * 
- * @param    info is a pointer to the received signal info. 
- * 
+ *
+ * @param    set is the set of signal values to be waited for.
+ *
+ * @param    info is a pointer to the received signal info.
+ *
  * @param    timeout is a pointer to a timespec structure that specifys the waiting time.
- * 
+ *
  * @return   Return 0 on success. Otherwise, return -1 and set errno to indicate the error.
  */
 int sigtimedwait(const sigset_t *set, siginfo_t *info, const struct timespec *timeout)
@@ -182,13 +182,13 @@ int sigtimedwait(const sigset_t *set, siginfo_t *info, const struct timespec *ti
     return -1;
 }
 /**
- * @brief    This function will suspend execution of the calling thread until one of 
+ * @brief    This function will suspend execution of the calling thread until one of
  *           the specified signal becomes pending and return the signal number.
- * 
+ *
  * @param    set is the set of signal values to be waited for.
- * 
+ *
  * @param    sig is a pointer to the received signal number.
- * 
+ *
  * @return   Return 0 on success or -1 on failure.
  */
 int sigwait(const sigset_t *set, int *sig)
@@ -201,14 +201,14 @@ int sigwait(const sigset_t *set, int *sig)
     return 0;
 }
 /**
- * @brief    This function will suspend execution of the calling thread until one of 
+ * @brief    This function will suspend execution of the calling thread until one of
  *           the specified signal is pending.
- * 
+ *
  * @param    set is the set of signal values to be waited for.
- * 
+ *
  * @param    info is a pointer to the received signal info.
- * 
- * @return   Return 0 on success or -1 on failure. 
+ *
+ * @return   Return 0 on success or -1 on failure.
  */
 int sigwaitinfo(const sigset_t *set, siginfo_t *info)
 {
