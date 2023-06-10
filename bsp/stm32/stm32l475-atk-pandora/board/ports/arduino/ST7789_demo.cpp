@@ -8,13 +8,6 @@
  * 2023-05-29     Meco Man      port to RTduino
  */
 
-/*
- * Interfacing Arduino with ST7789 TFT display (240x240 pixel).
- * Graphics test example.
- * This is a free software with NO WARRANTY.
- * https://simple-circuit.com/
- */
-
 /**************************************************************************
   This is a library for several Adafruit displays based on ST77* drivers.
 
@@ -282,12 +275,16 @@ static void st7789_setup(void)
     uint16_t time = millis();
     tft.fillScreen(ST77XX_BLACK);
     time = millis() - time;
-
     Serial.print("Fill the screen spend: ");
     Serial.print(time, DEC);
     Serial.println(" ms");
 
     testdrawtext((char *)"RTduino is an open source project which is compatible with Arduino APIs so that RT-Thread beginners can easily get start to use RT-Thread through Arduino APIs, which significantly reduces the difficulty of learning RT-Thread.", ST77XX_WHITE);
+    time = millis();
+    time = millis() - time;
+    Serial.print("write text spend: ");
+    Serial.print(time, DEC);
+    Serial.println(" ms");
     delay(1500);
 
     // tft print function!
@@ -299,7 +296,12 @@ static void st7789_setup(void)
     delay(500);
 
     // line draw test
+    time = millis();
     testlines(ST77XX_YELLOW);
+    time = millis() - time;
+    Serial.print("testlines spend: ");
+    Serial.print(time, DEC);
+    Serial.println(" ms");
     delay(500);
 
     // optimized lines
