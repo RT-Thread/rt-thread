@@ -47,6 +47,20 @@ void dfs_vnode_mgr_init(void)
     }
 }
 
+int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops *fops)
+{
+    if (vnode)
+    {
+        rt_memset(vnode, 0, sizeof(struct dfs_vnode));
+        vnode->type = type;
+        vnode->fops = fops;
+
+        rt_list_init(&(vnode->list));
+        vnode->ref_count = 1;
+    }
+    return 0;
+}
+
 /* BKDR Hash Function */
 static unsigned int bkdr_hash(const char *str)
 {

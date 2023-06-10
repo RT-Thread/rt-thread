@@ -76,6 +76,8 @@ struct dfs_mmap2_args
 };
 
 void dfs_vnode_mgr_init(void);
+int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops *fops);
+
 int dfs_file_is_open(const char *pathname);
 int dfs_file_open(struct dfs_file *fd, const char *path, int flags);
 int dfs_file_close(struct dfs_file *fd);

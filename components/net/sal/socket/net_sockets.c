@@ -40,6 +40,9 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         d = fd_get(fd);
         if(d)
         {
+#ifdef RT_USING_DFS_V2
+            d->fops = dfs_net_get_fops();
+#endif
             /* this is a socket fd */
             d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
             if (!d->vnode)
@@ -50,16 +53,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
                 return -1;
             }
             rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
-            rt_list_init(&d->vnode->list);
-
-            d->vnode->type = FT_SOCKET;
-            d->vnode->path = NULL;
-            d->vnode->fullpath = NULL;
-            d->vnode->ref_count = 1;
-            d->vnode->fops = dfs_net_get_fops();
-            d->flags = O_RDWR; /* set flags as read and write */
-            d->vnode->size = 0;
-            d->pos = 0;
+            dfs_vnode_init(d->vnode, FT_SOCKET, dfs_net_get_fops());
 
             /* set socket to the data of dfs_file */
             d->vnode->data = (void *)(size_t)new_socket;
@@ -238,6 +232,11 @@ int socket(int domain, int type, int protocol)
         return -1;
     }
     d = fd_get(fd);
+
+#ifdef RT_USING_DFS_V2
+    d->fops = dfs_net_get_fops();
+#endif
+
     d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
     if (!d->vnode)
     {
@@ -258,18 +257,7 @@ int socket(int domain, int type, int protocol)
     socket = sal_socket(domain, type, protocol);
     if (socket >= 0)
     {
-        rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
-        rt_list_init(&d->vnode->list);
-        /* this is a socket fd */
-        d->vnode->type = FT_SOCKET;
-        d->vnode->path = NULL;
-        d->vnode->fullpath = NULL;
-        d->vnode->ref_count = 1;
-        d->vnode->fops = dfs_net_get_fops();
-
-        d->flags = O_RDWR; /* set flags as read and write */
-        d->vnode->size = 0;
-        d->pos = 0;
+        dfs_vnode_init(d->vnode, FT_SOCKET, dfs_net_get_fops());
 
         /* set socket to the data of dfs_file */
         d->vnode->data = (void *)(size_t)socket;
