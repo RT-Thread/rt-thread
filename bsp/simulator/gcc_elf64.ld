@@ -66,6 +66,12 @@ SECTIONS
 
   /* setction information for finsh shell begin */
   . = ALIGN(8);
+  UtestTcTab : {
+    __rt_utest_tc_tab_start = .;
+    KEEP(*(UtestTcTab))
+    __rt_utest_tc_tab_end = .;
+  }
+  . = ALIGN(8);
   FSymTab : {
       __fsymtab_start = .;
       KEEP(*(FSymTab))
