@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,7 +31,7 @@ int libc_system_init(void)
     if (dev_console)
     {
         int fd = libc_stdio_set_console(dev_console->parent.name, O_RDWR);
-        if (fd < 0) 
+        if (fd < 0)
         {
             return -1;
         }
@@ -43,7 +43,7 @@ int libc_system_init(void)
 #endif /* RT_USING_POSIX_STDIO */
     return 0;
 }
-INIT_COMPONENT_EXPORT(libc_system_init);
+INIT_APP_EXPORT(libc_system_init);
 
 #if defined(RT_USING_POSIX_STDIO) && defined(RT_USING_NEWLIBC)
 
