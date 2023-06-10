@@ -99,14 +99,6 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
     device->config.mode       = cfg->mode & RT_SPI_MODE_MASK ;
     device->config.max_hz     = cfg->max_hz ;
 
-    if (device->cs_pin != PIN_NONE)
-    {
-        if (device->config.mode & RT_SPI_CS_HIGH)
-            rt_pin_write(device->cs_pin, PIN_LOW);
-        else
-            rt_pin_write(device->cs_pin, PIN_HIGH);
-    }
-
     if (device->bus != RT_NULL)
     {
         result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
