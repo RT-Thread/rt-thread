@@ -18,6 +18,9 @@
 .type rt_hw_cpu_id_set, @function
 rt_hw_cpu_id_set:
     mrs x0, mpidr_el1           /* MPIDR_EL1: Multi-Processor Affinity Register */
+#ifdef ARCH_ARM_CORTEX_A55
+    lsr x0, x0, #8
+#endif
     and x0, x0, #15
     msr tpidr_el1, x0
     ret

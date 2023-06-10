@@ -374,4 +374,20 @@ rt_weak void rt_hw_cpu_shutdown()
 }
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_shutdown, shutdown, shutdown machine);
 
+#ifdef RT_USING_CPU_FFS
+/**
+ * This function finds the first bit set (beginning with the least significant bit)
+ * in value and return the index of that bit.
+ *
+ * Bits are numbered starting at 1 (the least significant bit).  A return value of
+ * zero from any of these functions means that the argument was zero.
+ *
+ * @return return the index of the first bit set. If value is 0, then this function
+ * shall return 0.
+ */
+int __rt_ffs(int value)
+{
+    return __builtin_ffs(value);
+}
+#endif
 /*@}*/
