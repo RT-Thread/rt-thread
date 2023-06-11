@@ -111,9 +111,9 @@ static int _free_subdir(struct tmpfs_file *dfile)
     return 0;
 }
 
-static int dfs_tmpfs_mount(struct dfs_mnt    *mnt,
-                                            unsigned long   rwflag,
-                                            const void      *data)
+static int dfs_tmpfs_mount(struct dfs_mnt *mnt,
+                           unsigned long rwflag,
+                           const void *data)
 {
     struct tmpfs_sb *superblock;
 
@@ -295,7 +295,6 @@ static int dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, off_t 
     return length;
 }
 
-
 static int dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 {
     struct tmpfs_file *d_file;
@@ -347,13 +346,13 @@ static int dfs_tmpfs_lseek(struct dfs_file *file, off_t offset, int wherece)
     return -EIO;
 }
 
-int dfs_tmpfs_close(struct dfs_file *file)
+static int dfs_tmpfs_close(struct dfs_file *file)
 {
     RT_ASSERT(file->vnode->ref_count > 0);
     return RT_EOK;
 }
 
-int dfs_tmpfs_open(struct dfs_file *file)
+static int dfs_tmpfs_open(struct dfs_file *file)
 {
     struct tmpfs_file *d_file;
 
@@ -416,7 +415,7 @@ static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
     return RT_EOK;
 }
 
-int dfs_tmpfs_getdents(struct dfs_file *file,
+static int dfs_tmpfs_getdents(struct dfs_file *file,
                        struct dirent *dirp,
                        uint32_t    count)
 {
@@ -471,7 +470,7 @@ int dfs_tmpfs_getdents(struct dfs_file *file,
     return count * sizeof(struct dirent);
 }
 
-int dfs_tmpfs_unlink(struct dfs_dentry *dentry)
+static int dfs_tmpfs_unlink(struct dfs_dentry *dentry)
 {
     rt_size_t size;
     struct tmpfs_sb *superblock;
@@ -497,7 +496,7 @@ int dfs_tmpfs_unlink(struct dfs_dentry *dentry)
     return RT_EOK;
 }
 
-int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *new_dentry)
+static int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *new_dentry)
 {
     struct tmpfs_file *d_file, *p_file;
     struct tmpfs_sb *superblock;
@@ -537,7 +536,6 @@ int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *new_dentr
 
     return RT_EOK;
 }
-
 
 static struct dfs_vnode *_dfs_tmpfs_lookup(struct dfs_dentry *dentry)
 {
