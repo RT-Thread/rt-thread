@@ -151,14 +151,13 @@ static struct dfs_dentry *_dentry_hash_lookup(struct dfs_mnt *mnt, const char *p
 {
     rt_err_t ret = RT_EOK;
     struct dfs_dentry *entry = RT_NULL;
-    int path_len = strlen(path);
 
     ret = dfs_file_lock();
     if (ret == RT_EOK)
     {
         rt_list_for_each_entry(entry, &hash_head.head[_dentry_hash(mnt, path)], hashlist)
         {
-            if (entry->mnt == mnt && !strncmp(entry->pathname, path, path_len))
+            if (entry->mnt == mnt && !strcmp(entry->pathname, path))
             {
                 dfs_dentry_ref(entry);
                 dfs_file_unlock();
@@ -358,7 +357,7 @@ int dfs_dentry_dump(int argc, char** argv)
     {
         rt_list_for_each_entry(entry, &hash_head.head[index], hashlist)
         {
-            printf("dentry:%s @ %p, ref_count = %zd\n", entry->pathname, entry, (size_t)rt_atomic_load(&entry->ref_count));
+            printf("dentry: %s%s @ %p, ref_count = %zd\n", entry->mnt->fullpath, entry->pathname, entry, (size_t)rt_atomic_load(&entry->ref_count));
         }
     }
     dfs_unlock();
