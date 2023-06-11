@@ -393,8 +393,9 @@ typedef int (*init_fn_t)(void);
  * Return true(1) or false(0).
  *     RT_IS_ALIGN(128, 4) is judging whether 128 aligns with 4.
  *     The result is 1, which means 128 aligns with 4.
+ * @note If the address is NULL, false(0) will be returned
  */
-#define RT_IS_ALIGN(addr, align) (!(addr & (align - 1)))
+#define RT_IS_ALIGN(addr, align) ((!(addr & (align - 1))) && (addr != RT_NULL))
 
 /**
  * @ingroup BasicDef
