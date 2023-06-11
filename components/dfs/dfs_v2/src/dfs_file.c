@@ -1668,6 +1668,11 @@ void ls(const char *pathname)
                                 rt_kprintf(_COLOR_RED "-> link_error\n" _COLOR_NORMAL);
                             }
                         }
+                        else if (stat.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
+                        {
+                            rt_kprintf(_COLOR_GREEN "%-20s" _COLOR_NORMAL, dirent.d_name);
+                            rt_kprintf("%-25lu\n", (unsigned long)stat.st_size);
+                        }
                         else
                         {
                             rt_kprintf("%-20s", dirent.d_name);
@@ -1676,7 +1681,7 @@ void ls(const char *pathname)
                     }
                     else
                     {
-                        rt_kprintf("BAD file: %s\n", dirent.d_name);
+                        rt_kprintf(_COLOR_RED "%-20s" _COLOR_NORMAL, dirent.d_name);
                     }
 
                     rt_free(fullpath);
