@@ -12,13 +12,10 @@
 #define VIRT_H__
 
 #include <rtdef.h>
+#include <ioremap.h>
 
 #ifdef RT_USING_SMART
 #include <mmu.h>
-#include <ioremap.h>
-
-#else
-#define rt_ioremap(x, ...) (x)
 #endif
 
 #define __REG32(x)          (*((volatile unsigned int *)(x)))
