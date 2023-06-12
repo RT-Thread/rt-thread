@@ -771,19 +771,19 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
                            unsigned long size, unsigned long pv_off)
 {
     int ret;
-
-    /* setup pv off */
-    rt_kmem_pvoff_set(pv_off);
+    unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
+    unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);
 
 #ifdef RT_USING_SMART
     unsigned long va = KERNEL_VADDR_START;
 #else
     extern unsigned char __start;
     unsigned long va = (unsigned long) &__start;
+    va = RT_ALIGN_DOWN(va, 0x200000);
 #endif
 
-    unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
-    unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);
+    /* setup pv off */
+    rt_kmem_pvoff_set(pv_off);
 
     /* clean the first two pages */
     rt_memset((char *)tbl0, 0, ARCH_PAGE_SIZE);

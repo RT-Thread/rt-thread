@@ -134,7 +134,7 @@ __start:
     mov     x3,0
 #endif
 
-    ldr x2, =0x01000000     /* map 16M memory for kernel space */
+    ldr x2, =0x10000000     /* map 256M memory for kernel space */
     bl rt_hw_mem_setup_early
 
     ldr x30, =after_mmu_enable  /* set LR to after_mmu_enable function, it's a v_addr */
