@@ -292,6 +292,11 @@ jobs:
             SUB_RTT_BSP:  
                 - "stm32/stm32l475-atk-pandora"
                 - "renesas/ra6m3-hmi-board"
+         -  RTT_BSP: "simulator" 
+            RTT_TOOL_CHAIN: "gcc"
+            SUB_RTT_BSP:  
+                - "simulator"
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -363,6 +368,11 @@ jobs:
           sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
           /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+
+      - name: Install Simulator Tools
+        if: ${{ matrix.legs.RTT_BSP == 'simulator' && success() }}
+        run: |
+          sudo apt-get -qq install libsdl2-dev
 
       - name: Bsp Scons Compile
         if: ${{ success() }}
