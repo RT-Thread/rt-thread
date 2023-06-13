@@ -177,7 +177,7 @@ static int set_timeval(struct timeval *tv)
 struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
     int i;
-    int work = *timep % (SPD);
+    int work;
 
     if(timep == RT_NULL || r == RT_NULL)
     {
@@ -187,6 +187,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 
     rt_memset(r, RT_NULL, sizeof(struct tm));
 
+    work = *timep % (SPD);
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
