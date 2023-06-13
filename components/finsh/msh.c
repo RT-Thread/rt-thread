@@ -274,7 +274,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     RT_ASSERT(retp);
 
     /* find the size of first command */
-    while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
+    while (cmd0_size < length && (cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t'))
         cmd0_size ++;
     if (cmd0_size == 0)
         return -RT_ERROR;
