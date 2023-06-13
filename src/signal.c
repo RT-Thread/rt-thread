@@ -103,73 +103,65 @@ static void _signal_deliver(rt_thread_t tid)
         return;
     }
 
-    if ((tid->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+    if (tid == rt_thread_self())
     {
-        /* resume thread to handle signal */
+        /* add signal state */
+        tid->stat |= RT_THREAD_STAT_SIGNAL;
+
+        rt_hw_interrupt_enable(level);
+
+        /* do signal action in self thread context */
+        if (rt_interrupt_get_nest() == 0)
+        {
+            rt_thread_handle_sig(RT_TRUE);
+        }
+    }
+    else if (!((tid->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL))
+    {
+
+        if ((tid->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+        {
+            /* resume thread to handle signal */
 #ifdef RT_USING_SMART
-        rt_thread_wakeup(tid);
+            rt_thread_wakeup(tid);
 #else
-        rt_thread_resume(tid);
+            rt_thread_resume(tid);
 #endif
+        }
+
         /* add signal state */
         tid->stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
 
+#ifdef RT_USING_SMP
+        {
+            int cpu_id;
+
+            cpu_id = tid->oncpu;
+            if ((cpu_id != RT_CPU_DETACHED) && (cpu_id != rt_hw_cpu_id()))
+            {
+                rt_uint32_t cpu_mask;
+
+                cpu_mask = RT_CPU_MASK ^ (1 << cpu_id);
+                rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
+            }
+        }
+#else
+        /* point to the signal handle entry */
+        tid->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+        tid->sig_ret = tid->sp;
+        tid->sp = rt_hw_stack_init((void *)_signal_entry, RT_NULL,
+                                   (void *)((char *)tid->sig_ret - 32), RT_NULL);
+#endif /* RT_USING_SMP */
+
         rt_hw_interrupt_enable(level);
+        LOG_D("signal stack pointer @ 0x%08x", tid->sp);
 
         /* re-schedule */
         rt_schedule();
     }
     else
     {
-        if (tid == rt_thread_self())
-        {
-            /* add signal state */
-            tid->stat |= RT_THREAD_STAT_SIGNAL;
-
-            rt_hw_interrupt_enable(level);
-
-            /* do signal action in self thread context */
-            if (rt_interrupt_get_nest() == 0)
-            {
-                rt_thread_handle_sig(RT_TRUE);
-            }
-        }
-        else if (!((tid->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL))
-        {
-            /* add signal state */
-            tid->stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
-
-#ifdef RT_USING_SMP
-            {
-                int cpu_id;
-
-                cpu_id = tid->oncpu;
-                if ((cpu_id != RT_CPU_DETACHED) && (cpu_id != rt_hw_cpu_id()))
-                {
-                    rt_uint32_t cpu_mask;
-
-                    cpu_mask = RT_CPU_MASK ^ (1 << cpu_id);
-                    rt_hw_ipi_send(RT_SCHEDULE_IPI, cpu_mask);
-                }
-            }
-#else
-            /* point to the signal handle entry */
-            tid->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
-            tid->sig_ret = tid->sp;
-            tid->sp = rt_hw_stack_init((void *)_signal_entry, RT_NULL,
-                                       (void *)((char *)tid->sig_ret - 32), RT_NULL);
-#endif /* RT_USING_SMP */
-
-            rt_hw_interrupt_enable(level);
-            LOG_D("signal stack pointer @ 0x%08x", tid->sp);
-
-            /* re-schedule */
-            rt_schedule();
-        }
-        else
-        {
-            rt_hw_interrupt_enable(level);
-        }
+        rt_hw_interrupt_enable(level);
     }
 }
 
