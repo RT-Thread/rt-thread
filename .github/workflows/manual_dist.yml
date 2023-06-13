@@ -22,6 +22,7 @@ on:
           - "sourcery-mips"
           - "sourcery-riscv-none-embed"
           - "sourcery-riscv64-unknown-elf"
+          - "gcc"
       bsp_config:
         description: 'Type a config you want mannual test in .config, like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT '
         required: false
@@ -106,6 +107,11 @@ jobs:
           sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
           /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+
+      - name: Install Simulator Tools
+        if: ${{ github.event.inputs.bsp_options == 'simulator' && success() }}
+        run: |
+          sudo apt-get -qq install libsdl2-dev
 
       - name: Bsp Scons Compile
         if: ${{ success() }}
