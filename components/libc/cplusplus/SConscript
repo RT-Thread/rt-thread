@@ -5,8 +5,13 @@ Import('rtconfig')
 cwd     = GetCurrentDir()
 src     = ['cxx_crt_init.c', 'cxx_crt.cpp']
 CPPPATH = [cwd]
+CXXFLAGS = ''
 
-group = DefineGroup('CPP', src, depend=['RT_USING_CPLUSPLUS'], CPPPATH=CPPPATH)
+
+if rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm'] and not GetDepend('RT_USING_CPP_EXCEPTIONS'):
+    CXXFLAGS += ' -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -Wl,--gc-sections' # reduce resource consumptions
+
+group = DefineGroup('CPP', src, depend=['RT_USING_CPLUSPLUS'], CPPPATH=CPPPATH, CXXFLAGS=CXXFLAGS)
 
 list = os.listdir(cwd)
 for d in list:

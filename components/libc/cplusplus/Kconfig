@@ -16,4 +16,8 @@ if RT_USING_CPLUSPLUS
         bool "Enable RT-Thread APIs C++ wrapper"
         default n
 
+    config RT_USING_CPP_EXCEPTIONS
+        bool "Enable C++ exceptions (will increase overhead)"
+        default n
+
 endif
