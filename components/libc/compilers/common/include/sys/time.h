@@ -157,6 +157,10 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #define CLOCK_MONOTONIC     4
 #endif /* CLOCK_MONOTONIC */
 
+#ifndef TIMER_ABSTIME
+#define TIMER_ABSTIME       4
+#endif /* TIMER_ABSTIME */
+
 #ifdef CLOCK_TAI
 #define CLOCK_ID_MAX CLOCK_TAI
 #else
