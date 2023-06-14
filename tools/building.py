@@ -1017,10 +1017,7 @@ def SrcRemove(src, remove):
                 if item_str == remove_str:
                     src.remove(item)
 
-def GetVersion():
-    import SCons.cpp
-    import string
-
+def GetRTThreadVersion():
     rtdef = os.path.join(Rtt_Root, 'include', 'rtdef.h')
 
     # parse rtdef.h to get RT-Thread version
@@ -1038,7 +1035,7 @@ def GetVersion():
         revision = int([ch for ch in def_ns['RT_VERSION_PATCH'] if ch in '0123456789.'])
         return '%d.%d.%d' % (version, subversion, revision)
 
-    return '0.%d.%d' % (version, subversion)
+    return '0.%d.%d' % (version, subversion) #should return e.g. 50001 十进制整形数字
 
 def GlobSubDir(sub_dir, ext_name):
     import os
