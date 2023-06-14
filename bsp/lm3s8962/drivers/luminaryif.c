@@ -13,6 +13,7 @@
 #include <driverlib/sysctl.h>
 #include <driverlib/gpio.h>
 #include <driverlib/flash.h>
+#include <lwip/stats.h>
 
 #include <netif/ethernetif.h>
 #include "lwipopts.h"
