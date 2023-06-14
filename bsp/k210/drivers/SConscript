@@ -38,7 +38,7 @@ if GetDepend('RT_USING_PWM'):
 if GetDepend('RT_USING_WDT'):
     src += ['drv_wdt.c']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=['NNCASE_NO_EXCEPTIONS'])
 
 objs = [group]
 
