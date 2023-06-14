@@ -6,8 +6,6 @@ path =  [cwd]
 
 if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     
-    src += ['drv_common.c']
-
     if GetDepend('BSP_USING_GPIO'):
         src += ['drv_gpio.c']
 
@@ -41,6 +39,7 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     if GetDepend('BSP_USING_HWTIMER'):
         src += ['drv_hwtimer.c']
 
+src += ['drv_common.c']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')
