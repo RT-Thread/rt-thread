@@ -22,21 +22,38 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
-        select BSP_USING_PWM1
-        select BSP_USING_PWM4
         select BSP_USING_PWM3
         select BSP_USING_PWM2
         select BSP_USING_PWM2_CH2
         select BSP_USING_PWM3_CH1
         select BSP_USING_PWM2_CH3
         select BSP_USING_PWM3_CH2
-        select BSP_USING_PWM4_CH1
-        select BSP_USING_PWM1_CH1
         select BSP_USING_I2C
         select BSP_USING_I2C1
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
         default n
+
+
+    if BSP_USING_ARDUINO
+
+        choice
+            prompt "Arduino D10-D13 set as"
+            default BSP_ARDUINO_CHOICE_D10D13_PWM
+
+            config BSP_ARDUINO_CHOICE_D10D13_PWM
+                bool "PWM and GPIO"
+                select BSP_USING_PWM1
+                select BSP_USING_PWM4
+                select BSP_USING_PWM4_CH1
+                select BSP_USING_PWM1_CH1
+
+            config BSP_ARDUINO_CHOICE_D10D13_SPI
+                bool "SPI"
+                select BSP_USING_SPI?
+
+        endchoice
+    endif
 
 endmenu
 
