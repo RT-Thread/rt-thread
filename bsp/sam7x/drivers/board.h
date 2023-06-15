@@ -23,6 +23,8 @@
 #define BR    	115200			/* Baud Rate */
 #define BRD  	(MCK/16/BR)		/* Baud Rate Divisor */
 
+#define RT_UART_RX_BUFFER_SIZE	128
+
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);
 void rt_hw_board_init(void);
