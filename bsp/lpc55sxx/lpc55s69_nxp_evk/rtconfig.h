@@ -38,7 +38,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -198,7 +197,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -242,8 +241,6 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_LED
-#define BSP_USING_KEY
 
 /* Board extended module Drivers */
 
