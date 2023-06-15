@@ -1,6 +1,8 @@
 #ifndef __RT_SERIAL_H__
 #define __RT_SERIAL_H__
 
+#include "board.h"
+
 #ifndef AT91C_BASE_US0
 #define AT91C_BASE_US0            (0xFFFC0000) // (US0) Base Address
 #endif
