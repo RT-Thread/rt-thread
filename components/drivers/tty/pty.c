@@ -183,8 +183,6 @@ static int ptmx_open(struct dfs_file *fd)
     struct tty_struct *tty = RT_NULL;
     struct tty_struct *pts = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
-    struct rt_lwp *lwp = RT_NULL;
-    struct rt_wqueue *wq = RT_NULL;
 
     tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
@@ -203,9 +201,6 @@ static int ptmx_open(struct dfs_file *fd)
         return -1;
     }
     pts_index++;
-    lwp = lwp_self();
-    wq = wait_queue_get(lwp, tty);
-    pts->wait_queue = *wq;
     tty->other_struct = pts;
 
     ld = tty->ldisc;
