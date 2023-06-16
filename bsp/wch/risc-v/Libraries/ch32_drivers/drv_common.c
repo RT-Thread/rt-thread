@@ -13,16 +13,16 @@
 
 void rt_hw_us_delay(rt_uint32_t us)
 {
-    uint64_t total_delay_ticks, us_ticks, start, now, delta, reload;
+    rt_uint64_t total_delay_ticks, us_ticks, start, now, delta, reload;
 
     start = SysTick->CNT;
     reload = SysTick->CMP;
     us_ticks = SystemCoreClock / 8000000UL;
-    total_delay_ticks = (uint32_t)us * us_ticks;
+    total_delay_ticks = (rt_uint32_t)us * us_ticks;
     RT_ASSERT(total_delay_ticks < reload);
 
-    do{
+    do {
         now = SysTick->CNT;
         delta = start > now ? start - now : reload + start - now;
-    }while(delta < total_delay_ticks);
+    } while(delta < total_delay_ticks);
 }
