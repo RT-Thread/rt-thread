@@ -119,7 +119,7 @@ static void sd_mount(void *parameter)
 
 int mount_init(void)
 {
-    #ifdef RT_USING_DFS_ROMFS 
+    #ifdef RT_USING_DFS_ROMFS
     if (dfs_mount(RT_NULL, "/", "rom", 0, &(romfs_root)) != 0)
     {
         LOG_E("rom mount to '/' failed!");
@@ -133,7 +133,7 @@ int mount_init(void)
     fal_init();
     #endif
 
-    #ifdef RT_USING_DFS_ROMFS 
+    #ifdef RT_USING_DFS_ROMFS
     flash_dev = fal_mtd_nor_device_create("filesystem");
 
     if (flash_dev)
