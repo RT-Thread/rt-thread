@@ -107,7 +107,6 @@ menu "Onboard Peripheral Drivers"
     menuconfig BSP_USING_FS
         bool "Enable filesystem"
         select RT_USING_DFS
-        select RT_USING_DFS_ROMFS
         default n
         if BSP_USING_FS
             config BSP_USING_SDCARD_FS
