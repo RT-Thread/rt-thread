@@ -98,7 +98,6 @@ config USING_BXCAN1
 if RT_USING_CAN
 config RT_CAN_USING_HDR
     bool "Using RT_CAN_USING_HDR"
-    select RT_USING_CAN
     default y
 endif
 
