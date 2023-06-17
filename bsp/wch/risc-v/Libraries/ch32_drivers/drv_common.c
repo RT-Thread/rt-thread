@@ -22,7 +22,7 @@ void rt_hw_us_delay(rt_uint32_t us)
     start = SysTick->CNT;
     reload = SysTick->CMP;
     us_ticks = SystemCoreClock / 8000000UL;
-    total_delay_ticks = (rt_uint32_t)us * us_ticks;
+    total_delay_ticks = us * us_ticks;
     if (total_delay_ticks >= reload)
     {
         LOW_E("rt_hw_us_delay: the us parameter exceeds the maximum limit!");
