@@ -11,6 +11,10 @@
 #include <rtthread.h>
 #include "drv_common.h"
 
+#define DBG_TAG    "drv.common"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 void rt_hw_us_delay(rt_uint32_t us)
 {
     rt_uint64_t total_delay_ticks, us_ticks, start, now, delta, reload;
@@ -19,6 +23,10 @@ void rt_hw_us_delay(rt_uint32_t us)
     reload = SysTick->CMP;
     us_ticks = SystemCoreClock / 8000000UL;
     total_delay_ticks = (rt_uint32_t)us * us_ticks;
+    if (total_delay_ticks >= reload)
+    {
+        LOW_E("rt_hw_us_delay: the us parameter exceeds the maximum limit!");
+    }
 
     do {
         now = SysTick->CNT;
