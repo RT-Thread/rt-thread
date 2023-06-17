@@ -25,7 +25,7 @@ void rt_hw_us_delay(rt_uint32_t us)
     total_delay_ticks = us * us_ticks;
     if (total_delay_ticks >= reload)
     {
-        LOW_E("rt_hw_us_delay: the us parameter exceeds the maximum limit!");
+        LOG_E("rt_hw_us_delay: the us parameter exceeds the maximum limit!");
     }
 
     do {
