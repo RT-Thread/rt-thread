@@ -97,13 +97,13 @@ int strtol_entry(void)
     TEST(l, strtol(s = "0F5F", &c, 16), 0x0f5fL, "%ld != %ld");
 
     TEST(l, strtol(s = "0xz", &c, 16), 0L, "%ld != %ld");
-    TEST3(i, c - s, 1, "wrong final position %ld != %ld");
+    TEST2(i, c - s, 1, "wrong final position %ld != %ld");
 
     TEST(l, strtol(s = "0x1234", &c, 16), 0x1234, "%ld != %ld");
     TEST2(i, c - s, 6, "wrong final position %ld != %ld");
 
     c = NULL;
-    TEST3(l, strtol(s = "123", &c, 37), 0, "%ld != %ld");
+    TEST3(l, strtol(s = "123", &c, 36), 0, "%ld != %ld");
     TEST3(i, c - s, 0, "wrong final position %d != %d");
 
     TEST(l, strtol(s = "  15437", &c, 8), 015437, "%ld != %ld");
