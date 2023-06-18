@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
 
 #include <rtthread.h>
+
+#ifdef RT_USING_DM
+
 #ifdef RT_USING_FDT
 #include <dtb_node.h>
-#endif
-#if defined(RT_USING_POSIX_DEVIO)
-#include <rtdevice.h> /* for wqueue_init */
 #endif
 
 /**
@@ -45,7 +45,6 @@ rt_err_t rt_driver_match_with_id(const rt_driver_t drv,int device_id)
     }
     return ret;
 }
-
 RTM_EXPORT(rt_driver_match_with_id);
 
 #ifdef RT_USING_FDT
@@ -107,7 +106,8 @@ rt_err_t rt_driver_match_with_dtb(const rt_driver_t drv,void *from_node,int max_
     rt_free(node_list);
     return ret;
 }
-
 RTM_EXPORT(rt_driver_match_with_dtb);
-#endif  
+#endif /* RT_USING_FDT */ 
+
+#endif /* RT_USING_DM */
 
