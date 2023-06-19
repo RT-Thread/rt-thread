@@ -32,19 +32,29 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_DFS_ROMFS
+
 #include "dfs_romfs.h"
+
+#ifdef RT_USING_DFS_ELMFAT
+static const struct romfs_dirent _romfs_root[] =
+{
+    {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
+    {ROMFS_DIRENT_DIR, "sdcard", RT_NULL, 0},
+    {ROMFS_DIRENT_DIR, "filesystem", RT_NULL, 0}
+};
+#else
 static const struct romfs_dirent _romfs_root[] =
 {
     {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
     {ROMFS_DIRENT_DIR, "sdcard", RT_NULL, 0}
 };
+#endif
 
 const struct romfs_dirent romfs_root =
 {
     ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_romfs_root, sizeof(_romfs_root) / sizeof(_romfs_root[0])
 };
-#endif
+
 
 #ifdef BSP_USING_SDCARD_FS
 
@@ -133,9 +143,32 @@ int mount_init(void)
     fal_init();
     #endif
 
-    #ifdef RT_USING_DFS_ROMFS
     flash_dev = fal_mtd_nor_device_create("filesystem");
 
+    #ifdef RT_USING_DFS_ELMFAT
+    flash_dev = fal_blk_device_create("filesystem");
+    if (flash_dev)
+    {
+        //mount filesystem
+        if (dfs_mount(flash_dev->parent.name, "/filesystem", "elm", 0, 0) != 0)
+        {
+            LOG_W("mount to '/filesystem' failed! try to mkfs %s", flash_dev->parent.name);
+            dfs_mkfs("elm", flash_dev->parent.name);
+            if (dfs_mount(flash_dev->parent.name, "/filesystem", "elm", 0, 0) == 0)
+            {
+                LOG_I("mount to '/filesystem' success!");
+            }
+        }
+        else
+        {
+            LOG_I("mount to '/filesystem' success!");
+        }
+    }
+    else
+    {
+        LOG_E("Can't create block device filesystem or bt_image partition.");
+    }
+    #else
     if (flash_dev)
     {
         //mount filesystem
@@ -152,31 +185,6 @@ int mount_init(void)
         else
         {
             LOG_I("mount to '/flash' success!");
-        }
-    }
-    else
-    {
-        LOG_E("Can't create block device filesystem or bt_image partition.");
-    }
-    #endif
-
-    #ifdef RT_USING_DFS_ELMFAT
-    flash_dev = fal_blk_device_create("filesystem");
-    if (flash_dev)
-    {
-        //mount filesystem
-        if (dfs_mount(flash_dev->parent.name, "/", "elm", 0, 0) != 0)
-        {
-            LOG_W("mount to '/' failed! try to mkfs %s", flash_dev->parent.name);
-            dfs_mkfs("elm", flash_dev->parent.name);
-            if (dfs_mount(flash_dev->parent.name, "/", "elm", 0, 0) == 0)
-            {
-                LOG_I("mount to '/' success!");
-            }
-        }
-        else
-        {
-            LOG_I("mount to '/' success!");
         }
     }
     else
