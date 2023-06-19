@@ -10,9 +10,9 @@
  * 2022-12-17     Meco Man     re-implement sensor framework
  */
 
-#include <drivers/sensor.h>
+#include <drivers/sensor_v2.h>
 
-#define DBG_TAG  "sensor"
+#define DBG_TAG  "sensor_v2"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
