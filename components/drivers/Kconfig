@@ -377,7 +377,7 @@ if RT_USING_SENSOR
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
         select PKG_USING_RT_VSNPRINTF_FULL if RT_USING_SENSOR_V2
-        default y 
+        default y
 endif
 
 config RT_USING_TOUCH
