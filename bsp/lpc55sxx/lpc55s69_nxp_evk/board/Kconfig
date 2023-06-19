@@ -339,6 +339,21 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_WIRE
         default n
 
+    if BSP_USING_ARDUINO
+        config BSP_USING_ARDUINO_AHT10
+            bool "Enable Arduino AHT10 sensor library"
+            select BSP_USING_I2C1
+            select PKG_USING_ARDUINO_ADAFRUIT_AHTX0
+            depends on !BSP_USING_AHT10
+            default n
+
+        config BSP_USING_ARDUINO_AHT10_DEMO
+            bool "Enable Arduino AHT10 sensor library demo"
+            select PKG_USING_ARDUINO_MSGQ_C_CPP_DEMO
+            depends on BSP_USING_ARDUINO_AHT10
+            default n
+    endif
+
 endmenu
 
 menu "Board extended module Drivers"
