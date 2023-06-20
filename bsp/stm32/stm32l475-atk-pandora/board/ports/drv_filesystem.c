@@ -68,7 +68,7 @@ static const struct romfs_dirent _romfs_root[] =
 #endif
 };
 
-static const struct romfs_dirent romfs_root =
+const struct romfs_dirent romfs_root =
 {
     ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_romfs_root, sizeof(_romfs_root) / sizeof(_romfs_root[0])
 };
