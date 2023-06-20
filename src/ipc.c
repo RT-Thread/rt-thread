@@ -3676,6 +3676,9 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
 
     /* get real message length */
     len = ((struct rt_mq_message *)msg)->length;
+    /* greater than buffer size */
+    if (len > size)
+        return -RT_ERROR;
     /* copy message */
     rt_memcpy(buffer, GET_MESSAGEBYTE_ADDR(msg), len);
 
