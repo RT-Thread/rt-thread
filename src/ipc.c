@@ -505,6 +505,9 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
 
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(sem->value == 0 && timeout != 0);
+
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
@@ -532,9 +535,6 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
         }
         else
         {
-            /* current context checking */
-            RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
-
             /* semaphore is unavailable, push to suspend list */
             /* get current thread */
             thread = rt_thread_self();
