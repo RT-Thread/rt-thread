@@ -88,7 +88,6 @@ static void thread2_entry(void *parameter)
             }
             rt_kprintf("thread2: send message - %s\n", buf);
         }
-        buf++;
         cnt++;
         /* 延时5ms */
         rt_thread_mdelay(5);
