@@ -711,7 +711,7 @@ void rt_usbh_hub_init(uhcd_t hcd)
     {
         LOG_E("hcd->roothub: allocate buffer failed.");
         return;
-    }         
+    }
     rt_memset(hcd->roothub, 0, sizeof(struct uhub));
     hcd->roothub->is_roothub = RT_TRUE;
     hcd->roothub->hcd = hcd;
