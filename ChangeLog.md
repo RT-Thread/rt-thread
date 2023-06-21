@@ -118,11 +118,11 @@ fix mismatched function types in rt_pin_ops for all drv_gpio.c
 
 ## Userapps
 
--Using xmake to build a system to replace the original scons
--Built in Toolchain, zlib and other software packages
--Can automatically generate images such as ext4 and fat
--Supports multiple architectures such as arm aarch64 riscv64
--Built in QEMU runtime environment
+- Using xmake to build a system to replace the original scons
+- Built in Toolchain, zlib and other software packages
+- Can automatically generate images such as ext4 and fat
+- Supports multiple architectures such as arm aarch64 riscv64
+- Add built in QEMU runtime environment
 
 # RT-Thread v5.0.0 released
 
