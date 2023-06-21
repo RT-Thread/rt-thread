@@ -62,7 +62,7 @@ public:
         else
             tick = rt_tick_from_millisecond(millisec);
 
-        return rt_mq_recv(&mID, &data, sizeof(data), tick) == RT_EOK;
+        return rt_mq_recv(&mID, &data, sizeof(data), tick) >= 0;
     }
 
 private:

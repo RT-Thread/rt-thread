@@ -458,6 +458,16 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
+
+struct rt_mq_message
+{
+    struct rt_mq_message *next;
+    rt_ssize_t length;
+};
+
+#define RT_MQ_BUF_SIZE(msg_size, max_msgs) \
+((RT_ALIGN((msg_size), RT_ALIGN_SIZE) + sizeof(struct rt_mq_message)) * (max_msgs))
+
 /*
  * message queue interface
  */
@@ -492,15 +502,15 @@ rt_err_t rt_mq_send_wait_killable(rt_mq_t     mq,
                          rt_size_t   size,
                          rt_int32_t  timeout);
 rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size);
-rt_err_t rt_mq_recv(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout);
-rt_err_t rt_mq_recv_interruptible(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv_interruptible(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout);
-rt_err_t rt_mq_recv_killable(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv_killable(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout);
