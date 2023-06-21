@@ -627,7 +627,7 @@ static void hid_thread_entry(void* parameter)
     hiddev = (struct hid_s *)parameter;
     while(1)
     {
-        if(rt_mq_recv(&hiddev->hid_mq, &report, sizeof(report),RT_WAITING_FOREVER) != RT_EOK )
+        if(rt_mq_recv(&hiddev->hid_mq, &report, sizeof(report),RT_WAITING_FOREVER) < 0)
             continue;
         HID_Report_Received(&report);
     }
