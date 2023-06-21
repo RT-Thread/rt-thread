@@ -119,17 +119,26 @@ while (0)
  *     1) the scheduler has been started.
  *     2) not in interrupt context.
  *     3) scheduler is not locked.
+ *     4) interrupt is not disabled.
  */
 #define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)                              \
 do                                                                            \
 {                                                                             \
     if (need_check)                                                           \
     {                                                                         \
+        rt_bool_t interrupt_disabled;                                         \
         rt_base_t level;                                                      \
+        interrupt_disabled = rt_hw_interrupt_is_disabled();                   \
         level = rt_hw_interrupt_disable();                                    \
         if (rt_critical_level() != 0)                                         \
         {                                                                     \
             rt_kprintf("Function[%s]: scheduler is not available\n",          \
+                    __FUNCTION__);                                            \
+            RT_ASSERT(0)                                                      \
+        }                                                                     \
+        if (interrupt_disabled == RT_TRUE)                                    \
+        {                                                                     \
+            rt_kprintf("Function[%s]: interrupt is disabled\n",               \
                     __FUNCTION__);                                            \
             RT_ASSERT(0)                                                      \
         }                                                                     \

@@ -138,5 +138,10 @@ RTM_EXPORT(rt_interrupt_get_nest);
 RTM_EXPORT(rt_hw_interrupt_disable);
 RTM_EXPORT(rt_hw_interrupt_enable);
 
+rt_weak rt_bool_t rt_hw_interrupt_is_disabled(void)
+{
+    return RT_FALSE;
+}
+RTM_EXPORT(rt_hw_interrupt_is_disabled);
 /**@}*/
 
