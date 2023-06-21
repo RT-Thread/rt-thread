@@ -788,7 +788,7 @@ osa_status_t OSA_MsgQGet(osa_msgq_handle_t msgqHandle, osa_msg_handle_t pMessage
     {
         timeoutTicks = rt_tick_from_millisecond(millisec);
     }
-    if (RT_EOK != rt_mq_recv(handler, pMessage, handler->msg_size, timeoutTicks))
+    if (rt_mq_recv(handler, pMessage, handler->msg_size, timeoutTicks) < 0)
     {
         osaStatus = KOSA_StatusTimeout; /* not able to send it to the queue? */
     }

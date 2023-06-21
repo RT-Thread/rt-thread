@@ -659,8 +659,8 @@ static void rt_usbh_hub_thread_entry(void* parameter)
         struct uhost_msg msg;
 
         /* receive message */
-        if(rt_mq_recv(hcd->usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER)
-            != RT_EOK ) continue;
+        if (rt_mq_recv(hcd->usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER) < 0)
+            continue;
 
         //RT_DEBUG_LOG(RT_DEBUG_USB, ("msg type %d\n", msg.type));
 
