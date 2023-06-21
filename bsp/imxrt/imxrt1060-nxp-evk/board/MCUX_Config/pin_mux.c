@@ -641,6 +641,9 @@ void BOARD_InitSemcPins(void) {
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_EMC_38_SEMC_DM01,           /* GPIO_EMC_38 is configured as SEMC_DM01 */
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_39_SEMC_DQS, 1U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_40_SEMC_RDY, 0U); 
+  IOMUXC_SetPinMux(IOMUXC_GPIO_EMC_41_SEMC_CSX00, 0U);   
   IOMUXC_SetPinConfig(
       IOMUXC_GPIO_EMC_00_SEMC_DATA00,         /* GPIO_EMC_00 PAD functional properties : */
       0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
@@ -1031,6 +1034,9 @@ void BOARD_InitSemcPins(void) {
                                                  Pull / Keep Select Field: Keeper
                                                  Pull Up / Down Config. Field: 100K Ohm Pull Down
                                                  Hyst. Enable Field: Hysteresis Disabled */
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_39_SEMC_DQS, 0x10B0u); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_40_SEMC_RDY, 0x10B0u); 
+  IOMUXC_SetPinConfig(IOMUXC_GPIO_EMC_41_SEMC_CSX00, 0x10B0u);   
 }
 
 
