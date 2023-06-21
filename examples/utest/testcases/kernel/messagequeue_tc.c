@@ -14,15 +14,8 @@
 #define MSG_SIZE    4
 #define MAX_MSGS    5
 
-/* This is to synchronize the rt_mq_message structure in ipc to calculate the buffer size */
-struct rt_mq_message
-{
-    struct rt_mq_message *next;
-    rt_ssize_t length;
-};
-
 static struct rt_messagequeue static_mq;
-static rt_uint8_t mq_buf[(RT_ALIGN(MSG_SIZE, RT_ALIGN_SIZE) + (rt_uint8_t)sizeof(struct rt_mq_message)) * MAX_MSGS];
+static rt_uint8_t mq_buf[RT_MQ_BUF_SIZE(MSG_SIZE, MAX_MSGS)];
 
 static struct rt_thread mq_send_thread;
 static struct rt_thread mq_recv_thread;

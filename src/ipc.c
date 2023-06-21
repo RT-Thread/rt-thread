@@ -2860,13 +2860,6 @@ RTM_EXPORT(rt_mb_control);
  * @{
  */
 
-struct rt_mq_message
-{
-    struct rt_mq_message *next;
-    rt_ssize_t length;
-};
-
-
 /**
  * @brief    Initialize a static messagequeue object.
  *

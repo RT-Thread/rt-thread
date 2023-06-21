@@ -458,6 +458,16 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
+
+struct rt_mq_message
+{
+    struct rt_mq_message *next;
+    rt_ssize_t length;
+};
+
+#define RT_MQ_BUF_SIZE(msg_size, max_msgs) \
+((RT_ALIGN((msg_size), RT_ALIGN_SIZE) + sizeof(struct rt_mq_message)) * (max_msgs))
+
 /*
  * message queue interface
  */
