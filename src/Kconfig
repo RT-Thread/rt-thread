@@ -39,7 +39,7 @@ config RT_USING_SMART
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
 
 config RT_USING_AMP
-    bool "Enable AMP(Asymmetric Multi-Processing)"
+    bool "Enable AMP (Asymmetric Multi-Processing)"
     default n
     if RT_USING_AMP
         choice
@@ -55,7 +55,7 @@ config RT_USING_AMP
     endif
 
 config RT_USING_SMP
-    bool "Enable SMP(Symmetric multiprocessing)"
+    bool "Enable SMP (Symmetric multiprocessing)"
     default n
     help
         This option should be selected by machines which have an SMP-
@@ -76,19 +76,19 @@ config RT_ALIGN_SIZE
     help
         Alignment size for CPU architecture data access
 
-    choice
-        prompt "The maximal level value of priority of thread"
-        default RT_THREAD_PRIORITY_32
+choice
+    prompt "The maximal level value of priority of thread"
+    default RT_THREAD_PRIORITY_32
 
-        config RT_THREAD_PRIORITY_8
-            bool "8"
+    config RT_THREAD_PRIORITY_8
+        bool "8"
 
-        config RT_THREAD_PRIORITY_32
-            bool "32"
+    config RT_THREAD_PRIORITY_32
+        bool "32"
 
-        config RT_THREAD_PRIORITY_256
-            bool "256"
-    endchoice
+    config RT_THREAD_PRIORITY_256
+        bool "256"
+endchoice
 
 config RT_THREAD_PRIORITY_MAX
     int
