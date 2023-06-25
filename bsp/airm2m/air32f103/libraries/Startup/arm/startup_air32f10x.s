@@ -205,7 +205,7 @@ Reset_Handler   PROC
 				LDR  R0,=0x400210F0
                 MOV R1,#0x00000001
                 STR R1,[R0]
-                LDR  R2,=0x40016C00
+                LDR R2,=0x40016C00
                 LDR R3,=0xa7d93a86
                 STR R3,[R2]
                 LDR R3,=0xab12dfcd
@@ -217,6 +217,20 @@ Reset_Handler   PROC
                 LDR R4,=0x4002228c
                 LDR R5,=0xa5a5a5a5
                 STR R5,[R4]
+				;lock
+				LDR R2,=0x400210F0
+                LDR R3,=0x00000000
+                STR R3,[R2]
+                LDR R2,=0x40016C00
+                LDR R3,=0x5826c579
+                STR R3,[R2]
+                LDR R3,=0x54ed2032
+                STR R3,[R2]
+                LDR R3,=0x3212cad9
+                STR R3,[R2]
+                LDR R2,=0x4002228c
+                LDR R3,=0x5a5a5a5a
+                STR R3,[R2]
                 MOV R1,#0x00000000	
                 IMPORT  __main
                 IMPORT  SystemInit

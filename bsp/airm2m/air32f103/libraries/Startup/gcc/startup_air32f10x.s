@@ -65,7 +65,7 @@ FillZerobss:
 LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
-
+/*unlock*/
   ldr r0,=0x400210F0
   mov r1,#0x00000001
   str r1,[r0]
@@ -81,6 +81,21 @@ LoopFillZerobss:
   ldr r4,=0x4002228c
   ldr r5,=0xa5a5a5a5
   str r5,[r4]
+/*lock*/
+  ldr r2,=0x400210f0
+  ldr r3,=0x00000000
+  str r3,[r2]
+  ldr r2,=0x40016c00
+  ldr r3,=0x5826c579
+  str r3,[r2]
+  ldr r3,=0x54ed2032
+  str r3,[r2]
+  ldr r3,=0x3212cad9
+  str r3,[r2]
+  ldr r2,=0x4002228c
+  ldr r3,=0x5a5a5a5a
+  str r3,[r2]
+
   mov r1,#0x00000000	
 
 /* Call the clock system intitialization function.*/
