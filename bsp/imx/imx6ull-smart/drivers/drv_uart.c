@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 #include "drv_uart.h"
 #include "drv_common.h"
 
-enum 
+enum
 {
 #ifdef BSP_USING_UART1
     eDevUart_UART1,
@@ -43,7 +43,7 @@ enum
     eDevUart_UART8,
 #endif
 
-    eDevUart_Max, 
+    eDevUart_Max,
 };
 
 _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
@@ -57,7 +57,7 @@ _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
         {IOMUXC_UART1_RX_DATA_UART1_RX,     0, 0x10B0},
     },
     .flag = (RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX),
-    .param = RT_SERIAL_CONFIG_115200N81, 
+    .param = RT_SERIAL_CONFIG_115200N81,
 },
 #endif
 
@@ -71,7 +71,7 @@ _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
         {IOMUXC_UART2_RX_DATA_UART2_RX,     0, 0x10B0},
     },
     .flag = (RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX),
-    .param = RT_SERIAL_CONFIG_DEFAULT, 
+    .param = RT_SERIAL_CONFIG_DEFAULT,
 },
 #endif
 
@@ -85,7 +85,7 @@ _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
         {IOMUXC_UART3_RX_DATA_UART3_RX,     0, 0x10B0},
     },
     .flag = (RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX),
-    .param = RT_SERIAL_CONFIG_DEFAULT, 
+    .param = RT_SERIAL_CONFIG_DEFAULT,
 },
 #endif
 
@@ -99,7 +99,7 @@ _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
         {IOMUXC_UART4_RX_DATA_UART4_RX,     0, 0x10B0},
     },
     .flag = (RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX),
-    .param = RT_SERIAL_CONFIG_DEFAULT, 
+    .param = RT_SERIAL_CONFIG_DEFAULT,
 },
 #endif
 
@@ -113,7 +113,7 @@ _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
         {IOMUXC_UART5_RX_DATA_UART5_RX,     0, 0x10B0},
     },
     .flag = (RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX),
-    .param = RT_SERIAL_CONFIG_DEFAULT, 
+    .param = RT_SERIAL_CONFIG_DEFAULT,
 },
 #endif
 
@@ -127,7 +127,7 @@ _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
         {IOMUXC_ENET2_RX_DATA0_UART6_RX,    0, 0x10B0},
     },
     .flag = (RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX),
-    .param = RT_SERIAL_CONFIG_DEFAULT, 
+    .param = RT_SERIAL_CONFIG_DEFAULT,
 },
 #endif
 
@@ -141,7 +141,7 @@ _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
         {IOMUXC_ENET2_RX_EN_UART7_RX,       0, 0x10B0},
     },
     .flag = (RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX),
-    .param = RT_SERIAL_CONFIG_DEFAULT, 
+    .param = RT_SERIAL_CONFIG_DEFAULT,
 },
 #endif
 
@@ -155,7 +155,7 @@ _internal_rw struct imx_uart _s_uart[eDevUart_Max] = {
         {IOMUXC_ENET2_TX_EN_UART8_RX,       0, 0x10B0},
     },
     .flag = (RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX),
-    .param = RT_SERIAL_CONFIG_DEFAULT, 
+    .param = RT_SERIAL_CONFIG_DEFAULT,
 },
 #endif
 };
@@ -168,7 +168,7 @@ static void _uart_gpio_init( struct imx_uart *device )
     }
 }
 
-static rt_err_t _uart_ops_configure( struct rt_serial_device *dev, 
+static rt_err_t _uart_ops_configure( struct rt_serial_device *dev,
                                      struct serial_configure *cfg )
 {
     struct imx_uart *uart = RT_NULL;
@@ -238,8 +238,8 @@ static rt_err_t _uart_ops_configure( struct rt_serial_device *dev,
     return RT_EOK;
 }
 
-static rt_err_t _uart_ops_control( struct rt_serial_device *dev, 
-                                   int cmd, 
+static rt_err_t _uart_ops_control( struct rt_serial_device *dev,
+                                   int cmd,
                                    void *arg )
 {
     struct imx_uart *uart = RT_NULL;
@@ -272,7 +272,7 @@ static rt_err_t _uart_ops_control( struct rt_serial_device *dev,
     return result;
 }
 
-static int _uart_ops_putc( struct rt_serial_device *dev, 
+static int _uart_ops_putc( struct rt_serial_device *dev,
                            char ch )
 {
     struct imx_uart *uart = RT_NULL;
@@ -300,7 +300,7 @@ static int _uart_ops_getc( struct rt_serial_device *dev )
     uart = (struct imx_uart*)dev;
     periph = (UART_Type*)uart->periph.vaddr;
 
-    ch = (0 == (periph->USR2 & UART_USR2_RDR_MASK)) ? -1 : periph->URXD; 
+    ch = (0 == (periph->USR2 & UART_USR2_RDR_MASK)) ? -1 : periph->URXD;
     return ch;
 }
 

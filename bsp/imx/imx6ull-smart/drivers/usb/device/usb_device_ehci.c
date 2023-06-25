@@ -177,7 +177,7 @@ static void USB_DeviceEhciSetDefaultState(usb_device_ehci_state_struct_t *ehciSt
     }
     p->nextDtdPointer = 0U;
 
-    
+
     ehciState->dtdCount = USB_DEVICE_CONFIG_EHCI_MAX_DTD;
 
     /* Not use interrupt threshold. */
@@ -918,7 +918,7 @@ static usb_status_t USB_DeviceEhciTransfer(usb_device_ehci_state_struct_t *ehciS
     uint32_t dtdRequestCount = (length + USB_DEVICE_ECHI_DTD_TOTAL_BYTES - 1U) / USB_DEVICE_ECHI_DTD_TOTAL_BYTES;
     uint8_t qhIdle = 0U;
     uint8_t waitingSafelyAccess = 1U;
-    
+
 
     USB_OSA_SR_ALLOC();
 
@@ -1054,7 +1054,7 @@ static usb_status_t USB_DeviceEhciTransfer(usb_device_ehci_state_struct_t *ehciS
         //ehciState->qh[index].nextDtdPointer = (uint32_t)dtdHard;
         dtdhard_phy = imx6ull_get_periph_paddr((uint32_t)dtdHard);
         ehciState->qh[index].nextDtdPointer = (uint32_t)dtdhard_phy;
-        
+
         ehciState->qh[index].dtdTokenUnion.dtdToken = 0U;
 
         ehciState->registerBase->EPPRIME = primeBit;
@@ -1652,7 +1652,7 @@ void USB_DeviceEhciIsrFunction(void *deviceHandle)
 
     ehciState = (usb_device_ehci_state_struct_t *)(handle->controllerHandle);
 
-    
+
 
 #if ((defined(USB_DEVICE_CONFIG_LOW_POWER_MODE)) && (USB_DEVICE_CONFIG_LOW_POWER_MODE > 0U))
 

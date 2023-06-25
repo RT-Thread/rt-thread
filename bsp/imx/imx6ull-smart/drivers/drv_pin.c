@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 #include "drv_common.h"
 #include "fsl_gpio.h"
 #include "fsl_iomuxc.h"
- 
+
 rt_uint32_t iomuxc_base      = IOMUXC_BASE;
 rt_uint32_t iomuxc_snvs_base = IOMUXC_SNVS_BASE;
 
@@ -36,7 +36,7 @@ struct pin_mask mask_tab[5] =
     {GPIO5, 0x00000fff, kCLOCK_Gpio5}      /* GPIO5,12~31 not supported */
 };
 
-const rt_int8_t gpio_reg_offset[5][32] = 
+const rt_int8_t gpio_reg_offset[5][32] =
 {
     { 6,  7,  8,  9, 10, 11, 12, 13, 14, 15,  0,  1,  2,  3,  4,  5, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,},
     {32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 94, 95, 96, 97, 98, 99, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,},
@@ -252,19 +252,19 @@ static void imx6ull_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t
     if(gpio_base != GPIO5)
     {
         IOMUXC_Type *periph = (IOMUXC_Type*)iomuxc_base;
-        
+
         mux_base_addr    = (rt_uint32_t)&periph->SW_MUX_CTL_PAD[reg_offset];
         config_base_addr = (rt_uint32_t)&periph->SW_PAD_CTL_PAD[reg_offset];
     }
     else
     {
         IOMUXC_SNVS_Type *periph = (IOMUXC_SNVS_Type*)iomuxc_snvs_base;
-        
+
         mux_base_addr    = (rt_uint32_t)&periph->SW_MUX_CTL_PAD[reg_offset];
         config_base_addr = (rt_uint32_t)&periph->SW_PAD_CTL_PAD[reg_offset];
     }
     IOMUXC_SetPinMux(mux_base_addr, 0x5U, 0x00000000U, 0x0U, config_base_addr, 1);
-	IOMUXC_SetPinConfig(mux_base_addr, 0x5U, 0x00000000U, 0x0U, config_base_addr, config_value);
+    IOMUXC_SetPinConfig(mux_base_addr, 0x5U, 0x00000000U, 0x0U, config_base_addr, config_value);
 
     GPIO_PinInit(mask_tab[port].gpio, pin_num, &config);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -181,7 +181,7 @@ static rt_size_t _ehci0_ep_write(rt_uint8_t address, void *buffer, rt_size_t siz
     USB_DeviceSendRequest(ehci0_handle, address, buffer, size);
     return size;
 }
-    
+
 
 static rt_err_t _ehci0_ep0_send_status(void)
 {

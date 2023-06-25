@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -130,7 +130,7 @@ static rt_ssize_t imx6ull_ecspi_xfer(struct rt_spi_device *device, struct rt_spi
 
         if (recv_ptr != RT_NULL)
         {
-        	*recv_ptr++ = temp_data;
+            *recv_ptr++ = temp_data;
         }
     }
 

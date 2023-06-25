@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,19 +21,19 @@
 
 #ifdef BSP_USING_IMX6ULL_ART_PI
 
-static struct imx6ull_iomuxc mdio_gpio[2] = 
+static struct imx6ull_iomuxc mdio_gpio[2] =
 {
     {IOMUXC_GPIO1_IO06_ENET1_MDIO,0U,0xB029},
     {IOMUXC_GPIO1_IO07_ENET1_MDC,0U,0xB0E9}
 };
 #else
-static struct imx6ull_iomuxc mdio_gpio[2] = 
+static struct imx6ull_iomuxc mdio_gpio[2] =
 {
     {IOMUXC_GPIO1_IO06_ENET2_MDIO,0U,0xB029},
     {IOMUXC_GPIO1_IO07_ENET2_MDC,0U,0xB0E9},
 };
 #endif
-enum 
+enum
 {
 #ifdef RT_USING_ENET1
     DEV_ENET1,
@@ -46,7 +46,7 @@ enum
     DEV_ENET_MAX,
 };
 
-static struct rt_imx6ul_ethps _imx6ul_eth_device[DEV_ENET_MAX] = 
+static struct rt_imx6ul_ethps _imx6ul_eth_device[DEV_ENET_MAX] =
 {
 #ifdef RT_USING_ENET1
     {
@@ -77,7 +77,7 @@ static struct rt_imx6ul_ethps _imx6ul_eth_device[DEV_ENET_MAX] =
             ENET_RXBUFF_TOTAL_SIZE,
             ENET_TXBUFF_TOTAL_SIZE
         },
-        .gpio = 
+        .gpio =
         {
             {IOMUXC_SNVS_SNVS_TAMPER9_GPIO5_IO09,0U,0x110B0},
             {IOMUXC_ENET1_RX_DATA0_ENET1_RDATA00,0U,0xB0E9},
@@ -121,7 +121,7 @@ static struct rt_imx6ul_ethps _imx6ul_eth_device[DEV_ENET_MAX] =
             ENET_RXBUFF_TOTAL_SIZE,
             ENET_TXBUFF_TOTAL_SIZE
         },
-        .gpio = 
+        .gpio =
         {
             {IOMUXC_SNVS_SNVS_TAMPER6_GPIO5_IO06,0U,0x110B0},
             {IOMUXC_ENET2_RX_DATA0_ENET2_RDATA00,0U,0xB0E9},
@@ -233,7 +233,7 @@ static rt_err_t rt_imx6ul_eth_init(rt_device_t dev)
     {
         imx6ull_gpio_init(&imx6ul_device->gpio[i]);
     }
-    
+
     IOMUXC_GPR_Type *GPR1 = (IOMUXC_GPR_Type *)rt_ioremap((void *)IOMUXC_GPR,0x1000);
     if(imx6ul_device->mac_num == 1)
     {
@@ -252,7 +252,7 @@ static rt_err_t rt_imx6ul_eth_init(rt_device_t dev)
         reg_value |=  IOMUXC_GPR_GPR1_ENET2_TX_CLK_DIR(1);
         reg_value |=  IOMUXC_GPR_GPR1_ENET2_CLK_SEL(0);
         GPR1->GPR1 = reg_value;
-    } 
+    }
 
     ENET_InitModuleClock();
     ENET_GetDefaultConfig(config);
@@ -451,7 +451,7 @@ int32_t get_instance_by_base(void *base)
         return -1;
     }
     return instance;
-    
+
 }
 void rx_enet_callback(void *base)
 {
@@ -505,8 +505,8 @@ static void phy_detect_thread_entry(void *param)
             if(link == true)
             {
                 PHY_StartNegotiation(base_addr,imx6ul_device->phy_num);
-                
-            }            
+
+            }
             imx6ul_eth_link_change(imx6ul_device,link);
         }
         rt_thread_delay(DETECT_DELAY_ONE_SECOND);

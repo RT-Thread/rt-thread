@@ -159,7 +159,7 @@ uint32_t SystemGetIRQNestingLevel (void);
 /**
  * @brief Setup systick for RTOS system.
  *
- * @param tickRateHz Tick number per second 
+ * @param tickRateHz Tick number per second
  * @param tickHandler IRQ callback handler for tick
  * @param intPriority IRQ interrupt priority (the smaller, the higher priority)
  */

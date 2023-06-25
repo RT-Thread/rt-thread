@@ -815,7 +815,7 @@ uint32_t CLOCK_GetSysPfdFreq(clock_pfd_t pfd)
 
         default:
             freq = 0U;
-			break;
+            break;
     }
     freq *= 18U;
 
@@ -846,7 +846,7 @@ uint32_t CLOCK_GetUsb1PfdFreq(clock_pfd_t pfd)
 
         default:
             freq = 0U;
-		    break;
+            break;
     }
     freq *= 18U;
 

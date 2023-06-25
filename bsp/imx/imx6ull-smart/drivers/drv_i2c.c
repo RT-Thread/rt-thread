@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -92,10 +92,10 @@ static rt_ssize_t imx6ull_i2c_mst_xfer(struct rt_i2c_bus_device *bus, struct rt_
             {
                 rt_thread_delay(1);
                 timeout_cnt--;
-                if(timeout_cnt == 0) 
+                if(timeout_cnt == 0)
                 {
                     break;
-                }   
+                }
             }
             timeout_cnt = 100;
             g_MasterCompletionFlag[instance - 1] = 0;
@@ -115,22 +115,22 @@ static rt_ssize_t imx6ull_i2c_mst_xfer(struct rt_i2c_bus_device *bus, struct rt_
             xfer.dataSize = msgs[i].len;
             rt_memcpy(i2c_buff_temp[instance - 1],msgs[i].buf,msgs[i].len);
 
-#ifdef IMX_I2C_IRQ_MODE            
+#ifdef IMX_I2C_IRQ_MODE
             I2C_MasterTransferNonBlocking(i2c_bus->config->I2C, &i2c_bus->config->master_handle,&xfer);
             while(!g_MasterCompletionFlag[instance - 1])
             {
                 timeout_cnt--;
                 rt_thread_delay(1);
-                if(timeout_cnt == 0) 
+                if(timeout_cnt == 0)
                 {
                     break;
-                }  
+                }
             }
             timeout_cnt = 100;
             g_MasterCompletionFlag[instance - 1] = 0;
 #else
             I2C_MasterTransferBlocking(i2c_bus->config->I2C, &xfer);
-#endif            
+#endif
         }
     }
 
@@ -155,7 +155,7 @@ static rt_err_t imx6ull_i2c_gpio_init(struct imx6ull_i2c_bus *bus)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-static const struct rt_i2c_bus_device_ops imx6ull_i2c_ops = 
+static const struct rt_i2c_bus_device_ops imx6ull_i2c_ops =
 {
     .master_xfer = imx6ull_i2c_mst_xfer,
     .slave_xfer = RT_NULL,

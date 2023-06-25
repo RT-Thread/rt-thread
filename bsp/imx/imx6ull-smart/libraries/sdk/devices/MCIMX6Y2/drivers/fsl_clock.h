@@ -766,7 +766,7 @@ static inline void CLOCK_SetDiv(clock_div_t divider, uint32_t value)
 static inline uint32_t CLOCK_GetDiv(clock_div_t divider)
 {
     uint32_t value;
-    
+
     value = (CCM_TUPLE_REG(CCM, divider) & CCM_TUPLE_MASK(divider)) >> CCM_TUPLE_SHIFT(divider);
     return value;
 }
@@ -818,7 +818,7 @@ static inline void CLOCK_SetMode(clock_mode_t mode)
 {
     CCM->CLPCR = (CCM->CLPCR & ~CCM_CLPCR_LPM_MASK) | CCM_CLPCR_LPM((uint32_t)mode);
 }
-  
+
 /*!
  * @brief Gets the clock frequency for a specific clock name.
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,7 +14,7 @@
 
 #include <rtdevice.h>
 
-#define BIT(nr)			((1) << (nr))
+#define BIT(nr)         ((1) << (nr))
 
 int rt_hw_pwm_init(void);
 

@@ -43,7 +43,7 @@
 
 #if defined(__GNUC__)
   #define FORCEDINLINE  __attribute__((always_inline))
-#else 
+#else
   #define FORCEDINLINE
 #endif
 

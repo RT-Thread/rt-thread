@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -336,7 +336,7 @@ int set_pwm_default(void)
         result = -RT_EIO;
         goto _exit;
     }
-    
+
     result = rt_pwm_set(device, 1, 1000000, 500000);
     result = rt_pwm_enable(device, 1);
 _exit:

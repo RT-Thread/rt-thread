@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -65,7 +65,7 @@ struct imx6ull_lcd_config
 
 struct imx6ull_lcd_bus
 {
-    struct rt_device parent; 
+    struct rt_device parent;
     struct rt_device_graphic_info info;
 
     struct imx6ull_lcd_config *config;

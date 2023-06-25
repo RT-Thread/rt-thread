@@ -19,7 +19,7 @@
 #define BOARD_USDHC_MMCCARD_POWER_CONTROL_INIT()
 #define BOARD_USDHC_MMCCARD_POWER_CONTROL(state)
 
-/* 
+/*
  * Insert detection is not used
  * Following setting no needed to care
  */

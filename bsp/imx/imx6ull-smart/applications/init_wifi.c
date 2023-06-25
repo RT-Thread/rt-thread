@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,13 +21,13 @@ int rw007_wifi_init(void)
 {
     if (access(WIFI_SH_PATH, 0) != -1)
     {
-        msh_exec(WIFI_SH_PATH, rt_strlen(WIFI_SH_PATH));   
+        msh_exec(WIFI_SH_PATH, rt_strlen(WIFI_SH_PATH));
     }
     else
     {
         rt_kprintf("%s wi-fi configuration file not exist in sd card!\n", WIFI_SH_PATH);
     }
-    
+
     return 0
 }
 INIT_APP_EXPORT(rw007_wifi_init);

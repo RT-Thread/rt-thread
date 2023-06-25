@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,7 +26,7 @@ struct imx6ull_i2c_config
     void *hw_base;  /* hardware physical address base */
     I2C_Type *I2C;
     char *name;
-    rt_uint32_t baud_rate;   
+    rt_uint32_t baud_rate;
     rt_uint32_t clk_ip_name;
     rt_uint32_t irq_num;
 
@@ -38,7 +38,7 @@ struct imx6ull_i2c_config
 
 struct imx6ull_i2c_bus
 {
-    struct rt_i2c_bus_device parent;   
+    struct rt_i2c_bus_device parent;
     struct imx6ull_i2c_config *config;
 };
 

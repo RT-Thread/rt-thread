@@ -182,7 +182,7 @@ static inline uint8_t GPIO_ReadPadStatus(GPIO_Type* base, uint32_t pin)
  * @param base GPIO base pointer.
  * @param pin GPIO port pin number.
  * @param pininterruptMode pointer to a @ref gpio_interrupt_mode_t structure
- *        that contains the interrupt mode information. 
+ *        that contains the interrupt mode information.
  */
 void GPIO_SetPinInterruptConfig(GPIO_Type* base, uint32_t pin, gpio_interrupt_mode_t pinInterruptMode);
 
@@ -191,9 +191,9 @@ void GPIO_SetPinInterruptConfig(GPIO_Type* base, uint32_t pin, gpio_interrupt_mo
  *
  * @param base GPIO base pointer.
  * @param mask GPIO pin number macro.
- */ 
+ */
 static inline void GPIO_EnableInterrupts(GPIO_Type* base, uint32_t mask)
-{ 
+{
     base->IMR |= mask;
 }
 
@@ -202,9 +202,9 @@ static inline void GPIO_EnableInterrupts(GPIO_Type* base, uint32_t mask)
  *
  * @param base GPIO base pointer.
  * @param mask GPIO pin number macro.
- */ 
+ */
 static inline void GPIO_DisableInterrupts(GPIO_Type* base, uint32_t mask)
-{ 
+{
     base->IMR &= ~mask;
 }
 

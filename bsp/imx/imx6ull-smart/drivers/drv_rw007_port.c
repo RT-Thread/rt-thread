@@ -54,7 +54,7 @@ static int rw007_gpio_init(void)
 int wifi_spi_device_init(void)
 {
     char sn_version[32];
-    
+
     if (rw007_gpio_init() == -1)
     {
         rt_hw_wifi_init("rw007 gpio init fault!\n");
