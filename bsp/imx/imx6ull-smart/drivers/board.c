@@ -102,21 +102,6 @@ void assert_handler(const char *ex_string, const char *func, rt_size_t line)
         periph->UTXD = ch;                                      \
     } while (0)
 
-volatile void *uart_hw_base = RT_NULL;
-void rt_hw_console_output(const char *str)
-{
-    UART_Type *periph = (UART_Type *)uart_hw_base;
-
-    while (*str)
-    {
-        if (*str == '\n') PUTC(periph, '\r');
-
-        PUTC(periph, *str);
-
-        str ++;
-    }
-}
-
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
@@ -131,14 +116,11 @@ void rt_hw_board_init(void)
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0x80000000, 0x10000000);
 #endif
 
-    uart_hw_base = rt_ioremap((void*)IMX6ULL_UART1_BASE, 0x1000);
-    rt_kprintf("hello!!!!\n");
+    /* initialize system heap */
+    rt_system_heap_init(HEAP_BEGIN, HEAP_END);
 
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
-
-    /* initialize system heap */
-    rt_system_heap_init(HEAP_BEGIN, HEAP_END);
 
     SystemAddressMapping();
     SystemClockInit();

@@ -44,4 +44,4 @@ if PLATFORM == 'gcc':
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n' +\
-              'python mkimage.py ' + MKIMAGE + '\n'
+              'python3 mkimage.py ' + MKIMAGE + '\n'

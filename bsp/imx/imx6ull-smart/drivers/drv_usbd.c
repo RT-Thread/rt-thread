@@ -267,7 +267,7 @@ static int rt_usbd_init(void)
 
     return 0;
 }
-INIT_DEVICE_EXPORT(rt_usbd_init);
+// INIT_DEVICE_EXPORT(rt_usbd_init);
 
 static usb_status_t usb_device_endpoint_callback(usb_device_handle handle, usb_device_endpoint_callback_message_struct_t *message, void *callbackParam)
 {
