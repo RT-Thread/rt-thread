@@ -88,6 +88,8 @@ rt_size_t rt_page_bits(rt_size_t size);
 
 void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr);
 
+void rt_page_high_get_info(rt_size_t *total_nr, rt_size_t *free_nr);
+
 void *rt_page_page2addr(struct rt_page *p);
 
 struct rt_page *rt_page_addr2page(void *addr);

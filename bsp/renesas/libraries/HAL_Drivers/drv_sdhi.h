@@ -62,4 +62,6 @@ struct ra_sdhi
     sdmmc_device_t *media_device;
 };
 
+extern void sdcard_change(void);
+
 #endif

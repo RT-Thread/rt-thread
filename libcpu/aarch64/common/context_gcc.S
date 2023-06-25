@@ -9,6 +9,7 @@
  */
 
 #include "rtconfig.h"
+#include "asm-generic.h"
 
 #include "asm-fpu.h"
 
@@ -17,6 +18,9 @@
 .type rt_hw_cpu_id_set, @function
 rt_hw_cpu_id_set:
     mrs x0, mpidr_el1           /* MPIDR_EL1: Multi-Processor Affinity Register */
+#ifdef ARCH_ARM_CORTEX_A55
+    lsr x0, x0, #8
+#endif
     and x0, x0, #15
     msr tpidr_el1, x0
     ret
@@ -76,6 +80,13 @@ rt_hw_get_cntpct_val:
 rt_hw_get_gtimer_frq:
     MRS X0,CNTFRQ_EL0
     RET
+
+START_POINT(_thread_start)
+    blr x19
+    mov x29, #0
+    blr x20
+    b   .   /* never here */
+START_POINT_END(_thread_start)
 
 .macro SAVE_CONTEXT
     /* Save the entire context. */
@@ -499,18 +510,18 @@ vector_irq_exit:
 
 // -------------------------------------------------
 
-    .globl  vector_exception
-vector_exception:
+START_POINT(vector_exception)
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!
     BL      rt_hw_trap_exception
     LDP     X0, X1, [SP], #0x10
     MOV     SP, X0
     RESTORE_CONTEXT_WITHOUT_MMU_SWITCH
+START_POINT_END(vector_exception)
 
-    .globl  vector_serror
-vector_serror:
+START_POINT(vector_serror)
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!
     BL      rt_hw_trap_serror
     b .
+START_POINT_END(vector_exception)

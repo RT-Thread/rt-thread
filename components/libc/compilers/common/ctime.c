@@ -66,6 +66,7 @@ static const short __spm[13] =
 rt_align(4) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
 rt_align(4) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
+#ifndef __isleap
 static int __isleap(int year)
 {
     /* every fourth year is a leap year except for century years that are
@@ -73,6 +74,7 @@ static int __isleap(int year)
     /*  return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)); */
     return (!(year % 4) && ((year % 100) || !(year % 400)));
 }
+#endif
 
 static void num2str(char *c, int i)
 {
@@ -175,7 +177,7 @@ static int set_timeval(struct timeval *tv)
 struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
     int i;
-    int work = *timep % (SPD);
+    int work;
 
     if(timep == RT_NULL || r == RT_NULL)
     {
@@ -185,6 +187,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 
     rt_memset(r, RT_NULL, sizeof(struct tm));
 
+    work = *timep % (SPD);
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
@@ -677,8 +680,13 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
             level = rt_hw_interrupt_disable();
             tick = rt_tick_get(); /* get tick */
             tp->tv_sec  = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
-            tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
+            tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000U;
             rt_hw_interrupt_enable(level);
+            if (tp->tv_nsec > 1000000000ULL)
+            {
+                tp->tv_nsec %= 1000000000ULL;
+                tp->tv_sec += 1;
+            }
         }
         break;
 #endif

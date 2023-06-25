@@ -44,13 +44,13 @@ d1_library = 'sunxi-hal'
 rtconfig.BSP_LIBRARY_TYPE = d1_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, d1_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, d1_library, 'SConscript'), variant_dir='build/libraries/sunxi-hal', duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
 
 # include libos
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'libos', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'libos', 'SConscript'), variant_dir='build/libraries/libos', duplicate=0))
 
 stack_size = 4096
 

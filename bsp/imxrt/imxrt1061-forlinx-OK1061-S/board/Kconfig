@@ -1,0 +1,99 @@
+menu "Hardware Drivers Config"
+
+config SOC_IMXRT1061CVL5A
+    bool
+    select SOC_IMXRT1060_SERIES
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        default n
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_LPUART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_LPUART
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default y
+
+                config BSP_LPUART1_RX_USING_DMA
+                    bool "Enable LPUART1 RX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_RX_DMA_CHANNEL
+                        depends on BSP_LPUART1_RX_USING_DMA
+                        int "Set LPUART1 RX DMA channel (0-32)"
+                        default 0
+
+                config BSP_LPUART1_TX_USING_DMA
+                    bool "Enable LPUART1 TX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_TX_DMA_CHANNEL
+                        depends on BSP_LPUART1_TX_USING_DMA
+                        int "Set LPUART1 TX DMA channel (0-32)"
+                        default 1
+
+            config BSP_USING_LPUART2
+                bool "Enable LPUART2"
+                default n
+
+                config BSP_LPUART2_RX_USING_DMA
+                    bool "Enable LPUART2 RX DMA"
+                    depends on BSP_USING_LPUART2
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART2_RX_DMA_CHANNEL
+                        depends on BSP_LPUART2_RX_USING_DMA
+                        int "Set LPUART2 RX DMA channel (0-32)"
+                        default 2
+
+                config BSP_LPUART2_TX_USING_DMA
+                    bool "Enable LPUART2 TX DMA"
+                    depends on BSP_USING_LPUART2
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART2_TX_DMA_CHANNEL
+                        depends on BSP_LPUART2_TX_USING_DMA
+                        int "Set LPUART2 TX DMA channel (0-32)"
+                        default 3
+        endif
+
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_RS232
+        bool "Enable RS232"
+        select BSP_USING_LPUART1
+        default n
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

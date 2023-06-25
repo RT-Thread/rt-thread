@@ -14,6 +14,11 @@
 
 #define USB_THREAD_STACK_SIZE    4096
 
+#define DBG_TAG    "usbhost.hub"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
+
 // static struct rt_messagequeue *usb_mq;
 static struct uclass_driver hub_driver;
 // static struct uhub root_hub;
@@ -654,8 +659,8 @@ static void rt_usbh_hub_thread_entry(void* parameter)
         struct uhost_msg msg;
 
         /* receive message */
-        if(rt_mq_recv(hcd->usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER)
-            != RT_EOK ) continue;
+        if (rt_mq_recv(hcd->usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER) < 0)
+            continue;
 
         //RT_DEBUG_LOG(RT_DEBUG_USB, ("msg type %d\n", msg.type));
 
@@ -702,6 +707,11 @@ void rt_usbh_hub_init(uhcd_t hcd)
     rt_thread_t thread;
     /* create root hub for hcd */
     hcd->roothub = rt_malloc(sizeof(struct uhub));
+    if(hcd->roothub == RT_NULL)
+    {
+        LOG_E("hcd->roothub: allocate buffer failed.");
+        return;
+    }
     rt_memset(hcd->roothub, 0, sizeof(struct uhub));
     hcd->roothub->is_roothub = RT_TRUE;
     hcd->roothub->hcd = hcd;

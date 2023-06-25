@@ -1,6 +1,6 @@
 name: Static code analysis
 
-on: 
+on:
   pull_request:
     branches:
       - master
@@ -21,16 +21,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -qq install cppcheck
+          pip install click PyYaml
           git remote -v
           git fetch origin
           cppcheck --version
           ls
           git branch -a
-          changed_files=$(git diff --name-only HEAD origin/master | grep -E '\.(c|cpp|cc|cxx)$' || true)
-          if [ -n "$changed_files" ];then
-              cppcheck --enable=warning,performance,portability --inline-suppr --error-exitcode=1 --force $changed_files
-              err=$?
-              if [ $err -ne 0 ]; then
-                  echo "CPPCHECK REPORT, PLEASE CHECK THE WARNING !!!!!!!!!"
-              fi
-          fi
+          python tools/ci/cpp_check.py check

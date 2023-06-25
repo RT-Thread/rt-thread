@@ -166,7 +166,7 @@ rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr)
     return oldval;
 }
 
-rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, volatile rt_atomic_t *old, rt_atomic_t new)
+rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old, rt_atomic_t new)
 {
     rt_atomic_t result;
     rt_atomic_t temp = *old;

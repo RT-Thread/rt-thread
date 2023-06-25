@@ -35,9 +35,8 @@
 #define ARM_SPI_BIND_CPU_ID 0
 #endif
 
-#ifndef RT_USING_SMP
+#if !defined(RT_USING_SMP) && !defined(RT_USING_AMP)
 #define RT_CPUS_NR 1
-extern int rt_hw_cpu_id(void);
 #else
 extern rt_uint64_t rt_cpu_mpidr_early[];
 #endif /* RT_USING_SMP */
@@ -114,6 +113,7 @@ static unsigned int _gic_max_irq;
 /* Macro to access the Generic Interrupt Controller Distributor (GICD) */
 #define GIC_DIST_CTRL(hw_base)              HWREG32((hw_base) + 0x000U)
 #define GIC_DIST_TYPE(hw_base)              HWREG32((hw_base) + 0x004U)
+#define GIC_DIST_IIDR(hw_base)              HWREG32((hw_base) + 0x008U)
 #define GIC_DIST_IGROUP(hw_base, n)         HWREG32((hw_base) + 0x080U + ((n) / 32U) * 4U)
 #define GIC_DIST_ENABLE_SET(hw_base, n)     HWREG32((hw_base) + 0x100U + ((n) / 32U) * 4U)
 #define GIC_DIST_ENABLE_CLEAR(hw_base, n)   HWREG32((hw_base) + 0x180U + ((n) / 32U) * 4U)
@@ -335,6 +335,26 @@ void arm_gic_clear_active(rt_uint64_t index, int irq)
     GIC_DIST_ACTIVE_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
 }
 
+void arm_gic_set_router_cpu(rt_uint64_t index, int irq, rt_uint64_t aff)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 32);
+
+    GIC_DIST_IROUTER(_gic_table[index].dist_hw_base, irq) = aff & 0xff00ffffffULL;
+}
+
+rt_uint64_t arm_gic_get_router_cpu(rt_uint64_t index, int irq)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 32);
+
+    return GIC_DIST_IROUTER(_gic_table[index].dist_hw_base, irq);
+}
+
 /* Set up the cpu mask for the specific interrupt */
 void arm_gic_set_cpu(rt_uint64_t index, int irq, unsigned int cpumask)
 {
@@ -478,76 +498,118 @@ rt_uint64_t arm_gic_get_irq_status(rt_uint64_t index, int irq)
     return ((active << 1) | pending);
 }
 
-#ifdef RT_USING_SMP
+#if defined(RT_USING_SMP) || defined(RT_USING_AMP)
+struct gicv3_sgi_aff
+{
+    rt_uint64_t aff;
+    rt_uint32_t cpu_mask[(RT_CPUS_NR + 31) >> 5];
+    rt_uint16_t target_list;
+};
+
+static struct gicv3_sgi_aff sgi_aff_table[RT_CPUS_NR];
+static rt_uint64_t sgi_aff_table_num;
+static void sgi_aff_add_table(rt_uint64_t aff, rt_uint64_t cpu_index)
+{
+    rt_uint64_t i;
+
+    for (i = 0; i < sgi_aff_table_num; i++)
+    {
+        if (sgi_aff_table[i].aff == aff)
+        {
+            sgi_aff_table[i].cpu_mask[cpu_index >> 5] |= (1 << (cpu_index & 0x1F));
+            return;
+        }
+    }
+
+    sgi_aff_table[sgi_aff_table_num].aff = aff;
+    sgi_aff_table[sgi_aff_table_num].cpu_mask[cpu_index >> 5] |= (1 << (cpu_index & 0x1F));
+    sgi_aff_table_num++;
+}
+
+static rt_uint64_t gicv3_sgi_init(void)
+{
+    rt_uint64_t i, icc_sgi1r_value;
+
+    for (i = 0; i < RT_CPUS_NR; i++)
+    {
+        icc_sgi1r_value =  (rt_uint64_t)((rt_cpu_mpidr_early[i] >> 8)  & 0xFF) << 16;
+        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_early[i] >> 16) & 0xFF) << 32;
+        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_early[i] >> 32) & 0xFF) << 48;
+        icc_sgi1r_value |= (rt_uint64_t)((rt_cpu_mpidr_early[i] >> 4)  & 0xF)  << 44;
+        sgi_aff_add_table(icc_sgi1r_value, i);
+    }
+
+    return (RT_CPUS_NR + 31) >> 5;
+}
+
+rt_inline void gicv3_sgi_send(rt_uint64_t int_id)
+{
+    rt_uint64_t i;
+    for (i = 0; i < sgi_aff_table_num; i++)
+    {
+        if (sgi_aff_table[i].target_list)
+        {
+            __DSB();
+            /* Interrupts routed to the PEs specified by Aff3.Aff2.Aff1.<target list>. */
+            SET_GICV3_REG(ICC_SGI1R_EL1, sgi_aff_table[i].aff | int_id | sgi_aff_table[i].target_list);
+            __ISB();
+            sgi_aff_table[i].target_list = 0;
+        }
+    }
+}
+
+rt_inline void gicv3_sgi_target_list_set(rt_uint64_t array, rt_uint32_t cpu_mask)
+{
+    rt_uint64_t i, value;
+
+    for (i = 0; i < sgi_aff_table_num; i++)
+    {
+        if (sgi_aff_table[i].cpu_mask[array] & cpu_mask)
+        {
+            while (cpu_mask)
+            {
+                value = __builtin_ctzl(cpu_mask);
+                cpu_mask &= ~(1 << value);
+                sgi_aff_table[i].target_list |= 1 << (rt_cpu_mpidr_early[(array << 5) | value] & 0xF);
+            }
+        }
+    }
+}
+
 void arm_gic_send_affinity_sgi(rt_uint64_t index, int irq, rt_uint32_t cpu_masks[], rt_uint64_t routing_mode)
 {
-    const int cpu_mask_cpu_max_nr = sizeof(cpu_masks[0]) * 8;
+    rt_uint64_t i;
     rt_uint64_t int_id = (irq & 0xf) << 24;
-    rt_uint64_t irm = routing_mode << 40; /* Interrupt Routing Mode */
+    static rt_uint64_t masks_nrs = 0;
 
     if (routing_mode == GICV3_ROUTED_TO_SPEC)
     {
-        int cpu_id, cpu_mask_bit, i, cpu_masks_nr = RT_CPUS_NR / cpu_mask_cpu_max_nr;
-        rt_uint16_t target_list;
-        rt_uint64_t rs = 0; /* Range Selector */
-        rt_uint64_t affinity_val, next_affinity_val;
-
-        if (cpu_masks_nr * cpu_mask_cpu_max_nr != RT_CPUS_NR)
+        if (!masks_nrs)
         {
-            ++cpu_masks_nr;
+            masks_nrs = gicv3_sgi_init();
         }
 
-        for (i = cpu_id = 0; i < cpu_masks_nr;)
+        for (i = 0; i < masks_nrs; i++)
         {
-            /* No cpu in this mask */
             if (cpu_masks[i] == 0)
             {
-                ++i;
-                cpu_id += cpu_mask_cpu_max_nr;
                 continue;
             }
 
-            /* Get last cpu affinity value */
-            affinity_val = rt_cpu_mpidr_early[cpu_id] & 0xff00ffff00ULL;
-
-            /* Read 16 cpus information */
-            for (cpu_mask_bit = 0; cpu_mask_bit < 16; ++cpu_mask_bit, ++cpu_id)
-            {
-                /* MPIDR_EL1: aff3[39:32], aff2[23:16], aff1[15:8] */
-                next_affinity_val = rt_cpu_mpidr_early[cpu_id] & 0xff00ffff00ULL;
-
-                /* Affinity value is different, read end */
-                if (affinity_val != next_affinity_val)
-                {
-                    break;
-                }
-            }
-
-            /* Get all valid cpu mask */
-            target_list = (0xffff >> (16 - cpu_mask_bit)) & cpu_masks[i];
-            /* Clear read mask */
-            cpu_masks[i] >>= cpu_mask_bit;
-            /* ICC_SGI1R_EL1: aff3[55:48], aff2[39:32], aff1[23:16] */
-            affinity_val <<= 8;
-
-            __DSB();
-            /* Interrupts routed to the PEs specified by Aff3.Aff2.Aff1.<target list>. */
-            SET_GICV3_REG(ICC_SGI1R_EL1, affinity_val | (rs << 44) | irm | int_id | target_list);
-            __ISB();
-
-            /* Check if reset the range selector */
-            rs = affinity_val != next_affinity_val ? 0 : rs + 1;
+            gicv3_sgi_target_list_set(i, cpu_masks[i]);
         }
+
+        gicv3_sgi_send(int_id);
     }
     else
     {
         __DSB();
         /* Interrupts routed to all PEs in the system, excluding "self". */
-        SET_GICV3_REG(ICC_SGI1R_EL1, irm | int_id);
+        SET_GICV3_REG(ICC_SGI1R_EL1, (0x10000000000ULL) | int_id);
         __ISB();
     }
 }
-#endif /* RT_USING_SMP */
+#endif /* defined(RT_USING_SMP) || defined(RT_USING_AMP) */
 
 rt_uint64_t arm_gic_get_high_pending_irq(rt_uint64_t index)
 {
@@ -636,6 +698,8 @@ int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start)
     unsigned int gic_type;
     rt_uint64_t main_cpu_affinity_val;
 
+    RT_UNUSED(i);
+    RT_UNUSED(main_cpu_affinity_val);
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
     _gic_table[index].dist_hw_base = dist_base;
@@ -659,6 +723,8 @@ int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start)
     {
         _gic_max_irq = ARM_GIC_NR_IRQS;
     }
+
+#ifndef RT_AMP_SLAVE
 
     GIC_DIST_CTRL(dist_base) = 0;
     /* Wait for register write pending */
@@ -724,6 +790,7 @@ int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start)
      */
     GIC_DIST_CTRL(dist_base) = GICD_CTLR_ARE_NS | GICD_CTLR_ENGRP1NS;
 
+#endif /* RT_AMP_SLAVE */
     return 0;
 }
 
@@ -811,13 +878,19 @@ int arm_gic_cpu_init(rt_uint64_t index, rt_uint64_t cpu_base)
 void arm_gic_dump_type(rt_uint64_t index)
 {
     unsigned int gic_type;
+    unsigned int gic_version;
+    unsigned int gic_rp;
 
+    gic_version = (GIC_DIST_IIDR(_gic_table[index].dist_hw_base) >> 24) & 0xfUL;
+    gic_rp = (GIC_DIST_IIDR(_gic_table[index].dist_hw_base) >> 12) & 0xfUL;
     gic_type = GIC_DIST_TYPE(_gic_table[index].dist_hw_base);
-    rt_kprintf("GICv%d on %p, max IRQs: %d, %s security extension(%08x)\n",
-               (GIC_DIST_ICPIDR2(_gic_table[index].dist_hw_base) >> 4) & 0xf,
+    rt_kprintf("GICv3-%d r%dp%d on %p, max IRQs: %d, %s security extension(%08x)\n",
+               (gic_version == 0) ? 500 : (gic_version == 2) ? 600 : 0,
+               (gic_rp >> 4) & 0xF,
+                gic_rp & 0xF,
                _gic_table[index].dist_hw_base,
                _gic_max_irq,
-               gic_type & (1 << 10) ? "has" : "no",
+               gic_type & (1U << 10U) ? "has" : "no",
                gic_type);
 }
 
@@ -850,10 +923,36 @@ void arm_gic_dump(rt_uint64_t index)
     rt_kprintf("\b\b\n");
 }
 
+static void arm_gic_bind_dump(void)
+{
+#ifdef BSP_USING_GICV3
+    int i;
+    for (i = 32; i < _gic_max_irq; i++)
+    {
+        rt_kprintf("irq(%d) -> 0x%X\n", i, arm_gic_get_router_cpu(0, i));
+    }
+#endif  /* BSP_USING_GICV3 */
+}
+
+static void arm_gic_sgi_dump(rt_uint64_t index)
+{
+    rt_int32_t cpu_id = rt_hw_cpu_id();
+
+    rt_kprintf("redist_hw_base = 0x%X\n", _gic_table[index].redist_hw_base[cpu_id]);
+    rt_kprintf("--- sgi mask ---\n");
+    rt_kprintf("0x%08x\n", GIC_RDISTSGI_ISENABLER0(_gic_table[index].redist_hw_base[cpu_id]));
+    rt_kprintf("--- sgi pending ---\n");
+    rt_kprintf("0x%08x\n", GIC_RDISTSGI_ISPENDR0(_gic_table[index].redist_hw_base[cpu_id]));
+    rt_kprintf("--- sgi active ---\n");
+    rt_kprintf("0x%08x\n", GIC_RDISTSGI_ISACTIVER0(_gic_table[index].redist_hw_base[cpu_id]));
+}
+
 long gic_dump(void)
 {
     arm_gic_dump_type(0);
     arm_gic_dump(0);
+    arm_gic_bind_dump();
+    arm_gic_sgi_dump(0);
 
     return 0;
 }

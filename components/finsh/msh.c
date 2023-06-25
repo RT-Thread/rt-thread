@@ -274,7 +274,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     RT_ASSERT(retp);
 
     /* find the size of first command */
-    while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
+    while (cmd0_size < length && (cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t'))
         cmd0_size ++;
     if (cmd0_size == 0)
         return -RT_ERROR;
@@ -677,9 +677,21 @@ void msh_auto_complete_path(char *path)
             if (multi == 1)
             {
                 struct stat buffer = {0};
-                if ((stat(path, &buffer) == 0) && (S_ISDIR(buffer.st_mode)))
+                if ((stat(path, &buffer) == 0))
                 {
-                    strcat(path, "/");
+                    if (S_ISDIR(buffer.st_mode))
+                    {
+                        strcat(path, "/");
+                    }
+                    else if (S_ISLNK(buffer.st_mode))
+                    {
+                        DIR *dir = opendir(path);
+                        if (dir)
+                        {
+                            closedir(dir);
+                            strcat(path, "/");
+                        }
+                    }
                 }
             }
         }

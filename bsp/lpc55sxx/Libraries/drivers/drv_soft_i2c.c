@@ -8,16 +8,16 @@
  * 2023-04-11     linshire     the first version
  */
 
-#include <board.h>
+#include "board.h"
 #include "drv_soft_i2c.h"
 
-#ifdef RT_USING_I2C
+#ifdef BSP_USING_SOFT_I2C
 
-#define LOG_TAG              "drv.i2c"
+#define LOG_TAG              "drv.soft_i2c"
 #include <drv_log.h>
 
-#if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4)
-#error "Please define at least one BSP_USING_I2Cx"
+#if !defined(BSP_USING_SOFT_I2C1) && !defined(BSP_USING_SOFT_I2C2)
+#error "Please define at least one BSP_USING_SOFT_I2Cx"
 /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
@@ -186,7 +186,7 @@ static rt_err_t lpc55s69_i2c_bus_unlock(const struct lpc55s69_soft_i2c_config *c
 }
 
 /* I2C initialization function */
-int rt_hw_i2c_init(void)
+int rt_soft_i2c_init(void)
 {
     rt_err_t result;
 
@@ -208,6 +208,6 @@ int rt_hw_i2c_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(rt_hw_i2c_init);
+INIT_BOARD_EXPORT(rt_soft_i2c_init);
 
-#endif /* RT_USING_I2C */
+#endif /* BSP_USING_SOFT_I2C */

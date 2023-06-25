@@ -107,7 +107,7 @@ static void udpserv(void *paramemter)
         }
         else if (bytes_read == 0)
         {
-            LOG_W("Received warning, recv function return 0.");
+            LOG_W("Received warning, recv function returns 0.");
             continue;
         }
         else

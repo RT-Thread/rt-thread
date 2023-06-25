@@ -93,30 +93,35 @@ static void ifx_spi_init(struct ifx_spi *spi_device)
 
     rt_err_t result = RT_EOK;
 
-    result = cyhal_spi_init(spi_device->spi_handle_t->spi_obj, spi_device->spi_handle_t->mosi_pin, spi_device->spi_handle_t->miso_pin,
-                            spi_device->spi_handle_t->sck_pin, NC, NULL, spi_device->spi_handle_t->spi_obj->data_bits,
-                            spi_device->spi_handle_t->spi_obj->mode, false);
+    static uint8_t init_flag = 1;
 
-    if (result != RT_EOK)
+    if (init_flag)
     {
-        LOG_E("spi%s init fail", spi_device->spi_handle_t->bus_name);
-        return;
+        result = cyhal_spi_init(spi_device->spi_handle_t->spi_obj, spi_device->spi_handle_t->mosi_pin, spi_device->spi_handle_t->miso_pin,
+                                spi_device->spi_handle_t->sck_pin, NC, NULL, spi_device->spi_handle_t->spi_obj->data_bits,
+                                spi_device->spi_handle_t->spi_obj->mode, false);
+        if (result != RT_EOK)
+        {
+            LOG_E("spi%s init fail", spi_device->spi_handle_t->bus_name);
+            return;
+        }
+
+        result = cyhal_spi_set_frequency(spi_device->spi_handle_t->spi_obj, spi_device->spi_handle_t->freq);
+        if (result == CYHAL_SPI_RSLT_CLOCK_ERROR)
+        {
+            LOG_E("%s set frequency fail", spi_device->spi_handle_t->bus_name);
+            return;
+        }
+        LOG_I("[%s] freq:[%d]HZ\n", spi_device->spi_handle_t->bus_name, spi_device->spi_handle_t->freq);
+
+        /* Register a callback function to be called when the interrupt fires */
+        cyhal_spi_register_callback(spi_device->spi_handle_t->spi_obj, spi_interrupt_callback, spi_device);
+
+        /* Enable the events that will trigger the call back function */
+        cyhal_spi_enable_event(spi_device->spi_handle_t->spi_obj, CYHAL_SPI_IRQ_DONE, 4, true);
     }
 
-    LOG_I("[%s] freq:[%d]HZ\n", spi_device->spi_handle_t->bus_name, spi_device->spi_handle_t->freq);
-
-    result = cyhal_spi_set_frequency(spi_device->spi_handle_t->spi_obj, spi_device->spi_handle_t->freq);
-    if (result == CYHAL_SPI_RSLT_CLOCK_ERROR)
-    {
-        LOG_E("%s set frequency fail", spi_device->spi_handle_t->bus_name);
-        return;
-    }
-
-    /* Register a callback function to be called when the interrupt fires */
-    cyhal_spi_register_callback(spi_device->spi_handle_t->spi_obj, spi_interrupt_callback, spi_device);
-
-    /* Enable the events that will trigger the call back function */
-    cyhal_spi_enable_event(spi_device->spi_handle_t->spi_obj, CYHAL_SPI_IRQ_DONE, 4, true);
+    init_flag = 0;
 }
 
 static rt_err_t spi_configure(struct rt_spi_device *device,

@@ -1,8 +1,26 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
+src = []
 CPPPATH = [cwd]
+
+if GetDepend('BSP_USING_PIN'):
+    src += ['drv_gpio.c']
+
+if GetDepend('BSP_USING_UART'):
+    src += ['drv_uart.c']
+
+if GetDepend('BSP_USING_SOFT_I2C'):
+    src += ['drv_soft_i2c.c']
+
+if GetDepend('BSP_USING_SOFT_SPI'):
+    src += ['drv_soft_spi.c']
+
+if GetDepend('BSP_USING_ADC'):
+    src += ['drv_adc.c']
+
+if GetDepend('BSP_USING_WDT'):
+    src += ['drv_wdt.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

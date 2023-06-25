@@ -381,6 +381,7 @@ static int _ipc_msg_fd_new(void *file)
 {
     int fd;
     struct dfs_file *d;
+    struct dfs_vnode *vnode = (struct dfs_vnode *)file;
 
     fd = fd_new();
     if (fd < 0)
@@ -395,7 +396,11 @@ static int _ipc_msg_fd_new(void *file)
         return -1;
     }
 
-    d->vnode = (struct dfs_vnode *)file;
+#ifdef RT_USING_DFS_V2
+    d->fops = vnode->fops;
+#endif
+
+    d->vnode = vnode;
     d->flags = O_RDWR; /* set flags as read and write */
 
     return fd;
@@ -946,15 +951,8 @@ static int channel_fops_close(struct dfs_file *file)
 
 static const struct dfs_file_ops channel_fops =
 {
-    NULL,    /* open     */
-    channel_fops_close,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,    /* lseek    */
-    NULL,    /* getdents */
-    channel_fops_poll,
+    .close = channel_fops_close,    /* close */
+    .poll = channel_fops_poll,      /* poll */
 };
 
 int lwp_channel_open(int fdt_type, const char *name, int flags)
@@ -980,18 +978,8 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     ch = rt_raw_channel_open(name, flags);
     if (ch)
     {
-        rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
-        rt_list_init(&d->vnode->list);
-        d->vnode->type = FT_USER;
-        d->vnode->path = NULL;
-        d->vnode->fullpath = NULL;
-
-        d->vnode->fops = &channel_fops;
-
-        d->flags = O_RDWR; /* set flags as read and write */
-        d->vnode->size = 0;
-        d->pos = 0;
-        d->vnode->ref_count = 1;
+        /* initialize vnode */
+        dfs_vnode_init(d->vnode, FT_USER, &channel_fops);
 
         /* set socket to the data of dfs_file */
         d->vnode->data = (void *)ch;

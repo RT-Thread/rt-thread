@@ -49,7 +49,7 @@ int atol_entry(void)
 {
     int i = 0;
     int res = 0;
-    for (i = 0; i < sizeof(test_data1[0]); i++)
+    for (i = 0; i < sizeof(test_data1) / sizeof(test_data1[0]); i++)
     {
         res = atol(test_data1[i].string);
         uassert_int_equal(res, test_data1[i].ret_num);

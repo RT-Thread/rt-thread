@@ -89,7 +89,7 @@ struct serial_device
     struct serial_int_tx* int_tx;
 };
 
-void rt_hw_serial_isr(rt_device_t device);
+void rt_hw_fujitsu_serial_isr(rt_device_t device);
 void rt_hw_serial_init(void);
 
 #endif

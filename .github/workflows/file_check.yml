@@ -17,4 +17,4 @@ jobs:
         shell: bash
         run: |
           pip install click chardet PyYaml
-          python tools/file_check.py check 'https://github.com/RT-Thread/rt-thread' 'master'
+          python tools/ci/file_check.py check 'https://github.com/RT-Thread/rt-thread' 'master'

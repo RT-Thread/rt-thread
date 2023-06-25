@@ -17,7 +17,7 @@
 #include "fsl_i2c.h"
 #include "fsl_i2c_dma.h"
 
-#ifdef RT_USING_I2C
+#ifdef BSP_USING_I2C
 
 enum
 {
@@ -55,7 +55,7 @@ struct lpc_i2c_bus lpc_obj[] =
         {
             .I2C = I2C1,
             .DMA = DMA0,
-            .dma_chl = 12,
+            .dma_chl = 7,
             .device_name = "i2c1",
             .baud = 100000U,
             .instance = 1U,
@@ -184,4 +184,4 @@ int rt_hw_i2c_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_i2c_init);
 
-#endif /* RT_USING_I2C */
+#endif /* BSP_USING_I2C */

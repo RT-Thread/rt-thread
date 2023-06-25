@@ -152,6 +152,10 @@ config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
 
+config ARCH_ARM_CORTEX_A55
+    bool
+    select ARCH_ARM_CORTEX_A
+
 config ARCH_ARM_SECURE_MODE
     bool "Running in secure mode [ARM Cortex-A]"
     default n
@@ -166,7 +170,6 @@ config ARCH_ARMV8
     bool
     select ARCH_ARM
     select ARCH_ARM_MMU
-    select RT_USING_HW_ATOMIC
 
 config ARCH_MIPS
     bool

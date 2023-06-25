@@ -148,7 +148,7 @@ void example_publish(mqtt_client_t *client, void *arg)
   }
 }
 
-/* Called when publish is complete either with sucess or failure */
+/* Called when publish is complete either with success or failure */
 static void mqtt_pub_request_cb(void *arg, err_t result)
 {
   if(result != ERR_OK) {

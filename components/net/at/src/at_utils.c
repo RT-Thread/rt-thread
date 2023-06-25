@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-04-14     chenyong     first version
+ * 2023-06-09     CX           optimize at_vprintfln interface
  */
 
 #include <at.h>
@@ -91,8 +92,16 @@ rt_size_t at_vprintfln(rt_device_t device, const char *format, va_list args)
     rt_size_t len;
 
     last_cmd_len = vsnprintf(send_buf, sizeof(send_buf) - 2, format, args);
+
+    if(last_cmd_len == 0)
+    {
+        return 0;
+    }
+
     if(last_cmd_len > sizeof(send_buf) - 2)
+    {
         last_cmd_len = sizeof(send_buf) - 2;
+    }
     rt_memcpy(send_buf + last_cmd_len, "\r\n", 2);
 
     len = last_cmd_len + 2;

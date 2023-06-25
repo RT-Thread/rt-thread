@@ -36,7 +36,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -48,7 +47,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
@@ -76,12 +75,16 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+
+/* DFS: device virtual file system */
+
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_V1
 #define DFS_FILESYSTEMS_MAX 2
 #define DFS_FILESYSTEM_TYPES_MAX 2
-#define DFS_FD_MAX 16
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -183,11 +186,6 @@
 
 /* language packages */
 
-/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-
-/* XML: Extensible Markup Language */
-
 
 /* multimedia packages */
 
@@ -202,13 +200,7 @@
 
 /* system packages */
 
-/* enhanced kernel services */
-
-
 /* acceleration: Assembly language or algorithmic acceleration packages */
-
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -216,64 +208,16 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
-
-/* Kendryte SDK */
-
 
 /* AI packages */
 
 
-/* Signal Processing and Control Algorithm Packages */
-
-
 /* miscellaneous packages */
-
-/* project laboratory */
 
 /* samples: kernel and components samples */
 
 
 /* entertainment: terminal games and other interesting software packages */
-
-
-/* Arduino libraries */
-
-
-/* Projects */
-
-
-/* Sensors */
-
-
-/* Display */
-
-
-/* Timing */
-
-
-/* Data Processing */
-
-
-/* Data Storage */
-
-/* Communication */
-
-
-/* Device Control */
-
-
-/* Other */
-
-
-/* Signal IO */
-
-
-/* Uncategorized */
 
 #define SOC_IMXRT1020_SERIES
 

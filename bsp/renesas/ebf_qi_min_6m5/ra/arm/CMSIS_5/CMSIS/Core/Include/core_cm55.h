@@ -1,11 +1,11 @@
 /**************************************************************************//**
  * @file     core_cm55.h
  * @brief    CMSIS Cortex-M55 Core Peripheral Access Layer Header File
- * @version  V1.2.1
- * @date     04. June 2021
+ * @version  V1.2.4
+ * @date     21. April 2022
  ******************************************************************************/
 /*
- * Copyright (c) 2018-2021 Arm Limited. All rights reserved.
+ * Copyright (c) 2018-2022 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -58,7 +58,7 @@
  *                 CMSIS definitions
  ******************************************************************************/
 /**
-  \ingroup Cortex_CM55
+  \ingroup Cortex_M55
   @{
  */
 
@@ -303,9 +303,11 @@
   Core Register contain:
   - Core Register
   - Core NVIC Register
+  - Core EWIC Register
   - Core SCB Register
   - Core SysTick Register
   - Core Debug Register
+  - Core PMU Register
   - Core MPU Register
   - Core SAU Register
   - Core FPU Register
@@ -526,7 +528,7 @@ typedef struct
   __IOM uint32_t AFSR;                   /*!< Offset: 0x03C (R/W)  Auxiliary Fault Status Register */
   __IM  uint32_t ID_PFR[2U];             /*!< Offset: 0x040 (R/ )  Processor Feature Register */
   __IM  uint32_t ID_DFR;                 /*!< Offset: 0x048 (R/ )  Debug Feature Register */
-  __IM  uint32_t ID_ADR;                 /*!< Offset: 0x04C (R/ )  Auxiliary Feature Register */
+  __IM  uint32_t ID_AFR;                 /*!< Offset: 0x04C (R/ )  Auxiliary Feature Register */
   __IM  uint32_t ID_MMFR[4U];            /*!< Offset: 0x050 (R/ )  Memory Model Feature Register */
   __IM  uint32_t ID_ISAR[6U];            /*!< Offset: 0x060 (R/ )  Instruction Set Attributes Register */
   __IM  uint32_t CLIDR;                  /*!< Offset: 0x078 (R/ )  Cache Level ID register */
@@ -535,7 +537,10 @@ typedef struct
   __IOM uint32_t CSSELR;                 /*!< Offset: 0x084 (R/W)  Cache Size Selection Register */
   __IOM uint32_t CPACR;                  /*!< Offset: 0x088 (R/W)  Coprocessor Access Control Register */
   __IOM uint32_t NSACR;                  /*!< Offset: 0x08C (R/W)  Non-Secure Access Control Register */
-        uint32_t RESERVED3[92U];
+        uint32_t RESERVED7[21U];
+  __IOM uint32_t SFSR;                   /*!< Offset: 0x0E4 (R/W)  Secure Fault Status Register */
+  __IOM uint32_t SFAR;                   /*!< Offset: 0x0E8 (R/W)  Secure Fault Address Register */
+        uint32_t RESERVED3[69U];
   __OM  uint32_t STIR;                   /*!< Offset: 0x200 ( /W)  Software Triggered Interrupt Register */
   __IOM uint32_t RFSR;                   /*!< Offset: 0x204 (R/W)  RAS Fault Status Register */
         uint32_t RESERVED4[14U];
@@ -987,13 +992,13 @@ typedef struct
 
 /**
   \ingroup  CMSIS_core_register
-  \defgroup CMSIS_SCnSCB System Controls not in SCB (SCnSCB)
-  \brief    Type definitions for the System Control and ID Register not in the SCB
+  \defgroup CMSIS_ICB Implementation Control Block register (ICB)
+  \brief    Type definitions for the Implementation Control Block Register
   @{
  */
 
 /**
-  \brief  Structure type to access the System Control and ID Register not in the SCB.
+  \brief  Structure type to access the Implementation Control Block (ICB).
  */
 typedef struct
 {
@@ -1001,13 +1006,56 @@ typedef struct
   __IM  uint32_t ICTR;                   /*!< Offset: 0x004 (R/ )  Interrupt Controller Type Register */
   __IOM uint32_t ACTLR;                  /*!< Offset: 0x008 (R/W)  Auxiliary Control Register */
   __IOM uint32_t CPPWR;                  /*!< Offset: 0x00C (R/W)  Coprocessor Power Control  Register */
-} SCnSCB_Type;
+} ICB_Type;
+
+/* Auxiliary Control Register Definitions */
+#define ICB_ACTLR_DISCRITAXIRUW_Pos     27U                                               /*!< ACTLR: DISCRITAXIRUW Position */
+#define ICB_ACTLR_DISCRITAXIRUW_Msk     (1UL << ICB_ACTLR_DISCRITAXIRUW_Pos)              /*!< ACTLR: DISCRITAXIRUW Mask */
+
+#define ICB_ACTLR_DISDI_Pos             16U                                               /*!< ACTLR: DISDI Position */
+#define ICB_ACTLR_DISDI_Msk             (3UL << ICB_ACTLR_DISDI_Pos)                      /*!< ACTLR: DISDI Mask */
+
+#define ICB_ACTLR_DISCRITAXIRUR_Pos     15U                                               /*!< ACTLR: DISCRITAXIRUR Position */
+#define ICB_ACTLR_DISCRITAXIRUR_Msk     (1UL << ICB_ACTLR_DISCRITAXIRUR_Pos)              /*!< ACTLR: DISCRITAXIRUR Mask */
+
+#define ICB_ACTLR_EVENTBUSEN_Pos        14U                                               /*!< ACTLR: EVENTBUSEN Position */
+#define ICB_ACTLR_EVENTBUSEN_Msk        (1UL << ICB_ACTLR_EVENTBUSEN_Pos)                 /*!< ACTLR: EVENTBUSEN Mask */
+
+#define ICB_ACTLR_EVENTBUSEN_S_Pos      13U                                               /*!< ACTLR: EVENTBUSEN_S Position */
+#define ICB_ACTLR_EVENTBUSEN_S_Msk      (1UL << ICB_ACTLR_EVENTBUSEN_S_Pos)               /*!< ACTLR: EVENTBUSEN_S Mask */
+
+#define ICB_ACTLR_DISITMATBFLUSH_Pos    12U                                               /*!< ACTLR: DISITMATBFLUSH Position */
+#define ICB_ACTLR_DISITMATBFLUSH_Msk    (1UL << ICB_ACTLR_DISITMATBFLUSH_Pos)             /*!< ACTLR: DISITMATBFLUSH Mask */
+
+#define ICB_ACTLR_DISNWAMODE_Pos        11U                                               /*!< ACTLR: DISNWAMODE Position */
+#define ICB_ACTLR_DISNWAMODE_Msk        (1UL << ICB_ACTLR_DISNWAMODE_Pos)                 /*!< ACTLR: DISNWAMODE Mask */
+
+#define ICB_ACTLR_FPEXCODIS_Pos         10U                                               /*!< ACTLR: FPEXCODIS Position */
+#define ICB_ACTLR_FPEXCODIS_Msk         (1UL << ICB_ACTLR_FPEXCODIS_Pos)                  /*!< ACTLR: FPEXCODIS Mask */
+
+#define ICB_ACTLR_DISOLAP_Pos            7U                                               /*!< ACTLR: DISOLAP Position */
+#define ICB_ACTLR_DISOLAP_Msk           (1UL << ICB_ACTLR_DISOLAP_Pos)                    /*!< ACTLR: DISOLAP Mask */
+
+#define ICB_ACTLR_DISOLAPS_Pos           6U                                               /*!< ACTLR: DISOLAPS Position */
+#define ICB_ACTLR_DISOLAPS_Msk          (1UL << ICB_ACTLR_DISOLAPS_Pos)                   /*!< ACTLR: DISOLAPS Mask */
+
+#define ICB_ACTLR_DISLOBR_Pos            5U                                               /*!< ACTLR: DISLOBR Position */
+#define ICB_ACTLR_DISLOBR_Msk           (1UL << ICB_ACTLR_DISLOBR_Pos)                    /*!< ACTLR: DISLOBR Mask */
+
+#define ICB_ACTLR_DISLO_Pos              4U                                               /*!< ACTLR: DISLO Position */
+#define ICB_ACTLR_DISLO_Msk             (1UL << ICB_ACTLR_DISLO_Pos)                      /*!< ACTLR: DISLO Mask */
+
+#define ICB_ACTLR_DISLOLEP_Pos           3U                                               /*!< ACTLR: DISLOLEP Position */
+#define ICB_ACTLR_DISLOLEP_Msk          (1UL << ICB_ACTLR_DISLOLEP_Pos)                   /*!< ACTLR: DISLOLEP Mask */
+
+#define ICB_ACTLR_DISFOLD_Pos            2U                                               /*!< ACTLR: DISFOLD Position */
+#define ICB_ACTLR_DISFOLD_Msk           (1UL << ICB_ACTLR_DISFOLD_Pos)                    /*!< ACTLR: DISFOLD Mask */
 
 /* Interrupt Controller Type Register Definitions */
-#define SCnSCB_ICTR_INTLINESNUM_Pos         0U                                         /*!< ICTR: INTLINESNUM Position */
-#define SCnSCB_ICTR_INTLINESNUM_Msk        (0xFUL /*<< SCnSCB_ICTR_INTLINESNUM_Pos*/)  /*!< ICTR: INTLINESNUM Mask */
+#define ICB_ICTR_INTLINESNUM_Pos         0U                                               /*!< ICTR: INTLINESNUM Position */
+#define ICB_ICTR_INTLINESNUM_Msk        (0xFUL /*<< ICB_ICTR_INTLINESNUM_Pos*/)           /*!< ICTR: INTLINESNUM Mask */
 
-/*@} end of group CMSIS_SCnotSCB */
+/*@} end of group CMSIS_ICB */
 
 
 /**
@@ -1351,6 +1399,133 @@ typedef struct
 
 /**
   \ingroup  CMSIS_core_register
+  \defgroup MemSysCtl_Type     Memory System Control Registers (IMPLEMENTATION DEFINED)
+  \brief    Type definitions for the Memory System Control Registers (MEMSYSCTL)
+  @{
+ */
+
+/**
+  \brief  Structure type to access the Memory System Control Registers (MEMSYSCTL).
+ */
+typedef struct
+{
+  __IOM uint32_t MSCR;                   /*!< Offset: 0x000 (R/W)  Memory System Control Register */
+  __IOM uint32_t PFCR;                   /*!< Offset: 0x004 (R/W)  Prefetcher Control Register */
+        uint32_t RESERVED1[2U];
+  __IOM uint32_t ITCMCR;                 /*!< Offset: 0x010 (R/W)  ITCM Control Register */
+  __IOM uint32_t DTCMCR;                 /*!< Offset: 0x014 (R/W)  DTCM Control Register */
+  __IOM uint32_t PAHBCR;                 /*!< Offset: 0x018 (R/W)  P-AHB Control Register */
+        uint32_t RESERVED2[313U];
+  __IOM uint32_t ITGU_CTRL;              /*!< Offset: 0x500 (R/W)  ITGU Control Register */
+  __IOM uint32_t ITGU_CFG;               /*!< Offset: 0x504 (R/W)  ITGU Configuration Register */
+        uint32_t RESERVED3[2U];
+  __IOM uint32_t ITGU_LUT[16U];          /*!< Offset: 0x510 (R/W)  ITGU Look Up Table Register */
+        uint32_t RESERVED4[44U];
+  __IOM uint32_t DTGU_CTRL;              /*!< Offset: 0x600 (R/W)  DTGU Control Registers */
+  __IOM uint32_t DTGU_CFG;               /*!< Offset: 0x604 (R/W)  DTGU Configuration Register */
+        uint32_t RESERVED5[2U];
+  __IOM uint32_t DTGU_LUT[16U];          /*!< Offset: 0x610 (R/W)  DTGU Look Up Table Register */
+} MemSysCtl_Type;
+
+/* MEMSYSCTL Memory System Control Register (MSCR) Register Definitions */
+#define MEMSYSCTL_MSCR_CPWRDN_Pos          17U                                         /*!< MEMSYSCTL MSCR: CPWRDN Position */
+#define MEMSYSCTL_MSCR_CPWRDN_Msk          (0x1UL << MEMSYSCTL_MSCR_CPWRDN_Pos)        /*!< MEMSYSCTL MSCR: CPWRDN Mask */
+
+#define MEMSYSCTL_MSCR_DCCLEAN_Pos         16U                                         /*!< MEMSYSCTL MSCR: DCCLEAN Position */
+#define MEMSYSCTL_MSCR_DCCLEAN_Msk         (0x1UL << MEMSYSCTL_MSCR_DCCLEAN_Pos)       /*!< MEMSYSCTL MSCR: DCCLEAN Mask */
+
+#define MEMSYSCTL_MSCR_ICACTIVE_Pos        13U                                         /*!< MEMSYSCTL MSCR: ICACTIVE Position */
+#define MEMSYSCTL_MSCR_ICACTIVE_Msk        (0x1UL << MEMSYSCTL_MSCR_ICACTIVE_Pos)      /*!< MEMSYSCTL MSCR: ICACTIVE Mask */
+
+#define MEMSYSCTL_MSCR_DCACTIVE_Pos        12U                                         /*!< MEMSYSCTL MSCR: DCACTIVE Position */
+#define MEMSYSCTL_MSCR_DCACTIVE_Msk        (0x1UL << MEMSYSCTL_MSCR_DCACTIVE_Pos)      /*!< MEMSYSCTL MSCR: DCACTIVE Mask */
+
+#define MEMSYSCTL_MSCR_TECCCHKDIS_Pos       4U                                         /*!< MEMSYSCTL MSCR: TECCCHKDIS Position */
+#define MEMSYSCTL_MSCR_TECCCHKDIS_Msk      (0x1UL << MEMSYSCTL_MSCR_TECCCHKDIS_Pos)    /*!< MEMSYSCTL MSCR: TECCCHKDIS Mask */
+
+#define MEMSYSCTL_MSCR_EVECCFAULT_Pos       3U                                         /*!< MEMSYSCTL MSCR: EVECCFAULT Position */
+#define MEMSYSCTL_MSCR_EVECCFAULT_Msk      (0x1UL << MEMSYSCTL_MSCR_EVECCFAULT_Pos)    /*!< MEMSYSCTL MSCR: EVECCFAULT Mask */
+
+#define MEMSYSCTL_MSCR_FORCEWT_Pos          2U                                         /*!< MEMSYSCTL MSCR: FORCEWT Position */
+#define MEMSYSCTL_MSCR_FORCEWT_Msk         (0x1UL << MEMSYSCTL_MSCR_FORCEWT_Pos)       /*!< MEMSYSCTL MSCR: FORCEWT Mask */
+
+#define MEMSYSCTL_MSCR_ECCEN_Pos            1U                                         /*!< MEMSYSCTL MSCR: ECCEN Position */
+#define MEMSYSCTL_MSCR_ECCEN_Msk           (0x1UL << MEMSYSCTL_MSCR_ECCEN_Pos)         /*!< MEMSYSCTL MSCR: ECCEN Mask */
+
+/* MEMSYSCTL Prefetcher Control Register (PFCR) Register Definitions */
+#define MEMSYSCTL_PFCR_MAX_OS_Pos           7U                                         /*!< MEMSYSCTL PFCR: MAX_OS Position */
+#define MEMSYSCTL_PFCR_MAX_OS_Msk          (0x7UL << MEMSYSCTL_PFCR_MAX_OS_Pos)        /*!< MEMSYSCTL PFCR: MAX_OS Mask */
+
+#define MEMSYSCTL_PFCR_MAX_LA_Pos           4U                                         /*!< MEMSYSCTL PFCR: MAX_LA Position */
+#define MEMSYSCTL_PFCR_MAX_LA_Msk          (0x7UL << MEMSYSCTL_PFCR_MAX_LA_Pos)        /*!< MEMSYSCTL PFCR: MAX_LA Mask */
+
+#define MEMSYSCTL_PFCR_MIN_LA_Pos           1U                                         /*!< MEMSYSCTL PFCR: MIN_LA Position */
+#define MEMSYSCTL_PFCR_MIN_LA_Msk          (0x7UL << MEMSYSCTL_PFCR_MIN_LA_Pos)        /*!< MEMSYSCTL PFCR: MIN_LA Mask */
+
+#define MEMSYSCTL_PFCR_ENABLE_Pos           0U                                         /*!< MEMSYSCTL PFCR: ENABLE Position */
+#define MEMSYSCTL_PFCR_ENABLE_Msk          (0x1UL /*<< MEMSYSCTL_PFCR_ENABLE_Pos*/)    /*!< MEMSYSCTL PFCR: ENABLE Mask */
+
+/* MEMSYSCTL ITCM Control Register (ITCMCR) Register Definitions */
+#define MEMSYSCTL_ITCMCR_SZ_Pos             3U                                         /*!< MEMSYSCTL ITCMCR: SZ Position */
+#define MEMSYSCTL_ITCMCR_SZ_Msk            (0xFUL << MEMSYSCTL_ITCMCR_SZ_Pos)          /*!< MEMSYSCTL ITCMCR: SZ Mask */
+
+#define MEMSYSCTL_ITCMCR_EN_Pos             0U                                         /*!< MEMSYSCTL ITCMCR: EN Position */
+#define MEMSYSCTL_ITCMCR_EN_Msk            (0x1UL /*<< MEMSYSCTL_ITCMCR_EN_Pos*/)      /*!< MEMSYSCTL ITCMCR: EN Mask */
+
+/* MEMSYSCTL DTCM Control Register (DTCMCR) Register Definitions */
+#define MEMSYSCTL_DTCMCR_SZ_Pos             3U                                         /*!< MEMSYSCTL DTCMCR: SZ Position */
+#define MEMSYSCTL_DTCMCR_SZ_Msk            (0xFUL << MEMSYSCTL_DTCMCR_SZ_Pos)          /*!< MEMSYSCTL DTCMCR: SZ Mask */
+
+#define MEMSYSCTL_DTCMCR_EN_Pos             0U                                         /*!< MEMSYSCTL DTCMCR: EN Position */
+#define MEMSYSCTL_DTCMCR_EN_Msk            (0x1UL /*<< MEMSYSCTL_DTCMCR_EN_Pos*/)      /*!< MEMSYSCTL DTCMCR: EN Mask */
+
+/* MEMSYSCTL P-AHB Control Register (PAHBCR) Register Definitions */
+#define MEMSYSCTL_PAHBCR_SZ_Pos             1U                                         /*!< MEMSYSCTL PAHBCR: SZ Position */
+#define MEMSYSCTL_PAHBCR_SZ_Msk            (0x7UL << MEMSYSCTL_PAHBCR_SZ_Pos)          /*!< MEMSYSCTL PAHBCR: SZ Mask */
+
+#define MEMSYSCTL_PAHBCR_EN_Pos             0U                                         /*!< MEMSYSCTL PAHBCR: EN Position */
+#define MEMSYSCTL_PAHBCR_EN_Msk            (0x1UL /*<< MEMSYSCTL_PAHBCR_EN_Pos*/)      /*!< MEMSYSCTL PAHBCR: EN Mask */
+
+/* MEMSYSCTL ITGU Control Register (ITGU_CTRL) Register Definitions */
+#define MEMSYSCTL_ITGU_CTRL_DEREN_Pos       1U                                         /*!< MEMSYSCTL ITGU_CTRL: DEREN Position */
+#define MEMSYSCTL_ITGU_CTRL_DEREN_Msk      (0x1UL << MEMSYSCTL_ITGU_CTRL_DEREN_Pos)    /*!< MEMSYSCTL ITGU_CTRL: DEREN Mask */
+
+#define MEMSYSCTL_ITGU_CTRL_DBFEN_Pos       0U                                         /*!< MEMSYSCTL ITGU_CTRL: DBFEN Position */
+#define MEMSYSCTL_ITGU_CTRL_DBFEN_Msk      (0x1UL /*<< MEMSYSCTL_ITGU_CTRL_DBFEN_Pos*/) /*!< MEMSYSCTL ITGU_CTRL: DBFEN Mask */
+
+/* MEMSYSCTL ITGU Configuration Register (ITGU_CFG) Register Definitions */
+#define MEMSYSCTL_ITGU_CFG_PRESENT_Pos     31U                                         /*!< MEMSYSCTL ITGU_CFG: PRESENT Position */
+#define MEMSYSCTL_ITGU_CFG_PRESENT_Msk     (0x1UL << MEMSYSCTL_ITGU_CFG_PRESENT_Pos)   /*!< MEMSYSCTL ITGU_CFG: PRESENT Mask */
+
+#define MEMSYSCTL_ITGU_CFG_NUMBLKS_Pos      8U                                         /*!< MEMSYSCTL ITGU_CFG: NUMBLKS Position */
+#define MEMSYSCTL_ITGU_CFG_NUMBLKS_Msk     (0xFUL << MEMSYSCTL_ITGU_CFG_NUMBLKS_Pos)   /*!< MEMSYSCTL ITGU_CFG: NUMBLKS Mask */
+
+#define MEMSYSCTL_ITGU_CFG_BLKSZ_Pos        0U                                         /*!< MEMSYSCTL ITGU_CFG: BLKSZ Position */
+#define MEMSYSCTL_ITGU_CFG_BLKSZ_Msk       (0xFUL /*<< MEMSYSCTL_ITGU_CFG_BLKSZ_Pos*/) /*!< MEMSYSCTL ITGU_CFG: BLKSZ Mask */
+
+/* MEMSYSCTL DTGU Control Registers (DTGU_CTRL) Register Definitions */
+#define MEMSYSCTL_DTGU_CTRL_DEREN_Pos       1U                                         /*!< MEMSYSCTL DTGU_CTRL: DEREN Position */
+#define MEMSYSCTL_DTGU_CTRL_DEREN_Msk      (0x1UL << MEMSYSCTL_DTGU_CTRL_DEREN_Pos)    /*!< MEMSYSCTL DTGU_CTRL: DEREN Mask */
+
+#define MEMSYSCTL_DTGU_CTRL_DBFEN_Pos       0U                                         /*!< MEMSYSCTL DTGU_CTRL: DBFEN Position */
+#define MEMSYSCTL_DTGU_CTRL_DBFEN_Msk      (0x1UL /*<< MEMSYSCTL_DTGU_CTRL_DBFEN_Pos*/) /*!< MEMSYSCTL DTGU_CTRL: DBFEN Mask */
+
+/* MEMSYSCTL DTGU Configuration Register (DTGU_CFG) Register Definitions */
+#define MEMSYSCTL_DTGU_CFG_PRESENT_Pos     31U                                         /*!< MEMSYSCTL DTGU_CFG: PRESENT Position */
+#define MEMSYSCTL_DTGU_CFG_PRESENT_Msk     (0x1UL << MEMSYSCTL_DTGU_CFG_PRESENT_Pos)   /*!< MEMSYSCTL DTGU_CFG: PRESENT Mask */
+
+#define MEMSYSCTL_DTGU_CFG_NUMBLKS_Pos      8U                                         /*!< MEMSYSCTL DTGU_CFG: NUMBLKS Position */
+#define MEMSYSCTL_DTGU_CFG_NUMBLKS_Msk     (0xFUL << MEMSYSCTL_DTGU_CFG_NUMBLKS_Pos)   /*!< MEMSYSCTL DTGU_CFG: NUMBLKS Mask */
+
+#define MEMSYSCTL_DTGU_CFG_BLKSZ_Pos        0U                                         /*!< MEMSYSCTL DTGU_CFG: BLKSZ Position */
+#define MEMSYSCTL_DTGU_CFG_BLKSZ_Msk       (0xFUL /*<< MEMSYSCTL_DTGU_CFG_BLKSZ_Pos*/) /*!< MEMSYSCTL DTGU_CFG: BLKSZ Mask */
+
+
+/*@}*/ /* end of group MemSysCtl_Type */
+
+
+/**
+  \ingroup  CMSIS_core_register
   \defgroup PwrModCtl_Type     Power Mode Control Registers
   \brief    Type definitions for the Power Mode Control Registers (PWRMODCTL)
   @{
@@ -1361,26 +1536,315 @@ typedef struct
  */
 typedef struct
 {
-  __IOM uint32_t CPDLPSTATE;
-  __IOM uint32_t DPDLPSTATE;
+  __IOM uint32_t CPDLPSTATE;             /*!< Offset: 0x000 (R/W)  Core Power Domain Low Power State Register */
+  __IOM uint32_t DPDLPSTATE;             /*!< Offset: 0x004 (R/W)  Debug Power Domain Low Power State Register */
 } PwrModCtl_Type;
 
-
 /* PWRMODCTL Core Power Domain Low Power State (CPDLPSTATE) Register Definitions */
-#define PWRMODCTL_CPDLPSTATE_CLPSTATE_Pos                 0U                           /*!< PWRMODCTL CPDLPSTATE CLPSTATE Position */
-#define PWRMODCTL_CPDLPSTATE_CLPSTATE_Msk                 3UL                          /*!< PWRMODCTL CPDLPSTATE CLPSTATE Mask */
+#define PWRMODCTL_CPDLPSTATE_RLPSTATE_Pos   8U                                              /*!< PWRMODCTL CPDLPSTATE: RLPSTATE Position */
+#define PWRMODCTL_CPDLPSTATE_RLPSTATE_Msk  (0x3UL << PWRMODCTL_CPDLPSTATE_RLPSTATE_Pos)     /*!< PWRMODCTL CPDLPSTATE: RLPSTATE Mask */
 
-#define PWRMODCTL_CPDLPSTATE_ELPSTATE_Pos                 4U                           /*!< PWRMODCTL CPDLPSTATE ELPSTATE Position */
-#define PWRMODCTL_CPDLPSTATE_ELPSTATE_Msk                 3UL                          /*!< PWRMODCTL CPDLPSTATE ELPSTATE Mask */
+#define PWRMODCTL_CPDLPSTATE_ELPSTATE_Pos   4U                                              /*!< PWRMODCTL CPDLPSTATE: ELPSTATE Position */
+#define PWRMODCTL_CPDLPSTATE_ELPSTATE_Msk  (0x3UL << PWRMODCTL_CPDLPSTATE_ELPSTATE_Pos)     /*!< PWRMODCTL CPDLPSTATE: ELPSTATE Mask */
 
-#define PWRMODCTL_CPDLPSTATE_RLPSTATE_Pos                 8U                           /*!< PWRMODCTL CPDLPSTATE RLPSTATE Position */
-#define PWRMODCTL_CPDLPSTATE_RLPSTATE_Msk                 3UL                          /*!< PWRMODCTL CPDLPSTATE RLPSTATE Mask */
+#define PWRMODCTL_CPDLPSTATE_CLPSTATE_Pos   0U                                              /*!< PWRMODCTL CPDLPSTATE: CLPSTATE Position */
+#define PWRMODCTL_CPDLPSTATE_CLPSTATE_Msk  (0x3UL /*<< PWRMODCTL_CPDLPSTATE_CLPSTATE_Pos*/) /*!< PWRMODCTL CPDLPSTATE: CLPSTATE Mask */
 
 /* PWRMODCTL Debug Power Domain Low Power State (DPDLPSTATE) Register Definitions */
-#define PWRMODCTL_DPDLPSTATE_DLPSTATE_Pos                 0U                           /*!< PWRMODCTL DPDLPSTATE DLPSTATE Position */
-#define PWRMODCTL_DPDLPSTATE_DLPSTATE_Msk                 3UL                          /*!< PWRMODCTL DPDLPSTATE DLPSTATE Mask */
+#define PWRMODCTL_DPDLPSTATE_DLPSTATE_Pos   0U                                              /*!< PWRMODCTL DPDLPSTATE: DLPSTATE Position */
+#define PWRMODCTL_DPDLPSTATE_DLPSTATE_Msk  (0x3UL /*<< PWRMODCTL_DPDLPSTATE_DLPSTATE_Pos*/) /*!< PWRMODCTL DPDLPSTATE: DLPSTATE Mask */
 
-/*@}*/ /* end of group CMSIS_PWRMODCTL */
+/*@}*/ /* end of group PwrModCtl_Type */
+
+
+/**
+  \ingroup  CMSIS_core_register
+  \defgroup EWIC_Type     External Wakeup Interrupt Controller Registers
+  \brief    Type definitions for the External Wakeup Interrupt Controller Registers (EWIC)
+  @{
+ */
+
+/**
+  \brief  Structure type to access the External Wakeup Interrupt Controller Registers (EWIC).
+ */
+typedef struct
+{
+  __OM  uint32_t EVENTSPR;               /*!< Offset: 0x000 ( /W)  Event Set Pending Register */
+        uint32_t RESERVED0[31U];
+  __IM  uint32_t EVENTMASKA;             /*!< Offset: 0x080 (R/W)  Event Mask A Register */
+  __IM  uint32_t EVENTMASK[15];          /*!< Offset: 0x084 (R/W)  Event Mask Register */
+} EWIC_Type;
+
+/* EWIC External Wakeup Interrupt Controller (EVENTSPR) Register Definitions */
+#define EWIC_EVENTSPR_EDBGREQ_Pos   2U                                                 /*!< EWIC EVENTSPR: EDBGREQ Position */
+#define EWIC_EVENTSPR_EDBGREQ_Msk  (0x1UL << EWIC_EVENTSPR_EDBGREQ_Pos)                /*!< EWIC EVENTSPR: EDBGREQ Mask */
+
+#define EWIC_EVENTSPR_NMI_Pos   1U                                                     /*!< EWIC EVENTSPR: NMI Position */
+#define EWIC_EVENTSPR_NMI_Msk  (0x1UL << EWIC_EVENTSPR_NMI_Pos)                        /*!< EWIC EVENTSPR: NMI Mask */
+
+#define EWIC_EVENTSPR_EVENT_Pos   0U                                                   /*!< EWIC EVENTSPR: EVENT Position */
+#define EWIC_EVENTSPR_EVENT_Msk  (0x1UL /*<< EWIC_EVENTSPR_EVENT_Pos*/)                /*!< EWIC EVENTSPR: EVENT Mask */
+
+/* EWIC External Wakeup Interrupt Controller (EVENTMASKA) Register Definitions */
+#define EWIC_EVENTMASKA_EDBGREQ_Pos   2U                                               /*!< EWIC EVENTMASKA: EDBGREQ Position */
+#define EWIC_EVENTMASKA_EDBGREQ_Msk  (0x1UL << EWIC_EVENTMASKA_EDBGREQ_Pos)            /*!< EWIC EVENTMASKA: EDBGREQ Mask */
+
+#define EWIC_EVENTMASKA_NMI_Pos   1U                                                   /*!< EWIC EVENTMASKA: NMI Position */
+#define EWIC_EVENTMASKA_NMI_Msk  (0x1UL << EWIC_EVENTMASKA_NMI_Pos)                    /*!< EWIC EVENTMASKA: NMI Mask */
+
+#define EWIC_EVENTMASKA_EVENT_Pos   0U                                                 /*!< EWIC EVENTMASKA: EVENT Position */
+#define EWIC_EVENTMASKA_EVENT_Msk  (0x1UL /*<< EWIC_EVENTMASKA_EVENT_Pos*/)            /*!< EWIC EVENTMASKA: EVENT Mask */
+
+/* EWIC External Wakeup Interrupt Controller (EVENTMASK) Register Definitions */
+#define EWIC_EVENTMASK_IRQ_Pos   0U                                                    /*!< EWIC EVENTMASKA: IRQ Position */
+#define EWIC_EVENTMASK_IRQ_Msk  (0xFFFFFFFFUL /*<< EWIC_EVENTMASKA_IRQ_Pos*/)          /*!< EWIC EVENTMASKA: IRQ Mask */
+
+/*@}*/ /* end of group EWIC_Type */
+
+
+/**
+  \ingroup  CMSIS_core_register
+  \defgroup ErrBnk_Type     Error Banking Registers (IMPLEMENTATION DEFINED)
+  \brief    Type definitions for the Error Banking Registers (ERRBNK)
+  @{
+ */
+
+/**
+  \brief  Structure type to access the Error Banking Registers (ERRBNK).
+ */
+typedef struct
+{
+  __IOM uint32_t IEBR0;                  /*!< Offset: 0x000 (R/W)  Instruction Cache Error Bank Register 0 */
+  __IOM uint32_t IEBR1;                  /*!< Offset: 0x004 (R/W)  Instruction Cache Error Bank Register 1 */
+        uint32_t RESERVED0[2U];
+  __IOM uint32_t DEBR0;                  /*!< Offset: 0x010 (R/W)  Data Cache Error Bank Register 0 */
+  __IOM uint32_t DEBR1;                  /*!< Offset: 0x014 (R/W)  Data Cache Error Bank Register 1 */
+        uint32_t RESERVED1[2U];
+  __IOM uint32_t TEBR0;                  /*!< Offset: 0x020 (R/W)  TCM Error Bank Register 0 */
+        uint32_t RESERVED2[1U];
+  __IOM uint32_t TEBR1;                  /*!< Offset: 0x028 (R/W)  TCM Error Bank Register 1 */
+} ErrBnk_Type;
+
+/* ERRBNK Instruction Cache Error Bank Register 0 (IEBR0) Register Definitions */
+#define ERRBNK_IEBR0_SWDEF_Pos             30U                                         /*!< ERRBNK IEBR0: SWDEF Position */
+#define ERRBNK_IEBR0_SWDEF_Msk             (0x3UL << ERRBNK_IEBR0_SWDEF_Pos)           /*!< ERRBNK IEBR0: SWDEF Mask */
+
+#define ERRBNK_IEBR0_BANK_Pos              16U                                         /*!< ERRBNK IEBR0: BANK Position */
+#define ERRBNK_IEBR0_BANK_Msk              (0x1UL << ERRBNK_IEBR0_BANK_Pos)            /*!< ERRBNK IEBR0: BANK Mask */
+
+#define ERRBNK_IEBR0_LOCATION_Pos           2U                                         /*!< ERRBNK IEBR0: LOCATION Position */
+#define ERRBNK_IEBR0_LOCATION_Msk          (0x3FFFUL << ERRBNK_IEBR0_LOCATION_Pos)     /*!< ERRBNK IEBR0: LOCATION Mask */
+
+#define ERRBNK_IEBR0_LOCKED_Pos             1U                                         /*!< ERRBNK IEBR0: LOCKED Position */
+#define ERRBNK_IEBR0_LOCKED_Msk            (0x1UL << ERRBNK_IEBR0_LOCKED_Pos)          /*!< ERRBNK IEBR0: LOCKED Mask */
+
+#define ERRBNK_IEBR0_VALID_Pos              0U                                         /*!< ERRBNK IEBR0: VALID Position */
+#define ERRBNK_IEBR0_VALID_Msk             (0x1UL << /*ERRBNK_IEBR0_VALID_Pos*/)       /*!< ERRBNK IEBR0: VALID Mask */
+
+/* ERRBNK Instruction Cache Error Bank Register 1 (IEBR1) Register Definitions */
+#define ERRBNK_IEBR1_SWDEF_Pos             30U                                         /*!< ERRBNK IEBR1: SWDEF Position */
+#define ERRBNK_IEBR1_SWDEF_Msk             (0x3UL << ERRBNK_IEBR1_SWDEF_Pos)           /*!< ERRBNK IEBR1: SWDEF Mask */
+
+#define ERRBNK_IEBR1_BANK_Pos              16U                                         /*!< ERRBNK IEBR1: BANK Position */
+#define ERRBNK_IEBR1_BANK_Msk              (0x1UL << ERRBNK_IEBR1_BANK_Pos)            /*!< ERRBNK IEBR1: BANK Mask */
+
+#define ERRBNK_IEBR1_LOCATION_Pos           2U                                         /*!< ERRBNK IEBR1: LOCATION Position */
+#define ERRBNK_IEBR1_LOCATION_Msk          (0x3FFFUL << ERRBNK_IEBR1_LOCATION_Pos)     /*!< ERRBNK IEBR1: LOCATION Mask */
+
+#define ERRBNK_IEBR1_LOCKED_Pos             1U                                         /*!< ERRBNK IEBR1: LOCKED Position */
+#define ERRBNK_IEBR1_LOCKED_Msk            (0x1UL << ERRBNK_IEBR1_LOCKED_Pos)          /*!< ERRBNK IEBR1: LOCKED Mask */
+
+#define ERRBNK_IEBR1_VALID_Pos              0U                                         /*!< ERRBNK IEBR1: VALID Position */
+#define ERRBNK_IEBR1_VALID_Msk             (0x1UL << /*ERRBNK_IEBR1_VALID_Pos*/)       /*!< ERRBNK IEBR1: VALID Mask */
+
+/* ERRBNK Data Cache Error Bank Register 0 (DEBR0) Register Definitions */
+#define ERRBNK_DEBR0_SWDEF_Pos             30U                                         /*!< ERRBNK DEBR0: SWDEF Position */
+#define ERRBNK_DEBR0_SWDEF_Msk             (0x3UL << ERRBNK_DEBR0_SWDEF_Pos)           /*!< ERRBNK DEBR0: SWDEF Mask */
+
+#define ERRBNK_DEBR0_TYPE_Pos              17U                                         /*!< ERRBNK DEBR0: TYPE Position */
+#define ERRBNK_DEBR0_TYPE_Msk              (0x1UL << ERRBNK_DEBR0_TYPE_Pos)            /*!< ERRBNK DEBR0: TYPE Mask */
+
+#define ERRBNK_DEBR0_BANK_Pos              16U                                         /*!< ERRBNK DEBR0: BANK Position */
+#define ERRBNK_DEBR0_BANK_Msk              (0x1UL << ERRBNK_DEBR0_BANK_Pos)            /*!< ERRBNK DEBR0: BANK Mask */
+
+#define ERRBNK_DEBR0_LOCATION_Pos           2U                                         /*!< ERRBNK DEBR0: LOCATION Position */
+#define ERRBNK_DEBR0_LOCATION_Msk          (0x3FFFUL << ERRBNK_DEBR0_LOCATION_Pos)     /*!< ERRBNK DEBR0: LOCATION Mask */
+
+#define ERRBNK_DEBR0_LOCKED_Pos             1U                                         /*!< ERRBNK DEBR0: LOCKED Position */
+#define ERRBNK_DEBR0_LOCKED_Msk            (0x1UL << ERRBNK_DEBR0_LOCKED_Pos)          /*!< ERRBNK DEBR0: LOCKED Mask */
+
+#define ERRBNK_DEBR0_VALID_Pos              0U                                         /*!< ERRBNK DEBR0: VALID Position */
+#define ERRBNK_DEBR0_VALID_Msk             (0x1UL << /*ERRBNK_DEBR0_VALID_Pos*/)       /*!< ERRBNK DEBR0: VALID Mask */
+
+/* ERRBNK Data Cache Error Bank Register 1 (DEBR1) Register Definitions */
+#define ERRBNK_DEBR1_SWDEF_Pos             30U                                         /*!< ERRBNK DEBR1: SWDEF Position */
+#define ERRBNK_DEBR1_SWDEF_Msk             (0x3UL << ERRBNK_DEBR1_SWDEF_Pos)           /*!< ERRBNK DEBR1: SWDEF Mask */
+
+#define ERRBNK_DEBR1_TYPE_Pos              17U                                         /*!< ERRBNK DEBR1: TYPE Position */
+#define ERRBNK_DEBR1_TYPE_Msk              (0x1UL << ERRBNK_DEBR1_TYPE_Pos)            /*!< ERRBNK DEBR1: TYPE Mask */
+
+#define ERRBNK_DEBR1_BANK_Pos              16U                                         /*!< ERRBNK DEBR1: BANK Position */
+#define ERRBNK_DEBR1_BANK_Msk              (0x1UL << ERRBNK_DEBR1_BANK_Pos)            /*!< ERRBNK DEBR1: BANK Mask */
+
+#define ERRBNK_DEBR1_LOCATION_Pos           2U                                         /*!< ERRBNK DEBR1: LOCATION Position */
+#define ERRBNK_DEBR1_LOCATION_Msk          (0x3FFFUL << ERRBNK_DEBR1_LOCATION_Pos)     /*!< ERRBNK DEBR1: LOCATION Mask */
+
+#define ERRBNK_DEBR1_LOCKED_Pos             1U                                         /*!< ERRBNK DEBR1: LOCKED Position */
+#define ERRBNK_DEBR1_LOCKED_Msk            (0x1UL << ERRBNK_DEBR1_LOCKED_Pos)          /*!< ERRBNK DEBR1: LOCKED Mask */
+
+#define ERRBNK_DEBR1_VALID_Pos              0U                                         /*!< ERRBNK DEBR1: VALID Position */
+#define ERRBNK_DEBR1_VALID_Msk             (0x1UL << /*ERRBNK_DEBR1_VALID_Pos*/)       /*!< ERRBNK DEBR1: VALID Mask */
+
+/* ERRBNK TCM Error Bank Register 0 (TEBR0) Register Definitions */
+#define ERRBNK_TEBR0_SWDEF_Pos             30U                                         /*!< ERRBNK TEBR0: SWDEF Position */
+#define ERRBNK_TEBR0_SWDEF_Msk             (0x3UL << ERRBNK_TEBR0_SWDEF_Pos)           /*!< ERRBNK TEBR0: SWDEF Mask */
+
+#define ERRBNK_TEBR0_POISON_Pos            28U                                         /*!< ERRBNK TEBR0: POISON Position */
+#define ERRBNK_TEBR0_POISON_Msk            (0x1UL << ERRBNK_TEBR0_POISON_Pos)          /*!< ERRBNK TEBR0: POISON Mask */
+
+#define ERRBNK_TEBR0_TYPE_Pos              27U                                         /*!< ERRBNK TEBR0: TYPE Position */
+#define ERRBNK_TEBR0_TYPE_Msk              (0x1UL << ERRBNK_TEBR0_TYPE_Pos)            /*!< ERRBNK TEBR0: TYPE Mask */
+
+#define ERRBNK_TEBR0_BANK_Pos              24U                                         /*!< ERRBNK TEBR0: BANK Position */
+#define ERRBNK_TEBR0_BANK_Msk              (0x3UL << ERRBNK_TEBR0_BANK_Pos)            /*!< ERRBNK TEBR0: BANK Mask */
+
+#define ERRBNK_TEBR0_LOCATION_Pos           2U                                         /*!< ERRBNK TEBR0: LOCATION Position */
+#define ERRBNK_TEBR0_LOCATION_Msk          (0x3FFFFFUL << ERRBNK_TEBR0_LOCATION_Pos)   /*!< ERRBNK TEBR0: LOCATION Mask */
+
+#define ERRBNK_TEBR0_LOCKED_Pos             1U                                         /*!< ERRBNK TEBR0: LOCKED Position */
+#define ERRBNK_TEBR0_LOCKED_Msk            (0x1UL << ERRBNK_TEBR0_LOCKED_Pos)          /*!< ERRBNK TEBR0: LOCKED Mask */
+
+#define ERRBNK_TEBR0_VALID_Pos              0U                                         /*!< ERRBNK TEBR0: VALID Position */
+#define ERRBNK_TEBR0_VALID_Msk             (0x1UL << /*ERRBNK_TEBR0_VALID_Pos*/)       /*!< ERRBNK TEBR0: VALID Mask */
+
+/* ERRBNK TCM Error Bank Register 1 (TEBR1) Register Definitions */
+#define ERRBNK_TEBR1_SWDEF_Pos             30U                                         /*!< ERRBNK TEBR1: SWDEF Position */
+#define ERRBNK_TEBR1_SWDEF_Msk             (0x3UL << ERRBNK_TEBR1_SWDEF_Pos)           /*!< ERRBNK TEBR1: SWDEF Mask */
+
+#define ERRBNK_TEBR1_POISON_Pos            28U                                         /*!< ERRBNK TEBR1: POISON Position */
+#define ERRBNK_TEBR1_POISON_Msk            (0x1UL << ERRBNK_TEBR1_POISON_Pos)          /*!< ERRBNK TEBR1: POISON Mask */
+
+#define ERRBNK_TEBR1_TYPE_Pos              27U                                         /*!< ERRBNK TEBR1: TYPE Position */
+#define ERRBNK_TEBR1_TYPE_Msk              (0x1UL << ERRBNK_TEBR1_TYPE_Pos)            /*!< ERRBNK TEBR1: TYPE Mask */
+
+#define ERRBNK_TEBR1_BANK_Pos              24U                                         /*!< ERRBNK TEBR1: BANK Position */
+#define ERRBNK_TEBR1_BANK_Msk              (0x3UL << ERRBNK_TEBR1_BANK_Pos)            /*!< ERRBNK TEBR1: BANK Mask */
+
+#define ERRBNK_TEBR1_LOCATION_Pos           2U                                         /*!< ERRBNK TEBR1: LOCATION Position */
+#define ERRBNK_TEBR1_LOCATION_Msk          (0x3FFFFFUL << ERRBNK_TEBR1_LOCATION_Pos)   /*!< ERRBNK TEBR1: LOCATION Mask */
+
+#define ERRBNK_TEBR1_LOCKED_Pos             1U                                         /*!< ERRBNK TEBR1: LOCKED Position */
+#define ERRBNK_TEBR1_LOCKED_Msk            (0x1UL << ERRBNK_TEBR1_LOCKED_Pos)          /*!< ERRBNK TEBR1: LOCKED Mask */
+
+#define ERRBNK_TEBR1_VALID_Pos              0U                                         /*!< ERRBNK TEBR1: VALID Position */
+#define ERRBNK_TEBR1_VALID_Msk             (0x1UL << /*ERRBNK_TEBR1_VALID_Pos*/)       /*!< ERRBNK TEBR1: VALID Mask */
+
+/*@}*/ /* end of group ErrBnk_Type */
+
+
+/**
+  \ingroup  CMSIS_core_register
+  \defgroup PrcCfgInf_Type     Processor Configuration Information Registers (IMPLEMENTATION DEFINED)
+  \brief    Type definitions for the Processor Configuration Information Registerss (PRCCFGINF)
+  @{
+ */
+
+/**
+  \brief  Structure type to access the Processor Configuration Information Registerss (PRCCFGINF).
+ */
+typedef struct
+{
+  __OM  uint32_t CFGINFOSEL;             /*!< Offset: 0x000 ( /W)  Processor Configuration Information Selection Register */
+  __IM  uint32_t CFGINFORD;              /*!< Offset: 0x004 (R/ )  Processor Configuration Information Read Data Register */
+} PrcCfgInf_Type;
+
+/* PRCCFGINF Processor Configuration Information Selection Register (CFGINFOSEL) Definitions */
+
+/* PRCCFGINF Processor Configuration Information Read Data Register (CFGINFORD) Definitions */
+
+/*@}*/ /* end of group PrcCfgInf_Type */
+
+
+/**
+  \ingroup  CMSIS_core_register
+  \defgroup STL_Type     Software Test Library Observation Registers
+  \brief    Type definitions for the Software Test Library Observation Registerss (STL)
+  @{
+ */
+
+/**
+  \brief  Structure type to access the Software Test Library Observation Registerss (STL).
+ */
+typedef struct
+{
+  __IM  uint32_t STLNVICPENDOR;          /*!< Offset: 0x000 (R/ )  NVIC Pending Priority Tree Register */
+  __IM  uint32_t STLNVICACTVOR;          /*!< Offset: 0x004 (R/ )  NVIC Active Priority Tree Register */
+        uint32_t RESERVED0[2U];
+  __OM  uint32_t STLIDMPUSR;             /*!< Offset: 0x010 ( /W)  MPU Sanple Register */
+  __IM  uint32_t STLIMPUOR;              /*!< Offset: 0x014 (R/ )  MPU Region Hit Register */
+  __IM  uint32_t STLD0MPUOR;             /*!< Offset: 0x018 (R/ )  MPU Memory Attributes Register 0 */
+  __IM  uint32_t STLD1MPUOR;             /*!< Offset: 0x01C (R/ )  MPU Memory Attributes Register 1 */
+
+} STL_Type;
+
+/* STL Software Test Library Observation Register (STLNVICPENDOR) Definitions */
+#define STL_STLNVICPENDOR_VALID_Pos        18U                                         /*!< STL STLNVICPENDOR: VALID Position */
+#define STL_STLNVICPENDOR_VALID_Msk        (0x1UL << STL_STLNVICPENDOR_VALID_Pos)      /*!< STL STLNVICPENDOR: VALID Mask */
+
+#define STL_STLNVICPENDOR_TARGET_Pos       17U                                         /*!< STL STLNVICPENDOR: TARGET Position */
+#define STL_STLNVICPENDOR_TARGET_Msk       (0x1UL << STL_STLNVICPENDOR_TARGET_Pos)     /*!< STL STLNVICPENDOR: TARGET Mask */
+
+#define STL_STLNVICPENDOR_PRIORITY_Pos      9U                                         /*!< STL STLNVICPENDOR: PRIORITY Position */
+#define STL_STLNVICPENDOR_PRIORITY_Msk     (0xFFUL << STL_STLNVICPENDOR_PRIORITY_Pos)  /*!< STL STLNVICPENDOR: PRIORITY Mask */
+
+#define STL_STLNVICPENDOR_INTNUM_Pos        0U                                         /*!< STL STLNVICPENDOR: INTNUM Position */
+#define STL_STLNVICPENDOR_INTNUM_Msk       (0x1FFUL /*<< STL_STLNVICPENDOR_INTNUM_Pos*/) /*!< STL STLNVICPENDOR: INTNUM Mask */
+
+/* STL Software Test Library Observation Register (STLNVICACTVOR) Definitions */
+#define STL_STLNVICACTVOR_VALID_Pos        18U                                         /*!< STL STLNVICACTVOR: VALID Position */
+#define STL_STLNVICACTVOR_VALID_Msk        (0x1UL << STL_STLNVICACTVOR_VALID_Pos)      /*!< STL STLNVICACTVOR: VALID Mask */
+
+#define STL_STLNVICACTVOR_TARGET_Pos       17U                                         /*!< STL STLNVICACTVOR: TARGET Position */
+#define STL_STLNVICACTVOR_TARGET_Msk       (0x1UL << STL_STLNVICACTVOR_TARGET_Pos)     /*!< STL STLNVICACTVOR: TARGET Mask */
+
+#define STL_STLNVICACTVOR_PRIORITY_Pos      9U                                         /*!< STL STLNVICACTVOR: PRIORITY Position */
+#define STL_STLNVICACTVOR_PRIORITY_Msk     (0xFFUL << STL_STLNVICACTVOR_PRIORITY_Pos)  /*!< STL STLNVICACTVOR: PRIORITY Mask */
+
+#define STL_STLNVICACTVOR_INTNUM_Pos        0U                                         /*!< STL STLNVICACTVOR: INTNUM Position */
+#define STL_STLNVICACTVOR_INTNUM_Msk       (0x1FFUL /*<< STL_STLNVICACTVOR_INTNUM_Pos*/) /*!< STL STLNVICACTVOR: INTNUM Mask */
+
+/* STL Software Test Library Observation Register (STLIDMPUSR) Definitions */
+#define STL_STLIDMPUSR_ADDR_Pos             5U                                         /*!< STL STLIDMPUSR: ADDR Position */
+#define STL_STLIDMPUSR_ADDR_Msk            (0x7FFFFFFUL << STL_STLIDMPUSR_ADDR_Pos)    /*!< STL STLIDMPUSR: ADDR Mask */
+
+#define STL_STLIDMPUSR_INSTR_Pos            2U                                         /*!< STL STLIDMPUSR: INSTR Position */
+#define STL_STLIDMPUSR_INSTR_Msk           (0x1UL << STL_STLIDMPUSR_INSTR_Pos)         /*!< STL STLIDMPUSR: INSTR Mask */
+
+#define STL_STLIDMPUSR_DATA_Pos             1U                                         /*!< STL STLIDMPUSR: DATA Position */
+#define STL_STLIDMPUSR_DATA_Msk            (0x1UL << STL_STLIDMPUSR_DATA_Pos)          /*!< STL STLIDMPUSR: DATA Mask */
+
+/* STL Software Test Library Observation Register (STLIMPUOR) Definitions */
+#define STL_STLIMPUOR_HITREGION_Pos         9U                                         /*!< STL STLIMPUOR: HITREGION Position */
+#define STL_STLIMPUOR_HITREGION_Msk        (0xFFUL << STL_STLIMPUOR_HITREGION_Pos)     /*!< STL STLIMPUOR: HITREGION Mask */
+
+#define STL_STLIMPUOR_ATTR_Pos              0U                                         /*!< STL STLIMPUOR: ATTR Position */
+#define STL_STLIMPUOR_ATTR_Msk             (0x1FFUL /*<< STL_STLIMPUOR_ATTR_Pos*/)     /*!< STL STLIMPUOR: ATTR Mask */
+
+/* STL Software Test Library Observation Register (STLD0MPUOR) Definitions */
+#define STL_STLD0MPUOR_HITREGION_Pos        9U                                         /*!< STL STLD0MPUOR: HITREGION Position */
+#define STL_STLD0MPUOR_HITREGION_Msk       (0xFFUL << STL_STLD0MPUOR_HITREGION_Pos)    /*!< STL STLD0MPUOR: HITREGION Mask */
+
+#define STL_STLD0MPUOR_ATTR_Pos             0U                                         /*!< STL STLD0MPUOR: ATTR Position */
+#define STL_STLD0MPUOR_ATTR_Msk            (0x1FFUL /*<< STL_STLD0MPUOR_ATTR_Pos*/)    /*!< STL STLD0MPUOR: ATTR Mask */
+
+/* STL Software Test Library Observation Register (STLD1MPUOR) Definitions */
+#define STL_STLD1MPUOR_HITREGION_Pos        9U                                         /*!< STL STLD1MPUOR: HITREGION Position */
+#define STL_STLD1MPUOR_HITREGION_Msk       (0xFFUL << STL_STLD1MPUOR_HITREGION_Pos)    /*!< STL STLD1MPUOR: HITREGION Mask */
+
+#define STL_STLD1MPUOR_ATTR_Pos             0U                                         /*!< STL STLD1MPUOR: ATTR Position */
+#define STL_STLD1MPUOR_ATTR_Msk            (0x1FFUL /*<< STL_STLD1MPUOR_ATTR_Pos*/)    /*!< STL STLD1MPUOR: ATTR Mask */
+
+/*@}*/ /* end of group STL_Type */
 
 
 /**
@@ -1524,15 +1988,14 @@ typedef struct
         uint32_t RESERVED11[108];
   __IOM uint32_t AUTHSTATUS;                        /*!< Offset: 0xFB8 (R/W)  PMU Authentication Status Register */
   __IOM uint32_t DEVARCH;                           /*!< Offset: 0xFBC (R/W)  PMU Device Architecture Register */
-        uint32_t RESERVED12[4];
+        uint32_t RESERVED12[3];
   __IOM uint32_t DEVTYPE;                           /*!< Offset: 0xFCC (R/W)  PMU Device Type Register */
   __IOM uint32_t PIDR4;                             /*!< Offset: 0xFD0 (R/W)  PMU Peripheral Identification Register 4 */
         uint32_t RESERVED13[3];
   __IOM uint32_t PIDR0;                             /*!< Offset: 0xFE0 (R/W)  PMU Peripheral Identification Register 0 */
-  __IOM uint32_t PIDR1;                             /*!< Offset: 0xFE0 (R/W)  PMU Peripheral Identification Register 1 */
-  __IOM uint32_t PIDR2;                             /*!< Offset: 0xFE0 (R/W)  PMU Peripheral Identification Register 2 */
-  __IOM uint32_t PIDR3;                             /*!< Offset: 0xFE0 (R/W)  PMU Peripheral Identification Register 3 */
-        uint32_t RESERVED14[3];
+  __IOM uint32_t PIDR1;                             /*!< Offset: 0xFE4 (R/W)  PMU Peripheral Identification Register 1 */
+  __IOM uint32_t PIDR2;                             /*!< Offset: 0xFE8 (R/W)  PMU Peripheral Identification Register 2 */
+  __IOM uint32_t PIDR3;                             /*!< Offset: 0xFEC (R/W)  PMU Peripheral Identification Register 3 */
   __IOM uint32_t CIDR0;                             /*!< Offset: 0xFF0 (R/W)  PMU Component Identification Register 0 */
   __IOM uint32_t CIDR1;                             /*!< Offset: 0xFF4 (R/W)  PMU Component Identification Register 1 */
   __IOM uint32_t CIDR2;                             /*!< Offset: 0xFF8 (R/W)  PMU Component Identification Register 2 */
@@ -3127,7 +3590,12 @@ typedef struct
   #define SCS_BASE            (0xE000E000UL)                             /*!< System Control Space Base Address */
   #define ITM_BASE            (0xE0000000UL)                             /*!< ITM Base Address */
   #define DWT_BASE            (0xE0001000UL)                             /*!< DWT Base Address */
+  #define MEMSYSCTL_BASE      (0xE001E000UL)                             /*!< Memory System Control Base Address */
+  #define ERRBNK_BASE         (0xE001E100UL)                             /*!< Error Banking Base Address */
   #define PWRMODCTL_BASE      (0xE001E300UL)                             /*!< Power Mode Control Base Address */
+  #define EWIC_BASE           (0xE001E400UL)                             /*!< External Wakeup Interrupt Controller Base Address */
+  #define PRCCFGINF_BASE      (0xE001E700UL)                             /*!< Processor Configuration Information Base Address */
+  #define STL_BASE            (0xE001E800UL)                             /*!< Software Test Library Base Address */
   #define TPI_BASE            (0xE0040000UL)                             /*!< TPI Base Address */
   #define CoreDebug_BASE      (0xE000EDF0UL)                             /*!< \deprecated Core Debug Base Address */
   #define DCB_BASE            (0xE000EDF0UL)                             /*!< DCB Base Address */
@@ -3136,14 +3604,19 @@ typedef struct
   #define NVIC_BASE           (SCS_BASE +  0x0100UL)                     /*!< NVIC Base Address */
   #define SCB_BASE            (SCS_BASE +  0x0D00UL)                     /*!< System Control Block Base Address */
 
-  #define SCnSCB              ((SCnSCB_Type    *)     SCS_BASE         ) /*!< System control Register not in SCB */
+  #define ICB                 ((ICB_Type       *)     SCS_BASE         ) /*!< System control Register not in SCB */
   #define SCB                 ((SCB_Type       *)     SCB_BASE         ) /*!< SCB configuration struct */
   #define SysTick             ((SysTick_Type   *)     SysTick_BASE     ) /*!< SysTick configuration struct */
   #define NVIC                ((NVIC_Type      *)     NVIC_BASE        ) /*!< NVIC configuration struct */
   #define ITM                 ((ITM_Type       *)     ITM_BASE         ) /*!< ITM configuration struct */
   #define DWT                 ((DWT_Type       *)     DWT_BASE         ) /*!< DWT configuration struct */
   #define TPI                 ((TPI_Type       *)     TPI_BASE         ) /*!< TPI configuration struct */
+  #define MEMSYSCTL           ((MemSysCtl_Type *)     MEMSYSCTL_BASE   ) /*!< Memory System Control configuration struct */
+  #define ERRBNK              ((ErrBnk_Type    *)     ERRBNK_BASE      ) /*!< Error Banking configuration struct */
   #define PWRMODCTL           ((PwrModCtl_Type *)     PWRMODCTL_BASE   ) /*!< Power Mode Control configuration struct */
+  #define EWIC                ((EWIC_Type      *)     EWIC_BASE        ) /*!< EWIC configuration struct */
+  #define PRCCFGINF           ((PrcCfgInf_Type *)     PRCCFGINF_BASE   ) /*!< Processor Configuration Information configuration struct */
+  #define STL                 ((STL_Type       *)     STL_BASE         ) /*!< Software Test Library configuration struct */
   #define CoreDebug           ((CoreDebug_Type *)     CoreDebug_BASE   ) /*!< \deprecated Core Debug configuration struct */
   #define DCB                 ((DCB_Type       *)     DCB_BASE         ) /*!< DCB configuration struct */
   #define DIB                 ((DIB_Type       *)     DIB_BASE         ) /*!< DIB configuration struct */
@@ -3175,7 +3648,7 @@ typedef struct
   #define NVIC_BASE_NS        (SCS_BASE_NS +  0x0100UL)                  /*!< NVIC Base Address                 (non-secure address space) */
   #define SCB_BASE_NS         (SCS_BASE_NS +  0x0D00UL)                  /*!< System Control Block Base Address (non-secure address space) */
 
-  #define SCnSCB_NS           ((SCnSCB_Type    *)     SCS_BASE_NS      ) /*!< System control Register not in SCB(non-secure address space) */
+  #define ICB_NS              ((ICB_Type       *)     SCS_BASE_NS      ) /*!< System control Register not in SCB(non-secure address space) */
   #define SCB_NS              ((SCB_Type       *)     SCB_BASE_NS      ) /*!< SCB configuration struct          (non-secure address space) */
   #define SysTick_NS          ((SysTick_Type   *)     SysTick_BASE_NS  ) /*!< SysTick configuration struct      (non-secure address space) */
   #define NVIC_NS             ((NVIC_Type      *)     NVIC_BASE_NS     ) /*!< NVIC configuration struct         (non-secure address space) */
@@ -3194,6 +3667,69 @@ typedef struct
 #endif /* defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U) */
 /*@} */
 
+
+/**
+  \ingroup    CMSIS_core_register
+  \defgroup   CMSIS_register_aliases     Backwards Compatibility Aliases
+  \brief      Register alias definitions for backwards compatibility.
+  @{
+ */
+#define ID_ADR  (ID_AFR)    /*!< SCB Auxiliary Feature Register */
+
+/* 'SCnSCB' is deprecated and replaced by 'ICB' */
+typedef ICB_Type SCnSCB_Type;
+
+/* Auxiliary Control Register Definitions */
+#define SCnSCB_ACTLR_DISCRITAXIRUW_Pos   (ICB_ACTLR_DISCRITAXIRUW_Pos)
+#define SCnSCB_ACTLR_DISCRITAXIRUW_Msk   (ICB_ACTLR_DISCRITAXIRUW_Msk)
+
+#define SCnSCB_ACTLR_DISDI_Pos           (ICB_ACTLR_DISDI_Pos)
+#define SCnSCB_ACTLR_DISDI_Msk           (ICB_ACTLR_DISDI_Msk)
+
+#define SCnSCB_ACTLR_DISCRITAXIRUR_Pos   (ICB_ACTLR_DISCRITAXIRUR_Pos)
+#define SCnSCB_ACTLR_DISCRITAXIRUR_Msk   (ICB_ACTLR_DISCRITAXIRUR_Msk)
+
+#define SCnSCB_ACTLR_EVENTBUSEN_Pos      (ICB_ACTLR_EVENTBUSEN_Pos)
+#define SCnSCB_ACTLR_EVENTBUSEN_Msk      (ICB_ACTLR_EVENTBUSEN_Msk)
+
+#define SCnSCB_ACTLR_EVENTBUSEN_S_Pos    (ICB_ACTLR_EVENTBUSEN_S_Pos)
+#define SCnSCB_ACTLR_EVENTBUSEN_S_Msk    (ICB_ACTLR_EVENTBUSEN_S_Msk)
+
+#define SCnSCB_ACTLR_DISITMATBFLUSH_Pos  (ICB_ACTLR_DISITMATBFLUSH_Pos)
+#define SCnSCB_ACTLR_DISITMATBFLUSH_Msk  (ICB_ACTLR_DISITMATBFLUSH_Msk)
+
+#define SCnSCB_ACTLR_DISNWAMODE_Pos      (ICB_ACTLR_DISNWAMODE_Pos)
+#define SCnSCB_ACTLR_DISNWAMODE_Msk      (ICB_ACTLR_DISNWAMODE_Msk)
+
+#define SCnSCB_ACTLR_FPEXCODIS_Pos       (ICB_ACTLR_FPEXCODIS_Pos)
+#define SCnSCB_ACTLR_FPEXCODIS_Msk       (ICB_ACTLR_FPEXCODIS_Msk)
+
+#define SCnSCB_ACTLR_DISOLAP_Pos         (ICB_ACTLR_DISOLAP_Pos)
+#define SCnSCB_ACTLR_DISOLAP_Msk         (ICB_ACTLR_DISOLAP_Msk)
+
+#define SCnSCB_ACTLR_DISOLAPS_Pos        (ICB_ACTLR_DISOLAPS_Pos)
+#define SCnSCB_ACTLR_DISOLAPS_Msk        (ICB_ACTLR_DISOLAPS_Msk)
+
+#define SCnSCB_ACTLR_DISLOBR_Pos         (ICB_ACTLR_DISLOBR_Pos)
+#define SCnSCB_ACTLR_DISLOBR_Msk         (ICB_ACTLR_DISLOBR_Msk)
+
+#define SCnSCB_ACTLR_DISLO_Pos           (ICB_ACTLR_DISLO_Pos)
+#define SCnSCB_ACTLR_DISLO_Msk           (ICB_ACTLR_DISLO_Msk)
+
+#define SCnSCB_ACTLR_DISLOLEP_Pos        (ICB_ACTLR_DISLOLEP_Pos)
+#define SCnSCB_ACTLR_DISLOLEP_Msk        (ICB_ACTLR_DISLOLEP_Msk)
+
+#define SCnSCB_ACTLR_DISFOLD_Pos         (ICB_ACTLR_DISFOLD_Pos)
+#define SCnSCB_ACTLR_DISFOLD_Msk         (ICB_ACTLR_DISFOLD_Msk)
+
+/* Interrupt Controller Type Register Definitions */
+#define SCnSCB_ICTR_INTLINESNUM_Pos      (ICB_ICTR_INTLINESNUM_Pos)
+#define SCnSCB_ICTR_INTLINESNUM_Msk      (ICB_ICTR_INTLINESNUM_Msk)
+
+#define SCnSCB                           (ICB)
+#define SCnSCB_NS                        (ICB_NS)
+
+/*@} */
 
 
 /*******************************************************************************
@@ -3888,6 +4424,9 @@ __STATIC_INLINE uint32_t TZ_NVIC_GetPriority_NS(IRQn_Type IRQn)
 #define ARMCM55_PMU_NWAMODE_ENTER                    0xC200             /*!< No write-allocate mode entry */
 #define ARMCM55_PMU_NWAMODE                          0xC201             /*!< Write-allocate store is not allocated into the data cache due to no-write-allocate mode */
 #define ARMCM55_PMU_SAHB_ACCESS                      0xC300             /*!< Read or write access on the S-AHB interface to the TCM */
+#define ARMCM55_PMU_PAHB_ACCESS                      0xC301             /*!< Read or write access to the P-AHB write interface */
+#define ARMCM55_PMU_AXI_WRITE_ACCESS                 0xC302             /*!< Any beat access to M-AXI write interface */
+#define ARMCM55_PMU_AXI_READ_ACCESS                  0xC303             /*!< Any beat access to M-AXI read interface */
 #define ARMCM55_PMU_DOSTIMEOUT_DOUBLE                0xC400             /*!< Denial of Service timeout has fired twice and caused buffers to drain to allow forward progress */
 #define ARMCM55_PMU_DOSTIMEOUT_TRIPLE                0xC401             /*!< Denial of Service timeout has fired three times and blocked the LSU to force forward progress */
 

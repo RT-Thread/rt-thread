@@ -94,7 +94,11 @@ extern "C" {
 #endif /* RT_USING_PIN */
 
 #ifdef RT_USING_SENSOR
+#ifdef RT_USING_SENSOR_V2
+#include "drivers/sensor_v2.h"
+#else
 #include "drivers/sensor.h"
+#endif /* RT_USING_SENSOR_V2 */
 #endif /* RT_USING_SENSOR */
 
 #ifdef RT_USING_CAN

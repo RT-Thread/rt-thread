@@ -15,10 +15,8 @@ elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'D:/Keil'
 elif CROSS_TOOL == 'iar':
-    print('================ERROR============================')
-    print('Not support iar yet!')
-    print('=================================================')
-    exit(0)
+    PLATFORM    = 'iccarm'
+    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.4'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -43,7 +41,7 @@ if PLATFORM == 'gcc':
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'
     CXXFLAGS = CFLAGS
-	
+
     CPATH = ''
     LPATH = ''
 
@@ -82,3 +80,53 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -O2'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+
+elif PLATFORM == 'iccarm':
+    # toolchains
+    CC = 'iccarm'
+    CXX = 'iccarm'
+    AS = 'iasmarm'
+    AR = 'iarchive'
+    LINK = 'ilinkarm'
+    TARGET_EXT = 'out'
+
+    DEVICE = '-Dewarm'
+
+    CFLAGS = DEVICE
+    CFLAGS += ' --diag_suppress Pa050'
+    CFLAGS += ' --no_cse'
+    CFLAGS += ' --no_unroll'
+    CFLAGS += ' --no_inline'
+    CFLAGS += ' --no_code_motion'
+    CFLAGS += ' --no_tbaa'
+    CFLAGS += ' --no_clustering'
+    CFLAGS += ' --no_scheduling'
+    CFLAGS += ' --endian=little'
+    CFLAGS += ' --cpu=Cortex-M4'
+    CFLAGS += ' -e'
+    CFLAGS += ' --fpu=VFPv4_sp'
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
+    CFLAGS += ' --silent'
+
+    AFLAGS = DEVICE
+    AFLAGS += ' -s+'
+    AFLAGS += ' -w+'
+    AFLAGS += ' -r'
+    AFLAGS += ' --cpu Cortex-M4'
+    AFLAGS += ' --fpu VFPv4_sp'
+    AFLAGS += ' -S'
+
+    if BUILD == 'debug':
+        CFLAGS += ' --debug'
+        CFLAGS += ' -On'
+    else:
+        CFLAGS += ' -Oh'
+
+    LFLAGS = ' --config "drivers/linker_scripts/link.icf"'
+    LFLAGS += ' --entry __iar_program_start'
+
+    CXXFLAGS = CFLAGS
+
+    EXEC_PATH = EXEC_PATH + '/arm/bin/'
+    POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
+

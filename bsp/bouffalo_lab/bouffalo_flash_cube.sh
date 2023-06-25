@@ -31,6 +31,15 @@ then
 elif [ $CHIPNAME = 'bl808' ]
 then
     CONFIG_DIR=./bl808
+elif [ $CHIPNAME = 'bl808-m0' ]
+then
+    CONFIG_DIR=./bl808/m0
+elif [ $CHIPNAME = 'bl808-lp' ]
+then
+    CONFIG_DIR=./bl808/lp
+elif [ $CHIPNAME = 'bl808-d0' ]
+then
+    CONFIG_DIR=./bl808/d0
 else
     echo "chip name error"
 fi

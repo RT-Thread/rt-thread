@@ -1348,6 +1348,19 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     intf_comm = rt_usbd_interface_new(device, _interface_handler);
     intf_data = rt_usbd_interface_new(device, _interface_handler);
 
+    if((intf_comm == RT_NULL) || (intf_data == RT_NULL))
+    {
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
+
+        if(intf_comm != RT_NULL)
+            rt_free(intf_comm);
+
+        if(intf_data != RT_NULL)
+            rt_free(intf_data);
+
+        return RT_NULL;
+    }
+
     /* create a communication alternate setting and a data alternate setting */
     comm_setting = rt_usbd_altsetting_new(sizeof(struct ucdc_comm_descriptor));
     data_setting = rt_usbd_altsetting_new(sizeof(struct ucdc_data_descriptor));

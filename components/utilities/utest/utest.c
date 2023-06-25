@@ -88,19 +88,19 @@ int utest_init(void)
 #elif defined (__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
     tc_table = (utest_tc_export_t)__section_begin("UtestTcTab");
     tc_num = (utest_tc_export_t)__section_end("UtestTcTab") - tc_table;
-#elif defined (__GNUC__)                            /* for GCC Compiler */
+#else
+    unsigned int *ptr_begin, *ptr_end;
+#if defined(__GNUC__)
     extern const int __rt_utest_tc_tab_start;
     extern const int __rt_utest_tc_tab_end;
-    tc_table = (utest_tc_export_t)&__rt_utest_tc_tab_start;
-    tc_num = (utest_tc_export_t) &__rt_utest_tc_tab_end - tc_table;
+    ptr_begin = (unsigned int *)&__rt_utest_tc_tab_start;
+    ptr_end = (unsigned int *)&__rt_utest_tc_tab_end;
 #elif defined(_MSC_VER)
-    unsigned int* ptr_begin, * ptr_end;
-
-    ptr_begin = (unsigned int*)&__tc_export_begin;
+    ptr_begin = (unsigned int *)&__tc_export_begin;
+    ptr_end = (unsigned int *)&__tc_export_end;
     ptr_begin += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
+#endif
     while (*ptr_begin == 0) ptr_begin++;
-
-    ptr_end = (unsigned int*)&__tc_export_end;
     ptr_end--;
     while (*ptr_end == 0) ptr_end--;
     /* copy tc_table from rodata section to ram */

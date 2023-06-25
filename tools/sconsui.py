@@ -291,7 +291,7 @@ class SconsUI():
 
         setting.close()
         tkMessageBox.showinfo("RT-Thread SCons UI",
-                    "Save setting sucessfully")
+                    "Save setting successfully")
 
     def setup_building_ui(self, frame):
         padding = ttk.Frame(frame)

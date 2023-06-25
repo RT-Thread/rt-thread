@@ -44,6 +44,7 @@
  * 2022-04-08     Stanley      Correct descriptions
  * 2022-10-15     Bernard      add nested mutex feature
  * 2022-10-16     Bernard      add prioceiling feature in mutex
+ * 2023-04-16     Xin-zheqi    redesigen queue recv and send function return real message size
  */
 
 #include <rtthread.h>
@@ -59,6 +60,7 @@
     #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
 #endif
 
+#define GET_MESSAGEBYTE_ADDR(msg)               ((struct rt_mq_message *) msg + 1)
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);
@@ -505,6 +507,9 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
 
+    /* current context checking */
+    RT_DEBUG_SCHEDULER_AVAILABLE(sem->value == 0 && timeout != 0);
+
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
@@ -532,9 +537,6 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
         }
         else
         {
-            /* current context checking */
-            RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
-
             /* semaphore is unavailable, push to suspend list */
             /* get current thread */
             thread = rt_thread_self();
@@ -2858,12 +2860,6 @@ RTM_EXPORT(rt_mb_control);
  * @{
  */
 
-struct rt_mq_message
-{
-    struct rt_mq_message *next;
-};
-
-
 /**
  * @brief    Initialize a static messagequeue object.
  *
@@ -3300,8 +3296,11 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
 
     /* the msg is the new tailer of list, the next shall be NULL */
     msg->next = RT_NULL;
+
+    /* add the length */
+    ((struct rt_mq_message *)msg)->length = size;
     /* copy buffer */
-    rt_memcpy(msg + 1, buffer, size);
+    rt_memcpy(GET_MESSAGEBYTE_ADDR(msg), buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3355,7 +3354,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
 {
     return _rt_mq_send_wait(mq, buffer, size, timeout, RT_UNINTERRUPTIBLE);
 }
-RTM_EXPORT(rt_mq_send_wait)
+RTM_EXPORT(rt_mq_send_wait);
 
 rt_err_t rt_mq_send_wait_interruptible(rt_mq_t     mq,
                          const void *buffer,
@@ -3364,7 +3363,7 @@ rt_err_t rt_mq_send_wait_interruptible(rt_mq_t     mq,
 {
     return _rt_mq_send_wait(mq, buffer, size, timeout, RT_INTERRUPTIBLE);
 }
-RTM_EXPORT(rt_mq_send_wait_interruptible)
+RTM_EXPORT(rt_mq_send_wait_interruptible);
 
 rt_err_t rt_mq_send_wait_killable(rt_mq_t     mq,
                          const void *buffer,
@@ -3373,7 +3372,7 @@ rt_err_t rt_mq_send_wait_killable(rt_mq_t     mq,
 {
     return _rt_mq_send_wait(mq, buffer, size, timeout, RT_KILLABLE);
 }
-RTM_EXPORT(rt_mq_send_wait_killable)
+RTM_EXPORT(rt_mq_send_wait_killable);
 /**
  * @brief    This function will send a message to the messagequeue object.
  *           If there is a thread suspended on the messagequeue, the thread will be resumed.
@@ -3467,8 +3466,10 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
+    /* add the length */
+    ((struct rt_mq_message *)msg)->length = size;
     /* copy buffer */
-    rt_memcpy(msg + 1, buffer, size);
+    rt_memcpy(GET_MESSAGEBYTE_ADDR(msg), buffer, size);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3536,10 +3537,10 @@ RTM_EXPORT(rt_mq_urgent);
  *           If use macro RT_WAITING_NO to set this parameter, which means that this
  *           function is non-blocking and will return immediately.
  *
- * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ * @return   Return the real length of the message. When the return value is larger than zero, the operation is successful.
  *           If the return value is any other values, it means that the mailbox release failed.
  */
-static rt_err_t _rt_mq_recv(rt_mq_t    mq,
+static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout,
@@ -3550,6 +3551,7 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
     rt_err_t ret;
+    rt_size_t len;
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
@@ -3665,8 +3667,13 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
+    /* get real message length */
+    len = ((struct rt_mq_message *)msg)->length;
+
+    if (len > size)
+        len = size;
     /* copy message */
-    rt_memcpy(buffer, msg + 1, size > mq->msg_size ? mq->msg_size : size);
+    rt_memcpy(buffer, GET_MESSAGEBYTE_ADDR(msg), len);
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -3686,7 +3693,7 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
 
         rt_schedule();
 
-        return RT_EOK;
+        return len;
     }
 
     /* enable interrupt */
@@ -3694,10 +3701,10 @@ static rt_err_t _rt_mq_recv(rt_mq_t    mq,
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mq->parent.parent)));
 
-    return RT_EOK;
+    return len;
 }
 
-rt_err_t rt_mq_recv(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout)
@@ -3706,7 +3713,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
 }
 RTM_EXPORT(rt_mq_recv);
 
-rt_err_t rt_mq_recv_interruptible(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv_interruptible(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout)
@@ -3715,7 +3722,7 @@ rt_err_t rt_mq_recv_interruptible(rt_mq_t    mq,
 }
 RTM_EXPORT(rt_mq_recv_interruptible);
 
-rt_err_t rt_mq_recv_killable(rt_mq_t    mq,
+rt_ssize_t rt_mq_recv_killable(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout)

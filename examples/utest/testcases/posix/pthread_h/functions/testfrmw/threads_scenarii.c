@@ -246,7 +246,7 @@ static void scenar_init(void)
                        " PTHREAD_CREATE_JOINABLE");
         }
 #if VERBOSE > 4
-        output("Detach state was set sucessfully\n");
+        output("Detach state was set successfully\n");
 #endif
 
         /* Sched related attributes */
@@ -269,7 +269,7 @@ static void scenar_init(void)
                 UNRESOLVED(ret, "Unable to set inheritsched"
                        " attribute");
 #if VERBOSE > 4
-            output("inheritsched state was set sucessfully\n");
+            output("inheritsched state was set successfully\n");
 #endif
         }
 #if VERBOSE > 4
@@ -292,7 +292,7 @@ static void scenar_init(void)
                        " sched policy");
 #if VERBOSE > 4
             if (scenarii[i].schedpolicy)
-                output("Sched policy was set sucessfully\n");
+                output("Sched policy was set successfully\n");
             else
                 output("Sched policy untouched\n");
 #endif
@@ -323,7 +323,7 @@ static void scenar_init(void)
                        "Failed to set the sched param");
 
 #if VERBOSE > 4
-            output("Sched param was set sucessfully to %i\n",
+            output("Sched param was set successfully to %i\n",
                    sp.sched_priority);
         } else {
             output("Sched param untouched\n");

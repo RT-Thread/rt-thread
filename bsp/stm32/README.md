@@ -24,6 +24,9 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f107-uc-eval](stm32f107-uc-eval) | uC/Eval STM32F107 评估板（中国版） |
 | **F2 系列** |  |
 | [stm32f207-st-nucleo](stm32f207-st-nucleo) | ST 官方 STM32F207-nucleo 开发板 |
+| **F3 系列** |  |
+| [stm32f302-st-nucleo](stm32f302-st-nucleo) | ST 官方 STM32F302-nucleo 开发板 |
+| [stm32f334-st-nucleo](stm32f334-st-nucleo) | ST 官方 STM32F334-nucleo 开发板 |
 | **F4 系列** |  |
 | [stm32f401-st-nucleo](stm32f401-st-nucleo) | ST 官方 STM32F401 Nucleo-64 开发板 |
 | [stm32f405-smdz-breadfruit](stm32f405-smdz-breadfruit) | 三木电子 SM1432F405 开发板 |
@@ -81,6 +84,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32l433-ali-startkit](stm32l433-ali-startkit) | 诺行 STM32L433 Ali Start Kit 开发板 |
 | [stm32l496-ali-developer](stm32l496-ali-developer) | 诺行 STM32L496 Ali Developer Kit 开发板 |
 | [stm32l496-st-nucleo](stm32l496-st-nucleo) | ST 官方 STM32L496-Nucleo 开发板 |
+| [stm32l496-st-discovery](stm32l496-st-discovery) | ST 官方 STM32L496G discovery 开发板 |
 | **L5 系列** |  |
 | [stm32l552-st-nucleo](stm32l552-st-nucleo) | ST 官方 STM32L552-Nucleo 开发板 |
 | **U5 系列** |  |
