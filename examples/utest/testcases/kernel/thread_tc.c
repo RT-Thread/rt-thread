@@ -32,7 +32,7 @@ static volatile rt_uint32_t tid3_delay_pass_flag = 0;
 static volatile rt_uint32_t tid3_finish_flag = 0;
 static volatile rt_uint32_t tid4_finish_flag = 0;
 static volatile rt_uint32_t tid6_finish_flag = 0;
-static rt_uint32_t thread5_source = 0;
+static volatile rt_uint32_t thread5_source = 0;
 
 #ifndef RT_USING_SMP
     static rt_uint32_t thread_yield_flag = 0;
