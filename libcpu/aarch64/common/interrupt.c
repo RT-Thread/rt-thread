@@ -389,7 +389,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         __asm__ volatile ("mrs %0, mpidr_el1":"=r"(cpu_affinity_val));
         rt_hw_interrupt_set_target_cpus(vector, cpu_affinity_val);
 #else
-        rt_hw_interrupt_set_target_cpus(vector, rt_hw_cpu_id());
+        rt_hw_interrupt_set_target_cpus(vector, 1 << rt_hw_cpu_id());
 #endif /* BSP_USING_GICV3 */
     }
 #endif
