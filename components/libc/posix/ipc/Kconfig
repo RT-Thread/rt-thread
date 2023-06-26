@@ -24,6 +24,7 @@ config RT_USING_POSIX_PIPE_SIZE
 config RT_USING_POSIX_MESSAGE_QUEUE
     bool "Enable posix message queue <mqueue.h>"
     select RT_USING_POSIX_CLOCK
+    select RT_USING_MESSAGEQUEUE_PRIORITY
     default n
 
 config RT_USING_POSIX_MESSAGE_SEMAPHORE

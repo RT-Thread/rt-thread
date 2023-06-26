@@ -82,6 +82,25 @@ static void mq_send_case(rt_mq_t testmq)
         rt_thread_delay(100);
     }
 
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+    ret = rt_mq_send_wait_prio(testmq, &send_buf[3], sizeof(send_buf[0]), 3, 0, RT_UNINTERRUPTIBLE);
+    uassert_true(ret == RT_EOK);
+    ret = rt_mq_send_wait_prio(testmq, &send_buf[0], sizeof(send_buf[0]), 0, 0, RT_UNINTERRUPTIBLE);
+    uassert_true(ret == RT_EOK);
+
+    ret = rt_mq_send_wait_prio(testmq, &send_buf[2], sizeof(send_buf[0]), 1, 0, RT_UNINTERRUPTIBLE);
+    uassert_true(ret == RT_EOK);
+    ret = rt_mq_send_wait_prio(testmq, &send_buf[4], sizeof(send_buf[0]), 4, 0, RT_UNINTERRUPTIBLE);
+    uassert_true(ret == RT_EOK);
+    ret = rt_mq_send_wait_prio(testmq, &send_buf[1], sizeof(send_buf[0]), 1, 0, RT_UNINTERRUPTIBLE);
+    uassert_true(ret == RT_EOK);
+
+    while (testmq->entry != 0)
+    {
+        rt_thread_delay(100);
+    }
+#endif
+
     ret = rt_mq_send(testmq, &send_buf[1], sizeof(send_buf[0]));
     uassert_true(ret == RT_EOK);
     ret = rt_mq_control(testmq, RT_IPC_CMD_RESET, RT_NULL);
@@ -121,6 +140,20 @@ static void mq_recv_case(rt_mq_t testmq)
         uassert_true(ret >= 0);
         uassert_true(recv_buf[var] == (var + 1));
     }
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+    rt_int32_t msg_prio;
+    while (testmq->entry == MAX_MSGS)
+    {
+        rt_thread_delay(100);
+    }
+    for (int var = 0; var < MAX_MSGS; ++var)
+    {
+        ret = rt_mq_recv_prio(testmq, &recv_buf[var], sizeof(recv_buf[0]), &msg_prio, RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
+        rt_kprintf("msg_prio = %d\r\n", msg_prio);
+        uassert_true(ret >= 0);
+        uassert_true(recv_buf[var] == (MAX_MSGS - var));
+    }
+#endif
 }
 
 static void mq_recv_entry(void *param)

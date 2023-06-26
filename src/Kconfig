@@ -317,6 +317,12 @@ menu "Inter-Thread communication"
         bool "Enable message queue"
         default y
 
+    if RT_USING_MESSAGEQUEUE
+        config RT_USING_MESSAGEQUEUE_PRIORITY
+            bool "Enable message queue priority"
+            default n
+    endif
+
     config RT_USING_SIGNALS
         bool "Enable signals"
         select RT_USING_MEMPOOL
