@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021.12.07     linzhenxing      first version
+ * 2021-12-07     linzhenxing  first version
+ * 2023-06-26     WangXiaoyao  fix bug on foreground app switch
  */
 #include <dfs_file.h>
 #include <dfs_fs.h>
@@ -41,7 +42,7 @@ const struct termios tty_std_termios = {  /* for the benefit of tty drivers  */
 void tty_initstack(struct tty_node *node)
 {
     node->lwp = RT_NULL;
-    node->next = node;
+    node->next = RT_NULL;
 }
 
 static struct tty_node tty_node_cache = { RT_NULL, RT_NULL };
