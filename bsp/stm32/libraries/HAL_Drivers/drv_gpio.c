@@ -517,7 +517,7 @@ rt_inline void pin_irq_hdr(int irqno)
     }
 }
 
-#if defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1)
+#if defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5)
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
     pin_irq_hdr(bit2bitno(GPIO_Pin));

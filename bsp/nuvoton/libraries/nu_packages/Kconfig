@@ -11,18 +11,21 @@ menu "Nuvoton Packages Config"
         bool "BMX055 9-axis sensor."
         select RT_USING_I2C
         select RT_USING_SENSOR
+        select RT_USING_SENSOR_V2
         default n
 
     config NU_PKG_USING_MAX31875
         bool "MAX31875 Temperature sensor."
         select RT_USING_I2C
         select RT_USING_SENSOR
+        select RT_USING_SENSOR_V2
         default n
 
     config NU_PKG_USING_NCT7717U
         bool "NCT7717U Temperature sensor."
         select RT_USING_I2C
         select RT_USING_SENSOR
+        select RT_USING_SENSOR_V2
         default n
 
     config NU_PKG_USING_NAU88L25

@@ -1,14 +1,15 @@
-# SConscript for sensor framework
+# RT-Thread building script for bridge
 
+import os
 from building import *
 
 cwd = GetCurrentDir()
-src = ['sensor.c']
-CPPPATH = [cwd, cwd + '/../include']
+objs = []
+list = os.listdir(cwd)
 
-if GetDepend('RT_USING_SENSOR_CMD'):
-    src += ['sensor_cmd.c']
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SENSOR', 'RT_USING_DEVICE'], CPPPATH = CPPPATH)
-
-Return('group')
+Return('objs')

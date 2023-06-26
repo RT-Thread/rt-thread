@@ -74,7 +74,7 @@ void rt_init_thread_entry(void *parameter)
 
     while(1)
     {
-        if (rt_mq_recv(&mq, &msg, sizeof(msg), RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mq_recv(&mq, &msg, sizeof(msg), RT_WAITING_FOREVER) >= 0)
         {
             switch(msg.type)
             {

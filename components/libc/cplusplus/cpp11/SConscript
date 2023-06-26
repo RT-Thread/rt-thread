@@ -1,0 +1,18 @@
+from building import *
+Import('rtconfig')
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = []
+
+src += Glob('*.cpp') + Glob('*.c')
+if rtconfig.PLATFORM in ['armclang']:
+    src += Glob('armclang/*.cpp') + Glob('armclang/*.c')
+    CPPPATH += [cwd + '/armclang']
+elif rtconfig.PLATFORM in ['gcc']:
+    src += Glob('gcc/*.cpp') + Glob('gcc/*.c')
+    CPPPATH += [cwd + '/gcc']
+
+group   = DefineGroup('CPP', src, depend=['RT_USING_CPLUSPLUS11'], CPPPATH=CPPPATH)
+
+Return('group')

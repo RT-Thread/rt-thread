@@ -336,7 +336,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine />
-              <IncludePath>..\Libraries\CMSIS\Core\Include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\finsh;..\..\..\components\drivers\include;board\MCUX_Config\board;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;..\Libraries\LPC55S16\LPC55S16;..\Libraries\LPC55S16\middleware\sdmmc\inc;..\Libraries\LPC55S16\LPC55S16\drivers;..\..\..\components\libc\posix\io\poll;..\Libraries\drivers;..\..\..\libcpu\arm\cortex-m33;.;..\Libraries\LPC55S16\components\codec;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\ipc;applications;..\Libraries\drivers\config;..\..\..\components\libc\compilers\common\include;board;..\Libraries\LPC55S16\middleware\sdmmc\port</IncludePath>
+              <IncludePath>..\..\..\libcpu\arm\common;.;..\..\..\components\libc\posix\io\stdio;..\Libraries\LPC55S16\LPC55S16\drivers;..\..\..\components\drivers\include;..\Libraries\LPC55S16\middleware\sdmmc\inc;..\..\..\libcpu\arm\cortex-m33;board\MCUX_Config\board;..\..\..\components\libc\compilers\common\extension;..\..\..\include;..\Libraries\CMSIS\Core\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\Libraries\drivers;..\Libraries\LPC55S16\LPC55S16;..\Libraries\LPC55S16\components\codec;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh;board;..\..\..\components\drivers\include;applications;..\Libraries\LPC55S16\middleware\sdmmc\port</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -585,20 +585,6 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_key.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_led.c</FilePath>
             </File>
           </Files>
           <Files>

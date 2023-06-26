@@ -1,0 +1,8 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.cpp')
+CPPPATH = [cwd]
+group   = DefineGroup('CPP', src, depend=['RT_USING_CPP_WRAPPER'], CPPPATH=CPPPATH)
+
+Return('group')
