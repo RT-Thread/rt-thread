@@ -227,7 +227,7 @@ Change log since v4.1.0 released
 * remove the executable permission of thread.c
 * remove strnlen function
 * add NULL check for rt_free and rt_free_align
-* suuport perf_counter
+* support perf_counter
 * tighten size before check with mem_size_aligned
 * Add string information for error
 * fix a problem about finsh_set_prompt redefined msh command
