@@ -463,6 +463,9 @@ struct rt_mq_message
 {
     struct rt_mq_message *next;
     rt_ssize_t length;
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+    rt_int32_t prio;
+#endif
 };
 
 #define RT_MQ_BUF_SIZE(msg_size, max_msgs) \
@@ -515,6 +518,21 @@ rt_ssize_t rt_mq_recv_killable(rt_mq_t    mq,
                     rt_size_t  size,
                     rt_int32_t timeout);
 rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg);
+
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+rt_err_t rt_mq_send_wait_prio(rt_mq_t mq,
+                              const void *buffer,
+                              rt_size_t size,
+                              rt_int32_t prio,
+                              rt_int32_t timeout,
+                              int suspend_flag);
+rt_err_t rt_mq_recv_prio(rt_mq_t mq,
+                         void *buffer,
+                         rt_size_t size,
+                         rt_int32_t *prio,
+                         rt_int32_t timeout,
+                         int suspend_flag);
+#endif
 #endif
 
 /* defunct */

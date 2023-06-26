@@ -3144,7 +3144,6 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
 RTM_EXPORT(rt_mq_delete);
 #endif /* RT_USING_HEAP */
 
-
 /**
  * @brief    This function will send a message to the messagequeue object. If
  *           there is a thread suspended on the messagequeue, the thread will be
@@ -3154,10 +3153,10 @@ RTM_EXPORT(rt_mq_delete);
  *           fully used, the current thread will wait for a timeout. If reaching
  *           the timeout and there is still no space available, the sending
  *           thread will be resumed and an error code will be returned. By
- *           contrast, the rt_mq_send() function will return an error code
+ *           contrast, the _rt_mq_send_wait() function will return an error code
  *           immediately without waiting when the messagequeue if fully used.
  *
- * @see      rt_mq_send()
+ * @see      _rt_mq_send_wait()
  *
  * @param    mq is a pointer to the messagequeue object to be sent.
  *
@@ -3165,7 +3164,11 @@ RTM_EXPORT(rt_mq_delete);
  *
  * @param    size is the length of the message(Unit: Byte).
  *
+ * @param    prio is message priority, A larger value indicates a higher priority
+ *
  * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @param    suspend_flag status flag of the thread to be suspended.
  *
  * @return   Return the operation status. When the return value is RT_EOK, the
  *           operation is successful. If the return value is any other values,
@@ -3174,11 +3177,12 @@ RTM_EXPORT(rt_mq_delete);
  * @warning  This function can be called in interrupt context and thread
  * context.
  */
-static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
-                         const void *buffer,
-                         rt_size_t   size,
-                         rt_int32_t  timeout,
-                         int suspend_flag)
+static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
+                                 const void *buffer,
+                                 rt_size_t size,
+                                 rt_int32_t prio,
+                                 rt_int32_t timeout,
+                                 int suspend_flag)
 {
     rt_base_t level;
     struct rt_mq_message *msg;
@@ -3304,6 +3308,33 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+    msg->prio = prio;
+    if (mq->msg_queue_head == RT_NULL)
+        mq->msg_queue_head = msg;
+
+    struct rt_mq_message *node, *prev_node = RT_NULL;
+    for (node = mq->msg_queue_head; node != RT_NULL; node = node->next)
+    {
+        if (node->prio < msg->prio)
+        {
+            if (prev_node == RT_NULL)
+                mq->msg_queue_head = msg;
+            else
+                prev_node->next = msg;
+            msg->next = node;
+            break;
+        }
+        if (node->next == RT_NULL)
+        {
+            if (node != msg)
+                node->next = msg;
+            mq->msg_queue_tail = msg;
+            break;
+        }
+        prev_node = node;
+    }
+#else
     /* link msg to message queue */
     if (mq->msg_queue_tail != RT_NULL)
     {
@@ -3316,6 +3347,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
     /* if the head is empty, set head */
     if (mq->msg_queue_head == RT_NULL)
         mq->msg_queue_head = msg;
+#endif
 
     if(mq->entry < RT_MQ_ENTRY_MAX)
     {
@@ -3352,7 +3384,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
                          rt_size_t   size,
                          rt_int32_t  timeout)
 {
-    return _rt_mq_send_wait(mq, buffer, size, timeout, RT_UNINTERRUPTIBLE);
+    return _rt_mq_send_wait(mq, buffer, size, 0, timeout, RT_UNINTERRUPTIBLE);
 }
 RTM_EXPORT(rt_mq_send_wait);
 
@@ -3361,7 +3393,7 @@ rt_err_t rt_mq_send_wait_interruptible(rt_mq_t     mq,
                          rt_size_t   size,
                          rt_int32_t  timeout)
 {
-    return _rt_mq_send_wait(mq, buffer, size, timeout, RT_INTERRUPTIBLE);
+    return _rt_mq_send_wait(mq, buffer, size, 0, timeout, RT_INTERRUPTIBLE);
 }
 RTM_EXPORT(rt_mq_send_wait_interruptible);
 
@@ -3370,7 +3402,7 @@ rt_err_t rt_mq_send_wait_killable(rt_mq_t     mq,
                          rt_size_t   size,
                          rt_int32_t  timeout)
 {
-    return _rt_mq_send_wait(mq, buffer, size, timeout, RT_KILLABLE);
+    return _rt_mq_send_wait(mq, buffer, size, 0, timeout, RT_KILLABLE);
 }
 RTM_EXPORT(rt_mq_send_wait_killable);
 /**
@@ -3513,7 +3545,6 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 }
 RTM_EXPORT(rt_mq_urgent);
 
-
 /**
  * @brief    This function will receive a message from message queue object,
  *           if there is no message in messagequeue object, the thread shall wait for a specified time.
@@ -3526,10 +3557,14 @@ RTM_EXPORT(rt_mq_urgent);
  *
  * @param    buffer is the content of the message.
  *
+ * @param    prio is message priority, A larger value indicates a higher priority
+ *
  * @param    size is the length of the message(Unit: Byte).
  *
  * @param    timeout is a timeout period (unit: an OS tick). If the message is unavailable, the thread will wait for
  *           the message in the queue up to the amount of time specified by this parameter.
+ *
+ * @param    suspend_flag status flag of the thread to be suspended.
  *
  *           NOTE:
  *           If use Macro RT_WAITING_FOREVER to set this parameter, which means that when the
@@ -3540,11 +3575,12 @@ RTM_EXPORT(rt_mq_urgent);
  * @return   Return the real length of the message. When the return value is larger than zero, the operation is successful.
  *           If the return value is any other values, it means that the mailbox release failed.
  */
-static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
-                    void      *buffer,
-                    rt_size_t  size,
-                    rt_int32_t timeout,
-                    int suspend_flag)
+static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
+                              void *buffer,
+                              rt_size_t size,
+                              rt_int32_t *prio,
+                              rt_int32_t timeout,
+                              int suspend_flag)
 {
     struct rt_thread *thread;
     rt_base_t level;
@@ -3675,6 +3711,10 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t    mq,
     /* copy message */
     rt_memcpy(buffer, GET_MESSAGEBYTE_ADDR(msg), len);
 
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+    if (prio != RT_NULL)
+        *prio = msg->prio;
+#endif
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
     /* put message to free list */
@@ -3709,7 +3749,7 @@ rt_ssize_t rt_mq_recv(rt_mq_t    mq,
                     rt_size_t  size,
                     rt_int32_t timeout)
 {
-    return _rt_mq_recv(mq, buffer, size, timeout, RT_UNINTERRUPTIBLE);
+    return _rt_mq_recv(mq, buffer, size, 0, timeout, RT_UNINTERRUPTIBLE);
 }
 RTM_EXPORT(rt_mq_recv);
 
@@ -3718,7 +3758,7 @@ rt_ssize_t rt_mq_recv_interruptible(rt_mq_t    mq,
                     rt_size_t  size,
                     rt_int32_t timeout)
 {
-    return _rt_mq_recv(mq, buffer, size, timeout, RT_INTERRUPTIBLE);
+    return _rt_mq_recv(mq, buffer, size, 0, timeout, RT_INTERRUPTIBLE);
 }
 RTM_EXPORT(rt_mq_recv_interruptible);
 
@@ -3727,8 +3767,28 @@ rt_ssize_t rt_mq_recv_killable(rt_mq_t    mq,
                     rt_size_t  size,
                     rt_int32_t timeout)
 {
-    return _rt_mq_recv(mq, buffer, size, timeout, RT_KILLABLE);
+    return _rt_mq_recv(mq, buffer, size, 0, timeout, RT_KILLABLE);
 }
+#ifdef RT_USING_MESSAGEQUEUE_PRIORITY
+rt_err_t rt_mq_send_wait_prio(rt_mq_t mq,
+                              const void *buffer,
+                              rt_size_t size,
+                              rt_int32_t prio,
+                              rt_int32_t timeout,
+                              int suspend_flag)
+{
+    return _rt_mq_send_wait(mq, buffer, size, prio, timeout, suspend_flag);
+}
+rt_err_t rt_mq_recv_prio(rt_mq_t mq,
+                         void *buffer,
+                         rt_size_t size,
+                         rt_int32_t *prio,
+                         rt_int32_t timeout,
+                         int suspend_flag)
+{
+    return _rt_mq_recv(mq, buffer, size, prio, timeout, suspend_flag);
+}
+#endif
 RTM_EXPORT(rt_mq_recv_killable);
 /**
  * @brief    This function will set some extra attributions of a messagequeue object.

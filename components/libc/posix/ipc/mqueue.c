@@ -232,7 +232,7 @@ ssize_t mq_receive(mqd_t id, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
         return -1;
     }
 
-    result = rt_mq_recv(mqdes->mq, msg_ptr, msg_len, RT_WAITING_FOREVER);
+    result = rt_mq_recv_prio(mqdes->mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
     if (result >= 0)
         return rt_strlen(msg_ptr);
 
@@ -255,7 +255,7 @@ int mq_send(mqd_t id, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
         return -1;
     }
 
-    result = rt_mq_send(mqdes->mq, (void*)msg_ptr, msg_len);
+    result = rt_mq_send_wait_prio(mqdes->mq, (void *)msg_ptr, msg_len, msg_prio, 0, RT_UNINTERRUPTIBLE);
     if (result == RT_EOK)
         return 0;
 
@@ -287,7 +287,8 @@ ssize_t mq_timedreceive(mqd_t                  id,
     if (abs_timeout != RT_NULL)
         tick = rt_timespec_to_tick(abs_timeout);
 
-    result = rt_mq_recv(mqdes->mq, msg_ptr, msg_len, tick);
+    result = rt_mq_recv_prio(mqdes->mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, tick, RT_UNINTERRUPTIBLE);
+
     if (result >= 0)
         return rt_strlen(msg_ptr);
 
