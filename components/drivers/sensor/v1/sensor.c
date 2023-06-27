@@ -279,7 +279,7 @@ __exit:
     return RT_EOK;
 }
 
-static rt_size_t rt_sensor_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t len)
+static rt_ssize_t rt_sensor_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t len)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
     rt_size_t result = 0;
