@@ -12,7 +12,7 @@
 
 #if defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
 #include <intrinsics.h>
-#endif 
+#endif
 
 /**
  \brief   LDR Exclusive (32 bit)
@@ -31,7 +31,7 @@
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
 _Pragma("inline=forced") __intrinsic rt_atomic_t __LDREXW(volatile rt_atomic_t *ptr)
 {
-    return __LDREX((unsigned long *)ptr);
+    return __LDREX((unsigned int *)ptr);
 }
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
 __attribute__((always_inline))     static inline rt_atomic_t __LDREXW(volatile rt_atomic_t *addr)
@@ -62,7 +62,7 @@ __attribute__((always_inline))     static inline rt_atomic_t __LDREXW(volatile r
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
 _Pragma("inline=forced") __intrinsic rt_atomic_t __STREXW(rt_atomic_t value, volatile rt_atomic_t *ptr)
 {
-    return __STREX(value, (unsigned long *)ptr);
+    return __STREX(value, (unsigned int *)ptr);
 }
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
 __attribute__((always_inline))     static inline rt_atomic_t __STREXW(volatile rt_atomic_t value, volatile rt_atomic_t *addr)
