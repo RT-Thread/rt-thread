@@ -94,7 +94,7 @@ rt_err_t command_send(sdhi_instance_ctrl_t *p_ctrl, struct rt_mmcsd_cmd *cmd)
                 cmd->cmd_code |= SDHI_CMD_DATA_DIR_READ;
             }
         }
-        if (data->blks > 1) 
+        if (data->blks > 1)
         {
             cmd->cmd_code |= SDHI_BLK_TRANSFER;
             cmd->cmd_code |= SDHI_BLK_NOT_AUTO_STOP;
