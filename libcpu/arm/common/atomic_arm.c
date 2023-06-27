@@ -10,6 +10,10 @@
 
 #include <rtthread.h>
 
+#if defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
+#include <intrinsics.h>
+#endif 
+
 /**
  \brief   LDR Exclusive (32 bit)
  \details Executes a exclusive LDR instruction for 32 bit values.
