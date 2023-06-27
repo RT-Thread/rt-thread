@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include "drv_common.h"
+#include <board.h> /* for rt_hw_us_delay */
 
 #define DBG_TAG    "drv.common"
 #define DBG_LVL    DBG_INFO
