@@ -44,6 +44,7 @@
 #define SDHI_CMD_ADTC_EN (1 << 11)
 #define SDHI_CMD_DATA_DIR_READ (1 << 12)
 #define SDHI_BLK_TRANSFER (1 << 13)
+#define SDHI_BLK_NOT_AUTO_STOP (1 << 14)
 
 #define SDIO_MAX_FREQ 25000000
 
