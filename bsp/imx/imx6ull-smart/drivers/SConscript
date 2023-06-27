@@ -1,0 +1,22 @@
+from building import *
+
+cwd  = GetCurrentDir()
+src  = Glob('*.c') + Glob('iomux/*.c')
+
+if GetDepend(['BSP_USING_USB_DEVICE']):
+    src += Glob('usb/device/*.c')
+    src += Glob('usb/phy/*.c')
+
+list = os.listdir(cwd)
+CPPPATH = [cwd]
+objs = []
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+objs = objs + group
+
+Return('objs')
