@@ -96,6 +96,7 @@ static int _dtb_node_get_dtb_nodes_list(struct dtb_node *dtb_node_head, struct d
                 paths_buf.cur += node_name_sz;
                 *paths_buf.cur++ = '/';
                 *paths_buf.cur++ = '\0';
+                dtb_node->level = dtb_node_head->level + 1;
             }
             else
             {
@@ -144,6 +145,7 @@ static int _dtb_node_get_dtb_nodes_list(struct dtb_node *dtb_node_head, struct d
                     return FDT_RET_NO_MEMORY;
                 }
                 dtb_node = dtb_node->sibling;
+                dtb_node->level--;
             }
             else
             {
@@ -235,6 +237,7 @@ struct dtb_node *dtb_node_get_dtb_list(void *fdt)
     dtb_node_head->handle = fdt_get_phandle(fdt, root_off);
     dtb_node_head->properties = (struct dtb_property *)malloc(sizeof(struct dtb_property));
     dtb_node_head->child = (struct dtb_node *)malloc(sizeof(struct dtb_node));
+    dtb_node_head->level = 0;
 
     if (dtb_node_head->properties == NULL || dtb_node_head->child == NULL)
     {
