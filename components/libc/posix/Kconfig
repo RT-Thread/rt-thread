@@ -57,6 +57,7 @@ config RT_USING_POSIX_CLOCK
 
 config RT_USING_POSIX_TIMER
     select RT_USING_TIMER_SOFT
+    select RT_USING_RESOURCE_ID
     bool "Enable timer APIs, timer_create()/timer_gettime() etc"
     default n
 

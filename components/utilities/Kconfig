@@ -221,6 +221,10 @@ config RT_USING_ADT
     default y if ARCH_MM_MMU
     default n
 
+config RT_USING_RESOURCE_ID
+    bool "Enable resource id"
+    default n
+
 source "$RTT_DIR/components/utilities/rt-link/Kconfig"
 
 endmenu
