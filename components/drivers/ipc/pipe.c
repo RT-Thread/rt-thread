@@ -7,6 +7,8 @@
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
  * 2017-11-08     JasonJiaJie  fix memory leak issue when close a pipe.
+ * 2023-06-28     shell        return POLLHUP when writer closed its channel on poll()
+ *                             fix flag test on pipe_fops_open()
  */
 #include <rthw.h>
 #include <rtdevice.h>
@@ -65,12 +67,12 @@ static int pipe_fops_open(struct dfs_file *fd)
 
     rt_mutex_take(&pipe->lock, RT_WAITING_FOREVER);
 
-    if ((fd->flags & O_RDONLY) == O_RDONLY)
+    if ((fd->flags & O_ACCMODE) == O_RDONLY)
     {
         pipe->reader = 1;
     }
 
-    if ((fd->flags & O_WRONLY) == O_WRONLY)
+    if ((fd->flags & O_ACCMODE) == O_WRONLY)
     {
         pipe->writer = 1;
     }
@@ -361,6 +363,10 @@ static int pipe_fops_poll(struct dfs_file *fd, rt_pollreq_t *req)
         if (rt_ringbuffer_data_len(pipe->fifo) != 0)
         {
             mask |= POLLIN;
+        }
+        else if (pipe->writer == 0)
+        {
+            mask = POLLHUP;
         }
     }
 
