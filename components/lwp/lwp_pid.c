@@ -7,6 +7,8 @@
  * Date           Author       Notes
  * 2019-10-16     zhangjun     first version
  * 2021-02-20     lizhirui     fix warning
+ * 2023-06-26     shell        clear ref to parent on waitpid()
+ *                             Remove recycling of lwp on waitpid() and leave it to defunct routine
  */
 
 #include <rthw.h>
@@ -672,6 +674,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
 
     if (ret != -1)
     {
+        /* delete from sibling list of its parent */
         struct rt_lwp **lwp_node;
 
         *status = lwp->lwp_ret;
@@ -682,9 +685,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
             lwp_node = &(*lwp_node)->sibling;
         }
         (*lwp_node) = lwp->sibling;
-
-        lwp_pid_put(pid);
-        rt_free(lwp);
+        lwp->parent = RT_NULL;
     }
 
 quit:
