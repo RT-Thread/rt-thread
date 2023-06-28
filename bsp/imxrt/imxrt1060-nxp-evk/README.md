@@ -158,7 +158,7 @@ The SPI interface provided by the MIMXRT1060-EVK onboard Arduino interface has d
 ![](./figures/11.png)
 
 Solder works must be done before next step:
-![](./figures/18.png)
+![](./figures/18.jpg)
 
 ### 4.1 Configure the onboard SPI peripherals
 
