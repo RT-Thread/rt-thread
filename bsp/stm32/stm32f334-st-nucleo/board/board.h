@@ -20,12 +20,13 @@
 extern "C" {
 #endif
 
-#define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
-#define STM32_FLASH_SIZE             (64 * 1024)
-#define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
+#define STM32_FLASH_START_ADRESS        ((uint32_t)0x08000000)
+#define STM32_FLASH_SIZE                (64 * 1024)
+#define STM32_FLASH_END_ADDRESS         ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-#define STM32_SRAM_SIZE           12
-#define STM32_SRAM_END            (0x20000000 + STM32_SRAM_SIZE * 1024)
+#define STM32_SRAM_START_ADDRESS        ((uint32_t)0x20000000)
+#define STM32_SRAM_SIZE                 (12 * 1024)
+#define STM32_SRAM_END_ADDRESS          ((uint32_t)(STM32_SRAM_START_ADDRESS + STM32_SRAM_SIZE))
 
 #if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -38,7 +39,11 @@ extern int __bss_end;
 #define HEAP_BEGIN      (&__bss_end)
 #endif
 
-#define HEAP_END        STM32_SRAM_END
+#define HEAP_END        STM32_SRAM_END_ADDRESS
+
+#ifdef RT_USING_MEM_PROTECTION
+#define NUM_STATIC_REGIONS 2
+#endif
 
 void SystemClock_Config(void);
 

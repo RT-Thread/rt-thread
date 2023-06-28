@@ -98,6 +98,10 @@ rt_uint8_t *rt_hw_stack_init(void       *entry,
                              rt_uint8_t *stack_addr,
                              void       *exit);
 
+#ifdef RT_USING_HW_STACK_GUARD
+void rt_hw_stack_guard_init(rt_thread_t thread);
+#endif
+
 /*
  * Interrupt handler definition
  */

@@ -187,6 +187,11 @@ rt_weak void rt_hw_board_init(void)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
+#if defined(CONFIG_RT_USING_MEM_PROTECTION)
+    extern rt_mem_region_t static_regions[NUM_STATIC_REGIONS];
+    rt_mem_protection_init(static_regions, NUM_STATIC_REGIONS);
+#endif
+
     /* Pin driver initialization is open by default */
 #ifdef RT_USING_PIN
     rt_hw_pin_init();

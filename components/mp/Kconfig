@@ -1,0 +1,12 @@
+menu "Memory protection"
+
+config RT_USING_MEM_PROTECTION
+    bool "Enable memory protection"
+    default n
+
+config RT_USING_HW_STACK_GUARD
+    bool "Enable hardware stack guard"
+    default n
+    select RT_USING_MEM_PROTECTION
+
+endmenu
