@@ -70,6 +70,7 @@ struct dtb_node
     };
     const char *path;
     phandle handle;
+    int level;
 
     struct dtb_property *properties;
     struct dtb_node *parent;
@@ -287,6 +288,9 @@ const uint32_t *dtb_node_get_address(const struct dtb_node *dev, int index,
 
 #define for_each_of_allnodes_from(from, dn) \
     for (dn = dtb_node_find_all_nodes(from); dn; dn = dtb_node_find_all_nodes(dn))
+
+#define for_each_of_all_child_nodes_from(from, dn) \
+    for (dn = dtb_node_find_all_nodes(from); dn && (dn->level > from->level); dn = dtb_node_find_all_nodes(dn))
 
 #define for_each_of_allnodes(dn) for_each_of_allnodes_from(NULL, dn)
 

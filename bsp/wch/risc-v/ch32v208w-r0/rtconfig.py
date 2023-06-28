@@ -17,7 +17,7 @@ else:
 	
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
-    
+
 BUILD = 'debug'
 #BUILD = 'release'
 
@@ -56,6 +56,8 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -g3'
     else:
         CFLAGS += ' -O2'
+
+    CXXFLAGS = CFLAGS
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + TARGET_NAME + '\n'
     POST_ACTION += SIZE + ' $TARGET\n'

@@ -15,6 +15,9 @@ MCUX_Config/dcd.c
 if GetDepend(['BSP_USING_TOUCHPAD']):
     src += ['ports/touchpad.c']
 
+if GetDepend(['PKG_USING_RW007']):
+    src += ['ports/rw007_port.c']
+
 CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
 
 # CPPDEFINES = ['CPU_MIMXRT1062DVL6A', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1',

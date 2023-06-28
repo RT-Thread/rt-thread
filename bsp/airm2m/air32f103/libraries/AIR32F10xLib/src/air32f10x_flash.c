@@ -296,7 +296,7 @@ void FLASH_Unlock(void)
   FLASH->KEYR = FLASH_KEY1;
   FLASH->KEYR = FLASH_KEY2;
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   /* Authorize the FPEC of Bank2 Access */
   FLASH->KEYR2 = FLASH_KEY1;
   FLASH->KEYR2 = FLASH_KEY2;
@@ -318,7 +318,7 @@ void FLASH_UnlockBank1(void)
   FLASH->KEYR = FLASH_KEY2;
 }
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
 /**
   * @brief  Unlocks the FLASH Bank2 Program Erase Controller.
   * @note   This function can be used only for AIR32F10X_XL density devices.
@@ -348,7 +348,7 @@ void FLASH_Lock(void)
   /* Set the Lock Bit to lock the FPEC and the CR of  Bank1 */
   FLASH->CR |= CR_LOCK_Set;
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   /* Set the Lock Bit to lock the FPEC and the CR of  Bank2 */
   FLASH->CR2 |= CR_LOCK_Set;
 #endif /* AIR32F10X_XL */
@@ -369,7 +369,7 @@ void FLASH_LockBank1(void)
   FLASH->CR |= CR_LOCK_Set;
 }
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
 /**
   * @brief  Locks the FLASH Bank2 Program Erase Controller.
   * @note   This function can be used only for AIR32F10X_XL density devices.
@@ -396,7 +396,7 @@ FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
   /* Check the parameters */
   assert_param(IS_FLASH_ADDRESS(Page_Address));
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   if(Page_Address < FLASH_BANK1_END_ADDRESS)
   {
     /* Wait for last operation to be completed */
@@ -467,7 +467,7 @@ FLASH_Status FLASH_EraseAllPages(void)
 {
   FLASH_Status status = FLASH_COMPLETE;
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastBank1Operation(EraseTimeout);
 
@@ -548,7 +548,7 @@ FLASH_Status FLASH_EraseAllBank1Pages(void)
   return status;
 }
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
 /**
   * @brief  Erases all Bank2 FLASH pages.
   * @note   This function can be used only for AIR32F103_XL density devices.
@@ -754,7 +754,7 @@ FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
   /* Check the parameters */
   assert_param(IS_FLASH_ADDRESS(Address));
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   if(Address < FLASH_BANK1_END_ADDRESS - 2)
   {
     /* Wait for last operation to be completed */
@@ -929,7 +929,7 @@ FLASH_Status FLASH_ProgramHalfWord(uint32_t Address, uint16_t Data)
   /* Check the parameters */
   assert_param(IS_FLASH_ADDRESS(Address));
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(ProgramTimeout);
 
@@ -1222,7 +1222,7 @@ FLASH_Status FLASH_UserOptionByteConfig(uint16_t OB_IWDG, uint16_t OB_STOP, uint
   return status;
 }
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
 /**
   * @brief  Configures to boot from Bank1 or Bank2.
   * @note   This function can be used only for AIR32F103_XL density devices.
@@ -1361,7 +1361,7 @@ FlagStatus FLASH_GetPrefetchBufferStatus(void)
   */
 void FLASH_ITConfig(uint32_t FLASH_IT, FunctionalState NewState)
 {
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   /* Check the parameters */
   assert_param(IS_FLASH_IT(FLASH_IT));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
@@ -1430,7 +1430,7 @@ FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
 {
   FlagStatus bitstatus = RESET;
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   /* Check the parameters */
   assert_param(IS_FLASH_GET_FLAG(FLASH_FLAG)) ;
   if(FLASH_FLAG == FLASH_FLAG_OPTERR)
@@ -1514,7 +1514,7 @@ FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
   */
 void FLASH_ClearFlag(uint32_t FLASH_FLAG)
 {
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
   /* Check the parameters */
   assert_param(IS_FLASH_CLEAR_FLAG(FLASH_FLAG)) ;
 
@@ -1614,7 +1614,7 @@ FLASH_Status FLASH_GetBank1Status(void)
   return flashstatus;
 }
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
 /**
   * @brief  Returns the FLASH Bank2 Status.
   * @note   This function can be used for AIR32F103_XL density devices.
@@ -1712,7 +1712,7 @@ FLASH_Status FLASH_WaitForLastBank1Operation(uint32_t Timeout)
   return status;
 }
 
-#ifdef AIR32F10X_XL
+#if defined(AIR32F10X_XL) || defined(AIR32F10X_MD_1024K)
 /**
   * @brief  Waits for a Flash operation on Bank2 to complete or a TIMEOUT to occur.
   * @note   This function can be used only for AIR32F103_XL density devices.

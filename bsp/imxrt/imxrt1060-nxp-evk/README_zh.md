@@ -178,6 +178,9 @@ MIMXRT1060-EVK板载arduino接口提供的SPI接口与SD卡的SDIO接口使用�
 
 ![](./figures/11.png)
 
+修改图示跳线：
+![](./figures/18.png)
+
 ### 4.1 配置板载SPI外设
 
 RW007可采用SPI接口通讯，MIMXRT1060-EVK支持SPI驱动，默认采用轮询的方式与RW007通讯(暂不支持中断与DMA模式与RW007通讯)，使用RT-Studio配置SPI的具体配置如下:
@@ -196,32 +199,9 @@ RW007可采用SPI接口通讯，MIMXRT1060-EVK支持SPI驱动，默认采用轮�
 
 ### 4.4 修改RW007示例
 
-由于RW007软件包的默认示例是基于STM32的示例，所以在RT1060-EVK上需进行少量的修改，修改RW007软件包中的example文件夹中的rw007_stm32_port.c文件。
+RW007已经为IMXRT1062平台做了单独适配，文件目录在：`board/ports/rw007_port.c` 工程会自动加入此文件，因此无需修改即可简单适配。
 
-修改`int wifi_spi_device_init(void)`函数，使用下述给出的代码替换原有的示例：
-
-```c
-int wifi_spi_device_init(void)
-{
-    char sn_version[32];
-    
-    rw007_gpio_init();
-    rt_hw_spi_device_attach(RW007_SPI_BUS_NAME, "wspi", RW007_CS_PIN);
-    rt_hw_wifi_init("wspi");
-
-    rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION);
-    rt_wlan_set_mode(RT_WLAN_DEVICE_AP_NAME, RT_WLAN_AP);
-
-    rw007_sn_get(sn_version);
-    rt_kprintf("\nrw007  sn: [%s]\n", sn_version);
-    rw007_version_get(sn_version);
-    rt_kprintf("rw007 ver: [%s]\n\n", sn_version);
-
-    return 0;
-}
-```
-
-### 4.5 修改完成后，编译工程，烧录固件。
+### 4.5 编译工程，烧录固件。
 
 ![](./figures/13.png)
 
