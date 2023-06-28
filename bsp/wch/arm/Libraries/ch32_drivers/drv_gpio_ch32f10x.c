@@ -441,16 +441,16 @@ rt_base_t ch32f1_pin_get(const char *name)
 
     sz = rt_strlen(name);
 
+    portsource = name[1] - 0x41;
+
     if (sz == 4)
     {
-        portsource = name[1] - 0x41;
         pinsource = name[3] - 0x30;
         return pin_info_list_find_pin(portsource, pinsource);
     }
 
     if (sz == 5)
     {
-        portsource = name[1];
         pinsource = (name[3] - 0x30) * 10 + (name[4] - 0x30);
         return pin_info_list_find_pin(portsource, pinsource);
     }
