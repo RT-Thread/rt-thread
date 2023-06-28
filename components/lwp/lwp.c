@@ -10,6 +10,7 @@
  * 2021-02-03     lizhirui     add 64-bit arch support and riscv64 arch support
  * 2021-08-26     linzhenxing  add lwp_setcwd\lwp_getcwd
  * 2023-02-20     wangxiaoyao  inv icache before new app startup
+ * 2023-02-20     wangxiaoyao  fix bug on foreground app switch
  */
 
 #include <rthw.h>
@@ -1250,15 +1251,19 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
                     struct rt_lwp *old_lwp;
                     tty = (struct tty_struct *)console_tty_get();
                     old_lwp = tty->foreground;
-                    rt_mutex_take(&tty->lock, RT_WAITING_FOREVER);
-                    ret = tty_push(&tty->head, old_lwp);
-                    rt_mutex_release(&tty->lock);
-                    if (ret < 0)
+                    if (old_lwp)
                     {
-                        lwp_tid_put(tid);
-                        lwp_ref_dec(lwp);
-                        LOG_E("malloc fail!\n");
-                        return -ENOMEM;
+                        rt_mutex_take(&tty->lock, RT_WAITING_FOREVER);
+                        ret = tty_push(&tty->head, old_lwp);
+                        rt_mutex_release(&tty->lock);
+
+                        if (ret < 0)
+                        {
+                            lwp_tid_put(tid);
+                            lwp_ref_dec(lwp);
+                            LOG_E("malloc fail!\n");
+                            return -ENOMEM;
+                        }
                     }
 
                     lwp->tty = tty;
