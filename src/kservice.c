@@ -29,6 +29,14 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#define DBG_TAG           "kernel.device"
+#ifdef RT_DEBUG_DEVICE
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_DEVICE) */
+#include <rtdbg.h>
+
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
@@ -58,8 +66,8 @@ static rt_device_t _console_device = RT_NULL;
 rt_weak void rt_hw_us_delay(rt_uint32_t us)
 {
     (void) us;
-    RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
-        "Please consider implementing rt_hw_us_delay() in another file.\n"));
+    LOG_D("rt_hw_us_delay() doesn't support for this board."
+        "Please consider implementing rt_hw_us_delay() in another file.");
 }
 
 rt_weak const char *rt_hw_cpu_arch(void)

@@ -14,6 +14,10 @@
 
 #ifdef RT_USBH_ADK
 
+#define DBG_TAG           "usbhost.adk"
+#define DBG_LVL           DBG_INFO
+#include <rtdbg.h>
+
 static struct uclass_driver adk_driver;
 static const char* _adk_manufacturer = RT_NULL;
 static const char* _adk_model = RT_NULL;
@@ -231,7 +235,7 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
         return -RT_EIO;
     }
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_adk_run\n"));
+    LOG_D("rt_usbh_adk_run");
 
     dev_desc = &intf->device->dev_desc;
     if(dev_desc->idVendor == USB_ACCESSORY_VENDOR_ID &&
@@ -240,11 +244,11 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
     {
         if(intf->intf_desc->bInterfaceSubClass != 0xFF) return -RT_ERROR;
 
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("found android accessory device\n"));
+        LOG_D("found android accessory device");
     }
     else
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("switch device\n"));
+        LOG_D("switch device");
 
         if((ret = rt_usbh_adk_get_protocol(intf, &protocol)) != RT_EOK)
         {
@@ -271,12 +275,12 @@ static rt_err_t rt_usbh_adk_enable(void* arg)
         rt_usbh_adk_send_string(intf,
             ACCESSORY_STRING_SERIAL, _adk_serial);
 
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("manufacturer %s\n", _adk_manufacturer));
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("model %s\n", _adk_model));
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("description %s\n", _adk_description));
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("version %s\n", _adk_version));
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("uri %s\n", _adk_uri));
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("serial %s\n", _adk_serial));
+        LOG_D("manufacturer %s", _adk_manufacturer);
+        LOG_D("model %s", _adk_model);
+        LOG_D("description %s", _adk_description);
+        LOG_D("version %s", _adk_version);
+        LOG_D("uri %s", _adk_uri);
+        LOG_D("serial %s", _adk_serial);
 
         if((ret = rt_usbh_adk_start(intf)) != RT_EOK)
         {
@@ -372,7 +376,7 @@ static rt_err_t rt_usbh_adk_disable(void* arg)
 
     RT_ASSERT(intf != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_adk_stop\n"));
+    LOG_D("rt_usbh_adk_stop");
 
     adk = (uadk_t)intf->user_data;
     if(adk == RT_NULL)

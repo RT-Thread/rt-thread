@@ -17,6 +17,10 @@
 #include "drivers/usb_common.h"
 #include "drivers/usb_device.h"
 
+#define DBG_TAG           "usbdevice.core"
+#define DBG_LVL           DBG_INFO
+#include <rtdbg.h>
+
 static rt_list_t device_list;
 
 static rt_ssize_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
@@ -40,7 +44,7 @@ static rt_err_t _get_device_descriptor(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_device_descriptor\n"));
+    LOG_D("_get_device_descriptor");
 
     /* device descriptor wLength should less than USB_DESC_LENGTH_DEVICE*/
     size = (setup->wLength > USB_DESC_LENGTH_DEVICE) ?
@@ -69,7 +73,7 @@ static rt_err_t _get_config_descriptor(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_config_descriptor\n"));
+    LOG_D("_get_config_descriptor");
 
     cfg_desc = &device->curr_cfg->cfg_desc;
     size = (setup->wLength > cfg_desc->wTotalLength) ?
@@ -99,7 +103,7 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_string_descriptor\n"));
+    LOG_D("_get_string_descriptor");
 
     str_desc.type = USB_DESC_TYPE_STRING;
     index = setup->wValue & 0xFF;
@@ -152,7 +156,7 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
 
 static rt_err_t _get_qualifier_descriptor(struct udevice* device, ureq_t setup)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_qualifier_descriptor\n"));
+    LOG_D("_get_qualifier_descriptor");
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -249,7 +253,7 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_interface\n"));
+    LOG_D("_get_interface");
 
     if (device->state != USB_STATE_CONFIGURED)
     {
@@ -292,7 +296,7 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_set_interface\n"));
+    LOG_D("_set_interface");
 
     if (device->state != USB_STATE_CONFIGURED)
     {
@@ -341,7 +345,7 @@ static rt_err_t _get_config(struct udevice* device, ureq_t setup)
     RT_ASSERT(setup != RT_NULL);
     RT_ASSERT(device->curr_cfg != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_get_config\n"));
+    LOG_D("_get_config");
 
     if (device->state == USB_STATE_CONFIGURED)
     {
@@ -378,7 +382,7 @@ static rt_err_t _set_config(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_set_config\n"));
+    LOG_D("_set_config");
 
     if (setup->wValue > device->dev_desc.bNumConfigurations)
     {
@@ -388,7 +392,7 @@ static rt_err_t _set_config(struct udevice* device, ureq_t setup)
 
     if (setup->wValue == 0)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("address state\n"));
+        LOG_D("address state");
         device->state = USB_STATE_ADDRESS;
 
         goto _exit;
@@ -448,7 +452,7 @@ static rt_err_t _set_address(struct udevice* device, ureq_t setup)
     /* issue status stage */
     dcd_ep0_send_status(device->dcd);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_set_address\n"));
+    LOG_D("_set_address");
 
     device->state = USB_STATE_ADDRESS;
 
@@ -474,7 +478,7 @@ static rt_err_t _request_interface(struct udevice* device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_request_interface\n"));
+    LOG_D("_request_interface");
 
     intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, &func);
     if (intf != RT_NULL)
@@ -593,7 +597,7 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
                 {
                     req = (uio_request_t)rt_list_entry(node, struct uio_request, list);
                     rt_usbd_io_request(device, ep, req);
-                    RT_DEBUG_LOG(RT_DEBUG_USB, ("fired a request\n"));
+                    LOG_D("fired a request");
                 }
 
                 rt_list_init(&ep->request_list);
@@ -739,14 +743,14 @@ static rt_err_t _vendor_request(udevice_t device, ureq_t setup)
 }
 static rt_err_t _dump_setup_packet(ureq_t setup)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("[\n"));
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("  setup_request : 0x%x\n",
-                                setup->request_type));
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("  value         : 0x%x\n", setup->wValue));
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("  length        : 0x%x\n", setup->wLength));
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("  index         : 0x%x\n", setup->wIndex));
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("  request       : 0x%x\n", setup->bRequest));
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("]\n"));
+    LOG_D("[");
+    LOG_D("  setup_request : 0x%x",
+                                setup->request_type);
+    LOG_D("  value         : 0x%x", setup->wValue);
+    LOG_D("  length        : 0x%x", setup->wLength);
+    LOG_D("  index         : 0x%x", setup->wIndex);
+    LOG_D("  request       : 0x%x", setup->bRequest);
+    LOG_D("]");
 
     return RT_EOK;
 }
@@ -1010,7 +1014,7 @@ udevice_t rt_usbd_device_new(void)
 {
     udevice_t udevice;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_device_new\n"));
+    LOG_D("rt_usbd_device_new");
 
     /* allocate memory for the object */
     udevice = (udevice_t)rt_malloc(sizeof(struct udevice));
@@ -1146,7 +1150,7 @@ uconfig_t rt_usbd_config_new(void)
 {
     uconfig_t cfg;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_config_new\n"));
+    LOG_D("rt_usbd_config_new");
 
     /* allocate memory for the object */
     cfg = (uconfig_t)rt_malloc(sizeof(struct uconfig));
@@ -1182,7 +1186,7 @@ uintf_t rt_usbd_interface_new(udevice_t device, uintf_handler_t handler)
 {
     uintf_t intf;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_interface_new\n"));
+    LOG_D("rt_usbd_interface_new");
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -1217,7 +1221,7 @@ ualtsetting_t rt_usbd_altsetting_new(rt_size_t desc_size)
 {
     ualtsetting_t setting;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_altsetting_new\n"));
+    LOG_D("rt_usbd_altsetting_new");
 
     /* parameter check */
     RT_ASSERT(desc_size > 0);
@@ -1281,7 +1285,7 @@ ufunction_t rt_usbd_function_new(udevice_t device, udev_desc_t dev_desc,
 {
     ufunction_t func;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_function_new\n"));
+    LOG_D("rt_usbd_function_new");
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -1317,7 +1321,7 @@ uep_t rt_usbd_endpoint_new(uep_desc_t ep_desc, udep_handler_t handler)
 {
     uep_t ep;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_endpoint_new\n"));
+    LOG_D("rt_usbd_endpoint_new");
 
     /* parameter check */
     RT_ASSERT(ep_desc != RT_NULL);
@@ -1377,7 +1381,7 @@ uconfig_t rt_usbd_find_config(udevice_t device, rt_uint8_t value)
     struct rt_list_node* node;
     uconfig_t cfg = RT_NULL;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_find_config\n"));
+    LOG_D("rt_usbd_find_config");
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -1411,7 +1415,7 @@ uintf_t rt_usbd_find_interface(udevice_t device, rt_uint8_t value, ufunction_t *
     ufunction_t func;
     uintf_t intf;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_find_interface\n"));
+    LOG_D("rt_usbd_find_interface");
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -1451,7 +1455,7 @@ ualtsetting_t rt_usbd_find_altsetting(uintf_t intf, rt_uint8_t value)
     struct rt_list_node *i;
     ualtsetting_t setting;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_find_altsetting\n"));
+    LOG_D("rt_usbd_find_altsetting");
 
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -1534,7 +1538,7 @@ rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
     ualtsetting_t altsetting;
     uep_t ep;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_device_add_config\n"));
+    LOG_D("rt_usbd_device_add_config");
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -1592,7 +1596,7 @@ rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
  */
 rt_err_t rt_usbd_config_add_function(uconfig_t cfg, ufunction_t func)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_config_add_function\n"));
+    LOG_D("rt_usbd_config_add_function");
 
     /* parameter check */
     RT_ASSERT(cfg != RT_NULL);
@@ -1615,7 +1619,7 @@ rt_err_t rt_usbd_config_add_function(uconfig_t cfg, ufunction_t func)
 rt_err_t rt_usbd_function_add_interface(ufunction_t func, uintf_t intf)
 {
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_function_add_interface\n"));
+    LOG_D("rt_usbd_function_add_interface");
 
     /* parameter check */
     RT_ASSERT(func != RT_NULL);
@@ -1637,7 +1641,7 @@ rt_err_t rt_usbd_function_add_interface(ufunction_t func, uintf_t intf)
  */
 rt_err_t rt_usbd_interface_add_altsetting(uintf_t intf, ualtsetting_t setting)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_interface_add_altsetting\n"));
+    LOG_D("rt_usbd_interface_add_altsetting");
 
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -1661,7 +1665,7 @@ rt_err_t rt_usbd_interface_add_altsetting(uintf_t intf, ualtsetting_t setting)
  */
 rt_err_t rt_usbd_altsetting_add_endpoint(ualtsetting_t setting, uep_t ep)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_altsetting_add_endpoint\n"));
+    LOG_D("rt_usbd_altsetting_add_endpoint");
 
     /* parameter check */
     RT_ASSERT(setting != RT_NULL);
@@ -1694,7 +1698,7 @@ rt_err_t rt_usbd_set_altsetting(uintf_t intf, rt_uint8_t value)
 {
     ualtsetting_t setting;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_set_altsetting\n"));
+    LOG_D("rt_usbd_set_altsetting");
 
     /* parameter check */
     RT_ASSERT(intf != RT_NULL);
@@ -1720,7 +1724,7 @@ rt_err_t rt_usbd_set_config(udevice_t device, rt_uint8_t value)
 {
     uconfig_t cfg;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_set_config\n"));
+    LOG_D("rt_usbd_set_config");
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -1774,7 +1778,7 @@ rt_size_t rt_usbd_io_request(udevice_t device, uep_t ep, uio_request_t req)
     else
     {
         rt_list_insert_before(&ep->request_list, &req->list);
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("suspend a request\n"));
+        LOG_D("suspend a request");
     }
 
     return size;
@@ -1794,11 +1798,11 @@ rt_err_t rt_usbd_set_feature(udevice_t device, rt_uint16_t value, rt_uint16_t in
 
     if (value == USB_FEATURE_DEV_REMOTE_WAKEUP)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("set feature remote wakeup\n"));
+        LOG_D("set feature remote wakeup");
     }
     else if (value == USB_FEATURE_ENDPOINT_HALT)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("set feature stall\n"));
+        LOG_D("set feature stall");
         dcd_ep_set_stall(device->dcd, (rt_uint32_t)(index & 0xFF));
     }
 
@@ -1819,11 +1823,11 @@ rt_err_t rt_usbd_clear_feature(udevice_t device, rt_uint16_t value, rt_uint16_t 
 
     if (value == USB_FEATURE_DEV_REMOTE_WAKEUP)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("clear feature remote wakeup\n"));
+        LOG_D("clear feature remote wakeup");
     }
     else if (value == USB_FEATURE_ENDPOINT_HALT)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("clear feature stall\n"));
+        LOG_D("clear feature stall");
         dcd_ep_clear_stall(device->dcd, (rt_uint32_t)(index & 0xFF));
     }
 
@@ -1897,7 +1901,7 @@ static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep)
             ep->id = &device->dcd->ep_pool[i];
             device->dcd->ep_pool[i].status = ID_ASSIGNED;
 
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("assigned %d\n", device->dcd->ep_pool[i].addr));
+            LOG_D("assigned %d", device->dcd->ep_pool[i].addr);
             return RT_EOK;
         }
 
@@ -2170,7 +2174,7 @@ static void rt_usbd_thread_entry(void* parameter)
             continue;
         }
 
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("message type %d\n", msg.type));
+        LOG_D("message type %d", msg.type);
 
         switch (msg.type)
         {
@@ -2189,7 +2193,7 @@ static void rt_usbd_thread_entry(void* parameter)
             _ep0_out_notify(device, &msg.content.ep_msg);
             break;
         case USB_MSG_RESET:
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("reset %d\n", device->state));
+            LOG_D("reset %d", device->state);
             if (device->state == USB_STATE_ADDRESS || device->state == USB_STATE_CONFIGURED)
                 _stop_notify(device);
             device->state = USB_STATE_NOTATTACHED;
