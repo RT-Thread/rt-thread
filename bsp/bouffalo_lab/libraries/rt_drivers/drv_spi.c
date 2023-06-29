@@ -554,6 +554,12 @@ int rt_hw_spi_init(void)
     dev_spi.dma_rx = bflb_device_get_by_name(BSP_SPI_RX_DMA_CHANNEL);
 #endif
 
+#else
+    bflb_gpio_init(gpio, SPI_SCK_PIN, GPIO_FUNC_SPI1 | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
+    bflb_gpio_init(gpio, SPI_MISO_PIN, GPIO_FUNC_SPI1 | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
+    bflb_gpio_init(gpio, SPI_MOSI_PIN, GPIO_FUNC_SPI1 | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
+
+    dev_spi.spi = bflb_device_get_by_name("spi1");
 #endif /* BL808_CORE_D0 */
 
     dev_spi.spi_bus.parent.user_data = (void *)&dev_spi;

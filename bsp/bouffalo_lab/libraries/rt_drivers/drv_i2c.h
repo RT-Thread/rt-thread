@@ -358,7 +358,7 @@
 #define I2C3_GPIO_SCL       GPIO_PIN_44
 #endif
 
-#ifdef I2C3_SDA_USING_GPIO26
+#ifdef I2C3_SDA_USING_GPIO1
 #define I2C3_GPIO_SDA       GPIO_PIN_1
 #elif defined(I2C3_SDA_USING_GPIO3)
 #define I2C3_GPIO_SDA       GPIO_PIN_3
