@@ -38,6 +38,14 @@
 #include <rtthread.h>
 #include <stddef.h>
 
+#define DBG_TAG           "kernel.thread"
+#ifdef RT_DEBUG_THREAD
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_THREAD) */
+#include <rtdbg.h>
+
 #ifndef __on_rt_thread_inited_hook
     #define __on_rt_thread_inited_hook(thread)      __ON_HOOK_ARGS(rt_thread_inited_hook, (thread))
 #endif
@@ -385,8 +393,8 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     thread->number_mask = 1L << thread->current_priority;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
-    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("startup a thread:%s with priority:%d\n",
-                                   thread->parent.name, thread->current_priority));
+    LOG_D("startup a thread:%s with priority:%d",
+          thread->parent.name, thread->current_priority);
     /* change thread stat */
     thread->stat = RT_THREAD_SUSPEND;
     /* then resume it */
@@ -983,12 +991,12 @@ rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(thread == rt_thread_self());
 
-    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend:  %s\n", thread->parent.name));
+    LOG_D("thread suspend:  %s", thread->parent.name);
 
     stat = thread->stat & RT_THREAD_STAT_MASK;
     if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
-        RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread suspend: thread disorder, 0x%2x\n", thread->stat));
+        LOG_D("thread suspend: thread disorder, 0x%2x", thread->stat);
         return -RT_ERROR;
     }
 
@@ -1046,12 +1054,12 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->parent.name));
+    LOG_D("thread resume:  %s", thread->parent.name);
 
     if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
     {
-        RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume: thread disorder, %d\n",
-                                       thread->stat));
+        LOG_D("thread resume: thread disorder, %d",
+              thread->stat);
 
         return -RT_ERROR;
     }

@@ -14,7 +14,7 @@
 #include "mass.h"
 
 #define DBG_TAG    "usbhost.udisk"
-#define DBG_LVL    DBG_INFO
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 #ifdef RT_USBH_MSTORAGE
@@ -281,8 +281,8 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
     stor->capicity[1] = uswap_32(stor->capicity[1]);
     stor->capicity[0] += 1;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("capicity %d, block size %d\n",
-        stor->capicity[0], stor->capicity[1]));
+    LOG_D("capicity %d, block size %d",
+        stor->capicity[0], stor->capicity[1]);
 
     /* get the first sector to read partition table */
     sector = (rt_uint8_t*) rt_malloc (SECTOR_SIZE);
@@ -294,7 +294,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
 
     rt_memset(sector, 0, SECTOR_SIZE);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("read partition table\n"));
+    LOG_D("read partition table");
 
     /* get the partition table */
     ret = rt_usbh_storage_read10(intf, sector, 0, 1, USB_TIMEOUT_LONG);
@@ -306,7 +306,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
         return -RT_ERROR;
     }
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("finished reading partition\n"));
+    LOG_D("finished reading partition");
 
     for(i=0; i<MAX_PARTITION_COUNT; i++)
     {
@@ -346,11 +346,11 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
             if (dfs_mount(stor->dev[i].parent.name, UDISK_MOUNTPOINT, "elm",
                 0, 0) == 0)
             {
-                RT_DEBUG_LOG(RT_DEBUG_USB, ("udisk part %d mount successfully\n", i));
+                LOG_D("udisk part %d mount successfully", i);
             }
             else
             {
-                RT_DEBUG_LOG(RT_DEBUG_USB, ("udisk part %d mount failed\n", i));
+                LOG_D("udisk part %d mount failed", i);
             }
         }
         else
