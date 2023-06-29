@@ -303,7 +303,7 @@ config RT_USING_SPI
             bool "Using Serial Flash Universal Driver"
             default n
             help
-                An using JEDEC's SFDP standard serial (SPI) flash universal driver library
+                "An using JEDEC's SFDP standard serial (SPI) flash universal driver library"
 
             if RT_USING_SFUD
                 config RT_SFUD_USING_SFDP
@@ -368,12 +368,19 @@ config RT_USING_SENSOR
     bool "Using Sensor device drivers"
     select RT_USING_PIN
     default n
+    if RT_USING_SENSOR
+        choice
+            prompt "Enable Sensor Framework"
+            default RT_USING_SENSOR_V1
+
+            config RT_USING_SENSOR_V1
+                bool " v1"
+            config RT_USING_SENSOR_V2
+                bool " v2"
+        endchoice
+    endif
 
 if RT_USING_SENSOR
-    config RT_USING_SENSOR_V2
-        bool "Enable Sensor Framework v2"
-        default n
-
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
         select PKG_USING_RT_VSNPRINTF_FULL if RT_USING_SENSOR_V2
