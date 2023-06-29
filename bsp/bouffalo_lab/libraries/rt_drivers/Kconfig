@@ -1111,6 +1111,7 @@ menu "General Drivers Configuration"
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         select RT_USING_SPI
+        select RT_USING_PIN
         default n
 
         if BSP_USING_SPI

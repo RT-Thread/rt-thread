@@ -89,4 +89,375 @@ menu "General Drivers Configuration"
                     bool "GPIO_45"
             endchoice
         endif        
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_I2C
+            config BSP_USING_HW_I2C
+                bool "Enable Hardware I2C BUS"
+                default n
+            if BSP_USING_HW_I2C
+                menuconfig BSP_USING_I2C2
+                    bool "Enable I2C2 (hardware)"
+                    default n
+                    if BSP_USING_I2C2
+                        choice 
+                            prompt "I2C2 SCL"
+                            default I2C2_SCL_USING_GPIO14
+
+                            config I2C2_SCL_USING_GPIO0
+                                bool "GPIO_0"
+                            config I2C2_SCL_USING_GPIO2
+                                bool "GPIO_2"
+                            config I2C2_SCL_USING_GPIO4
+                                bool "GPIO_4"
+                            config I2C2_SCL_USING_GPIO6
+                                bool "GPIO_6"
+                            config I2C2_SCL_USING_GPIO8
+                                bool "GPIO_8"
+                            config I2C2_SCL_USING_GPIO10
+                                bool "GPIO_10"
+                            config I2C2_SCL_USING_GPIO12
+                                bool "GPIO_12"
+                            config I2C2_SCL_USING_GPIO14
+                                bool "GPIO_14"
+                            config I2C2_SCL_USING_GPIO16
+                                bool "GPIO_16"
+                            config I2C2_SCL_USING_GPIO18
+                                bool "GPIO_18"
+                            config I2C2_SCL_USING_GPIO20
+                                bool "GPIO_20"
+                            config I2C2_SCL_USING_GPIO22
+                                bool "GPIO_22"
+                            config I2C2_SCL_USING_GPIO24
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_8"
+                            config I2C2_SCL_USING_GPIO26
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_26"
+                            config I2C2_SCL_USING_GPIO28
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_28"
+                            config I2C2_SCL_USING_GPIO30
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_30"
+                            config I2C2_SCL_USING_GPIO32
+                                depends on BSP_USING_BL61X || BSP_USING_BL808
+                                bool "GPIO_32"
+                            config I2C2_SCL_USING_GPIO34
+                                depends on BSP_USING_BL61X || BSP_USING_BL808
+                                bool "GPIO_34"
+                            config I2C2_SDA_USING_GPIO36
+                                depends on BSP_USING_BL808
+                                bool "GPIO_36"
+                            config I2C2_SDA_USING_GPIO38
+                                depends on BSP_USING_BL808
+                                bool "GPIO_38"
+                            config I2C2_SDA_USING_GPIO40
+                                depends on BSP_USING_BL808
+                                bool "GPIO_40"
+                            config I2C3_SDA_USING_GPIO42
+                                depends on BSP_USING_BL808
+                                bool "GPIO_42"
+                            config I2C2_SDA_USING_GPIO44
+                                depends on BSP_USING_BL808
+                                bool "GPIO_44"
+                        endchoice
+
+                        choice
+                            prompt "I2C2 SDA"
+                            default I2C2_SDA_USING_GPIO15
+
+                            config I2C2_SDA_USING_GPIO1
+                                bool "GPIO_1"
+                            config I2C2_SDA_USING_GPIO3
+                                bool "GPIO_3"
+                            config I2C2_SDA_USING_GPIO5
+                                bool "GPIO_5"
+                            config I2C2_SDA_USING_GPIO7
+                                bool "GPIO_7"
+                            config I2C2_SDA_USING_GPIO9
+                                bool "GPIO_9"
+                            config I2C2_SDA_USING_GPIO11
+                                bool "GPIO_11"
+                            config I2C2_SDA_USING_GPIO13
+                                bool "GPIO_13"
+                            config I2C2_SDA_USING_GPIO15
+                                bool "GPIO_15"
+                            config I2C2_SDA_USING_GPIO17
+                                bool "GPIO_17"
+                            config I2C2_SDA_USING_GPIO19
+                                bool "GPIO_19"
+                            config I2C2_SDA_USING_GPIO21
+                                bool "GPIO_21"
+                            config I2C2_SDA_USING_GPIO23
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_23"                        
+                            config I2C2_SDA_USING_GPIO25
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_25"
+                            config I2C2_SDA_USING_GPIO27
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_27"
+                            config I2C2_SDA_USING_GPIO29
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_29"
+                            config I2C2_SDA_USING_GPIO31
+                                depends on BSP_USING_BL61X || BSP_USING_BL70X || BSP_USING_BL808
+                                bool "GPIO_31"
+                            config I2C2_SDA_USING_GPIO33
+                                depends on BSP_USING_BL61X || BSP_USING_BL808
+                                bool "GPIO_33"
+                            config I2C2_SDA_USING_GPIO35
+                                depends on BSP_USING_BL808
+                                bool "GPIO_35"
+                            config I2C2_SDA_USING_GPIO37
+                                depends on BSP_USING_BL808
+                                bool "GPIO_37"
+                            config I2C2_SDA_USING_GPIO39
+                                depends on BSP_USING_BL808
+                                bool "GPIO_39"
+                            config I2C2_SDA_USING_GPIO41
+                                depends on BSP_USING_BL808
+                                bool "GPIO_41"
+                            config I2C2_SDA_USING_GPIO43
+                                depends on BSP_USING_BL808
+                                bool "GPIO_43"
+                            config I2C2_SDA_USING_GPIO45
+                                depends on BSP_USING_BL808
+                                bool "GPIO_45"
+                            endchoice
+
+                        config I2C2_FREQUENCY
+                            int "I2C2 Frequency"
+                            default 400000
+                    endif
+            
+
+                menuconfig BSP_USING_I2C3
+                    depends on BSP_USING_BL61X || BSP_USING_BL808
+                    bool "Enable I2C3 (hardware)"
+                    default n
+                    if BSP_USING_I2C3
+                        choice 
+                            prompt "I2C3 SCL"
+                            default I2C3_SCL_USING_GPIO0
+
+                            config I2C3_SCL_USING_GPIO0
+                                bool "GPIO_0"
+                            config I2C3_SCL_USING_GPIO2
+                                bool "GPIO_2"
+                            config I2C3_SCL_USING_GPIO4
+                                bool "GPIO_4"
+                            config I2C3_SCL_USING_GPIO6
+                                bool "GPIO_6"
+                            config I2C3_SCL_USING_GPIO8
+                                bool "GPIO_8"
+                            config I2C3_SCL_USING_GPIO10
+                                bool "GPIO_10"
+                            config I2C3_SCL_USING_GPIO12
+                                bool "GPIO_12"
+                            config I2C3_SCL_USING_GPIO14
+                                bool "GPIO_14"
+                            config I2C3_SCL_USING_GPIO16
+                                bool "GPIO_16"
+                            config I2C3_SCL_USING_GPIO18
+                                bool "GPIO_18"
+                            config I2C3_SCL_USING_GPIO20
+                                bool "GPIO_20"
+                            config I2C3_SCL_USING_GPIO22
+                                bool "GPIO_22"
+                            config I2C3_SCL_USING_GPIO24
+                                bool "GPIO_24"
+                            config I2C3_SCL_USING_GPIO26
+                                bool "GPIO_26"
+                            config I2C3_SCL_USING_GPIO28
+                                bool "GPIO_28"
+                            config I2C3_SCL_USING_GPIO30
+                                bool "GPIO_30"
+                            config I2C3_SCL_USING_GPIO32
+                                bool "GPIO_32"
+                            config I2C3_SCL_USING_GPIO34
+                                bool "GPIO_34"
+                            config I2C3_SDA_USING_GPIO36
+                                depends on BSP_USING_BL808
+                                bool "GPIO_36"
+                            config I2C3_SDA_USING_GPIO38
+                                depends on BSP_USING_BL808
+                                bool "GPIO_38"
+                            config I2C3_SDA_USING_GPIO40
+                                depends on BSP_USING_BL808
+                                bool "GPIO_40"
+                            config I2C3_SDA_USING_GPIO42
+                                depends on BSP_USING_BL808
+                                bool "GPIO_42"
+                            config I2C3_SDA_USING_GPIO44
+                                depends on BSP_USING_BL808
+                                bool "GPIO_44"
+                        endchoice
+
+                        choice
+                            prompt "I2C3 SDA"
+                            default I2C3_SDA_USING_GPIO1
+
+                            config I2C3_SDA_USING_GPIO1
+                                bool "GPIO_1"
+                            config I2C3_SDA_USING_GPIO3
+                                bool "GPIO_3"
+                            config I2C3_SDA_USING_GPIO5
+                                bool "GPIO_5"
+                            config I2C3_SDA_USING_GPIO7
+                                bool "GPIO_7"
+                            config I2C3_SDA_USING_GPIO9
+                                bool "GPIO_9"
+                            config I2C3_SDA_USING_GPIO11
+                                bool "GPIO_11"
+                            config I2C3_SDA_USING_GPIO13
+                                bool "GPIO_13"
+                            config I2C3_SDA_USING_GPIO15
+                                bool "GPIO_15"
+                            config I2C3_SDA_USING_GPIO17
+                                bool "GPIO_17"
+                            config I2C3_SDA_USING_GPIO19
+                                bool "GPIO_19"
+                            config I2C3_SDA_USING_GPIO21
+                                bool "GPIO_21"
+                            config I2C3_SDA_USING_GPIO23
+                                bool "GPIO_23"                        
+                            config I2C3_SDA_USING_GPIO25
+                                bool "GPIO_25"
+                            config I2C3_SDA_USING_GPIO27
+                                bool "GPIO_27"
+                            config I2C3_SDA_USING_GPIO29
+                                bool "GPIO_29"
+                            config I2C3_SDA_USING_GPIO31
+                                bool "GPIO_31"
+                            config I2C3_SDA_USING_GPIO33
+                                bool "GPIO_33"
+                            config I2C3_SDA_USING_GPIO35
+                                depends on BSP_USING_BL808
+                                bool "GPIO_35"
+                            config I2C3_SDA_USING_GPIO37
+                                depends on BSP_USING_BL808
+                                bool "GPIO_37"
+                            config I2C3_SDA_USING_GPIO39
+                                depends on BSP_USING_BL808
+                                bool "GPIO_39"
+                            config I2C3_SDA_USING_GPIO41
+                                depends on BSP_USING_BL808
+                                bool "GPIO_41"
+                            config I2C3_SDA_USING_GPIO43
+                                depends on BSP_USING_BL808
+                                bool "GPIO_43"
+                            config I2C3_SDA_USING_GPIO45
+                                depends on BSP_USING_BL808
+                                bool "GPIO_45"
+                        endchoice
+
+                        config I2C3_FREQUENCY
+                            int "I2C3 Frequency"
+                            default 400000
+                    endif
+                
+            endif
+        endif
+
+        menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_SPI
+            choice
+                prompt "SPI SCK PIN"
+                default SPI_SCK_USING_GPIO19
+
+                config SPI_SCK_USING_GPIO3
+                    bool "GPIO_3" 
+                config SPI_SCK_USING_GPIO7
+                    bool "GPIO_7"   
+                config SPI_SCK_USING_GPIO11
+                    bool "GPIO_11"   
+                config SPI_SCK_USING_GPIO15
+                    bool "GPIO_15"
+                config SPI_SCK_USING_GPIO19
+                    bool "GPIO_19"
+                config SPI_SCK_USING_GPIO23
+                    bool "GPIO_23"
+                config SPI_SCK_USING_GPIO27
+                    bool "GPIO_27"
+                config SPI_SCK_USING_GPIO31
+                    bool "GPIO_31"
+                config SPI_SCK_USING_GPIO35
+                    bool "GPIO_35"
+                config SPI_SCK_USING_GPIO39
+                    bool "GPIO_39"
+                config SPI_SCK_USING_GPIO43
+                    bool "GPIO_43"
+            endchoice
+
+            choice
+                prompt "SPI MISO PIN"
+                default SPI_MISO_USING_GPIO22
+
+                config SPI_MISO_USING_GPIO2
+                    bool "GPIO_2"
+                config SPI_MISO_USING_GPIO6
+                    bool "GPIO_6"
+                config SPI_MISO_USING_GPIO10
+                    bool "GPIO_10"
+                config SPI_MISO_USING_GPIO14
+                    bool "GPIO_14"
+                config SPI_MISO_USING_GPIO18
+                    bool "GPIO_18"
+                config SPI_MISO_USING_GPIO22
+                    bool "GPIO_22"
+                config SPI_MISO_USING_GPIO26
+                    bool "GPIO_26"
+                config SPI_MISO_USING_GPIO30
+                    bool "GPIO_30"
+                config SPI_MISO_USING_GPIO34
+                    bool "GPIO_34"
+                config SPI_MISO_USING_GPIO38
+                    depends on BSP_USING_BL808
+                    bool "GPIO_38"
+                config SPI_MISO_USING_GPIO42
+                    depends on BSP_USING_BL808
+                    bool "GPIO_42"
+            endchoice
+
+            choice
+                prompt "SPI MOSI PIN"
+                default SPI_MOSI_USING_GPIO21
+
+                config SPI_MOSI_USING_GPIO1
+                    bool "GPIO_1"
+                config SPI_MOSI_USING_GPIO5
+                    bool "GPIO_5"
+                config SPI_MOSI_USING_GPIO9
+                    bool "GPIO_9"  
+                config SPI_MOSI_USING_GPIO13
+                    bool "GPIO_13"
+                config SPI_MOSI_USING_GPIO17
+                    bool "GPIO_17"
+                config SPI_MOSI_USING_GPIO21
+                    bool "GPIO_21"
+                config SPI_MOSI_USING_GPIO25
+                    bool "GPIO_25"
+                config SPI_MOSI_USING_GPIO29
+                    bool "GPIO_29"
+                config SPI_MOSI_USING_GPIO33
+                    bool "GPIO_33"
+                config SPI_MOSI_USING_GPIO37
+                    bool "GPIO_37"
+                config SPI_MOSI_USING_GPIO41
+                    bool "GPIO_41"
+                config SPI_MOSI_USING_GPIO45
+                    bool "GPIO_45"
+            endchoice
+
+         endif
 endmenu

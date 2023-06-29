@@ -43,7 +43,7 @@ if GetDepend('BSP_USING_ON_CHIP_FLASH'):
 if GetDepend('BSP_USING_SDH'):
     src += ['drv_sdh.c']
 
-if GetDepend('RT_USING_DFS'):
+if GetDepend('BSP_USING_SDH'):
     src += ['port/mnt.c']
 
 group = DefineGroup('rt_drivers', src, depend = [''], CPPPATH = CPPPATH)
