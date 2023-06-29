@@ -18,6 +18,7 @@
 #include "rt_interrupt.h"
 #include "io.h"
 #include "encoding.h"
+#include "ioremap.h"
 
 static void *c906_plic_regs = RT_NULL;
 extern struct rt_irq_desc isr_table[];
@@ -43,7 +44,7 @@ rt_inline void plic_irq_toggle(int hwirq, int enable)
 #ifdef RT_USING_SMART
     if (c906_irq_priority[hwirq] == RT_NULL)
     {
-        c906_irq_priority[hwirq] = rt_ioremap(priority_addr, 0x1000);
+        c906_irq_priority[hwirq] = (void *)rt_ioremap(priority_addr, 0x1000);
     }
     priority_addr = c906_irq_priority[hwirq];
 #endif
@@ -202,8 +203,8 @@ void plic_init(void)
         handler->hart_base = (void *)((rt_size_t)c906_plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART);
         handler->enable_base = (void *)((rt_size_t)c906_plic_regs + ENABLE_BASE + i * ENABLE_PER_HART);
 #ifdef RT_USING_SMART
-        handler->hart_base = rt_ioremap(handler->hart_base, 0x1000);
-        handler->enable_base = rt_ioremap(handler->enable_base, 0x1000);
+        handler->hart_base = (void *)rt_ioremap(handler->hart_base, 0x1000);
+        handler->enable_base = (void *)rt_ioremap(handler->enable_base, 0x1000);
 #endif
 done:
         /* priority must be > threshold to trigger an interrupt */
