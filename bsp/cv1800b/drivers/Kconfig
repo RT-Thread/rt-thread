@@ -1,0 +1,31 @@
+menu "General Drivers Configuration"
+
+    menuconfig BSP_USING_UART
+        bool "Using UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_UART
+            config RT_USING_UART0
+            bool "Enable UART 0"
+            default y
+
+            config RT_USING_UART1
+            bool "Enable UART 1"
+            default n
+
+            config RT_USING_UART2
+            bool "Enable UART 2"
+            default n
+
+            config RT_USING_UART3
+            bool "Enable UART 3"
+            default n
+
+            config RT_USING_UART4
+            bool "Enable UART 4"
+            default n
+
+        endif
+
+endmenu

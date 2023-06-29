@@ -1,0 +1,45 @@
+mainmenu "RT-Thread Project Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "drivers/Kconfig"
+
+config BSP_USING_CV1800B
+    bool
+    select ARCH_RISCV64
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_CACHE
+    select ARCH_MM_MMU
+    default y
+
+config C906_PLIC_PHY_ADDR
+    hex
+    default 0x70000000
+
+config IRQ_MAX_NR
+    int 
+    default 64
+
+config TIMER_CLK_FREQ
+    int
+    default 25000000
+
+config __STACKSIZE__
+    int "stack size for interrupt"
+    default 4096
