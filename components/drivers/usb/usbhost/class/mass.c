@@ -14,6 +14,14 @@
 
 #ifdef RT_USBH_MSTORAGE
 
+#define DBG_TAG           "usbhost.mass"
+#if RT_DEBUG_USB
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_USB) */
+#include <rtdbg.h>
+
 extern rt_err_t rt_udisk_run(struct uhintf* intf);
 extern rt_err_t rt_udisk_stop(struct uhintf* intf);
 
@@ -70,7 +78,7 @@ static rt_err_t _pipe_check(struct uhintf* intf, upipe_t pipe)
 
     stor->pipe_in->status = UPIPE_STATUS_OK;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("clean storage in pipe stall\n"));
+    LOG_D("clean storage in pipe stall");
 
     /* it should receive csw after clear the stall feature */
     size = rt_usb_hcd_pipe_xfer(stor->pipe_in->inst->hcd,
@@ -200,7 +208,7 @@ rt_err_t rt_usbh_storage_get_max_lun(struct uhintf* intf, rt_uint8_t* max_lun)
 
     /* parameter check */
     RT_ASSERT(intf->device != RT_NULL);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_get_max_lun\n"));
+    LOG_D("rt_usbh_storage_get_max_lun");
 
     /* get usb device instance from the interface instance */
     device = intf->device;
@@ -250,7 +258,7 @@ rt_err_t rt_usbh_storage_reset(struct uhintf* intf)
     }
 
     RT_ASSERT(intf->device != RT_NULL);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_reset\n"));
+    LOG_D("rt_usbh_storage_reset");
 
     /* get usb device instance from the interface instance */
     device = intf->device;
@@ -297,7 +305,7 @@ rt_err_t rt_usbh_storage_read10(struct uhintf* intf, rt_uint8_t *buffer,
     }
 
     RT_ASSERT(intf->device != RT_NULL);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_read10\n"));
+    LOG_D("rt_usbh_storage_read10");
 
     /* construct the command block wrapper */
     rt_memset(&cmd, 0, sizeof(struct ustorage_cbw));
@@ -343,7 +351,7 @@ rt_err_t rt_usbh_storage_write10(struct uhintf* intf, rt_uint8_t *buffer,
     }
 
     RT_ASSERT(intf->device != RT_NULL);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_write10\n"));
+    LOG_D("rt_usbh_storage_write10");
 
     /* construct the command block wrapper */
     rt_memset(&cmd, 0, sizeof(struct ustorage_cbw));
@@ -387,7 +395,7 @@ rt_err_t rt_usbh_storage_request_sense(struct uhintf* intf, rt_uint8_t* buffer)
     }
 
     RT_ASSERT(intf->device != RT_NULL);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_request_sense\n"));
+    LOG_D("rt_usbh_storage_request_sense");
 
     /* construct the command block wrapper */
     rt_memset(&cmd, 0, sizeof(struct ustorage_cbw));
@@ -423,7 +431,7 @@ rt_err_t rt_usbh_storage_test_unit_ready(struct uhintf* intf)
     }
 
     RT_ASSERT(intf->device != RT_NULL);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_test_unit_ready\n"));
+    LOG_D("rt_usbh_storage_test_unit_ready");
 
     /* construct the command block wrapper */
     rt_memset(&cmd, 0, sizeof(struct ustorage_cbw));
@@ -459,7 +467,7 @@ rt_err_t rt_usbh_storage_inquiry(struct uhintf* intf, rt_uint8_t* buffer)
     }
 
     RT_ASSERT(intf->device != RT_NULL);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_inquiry\n"));
+    LOG_D("rt_usbh_storage_inquiry");
 
     /* construct the command block wrapper */
     rt_memset(&cmd, 0, sizeof(struct ustorage_cbw));
@@ -496,7 +504,7 @@ rt_err_t rt_usbh_storage_get_capacity(struct uhintf* intf, rt_uint8_t* buffer)
     }
 
     RT_ASSERT(intf->device != RT_NULL);
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_get_capacity\n"));
+    LOG_D("rt_usbh_storage_get_capacity");
 
     /* construct the command block wrapper */
     rt_memset(&cmd, 0, sizeof(struct ustorage_cbw));
@@ -534,11 +542,11 @@ static rt_err_t rt_usbh_storage_enable(void* arg)
         return -RT_EIO;
     }
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("subclass %d, protocal %d\n",
+    LOG_D("subclass %d, protocal %d",
         intf->intf_desc->bInterfaceSubClass,
-        intf->intf_desc->bInterfaceProtocol));
+        intf->intf_desc->bInterfaceProtocol);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_run\n"));
+    LOG_D("rt_usbh_storage_run");
 
     /* only support SCSI subclass and bulk only protocal */
 
@@ -610,7 +618,7 @@ static rt_err_t rt_usbh_storage_disable(void* arg)
     RT_ASSERT(intf->user_data != RT_NULL);
     RT_ASSERT(intf->device != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbh_storage_stop\n"));
+    LOG_D("rt_usbh_storage_stop");
 
     /* get storage instance from interface instance */
     stor = (ustor_t)intf->user_data;

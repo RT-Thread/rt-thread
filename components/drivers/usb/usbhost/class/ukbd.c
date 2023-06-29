@@ -14,6 +14,14 @@
 
 #if defined(RT_USBH_HID) && defined(RT_USBH_HID_KEYBOARD)
 
+#define DBG_TAG    "usbhost.ukbd"
+#if RT_DEBUG_USB
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_USB) */
+#include <rtdbg.h>
+
 static struct uprotocal kbd_protocal;
 
 static rt_err_t rt_usbh_hid_kbd_callback(void* arg)
@@ -28,7 +36,7 @@ static rt_err_t rt_usbh_hid_kbd_callback(void* arg)
 
     if(int1 != 0 || int2 != 0)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("key down 0x%x, 0x%x\n", int1, int2));
+        LOG_D("key down 0x%x, 0x%x", int1, int2);
     }
 
     return RT_EOK;
@@ -62,7 +70,7 @@ static rt_err_t rt_usbh_hid_kbd_init(void* arg)
 
     rt_usbh_hid_set_idle(intf, 10, 0);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("start usb keyboard\n"));
+    LOG_D("start usb keyboard");
 
     kbd_thread = rt_thread_create("kbd0", kbd_task, intf, 1024, 8, 100);
     rt_thread_startup(kbd_thread);

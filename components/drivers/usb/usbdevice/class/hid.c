@@ -17,6 +17,15 @@
 #include "hid.h"
 
 #ifdef RT_USB_DEVICE_HID
+
+#define DBG_TAG           "usbdevice.hid"
+#if RT_DEBUG_USB
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_USB) */
+#include <rtdbg.h>
+
 #define HID_INTF_STR_INDEX 7
 struct hid_s
 {
@@ -431,7 +440,7 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
 
 static rt_err_t _hid_set_report_callback(udevice_t device, rt_size_t size)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_hid_set_report_callback\n"));
+    LOG_D("_hid_set_report_callback");
 
     if(size != 0)
     {
@@ -525,7 +534,7 @@ static rt_err_t _function_enable(ufunction_t func)
     RT_ASSERT(func->device != RT_NULL);
     data = (struct hid_s *) func->user_data;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("hid function enable\n"));
+    LOG_D("hid function enable");
 //
 //    _vcom_reset_state(func);
 //
@@ -557,7 +566,7 @@ static rt_err_t _function_disable(ufunction_t func)
     RT_ASSERT(func->device != RT_NULL);
     data = (struct hid_s *) func->user_data;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("hid function disable\n"));
+    LOG_D("hid function disable");
 
     if(data->ep_out->buffer != RT_NULL)
     {
