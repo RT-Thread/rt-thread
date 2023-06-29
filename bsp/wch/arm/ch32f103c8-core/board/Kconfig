@@ -64,6 +64,18 @@ config BSP_USING_IWDT
         select LSI_VALUE
         default n
 
+config BSP_USING_ADC
+        bool "using onchip adc"
+        select RT_USING_ADC
+        default n
+
+        if BSP_USING_ADC
+                config BSP_USING_ADC1
+                        bool "using adc1"
+                        default n
+
+        endif
+
 config BSP_USING_RTC
         bool "using onchip rtc"
         select RT_USING_RTC
