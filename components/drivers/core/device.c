@@ -16,6 +16,15 @@
  */
 
 #include <rtthread.h>
+
+#define DBG_TAG           "kernel.device"
+#ifdef RT_DEBUG_DEVICE
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_DEVICE) */
+#include <rtdbg.h>
+
 #ifdef RT_USING_POSIX_DEVIO
 #include <rtdevice.h> /* for wqueue_init */
 #endif /* RT_USING_POSIX_DEVIO */
@@ -178,8 +187,8 @@ rt_err_t rt_device_init(rt_device_t dev)
             result = device_init(dev);
             if (result != RT_EOK)
             {
-                RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("To initialize device:%s failed. The error code is %d\n",
-                           dev->parent.name, result));
+                LOG_E("To initialize device:%s failed. The error code is %d",
+                      dev->parent.name, result);
             }
             else
             {
@@ -216,8 +225,8 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
             result = device_init(dev);
             if (result != RT_EOK)
             {
-                RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("To initialize device:%s failed. The error code is %d\n",
-                           dev->parent.name, result));
+                LOG_E("To initialize device:%s failed. The error code is %d",
+                      dev->parent.name, result);
 
                 return result;
             }

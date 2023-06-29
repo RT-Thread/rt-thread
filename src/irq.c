@@ -17,6 +17,14 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#define DBG_TAG           "kernel.irq"
+#ifdef RT_DEBUG_IRQ
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_IRQ) */
+#include <rtdbg.h>
+
 #ifndef __on_rt_interrupt_enter_hook
     #define __on_rt_interrupt_enter_hook()          __ON_HOOK_ARGS(rt_interrupt_enter_hook, ())
 #endif
@@ -87,8 +95,8 @@ rt_weak void rt_interrupt_enter(void)
     RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
     rt_hw_interrupt_enable(level);
 
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq has come..., irq current nest:%d\n",
-                                (rt_int32_t)rt_interrupt_nest));
+    LOG_D("irq has come..., irq current nest:%d",
+          (rt_int32_t)rt_interrupt_nest);
 }
 RTM_EXPORT(rt_interrupt_enter);
 
@@ -104,8 +112,8 @@ rt_weak void rt_interrupt_leave(void)
 {
     rt_base_t level;
 
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq is going to leave, irq current nest:%d\n",
-                                (rt_int32_t)rt_interrupt_nest));
+    LOG_D("irq is going to leave, irq current nest:%d",
+                 (rt_int32_t)rt_interrupt_nest);
 
     level = rt_hw_interrupt_disable();
     RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
