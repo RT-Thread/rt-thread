@@ -51,10 +51,9 @@ stm32_library = 'STM32F0xx_HAL'
 rtconfig.BSP_LIBRARY_TYPE = stm32_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript')))
-
+objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript'), variant_dir='build/libraries/'+stm32_library, duplicate=0))
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'), variant_dir='build/libraries/'+"HAL_Drivers", duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)
