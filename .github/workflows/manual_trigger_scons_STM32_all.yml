@@ -9,10 +9,7 @@
 #
 name: manual_scons_dist_STM32_all
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
-  # Runs at 16:00 UTC (BeiJing 00:00) on the 1st of every month
   workflow_dispatch:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
     inputs:
@@ -21,8 +18,12 @@ on:
         required: false
         type: string
         default: 'CONFIG_BSP_USING_GPIO'
-
-
+      dist_flag:
+        description: 'True to dist all bsp, False not dist'
+        required: true
+        type: boolean
+        default: false
+        
 permissions:
   contents: read # to fetch code (actions/checkout)
 
@@ -168,6 +169,7 @@ jobs:
           ls bsp/$RTT_BSP/dist
           pwd
       - uses: actions/upload-artifact@v3
+        if:  ${{ github.event.inputs.bsp_options.dist_flag }} 
         env:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
