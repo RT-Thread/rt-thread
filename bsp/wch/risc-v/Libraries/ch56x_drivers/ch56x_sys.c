@@ -8,7 +8,6 @@
  * 2022-07-15     Emuzit            first version
  */
 #include <rthw.h>
-#include <rtdebug.h>
 #include "ch56x_sys.h"
 
 static uint32_t hclk_freq;
