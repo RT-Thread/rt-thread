@@ -119,7 +119,7 @@ __start:
 .L__jump_to_entry:          /* jump to C code, should not return */
     bl mmu_tcr_init
 
-    adr x0, .early_mmu_table         /* install early page table */
+    bl get_ttbrn_base
     add x1, x0, #0x1000
 
     msr ttbr0_el1, x0
@@ -246,7 +246,7 @@ _secondary_cpu_entry:
 
     bl mmu_tcr_init
 
-    adr x0, .early_mmu_table             /* GET & setup early page table */
+    bl get_ttbrn_base
     add x1, x0, #0x1000
 
     msr ttbr0_el1, x0
@@ -292,10 +292,6 @@ after_mmu_enable_cpux:
 
     b rt_hw_secondary_cpu_bsp_start
 #endif
-
-.align 12
-.early_mmu_table:
-.space (4096 * 2)
 
 .align 12
 .el_stack:
