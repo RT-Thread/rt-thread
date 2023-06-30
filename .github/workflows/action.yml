@@ -370,7 +370,7 @@ jobs:
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
 
       - name: Install Simulator Tools
-        if: ${{ matrix.legs.RTT_BSP == 'simulator' && success() }}
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'gcc' && success() }}
         run: |
           sudo apt-get -qq install libsdl2-dev
 
