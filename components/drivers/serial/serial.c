@@ -352,17 +352,15 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
          */
         if (*data == '\n' && (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
         {
-            if (serial->ops->putc(serial, '\r') == -1)
+            while (serial->ops->putc(serial, '\r') == -1)
             {
                 rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
-                continue;
             }
         }
 
-        if (serial->ops->putc(serial, *(char*)data) == -1)
+        while (serial->ops->putc(serial, *(char*)data) == -1)
         {
             rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
-            continue;
         }
 
         data ++; length --;
