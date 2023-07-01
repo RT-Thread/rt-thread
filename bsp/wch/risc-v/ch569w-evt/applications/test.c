@@ -12,7 +12,6 @@
  * 2022-08-04     Emuzit            add pwm test
  */
 #include <rtthread.h>
-#include <rtdebug.h>
 #include <drivers/pin.h>
 #include <drivers/watchdog.h>
 #include <drivers/hwtimer.h>

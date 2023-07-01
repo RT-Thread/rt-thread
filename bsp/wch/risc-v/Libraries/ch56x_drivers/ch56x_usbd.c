@@ -8,7 +8,6 @@
  * 2022-08-22     Emuzit            first version
  */
 #include <rthw.h>
-#include <rtdebug.h>
 #include <drivers/usb_common.h>
 #include <drivers/usb_device.h>
 #include "ch56x_usbhs.h"
