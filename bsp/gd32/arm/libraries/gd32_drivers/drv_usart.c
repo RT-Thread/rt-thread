@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-20     BruceOu      first implementation
- * 2023-06-17     CX      	   support DMA TX and RX
+ * 2023-06-17     CX           support DMA TX and RX
  */
 
 #include "drv_usart.h"
@@ -1010,26 +1010,26 @@ static rt_err_t gd32_uart_control(struct rt_serial_device *serial, int cmd, void
         /* enable DMA */
         if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX)
         {
-            //			usart_flag_clear(uart->uart_periph, USART_FLAG_IDLE);
-            //			dma_interrupt_flag_clear(uart->dma_rx->dma_periph, uart->dma_rx->channel, DMA_INT_FLAG_FTF|DMA_INT_FLAG_HTF);
-            //			/* enable interrupt */
-            //			usart_interrupt_enable(uart->uart_periph, USART_INT_IDLE);
-            //			/* enable DMA rx irq */
-            //			NVIC_EnableIRQ(uart->dma_rx->dma_irqn);
-            //			/* enable DMA interrupt */
-            //			dma_interrupt_enable(uart->dma_rx->dma_periph, uart->dma_rx->channel, DMA_CHXCTL_FTFIE|DMA_CHXCTL_HTFIE);
+            //          usart_flag_clear(uart->uart_periph, USART_FLAG_IDLE);
+            //          dma_interrupt_flag_clear(uart->dma_rx->dma_periph, uart->dma_rx->channel, DMA_INT_FLAG_FTF|DMA_INT_FLAG_HTF);
+            //          /* enable interrupt */
+            //          usart_interrupt_enable(uart->uart_periph, USART_INT_IDLE);
+            //          /* enable DMA rx irq */
+            //          NVIC_EnableIRQ(uart->dma_rx->dma_irqn);
+            //          /* enable DMA interrupt */
+            //          dma_interrupt_enable(uart->dma_rx->dma_periph, uart->dma_rx->channel, DMA_CHXCTL_FTFIE|DMA_CHXCTL_HTFIE);
         }
         else if (ctrl_arg == RT_DEVICE_FLAG_DMA_TX)
         {
-            //			/* clean TC flag */
-            //			usart_flag_clear(uart->uart_periph, USART_FLAG_TC);
-            //			/* clean DMA Full flag */
-            //			dma_interrupt_flag_clear(uart->dma_tx->dma_periph, uart->dma_tx->channel, DMA_INT_FLAG_FTF);
-            //			/* enable DMA Tx irq */
-            //			NVIC_EnableIRQ(uart->dma_tx->dma_irqn);
-            //			/* enable interrupt */
-            //			usart_interrupt_enable(uart->uart_periph, USART_INT_TC);
-            //			dma_interrupt_enable(uart->dma_tx->dma_periph, uart->dma_tx->channel, DMA_CHXCTL_FTFIE);
+            //          /* clean TC flag */
+            //          usart_flag_clear(uart->uart_periph, USART_FLAG_TC);
+            //          /* clean DMA Full flag */
+            //          dma_interrupt_flag_clear(uart->dma_tx->dma_periph, uart->dma_tx->channel, DMA_INT_FLAG_FTF);
+            //          /* enable DMA Tx irq */
+            //          NVIC_EnableIRQ(uart->dma_tx->dma_irqn);
+            //          /* enable interrupt */
+            //          usart_interrupt_enable(uart->uart_periph, USART_INT_TC);
+            //          dma_interrupt_enable(uart->dma_tx->dma_periph, uart->dma_tx->channel, DMA_CHXCTL_FTFIE);
         }
 #endif
         break;

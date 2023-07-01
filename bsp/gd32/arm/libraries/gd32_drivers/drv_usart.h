@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-20     BruceOu      first implementation
- * 2023-06-17     CX      	   support DMA TX and RX
+ * 2023-06-17     CX           support DMA TX and RX
  */
 
 #ifndef __DRV_USART_H__
