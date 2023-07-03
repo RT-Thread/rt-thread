@@ -82,6 +82,13 @@ int dfs_init(void)
     }
 #endif
 
+#ifdef RT_USING_DFS_MQUEUE
+    {
+        extern int dfs_mqueue_init(void);
+        dfs_mqueue_init();
+    }
+#endif
+
 #ifdef RT_USING_DFS_DEVFS
     {
         extern int devfs_init(void);
@@ -91,14 +98,23 @@ int dfs_init(void)
 
         dfs_mount(NULL, "/dev", "devfs", 0, 0);
     }
-#if defined(RT_USING_DEV_BUS) && defined(RT_USING_DFS_TMPFS)
+#if defined(RT_USING_DEV_BUS)
+#if defined(RT_USING_DFS_TMPFS)
     mkdir("/dev/shm", 0x777);
     if (dfs_mount(RT_NULL, "/dev/shm", "tmp", 0, 0) != 0)
     {
         rt_kprintf("Dir /dev/shm mount failed!\n");
     }
-#endif
-#endif
+#endif /* RT_USING_DFS_TMPFS */
+#if defined(RT_USING_DFS_MQUEUE)
+    mkdir("/dev/mqueue", 0x777);
+    if (dfs_mount(RT_NULL, "/dev/mqueue", "mqueue", 0, 0) != 0)
+    {
+        rt_kprintf("Dir /dev/mqueue mount failed!\n");
+    }
+#endif /* RT_USING_DFS_MQUEUE */
+#endif /* RT_USING_DEV_BUS */
+#endif /* RT_USING_DFS_DEVFS */
 
     init_ok = RT_TRUE;
 

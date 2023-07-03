@@ -9,7 +9,7 @@ inc        = [cwd]
 #     src += Glob('system-v/*.c')
 #     inc += [cwd + '/system-v']
 
-if GetDepend('RT_USING_POSIX_MESSAGE_QUEUE'):
+if GetDepend(['RT_USING_POSIX_MESSAGE_QUEUE', 'RT_USING_DFS_MQUEUE']):
     src += ['mqueue.c']
 
 if GetDepend('RT_USING_POSIX_MESSAGE_SEMAPHORE'):

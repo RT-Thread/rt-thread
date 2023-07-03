@@ -173,6 +173,10 @@ endif
         bool "Enable TMP file system"
         default n
 
+    config RT_USING_DFS_MQUEUE
+        bool "Enable MQUEUE file system"
+        default n
+
 if RT_USING_DFS_V1
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"

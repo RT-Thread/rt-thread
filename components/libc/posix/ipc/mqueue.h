@@ -10,24 +10,21 @@
 #ifndef __MQUEUE_H__
 #define __MQUEUE_H__
 
+#include <rtthread.h>
+#include <rthw.h>
 #include <sys/signal.h>
 #include <sys/time.h>
 #include <rtdef.h>
 
-struct mqdes
+struct mqueue_file
 {
-    /* reference count and unlinked */
-    rt_uint16_t refcount;
-    rt_uint16_t unlinked;
-
-    /* RT-Thread message queue */
-    rt_mq_t mq;
-
-    int mq_id;
-    /* next posix mqueue */
-    struct mqdes* next;
+    char        name[RT_NAME_MAX + 1];      /* file name */
+    rt_uint16_t msg_size;                   /**< message size of each message */
+    rt_uint16_t max_msgs;                   /**< max number of messages */
+    rt_list_t   list;
+    rt_uint8_t  *data;                      /* file date ptr */
+    rt_size_t   size;                       /* file size */
 };
-typedef struct mqdes* mqdes_t;
 
 typedef int mqd_t;
 
