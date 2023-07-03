@@ -13,6 +13,7 @@
 #include <rtdevice.h>
 
 #include <board.h>
+#include "ioremap.h"
 
 /*
  * The Synopsys DesignWare 8250 has an extra feature whereby it detects if the
@@ -302,17 +303,17 @@ static void rt_hw_uart_isr(int irqno, void *param)
 
 int rt_hw_uart_init(void)
 {
-    rt_uint32_t value;
-    struct hw_uart_device* uart;
+    struct hw_uart_device *uart;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    RT_UNUSED(value);
 
+    // config.baud_rate = 1500000;
     config.baud_rate = 115200;
 
-#define BSP_INSTALL_UART_DEVICE(no)     \
-    uart = &_uart##no##_device;         \
-    _serial##no.ops    = &_uart_ops;    \
-    _serial##no.config = config;        \
+#define BSP_INSTALL_UART_DEVICE(no)                     \
+    uart = &_uart##no##_device;                         \
+    uart->hw_base = rt_ioremap(uart->hw_base, 0x1000);  \
+    _serial##no.ops    = &_uart_ops;                    \
+    _serial##no.config = config;                        \
     rt_hw_serial_register(&_serial##no, "uart" #no, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart); \
     rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, &_serial##no, "uart" #no);
 
@@ -333,12 +334,6 @@ int rt_hw_uart_init(void)
 #endif
 
 #ifdef RT_USING_UART4
-    HWREG32(CRU_BASE + 0x370) = 0xFFFF0000 | (0x600) |(HWREG32(CRU_BASE + 0x370) & 0xF0FF);
-    value = HWREG32(0xFDC60000 + 0x48);
-    value &= ~((7 << 8) | (7 << 4));
-    value |= 0xFFFF0000 | (4 << 8) | (4 << 4);
-    HWREG32(0xFDC60000 + 0x48) = value;
-    HWREG32(0xFDC60000 + 0x30C) = 0xFFFF0000 | (1 << 14) | HWREG32(0xFDC60000 + 0x30C);
     BSP_INSTALL_UART_DEVICE(4);
 #endif
 

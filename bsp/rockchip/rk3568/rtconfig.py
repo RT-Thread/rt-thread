@@ -15,15 +15,16 @@ if os.getenv('RTT_CC'):
 
 PLATFORM    = 'gcc'
 EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'
+EXEC_PATH   = r'C:\env\tools\gnu_gcc\aarch64-linux-musleabi_for_i686-w64-mingw32\bin'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug'
+BUILD = 'release'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'aarch64-none-elf-'
+    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'aarch64-linux-musleabi-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'

@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "dtb_node.h"
+#include "libfdt.h"
+#include <ioremap.h>
+
 
 static void *dtb_root = NULL;
 static struct dtb_node *dtb_node_list = NULL;

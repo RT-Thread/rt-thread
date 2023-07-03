@@ -99,28 +99,18 @@ void rt_hw_interrupt_init(void)
 
     /* initialize vector table */
     rt_hw_vector_init();
-
     /* initialize exceptions table */
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
     /* initialize ARM GIC */
-#ifdef RT_USING_SMART
-    gic_dist_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_dist_base(), 0x40000);
-    gic_cpu_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_cpu_base(), 0x1000);
+    gic_dist_base = (rt_uint64_t) rt_ioremap((void *) (intptr_t) platform_get_gic_dist_base(), 0x40000);
+    gic_cpu_base = (rt_uint64_t) rt_ioremap((void *) (intptr_t) platform_get_gic_cpu_base(), 0x1000);
 #ifdef BSP_USING_GICV3
-    gic_rdist_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_redist_base(),
+    gic_rdist_base = (rt_uint64_t) rt_ioremap((void*)(intptr_t)platform_get_gic_redist_base(),
             ARM_GIC_CPU_NUM * (2 << 16));
-#endif
-#else
-    gic_dist_base = platform_get_gic_dist_base();
-    gic_cpu_base = platform_get_gic_cpu_base();
-#ifdef BSP_USING_GICV3
-    gic_rdist_base = platform_get_gic_redist_base();
-#endif
 #endif
 
     gic_irq_start = GIC_IRQ_START;
-
     arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
     arm_gic_cpu_init(0, gic_cpu_base);
 #ifdef BSP_USING_GICV3
