@@ -2246,6 +2246,11 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
     int i;
     struct lwp_args_info args_info;
 
+    if (access(path, X_OK) != 0)
+    {
+        return -EACCES;
+    }
+
     lwp = lwp_self();
     thread = rt_thread_self();
     uni_thread = 1;

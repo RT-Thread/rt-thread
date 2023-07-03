@@ -1150,6 +1150,11 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
         return -RT_ERROR;
     }
 
+    if (access(filename, X_OK) != 0)
+    {
+        return -EACCES;
+    }
+
     lwp = lwp_new();
 
     if (lwp == RT_NULL)
