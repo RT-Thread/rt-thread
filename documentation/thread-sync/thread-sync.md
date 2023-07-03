@@ -783,11 +783,11 @@ static void rt_thread_entry2(void *parameter)
           rt_mutex_take(dynamic_mutex, RT_WAITING_FOREVER);
           if(number1 != number2)
           {
-            rt_kprintf("not protect.number1 = %d, mumber2 = %d \n",number1 ,number2);
+            rt_kprintf("not protect.number1 = %d, number2 = %d \n",number1 ,number2);
           }
           else
           {
-            rt_kprintf("mutex protect ,number1 = mumber2 is %d\n",number1);
+            rt_kprintf("mutex protect ,number1 = number2 is %d\n",number1);
           }
 
            number1++;
@@ -842,13 +842,13 @@ Both thread 1 and thread 2 use mutexes to protect the operation on the 2 numbers
  / | \     3.1.0 build Aug 24 2018
  2006 - 2018 Copyright by rt-thread team
 msh >mutex_sample
-msh >mutex protect ,number1 = mumber2 is 1
-mutex protect ,number1 = mumber2 is 2
-mutex protect ,number1 = mumber2 is 3
-mutex protect ,number1 = mumber2 is 4
+msh >mutex protect ,number1 = number2 is 1
+mutex protect ,number1 = number2 is 2
+mutex protect ,number1 = number2 is 3
+mutex protect ,number1 = number2 is 4
 …
-mutex protect ,number1 = mumber2 is 48
-mutex protect ,number1 = mumber2 is 49
+mutex protect ,number1 = number2 is 48
+mutex protect ,number1 = number2 is 49
 ```
 
 Threads use mutexes to protect the operation on the two numbers, keeping the number values consistent.
