@@ -12,7 +12,10 @@
 
 #include <rtthread.h>
 #include <sys/signal.h>
+
+#ifdef RT_USING_DFS_MQUEUE
 #include "dfs_mqueue.h"
+#endif
 
 typedef int mqd_t;
 
