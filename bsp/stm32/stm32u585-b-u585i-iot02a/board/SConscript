@@ -1,0 +1,38 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32u5xx_hal_msp.c
+''')
+
+if GetDepend(['BSP_USING_KEY']):
+    src += Glob('ports/drv_key.c')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('ports/drv_spi_flash.c')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/STM32U5xx_HAL/CMSIS/Device/ST/STM32U5xx/Source/Templates/gcc/startup_stm32u585xx.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/STM32U5xx_HAL/CMSIS/Device/ST/STM32U5xx/Source/Templates/arm/startup_stm32u585xx.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/STM32U5xx_HAL/CMSIS/Device/ST/STM32U5xx/Source/Templates/iar/startup_stm32u585xx.s']
+
+# You can select chips from the list above
+CPPDEFINES = ['STM32U575xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
+
