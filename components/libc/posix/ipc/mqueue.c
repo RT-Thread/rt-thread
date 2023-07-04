@@ -293,8 +293,8 @@ mqd_t mq_open(const char *name, int oflag, ...)
         return (mqd_t)(-1);
     }
 
-    char* mq_path = "/dev/mqueue/";
-    char mq_name[strlen(mq_path) + RT_NAME_MAX];
+    const char* mq_path = "/dev/mqueue/";
+    char mq_name[RT_NAME_MAX + 12] = {0};
     rt_sprintf(mq_name, "%s%s", mq_path, name);
     mq_fd = open(mq_name, oflag);
 
