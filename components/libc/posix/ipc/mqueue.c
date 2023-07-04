@@ -33,7 +33,7 @@ struct mqueue_file *dfs_mqueue_lookup(const char       *path,
     {
         file = rt_list_entry(node, struct mqueue_file, list);
 
-        if (rt_strcmp(file->name, path) == 0)
+        if (rt_strncmp(file->name, path, RT_NAME_MAX) == 0)
         {
             *size = file->size;
             rt_spin_unlock(&mqueue_lock);
@@ -87,9 +87,9 @@ int dfs_mqueue_open(struct dfs_file *file)
         {
             return -ENFILE;
         }
-        mq_file->msg_size = 8;
-        mq_file->max_msgs = 256;
-        strncpy(mq_file->name, file->vnode->path + 1, RT_NAME_MAX + 1);
+        mq_file->msg_size = 8192;
+        mq_file->max_msgs = 10;
+        strncpy(mq_file->name, file->vnode->path + 1, RT_NAME_MAX);
         rt_list_init(&(mq_file->list));
         rt_spin_lock(&mqueue_lock);
         rt_list_insert_after(&(_mqueue_file_list), &(mq_file->list));
@@ -281,7 +281,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
         }
         mq_file->msg_size = attr->mq_msgsize;
         mq_file->max_msgs = attr->mq_maxmsg;
-        strncpy(mq_file->name, name, RT_NAME_MAX + 1);
+        strncpy(mq_file->name, name, RT_NAME_MAX);
         rt_list_init(&(mq_file->list));
         rt_spin_lock(&mqueue_lock);
         rt_list_insert_after(&(_mqueue_file_list), &(mq_file->list));
@@ -294,7 +294,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
     }
 
     char* mq_path = "/dev/mqueue/";
-    char mq_name[strlen(mq_path) + RT_NAME_MAX + 1];
+    char mq_name[strlen(mq_path) + RT_NAME_MAX];
     rt_sprintf(mq_name, "%s%s", mq_path, name);
     mq_fd = open(mq_name, oflag);
 
@@ -459,7 +459,7 @@ int mq_unlink(const char *name)
         name++;
     }
     char* mq_path = "/dev/mqueue/";
-    char mq_name[strlen(mq_path) + RT_NAME_MAX + 1];
+    char mq_name[strlen(mq_path) + RT_NAME_MAX];
     rt_sprintf(mq_name, "%s%s", mq_path, name);
     return unlink(mq_name);
 }

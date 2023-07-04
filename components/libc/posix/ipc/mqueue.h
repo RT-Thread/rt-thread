@@ -18,7 +18,7 @@
 
 struct mqueue_file
 {
-    char        name[RT_NAME_MAX + 1];      /* file name */
+    char        name[RT_NAME_MAX];          /* file name */
     rt_uint16_t msg_size;                   /**< message size of each message */
     rt_uint16_t max_msgs;                   /**< max number of messages */
     rt_list_t   list;
