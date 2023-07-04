@@ -356,7 +356,7 @@ jobs:
           ls bsp/$RTT_BSP/dist
           pwd
       - uses: actions/upload-artifact@v3
-        if:  ${{ github.event.inputs.bsp_options.dist_flag }} 
+        if:  ${{ github.event.inputs.dist_flag }} 
         env:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}

@@ -147,7 +147,7 @@ jobs:
           ls bsp/$RTT_BSP/dist
           pwd
       - uses: actions/upload-artifact@v3
-        if:  ${{ github.event.inputs.bsp_options.dist_flag }} 
+        if:  ${{ github.event.inputs.dist_flag }} 
         with:
           name: dist_file
           path: ${{ github.workspace }}/${{ github.event.inputs.bsp_options }}/*
