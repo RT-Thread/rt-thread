@@ -10,20 +10,20 @@
       <TargetName>rtthread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32U575ZITx</Device>
+          <Device>STM32U585AIIxQ</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32U5xx_DFP.2.1.0</PackID>
           <PackURL>https://www.keil.com/pack/</PackURL>
-          <Cpu>IROM(0x08000000-0x81FFFFF) IRAM(0x20000000-0x200BFFFF) CLOCK(8000000) FPU3(SFPU) CPUTYPE("Cortex-M33") ELITTLE TZ</Cpu>
+          <Cpu>IRAM(0x20000000,0x00040000) IRAM2(0x20040000,0x00080000) IROM(0x08000000,0x00200000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll></FlashDriverDll>
+          <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC8000 -FN2 -FF0STM32U5xx_2M_0800 -FS08000000 -FL0200000 -FF1STM32U5xx_2M_0C00 -FS1C000000 -FL1200000 -FP0($$Device:STM32U585AIIxQ$CMSIS\Flash\STM32U5xx_2M_0800.FLM) -FP1($$Device:STM32U585AIIxQ$CMSIS\Flash\STM32U5xx_2M_0C00.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile></RegisterFile>
+          <RegisterFile>$$Device:STM32U585AIIxQ$Drivers\CMSIS\Device\ST\STM32U5xx\Include\stm32u5xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32U575ZITx$CMSIS\SVD\STM32U5xx.svd</SFDFile>
+          <SFDFile>$$Device:STM32U585AIIxQ$CMSIS\SVD\STM32U585.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -114,7 +114,7 @@
           <SimDlgDll></SimDlgDll>
           <SimDlgDllArguments></SimDlgDllArguments>
           <TargetDllName>SARMV8M.DLL</TargetDllName>
-          <TargetDllArguments>-MPU</TargetDllArguments>
+          <TargetDllArguments> -MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM33</TargetDlgDllArguments>
         </DllOption>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -186,7 +186,8 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
-            <hadIRAM2>0</hadIRAM2>
+            <nBranchProt>0</nBranchProt>
+            <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>1</useUlib>
@@ -246,7 +247,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0xc0000</Size>
+                <Size>0x40000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -301,12 +302,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0xc0000</Size>
+                <Size>0x40000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x20040000</StartAddress>
+                <Size>0x80000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -339,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__STDC_LIMIT_MACROS, STM32U575xx, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\libraries\HAL_Drivers;..\..\..\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m33;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\libc\compilers\common\extension;applications;board\CubeMX_Config\Inc;board;..\..\..\components\libc\posix\io\stdio</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;..\..\..\components\drivers\include;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include;board;.;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\stdio;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;..\..\..\libcpu\arm\cortex-m33;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\finsh;..\libraries\HAL_Drivers;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\poll;applications;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\drivers\spi;board\CubeMX_Config\Inc;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -479,6 +480,11 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+            <File>
               <FileName>i2c-bit-ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
@@ -564,21 +570,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32u575xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Source\Templates\arm\startup_stm32u575xx.s</FilePath>
-            </File>
-            <File>
-              <FileName>stm32u5xx_hal_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\CubeMX_Config\Src\stm32u5xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_adc.c</FilePath>
@@ -602,6 +593,21 @@
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32u585xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Source\Templates\arm\startup_stm32u585xx.s</FilePath>
+            </File>
+            <File>
+              <FileName>stm32u5xx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\CubeMX_Config\Src\stm32u5xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -642,11 +648,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
             </File>
             <File>
               <FileName>idle.c</FileName>

@@ -36,7 +36,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -88,8 +87,12 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
-
+#define RT_USING_ADC
+#define RT_USING_PWM
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -198,7 +201,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -234,10 +237,9 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_STM32U575ZI
+#define SOC_STM32U585AIIxQ
 
 /* Onboard Peripheral Drivers */
-
 
 /* On-chip Peripheral Drivers */
 

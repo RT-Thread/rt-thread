@@ -7,9 +7,6 @@ config SOC_STM32U585AIIxQ
     select RT_USING_USER_MAIN
     default y
 
-menu "Onboard Peripheral Drivers"
-
-endmenu
 
 menu "On-chip Peripheral Drivers"
 
@@ -26,36 +23,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
-
-            config BSP_UART1_RX_USING_DMA
-                bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default n
-
-            config BSP_USING_UART2
-                bool "Enable UART2"
-                default n
-
-            config BSP_UART2_RX_USING_DMA
-                bool "Enable UART2 RX DMA"
-                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
-                default n
-
-            config BSP_USING_LPUART1
-                bool "Enable LPUART1"
-                default n
-
-            config BSP_LPUART1_RX_USING_DMA
-                bool "Enable LPUART1 RX DMA"
-                depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
-                default n
         endif
 
     source "../libraries/HAL_Drivers/Kconfig"
-
-endmenu
-
-menu "Board extended module Drivers"
 
 endmenu
 
