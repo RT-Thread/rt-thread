@@ -169,6 +169,10 @@ extern "C" {
 #include "drivers/lcd.h"
 #endif
 
+#ifdef RT_USING_DM
+#include "drivers/core/rtdm.h"
+#endif /* RT_USING_DM */
+
 #ifdef __cplusplus
 }
 #endif
