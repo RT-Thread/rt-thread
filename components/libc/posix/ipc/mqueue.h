@@ -11,20 +11,8 @@
 #define __MQUEUE_H__
 
 #include <rtthread.h>
-#include <rthw.h>
 #include <sys/signal.h>
-#include <sys/time.h>
-#include <rtdef.h>
-
-struct mqueue_file
-{
-    char        name[RT_NAME_MAX];          /* file name */
-    rt_uint16_t msg_size;                   /**< message size of each message */
-    rt_uint16_t max_msgs;                   /**< max number of messages */
-    rt_list_t   list;
-    rt_uint8_t  *data;                      /* file date ptr */
-    rt_size_t   size;                       /* file size */
-};
+#include "dfs_mqueue.h"
 
 typedef int mqd_t;
 
