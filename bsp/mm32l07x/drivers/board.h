@@ -11,7 +11,7 @@
 #ifndef BOARD_H__
 #define BOARD_H__
 #include <rtthread.h>
-#include <hal_device.h>
+#include <HAL_device.h>
 
 #define SRAM_SIZE 0x2000
 

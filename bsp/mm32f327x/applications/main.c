@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "HAL_device.h"
+#include "hal_device.h"
 /* defined the LED pin: PA15 */
 #define LED_PIN    38
 int main(void)
