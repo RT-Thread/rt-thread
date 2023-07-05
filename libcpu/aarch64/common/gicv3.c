@@ -30,6 +30,13 @@
 #include <cp15.h>
 
 #include <board.h>
+#include <rtatomic.h>
+#include <cache.h>
+#include <mm_aspace.h>
+#include <ioremap.h>
+
+#define DBG_LEVEL   DBG_ERROR
+#include "rtdbg.h"
 
 #ifndef ARM_SPI_BIND_CPU_ID
 #define ARM_SPI_BIND_CPU_ID 0
@@ -41,12 +48,37 @@
 extern rt_uint64_t rt_cpu_mpidr_early[];
 #endif /* RT_USING_SMP */
 
+struct its_cmd_block
+{
+    rt_uint64_t raw_cmd[4];
+};
+
+struct gicv3_its_data
+{
+    rt_uint64_t base_pa;
+    rt_uint64_t base_va;
+    struct its_cmd_block *cmd_base;
+    struct its_cmd_block *cmd_write;
+    rt_bool_t dev_table_is_indirect;
+    rt_uint64_t *indirect_dev_lvl1_table;
+    rt_size_t indirect_dev_lvl1_width;
+    rt_size_t indirect_dev_lvl2_width;
+    rt_size_t indirect_dev_page_size;
+    rt_size_t cmd_queue_size;
+    rt_uint64_t rdbase[ARM_GIC_CPU_NUM];
+    rt_uint64_t redist_base[ARM_GIC_CPU_NUM];
+};
+
 struct arm_gic
 {
-    rt_uint64_t offset;                     /* the first interrupt index in the vector table */
-    rt_uint64_t redist_hw_base[ARM_GIC_CPU_NUM]; /* the pointer of the gic redistributor */
-    rt_uint64_t dist_hw_base;               /* the base address of the gic distributor */
+    rt_uint64_t offset;                          /* the first interrupt index in the vector table */
+    rt_uint64_t dist_hw_base;                    /* the base address of the gic distributor */
     rt_uint64_t cpu_hw_base[ARM_GIC_CPU_NUM];    /* the base address of the gic cpu interface */
+    rt_uint64_t redist_hw_base[ARM_GIC_CPU_NUM]; /* the pointer of the gic redistributor */
+    rt_bool_t lpi_init_flag;
+    rt_uint64_t gicr_propbaser_base;
+    rt_uint64_t msi_address;
+    struct gicv3_its_data its_config;            /* the base address of the its descriptions */
 };
 
 /* 'ARM_GIC_MAX_NR' is the number of cores */
@@ -100,6 +132,10 @@ static unsigned int _gic_max_irq;
 #define GICR_CTLR_CES       (1 << 1)
 #define GICR_CTLR_EnableLPI (1 << 0)
 
+/* GITS_CTLR */
+#define GITS_CTLR_Enabled   (1 << 0)
+#define GITS_CTLR_Quiescent (1 << 31)
+
 /* Macro to access the Generic Interrupt Controller Interface (GICC) */
 #define GIC_CPU_CTRL(hw_base)               HWREG32((hw_base) + 0x00U)
 #define GIC_CPU_PRIMASK(hw_base)            HWREG32((hw_base) + 0x04U)
@@ -140,6 +176,7 @@ static unsigned int _gic_max_irq;
 #define GIC_RDIST_TSTATUSR(hw_base)         HWREG32((hw_base) + 0x010U)
 #define GIC_RDIST_WAKER(hw_base)            HWREG32((hw_base) + 0x014U)
 #define GIC_RDIST_SETLPIR(hw_base)          HWREG32((hw_base) + 0x040U)
+#define GIC_RDIST_SETLPIR_ADDR(hw_base)     ((hw_base) + 0x040U)
 #define GIC_RDIST_CLRLPIR(hw_base)          HWREG32((hw_base) + 0x048U)
 #define GIC_RDIST_PROPBASER(hw_base)        HWREG32((hw_base) + 0x070U)
 #define GIC_RDIST_PENDBASER(hw_base)        HWREG32((hw_base) + 0x078U)
@@ -159,6 +196,23 @@ static unsigned int _gic_max_irq;
 #define GIC_RDISTSGI_ICFGR1(hw_base)        HWREG32((hw_base) + GIC_RSGI_OFFSET + 0xC04U)
 #define GIC_RDISTSGI_IGRPMODR0(hw_base, n)  HWREG32((hw_base) + GIC_RSGI_OFFSET + 0xD00U + (n) * 4)
 #define GIC_RDISTSGI_NSACR(hw_base)         HWREG32((hw_base) + GIC_RSGI_OFFSET + 0xE00U)
+
+/* ITS registers */
+#define GITS_CTLR(hw_base)                  HWREG32((hw_base) + 0x0000)
+#define GITS_IIDR(hw_base)                  HWREG32((hw_base) + 0x0004)
+#define GITS_TYPER(hw_base)                 HWREG64((hw_base) + 0x0008)
+#define GITS_FCTLR(hw_base)                 HWREG32((hw_base) + 0x0020)
+#define GITS_CBASER(hw_base)                HWREG64((hw_base) + 0x0080)
+#define GITS_CWRITER(hw_base)               HWREG64((hw_base) + 0x0088)
+#define GITS_CREADR(hw_base)                HWREG64((hw_base) + 0x0090)
+#define GITS_BASER(hw_base, n)              HWREG64((hw_base) + 0x0100 + ((n) * 8))
+#define GITS_TRANSLATER_ADDR(hw_base)       ((hw_base) + 0x10040)
+
+static void lpi_init(rt_uint64_t index);
+static void gicv3_lpi_mask(rt_uint64_t index, rt_uint32_t irq);
+static void gicv3_lpi_umask(rt_uint64_t index, rt_uint32_t irq);
+static rt_uint64_t gicv3_lpi_get_priority(rt_uint64_t index, rt_uint32_t irq);
+static void gicv3_lpi_set_priority(rt_uint64_t index, rt_uint32_t irq, rt_uint64_t priority);
 
 int arm_gic_get_active_irq(rt_uint64_t index)
 {
@@ -190,6 +244,12 @@ void arm_gic_mask(rt_uint64_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        gicv3_lpi_mask(index, irq);
+        return;
+    }
+
     if (irq < 32)
     {
         rt_int32_t cpu_id = rt_hw_cpu_id();
@@ -211,6 +271,12 @@ void arm_gic_umask(rt_uint64_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        gicv3_lpi_umask(index, irq);
+        return;
+    }
+
     if (irq < 32)
     {
         rt_int32_t cpu_id = rt_hw_cpu_id();
@@ -231,6 +297,11 @@ rt_uint64_t arm_gic_get_pending_irq(rt_uint64_t index, int irq)
 
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
+
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return -RT_ERROR;
+    }
 
     if (irq >= 16)
     {
@@ -261,6 +332,11 @@ void arm_gic_set_pending_irq(rt_uint64_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return;
+    }
+
     if (irq >= 16)
     {
         GIC_DIST_PENDING_SET(_gic_table[index].dist_hw_base, irq) = 1 << (irq % 32);
@@ -282,6 +358,11 @@ void arm_gic_clear_pending_irq(rt_uint64_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return;
+    }
+
     if (irq >= 16)
     {
         mask = 1 << (irq % 32);
@@ -302,6 +383,12 @@ void arm_gic_set_configuration(rt_uint64_t index, int irq, rt_uint32_t config)
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
     irq = irq - _gic_table[index].offset;
+
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return;
+    }
+
     RT_ASSERT(irq >= 0);
 
     icfgr = GIC_DIST_CONFIG(_gic_table[index].dist_hw_base, irq);
@@ -320,6 +407,11 @@ rt_uint64_t arm_gic_get_configuration(rt_uint64_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return -RT_ERROR;
+    }
+
     return (GIC_DIST_CONFIG(_gic_table[index].dist_hw_base, irq) >> ((irq % 16) >> 1));
 }
 
@@ -332,12 +424,22 @@ void arm_gic_clear_active(rt_uint64_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return;
+    }
+
     GIC_DIST_ACTIVE_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
 }
 
 void arm_gic_set_router_cpu(rt_uint64_t index, int irq, rt_uint64_t aff)
 {
     RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return;
+    }
 
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 32);
@@ -352,6 +454,11 @@ rt_uint64_t arm_gic_get_router_cpu(rt_uint64_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 32);
 
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return -RT_ERROR;
+    }
+
     return GIC_DIST_IROUTER(_gic_table[index].dist_hw_base, irq);
 }
 
@@ -364,6 +471,11 @@ void arm_gic_set_cpu(rt_uint64_t index, int irq, unsigned int cpumask)
 
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
+
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return;
+    }
 
     old_tgt = GIC_DIST_TARGET(_gic_table[index].dist_hw_base, irq);
 
@@ -380,6 +492,11 @@ rt_uint64_t arm_gic_get_target_cpu(rt_uint64_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return -RT_ERROR;
+    }
+
     return (GIC_DIST_TARGET(_gic_table[index].dist_hw_base, irq) >> ((irq % 4) * 8)) & 0xff;
 }
 
@@ -391,6 +508,12 @@ void arm_gic_set_priority(rt_uint64_t index, int irq, rt_uint64_t priority)
 
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
+
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        gicv3_lpi_set_priority(index, (rt_uint32_t) irq, priority);
+        return;
+    }
 
     if (irq < 32)
     {
@@ -416,6 +539,11 @@ rt_uint64_t arm_gic_get_priority(rt_uint64_t index, int irq)
 
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
+
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return gicv3_lpi_get_priority(index, (rt_uint32_t) irq);
+    }
 
     if (irq < 32)
     {
@@ -491,6 +619,11 @@ rt_uint64_t arm_gic_get_irq_status(rt_uint64_t index, int irq)
 
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
+
+    if (irq >= GIC_LPI_INTID_START)
+    {
+        return -RT_ERROR;
+    }
 
     active = (GIC_DIST_ACTIVE_SET(_gic_table[index].dist_hw_base, irq) >> (irq % 32)) & 0x1;
     pending = (GIC_DIST_PENDING_SET(_gic_table[index].dist_hw_base, irq) >> (irq % 32)) & 0x1;
@@ -842,6 +975,9 @@ int arm_gic_redist_init(rt_uint64_t index, rt_uint64_t redist_base)
 
     /* Trigger level for PPI interrupts*/
     GIC_RDISTSGI_ICFGR1(redist_base) = 0;
+
+    lpi_init(index);
+
     return 0;
 }
 
@@ -873,6 +1009,885 @@ int arm_gic_cpu_init(rt_uint64_t index, rt_uint64_t cpu_base)
     SET_GICV3_REG(ICC_CTLR_EL1, value);
 
     return 0;
+}
+
+
+/* LPI and ITS */
+#define ITS_CMD_QUEUE_SIZE          1024 * 64
+#define ITS_CMD_QUEUE_NR_ENTRIES    (ITS_CMD_QUEUE_SIZE / sizeof(struct its_cmd_block))
+
+#define GITS_BASER_TYPE_NONE        0
+#define GITS_BASER_TYPE_DEVICE      1
+#define GITS_BASER_TYPE_COLLECTION  4
+
+/* cmd */
+#define GITS_CMD_ID_MOVI            0x01
+#define GITS_CMD_ID_INT             0x03
+#define GITS_CMD_ID_CLEAR           0x04
+#define GITS_CMD_ID_SYNC            0x05
+#define GITS_CMD_ID_MAPD            0x08
+#define GITS_CMD_ID_MAPC            0x09
+#define GITS_CMD_ID_MAPTI           0x0a
+#define GITS_CMD_ID_MAPI            0x0b
+#define GITS_CMD_ID_INV             0x0c
+#define GITS_CMD_ID_INVALL          0x0d
+#define GITS_CMD_ID_MOVALL          0x0e
+#define GITS_CMD_ID_DISCARD         0x0f
+
+#define GITS_CMD_ID_OFFSET          0
+#define GITS_CMD_ID_SHIFT           0
+#define GITS_CMD_ID_MASK            0xffUL
+
+#define GITS_CMD_DEVICEID_OFFSET    0
+#define GITS_CMD_DEVICEID_SHIFT     32
+#define GITS_CMD_DEVICEID_MASK      0xffffffffUL
+
+#define GITS_CMD_SIZE_OFFSET        1
+#define GITS_CMD_SIZE_SHIFT         0
+#define GITS_CMD_SIZE_MASK          0x1fUL
+
+#define GITS_CMD_EVENTID_OFFSET     1
+#define GITS_CMD_EVENTID_SHIFT      0
+#define GITS_CMD_EVENTID_MASK       0xffffffffUL
+
+#define GITS_CMD_PINTID_OFFSET      1
+#define GITS_CMD_PINTID_SHIFT       32
+#define GITS_CMD_PINTID_MASK        0xffffffffUL
+
+#define GITS_CMD_ICID_OFFSET        2
+#define GITS_CMD_ICID_SHIFT         0
+#define GITS_CMD_ICID_MASK          0xffffUL
+
+#define GITS_CMD_ITTADDR_OFFSET     2
+#define GITS_CMD_ITTADDR_SHIFT      8
+#define GITS_CMD_ITTADDR_MASK       0xffffffffffUL
+#define GITS_CMD_ITTADDR_ALIGN      GITS_CMD_ITTADDR_SHIFT
+#define GITS_CMD_ITTADDR_ALIGN_SZ   (BIT(0) << GITS_CMD_ITTADDR_ALIGN)
+
+#define GITS_CMD_RDBASE_OFFSET      2
+#define GITS_CMD_RDBASE_SHIFT       16
+#define GITS_CMD_RDBASE_MASK        0xffffffffUL
+#define GITS_CMD_RDBASE_ALIGN       GITS_CMD_RDBASE_SHIFT
+
+#define GITS_CMD_VALID_OFFSET       2
+#define GITS_CMD_VALID_SHIFT        63
+#define GITS_CMD_VALID_MASK         0x1UL
+
+/* Cache and Share ability for ITS & Redistributor LPI state tables */
+#define GIC_BASER_CACHE_NGNRNE      0x0UL /* Device-nGnRnE */
+#define GIC_BASER_CACHE_INNERLIKE   0x0UL /* Same as Inner Cacheability. */
+#define GIC_BASER_CACHE_NCACHEABLE  0x1UL /* Non-cacheable */
+#define GIC_BASER_CACHE_RAWT        0x2UL /* Cacheable R-allocate, W-through */
+#define GIC_BASER_CACHE_RAWB        0x3UL /* Cacheable R-allocate, W-back */
+#define GIC_BASER_CACHE_WAWT        0x4UL /* Cacheable W-allocate, W-through */
+#define GIC_BASER_CACHE_WAWB        0x5UL /* Cacheable W-allocate, W-back */
+#define GIC_BASER_CACHE_RAWAWT      0x6UL /* Cacheable R-allocate, W-allocate, W-through */
+#define GIC_BASER_CACHE_RAWAWB      0x7UL /* Cacheable R-allocate, W-allocate, W-back */
+#define GIC_BASER_SHARE_NO          0x0UL /* Non-shareable */
+#define GIC_BASER_SHARE_INNER       0x1UL /* Inner Shareable */
+#define GIC_BASER_SHARE_OUTER       0x2UL /* Outer Shareable */
+
+/* ITS TYPER register */
+#define GITS_TYPER_PHY_SHIFT              0
+#define GITS_TYPER_PHY_MASK               0x1UL
+#define GITS_TYPER_VIRT_SHIFT             1
+#define GITS_TYPER_VIRT_MASK              0x1UL
+#define GITS_TYPER_ITT_ENTRY_SIZE_SHIFT   4
+#define GITS_TYPER_ITT_ENTRY_SIZE_MASK    0xfUL
+#define GITS_TYPER_IDBITS_SHIFT           8
+#define GITS_TYPER_IDBITS_MASK            0x1fUL
+#define GITS_TYPER_DEVBITS_SHIFT          13
+#define GITS_TYPER_DEVBITS_MASK           0x1fUL
+#define GITS_TYPER_SEIS_SHIFT             18
+#define GITS_TYPER_SEIS_MASK              0x1UL
+#define GITS_TYPER_PTA_SHIFT              19
+#define GITS_TYPER_PTA_MASK               0x1UL
+#define GITS_TYPER_HCC_SHIFT              24
+#define GITS_TYPER_HCC_MASK               0xffUL
+#define GITS_TYPER_CIDBITS_SHIFT          32
+#define GITS_TYPER_CIDBITS_MASK           0xfUL
+#define GITS_TYPER_CIL_SHIFT              36
+#define GITS_TYPER_CIL_MASK               0x1UL
+
+/* ITS CBASER register */
+#define GITS_CBASER_SIZE_SHIFT            0
+#define GITS_CBASER_SIZE_MASK             0xffUL
+#define GITS_CBASER_SHAREABILITY_SHIFT    10
+#define GITS_CBASER_SHAREABILITY_MASK     0x3UL
+#define GITS_CBASER_ADDR_SHIFT            12
+#define GITS_CBASER_ADDR_MASK             0xfffffffffUL
+#define GITS_CBASER_OUTER_CACHE_SHIFT     53
+#define GITS_CBASER_OUTER_CACHE_MASK      0x7UL
+#define GITS_CBASER_INNER_CACHE_SHIFT     59
+#define GITS_CBASER_INNER_CACHE_MASK      0x7UL
+#define GITS_CBASER_VALID_SHIFT           63
+#define GITS_CBASER_VALID_MASK            0x1UL
+
+/* ITS BASER<n> register */
+#define GITS_BASER_SIZE_SHIFT             0
+#define GITS_BASER_SIZE_MASK              0xffUL
+#define GITS_BASER_PAGE_SIZE_SHIFT        8
+#define GITS_BASER_PAGE_SIZE_MASK         0x3UL
+#define GITS_BASER_PAGE_SIZE_4K           0
+#define GITS_BASER_PAGE_SIZE_16K          1
+#define GITS_BASER_PAGE_SIZE_64K          2
+#define GITS_BASER_SHAREABILITY_SHIFT     10
+#define GITS_BASER_SHAREABILITY_MASK      0x3UL
+#define GITS_BASER_ADDR_SHIFT             12
+#define GITS_BASER_ADDR_MASK              0xfffffffff
+#define GITS_BASER_ENTRY_SIZE_SHIFT       48
+#define GITS_BASER_ENTRY_SIZE_MASK        0x1fUL
+#define GITS_BASER_OUTER_CACHE_SHIFT      53
+#define GITS_BASER_OUTER_CACHE_MASK       0x7UL
+#define GITS_BASER_TYPE_SHIFT             56
+#define GITS_BASER_TYPE_MASK              0x7UL
+#define GITS_BASER_INNER_CACHE_SHIFT      59
+#define GITS_BASER_INNER_CACHE_MASK       0x7UL
+#define GITS_BASER_INDIRECT_SHIFT         62
+#define GITS_BASER_INDIRECT_MASK          0x1UL
+#define GITS_BASER_VALID_SHIFT            63
+#define GITS_BASER_VALID_MASK             0x1UL
+
+#define MASK(__basename)                (__basename##_MASK << __basename##_SHIFT)
+#define MASK_SET(__val, __basename)     (((__val) & __basename##_MASK) << __basename##_SHIFT)
+#define MASK_GET(__reg, __basename)     (((__reg) >> __basename##_SHIFT) & __basename##_MASK)
+
+/* Temporarily do not make its affinity, only use Collection 0 */
+#define ICID_NO 0
+
+rt_inline rt_size_t fls_z(rt_uint32_t x)
+{
+    rt_uint32_t bits = sizeof(x) * 8;
+    rt_uint32_t cmp = 1 << (bits - 1);
+
+    while (bits) {
+        if (x & cmp) {
+            return bits;
+        }
+        cmp >>= 1;
+        bits--;
+    }
+
+    return 0;
+}
+
+static rt_err_t its_force_quiescent(struct gicv3_its_data *its_data)
+{
+    rt_uint32_t reg, count = 500;
+    rt_uint64_t its_base =  its_data->base_va;
+
+    reg = GITS_CTLR(its_base);
+    if (reg & GITS_CTLR_Enabled)
+    {
+        reg &= ~GITS_CTLR_Enabled;
+        GITS_CTLR(its_base) = reg;
+    }
+
+    while (!(reg & GITS_CTLR_Quiescent))
+    {
+        count--;
+        if (!count)
+        {
+            return -RT_ETIMEOUT;
+        }
+
+        rt_hw_us_delay(1000);
+        reg = GITS_CTLR(its_base);
+    }
+
+    return RT_EOK;
+}
+
+/* Probe the BASER(i) to get the largest supported page size */
+static rt_size_t its_probe_baser_page_size(struct gicv3_its_data *its_data, rt_uint32_t i)
+{
+    rt_uint64_t its_base =  its_data->base_va;
+    rt_size_t page_size = GITS_BASER_PAGE_SIZE_64K;
+
+    while (page_size > GITS_BASER_PAGE_SIZE_4K)
+    {
+        rt_uint64_t reg = GITS_BASER(its_base, i);
+
+        reg &= ~MASK(GITS_BASER_PAGE_SIZE);
+        reg |= MASK_SET(page_size, GITS_BASER_PAGE_SIZE);
+
+        GITS_BASER(its_base, i) = reg;
+
+        reg = GITS_BASER(its_base, i);
+
+        if (MASK_GET(reg, GITS_BASER_PAGE_SIZE) == page_size)
+        {
+            break;
+        }
+
+        switch (page_size)
+        {
+        case GITS_BASER_PAGE_SIZE_64K:
+            page_size = GITS_BASER_PAGE_SIZE_16K;
+            break;
+        default:
+            page_size = GITS_BASER_PAGE_SIZE_4K;
+            break;
+        }
+    }
+
+    switch (page_size)
+    {
+    case GITS_BASER_PAGE_SIZE_64K:
+        return 1024 * 64;
+    case GITS_BASER_PAGE_SIZE_16K:
+        return 1024 * 16;
+    default:
+        return 1024 * 4;
+    }
+}
+
+static rt_err_t its_alloc_tables(struct gicv3_its_data *its_data)
+{
+#define GITS_BASER_NR_REGS              8
+
+    rt_uint32_t device_ids, i;
+    rt_uint64_t reg, type;
+    rt_uint64_t its_base =  its_data->base_va;
+
+    device_ids = MASK_GET(GITS_TYPER(its_base), GITS_TYPER_DEVBITS) + 1;
+
+    for (i = 0; i < GITS_BASER_NR_REGS; i++)
+    {
+        rt_size_t page_size, entry_size, page_cnt, lvl2_width = 0;
+        rt_bool_t indirect = RT_FALSE;
+        void *alloc_addr, *alloc_addr_pa;
+
+        reg = GITS_BASER(its_base, i);
+        type = MASK_GET(reg, GITS_BASER_TYPE);
+        entry_size = MASK_GET(reg, GITS_BASER_ENTRY_SIZE) + 1;
+
+        switch (MASK_GET(reg, GITS_BASER_PAGE_SIZE))
+        {
+        case GITS_BASER_PAGE_SIZE_4K:
+            page_size = 1024 * 4;
+            break;
+        case GITS_BASER_PAGE_SIZE_16K:
+            page_size = 1024 * 16;
+            break;
+        case GITS_BASER_PAGE_SIZE_64K:
+            page_size = 1024 * 64;
+            break;
+        default:
+            page_size = 1024 * 4;
+            break;
+        }
+
+        LOG_I("BASER  type: %d  page_size: %d  entry_size: %d device_ids: %d  reg: %p",
+                    type, page_size, entry_size, device_ids, reg);
+        switch (type)
+        {
+        case GITS_BASER_TYPE_DEVICE:
+            if (device_ids > 16)
+            {
+                /* Use the largest possible page size for indirect */
+                page_size = its_probe_baser_page_size(its_data, i);
+
+                /*
+                 * lvl1 table size:
+                 * subtract ID bits that sparse lvl2 table from 'ids'
+                 * which is reported by ITS hardware times lvl1 table
+                 * entry size.
+                 */
+                lvl2_width = fls_z(page_size / entry_size) - 1;
+                device_ids -= lvl2_width + 1;
+
+                /* The level 1 entry size is a 64bit pointer */
+                entry_size = sizeof(rt_uint64_t);
+
+                indirect = RT_TRUE;
+            }
+
+            page_cnt = RT_ALIGN(entry_size << device_ids, page_size) / page_size;
+            break;
+
+        case GITS_BASER_TYPE_COLLECTION:
+            page_cnt = RT_ALIGN(entry_size * ARM_GIC_CPU_NUM, page_size) / page_size;
+            break;
+
+        default:
+            continue;
+        }
+
+        LOG_I("Allocating table of %ldx%ldK pages (%ld bytes entry)",
+                            page_cnt, page_size / 1024, entry_size);
+
+        alloc_addr = rt_malloc_align(page_size * page_cnt, page_size);
+        if (!alloc_addr)
+        {
+            return -RT_ENOMEM;
+        }
+
+        rt_memset(alloc_addr, 0, page_size * page_cnt);
+        alloc_addr_pa = rt_kmem_v2p(alloc_addr);
+        alloc_addr = rt_ioremap(alloc_addr, page_size * page_cnt);
+
+        switch (page_size)
+        {
+        case 1024 * 4:
+            reg = GITS_BASER_PAGE_SIZE_4K << 8;
+            break;
+
+        case 1024 * 16:
+            reg = GITS_BASER_PAGE_SIZE_16K << 8;
+            break;
+
+        case 1024 * 64:
+            reg = GITS_BASER_PAGE_SIZE_64K << 8;
+            break;
+        }
+
+        reg |= MASK_SET(page_cnt - 1, GITS_BASER_SIZE);
+        reg |= MASK_SET(GIC_BASER_SHARE_INNER, GITS_BASER_SHAREABILITY);    /* Inner Shareable */
+        reg |= MASK_SET((rt_uint64_t) alloc_addr_pa >> GITS_BASER_ADDR_SHIFT, GITS_BASER_ADDR);
+        reg |= MASK_SET(GIC_BASER_CACHE_INNERLIKE, GITS_BASER_OUTER_CACHE); /* OuterCache */
+        reg |= MASK_SET(GIC_BASER_CACHE_RAWAWB, GITS_BASER_INNER_CACHE);    /* Cacheable */
+        reg |= MASK_SET(indirect ? 1 : 0, GITS_BASER_INDIRECT);             /* Indirect */
+        reg |= MASK_SET(1, GITS_BASER_VALID);                               /* Valid */
+
+        GITS_BASER(its_base, i) = reg;
+
+        /* TOFIX: check page size & SHAREABILITY validity after write */
+        if (type == GITS_BASER_TYPE_DEVICE && indirect)
+        {
+            its_data->dev_table_is_indirect   = indirect;
+            its_data->indirect_dev_lvl1_table = alloc_addr;
+            its_data->indirect_dev_lvl1_width = device_ids;
+            its_data->indirect_dev_lvl2_width = lvl2_width;
+            its_data->indirect_dev_page_size  = page_size;
+            LOG_D("table Indirection enabled");
+        }
+    }
+
+    return RT_EOK;
+}
+
+static rt_bool_t its_queue_full(struct gicv3_its_data *its_data)
+{
+    rt_size_t widx;
+    rt_size_t ridx;
+
+    widx = its_data->cmd_write - its_data->cmd_base;
+    ridx = GITS_CREADR( its_data->base_va) / sizeof(struct its_cmd_block);
+
+    /* This is incredibly unlikely to happen, unless the ITS locks up. */
+    return (((widx + 1) % ITS_CMD_QUEUE_NR_ENTRIES) == ridx);
+}
+
+static struct its_cmd_block *its_allocate_entry(struct gicv3_its_data *its_data)
+{
+    struct its_cmd_block *cmd;
+    unsigned int count = 1000000;   /* 1s! */
+
+    while (its_queue_full(its_data))
+    {
+        count--;
+        if (!count)
+        {
+            LOG_E("ITS queue not draining");
+            return RT_NULL;
+        }
+        rt_hw_us_delay(1);
+    }
+
+    cmd = its_data->cmd_write++;
+
+    /* Handle queue wrapping */
+    if (its_data->cmd_write == (its_data->cmd_base + ITS_CMD_QUEUE_NR_ENTRIES))
+    {
+        its_data->cmd_write = its_data->cmd_base;
+    }
+
+    /* Clear command  */
+    cmd->raw_cmd[0] = 0;
+    cmd->raw_cmd[1] = 0;
+    cmd->raw_cmd[2] = 0;
+    cmd->raw_cmd[3] = 0;
+
+    return cmd;
+}
+
+static rt_err_t its_post_command(struct gicv3_its_data *its_data, struct its_cmd_block *cmd)
+{
+    rt_uint64_t wr_idx, rd_idx, idx;
+    rt_uint32_t count = 1000000;   /* 1s! */
+
+    wr_idx = (its_data->cmd_write - its_data->cmd_base) * sizeof(*cmd);
+    rd_idx = GITS_CREADR( its_data->base_va);
+
+    rt_hw_wmb();
+
+    GITS_CWRITER( its_data->base_va) = wr_idx;
+
+    while (1)
+    {
+        idx = GITS_CREADR( its_data->base_va);
+        if (idx == wr_idx)
+        {
+            break;
+        }
+
+        count--;
+        if (!count)
+        {
+            LOG_D("cmd[0] %p", cmd->raw_cmd[0]);
+            LOG_D("cmd[1] %p", cmd->raw_cmd[1]);
+            LOG_D("cmd[2] %p", cmd->raw_cmd[2]);
+            LOG_D("cmd[3] %p", cmd->raw_cmd[3]);
+
+            LOG_E("ITS queue timeout (rd 0x%X => 0x%X => wr 0x%X)", rd_idx, idx, wr_idx);
+            LOG_E("GITS_TYPER: %p", GITS_TYPER( its_data->base_va));
+            LOG_E("GITS_FCTLR: 0x%X", GITS_FCTLR( its_data->base_va));
+            return -RT_ETIMEOUT;
+        }
+        rt_hw_us_delay(1);
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t its_send_sync_cmd(struct gicv3_its_data *its_data, rt_uint64_t rd_addr)
+{
+    struct its_cmd_block *cmd = its_allocate_entry(its_data);
+
+    if (!cmd)
+    {
+        return -RT_EBUSY;
+    }
+
+    cmd->raw_cmd[0] = MASK_SET(GITS_CMD_ID_SYNC, GITS_CMD_ID);
+    cmd->raw_cmd[2] = MASK_SET(rd_addr >> GITS_CMD_RDBASE_ALIGN, GITS_CMD_RDBASE);
+
+    return its_post_command(its_data, cmd);
+}
+
+static rt_err_t its_send_mapc_cmd(struct gicv3_its_data *its_data, rt_uint32_t icid, rt_uint32_t cpuid, rt_bool_t valid)
+{
+    struct its_cmd_block *cmd = its_allocate_entry(its_data);
+
+    if (!cmd)
+    {
+        return -RT_EBUSY;
+    }
+
+    cmd->raw_cmd[0] =   MASK_SET(GITS_CMD_ID_MAPC, GITS_CMD_ID);
+    cmd->raw_cmd[2] =   MASK_SET(icid, GITS_CMD_ICID)                                               |
+                        MASK_SET(its_data->rdbase[cpuid] >> GITS_CMD_RDBASE_ALIGN, GITS_CMD_RDBASE) |
+                        MASK_SET(valid ? 1 : 0, GITS_CMD_VALID);
+
+    return its_post_command(its_data, cmd);
+}
+
+static rt_err_t its_send_mapd_cmd(struct gicv3_its_data *its_data, rt_uint32_t device_id,
+                        rt_uint32_t size, rt_uint64_t itt_addr, rt_bool_t valid)
+{
+    struct its_cmd_block *cmd = its_allocate_entry(its_data);
+
+    if (!cmd)
+    {
+        return -RT_EBUSY;
+    }
+
+    cmd->raw_cmd[0] = MASK_SET(GITS_CMD_ID_MAPD, GITS_CMD_ID) | MASK_SET(device_id, GITS_CMD_DEVICEID);
+    cmd->raw_cmd[1] = MASK_SET(size, GITS_CMD_SIZE);
+    cmd->raw_cmd[2] = MASK_SET(itt_addr >> GITS_CMD_ITTADDR_ALIGN, GITS_CMD_ITTADDR) | MASK_SET(valid ? 1 : 0, GITS_CMD_VALID);
+
+    return its_post_command(its_data, cmd);
+}
+
+static rt_err_t its_send_mapti_cmd(struct gicv3_its_data *its_data, rt_uint32_t device_id,
+                    rt_uint32_t event_id, rt_uint32_t intid, rt_uint32_t icid)
+{
+    struct its_cmd_block *cmd = its_allocate_entry(its_data);
+
+    if (!cmd)
+    {
+        return -RT_EBUSY;
+    }
+
+    cmd->raw_cmd[0] = MASK_SET(GITS_CMD_ID_MAPTI, GITS_CMD_ID) | MASK_SET(device_id, GITS_CMD_DEVICEID);
+    cmd->raw_cmd[1] = MASK_SET(event_id, GITS_CMD_EVENTID) | MASK_SET(intid, GITS_CMD_PINTID);
+    cmd->raw_cmd[2] = MASK_SET(icid, GITS_CMD_ICID);
+
+    return its_post_command(its_data, cmd);
+}
+
+static rt_err_t its_send_int_cmd(struct gicv3_its_data *its_data, rt_uint32_t device_id, rt_uint32_t event_id)
+{
+    struct its_cmd_block *cmd = its_allocate_entry(its_data);
+
+    if (!cmd)
+    {
+        return -RT_EBUSY;
+    }
+
+    cmd->raw_cmd[0] = MASK_SET(GITS_CMD_ID_INT, GITS_CMD_ID) | MASK_SET(device_id, GITS_CMD_DEVICEID);
+    cmd->raw_cmd[1] = MASK_SET(event_id, GITS_CMD_EVENTID);
+
+    return its_post_command(its_data, cmd);
+}
+
+static void its_setup_cmd_queue(struct gicv3_its_data *its_data)
+{
+    rt_uint64_t its_base =  its_data->base_va;
+    rt_uint64_t reg = 0;
+    void *cmd_base_pa;
+
+    its_data->cmd_queue_size = ITS_CMD_QUEUE_SIZE;
+    its_data->cmd_base = rt_malloc_align(its_data->cmd_queue_size, 0x10000);
+
+    cmd_base_pa = rt_kmem_v2p(its_data->cmd_base);
+    its_data->cmd_base = rt_ioremap(cmd_base_pa, its_data->cmd_queue_size);
+    its_data->cmd_write = its_data->cmd_base;
+
+    /* Zero out cmd table */
+    rt_memset(its_data->cmd_base, 0, its_data->cmd_queue_size);
+
+    LOG_D("cmd base va cache:   %p", its_data->cmd_base);
+    LOG_D("cmd base pa: [%p : %p]", cmd_base_pa, cmd_base_pa + its_data->cmd_queue_size);
+
+    reg |= MASK_SET(its_data->cmd_queue_size / 4096, GITS_CBASER_SIZE);
+    reg |= MASK_SET(GIC_BASER_SHARE_INNER, GITS_CBASER_SHAREABILITY);/* Inner Shareable */
+    reg |= MASK_SET((rt_uint64_t) cmd_base_pa >> GITS_CBASER_ADDR_SHIFT, GITS_CBASER_ADDR);
+    reg |= MASK_SET(GIC_BASER_CACHE_RAWAWB, GITS_CBASER_OUTER_CACHE);/* Cacheable R-allocate, W-allocate, W-back */
+    reg |= MASK_SET(GIC_BASER_CACHE_RAWAWB, GITS_CBASER_INNER_CACHE); /* Cacheable R-allocate, W-allocate, W-back */
+    reg |= MASK_SET(1, GITS_CBASER_VALID);  /* Valid */
+
+
+    GITS_CBASER(its_base) = reg;
+
+    LOG_I("GITS_CBASER: %p  %p", GITS_CBASER(its_base), reg);
+    LOG_I("Allocated %ld entries for command table %p", ITS_CMD_QUEUE_NR_ENTRIES, its_data->cmd_base);
+
+    GITS_CWRITER(its_base) = 0;
+}
+
+static rt_uint64_t its_rdist_get_rdbase(rt_uint64_t index, rt_uint32_t cpuid)
+{
+    rt_uint64_t rdbase;
+    struct gicv3_its_data *its_data = &_gic_table[index].its_config;
+
+    if (cpuid >= ARM_GIC_CPU_NUM)
+    {
+        LOG_E("cpuid: %d > ARM_GIC_CPU_NUM", cpuid);
+    }
+
+    if (MASK_GET(GITS_TYPER( its_data->base_va), GITS_TYPER_PTA))
+    {
+        rdbase = _gic_table[index].its_config.redist_base[cpuid];
+    }
+    else
+    {
+        rdbase = (GIC_RDIST_TYPER(_gic_table[index].redist_hw_base[0] + cpuid * 0x20000) >> 8) & 0xFFFF;
+        rdbase <<= GITS_CMD_RDBASE_SHIFT;
+    }
+
+    LOG_I("PTA: %d  rdbase: 0x%X", MASK_GET(GITS_TYPER( its_data->base_va), GITS_TYPER_PTA), rdbase);
+    return rdbase;
+}
+
+static rt_uint64_t gicv3_lpi_get_priority(rt_uint64_t index, rt_uint32_t irq)
+{
+    if (!_gic_table[index].lpi_init_flag)
+    {
+        return -RT_ERROR;
+    }
+
+    irq -= GIC_LPI_INTID_START;
+    return HWREG8(_gic_table[index].gicr_propbaser_base + irq) & 0xFC;
+}
+
+static void gicv3_lpi_set_priority(rt_uint64_t index, rt_uint32_t irq, rt_uint64_t priority)
+{
+    rt_uint8_t reg;
+
+    if (!_gic_table[index].lpi_init_flag)
+    {
+        return;
+    }
+
+    irq -= GIC_LPI_INTID_START;
+    reg = HWREG8(_gic_table[index].gicr_propbaser_base + irq);
+    reg &= 0x01;
+    reg |= priority & 0xFC;
+    HWREG8(_gic_table[index].gicr_propbaser_base + irq) = reg;
+    rt_hw_cpu_dcache_clean((void *) _gic_table[index].gicr_propbaser_base + irq, 1);
+}
+
+static void gicv3_lpi_mask(rt_uint64_t index, rt_uint32_t irq)
+{
+    rt_uint8_t reg;
+
+    if (!_gic_table[index].lpi_init_flag)
+    {
+        return;
+    }
+
+    irq -= GIC_LPI_INTID_START;
+    reg = HWREG8(_gic_table[index].gicr_propbaser_base + irq);
+    reg &= ~0x1;
+    HWREG8(_gic_table[index].gicr_propbaser_base + irq) = reg;
+    rt_hw_cpu_dcache_clean((void *) _gic_table[index].gicr_propbaser_base + irq, 1);
+}
+
+static void gicv3_lpi_umask(rt_uint64_t index, rt_uint32_t irq)
+{
+    rt_uint8_t reg;
+
+    if (!_gic_table[index].lpi_init_flag)
+    {
+        return;
+    }
+
+    irq -= GIC_LPI_INTID_START;
+    reg = HWREG8(_gic_table[index].gicr_propbaser_base + irq);
+    reg |= 0x1;
+    HWREG8(_gic_table[index].gicr_propbaser_base + irq) = reg;
+    rt_hw_cpu_dcache_clean((void *) _gic_table[index].gicr_propbaser_base + irq, 1);
+}
+
+static rt_err_t its_init(rt_uint64_t index)
+{
+    rt_err_t ret;
+    rt_uint32_t reg, i;
+    struct gicv3_its_data *its_data = &_gic_table[index].its_config;
+
+    LOG_W("GITS_TYPER: %p", GITS_TYPER(its_data->base_va));
+
+    for (i = 0; i < ARM_GIC_CPU_NUM; i++)
+    {
+        its_data->rdbase[i] = its_rdist_get_rdbase(index, i);
+    }
+
+    ret = its_force_quiescent(its_data);
+    if (ret)
+    {
+        LOG_E("Failed to quiesce, giving up");
+        return ret;
+    }
+
+    ret = its_alloc_tables(its_data);
+    if (ret)
+    {
+        LOG_E("Failed to allocate tables, giving up");
+        return ret;
+    }
+
+    its_setup_cmd_queue(its_data);
+
+    reg = GITS_CTLR( its_data->base_va);
+    reg |= GITS_CTLR_Enabled;
+    GITS_CTLR( its_data->base_va) = reg;
+
+    /* Map the boot CPU id to the CPU redistributor */
+    ret = its_send_mapc_cmd(its_data, ICID_NO, rt_hw_cpu_id(), RT_TRUE);
+    if (ret)
+    {
+        LOG_E("Failed to map boot CPU redistributor");
+        return ret;
+    }
+
+    return RT_EOK;
+}
+
+static void lpi_init(rt_uint64_t index)
+{
+    rt_ubase_t base;
+    rt_uint32_t val, val1, i, lpi_id_bits, prop_size, pend_size;
+    void *propbaser_pa, *propbaser_va, *pendbaser_pa, *pendbaser_va;
+    rt_err_t ret = -RT_ERROR;
+
+    if (_gic_table[index].lpi_init_flag)
+    {
+        return;
+    }
+
+    if (_gic_table[index].its_config.base_pa)
+    {
+        ret = its_init(index);
+    }
+
+    if (ret != RT_EOK)
+    {
+        /* LPIS, bit [17]: Indicates whether the implementation supports LPIs */
+        val = (GIC_DIST_TYPE(_gic_table[index].dist_hw_base) >> 17) & 0X1;
+        if (!val)
+        {
+            LOG_E("no supports LPI");
+            return;
+        }
+        _gic_table[index].msi_address = GIC_RDIST_SETLPIR_ADDR(_gic_table[index].redist_hw_base[rt_hw_cpu_id()]);
+    }
+    else
+    {
+        _gic_table[index].msi_address = GITS_TRANSLATER_ADDR(_gic_table[index].its_config.base_pa);
+    }
+
+    lpi_id_bits = (GIC_DIST_TYPE(_gic_table[index].dist_hw_base) >> 19) & 0x1F;
+    prop_size = 1 << (lpi_id_bits + 1);
+    pend_size = RT_ALIGN(prop_size / 8, 0x10000);
+
+    propbaser_va = rt_malloc_align(prop_size, 0x10000);
+    pendbaser_va = rt_malloc_align(pend_size * ARM_GIC_CPU_NUM, 0x10000);
+
+    rt_memset(propbaser_va, 0, prop_size);
+    rt_memset(pendbaser_va, 0, pend_size * ARM_GIC_CPU_NUM);
+
+    rt_hw_cpu_dcache_clean(propbaser_va, prop_size);
+    rt_hw_cpu_dcache_clean(pendbaser_va, pend_size * ARM_GIC_CPU_NUM);
+
+    propbaser_pa = rt_kmem_v2p(propbaser_va);
+    pendbaser_pa = rt_kmem_v2p(pendbaser_va);
+
+    _gic_table[index].gicr_propbaser_base = (rt_uint64_t)propbaser_va;
+
+    base = _gic_table[index].redist_hw_base[0];
+
+    for (i = 0; i < ARM_GIC_CPU_NUM; i++)
+    {
+        val = GIC_RDIST_CTRL(base);
+        val &= ~GICR_CTLR_EnableLPI;
+        GIC_RDIST_CTRL(base) = val;
+
+        val = (rt_uint64_t) propbaser_pa | 0x780 | lpi_id_bits;
+        val1 = (rt_uint64_t) pendbaser_pa | 0x4000000000000780;
+        GIC_RDIST_PROPBASER(base) = val;
+        GIC_RDIST_PENDBASER(base) = val1;
+
+        val = GIC_RDIST_CTRL(base);
+        val |= GICR_CTLR_EnableLPI;
+        GIC_RDIST_CTRL(base) = val;
+
+        GIC_RDIST_INVALLR(base) = 0;
+        GIC_RDIST_SYNCR(base) = 0;
+
+        pendbaser_pa += pend_size;
+        base += 0x20000;
+    }
+
+    _gic_table[index].lpi_init_flag = RT_TRUE;
+}
+
+void gicv3_its_base_set(rt_uint64_t index, rt_uint64_t its_base, rt_uint64_t rd_base)
+{
+    rt_uint32_t i;
+
+    _gic_table[index].its_config.base_pa = its_base;
+    _gic_table[index].its_config.base_va = (rt_uint64_t) rt_ioremap((void *) its_base, 0x20000);
+
+    for (i = 0; i < ARM_GIC_CPU_NUM; i++)
+    {
+        _gic_table[index].its_config.redist_base[i] = rd_base + 0x20000 * i;
+    }
+}
+
+rt_uint32_t gicv3_lpi_alloc_irq(void)
+{
+    static volatile rt_atomic_t lpi_intid = GIC_LPI_INTID_START;
+    return (rt_uint32_t) rt_atomic_add(&lpi_intid, 1);
+}
+
+rt_uint64_t gicv3_msi_address_get(rt_uint64_t index)
+{
+    return _gic_table[index].msi_address;
+}
+
+rt_err_t gicv3_its_map_intid(rt_uint64_t index, rt_uint32_t device_id,
+                                rt_uint32_t event_id, rt_uint32_t intid)
+{
+    rt_err_t ret;
+    struct gicv3_its_data *its_data = &_gic_table[index].its_config;
+
+    /* TOFIX check device_id, event_id & intid bounds */
+    if (intid < GIC_LPI_INTID_START)
+    {
+        return -RT_EINVAL;
+    }
+
+    /* The CPU id directly maps as ICID for the current CPU redistributor */
+    ret = its_send_mapti_cmd(its_data, device_id, event_id, intid, ICID_NO);
+    if (ret)
+    {
+        LOG_E("Failed to map eventid %d to intid %d for deviceid %x", event_id, intid, device_id);
+        return ret;
+    }
+
+    return its_send_sync_cmd(its_data, its_data->rdbase[rt_hw_cpu_id()]);
+}
+
+rt_err_t gicv3_its_init_device_id(rt_uint64_t index, rt_uint32_t device_id, rt_uint32_t nites)
+{
+    rt_size_t entry_size, alloc_size;
+    rt_uint32_t nr_ites;
+    rt_err_t ret;
+    void *itt;
+    struct gicv3_its_data *its_data = &_gic_table[index].its_config;
+
+    /* TOFIX check device_id & nites bounds */
+
+    entry_size = MASK_GET(GITS_TYPER( its_data->base_va), GITS_TYPER_ITT_ENTRY_SIZE) + 1;
+    if (its_data->dev_table_is_indirect)
+    {
+        size_t offset = device_id >> its_data->indirect_dev_lvl2_width;
+
+        /* Check if DeviceID can fit in the Level 1 table */
+        if (offset > (1 << its_data->indirect_dev_lvl1_width))
+        {
+            return -RT_EINVAL;
+        }
+
+        /* Check if a Level 2 table has already been allocated for the DeviceID */
+        if (!its_data->indirect_dev_lvl1_table[offset])
+        {
+            void *alloc_addr, *alloc_addr_pa;
+
+            LOG_I("Allocating Level 2 Device %ldK table", its_data->indirect_dev_page_size / 1024);
+
+            alloc_addr = rt_malloc_align(its_data->indirect_dev_page_size, its_data->indirect_dev_page_size);
+            if (!alloc_addr)
+            {
+                return -RT_ENOMEM;
+            }
+
+            alloc_addr_pa = rt_kmem_v2p(alloc_addr);
+            alloc_addr = rt_ioremap(alloc_addr_pa, its_data->indirect_dev_page_size);
+
+            rt_memset(alloc_addr, 0, its_data->indirect_dev_page_size);
+
+            its_data->indirect_dev_lvl1_table[offset] = (uintptr_t) alloc_addr | MASK_SET(1, GITS_BASER_VALID);
+
+            rt_hw_isb();
+        }
+    }
+
+    /* ITT must be of power of 2 */
+    nr_ites = nites > 2 ? nites : 2;
+    alloc_size = RT_ALIGN(nr_ites * entry_size, 256);
+
+    LOG_I("Allocating ITT for DeviceID 0x%x and %d vectors (%ld bytes entry)",
+        device_id, nr_ites, entry_size);
+
+    itt = rt_malloc_align(alloc_size, 256);
+    if (!itt)
+    {
+        return -RT_ENOMEM;
+    }
+
+    /* size is log2(ites) - 1, equivalent to (fls(ites) - 1) - 1 */
+    itt = rt_kmem_v2p(itt);
+    ret = its_send_mapd_cmd(its_data, device_id, fls_z(nr_ites) - 2, (uintptr_t) itt, RT_TRUE);
+    if (ret)
+    {
+        LOG_E("Failed to map device id %x ITT table", device_id);
+        return ret;
+    }
+
+    return RT_EOK;
 }
 
 void arm_gic_dump_type(rt_uint64_t index)
@@ -957,5 +1972,61 @@ long gic_dump(void)
     return 0;
 }
 MSH_CMD_EXPORT(gic_dump, show gic status);
+
+#ifdef LPI_DEBUG
+#include "interrupt.h"
+
+static int gicv3_its_send_int(struct gicv3_its_data *its_data, rt_uint32_t device_id, rt_uint32_t event_id)
+{
+    /* TOFIX check device_id & event_id bounds */
+    return its_send_int_cmd(its_data, device_id, event_id);
+}
+
+static void lpi_test_isr(int vector, void *param)
+{
+    rt_kprintf("lpi_test_isr  vector %d\n", vector);
+}
+
+static void lpi_init_test(int argc, char *argv)
+{
+    rt_err_t ret = 0;
+    rt_uint32_t irq, device_id, event_id, i;
+
+    device_id = 0x123;
+    event_id = 0x5;
+
+    lpi_init(0);
+
+    gicv3_its_init_device_id(0, device_id, 32);
+
+    for (i = 0; i < 5; i++)
+    {
+        irq = gicv3_lpi_alloc_irq();
+        ret |= gicv3_its_map_intid(0, device_id, event_id + i, irq);
+        if (ret)
+        {
+            LOG_E("Failed to map boot CPU gicv3_its_map_intid");
+            return;
+        }
+
+        gicv3_lpi_umask(0, irq);
+    }
+
+    rt_thread_mdelay(100);
+
+    for (i = 0; i < 5; i++)
+    {
+        gicv3_its_send_int(&_gic_table[0].its_config, device_id, event_id + i);
+    }
+
+    irq = rt_hw_interrupt_msi_alloc_irq();
+    rt_hw_interrupt_msi_setup_deviceid(device_id + 1, 32);
+    rt_hw_interrupt_msi_map_irq(device_id + 1, 0x02, irq);
+    rt_hw_interrupt_install(irq, lpi_test_isr, RT_NULL, "msi");
+    rt_hw_interrupt_umask(irq);
+    gicv3_its_send_int(&_gic_table[0].its_config, device_id + 1, 0x02);
+}
+MSH_CMD_EXPORT(lpi_init_test, lpi_init_test);
+#endif /* LPI_DEBUG */
 
 #endif /* defined(BSP_USING_GIC) && defined(BSP_USING_GICV3) */

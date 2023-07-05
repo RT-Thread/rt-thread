@@ -18,6 +18,7 @@
 
 #if defined(BSP_USING_GIC) && defined(BSP_USING_GICV3)
 
+#define GIC_LPI_INTID_START 8192
 
 #ifndef ARM_GIC_CPU_NUM
 #define ARM_GIC_CPU_NUM RT_CPUS_NR
@@ -77,6 +78,13 @@ int arm_gic_cpu_init(rt_uint64_t index, rt_uint64_t cpu_base);
 void arm_gic_dump_type(rt_uint64_t index);
 void arm_gic_dump(rt_uint64_t index);
 
+/* LPI */
+rt_uint32_t gicv3_lpi_alloc_irq(void);
+rt_uint64_t gicv3_msi_address_get(rt_uint64_t index);
+void gicv3_its_base_set(rt_uint64_t index, rt_uint64_t its_base, rt_uint64_t rd_base);
+rt_err_t gicv3_its_init_device_id(rt_uint64_t index, rt_uint32_t device_id, rt_uint32_t nites);
+rt_err_t gicv3_its_map_intid(rt_uint64_t index, rt_uint32_t device_id,
+                                rt_uint32_t event_id, rt_uint32_t intid);
 #endif /* defined(BSP_USING_GIC) && defined(BSP_USING_GICV3) */
 
 #endif
