@@ -434,28 +434,40 @@ void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
 
 rt_uint32_t rt_hw_interrupt_msi_alloc_irq(void)
 {
+    rt_uint32_t irq = 0;
+
 #ifdef BSP_USING_GICV3
-    return gicv3_lpi_alloc_irq();
+    irq = gicv3_lpi_alloc_irq();
 #endif
+    return irq;
 }
 
 rt_err_t rt_hw_interrupt_msi_setup_deviceid(unsigned int device_id, unsigned int event_num)
 {
+    rt_err_t ret = -RT_ERROR;
+
 #ifdef BSP_USING_GICV3
-    return gicv3_its_init_device_id(0, device_id, event_num);
+    ret = gicv3_its_init_device_id(0, device_id, event_num);
 #endif
+    return ret;
 }
 
 rt_err_t rt_hw_interrupt_msi_map_irq(unsigned int device_id, unsigned int event_id, unsigned int irq)
 {
+    rt_err_t ret = -RT_ERROR;
+
 #ifdef BSP_USING_GICV3
-    return gicv3_its_map_intid(0, device_id, event_id, irq);
+    ret = gicv3_its_map_intid(0, device_id, event_id, irq);
 #endif
+    return ret;
 }
 
 rt_uint64_t rt_hw_interrupt_msi_address_get(void)
 {
+    rt_uint64_t address = 0;
+
 #ifdef BSP_USING_GICV3
-    return gicv3_msi_address_get(0);
+    address = gicv3_msi_address_get(0);
 #endif
+    return address;
 }
