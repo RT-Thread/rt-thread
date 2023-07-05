@@ -773,6 +773,9 @@ menuconfig RT_USING_VIRTIO
             default y
     endif
 
+source "$RTT_DIR/components/drivers/ofw/Kconfig"
+source "$RTT_DIR/components/drivers/pic/Kconfig"
+
 menu "Using USB"
     config RT_USING_USB
         bool
