@@ -13,6 +13,7 @@
 #include <rthw.h>
 #include "bflb_spi.h"
 #include "bflb_dma.h"
+#include "bflb_gpio.h"
 
 #ifndef __DRV_SPI_H_
 #define __DRV_SPI_H_

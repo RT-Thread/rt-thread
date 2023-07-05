@@ -1,3 +1,4 @@
+[English](README_en.md) | **中文**
 # 博流智能 BL808板级支持包说明
 
 ## 1. 简介
@@ -127,7 +128,7 @@ bl808-d0运行在S态下，支持RT-Smart，采用的交叉编译器为`riscv64-
 
 其中内核虚拟地址开始地址为`0x50000000`
 
-![kernel_start](./figures/kernel_start.png)
+![kernel_start](figures/kernel_start.png)
 
 bl808-d0编译完成后通过`merge_rtsmart.py`脚本，将`hw.dtb.5M`,`spl_bl808_d0.bin`，`opensbi_v0.6.bin`与`rtthread_d0.bin`，合成最终烧录文件`whole_img_d0.bin`，烧录地址为`0x100000`，否则无法启动。
 
@@ -135,7 +136,7 @@ bl808-d0编译完成后通过`merge_rtsmart.py`脚本，将`hw.dtb.5M`,`spl_bl80
 
 d0单独烧录文件为`bsp/bouffalo_lab/bl808/d0/flash_prog_cfg.ini`
 
-![d0](./figures/d0.png)
+![d0](figures/d0.png)
 
 
 
@@ -144,7 +145,7 @@ d0单独烧录文件为`bsp/bouffalo_lab/bl808/d0/flash_prog_cfg.ini`
 - 可运行`bsp/bouffalo_lab/bl808/build_bl808_all.sh`依次编译m0、lp、d0核
 - 可通过`bsp/bouffalo_lab/bl808/flash_prog_cfg.ini`烧录配置文件，同时烧录m0、lp、d0核。
 
-![bl808](./figures/bl808.png)
+![bl808](figures/bl808.png)
 
 
 

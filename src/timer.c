@@ -24,6 +24,14 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#define DBG_TAG           "kernel.timer"
+#ifdef RT_DEBUG_TIMER
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_TIMER) */
+#include <rtdbg.h>
+
 /* hard timer list */
 static rt_list_t _timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 
@@ -195,7 +203,7 @@ rt_inline void _timer_remove(rt_timer_t timer)
     }
 }
 
-#if RT_DEBUG_TIMER
+#ifdef RT_DEBUG_TIMER
 /**
  * @brief The number of timer
  *
@@ -653,7 +661,7 @@ void rt_timer_check(void)
 
     rt_list_init(&list);
 
-    RT_DEBUG_LOG(RT_DEBUG_TIMER, ("timer check enter\n"));
+    LOG_D("timer check enter");
 
     current_tick = rt_tick_get();
 
@@ -688,7 +696,7 @@ void rt_timer_check(void)
             current_tick = rt_tick_get();
 
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
-            RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
+            LOG_D("current tick: %d", current_tick);
 
             /* Check whether the timer object is detached or started again */
             if (rt_list_isempty(&list))
@@ -710,7 +718,7 @@ void rt_timer_check(void)
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
-    RT_DEBUG_LOG(RT_DEBUG_TIMER, ("timer check leave\n"));
+    LOG_D("timer check leave");
 }
 
 /**
@@ -739,7 +747,7 @@ void rt_soft_timer_check(void)
 
     rt_list_init(&list);
 
-    RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check enter\n"));
+    LOG_D("software timer check enter");
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -776,7 +784,7 @@ void rt_soft_timer_check(void)
             t->timeout_func(t->parameter);
 
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
-            RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
+            LOG_D("current tick: %d", current_tick);
 
             /* disable interrupt */
             level = rt_hw_interrupt_disable();
@@ -801,7 +809,7 @@ void rt_soft_timer_check(void)
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
-    RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check leave\n"));
+    LOG_D("software timer check leave");
 }
 
 /**

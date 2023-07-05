@@ -8,7 +8,6 @@
  * 2022-07-20     Emuzit            first version
  */
 #include <rthw.h>
-#include <rtdebug.h>
 #include <drivers/watchdog.h>
 #include "ch56x_sys.h"
 

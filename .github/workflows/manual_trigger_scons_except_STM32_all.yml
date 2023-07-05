@@ -1,0 +1,365 @@
+#
+# Copyright (c) 2006-2023, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2023-07-01     Supperthomas the first version
+#
+name: manual_scons_dist_except_STM32_all
+
+
+on:
+  workflow_dispatch:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
+    inputs:
+      bsp_config:
+        description: 'Type a config you want mannual test in .config, like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT '
+        required: false
+        type: string
+        default: 'CONFIG_BSP_USING_GPIO'
+      dist_flag:
+        description: 'True to dist all bsp, False not dist'
+        required: true
+        type: boolean
+        default: false
+
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.legs.RTT_BSP }}
+    strategy:
+      fail-fast: false
+      matrix:
+       legs:
+          - {RTT_BSP_NAME: "acm32_acm32f0x0-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "acm32/acm32f0x0-nucleo"} 
+          - {RTT_BSP_NAME: "acm32_acm32f4xx-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "acm32/acm32f4xx-nucleo"} 
+         #- {RTT_BSP_NAME: "airm2m_air105", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "airm2m/air105"}  #scons fail in last step
+          - {RTT_BSP_NAME: "airm2m_air32f103", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "airm2m/air32f103"}
+         #- {RTT_BSP_NAME: "allwinner_d1", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "allwinner/d1"}   # rt-smart fail toolchain
+         #- {RTT_BSP_NAME: "allwinner_d1s", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "allwinner/d1s"}  #toochain
+          - {RTT_BSP_NAME: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "allwinner_tina"}
+         #- {RTT_BSP_NAME: "amebaz", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "amebaz"} # scons --pyconfig-silent 执行有问题
+          - {RTT_BSP_NAME: "apm32_apm32e103ze-evalboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32e103ze-evalboard"}
+          - {RTT_BSP_NAME: "apm32_apm32e103ze-tinyboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32e103ze-tinyboard"}
+          - {RTT_BSP_NAME: "apm32_apm32f030r8-miniboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f030r8-miniboard"}
+          - {RTT_BSP_NAME: "apm32_apm32f051r8-evalboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f051r8-evalboard"}
+          - {RTT_BSP_NAME: "apm32_apm32f072vb-miniboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f072vb-miniboard"}
+          - {RTT_BSP_NAME: "apm32_apm32f091vc-miniboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f091vc-miniboard"}
+          - {RTT_BSP_NAME: "apm32_apm32f103vb-miniboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f103vb-miniboard"}
+          - {RTT_BSP_NAME: "apm32_apm32f103xe-minibroard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f103xe-minibroard"}
+          - {RTT_BSP_NAME: "apm32_apm32f107vc-evalboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f107vc-evalboard"}
+          - {RTT_BSP_NAME: "apm32_apm32f407ig-minibroard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f407ig-minibroard"}
+          - {RTT_BSP_NAME: "apm32_apm32f407zg-evalboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32f407zg-evalboard"}
+          - {RTT_BSP_NAME: "apm32_apm32s103vb-miniboard", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apm32/apm32s103vb-miniboard"}
+          - {RTT_BSP_NAME: "apollo2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "apollo2"}
+          - {RTT_BSP_NAME: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "asm9260t"}
+          - {RTT_BSP_NAME: "at32_at32f403a-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f403a-start"}
+          - {RTT_BSP_NAME: "at32_at32f407-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f407-start"}
+          - {RTT_BSP_NAME: "at32_at32f413-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f413-start"}
+          - {RTT_BSP_NAME: "at32_at32f415-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f415-start"}
+          - {RTT_BSP_NAME: "at32_at32f421-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f421-start"}
+          - {RTT_BSP_NAME: "at32_at32f423-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f423-start"}
+          - {RTT_BSP_NAME: "at32_at32f425-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f425-start"}
+          - {RTT_BSP_NAME: "at32_at32f435-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f435-start"}
+          - {RTT_BSP_NAME: "at32_at32f437-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at32/at32f437-start"}
+          - {RTT_BSP_NAME: "at91_at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at91/at91sam9260"}
+          - {RTT_BSP_NAME: "at91_at91sam9g45", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "at91/at91sam9g45"}
+         #- {RTT_BSP_NAME: "avr32uc3b0", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "avr32uc3b0"}  #toolchain比较特殊，bsp不完善
+          - {RTT_BSP_NAME: "beaglebone", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "beaglebone"}
+         #- {RTT_BSP_NAME: "bf533", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "bf533"}  #bsp比较老，不完善
+          - {RTT_BSP_NAME: "bluetrum_ab32vg1-ab-prougen", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "bluetrum/ab32vg1-ab-prougen"}
+          - {RTT_BSP_NAME: "bm3803", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "bm3803"}
+          - {RTT_BSP_NAME: "bouffalo_lab_bl60x", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "bouffalo_lab/bl60x"}
+         #- {RTT_BSP_NAME: "bouffalo_lab_bl61x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "bouffalo_lab/bl61x"}  #RISC-V 内核
+          - {RTT_BSP_NAME: "bouffalo_lab_bl70x", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "bouffalo_lab/bl70x"}
+         #- {RTT_BSP_NAME: "bouffalo_lab_bl808_d0", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "bouffalo_lab/bl808/d0"}  #toolchain
+         #- {RTT_BSP_NAME: "bouffalo_lab_bl808_lp", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "bouffalo_lab/bl808/lp"}   #toolchain
+         #- {RTT_BSP_NAME: "bouffalo_lab_bl808_m0", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "bouffalo_lab/bl808/m0"}   #toolchain
+         #- {RTT_BSP_NAME: "ck802", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ck802"}   #CKD toolchain
+          - {RTT_BSP_NAME: "CME_M7", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "CME_M7"}
+         #- {RTT_BSP_NAME: "core-v-mcu_core-v-cv32e40p", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "core-v-mcu/core-v-cv32e40p"} #特殊toolchain，不支持
+          - {RTT_BSP_NAME: "dm365", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "dm365"}
+          - {RTT_BSP_NAME: "efm32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "efm32"}
+         #- {RTT_BSP_NAME: "ESP32_C3", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ESP32_C3"}  #bsp还不完善，toolchain不支持
+         #- {RTT_BSP_NAME: "essemi_es32f0654", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f0654"}   #GCC link文件没支持好
+         #- {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}   #GCC link文件没支持好
+          - {RTT_BSP_NAME: "essemi_es32f369x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f369x"}
+          - {RTT_BSP_NAME: "essemi_es32vf2264", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32vf2264"}
+         #- {RTT_BSP_NAME: "fm33lc026", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fm33lc026"}   #GCC
+          - {RTT_BSP_NAME: "frdm-k64f", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "frdm-k64f"}
+         #- {RTT_BSP_NAME: "ft2004", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ft2004"}   #编译错误
+          - {RTT_BSP_NAME: "ft32_ft32f072xb-starter", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ft32/ft32f072xb-starter"}
+          - {RTT_BSP_NAME: "fujitsu_mb9x_mb9bf500r", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fujitsu/mb9x/mb9bf500r"}
+          - {RTT_BSP_NAME: "fujitsu_mb9x_mb9bf506r", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fujitsu/mb9x/mb9bf506r"}
+          - {RTT_BSP_NAME: "fujitsu_mb9x_mb9bf568r", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fujitsu/mb9x/mb9bf568r"}
+          - {RTT_BSP_NAME: "fujitsu_mb9x_mb9bf618s", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fujitsu/mb9x/mb9bf618s"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32103c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32103c-eval"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32105c-eval"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32105r-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32105r-start"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32107c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32107c-eval"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32205r-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32205r-start"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32207i-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32207i-eval"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32303c-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32303c-start"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32303e-eval"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32305r-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32305r-start"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32307e-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32307e-start"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32407v-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32407v-start"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32450z-eval"}
+          - {RTT_BSP_NAME: "gd32_arm_gd32470z-lckfb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32470z-lckfb"}
+          - {RTT_BSP_NAME: "gd32_risc-v_gd32vf103r-start", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32/risc-v/gd32vf103r-start"}
+          - {RTT_BSP_NAME: "gd32_risc-v_gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32/risc-v/gd32vf103v-eval"}
+         #- {RTT_BSP_NAME: "gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32105c-eval"}  #编译错误
+         #- {RTT_BSP_NAME: "gd32107c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32107c-eval"}  #编译错误
+          - {RTT_BSP_NAME: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32303e-eval"}
+         #- {RTT_BSP_NAME: "gd32350r-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32350r-eval"}  #编译错误
+          - {RTT_BSP_NAME: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32450z-eval"}
+          - {RTT_BSP_NAME: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32e230k-start"}
+          - {RTT_BSP_NAME: "gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32vf103v-eval"}
+          - {RTT_BSP_NAME: "hc32_ev_hc32f460_lqfp100_v2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32/ev_hc32f460_lqfp100_v2"}
+          - {RTT_BSP_NAME: "hc32_ev_hc32f4a0_lqfp176", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32/ev_hc32f4a0_lqfp176"}
+         #- {RTT_BSP_NAME: "hc32l136", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l136"}  #编译错误
+          - {RTT_BSP_NAME: "hc32l196", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l196"}
+          - {RTT_BSP_NAME: "hifive1", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "hifive1"} 
+         #- {RTT_BSP_NAME: "hk32_hk32f030c8-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hk32/hk32f030c8-mini"}  #scons dist有问题
+          - {RTT_BSP_NAME: "hpmicro_hpm6750evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hpmicro/hpm6750evk"}
+          - {RTT_BSP_NAME: "hpmicro_hpm6750evkmini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hpmicro/hpm6750evkmini"}
+         #- {RTT_BSP_NAME: "imx_imx6ull-smart", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx/imx6ull-smart"} # toolchain还没支持
+          - {RTT_BSP_NAME: "imx6sx_cortex-a9", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx6sx/cortex-a9"}
+          - {RTT_BSP_NAME: "imx6ul", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx6ul"}
+         #- {RTT_BSP_NAME: "imxrt_imxrt1021-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1021-nxp-evk"}  #GCC编译有问题
+          - {RTT_BSP_NAME: "imxrt_imxrt1052-atk-commander", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-atk-commander"}
+          - {RTT_BSP_NAME: "imxrt_imxrt1052-fire-pro", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-fire-pro"}
+          - {RTT_BSP_NAME: "imxrt_imxrt1052-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-nxp-evk"}
+          - {RTT_BSP_NAME: "imxrt_imxrt1052-seeed-ArchMix", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-seeed-ArchMix"}
+          - {RTT_BSP_NAME: "imxrt_imxrt1060-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1060-nxp-evk"}
+          - {RTT_BSP_NAME: "imxrt_imxrt1061-forlinx-OK1061-S", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1061-forlinx-OK1061-S"}
+          - {RTT_BSP_NAME: "imxrt_imxrt1064-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1064-nxp-evk"}
+         #- {RTT_BSP_NAME: "imxrt_imxrt1170-nxp-evk_m7", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1170-nxp-evk/m7"} #GCC 编译有问题
+          - {RTT_BSP_NAME: "Infineon_psoc6-cy8ckit-062-BLE", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-cy8ckit-062-BLE"}
+          - {RTT_BSP_NAME: "Infineon_psoc6-cy8ckit-062-WIFI-BT", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-cy8ckit-062-WIFI-BT"}
+          - {RTT_BSP_NAME: "Infineon_psoc6-cy8ckit-062S2-43012", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-cy8ckit-062S2-43012"}
+          - {RTT_BSP_NAME: "Infineon_psoc6-cy8ckit-062s4", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-cy8ckit-062s4"}
+          - {RTT_BSP_NAME: "Infineon_psoc6-cy8cproto-062S3-4343W", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-cy8cproto-062S3-4343W"}
+          - {RTT_BSP_NAME: "Infineon_psoc6-evaluationkit-062S2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-evaluationkit-062S2"}
+         #- {RTT_BSP_NAME: "Infineon_psoc6-pioneerkit_modus", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Infineon/psoc6-pioneerkit_modus"} #GCC不支持
+         #- {RTT_BSP_NAME: "juicevm", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "juicevm"}  #编译错误
+          - {RTT_BSP_NAME: "k210", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "k210"}
+          - {RTT_BSP_NAME: "lm3s8962", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lm3s8962"}
+          - {RTT_BSP_NAME: "lm3s9b9x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lm3s9b9x"}
+          - {RTT_BSP_NAME: "lm4f232", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lm4f232"}
+          - {RTT_BSP_NAME: "loongson_ls1bdev", RTT_TOOL_CHAIN: "sourcery-mips", RTT_BSP: "loongson/ls1bdev"}
+          - {RTT_BSP_NAME: "loongson_ls1cdev", RTT_TOOL_CHAIN: "sourcery-mips", RTT_BSP: "loongson/ls1cdev"}
+          - {RTT_BSP_NAME: "loongson_ls2kdev", RTT_TOOL_CHAIN: "sourcery-mips", RTT_BSP: "loongson/ls2kdev"}
+          - {RTT_BSP_NAME: "lpc1114", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc1114"}
+          - {RTT_BSP_NAME: "lpc176x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc176x"}
+          - {RTT_BSP_NAME: "lpc178x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc178x"}
+          - {RTT_BSP_NAME: "lpc2148", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc2148"}
+          - {RTT_BSP_NAME: "lpc2478", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc2478"}
+          - {RTT_BSP_NAME: "lpc408x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc408x"}
+         #- {RTT_BSP_NAME: "lpc43xx_M0", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc43xx/M0"}  #编译问题
+         #- {RTT_BSP_NAME: "lpc43xx_M4", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc43xx/M4"}  #编译问题
+          - {RTT_BSP_NAME: "lpc5410x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc5410x"}
+          - {RTT_BSP_NAME: "lpc54114-lite", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc54114-lite"}
+         #- {RTT_BSP_NAME: "lpc54608-LPCXpresso", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc54608-LPCXpresso"}  #编译问题
+          - {RTT_BSP_NAME: "lpc55sxx_lpc55s06_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s06_nxp_evk"}
+          - {RTT_BSP_NAME: "lpc55sxx_lpc55s16_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s16_nxp_evk"}
+          - {RTT_BSP_NAME: "lpc55sxx_lpc55s28_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s28_nxp_evk"}
+          - {RTT_BSP_NAME: "lpc55sxx_lpc55s36_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s36_nxp_evk"}
+          - {RTT_BSP_NAME: "lpc55sxx_lpc55s69_nxp_evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc55sxx/lpc55s69_nxp_evk"}
+         #- {RTT_BSP_NAME: "lpc824", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "lpc824"}  #编译问题
+         #- {RTT_BSP_NAME: "m16c62p", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "m16c62p"}  #编译问题
+          - {RTT_BSP_NAME: "maxim_max32660-evsys", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "maxim/max32660-evsys"}
+         #- {RTT_BSP_NAME: "microblaze", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "microblaze"}  #编译问题
+          - {RTT_BSP_NAME: "microchip_samc21", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "microchip/samc21"}
+          - {RTT_BSP_NAME: "microchip_same54", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "microchip/same54"}
+          - {RTT_BSP_NAME: "microchip_same70", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "microchip/same70"}
+          - {RTT_BSP_NAME: "microchip_saml10", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "microchip/saml10"}
+          - {RTT_BSP_NAME: "mini2440", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mini2440"}
+         #- {RTT_BSP_NAME: "mini4020", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mini4020"}  #toolchain不支持
+          - {RTT_BSP_NAME: "mipssim", RTT_TOOL_CHAIN: "sourcery-mips", RTT_BSP: "mipssim"}
+          - {RTT_BSP_NAME: "mm32_mm32f3270-100ask-pitaya", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32/mm32f3270-100ask-pitaya"}
+         #- {RTT_BSP_NAME: "mm32f103x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32f103x"}  #编译问题
+         #- {RTT_BSP_NAME: "mm32f327x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32f327x"}  #编译问题
+         #- {RTT_BSP_NAME: "mm32l07x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l07x"}   #编译问题
+         #- {RTT_BSP_NAME: "mm32l3xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l3xx"}  #编译问题
+          - {RTT_BSP_NAME: "n32_n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g43xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g457qel-stb"}
+          - {RTT_BSP_NAME: "n32_n32g45xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32g45xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xml-stb"}
+          - {RTT_BSP_NAME: "n32_n32g45xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xrl-stb"}
+          - {RTT_BSP_NAME: "n32_n32g45xvl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xvl-stb"}
+          - {RTT_BSP_NAME: "n32_n32g4frml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g4frml-stb"}
+          - {RTT_BSP_NAME: "n32_n32l40xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l40xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32l436-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l436-evb"}
+          - {RTT_BSP_NAME: "n32_n32l43xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l43xml-stb"}
+          - {RTT_BSP_NAME: "n32_n32l43xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l43xrl-stb"}
+          - {RTT_BSP_NAME: "n32_n32wb45xl-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32wb45xl-evb"}
+          - {RTT_BSP_NAME: "n32g452xx_n32g452xx-mini-system", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32g452xx/n32g452xx-mini-system"}
+         #- {RTT_BSP_NAME: "nios_ii", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nios_ii"} #编译问题
+          - {RTT_BSP_NAME: "nrf5x_nrf51822", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nrf5x/nrf51822"}
+          - {RTT_BSP_NAME: "nrf5x_nrf52832", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nrf5x/nrf52832"}
+          - {RTT_BSP_NAME: "nrf5x_nrf52833", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nrf5x/nrf52833"}
+          - {RTT_BSP_NAME: "nrf5x_nrf52840", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nrf5x/nrf52840"}
+          - {RTT_BSP_NAME: "nrf5x_nrf5340", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nrf5x/nrf5340"}
+          - {RTT_BSP_NAME: "nuclei_gd32vf103_rvstar", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuclei/gd32vf103_rvstar"}
+         #- {RTT_BSP_NAME: "nuclei_nuclei_fpga_eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuclei/nuclei_fpga_eval"}  #riscv-nuclei-elf-gcc toolchain不支持
+         #- {RTT_BSP_NAME: "nv32f100x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nv32f100x"}  #编译错误
+         #- {RTT_BSP_NAME: "phytium_aarch32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "phytium/aarch32"} #编译错误
+         # - {RTT_BSP_NAME: "phytium_aarch64", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "phytium/aarch64"} #编译错误
+         #- {RTT_BSP_NAME: "pic32ethernet", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "pic32ethernet"} #编译错误
+          - {RTT_BSP_NAME: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "qemu-vexpress-a9"}
+          - {RTT_BSP_NAME: "qemu-virt64-aarch64", RTT_TOOL_CHAIN: "sourcery-aarch64", RTT_BSP: "qemu-virt64-aarch64"}
+        # - {RTT_BSP_NAME: "qemu-virt64-riscv", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "qemu-virt64-riscv"}  #riscv64-unknown-elf-gcc toolchain不支持
+        # - {RTT_BSP_NAME: "raspberry-pi_raspi2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pi/raspi2"} #编译错误，toolchain不对
+          - {RTT_BSP_NAME: "raspberry-pi_raspi3-32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pi/raspi3-32"}
+         #- {RTT_BSP_NAME: "raspberry-pi_raspi3-64", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pi/raspi3-64"}  #TOOLCHAIN未支持
+          - {RTT_BSP_NAME: "raspberry-pi_raspi4-32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pi/raspi4-32"}
+         #- {RTT_BSP_NAME: "raspberry-pi_raspi4-64", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pi/raspi4-64"} #toolchain未支持
+          - {RTT_BSP_NAME: "raspberry-pico", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pico"} 
+          - {RTT_BSP_NAME: "renesas_ebf_qi_min_6m5", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ebf_qi_min_6m5"}
+         #- {RTT_BSP_NAME: "renesas_ra2l1-cpk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra2l1-cpk"}  #编译错误
+         #- {RTT_BSP_NAME: "renesas_ra4m2-eco", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra4m2-eco"} #编译错误
+          - {RTT_BSP_NAME: "renesas_ra6m3-ek", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m3-ek"}
+          - {RTT_BSP_NAME: "renesas_ra6m3-hmi-board", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m3-hmi-board"}
+          - {RTT_BSP_NAME: "renesas_ra6m4-cpk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m4-cpk"}
+          - {RTT_BSP_NAME: "renesas_ra6m4-iot", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m4-iot"}
+          - {RTT_BSP_NAME: "rm48x50", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rm48x50"}
+         #- {RTT_BSP_NAME: "rockchip_rk2108", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rockchip/rk2108"} # menuconfig 有问题
+          - {RTT_BSP_NAME: "rockchip_rk3568", RTT_TOOL_CHAIN: "sourcery-aarch64", RTT_BSP: "rockchip/rk3568"} 
+         #- {RTT_BSP_NAME: "rv32m1_vega_ri5cy", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "rv32m1_vega/ri5cy"}  # 编译错误
+         #- {RTT_BSP_NAME: "rx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rx"}  #GCC 还未支持
+          - {RTT_BSP_NAME: "sam7x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "sam7x"}
+         #- {RTT_BSP_NAME: "samd21", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "samd21"}  #GCC 还未支持
+         #- {RTT_BSP_NAME: "sep6200", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "sep6200"}  #unicore32-linux-gcc 还没支持
+          - {RTT_BSP_NAME: "simulator", RTT_TOOL_CHAIN: "gcc", RTT_BSP: "simulator"}
+          - {RTT_BSP_NAME: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "smartfusion2"}
+          - {RTT_BSP_NAME: "sparkfun-redv", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "sparkfun-redv"}
+         #- {RTT_BSP_NAME: "synopsys_boards", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synopsys/boards"} #不支持的toolchain
+          - {RTT_BSP_NAME: "synwit_swm320", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm320"}
+          - {RTT_BSP_NAME: "synwit_swm341", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm341"}
+         #- {RTT_BSP_NAME: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "tae32f5300"}  #musl toolchain 未支持
+         #- {RTT_BSP_NAME: "taihu", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "taihu"} #powerpc-eabi-gcc 未支持
+         #- {RTT_BSP_NAME: "thead-smart", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "thead-smart"} #menuconfig有问题
+         #- {RTT_BSP_NAME: "ti_c28x_tms320f28379d", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ti/c28x/tms320f28379d"}  #编译出错
+         #- {RTT_BSP_NAME: "tkm32F499", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "tkm32F499"}  #menuconfig 出错
+          - {RTT_BSP_NAME: "tm4c123bsp", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "tm4c123bsp"}
+          - {RTT_BSP_NAME: "tm4c129x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "tm4c129x"}
+         #- {RTT_BSP_NAME: "tms320c6678", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "tms320c6678"}   #scons还没支持
+         #- {RTT_BSP_NAME: "upd70f3454", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "upd70f3454"}  #GCC还没支持
+          - {RTT_BSP_NAME: "Vango_v85xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Vango/v85xx"}
+          - {RTT_BSP_NAME: "Vango_v85xxp", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "Vango/v85xxp"}
+         #- {RTT_BSP_NAME: "w60x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "w60x"}   #menuconfig有问题 
+          - {RTT_BSP_NAME: "wch_arm_ch32f103c8-core", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch32f103c8-core"}
+          - {RTT_BSP_NAME: "wch_arm_ch32f203r-evt", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch32f203r-evt"}
+         #- {RTT_BSP_NAME: "wch_arm_ch579m", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch579m"}  #编译错误
+         #- {RTT_BSP_NAME: "wch_risc-v_ch32v103r-evt", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v103r-evt"} #编译出错
+          - {RTT_BSP_NAME: "wch_risc-v_ch32v208w-r0", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v208w-r0"}
+          - {RTT_BSP_NAME: "wch_risc-v_ch32v307v-r1", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v307v-r1"}
+         #- {RTT_BSP_NAME: "wch_risc-v_ch569w-evt", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch569w-evt"}  #编译出错
+        # - {RTT_BSP_NAME: "wh44b0", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wh44b0"}  #scons还没支持
+         #- {RTT_BSP_NAME: "x86", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "x86"}   #menuconfig有问题，toolchain也不支持
+         #- {RTT_BSP_NAME: "xplorer4330_M0", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "xplorer4330/M0"} #编译问题
+          - {RTT_BSP_NAME: "xplorer4330_M4", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "xplorer4330/M4"}
+       #  - {RTT_BSP_NAME: "yichip_yc3121-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3121-pos"}  #编译问题
+        # - {RTT_BSP_NAME: "yichip_yc3122-pos", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "yichip/yc3122-pos"}  #编译问题
+          - {RTT_BSP_NAME: "zynqmp-r5-axu4ev", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "zynqmp-r5-axu4ev"}
+  
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+
+      - name: Install Tools
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
+          sudo python -m pip install --upgrade pip -qq
+          pip install requests -qq
+          git config --global http.postBuffer 524288000
+          python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
+          echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
+          echo "RTT_CC=gcc" >> $GITHUB_ENV
+
+      - name: Install Arm ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+          sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
+          /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
+          echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
+
+      - name: Install AArch64 ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-aarch64' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.6/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz
+          sudo tar -xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz -C /opt
+          /opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin/aarch64-none-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin" >> $GITHUB_ENV
+
+      - name: Install Mips ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-mips' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.1/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2
+          sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt
+          /opt/mips-2016.05/bin/mips-sde-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/mips-2016.05/bin" >> $GITHUB_ENV
+
+      - name: Install Riscv64-unknown-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv64-unknown-elf' && success() }}
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+          sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+          /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+      - name: Install Riscv-none-embed ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv-none-embed' && success() }}
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
+          sudo tar zxvf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+          /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
+          echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+          
+      - name: Install Simulator Tools
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'gcc' && success() }}
+        run: |
+          sudo apt-get -qq install libsdl2-dev
+          
+      - name: Bsp Scons Compile
+        if: ${{ success() }}
+        shell: bash
+        env:
+          RTT_BSP: ${{ matrix.legs.RTT_BSP }}
+          RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
+        run: |
+          source ~/.env/env.sh
+          echo $RTT_BSP
+          ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
+          pushd bsp/$RTT_BSP && pkgs --update && popd
+          scons -C bsp/$RTT_BSP -j$(nproc) 
+          mkdir -p ${{ github.workspace }}/$RTT_BSP 
+          cp -r bsp/$RTT_BSP ${{ github.workspace }}/$RTT_BSP/
+          scons --dist -C bsp/$RTT_BSP
+          cp bsp/$RTT_BSP/dist/project.zip ${{ github.workspace }}/$RTT_BSP/
+          ls bsp/$RTT_BSP/dist
+          pwd
+      - uses: actions/upload-artifact@v3
+        if:  ${{ github.event.inputs.dist_flag }} 
+        env:
+          RTT_BSP: ${{ matrix.legs.RTT_BSP }}
+          RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
+        with:
+          name: ${{ matrix.legs.RTT_BSP_NAME}}
+          path: ${{ github.workspace }}/${{matrix.legs.RTT_BSP}}/*

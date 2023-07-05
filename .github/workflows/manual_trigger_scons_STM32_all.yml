@@ -1,0 +1,179 @@
+#
+# Copyright (c) 2006-2023, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2023-06-29     Supperthomas the first version
+#
+name: manual_scons_dist_STM32_all
+
+on:
+  workflow_dispatch:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
+    inputs:
+      bsp_config:
+        description: 'Type a config you want mannual test in .config, like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT '
+        required: false
+        type: string
+        default: 'CONFIG_BSP_USING_GPIO'
+      dist_flag:
+        description: 'True to dist all bsp, False not dist'
+        required: true
+        type: boolean
+        default: false
+        
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.legs.RTT_BSP }}
+    strategy:
+      fail-fast: false
+      matrix:
+       legs:
+        - {RTT_BSP_NAME: "stm32_stm32f072-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f072-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f091-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f091-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-100ask-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-100ask-mini"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-100ask-pro", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-100ask-pro"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-atk-nano", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-atk-nano"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-atk-warshipv3", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-atk-warshipv3"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-blue-pill", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-blue-pill"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-dofly-lyc8", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-dofly-lyc8"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-dofly-M3S", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-dofly-M3S"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-fire-arbitrary", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-fire-arbitrary"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-gizwits-gokitv21", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-gizwits-gokitv21"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-hw100k-ibox", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-hw100k-ibox"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-onenet-nbiot", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-onenet-nbiot"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-yf-ufun", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-yf-ufun"}
+        - {RTT_BSP_NAME: "stm32_stm32f103-ys-f1pro", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f103-ys-f1pro"}
+        - {RTT_BSP_NAME: "stm32_stm32f107-uc-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f107-uc-eval"}
+        - {RTT_BSP_NAME: "stm32_stm32f207-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f207-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f302-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f302-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f334-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f334-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f401-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f401-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f401-weact-blackpill", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f401-weact-blackpill"}
+        - {RTT_BSP_NAME: "stm32_stm32f405-smdz-breadfruit", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f405-smdz-breadfruit"}
+        - {RTT_BSP_NAME: "stm32_stm32f407-armfly-v5", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f407-armfly-v5"}
+        - {RTT_BSP_NAME: "stm32_stm32f407-atk-explorer", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f407-atk-explorer"}
+        - {RTT_BSP_NAME: "stm32_stm32f407-robomaster-c", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f407-robomaster-c"}
+        - {RTT_BSP_NAME: "stm32_stm32f407-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f407-st-discovery"}
+        - {RTT_BSP_NAME: "stm32_stm32f410-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f410-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f411-atk-nano", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f411-atk-nano"}
+        - {RTT_BSP_NAME: "stm32_stm32f411-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f411-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f411-weact-blackpill", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f411-weact-blackpill"}
+        - {RTT_BSP_NAME: "stm32_stm32f412-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f412-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f413-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f413-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f427-robomaster-a", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f427-robomaster-a"}
+        - {RTT_BSP_NAME: "stm32_stm32f429-armfly-v6", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f429-armfly-v6"}
+        - {RTT_BSP_NAME: "stm32_stm32f429-atk-apollo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f429-atk-apollo"}
+        - {RTT_BSP_NAME: "stm32_stm32f429-fire-challenger", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f429-fire-challenger"}
+        - {RTT_BSP_NAME: "stm32_stm32f429-st-disco", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f429-st-disco"}
+        - {RTT_BSP_NAME: "stm32_stm32f446-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f446-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f469-st-disco", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f469-st-disco"}
+        - {RTT_BSP_NAME: "stm32_stm32f723-st-disco", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f723-st-disco"}
+        - {RTT_BSP_NAME: "stm32_stm32f746-st-disco", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f746-st-disco"}
+        - {RTT_BSP_NAME: "stm32_stm32f746-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f746-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f767-atk-apollo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f767-atk-apollo"}
+        - {RTT_BSP_NAME: "stm32_stm32f767-fire-challenger-v1", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f767-fire-challenger-v1"}
+        - {RTT_BSP_NAME: "stm32_stm32f767-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f767-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32f769-st-disco", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32f769-st-disco"}
+        - {RTT_BSP_NAME: "stm32_stm32g070-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g070-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32g071-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g071-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32g431-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g431-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32g474-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g474-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32h743-armfly-v7", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h743-armfly-v7"}
+        - {RTT_BSP_NAME: "stm32_stm32h743-atk-apollo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h743-atk-apollo"}
+        - {RTT_BSP_NAME: "stm32_stm32h743-openmv-h7plus", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h743-openmv-h7plus"}
+        - {RTT_BSP_NAME: "stm32_stm32h743-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h743-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32h747-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h747-st-discovery"}
+        - {RTT_BSP_NAME: "stm32_stm32h750-armfly-h7-tool", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h750-armfly-h7-tool"}
+        - {RTT_BSP_NAME: "stm32_stm32h750-artpi", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h750-artpi"}
+        - {RTT_BSP_NAME: "stm32_stm32h750-fk750m1-vbt6", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h750-fk750m1-vbt6"}
+        - {RTT_BSP_NAME: "stm32_stm32h750-weact-ministm32h7xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h750-weact-ministm32h7xx"}
+        - {RTT_BSP_NAME: "stm32_stm32l010-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l010-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l053-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l053-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l412-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l412-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l431-BearPi", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l431-BearPi"}
+        - {RTT_BSP_NAME: "stm32_stm32l432-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l432-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l433-ali-startkit", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l433-ali-startkit"}
+        - {RTT_BSP_NAME: "stm32_stm32l433-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l433-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l452-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l452-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l475-atk-pandora", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l475-atk-pandora"}
+        - {RTT_BSP_NAME: "stm32_stm32l475-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l475-st-discovery"}
+        - {RTT_BSP_NAME: "stm32_stm32l476-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l476-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l496-ali-developer", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l496-ali-developer"}
+        - {RTT_BSP_NAME: "stm32_stm32l496-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l496-st-discovery"}
+        - {RTT_BSP_NAME: "stm32_stm32l496-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l496-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l4r5-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l4r5-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32l4r9-st-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l4r9-st-eval"}
+        - {RTT_BSP_NAME: "stm32_stm32l4r9-st-sensortile-box", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l4r9-st-sensortile-box"}
+        - {RTT_BSP_NAME: "stm32_stm32l552-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32l552-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32mp157a-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32mp157a-st-discovery"}
+        - {RTT_BSP_NAME: "stm32_stm32mp157a-st-ev1", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32mp157a-st-ev1"}
+        - {RTT_BSP_NAME: "stm32_stm32u575-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32u575-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32wb55-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32wb55-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32wl55-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32wl55-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32wle5-yizhilian-lm401", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32wle5-yizhilian-lm401"}
+        - {RTT_BSP_NAME: "stm32_stm32wle5-yizhilian-lm402", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32wle5-yizhilian-lm402"}
+
+  
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+
+      - name: Install Tools
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
+          sudo python -m pip install --upgrade pip -qq
+          pip install requests -qq
+          git config --global http.postBuffer 524288000
+          python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
+          echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
+          echo "RTT_CC=gcc" >> $GITHUB_ENV
+
+      - name: Install Arm ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
+        shell: bash
+        run: |
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+          sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
+          /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
+          echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
+          
+      - name: Bsp Scons Compile
+        if: ${{ success() }}
+        shell: bash
+        env:
+          RTT_BSP: ${{ matrix.legs.RTT_BSP }}
+          RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
+        run: |
+          source ~/.env/env.sh
+          echo $RTT_BSP
+          ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
+          sed -i "s/# ${{ github.event.inputs.bsp_config }} is not set/${{ github.event.inputs.bsp_config }}=y/g" bsp/$RTT_BSP/.config
+          pushd bsp/$RTT_BSP && pkgs --update && popd
+          scons -C bsp/$RTT_BSP -j$(nproc) 
+          mkdir -p ${{ github.workspace }}/$RTT_BSP 
+          cp -r bsp/$RTT_BSP ${{ github.workspace }}/$RTT_BSP/
+          scons --dist -C bsp/$RTT_BSP
+          cp bsp/$RTT_BSP/dist/project.zip ${{ github.workspace }}/$RTT_BSP/
+          ls bsp/$RTT_BSP/dist
+          pwd
+      - uses: actions/upload-artifact@v3
+        if:  ${{ github.event.inputs.dist_flag }} 
+        env:
+          RTT_BSP: ${{ matrix.legs.RTT_BSP }}
+          RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
+        with:
+          name: ${{ matrix.legs.RTT_BSP_NAME}}
+          path: ${{ github.workspace }}/${{matrix.legs.RTT_BSP}}/*
+

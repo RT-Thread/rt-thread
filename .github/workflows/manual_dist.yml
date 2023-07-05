@@ -1,4 +1,13 @@
-name: RT-Thread BSP dist manual trigger
+#
+# Copyright (c) 2006-2023, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2023-07-01     Supperthomas the first version
+#
+name:  manual_scons_dist_trigger_only_one
 
 # Controls when the action will run. Triggers 'scons --dist' to build the dist
 on:
@@ -28,6 +37,11 @@ on:
         required: false
         type: string
         default: 'CONFIG_BSP_USING_GPIO'
+      dist_flag:
+        description: 'True to dist all bsp, False not dist'
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -133,6 +147,7 @@ jobs:
           ls bsp/$RTT_BSP/dist
           pwd
       - uses: actions/upload-artifact@v3
+        if:  ${{ github.event.inputs.dist_flag }} 
         with:
           name: dist_file
           path: ${{ github.workspace }}/${{ github.event.inputs.bsp_options }}/*

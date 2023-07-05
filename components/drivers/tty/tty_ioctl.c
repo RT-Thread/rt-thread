@@ -80,6 +80,7 @@ int n_tty_ioctl_extend(struct tty_struct *tty, int cmd, void *args)
     switch(cmd)
     {
     case TCGETS:
+    case TCGETA:
     {
         struct termios *tio = (struct termios *)p;
         if (tio == RT_NULL)
@@ -101,6 +102,18 @@ int n_tty_ioctl_extend(struct tty_struct *tty, int cmd, void *args)
     case TCSETS:
     {
         return set_termios(real_tty, p, TERMIOS_OLD);
+    }
+    case TCSETAF:
+    {
+        return set_termios(real_tty, p,  TERMIOS_FLUSH | TERMIOS_WAIT | TERMIOS_TERMIO);
+    }
+    case TCSETAW:
+    {
+        return set_termios(real_tty, p, TERMIOS_WAIT | TERMIOS_TERMIO);
+    }
+    case TCSETA:
+    {
+        return set_termios(real_tty, p, TERMIOS_TERMIO);
     }
     default:
         break;
