@@ -19,7 +19,7 @@ libpath = ['.', cwd + '/Device', cwd + '/HAL_Driver/Src']
 libs = ['System_Accelerate', 'HAL_EFlash_EX']
 
 if rtconfig.PLATFORM in ['gcc']:
-    src += ['Device/Startup_ACM32F4_gcc.s']
+    src += ['Device/startup_ACM32F4_gcc.s']
 elif rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += ['Device/Startup_ACM32F4.s']
 elif rtconfig.PLATFORM in ['iccarm']:
