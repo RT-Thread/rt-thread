@@ -1770,6 +1770,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
     rt_base_t level;
     rt_base_t status;
     rt_bool_t need_schedule;
+    rt_uint32_t need_clear_set = 0;
 
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
@@ -1833,7 +1834,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
             {
                 /* clear event */
                 if (thread->event_info & RT_EVENT_FLAG_CLEAR)
-                    event->set &= ~thread->event_set;
+                    need_clear_set |= thread->event_set;
 
                 /* resume thread, and thread list breaks out */
                 rt_thread_resume(thread);
@@ -1842,6 +1843,10 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
                 /* need do a scheduling */
                 need_schedule = RT_TRUE;
             }
+        }
+        if (need_clear_set)
+        {
+            event->set &= ~need_clear_set;
         }
     }
 
