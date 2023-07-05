@@ -16,9 +16,13 @@
 #include "gicv3.h"
 #include "ioremap.h"
 
+#ifndef LPI_MAX_HANDLERS
+#define LPI_MAX_HANDLERS    MAX_HANDLERS
+#endif /* LPI_MAX_HANDLERS */
 
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
+struct rt_irq_desc lpi_isr_table[LPI_MAX_HANDLERS];
 
 #ifndef RT_USING_SMP
 /* Those variables will be accessed in ISR, so we need to share them. */
@@ -114,6 +118,7 @@ void rt_hw_interrupt_init(void)
     arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
     arm_gic_cpu_init(0, gic_cpu_base);
 #ifdef BSP_USING_GICV3
+    gicv3_its_base_set(0, (rt_uint64_t) platform_get_gic_its_base(), (rt_uint64_t) platform_get_gic_redist_base());
     arm_gic_redist_init(0, gic_rdist_base);
 #endif
 #endif
@@ -356,19 +361,34 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
+    struct rt_irq_desc *table = RT_NULL;
 
-    if (vector < MAX_HANDLERS)
+    if (vector >= GIC_LPI_INTID_START)
     {
-        old_handler = isr_table[vector].handler;
-
-        if (handler != RT_NULL)
+        vector -= GIC_LPI_INTID_START;
+        if (vector < LPI_MAX_HANDLERS)
         {
-#ifdef RT_USING_INTERRUPT_INFO
-            rt_strncpy(isr_table[vector].name, name, RT_NAME_MAX);
-#endif /* RT_USING_INTERRUPT_INFO */
-            isr_table[vector].handler = handler;
-            isr_table[vector].param = param;
+            table = lpi_isr_table;
         }
+    }
+    else if (vector < MAX_HANDLERS)
+    {
+        table = isr_table;
+    }
+    else
+    {
+        return RT_NULL;
+    }
+
+    old_handler = table[vector].handler;
+
+    if (handler != RT_NULL)
+    {
+#ifdef RT_USING_INTERRUPT_INFO
+        rt_strncpy(table[vector].name, name, RT_NAME_MAX);
+#endif /* RT_USING_INTERRUPT_INFO */
+        table[vector].handler = handler;
+        table[vector].param = param;
     }
 
 #ifdef BSP_USING_GIC
@@ -405,3 +425,31 @@ void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
     rt_hw_interrupt_install(ipi_vector, ipi_isr_handler, 0, "IPI_HANDLER");
 }
 #endif
+
+rt_uint32_t rt_hw_interrupt_msi_alloc_irq(void)
+{
+#ifdef BSP_USING_GICV3
+    return gicv3_lpi_alloc_irq();
+#endif
+}
+
+rt_err_t rt_hw_interrupt_msi_setup_deviceid(unsigned int device_id, unsigned int event_num)
+{
+#ifdef BSP_USING_GICV3
+    return gicv3_its_init_device_id(0, device_id, event_num);
+#endif
+}
+
+rt_err_t rt_hw_interrupt_msi_map_irq(unsigned int device_id, unsigned int event_id, unsigned int irq)
+{
+#ifdef BSP_USING_GICV3
+    return gicv3_its_map_intid(0, device_id, event_id, irq);
+#endif
+}
+
+rt_uint64_t rt_hw_interrupt_msi_address_get(void)
+{
+#ifdef BSP_USING_GICV3
+    return gicv3_msi_address_get(0);
+#endif
+}

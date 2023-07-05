@@ -49,6 +49,12 @@ unsigned int rt_hw_interrupt_get_priority_mask(void);
 int rt_hw_interrupt_set_prior_group_bits(unsigned int bits);
 unsigned int rt_hw_interrupt_get_prior_group_bits(void);
 
+/* message interrupt api */
+rt_uint32_t rt_hw_interrupt_msi_alloc_irq(void);
+rt_err_t rt_hw_interrupt_msi_setup_deviceid(unsigned int device_id, unsigned int event_num);
+rt_err_t rt_hw_interrupt_msi_map_irq(unsigned int device_id, unsigned int event_id, unsigned int irq);
+rt_uint64_t rt_hw_interrupt_msi_address_get(void);
+
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name);
 
