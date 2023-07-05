@@ -209,6 +209,7 @@
 #define ULOG_OUTPUT_TAG
 #define ULOG_BACKEND_USING_CONSOLE
 #define RT_USING_ADT
+#define RT_USING_ADT_AVL
 
 /* RT-Thread Utestcases */
 

@@ -1,0 +1,22 @@
+menuconfig RT_USING_OFW
+    bool "Using Open Firmware (OFW)"
+    select RT_USING_ADT
+    select RT_USING_ADT_REF
+    select RT_USING_ADT_BITMAP
+    depends on RT_USING_DM
+    default n
+
+config RT_USING_BUILTIN_FDT
+    bool "Using builtin fdt in kernel"
+    depends on RT_USING_OFW
+    default n
+
+config RT_BUILTIN_FDT_PATH
+    string "Builtin fdt path, will rebuild if have dts"
+    depends on RT_USING_BUILTIN_FDT
+    default "rtthread.dtb"
+
+config RT_FDT_EARLYCON_MSG_SIZE
+    int "Earlycon message buffer size (KB)"
+    depends on RT_USING_OFW
+    default 128

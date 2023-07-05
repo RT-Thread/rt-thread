@@ -1,0 +1,11 @@
+menuconfig RT_USING_PIC
+    bool "Using Programmable Interrupt Controller (PIC)"
+    select RT_USING_BITMAP
+    depends on RT_USING_DM
+    default n
+
+config MAX_HANDLERS
+    int "IRQ max handlers"
+    depends on RT_USING_PIC
+    range 1 4294967294
+    default 256
