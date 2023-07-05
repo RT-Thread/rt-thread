@@ -16,13 +16,9 @@
 #include "gicv3.h"
 #include "ioremap.h"
 
-#ifndef LPI_MAX_HANDLERS
-#define LPI_MAX_HANDLERS    MAX_HANDLERS
-#endif /* LPI_MAX_HANDLERS */
-
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
-struct rt_irq_desc lpi_isr_table[LPI_MAX_HANDLERS];
+struct rt_irq_desc lpi_isr_table[MAX_MSI_HANDLERS];
 
 #ifndef RT_USING_SMP
 /* Those variables will be accessed in ISR, so we need to share them. */
@@ -373,10 +369,10 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     rt_isr_handler_t old_handler = RT_NULL;
     struct rt_irq_desc *table = RT_NULL;
 
-    if (vector >= GIC_LPI_INTID_START)
+    if (vector >= MSI_INTID_START)
     {
-        vector -= GIC_LPI_INTID_START;
-        if (vector < LPI_MAX_HANDLERS)
+        vector -= MSI_INTID_START;
+        if (vector < MAX_MSI_HANDLERS)
         {
             table = lpi_isr_table;
         }
@@ -402,7 +398,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     }
 
 #ifdef BSP_USING_GIC
-    if (vector > 32)
+    if ((vector > 32) && (table == isr_table))
     {
 #ifdef BSP_USING_GICV3
         rt_uint64_t cpu_affinity_val;

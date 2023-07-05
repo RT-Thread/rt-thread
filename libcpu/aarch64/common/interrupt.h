@@ -14,6 +14,14 @@
 #include <rthw.h>
 #include <board.h>
 
+#ifndef MAX_MSI_HANDLERS
+#define MAX_MSI_HANDLERS    MAX_HANDLERS
+#endif /* MAX_MSI_HANDLERS */
+
+#ifndef MSI_INTID_START
+#define MSI_INTID_START     8192
+#endif /* MSI_INTID_START */
+
 #define INT_IRQ     0x00
 #define INT_FIQ     0x01
 

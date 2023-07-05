@@ -19,6 +19,7 @@
 #if defined(BSP_USING_GIC) && defined(BSP_USING_GICV3)
 
 #define GIC_LPI_INTID_START 8192
+#define MSI_INTID_START     GIC_LPI_INTID_START
 
 #ifndef ARM_GIC_CPU_NUM
 #define ARM_GIC_CPU_NUM RT_CPUS_NR

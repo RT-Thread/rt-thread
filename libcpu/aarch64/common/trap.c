@@ -218,9 +218,9 @@ void rt_hw_trap_irq(void)
     }
 
     ir_self = ir;
-    if (ir_self >= 8192)
+    if (ir_self >= MSI_INTID_START)
     {
-        ir_self -= 8192;
+        ir_self -= MSI_INTID_START;
         table = lpi_isr_table;
     }
     else
