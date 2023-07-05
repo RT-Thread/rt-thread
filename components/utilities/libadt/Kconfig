@@ -1,0 +1,24 @@
+menuconfig RT_USING_ADT
+    bool "Enable ADT(abstract data type)"
+    default y if ARCH_MM_MMU
+    default n
+
+config RT_USING_ADT_AVL
+    bool "AVL tree"
+    depends on RT_USING_ADT
+    default y
+
+config RT_USING_ADT_BITMAP
+    bool "Bitmap"
+    depends on RT_USING_ADT
+    default y
+
+config RT_USING_ADT_HASHMAP
+    bool "HashMap"
+    depends on RT_USING_ADT
+    default y
+
+config RT_USING_ADT_REF
+    bool "Reference API"
+    depends on RT_USING_ADT
+    default y
