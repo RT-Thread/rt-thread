@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=' + CPU + '-mthumb -ffunction-sections -fdata-sections -Wall'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -ffunction-sections -fdata-sections -Wall'
     CFLAGS = DEVICE + ' -std=c99'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'

@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2021-08-05     mazhiyuan   first version
  */
-#include <HAL_device.h>
+#include <hal_device.h>
 #include <rtdevice.h>
 #include "drv_uart.h"
 #include <hal_gpio.h>
