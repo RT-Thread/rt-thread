@@ -38,6 +38,8 @@
 #define A6        (23)
 #define A7        (24)
 
+#define RTDUINO_PIN_MAX_LIMIT A7 /* pin number max limit check */
+
 #define F_CPU          80000000L  /* CPU:80MHz */
 
 /* i2c1 : PB9-SDA PB8-SCL */
