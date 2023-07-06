@@ -66,6 +66,8 @@
 /* Serial2 - PA2-TX  PA3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME     "uart2"
 
+#define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer7"
+
 /* I2C */
 #if defined(BSP_USING_ARDUINO_AHT10)
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c4" /* i2c4 - AHT10 (On Board) */
