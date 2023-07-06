@@ -175,6 +175,7 @@
 /* Utilities */
 
 #define RT_USING_ADT
+#define RT_USING_ADT_AVL
 #define RT_USING_RESOURCE_ID
 
 /* RT-Thread Utestcases */

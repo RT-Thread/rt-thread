@@ -11,6 +11,8 @@
 #ifndef __RT_ATOMIC_H__
 #define __RT_ATOMIC_H__
 
+#include <rthw.h>
+
 #if !defined(__cplusplus)
 
 rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr);
@@ -205,6 +207,35 @@ rt_inline rt_atomic_t rt_soft_atomic_compare_exchange_strong(volatile rt_atomic_
     return temp;
 }
 #endif /* RT_USING_STDC_ATOMIC */
+
+rt_inline rt_bool_t rt_atomic_dec_and_test(volatile rt_atomic_t *ptr)
+{
+    return rt_atomic_sub(ptr, 1) == 0;
+}
+
+rt_inline rt_atomic_t rt_atomic_fetch_add_unless(volatile rt_atomic_t *ptr, rt_atomic_t a, rt_atomic_t u)
+{
+    rt_atomic_t c = rt_atomic_load(ptr);
+
+    do {
+        if (c == u)
+        {
+            break;
+        }
+    } while (!rt_atomic_compare_exchange_strong(ptr, &c, c + a));
+
+    return c;
+}
+
+rt_inline rt_bool_t rt_atomic_add_unless(volatile rt_atomic_t *ptr, rt_atomic_t a, rt_atomic_t u)
+{
+    return rt_atomic_fetch_add_unless(ptr, a, u) != u;
+}
+
+rt_inline rt_bool_t rt_atomic_inc_not_zero(volatile rt_atomic_t *ptr)
+{
+    return rt_atomic_add_unless(ptr, 1, 0);
+}
 
 #endif /* __cplusplus */
 
