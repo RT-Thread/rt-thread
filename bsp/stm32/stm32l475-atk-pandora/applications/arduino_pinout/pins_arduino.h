@@ -59,6 +59,8 @@
 #define A3        (43)
 #define DAC0      (44)
 
+#define RTDUINO_PIN_MAX_LIMIT DAC0 /* pin number max limit check */
+
 #define F_CPU          80000000L  /* CPU:80MHz */
 
 #define LED_BUILTIN     D22  /* Default Built-in LED */
