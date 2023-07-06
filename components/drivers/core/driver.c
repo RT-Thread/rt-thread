@@ -5,109 +5,49 @@
  */
 
 #include <rtthread.h>
+#include <drivers/core/bus.h>
 
-#ifdef RT_USING_DM
-
-#ifdef RT_USING_FDT
-#include <dtb_node.h>
+#if defined(RT_USING_POSIX_DEVIO)
+#include <rtdevice.h> /* for wqueue_init */
 #endif
 
 /**
- * This function driver device match with id
+ * This function attach a driver to bus
  *
- * @param drv the pointer of driver structure
- * @param device_id the id of the device
- *
- * @return the error code, RT_EOK on successfully.
+ * @param drv the driver to be attached
  */
-rt_err_t rt_driver_match_with_id(const rt_driver_t drv,int device_id)
+rt_err_t rt_driver_register(rt_driver_t drv)
 {
-    rt_device_t device;
-    int ret;
-    if (!drv)
+    rt_err_t ret;
+    struct rt_bus *bus = RT_NULL;
+
+    RT_ASSERT(drv != RT_NULL);
+
+    if (drv->bus)
     {
-        return -RT_EINVAL;
+        bus = drv->bus;
+        ret = rt_bus_add_driver(bus, drv);
     }
-    device = rt_device_create_since_driver(drv,device_id);
-    if(!device)
+    else
     {
-        return -RT_ERROR;
+        ret = -RT_EINVAL;
     }
-    ret = rt_device_bind_driver(device,drv,RT_NULL);
-    if(ret != 0)
-    {
-        return -RT_ERROR;
-    }
-    ret = rt_device_probe_and_init(device);
-    if(ret != 0)
-    {
-        return -RT_ERROR;
-    }
+
     return ret;
 }
-RTM_EXPORT(rt_driver_match_with_id);
+RTM_EXPORT(rt_driver_register);
 
-#ifdef RT_USING_FDT
 /**
- * This function driver device match with dtb_node
+ * This function remove driver from system.
  *
- * @param drv the pointer of driver structure
- * @param from_node dtb node entry 
- * @param max_dev_num the max device support 
- * 
- * @return the error code, RT_EOK on successfully.
+ * @param drv the driver to be removed
  */
-rt_err_t rt_driver_match_with_dtb(const rt_driver_t drv,void *from_node,int max_dev_num)
+rt_err_t rt_driver_unregister(rt_driver_t drv)
 {
-    struct dtb_node** node_list; 
-    rt_device_t device;
-    int ret,i;
-    int total_dev_num = 0;
-    if ((!drv)||(!drv->dev_match)||(!drv->dev_match->compatible)||(!from_node)||(!drv->device_size))
-    {
-        return -RT_EINVAL;
-    }
+    rt_err_t ret;
 
-    node_list = rt_calloc(max_dev_num,sizeof(void *));
-    if(!node_list)
-    {
-        return -RT_ERROR;
-    }
+    ret = rt_bus_remove_driver(drv);
 
-    ret = dtb_node_find_all_compatible_node(from_node,drv->dev_match->compatible,node_list,max_dev_num,&total_dev_num);
-    if((ret != 0) || (!total_dev_num))
-    {
-        return -RT_ERROR;
-    }
-    
-    for(i = 0; i < total_dev_num; i ++)
-    {
-        if (!dtb_node_device_is_available(node_list[i]))
-        {
-            continue;
-        }
-        device = rt_device_create_since_driver(drv,i);
-        if(!device)
-        {
-            continue;
-        }
-    
-        ret = rt_device_bind_driver(device,drv,node_list[i]);
-        if(ret != 0)
-        {
-            continue;
-        }
-        ret = rt_device_probe_and_init(device);
-        if(ret != 0)
-        {
-            continue;
-        }
-    }
-    rt_free(node_list);
     return ret;
 }
-RTM_EXPORT(rt_driver_match_with_dtb);
-#endif /* RT_USING_FDT */ 
-
-#endif /* RT_USING_DM */
-
+RTM_EXPORT(rt_driver_register);
