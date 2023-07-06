@@ -69,8 +69,10 @@ jobs:
                 - "hc32l196"
                 #- "tae32f5300"
                 - "mm32/mm32f3270-100ask-pitaya"
-                - "sam7x"   
+                - "sam7x"
                 - "hk32/hk32f030c8-mini"
+                - "acm32/acm32f0x0-nucleo"
+                - "acm32/acm32f4xx-nucleo"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -187,7 +189,9 @@ jobs:
                 #- "lpc43xx/M4"
                 - "renesas/ra6m3-ek"
                 - "renesas/ra6m4-cpk"
-                - "renesas/ra6m3-hmi-board"  
+                - "renesas/ra6m3-hmi-board"
+                - "renesas/ra4m2-eco"
+                - "renesas/ra2l1-cpk"
          -  RTT_BSP: "gd32_n32_apm32"   
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:             
