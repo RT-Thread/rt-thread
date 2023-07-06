@@ -162,6 +162,7 @@
 /* Utilities */
 
 #define RT_USING_ADT
+#define RT_USING_ADT_AVL
 
 /* RT-Thread Utestcases */
 

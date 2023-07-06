@@ -143,6 +143,7 @@
 #define RT_USING_RYM
 #define YMODEM_USING_FILE_TRANSFER
 #define RT_USING_ADT
+#define RT_USING_ADT_AVL
 
 /* RT-Thread Utestcases */
 

@@ -227,6 +227,7 @@
 #define UTEST_THR_STACK_SIZE 8192
 #define UTEST_THR_PRIORITY 20
 #define RT_USING_ADT
+#define RT_USING_ADT_AVL
 
 /* RT-Thread Utestcases */
 
