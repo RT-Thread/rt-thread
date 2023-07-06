@@ -829,7 +829,7 @@ int dfs_elm_stat(struct dfs_dentry *dentry, struct stat *st)
         st->st_blksize = fat->csize * SS(fat);
         if (file_info.fattrib & AM_ARC)
         {
-            st->st_blocks = file_info.fsize ? ((file_info.fsize - 1) / SS(f) / fat->csize + 1) : 0;
+            st->st_blocks = file_info.fsize ? ((file_info.fsize - 1) / SS(fat) / fat->csize + 1) : 0;
             st->st_blocks *= (st->st_blksize / 512);  // man say st_blocks is number of 512B blocks allocated
         }
         else

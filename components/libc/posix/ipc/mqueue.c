@@ -7,92 +7,9 @@
  * Date           Author       Notes
  */
 
-#include <string.h>
-#include <fcntl.h>
-#include <sys/signal.h>
-#include <sys/time.h>
-#include <sys/errno.h>
-#include <rtthread.h>
-#include <limits.h>
+#include <dfs_file.h>
+#include <unistd.h>
 #include "mqueue.h"
-
-static mqdes_t posix_mq_list = RT_NULL;
-static struct rt_semaphore posix_mq_lock;
-
-/* initialize posix mqueue */
-static int posix_mq_system_init(void)
-{
-    rt_sem_init(&posix_mq_lock, "pmq", 1, RT_IPC_FLAG_FIFO);
-    return 0;
-}
-INIT_COMPONENT_EXPORT(posix_mq_system_init);
-
-rt_inline void posix_mq_insert(mqdes_t pmq)
-{
-    if (posix_mq_list == RT_NULL)
-        pmq->mq_id = 1;
-    else
-        pmq->mq_id = posix_mq_list->mq_id + 1;
-    pmq->next = posix_mq_list;
-    posix_mq_list = pmq;
-}
-
-static void posix_mq_delete(mqdes_t pmq)
-{
-    mqdes_t iter;
-    if (posix_mq_list == pmq)
-    {
-        posix_mq_list = pmq->next;
-
-        rt_mq_delete(pmq->mq);
-        rt_free(pmq);
-
-        return;
-    }
-    for (iter = posix_mq_list; iter->next != RT_NULL; iter = iter->next)
-    {
-        if (iter->next == pmq)
-        {
-            /* delete this mq */
-            if (pmq->next != RT_NULL)
-                iter->next = pmq->next;
-            else
-                iter->next = RT_NULL;
-
-            /* delete RT-Thread mqueue */
-            rt_mq_delete(pmq->mq);
-            rt_free(pmq);
-
-            return ;
-        }
-    }
-}
-
-static mqdes_t posix_mq_find(const char *name)
-{
-    mqdes_t iter;
-    rt_object_t object;
-
-    for (iter = posix_mq_list; iter != RT_NULL; iter = iter->next)
-    {
-        object = (rt_object_t)(iter->mq);
-
-        if (strncmp(object->name, name, RT_NAME_MAX) == 0)
-        {
-            return iter;
-        }
-    }
-
-    return RT_NULL;
-}
-
-static mqdes_t posix_mq_id_find(mqd_t id)
-{
-    for (mqdes_t iter = posix_mq_list; iter != RT_NULL; iter = iter->next)
-        if (iter->mq_id == id)
-            return iter;
-    return RT_NULL;
-}
 
 int mq_setattr(mqd_t                 id,
                const struct mq_attr *mqstat,
@@ -109,18 +26,18 @@ RTM_EXPORT(mq_setattr);
 
 int mq_getattr(mqd_t id, struct mq_attr *mqstat)
 {
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
-    mqdes_t mqdes = posix_mq_id_find(id);
-    rt_sem_release(&posix_mq_lock);
-    if ((mqdes == RT_NULL) || mqstat == RT_NULL)
+    rt_mq_t mq;
+    struct mqueue_file *mq_file;
+    mq_file = fd_get(id)->vnode->data;
+    mq = (rt_mq_t)mq_file->data;
+    if ((mq == RT_NULL) || mqstat == RT_NULL)
     {
         rt_set_errno(EBADF);
-
         return -1;
     }
 
-    mqstat->mq_maxmsg = mqdes->mq->max_msgs;
-    mqstat->mq_msgsize = mqdes->mq->msg_size;
+    mqstat->mq_maxmsg = mq->max_msgs;
+    mqstat->mq_msgsize = mq->msg_size;
     mqstat->mq_curmsgs = 0;
     mqstat->mq_flags = 0;
 
@@ -130,109 +47,88 @@ RTM_EXPORT(mq_getattr);
 
 mqd_t mq_open(const char *name, int oflag, ...)
 {
+    int mq_fd;
     va_list arg;
     mode_t mode;
-    mqdes_t mqdes = RT_NULL;
     struct mq_attr *attr = RT_NULL;
+    va_start(arg, oflag);
+    mode = (mode_t)va_arg(arg, unsigned int);
+    mode = (mode_t)mode; /* self-assignment avoids compiler optimization */
+    attr = (struct mq_attr *)va_arg(arg, struct mq_attr *);
+    attr = (struct mq_attr *)attr; /* self-assignment avoids compiler optimization */
+    va_end(arg);
+    if(*name == '/')
+    {
+        name++;
+    }
 
-    /* lock posix mqueue list */
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
     int len = rt_strlen(name);
     if (len > RT_NAME_MAX)
     {
         rt_set_errno(ENAMETOOLONG);
-        goto __return;
+        return (mqd_t)(-1);
     }
-
-    mqdes = posix_mq_find(name);
-    if (mqdes != RT_NULL)
+    rt_size_t size;
+    struct mqueue_file *mq_file;
+    mq_file = dfs_mqueue_lookup(name, &size);
+    if(mq_file != RT_NULL)
     {
         if (oflag & O_CREAT && oflag & O_EXCL)
         {
             rt_set_errno(EEXIST);
-            rt_sem_release(&posix_mq_lock);
             return (mqd_t)(-1);
         }
-        mqdes->refcount++; /* increase reference count */
     }
     else if (oflag & O_CREAT)
     {
-        va_start(arg, oflag);
-        mode = (mode_t)va_arg(arg, unsigned int);
-        mode = (mode_t)mode; /* self-assignment avoids compiler optimization */
-        attr = (struct mq_attr *)va_arg(arg, struct mq_attr *);
-        attr = (struct mq_attr *)attr; /* self-assignment avoids compiler optimization */
-        va_end(arg);
-
         if (attr->mq_maxmsg <= 0)
         {
             rt_set_errno(EINVAL);
-            goto __return;
+            return (mqd_t)(-1);
         }
+        struct mqueue_file *mq_file;
+        mq_file = (struct mqueue_file *) rt_malloc (sizeof(struct mqueue_file));
 
-        mqdes = (mqdes_t) rt_malloc (sizeof(struct mqdes));
-        if (mqdes == RT_NULL)
+        if (mq_file == RT_NULL)
         {
             rt_set_errno(ENFILE);
-            goto __return;
+            return (mqd_t)(-1);
         }
-
-        /* create RT-Thread message queue */
-        mqdes->mq = rt_mq_create(name, attr->mq_msgsize, attr->mq_maxmsg, RT_IPC_FLAG_FIFO);
-        if (mqdes->mq == RT_NULL) /* create failed */
-        {
-            rt_set_errno(ENFILE);
-            goto __return;
-        }
-        /* initialize reference count */
-        mqdes->refcount = 1;
-        mqdes->unlinked = 0;
-
-        /* insert mq to posix mq list */
-        posix_mq_insert(mqdes);
+        mq_file->msg_size = attr->mq_msgsize;
+        mq_file->max_msgs = attr->mq_maxmsg;
+        mq_file->data = RT_NULL;
+        strncpy(mq_file->name, name, RT_NAME_MAX);
+        dfs_mqueue_insert_after(&(mq_file->list));
     }
     else
     {
         rt_set_errno(ENOENT);
-        goto __return;
+        return (mqd_t)(-1);
     }
-    rt_sem_release(&posix_mq_lock);
 
-    return (mqd_t)(mqdes->mq_id);
+    const char* mq_path = "/dev/mqueue/";
+    char mq_name[RT_NAME_MAX + 12] = {0};
+    rt_sprintf(mq_name, "%s%s", mq_path, name);
+    mq_fd = open(mq_name, oflag);
 
-__return:
-    /* release lock */
-    rt_sem_release(&posix_mq_lock);
-
-    /* release allocated memory */
-    if (mqdes != RT_NULL)
-    {
-        if (mqdes->mq != RT_NULL)
-        {
-            /* delete RT-Thread message queue */
-            rt_mq_delete(mqdes->mq);
-        }
-        rt_free(mqdes);
-    }
-    return (mqd_t)(-1);
+    return (mqd_t)(mq_fd);
 }
 RTM_EXPORT(mq_open);
 
 ssize_t mq_receive(mqd_t id, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 {
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
-    mqdes_t mqdes = posix_mq_id_find(id);
-    rt_sem_release(&posix_mq_lock);
+    rt_mq_t mq;
     rt_err_t result;
-
-    if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
+    struct mqueue_file *mq_file;
+    mq_file = fd_get(id)->vnode->data;
+    mq = (rt_mq_t)mq_file->data;
+    if ((mq == RT_NULL) || (msg_ptr == RT_NULL))
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
 
-    result = rt_mq_recv_prio(mqdes->mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
+    result = rt_mq_recv_prio(mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
     if (result >= 0)
         return rt_strlen(msg_ptr);
 
@@ -243,19 +139,18 @@ RTM_EXPORT(mq_receive);
 
 int mq_send(mqd_t id, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 {
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
-    mqdes_t mqdes = posix_mq_id_find(id);
-    rt_sem_release(&posix_mq_lock);
+    rt_mq_t mq;
     rt_err_t result;
+    struct mqueue_file *mq_file;
+    mq_file = fd_get(id)->vnode->data;
+    mq = (rt_mq_t)mq_file->data;
 
-    if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
+    if ((mq == RT_NULL) || (msg_ptr == RT_NULL))
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
-
-    result = rt_mq_send_wait_prio(mqdes->mq, (void *)msg_ptr, msg_len, msg_prio, 0, RT_UNINTERRUPTIBLE);
+    result = rt_mq_send_wait_prio(mq, (void *)msg_ptr, msg_len, msg_prio, 0, RT_UNINTERRUPTIBLE);
     if (result == RT_EOK)
         return 0;
 
@@ -271,23 +166,22 @@ ssize_t mq_timedreceive(mqd_t                  id,
                         unsigned              *msg_prio,
                         const struct timespec *abs_timeout)
 {
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
-    mqdes_t mqdes = posix_mq_id_find(id);
-    rt_sem_release(&posix_mq_lock);
-    int tick = 0;
+    rt_mq_t mq;
     rt_err_t result;
-
+    int tick = 0;
+    struct mqueue_file *mq_file;
+    mq_file = fd_get(id)->vnode->data;
+    mq = (rt_mq_t)mq_file->data;
     /* parameters check */
-    if ((mqdes == RT_NULL) || (msg_ptr == RT_NULL))
+    if ((mq == RT_NULL) || (msg_ptr == RT_NULL))
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
     if (abs_timeout != RT_NULL)
         tick = rt_timespec_to_tick(abs_timeout);
 
-    result = rt_mq_recv_prio(mqdes->mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, tick, RT_UNINTERRUPTIBLE);
+    result = rt_mq_recv_prio(mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, tick, RT_UNINTERRUPTIBLE);
 
     if (result >= 0)
         return rt_strlen(msg_ptr);
@@ -316,10 +210,11 @@ RTM_EXPORT(mq_timedsend);
 
 int mq_notify(mqd_t id, const struct sigevent *notification)
 {
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
-    mqdes_t mqdes = posix_mq_id_find(id);
-    rt_sem_release(&posix_mq_lock);
-    if (mqdes == RT_NULL || mqdes->refcount == 0)
+    rt_mq_t mq;
+    struct mqueue_file *mq_file;
+    mq_file = fd_get(id)->vnode->data;
+    mq = (rt_mq_t)mq_file->data;
+    if (mq == RT_NULL)
     {
         rt_set_errno(EBADF);
         return -1;
@@ -332,27 +227,7 @@ RTM_EXPORT(mq_notify);
 
 int mq_close(mqd_t id)
 {
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
-    mqdes_t mqdes = posix_mq_id_find(id);
-    rt_sem_release(&posix_mq_lock);
-    if (mqdes == RT_NULL)
-    {
-        rt_set_errno(EBADF);
-        return -1;
-    }
-
-    /* lock posix mqueue list */
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
-    mqdes->refcount --;
-    if (mqdes->refcount == 0)
-    {
-        /* delete from posix mqueue list */
-        if (mqdes->unlinked)
-            posix_mq_delete(mqdes);
-    }
-    rt_sem_release(&posix_mq_lock);
-
-    return 0;
+    return close(id);
 }
 RTM_EXPORT(mq_close);
 
@@ -392,28 +267,13 @@ RTM_EXPORT(mq_close);
  */
 int mq_unlink(const char *name)
 {
-    mqdes_t pmq;
-
-    /* lock posix mqueue list */
-    rt_sem_take(&posix_mq_lock, RT_WAITING_FOREVER);
-    pmq = posix_mq_find(name);
-    if (pmq != RT_NULL)
+    if(*name == '/')
     {
-        pmq->unlinked = 1;
-        if (pmq->refcount == 0)
-        {
-            /* remove this mqueue */
-            posix_mq_delete(pmq);
-        }
-        rt_sem_release(&posix_mq_lock);
-
-        return 0;
+        name++;
     }
-    rt_sem_release(&posix_mq_lock);
-
-    /* no this entry */
-    rt_set_errno(ENOENT);
-
-    return -1;
+    const char *mq_path = "/dev/mqueue/";
+    char mq_name[RT_NAME_MAX + 12] = {0};
+    rt_sprintf(mq_name, "%s%s", mq_path, name);
+    return unlink(mq_name);
 }
 RTM_EXPORT(mq_unlink);
