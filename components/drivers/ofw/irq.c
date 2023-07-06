@@ -67,7 +67,7 @@ static rt_err_t ofw_parse_irq_map(struct rt_ofw_node *np, struct rt_ofw_cell_arg
      *  child interrupt specifier
      *      The interrupt specifier of the child node being mapped. The number
      *      of 32-bit cells required to specify this component is described by
-     *      the #interrupt-cells property of this node—the nexus node containing
+     *      the #interrupt-cells property of this node-the nexus node containing
      *      the interrupt-map property.
      *
      *  interrupt-parent
