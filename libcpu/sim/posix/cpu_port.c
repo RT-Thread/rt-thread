@@ -394,8 +394,7 @@ void rt_hw_context_switch(rt_ubase_t from,
     pthread_mutex_unlock(ptr_int_mutex);
 }
 
-void rt_hw_context_switch_interrupt(rt_ubase_t from,
-                                    rt_ubase_t to)
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread)
 {
     rt_hw_context_switch(from, to);
 }
