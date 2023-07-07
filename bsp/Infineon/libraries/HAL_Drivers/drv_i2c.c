@@ -11,7 +11,7 @@
 #include "board.h"
 
 #if defined(RT_USING_I2C)
-#if defined(BSP_USING_HW_I2C3) || defined(BSP_USING_HW_I2C6)
+#if defined(BSP_USING_HW_I2C3) || defined(BSP_USING_HW_I2C4) || defined(BSP_USING_HW_I2C6)
 #include <rtdevice.h>
 
 #ifndef I2C3_CONFIG
@@ -22,7 +22,16 @@
         .sda_pin = BSP_I2C3_SDA_PIN, \
     }
 #endif /* I2C3_CONFIG */
-#endif
+
+#ifndef I2C4_CONFIG
+#define I2C4_CONFIG                  \
+    {                                \
+        .name = "i2c4",              \
+        .scl_pin = BSP_I2C4_SCL_PIN, \
+        .sda_pin = BSP_I2C4_SDA_PIN, \
+    }
+#endif /* I2C4_CONFIG */
+
 #ifndef I2C6_CONFIG
 #define I2C6_CONFIG                  \
     {                                \
@@ -32,10 +41,15 @@
     }
 #endif /* I2C6_CONFIG */
 
+#endif /* defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) */
+
 enum
 {
 #ifdef BSP_USING_HW_I2C3
     I2C3_INDEX,
+#endif
+#ifdef BSP_USING_HW_I2C4
+    I2C4_INDEX,
 #endif
 #ifdef BSP_USING_HW_I2C6
     I2C6_INDEX,
@@ -61,6 +75,10 @@ static struct ifx_i2c_config i2c_config[] =
     {
 #ifdef BSP_USING_HW_I2C3
         I2C3_CONFIG,
+#endif
+
+#ifdef BSP_USING_HW_I2C4
+        I2C4_CONFIG,
 #endif
 
 #ifdef BSP_USING_HW_I2C6
@@ -145,8 +163,7 @@ void HAL_I2C_Init(struct ifx_i2c *obj)
 
 int rt_hw_i2c_init(void)
 {
-    rt_err_t result;
-    cyhal_i2c_t mI2C;
+    rt_err_t result = RT_EOK;
 
     for (int i = 0; i < sizeof(i2c_config) / sizeof(i2c_config[0]); i++)
     {
@@ -156,8 +173,6 @@ int rt_hw_i2c_init(void)
         i2c_objs[i].mI2C_cfg.is_slave = false;
         i2c_objs[i].mI2C_cfg.address = 0;
         i2c_objs[i].mI2C_cfg.frequencyhal_hz = (400000UL);
-
-        i2c_objs[i].mI2C = mI2C;
 
         i2c_objs[i].i2c_bus.ops = &i2c_ops;
 
@@ -171,4 +186,4 @@ int rt_hw_i2c_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_i2c_init);
 
-#endif /* defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) */
+#endif /* RT_USING_I2C */
