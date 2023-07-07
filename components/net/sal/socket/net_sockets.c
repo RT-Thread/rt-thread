@@ -311,7 +311,6 @@ int closesocket(int s)
         error = -1;
     }
 
-    rt_free(d->vnode);
     /* socket has been closed, delete it from file system fd */
     fd_release(s);
 
