@@ -155,6 +155,20 @@ menu "On-chip Peripheral Drivers"
                         range 1 113
                         default 49
                 endif
+            config BSP_USING_HW_I2C4
+                bool "Enable I2C4 Bus (Arduino I2C)"
+                default n
+                if BSP_USING_HW_I2C4
+                    comment "Notice: P8_0 --> 64; P8_1 --> 65"
+                    config BSP_I2C4_SCL_PIN
+                        int "i2c4 SCL pin number"
+                        range 1 113
+                        default 64
+                    config BSP_I2C4_SDA_PIN
+                        int "i2c4 SDA pin number"
+                        range 1 113
+                        default 65
+                endif
             config BSP_USING_HW_I2C6
                 bool "Enable I2C6 Bus (User I2C)"
                 default n
