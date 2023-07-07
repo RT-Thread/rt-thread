@@ -15,7 +15,7 @@
 #include <rtdbg.h>
 
 #include <drivers/platform.h>
-#include <drivers/core/rtdm.h>
+#include <drivers/core/dm.h>
 
 static const struct rt_ofw_node_id platform_ofw_ids[] =
 {

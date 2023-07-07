@@ -401,6 +401,8 @@ rt_err_t rt_bus_register(rt_bus_t bus)
     rt_list_init(&bus->dev_list);
     rt_list_init(&bus->drv_list);
 
+    rt_spin_lock_init(&bus->spinlock);
+
     rt_bus_add(bus);
 
     return RT_EOK;

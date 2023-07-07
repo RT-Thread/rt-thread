@@ -12,7 +12,7 @@
 
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
-#include <drivers/core/rtdm.h>
+#include <drivers/core/dm.h>
 
 static struct rt_bus platform_bus;
 
