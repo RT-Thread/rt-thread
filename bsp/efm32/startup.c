@@ -36,7 +36,7 @@ extern int __bss_end__;
 /* External function prototypes ----------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-#ifdef RT_DEBUG
+#ifdef RT_USING_DEBUG
 /***************************************************************************//**
  * @brief
  *  Reports the name of the source file and the source line number where the

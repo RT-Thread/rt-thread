@@ -270,7 +270,7 @@ typedef __gnuc_va_list              va_list;
 typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER
 #pragma section("rti_fn$f",read)
-    #ifdef RT_DEBUG_INIT
+    #ifdef RT_DEBUGING_INIT
         struct rt_init_desc
         {
             const char* level;
@@ -296,7 +296,7 @@ typedef int (*init_fn_t)(void);
                                 {__rti_level_##fn, fn };
     #endif
 #else
-    #ifdef RT_DEBUG_INIT
+    #ifdef RT_DEBUGING_INIT
         struct rt_init_desc
         {
             const char* fn_name;

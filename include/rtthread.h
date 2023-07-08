@@ -18,7 +18,7 @@
  * 2021-11-14     Meco Man     add rtlegacy.h for compatibility
  * 2022-06-04     Meco Man     remove strnlen
  * 2023-05-20     Bernard      add rtatomic.h header file to included files.
- * 2023-06-30     ChuShicheng  Move RT_DEBUG_CONTEXT_CHECK from the rtdebug.h
+ * 2023-06-30     ChuShicheng  move debug check from the rtdebug.h
  */
 
 #ifndef __RT_THREAD_H__
@@ -725,15 +725,10 @@ rt_size_t rt_strlen(const char *src);
 
 void rt_show_version(void);
 
-#ifdef RT_DEBUG
+#ifdef RT_USING_DEBUG
 extern void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
 void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line));
 void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
-
-/* Turn on this to enable context check */
-#ifndef RT_DEBUG_CONTEXT_CHECK
-#define RT_DEBUG_CONTEXT_CHECK         1
-#endif
 
 #define RT_ASSERT(EX)                                                         \
 if (!(EX))                                                                    \
@@ -741,8 +736,8 @@ if (!(EX))                                                                    \
     rt_assert_handler(#EX, __FUNCTION__, __LINE__);                           \
 }
 
+#ifdef RT_DEBUGING_CONTEXT
 /* Macro to check current context */
-#if RT_DEBUG_CONTEXT_CHECK
 #define RT_DEBUG_NOT_IN_INTERRUPT                                             \
 do                                                                            \
 {                                                                             \
@@ -813,19 +808,14 @@ while (0)
 #define RT_DEBUG_NOT_IN_INTERRUPT
 #define RT_DEBUG_IN_THREAD_CONTEXT
 #define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)
-#endif
-
-#else /* RT_DEBUG */
-
+#endif /* RT_DEBUGING_CONTEXT */
+#else
 #define RT_ASSERT(EX)
-#define RT_DEBUG_NOT_IN_INTERRUPT
-#define RT_DEBUG_IN_THREAD_CONTEXT
-#define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)
-#endif /* RT_DEBUG */
+#endif /* RT_USING_DEBUG */
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-#endif
+#endif /* RT_USING_FINSH */
 
 /**@}*/
 
@@ -833,4 +823,4 @@ while (0)
 }
 #endif
 
-#endif
+#endif /* __RT_THREAD_H__ */

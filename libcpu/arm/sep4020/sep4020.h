@@ -808,8 +808,8 @@ typedef    int                  ER;         /* Error code.  A signed integer. */
         rt_kprintf(fmt,##__VA_ARGS__); \
     }while(0)
 
-#define RT_DEBUG
-#ifdef RT_DEBUG
+#define RT_USING_DEBUG
+#ifdef RT_USING_DEBUG
     #define DBOUT(fmt,...) \
     do \
     {   \
@@ -821,7 +821,7 @@ typedef    int                  ER;         /* Error code.  A signed integer. */
     do{}while(0)
 #endif
 
-#ifdef  RT_DEBUG
+#ifdef  RT_USING_DEBUG
     #define ASSERT(arg) \
     if((arg) == 0) \
     {       \
