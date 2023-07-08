@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2018-11-06     SummerGift   first version
+ * Date           Author            Notes
+ * 2023-07-08     Zheng-Bicheng     first version
  */
 
 #include <rtthread.h>

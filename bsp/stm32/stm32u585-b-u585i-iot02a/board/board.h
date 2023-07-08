@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2018-11-5      SummerGift   first version
- * 2019-04-24     yangjie      Use the end of ZI as HEAP_BEGIN
+ * Date           Author            Notes
+ * 2023-07-08     Zheng-Bicheng     first version
  */
 
 #ifndef __BOARD_H__
