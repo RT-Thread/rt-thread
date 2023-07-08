@@ -51,11 +51,7 @@
 #include <rthw.h>
 
 #define DBG_TAG           "kernel.ipc"
-#ifdef RT_DEBUG_IPC
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_IPC) */
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 #ifndef __on_rt_object_trytake_hook

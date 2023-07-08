@@ -39,11 +39,7 @@
 #include <stddef.h>
 
 #define DBG_TAG           "kernel.thread"
-#ifdef RT_DEBUG_THREAD
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_THREAD) */
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 #ifndef __on_rt_thread_inited_hook

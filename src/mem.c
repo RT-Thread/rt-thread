@@ -51,16 +51,9 @@
 #include <rtthread.h>
 
 #if defined (RT_USING_SMALL_MEM)
- /**
-  * memory item on the small mem
-  */
 
 #define DBG_TAG           "kernel.mem"
-#ifdef RT_DEBUG_MEM
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_MEM) */
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 struct rt_small_mem_item

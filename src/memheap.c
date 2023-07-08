@@ -27,11 +27,7 @@
 #ifdef RT_USING_MEMHEAP
 
 #define DBG_TAG           "kernel.memheap"
-#ifdef RT_DEBUG_MEMHEAP
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_MEM) */
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 /* dynamic pool magic and mask */
