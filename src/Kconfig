@@ -211,47 +211,11 @@ if RT_DEBUG
         bool "Enable debugging of components initialization"
         default n
 
-    config RT_DEBUG_THREAD
-        bool "Enable debugging of Thread State Changes"
-        default n
-
-    config RT_DEBUG_SCHEDULER
-        bool "Enable debugging of Scheduler"
-        default n
-
-    config RT_DEBUG_IPC
-        bool "Enable debugging of IPC"
-        default n
-
-    config RT_DEBUG_TIMER
-        bool "Enable debugging of Timer"
-        default n
-
-    config RT_DEBUG_IRQ
-        bool "Enable debugging of IRQ(Interrupt Request)"
-        default n
-
-    config RT_DEBUG_MEM
-        bool "Enable debugging of Small Memory Algorithm"
-        default n
-
-    config RT_DEBUG_SLAB
-        bool "Enable debugging of SLAB Memory Algorithm"
-        default n
-
-    config RT_DEBUG_MEMHEAP
-        bool "Enable debugging of Memory Heap Algorithm"
-        default n
-
     if ARCH_MM_MMU
         config RT_DEBUG_PAGE_LEAK
             bool "Enable page leaking tracer"
             default n
     endif
-
-    config RT_DEBUG_MODULE
-        bool "Enable debugging of Application Module"
-        default n
 
 endif
 

@@ -25,11 +25,7 @@
 #include <rthw.h>
 
 #define DBG_TAG           "kernel.timer"
-#ifdef RT_DEBUG_TIMER
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_TIMER) */
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 /* hard timer list */
@@ -203,7 +199,7 @@ rt_inline void _timer_remove(rt_timer_t timer)
     }
 }
 
-#ifdef RT_DEBUG_TIMER
+#if (DBG_LVL == DBG_LOG)
 /**
  * @brief The number of timer
  *
@@ -242,7 +238,7 @@ void rt_timer_dump(rt_list_t timer_heads[])
     }
     rt_kprintf("\n");
 }
-#endif /* RT_DEBUG_TIMER */
+#endif /* (DBG_LVL == DBG_LOG) */
 
 /**
  * @addtogroup Clock

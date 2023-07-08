@@ -35,11 +35,7 @@
 #include <rthw.h>
 
 #define DBG_TAG           "kernel.scheduler"
-#ifdef RT_DEBUG_SCHEDULER
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_SCHEDULER) */
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];

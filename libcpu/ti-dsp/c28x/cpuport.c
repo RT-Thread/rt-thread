@@ -13,12 +13,8 @@
 
 #include <rthw.h>
 
-#define DBG_TAG           "kernel.irq"
-#ifdef RT_DEBUG_IRQ
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_IRQ) */
+#define DBG_TAG           "cpu.ti.c28x"
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 extern volatile rt_uint8_t rt_interrupt_nest;
