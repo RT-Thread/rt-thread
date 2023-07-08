@@ -13,9 +13,6 @@ name: BSP compilation with more drivers
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  # Runs at 16:00 UTC (BeiJing 00:00) on the 1st of every month
-  schedule:
-    - cron:  '0 16 1 * *'
   push:
     branches:
       - master
@@ -71,4 +68,4 @@ jobs:
         shell: bash
         run: |
           source ~/.env/env.sh
-          python tools/ci/compile_bsp_with_drivers.py
+          #python tools/ci/compile_bsp_with_drivers.py
