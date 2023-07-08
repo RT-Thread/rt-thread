@@ -40,6 +40,9 @@
 
 #define F_CPU          84000000L  /* CPU:84MHz */
 
+#define SS          D7
+#define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi1"
+
 #define LED_BUILTIN     D13  /* Default Built-in LED */
 
 /* i2c1 : PB9-SDA PB8-SCL */
