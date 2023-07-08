@@ -55,14 +55,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#if defined (RT_USING_SLAB)
+#ifdef RT_USING_SLAB
 
 #define DBG_TAG           "kernel.slab"
-#ifdef RT_DEBUG_SLAB
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_SLAB) */
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 /*
@@ -751,7 +747,7 @@ void rt_slab_free(rt_slab_t m, void *ptr)
         return ;
 
     /* get memory usage */
-#ifdef RT_DEBUG_SLAB
+#if (DBG_LVL == DBG_LOG)
     {
         rt_ubase_t addr = ((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK);
         LOG_D("free a memory 0x%x and align to 0x%x, kup index %d",
@@ -759,7 +755,7 @@ void rt_slab_free(rt_slab_t m, void *ptr)
               (rt_ubase_t)addr,
               ((rt_ubase_t)(addr) - slab->heap_start) >> RT_MM_PAGE_BITS);
     }
-#endif /* RT_DEBUG_SLAB */
+#endif /* DBG_LVL == DBG_LOG */
 
     kup = btokup((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK);
     /* release large allocation */
@@ -857,4 +853,4 @@ void rt_slab_free(rt_slab_t m, void *ptr)
 }
 RTM_EXPORT(rt_slab_free);
 
-#endif /* defined (RT_USING_SLAB) */
+#endif /* RT_USING_SLAB */

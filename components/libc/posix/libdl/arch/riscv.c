@@ -26,12 +26,8 @@
 #define R_RISCV_TLS_TPREL32   10
 #define R_RISCV_TLS_TPREL64   11
 
-#define DBG_TAG           "kernel.module"
-#ifdef RT_DEBUG_MODULE
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_MODULE) */
+#define DBG_TAG           "posix.libdl.arch"
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 int dlmodule_relocate(struct rt_dlmodule *module, Elf_Rel *rel, Elf_Addr sym_val)

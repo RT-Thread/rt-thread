@@ -580,9 +580,6 @@ Configuration is mainly done by modifying the file under project directory - rtc
 #define RT_DEBUG
 /* When debug mode is enabled: Define this macro to enable the print component initialization information, if not defined, close.  */
 #define RT_DEBUG_INIT
-/* When debug mode is enabled: When the macro is defined as 0, the print thread switching information is turned off. When it is defined as 1, it is enabled. */
-/* When debug mode is enabled: Define this macro to enable the print thread switching information. */
-#define RT_DEBUG_THREAD
 
 /* Defining this macro means the use of the hook function is started, if not defined, close. */
 #define RT_USING_HOOK

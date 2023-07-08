@@ -13,12 +13,8 @@
 
 #ifdef __i386__
 
-#define DBG_TAG           "kernel.module"
-#ifdef RT_DEBUG_MODULE
-#define DBG_LVL           DBG_LOG
-#else
-#define DBG_LVL           DBG_WARNING
-#endif /* defined (RT_DEBUG_MODULE) */
+#define DBG_TAG           "posix.libdl.arch"
+#define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
 #define R_X86_64_GLOB_DAT   6   /* Create GOT entry */
@@ -55,4 +51,5 @@ int dlmodule_relocate(struct rt_dlmodule *module, Elf32_Rel *rel, Elf32_Addr sym
 
     return 0;
 }
-#endif
+
+#endif /* __i386__ */
