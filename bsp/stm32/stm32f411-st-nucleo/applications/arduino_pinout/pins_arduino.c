@@ -11,6 +11,10 @@
 #include <Arduino.h>
 #include "pins_arduino.h"
 
+#define DBG_TAG    "RTduino.pins_arduino"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 /*
  * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
  * [] means optional
@@ -69,6 +73,6 @@ void pins_switch_to_spi(const char *bus_name)
         GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-        rt_kprintf("D11, D12 and D13 will switch from PWM to SPI\n");
+        LOG_W("D11, D12 and D13 will switch from PWM to SPI");
     }
 }
