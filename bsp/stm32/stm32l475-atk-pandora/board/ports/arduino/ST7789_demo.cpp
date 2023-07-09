@@ -279,8 +279,8 @@ static void st7789_setup(void)
     Serial.print(time, DEC);
     Serial.println(" ms");
 
-    testdrawtext((char *)"RTduino is an open source project which is compatible with Arduino APIs so that RT-Thread beginners can easily get start to use RT-Thread through Arduino APIs, which significantly reduces the difficulty of learning RT-Thread.", ST77XX_WHITE);
     time = millis();
+    testdrawtext((char *)"RTduino is an open source project which is compatible with Arduino APIs so that RT-Thread beginners can easily get start to use RT-Thread through Arduino APIs, which significantly reduces the difficulty of learning RT-Thread.", ST77XX_WHITE);
     time = millis() - time;
     Serial.print("write text spend: ");
     Serial.print(time, DEC);
