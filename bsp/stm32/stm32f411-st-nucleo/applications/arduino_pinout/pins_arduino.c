@@ -49,7 +49,7 @@ const pin_map_t pin_map_table[]=
 
 void pins_switch_to_spi(const char *bus_name)
 {
-    if(!rt_strcmp(bus_name, RTDUINO_DEFAULT_SPI_BUS_NAME))
+    if(!rt_strcmp(bus_name, "spi1"))
     {
         __HAL_RCC_TIM1_CLK_DISABLE();
         HAL_GPIO_DeInit(GPIOA, GPIO_PIN_7);
