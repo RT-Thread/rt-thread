@@ -51,16 +51,20 @@ const pin_map_t pin_map_table[]=
     {A7, RT_NULL, "adc1", RT_ADC_INTERN_CH_TEMPER}, /* ADC, On-Chip: internal temperature sensor */
 };
 
-void pins_switch_to_spi(const char *bus_name)
+#ifdef RTDUINO_USING_SPI
+void switchToSPI(const char *bus_name)
 {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
     if(!rt_strcmp(bus_name, "spi1"))
     {
-        __HAL_RCC_TIM1_CLK_DISABLE();
-        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_7);
-
-        GPIO_InitTypeDef GPIO_InitStruct = {0};
         __HAL_RCC_SPI1_CLK_ENABLE();
         __HAL_RCC_GPIOA_CLK_ENABLE();
+
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5);
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_6);
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_7);
+
         /**SPI1 GPIO Configuration
         PA5     ------> SPI1_SCK
         PA6     ------> SPI1_MISO
@@ -76,3 +80,4 @@ void pins_switch_to_spi(const char *bus_name)
         LOG_W("D11, D12 and D13 will switch from PWM to SPI");
     }
 }
+#endif /* RTDUINO_USING_SPI */
