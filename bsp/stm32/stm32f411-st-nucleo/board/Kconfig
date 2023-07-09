@@ -221,7 +221,7 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    source "libraries/HAL_Drivers/Kconfig"
+    source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
 
