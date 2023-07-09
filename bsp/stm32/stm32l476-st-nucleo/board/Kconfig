@@ -37,8 +37,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM17_CH1
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select BSP_SPI1_TX_USING_DMA
+        select BSP_SPI1_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
 endmenu
@@ -140,21 +145,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
-                default n
-
-            config BSP_USING_SPI2
-                bool "Enable SPI2 BUS"
-                default n
-
-            config BSP_SPI2_TX_USING_DMA
-                bool "Enable SPI2 TX DMA"
-                depends on BSP_USING_SPI2
-                default n
-
-            config BSP_SPI2_RX_USING_DMA
-                bool "Enable SPI2 RX DMA"
-                depends on BSP_USING_SPI2
-                select BSP_SPI2_TX_USING_DMA
                 default n
 
             config BSP_USING_SPI3

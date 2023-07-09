@@ -43,7 +43,10 @@
 #define F_CPU          80000000L  /* CPU:80MHz */
 
 /* i2c1 : PB9-SDA PB8-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+#define RTDUINO_DEFAULT_IIC_BUS_NAME     "i2c1"
+
+#define SS          D10
+#define RTDUINO_DEFAULT_SPI_BUS_NAME     "spi1"
 
 #define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer7"
 
