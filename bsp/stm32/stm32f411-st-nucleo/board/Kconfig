@@ -37,6 +37,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI
         select BSP_USING_SPI1
         select RTDUINO_USING_SPI
+        select BSP_SPI1_TX_USING_DMA
+        select BSP_SPI1_RX_USING_DMA
         select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
         default n
