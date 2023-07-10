@@ -28,6 +28,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f302-st-nucleo](stm32f302-st-nucleo) | ST 官方 STM32F302-nucleo 开发板 |
 | [stm32f334-st-nucleo](stm32f334-st-nucleo) | ST 官方 STM32F334-nucleo 开发板 |
 | **F4 系列** |  |
+| [stm32f407-rt-spark](stm32f407-rt-spark) | 睿赛德官方 F407 星火一号开发板 |
 | [stm32f401-st-nucleo](stm32f401-st-nucleo) | ST 官方 STM32F401 Nucleo-64 开发板 |
 | [stm32f405-smdz-breadfruit](stm32f405-smdz-breadfruit) | 三木电子 SM1432F405 开发板 |
 | [stm32f407-atk-explorer](stm32f407-atk-explorer) | 正点原子 F407 探索者开发板 |
