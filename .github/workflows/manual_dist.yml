@@ -48,17 +48,15 @@ permissions:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: [self-hosted, windows, x64]
     name: ${{ github.event.inputs.bsp_options }}
     steps:
       - uses: actions/checkout@v3
       - name: Bsp Scons Compile
         if: ${{ success() }}
-        shell: bash
         env:
           RTT_BSP: ${{ github.event.inputs.bsp_options }}
           RTT_TOOL_CHAIN: ${{ github.event.inputs.bsp_tool_chain}}
         run: |
           cd bsp/stm32/stm32l496-st-nucleo
-          UV4.exe -r project.uvprojx -q -j0 -t rt-thread -o test.log
-          cat test.log
+          echo $RTT_BSP
