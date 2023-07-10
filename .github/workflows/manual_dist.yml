@@ -59,11 +59,7 @@ jobs:
           RTT_BSP: ${{ github.event.inputs.bsp_options }}
           RTT_TOOL_CHAIN: ${{ github.event.inputs.bsp_tool_chain}}
         run: |
-          source ~/.env/env.sh
           echo $RTT_BSP
-          ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
-          sed -i "s/# ${{ github.event.inputs.bsp_config }} is not set/${{ github.event.inputs.bsp_config }}=y/g" bsp/$RTT_BSP/.config
-          pushd bsp/$RTT_BSP && pkgs --update && popd
           cd bsp/$RTT_BSP
           scons --target=mdk5
           UV4.exe -r project.uvprojx -q -j0 -t rt-thread -o test.log
