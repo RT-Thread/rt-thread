@@ -67,7 +67,6 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
     rt_err_t ret;
     struct rt_i2c_priv_data *priv_data;
     struct rt_i2c_bus_device *bus = (struct rt_i2c_bus_device *)dev->user_data;
-    rt_uint32_t bus_clock;
 
     RT_ASSERT(bus != RT_NULL);
 
