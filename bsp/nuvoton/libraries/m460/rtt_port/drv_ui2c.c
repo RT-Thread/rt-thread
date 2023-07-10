@@ -61,8 +61,8 @@ static rt_ssize_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                   rt_uint32_t num);
 
 static rt_err_t nu_ui2c_bus_control(struct rt_i2c_bus_device *bus,
-                                    rt_uint32_t u32Cmd,
-                                    rt_uint32_t u32Value);
+                                    int cmd,
+                                    void *args);
 
 static const struct rt_i2c_bus_device_ops nu_ui2c_ops =
 {
@@ -71,17 +71,17 @@ static const struct rt_i2c_bus_device_ops nu_ui2c_ops =
     .i2c_bus_control    = nu_ui2c_bus_control,
 };
 
-static rt_err_t nu_ui2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u32Cmd, rt_uint32_t u32Value)
+static rt_err_t nu_ui2c_bus_control(struct rt_i2c_bus_device *bus, int cmd, void *args)
 {
     nu_ui2c_bus_t nu_ui2c;
 
     RT_ASSERT(bus);
     nu_ui2c = (nu_ui2c_bus_t) bus;
 
-    switch (u32Cmd)
+    switch (cmd)
     {
     case RT_I2C_DEV_CTRL_CLK:
-        UI2C_SetBusClockFreq(nu_ui2c->UI2C, u32Value);
+        UI2C_SetBusClockFreq(nu_ui2c->UI2C, *(rt_uint32_t *)args);
         break;
     default:
         return -RT_EIO;
