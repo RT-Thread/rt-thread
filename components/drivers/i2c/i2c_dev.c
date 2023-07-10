@@ -88,16 +88,8 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
             return -RT_EIO;
         }
         break;
-    case RT_I2C_DEV_CTRL_CLK:
-        bus_clock = *(rt_uint32_t *)args;
-        ret = rt_i2c_control(bus, cmd, bus_clock);
-        if (ret < 0)
-        {
-            return -RT_EIO;
-        }
-        break;
     default:
-        break;
+        return rt_i2c_control(bus, cmd, args);
     }
 
     return RT_EOK;
