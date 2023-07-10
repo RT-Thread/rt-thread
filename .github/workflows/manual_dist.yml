@@ -51,6 +51,7 @@ jobs:
     runs-on: [self-hosted, windows, x64]
     name: ${{ github.event.inputs.bsp_options }}
     steps:
+      - uses: actions/checkout@v3
       - name: Bsp Scons Compile
         if: ${{ success() }}
         env:
