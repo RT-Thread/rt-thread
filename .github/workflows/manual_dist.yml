@@ -62,4 +62,5 @@ jobs:
           echo $RTT_BSP
           cd bsp/$RTT_BSP
           UV4.exe -r project.uvprojx -q -j0 -t rt-thread -o test.log
+          ls
           cat test.log
