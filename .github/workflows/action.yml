@@ -160,6 +160,7 @@ jobs:
                 - "stm32/stm32mp157a-st-discovery"
                 - "stm32/stm32mp157a-st-ev1"
                 - "stm32/stm32u575-st-nucleo"
+                - "stm32/stm32u585-iot02a"
                 - "stm32/stm32wb55-st-nucleo"
          -  RTT_BSP: "nxp_renesas" 
             RTT_TOOL_CHAIN: "sourcery-arm"
