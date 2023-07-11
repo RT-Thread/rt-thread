@@ -34,6 +34,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Tools
+    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
     env:
