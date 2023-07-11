@@ -234,15 +234,10 @@
 
 #define SOC_STM32U585AIIxQ
 
-/* Onboard Peripheral Drivers */
-
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-
-/* Board extended module Drivers */
-
 
 #endif
