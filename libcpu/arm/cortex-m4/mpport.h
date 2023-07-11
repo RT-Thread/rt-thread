@@ -3,7 +3,6 @@
 
 #ifdef RT_USING_MEM_PROTECTION
 
-#include <rtdef.h>
 #include <board.h>
 
 #define MPU_MIN_REGION_SIZE	32
@@ -52,16 +51,6 @@
 #define RESERVED						((2 << MPU_RASR_TEX_Pos) | MPU_RASR_B_Msk)
 
 typedef struct {
-	rt_uint32_t rasr;
-} rt_mem_attr_t;
-
-typedef struct {
-    void *start;
-    rt_size_t size;
-    rt_mem_attr_t attr;
-} rt_mem_region_t;
-
-typedef struct {
 	rt_thread_t thread;		/* Thread that triggered exception */
 	void *addr;				/* Address of faulting memory access */
 	rt_mem_region_t region;	/* Configurations of the memory region containing the address */
@@ -88,10 +77,10 @@ typedef struct {
 rt_err_t rt_hw_mp_init(rt_mem_region_t *static_regions, rt_uint8_t num_regions);
 rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region);
-rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region);
+rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *old_region, rt_mem_region_t *new_region);
 rt_err_t rt_hw_mp_exception_set_hook(rt_mem_exception_info_t *info);
 void rt_hw_mp_table_switch(rt_thread_t thread);
 
-#endif /* RT_USING_MP */
+#endif /* RT_USING_MEM_PROTECTION */
 
 #endif /* __MPPORT_H__ */

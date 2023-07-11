@@ -9,4 +9,15 @@ config RT_USING_HW_STACK_GUARD
     default n
     select RT_USING_MEM_PROTECTION
 
+if RT_USING_MEM_PROTECTION
+    config NUM_MEM_REGIONS
+    int "Total number of memory protection regions supported by hardware"
+
+    config NUM_EXCLUSIVE_REGIONS
+    int "Total number of exclusive memory regions added using rt_mem_protection_add_exclusive_region API"
+
+    config NUM_DYNAMIC_REGIONS
+    int "Maximum number of dynamic memory regions for each thread, except for stack guard and exclusive regions added using rt_mem_protection_add_exclusive_region API"
+endif
+
 endmenu
