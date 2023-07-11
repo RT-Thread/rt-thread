@@ -61,6 +61,6 @@ jobs:
           ls
           echo $RTT_BSP
           cd bsp/stm32/stm32l496-st-nucleo
-          UV4.exe -r project.uvprojx -q -j0 -t rt-thread -o test.log
+          C:/Keil_v5/UV4/UV4.exe -r project.uvprojx -q -j0 -t rt-thread -o test.log
           ls
           cat test.log
