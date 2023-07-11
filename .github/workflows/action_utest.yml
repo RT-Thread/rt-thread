@@ -28,6 +28,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: ${{ matrix.legs.UTEST }}
+    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix:
