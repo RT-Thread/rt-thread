@@ -63,5 +63,5 @@ jobs:
           cd bsp/stm32/stm32l496-st-nucleo
           C:/Keil_v5/UV4/UV4.exe -b project.uvprojx -q -j0 -t rt-thread -o test.log
           ls
-          sleep 100
+          sleep 10
           cat test.log
