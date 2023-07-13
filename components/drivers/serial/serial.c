@@ -637,7 +637,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
         stream_flag = RT_DEVICE_FLAG_STREAM;
 
     /* get open flags */
-    dev->open_flag = oflag & 0xff;
+    dev->open_flag |= oflag & 0xff;
 
     /* initialize the Rx/Tx structure according to open flag */
     if (serial->serial_rx == RT_NULL)
