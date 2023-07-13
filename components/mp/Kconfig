@@ -16,8 +16,8 @@ if RT_USING_MEM_PROTECTION
     config NUM_EXCLUSIVE_REGIONS
     int "Total number of exclusive memory regions added using rt_mem_protection_add_exclusive_region API"
 
-    config NUM_DYNAMIC_REGIONS
-    int "Maximum number of dynamic memory regions for each thread, except for stack guard and exclusive regions added using rt_mem_protection_add_exclusive_region API"
+    config NUM_CONFIGURABLE_REGIONS
+    int "Maximum number of configurable memory regions for each thread, excluding stack guard and exclusive regions added using rt_mem_protection_add_exclusive_region API"
 endif
 
 endmenu
