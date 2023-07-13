@@ -54,9 +54,9 @@ static rt_list_t _traps_nodes = RT_LIST_OBJECT_INIT(_traps_nodes);
 
 static struct rt_pic_irq *irq2pirq(int irq)
 {
-    struct rt_pic_irq *pirq;
+    struct rt_pic_irq *pirq = RT_NULL;
 
-    if (irq >= 0 && irq < MAX_HANDLERS)
+    if ((irq >= 0) && (irq < MAX_HANDLERS))
     {
         pirq = &_pirq_hash[irq];
 
@@ -453,7 +453,7 @@ rt_err_t rt_pic_do_traps(void)
 
 rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 {
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
     rt_list_t *handler_nodes;
     struct rt_irq_desc *action;
 
@@ -547,49 +547,101 @@ rt_err_t rt_pic_irq_finit(void)
     return err;
 }
 
-#define _irq_call_helper(irq, fn)       \
-({                                      \
-    struct rt_pic_irq *pirq;            \
-    if ((pirq = irq2pirq(irq)))         \
-    {                                   \
-        rt_spin_lock(&pirq->rw_lock);   \
-        if (pirq->pic->ops->fn)         \
-            pirq->pic->ops->fn(pirq);   \
-        rt_spin_unlock(&pirq->rw_lock); \
-    }                                   \
-})
-
 void rt_pic_irq_enable(int irq)
 {
-    _irq_call_helper(irq, irq_enable);
+    struct rt_pic_irq *pirq = irq2pirq(irq);
+
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (pirq->pic->ops->irq_enable)
+    {
+        pirq->pic->ops->irq_enable(pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_disable(int irq)
 {
-    _irq_call_helper(irq, irq_disable);
+    struct rt_pic_irq *pirq = irq2pirq(irq);
+
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (pirq->pic->ops->irq_disable)
+    {
+        pirq->pic->ops->irq_disable(pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_ack(int irq)
 {
-    _irq_call_helper(irq, irq_ack);
+    struct rt_pic_irq *pirq = irq2pirq(irq);
+
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (pirq->pic->ops->irq_ack)
+    {
+        pirq->pic->ops->irq_ack(pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_mask(int irq)
 {
-    _irq_call_helper(irq, irq_mask);
+    struct rt_pic_irq *pirq = irq2pirq(irq);
+
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (pirq->pic->ops->irq_mask)
+    {
+        pirq->pic->ops->irq_mask(pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_unmask(int irq)
 {
-    _irq_call_helper(irq, irq_unmask);
+    struct rt_pic_irq *pirq = irq2pirq(irq);
+
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (pirq->pic->ops->irq_unmask)
+    {
+        pirq->pic->ops->irq_unmask(pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_eoi(int irq)
 {
-    _irq_call_helper(irq, irq_eoi);
-}
+    struct rt_pic_irq *pirq = irq2pirq(irq);
 
-#undef _irq_call_helper
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (pirq->pic->ops->irq_eoi)
+    {
+        pirq->pic->ops->irq_eoi(pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
+}
 
 rt_err_t rt_pic_irq_set_priority(int irq, rt_uint32_t priority)
 {
@@ -747,58 +799,145 @@ void rt_pic_irq_send_ipi(int irq, rt_bitmap_t *cpumask)
     }
 }
 
-#define _pirq_parent_call_helper(ppic, pirq, fn, ret,...) \
-({                                                  \
-    if (ppic && pirq)                               \
-    {                                               \
-        rt_spin_lock(&pirq->rw_lock);               \
-        if (ppic->ops->fn)                          \
-        {                                           \
-            struct rt_pic *cpic;                    \
-            cpic = pirq->pic; /* push old pic */    \
-            pirq->pic = ppic;                       \
-            ret ppic->ops->fn(pirq __VA_ARGS__);    \
-            pirq->pic = cpic; /* pop old pic */     \
-        }                                           \
-        rt_spin_unlock(&pirq->rw_lock);             \
-    }                                               \
-})
+#define _pic_push(stack, pirq, ppic)    struct rt_pic *(stack) = (pirq)->pic; (pirq)->pic = ppic;
+#define _pic_pop(stack, pirq)           (pirq)->pic = (stack)
 
 void rt_pic_irq_parent_enable(struct rt_pic *ppic, struct rt_pic_irq *pirq)
 {
-    _pirq_parent_call_helper(ppic, pirq, irq_enable,,);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_enable)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        ppic->ops->irq_enable(pirq);
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_parent_disable(struct rt_pic *ppic, struct rt_pic_irq *pirq)
 {
-    _pirq_parent_call_helper(ppic, pirq, irq_disable,,);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_disable)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        ppic->ops->irq_disable(pirq);
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_parent_ack(struct rt_pic *ppic, struct rt_pic_irq *pirq)
 {
-    _pirq_parent_call_helper(ppic, pirq, irq_ack,,);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_ack)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        ppic->ops->irq_ack(pirq);
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_parent_mask(struct rt_pic *ppic, struct rt_pic_irq *pirq)
 {
-    _pirq_parent_call_helper(ppic, pirq, irq_mask,,);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_mask)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        ppic->ops->irq_mask(pirq);
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_parent_unmask(struct rt_pic *ppic, struct rt_pic_irq *pirq)
 {
-    _pirq_parent_call_helper(ppic, pirq, irq_unmask,,);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_unmask)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        ppic->ops->irq_unmask(pirq);
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 void rt_pic_irq_parent_eoi(struct rt_pic *ppic, struct rt_pic_irq *pirq)
 {
-    _pirq_parent_call_helper(ppic, pirq, irq_eoi,,);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_eoi)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        ppic->ops->irq_eoi(pirq);
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 }
 
 rt_err_t rt_pic_irq_parent_set_priority(struct rt_pic *ppic, struct rt_pic_irq *pirq, rt_uint32_t priority)
 {
     rt_err_t err = -RT_ENOSYS;
 
-    _pirq_parent_call_helper(ppic, pirq, irq_set_priority, err = , ,priority);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_set_priority)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        if (!(err = ppic->ops->irq_set_priority(pirq, priority)))
+        {
+            pirq->priority = priority;
+        }
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 
     return err;
 }
@@ -807,7 +946,24 @@ rt_err_t rt_pic_irq_parent_set_affinity(struct rt_pic *ppic, struct rt_pic_irq *
 {
     rt_err_t err = -RT_ENOSYS;
 
-    _pirq_parent_call_helper(ppic, pirq, irq_set_affinity, err = , ,affinity);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_set_affinity)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        if (!(err = ppic->ops->irq_set_affinity(pirq, affinity)))
+        {
+            rt_memcpy(pirq->affinity, affinity, sizeof(pirq->affinity));
+        }
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 
     return err;
 }
@@ -816,12 +972,30 @@ rt_err_t rt_pic_irq_parent_set_triger_mode(struct rt_pic *ppic, struct rt_pic_ir
 {
     rt_err_t err = -RT_ENOSYS;
 
-    _pirq_parent_call_helper(ppic, pirq, irq_set_triger_mode, err = , ,mode);
+    RT_ASSERT(ppic != RT_NULL);
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_spin_lock(&pirq->rw_lock);
+
+    if (ppic->ops->irq_set_triger_mode)
+    {
+        _pic_push(pic_stack, pirq, ppic);
+
+        if (!(err = ppic->ops->irq_set_triger_mode(pirq, mode)))
+        {
+            pirq->mode = mode;
+        }
+
+        _pic_pop(pic_stack, pirq);
+    }
+
+    rt_spin_unlock(&pirq->rw_lock);
 
     return err;
 }
 
-#undef _pirq_parent_call_helper
+#undef _pic_push
+#undef _pic_pop
 
 #ifdef RT_USING_OFW
 RT_OFW_STUB_RANGE_EXPORT(pic, _pic_ofw_start, _pic_ofw_end);
