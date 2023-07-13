@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 
-#include <drivers/core/rtdm.h>
+#include <drivers/core/dm.h>
 
 #ifdef RT_USING_SMP
 static int rti_secondary_cpu_start(void)

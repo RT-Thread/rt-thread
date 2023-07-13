@@ -15,7 +15,7 @@
 
 #include <bitmap.h>
 #include <drivers/ofw.h>
-#include <drivers/core/rtdm.h>
+#include <drivers/core/dm.h>
 
 struct rt_pci_msi_desc;
 struct rt_pci_msi_msg;

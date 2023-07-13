@@ -170,7 +170,7 @@ extern "C" {
 #endif
 
 #ifdef RT_USING_DM
-#include "drivers/core/rtdm.h"
+#include "drivers/core/dm.h"
 
 #ifdef RT_USING_OFW
 #include "drivers/ofw.h"

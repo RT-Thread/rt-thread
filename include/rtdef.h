@@ -318,6 +318,17 @@ typedef int (*init_fn_t)(void);
 /* board init routines will be called in board_init() function */
 #define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
 
+/* init cpu, memory, interrupt-controller, bus... */
+#define INIT_CORE_EXPORT(fn)            INIT_EXPORT(fn, "1.0")
+/* init pci/pcie, usb platform driver... */
+#define INIT_FRAMEWORK_EXPORT(fn)       INIT_EXPORT(fn, "1.1")
+/* init platform, user code... */
+#define INIT_PLATFORM_EXPORT(fn)        INIT_EXPORT(fn, "1.2")
+/* init sys-timer, clk, pinctrl... */
+#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3")
+/* init early drivers */
+#define INIT_DRIVER_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.4")
+
 /* pre/device/component/env/app init routines will be called in init_thread */
 /* components pre-initialization (pure software initialization) */
 #define INIT_PREV_EXPORT(fn)            INIT_EXPORT(fn, "2")
@@ -329,6 +340,11 @@ typedef int (*init_fn_t)(void);
 #define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
 /* application initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
+
+/* init after mount fs */
+#define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "6.0")
+/* init in secondary_cpu_c_start */
+#define INIT_SECONDARY_CPU_EXPORT(fn)   INIT_EXPORT(fn, "7")
 
 #if !defined(RT_USING_FINSH)
 /* define these to empty, even if not include finsh.h file */

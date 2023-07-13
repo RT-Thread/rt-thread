@@ -13,7 +13,7 @@
 
 #include <drivers/ofw_fdt.h>
 #include <drivers/ofw_raw.h>
-#include <drivers/core/rtdm.h>
+#include <drivers/core/dm.h>
 
 #define DBG_TAG "rtdm.ofw"
 #define DBG_LVL DBG_INFO
@@ -79,14 +79,13 @@ rt_uint64_t rt_fdt_translate_address(void *fdt, int nodeoffset, rt_uint64_t addr
             int addr_cells;
             int size_cells;
         } local, cpu;
-        int parent, length, group_len;
+        int parent, length = 0, group_len;
         const fdt32_t *ranges = RT_NULL;
 
         parent = fdt_parent_offset(fdt, nodeoffset);
 
         if (parent >= 0)
         {
-            length = 0;
             ranges = fdt_getprop(fdt, nodeoffset, "ranges", &length);
         }
 
