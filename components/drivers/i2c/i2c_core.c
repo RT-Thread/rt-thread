@@ -89,14 +89,14 @@ rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
 }
 
 rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
-                        rt_uint32_t               cmd,
-                        rt_uint32_t               arg)
+                        int                       cmd,
+                        void                      *args)
 {
     rt_err_t ret;
 
     if(bus->ops->i2c_bus_control)
     {
-        ret = bus->ops->i2c_bus_control(bus, cmd, arg);
+        ret = bus->ops->i2c_bus_control(bus, cmd, args);
         return ret;
     }
     else

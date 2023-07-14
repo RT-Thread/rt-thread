@@ -90,11 +90,11 @@ rt_size_t rt_i2c_master_xfer(struct rt_i2c_bus_device *bus,
 }
 
 rt_err_t rt_i2c_bus_control(struct rt_i2c_bus_device *bus,
-                          rt_uint32_t               cmd,
-                          rt_uint32_t               arg)
+                          int                cmd,
+                          void               *args)
 {
     struct am_i2c_bus * am_i2c_bus = (struct am_i2c_bus *)bus;
-    //rt_uint32_t ctrl_arg = (rt_uint32_t)(arg);
+    //rt_uint32_t ctrl_arg = *(rt_uint32_t *)args;
 
     RT_ASSERT(bus != RT_NULL);
     am_i2c_bus = (struct am_i2c_bus *)bus->parent.user_data;
