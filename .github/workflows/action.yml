@@ -184,6 +184,7 @@ jobs:
                 - "imxrt/imxrt1052-seeed-ArchMix"
                 - "imxrt/imxrt1060-nxp-evk"
                 - "imxrt/imxrt1064-nxp-evk"
+                - "imxrt/imxrt1021-nxp-evk"
                 - "frdm-k64f"
                 - "lpc176x"
                 - "xplorer4330/M4"
