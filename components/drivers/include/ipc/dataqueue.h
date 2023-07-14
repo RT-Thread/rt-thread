@@ -33,6 +33,7 @@ struct rt_data_queue
     rt_uint16_t is_full   : 1;
 
     struct rt_data_item *queue;
+    struct rt_spinlock spinlock;
 
     rt_list_t suspended_push_list;
     rt_list_t suspended_pop_list;

@@ -42,6 +42,8 @@ struct eth_device
     rt_uint8_t  link_status;
     rt_uint8_t  rx_notice;
 
+    struct rt_spinlock spinlock;
+
     /* eth device interface */
     struct pbuf* (*eth_rx)(rt_device_t dev);
     rt_err_t (*eth_tx)(rt_device_t dev, struct pbuf* p);

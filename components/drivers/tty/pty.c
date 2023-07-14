@@ -73,17 +73,14 @@ static int pty_get_index(struct tty_struct *tty, int *arg)
  */
 static rt_err_t pty_device_init(struct rt_device *dev)
 {
-    rt_ubase_t level = 0;
     rt_err_t result = RT_EOK;
     struct tty_struct *tty = RT_NULL;
 
     RT_ASSERT(dev != RT_NULL);
     tty = (struct tty_struct *)dev;
 
-    level = rt_hw_interrupt_disable();
     RT_ASSERT(tty->init_flag == TTY_INIT_FLAG_REGED);
     tty->init_flag = TTY_INIT_FLAG_INITED;
-    rt_hw_interrupt_enable(level);
 
     return result;
 }
@@ -150,12 +147,12 @@ static rt_ssize_t pty_device_write(struct rt_device *dev,
     RT_ASSERT(tty->init_flag == TTY_INIT_FLAG_INITED);
     to = tty->other_struct;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&tty->spinlock);
     if (to->ldisc->ops->receive_buf)
     {
         len = to->ldisc->ops->receive_buf(to, (char *)buffer, size);
     }
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&tty->spinlock, level);
 
     return len;
 }

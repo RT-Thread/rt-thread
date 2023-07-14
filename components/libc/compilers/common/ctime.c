@@ -23,6 +23,7 @@
  * 2023-07-16     Shell        update signal generation routine for lwp
  *                             adapt to new api and do the signal handling in thread context
  * 2023-08-12     Meco Man     re-implement RT-Thread lightweight timezone API
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include "sys/time.h"
@@ -136,21 +137,12 @@ static volatile int32_t _current_tz_offset_sec = \
 /* return current timezone offset in seconds */
 void rt_tz_set(int32_t offset_sec)
 {
-    rt_base_t level;
-    level = rt_hw_interrupt_disable();
     _current_tz_offset_sec = offset_sec;
-    rt_hw_interrupt_enable(level);
 }
 
 int32_t rt_tz_get(void)
 {
-    int32_t offset_sec;
-    rt_base_t level;
-
-    level = rt_hw_interrupt_disable();
-    offset_sec = _current_tz_offset_sec;
-    rt_hw_interrupt_enable(level);
-    return offset_sec;
+    return _current_tz_offset_sec;
 }
 
 int8_t rt_tz_is_dst(void)

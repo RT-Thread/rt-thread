@@ -32,6 +32,8 @@ struct rt_poll_node
     struct rt_poll_node *next;
 };
 
+static RT_DEFINE_SPINLOCK(_spinlock);
+
 static int __wqueue_pollwake(struct rt_wqueue_node *wait, void *key)
 {
     struct rt_poll_node *pn;
@@ -85,7 +87,7 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
 
     timeout = rt_tick_from_millisecond(msec);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
 
     if (timeout != 0 && !pt->triggered)
     {
@@ -99,16 +101,16 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
                 rt_timer_start(&(thread->thread_timer));
             }
 
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&_spinlock, level);
 
             rt_schedule();
 
-            level = rt_hw_interrupt_disable();
+            level = rt_spin_lock_irqsave(&_spinlock);
         }
     }
 
     ret = !pt->triggered;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return ret;
 }

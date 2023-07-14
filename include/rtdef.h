@@ -1372,6 +1372,7 @@ struct rt_wqueue
 {
     rt_uint32_t flag;
     rt_list_t waiting_list;
+    struct rt_spinlock spinlock;
 };
 typedef struct rt_wqueue rt_wqueue_t;
 

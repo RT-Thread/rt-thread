@@ -41,6 +41,7 @@ struct rt_workqueue
 
     struct rt_semaphore sem;
     rt_thread_t    work_thread;
+    struct rt_spinlock spinlock;
 };
 
 struct rt_work
