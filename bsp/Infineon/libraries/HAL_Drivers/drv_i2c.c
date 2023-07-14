@@ -11,8 +11,17 @@
 #include "board.h"
 
 #if defined(RT_USING_I2C)
-#if defined(BSP_USING_HW_I2C3) || defined(BSP_USING_HW_I2C4) || defined(BSP_USING_HW_I2C6)
+#if defined(BSP_USING_HW_I2C2) || defined(BSP_USING_HW_I2C3) || defined(BSP_USING_HW_I2C4)|| defined(BSP_USING_HW_I2C6)
 #include <rtdevice.h>
+
+#ifndef I2C2_CONFIG
+#define I2C2_CONFIG                  \
+    {                                \
+        .name = "i2c2",              \
+        .scl_pin = BSP_I2C2_SCL_PIN, \
+        .sda_pin = BSP_I2C2_SDA_PIN, \
+    }
+#endif /* I2C2_CONFIG */
 
 #ifndef I2C3_CONFIG
 #define I2C3_CONFIG                  \
@@ -40,11 +49,13 @@
         .sda_pin = BSP_I2C6_SDA_PIN, \
     }
 #endif /* I2C6_CONFIG */
-
 #endif /* defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) */
 
 enum
 {
+#ifdef BSP_USING_HW_I2C2
+    I2C2_INDEX,
+#endif
 #ifdef BSP_USING_HW_I2C3
     I2C3_INDEX,
 #endif
@@ -72,17 +83,21 @@ struct ifx_i2c
 };
 
 static struct ifx_i2c_config i2c_config[] =
-    {
+{
+#ifdef BSP_USING_HW_I2C2
+    I2C2_CONFIG,
+#endif
+
 #ifdef BSP_USING_HW_I2C3
-        I2C3_CONFIG,
+    I2C3_CONFIG,
 #endif
 
 #ifdef BSP_USING_HW_I2C4
-        I2C4_CONFIG,
+    I2C4_CONFIG,
 #endif
 
 #ifdef BSP_USING_HW_I2C6
-        I2C6_CONFIG,
+    I2C6_CONFIG,
 #endif
 };
 
@@ -145,20 +160,29 @@ out:
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
-    {
-        _i2c_xfer,
-        RT_NULL,
-        RT_NULL};
+{
+    _i2c_xfer,
+    RT_NULL,
+    RT_NULL
+};
 
 void HAL_I2C_Init(struct ifx_i2c *obj)
 {
-    rt_uint8_t result = RT_EOK;
+    cy_rslt_t result = CY_RSLT_SUCCESS;
 
     result = cyhal_i2c_init(&obj->mI2C, obj->config->sda_pin, obj->config->scl_pin, NULL);
-    RT_ASSERT(result == RT_EOK);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        rt_kprintf("hal i2c init fail!\n");
+        return;
+    }
 
     result = cyhal_i2c_configure(&obj->mI2C, &obj->mI2C_cfg);
-    RT_ASSERT(result == RT_EOK);
+    if (result != CY_RSLT_SUCCESS)
+    {
+        rt_kprintf("hal i2c configure fail!\n");
+        return;
+    }
 }
 
 int rt_hw_i2c_init(void)
