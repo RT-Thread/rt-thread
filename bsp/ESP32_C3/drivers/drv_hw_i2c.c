@@ -96,7 +96,7 @@ static rt_size_t _slave_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg ms
     return -RT_ENOSYS;
 }
 
-static rt_err_t _i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t cmd, rt_uint32_t arg)
+static rt_err_t _i2c_bus_control(struct rt_i2c_bus_device *bus, int cmd, void *args)
 {
     return -RT_EINVAL;
 }

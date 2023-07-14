@@ -162,8 +162,8 @@ static rt_ssize_t raspi_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
 }
 
 static rt_err_t raspi_i2c_bus_control(struct rt_i2c_bus_device *bus,
-                                      rt_uint32_t cmd,
-                                      rt_uint32_t arg)
+                                      int cmd,
+                                      void *args)
 {
     return RT_EOK;
 }
