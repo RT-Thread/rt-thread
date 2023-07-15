@@ -8,9 +8,14 @@
  * 2021-05-18     Jesven       first version
  */
 
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
 #include "rtconfig.h"
 #include "asm-generic.h"
 #include "asm-fpu.h"
+#include "armv8.h"
 
 /*********************
  *      SPSR BIT     *
@@ -31,67 +36,6 @@
 #define  SPSR_C(v)             ((v) << 29)
 #define  SPSR_Z(v)             ((v) << 30)
 #define  SPSR_N(v)             ((v) << 31)
-
-/*********************
- *   CONTEXT_OFFSET  *
- *********************/
-
-#define CONTEXT_OFFSET_ELR_EL1    0x0
-#define CONTEXT_OFFSET_SPSR_EL1   0x8
-#define CONTEXT_OFFSET_SP_EL0     0x10
-#define CONTEXT_OFFSET_X30        0x18
-#define CONTEXT_OFFSET_FPCR       0x20
-#define CONTEXT_OFFSET_FPSR       0x28
-#define CONTEXT_OFFSET_X28        0x30
-#define CONTEXT_OFFSET_X29        0x38
-#define CONTEXT_OFFSET_X26        0x40
-#define CONTEXT_OFFSET_X27        0x48
-#define CONTEXT_OFFSET_X24        0x50
-#define CONTEXT_OFFSET_X25        0x58
-#define CONTEXT_OFFSET_X22        0x60
-#define CONTEXT_OFFSET_X23        0x68
-#define CONTEXT_OFFSET_X20        0x70
-#define CONTEXT_OFFSET_X21        0x78
-#define CONTEXT_OFFSET_X18        0x80
-#define CONTEXT_OFFSET_X19        0x88
-#define CONTEXT_OFFSET_X16        0x90
-#define CONTEXT_OFFSET_X17        0x98
-#define CONTEXT_OFFSET_X14        0xa0
-#define CONTEXT_OFFSET_X15        0xa8
-#define CONTEXT_OFFSET_X12        0xb0
-#define CONTEXT_OFFSET_X13        0xb8
-#define CONTEXT_OFFSET_X10        0xc0
-#define CONTEXT_OFFSET_X11        0xc8
-#define CONTEXT_OFFSET_X8         0xd0
-#define CONTEXT_OFFSET_X9         0xd8
-#define CONTEXT_OFFSET_X6         0xe0
-#define CONTEXT_OFFSET_X7         0xe8
-#define CONTEXT_OFFSET_X4         0xf0
-#define CONTEXT_OFFSET_X5         0xf8
-#define CONTEXT_OFFSET_X2         0x100
-#define CONTEXT_OFFSET_X3         0x108
-#define CONTEXT_OFFSET_X0         0x110
-#define CONTEXT_OFFSET_X1         0x118
-
-#define CONTEXT_OFFSET_Q15        0x120
-#define CONTEXT_OFFSET_Q14        0x130
-#define CONTEXT_OFFSET_Q13        0x140
-#define CONTEXT_OFFSET_Q12        0x150
-#define CONTEXT_OFFSET_Q11        0x160
-#define CONTEXT_OFFSET_Q10        0x170
-#define CONTEXT_OFFSET_Q9         0x180
-#define CONTEXT_OFFSET_Q8         0x190
-#define CONTEXT_OFFSET_Q7         0x1a0
-#define CONTEXT_OFFSET_Q6         0x1b0
-#define CONTEXT_OFFSET_Q5         0x1c0
-#define CONTEXT_OFFSET_Q4         0x1d0
-#define CONTEXT_OFFSET_Q3         0x1e0
-#define CONTEXT_OFFSET_Q2         0x1f0
-#define CONTEXT_OFFSET_Q1         0x200
-#define CONTEXT_OFFSET_Q0         0x210
-
-#define CONTEXT_FPU_SIZE          0x100
-#define CONTEXT_SIZE              0x220
 
 /**************************************************/
 
@@ -370,50 +314,6 @@ arch_ret_to_user:
 1:
     eret
 
-/*
-struct rt_hw_exp_stack
-{
-    unsigned long pc;     0
-    unsigned long cpsr;
-    unsigned long sp_el0; 0x10
-    unsigned long x30;
-    unsigned long fpcr;   0x20
-    unsigned long fpsr;
-    unsigned long x28;    0x30
-    unsigned long x29;
-    unsigned long x26;    0x40
-    unsigned long x27;
-    unsigned long x24;    0x50
-    unsigned long x25;
-    unsigned long x22;    0x60
-    unsigned long x23;
-    unsigned long x20;    0x70
-    unsigned long x21;
-    unsigned long x18;    0x80
-    unsigned long x19;
-    unsigned long x16;    0x90
-    unsigned long x17;
-    unsigned long x14;    0xa0
-    unsigned long x15;
-    unsigned long x12;    0xb0
-    unsigned long x13;
-    unsigned long x10;    0xc0
-    unsigned long x11;
-    unsigned long x8;     0xd0
-    unsigned long x9;
-    unsigned long x6;     0xe0
-    unsigned long x7;
-    unsigned long x4;     0xf0
-    unsigned long x5;
-    unsigned long x2;     0x100
-    unsigned long x3;
-    unsigned long x0;     0x110
-    unsigned long x1;
-
-    unsigned long long fpu[16]; 0x120
-                                0x220 = 0x120 + 0x10 * 0x10
-};
-*/
 .global lwp_check_debug
 lwp_check_debug:
     ldr x0, =rt_dbg_ops
