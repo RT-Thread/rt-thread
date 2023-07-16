@@ -2,7 +2,6 @@ import os
 from building import *
 
 src = Split("""
-    src/project_elf_src_esp32c3.c
     src/rt-thread_balance_stub.c
     src/x509_crt_bundle.S
 """)
