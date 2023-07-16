@@ -1,0 +1,28 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+startup_system_files/system_msp432e401y.c
+driverlib/sysctl.c
+driverlib/systick.c
+driverlib/interrupt.c
+driverlib/fpu.c
+driverlib/cpu.c
+driverlib/gpio.c
+""")
+   
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['driverlib/uart.c']
+
+path = [cwd + '/driverlib', 
+    cwd + '/inc',
+    cwd + '/driverlib/inc']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+
+Return('group')
