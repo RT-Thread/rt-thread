@@ -263,6 +263,7 @@ jobs:
                 - "lm4f232"
                 - "tm4c123bsp"
                 - "tm4c129x"
+                - "msp432e401y-LaunchPad"
                 - "microchip/samc21"
                 - "microchip/same54"
                 - "microchip/same70"
