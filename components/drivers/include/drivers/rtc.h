@@ -27,6 +27,9 @@ extern "C" {
 #define RT_DEVICE_CTRL_RTC_SET_TIMEVAL  (RT_DEVICE_CTRL_BASE(RTC) + 0x04)              /**< set timeval for gettimeofday */
 #define RT_DEVICE_CTRL_RTC_GET_ALARM    (RT_DEVICE_CTRL_BASE(RTC) + 0x05)              /**< get alarm */
 #define RT_DEVICE_CTRL_RTC_SET_ALARM    (RT_DEVICE_CTRL_BASE(RTC) + 0x06)              /**< set alarm */
+#define RT_DEVICE_CTRL_RTC_GET_TIMESPEC (RT_DEVICE_CTRL_BASE(RTC) + 0x07)              /**< get timespec for clock_gettime */
+#define RT_DEVICE_CTRL_RTC_SET_TIMESPEC (RT_DEVICE_CTRL_BASE(RTC) + 0x08)              /**< set timespec for clock_settime */
+#define RT_DEVICE_CTRL_RTC_GET_TIMERES  (RT_DEVICE_CTRL_BASE(RTC) + 0x09)              /**< get resolution for clock_getres */
 
 /* used for alarm function */
 struct rt_rtc_wkalarm
@@ -63,6 +66,11 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day);
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second);
 rt_err_t set_timestamp(time_t timestamp);
 rt_err_t get_timestamp(time_t *timestamp);
+
+#ifdef RT_USING_SYSTEM_WORKQUEUE
+rt_err_t rt_soft_rtc_sync();
+rt_err_t rt_soft_rtc_set_source(const char *name);
+#endif
 
 #ifdef __cplusplus
 }

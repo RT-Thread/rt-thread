@@ -133,6 +133,7 @@
 #define RT_USING_FDT
 #define RT_USING_FDTLIB
 #define RT_USING_RTC
+#define RT_USING_SOFT_RTC
 #define RT_USING_DEV_BUS
 #define RT_USING_VIRTIO
 #define RT_USING_VIRTIO10
