@@ -16,7 +16,7 @@
 extern void start_r(void);
 
 
-rt_uint32_t context_switch_reqflg;
+rt_uint32_t rt_thread_switch_interrupt_flag;
 rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;
 rt_uint32_t exc_nest_count;
