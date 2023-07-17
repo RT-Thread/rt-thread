@@ -9,7 +9,7 @@
 
 .global rt_interrupt_enter;
 .global rt_interrupt_leave;
-.global context_switch_reqflg;
+.global rt_thread_switch_interrupt_flag;
 .global rt_interrupt_from_thread;
 .global rt_interrupt_to_thread;
 .global exc_nest_count;
@@ -47,6 +47,7 @@ dispatcher:
 /* return routine when task dispatch happened in task context */
 dispatch_r:
     RESTORE_NONSCRATCH_REGS
+    RESTORE_R0_TO_R12
     j   [blink]
 
 /*
@@ -72,10 +73,13 @@ rt_hw_interrupt_enable:
     .global rt_hw_context_switch_interrupt
     .align 4
 rt_hw_context_switch_interrupt:
+    ld r2, [rt_thread_switch_interrupt_flag]
+    breq r2, 1, _reswitch    /* Check the flag, if it is 1, skip to reswitch */
+    mov r2, 1
+    st r2, [rt_thread_switch_interrupt_flag]
     st r0, [rt_interrupt_from_thread]
+_reswitch:
     st r1, [rt_interrupt_to_thread]
-    mov r0, 1
-    st r0, [context_switch_reqflg]
     j [blink]
 
 
@@ -87,6 +91,7 @@ rt_hw_context_switch_interrupt:
     .global rt_hw_context_switch
     .align 4
 rt_hw_context_switch:
+    SAVE_R0_TO_R12
     SAVE_NONSCRATCH_REGS
     mov r2, dispatch_r
     push r2
@@ -189,7 +194,7 @@ ret_exc:
     lr  r1, [AUX_IRQ_ACT] /* nest interrupt case */
     brne    r1, 0, ret_exc_1
 
-    ld  r0, [context_switch_reqflg]
+    ld  r0, [rt_thread_switch_interrupt_flag]
     brne    r0, 0, ret_exc_2
 ret_exc_1:  /* return from non-task context, interrupts or exceptions are nested */
     EXCEPTION_EPILOGUE
@@ -199,7 +204,7 @@ ret_exc_1:  /* return from non-task context, interrupts or exceptions are nested
 ret_exc_2:
     /* clear dispatch request */
     mov r0, 0
-    st  r0, [context_switch_reqflg]
+    st  r0, [rt_thread_switch_interrupt_flag]
 
     SAVE_CALLEE_REGS    /* save callee save registers */
 
@@ -304,7 +309,7 @@ ret_int:
     bclr    r2, r1, r3
     brne    r2, 0, ret_int_1
 
-    ld  r0, [context_switch_reqflg]
+    ld  r0, [rt_thread_switch_interrupt_flag]
     brne    r0, 0, ret_int_2
 ret_int_1:  /* return from non-task context */
     INTERRUPT_EPILOGUE
@@ -313,7 +318,7 @@ ret_int_1:  /* return from non-task context */
 ret_int_2:
     /* clear dispatch request */
     mov r0, 0
-    st  r0, [context_switch_reqflg]
+    st  r0, [rt_thread_switch_interrupt_flag]
 
     /* interrupt return by SW */
     lr  r10, [AUX_IRQ_ACT]
