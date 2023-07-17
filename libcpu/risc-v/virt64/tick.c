@@ -28,7 +28,6 @@ static uint64_t get_ticks()
 int tick_isr(void)
 {
     // uint64_t core_id = current_coreid();
-    int tick_cycles = 40000;
     // clint->mtimecmp[core_id] += tick_cycles;
     rt_tick_increase();
     sbi_set_timer(get_ticks() + tick_cycles);
@@ -41,14 +40,12 @@ int rt_hw_tick_init(void)
 {
     /* Read core id */
     // unsigned long core_id = current_coreid();
-    unsigned long interval = 1000/RT_TICK_PER_SECOND;
 
     /* Clear the Supervisor-Timer bit in SIE */
     clear_csr(sie, SIP_STIP);
 
     /* calculate the tick cycles */
-    // tick_cycles = interval * sysctl_clock_get_freq(SYSCTL_CLOCK_CPU) / CLINT_CLOCK_DIV / 1000ULL - 1;
-    tick_cycles = 40000;
+    tick_cycles = CPUTIME_TIMER_FREQ / RT_TICK_PER_SECOND;
     /* Set timer */
     sbi_set_timer(get_ticks() + tick_cycles);
 

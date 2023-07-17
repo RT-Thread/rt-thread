@@ -115,8 +115,8 @@ int rt_hw_rtc_init(void)
     rtc_device.device.user_data   = RT_NULL;
 
     /* register a rtc device */
-    rt_device_register(&rtc_device.device, "rtc", RT_DEVICE_FLAG_RDWR);
-
+    rt_device_register(&rtc_device.device, "rtc0", RT_DEVICE_FLAG_RDWR);
+    rt_soft_rtc_set_source("rtc0");
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);

@@ -14,6 +14,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <mmu.h>
+#include <gtimer.h>
 
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
@@ -97,6 +98,8 @@ void rt_hw_board_init(void)
 
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
+
+    rt_hw_gtimer_init();
 
     /* support debug feature before components init */
     rt_hw_uart_init();

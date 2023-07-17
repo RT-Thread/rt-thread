@@ -172,7 +172,7 @@ int sigtimedwait(const sigset_t *set, siginfo_t *info, const struct timespec *ti
 
     if (timeout)
     {
-        tick = rt_timespec_to_tick(timeout);
+        tick = timeout->tv_sec * RT_TICK_PER_SECOND + timeout->tv_nsec * RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND;
     }
 
     ret = rt_signal_wait(set, info, tick);
