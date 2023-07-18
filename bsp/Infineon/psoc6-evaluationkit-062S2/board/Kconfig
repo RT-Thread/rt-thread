@@ -14,6 +14,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART6
         default y
+        
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -141,19 +142,19 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C
         select RT_USING_PIN
         if BSP_USING_HW_I2C
-            config BSP_USING_HW_I2C3
-                bool "Enable I2C3 Bus (User I2C)"
+            config BSP_USING_HW_I2C2
+                bool "Enable I2C2 Bus (User I2C)"
                 default n
-                if BSP_USING_HW_I2C3
-                    comment "Notice: P6_0 --> 48; P6_1 --> 49"
-                    config BSP_I2C3_SCL_PIN
-                        int "i2c3 SCL pin number"
+                if BSP_USING_HW_I2C2
+                    comment "Notice: P3_0 --> 24; P3_1 --> 25"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 SCL pin number"
                         range 1 113
-                        default 48
-                    config BSP_I2C3_SDA_PIN
-                        int "i2c3 SDA pin number"
+                        default 24
+                    config BSP_I2C2_SDA_PIN
+                        int "i2c2 SDA pin number"
                         range 1 113
-                        default 49
+                        default 25
                 endif
             config BSP_USING_HW_I2C4
                 bool "Enable I2C4 Bus (Arduino I2C)"
@@ -168,20 +169,6 @@ menu "On-chip Peripheral Drivers"
                         int "i2c4 SDA pin number"
                         range 1 113
                         default 65
-                endif
-            config BSP_USING_HW_I2C6
-                bool "Enable I2C6 Bus (User I2C)"
-                default n
-                if BSP_USING_HW_I2C6
-                    comment "Notice: P13_0 --> 48; P13_1 --> 49"
-                    config BSP_I2C6_SCL_PIN
-                        int "i2c6 SCL pin number"
-                        range 1 113
-                        default 104
-                    config BSP_I2C6_SDA_PIN
-                        int "i2c6 SDA pin number"
-                        range 1 113
-                        default 105
                 endif
         endif
 
