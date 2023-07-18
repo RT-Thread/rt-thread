@@ -15,31 +15,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART6
         default y
         
-    config BSP_USING_ARDUINO
-        bool "Compatible with Arduino Ecosystem (RTduino)"
-        select PKG_USING_RTDUINO
-        select BSP_USING_STLINK_TO_USART
-        select BSP_USING_UART5
-        select BSP_USING_GPIO
-        select BSP_USING_PWM
-        select BSP_USING_PWM0
-        select BSP_USING_PWM0_CH2
-        select BSP_USING_PWM0_CH4
-        select BSP_USING_PWM0_CH7
-        select BSP_USING_PWM1
-        select BSP_USING_PWM1_CH1
-        select BSP_USING_PWM1_CH2
-        select BSP_USING_PWM1_CH3
-        select BSP_USING_PWM1_CH4
-        select BSP_USING_PWM1_CH7
-        select BSP_USING_I2C
-        select BSP_USING_I2C4
-        select BSP_USING_SPI
-        select BSP_USING_SPI0
-        imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_SPI
-        default n
 endmenu
 
 menu "On-chip Peripheral Drivers"
