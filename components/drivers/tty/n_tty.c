@@ -50,7 +50,6 @@
 #define ECHO_BLOCK      256
 #define ECHO_DISCARD_WATERMARK  RT_TTY_BUF - (ECHO_BLOCK + 32)
 
-
 struct n_tty_data
 {
     /* producer-published */
@@ -136,6 +135,12 @@ rt_inline int test_and_clear_bit(int nr, volatile void *addr)
     return retval;
 }
 
+#ifdef __GNUC__
+rt_inline unsigned long __ffs(unsigned long word)
+{
+    return __builtin_ffsl(word);
+}
+#else
 rt_inline unsigned long __ffs(unsigned long word)
 {
     int num = 0;
@@ -174,6 +179,7 @@ rt_inline unsigned long __ffs(unsigned long word)
 
     return num;
 }
+#endif
 
 #define BITS_PER_LONG       32
 #define BITOP_WORD(nr)      ((nr) / BITS_PER_LONG)
@@ -703,13 +709,13 @@ static void __isig(int sig, struct tty_struct *tty)
                     ld->ops->set_termios(tty, &old_termios);
                 }
             }
-            tty_sigaddset(&lwp->signal_mask, SIGTTOU);
+            lwp_signal_kill(lwp, SIGTTOU, SI_USER, 0);
             old_lwp = tty_pop(&tty->head, RT_NULL);
             tty->foreground = old_lwp;
         }
         else
         {
-            lwp_kill(lwp_to_pid(lwp), sig);
+            lwp_signal_kill(lwp, sig, SI_USER, 0);
         }
     }
 }
