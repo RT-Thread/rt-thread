@@ -3,7 +3,7 @@
 RT-Thread is an open-source community driven by collaboration, respect, and inclusivity. We strive to create a welcoming and safe environment for all participants, regardless of their background, identity, or experience. This Code of Conduct outlines our shared values and expectations, ensuring that everyone can contribute to RT-Thread with mutual respect and professionalism.
 
 ## Be Respectful and Inclusive
-
+ 
 1. Treat all participants with respect. Be considerate of others' perspectives and experiences.
 2. Use inclusive and welcoming language. Refrain from derogatory, offensive, or discriminatory remarks or actions.
 3. Be open to constructive feedback and diverse viewpoints. Engage in thoughtful discussions and debates.
