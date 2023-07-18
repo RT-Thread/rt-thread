@@ -779,120 +779,118 @@ struct rt_user_context
 };
 #endif
 
+typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
+
 /**
  * Thread structure
  */
 struct rt_thread
 {
-    struct rt_object parent;
-    rt_list_t   tlist;                                  /**< the thread list */
+    struct rt_object            parent;
+    rt_list_t                   tlist;                  /**< the thread list */
 
     /* stack point and entry */
-    void       *sp;                                     /**< stack point */
-    void       *entry;                                  /**< entry */
-    void       *parameter;                              /**< parameter */
-    void       *stack_addr;                             /**< stack address */
-    rt_uint32_t stack_size;                             /**< stack size */
+    void                        *sp;                    /**< stack point */
+    void                        *entry;                 /**< entry */
+    void                        *parameter;             /**< parameter */
+    void                        *stack_addr;            /**< stack address */
+    rt_uint32_t                 stack_size;             /**< stack size */
 
     /* error code */
-    rt_err_t    error;                                  /**< error code */
+    rt_err_t                    error;                  /**< error code */
 
-    rt_uint8_t  stat;                                   /**< thread status */
+    rt_uint8_t                  stat;                   /**< thread status */
 
 #ifdef RT_USING_SMP
-    rt_uint8_t  bind_cpu;                               /**< thread is bind to cpu */
-    rt_uint8_t  oncpu;                                  /**< process on cpu */
+    rt_uint8_t                  bind_cpu;               /**< thread is bind to cpu */
+    rt_uint8_t                  oncpu;                  /**< process on cpu */
 
-    rt_uint16_t scheduler_lock_nest;                    /**< scheduler lock count */
-    rt_uint16_t cpus_lock_nest;                         /**< cpus lock count */
-    rt_uint16_t critical_lock_nest;                     /**< critical lock count */
+    rt_uint16_t                 scheduler_lock_nest;    /**< scheduler lock count */
+    rt_int16_t                  cpus_lock_nest;         /**< cpus lock count */
+    rt_uint16_t                 critical_lock_nest;     /**< critical lock count */
 #endif /*RT_USING_SMP*/
 
     /* priority */
-    rt_uint8_t  current_priority;                       /**< current priority */
-    rt_uint8_t  init_priority;                          /**< initialized priority */
+    rt_uint8_t                  current_priority;       /**< current priority */
+    rt_uint8_t                  init_priority;          /**< initialized priority */
 #if RT_THREAD_PRIORITY_MAX > 32
-    rt_uint8_t  number;
-    rt_uint8_t  high_mask;
+    rt_uint8_t                  number;
+    rt_uint8_t                  high_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-    rt_uint32_t number_mask;                            /**< priority number mask */
+    rt_uint32_t                 number_mask;            /**< priority number mask */
 
 #ifdef RT_USING_MUTEX
     /* object for IPC */
-    rt_list_t taken_object_list;
-    rt_object_t pending_object;
+    rt_list_t                   taken_object_list;
+    rt_object_t                 pending_object;
 #endif
 
 #ifdef RT_USING_EVENT
     /* thread event */
-    rt_uint32_t event_set;
-    rt_uint8_t  event_info;
+    rt_uint32_t                 event_set;
+    rt_uint8_t                  event_info;
 #endif /* RT_USING_EVENT */
 
 #ifdef RT_USING_SIGNALS
-    rt_sigset_t     sig_pending;                        /**< the pending signals */
-    rt_sigset_t     sig_mask;                           /**< the mask bits of signal */
+    rt_sigset_t                 sig_pending;            /**< the pending signals */
+    rt_sigset_t                 sig_mask;               /**< the mask bits of signal */
 
 #ifndef RT_USING_SMP
-    void            *sig_ret;                           /**< the return stack pointer from signal */
+    void                        *sig_ret;               /**< the return stack pointer from signal */
 #endif /* RT_USING_SMP */
-    rt_sighandler_t *sig_vectors;                       /**< vectors of signal handler */
-    void            *si_list;                           /**< the signal infor list */
+    rt_sighandler_t             *sig_vectors;           /**< vectors of signal handler */
+    void                        *si_list;               /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
 
-#ifdef RT_USING_SMART
-    void            *msg_ret;                           /**< the return msg */
-#endif
-
-    rt_ubase_t  init_tick;                              /**< thread's initialized tick */
-    rt_ubase_t  remaining_tick;                         /**< remaining tick */
+    rt_ubase_t                  init_tick;              /**< thread's initialized tick */
+    rt_ubase_t                  remaining_tick;         /**< remaining tick */
 
 #ifdef RT_USING_CPU_USAGE
-    rt_uint64_t  duration_tick;                         /**< cpu usage tick */
+    rt_uint64_t                 duration_tick;          /**< cpu usage tick */
 #endif /* RT_USING_CPU_USAGE */
 
 #ifdef RT_USING_PTHREADS
-    void  *pthread_data;                                /**< the handle of pthread data, adapt 32/64bit */
+    void                        *pthread_data;          /**< the handle of pthread data, adapt 32/64bit */
 #endif /* RT_USING_PTHREADS */
 
-    struct rt_timer thread_timer;                       /**< built-in thread timer */
+    struct rt_timer             thread_timer;           /**< built-in thread timer */
 
-    void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
+    rt_thread_cleanup_t         cleanup;                /**< cleanup function when thread exit */
 
     /* light weight process if present */
 #ifdef RT_USING_SMART
-    void        *lwp;
+    void                        *msg_ret;               /**< the return msg */
+
+    void                        *lwp;                   /**< the lwp reference */
     /* for user create */
-    void        *user_entry;
-    void        *user_stack;
-    rt_uint32_t user_stack_size;
-    rt_uint32_t *kernel_sp;                             /**< kernel stack point */
-    rt_list_t   sibling;                                /**< next thread of same process */
+    void                        *user_entry;
+    void                        *user_stack;
+    rt_uint32_t                 user_stack_size;
+    rt_uint32_t                 *kernel_sp;             /**< kernel stack point */
+    rt_list_t                   sibling;                /**< next thread of same process */
 
-    lwp_sigset_t signal;
-    lwp_sigset_t signal_mask;
-    int signal_mask_bak;
-    rt_uint32_t signal_in_process;
+    lwp_sigset_t                signal;
+    lwp_sigset_t                signal_mask;
+    int                         signal_mask_bak;
+    rt_uint32_t                 signal_in_process;
+    struct rt_user_context      user_ctx;               /**< user space context */
+    struct rt_wakeup            wakeup;                 /**< wakeup data */
+    int                         exit_request;
+    int                         tid;
 #ifndef ARCH_MM_MMU
-    lwp_sighandler_t signal_handler[32];
-#endif
-    struct rt_user_context user_ctx;
+    lwp_sighandler_t            signal_handler[32];
+#else
+    int                         step_exec;
+    int                         debug_attach_req;
+    int                         debug_ret_user;
+    int                         debug_suspend;
+    struct rt_hw_exp_stack      *regs;
+    void                        *thread_idr;            /** lwp thread indicator */
+    int                         *clear_child_tid;
+#endif /* ARCH_MM_MMU */
+#endif /* RT_USING_SMART */
 
-    struct rt_wakeup wakeup;                            /**< wakeup data */
-    int exit_request;
-#if defined(ARCH_MM_MMU)
-    int step_exec;
-    int debug_attach_req;
-    int debug_ret_user;
-    int debug_suspend;
-    struct rt_hw_exp_stack *regs;
-    void * thread_idr;                                 /** lwp thread indicator */
-    int *clear_child_tid;
-#endif
-    int tid;
-#endif
-
-    rt_ubase_t user_data;                             /**< private user data beyond this thread */
+    rt_ubase_t                  user_data;              /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
 
