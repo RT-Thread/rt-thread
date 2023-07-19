@@ -11,6 +11,8 @@
 #ifndef LWP_PID_H__
 #define LWP_PID_H__
 
+#include "lwp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

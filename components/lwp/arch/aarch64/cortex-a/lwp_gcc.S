@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-05-18     Jesven       first version
+ * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
  */
 
 #ifndef __ASSEMBLY__
@@ -192,8 +193,9 @@ arch_syscall_exit:
     add sp, sp, #0x40
     RESTORE_FPU sp
 
-.global arch_ret_to_user
-arch_ret_to_user:
+/* the sp is reset to the outer most level */
+START_POINT(arch_ret_to_user)
+    /* save exception frame */
     SAVE_FPU sp
     stp x0, x1, [sp, #-0x10]!
     stp x2, x3, [sp, #-0x10]!
@@ -216,12 +218,16 @@ arch_ret_to_user:
     stp x0, x1, [sp, #-0x10]!
     stp x29, x30, [sp, #-0x10]!
 
+    /* pre-action */
     bl lwp_check_debug
+
     bl lwp_check_exit_request
     cbz w0, 1f
+    /* exit on event */
     mov x0, xzr
     b sys_exit
 1:
+    /* check if dbg ops exist */
     ldr x0, =rt_dbg_ops
     ldr x0, [x0]
     cbz x0, 3f
@@ -236,9 +242,17 @@ arch_ret_to_user:
     bic x2, x2, x1
     msr spsr_el1, x2
 3:
-    bl lwp_signal_check
-    cmp x0, xzr
 
+    /**
+     * push 2 dummy words to simulate a exception frame of interrupt
+     */
+    add sp, sp, #-0x10
+    mov x0, sp
+    bl lwp_thread_signal_catch
+    add sp, sp, #0x10
+
+    /* check debug */
+    /* restore exception frame */
     ldp x29, x30, [sp], #0x10
     ldp x0, x1, [sp], #0x10
     msr fpcr, x0
@@ -261,14 +275,14 @@ arch_ret_to_user:
     ldp x0, x1, [sp], #0x10
     RESTORE_FPU sp
 
-    bne user_do_signal
-
     stp x0, x1, [sp, #-0x10]!
     ldr x0, =rt_dbg_ops
     ldr x0, [x0]
     cmp x0, xzr
     ldp x0, x1, [sp], #0x10
     beq 1f
+
+    /* save */
     SAVE_FPU sp
     stp x0, x1, [sp, #-0x10]!
     stp x2, x3, [sp, #-0x10]!
@@ -289,8 +303,11 @@ arch_ret_to_user:
     mrs x1, fpsr
     stp x0, x1, [sp, #-0x10]!
     stp x29, x30, [sp, #-0x10]!
+
     mrs x0, elr_el1
     bl dbg_attach_req
+
+    /* restore */
     ldp x29, x30, [sp], #0x10
     ldp x0, x1, [sp], #0x10
     msr fpcr, x0
@@ -313,6 +330,7 @@ arch_ret_to_user:
     RESTORE_FPU sp
 1:
     eret
+START_POINT_END(arch_ret_to_user)
 
 .global lwp_check_debug
 lwp_check_debug:
@@ -371,26 +389,28 @@ lwp_check_debug_quit:
 
 arch_signal_quit:
     msr daifset, #3
-/*
-    drop stack data
-*/
-    add sp, sp, #CONTEXT_SIZE
-    bl lwp_signal_restore
-    /* x0 is user_ctx : ori sp, pc, cpsr */
-    ldr x1, [x0]
-    ldr x2, [x0, #8]
-    ldr x3, [x0, #16]
-    msr spsr_el1, x3
-    msr elr_el1, x2
-    add x1, x1, #16
-    msr sp_el0, x1
 
+    /* drop current exception frame */
+    add sp, sp, #CONTEXT_SIZE
+    mrs x0, sp_el0
+    bl  arch_signal_ucontext_restore
+    add x0, x0, #-CONTEXT_SIZE
+    msr sp_el0, x0
+
+    /* restore previous exception frame */
     msr spsel, #0
 
+    ldp x2, x3, [sp], #0x10
+    msr elr_el1, x2
+    msr spsr_el1, x3
+
     ldp x29, x30, [sp], #0x10
+    // msr sp_el0, x29
+
     ldp x28, x29, [sp], #0x10
     msr fpcr, x28
     msr fpsr, x29
+
     ldp x28, x29, [sp], #0x10
     ldp x26, x27, [sp], #0x10
     ldp x24, x25, [sp], #0x10
@@ -412,65 +432,69 @@ arch_signal_quit:
 
     b arch_ret_to_user
 
-user_do_signal:
-    msr spsel, #0
-    SAVE_FPU sp
-    stp x0, x1, [sp, #-0x10]!
-    stp x2, x3, [sp, #-0x10]!
-    stp x4, x5, [sp, #-0x10]!
-    stp x6, x7, [sp, #-0x10]!
-    stp x8, x9, [sp, #-0x10]!
-    stp x10, x11, [sp, #-0x10]!
-    stp x12, x13, [sp, #-0x10]!
-    stp x14, x15, [sp, #-0x10]!
-    stp x16, x17, [sp, #-0x10]!
-    stp x18, x19, [sp, #-0x10]!
-    stp x20, x21, [sp, #-0x10]!
-    stp x22, x23, [sp, #-0x10]!
-    stp x24, x25, [sp, #-0x10]!
-    stp x26, x27, [sp, #-0x10]!
-    stp x28, x29, [sp, #-0x10]!
-    mrs x28, fpcr
-    mrs x29, fpsr
-    stp x28, x29, [sp, #-0x10]!
-    stp x29, x30, [sp, #-0x10]!
+/**
+ * rt_noreturn
+ * void arch_thread_signal_enter(
+ *      int signo,                      -> x0
+ *      siginfo_t *psiginfo,            -> x1
+ *      void *exp_frame,                -> x2
+ *      void *entry_uaddr,              -> x3
+ *      lwp_sigset_t *save_sig_mask,    -> x4
+ *      )
+ */
+.global arch_thread_signal_enter
+arch_thread_signal_enter:
+    mov x19, x0
+    mov x20, x2 /* exp_frame */
+    mov x21, x3
 
-    sub sp, sp, #0x10
-    adr x0, lwp_sigreturn
-    ldr w1, [x0]
-    str w1, [sp]
-    ldr w1, [x0, #4]
-    str w1, [sp, #4]
+    /**
+     * move exception frame to user stack
+     */
+    mrs x0, sp_el0
+    mrs x3, elr_el1
+    mov x5, x4
+    /** FIXME: spsr must restore from exception frame */
+    mrs x4, spsr_el1
 
-    mov x20, sp /* lwp_sigreturn */
-    mov x0, sp
+    /* arch_signal_ucontext_save(user_sp, psiginfo, exp_frame, elr, spsr, save_sig_mask); */
+    bl arch_signal_ucontext_save
 
     dc cvau, x0
     dsb sy
     ic ialluis
     dsb sy
 
-    msr spsel, #1
+    /**
+     * @brief Prepare the environment for signal handler
+     */
 
-    mrs x1, elr_el1
-    mrs x2, spsr_el1
-    bl lwp_signal_backup
-    /* x0 is signal */
-    mov x19, x0
-    bl lwp_sighandler_get
-    adds x1, x0, xzr
+    /** drop exp frame on kernel stack, reset kernel sp */
+    add sp, x20, #CONTEXT_SIZE
+
+    /** reset user sp */
+    msr sp_el0, x0
+    /** set the return address to the sigreturn */
+    mov x30, x0
+
+    /** set the entry address of signal handler */
+    msr elr_el1, x21
+
+    /* siginfo is above the return address */
+    add x2, x30, 16
+    add x1, x2, #CONTEXT_SIZE
     mov x0, x19
-    bne 1f
-    mov x1, x20
-1:
-    msr elr_el1, x1
-    mov x30, x20
+
+    /**
+     * handler(signo, psi, ucontext);
+     */
     eret
 
 lwp_debugreturn:
     mov x8, 0xf000
     svc #0
 
+.global lwp_sigreturn
 lwp_sigreturn:
     mov x8, #0xe000
     svc #0

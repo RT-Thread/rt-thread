@@ -20,6 +20,8 @@
  * 2021-05-01     Meco Man     support fixed timezone
  * 2021-07-21     Meco Man     implement that change/set timezone APIs
  * 2023-07-03     xqyjlj       refactor posix time and timer
+ * 2023-07-16     Shell        update signal generation routine for lwp
+ *                             adapt to new api and do the signal handling in thread context
  */
 
 #include "sys/time.h"
@@ -713,8 +715,55 @@ struct timer_obj
     clockid_t clockid;
 #ifdef RT_USING_SMART
     pid_t pid;
+    struct rt_work *work;
 #endif
 };
+
+#ifdef RT_USING_SMART
+struct lwp_timer_event_param
+{
+    struct rt_work work;
+
+    union
+    {
+        int tid;
+        pid_t pid;
+    };
+    int signo;
+};
+
+static void _lwp_timer_event_from_tid(struct rt_work *work, void *param)
+{
+    rt_err_t ret;
+    struct lwp_timer_event_param *data = (void *)work;
+    rt_thread_t thread;
+
+    RT_ASSERT(data->tid);
+
+    thread = lwp_tid_get_thread(data->tid);
+    ret = lwp_thread_signal_kill(thread, data->signo, SI_TIMER, 0);
+    if (ret)
+    {
+        LOG_W("%s: Do kill failed(tid %d) returned %d", __func__, data->tid, ret);
+    }
+
+    rt_free(work);
+}
+
+static void _lwp_timer_event_from_pid(struct rt_work *work, void *param)
+{
+    rt_err_t ret;
+    struct lwp_timer_event_param *data = (void *)work;
+
+    ret = lwp_signal_kill(lwp_from_pid(data->pid), data->signo, SI_TIMER, 0);
+    if (ret)
+    {
+        LOG_W("%s: Do kill failed(pid %d) returned %d", __func__, data->pid, ret);
+    }
+
+    rt_free(work);
+}
+#endif /* RT_USING_SMART */
 
 static void rtthread_timer_wrapper(void *timerobj)
 {
@@ -735,7 +784,24 @@ static void rtthread_timer_wrapper(void *timerobj)
         rt_ktime_hrtimer_start(&timer->hrtimer);
     }
 #ifdef RT_USING_SMART
-    sys_kill(timer->pid, timer->sigev_signo);
+    /* this field is named as tid in musl */
+    int tid = *(int *)&timer->sigev_notify_function;
+    struct lwp_timer_event_param *data = (void *)timer->work;
+    data->signo = timer->sigev_signo;
+
+    if (!tid)
+    {
+        data->pid = timer->pid;
+        rt_work_init(timer->work, _lwp_timer_event_from_pid, 0);
+    }
+    else
+    {
+        data->tid = tid;
+        rt_work_init(timer->work, _lwp_timer_event_from_tid, 0);
+    }
+
+    if (rt_work_submit(timer->work, 0))
+        RT_ASSERT(0);
 #else
     if(timer->sigev_notify_function != RT_NULL)
     {
@@ -802,7 +868,27 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     num %= 100;
     timer->sigev_signo = evp->sigev_signo;
 #ifdef RT_USING_SMART
-    timer->pid = lwp_self()->pid;
+    struct rt_work *work;
+    struct rt_lwp *lwp = lwp_self();
+
+    work = rt_malloc(sizeof(struct lwp_timer_event_param));
+    if (!work)
+    {
+        rt_set_errno(ENOMEM);
+        return -1;
+    }
+
+    if (lwp)
+    {
+        timer->pid = lwp_self()->pid;
+    }
+    else
+    {
+        timer->pid = 0; /* pid 0 is never used */
+    }
+
+    timer->work = work;
+
 #endif
     timer->sigev_notify_function = evp->sigev_notify_function;
     timer->val = evp->sigev_value;

@@ -218,6 +218,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_used                     __attribute__((used))
 #define rt_align(n)                 __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
+#define rt_noreturn                 __attribute__ ((noreturn))
 #define rt_inline                   static __inline
 #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
@@ -399,6 +400,7 @@ typedef int (*init_fn_t)(void);
 #define RT_ETRAP                        11              /**< Trap event */
 #define RT_ENOENT                       12              /**< No entry */
 #define RT_ENOSPC                       13              /**< No space left */
+#define RT_EPERM                        14              /**< Operation not permitted */
 
 /**@}*/
 
@@ -753,13 +755,19 @@ struct rt_wakeup
 #define _LWP_NSIG_BPW   32
 #endif
 
-#define _LWP_NSIG_WORDS (_LWP_NSIG / _LWP_NSIG_BPW)
+#define _LWP_NSIG_WORDS (RT_ALIGN(_LWP_NSIG, _LWP_NSIG_BPW) / _LWP_NSIG_BPW)
 
 typedef void (*lwp_sighandler_t)(int);
+typedef void (*lwp_sigaction_t)(int signo, siginfo_t *info, void *context);
 
 typedef struct {
     unsigned long sig[_LWP_NSIG_WORDS];
 } lwp_sigset_t;
+
+#if _LWP_NSIG <= 64
+#define lwp_sigmask(signo)      ((lwp_sigset_t){.sig = {[0] = ((long)(1u << ((signo)-1)))}})
+#define lwp_sigset_init(mask)   ((lwp_sigset_t){.sig = {[0] = (long)(mask)}})
+#endif
 
 struct lwp_sigaction {
     union {
@@ -769,6 +777,29 @@ struct lwp_sigaction {
     lwp_sigset_t sa_mask;
     int sa_flags;
     void (*sa_restorer)(void);
+};
+
+typedef struct lwp_siginfo {
+    rt_list_t node;
+
+    struct {
+        int signo;
+        int code;
+        long value;
+
+        int from_tid;
+        pid_t from_pid;
+    } ksiginfo;
+} *lwp_siginfo_t;
+
+typedef struct lwp_sigqueue {
+    rt_list_t siginfo_list;
+    lwp_sigset_t sigset_pending;
+} *lwp_sigqueue_t;
+
+struct lwp_thread_signal {
+    lwp_sigset_t sigset_mask;
+    struct lwp_sigqueue sig_queue;
 };
 
 struct rt_user_context
@@ -869,14 +900,12 @@ struct rt_thread
     rt_uint32_t                 *kernel_sp;             /**< kernel stack point */
     rt_list_t                   sibling;                /**< next thread of same process */
 
-    lwp_sigset_t                signal;
-    lwp_sigset_t                signal_mask;
-    int                         signal_mask_bak;
-    rt_uint32_t                 signal_in_process;
+    struct lwp_thread_signal    signal;                 /**< lwp signal for user-space thread */
     struct rt_user_context      user_ctx;               /**< user space context */
     struct rt_wakeup            wakeup;                 /**< wakeup data */
     int                         exit_request;
     int                         tid;
+
 #ifndef ARCH_MM_MMU
     lwp_sighandler_t            signal_handler[32];
 #else

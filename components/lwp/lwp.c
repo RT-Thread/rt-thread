@@ -13,6 +13,10 @@
  * 2023-02-20     wangxiaoyao  fix bug on foreground app switch
  */
 
+#define DBG_TAG "LWP"
+#define DBG_LVL DBG_WARNING
+#include <rtdbg.h>
+
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -32,11 +36,9 @@
 #include "lwp.h"
 #include "lwp_arch.h"
 #include "lwp_arch_comm.h"
+#include "lwp_signal.h"
+#include "lwp_dbg.h"
 #include "console.h"
-
-#define DBG_TAG "LWP"
-#define DBG_LVL DBG_WARNING
-#include <rtdbg.h>
 
 #ifdef ARCH_MM_MMU
 #include <lwp_user_mm.h>
@@ -1025,37 +1027,32 @@ out:
     return ret;
 }
 
+/* lwp thread clean up */
 void lwp_cleanup(struct rt_thread *tid)
 {
     rt_base_t level;
     struct rt_lwp *lwp;
-    struct tty_node *tty_head = RT_NULL;
 
     if (tid == NULL)
     {
+        LOG_I("%s: invalid parameter tid == NULL", __func__);
         return;
     }
-
-    LOG_I("cleanup thread: %s, stack_addr: %08X", tid->parent.name, tid->stack_addr);
+    else
+        LOG_D("cleanup thread: %s, stack_addr: 0x%x", tid->parent.name, tid->stack_addr);
 
     level = rt_hw_interrupt_disable();
     lwp = (struct rt_lwp *)tid->lwp;
 
+    /* lwp thread cleanup */
     lwp_tid_put(tid->tid);
     rt_list_remove(&tid->sibling);
-    rt_hw_interrupt_enable(level);
-    if (lwp->tty != RT_NULL)
-    {
-        tty_head = lwp->tty->head;
-    }
-    if (!lwp_ref_dec(lwp))
-    {
-        if (tty_head)
-        {
-            tty_pop(&tty_head, lwp);
-        }
-    }
+    lwp_thread_signal_detach(&tid->signal);
 
+    rt_hw_interrupt_enable(level);
+
+    /* tty will be release in lwp_ref_dec() if ref is cleared */
+    lwp_ref_dec(lwp);
     return;
 }
 
