@@ -81,7 +81,7 @@ rt_err_t rt_hw_mp_init(rt_mem_region_t *static_regions, rt_uint8_t num_regions);
 rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region);
-rt_err_t rt_hw_mp_exception_set_hook(rt_mem_exception_info_t *info);
+rt_err_t rt_hw_mp_exception_set_hook(rt_hw_mp_exception_hook_t hook);
 void rt_hw_mp_table_switch(rt_thread_t thread);
 
 #endif /* RT_USING_MEM_PROTECTION */
