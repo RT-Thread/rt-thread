@@ -262,10 +262,12 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #ifdef RT_USING_SMART
     thread->lwp = RT_NULL;
     rt_list_init(&(thread->sibling));
-    rt_memset(&thread->signal, 0, sizeof(lwp_sigset_t));
-    rt_memset(&thread->signal_mask, 0, sizeof(lwp_sigset_t));
-    thread->signal_mask_bak = 0;
-    thread->signal_in_process = 0;
+
+    /* lwp thread-signal init */
+    rt_memset(&thread->signal.sigset_mask, 0, sizeof(lwp_sigset_t));
+    rt_memset(&thread->signal.sig_queue.sigset_pending, 0, sizeof(lwp_sigset_t));
+    rt_list_init(&thread->signal.sig_queue.siginfo_list);
+
     rt_memset(&thread->user_ctx, 0, sizeof thread->user_ctx);
 #endif
 
@@ -935,7 +937,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 RTM_EXPORT(rt_thread_control);
 
 #ifdef RT_USING_SMART
-int lwp_suspend_sigcheck(rt_thread_t thread, int suspend_flag);
+#include <lwp_signal.h>
 #endif
 
 static void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
@@ -1004,7 +1006,7 @@ rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
         RT_ASSERT(thread == rt_thread_self());
     }
 #ifdef RT_USING_SMART
-    if (lwp_suspend_sigcheck(thread, suspend_flag) == 0)
+    if (lwp_thread_signal_suspend_check(thread, suspend_flag) == 0)
     {
         /* not to suspend */
         rt_hw_interrupt_enable(level);
