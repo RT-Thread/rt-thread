@@ -466,11 +466,11 @@ static rt_base_t swm_pin_get(const char *name)
 
     if ((name_len < 4) || (name_len >= 6))
     {
-        return -RT_EINVAL;
+        goto out;
     }
     if ((name[0] != 'P') || (name[2] != '.'))
     {
-        return -RT_EINVAL;
+        goto out;
     }
 
     switch(name[1])
@@ -497,7 +497,7 @@ static rt_base_t swm_pin_get(const char *name)
             pin = 96;
         break;
         default:
-            return -RT_EINVAL;
+            goto out;
     }
 
     for (i = 3; i < name_len; i++)
@@ -511,10 +511,13 @@ static rt_base_t swm_pin_get(const char *name)
     }
     else
     {
-        return -RT_EINVAL;
+        goto out;
     }
 
     return pin;
+out:
+    rt_kprintf("Px.y  x:A/B/C/D/E/M/N  y:0~15, e.g. PA.0\n");
+    return -RT_EINVAL;
 }
 
 static const struct rt_pin_ops swm_pin_ops =
