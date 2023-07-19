@@ -382,7 +382,7 @@ jobs:
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv32-esp32' && success() }}
         run: |
           wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
-          sudo tar zxf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
           /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
           pip install esptool
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
