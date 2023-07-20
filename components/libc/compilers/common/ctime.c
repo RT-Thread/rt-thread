@@ -25,7 +25,6 @@
  */
 
 #include "sys/time.h"
-#include <ktime.h>
 #include <rthw.h>
 #include <rtthread.h>
 #include <sys/errno.h>
@@ -39,6 +38,9 @@
 #endif
 #if defined( RT_USING_RTC ) || defined( RT_USING_CPUTIME)
 #include <rtdevice.h>
+#endif
+#ifdef RT_USING_KTIME
+#include "ktime.h"
 #endif
 
 #define DBG_TAG    "time"
@@ -459,7 +461,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 }
 RTM_EXPORT(settimeofday);
 
-#ifdef RT_USING_POSIX_DELAY
+#if defined(RT_USING_POSIX_DELAY) && defined(RT_USING_KTIME)
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     struct timespec old_ts = {0};
@@ -501,9 +503,9 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     return 0;
 }
 RTM_EXPORT(nanosleep);
-#endif /* RT_USING_POSIX_DELAY */
+#endif /* RT_USING_POSIX_DELAY && RT_USING_KTIME */
 
-#ifdef RT_USING_POSIX_CLOCK
+#if defined(RT_USING_POSIX_CLOCK) && defined(RT_USING_KTIME)
 
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
@@ -693,9 +695,9 @@ int rt_timespec_to_tick(const struct timespec *time)
 }
 RTM_EXPORT(rt_timespec_to_tick);
 
-#endif /* RT_USING_POSIX_CLOCK */
+#endif /* RT_USING_POSIX_CLOCK && RT_USING_KTIME */
 
-#ifdef RT_USING_POSIX_TIMER
+#if defined(RT_USING_POSIX_TIMER) && defined(RT_USING_KTIME)
 
 #include <resource_id.h>
 
@@ -1111,7 +1113,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     return 0;
 }
 RTM_EXPORT(timer_settime);
-#endif /* RT_USING_POSIX_TIMER */
+#endif /* RT_USING_POSIX_TIMER && RT_USING_KTIME */
 
 
 /* timezone */
