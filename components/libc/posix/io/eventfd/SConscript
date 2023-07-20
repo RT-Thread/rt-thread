@@ -6,7 +6,6 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-
 if GetDepend('RT_USING_POSIX_EVENTFD'):
     src += ['eventfd.c']
 
