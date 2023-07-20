@@ -11,8 +11,6 @@
 #include <rtthread.h>
 #include <fcntl.h>
 #include <rtdevice.h>
-#include <dfs_file.h>
-#include <resource_id.h>
 #include <stdint.h>
 #include <unistd.h>
 #include "poll.h"
