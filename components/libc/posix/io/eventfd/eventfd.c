@@ -127,11 +127,11 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     rt_ssize_t res;
-    /* 
-    ucnt: unsigned count 
-    Adds a value to the counter  
+    /*
+    ucnt: unsigned count
+    Adds a value to the counter
     */
-    rt_ubase_t ucnt = *(rt_ubase_t *)buf; 
+    rt_ubase_t ucnt = *(rt_ubase_t *)buf;
 
     if (count < sizeof(ucnt))
         return -EINVAL;
