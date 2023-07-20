@@ -49,7 +49,7 @@ static const struct dfs_file_ops eventfd_fops =
     .lseek      = noop_lseek,
 };
 
-void eventfd_ctx_do_read(struct eventfd_ctx *ctx, rt_u64 *cnt)
+void eventfd_ctx_do_read(struct eventfd_ctx *ctx, rt_ubase_t *cnt)
 {
     *cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
     ctx->count -= *cnt;
@@ -69,7 +69,7 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
     rt_poll_add(&ctx->writer_queue, req);
 
     int events = 0;
-    rt_u64 count;
+    rt_ubase_t count;
     count = ctx->count;
 
     if (count > 0)
@@ -91,21 +91,26 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 #endif
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
-    rt_u64 ucnt = 0;
+    rt_ubase_t ucnt = 0;
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
     if(ctx->count == 0)
     {
+        rt_kprintf("aaaaa %d \n", file->flags & O_NONBLOCK);
         if (file->flags & O_NONBLOCK)
         {
+            rt_wqueue_wakeup(&ctx->writer_queue, (void*)POLLOUT);
             rt_mutex_release(&ctx->lock);
             return -EAGAIN;
         }
-        rt_mutex_release(&ctx->lock);
-        rt_wqueue_wakeup(&ctx->writer_queue, (void*)POLLOUT);
-        rt_wqueue_wait(&ctx->reader_queue, 0, RT_WAITING_FOREVER);
-        rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
+        else
+        {
+            rt_mutex_release(&ctx->lock);
+            rt_wqueue_wakeup(&ctx->writer_queue, (void*)POLLOUT);
+            rt_wqueue_wait(&ctx->reader_queue, 0, RT_WAITING_FOREVER);
+            rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
+        }
     }
 
     eventfd_ctx_do_read(ctx, &ucnt);
@@ -122,7 +127,11 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     rt_ssize_t res;
-    rt_u64 ucnt = *(rt_u64 *)buf;
+    /* 
+    ucnt: unsigned count 
+    Adds a value to the counter  
+    */
+    rt_ubase_t ucnt = *(rt_ubase_t *)buf; 
 
     if (count < sizeof(ucnt))
         return -EINVAL;
@@ -136,7 +145,6 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
         res = sizeof(ucnt);
     else if (!(file->flags & O_NONBLOCK))
     {
-
         for (res = 0;;)
         {
             if ((ULLONG_MAX - ctx->count) >= ucnt)
@@ -144,6 +152,7 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
                 res = sizeof(ucnt);
                 break;
             }
+            /* Release the mutex to avoid a deadlock */
             rt_mutex_release(&ctx->lock);
             rt_wqueue_wait(&ctx->writer_queue, 0, RT_WAITING_FOREVER);
             rt_wqueue_wakeup(&ctx->reader_queue, (void *)POLLIN);
@@ -153,7 +162,6 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
 
     if (res > 0)
     {
-        rt_kprintf("%u \n", ucnt);
         ctx->count += ucnt;
         rt_wqueue_wakeup(&ctx->reader_queue, (void *)POLLIN);
     }
@@ -169,44 +177,46 @@ static int noop_lseek(struct dfs_file *file, off_t offset)
 static int noop_lseek(struct dfs_file *file, off_t offset, int wherece)
 #endif
 {
-    #ifndef RT_USING_DFS_V2
-    return file->pos;
-    #else
-    return file->fpos;
-    #endif
+    return 0;
 }
 
 static int rt_eventfd_create(struct dfs_file *df,const char *name, unsigned int count, int flags)
 {
     struct eventfd_ctx *ctx = RT_NULL;
+    rt_err_t ret = 0;
 
     ctx = (struct eventfd_ctx *)rt_malloc(sizeof(struct eventfd_ctx));
     if (ctx == RT_NULL)
-        return -ENOMEM;
-
-    ctx->count = count;
-    ctx->flags = flags;
-    ctx->id = rt_thread_self();
-    flags &= EFD_SHARED_FCNTL_FLAGS;
-    flags |= O_RDWR;
-
-    rt_mutex_init(&ctx->lock, name, RT_IPC_FLAG_FIFO);
-    rt_wqueue_init(&ctx->reader_queue);
-    rt_wqueue_init(&ctx->writer_queue);
-
-    df->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
-    if (!df->vnode)
     {
-        free(ctx);
-        return -ENOMEM;
+        ret = -ENOMEM;
+    }
+    else
+    {
+        ctx->count = count;
+        ctx->flags = flags;
+        ctx->id = rt_thread_self();
+        flags &= EFD_SHARED_FCNTL_FLAGS;
+        flags |= O_RDWR;
+
+        rt_mutex_init(&ctx->lock, name, RT_IPC_FLAG_FIFO);
+        rt_wqueue_init(&ctx->reader_queue);
+        rt_wqueue_init(&ctx->writer_queue);
+
+        df->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
+        if (df->vnode)
+        {
+            dfs_vnode_init(df->vnode, FT_REGULAR, &eventfd_fops);
+            df->vnode->data = ctx;
+            df->flags = flags;
+        }
+        else
+        {
+            free(ctx);
+            ret = -ENOMEM;
+        }
     }
 
-    dfs_vnode_init(df->vnode, FT_REGULAR, &eventfd_fops);
-    df->vnode->data = ctx;
-
-    df->flags = flags;
-
-    return 0;
+    return ret;
 }
 
 static int do_eventfd(unsigned int count, int flags)
@@ -216,29 +226,33 @@ static int do_eventfd(unsigned int count, int flags)
     int fd;
     int eventno = 0;
     int status;
+    int res = 0;
 
     if (flags & ~EFD_FLAGS_SET)
         return -RT_EINVAL;
 
     fd = fd_new();
-    if (fd < 0)
+    if (fd >= 0)
     {
-        return fd;
+        res = fd;
+        file = fd_get(fd);
+
+        eventno = resource_id_get(&id_mgr);
+        rt_snprintf(dname, sizeof(dname), "eventfd%d", eventno);
+
+        status = rt_eventfd_create(file, dname, count, flags);
+        if (status < 0)
+        {
+            fd_release(fd);
+            res = status;
+        }
+    }
+    else
+    {
+        res = fd;
     }
 
-    file = fd_get(fd);
-
-    eventno = resource_id_get(&id_mgr);
-    rt_snprintf(dname, sizeof(dname), "eventfd%d", eventno);
-
-    status = rt_eventfd_create(file, dname, count, flags);
-    if (status < 0)
-    {
-        fd_release(fd);
-        return status;
-    }
-
-    return fd;
+    return res;
 }
 
 int eventfd(unsigned int count)

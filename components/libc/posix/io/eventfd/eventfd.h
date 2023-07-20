@@ -27,10 +27,7 @@
 #define BITS(x) _BITS(x)
 #define _BITS(x) (sizeof(#x) - 1)
 
-typedef unsigned long rt_u64;
-
 struct eventfd_ctx {
-
     rt_wqueue_t reader_queue;
     rt_wqueue_t writer_queue;
     rt_uint64_t count;
