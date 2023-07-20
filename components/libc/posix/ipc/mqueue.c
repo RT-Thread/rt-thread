@@ -178,7 +178,7 @@ ssize_t mq_timedreceive(mqd_t                  id,
         rt_set_errno(EINVAL);
         return -1;
     }
-    if (abs_timeout == -1)
+    if (-1 == (rt_ubase_t)abs_timeout )
         tick = RT_WAITING_FOREVER;
     else if (abs_timeout != RT_NULL)
         tick = rt_timespec_to_tick(abs_timeout);
