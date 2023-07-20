@@ -5320,6 +5320,7 @@ sysret_t sys_symlink(const char *existing, const char *new)
 sysret_t sys_eventfd(unsigned int count)
 {
     int ret;
+
     ret = eventfd(count);
     return (ret < 0 ? GET_ERRNO() : ret);
 }
@@ -5327,6 +5328,7 @@ sysret_t sys_eventfd(unsigned int count)
 sysret_t sys_eventfd2(unsigned int count, int flags)
 {
     int ret;
+    
     ret = eventfd2(count, flags);
     return (ret < 0 ? GET_ERRNO() : ret);
 }

@@ -16,6 +16,26 @@
 #include "poll.h"
 #include "eventfd.h"
 
+#define EFD_SEMAPHORE (1 << 0)
+#define EFD_CLOEXEC O_CLOEXEC
+#define EFD_NONBLOCK O_NONBLOCK
+
+#define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
+
+#define ULLONG_MAX  (~0ULL)
+
+#define EVENTFD_MUTEX_NAME "eventfd"
+
+struct eventfd_ctx {
+    rt_wqueue_t reader_queue;
+    rt_wqueue_t writer_queue;
+    rt_uint64_t count;
+    unsigned int flags;
+    struct rt_mutex lock;
+    rt_thread_t id;
+};
+
 #ifndef RT_USING_DFS_V2
 static int eventfd_close(struct dfs_file *file);
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req);
@@ -30,6 +50,12 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
 static int noop_lseek(struct dfs_file *file, off_t offset, int wherece);
 #endif
 
+static inline void eventfd_ctx_do_read(struct eventfd_ctx *ctx, rt_ubase_t *cnt)
+{
+    *cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
+    ctx->count -= *cnt;
+}
+
 static const struct dfs_file_ops eventfd_fops =
 {
     .close      = eventfd_close,
@@ -39,28 +65,26 @@ static const struct dfs_file_ops eventfd_fops =
     .lseek      = noop_lseek,
 };
 
-void eventfd_ctx_do_read(struct eventfd_ctx *ctx, rt_ubase_t *cnt)
-{
-    *cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
-    ctx->count -= *cnt;
-}
-
 static int eventfd_close(struct dfs_file *file)
 {
-    struct eventfd_ctx *ctx = file->data;
-    free(ctx);
+    struct eventfd_ctx *ctx = file->vnode->data;
+
+    rt_mutex_detach (&ctx->lock);
+    rt_free(ctx);
+
     return 0;
 }
 
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
-    rt_poll_add(&ctx->reader_queue, req);
-    rt_poll_add(&ctx->writer_queue, req);
-
     int events = 0;
     rt_ubase_t count;
+
     count = ctx->count;
+
+    rt_poll_add(&ctx->reader_queue, req);
+    rt_poll_add(&ctx->writer_queue, req);
 
     if (count > 0)
         events |= POLLIN;
@@ -85,9 +109,8 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
-    if(ctx->count == 0)
+    if (ctx->count == 0)
     {
-        rt_kprintf("aaaaa %d \n", file->flags & O_NONBLOCK);
         if (file->flags & O_NONBLOCK)
         {
             rt_wqueue_wakeup(&ctx->writer_queue, (void*)POLLOUT);
@@ -96,6 +119,7 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
         }
         else
         {
+            /* In this case, when the data is read in blocked mode, when ctx->count is 0, the mutex needs to be released and wait for writing */
             rt_mutex_release(&ctx->lock);
             rt_wqueue_wakeup(&ctx->writer_queue, (void*)POLLOUT);
             rt_wqueue_wait(&ctx->reader_queue, 0, RT_WAITING_FOREVER);
@@ -130,7 +154,9 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
         return -EINVAL;
 
     res = -EAGAIN;
+
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
+
     if ((ULLONG_MAX - ctx->count) > ucnt)
         res = sizeof(ucnt);
     else if (!(file->flags & O_NONBLOCK))
@@ -201,7 +227,7 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
         }
         else
         {
-            free(ctx);
+            rt_free(ctx);
             ret = -ENOMEM;
         }
     }
@@ -214,7 +240,7 @@ static int do_eventfd(unsigned int count, int flags)
     struct dfs_file *file;
     int fd;
     int status;
-    int res = 0;
+    rt_ssize_t res = 0;
 
     if (flags & ~EFD_FLAGS_SET)
         return -RT_EINVAL;
