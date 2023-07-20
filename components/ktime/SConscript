@@ -14,6 +14,6 @@ if rtconfig.ARCH in list:
         src += Glob("src/" + rtconfig.ARCH + "/*.c")
 CPPPATH = [cwd, cwd + "/inc"]
 
-group = DefineGroup('ktime', src, depend=[''], CPPPATH=CPPPATH)
+group = DefineGroup('ktime', src, depend=['RT_USING_KTIME'], CPPPATH=CPPPATH)
 
 Return('group')
