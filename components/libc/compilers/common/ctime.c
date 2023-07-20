@@ -713,9 +713,11 @@ struct timer_obj
     rt_uint32_t status;
     int sigev_signo;
     clockid_t clockid;
+    timer_t timer_id;
 #ifdef RT_USING_SMART
     pid_t pid;
     struct rt_work *work;
+    rt_list_t lwp_node;
 #endif
 };
 
@@ -763,6 +765,17 @@ static void _lwp_timer_event_from_pid(struct rt_work *work, void *param)
 
     rt_free(work);
 }
+
+int timer_list_free(rt_list_t *timer_list)
+{
+    struct timer_obj *pos, *n;
+    rt_list_for_each_entry_safe(pos, n, timer_list, lwp_node)
+    {
+        timer_delete(pos->timer_id);
+    }
+    return 0;
+}
+
 #endif /* RT_USING_SMART */
 
 static void rtthread_timer_wrapper(void *timerobj)
@@ -881,6 +894,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     if (lwp)
     {
         timer->pid = lwp_self()->pid;
+        rt_list_insert_after(&lwp->timer, &timer->lwp_node);
     }
     else
     {
@@ -908,6 +922,8 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
         return -1; /* todo:memory leak */
     }
     _g_timerid[_timerid] = timer;
+
+    timer->timer_id = (timer_t)(rt_ubase_t)_timerid;
     *timerid = (timer_t)(rt_ubase_t)_timerid;
 
     return 0;
@@ -952,6 +968,11 @@ int timer_delete(timer_t timerid)
         rt_ktime_hrtimer_stop(&timer->hrtimer);
     }
     rt_ktime_hrtimer_detach(&timer->hrtimer);
+
+#ifdef RT_USING_SMART
+    if (timer->pid)
+        rt_list_remove(&timer->lwp_node);
+#endif
 
     rt_free(timer);
     return 0;
