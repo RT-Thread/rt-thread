@@ -171,6 +171,10 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     /* init thread list */
     rt_list_init(&(thread->tlist));
 
+#ifdef RT_USING_MEM_PROTECTION
+    rt_memset(&(thread->mem_regions), 0, sizeof(rt_mem_region_t) * NUM_DYNAMIC_REGIONS);
+#endif
+
 #ifdef RT_USING_SMART
     thread->wakeup.func = RT_NULL;
 #endif

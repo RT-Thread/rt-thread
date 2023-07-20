@@ -201,7 +201,29 @@ rt_err_t rt_hw_mp_exception_set_hook(rt_hw_mp_exception_hook_t hook)
 
 void rt_hw_mp_table_switch(rt_thread_t thread)
 {
-    
+    extern rt_mem_exclusive_region_t exclusive_regions[NUM_EXCLUSIVE_REGIONS];
+    rt_uint8_t i;
+    rt_uint8_t index = NUM_STATIC_REGIONS;
+    for (i = 0; i < NUM_DYNAMIC_REGIONS; ++i)
+    {
+        if (thread->mem_regions[i].size != 0)
+        {
+            ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (uint32_t)(thread->mem_regions[i].start)), thread->mem_regions[i].attr.rasr);
+            index += 1;
+        }
+    }
+    for (i = 0; i < NUM_EXCLUSIVE_REGIONS; ++i)
+    {
+        if (exclusive_regions[i].owner != thread)
+        {
+            ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (uint32_t)(exclusive_regions[i].region.start)), exclusive_regions[i].region.attr.rasr);
+            index += 1;
+        }
+    }
+    for ( ; index < NUM_MEM_REGIONS; ++index)
+    {
+        ARM_MPU_ClrRegion(index);
+    }
 }
 
 void MemManage_Handler(void)
