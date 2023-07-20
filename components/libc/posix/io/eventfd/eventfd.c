@@ -40,19 +40,19 @@ struct check_rt_unamed_event_number
 static void *resoure_id[RT_UNAMED_PIPE_NUMBER];
 static resource_id_t id_mgr = RESOURCE_ID_INIT(RT_UNAMED_PIPE_NUMBER, resoure_id);
 
-static const struct dfs_file_ops eventfd_fops = 
+static const struct dfs_file_ops eventfd_fops =
 {
-	.close	= eventfd_close,
-	.poll		= eventfd_poll,
-	.read	= eventfd_read,
-	.write		= eventfd_write,
-	.lseek		= noop_lseek,
+    .close      = eventfd_close,
+    .poll       = eventfd_poll,
+    .read       = eventfd_read,
+    .write      = eventfd_write,
+    .lseek      = noop_lseek,
 };
 
 void eventfd_ctx_do_read(struct eventfd_ctx *ctx, rt_u64 *cnt)
 {
-	*cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
-	ctx->count -= *cnt;
+    *cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
+    ctx->count -= *cnt;
 }
 
 static int eventfd_close(struct dfs_file *file)
@@ -67,7 +67,7 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     rt_poll_add(&ctx->reader_queue, req);
     rt_poll_add(&ctx->writer_queue, req);
-    
+
     int events = 0;
     rt_u64 count;
     count = ctx->count;
@@ -77,7 +77,7 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 
     if (count == ULLONG_MAX)
         events |= POLLERR;
-    
+
     if (ULLONG_MAX -1 > count)
         events |= POLLOUT;
 
@@ -123,20 +123,20 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     rt_ssize_t res;
     rt_u64 ucnt = *(rt_u64 *)buf;
-    
+
     if (count < sizeof(ucnt))
         return -EINVAL;
 
     if (ucnt == ULLONG_MAX)
         return -EINVAL;
-    
+
     res = -EAGAIN;
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
     if ((ULLONG_MAX - ctx->count) > ucnt)
         res = sizeof(ucnt);
     else if (!(file->flags & O_NONBLOCK))
     {
-        
+
         for (res = 0;;)
         {
             // status fun
@@ -204,7 +204,7 @@ static int rt_eventfd_create(struct dfs_file *df,const char *name, unsigned int 
 
     dfs_vnode_init(df->vnode, FT_REGULAR, &eventfd_fops);
     df->vnode->data = ctx;
-    
+
     df->flags = flags;
 
     return 0;
@@ -228,7 +228,7 @@ static int do_eventfd(unsigned int count, int flags)
     }
 
     file = fd_get(fd);
-    
+
     eventno = resource_id_get(&id_mgr);
     rt_snprintf(dname, sizeof(dname), "eventfd%d", eventno);
 

@@ -22,7 +22,7 @@
 #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
 #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
 
-#define ULLONG_MAX	(~0ULL)
+#define ULLONG_MAX  (~0ULL)
 
 #define BITS(x) _BITS(x)
 #define _BITS(x) (sizeof(#x) - 1)
@@ -30,13 +30,13 @@
 typedef unsigned long rt_u64;
 
 struct eventfd_ctx {
-	
+
     rt_wqueue_t reader_queue;
     rt_wqueue_t writer_queue;
-	rt_uint64_t count;
-	unsigned int flags;
+    rt_uint64_t count;
+    unsigned int flags;
     struct rt_mutex lock;
-	rt_thread_t id;
+    rt_thread_t id;
 };
 
 int eventfd(unsigned int count);
