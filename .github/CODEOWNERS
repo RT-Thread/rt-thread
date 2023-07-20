@@ -3,7 +3,15 @@
 # https://help.github.com/en/articles/about-code-owners#codeowners-syntax
 
 /.github                                  @supperthomas
-/bsp                                      @mysterywolf
-/components                               @mysterywolf
+/bsp/ESP32_C3                             @supperthomas
+/bsp/nr5x/                                @supperthomas
+/bsp/stm32/stm32l496-st-nucleo            @supperthomas
+/bsp/stm32/stm32f407-rt-spark             @supperthomas
+/bsp/stm32/stm32h743-openmv-h7plus        @supperthomas
+/bsp/stm32/stm32l4r9-st-sensortile-box/   @supperthomas
+/bsp/maxim                                @supperthomas
+
+/components/libc/                         @mysterywolf
+
 /examples                                 @Guozhanxin
 
