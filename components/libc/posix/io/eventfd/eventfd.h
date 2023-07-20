@@ -24,8 +24,7 @@
 
 #define ULLONG_MAX  (~0ULL)
 
-#define BITS(x) _BITS(x)
-#define _BITS(x) (sizeof(#x) - 1)
+#define EVENTFD_MUTEX_NAME "eventfd"
 
 struct eventfd_ctx {
     rt_wqueue_t reader_queue;

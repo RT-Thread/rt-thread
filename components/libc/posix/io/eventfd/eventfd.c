@@ -32,14 +32,6 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
 static int noop_lseek(struct dfs_file *file, off_t offset, int wherece);
 #endif
 
-struct check_rt_unamed_event_number
-{
-    char _check[RT_NAME_MAX - 4 - 1 - BITS(RT_UNAMED_PIPE_NUMBER)];
-};
-
-static void *resoure_id[RT_UNAMED_PIPE_NUMBER];
-static resource_id_t id_mgr = RESOURCE_ID_INIT(RT_UNAMED_PIPE_NUMBER, resoure_id);
-
 static const struct dfs_file_ops eventfd_fops =
 {
     .close      = eventfd_close,
@@ -180,7 +172,7 @@ static int noop_lseek(struct dfs_file *file, off_t offset, int wherece)
     return 0;
 }
 
-static int rt_eventfd_create(struct dfs_file *df,const char *name, unsigned int count, int flags)
+static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
 {
     struct eventfd_ctx *ctx = RT_NULL;
     rt_err_t ret = 0;
@@ -198,7 +190,7 @@ static int rt_eventfd_create(struct dfs_file *df,const char *name, unsigned int 
         flags &= EFD_SHARED_FCNTL_FLAGS;
         flags |= O_RDWR;
 
-        rt_mutex_init(&ctx->lock, name, RT_IPC_FLAG_FIFO);
+        rt_mutex_init(&ctx->lock, EVENTFD_MUTEX_NAME, RT_IPC_FLAG_FIFO);
         rt_wqueue_init(&ctx->reader_queue);
         rt_wqueue_init(&ctx->writer_queue);
 
@@ -222,9 +214,7 @@ static int rt_eventfd_create(struct dfs_file *df,const char *name, unsigned int 
 static int do_eventfd(unsigned int count, int flags)
 {
     struct dfs_file *file;
-    char dname[8];
     int fd;
-    int eventno = 0;
     int status;
     int res = 0;
 
@@ -237,10 +227,7 @@ static int do_eventfd(unsigned int count, int flags)
         res = fd;
         file = fd_get(fd);
 
-        eventno = resource_id_get(&id_mgr);
-        rt_snprintf(dname, sizeof(dname), "eventfd%d", eventno);
-
-        status = rt_eventfd_create(file, dname, count, flags);
+        status = rt_eventfd_create(file, count, flags);
         if (status < 0)
         {
             fd_release(fd);
