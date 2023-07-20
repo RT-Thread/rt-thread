@@ -25,6 +25,11 @@ if RT_USING_POSIX_FS
         bool "Enable I/O Multiplexing select() <sys/select.h>"
         select RT_USING_POSIX_POLL
         default n
+    
+    config RT_USING_POSIX_EVENTFD
+        bool "Enable I/O event eventfd <sys/eventfd.h>"
+        select RT_USING_POSIX_POLL
+        default n
 
     config RT_USING_POSIX_SOCKET
         bool "Enable BSD Socket I/O <sys/socket.h> <netdb.h>"
