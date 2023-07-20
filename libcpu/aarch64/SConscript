@@ -8,6 +8,11 @@ Import('rtconfig')
 cwd   = GetCurrentDir()
 group = []
 list  = os.listdir(cwd)
+bsp_path = Dir('#').abspath
+
+if not os.path.exists(bsp_path + "/link.lds"):
+    Env['LINKFLAGS'] = Env['LINKFLAGS'].replace('link.lds', cwd + "/link.lds")
+    Preprocessing("link.lds.S", ".lds", CPPPATH=[bsp_path])
 
 # add common code files
 group = group + SConscript(os.path.join('common', 'SConscript'))
