@@ -272,7 +272,6 @@ static int do_eventfd(unsigned int count, int flags)
 
 int eventfd(unsigned int count)
 {
-    rt_kprintf("qqq \n");
     return do_eventfd(count, 0);
 }
 
