@@ -23,17 +23,14 @@
 
 #include "sys/time.h"
 #include <sys/errno.h>
-#include <rtthread.h>
+#include <rtdevice.h>
 #include <rthw.h>
 #include <unistd.h>
 #ifdef RT_USING_SMART
-#include "lwp.h"
+#include <lwp.h>
 #endif
 #ifdef RT_USING_POSIX_DELAY
 #include <delay.h>
-#endif
-#if defined( RT_USING_RTC ) || defined( RT_USING_CPUTIME)
-#include <rtdevice.h>
 #endif
 
 #define DBG_TAG    "time"
@@ -63,8 +60,8 @@ static const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
 
-rt_align(4) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
-rt_align(4) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+rt_align(RT_ALIGN_SIZE) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
+rt_align(RT_ALIGN_SIZE) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 #ifndef __isleap
 static int __isleap(int year)
