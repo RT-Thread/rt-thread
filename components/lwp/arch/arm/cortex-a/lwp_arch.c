@@ -54,10 +54,13 @@ static struct rt_varea kuser_varea;
 
 void arch_kuser_init(rt_aspace_t aspace, void *vectors)
 {
-    const size_t kuser_size = 0x1000;
     int err;
-    extern char *__kuser_helper_start, *__kuser_helper_end;
-    int kuser_sz = __kuser_helper_end - __kuser_helper_start;
+    const size_t kuser_size = 0x1000;
+    extern char __kuser_helper_start[];
+    extern char __kuser_helper_end[];
+    rt_base_t start = (rt_base_t)__kuser_helper_start;
+    rt_base_t end = (rt_base_t)__kuser_helper_end;
+    int kuser_sz = end - start;
 
     err = rt_aspace_map_static(aspace, &kuser_varea, &vectors, kuser_size,
                                MMU_MAP_U_RO, MMF_MAP_FIXED | MMF_PREFETCH,
