@@ -26,21 +26,18 @@
 
 #include "sys/time.h"
 #include <rthw.h>
-#include <rtthread.h>
+#include <rtdevice.h>
+#include <drivers/rtc.h>
 #include <sys/errno.h>
 #include <unistd.h>
-#include "drivers/rtc.h"
 #ifdef RT_USING_SMART
-#include "lwp.h"
+#include <lwp.h>
 #endif
 #ifdef RT_USING_POSIX_DELAY
 #include <delay.h>
 #endif
-#if defined( RT_USING_RTC ) || defined( RT_USING_CPUTIME)
-#include <rtdevice.h>
-#endif
 #ifdef RT_USING_KTIME
-#include "ktime.h"
+#include <ktime.h>
 #endif
 
 #define DBG_TAG    "time"
@@ -48,9 +45,6 @@
 #include <rtdbg.h>
 
 #define _WARNING_NO_RTC "Cannot find a RTC device!"
-
-/* seconds per day */
-#define SPD 24*60*60
 
 /* days per month -- nonleap! */
 static const short __spm[13] =
@@ -70,8 +64,8 @@ static const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
 
-rt_align(4) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
-rt_align(4) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+rt_align(RT_ALIGN_SIZE) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
+rt_align(RT_ALIGN_SIZE) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 #ifndef __isleap
 static int __isleap(int year)
@@ -134,12 +128,12 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 
     rt_memset(r, RT_NULL, sizeof(struct tm));
 
-    work = *timep % (SPD);
+    work = *timep % (24*60*60);
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
     r->tm_hour = work / 60;
-    work = (int)(*timep / (SPD));
+    work = (int)(*timep / (24*60*60));
     r->tm_wday = (4 + work) % 7;
     for (i = 1970;; ++i)
     {
@@ -257,7 +251,7 @@ char* asctime_r(const struct tm *t, char *buf)
 }
 RTM_EXPORT(asctime_r);
 
-char* asctime(const struct tm *timeptr)
+char *asctime(const struct tm *timeptr)
 {
     static char buf[26];
     return asctime_r(timeptr, buf);
@@ -271,7 +265,7 @@ char *ctime_r(const time_t * tim_p, char * result)
 }
 RTM_EXPORT(ctime_r);
 
-char* ctime(const time_t *tim_p)
+char *ctime(const time_t *tim_p)
 {
     return asctime(localtime(tim_p));
 }
@@ -303,7 +297,7 @@ rt_weak time_t time(time_t *t)
     if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIME, &_t) != RT_EOK)
     {
         rt_set_errno(EFAULT);
-        return -1;
+        return (time_t)-1;
     }
 
     if (t)
@@ -809,7 +803,7 @@ static void rtthread_timer_wrapper(void *timerobj)
     {
         (timer->sigev_notify_function)(timer->val);
     }
-#endif
+#endif /* RT_USING_SMART */
 }
 
 #define TIMER_ID_MAX 50
@@ -890,8 +884,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     }
 
     timer->work = work;
-
-#endif
+#endif /* RT_USING_SMART */
     timer->sigev_notify_function = evp->sigev_notify_function;
     timer->val = evp->sigev_value;
     timer->interval.tv_sec = 0;
