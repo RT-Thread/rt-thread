@@ -106,6 +106,7 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     rt_ubase_t ucnt = 0;
+    rt_ubase_t *buffer = (rt_ubase_t *)buf;
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
@@ -128,6 +129,9 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
     }
 
     eventfd_ctx_do_read(ctx, &ucnt);
+
+    (*buffer) = ucnt;
+
     rt_mutex_release(&ctx->lock);
 
     return sizeof(ucnt);
@@ -268,6 +272,7 @@ static int do_eventfd(unsigned int count, int flags)
 
 int eventfd(unsigned int count)
 {
+    rt_kprintf("qqq \n");
     return do_eventfd(count, 0);
 }
 
