@@ -12,6 +12,7 @@
 /bsp/maxim                                @supperthomas
 
 /components/libc/                         @mysterywolf
+/components/ktime                         @xqyjlj
 
 /examples                                 @Guozhanxin
 
