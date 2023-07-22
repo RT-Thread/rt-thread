@@ -162,7 +162,9 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
     if ((ULLONG_MAX - ctx->count) > ucnt)
+    {
         res = sizeof(ucnt);
+    }
     else if (!(file->flags & O_NONBLOCK))
     {
         for (res = 0;;)
