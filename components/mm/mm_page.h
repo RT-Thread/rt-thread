@@ -34,7 +34,7 @@
 #define PAGE_ANY_AVAILABLE 0x1ul
 
 
-#ifdef RT_DEBUG_PAGE_LEAK
+#ifdef RT_DEBUGING_PAGE_LEAK
 #define DEBUG_FIELD {           \
     /* trace list */            \
     struct rt_page *tl_next;    \

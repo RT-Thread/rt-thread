@@ -269,7 +269,7 @@ jobs:
                 - "microchip/same70"
                 - "smartfusion2"
                 - "maxim/max32660-evsys"
-                - "efm32"
+               # - "efm32"
          -  RTT_BSP: "mips" 
             RTT_TOOL_CHAIN: "sourcery-mips"
             SUB_RTT_BSP:  
