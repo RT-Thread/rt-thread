@@ -106,6 +106,7 @@ struct rt_lwp
     pid_t tty_old_pgrp;
     pid_t session;
     rt_list_t t_grp;
+    rt_list_t timer; /* POSIX timer object binding to a process */
 
     int leader; /*boolean value for session group_leader*/
     struct dfs_fdtable fdt;
@@ -164,6 +165,9 @@ void lwp_aspace_switch(struct rt_thread *thread);
 void lwp_user_setting_save(rt_thread_t thread);
 void lwp_user_setting_restore(rt_thread_t thread);
 int lwp_setaffinity(pid_t pid, int cpu);
+
+/* ctime lwp API */
+int timer_list_free(rt_list_t *timer_list);
 
 #ifdef ARCH_MM_MMU
 struct __pthread {
