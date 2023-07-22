@@ -69,7 +69,7 @@ static int eventfd_close(struct dfs_file *file)
 {
     struct eventfd_ctx *ctx = file->vnode->data;
 
-    rt_mutex_detach (&ctx->lock);
+    rt_mutex_detach(&ctx->lock);
     rt_free(ctx);
 
     return 0;
@@ -232,6 +232,7 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
         else
         {
             rt_free(ctx);
+            rt_mutex_detach(&ctx->lock);
             ret = -ENOMEM;
         }
     }
