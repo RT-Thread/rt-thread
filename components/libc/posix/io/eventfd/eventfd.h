@@ -11,10 +11,6 @@
 #ifndef __EVENTFD_H__
 #define __EVENTFD_H__
 
-#include <rtthread.h>
-#include <rthw.h>
-#include <dfs_file.h>
-
 int eventfd(unsigned int count);
 int eventfd2(unsigned int count, int flags);
 

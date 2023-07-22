@@ -13,6 +13,7 @@
 #include <rtdevice.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <dfs_file.h>
 #include "poll.h"
 #include "eventfd.h"
 
@@ -233,8 +234,8 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
         }
         else
         {
-            rt_free(ctx);
             rt_mutex_detach(&ctx->lock);
+            rt_free(ctx);
             ret = -ENOMEM;
         }
     }
