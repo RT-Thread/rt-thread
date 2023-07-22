@@ -198,27 +198,28 @@ menu "kservice optimization"
 
 endmenu
 
-menuconfig RT_DEBUG
+menuconfig RT_USING_DEBUG
     bool "Enable debugging features"
     default y
 
-if RT_DEBUG
+    if RT_USING_DEBUG
+        config RT_DEBUGING_COLOR
+            bool "Enable color debugging log"
+            default y
 
-    config RT_DEBUG_COLOR
-        bool "Enable color debugging log"
-        default n
+        config RT_DEBUGING_CONTEXT
+            bool "Enable debugging of environment and context check"
+            default y
 
-    config RT_DEBUG_INIT
-        bool "Enable debugging of components initialization"
-        default n
+        config RT_DEBUGING_INIT
+            bool "Enable debugging of components initialization"
+            default y
 
-    if ARCH_MM_MMU
-        config RT_DEBUG_PAGE_LEAK
+        config RT_DEBUGING_PAGE_LEAK
             bool "Enable page leaking tracer"
+            depends on ARCH_MM_MMU
             default n
     endif
-
-endif
 
 menu "Inter-Thread communication"
 
@@ -260,17 +261,16 @@ endmenu
 
 menu "Memory Management"
 
-    if ARCH_MM_MMU
-        config RT_PAGE_MAX_ORDER
-            int "Max order of pages allocatable by page allocator"
-            default 11
-            help
-                For example, A value of 11 means the maximum chunk of contiguous memory
-                allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
-                Large memory requirement can consume all system resource, and should
-                consider reserved memory instead to enhance system endurance.
-                Max order should at least satisfied usage by huge page.
-    endif
+    config RT_PAGE_MAX_ORDER
+        int "Max order of pages allocatable by page allocator"
+        default 11
+        depends on ARCH_MM_MMU
+        help
+            For example, A value of 11 means the maximum chunk of contiguous memory
+            allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
+            Large memory requirement can consume all system resource, and should
+            consider reserved memory instead to enhance system endurance.
+            Max order should at least satisfied usage by huge page.
 
     config RT_USING_MEMPOOL
         bool "Using memory pool"

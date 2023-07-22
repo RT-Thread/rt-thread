@@ -577,9 +577,9 @@ Configuration is mainly done by modifying the file under project directory - rtc
 #define RT_USING_OVERFLOW_CHECK
 
 /* Define this macro to enable debug mode, if not defined, close.  */
-#define RT_DEBUG
+#define RT_USING_DEBUG
 /* When debug mode is enabled: Define this macro to enable the print component initialization information, if not defined, close.  */
-#define RT_DEBUG_INIT
+#define RT_DEBUGING_INIT
 
 /* Defining this macro means the use of the hook function is started, if not defined, close. */
 #define RT_USING_HOOK

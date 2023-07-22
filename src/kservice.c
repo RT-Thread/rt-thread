@@ -1987,7 +1987,7 @@ int __rt_ffs(int value)
     #define __on_rt_assert_hook(ex, func, line)         __ON_HOOK_ARGS(rt_assert_hook, (ex, func, line))
 #endif
 
-#ifdef RT_DEBUG
+#ifdef RT_USING_DEBUG
 /* RT_ASSERT(EX)'s hook */
 
 void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
@@ -2036,6 +2036,6 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
     }
 }
 RTM_EXPORT(rt_assert_handler);
-#endif /* RT_DEBUG */
+#endif /* RT_USING_DEBUG */
 
 /**@}*/

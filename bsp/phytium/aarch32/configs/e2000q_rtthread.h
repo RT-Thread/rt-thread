@@ -28,7 +28,7 @@
 
 #define RT_KSERVICE_USING_STDLIB
 #define RT_KPRINTF_USING_LONGLONG
-#define RT_DEBUG
+#define RT_USING_DEBUG
 
 /* Inter-Thread communication */
 
