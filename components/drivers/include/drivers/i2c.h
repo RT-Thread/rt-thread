@@ -26,11 +26,27 @@ extern "C" {
 #define RT_I2C_NO_READ_ACK      (1u << 6)  /* when I2C reading, we do not ACK */
 #define RT_I2C_NO_STOP          (1u << 7)
 
+typedef enum
+{
+    RT_I2C_STATE_RESET      = 0x0000U,      /* Is not yet Initialized */
+    RT_I2C_STATE_READY      = (1U << 0),    /* Is ready */
+    RT_I2C_STATE_BUSY       = (1U << 1),    /* Is busy */
+    RT_I2C_STATE_START      = (1U << 2),    /* Start signal */
+    RT_I2C_STATE_ADDR       = (1U << 3),    /* Send address */
+    RT_I2C_STATE_RESTART    = (1U << 4),    /* Restart signal */
+    RT_I2C_STATE_TX         = (1U << 5),    /* Data transmission */
+    RT_I2C_STATE_RX         = (1U << 6),    /* Data reception */
+    RT_I2C_STATE_LISTEN     = (1U << 7),    /* Address listen mode */
+    RT_I2C_STATE_ABORT      = (1U << 8),    /* Abort user request */
+    RT_I2C_STATE_UNLOCK     = (1U << 14),   /* Unlock signal */
+    RT_I2C_STATE_STOP       = (1U << 15),   /* Stop signal */
+} rt_i2c_state_t;
+
 struct rt_i2c_msg
 {
     rt_uint16_t addr;
     rt_uint16_t flags;
-    rt_uint16_t len;
+    rt_uint32_t len;
     rt_uint8_t  *buf;
 };
 
@@ -55,9 +71,9 @@ struct rt_i2c_bus_device
     struct rt_device parent;
     const struct rt_i2c_bus_device_ops *ops;
     rt_uint16_t  flags;
+    rt_uint16_t  retries;
     struct rt_mutex lock;
     rt_uint32_t  timeout;
-    rt_uint32_t  retries;
     void *priv;
 };
 
@@ -67,6 +83,7 @@ struct rt_i2c_client
     rt_uint16_t                    client_addr;
 };
 
+#define rt_i2c_bus_name(bus) rt_device_name(&bus->parent)
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name);
 struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name);
@@ -87,7 +104,7 @@ rt_ssize_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
                              rt_uint8_t               *buf,
                              rt_uint32_t               count);
 
-rt_inline rt_err_t rt_i2c_bus_lock(struct rt_i2c_bus_device *bus, rt_tick_t timeout)
+rt_inline rt_err_t rt_i2c_bus_lock(struct rt_i2c_bus_device *bus, rt_int32_t timeout)
 {
     return rt_mutex_take(&bus->lock, timeout);
 }

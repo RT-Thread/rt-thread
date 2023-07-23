@@ -24,6 +24,10 @@ if RT_USING_DEVICE_IPC
     endif
 endif
 
+config RT_USING_UDELAY
+    bool "Using us delay"
+    default y
+
 menuconfig RT_USING_SERIAL
     bool "USING Serial device drivers"
     select RT_USING_DEVICE_IPC
@@ -121,6 +125,10 @@ if RT_USING_I2C
         bool "Use I2C debug message"
         default n
 
+    config RT_I2C_DETAIL
+        bool "Use I2C detail message"
+        default y
+
     config RT_USING_I2C_BITOPS
         bool "Use GPIO to simulate I2C"
         default y
@@ -129,6 +137,124 @@ if RT_USING_I2C
         config RT_I2C_BITOPS_DEBUG
             bool "Use simulate I2C debug message"
             default n
+    endif
+
+    config RT_USING_SOFT_I2C
+        bool "Use GPIO to soft simulate I2C"
+        default n
+        select RT_USING_PIN
+        select RT_USING_UDELAY
+    if RT_USING_SOFT_I2C
+        config RT_USING_SOFT_I2C_DEBUG
+            bool "Use simulate I2C debug message"
+            default n
+        config RT_USING_SOFT_I2C_SIMPLE
+            bool "Use simple soft I2C"
+            default n
+        config RT_USING_SOFT_I2C_FINSH
+            bool "Use shell cmd"
+			depends on RT_USING_FINSH
+            default n
+		config RT_USING_SOFT_I2C5
+			bool "Enable I2C5 Bus (software simulation)"
+			default n
+			if RT_USING_SOFT_I2C5
+				comment "Notice: PA00 --> 0x00; PA01 --> 0x01"
+				config RT_SOFT_I2C5_SCL_PIN
+					hex "SCL pin number"
+					range 0x00 0xFF
+					default 0x00
+				config RT_SOFT_I2C5_SDA_PIN
+					hex "SDA pin number"
+					range 0x00 0xFF
+					default 0x01
+				config RT_SOFT_I2C5_BUS_NAME
+					string "Bus name"
+					default i2c5
+				config RT_SOFT_I2C5_TIMING_DELAY
+					int "Timing delay (us)"
+					range 0 32767
+					default 10
+				config RT_SOFT_I2C5_TIMING_TIMEOUT
+					int "Timing timeout (tick)"
+					range 0 32767
+					default 10
+			endif
+		config RT_USING_SOFT_I2C6
+			bool "Enable I2C6 Bus (software simulation)"
+			default n
+			if RT_USING_SOFT_I2C6
+				comment "Notice: PB02 --> 0x12; PB03 --> 0x13"
+				config RT_SOFT_I2C6_SCL_PIN
+					hex "SCL pin number"
+					range 0x00 0xFF
+					default 0x12
+				config RT_SOFT_I2C6_SDA_PIN
+					hex "SDA pin number"
+					range 0x00 0xFF
+					default 0x13
+				config RT_SOFT_I2C6_BUS_NAME
+					string "Bus name"
+					default i2c6
+				config RT_SOFT_I2C6_TIMING_DELAY
+					int "Timing delay (us)"
+					range 0 32767
+					default 10
+				config RT_SOFT_I2C6_TIMING_TIMEOUT
+					int "Timing timeout (tick)"
+					range 0 32767
+					default 10
+			endif
+		config RT_USING_SOFT_I2C7
+			bool "Enable I2C7 Bus (software simulation)"
+			default n
+			if RT_USING_SOFT_I2C7
+				comment "Notice: PC04 --> 0x24; PC05 --> 0x25"
+				config RT_SOFT_I2C7_SCL_PIN
+					hex "SCL pin number"
+					range 0x00 0xFF
+					default 0x24
+				config RT_SOFT_I2C7_SDA_PIN
+					hex "SDA pin number"
+					range 0x00 0xFF
+					default 0x25
+				config RT_SOFT_I2C7_BUS_NAME
+					string "Bus name"
+					default i2c7
+				config RT_SOFT_I2C7_TIMING_DELAY
+					int "Timing delay (us)"
+					range 0 32767
+					default 10
+				config RT_SOFT_I2C7_TIMING_TIMEOUT
+					int "Timing timeout (tick)"
+					range 0 32767
+					default 10
+			endif
+		config RT_USING_SOFT_I2C8
+			bool "Enable I2C8 Bus (software simulation)"
+			default n
+			if RT_USING_SOFT_I2C8
+				comment "Notice: PD06 --> 0x36; PD07 --> 0x37"
+				config RT_SOFT_I2C8_SCL_PIN
+					hex "SCL pin number"
+					range 0x00 0xFF
+					default 0x36
+				config RT_SOFT_I2C8_SDA_PIN
+					hex "SDA pin number"
+					range 0x00 0xFF
+					default 0x37
+				config RT_SOFT_I2C8_BUS_NAME
+					string "Bus name"
+					default i2c8
+				config RT_SOFT_I2C8_TIMING_DELAY
+					int "Timing delay (us)"
+					range 0 32767
+					default 10
+				config RT_SOFT_I2C8_TIMING_TIMEOUT
+					int "Timing timeout (tick)"
+					range 0 32767
+					default 10
+			endif
     endif
 endif
 
