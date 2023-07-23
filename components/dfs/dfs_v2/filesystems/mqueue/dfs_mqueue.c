@@ -43,28 +43,21 @@ struct mqueue_file *dfs_mqueue_lookup(const char *path, rt_size_t *size) {
     return RT_NULL;
 }
 
-int dfs_mqueue_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data) {
+int dfs_mqueue_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data) {
     return RT_EOK;
 }
 
-int dfs_mqueue_umount(struct dfs_filesystem *fs) { return RT_EOK; }
+int dfs_mqueue_umount(struct dfs_mnt *mnt) { return RT_EOK; }
 
-int dfs_mqueue_statfs(struct dfs_filesystem *fs, struct statfs *buf) { return RT_EOK; }
+int dfs_mqueue_statfs(struct dfs_mnt *mnt, struct statfs *buf) { return RT_EOK; }
 
 int dfs_mqueue_close(struct dfs_file *file) { return RT_EOK; }
 
-int dfs_mqueue_open(struct dfs_file *file) {
-    rt_size_t size;
-    if ((file->dentry->pathname[0] == '/') && (file->dentry->pathname[1] == '\0'))
-        return 0;
-
-}
+int dfs_mqueue_open(struct dfs_file *file) { return 0; }
 
 int dfs_mqueue_stat(struct dfs_dentry *dentry, struct stat *st) {
-    const char *path = RT_NULL;
     struct dfs_vnode *vnode = RT_NULL;
     if (dentry && dentry->vnode) {
-        path = dentry->pathname;
         vnode = dentry->vnode;
         st->st_dev = 0;
         st->st_gid = vnode->gid;
@@ -140,7 +133,7 @@ static struct dfs_vnode *dfs_mqueue_create_vnode(struct dfs_dentry *dentry, int 
         if (mq_file == RT_NULL) {
             mq_file = (struct mqueue_file *)rt_malloc(sizeof(struct mqueue_file));
             if (mq_file == RT_NULL) {
-                return -ENFILE;
+                return NULL;
             }
             mq_file->msg_size = 8192;
             mq_file->max_msgs = 10;
