@@ -51,12 +51,6 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
 static int noop_lseek(struct dfs_file *file, off_t offset, int wherece);
 #endif
 
-static inline void eventfd_ctx_do_read(struct eventfd_ctx *ctx, rt_ubase_t *cnt)
-{
-    *cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
-    ctx->count -= *cnt;
-}
-
 static const struct dfs_file_ops eventfd_fops =
 {
     .close      = eventfd_close,
@@ -129,7 +123,16 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
         }
     }
 
-    eventfd_ctx_do_read(ctx, &ucnt);
+    if (ctx->flags & EFD_SEMAPHORE)
+    {
+        ucnt = 1;
+    }
+    else
+    {
+        ucnt = ctx->count;
+    }
+
+    ctx->count -= ucnt;
 
     (*buffer) = ucnt;
 
