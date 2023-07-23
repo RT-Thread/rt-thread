@@ -47,13 +47,21 @@ int dfs_mqueue_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data
     return RT_EOK;
 }
 
-int dfs_mqueue_umount(struct dfs_mnt *mnt) { return RT_EOK; }
+int dfs_mqueue_umount(struct dfs_mnt *mnt) {
+    return RT_EOK;
+}
 
-int dfs_mqueue_statfs(struct dfs_mnt *mnt, struct statfs *buf) { return RT_EOK; }
+int dfs_mqueue_statfs(struct dfs_mnt *mnt, struct statfs *buf) {
+    return RT_EOK;
+}
 
-int dfs_mqueue_close(struct dfs_file *file) { return RT_EOK; }
+int dfs_mqueue_close(struct dfs_file *file) {
+    return RT_EOK;
+}
 
-int dfs_mqueue_open(struct dfs_file *file) { return 0; }
+int dfs_mqueue_open(struct dfs_file *file) {
+    return 0;
+}
 
 int dfs_mqueue_stat(struct dfs_dentry *dentry, struct stat *st) {
     struct dfs_vnode *vnode = RT_NULL;
@@ -149,7 +157,6 @@ static struct dfs_vnode *dfs_mqueue_create_vnode(struct dfs_dentry *dentry, int 
         vnode->data = mq_file;
         vnode->size = 0;
     }
-
     return vnode;
 }
 
