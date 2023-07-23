@@ -481,6 +481,10 @@ static rt_ssize_t i2c_send_bytes(struct rt_i2c_bus_device *bus,
 
     while(count > 0)
     {
+        I2C_DEBUG_LOG(LOG_D, "%s send bytes: 0x%02X"
+            , rt_i2c_bus_name(bus)
+            , *ptr
+            );
         ret = i2c_writeb(bus, *ptr);
 
         if((ret > 0) || ((ignore_nack > 0) && (ret == 0)))
@@ -755,7 +759,7 @@ static rt_ssize_t soft_i2c_xfer(struct rt_i2c_bus_device *bus,
         {
             ret = i2c_recv_bytes(bus, msg);
             if(ret >= 1)
-                I2C_DEBUG_LOG(LOG_D, "%s readed %d byte%s",
+                I2C_DEBUG_LOG(LOG_I, "%s readed %d byte%s",
                               rt_i2c_bus_name(bus), ret,
                               ret == 1 ? "" : "s");
             if(ret < msg->len)
@@ -769,7 +773,7 @@ static rt_ssize_t soft_i2c_xfer(struct rt_i2c_bus_device *bus,
         {
             ret = i2c_send_bytes(bus, msg);
             if(ret >= 1)
-                I2C_DEBUG_LOG(LOG_D, "%s writed %d byte%s",
+                I2C_DEBUG_LOG(LOG_I, "%s writed %d byte%s",
                               rt_i2c_bus_name(bus), ret,
                               ret == 1 ? "" : "s");
             if(ret < msg->len)
