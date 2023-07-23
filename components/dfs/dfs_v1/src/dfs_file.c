@@ -544,7 +544,7 @@ int dfs_file_flush(struct dfs_file *fd)
  *
  * @return the current position after seek.
  */
-int dfs_file_lseek(struct dfs_file *fd, off_t offset)
+off_t dfs_file_lseek(struct dfs_file *fd, off_t offset)
 {
     int result;
 

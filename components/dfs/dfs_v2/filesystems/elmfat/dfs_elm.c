@@ -557,7 +557,7 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
     return -ENOSYS;
 }
 
-int dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
+ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
 {
     FIL *fd;
     FRESULT result;
@@ -581,7 +581,7 @@ int dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, off_t *pos)
+ssize_t dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, off_t *pos)
 {
     FIL *fd;
     FRESULT result;
@@ -618,7 +618,7 @@ int dfs_elm_flush(struct dfs_file *file)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
+off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
     FRESULT result = FR_OK;
     if (file->vnode->type == FT_REGULAR)
