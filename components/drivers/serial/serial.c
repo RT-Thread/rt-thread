@@ -136,9 +136,9 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 }
 
 #ifdef RT_USING_DFS_V2
-static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
+static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
 #else
-static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
+static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 #endif
 {
     int size = 0;
@@ -174,9 +174,9 @@ static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 }
 
 #ifdef RT_USING_DFS_V2
-static int serial_fops_write(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
 #else
-static int serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
+static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 #endif
 {
     rt_device_t device;
