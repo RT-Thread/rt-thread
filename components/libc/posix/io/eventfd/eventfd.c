@@ -274,12 +274,7 @@ static int do_eventfd(unsigned int count, int flags)
     return res;
 }
 
-int eventfd(unsigned int count)
-{
-    return do_eventfd(count, 0);
-}
-
-int eventfd2(unsigned int count, int flags)
+int eventfd(unsigned int count, int flags)
 {
     return do_eventfd(count, flags);
 }

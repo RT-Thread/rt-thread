@@ -11,7 +11,6 @@
 #ifndef __EVENTFD_H__
 #define __EVENTFD_H__
 
-int eventfd(unsigned int count);
-int eventfd2(unsigned int count, int flags);
+int eventfd(unsigned int count, int flags);
 
 #endif /* __EVENTFD_H__ */
