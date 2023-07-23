@@ -389,7 +389,7 @@ int dfs_file_ioctl(struct dfs_file *fd, int cmd, void *args)
  *
  * @return the actual read data bytes or 0 on end of file or failed.
  */
-int dfs_file_read(struct dfs_file *fd, void *buf, size_t len)
+ssize_t dfs_file_read(struct dfs_file *fd, void *buf, size_t len)
 {
     int result = 0;
 
@@ -503,7 +503,7 @@ __exit:
  *
  * @return the actual written data length.
  */
-int dfs_file_write(struct dfs_file *fd, const void *buf, size_t len)
+ssize_t dfs_file_write(struct dfs_file *fd, const void *buf, size_t len)
 {
     if (fd == NULL)
     {
