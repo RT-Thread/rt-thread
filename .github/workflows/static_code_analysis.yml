@@ -4,6 +4,10 @@ on:
   pull_request:
     branches:
       - master
+    paths-ignore:
+      - documentation/**
+      - '**/README.md'
+      - '**/README_zh.md'
 
 jobs:
   scancode_job:
