@@ -10,7 +10,7 @@
 
 #include <Arduino.h>
 
-void setup(void)
+void setup(void) 
 {
     /* put your setup code here, to run once: */
     Serial.begin();
