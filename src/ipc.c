@@ -791,52 +791,58 @@ rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
 /* update priority of target thread and the thread suspended it if any */
 rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t priority, int suspend_flag)
 {
-    rt_err_t ret;
+    rt_err_t ret = -RT_ERROR;
+    struct rt_object* pending_obj = RT_NULL;
+
     LOG_D("thread:%s priority -> %d", thread->parent.name, priority);
 
     /* change priority of the thread */
-    rt_thread_control(thread,
-                      RT_THREAD_CTRL_CHANGE_PRIORITY,
-                      &priority);
+    ret = rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, &priority);
 
-    if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+    while ((ret == RT_EOK) && ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
     {
         /* whether change the priority of taken mutex */
-        struct rt_object* pending_obj = thread->pending_object;
+        pending_obj = thread->pending_object;
 
         if (pending_obj && rt_object_get_type(pending_obj) == RT_Object_Class_Mutex)
         {
-            rt_uint8_t mutex_priority;
+            rt_uint8_t mutex_priority = 0xff;
             struct rt_mutex* pending_mutex = (struct rt_mutex *)pending_obj;
 
             /* re-insert thread to suspended thread list */
             rt_list_remove(&(thread->tlist));
 
             ret = _ipc_list_suspend(&(pending_mutex->parent.suspend_thread),
-                                thread,
-                                pending_mutex->parent.parent.flag,
-                                suspend_flag);
-            if (ret != RT_EOK)
+                                    thread,
+                                    pending_mutex->parent.parent.flag,
+                                    suspend_flag);
+            if (ret == RT_EOK)
             {
-                /* TODO */
-                return ;
-            }
+                /* update priority */
+                _mutex_update_priority(pending_mutex);
+                /* change the priority of mutex owner thread */
+                LOG_D("mutex: %s priority -> %d", pending_mutex->parent.parent.name,
+                        pending_mutex->priority);
 
-            /* update priority */
-            _mutex_update_priority(pending_mutex);
-            /* change the priority of mutex owner thread */
-            LOG_D("mutex: %s priority -> %d", pending_mutex->parent.parent.name,
-                    pending_mutex->priority);
+                mutex_priority = _thread_get_mutex_priority(pending_mutex->owner);
+                if (mutex_priority != pending_mutex->owner->current_priority)
+                {
+                    thread = pending_mutex->owner;
 
-            mutex_priority = _thread_get_mutex_priority(pending_mutex->owner);
-            if (mutex_priority != pending_mutex->owner->current_priority)
-            {
-                _thread_update_priority(pending_mutex->owner, mutex_priority, suspend_flag);
+                    ret = rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, &mutex_priority);
+                }
+                else
+                {
+                    ret = -RT_ERROR;
+                }
             }
+        }
+        else
+        {
+            ret = -RT_ERROR;
         }
     }
 }
-
 /**
  * @addtogroup mutex
  * @{
