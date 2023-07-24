@@ -84,7 +84,7 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
     if (count == ULLONG_MAX)
         events |= POLLERR;
 
-    if (ULLONG_MAX -1 > count)
+    if ((ULLONG_MAX -1) > count)
         events |= POLLOUT;
 
     return events;
@@ -97,10 +97,10 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 #endif
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
-    rt_uint64_t ucnt = 0;
+    rt_uint64_t counter_num = 0;
     rt_uint64_t *buffer = (rt_uint64_t *)buf;
 
-    if (count < sizeof(ucnt))
+    if (count < sizeof(counter_num))
         return -EINVAL;
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
@@ -125,20 +125,20 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 
     if (ctx->flags & EFD_SEMAPHORE)
     {
-        ucnt = 1;
+        counter_num = 1;
     }
     else
     {
-        ucnt = ctx->count;
+        counter_num = ctx->count;
     }
 
-    ctx->count -= ucnt;
+    ctx->count -= counter_num;
 
-    (*buffer) = ucnt;
+    (*buffer) = counter_num;
 
     rt_mutex_release(&ctx->lock);
 
-    return sizeof(ucnt);
+    return sizeof(counter_num);
 }
 
 #ifndef RT_USING_DFS_V2
@@ -148,34 +148,31 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
 #endif
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
-    rt_ssize_t res;
-    /*
-    ucnt: unsigned count
-    Adds a value to the counter
-    */
-    rt_uint64_t ucnt = *(rt_uint64_t *)buf;
+    rt_ssize_t ret = 0;
 
-    if (count < sizeof(ucnt))
+    rt_uint64_t counter_num = *(rt_uint64_t *)buf;
+
+    if (count < sizeof(counter_num))
         return -EINVAL;
 
-    if (ucnt == ULLONG_MAX)
+    if (counter_num == ULLONG_MAX)
         return -EINVAL;
 
-    res = -EAGAIN;
+    ret = -EAGAIN;
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
-    if ((ULLONG_MAX - ctx->count) > ucnt)
+    if ((ULLONG_MAX - ctx->count) > counter_num)
     {
-        res = sizeof(ucnt);
+        ret = sizeof(counter_num);
     }
     else if (!(file->flags & O_NONBLOCK))
     {
-        for (res = 0;;)
+        for (;;)
         {
-            if ((ULLONG_MAX - ctx->count) >= ucnt)
+            if ((ULLONG_MAX - ctx->count) >= counter_num)
             {
-                res = sizeof(ucnt);
+                ret = sizeof(counter_num);
                 break;
             }
             /* Release the mutex to avoid a deadlock */
@@ -186,15 +183,15 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
         }
     }
 
-    if (res > 0)
+    if (ret > 0)
     {
-        ctx->count += ucnt;
+        ctx->count += counter_num;
         rt_wqueue_wakeup(&ctx->reader_queue, (void *)POLLIN);
     }
 
     rt_mutex_release(&ctx->lock);
 
-    return res;
+    return ret;
 }
 
 static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
@@ -241,7 +238,7 @@ static int do_eventfd(unsigned int count, int flags)
     struct dfs_file *file;
     int fd;
     int status;
-    rt_ssize_t res = 0;
+    rt_ssize_t ret = 0;
 
     if (flags & ~EFD_FLAGS_SET)
         return -RT_EINVAL;
@@ -249,22 +246,22 @@ static int do_eventfd(unsigned int count, int flags)
     fd = fd_new();
     if (fd >= 0)
     {
-        res = fd;
+        ret = fd;
         file = fd_get(fd);
 
         status = rt_eventfd_create(file, count, flags);
         if (status < 0)
         {
             fd_release(fd);
-            res = status;
+            ret = status;
         }
     }
     else
     {
-        res = fd;
+        ret = fd;
     }
 
-    return res;
+    return ret;
 }
 
 int eventfd(unsigned int count, int flags)
