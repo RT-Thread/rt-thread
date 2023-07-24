@@ -35,7 +35,6 @@ struct eventfd_ctx
     rt_uint64_t count;
     unsigned int flags;
     struct rt_mutex lock;
-    rt_thread_t id;
 };
 
 #ifndef RT_USING_DFS_V2
@@ -212,7 +211,6 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
     {
         ctx->count = count;
         ctx->flags = flags;
-        ctx->id = rt_thread_self();
         flags &= EFD_SHARED_FCNTL_FLAGS;
         flags |= O_RDWR;
 
