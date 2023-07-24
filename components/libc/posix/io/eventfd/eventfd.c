@@ -100,7 +100,7 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     rt_uint64_t ucnt = 0;
     rt_uint64_t *buffer = (rt_uint64_t *)buf;
-    
+
     if (count < sizeof(ucnt))
         return -EINVAL;
 
