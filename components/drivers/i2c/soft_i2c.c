@@ -12,6 +12,14 @@
 #include <rthw.h>
 
 #ifdef RT_USING_SOFT_I2C
+#if !defined(RT_USING_SOFT_I2C5) && !defined(RT_USING_SOFT_I2C6)\
+    && !defined(RT_USING_SOFT_I2C7) && !defined(RT_USING_SOFT_I2C8)
+    #error "Please define at least one RT_USING_SOFT_I2Cx"
+    /*
+    This driver can be disabled at:
+    menuconfig -> RT-Thread Components -> Device Drivers -> Using I2C device drivers
+    */
+#endif
 
 #define DBG_ENABLE
 #define DBG_TAG                         "I2C_S"
@@ -481,10 +489,8 @@ static rt_ssize_t i2c_send_bytes(struct rt_i2c_bus_device *bus,
 
     while(count > 0)
     {
-        I2C_DEBUG_LOG(LOG_D, "%s send bytes: 0x%02X"
-            , rt_i2c_bus_name(bus)
-            , *ptr
-            );
+        I2C_DEBUG_LOG(LOG_D, "%s send bytes: 0x%02X",
+                      rt_i2c_bus_name(bus), *ptr);
         ret = i2c_writeb(bus, *ptr);
 
         if((ret > 0) || ((ignore_nack > 0) && (ret == 0)))
