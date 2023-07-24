@@ -84,7 +84,7 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
     if (count == ULLONG_MAX)
         events |= POLLERR;
 
-    if ((ULLONG_MAX -1) > count)
+    if ((ULLONG_MAX - 1) > count)
         events |= POLLOUT;
 
     return events;
