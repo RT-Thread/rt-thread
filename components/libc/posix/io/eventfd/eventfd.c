@@ -28,7 +28,8 @@
 
 #define EVENTFD_MUTEX_NAME "eventfd"
 
-struct eventfd_ctx {
+struct eventfd_ctx
+{
     rt_wqueue_t reader_queue;
     rt_wqueue_t writer_queue;
     rt_uint64_t count;
@@ -42,13 +43,11 @@ static int eventfd_close(struct dfs_file *file);
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req);
 static int eventfd_read(struct dfs_file *file, void *buf, size_t count);
 static int eventfd_write(struct dfs_file *file, const void *buf, size_t count);
-static int noop_lseek(struct dfs_file *file, off_t offset);
 #else
 static int eventfd_close(struct dfs_file *file);
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req);
 static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
 static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
-static int noop_lseek(struct dfs_file *file, off_t offset, int wherece);
 #endif
 
 static const struct dfs_file_ops eventfd_fops =
@@ -57,7 +56,6 @@ static const struct dfs_file_ops eventfd_fops =
     .poll       = eventfd_poll,
     .read       = eventfd_read,
     .write      = eventfd_write,
-    .lseek      = noop_lseek,
 };
 
 static int eventfd_close(struct dfs_file *file)
@@ -74,7 +72,7 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     int events = 0;
-    rt_ubase_t count;
+    rt_uint64_t count;
 
     count = ctx->count;
 
@@ -100,8 +98,11 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 #endif
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
-    rt_ubase_t ucnt = 0;
-    rt_ubase_t *buffer = (rt_ubase_t *)buf;
+    rt_uint64_t ucnt = 0;
+    rt_uint64_t *buffer = (rt_uint64_t *)buf;
+    
+    if (count < sizeof(ucnt))
+        return -EINVAL;
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
@@ -153,7 +154,7 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
     ucnt: unsigned count
     Adds a value to the counter
     */
-    rt_ubase_t ucnt = *(rt_ubase_t *)buf;
+    rt_uint64_t ucnt = *(rt_uint64_t *)buf;
 
     if (count < sizeof(ucnt))
         return -EINVAL;
@@ -195,15 +196,6 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
     rt_mutex_release(&ctx->lock);
 
     return res;
-}
-
-#ifndef RT_USING_DFS_V2
-static int noop_lseek(struct dfs_file *file, off_t offset)
-#else
-static int noop_lseek(struct dfs_file *file, off_t offset, int wherece)
-#endif
-{
-    return 0;
 }
 
 static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
