@@ -29,7 +29,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
@@ -41,7 +40,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
 
 /* RT-Thread Components */
 
@@ -62,6 +61,9 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+
+/* DFS: device virtual file system */
+
 
 /* Device Drivers */
 
@@ -149,6 +151,7 @@
 /* Micrium: Micrium software products porting for RT-Thread */
 
 #define PKG_USING_FREERTOS_WRAPPER
+#define PKG_FREERTOS_USING_CONFIG_H
 #define PKG_USING_FREERTOS_WRAPPER_LATEST_VERSION
 
 /* peripheral libraries and drivers */
@@ -183,7 +186,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
