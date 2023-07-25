@@ -36,6 +36,28 @@ rt_inline void icache_invalid_all(void)
     asm volatile ("ic ialluis\n\tisb sy":::"memory");
 }
 
+/**
+ * @brief Save signal-related context to user stack
+ *
+ * @param user_sp the current sp of user
+ * @param exp_frame exception frame to resume former execution
+ * @param psiginfo pointer to the siginfo
+ * @param elr pc of former execution
+ * @param spsr program status of former execution
+ * @return void* the new user sp
+ */
+void *arch_signal_ucontext_save(rt_base_t user_sp, siginfo_t *psiginfo,
+                                struct rt_hw_exp_stack *exp_frame,
+                                rt_base_t elr, rt_base_t spsr,
+                                lwp_sigset_t *save_sig_mask);
+
+/**
+ * @brief Restore the signal mask after return
+ *
+ * @param user_sp sp of user
+ * @return void*
+ */
+void *arch_signal_ucontext_restore(rt_base_t user_sp);
 #ifdef __cplusplus
 }
 #endif

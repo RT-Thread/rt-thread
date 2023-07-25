@@ -353,7 +353,7 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     rt_base_t level;
-#ifdef RT_DEBUG
+#ifdef RT_USING_DEBUG
     struct rt_list_node *node = RT_NULL;
 #endif
     struct rt_object_information *information;
@@ -365,7 +365,7 @@ void rt_object_init(struct rt_object         *object,
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
 
-#ifdef RT_DEBUG
+#ifdef RT_USING_DEBUG
     /* check object type to avoid re-initialization */
 
     /* enter critical */

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-10     Jesven       first version
+ * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
  */
 
 #include "rtconfig.h"
@@ -191,7 +192,7 @@ arch_syscall_exit:
 
 .global arch_ret_to_user
 arch_ret_to_user:
-    push {r0-r3, r12, lr}
+    push {r0-r12, lr}
     bl lwp_check_debug
     bl lwp_check_exit_request
     cmp r0, #0
@@ -199,10 +200,10 @@ arch_ret_to_user:
     mov r0, #0
     b sys_exit
 1:
-    bl lwp_signal_check
-    cmp r0, #0
-    pop {r0-r3, r12, lr}
-    bne user_do_signal
+    mov r0, sp
+    /* r0 -> exp frame */
+    bl lwp_thread_signal_catch
+    pop {r0-r12, lr}
 
     push {r0}
     ldr r0, =rt_dbg_ops
@@ -273,35 +274,65 @@ lwp_check_debug_quit:
 
 arch_signal_quit:
     cpsid i
+    /* drop context of signal handler */
     pop {r0 - r3, r12}
     pop {r4, r5, lr}
     pop {lr}
-    bl lwp_signal_restore
-    /* r0 is user_ctx : ori sp, pc, cpsr*/
-    ldr r1, [r0]
-    ldr r2, [r0, #4]
-    ldr r3, [r0, #8]
-    msr spsr_cxsf, r3
-    mov lr, r2
+
+    /* restore context */
     cps #Mode_SYS
-    mov sp, r1
+    mov r0, sp
+    cps #Mode_SVC
+    bl arch_signal_ucontext_restore
+
+    /* lr <- *(&frame.ip) */
+    ldr lr, [r0]
+    cps #Mode_SYS
+    mov sp, r0
+
+    /* drop ip in the frame and restore cpsr */
+    pop {r0}
+    pop {r0}
+    msr spsr_cxsf, r0
     pop {r0-r12, lr}
     cps #Mode_SVC
+
     b arch_ret_to_user
 
-user_do_signal:
-    mov r0, r0
+/**
+ * rt_noreturn
+ * void arch_thread_signal_enter(
+ *      int signo,                      -> r0
+ *      siginfo_t *psiginfo,            -> r1
+ *      void *exp_frame,                -> r2
+ *      void *entry_uaddr,              -> r3
+ *      lwp_sigset_t *save_sig_mask,    -> ??
+ * )
+ */
+.global arch_thread_signal_enter
+arch_thread_signal_enter:
+    mov r4, r0
+    mov r5, r3
+
     cps #Mode_SYS
-    push {r0-r12, lr}
+    mov r0, lr
+    mov r3, sp
+    cps #Mode_SVC
+    bl arch_signal_ucontext_save
 
-    sub sp, #8
-    ldr r0, =lwp_sigreturn
-    ldr r1, [r0]
-    str r1, [sp]
-    ldr r1, [r0, #4]
-    str r1, [sp, #4]
+    /* reset user sp */
+    cps #Mode_SYS
+    mov sp, r0
+    mov lr, r0
+    cps #Mode_SVC
 
-    mov r1, sp
+    /* r1,r2 <- new_user_sp */
+    mov r1, r0
+    mov r2, r0
+    /* r0 <- signo */
+    mov r0, r4
+
+    mov r1, r0
     mcr p15, 0, r1, c7, c11, 1   ;//dc cmvau
     add r1, #4
     mcr p15, 0, r1, c7, c11, 1   ;//dc cmvau
@@ -311,27 +342,25 @@ user_do_signal:
     dsb
     isb
 
-    mov r5, sp  ;//if func is 0
-    mov lr, sp
+    /* r4 <- &sigreturn */
+    mov r4, r2
 
-    add r0, sp, #8 /* lwp_sigreturn */
-    cps #Mode_SVC
-    mov r1, lr
-    mrs r2, spsr
-    bl  lwp_signal_backup
-    /* r0 is signal */
-    mov r4, r0
-    bl lwp_sighandler_get
-    mov lr, r0
+    /* lr <- user_handler() */
+    mov lr, r5
     cmp lr, #0
-    moveq lr, r5
-    mov r0, r4
+    moveq lr, r4
+
+    /* r1 <- siginfo */
+    mov r1, r2
+    add r1, #8
+    /* handler(signo, siginfo, ucontext) */
     movs pc, lr
 
 lwp_debugreturn:
     mov r7, #0xf000
     svc #0
 
+.global lwp_sigreturn
 lwp_sigreturn:
     mov r7, #0xe000
     svc #0

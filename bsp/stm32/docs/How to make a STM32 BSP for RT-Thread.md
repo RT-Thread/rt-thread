@@ -217,7 +217,7 @@ The specifications of making STM32 BSP are mainly divided into three aspects: en
 #### 4.1.2 ENV configuration 
 
 - The system heartbeat is uniformly set to 1000 (Macro: RT_TICK_PER_SECOND) 
-- The assertion in the debugging option needs to be turned on in the BSP (macro: RT_DEBUG) 
+- The assertion in the debugging option needs to be turned on in the BSP (macro: RT_USING_DEBUG) 
 - The system idle thread stack size is uniformly set to 256 (Macro: IDLE_THREAD_STACK_SIZE) 
 - Turn on automatic component initialization (Macro: RT_USING_COMPONENTS_INIT) 
 - Need to enable the user main option (Macro: RT_USING_USER_MAIN) 

@@ -790,7 +790,7 @@ GD32 BSP 的制作规范主要分为 3 个方面：工程配置，ENV 配置和 
 #### 4.1.2 ENV 配置
 
 - 系统心跳统一设置为 1000（宏：RT_TICK_PER_SECOND）
-- BSP 中需要打开调试选项中的断言（宏：RT_DEBUG）
+- BSP 中需要打开调试选项中的断言（宏：RT_USING_DEBUG）
 - 系统空闲线程栈大小统一设置为 256（宏：IDLE_THREAD_STACK_SIZE）
 - 开启组件自动初始化（宏：RT_USING_COMPONENTS_INIT）
 - 需要开启 user main 选项（宏：RT_USING_USER_MAIN）

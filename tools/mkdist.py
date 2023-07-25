@@ -376,13 +376,13 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
 
     target_project_type = GetOption('target')
     if target_project_type:
-        child = subprocess.Popen('scons --target={} --project-name={}'.format(target_project_type, project_name), cwd=dist_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        child = subprocess.Popen('scons --target={} --project-name="{}"'.format(target_project_type, project_name), cwd=dist_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = child.communicate()
         if child.returncode == 0:
             print(stdout)
         else:
             print(stderr)
     else:
-        print('suggest to use command scons --dist [--target=xxx] [--project-name=xxx] [--project-path=xxx]')
+        print('suggest to use command scons --dist [--target=xxx] [--project-name="xxx"] [--project-path="xxx"]')
 
     print('dist project successfully!')

@@ -11,8 +11,11 @@
  * 2021-02-12     lizhirui     add 64-bit support for sys_brk
  * 2021-02-20     lizhirui     fix some warnings
  * 2023-03-13     WangXiaoyao  Format & fix syscall return value
+ * 2023-07-06     Shell        adapt the signal API, and clone, fork to new implementation of lwp signal
  */
+
 #define _GNU_SOURCE
+
 /* RT-Thread System call */
 #include <rtthread.h>
 #include <rthw.h>
@@ -28,6 +31,7 @@
 #include "syscall_generic.h"
 
 #include <lwp.h>
+#include "lwp_signal.h"
 #ifdef ARCH_MM_MMU
 #include <lwp_user_mm.h>
 #include <lwp_arch.h>
@@ -1007,11 +1011,80 @@ sysret_t sys_exec(char *filename, int argc, char **argv, char **envp)
     return lwp_execve(filename, 0, argc, argv, envp);
 }
 
-sysret_t sys_kill(int pid, int sig)
+sysret_t sys_kill(int pid, int signo)
 {
-    int ret = 0;
-    ret = lwp_kill(pid, sig);
-    return (ret < 0 ? GET_ERRNO() : ret);
+    rt_err_t kret;
+    sysret_t sysret;
+    rt_base_t level;
+    struct rt_lwp *lwp;
+
+    /* handling the semantics of sys_kill */
+    if (pid > 0)
+    {
+        /* TODO: lock the lwp strcut */
+        level = rt_hw_interrupt_disable();
+        lwp = lwp_from_pid(pid);
+
+        /* lwp_signal_kill() can handle NULL lwp */
+        if (lwp)
+            kret = lwp_signal_kill(lwp, signo, SI_USER, 0);
+        else
+            kret = -RT_ENOENT;
+
+        rt_hw_interrupt_enable(level);
+    }
+    else if (pid == 0)
+    {
+        /**
+         * sig shall be sent to all processes (excluding an unspecified set
+         * of system processes) whose process group ID is equal to the process
+         * group ID of the sender, and for which the process has permission to
+         * send a signal.
+         */
+        kret = -RT_ENOSYS;
+    }
+    else if (pid == -1)
+    {
+        /**
+         * sig shall be sent to all processes (excluding an unspecified set
+         * of system processes) for which the process has permission to send
+         * that signal.
+         */
+        kret = -RT_ENOSYS;
+    }
+    else /* pid < -1 */
+    {
+        /**
+         * sig shall be sent to all processes (excluding an unspecified set
+         * of system processes) whose process group ID is equal to the absolute
+         * value of pid, and for which the process has permission to send a signal.
+         */
+        kret = -RT_ENOSYS;
+    }
+
+    switch (kret)
+    {
+        case -RT_ENOENT:
+            sysret = -ESRCH;
+            break;
+        case -RT_EINVAL:
+            sysret = -EINVAL;
+            break;
+        case -RT_ENOSYS:
+            sysret = -ENOSYS;
+            break;
+
+        /**
+         * kill() never returns ENOMEM, so return normally to caller.
+         * IEEE Std 1003.1-2017 says the kill() function is successful
+         * if the process has permission to send sig to any of the
+         * processes specified by pid.
+         */
+        case -RT_ENOMEM:
+        default:
+            sysret = 0;
+    }
+    return sysret;
 }
 
 sysret_t sys_getpid(void)
@@ -1500,40 +1573,9 @@ fail:
     }
     return RT_NULL;
 }
-#ifdef ARCH_MM_MMU
-#define CLONE_VM    0x00000100
-#define CLONE_FS    0x00000200
-#define CLONE_FILES 0x00000400
-#define CLONE_SIGHAND   0x00000800
-#define CLONE_PTRACE    0x00002000
-#define CLONE_VFORK 0x00004000
-#define CLONE_PARENT    0x00008000
-#define CLONE_THREAD    0x00010000
-#define CLONE_NEWNS 0x00020000
-#define CLONE_SYSVSEM   0x00040000
-#define CLONE_SETTLS    0x00080000
-#define CLONE_PARENT_SETTID 0x00100000
-#define CLONE_CHILD_CLEARTID    0x00200000
-#define CLONE_DETACHED  0x00400000
-#define CLONE_UNTRACED  0x00800000
-#define CLONE_CHILD_SETTID  0x01000000
-#define CLONE_NEWCGROUP 0x02000000
-#define CLONE_NEWUTS    0x04000000
-#define CLONE_NEWIPC    0x08000000
-#define CLONE_NEWUSER   0x10000000
-#define CLONE_NEWPID    0x20000000
-#define CLONE_NEWNET    0x40000000
-#define CLONE_IO    0x80000000
 
-/* arg[] -> flags
- *          stack
- *          new_tid
- *          tls
- *          set_clear_tid_address
- *          quit_func
- *          start_args
- *          */
-#define SYS_CLONE_ARGS_NR 7
+#ifdef ARCH_MM_MMU
+#include "lwp_clone.h"
 
 long _sys_clone(void *arg[])
 {
@@ -1687,9 +1729,12 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     dst->tty = src->tty;
     rt_memcpy(dst->cmd, src->cmd, RT_NAME_MAX);
 
-    dst->sa_flags = src->sa_flags;
-    dst->signal_mask = src->signal_mask;
-    rt_memcpy(dst->signal_handler, src->signal_handler, sizeof dst->signal_handler);
+    rt_memcpy(&dst->signal.sig_action, &src->signal.sig_action, sizeof(dst->signal.sig_action));
+    rt_memcpy(&dst->signal.sig_action_mask, &src->signal.sig_action_mask, sizeof(dst->signal.sig_action_mask));
+    rt_memcpy(&dst->signal.sig_action_nodefer, &src->signal.sig_action_nodefer, sizeof(dst->signal.sig_action_nodefer));
+    rt_memcpy(&dst->signal.sig_action_onstack, &src->signal.sig_action_onstack, sizeof(dst->signal.sig_action_onstack));
+    rt_memcpy(&dst->signal.sig_action_restart, &dst->signal.sig_action_restart, sizeof(dst->signal.sig_action_restart));
+    rt_memcpy(&dst->signal.sig_action_siginfo, &dst->signal.sig_action_siginfo, sizeof(dst->signal.sig_action_siginfo));
     rt_strcpy(dst->working_directory, src->working_directory);
 }
 
@@ -1797,7 +1842,7 @@ sysret_t _sys_fork(void)
     thread->user_entry = self_thread->user_entry;
     thread->user_stack = self_thread->user_stack;
     thread->user_stack_size = self_thread->user_stack_size;
-    thread->signal_mask = self_thread->signal_mask;
+    thread->signal.sigset_mask = self_thread->signal.sigset_mask;
     thread->thread_idr = self_thread->thread_idr;
     thread->lwp = (void *)lwp;
     thread->tid = tid;
@@ -2457,18 +2502,20 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 
         _swap_lwp_data(lwp, new_lwp, void *, args);
 
-        rt_memset(&thread->signal_mask, 0, sizeof(thread->signal_mask));
-        rt_memset(&thread->signal_mask_bak, 0, sizeof(thread->signal_mask_bak));
-        lwp->sa_flags = 0;
-        rt_memset(&lwp->signal_mask, 0, sizeof(lwp->signal_mask));
-        rt_memset(&lwp->signal_mask_bak, 0, sizeof(lwp->signal_mask_bak));
-        rt_memset(lwp->signal_handler, 0, sizeof(lwp->signal_handler));
+        lwp_thread_signal_detach(&thread->signal);
+        rt_memset(&thread->signal.sigset_mask, 0, sizeof(thread->signal.sigset_mask));
+
+        lwp_signal_detach(&lwp->signal);
+        lwp_signal_init(&lwp->signal);
 
         /* to do: clsoe files with flag CLOEXEC */
 
         lwp_aspace_switch(thread);
 
         rt_hw_interrupt_enable(level);
+
+        /* setup the signal for the dummy lwp, so that is can be smoothly recycled */
+        lwp_signal_init(&new_lwp->signal);
 
         lwp_ref_dec(new_lwp);
         arch_start_umode(lwp->args,
@@ -3267,9 +3314,10 @@ struct k_sigaction {
 };
 
 sysret_t sys_sigaction(int sig, const struct k_sigaction *act,
-                     struct k_sigaction *oact, size_t sigsetsize)
+                       struct k_sigaction *oact, size_t sigsetsize)
 {
     int ret = -RT_EINVAL;
+    struct rt_lwp *lwp;
     struct lwp_sigaction kact, *pkact = RT_NULL;
     struct lwp_sigaction koact, *pkoact = RT_NULL;
 
@@ -3310,7 +3358,9 @@ sysret_t sys_sigaction(int sig, const struct k_sigaction *act,
         pkact = &kact;
     }
 
-    ret = lwp_sigaction(sig, pkact, pkoact, sigsetsize);
+    lwp = lwp_self();
+    RT_ASSERT(lwp);
+    ret = lwp_signal_action(lwp, sig, pkact, pkoact);
 #ifdef ARCH_MM_MMU
     if (ret == 0 && oact)
     {
@@ -3323,6 +3373,12 @@ sysret_t sys_sigaction(int sig, const struct k_sigaction *act,
 out:
     return (ret < 0 ? GET_ERRNO() : ret);
 }
+
+static int mask_command_u2k[] = {
+    [SIG_BLOCK] = LWP_SIG_MASK_CMD_BLOCK,
+    [SIG_UNBLOCK] = LWP_SIG_MASK_CMD_UNBLOCK,
+    [SIG_SETMASK] = LWP_SIG_MASK_CMD_SET_MASK,
+};
 
 sysret_t sys_sigprocmask(int how, const sigset_t *sigset, sigset_t *oset, size_t size)
 {
@@ -3377,7 +3433,7 @@ sysret_t sys_sigprocmask(int how, const sigset_t *sigset, sigset_t *oset, size_t
         pnewset = (lwp_sigset_t *)sigset;
 #endif /* ARCH_MM_MMU */
     }
-    ret = lwp_sigprocmask(how, pnewset, poldset);
+    ret = lwp_thread_signal_mask(rt_thread_self(), mask_command_u2k[how], pnewset, poldset);
 #ifdef ARCH_MM_MMU
     if (ret < 0)
     {
@@ -3391,6 +3447,97 @@ sysret_t sys_sigprocmask(int how, const sigset_t *sigset, sigset_t *oset, size_t
     return (ret < 0 ? -EFAULT: ret);
 }
 
+sysret_t sys_sigpending(sigset_t *sigset, size_t sigsize)
+{
+    sysret_t ret = 0;
+    lwp_sigset_t lwpset;
+
+    /* Verify and Get sigset, timeout */
+    if (!sigset || !lwp_user_accessable((void *)sigset, sigsize))
+    {
+        ret = -EFAULT;
+    }
+    else
+    {
+        /* Fit sigset size to lwp set */
+        if (sizeof(lwpset) < sigsize)
+        {
+            LOG_I("%s: sigsize (%lx) extends lwp sigset chunk\n", __func__, sigsize);
+            sigsize = sizeof(lwpset);
+        }
+
+        lwp_thread_signal_pending(rt_thread_self(), &lwpset);
+
+        if (!lwp_put_to_user(sigset, &lwpset, sigsize))
+            RT_ASSERT(0);   /* should never happened */
+    }
+
+    return ret;
+}
+
+sysret_t sys_sigtimedwait(const sigset_t *sigset, siginfo_t *info, const struct timespec *timeout, size_t sigsize)
+{
+    int sig;
+    size_t ret;
+    lwp_sigset_t lwpset;
+    siginfo_t kinfo;
+    struct timespec ktimeout;
+    struct timespec *ptimeout;
+
+    /* Fit sigset size to lwp set */
+    if (sizeof(lwpset) < sigsize)
+    {
+        LOG_I("%s: sigsize (%lx) extends lwp sigset chunk\n", __func__, sigsize);
+        sigsize = sizeof(lwpset);
+    }
+    else
+    {
+        memset(&lwpset, 0, sizeof(lwpset));
+    }
+
+    /* Verify and Get sigset, timeout */
+    if (!sigset || !lwp_user_accessable((void *)sigset, sigsize))
+    {
+        return -EFAULT;
+    }
+    else
+    {
+        ret = lwp_get_from_user(&lwpset, (void *)sigset, sigsize);
+        RT_ASSERT(ret == sigsize);
+    }
+
+    if (timeout)
+    {
+        if (!lwp_user_accessable((void *)timeout, sizeof(*timeout)))
+            return -EFAULT;
+        else
+        {
+            ret = lwp_get_from_user(&ktimeout, (void *)timeout, sizeof(*timeout));
+            ptimeout = &ktimeout;
+            RT_ASSERT(ret == sizeof(*timeout));
+        }
+    }
+    else
+    {
+        ptimeout = RT_NULL;
+    }
+
+    sig = lwp_thread_signal_timedwait(rt_thread_self(), &lwpset, &kinfo, ptimeout);
+
+    if (info)
+    {
+        if (!lwp_user_accessable((void *)info, sizeof(*info)))
+            return -EFAULT;
+        else
+        {
+            ret = lwp_put_to_user(info, &kinfo, sizeof(*info));
+            RT_ASSERT(ret == sizeof(*info));
+        }
+    }
+
+    return sig;
+}
+
 sysret_t sys_tkill(int tid, int sig)
 {
 #ifdef ARCH_MM_MMU
@@ -3400,7 +3547,7 @@ sysret_t sys_tkill(int tid, int sig)
 
     level = rt_hw_interrupt_disable();
     thread = lwp_tid_get_thread(tid);
-    ret =  lwp_thread_kill(thread, sig);
+    ret = lwp_thread_signal_kill(thread, sig, SI_USER, 0);
     rt_hw_interrupt_enable(level);
     return ret;
 #else
@@ -3461,7 +3608,7 @@ sysret_t sys_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_
         pnewset = (lwp_sigset_t *)sigset;
 #endif
     }
-    ret = lwp_thread_sigprocmask(how, pnewset, poldset);
+    ret = lwp_thread_signal_mask(rt_thread_self(), mask_command_u2k[how], pnewset, poldset);
     if (ret < 0)
     {
         return ret;
@@ -5169,7 +5316,7 @@ sysret_t sys_symlink(const char *existing, const char *new)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-const static struct rt_syscall_def func_table[] =
+static const struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
     SYSCALL_SIGN(sys_read),
@@ -5391,6 +5538,15 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_symlink),
     SYSCALL_SIGN(sys_getaffinity),                      /* 180 */
     SYSCALL_SIGN(sys_sysinfo),
+    SYSCALL_SIGN(sys_notimpl),
+    SYSCALL_SIGN(sys_notimpl),
+    SYSCALL_SIGN(sys_notimpl),
+    SYSCALL_SIGN(sys_notimpl),                          /* 185 */
+    SYSCALL_SIGN(sys_notimpl),
+    SYSCALL_SIGN(sys_sigpending),
+    SYSCALL_SIGN(sys_sigtimedwait),
+    SYSCALL_SIGN(sys_notimpl),
+    SYSCALL_SIGN(sys_notimpl),                          /* 190 */
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
@@ -5407,6 +5563,10 @@ const void *lwp_get_sys_api(rt_uint32_t number)
         if (number < sizeof(func_table) / sizeof(func_table[0]))
         {
             func = func_table[number].func;
+        }
+        else
+        {
+            LOG_I("Unimplement syscall %d", number);
         }
     }
 
@@ -5427,6 +5587,10 @@ const char *lwp_get_syscall_name(rt_uint32_t number)
         if (number < sizeof(func_table) / sizeof(func_table[0]))
         {
             name = (char*)func_table[number].name;
+        }
+        else
+        {
+            LOG_I("Unimplement syscall %d", number);
         }
     }
 

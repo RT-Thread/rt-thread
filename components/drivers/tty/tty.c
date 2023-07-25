@@ -126,26 +126,6 @@ struct rt_lwp *tty_pop(struct tty_node **head, struct rt_lwp *target_lwp)
     return lwp;
 }
 
-rt_inline int tty_sigismember(lwp_sigset_t *set, int _sig)
-{
-    unsigned long sig = _sig - 1;
-
-    if (_LWP_NSIG_WORDS == 1)
-    {
-        return 1 & (set->sig[0] >> sig);
-    }
-    else
-    {
-        return 1 & (set->sig[sig / _LWP_NSIG_BPW] >> (sig % _LWP_NSIG_BPW));
-    }
-}
-
-static int is_ignored(int sig)
-{
-    return (tty_sigismember(&current->signal_mask, sig) ||
-        current->signal_handler[sig-1] == SIG_IGN);
-}
-
 /**
  *  tty_check_change    -   check for POSIX terminal changes
  *  @tty: tty to check
@@ -160,7 +140,6 @@ static int is_ignored(int sig)
 int __tty_check_change(struct tty_struct *tty, int sig)
 {
     pid_t pgrp = 0, tty_pgrp = 0;
-    struct rt_lwp *lwp = tty->foreground;
     int ret = 0;
     int level = 0;
 
@@ -182,20 +161,7 @@ int __tty_check_change(struct tty_struct *tty, int sig)
 
     if (tty_pgrp && (pgrp != tty->pgrp))
     {
-        if (is_ignored(sig))
-        {
-            if (sig == SIGTTIN)
-            {
-                ret = -EIO;
-            }
-        }
-        else
-        {
-            if (lwp)
-            {
-                lwp_kill(lwp_to_pid(lwp), sig);
-            }
-        }
+        lwp_signal_kill(current, sig, SI_USER, 0);
     }
     rt_hw_interrupt_enable(level);
 
@@ -340,9 +306,9 @@ static int tty_ioctl(struct dfs_file *fd, int cmd, void *args)
 }
 
 #ifdef RT_USING_DFS_V2
-static int tty_read(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
+static ssize_t tty_read(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
 #else
-static int tty_read(struct dfs_file *fd, void *buf, size_t count)
+static ssize_t tty_read(struct dfs_file *fd, void *buf, size_t count)
 #endif
 {
     int ret = 0;
@@ -361,9 +327,9 @@ static int tty_read(struct dfs_file *fd, void *buf, size_t count)
 }
 
 #ifdef RT_USING_DFS_V2
-static int tty_write(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+static ssize_t tty_write(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
 #else
-static int tty_write(struct dfs_file *fd, const void *buf, size_t count )
+static ssize_t tty_write(struct dfs_file *fd, const void *buf, size_t count )
 #endif
 {
     int ret = 0;

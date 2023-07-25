@@ -20,23 +20,24 @@
  * 2021-05-01     Meco Man     support fixed timezone
  * 2021-07-21     Meco Man     implement that change/set timezone APIs
  * 2023-07-03     xqyjlj       refactor posix time and timer
+ * 2023-07-16     Shell        update signal generation routine for lwp
+ *                             adapt to new api and do the signal handling in thread context
  */
 
 #include "sys/time.h"
-#include <ktime.h>
 #include <rthw.h>
-#include <rtthread.h>
+#include <rtdevice.h>
+#include <drivers/rtc.h>
 #include <sys/errno.h>
 #include <unistd.h>
-#include "drivers/rtc.h"
 #ifdef RT_USING_SMART
-#include "lwp.h"
+#include <lwp.h>
 #endif
 #ifdef RT_USING_POSIX_DELAY
 #include <delay.h>
 #endif
-#if defined( RT_USING_RTC ) || defined( RT_USING_CPUTIME)
-#include <rtdevice.h>
+#ifdef RT_USING_KTIME
+#include <ktime.h>
 #endif
 
 #define DBG_TAG    "time"
@@ -44,9 +45,6 @@
 #include <rtdbg.h>
 
 #define _WARNING_NO_RTC "Cannot find a RTC device!"
-
-/* seconds per day */
-#define SPD 24*60*60
 
 /* days per month -- nonleap! */
 static const short __spm[13] =
@@ -66,8 +64,8 @@ static const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
 
-rt_align(4) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
-rt_align(4) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+rt_align(RT_ALIGN_SIZE) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
+rt_align(RT_ALIGN_SIZE) static const char *months = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 #ifndef __isleap
 static int __isleap(int year)
@@ -130,12 +128,12 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 
     rt_memset(r, RT_NULL, sizeof(struct tm));
 
-    work = *timep % (SPD);
+    work = *timep % (24*60*60);
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
     r->tm_hour = work / 60;
-    work = (int)(*timep / (SPD));
+    work = (int)(*timep / (24*60*60));
     r->tm_wday = (4 + work) % 7;
     for (i = 1970;; ++i)
     {
@@ -253,7 +251,7 @@ char* asctime_r(const struct tm *t, char *buf)
 }
 RTM_EXPORT(asctime_r);
 
-char* asctime(const struct tm *timeptr)
+char *asctime(const struct tm *timeptr)
 {
     static char buf[26];
     return asctime_r(timeptr, buf);
@@ -267,7 +265,7 @@ char *ctime_r(const time_t * tim_p, char * result)
 }
 RTM_EXPORT(ctime_r);
 
-char* ctime(const time_t *tim_p)
+char *ctime(const time_t *tim_p)
 {
     return asctime(localtime(tim_p));
 }
@@ -299,7 +297,7 @@ rt_weak time_t time(time_t *t)
     if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIME, &_t) != RT_EOK)
     {
         rt_set_errno(EFAULT);
-        return -1;
+        return (time_t)-1;
     }
 
     if (t)
@@ -457,7 +455,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 }
 RTM_EXPORT(settimeofday);
 
-#ifdef RT_USING_POSIX_DELAY
+#if defined(RT_USING_POSIX_DELAY) && defined(RT_USING_KTIME)
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     struct timespec old_ts = {0};
@@ -499,9 +497,9 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     return 0;
 }
 RTM_EXPORT(nanosleep);
-#endif /* RT_USING_POSIX_DELAY */
+#endif /* RT_USING_POSIX_DELAY && RT_USING_KTIME */
 
-#ifdef RT_USING_POSIX_CLOCK
+#if defined(RT_USING_POSIX_CLOCK) && defined(RT_USING_KTIME)
 
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
@@ -691,9 +689,9 @@ int rt_timespec_to_tick(const struct timespec *time)
 }
 RTM_EXPORT(rt_timespec_to_tick);
 
-#endif /* RT_USING_POSIX_CLOCK */
+#endif /* RT_USING_POSIX_CLOCK && RT_USING_KTIME */
 
-#ifdef RT_USING_POSIX_TIMER
+#if defined(RT_USING_POSIX_TIMER) && defined(RT_USING_KTIME)
 
 #include <resource_id.h>
 
@@ -711,10 +709,70 @@ struct timer_obj
     rt_uint32_t status;
     int sigev_signo;
     clockid_t clockid;
+    timer_t timer_id;
 #ifdef RT_USING_SMART
     pid_t pid;
+    struct rt_work *work;
+    rt_list_t lwp_node;
 #endif
 };
+
+#ifdef RT_USING_SMART
+struct lwp_timer_event_param
+{
+    struct rt_work work;
+
+    union
+    {
+        int tid;
+        pid_t pid;
+    };
+    int signo;
+};
+
+static void _lwp_timer_event_from_tid(struct rt_work *work, void *param)
+{
+    rt_err_t ret;
+    struct lwp_timer_event_param *data = (void *)work;
+    rt_thread_t thread;
+
+    RT_ASSERT(data->tid);
+
+    thread = lwp_tid_get_thread(data->tid);
+    ret = lwp_thread_signal_kill(thread, data->signo, SI_TIMER, 0);
+    if (ret)
+    {
+        LOG_W("%s: Do kill failed(tid %d) returned %d", __func__, data->tid, ret);
+    }
+
+    rt_free(work);
+}
+
+static void _lwp_timer_event_from_pid(struct rt_work *work, void *param)
+{
+    rt_err_t ret;
+    struct lwp_timer_event_param *data = (void *)work;
+
+    ret = lwp_signal_kill(lwp_from_pid(data->pid), data->signo, SI_TIMER, 0);
+    if (ret)
+    {
+        LOG_W("%s: Do kill failed(pid %d) returned %d", __func__, data->pid, ret);
+    }
+
+    rt_free(work);
+}
+
+int timer_list_free(rt_list_t *timer_list)
+{
+    struct timer_obj *pos, *n;
+    rt_list_for_each_entry_safe(pos, n, timer_list, lwp_node)
+    {
+        timer_delete(pos->timer_id);
+    }
+    return 0;
+}
+
+#endif /* RT_USING_SMART */
 
 static void rtthread_timer_wrapper(void *timerobj)
 {
@@ -735,13 +793,30 @@ static void rtthread_timer_wrapper(void *timerobj)
         rt_ktime_hrtimer_start(&timer->hrtimer);
     }
 #ifdef RT_USING_SMART
-    sys_kill(timer->pid, timer->sigev_signo);
+    /* this field is named as tid in musl */
+    int tid = *(int *)&timer->sigev_notify_function;
+    struct lwp_timer_event_param *data = (void *)timer->work;
+    data->signo = timer->sigev_signo;
+
+    if (!tid)
+    {
+        data->pid = timer->pid;
+        rt_work_init(timer->work, _lwp_timer_event_from_pid, 0);
+    }
+    else
+    {
+        data->tid = tid;
+        rt_work_init(timer->work, _lwp_timer_event_from_tid, 0);
+    }
+
+    if (rt_work_submit(timer->work, 0))
+        RT_ASSERT(0);
 #else
     if(timer->sigev_notify_function != RT_NULL)
     {
         (timer->sigev_notify_function)(timer->val);
     }
-#endif
+#endif /* RT_USING_SMART */
 }
 
 #define TIMER_ID_MAX 50
@@ -802,8 +877,28 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     num %= 100;
     timer->sigev_signo = evp->sigev_signo;
 #ifdef RT_USING_SMART
-    timer->pid = lwp_self()->pid;
-#endif
+    struct rt_work *work;
+    struct rt_lwp *lwp = lwp_self();
+
+    work = rt_malloc(sizeof(struct lwp_timer_event_param));
+    if (!work)
+    {
+        rt_set_errno(ENOMEM);
+        return -1;
+    }
+
+    if (lwp)
+    {
+        timer->pid = lwp_self()->pid;
+        rt_list_insert_after(&lwp->timer, &timer->lwp_node);
+    }
+    else
+    {
+        timer->pid = 0; /* pid 0 is never used */
+    }
+
+    timer->work = work;
+#endif /* RT_USING_SMART */
     timer->sigev_notify_function = evp->sigev_notify_function;
     timer->val = evp->sigev_value;
     timer->interval.tv_sec = 0;
@@ -822,6 +917,8 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
         return -1; /* todo:memory leak */
     }
     _g_timerid[_timerid] = timer;
+
+    timer->timer_id = (timer_t)(rt_ubase_t)_timerid;
     *timerid = (timer_t)(rt_ubase_t)_timerid;
 
     return 0;
@@ -866,6 +963,11 @@ int timer_delete(timer_t timerid)
         rt_ktime_hrtimer_stop(&timer->hrtimer);
     }
     rt_ktime_hrtimer_detach(&timer->hrtimer);
+
+#ifdef RT_USING_SMART
+    if (timer->pid)
+        rt_list_remove(&timer->lwp_node);
+#endif
 
     rt_free(timer);
     return 0;
@@ -1025,7 +1127,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     return 0;
 }
 RTM_EXPORT(timer_settime);
-#endif /* RT_USING_POSIX_TIMER */
+#endif /* RT_USING_POSIX_TIMER && RT_USING_KTIME */
 
 
 /* timezone */

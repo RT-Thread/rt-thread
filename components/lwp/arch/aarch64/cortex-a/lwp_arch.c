@@ -1,15 +1,20 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-05-18     Jesven       first version
+ * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
  */
 
+#include <armv8.h>
 #include <rthw.h>
 #include <rtthread.h>
+#include <stdlib.h>
+#include <string.h>
+#include <lwp_signal.h>
 
 #ifdef ARCH_MM_MMU
 
@@ -92,3 +97,75 @@ int arch_expand_user_stack(void *addr)
 }
 
 #endif
+#define ALGIN_BYTES (16)
+
+struct signal_ucontext
+{
+    rt_int64_t sigreturn;
+    lwp_sigset_t save_sigmask;
+
+    siginfo_t si;
+
+    rt_align(16)
+    struct rt_hw_exp_stack frame;
+};
+
+void *arch_signal_ucontext_restore(rt_base_t user_sp)
+{
+    struct signal_ucontext *new_sp;
+    new_sp = (void *)user_sp;
+
+    if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
+    {
+        lwp_thread_signal_mask(rt_thread_self(), LWP_SIG_MASK_CMD_SET_MASK, &new_sp->save_sigmask, RT_NULL);
+    }
+    else
+    {
+        LOG_I("User frame corrupted during signal handling\nexiting...");
+        sys_exit(EXIT_FAILURE);
+    }
+
+    return (char *)&new_sp->frame + sizeof(struct rt_hw_exp_stack);
+}
+
+void *arch_signal_ucontext_save(rt_base_t user_sp, siginfo_t *psiginfo,
+                                struct rt_hw_exp_stack *exp_frame,
+                                rt_base_t elr, rt_base_t spsr,
+                                lwp_sigset_t *save_sig_mask)
+{
+    struct signal_ucontext *new_sp;
+    new_sp = (void *)(user_sp - sizeof(struct signal_ucontext));
+
+    if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
+    {
+        /* push psiginfo */
+        if (psiginfo)
+        {
+            memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
+        }
+
+        /* exp frame is already aligned as AAPCS64 required */
+        memcpy(&new_sp->frame, exp_frame, sizeof(*exp_frame));
+
+        /* fix the 3 fields in exception frame, so that memcpy will be fine */
+        new_sp->frame.pc = elr;
+        new_sp->frame.cpsr = spsr;
+        new_sp->frame.sp_el0 = user_sp;
+
+        /* copy the save_sig_mask */
+        memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
+
+        /* copy lwp_sigreturn */
+        const size_t lwp_sigreturn_bytes = 8;
+        extern void lwp_sigreturn(void);
+        /* -> ensure that the sigreturn start at the outer most boundary */
+        memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
+    }
+    else
+    {
+        LOG_I("%s: User stack overflow", __func__);
+        sys_exit(EXIT_FAILURE);
+    }
+
+    return new_sp;
+}

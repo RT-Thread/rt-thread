@@ -652,7 +652,7 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
     return ret;
 }
 
-int generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence)
+off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence)
 {
     off_t foffset;
 

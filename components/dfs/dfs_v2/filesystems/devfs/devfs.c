@@ -30,9 +30,9 @@ struct device_dirent
 
 int dfs_devfs_open(struct dfs_file *file);
 int dfs_devfs_close(struct dfs_file *file);
-int generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);
-int dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
-int dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
+off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);
+ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
+ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
 int dfs_devfs_ioctl(struct dfs_file *file, int cmd, void *args);
 int dfs_devfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count);
 static int dfs_devfs_poll(struct dfs_file *file, struct rt_pollreq *req);
@@ -275,7 +275,7 @@ int dfs_devfs_ioctl(struct dfs_file *file, int cmd, void *args)
     return result;
 }
 
-int dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
     int result;
     rt_device_t dev_id;
@@ -296,7 +296,7 @@ int dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
     return result;
 }
 
-int dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 {
     int result;
     rt_device_t dev_id;

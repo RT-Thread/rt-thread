@@ -88,8 +88,10 @@ struct rt_lwp
     struct rt_lwp *sibling;
 
     rt_list_t wait_list;
-    int32_t  finish;
-    int  lwp_ret;
+    rt_bool_t finish;
+    rt_bool_t terminated;
+    rt_bool_t background;
+    int lwp_ret;
 
     void *text_entry;
     uint32_t text_size;
@@ -104,17 +106,14 @@ struct rt_lwp
     pid_t tty_old_pgrp;
     pid_t session;
     rt_list_t t_grp;
+    rt_list_t timer; /* POSIX timer object binding to a process */
 
     int leader; /*boolean value for session group_leader*/
     struct dfs_fdtable fdt;
     char cmd[RT_NAME_MAX];
 
-    int sa_flags;
-    lwp_sigset_t signal;
-    lwp_sigset_t signal_mask;
-    int signal_mask_bak;
-    rt_uint32_t signal_in_process;
-    lwp_sighandler_t signal_handler[_LWP_NSIG];
+    /* POSIX signal */
+    struct lwp_signal signal;
 
     struct lwp_avl_struct *object_root;
     struct rt_mutex object_mutex;
@@ -123,10 +122,9 @@ struct rt_lwp
     struct rt_wqueue wait_queue; /*for console */
     struct tty_struct *tty; /* NULL if no tty */
 
-    struct lwp_avl_struct *address_search_head; /* for addressed object fast rearch */
+    struct lwp_avl_struct *address_search_head; /* for addressed object fast search */
     char working_directory[DFS_PATH_MAX];
     int debug;
-    int background;
     uint32_t bak_first_ins;
 
 #ifdef LWP_ENABLE_ASID
@@ -167,6 +165,9 @@ void lwp_aspace_switch(struct rt_thread *thread);
 void lwp_user_setting_save(rt_thread_t thread);
 void lwp_user_setting_restore(rt_thread_t thread);
 int lwp_setaffinity(pid_t pid, int cpu);
+
+/* ctime lwp API */
+int timer_list_free(rt_list_t *timer_list);
 
 #ifdef ARCH_MM_MMU
 struct __pthread {

@@ -134,10 +134,11 @@ static void ture_entry(void *parameter)
 static void test_atomic_add(void)
 {
     rt_thread_t thread;
-    int i;
+    size_t i;
     sem_t = rt_sem_create("atomic_sem", 0, RT_IPC_FLAG_PRIO);
 
-    count = 0;
+    rt_atomic_store(&count, 0);
+
     thread = rt_thread_create("t1", ture_entry, RT_NULL, THREAD_STACKSIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     rt_thread_startup(thread);
     thread = rt_thread_create("t2", ture_entry, RT_NULL, THREAD_STACKSIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
@@ -149,7 +150,8 @@ static void test_atomic_add(void)
     {
         rt_sem_take(sem_t, RT_WAITING_FOREVER);
     }
-    uassert_true(count == 3000000);
+    i = rt_atomic_load(&count);
+    uassert_true(i == 3000000);
 }
 
 static rt_err_t utest_tc_init(void)
