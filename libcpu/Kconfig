@@ -1,3 +1,5 @@
+menu "RT-Thread Architecture"
+
 config ARCH_CPU_64BIT
     bool
 
@@ -231,3 +233,7 @@ config ARCH_HOST_SIMULATOR
 config ARCH_CPU_STACK_GROWS_UPWARD
     bool
     default n
+
+source "$RTT_DIR/libcpu/aarch64/Kconfig"
+
+endmenu

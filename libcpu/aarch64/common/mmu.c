@@ -777,8 +777,8 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
 #ifdef RT_USING_SMART
     unsigned long va = KERNEL_VADDR_START;
 #else
-    extern unsigned char __start;
-    unsigned long va = (unsigned long) &__start;
+    extern unsigned char _start;
+    unsigned long va = (unsigned long) &_start;
     va = RT_ALIGN_DOWN(va, 0x200000);
 #endif
 
