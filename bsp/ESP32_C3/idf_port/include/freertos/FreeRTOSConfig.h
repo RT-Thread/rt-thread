@@ -92,7 +92,7 @@ This file get's pulled into assembly sources. Therefore, some includes need to b
 
 // ------------------ Scheduler Related --------------------
 
-#define configUSE_PREEMPTION 1
+// #define configUSE_PREEMPTION 1
 // #define configUSE_TICKLESS_IDLE                         CONFIG_FREERTOS_USE_TICKLESS_IDLE
 #if configUSE_TICKLESS_IDLE
 #define configEXPECTED_IDLE_TIME_BEFORE_SLEEP CONFIG_FREERTOS_IDLE_TIME_BEFORE_SLEEP
@@ -101,8 +101,8 @@ This file get's pulled into assembly sources. Therefore, some includes need to b
 // #define configTICK_RATE_HZ                              CONFIG_FREERTOS_HZ
 // #define configMAX_PRIORITIES                            ( 25 )  //This has impact on speed of search for highest priority
 // #define configMINIMAL_STACK_SIZE                        ( 768 + configSTACK_OVERHEAD_TOTAL )
-#define configUSE_TIME_SLICING 1
-#define configUSE_16_BIT_TICKS 0
+// #define configUSE_TIME_SLICING 1
+// #define configUSE_16_BIT_TICKS 0
 #define configIDLE_SHOULD_YIELD 0
 #define configKERNEL_INTERRUPT_PRIORITY 1 // Todo: This currently isn't used anywhere
 
