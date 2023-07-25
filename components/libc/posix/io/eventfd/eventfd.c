@@ -98,10 +98,12 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     rt_uint64_t counter_num = 0;
-    rt_uint64_t *buffer = (rt_uint64_t *)buf;
+    rt_uint64_t *buffer;
 
     if (count < sizeof(counter_num))
         return -EINVAL;
+
+    buffer = (rt_uint64_t *)buf;
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
@@ -150,10 +152,12 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
     rt_ssize_t ret = 0;
 
-    rt_uint64_t counter_num = *(rt_uint64_t *)buf;
+    rt_uint64_t counter_num;
 
     if (count < sizeof(counter_num))
         return -EINVAL;
+
+    counter_num = *(rt_uint64_t *)buf;
 
     if (counter_num == ULLONG_MAX)
         return -EINVAL;
