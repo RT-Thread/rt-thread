@@ -377,7 +377,6 @@ vector_fiq:
 
 .globl vector_irq
 vector_irq:
-    CLREX
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!   /* X0 is thread sp */
 
@@ -391,10 +390,11 @@ vector_irq:
 
 .global rt_hw_context_switch_exit
 rt_hw_context_switch_exit:
+    CLREX
     MOV     X0, SP
     RESTORE_CONTEXT
 
-#else
+#else   /* RT_USING_SMP */
 
 /*
  * void rt_hw_context_switch_to(rt_ubase_t to);
@@ -402,6 +402,7 @@ rt_hw_context_switch_exit:
  */
 .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
+    CLREX
     LDR     X0, [X0]
     RESTORE_CONTEXT
 
@@ -413,7 +414,7 @@ rt_hw_context_switch_to:
  */
 .globl rt_hw_context_switch
 rt_hw_context_switch:
-
+    CLREX
     SAVE_CONTEXT_FROM_EL1
 
     MOV    X2, SP
@@ -430,6 +431,7 @@ rt_hw_context_switch:
 .globl rt_interrupt_to_thread
 .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
+    CLREX
     LDR     X6, =rt_thread_switch_interrupt_flag
     LDR     X7, [X6]
     CMP     X7, #1
@@ -506,7 +508,7 @@ vector_irq:
 vector_irq_exit:
     MOV     SP, X0
     RESTORE_CONTEXT_WITHOUT_MMU_SWITCH
-#endif
+#endif  /* RT_USING_SMP */
 
 // -------------------------------------------------
 
