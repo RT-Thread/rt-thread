@@ -408,8 +408,6 @@ vector_fiq:
 .globl vector_irq
 vector_irq:
 #ifdef RT_USING_SMP
-    clrex
-
     stmfd   sp!, {r0, r1}
     cps     #Mode_SVC
     mov     r0, sp          /* svc_sp */
