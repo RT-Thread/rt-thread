@@ -189,8 +189,10 @@ jobs:
                 - "lpc176x"
                 - "xplorer4330/M4"
                 #- "lpc43xx/M4"
-                - "renesas/ra6m3-ek"
+                - "renesas/ebf_qi_min_6m5"
                 - "renesas/ra6m4-cpk"
+                - "renesas/ra6m4-iot"
+                - "renesas/ra6m3-ek"
                 - "renesas/ra6m3-hmi-board"
                 - "renesas/ra4m2-eco"
                 - "renesas/ra2l1-cpk"
@@ -303,7 +305,10 @@ jobs:
             RTT_TOOL_CHAIN: "gcc"
             SUB_RTT_BSP:  
                 - "simulator"
-
+         -  RTT_BSP: "ESP32C3" 
+            RTT_TOOL_CHAIN: "sourcery-riscv32-esp32"
+            SUB_RTT_BSP:  
+                - "ESP32_C3"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -375,6 +380,15 @@ jobs:
           sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
           /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+
+      - name: Install riscv32-esp-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv32-esp32' && success() }}
+        run: |
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
+          /usr/bin/pip install esptool
+          echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
 
       - name: Install Simulator Tools
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'gcc' && success() }}

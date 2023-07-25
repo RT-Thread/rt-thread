@@ -180,6 +180,8 @@ ssize_t mq_timedreceive(mqd_t                  id,
     }
     if (abs_timeout != RT_NULL)
         tick = rt_timespec_to_tick(abs_timeout);
+    else
+        tick = RT_WAITING_FOREVER;
 
     result = rt_mq_recv_prio(mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, tick, RT_UNINTERRUPTIBLE);
 

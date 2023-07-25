@@ -61,7 +61,7 @@ int dfs_device_fs_ioctl(struct dfs_file *file, int cmd, void *args)
     return result;
 }
 
-int dfs_device_fs_read(struct dfs_file *file, void *buf, size_t count)
+ssize_t dfs_device_fs_read(struct dfs_file *file, void *buf, size_t count)
 {
     int result;
     rt_device_t dev_id;
@@ -82,7 +82,7 @@ int dfs_device_fs_read(struct dfs_file *file, void *buf, size_t count)
     return result;
 }
 
-int dfs_device_fs_write(struct dfs_file *file, const void *buf, size_t count)
+ssize_t dfs_device_fs_write(struct dfs_file *file, const void *buf, size_t count)
 {
     int result;
     rt_device_t dev_id;

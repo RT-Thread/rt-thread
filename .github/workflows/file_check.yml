@@ -1,6 +1,13 @@
 name: Check File Format and License
 
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - documentation/**
+      - '**/README.md'
+      - '**/README_zh.md'
 
 jobs:
   scancode_job:

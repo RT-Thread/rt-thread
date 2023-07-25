@@ -39,10 +39,10 @@ struct dfs_file_ops
     int (*open)(struct dfs_file *file);
     int (*close)(struct dfs_file *file);
     int (*ioctl)(struct dfs_file *file, int cmd, void *arg);
-    int (*read)(struct dfs_file *file, void *buf, size_t count, off_t *pos);
-    int (*write)(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
+    ssize_t (*read)(struct dfs_file *file, void *buf, size_t count, off_t *pos);
+    ssize_t (*write)(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
     int (*flush)(struct dfs_file *file);
-    int (*lseek)(struct dfs_file *file, off_t offset, int wherece);
+    off_t (*lseek)(struct dfs_file *file, off_t offset, int wherece);
     int (*truncate)(struct dfs_file *file, off_t offset);
     int (*getdents)(struct dfs_file *file, struct dirent *dirp, uint32_t count);
     int (*poll)(struct dfs_file *file, struct rt_pollreq *req);
@@ -142,7 +142,7 @@ int dfs_file_close(struct dfs_file *file);
 
 ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len);
 ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len);
-int generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);
+off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);
 off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece);
 int dfs_file_stat(const char *path, struct stat *buf);
 int dfs_file_lstat(const char *path, struct stat *buf);

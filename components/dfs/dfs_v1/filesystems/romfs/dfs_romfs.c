@@ -146,7 +146,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
     return NULL;
 }
 
-int dfs_romfs_read(struct dfs_file *file, void *buf, size_t count)
+ssize_t dfs_romfs_read(struct dfs_file *file, void *buf, size_t count)
 {
     rt_size_t length;
     struct romfs_dirent *dirent;
@@ -173,7 +173,7 @@ int dfs_romfs_read(struct dfs_file *file, void *buf, size_t count)
     return length;
 }
 
-int dfs_romfs_lseek(struct dfs_file *file, off_t offset)
+off_t dfs_romfs_lseek(struct dfs_file *file, off_t offset)
 {
     if (offset <= file->vnode->size)
     {

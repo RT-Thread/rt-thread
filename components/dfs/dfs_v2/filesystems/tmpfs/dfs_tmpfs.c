@@ -272,7 +272,7 @@ find_subpath:
     return NULL;
 }
 
-static int dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
     rt_size_t length;
     struct tmpfs_file *d_file;
@@ -295,7 +295,7 @@ static int dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, off_t 
     return length;
 }
 
-static int dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 {
     struct tmpfs_file *d_file;
     struct tmpfs_sb *superblock;
@@ -334,7 +334,7 @@ static int dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t count,
     return count;
 }
 
-static int dfs_tmpfs_lseek(struct dfs_file *file, off_t offset, int wherece)
+static off_t dfs_tmpfs_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
     if (offset <= (off_t)file->vnode->size)
     {

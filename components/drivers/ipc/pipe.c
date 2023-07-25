@@ -203,9 +203,9 @@ static int pipe_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
  *           When the return value is -EAGAIN, it means there are no data to be read.
  */
 #ifdef RT_USING_DFS_V2
-static int pipe_fops_read(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
+static ssize_t pipe_fops_read(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
 #else
-static int pipe_fops_read(struct dfs_file *fd, void *buf, size_t count)
+static ssize_t pipe_fops_read(struct dfs_file *fd, void *buf, size_t count)
 #endif
 {
     int len = 0;
@@ -261,9 +261,9 @@ out:
  *           When the return value is -EPIPE, it means there is no thread that has the pipe open for reading.
  */
 #ifdef RT_USING_DFS_V2
-static int pipe_fops_write(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+static ssize_t pipe_fops_write(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
 #else
-static int pipe_fops_write(struct dfs_file *fd, const void *buf, size_t count)
+static ssize_t pipe_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 #endif
 {
     int len;
