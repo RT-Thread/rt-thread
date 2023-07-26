@@ -7,37 +7,6 @@ The development of embedded software is inseparable from the development board. 
 - [Download RT-Thread source code](https://github.com/RT-Thread/rt-thread)
 - [Download annd install Env tool](../../env/env.md)
 
-## Instructions for the Env tool
-
-When using Env tools, you need to enter the corresponding BSP directory in the Env terminal.
-
-### Configuration
-
-```
-menuconfig
-```
-
-Type the `menuconfig` command in the Env terminal to enter the configuration interface, and then configure the BSP:
-
-![menuconfig command](figures/win-menuconfig.png)
-
-![enter the configuration interface](figures/env_menu.png)
-
-You can use the keyboard `↑` key and `↓` key to look up and down menu items, use the `Enter` key to enter the selected directory, use the `Space` key to select or cancel bool variables, and use the `Esc` key to exit the current directory.
-
-### Acquisition of software packages
-
-```
-pkgs --update
-```
-
-If a package is selected in menuconfig, download the package using the `pkgs --update` command. 
-
-The alternative and recommended way is by using `menuconfig -s` to select the `Auto update pkgs config` feature, so that when users exit the menuconfig, Env will automatically download and update software packages.
-
-### Compile
-
-Compile using the `scons` command, or `scons -j12` means 12 CPU cores compiling.
 
 ## Introduction of QEMU BSP Catalogue
 
@@ -61,7 +30,27 @@ The main files and directories of `qemu-vexpress-a9` BSP are described as follow
 
 ## Compile and Run
 
-### Step 1. Use the *scons* Command to Compile the Project
+### Configuration
+
+Type the `menuconfig` command in the Env terminal to enter the configuration interface, and then configure the BSP:
+
+![menuconfig command](figures/win-menuconfig.png)
+
+![enter the configuration interface](figures/env_menu.png)
+
+You can use the keyboard `↑` key and `↓` key to look up and down menu items, use the `Enter` key to enter the selected directory, use the `Space` key to select or cancel bool variables, and use the `Esc` key to exit the current directory.
+
+### Acquisition of software packages
+
+If a package is selected in menuconfig, download the package using the `pkgs --update` command. 
+
+The alternative and recommended way is by using `menuconfig -s` to select the `Auto update pkgs config` feature, so that when users exit the menuconfig, Env will automatically download and update software packages.
+
+### Compile
+
+Compile using the `scons` command, or `scons -j12` means 12 CPU cores compiling.
+
+#### Step 1. Use the *scons* Command to Compile the Project
 
 Open the Env folder and double-click the `env.exe` file to open the Env console:
 
@@ -71,7 +60,7 @@ Switch to the QEMU BSP directory and enter the `scons` or `scons -j12` command t
 
 ![compile the project](figures/scons.png)
 
-### Step 2. Use the *qemu.bat* Command to Run the Project 
+#### Step 2. Use the *qemu.bat* Command to Run the Project
 
 After compiling, type `qemu.bat` to start the virtual machine and BSP project. `qemu.bat` is a Windows batch file. This file is located in the BSP folder, mainly including the execution instructions of QEMU. The first run of the project will create a blank `sd.bin` file under the BSP folder, which is a virtual SD card with a size of 64M. The Env command interface displays the initialization information and version number information printed during the start-up of RT-Thread system, and the QEMU virtual machine is also running. As shown in the following picture:
 
