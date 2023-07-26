@@ -14,6 +14,10 @@
 #include <encoding.h>
 #include "sbi.h"
 
+#ifdef RT_USING_KTIME
+#include <ktime.h>
+#endif
+
 static volatile uint64_t time_elapsed = 0;
 static volatile unsigned long tick_cycles = 0;
 
@@ -49,6 +53,9 @@ int rt_hw_tick_init(void)
     /* Set timer */
     sbi_set_timer(get_ticks() + tick_cycles);
 
+#ifdef RT_USING_KTIME
+    rt_ktime_cputimer_init();
+#endif
     /* Enable the Supervisor-Timer bit in SIE */
     set_csr(sie, SIP_STIP);
 

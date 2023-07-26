@@ -29,3 +29,8 @@ rt_weak unsigned long rt_ktime_cputimer_getstep(void)
 {
     return 1;
 }
+
+rt_weak void rt_ktime_cputimer_init(void)
+{
+    return;
+}
