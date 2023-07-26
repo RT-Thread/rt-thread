@@ -12,40 +12,37 @@
 
 #define __KTIME_MUL ((1000UL * 1000 * 1000) / RT_TICK_PER_SECOND)
 
-rt_err_t rt_ktime_boottime_get_us(struct timeval *tv)
+rt_weak rt_err_t rt_ktime_boottime_get_us(struct timeval *tv)
 {
     RT_ASSERT(tv != RT_NULL);
 
-    rt_tick_t     ms = rt_tick_get();
-    unsigned long ns =
-        ((rt_ktime_cputimer_getcnt() % rt_ktime_cputimer_getstep()) * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
-    ns = ((ms % RT_TICK_PER_SECOND) * __KTIME_MUL) + ns;
+    unsigned long ns = (rt_ktime_cputimer_getcnt() * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
 
-    tv->tv_sec  = ms / RT_TICK_PER_SECOND;
-    tv->tv_usec = ns / 1000;
+    tv->tv_sec  = ns / (1000UL * 1000 * 1000);
+    tv->tv_usec = (ns % (1000UL * 1000 * 1000)) / 1000;
 
     return RT_EOK;
 }
 
-rt_err_t rt_ktime_boottime_get_s(time_t *t)
+rt_weak rt_err_t rt_ktime_boottime_get_s(time_t *t)
 {
     RT_ASSERT(t != RT_NULL);
 
-    *t = rt_tick_get() / RT_TICK_PER_SECOND;
+    unsigned long ns = (rt_ktime_cputimer_getcnt() * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
+
+    *t = ns / (1000UL * 1000 * 1000);
 
     return RT_EOK;
 }
 
-rt_err_t rt_ktime_boottime_get_ns(struct timespec *ts)
+rt_weak rt_err_t rt_ktime_boottime_get_ns(struct timespec *ts)
 {
     RT_ASSERT(ts != RT_NULL);
 
-    rt_tick_t     ms = rt_tick_get();
-    unsigned long ns =
-        ((rt_ktime_cputimer_getcnt() % rt_ktime_cputimer_getstep()) * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
+    unsigned long ns = (rt_ktime_cputimer_getcnt() * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
 
-    ts->tv_sec  = ms / RT_TICK_PER_SECOND;
-    ts->tv_nsec = ((ms % RT_TICK_PER_SECOND) * __KTIME_MUL) + ns;
+    ts->tv_sec  = ns / (1000UL * 1000 * 1000);
+    ts->tv_nsec = ns % (1000UL * 1000 * 1000);
 
     return RT_EOK;
 }

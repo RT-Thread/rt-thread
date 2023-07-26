@@ -83,6 +83,12 @@ unsigned long rt_ktime_cputimer_getcnt(void);
 unsigned long rt_ktime_cputimer_getstep(void);
 
 /**
+ * @brief Init cputimer
+ *
+ */
+void rt_ktime_cputimer_init(void);
+
+/**
  * @brief Get hrtimer resolution
  *
  * @return (resolution * RT_KTIME_RESMUL)
