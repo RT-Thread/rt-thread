@@ -502,6 +502,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                 else
                 {
                     LOG_I("lookup file:%s failed in file system", path);
+                    ret = -ENOENT;
                 }
             }
 
@@ -907,8 +908,15 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
             ret = file->flags;
             break;
         case F_SETFL:
-            file->flags = arg;
+        {
+            #define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_LARGEFILE | O_NOATIME)
+            int flags = (int)(rt_base_t)arg;
+
+            flags &= SETFL_MASK;
+            file->flags &= ~SETFL_MASK;
+            file->flags |= flags;
             break;
+        }
         case F_GETLK:
             break;
         case F_SETLK:
