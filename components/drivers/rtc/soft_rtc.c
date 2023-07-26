@@ -134,7 +134,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
         tv = (struct timeval *)args;
         rt_ktime_boottime_get_us(&_tv);
-        tv->tv_sec  = init_time + (rt_tick_get() - init_tick) / RT_TICK_PER_SECOND;
+        tv->tv_sec  = init_time + _tv.tv_sec;
         tv->tv_usec = init_tv.tv_usec + _tv.tv_usec;
         break;
     case RT_DEVICE_CTRL_RTC_SET_TIMEVAL:
@@ -147,7 +147,7 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     case RT_DEVICE_CTRL_RTC_GET_TIMESPEC:
         ts = (struct timespec *)args;
         rt_ktime_boottime_get_ns(&_ts);
-        ts->tv_sec  = init_time + (rt_tick_get() - init_tick) / RT_TICK_PER_SECOND;
+        ts->tv_sec  = init_time + _ts.tv_sec;
         ts->tv_nsec = init_ts.tv_nsec + _ts.tv_nsec;
         break;
     case RT_DEVICE_CTRL_RTC_SET_TIMESPEC:
