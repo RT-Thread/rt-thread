@@ -4,10 +4,8 @@ The development of embedded software is inseparable from the development board. 
 
 ## Preparations
 
-- [Download RT-Thread Source Code](https://github.com/RT-Thread/rt-thread)
-- Download Env Tool
-- [Install Git on your PC](https://www.git-scm.com/download/)
-
+- [Download RT-Thread source code](https://github.com/RT-Thread/rt-thread)
+- [Download annd install Env tool](../../env/env.md)
 
 ## Instructions for the Env tool
 
@@ -33,33 +31,17 @@ You can use the keyboard `↑` key and `↓` key to look up and down menu items,
 pkgs --update
 ```
 
-If a package is selected in menuconfig, download the package using the `pkgs --update` command (Git needs to be installed)
+If a package is selected in menuconfig, download the package using the `pkgs --update` command. 
+
+The alternative and recommended way is by using `menuconfig -s` to select the `Auto update pkgs config` feature, so that when users exit the menuconfig, Env will automatically download and update software packages.
 
 ### Compile
 
-```
-scons
-```
-
-Compile using the `scons` command.
-
-### Generate IDE's Project Files
-
-```
-scons --target=xxx
-```
-
-If you use the MDK or IAR IDE for development, you need to regenerate project files to make the configuration work after the configuration is completed. The command is `scons --target=xxx`, as shown below, which is the generation of IAR project, MDK4 project and MDK5 project.
-
-```c
-scons --target=iar
-scons --target=mdk4
-scons --target=mdk5
-```
+Compile using the `scons` command, or `scons -j12` means 12 CPU cores compiling.
 
 ## Introduction of QEMU BSP Catalogue
 
-The board-level support package (BSP) provided by RT-Thread simulates ARM vexpress A9 development board is located in the `qemu-vexpress-a9` folder under the BSP directory of RT-Thread source code. This BSP implements LCD, keyboard, mouse, SD card, Ethernet card, serial port and other related drivers. The contents of the folder are shown in the following figure.
+The board-level support package (BSP) provided by RT-Thread simulates ARM vexpress A9 development board is located in the `bsp/qemu-vexpress-a9` folder under the BSP directory of RT-Thread source code. This BSP implements LCD, keyboard, mouse, SD card, Ethernet card, serial port and other related drivers. The contents of the folder are shown in the following figure.
 
 ![qemu-vexpress-a9 folder](figures/qemubsp.png)
 
@@ -85,7 +67,7 @@ Open the Env folder and double-click the `env.exe` file to open the Env console:
 
 ![Env folder](figures/env.png)
 
-Switch to the QEMU BSP directory and enter the `scons` command to compile the project. If the compilation is correct, the `rtthread.elf`  file will be generated in the BSP directory, which is a target file required for QEMU to run.
+Switch to the QEMU BSP directory and enter the `scons` or `scons -j12` command to compile the project. If the compilation is correct, the `rtthread.elf`  file will be generated in the BSP directory, which is a target file required for QEMU to run.
 
 ![compile the project](figures/scons.png)
 
@@ -141,6 +123,6 @@ You can configure more functions in the configuration interface. After the confi
 ![menuconfig interface](figures/menuconfig_menu.png)
 
 1. If you choose a package, you need to use the command `pkgs --update` to download the package.
-2. Compile with `scons`.
+2. Compile with `scons` or `scons -j12`.
 3. Then enter `qemu.bat` to run.
 4. Use `help` to view all commands of the BSP. And then use the commands.
