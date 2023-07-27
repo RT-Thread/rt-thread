@@ -717,6 +717,9 @@ if (!(EX))                                                                    \
 {                                                                             \
     rt_assert_handler(#EX, __FUNCTION__, __LINE__);                           \
 }
+#else
+#define RT_ASSERT(EX)
+#endif /* RT_USING_DEBUG */
 
 #ifdef RT_DEBUGING_CONTEXT
 /* Macro to check current context */
@@ -791,9 +794,6 @@ while (0)
 #define RT_DEBUG_IN_THREAD_CONTEXT
 #define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)
 #endif /* RT_DEBUGING_CONTEXT */
-#else
-#define RT_ASSERT(EX)
-#endif /* RT_USING_DEBUG */
 
 /**@}*/
 
