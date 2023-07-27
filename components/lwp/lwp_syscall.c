@@ -41,6 +41,7 @@
 #include <sys/utsname.h>
 
 #ifdef RT_USING_DFS
+#include <eventfd.h>
 #include <poll.h>
 #include <sys/select.h>
 #include <dfs_file.h>
@@ -5317,6 +5318,14 @@ sysret_t sys_symlink(const char *existing, const char *new)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
+sysret_t sys_eventfd2(unsigned int count, int flags)
+{
+    int ret;
+
+    ret = eventfd(count, flags);
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
 static const struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -5548,6 +5557,7 @@ static const struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_sigtimedwait),
     SYSCALL_SIGN(sys_notimpl),
     SYSCALL_SIGN(sys_notimpl),                          /* 190 */
+    SYSCALL_SIGN(sys_eventfd2),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
