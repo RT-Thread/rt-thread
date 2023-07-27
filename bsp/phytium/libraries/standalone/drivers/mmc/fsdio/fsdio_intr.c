@@ -168,7 +168,7 @@ void FSdioInterruptHandler(s32 vector, void *param)
     FSDIO_WRITE_REG(base_addr, FSDIO_DMAC_STATUS_OFFSET, dmac_events);
 
     if (((events & event_mask) == 0) &&
-        ((dmac_events & dmac_evt_mask == 0)))
+        (((dmac_events & dmac_evt_mask) == 0)))
     {
         return; /* no need to handle interrupt */
     }

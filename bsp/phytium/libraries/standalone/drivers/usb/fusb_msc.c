@@ -23,6 +23,7 @@
  */
 
 #include <string.h>
+#include "fparameters.h"
 #include "fswap.h"
 #include "fsleep.h"
 #include "fassert.h"
@@ -41,18 +42,18 @@
 
 static inline tick_t FUsbMscGetTick(void)
 {
-    return GenericTimerRead();
+    return GenericTimerRead(GENERIC_TIMER_ID0);
 }
 
 static inline tick_t FUsbMscStartTick(void)
 {
-    GenericTimerStart();
+    GenericTimerStart(GENERIC_TIMER_ID0);
     return FUsbMscGetTick();
 }
 
 static inline void FUsbMscStopTick(void)
 {
-    GenericTimerStop();
+    GenericTimerStop(GENERIC_TIMER_ID0);
 }
 
 static inline boolean FUsbMscTimeout(tick_t start_tick, tick_t timeout_tick)

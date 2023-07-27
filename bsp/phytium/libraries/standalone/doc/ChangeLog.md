@@ -1,3 +1,586 @@
+# Phytium Standalone SDK 2023-7-18 ChangeLog
+
+Change Log since 2023-07-11
+
+## drivers
+
+- add iopad driver
+# Phytium Standalone SDK 2023-7-14 ChangeLog
+
+Change Log since 2023-07-11
+
+## tools
+
+- modify scripts to adapt freertos
+
+# Phytium Standalone SDK 2023-7-11 ChangeLog
+
+Change Log since 2023-07-11
+
+## board
+
+- modify fearly uart
+
+# Phytium Standalone SDK 2023-7-06 ChangeLog
+
+Change Log since 2023-07-03
+
+## tools
+
+- Resolved an issue where the header file could not be recognized after modification
+
+* Fixed a bug where C++ logic could not generate binary
+
+# Phytium Standalone SDK 2023-7-03 ChangeLog
+
+Change Log since 2023-06-30
+
+## arch
+
+- added new features such as smcc and psci
+- Remove the old smcc and psci methods
+
+## exampe
+
+- add psci example
+
+# Phytium Standalone SDK 2023-6-30 ChangeLog
+
+Change Log since 2023-06-28
+
+## driver
+
+- change the struct of FDcDisplayTimmingConfig
+
+# Phytium Standalone SDK 2023-6-28 ChangeLog
+
+Change Log since 2023-06-26
+
+## example
+
+- Add serial new examples
+
+## driver
+
+- Add new state clear function in fpl011_intr.c
+
+# Phytium Standalone SDK 2023-6-26 ChangeLog
+
+Change Log since 2023-06-21
+
+## arch
+
+- Add fpen choice in fboot.S to compatible with rtos startup
+
+## driver
+
+- Modify the method of reading and writing gic 64-bit registers in aarch32 mode
+
+# Phytium Standalone SDK 2023-6-20 ChangeLog
+
+Change Log since 2023-06-12
+
+## board
+
+- Added mio slave id
+
+## example
+
+- Added mio ddma example
+
+# Phytium Standalone SDK 2023-06-19 ChangeLog
+
+Change Log since 2023-06-19
+
+## third-party
+
+- add callback function eth_poll in LwipPortInputThread: to enable the NIC to send and receive packets steadily in FreeRTOS.
+
+# Phytium Standalone SDK 2023-06-19 ChangeLog
+
+Change Log since 2023-06-08
+
+## arch
+
+- restruct aarch32 system register access interface
+- delete fcp15 file
+
+## driver
+
+- add windbond qspi flash support
+
+# Phytium Standalone SDK 2023-6-16 ChangeLog
+
+Change Log since 2023-06-15
+
+## tools
+
+Added some memory check tools
+
+## doc
+
+Added user document
+
+## example
+
+Added libmetal example
+
+# Phytium Standalone SDK 2023-6-15 ChangeLog
+
+Change Log since 2023-6-12
+
+## driver
+
+- Modify the framebuffer generate method and the driver lib
+
+## driver
+
+- adjust the lvgl and the driver relation
+
+## example
+
+- adapt the driver change
+
+# Phytium Standalone SDK 2023-6-15 ChangeLog
+
+Change Log since 2023-6-12
+
+## sdmmc
+
+- Modify the variable name in sdmmc.mk to resolve the issue of variable name overloading.
+
+# Phytium Standalone SDK 2023-6-12 ChangeLog
+
+Change Log since 2023-6-12
+
+## example
+
+- modify uart ddma example
+- remove FDDMA_MAX_TRANSFER_LEN
+
+## drivers
+
+- remove FDDMA_MAX_TRANSFER_LEN
+
+# Phytium Standalone SDK 2023-6-12 ChangeLog
+
+Change Log since 2023-6-8
+
+## drivers
+
+- modify annotation and variable name in gdma driver.
+- solve customer issue in gdma.
+
+## example
+
+- modify gdma example.
+
+# Phytium Standalone SDK 2023-6-8 ChangeLog
+
+Change Log since 2023-6-8
+
+## example
+
+- modify gic example Kconfig.
+- gic example debug.
+
+# Phytium Standalone SDK 2023-6-8 ChangeLog
+
+Change Log since 2023-6-6
+
+## arch
+
+- add gcc atomic api
+
+## example
+
+- add atomic test example.
+
+# Phytium Standalone SDK 2023-6-8 ChangeLog
+
+Change Log since 2023-06-7
+
+## example
+
+- add cxx example
+- add crypto++ example
+
+## arch
+
+- support c++
+
+## lib
+
+- add some stub functions for std c++ library
+
+## third-party
+
+- add crypto++
+
+# Phytium Standalone SDK 2023-6-7 ChangeLog
+
+Change Log since 2023-6-6
+
+## example
+
+- network/raw_api/tcp_client example debug: Memory double free problem solved.
+- network/raw_api/tcp_client example modified: The new code is more robust and secure.
+
+# Phytium Standalone SDK 2023-6-7 ChangeLog
+
+Change Log since 2023-6-2
+
+## example
+
+- add wdt example.
+
+# Phytium Standalone SDK 2023-6-6 ChangeLog
+
+Change Log since 2023-6-6
+
+## arch
+
+- modify generic timer api
+
+# Phytium Standalone SDK 2023-6-05 ChangeLog
+
+Change Log since 2023-05-31
+
+## example
+
+- add timer example.
+
+# Phytium Standalone SDK 2023-6-05 ChangeLog
+
+Change Log since 2023-05-31
+
+## baremetal
+
+- modified license of libmetal demo
+- add loadelf function for openamp example
+
+## third-party
+
+- add image store file
+- complete remote processor operation ports
+
+# Phytium Standalone SDK 2023-6-2 ChangeLog
+
+Change Log since 2023-6-1
+
+## scrips
+
+- update settings.json (fileheader extentions update)
+
+# Phytium Standalone SDK 2023-5-31 ChangeLog
+
+Change Log since 2023-05-29
+
+## tools
+
+Added a new compilation framework
+
+## baremetal
+
+Added a new test code
+
+## SDK
+
+Add a series of makefile scripts
+
+# Phytium Standalone SDK 2023-5-29 ChangeLog
+
+Change Log since 2023-05-25
+
+## example
+
+- add ipc semaphore refactoring example.
+
+# Phytium Standalone SDK 2023-5-29 ChangeLog
+
+Change Log since 2023-05-23
+
+## arch
+
+- modify generic timer api, add virtual timer's use
+- delete USE_SYS_TICK kconfig
+
+## example
+
+- add generic_timer example to test physical and virtual timers
+
+# Phytium Standalone SDK 2023-05-24 v1.1.1 ChangeLog
+
+Change Log since 2023-05-23
+
+## README
+
+- add developer infomation.
+- install.py update including version infomation modified.
+
+## common
+
+- according to user issue, add a ; in fdebug.h
+
+# Phytium Standalone SDK 2023-5-23 ChangeLog
+
+Change Log since 2023-05-16
+
+## example
+
+- add LwipEthProcessLoop call in LwipTestLoop.
+- add new macro definition: CONFIG_LWIP_RX_POLL to control LwipEthProcessLoop calls.
+
+## drivers
+
+- add new member variable: mask in struct Fxmac,which can be used to manage TX and RX interrupts.
+- add new macro definition: FXMAC_INTR_MASK,which can be used to enable TX and RX interrupts.
+
+## third-party
+
+- delete LWIP_DEBUG_ESP_LOG in /lwip-2.1.2/Kconfig
+- add new function LwipEthProcessLoop.
+- add new callback function ethernetif_poll,which can poll network packets.
+- add new macro definitions: FXMAC_LWIP_PORT_CONFIG_RX_POLL_RECV,which controls whether Frame received interrupts are enabled or not.
+
+# Phytium Standalone SDK 2023-5-16 ChangeLog
+
+Change Log since 2023-05-12
+
+## example
+
+- add new openamp demo,support manager core and remote core communicate always.
+- Change openamp for linux demo folder name “openamp old”.
+
+## third-party
+
+- modified some const variable
+- add some defines of service
+
+# Phytium Standalone SDK 2023-5-12 ChangeLog
+
+Change Log since 2023-05-10
+
+## example
+
+- add pcie refactoring example.
+
+## driver
+
+-little change to pcie driver
+
+# Phytium Standalone SDK 2023-5-10 ChangeLog
+
+Change Log since 2023-05-09
+
+## board
+
+- Modify the description in the MMUs table in the aarch64.
+
+## aarch64
+
+* Modify the execution mode in fmmu.c
+
+# Phytium Standalone SDK 2023-5-09 ChangeLog
+
+Change Log since 2023-04-28
+
+## board
+
+- Change the suffix of CACHE_LINE_ADDR_MASK, resolve the problem that cache flush addresses are truncated .
+
+# Phytium Standalone SDK 2023-4-28 ChangeLog
+
+Change Log since 2023-04-24
+
+## example
+
+- add gic refactoring example.
+
+# Phytium Standalone SDK 2023-04-24 v1.1.0 ChangeLog
+
+Change Log since 2023-04-20
+
+## README
+
+- add developer infomation.
+- install.py update including version infomation modified.
+
+## example
+
+- add new refactoring examples.
+
+# Phytium Standalone SDK 2023-4-21 ChangeLog
+
+Change Log since 2023-04-12
+
+## example
+
+- add serial refactoring example.
+
+# Phytium Standalone SDK 2023-4-20 ChangeLog
+
+Change Log since 2023-04-15
+
+## example
+
+- add new spim test refactoring example.
+
+# Phytium Standalone SDK 2023-4-18 ChangeLog
+
+Change Log since 2023-04-13
+
+## common
+
+- finterrupt: modify priority icc_pmr set and icc_rpr get, according to different configurations.
+
+# Phytium Standalone SDK 2023-4-18 ChangeLog
+
+Change Log since 2023-04-10
+
+## example
+
+- add new sata test refactoring example.
+
+# Phytium Standalone SDK 2023-4-11 ChangeLog
+
+Change Log since 2023-04-11
+
+## driver
+
+- resolve the driver clock configuration in xmac cannot perform network auto-negotiation bug.
+
+# Phytium Standalone SDK 2023-4-11 ChangeLog
+
+Change Log since 2023-03-30
+
+## example
+
+- update lwip_start_up README.md : add new description about jumbo mode enable and related operating instructions.
+
+## driver
+
+- modify macro definitions about jumbo registers and delete useless code.
+
+## third-party
+
+- add new instructions which can change netif mtu manually according to the actual transmission.
+- modify pbuf alloc type and delete redundant code.
+
+# Phytium Standalone SDK 2023-3-30 ChangeLog
+
+Change Log since 2023-03-29
+
+## example
+
+- lwip instructions has been updated by which we can choose driver type manually.
+- update README.md : add new description about lwip probe instructions.
+
+# Phytium Standalone SDK 2023-3-29 ChangeLog
+
+Change Log since 2023-03-27
+
+## example
+
+- add new gdma test refactoring example: gdma_direct_transfer_example, gdma_bdl_transfer_example, gdma_performance_test_example.
+- little change in old gdma example.
+
+## driver
+
+- add wait mode feature in gdma driver.
+
+# Phytium Standalone SDK 2023-3-27 ChangeLog
+
+Change Log since 2023-03-24
+
+## example
+
+- remove lib_core0 lib_core1 folder,add apu_running and rpu_running,support more example.
+- modified README.md and update picture.
+- fix atomic operation bug.
+
+## doc
+
+- add libmetal.md to introduce how to use it
+
+## third-party
+
+- remove extra code
+
+# Phytium Standalone SDK 2023-3-24 ChangeLog
+
+Change Log since 2023-03-20
+
+## third-party
+
+- add apps lwiperf by which we can test mac bandwidth
+- modify kconfig to add a new feature : LWIP_WND_SCALE,which can boost window maximum
+
+# Phytium Standalone SDK 2023-3-23 ChangeLog
+
+Change Log since 2023-03-20
+
+## example
+
+- modify the lvgl example
+- change the cmd, and interface , add the test fig and modify the readme
+
+## driver
+
+- modify the format
+- add a dump function
+- change some function and interface
+- generate a new lib driver of dcdp
+
+## third-party
+
+- delete the unused part of port
+- modify the format
+
+# Phytium Standalone SDK 2023-3-20 ChangeLog
+
+Change Log since 2023-03-17
+
+## aarch
+
+- Adapt exception frame sequence
+
+## example
+
+- Add some exception test example
+
+# Phytium Standalone SDK 2023-3-17 ChangeLog
+
+Change Log since 2023-03-17
+
+- add pwm example
+
+# Phytium Standalone SDK 2023-3-13 ChangeLog
+
+Change Log since 2023-03-3
+
+## third-party
+
+- delete redundant code about NO_SYS macro definition
+- modify kconfig ：delete config_LWIP_PORT_DEBUG_EN and add config_LWIP_USE_MEM__HEAP_DEBUG, which can manage parameters in memory debug mode
+- modify LwipPortStop function : add dhcp_cleanup api and free emac after sys_thread_delete
+
+# Phytium Standalone SDK 2023-3-3 ChangeLog
+
+Change Log since 2023-03-3
+
+# third-party
+
+- delete redundant code about NO_SYS macro definition
+- modify kconfig ：delete config_LWIP_PORT_DEBUG_EN and add config_LWIP_USE_MEM__HEAP_DEBUG, which can manage parameters in memory debug mode
+- modify LwipPortStop function : add dhcp_cleanup api and free emac after sys_thread_delete
+
+# Phytium Standalone SDK 2023-3-3 ChangeLog
+
+Change Log since 2023-03-1
+
+- add qspi example
+
 # Phytium Standalone SDK 2023-3-2 ChangeLog
 
 Change Log since 2023-03-01
@@ -15,7 +598,7 @@ Change Log since 2023-03-01
 - add drviver.mk, board.mk, arch.mk and lib.mk, to seprate src and inc to groups
 - remove un-used packsource.mk
 - support compiling with makefile depends
-- support compiling drviver only without arch support 
+- support compiling drviver only without arch support
 
 ## drivers
 
@@ -33,7 +616,7 @@ Change Log since 2023-03-01
 
 ## baremetal
 
-- add multi-display test example 
+- add multi-display test example
 
 ## driver
 
@@ -42,6 +625,18 @@ Change Log since 2023-03-01
 ## third-party
 
 - change the lvgl/port config and adapt to the multi-display config
+
+# Phytium Standalone SDK 2023-03-01 ChangeLog
+
+Change Log since 2023-03-01
+
+## example
+
+- add can example,  modify adc example
+
+## driver
+
+- modify can driver
 
 # Phytium Standalone SDK 2023-3-1 ChangeLog
 

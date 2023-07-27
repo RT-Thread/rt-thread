@@ -122,7 +122,6 @@ FError FSdioSetClkFreq(FSdio *const instance_p, u32 input_clk_hz)
 {
     FASSERT(instance_p);
     uintptr base_addr = instance_p->config.base_addr;
-    u32 reg_val;
     u32 div = 0xff, drv = 0, sample = 0;
     u32 first_uhs_div, tmp_ext_reg, div_reg;
     FError ret = FSDIO_SUCCESS;
@@ -220,34 +219,6 @@ u32 FSdioGetClkFreq(FSdio *const instance_p)
     u32 real_clk_hz = FSDIO_CLK_FREQ_HZ / (2 * first_uhs_div * div);
 
     return real_clk_hz;
-}
-
-/**
- * @name: FSdioWaitClkReady
- * @msg: Wait clock ready after modify clock setting
- * @return {FError} FSDIO_SUCCESS if wait success, FSDIO_ERR_TIMEOUT if wait timeout
- * @param {uintptr} base_addr, base address of SDIO controller
- * @param {int} retries, retry times in waiting
- */
-static FError FSdioWaitClkReady(uintptr base_addr, int retries)
-{
-    FASSERT(retries > 1);
-    u32 reg_val = 0;
-
-    do
-    {
-        reg_val = FSDIO_READ_REG(base_addr, FSDIO_GPIO_OFFSET);
-    }
-    while (!(reg_val & FSDIO_CLK_READY) && (retries-- > 0));
-
-    if (!(reg_val & FSDIO_CLK_READY) && (retries <= 0))
-    {
-        FSDIO_ERROR("Wait clk ready timeout !!! status: 0x%x",
-                    reg_val);
-        return FSDIO_ERR_TIMEOUT;
-    }
-
-    return FSDIO_SUCCESS;
 }
 
 /**
@@ -443,11 +414,6 @@ static FError FSdioReset(FSdio *const instance_p)
     u32 reg_val;
     FError ret = FSDIO_SUCCESS;
 
-    /* set creg_nand_mmcsd DMA path */
-    FSDIO_INFO("Prev LSD CFG: 0x%x", FtIn32(FLSD_CONFIG_BASE + FLSD_NAND_MMCSD_HADDR));
-    FtOut32(FLSD_CONFIG_BASE + FLSD_NAND_MMCSD_HADDR, 0x0U);
-    FSDIO_INFO("Curr LSD CFG: 0x%x", FtIn32(FLSD_CONFIG_BASE + FLSD_NAND_MMCSD_HADDR));
-
     /* set fifo */
     reg_val = FSDIO_FIFOTH(FSDIO_FIFOTH_DMA_TRANS_8, FSDIO_RX_WMARK, FSDIO_TX_WMARK);
     FSDIO_WRITE_REG(base_addr, FSDIO_FIFOTH_OFFSET, reg_val);
@@ -550,7 +516,6 @@ FError FSdioRestart(FSdio *const instance_p)
 {
     FASSERT(instance_p);
     uintptr base_addr = instance_p->config.base_addr;
-    u32 reg_val;
     FError ret = FSDIO_SUCCESS;
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)

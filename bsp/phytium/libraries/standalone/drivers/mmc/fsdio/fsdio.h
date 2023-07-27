@@ -116,12 +116,14 @@ typedef struct
 typedef struct
 {
     volatile FSdioIDmaDesc *first_desc; /* first descriptor in the list */
+    volatile uintptr first_desc_p;
     u32 desc_num; /* num of descriptors in the list */
 } FSdioIDmaDescList; /* SDIO DMA descriptors list */
 
 typedef struct
 {
     u8 *buf; /* trans buffer */
+    uintptr buf_p;
     u32 blksz; /* card block size */
     u32 blkcnt; /* num of block in trans */
     u32 datalen; /* bytes in trans */

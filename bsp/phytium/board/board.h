@@ -17,6 +17,7 @@
 
 #include "fparameters.h"
 #include "phytium_cpu.h"
+#include "fkernel.h"
 
 #include "mmu.h"
 #ifdef RT_USING_SMART
@@ -42,6 +43,16 @@
 #define PAGE_POOL_SIZE  (8ul << 20)
 #define PAGE_START      (rt_size_t)(HEAP_END)
 #define PAGE_END        (PAGE_START +PAGE_POOL_SIZE)
+#endif
+
+#ifdef RT_USING_PIN
+/* gpio pin_index handle */
+#define FGPIO_OPS_PIN_INDEX(ctrl, port, pin)      SET_REG32_BITS(ctrl, 19, 12) | \
+                                                  SET_REG32_BITS(port, 11, 8) | \
+                                                  SET_REG32_BITS(pin, 7, 0)
+#define FGPIO_OPS_PIN_CTRL_ID(pin_idx)            GET_REG32_BITS(pin_idx, 19, 12)
+#define FGPIO_OPS_PIN_PORT_ID(pin_idx)            GET_REG32_BITS(pin_idx, 11, 8)
+#define FGPIO_OPS_PIN_ID(pin_idx)                 GET_REG32_BITS(pin_idx, 7, 0)
 #endif
 
 void rt_hw_board_init(void);

@@ -8,21 +8,31 @@ menu "Board Configuration"
 
         config TARGET_F2000_4
             bool "FT2000-4"
+            select USE_SERIAL
+            select ENABLE_Pl011_UART
 
         config TARGET_D2000
             bool "D2000"
+            select USE_SERIAL
+            select ENABLE_Pl011_UART
             
         config TARGET_E2000Q
             bool "E2000Q"
             select TARGET_E2000
+            select USE_SERIAL
+            select ENABLE_Pl011_UART
         
         config TARGET_E2000D
             bool "E2000D"
             select TARGET_E2000
+            select USE_SERIAL
+            select ENABLE_Pl011_UART
         
         config TARGET_E2000S
             bool "E2000S"
             select TARGET_E2000
+            select USE_SERIAL
+            select ENABLE_Pl011_UART
 
 #       config TARGET_TARDIGRADE
 #           bool "TARDIGRADE"

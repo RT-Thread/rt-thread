@@ -44,12 +44,29 @@ extern "C"
 /************************** Function Prototypes ******************************/
 
 /************************** Function *****************************************/
-u64 GenericTimerRead(void);
-void GenericTimerStart(void);
-void GenericTimerStop(void);
+/* Set generic timer CompareValue */
+void GenericTimerSetTimerCompareValue(u32 id, u32 interval);
+
+/* Set generic timer TimerValue */
+void GenericTimerSetTimerValue(u32 id, u32 timeout);
+
+/* Unmask generic timer interrupt */
+void GenericTimerInterruptEnable(u32 id);
+
+/* Mask generic timer interrupt */
+void GenericTimerInterruptDisable(u32 id);
+
+/* Enable generic timer */
+void GenericTimerStart(u32 id);
+
+/* Get generic timer physical count value */
+u64 GenericTimerRead(u32 id);
+
+/* Get generic timer frequency of the system counter */
 u32 GenericTimerFrequecy(void);
-void GenericTimerCompare(u32 interval);
-void GenericTimerInterruptEnable(void);
+
+/* Disable generic timer */
+void GenericTimerStop(u32 id);
 
 #ifdef __cplusplus
 }

@@ -27,22 +27,25 @@
 /***************************** Include Files *********************************/
 
 #include "ftypes.h"
-
-#include "fdcdp_param.h"
+#include "fparameters.h"
+#include "ferror_code.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /************************** Constant Definitions *****************************/
 #define FMEDIA_DC_SUCCESS FT_SUCCESS
 
-/************************** Constant Definitions *****************************/
-
 #define FDC_FALSE 0
 #define FDC_TRUE 1
-#define FDCDP_PATH_NUM 2
+
 
 #define FDC_GOP_MAX_MODENUM 11
 
 #define FDC_PCCON_BUFFER_SIZE (1 * 1024 * 1024)
 
+/**************************** Type Definitions *******************************/
 typedef enum
 {
     FDC_MULTI_MODE_CLONE = 0,
@@ -121,8 +124,6 @@ typedef enum
     FDC_OUTPUT_RGB1010,
 } FDcOutputColor;
 
-/**************************** Type Definitions *******************************/
-
 typedef struct
 {
     u32 instance_id;         /* dc id */
@@ -133,8 +134,8 @@ typedef struct
 
 typedef struct
 {
-    u32 visble_line;       /*  Visible Number of  lines */
     u32 total_line;        /*  Total Number of  lines. */
+    u32 visble_line;       /*  Visible Number of  lines */     
     u32 sync_start;        /* Start of  sync pulse. */
     u32 sync_end;          /* End of  sync pulse. */
     boolean sync_polarity; /* Polarity of the  sync pulse.1 - positive , 0 - negative.  */
@@ -150,7 +151,7 @@ typedef struct
 typedef struct
 {
     u32 color_format;      /* color format. */
-    uintptr framebuffer_p; /* Starting address of the frame buffer. */
+    uintptr framebuffer_p;     /* Starting address of the frame buffer. */
     u32 tiling_mode;       /* tile mode */
     u32 yuv_type;          /* unused , reserved */
     u32 stride;            /* memory image line span , --- FDcWidthToStride */
@@ -208,7 +209,7 @@ typedef struct
 typedef struct
 {
     boolean enable;
-    u64 phys_addr;    /* Address of the cursor shape. */
+    uintptr phys_addr;    /* Address of the cursor shape. */
     u32 type;             /* Cursor type , 0 - disable , 1 - mask mode , 2 - argb mode. */
     u32 x;                /* X location of cursor's hotspot. */
     u32 y;                /* Y location of cursor's hotspot. */
@@ -221,9 +222,9 @@ typedef struct
 
 typedef struct
 {
-    u32 y_address;
-    u32 u_address;
-    u32 v_address;
+    uintptr y_address;
+    uintptr u_address;
+    uintptr v_address;
     u32 u_stride;
     u32 v_stride;
     u32 rot_angle;
@@ -263,6 +264,32 @@ typedef struct
     FDcSyncParameter FDcSyncParameter;
 } FDcDtdTable;
 
+typedef enum
+{
+    FDC_DISPLAY_ID_640_480 = 0,
+    FDC_DISPLAY_ID_800_600,
+    FDC_DISPLAY_ID_1024_768,
+    FDC_DISPLAY_ID_1280_720,
+    FDC_DISPLAY_ID_1366_768,
+    FDC_DISPLAY_ID_1920_1080,
+    FDC_DISPLAY_ID_1600_1200,
+    FDC_DISPLAY_ID_1280_800,
+    FDC_DISPLAY_ID_800_480,
+    FDC_DISPLAY_ID_1280_768,
+    FDC_DISPLAY_ID_1280_1024,
+    FDC_DISPLAY_ID_MAX_NUM
+
+} FDcDisplayId;
+
+typedef struct
+{
+    u32 width;
+    u32 height;
+    u32 color_depth;  /*  value follow the  DISPLAY_REFRESH_RATE_XX */
+    u32 refresh_rate; /*  value follow the  DISPLAY_COLOR_DEPTH_XX */
+    FDcDisplayId id;
+} FDcDisplaySetting;
+
 typedef struct
 {
     FDcDtdTable dtd_table; /*the table of dtd params*/
@@ -274,22 +301,20 @@ typedef struct
     FDcDisplayDpMode dp_mode;
     FDcDisplayVideoMode video_mode; /*the params of video*/
     FDcDisplayCursor cursor;
+    FDcDisplaySetting  display_setting[FDC_DISPLAY_ID_MAX_NUM];
 } FDcCurrentConfig;
 
 typedef struct
 {
     FDcCurrentConfig fdc_current_config;
     FDcConfig config;
-    u32 multimode; /* The display mode of the device , including clone, horizontal and vertical display*/
-
+    u32 multi_mode; /* The display mode of the device , including clone, horizontal and vertical display*/
 } FDcCtrl;
 
 /************************** Function Prototypes ******************************/
 
 /*Initialization of dc configuration parameter */
-FError FDcConfigInit(FDcCtrl *instance_p, FDcDpDisplaySetting *gop_mode, u32 mode_id);
-
-/* config to ddr */
+FError FDcConfigInit(FDcCtrl *instance_p, FDcDisplaySetting *gop_mode, u32 mode_id);
 
 /*config the panel data of core data */
 void FDcPanelSetConfig(FDcCtrl *instance_p, boolean data_enable_polarity, boolean data_polarity, boolean clock_Polarity);
@@ -299,6 +324,7 @@ void FDcDisplaySetHorizontal(FDcCtrl *instance_p, u32 mode_id, u32 total_pixels,
 
 /* set the vertical timing parameter */
 void FDcDisplaySetVertical(FDcCtrl *instance_p, u32 mode_id, u32 line_pixels, u32 total_pixels, u32 vsync_start, u32 vsync_end, boolean vsync_polarity);
+
 /* select core data about dc output mode , DP mode or DPI mode */
 void FDcOutputSelect(FDcCtrl *instance_p, FDcPhyOutPutType output_type);
 
@@ -314,16 +340,12 @@ void FDcFramebufferSetFramebuffer(FDcCtrl *instance_p, FDcDisplayVideoMode *fdc_
 /* config core data about dither enable */
 void FDcDitherEnable(FDcCtrl *instance_p, boolean enable);
 
-/* update config */
-
 /* enable core data about gamma */
 void FDcGammaEnable(FDcCtrl *instance_p, boolean enable);
 
 /* config register about all dc parameters include video framebuffer  address and stride
 the main function interface to set the dc parameters*/
 FError FDcCoreCommit(FDcCtrl *instance_p, u32 mode_id);
-
-/* direct update config */
 
 /* commit display configuration about timing parameter*/
 void FDcDisplayCommit(FDcCtrl *instance_p, u32 mode_id);
@@ -337,8 +359,6 @@ void FDcPanelCommit(FDcCtrl *instance_p);
 /* config register about cursor parameter */
 void FDcCursorCommit(FDcCtrl *instance_p);
 
-/* cursor setting */
-
 /* enable the cursor */
 void FDcCursorEnable(FDcCtrl *instance_p, boolean enable);
 
@@ -351,9 +371,12 @@ void FDcCursorSetPos(FDcCtrl *instance_p, uintptr x, uintptr y);
 /* Config register about vedio parameter and framebuffer */
 void FDcFramebufferCommit(FDcCtrl *instance_p);
 
-/* common setting */
-
 /* according to the width, calculate the stride */
-FError FDcWidthToStride(u32 width, u32 color_depth, u32 multimode);
+FError FDcWidthToStride(u32 width, u32 color_depth, u32 multi_mode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
+

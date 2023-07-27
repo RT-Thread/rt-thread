@@ -2,7 +2,7 @@ menu "Hardware Timer Configuration"
     config ENABLE_TIMER_TACHO
         bool
         prompt "Use Timer Tacho"
-        depends on TARGET_E2000S || TARGET_E2000D || TARGET_E2000Q
+        depends on TARGET_E2000S || TARGET_E2000D || TARGET_E2000Q || TARGET_T2000Q
 
         default n
 endmenu

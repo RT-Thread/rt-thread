@@ -6,5 +6,4 @@ config USE_FSPIM
     depends on USE_SPI
     help
         Select FSPIM driver component
-	
-	
+

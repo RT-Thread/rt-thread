@@ -243,6 +243,10 @@ fatload mmc 1:1 0x80100000 baremetal.bin
 dcache flush
 go 0x80100000
 ```
+- 如果固件中没有 ```dcache flush```指令，可以在编译镜像时，将刷新cache的配置选择
+
+![](../../fig/flush_cache.png)
+
 
 - 输入下列命令，可以下电、上电启动，自动从 SD 卡介质中引导系统
 > 使用 saveenv 前，需要找 FAE 确认 u-boot 版本是否支持

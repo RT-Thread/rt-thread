@@ -11,7 +11,9 @@
 #ifndef __RT_ATOMIC_H__
 #define __RT_ATOMIC_H__
 
+#if defined(__aarch64__)
 #include <rthw.h>
+#endif
 
 #if !defined(__cplusplus)
 

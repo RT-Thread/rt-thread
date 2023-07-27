@@ -66,8 +66,8 @@ typedef struct
     FGdmaOperPriority   wr_qos;  /* DMA通道写Qos配置 */
     FGdmaOperMode       trans_mode; /* DMA通道的操作模式，直接模式或者BDL模式 */
     /* Direct模式有效 */
-    FGdmaBurstSize      rd_align; /* DMA读请求的Burst对齐方式 */
-    FGdmaBurstSize      wr_align; /* DMA写请求的Burst对齐方式 */    
+    FGdmaBurstSize      rd_size; /* DMA读请求的burst size */
+    FGdmaBurstSize      wr_size; /* DMA写请求的burst size */    
     /* BDL模式有效 */
     boolean             roll_back; /* 循环模式，TRUE: 当前BDL列表完成后，从第一个BDL项从新开始传输 */ 
     FGdmaBdlDesc        *descs;

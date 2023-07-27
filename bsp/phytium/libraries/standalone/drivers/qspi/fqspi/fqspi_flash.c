@@ -76,7 +76,7 @@ FError FQspiFlashDetect(FQspiCtrl *pctrl)
         ret = FQspiFlashSpecialInstruction(pctrl, FQSPI_FLASH_CMD_RDID, flash_id, sizeof(flash_id));
         if (FQSPI_SUCCESS != ret)
         {
-            FQSPI_ERROR("Read flash id failed, ret 0x%x\r\n", ret);
+            FQSPI_INFO("Read flash id failed, ret 0x%x\r\n", ret);
             return ret;
         }
 
@@ -86,7 +86,7 @@ FError FQspiFlashDetect(FQspiCtrl *pctrl)
         }
         else
         {
-            FQSPI_ERROR("The Detected CSN%d flash is not matched", index);
+            FQSPI_INFO("The Detected CSN%d flash is not matched", index);
         }
 
         for (i = 0; i < sizeof(flash_info_table) / sizeof(FQspiFlashInfo); i++)
@@ -108,7 +108,7 @@ FError FQspiFlashDetect(FQspiCtrl *pctrl)
 
         if (i == sizeof(flash_info_table) / sizeof(FQspiFlashInfo) && flash_id[0] != 0xff)
         {
-            FQSPI_ERROR("The Detected CSN%d flash not detected, id = 0x%x, 0x%x, 0x%x\r\n", index, flash_id[0], flash_id[1], flash_id[2]);
+            FQSPI_INFO("The Detected CSN%d flash not detected, id = 0x%x, 0x%x, 0x%x\r\n", index, flash_id[0], flash_id[1], flash_id[2]);
         }
 
     }
@@ -478,7 +478,7 @@ FError FQspiFlashReadDataConfig(FQspiCtrl *pctrl, u8 command)
             pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
             pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_2_2;
             pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
-
+            pctrl->rd_cfg.dummy = 4;
             if (pctrl->mf_id == FQSPI_FLASH_MF_ID_CYPRESS)
             {
                 pctrl->rd_cfg.mode_byte = 0x1;
@@ -502,6 +502,8 @@ FError FQspiFlashReadDataConfig(FQspiCtrl *pctrl, u8 command)
             pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
             pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_4_4;
             pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
+            
+            pctrl->rd_cfg.dummy = 6;
 
             if (pctrl->mf_id == FQSPI_FLASH_MF_ID_CYPRESS)
             {
@@ -615,8 +617,11 @@ FError FQspiFlashWriteData(FQspiCtrl *pctrl, u8 command, u32 chip_addr, const u8
     switch (command)
     {
         case FQSPI_FLASH_CMD_PP:
+            pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_3;
+            break;
         case FQSPI_FLASH_CMD_QPP:
             pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_3;
+            pctrl->wr_cfg.wr_transfer = FQSPI_TRANSFER_1_1_4;
             break;
         case FQSPI_FLASH_CMD_4PP:
         case FQSPI_FLASH_CMD_4QPP:

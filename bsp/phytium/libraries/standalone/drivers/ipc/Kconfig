@@ -2,7 +2,7 @@ config ENABLE_FSEMAPHORE
     bool
     prompt "Use FSemaphore"
     default n
-    depends on TARGET_E2000S || TARGET_E2000D || TARGET_E2000Q
+    depends on TARGET_E2000S || TARGET_E2000D || TARGET_E2000Q || TARGET_T2000Q
     help
         Select FSemaphore driver component
 	
