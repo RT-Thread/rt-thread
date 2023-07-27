@@ -8,6 +8,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-04-27     huanghe      first version
+ * 2023-07-27     zhangyan     add qspi io space
  *
  */
 

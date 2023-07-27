@@ -7,7 +7,8 @@
  * 
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe       first commit 
+ * 2022-10-26  huanghe       first commit
+ * 2023-07-27  zhugengyu     flush cache in aarch64-el2 
  *
  */
  

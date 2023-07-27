@@ -9,6 +9,7 @@
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
  * 2022-04-13  zhugengyu    support RT-Smart
+ * 2023-07-27  liqiaozhong  add gpio pin definition
  *
  */
 

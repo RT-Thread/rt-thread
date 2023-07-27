@@ -10,6 +10,7 @@
  * 2022-10-26  huanghe      first commit
  * 2022-10-26  zhugengyu    support aarch64
  * 2023-04-13  zhugengyu    support RT-Smart
+ * 2023-07-27  zhugengyu    update aarch32 gtimer usage
  *
  */
 

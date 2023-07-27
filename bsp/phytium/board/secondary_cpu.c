@@ -9,6 +9,7 @@
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
  * 2022-10-26  zhugengyu    support aarch64
+ * 2023-07-26  huanghe      update psci uage
  *
  */
 
