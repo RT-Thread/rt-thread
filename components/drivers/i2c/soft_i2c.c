@@ -384,10 +384,7 @@ static rt_int32_t i2c_writeb(struct rt_i2c_bus_device *bus, rt_uint8_t data)
     for(rt_int8_t i = 7; i >= 0; i--)
     {
         bit = (data >> i) & 1;
-        if(bit)
-            SDA_H(cfg);
-        else
-            SDA_L(cfg);
+        SET_SDA(cfg, bit);
         i2c_delay(cfg);
         SCL_H(cfg);
         i2c_delay(cfg);
@@ -400,10 +397,7 @@ static rt_int32_t i2c_writeb(struct rt_i2c_bus_device *bus, rt_uint8_t data)
 
         SCL_L(cfg);
         bit = (data >> i) & 1;
-        if(bit)
-            SDA_H(cfg);
-        else
-            SDA_L(cfg);
+        SET_SDA(cfg, bit);
         i2c_delay(cfg);
         if(bit > 0 && GET_SDA(cfg) == PIN_LOW)
         {
