@@ -2866,11 +2866,11 @@ sysret_t sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
 
     if (addr)
     {
-        if (!lwp_user_accessable(addrlen, sizeof (socklen_t)))
+        if (!lwp_user_accessable(addrlen, sizeof(socklen_t)))
         {
             return -EFAULT;
         }
-        lwp_get_from_user(&uaddrlen, addrlen, sizeof (socklen_t));
+        lwp_get_from_user(&uaddrlen, addrlen, sizeof(socklen_t));
         if (!uaddrlen)
         {
             return -EINVAL;
@@ -2894,7 +2894,7 @@ sysret_t sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
                 uaddrlen = sizeof(struct musl_sockaddr);
             }
             lwp_put_to_user(addr, &kmusladdr, uaddrlen);
-            lwp_put_to_user(addrlen, &uaddrlen, sizeof (socklen_t));
+            lwp_put_to_user(addrlen, &uaddrlen, sizeof(socklen_t));
         }
     }
     return ret;
@@ -2937,11 +2937,11 @@ sysret_t sys_getpeername(int socket, struct musl_sockaddr *name, socklen_t *name
     socklen_t unamelen;
     socklen_t knamelen;
 
-    if (!lwp_user_accessable(namelen, sizeof (socklen_t *)))
+    if (!lwp_user_accessable(namelen, sizeof(socklen_t)))
     {
         return -EFAULT;
     }
-    lwp_get_from_user(&unamelen, namelen, sizeof (socklen_t *));
+    lwp_get_from_user(&unamelen, namelen, sizeof(socklen_t));
     if (!unamelen)
     {
         return -EINVAL;
@@ -2963,7 +2963,7 @@ sysret_t sys_getpeername(int socket, struct musl_sockaddr *name, socklen_t *name
             unamelen = sizeof(struct musl_sockaddr);
         }
         lwp_put_to_user(name, &kname, unamelen);
-        lwp_put_to_user(namelen, &unamelen, sizeof (socklen_t *));
+        lwp_put_to_user(namelen, &unamelen, sizeof(socklen_t));
     }
     else
     {
@@ -2981,11 +2981,11 @@ sysret_t sys_getsockname(int socket, struct musl_sockaddr *name, socklen_t *name
     socklen_t unamelen;
     socklen_t knamelen;
 
-    if (!lwp_user_accessable(namelen, sizeof (socklen_t *)))
+    if (!lwp_user_accessable(namelen, sizeof (socklen_t)))
     {
         return -EFAULT;
     }
-    lwp_get_from_user(&unamelen, namelen, sizeof (socklen_t *));
+    lwp_get_from_user(&unamelen, namelen, sizeof (socklen_t));
     if (!unamelen)
     {
         return -EINVAL;
@@ -3006,7 +3006,7 @@ sysret_t sys_getsockname(int socket, struct musl_sockaddr *name, socklen_t *name
             unamelen = sizeof(struct musl_sockaddr);
         }
         lwp_put_to_user(name, &kname, unamelen);
-        lwp_put_to_user(namelen, &unamelen, sizeof(socklen_t *));
+        lwp_put_to_user(namelen, &unamelen, sizeof(socklen_t));
     }
     else
     {
