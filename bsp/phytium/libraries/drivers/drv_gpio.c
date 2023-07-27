@@ -91,6 +91,7 @@ static void FGpioOpsSetupPinIRQ(FGpio *ctrl, FGpioPin *const pin, FGpioOpsPinCon
 
 void FIOPadSetGpioMux(u32 ctrl_id_p, u32 pin_id_p)
 {
+#if defined(TARGET_E2000D)
     if (ctrl_id_p == FGPIO4_ID)
     {
         switch (pin_id_p)
@@ -112,6 +113,31 @@ void FIOPadSetGpioMux(u32 ctrl_id_p, u32 pin_id_p)
         LOG_E("Unsupported ctrl.");
         RT_ASSERT(0);
     }
+#endif
+
+#if defined(TARGET_E2000Q)
+    if (ctrl_id_p == FGPIO4_ID)
+    {
+        switch (pin_id_p)
+        {
+            case 11: /* gpio 4-a-11 */
+                FIOPadSetFunc(&iopad_ctrl, FIOPAD_AC49_REG0_OFFSET, FIOPAD_FUNC6);
+                break;
+            case 12: /* gpio 4-a-12 */
+                FIOPadSetFunc(&iopad_ctrl, FIOPAD_AE47_REG0_OFFSET, FIOPAD_FUNC6);
+                break;
+            default:
+                LOG_E("Unsupported ctrl pin.");
+                RT_ASSERT(0);
+                break;
+        }
+    }
+    else
+    {
+        LOG_E("Unsupported ctrl.");
+        RT_ASSERT(0);
+    }
+#endif
 }
 
 /* on E2000, if u want use GPIO-4-11, set pin = FGPIO_OPS_PIN_INDEX(4, 0, 11) */
