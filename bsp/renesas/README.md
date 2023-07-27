@@ -3,15 +3,18 @@
 
 RA 系列 BSP 目前支持情况如下表所示：
 
-| **BSP 文件夹名称**        | **开发板名称**              |
-|:------------------------- |:-------------------------- |
-| **RA6 系列**              |                          |
-| [ra6m4-cpk](ra6m4-cpk) | Renesas 官方 CPK-RA6M4 开发板 |
-| [ra6m4-iot](ra6m4-iot) | Renesas 官方 IOT-RA6M4 开发板 |
-| [ra6m3-ek](ra6m3-ek)   | Renesas 官方 RA6M3-EK 开发板  |
+| **BSP 文件夹名称**                 | **开发板名称**                                |
+| :--------------------------------- | :-------------------------------------------- |
+| **RA6 系列**                       |                                               |
+| [ebf_qi_min_6m5](ebf_qi_min_6m5)   | 野火 启明6 开发板                             |
+| [ra6m4-cpk](ra6m4-cpk)             | Renesas 官方 CPK-RA6M4 开发板                 |
+| [ra6m4-iot](ra6m4-iot)             | Renesas 官方 IOT-RA6M4 开发板                 |
+| [ra6m3-ek](ra6m3-ek)               | Renesas 官方 RA6M3-EK 开发板                  |
 | [ra6m3-hmi-board](ra6m3-hmi-board) | Renesas 联合 RT-Thread RA6M3-HMI-Board 开发板 |
+| **RA4 系列**                       |                                               |
+| [ra4m2-eco](ra4m2-eco)             | Renesas 官方 RA-Eco-RA4M2 开发板              |
 | **RA2 系列**                       |                                               |
-| [ra2l1-cpk](ra2l1-cpk) | Renesas 官方 CPK-RA2L1 开发板 |
+| [ra2l1-cpk](ra2l1-cpk)             | Renesas 官方 CPK-RA2L1 开发板                 |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 
@@ -20,6 +23,8 @@ RA 系列 BSP 目前支持情况如下表所示：
 | [外设驱动使用教程](docs/RA系列BSP外设驱动使用教程.md) | 讲解 BSP 上更多外设驱动的使用方法 |
 | [外设驱动介绍与应用](docs/RA系列驱动介绍.md) | 讲解 RA 系列 BSP 驱动的支持情况，以及如何利用驱动框架开发应用程序 |
 | [使用 FSP 配置外设驱动](docs/RA系列使用FSP配置外设驱动.md) | 介绍如何使用 FSP 工具添加和配置外设 |
+| [瑞萨RA2L1开发实践指南](https://docs.qq.com/doc/DQktJWmpBZkNiTnh6) | 介绍基于 RA2L1 如何添加和配置外设 |
+| [瑞萨RA6m3开发实践指南](https://docs.qq.com/doc/DQmVYUEN1dHVyd0hi) | 介绍基于 RA6M3 如何添加和配置外设 |
 | **BSP 制作与提交** | **简介**                                     |
 | [BSP 制作教程](docs/RA系列BSP制作教程.md) | 讲解 RA 系列 BSP 的制作方法，以及在制作 BSP 和提交 BSP 时应当遵守的规范 |
 | [外设驱动添加指南](docs/RA系列外设驱动添加指南.md) | 讲解 BSP 添加更多设备驱动的方法 |

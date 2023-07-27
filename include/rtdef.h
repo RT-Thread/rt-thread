@@ -128,11 +128,11 @@ typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 #if !defined(__cplusplus)
-#if defined(RT_USING_STDC_ATOMIC)
+#if defined(RT_USING_HW_ATOMIC)
+    typedef rt_base_t rt_atomic_t;
+#elif defined(RT_USING_STDC_ATOMIC)
     #include <stdatomic.h>
     typedef atomic_size_t rt_atomic_t;
-#elif defined(RT_USING_HW_ATOMIC)
-    typedef rt_base_t rt_atomic_t;
 #else
 
     /* To detect std atomic */
@@ -271,7 +271,7 @@ typedef __gnuc_va_list              va_list;
 typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER
 #pragma section("rti_fn$f",read)
-    #ifdef RT_DEBUG_INIT
+    #ifdef RT_DEBUGING_INIT
         struct rt_init_desc
         {
             const char* level;
@@ -297,7 +297,7 @@ typedef int (*init_fn_t)(void);
                                 {__rti_level_##fn, fn };
     #endif
 #else
-    #ifdef RT_DEBUG_INIT
+    #ifdef RT_DEBUGING_INIT
         struct rt_init_desc
         {
             const char* fn_name;

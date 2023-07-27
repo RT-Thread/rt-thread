@@ -33,6 +33,7 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
+#define RT_USING_MESSAGEQUEUE_PRIORITY
 
 /* Memory Management */
 
@@ -53,7 +54,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50001
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
@@ -83,12 +84,14 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+
+/* DFS: device virtual file system */
+
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 8
-#define DFS_FILESYSTEM_TYPES_MAX 8
 #define DFS_FD_MAX 32
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -107,6 +110,7 @@
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
 #define RT_USING_DFS_TMPFS
+#define RT_USING_DFS_MQUEUE
 
 /* Device Drivers */
 
@@ -180,8 +184,12 @@
 
 /* Utilities */
 
+#define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
+#define RT_USING_ADT_BITMAP
+#define RT_USING_ADT_HASHMAP
+#define RT_USING_ADT_REF
 
 /* RT-Thread Utestcases */
 
@@ -268,7 +276,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */

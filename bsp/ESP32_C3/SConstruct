@@ -1,6 +1,38 @@
 import os
 import sys
 import rtconfig
+from esptool.bin_image import ELFFile, ImageSegment, LoadFirmwareImage
+from esptool.targets import CHIP_DEFS, CHIP_LIST, ROM_LIST
+
+def elf2image(target, source, env):
+    e = ELFFile("rtthread.elf")
+
+    print("Creating esp32c3 image...")
+
+    image = CHIP_DEFS["esp32c3"].BOOTLOADER_IMAGE()
+    image.min_rev = 3
+    image.entrypoint = e.entrypoint
+    image.flash_mode = 2 # flash_mode: dio
+
+    # ELFSection is a subclass of ImageSegment, so can use interchangeably
+    image.segments = e.sections
+    image.flash_size_freq = image.ROM_LOADER.parse_flash_size_arg("4MB")
+    image.flash_size_freq += image.ROM_LOADER.parse_flash_freq_arg("80m")
+
+    image.elf_sha256 = e.sha256()
+    image.elf_sha256_offset = 0xb0
+
+    before = len(image.segments)
+    image.merge_adjacent_segments()
+    if len(image.segments) != before:
+        delta = before - len(image.segments)
+        print("Merged %d ELF section%s" % (delta, "s" if delta > 1 else ""))
+
+    image.verify()
+
+    image.save("rtthread.bin")
+
+    print("Successfully created esp32c3 image.")
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
@@ -30,3 +62,6 @@ objs = PrepareBuilding(env, RTT_ROOT, remove_components = ['libc'])
 
 # make a building
 DoBuilding(TARGET, objs)
+
+# 添加构建后的钩子函数
+env.AddPostAction(TARGET, elf2image)

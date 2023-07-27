@@ -1,3 +1,5 @@
+menu "RT-Thread Architecture"
+
 config ARCH_CPU_64BIT
     bool
 
@@ -89,18 +91,18 @@ config ARCH_ARM_MMU
     depends on ARCH_ARM
 
 if RT_USING_SMART
-config KERNEL_VADDR_START
-    hex "The virtural address of kernel start"
-    default 0xffff000000000000 if ARCH_ARMV8
-    default 0xc0000000 if ARCH_ARM
-    default 0x80000000 if ARCH_RISCV
-    depends on ARCH_MM_MMU
+    config KERNEL_VADDR_START
+        hex "The virtural address of kernel start"
+        default 0xffff000000000000 if ARCH_ARMV8
+        default 0xc0000000 if ARCH_ARM
+        default 0x80000000 if ARCH_RISCV
+        depends on ARCH_MM_MMU
 
-config RT_IOREMAP_LATE
-    bool "Support to create IO mapping in the kernel address space after system initlalization."
-    default n
-    depends on ARCH_ARM_CORTEX_A
-    depends on ARCH_MM_MMU
+    config RT_IOREMAP_LATE
+        bool "Support to create IO mapping in the kernel address space after system initlalization."
+        default n
+        depends on ARCH_ARM_CORTEX_A
+        depends on ARCH_MM_MMU
 endif
 
 config ARCH_ARM_ARM9
@@ -231,3 +233,7 @@ config ARCH_HOST_SIMULATOR
 config ARCH_CPU_STACK_GROWS_UPWARD
     bool
     default n
+
+source "$RTT_DIR/libcpu/aarch64/Kconfig"
+
+endmenu

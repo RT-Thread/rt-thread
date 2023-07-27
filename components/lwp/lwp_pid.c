@@ -327,6 +327,7 @@ struct rt_lwp* lwp_new(void)
     lwp->session = -1;
     lwp->tty = RT_NULL;
     rt_list_init(&lwp->t_grp);
+    rt_list_init(&lwp->timer);
     lwp_user_object_lock_init(lwp);
     lwp->address_search_head = RT_NULL;
     rt_wqueue_init(&lwp->wait_queue);
@@ -502,6 +503,7 @@ void lwp_free(struct rt_lwp* lwp)
         }
     }
 
+    timer_list_free(&lwp->timer);
     lwp_pid_put(lwp_to_pid(lwp));
     rt_hw_interrupt_enable(level);
     rt_free(lwp);

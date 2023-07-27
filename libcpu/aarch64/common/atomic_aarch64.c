@@ -8,6 +8,7 @@
  * 2023-05-18     GuEe-GUI     first version
  */
 
+#include <rthw.h>
 #include <rtatomic.h>
 
 rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr)
@@ -15,7 +16,7 @@ rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr)
     rt_atomic_t ret;
 
     __asm__ volatile (
-        "   ldr     %w0, %1\n"
+        "   ldr     %0, %1\n"
         "   dmb     ish"
         : "=r" (ret)
         : "Q" (*ptr)
@@ -27,7 +28,7 @@ rt_atomic_t rt_hw_atomic_load(volatile rt_atomic_t *ptr)
 void rt_hw_atomic_store(volatile rt_atomic_t *ptr, rt_atomic_t val)
 {
     __asm__ volatile (
-        "   stlr    %w1, %0\n"
+        "   str     %1, %0\n"
         "   dmb     ish"
         : "=Q" (*ptr)
         : "r" (val)
@@ -41,9 +42,9 @@ rt_atomic_t rt_hw_atomic_##op(volatile rt_atomic_t *ptr, rt_atomic_t in_val)    
                                                                     \
     __asm__ volatile (                                              \
         "   prfm    pstl1strm, %3\n"                                \
-        "1: ldxr    %w0, %3\n"                                      \
-        "   "#ins " %w1, %w0, %w4\n"                                \
-        "   stlxr   %w2, %w1, %3\n"                                 \
+        "1: ldxr    %0, %3\n"                                       \
+        "   "#ins " %1, %0, %4\n"                                   \
+        "   stlxr   %w2, %1, %3\n"                                  \
         "   cbnz    %w2, 1b\n"                                      \
         "   dmb     ish"                                            \
         : "=&r" (result), "=&r" (val), "=&r" (tmp), "+Q" (*ptr)     \
@@ -65,8 +66,8 @@ rt_atomic_t rt_hw_atomic_exchange(volatile rt_atomic_t *ptr, rt_atomic_t val)
 
     __asm__ volatile (
         "   prfm    pstl1strm, %2\n"
-        "1: ldxr    %w0, %2\n"
-        "   stlxr   %w1, %w3, %2\n"
+        "1: ldxr    %0, %2\n"
+        "   stlxr   %w1, %3, %2\n"
         "   cbnz    %w1, 1b\n"
         "   dmb     ish"
         : "=&r" (ret), "=&r" (tmp), "+Q" (*ptr)
@@ -92,10 +93,10 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
 
     __asm__ volatile (
         "   prfm    pstl1strm, %2\n"
-        "1: ldxr    %w0, %2\n"
-        "   eor     %w1, %w0, %w3\n"
-        "   cbnz    %w1, 2f\n"
-        "   stlxr   %w1, %w4, %2\n"
+        "1: ldxr    %0, %2\n"
+        "   eor     %1, %0, %3\n"
+        "   cbnz    %1, 2f\n"
+        "   stlxr   %w1, %4, %2\n"
         "   cbnz    %w1, 1b\n"
         "   dmb     ish\n"
         "2:"
@@ -103,6 +104,5 @@ rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_a
         : "Kr" (*old), "r" (new)
         : "memory");
 
-    return oldval;
+    return oldval == *old;
 }
-

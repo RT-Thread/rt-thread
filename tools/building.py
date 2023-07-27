@@ -513,6 +513,23 @@ def AddDepend(option):
     else:
         print('AddDepend arguements are illegal!')
 
+def Preprocessing(input, suffix, output = None, CPPPATH = None):
+    if hasattr(rtconfig, "CPP") and hasattr(rtconfig, "CPPFLAGS"):
+        if output == None:
+            import re
+            output = re.sub(r'[\.]+.*', suffix, input)
+        inc = ' '
+        cpppath = CPPPATH
+        for cpppath_item in cpppath:
+            inc += ' -I' + cpppath_item
+        CPP = rtconfig.EXEC_PATH + '/' + rtconfig.CPP
+        if not os.path.exists(CPP):
+            CPP = rtconfig.CPP
+        CPP += rtconfig.CPPFLAGS
+        path = GetCurrentDir() + '/'
+        os.system(CPP + inc + ' ' + path + input + ' -o ' + path + output)
+    else:
+        print('CPP tool or CPPFLAGS is undefined in rtconfig!')
 
 def MergeGroup(src_group, group):
     src_group['src'] = src_group['src'] + group['src']
@@ -959,7 +976,7 @@ def EndBuilding(target, program = None):
         if not isinstance(project_path, str) or len(project_path) == 0 :
             project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-        child = subprocess.Popen('scons --target=eclipse --project-name=' + project_name, cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name), cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = child.communicate()
         need_exit = True
     if GetOption('cscope'):

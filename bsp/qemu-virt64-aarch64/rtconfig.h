@@ -61,12 +61,19 @@
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50001
 #define RT_USING_STDC_ATOMIC
+
+/* RT-Thread Architecture */
+
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
 #define ARCH_ARMV8
+#define ARCH_TEXT_OFFSET 0x80000
+#define ARCH_RAM_OFFSET 0x40000000
+#define ARCH_SECONDARY_CPU_STACK_SIZE 4096
+#define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
 
 /* RT-Thread Components */
 

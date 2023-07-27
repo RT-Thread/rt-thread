@@ -2515,8 +2515,9 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 
         rt_hw_interrupt_enable(level);
 
-        /* setup the signal for the dummy lwp, so that is can be smoothly recycled */
+        /* setup the signal, timer_list for the dummy lwp, so that is can be smoothly recycled */
         lwp_signal_init(&new_lwp->signal);
+        rt_list_init(&new_lwp->timer);
 
         lwp_ref_dec(new_lwp);
         arch_start_umode(lwp->args,

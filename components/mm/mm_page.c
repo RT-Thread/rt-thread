@@ -85,7 +85,7 @@ static struct rt_mem_obj mm_page_mapper = {
     .hint_free = hint_free,
 };
 
-#ifdef RT_DEBUG_PAGE_LEAK
+#ifdef RT_DEBUGING_PAGE_LEAK
 static volatile int enable;
 static rt_page_t _trace_head;
 #define TRACE_ALLOC(pg, size)       _trace_alloc(pg, __builtin_return_address(0), size)
@@ -556,7 +556,7 @@ static void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
     {
         alloc_buf = page_to_addr(p);
 
-        #ifdef RT_DEBUG_PAGE_LEAK
+        #ifdef RT_DEBUGING_PAGE_LEAK
             level = rt_hw_interrupt_disable();
             TRACE_ALLOC(p, size_bits);
             rt_hw_interrupt_enable(level);
