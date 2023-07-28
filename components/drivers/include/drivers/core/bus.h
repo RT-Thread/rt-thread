@@ -8,8 +8,8 @@
  * 2023-04-12     ErikChan      the first version
  */
 
-#ifndef __BUS_H__
-#define __BUS_H__
+#ifndef __CORE_BUS_H__
+#define __CORE_BUS_H__
 
 #include <rthw.h>
 #include <drivers/core/device.h>

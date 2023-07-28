@@ -8,8 +8,8 @@
  * 2023-04-12     ErikChan      the first version
  */
 
-#ifndef __DEVICE_H__
-#define __DEVICE_H__
+#ifndef __CORE_DEVICE_H__
+#define __CORE_DEVICE_H__
 
 #include <rtdef.h>
 
