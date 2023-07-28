@@ -18,7 +18,7 @@
 #include "drv_config.h"
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.usb"
+#define LOG_TAG             "drv.usb.fsh"
 #include <drv_log.h>
 
 static struct rt_completion urb_completion;
@@ -76,7 +76,7 @@ void usbh_connect_callback(usbh_core_type *uhost)
     if (!connect_status)
     {
         connect_status = RT_TRUE;
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb connected\n"));
+        LOG_D("usb connected");
         rt_usbh_root_hub_connect_handler(hcd, 1, RT_FALSE);
     }
 }
@@ -87,7 +87,7 @@ void usbh_disconnect_callback(usbh_core_type *uhost)
     if (connect_status)
     {
         connect_status = RT_FALSE;
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb disconnnect\n"));
+        LOG_D("usb disconnnect");
         rt_usbh_root_hub_disconnect_handler(hcd, 1);
     }
 }
@@ -99,7 +99,7 @@ void usbd_notify_urbchange_callback(usbh_core_type *uhost, uint8_t chnum, urb_st
 
 static rt_err_t drv_reset_port(rt_uint8_t port)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("reset port\n"));
+    LOG_D("reset port");
     usbh_reset_port(&p_usbfs_instance->p_otg_core->host);
     return RT_EOK;
 }
@@ -224,7 +224,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
 
         if(usbh_get_status((&p_usbfs_instance->p_otg_core->host), pipe->pipe_index) == HCH_NAK)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("nak\n"));
+            LOG_D("nak");
             if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
             {
                 rt_thread_delay((pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) > 0 ? (pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) : 1);
@@ -242,7 +242,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
         }
         else if (usbh_get_status(&p_usbfs_instance->p_otg_core->host, pipe->pipe_index) == HCH_STALL)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("stall\n"));
+            LOG_D("stall");
             pipe->status = UPIPE_STATUS_STALL;
             if (pipe->callback != RT_NULL)
             {
@@ -252,7 +252,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
         }
         else if (usbh_get_status(&p_usbfs_instance->p_otg_core->host, pipe->pipe_index) == URB_ERROR)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("error\n"));
+            LOG_D("error");
             pipe->status = UPIPE_STATUS_ERROR;
             if (pipe->callback != RT_NULL)
             {
@@ -262,7 +262,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
         }
         else if(URB_DONE == usbh_get_urb_status(&p_usbfs_instance->p_otg_core->host, pipe->pipe_index))
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("ok\n"));
+            LOG_D("ok");
             pipe->status = UPIPE_STATUS_OK;
             if (pipe->callback != RT_NULL)
             {
