@@ -11,10 +11,8 @@
  */
 
 #include <stdint.h>
-
 #include <rthw.h>
 #include <rtdevice.h>
-#include <rtservice.h>
 
 /**
  * @brief    This function will insert a node to the wait queue.

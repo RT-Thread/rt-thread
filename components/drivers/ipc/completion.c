@@ -10,7 +10,6 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #define RT_COMPLETED    1
