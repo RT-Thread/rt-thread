@@ -12,7 +12,6 @@
  * 2021-08-14     Jackistang   add comments for function interface.
  */
 
-#include <rtthread.h>
 #include <rtdevice.h>
 #include <string.h>
 
