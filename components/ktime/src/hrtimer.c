@@ -197,24 +197,6 @@ void rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
     rt_sem_init(&(timer->sem), "hrtimer", 0, RT_IPC_FLAG_PRIO);
 }
 
-rt_err_t rt_ktime_hrtimer_delete(rt_ktime_hrtimer_t timer)
-{
-    rt_base_t level;
-
-    /* parameter check */
-    RT_ASSERT(timer != RT_NULL);
-
-    level     = rt_spin_lock_irqsave(&_spinlock);
-    _nowtimer = RT_NULL;
-    rt_list_remove(&timer->row);
-    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED; /* stop timer */
-    rt_spin_unlock_irqrestore(&_spinlock, level);
-
-    _set_next_timeout();
-
-    return RT_EOK;
-}
-
 rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer)
 {
     rt_list_t *timer_list;
@@ -350,15 +332,22 @@ rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer)
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
 
-    level     = rt_spin_lock_irqsave(&_spinlock);
-    _nowtimer = RT_NULL;
-    rt_list_remove(&timer->row);
+    level = rt_spin_lock_irqsave(&_spinlock);
+
     /* stop timer */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-    rt_spin_unlock_irqrestore(&_spinlock, level);
-
-    _set_next_timeout();
-
+    /* when interrupted */
+    if (timer->error == -RT_EINTR || timer->error == RT_EINTR)
+    {
+        _nowtimer = RT_NULL;
+        rt_list_remove(&timer->row);
+        rt_spin_unlock_irqrestore(&_spinlock, level);
+        _set_next_timeout();
+    }
+    else
+    {
+        rt_spin_unlock_irqrestore(&_spinlock, level);
+    }
     rt_sem_detach(&(timer->sem));
 
     return RT_EOK;
@@ -369,6 +358,7 @@ rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer)
 rt_err_t rt_ktime_hrtimer_sleep(unsigned long cnt)
 {
     struct rt_ktime_hrtimer timer;
+    rt_err_t err;
 
     if (cnt == 0)
         return -RT_EINVAL;
@@ -377,7 +367,8 @@ rt_err_t rt_ktime_hrtimer_sleep(unsigned long cnt)
                           _sleep_timeout, &(timer.sem));
 
     rt_ktime_hrtimer_start(&timer); /* reset the timeout of thread timer and start it */
-    rt_sem_take_interruptible(&(timer.sem), RT_WAITING_FOREVER);
+    err = rt_sem_take_interruptible(&(timer.sem), RT_WAITING_FOREVER);
+    rt_ktime_hrtimer_keep_errno(&timer, err);
 
     rt_ktime_hrtimer_detach(&timer);
     return RT_EOK;
