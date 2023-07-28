@@ -14,8 +14,8 @@
 
 #define USB_THREAD_STACK_SIZE    4096
 
-#define DBG_TAG    "usbhost.hub"
-#define DBG_LVL           DBG_INFO
+#define DBG_TAG    "usb.host.hub"
+#define DBG_LVL     DBG_INFO
 #include <rtdbg.h>
 
 
@@ -405,7 +405,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
         ret = rt_usbh_hub_get_port_status(hub, i + 1, &pstatus);
         if(ret != RT_EOK) continue;
 
-        RT_DEBUG_LOG_D("port %d status 0x%x", i + 1, pstatus);
+        LOG_D("port %d status 0x%x", i + 1, pstatus);
 
         /* check port status change */
         if (pstatus & PORT_CCSC)
@@ -512,8 +512,6 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     /* paremeter check */
     RT_ASSERT(intf != RT_NULL);
 
-    RT_DEBUG_LOG_D("rt_usbh_hub_run");
-
     /* get usb device instance */
     device = intf->device;
 
@@ -613,7 +611,7 @@ static rt_err_t rt_usbh_hub_disable(void* arg)
     /* paremeter check */
     RT_ASSERT(intf != RT_NULL);
 
-    RT_DEBUG_LOG_D("rt_usbh_hub_stop");
+    LOG_D("rt_usbh_hub_stop");
     hub = (uhub_t)intf->user_data;
 
     for(i=0; i<hub->num_ports; i++)
@@ -661,8 +659,6 @@ static void rt_usbh_hub_thread_entry(void* parameter)
         /* receive message */
         if (rt_mq_recv(hcd->usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER) < 0)
             continue;
-
-        //RT_DEBUG_LOG_D("msg type %d", msg.type);
 
         switch (msg.type)
         {
