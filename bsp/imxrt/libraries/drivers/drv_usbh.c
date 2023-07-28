@@ -21,6 +21,9 @@
 #include <usb/host/usb_host_ehci.h>
 #include <rtdevice.h>
 
+//#define DRV_DEBUG
+#define LOG_TAG             "drv.usb.host"
+#include <drv_log.h>
 
 /* USB PHY configuration */
 #ifndef BOARD_USB_PHY_D_CAL
@@ -171,12 +174,12 @@ static int _ehci0_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     usb_host_transfer_t *transfer;
     if (imxrt_usb_host_obj[USBH0_INDEX].pipes[pipe->pipe_index].pipe_handle == NULL)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("error operation on null pipe\n"));
+        LOG_D("error operation on null pipe");
         return -1;
     }
     if (USB_HostMallocTransfer(imxrt_usb_host_obj[USBH0_INDEX].host_handle, &transfer) != kStatus_USB_Success)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("error to get transfer\n"));
+        LOG_D("error to get transfer");
         return -1;
     }
     transfer->transferBuffer      = buffer;
@@ -228,13 +231,13 @@ static int _ehci0_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     rt_completion_init(&(imxrt_usb_host_obj[USBH0_INDEX].pipes[pipe->pipe_index].urb_completion));
     if (USB_HostEhciWritePipe(((usb_host_instance_t *)imxrt_usb_host_obj[USBH0_INDEX].host_handle)->controllerHandle, imxrt_usb_host_obj[USBH0_INDEX].pipes[pipe->pipe_index].pipe_handle, transfer) != kStatus_USB_Success)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb host failed to send\n"));
+        LOG_D("usb host failed to send");
         (void)USB_HostFreeTransfer(imxrt_usb_host_obj[USBH0_INDEX].host_handle, transfer);
         return -1;
     }
     if (-RT_ETIMEOUT == rt_completion_wait(&(imxrt_usb_host_obj[USBH0_INDEX].pipes[pipe->pipe_index].urb_completion), RT_WAITING_FOREVER))
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb transfer timeout\n"));
+        LOG_D("usb transfer timeout");
         (void)USB_HostFreeTransfer(imxrt_usb_host_obj[USBH0_INDEX].host_handle, transfer);
         return -1;
     }
@@ -243,7 +246,7 @@ static int _ehci0_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     {
     case kStatus_USB_Success:
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("ok\n"));
+        LOG_D("ok");
         pipe->status = UPIPE_STATUS_OK;
         if (pipe->callback != RT_NULL)
         {
@@ -264,7 +267,7 @@ static int _ehci0_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     }
     case kStatus_USB_TransferStall:
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("stall\n"));
+        LOG_D("stall");
         pipe->status = UPIPE_STATUS_STALL;
         if (pipe->callback != RT_NULL)
         {
@@ -277,7 +280,7 @@ static int _ehci0_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     case kStatus_USB_TransferFailed:
     default:
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("error\n"));
+        LOG_D("error");
         pipe->status = UPIPE_STATUS_ERROR;
         if (pipe->callback != RT_NULL)
         {
@@ -358,17 +361,17 @@ static usb_status_t usb0_host_callback(usb_device_handle handle, usb_host_config
         {
             imxrt_usb_host_obj[USBH0_INDEX].connect_status = RT_TRUE;
             imxrt_usb_host_obj[USBH0_INDEX].device_handle = handle;
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("usb connected\n"));
+            LOG_D("usb connected");
             rt_usbh_root_hub_connect_handler(&(imxrt_usb_host_obj[USBH0_INDEX].uhcd), OTG_PORT, RT_TRUE);
         }
         break;
 
     case kUSB_HostEventNotSupported:
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb device not supported\n"));
+        LOG_D("usb device not supported");
         break;
 
     case kUSB_HostEventEnumerationDone:
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("enumeration done\n"));
+        LOG_D("enumeration done");
         break;
 
     case kUSB_HostEventDetach:
@@ -376,7 +379,7 @@ static usb_status_t usb0_host_callback(usb_device_handle handle, usb_host_config
         {
             imxrt_usb_host_obj[USBH0_INDEX].connect_status = RT_FALSE;
             imxrt_usb_host_obj[USBH0_INDEX].device_handle = handle;
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("usb disconnnect\n"));
+            LOG_D("usb disconnnect");
             rt_usbh_root_hub_disconnect_handler(&(imxrt_usb_host_obj[USBH0_INDEX].uhcd), OTG_PORT);
             (void)USB_HostCloseDeviceInterface(handle, NULL);
         }
@@ -448,12 +451,12 @@ static int _ehci1_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     usb_host_transfer_t *transfer;
     if (imxrt_usb_host_obj[USBH1_INDEX].pipes[pipe->pipe_index].pipe_handle == NULL)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("error operation on null pipe\n"));
+        LOG_D("error operation on null pipe");
         return -1;
     }
     if (USB_HostMallocTransfer(imxrt_usb_host_obj[USBH1_INDEX].host_handle, &transfer) != kStatus_USB_Success)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("error to get transfer\n"));
+        LOG_D("error to get transfer");
         return -1;
     }
     transfer->transferBuffer      = buffer;
@@ -505,13 +508,13 @@ static int _ehci1_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     rt_completion_init(&(imxrt_usb_host_obj[USBH1_INDEX].pipes[pipe->pipe_index].urb_completion));
     if (USB_HostEhciWritePipe(((usb_host_instance_t *)imxrt_usb_host_obj[USBH1_INDEX].host_handle)->controllerHandle, imxrt_usb_host_obj[USBH1_INDEX].pipes[pipe->pipe_index].pipe_handle, transfer) != kStatus_USB_Success)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb host failed to send\n"));
+        LOG_D("usb host failed to send");
         (void)USB_HostFreeTransfer(imxrt_usb_host_obj[USBH1_INDEX].host_handle, transfer);
         return -1;
     }
     if (-RT_ETIMEOUT == rt_completion_wait(&(imxrt_usb_host_obj[USBH1_INDEX].pipes[pipe->pipe_index].urb_completion), RT_WAITING_FOREVER))
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb transfer timeout\n"));
+        LOG_D("usb transfer timeout");
         (void)USB_HostFreeTransfer(imxrt_usb_host_obj[USBH1_INDEX].host_handle, transfer);
         return -1;
     }
@@ -521,7 +524,7 @@ static int _ehci1_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     {
     case kStatus_USB_Success:
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("ok\n"));
+        LOG_D("ok");
         pipe->status = UPIPE_STATUS_OK;
         if (pipe->callback != RT_NULL)
         {
@@ -542,7 +545,7 @@ static int _ehci1_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     }
     case kStatus_USB_TransferStall:
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("stall\n"));
+        LOG_D("stall");
         pipe->status = UPIPE_STATUS_STALL;
         if (pipe->callback != RT_NULL)
         {
@@ -555,7 +558,7 @@ static int _ehci1_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nb
     case kStatus_USB_TransferFailed:
     default:
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("error\n"));
+        LOG_D("error");
         pipe->status = UPIPE_STATUS_ERROR;
         if (pipe->callback != RT_NULL)
         {
@@ -636,17 +639,17 @@ static usb_status_t usb1_host_callback(usb_device_handle handle, usb_host_config
         {
             imxrt_usb_host_obj[USBH1_INDEX].connect_status = RT_TRUE;
             imxrt_usb_host_obj[USBH1_INDEX].device_handle = handle;
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("usb connected\n"));
+            LOG_D("usb connected");
             rt_usbh_root_hub_connect_handler(&(imxrt_usb_host_obj[USBH1_INDEX].uhcd), OTG_PORT, RT_TRUE);
         }
         break;
 
     case kUSB_HostEventNotSupported:
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb device not supported\n"));
+        LOG_D("usb device not supported");
         break;
 
     case kUSB_HostEventEnumerationDone:
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("enumeration done\n"));
+        LOG_D("enumeration done");
         break;
 
     case kUSB_HostEventDetach:
@@ -654,7 +657,7 @@ static usb_status_t usb1_host_callback(usb_device_handle handle, usb_host_config
         {
             imxrt_usb_host_obj[USBH1_INDEX].connect_status = RT_FALSE;
             imxrt_usb_host_obj[USBH1_INDEX].device_handle = handle;
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("usb disconnnect\n"));
+            LOG_D("usb disconnnect");
             rt_usbh_root_hub_disconnect_handler(&(imxrt_usb_host_obj[USBH1_INDEX].uhcd), OTG_PORT);
             (void)USB_HostCloseDeviceInterface(handle, NULL);
         }
