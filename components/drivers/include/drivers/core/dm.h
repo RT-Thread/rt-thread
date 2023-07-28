@@ -8,8 +8,8 @@
  * 2023-04-20     ErikChan     the first version
  */
 
-#ifndef __RT_DM_H__
-#define __RT_DM_H__
+#ifndef __CORE_DM_H__
+#define __CORE_DM_H__
 
 #include <rthw.h>
 #include <rtdef.h>
