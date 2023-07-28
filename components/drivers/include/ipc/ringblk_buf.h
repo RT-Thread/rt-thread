@@ -11,6 +11,9 @@
 #ifndef _RINGBLK_BUF_H_
 #define _RINGBLK_BUF_H_
 
+#include <rtdef.h>
+#include <rtconfig.h>
+
 /*
  * Introduction:
  * The rbb is the ring buffer which is composed with many blocks. It is different from the ring buffer.
