@@ -336,18 +336,12 @@ rt_inline rt_err_t i2c_send_ack(struct rt_i2c_bus_device *bus, rt_bool_t ack)
     const struct soft_i2c_config *cfg = obj->cfg;
 
     #ifdef RT_USING_SOFT_I2C_SIMPLE
-    if(ack)
-        SDA_L(cfg);
-    else
-        SDA_H(cfg);
+    SET_SDA(cfg, !ack);
     i2c_delay(cfg);
     SCL_H(cfg);
     #else
     SCL_L(cfg);
-    if(ack)
-        SDA_L(cfg);
-    else
-        SDA_H(cfg);
+    SET_SDA(cfg, !ack);
     i2c_delay(cfg);
     if(0 == ack && GET_SDA(cfg) == PIN_LOW)
     {
