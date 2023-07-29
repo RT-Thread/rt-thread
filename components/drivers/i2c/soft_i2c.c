@@ -239,6 +239,7 @@ static rt_err_t i2c_stop(struct rt_i2c_bus_device *bus)
 *
 * @return RT_EOK indicates successful unlock.
 */
+#ifdef RT_USING_SOFT_I2C_SIMPLE
 static rt_err_t i2c_bus_unlock(struct rt_i2c_bus_device *bus)
 {
     rt_err_t ret;
@@ -249,50 +250,103 @@ static rt_err_t i2c_bus_unlock(struct rt_i2c_bus_device *bus)
     SET_STATE(obj, RT_I2C_STATE_BUSY | RT_I2C_STATE_UNLOCK);
 
     SDA_H(cfg);
-    if(GET_SCL(cfg) == PIN_LOW)
+    if(PIN_LOW == GET_SDA(cfg) || PIN_LOW == GET_SCL(cfg))
+    {
+        LOG_I("%s bus unlock", rt_i2c_bus_name(bus));
+
+        ret = SCL_H(cfg);
+        if(ret < 0)
+        {
+            LOG_E("%s unlock error: SCL low", rt_i2c_bus_name(bus));
+            SET_ERROR(obj, ret);
+            return ret;
+        }
+
+        while(i++ < 9)
+        {
+            SCL_H(cfg);
+            i2c_delay(cfg);
+            SCL_L(cfg);
+            i2c_delay(cfg);
+        }
+        ret = i2c_stop(bus);
+        if(RT_EOK == ret)
+            I2C_DEBUG_LOG(LOG_D, "%s bus unlock ok", rt_i2c_bus_name(bus));
+        else
+        {
+            LOG_E("%s  bus unlock fail", rt_i2c_bus_name(bus));
+            SET_ERROR(obj, ret);
+        }
+
+        return ret;
+    }
+    else
+    {
+        I2C_DEBUG_LOG(LOG_I, "%s bus not lock", rt_i2c_bus_name(bus));
+        return RT_EOK;
+    }
+}
+#else
+static rt_err_t i2c_bus_unlock(struct rt_i2c_bus_device *bus)
+{
+    rt_err_t ret = RT_EOK;
+    rt_int32_t i = 0;
+    struct soft_i2c *obj = (struct soft_i2c *)bus;
+    const struct soft_i2c_config *cfg = obj->cfg;
+
+    SET_STATE(obj, RT_I2C_STATE_BUSY | RT_I2C_STATE_UNLOCK);
+
+    SDA_H(cfg);
+    if(PIN_LOW == GET_SCL(cfg))
     {
         ret = SCL_H(cfg);
         if(ret < 0)
             goto _SCL_low;
-        i2c_delay(cfg);
+        if(PIN_HIGH == GET_SDA(cfg))
+        {
+            ret = i2c_stop(bus);
+            goto _unlock_end;
+        }
     }
     if(PIN_LOW == GET_SDA(cfg))
     {
         LOG_I("%s bus unlock", rt_i2c_bus_name(bus));
-        SCL_L(cfg);
         while(i++ < 9)
         {
-            #ifdef RT_USING_SOFT_I2C_SIMPLE
-            i2c_delay(cfg);
-            SCL_H(cfg);
-            i2c_delay(cfg);
-            SCL_L(cfg);
-            #else
-            i2c_delay(cfg);
             ret = SCL_H(cfg);
             if(ret < 0)
                 goto _SCL_low;
             i2c_delay(cfg);
             SCL_L(cfg);
+            i2c_delay(cfg);
             if(PIN_HIGH == GET_SDA(cfg))
                 break;
-            #endif // RT_USING_SOFT_I2C_SIMPLE
         }
         ret = i2c_stop(bus);
-        if(RT_EOK != ret)
-            return ret;
-        I2C_DEBUG_LOG(LOG_D, "%s bus unlock success", rt_i2c_bus_name(bus));
     }
     else
+    {
         I2C_DEBUG_LOG(LOG_I, "%s bus not lock", rt_i2c_bus_name(bus));
+        return RT_EOK;
+    }
 
-    return RT_EOK;
+_unlock_end:
+    if(RT_EOK == ret)
+        I2C_DEBUG_LOG(LOG_D, "%s bus unlock ok", rt_i2c_bus_name(bus));
+    else
+    {
+        LOG_E("%s  bus unlock fail", rt_i2c_bus_name(bus));
+        SET_ERROR(obj, ret);
+    }
+
+    return ret;
 
 _SCL_low:
     LOG_E("%s unlock error: SCL low", rt_i2c_bus_name(bus));
     SET_ERROR(obj, ret);
     return ret;
 }
+#endif // RT_USING_SOFT_I2C_SIMPLE
 
 rt_inline rt_bool_t i2c_waitack(struct rt_i2c_bus_device *bus)
 {
@@ -895,11 +949,11 @@ int rt_soft_i2c_init(void)
 INIT_PREV_EXPORT(rt_soft_i2c_init);
 
 
-#if defined(RT_USING_FINSH) && defined(RT_USING_SOFT_I2C_FINSH)
-#include <string.h>
-#include <stdlib.h>
+#if defined(RT_USING_MSH) && defined(RT_USING_SOFT_I2C_MSH)
+#include <string.h> //strchr
+#include <stdlib.h> //strtoul
 
-static rt_uint16_t i2c_str2flags(const char *str)
+static rt_uint16_t _cmd_str2flags(const char *str)
 {
     rt_uint16_t flags = 0;
     if(strchr(str, 'r'))
@@ -914,6 +968,50 @@ static rt_uint16_t i2c_str2flags(const char *str)
         flags |= RT_I2C_NO_STOP;
 
     return flags;
+}
+
+static void _cmd_str2data(const char *str, rt_uint8_t **data, rt_uint32_t *len)
+{
+    rt_uint8_t *d;
+    unsigned int l;
+    char s[3] = { 0 };
+    unsigned int i = rt_strlen(str) % 2;
+
+    l = rt_strlen(str) / 2;
+    if('x' == str[1] || 'X' == str[1])
+    {
+        l--;
+        str += 2;
+    }
+
+    d = rt_malloc(l);
+
+    if(i)
+    {
+        s[0] = str[0];
+        d[0] = strtoul(s, 0, 16);
+        str++;
+    }
+
+    for(; i < l; i++)
+    {
+        s[0] = str[0];
+        s[1] = str[1];
+        d[i] = strtoul(s, 0, 16);
+        str += 2;
+    }
+
+    *data = d;
+    *len = l;
+}
+static void _cmd_showhex(rt_uint8_t *data, unsigned int len)
+{
+    rt_kprintf("0x");
+    while(len--)
+    {
+        rt_kprintf("%02X", *data);
+        data++;
+    }
 }
 
 int cmd_soft_i2c(int argc, char **argv)
@@ -950,56 +1048,54 @@ int cmd_soft_i2c(int argc, char **argv)
         else if(rt_strcmp(argv[0], "xfer") == 0)
         {
             struct rt_i2c_msg       msg = { 0 };
-            rt_uint32_t             data = 0;
-            char                    str[10];
+            rt_uint8_t             *data;
 
             if(RT_NULL == bus)
                 goto _bus_null;
             if(argc < 4)
                 break;
 
-            msg.flags = i2c_str2flags(argv[1]);
-            msg.addr = strtoull(argv[2], 0, 0);
+            msg.flags = _cmd_str2flags(argv[1]);
+            msg.addr = strtoul(argv[2], 0, 0);
             if(msg.addr > 0xFF)
                 msg.flags |= RT_I2C_ADDR_10BIT;
-            msg.buf = (rt_uint8_t *)&data;
 
             rt_kprintf("%s bus xfer: addr = 0x%02X",
                        rt_i2c_bus_name(bus), msg.addr);
             if(msg.flags & RT_I2C_RD)
             {
-                msg.len = strtoull(argv[3], 0, 0);
+                msg.len = strtoul(argv[3], 0, 0);
+                data = rt_malloc(msg.len);
+                msg.buf = data;
                 rt_kprintf(", len = %d: ", msg.len);
-                if(msg.len > sizeof(data))
-                {
-                    rt_kprintf("Length greater than %d\n", sizeof(data));
-                    return 1;
-                }
             }
             else
             {
-                data = strtoull(argv[3], 0, 0);
-                msg.len = (rt_strlen(argv[3]) >> 1) - 1;//must hex
-                rt_snprintf(str, sizeof(str), "0x%%0%dX: ", msg.len * 2);
+                _cmd_str2data(argv[3], &data, &msg.len);
+                msg.buf = data;
                 rt_kprintf(", data = ");
-                rt_kprintf(str, data);
+                _cmd_showhex(data, msg.len);
+                rt_kprintf(": ");
             }
             ret = soft_i2c_xfer(bus, &msg, 1);
             if(ret < 0)
             {
                 rt_kprintf("%s\n", rt_strerror(ret));
+                rt_free(data);
                 return 1;
             }
             else
             {
                 if(msg.flags & RT_I2C_RD)
                 {
-                    rt_snprintf(str, sizeof(str), "0x%%0%dX\n", msg.len * 2);
-                    rt_kprintf(str, data);
+                    rt_kprintf("data = ");
+                    _cmd_showhex(data, msg.len);
+                    rt_kprintf("\n");
                 }
                 else
-                    rt_kprintf("success\n");
+                    rt_kprintf("ok\n");
             }
+            rt_free(data);
             argc -= 4;
             argv += 4;
         }
@@ -1076,8 +1172,8 @@ int cmd_soft_i2c(int argc, char **argv)
             if(argc < 3)
                 break;
 
-            msg.flags = i2c_str2flags(argv[1]);
-            msg.addr = strtoull(argv[2], 0, 0);
+            msg.flags = _cmd_str2flags(argv[1]);
+            msg.addr = strtoul(argv[2], 0, 0);
             if(msg.addr > 0xFF)
                 msg.flags |= RT_I2C_ADDR_10BIT;
 
@@ -1091,97 +1187,83 @@ int cmd_soft_i2c(int argc, char **argv)
                 return 1;
             }
             else
-                rt_kprintf("success\n");
+                rt_kprintf("ok\n");
             argc -= 3;
             argv += 3;
         }
         else if(rt_strcmp(argv[0], "send") == 0)
         {
             struct rt_i2c_msg       msg = { 0 };
-            rt_uint32_t             data;
-            char                    str[10];
+            rt_uint8_t             *data;
 
             if(RT_NULL == bus)
                 goto _bus_null;
             if(argc < 3)
                 break;
 
-            msg.flags = i2c_str2flags(argv[1]);
-            msg.buf = (rt_uint8_t *)&data;
-            data = strtoull(argv[2], 0, 0);
-            msg.len = (rt_strlen(argv[2]) >> 1) - 1;//argv[2] must hex
+            msg.flags = _cmd_str2flags(argv[1]);
+            _cmd_str2data(argv[2], &data, &msg.len);
+            msg.buf = data;
 
-            if(msg.len > sizeof(data))
+            rt_kprintf("%s bus send ", rt_i2c_bus_name(bus));
+            _cmd_showhex(data, msg.len);
+            rt_kprintf(": ");
+
+            ret = i2c_send_bytes(bus, &msg);
+            rt_free(data);
+
+            if(ret < msg.len)
             {
-                rt_kprintf("Once send data length must"
-                           "not greater %d\n", sizeof(data));
+                if(ret < 0)
+                    rt_kprintf("%s\n", rt_strerror(ret));
+                else
+                    rt_kprintf("%d\n", ret);
                 return 1;
             }
             else
             {
-                rt_snprintf(str, sizeof(str), "0x%%0%dX: ", msg.len * 2);
-                rt_kprintf("%s bus send ", rt_i2c_bus_name(bus));
-                rt_kprintf(str, data);
-                ret = i2c_send_bytes(bus, &msg);
-                if(ret < msg.len)
-                {
-                    if(ret < 0)
-                        rt_kprintf("%s\n", rt_strerror(ret));
-                    else
-                        rt_kprintf("%d\n", ret);
-                    return 1;
-                }
-                else
-                {
-                    rt_kprintf("success\n", ret);
-                }
-                argc -= 3;
-                argv += 3;
+                rt_kprintf("ok\n", ret);
             }
+
+            argc -= 3;
+            argv += 3;
         }
         else if(rt_strcmp(argv[0], "recv") == 0)
         {
             struct rt_i2c_msg       msg = { 0 };
-            rt_uint32_t             data = 0;
-            char                    str[10];
+            rt_uint8_t             *data;
 
             if(RT_NULL == bus)
                 goto _bus_null;
             if(argc < 3)
                 break;
 
-            msg.flags = i2c_str2flags(argv[1]);
-            msg.buf = (rt_uint8_t *)&data;
-            msg.len = strtoull(argv[2], 0, 0);
+            msg.flags = _cmd_str2flags(argv[1]);
+            msg.len = strtoul(argv[2], 0, 0);
+            data = rt_malloc(msg.len);
+            msg.buf = data;
 
-            if(msg.len > sizeof(data))
+            rt_kprintf("%s bus recv %d byte:",
+                       rt_i2c_bus_name(bus), msg.len);
+            ret = i2c_recv_bytes(bus, &msg);
+            if(ret < msg.len)
             {
-                rt_kprintf("Once recv data length must"
-                           "not greater %d\n", sizeof(data));
+                if(ret < 0)
+                    rt_kprintf("%s\n", rt_strerror(ret));
+                else
+                    rt_kprintf("%d\n", ret);
+                rt_free(data);
                 return 1;
             }
             else
             {
-                rt_kprintf("%s bus recv %d:",
-                           rt_i2c_bus_name(bus), msg.len);
-                ret = i2c_recv_bytes(bus, &msg);
-                if(ret < msg.len)
-                {
-                    if(ret < 0)
-                        rt_kprintf("%s\n", rt_strerror(ret));
-                    else
-                        rt_kprintf("%d\n", ret);
-                    return 1;
-                }
-                else
-                {
-                    rt_snprintf(str, sizeof(str),
-                                "0x%%0%dX\n", msg.len * 2);
-                    rt_kprintf(str, data);
-                }
-                argc -= 3;
-                argv += 3;
+                rt_kprintf("data = ");
+                _cmd_showhex(data, msg.len);
+                rt_kprintf("\n");
             }
+            rt_free(data);
+            argc -= 3;
+            argv += 3;
         }
         #ifdef RT_I2C_DETAIL
         else if(rt_strcmp(argv[0], "state") == 0)

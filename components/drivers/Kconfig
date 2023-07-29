@@ -146,9 +146,9 @@ if RT_USING_I2C
         config RT_USING_SOFT_I2C_SIMPLE
             bool "Use simple soft I2C"
             default n
-        config RT_USING_SOFT_I2C_FINSH
+        config RT_USING_SOFT_I2C_MSH
             bool "Use shell cmd"
-			depends on RT_USING_FINSH
+			depends on RT_USING_MSH
             default n
 		config RT_USING_SOFT_I2C5
 			bool "Enable I2C5 Bus (software simulation)"
