@@ -197,7 +197,7 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     dfs_file_lock();
 
     /* find an empty fd entry */
-    idx = fd_alloc(fdt, 0);
+    idx = fd_alloc(fdt, (fdt == &_fdtab) ? DFS_STDIO_OFFSET : 0);
     /* can't find an empty fd entry */
     if (idx < 0)
     {
@@ -452,7 +452,7 @@ sysret_t sys_dup(int oldfd)
 int sys_dup(int oldfd)
 #endif
 {
-    int newfd = dfs_dup(oldfd, DFS_STDIO_OFFSET);
+    int newfd = dfs_dup(oldfd, (dfs_fdtable_get() == &_fdtab) ? DFS_STDIO_OFFSET : 0);
 
 #ifdef RT_USING_SMART
     return (sysret_t)newfd;

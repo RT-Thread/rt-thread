@@ -280,17 +280,16 @@ static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, of
     d_file = (struct tmpfs_file *)file->vnode->data;
     RT_ASSERT(d_file != NULL);
 
-    if (count < file->vnode->size - file->fpos)
+    if (count < file->vnode->size - *pos)
         length = count;
     else
-        length = file->vnode->size - file->fpos;
+        length = file->vnode->size - *pos;
 
     if (length > 0)
-        memcpy(buf, &(d_file->data[file->fpos]), length);
+        memcpy(buf, &(d_file->data[*pos]), length);
 
     /* update file current position */
-    file->fpos += length;
-    *pos = file->fpos;
+    *pos += length;
 
     return length;
 }
@@ -306,41 +305,55 @@ static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t co
     superblock = d_file->sb;
     RT_ASSERT(superblock != NULL);
 
-    if (count + file->fpos > file->vnode->size)
+    if (count + *pos > file->vnode->size)
     {
         rt_uint8_t *ptr;
-        ptr = rt_realloc(d_file->data, file->fpos + count);
+        ptr = rt_realloc(d_file->data, *pos + count);
         if (ptr == NULL)
         {
             rt_set_errno(-ENOMEM);
             return 0;
         }
 
-        superblock->df_size += (file->fpos - d_file->size + count);
+        superblock->df_size += (*pos - d_file->size + count);
         /* update d_file and file size */
         d_file->data = ptr;
-        d_file->size = file->fpos + count;
+        d_file->size = *pos + count;
         file->vnode->size = d_file->size;
         LOG_D("tmpfile ptr:%x, size:%d", ptr, d_file->size);
     }
 
     if (count > 0)
-        memcpy(d_file->data + file->fpos, buf, count);
+        memcpy(d_file->data + *pos, buf, count);
 
     /* update file current position */
-    file->fpos += count;
-    *pos = file->fpos;
+    *pos += count;
 
     return count;
 }
 
 static off_t dfs_tmpfs_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
+    switch (wherece)
+    {
+    case SEEK_SET:
+        break;
+
+    case SEEK_CUR:
+        offset += file->fpos;
+        break;
+
+    case SEEK_END:
+        offset += file->vnode->size;
+        break;
+
+    default:
+        return -EINVAL;
+    }
+
     if (offset <= (off_t)file->vnode->size)
     {
-        file->fpos = offset;
-
-        return file->fpos;
+        return offset;
     }
 
     return -EIO;

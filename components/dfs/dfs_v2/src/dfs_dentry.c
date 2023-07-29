@@ -185,7 +185,7 @@ void dfs_dentry_insert(struct dfs_dentry *dentry)
 struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint32_t flags)
 {
     struct dfs_dentry *dentry;
-    struct dfs_vnode *vnode;
+    struct dfs_vnode *vnode = RT_NULL;
     int mntpoint_len = strlen(mnt->fullpath);
 
     if (rt_strncmp(mnt->fullpath, path, mntpoint_len) == 0)
@@ -210,7 +210,12 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
             if (dentry)
             {
                 DLOG(msg, "dentry", mnt->fs_ops->name, DLOG_MSG, "vnode=fs_ops->lookup(dentry)");
-                vnode = mnt->fs_ops->lookup(dentry);
+
+                if (dfs_is_mounted(mnt) == 0)
+                {
+                    vnode = mnt->fs_ops->lookup(dentry);
+                }
+
                 if (vnode)
                 {
                     DLOG(msg, mnt->fs_ops->name, "dentry", DLOG_MSG_RET, "return vnode");

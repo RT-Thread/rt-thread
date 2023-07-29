@@ -412,7 +412,7 @@ RTM_EXPORT(stat);
  */
 int fstat(int fildes, struct stat *buf)
 {
-    int ret = 0;
+    int ret = -1;
     struct dfs_file *file;
 
     if (buf == NULL)
@@ -430,7 +430,10 @@ int fstat(int fildes, struct stat *buf)
         return -1;
     }
 
-    ret = file->dentry->mnt->fs_ops->stat(file->dentry, buf);
+    if (dfs_is_mounted(file->dentry->mnt) == 0)
+    {
+        ret = file->dentry->mnt->fs_ops->stat(file->dentry, buf);
+    }
 
     return ret;
 }
@@ -624,7 +627,7 @@ RTM_EXPORT(statfs);
  */
 int fstatfs(int fildes, struct statfs *buf)
 {
-    int ret = 0;
+    int ret = -1;
     struct dfs_file *file;
 
     if (buf == NULL)
@@ -642,7 +645,10 @@ int fstatfs(int fildes, struct statfs *buf)
         return -1;
     }
 
-    ret = file->dentry->mnt->fs_ops->statfs(file->dentry->mnt, buf);
+    if (dfs_is_mounted(file->dentry->mnt) == 0)
+    {
+        ret = file->dentry->mnt->fs_ops->statfs(file->dentry->mnt, buf);
+    }
 
     return ret;
 }
@@ -1222,5 +1228,103 @@ char *getcwd(char *buf, size_t size)
     return buf;
 }
 RTM_EXPORT(getcwd);
+
+/**
+ * this function is a POSIX compliant version, which will read specified data
+ * buffer length for an open file descriptor.
+ *
+ * @param fd the file descriptor.
+ * @param buf the buffer to save the read data.
+ * @param len the maximal length of data buffer
+ * @param offset the file pos
+ *
+ * @return the actual read data buffer length. If the returned value is 0, it
+ * may be reach the end of file, please check errno.
+ */
+ssize_t pread(int fd, void *buf, size_t len, off_t offset)
+{
+    ssize_t result;
+    off_t fpos;
+    struct dfs_file *file;
+
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    file = fd_get(fd);
+    if (file == NULL)
+    {
+        rt_set_errno(-EBADF);
+
+        return -1;
+    }
+
+    /* fpos lock */
+    fpos = dfs_file_get_fpos(file);
+    dfs_file_lseek(file, offset, SEEK_SET);
+    result = dfs_file_read(file, buf, len);
+    dfs_file_lseek(file, fpos, SEEK_SET);
+    /* fpos unlock */
+    dfs_file_set_fpos(file, fpos);
+    if (result < 0)
+    {
+        rt_set_errno(result);
+
+        return -1;
+    }
+
+    return result;
+}
+RTM_EXPORT(pread);
+
+/**
+ * this function is a POSIX compliant version, which will write specified data
+ * buffer length for an open file descriptor.
+ *
+ * @param fd the file descriptor
+ * @param buf the data buffer to be written.
+ * @param len the data buffer length.
+ * @param offset the file pos
+ *
+ * @return the actual written data buffer length.
+ */
+ssize_t pwrite(int fd, const void *buf, size_t len, off_t offset)
+{
+    ssize_t result;
+    off_t fpos;
+    struct dfs_file *file;
+
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    file = fd_get(fd);
+    if (file == NULL)
+    {
+        rt_set_errno(-EBADF);
+
+        return -1;
+    }
+    /* fpos lock */
+    fpos = dfs_file_get_fpos(file);
+    dfs_file_lseek(file, offset, SEEK_SET);
+    result = dfs_file_write(file, buf, len);
+    dfs_file_lseek(file, fpos, SEEK_SET);
+    /* fpos unlock */
+    dfs_file_set_fpos(file, fpos);
+    if (result < 0)
+    {
+        rt_set_errno(result);
+
+        return -1;
+    }
+
+    return result;
+}
+RTM_EXPORT(pwrite);
 
 /**@}*/
