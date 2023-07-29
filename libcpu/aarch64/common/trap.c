@@ -296,6 +296,19 @@ void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
 #ifdef RT_USING_FINSH
     list_thread();
 #endif
+
+#ifdef RT_USING_LWP
+    {
+        rt_thread_t th;
+
+        th = rt_thread_self();
+        if (th && th->lwp)
+        {
+            rt_backtrace_user_thread(th);
+        }
+    }
+#endif
+
     backtrace((unsigned long)regs->pc, (unsigned long)regs->x30, (unsigned long)regs->x29);
     rt_hw_cpu_shutdown();
 }

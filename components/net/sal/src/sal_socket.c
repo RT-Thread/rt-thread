@@ -51,6 +51,54 @@ struct sal_netdev_res_table
     struct netdev *netdev;
 };
 
+struct ifconf
+{
+    int	ifc_len;            /* Size of buffer.  */
+    union
+    {
+        char* ifcu_buf;
+        struct sal_ifreq *ifcu_req;
+    } ifc_ifcu;
+};
+
+struct musl_sockaddr
+{
+    uint16_t sa_family;
+    char     sa_data[16];
+};
+
+struct musl_ifmap {
+    unsigned long int mem_start;
+    unsigned long int mem_end;
+    unsigned short int base_addr;
+    unsigned char irq;
+    unsigned char dma;
+    unsigned char port;
+};
+
+struct musl_ifreq
+{
+    union
+    {
+        char ifrn_name[IFNAMSIZ];
+    } ifr_ifrn;
+    union
+    {
+        struct musl_sockaddr ifru_addr;
+        struct musl_sockaddr ifru_dstaddr;
+        struct musl_sockaddr ifru_broadaddr;
+        struct musl_sockaddr ifru_netmask;
+        struct musl_sockaddr ifru_hwaddr;
+        short int ifru_flags;
+        int ifru_ivalue;
+        int ifru_mtu;
+        struct musl_ifmap ifru_map;
+        char ifru_slave[IFNAMSIZ];
+        char ifru_newname[IFNAMSIZ];
+        char *ifru_data;
+    } ifr_ifru;
+};
+
 #ifdef SAL_USING_TLS
 /* The global TLS protocol options */
 static struct sal_proto_tls *proto_tls;
@@ -1028,8 +1076,18 @@ int sal_closesocket(int socket)
     return error;
 }
 
+#define ARPHRD_ETHER    1      /* Ethernet 10/100Mbps. */
+#define ARPHRD_LOOPBACK 772    /* Loopback device.  */
+#define IFF_UP	0x1
+#define IFF_RUNNING 0x40
+#define IFF_NOARP 0x80
+
+
 int sal_ioctlsocket(int socket, long cmd, void *arg)
 {
+    rt_slist_t *node  = RT_NULL;
+    struct netdev *netdev = RT_NULL;
+    struct netdev *cur_netdev_list = netdev_list;
     struct sal_socket *sock;
     struct sal_proto_family *pf;
     struct sockaddr_in *addr_in = RT_NULL;
@@ -1048,46 +1106,269 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
         switch (cmd)
         {
         case SIOCGIFADDR:
-            addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr);
-#if NETDEV_IPV4 && NETDEV_IPV6
-            addr_in->sin_addr.s_addr = sock->netdev->ip_addr.u_addr.ip4.addr;
-#elif NETDEV_IPV4
-            addr_in->sin_addr.s_addr = sock->netdev->ip_addr.addr;
-#elif NETDEV_IPV6
-#error "not only support IPV6"
-#endif /* NETDEV_IPV4 && NETDEV_IPV6*/
-            return 0;
+            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            {
+                addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr);
+            #if NETDEV_IPV4 && NETDEV_IPV6
+                addr_in->sin_addr.s_addr = sock->netdev->ip_addr.u_addr.ip4.addr;
+            #elif NETDEV_IPV4
+                addr_in->sin_addr.s_addr = sock->netdev->ip_addr.addr;
+            #elif NETDEV_IPV6
+            #error "not only support IPV6"
+            #endif /* NETDEV_IPV4 && NETDEV_IPV6*/
+                return 0;
+            }
+            else
+            {
+                if (cur_netdev_list == RT_NULL)
+                {
+                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    return -1;
+                }
+
+                for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+                {
+                    netdev = rt_list_entry(node, struct netdev, list);
+                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    {
+                        addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr);
+                        addr_in->sin_addr.s_addr = netdev->ip_addr.addr;
+                        return 0;
+                    }
+                }
+                return -1;
+            }
 
         case SIOCSIFADDR:
-            addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_addr);
-            sal_sockaddr_to_ipaddr(addr,&input_ipaddr);
-            netdev_set_ipaddr(sock->netdev,&input_ipaddr);
-            return 0;
+            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            {
+                addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_addr);
+                sal_sockaddr_to_ipaddr(addr, &input_ipaddr);
+                netdev_set_ipaddr(sock->netdev, &input_ipaddr);
+                return 0;
+            }
+            else
+            {
+                if (cur_netdev_list == RT_NULL)
+                {
+                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    return -1;
+                }
+
+                for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+                {
+                    netdev = rt_list_entry(node, struct netdev, list);
+                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    {
+                        addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_addr);
+                        sal_sockaddr_to_ipaddr(addr, &input_ipaddr);
+                        netdev_set_ipaddr(netdev, &input_ipaddr);
+                        return 0;
+                    }
+                }
+                return -1;
+            }
 
         case SIOCGIFNETMASK:
-            addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_netmask);
-#if NETDEV_IPV4 && NETDEV_IPV6
-            addr_in->sin_addr.s_addr = sock->netdev->netmask.u_addr.ip4.addr;
-#elif NETDEV_IPV4
-            addr_in->sin_addr.s_addr = sock->netdev->netmask.addr;
-#elif NETDEV_IPV6
-#error "not only support IPV6"
-#endif /* NETDEV_IPV4 && NETDEV_IPV6*/
-            return 0;
+            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            {
+                addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_netmask);
+            #if NETDEV_IPV4 && NETDEV_IPV6
+                addr_in->sin_addr.s_addr = sock->netdev->netmask.u_addr.ip4.addr;
+            #elif NETDEV_IPV4
+                addr_in->sin_addr.s_addr = sock->netdev->netmask.addr;
+            #elif NETDEV_IPV6
+            #error "not only support IPV6"
+            #endif /* NETDEV_IPV4 && NETDEV_IPV6*/
+                return 0;
+            }
+            else
+            {
+                if (cur_netdev_list == RT_NULL)
+                {
+                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    return -1;
+                }
+
+                for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+                {
+                    netdev = rt_list_entry(node, struct netdev, list);
+                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    {
+                        addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_netmask);
+                    #if NETDEV_IPV4 && NETDEV_IPV6
+                        addr_in->sin_addr.s_addr = netdev->netmask.u_addr.ip4.addr;
+                    #elif NETDEV_IPV4
+                        addr_in->sin_addr.s_addr = netdev->netmask.addr;
+                    #elif NETDEV_IPV6
+                    #error "not only support IPV6"
+                    #endif /* NETDEV_IPV4 && NETDEV_IPV6*/
+                        return 0;
+                    }
+                }
+                return -1;
+            }
 
         case SIOCSIFNETMASK:
-            addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_netmask);
-            sal_sockaddr_to_ipaddr(addr,&input_ipaddr);
-            netdev_set_netmask(sock->netdev,&input_ipaddr);
-            return 0;
+            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            {
+                addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_netmask);
+                sal_sockaddr_to_ipaddr(addr, &input_ipaddr);
+                netdev_set_netmask(sock->netdev, &input_ipaddr);
+                return 0;
+            }
+            else
+            {
+                if (cur_netdev_list == RT_NULL)
+                {
+                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    return -1;
+                }
+
+                for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+                {
+                    netdev = rt_list_entry(node, struct netdev, list);
+                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    {
+                        addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_netmask);
+                        sal_sockaddr_to_ipaddr(addr, &input_ipaddr);
+                        netdev_set_netmask(netdev, &input_ipaddr);
+                        return 0;
+                    }
+                }
+                return -1;
+            }
 
         case SIOCGIFHWADDR:
-            addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
-            rt_memcpy(addr->sa_data,sock->netdev->hwaddr,sock->netdev->hwaddr_len);
-            return 0;
+            if (!strcmp(ifr->ifr_ifrn.ifrn_name,sock->netdev->name))
+            {
+                addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
+                if (!strcmp("lo", sock->netdev->name))
+                {
+                    struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
+                    musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_LOOPBACK;
+                }
+                else
+                {
+                    struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
+                    musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_ETHER;
+                }
+                rt_memcpy(addr->sa_data, sock->netdev->hwaddr, sock->netdev->hwaddr_len);
+                return 0;
+            }
+            else
+            {
+                if (cur_netdev_list == RT_NULL)
+                {
+                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    return -1;
+                }
+
+                for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+                {
+                    netdev = rt_list_entry(node, struct netdev, list);
+                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    {
+                        addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
+                        if (!strcmp("lo", netdev->name))
+                        {
+                            struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
+                            musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_LOOPBACK;
+                        }
+                        else
+                        {
+                            struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
+                            musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_ETHER;
+                        }
+                        rt_memcpy(addr->sa_data, netdev->hwaddr, netdev->hwaddr_len);
+                        return 0;
+                    }
+                }
+                return -1;
+            }
 
         case SIOCGIFMTU:
-            ifr->ifr_ifru.ifru_mtu = sock->netdev->mtu;
+            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            {
+                ifr->ifr_ifru.ifru_mtu = sock->netdev->mtu;
+                return 0;
+            }
+            else
+            {
+                if (cur_netdev_list == RT_NULL)
+                {
+                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    return -1;
+                }
+
+                for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+                {
+                    netdev = rt_list_entry(node, struct netdev, list);
+                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    {
+                        ifr->ifr_ifru.ifru_mtu = netdev->mtu;
+                        return 0;
+                    }
+                }
+                return -1;
+            }
+        case SIOCGIFFLAGS:
+            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            {
+                uint16_t flags_tmp = 0;
+                if (sock->netdev->flags & NETDEV_FLAG_UP)
+                    flags_tmp = flags_tmp | IFF_UP;
+                if (!(sock->netdev->flags & NETDEV_FLAG_ETHARP))
+                    flags_tmp = flags_tmp | IFF_NOARP;
+                flags_tmp = flags_tmp | IFF_RUNNING;
+                ifr->ifr_ifru.ifru_flags = flags_tmp;
+                return 0;
+            }
+            else
+            {
+                if (cur_netdev_list == RT_NULL)
+                {
+                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    return -1;
+                }
+
+                for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+                {
+                    netdev = rt_list_entry(node, struct netdev, list);
+                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    {
+                        uint16_t flags_tmp = 0;
+                        if (sock->netdev->flags & NETDEV_FLAG_UP)
+                            flags_tmp = flags_tmp | IFF_UP;
+                        if (!(sock->netdev->flags & NETDEV_FLAG_ETHARP))
+                            flags_tmp = flags_tmp | IFF_NOARP;
+                        ifr->ifr_ifru.ifru_flags = flags_tmp;
+                        return 0;
+                    }
+                }
+                return -1;
+            }
+
+
+        case SIOCSIFFLAGS:
+            sock->netdev->flags = ifr->ifr_ifru.ifru_flags;
+            return 0;
+        case SIOCGIFCONF:
+            struct ifconf *ifconf_tmp;
+            ifconf_tmp = (struct ifconf *)arg;
+            int count_size = 0;
+
+            for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+            {
+                struct sal_ifreq sal_ifreq_temp;
+                count_size++;
+                netdev = rt_list_entry(node, struct netdev, list);
+                rt_strcpy(sal_ifreq_temp.ifr_ifrn.ifrn_name, netdev->name);
+                rt_memcpy(ifconf_tmp->ifc_ifcu.ifcu_buf, &sal_ifreq_temp, sizeof(struct sal_ifreq));
+                ifconf_tmp->ifc_ifcu.ifcu_buf += sizeof(struct sal_ifreq);
+            }
+            ifconf_tmp->ifc_len = sizeof(struct sal_ifreq) * count_size;
+            ifconf_tmp->ifc_ifcu.ifcu_buf =  ifconf_tmp->ifc_ifcu.ifcu_buf - sizeof(struct sal_ifreq) * count_size;
             return 0;
 
         default:
