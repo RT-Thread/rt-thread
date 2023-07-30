@@ -676,7 +676,6 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                 rdllist = rdllist->next;
                 if (event_num < maxevents)
                 {
-
                     if (rdllist->read_event->epev.events == 0)
                     {
                         isfree = 1;
@@ -725,7 +724,6 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                         ep->eventfd_num --;
                         rdllist = pre_rdllist;
                     }
-
                 }
                 else
                 {
@@ -746,7 +744,6 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
         {
             istimeout = 1;
         }
-
     }
 
     return event_num;
