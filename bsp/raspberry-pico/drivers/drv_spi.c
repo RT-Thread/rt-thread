@@ -233,6 +233,6 @@ int rt_hw_spi_init(void)
 
     return result;
 }
-INIT_APP_EXPORT(rt_hw_spi_init);
+INIT_BOARD_EXPORT(rt_hw_spi_init);
 
 #endif /* BSP_USING_SPI */
