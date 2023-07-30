@@ -126,7 +126,7 @@ int var_export_init(void)
 
     return ve_exporter_num;
 }
-INIT_PREV_EXPORT(var_export_init);
+INIT_BOARD_EXPORT(var_export_init);
 
 /* initialize module */
 int ve_module_init(ve_module_t *mod, const char *module)
