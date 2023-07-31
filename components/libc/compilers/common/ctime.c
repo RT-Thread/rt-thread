@@ -733,7 +733,7 @@ struct lwp_timer_event_param
 static void _lwp_timer_event_from_tid(struct rt_work *work, void *param)
 {
     rt_err_t ret;
-    struct lwp_timer_event_param *data = (void *)work;
+    struct lwp_timer_event_param *data = rt_container_of(work, struct lwp_timer_event_param, work);
     rt_thread_t thread;
 
     RT_ASSERT(data->tid);
@@ -744,22 +744,18 @@ static void _lwp_timer_event_from_tid(struct rt_work *work, void *param)
     {
         LOG_W("%s: Do kill failed(tid %d) returned %d", __func__, data->tid, ret);
     }
-
-    rt_free(work);
 }
 
 static void _lwp_timer_event_from_pid(struct rt_work *work, void *param)
 {
     rt_err_t ret;
-    struct lwp_timer_event_param *data = (void *)work;
+    struct lwp_timer_event_param *data = rt_container_of(work, struct lwp_timer_event_param, work);
 
     ret = lwp_signal_kill(lwp_from_pid(data->pid), data->signo, SI_TIMER, 0);
     if (ret)
     {
         LOG_W("%s: Do kill failed(pid %d) returned %d", __func__, data->pid, ret);
     }
-
-    rt_free(work);
 }
 
 int timer_list_free(rt_list_t *timer_list)
@@ -795,7 +791,7 @@ static void rtthread_timer_wrapper(void *timerobj)
 #ifdef RT_USING_SMART
     /* this field is named as tid in musl */
     int tid = *(int *)&timer->sigev_notify_function;
-    struct lwp_timer_event_param *data = (void *)timer->work;
+    struct lwp_timer_event_param *data = rt_container_of(timer->work, struct lwp_timer_event_param, work);
     data->signo = timer->sigev_signo;
 
     if (!tid)
@@ -879,8 +875,10 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 #ifdef RT_USING_SMART
     struct rt_work *work;
     struct rt_lwp *lwp = lwp_self();
+    struct lwp_timer_event_param *param;
+    param = rt_malloc(sizeof(struct lwp_timer_event_param));
+    work = &param->work;
 
-    work = rt_malloc(sizeof(struct lwp_timer_event_param));
     if (!work)
     {
         rt_set_errno(ENOMEM);
@@ -967,8 +965,8 @@ int timer_delete(timer_t timerid)
 #ifdef RT_USING_SMART
     if (timer->pid)
         rt_list_remove(&timer->lwp_node);
+    rt_free(timer->work);
 #endif
-
     rt_free(timer);
     return 0;
 }
