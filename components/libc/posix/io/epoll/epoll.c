@@ -58,7 +58,7 @@ struct rt_eventpoll
 
 static int epoll_close(struct dfs_file *file);
 static int epoll_poll(struct dfs_file *file, struct rt_pollreq *req);
-static int do_epoll(struct rt_fd_list *fl, rt_pollreq_t *req);
+static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req);
 static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
 
 static const struct dfs_file_ops epoll_fops =
@@ -160,7 +160,7 @@ static int epoll_poll(struct dfs_file *file, struct rt_pollreq *req)
             while (fdlist->next != RT_NULL)
             {
                 fdlist = fdlist->next;
-                mask = do_epoll(fdlist, &fdlist->req);
+                mask = epoll_get_event(fdlist, &fdlist->req);
 
                 if (mask & fdlist->epev.events)
                 {
@@ -247,6 +247,7 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
         return -1;
 
     fdlist = rt_container_of(wait, struct rt_fd_list, wqn);
+
     if (fdlist->epev.events)
     {
         epoll_rdllist_add(fdlist, (rt_ubase_t)key);
@@ -278,7 +279,7 @@ static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep
 
     fdlist->req._key = fdlist->epev.events;
 
-    mask = do_epoll(fdlist, &fdlist->req);
+    mask = epoll_get_event(fdlist, &fdlist->req);
     if (mask & fdlist->epev.events)
     {
         epoll_rdllist_add(fdlist, mask);
@@ -612,7 +613,7 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
     return ret;
 }
 
-static int do_epoll(struct rt_fd_list *fl, rt_pollreq_t *req)
+static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req)
 {
     struct dfs_file *df;
     int mask = 0;
@@ -651,7 +652,6 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
     while (1)
     {
         rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
-
         if (ep->eventpoll_num > 0)
         {
             rdllist = ep->rdllist;
@@ -673,7 +673,7 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                         if (rdllist->rdl_event->revents & EPOLLET)
                         {
                             rt_wqueue_remove(&rdllist->rdl_event->wqn);
-                            do_epoll(rdllist->rdl_event, &rdllist->rdl_event->req);
+                            epoll_get_event(rdllist->rdl_event, &rdllist->rdl_event->req);
                             isfree = 1;
                         }
                         else
@@ -681,7 +681,7 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                             if (rdllist->exclusive)
                             {
                                 rt_wqueue_remove(&rdllist->rdl_event->wqn);
-                                mask = do_epoll(rdllist->rdl_event, &rdllist->rdl_event->req);
+                                mask = epoll_get_event(rdllist->rdl_event, &rdllist->rdl_event->req);
                                 if (mask & rdllist->rdl_event->revents)
                                 {
                                     rdllist->rdl_event->epev.events = mask;
