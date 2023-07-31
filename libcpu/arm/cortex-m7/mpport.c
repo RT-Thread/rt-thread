@@ -7,7 +7,7 @@
 #define DBG_LEVEL DBG_ERROR
 #include <rtdbg.h>
 
-#define MEM_REGION_TO_MPU_INDEX(thread, region) ((rt_size_t)region - (rt_size_t)(&(thread->mem_regions[0])) / sizeof(rt_mem_region_t)) + NUM_STATIC_REGIONS
+#define MEM_REGION_TO_MPU_INDEX(thread, region) (((rt_size_t)region - (rt_size_t)(&(thread->mem_regions[0]))) / sizeof(rt_mem_region_t)) + NUM_STATIC_REGIONS
 
 extern rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread);
 extern rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region_t *region);
@@ -27,7 +27,7 @@ static rt_uint32_t default_mem_attr[] = {
 static inline rt_uint32_t mpu_rasr(rt_mem_region_t *region)
 {
     rt_uint32_t rasr = 0;
-    if (region->attr.rasr & RESERVED)
+    if ((region->attr.rasr & RESERVED) == RESERVED)
     {
         if ((uint32_t)region->start >= 0xE0000000U)
         {
@@ -35,16 +35,14 @@ static inline rt_uint32_t mpu_rasr(rt_mem_region_t *region)
         }
         else
         {
-            rasr |= (region->attr.rasr | default_mem_attr[((uint32_t)region->start & ~0xFFFFFFF) >> 1]);
+            rasr |= (region->attr.rasr | default_mem_attr[((uint32_t)region->start & ~0xFFFFFFFU) >> 29U]);
         }
     }
     else
     {
         rasr |= region->attr.rasr;
     }
-    rasr |= (region->attr.rasr & RESERVED) ? (region->attr.rasr | default_mem_attr[(uint32_t)region->start & ~0xFFFFFFF]): region->attr.rasr;
-    rasr |= ((32 - __builtin_clz(region->size - 1U) - 2 + 1) << MPU_RASR_SIZE_Pos) & MPU_RASR_SIZE_Msk;
-    rasr |= MPU_RASR_SRD_Msk;
+    rasr |= ((32U - __builtin_clz(region->size - 1U) - 2U + 1U) << MPU_RASR_SIZE_Pos) & MPU_RASR_SIZE_Msk;
     rasr |= MPU_RASR_ENABLE_Msk;
     return rasr;
 }
@@ -100,7 +98,7 @@ rt_err_t rt_hw_mp_init(rt_mem_region_t *static_regions, rt_uint8_t num_regions)
     }
 
     ARM_MPU_Disable();
-    for (region_index = 0; region_index < NUM_STATIC_REGIONS; ++region_index)
+    for (region_index = 0; region_index < NUM_STATIC_REGIONS; region_index++)
     {
         if (rt_hw_mp_region_valid(&(static_regions[region_index])) == RT_FALSE)
         {
@@ -204,7 +202,7 @@ void rt_hw_mp_table_switch(rt_thread_t thread)
     extern rt_mem_exclusive_region_t exclusive_regions[NUM_EXCLUSIVE_REGIONS];
     rt_uint8_t i;
     rt_uint8_t index = NUM_STATIC_REGIONS;
-    for (i = 0; i < NUM_DYNAMIC_REGIONS; ++i)
+    for (i = 0; i < NUM_DYNAMIC_REGIONS; i++)
     {
         if (thread->mem_regions[i].size != 0)
         {
@@ -212,15 +210,15 @@ void rt_hw_mp_table_switch(rt_thread_t thread)
             index += 1;
         }
     }
-    for (i = 0; i < NUM_EXCLUSIVE_REGIONS; ++i)
+    for (i = 0; i < NUM_EXCLUSIVE_REGIONS; i++)
     {
-        if (exclusive_regions[i].owner != thread)
+        if ((exclusive_regions[i].owner != RT_NULL) && (exclusive_regions[i].owner != thread))
         {
             ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (uint32_t)(exclusive_regions[i].region.start)), exclusive_regions[i].region.attr.rasr);
             index += 1;
         }
     }
-    for ( ; index < NUM_MEM_REGIONS; ++index)
+    for ( ; index < NUM_MEM_REGIONS; index++)
     {
         ARM_MPU_ClrRegion(index);
     }
@@ -231,31 +229,40 @@ void MemManage_Handler(void)
     extern rt_mem_region_t static_regions[NUM_STATIC_REGIONS];
     extern rt_mem_exclusive_region_t exclusive_regions[NUM_EXCLUSIVE_REGIONS];
     rt_mem_exception_info_t info;
-    rt_uint8_t i;
+    rt_int8_t i;
     rt_memset(&info, 0, sizeof(rt_mem_exception_info_t));
     info.thread = rt_thread_self();
     if (SCB->CFSR & SCB_CFSR_MMARVALID_Msk)
     {
         info.addr = (void *)(SCB->MMFAR);
-        for (i = NUM_EXCLUSIVE_REGIONS - 1; i >= 0; --i)
+        for (i = NUM_EXCLUSIVE_REGIONS - 1; i >= 0; i--)
         {
-        if (ADDR_IN_REGION(info.addr, (rt_mem_region_t *)&(exclusive_regions[i])))
+        if ((exclusive_regions[i].owner != RT_NULL) && ((exclusive_regions[i].owner != rt_thread_self())) && ADDR_IN_REGION(info.addr, (rt_mem_region_t *)&(exclusive_regions[i])))
             {
                 rt_memcpy(&(info.region), &(exclusive_regions[i]), sizeof(rt_mem_region_t));
+                break;
             }
         }
-        for (i = NUM_DYNAMIC_REGIONS - 1; i >= 0; --i)
+        if (info.region.size == 0U)
         {
-        if (ADDR_IN_REGION(info.addr, &(info.thread->mem_regions[i])))
+            for (i = NUM_DYNAMIC_REGIONS - 1; i >= 0; i--)
             {
-                rt_memcpy(&(info.region), &(info.thread->mem_regions[i]), sizeof(rt_mem_region_t));
+                if ((info.thread->mem_regions[i].size != 0) && ADDR_IN_REGION(info.addr, &(info.thread->mem_regions[i])))
+                {
+                    rt_memcpy(&(info.region), &(info.thread->mem_regions[i]), sizeof(rt_mem_region_t));
+                    break;
+                }
             }
-        }
-        for (i = NUM_STATIC_REGIONS - 1; i >= 0; --i)
-        {
-            if (ADDR_IN_REGION(info.addr, &(static_regions[i])))
+            if (info.region.size == 0U)
             {
-                rt_memcpy(&(info.region), &(static_regions[i]), sizeof(rt_mem_region_t));
+                for (i = NUM_STATIC_REGIONS - 1; i >= 0; i--)
+                {
+                    if (ADDR_IN_REGION(info.addr, &(static_regions[i])))
+                    {
+                        rt_memcpy(&(info.region), &(static_regions[i]), sizeof(rt_mem_region_t));
+                        break;
+                    }
+                }
             }
         }
     }
@@ -264,4 +271,5 @@ void MemManage_Handler(void)
     {
         mem_manage_hook(&info);
     }
+    while (1);
 }

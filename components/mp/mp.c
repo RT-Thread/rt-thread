@@ -11,7 +11,7 @@ rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread)
 {
     rt_uint8_t i;
     rt_mem_region_t *free_region = RT_NULL;
-    for (i = 0; i < NUM_DYNAMIC_REGIONS; ++i)
+    for (i = 0; i < NUM_DYNAMIC_REGIONS; i++)
     {
         if (thread->mem_regions[i].size == 0)
         {
@@ -27,7 +27,7 @@ rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region
 {
     rt_uint8_t i;
     rt_mem_region_t *found_region = RT_NULL;
-    for (i = 0; i < NUM_DYNAMIC_REGIONS; ++i)
+    for (i = 0; i < NUM_DYNAMIC_REGIONS; i++)
     {
         if ((thread->mem_regions[i].start == region->start) && (thread->mem_regions[i].size == region->size))
         {
@@ -72,7 +72,7 @@ rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)
         return RT_ERROR;
     }
     rt_enter_critical();
-    for (i = 0; i < NUM_EXCLUSIVE_REGIONS; ++i)
+    for (i = 0; i < NUM_EXCLUSIVE_REGIONS; i++)
     {
         if (exclusive_regions[i].owner == RT_NULL)
         {
@@ -90,7 +90,7 @@ rt_err_t rt_mem_protection_delete_exclusive_region(void *start, rt_size_t size)
 {
     rt_uint8_t i;
     rt_enter_critical();
-    for (i = 0; i < NUM_EXCLUSIVE_REGIONS; ++i)
+    for (i = 0; i < NUM_EXCLUSIVE_REGIONS; i++)
     {
         if (exclusive_regions[i].owner == rt_thread_self() && exclusive_regions[i].region.start == start && exclusive_regions[i].region.size == size)
         {

@@ -4,7 +4,7 @@
 #include <rtdef.h>
 #include <mpport.h>
 
-#define ADDR_IN_REGION(addr, region) (((rt_size_t)(addr) >= (rt_size_t)((region)->start)) && ((rt_size_t)(addr) < (rt_size_t)((region)->start) + (rt_size_t)((region)->start) + (region)->size))
+#define ADDR_IN_REGION(addr, region) (((rt_size_t)(addr) >= (rt_size_t)((region)->start)) && ((rt_size_t)(addr) < (rt_size_t)((region)->start) + (region)->size))
 
 typedef struct {
     rt_mem_region_t region;
