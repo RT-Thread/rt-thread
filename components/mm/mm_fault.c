@@ -100,7 +100,10 @@ int rt_aspace_fault_try_fix(struct rt_aspace_fault_msg *msg)
     if (lwp)
     {
         rt_aspace_t aspace = lwp->aspace;
-        rt_varea_t varea = _aspace_bst_search(aspace, msg->fault_vaddr);
+        rt_varea_t varea;
+
+        RD_LOCK(aspace);
+        varea = _aspace_bst_search(aspace, msg->fault_vaddr);
         if (varea)
         {
             void *pa = rt_hw_mmu_v2p(aspace, msg->fault_vaddr);
@@ -120,6 +123,7 @@ int rt_aspace_fault_try_fix(struct rt_aspace_fault_msg *msg)
                 break;
             }
         }
+        RD_UNLOCK(aspace);
     }
 
     return err;

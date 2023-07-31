@@ -669,7 +669,15 @@ int lwp_user_accessable(void *addr, size_t size)
         if (tmp_addr == ARCH_MAP_FAILED)
         {
             if ((rt_ubase_t)addr_start >= USER_STACK_VSTART && (rt_ubase_t)addr_start < USER_STACK_VEND)
-                tmp_addr = *(void **)addr_start;
+            {
+                struct rt_aspace_fault_msg msg = {
+                    .fault_op = MM_FAULT_OP_WRITE,
+                    .fault_type = MM_FAULT_TYPE_PAGE_FAULT,
+                    .fault_vaddr = addr_start,
+                };
+                if (!rt_aspace_fault_try_fix(&msg))
+                    return 0;
+            }
             else
                 return 0;
         }

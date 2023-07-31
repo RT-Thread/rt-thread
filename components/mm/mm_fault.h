@@ -52,7 +52,7 @@ struct rt_aspace_fault_msg
     struct rt_mm_fault_res response;
 };
 
-/* MMU base page fault handler, return 1 is */
+/* MMU base page fault handler, return 1 is fixable */
 int rt_aspace_fault_try_fix(struct rt_aspace_fault_msg *msg);
 
 #endif /* __MM_FAULT_H__ */
