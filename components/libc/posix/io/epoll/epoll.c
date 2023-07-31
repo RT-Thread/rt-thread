@@ -29,7 +29,7 @@ struct rt_eventpoll;
 /* Monitor queue */
 struct rt_fd_list
 {
-    rt_uint32_t revents;
+    rt_uint32_t revents; /* Monitored events */
     struct epoll_event epev;
     rt_pollreq_t req;
     struct rt_eventpoll *ep;
@@ -39,21 +39,21 @@ struct rt_fd_list
 
 struct rt_rdllist
 {
-    int exclusive;
+    int exclusive;/* If triggered horizontally, a check is made to see if the data has been read, and if there is any data left to read, the readability event is returned in the next epoll_wait */
     struct rt_fd_list *rdl_event;
     struct rt_rdllist *next;
 };
 
 struct rt_eventpoll
 {
-    rt_uint32_t tirggered;
+    rt_uint32_t tirggered;      /* the waited thread whether triggered */
     rt_wqueue_t epoll_read;
     rt_thread_t polling_thread;
     struct rt_mutex lock;
-    struct rt_fd_list *fdlist;
-    int eventpoll_num;
+    struct rt_fd_list *fdlist;  /* Monitor list */
+    int eventpoll_num;          /* Number of ready lists */
     rt_pollreq_t req;
-    struct rt_rdllist *rdllist;
+    struct rt_rdllist *rdllist; /* ready list */
 };
 
 static int epoll_close(struct dfs_file *file);
@@ -228,7 +228,7 @@ static int epoll_rdllist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
             res = 0;
             if (rdllist->rdl_event->revents & EPOLLONESHOT)
             {
-                rdllist->rdl_event->epev.events = 0;
+                rdllist->rdl_event->revents = 0;
             }
         }
     }
@@ -248,7 +248,6 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
         return -1;
 
     fdlist = rt_container_of(wait, struct rt_fd_list, wqn);
-
     if (fdlist->epev.events)
     {
         epoll_rdllist_add(fdlist, (rt_ubase_t)key);
@@ -508,8 +507,8 @@ static int epoll_ctl_mod(struct dfs_file *df ,struct epoll_event *event)
         {
             fdlist->next->epev.events = event->events;
             fdlist->next->revents = event->events;
-            rt_wqueue_remove(&fdlist->wqn);
-            epoll_ctl_install(fdlist, ep);
+            rt_wqueue_remove(&fdlist->next->wqn);
+            epoll_ctl_install(fdlist->next, ep);
             break;
         }
 
@@ -666,7 +665,7 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                 rdllist = rdllist->next;
                 if (event_num < maxevents)
                 {
-                    if (rdllist->rdl_event->epev.events == 0)
+                    if (rdllist->rdl_event->revents == 0)
                     {
                         isfree = 1;
                         rt_wqueue_remove(&rdllist->rdl_event->wqn);
@@ -675,6 +674,8 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                     {
                         if (rdllist->rdl_event->revents & EPOLLET)
                         {
+                            rt_wqueue_remove(&rdllist->rdl_event->wqn);
+                            do_epoll(rdllist->rdl_event, &rdllist->rdl_event->req);
                             isfree = 1;
                         }
                         else
@@ -703,7 +704,7 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                     if (!isn_add)
                     {
                         events[event_num].data.fd = rdllist->rdl_event->epev.data.fd;
-                        events[event_num].events = rdllist->rdl_event->revents;
+                        events[event_num].events = rdllist->rdl_event->epev.events;
                         event_num ++;
                     }
 
