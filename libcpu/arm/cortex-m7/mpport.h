@@ -77,7 +77,7 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 #define RT_MEM_REGION_P_RX_U_NA		RT_ARM_MEM_ATTR(P_RX_U_NA, RESERVED)
 
 rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region);
-rt_err_t rt_hw_mp_init(rt_mem_region_t *static_regions, rt_uint8_t num_regions);
+rt_err_t rt_hw_mp_init();
 rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region);

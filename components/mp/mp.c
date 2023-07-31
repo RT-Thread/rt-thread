@@ -39,9 +39,9 @@ rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region
     return found_region;
 }
 
-rt_err_t rt_mem_protection_init(rt_mem_region_t *static_regions, rt_uint8_t num_static_regions)
+int rt_mem_protection_init()
 {
-    return rt_hw_mp_init(static_regions, num_static_regions);
+    return (int)rt_hw_mp_init();
 }
 
 rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *region)
@@ -103,3 +103,5 @@ rt_err_t rt_mem_protection_delete_exclusive_region(void *start, rt_size_t size)
     LOG_E("Region not found");
     return RT_ERROR;
 }
+
+INIT_BOARD_EXPORT(rt_mem_protection_init);

@@ -67,8 +67,9 @@ rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region)
     return RT_TRUE;
 }
 
-rt_err_t rt_hw_mp_init(rt_mem_region_t *static_regions, rt_uint8_t num_regions)
+rt_err_t rt_hw_mp_init()
 {
+    extern rt_mem_region_t static_regions[NUM_STATIC_REGIONS];
     rt_uint8_t num_mpu_regions;
     rt_uint8_t num_dynamic_regions;
     rt_uint8_t region_index;

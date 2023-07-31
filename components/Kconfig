@@ -35,9 +35,6 @@ source "$RTT_DIR/components/net/Kconfig"
 source "$RTT_DIR/components/utilities/Kconfig"
 source "$RTT_DIR/components/vbus/Kconfig"
 source "$RTT_DIR/components/mm/Kconfig"
-<<<<<<< HEAD
-=======
 source "$RTT_DIR/components/mp/Kconfig"
->>>>>>> d62e77819 (MPU function declaratins and simple example)
 
 endmenu
