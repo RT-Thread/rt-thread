@@ -73,6 +73,11 @@ config ARCH_ARM_CORTEX_M7
     select RT_USING_CACHE
     select RT_USING_HW_ATOMIC
 
+config ARCH_ARM_CORTEX_M23
+    bool
+    select ARCH_ARM_CORTEX_M
+    select RT_USING_HW_ATOMIC
+
 config ARCH_ARM_CORTEX_M33
     bool
     select ARCH_ARM_CORTEX_M
