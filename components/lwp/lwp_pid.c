@@ -983,26 +983,31 @@ void lwp_terminate(struct rt_lwp *lwp)
         return;
     }
 
+    LOG_D("%s(lwp=%p \"%s\")", __func__, lwp, lwp->cmd);
+
     level = rt_hw_interrupt_disable();
 
     /* stop the receiving of signals */
-    lwp->terminated = RT_TRUE;
-
-    /* broadcast exit request for sibling threads */
-    for (list = lwp->t_grp.next; list != &lwp->t_grp; list = list->next)
+    if (!lwp->terminated)
     {
-        rt_thread_t thread;
+        lwp->terminated = RT_TRUE;
 
-        thread = rt_list_entry(list, struct rt_thread, sibling);
-        if (thread->exit_request == LWP_EXIT_REQUEST_NONE)
+        /* broadcast exit request for sibling threads */
+        for (list = lwp->t_grp.next; list != &lwp->t_grp; list = list->next)
         {
-            thread->exit_request = LWP_EXIT_REQUEST_TRIGGERED;
-        }
-        if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
-        {
-            thread->error = RT_EINTR;
-            rt_hw_dsb();
-            rt_thread_wakeup(thread);
+            rt_thread_t thread;
+
+            thread = rt_list_entry(list, struct rt_thread, sibling);
+            if (thread->exit_request == LWP_EXIT_REQUEST_NONE)
+            {
+                thread->exit_request = LWP_EXIT_REQUEST_TRIGGERED;
+            }
+            if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+            {
+                thread->error = RT_EINTR;
+                rt_hw_dsb();
+                rt_thread_wakeup(thread);
+            }
         }
     }
     rt_hw_interrupt_enable(level);
@@ -1031,6 +1036,7 @@ void lwp_wait_subthread_exit(void)
     while (1)
     {
         int subthread_is_terminated;
+        LOG_D("%s: wait for subthread exiting", __func__);
 
         level = rt_hw_interrupt_disable();
         subthread_is_terminated = (int)(thread->sibling.prev == &lwp->t_grp);
