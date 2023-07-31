@@ -219,10 +219,9 @@ static int epoll_rdllist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
         if (rdllist != RT_NULL)
         {
             rdllist->rdl_event = fdl;
-            rdllist->rdl_event->epev.events = revents;
+            rdllist->rdl_event->epev.events = fdl->epev.events & revents;
             rdllist->next = ep->rdllist->next;
             rdllist->exclusive = 0;
-
             ep->rdllist->next = rdllist;
             ep->eventpoll_num ++;
             res = 0;
@@ -629,7 +628,6 @@ static int do_epoll(struct rt_fd_list *fl, rt_pollreq_t *req)
             {
                 req->_key = fl->epev.events | POLLERR | POLLHUP;
                 mask = df->vnode->fops->poll(df, req);
-
                 if (mask < 0)
                     return mask;
             }
