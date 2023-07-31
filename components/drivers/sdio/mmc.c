@@ -209,6 +209,12 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
         card->hs_max_data_rate = 52000000;
     }
 
+    card->ext_csd.cache_size =
+        ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
+
     card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
     card->card_sec_cnt = card_capacity;
     card_capacity *= card->card_blksize;
@@ -611,6 +617,12 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     {
         LOG_E("mmc select timing fail");
         goto err0;
+    }
+
+    if (card->ext_csd.cache_size > 0)
+    {
+        mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+                   EXT_CSD_CACHE_CTRL, 1);
     }
 
     host->card = card;
