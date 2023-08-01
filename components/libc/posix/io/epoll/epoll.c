@@ -24,6 +24,8 @@
 #define EPOLLEXCLUSIVE_BITS (EPOLLINOUT_BITS | EPOLLERR | EPOLLHUP | \
                 EPOLLET | EPOLLEXCLUSIVE)
 
+static struct rt_spinlock spinlock;
+
 struct rt_eventpoll;
 
 /* Monitor queue */
@@ -37,11 +39,11 @@ struct rt_fd_list
     struct rt_fd_list *next;
 };
 
-struct rt_rdllist
+struct rt_ready_list
 {
     int exclusive;/* If triggered horizontally, a check is made to see if the data has been read, and if there is any data left to read, the readability event is returned in the next epoll_wait */
-    struct rt_fd_list *rdl_event;
-    struct rt_rdllist *next;
+    struct rt_fd_list *rdl_event; /* rdl: ready list */
+    struct rt_ready_list *next;
 };
 
 struct rt_eventpoll
@@ -53,13 +55,13 @@ struct rt_eventpoll
     struct rt_fd_list *fdlist;  /* Monitor list */
     int eventpoll_num;          /* Number of ready lists */
     rt_pollreq_t req;
-    struct rt_rdllist *rdllist; /* ready list */
+    struct rt_ready_list *rdlist; /* ready list */
 };
 
 static int epoll_close(struct dfs_file *file);
 static int epoll_poll(struct dfs_file *file, struct rt_pollreq *req);
 static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req);
-static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event);
 
 static const struct dfs_file_ops epoll_fops =
 {
@@ -88,11 +90,11 @@ static int epoll_close_fdlist(struct rt_fd_list *fdlist)
     return 0;
 }
 
-static int epoll_close_rdllist(struct rt_rdllist *rdllist)
+static int epoll_close_rdlist(struct rt_ready_list *rdlist)
 {
-    struct rt_rdllist *list, *fre_node;
+    struct rt_ready_list *list, *fre_node;
 
-    list = rdllist;
+    list = rdlist;
     if (list)
     {
         while (list->next != RT_NULL)
@@ -102,7 +104,7 @@ static int epoll_close_rdllist(struct rt_rdllist *rdllist)
             rt_free(fre_node);
         }
 
-        rt_free(rdllist);
+        rt_free(rdlist);
     }
 
     return 0;
@@ -125,9 +127,9 @@ static int epoll_close(struct dfs_file *file)
                     epoll_close_fdlist(ep->fdlist);
                 }
 
-                if (ep->rdllist)
+                if (ep->rdlist)
                 {
-                    epoll_close_rdllist(ep->rdllist);
+                    epoll_close_rdlist(ep->rdlist);
                 }
 
                 rt_mutex_release(&ep->lock);
@@ -174,9 +176,9 @@ static int epoll_poll(struct dfs_file *file, struct rt_pollreq *req)
     return events;
 }
 
-static int epoll_rdllist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
+static int epoll_rdlist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
 {
-    struct rt_rdllist *rdllist = RT_NULL;
+    struct rt_ready_list *rdlist = RT_NULL;
     struct rt_eventpoll *ep;
     int isexist = 0;
     int res = -1;
@@ -190,21 +192,21 @@ static int epoll_rdllist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
 
     rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
 
-    if (ep->rdllist == RT_NULL)
+    if (ep->rdlist == RT_NULL)
     {
-        ep->rdllist = (struct rt_rdllist *)rt_malloc(sizeof(struct rt_rdllist));
-        if (ep->rdllist == RT_NULL)
+        ep->rdlist = (struct rt_ready_list *)rt_malloc(sizeof(struct rt_ready_list));
+        if (ep->rdlist == RT_NULL)
         {
             return -1;
         }
-        ep->rdllist->next = RT_NULL;
+        ep->rdlist->next = RT_NULL;
     }
 
-    rdllist = ep->rdllist;
-    while (rdllist->next != RT_NULL)
+    rdlist = ep->rdlist;
+    while (rdlist->next != RT_NULL)
     {
-        rdllist = rdllist->next;
-        if (rdllist->rdl_event->epev.data.fd == fdl->epev.data.fd)
+        rdlist = rdlist->next;
+        if (rdlist->rdl_event->epev.data.fd == fdl->epev.data.fd)
         {
             isexist = 1;
             res = 0;
@@ -214,20 +216,20 @@ static int epoll_rdllist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
 
     if (!isexist)
     {
-        rdllist = RT_NULL;
-        rdllist = (struct rt_rdllist *)rt_malloc(sizeof(struct rt_rdllist));
-        if (rdllist != RT_NULL)
+        rdlist = RT_NULL;
+        rdlist = (struct rt_ready_list *)rt_malloc(sizeof(struct rt_ready_list));
+        if (rdlist != RT_NULL)
         {
-            rdllist->rdl_event = fdl;
-            rdllist->rdl_event->epev.events = fdl->epev.events & revents;
-            rdllist->next = ep->rdllist->next;
-            rdllist->exclusive = 0;
-            ep->rdllist->next = rdllist;
+            rdlist->rdl_event = fdl;
+            rdlist->rdl_event->epev.events = fdl->epev.events & revents;
+            rdlist->next = ep->rdlist->next;
+            rdlist->exclusive = 0;
+            ep->rdlist->next = rdlist;
             ep->eventpoll_num ++;
             res = 0;
-            if (rdllist->rdl_event->revents & EPOLLONESHOT)
+            if (rdlist->rdl_event->revents & EPOLLONESHOT)
             {
-                rdllist->rdl_event->revents = 0;
+                rdlist->rdl_event->revents = 0;
             }
         }
     }
@@ -250,7 +252,7 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
 
     if (fdlist->epev.events)
     {
-        epoll_rdllist_add(fdlist, (rt_ubase_t)key);
+        epoll_rdlist_add(fdlist, (rt_ubase_t)key);
     }
 
     return __wqueue_default_wake(wait, key);
@@ -282,7 +284,7 @@ static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep
     mask = epoll_get_event(fdlist, &fdlist->req);
     if (mask & fdlist->epev.events)
     {
-        epoll_rdllist_add(fdlist, mask);
+        epoll_rdlist_add(fdlist, mask);
     }
 }
 
@@ -291,10 +293,11 @@ static void epoll_member_init(struct rt_eventpoll *ep)
     ep->tirggered = 0;
     ep->eventpoll_num = 0;
     ep->polling_thread = rt_thread_self();
-    ep->rdllist = RT_NULL;
+    ep->rdlist = RT_NULL;
     ep->fdlist = RT_NULL;
     ep->req._key = 0;
     rt_wqueue_init(&ep->epoll_read);
+    rt_spin_lock_init(&spinlock);
 }
 
 static int epoll_epf_init(int fd)
@@ -348,7 +351,7 @@ static int epoll_epf_init(int fd)
     return ret;
 }
 
-static int do_epoll_create(int size)
+static int epoll_do_create(int size)
 {
     rt_err_t ret = 0;
     int status;
@@ -384,43 +387,40 @@ static int epoll_ctl_add(struct dfs_file *df ,struct epoll_event *event)
 {
     struct rt_fd_list *fdlist;
     struct rt_eventpoll *ep;
-    rt_err_t ret = 0;
+    rt_err_t ret = -EINVAL;
 
     if (df->vnode->data)
     {
         ep = df->vnode->data;
-    }
-    else
-    {
-        return -1;
-    }
+        fdlist = ep->fdlist;
+        ret = 0;
 
-    fdlist = ep->fdlist;
-    while (fdlist->next != RT_NULL)
-    {
-        if (fdlist->next->epev.data.fd == event->data.fd)
+        while (fdlist->next != RT_NULL)
         {
-            return 0;
+            if (fdlist->next->epev.data.fd == event->data.fd)
+            {
+                return 0;
+            }
+            fdlist = fdlist->next;
         }
-        fdlist = fdlist->next;
-    }
 
-    fdlist = (struct rt_fd_list *)rt_malloc(sizeof(struct rt_fd_list));
-    if (fdlist)
-    {
-        fdlist->epev.data.fd = event->data.fd;
-        fdlist->epev.events = event->events;
-        fdlist->ep = ep;
-        fdlist->req._proc = epoll_wqueue_add_callback;
-        fdlist->next = ep->fdlist->next;
-        fdlist->revents = event->events;
-        ep->fdlist->next = fdlist;
+        fdlist = (struct rt_fd_list *)rt_malloc(sizeof(struct rt_fd_list));
+        if (fdlist)
+        {
+            fdlist->epev.data.fd = event->data.fd;
+            fdlist->epev.events = event->events;
+            fdlist->ep = ep;
+            fdlist->req._proc = epoll_wqueue_add_callback;
+            fdlist->next = ep->fdlist->next;
+            fdlist->revents = event->events;
+            ep->fdlist->next = fdlist;
 
-        epoll_ctl_install(fdlist, ep);
-    }
-    else
-    {
-        ret = -ENOMEM;
+            epoll_ctl_install(fdlist, ep);
+        }
+        else
+        {
+            ret = -ENOMEM;
+        }
     }
 
     return ret;
@@ -430,56 +430,54 @@ static int epoll_ctl_del(struct dfs_file *df ,struct epoll_event *event)
 {
     struct rt_fd_list *fdlist, *fre_fd;
     struct rt_eventpoll *ep = RT_NULL;
-    struct rt_rdllist *rdllist, *fre_rdl;
-    rt_err_t ret = 0;
+    struct rt_ready_list *rdlist, *fre_rdl;
+    rt_err_t ret = -EINVAL;
 
     if (df->vnode->data)
     {
         ep = df->vnode->data;
-    }
-    else
-    {
-        return 0;
-    }
 
-    fdlist = ep->fdlist;
-    while (fdlist->next != RT_NULL)
-    {
-        if (fdlist->next->epev.data.fd == event->data.fd)
+        fdlist = ep->fdlist;
+        while (fdlist->next != RT_NULL)
         {
-            fre_fd = fdlist->next;
-            fdlist->next = fdlist->next->next;
-            if (fre_fd->epev.events != 0)
+            if (fdlist->next->epev.data.fd == event->data.fd)
             {
-                rt_wqueue_remove(&fre_fd->wqn);
-            }
-            rt_free(fre_fd);
-            break;
-        }
-        else
-        {
-            fdlist = fdlist->next;
-        }
-    }
-
-    if (ep->rdllist)
-    {
-        rdllist = ep->rdllist;
-        while (rdllist->next != RT_NULL)
-        {
-            if (rdllist->next->rdl_event->epev.data.fd == event->data.fd)
-            {
-                fre_rdl = rdllist->next;
-                rdllist->next = rdllist->next->next;
-                ep->eventpoll_num --;
-                rt_free(fre_rdl);
+                fre_fd = fdlist->next;
+                fdlist->next = fdlist->next->next;
+                if (fre_fd->epev.events != 0)
+                {
+                    rt_wqueue_remove(&fre_fd->wqn);
+                }
+                rt_free(fre_fd);
                 break;
             }
             else
             {
-                rdllist = rdllist->next;
+                fdlist = fdlist->next;
             }
         }
+
+        if (ep->rdlist)
+        {
+            rdlist = ep->rdlist;
+            while (rdlist->next != RT_NULL)
+            {
+                if (rdlist->next->rdl_event->epev.data.fd == event->data.fd)
+                {
+                    fre_rdl = rdlist->next;
+                    rdlist->next = rdlist->next->next;
+                    ep->eventpoll_num --;
+                    rt_free(fre_rdl);
+                    break;
+                }
+                else
+                {
+                    rdlist = rdlist->next;
+                }
+            }
+        }
+
+        ret = 0;
     }
 
     return ret;
@@ -489,40 +487,38 @@ static int epoll_ctl_mod(struct dfs_file *df ,struct epoll_event *event)
 {
     struct rt_fd_list *fdlist;
     struct rt_eventpoll *ep = RT_NULL;
-    rt_err_t ret = 0;
+    rt_err_t ret = -EINVAL;
 
     if (df->vnode->data)
     {
         ep = df->vnode->data;
-    }
-    else
-    {
-        return -1;
-    }
 
-    fdlist = ep->fdlist;
-    while (fdlist->next != RT_NULL)
-    {
-        if (fdlist->next->epev.data.fd == event->data.fd)
+        fdlist = ep->fdlist;
+        while (fdlist->next != RT_NULL)
         {
-            fdlist->next->epev.events = event->events;
-            fdlist->next->revents = event->events;
-            rt_wqueue_remove(&fdlist->next->wqn);
-            epoll_ctl_install(fdlist->next, ep);
-            break;
+            if (fdlist->next->epev.data.fd == event->data.fd)
+            {
+                fdlist->next->epev.events = event->events;
+                fdlist->next->revents = event->events;
+                rt_wqueue_remove(&fdlist->next->wqn);
+                epoll_ctl_install(fdlist->next, ep);
+                break;
+            }
+
+            fdlist = fdlist->next;
         }
 
-        fdlist = fdlist->next;
+        ret = 0;
     }
 
     return ret;
 }
 
-static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
+static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
 {
     struct dfs_file *epdf;
     struct rt_eventpoll *ep;
-    rt_err_t ret = 0;
+    rt_err_t ret = -EINVAL;
 
     if (op & ~EFD_SHARED_EPOLL_TYPE)
         return -EINVAL;
@@ -538,16 +534,10 @@ static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
     if (epdf->vnode->data)
     {
         ep = epdf->vnode->data;
-    }
-    else
-    {
-        return -1;
-    }
+        ret = 0;
 
-    rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
+        rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
 
-    if (epdf)
-    {
         switch (op)
         {
         case EPOLL_CTL_ADD:
@@ -563,10 +553,6 @@ static int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
             ret = -EINVAL;
             break;
         }
-    }
-    else
-    {
-        ret = -EINVAL;
     }
 
     rt_mutex_release(&ep->lock);
@@ -585,7 +571,7 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
 
     timeout = rt_tick_from_millisecond(msec);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&spinlock);
 
     if (timeout != 0 && !ep->tirggered)
     {
@@ -599,16 +585,16 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
                 rt_timer_start(&(thread->thread_timer));
             }
 
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&spinlock, level);
 
             rt_schedule();
 
-            level = rt_hw_interrupt_disable();
+            level = rt_spin_lock_irqsave(&spinlock);
         }
     }
 
     ret = !ep->tirggered;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&spinlock, level);
 
     return ret;
 }
@@ -642,7 +628,7 @@ static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req)
 
 static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int maxevents, int timeout)
 {
-    struct rt_rdllist *rdllist, *pre_rdllist;
+    struct rt_ready_list *rdlist, *pre_rdlist;
     int event_num = 0;
     int istimeout = 0;
     int isn_add = 0;
@@ -654,37 +640,37 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
         rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
         if (ep->eventpoll_num > 0)
         {
-            rdllist = ep->rdllist;
-            while (rdllist->next != RT_NULL)
+            rdlist = ep->rdlist;
+            while (rdlist->next != RT_NULL)
             {
                 isfree = 0;
                 isn_add = 0;
-                pre_rdllist = rdllist;
-                rdllist = rdllist->next;
+                pre_rdlist = rdlist;
+                rdlist = rdlist->next;
                 if (event_num < maxevents)
                 {
-                    if (rdllist->rdl_event->revents == 0)
+                    if (rdlist->rdl_event->revents == 0)
                     {
                         isfree = 1;
-                        rt_wqueue_remove(&rdllist->rdl_event->wqn);
+                        rt_wqueue_remove(&rdlist->rdl_event->wqn);
                     }
                     else
                     {
-                        if (rdllist->rdl_event->revents & EPOLLET)
+                        if (rdlist->rdl_event->revents & EPOLLET)
                         {
-                            rt_wqueue_remove(&rdllist->rdl_event->wqn);
-                            epoll_get_event(rdllist->rdl_event, &rdllist->rdl_event->req);
+                            rt_wqueue_remove(&rdlist->rdl_event->wqn);
+                            epoll_get_event(rdlist->rdl_event, &rdlist->rdl_event->req);
                             isfree = 1;
                         }
                         else
                         {
-                            if (rdllist->exclusive)
+                            if (rdlist->exclusive)
                             {
-                                rt_wqueue_remove(&rdllist->rdl_event->wqn);
-                                mask = epoll_get_event(rdllist->rdl_event, &rdllist->rdl_event->req);
-                                if (mask & rdllist->rdl_event->revents)
+                                rt_wqueue_remove(&rdlist->rdl_event->wqn);
+                                mask = epoll_get_event(rdlist->rdl_event, &rdlist->rdl_event->req);
+                                if (mask & rdlist->rdl_event->revents)
                                 {
-                                    rdllist->rdl_event->epev.events = mask;
+                                    rdlist->rdl_event->epev.events = mask;
                                 }
                                 else
                                 {
@@ -694,24 +680,24 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                             }
                             else
                             {
-                                rdllist->exclusive = 1;
+                                rdlist->exclusive = 1;
                             }
                         }
                     }
 
                     if (!isn_add)
                     {
-                        events[event_num].data.fd = rdllist->rdl_event->epev.data.fd;
-                        events[event_num].events = rdllist->rdl_event->epev.events;
+                        events[event_num].data.fd = rdlist->rdl_event->epev.data.fd;
+                        events[event_num].events = rdlist->rdl_event->epev.events;
                         event_num ++;
                     }
 
                     if (isfree)
                     {
-                        pre_rdllist->next = rdllist->next;
-                        rt_free(rdllist);
+                        pre_rdlist->next = rdlist->next;
+                        rt_free(rdlist);
                         ep->eventpoll_num --;
-                        rdllist = pre_rdllist;
+                        rdlist = pre_rdlist;
                     }
                 }
                 else
@@ -738,7 +724,7 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
     return event_num;
 }
 
-static int do_epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout, const sigset_t *ss)
+static int epoll_do_wait(int epfd, struct epoll_event *events, int maxevents, int timeout, const sigset_t *ss)
 {
     struct rt_eventpoll *ep;
     struct dfs_file *df;
@@ -774,25 +760,25 @@ static int do_epoll_wait(int epfd, struct epoll_event *events, int maxevents, in
 
 int epoll_create(int size)
 {
-    return do_epoll_create(size);
+    return epoll_do_create(size);
 }
 
 int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
 {
-    return do_epoll_ctl(epfd, op, fd, event);
+    return epoll_do_ctl(epfd, op, fd, event);
 }
 
 int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout)
 {
-    return do_epoll_wait(epfd, events, maxevents, timeout, RT_NULL);
+    return epoll_do_wait(epfd, events, maxevents, timeout, RT_NULL);
 }
 
 int epoll_pwait(int epfd, struct epoll_event *events, int maxevents, int timeout, const sigset_t *ss)
 {
-    return do_epoll_wait(epfd, events, maxevents, timeout, ss);
+    return epoll_do_wait(epfd, events, maxevents, timeout, ss);
 }
 
 int epoll_pwait2(int epfd, struct epoll_event *events, int maxevents, int timeout, const sigset_t *ss)
 {
-    return do_epoll_wait(epfd, events, maxevents, timeout, ss);
+    return epoll_do_wait(epfd, events, maxevents, timeout, ss);
 }
