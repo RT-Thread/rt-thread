@@ -11,6 +11,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#include <string.h>
 #include <drivers/ofw_fdt.h>
 #include <drivers/ofw_raw.h>
 #include <drivers/core/dm.h>
@@ -40,7 +41,7 @@ static rt_size_t _root_addr_cells;
 
 const char *rt_fdt_node_name(const char *full_name)
 {
-    const char *node_name = rt_strrchr(full_name, '/');
+    const char *node_name = strrchr(full_name, '/');
 
     return node_name ? node_name + 1 : full_name;
 }
@@ -701,7 +702,7 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
 
                 if (stdout_path && len)
                 {
-                    const char *path_split = rt_strchrnul(stdout_path, ':');
+                    const char *path_split = strchrnul(stdout_path, ':');
 
                     if (*path_split != '\0')
                     {
@@ -780,13 +781,13 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
 
                     if (*options)
                     {
-                        type_len = rt_strchrnul(options, ',') - options;
+                        type_len = strchrnul(options, ',') - options;
                     }
                 }
 
                 if (options && *options && *options != ' ')
                 {
-                    options_len = rt_strchrnul(options, ' ') - options;
+                    options_len = strchrnul(options, ' ') - options;
                 }
 
                 /* console > stdout-path */
