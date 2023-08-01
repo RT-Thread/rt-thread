@@ -29,11 +29,11 @@ extern "C"
 
 typedef struct
 {
-    rt_uint32_t fqspi_id; 
+    rt_uint32_t fqspi_id;
     rt_uint32_t init; /* 0 is init already */
     FQspiCtrl fqspi;
     struct rt_spi_bus qspi_bus;
-}phytium_qspi_bus;
+} phytium_qspi_bus;
 
 rt_err_t phytium_qspi_bus_attach_device(const char *bus_name, const char *device_name);
 

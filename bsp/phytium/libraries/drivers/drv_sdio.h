@@ -8,7 +8,7 @@
  * Change Logs:
  * Date        Author       Notes
  * 2023/7/11   liqiaozhong  init SD card and mount file system
- * 
+ *
  */
 
 #ifndef __DRV_SDIO_H__

@@ -8,7 +8,7 @@
  * Change Logs:
  * Date        Author       Notes
  * 2023/7/24   liqiaozhong  first add, support intr
- * 
+ *
  */
 
 #include <rtthread.h>
@@ -16,13 +16,13 @@
 #include "interrupt.h"
 #include "rtdbg.h"
 #ifdef RT_USING_SMART
-#include "ioremap.h"
+    #include "ioremap.h"
 #endif
 
 #include <string.h>
 
 #if defined(TARGET_E2000)
-#include "fparameters.h"
+    #include "fparameters.h"
 #endif
 #include "fkernel.h"
 #include "fpinctrl.h"
@@ -54,7 +54,7 @@ typedef struct
 } FGpioOps;
 /***************** Macros (Inline Functions) Definitions *********************/
 #if defined(TARGET_E2000)
-#define FGPIO_VERSION_2
+    #define FGPIO_VERSION_2
 #endif
 /************************** Variable Definitions *****************************/
 static FGpioOps gpio[FGPIO_NUM];
@@ -70,7 +70,7 @@ static void FGpioOpsSetupCtrlIRQ(FGpio *ctrl)
     rt_hw_interrupt_set_target_cpus(irq_num, cpu_id);
     rt_hw_interrupt_set_priority(irq_num, ctrl->config.irq_priority); /* setup interrupt */
     rt_hw_interrupt_install(irq_num, FGpioInterruptHandler, ctrl, NULL); /* register intr handler */
-	rt_hw_interrupt_umask(irq_num);
+    rt_hw_interrupt_umask(irq_num);
     return;
 }
 
@@ -96,16 +96,16 @@ void FIOPadSetGpioMux(u32 ctrl_id_p, u32 pin_id_p)
     {
         switch (pin_id_p)
         {
-            case 11: /* gpio 4-a-11 */
-                FIOPadSetFunc(&iopad_ctrl, FIOPAD_AC45_REG0_OFFSET, FIOPAD_FUNC6);
-                break;
-            case 12: /* gpio 4-a-12 */
-                FIOPadSetFunc(&iopad_ctrl, FIOPAD_AE43_REG0_OFFSET, FIOPAD_FUNC6);
-                break;
-            default:
-                LOG_E("Unsupported ctrl pin.");
-                RT_ASSERT(0);
-                break;
+        case 11: /* gpio 4-a-11 */
+            FIOPadSetFunc(&iopad_ctrl, FIOPAD_AC45_REG0_OFFSET, FIOPAD_FUNC6);
+            break;
+        case 12: /* gpio 4-a-12 */
+            FIOPadSetFunc(&iopad_ctrl, FIOPAD_AE43_REG0_OFFSET, FIOPAD_FUNC6);
+            break;
+        default:
+            LOG_E("Unsupported ctrl pin.");
+            RT_ASSERT(0);
+            break;
         }
     }
     else
@@ -120,16 +120,16 @@ void FIOPadSetGpioMux(u32 ctrl_id_p, u32 pin_id_p)
     {
         switch (pin_id_p)
         {
-            case 11: /* gpio 4-a-11 */
-                FIOPadSetFunc(&iopad_ctrl, FIOPAD_AC49_REG0_OFFSET, FIOPAD_FUNC6);
-                break;
-            case 12: /* gpio 4-a-12 */
-                FIOPadSetFunc(&iopad_ctrl, FIOPAD_AE47_REG0_OFFSET, FIOPAD_FUNC6);
-                break;
-            default:
-                LOG_E("Unsupported ctrl pin.");
-                RT_ASSERT(0);
-                break;
+        case 11: /* gpio 4-a-11 */
+            FIOPadSetFunc(&iopad_ctrl, FIOPAD_AC49_REG0_OFFSET, FIOPAD_FUNC6);
+            break;
+        case 12: /* gpio 4-a-12 */
+            FIOPadSetFunc(&iopad_ctrl, FIOPAD_AE47_REG0_OFFSET, FIOPAD_FUNC6);
+            break;
+        default:
+            LOG_E("Unsupported ctrl pin.");
+            RT_ASSERT(0);
+            break;
         }
     }
     else
@@ -151,19 +151,19 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
     FGpio *instance = &gpio[ctrl_id].ctrl;
     FGpioPin *pin_instance = &gpio[ctrl_id].pins[port_id][pin_id];
     FGpioOpsPinConfig *pin_config = &gpio[ctrl_id].pin_config[port_id][pin_id];
-    
+
     if (ctrl_id >= FGPIO_NUM)
-	{
+    {
         LOG_E("ctrl_id too large!!!");
-		return;
-	}
+        return;
+    }
 
     if (FALSE == gpio[ctrl_id].init_ok) /* init ctrl if needed */
-	{
-		FGpioConfig input_cfg = *FGpioLookupConfig(ctrl_id);
-	    memset(instance, 0, sizeof(*instance));
+    {
+        FGpioConfig input_cfg = *FGpioLookupConfig(ctrl_id);
+        memset(instance, 0, sizeof(*instance));
 #ifdef RT_USING_SMART
-        input_cfg.base_addr = (uintptr)rt_ioremap((void*)input_cfg.base_addr, 0x1000);
+        input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr, 0x1000);
 #endif
         err = FGpioCfgInitialize(instance, &input_cfg);
         if (FGPIO_SUCCESS != err)
@@ -172,7 +172,7 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
             return;
         }
         gpio[ctrl_id].init_ok = TRUE;
-	}
+    }
 
     FIOPadSetGpioMux(ctrl_id, pin_id);
 
@@ -187,34 +187,34 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
     err = FGpioPinInitialize(instance, pin_instance, gpio_pin_id);
 
     if (FGPIO_SUCCESS != err)
-	{
-		LOG_E("Pin %d-%c-%d init fail!!!\n",
+    {
+        LOG_E("Pin %d-%c-%d init fail!!!\n",
               ctrl_id,
               port_id == 0 ? 'a' : 'b',
               pin_id);
-		return;
-	}
+        return;
+    }
 
     switch (mode)
     {
-        case PIN_MODE_OUTPUT:
-            pin_config->direction =  FGPIO_DIR_OUTPUT;
-            pin_config->en_irq = FALSE;
-            break;
-        case PIN_MODE_INPUT:
-            pin_config->direction =  FGPIO_DIR_INPUT;
-            pin_config->en_irq = TRUE;
-            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
-            break;
-        default:
-            rt_kprintf("Not support mode %d!!!\n", mode);
-            break;
+    case PIN_MODE_OUTPUT:
+        pin_config->direction =  FGPIO_DIR_OUTPUT;
+        pin_config->en_irq = FALSE;
+        break;
+    case PIN_MODE_INPUT:
+        pin_config->direction =  FGPIO_DIR_INPUT;
+        pin_config->en_irq = TRUE;
+        pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
+        break;
+    default:
+        rt_kprintf("Not support mode %d!!!\n", mode);
+        break;
     }
 
     FGpioSetDirection(pin_instance, pin_config->direction);
     rt_kprintf("Init GPIO-%d-%c-%d as an %sput pin\r\n",
-               ctrl_id, 
-               port_id, 
+               ctrl_id,
+               port_id,
                pin_id, pin_config->direction == FGPIO_DIR_OUTPUT ? "out" : "in");
 }
 
@@ -228,9 +228,9 @@ void drv_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
     if (pin_instance == RT_NULL)
     {
         rt_kprintf("Pin %d-%c-%d not set mode\n",
-                    ctrl_id,
-                    port_id == 0 ? 'a' : 'b',
-                    pin_id);
+                   ctrl_id,
+                   port_id == 0 ? 'a' : 'b',
+                   pin_id);
         return;
     }
     FGpioSetOutputValue(pin_instance, (value == PIN_HIGH) ? FGPIO_PIN_HIGH : FGPIO_PIN_LOW);
@@ -246,16 +246,16 @@ rt_int8_t drv_pin_read(struct rt_device *device, rt_base_t pin)
     if (pin_instance == RT_NULL)
     {
         rt_kprintf("Pin %d-%c-%d not set mode\n",
-                    ctrl_id,
-                    port_id == 0 ? 'a' : 'b',
-                    pin_id);
+                   ctrl_id,
+                   port_id == 0 ? 'a' : 'b',
+                   pin_id);
         return RT_ERROR;
     }
     return FGpioGetInputValue(pin_instance) == FGPIO_PIN_HIGH ? PIN_HIGH : PIN_LOW;
 }
 
 rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
-                                   rt_uint8_t mode, void (*hdr)(void *args), void *args)
+                            rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     u32 ctrl_id = FGPIO_OPS_PIN_CTRL_ID(pin);
     u32 port_id = FGPIO_OPS_PIN_PORT_ID(pin);
@@ -299,28 +299,28 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
 
         switch (mode)
         {
-            case PIN_IRQ_MODE_RISING:
-                pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
-                break;
-            case PIN_IRQ_MODE_FALLING:
-                pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_FALLING;
-                break;
-            case PIN_IRQ_MODE_LOW_LEVEL:
-                pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_LOW;
-                break;
-            case PIN_IRQ_MODE_HIGH_LEVEL:
-                pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_HIGH;
-                break;
-            default:
-                LOG_E("Do not spport irq_mode: %d\n", mode);
-                break;
+        case PIN_IRQ_MODE_RISING:
+            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
+            break;
+        case PIN_IRQ_MODE_FALLING:
+            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_FALLING;
+            break;
+        case PIN_IRQ_MODE_LOW_LEVEL:
+            pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_LOW;
+            break;
+        case PIN_IRQ_MODE_HIGH_LEVEL:
+            pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_HIGH;
+            break;
+        default:
+            LOG_E("Do not spport irq_mode: %d\n", mode);
+            break;
         }
         FGpioSetInterruptType(pin_instance, pin_config->irq_type);
-        FGpioRegisterInterruptCB(pin_instance, pin_config->irq_handler, 
+        FGpioRegisterInterruptCB(pin_instance, pin_config->irq_handler,
                                  pin_config->irq_args, TRUE); /* register intr callback */
     }
     rt_hw_interrupt_enable(level);
-    
+
     return RT_EOK;
 }
 
@@ -336,9 +336,9 @@ rt_err_t drv_pin_detach_irq(struct rt_device *device, rt_base_t pin)
     if (pin_instance == RT_NULL)
     {
         rt_kprintf("pin %d-%c-%d not set mode\n",
-                    ctrl_id,
-                    port_id == 0 ? 'a' : 'b',
-                    pin_id);
+                   ctrl_id,
+                   port_id == 0 ? 'a' : 'b',
+                   pin_id);
         return RT_ERROR;
     }
 
@@ -360,9 +360,9 @@ rt_err_t drv_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t 
     if (pin_instance == RT_NULL)
     {
         rt_kprintf("Pin %d-%c-%d not set mode\n",
-                    ctrl_id,
-                    port_id == 0 ? 'a' : 'b',
-                    pin_id);
+                   ctrl_id,
+                   port_id == 0 ? 'a' : 'b',
+                   pin_id);
         return RT_ERROR;
     }
 

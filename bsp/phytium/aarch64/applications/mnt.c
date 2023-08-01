@@ -25,7 +25,7 @@
 #define SD_DEIVCE_NAME "sd"
 static int filesystem_mount(void)
 {
-    while(rt_device_find(SD_DEIVCE_NAME) == RT_NULL)
+    while (rt_device_find(SD_DEIVCE_NAME) == RT_NULL)
     {
         rt_thread_mdelay(1);
     }
@@ -50,8 +50,8 @@ static int filesystem_mount(void)
     }
 
     mkdir("/ram", 0x777);
-    
-    #ifdef RT_USING_DFS_RAMFS
+
+#ifdef RT_USING_DFS_RAMFS
     extern struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size);
 
     rt_uint8_t *pool = RT_NULL;
@@ -65,14 +65,14 @@ static int filesystem_mount(void)
         LOG_I("RAM file system initializated!");
     else
         LOG_E("RAM file system initializate failed!");
-    #endif
+#endif
     return RT_EOK;
 }
 INIT_ENV_EXPORT(filesystem_mount);
 #else
 static int filesystem_mount(void)
 {
-    #ifdef RT_USING_DFS_RAMFS
+#ifdef RT_USING_DFS_RAMFS
     extern struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size);
 
     rt_uint8_t *pool = RT_NULL;
@@ -86,7 +86,7 @@ static int filesystem_mount(void)
         LOG_I("RAM file system initializated!");
     else
         LOG_E("RAM file system initializate failed!");
-    #endif
+#endif
 
     return RT_EOK;
 }

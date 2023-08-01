@@ -68,7 +68,7 @@ extern "C" {
 #define LINK_THREAD_STACK_LENGTH 0x20400
 
 
-typedef struct 
+typedef struct
 {
     uintptr data[PQ_QUEUE_SIZE];
     int head, tail, len;
@@ -106,7 +106,7 @@ typedef struct
 typedef struct
 {
     struct eth_device parent; /* inherit from ethernet device */
-    
+
     FXmac instance; /* Xmac controller */
     FXmacOsControl mac_config;
 
@@ -120,16 +120,17 @@ typedef struct
     u32 config;
 
     rt_uint8_t hwaddr[FXMAX_MAX_HARDWARE_ADDRESS_LENGTH]; /* MAC address */
-    
+
     struct rt_thread _link_thread; /* link detect thread */
     rt_uint8_t _link_thread_stack[LINK_THREAD_STACK_LENGTH];/* link detect thread stack*/
-} FXmacOs; 
+} FXmacOs;
 
-enum lwip_port_link_status {
-	ETH_LINK_UNDEFINED = 0,
-	ETH_LINK_UP,
-	ETH_LINK_DOWN,
-	ETH_LINK_NEGOTIATING
+enum lwip_port_link_status
+{
+    ETH_LINK_UNDEFINED = 0,
+    ETH_LINK_UP,
+    ETH_LINK_DOWN,
+    ETH_LINK_NEGOTIATING
 };
 
 

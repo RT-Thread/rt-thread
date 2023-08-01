@@ -20,13 +20,13 @@
 #include <drivers/mmcsd_core.h>
 
 #ifdef RT_USING_SMART
-#include "ioremap.h"
+    #include "ioremap.h"
 #endif
 #include "mm_aspace.h"
 
 #include "ftypes.h"
 #if defined(TARGET_E2000)
-#include "fparameters.h"
+    #include "fparameters.h"
 #endif
 #include "fparameters_comm.h"
 
@@ -53,7 +53,7 @@ typedef struct
 {
     FSdio *mmcsd_instance;
     FSdioIDmaDesc *rw_desc;
-    rt_err_t (*transfer)(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req, FSdioCmdData * cmd_data_p);
+    rt_err_t (*transfer)(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req, FSdioCmdData *cmd_data_p);
 } mmcsd_info_t;
 /************************** Variable Definitions *****************************/
 
@@ -94,7 +94,7 @@ static rt_err_t fsdio_ctrl_init(struct rt_mmcsd_host *host)
     RT_ASSERT((default_mmcsd_config = FSdioLookupConfig(SDIO_CONTROLLER_ID)) != RT_NULL);
     mmcsd_config = *default_mmcsd_config; /* load default config */
 #ifdef RT_USING_SMART
-    mmcsd_config.base_addr = (uintptr)rt_ioremap((void*)mmcsd_config.base_addr, 0x1000);
+    mmcsd_config.base_addr = (uintptr)rt_ioremap((void *)mmcsd_config.base_addr, 0x1000);
 #endif
     mmcsd_config.trans_mode = FSDIO_IDMA_TRANS_MODE;
 #ifdef USING_EMMC
@@ -102,7 +102,7 @@ static rt_err_t fsdio_ctrl_init(struct rt_mmcsd_host *host)
 #else
     mmcsd_config.non_removable = FALSE; /* TF card is removable on board */
 #endif
-    
+
 
     if (FSDIO_SUCCESS != FSdioCfgInitialize(mmcsd_instance, &mmcsd_config))
     {
@@ -160,7 +160,7 @@ rt_inline rt_err_t sdio_dma_transfer(struct rt_mmcsd_host *host, struct rt_mmcsd
             req->cmd->resp[0] = req_cmd->response[0];
         }
     }
-    
+
     return RT_EOK;
 }
 
@@ -172,7 +172,7 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
         req->cmd->err = -1;
         goto skip_cmd;
     }
-    
+
     mmcsd_info_t *private_data_t = (mmcsd_info_t *)host->private_data;
     FSdioCmdData req_cmd;
     FSdioCmdData req_stop;
@@ -199,7 +199,7 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
     {
         req_cmd.flag |= FSDIO_CMD_FLAG_NEED_RESP_CRC;
     }
-    
+
     if (cmd_flag & RESP_MASK)
     {
         req_cmd.flag |= FSDIO_CMD_FLAG_EXP_RESP;
@@ -240,7 +240,7 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
             req_data.buf_p = (uintptr)req->data->buf + PV_OFFSET;
         }
         req_cmd.data_p = &req_data;
-        
+
         if (req->data->flags & DATA_DIR_READ)
         {
             req_cmd.flag |= FSDIO_CMD_FLAG_READ_DATA;
@@ -266,7 +266,7 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
         if ((uintptr)req->data->buf % SDIO_DMA_ALIGN) /* data buffer should be 512-aligned */
         {
             rt_memcpy((void *)req->data->buf, (void *)data_buf_aligned, req_data.datalen);
-        }   
+        }
     }
 
     /* stop cmd */
@@ -308,18 +308,18 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
 
     switch (io_cfg->bus_width)
     {
-        case MMCSD_BUS_WIDTH_1:
-            FSdioSetBusWidth(base_addr, 1U);
-            break;
-        case MMCSD_BUS_WIDTH_4:
-            FSdioSetBusWidth(base_addr, 4U);
-            break;
-        case MMCSD_BUS_WIDTH_8:
-            FSdioSetBusWidth(base_addr, 8U);
-            break;
-        default:
-            LOG_E("Invalid bus width %d", io_cfg->bus_width);
-            break;
+    case MMCSD_BUS_WIDTH_1:
+        FSdioSetBusWidth(base_addr, 1U);
+        break;
+    case MMCSD_BUS_WIDTH_4:
+        FSdioSetBusWidth(base_addr, 4U);
+        break;
+    case MMCSD_BUS_WIDTH_8:
+        FSdioSetBusWidth(base_addr, 8U);
+        break;
+    default:
+        LOG_E("Invalid bus width %d", io_cfg->bus_width);
+        break;
     }
 }
 
@@ -367,7 +367,7 @@ int ft_mmcsd_init(void)
     host->max_blk_count = SDIO_MAX_BLK_TRANS;
     host->private_data = private_data;
 
-    if(RT_EOK != fsdio_ctrl_init(host))
+    if (RT_EOK != fsdio_ctrl_init(host))
     {
         LOG_E("fsdio_ctrl_init() failed");
         goto err_free;
@@ -378,13 +378,13 @@ int ft_mmcsd_init(void)
     return RT_EOK;
 
 err_free:
-    if(host)
+    if (host)
         rt_free(host);
-    if(private_data->mmcsd_instance)
+    if (private_data->mmcsd_instance)
         rt_free(private_data->mmcsd_instance);
-    if(private_data->rw_desc)
+    if (private_data->rw_desc)
         rt_free_align(private_data->rw_desc);
-    if(private_data)
+    if (private_data)
         rt_free(private_data);
 
     return -RT_EOK;

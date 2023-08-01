@@ -8,7 +8,7 @@
  * Change Logs:
  * Date        Author       Notes
  * 2023/7/24   liqiaozhong  first add, support intr
- * 
+ *
  */
 
 #ifndef __DRV_GPIO_H__
