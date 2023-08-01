@@ -43,6 +43,7 @@
 #ifdef RT_USING_DFS
 #include <eventfd.h>
 #include <poll.h>
+#include <sys/epoll.h>
 #include <sys/select.h>
 #include <dfs_file.h>
 #ifdef RT_USING_DFS_V2
@@ -5325,6 +5326,55 @@ sysret_t sys_eventfd2(unsigned int count, int flags)
     ret = eventfd(count, flags);
     return (ret < 0 ? GET_ERRNO() : ret);
 }
+sysret_t sys_epoll_create1(int flags)
+{
+    int ret;
+
+    ret = epoll_create(flags);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_epoll_ctl(int fd, int op, int fd2, struct epoll_event *ev)
+{
+    int ret;
+
+    if (!lwp_user_accessable((void *)ev, sizeof(struct epoll_event)))
+    {
+        return -EFAULT;
+    }
+
+    ret = epoll_ctl(fd, op, fd2, ev);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_epoll_pwait(int fd,
+        struct epoll_event *ev,
+        int cnt,
+        int to,
+        const sigset_t *sigs,
+        unsigned long sigsetsize)
+{
+    int ret;
+
+    if (!lwp_user_accessable((void *)ev, sizeof(struct epoll_event)))
+    {
+        return -EFAULT;
+    }
+
+    if (sigs != 0)
+    {
+        if (!lwp_user_accessable((void *)sigs, sizeof(sigset_t)))
+        {
+            return -EFAULT;
+        }
+    }
+
+    ret = epoll_pwait(fd, ev, cnt, to, sigs);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
 
 static const struct rt_syscall_def func_table[] =
 {
@@ -5558,6 +5608,9 @@ static const struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_notimpl),
     SYSCALL_SIGN(sys_notimpl),                          /* 190 */
     SYSCALL_SIGN(sys_eventfd2),
+    SYSCALL_SIGN(sys_epoll_create1),
+    SYSCALL_SIGN(sys_epoll_ctl),
+    SYSCALL_SIGN(sys_epoll_pwait),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
