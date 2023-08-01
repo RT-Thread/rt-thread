@@ -280,7 +280,7 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
     switch (pmutex->type)
     {
     case PMUTEX_NORMAL:
-        lock_ret = rt_sem_take_interruptible(pmutex->lock.ksem, time);
+        lock_ret = rt_sem_take(pmutex->lock.ksem, time);
         break;
     case PMUTEX_RECURSIVE:
         lock_ret = rt_mutex_take_interruptible(pmutex->lock.kmutex, time);
