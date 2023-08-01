@@ -31,6 +31,13 @@ if RT_USING_POSIX_FS
         select RT_USING_POSIX_POLL
         default n
 
+    if RT_USING_SMART
+        config RT_USING_POSIX_EPOLL
+            bool "Enable I/O Multiplexing epoll <sys/epoll.h>"
+            select RT_USING_POSIX_POLL
+            default n
+    endif
+
     config RT_USING_POSIX_SOCKET
         bool "Enable BSD Socket I/O <sys/socket.h> <netdb.h>"
         select RT_USING_POSIX_SELECT
