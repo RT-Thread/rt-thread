@@ -22,6 +22,12 @@ if GetDepend('BSP_USING_ADC'):
 if GetDepend('BSP_USING_WDT'):
     src += ['drv_wdt.c']
 
+if GetDepend('BSP_USING_SPI'):
+    src += ['drv_spi.c']
+
+if GetDepend('BSP_USING_I2C'):
+    src += ['drv_i2c.c']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

@@ -12,7 +12,6 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #ifdef RT_USING_HEAP

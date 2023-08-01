@@ -9,7 +9,8 @@
 #ifndef COMPLETION_H_
 #define COMPLETION_H_
 
-#include <rtthread.h>
+#include <rtdef.h>
+#include <rtconfig.h>
 
 /**
  * Completion

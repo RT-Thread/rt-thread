@@ -8,8 +8,8 @@
  * 2023-04-12     ErikChan      the first version
  */
 
-#ifndef __DRIVER_H__
-#define __DRIVER_H__
+#ifndef __CORE_DRIVER_H__
+#define __CORE_DRIVER_H__
 
 #include <drivers/core/device.h>
 

@@ -21,12 +21,9 @@
 #include "usb.h"
 #include "usbh_lib.h"
 
-#define LOG_TAG    "drv.usbhost"
-#define DBG_ENABLE
-#define DBG_SECTION_NAME   LOG_TAG
-#define DBG_LEVEL   LOG_LVL_DBG
-#define DBG_COLOR
-#include <rtdbg.h>
+#define LOG_TAG       "drv.usb.host"
+#define DBG_LVL       DBG_INFO
+#include <drv_log.h>
 
 #if !defined(NU_USBHOST_HUB_POLLING_INTERVAL)
     #define NU_USBHOST_HUB_POLLING_INTERVAL    (100)
@@ -113,7 +110,7 @@ GetRHPortControlFromPipe(
 
     if (port > NU_MAX_USBH_PORT)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_open_pipe ERROR: port index over NU_MAX_USBH_PORT\n"));
+        LOG_D("nu_open_pipe ERROR: port index over NU_MAX_USBH_PORT");
         return RT_NULL;
     }
 
@@ -155,14 +152,14 @@ static rt_err_t nu_reset_port(rt_uint8_t port)
 
     if (port > NU_MAX_USBH_PORT)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("%s ERROR: port index over NU_MAX_USBH_PORT\n", __func__));
+        LOG_D("%s ERROR: port index over NU_MAX_USBH_PORT", __func__);
         return -RT_EIO;
     }
 
     psPortCtrl = &s_sUSBHDev.asPortCtrl[port - 1];
     if (psPortCtrl->sRHPortDev.pUDev == NULL)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("%s ERROR: udev not found\n", __func__));
+        LOG_D("%s ERROR: udev not found", __func__);
         return -RT_EIO;
     }
 
@@ -252,13 +249,13 @@ static rt_err_t nu_open_pipe(upipe_t pipe)
     psPortCtrl = GetRHPortControlFromPipe(pipe);
     if (psPortCtrl == RT_NULL)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("%s ERROR: RHPort not found\n", __func__));
+        LOG_D("%s ERROR: RHPort not found", __func__);
         goto exit_nu_open_pipe;
     }
 
     if (psPortCtrl->sRHPortDev.pUDev == NULL)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("%s ERROR: udev not found\n", __func__));
+        LOG_D("%s ERROR: udev not found", __func__);
         goto exit_nu_open_pipe;
     }
 
@@ -271,7 +268,7 @@ static rt_err_t nu_open_pipe(upipe_t pipe)
 
         if (psPortDev == RT_NULL)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_open_pipe ERROR: udev allocate failed\n"));
+            LOG_D("nu_open_pipe ERROR: udev allocate failed");
             goto exit_nu_open_pipe;
         }
 
@@ -302,7 +299,7 @@ static rt_err_t nu_open_pipe(upipe_t pipe)
         EP_INFO_T *psEPInfo = GetFreePipe(psPortCtrl, psPortDev, &pipe->pipe_index);
         if (psEPInfo == RT_NULL)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("%s ERROR: get free pipe failed\n", __func__));
+            LOG_D("%s ERROR: get free pipe failed", __func__);
             goto exit_nu_open_pipe;
         }
 
@@ -380,13 +377,13 @@ static int nu_ctrl_xfer(
     ret = usbh_ctrl_xfer(psPortDev->pUDev, psSetup->request_type, psSetup->bRequest, psSetup->wValue, psSetup->wIndex, psSetup->wLength, buffer, &xfer_len, timeouts * 10);
     if (ret < 0)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_ctrl_xfer ERROR: xfer failed %d\n", ret));
+        LOG_D("nu_ctrl_xfer ERROR: xfer failed %d", ret);
         return ret;
     }
 
     if (xfer_len != psSetup->wLength)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_ctrl_xfer ERROR: xfer length %d %d\n", psSetup->wLength, xfer_len));
+        LOG_D("nu_ctrl_xfer ERROR: xfer length %d %d", psSetup->wLength, xfer_len);
     }
 
     if ((psSetup->bRequest == USB_REQ_SET_ADDRESS) && ((psSetup->request_type & 0x60) == REQ_TYPE_STD_DEV))
@@ -443,7 +440,7 @@ static int nu_int_xfer(
 
         if (rt_completion_wait(&(psPortDev->utr_completion), timeouts) != 0)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("Request %08x Timeout in %d ms!!\n", psUTR, timeouts));
+            LOG_D("Request %08x Timeout in %d ms", psUTR, timeouts);
             usbh_quit_utr(psUTR);
 
             rt_completion_init(&(psPortDev->utr_completion));
@@ -452,7 +449,7 @@ static int nu_int_xfer(
         else
         {
 
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("Transferring done %08x\n", psUTR));
+            LOG_D("Transferring done %08x", psUTR);
             usbh_quit_utr(psUTR);
             break;
         }
@@ -489,7 +486,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
     psPortDev = GetPortDevFromPipe(pipe);
     if (psPortDev->pUDev == NULL)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: udev not found\n"));
+        LOG_D("nu_pipe_xfer ERROR: udev not found");
         goto exit_nu_pipe_xfer;
     }
 
@@ -553,7 +550,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
             }
             else
             {
-                RT_DEBUG_LOG(RT_DEBUG_USB, ("%d == USBH_PID_DATA, nil buf-%d \n", token, nbytes));
+                LOG_D("%d == USBH_PID_DATA, nil buf-%d", token, nbytes);
             }
 
         } //else
@@ -567,7 +564,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
 
         if (!psUTR)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: unable alloc UTR\n"));
+            LOG_D("nu_pipe_xfer ERROR: unable alloc UTR");
             goto exit_nu_pipe_xfer;
         }
 
@@ -587,7 +584,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         {
             if (nu_bulk_xfer(psPortDev, psUTR, timeouts) < 0)
             {
-                RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: bulk transfer failed\n"));
+                LOG_D("nu_pipe_xfer ERROR: bulk transfer failed");
                 goto failreport_nu_pipe_xfer;
             }
         }
@@ -595,7 +592,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         {
             if (nu_int_xfer(pipe, psPortDev, psUTR, timeouts) < 0)
             {
-                RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: int transfer failed\n"));
+                LOG_D("nu_pipe_xfer ERROR: int transfer failed");
                 //goto exit_nu_pipe_xfer;
             }
             else
@@ -607,7 +604,7 @@ static int nu_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes
         else if (pipe->ep.bmAttributes == USB_EP_ATTR_ISOC)
         {
             //TODO: ISO transfer
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: isoc transfer not support\n"));
+            LOG_D("nu_pipe_xfer ERROR: isoc transfer not support");
             goto exit_nu_pipe_xfer;
         }
 
@@ -618,7 +615,7 @@ failreport_nu_pipe_xfer:
     if (psUTR->bIsTransferDone == 0)
     {
         //Timeout
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("nu_pipe_xfer ERROR: timeout\n"));
+        LOG_D("nu_pipe_xfer ERROR: timeout");
         pipe->status = UPIPE_STATUS_ERROR;
         usbh_quit_utr(psUTR);
     }
@@ -687,7 +684,7 @@ static void nu_hcd_connect_callback(
 
     if (i >= NU_MAX_USBH_PORT)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("ERROR: port connect slot is full\n"));
+        LOG_D("ERROR: port connect slot is full");
         return;
     }
 
@@ -695,7 +692,7 @@ static void nu_hcd_connect_callback(
     psPortCtrl->sRHPortDev.pUDev = udev;
     psPortCtrl->sRHPortDev.bRHParent = TRUE;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("usb connected\n"));
+    LOG_D("usb connected");
 
     if (udev->speed == SPEED_HIGH)
         rt_usbh_root_hub_connect_handler(&s_sUSBHDev.uhcd, port_index, RT_TRUE);
@@ -720,7 +717,7 @@ static void nu_hcd_disconnect_callback(
 
     if (i >= NU_MAX_USBH_PORT)
     {
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("ERROR: udev not found\n"));
+        LOG_D("ERROR: udev not found");
         return;
     }
 
@@ -736,7 +733,7 @@ static void nu_hcd_disconnect_callback(
 
     psPortCtrl->sRHPortDev.pUDev = NULL;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("usb disconnect\n"));
+    LOG_D("usb disconnect");
 
     rt_usbh_root_hub_disconnect_handler(&s_sUSBHDev.uhcd, port_index);
 }

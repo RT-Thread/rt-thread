@@ -119,6 +119,60 @@ menu "On-chip Peripheral Drivers"
         bool "Enable WDT"
         select RT_USING_WDT
         default n
+
+    menuconfig BSP_USING_SPI
+        config BSP_USING_SPI
+            bool "Enable SPI"
+            select RT_USING_SPI
+            default n
+
+            if BSP_USING_SPI
+                config BSP_USING_SPI0
+                    bool "Enable SPI0"
+                    default n
+
+                config BSP_USING_SPI1
+                    bool "Enable SPI1"
+                    default n
+            endif
+
+    menuconfig BSP_USING_I2C
+        config BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            select RT_USING_I2C_BITOPS
+            select RT_USING_PIN
+            default n
+
+            if BSP_USING_I2C
+                config BSP_USING_I2C0
+                    bool "Enable I2C0"
+                    default n
+                    if BSP_USING_I2C0
+                        config BSP_I2C0_SCL_PIN
+                            int "i2c0 scl pin number (GP)"
+                            range 0 28
+                            default 21
+                        config BSP_I2C0_SDA_PIN
+                            int "I2C0 sda pin number (GP)"
+                            range 0 28
+                            default 20
+                    endif
+
+                config BSP_USING_I2C1
+                    bool "Enable I2C1"
+                    default n
+                    if BSP_USING_I2C1
+                        config BSP_I2C1_SCL_PIN
+                            int "i2c1 scl pin number (GP)"
+                            range 0 28
+                            default 19
+                        config BSP_I2C1_SDA_PIN
+                            int "I2C1 sda pin number (GP)"
+                            range 0 28
+                            default 18
+                    endif
+            endif
 endmenu
 
 endmenu

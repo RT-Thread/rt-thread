@@ -8,8 +8,13 @@
  * 2017-10-30     ZYH            the first version
  * 2019-12-19     tyustli           port to stm32 series
  */
+
 #include "drv_usbh.h"
 #include "board.h"
+
+#define LOG_TAG       "drv.usb.host"
+#define DBG_LVL       DBG_INFO
+#include <drv_log.h>
 
 static HCD_HandleTypeDef stm32_hhcd_fs;
 static struct rt_completion urb_completion;
@@ -28,7 +33,7 @@ void HAL_HCD_Connect_Callback(HCD_HandleTypeDef *hhcd)
     if (!connect_status)
     {
         connect_status = RT_TRUE;
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb connected\n"));
+        LOG_D("usb connected");
         rt_usbh_root_hub_connect_handler(hcd, OTG_FS_PORT, RT_FALSE);
     }
 }
@@ -39,7 +44,7 @@ void HAL_HCD_Disconnect_Callback(HCD_HandleTypeDef *hhcd)
     if (connect_status)
     {
         connect_status = RT_FALSE;
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("usb disconnnect\n"));
+        LOG_D("usb disconnnect");
         rt_usbh_root_hub_disconnect_handler(hcd, OTG_FS_PORT);
     }
 }
@@ -51,7 +56,7 @@ void HAL_HCD_HC_NotifyURBChange_Callback(HCD_HandleTypeDef *hhcd, uint8_t chnum,
 
 static rt_err_t drv_reset_port(rt_uint8_t port)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("reset port\n"));
+    LOG_D("reset port");
     HAL_HCD_ResetPort(&stm32_hhcd_fs);
     return RT_EOK;
 }
@@ -79,7 +84,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
         rt_thread_mdelay(1);
         if (HAL_HCD_HC_GetState(&stm32_hhcd_fs, pipe->pipe_index) == HC_NAK)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("nak\n"));
+            LOG_D("nak");
             if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
             {
                 rt_thread_delay((pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) > 0 ? (pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) : 1);
@@ -96,7 +101,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
         }
         else if (HAL_HCD_HC_GetState(&stm32_hhcd_fs, pipe->pipe_index) == HC_STALL)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("stall\n"));
+            LOG_D("stall");
             pipe->status = UPIPE_STATUS_STALL;
             if (pipe->callback != RT_NULL)
             {
@@ -106,7 +111,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
         }
         else if (HAL_HCD_HC_GetState(&stm32_hhcd_fs, pipe->pipe_index) == URB_ERROR)
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("error\n"));
+            LOG_D("error");
             pipe->status = UPIPE_STATUS_ERROR;
             if (pipe->callback != RT_NULL)
             {
@@ -116,7 +121,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
         }
         else if(URB_DONE == HAL_HCD_HC_GetURBState(&stm32_hhcd_fs, pipe->pipe_index))
         {
-            RT_DEBUG_LOG(RT_DEBUG_USB, ("ok\n"));
+            LOG_D("ok");
             pipe->status = UPIPE_STATUS_OK;
             if (pipe->callback != RT_NULL)
             {
