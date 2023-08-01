@@ -22,7 +22,7 @@
 
 #define DAT_LENGTH 128
 
-static phytium_qspi_bus phytium_qspi = 
+static phytium_qspi_bus phytium_qspi =
 {
     .fqspi_id = FQSPI0_ID,
 };
@@ -35,7 +35,7 @@ extern FIOPadCtrl iopad_ctrl;
 rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
 {
     FError ret = FT_SUCCESS;
-    rt_uint32_t qspi_id = phytium_qspi_bus->fqspi_id; 
+    rt_uint32_t qspi_id = phytium_qspi_bus->fqspi_id;
 
 #ifdef USING_QSPI_CHANNEL0
     FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR51_REG0_OFFSET, FIOPAD_FUNC0);
@@ -51,7 +51,7 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
     FQspiConfig pconfig = *FQspiLookupConfig(qspi_id);
 
 #ifdef RT_USING_SMART
-    pconfig.base_addr = (uintptr)rt_ioremap((void*)pconfig.base_addr, 0x1000);
+    pconfig.base_addr = (uintptr)rt_ioremap((void *)pconfig.base_addr, 0x1000);
 #endif
 
     /* Norflash init, include reset and read flash_size */
@@ -88,7 +88,7 @@ static rt_err_t phytium_qspi_configure(struct rt_spi_device *device, struct rt_s
     phytium_qspi_bus *qspi_bus;
     qspi_bus = (struct phytium_qspi_bus *) device->bus->parent.user_data;
     rt_err_t ret = RT_EOK;
-    
+
     ret = FQspiInit(qspi_bus);
     if (RT_EOK != ret)
     {
@@ -109,7 +109,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
     struct rt_qspi_message *qspi_message = (struct rt_qspi_message *)message;
     rt_uint32_t cmd = qspi_message->instruction.content;
     rt_uint32_t flash_addr = qspi_message->address.content;
-    
+
     rt_uint8_t *rcvb = message->recv_buf;
     rt_uint8_t *sndb = message->send_buf;
     FError ret = FT_SUCCESS;
@@ -125,10 +125,10 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
     uintptr addr = qspi_bus->fqspi.config.mem_start + qspi_bus->fqspi.config.channel * qspi_bus->fqspi.flash_size + flash_addr;
 
 #ifdef RT_USING_SMART
-    addr = (uintptr)rt_ioremap((void*)addr , 0x2000);
+    addr = (uintptr)rt_ioremap((void *)addr, 0x2000);
 #endif
     /*Distinguish the write mode according to different commands*/
-    if (cmd == FQSPI_FLASH_CMD_PP||cmd == FQSPI_FLASH_CMD_QPP||cmd ==FQSPI_FLASH_CMD_4PP||cmd ==FQSPI_FLASH_CMD_4QPP )
+    if (cmd == FQSPI_FLASH_CMD_PP || cmd == FQSPI_FLASH_CMD_QPP || cmd == FQSPI_FLASH_CMD_4PP || cmd == FQSPI_FLASH_CMD_4QPP)
     {
         rt_uint8_t *wr_buf = NULL;
         wr_buf = (rt_uint8_t *)rt_malloc(DAT_LENGTH * sizeof(rt_uint8_t));
@@ -158,8 +158,8 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
     }
 
     /*Distinguish the read mode according to different commands*/
-    if (cmd == FQSPI_FLASH_CMD_READ||cmd == FQSPI_FLASH_CMD_4READ||cmd == FQSPI_FLASH_CMD_FAST_READ||cmd == FQSPI_FLASH_CMD_4FAST_READ||
-        cmd == FQSPI_FLASH_CMD_DUAL_READ||cmd == FQSPI_FLASH_CMD_QIOR||cmd == FQSPI_FLASH_CMD_4QIOR)
+    if (cmd == FQSPI_FLASH_CMD_READ || cmd == FQSPI_FLASH_CMD_4READ || cmd == FQSPI_FLASH_CMD_FAST_READ || cmd == FQSPI_FLASH_CMD_4FAST_READ ||
+            cmd == FQSPI_FLASH_CMD_DUAL_READ || cmd == FQSPI_FLASH_CMD_QIOR || cmd == FQSPI_FLASH_CMD_4QIOR)
     {
         rt_uint8_t *rd_buf = NULL;
         rd_buf = (rt_uint8_t *)rt_malloc(DAT_LENGTH * sizeof(rt_uint8_t));
@@ -187,12 +187,12 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
         }
         FtDumpHexByte(message->recv_buf, read_len);
 
-       return RT_EOK;
+        return RT_EOK;
     }
 
     if (rcvb)
     {
-        if (cmd == FQSPI_FLASH_CMD_RDID||cmd == FQSPI_FLASH_CMD_RDSR1||cmd == FQSPI_FLASH_CMD_RDSR2 ||cmd == FQSPI_FLASH_CMD_RDSR3)
+        if (cmd == FQSPI_FLASH_CMD_RDID || cmd == FQSPI_FLASH_CMD_RDSR1 || cmd == FQSPI_FLASH_CMD_RDSR2 || cmd == FQSPI_FLASH_CMD_RDSR3)
         {
             ret |= FQspiFlashSpecialInstruction(&(qspi_bus->fqspi), cmd, rcvb, sizeof(rcvb));
             if (FT_SUCCESS != ret)
@@ -256,8 +256,8 @@ __exit:
 
         }
 
-    return  result;
-}
+        return  result;
+    }
 }
 
 int rt_hw_qspi_init(void)
@@ -265,8 +265,8 @@ int rt_hw_qspi_init(void)
     int result = RT_EOK;
 
     phytium_qspi.qspi_bus.parent.user_data = &phytium_qspi;
-    
-    if(rt_qspi_bus_register(&phytium_qspi.qspi_bus, qspi_bus_name , &phytium_qspi_ops) == RT_EOK)
+
+    if (rt_qspi_bus_register(&phytium_qspi.qspi_bus, qspi_bus_name, &phytium_qspi_ops) == RT_EOK)
     {
         rt_kprintf("Qspi bus register successfully!!!\n");
     }
@@ -297,7 +297,7 @@ rt_err_t qspi_init()
 /*read cmd example message improvement*/
 void ReadCmd(struct rt_spi_message *spi_message)
 {
-    struct rt_qspi_message *message = (struct rt_qspi_message*) spi_message;
+    struct rt_qspi_message *message = (struct rt_qspi_message *) spi_message;
     message->address.content = 0x360000 ;/*Flash address*/
     message->instruction.content = 0x03 ;/*read cmd*/
 
@@ -307,7 +307,7 @@ void ReadCmd(struct rt_spi_message *spi_message)
 /*write cmd example message improvement*/
 void WriteCmd(struct rt_spi_message *spi_message)
 {
-    struct rt_qspi_message *message = (struct rt_qspi_message*) spi_message;
+    struct rt_qspi_message *message = (struct rt_qspi_message *) spi_message;
     message->address.content = 0x360000 ;/*Flash address*/
     message->instruction.content = 0x02 ;/*write cmd*/
     rt_qspi_transfer_message(qspi_device, message);
@@ -338,9 +338,9 @@ void qspi_thread(void *parameter)
     rt_uint8_t recv;
     rt_uint8_t cmd = 0x9F;/*read the flash status reg2*/
     res = rt_qspi_send_then_recv(qspi_device, &cmd, sizeof(cmd), &recv, sizeof(recv));
-    RT_ASSERT(res!=RT_EOK);
+    RT_ASSERT(res != RT_EOK);
 
-    rt_kprintf("The status reg = %x \n" ,recv);
+    rt_kprintf("The status reg = %x \n", recv);
 
     return 0;
 }
@@ -351,7 +351,7 @@ rt_err_t qspi_sample(int argc, char *argv[])
     rt_err_t res;
     thread = rt_thread_create("qspi_thread", qspi_thread, RT_NULL, 2048, 25, 10);
     res = rt_thread_startup(thread);
-    RT_ASSERT(res==RT_EOK);
+    RT_ASSERT(res == RT_EOK);
 
     return res;
 }
