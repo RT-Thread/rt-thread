@@ -10,26 +10,6 @@
 
 #include "board.h"
 
-#ifdef RT_USING_MEMORY_PROTECTION
-#include "mp.h"
-
-rt_mem_region_t static_regions[NUM_STATIC_REGIONS] = {
-  /* Flash region, read only */
-  {
-    .start = (void *)STM32_FLASH_START_ADRESS,
-    .size = (rt_size_t)STM32_FLASH_SIZE,
-    .attr = RT_ARM_MEM_ATTR(P_RO_U_RO, NORMAL_OUTER_INNER_WRITE_THROUGH_NON_SHAREABLE),
-  },
-  /* SRAM regin, no execute */
-  {
-    .start = (void *)STM32_SRAM_START_ADDRESS,
-    .size = (rt_size_t)STM32_SRAM_SIZE,
-    .attr = RT_ARM_MEM_ATTR(P_RW_U_RW, NORMAL_OUTER_INNER_WRITE_BACK_WRITE_READ_ALLOCATE_NON_SHAREABLE),
-  }
-}
-
-#endif
-
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
