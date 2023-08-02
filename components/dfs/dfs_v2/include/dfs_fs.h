@@ -77,6 +77,7 @@ struct dfs_filesystem_type
     struct dfs_filesystem_type *next;
 };
 
+struct dfs_filesystem_type *dfs_filesystems(void);
 int dfs_unregister(struct dfs_filesystem_type *fs);
 int dfs_register(struct dfs_filesystem_type *fs);
 const char *dfs_filesystem_get_mounted_path(struct rt_device *device);
@@ -86,8 +87,9 @@ int dfs_mount(const char *device_name,
             const char *filesystemtype,
             unsigned long rwflag,
             const void *data);
-int dfs_umount(const char *specialfile);
+int dfs_umount(const char *specialfile, int flags);
 int dfs_unmount(const char *specialfile);
+int dfs_is_mounted(struct dfs_mnt *mnt);
 int dfs_mkfs(const char *fs_name, const char *device_name);
 int dfs_statfs(const char *path, struct statfs *buffer);
 int dfs_filesystem_get_partition(struct dfs_partition *part,
