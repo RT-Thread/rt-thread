@@ -164,21 +164,21 @@ extern "C"
 
 /** @name FGDMA_CHX_XFER_CFG_OFFSET Register
  */
-#define FGDMA_CHX_XFER_CFG_AR_LEN_SET(len)      SET_REG32_BITS((len), 31, 24) /* CHX 读请求Burst length 大小 */
-#define FGDMA_CHX_XFER_CFG_AR_SIZE_SET(size)    SET_REG32_BITS((size), 22, 20) /* CHX 读请求Size 大小 ， 支持 1、2、8、16 Byte */
-#define FGDMA_CHX_XFER_CFG_AR_BRUST_SET(type)   SET_REG32_BITS((type), 17, 16) /* CHX 读请求Brust 类型： 0：fix ，1：incr */
-#define FGDMA_CHX_XFER_CFG_AW_LEN_SET(len)      SET_REG32_BITS((len), 15, 8) /* CHX 写请求Burst length 大小 */
-#define FGDMA_CHX_XFER_CFG_AW_SIZE_SET(size)    SET_REG32_BITS((size), 6, 4) /* CHX 写请求Size 大小 ， 支持 1、2、8、16 Byte */
-#define FGDMA_CHX_XFER_CFG_AW_BRUST_SET(type)   SET_REG32_BITS((type), 1, 0) /* CHX 写请求Brust 类型： 0：fix ，1：incr */
+#define FGDMA_CHX_XFER_CFG_AR_LEN_SET(len)      SET_REG32_BITS((len), 31, 24) /* CHX 读请求 Burst length 大小 */
+#define FGDMA_CHX_XFER_CFG_AR_SIZE_SET(size)    SET_REG32_BITS((size), 22, 20) /* CHX 读请求 Burst size 大小， 支持 1、2、8、16 Byte */
+#define FGDMA_CHX_XFER_CFG_AR_BRUST_SET(type)   SET_REG32_BITS((type), 17, 16) /* CHX 读请求 Brust 类型： 0：fix ，1：incr */
+#define FGDMA_CHX_XFER_CFG_AW_LEN_SET(len)      SET_REG32_BITS((len), 15, 8) /* CHX 写请求 Burst length 大小 */
+#define FGDMA_CHX_XFER_CFG_AW_SIZE_SET(size)    SET_REG32_BITS((size), 6, 4) /* CHX 写请求 Burst size 大小， 支持 1、2、8、16 Byte */
+#define FGDMA_CHX_XFER_CFG_AW_BRUST_SET(type)   SET_REG32_BITS((type), 1, 0) /* CHX 写请求 Brust 类型： 0：fix ，1：incr */
 
 #define FGDMA_INCR                      1U
 #define FGDMA_FIX                       0U
 
-#define FGDMA_MAX_BURST_LEN             8U
+#define FGDMA_BURST_LEN                 7U /* burst lenth = FGDMA_BURST_LEN + 1，写入寄存器的最大合法值为7，burst length最大值为8 */
 
 /** @name FGDMA_CHX_LCP_OFFSET Register
  */
-#define FGDMA_CHX_LCP_GET(reg_val)   GET_REG32_BITS((reg_val), 31, 0) /* 当前操作了多少个 BDL 列表 */
+#define FGDMA_CHX_LCP_GET(reg_val)   GET_REG32_BITS((reg_val), 31, 0) /* 当前操作的BDL列表数  */
 
 /** @name FGDMA_CHX_SECCTL_OFFSET Register
  */

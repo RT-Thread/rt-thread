@@ -31,7 +31,11 @@
 #include "fio.h"
 #include "fkernel.h"
 
-/****************************************************************************/
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/************************** Constant Definitions *****************************/
 /**
 * This macro writes the given register.
 * @param    base_addr is the base address of the device.
@@ -97,6 +101,11 @@
 #define FDP_TX_AUX_TRANSACTION_STATUS 0x014C
 #define FDP_TX_TIMER 0x0158
 
+/*FDPTX_MAIN_LINK_MISC0*/
+#define FDPTX_MAIN_LINK_MISC0_CLOCK_MODE   BIT(0)
+#define FDPTX_MAIN_LINK_MISC0_COLOR_FORMAT GENMASK(2,1)
+#define FDPTX_MAIN_LINK_MISC0_BIT_DEPTH    GENMASK(7,5)
+
 /*
  Main Link registers
 */
@@ -127,11 +136,11 @@
 #define FDP_TX_HPD_INTR_MASK BIT(1) //hpd irq 中断
 #define FDP_TX_HPD_EVENT_MASK BIT(0)//HPD 连接或断开事件 中断
 
-#define FDP_TX_STATUS_AUX_ERROR BIT(6) 
-#define FDP_TX_STATUS_GP_TIME BIT(4) 
+#define FDP_TX_STATUS_AUX_ERROR BIT(6)
+#define FDP_TX_STATUS_GP_TIME BIT(4)
 #define FDP_TX_STATUS_AUX_TIMEOUT BIT(3)
-#define FDP_TX_STATUS_AUX_RECEIVED BIT(2) 
-#define FDP_TX_STATUS_HPD_INTR BIT(1) 
+#define FDP_TX_STATUS_AUX_RECEIVED BIT(2)
+#define FDP_TX_STATUS_HPD_INTR BIT(1)
 #define FDP_TX_STATUS_HPD_EVENT BIT(0)
 
 /*
@@ -142,6 +151,9 @@
 #define FDPTX_EDP_CRC_GREEN 0x01D8
 #define FDPTX_EDP_CRC_BLUE 0x01DC
 
+
+/************************** Function Prototypes ******************************/
+
 /* write the data to the channel of dp */
 void FDpChannelRegWrite(uintptr addr,  uintptr offset, u32 data);
 
@@ -149,9 +161,16 @@ void FDpChannelRegWrite(uintptr addr,  uintptr offset, u32 data);
 FError FDpChannelRegRead(uintptr addr, uintptr offset);
 
 /* write FdpPhy control register */
-void FDpPhyRegWrite(uintptr addr,uintptr offset, u32 data);
+void FDpPhyRegWrite(uintptr addr, uintptr offset, u32 data);
 
 /* read FdpPhy control register */
 FError FDpPhyRegRead(uintptr addr,  uintptr offset);
+
+/*dump the dp info*/
+void FDpDump(uintptr address);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

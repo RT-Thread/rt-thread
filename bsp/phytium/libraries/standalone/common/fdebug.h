@@ -33,9 +33,7 @@
 #include "fsmp.h"
 #endif
 
-#if defined(CONFIG_USE_AMP)
 #include "fcpu_info.h"
-#endif
 
 
 #ifdef __cplusplus
@@ -133,7 +131,7 @@ typedef enum
     {                                                                         \
         if (LOG_LOCAL_LEVEL < log_level)                                      \
             break;                                                            \
-        DISPALY_CORE_NUM()  \
+        DISPALY_CORE_NUM(); \
         PORT_KPRINTF(LOG_FORMAT(log_tag_letter, format" @%s:%d"), tag, ##__VA_ARGS__, __FILENAME__, __LINE__); \
     } while (0)
 #endif

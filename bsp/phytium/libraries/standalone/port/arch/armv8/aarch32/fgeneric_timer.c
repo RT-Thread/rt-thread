@@ -43,12 +43,12 @@
 /************************** Function Prototypes ******************************/
 
 /************************** Function *****************************************/
-u64 GenericTimerRead(void)
+u64 GenericTimerRead(u32 id)
 {
     return (u64)gtimer_get_current_value();
 }
 
-void GenericTimerStart(void)
+void GenericTimerStart(u32 id)
 {
     u32 ctrl = gtimer_get_control(); /* get CNTP_CTL */
 
@@ -59,7 +59,7 @@ void GenericTimerStart(void)
     }
 }
 
-void GenericTimerStop(void)
+void GenericTimerStop(u32 id)
 {
     u32 ctrl = gtimer_get_control(); /* get CNTP_CTL */
     if ((ctrl & CNTP_CTL_ENABLE))
@@ -76,13 +76,13 @@ u32 GenericTimerFrequecy(void)
     return rate;
 }
 
-void GenericTimerCompare(u32 interval)
+void GenericTimerSetTimerCompareValue(u32 id, u32 interval)
 {
     /* set CNTP_CVAL, set compare value for physical timer */
     gtimer_set_load_value((rt_uint64_t)interval);
 }
 
-void GenericTimerInterruptEnable(void)
+void GenericTimerInterruptEnable(u32 id)
 {
     u64 ctrl = gtimer_get_control();
     if (ctrl & CNTP_CTL_IMASK)

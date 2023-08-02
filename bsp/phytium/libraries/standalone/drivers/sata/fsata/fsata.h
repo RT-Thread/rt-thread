@@ -37,7 +37,7 @@ extern "C"
 #endif
 
 #define FSATA_SUCCESS               FT_SUCCESS
-#define FSATA_ERR_INVAILD_PARAMETER FT_MAKE_ERRCODE(ErrModBsp, ErrBspSata, 1)
+#define FSATA_ERR_INVALID_PARAMETER FT_MAKE_ERRCODE(ErrModBsp, ErrBspSata, 1)
 #define FSATA_ERR_TIMEOUT           FT_MAKE_ERRCODE(ErrModBsp, ErrBspSata, 2)
 #define FSATA_ERR_OPERATION         FT_MAKE_ERRCODE(ErrModBsp, ErrBspSata, 3)
 #define FSATA_UNKNOWN_DEVICE        FT_MAKE_ERRCODE(ErrModBsp, ErrBspSata, 4)

@@ -52,6 +52,7 @@ typedef enum
     ErrCommGeneral = 0,
     ErrCommMemp,
     ErrInterrupt,
+    ErrElf,
 } FtErrCodeCommMask;
 
 /* BSP模块的错误子模块定义 */
@@ -86,6 +87,7 @@ typedef enum
     ErrSema,
     ErrBspMEDIA,
     ErrBspMhu,
+    ErrBspIOPad,
 	
     ErrBspModMaxMask = 255
 } FtErrCodeBspMask;

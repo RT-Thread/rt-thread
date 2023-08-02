@@ -173,6 +173,7 @@ u32 FPl011GetInterruptMask(FPl011 *uart_p) ;
 void FPl011InterruptHandler(s32 vector, void *param);
 void FPl011SetHandler(FPl011 *uart_p, FPl011EventHandler fun_p, void *args);
 void FPl011SetInterruptMask(FPl011 *uart_p, u32 mask);
+void FPl011InterruptClearAll(FPl011 *uart_p);
 
 
 

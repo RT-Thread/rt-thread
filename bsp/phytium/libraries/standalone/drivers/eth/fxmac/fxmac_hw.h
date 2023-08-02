@@ -20,6 +20,7 @@
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   huanghe    2022/06/16    first release
+ * 1.1  liuzhihong  2023/4/11     jumbo support
  */
 
 #ifndef FXMAC_HW_H
@@ -34,9 +35,6 @@
 extern "C"
 {
 #endif
-
-#define FXMAC_RX_BUF_SIZE 1536U /* Specify the receive buffer size in bytes, 64, 128, ... 10240 */
-#define FXMAC_RX_BUF_SIZE_JUMBO 10240U
 
 #define FXMAC_RX_BUF_UNIT 64U /* Number of receive buffer bytes as a unit, this is HW setup */
 
@@ -186,6 +184,7 @@ extern "C"
 
 #define FXMAC_MSBBUF_TXQBASE_OFFSET 0x000004C8U /* MSB Buffer TX Q Base reg */
 #define FXMAC_MSBBUF_RXQBASE_OFFSET 0x000004D4U /* MSB Buffer RX Q Base reg */
+#define FXMAC_TXQSEGALLOC_QLOWER_OFFSET 0x000005A0U /* Transmit SRAM segment distribution */
 #define FXMAC_INTQ1_IER_OFFSET 0x00000600U      /* Interrupt Q1 Enable reg */
 #define FXMAC_INTQX_IER_SIZE_OFFSET(x) (FXMAC_INTQ1_IER_OFFSET + (x << 2))
 
@@ -255,7 +254,7 @@ extern "C"
 #define FXMAC_IXR_RXUSED_MASK BIT(2)      /* Rx buffer used bit read */
 #define FXMAC_IXR_RXCOMPL_MASK BIT(1)     /* Frame received ok */
 #define FXMAC_IXR_MGMNT_MASK BIT(0)       /* PHY management complete */
-#define FXMAC_IXR_ALL_MASK GENMASK(14, 0) /* Everything! */
+#define FXMAC_IXR_ALL_MASK GENMASK(31, 0) /* Everything! */
 
 #define FXMAC_IXR_TX_ERR_MASK ((u32)FXMAC_IXR_TXEXH_MASK | \
                                (u32)FXMAC_IXR_RETRY_MASK | \
@@ -264,6 +263,13 @@ extern "C"
 #define FXMAC_IXR_RX_ERR_MASK ((u32)FXMAC_IXR_HRESPNOK_MASK | \
                                (u32)FXMAC_IXR_RXUSED_MASK |   \
                                (u32)FXMAC_IXR_RXOVR_MASK)
+
+#define FXMAC_INTR_MASK               \
+     ((u32)FXMAC_IXR_LINKCHANGE_MASK |  \
+     (u32)FXMAC_IXR_TX_ERR_MASK |       \
+     (u32)FXMAC_IXR_RX_ERR_MASK |       \
+     (u32)FXMAC_IXR_RXCOMPL_MASK |      \
+     (u32)FXMAC_IXR_TXCOMPL_MASK)
 
 /** @name network control register bit definitions
  * @{
@@ -284,12 +290,22 @@ extern "C"
 #define FXMAC_NWCTRL_MDEN_MASK BIT(4)    /* Enable MDIO port */
 #define FXMAC_NWCTRL_TXEN_MASK BIT(3)    /* Enable transmit */
 #define FXMAC_NWCTRL_RXEN_MASK BIT(2)    /* Enable receive */
-#define FXMAC_NWCTRL_LOOPEN_MASK BIT(1)  /* local loopback */
+#define FXMAC_NWCTRL_LOOPBACK_LOCAL_MASK BIT(1) /* Loopback local */
 
-/* External address match enable */
 
+
+/** @name network configuration register bit definitions
+ * @{
+ */
+#define FXMAC_NWCFG_BADPREAMBEN_MASK BIT(29)       /* disable rejection of non-standard preamble */
+#define FXMAC_NWCFG_IPDSTRETCH_MASK BIT(28)        /* enable transmit IPG */
 #define FXMAC_NWCFG_SGMII_MODE_ENABLE_MASK BIT(27) /* SGMII mode enable */
+#define FXMAC_NWCFG_FCSIGNORE_MASK BIT(26)         /* disable rejection of FCS error */
+#define FXMAC_NWCFG_HDRXEN_MASK BIT(25)            /* RX half duplex */
+#define FXMAC_NWCFG_RXCHKSUMEN_MASK BIT(24)        /* enable RX checksum offload */
+#define FXMAC_NWCFG_PAUSECOPYDI_MASK BIT(23)       /* Do not copy pause Frames to memory */
 
+#define FXMAC_NWCFG_DWIDTH_64_MASK BIT(21)         /* 64 bit Data bus width */
 #define FXMAC_NWCFG_BUS_WIDTH_32_MASK (0U << 21)
 #define FXMAC_NWCFG_BUS_WIDTH_64_MASK (1U << 21)
 #define FXMAC_NWCFG_BUS_WIDTH_128_MASK (2U << 21)
@@ -302,12 +318,18 @@ extern "C"
 #define FXMAC_NWCFG_CLOCK_DIV32_MASK (2U << 18)
 #define FXMAC_NWCFG_CLOCK_DIV16_MASK (1U << 18)
 #define FXMAC_NWCFG_CLOCK_DIV8_MASK (0U << 18)
+#define FXMAC_NWCFG_RESET_MASK BIT(19)      /* reset value of mdc_clock_division*/
+#define FXMAC_NWCFG_MDC_SHIFT_MASK 18U             /* shift bits for MDC */
+#define FXMAC_NWCFG_MDCCLKDIV_MASK GENMASK(20, 18) /* MDC Mask PCLK divisor */
 
-#define FXMAC_NWCFG_FCS_REMOVE BIT(17)      /* FCS remove - setting this bit will cause received frames to be written to memory without their frame check sequence (last 4 bytes). */
-#define FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD    BIT(16)
-#define FXMAC_NWCFG_PAUSE_ENABLE BIT(13)    /* Pause enable - when set, transmission will pause if a non-zero 802.3 classic pause frame is received and PFC has not been negotiated. */
+#define FXMAC_NWCFG_FCS_REMOVE_MASK BIT(17)      /* FCS remove - setting this bit will cause received frames to be written to memory without their frame check sequence (last 4 bytes). */
+#define FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD_MASK BIT(16)    /* RX length error discard */
+#define FXMAC_NWCFG_RXOFFS_MASK GENMASK(15)  /* RX buffer offset */
+#define FXMAC_NWCFG_PAUSE_ENABLE_MASK BIT(13)    /* Pause enable - when set, transmission will pause if a non-zero 802.3 classic pause frame is received and PFC has not been negotiated. */
+#define FXMAC_NWCFG_RETRYTESTEN_MASK BIT(12) /* Retry test */
 #define FXMAC_NWCFG_PCSSEL_MASK BIT(11)     /* PCS Select */
 #define FXMAC_NWCFG_1000_MASK BIT(10)       /* Gigabit mode enable */
+#define FXMAC_NWCFG_XTADDMACHEN_MASK BIT(9) /* External address match enable */
 #define FXMAC_NWCFG_1536RXEN_MASK BIT(8)    /* Enable 1536 byte frames reception */
 #define FXMAC_NWCFG_UCASTHASHEN_MASK BIT(7) /* Receive unicast hash frames */
 #define FXMAC_NWCFG_MCASTHASHEN_MASK BIT(6) /* Receive multicast hash frames */
@@ -317,7 +339,7 @@ extern "C"
 #define FXMAC_NWCFG_NVLANDISC_MASK BIT(2)   /* Receive only VLAN frames */
 #define FXMAC_NWCFG_FDEN_MASK BIT(1)        /* full duplex */
 #define FXMAC_NWCFG_100_MASK BIT(0)         /* 100 Mbps */
-#define FXMAC_NWCFG_RESET_MASK BIT(19)      /* reset value */
+
 
 /* Receive buffer descriptor status words bit positions.
  * Receive buffer descriptor consists of two 32-bit registers,
@@ -378,28 +400,6 @@ matched */
  * @}
  */
 
-/** @name network configuration register bit definitions
- * @{
- */
-#define FXMAC_NWCFG_BADPREAMBEN_MASK BIT(29)       /* disable rejection of non-standard preamble */
-#define FXMAC_NWCFG_IPDSTRETCH_MASK BIT(28)        /* enable transmit IPG */
-#define FXMAC_NWCFG_SGMIIEN_MASK BIT(27)           /* SGMII Enable */
-#define FXMAC_NWCFG_FCSIGNORE_MASK BIT(26)         /* disable rejection of FCS error */
-#define FXMAC_NWCFG_HDRXEN_MASK BIT(25)            /* RX half duplex */
-#define FXMAC_NWCFG_RXCHKSUMEN_MASK BIT(24)        /* enable RX checksum offload */
-#define FXMAC_NWCFG_PAUSECOPYDI_MASK BIT(23)       /* Do not copy pause Frames to memory */
-#define FXMAC_NWCFG_DWIDTH_64_MASK BIT(21)         /* 64 bit Data bus width */
-#define FXMAC_NWCFG_MDC_SHIFT_MASK 18U             /* shift bits for MDC */
-#define FXMAC_NWCFG_MDCCLKDIV_MASK GENMASK(20, 18) /* MDC Mask PCLK divisor */
-#define FXMAC_NWCFG_FCSREM_MASK BIT(17)            /* Discard FCS from received frames */
-#define FXMAC_NWCFG_LENERRDSCRD_MASK BIT(16)    /* RX length error discard */
-#define FXMAC_NWCFG_RXOFFS_MASK GENMASK(15)  /* RX buffer offset */
-#define FXMAC_NWCFG_PAUSEEN_MASK BIT(13)     /* Enable pause RX */
-#define FXMAC_NWCFG_RETRYTESTEN_MASK BIT(12) /* Retry test */
-#define FXMAC_NWCFG_XTADDMACHEN_MASK BIT(9)
-#define FXMAC_NWCFG_LOOPBACK_LOCAL_MASK BIT(1) /* Loopback local */
-
-/* External address match enable */
 
 /**
  * @name receive status register bit definitions
@@ -479,7 +479,11 @@ matched */
                                (u32)FXMAC_TXSR_RXOVR_MASK |    \
                                (u32)FXMAC_TXSR_FRAMERX_MASK |  \
                                (u32)FXMAC_TXSR_USEDREAD_MASK)
-
+/** @name transmit SRAM segment allocation by queue 0 to 7  register bit definitions
+ * @{
+ */                                
+#define FXMAC_TXQSEGALLOC_QLOWER_MASK BIT(2)  /* 16 segments are distributed to queue 0*/
+#define FXMAC_TXQSEGALLOC_QLOWER_CLEAN_MASK 0x0U
 /**
  * @name Interrupt Q1 status register bit definitions
  * @{

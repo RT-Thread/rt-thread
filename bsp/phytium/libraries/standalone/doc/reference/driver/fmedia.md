@@ -52,20 +52,19 @@
 ├── fdc_hw.h
 ├── fdc_g.c
 ├── fdc_common_hw.c
-├── fdc_common_hw.c
+├── fdc_common_hw.h
 ├── fdp.c
 ├── fdp.h
 ├── fdp_static.c
 ├── fdp_phy.c
 ├── fdp_phy.h
-├── fdp_hq.c
+├── fdp_hw.c
 ├── fdp_hw.h
 ├── fdp_g.c
 ├── fdp_aux.c
 ├── fdp_aux.h
 ├── fdcdp.c
 ├── fdcdp.h
-├── fdcdp_param.c
 ├── fdcdp_intr.c
 ├── fdcdp_multi_display.c
 ├── fdcdp_multi_display.h
@@ -86,19 +85,14 @@ typedef struct
     FDcCtrl dc_instance_p[FDCDP_INSTANCE_NUM];
     /* fdp instace object */
     FDpCtrl dp_instance_p[FDCDP_INSTANCE_NUM];
-    /* user config */
-    /* resolution */
-    /* color depth */
-    FDcDpDisplaySetting display_setting[FDCDP_DISPLAY_ID_MAX_NUM];
-    /* gamma parameter */
-    /* .... */
-    /* uintptr fb_p[FDCDP_INSTANCE_NUM];*/
-    u32 is_ready; /* Device is ininitialized and ready*/
+    /* uintptr fb_config[FDCDP_INSTANCE_NUM];*/
+    uintptr fb_config[FDCDP_INSTANCE_NUM];
+   /*the intr config of dcdp*/
     FMediaIntrConfig intr_event[FDCDP_INTR_MAX_NUM];
-    
-    void *args;
+    /*connect status ,1 :connected,0:disconnected*/
     u32 connect_flg[FDCDP_INSTANCE_NUM];
-    u32 connect_changed_flg[FDCDP_INSTANCE_NUM];
+    /* Device is ininitialized and ready*/
+     u32 is_ready; 
 } FDcDp;
 其中FdcPrivateParams结构体为dc模块相关变量，包含有时序，frambuffer，pannel,gamma,dither,cursor等等；FdpPrivateParams结构体为dp模块相关变量，包括有时序，传输参数，phy等等。
 
@@ -106,15 +100,16 @@ typedef struct
 dc 相关结构体定义
 typedef struct
 {
-  FDcDtdTable dtd_table;
-  FDcDisplayVHTimmingConfig timming_config;
-  FDcDisplayFramebuffer framebuffer;
-  FDcDisplayPanel panel;
-  FDcDisplayGamma gamma;
-  FDcDisplayDither dither;
-  FDcDisplayDpMode dp_mode;
-  FDcDisplayVideoMode video_mode;
-  FDcDisplayCursor cursor;
+    FDcDtdTable dtd_table; /*the table of dtd params*/
+    FDcSyncParameter sync_parameter[FDC_GOP_MAX_MODENUM];
+    FDcDisplayFramebuffer framebuffer;
+    FDcDisplayPanel panel;
+    FDcDisplayGamma gamma;
+    FDcDisplayDither dither;
+    FDcDisplayDpMode dp_mode;
+    FDcDisplayVideoMode video_mode; /*the params of video*/
+    FDcDisplayCursor cursor;
+    FDcDisplaySetting  display_setting[FDC_DISPLAY_ID_MAX_NUM];
 } FDcCurrentConfig;
 
 typedef struct
@@ -123,14 +118,13 @@ typedef struct
   uintptr dcch_baseaddr;   /* DC channel register address*/
   uintptr dcctrl_baseaddr; /* DC control register address */
   u32 irq_num;             /* Device intrrupt id */
-
 } FDcConfig;
 
 typedef struct
 {
   FDcCurrentConfig fdc_currentconfig;
   FDcConfig config;
-  u32 multimode; /* The display mode of the device , including clone, horizontal and vertical display*/
+  u32 multi_mode; /* The display mode of the device , including clone, horizontal and vertical display*/
 
 } FDcCtrl;
 
@@ -147,9 +141,9 @@ typedef struct
   FDpStatus status;
 
   u8 down_spread_enable;
-#define dtd_list_max 4
+#define DTD_MAX 4
   /* edid 缓冲数据 */
-  FDpDtdTable dtd_table[dtd_list_max]; /* the max dtd num is 4 */
+  FDpDtdTable dtd_table[DTD_MAX]; /* the max dtd num is 4 */
 
 } FDpCurrentConfig;
 
@@ -254,7 +248,7 @@ FDpConfig * :dp静态默认配置
 ### 2. FDcDpSetBasicParam
 
 ```
-FError FDcDpSetBasicParam(FDcDp *instance_p, u32 channel_num, u32 mode_id);
+FError FDcDpSetBasicParam(FDcDp *instance_p, u32 mode_id, u32 color_depth, u32 refresh_rate);
 ```
 #### 介绍
 - 根据传入配置，初始化MEDIA驱动实例，设置基本参数
@@ -263,6 +257,8 @@ FError FDcDpSetBasicParam(FDcDp *instance_p, u32 channel_num, u32 mode_id);
 - FDcDp *instance_p  FDcDp 控制器实例的指针
 - u32 channel_num DP通道号
 - u32 mode_id sync时序模式
+- u32 color_depth 色深
+-u32 refresh_rate 刷新率
 
 #### 返回
 - FError :FMEDIA_DP_SUCCESS 为初始成功
@@ -288,8 +284,7 @@ FError FDcDpInitial(FDcDp *instance_p, u32 channel_num, u32 mode_id, u32 multi_m
 ### 4. FDcDpRegisterHandler
 
 ```
-void FDcDpRegisterHandler(FDcDp *instance_p, FMediaIntrConfig *intr_event_p)
-
+void FDcDpRegisterHandler(FDcDp *instance_p, FDcDpIntrEventType type,FMediaIntrHandler  handler,void *param)
 ```
 #### 介绍
 
@@ -297,7 +292,9 @@ void FDcDpRegisterHandler(FDcDp *instance_p, FMediaIntrConfig *intr_event_p)
 
 #### 参数
 - FDcDp *instance_p  FDcDp 控制器实例的指针
-- FMediaIntrConfig event_p 中断事件参数
+- FDcDpIntrEventType type 中断事件
+- FMediaIntrHandler  中断事件响应函数
+- void *param        回调函数参数
 
 ### 5. FDcDpInterruptHandler
 
@@ -319,7 +316,7 @@ void *irq_args 回调结构体指针
 ### 6. FDcDpIrqEnable
 
 ```
-void FDcDpIrqEnable(FDcDp *instance_p, FMediaIntrConfigintr_event_p);
+void FDcDpIrqEnable(FDcDp *instance_p,u32 index, FDcDpIntrEventType intr_event_p);
 ```
 
 #### 介绍
@@ -328,6 +325,7 @@ void FDcDpIrqEnable(FDcDp *instance_p, FMediaIntrConfigintr_event_p);
 #### 参数
 ```
 FDcDp *instance_p dcdp驱动实例
+u32 index   通道序号
 FMediaIntrConfig intr_event_p 中断类型
 ```
 #### 返回
@@ -335,8 +333,8 @@ FMediaIntrConfig intr_event_p 中断类型
 
 ### 7. FDcDpMultiDisplayFrameBufferSet
 
-```
-FError FDcDpMultiDisplayFrameBufferSet(FDcDp *instance_p, u32 channel_num, u32 multi_mode);
+disp_parm *FDcDpMultiDisplayFrameBufferSet(u32 channel, u32 width,u32 height,u32 color_depth,u32 multi_mode);
+
 ```
 
 #### 介绍
@@ -344,26 +342,13 @@ FError FDcDpMultiDisplayFrameBufferSet(FDcDp *instance_p, u32 channel_num, u32 m
 
 #### 参数
 ```
-FDcDp *instance_p dcdp驱动实例
-u32   channel_num 通道号
-u32   multi_mode 单屏/多屏
+u32   channel 通道号
+u32   width 宽度
+u32   height 高度
+u32   color_depth 色深
+u32   multi_mode   多频模式
 ```
 #### 返回
-- FMEDIA_DP_SUCCESS
+- &disp_parm
 
-### 8. FDcDpGetFramebuffer
 
-```
-FDcDpFrameBuffer *FDcDpGetFramebuffer(FDcDp *instance_p);
-```
-
-#### 介绍
--提供framebuffer信息对外接口
-
-#### 参数
-```
-FDcDp *instance_p dcdp驱动实例
-```
-#### 返回
-- &framebuffer_config  
-frambuffer信息

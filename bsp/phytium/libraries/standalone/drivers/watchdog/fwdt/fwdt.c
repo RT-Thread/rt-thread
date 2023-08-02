@@ -164,7 +164,7 @@ u32 FWdtGetTimeleft(FWdtCtrl *pctrl)
     u32 wcvl = (u32)FWdtReadWCVL(base_addr);
     u64 wcv = (((u64)wcvh << 32) | wcvl);
 
-    timeleft += (wcv - GenericTimerRead());
+    timeleft += (wcv - GenericTimerRead(GENERIC_TIMER_ID0));
 
     FWDT_DEBUG("wcvh=%llx, wcvl=%llx, wcv=%llx, timeleft=%llx\n", wcvh, wcvl, wcv, timeleft);
 

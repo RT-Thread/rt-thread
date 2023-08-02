@@ -25,6 +25,12 @@
 #define FDP_PHY_H
 
 #include "fdp.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/************************** Constant Definitions *****************************/
 /*
 ** DPCD Address
 */
@@ -310,6 +316,8 @@
 #define PHY_PMA_CMN_CTRL2 0x38004
 #define PHY_PMA_PLL_RAW_CTRL 0x3800c
 
+/************************** Function Prototypes ******************************/
+
 FError FDptxPhyGetLaneCount(FDpCtrl *instance_p, u8 *lanecount);
 
 FError FDpTxPhyGetLinkRate(FDpCtrl *instance_p, u32 *linkrate);
@@ -318,25 +326,25 @@ FError FDpTxPhyGetLinkRate(FDpCtrl *instance_p, u32 *linkrate);
 void FDpLinkPhyChangeRate(FDpCtrl *instance_p, u32 link_rate);
 
 /* Get sink ENHANCED_FRAME_CAP */
-FError FDpTxPhyGetEnhancedFrameCap(FDpCtrl *instance_p);
+u8 FDpTxPhyGetEnhancedFrameCap(FDpCtrl *instance_p);
 
 /* configure the PHY for the specified link rate */
 FError FDpTxPhyUpdateLinkRate(FDpCtrl *instance_p, u32 link_rate);
 
 /* set the lane count in the PHY */
-void FDpTxPhySetLaneCount(FDpCtrl *instance_p, u32 lane_count);
+void FDpTxPhySetLaneCount(FDpCtrl *instance_p, u8 lane_count);
 
 /*Get voltage swing of a specified lane.Voltage swing has three levels*/
-FError FDpTxSourceVswingForValue(FDpCtrl *instance_p, u8 lane_num);
+u8 FDpTxSourceVswingForValue(FDpCtrl *instance_p, u8 lane_num);
 
 /* Get pre-emphasis level of a specified lane*/
-FError FDpTxSourcePreemphasisForValue(FDpCtrl *instance_p, u8 lane_num);
+u8 FDpTxSourcePreemphasisForValue(FDpCtrl *instance_p, u8 lane_num);
 
 /*  Get sink TPS4 support.*/
-FError FDpTxPhyTps4Supported(FDpCtrl *instance_p);
+u8 FDpTxPhyTps4Supported(FDpCtrl *instance_p);
 
 /*  Get sink TPS3 support.*/
-FError FDpTxPhyTps3Supported(FDpCtrl *instance_p);
+u8 FDpTxPhyTps3Supported(FDpCtrl *instance_p);
 
 /*  Get Swing and pre-emphasis level form sink*/
 FError FDpTxPhyGetAdjustRequest(FDpCtrl *instance_p, u8 *swing, u8 *pre_emphasis);
@@ -346,4 +354,9 @@ void FDpLinkPhyInit(FDpCtrl *instance_p, u32 link_rate);
 
 /* Voltage swing and pre-emphasis training.*/
 void FDpLinkPhyChangeVsWing(FDpCtrl *instance_p, u32 vswing, u32 pre_emphasis);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

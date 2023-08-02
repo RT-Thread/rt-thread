@@ -1,0 +1,540 @@
+<mxfile host="65bd71144e">
+    <diagram id="nKelZ6Gt3N6YIWwZSbJ6" name="第 1 页">
+        <mxGraphModel dx="3995" dy="3514" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="7" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_device&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;labelBackgroundColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="70" width="139" height="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;IPI metal device&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="69" y="100" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;TTC metal device&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="69" y="290" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;SHM metal device&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="69" y="190" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="" style="shape=flexArrow;endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="2" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="349" y="190" as="sourcePoint"/>
+                        <mxPoint x="239" y="125" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9" value="" style="shape=flexArrow;endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="169" y="214.5" as="sourcePoint"/>
+                        <mxPoint x="239" y="214.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="10" value="" style="shape=flexArrow;endArrow=classic;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="4" target="12" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="199" y="292.5" as="sourcePoint"/>
+                        <mxPoint x="239" y="305" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="11" value="&lt;p class=&quot;MsoNormal&quot;&gt;&lt;font face=&quot;Consolas&quot; color=&quot;#6666ff&quot;&gt;（处理器间中断）是一个处理器中断另一个处理器的机制。 这通常用于多处理器系统中的处理器间通信和同步。 Libmetal 提供了一个 IPI API，允许软件在不同的处理器之间发送和接收中断，而不管它们的架构如何。&lt;/font&gt;&lt;br&gt;&lt;/p&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="239" y="70" width="571" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="&lt;p class=&quot;MsoNormal&quot;&gt;&lt;font face=&quot;Consolas&quot;&gt;（时间触发通信）是一种基于公共时钟同步两个或多个处理器的机制。 这对于实现实时系统非常有用，其中精确计时至关重要。 Libmetal 提供了一个 TTC API，允许软件配置和管理 TTC 硬件，以及基于 TTC 时钟发送和接收消息。&lt;/font&gt;&lt;br&gt;&lt;/p&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;align=left;fontColor=#6666FF;" parent="1" vertex="1">
+                    <mxGeometry x="239" y="270" width="571" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="&lt;p class=&quot;MsoNormal&quot;&gt;&lt;font face=&quot;Consolas&quot;&gt;(共享内存) 是一种让两个或多个处理器共享公共内存区域的机制。 这对于实现处理器间通信和同步以及在不同处理器之间共享数据很有用。 Libmetal 提供了一个 SHM API，允许软件分配和释放共享内存区域，以及读取和写入这些区域的数据。&lt;/font&gt;&lt;br&gt;&lt;/p&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontColor=#6666FF;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="239" y="170" width="571" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px; font-size: 20px;&quot;&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;int ipi_latency_demod()&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=default;fontColor=#FF3333;verticalAlign=top;fontSize=20;arcSize=6;" parent="1" vertex="1">
+                    <mxGeometry x="1140" y="-1050" width="778" height="970" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="" style="edgeStyle=none;html=1;fontSize=15;fontColor=none;" parent="1" source="27" target="45" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;struct&lt;/span&gt; &lt;span style=&quot;color: #4ec9b0;&quot;&gt;channel_s&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="1205" y="-952" width="460" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;struct&lt;/span&gt; &lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_io_region&lt;/span&gt; *&lt;span style=&quot;color: #9cdcfe;&quot;&gt;ipi_io&lt;/span&gt;;&lt;span style=&quot;color: #6a9955;&quot;&gt; /* IPI metal i/o region */&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="27" vertex="1">
+                    <mxGeometry y="30" width="460" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;struct&lt;/span&gt; &lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_io_region&lt;/span&gt; *&lt;span style=&quot;color: #9cdcfe;&quot;&gt;shm_io&lt;/span&gt;;&lt;span style=&quot;color: #6a9955;&quot;&gt; /* Shared memory metal i/o region */&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="27" vertex="1">
+                    <mxGeometry y="60" width="460" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;struct&lt;/span&gt; &lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_io_region&lt;/span&gt; *&lt;span style=&quot;color: #9cdcfe;&quot;&gt;ttc_io&lt;/span&gt;;&lt;span style=&quot;color: #6a9955;&quot;&gt; /* TTC metal i/o region */&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="27" vertex="1">
+                    <mxGeometry y="90" width="460" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #4ec9b0;&quot;&gt;uint32_t&lt;/span&gt; &lt;span style=&quot;color: #9cdcfe;&quot;&gt;ipi_mask&lt;/span&gt;;&lt;span style=&quot;color: #6a9955;&quot;&gt; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; /* RPU IPI mask */&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="27" vertex="1">
+                    <mxGeometry y="120" width="460" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #4ec9b0;&quot;&gt;atomic_int&lt;/span&gt; &lt;span style=&quot;color: #9cdcfe;&quot;&gt;remote_nkicked&lt;/span&gt;;&lt;span style=&quot;color: #6a9955;&quot;&gt; &amp;nbsp; &amp;nbsp; /* 0 - kicked from remote */&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="27" vertex="1">
+                    <mxGeometry y="150" width="460" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;ch&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;fontColor=none;fontStyle=0;startSize=30;labelBackgroundColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="1743" y="-892" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;int&lt;/span&gt; &lt;span style=&quot;color: #dcdcaa;&quot;&gt;sys_init&lt;/span&gt;()&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;verticalAlign=top;labelBorderColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="390" width="740" height="770" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="" style="edgeStyle=none;html=1;fontSize=21;fontColor=none;" parent="1" source="48" target="53" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="" style="edgeStyle=none;html=1;fontSize=21;fontColor=none;" parent="1" source="48" target="57" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #dcdcaa;&quot;&gt;enable_caches&lt;/span&gt;();&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="378" y="544" width="270" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;struct&lt;/span&gt; &lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_init_params&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;metal_param&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="184" y="430" width="520" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_log_handler&lt;/span&gt; &amp;nbsp; &amp;nbsp; &amp;nbsp;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;log_handler&lt;/span&gt;;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="49" vertex="1">
+                    <mxGeometry y="30" width="520" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;enum&lt;/span&gt; &lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_log_level&lt;/span&gt; &amp;nbsp; &amp;nbsp; &amp;nbsp; &lt;span style=&quot;color: #9cdcfe;&quot;&gt;log_level&lt;/span&gt;;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=none;" parent="49" vertex="1">
+                    <mxGeometry y="60" width="520" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="" style="edgeStyle=none;html=1;fontSize=21;fontColor=none;" parent="1" source="53" target="55" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="60" value="" style="edgeStyle=none;html=1;fontSize=21;fontColor=none;" parent="1" source="53" target="59" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #dcdcaa;&quot;&gt;init_uart&lt;/span&gt;();&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;fontColor=none;rounded=1;labelBackgroundColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="373" y="620" width="280" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" value="" style="edgeStyle=none;html=1;fontSize=21;fontColor=none;" parent="1" source="55" target="61" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" value="" style="edgeStyle=none;html=1;fontSize=21;fontColor=default;" parent="1" source="55" target="63" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #dcdcaa;&quot;&gt;init_irq&lt;/span&gt;()&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;fontColor=none;rounded=1;labelBackgroundColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="373" y="700" width="280" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="57" value="port" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontSize=21;fontColor=default;rounded=1;labelBackgroundColor=none;fillColor=#FF6666;" parent="1" vertex="1">
+                    <mxGeometry x="203" y="534" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="port" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontSize=21;fontColor=default;rounded=1;labelBackgroundColor=none;fillColor=#FF6666;" parent="1" vertex="1">
+                    <mxGeometry x="203" y="610" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" value="port" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontSize=21;fontColor=default;rounded=1;labelBackgroundColor=none;fillColor=#FF6666;" parent="1" vertex="1">
+                    <mxGeometry x="203" y="690" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="" style="edgeStyle=none;html=1;fontSize=21;fontColor=default;" parent="1" source="63" target="65" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Initialize libmetal environment */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #dcdcaa;&quot;&gt;metal_init&lt;/span&gt;(&amp;amp;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;metal_param&lt;/span&gt;);&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;fontColor=none;rounded=1;labelBackgroundColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="298" y="780" width="430" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="" style="edgeStyle=none;html=1;fontSize=21;fontColor=default;" parent="1" source="65" target="67" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="" style="edgeStyle=none;html=1;" parent="1" source="65" target="69" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Initialize metal Xilinx IRQ controller */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&amp;nbsp; &amp;nbsp; &lt;span style=&quot;color: #9cdcfe;&quot;&gt;ret&lt;/span&gt; = &lt;span style=&quot;color: #dcdcaa;&quot;&gt;metal_xlnx_irq_init&lt;/span&gt;();&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;fontColor=none;rounded=1;labelBackgroundColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="233" y="870" width="560" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="port" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fontSize=21;fontColor=none;rounded=1;labelBackgroundColor=none;fillColor=#FF6666;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="860" width="120" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="73" value="" style="edgeStyle=none;html=1;fontSize=21;" edge="1" parent="1" source="69" target="72">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Register libmetal devices */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #dcdcaa;&quot;&gt;platform_register_metal_device&lt;/span&gt;();&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;fontColor=none;rounded=1;labelBackgroundColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="950" width="560" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="75" value="" style="edgeStyle=none;html=1;fontSize=21;" edge="1" parent="1" source="72" target="74">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="72" value="&lt;span style=&quot;border-color: var(--border-color); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; color: rgb(106, 153, 85);&quot;&gt;/* Open libmetal devices which have been registered */&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; background-color: initial; color: rgb(220, 220, 170);&quot;&gt;open_metal_devices&lt;/span&gt;&lt;span style=&quot;border-color: var(--border-color); color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; background-color: initial;&quot;&gt;();&lt;/span&gt;" style="whiteSpace=wrap;html=1;fontSize=21;fontColor=none;rounded=1;labelBackgroundColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="119" y="1050" width="649" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="81" value="" style="edgeStyle=none;html=1;fontSize=18;fontColor=default;" edge="1" parent="1" source="74" target="80">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="74" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 16px;&quot;&gt;&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;int&lt;/span&gt; &lt;span style=&quot;color: #dcdcaa;&quot;&gt;open_metal_devices&lt;/span&gt;(&lt;span style=&quot;color: #569cd6;&quot;&gt;void&lt;/span&gt;)&lt;/div&gt;&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;fontColor=none;rounded=1;labelBackgroundColor=none;verticalAlign=top;arcSize=7;" vertex="1" parent="1">
+                    <mxGeometry x="853" y="690" width="780" height="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="76" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 18px; line-height: 16px;&quot;&gt;&lt;div style=&quot;font-size: 18px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 18px;&quot;&gt;/* Open TTC device */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 18px;&quot;&gt;&amp;nbsp; &amp;nbsp; &lt;span style=&quot;color: rgb(156, 220, 254); font-size: 18px;&quot;&gt;ret&lt;/span&gt; = &lt;span style=&quot;color: rgb(220, 220, 170); font-size: 18px;&quot;&gt;metal_device_open&lt;/span&gt;(&lt;span style=&quot;color: rgb(86, 156, 214); font-size: 18px;&quot;&gt;BUS_NAME&lt;/span&gt;, &lt;span style=&quot;color: rgb(86, 156, 214); font-size: 18px;&quot;&gt;TTC_DEV_NAME&lt;/span&gt;,&amp;amp;&lt;span style=&quot;color: rgb(156, 220, 254); font-size: 18px;&quot;&gt;ttc_dev&lt;/span&gt;);&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=18;" vertex="1" parent="1">
+                    <mxGeometry x="953" y="1030" width="610" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="77" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 18px; line-height: 16px;&quot;&gt;&lt;div style=&quot;color: rgb(212, 212, 212); line-height: 16px;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Open shared memory device */&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &lt;span style=&quot;color: #9cdcfe;&quot;&gt;ret&lt;/span&gt; = &lt;span style=&quot;color: #dcdcaa;&quot;&gt;metal_device_open&lt;/span&gt;(&lt;span style=&quot;color: #569cd6;&quot;&gt;BUS_NAME&lt;/span&gt;, &lt;span style=&quot;color: #569cd6;&quot;&gt;SHM_DEV_NAME&lt;/span&gt;,&amp;amp;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;shm_dev&lt;/span&gt;);&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=14;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="953" y="750" width="610" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="78" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 18px; line-height: 16px;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Open IPI device */&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; &lt;span style=&quot;color: #9cdcfe;&quot;&gt;ret&lt;/span&gt; = &lt;span style=&quot;color: #dcdcaa;&quot;&gt;metal_device_open&lt;/span&gt;(&lt;span style=&quot;color: #569cd6;&quot;&gt;BUS_NAME&lt;/span&gt;, &lt;span style=&quot;color: #569cd6;&quot;&gt;IPI_DEV_NAME&lt;/span&gt;,&amp;amp;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;ipi_dev&lt;/span&gt;);&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="953" y="890" width="610" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="79" value="&lt;font style=&quot;font-size: 26px;&quot;&gt;application&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fontSize=18;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="1499" y="-1000" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="87" value="" style="edgeStyle=none;html=1;fontSize=26;fontColor=default;" edge="1" parent="1" source="80" target="86">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="80" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #dcdcaa;&quot;&gt;close_metal_devices&lt;/span&gt;(&lt;span style=&quot;color: #569cd6;&quot;&gt;void&lt;/span&gt;)&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;verticalAlign=top;fontColor=none;rounded=1;labelBackgroundColor=none;arcSize=7;" vertex="1" parent="1">
+                    <mxGeometry x="1714" y="650" width="720" height="460" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Close IPI device */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #dcdcaa;&quot;&gt;metal_device_close&lt;/span&gt;(&lt;span style=&quot;color: #9cdcfe;&quot;&gt;ipi_dev&lt;/span&gt;);&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=18;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="1824" y="850" width="530" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="83" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Close TTC device */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #dcdcaa;&quot;&gt;metal_device_close&lt;/span&gt;(&lt;span style=&quot;color: #9cdcfe;&quot;&gt;ttc_dev&lt;/span&gt;);&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=18;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="1824" y="980" width="530" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="84" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Close shared memory device */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170);&quot;&gt;metal_device_close&lt;/span&gt;(&lt;span style=&quot;color: rgb(156, 220, 254);&quot;&gt;shm_dev&lt;/span&gt;);&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=18;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="1824" y="710" width="530" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="86" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;void&lt;/span&gt; &lt;span style=&quot;color: #dcdcaa;&quot;&gt;sys_cleanup&lt;/span&gt;()&lt;/div&gt;" style="whiteSpace=wrap;html=1;fontSize=21;verticalAlign=top;fontColor=none;rounded=1;labelBackgroundColor=none;arcSize=7;" vertex="1" parent="1">
+                    <mxGeometry x="2520" y="530" width="750" height="630" as="geometry"/>
+                </mxCell>
+                <mxCell id="88" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 21px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Close libmetal devices which have been opened */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;font-size: 21px; background-color: initial; color: rgb(220, 220, 170);&quot;&gt;close_metal_devices&lt;/span&gt;&lt;span style=&quot;font-size: 21px; background-color: initial;&quot;&gt;();&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="2625" y="600" width="540" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="89" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 21px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* Finish libmetal environment */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&amp;nbsp; &amp;nbsp; &lt;span style=&quot;color: #dcdcaa;&quot;&gt;metal_finish&lt;/span&gt;();&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="2625" y="790" width="540" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px; font-size: 30px;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170);&quot;&gt;&lt;font style=&quot;font-size: 30px;&quot;&gt;disable_caches&lt;/font&gt;&lt;/span&gt;&lt;span style=&quot;&quot;&gt;();&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="2625" y="970" width="540" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="91" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 21px; line-height: 16px;&quot;&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;static&lt;/span&gt; &lt;span style=&quot;color: #569cd6;&quot;&gt;struct&lt;/span&gt; &lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_device&lt;/span&gt; &lt;span style=&quot;color: #9cdcfe;&quot;&gt;metal_dev_table&lt;/span&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;[]&lt;/span&gt; =&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; line-height: 16px;&quot;&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;/* IPI device */&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;name&lt;/span&gt; = &lt;span style=&quot;color: #569cd6;&quot;&gt;IPI_DEV_NAME&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;bus&lt;/span&gt; = &lt;span style=&quot;color: #569cd6;&quot;&gt;NULL&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;num_regions&lt;/span&gt; = &lt;span style=&quot;color: #b5cea8;&quot;&gt;1&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;regions&lt;/span&gt; = {&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; {&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;virt&lt;/span&gt; = (&lt;span style=&quot;color: #569cd6;&quot;&gt;void&lt;/span&gt; *)&lt;span style=&quot;color: #569cd6;&quot;&gt;IPI_BASE_ADDR&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;physmap&lt;/span&gt; = &amp;amp;&lt;span style=&quot;color: #9cdcfe;&quot;&gt;metal_phys&lt;/span&gt;[&lt;span style=&quot;color: #b5cea8;&quot;&gt;0&lt;/span&gt;],&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;size&lt;/span&gt; = &lt;span style=&quot;color: #b5cea8;&quot;&gt;0x1000&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;page_shift&lt;/span&gt; = &lt;span style=&quot;color: #569cd6;&quot;&gt;DEFAULT_PAGE_SHIFT&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;page_mask&lt;/span&gt; = &lt;span style=&quot;color: #569cd6;&quot;&gt;DEFAULT_PAGE_MASK&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;mem_flags&lt;/span&gt; = DEVICE_NONSHARED | PRIV_RW_USER_RW,&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;ops&lt;/span&gt; = {&lt;span style=&quot;color: #569cd6;&quot;&gt;NULL&lt;/span&gt;},&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; }},&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;node&lt;/span&gt; = {&lt;span style=&quot;color: #569cd6;&quot;&gt;NULL&lt;/span&gt;},&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;span style=&quot;color: #9cdcfe;&quot;&gt;irq_num&lt;/span&gt; = &lt;span style=&quot;color: #b5cea8;&quot;&gt;1&lt;/span&gt;,&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; .&lt;/span&gt;&lt;span style=&quot;font-size: 12px; color: rgb(156, 220, 254);&quot;&gt;irq_info&lt;/span&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt; = (&lt;/span&gt;&lt;span style=&quot;font-size: 12px; color: rgb(86, 156, 214);&quot;&gt;void&lt;/span&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt; *)&lt;/span&gt;&lt;span style=&quot;font-size: 12px; color: rgb(86, 156, 214);&quot;&gt;IPI_IRQ_VECT_ID&lt;/span&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;&quot;&gt;}&lt;/span&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=30;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="910" y="299" width="690" height="371" as="geometry"/>
+                </mxCell>
+                <mxCell id="92" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 21px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;const&lt;/span&gt; &lt;span style=&quot;color: #4ec9b0;&quot;&gt;metal_phys_addr_t&lt;/span&gt; &lt;span style=&quot;color: #9cdcfe;&quot;&gt;metal_phys&lt;/span&gt;&lt;span style=&quot;color: #569cd6;&quot;&gt;[]&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=30;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="846" y="140" width="430" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="93" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: rgb(86, 156, 214);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;IPI_BASE_ADDR&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=30;fontColor=default;" vertex="1" parent="92">
+                    <mxGeometry y="30" width="430" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="94" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: rgb(86, 156, 214);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;SHM_BASE_ADDR&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=30;fontColor=default;" vertex="1" parent="92">
+                    <mxGeometry y="60" width="430" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="95" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: rgb(86, 156, 214);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;TTC0_BASE_ADDR&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=30;fontColor=default;" vertex="1" parent="92">
+                    <mxGeometry y="90" width="430" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" value="&lt;span style=&quot;color: rgb(86, 156, 214); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; text-align: start;&quot; class=&quot;mtk5&quot;&gt;struct&lt;/span&gt;&lt;span style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; text-align: start;&quot; class=&quot;mtk1&quot;&gt; &lt;/span&gt;&lt;span style=&quot;color: rgb(78, 201, 176); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; text-align: start;&quot; class=&quot;mtk16&quot;&gt;metal_device&lt;/span&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="1286" y="140" width="350" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;*&lt;span style=&quot;color: #9cdcfe;&quot;&gt;ipi_dev&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=default;" vertex="1" parent="96">
+                    <mxGeometry y="30" width="350" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;*&lt;span style=&quot;color: #9cdcfe;&quot;&gt;shm_dev&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=default;" vertex="1" parent="96">
+                    <mxGeometry y="60" width="350" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="99" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;*&lt;span style=&quot;color: #9cdcfe;&quot;&gt;ttc_dev&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=default;" vertex="1" parent="96">
+                    <mxGeometry y="90" width="350" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="101" value="sys_init.c" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fontSize=50;fontColor=default;" vertex="1" parent="1">
+                    <mxGeometry x="550" width="580" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="102" value="实例化设备" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fontSize=21;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="846" y="330" width="284" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="109" value="&lt;font style=&quot;font-size: 30px;&quot;&gt;main（）&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#FF0080;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="330" y="-1050" width="740" height="970" as="geometry"/>
+                </mxCell>
+                <mxCell id="112" value="" style="endArrow=classic;html=1;fontSize=21;fontColor=#FF0080;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;strokeColor=#FF0000;strokeWidth=10;dashed=1;" edge="1" parent="1" source="114" target="101">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="870" y="-840" as="sourcePoint"/>
+                        <mxPoint x="840" y="-60" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="240" y="-955"/>
+                            <mxPoint x="250" y="-70"/>
+                            <mxPoint x="840" y="-70"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="113" value="&lt;font style=&quot;font-size: 50px;&quot;&gt;libmetal_amp_demod.c&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fontSize=21;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="420" y="-1140" width="560" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="114" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 26px;&quot;&gt;Setup libmetal resources&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170); font-size: 26px;&quot;&gt;sys_init&lt;/span&gt;();&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="-990" width="460" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="115" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 26px;&quot;&gt;Run the shared memory throughput demo&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170); font-size: 26px;&quot;&gt;shmem_throughput_demod&lt;/span&gt;();&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="430" y="-300" width="550" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="116" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 26px;&quot;&gt;Run the shared memory latency demo&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170); font-size: 26px;&quot;&gt;shmem_latency_demod&lt;/span&gt;();&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="435" y="-420" width="540" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="117" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 26px;&quot;&gt;Run the ipi latency demo&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170); font-size: 26px;&quot;&gt;ipi_latency_demod&lt;/span&gt;();&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="-540" width="460" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="118" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 26px;&quot;&gt;Run the IPI with shared memory demo&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170); font-size: 26px;&quot;&gt;ipi_shmem_demod&lt;/span&gt;();&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="420" y="-660" width="550" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="119" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 26px;&quot;&gt;Run the atomic across shared memory demo&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170); font-size: 26px;&quot;&gt;atomic_shmem_demod&lt;/span&gt;();&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="400" y="-770" width="610" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="120" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 26px;&quot;&gt;Run the shared memory demo&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170); font-size: 26px;&quot;&gt;shmem_demod&lt;/span&gt;();&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="471" y="-880" width="460" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="121" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%; font-size: 26px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85); font-size: 26px;&quot;&gt;Cleanup libmetal resources&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 26px; line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(220, 220, 170); font-size: 26px;&quot;&gt;sys_cleanup&lt;/span&gt;();&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=26;fontColor=#FF0080;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="-190" width="460" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="123" value="" style="endArrow=classic;html=1;fontSize=30;fontColor=#FF0080;exitX=1;exitY=0.5;exitDx=0;exitDy=0;strokeWidth=10;strokeColor=#FF0000;dashed=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="109" target="18">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1130" y="-780" as="sourcePoint"/>
+                        <mxPoint x="1680" y="-820" as="targetPoint"/>
+                        <Array as="points"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="124" value="" style="endArrow=classic;html=1;fontSize=30;fontColor=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;labelBorderColor=none;labelBackgroundColor=none;noLabel=1;strokeColor=#FF0000;strokeWidth=10;dashed=1;" edge="1" parent="1" source="121" target="86">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="1480" y="-110" as="sourcePoint"/>
+                        <mxPoint x="1869.0277099609375" y="90" as="targetPoint"/>
+                        <Array as="points"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="146" value="" style="edgeStyle=none;html=1;dashed=1;labelBackgroundColor=none;labelBorderColor=none;strokeColor=#FF0000;strokeWidth=5;fontSize=21;fontColor=#FF3333;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="126" target="176">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="2210" y="-580" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="153" value="" style="edgeStyle=none;html=1;dashed=1;labelBackgroundColor=none;labelBorderColor=none;strokeColor=#FF0000;strokeWidth=5;fontSize=15;fontColor=#6666FF;" edge="1" parent="1" source="126" target="127">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="154" style="edgeStyle=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;labelBackgroundColor=none;labelBorderColor=none;strokeColor=#FF0000;strokeWidth=5;fontSize=15;fontColor=#6666FF;" edge="1" parent="1" source="126" target="128">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1534" y="-560"/>
+                            <mxPoint x="1900" y="-560"/>
+                            <mxPoint x="1900" y="-235"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="126" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%; font-size: 21px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;shmem_echod() - Show use of shared memory with libmetal.&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%; font-size: 21px;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;Wait for message from APU. Once received, read and echo it back.&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=30;fontColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="1199" y="-710" width="670" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="127" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%; font-size: 21px;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;reset_timer() - function to reset TTC counter&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 126%; font-size: 21px;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: rgb(106, 153, 85);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;Set the RST bit in the Count Control Reg.&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;div style=&quot;border-color: var(--border-color); line-height: 126%;&quot;&gt;&lt;span style=&quot;border-color: var(--border-color); color: rgb(106, 153, 85);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;stop_timer() - function to stop TTC counter&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;border-color: var(--border-color); line-height: 126%;&quot;&gt;&lt;div style=&quot;border-color: var(--border-color); line-height: 126%;&quot;&gt;&lt;span style=&quot;border-color: var(--border-color); color: rgb(106, 153, 85);&quot;&gt;&lt;font style=&quot;font-size: 21px;&quot;&gt;Set the disable bit in the Count Control Reg.&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=30;fontColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="1194" y="-510" width="670" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="128" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 21px; line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;ipi_irq_handler() - IPI interrupt handler&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;div style=&quot;line-height: 126%;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;measure_ipi_latencyd() - measure IPI latency with libmetal&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(106, 153, 85);&quot;&gt;Loop until APU tells RPU to stop via shared memory.&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=30;fontColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="1193" y="-310" width="670" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="129" value="&lt;font color=&quot;#ff3333&quot;&gt;shm&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fontSize=30;fontColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="1199" y="-740" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="130" value="&lt;font color=&quot;#ff3333&quot;&gt;ttc&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fontSize=30;fontColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="1194" y="-540" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="131" value="&lt;font color=&quot;#ff3333&quot;&gt;ipi&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;fontSize=30;fontColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="1205" y="-350" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="132" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;shmem_demo.c(主机 APU)&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#FF3333;" vertex="1" parent="1">
+                    <mxGeometry x="1970" y="-1050" width="490" height="380" as="geometry"/>
+                </mxCell>
+                <mxCell id="133" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;1.Open the shared memory device.&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;labelBorderColor=none;strokeWidth=1;" vertex="1" parent="132">
+                    <mxGeometry y="30" width="490" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="134" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;2.Clear the demo control TX/RX available values in shared memory.&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="132">
+                    <mxGeometry y="60" width="490" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="135" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;3.APU set demo control in shared memory to notify RPU demo has started&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="132">
+                    <mxGeometry y="100" width="490" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="141" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;4.APU will write message to the shared memory.&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="132">
+                    <mxGeometry y="140" width="490" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="142" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 15px; line-height: 16px;&quot;&gt;&lt;span style=&quot;&quot;&gt;5.APU will increase TX avail values in the shared memory to notify RPU&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;&quot;&gt;there is a message ready to read.&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="132">
+                    <mxGeometry y="170" width="490" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="143" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 15px; line-height: 16px;&quot;&gt;&lt;span style=&quot;&quot;&gt;6.APU will poll the RX avail value in th shared memory to see if RPU&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;&quot;&gt;has echoed back the message into the shared memory.&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="132">
+                    <mxGeometry y="210" width="490" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="144" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 15px; line-height: 16px;&quot;&gt;&lt;span style=&quot;&quot;&gt;7.When APU knows there is new RX message available, it will read the&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;&quot;&gt;RX message from the shared memory.&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="132">
+                    <mxGeometry y="270" width="490" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="147" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;8.APU will verify the message to see if it matches the one it has sent.&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="132">
+                    <mxGeometry y="310" width="490" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="148" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;9.Close the shared memory device.&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="132">
+                    <mxGeometry y="350" width="490" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="164" value="&lt;div style=&quot;color: rgb(212, 212, 212); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 12px; line-height: 16px;&quot;&gt;&lt;span style=&quot;color: #6a9955;&quot;&gt;shmem_demo.c(从机 RPU)&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#FF3333;" vertex="1" parent="1">
+                    <mxGeometry x="1970" y="-510" width="490" height="380" as="geometry"/>
+                </mxCell>
+                <mxCell id="165" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;1.Get the shared memory device I/O region.&lt;span style=&quot;&quot;&gt;&#9;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;labelBorderColor=none;strokeWidth=1;" vertex="1" parent="164">
+                    <mxGeometry y="30" width="490" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="166" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;2.Clear the demo control value in shared memory.&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="164">
+                    <mxGeometry y="60" width="490" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="167" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;3.Check the demo control value in the shared memory to wait for APU to start the demo.&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="164">
+                    <mxGeometry y="90" width="490" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="168" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;4.Once the demo control value indicates the demo starts, it polls on RX available value to see if there is new RX message available.&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="164">
+                    <mxGeometry y="130" width="490" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="169" value="&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;span style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 15px;&quot;&gt;5.&lt;/span&gt;&lt;font face=&quot;Consolas, Courier New, monospace&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;If there is a new RX message available, it reads the message from the shared memory.&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="164">
+                    <mxGeometry y="190" width="490" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="170" value="&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;span style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 15px;&quot;&gt;6.&lt;/span&gt;&lt;font face=&quot;Consolas, Courier New, monospace&quot;&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;It echos back the message to the shared memory.&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="164">
+                    <mxGeometry y="230" width="490" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="172" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;7.AIt increases the TX available value in the shared memory to notify the other end there is a message available to read.&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="164">
+                    <mxGeometry y="260" width="490" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="173" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 16px;&quot;&gt;&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;div style=&quot;line-height: 16px;&quot;&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;8.Check if the demo control value and the RX available values to see if demo finishes and if there is new RX data available.&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="text;strokeColor=#666666;fillColor=#f5f5f5;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontSize=21;fontColor=#333333;" vertex="1" parent="164">
+                    <mxGeometry y="320" width="490" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="175" value="" style="endArrow=classic;startArrow=classic;html=1;dashed=1;labelBackgroundColor=none;labelBorderColor=none;strokeColor=#FF0000;strokeWidth=5;fontSize=15;fontColor=#6666FF;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="164" target="132">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="2180" y="-440" as="sourcePoint"/>
+                        <mxPoint x="2230" y="-490" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="180" value="" style="edgeStyle=none;html=1;dashed=1;labelBackgroundColor=none;labelBorderColor=none;strokeColor=#FF0000;strokeWidth=5;fontSize=15;fontColor=#6666FF;" edge="1" parent="1" source="176">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="2510" y="-584" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="176" value="&lt;font style=&quot;font-size: 25px;&quot;&gt;主从机通信交互&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="1">
+                    <mxGeometry x="2210" y="-599.5" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="182" value="Table" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fontStyle=1;align=center;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="1">
+                    <mxGeometry x="2520" y="-810" width="470" height="535" as="geometry"/>
+                </mxCell>
+                <mxCell id="183" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="182">
+                    <mxGeometry y="30" width="470" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="184" value="偏移" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="183">
+                    <mxGeometry width="50" height="63" as="geometry">
+                        <mxRectangle width="50" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="185" value="大小" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="183">
+                    <mxGeometry x="50" width="70" height="63" as="geometry">
+                        <mxRectangle width="70" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="186" value="说明" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="183">
+                    <mxGeometry x="120" width="350" height="63" as="geometry">
+                        <mxRectangle width="350" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="204" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="182">
+                    <mxGeometry y="93" width="470" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="205" value="0" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="204">
+                    <mxGeometry width="50" height="63" as="geometry">
+                        <mxRectangle width="50" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="206" value="4Bytes" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="204">
+                    <mxGeometry x="50" width="70" height="63" as="geometry">
+                        <mxRectangle width="70" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="207" value="DEMO control status shows if demo starts or not" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="204">
+                    <mxGeometry x="120" width="350" height="63" as="geometry">
+                        <mxRectangle width="350" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="187" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="182">
+                    <mxGeometry y="156" width="470" height="64" as="geometry"/>
+                </mxCell>
+                <mxCell id="188" value="0x04" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="187">
+                    <mxGeometry width="50" height="64" as="geometry">
+                        <mxRectangle width="50" height="64" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="189" value="4Bytes" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="187">
+                    <mxGeometry x="50" width="70" height="64" as="geometry">
+                        <mxRectangle width="70" height="64" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="190" value="number of APU to RPU buffers available to RPU" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="187">
+                    <mxGeometry x="120" width="350" height="64" as="geometry">
+                        <mxRectangle width="350" height="64" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="191" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="182">
+                    <mxGeometry y="220" width="470" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="192" value="0x08" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="191">
+                    <mxGeometry width="50" height="63" as="geometry">
+                        <mxRectangle width="50" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="193" value="4Bytes" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="191">
+                    <mxGeometry x="50" width="70" height="63" as="geometry">
+                        <mxRectangle width="70" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="194" value="number of APU to RPU buffers consumed by RPU" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="191">
+                    <mxGeometry x="120" width="350" height="63" as="geometry">
+                        <mxRectangle width="350" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="199" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="182">
+                    <mxGeometry y="283" width="470" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="200" value="0x0c" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="199">
+                    <mxGeometry width="50" height="63" as="geometry">
+                        <mxRectangle width="50" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="201" value="4Bytes" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="199">
+                    <mxGeometry x="50" width="70" height="63" as="geometry">
+                        <mxRectangle width="70" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="202" value="number of RPU to APU buffers available to APU" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="199">
+                    <mxGeometry x="120" width="350" height="63" as="geometry">
+                        <mxRectangle width="350" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="195" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="182">
+                    <mxGeometry y="346" width="470" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="196" value="0x10" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="195">
+                    <mxGeometry width="50" height="63" as="geometry">
+                        <mxRectangle width="50" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="197" value="4Bytes" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="195">
+                    <mxGeometry x="50" width="70" height="63" as="geometry">
+                        <mxRectangle width="70" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="198" value="number of RPU to APU buffers consumed by APU" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="195">
+                    <mxGeometry x="120" width="350" height="63" as="geometry">
+                        <mxRectangle width="350" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="209" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="182">
+                    <mxGeometry y="409" width="470" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="210" value="0x14" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="209">
+                    <mxGeometry width="50" height="63" as="geometry">
+                        <mxRectangle width="50" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="211" value="1KBytes" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="209">
+                    <mxGeometry x="50" width="70" height="63" as="geometry">
+                        <mxRectangle width="70" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="212" value="APU to RPU buffer" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="209">
+                    <mxGeometry x="120" width="350" height="63" as="geometry">
+                        <mxRectangle width="350" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="213" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="182">
+                    <mxGeometry y="472" width="470" height="63" as="geometry"/>
+                </mxCell>
+                <mxCell id="214" value="0x800" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="213">
+                    <mxGeometry width="50" height="63" as="geometry">
+                        <mxRectangle width="50" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="215" value="1KBytes" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="213">
+                    <mxGeometry x="50" width="70" height="63" as="geometry">
+                        <mxRectangle width="70" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="216" value="RPU to APU buffer" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;labelBackgroundColor=none;labelBorderColor=none;strokeWidth=1;fontSize=15;fontColor=#6666FF;" vertex="1" parent="213">
+                    <mxGeometry x="120" width="350" height="63" as="geometry">
+                        <mxRectangle width="350" height="63" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

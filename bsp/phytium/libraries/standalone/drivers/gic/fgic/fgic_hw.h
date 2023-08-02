@@ -146,8 +146,28 @@ extern "C"
 #define FGIC_READREG32(addr, reg_offset) FtIn32(addr + (u32)reg_offset)
 #define FGIC_WRITEREG32(addr, reg_offset, reg_value) FtOut32(addr + (u32)reg_offset, (u32)reg_value)
 
+#ifdef __aarch64__
+
 #define FGIC_READREG64(addr, reg_offset) FtIn64(addr + (u64)reg_offset)
 #define FGIC_WRITEREG64(addr, reg_offset, reg_value) FtOut64(addr +(u64)reg_offset, (u64)reg_value)
+
+#else
+
+#define FGIC_READREG64(addr, reg_offset)                            \
+({                                                                  \
+        u64 reg_val;                                                \
+        reg_val = FtIn32(addr + (u32)reg_offset + 4);               \
+        reg_val = (reg_val << 32) | FtIn32(addr + (u32)reg_offset); \
+        reg_val;                                                    \
+})
+            
+#define FGIC_WRITEREG64(addr, reg_offset, reg_value)                \
+({                                                                  \
+        FtOut32(addr + (u32)reg_offset, (u32)reg_value);            \
+        FtOut32(addr + (u32)reg_offset + 4, (u32)(((u64)reg_value) >> 32));  \
+})
+
+#endif 
 
 
 #define FGIC_SETBIT(base_addr, reg_offset, data) \

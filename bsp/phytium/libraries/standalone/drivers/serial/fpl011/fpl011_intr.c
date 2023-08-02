@@ -25,7 +25,6 @@
 
 
 /***************************** Include Files *********************************/
-
 #include "fpl011.h"
 
 /************************** Constant Definitions *****************************/
@@ -81,6 +80,21 @@ void FPl011SetInterruptMask(FPl011 *uart_p, u32 mask)
     temp_mask &= FPL011IMSC_ALLM;
 
     FUART_WRITEREG32(uart_p->config.base_address, FPL011IMSC_OFFSET, temp_mask);
+}
+
+/**
+ * @name: FPl011InterruptClear
+ * @msg:  This function clears all interrupt state.
+ * @param uart_p is a pointer to the uart instance
+ */
+void FPl011InterruptClearAll(FPl011 *uart_p)
+{
+    FASSERT(uart_p != NULL);
+
+    if (FUART_READREG32(uart_p->config.base_address, FPL011RIS_OFFSET))
+    {
+        FUART_WRITEREG32(uart_p->config.base_address, FPL011ICR_OFFSET, 0xFFFFFFFF);
+    }
 }
 
 /**

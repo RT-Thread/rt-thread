@@ -1,25 +1,26 @@
 /*
- * Copyright : (C) 2022 Phytium Information Technology, Inc.
+ * @Copyright : (C) 2022 Phytium Information Technology, Inc. 
  * All Rights Reserved.
- *
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
- * either version 1.0 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
+ *  
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
+ * either version 1.0 of the License, or (at your option) any later version. 
+ *  
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details.
- *
- *
- * FilePath: felf.c
- * Date: 2021-08-31 11:16:59
- * LastEditTime: 2022-02-17 18:05:16
+ * See the Phytium Public License for more details. 
+ *  
+ * 
+ * @FilePath: felf.c
+ * @Date: 2023-05-25 19:27:49
+ * @LastEditTime: 2023-06-05 14:11:48
  * Description:  This file is for providing elf functions.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0  zhugengyu  2022/10/27   rename file name
+ * 1.1  huanghe    2023/06/05   add get section information 
  */
 
 #include <string.h>
@@ -731,6 +732,7 @@ static unsigned long ElfLoadElf64ImagePhdr(unsigned long addr)
 {
     Elf64_Ehdr *ehdr; /* Elf header structure pointer */
     Elf64_Phdr *phdr; /* Program header structure pointer */
+    
     int i;
 
     ehdr = (Elf64_Ehdr *)addr;
@@ -742,7 +744,7 @@ static unsigned long ElfLoadElf64ImagePhdr(unsigned long addr)
         void *dst = (void *)(unsigned long)phdr->p_paddr;
         void *src = (void *)addr + phdr->p_offset;
 
-        f_printk("Loading phdr %i to 0x%p (%lu bytes)",
+        f_printk("Loading phdr %i to %p (%lu bytes) \r\n",
                       i, dst, (unsigned long)phdr->p_filesz);
         if (phdr->p_filesz)
         {
@@ -773,6 +775,8 @@ static unsigned long ElfLoadElf64ImagePhdr(unsigned long addr)
 
     return ehdr->e_entry;
 }
+
+
 
 static unsigned long ElfLoadElf64ImageShdr(unsigned long addr)
 {
@@ -807,7 +811,7 @@ static unsigned long ElfLoadElf64ImageShdr(unsigned long addr)
 
         if (strtab)
         {
-            f_printk("%sing %s @ 0x%08lx (%ld bytes)",
+            f_printk("%sing %s @ 0x%08lx (%ld bytes) \r\n",
                           (shdr->sh_type == SHT_NOBITS) ? "Clear" : "Load",
                           &strtab[shdr->sh_name],
                           (unsigned long)shdr->sh_addr,
@@ -864,7 +868,7 @@ unsigned long ElfLoadElfImagePhdr(unsigned long addr)
         void *dst = (void *)(uintptr)phdr->p_paddr;
         void *src = (void *)addr + phdr->p_offset;
 
-        f_printk("Loading phdr %i to 0x%p (%i bytes)",
+        f_printk("Loading phdr %i to %p (%i bytes)",
                       i, dst, phdr->p_filesz);
         if (phdr->p_filesz)
         {
@@ -958,13 +962,11 @@ int ElfIsImageValid(unsigned long addr)
 
     if (!IS_ELF(*ehdr))
     {
-        f_printk("## No elf image at address 0x%08lx.", addr);
         return 0;
     }
 
     if (ehdr->e_type != ET_EXEC)
     {
-        f_printk("## Not a 32-bit elf image at address 0x%08lx.", addr);
         return 0;
     }
 
@@ -985,3 +987,200 @@ unsigned long ElfExecBootElf(unsigned long (*entry)(int, char *const[]),
 
     return ret;
 }
+
+
+ 
+
+/**
+ * @name: Elf64GetTargetSection
+ * @msg: 从ELF文件中获取指定名称的section的数据
+ * @return: FError，表示函数执行结果的错误码
+ * @note: 
+ * @param {Elf64_Ehdr} *ehdr，指向ELF文件头的指针
+ * @param {char} *section_name，指定的section名称
+ * @param {u8} *data_get，用于存储获取到的section数据的缓冲区指针
+ * @param {u32} *length_p，用于存储获取到的section数据长度的指针
+ */
+static FError Elf64GetTargetSection(unsigned long addr,char *section_name ,u8 *data_get,u32 *length_p)
+{
+    Elf64_Ehdr *ehdr;          /* Elf header structure pointer */
+    Elf64_Shdr *shdr;          /* Section header structure pointer */
+    unsigned char *strtab = 0; /* String table pointer */
+    unsigned char *image;      /* Binary image pointer */
+    int i;                     /* Loop counter */
+
+    ehdr = (Elf64_Ehdr *)addr;
+    /* Find the section header string table for output info */
+    shdr = (Elf64_Shdr *)(addr + (unsigned long)ehdr->e_shoff +
+                          (ehdr->e_shstrndx * sizeof(Elf64_Shdr)));
+
+    if (shdr->sh_type == SHT_STRTAB)
+    {
+        strtab = (unsigned char *)(addr + (unsigned long)shdr->sh_offset);
+    }
+    else
+    {
+        f_printk("There is no string table \r\n");
+        return FELF_SECTION_NO_STRTAB;
+    }
+
+    /* Load each appropriate section */
+    for (i = 0; i < ehdr->e_shnum; ++i)
+    {
+        shdr = (Elf64_Shdr *)(addr + (unsigned long)ehdr->e_shoff +
+                              (i * sizeof(Elf64_Shdr)));
+
+        if (!(shdr->sh_flags & SHF_ALLOC) ||
+            shdr->sh_addr == 0 || shdr->sh_size == 0)
+        {
+            continue;
+        }
+
+        if(strcmp(section_name, &strtab[shdr->sh_name]) == 0)
+        {
+            f_printk("%sing %s @ 0x%08lx (%ld bytes) \r\n",
+                (shdr->sh_type == SHT_NOBITS) ? "Clear" : "Load",
+                &strtab[shdr->sh_name],
+                (unsigned long)shdr->sh_addr,
+                (long)shdr->sh_size);
+
+            if(shdr->sh_type == SHT_NOBITS)
+            {
+                f_printk("There is no space section \r\n");
+                return FELF_SECTION_NO_SPACE;
+            }
+            printf("*length_p is %d \r\n",*length_p);
+            if (shdr->sh_size < *length_p)
+            {
+                *length_p = shdr->sh_size;
+            }
+
+            image = (unsigned char *)addr + (unsigned long)shdr->sh_offset;
+            memcpy((void *)(uintptr)data_get,
+                   (const void *)image, *length_p);
+
+            return FELF_SUCCESS;
+        }
+
+    }
+
+    f_printk("%s: No %s section exists in this elf file \r\n",__func__,section_name);
+    return FELF_SECTION_NOT_FIT;
+}
+
+
+
+/**
+ * @name: 
+ * @msg: 
+ * @return {*}
+ * @note: 
+ * @param {Elf32_Shdr} *ehdr
+ * @param {char} *section_name
+ * @param {u8} *data_get
+ * @param {u32} *length_p
+ */
+static FError Elf32GetTargetSection(unsigned long addr,char *section_name ,u8 *data_get,u32 *length_p)
+{
+
+    Elf32_Ehdr *ehdr;          /* Elf header structure pointer */
+    Elf32_Shdr *shdr;          /* Section header structure pointer */
+    unsigned char *strtab = 0; /* String table pointer */
+    unsigned char *image;      /* Binary image pointer */
+    int i;                     /* Loop counter */
+
+    ehdr = (Elf32_Ehdr *)addr;
+    /* Find the section header string table for output info */
+    shdr = (Elf32_Shdr *)(addr + ehdr->e_shoff +
+                          (ehdr->e_shstrndx * sizeof(Elf32_Shdr)));
+
+    if (shdr->sh_type == SHT_STRTAB)
+    {
+        strtab = (unsigned char *)(addr + shdr->sh_offset);
+    }    
+    else
+    {
+        f_printk("There is no string table \r\n");
+        return FELF_SECTION_NO_STRTAB;
+    }
+
+    /* Load each appropriate section */
+    for (i = 0; i < ehdr->e_shnum; ++i)
+    {
+        shdr = (Elf32_Shdr *)(addr + ehdr->e_shoff +
+                              (i * sizeof(Elf32_Shdr)));
+
+        if (!(shdr->sh_flags & SHF_ALLOC) ||
+            shdr->sh_addr == 0 || shdr->sh_size == 0)
+        {
+            continue;
+        }
+
+        if (strcmp(section_name, &strtab[shdr->sh_name]) == 0)
+        {
+            printf("%sing %s @ 0x%08lx (%ld bytes)",
+                (shdr->sh_type == SHT_NOBITS) ? "Clear" : "Load",
+                &strtab[shdr->sh_name],
+                (unsigned long)shdr->sh_addr,
+                (long)shdr->sh_size);
+
+            printf("copy num is \r\n");
+            printf("*length_p is %d \r\n",*length_p);
+            if(shdr->sh_size < *length_p)
+            {
+                *length_p = shdr->sh_size;
+            }
+            
+
+            image = (unsigned char *)addr + (unsigned long)shdr->sh_offset;
+            memcpy((void *)(uintptr)data_get,
+                   (const void *)image, *length_p);
+
+            return FELF_SUCCESS;
+
+        }
+    }
+
+    f_printk("%s: No %s section exists in this elf file \r\n",__func__,section_name);
+    return FELF_SECTION_NOT_FIT;
+}
+
+
+
+
+/**
+ * @name: ElfGetSection
+ * @msg: 获取 ELF 文件中指定节的内容
+ * @return {FError} 返回错误码，表示获取节内容的结果
+ * @note: 函数将根据 ELF 文件的类型（32位或64位）调用相应的函数来获取指定节的内容。
+ * @param {unsigned long} addr ELF 文件的基地址
+ * @param {char*} section_name 节的名称
+ * @param {u8*} data_get 用于存储节内容的缓冲区
+ * @param {u32*} length_p 存储获取到的节内容的长度
+ */
+FError ElfGetSection(unsigned long addr, char *section_name, u8 *data_get, u32 *length_p)
+{
+    Elf32_Ehdr *ehdr;          /* ELF 文件头指针 */
+    Elf32_Shdr *shdr;          /* 节头指针 */
+    unsigned char *strtab = 0; /* 字符串表指针 */
+    unsigned char *image;      /* 二进制映像指针 */
+    int i;                     /* 循环计数器 */
+
+    /* 检查 ELF 文件的类型 */
+    ehdr = (Elf32_Ehdr *)addr;
+    if (ehdr->e_ident[EI_CLASS] == ELFCLASS64)
+    {
+        /* 如果是64位 ELF，则调用 Elf64GetTargetSection 函数获取指定节的内容 */
+        return Elf64GetTargetSection(addr, section_name, data_get, length_p);
+    }
+
+    /* 如果是32位 ELF，则调用 Elf32GetTargetSection 函数获取指定节的内容 */
+    if (ehdr->e_ident[EI_CLASS] == ELFCLASS32)
+    {
+        return Elf32GetTargetSection(addr, section_name, data_get, length_p);
+    }
+
+    /* 若未匹配到有效的 ELF 类型，则返回 FELF_SECTION_GET_ERROR 错误码 */
+    return FELF_SECTION_GET_ERROR;
+}
+

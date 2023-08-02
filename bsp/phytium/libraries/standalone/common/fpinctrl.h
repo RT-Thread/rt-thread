@@ -34,24 +34,7 @@ extern "C"
 #include "sdkconfig.h"
 
 #if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
-#ifndef FPIN_IO_CTRL
-#define FPIN_IO_CTRL
-#endif
-#endif
-
-#if defined(CONFIG_TARGET_E2000) || defined(CONFIG_TARGET_TARDIGRADE)
-#ifndef FPIN_IO_PAD
-#define FPIN_IO_PAD
-#endif
-#endif
-
-#if defined(FPIN_IO_CTRL)
 #include "fioctrl.h"
-#endif
-
-#if defined(FPIN_IO_PAD)
-#include "fiopad.h"
-#endif
 
 /**************************** Type Definitions *******************************/
 
@@ -61,38 +44,9 @@ typedef enum
     FPIN_FUNC1,
     FPIN_FUNC2,
     FPIN_FUNC3 = 0b011,
-#if defined(FPIN_IO_PAD) /* E2000 support more pin func */
-    FPIN_FUNC4,
-    FPIN_FUNC5,
-    FPIN_FUNC6,
-    FPIN_FUNC7 = 0b111,
-#endif
+
     FPIN_NUM_OF_FUNC
 } FPinFunc; /* 引脚复用功能配置, func0为默认功能 */
-
-#if defined(FPIN_IO_PAD) /* Only support driver strength config in E2000 */
-typedef enum
-{
-    FPIN_DRV0 = 0b0000,
-    FPIN_DRV1,
-    FPIN_DRV2,
-    FPIN_DRV3,
-    FPIN_DRV4,
-    FPIN_DRV5,
-    FPIN_DRV6,
-    FPIN_DRV7,
-    FPIN_DRV8,
-    FPIN_DRV9,
-    FPIN_DRV10,
-    FPIN_DRV11,
-    FPIN_DRV12,
-    FPIN_DRV13,
-    FPIN_DRV14,
-    FPIN_DRV15 = 0b1111,
-
-    FPIN_NUM_OF_DRIVE
-} FPinDrive; /* 引脚驱动能力配置 */
-#endif
 
 typedef enum
 {
@@ -162,28 +116,11 @@ FPinPull FPinGetPull(const FPinIndex pin);
 /* 设置IO引脚的上下拉 */
 void FPinSetPull(const FPinIndex pin, FPinPull pull);
 
-#if defined(FPIN_IO_PAD)
-/* 获取IO引脚的驱动能力 */
-FPinDrive FPinGetDrive(const FPinIndex pin);
-
-/* 设置IO引脚的驱动能力 */
-void FPinSetDrive(const FPinIndex pin, FPinDrive drive);
-
-/* 获取IO引脚的复用、上下拉和驱动能力设置 */
-void FPinGetConfig(const FPinIndex pin, FPinFunc *func, FPinPull *pull, FPinDrive *drive);
-
-/* 设置IO引脚的复用、上下拉和驱动能力 */
-void FPinSetConfig(const FPinIndex pin, FPinFunc func, FPinPull pull, FPinDrive drive);
-
-#else
-
 /* 获取IO引脚的复用、上下拉和驱动能力设置 */
 void FPinGetConfig(const FPinIndex pin, FPinFunc *func, FPinPull *pull);
 
 /* 设置IO引脚的复用、上下拉和驱动能力 */
 void FPinSetConfig(const FPinIndex pin, FPinFunc func, FPinPull pull);
-
-#endif
 
 /* 获取IO引脚当前的单项延时设置 */
 FPinDelay FPinGetDelay(const FPinIndex pin, FPinDelayDir dir, FPinDelayType type);
@@ -208,4 +145,5 @@ void FPinGetDelayConfig(const FPinIndex pin, FPinDelay *in_roungh_delay, FPinDel
 }
 #endif
 
+#endif
 #endif

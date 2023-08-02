@@ -104,8 +104,8 @@ typedef enum
 
 typedef enum
 {
-    FGPIO_IRQ_TYPE_EDGE_FALLING = 0, /* 上升沿中断，引脚检测到电平从低变高时触发 */
-    FGPIO_IRQ_TYPE_EDGE_RISING, /* 下降沿中断，引脚检测到电平从高变低时触发 */
+    FGPIO_IRQ_TYPE_EDGE_FALLING = 0, /* 下降沿中断，引脚检测到电平从高变低时触发 */
+    FGPIO_IRQ_TYPE_EDGE_RISING, /* 上升沿中断，引脚检测到电平从低变高时触发 */
     FGPIO_IRQ_TYPE_LEVEL_LOW, /* 低电平中断，引脚电平为低时触发 */
     FGPIO_IRQ_TYPE_LEVEL_HIGH /* 高电平中断，引脚电平为高时触发 */
 } FGpioIrqType; /* GPIO引脚中断类型 */

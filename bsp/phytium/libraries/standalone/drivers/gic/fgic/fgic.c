@@ -49,7 +49,7 @@
 #define FGIC_GICD_4_PER_REG     4
 
 #define FGIC_INT_DEFAULT_PRI_X4     0xa0a0a0a0 /* 考虑到当前一般程序工作于EL1，对于NS 或 S 安全状态 ，0x80 - 0xff 的优先级都有存在的可能性 */
-#define FGIC_CPU_INTERFACE_DEFAULT_FLITER 0xFF
+#define FGIC_CPU_INTERFACE_DEFAULT_FILTER 0xFF
 
 typedef enum
 {
@@ -236,7 +236,7 @@ void FGicCpuInterfaceInit(void)
         FASSERT(reg & GICC_SRE_SRE);
     }
 
-    FGicSetICC_PMR(FGIC_CPU_INTERFACE_DEFAULT_FLITER);
+    FGicSetICC_PMR(FGIC_CPU_INTERFACE_DEFAULT_FILTER);
 
     FGicEnableGroup1_EL1();
 

@@ -64,7 +64,6 @@ typedef struct
     uintptr ddr_addr;           /* DMA channel DDR address, could be source or destination */
     u32 dev_addr;               /* DMA channel Perpherial, could be source or destination */
     u32 trans_len;              /* DMA channel transfer length */
-#define FDDMA_MAX_TRANSFER_LEN      64 /* max bytes in transfer */
 #define FDDMA_MIN_TRANSFER_LEN      4  /* min bytes in transfer */
     u32 timeout;                /* timeout = 0 means no use DMA timeout */
 } FDdmaChanConfig;  /* DDMA channel instance */

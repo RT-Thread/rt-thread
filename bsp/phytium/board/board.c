@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,7 @@
  * 2022-10-26  huanghe      first commit
  * 2022-10-26  zhugengyu    support aarch64
  * 2023-04-13  zhugengyu    support RT-Smart
+ * 2023-07-27  zhugengyu    update aarch32 gtimer usage
  *
  */
 
@@ -22,8 +23,8 @@
 #include <mm_page.h>
 
 #ifdef RT_USING_SMART
-#include <page.h>
-#include <lwp_arch.h>
+    #include <page.h>
+    #include <lwp_arch.h>
 #endif
 
 #include <gicv3.h>
@@ -41,6 +42,11 @@
 #include "fprintk.h"
 #include "fearly_uart.h"
 #include "fcpu_info.h"
+#include "fiopad.h"
+
+#ifdef RT_USING_SMP
+    #include "fpsci.h"
+#endif
 
 #define LOG_DEBUG_TAG "BOARD"
 #define BSP_LOG_ERROR(format, ...) FT_DEBUG_PRINT_E(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
@@ -48,6 +54,7 @@
 #define BSP_LOG_INFO(format, ...)  FT_DEBUG_PRINT_I(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
 #define BSP_LOG_DEBUG(format, ...) FT_DEBUG_PRINT_D(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
 
+FIOPadCtrl iopad_ctrl;
 /* mmu config */
 extern struct mem_desc platform_mem_desc[];
 extern const rt_uint32_t platform_mem_desc_size;
@@ -62,7 +69,8 @@ void idle_wfi(void)
  */
 extern size_t MMUTable[];
 
-rt_region_t init_page_region = {
+rt_region_t init_page_region =
+{
     PAGE_START,
     PAGE_END
 };
@@ -78,7 +86,7 @@ static rt_uint32_t timer_step;
 
 void rt_hw_timer_isr(int vector, void *parameter)
 {
-    GenericTimerCompare(timer_step);
+    GenericTimerSetTimerCompareValue(GENERIC_TIMER_ID0, timer_step);
     rt_tick_increase();
 }
 
@@ -89,9 +97,9 @@ int rt_hw_timer_init(void)
     timer_step = GenericTimerFrequecy();
     timer_step /= RT_TICK_PER_SECOND;
 
-    GenericTimerCompare(timer_step);
-    GenericTimerInterruptEnable();
-    GenericTimerStart();
+    GenericTimerSetTimerCompareValue(GENERIC_TIMER_ID0, timer_step);
+    GenericTimerInterruptEnable(GENERIC_TIMER_ID0);
+    GenericTimerStart(GENERIC_TIMER_ID0);
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_timer_init);
@@ -106,17 +114,17 @@ INIT_BOARD_EXPORT(rt_hw_timer_init);
 void rt_hw_board_aarch64_init(void)
 {
     /* AARCH64 */
-    #if defined(RT_USING_SMART)
-        /* 1. init rt_kernel_space table  (aspace.start = KERNEL_VADDR_START ,  aspace.size = ), 2. init io map range (rt_ioremap_start \ rt_ioremap_size) 3.   */
-        rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
-    #else
-        rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
-    #endif
+#if defined(RT_USING_SMART)
+    /* 1. init rt_kernel_space table  (aspace.start = KERNEL_VADDR_START ,  aspace.size = ), 2. init io map range (rt_ioremap_start \ rt_ioremap_size) 3.   */
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
+#else
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0x80000000, 0x10000000, MMUTable, 0);
+#endif
     rt_page_init(init_page_region);
 
     rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
-        /* init memory pool */
+    /* init memory pool */
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
@@ -125,7 +133,13 @@ void rt_hw_board_aarch64_init(void)
 
     rt_hw_gtimer_init();
 
+    FEarlyUartProbe();
 
+    FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
+
+#ifdef RT_USING_SMART
+    iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
+#endif
 
     /* compoent init */
 #ifdef RT_USING_COMPONENTS_INIT
@@ -141,11 +155,14 @@ void rt_hw_board_aarch64_init(void)
     rt_thread_idle_sethook(idle_wfi);
 
 #ifdef RT_USING_SMP
+    FPsciInit();
     /* install IPI handle */
     rt_hw_interrupt_set_priority(RT_SCHEDULE_IPI, 16);
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
 #endif
+
+
 
 }
 #else
@@ -156,25 +173,25 @@ void rt_hw_board_aarch32_init(void)
 #if defined(RT_USING_SMART)
 
     /* set io map range is 0xf0000000 ~ 0x10000000  , Memory Protection start address is 0xf0000000  - rt_mpr_size */
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
 
     rt_page_init(init_page_region);
 
     /* rt_kernel_space 在start_gcc.S 中被初始化，此函数将iomap 空间放置在kernel space 上 */
-    rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0xf0000000, 0x10000000);
+    rt_hw_mmu_ioremap_init(&rt_kernel_space, (void *)0xf0000000, 0x10000000);
     /*  */
-    arch_kuser_init(&rt_kernel_space, (void*)0xffff0000);
+    arch_kuser_init(&rt_kernel_space, (void *)0xffff0000);
 #else
     /*
        map kernel space memory (totally 1GB = 0x10000000), pv_offset = 0 if not RT_SMART:
          0x80000000 ~ 0x80100000: kernel stack
          0x80100000 ~ __bss_end: kernel code and data
     */
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
-    rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0x80000000, 0x10000000);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_mmu_ioremap_init(&rt_kernel_space, (void *)0x80000000, 0x10000000);
 #endif
 
-        /* init memory pool */
+    /* init memory pool */
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
@@ -189,8 +206,13 @@ void rt_hw_board_aarch32_init(void)
 #endif
     rt_uint32_t redist_addr = 0;
 
+    FEarlyUartProbe();
+
+    FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
+
 #if defined(RT_USING_SMART)
-    redist_addr = (uint32_t)rt_ioremap(GICV3_RD_BASE_ADDR, 4 * 128*1024);
+    redist_addr = (uint32_t)rt_ioremap(GICV3_RD_BASE_ADDR, 4 * 128 * 1024);
+    iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
 #else
     redist_addr = GICV3_RD_BASE_ADDR;
 #endif
@@ -242,6 +264,7 @@ void rt_hw_board_aarch32_init(void)
     rt_thread_idle_sethook(idle_wfi);
 
 #ifdef RT_USING_SMP
+    FPsciInit();
     /* install IPI handle */
     rt_hw_interrupt_set_priority(RT_SCHEDULE_IPI, 16);
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
