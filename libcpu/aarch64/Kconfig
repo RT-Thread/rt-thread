@@ -1,4 +1,4 @@
-if ARCH_ARMV8 && ARCH_CPU_64BIT
+menu "AArch64 Architecture Configuration"
 
 config ARCH_TEXT_OFFSET
     hex "Text offset"
@@ -16,4 +16,4 @@ config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
     bool
     default y
 
-endif
+endmenu

@@ -63,6 +63,8 @@ typedef struct tag_region
 {
     rt_size_t start;
     rt_size_t end;
+
+    const char *name;
 } rt_region_t;
 
 extern const rt_size_t rt_mpr_size;

@@ -590,6 +590,31 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     return 0;
 }
 
+void *rt_ioremap_early(void *paddr, size_t size)
+{
+    size_t count;
+    static void *tbl = RT_NULL;
+
+    if (!size)
+    {
+        return RT_NULL;
+    }
+
+    if (!tbl)
+    {
+        tbl = rt_hw_mmu_tbl_get();
+    }
+
+    count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
+
+    while (count --> 0)
+    {
+        _map_single_page_2M(tbl, (unsigned long)paddr, (unsigned long)paddr, MMU_MAP_K_DEVICE);
+    }
+
+    return paddr;
+}
+
 static int _init_map_2M(unsigned long *lv0_tbl, unsigned long va,
                         unsigned long pa, unsigned long count,
                         unsigned long attr)

@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 
+#include <string.h>
 #include <drivers/ofw.h>
 #include <drivers/ofw_io.h>
 #include <drivers/ofw_fdt.h>
@@ -249,7 +250,7 @@ rt_bool_t rt_ofw_node_tag_equ(const struct rt_ofw_node *np, const char *tag)
     if (np && tag)
     {
         const char *node_name = rt_fdt_node_name(np->full_name);
-        rt_size_t tag_len = rt_strchrnul(node_name, '@') - node_name;
+        rt_size_t tag_len = strchrnul(node_name, '@') - node_name;
 
         ret = (rt_strlen(tag) == tag_len && !rt_strncmp(node_name, tag, tag_len));
     }
@@ -569,7 +570,7 @@ struct rt_ofw_node *rt_ofw_find_node_by_ids_r(struct rt_ofw_node *from, const st
 
 struct rt_ofw_node *rt_ofw_find_node_by_path(const char *path)
 {
-    struct rt_ofw_node *np, *parent, *tmp;
+    struct rt_ofw_node *np = RT_NULL, *parent, *tmp = RT_NULL;
 
     if (path)
     {
@@ -584,7 +585,7 @@ struct rt_ofw_node *rt_ofw_find_node_by_path(const char *path)
 
             while (*path)
             {
-                const char *next = rt_strchrnul(path, '/');
+                const char *next = strchrnul(path, '/');
                 rt_size_t len = next - path;
 
                 tmp = RT_NULL;
