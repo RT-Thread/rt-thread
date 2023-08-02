@@ -76,6 +76,16 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     return v_addr;
 }
 
+rt_weak void *rt_ioremap_early(void *paddr, size_t size)
+{
+    if (!size)
+    {
+        return RT_NULL;
+    }
+
+    return paddr;
+}
+
 void *rt_ioremap(void *paddr, size_t size)
 {
     return _ioremap_type(paddr, size, MM_AREA_TYPE_PHY);

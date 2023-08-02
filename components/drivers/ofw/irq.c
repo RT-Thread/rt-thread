@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 
+#include <string.h>
 #include <drivers/pic.h>
 #include <drivers/ofw.h>
 #include <drivers/ofw_io.h>
@@ -130,7 +131,7 @@ static rt_err_t ofw_parse_irq_map(struct rt_ofw_node *np, struct rt_ofw_cell_arg
      *              <0x1800 0 0   4 &gic    0 0 GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>; // INTD
      *      };
      *
-     * In fact, basically no SoC will be use multi ic to implemented INTx.
+     * In fact, almost no SoC will be use multi IC to implement INTx.
      * before call ofw_parse_irq_map(np, &args):
      *
      *      args.data = addr;

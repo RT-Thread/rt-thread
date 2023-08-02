@@ -30,6 +30,7 @@ extern "C" {
  *                    | Currently as non-cacheable
  */
 
+void *rt_ioremap_early(void *paddr, size_t size);
 void *rt_ioremap(void *paddr, size_t size);
 void *rt_ioremap_nocache(void *paddr, size_t size);
 void *rt_ioremap_cached(void *paddr, size_t size);
