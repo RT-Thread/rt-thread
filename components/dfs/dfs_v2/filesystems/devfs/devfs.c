@@ -232,6 +232,10 @@ int dfs_devfs_free_vnode(struct dfs_vnode *vnode)
 int dfs_devfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
 {
     RT_ASSERT(mnt != RT_NULL);
+
+    rt_atomic_add(&(mnt->ref_count), 1);
+    mnt->flags |= MNT_IS_LOCKED;
+
     return RT_EOK;
 }
 
