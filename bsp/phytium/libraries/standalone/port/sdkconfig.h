@@ -82,6 +82,9 @@ extern "C" {
 #define CONFIG_USE_FQSPI
 #endif
 
+#if defined(BSP_USING_ETH)
+#define CONFIG_USE_ETH
+#endif
 
 #ifdef __cplusplus
 }

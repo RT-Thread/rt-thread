@@ -1,6 +1,6 @@
 # Phytium-Standalone-SDK
 
-**v1.0.0** [ReleaseNote](./doc/ChangeLog.md)
+**v1.1.1** [ReleaseNote](./doc/ChangeLog.md)
 
 ## 1. 项目概要
 
@@ -16,20 +16,15 @@ release 分支：发布分支，包含核心启动代码、芯片外设驱动、
 
 ![LetterShell](./doc/fig/letter_shell.png)
 
-
 ### 1.3 系统架构
-
 
 本项目的整体设计如下所示，自下而上可以分为平台层、组件层、框架层和应用层。
 
 ![Framework](./doc/design/system_2.png)
 
 - 平台层（Platform）在整个软件框架中位于最底层，提供了基本数据结构类型定义、驱动参数标定、硬件平台耦合的寄存器自检、板级启动、CPU 内存虚拟等功能
-
 - 组件层（Component）在整个软件框架中位于中间位置，向下依赖于平台层提供的参数配置与内存方案，向上提供应用开发与模块测试的支持
-
 - 框架层（Framework）为开发主机提供了开发环境，支持SDK安装，应用工程配置和二进制文件构建及烧录等工具。
-
 - 应用层（Application）提供了应用开发模板和例程，帮助开发者迅速熟悉SDK的使用，进行不同类型的应用程序开发
 
 ### 1.4 源代码结构
@@ -39,15 +34,15 @@ release 分支：发布分支，包含核心启动代码、芯片外设驱动、
 ├── Kconfig               --> 配置定义
 ├── LICENSE               --> 版权声明
 ├── README.md             --> 使用说明
-├── arch                  
+├── arch                
 │   └── armv8             --> 架构相关
 ├── baremetal
 │   └── example           --> 裸机例程
-├── board                  
+├── board                
 │   ├── d2000
 │   ├── e2000
 │   └── ft2004            --> 平台相关
-├── common                
+├── common              
 │   ├── fprintf.c
 │   ├── fprintf.h
 │   ├── fsleep.c
@@ -63,7 +58,7 @@ release 分支：发布分支，包含核心启动代码、芯片外设驱动、
 │   ├── dma
 │   └── watchdog          --> 外设驱动
 ├── install.py            --> 安装脚本
-├── lib             
+├── lib           
 │   ├── Kconfiglib
 │   ├── lib.mk
 │   ├── libc
@@ -77,7 +72,7 @@ release 分支：发布分支，包含核心启动代码、芯片外设驱动、
 ├── scripts
 ├── standalone.mk
 ├── third-party
-│   └── letter-shell-3.1  --> 第三方库            
+│   └── letter-shell-3.1  --> 第三方库          
 ├── tools
 ```
 
@@ -89,12 +84,10 @@ release 分支：发布分支，包含核心启动代码、芯片外设驱动、
 
 ![windows](./doc/fig/windows.png)![linux](./doc/fig/linux.png)![输入图片说明](./doc/fig/kylin.png)
 
-
 - 参考[Windows10 快速入门](./doc/reference/usr/install_windows.md), [Linux x86_64 快速入门](./doc/reference/usr/install_linux_x86_64.md)
-
 - 参考[使用说明](./doc/reference/usr/usage.md), 新建Phytium Standalone SDK的应用工程，与开发板建立连接
-
 - 参考[例程](./baremetal/example)，开始使用SDK
+- 参考[系统测试](./example)，开始使用重构后的系统测试用例(v1.1.0版本开始，测试用例将逐步进行重构)
 
 ---
 
@@ -134,7 +127,6 @@ D2000 是一款面向桌面应用的高性能通用 8 核处理器。每 2 个�
 ### 3.3 E2000Q
 
 - E2000Q 集成2个FTC664核和2个FTC310核。主要技术特征如下：
-
 - 兼容ARM v8 64 位指令系统，兼容32 位指令
 - 集成 1 路 16 通道 General DMA 和 1 路 8 通道 Device DMA
 - 支持单精度、双精度浮点运算指令
@@ -150,7 +142,6 @@ D2000 是一款面向桌面应用的高性能通用 8 核处理器。每 2 个�
 ### 3.4 E2000D
 
 - E2000D 集成 2 个 FTC310 核。主要技术特征如下：
-
 - 兼容ARM v8 64 位指令系统，兼容32 位指令
 - 集成 1 路 16 通道 General DMA 和 1 路 8 通道 Device DMA
 - 支持单精度、双精度浮点运算指令
@@ -166,7 +157,6 @@ D2000 是一款面向桌面应用的高性能通用 8 核处理器。每 2 个�
 ### 3.5 E2000S
 
 - E2000S 集成 1 个 FTC310 核，单核结构。主要技术特征如下：
-
 - 兼容ARM v8 64 位指令系统，兼容32 位指令
 - 集成 1 路 16 通道 General DMA 和 1 路 8 通道 Device DMA
 - 支持单精度、双精度浮点运算指令
@@ -178,50 +168,48 @@ D2000 是一款面向桌面应用的高性能通用 8 核处理器。每 2 个�
 - 2路 DisplayPort1.4 接口
 - 集成常用低速接口：WDT、DMAC、PWM、QSPI、SD/SDIO/eMMC、SPI Master、UART、I2C、MIO、I3C、PMBUS、GPIO、SGPIO、One-Wire、Timer、One-Wire
 
-
 ## 4 外设驱动支持情况
 
-| Hardware Interface             | Platform Supported         | Platform Developing         | Component                 |
-| ------------------------------ | -------------------------- | --------------------------- | ------------------------- |
-| Generic Intrrupt Controller v3 | FT2000/4<br>E2000<br>D2000 |                             | gic/fgic                  |
-| Generic Timer                  | FT2000/4<br>E2000<br>D2000 |                             | generic_timer             |
-| UART (PrimeCell PL011)         | FT2000/4<br>E2000<br>D2000 |                             | usart/pl011_uart          |
-| 10/100/1000MB-ETHERNET         | FT2000/4<br>E2000<br>D2000 |                             | eth/fgmac<br>eth/fxmac    |
-| ADC                            | E2000                      |                             | adc/fadc                  |
-| CAN                            | FT2000/4<br>E2000<br>D2000 |                             | can/fcan                  |
-| DDMA                           |                            | E2000                       | dma/fddma                 |
-| GDMA                           | E2000                      |                             | dma/gdma                  |
-| GPIO                           | FT2000/4<br>E2000<br>D2000 |                             | gpio/fgpio                |
-| I2C                            | FT2000/4<br>E2000<br>D2000 |                             | i2c/fi2c                  |
-| QSPI (Nor Flash)               | FT2000/4<br>E2000<br>D2000 |                             | qspi/fqspi                |
-| SPI                            | FT2000/4<br>E2000<br>D2000 |                             | spi/fspim                 |
-| TIMER & TACHO                  | E2000                      |                             | timer/ftimer_tacho        |
-| MIO                            | E2000                      |                             | mio/fmio                  |
-| SDMMC                          |                            | FT2000/4<br>D2000           | mmc/fsdmmc                |
-| SDIO                           | E2000                      |                             | mmc/fsdio                 |
-| PCIE                           | FT2000/4<br>D2000<br>E2000 |                             | pcie/fpcie                |
-| NAND                           | E2000                      |                             | nand/fnand                |
-| RTC                            | FT2000/4<br>D2000          |                             | rtc/frtc                  |
-| SATA                           | FT2000/4<br>D2000<br>E2000 |                             | sata/fsata                |
-| USB-PCI                        |                            | FT2000/4<br>E2000<br>D2000  | usb/fxhci                 |
-| PWM                            | E2000                      |                             | pwm/fpwm                  |
-| WDT                            | FT2000/4<br>D2000<br>E2000 |                             | watchdog/fwdt             |
+| Hardware Interface             | Platform Supported                 | Platform Developing                | Component                  |
+| ------------------------------ | ---------------------------------- | ---------------------------------- | -------------------------- |
+| Generic Intrrupt Controller v3 | FT2000/4`<br>`E2000`<br>`D2000 |                                    | gic/fgic                   |
+| Generic Timer                  | FT2000/4`<br>`E2000`<br>`D2000 |                                    | generic_timer              |
+| UART (PrimeCell PL011)         | FT2000/4`<br>`E2000`<br>`D2000 |                                    | usart/pl011_uart           |
+| 10/100/1000MB-ETHERNET         | FT2000/4`<br>`E2000`<br>`D2000 |                                    | eth/fgmac`<br>`eth/fxmac |
+| ADC                            | E2000                              |                                    | adc/fadc                   |
+| CAN                            | FT2000/4`<br>`E2000`<br>`D2000 |                                    | can/fcan                   |
+| DDMA                           |                                    | E2000                              | dma/fddma                  |
+| GDMA                           | E2000                              |                                    | dma/gdma                   |
+| GPIO                           | FT2000/4`<br>`E2000`<br>`D2000 |                                    | gpio/fgpio                 |
+| I2C                            | FT2000/4`<br>`E2000`<br>`D2000 |                                    | i2c/fi2c                   |
+| QSPI (Nor Flash)               | FT2000/4`<br>`E2000`<br>`D2000 |                                    | qspi/fqspi                 |
+| SPI                            | FT2000/4`<br>`E2000`<br>`D2000 |                                    | spi/fspim                  |
+| TIMER & TACHO                  | E2000                              |                                    | timer/ftimer_tacho         |
+| MIO                            | E2000                              |                                    | mio/fmio                   |
+| SDMMC                          |                                    | FT2000/4`<br>`D2000              | mmc/fsdmmc                 |
+| SDIO                           | E2000                              |                                    | mmc/fsdio                  |
+| PCIE                           | FT2000/4`<br>`D2000`<br>`E2000 |                                    | pcie/fpcie                 |
+| NAND                           | E2000                              |                                    | nand/fnand                 |
+| RTC                            | FT2000/4`<br>`D2000              |                                    | rtc/frtc                   |
+| SATA                           | FT2000/4`<br>`D2000`<br>`E2000 |                                    | sata/fsata                 |
+| USB-PCI                        |                                    | FT2000/4`<br>`E2000`<br>`D2000 | usb/fxhci                  |
+| PWM                            | E2000                              |                                    | pwm/fpwm                   |
+| WDT                            | FT2000/4`<br>`D2000`<br>`E2000 |                                    | watchdog/fwdt              |
 
-
-| Third-Party                    | Platform Supported         | Platform Developing         | Component                 |
-| ------------------------------ | -------------------------- | --------------------------- | ------------------------- |
-| LWIP 2.1.2                     | FT2000/4<br>D2000<br>E2000 |                             | lwip-2.1.2                |
-| Letter shell 3.1               | FT2000/4<br>D2000<br>E2000 |                             | letter-shell-3.1          |
-| Sdmmc                          | FT2000/4<br>D2000          |                             | sdmmc                     |
-| Sfud 1.1.0                     | FT2000/4<br>D2000<br>E2000 |                             | sfud-1.1.0                |
-| Backtrace                      | FT2000/4<br>D2000<br>E2000 |                             | backtrace                 |
-| Tlsf                           | FT2000/4<br>D2000<br>E2000 |                             | tlsf-3.1.0                |
-| Fatfs (RAM/Sd/SATA)            | FT2000/4<br>D2000<br>E2000 |                             | fatfs-0.1.3               |
-| Ymodem                         | FT2000/4<br>D2000<br>E2000 |                             |                           |
-| OpenAMP                        | FT2000/4<br>D2000<br>E2000 |                             | openamp                   |
-| LittleFS-2.4.2                 |                            | FT2000/4<br>E2000<br>D2000  | littlefs-2.4.2            |
-| SPIFFS-0.3.7                   | FT2000/4<br>D2000<br>E2000 |                             | spiffs-0.3.7              |
-| freemodbus-v1.6                | E2000                      |                             | protocols/fmodbus_test    |
+| Third-Party         | Platform Supported                 | Platform Developing                | Component              |
+| ------------------- | ---------------------------------- | ---------------------------------- | ---------------------- |
+| LWIP 2.1.2          | FT2000/4`<br>`D2000`<br>`E2000 |                                    | lwip-2.1.2             |
+| Letter shell 3.1    | FT2000/4`<br>`D2000`<br>`E2000 |                                    | letter-shell-3.1       |
+| Sdmmc               | FT2000/4`<br>`D2000              |                                    | sdmmc                  |
+| Sfud 1.1.0          | FT2000/4`<br>`D2000`<br>`E2000 |                                    | sfud-1.1.0             |
+| Backtrace           | FT2000/4`<br>`D2000`<br>`E2000 |                                    | backtrace              |
+| Tlsf                | FT2000/4`<br>`D2000`<br>`E2000 |                                    | tlsf-3.1.0             |
+| Fatfs (RAM/Sd/SATA) | FT2000/4`<br>`D2000`<br>`E2000 |                                    | fatfs-0.1.3            |
+| Ymodem              | FT2000/4`<br>`D2000`<br>`E2000 |                                    |                        |
+| OpenAMP             | FT2000/4`<br>`D2000`<br>`E2000 |                                    | openamp                |
+| LittleFS-2.4.2      |                                    | FT2000/4`<br>`E2000`<br>`D2000 | littlefs-2.4.2         |
+| SPIFFS-0.3.7        | FT2000/4`<br>`D2000`<br>`E2000 |                                    | spiffs-0.3.7           |
+| freemodbus-v1.6     | E2000                              |                                    | protocols/fmodbus_test |
 
 ---
 
@@ -266,15 +254,18 @@ D2000 是一款面向桌面应用的高性能通用 8 核处理器。每 2 个�
 #### 5.1.18 [FMEDIA](doc/reference/driver/fmedia.md)
 
 ### 5.2 MEMORY
+
 #### 5.2.1 [FMEMORY_POOL](./doc/reference/sdk/fmemory_pool.md)
 
 ### 5.3 CPU
 
-#### 5.3.1 [MMU](./doc/reference/processor/mmu.md)
+#### 5.3.1 [MMU](./doc/reference/cpu/mmu.md)
 
 #### 5.3.2 [FPINCTRL](./doc/reference/sdk/fpinctrl.md)
 
-#### 5.3.2 [INTERRUPT](./doc/reference/processor/interrupt.md)
+#### 5.3.2 [FINTERRUPT](./doc/reference/cpu/finterrupt.md)
+
+#### 5.3.3 [FPSCI](./doc/reference/cpu/psci.md)
 
 ---
 
@@ -301,7 +292,6 @@ zhangyan1491@phytium.com.cn
 ---
 
 ## 6. 相关资源
-
 
 - ARM Architecture Reference Manual
 - ARM Cortex-A Series Programmer’s Guide

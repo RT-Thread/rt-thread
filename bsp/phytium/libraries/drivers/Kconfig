@@ -19,7 +19,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_SPI
         bool "Enable Spi"
-        default y
+        default n
         select USE_SPI # sdk spi component
         select RT_USING_SPI
         if BSP_USING_SPI
@@ -42,17 +42,69 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_CAN
         bool "Enable CAN"
-        default y
+        default n
         select RT_USING_CAN
         select RT_CAN_USING_HDR
         select RT_CAN_USING_CANFD
 
+    menuconfig BSP_USING_GPIO
+        bool "Enable GPIO"
+        default n
+        select RT_USING_PIN
+
     menuconfig BSP_USING_QSPI
         bool "Enable QSPI"
-        default y
+        default n
         select RT_USING_QSPI
         select RT_USING_SPI
+        if BSP_USING_QSPI
+            config USING_QSPI_CHANNEL0
+                bool "using qspi channel_0"
+                default n
+            config USING_QSPI_CHANNEL1
+                bool "using qspi channel_1"
+                default n
+        endif
 
+    menuconfig BSP_USING_ETH
+        bool "Enable ETH"
+        default y
+        select USE_ETH 
+        if BSP_USING_ETH
+            config RT_LWIP_PBUF_POOL_BUFSIZE
+                        int "The size of each pbuf in the pbuf pool"
+                        range 1500 2000
+                        default 1700
+        endif
+       
+
+           
+    
+    menuconfig BSP_USING_SDIO
+        bool "Enable SDIO"
+        default y
+        select RT_USING_SDIO
+    
+        if BSP_USING_SDIO
+                config BSP_USING_SDCARD_FATFS
+                    bool "Enable SDCARD (FATFS)"
+                    select RT_USING_DFS_ELMFAT
+                    default y
+    
+                choice
+                    prompt "Choose a card to mount"
+                    default USING_SDIO1
+
+                    config USING_SDIO0
+                        bool "Use SDIO0"
+
+                    config USING_SDIO1
+                        bool "Use SDIO1"
+
+                    config USING_EMMC
+                        bool "Use EMMC"
+                endchoice  
+        endif
 endmenu
 
 menu "Board extended module Drivers"

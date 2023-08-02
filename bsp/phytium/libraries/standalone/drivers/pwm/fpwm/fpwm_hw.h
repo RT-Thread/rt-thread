@@ -50,6 +50,7 @@ extern "C"
 /* DB register */
 #define FPWM_DB_CTRL_OFFSET      0x00
 #define FPWM_DB_DLY_OFFSET       0x04
+
 #define FPWM_OFFSET              0x400
 #define FPWM_TIM_CNT_OFFSET      0x00
 #define FPWM_TIM_CTRL_OFFSET     0x04

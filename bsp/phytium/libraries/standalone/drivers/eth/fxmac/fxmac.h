@@ -137,7 +137,7 @@ extern "C"
      (u32)FXMAC_RECEIVER_ENABLE_OPTION |    \
      (u32)FXMAC_RX_CHKSUM_ENABLE_OPTION |   \
      (u32)FXMAC_TX_CHKSUM_ENABLE_OPTION)
-
+     
 typedef enum
 {
     FXMAC_LINKDOWN = 0,
@@ -151,18 +151,20 @@ typedef enum
 #define FXMAC_MAC_ADDR_SIZE 6U /* size of Ethernet header */
 
 #define FXMAC_MTU 1500U         /* max MTU size of Ethernet frame */
-#define FXMAC_MTU_JUMBO 10240U  /* max MTU size of jumbo frame */
+#define FXMAC_MTU_JUMBO 10240U  /* max MTU size of jumbo frame including Ip header + IP payload */
 #define FXMAC_HDR_SIZE 14U      /* size of Ethernet header  , DA + SA + TYPE*/
 #define FXMAC_HDR_VLAN_SIZE 18U /* size of Ethernet header with VLAN */
 #define FXMAC_TRL_SIZE 4U       /* size of Ethernet trailer (FCS) */
-#define FXMAC_MAX_FRAME_SIZE (FXMAC_MTU + FXMAC_HDR_SIZE + \
-                              FXMAC_TRL_SIZE)
+
+#define FXMAC_MAX_FRAME_SIZE (FXMAC_MTU + FXMAC_HDR_SIZE + FXMAC_TRL_SIZE)
+#define FXMAC_MAX_FRAME_SIZE_JUMBO (FXMAC_MTU_JUMBO + FXMAC_HDR_SIZE + FXMAC_TRL_SIZE)
+
 #define FXMAC_MAX_VLAN_FRAME_SIZE (FXMAC_MTU + FXMAC_HDR_SIZE + \
                                    FXMAC_HDR_VLAN_SIZE + FXMAC_TRL_SIZE)
 #define FXMAC_MAX_VLAN_FRAME_SIZE_JUMBO (FXMAC_MTU_JUMBO + FXMAC_HDR_SIZE + \
-        FXMAC_HDR_VLAN_SIZE + FXMAC_TRL_SIZE)
+                                         FXMAC_HDR_VLAN_SIZE + FXMAC_TRL_SIZE)
 
-#define FXMAC_MAX_FRAME_SIZE_JUMBO (FXMAC_MTU_JUMBO + FXMAC_HDR_SIZE + FXMAC_TRL_SIZE)
+
 
 /** @name Callback identifiers
  *
@@ -268,8 +270,9 @@ typedef struct
     u32 is_ready; /* Device is ininitialized and ready*/
     u32 is_started;
     u32 link_status; /* indicates link status ,FXMAC_LINKUP is link up ,FXMAC_LINKDOWN is link down,FXMAC_NEGOTIATING is need to negotiating*/
-    u32 options;
-    u32 caps;   /*  Capability mask bits */
+    u32 options; 
+    u32 mask; /*indicate intr mask */
+    u32 caps; /*  Capability mask bits */
 
     FXmacQueue tx_bd_queue; /* Transmit Queue */
     FXmacQueue rx_bd_queue; /* Receive Queue */

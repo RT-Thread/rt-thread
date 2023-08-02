@@ -202,7 +202,6 @@ FError FSdioPollWaitPIOEnd(FSdio *const instance_p, FSdioCmdData *const cmd_data
     FASSERT(instance_p);
     FASSERT(cmd_data_p);
     FError ret = FSDIO_SUCCESS;
-    u32 loop;
     u32 reg_val;
     int delay;
     const boolean read = cmd_data_p->flag & FSDIO_CMD_FLAG_READ_DATA;

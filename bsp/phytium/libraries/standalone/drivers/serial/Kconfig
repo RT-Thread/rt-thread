@@ -3,7 +3,7 @@ menu "Usart Configuration"
     config ENABLE_Pl011_UART
         bool
         prompt "Use Pl011 uart"
-        default n
+        default y
         
 endmenu
 

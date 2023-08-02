@@ -49,6 +49,4 @@ menu "Standalone Setting"
     source "$STANDALONE_DIR/board/Kconfig"
     source "$STANDALONE_DIR/drivers/Kconfig"
     source "$STANDALONE_DIR/common/Kconfig"
-
 endmenu
-

@@ -114,6 +114,12 @@ rtthread_a64.map
 
 - 可以用串口通过 XMODEM 协议将 bin/elf 文件上传到开发板，然后启动，
 
+- 如果使用 SD-1 控制器
+
+```
+mw.l 0x32b31178 0x1f
+```
+
 - 首先在 Phytium 开发板上输入，上传 bin 文件
 
 ```

@@ -393,7 +393,7 @@ FError FGpioSetOutputValue(FGpioPin *const pin, const FGpioPinVal output)
     FASSERT_MSG(instance->is_ready == FT_COMPONENT_IS_READY, "gpio instance is not yet inited !!!");
 
     FGpioPinId index = pin->index;
-    u32 base_addr = instance->config.base_addr;
+    uintptr base_addr = instance->config.base_addr;
     u32 reg_val;
 
     if (FGPIO_DIR_OUTPUT != FGpioGetDirection(pin))

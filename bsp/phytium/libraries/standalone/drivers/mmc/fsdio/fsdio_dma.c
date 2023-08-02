@@ -29,7 +29,6 @@
 #include "fassert.h"
 #include "ftypes.h"
 
-
 #include "fsdio_hw.h"
 #include "fsdio.h"
 
@@ -126,10 +125,10 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
         cur_desc->len = FSDIO_IDMAC_DES2_BUF1_SIZE(data_p->blksz) | FSDIO_IDMAC_DES2_BUF2_SIZE(0U);
 
         /* set data buffer for transfer */
-        buff_addr = (uintptr)data_p->buf + (uintptr)(loop * data_p->blksz);
+        buff_addr = data_p->buf_p + (uintptr)(loop * data_p->blksz);
         if (buff_addr % data_p->blksz) /* make sure buffer aligned and not cross page boundary */
         {
-            FSDIO_ERROR("Data buffer 0x%x do not align.", buff_addr);
+            FSDIO_ERROR("Data buffer 0x%x do not align to %d.", buff_addr, data_p->blksz);
             return FSDIO_ERR_DMA_BUF_UNALIGN;
         }
 
@@ -142,7 +141,7 @@ static FError FSdioSetupDMADescriptor(FSdio *const instance_p, FSdioData *data_p
 #endif
 
         /* set address of next descriptor entry, NULL for last entry */
-        desc_addr = is_last ? 0U : (uintptr)&instance_p->desc_list.first_desc[loop + 1];
+        desc_addr = is_last ? 0U : (instance_p->desc_list.first_desc_p + (uintptr)((loop + 1) * sizeof(FSdioIDmaDesc)));
         if (desc_addr % sizeof(FSdioIDmaDesc)) /* make sure dma descriptor aligned and not cross page boundary */
         {
             FSDIO_ERROR("dma descriptor 0x%x do not align.", desc_addr);
@@ -197,7 +196,7 @@ static FError FSdioDMATransferData(FSdio *const instance_p, FSdioData *data_p)
                data_p->blksz);
 
     /* set transfer info to register */
-    FSdioSetDescriptor(base_addr, (uintptr)(instance_p->desc_list.first_desc));
+    FSdioSetDescriptor(base_addr, instance_p->desc_list.first_desc_p);
     FSdioSetTransBytes(base_addr, data_p->datalen);
     FSdioSetBlockSize(base_addr, data_p->blksz);
 
@@ -377,6 +376,7 @@ FError FSdioSetIDMAList(FSdio *const instance_p, volatile FSdioIDmaDesc *desc, u
     }
 
     instance_p->desc_list.first_desc = desc;
+    instance_p->desc_list.first_desc_p = (uintptr)desc; /* physical address equals with virtual address */
     instance_p->desc_list.desc_num = desc_num;
     return ret;
 }

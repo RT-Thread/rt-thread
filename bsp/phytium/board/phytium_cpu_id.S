@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Email: opensource_embedded@phytium.com.cn
+ *
+ * Change Logs:
+ * Date        Author       Notes
+ * 2023-07-26  huanghe      first commit
+ *
+ */
+
 #include "fparameters.h"
 #include "sdkconfig.h"
 

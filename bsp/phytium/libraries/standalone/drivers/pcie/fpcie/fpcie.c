@@ -319,6 +319,7 @@ error:
 
 
 
+/* This function uses BAR to request IO or MMIO space and configure the expansion ROM address */
 void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
                           struct FPcieRegion *mem,
                           struct FPcieRegion *prefetch, struct FPcieRegion *io,
@@ -335,6 +336,7 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
     int found_mem64 = 0;
     u16 class;
 
+    /* Command register: enable or disable the access to I/O and memory */
     FPcieEcamReadConfig16bit(instance_p->config.ecam, bdf, FPCIE_COMMAND_REG, &cmdstat);
     cmdstat = (cmdstat & ~(FPCIE_COMMAND_IO | FPCIE_COMMAND_MEMORY)) |
               FPCIE_COMMAND_MASTER;
@@ -361,6 +363,7 @@ void FPcieAutoSetupDevice(FPcie *instance_p, u32 bdf, int bars_num,
         /* Check the BAR type and set our address mask */
         if (bar_response & FPCIE_BASE_ADDRESS_SPACE)
         {
+            /* formula to get addr space of BAR */
             bar_size = ((~(bar_response & FPCIE_BASE_ADDRESS_IO_MASK))
                         & 0xffff) + 1;
             if (!enum_only)
@@ -779,10 +782,10 @@ FError FPcieBindBusDevices(FPcie *instance_p, u32 bus_num, u32 parent_bdf, struc
             sprintf(buf_bdf_print, "pci_%x:%x:%x",
                     FPCIE_BUS(parent_bdf), FPCIE_DEV(parent_bdf), FPCIE_FUNC(parent_bdf));
         }
-        printf("	%02x:%02x.%02x	-	%04lx:%04lx 	%s",
+        printf("\t%02x:%02x.%02x\t\t%04lx:%04lx\t\t%s",
                FPCIE_BUS(bdf), FPCIE_DEV(bdf), FPCIE_FUNC(bdf), vendor, device,
                buf_bdf_print);
-        printf("	0x%.2x (%s)\n", (int)class_show, FPcieClassStr(class_show));
+        printf("\t\t\t0x%.2x (%s)\n", (int)class_show, FPcieClassStr(class_show));
 
         /* ARI function handle  */
         /* step 1: detect if PCI Express Device */
@@ -849,5 +852,7 @@ FError FPcieScanBus(FPcie *instance_p, u32 bus_num, u32 parent_bdf)
         }
     }
     instance_p->is_scaned = 1;  //表示已经扫描完成
+
+    return FT_SUCCESS;
 }
 

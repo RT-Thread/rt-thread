@@ -27,6 +27,10 @@ else
 RTCONFIG := $(RTCONFIG)_rtthread
 endif
 
+ifdef CONFIG_PHYTIUM_RTT_TEST
+RTCONFIG := $(RTCONFIG)_test
+endif
+
 boot:
 	make all
 	cp rtthread_a32.elf /mnt/d/tftboot
@@ -59,10 +63,22 @@ load_e2000q_rtsmart:
 	@cp ./configs/e2000q_rtsmart.h ./rtconfig.h -f
 	@scons -c
 
+load_e2000q_rtsmart_test:
+	@echo "Load configs from ./configs/e2000q_rtsmart_test"
+	@cp ./configs/e2000q_rtsmart_test ./.config -f
+	@cp ./configs/e2000q_rtsmart_test.h ./rtconfig.h -f
+	@scons -c
+
 load_e2000q_rtthread:
 	@echo "Load configs from ./configs/e2000q_rtthread"
 	@cp ./configs/e2000q_rtthread ./.config -f
 	@cp ./configs/e2000q_rtthread.h ./rtconfig.h -f
+	@scons -c
+
+load_e2000q_rtthread_test:
+	@echo "Load configs from ./configs/e2000q_rtthread_test"
+	@cp ./configs/e2000q_rtthread_test ./.config -f
+	@cp ./configs/e2000q_rtthread_test.h ./rtconfig.h -f
 	@scons -c
 
 load_e2000d_rtsmart:
@@ -71,8 +87,20 @@ load_e2000d_rtsmart:
 	@cp ./configs/e2000d_rtsmart.h ./rtconfig.h -f
 	@scons -c
 
+load_e2000d_rtsmart_test:
+	@echo "Load configs from ./configs/e2000d_rtsmart_test"
+	@cp ./configs/e2000d_rtsmart_test ./.config -f
+	@cp ./configs/e2000d_rtsmart_test.h ./rtconfig.h -f
+	@scons -c
+
 load_e2000d_rtthread:
 	@echo "Load configs from ./configs/e2000d_rtthread"
 	@cp ./configs/e2000d_rtthread ./.config -f
 	@cp ./configs/e2000d_rtthread.h ./rtconfig.h -f
+	scons -c
+
+load_e2000d_rtthread_test:
+	@echo "Load configs from ./configs/e2000d_rtthread_test"
+	@cp ./configs/e2000d_rtthread_test ./.config -f
+	@cp ./configs/e2000d_rtthread_test.h ./rtconfig.h -f
 	scons -c

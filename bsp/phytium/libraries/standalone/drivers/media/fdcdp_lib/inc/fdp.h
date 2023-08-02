@@ -29,13 +29,15 @@
 
 #include "ftypes.h"
 #include "fparameters_comm.h"
-#include "fdcdp_param.h"
 #include "fdc.h"
-
+#include "ferror_code.h"
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /************************** Constant Definitions *****************************/
 #define FMEDIA_DP_SUCCESS FT_SUCCESS
-
-/************************** Constant Definitions *****************************/
+#define FMEDIA_DP_FAILED 1
 
 #define FDP_HAS_TRAINED 1
 #define FDP_NOT_TRAINED 0
@@ -46,8 +48,12 @@
 #define FDP_DIS_CONNECTED 1
 #define FDP_IS_CONNECTED 0
 
+#define FDP_TRAIN_SUCCESS 0
+#define FDP_TRAIN_FAILED 1
+
 #define DP_GOP_MAX_MODENUM 11
 
+/**************************** Type Definitions *******************************/
 typedef enum
 {
     FDP_TRAINING_OFF = 0,
@@ -74,16 +80,16 @@ typedef enum
 
 typedef struct
 {
-    u16 h_total;
-    u16 v_total;
+    u16 h_total;             /* Horizontal total  lines. */
+    u16 v_total;             /* Vertical total lines. */
     boolean h_polarity;      /*0 - active high , 1 - active low  */
     boolean v_polarity;      /*0 - active high , 1 - active low   */
     u16 hs_width;            /* Horizontal Sync Pulse Width in pixels. */
     u16 vs_width;            /* Vertical Sync Pulse Width in lines. */
     u16 h_res;               /* Horizontal Addressable video in lines. */
     u16 v_res;               /* Vertical Addressable video in lines. */
-    u16 h_start;             /* Horizontal Blanking in pixels minus  Horizontal Front Proch in pixels. */
-    u16 v_start;             /* Vertical Blanking in pixels minus  Vertical Front Proch in pixels. */
+    u16 h_start;             /* Horizontal Blanking in pixels minus  */
+    u16 v_start;             /* Vertical Blanking in pixels minus   */
     boolean h_user_polarity; /* Horizontal Sync Polarity. */
     boolean v_user_polarity; /* Vertical Sync Polarity. */
 } FDpSyncParameter;
@@ -126,9 +132,9 @@ typedef struct
     FDpStatus status;
 
     u8 down_spread_enable;
-#define dtd_list_max 4
+#define DTD_MAX 4
     /* edid 缓冲数据 */
-    FDpDtdTable dtd_table[dtd_list_max]; /* the max dtd num is 4 */
+    FDpDtdTable dtd_table[DTD_MAX]; /* the max dtd num is 4 */
 
 } FDpCurrentConfig;
 
@@ -146,11 +152,13 @@ typedef struct
     FDpConfig config;
 } FDpCtrl;
 
+/************************** Function Prototypes ******************************/
+
 /* dp init */
-FError FDpInit(FDcCtrl *dc_config, FDpCtrl *instance_p, FDcDpDisplaySetting *gop_mode, u32 mode_id);
+FError FDpInit(FDcCtrl *dc_config, FDpCtrl *dp_config, FDcDisplaySetting *gop_mode, u32 mode_id);
 
 /* Initialization of dp configuration parameter */
-void FDpConfigInit(FDpCtrl *instance_p, FDcDpDisplaySetting *gop_mode);
+void FDpConfigInit(FDpCtrl *instance_p, FDcDisplaySetting *gop_mode);
 
 /* Dp connect to sink */
 FError FDpConnect(FDpCtrl *instance_p);
@@ -167,8 +175,6 @@ FError FDpConfigTraingPattern(FDpCtrl *instance_p);
 /* Config Main Stream Attributes.It is must to reset reset phy link after main
   stream attributes configuration*/
 void FDpConfigMainStreamAttr(FDpCtrl *instance_p, FDpTransmissionConfig *fdp_trans_config, FDpSyncParameter *fdp_sync_config);
-
-/*Dp link training*/
 
 /*Set sink device to D0(normal operation mode).*/
 FError FDpWakeUpSink(FDpCtrl *instance_p);
@@ -187,4 +193,9 @@ FError FDpCheckTrainingStatus(FDpCtrl *instance_p, u8 lane_count, u8 tpsn, u8 *v
 /*Check the HPD status*/
 FError FDpCheckHpdStatus(FDpCtrl *instance_p);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif
+
