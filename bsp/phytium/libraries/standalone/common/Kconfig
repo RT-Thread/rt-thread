@@ -1,7 +1,6 @@
-
-
+menu "Sdk common configuration"
 choice DEBUG_LOG_LEVEL
-    prompt "Debug Log Level"
+    prompt "Debug log level"
     default LOG_ERROR
     help
         VERBOS: Print bigger chunks of debugging information
@@ -11,19 +10,39 @@ choice DEBUG_LOG_LEVEL
         ERROR: Print critical errors, software module can not recover on its own
 
     config LOG_VERBOS
-        bool "VERBOS"
+        bool "Verbos"
     config LOG_DEBUG
-        bool "DEBUG"
+        bool "Debug"
     config LOG_INFO
-        bool "INFO"
+        bool "Info"
     config LOG_WARN
-        bool "WARN"
+        bool "Warn"
     config LOG_ERROR
-        bool "ERROR"
+        bool "Error"
     config LOG_NONE
-        bool "NONE"
+        bool "None"
 
 endchoice # DEBUG_LOG_LEVEL
+
+config LOG_EXTRA_INFO
+    bool "Debug log with extra info"
+    default n
+    help
+        Print debug information with source file name and source code line num.
+
+config LOG_DISPALY_CORE_NUM
+    bool "Debug display with core"
+    default n
+    help
+        To display CPU core information during debugging
+
+config BOOTUP_DEBUG_PRINTS
+    bool
+    prompt "Bootup debug"
+    default n
+    help
+        Enable Bootup debug printing
+
 
 
 config USE_DEFAULT_INTERRUPT_CONFIG
@@ -40,30 +59,12 @@ config USE_DEFAULT_INTERRUPT_CONFIG
             "Select Interrupt role"
 
         config INTERRUPT_ROLE_MASTER
-            bool "use master role"    
+            bool "Use master role"    
         
         config INTERRUPT_ROLE_SLAVE
-            bool "use slave role"
+            bool "Use slave role"
 
         endchoice # INTERRUPT_ROLE_SELECT
     endif
 
-config LOG_EXTRA_INFO
-    bool "Debug Log with Extra Info"
-    default n
-    help
-        Print debug information with source file name and source code line num.
-
-config LOG_DISPALY_CORE_NUM
-    bool "Debug Display with Core"
-    default n
-    help
-        To display CPU core information during debugging
-
-config BOOTUP_DEBUG_PRINTS
-    bool
-    prompt "Bootup debug"
-    default n
-    help
-        Enable Bootup debug printing
-	
+endmenu

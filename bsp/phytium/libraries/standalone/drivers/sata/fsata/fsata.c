@@ -554,7 +554,7 @@ FError FSataAhciInit(FSataCtrl *instance_p)
         ret = FSataAhciLinkUp(instance_p, i);
         if (ret)
         {
-            FSATA_DEBUG("sata host %d, port %d link timeout.", instance_p->config.instance_id, i);
+            FSATA_DEBUG("sata host %d, port %d link timeout.", instance_p->config.instance_id, i);    
             continue;
         }
         else
@@ -602,6 +602,11 @@ FError FSataAhciInit(FSataCtrl *instance_p)
             instance_p->link_port_map |= BIT(i);
         }
     }
+    if (instance_p->link_port_map == 0)
+    {
+        FSATA_ERROR("Sata ports link failed.\n");
+        return FSATA_UNKNOWN_DEVICE;
+    }       
 
     /* host interrupt enable */
     reg_val = FSATA_READ_REG32(base_addr, FSATA_HOST_CTL);
@@ -770,7 +775,7 @@ static FError FSataAhciDataIO(FSataCtrl *instance_p, u8 port, u8 *fis,
     if (port >= instance_p->n_ports)
     {
         FSATA_DEBUG("Invalid port number %d.", port);
-        return FSATA_ERR_INVAILD_PARAMETER;
+        return FSATA_ERR_INVALID_PARAMETER;
     }
 
     u32 reg_val = FSATA_READ_REG32(port_base_addr, FSATA_PORT_SCR_STAT);
@@ -788,7 +793,7 @@ static FError FSataAhciDataIO(FSataCtrl *instance_p, u8 port, u8 *fis,
     if (prdt_length == -1)
     {
         FSATA_ERROR("FSataAhciFillCmdTablePrdt failed, buf_len = %d.\n", buf_len);
-        return FSATA_ERR_INVAILD_PARAMETER;
+        return FSATA_ERR_INVALID_PARAMETER;
     }
 
     /* command list DW0: PRDTL(buf len) + W/R + CFL(fis len, 4 Byte(Dword) aligned) */

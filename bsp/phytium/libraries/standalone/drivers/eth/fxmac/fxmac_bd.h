@@ -184,7 +184,6 @@ extern "C"
  * @name: FXMAC_GET_RX_FRAME_SIZE
  * @msg:  The returned value is the size of the received packet.
  * This API supports jumbo frame sizes if enabled.
- * @param  instance_p is the pointer to xmac instance
  * @param  bd_ptr is the BD pointer to operate on
  *
  * @return Length field processed by hardware or set by
@@ -193,7 +192,7 @@ extern "C"
 
 #define FXMAC_BD_JUMBO_LENGTH_MASK
 
-#define FXMAC_GET_RX_FRAME_SIZE(instance_p, bd_ptr)                   \
+#define FXMAC_GET_RX_FRAME_SIZE(bd_ptr)                   \
     (FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) &            \
      0x00003FFFU)
 

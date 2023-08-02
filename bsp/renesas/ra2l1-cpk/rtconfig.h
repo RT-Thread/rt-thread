@@ -52,6 +52,13 @@
 #define RT_CONSOLE_DEVICE_NAME "uart9"
 #define RT_VER_NUM 0x50001
 
+/* RT-Thread Architecture */
+
+#define RT_USING_HW_ATOMIC
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M23
+
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT

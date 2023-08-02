@@ -16,6 +16,7 @@ if PLATFORM == 'gcc':
     PREFIX  = os.getenv('RTT_CC_PREFIX') or 'arm-none-eabi-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
+    CPP     = PREFIX + 'cpp'
     AS      = PREFIX + 'gcc'
     AR      = PREFIX + 'ar'
     LINK    = PREFIX + 'gcc'
@@ -28,6 +29,7 @@ if PLATFORM == 'gcc':
     AFPFLAGS = ' -mfloat-abi=softfp -mfpu=neon'
     DEVICE   = ' -march=armv8-a -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing'
 
+    CPPFLAGS= ' -E -P -x assembler-with-cpp'
     CXXFLAGS= DEVICE + CFPFLAGS + ' -Wall -fdiagnostics-color=always'
     CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -Wno-cpp -std=gnu99 -D_POSIX_SOURCE -fdiagnostics-color=always'
     AFLAGS  = DEVICE + ' -c' + AFPFLAGS + ' -x assembler-with-cpp'    

@@ -28,17 +28,29 @@
 #include "ftypes.h"
 #include "fparameters.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/**************************** Type Definitions *******************************/
 typedef struct
 {
-    uintptr dp0_framebuffer;/* data */
-    uintptr dp1_framebuffer;
-    u32     multi_mode;
-} FDcDpFrameBuffer;
+    u32 channel;
+    u32 color_depth;
+    u32 width;
+    u32 height;
+    u32 multi_mode;
+    u8 *fb_config[FDCDP_INSTANCE_NUM];
+    u32 connect[FDCDP_INSTANCE_NUM];
+}  disp_parm;
 
-/*set the frambbuffer of multidisplay*/
-FError FDcDpMultiDisplayFrameBufferSet(FDcDp *instance_p, u32 channel_num, u32 multi_mode);
+/************************** Function Prototypes ******************************/
+/*set the frambbufferconfig*/
 
-/*return the framebuffer*/
-FDcDpFrameBuffer *FDcDpGetFramebuffer(FDcDp *instance_p);
+disp_parm *FDcDpMultiDisplayFrameBufferSet(u32 channel, u32 width,u32 height,u32 color_depth,u32 multi_mode);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

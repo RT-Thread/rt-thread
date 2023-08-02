@@ -1,5 +1,3 @@
-menu "RT-Thread Architecture"
-
 config ARCH_CPU_64BIT
     bool
 
@@ -71,6 +69,11 @@ config ARCH_ARM_CORTEX_M7
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_CACHE
+    select RT_USING_HW_ATOMIC
+
+config ARCH_ARM_CORTEX_M23
+    bool
+    select ARCH_ARM_CORTEX_M
     select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M33
@@ -234,6 +237,6 @@ config ARCH_CPU_STACK_GROWS_UPWARD
     bool
     default n
 
-source "$RTT_DIR/libcpu/aarch64/Kconfig"
-
-endmenu
+if ARCH_ARMV8 && ARCH_CPU_64BIT
+    source "$RTT_DIR/libcpu/aarch64/Kconfig"
+endif

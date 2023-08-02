@@ -8,6 +8,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-04-27     huanghe      first version
+ * 2023-07-27     zhangyan     add qspi io space
  *
  */
 
@@ -46,6 +47,12 @@ struct mem_desc platform_mem_desc[] = {
         0x28000000U,
         0x32B36FFFU,
         0x28000000U,
+        DEVICE_MEM
+    },
+    {
+        0x00001000U,
+        0x0FFFFFFFU,
+        0x00001000U,
         DEVICE_MEM
     },
 };

@@ -116,6 +116,9 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     RT_ASSERT(configuration != RT_NULL);
     struct drv_spi *user_data_cfg = device->parent.user_data;
     FSpimConfig input_cfg = *FSpimLookupConfig(user_data_cfg->spi_id);
+#ifdef RT_USING_SMART
+    input_cfg.base_addr = (uintptr)rt_ioremap((void*)input_cfg.base_addr, 0x1000);
+#endif
     FSpimConfig *set_input_cfg = &input_cfg;
 
     /* set fspim device according to configuration */

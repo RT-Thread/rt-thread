@@ -31,13 +31,15 @@
 #include "ferror_code.h"
 #include "fkernel.h"
 
-/**************************** Type Definitions *******************************/
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/************************** Constant Definitions *****************************/
 
 #define FDC_READ_REG32(addr, reg_offset) FtIn32((addr) + (u32)(reg_offset))
 #define FDC_WRITE_REG32(addr, reg_value) FtOut32(addr, (u32)(reg_value))
 #define FDC_PHY_ALIGN(data, Offset) ((data + Offset - 1) & ~(Offset - 1))
-
-/************************** Constant Definitions *****************************/
 
 /*
 AHB Byte Address
@@ -101,6 +103,19 @@ DC Ctrl Register*/
 #define FDC_GCREG_MODCLKGATE_CONTROL0 0xA28
 #define FDC_GCREG_READ_OT 0xCC8
 #define FDC_GCREG_DPCONFIG0 0xCD0
+
+
+/*FDC_AQ_HI_CLOCK_CONTROL*/
+
+#define FDC_AQ_HI_CLOCK_CORE_SOFT_RESET_DC1  BIT(18)
+#define FDC_AQ_HI_CLOCK_CORE_SOFT_RESET_DC0  BIT(17)
+#define FDC_AQ_HI_CLOCK_AXI_SOFT_RESET       BIT(16)
+#define FDC_AQ_HI_CLOCK_AHB_SOFT_RESET       BIT(12)
+
+/*FDC_CTRL_CH1_PIXEL_CLOCK*/
+#define FDC_CTRL_PIXEL_CLOCK_CLEAR_MASK        GENMASK(31,30)
+#define FDC_CTRL_PIXEL_CLOCK_VALID             BIT(31)
+#define FDC_CTRL_PIXEL_CLOCK_ENABLE            BIT(30)
 
 /* FDC_GCREG_FRAMEBUFFER_SIZE0 */
 #define FDC_GCREG_FRAMEBUFFER_SIZE0_HEIGHT_SET(x) SET_REG32_BITS((x), 29, 15) /* the height of window size of the framebuffer in memory - in pixels*/
@@ -183,7 +198,7 @@ DC Ctrl Register*/
 #define FDC_GCREG_DISPLAY_INTR_ENABLE_DC0_UNDERFLOW BIT(1) /* dc0 underflow interrupt enable */
 #define FDC_GCREG_DISPLAY_INTR_ENABLE_DC0_INTR BIT(0)      /* dc0 frame complete interrupt enable */
 
-/**************************************************************************************/
+/************************** Function Prototypes ******************************/
 
 /* write the data to the channel of DcDp */
 void FDcChannelRegWrite(uintptr addr, uintptr offset, u32 data);
@@ -196,5 +211,12 @@ void FDcCtrlRegWrite(uintptr addr, uintptr offset, u32 data);
 
 /* read Dc control register */
 FError FDcCtrlRegRead(uintptr addr, uintptr offset);
+
+/*dump the dc info*/
+void FDcDump(uintptr address);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

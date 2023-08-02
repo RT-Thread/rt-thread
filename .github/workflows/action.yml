@@ -285,6 +285,7 @@ jobs:
                 - "raspberry-pi/raspi3-64"
                 - "raspberry-pi/raspi4-64"
                 - "rockchip/rk3568"
+                - "phytium/aarch64"
          -  RTT_BSP: "riscv-none" 
             RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"
             SUB_RTT_BSP:  

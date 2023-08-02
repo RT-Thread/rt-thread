@@ -32,6 +32,17 @@ config USE_GIC
         source "$STANDALONE_DIR/drivers/gic/Kconfig"
     endif
 
+config USE_IOPAD
+    bool
+    prompt "Use Iopad"
+    depends on TARGET_E2000
+    help
+        Include Iopad
+    
+    if USE_IOPAD
+        source "$STANDALONE_DIR/drivers/iopad/Kconfig"
+    endif
+
 config USE_SERIAL
     bool
     prompt "Use SERIAL"

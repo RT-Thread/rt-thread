@@ -23,8 +23,11 @@
  */
 
 /***************************** Include Files *********************************/
+#include "fparameters.h"
 #include "fassert.h"
+#include "fgeneric_timer.h"
 #include "fsleep.h"
+#include "fkernel.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -37,17 +40,34 @@
 /************************** Function Prototypes ******************************/
 
 /************************** Function *****************************************/
+static u32 fsleep_general(u32 ticks, u32 div)
+{
+    u64 end_time;
+    u64 cur_time;
+    GenericTimerStart(GENERIC_TIMER_ID0);
+    cur_time = GenericTimerRead(GENERIC_TIMER_ID0);
+    end_time = cur_time + ((u64)ticks * GenericTimerFrequecy() / div);
+
+    do
+    {
+        cur_time = GenericTimerRead(GENERIC_TIMER_ID0);
+    }
+    while (cur_time < end_time);
+
+    return 0;
+}
+
 u32 fsleep_seconds(u32 seconds)
 {
-    FASSERT_MSG(0, "%s not implment !!!", __func__);
+    return fsleep_general(seconds, 1);
 }
 
 u32 fsleep_millisec(u32 mseconds)
 {
-    FASSERT_MSG(0, "%s not implment !!!", __func__);
+    return fsleep_general(mseconds, NANO_TO_MICRO);
 }
 
-u32 fsleep_microsec(u32 useconds)
+u32 fsleep_microsec(u32 mseconds)
 {
-    FASSERT_MSG(0, "%s not implment !!!", __func__);
+    return fsleep_general(mseconds, NANO_TO_KILO);
 }

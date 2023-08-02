@@ -47,4 +47,7 @@
 /* i2c1 - PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
+#define SS          D7
+#define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi1"
+
 #endif /* Pins_Arduino_h */

@@ -19,7 +19,10 @@ if GetDepend(['TARGET_ARMV8_AARCH32']):
     path += [STANDALONE_DIR + '/port/arch/armv8/aarch32']
 elif GetDepend(['TARGET_ARMV8_AARCH64']):
     src += Glob(STANDALONE_DIR+'/port/arch/armv8/aarch64/*.c') + Glob(STANDALONE_DIR+'/port/arch/armv8/aarch64/*.S')
-    path += [STANDALONE_DIR + '/port/arch/armv8/aarch64']    
+    path += [STANDALONE_DIR + '/port/arch/armv8/aarch64']
+
+    src += Glob(STANDALONE_DIR+'/port/*.c')
+    path += [STANDALONE_DIR + '/port/*.h']      
 
 # board
 src += Glob(STANDALONE_DIR+'/board/common/*.c') + Glob(STANDALONE_DIR+'/board/common/*.S')
@@ -69,6 +72,26 @@ if GetDepend(['BSP_USING_CAN']):
 if GetDepend(['BSP_USING_QSPI']):
     src += Glob(STANDALONE_DIR+'/drivers/qspi/fqspi/*.c') + Glob(STANDALONE_DIR+'/drivers/qspi/fqspi/*.S')
     path += [STANDALONE_DIR + '/drivers/qspi/fqspi/']
+
+## eth
+if GetDepend(['BSP_USING_ETH']):
+    src += Glob(STANDALONE_DIR+'/drivers/eth/fxmac/*.c') + Glob(STANDALONE_DIR+'/drivers/eth/fxmac/*.S')
+    path += [STANDALONE_DIR + '/drivers/eth/fxmac/'] + [STANDALONE_DIR + '/drivers/eth/fxmac/phy/']
+
+## sdio
+if GetDepend(['BSP_USING_SDIO']):
+    src += Glob(STANDALONE_DIR+'/drivers/mmc/fsdio/*.c') + Glob(STANDALONE_DIR+'/drivers/mmc/fsdio/*.S')
+    path += [STANDALONE_DIR + '/drivers/mmc/fsdio/']
+
+## gpio
+if GetDepend(['BSP_USING_GPIO']):
+    src += Glob(STANDALONE_DIR+'/drivers/pin/fgpio/*.c') + Glob(STANDALONE_DIR+'/drivers/pin/fgpio/*.S')
+    path += [STANDALONE_DIR + '/drivers/pin/fgpio/']
+
+## iopad
+if GetDepend(['ENABLE_IOPAD']):
+    src += Glob(STANDALONE_DIR+'/drivers/iopad/fiopad/*.c') + Glob(STANDALONE_DIR+'/drivers/iopad/fiopad/*.S')
+    path += [STANDALONE_DIR + '/drivers/iopad/fiopad/']
 
 # phytium ports rt-thread drivers
 PORT_DRV_DIR = cwd + '/drivers'

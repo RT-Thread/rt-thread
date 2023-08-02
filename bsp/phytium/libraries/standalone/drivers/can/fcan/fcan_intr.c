@@ -105,14 +105,14 @@ void FCanIntrHandler(s32 vector, void *args)
         if (irq_status & FCAN_INTR_RFIS_MASK)
         {
             FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_FIFOFULL);
-            FCAN_ERROR("rx_fifo is full!!!");
+            FCAN_DEBUG("rx_fifo is full!!!");
             /* disable rx fifo full interrupt */
             FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_RFIE_MASK);
         }
         if (irq_status & FCAN_INTR_TFIS_MASK)
         {
             FCAN_CALL_INTR_EVENT_HANDLDER(instance_p, FCAN_INTR_EVENT_FIFOEMPTY);
-            FCAN_ERROR("tx_fifo is empty!!!");
+            FCAN_DEBUG("tx_fifo is empty!!!");
             /* disable tx fifo empty interrupt */
             FCAN_CLEARBIT(config_p->base_address, FCAN_INTR_OFFSET, FCAN_INTR_TFIE_MASK);
         }

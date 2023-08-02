@@ -210,8 +210,8 @@ jobs:
           - {RTT_BSP_NAME: "nuclei_gd32vf103_rvstar", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuclei/gd32vf103_rvstar"}
          #- {RTT_BSP_NAME: "nuclei_nuclei_fpga_eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nuclei/nuclei_fpga_eval"}  #riscv-nuclei-elf-gcc toolchain不支持
          #- {RTT_BSP_NAME: "nv32f100x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nv32f100x"}  #编译错误
-         #- {RTT_BSP_NAME: "phytium_aarch32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "phytium/aarch32"} #编译错误
-         # - {RTT_BSP_NAME: "phytium_aarch64", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "phytium/aarch64"} #编译错误
+        # - {RTT_BSP_NAME: "phytium_aarch32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "phytium/aarch32"} 
+          - {RTT_BSP_NAME: "phytium_aarch64", RTT_TOOL_CHAIN: "sourcery-aarch64", RTT_BSP: "phytium/aarch64"} 
          #- {RTT_BSP_NAME: "pic32ethernet", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "pic32ethernet"} #编译错误
           - {RTT_BSP_NAME: "qemu-vexpress-a9", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "qemu-vexpress-a9"}
           - {RTT_BSP_NAME: "qemu-virt64-aarch64", RTT_TOOL_CHAIN: "sourcery-aarch64", RTT_BSP: "qemu-virt64-aarch64"}

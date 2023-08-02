@@ -20,6 +20,7 @@
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   huanghe    2022/06/16    first release
+ * 1.1  liuzhihong  2023/4/11     jumbo support
  */
 
 #include "fxmac_hw.h"
@@ -218,19 +219,19 @@ FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num)
         /* Turn on FCS stripping on receive packets */
         if ((options & FXMAC_FCS_STRIP_OPTION) != 0x00000000U)
         {
-            reg_new_netcfg |= FXMAC_NWCFG_FCSREM_MASK;
+            reg_new_netcfg |= FXMAC_NWCFG_FCS_REMOVE_MASK;
         }
 
         /* Turn on length/type field checking on receive packets */
         if ((options & FXMAC_LENTYPE_ERR_OPTION) != 0x00000000U)
         {
-            reg_new_netcfg |= FXMAC_NWCFG_LENERRDSCRD_MASK;
+            reg_new_netcfg |= FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD_MASK;
         }
 
         /* Turn on flow control */
         if ((options & FXMAC_FLOW_CONTROL_OPTION) != 0x00000000U)
         {
-            reg_new_netcfg |= FXMAC_NWCFG_PAUSEEN_MASK;
+            reg_new_netcfg |= FXMAC_NWCFG_PAUSE_ENABLE_MASK;
         }
 
         /* Turn on promiscuous frame filtering (all frames are received) */
@@ -261,13 +262,13 @@ FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num)
         if ((options & FXMAC_JUMBO_ENABLE_OPTION) != 0x00000000U)
         {
             instance_p->max_mtu_size = FXMAC_MTU_JUMBO;
-            instance_p->max_frame_size = FXMAC_MTU_JUMBO +
-                                         FXMAC_HDR_SIZE + FXMAC_TRL_SIZE;
+            instance_p->max_frame_size = FXMAC_MAX_FRAME_SIZE_JUMBO;
 
             reg_new_netcfg |= FXMAC_NWCFG_JUMBO_MASK;
             FXMAC_WRITEREG32(config_p->base_address,
-                             FXMAC_JUMBOMAXLEN_OFFSET, FXMAC_MTU_JUMBO);
-
+                             FXMAC_JUMBOMAXLEN_OFFSET, FXMAC_MAX_FRAME_SIZE_JUMBO);
+            FXMAC_WRITEREG32(config_p->base_address,
+                            FXMAC_TXQSEGALLOC_QLOWER_OFFSET,FXMAC_TXQSEGALLOC_QLOWER_MASK);
             if (queue_num == 0)
             {
                 u32 rx_buf_size = 0;
@@ -275,8 +276,8 @@ FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num)
                                       FXMAC_DMACR_OFFSET);
                 reg &= ~FXMAC_DMACR_RXBUF_MASK;
 
-                rx_buf_size = ((u32)instance_p->max_mtu_size / (u32)FXMAC_RX_BUF_UNIT);
-                rx_buf_size += (((u32)instance_p->max_mtu_size % (u32)FXMAC_RX_BUF_UNIT) != (u32)0) ? 1U : 0U;
+                rx_buf_size = ((u32)instance_p->max_frame_size / (u32)FXMAC_RX_BUF_UNIT);
+                rx_buf_size += (((u32)instance_p->max_frame_size % (u32)FXMAC_RX_BUF_UNIT) != (u32)0) ? 1U : 0U;
 
                 reg |= ((rx_buf_size << (u32)(FXMAC_DMACR_RXBUF_SHIFT)) &
                         (u32)(FXMAC_DMACR_RXBUF_MASK));
@@ -286,8 +287,8 @@ FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num)
             else if (queue_num < instance_p->config.max_queue_num)
             {
                 u32 rx_buf_size = 0;
-                rx_buf_size = ((u32)instance_p->max_mtu_size / (u32)FXMAC_RX_BUF_UNIT);
-                rx_buf_size += (((u32)instance_p->max_mtu_size % (u32)FXMAC_RX_BUF_UNIT) != (u32)0) ? 1U : 0U;
+                rx_buf_size = ((u32)instance_p->max_frame_size / (u32)FXMAC_RX_BUF_UNIT);
+                rx_buf_size += (((u32)instance_p->max_frame_size % (u32)FXMAC_RX_BUF_UNIT) != (u32)0) ? 1U : 0U;
 
                 FXMAC_WRITEREG32(config_p->base_address, FXMAC_RXBUFQX_SIZE_OFFSET(queue_num), rx_buf_size & FXMAC_RXBUFQX_SIZE_MASK);
             }
@@ -295,14 +296,14 @@ FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num)
 
         if (((options & FXMAC_SGMII_ENABLE_OPTION) != 0x00000000U))
         {
-            reg_new_netcfg |= (FXMAC_NWCFG_SGMIIEN_MASK |
+            reg_new_netcfg |= (FXMAC_NWCFG_SGMII_MODE_ENABLE_MASK |
                                FXMAC_NWCFG_PCSSEL_MASK);
         }
 
         if ((options & FXMAC_LOOPBACK_NO_MII_OPTION) != 0x00000000U)
         {
             reg = FXMAC_READREG32(config_p->base_address, FXMAC_NWCTRL_OFFSET);
-            reg |= FXMAC_NWCFG_LOOPBACK_LOCAL_MASK;
+            reg |= FXMAC_NWCTRL_LOOPBACK_LOCAL_MASK;
             FXMAC_WRITEREG32(config_p->base_address, FXMAC_NWCTRL_OFFSET, reg);
         }
 
@@ -421,19 +422,19 @@ FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num)
         /* Turn off FCS stripping on receive packets */
         if ((options & FXMAC_FCS_STRIP_OPTION) != 0x00000000U)
         {
-            reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_FCSREM_MASK);
+            reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_FCS_REMOVE_MASK);
         }
 
         /* Turn off length/type field checking on receive packets */
         if ((options & FXMAC_LENTYPE_ERR_OPTION) != 0x00000000U)
         {
-            reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_LENERRDSCRD_MASK);
+            reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD_MASK);
         }
 
         /* Turn off flow control */
         if ((options & FXMAC_FLOW_CONTROL_OPTION) != 0x00000000U)
         {
-            reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_PAUSEEN_MASK);
+            reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_PAUSE_ENABLE_MASK);
         }
 
         /* Turn off promiscuous frame filtering (all frames are received) */
@@ -465,12 +466,14 @@ FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num)
         {
 
             instance_p->max_mtu_size = FXMAC_MTU;
-            instance_p->max_frame_size = FXMAC_MTU + FXMAC_HDR_SIZE + FXMAC_TRL_SIZE;
+            instance_p->max_frame_size = FXMAC_MAX_FRAME_SIZE;
 
             reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_JUMBO_MASK);
             reg = FXMAC_READREG32(instance_p->config.base_address,
                                   FXMAC_DMACR_OFFSET);
             reg &= ~FXMAC_DMACR_RXBUF_MASK;
+            FXMAC_WRITEREG32(config_p->base_address,
+                            FXMAC_TXQSEGALLOC_QLOWER_OFFSET,FXMAC_TXQSEGALLOC_QLOWER_CLEAN_MASK);
 
             if (queue_num == 0)
             {
@@ -479,8 +482,8 @@ FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num)
                 reg = FXMAC_READREG32(instance_p->config.base_address, FXMAC_DMACR_OFFSET);
                 reg &= ~FXMAC_DMACR_RXBUF_MASK;
 
-                rx_buf_size = ((u32)instance_p->max_mtu_size / (u32)FXMAC_RX_BUF_UNIT);
-                rx_buf_size += ((u32)instance_p->max_mtu_size % ((u32)FXMAC_RX_BUF_UNIT) != (u32)0) ? 1U : 0U;
+                rx_buf_size = ((u32)instance_p->max_frame_size / (u32)FXMAC_RX_BUF_UNIT);
+                rx_buf_size += ((u32)instance_p->max_frame_size % ((u32)FXMAC_RX_BUF_UNIT) != (u32)0) ? 1U : 0U;
 
                 reg |= ((rx_buf_size << (u32)(FXMAC_DMACR_RXBUF_SHIFT)) & (u32)(FXMAC_DMACR_RXBUF_MASK));
 
@@ -489,8 +492,8 @@ FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num)
             else if (queue_num < instance_p->config.max_queue_num)
             {
                 u32 rx_buf_size = 0;
-                rx_buf_size = ((u32)instance_p->max_mtu_size / (u32)FXMAC_RX_BUF_UNIT);
-                rx_buf_size += (((u32)instance_p->max_mtu_size % (u32)FXMAC_RX_BUF_UNIT) != (u32)0) ? 1U : 0U;
+                rx_buf_size = ((u32)instance_p->max_frame_size / (u32)FXMAC_RX_BUF_UNIT);
+                rx_buf_size += (((u32)instance_p->max_frame_size % (u32)FXMAC_RX_BUF_UNIT) != (u32)0) ? 1U : 0U;
 
                 FXMAC_WRITEREG32(config_p->base_address, FXMAC_RXBUFQX_SIZE_OFFSET(queue_num), rx_buf_size & FXMAC_RXBUFQX_SIZE_MASK);
             }
@@ -498,14 +501,14 @@ FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num)
 
         if (((options & FXMAC_SGMII_ENABLE_OPTION) != 0x00000000U))
         {
-            reg_new_net_cfg &= (u32)(~(FXMAC_NWCFG_SGMIIEN_MASK |
+            reg_new_net_cfg &= (u32)(~(FXMAC_NWCFG_SGMII_MODE_ENABLE_MASK |
                                        FXMAC_NWCFG_PCSSEL_MASK));
         }
 
         if ((options & FXMAC_LOOPBACK_NO_MII_OPTION) != 0x00000000U)
         {
             reg = FXMAC_READREG32(config_p->base_address, FXMAC_NWCTRL_OFFSET);
-            reg &= (u32)(~FXMAC_NWCFG_LOOPBACK_LOCAL_MASK);
+            reg &= (u32)(~FXMAC_NWCTRL_LOOPBACK_LOCAL_MASK);
             FXMAC_WRITEREG32(config_p->base_address, FXMAC_NWCTRL_OFFSET, reg);
         }
 

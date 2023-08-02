@@ -181,7 +181,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                 }
             }
             
-            /* link chaged */
+            /* link changed */
             if ((reg_isr & FXMAC_IXR_LINKCHANGE_MASK) != 0x00000000U)
             {
                 if (instance_p->link_change_handler)

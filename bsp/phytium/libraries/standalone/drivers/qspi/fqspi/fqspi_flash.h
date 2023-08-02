@@ -47,6 +47,7 @@ extern "C"
 #define FQSPI_FLASH_MF_ID_CYPRESS            0x01
 #define FQSPI_FLASH_MF_ID_GIGADEVICE         0xC8
 #define FQSPI_FLASH_MF_ID_BOYA               0x68
+#define FQSPI_FLASH_MF_ID_WINBOND            0xEF
 
 /* qspi flash supported information table */
 #define FQSPI_FLASH_INFO_TABLE                                                                  \
@@ -60,7 +61,8 @@ extern "C"
         {"GD25QL256D", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x19, FQSPI_FLASH_CAP_32MB},         \
         {"BY25Q64BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x17, FQSPI_FLASH_CAP_8MB},                 \
         {"BY25Q128BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x18, FQSPI_FLASH_CAP_16MB},               \
-        {"BY25Q32BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x16, FQSPI_FLASH_CAP_4MB}                  \
+        {"BY25Q32BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x16, FQSPI_FLASH_CAP_4MB},                 \
+        {"W25Q128", FQSPI_FLASH_MF_ID_WINBOND, 0x40, 0x18, FQSPI_FLASH_CAP_16MB}                \
     }
 
 #define FQSPI_FLASH_CMD_WRR 0x01        /* Write status register */
@@ -107,8 +109,8 @@ extern "C"
 #define FQSPI_BUSY_TIMEOUT_US           1000000
 #define FQSPI_NOR_FLASH_STATE_BUSY      BIT(0)
 
-#define FQSPI_FLASH_WP_ENABLE 0x7c      /* Write status register 2 */
-#define FQSPI_FLASH_WP_DISABLE 0x00     /* Write status register 2 */
+#define FQSPI_FLASH_WP_ENABLE 0x7c      
+#define FQSPI_FLASH_WP_DISABLE 0x00     
 /* Read some flash information */
 FError FQspiFlashSpecialInstruction(FQspiCtrl *pctrl, u8 cmd, u8 *buf, size_t len);
 

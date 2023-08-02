@@ -485,7 +485,7 @@ int dfs_tmpfs_stat(struct dfs_filesystem *fs,
     if (d_file == NULL)
         return -ENOENT;
 
-    st->st_dev = 0;
+    st->st_dev = (dev_t)dfs_filesystem_lookup(fs->path);
     st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
                   S_IWUSR | S_IWGRP | S_IWOTH;
     if (d_file->type == TMPFS_TYPE_DIR)

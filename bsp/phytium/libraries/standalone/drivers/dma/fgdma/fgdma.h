@@ -77,14 +77,21 @@ typedef enum
 
 typedef enum
 {
+    FGDMA_WAIT_INTR = 0, /* 中断模式 */
+    FGDMA_WAIT_POLL  /* 轮询模式 */
+} FGdmaWaitEnd; /* 支持的等待传输完成的模式 */
+
+typedef enum
+{
     FGDMA_BURST_SIZE_1_BYTE = 0,
     FGDMA_BURST_SIZE_2_BYTE = 1,
     FGDMA_BURST_SIZE_4_BYTE = 2,
     FGDMA_BURST_SIZE_8_BYTE = 3,
     FGDMA_BURST_SIZE_16_BYTE = 4
-} FGdmaBurstSize; /* 支持的读写请求size大小 */
+} FGdmaBurstSize; /* 所支持的读写请求burst size范围，其值本身是一个二次幂指数
+                   * 即，单次burst传输的最大数据字节数 = 2^burst size */
 
-#define FGDMA_GET_BURST_SIZE(brust_align)   (1U << brust_align)
+#define FGDMA_GET_BURST_BYTE(burst_size)   (1U << burst_size) /* 获取burst size所代表的单次burst传输的最大数据字节数 */
 
 typedef enum
 {
@@ -105,7 +112,7 @@ typedef enum
 #define FGDMA_ERR_INVALID_SIZE  FT_MAKE_ERRCODE(ErrModBsp, ErrGdma, 4)
 #define FGDMA_ERR_BDL_NOT_ENOUGH  FT_MAKE_ERRCODE(ErrModBsp, ErrGdma, 5)
 
-#define FGDMA_ADDR_ALIGMENT                      128U  /* 直接模式和BDL模式的地址需要按128位对齐 */
+#define FGDMA_ADDR_ALIGMENT                      128U /* BDL链表的地址需要按128字节对齐 */
 
 /**************************** Type Definitions *******************************/
 typedef struct _FGdma FGdma;
@@ -113,12 +120,12 @@ typedef struct _FGdmaChan FGdmaChan;
 
 typedef struct
 {
-    u32 instance_id;               /* GDMA控制器ID */
-    u32 irq_num[FGDMA_NUM_OF_CHAN];   /* GDMA控制器中断号 */
-    u32 irq_prority;               /* GDMA控制器中断优先级 */
-    volatile uintptr_t base_addr;  /* GDMA控制器基地址 */
-    FGdmaOperPriority rd_qos;      /* 读操作优先级 */
-    FGdmaOperPriority wr_qos;      /* 写操作优先级 */
+    u32 instance_id;                /* GDMA控制器ID */
+    u32 irq_num[FGDMA_NUM_OF_CHAN]; /* GDMA控制器中断号 */
+    u32 irq_prority;                /* GDMA控制器中断优先级 */
+    volatile uintptr_t base_addr;   /* GDMA控制器基地址 */
+    FGdmaOperPriority rd_qos;       /* 读操作优先级 */
+    FGdmaOperPriority wr_qos;       /* 写操作优先级 */
     u32 caps;                       /* driver capacity */
 } FGdmaConfig; /* GDMA控制器配置 */
 
@@ -150,9 +157,10 @@ typedef struct
     FGdmaOperPriority   rd_qos;  /* DMA通道读Qos配置 */
     FGdmaOperPriority   wr_qos;  /* DMA通道写Qos配置 */
     FGdmaOperMode       trans_mode; /* DMA通道的操作模式，直接模式或者BDL模式 */
+    FGdmaWaitEnd        wait_mode; /* 等待传输完成信号的模式，中断模式或轮询模式 */
     /* Direct模式有效 */
-    FGdmaBurstSize      rd_align; /* DMA读请求的Burst对齐方式 */
-    FGdmaBurstSize      wr_align; /* DMA写请求的Burst对齐方式 */
+    FGdmaBurstSize      rd_size; /* DMA读请求的burst size */
+    FGdmaBurstSize      wr_size; /* DMA写请求的burst size */
     /* BDL模式有效 */
     boolean             roll_back; /* 循环模式，TRUE: 当前BDL列表完成后，从第一个BDL项从新开始传输 */
     FGdmaBdlDesc        *descs;
@@ -185,22 +193,24 @@ typedef struct _FGdma
 #define FGDMA_DEFAULT_DIRECT_CHAN_CONFIG(_chan_id)\
     (FGdmaChanConfig){ \
         .chan_id = (_chan_id),\
-        .rd_align = FGDMA_BURST_SIZE_4_BYTE,\
-        .wr_align = FGDMA_BURST_SIZE_4_BYTE,\
+        .rd_size = FGDMA_BURST_SIZE_4_BYTE,\
+        .wr_size = FGDMA_BURST_SIZE_4_BYTE,\
         .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
         .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
         .trans_mode = FGDMA_OPER_DIRECT,\
+        .wait_mode = FGDMA_WAIT_INTR,\
         .roll_back = FALSE\
     }
 
 #define FGDMA_DEFAULT_BDL_CHAN_CONFIG(_chan_id, _bdl_descs, _bdl_desc_num)\
     (FGdmaChanConfig){ \
         .chan_id = (_chan_id),\
-        .rd_align = FGDMA_BURST_SIZE_4_BYTE,\
-        .wr_align = FGDMA_BURST_SIZE_4_BYTE,\
+        .rd_size = FGDMA_BURST_SIZE_4_BYTE,\
+        .wr_size = FGDMA_BURST_SIZE_4_BYTE,\
         .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
         .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,\
         .trans_mode = FGDMA_OPER_BDL,\
+        .wait_mode = FGDMA_WAIT_INTR,\
         .roll_back = FALSE,\
         .descs = _bdl_descs,\
         .total_desc_num = _bdl_desc_num,\
