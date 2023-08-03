@@ -347,10 +347,11 @@ void sys_exit(int value)
         lwp_put_to_user(clear_child_tid, &t, sizeof t);
         sys_futex(clear_child_tid, FUTEX_WAKE, 1, RT_NULL, RT_NULL, 0);
     }
+    lwp_terminate(lwp);
+
     main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
     if (main_thread == tid)
     {
-        lwp_terminate(lwp);
         lwp_wait_subthread_exit();
         lwp->lwp_ret = value;
     }
@@ -3495,6 +3496,7 @@ sysret_t sys_sigtimedwait(const sigset_t *sigset, siginfo_t *info, const struct 
     }
     else
     {
+        /* if sigset of user is smaller, clear extra space */
         memset(&lwpset, 0, sizeof(lwpset));
     }
 
@@ -3527,7 +3529,7 @@ sysret_t sys_sigtimedwait(const sigset_t *sigset, siginfo_t *info, const struct 
 
     sig = lwp_thread_signal_timedwait(rt_thread_self(), &lwpset, &kinfo, ptimeout);
 
-    if (info)
+    if (sig > 0 && info)
     {
         if (!lwp_user_accessable((void *)info, sizeof(*info)))
             return -EFAULT;
