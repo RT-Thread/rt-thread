@@ -571,9 +571,9 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
             rt_set_errno(-ret);
             ret = -1;
         }
-    }
 
-    rt_mutex_release(&ep->lock);
+        rt_mutex_release(&ep->lock);
+    }
 
     return ret;
 }
