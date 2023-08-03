@@ -130,7 +130,6 @@ void *arch_signal_ucontext_restore(rt_base_t user_sp)
 
 void *arch_signal_ucontext_save(rt_base_t user_sp, siginfo_t *psiginfo,
                                 struct rt_hw_exp_stack *exp_frame,
-                                rt_base_t elr, rt_base_t spsr,
                                 lwp_sigset_t *save_sig_mask)
 {
     struct signal_ucontext *new_sp;
@@ -146,11 +145,6 @@ void *arch_signal_ucontext_save(rt_base_t user_sp, siginfo_t *psiginfo,
 
         /* exp frame is already aligned as AAPCS64 required */
         memcpy(&new_sp->frame, exp_frame, sizeof(*exp_frame));
-
-        /* fix the 3 fields in exception frame, so that memcpy will be fine */
-        new_sp->frame.pc = elr;
-        new_sp->frame.cpsr = spsr;
-        new_sp->frame.sp_el0 = user_sp;
 
         /* copy the save_sig_mask */
         memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));

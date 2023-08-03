@@ -193,7 +193,7 @@ arch_syscall_exit:
     add sp, sp, #0x40
     RESTORE_FPU sp
 
-/* the sp is reset to the outer most level */
+/* the sp is reset to the outer most level, irq and fiq are disabled */
 START_POINT(arch_ret_to_user)
     /* save exception frame */
     SAVE_FPU sp
@@ -245,11 +245,18 @@ START_POINT(arch_ret_to_user)
 
     /**
      * push 2 dummy words to simulate a exception frame of interrupt
+     * @note in kernel state, the context switch dont saved the context
      */
-    add sp, sp, #-0x10
+    mrs x0, spsr_el1
+    mrs x1, elr_el1
+    stp x1, x0, [sp, #-0x10]!
     mov x0, sp
+    msr daifclr, #3
     bl lwp_thread_signal_catch
-    add sp, sp, #0x10
+    msr daifset, #3
+    ldp x1, x0, [sp], #0x10
+    msr spsr_el1, x0
+    msr elr_el1, x1
 
     /* check debug */
     /* restore exception frame */
@@ -405,7 +412,6 @@ arch_signal_quit:
     msr spsr_el1, x3
 
     ldp x29, x30, [sp], #0x10
-    // msr sp_el0, x29
 
     ldp x28, x29, [sp], #0x10
     msr fpcr, x28
@@ -452,12 +458,9 @@ arch_thread_signal_enter:
      * move exception frame to user stack
      */
     mrs x0, sp_el0
-    mrs x3, elr_el1
-    mov x5, x4
-    /** FIXME: spsr must restore from exception frame */
-    mrs x4, spsr_el1
+    mov x3, x4
 
-    /* arch_signal_ucontext_save(user_sp, psiginfo, exp_frame, elr, spsr, save_sig_mask); */
+    /* arch_signal_ucontext_save(user_sp, psiginfo, exp_frame, save_sig_mask); */
     bl arch_signal_ucontext_save
 
     dc cvau, x0
@@ -469,7 +472,16 @@ arch_thread_signal_enter:
      * @brief Prepare the environment for signal handler
      */
 
-    /** drop exp frame on kernel stack, reset kernel sp */
+    /** 
+     * reset the cpsr
+     * and drop exp frame on kernel stack, reset kernel sp
+     *
+     * @note Since we will reset spsr, but the reschedule will
+     * corrupt the spsr, we diable irq for a short period here
+     */
+    msr daifset, #3
+    ldr x1, [x20, #CONTEXT_OFFSET_SPSR_EL1]
+    msr spsr_el1, x1
     add sp, x20, #CONTEXT_SIZE
 
     /** reset user sp */
