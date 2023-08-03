@@ -309,13 +309,6 @@ int dfs_file_close(struct dfs_file *fd)
             result = vnode->fops->close(fd);
         }
 
-        /* close fd error, return */
-        if (result < 0)
-        {
-            dfs_fm_unlock();
-            return result;
-        }
-
         if (vnode->ref_count == 1)
         {
             /* remove from hash */
