@@ -40,13 +40,13 @@ struct eventfd_ctx
 #ifndef RT_USING_DFS_V2
 static int eventfd_close(struct dfs_file *file);
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req);
-static int eventfd_read(struct dfs_file *file, void *buf, size_t count);
-static int eventfd_write(struct dfs_file *file, const void *buf, size_t count);
+static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count);
+static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count);
 #else
 static int eventfd_close(struct dfs_file *file);
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req);
-static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
-static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
+static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
+static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
 #endif
 
 static const struct dfs_file_ops eventfd_fops =
@@ -76,7 +76,6 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
     count = ctx->count;
 
     rt_poll_add(&ctx->reader_queue, req);
-    rt_poll_add(&ctx->writer_queue, req);
 
     if (count > 0)
         events |= POLLIN;
@@ -91,9 +90,9 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 }
 
 #ifndef RT_USING_DFS_V2
-static int eventfd_read(struct dfs_file *file, void *buf, size_t count)
+static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count)
 #else
-static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 #endif
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
@@ -107,7 +106,7 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
-    if (ctx->count == 0)
+    if (ctx->count <= 0)
     {
         if (file->flags & O_NONBLOCK)
         {
@@ -135,7 +134,6 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
     }
 
     ctx->count -= counter_num;
-
     (*buffer) = counter_num;
 
     rt_mutex_release(&ctx->lock);
@@ -144,9 +142,9 @@ static int eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 }
 
 #ifndef RT_USING_DFS_V2
-static int eventfd_write(struct dfs_file *file, const void *buf, size_t count)
+static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count)
 #else
-static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 #endif
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
@@ -182,7 +180,6 @@ static int eventfd_write(struct dfs_file *file, const void *buf, size_t count, o
             /* Release the mutex to avoid a deadlock */
             rt_mutex_release(&ctx->lock);
             rt_wqueue_wait(&ctx->writer_queue, 0, RT_WAITING_FOREVER);
-            rt_wqueue_wakeup(&ctx->reader_queue, (void *)POLLIN);
             rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
         }
     }
@@ -232,6 +229,11 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
             rt_free(ctx);
             ret = -ENOMEM;
         }
+
+        #ifdef RT_USING_DFS_V2
+        df->fops = &eventfd_fops;
+        #endif
+
     }
 
     return ret;
@@ -245,7 +247,10 @@ static int do_eventfd(unsigned int count, int flags)
     rt_ssize_t ret = 0;
 
     if (flags & ~EFD_FLAGS_SET)
-        return -RT_EINVAL;
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
 
     fd = fd_new();
     if (fd >= 0)
@@ -257,12 +262,14 @@ static int do_eventfd(unsigned int count, int flags)
         if (status < 0)
         {
             fd_release(fd);
-            ret = status;
+            rt_set_errno(-status);
+            ret = -1;
         }
     }
     else
     {
-        ret = fd;
+        rt_set_errno(-fd);
+        ret = -1;
     }
 
     return ret;
