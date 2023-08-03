@@ -164,7 +164,7 @@ static int epoll_poll(struct dfs_file *file, struct rt_pollreq *req)
                 fdlist = fdlist->next;
                 mask = epoll_get_event(fdlist, &fdlist->req);
 
-                if (mask & fdlist->epev.events)
+                if (mask & fdlist->revents)
                 {
                     events |= mask | POLLIN | EPOLLRDNORM;
                     break;
@@ -221,7 +221,7 @@ static int epoll_rdlist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
         if (rdlist != RT_NULL)
         {
             rdlist->rdl_event = fdl;
-            rdlist->rdl_event->epev.events = fdl->epev.events & revents;
+            rdlist->rdl_event->epev.events = fdl->revents & revents;
             rdlist->next = ep->rdlist->next;
             rdlist->exclusive = 0;
             ep->rdlist->next = rdlist;
@@ -250,7 +250,7 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
 
     fdlist = rt_container_of(wait, struct rt_fd_list, wqn);
 
-    if (fdlist->epev.events)
+    if (fdlist->revents)
     {
         epoll_rdlist_add(fdlist, (rt_ubase_t)key);
     }
@@ -279,10 +279,10 @@ static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep
 {
     rt_uint32_t mask = 0;
 
-    fdlist->req._key = fdlist->epev.events;
+    fdlist->req._key = fdlist->revents;
 
     mask = epoll_get_event(fdlist, &fdlist->req);
-    if (mask & fdlist->epev.events)
+    if (mask & fdlist->revents)
     {
         epoll_rdlist_add(fdlist, mask);
     }
@@ -316,6 +316,10 @@ static int epoll_epf_init(int fd)
             epoll_member_init(ep);
 
             rt_mutex_init(&ep->lock, EPOLL_MUTEX_NAME, RT_IPC_FLAG_FIFO);
+
+            #ifdef RT_USING_DFS_V2
+            df->fops = &epoll_fops;
+            #endif
 
             df->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
             if (df->vnode)
@@ -353,13 +357,13 @@ static int epoll_epf_init(int fd)
 
 static int epoll_do_create(int size)
 {
-    rt_err_t ret = 0;
+    rt_err_t ret = -1;
     int status;
     int fd;
 
     if (size < 0)
     {
-        ret = -EINVAL;
+        rt_set_errno(EINVAL);
     }
     else
     {
@@ -371,12 +375,12 @@ static int epoll_do_create(int size)
             if (status < 0)
             {
                 fd_release(fd);
-                ret = status;
+                rt_set_errno(-status);
             }
         }
         else
         {
-            ret = fd;
+            rt_set_errno(-fd);
         }
     }
 
@@ -518,23 +522,31 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
 {
     struct dfs_file *epdf;
     struct rt_eventpoll *ep;
-    rt_err_t ret = -EINVAL;
+    rt_err_t ret = 0;
 
     if (op & ~EFD_SHARED_EPOLL_TYPE)
-        return -EINVAL;
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
 
     if ((epfd == fd) || (epfd < 0) || (fd < 0) || (event->data.fd != fd))
-        return -EINVAL;
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
 
     if (!(event->events & EPOLLEXCLUSIVE_BITS))
-        return -EINVAL;
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
 
     epdf = fd_get(epfd);
 
     if (epdf->vnode->data)
     {
         ep = epdf->vnode->data;
-        ret = 0;
 
         rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
 
@@ -550,12 +562,18 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
             ret = epoll_ctl_mod(epdf, event);
             break;
         default:
-            ret = -EINVAL;
+            rt_set_errno(EINVAL);
             break;
         }
-    }
 
-    rt_mutex_release(&ep->lock);
+        if (ret < 0)
+        {
+            rt_set_errno(-ret);
+            ret = -1;
+        }
+
+        rt_mutex_release(&ep->lock);
+    }
 
     return ret;
 }
@@ -613,13 +631,13 @@ static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req)
         {
             if (df->vnode->fops->poll)
             {
-                req->_key = fl->epev.events | POLLERR | POLLHUP;
+                req->_key = fl->revents | POLLERR | POLLHUP;
                 mask = df->vnode->fops->poll(df, req);
                 if (mask < 0)
                     return mask;
             }
 
-            mask &= fl->epev.events | EPOLLOUT | POLLERR;
+            mask &= fl->revents | EPOLLOUT | POLLERR;
         }
     }
 
@@ -659,7 +677,8 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                         if (rdlist->rdl_event->revents & EPOLLET)
                         {
                             rt_wqueue_remove(&rdlist->rdl_event->wqn);
-                            epoll_get_event(rdlist->rdl_event, &rdlist->rdl_event->req);
+                            mask = epoll_get_event(rdlist->rdl_event, &rdlist->rdl_event->req);
+                            rdlist->rdl_event->epev.events = mask & rdlist->rdl_event->revents;
                             isfree = 1;
                         }
                         else
@@ -729,7 +748,7 @@ static int epoll_do_wait(int epfd, struct epoll_event *events, int maxevents, in
     struct rt_eventpoll *ep;
     struct dfs_file *df;
     lwp_sigset_t old_sig, new_sig;
-    rt_err_t ret = -EINVAL;
+    rt_err_t ret = 0;
 
     if (ss)
     {
@@ -753,6 +772,12 @@ static int epoll_do_wait(int epfd, struct epoll_event *events, int maxevents, in
     if (ss)
     {
         lwp_thread_signal_mask(rt_thread_self(), LWP_SIG_MASK_CMD_SET_MASK, &old_sig, RT_NULL);
+    }
+
+    if (ret < 0)
+    {
+        rt_set_errno(-ret);
+        ret = -1;
     }
 
     return ret;
