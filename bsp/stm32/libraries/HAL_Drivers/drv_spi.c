@@ -108,8 +108,6 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     if (cfg->data_width == 8)
     {
         spi_handle->Init.DataSize = SPI_DATASIZE_8BIT;
-        spi_handle->TxXferSize = 8;
-        spi_handle->RxXferSize = 8;
     }
     else if (cfg->data_width == 16)
     {
