@@ -103,12 +103,6 @@
 #error "No definition RT_USING_POSIX_CLOCK"
 #endif /* RT_USING_POSIX_CLOCK */
 
-struct musl_sockaddr
-{
-    uint16_t sa_family;
-    char     sa_data[14];
-};
-
 void lwp_cleanup(struct rt_thread *tid);
 
 #ifdef ARCH_MM_MMU
@@ -5389,8 +5383,10 @@ sysret_t sys_chmod(const char *fileName, mode_t mode)
     char *copy_fileName;
     size_t len_fileName, copy_len_fileName;
     int err_fileName;
+#ifdef RT_USING_DFS_V2
     struct dfs_attr attr;
     attr.st_mode = mode;
+#endif
     int ret = 0;
 
     len_fileName = lwp_user_strlen(fileName, &err_fileName);
@@ -5425,10 +5421,12 @@ sysret_t sys_reboot(int magic)
 }
 
 ssize_t sys_pread64(int fd, void *buf, int size, off_t offset)
+#ifdef RT_USING_DFS_V2
 {
+    ssize_t pread(int fd, void *buf, size_t len, off_t offset);
 #ifdef ARCH_MM_MMU
-    void *kmem = RT_NULL;
     ssize_t ret = -1;
+    void *kmem = RT_NULL;
 
     if (!size)
     {
@@ -5439,7 +5437,6 @@ ssize_t sys_pread64(int fd, void *buf, int size, off_t offset)
     {
         return -EFAULT;
     }
-
     kmem = kmem_get(size);
     if (!kmem)
     {
@@ -5470,12 +5467,20 @@ ssize_t sys_pread64(int fd, void *buf, int size, off_t offset)
     return (ret < 0 ? GET_ERRNO() : ret);
 #endif
 }
+#else
+{
+    ssize_t ret = -ENOSYS;
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+#endif
 
 ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
+#ifdef RT_USING_DFS_V2
 {
+    ssize_t pwrite(int fd, const void *buf, size_t len, off_t offset);
 #ifdef ARCH_MM_MMU
-    void *kmem = RT_NULL;
     ssize_t ret = -1;
+    void *kmem = RT_NULL;
 
     if (!size)
     {
@@ -5486,7 +5491,6 @@ ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
     {
         return -EFAULT;
     }
-
     kmem = kmem_get(size);
     if (!kmem)
     {
@@ -5514,6 +5518,12 @@ ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
     return (ret < 0 ? GET_ERRNO() : ret);
 #endif
 }
+#else
+{
+    ssize_t ret = -ENOSYS;
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+#endif
 
 const static struct rt_syscall_def func_table[] =
 {

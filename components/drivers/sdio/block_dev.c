@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <dfs_fs.h>
+#include <dfs_file.h>
 
 #include <drivers/mmcsd_core.h>
 #include <drivers/gpt.h>
@@ -427,6 +428,8 @@ const static struct rt_device_ops mmcsd_blk_ops =
 };
 #endif
 
+#ifdef RT_USING_DFS_V2
+
 static ssize_t rt_mmcsd_fops_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
     int result = 0;
@@ -624,6 +627,7 @@ const static struct dfs_file_ops mmcsd_blk_fops =
     RT_NULL,
     rt_mmcsd_fops_poll
 };
+#endif
 
 rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
 {
@@ -672,7 +676,9 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
     rt_device_register(&(blk_dev->dev), card->host->name,
                        RT_DEVICE_FLAG_RDWR);
 #ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_DFS_V2
     blk_dev->dev.fops  = &mmcsd_blk_fops;
+#endif
 #endif
     rt_list_insert_after(&blk_devices, &blk_dev->list);
 
@@ -720,7 +726,9 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
             rt_device_register(&(blk_dev->dev), dname,
                                RT_DEVICE_FLAG_RDWR);
 #ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_DFS_V2
             blk_dev->dev.fops  = &mmcsd_blk_fops;
+#endif
 #endif
             rt_list_insert_after(&blk_devices, &blk_dev->list);
         }

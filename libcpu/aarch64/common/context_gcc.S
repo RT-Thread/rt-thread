@@ -394,10 +394,13 @@ vector_irq:
 
     BL      rt_interrupt_enter
     LDP     X0, X1, [SP]
+#ifdef RT_USING_LWP
     SAVE_USER_CTX
-
+#endif
     BL      rt_hw_trap_irq
+#ifdef RT_USING_LWP
     BL      lwp_uthread_ctx_restore
+#endif
     BL      rt_interrupt_leave
 
     LDP     X0, X1, [SP], #0x10
@@ -531,10 +534,14 @@ vector_irq_exit:
 START_POINT(vector_exception)
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!
+#ifdef RT_USING_LWP
     SAVE_USER_CTX
+#endif
 
     BL      rt_hw_trap_exception
+#ifdef RT_USING_LWP
     BL      lwp_uthread_ctx_restore
+#endif
 
     LDP     X0, X1, [SP], #0x10
     MOV     SP, X0
@@ -543,8 +550,9 @@ START_POINT_END(vector_exception)
 
 START_POINT(vector_serror)
     SAVE_CONTEXT
-
+#ifdef RT_USING_LWP
     SAVE_USER_CTX
+#endif
     STP     X0, X1, [SP, #-0x10]!
     BL      rt_hw_trap_serror
     b .

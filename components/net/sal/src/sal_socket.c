@@ -26,6 +26,10 @@
 #include <ipc/workqueue.h>
 #endif
 
+#ifdef RT_USING_LWP
+#include <lwp_sys_socket.h>
+#endif
+
 /* check system workqueue stack size */
 #if defined(SAL_INTERNET_CHECK) && RT_SYSTEM_WORKQUEUE_STACKSIZE < 1536
 #error "The system workqueue stack size must more than 1536 bytes"
@@ -59,44 +63,6 @@ struct ifconf
         char* ifcu_buf;
         struct sal_ifreq *ifcu_req;
     } ifc_ifcu;
-};
-
-struct musl_sockaddr
-{
-    uint16_t sa_family;
-    char     sa_data[16];
-};
-
-struct musl_ifmap {
-    unsigned long int mem_start;
-    unsigned long int mem_end;
-    unsigned short int base_addr;
-    unsigned char irq;
-    unsigned char dma;
-    unsigned char port;
-};
-
-struct musl_ifreq
-{
-    union
-    {
-        char ifrn_name[IFNAMSIZ];
-    } ifr_ifrn;
-    union
-    {
-        struct musl_sockaddr ifru_addr;
-        struct musl_sockaddr ifru_dstaddr;
-        struct musl_sockaddr ifru_broadaddr;
-        struct musl_sockaddr ifru_netmask;
-        struct musl_sockaddr ifru_hwaddr;
-        short int ifru_flags;
-        int ifru_ivalue;
-        int ifru_mtu;
-        struct musl_ifmap ifru_map;
-        char ifru_slave[IFNAMSIZ];
-        char ifru_newname[IFNAMSIZ];
-        char *ifru_data;
-    } ifr_ifru;
 };
 
 #ifdef SAL_USING_TLS
@@ -1082,7 +1048,6 @@ int sal_closesocket(int socket)
 #define IFF_RUNNING 0x40
 #define IFF_NOARP 0x80
 
-
 int sal_ioctlsocket(int socket, long cmd, void *arg)
 {
     rt_slist_t *node  = RT_NULL;
@@ -1122,7 +1087,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             {
                 if (cur_netdev_list == RT_NULL)
                 {
-                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    LOG_E("ifconfig: network interface device list error.\n");
                     return -1;
                 }
 
@@ -1151,7 +1116,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             {
                 if (cur_netdev_list == RT_NULL)
                 {
-                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    LOG_E("ifconfig: network interface device list error.\n");
                     return -1;
                 }
 
@@ -1186,7 +1151,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             {
                 if (cur_netdev_list == RT_NULL)
                 {
-                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    LOG_E("ifconfig: network interface device list error.\n");
                     return -1;
                 }
 
@@ -1221,7 +1186,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             {
                 if (cur_netdev_list == RT_NULL)
                 {
-                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    LOG_E("ifconfig: network interface device list error.\n");
                     return -1;
                 }
 
@@ -1243,6 +1208,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             if (!strcmp(ifr->ifr_ifrn.ifrn_name,sock->netdev->name))
             {
                 addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
+#ifdef RT_USING_LWP
                 if (!strcmp("lo", sock->netdev->name))
                 {
                     struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
@@ -1253,6 +1219,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                     struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
                     musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_ETHER;
                 }
+#endif
                 rt_memcpy(addr->sa_data, sock->netdev->hwaddr, sock->netdev->hwaddr_len);
                 return 0;
             }
@@ -1260,7 +1227,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             {
                 if (cur_netdev_list == RT_NULL)
                 {
-                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    LOG_E("ifconfig: network interface device list error.\n");
                     return -1;
                 }
 
@@ -1270,6 +1237,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                     if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
+#ifdef RT_USING_LWP
                         if (!strcmp("lo", netdev->name))
                         {
                             struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
@@ -1280,6 +1248,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                             struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
                             musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_ETHER;
                         }
+#endif
                         rt_memcpy(addr->sa_data, netdev->hwaddr, netdev->hwaddr_len);
                         return 0;
                     }
@@ -1297,7 +1266,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             {
                 if (cur_netdev_list == RT_NULL)
                 {
-                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    LOG_E("ifconfig: network interface device list error.\n");
                     return -1;
                 }
 
@@ -1328,7 +1297,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             {
                 if (cur_netdev_list == RT_NULL)
                 {
-                    rt_kprintf("ifconfig: network interface device list error.\n");
+                    LOG_E("ifconfig: network interface device list error.\n");
                     return -1;
                 }
 
@@ -1354,6 +1323,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             sock->netdev->flags = ifr->ifr_ifru.ifru_flags;
             return 0;
         case SIOCGIFCONF:
+        {
             struct ifconf *ifconf_tmp;
             ifconf_tmp = (struct ifconf *)arg;
             int count_size = 0;
@@ -1370,7 +1340,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             ifconf_tmp->ifc_len = sizeof(struct sal_ifreq) * count_size;
             ifconf_tmp->ifc_ifcu.ifcu_buf =  ifconf_tmp->ifc_ifcu.ifcu_buf - sizeof(struct sal_ifreq) * count_size;
             return 0;
-
+        }
         default:
             break;
         }
