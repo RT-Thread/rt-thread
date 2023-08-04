@@ -57,6 +57,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_QSPI
         select RT_USING_SPI
+        select RT_USING_SPI_BITOPS
         if BSP_USING_QSPI
             config USING_QSPI_CHANNEL0
                 bool "using qspi channel_0"
