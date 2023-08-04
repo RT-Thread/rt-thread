@@ -27,6 +27,8 @@
 
 #define DAT_LENGTH 128
 #define QSPI_ALIGNED_BYTE 4
+static rt_uint8_t rd_buf[DAT_LENGTH];
+static rt_uint8_t wr_buf[DAT_LENGTH];
 
 static phytium_qspi_bus phytium_qspi =
 {
@@ -324,7 +326,6 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
     /*Distinguish the write mode according to different commands*/
     if (cmd == FQSPI_FLASH_CMD_PP || cmd == FQSPI_FLASH_CMD_QPP || cmd == FQSPI_FLASH_CMD_4PP || cmd == FQSPI_FLASH_CMD_4QPP)
     {
-        rt_uint8_t wr_buf[DAT_LENGTH];
         rt_uint8_t len = message->length;
 
         rt_memcpy(&wr_buf, (char *)message->send_buf, len);
@@ -354,8 +355,6 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
     if (cmd == FQSPI_FLASH_CMD_READ || cmd == FQSPI_FLASH_CMD_4READ || cmd == FQSPI_FLASH_CMD_FAST_READ || cmd == FQSPI_FLASH_CMD_4FAST_READ ||
             cmd == FQSPI_FLASH_CMD_DUAL_READ || cmd == FQSPI_FLASH_CMD_QIOR || cmd == FQSPI_FLASH_CMD_4QIOR)
     {
-        rt_uint8_t rd_buf[DAT_LENGTH];
-
         ret |= FQspiFlashReadDataConfig(&(qspi_bus->fqspi), cmd);
         if (FT_SUCCESS != ret)
         {
