@@ -140,6 +140,8 @@ void dfs_file_deinit(struct dfs_file *file);
 int dfs_file_open(struct dfs_file *file, const char *path, int flags, mode_t mode);
 int dfs_file_close(struct dfs_file *file);
 
+off_t dfs_file_get_fpos(struct dfs_file *file);
+void dfs_file_set_fpos(struct dfs_file *file, off_t fpos);
 ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len);
 ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len);
 off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);

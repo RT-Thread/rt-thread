@@ -491,11 +491,9 @@ int dfs_elm_close(struct dfs_file *file)
         RT_ASSERT(fd != RT_NULL);
 
         result = f_close(fd);
-        if (result == FR_OK)
-        {
-            /* release memory */
-            rt_free(fd);
-        }
+
+        /* release memory */
+        rt_free(fd);
     }
 
     return elm_result_to_dfs(result);

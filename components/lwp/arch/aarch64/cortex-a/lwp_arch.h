@@ -48,7 +48,6 @@ rt_inline void icache_invalid_all(void)
  */
 void *arch_signal_ucontext_save(rt_base_t user_sp, siginfo_t *psiginfo,
                                 struct rt_hw_exp_stack *exp_frame,
-                                rt_base_t elr, rt_base_t spsr,
                                 lwp_sigset_t *save_sig_mask);
 
 /**
