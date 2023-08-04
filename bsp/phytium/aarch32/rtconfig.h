@@ -8,8 +8,6 @@
 
 #define RT_NAME_MAX 16
 #define RT_USING_SMART
-#define RT_USING_SMP
-#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -20,7 +18,6 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
-#define SYSTEM_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
@@ -60,9 +57,6 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50001
-
-/* RT-Thread Architecture */
-
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
@@ -141,6 +135,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
 #define RT_USING_TTY
+#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -151,6 +146,8 @@
 #define RT_MMCSD_STACK_SIZE 4096
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SPI
+#define RT_USING_QSPI
 #define RT_USING_DEV_BUS
 
 /* Using USB */
@@ -376,11 +373,11 @@
 
 #define BSP_USING_UART
 #define RT_USING_UART1
-#define BSP_USING_ETH
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
-#define BSP_USING_SDIO
-#define BSP_USING_SDCARD_FATFS
-#define USING_SDIO1
+#define BSP_USING_SPI
+#define RT_USING_SPIM2
+#define BSP_USING_GPIO
+#define BSP_USING_QSPI
+#define USING_QSPI_CHANNEL0
 
 /* Board extended module Drivers */
 
@@ -399,6 +396,13 @@
 
 /* Components Configuration */
 
+#define USE_SPI
+#define USE_FSPIM
+#define USE_QSPI
+
+/* Qspi Configuration */
+
+#define USE_FQSPI
 #define USE_GIC
 #define ENABLE_GICV3
 #define USE_IOPAD
@@ -408,6 +412,8 @@
 /* Usart Configuration */
 
 #define ENABLE_Pl011_UART
+#define USE_GPIO
+#define ENABLE_FGPIO
 #define USE_ETH
 
 /* Eth Configuration */
