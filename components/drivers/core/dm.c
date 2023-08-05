@@ -9,7 +9,6 @@
  */
 
 #include <rtthread.h>
-
 #include <drivers/core/dm.h>
 
 #ifdef RT_USING_SMP
@@ -27,7 +26,7 @@ INIT_EXPORT(rti_secondary_cpu_end, "7.end");
 
 void rt_dm_secondary_cpu_init(void)
 {
-#if RT_DEBUGING_INIT
+#if RT_DEBUGING_PRE_INIT
     int result;
     const struct rt_init_desc *desc;
 
@@ -45,7 +44,7 @@ void rt_dm_secondary_cpu_init(void)
     {
         (*fn_ptr)();
     }
-#endif /* RT_DEBUGING_INIT */
+#endif /* RT_DEBUGING_PRE_INIT */
 }
 #endif /* RT_USING_SMP */
 

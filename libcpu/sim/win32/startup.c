@@ -81,7 +81,7 @@ struct rt_init_tag
 {
     const char *level;
     init_fn_t fn;
-#ifdef RT_DEBUGING_INIT
+#ifdef RT_DEBUGING_PRE_INIT
     const char *fn_name;
 #endif
 };
@@ -114,7 +114,7 @@ static int rt_init_objects_sort(void)
         {
             table->level = ((struct rt_init_desc *)ptr_begin)->level;
             table->fn = ((struct rt_init_desc *)ptr_begin)->fn;
-#ifdef RT_DEBUGING_INIT
+#ifdef RT_DEBUGING_PRE_INIT
             table->fn_name = ((struct rt_init_desc *)ptr_begin)->fn_name;
 #endif
             ptr_begin += sizeof(struct rt_init_desc) / sizeof(unsigned int);
@@ -168,7 +168,7 @@ void rt_components_board_init(void)
             {
                 break;
             }
-#ifdef RT_DEBUGING_INIT
+#ifdef RT_DEBUGING_PRE_INIT
             rt_kprintf("initialize %s", rt_init_table[index_i].fn_name);
             result = rt_init_table[index_i].fn();
             rt_kprintf(":%d done\n", result);
@@ -203,7 +203,7 @@ void rt_components_init(void)
             {
                 break;
             }
-#ifdef RT_DEBUGING_INIT
+#ifdef RT_DEBUGING_PRE_INIT
             rt_kprintf("initialize %s", rt_init_table[index_i].fn_name);
             result = rt_init_table[index_i].fn();
             rt_kprintf(":%d done\n", result);

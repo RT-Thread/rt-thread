@@ -84,7 +84,7 @@ INIT_EXPORT(rti_end, "6.end");
  */
 void rt_components_board_init(void)
 {
-#ifdef RT_DEBUGING_INIT
+#ifdef RT_DEBUGING_PRE_INIT
     int result;
     const struct rt_init_desc *desc;
     for (desc = &__rt_init_desc_rti_board_start; desc < &__rt_init_desc_rti_board_end; desc ++)
@@ -100,7 +100,7 @@ void rt_components_board_init(void)
     {
         (*fn_ptr)();
     }
-#endif /* RT_DEBUGING_INIT */
+#endif /* RT_DEBUGING_PRE_INIT */
 }
 
 /**
@@ -108,7 +108,7 @@ void rt_components_board_init(void)
  */
 void rt_components_init(void)
 {
-#ifdef RT_DEBUGING_INIT
+#ifdef RT_DEBUGING_PRE_INIT
     int result;
     const struct rt_init_desc *desc;
 
@@ -126,7 +126,7 @@ void rt_components_init(void)
     {
         (*fn_ptr)();
     }
-#endif /* RT_DEBUGING_INIT */
+#endif /* RT_DEBUGING_PRE_INIT */
 }
 #endif /* RT_USING_COMPONENTS_INIT */
 

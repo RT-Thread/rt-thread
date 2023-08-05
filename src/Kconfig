@@ -203,16 +203,16 @@ menuconfig RT_USING_DEBUG
     default y
 
     if RT_USING_DEBUG
+        config RT_DEBUGING_PRE_INIT
+            bool "Enable debugging of components pre-initialization"
+            default n
+
         config RT_DEBUGING_COLOR
             bool "Enable color debugging log"
             default y
 
         config RT_DEBUGING_CONTEXT
             bool "Enable debugging of environment and context check"
-            default y
-
-        config RT_DEBUGING_INIT
-            bool "Enable debugging of components initialization"
             default y
 
         config RT_DEBUGING_PAGE_LEAK
