@@ -10,6 +10,9 @@
 name: manual_scons_dist_STM32_all
 
 on:
+  # Runs at 16:00 UTC (BeiJing 00:00) on the 3st of every month
+  schedule:
+    - cron:  '0 16 2 * *'
   workflow_dispatch:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputs
     inputs:
