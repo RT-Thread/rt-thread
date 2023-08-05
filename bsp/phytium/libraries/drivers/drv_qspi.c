@@ -14,13 +14,21 @@
 
 #ifdef RT_USING_QSPI
 #include <rtthread.h>
+#ifdef RT_USING_SMART
+    #include <ioremap.h>
+#endif
 #include "rtdevice.h"
 #include "drv_qspi.h"
 #include "fqspi_flash.h"
 #include "rtdbg.h"
 #include "fiopad.h"
+#include "fqspi_hw.h"
+
 
 #define DAT_LENGTH 128
+#define QSPI_ALIGNED_BYTE 4
+static rt_uint8_t rd_buf[DAT_LENGTH];
+static rt_uint8_t wr_buf[DAT_LENGTH];
 
 static phytium_qspi_bus phytium_qspi =
 {
@@ -38,13 +46,17 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
     rt_uint32_t qspi_id = phytium_qspi_bus->fqspi_id;
 
 #ifdef USING_QSPI_CHANNEL0
+#if defined CONFIG_TARGET_E2000D
     FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR51_REG0_OFFSET, FIOPAD_FUNC0);
-    FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR45_REG0_OFFSET, FIOPAD_FUNC0);
-#endif
-
-#ifdef USING_QSPI_CHANNEL1
+#elif defined CONFIG_TARGET_E2000Q
     FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR55_REG0_OFFSET, FIOPAD_FUNC0);
+#endif
+#elif defined USING_QSPI_CHANNEL1
+#if defined CONFIG_TARGET_E2000D
+    FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR45_REG0_OFFSET, FIOPAD_FUNC0);
+#elif defined CONFIG_TARGET_E2000Q
     FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR49_REG0_OFFSET, FIOPAD_FUNC0);
+#endif
 #endif
 
     FQspiDeInitialize(&(phytium_qspi_bus->fqspi));
@@ -86,7 +98,7 @@ static rt_err_t phytium_qspi_configure(struct rt_spi_device *device, struct rt_s
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
     phytium_qspi_bus *qspi_bus;
-    qspi_bus = (struct phytium_qspi_bus *) device->bus->parent.user_data;
+    qspi_bus = (phytium_qspi_bus *)(struct phytium_qspi_bus *) device->bus->parent.user_data;
     rt_err_t ret = RT_EOK;
 
     ret = FQspiInit(qspi_bus);
@@ -101,7 +113,191 @@ static rt_err_t phytium_qspi_configure(struct rt_spi_device *device, struct rt_s
     return RT_EOK;
 }
 
-static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static FError QspiFlashWriteData(FQspiCtrl *pctrl, u8 command, uintptr addr, const u8 *buf, size_t len)
+{
+    RT_ASSERT(pctrl && buf);
+    FError ret = FQSPI_SUCCESS;
+    u32 loop = 0;
+    const u32 mask = (u32)GENMASK(1, 0);
+    u32 reg_val = 0;
+    u32 val = 0;
+    u32 aligned_bit = 0;
+
+    u8 tmp[QSPI_ALIGNED_BYTE] = {0xff, 0xff, 0xff, 0xff};
+    uintptr base_addr = pctrl->config.base_addr;
+
+    if (FT_COMPONENT_IS_READY != pctrl->is_ready)
+    {
+        LOG_E("Nor flash not ready !!!");
+        return FQSPI_NOT_READY;
+    }
+
+    /* Flash write enable */
+    FQspiFlashEnableWrite(pctrl);
+
+    memset(&pctrl->wr_cfg, 0, sizeof(pctrl->wr_cfg));
+    /* set cmd region, command */
+    pctrl->wr_cfg.wr_cmd = command;
+    pctrl->wr_cfg.wr_wait = FQSPI_WAIT_ENABLE;
+    /* clear addr select bit */
+    pctrl->wr_cfg.wr_addr_sel = 0;
+    /* set wr mode, use buffer */
+    pctrl->wr_cfg.wr_mode = FQSPI_USE_BUFFER_ENABLE;
+    /* set sck_sel region, clk_div */
+    pctrl->wr_cfg.wr_sck_sel = FQSPI_SCK_DIV_128;
+
+    /* set addr_sel region, FQSPI_ADDR_SEL_3 or FQSPI_ADDR_SEL_4 */
+    switch (command)
+    {
+    case FQSPI_FLASH_CMD_PP:
+    case FQSPI_FLASH_CMD_QPP:
+        pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_3;
+        break;
+    case FQSPI_FLASH_CMD_4PP:
+    case FQSPI_FLASH_CMD_4QPP:
+        pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_4;
+        break;
+    default:
+        ret |= FQSPI_NOT_SUPPORT;
+        return ret;
+        break;
+    }
+
+    /*write wr_cfg to Write config register 0x08 */
+    FQspiWrCfgConfig(pctrl);
+    if (IS_ALIGNED(addr, QSPI_ALIGNED_BYTE)) /* if copy src is aligned by 4 bytes */
+    {
+        /* write alligned data into memory space */
+        for (loop = 0; loop < (len >> 2); loop++)
+        {
+            FQSPI_DAT_WRITE(addr + QSPI_ALIGNED_BYTE * loop, *(u32 *)(buf + QSPI_ALIGNED_BYTE * loop));
+        }
+        /* write not alligned data into memory space */
+        if (len & mask)
+        {
+            addr = addr + (len & ~mask);
+            memcpy(tmp, buf + (len & ~mask), len & mask);
+            FQSPI_DAT_WRITE(addr, *(u32 *)(tmp));
+        }
+    }
+    else
+    {
+        aligned_bit = (addr & mask);
+        addr = addr - aligned_bit;
+        reg_val = FQSPI_READ_REG32(addr, 0);
+
+        for (loop = 0; loop < (QSPI_ALIGNED_BYTE - aligned_bit); loop++)
+        {
+            val = (val << 8) | (buf[loop]);
+            reg_val &= (~(0xff << (loop * 8)));
+        }
+
+        reg_val |= val;
+        reg_val = __builtin_bswap32(reg_val);
+        FQSPI_DAT_WRITE(addr, reg_val);
+
+        buf = buf + loop;
+        len = len - loop;
+        addr = addr + QSPI_ALIGNED_BYTE;
+
+        LOG_E("addr=%p, buf=%p, len=%d, value=%#x\r\n", addr, buf, len, *(u32 *)(buf));
+
+        for (loop = 0; loop < (len >> 2); loop++)
+        {
+            FQSPI_DAT_WRITE(addr + QSPI_ALIGNED_BYTE * loop, *(u32 *)(buf + QSPI_ALIGNED_BYTE * loop));
+        }
+
+        if (!IS_ALIGNED(len, QSPI_ALIGNED_BYTE))
+        {
+            buf = buf + QSPI_ALIGNED_BYTE * loop;
+            len = len - QSPI_ALIGNED_BYTE * loop;
+            addr = addr + QSPI_ALIGNED_BYTE * loop;
+            memcpy(tmp, buf, len);
+            FQSPI_DAT_WRITE(addr, *(u32 *)(tmp));
+        }
+    }
+
+    /* flush buffer data to Flash */
+    FQspiWriteFlush(base_addr);
+
+    ret = FQspiFlashWaitForCmd(pctrl);
+
+    return ret;
+}
+
+size_t QspiFlashReadData(FQspiCtrl *pctrl, uintptr addr, u8 *buf, size_t len)
+{
+    /* addr of copy dst or src might be zero */
+    RT_ASSERT(pctrl && buf);
+    size_t loop = 0;
+    const size_t cnt = len / QSPI_ALIGNED_BYTE;    /* cnt number of 4-bytes need copy  */
+    const size_t remain = len % QSPI_ALIGNED_BYTE; /* remain number of 1-byte not aligned */
+    u8 align_buf[QSPI_ALIGNED_BYTE];
+    size_t copy_len = 0;
+
+    intptr src_addr = (intptr)addr; /* conver to 32/64 bit addr */
+    intptr dst_addr = (intptr)buf;
+
+    if (FT_COMPONENT_IS_READY != pctrl->is_ready)
+    {
+        LOG_E("Nor flash not ready !!!");
+        return 0;
+    }
+    if (0 == pctrl->rd_cfg.rd_cmd)
+    {
+        LOG_E("Nor flash read command is not ready !!!");
+        return 0;
+    }
+
+    if (0 == len)
+    {
+        return 0;
+    }
+
+    if (IS_ALIGNED(src_addr, QSPI_ALIGNED_BYTE)) /* if copy src is aligned by 4 bytes */
+    {
+        /* read 4-bytes aligned buf part */
+        for (loop = 0; loop < cnt; loop++)
+        {
+            *(u32 *)dst_addr = *(volatile u32 *)(src_addr);
+            src_addr += QSPI_ALIGNED_BYTE;
+            dst_addr += QSPI_ALIGNED_BYTE;
+        }
+
+        copy_len += (loop << 2);
+
+        if (remain > 0)
+        {
+            *(u32 *)align_buf = *(volatile u32 *)(src_addr);
+        }
+
+        /* read remain un-aligned buf byte by byte */
+        for (loop = 0; loop < remain; loop++)
+        {
+            *(u8 *)dst_addr = align_buf[loop];
+            dst_addr += 1;
+        }
+
+        copy_len += loop;
+
+    }
+    else /* if copy src is not aligned */
+    {
+        /* read byte by byte */
+        for (loop = 0; loop < len; loop++)
+        {
+            *(u8 *)dst_addr = *(volatile u8 *)(src_addr);
+            dst_addr += 1;
+            src_addr += 1;
+        }
+        copy_len += loop;
+
+    }
+
+    return copy_len;
+}
+
+static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(message != RT_NULL);
@@ -110,18 +306,18 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
     rt_uint32_t cmd = qspi_message->instruction.content;
     rt_uint32_t flash_addr = qspi_message->address.content;
 
-    rt_uint8_t *rcvb = message->recv_buf;
-    rt_uint8_t *sndb = message->send_buf;
+    const void *rcvb = message->recv_buf;
+    const void *sndb = message->send_buf;
     FError ret = FT_SUCCESS;
 
-    qspi_bus = (struct phytium_qspi_bus *) device->bus->parent.user_data;
+    qspi_bus = (phytium_qspi_bus *)(struct phytium_qspi_bus *) device->bus->parent.user_data;
+
 #ifdef USING_QSPI_CHANNEL0
     qspi_bus->fqspi.config.channel = 0;
-#endif
-
-#ifdef USING_QSPI_CHANNEL1
+#elif defined USING_QSPI_CHANNEL1
     qspi_bus->fqspi.config.channel = 1;
 #endif
+
     uintptr addr = qspi_bus->fqspi.config.mem_start + qspi_bus->fqspi.config.channel * qspi_bus->fqspi.flash_size + flash_addr;
 
 #ifdef RT_USING_SMART
@@ -130,10 +326,9 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
     /*Distinguish the write mode according to different commands*/
     if (cmd == FQSPI_FLASH_CMD_PP || cmd == FQSPI_FLASH_CMD_QPP || cmd == FQSPI_FLASH_CMD_4PP || cmd == FQSPI_FLASH_CMD_4QPP)
     {
-        rt_uint8_t *wr_buf = NULL;
-        wr_buf = (rt_uint8_t *)rt_malloc(DAT_LENGTH * sizeof(rt_uint8_t));
         rt_uint8_t len = message->length;
-        rt_memcpy(wr_buf, (char *)message->send_buf, len);
+
+        rt_memcpy(&wr_buf, (char *)message->send_buf, len);
         ret = FQspiFlashErase(&(qspi_bus->fqspi), FQSPI_FLASH_CMD_SE, flash_addr);
         if (FT_SUCCESS != ret)
         {
@@ -141,7 +336,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
             return RT_ERROR;
         }
         /* write norflash data */
-        ret = FQspiFlashWriteData(&(qspi_bus->fqspi), cmd, addr, wr_buf, len);
+        ret = QspiFlashWriteData(&(qspi_bus->fqspi), cmd, addr, (u8 *)&wr_buf, len);
 
         if (FT_SUCCESS != ret)
         {
@@ -152,7 +347,6 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
         {
             rt_kprintf("Write successfully!!!\r\n");
         }
-        rt_free(wr_buf);
 
         return RT_EOK;
     }
@@ -161,18 +355,14 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
     if (cmd == FQSPI_FLASH_CMD_READ || cmd == FQSPI_FLASH_CMD_4READ || cmd == FQSPI_FLASH_CMD_FAST_READ || cmd == FQSPI_FLASH_CMD_4FAST_READ ||
             cmd == FQSPI_FLASH_CMD_DUAL_READ || cmd == FQSPI_FLASH_CMD_QIOR || cmd == FQSPI_FLASH_CMD_4QIOR)
     {
-        rt_uint8_t *rd_buf = NULL;
-        rd_buf = (rt_uint8_t *)rt_malloc(DAT_LENGTH * sizeof(rt_uint8_t));
-
         ret |= FQspiFlashReadDataConfig(&(qspi_bus->fqspi), cmd);
-
         if (FT_SUCCESS != ret)
         {
             rt_kprintf("Failed to config read, test result 0x%x.\r\n", ret);
             return RT_ERROR;
         }
         /* read norflash data */
-        size_t read_len = FQspiFlashReadData(&(qspi_bus->fqspi), addr, rd_buf, DAT_LENGTH);
+        size_t read_len = QspiFlashReadData(&(qspi_bus->fqspi), addr, (u8 *)&rd_buf, DAT_LENGTH);
         message->length = read_len;
         if (read_len != DAT_LENGTH)
         {
@@ -182,8 +372,8 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
         else
         {
             rt_kprintf("Read successfully!!!\r\n");
-            message->recv_buf = rd_buf;
-            rt_free(rd_buf);
+            message->recv_buf = &rd_buf;
+
         }
         FtDumpHexByte(message->recv_buf, read_len);
 
@@ -194,7 +384,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
     {
         if (cmd == FQSPI_FLASH_CMD_RDID || cmd == FQSPI_FLASH_CMD_RDSR1 || cmd == FQSPI_FLASH_CMD_RDSR2 || cmd == FQSPI_FLASH_CMD_RDSR3)
         {
-            ret |= FQspiFlashSpecialInstruction(&(qspi_bus->fqspi), cmd, rcvb, sizeof(rcvb));
+            ret |= FQspiFlashSpecialInstruction(&(qspi_bus->fqspi), cmd, (u8 *)rcvb, sizeof(rcvb));
             if (FT_SUCCESS != ret)
             {
                 LOG_E("Failed to read flash information.\n");
@@ -214,7 +404,7 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
             return RT_ERROR;
         }
 
-        ret |= FQspiFlashWriteReg(&(qspi_bus->fqspi), cmd, sndb, 1);
+        ret |= FQspiFlashWriteReg(&(qspi_bus->fqspi), cmd, (u8 *)sndb, 1);
         if (FT_SUCCESS != ret)
         {
             LOG_E("Failed to write flash reg.\n");
@@ -223,6 +413,8 @@ static rt_uint32_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi
 
         return RT_EOK;
     }
+    rt_kprintf("cmd not found!!!\r\n");
+    return ret;
 }
 
 static struct rt_spi_ops phytium_qspi_ops =
@@ -253,11 +445,9 @@ __exit:
         if (qspi_device)
         {
             rt_free(qspi_device);
-
         }
-
-        return  result;
     }
+    return  result;
 }
 
 int rt_hw_qspi_init(void)
@@ -341,15 +531,13 @@ void qspi_thread(void *parameter)
     RT_ASSERT(res != RT_EOK);
 
     rt_kprintf("The status reg = %x \n", recv);
-
-    return 0;
 }
 
 rt_err_t qspi_sample(int argc, char *argv[])
 {
     rt_thread_t thread;
     rt_err_t res;
-    thread = rt_thread_create("qspi_thread", qspi_thread, RT_NULL, 2048, 25, 10);
+    thread = rt_thread_create("qspi_thread", qspi_thread, RT_NULL, 4096, 25, 10);
     res = rt_thread_startup(thread);
     RT_ASSERT(res == RT_EOK);
 
@@ -358,4 +546,3 @@ rt_err_t qspi_sample(int argc, char *argv[])
 /* Enter qspi_sample command for testing */
 MSH_CMD_EXPORT(qspi_sample, qspi sample);
 #endif
-
