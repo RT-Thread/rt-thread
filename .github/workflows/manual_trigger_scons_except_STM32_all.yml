@@ -89,7 +89,7 @@ jobs:
          #- {RTT_BSP_NAME: "core-v-mcu_core-v-cv32e40p", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "core-v-mcu/core-v-cv32e40p"} #特殊toolchain，不支持
           - {RTT_BSP_NAME: "dm365", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "dm365"}
           - {RTT_BSP_NAME: "efm32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "efm32"}
-          - {RTT_BSP_NAME: "ESP32_C3", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C3"}  #bsp还不完善，toolchain不支持
+          - {RTT_BSP_NAME: "ESP32_C3", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C3"} \
          #- {RTT_BSP_NAME: "essemi_es32f0654", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f0654"}   #GCC link文件没支持好
          #- {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}   #GCC link文件没支持好
           - {RTT_BSP_NAME: "essemi_es32f369x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f369x"}
@@ -135,7 +135,7 @@ jobs:
          #- {RTT_BSP_NAME: "imx_imx6ull-smart", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx/imx6ull-smart"} # toolchain还没支持
           - {RTT_BSP_NAME: "imx6sx_cortex-a9", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx6sx/cortex-a9"}
           - {RTT_BSP_NAME: "imx6ul", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx6ul"}
-          - {RTT_BSP_NAME: "imxrt_imxrt1021-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1021-nxp-evk"}  #GCC编译有问题
+          - {RTT_BSP_NAME: "imxrt_imxrt1021-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1021-nxp-evk"} \
           - {RTT_BSP_NAME: "imxrt_imxrt1052-atk-commander", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-atk-commander"}
           - {RTT_BSP_NAME: "imxrt_imxrt1052-fire-pro", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-fire-pro"}
           - {RTT_BSP_NAME: "imxrt_imxrt1052-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-nxp-evk"}
@@ -221,9 +221,9 @@ jobs:
           - {RTT_BSP_NAME: "qemu-virt64-riscv", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "qemu-virt64-riscv"}  #riscv64-unknown-elf-gcc toolchain不支持
         # - {RTT_BSP_NAME: "raspberry-pi_raspi2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pi/raspi2"} #编译错误，toolchain不对
           - {RTT_BSP_NAME: "raspberry-pi_raspi3-32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pi/raspi3-32"}
-          - {RTT_BSP_NAME: "raspberry-pi_raspi3-64", RTT_TOOL_CHAIN: "aarch64", RTT_BSP: "raspberry-pi/raspi3-64"}  #TOOLCHAIN未支持
+          - {RTT_BSP_NAME: "raspberry-pi_raspi3-64", RTT_TOOL_CHAIN: "aarch64", RTT_BSP: "raspberry-pi/raspi3-64"} 
           - {RTT_BSP_NAME: "raspberry-pi_raspi4-32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pi/raspi4-32"}
-          - {RTT_BSP_NAME: "raspberry-pi_raspi4-64", RTT_TOOL_CHAIN: "aarch64", RTT_BSP: "raspberry-pi/raspi4-64"} #toolchain未支持
+          - {RTT_BSP_NAME: "raspberry-pi_raspi4-64", RTT_TOOL_CHAIN: "aarch64", RTT_BSP: "raspberry-pi/raspi4-64"} 
           - {RTT_BSP_NAME: "raspberry-pico", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "raspberry-pico"} 
           - {RTT_BSP_NAME: "renesas_ebf_qi_min_6m5", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ebf_qi_min_6m5"}
           - {RTT_BSP_NAME: "renesas_ra2l1-cpk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra2l1-cpk"}  #编译错误
