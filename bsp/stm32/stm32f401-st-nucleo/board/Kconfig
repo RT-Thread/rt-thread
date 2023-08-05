@@ -19,6 +19,8 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM9
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
@@ -81,7 +83,12 @@ menu "On-chip Peripheral Drivers"
         bool "Enable timer"
         default n
         select RT_USING_HWTIMER
+
         if BSP_USING_TIM
+            config BSP_USING_TIM9
+                bool "Enable TIM9"
+                default n
+
             config BSP_USING_TIM11
                 bool "Enable TIM11"
                 default n
