@@ -138,6 +138,7 @@ jobs:
           echo $RTT_BSP
           ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
           sed -i "s/# ${{ github.event.inputs.bsp_config }} is not set/${{ github.event.inputs.bsp_config }}=y/g" bsp/$RTT_BSP/.config
+          scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           scons -C bsp/$RTT_BSP -j$(nproc) 
           mkdir -p ${{ github.workspace }}/$RTT_BSP 
