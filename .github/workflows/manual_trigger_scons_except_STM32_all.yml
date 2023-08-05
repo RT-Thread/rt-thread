@@ -135,7 +135,7 @@ jobs:
          #- {RTT_BSP_NAME: "imx_imx6ull-smart", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx/imx6ull-smart"} # toolchain还没支持
           - {RTT_BSP_NAME: "imx6sx_cortex-a9", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx6sx/cortex-a9"}
           - {RTT_BSP_NAME: "imx6ul", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx6ul"}
-          - {RTT_BSP_NAME: "imxrt_imxrt1021-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1021-nxp-evk"} \
+          - {RTT_BSP_NAME: "imxrt_imxrt1021-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1021-nxp-evk"} 
           - {RTT_BSP_NAME: "imxrt_imxrt1052-atk-commander", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-atk-commander"}
           - {RTT_BSP_NAME: "imxrt_imxrt1052-fire-pro", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-fire-pro"}
           - {RTT_BSP_NAME: "imxrt_imxrt1052-nxp-evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imxrt/imxrt1052-nxp-evk"}
