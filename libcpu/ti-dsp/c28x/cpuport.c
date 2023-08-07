@@ -158,16 +158,6 @@ int __rt_ffs(int value)
 }
 #endif
 
-/**
- * shutdown CPU
- */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    RT_ASSERT(0);
-}
-
 void rt_interrupt_enter(void)
 {
     rt_base_t level;

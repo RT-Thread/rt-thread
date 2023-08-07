@@ -27,28 +27,6 @@
 extern unsigned char __bss_end;
 
 /**
- * this function will reset CPU
- *
- */
-void rt_hw_cpu_reset(void)
-{
-    rt_kprintf("reboot system...\n");
-    while (1);
-}
-
-/**
- * this function will shutdown CPU
- *
- */
-void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    while (1);
-}
-
-
-/**
  * This is the timer interrupt service routine.
  */
 void rt_hw_timer_handler(void)

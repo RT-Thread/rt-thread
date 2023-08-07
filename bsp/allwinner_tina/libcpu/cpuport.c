@@ -160,7 +160,7 @@ void rt_hw_cpu_reset()
  *  shutdown CPU
  *
  */
-void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");
