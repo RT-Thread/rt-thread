@@ -370,7 +370,7 @@ rt_err_t rt_wlan_dev_unregister_event_handler(struct rt_wlan_device *device, rt_
 
 void rt_wlan_dev_indicate_event_handle(struct rt_wlan_device *device, rt_wlan_dev_event_t event, struct rt_wlan_buff *buff)
 {
-    void *parameter[RT_WLAN_DEV_EVENT_NUM];
+    void *parameter[RT_WLAN_DEV_EVENT_NUM] = {0};
     rt_wlan_dev_event_handler handler[RT_WLAN_DEV_EVENT_NUM] = {0};
     int i;
     rt_base_t level;
