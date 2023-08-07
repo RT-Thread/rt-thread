@@ -159,18 +159,25 @@ long list_thread(void)
     rt_list_t *obj_list[LIST_FIND_OBJ_NR];
     rt_list_t *next = (rt_list_t *)RT_NULL;
     const char *item_title = "thread";
+    const size_t tcb_strlen = sizeof(void *) * 2 + 2;
     int maxlen;
 
     list_find_init(&find_arg, RT_Object_Class_Thread, obj_list, sizeof(obj_list) / sizeof(obj_list[0]));
 
     maxlen = RT_NAME_MAX;
 
+    rt_kprintf("%-*.*s ", tcb_strlen, tcb_strlen, "rt_thread_t");
+
 #ifdef RT_USING_SMP
     rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
+    object_split(tcb_strlen);
+    rt_kprintf(" ");
     object_split(maxlen);
     rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- ---\n");
 #else
     rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
+    object_split(tcb_strlen);
+    rt_kprintf(" ");
     object_split(maxlen);
     rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- ---\n");
 #endif /*RT_USING_SMP*/
@@ -202,6 +209,7 @@ long list_thread(void)
                     rt_uint8_t stat;
                     rt_uint8_t *ptr;
 
+                    rt_kprintf("%p ", thread);
 #ifdef RT_USING_SMP
                     if (thread->oncpu != RT_CPU_DETACHED)
                         rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->oncpu, thread->bind_cpu, thread->current_priority);

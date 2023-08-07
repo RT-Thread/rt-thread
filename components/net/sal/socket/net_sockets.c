@@ -52,8 +52,9 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
                 rt_set_errno(-ENOMEM);
                 return -1;
             }
-            rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
+
             dfs_vnode_init(d->vnode, FT_SOCKET, dfs_net_get_fops());
+            d->flags = O_RDWR; /* set flags as read and write */
 
             /* set socket to the data of dfs_file */
             d->vnode->data = (void *)(size_t)new_socket;
@@ -258,6 +259,7 @@ int socket(int domain, int type, int protocol)
     if (socket >= 0)
     {
         dfs_vnode_init(d->vnode, FT_SOCKET, dfs_net_get_fops());
+        d->flags = O_RDWR; /* set flags as read and write */
 
         /* set socket to the data of dfs_file */
         d->vnode->data = (void *)(size_t)socket;

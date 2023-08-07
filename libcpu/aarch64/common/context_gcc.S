@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-05-18     Jesven       the first version
+ * 2023-06-24     WangXiaoyao  Support backtrace for user thread
  */
 
 #include "rtconfig.h"
@@ -375,13 +376,31 @@ rt_hw_context_switch_interrupt:
 vector_fiq:
     B       .
 
+.macro SAVE_USER_CTX
+    MRS     X1, SPSR_EL1
+    AND     X1, X1, 0xf
+    CMP     X1, XZR
+
+    BNE     1f
+    BL      lwp_uthread_ctx_save
+    LDP     X0, X1, [SP]
+1:
+.endm
+
 .globl vector_irq
 vector_irq:
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!   /* X0 is thread sp */
 
     BL      rt_interrupt_enter
+    LDP     X0, X1, [SP]
+#ifdef RT_USING_LWP
+    SAVE_USER_CTX
+#endif
     BL      rt_hw_trap_irq
+#ifdef RT_USING_LWP
+    BL      lwp_uthread_ctx_restore
+#endif
     BL      rt_interrupt_leave
 
     LDP     X0, X1, [SP], #0x10
@@ -515,7 +534,15 @@ vector_irq_exit:
 START_POINT(vector_exception)
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!
+#ifdef RT_USING_LWP
+    SAVE_USER_CTX
+#endif
+
     BL      rt_hw_trap_exception
+#ifdef RT_USING_LWP
+    BL      lwp_uthread_ctx_restore
+#endif
+
     LDP     X0, X1, [SP], #0x10
     MOV     SP, X0
     RESTORE_CONTEXT_WITHOUT_MMU_SWITCH
@@ -523,6 +550,9 @@ START_POINT_END(vector_exception)
 
 START_POINT(vector_serror)
     SAVE_CONTEXT
+#ifdef RT_USING_LWP
+    SAVE_USER_CTX
+#endif
     STP     X0, X1, [SP, #-0x10]!
     BL      rt_hw_trap_serror
     b .
