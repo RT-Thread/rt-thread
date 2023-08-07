@@ -440,7 +440,7 @@ rt_weak void rt_hw_cpu_shutdown(void)
 /**
  * reset CPU
  */
-rt_weak void rt_hw_cpu_reset(void)
+void rt_hw_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
 }

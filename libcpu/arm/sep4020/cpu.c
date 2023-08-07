@@ -152,7 +152,7 @@ rt_base_t rt_hw_cpu_dcache_status()
  * reset cpu by dog's time-out
  *
  */
-rt_weak void rt_hw_cpu_reset()
+void rt_hw_cpu_reset()
 {
 
     /* enable watchdog */

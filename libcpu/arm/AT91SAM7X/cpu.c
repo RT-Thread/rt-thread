@@ -20,7 +20,7 @@
  * this function will reset CPU
  *
  */
-rt_weak void rt_hw_cpu_reset()
+void rt_hw_cpu_reset()
 {
 }
 

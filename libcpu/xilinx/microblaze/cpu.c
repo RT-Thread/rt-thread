@@ -11,14 +11,6 @@
 #include <rtthread.h>
 
 /**
- * this function will reset CPU
- *
- */
-rt_weak void rt_hw_cpu_reset()
-{
-}
-
-/**
  * this function will shutdown CPU
  *
  */
