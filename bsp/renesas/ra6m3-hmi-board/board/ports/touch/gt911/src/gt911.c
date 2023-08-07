@@ -375,7 +375,7 @@ static rt_err_t gt911_control(struct rt_touch_device *touch, int cmd, void *arg)
     }
     case RT_TOUCH_CTRL_SET_X_TO_Y:
     {
-        config[8] = config[8] ^= (1 << 3);
+        config[8] ^= (1 << 3);
         break;
     }
     case RT_TOUCH_CTRL_SET_MODE:
