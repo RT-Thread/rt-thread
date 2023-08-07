@@ -167,20 +167,5 @@ void rt_hw_cpu_reset()
     /* NEVER REACHED */
 }
 
-/**
- *  shutdown CPU
- *
- */
-rt_weak void rt_hw_cpu_shutdown()
-{
-    rt_base_t level;
-    rt_kprintf("shutdown...\n");
-
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
-}
 
 /*@}*/

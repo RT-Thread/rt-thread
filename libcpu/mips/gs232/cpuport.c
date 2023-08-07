@@ -34,18 +34,6 @@ void rt_hw_cpu_reset(void)
     while (1);
 }
 
-/**
- * this function will shutdown CPU
- *
- */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    while (1);
-}
-
-
 #define Hit_Invalidate_I    0x10
 #define Hit_Invalidate_D    0x11
 #define CONFIG_SYS_CACHELINE_SIZE   32

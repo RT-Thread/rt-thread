@@ -133,7 +133,7 @@ void start_cpu(int argc, char *argv[])
 MSH_CMD_EXPORT(start_cpu, start_cpu);
 
 #ifdef RT_AMP_SLAVE
-void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     if (psci_ops.cpu_off)
     {

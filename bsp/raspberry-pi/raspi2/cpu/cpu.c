@@ -17,17 +17,6 @@
  */
 /*@{*/
 
-/** shutdown CPU */
-void rt_hw_cpu_shutdown()
-{
-    rt_uint32_t level;
-    rt_kprintf("shutdown...\n");
 
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
-}
 
 /*@}*/
