@@ -23,7 +23,7 @@
 #include <sys/stat.h>
 #include <compiler_private.h>
 #ifdef RT_USING_POSIX_STDIO
-    #include "libc.h"
+#include <posix/stdio.h>
 #endif /* RT_USING_POSIX_STDIO */
 
 #define DBG_TAG    "armlibc.syscalls"
@@ -153,7 +153,7 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
     if (fh == STDIN)
     {
 #ifdef RT_USING_POSIX_STDIO
-        if (libc_stdio_get_console() < 0)
+        if (rt_posix_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard output before initializing Compiler");
             return 0; /* error, but keep going */
@@ -375,7 +375,7 @@ int fgetc(FILE *f)
 #ifdef RT_USING_POSIX_STDIO
     char ch;
 
-    if (libc_stdio_get_console() < 0)
+    if (rt_posix_stdio_get_console() < 0)
     {
         LOG_W("Do not invoke standard output before initializing Compiler");
         return 0;
