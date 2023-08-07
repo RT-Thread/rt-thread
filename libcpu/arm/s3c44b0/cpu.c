@@ -100,7 +100,7 @@ rt_base_t rt_hw_cpu_dcache_status()
  * this function will reset CPU
  *
  */
-rt_weak void rt_hw_cpu_reset()
+void rt_hw_cpu_reset()
 {
 }
 
