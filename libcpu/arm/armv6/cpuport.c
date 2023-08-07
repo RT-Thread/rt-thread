@@ -162,7 +162,7 @@ void rt_hw_cpu_reset()
  *  shutdown CPU
  *
  */
-rt_weak void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_base_t level;
     rt_kprintf("shutdown...\n");

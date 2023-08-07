@@ -52,16 +52,3 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     /* return task's current stack address */
     return (rt_uint8_t *)stk;
 }
-
-/** shutdown CPU */
-void rt_hw_cpu_shutdown(void)
-{
-    rt_uint32_t level;
-    rt_kprintf("shutdown...\n");
-
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
-}

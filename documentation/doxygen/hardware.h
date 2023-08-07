@@ -74,14 +74,4 @@ void rt_hw_interrupt_umask(int vector);
 void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler,
                             rt_isr_handler_t *old_handler);
 
-/**
- * This function will reset whole platform.
- */
-void rt_hw_cpu_reset(void);
-
-/**
- * This function will halt whole platform.
- */
-void rt_hw_cpu_shutdown(void);
-
 /**@}*/
