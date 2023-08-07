@@ -123,9 +123,7 @@ rt_err_t rt_wlan_dev_connect(struct rt_wlan_device *device, struct rt_wlan_info 
 rt_err_t rt_wlan_dev_fast_connect(struct rt_wlan_device *device, struct rt_wlan_info *info, const char *password, int password_len)
 {
     rt_err_t result = RT_EOK;
-    struct rt_wlan_buff buff;
-
-    int len = 0;
+    struct rt_wlan_buff buff = {0};
 
     if (device == RT_NULL)
     {
