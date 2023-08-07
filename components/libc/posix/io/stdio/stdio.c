@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017/10/15     bernard      the first version
+ * 2023/08/07     Meco Man     rename as posix/stdio.c
  */
 
 #include <rtthread.h>
@@ -13,24 +14,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <limits.h>
 #include <fcntl.h>
 #include <sys/time.h>
 #include <sys/errno.h>
-#include "libc.h"
+#include "posix/stdio.h"
 
 #define STDIO_DEVICE_NAME_MAX   32
 
 int sys_dup2(int oldfd, int new);
 
-int libc_system_init(void)
+int rt_posix_stdio_init(void)
 {
-#ifdef RT_USING_POSIX_STDIO
     rt_device_t dev_console;
 
     dev_console = rt_console_get_device();
     if (dev_console)
     {
-        int fd = libc_stdio_set_console(dev_console->parent.name, O_RDWR);
+        int fd = rt_posix_stdio_set_console(dev_console->parent.name, O_RDWR);
         if (fd < 0)
         {
             return -1;
@@ -40,15 +41,14 @@ int libc_system_init(void)
         sys_dup2(fd, 1);
         sys_dup2(fd, 2);
     }
-#endif /* RT_USING_POSIX_STDIO */
     return 0;
 }
-INIT_ENV_EXPORT(libc_system_init);
+INIT_ENV_EXPORT(rt_posix_stdio_init);
 
-#if defined(RT_USING_POSIX_STDIO) && defined(RT_USING_NEWLIBC)
+#if defined(RT_USING_NEWLIBC)
 
 static FILE* std_console = NULL;
-int libc_stdio_set_console(const char* device_name, int mode)
+int rt_posix_stdio_set_console(const char* device_name, int mode)
 {
     FILE *fp;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -111,7 +111,7 @@ int libc_stdio_set_console(const char* device_name, int mode)
     return -1;
 }
 
-int libc_stdio_get_console(void)
+int rt_posix_stdio_get_console(void)
 {
     if (std_console)
         return fileno(std_console);
@@ -119,11 +119,11 @@ int libc_stdio_get_console(void)
         return -1;
 }
 
-#elif defined(RT_USING_POSIX_STDIO) && defined(RT_USING_MUSLLIBC)
+#elif defined(RT_USING_MUSLLIBC)
 
 static FILE* std_console = NULL;
 
-int libc_stdio_set_console(const char* device_name, int mode)
+int rt_posix_stdio_set_console(const char* device_name, int mode)
 {
     FILE *fp;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -159,7 +159,7 @@ int libc_stdio_set_console(const char* device_name, int mode)
     return -1;
 }
 
-int libc_stdio_get_console(void)
+int rt_posix_stdio_get_console(void)
 {
     int ret = -1;
     if (std_console)
@@ -170,10 +170,10 @@ int libc_stdio_get_console(void)
     return ret;
 }
 
-#elif defined(RT_USING_POSIX_STDIO)
+#else
 
 static int std_fd = -1;
-int libc_stdio_set_console(const char* device_name, int mode)
+int rt_posix_stdio_set_console(const char* device_name, int mode)
 {
     int fd;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -194,28 +194,78 @@ int libc_stdio_set_console(const char* device_name, int mode)
     return std_fd;
 }
 
-int libc_stdio_get_console(void) {
+int rt_posix_stdio_get_console(void) {
     return std_fd;
 }
-#endif /* defined(RT_USING_POSIX_STDIO) && defined(RT_USING_NEWLIBC) */
+#endif /* defined(RT_USING_NEWLIBC) */
 
-int isatty(int fd)
+ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
 {
-#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
-    if(fd == STDOUT_FILENO || fd == STDERR_FILENO)
-    {
-        return 1;
-    }
-#endif
+    char *cur_pos, *new_lineptr;
+    size_t new_lineptr_len;
+    int c;
 
-#ifdef RT_USING_POSIX_STDIO
-    if(fd == STDIN_FILENO)
+    if (lineptr == NULL || n == NULL || stream == NULL)
     {
-        return 1;
+        errno = EINVAL;
+        return -1;
     }
-#endif
 
-    rt_set_errno(ENOTTY);
-    return 0;
+    if (*lineptr == NULL)
+    {
+        *n = 128; /* init len */
+        if ((*lineptr = (char *)malloc(*n)) == NULL)
+        {
+            errno = ENOMEM;
+            return -1;
+        }
+    }
+
+    cur_pos = *lineptr;
+    for (;;)
+    {
+        c = getc(stream);
+
+        if (ferror(stream) || (c == EOF && cur_pos == *lineptr))
+            return -1;
+
+        if (c == EOF)
+            break;
+
+        if ((*lineptr + *n - cur_pos) < 2)
+        {
+            if (LONG_MAX / 2 < *n)
+            {
+#ifdef EOVERFLOW
+                errno = EOVERFLOW;
+#else
+                errno = ERANGE; /* no EOVERFLOW defined */
+#endif
+                return -1;
+            }
+            new_lineptr_len = *n * 2;
+
+            if ((new_lineptr = (char *)realloc(*lineptr, new_lineptr_len)) == NULL)
+            {
+                errno = ENOMEM;
+                return -1;
+            }
+            cur_pos = new_lineptr + (cur_pos - *lineptr);
+            *lineptr = new_lineptr;
+            *n = new_lineptr_len;
+        }
+
+        *cur_pos++ = (char)c;
+
+        if (c == delim)
+            break;
+    }
+
+    *cur_pos = '\0';
+    return (ssize_t)(cur_pos - *lineptr);
 }
-RTM_EXPORT(isatty);
+
+ssize_t getline(char **lineptr, size_t *n, FILE *stream)
+{
+    return getdelim(lineptr, n, '\n', stream);
+}
