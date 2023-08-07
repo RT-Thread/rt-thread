@@ -103,12 +103,6 @@
 #error "No definition RT_USING_POSIX_CLOCK"
 #endif /* RT_USING_POSIX_CLOCK */
 
-struct musl_sockaddr
-{
-    uint16_t sa_family;
-    char     sa_data[14];
-};
-
 void lwp_cleanup(struct rt_thread *tid);
 
 #ifdef ARCH_MM_MMU
@@ -551,7 +545,7 @@ sysret_t sys_open(const char *name, int flag, ...)
 #endif
 }
 
-/* syscall: "open" ret: "int" args: "const char *" "mode_t" "mode" */
+/* syscall: "openat" ret: "int" args: "const char *" "mode_t" "mode" */
 sysret_t sys_openat(int dirfd, const char *name, int flag, mode_t mode)
 {
 #ifdef ARCH_MM_MMU
@@ -4684,6 +4678,12 @@ sysret_t sys_sched_setparam(pid_t pid, void *param)
     return ret;
 }
 
+sysret_t sys_sched_yield(void)
+{
+    rt_thread_yield();
+    return 0;
+}
+
 sysret_t sys_sched_getparam(pid_t pid, void *param)
 {
     struct sched_param *sched_param = (struct sched_param *)param;
@@ -5378,7 +5378,154 @@ sysret_t sys_epoll_pwait(int fd,
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-static const struct rt_syscall_def func_table[] =
+sysret_t sys_chmod(const char *fileName, mode_t mode)
+{
+    char *copy_fileName;
+    size_t len_fileName, copy_len_fileName;
+    int err_fileName;
+#ifdef RT_USING_DFS_V2
+    struct dfs_attr attr;
+    attr.st_mode = mode;
+#endif
+    int ret = 0;
+
+    len_fileName = lwp_user_strlen(fileName, &err_fileName);
+    if (err_fileName)
+    {
+        return -EFAULT;
+    }
+
+    copy_fileName = (char*)rt_malloc(len_fileName + 1);
+    if (!copy_fileName)
+    {
+        return -ENOMEM;
+    }
+
+    copy_len_fileName = lwp_get_from_user(copy_fileName, (void *)fileName, len_fileName);
+    copy_fileName[copy_len_fileName] = '\0';
+#ifdef RT_USING_DFS_V2
+    ret = dfs_file_setattr(copy_fileName, &attr);
+#else
+    SET_ERRNO(EFAULT);
+#endif
+    rt_free(copy_fileName);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_reboot(int magic)
+{
+    rt_hw_cpu_reset();
+
+    return 0;
+}
+
+ssize_t sys_pread64(int fd, void *buf, int size, off_t offset)
+#ifdef RT_USING_DFS_V2
+{
+    ssize_t pread(int fd, void *buf, size_t len, off_t offset);
+#ifdef ARCH_MM_MMU
+    ssize_t ret = -1;
+    void *kmem = RT_NULL;
+
+    if (!size)
+    {
+        return -EINVAL;
+    }
+
+    if (!lwp_user_accessable((void *)buf, size))
+    {
+        return -EFAULT;
+    }
+    kmem = kmem_get(size);
+    if (!kmem)
+    {
+        return -ENOMEM;
+    }
+
+    ret = pread(fd, kmem, size, offset);
+    if (ret > 0)
+    {
+        lwp_put_to_user(buf, kmem, ret);
+    }
+
+    if (ret < 0)
+    {
+        ret = GET_ERRNO();
+    }
+
+    kmem_put(kmem);
+
+    return ret;
+#else
+    if (!lwp_user_accessable((void *)buf, size))
+    {
+        return -EFAULT;
+    }
+
+    ssize_t ret = pread(fd, kmem, size, offset);
+    return (ret < 0 ? GET_ERRNO() : ret);
+#endif
+}
+#else
+{
+    ssize_t ret = -ENOSYS;
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+#endif
+
+ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
+#ifdef RT_USING_DFS_V2
+{
+    ssize_t pwrite(int fd, const void *buf, size_t len, off_t offset);
+#ifdef ARCH_MM_MMU
+    ssize_t ret = -1;
+    void *kmem = RT_NULL;
+
+    if (!size)
+    {
+        return -EINVAL;
+    }
+
+    if (!lwp_user_accessable((void *)buf, size))
+    {
+        return -EFAULT;
+    }
+    kmem = kmem_get(size);
+    if (!kmem)
+    {
+        return -ENOMEM;
+    }
+
+    lwp_get_from_user(kmem, (void *)buf, size);
+
+    ret = pwrite(fd, kmem, size, offset);
+    if (ret < 0)
+    {
+        ret = GET_ERRNO();
+    }
+
+    kmem_put(kmem);
+
+    return ret;
+#else
+    if (!lwp_user_accessable((void *)buf, size))
+    {
+        return -EFAULT;
+    }
+
+    ssize_t ret = pwrite(fd, kmem, size, offset);
+    return (ret < 0 ? GET_ERRNO() : ret);
+#endif
+}
+#else
+{
+    ssize_t ret = -ENOSYS;
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+#endif
+
+const static struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
     SYSCALL_SIGN(sys_read),
@@ -5600,11 +5747,11 @@ static const struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_symlink),
     SYSCALL_SIGN(sys_getaffinity),                      /* 180 */
     SYSCALL_SIGN(sys_sysinfo),
-    SYSCALL_SIGN(sys_notimpl),
-    SYSCALL_SIGN(sys_notimpl),
-    SYSCALL_SIGN(sys_notimpl),
-    SYSCALL_SIGN(sys_notimpl),                          /* 185 */
-    SYSCALL_SIGN(sys_notimpl),
+    SYSCALL_SIGN(sys_chmod),
+    SYSCALL_SIGN(sys_reboot),
+    SYSCALL_SIGN(sys_sched_yield),
+    SYSCALL_SIGN(sys_pread64),                          /* 185 */
+    SYSCALL_SIGN(sys_pwrite64),
     SYSCALL_SIGN(sys_sigpending),
     SYSCALL_SIGN(sys_sigtimedwait),
     SYSCALL_SIGN(sys_notimpl),
@@ -5632,7 +5779,10 @@ const void *lwp_get_sys_api(rt_uint32_t number)
         }
         else
         {
-            LOG_I("Unimplement syscall %d", number);
+            if (__sys_log_enable)
+            {
+                LOG_I("Unimplement syscall %d", number);
+            }
         }
     }
 
@@ -5656,7 +5806,10 @@ const char *lwp_get_syscall_name(rt_uint32_t number)
         }
         else
         {
-            LOG_I("Unimplement syscall %d", number);
+            if (__sys_log_enable)
+            {
+                LOG_I("Unimplement syscall %d", number);
+            }
         }
     }
 

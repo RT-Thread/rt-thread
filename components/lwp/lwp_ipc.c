@@ -980,6 +980,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     {
         /* initialize vnode */
         dfs_vnode_init(d->vnode, FT_USER, &channel_fops);
+        d->flags = O_RDWR; /* set flags as read and write */
 
         /* set socket to the data of dfs_file */
         d->vnode->data = (void *)ch;

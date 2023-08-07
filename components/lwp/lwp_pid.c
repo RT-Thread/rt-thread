@@ -106,6 +106,11 @@ static void lwp_pid_put(pid_t pid)
     rt_base_t level;
     struct lwp_avl_struct *p;
 
+    if (pid == 0)
+    {
+        return;
+    }
+
     level = rt_hw_interrupt_disable();
     p  = lwp_avl_find(pid, lwp_pid_root);
     if (p)

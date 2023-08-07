@@ -807,6 +807,8 @@ struct rt_user_context
     void *sp;
     void *pc;
     void *flag;
+
+    void *ctx;
 };
 #endif
 

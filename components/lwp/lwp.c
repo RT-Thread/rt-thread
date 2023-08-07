@@ -1403,3 +1403,17 @@ void lwp_user_setting_restore(rt_thread_t thread)
     }
 }
 #endif /* ARCH_MM_MMU */
+
+void lwp_uthread_ctx_save(void *ctx)
+{
+    rt_thread_t thread;
+    thread = rt_thread_self();
+    thread->user_ctx.ctx = ctx;
+}
+
+void lwp_uthread_ctx_restore(void)
+{
+    rt_thread_t thread;
+    thread = rt_thread_self();
+    thread->user_ctx.ctx = RT_NULL;
+}

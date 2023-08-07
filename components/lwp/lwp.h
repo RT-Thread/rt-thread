@@ -164,6 +164,10 @@ void lwp_aspace_switch(struct rt_thread *thread);
 #endif
 void lwp_user_setting_save(rt_thread_t thread);
 void lwp_user_setting_restore(rt_thread_t thread);
+
+void lwp_uthread_ctx_save(void *ctx);
+void lwp_uthread_ctx_restore(void);
+
 int lwp_setaffinity(pid_t pid, int cpu);
 
 /* ctime lwp API */

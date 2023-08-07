@@ -30,39 +30,20 @@ int libc_system_init(void)
     dev_console = rt_console_get_device();
     if (dev_console)
     {
-        int fd, ret;
-        char name[STDIO_DEVICE_NAME_MAX];
-
-        rt_snprintf(name, sizeof(name) - 1, "/dev/%s", dev_console->parent.name);
-        name[STDIO_DEVICE_NAME_MAX - 1] = '\0';
-
-        fd = open(name, O_RDWR);
-        if (fd >= 0)
-        {
-            /* set fd (0, 1, 2) */
-            ret = sys_dup2(fd, 0);
-            if (ret != fd)
-            {
-                close(fd);
-            }
-            sys_dup2(ret, 1);
-            sys_dup2(ret, 2);
-
-            ret = libc_stdio_set_console(dev_console->parent.name, O_RDWR);
-            if (ret < 0)
-            {
-                return -1;
-            }
-        }
-        else
+        int fd = libc_stdio_set_console(dev_console->parent.name, O_RDWR);
+        if (fd < 0)
         {
             return -1;
         }
+        /* set fd (0, 1, 2) */
+        sys_dup2(fd, 0);
+        sys_dup2(fd, 1);
+        sys_dup2(fd, 2);
     }
 #endif /* RT_USING_POSIX_STDIO */
     return 0;
 }
-INIT_APP_EXPORT(libc_system_init);
+INIT_ENV_EXPORT(libc_system_init);
 
 #if defined(RT_USING_POSIX_STDIO) && defined(RT_USING_NEWLIBC)
 
