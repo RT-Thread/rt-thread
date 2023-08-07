@@ -85,3 +85,24 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream)
     return getdelim(lineptr, n, '\n', stream);
 }
 #endif /* DFS_USING_POSIX */
+
+int isatty(int fd)
+{
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    if(fd == STDOUT_FILENO || fd == STDERR_FILENO)
+    {
+        return 1;
+    }
+#endif
+
+#ifdef RT_USING_POSIX_STDIO
+    if(fd == STDIN_FILENO)
+    {
+        return 1;
+    }
+#endif
+
+    rt_set_errno(ENOTTY);
+    return 0;
+}
+RTM_EXPORT(isatty);

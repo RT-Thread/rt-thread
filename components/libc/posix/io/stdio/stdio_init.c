@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017/10/15     bernard      the first version
+ * 2023/08/06     Meco Man     rename as stdio_init.c
  */
 
 #include <rtthread.h>
@@ -16,13 +17,13 @@
 #include <fcntl.h>
 #include <sys/time.h>
 #include <sys/errno.h>
-#include "libc.h"
+#include "stdio_init.h"
 
 #define STDIO_DEVICE_NAME_MAX   32
 
 int sys_dup2(int oldfd, int new);
 
-int libc_system_init(void)
+int posix_stdio_init(void)
 {
 #ifdef RT_USING_POSIX_STDIO
     rt_device_t dev_console;
@@ -48,7 +49,7 @@ int libc_system_init(void)
             sys_dup2(ret, 1);
             sys_dup2(ret, 2);
 
-            ret = libc_stdio_set_console(dev_console->parent.name, O_RDWR);
+            ret = posix_stdio_set_console(dev_console->parent.name, O_RDWR);
             if (ret < 0)
             {
                 return -1;
@@ -62,12 +63,12 @@ int libc_system_init(void)
 #endif /* RT_USING_POSIX_STDIO */
     return 0;
 }
-INIT_APP_EXPORT(libc_system_init);
+INIT_APP_EXPORT(posix_stdio_init);
 
 #if defined(RT_USING_POSIX_STDIO) && defined(RT_USING_NEWLIBC)
 
 static FILE* std_console = NULL;
-int libc_stdio_set_console(const char* device_name, int mode)
+int posix_stdio_set_console(const char* device_name, int mode)
 {
     FILE *fp;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -130,7 +131,7 @@ int libc_stdio_set_console(const char* device_name, int mode)
     return -1;
 }
 
-int libc_stdio_get_console(void)
+int posix_stdio_get_console(void)
 {
     if (std_console)
         return fileno(std_console);
@@ -142,7 +143,7 @@ int libc_stdio_get_console(void)
 
 static FILE* std_console = NULL;
 
-int libc_stdio_set_console(const char* device_name, int mode)
+int posix_stdio_set_console(const char* device_name, int mode)
 {
     FILE *fp;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -178,7 +179,7 @@ int libc_stdio_set_console(const char* device_name, int mode)
     return -1;
 }
 
-int libc_stdio_get_console(void)
+int posix_stdio_get_console(void)
 {
     int ret = -1;
     if (std_console)
@@ -192,7 +193,7 @@ int libc_stdio_get_console(void)
 #elif defined(RT_USING_POSIX_STDIO)
 
 static int std_fd = -1;
-int libc_stdio_set_console(const char* device_name, int mode)
+int posix_stdio_set_console(const char* device_name, int mode)
 {
     int fd;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -213,28 +214,7 @@ int libc_stdio_set_console(const char* device_name, int mode)
     return std_fd;
 }
 
-int libc_stdio_get_console(void) {
+int posix_stdio_get_console(void) {
     return std_fd;
 }
 #endif /* defined(RT_USING_POSIX_STDIO) && defined(RT_USING_NEWLIBC) */
-
-int isatty(int fd)
-{
-#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
-    if(fd == STDOUT_FILENO || fd == STDERR_FILENO)
-    {
-        return 1;
-    }
-#endif
-
-#ifdef RT_USING_POSIX_STDIO
-    if(fd == STDIN_FILENO)
-    {
-        return 1;
-    }
-#endif
-
-    rt_set_errno(ENOTTY);
-    return 0;
-}
-RTM_EXPORT(isatty);
