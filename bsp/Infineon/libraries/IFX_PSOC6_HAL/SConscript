@@ -78,7 +78,6 @@ if GetDepend(['SOC_CY8C6244LQI_S4D92']):
     src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
 
 if GetDepend(['RT_USING_SERIAL']):
-    src += ['retarget-io/cy_retarget_io.c']
     src += ['mtb-hal-cat1/source/cyhal_uart.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_scb_uart.c']
 
@@ -93,7 +92,7 @@ if GetDepend(['RT_USING_ADC']):
     src += ['mtb-pdl-cat1/drivers/source/cy_dmac.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_sysanalog.c']
 
-if GetDepend(['RT_USING_SDIO']):
+if GetDepend(['RT_USING_SDIO']) or GetDepend(['BSP_USING_CYW43012_WIFI']):
     src += ['mtb-hal-cat1/source/cyhal_sdhc.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_sd_host.c']
 
