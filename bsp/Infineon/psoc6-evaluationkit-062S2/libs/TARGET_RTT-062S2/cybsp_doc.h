@@ -23,7 +23,7 @@
 #if defined(CY_USING_HAL)
 #include "cyhal_pin_package.h"
 #endif
-/* CAT4 does not have configurators so the BSP defines pins in a non-generated header */
+/* CAT4 and CAT5 do not have configurators so the BSP defines pins in a non-generated header */
 #if defined(COMPONENT_CAT4)
 #include "cybsp_pins.h"
 #else
@@ -739,7 +739,7 @@ extern "C" {
 /**
  * \addtogroup group_bsp_pins_capsense Capsense
  * \{
- * Pins connected to CAPSENSEâ„¢ sensors on the board.
+ * Pins connected to CAPSENSE™ sensors on the board.
  */
 
 #ifdef CYBSP_CSD_TX

@@ -5,8 +5,8 @@
 * Simple wrapper header containing all generated files.
 * This file was automatically generated and should not be modified.
 * Configurator Backend 3.0.0
-* device-db 4.1.0.3437
-* mtb-pdl-cat1 3.3.0.21979
+* device-db 4.3.0.3855
+* mtb-pdl-cat1 3.4.0.24948
 *
 ********************************************************************************
 * Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
@@ -35,6 +35,7 @@ extern "C" {
 
 #include "cycfg_notices.h"
 #include "cycfg_system.h"
+#include "cycfg_connectivity_bt.h"
 #include "cycfg_clocks.h"
 #include "cycfg_routing.h"
 #include "cycfg_peripherals.h"

@@ -10,18 +10,18 @@
       <TargetName>rtthread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pArmCC>6160000::V6.16::ARMCLANG</pArmCC>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>CY8C624ALQI-S2D42:Cortex-M4</Device>
-          <Vendor>Infineon</Vendor>
-          <PackID>Infineon.PSoC6_DFP.1.4.0</PackID>
-          <PackURL>https://github.com/Infineon/cmsis-packs/raw/master/PSoC6_DFP/</PackURL>
-          <Cpu>IRAM(0x08000000,0x00100000) IROM(0x10000000,0x00200000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Device>CY8C6248LQI-S2D42:Cortex-M4</Device>
+          <Vendor>Cypress</Vendor>
+          <PackID>Cypress.PSoC6_DFP.1.2.0</PackID>
+          <PackURL>https://github.com/cypresssemiconductorco/cmsis-packs/raw/master/PSoC6_DFP/</PackURL>
+          <Cpu>IRAM(0x08000000,0x80000) IROM(0x10000000,0x100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD08026400 -FC8000 -FN5 -FF0CY8C6xxA_SFLASH_TOC2 -FS016007C00 -FL0400 -FF1CY8C6xxA_SFLASH_PKEY -FS116005A00 -FL1C00 -FF2CY8C6xxA_SFLASH_USER -FS216000800 -FL2800 -FF3CY8C6xxA_WFLASH -FS314000000 -FL38000 -FF4CY8C6xxA_sect256KB -FS410000000 -FL4200000 -FP0($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_TOC2.FLM) -FP1($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_PKEY.FLM) -FP2($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_USER.FLM) -FP3($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_WFLASH.FLM) -FP4($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_sect256KB.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD08026400 -FC8000 -FN5 -FF0CY8C6xxA_SFLASH_TOC2 -FS016007C00 -FL0400 -FF1CY8C6xxA_SFLASH_PKEY -FS116005A00 -FL1C00 -FF2CY8C6xxA_SFLASH_USER -FS216000800 -FL2800 -FF3CY8C6xxA_WFLASH -FS314000000 -FL38000 -FF4CY8C6xx8_sect256KB -FS410000000 -FL4100000 -FP0($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_TOC2.FLM) -FP1($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_PKEY.FLM) -FP2($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_USER.FLM) -FP3($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_WFLASH.FLM) -FP4($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xx8_sect256KB.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile></RegisterFile>
           <MemoryEnv></MemoryEnv>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:CY8C624ALQI-S2D42$SVD\psoc6_02.svd</SFDFile>
+          <SFDFile>$$Device:CY8C6248LQI-S2D42$SVD\psoc6_02.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -186,6 +186,7 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -246,12 +247,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x80000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x10000000</StartAddress>
-                <Size>0x200000</Size>
+                <Size>0x100000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -276,7 +277,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x10000000</StartAddress>
-                <Size>0x200000</Size>
+                <Size>0x100000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -301,7 +302,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x80000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -337,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>COMPONENT_CAT1A, RT_USING_LIBC, RT_USING_ARMLIBC, CY_USING_HAL, __CLK_TCK=RT_TICK_PER_SECOND, COMPONENT_BSP_DESIGN_MODUS, __STDC_LIMIT_MACROS, __RTTHREAD__, COMPONENT_CAT1, CY8C624ALQI_S2D42</Define>
+              <Define>COMPONENT_MW_CORE_MAKE, COMPONENT_MW_SENSOR_MOTION_BMI160, COMPONENT_CAT1, CY8C624ALQI_S2D42, COMPONENT_MW_CY8CKIT_028_TFT, COMPONENT_MW_AUDIO_CODEC_AK4954A, COMPONENT_MW_CMSIS, COMPONENT_GCC_ARM, CY_RTOS_AWARE, COMPONENT_MW_CAPSENSE, CY_SUPPORTS_DEVICE_VALIDATION, __STDC_LIMIT_MACROS, CORE_NAME_CM0P_0, COMPONENT_MW_MTB_PDL_CAT1, COMPONENT_MW_CONNECTIVITY_UTILITIES, COMPONENT_PSOC6_02, COMPONENT_MW_WIFI_CORE_FREERTOS_LWIP_MBEDTLS, COMPONENT_WIFI_INTERFACE_SDIO, COMPONENT_MBEDTLS, CY_USING_PREBUILT_CM0P_IMAGE, COMPONENT_MW_SENSOR_LIGHT, COMPONENT_MW_WPA3_EXTERNAL_SUPPLICANT, COMPONENT_MW_LWIP, COMPONENT_LWIP, COMPONENT_APP_CY8CKIT_062S2_43012, COMPONENT_MW_RETARGET_IO, COMPONENT_43012, COMPONENT_CM4, LWIP_NETIF_REMOVE_CALLBACK=1, COMPONENT_MW_MTB_HAL_CAT1, COMPONENT_MW_CLIB_SUPPORT, TARGET_APP_CY8CKIT_062S2_43012, COMPONENT_MW_HTTP_SERVER, COMPONENT_CAT1A, COMPONENT_MURATA_1LV, COMPONENT_MW_LWIP_NETWORK_INTERFACE_INTEGRATION, CORE_NAME_CM4_0, COMPONENT_MW_BMI160_DRIVER, MAX_NUMBER_OF_HTTP_SERVER_RESOURCES=10, COMPONENT_MW_CORE_LIB, COMPONENT_MW_EMWIN, COMPONENT_MW_RECIPE_MAKE_CAT1A, CY_APPNAME_mtb_example_wifi_web_server, COMPONENT_HCI_UART, COMPONENT_MW_FREERTOS, __RTTHREAD__, CYBSP_WIFI_CAPABLE, CY_USING_HAL, COMPONENT_MW_WIFI_HOST_DRIVER, CY_TARGET_BOARD=APP_CY8CKIT_062S2_43012, COMPONENT_SECURE_SOCKETS, CY_RETARGET_IO_CONVERT_LF_TO_CRLF, COMPONENT_MW_ABSTRACTION_RTOS, COMPONENT_MW_MBEDTLS, COMPONENT_MW_DISPLAY_TFT_ST7789V, RT_USING_ARMLIBC, COMPONENT_CM0P_SLEEP, COMPONENT_MW_WHD_BSP_INTEGRATION, RT_USING_LIBC, COMPONENT_MW_SERIAL_FLASH, COMPONENT_MW_LWIP_FREERTOS_INTEGRATION, COMPONENT_MW_CY_MBEDTLS_ACCELERATION, COMPONENT_MW_SECURE_SOCKETS, MBEDTLS_USER_CONFIG_FILE="mbedtls_user_config.h", __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine></Undefine>
-              <IncludePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource;..\..\..\components\libc\posix\io\poll;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;applications;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\libraries\HAL_Drivers\config;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;..\..\..\include;packages\ili9341-latest;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\..\..\components\libc\compilers\common\include;board;..\..\..\components\libc\compilers\common\extension;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\IFX_PSOC6_HAL\capsense;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\retarget-io;libs\TARGET_RTT-062S2;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\..\..\components\finsh;..\..\..\libcpu\arm\cortex-m4;.;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\..\..\components\libc\posix\io\stdio;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\..\..\components\drivers\include;board\ports;..\libraries\HAL_Drivers</IncludePath>
+              <IncludePath>applications;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\include;packages\FreeRTOS_Wrapper-latest\FreeRTOS\portable\rt-thread;..\..\..\include;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;..\libraries\IFX_PSOC6_HAL\capsense;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\..\..\components\drivers\include;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\firmware\COMPONENT_43012;..\..\..\libcpu\arm\common;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\nvram;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\firmware;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources;..\..\..\components\net\lwip\lwip-2.0.3\src\include;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\clm;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;packages\wlan_cyw43012-v0.0.1;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\inc;packages\wlan_cyw43012-v0.0.1\wifi-host-driver;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\clm\COMPONENT_43012;..\..\..\components\drivers\include;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols;..\..\..\components\drivers\wlan;libs\TARGET_RTT-062S2;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\resource_imp;libs\TARGET_RTT-062S2\config\GeneratedSource;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\finsh;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\..\..\components\net\lwip\port;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver;board\ports;..\..\..\components\drivers\include;..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif;packages\wlan_cyw43012-v0.0.1\abstraction-rtos\include\COMPONENT_FREERTOS;..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\libraries\HAL_Drivers;packages\FreeRTOS_Wrapper-latest\FreeRTOS\include;..\..\..\components\libc\posix\io\eventfd;.;packages\wlan_cyw43012-v0.0.1\abstraction-rtos\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\..\..\components\libc\posix\io\epoll;packages\wlan_cyw43012-v0.0.1\whd-bsp-integration;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\nvram\COMPONENT_43012;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\..\..\components\libc\compilers\common\extension;packages\wlan_cyw43012-v0.0.1\abstraction-rtos;..\..\..\components\libc\posix\io\stdio;..\libraries\IFX_PSOC6_HAL\retarget-io;board;packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\nvram\COMPONENT_43012\COMPONENT_MURATA-1LV;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;packages\FreeRTOS_Wrapper-latest\FreeRTOS\include\freertos</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -466,8 +467,198 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>cyw43012</GroupName>
+          <Files>
+            <File>
+              <FileName>whd_logging.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_logging.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_wifi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_wifi.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_clm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_clm.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_debug.c</FilePath>
+            </File>
+            <File>
+              <FileName>43012C0-mfgtest_clm_blob.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\clm\COMPONENT_43012\43012C0-mfgtest_clm_blob.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_bus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_network_buffer_lwip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\whd-bsp-integration\COMPONENT_LWIP\cy_network_buffer_lwip.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_resources.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\resource_imp\whd_resources.c</FilePath>
+            </File>
+            <File>
+              <FileName>wifi_ifx_cyw43012.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi_ifx_cyw43012.c</FilePath>
+            </File>
+            <File>
+              <FileName>43012C0_bin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\firmware\COMPONENT_43012\43012C0_bin.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_thread.c</FilePath>
+            </File>
+            <File>
+              <FileName>cybsp_wifi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\whd-bsp-integration\cybsp_wifi.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_bus_spi_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus_spi_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_worker_thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\cy_worker_thread.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_bus_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_sdpcm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_sdpcm.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_ap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_ap.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_cdc_bdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_cdc_bdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_chip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_chip.c</FilePath>
+            </File>
+            <File>
+              <FileName>43012C0-mfgtest_bin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\firmware\COMPONENT_43012\43012C0-mfgtest_bin.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyabs_freertos_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\COMPONENT_FREERTOS\cyabs_freertos_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_management.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_management.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyabs_rtos_freertos.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\COMPONENT_FREERTOS\cyabs_rtos_freertos.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_bus_sdio_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus_sdio_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_buffer_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_buffer_api.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_resource_if.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_resource_if.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_bus_m2m_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus_m2m_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_wifi_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_wifi_api.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyabs_rtos_dsram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\COMPONENT_FREERTOS\cyabs_rtos_dsram.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_chip_constants.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_chip_constants.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_network_if.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_network_if.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_wifi_p2p.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_wifi_p2p.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyabs_freertos_helpers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\COMPONENT_FREERTOS\cyabs_freertos_helpers.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>43012C0_clm_blob.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\clm\COMPONENT_43012\43012C0_clm_blob.c</FilePath>
+            </File>
+            <File>
+              <FileName>whd_events.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_events.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
@@ -513,20 +704,60 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
             </File>
+            <File>
+              <FileName>wlan_cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\wlan\wlan_cfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>wlan_cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\wlan\wlan_cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>wlan_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\wlan\wlan_dev.c</FilePath>
+            </File>
+            <File>
+              <FileName>wlan_lwip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\wlan\wlan_lwip.c</FilePath>
+            </File>
+            <File>
+              <FileName>wlan_mgnt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\wlan\wlan_mgnt.c</FilePath>
+            </File>
+            <File>
+              <FileName>wlan_prot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\wlan\wlan_prot.c</FilePath>
+            </File>
+            <File>
+              <FileName>wlan_workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\wlan\wlan_workqueue.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>cy_syslib_mdk.S</FileName>
+              <FileName>cy_syslib_ext.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\TOOLCHAIN_ARM\cy_syslib_mdk.S</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\TOOLCHAIN_ARM\cy_syslib_ext.S</FilePath>
             </File>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_cyw43012.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\ports\drv_cyw43012.c</FilePath>
             </File>
             <File>
               <FileName>drv_common.c</FileName>
@@ -549,9 +780,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
             <File>
               <FileName>msh.c</FileName>
@@ -559,14 +790,49 @@
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FreeRTOS</GroupName>
+          <Files>
+            <File>
+              <FileName>list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\FreeRTOS_Wrapper-latest\FreeRTOS\list.c</FilePath>
+            </File>
+            <File>
+              <FileName>port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\FreeRTOS_Wrapper-latest\FreeRTOS\portable\rt-thread\port.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\FreeRTOS_Wrapper-latest\FreeRTOS\queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\FreeRTOS_Wrapper-latest\FreeRTOS\tasks.c</FilePath>
+            </File>
+            <File>
+              <FileName>event_groups.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\FreeRTOS_Wrapper-latest\FreeRTOS\event_groups.c</FilePath>
+            </File>
+            <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\FreeRTOS_Wrapper-latest\FreeRTOS\timers.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -582,11 +848,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
             </File>
             <File>
               <FileName>idle.c</FileName>
@@ -644,94 +905,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_sysint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</FilePath>
-            </File>
-            <File>
-              <FileName>cyhal_triggers_psoc6_02.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\source\triggers\cyhal_triggers_psoc6_02.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_retarget_io.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\retarget-io\cy_retarget_io.c</FilePath>
-            </File>
-            <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_scb_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>cyhal_scb_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_scb_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>cyhal_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_scb_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_scb_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_common.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_prot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_prot.c</FilePath>
-            </File>
-            <File>
-              <FileName>cyhal_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>cyhal_system.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_system.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_ipc_sema.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_sema.c</FilePath>
-            </File>
-            <File>
-              <FileName>cyhal_utils_psoc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_psoc.c</FilePath>
-            </File>
-            <File>
               <FileName>cyhal_utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils.c</FilePath>
-            </File>
-            <File>
-              <FileName>psoc6_01_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
             </File>
             <File>
               <FileName>cy_ipc_drv.c</FileName>
@@ -739,19 +915,9 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_drv.c</FilePath>
             </File>
             <File>
-              <FileName>cyhal_hwmgr.c</FileName>
+              <FileName>cyhal_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_hwmgr.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_syslib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syslib.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_ipc_pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_pipe.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_uart.c</FilePath>
             </File>
             <File>
               <FileName>cyhal_lptimer.c</FileName>
@@ -759,19 +925,39 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_lptimer.c</FilePath>
             </File>
             <File>
-              <FileName>cyhal_irq_psoc.c</FileName>
+              <FileName>cyhal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_irq_psoc.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>cy_mcwdt.c</FileName>
+              <FileName>cy_syspm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_mcwdt.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</FilePath>
             </File>
             <File>
-              <FileName>cy_sysclk.c</FileName>
+              <FileName>cy_ipc_pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysclk.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_pipe.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_scb_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_scb_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_syslib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syslib.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_utils_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_impl.c</FilePath>
             </File>
             <File>
               <FileName>cyhal_syspm.c</FileName>
@@ -779,29 +965,14 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_syspm.c</FilePath>
             </File>
             <File>
-              <FileName>cyhal_uart.c</FileName>
+              <FileName>cy_scb_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_uart.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_uart.c</FilePath>
             </File>
             <File>
-              <FileName>cyhal_psoc6_02_68_qfn.c</FileName>
+              <FileName>cy_sd_host.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\source\pin_packages\cyhal_psoc6_02_68_qfn.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_systick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_systick.c</FilePath>
-            </File>
-            <File>
-              <FileName>cyhal_interconnect.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_interconnect.c</FilePath>
-            </File>
-            <File>
-              <FileName>cy_trigmux.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_trigmux.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sd_host.c</FilePath>
             </File>
             <File>
               <FileName>cy_device.c</FileName>
@@ -809,14 +980,109 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\source\cy_device.c</FilePath>
             </File>
             <File>
+              <FileName>cy_scb_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_sysclk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysclk.c</FilePath>
+            </File>
+            <File>
+              <FileName>psoc6_01_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_psoc6_02_68_qfn.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\source\pin_packages\cyhal_psoc6_02_68_qfn.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_scb_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_triggers_psoc6_02.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\source\triggers\cyhal_triggers_psoc6_02.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_sysint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</FilePath>
+            </File>
+            <File>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_sdhc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_sdhc.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_interconnect.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_interconnect.c</FilePath>
+            </File>
+            <File>
               <FileName>psoc6_03_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
             </File>
             <File>
-              <FileName>cy_syspm.c</FileName>
+              <FileName>cy_ipc_sema.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_sema.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_trigmux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_trigmux.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_prot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_prot.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_hwmgr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_hwmgr.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
+            </File>
+            <File>
+              <FileName>cyhal_irq_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_irq_impl.c</FilePath>
+            </File>
+            <File>
+              <FileName>cy_mcwdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_mcwdt.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -824,9 +1090,19 @@
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cycfg_clocks.c</FileName>
+              <FileName>cybsp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\cybsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_connectivity_bt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_peripherals.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_peripherals.c</FilePath>
             </File>
             <File>
               <FileName>system_psoc6_cm4.c</FileName>
@@ -834,59 +1110,234 @@
               <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
             </File>
             <File>
-              <FileName>cycfg_connectivity_bt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg_peripherals.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_peripherals.c</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg_routing.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg_capsense.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_capsense.c</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg_dmas.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_dmas.c</FilePath>
-            </File>
-            <File>
               <FileName>startup_psoc6_02_cm4.S</FileName>
               <FileType>2</FileType>
               <FilePath>libs\TARGET_RTT-062S2\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_02_cm4.S</FilePath>
             </File>
             <File>
-              <FileName>cybsp.c</FileName>
+              <FileName>cycfg_qspi_memslot.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\cybsp.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
             </File>
             <File>
               <FileName>cycfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</FilePath>
-            </File>
-            <File>
-              <FileName>cycfg_pins.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg.c</FilePath>
             </File>
             <File>
               <FileName>cycfg_system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_system.c</FilePath>
             </File>
             <File>
-              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileName>cycfg_clocks.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_clocks.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_pins.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_pins.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_routing.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_routing.c</FilePath>
+            </File>
+            <File>
+              <FileName>cycfg_capsense.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_capsense.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>lwIP</GroupName>
+          <Files>
+            <File>
+              <FileName>api_lib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\api\api_lib.c</FilePath>
+            </File>
+            <File>
+              <FileName>api_msg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\api\api_msg.c</FilePath>
+            </File>
+            <File>
+              <FileName>err.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\api\err.c</FilePath>
+            </File>
+            <File>
+              <FileName>netbuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\api\netbuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\api\netdb.c</FilePath>
+            </File>
+            <File>
+              <FileName>netifapi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\api\netifapi.c</FilePath>
+            </File>
+            <File>
+              <FileName>sockets.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\api\sockets.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcpip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\api\tcpip.c</FilePath>
+            </File>
+            <File>
+              <FileName>ping.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\apps\ping\ping.c</FilePath>
+            </File>
+            <File>
+              <FileName>def.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\def.c</FilePath>
+            </File>
+            <File>
+              <FileName>dns.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\dns.c</FilePath>
+            </File>
+            <File>
+              <FileName>inet_chksum.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\inet_chksum.c</FilePath>
+            </File>
+            <File>
+              <FileName>init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\init.c</FilePath>
+            </File>
+            <File>
+              <FileName>ip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ip.c</FilePath>
+            </File>
+            <File>
+              <FileName>autoip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\autoip.c</FilePath>
+            </File>
+            <File>
+              <FileName>dhcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\dhcp.c</FilePath>
+            </File>
+            <File>
+              <FileName>etharp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\etharp.c</FilePath>
+            </File>
+            <File>
+              <FileName>icmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\icmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>igmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\igmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>ip4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4.c</FilePath>
+            </File>
+            <File>
+              <FileName>ip4_addr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_addr.c</FilePath>
+            </File>
+            <File>
+              <FileName>ip4_frag.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_frag.c</FilePath>
+            </File>
+            <File>
+              <FileName>memp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\memp.c</FilePath>
+            </File>
+            <File>
+              <FileName>netif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\netif.c</FilePath>
+            </File>
+            <File>
+              <FileName>pbuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\pbuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>raw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\raw.c</FilePath>
+            </File>
+            <File>
+              <FileName>stats.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\stats.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcp_in.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_in.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcp_out.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_out.c</FilePath>
+            </File>
+            <File>
+              <FileName>timeouts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\timeouts.c</FilePath>
+            </File>
+            <File>
+              <FileName>udp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\core\udp.c</FilePath>
+            </File>
+            <File>
+              <FileName>ethernet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\netif\ethernet.c</FilePath>
+            </File>
+            <File>
+              <FileName>lowpan6.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\lwip-2.0.3\src\netif\lowpan6.c</FilePath>
+            </File>
+            <File>
+              <FileName>ethernetif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\port\ethernetif.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys_arch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\net\lwip\port\sys_arch.c</FilePath>
             </File>
           </Files>
         </Group>

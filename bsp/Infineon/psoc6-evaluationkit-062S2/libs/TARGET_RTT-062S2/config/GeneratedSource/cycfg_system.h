@@ -5,8 +5,8 @@
 * System configuration
 * This file was automatically generated and should not be modified.
 * Configurator Backend 3.0.0
-* device-db 4.1.0.3437
-* mtb-pdl-cat1 3.3.0.21979
+* device-db 4.3.0.3855
+* mtb-pdl-cat1 3.4.0.24948
 *
 ********************************************************************************
 * Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
@@ -33,6 +33,7 @@
 #include "cy_sysclk.h"
 #include "cy_pra.h"
 #include "cy_pra_cfg.h"
+#include "cy_systick.h"
 #if defined (CY_USING_HAL)
     #include "cyhal_hwmgr.h"
 #endif //defined (CY_USING_HAL)
@@ -44,22 +45,18 @@ extern "C" {
 
 #define cpuss_0_dap_0_ENABLED 1U
 #define srss_0_clock_0_ENABLED 1U
+#define srss_0_clock_0_altsystickclk_0_ENABLED 1U
+#define srss_0_clock_0_bakclk_0_ENABLED 1U
 #define srss_0_clock_0_fastclk_0_ENABLED 1U
 #define srss_0_clock_0_fll_0_ENABLED 1U
 #define srss_0_clock_0_hfclk_0_ENABLED 1U
 #define CY_CFG_SYSCLK_CLKHF0 0UL
 #define CY_CFG_SYSCLK_CLKHF0_CLKPATH_NUM 0UL
-#define srss_0_clock_0_hfclk_1_ENABLED 1U
-#define CY_CFG_SYSCLK_CLKHF1 1UL
-#define CY_CFG_SYSCLK_CLKHF1_CLKPATH_NUM 0UL
-#define srss_0_clock_0_hfclk_3_ENABLED 1U
-#define CY_CFG_SYSCLK_CLKHF3 3UL
-#define CY_CFG_SYSCLK_CLKHF3_CLKPATH_NUM 0UL
-#define srss_0_clock_0_hfclk_4_ENABLED 1U
-#define CY_CFG_SYSCLK_CLKHF4 4UL
-#define CY_CFG_SYSCLK_CLKHF4_CLKPATH_NUM 0UL
 #define srss_0_clock_0_ilo_0_ENABLED 1U
 #define srss_0_clock_0_imo_0_ENABLED 1U
+#define srss_0_clock_0_lfclk_0_ENABLED 1U
+#define CY_CFG_SYSCLK_CLKLF_FREQ_HZ 32768
+#define CY_CFG_SYSCLK_CLKLF_SOURCE CY_SYSCLK_CLKLF_IN_ILO
 #define srss_0_clock_0_pathmux_0_ENABLED 1U
 #define srss_0_clock_0_pathmux_1_ENABLED 1U
 #define srss_0_clock_0_pathmux_2_ENABLED 1U
@@ -68,7 +65,6 @@ extern "C" {
 #define srss_0_clock_0_pathmux_5_ENABLED 1U
 #define srss_0_clock_0_periclk_0_ENABLED 1U
 #define srss_0_clock_0_pll_0_ENABLED 1U
-#define srss_0_clock_0_pll_1_ENABLED 1U
 #define srss_0_clock_0_slowclk_0_ENABLED 1U
 #define srss_0_clock_0_timerclk_0_ENABLED 1U
 #define srss_0_power_0_ENABLED 1U

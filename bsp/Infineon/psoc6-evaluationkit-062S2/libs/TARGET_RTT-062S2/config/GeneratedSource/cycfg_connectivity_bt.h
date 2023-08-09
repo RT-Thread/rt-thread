@@ -1,8 +1,8 @@
 /*******************************************************************************
-* File Name: cycfg_routing.c
+* File Name: cycfg_connectivity_bt.h
 *
 * Description:
-* Establishes all necessary connections between hardware elements.
+* Connectivity BT configuration
 * This file was automatically generated and should not be modified.
 * Configurator Backend 3.0.0
 * device-db 4.3.0.3855
@@ -26,18 +26,29 @@
 * limitations under the License.
 ********************************************************************************/
 
-#include "cycfg_routing.h"
+#if !defined(CYCFG_CONNECTIVITY_BT_H)
+#define CYCFG_CONNECTIVITY_BT_H
 
-#include "cy_device_headers.h"
+#include "cycfg_notices.h"
+#include "cycfg_pins.h"
 
-void init_cycfg_routing(void)
-{
-    HSIOM->AMUX_SPLIT_CTL[4] = HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SL_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SR_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SL_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SR_Msk;
-    HSIOM->AMUX_SPLIT_CTL[5] = HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SL_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SR_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SL_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SR_Msk;
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+#define bt_0_power_0_ENABLED (0)
+#define CYCFG_BT_LP_ENABLED 0
+#define CYCFG_BT_WAKE_EVENT_ACTIVE_LOW (0)
+#define CYCFG_BT_WAKE_EVENT_ACTIVE_HIGH (1)
+#define CYCFG_BT_HOST_WAKE_GPIO CYHAL_NC_PIN_VALUE
+#define CYCFG_BT_HOST_WAKE_IRQ_EVENT 0
+#define CYCFG_BT_DEV_WAKE_GPIO CYHAL_NC_PIN_VALUE
+#define CYCFG_BT_DEV_WAKE_POLARITY 0
+
+
+#if defined(__cplusplus)
 }
+#endif
+
+
+#endif /* CYCFG_CONNECTIVITY_BT_H */
