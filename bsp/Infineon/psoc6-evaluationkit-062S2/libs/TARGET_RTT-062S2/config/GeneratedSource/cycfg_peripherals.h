@@ -5,8 +5,8 @@
 * Peripheral Hardware Block configuration
 * This file was automatically generated and should not be modified.
 * Configurator Backend 3.0.0
-* device-db 4.1.0.3437
-* mtb-pdl-cat1 3.3.0.21979
+* device-db 4.3.0.3855
+* mtb-pdl-cat1 3.4.0.24948
 *
 ********************************************************************************
 * Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
@@ -45,17 +45,21 @@ extern "C" {
 #define CY_CAPSENSE_PERI_DIV_TYPE CY_SYSCLK_DIV_8_BIT
 #define CY_CAPSENSE_PERI_DIV_INDEX 0u
 #define Cmod_PORT GPIO_PRT7
-#define LinearSlider0_Sns0_PORT GPIO_PRT7
+#define Button0_Sns0_PORT GPIO_PRT7
+#define Button1_Sns0_PORT GPIO_PRT9
+#define LinearSlider0_Sns0_PORT GPIO_PRT9
 #define LinearSlider0_Sns1_PORT GPIO_PRT9
 #define LinearSlider0_Sns2_PORT GPIO_PRT9
 #define LinearSlider0_Sns3_PORT GPIO_PRT9
 #define LinearSlider0_Sns4_PORT GPIO_PRT9
 #define Cmod_PIN 7u
-#define LinearSlider0_Sns0_PIN 3u
-#define LinearSlider0_Sns1_PIN 0u
-#define LinearSlider0_Sns2_PIN 1u
-#define LinearSlider0_Sns3_PIN 2u
-#define LinearSlider0_Sns4_PIN 3u
+#define Button0_Sns0_PIN 3u
+#define Button1_Sns0_PIN 0u
+#define LinearSlider0_Sns0_PIN 1u
+#define LinearSlider0_Sns1_PIN 2u
+#define LinearSlider0_Sns2_PIN 3u
+#define LinearSlider0_Sns3_PIN 0u
+#define LinearSlider0_Sns4_PIN 1u
 #define Cmod_PORT_NUM 7u
 #define CYBSP_CSD_HW CSD0
 #define CYBSP_CSD_IRQ csd_interrupt_IRQn

@@ -77,7 +77,7 @@
         <tvExpOptDlg>0</tvExpOptDlg>
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
-      <CpuCode>255</CpuCode>
+      <CpuCode>10</CpuCode>
       <DebugOpt>
         <uSim>0</uSim>
         <uTrg>1</uTrg>
@@ -119,28 +119,97 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>UL2CM3</Key>
-          <Name>UL2CM3(-S0 -C0 -P0 )  -FN5 -FC8000 -FD08026400 -FF0CY8C6xxA_SFLASH_TOC2 -FF1CY8C6xxA_SFLASH_PKEY -FF2CY8C6xxA_SFLASH_USER -FF3CY8C6xxA_WFLASH -FF4CY8C6xxA_sect256KB -FL0400 -FL1C00 -FL2800 -FL38000 -FL4200000 -FS016007C00 -FS116005A00 -FS216000800 -FS314000000 -FS410000000 -FP0($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_TOC2.FLM) -FP1($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_PKEY.FLM) -FP2($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_USER.FLM) -FP3($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_WFLASH.FLM) -FP4($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_sect256KB.FLM)</Name>
+          <Key>ARMRTXEVENTFLAGS</Key>
+          <Name>-L70 -Z18 -C0 -M0 -T1</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>DLGTARM</Key>
+          <Name>(1010=-1,-1,-1,-1,0)(1007=-1,-1,-1,-1,0)(1008=-1,-1,-1,-1,0)(1009=-1,-1,-1,-1,0)(1012=-1,-1,-1,-1,0)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>ARMDBGFLAGS</Key>
+          <Name></Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>DLGUARM</Key>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>CMSIS_AGDI</Key>
-          <Name>-X"Any" -UAny -O206 -S8 -C0 -P00000002 -N00("ARM CoreSight SW-DP") -D00(6BA02477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD8026400 -FC8000 -FN5 -FF0CY8C6xxA_SFLASH_TOC2.FLM -FS016007C00 -FL0400 -FP0($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_TOC2.FLM) -FF1CY8C6xxA_SFLASH_PKEY.FLM -FS116005A00 -FL1C00 -FP1($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_PKEY.FLM) -FF2CY8C6xxA_SFLASH_USER.FLM -FS216000800 -FL2800 -FP2($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_SFLASH_USER.FLM) -FF3CY8C6xxA_WFLASH.FLM -FS314000000 -FL38000 -FP3($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_WFLASH.FLM) -FF4CY8C6xxA_sect256KB.FLM -FS410000000 -FL4200000 -FP4($$Device:CY8C624ALQI-S2D42$Flash\CY8C6xxA_sect256KB.FLM)</Name>
+          <Name>-X"Any" -UAny -O206 -S8 -C0 -P00000002 -N00("ARM CoreSight SW-DP") -D00(6BA02477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD8026400 -FC8000 -FN5 -FF0CY8C6xxA_SFLASH_TOC2.FLM -FS016007C00 -FL0400 -FP0($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_TOC2.FLM) -FF1CY8C6xxA_SFLASH_PKEY.FLM -FS116005A00 -FL1C00 -FP1($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_PKEY.FLM) -FF2CY8C6xxA_SFLASH_USER.FLM -FS216000800 -FL2800 -FP2($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_USER.FLM) -FF3CY8C6xxA_WFLASH.FLM -FS314000000 -FL38000 -FP3($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_WFLASH.FLM) -FF4CY8C6xx8_sect256KB.FLM -FS410000000 -FL4100000 -FP4($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xx8_sect256KB.FLM)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>UL2CM3</Key>
+          <Name>UL2CM3(-S0 -C0 -P0 )  -FN5 -FC8000 -FD08026400 -FF0CY8C6xxA_SFLASH_TOC2 -FF1CY8C6xxA_SFLASH_PKEY -FF2CY8C6xxA_SFLASH_USER -FF3CY8C6xxA_WFLASH -FF4CY8C6xx8_sect256KB -FL0400 -FL1C00 -FL2800 -FL38000 -FL4100000 -FS016007C00 -FS116005A00 -FS216000800 -FS314000000 -FS410000000 -FP0($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_TOC2.FLM) -FP1($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_PKEY.FLM) -FP2($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_SFLASH_USER.FLM) -FP3($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xxA_WFLASH.FLM) -FP4($$Device:CY8C6248LQI-S2D42$Flash\CY8C6xx8_sect256KB.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>8</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>268662086</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>board\ports\drv_cyw43012.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\rtthread\board/ports/drv_cyw43012.c\8</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>267</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>268664028</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>packages\wlan_cyw43012-v0.0.1\wifi_ifx_cyw43012.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\rtthread\packages/wlan_cyw43012-v0.0.1/wifi_ifx_cyw43012.c\267</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>229</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>268445012</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\rtthread\../../../libcpu/arm/cortex-m4/context_rvds.S\229</Expression>
+        </Bp>
+      </Breakpoint>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
         <aPa>0</aPa>
-        <viewmode>0</viewmode>
+        <viewmode>1</viewmode>
         <vrSel>0</vrSel>
         <aSym>0</aSym>
         <aTbox>0</aTbox>
@@ -374,7 +443,7 @@
   </Group>
 
   <Group>
-    <GroupName>DeviceDrivers</GroupName>
+    <GroupName>cyw43012</GroupName>
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -386,8 +455,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\ipc\completion.c</PathWithFileName>
-      <FilenameWithoutPath>completion.c</FilenameWithoutPath>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_logging.c</PathWithFileName>
+      <FilenameWithoutPath>whd_logging.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -398,8 +467,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\ipc\dataqueue.c</PathWithFileName>
-      <FilenameWithoutPath>dataqueue.c</FilenameWithoutPath>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_wifi.c</PathWithFileName>
+      <FilenameWithoutPath>whd_wifi.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -410,8 +479,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\ipc\pipe.c</PathWithFileName>
-      <FilenameWithoutPath>pipe.c</FilenameWithoutPath>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_clm.c</PathWithFileName>
+      <FilenameWithoutPath>whd_clm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -422,8 +491,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\ipc\ringblk_buf.c</PathWithFileName>
-      <FilenameWithoutPath>ringblk_buf.c</FilenameWithoutPath>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_debug.c</PathWithFileName>
+      <FilenameWithoutPath>whd_debug.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -434,8 +503,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\ipc\ringbuffer.c</PathWithFileName>
-      <FilenameWithoutPath>ringbuffer.c</FilenameWithoutPath>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\clm\COMPONENT_43012\43012C0-mfgtest_clm_blob.c</PathWithFileName>
+      <FilenameWithoutPath>43012C0-mfgtest_clm_blob.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -446,8 +515,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\ipc\waitqueue.c</PathWithFileName>
-      <FilenameWithoutPath>waitqueue.c</FilenameWithoutPath>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus.c</PathWithFileName>
+      <FilenameWithoutPath>whd_bus.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -458,8 +527,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\ipc\workqueue.c</PathWithFileName>
-      <FilenameWithoutPath>workqueue.c</FilenameWithoutPath>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\whd-bsp-integration\COMPONENT_LWIP\cy_network_buffer_lwip.c</PathWithFileName>
+      <FilenameWithoutPath>cy_network_buffer_lwip.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -470,8 +539,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\misc\pin.c</PathWithFileName>
-      <FilenameWithoutPath>pin.c</FilenameWithoutPath>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\resource_imp\whd_resources.c</PathWithFileName>
+      <FilenameWithoutPath>whd_resources.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -482,8 +551,544 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi_ifx_cyw43012.c</PathWithFileName>
+      <FilenameWithoutPath>wifi_ifx_cyw43012.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>24</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\firmware\COMPONENT_43012\43012C0_bin.c</PathWithFileName>
+      <FilenameWithoutPath>43012C0_bin.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>25</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_thread.c</PathWithFileName>
+      <FilenameWithoutPath>whd_thread.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>26</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\whd-bsp-integration\cybsp_wifi.c</PathWithFileName>
+      <FilenameWithoutPath>cybsp_wifi.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>27</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus_spi_protocol.c</PathWithFileName>
+      <FilenameWithoutPath>whd_bus_spi_protocol.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>28</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\cy_worker_thread.c</PathWithFileName>
+      <FilenameWithoutPath>cy_worker_thread.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>29</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus_common.c</PathWithFileName>
+      <FilenameWithoutPath>whd_bus_common.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>30</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_sdpcm.c</PathWithFileName>
+      <FilenameWithoutPath>whd_sdpcm.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>31</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_ap.c</PathWithFileName>
+      <FilenameWithoutPath>whd_ap.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>32</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_cdc_bdc.c</PathWithFileName>
+      <FilenameWithoutPath>whd_cdc_bdc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>33</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_chip.c</PathWithFileName>
+      <FilenameWithoutPath>whd_chip.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>34</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\firmware\COMPONENT_43012\43012C0-mfgtest_bin.c</PathWithFileName>
+      <FilenameWithoutPath>43012C0-mfgtest_bin.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>35</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\COMPONENT_FREERTOS\cyabs_freertos_common.c</PathWithFileName>
+      <FilenameWithoutPath>cyabs_freertos_common.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>36</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_management.c</PathWithFileName>
+      <FilenameWithoutPath>whd_management.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>37</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\COMPONENT_FREERTOS\cyabs_rtos_freertos.c</PathWithFileName>
+      <FilenameWithoutPath>cyabs_rtos_freertos.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>38</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus_sdio_protocol.c</PathWithFileName>
+      <FilenameWithoutPath>whd_bus_sdio_protocol.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>39</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_buffer_api.c</PathWithFileName>
+      <FilenameWithoutPath>whd_buffer_api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>40</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_resource_if.c</PathWithFileName>
+      <FilenameWithoutPath>whd_resource_if.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>41</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\bus_protocols\whd_bus_m2m_protocol.c</PathWithFileName>
+      <FilenameWithoutPath>whd_bus_m2m_protocol.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>42</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_wifi_api.c</PathWithFileName>
+      <FilenameWithoutPath>whd_wifi_api.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>43</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\COMPONENT_FREERTOS\cyabs_rtos_dsram.c</PathWithFileName>
+      <FilenameWithoutPath>cyabs_rtos_dsram.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>44</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_chip_constants.c</PathWithFileName>
+      <FilenameWithoutPath>whd_chip_constants.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>45</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_network_if.c</PathWithFileName>
+      <FilenameWithoutPath>whd_network_if.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>46</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_wifi_p2p.c</PathWithFileName>
+      <FilenameWithoutPath>whd_wifi_p2p.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>47</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\abstraction-rtos\source\COMPONENT_FREERTOS\cyabs_freertos_helpers.c</PathWithFileName>
+      <FilenameWithoutPath>cyabs_freertos_helpers.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>48</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_utils.c</PathWithFileName>
+      <FilenameWithoutPath>whd_utils.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>49</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\resources\clm\COMPONENT_43012\43012C0_clm_blob.c</PathWithFileName>
+      <FilenameWithoutPath>43012C0_clm_blob.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>50</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\wlan_cyw43012-v0.0.1\wifi-host-driver\WiFi_Host_Driver\src\whd_events.c</PathWithFileName>
+      <FilenameWithoutPath>whd_events.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+  </Group>
+
+  <Group>
+    <GroupName>DeviceDrivers</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>51</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\core\device.c</PathWithFileName>
+      <FilenameWithoutPath>device.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>52</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\ipc\completion.c</PathWithFileName>
+      <FilenameWithoutPath>completion.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>53</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\ipc\dataqueue.c</PathWithFileName>
+      <FilenameWithoutPath>dataqueue.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>54</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\ipc\pipe.c</PathWithFileName>
+      <FilenameWithoutPath>pipe.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>55</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\ipc\ringblk_buf.c</PathWithFileName>
+      <FilenameWithoutPath>ringblk_buf.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>56</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\ipc\ringbuffer.c</PathWithFileName>
+      <FilenameWithoutPath>ringbuffer.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>57</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\ipc\waitqueue.c</PathWithFileName>
+      <FilenameWithoutPath>waitqueue.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>58</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\ipc\workqueue.c</PathWithFileName>
+      <FilenameWithoutPath>workqueue.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>59</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\misc\pin.c</PathWithFileName>
+      <FilenameWithoutPath>pin.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>60</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\components\drivers\serial\serial.c</PathWithFileName>
       <FilenameWithoutPath>serial.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>61</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\wlan\wlan_cfg.c</PathWithFileName>
+      <FilenameWithoutPath>wlan_cfg.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>62</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\wlan\wlan_cmd.c</PathWithFileName>
+      <FilenameWithoutPath>wlan_cmd.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>63</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\wlan\wlan_dev.c</PathWithFileName>
+      <FilenameWithoutPath>wlan_dev.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>64</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\wlan\wlan_lwip.c</PathWithFileName>
+      <FilenameWithoutPath>wlan_lwip.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>65</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\wlan\wlan_mgnt.c</PathWithFileName>
+      <FilenameWithoutPath>wlan_mgnt.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>66</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\wlan\wlan_prot.c</PathWithFileName>
+      <FilenameWithoutPath>wlan_prot.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>67</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\wlan\wlan_workqueue.c</PathWithFileName>
+      <FilenameWithoutPath>wlan_workqueue.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -496,20 +1101,20 @@
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>24</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>68</FileNumber>
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\TOOLCHAIN_ARM\cy_syslib_mdk.S</PathWithFileName>
-      <FilenameWithoutPath>cy_syslib_mdk.S</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\TOOLCHAIN_ARM\cy_syslib_ext.S</PathWithFileName>
+      <FilenameWithoutPath>cy_syslib_ext.S</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>25</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>69</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -520,8 +1125,20 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>26</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>70</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>board\ports\drv_cyw43012.c</PathWithFileName>
+      <FilenameWithoutPath>drv_cyw43012.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>71</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -532,8 +1149,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>27</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>72</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -544,8 +1161,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>28</FileNumber>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>73</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -564,32 +1181,8 @@
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
-      <GroupNumber>6</GroupNumber>
-      <FileNumber>29</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\finsh\shell.c</PathWithFileName>
-      <FilenameWithoutPath>shell.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>6</GroupNumber>
-      <FileNumber>30</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\finsh\msh.c</PathWithFileName>
-      <FilenameWithoutPath>msh.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>6</GroupNumber>
-      <FileNumber>31</FileNumber>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>74</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -600,8 +1193,32 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>6</GroupNumber>
-      <FileNumber>32</FileNumber>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>75</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\finsh\msh.c</PathWithFileName>
+      <FilenameWithoutPath>msh.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>76</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\finsh\shell.c</PathWithFileName>
+      <FilenameWithoutPath>shell.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>77</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -614,14 +1231,94 @@
   </Group>
 
   <Group>
+    <GroupName>FreeRTOS</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>78</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\FreeRTOS_Wrapper-latest\FreeRTOS\list.c</PathWithFileName>
+      <FilenameWithoutPath>list.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>79</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\FreeRTOS_Wrapper-latest\FreeRTOS\portable\rt-thread\port.c</PathWithFileName>
+      <FilenameWithoutPath>port.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>80</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\FreeRTOS_Wrapper-latest\FreeRTOS\queue.c</PathWithFileName>
+      <FilenameWithoutPath>queue.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>81</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\FreeRTOS_Wrapper-latest\FreeRTOS\tasks.c</PathWithFileName>
+      <FilenameWithoutPath>tasks.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>82</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\FreeRTOS_Wrapper-latest\FreeRTOS\event_groups.c</PathWithFileName>
+      <FilenameWithoutPath>event_groups.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>83</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>packages\FreeRTOS_Wrapper-latest\FreeRTOS\timers.c</PathWithFileName>
+      <FilenameWithoutPath>timers.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+  </Group>
+
+  <Group>
     <GroupName>Kernel</GroupName>
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>33</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>84</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -632,8 +1329,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>34</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>85</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -644,20 +1341,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>35</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\src\device.c</PathWithFileName>
-      <FilenameWithoutPath>device.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>36</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>86</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -668,8 +1353,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>37</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>87</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -680,8 +1365,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>38</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>88</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -692,8 +1377,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>39</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>89</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -704,8 +1389,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>40</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>90</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -716,8 +1401,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>41</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>91</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -728,8 +1413,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>42</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>92</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -740,8 +1425,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>43</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>93</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -752,8 +1437,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>44</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>94</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -764,8 +1449,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>45</FileNumber>
+      <GroupNumber>9</GroupNumber>
+      <FileNumber>95</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -779,205 +1464,13 @@
 
   <Group>
     <GroupName>Libraries</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>46</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</PathWithFileName>
-      <FilenameWithoutPath>psoc6_04_cm0p_sleep.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>47</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</PathWithFileName>
-      <FilenameWithoutPath>cy_sysint.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>48</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\source\triggers\cyhal_triggers_psoc6_02.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_triggers_psoc6_02.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>49</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\retarget-io\cy_retarget_io.c</PathWithFileName>
-      <FilenameWithoutPath>cy_retarget_io.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>50</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</PathWithFileName>
-      <FilenameWithoutPath>psoc6_02_cm0p_sleep.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>51</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_i2c.c</PathWithFileName>
-      <FilenameWithoutPath>cy_scb_i2c.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>52</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>cy_gpio.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>53</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_scb_common.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_scb_common.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>54</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_clock.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_clock.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>55</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_uart.c</PathWithFileName>
-      <FilenameWithoutPath>cy_scb_uart.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>56</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_common.c</PathWithFileName>
-      <FilenameWithoutPath>cy_scb_common.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>57</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_prot.c</PathWithFileName>
-      <FilenameWithoutPath>cy_prot.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>58</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_gpio.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>59</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_system.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_system.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>60</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_sema.c</PathWithFileName>
-      <FilenameWithoutPath>cy_ipc_sema.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>61</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_psoc.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_utils_psoc.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>62</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>96</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -988,20 +1481,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>63</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</PathWithFileName>
-      <FilenameWithoutPath>psoc6_01_cm0p_sleep.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>64</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>97</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1012,104 +1493,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>65</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_hwmgr.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_hwmgr.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>66</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syslib.c</PathWithFileName>
-      <FilenameWithoutPath>cy_syslib.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>67</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_pipe.c</PathWithFileName>
-      <FilenameWithoutPath>cy_ipc_pipe.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>68</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_lptimer.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_lptimer.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>69</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_irq_psoc.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_irq_psoc.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>70</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_mcwdt.c</PathWithFileName>
-      <FilenameWithoutPath>cy_mcwdt.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>71</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysclk.c</PathWithFileName>
-      <FilenameWithoutPath>cy_sysclk.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>72</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_syspm.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_syspm.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>73</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>98</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1120,56 +1505,140 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>74</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>99</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\source\pin_packages\cyhal_psoc6_02_68_qfn.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_psoc6_02_68_qfn.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_lptimer.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_lptimer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>75</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>100</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_systick.c</PathWithFileName>
-      <FilenameWithoutPath>cy_systick.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>76</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>101</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_interconnect.c</PathWithFileName>
-      <FilenameWithoutPath>cyhal_interconnect.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</PathWithFileName>
+      <FilenameWithoutPath>cy_syspm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>77</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>102</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_trigmux.c</PathWithFileName>
-      <FilenameWithoutPath>cy_trigmux.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_pipe.c</PathWithFileName>
+      <FilenameWithoutPath>cy_ipc_pipe.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>78</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>103</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_scb_common.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_scb_common.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>104</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syslib.c</PathWithFileName>
+      <FilenameWithoutPath>cy_syslib.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>105</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_clock.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_clock.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>106</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_impl.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_utils_impl.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>107</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_syspm.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_syspm.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>108</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_uart.c</PathWithFileName>
+      <FilenameWithoutPath>cy_scb_uart.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>109</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sd_host.c</PathWithFileName>
+      <FilenameWithoutPath>cy_sd_host.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>110</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1180,8 +1649,152 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>79</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>111</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_common.c</PathWithFileName>
+      <FilenameWithoutPath>cy_scb_common.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>112</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysclk.c</PathWithFileName>
+      <FilenameWithoutPath>cy_sysclk.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>113</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</PathWithFileName>
+      <FilenameWithoutPath>psoc6_01_cm0p_sleep.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>114</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\source\pin_packages\cyhal_psoc6_02_68_qfn.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_psoc6_02_68_qfn.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>115</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_scb_i2c.c</PathWithFileName>
+      <FilenameWithoutPath>cy_scb_i2c.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>116</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\source\triggers\cyhal_triggers_psoc6_02.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_triggers_psoc6_02.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>117</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>cy_gpio.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>118</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_systick.c</PathWithFileName>
+      <FilenameWithoutPath>cy_systick.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>119</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</PathWithFileName>
+      <FilenameWithoutPath>cy_sysint.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>120</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</PathWithFileName>
+      <FilenameWithoutPath>psoc6_02_cm0p_sleep.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>121</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_sdhc.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_sdhc.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>122</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_interconnect.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_interconnect.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>123</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1192,14 +1805,98 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>80</FileNumber>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>124</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</PathWithFileName>
-      <FilenameWithoutPath>cy_syspm.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_sema.c</PathWithFileName>
+      <FilenameWithoutPath>cy_ipc_sema.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>125</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_trigmux.c</PathWithFileName>
+      <FilenameWithoutPath>cy_trigmux.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>126</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_prot.c</PathWithFileName>
+      <FilenameWithoutPath>cy_prot.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>127</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_hwmgr.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_hwmgr.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>128</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_system.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_system.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>129</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</PathWithFileName>
+      <FilenameWithoutPath>psoc6_04_cm0p_sleep.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>130</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_irq_impl.c</PathWithFileName>
+      <FilenameWithoutPath>cyhal_irq_impl.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>131</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_mcwdt.c</PathWithFileName>
+      <FilenameWithoutPath>cy_mcwdt.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1212,104 +1909,8 @@
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>81</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</PathWithFileName>
-      <FilenameWithoutPath>cycfg_clocks.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>82</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_CM4\system_psoc6_cm4.c</PathWithFileName>
-      <FilenameWithoutPath>system_psoc6_cm4.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>83</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_connectivity_bt.c</PathWithFileName>
-      <FilenameWithoutPath>cycfg_connectivity_bt.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>84</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_peripherals.c</PathWithFileName>
-      <FilenameWithoutPath>cycfg_peripherals.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>85</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</PathWithFileName>
-      <FilenameWithoutPath>cycfg_routing.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>86</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_capsense.c</PathWithFileName>
-      <FilenameWithoutPath>cycfg_capsense.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>87</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_dmas.c</PathWithFileName>
-      <FilenameWithoutPath>cycfg_dmas.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>88</FileNumber>
-      <FileType>2</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_02_cm4.S</PathWithFileName>
-      <FilenameWithoutPath>startup_psoc6_02_cm4.S</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>89</FileNumber>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>132</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1320,50 +1921,586 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>90</FileNumber>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>133</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</PathWithFileName>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_connectivity_bt.c</PathWithFileName>
+      <FilenameWithoutPath>cycfg_connectivity_bt.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>134</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_peripherals.c</PathWithFileName>
+      <FilenameWithoutPath>cycfg_peripherals.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>135</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_CM4\system_psoc6_cm4.c</PathWithFileName>
+      <FilenameWithoutPath>system_psoc6_cm4.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>136</FileNumber>
+      <FileType>2</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_02_cm4.S</PathWithFileName>
+      <FilenameWithoutPath>startup_psoc6_02_cm4.S</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>137</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_qspi_memslot.c</PathWithFileName>
+      <FilenameWithoutPath>cycfg_qspi_memslot.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>138</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg.c</PathWithFileName>
       <FilenameWithoutPath>cycfg.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>91</FileNumber>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>139</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</PathWithFileName>
-      <FilenameWithoutPath>cycfg_pins.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>92</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</PathWithFileName>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_system.c</PathWithFileName>
       <FilenameWithoutPath>cycfg_system.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>9</GroupNumber>
-      <FileNumber>93</FileNumber>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>140</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>libs\TARGET_RTT-062S2\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_qspi_memslot.c</PathWithFileName>
-      <FilenameWithoutPath>cycfg_qspi_memslot.c</FilenameWithoutPath>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_clocks.c</PathWithFileName>
+      <FilenameWithoutPath>cycfg_clocks.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>141</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_pins.c</PathWithFileName>
+      <FilenameWithoutPath>cycfg_pins.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>142</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_routing.c</PathWithFileName>
+      <FilenameWithoutPath>cycfg_routing.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>143</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_capsense.c</PathWithFileName>
+      <FilenameWithoutPath>cycfg_capsense.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+  </Group>
+
+  <Group>
+    <GroupName>lwIP</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>144</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\api\api_lib.c</PathWithFileName>
+      <FilenameWithoutPath>api_lib.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>145</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\api\api_msg.c</PathWithFileName>
+      <FilenameWithoutPath>api_msg.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>146</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\api\err.c</PathWithFileName>
+      <FilenameWithoutPath>err.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>147</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\api\netbuf.c</PathWithFileName>
+      <FilenameWithoutPath>netbuf.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>148</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\api\netdb.c</PathWithFileName>
+      <FilenameWithoutPath>netdb.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>149</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\api\netifapi.c</PathWithFileName>
+      <FilenameWithoutPath>netifapi.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>150</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\api\sockets.c</PathWithFileName>
+      <FilenameWithoutPath>sockets.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>151</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\api\tcpip.c</PathWithFileName>
+      <FilenameWithoutPath>tcpip.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>152</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\apps\ping\ping.c</PathWithFileName>
+      <FilenameWithoutPath>ping.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>153</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\def.c</PathWithFileName>
+      <FilenameWithoutPath>def.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>154</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\dns.c</PathWithFileName>
+      <FilenameWithoutPath>dns.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>155</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\inet_chksum.c</PathWithFileName>
+      <FilenameWithoutPath>inet_chksum.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>156</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\init.c</PathWithFileName>
+      <FilenameWithoutPath>init.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>157</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ip.c</PathWithFileName>
+      <FilenameWithoutPath>ip.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>158</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\autoip.c</PathWithFileName>
+      <FilenameWithoutPath>autoip.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>159</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\dhcp.c</PathWithFileName>
+      <FilenameWithoutPath>dhcp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>160</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\etharp.c</PathWithFileName>
+      <FilenameWithoutPath>etharp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>161</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\icmp.c</PathWithFileName>
+      <FilenameWithoutPath>icmp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>162</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\igmp.c</PathWithFileName>
+      <FilenameWithoutPath>igmp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>163</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4.c</PathWithFileName>
+      <FilenameWithoutPath>ip4.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>164</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_addr.c</PathWithFileName>
+      <FilenameWithoutPath>ip4_addr.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>165</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_frag.c</PathWithFileName>
+      <FilenameWithoutPath>ip4_frag.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>166</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\memp.c</PathWithFileName>
+      <FilenameWithoutPath>memp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>167</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\netif.c</PathWithFileName>
+      <FilenameWithoutPath>netif.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>168</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\pbuf.c</PathWithFileName>
+      <FilenameWithoutPath>pbuf.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>169</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\raw.c</PathWithFileName>
+      <FilenameWithoutPath>raw.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>170</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\stats.c</PathWithFileName>
+      <FilenameWithoutPath>stats.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>171</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\sys.c</PathWithFileName>
+      <FilenameWithoutPath>sys.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>172</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp.c</PathWithFileName>
+      <FilenameWithoutPath>tcp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>173</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_in.c</PathWithFileName>
+      <FilenameWithoutPath>tcp_in.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>174</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_out.c</PathWithFileName>
+      <FilenameWithoutPath>tcp_out.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>175</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\timeouts.c</PathWithFileName>
+      <FilenameWithoutPath>timeouts.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>176</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\core\udp.c</PathWithFileName>
+      <FilenameWithoutPath>udp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>177</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\netif\ethernet.c</PathWithFileName>
+      <FilenameWithoutPath>ethernet.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>178</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\lwip-2.0.3\src\netif\lowpan6.c</PathWithFileName>
+      <FilenameWithoutPath>lowpan6.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>179</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\port\ethernetif.c</PathWithFileName>
+      <FilenameWithoutPath>ethernetif.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>180</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\net\lwip\port\sys_arch.c</PathWithFileName>
+      <FilenameWithoutPath>sys_arch.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

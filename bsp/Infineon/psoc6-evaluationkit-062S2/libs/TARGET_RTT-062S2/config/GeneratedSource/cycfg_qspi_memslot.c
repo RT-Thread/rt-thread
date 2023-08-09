@@ -4,7 +4,7 @@
 * Description:
 * Provides definitions of the SMIF-driver memory configuration.
 * This file was automatically generated and should not be modified.
-* QSPI Configurator 4.0.0.985
+* QSPI Configurator 4.10.0.1343
 *
 ********************************************************************************
 * Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or
@@ -60,7 +60,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_readCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -98,7 +98,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_writeEnCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -136,7 +136,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_writeDisCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -174,7 +174,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_eraseCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -212,7 +212,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_chipEraseCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -250,7 +250,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_programCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -288,7 +288,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_readStsRegQeCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -326,7 +326,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_readStsRegWipCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -364,7 +364,7 @@ const cy_stc_smif_mem_cmd_t S25FL512S_SlaveSlot_0_writeStsRegQeCmd =
     /* The high byte of a 16-bit command. This value is 0x0 when there is no higher byte command present */
     .commandH = 0x00,
     /* The Data rate of command */
-    .cmdRate = CY_SMIF_SDR
+    .cmdRate = CY_SMIF_SDR,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
@@ -409,7 +409,29 @@ const cy_stc_smif_mem_device_cfg_t deviceCfg_S25FL512S_SlaveSlot_0 =
 #if (CY_SMIF_DRV_VERSION_MAJOR > 1) || (CY_SMIF_DRV_VERSION_MINOR >= 50)
     /* Points to NULL or to structure with info about sectors for hybrid memory. */
     .hybridRegionCount = 0U,
-    .hybridRegionInfo = NULL
+    .hybridRegionInfo = 0,
+#endif
+    /* Specifies the command to read variable latency cycles configuration register */
+    .readLatencyCmd = 0,
+    /* Specifies the command to write variable latency cycles configuration register */
+    .writeLatencyCmd = 0,
+    /* Specifies the address for variable latency cycle address */
+    .latencyCyclesRegAddr = 0x00U,
+    /* Specifies variable latency cycles Mask */
+    .latencyCyclesMask = 0x00U,
+#if (CY_IP_MXSMIF_VERSION >= 2)
+    /* Specifies data for memory with hybrid sectors */
+    .octalDDREnableSeq = 0,
+    /* Specifies the command to read the OE-containing status register. */
+    .readStsRegOeCmd = 0,
+    /* Specifies the command to write the OE-containing status register. */
+    .writeStsRegOeCmd = 0,
+    /* QE mask for the status registers */
+    .stsRegOctalEnableMask = 0x00U,
+    /* Octal enable register address */
+    .octalEnableRegAddr = 0x00U,
+    /* Frequency of operation used in Octal mode */
+    .freq_of_operation = CY_SMIF_100MHZ_OPERATION,
 #endif
 };
 
@@ -441,12 +463,12 @@ const cy_stc_smif_mem_config_t S25FL512S_SlaveSlot_0 =
      * After this period the memory device is deselected. A later transfer, even from a
      * continuous address, starts with the overhead phases (command, address, mode, dummy cycles).
      * This configuration parameter is available for CAT1B devices. */
-    .mergeTimeout = CY_SMIF_MERGE_TIMEOUT_1_CYCLE
+    .mergeTimeout = CY_SMIF_MERGE_TIMEOUT_1_CYCLE,
 #endif /* CY_IP_MXSMIF_VERSION */
 };
 
 const cy_stc_smif_mem_config_t* const smifMemConfigs[CY_SMIF_DEVICE_NUM] = {
-   &S25FL512S_SlaveSlot_0
+   &S25FL512S_SlaveSlot_0,
 };
 
 const cy_stc_smif_block_config_t smifBlockConfig =
@@ -458,5 +480,5 @@ const cy_stc_smif_block_config_t smifBlockConfig =
     /* The version of the SMIF driver. */
     .majorVersion = CY_SMIF_DRV_VERSION_MAJOR,
     /* The version of the SMIF driver. */
-    .minorVersion = CY_SMIF_DRV_VERSION_MINOR
+    .minorVersion = CY_SMIF_DRV_VERSION_MINOR,
 };

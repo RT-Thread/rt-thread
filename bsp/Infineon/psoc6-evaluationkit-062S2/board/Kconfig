@@ -372,53 +372,57 @@ menu "Board extended module Drivers"
             default n
     endif
 
-        menuconfig BSP_USING_RW007
-            bool "Enable RW007"
-            default n
-            select PKG_USING_RW007
-            select BSP_USING_SPI
-            select BSP_USING_SPI0
-            select RW007_NOT_USE_EXAMPLE_DRIVERS
+    menuconfig BSP_USING_RW007
+        bool "Enable RW007"
+        default n
+        select PKG_USING_RW007
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+        select RW007_NOT_USE_EXAMPLE_DRIVERS
 
-        if BSP_USING_RW007
-            comment "Notice: P5_7 --> 47; P5_6 -->46; P0_5 --> 5; P0_4 --> 4"
-            config IFX_RW007_SPI_BUS_NAME
-                string "RW007 BUS NAME"
-                default "spi0"
+    if BSP_USING_RW007
+        comment "Notice: P5_7 --> 47; P5_6 -->46; P0_5 --> 5; P0_4 --> 4"
+        config IFX_RW007_SPI_BUS_NAME
+            string "RW007 BUS NAME"
+            default "spi0"
 
-            config IFX_RW007_WIFI_SSID
-                string "Wi-Fi SSID"
-                default "realthread_VIP"
+        config IFX_RW007_WIFI_SSID
+            string "Wi-Fi SSID"
+            default "realthread_VIP"
 
-            config IFX_RW007_WIFI_PASSWORD
-                string "Wi-Fi Password"
-                default "your wifi password"
+        config IFX_RW007_WIFI_PASSWORD
+            string "Wi-Fi Password"
+            default "your wifi password"
 
-            config IFX_RW007_CS_PIN
-                int "(INT)CS pin index"
-                range 1 113
-                default 5
+        config IFX_RW007_CS_PIN
+            int "(INT)CS pin index"
+            range 1 113
+            default 5
 
-            config IFX_RW007_BOOT0_PIN
-                int "(INT)BOOT0 pin index (same as spi clk pin)"
-                range 1 113
-                default 4
+        config IFX_RW007_BOOT0_PIN
+            int "(INT)BOOT0 pin index (same as spi clk pin)"
+            range 1 113
+            default 4
 
-            config IFX_RW007_BOOT1_PIN
-                int "(INT)BOOT1 pin index (same as spi cs pin)"
-                range 1 113
-                default 5
+        config IFX_RW007_BOOT1_PIN
+            int "(INT)BOOT1 pin index (same as spi cs pin)"
+            range 1 113
+            default 5
 
-            config IFX_RW007_INT_BUSY_PIN
-                int "(INT)INT/BUSY pin index"
-                range 1 113
-                default 47
+        config IFX_RW007_INT_BUSY_PIN
+            int "(INT)INT/BUSY pin index"
+            range 1 113
+            default 47
 
-            config IFX_RW007_RST_PIN
-                int "(INT)RESET pin index"  
-                range 1 113
-                default 46
-        endif
+        config IFX_RW007_RST_PIN
+            int "(INT)RESET pin index"  
+            range 1 113
+            default 46
+    endif
+    config BSP_USING_CYW43012_WIFI
+        bool "Enable cyw43012 wifi"
+        select PKG_USING_WLAN_CYW43012
+        default n
 endmenu
 
 endmenu

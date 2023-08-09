@@ -19,6 +19,9 @@ if GetDepend(['BSP_USING_SPI3_SAMPLE']):
 if GetDepend(['BSP_USING_RW007']):
     src += Glob('ports/drv_rw007.c')
 
+if GetDepend(['BSP_USING_CYW43012_WIFI']):
+    src += Glob('ports/drv_cyw43012.c')
+
 if GetDepend(['BSP_USING_SLIDER_SAMPLE']):
     src += Glob('ports/slider_sample.c')
 
@@ -35,6 +38,14 @@ elif rtconfig.PLATFORM in ['armclang']:
             '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_ARM/cy_syslib_ext.S']
 
 CPPDEFINES = ['CY8C624ALQI_S2D42', 'CORE_NAME_CM0P_0', 'CORE_NAME_CM4_0', 'CY_USING_PREBUILT_CM0P_IMAGE', 'CY_USING_HAL', 'COMPONENT_CAT1A', 'COMPONENT_CAT1']
+
+if GetDepend(['BSP_USING_CYW43012_WIFI']):
+    CPPDEFINES += [
+        "COMPONENT_WIFI_INTERFACE_SDIO",
+        "CYBSP_WIFI_CAPABLE",
+        "CY_RTOS_AWARE",
+        "CY_SUPPORTS_DEVICE_VALIDATION",
+        ]
 group = DefineGroup('Drivers', src, depend=[''], CPPPATH=path, CPPDEFINES=CPPDEFINES)
 
 Return('group')

@@ -1,8 +1,8 @@
 /*******************************************************************************
-* File Name: cycfg_routing.c
+* File Name: cycfg_connectivity_bt.c
 *
 * Description:
-* Establishes all necessary connections between hardware elements.
+* Connectivity BT configuration
 * This file was automatically generated and should not be modified.
 * Configurator Backend 3.0.0
 * device-db 4.3.0.3855
@@ -26,18 +26,5 @@
 * limitations under the License.
 ********************************************************************************/
 
-#include "cycfg_routing.h"
+#include "cycfg_connectivity_bt.h"
 
-#include "cy_device_headers.h"
-
-void init_cycfg_routing(void)
-{
-    HSIOM->AMUX_SPLIT_CTL[4] = HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SL_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SR_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SL_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SR_Msk;
-    HSIOM->AMUX_SPLIT_CTL[5] = HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SL_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_AA_SR_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SL_Msk |
-        HSIOM_V2_AMUX_SPLIT_CTL_SWITCH_BB_SR_Msk;
-}
