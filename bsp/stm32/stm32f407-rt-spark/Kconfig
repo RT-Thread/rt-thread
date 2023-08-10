@@ -16,6 +16,6 @@ config PKGS_DIR
     default "packages"
 
 source "$RTT_DIR/Kconfig"
-source "$PKGS_DIR/Kconfig"
 source "../libraries/Kconfig"
 source "board/Kconfig"
+source "$PKGS_DIR/Kconfig"
