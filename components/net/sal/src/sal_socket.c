@@ -1103,7 +1103,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                         addr_in->sin_addr.s_addr = sock->netdev->ip_addr.addr;
                     #elif NETDEV_IPV6
                     #error "Do not only support IPV6"
-                    #endif /* NETDEV_IPV4 && NETDEV_IPV6*/
+                    #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
 
                         return 0;
                     }
