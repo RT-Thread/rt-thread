@@ -1,0 +1,70 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = []
+path =  [cwd]
+
+if GetDepend(['BSP_USING_ETH']):
+    src += Glob('phy_reset.c')
+
+if GetDepend(['BSP_USING_RS485']):
+    src += Glob('drv_rs485.c')
+    
+if GetDepend(['BSP_USING_SOFT_SPI_FLASH']):
+    src += Glob('soft_spi_flash_init.c')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('spi_flash_init.c')
+
+if GetDepend(['BSP_USING_FS']):
+    src += Glob('drv_filesystem.c')
+
+if GetDepend(['BSP_USING_FAL']):
+    src += Glob('fal/fal_spi_flash_sfud_port.c')
+    path += [cwd + '/fal']
+
+if GetDepend(['BSP_USING_SRAM']):
+    src += Glob('drv_sram.c')
+
+if GetDepend(['BSP_USING_ONBOARD_LCD']):
+    src += Glob('lcd/drv_lcd.c')
+    path += [cwd + '/lcd']
+    
+if GetDepend(['BSP_USING_ONBOARD_LED_MATRIX']):
+	src += Glob('led_matrix/drv_matrix_led.c')
+	path += [cwd + '/led_matrix']
+
+if GetDepend(['BSP_USING_EASYFLASH']):
+    src += Glob('ef_fal_port.c')
+
+if GetDepend(['BSP_USING_ENC28j60']):
+    src += Glob('drv_enc28j60.c')
+
+if GetDepend(['BSP_USING_ONBOARD_PM']):
+	src += Glob('pm/drv_pm.c')
+	src += Glob('pm/drv_wakeup.c')
+	path += [cwd + '/pm']
+
+if GetDepend(['BSP_USING_AUDIO']):
+    src += Glob('audio/drv_es8388.c')
+    src += Glob('audio/drv_sound.c')
+    path += [cwd + '/audio']
+
+if GetDepend(['BSP_USING_AUDIO_RECORD']):
+    src += Glob('audio/drv_mic.c')
+
+CPPDEFINES = ['STM32F407xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')
