@@ -429,7 +429,8 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                             oflags &= ~O_EXCL;
                             /* the dentry already exists */
                             dfs_dentry_unref(dentry);
-                            dentry = RT_NULL;
+                            ret = -EEXIST;
+                            goto _ERR_RET;
                         }
                     }
                     else
@@ -536,6 +537,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                     {
                         DLOG(msg, "dfs_file", mnt->fs_ops->name, DLOG_MSG, "no permission or fops->open");
                         dfs_file_unref(file);
+                        ret = -EPERM;
                     }
                 }
                 else
@@ -544,8 +546,6 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                     ret = -ENOENT;
                 }
             }
-
-            rt_free(fullpath);
         }
 
         if (ret >= 0 && (oflags & O_TRUNC))
@@ -584,6 +584,11 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
         }
     }
 
+_ERR_RET:
+    if (fullpath != NULL)
+    {
+        rt_free(fullpath);
+    }
     return ret;
 }
 
