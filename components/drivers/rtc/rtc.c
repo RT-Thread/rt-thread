@@ -291,7 +291,7 @@ static void date(int argc, char **argv)
         /* output current time */
         rt_kprintf("local time: %.*s", 25, ctime(&now));
         rt_kprintf("timestamps: %ld\n", (long)tv.tv_sec);
-        rt_kprintf("timezone: UTC%c%d\n", -tz.tz_minuteswest > 0 ? '+' : '-', -tz.tz_minuteswest / 60);
+        rt_kprintf("timezone: UTC%c %d:%d\n", -tz.tz_minuteswest > 0 ? '+' : '-', -tz.tz_minuteswest / 60, -tz.tz_minuteswest % 60);
     }
     else if (argc >= 7)
     {

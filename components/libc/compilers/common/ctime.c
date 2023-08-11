@@ -175,7 +175,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
 
-    local_tz = *t + (time_t)tz_get() * 3600;
+    local_tz = *t + tz_get_timeoffset();
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -192,7 +192,7 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * (time_t)tz_get();
+    timestamp = timestamp - tz_get_timeoffset();
     return timestamp;
 }
 RTM_EXPORT(mktime);
@@ -420,7 +420,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     if(tz != RT_NULL)
     {
         tz->tz_dsttime = DST_NONE;
-        tz->tz_minuteswest = -(tz_get() * 60);
+        tz->tz_minuteswest = -(tz_get_timeoffset() / 60);
     }
 
     if (tv != RT_NULL)
@@ -1134,6 +1134,7 @@ RTM_EXPORT(timer_settime);
 #endif
 
 static volatile int8_t _current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
+static volatile int _current_timeoffset = RT_LIBC_DEFAULT_TIMEZONE * 3600;
 
 void tz_set(int8_t tz)
 {
@@ -1146,6 +1147,19 @@ void tz_set(int8_t tz)
 int8_t tz_get(void)
 {
     return _current_timezone;
+}
+
+void tz_set_timeoffset(int tz_offset)
+{
+    rt_base_t level;
+    level = rt_hw_interrupt_disable();
+    _current_timeoffset = tz_offset;
+    rt_hw_interrupt_enable(level);
+}
+
+int tz_get_timeoffset(void)
+{
+    return _current_timeoffset;
 }
 
 int8_t tz_is_dst(void)

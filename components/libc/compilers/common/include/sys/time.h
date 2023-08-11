@@ -222,6 +222,8 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value, st
 void tz_set(int8_t tz);
 int8_t tz_get(void);
 int8_t tz_is_dst(void);
+void tz_set_timeoffset(int tz_offset);
+int tz_get_timeoffset(void);
 
 #ifdef __cplusplus
 }
