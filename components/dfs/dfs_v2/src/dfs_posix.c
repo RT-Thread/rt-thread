@@ -676,7 +676,7 @@ int mkdir(const char *path, mode_t mode)
 
     if (path && dfs_file_lstat(path, &stat) == 0)
     {
-        rt_set_errno(-RT_ERROR);
+        rt_set_errno(-EEXIST);
         return -1;
     }
 
