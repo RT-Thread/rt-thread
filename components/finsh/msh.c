@@ -11,6 +11,7 @@
  */
 #include <rtthread.h>
 #include <string.h>
+#include <errno.h>
 
 #ifdef RT_USING_FINSH
 
@@ -539,12 +540,13 @@ int msh_exec(char *cmd, rt_size_t length)
         }
         *tcmd = '\0';
     }
-
+#ifdef RT_USING_SMART
     if (cmd_ret == -EACCES)
     {
         rt_kprintf("%s: Permission denied.\n", cmd);
     }
     else
+#endif
     {
         rt_kprintf("%s: command not found.\n", cmd);
     }
