@@ -483,7 +483,7 @@ found_program:
 
 int msh_exec(char *cmd, rt_size_t length)
 {
-    int cmd_ret;
+    int cmd_ret = 0;
 
     /* strim the beginning of command */
     while ((length > 0) && (*cmd  == ' ' || *cmd == '\t'))
@@ -521,7 +521,8 @@ int msh_exec(char *cmd, rt_size_t length)
 #ifdef RT_USING_SMART
     /* exec from msh_exec , debug = 0*/
     /* _msh_exec_lwp return is pid , <= 0 means failed */
-    if (_msh_exec_lwp(0, cmd, length) > 0)
+    cmd_ret = _msh_exec_lwp(0, cmd, length);
+    if (cmd_ret > 0)
     {
         return 0;
     }
@@ -538,7 +539,15 @@ int msh_exec(char *cmd, rt_size_t length)
         }
         *tcmd = '\0';
     }
-    rt_kprintf("%s: command not found.\n", cmd);
+
+    if (cmd_ret == -EACCES)
+    {
+        rt_kprintf("%s: Permission denied.\n", cmd);
+    }
+    else
+    {
+        rt_kprintf("%s: command not found.\n", cmd);
+    }
     return -1;
 }
 
