@@ -1,0 +1,26 @@
+menu "ISO-ANSI C layer"
+
+menu "Timezone and Daylight Saving Time"
+    config RT_LIBC_USING_LIGHT_TZ_DST
+        bool "Enable lightweight timezone and daylight saving time"
+        default y
+
+    if RT_LIBC_USING_LIGHT_TZ_DST
+        config RT_LIBC_TZ_DEFAULT_HOUR
+            int "Set the default local timezone (hour)"
+            range -12 12
+            default 8
+
+        config RT_LIBC_TZ_DEFAULT_MIN
+            int "Set the default local timezone (minute)"
+            range -59 59
+            default 0
+
+        config RT_LIBC_TZ_DEFAULT_SEC
+            int "Set the default local timezone (second)"
+            range -59 59
+            default 0
+    endif
+endmenu
+
+endmenu
