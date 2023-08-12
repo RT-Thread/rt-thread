@@ -20,8 +20,8 @@
 #include "mmu.h"
 #include "tlb.h"
 
-#ifdef RT_USING_SMART
 #include "ioremap.h"
+#ifdef RT_USING_SMART
 #include <lwp_mm.h>
 #endif
 
@@ -44,6 +44,15 @@
 #define MMU_TBL_BLOCK_2M_LEVEL 2
 #define MMU_TBL_PAGE_4k_LEVEL  3
 #define MMU_TBL_LEVEL_NR       4
+
+#ifndef KERNEL_VADDR_START
+#ifndef ARCH_RAM_OFFSET
+extern unsigned char _start;
+#define KERNEL_VADDR_START RT_ALIGN_DOWN((rt_ubase_t)&_start, 0x200000);
+#else
+#define KERNEL_VADDR_START ARCH_RAM_OFFSET
+#endif
+#endif
 
 volatile unsigned long MMUTable[512] __attribute__((aligned(4 * 1024)));
 
@@ -355,12 +364,9 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
 
 void rt_hw_mmu_ktbl_set(unsigned long tbl)
 {
-#ifdef RT_USING_SMART
     tbl += PV_OFFSET;
     __asm__ volatile("msr TTBR1_EL1, %0\n dsb sy\nisb" ::"r"(tbl) : "memory");
-#else
-    __asm__ volatile("msr TTBR0_EL1, %0\n dsb sy\nisb" ::"r"(tbl) : "memory");
-#endif
+
     __asm__ volatile("tlbi vmalle1\n dsb sy\nisb" ::: "memory");
     __asm__ volatile("ic ialluis\n dsb sy\nisb" ::: "memory");
 }
@@ -422,21 +428,12 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
     rt_page_cleanup();
 }
 
-#ifdef RT_USING_SMART
 static void _init_region(void *vaddr, size_t size)
 {
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = (char *)rt_ioremap_start - rt_mpr_size;
 }
-#else
-
-#define RTOS_VEND (0xfffffffff000UL)
-static inline void _init_region(void *vaddr, size_t size)
-{
-    rt_mpr_start = (void *)(RTOS_VEND - rt_mpr_size);
-}
-#endif
 
 /**
  * This function will initialize rt_mmu_info structure.
@@ -459,6 +456,8 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size,
         return -1;
     }
 
+    v_address = (void *)(0UL - size);
+
     va_s = (size_t)v_address;
     va_e = (size_t)v_address + size - 1;
 
@@ -475,12 +474,8 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size,
         return -1;
     }
 
-#ifdef RT_USING_SMART
     rt_aspace_init(aspace, (void *)KERNEL_VADDR_START, 0 - KERNEL_VADDR_START,
                    vtable);
-#else
-    rt_aspace_init(aspace, (void *)0x1000, RTOS_VEND - 0x1000ul, vtable);
-#endif
 
     _init_region(v_address, size);
 
@@ -796,16 +791,9 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
                            unsigned long size, unsigned long pv_off)
 {
     int ret;
+    unsigned long va = KERNEL_VADDR_START;
     unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
     unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);
-
-#ifdef RT_USING_SMART
-    unsigned long va = KERNEL_VADDR_START;
-#else
-    extern unsigned char _start;
-    unsigned long va = (unsigned long) &_start;
-    va = RT_ALIGN_DOWN(va, 0x200000);
-#endif
 
     /* setup pv off */
     rt_kmem_pvoff_set(pv_off);
