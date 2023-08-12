@@ -284,14 +284,22 @@ static void date(int argc, char **argv)
     if (argc == 1)
     {
         struct timeval tv = { 0 };
-        struct timezone tz = { 0 };
+        int32_t tz_offset_sec = 0;
+        uint32_t abs_tz_offset_sec = 0U;
 
-        gettimeofday(&tv, &tz);
+#if defined(RT_LIBC_USING_LIGHT_TZ_DST)
+        tz_offset_sec = rt_tz_get();
+#endif /* RT_LIBC_USING_LIGHT_TZ_DST */
+
+        gettimeofday(&tv, RT_NULL);
         now = tv.tv_sec;
+
+        abs_tz_offset_sec = tz_offset_sec > 0 ? tz_offset_sec : -tz_offset_sec;
         /* output current time */
-        rt_kprintf("local time: %.*s", 25, ctime(&now));
+        rt_kprintf("local time: %.*s", 25U, ctime(&now));
         rt_kprintf("timestamps: %ld\n", (long)tv.tv_sec);
-        rt_kprintf("timezone: UTC%c%d\n", -tz.tz_minuteswest > 0 ? '+' : '-', -tz.tz_minuteswest / 60);
+        rt_kprintf("timezone: UTC%c%02d:%02d:%02d\n",
+            tz_offset_sec > 0 ? '+' : '-', abs_tz_offset_sec / 3600U, abs_tz_offset_sec % 3600U / 60U, abs_tz_offset_sec % 3600U % 60U);
     }
     else if (argc >= 7)
     {
