@@ -11,7 +11,11 @@
 #ifndef __LWP_SYSCALL_H__
 #define __LWP_SYSCALL_H__
 
-#include <syscall_generic.h>
+#ifdef RT_USING_MUSLLIBC
+#include "libc_musl.h"
+#endif
+
+#include "syscall_generic.h"
 
 #include <stdint.h>
 #include <rtthread.h>

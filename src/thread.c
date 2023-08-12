@@ -203,7 +203,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     /* tick init */
-    thread->init_tick = tick;
+    rt_atomic_store(&thread->init_tick, tick);
     rt_atomic_store(&thread->remaining_tick, tick);
 
     /* error and flags */
@@ -245,7 +245,9 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #endif /* RT_USING_SIGNALS */
 
 #ifdef RT_USING_SMART
+    thread->tid_ref_count = 0;
     thread->lwp = RT_NULL;
+    thread->susp_recycler = RT_NULL;
     rt_list_init(&(thread->sibling));
 
     /* lwp thread-signal init */
@@ -271,7 +273,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #ifdef RT_USING_MODULE
     thread->parent.module_id = 0;
 #endif /* RT_USING_MODULE */
-    rt_atomic_store(&thread->counter, 0);
+    rt_atomic_store(&thread->ref_count, 0);
     rt_spin_lock_init(&thread->spinlock);
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));

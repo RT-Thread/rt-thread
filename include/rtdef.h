@@ -500,10 +500,11 @@ struct rt_spinlock
     void *pc;
 #endif /* RT_DEBUGING_SPINLOCK */
 };
+typedef struct rt_spinlock rt_spinlock_t;
 
 #ifndef RT_SPINLOCK_INIT
 #define RT_SPINLOCK_INIT {{0}} // default
-#endif
+#endif /* RT_SPINLOCK_INIT */
 
 #else
 typedef rt_ubase_t rt_spinlock_t;
@@ -511,10 +512,8 @@ struct rt_spinlock
 {
     rt_spinlock_t lock;
 };
-
 #define RT_SPINLOCK_INIT {0}
-
-#endif
+#endif /* RT_USING_SMP */
 
 #define RT_DEFINE_SPINLOCK(x)  struct rt_spinlock x = RT_SPINLOCK_INIT
 
@@ -547,7 +546,7 @@ struct rt_object
 #endif /* RT_USING_MODULE */
 
 #ifdef RT_USING_SMART
-    int         lwp_ref_count;                           /**< ref count for lwp */
+    rt_atomic_t lwp_ref_count;                           /**< ref count for lwp */
 #endif /* RT_USING_SMART */
 
     rt_list_t   list;                                    /**< list node of kernel object */
@@ -887,7 +886,6 @@ struct rt_user_context
 
 typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
 
-
 /**
  * Thread structure
  */
@@ -949,7 +947,7 @@ struct rt_thread
     void                        *si_list;               /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
 
-    rt_ubase_t                  init_tick;              /**< thread's initialized tick */
+    rt_atomic_t                 init_tick;              /**< thread's initialized tick */
     rt_atomic_t                 remaining_tick;         /**< remaining tick */
 
 #ifdef RT_USING_CPU_USAGE
@@ -979,8 +977,10 @@ struct rt_thread
     struct lwp_thread_signal    signal;                 /**< lwp signal for user-space thread */
     struct rt_user_context      user_ctx;               /**< user space context */
     struct rt_wakeup            wakeup;                 /**< wakeup data */
-    int                         exit_request;
-    int                         tid;
+    int                         exit_request;           /**< pending exit request of thread */
+    int                         tid;                    /**< thread ID used by process */
+    int                         tid_ref_count;          /**< reference of tid */
+    void                        *susp_recycler;         /**< suspended recycler on this thread */
 
     rt_uint64_t                 user_time;
     rt_uint64_t                 system_time;
@@ -997,7 +997,7 @@ struct rt_thread
     int                         *clear_child_tid;
 #endif /* ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
-    rt_atomic_t                 counter;
+    rt_atomic_t                 ref_count;
     struct rt_spinlock          spinlock;
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */
 };
@@ -1011,8 +1011,8 @@ typedef struct rt_thread *rt_thread_t;
 
 #define rt_atomic_inc(v)                rt_atomic_add((v), 1)
 #define rt_atomic_dec(v)                rt_atomic_sub((v), 1)
-#define rt_get_thread_struct(object)    do { rt_atomic_inc(&(object)->counter); } while(0)
-#define rt_put_thread_struct(object)    do { rt_atomic_dec(&(object)->counter); } while(0)
+#define rt_get_thread_struct(object)    do { rt_atomic_inc(&(object)->ref_count); } while(0)
+#define rt_put_thread_struct(object)    do { rt_atomic_dec(&(object)->ref_count); } while(0)
 
 /**
  * @addtogroup IPC

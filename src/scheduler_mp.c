@@ -354,7 +354,6 @@ static void _rt_schedule_insert_thread(struct rt_thread *thread, rt_bool_t is_lo
 
     LOG_D("insert thread[%.*s], the priority: %d",
           RT_NAME_MAX, thread->parent.name, thread->current_priority);
-
 }
 
 static void _rt_schedule_remove_thread(struct rt_thread *thread, rt_bool_t is_lock)

@@ -2057,6 +2057,7 @@ static int n_tty_read(struct dfs_file *fd, void *buf, size_t count)
             }
 
             wait_ret = rt_wqueue_wait_interruptible(wq, 0, RT_WAITING_FOREVER);
+
             if (wait_ret != 0)
             {
                 break;

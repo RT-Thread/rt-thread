@@ -22,10 +22,12 @@ rt_hw_spinlock_t _cpus_lock;
 void *_cpus_lock_owner = 0;
 void *_cpus_lock_pc = 0;
 
+#define __OWNER_MAGIC ((void *)0xdeadbeaf)
+
 #if defined (__GNUC__)
 #define __GET_RETURN_ADDRESS __builtin_return_address(0)
 #else
-#define __GET_RETURN_ADDRESS ((void *)0xdeadbeaf)
+#define __GET_RETURN_ADDRESS RT_NULL
 #endif
 
 #endif /* RT_DEBUGING_SPINLOCK */
@@ -71,8 +73,8 @@ void rt_spin_unlock(struct rt_spinlock *lock)
 {
     rt_hw_spin_unlock(&lock->lock);
 #if defined(RT_DEBUGING_SPINLOCK)
-    lock->owner = (void *)0;
-    lock->pc = (void *)0xbeafdead;
+    lock->owner = __OWNER_MAGIC;
+    lock->pc = RT_NULL;
 #endif /* RT_DEBUGING_SPINLOCK */
 }
 RTM_EXPORT(rt_spin_unlock)
@@ -114,8 +116,8 @@ RTM_EXPORT(rt_spin_lock_irqsave)
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
 #if defined(RT_DEBUGING_SPINLOCK)
-    lock->owner = (void *)0xdeadbeaf;
-    lock->pc = (void *)0;
+    lock->owner = __OWNER_MAGIC;
+    lock->pc = RT_NULL;
 #endif /* RT_DEBUGING_SPINLOCK */
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
@@ -193,8 +195,8 @@ void rt_cpus_unlock(rt_base_t level)
         if (pcpu->current_thread->cpus_lock_nest == 0)
         {
 #if defined(RT_DEBUGING_SPINLOCK)
-            _cpus_lock_owner = (void *)0xdeadbeaf;
-            _cpus_lock_pc = (void *)0;
+            _cpus_lock_owner = __OWNER_MAGIC;
+            _cpus_lock_pc = RT_NULL;
 #endif
             rt_hw_spin_unlock(&_cpus_lock);
         }

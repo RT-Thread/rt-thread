@@ -199,7 +199,7 @@ static void rt_defunct_execute(void)
             break;
         }
 
-        while (rt_atomic_load(&(thread->counter)))
+        while (rt_atomic_load(&(thread->ref_count)))
         {
             rt_thread_delay(5);
         }
