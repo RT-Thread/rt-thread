@@ -469,13 +469,18 @@ void lwp_free(struct rt_lwp* lwp)
         if (lwp->tty != RT_NULL)
         {
             rt_mutex_take(&lwp->tty->lock, RT_WAITING_FOREVER);
-            old_lwp = tty_pop(&lwp->tty->head, RT_NULL);
-            rt_mutex_release(&lwp->tty->lock);
             if (lwp->tty->foreground == lwp)
             {
+                old_lwp = tty_pop(&lwp->tty->head, RT_NULL);
                 lwp->tty->foreground = old_lwp;
-                lwp->tty = RT_NULL;
             }
+            else
+            {
+                tty_pop(&lwp->tty->head, lwp);
+            }
+            rt_mutex_release(&lwp->tty->lock);
+
+            lwp->tty = RT_NULL;
         }
     }
     else
