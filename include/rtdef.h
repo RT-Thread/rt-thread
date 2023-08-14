@@ -68,6 +68,7 @@
 #include <stdarg.h>
 #if !RT_USING_LIBC_ISO_ONLY
 #include <sys/types.h>
+#include <sys/errno.h>
 #if defined(RT_USING_SIGNALS) || defined(RT_USING_SMART)
 #include <sys/signal.h>
 #endif /* defined(RT_USING_SIGNALS) || defined(RT_USING_SMART) */
@@ -396,27 +397,44 @@ typedef int (*init_fn_t)(void);
 #endif
 
 /**
- * @addtogroup Error
+ * @addtogroup Error Code
  */
 
 /**@{*/
 
 /* RT-Thread error code definitions */
+#if defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY
+/* POSIX error code compatible */
 #define RT_EOK                          0               /**< There is no error */
-#define RT_ERROR                        1               /**< A generic error happens */
+#define RT_ERROR                        255             /**< A generic/unknown error happens */
+#define RT_ETIMEOUT                     ETIMEDOUT       /**< Timed out */
+#define RT_EFULL                        ENOSPC          /**< The resource is full */
+#define RT_EEMPTY                       ENODATA         /**< The resource is empty */
+#define RT_ENOMEM                       ENOMEM          /**< No memory */
+#define RT_ENOSYS                       ENOSYS          /**< Function not implemented */
+#define RT_EBUSY                        EBUSY           /**< Busy */
+#define RT_EIO                          EIO             /**< IO error */
+#define RT_EINTR                        EINTR           /**< Interrupted system call */
+#define RT_EINVAL                       EINVAL          /**< Invalid argument */
+#define RT_ENOENT                       ENOENT          /**< No entry */
+#define RT_ENOSPC                       ENOSPC          /**< No space left */
+#define RT_EPERM                        EPERM           /**< Operation not permitted */
+#else
+#define RT_EOK                          0               /**< There is no error */
+#define RT_ERROR                        1               /**< A generic/unknown error happens */
 #define RT_ETIMEOUT                     2               /**< Timed out */
 #define RT_EFULL                        3               /**< The resource is full */
 #define RT_EEMPTY                       4               /**< The resource is empty */
 #define RT_ENOMEM                       5               /**< No memory */
-#define RT_ENOSYS                       6               /**< No system */
+#define RT_ENOSYS                       6               /**< Function not implemented */
 #define RT_EBUSY                        7               /**< Busy */
 #define RT_EIO                          8               /**< IO error */
 #define RT_EINTR                        9               /**< Interrupted system call */
 #define RT_EINVAL                       10              /**< Invalid argument */
-#define RT_ETRAP                        11              /**< Trap event */
-#define RT_ENOENT                       12              /**< No entry */
-#define RT_ENOSPC                       13              /**< No space left */
-#define RT_EPERM                        14              /**< Operation not permitted */
+#define RT_ENOENT                       11              /**< No entry */
+#define RT_ENOSPC                       12              /**< No space left */
+#define RT_EPERM                        13              /**< Operation not permitted */
+#endif /* defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY */
 
 /**@}*/
 
