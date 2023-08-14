@@ -91,3 +91,8 @@ void rt_hw_board_init()
    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    busy_wait_us_32(us);
+}

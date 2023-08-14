@@ -73,6 +73,10 @@ extern "C" {
 #endif /* RT_USING_I2C_BITOPS */
 #endif /* RT_USING_I2C */
 
+#ifdef RT_USING_SOFT_I2C
+#include "drivers/i2c_soft.h"
+#endif /* RT_USING_SOFT_I2C */
+
 #ifdef RT_USING_PHY
 #include "drivers/phy.h"
 #include "drivers/phy_mdio.h"
