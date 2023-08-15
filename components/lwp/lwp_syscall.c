@@ -764,18 +764,18 @@ sysret_t sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     kmem_put(kfds);
     return ret;
 #else
-#ifdef RT_USING_MUSL
+#ifdef RT_USING_MUSLLIBC
     for (i = 0; i < nfds; i++)
     {
         musl2dfs_events(&fds->events);
     }
-#endif /* RT_USING_MUSL */
+#endif /* RT_USING_MUSLLIBC */
     if (!lwp_user_accessable((void *)fds, nfds * sizeof *fds))
     {
         return -EFAULT;
     }
     ret = poll(fds, nfds, timeout);
-#ifdef RT_USING_MUSL
+#ifdef RT_USING_MUSLLIBC
     if (ret > 0)
     {
         for (i = 0; i < nfds; i++)
@@ -783,7 +783,7 @@ sysret_t sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
             dfs2musl_events(&fds->revents);
         }
     }
-#endif /* RT_USING_MUSL */
+#endif /* RT_USING_MUSLLIBC */
     return ret;
 #endif /* ARCH_MM_MMU */
 }
@@ -3986,7 +3986,7 @@ sysret_t sys_rmdir(const char *path)
 #endif
 }
 
-#ifdef RT_USING_MUSL
+#ifdef RT_USING_MUSLLIBC
 typedef uint64_t ino_t;
 #endif
 

@@ -31,6 +31,10 @@
 #include <mmu.h>
 #include <page.h>
 
+#ifdef RT_USING_MUSLLIBC
+#include "libc_musl.h"
+#endif
+
 #define DBG_TAG "LwP"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
@@ -505,8 +509,6 @@ rt_base_t lwp_brk(void *addr)
     rt_mm_unlock();
     return ret;
 }
-
-#define MAP_ANONYMOUS 0x20
 
 void *lwp_mmap2(void *addr, size_t length, int prot, int flags, int fd,
                 off_t pgoffset)
