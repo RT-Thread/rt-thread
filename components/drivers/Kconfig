@@ -121,10 +121,6 @@ if RT_USING_I2C
         bool "Use I2C debug message"
         default n
 
-    config RT_I2C_DETAIL
-        bool "Use I2C detail message"
-        default y
-
     config RT_USING_I2C_BITOPS
         bool "Use GPIO to simulate I2C"
         default y
@@ -139,17 +135,8 @@ if RT_USING_I2C
         bool "Use GPIO to soft simulate I2C"
         default n
         select RT_USING_PIN
+        select RT_USING_I2C_BITOPS
     if RT_USING_SOFT_I2C
-        config RT_USING_SOFT_I2C_DEBUG
-            bool "Use simulate I2C debug message"
-            default n
-        config RT_USING_SOFT_I2C_SIMPLE
-            bool "Use simple soft I2C"
-            default n
-        config RT_USING_SOFT_I2C_MSH
-            bool "Use shell cmd"
-			depends on RT_USING_MSH
-            default n
 		config RT_USING_SOFT_I2C5
 			bool "Enable I2C5 Bus (software simulation)"
 			default n

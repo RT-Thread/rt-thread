@@ -561,7 +561,6 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
  * device (I/O) system interface
  */
 rt_device_t rt_device_find(const char *name);
-#define rt_device_name(dev) (dev)->parent.name
 
 rt_err_t rt_device_register(rt_device_t dev,
                             const char *name,

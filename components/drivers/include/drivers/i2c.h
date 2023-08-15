@@ -26,21 +26,6 @@ extern "C" {
 #define RT_I2C_NO_READ_ACK      (1u << 6)  /* when I2C reading, we do not ACK */
 #define RT_I2C_NO_STOP          (1u << 7)
 
-typedef enum
-{
-    RT_I2C_STATE_RESET      = 0x0000U,      /* Is not yet Initialized */
-    RT_I2C_STATE_READY      = (1U << 0),    /* Is ready */
-    RT_I2C_STATE_BUSY       = (1U << 1),    /* Is busy */
-    RT_I2C_STATE_START      = (1U << 2),    /* Start signal */
-    RT_I2C_STATE_ADDR       = (1U << 3),    /* Send address */
-    RT_I2C_STATE_RESTART    = (1U << 4),    /* Restart signal */
-    RT_I2C_STATE_TX         = (1U << 5),    /* Data transmission */
-    RT_I2C_STATE_RX         = (1U << 6),    /* Data reception */
-    RT_I2C_STATE_LISTEN     = (1U << 7),    /* Address listen mode */
-    RT_I2C_STATE_ABORT      = (1U << 8),    /* Abort user request */
-    RT_I2C_STATE_UNLOCK     = (1U << 14),   /* Unlock signal */
-    RT_I2C_STATE_STOP       = (1U << 15),   /* Stop signal */
-} rt_i2c_state_t;
 
 struct rt_i2c_msg
 {
@@ -83,7 +68,6 @@ struct rt_i2c_client
     rt_uint16_t                    client_addr;
 };
 
-#define rt_i2c_bus_name(bus) rt_device_name(&(bus)->parent)
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name);
 struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name);
