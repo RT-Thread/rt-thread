@@ -11,7 +11,6 @@
 #define __TEST_ASPACE_API_H__
 
 #include "common.h"
-#include "lwp_arch.h"
 #include "test_aspace_api_internal.h"
 #include "test_synchronization.h"
 
@@ -181,6 +180,7 @@ static void test_varea_map_page(void)
         void *page = rt_pages_alloc(0);
         uassert_true(!!page);
         uassert_true(!rt_varea_map_page(varea, varea->start + i, page));
+        uassert_true(rt_kmem_v2p(varea->start + i) == (page + PV_OFFSET));
 
         /* let page manager handle the free of page */
         rt_varea_pgmgr_insert(varea, page);
@@ -210,10 +210,69 @@ static void test_varea_map_range(void)
     uassert_true(!rt_aspace_unmap(&rt_kernel_space, varea->start));
 }
 
+/**
+ * @brief rt_varea_unmap_page
+ * Requirements: cancel the page table entry
+ */
+static void test_varea_unmap_page(void)
+{
+    /* Prepare environment */
+    const size_t buf_sz = 4 * ARCH_PAGE_SIZE;
+    rt_varea_t varea = _create_varea(buf_sz);
+    for (size_t i = 0; i < buf_sz; i += ARCH_PAGE_SIZE)
+    {
+        void *page = rt_pages_alloc(0);
+        uassert_true(!!page);
+        uassert_true(!rt_varea_map_page(varea, varea->start + i, page));
+
+        /* let page manager handle the free of page */
+        rt_varea_pgmgr_insert(varea, page);
+        uassert_true(rt_kmem_v2p(varea->start + i) == (page + PV_OFFSET));
+    }
+
+    /* test if unmap is success */
+    for (size_t i = 0; i < buf_sz; i += ARCH_PAGE_SIZE)
+    {
+        uassert_true(rt_varea_unmap_page(varea, varea->start + i) == RT_EOK);
+        uassert_true(rt_kmem_v2p(varea->start + i) == ARCH_MAP_FAILED);
+    }
+
+    uassert_true(!rt_aspace_unmap(&rt_kernel_space, varea->start));
+}
+
+/**
+ * @brief rt_varea_map_range
+ * Requirements: complete the page table entry
+ */
+static void test_varea_unmap_range(void)
+{
+    const size_t buf_sz = 4 * ARCH_PAGE_SIZE;
+    rt_varea_t varea = _create_varea(buf_sz);
+    void *page = rt_pages_alloc(rt_page_bits(buf_sz));
+    uassert_true(!!page);
+    uassert_true(!rt_varea_map_range(varea, varea->start, page + PV_OFFSET, buf_sz));
+    for (size_t i = 0; i < buf_sz; i += ARCH_PAGE_SIZE)
+    {
+        uassert_true(rt_kmem_v2p(varea->start + i) == (page + i + PV_OFFSET));
+    }
+
+    /* test if unmap is success */
+    uassert_true(rt_varea_unmap_range(varea, varea->start, buf_sz) == RT_EOK);
+    for (size_t i = 0; i < buf_sz; i += ARCH_PAGE_SIZE)
+    {
+        uassert_true(rt_kmem_v2p(varea->start + i) == ARCH_MAP_FAILED);
+    }
+
+    uassert_true(rt_pages_free(page, rt_page_bits(buf_sz)));
+    uassert_true(!rt_aspace_unmap(&rt_kernel_space, varea->start));
+}
+
 static void varea_map_tc(void)
 {
     CONSIST_HEAP(test_varea_map_page());
     CONSIST_HEAP(test_varea_map_range());
+    CONSIST_HEAP(test_varea_unmap_page());
+    CONSIST_HEAP(test_varea_unmap_range());
 }
 
 static void aspace_traversal_tc(void)
