@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -12,8 +12,7 @@
 typedef struct {
     __R  uint8_t  RESERVED0[16];               /* 0x0 - 0xF: Reserved */
     __RW uint32_t TRANSFMT;                    /* 0x10: Transfer Format Register */
-    __RW uint32_t DIRECTIO;                    /* 0x14: Direct IO Control Register */
-    __R  uint8_t  RESERVED1[8];                /* 0x18 - 0x1F: Reserved */
+    __R  uint8_t  RESERVED1[12];               /* 0x14 - 0x1F: Reserved */
     __RW uint32_t TRANSCTRL;                   /* 0x20: Transfer Control Register */
     __RW uint32_t CMD;                         /* 0x24: Command Register */
     __RW uint32_t ADDR;                        /* 0x28: Address Register */
@@ -128,193 +127,6 @@ typedef struct {
 #define SPI_TRANSFMT_CPHA_SHIFT (0U)
 #define SPI_TRANSFMT_CPHA_SET(x) (((uint32_t)(x) << SPI_TRANSFMT_CPHA_SHIFT) & SPI_TRANSFMT_CPHA_MASK)
 #define SPI_TRANSFMT_CPHA_GET(x) (((uint32_t)(x) & SPI_TRANSFMT_CPHA_MASK) >> SPI_TRANSFMT_CPHA_SHIFT)
-
-/* Bitfield definition for register: DIRECTIO */
-/*
- * DIRECTIOEN (RW)
- *
- * Enable Direct IO
- * 0x0: Disable
- * 0x1: Enable
- */
-#define SPI_DIRECTIO_DIRECTIOEN_MASK (0x1000000UL)
-#define SPI_DIRECTIO_DIRECTIOEN_SHIFT (24U)
-#define SPI_DIRECTIO_DIRECTIOEN_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_DIRECTIOEN_SHIFT) & SPI_DIRECTIO_DIRECTIOEN_MASK)
-#define SPI_DIRECTIO_DIRECTIOEN_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_DIRECTIOEN_MASK) >> SPI_DIRECTIO_DIRECTIOEN_SHIFT)
-
-/*
- * HOLD_OE (RW)
- *
- * Output enable for the SPI Flash hold signal
- */
-#define SPI_DIRECTIO_HOLD_OE_MASK (0x200000UL)
-#define SPI_DIRECTIO_HOLD_OE_SHIFT (21U)
-#define SPI_DIRECTIO_HOLD_OE_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_HOLD_OE_SHIFT) & SPI_DIRECTIO_HOLD_OE_MASK)
-#define SPI_DIRECTIO_HOLD_OE_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_HOLD_OE_MASK) >> SPI_DIRECTIO_HOLD_OE_SHIFT)
-
-/*
- * WP_OE (RW)
- *
- * Output enable for the SPI Flash write protect signal
- */
-#define SPI_DIRECTIO_WP_OE_MASK (0x100000UL)
-#define SPI_DIRECTIO_WP_OE_SHIFT (20U)
-#define SPI_DIRECTIO_WP_OE_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_WP_OE_SHIFT) & SPI_DIRECTIO_WP_OE_MASK)
-#define SPI_DIRECTIO_WP_OE_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_WP_OE_MASK) >> SPI_DIRECTIO_WP_OE_SHIFT)
-
-/*
- * MISO_OE (RW)
- *
- * Output enable fo the SPI MISO signal
- */
-#define SPI_DIRECTIO_MISO_OE_MASK (0x80000UL)
-#define SPI_DIRECTIO_MISO_OE_SHIFT (19U)
-#define SPI_DIRECTIO_MISO_OE_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_MISO_OE_SHIFT) & SPI_DIRECTIO_MISO_OE_MASK)
-#define SPI_DIRECTIO_MISO_OE_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_MISO_OE_MASK) >> SPI_DIRECTIO_MISO_OE_SHIFT)
-
-/*
- * MOSI_OE (RW)
- *
- * Output enable for the SPI MOSI signal
- */
-#define SPI_DIRECTIO_MOSI_OE_MASK (0x40000UL)
-#define SPI_DIRECTIO_MOSI_OE_SHIFT (18U)
-#define SPI_DIRECTIO_MOSI_OE_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_MOSI_OE_SHIFT) & SPI_DIRECTIO_MOSI_OE_MASK)
-#define SPI_DIRECTIO_MOSI_OE_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_MOSI_OE_MASK) >> SPI_DIRECTIO_MOSI_OE_SHIFT)
-
-/*
- * SCLK_OE (RW)
- *
- * Output enable for the SPI SCLK signal
- */
-#define SPI_DIRECTIO_SCLK_OE_MASK (0x20000UL)
-#define SPI_DIRECTIO_SCLK_OE_SHIFT (17U)
-#define SPI_DIRECTIO_SCLK_OE_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_SCLK_OE_SHIFT) & SPI_DIRECTIO_SCLK_OE_MASK)
-#define SPI_DIRECTIO_SCLK_OE_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_SCLK_OE_MASK) >> SPI_DIRECTIO_SCLK_OE_SHIFT)
-
-/*
- * CS_OE (RW)
- *
- * Output enable for SPI CS (chip select) signal
- */
-#define SPI_DIRECTIO_CS_OE_MASK (0x10000UL)
-#define SPI_DIRECTIO_CS_OE_SHIFT (16U)
-#define SPI_DIRECTIO_CS_OE_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_CS_OE_SHIFT) & SPI_DIRECTIO_CS_OE_MASK)
-#define SPI_DIRECTIO_CS_OE_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_CS_OE_MASK) >> SPI_DIRECTIO_CS_OE_SHIFT)
-
-/*
- * HOLD_O (RW)
- *
- * Output value for the SPI Flash hold signal
- */
-#define SPI_DIRECTIO_HOLD_O_MASK (0x2000U)
-#define SPI_DIRECTIO_HOLD_O_SHIFT (13U)
-#define SPI_DIRECTIO_HOLD_O_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_HOLD_O_SHIFT) & SPI_DIRECTIO_HOLD_O_MASK)
-#define SPI_DIRECTIO_HOLD_O_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_HOLD_O_MASK) >> SPI_DIRECTIO_HOLD_O_SHIFT)
-
-/*
- * WP_O (RW)
- *
- * Output value for the SPI Flash write protect signal
- */
-#define SPI_DIRECTIO_WP_O_MASK (0x1000U)
-#define SPI_DIRECTIO_WP_O_SHIFT (12U)
-#define SPI_DIRECTIO_WP_O_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_WP_O_SHIFT) & SPI_DIRECTIO_WP_O_MASK)
-#define SPI_DIRECTIO_WP_O_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_WP_O_MASK) >> SPI_DIRECTIO_WP_O_SHIFT)
-
-/*
- * MISO_O (RW)
- *
- * Output value for the SPI MISO signal
- */
-#define SPI_DIRECTIO_MISO_O_MASK (0x800U)
-#define SPI_DIRECTIO_MISO_O_SHIFT (11U)
-#define SPI_DIRECTIO_MISO_O_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_MISO_O_SHIFT) & SPI_DIRECTIO_MISO_O_MASK)
-#define SPI_DIRECTIO_MISO_O_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_MISO_O_MASK) >> SPI_DIRECTIO_MISO_O_SHIFT)
-
-/*
- * MOSI_O (RW)
- *
- * Output value for the SPI MOSI signal
- */
-#define SPI_DIRECTIO_MOSI_O_MASK (0x400U)
-#define SPI_DIRECTIO_MOSI_O_SHIFT (10U)
-#define SPI_DIRECTIO_MOSI_O_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_MOSI_O_SHIFT) & SPI_DIRECTIO_MOSI_O_MASK)
-#define SPI_DIRECTIO_MOSI_O_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_MOSI_O_MASK) >> SPI_DIRECTIO_MOSI_O_SHIFT)
-
-/*
- * SCLK_O (RW)
- *
- * Output value for the SPI SCLK signal
- */
-#define SPI_DIRECTIO_SCLK_O_MASK (0x200U)
-#define SPI_DIRECTIO_SCLK_O_SHIFT (9U)
-#define SPI_DIRECTIO_SCLK_O_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_SCLK_O_SHIFT) & SPI_DIRECTIO_SCLK_O_MASK)
-#define SPI_DIRECTIO_SCLK_O_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_SCLK_O_MASK) >> SPI_DIRECTIO_SCLK_O_SHIFT)
-
-/*
- * CS_O (RW)
- *
- * Output value for the SPI CS (chip select) signal
- */
-#define SPI_DIRECTIO_CS_O_MASK (0x100U)
-#define SPI_DIRECTIO_CS_O_SHIFT (8U)
-#define SPI_DIRECTIO_CS_O_SET(x) (((uint32_t)(x) << SPI_DIRECTIO_CS_O_SHIFT) & SPI_DIRECTIO_CS_O_MASK)
-#define SPI_DIRECTIO_CS_O_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_CS_O_MASK) >> SPI_DIRECTIO_CS_O_SHIFT)
-
-/*
- * HOLD_I (RO)
- *
- * Status of the SPI Flash hold signal
- */
-#define SPI_DIRECTIO_HOLD_I_MASK (0x20U)
-#define SPI_DIRECTIO_HOLD_I_SHIFT (5U)
-#define SPI_DIRECTIO_HOLD_I_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_HOLD_I_MASK) >> SPI_DIRECTIO_HOLD_I_SHIFT)
-
-/*
- * WP_I (RO)
- *
- * Status of the SPI Flash write protect signal
- */
-#define SPI_DIRECTIO_WP_I_MASK (0x10U)
-#define SPI_DIRECTIO_WP_I_SHIFT (4U)
-#define SPI_DIRECTIO_WP_I_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_WP_I_MASK) >> SPI_DIRECTIO_WP_I_SHIFT)
-
-/*
- * MISO_I (RO)
- *
- * Status of the SPI MISO signal
- */
-#define SPI_DIRECTIO_MISO_I_MASK (0x8U)
-#define SPI_DIRECTIO_MISO_I_SHIFT (3U)
-#define SPI_DIRECTIO_MISO_I_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_MISO_I_MASK) >> SPI_DIRECTIO_MISO_I_SHIFT)
-
-/*
- * MOSI_I (RO)
- *
- * Status of the SPI MOSI signal
- */
-#define SPI_DIRECTIO_MOSI_I_MASK (0x4U)
-#define SPI_DIRECTIO_MOSI_I_SHIFT (2U)
-#define SPI_DIRECTIO_MOSI_I_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_MOSI_I_MASK) >> SPI_DIRECTIO_MOSI_I_SHIFT)
-
-/*
- * SCLK_I (RO)
- *
- * Status of the SPI SCLK signal
- */
-#define SPI_DIRECTIO_SCLK_I_MASK (0x2U)
-#define SPI_DIRECTIO_SCLK_I_SHIFT (1U)
-#define SPI_DIRECTIO_SCLK_I_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_SCLK_I_MASK) >> SPI_DIRECTIO_SCLK_I_SHIFT)
-
-/*
- * CS_I (RO)
- *
- * Status of the SPI CS (chip select) signal
- */
-#define SPI_DIRECTIO_CS_I_MASK (0x1U)
-#define SPI_DIRECTIO_CS_I_SHIFT (0U)
-#define SPI_DIRECTIO_CS_I_GET(x) (((uint32_t)(x) & SPI_DIRECTIO_CS_I_MASK) >> SPI_DIRECTIO_CS_I_SHIFT)
 
 /* Bitfield definition for register: TRANSCTRL */
 /*
@@ -847,12 +659,13 @@ typedef struct {
 
 /* Bitfield definition for register: SLVST */
 /*
- * UNDERRUN (R1C)
+ * UNDERRUN (W1C)
  *
  * Data underrun occurs in the last transaction
  */
 #define SPI_SLVST_UNDERRUN_MASK (0x40000UL)
 #define SPI_SLVST_UNDERRUN_SHIFT (18U)
+#define SPI_SLVST_UNDERRUN_SET(x) (((uint32_t)(x) << SPI_SLVST_UNDERRUN_SHIFT) & SPI_SLVST_UNDERRUN_MASK)
 #define SPI_SLVST_UNDERRUN_GET(x) (((uint32_t)(x) & SPI_SLVST_UNDERRUN_MASK) >> SPI_SLVST_UNDERRUN_SHIFT)
 
 /*
@@ -914,15 +727,6 @@ typedef struct {
 #define SPI_CONFIG_SLAVE_MASK (0x4000U)
 #define SPI_CONFIG_SLAVE_SHIFT (14U)
 #define SPI_CONFIG_SLAVE_GET(x) (((uint32_t)(x) & SPI_CONFIG_SLAVE_MASK) >> SPI_CONFIG_SLAVE_SHIFT)
-
-/*
- * DIRECTIO (RO)
- *
- * Support for Direct SPI IO
- */
-#define SPI_CONFIG_DIRECTIO_MASK (0x800U)
-#define SPI_CONFIG_DIRECTIO_SHIFT (11U)
-#define SPI_CONFIG_DIRECTIO_GET(x) (((uint32_t)(x) & SPI_CONFIG_DIRECTIO_MASK) >> SPI_CONFIG_DIRECTIO_SHIFT)
 
 /*
  * QUADSPI (RO)

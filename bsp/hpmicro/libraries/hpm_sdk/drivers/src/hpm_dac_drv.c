@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -7,14 +7,11 @@
 
 #include "hpm_dac_drv.h"
 
-ATTR_PLACE_AT_NONCACHEABLE_BSS static uint32_t dac_cfg0;
-
 void dac_get_default_config(dac_config_t *config)
 {
     config->sync_mode = false;
     config->dac_mode = dac_mode_direct;
-    config->clk_dac_div = dac_ana_div_2;
-    config->div_cfg = 167;
+    config->ana_div = dac_ana_div_2;
 }
 
 hpm_stat_t dac_init(DAC_Type *ptr, dac_config_t *config)
@@ -23,27 +20,27 @@ hpm_stat_t dac_init(DAC_Type *ptr, dac_config_t *config)
         return status_invalid_argument;
     }
 
-    if (config->clk_dac_div > dac_ana_div_8) {
+    if (config->ana_div > dac_ana_div_8) {
         return status_invalid_argument;
     }
 
     /* reset DAC output data */
-    dac_cfg0 &= ~DAC_CFG0_SW_DAC_DATA_MASK;
+    ptr->CFG0_BAK &= ~DAC_CFG0_SW_DAC_DATA_MASK;
 
     /* set sync mode */
-    dac_cfg0 &= ~DAC_CFG0_SYNC_MODE_MASK;
-    dac_cfg0 |= DAC_CFG0_SYNC_MODE_SET(config->sync_mode);
+    ptr->CFG0_BAK &= ~DAC_CFG0_SYNC_MODE_MASK;
+    ptr->CFG0_BAK |= DAC_CFG0_SYNC_MODE_SET(config->sync_mode);
 
     /* set DAC mode */
-    dac_cfg0 &= ~DAC_CFG0_DAC_MODE_MASK;
-    dac_cfg0 |= DAC_CFG0_DAC_MODE_SET(config->dac_mode);
+    ptr->CFG0_BAK &= ~DAC_CFG0_DAC_MODE_MASK;
+    ptr->CFG0_BAK |= DAC_CFG0_DAC_MODE_SET(config->dac_mode);
 
     /* refresh the CFG0 */
-    ptr->CFG0 = dac_cfg0;
+    ptr->CFG0 = ptr->CFG0_BAK;
 
     /* set DAC clock config */
     ptr->CFG1 &= ~DAC_CFG1_ANA_DIV_CFG_MASK;
-    ptr->CFG1 |= DAC_CFG1_ANA_DIV_CFG_SET(config->clk_dac_div);
+    ptr->CFG1 |= DAC_CFG1_ANA_DIV_CFG_SET(config->ana_div);
 
     if (config->dac_mode == dac_mode_direct) {
         /* set ANA_CLK_EN */
@@ -115,18 +112,18 @@ hpm_stat_t dac_set_buffer_config(DAC_Type *ptr, dac_buffer_config_t *config)
     }
 
     /* disable the internal DMA */
-    dac_cfg0 &= ~DAC_CFG0_DMA_AHB_EN_MASK;
+    ptr->CFG0_BAK &= ~DAC_CFG0_DMA_AHB_EN_MASK;
 
     /* refresh the CFG0 */
-    ptr->CFG0 = dac_cfg0;
+    ptr->CFG0 = ptr->CFG0_BAK;
 
     /* set buffer data mode */
-    dac_cfg0 &= ~DAC_CFG0_BUF_DATA_MODE_MASK;
-    dac_cfg0 |= DAC_CFG0_BUF_DATA_MODE_SET(config->buf_data_mode);
+    ptr->CFG0_BAK &= ~DAC_CFG0_BUF_DATA_MODE_MASK;
+    ptr->CFG0_BAK |= DAC_CFG0_BUF_DATA_MODE_SET(config->buf_data_mode);
 
     /* set burst type */
-    dac_cfg0 &= ~DAC_CFG0_HBURST_CFG_MASK;
-    dac_cfg0 |= DAC_CFG0_HBURST_CFG_SET(config->burst);
+    ptr->CFG0_BAK &= ~DAC_CFG0_HBURST_CFG_MASK;
+    ptr->CFG0_BAK |= DAC_CFG0_HBURST_CFG_SET(config->burst);
 
     /* reset DMA and FIFO */
     ptr->CFG2 |= DAC_CFG2_DMA_RST1_MASK | DAC_CFG2_DMA_RST0_MASK | DAC_CFG2_FIFO_CLR_MASK;
@@ -156,10 +153,10 @@ hpm_stat_t dac_set_buffer_config(DAC_Type *ptr, dac_buffer_config_t *config)
     ptr->BUF_LENGTH |= DAC_BUF_LENGTH_BUF1_LEN_SET(config->buf1.len - 1);
 
     /* enable the internal DMA */
-    dac_cfg0 |= DAC_CFG0_DMA_AHB_EN_MASK;
+    ptr->CFG0_BAK |= DAC_CFG0_DMA_AHB_EN_MASK;
 
     /* refresh the CFG0 */
-    ptr->CFG0 = dac_cfg0;
+    ptr->CFG0 = ptr->CFG0_BAK;
 
     return status_success;
 }
@@ -171,11 +168,11 @@ hpm_stat_t dac_set_direct_config(DAC_Type *ptr, uint16_t data)
     }
 
     /* set dac data to analog output */
-    dac_cfg0 &= ~DAC_CFG0_SW_DAC_DATA_MASK;
-    dac_cfg0 |= DAC_CFG0_SW_DAC_DATA_SET(data);
+    ptr->CFG0_BAK &= ~DAC_CFG0_SW_DAC_DATA_MASK;
+    ptr->CFG0_BAK |= DAC_CFG0_SW_DAC_DATA_SET(data);
 
     /* refresh the CFG0 */
-    ptr->CFG0 = dac_cfg0;
+    ptr->CFG0 = ptr->CFG0_BAK;
 
     return status_success;
 }
@@ -200,10 +197,10 @@ hpm_stat_t dac_set_step_sw_trigger(DAC_Type *ptr, uint8_t step_sw_trig_idx)
     }
 
     /* disable hw trigger */
-    dac_cfg0 &= ~DAC_CFG0_HW_TRIG_EN_MASK;
+    ptr->CFG0_BAK &= ~DAC_CFG0_HW_TRIG_EN_MASK;
 
     /* refresh the CFG0 */
-    ptr->CFG0 = dac_cfg0;
+    ptr->CFG0 = ptr->CFG0_BAK;
 
     /* enable sw trigger */
     ptr->CFG2 |= 1 << step_sw_trig_idx;
@@ -214,10 +211,10 @@ hpm_stat_t dac_set_step_sw_trigger(DAC_Type *ptr, uint8_t step_sw_trig_idx)
 void dac_set_buffer_sw_trigger(DAC_Type *ptr)
 {
     /* disable hw trigger */
-    dac_cfg0 &= ~DAC_CFG0_HW_TRIG_EN_MASK;
+    ptr->CFG0_BAK &= ~DAC_CFG0_HW_TRIG_EN_MASK;
 
     /* refresh the CFG0 */
-    ptr->CFG0 = dac_cfg0;
+    ptr->CFG0 = ptr->CFG0_BAK;
 
     /* enable sw trigger */
     ptr->CFG2 |= DAC_CFG2_BUF_SW_TRIG_MASK;
@@ -230,11 +227,11 @@ void dac_set_buffer_DMA_reset(DAC_Type *ptr)
 
 void dac_set_hw_trigger_enable(DAC_Type *ptr, bool enable)
 {
-    dac_cfg0 &= ~DAC_CFG0_HW_TRIG_EN_MASK;
-    dac_cfg0 |= DAC_CFG0_HW_TRIG_EN_SET(enable);
+    ptr->CFG0_BAK &= ~DAC_CFG0_HW_TRIG_EN_MASK;
+    ptr->CFG0_BAK |= DAC_CFG0_HW_TRIG_EN_SET(enable);
 
     /* refresh the CFG0 */
-    ptr->CFG0 = dac_cfg0;
+    ptr->CFG0 = ptr->CFG0_BAK;
 }
 
 void dac_enable_conversion(DAC_Type *ptr, bool enable)

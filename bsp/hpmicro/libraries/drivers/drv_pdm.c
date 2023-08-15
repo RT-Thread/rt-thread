@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -103,10 +103,8 @@ static rt_err_t hpm_pdm_set_channels(uint32_t channel)
     mclk_hz = clock_get_frequency(clock_i2s0);
     i2s_get_default_transfer_config_for_pdm(&transfer);
     transfer.data_line = I2S_DATA_LINE_0;
-    if (channel == i2s_mono_left) {
+    if (channel == 1) {
         transfer.channel_slot_mask = I2S_CHANNEL_SLOT_MASK(0);
-    } else if (channel == i2s_mono_right) {
-        transfer.channel_slot_mask = I2S_CHANNEL_SLOT_MASK(1);
     } else if(channel == 2) {
         transfer.channel_slot_mask = I2S_CHANNEL_SLOT_MASK(0) | I2S_CHANNEL_SLOT_MASK(1);
     } else {
@@ -217,7 +215,7 @@ static rt_err_t hpm_pdm_start(struct rt_audio_device* audio, int stream)
         }
 
         if (RT_EOK != hpm_pdm_dma_transmit()) {
-            return -RT_ERROR;
+            return RT_ERROR;
         }
     }
 
@@ -252,9 +250,9 @@ static rt_err_t hpm_pdm_dma_transmit()
     ch_config.src_mode = DMA_HANDSHAKE_MODE_HANDSHAKE;
     ch_config.src_burst_size = DMA_NUM_TRANSFER_PER_BURST_1T;
 
-    if (status_success != dma_setup_channel(dma_resource.base, dma_resource.channel, &ch_config)) {
+    if (status_success != dma_setup_channel(dma_resource.base, dma_resource.channel, &ch_config, true)) {
         LOG_E("dma setup channel failed\n");
-        return -RT_ERROR;
+        return RT_ERROR;
     }
 
     if (l1c_dc_is_enabled()) {
@@ -294,4 +292,3 @@ int rt_hw_pdm_init(void)
 INIT_DEVICE_EXPORT(rt_hw_pdm_init);
 
 #endif /* BSP_USING_PDM */
-

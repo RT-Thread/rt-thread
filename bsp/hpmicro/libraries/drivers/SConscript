@@ -34,6 +34,9 @@ if GetDepend('BSP_USING_GPTMR'):
 if GetDepend('BSP_USING_CAN'):
     src += ['drv_can.c']
 
+if GetDepend('BSP_USING_MCAN'):
+    src += ['drv_mcan.c']
+
 if GetDepend('BSP_USING_UART'):
     if GetDepend(['RT_USING_SERIAL_V2']):
         src += ['drv_uart_v2.c']
@@ -54,6 +57,9 @@ if GetDepend('BSP_USING_PDM'):
 
 if GetDepend('BSP_USING_I2S'):
     src += ['drv_i2s.c']
+
+if GetDepend('BSP_USING_MCAN'):
+    src += ['drv_mcan.c']
 
 
 path = [cwd]

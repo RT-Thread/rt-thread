@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 hpmicro
+ * Copyright (c) 2022-2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -9,10 +9,13 @@ define symbol UF2_BOOTLOADER_RESERVED_LENGTH = 0x20000;
 
 /* Regions */
 define region XPI0 = [from 0x80000000 + UF2_BOOTLOADER_RESERVED_LENGTH size _flash_size - UF2_BOOTLOADER_RESERVED_LENGTH];   /* XPI0 */
-define region ILM  = [from 0 size 128k];        /* ILM slave */
-define region DLM  = [from 0x80000 size 128k];    /* DLM */
-define region AXI_SRAM  = [from 0x1080000 size 256k];
-define region NONCACHEABLE_RAM = [from 0x10C0000 size 256k];
+define region ILM = [from 0x00000000 size 128k];    /* ILM */
+define region DLM = [from 0x00080000 size 128k];    /* DLM */
+define region AXI_SRAM  = [from 0x01080000 size 256k];
+define region NONCACHEABLE_RAM = [from 0x010C0000 size 256k];
+define region AHB_SRAM = [from 0xF0300000 size 32k];
+
+assert (__STACKSIZE__ + __HEAPSIZE__) <= 128k with error "stack and heap total size larger than 128k";
 
 /* Blocks */
 define block vectors with fixed order       { section .vector_table, section .isr_vector };
@@ -26,17 +29,18 @@ define block tls                            { block tbss, block tdata };
 define block tdata_load                     { copy of block tdata };
 define block heap  with size = __HEAPSIZE__,  alignment = 8, /* fill =0x00, */ readwrite access { };
 define block stack with size = __STACKSIZE__, alignment = 8, /* fill =0xCD, */ readwrite access { };
-
-define block framebuffer with alignment = 8 { section .framebuffer };
-define block safe_stack with size = 512, readwrite access {};
+define block cherryusb_usbh_class_info with alignment = 8    { section .usbh_class_info };
+define block framebuffer with alignment = 8                  { section .framebuffer };
 
 /* Symbols */
 define exported symbol __noncacheable_start__  = start of region NONCACHEABLE_RAM;
 define exported symbol __noncacheable_end__  = end of region NONCACHEABLE_RAM + 1;
-
-define exported symbol _stack_safe = end of block safe_stack + 1;
+define exported symbol _stack_safe = end of block stack + 1;
 define exported symbol _stack = end of block stack + 1;
+define exported symbol __usbh_class_info_start__  = start of block cherryusb_usbh_class_info;
+define exported symbol __usbh_class_info_end__  = end of block cherryusb_usbh_class_info + 1;
 
+/* Initialization */
 do not initialize                           { section .noncacheable };
 do not initialize                           { section .non_init, section .non_init.*, section .*.non_init, section .*.non_init.* };
 do not initialize                           { section .no_init, section .no_init.*, section .*.no_init, section .*.no_init.* };   // Legacy sections, kept for backwards compatibility
@@ -49,15 +53,15 @@ initialize by copy with packing=auto        { section .fast, section .fast.*, se
 
 initialize by symbol __SEGGER_init_heap     { block heap  };                                        // Init the heap if there is one
 initialize by symbol __SEGGER_init_ctors    { block ctors };                                        // Call constructors for global objects which need to be constructed before reaching main (if any). Make sure this is done after setting up heap.
+initialize by copy                          { block vectors, block vectors_s };
+initialize by copy                          { block cherryusb_usbh_class_info };
 
-place at start of XPI0 with fixed order { section .uf2_signature };
-place in XPI0 with fixed order {symbol _start};
-keep { section .uf2_signature };
-
-place at start of ILM with fixed order { block vectors, block vectors_s };
-initialize by copy { block vectors, block vectors_s };
-
-place in XPI0 with minimum size order     {   block tdata_load,                        // Thread-local-storage load image
+/* Placement */
+place at start of XPI0 with fixed order     { section .uf2_signature };
+place in XPI0 with fixed order              { symbol _start };
+place at start of ILM with fixed order      { block vectors, block vectors_s };
+place in XPI0 with minimum size order       {
+                                              block tdata_load,                        // Thread-local-storage load image
                                               block ctors,                             // Constructors block
                                               block dtors,                             // Destructors block
                                               block eh_frame,                          // Exception frames placed directly into flash overriding default placement (sections writable)
@@ -74,14 +78,20 @@ define access readonly { section .gcc_except_table, section .gcc_except_table.* 
 define access readonly { section .eh_frame, section .eh_frame.* };
 define access readonly { section .sdata.DW.* };
 
-place in ILM                              { section .fast, section .fast.* };                       // "ramfunc" section
-place in DLM with auto order              {
+place in ILM                                { section .fast, section .fast.* };                     // "ramfunc" section
+place in AXI_SRAM                           { block cherryusb_usbh_class_info };
+place in AXI_SRAM                           { block framebuffer };
+place in AXI_SRAM                           {
                                               block tls,                                            // Thread-local-storage block
                                               readwrite,                                            // Catch-all for initialized/uninitialized data sections (e.g. .data, .noinit)
                                               zeroinit                                              // Catch-all for zero-initialized data sections (e.g. .bss)
                                             };
-
-place in AXI_SRAM                              { block framebuffer };
 place in NONCACHEABLE_RAM                   { section .noncacheable, section .noncacheable.init, section .noncacheable.bss };
-place in AXI_SRAM                              { block heap };                                         // Heap reserved block
-place at end of DLM                         { block stack, block safe_stack };                                   // Safe stack reserved block at the end
+place in AHB_SRAM                           { section .ahb_sram};                                   // AHB SRAM memory
+place in DLM                                { section .fast_ram};                                   // Fast access memory
+place in DLM                                { block heap };                                         // Heap reserved block
+place at end of DLM                         { block stack };                                        // Stack reserved block
+
+/* Keep */
+keep { section .uf2_signature };
+keep { section .usbh_class_info};

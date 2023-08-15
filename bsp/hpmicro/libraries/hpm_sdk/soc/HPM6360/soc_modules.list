@@ -1,10 +1,10 @@
-# Copyright 2022 hpmicro
+# Copyright (c) 2022 HPMicro
 # SPDX-License-Identifier: BSD-3-Clause
 #
 # In this file, all modules available on this part are listed
 
 CONFIG_HAS_HPMSDK_UART=y
-CONFIG_HAS_HPMSDK_DRAM=y
+CONFIG_HAS_HPMSDK_FEMC=y
 CONFIG_HAS_HPMSDK_SDP=y
 CONFIG_HAS_HPMSDK_I2C=y
 CONFIG_HAS_HPMSDK_PMP=y

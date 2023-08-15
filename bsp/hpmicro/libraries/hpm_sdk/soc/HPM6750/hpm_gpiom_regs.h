@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -24,10 +24,10 @@ typedef struct {
  * 0: fields can be changed
  * 1: fields locked to current value, not changeable
  */
-#define GPIOM_PIN_LOCK_MASK (0x80000000UL)
-#define GPIOM_PIN_LOCK_SHIFT (31U)
-#define GPIOM_PIN_LOCK_SET(x) (((uint32_t)(x) << GPIOM_PIN_LOCK_SHIFT) & GPIOM_PIN_LOCK_MASK)
-#define GPIOM_PIN_LOCK_GET(x) (((uint32_t)(x) & GPIOM_PIN_LOCK_MASK) >> GPIOM_PIN_LOCK_SHIFT)
+#define GPIOM_ASSIGN_PIN_LOCK_MASK (0x80000000UL)
+#define GPIOM_ASSIGN_PIN_LOCK_SHIFT (31U)
+#define GPIOM_ASSIGN_PIN_LOCK_SET(x) (((uint32_t)(x) << GPIOM_ASSIGN_PIN_LOCK_SHIFT) & GPIOM_ASSIGN_PIN_LOCK_MASK)
+#define GPIOM_ASSIGN_PIN_LOCK_GET(x) (((uint32_t)(x) & GPIOM_ASSIGN_PIN_LOCK_MASK) >> GPIOM_ASSIGN_PIN_LOCK_SHIFT)
 
 /*
  * HIDE (RW)
@@ -38,10 +38,10 @@ typedef struct {
  * bit2: 1, invisible to cpu0 fast gpio; 0: visible to cpu0 fast gpio
  * bit3: 1, invisible to cpu1 fast gpio; 0: visible to cpu1 fast gpio
  */
-#define GPIOM_PIN_HIDE_MASK (0xF00U)
-#define GPIOM_PIN_HIDE_SHIFT (8U)
-#define GPIOM_PIN_HIDE_SET(x) (((uint32_t)(x) << GPIOM_PIN_HIDE_SHIFT) & GPIOM_PIN_HIDE_MASK)
-#define GPIOM_PIN_HIDE_GET(x) (((uint32_t)(x) & GPIOM_PIN_HIDE_MASK) >> GPIOM_PIN_HIDE_SHIFT)
+#define GPIOM_ASSIGN_PIN_HIDE_MASK (0xF00U)
+#define GPIOM_ASSIGN_PIN_HIDE_SHIFT (8U)
+#define GPIOM_ASSIGN_PIN_HIDE_SET(x) (((uint32_t)(x) << GPIOM_ASSIGN_PIN_HIDE_SHIFT) & GPIOM_ASSIGN_PIN_HIDE_MASK)
+#define GPIOM_ASSIGN_PIN_HIDE_GET(x) (((uint32_t)(x) & GPIOM_ASSIGN_PIN_HIDE_MASK) >> GPIOM_ASSIGN_PIN_HIDE_SHIFT)
 
 /*
  * SELECT (RW)
@@ -52,10 +52,10 @@ typedef struct {
  * 2: cpu0 fastgpio
  * 3: cpu1 fast gpio
  */
-#define GPIOM_PIN_SELECT_MASK (0x3U)
-#define GPIOM_PIN_SELECT_SHIFT (0U)
-#define GPIOM_PIN_SELECT_SET(x) (((uint32_t)(x) << GPIOM_PIN_SELECT_SHIFT) & GPIOM_PIN_SELECT_MASK)
-#define GPIOM_PIN_SELECT_GET(x) (((uint32_t)(x) & GPIOM_PIN_SELECT_MASK) >> GPIOM_PIN_SELECT_SHIFT)
+#define GPIOM_ASSIGN_PIN_SELECT_MASK (0x3U)
+#define GPIOM_ASSIGN_PIN_SELECT_SHIFT (0U)
+#define GPIOM_ASSIGN_PIN_SELECT_SET(x) (((uint32_t)(x) << GPIOM_ASSIGN_PIN_SELECT_SHIFT) & GPIOM_ASSIGN_PIN_SELECT_MASK)
+#define GPIOM_ASSIGN_PIN_SELECT_GET(x) (((uint32_t)(x) & GPIOM_ASSIGN_PIN_SELECT_MASK) >> GPIOM_ASSIGN_PIN_SELECT_SHIFT)
 
 
 

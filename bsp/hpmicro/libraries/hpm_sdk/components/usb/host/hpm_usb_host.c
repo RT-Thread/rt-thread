@@ -1,36 +1,46 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
 
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  * Includes
- *---------------------------------------------------------------------*/
+ *---------------------------------------------------------------------
+ */
 #include "hpm_usb_host.h"
 #include "hpm_misc.h"
 #include "hpm_common.h"
 #include "board.h"
 
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  * Macros
- *---------------------------------------------------------------------*/
+ *---------------------------------------------------------------------
+ */
+
 #define USB_QHD_TYP_SHIFT           (1U)
+
 #define USB_PERIOD_1MS              (1U)
 #define USB_PERIOD_2MS              (2U)
 #define USB_PERIOD_4MS              (4U)
 #define USB_PERIOD_8MS              (8U)
+
 #define USB_DEFAULT_ADDR            (0U)
 #define USB_HIGH_SPPED_INTERVAL_MAX (16)
+#define USB_SETUP_PACKET_LEN        (8U)
 
-/* log2 of a value */
+#define USB_BIN8(x)               ((uint8_t)  (0b##x))
+#define USB_BIN16(b1, b2)         ((uint16_t) (0b##b1##b2))
+#define USB_BIN32(b1, b2, b3, b4) ((uint32_t) (0b##b1##b2##b3##b4))
+
+/* helper functions */
 static uint8_t usb_log2(uint32_t value)
 {
     uint8_t result = 0;
 
     while (value >>= 1) {
-         result++;
+        result++;
     }
 
     return result;
@@ -45,11 +55,11 @@ static void usb_host_list_insert(hcd_link_t *current, hcd_link_t *new, uint8_t n
     current->address = core_local_mem_to_sys_address(USB_HOST_MCU_CORE, (uint32_t)new) | (new_type << USB_QHD_TYP_SHIFT);
 }
 
-static void usb_host_list_remove_qhd_by_addr(hcd_link_t* list_head, uint8_t dev_addr)
+static void usb_host_list_remove_qhd_by_addr(hcd_link_t *list_head, uint8_t dev_addr)
 {
     hcd_qhd_t *qhd;
 
-    for(hcd_link_t* prev = list_head;
+    for (hcd_link_t *prev = list_head;
         !prev->terminate && (sys_address_to_core_local_mem(USB_HOST_MCU_CORE, usb_host_align32(prev->address)) != (uint32_t)list_head);
         prev = (hcd_link_t *)sys_address_to_core_local_mem(USB_HOST_MCU_CORE, (uint32_t)usb_host_list_next(prev))) {
 
@@ -75,27 +85,27 @@ static void usb_host_list_remove_qhd_by_addr(hcd_link_t* list_head, uint8_t dev_
     }
 }
 
-hcd_link_t* usb_host_list_next(hcd_link_t *p_link_pointer)
+hcd_link_t *usb_host_list_next(hcd_link_t *p_link_pointer)
 {
-    return (hcd_link_t*)usb_host_align32(p_link_pointer->address);
+    return (hcd_link_t *)usb_host_align32(p_link_pointer->address);
 }
 
 /*************************************************************/
 /*                      qhd functions                        */
 /*************************************************************/
-static hcd_qhd_t* usb_host_qhd_control(usb_host_handle_t *handle, uint8_t dev_addr)
+static hcd_qhd_t *usb_host_qhd_control(usb_host_handle_t *handle, uint8_t dev_addr)
 {
     return &handle->hcd_data->control[dev_addr].qhd;
 }
 
-hcd_qhd_t* usb_host_qhd_next(hcd_qhd_t const * p_qhd)
+hcd_qhd_t *usb_host_qhd_next(hcd_qhd_t const *p_qhd)
 {
-    return (hcd_qhd_t*)usb_host_align32(p_qhd->next.address);
+    return (hcd_qhd_t *)usb_host_align32(p_qhd->next.address);
 }
 
-static hcd_qhd_t* usb_host_qhd_find_free(usb_host_handle_t *handle)
+static hcd_qhd_t *usb_host_qhd_find_free(usb_host_handle_t *handle)
 {
-    for (uint32_t i = 0; i < USB_SOC_HCD_MAX_ENDPOINT_COUNT; i++) {
+    for (uint32_t i = 0; i < USB_HCD_MAX_QHD_COUNT; i++) {
         if (!handle->hcd_data->qhd_pool[i].used) {
             return &handle->hcd_data->qhd_pool[i];
         }
@@ -104,21 +114,21 @@ static hcd_qhd_t* usb_host_qhd_find_free(usb_host_handle_t *handle)
     return NULL;
 }
 
-static hcd_qhd_t* usb_host_qhd_get_from_addr(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr)
+static hcd_qhd_t *usb_host_qhd_get_from_addr(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr)
 {
-    hcd_qhd_t* qhd_pool = handle->hcd_data->qhd_pool;
+    hcd_qhd_t *qhd_pool = handle->hcd_data->qhd_pool;
 
-    for(uint32_t i = 0; i < USB_SOC_HCD_MAX_ENDPOINT_COUNT; i++) {
+    for (uint32_t i = 0; i < USB_HCD_MAX_QHD_COUNT; i++) {
         if ((qhd_pool[i].dev_addr == dev_addr) &&
-             ep_addr == usb_edpt_addr(qhd_pool[i].ep_number, qhd_pool[i].pid)) {
-             return &qhd_pool[i];
+                ep_addr == usb_edpt_addr(qhd_pool[i].ep_number, qhd_pool[i].pid)) {
+            return &qhd_pool[i];
         }
     }
 
     return NULL;
 }
 
-static bool usb_host_qhd_init(usb_host_handle_t *handle, hcd_qhd_t *p_qhd, uint8_t dev_addr, usb_desc_endpoint_t const * ep_desc)
+static bool usb_host_qhd_init(usb_host_handle_t *handle, hcd_qhd_t *p_qhd, uint8_t dev_addr, usb_desc_endpoint_t const *ep_desc)
 {
     uint8_t const xfer_type = ep_desc->bmAttributes.xfer;
     uint8_t const interval = ep_desc->bInterval;
@@ -146,8 +156,8 @@ static bool usb_host_qhd_init(usb_host_handle_t *handle, hcd_qhd_t *p_qhd, uint8
 
             if (interval < 4) { /* sub millisecond interval */
                 p_qhd->interval_ms = 0;
-                p_qhd->int_smask   = (interval == 1) ? USB_HOST_BIN8(11111111) :
-                                     (interval == 2) ? USB_HOST_BIN8(10101010) : USB_HOST_BIN8(01000100);
+                p_qhd->int_smask   = (interval == 1) ? USB_BIN8(11111111) :
+                                     (interval == 2) ? USB_BIN8(10101010) : USB_BIN8(01000100);
             } else {
                 p_qhd->interval_ms = (uint8_t)MIN(1 << (interval - 4), 255);
                 p_qhd->int_smask = HPM_BITSMASK(1, interval % 8);
@@ -159,7 +169,7 @@ static bool usb_host_qhd_init(usb_host_handle_t *handle, hcd_qhd_t *p_qhd, uint8
 
             /* Full/Low:(EHCI) case 1 schedule start split at 1 us & complete split at 2,3,4 uframes */
             p_qhd->int_smask    = 0x01;
-            p_qhd->fl_int_cmask = USB_HOST_BIN8(11100);
+            p_qhd->fl_int_cmask = USB_BIN8(11100);
             p_qhd->interval_ms  = interval;
         }
     } else {
@@ -190,28 +200,28 @@ static bool usb_host_qhd_init(usb_host_handle_t *handle, hcd_qhd_t *p_qhd, uint8
     return true;
 }
 
-hcd_qhd_t* usb_host_qhd_async_head(usb_host_handle_t *handle)
+hcd_qhd_t *usb_host_qhd_async_head(usb_host_handle_t *handle)
 {
     /* control qhd of dev0 is used as async head */
     return usb_host_qhd_control(handle, 0);
 }
 
-bool usb_host_qhd_has_xact_error(hcd_qhd_t * p_qhd)
+bool usb_host_qhd_has_xact_error(hcd_qhd_t *p_qhd)
 {
     return (p_qhd->qtd_overlay.buffer_err || p_qhd->qtd_overlay.babble_err || p_qhd->qtd_overlay.xact_err);
 }
 
-hcd_link_t* usb_host_get_period_head(usb_host_handle_t *handle, uint8_t interval_ms)
+hcd_link_t *usb_host_get_period_head(usb_host_handle_t *handle, uint8_t interval_ms)
 {
-    return (hcd_link_t*)&handle->hcd_data->period_head_arr[usb_log2(MIN(USB_HOST_FRAMELIST_SIZE, interval_ms))];
+    return (hcd_link_t *)&handle->hcd_data->period_head_arr[usb_log2(MIN(USB_HOST_FRAMELIST_SIZE, interval_ms))];
 }
 
 /*************************************************************/
 /*                      qtd functions                        */
 /*************************************************************/
-static hcd_qtd_t* usb_host_qtd_find_free(usb_host_handle_t *handle)
+static hcd_qtd_t *usb_host_qtd_find_free(usb_host_handle_t *handle)
 {
-    for (uint32_t i = 0; i < USB_SOC_HCD_MAX_XFER_ENDPOINT_COUNT; i++) {
+    for (uint32_t i = 0; i < USB_HCD_MAX_QTD_COUNT; i++) {
         if (!handle->hcd_data->qtd_pool[i].used) {
             return &handle->hcd_data->qtd_pool[i];
         }
@@ -220,9 +230,9 @@ static hcd_qtd_t* usb_host_qtd_find_free(usb_host_handle_t *handle)
     return NULL;
 }
 
-static hcd_qtd_t* usb_host_qtd_next(hcd_qtd_t const * p_qtd)
+static hcd_qtd_t *usb_host_qtd_next(hcd_qtd_t const *p_qtd)
 {
-    return (hcd_qtd_t*)usb_host_align32(p_qtd->next.address);
+    return (hcd_qtd_t *)usb_host_align32(p_qtd->next.address);
 }
 
 static void usb_host_qtd_insert_to_qhd(hcd_qhd_t *p_qhd, hcd_qtd_t *p_qtd_new)
@@ -235,7 +245,7 @@ static void usb_host_qtd_insert_to_qhd(hcd_qhd_t *p_qhd, hcd_qtd_t *p_qtd_new)
     }
 }
 
-static void usb_host_qtd_init(hcd_qtd_t* p_qtd, void* buffer, uint16_t total_bytes)
+static void usb_host_qtd_init(hcd_qtd_t *p_qtd, void *buffer, uint16_t total_bytes)
 {
     memset(p_qtd, 0, sizeof(hcd_qtd_t));
 
@@ -251,7 +261,7 @@ static void usb_host_qtd_init(hcd_qtd_t* p_qtd, void* buffer, uint16_t total_byt
     if (buffer != NULL) {
         p_qtd->buffer[0] = (uint32_t)buffer;
 
-        for(uint8_t i = 1; i < USB_SOC_HCD_QTD_BUFFER_COUNT; i++) {
+        for (uint8_t i = 1; i < USB_SOC_HCD_QTD_BUFFER_COUNT; i++) {
             p_qtd->buffer[i] |= usb_host_align4k(p_qtd->buffer[i-1]) + 4096UL;
         }
     }
@@ -266,7 +276,7 @@ void usb_host_qtd_remove_1st_from_qhd(hcd_qhd_t *p_qhd)
     }
 }
 
-hcd_qtd_t* usb_host_qtd_control(usb_host_handle_t *handle, uint8_t dev_addr)
+hcd_qtd_t *usb_host_qtd_control(usb_host_handle_t *handle, uint8_t dev_addr)
 {
     return &handle->hcd_data->control[dev_addr].qtd;
 }
@@ -292,7 +302,7 @@ static void usb_host_init_periodic_list(usb_host_handle_t *handle)
     hcd_link_t *period_1ms;
 
     /* Build the polling interval tree with 1 ms, 2 ms, 4 ms and 8 ms (framesize) only */
-    for(uint32_t i = 0; i < 4; i++) {
+    for (uint32_t i = 0; i < 4; i++) {
         handle->hcd_data->period_head_arr[i].int_smask          = 1; /* queue head in period list must have non-zero smask */
         handle->hcd_data->period_head_arr[i].qtd_overlay.halted = 1; /* dummy node, always inactive */
     }
@@ -305,20 +315,20 @@ static void usb_host_init_periodic_list(usb_host_handle_t *handle)
      * 1, 5 --> period_head_arr[2] (4ms)
      * 3 --> period_head_arr[3] (8ms)
      */
-    for(uint32_t i = 0; i < USB_HOST_FRAMELIST_SIZE; i++) {
+    for (uint32_t i = 0; i < USB_HOST_FRAMELIST_SIZE; i++) {
         framelist[i].address = core_local_mem_to_sys_address(USB_HOST_MCU_CORE, (uint32_t)period_1ms);
         framelist[i].type    = usb_qtype_qhd;
     }
 
-    for(uint32_t i = 0; i < USB_HOST_FRAMELIST_SIZE; i+=2) {
+    for (uint32_t i = 0; i < USB_HOST_FRAMELIST_SIZE; i += 2) {
         usb_host_list_insert(framelist + i, usb_host_get_period_head(handle, USB_PERIOD_2MS), usb_qtype_qhd);
     }
 
-    for(uint32_t i = 1; i < USB_HOST_FRAMELIST_SIZE; i+=4) {
+    for (uint32_t i = 1; i < USB_HOST_FRAMELIST_SIZE; i += 4) {
         usb_host_list_insert(framelist + i, usb_host_get_period_head(handle, USB_PERIOD_4MS), usb_qtype_qhd);
     }
 
-    for(uint32_t i = 3; i < USB_HOST_FRAMELIST_SIZE; i+=8) {
+    for (uint32_t i = 3; i < USB_HOST_FRAMELIST_SIZE; i += 8) {
         usb_host_list_insert(framelist + i, usb_host_get_period_head(handle, USB_PERIOD_8MS), usb_qtype_qhd);
     }
 
@@ -340,6 +350,8 @@ bool usb_host_init(usb_host_handle_t *handle, uint32_t int_mask, uint16_t framel
     usb_host_init_async_list(handle);
     usb_host_init_periodic_list(handle);
     usb_host_vbus_ctrl(handle);
+    usb_hcd_run(handle->regs);
+    usb_hcd_enable_port_power(handle->regs);
     return true;
 }
 
@@ -392,26 +404,27 @@ void usb_host_device_close(usb_host_handle_t *handle, uint8_t dev_addr)
     }
 
     /* Remove from async list */
-    usb_host_list_remove_qhd_by_addr((hcd_link_t*) usb_host_qhd_async_head(handle), dev_addr);
+    usb_host_list_remove_qhd_by_addr((hcd_link_t *) usb_host_qhd_async_head(handle), dev_addr);
 
     /* Remove from all interval period list */
-    for(uint8_t i = 0; i < ARRAY_SIZE(handle->hcd_data->period_head_arr); i++) {
-        usb_host_list_remove_qhd_by_addr((hcd_link_t*)&handle->hcd_data->period_head_arr[i], dev_addr);
+    for (uint8_t i = 0; i < ARRAY_SIZE(handle->hcd_data->period_head_arr); i++) {
+        usb_host_list_remove_qhd_by_addr((hcd_link_t *)&handle->hcd_data->period_head_arr[i], dev_addr);
     }
 
     /* Async doorbell (EHCI for operational details) */
     usb_hcd_set_command(handle->regs, USB_USBCMD_IAA_MASK);
 }
 
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  * Control Pipe API
- *---------------------------------------------------------------------*/
-bool usb_host_edpt_xfer(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr, uint8_t * buffer, uint16_t buflen)
+ *---------------------------------------------------------------------
+ */
+bool usb_host_edpt_xfer(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr, uint8_t *buffer, uint16_t buflen)
 {
     uint8_t const epnum = usb_edpt_number(ep_addr);
     uint8_t const dir   = usb_edpt_dir(ep_addr);
-    hcd_qhd_t* qhd;
-    hcd_qtd_t* qtd;
+    hcd_qhd_t *qhd;
+    hcd_qtd_t *qtd;
     hcd_qhd_t *p_qhd;
     hcd_qtd_t *p_qtd;
 
@@ -464,8 +477,8 @@ bool usb_host_setup_send(usb_host_handle_t *handle, uint8_t dev_addr, const uint
 {
     uint32_t *p = NULL;
 
-    hcd_qhd_t* qhd = &handle->hcd_data->control[dev_addr].qhd;
-    hcd_qtd_t* td  = &handle->hcd_data->control[dev_addr].qtd;
+    hcd_qhd_t *qhd = &handle->hcd_data->control[dev_addr].qhd;
+    hcd_qtd_t *td  = &handle->hcd_data->control[dev_addr].qtd;
 
     if (setup_packet != NULL) {
         p = (uint32_t *)core_local_mem_to_sys_address(USB_HOST_MCU_CORE, (uint32_t)setup_packet);
@@ -486,7 +499,7 @@ bool usb_host_setup_send(usb_host_handle_t *handle, uint8_t dev_addr, const uint
     return true;
 }
 
-bool usb_host_edpt_open(usb_host_handle_t *handle, uint8_t dev_addr, usb_desc_endpoint_t const * ep_desc)
+bool usb_host_edpt_open(usb_host_handle_t *handle, uint8_t dev_addr, usb_desc_endpoint_t const *ep_desc)
 {
     hcd_qhd_t *p_qhd = NULL;
     hcd_link_t *list_head = NULL;
@@ -496,7 +509,7 @@ bool usb_host_edpt_open(usb_host_handle_t *handle, uint8_t dev_addr, usb_desc_en
     }
 
     /* Prepare Queue Head */
-    if ( ep_desc->bEndpointAddress == 0 ) {
+    if (ep_desc->bEndpointAddress == 0) {
         p_qhd = usb_host_qhd_control(handle, dev_addr);
     } else {
         p_qhd = usb_host_qhd_find_free(handle);
@@ -506,24 +519,24 @@ bool usb_host_edpt_open(usb_host_handle_t *handle, uint8_t dev_addr, usb_desc_en
     usb_host_qhd_init(handle, p_qhd, dev_addr, ep_desc);
 
     switch (ep_desc->bmAttributes.xfer) {
-        case usb_xfer_control:
-        case usb_xfer_bulk:
-            list_head = (hcd_link_t*)usb_host_qhd_async_head(handle);   /* control of dev0 is always present as async head */
-            break;
+    case usb_xfer_control:
+    case usb_xfer_bulk:
+        list_head = (hcd_link_t *)usb_host_qhd_async_head(handle);   /* control of dev0 is always present as async head */
+        break;
 
-        case usb_xfer_interrupt:
-            list_head = usb_host_get_period_head(handle, p_qhd->interval_ms);
-            break;
+    case usb_xfer_interrupt:
+        list_head = usb_host_get_period_head(handle, p_qhd->interval_ms);
+        break;
 
-        case usb_xfer_isochronous:
-            break;
+    case usb_xfer_isochronous:
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
 
     /* Insert to list */
-    usb_host_list_insert(list_head, (hcd_link_t*)p_qhd, usb_qtype_qhd);
+    usb_host_list_insert(list_head, (hcd_link_t *)p_qhd, usb_qtype_qhd);
 
     return true;
 }

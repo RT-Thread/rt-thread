@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -61,6 +61,17 @@ typedef enum qei_work_mode {
     qei_work_mode_pd = 1,   /**< Directional (PD) mode */
     qei_work_mode_ud = 2,   /**< Up and Down (UD) mode */
 } qei_work_mode_t;
+
+/**
+ * @brief speed history type
+ *
+ */
+typedef enum qei_speed_his_type {
+    qei_speed_his0 = QEI_SPDHIS_SPDHIS0, /**< Speed history0 */
+    qei_speed_his1 = QEI_SPDHIS_SPDHIS1, /**< Speed history1 */
+    qei_speed_his2 = QEI_SPDHIS_SPDHIS2, /**< Speed history2 */
+    qei_speed_his3 = QEI_SPDHIS_SPDHIS3, /**< Speed history3 */
+} qei_speed_his_type_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -272,8 +283,7 @@ static inline bool qei_get_bit_status(QEI_Type *qei_x, uint32_t mask)
 {
     if ((qei_x->SR & mask) == mask) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
@@ -394,16 +404,12 @@ static inline uint32_t qei_get_count_on_snap1_event(QEI_Type *qei_x,
  * @brief get speed history
  *
  * @param[in] qei_x QEI base address, HPM_QEIx(x=0...n)
- * @param[in] hist_index @ref QEI_SPDHIS_SPDHIS1 ,QEI_SPDHIS_SPDHISx(x=0...n)
+ * @param[in] hist_index @ref qei_speed_his_type_t
  * @retval speed history value
- *  @arg 0 - hist_index out of range
  *  @arg counter value
  */
-static inline uint32_t qei_get_speed_history(QEI_Type *qei_x, uint8_t hist_index)
+static inline uint32_t qei_get_speed_history(QEI_Type *qei_x, qei_speed_his_type_t hist_index)
 {
-    if (hist_index > QEI_SPDHIS_SPDHIS3) {
-        return 0;
-    }
     return QEI_SPDHIS_SPDHIS0_GET(qei_x->SPDHIS[hist_index]);
 }
 

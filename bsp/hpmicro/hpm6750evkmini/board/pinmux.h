@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -36,6 +36,9 @@ void init_pwm_pins(PWM_Type *ptr);
 void init_adc_pins(void);
 void init_usb_pins(USB_Type *ptr);
 void init_can_pins(CAN_Type *ptr);
+void init_sdxc_power_pin(SDXC_Type *ptr);
+void init_sdxc_vsel_pin(SDXC_Type *ptr);
+void init_sdxc_card_detection_pin(SDXC_Type *ptr);
 void init_sdxc_pins(SDXC_Type *ptr, bool use_1v8);
 void init_adc_bldc_pins(void);
 

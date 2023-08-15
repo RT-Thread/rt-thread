@@ -1,16 +1,55 @@
+``` mermaid
+gantt
+    title HPM SDK Release Plan
+    dateFormat  YYYY-MM-DD
+    section Mainline Release
+    v1.1.0           :a1, 2023-01-01, 2023-03-31
+    v1.2.0           :a2, 2023-04-01, 2023-06-30
+    v1.3.0           :a3, 2023-07-01, 2023-09-30
+    v1.4.0           :a4, 2023-10-01, 2023-12-31
+```
+
+[English](README.md)
+
 # HPM SDK 概述
 HPM SDK项目是基于HPMicro 公司的MCU编写的软件开发包，支持多种MCU。基于BSD许可证，包含了底层驱动，中间件和RTOS，例如littlevgl/ lwIP/ TinyUSB/ FreeRTOS等，支持大量评估板。
 
-# HPM SDK使用说明
+## HPM SDK 目录结构
 
-## 依赖软件最低版本要求
+| 目录名称 | 描述 |
+|--------|--------|
+| <HPM_SDK_BASE>/arch | cpu架构相关文件 |
+| <HPM_SDK_BASE>/boards | 板级文件 |
+| <HPM_SDK_BASE>/cmake | cmake扩展 |
+| <HPM_SDK_BASE>/components | 软件组件 |
+| <HPM_SDK_BASE>/docs | 文档 |
+| <HPM_SDK_BASE>/drivers | 底层驱动文件|
+| <HPM_SDK_BASE>/middleware | 中间件 |
+| <HPM_SDK_BASE>/samples | 驱动、中间件以及软件组件示例代码 |
+| <HPM_SDK_BASE>/scripts | 辅助脚本 |
+| <HPM_SDK_BASE>/soc | SoC相关文件 |
+| <HPM_SDK_BASE>/utils | 辅助文件 |
+
+## SDK文档
+- 本地文档:
+  SDK文档可以进行本地编译，成功编译之后可以通过以下入口访问本地文档:
+  - <HPM_SDK_BASE>>/docs/index.html
+  - <HPM_SDK_BASE>>/docs/index_zh.html
+  > 文档编译方式请参考<HPM_SDK_BASE>/docs/README.md
+- 在线文档：
+  - http://hpm-sdk.readthedocs.io/
+  - http://hpm-sdk-zh.readthedocs.io/
+
+## HPM SDK使用说明
+
+### 依赖软件最低版本要求
 
 | 软件名称 | 版本号 |
 |--- | --- |
 | CMake | 3.13 |
 | Python | 3.8 |
 
-## 安装依赖
+### 安装依赖
 
 - Ubuntu:
   - 安装工具:
@@ -208,15 +247,15 @@ HPM SDK项目是基于HPMicro 公司的MCU编写的软件开发包，支持多�
 
     打开zadig，点击 Options->List All Devices.
 
-    ![List All Devices](doc/images/readme/zadig_list_all_devices.png)
+    ![List All Devices](docs/assets/zadig_list_all_devices.png)
 
     选择 Dual RS232-HS (Interface 0).
 
-    ![Select Dual RS232-HS (Interface 0)](doc/images/readme/zadig_select_dual_rs232-hs.png)
+    ![Select Dual RS232-HS (Interface 0)](docs/assets/zadig_select_dual_rs232-hs.png)
 
      然后点击 Install Driver 或 Replace Driver.
 
-    ![Replace Driver](doc/images/readme/zadig_replace_driver.png)
+    ![Replace Driver](docs/assets/zadig_replace_driver.png)
 
     7. 切换到hello_world目录
 
@@ -240,7 +279,7 @@ HPM SDK项目是基于HPMicro 公司的MCU编写的软件开发包，支持多�
     9. 连接GDB client到openocd GDB server (缺省状态下, openocd gdbserver 端口为 3333)
 
     ```GDB
-      gdb> file build/output/hello_world.elf
+      gdb> file build/output/demo.elf
       gdb> target remote localhost:3333
       gdb> load
       gdb> b main
@@ -255,4 +294,7 @@ HPM SDK项目是基于HPMicro 公司的MCU编写的软件开发包，支持多�
 
   注意：openocd可执行文件应该可以通过当前终端的PATH环境变量中可以找到, 否则无法在工程文件中生成相应的调试配置，需要之后在Segger Embedded Studio中手工配置。
 
-# 社区支持
+## 社区支持
+- github page: https://hpmicro.github.io
+- github: https://github.com/hpmicro/hpm_sdk
+- gitee: https://gitee.com/hpmicro/hpm_sdk

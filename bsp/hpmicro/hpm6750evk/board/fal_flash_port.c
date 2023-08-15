@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -20,18 +20,19 @@
 
 #if defined(FLASH_XIP) && (FLASH_XIP == 1)
 
+static rt_base_t s_interrupt_level;
 #define FAL_ENTER_CRITICAL() do {\
         rt_enter_critical();\
-        disable_irq_from_intc();\
         fencei();\
-    }while(0)
+        s_interrupt_level = rt_hw_interrupt_disable();\
+    } while(0)
 
 #define FAL_EXIT_CRITICAL() do {\
         ROM_API_TABLE_ROOT->xpi_driver_if->software_reset(BOARD_APP_XPI_NOR_XPI_BASE);\
         fencei();\
         rt_exit_critical();\
-        enable_irq_from_intc();\
-    }while(0)
+        rt_hw_interrupt_enable(s_interrupt_level);\
+    } while(0)
 
 #define FAL_RAMFUNC __attribute__((section(".isr_vector")))
 
