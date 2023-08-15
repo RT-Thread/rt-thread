@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -23,7 +23,7 @@ typedef struct {
     __RW uint32_t DMA_EN;                      /* 0x38:  */
     __R  uint8_t  RESERVED2[4];                /* 0x3C - 0x3F: Reserved */
     __RW uint32_t ANA_CFG0;                    /* 0x40:  */
-    __R  uint8_t  RESERVED3[4];                /* 0x44 - 0x47: Reserved */
+    __RW uint32_t CFG0_BAK;                    /* 0x44:  */
     __RW uint32_t STATUS0;                     /* 0x48:  */
 } DAC_Type;
 
@@ -337,6 +337,15 @@ typedef struct {
 
 /* Bitfield definition for register: IRQ_STS */
 /*
+ * STEP_CMPT (W1C)
+ *
+ */
+#define DAC_IRQ_STS_STEP_CMPT_MASK (0x10U)
+#define DAC_IRQ_STS_STEP_CMPT_SHIFT (4U)
+#define DAC_IRQ_STS_STEP_CMPT_SET(x) (((uint32_t)(x) << DAC_IRQ_STS_STEP_CMPT_SHIFT) & DAC_IRQ_STS_STEP_CMPT_MASK)
+#define DAC_IRQ_STS_STEP_CMPT_GET(x) (((uint32_t)(x) & DAC_IRQ_STS_STEP_CMPT_MASK) >> DAC_IRQ_STS_STEP_CMPT_SHIFT)
+
+/*
  * AHB_ERROR (W1C)
  *
  * set if hresp==2'b01(ERROR)
@@ -375,6 +384,15 @@ typedef struct {
 
 /* Bitfield definition for register: IRQ_EN */
 /*
+ * STEP_CMPT (RW)
+ *
+ */
+#define DAC_IRQ_EN_STEP_CMPT_MASK (0x10U)
+#define DAC_IRQ_EN_STEP_CMPT_SHIFT (4U)
+#define DAC_IRQ_EN_STEP_CMPT_SET(x) (((uint32_t)(x) << DAC_IRQ_EN_STEP_CMPT_SHIFT) & DAC_IRQ_EN_STEP_CMPT_MASK)
+#define DAC_IRQ_EN_STEP_CMPT_GET(x) (((uint32_t)(x) & DAC_IRQ_EN_STEP_CMPT_MASK) >> DAC_IRQ_EN_STEP_CMPT_SHIFT)
+
+/*
  * AHB_ERROR (RW)
  *
  */
@@ -411,6 +429,15 @@ typedef struct {
 #define DAC_IRQ_EN_BUF0_CMPT_GET(x) (((uint32_t)(x) & DAC_IRQ_EN_BUF0_CMPT_MASK) >> DAC_IRQ_EN_BUF0_CMPT_SHIFT)
 
 /* Bitfield definition for register: DMA_EN */
+/*
+ * STEP_CMPT (RW)
+ *
+ */
+#define DAC_DMA_EN_STEP_CMPT_MASK (0x10U)
+#define DAC_DMA_EN_STEP_CMPT_SHIFT (4U)
+#define DAC_DMA_EN_STEP_CMPT_SET(x) (((uint32_t)(x) << DAC_DMA_EN_STEP_CMPT_SHIFT) & DAC_DMA_EN_STEP_CMPT_MASK)
+#define DAC_DMA_EN_STEP_CMPT_GET(x) (((uint32_t)(x) & DAC_DMA_EN_STEP_CMPT_MASK) >> DAC_DMA_EN_STEP_CMPT_SHIFT)
+
 /*
  * BUF1_CMPT (RW)
  *
@@ -474,6 +501,98 @@ typedef struct {
 #define DAC_ANA_CFG0_DAC12BIT_EN_SHIFT (0U)
 #define DAC_ANA_CFG0_DAC12BIT_EN_SET(x) (((uint32_t)(x) << DAC_ANA_CFG0_DAC12BIT_EN_SHIFT) & DAC_ANA_CFG0_DAC12BIT_EN_MASK)
 #define DAC_ANA_CFG0_DAC12BIT_EN_GET(x) (((uint32_t)(x) & DAC_ANA_CFG0_DAC12BIT_EN_MASK) >> DAC_ANA_CFG0_DAC12BIT_EN_SHIFT)
+
+/* Bitfield definition for register: CFG0_BAK */
+/*
+ * SW_DAC_DATA (RW)
+ *
+ * dac data used in direct mode(dac_mode==2'b10)
+ */
+#define DAC_CFG0_BAK_SW_DAC_DATA_MASK (0xFFF0000UL)
+#define DAC_CFG0_BAK_SW_DAC_DATA_SHIFT (16U)
+#define DAC_CFG0_BAK_SW_DAC_DATA_SET(x) (((uint32_t)(x) << DAC_CFG0_BAK_SW_DAC_DATA_SHIFT) & DAC_CFG0_BAK_SW_DAC_DATA_MASK)
+#define DAC_CFG0_BAK_SW_DAC_DATA_GET(x) (((uint32_t)(x) & DAC_CFG0_BAK_SW_DAC_DATA_MASK) >> DAC_CFG0_BAK_SW_DAC_DATA_SHIFT)
+
+/*
+ * DMA_AHB_EN (RW)
+ *
+ * set to enable internal DMA, it will read one burst if enough space in FIFO.
+ * Should only be used in buffer mode.
+ */
+#define DAC_CFG0_BAK_DMA_AHB_EN_MASK (0x200U)
+#define DAC_CFG0_BAK_DMA_AHB_EN_SHIFT (9U)
+#define DAC_CFG0_BAK_DMA_AHB_EN_SET(x) (((uint32_t)(x) << DAC_CFG0_BAK_DMA_AHB_EN_SHIFT) & DAC_CFG0_BAK_DMA_AHB_EN_MASK)
+#define DAC_CFG0_BAK_DMA_AHB_EN_GET(x) (((uint32_t)(x) & DAC_CFG0_BAK_DMA_AHB_EN_MASK) >> DAC_CFG0_BAK_DMA_AHB_EN_SHIFT)
+
+/*
+ * SYNC_MODE (RW)
+ *
+ * 1: sync dac clock and ahb clock.
+ *   all HW trigger signals are pulse in sync mode, can get faster response;
+ * 0: async dac clock and ahb_clock
+ *   all HW trigger signals should be level and should be more than one dac clock cycle,  used to get accurate output frequency(which may not be divided from AHB clock)
+ */
+#define DAC_CFG0_BAK_SYNC_MODE_MASK (0x100U)
+#define DAC_CFG0_BAK_SYNC_MODE_SHIFT (8U)
+#define DAC_CFG0_BAK_SYNC_MODE_SET(x) (((uint32_t)(x) << DAC_CFG0_BAK_SYNC_MODE_SHIFT) & DAC_CFG0_BAK_SYNC_MODE_MASK)
+#define DAC_CFG0_BAK_SYNC_MODE_GET(x) (((uint32_t)(x) & DAC_CFG0_BAK_SYNC_MODE_MASK) >> DAC_CFG0_BAK_SYNC_MODE_SHIFT)
+
+/*
+ * TRIG_MODE (RW)
+ *
+ * 0: single mode, one trigger pulse will send one 12bit data to DAC analog;
+ * 1: continual mode, if trigger signal(either  or HW) is set, DAC will send data if FIFO is not empty, if trigger signal is clear, DAC will stop send data.
+ */
+#define DAC_CFG0_BAK_TRIG_MODE_MASK (0x80U)
+#define DAC_CFG0_BAK_TRIG_MODE_SHIFT (7U)
+#define DAC_CFG0_BAK_TRIG_MODE_SET(x) (((uint32_t)(x) << DAC_CFG0_BAK_TRIG_MODE_SHIFT) & DAC_CFG0_BAK_TRIG_MODE_MASK)
+#define DAC_CFG0_BAK_TRIG_MODE_GET(x) (((uint32_t)(x) & DAC_CFG0_BAK_TRIG_MODE_MASK) >> DAC_CFG0_BAK_TRIG_MODE_SHIFT)
+
+/*
+ * HW_TRIG_EN (RW)
+ *
+ * set to use trigger signal from trigger_mux, user should config it to pulse in single mode, and level in continual mode
+ */
+#define DAC_CFG0_BAK_HW_TRIG_EN_MASK (0x40U)
+#define DAC_CFG0_BAK_HW_TRIG_EN_SHIFT (6U)
+#define DAC_CFG0_BAK_HW_TRIG_EN_SET(x) (((uint32_t)(x) << DAC_CFG0_BAK_HW_TRIG_EN_SHIFT) & DAC_CFG0_BAK_HW_TRIG_EN_MASK)
+#define DAC_CFG0_BAK_HW_TRIG_EN_GET(x) (((uint32_t)(x) & DAC_CFG0_BAK_HW_TRIG_EN_MASK) >> DAC_CFG0_BAK_HW_TRIG_EN_SHIFT)
+
+/*
+ * DAC_MODE (RW)
+ *
+ * 00: direct mode, DAC output the fixed configured data(from sw_dac_data)
+ * 01: step mode, DAC output from start_point to end point, with configured step, can step up or step down
+ * 10: buffer mode,  read data from buffer, then output to analog, internal DMA will load next burst if enough space in local FIFO;
+ */
+#define DAC_CFG0_BAK_DAC_MODE_MASK (0x30U)
+#define DAC_CFG0_BAK_DAC_MODE_SHIFT (4U)
+#define DAC_CFG0_BAK_DAC_MODE_SET(x) (((uint32_t)(x) << DAC_CFG0_BAK_DAC_MODE_SHIFT) & DAC_CFG0_BAK_DAC_MODE_MASK)
+#define DAC_CFG0_BAK_DAC_MODE_GET(x) (((uint32_t)(x) & DAC_CFG0_BAK_DAC_MODE_MASK) >> DAC_CFG0_BAK_DAC_MODE_SHIFT)
+
+/*
+ * BUF_DATA_MODE (RW)
+ *
+ * data structure for buffer mode,
+ * 0: each 32-bit data contains 2 points, b11:0 for first, b27:16 for second.
+ * 1: each 32-bit data contains 1 point, b11:0 for first
+ */
+#define DAC_CFG0_BAK_BUF_DATA_MODE_MASK (0x8U)
+#define DAC_CFG0_BAK_BUF_DATA_MODE_SHIFT (3U)
+#define DAC_CFG0_BAK_BUF_DATA_MODE_SET(x) (((uint32_t)(x) << DAC_CFG0_BAK_BUF_DATA_MODE_SHIFT) & DAC_CFG0_BAK_BUF_DATA_MODE_MASK)
+#define DAC_CFG0_BAK_BUF_DATA_MODE_GET(x) (((uint32_t)(x) & DAC_CFG0_BAK_BUF_DATA_MODE_MASK) >> DAC_CFG0_BAK_BUF_DATA_MODE_SHIFT)
+
+/*
+ * HBURST_CFG (RW)
+ *
+ * DAC support following fixed burst only
+ * 000-SINGLE;  011-INCR4;  101: INCR8
+ * others are reserved
+ */
+#define DAC_CFG0_BAK_HBURST_CFG_MASK (0x7U)
+#define DAC_CFG0_BAK_HBURST_CFG_SHIFT (0U)
+#define DAC_CFG0_BAK_HBURST_CFG_SET(x) (((uint32_t)(x) << DAC_CFG0_BAK_HBURST_CFG_SHIFT) & DAC_CFG0_BAK_HBURST_CFG_MASK)
+#define DAC_CFG0_BAK_HBURST_CFG_GET(x) (((uint32_t)(x) & DAC_CFG0_BAK_HBURST_CFG_MASK) >> DAC_CFG0_BAK_HBURST_CFG_SHIFT)
 
 /* Bitfield definition for register: STATUS0 */
 /*

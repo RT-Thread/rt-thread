@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -12,18 +12,18 @@
 /* trgm0_input mux definitions */
 #define HPM_TRGM0_INPUT_SRC_VSS                            (0x0UL)
 #define HPM_TRGM0_INPUT_SRC_VDD                            (0x1UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN0                      (0x2UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN1                      (0x3UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN2                      (0x4UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN3                      (0x5UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN4                      (0x6UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN5                      (0x7UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN6                      (0x8UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN7                      (0x9UL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN8                      (0xAUL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN9                      (0xBUL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN10                     (0xCUL)
-#define HPM_TRGM0_INPUT_SRC_TRGM0_IN11                     (0xDUL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P0                       (0x2UL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P1                       (0x3UL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P2                       (0x4UL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P3                       (0x5UL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P4                       (0x6UL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P5                       (0x7UL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P6                       (0x8UL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P7                       (0x9UL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P8                       (0xAUL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P9                       (0xBUL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P10                      (0xCUL)
+#define HPM_TRGM0_INPUT_SRC_TRGM0_P11                      (0xDUL)
 #define HPM_TRGM0_INPUT_SRC_TRGM3_OUTX0                    (0xEUL)
 #define HPM_TRGM0_INPUT_SRC_TRGM3_OUTX1                    (0xFUL)
 #define HPM_TRGM0_INPUT_SRC_TRGM2_OUTX0                    (0x10UL)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -139,6 +139,7 @@ void pllctlv2_set_postdiv(PLLCTLV2_Type *ptr, uint8_t pll,  uint8_t div_index, u
 
 /**
  * @brief Initialize PLL to specified frequency
+ *        Note: the specified PLL clock needs to be enabled before being configured
  * @param [in] ptr PLLCTLV2 base
  * @param [in] pll PLL index
  * @param [in] freq_in_hz expected PLL frequency

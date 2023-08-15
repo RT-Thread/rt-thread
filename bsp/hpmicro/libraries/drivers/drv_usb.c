@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -93,7 +93,7 @@ rt_err_t hpm_usb_control(rt_device_t dev, int cmd, void *args)
         break;
 
     default:
-        ret = -RT_EINVAL;
+        ret = RT_EINVAL;
         break;
     }
 
@@ -117,4 +117,3 @@ int rt_hw_usb_init(void)
 }
 
 INIT_BOARD_EXPORT(rt_hw_usb_init);
-

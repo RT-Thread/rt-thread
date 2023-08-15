@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,9 +11,18 @@
 
 typedef struct {
     __RW uint32_t UNLK;                        /* 0x0: Shadow registers unlock register */
-    __RW uint32_t STA;                         /* 0x4: Counter start register */
-    __RW uint32_t RLD;                         /* 0x8: Counter reload register */
-    __RW uint32_t CMP[24];                     /* 0xC - 0x68: Comparator register */
+    union {
+        __RW uint32_t STA;                     /* 0x4: Counter start register */
+        __RW uint32_t STA_HRPWM;               /* 0x4: Counter start register */
+    };
+    union {
+        __RW uint32_t RLD;                     /* 0x8: Counter reload register */
+        __RW uint32_t RLD_HRPWM;               /* 0x8: Counter reload register */
+    };
+    union {
+        __RW uint32_t CMP[24];                 /* 0xC - 0x68: Comparator register */
+        __RW uint32_t CMP_HRPWM[24];           /* 0xC - 0x68: Comparator register */
+    };
     __R  uint8_t  RESERVED0[12];               /* 0x6C - 0x77: Reserved */
     __RW uint32_t FRCMD;                       /* 0x78: Force output mode register */
     __RW uint32_t SHLK;                        /* 0x7C: Shadow registers lock register */
@@ -36,6 +45,9 @@ typedef struct {
     __R  uint8_t  RESERVED7[4];                /* 0x228 - 0x22B: Reserved */
     __RW uint32_t DMAEN;                       /* 0x22C: DMA request enable register */
     __RW uint32_t CMPCFG[24];                  /* 0x230 - 0x28C: Comparator configure register */
+    __R  uint8_t  RESERVED8[368];              /* 0x290 - 0x3FF: Reserved */
+    __R  uint32_t ANASTS[8];                   /* 0x400 - 0x41C: analog status register */
+    __W  uint32_t HRPWM_CFG;                   /* 0x420: hrpwm config register */
 } PWM_Type;
 
 
@@ -43,7 +55,8 @@ typedef struct {
 /*
  * SHUNLK (RW)
  *
- * write 0xB0382607 to unlock the shadow registers of register offset from 0x04 to 0x78, otherwise the shadow registers can not be written.
+ * write 0xB0382607 to unlock the shadow registers of register offset from 0x04 to 0x78,
+ * otherwise the shadow registers can not be written.
  */
 #define PWM_UNLK_SHUNLK_MASK (0xFFFFFFFFUL)
 #define PWM_UNLK_SHUNLK_SHIFT (0U)
@@ -72,6 +85,16 @@ typedef struct {
 #define PWM_STA_STA_SET(x) (((uint32_t)(x) << PWM_STA_STA_SHIFT) & PWM_STA_STA_MASK)
 #define PWM_STA_STA_GET(x) (((uint32_t)(x) & PWM_STA_STA_MASK) >> PWM_STA_STA_SHIFT)
 
+/* Bitfield definition for register: STA_HRPWM */
+/*
+ * STA (RW)
+ *
+ */
+#define PWM_STA_HRPWM_STA_MASK (0xFFFFFF00UL)
+#define PWM_STA_HRPWM_STA_SHIFT (8U)
+#define PWM_STA_HRPWM_STA_SET(x) (((uint32_t)(x) << PWM_STA_HRPWM_STA_SHIFT) & PWM_STA_HRPWM_STA_MASK)
+#define PWM_STA_HRPWM_STA_GET(x) (((uint32_t)(x) & PWM_STA_HRPWM_STA_MASK) >> PWM_STA_HRPWM_STA_SHIFT)
+
 /* Bitfield definition for register: RLD */
 /*
  * XRLD (RW)
@@ -93,7 +116,27 @@ typedef struct {
 #define PWM_RLD_RLD_SET(x) (((uint32_t)(x) << PWM_RLD_RLD_SHIFT) & PWM_RLD_RLD_MASK)
 #define PWM_RLD_RLD_GET(x) (((uint32_t)(x) & PWM_RLD_RLD_MASK) >> PWM_RLD_RLD_SHIFT)
 
-/* Bitfield definition for register array: CMP */
+/* Bitfield definition for register: RLD_HRPWM */
+/*
+ * RLD (RW)
+ *
+ */
+#define PWM_RLD_HRPWM_RLD_MASK (0xFFFFFF00UL)
+#define PWM_RLD_HRPWM_RLD_SHIFT (8U)
+#define PWM_RLD_HRPWM_RLD_SET(x) (((uint32_t)(x) << PWM_RLD_HRPWM_RLD_SHIFT) & PWM_RLD_HRPWM_RLD_MASK)
+#define PWM_RLD_HRPWM_RLD_GET(x) (((uint32_t)(x) & PWM_RLD_HRPWM_RLD_MASK) >> PWM_RLD_HRPWM_RLD_SHIFT)
+
+/*
+ * RLD_HR (RW)
+ *
+ * pwm timer counter reload value at high resolution, only exist if hwpwm is enabled.
+ */
+#define PWM_RLD_HRPWM_RLD_HR_MASK (0xFFU)
+#define PWM_RLD_HRPWM_RLD_HR_SHIFT (0U)
+#define PWM_RLD_HRPWM_RLD_HR_SET(x) (((uint32_t)(x) << PWM_RLD_HRPWM_RLD_HR_SHIFT) & PWM_RLD_HRPWM_RLD_HR_MASK)
+#define PWM_RLD_HRPWM_RLD_HR_GET(x) (((uint32_t)(x) & PWM_RLD_HRPWM_RLD_HR_MASK) >> PWM_RLD_HRPWM_RLD_HR_SHIFT)
+
+/* Bitfield definition for register: 0 */
 /*
  * XCMP (RW)
  *
@@ -107,7 +150,8 @@ typedef struct {
 /*
  * CMP (RW)
  *
- * clock counter compare value, the compare output is 0 at default, set to 1 when compare value meet, and clr to 0 when timer reload. Software can invert the output by setting chan_cfg.out_polarity.
+ * clock counter compare value, the compare output is 0 at default, set to 1 when compare value meet,
+ * and clr to 0 when timer reload. Software can invert the output by setting chan_cfg.out_polarity.
  */
 #define PWM_CMP_CMP_MASK (0xFFFFFF0UL)
 #define PWM_CMP_CMP_SHIFT (4U)
@@ -134,11 +178,31 @@ typedef struct {
 #define PWM_CMP_CMPJIT_SET(x) (((uint32_t)(x) << PWM_CMP_CMPJIT_SHIFT) & PWM_CMP_CMPJIT_MASK)
 #define PWM_CMP_CMPJIT_GET(x) (((uint32_t)(x) & PWM_CMP_CMPJIT_MASK) >> PWM_CMP_CMPJIT_SHIFT)
 
+/* Bitfield definition for register: 0 */
+/*
+ * CMP (RW)
+ *
+ */
+#define PWM_CMP_HRPWM_CMP_MASK (0xFFFFFF00UL)
+#define PWM_CMP_HRPWM_CMP_SHIFT (8U)
+#define PWM_CMP_HRPWM_CMP_SET(x) (((uint32_t)(x) << PWM_CMP_HRPWM_CMP_SHIFT) & PWM_CMP_HRPWM_CMP_MASK)
+#define PWM_CMP_HRPWM_CMP_GET(x) (((uint32_t)(x) & PWM_CMP_HRPWM_CMP_MASK) >> PWM_CMP_HRPWM_CMP_SHIFT)
+
+/*
+ * CMP_HR (RW)
+ *
+ * high resolution compare value
+ */
+#define PWM_CMP_HRPWM_CMP_HR_MASK (0xFFU)
+#define PWM_CMP_HRPWM_CMP_HR_SHIFT (0U)
+#define PWM_CMP_HRPWM_CMP_HR_SET(x) (((uint32_t)(x) << PWM_CMP_HRPWM_CMP_HR_SHIFT) & PWM_CMP_HRPWM_CMP_HR_MASK)
+#define PWM_CMP_HRPWM_CMP_HR_GET(x) (((uint32_t)(x) & PWM_CMP_HRPWM_CMP_HR_MASK) >> PWM_CMP_HRPWM_CMP_HR_SHIFT)
+
 /* Bitfield definition for register: FRCMD */
 /*
  * FRCMD (RW)
  *
- * 2bit for each PWM output channel (0~7);
+ * 2bit for each PWM output channel (0-7);
  * 00:  force output 0
  * 01:  force output 1
  * 10:  output highz
@@ -257,7 +321,8 @@ typedef struct {
 /*
  * HWSHDWEDG (RW)
  *
- * When hardware event is selected as shawdow register effective time and the select comparator is configured as input capture mode. This bit assign its which edge is used as shadow register hardware load event.
+ * When hardware event is selected as shawdow register effective time and the select comparator is configured as input capture mode.
+ * This bit assign its which edge is used as compare shadow register hardware load event.
  * 1- Falling edge
  * 0- Rising edge
  */
@@ -279,7 +344,8 @@ typedef struct {
 /*
  * FAULTRECEDG (RW)
  *
- * When hardware load is selected as output fault recover trigger and the selected channel is capture mode. This bit assign its effective edge of fault recover trigger.
+ * When hardware load is selected as output fault recover trigger and the selected channel is capture mode.
+ * This bit assign its effective edge of fault recover trigger.
  * 1- Falling edge
  * 0- Rising edge
  */
@@ -354,7 +420,8 @@ typedef struct {
 /*
  * FAULTCLR (RW)
  *
- * 1- Write 1 to clear the fault condition. The output will recover if FAULTRECTIME is set to 2b'11. User should write 1 to this bit after the active FAULT signal de-assert and before it re-assert again.
+ * 1- Write 1 to clear the fault condition. The output will recover if FAULTRECTIME is set to 2b'11.
+ * User should write 1 to this bit after the active FAULT signal de-assert and before it re-assert again.
  */
 #define PWM_GCR_FAULTCLR_MASK (0x40U)
 #define PWM_GCR_FAULTCLR_SHIFT (6U)
@@ -372,7 +439,27 @@ typedef struct {
 #define PWM_GCR_XRLDSYNCEN_GET(x) (((uint32_t)(x) & PWM_GCR_XRLDSYNCEN_MASK) >> PWM_GCR_XRLDSYNCEN_SHIFT)
 
 /*
- * FRCTIME (RW)
+ * HR_PWM_EN (RW)
+ *
+ * set to enable high resolution pwm, trig_cmp, start/reload register will have different definition.
+ */
+#define PWM_GCR_HR_PWM_EN_MASK (0x10U)
+#define PWM_GCR_HR_PWM_EN_SHIFT (4U)
+#define PWM_GCR_HR_PWM_EN_SET(x) (((uint32_t)(x) << PWM_GCR_HR_PWM_EN_SHIFT) & PWM_GCR_HR_PWM_EN_MASK)
+#define PWM_GCR_HR_PWM_EN_GET(x) (((uint32_t)(x) & PWM_GCR_HR_PWM_EN_MASK) >> PWM_GCR_HR_PWM_EN_SHIFT)
+
+/*
+ * TIMERRESET (RW)
+ *
+ * set to clear current timer(total 28bit, main counter and tmout_count ). Auto clear
+ */
+#define PWM_GCR_TIMERRESET_MASK (0x8U)
+#define PWM_GCR_TIMERRESET_SHIFT (3U)
+#define PWM_GCR_TIMERRESET_SET(x) (((uint32_t)(x) << PWM_GCR_TIMERRESET_SHIFT) & PWM_GCR_TIMERRESET_MASK)
+#define PWM_GCR_TIMERRESET_GET(x) (((uint32_t)(x) & PWM_GCR_TIMERRESET_MASK) >> PWM_GCR_TIMERRESET_SHIFT)
+
+/*
+ * FRCTIME (WO)
  *
  * This bit field select the force effective time
  * 00:  force immediately
@@ -396,6 +483,36 @@ typedef struct {
 #define PWM_GCR_SWFRC_GET(x) (((uint32_t)(x) & PWM_GCR_SWFRC_MASK) >> PWM_GCR_SWFRC_SHIFT)
 
 /* Bitfield definition for register: SHCR */
+/*
+ * CNT_UPDATE_RELOAD (RW)
+ *
+ * set to update counter working register at reload point, clear to use cnt_update_time as old version.
+ */
+#define PWM_SHCR_CNT_UPDATE_RELOAD_MASK (0x8000U)
+#define PWM_SHCR_CNT_UPDATE_RELOAD_SHIFT (15U)
+#define PWM_SHCR_CNT_UPDATE_RELOAD_SET(x) (((uint32_t)(x) << PWM_SHCR_CNT_UPDATE_RELOAD_SHIFT) & PWM_SHCR_CNT_UPDATE_RELOAD_MASK)
+#define PWM_SHCR_CNT_UPDATE_RELOAD_GET(x) (((uint32_t)(x) & PWM_SHCR_CNT_UPDATE_RELOAD_MASK) >> PWM_SHCR_CNT_UPDATE_RELOAD_SHIFT)
+
+/*
+ * CNT_UPDATE_EDGE (RW)
+ *
+ * 0 for posedge; 1 for negedge if hardware trigger time is selected for update_time, and selected channel is capture mode, for counter shadow registers
+ */
+#define PWM_SHCR_CNT_UPDATE_EDGE_MASK (0x4000U)
+#define PWM_SHCR_CNT_UPDATE_EDGE_SHIFT (14U)
+#define PWM_SHCR_CNT_UPDATE_EDGE_SET(x) (((uint32_t)(x) << PWM_SHCR_CNT_UPDATE_EDGE_SHIFT) & PWM_SHCR_CNT_UPDATE_EDGE_MASK)
+#define PWM_SHCR_CNT_UPDATE_EDGE_GET(x) (((uint32_t)(x) & PWM_SHCR_CNT_UPDATE_EDGE_MASK) >> PWM_SHCR_CNT_UPDATE_EDGE_SHIFT)
+
+/*
+ * FORCE_UPDATE_EDGE (RW)
+ *
+ * 0 for posedge; 1 for negedge if hardware trigger time is selected for update_time, and selected channel is capture mode, for FRCMD shadow registers
+ */
+#define PWM_SHCR_FORCE_UPDATE_EDGE_MASK (0x2000U)
+#define PWM_SHCR_FORCE_UPDATE_EDGE_SHIFT (13U)
+#define PWM_SHCR_FORCE_UPDATE_EDGE_SET(x) (((uint32_t)(x) << PWM_SHCR_FORCE_UPDATE_EDGE_SHIFT) & PWM_SHCR_FORCE_UPDATE_EDGE_MASK)
+#define PWM_SHCR_FORCE_UPDATE_EDGE_GET(x) (((uint32_t)(x) & PWM_SHCR_FORCE_UPDATE_EDGE_MASK) >> PWM_SHCR_FORCE_UPDATE_EDGE_SHIFT)
+
 /*
  * FRCSHDWSEL (RW)
  *
@@ -422,7 +539,8 @@ typedef struct {
  * This bitfield select when the counter related shadow registers (STA and RLD) will be loaded to its work register
  * 00:  after software set shlk bit of shlk register
  * 01:  immediately after the register being modified
- * 10:  after hardware event assert, user can select one of the comparators to generate this hardware event. The comparator can be either output compare mode or input capture mode.
+ * 10:  after hardware event assert, user can select one of the comparators to generate this hardware event.
+ *        The comparator can be either output compare mode or input capture mode.
  * 11:  after SHSYNCI assert
  */
 #define PWM_SHCR_CNTSHDWUPT_MASK (0x6U)
@@ -501,6 +619,19 @@ typedef struct {
 
 /* Bitfield definition for register array: PWMCFG */
 /*
+ * HR_UPDATE_MODE (RW)
+ *
+ * 0: update the hr value for the first edge at reload point;
+ * 1: update the hr value for the first edge at the last edge;
+ * all others will be updated at previous edge
+ * for pair mode, only pwm_cfg 0/2/4/6 are used
+ */
+#define PWM_PWMCFG_HR_UPDATE_MODE_MASK (0x20000000UL)
+#define PWM_PWMCFG_HR_UPDATE_MODE_SHIFT (29U)
+#define PWM_PWMCFG_HR_UPDATE_MODE_SET(x) (((uint32_t)(x) << PWM_PWMCFG_HR_UPDATE_MODE_SHIFT) & PWM_PWMCFG_HR_UPDATE_MODE_MASK)
+#define PWM_PWMCFG_HR_UPDATE_MODE_GET(x) (((uint32_t)(x) & PWM_PWMCFG_HR_UPDATE_MODE_MASK) >> PWM_PWMCFG_HR_UPDATE_MODE_SHIFT)
+
+/*
  * OEN (RW)
  *
  * PWM output enable
@@ -518,7 +649,8 @@ typedef struct {
  * This bitfield select when the FRCMD shadow register will be loaded to its work register
  * 00:  after software set shlk bit of shlk register
  * 01:  immediately after the register being modified
- * 10:  after hardware event assert, user can select one of the comparators to generate this hardware event. The comparator can be either output compare mode or input capture mode.
+ * 10:  after hardware event assert, user can select one of the comparators to generate this hardware event.
+ *        The comparator can be either output compare mode or input capture mode.
  * 11:  after SHSYNCI assert
  */
 #define PWM_PWMCFG_FRCSHDWUPT_MASK (0xC000000UL)
@@ -545,7 +677,8 @@ typedef struct {
  * This bitfield select when to recover PWM output after fault condition removed.
  * 00:  immediately
  * 01:  after pwm timer counter reload time
- * 10:  after hardware event assert, user can select one of the comparators to generate this hardware event. The comparator can be either output compare mode or input capture mode.
+ * 10:  after hardware event assert, user can select one of the comparators to generate this hardware event.
+ *        The comparator can be either output compare mode or input capture mode.
  * 11:  after software write faultclr bit in GCR register
  */
 #define PWM_PWMCFG_FAULTRECTIME_MASK (0xC00000UL)
@@ -757,7 +890,8 @@ typedef struct {
  * This bitfield select when the comparator shadow register will be loaded to its work register
  * 00:  after software set shlk bit of shlk register
  * 01:  immediately after the register being modified
- * 10:  after hardware event assert, user can select one of the comparators to generate this hardware event. The comparator can be either output compare mode or input capture mode.
+ * 10:  after hardware event assert, user can select one of the comparators to generate this hardware event.
+ *        The comparator can be either output compare mode or input capture mode.
  * 11:  after SHSYNCI assert
  */
 #define PWM_CMPCFG_CMPSHDWUPT_MASK (0xCU)
@@ -776,6 +910,31 @@ typedef struct {
 #define PWM_CMPCFG_CMPMODE_SHIFT (1U)
 #define PWM_CMPCFG_CMPMODE_SET(x) (((uint32_t)(x) << PWM_CMPCFG_CMPMODE_SHIFT) & PWM_CMPCFG_CMPMODE_MASK)
 #define PWM_CMPCFG_CMPMODE_GET(x) (((uint32_t)(x) & PWM_CMPCFG_CMPMODE_MASK) >> PWM_CMPCFG_CMPMODE_SHIFT)
+
+/* Bitfield definition for register array: ANASTS */
+/*
+ * CALON (RO)
+ *
+ * calibration status.
+ * will be set by hardware after setting cal_start.
+ * cleared after calibration finished
+ */
+#define PWM_ANASTS_CALON_MASK (0x80000000UL)
+#define PWM_ANASTS_CALON_SHIFT (31U)
+#define PWM_ANASTS_CALON_GET(x) (((uint32_t)(x) & PWM_ANASTS_CALON_MASK) >> PWM_ANASTS_CALON_SHIFT)
+
+/* Bitfield definition for register: HRPWM_CFG */
+/*
+ * CAL_START (WO)
+ *
+ * calibration start.
+ * software setting this bit to start calibration process.
+ * each bit for one channel.
+ */
+#define PWM_HRPWM_CFG_CAL_START_MASK (0xFFU)
+#define PWM_HRPWM_CFG_CAL_START_SHIFT (0U)
+#define PWM_HRPWM_CFG_CAL_START_SET(x) (((uint32_t)(x) << PWM_HRPWM_CFG_CAL_START_SHIFT) & PWM_HRPWM_CFG_CAL_START_MASK)
+#define PWM_HRPWM_CFG_CAL_START_GET(x) (((uint32_t)(x) & PWM_HRPWM_CFG_CAL_START_MASK) >> PWM_HRPWM_CFG_CAL_START_SHIFT)
 
 
 
@@ -804,6 +963,32 @@ typedef struct {
 #define PWM_CMP_21 (21UL)
 #define PWM_CMP_22 (22UL)
 #define PWM_CMP_23 (23UL)
+
+/* CMP_HRPWM register group index macro definition */
+#define PWM_CMP_HRPWM_0 (0UL)
+#define PWM_CMP_HRPWM_1 (1UL)
+#define PWM_CMP_HRPWM_2 (2UL)
+#define PWM_CMP_HRPWM_3 (3UL)
+#define PWM_CMP_HRPWM_4 (4UL)
+#define PWM_CMP_HRPWM_5 (5UL)
+#define PWM_CMP_HRPWM_6 (6UL)
+#define PWM_CMP_HRPWM_7 (7UL)
+#define PWM_CMP_HRPWM_8 (8UL)
+#define PWM_CMP_HRPWM_9 (9UL)
+#define PWM_CMP_HRPWM_10 (10UL)
+#define PWM_CMP_HRPWM_11 (11UL)
+#define PWM_CMP_HRPWM_12 (12UL)
+#define PWM_CMP_HRPWM_13 (13UL)
+#define PWM_CMP_HRPWM_14 (14UL)
+#define PWM_CMP_HRPWM_15 (15UL)
+#define PWM_CMP_HRPWM_16 (16UL)
+#define PWM_CMP_HRPWM_17 (17UL)
+#define PWM_CMP_HRPWM_18 (18UL)
+#define PWM_CMP_HRPWM_19 (19UL)
+#define PWM_CMP_HRPWM_20 (20UL)
+#define PWM_CMP_HRPWM_21 (21UL)
+#define PWM_CMP_HRPWM_22 (22UL)
+#define PWM_CMP_HRPWM_23 (23UL)
 
 /* CHCFG register group index macro definition */
 #define PWM_CHCFG_0 (0UL)
@@ -918,6 +1103,16 @@ typedef struct {
 #define PWM_CMPCFG_21 (21UL)
 #define PWM_CMPCFG_22 (22UL)
 #define PWM_CMPCFG_23 (23UL)
+
+/* ANASTS register group index macro definition */
+#define PWM_ANASTS_0 (0UL)
+#define PWM_ANASTS_1 (1UL)
+#define PWM_ANASTS_2 (2UL)
+#define PWM_ANASTS_3 (3UL)
+#define PWM_ANASTS_4 (4UL)
+#define PWM_ANASTS_5 (5UL)
+#define PWM_ANASTS_6 (6UL)
+#define PWM_ANASTS_7 (7UL)
 
 
 #endif /* HPM_PWM_H */

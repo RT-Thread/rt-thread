@@ -1,16 +1,55 @@
+``` mermaid
+gantt
+    title HPM SDK Release Plan
+    dateFormat  YYYY-MM-DD
+    section Mainline Release
+    v1.1.0           :a1, 2023-01-01, 2023-03-31
+    v1.2.0           :a2, 2023-04-01, 2023-06-30
+    v1.3.0           :a3, 2023-07-01, 2023-09-30
+    v1.4.0           :a4, 2023-10-01, 2023-12-31
+```
+
+[中文](README_zh.md)
+
 # HPM SDK Overview
 The HPM SDK Project is a software development kit based on HPMicro's MCUs, which supports a wide range of MCUs, based on the BSD license, including drivers, middleware and RTOS, such as littlevgl/ lwIP/ TinyUSB/ FreeRTOS, etc. It supports a large number of Boards.
 
-# HPM SDK Quick Start Guide
+## SDK Directory Structure
 
-## Minium required version of dependencies are:
+| Name | Description |
+|--------|--------|
+| <HPM_SDK_BASE>/arch | cpu architecture |
+| <HPM_SDK_BASE>/boards | board support files |
+| <HPM_SDK_BASE>/cmake | cmake extensions |
+| <HPM_SDK_BASE>/components | software components |
+| <HPM_SDK_BASE>/docs | documentation |
+| <HPM_SDK_BASE>/drivers | low level driver files |
+| <HPM_SDK_BASE>/middleware | middleware files |
+| <HPM_SDK_BASE>/samples | sample source for drivers, middleware, components |
+| <HPM_SDK_BASE>/scripts | util scripts |
+| <HPM_SDK_BASE>/soc | SoC specific source |
+| <HPM_SDK_BASE>/utils | util source |
+
+## SDK Documentation
+- Local:
+  SDK documentation can be built locally, once it's done, it can be accessed with the following entries:
+  - <HPM_SDK_BASE>>/docs/index.html
+  - <HPM_SDK_BASE>>/docs/index_zh.html
+  > Please refer to <HPM_SDK_BASE>/docs/README.md for more details about documentation building.
+- Online:
+  - http://hpm-sdk.readthedocs.io/
+  - http://hpm-sdk-zh.readthedocs.io/
+
+## HPM SDK Quick Start Guide
+
+### Minimum required version of dependencies are:
 
   | Name   |   Version |
   | -------|---------- |
   |CMake  |    3.13 |
   | Python |    3.8 |
 
-## Install Dependencies
+### Install Dependencies
  - Ubuntu
     - install tools
 
@@ -199,15 +238,15 @@ The HPM SDK Project is a software development kit based on HPMicro's MCUs, which
 
     Open zadig, click Options-> List All Devices.
 
-    ![List All Devices](doc/images/readme/zadig_list_all_devices.png)
+    ![List All Devices](docs/assets/zadig_list_all_devices.png)
 
     Select Dual RS232-HS (Interface 0).
 
-    ![Select Dual RS232-HS (Interface 0)](doc/images/readme/zadig_select_dual_rs232-hs.png)
+    ![Select Dual RS232-HS (Interface 0)](docs/assets/zadig_select_dual_rs232-hs.png)
 
     Then click Install Driver or Replace Driver.
 
-    ![Replace Driver](doc/images/readme/zadig_replace_driver.png)
+    ![Replace Driver](docs/assets/zadig_replace_driver.png)
 
     7. Go to hello_world directory
 
@@ -231,7 +270,7 @@ The HPM SDK Project is a software development kit based on HPMicro's MCUs, which
     9. connect gdb client to the gdbserver started by openocd, (by default, gdbserver port is 3333)
 
     ```GDB
-      gdb> file build/output/hello_world.elf
+      gdb> file build/output/demo.elf
       gdb> target remote localhost:3333
       gdb> load
       gdb> b main
@@ -248,3 +287,7 @@ The HPM SDK Project is a software development kit based on HPMicro's MCUs, which
   Note: openocd executable needs to be found in the PATH variable of current console, otherwise debug configuration will not be generated to project file and needs to be configured manually in Segger Embedded Studio later.
 
 # Community Support
+- github page: https://hpmicro.github.io
+- github: https://github.com/hpmicro/hpm_sdk
+- gitee: https://gitee.com/hpmicro/hpm_sdk
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,21 +10,21 @@
 #define HPM_TSNS_H
 
 typedef struct {
-    __R  uint32_t T;                           /* 0x0:  */
-    __R  uint32_t TMAX;                        /* 0x4:  */
-    __R  uint32_t TMIN;                        /* 0x8:  */
-    __R  uint32_t AGE;                         /* 0xC:  */
-    __RW uint32_t STATUS;                      /* 0x10:  */
-    __RW uint32_t CONFIG;                      /* 0x14:  */
-    __RW uint32_t VALIDITY;                    /* 0x18:  */
-    __RW uint32_t FLAG;                        /* 0x1C:  */
-    __RW uint32_t UPPER_LIM_IRQ;               /* 0x20:  */
-    __RW uint32_t LOWER_LIM_IRQ;               /* 0x24:  */
-    __RW uint32_t UPPER_LIM_RST;               /* 0x28:  */
-    __RW uint32_t LOWER_LIM_RST;               /* 0x2C:  */
-    __RW uint32_t ASYNC;                       /* 0x30:  */
+    __R  uint32_t T;                           /* 0x0: Temperature */
+    __R  uint32_t TMAX;                        /* 0x4: Maximum Temperature */
+    __R  uint32_t TMIN;                        /* 0x8: Minimum Temperature */
+    __R  uint32_t AGE;                         /* 0xC: Sample age */
+    __RW uint32_t STATUS;                      /* 0x10: Status */
+    __RW uint32_t CONFIG;                      /* 0x14: Configuration */
+    __RW uint32_t VALIDITY;                    /* 0x18: Sample validity */
+    __RW uint32_t FLAG;                        /* 0x1C: Temperature flag */
+    __RW uint32_t UPPER_LIM_IRQ;               /* 0x20: Maximum temperature to interrupt */
+    __RW uint32_t LOWER_LIM_IRQ;               /* 0x24: Minimum temperature to interrupt */
+    __RW uint32_t UPPER_LIM_RST;               /* 0x28: Maximum temperature to reset */
+    __RW uint32_t LOWER_LIM_RST;               /* 0x2C: Minimum temperature to reset */
+    __RW uint32_t ASYNC;                       /* 0x30: Configuration in asynchronous mode */
     __R  uint8_t  RESERVED0[4];                /* 0x34 - 0x37: Reserved */
-    __RW uint32_t ADVAN;                       /* 0x38:  */
+    __RW uint32_t ADVAN;                       /* 0x38: Advance configuration */
 } TSNS_Type;
 
 
@@ -134,7 +134,7 @@ typedef struct {
 /*
  * SPEED (RW)
  *
- * cycles of a progressive step in 24M clock, valide from 24-255, default 63
+ * cycles of a progressive step in 24M clock, valide from 24-255, default 96
  * 24: 24 cycle for a step
  * 25: 25 cycle for a step
  * 26: 26 cycle for a step
@@ -149,10 +149,10 @@ typedef struct {
 /*
  * AVERAGE (RW)
  *
- * Average time, defaul tin 2
+ * Average time, default in 3
  * 0: measure and return
  * 1: twice and average
- * 2: 4 times and average(default)
+ * 2: 4 times and average
  * . . .
  * 7: 128 times and average
  */
@@ -319,6 +319,7 @@ typedef struct {
 /*
  * POLARITY (RW)
  *
+ * Polarity of internal comparator
  */
 #define TSNS_ASYNC_POLARITY_MASK (0x10000UL)
 #define TSNS_ASYNC_POLARITY_SHIFT (16U)

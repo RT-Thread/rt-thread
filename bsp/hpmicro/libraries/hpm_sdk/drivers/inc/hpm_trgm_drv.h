@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,7 +9,7 @@
 #define HPM_TRGM_DRV_H
 
 #include "hpm_common.h"
-#include "hpm_trgm_drv.h"
+#include "hpm_trgm_regs.h"
 #include "hpm_trgmmux_src.h"
 
 /**
@@ -185,8 +185,9 @@ static inline void trgm_output_update_source(TRGM_Type *ptr, uint8_t output, uin
 static inline void trgm_output_config(TRGM_Type *ptr, uint8_t output, trgm_output_t *config)
 {
     ptr->TRGOCFG[output] = TRGM_TRGOCFG_TRIGOSEL_SET(config->input)
-                         | TRGM_TRGOCFG_FEDG2PEN_SET(config->type)
-                         | TRGM_TRGOCFG_REDG2PEN_SET(config->type);
+                        | (config->type & TRGM_TRGOCFG_FEDG2PEN_MASK)
+                        | (config->type & TRGM_TRGOCFG_REDG2PEN_MASK)
+                        | TRGM_TRGOCFG_OUTINV_SET(config->invert);
 }
 
 /**

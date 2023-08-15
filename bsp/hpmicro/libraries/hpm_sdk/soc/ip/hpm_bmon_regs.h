@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -13,7 +13,8 @@ typedef struct {
     struct {
         __RW uint32_t CONTROL;                 /* 0x0: Glitch and clock monitor control */
         __RW uint32_t STATUS;                  /* 0x4: Glitch and clock monitor status */
-    } MONITOR[3];
+        __R  uint8_t  RESERVED0[8];            /* 0x8 - 0xF: Reserved */
+    } MONITOR[2];
 } BMON_Type;
 
 
@@ -59,7 +60,7 @@ typedef struct {
 
 /* MONITOR register group index macro definition */
 #define BMON_MONITOR_GLITCH0 (0UL)
-#define BMON_MONITOR_CLOCK0 (2UL)
+#define BMON_MONITOR_CLOCK0 (1UL)
 
 
 #endif /* HPM_BMON_H */

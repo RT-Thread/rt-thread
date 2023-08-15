@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,6 +9,7 @@
 
 #include "hpm_common.h"
 #include "hpm_sysctl_drv.h"
+#include "hpm_csr_drv.h"
 
 
 /**
@@ -98,7 +99,7 @@ typedef enum _clock_sources {
 typedef enum _clock_name {
     clock_cpu0 = MAKE_CLOCK_NAME(sysctl_resource_cpu0, CLK_SRC_GROUP_CPU0, clock_node_cpu0),
     clock_mchtmr0 = MAKE_CLOCK_NAME(sysctl_resource_mchtmr0, CLK_SRC_GROUP_COMMON, clock_node_mchtmr0),
-    clock_dram = MAKE_CLOCK_NAME(sysctl_resource_dram, CLK_SRC_GROUP_COMMON, clock_node_dram),
+    clock_femc = MAKE_CLOCK_NAME(sysctl_resource_femc, CLK_SRC_GROUP_COMMON, clock_node_femc),
     clock_xpi0 = MAKE_CLOCK_NAME(sysctl_resource_xpi0, CLK_SRC_GROUP_COMMON, clock_node_xpi0),
     clock_xpi1 = MAKE_CLOCK_NAME(sysctl_resource_xpi1, CLK_SRC_GROUP_COMMON, clock_node_xpi1),
     clock_gptmr0 = MAKE_CLOCK_NAME(sysctl_resource_gptmr0, CLK_SRC_GROUP_COMMON, clock_node_gptmr0),
@@ -180,14 +181,14 @@ typedef enum _clock_name {
     clock_i2s1 = MAKE_CLOCK_NAME(sysctl_resource_i2s1, CLK_SRC_GROUP_I2S, 1),
 
     /* Clock sources */
-    clk_osc0clk0 = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_SRC, 0),
-    clk_pll0clk0 = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_SRC, 1),
-    clk_pll0clk1 = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_SRC, 2),
-    clk_pll0clk2 = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_SRC, 3),
-    clk_pll1clk0 = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_SRC, 4),
-    clk_pll1clk1 = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_SRC, 5),
-    clk_pll2clk0 = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_SRC, 6),
-    clk_pll2clk1 = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_SRC, 7),
+    clk_osc0clk0 = MAKE_CLOCK_NAME(sysctl_resource_xtal, CLK_SRC_GROUP_SRC, 0),
+    clk_pll0clk0 = MAKE_CLOCK_NAME(sysctl_resource_clk0_pll1, CLK_SRC_GROUP_SRC, 1),
+    clk_pll0clk1 = MAKE_CLOCK_NAME(sysctl_resource_clk1_pll0, CLK_SRC_GROUP_SRC, 2),
+    clk_pll0clk2 = MAKE_CLOCK_NAME(sysctl_resource_clk2_pll0, CLK_SRC_GROUP_SRC, 3),
+    clk_pll1clk0 = MAKE_CLOCK_NAME(sysctl_resource_clk0_pll1, CLK_SRC_GROUP_SRC, 4),
+    clk_pll1clk1 = MAKE_CLOCK_NAME(sysctl_resource_clk1_pll1, CLK_SRC_GROUP_SRC, 5),
+    clk_pll2clk0 = MAKE_CLOCK_NAME(sysctl_resource_clk0_pll2, CLK_SRC_GROUP_SRC, 6),
+    clk_pll2clk1 = MAKE_CLOCK_NAME(sysctl_resource_clk1_pll2, CLK_SRC_GROUP_SRC, 7),
 } clock_name_t;
 
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021-2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -183,12 +183,23 @@ uint32_t read_pmp_addr(uint32_t idx);
  */
 uint32_t read_pma_addr(uint32_t idx);
 
+
+/**
+ * @brief Configure PMP and PMA for specified PMP/PMA entry
+ *
+ * @param[in] entry PMP entry
+ * @param entry_index PMP/PMA entry index
+ * @retval status_invalid_argument  Invalid Arguments were detected
+ * @retval status_success           Configuration completed without errors
+ */
+hpm_stat_t pmp_config_entry(const pmp_entry_t *entry, uint32_t entry_index);
+
 /**
  * @brief Configure PMP and PMA based on the PMP entry list
  * @param entry start of the PMP entry list
  * @param num_of_entries Number of entries in the PMP entry list
- * @return #status_invalid_argument - Invalid Arguments were detected
- *         #status_success - Configuration completed without errors
+ * @retval status_invalid_argument  Invalid Arguments were detected
+ * @retval status_success           Configuration completed without errors
  */
 hpm_stat_t pmp_config(const pmp_entry_t *entry, uint32_t num_of_entries);
 

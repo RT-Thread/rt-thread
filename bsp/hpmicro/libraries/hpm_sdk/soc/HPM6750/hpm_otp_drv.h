@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -26,7 +26,7 @@ typedef enum {
     otp_region1_mask = 2U,  /*!< Address range: [8, 15] */
     otp_region2_mask = 4U,  /*!< Address range: [16, 127] */
     otp_region3_mask = 8U,  /*!< Address range: user defined */
-}otp_region_t;
+} otp_region_t;
 
 /**
  * @brief OTP lock options
@@ -37,11 +37,10 @@ typedef enum {
     otp_permanent_no_lock = 2,
     otp_disable_access = 3,
     otp_lock_option_max = otp_disable_access,
-}otp_lock_option_t;
+} otp_lock_option_t;
 
 
-enum
-{
+enum {
     otp_write_disallowed = MAKE_STATUS(status_group_otp, 0),
 };
 

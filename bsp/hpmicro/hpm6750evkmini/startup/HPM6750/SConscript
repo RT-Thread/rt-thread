@@ -12,6 +12,7 @@ src = Split('''
 
 if rtconfig.PLATFORM == 'gcc':
     src += [os.path.join('toolchains', 'gcc', 'start.S')]
+    src += [os.path.join('toolchains', 'gcc', 'port_gcc.S')]
 
 CPPPATH = [cwd]
 CPPDEFINES=['D45', rtconfig.CHIP_NAME]

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -28,6 +28,26 @@ extern "C" {
  * @param bit bits to be cleared
  */
 #define clear_csr(csr_num, bit) __asm volatile("csrc %0, %1" : : "i"(csr_num), "r"(bit))
+
+/**
+ * @brief read and clear bits in csr
+ *
+ * @param csr_num specific csr
+ * @param bit bits to be cleared
+ *
+ * @return csr value before cleared
+ */
+#define read_clear_csr(csr_num, bit) ({ volatile uint32_t v = 0; __asm volatile("csrrc %0, %1, %2" : "=r"(v) : "i"(csr_num), "r"(bit)); v; })
+
+/**
+ * @brief read and set bits in csr
+ *
+ * @param csr_num specific csr
+ * @param bit bits to be set
+ *
+ * @return csr value before set
+ */
+#define read_set_csr(csr_num, bit) ({ volatile uint32_t v = 0; __asm volatile("csrrs %0, %1, %2" : "=r"(v) : "i"(csr_num), "r"(bit)); v; })
 
 /**
  * @brief set bits in csr
@@ -66,6 +86,21 @@ extern "C" {
  *
  */
 #define fencei() __asm volatile("fence.i")
+
+/**
+ * @brief enable fpu
+ */
+#define enable_fpu() read_set_csr(CSR_MSTATUS, CSR_MSTATUS_FS_MASK)
+
+/**
+ * @brief disable fpu
+ */
+#define disable_fpu() read_clear_csr(CSR_MSTATUS, CSR_MSTATUS_FS_MASK)
+
+/**
+ * @brief clear fcsr
+ */
+#define clear_fcsr() write_fcsr(0)
 
 #ifdef __cplusplus
 }

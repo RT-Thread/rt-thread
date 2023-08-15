@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -246,13 +246,13 @@ typedef struct {
  * LIFECYCLE (RO)
  *
  * lifecycle status,
- * bit7: lifecycle_debate,
- * bit6: lifecycle_scribe,
- * bit5: lifecycle_no_ret,
- * bit4: lifecycle_return,
- * bit3: lifecycle_secure,
- * bit2: lifecycle_nonsec,
- * bit1: lifecycle_create,
+ * bit7: lifecycle_debate, 
+ * bit6: lifecycle_scribe, 
+ * bit5: lifecycle_no_ret, 
+ * bit4: lifecycle_return, 
+ * bit3: lifecycle_secure, 
+ * bit2: lifecycle_nonsec, 
+ * bit1: lifecycle_create, 
  * bit0: lifecycle_unknow
  */
 #define SEC_LIFECYCLE_LIFECYCLE_MASK (0xFFU)

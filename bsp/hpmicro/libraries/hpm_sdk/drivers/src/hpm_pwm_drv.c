@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -25,11 +25,11 @@ void pwm_get_captured_count(PWM_Type *pwm_x, uint32_t *buf, pwm_counter_type_t c
 {
     uint32_t i;
     if (counter == pwm_counter_type_capture_falling_edge) {
-        for (i = start_index; i < num; i++) {
+        for (i = start_index; i < start_index + num; i++) {
             *buf = pwm_x->CAPNEG[i];
         }
     } else {
-        for (i = start_index; i < num; i++) {
+        for (i = start_index; i < start_index + num; i++) {
             *buf = pwm_x->CAPPOS[i];
         }
     }
@@ -40,6 +40,10 @@ void pwm_get_default_cmp_config(PWM_Type *pwm_x, pwm_cmp_config_t *config)
     config->mode = pwm_cmp_mode_output_compare;
     config->update_trigger = pwm_shadow_register_update_on_modify;
     config->enable_ex_cmp = false;
+#if PWM_SOC_HRPWM_SUPPORT
+    config->enable_hrcmp = false;
+    config->hrcmp = 0;
+#endif
     config->cmp = 0;
     config->ex_cmp = 0;
     config->half_clock_cmp = 0;
@@ -152,3 +156,30 @@ hpm_stat_t pwm_update_raw_cmp_central_aligned(PWM_Type *pwm_x, uint8_t cmp1_inde
     pwm_cmp_update_cmp_value(pwm_x, cmp2_index, target_cmp2, 0);
     return status_success;
 }
+#if PWM_SOC_HRPWM_SUPPORT
+
+hpm_stat_t pwm_update_raw_hrcmp_edge_aligned(PWM_Type *pwm_x, uint8_t cmp_index, uint32_t target_cmp,
+            uint16_t target_hrcmp)
+{
+    pwm_shadow_register_unlock(pwm_x);
+    pwm_cmp_update_hrcmp_value(pwm_x, cmp_index, target_cmp, target_hrcmp);
+    return status_success;
+}
+
+hpm_stat_t pwm_update_raw_hrcmp_central_aligned(PWM_Type *pwm_x, uint8_t cmp1_index,
+                                       uint8_t cmp2_index, uint32_t target_cmp1, uint32_t target_cmp2,
+                                        uint16_t target_hrcmp1, uint16_t target_hrcmp2)
+{
+    uint32_t reload = PWM_RLD_RLD_GET(pwm_x->RLD);
+    if (!target_cmp1) {
+        target_cmp1 = reload + 1;
+    }
+    if (!target_cmp2) {
+        target_cmp2 = reload + 1;
+    }
+    pwm_shadow_register_unlock(pwm_x);
+    pwm_cmp_update_hrcmp_value(pwm_x, cmp1_index, target_cmp1, target_hrcmp1);
+    pwm_cmp_update_hrcmp_value(pwm_x, cmp2_index, target_cmp2, target_hrcmp2);
+    return status_success;
+}
+#endif

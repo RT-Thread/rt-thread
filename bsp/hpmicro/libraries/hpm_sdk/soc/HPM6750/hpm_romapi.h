@@ -1,9 +1,9 @@
 /*
-* Copyright (c) 2021 hpmicro
-*
-* SPDX-License-Identifier: BSD-3-Clause
-*
-*/
+ * Copyright (c) 2021-2023 HPMicro
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
 
 #ifndef HPM_ROMAPI_H
 #define HPM_ROMAPI_H
@@ -52,6 +52,14 @@ typedef union {
     };
 } api_boot_arg_t;
 
+/*EXiP Region Parameter */
+typedef struct {
+    uint32_t start;             /**< Start address, must be 4KB aligned */
+    uint32_t len;               /**< Must be 4KB aligned */
+    uint8_t key[16];            /**< AES Key */
+    uint8_t ctr[8];             /**< Initial Vector/Counter */
+} exip_region_param_t;
+
 #define API_BOOT_TAG  (0xEBU)                           /**< ROM API parameter tag */
 #define API_BOOT_SRC_OTP (0U)                           /**< Boot source: OTP */
 #define API_BOOT_SRC_PRIMARY (1U)                       /**< Boot source: Primary */
@@ -60,6 +68,18 @@ typedef union {
 #define API_BOOT_PERIPH_AUTO (0U)                       /**< Boot peripheral: Auto detected */
 #define API_BOOT_PERIPH_UART (1U)                       /**< Boot peripheral: UART */
 #define API_BOOT_PERIPH_USBHID (2U)                     /**< Boot Peripheral: USB-HID */
+
+typedef struct {
+    uint32_t _internal[138];
+} sm3_context_t;
+
+#define SM4_ENCRYPT     1
+#define SM4_DECRYPT     0
+
+typedef struct {
+    uint32_t mode;
+    uint32_t _internal[116];
+} sm4_context_t;
 
 /**
  * @brief OTP driver interface
@@ -117,7 +137,8 @@ typedef struct {
     void (*update_dllcr)(XPI_Type *base, uint32_t serial_root_clk_freq, uint32_t data_valid_time, xpi_channel_t channel,
                          uint32_t dly_target);
     /**< XPI driver interface: Get absolute address for APB transfer */
-    hpm_stat_t (*get_abs_apb_xfer_addr)(XPI_Type *base, xpi_xfer_channel_t channel, uint32_t in_addr, uint32_t *out_addr);
+    hpm_stat_t (*get_abs_apb_xfer_addr)(XPI_Type *base, xpi_xfer_channel_t channel, uint32_t in_addr,
+                                        uint32_t *out_addr);
 } xpi_driver_interface_t;
 
 /**
@@ -131,38 +152,48 @@ typedef struct {
     /**< XPI NOR driver interface: initialize FLASH */
     hpm_stat_t (*init)(XPI_Type *base, xpi_nor_config_t *nor_config);
     /**< XPI NOR driver interface: Enable write access to FLASH */
-    hpm_stat_t (*enable_write)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config, uint32_t addr);
+    hpm_stat_t (*enable_write)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+                               uint32_t addr);
     /**< XPI NOR driver interface: Get FLASH status register */
-    hpm_stat_t (*get_status)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config, uint32_t addr,
+    hpm_stat_t (*get_status)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+                             uint32_t addr,
                              uint16_t *out_status);
     /**< XPI NOR driver interface: Wait when FLASH is still busy */
-    hpm_stat_t (*wait_busy)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config, uint32_t addr);
+    hpm_stat_t (*wait_busy)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+                            uint32_t addr);
     /**< XPI NOR driver interface: erase a specified FLASH region */
     hpm_stat_t (*erase)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config, uint32_t start,
                         uint32_t length);
     /**< XPI NOR driver interface: Erase the whole FLASH */
     hpm_stat_t (*erase_chip)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config);
     /**< XPI NOR driver interface: Erase specified FLASH sector */
-    hpm_stat_t (*erase_sector)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config, uint32_t addr);
+    hpm_stat_t (*erase_sector)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+                               uint32_t addr);
     /**< XPI NOR driver interface: Erase specified FLASH block */
-    hpm_stat_t (*erase_block)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config, uint32_t addr);
+    hpm_stat_t (*erase_block)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+                              uint32_t addr);
     /**< XPI NOR driver interface: Program data to specified FLASH address */
-    hpm_stat_t (*program)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config, const uint32_t *src,
+    hpm_stat_t (*program)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+                          const uint32_t *src,
                           uint32_t dst_addr, uint32_t length);
     /**< XPI NOR driver interface: read data from specified FLASH address */
     hpm_stat_t (*read)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config, uint32_t *dst,
                        uint32_t start, uint32_t length);
     /**< XPI NOR driver interface: program FLASH page using nonblocking interface */
-    hpm_stat_t (*page_program_nonblocking)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+    hpm_stat_t (*page_program_nonblocking)(XPI_Type *base, xpi_xfer_channel_t channel,
+                                           const xpi_nor_config_t *nor_config,
                                            const uint32_t *src, uint32_t dst_addr, uint32_t length);
     /**< XPI NOR driver interface: erase FLASH sector using nonblocking interface */
-    hpm_stat_t (*erase_sector_nonblocking)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+    hpm_stat_t (*erase_sector_nonblocking)(XPI_Type *base, xpi_xfer_channel_t channel,
+                                           const xpi_nor_config_t *nor_config,
                                            uint32_t addr);
     /**< XPI NOR driver interface: erase FLASH block using nonblocking interface */
-    hpm_stat_t (*erase_block_nonblocking)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+    hpm_stat_t (*erase_block_nonblocking)(XPI_Type *base, xpi_xfer_channel_t channel,
+                                          const xpi_nor_config_t *nor_config,
                                           uint32_t addr);
     /**< XPI NOR driver interface: erase the whole FLASh using nonblocking interface */
-    hpm_stat_t (*erase_chip_nonblocking)(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config);
+    hpm_stat_t (*erase_chip_nonblocking)(XPI_Type *base, xpi_xfer_channel_t channel,
+                                         const xpi_nor_config_t *nor_config);
 
     uint32_t reserved0[3];
 
@@ -228,6 +259,42 @@ typedef struct {
     hpm_stat_t (*hash_finish)(sdp_hash_ctx_t *hash_ctx, uint8_t *digest);
 } sdp_driver_interface_t;
 
+typedef struct {
+    /**< SM3 API version*/
+    uint32_t version;
+    /**< SM3 API itnerface: HASH Initialization */
+    hpm_stat_t (*init)(sm3_context_t *ctx);
+    /**< SM3 API interface: HASH update */
+    hpm_stat_t (*update)(sm3_context_t *ctx, const void *input, uint32_t len);
+    /**< SM3 API interface: HASH finish */
+    hpm_stat_t (*finalize)(sm3_context_t *ctx, uint8_t output[32]);
+} sm3_api_interface_t;
+
+typedef struct {
+    /**< SM4 API interface: Version */
+    uint32_t version;
+    /**< SM4 API interface: Set encryption key */
+    void (*setkey_enc)(sm4_context_t *ctx, const uint8_t key[16]);
+    /**< SM4 API interface: Set decryption key */
+    void (*setkey_dec)(sm4_context_t *ctx, const uint8_t key[16]);
+    /**< SM4 API interface: SM4 ECB operation */
+    hpm_stat_t (*crypt_ecb)(sm4_context_t *ctx, uint32_t mode, uint32_t length, const uint8_t *input, uint8_t *output);
+    /**< SM4 API interface: SM4 CBC operation */
+    hpm_stat_t (*crypt_cbc)(sm4_context_t *ctx, uint32_t mode, uint32_t length, const uint8_t iv[16],
+                            const uint8_t *input, uint8_t *output);
+    /**< SM4 API interface: SM4 CTR operation */
+    hpm_stat_t (*crypt_ctr)(sm4_context_t *ctx, uint8_t *nonce_counter, const uint8_t *input,
+                            uint8_t *output, uint32_t length);
+    /**< SM4 API interface: SM4 CCB encryption */
+    hpm_stat_t (*ccm_gen_enc)(sm4_context_t *ctx, uint32_t input_len, const uint8_t *iv,
+                              uint32_t iv_len, const uint8_t *aad, uint32_t aad_len, const uint8_t *input,
+                              uint8_t *output, uint8_t *tag, uint32_t tag_len);
+    /**< SM4 API interface: SM4 CCM Decryption and verifying */
+    hpm_stat_t (*ccm_dec_verify)(sm4_context_t *ctx, uint32_t input_len, const uint8_t *iv,
+                                 uint32_t iv_len, const uint8_t *aad, uint32_t aad_len, const uint8_t *input,
+                                 uint8_t *output, const uint8_t *tag, uint32_t tag_len);
+} sm4_api_interface_t;
+
 /**
  * @brief Bootloader API table
  */
@@ -248,11 +315,13 @@ typedef struct {
     const xpi_ram_driver_interface_t *xpi_ram_driver_if;
     /**< Bootloader API table: sdp driver interface address */
     const sdp_driver_interface_t *sdp_driver_if;
+    const uint32_t reserved0;
+    const sm3_api_interface_t *sm3_api_if;  /* SM3 driver interface address */
+    const sm4_api_interface_t *sm4_api_if;  /* SM4 driver itnerface address */
 } bootloader_api_table_t;
 
 /**< Bootloader API table Root */
-#define ROM_API_TABLE_ROOT ((const bootloader_api_table_t*)0x2001FF00U)
-
+#define ROM_API_TABLE_ROOT ((const bootloader_api_table_t *)0x2001FF00U)
 
 #ifdef __cplusplus
 extern "C" {
@@ -317,10 +386,13 @@ static inline hpm_stat_t rom_xpi_nor_init(XPI_Type *base, xpi_nor_config_t *nor_
  * @param[in] length Region size to be erased
  * @return API execution status
  */
-static inline hpm_stat_t rom_xpi_nor_erase(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+static inline hpm_stat_t rom_xpi_nor_erase(XPI_Type *base, xpi_xfer_channel_t channel,
+                                           const xpi_nor_config_t *nor_config,
                                            uint32_t start, uint32_t length)
 {
-    return ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase(base, channel, nor_config, start, length);
+    hpm_stat_t status = ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase(base, channel, nor_config, start, length);
+    fencei();
+    return status;
 }
 
 /**
@@ -335,7 +407,9 @@ static inline hpm_stat_t rom_xpi_nor_erase_sector(XPI_Type *base, xpi_xfer_chann
                                                   const xpi_nor_config_t *nor_config,
                                                   uint32_t start)
 {
-    return ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase_sector(base, channel, nor_config, start);
+    hpm_stat_t status = ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase_sector(base, channel, nor_config, start);
+    fencei();
+    return status;
 }
 
 /**
@@ -365,7 +439,9 @@ static inline hpm_stat_t rom_xpi_nor_erase_block(XPI_Type *base, xpi_xfer_channe
                                                  const xpi_nor_config_t *nor_config,
                                                  uint32_t start)
 {
-    return ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase_block(base, channel, nor_config, start);
+    hpm_stat_t status = ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase_block(base, channel, nor_config, start);
+    fencei();
+    return status;
 }
 
 /**
@@ -382,7 +458,6 @@ static inline hpm_stat_t rom_xpi_nor_erase_block_nonblocking(XPI_Type *base, xpi
 {
     return ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase_block_nonblocking(base, channel, nor_config, start);
 }
-
 
 /**
  * @brief Erase the whole FLASH in blocking way
@@ -407,9 +482,10 @@ static inline hpm_stat_t rom_xpi_nor_erase_chip(XPI_Type *base, xpi_xfer_channel
 static inline hpm_stat_t rom_xpi_nor_erase_chip_nonblocking(XPI_Type *base, xpi_xfer_channel_t channel,
                                                             const xpi_nor_config_t *nor_config)
 {
-    return ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase_chip_nonblocking(base, channel, nor_config);
+    hpm_stat_t status = ROM_API_TABLE_ROOT->xpi_nor_driver_if->erase_chip_nonblocking(base, channel, nor_config);
+    fencei();
+    return status;
 }
-
 
 /**
  * @brief Program data to specified FLASH address in blocking way
@@ -421,10 +497,14 @@ static inline hpm_stat_t rom_xpi_nor_erase_chip_nonblocking(XPI_Type *base, xpi_
  * @param[in] length length of data to be programmed
  * @return API execution status
  */
-static inline hpm_stat_t rom_xpi_nor_program(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+static inline hpm_stat_t rom_xpi_nor_program(XPI_Type *base, xpi_xfer_channel_t channel,
+                                             const xpi_nor_config_t *nor_config,
                                              const uint32_t *src, uint32_t dst_addr, uint32_t length)
 {
-    return ROM_API_TABLE_ROOT->xpi_nor_driver_if->program(base, channel, nor_config, src, dst_addr, length);
+    hpm_stat_t
+        status = ROM_API_TABLE_ROOT->xpi_nor_driver_if->program(base, channel, nor_config, src, dst_addr, length);
+    fencei();
+    return status;
 }
 
 /**
@@ -455,7 +535,8 @@ static inline hpm_stat_t rom_xpi_nor_page_program_nonblocking(XPI_Type *base, xp
  * @param [in] length length of data to be read out
  * @return API exection address
  */
-static inline hpm_stat_t rom_xpi_nor_read(XPI_Type *base, xpi_xfer_channel_t channel, const xpi_nor_config_t *nor_config,
+static inline hpm_stat_t rom_xpi_nor_read(XPI_Type *base, xpi_xfer_channel_t channel,
+                                          const xpi_nor_config_t *nor_config,
                                           uint32_t *dst, uint32_t start, uint32_t length)
 {
     return ROM_API_TABLE_ROOT->xpi_nor_driver_if->read(base, channel, nor_config, dst, start, length);
@@ -488,6 +569,175 @@ static inline hpm_stat_t rom_xpi_nor_get_property(XPI_Type *base, xpi_nor_config
     return ROM_API_TABLE_ROOT->xpi_nor_driver_if->get_property(base, nor_cfg, property_id, value);
 }
 
+/**
+ * @brief Return the status register value on XPI NOR FLASH
+ *
+ * @param [in] base XPI base address
+ * @param [in] channel XPI transfer channel
+ * @param [in] nor_config XPI NOR configuration
+ * @param [in] addr FLASH address offset
+ * @param [out] out_status FLASH status register value
+ * @return API execution status
+ */
+static inline hpm_stat_t rom_xpi_nor_get_status(XPI_Type *base, xpi_xfer_channel_t channel,
+                                                const xpi_nor_config_t *nor_config, uint32_t addr,
+                                                uint16_t *out_status)
+{
+    return ROM_API_TABLE_ROOT->xpi_nor_driver_if->get_status(base, channel, nor_config, addr, out_status);
+}
+
+/**
+ * @brief Configure the XPI Address Remapping Logic
+ * @param [in] base XPI base address
+ * @param [in] start Start Address (memory mapped address)
+ * @param [in] len Size for the remapping region
+ * @param [in] offset Relative address based on parameter "start"
+ * @retval true is all parameters are valid
+ * @retval false if any parameter is invalid
+ */
+ATTR_RAMFUNC
+static inline bool rom_xpi_nor_remap_config(XPI_Type *base, uint32_t start, uint32_t len, uint32_t offset)
+{
+    if (((base != HPM_XPI0) && (base != HPM_XPI1)) || ((start & 0xFFF) != 0) || ((len & 0xFFF) != 0)
+        || ((offset & 0xFFF) != 0)) {
+        return false;
+    }
+    static const uint8_t k_mc_xpi_remap_config[] = {
+        0x2e, 0x96, 0x23, 0x22, 0xc5, 0x42, 0x23, 0x24,
+        0xd5, 0x42, 0x93, 0xe5, 0x15, 0x00, 0x23, 0x20,
+        0xb5, 0x42, 0x05, 0x45, 0x82, 0x80,
+    };
+    typedef bool (*remap_config_cb_t)(XPI_Type *, uint32_t, uint32_t, uint32_t);
+    remap_config_cb_t cb = (remap_config_cb_t) &k_mc_xpi_remap_config;
+    bool result = cb(base, start, len, offset);
+    ROM_API_TABLE_ROOT->xpi_driver_if->software_reset(base);
+    fencei();
+    return result;
+}
+
+/**
+ * @brief Disable XPI Remapping logic
+ * @param [in] base XPI base address
+ */
+ATTR_RAMFUNC
+static inline void rom_xpi_nor_remap_disable(XPI_Type *base)
+{
+    static const uint8_t k_mc_xpi_remap_disable[] = {
+        0x83, 0x27, 0x05, 0x42, 0xf9, 0x9b, 0x23, 0x20,
+        0xf5, 0x42, 0x82, 0x80,
+    };
+    typedef void (*remap_disable_cb_t)(XPI_Type *);
+    remap_disable_cb_t cb = (remap_disable_cb_t) &k_mc_xpi_remap_disable;
+    cb(base);
+    fencei();
+}
+
+/**
+ * @brief Check whether XPI Remapping is enabled
+ * @param [in] base XPI base address
+ *
+ * @retval true Remapping logic is enabled
+ * @retval false Remapping logic is disabled
+ */
+ATTR_RAMFUNC
+static inline bool rom_xpi_nor_is_remap_enabled(XPI_Type *base)
+{
+    static const uint8_t k_mc_xpi_remap_enabled[] = {
+        0x03, 0x25, 0x05, 0x42, 0x05, 0x89, 0x82, 0x80,
+    };
+    typedef bool (*remap_chk_cb_t)(XPI_Type *);
+    remap_chk_cb_t chk_cb = (remap_chk_cb_t) &k_mc_xpi_remap_enabled;
+    return chk_cb(base);
+}
+
+/**
+ * @brief Configure Specified EXiP Region
+ * @param [in] base XPI base address
+ * @param [in] index EXiP Region index
+ * @param [in] param ExiP Region Parameter
+ * @retval true All parameters are valid
+ * @retval false Any parameter is invalid
+ */
+ATTR_RAMFUNC
+static inline bool rom_xpi_nor_exip_region_config(XPI_Type *base, uint32_t index, exip_region_param_t *param)
+{
+    if ((base != HPM_XPI0) && (base != HPM_XPI1)) {
+        return false;
+    }
+    static const uint8_t k_mc_exip_region_config[] = {
+        0x18, 0x4a, 0x9a, 0x05, 0x2e, 0x95, 0x85, 0x67,
+        0xaa, 0x97, 0x23, 0xa4, 0xe7, 0xd0, 0x4c, 0x4a,
+        0x14, 0x42, 0x58, 0x42, 0x23, 0xa6, 0xb7, 0xd0,
+        0x4c, 0x46, 0x36, 0x97, 0x13, 0x77, 0x07, 0xc0,
+        0x23, 0xa2, 0xb7, 0xd0, 0x0c, 0x46, 0x13, 0x67,
+        0x37, 0x00, 0x05, 0x45, 0x23, 0xa0, 0xb7, 0xd0,
+        0x0c, 0x4e, 0x23, 0xaa, 0xb7, 0xd0, 0x50, 0x4e,
+        0x23, 0xa8, 0xc7, 0xd0, 0x23, 0xac, 0xd7, 0xd0,
+        0x23, 0xae, 0xe7, 0xd0, 0x82, 0x80,
+    };
+    typedef void (*exip_region_config_cb_t)(XPI_Type *, uint32_t, exip_region_param_t *);
+    exip_region_config_cb_t cb = (exip_region_config_cb_t) &k_mc_exip_region_config;
+    cb(base, index, param);
+    ROM_API_TABLE_ROOT->xpi_driver_if->software_reset(base);
+    fencei();
+    return true;
+}
+
+/**
+ * @brief Disable EXiP Feature on specified EXiP Region
+ * @@param [in] base XPI base address
+ * @param [in] index EXiP Region index
+ */
+ATTR_RAMFUNC
+static inline void rom_xpi_nor_exip_region_disable(XPI_Type *base, uint32_t index)
+{
+    static const uint8_t k_mc_exip_region_disable[] = {
+        0x9a, 0x05, 0x2e, 0x95, 0x85, 0x67, 0xaa, 0x97,
+        0x03, 0xa7, 0xc7, 0xd1, 0x75, 0x9b, 0x23, 0xae,
+        0xe7, 0xd0, 0x82, 0x80
+    };
+    typedef void (*exip_region_disable_cb_t)(XPI_Type *, uint32_t);
+    exip_region_disable_cb_t cb = (exip_region_disable_cb_t) &k_mc_exip_region_disable;
+    cb(base, index);
+    ROM_API_TABLE_ROOT->xpi_driver_if->software_reset(base);
+    fencei();
+}
+
+/**
+ * @brief Enable global EXiP logic
+ * @@param [in] base XPI base address
+ */
+ATTR_RAMFUNC
+static inline void rom_xpi_nor_exip_enable(XPI_Type *base)
+{
+    static const uint8_t k_mc_exip_enable[] = {
+        0x85, 0x67, 0x3e, 0x95, 0x83, 0x27, 0x05, 0xc0,
+        0x37, 0x07, 0x00, 0x80, 0xd9, 0x8f, 0x23, 0x20,
+        0xf5, 0xc0, 0x82, 0x80
+    };
+    typedef void (*exip_enable_cb_t)(XPI_Type *);
+    exip_enable_cb_t cb = (exip_enable_cb_t) &k_mc_exip_enable;
+    cb(base);
+}
+
+/**
+ * @brief Disable global EXiP logic
+ * @@param [in] base XPI base address
+ */
+ATTR_RAMFUNC
+static inline void rom_xpi_nor_exip_disable(XPI_Type *base)
+{
+    static const uint8_t k_mc_exip_disable[] = {
+        0x85, 0x67, 0x3e, 0x95, 0x83, 0x27, 0x05, 0xc0,
+        0x86, 0x07, 0x85, 0x83, 0x23, 0x20, 0xf5, 0xc0,
+        0x82, 0x80
+    };
+    typedef void (*exip_disable_cb_t)(XPI_Type *);
+    exip_disable_cb_t cb = (exip_disable_cb_t) &k_mc_exip_disable;
+    cb(base);
+    ROM_API_TABLE_ROOT->xpi_driver_if->software_reset(base);
+    fencei();
+}
 
 /***********************************************************************************************************************
  *
@@ -646,6 +896,111 @@ static inline hpm_stat_t rom_sdp_memcpy(sdp_dma_ctx_t *dma_ctx, void *dst, const
 static inline hpm_stat_t rom_sdp_memset(sdp_dma_ctx_t *dma_ctx, void *dst, uint8_t pattern, uint32_t length)
 {
     return ROM_API_TABLE_ROOT->sdp_driver_if->memset(dma_ctx, dst, pattern, length);
+}
+
+
+/***********************************************************************************************************************
+ *
+ *
+ *      SM3 Driver Wrapper
+ *
+ *
+ **********************************************************************************************************************/
+
+/**
+ * @brief SM4 initialization
+ *
+ * @param [in] ctx SM3 context
+ * @return API execution status
+ */
+static inline hpm_stat_t rom_sm3_init(sm3_context_t *ctx)
+{
+    return ROM_API_TABLE_ROOT->sm3_api_if->init(ctx);
+}
+
+/**
+ * @brief SM3 update operation
+ *
+ * @param [in,out] ctx SM3 context
+ * @param [in] input Data for SM3 calculation
+ * @param [in] len length of the data for SM3 calculation
+ * @return API execution status
+ */
+static inline hpm_stat_t rom_sm3_update(sm3_context_t *ctx, const void *input, uint32_t len)
+{
+    return ROM_API_TABLE_ROOT->sm3_api_if->update(ctx, input, len);
+}
+
+/**
+ * @brief SM3 finalize
+ *        Return the computing SM3 digest
+ *
+ * @param [in] ctx SM3 context
+ * @param [out] output SM3 digest calculated by the above API
+ * @return API execution status
+ */
+static inline hpm_stat_t rom_sm3_finalize(sm3_context_t *ctx, uint8_t output[32])
+{
+    return ROM_API_TABLE_ROOT->sm3_api_if->finalize(ctx, output);
+}
+
+/***********************************************************************************************************************
+ *
+ *
+ *      SM4 Driver Wrapper
+ *
+ *
+ **********************************************************************************************************************/
+/**
+ * @brief Set SM4 encryption key
+ *
+ * @param [in] ctx SM4 context
+ * @param [in] key SM4 encryption key
+ */
+static inline void rom_sm4_setkey_enc(sm4_context_t *ctx, const uint8_t key[16])
+{
+    ROM_API_TABLE_ROOT->sm4_api_if->setkey_enc(ctx, key);
+}
+
+/**
+ * @brief Set SM4 decryption key
+ *
+ * @param [in] ctx SM4 context
+ * @param [in] key SM4 decryption key
+ */
+static inline void rom_sm4_setkey_dec(sm4_context_t *ctx, const uint8_t key[16])
+{
+    ROM_API_TABLE_ROOT->sm4_api_if->setkey_dec(ctx, key);
+}
+
+/**
+ * @brief SM4 ECB crypto operation(Encrypt or Decrypt)
+ * @param [in] ctx SM4 context
+ * @param [in] mode SM4 operation: 1 - ENCRYPT, 0 - DECRYPT
+ * @param [in] length Data length for SM4 encryption/decryption
+ * @param [in] input Input data
+ * @param [out] output Output data
+ * @return API execution status
+ */
+static inline hpm_stat_t rom_sm4_crypt_ecb(sm4_context_t *ctx, uint32_t mode, uint32_t length, const uint8_t *input,
+                                           uint8_t *output)
+{
+    return ROM_API_TABLE_ROOT->sm4_api_if->crypt_ecb(ctx, mode, length, input, output);
+}
+
+/**
+ * @brief SM4 CBC crypto operation(Encrypt or Decrypt)
+ * @param [in] ctx SM4 context
+ * @param [in] mode SM4 operation: 1 - ENCRYPT, 0 - DECRYPT
+ * @param [in] length Data length for SM4 encryption/decryption
+ * @param [in] input Input data
+ * @param [out] output Output data
+ * @return API execution status
+ */
+static inline hpm_stat_t rom_sm4_crypt_cbc(sm4_context_t *ctx, uint32_t mode, uint32_t length, const uint8_t iv[16],
+                                           const uint8_t *input, uint8_t *output)
+{
+    return ROM_API_TABLE_ROOT->sm4_api_if->crypt_cbc(ctx, mode, length, iv, input, output);
 }
 
 #ifdef __cplusplus

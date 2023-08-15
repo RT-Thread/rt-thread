@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2019 NXP
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -749,8 +749,7 @@
 #define SGTL_I2C_BITRATE 100000U
 
 /*! @brief Modules in Sgtl5000 board. */
-typedef enum _sgtl5000_module
-{
+typedef enum _sgtl5000_module {
     sgtl_module_adc = 0x0, /*!< ADC module in SGTL5000 */
     sgtl_module_dac,       /*!< DAC module in SGTL5000 */
     sgtl_module_dap,       /*!< DAP module in SGTL5000 */
@@ -767,8 +766,7 @@ typedef enum _sgtl5000_module
  * @note Only provide some typical data route, not all route listed.
  * Users cannot combine any routes, once a new route is set, the precios one would be replaced.
  */
-typedef enum _sgtl_route
-{
+typedef enum _sgtl_route {
     sgtl_route_bypass = 0x0,             /*!< LINEIN->Headphone. */
     sgtl_route_playback,                 /*!< I2SIN->DAC->Headphone. */
     sgtl_route_playback_record,        /*!< I2SIN->DAC->Headphone, LINEIN->ADC->I2SOUT. */
@@ -781,8 +779,7 @@ typedef enum _sgtl_route
  * @brief The audio data transfer protocol choice.
  * Sgtl5000 only supports I2S format and PCM format.
  */
-typedef enum _sgtl_protocol
-{
+typedef enum _sgtl_protocol {
     sgtl_bus_i2s = 0x0,      /*!< I2S Type */
     sgtl_bus_left_justified,  /*!< Left justified */
     sgtl_bus_right_justified, /*!< Right Justified */
@@ -793,8 +790,7 @@ typedef enum _sgtl_protocol
 /*! @brief sgtl play channel
  * @anchor _sgtl_play_channel
  */
-enum
-{
+enum {
     sgtl_headphone_left  = 0, /*!< headphone left channel */
     sgtl_headphone_right = 1, /*!< headphone right channel */
     sgtl_lineout_left    = 2, /*!< lineout left channel */
@@ -804,8 +800,7 @@ enum
 /*! @brief sgtl record source
  * _sgtl_record_source
  */
-enum
-{
+enum {
     sgtl_record_source_linein = 0U, /*!< record source line in */
     sgtl_record_source_mic    = 1U, /*!< record source single end */
 };
@@ -813,22 +808,19 @@ enum
 /*! @brief sgtl play source
  * _stgl_play_source
  */
-enum
-{
+enum {
     sgtl_play_source_linein = 0U, /*!< play source line in */
     sgtl_play_source_dac    = 1U, /*!< play source line in */
 };
 
 /*! @brief SGTL SCLK valid edge */
-typedef enum _sgtl_sclk_edge
-{
+typedef enum _sgtl_sclk_edge {
     sgtl_sclk_valid_edge_rising   = 0U, /*!< SCLK valid edge */
     sgtl_sclk_valid_edge_failing = 1U, /*!< SCLK failling edge */
 } sgtl_sclk_edge_t;
 
 /*! @brief Audio format configuration. */
-typedef struct _sgtl_audio_format
-{
+typedef struct _sgtl_audio_format {
     uint32_t mclk_hz;          /*!< master clock */
     uint32_t sample_rate;       /*!< Sample rate */
     uint32_t bit_width;         /*!< Bit width */
@@ -836,16 +828,14 @@ typedef struct _sgtl_audio_format
 } sgtl_audio_format_t;
 
 /*! @brief Initailize structure of sgtl5000 */
-typedef struct _sgtl_config
-{
+typedef struct _sgtl_config {
     sgtl_route_t route;         /*!< Audio data route.*/
     sgtl_protocol_t bus;        /*!< Audio transfer protocol */
     bool master;          /*!< Master or slave. True means master, false means slave. */
     sgtl_audio_format_t format; /*!< audio format */
 } sgtl_config_t;
 
-typedef struct
-{
+typedef struct {
     I2C_Type *ptr;;                    /*!< sgtl I2C pointer */
     uint8_t slave_address;             /*!< code device slave address */
 } sgtl_context_t;

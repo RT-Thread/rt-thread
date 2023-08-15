@@ -1,40 +1,38 @@
 /*
- * Copyright 2021 - 2022 hpmicro
+ * Copyright 2021-2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 ENTRY(_start)
 
 STACK_SIZE = DEFINED(_stack_size) ? _stack_size : 0x4000;
-HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 1M;
+HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 256K;
 SDRAM_SIZE = DEFINED(_sdram_size) ? _sdram_size : 16M;
-NONCACHEABLE_SIZE = DEFINED(_noncacheable_size) ? _noncacheable_size : 4M;
+NONCACHEABLE_SIZE = DEFINED(_noncacheable_size) ? _noncacheable_size : 256K;
 
 MEMORY
 {
     ILM (wx) : ORIGIN = 0, LENGTH = 256K
     DLM (w) : ORIGIN = 0x80000, LENGTH = 256K
-    /* It's alias address of core0 ILM+DLM, but accessing via system bus */
-    CORE0_LM_SLV (wx) : ORIGIN = 0x1000000, LENGTH = 512K
-    /* It's alias address of core1 ILM+DLM, but accessing via system bus */
-    CORE1_LM_SLV (wx) : ORIGIN = 0x1180000, LENGTH = 512K
-    AXI_SRAM (wx) : ORIGIN = 0x1080000, LENGTH = 1536K
-    SDRAM (wx) : ORIGIN = 0x40000000, LENGTH = SDRAM_SIZE - NONCACHEABLE_SIZE
-    NONCACHEABLE (wx) : ORIGIN = 0x40000000 + SDRAM_SIZE - NONCACHEABLE_SIZE, LENGTH = NONCACHEABLE_SIZE
+    AXI_SRAM (wx) : ORIGIN = 0x1080000, LENGTH = 1280K
+    NONCACHEABLE_RAM (wx) : ORIGIN = 0x11C0000, LENGTH = NONCACHEABLE_SIZE
+    SDRAM (wx) : ORIGIN = 0x40000000, LENGTH = SDRAM_SIZE
+    AHB_SRAM (w) : ORIGIN = 0xF0300000, LENGTH = 32k
+    APB_SRAM (w): ORIGIN = 0xF40F0000, LENGTH = 8k
 }
 
 SECTIONS
 {
+    .start : {
+        . = ALIGN(8);
+        KEEP(*(.start))
+    } > AXI_SRAM
+
     .vectors : {
         . = ALIGN(8);
         KEEP(*(.isr_vector))
         KEEP(*(.vector_table))
         . = ALIGN(8);
-    } > AXI_SRAM
-
-    .start : {
-        . = ALIGN(8);
-        KEEP(*(.start))
     } > AXI_SRAM
 
     .text : {
@@ -98,8 +96,46 @@ SECTIONS
         KEEP(*(.rel*))
     } > AXI_SRAM
 
+    .fast_ram (NOLOAD) : {
+        KEEP(*(.fast_ram))
+    } > DLM
 
-    .data : AT(etext) {
+    .bss(NOLOAD) : {
+        . = ALIGN(8);
+        __bss_start__ = .;
+        *(.bss)
+        *(.bss*)
+        *(.sbss*)
+        *(.scommon)
+        *(.scommon*)
+        *(.dynsbss*)
+        *(COMMON)
+        . = ALIGN(8);
+        _end = .;
+        __bss_end__ = .;
+    } > DLM
+
+    /* Note: .tbss and .tdata should be adjacent */
+    .tbss(NOLOAD) : {
+        . = ALIGN(8);
+        __tbss_start__ = .;
+        *(.tbss*)
+        *(.tcommon*)
+        _end = .;
+        __tbss_end__ = .;
+    } > DLM
+
+    .tdata : AT(etext) {
+        . = ALIGN(8);
+        __tdata_start__ = .;
+        __thread_pointer = .;
+        *(.tdata)
+        *(.tdata*)
+        . = ALIGN(8);
+        __tdata_end__ = .;
+    } > DLM
+
+    .data : AT(etext + __tdata_end__ - __tdata_start__) {
         . = ALIGN(8);
         __data_start__ = .;
         __global_pointer$ = . + 0x800;
@@ -107,15 +143,13 @@ SECTIONS
         *(.data*)
         *(.sdata)
         *(.sdata*)
-        *(.tdata)
-        *(.tdata*)
 
         KEEP(*(.jcr))
         KEEP(*(.dynamic))
         KEEP(*(.got*))
         KEEP(*(.got))
-        KEEP(*(.gcc_execpt_table))
-        KEEP(*(.gcc_execpt_table.*))
+        KEEP(*(.gcc_except_table))
+        KEEP(*(.gcc_except_table.*))
 
         . = ALIGN(8);
         PROVIDE(__preinit_array_start = .);
@@ -135,10 +169,12 @@ SECTIONS
         PROVIDE(__finit_array_end = .);
 
         . = ALIGN(8);
+        PROVIDE(__ctors_start__ = .);
         KEEP(*crtbegin*.o(.ctors))
         KEEP(*(EXCLUDE_FILE (*crtend*.o) .ctors))
         KEEP(*(SORT(.ctors.*)))
         KEEP(*(.ctors))
+        PROVIDE(__ctors_end__ = .);
 
         . = ALIGN(8);
         KEEP(*crtbegin*.o(.dtors))
@@ -153,62 +189,71 @@ SECTIONS
         PROVIDE (edata = .);
     } > DLM
 
-    .fast : AT(etext + __data_end__ - __data_start__) {
+    .fast : AT(etext + __data_end__ - __tdata_start__) {
         . = ALIGN(8);
         PROVIDE(__ramfunc_start__ = .);
         *(.fast)
         . = ALIGN(8);
         PROVIDE(__ramfunc_end__ = .);
     } > AXI_SRAM
-    
-    .noncacheable : AT(etext + __data_end__ - __data_start__ + __ramfunc_end__ - __ramfunc_start__){
+
+    .noncacheable.init : AT(etext + __data_end__ - __tdata_start__ + __ramfunc_end__ - __ramfunc_start__) {
         . = ALIGN(8);
         __noncacheable_init_start__ = .;
         KEEP(*(.noncacheable.init))
         __noncacheable_init_end__ = .;
+        . = ALIGN(8);
+    } > NONCACHEABLE_RAM
+
+    .noncacheable.bss (NOLOAD) : {
+        . = ALIGN(8);
         KEEP(*(.noncacheable))
         __noncacheable_bss_start__ = .;
         KEEP(*(.noncacheable.bss))
         __noncacheable_bss_end__ = .;
         . = ALIGN(8);
-    } > NONCACHEABLE
-    __noncacheable_start__ = ORIGIN(NONCACHEABLE);
-    __noncacheable_end__ = ORIGIN(NONCACHEABLE) + LENGTH(NONCACHEABLE);
+    } > NONCACHEABLE_RAM
 
-    .bss : {
-        . = ALIGN(8);
-        __bss_start__ = .;
-        *(.bss)
-        *(.bss*)
-        *(.tbss*)
-        *(.sbss*)
-        *(.scommon)
-        *(.scommon*)
-        *(.tcommon*)
-        *(.dynsbss*)
-        *(COMMON)
-        . = ALIGN(8);
-        _end = .;
-        __bss_end__ = .;
+    __noncacheable_start__ = ORIGIN(NONCACHEABLE_RAM);
+    __noncacheable_end__ = ORIGIN(NONCACHEABLE_RAM) + LENGTH(NONCACHEABLE_RAM);
+
+     .ahb_sram (NOLOAD) : {
+        KEEP(*(.ahb_sram))
+    } > AHB_SRAM
+
+    .apb_sram (NOLOAD) : {
+        KEEP(*(.backup_sram))
+    } > APB_SRAM
+
+    .fast_ram (NOLOAD) : {
+        KEEP(*(.fast_ram))
     } > DLM
 
-    .stack : {
+    .stack(NOLOAD) : {
         . = ALIGN(8);
         __stack_base__ = .;
         . += STACK_SIZE;
         PROVIDE (_stack = .);
         PROVIDE (_stack_in_dlm = .);
+        PROVIDE (__rt_rvstack = .);
     } > DLM
 
     .framebuffer (NOLOAD) : {
         KEEP(*(.framebuffer))
-    } > SDRAM
+    } > AXI_SRAM
 
-    .heap : {
+    .heap (NOLOAD) : {
         . = ALIGN(8);
         __heap_start__ = .;
         . += HEAP_SIZE;
         __heap_end__ = .;
 
+    } > AXI_SRAM
+
+    .sdram (NOLOAD) : {
+        . = ALIGN(8);
+        __sdram_start__ = .;
+        . += SDRAM_SIZE;
+        __sdram_end__ = .;
     } > SDRAM
 }

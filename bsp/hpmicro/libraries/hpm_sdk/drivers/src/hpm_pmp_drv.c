@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021-2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -326,6 +326,36 @@ uint32_t read_pma_addr(uint32_t idx)
         break;
     }
     return ret_val;
+}
+
+hpm_stat_t pmp_config_entry(const pmp_entry_t *entry, uint32_t entry_index)
+{
+    hpm_stat_t status = status_invalid_argument;
+    do {
+        HPM_BREAK_IF((entry == NULL) || (entry_index > 15U));
+
+        uint32_t idx = entry_index / 4;
+        uint32_t offset = (entry_index * 8) & 0x1F;
+
+        uint32_t pmp_cfg = read_pmp_cfg(idx);
+        pmp_cfg &= ~(0xFFUL << offset);
+        pmp_cfg |= ((uint32_t) entry->pmp_cfg.val) << offset;
+        uint32_t pma_cfg = read_pma_cfg(idx);
+        pma_cfg &= ~(0xFFUL << offset);
+        pma_cfg |= ((uint32_t) entry->pma_cfg.val) << offset;
+
+        write_pmp_addr(entry->pmp_addr, entry_index);
+        write_pma_addr(entry->pma_addr, entry_index);
+
+        write_pma_cfg(pma_cfg, idx);
+        write_pmp_cfg(pmp_cfg, idx);
+        fencei();
+
+        status = status_success;
+
+    } while (false);
+
+    return status;
 }
 
 hpm_stat_t pmp_config(const pmp_entry_t *entry, uint32_t num_of_entries)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021-2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -43,27 +43,25 @@
 #endif
 
 #ifndef MAX
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 #ifndef MIN
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
-#define HPM_BITSMASK(val,offset) ((uint32_t)(val) << (offset))
-#define IS_HPM_BITMASK_SET(val,mask) (((uint32_t)(val) & (uint32_t)(mask)) != 0U)
-#define IS_HPM_BIT_SET(val,offset) (((uint32_t)(val) & (1UL << (offset))) != 0U)
-#define IS_HPM_BITMASK_CLR(val,mask) (((uint32_t)(val) & (uint32_t)(mask)) == 0U)
-#define IS_HPM_BIT_CLR(val,offset) (((uint32_t)(val) & (1UL << (offset))) == 0U)
+#define HPM_BITSMASK(val, offset) ((uint32_t)(val) << (offset))
+#define IS_HPM_BITMASK_SET(val, mask) (((uint32_t)(val) & (uint32_t)(mask)) != 0U)
+#define IS_HPM_BIT_SET(val, offset) (((uint32_t)(val) & (1UL << (offset))) != 0U)
+#define IS_HPM_BITMASK_CLR(val, mask) (((uint32_t)(val) & (uint32_t)(mask)) == 0U)
+#define IS_HPM_BIT_CLR(val, offset) (((uint32_t)(val) & (1UL << (offset))) == 0U)
 
-#define HPM_BREAK_IF(cond)   if(cond) {break;}
-#define HPM_CONTINUE_IF(cond) if(cond) {continue;}
+#define HPM_BREAK_IF(cond)   if (cond) { break; }
+#define HPM_CONTINUE_IF(cond) if (cond) { continue; }
 
 #define HPM_CHECK_RET(x)               \
-    do                                 \
-    {                                  \
+    do {                               \
         stat = (x);                    \
-        if (status_success != stat)    \
-        {                              \
+        if (status_success != stat) { \
             return stat;               \
         }                              \
     } while (false)
@@ -79,11 +77,10 @@ typedef uint32_t hpm_stat_t;
  *       1000 or above for the application status group
  *  [Code]  Valid value: 0-999
  *
- * */
-#define MAKE_STATUS(group,code) ((uint32_t)(group)*1000U + (uint32_t)(code))
+ */
+#define MAKE_STATUS(group, code) ((uint32_t)(group)*1000U + (uint32_t)(code))
 /* @brief System status group definitions */
-enum
-{
+enum {
     status_group_common = 0,
     status_group_uart = 1,
     status_group_i2c = 2,
@@ -93,7 +90,7 @@ enum
     status_group_xpi = 6,
     status_group_l1c,
     status_group_dma,
-    status_group_dram,
+    status_group_femc,
     status_group_sdp,
     status_group_xpi_nor,
     status_group_otp,
@@ -110,6 +107,7 @@ enum
     status_group_pllctl,
     status_group_pllctlv2,
     status_group_ffa,
+    status_group_mcan,
 
     status_group_middleware_start = 500,
     status_group_sdmmc = status_group_middleware_start,
@@ -118,8 +116,7 @@ enum
 };
 
 /* @brief Common status code definitions */
-enum
-{
+enum {
     status_success = MAKE_STATUS(status_group_common, 0),
     status_fail = MAKE_STATUS(status_group_common, 1),
     status_invalid_argument = MAKE_STATUS(status_group_common, 2),
@@ -143,7 +140,7 @@ enum
 #define ATTR_PLACE_AT_WITH_ALIGNMENT(section_name, alignment) \
 ATTR_PLACE_AT(section_name) ATTR_ALIGN(alignment)
 
-#define ATTR_PLACE_AT_NONCACHEABLE ATTR_PLACE_AT(".noncacheable")
+#define ATTR_PLACE_AT_NONCACHEABLE ATTR_PLACE_AT(".noncacheable.bss")
 #define ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(alignment) \
     ATTR_PLACE_AT_NONCACHEABLE ATTR_ALIGN(alignment)
 
@@ -159,6 +156,11 @@ ATTR_PLACE_AT(section_name) ATTR_ALIGN(alignment)
 #define ATTR_RAMFUNC ATTR_PLACE_AT(".fast")
 #define ATTR_RAMFUNC_WITH_ALIGNMENT(alignment) \
     ATTR_RAMFUNC ATTR_ALIGN(alignment)
+
+#define ATTR_SHARE_MEM ATTR_PLACE_AT(".sh_mem")
+
+#define NOP() __asm volatile("nop")
+#define WFI() __asm volatile("wfi")
 
 #else
 #error Unknown toolchain

@@ -14,6 +14,7 @@ src += ['drivers/src/hpm_pmp_drv.c']
 src += ['drivers/src/hpm_pllctl_drv.c']
 src += ['drivers/src/hpm_pllctlv2_drv.c']
 src += ['drivers/src/hpm_dma_drv.c']
+src += ['drivers/src/hpm_pcfg_drv.c']
 
 
 if GetDepend(['BSP_USING_GPIO']):
@@ -36,12 +37,15 @@ if GetDepend(['BSP_USING_WDG']):
 
 if GetDepend(['BSP_USING_ADC']):
     if GetDepend(['BSP_USING_ADC12']):
-            src += ['drivers/src/hpm_adc12_drv.c']
+        src += ['drivers/src/hpm_adc12_drv.c']
     if GetDepend(['BSP_USING_ADC16']):
-            src += ['drivers/src/hpm_adc16_drv.c']
+        src += ['drivers/src/hpm_adc16_drv.c']
 
 if GetDepend(['BSP_USING_CAN']):
     src += ['drivers/src/hpm_can_drv.c']
+
+if GetDepend(['BSP_USING_MCAN']):
+    src += ['drivers/src/hpm_mcan_drv.c']
 
 if GetDepend(['BSP_USING_ETH']):
     src += ['drivers/src/hpm_enet_drv.c']
@@ -58,8 +62,8 @@ if GetDepend(['BSP_USING_LCD']):
 if GetDepend(['BSP_USING_GPTMR']):
     src += ['drivers/src/hpm_gptmr_drv.c']
 
-if GetDepend(['BSP_USING_DRAM']):
-    src += ['drivers/src/hpm_dram_drv.c']
+if GetDepend(['BSP_USING_FEMC']):
+    src += ['drivers/src/hpm_femc_drv.c']
 
 if GetDepend(['BSP_USING_PWM']):
     src += ['drivers/src/hpm_pwm_drv.c']
@@ -77,6 +81,9 @@ if GetDepend(['BSP_USING_PDM']):
 if GetDepend(['BSP_USING_DAO']):
     src += ['drivers/src/hpm_dao_drv.c']
     src += ['drivers/src/hpm_i2s_drv.c']
+
+if GetDepend(['BSP_USING_PDMA']):
+    src += ['drivers/src/hpm_pdma_drv.c']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 

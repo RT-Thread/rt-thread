@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2021 hpmicro
+* Copyright (c) 2021 HPMicro
 *
 * SPDX-License-Identifier: BSD-3-Clause
 *
@@ -48,7 +48,7 @@ uint32_t otp_read_from_ip(uint32_t addr)
         HPM_OTP->ADDR = addr;
         HPM_OTP->INT_FLAG = OTP_INT_FLAG_READ_MASK; /* Write-1-Clear */
         HPM_OTP->CMD = OTP_CMD_READ;
-        while(!IS_HPM_BITMASK_SET(HPM_OTP->INT_FLAG, OTP_INT_FLAG_READ_MASK)) {
+        while (!IS_HPM_BITMASK_SET(HPM_OTP->INT_FLAG, OTP_INT_FLAG_READ_MASK)) {
         }
         ret_val = HPM_OTP->DATA;
     }
@@ -60,14 +60,14 @@ hpm_stat_t otp_program(uint32_t addr, const uint32_t *src, uint32_t num_of_words
     hpm_stat_t status = status_invalid_argument;
     do {
         uint32_t fuse_idx_max = ARRAY_SIZE(HPM_OTP->SHADOW);
-        HPM_BREAK_IF((addr >=fuse_idx_max) || (num_of_words > fuse_idx_max) || (addr + num_of_words > fuse_idx_max));
+        HPM_BREAK_IF((addr >= fuse_idx_max) || (num_of_words > fuse_idx_max) || (addr + num_of_words > fuse_idx_max));
 
         /* Enable 2.5V LDO for FUSE programming */
         uint32_t reg_val = (HPM_PCFG->LDO2P5 & ~PCFG_LDO2P5_VOLT_MASK) | PCFG_LDO2P5_ENABLE_MASK | PCFG_LDO2P5_VOLT_SET(2500);
         HPM_PCFG->LDO2P5 = reg_val;
-        //TODO: delay 1ms, wait for design team's update to get a steady bit (bit28 in this reg)
+        /* TODO: delay 1ms, wait for design team's update to get a steady bit (bit28 in this reg) */
 
-        for (uint32_t i=0; i<num_of_words; i++) {
+        for (uint32_t i = 0; i < num_of_words; i++) {
             /*
             HPM_OTP->UNLOCK = OTP_UNLOCK_MAGIC_NUM;
             HPM_OTP->FUSE[addr++] = *src++;
@@ -80,7 +80,7 @@ hpm_stat_t otp_program(uint32_t addr, const uint32_t *src, uint32_t num_of_words
 
             ++src;
             ++addr;
-            while(!IS_HPM_BITMASK_SET(HPM_OTP->INT_FLAG, OTP_INT_FLAG_WRITE_MASK)) {
+            while (!IS_HPM_BITMASK_SET(HPM_OTP->INT_FLAG, OTP_INT_FLAG_WRITE_MASK)) {
 
             }
 
@@ -88,7 +88,7 @@ hpm_stat_t otp_program(uint32_t addr, const uint32_t *src, uint32_t num_of_words
         /* Disable 2.5V LDO after FUSE programming for saving power */
         HPM_PCFG->LDO2P5 &= ~PCFG_LDO2P5_ENABLE_MASK;
         status = status_success;
-    }while(false);
+    } while (false);
 
     return status;
 }
@@ -99,7 +99,7 @@ hpm_stat_t otp_reload(otp_region_t region)
     if ((uint32_t)region < 0x10 && (region >= otp_region0_mask)) {
         HPM_OTP->LOAD_REQ = (uint32_t)region;
         HPM_OTP->LOAD_COMP = (uint32_t)region;
-        while(!IS_HPM_BITMASK_SET(HPM_OTP->LOAD_COMP, region)) {
+        while (!IS_HPM_BITMASK_SET(HPM_OTP->LOAD_COMP, region)) {
 
         }
         status = status_success;

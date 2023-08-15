@@ -1,0 +1,770 @@
+<!DOCTYPE CPU_Registers_File>
+<Root name="RISCV">
+  <RegisterGroup name="ABI, RV32I" default_visible="Yes" default_open="Yes" property="rv_abi" value="ilp32,ilp32d,ilp32f,None">
+    <Register name="pc" start="0" size="4" />
+    <Register name="ra" start="1" size="4" />
+    <Register name="sp" start="2" size="4" />
+    <Register name="gp" start="3" size="4" />
+    <Register name="tp" start="4" size="4" />
+    <Register name="a0" start="10" size="4" />
+    <Register name="a1" start="11" size="4" />
+    <Register name="a2" start="12" size="4" />
+    <Register name="a3" start="13" size="4" />
+    <Register name="a4" start="14" size="4" />
+    <Register name="a5" start="15" size="4" />
+    <Register name="a6" start="16" size="4" />
+    <Register name="a7" start="17" size="4" />
+    <Register name="t0" start="5" size="4" />
+    <Register name="t1" start="6" size="4" />
+    <Register name="t2" start="7" size="4" />
+    <Register name="t3" start="28" size="4" />
+    <Register name="t4" start="29" size="4" />
+    <Register name="t5" start="30" size="4" />
+    <Register name="t6" start="31" size="4" />
+    <Register name="s0" start="8" size="4" />
+    <Register name="s1" start="9" size="4" />
+    <Register name="s2" start="18" size="4" />
+    <Register name="s3" start="19" size="4" />
+    <Register name="s4" start="20" size="4" />
+    <Register name="s5" start="21" size="4" />
+    <Register name="s6" start="22" size="4" />
+    <Register name="s7" start="23" size="4" />
+    <Register name="s8" start="24" size="4" />
+    <Register name="s9" start="25" size="4" />
+    <Register name="s10" start="26" size="4" />
+    <Register name="s11" start="27" size="4" />
+  </RegisterGroup>
+  <RegisterGroup name="CPU, RV32I" default_visible="Yes" default_open="Yes" property="rv_architecture" value="rv32i,rv32ic,rv32im,rv32imc,rv32imf,rv32imfc,rv32ima,rv32imac,rv32imaf,rv32imafc,rv32g,rv32gc,None">
+    <Register name="pc" start="0" size="4" />
+    <Register name="x1" start="1" size="4" />
+    <Register name="x2" start="2" size="4" />
+    <Register name="x3" start="3" size="4" />
+    <Register name="x4" start="4" size="4" />
+    <Register name="x5" start="5" size="4" />
+    <Register name="x6" start="6" size="4" />
+    <Register name="x7" start="7" size="4" />
+    <Register name="x8" start="8" size="4" />
+    <Register name="x9" start="9" size="4" />
+    <Register name="x10" start="10" size="4" />
+    <Register name="x11" start="11" size="4" />
+    <Register name="x12" start="12" size="4" />
+    <Register name="x13" start="13" size="4" />
+    <Register name="x14" start="14" size="4" />
+    <Register name="x15" start="15" size="4" />
+    <Register name="x16" start="16" size="4" />
+    <Register name="x17" start="17" size="4" />
+    <Register name="x18" start="18" size="4" />
+    <Register name="x19" start="19" size="4" />
+    <Register name="x20" start="20" size="4" />
+    <Register name="x21" start="21" size="4" />
+    <Register name="x22" start="22" size="4" />
+    <Register name="x23" start="23" size="4" />
+    <Register name="x24" start="24" size="4" />
+    <Register name="x25" start="25" size="4" />
+    <Register name="x26" start="26" size="4" />
+    <Register name="x27" start="27" size="4" />
+    <Register name="x28" start="28" size="4" />
+    <Register name="x29" start="29" size="4" />
+    <Register name="x30" start="30" size="4" />
+    <Register name="x31" start="31" size="4" />
+  </RegisterGroup>
+  <RegisterGroup name="ABI, FPU - Single" property="rv_architecture" value="rv32imf,rv32imfc,rv32imaf,rv32imafc,rv32g,rv32gc,rv64imf,rv64imfc,rv64imaf,rv64imafc,rv64g,rv64gc,None">
+    <Register name="ft0" start="32" size="4" format="fp" />
+    <Register name="ft1" start="33" size="4" format="fp" />
+    <Register name="ft2" start="34" size="4" format="fp" />
+    <Register name="ft3" start="35" size="4" format="fp" />
+    <Register name="ft4" start="36" size="4" format="fp" />
+    <Register name="ft5" start="37" size="4" format="fp" />
+    <Register name="ft6" start="38" size="4" format="fp" />
+    <Register name="ft7" start="39" size="4" format="fp" />
+    <Register name="fs0" start="40" size="4" format="fp" />
+    <Register name="fs1" start="41" size="4" format="fp" />
+    <Register name="fa0" start="42" size="4" format="fp" />
+    <Register name="fa1" start="43" size="4" format="fp" />
+    <Register name="fa2" start="44" size="4" format="fp" />
+    <Register name="fa3" start="45" size="4" format="fp" />
+    <Register name="fa4" start="46" size="4" format="fp" />
+    <Register name="fa5" start="47" size="4" format="fp" />
+    <Register name="fa6" start="48" size="4" format="fp" />
+    <Register name="fa7" start="49" size="4" format="fp" />
+    <Register name="fs2" start="50" size="4" format="fp" />
+    <Register name="fs3" start="51" size="4" format="fp" />
+    <Register name="fs4" start="52" size="4" format="fp" />
+    <Register name="fs5" start="53" size="4" format="fp" />
+    <Register name="fs6" start="54" size="4" format="fp" />
+    <Register name="fs7" start="55" size="4" format="fp" />
+    <Register name="fs8" start="56" size="4" format="fp" />
+    <Register name="fs9" start="57" size="4" format="fp" />
+    <Register name="fs10" start="58" size="4" format="fp" />
+    <Register name="fs11" start="59" size="4" format="fp" />
+    <Register name="ft8" start="60" size="4" format="fp" />
+    <Register name="ft9" start="61" size="4" format="fp" />
+    <Register name="ft10" start="62" size="4" format="fp" />
+    <Register name="ft11" start="63" size="4" format="fp" />
+    <Register name="fcsr" start="0x1003" size="4">
+      <BitField size="1" name="NX" start="0" />
+      <BitField size="1" name="UF" start="1" />
+      <BitField size="1" name="OF" start="2" />
+      <BitField size="1" name="DZ" start="3" />
+      <BitField size="1" name="NV" start="4" />
+      <BitField size="3" name="FRM" start="5">
+        <Enum name="RNE" value="0" />
+        <Enum name="RTZ" value="1" />
+        <Enum name="RDN" value="2" />
+        <Enum name="RUP" value="3" />
+        <Enum name="RMM" value="4" />
+      </BitField>
+    </Register>
+  </RegisterGroup>
+  <RegisterGroup name="ABI, FPU - Double" property="rv_architecture" value="rv32imf,rv32imfc,rv32imaf,rv32imafc,rv32g,rv32gc,rv64imf,rv64imfc,rv64imaf,rv64imafc,rv64g,rv64gc,None">
+    <Register name="ft0" start="32" size="8" format="fp" />
+    <Register name="ft1" start="33" size="8" format="fp" />
+    <Register name="ft2" start="34" size="8" format="fp" />
+    <Register name="ft3" start="35" size="8" format="fp" />
+    <Register name="ft4" start="36" size="8" format="fp" />
+    <Register name="ft5" start="37" size="8" format="fp" />
+    <Register name="ft6" start="38" size="8" format="fp" />
+    <Register name="ft7" start="39" size="8" format="fp" />
+    <Register name="fs0" start="40" size="8" format="fp" />
+    <Register name="fs1" start="41" size="8" format="fp" />
+    <Register name="fa0" start="42" size="8" format="fp" />
+    <Register name="fa1" start="43" size="8" format="fp" />
+    <Register name="fa2" start="44" size="8" format="fp" />
+    <Register name="fa3" start="45" size="8" format="fp" />
+    <Register name="fa4" start="46" size="8" format="fp" />
+    <Register name="fa5" start="47" size="8" format="fp" />
+    <Register name="fa6" start="48" size="8" format="fp" />
+    <Register name="fa7" start="49" size="8" format="fp" />
+    <Register name="fs2" start="50" size="8" format="fp" />
+    <Register name="fs3" start="51" size="8" format="fp" />
+    <Register name="fs4" start="52" size="8" format="fp" />
+    <Register name="fs5" start="53" size="8" format="fp" />
+    <Register name="fs6" start="54" size="8" format="fp" />
+    <Register name="fs7" start="55" size="8" format="fp" />
+    <Register name="fs8" start="56" size="8" format="fp" />
+    <Register name="fs9" start="57" size="8" format="fp" />
+    <Register name="fs10" start="58" size="8" format="fp" />
+    <Register name="fs11" start="59" size="8" format="fp" />
+    <Register name="ft8" start="60" size="8" format="fp" />
+    <Register name="ft9" start="61" size="8" format="fp" />
+    <Register name="ft10" start="62" size="8" format="fp" />
+    <Register name="ft11" start="63" size="8" format="fp" />
+    <Register name="fcsr" start="0x1003" size="4">
+      <BitField size="1" name="NX" start="0" />
+      <BitField size="1" name="UF" start="1" />
+      <BitField size="1" name="OF" start="2" />
+      <BitField size="1" name="DZ" start="3" />
+      <BitField size="1" name="NV" start="4" />
+      <BitField size="3" name="FRM" start="5">
+        <Enum name="RNE" value="0" />
+        <Enum name="RTZ" value="1" />
+        <Enum name="RDN" value="2" />
+        <Enum name="RUP" value="3" />
+        <Enum name="RMM" value="4" />
+      </BitField>
+    </Register>
+  </RegisterGroup>
+  <RegisterGroup name="FPU - Single" property="rv_architecture" value="rv32imf,rv32imfc,rv32imaf,rv32imafc,rv32g,rv32gc,rv64imf,rv64imfc,rv64imaf,rv64imafc,rv64g,rv64gc,None">
+    <Register name="f0" start="32" size="4" />
+    <Register name="f1" start="33" size="4" />
+    <Register name="f2" start="34" size="4" />
+    <Register name="f3" start="35" size="4" />
+    <Register name="f4" start="36" size="4" />
+    <Register name="f5" start="37" size="4" />
+    <Register name="f6" start="38" size="4" />
+    <Register name="f7" start="39" size="4" />
+    <Register name="f8" start="40" size="4" />
+    <Register name="f9" start="41" size="4" />
+    <Register name="f10" start="42" size="4" />
+    <Register name="f11" start="43" size="4" />
+    <Register name="f12" start="44" size="4" />
+    <Register name="f13" start="45" size="4" />
+    <Register name="f14" start="46" size="4" />
+    <Register name="f15" start="47" size="4" />
+    <Register name="f16" start="48" size="4" />
+    <Register name="f17" start="49" size="4" />
+    <Register name="f18" start="50" size="4" />
+    <Register name="f19" start="51" size="4" />
+    <Register name="f20" start="52" size="4" />
+    <Register name="f21" start="53" size="4" />
+    <Register name="f22" start="54" size="4" />
+    <Register name="f23" start="55" size="4" />
+    <Register name="f24" start="56" size="4" />
+    <Register name="f25" start="57" size="4" />
+    <Register name="f26" start="58" size="4" />
+    <Register name="f27" start="59" size="4" />
+    <Register name="f28" start="60" size="4" />
+    <Register name="f29" start="61" size="4" />
+    <Register name="f30" start="62" size="4" />
+    <Register name="f31" start="63" size="4" />
+  </RegisterGroup>
+  <RegisterGroup name="FPU - Double" property="rv_architecture" value="rv32imf,rv32imfc,rv32imaf,rv32imafc,rv32g,rv32gc,rv64imf,rv64imfc,rv64imaf,rv64imafc,rv64g,rv64gc,None">
+    <Register name="f0" start="32" size="8" />
+    <Register name="f1" start="33" size="8" />
+    <Register name="f2" start="34" size="8" />
+    <Register name="f3" start="35" size="8" />
+    <Register name="f4" start="36" size="8" />
+    <Register name="f5" start="37" size="8" />
+    <Register name="f6" start="38" size="8" />
+    <Register name="f7" start="39" size="8" />
+    <Register name="f8" start="40" size="8" />
+    <Register name="f9" start="41" size="8" />
+    <Register name="f10" start="42" size="8" />
+    <Register name="f11" start="43" size="8" />
+    <Register name="f12" start="44" size="8" />
+    <Register name="f13" start="45" size="8" />
+    <Register name="f14" start="46" size="8" />
+    <Register name="f15" start="47" size="8" />
+    <Register name="f16" start="48" size="8" />
+    <Register name="f17" start="49" size="8" />
+    <Register name="f18" start="50" size="8" />
+    <Register name="f19" start="51" size="8" />
+    <Register name="f20" start="52" size="8" />
+    <Register name="f21" start="53" size="8" />
+    <Register name="f22" start="54" size="8" />
+    <Register name="f23" start="55" size="8" />
+    <Register name="f24" start="56" size="8" />
+    <Register name="f25" start="57" size="8" />
+    <Register name="f26" start="58" size="8" />
+    <Register name="f27" start="59" size="8" />
+    <Register name="f28" start="60" size="8" />
+    <Register name="f29" start="61" size="8" />
+    <Register name="f30" start="62" size="8" />
+    <Register name="f31" start="63" size="8" />
+  </RegisterGroup>
+  <RegisterGroup name="Machine-Level CSRs">
+    <Register name="USTATUS" start="0x1000" size="0x4">
+      <BitField name="UPIE" start="4" size="1"/>
+      <BitField name="UIE" start="0" size="1"/>
+    </Register>
+    <Register name="UIE" start="0x1004" size="0x4">
+      <BitField name="UEIE" start="8" size="1"/>
+      <BitField name="UTIE" start="4" size="1"/>
+      <BitField name="USIE" start="0" size="1"/>
+    </Register>
+    <Register name="UTVEC" start="0x1005" size="0x4">
+      <BitField name="BASE_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="USCRATCH" start="0x1040" size="0x4">
+      <BitField name="USCRATCH" start="0" size="32"/>
+    </Register>
+    <Register name="UEPC" start="0x1041" size="0x4">
+      <BitField name="EPC" start="1" size="31"/>
+    </Register>
+    <Register name="UCAUSE" start="0x1042" size="0x4">
+      <BitField name="INTERRUPT" start="31" size="1"/>
+      <BitField name="EXCEPTION_CODE" start="0" size="10"/>
+    </Register>
+    <Register name="UTVAL" start="0x1043" size="0x4">
+      <BitField name="UTVAL" start="0" size="32"/>
+    </Register>
+    <Register name="UIP" start="0x1044" size="0x4">
+      <BitField name="UEIP" start="8" size="1"/>
+      <BitField name="UTIP" start="4" size="1"/>
+      <BitField name="USIP" start="0" size="1"/>
+    </Register>
+    <Register name="SSTATUS" start="0x1100" size="0x4">
+      <BitField name="SD" start="31" size="1"/>
+      <BitField name="MXR" start="19" size="1"/>
+      <BitField name="SUM" start="18" size="1"/>
+      <BitField name="XS" start="15" size="2"/>
+      <BitField name="FS" start="13" size="2"/>
+      <BitField name="SPP" start="8" size="1"/>
+      <BitField name="SPIE" start="5" size="1"/>
+      <BitField name="UPIE" start="4" size="1"/>
+      <BitField name="SIE" start="1" size="1"/>
+      <BitField name="UIE" start="0" size="1"/>
+    </Register>
+    <Register name="SEDELEG" start="0x1102" size="0x4">
+      <BitField name="SPF" start="15" size="1"/>
+      <BitField name="LPF" start="13" size="1"/>
+      <BitField name="IPF" start="12" size="1"/>
+      <BitField name="UEC" start="8" size="1"/>
+      <BitField name="SAF" start="7" size="1"/>
+      <BitField name="SAM" start="6" size="1"/>
+      <BitField name="LAF" start="5" size="1"/>
+      <BitField name="LAM" start="4" size="1"/>
+      <BitField name="B" start="3" size="1"/>
+      <BitField name="II" start="2" size="1"/>
+      <BitField name="IAF" start="1" size="1"/>
+      <BitField name="IAM" start="0" size="1"/>
+    </Register>
+    <Register name="SIDELEG" start="0x1103" size="0x4">
+      <BitField name="UEI" start="8" size="1"/>
+      <BitField name="UTI" start="4" size="1"/>
+      <BitField name="USI" start="0" size="1"/>
+    </Register>
+    <Register name="SIE" start="0x1104" size="0x4">
+      <BitField name="SEIE" start="9" size="1"/>
+      <BitField name="UEIE" start="8" size="1"/>
+      <BitField name="STIE" start="5" size="1"/>
+      <BitField name="UTIE" start="4" size="1"/>
+      <BitField name="SSIE" start="1" size="1"/>
+      <BitField name="USIE" start="0" size="1"/>
+    </Register>
+    <Register name="STVEC" start="0x1105" size="0x4">
+      <BitField name="BASE_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="SSCRATCH" start="0x1140" size="0x4">
+      <BitField name="SSCRATCH" start="0" size="32"/>
+    </Register>
+    <Register name="SEPC" start="0x1141" size="0x4">
+      <BitField name="EPC" start="1" size="31"/>
+    </Register>
+    <Register name="SCAUSE" start="0x1142" size="0x4">
+      <BitField name="INTERRUPT" start="31" size="1"/>
+      <BitField name="EXCEPTION_CODE" start="0" size="10"/>
+    </Register>
+    <Register name="STVAL" start="0x1143" size="0x4">
+      <BitField name="STVAL" start="0" size="32"/>
+    </Register>
+    <Register name="SIP" start="0x1144" size="0x4">
+      <BitField name="SEIP" start="9" size="1"/>
+      <BitField name="UEIP" start="8" size="1"/>
+      <BitField name="STIP" start="5" size="1"/>
+      <BitField name="UTIP" start="4" size="1"/>
+      <BitField name="SSIP" start="1" size="1"/>
+      <BitField name="USIP" start="0" size="1"/>
+    </Register>
+    <Register name="SATP" start="0x1180" size="0x4">
+      <BitField name="MODE" start="31" size="1"/>
+      <BitField name="ASID" start="22" size="9"/>
+      <BitField name="PPN" start="0" size="22"/>
+    </Register>
+    <Register name="MSTATUS" start="0x1300" size="0x4">
+      <BitField name="SD" start="31" size="1"/>
+      <BitField name="TSR" start="22" size="1"/>
+      <BitField name="TW" start="21" size="1"/>
+      <BitField name="TVM" start="20" size="1"/>
+      <BitField name="MXR" start="19" size="1"/>
+      <BitField name="SUM" start="18" size="1"/>
+      <BitField name="MPRV" start="17" size="1"/>
+      <BitField name="XS" start="15" size="2"/>
+      <BitField name="FS" start="13" size="2"/>
+      <BitField name="MPP" start="11" size="2"/>
+      <BitField name="SPP" start="8" size="1"/>
+      <BitField name="MPIE" start="7" size="1"/>
+      <BitField name="SPIE" start="5" size="1"/>
+      <BitField name="UPIE" start="4" size="1"/>
+      <BitField name="MIE" start="3" size="1"/>
+      <BitField name="SIE" start="1" size="1"/>
+      <BitField name="UIE" start="0" size="1"/>
+    </Register>
+    <Register name="MISA" start="0x1301" size="0x4">
+      <BitField name="BASE" start="30" size="2"/>
+      <BitField name="Z" start="25" size="1"/>
+      <BitField name="Y" start="24" size="1"/>
+      <BitField name="X" start="23" size="1"/>
+      <BitField name="W" start="22" size="1"/>
+      <BitField name="V" start="21" size="1"/>
+      <BitField name="U" start="20" size="1"/>
+      <BitField name="T" start="19" size="1"/>
+      <BitField name="S" start="18" size="1"/>
+      <BitField name="R" start="17" size="1"/>
+      <BitField name="Q" start="16" size="1"/>
+      <BitField name="P" start="15" size="1"/>
+      <BitField name="O" start="14" size="1"/>
+      <BitField name="N" start="13" size="1"/>
+      <BitField name="M" start="12" size="1"/>
+      <BitField name="L" start="11" size="1"/>
+      <BitField name="K" start="10" size="1"/>
+      <BitField name="J" start="9" size="1"/>
+      <BitField name="I" start="8" size="1"/>
+      <BitField name="H" start="7" size="1"/>
+      <BitField name="G" start="6" size="1"/>
+      <BitField name="F" start="5" size="1"/>
+      <BitField name="E" start="4" size="1"/>
+      <BitField name="D" start="3" size="1"/>
+      <BitField name="C" start="2" size="1"/>
+      <BitField name="B" start="1" size="1"/>
+      <BitField name="A" start="0" size="1"/>
+    </Register>
+    <Register name="MEDELEG" start="0x1302" size="0x4">
+      <BitField name="SPF" start="15" size="1"/>
+      <BitField name="LPF" start="13" size="1"/>
+      <BitField name="IPF" start="12" size="1"/>
+      <BitField name="SEC" start="9" size="1"/>
+      <BitField name="UEC" start="8" size="1"/>
+      <BitField name="SAF" start="7" size="1"/>
+      <BitField name="SAM" start="6" size="1"/>
+      <BitField name="LAF" start="5" size="1"/>
+      <BitField name="LAM" start="4" size="1"/>
+      <BitField name="II" start="2" size="1"/>
+      <BitField name="IAF" start="1" size="1"/>
+      <BitField name="IAM" start="0" size="1"/>
+    </Register>
+    <Register name="MIDELEG" start="0x1303" size="0x4">
+      <BitField name="SEI" start="9" size="1"/>
+      <BitField name="UEI" start="8" size="1"/>
+      <BitField name="STI" start="5" size="1"/>
+      <BitField name="UTI" start="4" size="1"/>
+      <BitField name="SSI" start="1" size="1"/>
+      <BitField name="USI" start="0" size="1"/>
+    </Register>
+    <Register name="MIE" start="0x1304" size="0x4">
+      <BitField name="PMOVI" start="18" size="1"/>
+      <BitField name="BWEI" start="17" size="1"/>
+      <BitField name="IMECCI" start="16" size="1"/>
+      <BitField name="MEIE" start="11" size="1"/>
+      <BitField name="SEIE" start="9" size="1"/>
+      <BitField name="UEIE" start="8" size="1"/>
+      <BitField name="MTIE" start="7" size="1"/>
+      <BitField name="STIE" start="5" size="1"/>
+      <BitField name="UTIE" start="4" size="1"/>
+      <BitField name="MSIE" start="3" size="1"/>
+      <BitField name="SSIE" start="1" size="1"/>
+      <BitField name="USIE" start="0" size="1"/>
+    </Register>
+    <Register name="MTVEC" start="0x1305" size="0x4">
+      <BitField name="BASE_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="MCOUNTEREN" start="0x1306" size="0x4">
+      <BitField name="HPM6" start="6" size="1"/>
+      <BitField name="HPM5" start="5" size="1"/>
+      <BitField name="HPM4" start="4" size="1"/>
+      <BitField name="HPM3" start="3" size="1"/>
+      <BitField name="IR" start="2" size="1"/>
+      <BitField name="TM" start="1" size="1"/>
+      <BitField name="CY" start="0" size="1"/>
+    </Register>
+    <Register name="MHPMEVENT3" start="0x1323" size="0x4">
+      <BitField name="SEL" start="4" size="5"/>
+      <BitField name="TYPE" start="0" size="4"/>
+    </Register>
+    <Register name="MHPMEVENT4" start="0x1324" size="0x4">
+      <BitField name="SEL" start="4" size="5"/>
+      <BitField name="TYPE" start="0" size="4"/>
+    </Register>
+    <Register name="MHPMEVENT5" start="0x1325" size="0x4">
+      <BitField name="SEL" start="4" size="5"/>
+      <BitField name="TYPE" start="0" size="4"/>
+    </Register>
+    <Register name="MHPMEVENT6" start="0x1326" size="0x4">
+      <BitField name="SEL" start="4" size="5"/>
+      <BitField name="TYPE" start="0" size="4"/>
+    </Register>
+    <Register name="MSCRATCH" start="0x1340" size="0x4">
+      <BitField name="MSCRATCH" start="0" size="32"/>
+    </Register>
+    <Register name="MEPC" start="0x1341" size="0x4">
+      <BitField name="EPC" start="1" size="31"/>
+    </Register>
+    <Register name="MCAUSE" start="0x1342" size="0x4">
+      <BitField name="INTERRUPT" start="31" size="1"/>
+      <BitField name="EXCEPTION_CODE" start="0" size="12"/>
+    </Register>
+    <Register name="MTVAL" start="0x1343" size="0x4">
+      <BitField name="MTVAL" start="0" size="32"/>
+    </Register>
+    <Register name="MIP" start="0x1344" size="0x4">
+      <BitField name="PMOVI" start="18" size="1"/>
+      <BitField name="BWEI" start="17" size="1"/>
+      <BitField name="IMECCI" start="16" size="1"/>
+      <BitField name="MEIP" start="11" size="1"/>
+      <BitField name="SEIP" start="9" size="1"/>
+      <BitField name="UEIP" start="8" size="1"/>
+      <BitField name="MTIP" start="7" size="1"/>
+      <BitField name="STIP" start="5" size="1"/>
+      <BitField name="UTIP" start="4" size="1"/>
+      <BitField name="MSIP" start="3" size="1"/>
+      <BitField name="SSIP" start="1" size="1"/>
+      <BitField name="USIP" start="0" size="1"/>
+    </Register>
+    <Register name="PMPCFG0" start="0x13a0" size="0x4">
+      <BitField name="PMP3CFG" start="24" size="8"/>
+      <BitField name="PMP2CFG" start="16" size="8"/>
+      <BitField name="PMP1CFG" start="8" size="8"/>
+      <BitField name="PMP0CFG" start="0" size="8"/>
+    </Register>
+    <Register name="PMPCFG1" start="0x13a1" size="0x4">
+      <BitField name="PMP7CFG" start="24" size="8"/>
+      <BitField name="PMP6CFG" start="16" size="8"/>
+      <BitField name="PMP5CFG" start="8" size="8"/>
+      <BitField name="PMP4CFG" start="0" size="8"/>
+    </Register>
+    <Register name="PMPCFG2" start="0x13a2" size="0x4">
+      <BitField name="PMP11CFG" start="24" size="8"/>
+      <BitField name="PMP10CFG" start="16" size="8"/>
+      <BitField name="PMP9CFG" start="8" size="8"/>
+      <BitField name="PMP8CFG" start="0" size="8"/>
+    </Register>
+    <Register name="PMPCFG3" start="0x13a3" size="0x4">
+      <BitField name="PMP15CFG" start="24" size="8"/>
+      <BitField name="PMP14CFG" start="16" size="8"/>
+      <BitField name="PMP13CFG" start="8" size="8"/>
+      <BitField name="PMP12CFG" start="0" size="8"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR0" start="0x13b0" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR1" start="0x13b1" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR2" start="0x13b2" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR3" start="0x13b3" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR4" start="0x13b4" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR5" start="0x13b5" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR6" start="0x13b6" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR7" start="0x13b7" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR8" start="0x13b8" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR9" start="0x13b9" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR10" start="0x13ba" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR11" start="0x13bb" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR12" start="0x13bc" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR13" start="0x13bd" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR14" start="0x13be" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMPADDR_PMPADDR15" start="0x13bf" size="0x4">
+      <BitField name="PMPADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="TSELECT" start="0x17a0" size="0x4">
+      <BitField name="TRIGGER_INDEX" start="0" size="32"/>
+    </Register>
+    <Register name="TDATA1" start="0x17a1" size="0x4">
+      <BitField name="TYPE" start="28" size="4"/>
+      <BitField name="DMODE" start="27" size="1"/>
+      <BitField name="DATA" start="0" size="27"/>
+    </Register>
+    <Register name="MCONTROL" start="0x17a1" size="0x4">
+      <BitField name="TYPE" start="28" size="4"/>
+      <BitField name="DMODE" start="27" size="1"/>
+      <BitField name="MASKMAX" start="21" size="6"/>
+      <BitField name="ACTION" start="12" size="4"/>
+      <BitField name="CHAIN" start="11" size="1"/>
+      <BitField name="MATCH" start="7" size="4"/>
+      <BitField name="M" start="6" size="1"/>
+      <BitField name="S" start="4" size="1"/>
+      <BitField name="U" start="3" size="1"/>
+      <BitField name="EXECUTE" start="2" size="1"/>
+      <BitField name="STORE" start="1" size="1"/>
+      <BitField name="LOAD" start="0" size="1"/>
+    </Register>
+    <Register name="ICOUNT" start="0x17a1" size="0x4">
+      <BitField name="TYPE" start="28" size="4"/>
+      <BitField name="DMODE" start="27" size="1"/>
+      <BitField name="COUNT" start="10" size="1"/>
+      <BitField name="M" start="9" size="1"/>
+      <BitField name="S" start="7" size="1"/>
+      <BitField name="U" start="6" size="1"/>
+      <BitField name="ACTION" start="0" size="6"/>
+    </Register>
+    <Register name="ITRIGGER" start="0x17a1" size="0x4">
+      <BitField name="TYPE" start="28" size="4"/>
+      <BitField name="DMODE" start="27" size="1"/>
+      <BitField name="M" start="9" size="1"/>
+      <BitField name="S" start="7" size="1"/>
+      <BitField name="U" start="6" size="1"/>
+      <BitField name="ACTION" start="0" size="6"/>
+    </Register>
+    <Register name="ETRIGGER" start="0x17a1" size="0x4">
+      <BitField name="TYPE" start="28" size="4"/>
+      <BitField name="DMODE" start="27" size="1"/>
+      <BitField name="NMI" start="10" size="1"/>
+      <BitField name="M" start="9" size="1"/>
+      <BitField name="S" start="7" size="1"/>
+      <BitField name="U" start="6" size="1"/>
+      <BitField name="ACTION" start="0" size="6"/>
+    </Register>
+    <Register name="TDATA2" start="0x17a2" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
+    </Register>
+    <Register name="TDATA3" start="0x17a3" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
+    </Register>
+    <Register name="TEXTRA" start="0x17a3" size="0x4">
+      <BitField name="MVALUE" start="26" size="6"/>
+      <BitField name="MSELECT" start="25" size="1"/>
+      <BitField name="SVALUE" start="2" size="9"/>
+      <BitField name="SSELECT" start="0" size="2"/>
+    </Register>
+    <Register name="TINFO" start="0x17a4" size="0x4">
+      <BitField name="INFO" start="0" size="16"/>
+    </Register>
+    <Register name="TCONTROL" start="0x17a5" size="0x4">
+      <BitField name="MPTE" start="7" size="1"/>
+      <BitField name="MTE" start="3" size="1"/>
+    </Register>
+    <Register name="MCONTEXT" start="0x17a8" size="0x4">
+      <BitField name="MCONTEXT" start="0" size="6"/>
+    </Register>
+    <Register name="SCONTEXT" start="0x17aa" size="0x4">
+      <BitField name="SCONTEXT" start="0" size="9"/>
+    </Register>
+    <Register name="DCSR" start="0x17b0" size="0x4">
+      <BitField name="XDEBUGVER" start="28" size="4"/>
+      <BitField name="EBREAKM" start="15" size="1"/>
+      <BitField name="EBREAKS" start="13" size="1"/>
+      <BitField name="EBREAKU" start="12" size="1"/>
+      <BitField name="STEPIE" start="11" size="1"/>
+      <BitField name="STOPCOUNT" start="10" size="1"/>
+      <BitField name="STOPTIME" start="9" size="1"/>
+      <BitField name="CAUSE" start="6" size="3"/>
+      <BitField name="MPRVEN" start="4" size="1"/>
+      <BitField name="NMIP" start="3" size="1"/>
+      <BitField name="STEP" start="2" size="1"/>
+      <BitField name="PRV" start="0" size="2"/>
+    </Register>
+    <Register name="DPC" start="0x17b1" size="0x4">
+      <BitField name="DPC" start="0" size="32"/>
+    </Register>
+    <Register name="DSCRATCH0" start="0x17b2" size="0x4">
+      <BitField name="DSCRATCH" start="0" size="32"/>
+    </Register>
+    <Register name="DSCRATCH1" start="0x17b3" size="0x4">
+      <BitField name="DSCRATCH" start="0" size="32"/>
+    </Register>
+    <Register name="MCYCLE" start="0x1b00" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MINSTRET" start="0x1b02" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MHPMCOUNTER3" start="0x1b03" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MHPMCOUNTER4" start="0x1b04" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MHPMCOUNTER5" start="0x1b05" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MHPMCOUNTER6" start="0x1b06" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MCYCLEH" start="0x1b80" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MINSTRETH" start="0x1b82" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MHPMCOUNTER3H" start="0x1b83" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MHPMCOUNTER4H" start="0x1b84" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MHPMCOUNTER5H" start="0x1b85" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="MHPMCOUNTER6H" start="0x1b86" size="0x4">
+      <BitField name="COUNTER" start="0" size="32"/>
+    </Register>
+    <Register name="PMACFG0" start="0x1bc0" size="0x4">
+      <BitField name="PMA3CFG" start="24" size="8"/>
+      <BitField name="PMA2CFG" start="16" size="8"/>
+      <BitField name="PMA1CFG" start="8" size="8"/>
+      <BitField name="PMA0CFG" start="0" size="8"/>
+    </Register>
+    <Register name="PMACFG1" start="0x1bc1" size="0x4">
+      <BitField name="PMA7CFG" start="24" size="8"/>
+      <BitField name="PMA6CFG" start="16" size="8"/>
+      <BitField name="PMA5CFG" start="8" size="8"/>
+      <BitField name="PMA4CFG" start="0" size="8"/>
+    </Register>
+    <Register name="PMACFG2" start="0x1bc2" size="0x4">
+      <BitField name="PMA11CFG" start="24" size="8"/>
+      <BitField name="PMA10CFG" start="16" size="8"/>
+      <BitField name="PMA9CFG" start="8" size="8"/>
+      <BitField name="PMA8CFG" start="0" size="8"/>
+    </Register>
+    <Register name="PMACFG3" start="0x1bc3" size="0x4">
+      <BitField name="PMA15CFG" start="24" size="8"/>
+      <BitField name="PMA14CFG" start="16" size="8"/>
+      <BitField name="PMA13CFG" start="8" size="8"/>
+      <BitField name="PMA12CFG" start="0" size="8"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR0" start="0x1bd0" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR1" start="0x1bd1" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR2" start="0x1bd2" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR3" start="0x1bd3" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR4" start="0x1bd4" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR5" start="0x1bd5" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR6" start="0x1bd6" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR7" start="0x1bd7" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR8" start="0x1bd8" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR9" start="0x1bd9" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR10" start="0x1bda" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR11" start="0x1bdb" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR12" start="0x1bdc" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR13" start="0x1bdd" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR14" start="0x1bde" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="PMAADDR_PMAADDR15" start="0x1bdf" size="0x4">
+      <BitField name="PMAADDR_31_2" start="2" size="30"/>
+    </Register>
+    <Register name="CYCLE" start="0x1c00" size="0x4">
+      <BitField name="CYCLE" start="0" size="32"/>
+    </Register>
+    <Register name="CYCLEH" start="0x1c80" size="0x4">
+      <BitField name="CYCLEH" start="0" size="32"/>
+    </Register>
+    <Register name="MVENDORID" start="0x1f11" size="0x4">
+      <BitField name="MVENDORID" start="0" size="32"/>
+    </Register>
+    <Register name="MARCHID" start="0x1f12" size="0x4">
+      <BitField name="CPU_ID" start="0" size="31"/>
+    </Register>
+    <Register name="MIMPID" start="0x1f13" size="0x4">
+      <BitField name="MAJOR" start="8" size="24"/>
+      <BitField name="MINOR" start="4" size="4"/>
+      <BitField name="EXTENSION" start="0" size="4"/>
+    </Register>
+    <Register name="MHARTID" start="0x1f14" size="0x4">
+      <BitField name="MHARTID" start="0" size="32"/>
+    </Register>
+  </RegisterGroup>
+</Root>

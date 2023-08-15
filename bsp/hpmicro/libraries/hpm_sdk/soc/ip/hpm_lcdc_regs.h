@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -16,10 +16,19 @@ typedef struct {
     __RW uint32_t HSYNC_PARA;                  /* 0xC: HSYNC Config Register */
     __RW uint32_t VSYNC_PARA;                  /* 0x10: VSYNC Config Register */
     __W  uint32_t DMA_ST;                      /* 0x14: DMA Status Register */
-    __W  uint32_t ST;                          /* 0x18: Status Register */
+    __RW uint32_t ST;                          /* 0x18: Status Register */
     __RW uint32_t INT_EN;                      /* 0x1C: Interrupt Enable Register */
     __RW uint32_t TXFIFO;                      /* 0x20: TX FIFO Register */
-    __R  uint8_t  RESERVED0[476];              /* 0x24 - 0x1FF: Reserved */
+    __RW uint32_t CTRL_BP_V_RANGE;             /* 0x24: BP_V range for CAMSYNC mode */
+    __RW uint32_t CTRL_PW_V_RANGE;             /* 0x28: PW_V range for CAMSYNC mode */
+    __RW uint32_t CTRL_FP_V_RANGE;             /* 0x2C: FP_V range for CAMSYNC mode */
+    __RW uint32_t CAM_SYNC_HCNT_MIN;           /* 0x30: min HCNT value for CAMSYNC mode */
+    __RW uint32_t CAM_SYNC_HCNT_BEST;          /* 0x34: best HCNT value for CAMSYNC mode */
+    __RW uint32_t CAM_SYNC_HCNT_MAX;           /* 0x38: max HCNT value for CAMSYNC mode */
+    __R  uint32_t CAM_SYNC_HCNT_ST;            /* 0x3C: current HCNT value for CAMSYNC mode */
+    __R  uint32_t SHADOW_DONE_ST;              /* 0x40: Shadow done status */
+    __RW uint32_t SHADOW_DONE_INT_EN;          /* 0x44: Shadow done interrupt enable */
+    __R  uint8_t  RESERVED0[440];              /* 0x48 - 0x1FF: Reserved */
     struct {
         __RW uint32_t LAYCTRL;                 /* 0x200: Layer Control Register */
         __RW uint32_t ALPHAS;                  /* 0x204: Layer Alpha Register */
@@ -121,6 +130,64 @@ typedef struct {
 #define LCDC_CTRL_ARQOS_SHIFT (20U)
 #define LCDC_CTRL_ARQOS_SET(x) (((uint32_t)(x) << LCDC_CTRL_ARQOS_SHIFT) & LCDC_CTRL_ARQOS_MASK)
 #define LCDC_CTRL_ARQOS_GET(x) (((uint32_t)(x) & LCDC_CTRL_ARQOS_MASK) >> LCDC_CTRL_ARQOS_SHIFT)
+
+/*
+ * SHADOW_OP (RW)
+ *
+ * Shadow Option
+ * 1: Use physical VSYNC (ST[VS_BLANK]) as shadow time.
+ * 0: Use layer internal logic VSYNC as shadow time. In general, this type of shadow control will have longer memory read time, so less underflow risk.
+ */
+#define LCDC_CTRL_SHADOW_OP_MASK (0x20000UL)
+#define LCDC_CTRL_SHADOW_OP_SHIFT (17U)
+#define LCDC_CTRL_SHADOW_OP_SET(x) (((uint32_t)(x) << LCDC_CTRL_SHADOW_OP_SHIFT) & LCDC_CTRL_SHADOW_OP_MASK)
+#define LCDC_CTRL_SHADOW_OP_GET(x) (((uint32_t)(x) & LCDC_CTRL_SHADOW_OP_MASK) >> LCDC_CTRL_SHADOW_OP_SHIFT)
+
+/*
+ * B_LE_MODE (RW)
+ *
+ * Endianess mode for Blue Color Pads
+ * 1: Little endian. Pad 0 --> Color LSB 0
+ * 0: Big Endian. Pad 0--> Color MSB 7
+ */
+#define LCDC_CTRL_B_LE_MODE_MASK (0x10000UL)
+#define LCDC_CTRL_B_LE_MODE_SHIFT (16U)
+#define LCDC_CTRL_B_LE_MODE_SET(x) (((uint32_t)(x) << LCDC_CTRL_B_LE_MODE_SHIFT) & LCDC_CTRL_B_LE_MODE_MASK)
+#define LCDC_CTRL_B_LE_MODE_GET(x) (((uint32_t)(x) & LCDC_CTRL_B_LE_MODE_MASK) >> LCDC_CTRL_B_LE_MODE_SHIFT)
+
+/*
+ * G_LE_MODE (RW)
+ *
+ * Endianess mode for Green Color Pads
+ * 1: Little endian. Pad 0 --> Color LSB 0
+ * 0: Big Endian. Pad 0--> Color MSB 7
+ */
+#define LCDC_CTRL_G_LE_MODE_MASK (0x8000U)
+#define LCDC_CTRL_G_LE_MODE_SHIFT (15U)
+#define LCDC_CTRL_G_LE_MODE_SET(x) (((uint32_t)(x) << LCDC_CTRL_G_LE_MODE_SHIFT) & LCDC_CTRL_G_LE_MODE_MASK)
+#define LCDC_CTRL_G_LE_MODE_GET(x) (((uint32_t)(x) & LCDC_CTRL_G_LE_MODE_MASK) >> LCDC_CTRL_G_LE_MODE_SHIFT)
+
+/*
+ * R_LE_MODE (RW)
+ *
+ * Endianess mode for Red Color Pads
+ * 1: Little endian. Pad 0 --> Color LSB 0
+ * 0: Big Endian. Pad 0--> Color MSB 7
+ */
+#define LCDC_CTRL_R_LE_MODE_MASK (0x4000U)
+#define LCDC_CTRL_R_LE_MODE_SHIFT (14U)
+#define LCDC_CTRL_R_LE_MODE_SET(x) (((uint32_t)(x) << LCDC_CTRL_R_LE_MODE_SHIFT) & LCDC_CTRL_R_LE_MODE_MASK)
+#define LCDC_CTRL_R_LE_MODE_GET(x) (((uint32_t)(x) & LCDC_CTRL_R_LE_MODE_MASK) >> LCDC_CTRL_R_LE_MODE_SHIFT)
+
+/*
+ * CAM_SYNC_EN (RW)
+ *
+ * Enable the VSYNC synchronization of CAM and LCDC
+ */
+#define LCDC_CTRL_CAM_SYNC_EN_MASK (0x2000U)
+#define LCDC_CTRL_CAM_SYNC_EN_SHIFT (13U)
+#define LCDC_CTRL_CAM_SYNC_EN_SET(x) (((uint32_t)(x) << LCDC_CTRL_CAM_SYNC_EN_SHIFT) & LCDC_CTRL_CAM_SYNC_EN_MASK)
+#define LCDC_CTRL_CAM_SYNC_EN_GET(x) (((uint32_t)(x) & LCDC_CTRL_CAM_SYNC_EN_MASK) >> LCDC_CTRL_CAM_SYNC_EN_SHIFT)
 
 /*
  * INV_PXDATA (RW)
@@ -329,6 +396,55 @@ typedef struct {
 
 /* Bitfield definition for register: ST */
 /*
+ * P1_HANDSHAKE_ABORT (W1C)
+ *
+ * Plane 1 handshake abort error. W1C
+ */
+#define LCDC_ST_P1_HANDSHAKE_ABORT_MASK (0x100U)
+#define LCDC_ST_P1_HANDSHAKE_ABORT_SHIFT (8U)
+#define LCDC_ST_P1_HANDSHAKE_ABORT_SET(x) (((uint32_t)(x) << LCDC_ST_P1_HANDSHAKE_ABORT_SHIFT) & LCDC_ST_P1_HANDSHAKE_ABORT_MASK)
+#define LCDC_ST_P1_HANDSHAKE_ABORT_GET(x) (((uint32_t)(x) & LCDC_ST_P1_HANDSHAKE_ABORT_MASK) >> LCDC_ST_P1_HANDSHAKE_ABORT_SHIFT)
+
+/*
+ * P0_HANDSHAKE_ABORT (W1C)
+ *
+ * Plane 0 handshake abort error. W1C
+ */
+#define LCDC_ST_P0_HANDSHAKE_ABORT_MASK (0x80U)
+#define LCDC_ST_P0_HANDSHAKE_ABORT_SHIFT (7U)
+#define LCDC_ST_P0_HANDSHAKE_ABORT_SET(x) (((uint32_t)(x) << LCDC_ST_P0_HANDSHAKE_ABORT_SHIFT) & LCDC_ST_P0_HANDSHAKE_ABORT_MASK)
+#define LCDC_ST_P0_HANDSHAKE_ABORT_GET(x) (((uint32_t)(x) & LCDC_ST_P0_HANDSHAKE_ABORT_MASK) >> LCDC_ST_P0_HANDSHAKE_ABORT_SHIFT)
+
+/*
+ * CAM_HCNT_FAIL (W1C)
+ *
+ * During cam_vsync mode, sync fail due to hcnt out of acceptable ranges. W1C
+ */
+#define LCDC_ST_CAM_HCNT_FAIL_MASK (0x40U)
+#define LCDC_ST_CAM_HCNT_FAIL_SHIFT (6U)
+#define LCDC_ST_CAM_HCNT_FAIL_SET(x) (((uint32_t)(x) << LCDC_ST_CAM_HCNT_FAIL_SHIFT) & LCDC_ST_CAM_HCNT_FAIL_MASK)
+#define LCDC_ST_CAM_HCNT_FAIL_GET(x) (((uint32_t)(x) & LCDC_ST_CAM_HCNT_FAIL_MASK) >> LCDC_ST_CAM_HCNT_FAIL_SHIFT)
+
+/*
+ * CAM_VSYNC_FAIL (W1C)
+ *
+ * During cam_vsync mode, sync fail due to out of vsync parameters. W1C
+ */
+#define LCDC_ST_CAM_VSYNC_FAIL_MASK (0x20U)
+#define LCDC_ST_CAM_VSYNC_FAIL_SHIFT (5U)
+#define LCDC_ST_CAM_VSYNC_FAIL_SET(x) (((uint32_t)(x) << LCDC_ST_CAM_VSYNC_FAIL_SHIFT) & LCDC_ST_CAM_VSYNC_FAIL_MASK)
+#define LCDC_ST_CAM_VSYNC_FAIL_GET(x) (((uint32_t)(x) & LCDC_ST_CAM_VSYNC_FAIL_MASK) >> LCDC_ST_CAM_VSYNC_FAIL_SHIFT)
+
+/*
+ * SHADOW_DONE (RO)
+ *
+ * Shadow done status. This is an OR-ed signals of all shadow_done signals of all planes, and it can only be cleared by writing 1 for all asserted bits in SHADOW_DONE_ST register.
+ */
+#define LCDC_ST_SHADOW_DONE_MASK (0x10U)
+#define LCDC_ST_SHADOW_DONE_SHIFT (4U)
+#define LCDC_ST_SHADOW_DONE_GET(x) (((uint32_t)(x) & LCDC_ST_SHADOW_DONE_MASK) >> LCDC_ST_SHADOW_DONE_SHIFT)
+
+/*
  * URGENT_UNDERRUN (W1C)
  *
  * Asserted when the output buffer urgent underrun condition encountered
@@ -390,12 +506,53 @@ typedef struct {
 #define LCDC_INT_EN_DMA_DONE_GET(x) (((uint32_t)(x) & LCDC_INT_EN_DMA_DONE_MASK) >> LCDC_INT_EN_DMA_DONE_SHIFT)
 
 /*
- * URGENT_UNDERRUN (ROI)
+ * HANDSHAKE_ABORT (RW)
+ *
+ * Handshake abort error int enable
+ */
+#define LCDC_INT_EN_HANDSHAKE_ABORT_MASK (0x80U)
+#define LCDC_INT_EN_HANDSHAKE_ABORT_SHIFT (7U)
+#define LCDC_INT_EN_HANDSHAKE_ABORT_SET(x) (((uint32_t)(x) << LCDC_INT_EN_HANDSHAKE_ABORT_SHIFT) & LCDC_INT_EN_HANDSHAKE_ABORT_MASK)
+#define LCDC_INT_EN_HANDSHAKE_ABORT_GET(x) (((uint32_t)(x) & LCDC_INT_EN_HANDSHAKE_ABORT_MASK) >> LCDC_INT_EN_HANDSHAKE_ABORT_SHIFT)
+
+/*
+ * CAM_HCNT_FAIL (RW)
+ *
+ * hcnt out of acceptable ranges interrupt enable
+ */
+#define LCDC_INT_EN_CAM_HCNT_FAIL_MASK (0x40U)
+#define LCDC_INT_EN_CAM_HCNT_FAIL_SHIFT (6U)
+#define LCDC_INT_EN_CAM_HCNT_FAIL_SET(x) (((uint32_t)(x) << LCDC_INT_EN_CAM_HCNT_FAIL_SHIFT) & LCDC_INT_EN_CAM_HCNT_FAIL_MASK)
+#define LCDC_INT_EN_CAM_HCNT_FAIL_GET(x) (((uint32_t)(x) & LCDC_INT_EN_CAM_HCNT_FAIL_MASK) >> LCDC_INT_EN_CAM_HCNT_FAIL_SHIFT)
+
+/*
+ * CAM_VSYNC_FAIL (RW)
+ *
+ * cam_vsync fail interrupt enable
+ */
+#define LCDC_INT_EN_CAM_VSYNC_FAIL_MASK (0x20U)
+#define LCDC_INT_EN_CAM_VSYNC_FAIL_SHIFT (5U)
+#define LCDC_INT_EN_CAM_VSYNC_FAIL_SET(x) (((uint32_t)(x) << LCDC_INT_EN_CAM_VSYNC_FAIL_SHIFT) & LCDC_INT_EN_CAM_VSYNC_FAIL_MASK)
+#define LCDC_INT_EN_CAM_VSYNC_FAIL_GET(x) (((uint32_t)(x) & LCDC_INT_EN_CAM_VSYNC_FAIL_MASK) >> LCDC_INT_EN_CAM_VSYNC_FAIL_SHIFT)
+
+/*
+ * SHADOW_DONE (RW)
+ *
+ * Shadow done interrupt enable
+ */
+#define LCDC_INT_EN_SHADOW_DONE_MASK (0x10U)
+#define LCDC_INT_EN_SHADOW_DONE_SHIFT (4U)
+#define LCDC_INT_EN_SHADOW_DONE_SET(x) (((uint32_t)(x) << LCDC_INT_EN_SHADOW_DONE_SHIFT) & LCDC_INT_EN_SHADOW_DONE_MASK)
+#define LCDC_INT_EN_SHADOW_DONE_GET(x) (((uint32_t)(x) & LCDC_INT_EN_SHADOW_DONE_MASK) >> LCDC_INT_EN_SHADOW_DONE_SHIFT)
+
+/*
+ * URGENT_UNDERRUN (RW)
  *
  * Asserted when the output buffer urgent underrun condition encountered
  */
 #define LCDC_INT_EN_URGENT_UNDERRUN_MASK (0x8U)
 #define LCDC_INT_EN_URGENT_UNDERRUN_SHIFT (3U)
+#define LCDC_INT_EN_URGENT_UNDERRUN_SET(x) (((uint32_t)(x) << LCDC_INT_EN_URGENT_UNDERRUN_SHIFT) & LCDC_INT_EN_URGENT_UNDERRUN_MASK)
 #define LCDC_INT_EN_URGENT_UNDERRUN_GET(x) (((uint32_t)(x) & LCDC_INT_EN_URGENT_UNDERRUN_MASK) >> LCDC_INT_EN_URGENT_UNDERRUN_SHIFT)
 
 /*
@@ -439,7 +596,250 @@ typedef struct {
 #define LCDC_TXFIFO_THRSH_SET(x) (((uint32_t)(x) << LCDC_TXFIFO_THRSH_SHIFT) & LCDC_TXFIFO_THRSH_MASK)
 #define LCDC_TXFIFO_THRSH_GET(x) (((uint32_t)(x) & LCDC_TXFIFO_THRSH_MASK) >> LCDC_TXFIFO_THRSH_SHIFT)
 
+/* Bitfield definition for register: CTRL_BP_V_RANGE */
+/*
+ * MAX (RW)
+ *
+ * Maximal BP_V values
+ */
+#define LCDC_CTRL_BP_V_RANGE_MAX_MASK (0x7FC0000UL)
+#define LCDC_CTRL_BP_V_RANGE_MAX_SHIFT (18U)
+#define LCDC_CTRL_BP_V_RANGE_MAX_SET(x) (((uint32_t)(x) << LCDC_CTRL_BP_V_RANGE_MAX_SHIFT) & LCDC_CTRL_BP_V_RANGE_MAX_MASK)
+#define LCDC_CTRL_BP_V_RANGE_MAX_GET(x) (((uint32_t)(x) & LCDC_CTRL_BP_V_RANGE_MAX_MASK) >> LCDC_CTRL_BP_V_RANGE_MAX_SHIFT)
+
+/*
+ * BEST (RW)
+ *
+ * Best BP_V values
+ */
+#define LCDC_CTRL_BP_V_RANGE_BEST_MASK (0x3FE00UL)
+#define LCDC_CTRL_BP_V_RANGE_BEST_SHIFT (9U)
+#define LCDC_CTRL_BP_V_RANGE_BEST_SET(x) (((uint32_t)(x) << LCDC_CTRL_BP_V_RANGE_BEST_SHIFT) & LCDC_CTRL_BP_V_RANGE_BEST_MASK)
+#define LCDC_CTRL_BP_V_RANGE_BEST_GET(x) (((uint32_t)(x) & LCDC_CTRL_BP_V_RANGE_BEST_MASK) >> LCDC_CTRL_BP_V_RANGE_BEST_SHIFT)
+
+/*
+ * MIN (RW)
+ *
+ * Minimal BP_V values
+ */
+#define LCDC_CTRL_BP_V_RANGE_MIN_MASK (0x1FFU)
+#define LCDC_CTRL_BP_V_RANGE_MIN_SHIFT (0U)
+#define LCDC_CTRL_BP_V_RANGE_MIN_SET(x) (((uint32_t)(x) << LCDC_CTRL_BP_V_RANGE_MIN_SHIFT) & LCDC_CTRL_BP_V_RANGE_MIN_MASK)
+#define LCDC_CTRL_BP_V_RANGE_MIN_GET(x) (((uint32_t)(x) & LCDC_CTRL_BP_V_RANGE_MIN_MASK) >> LCDC_CTRL_BP_V_RANGE_MIN_SHIFT)
+
+/* Bitfield definition for register: CTRL_PW_V_RANGE */
+/*
+ * MAX (RW)
+ *
+ * Maximal PW_V values
+ */
+#define LCDC_CTRL_PW_V_RANGE_MAX_MASK (0x7FC0000UL)
+#define LCDC_CTRL_PW_V_RANGE_MAX_SHIFT (18U)
+#define LCDC_CTRL_PW_V_RANGE_MAX_SET(x) (((uint32_t)(x) << LCDC_CTRL_PW_V_RANGE_MAX_SHIFT) & LCDC_CTRL_PW_V_RANGE_MAX_MASK)
+#define LCDC_CTRL_PW_V_RANGE_MAX_GET(x) (((uint32_t)(x) & LCDC_CTRL_PW_V_RANGE_MAX_MASK) >> LCDC_CTRL_PW_V_RANGE_MAX_SHIFT)
+
+/*
+ * BEST (RW)
+ *
+ * Best PW_V values
+ */
+#define LCDC_CTRL_PW_V_RANGE_BEST_MASK (0x3FE00UL)
+#define LCDC_CTRL_PW_V_RANGE_BEST_SHIFT (9U)
+#define LCDC_CTRL_PW_V_RANGE_BEST_SET(x) (((uint32_t)(x) << LCDC_CTRL_PW_V_RANGE_BEST_SHIFT) & LCDC_CTRL_PW_V_RANGE_BEST_MASK)
+#define LCDC_CTRL_PW_V_RANGE_BEST_GET(x) (((uint32_t)(x) & LCDC_CTRL_PW_V_RANGE_BEST_MASK) >> LCDC_CTRL_PW_V_RANGE_BEST_SHIFT)
+
+/*
+ * MIN (RW)
+ *
+ * Minimal PW_V values
+ */
+#define LCDC_CTRL_PW_V_RANGE_MIN_MASK (0x1FFU)
+#define LCDC_CTRL_PW_V_RANGE_MIN_SHIFT (0U)
+#define LCDC_CTRL_PW_V_RANGE_MIN_SET(x) (((uint32_t)(x) << LCDC_CTRL_PW_V_RANGE_MIN_SHIFT) & LCDC_CTRL_PW_V_RANGE_MIN_MASK)
+#define LCDC_CTRL_PW_V_RANGE_MIN_GET(x) (((uint32_t)(x) & LCDC_CTRL_PW_V_RANGE_MIN_MASK) >> LCDC_CTRL_PW_V_RANGE_MIN_SHIFT)
+
+/* Bitfield definition for register: CTRL_FP_V_RANGE */
+/*
+ * MAX (RW)
+ *
+ * Maximal FP_V values
+ */
+#define LCDC_CTRL_FP_V_RANGE_MAX_MASK (0x7FC0000UL)
+#define LCDC_CTRL_FP_V_RANGE_MAX_SHIFT (18U)
+#define LCDC_CTRL_FP_V_RANGE_MAX_SET(x) (((uint32_t)(x) << LCDC_CTRL_FP_V_RANGE_MAX_SHIFT) & LCDC_CTRL_FP_V_RANGE_MAX_MASK)
+#define LCDC_CTRL_FP_V_RANGE_MAX_GET(x) (((uint32_t)(x) & LCDC_CTRL_FP_V_RANGE_MAX_MASK) >> LCDC_CTRL_FP_V_RANGE_MAX_SHIFT)
+
+/*
+ * BEST (RW)
+ *
+ * Best FP_V values
+ */
+#define LCDC_CTRL_FP_V_RANGE_BEST_MASK (0x3FE00UL)
+#define LCDC_CTRL_FP_V_RANGE_BEST_SHIFT (9U)
+#define LCDC_CTRL_FP_V_RANGE_BEST_SET(x) (((uint32_t)(x) << LCDC_CTRL_FP_V_RANGE_BEST_SHIFT) & LCDC_CTRL_FP_V_RANGE_BEST_MASK)
+#define LCDC_CTRL_FP_V_RANGE_BEST_GET(x) (((uint32_t)(x) & LCDC_CTRL_FP_V_RANGE_BEST_MASK) >> LCDC_CTRL_FP_V_RANGE_BEST_SHIFT)
+
+/*
+ * MIN (RW)
+ *
+ * Minimal FP_V values
+ */
+#define LCDC_CTRL_FP_V_RANGE_MIN_MASK (0x1FFU)
+#define LCDC_CTRL_FP_V_RANGE_MIN_SHIFT (0U)
+#define LCDC_CTRL_FP_V_RANGE_MIN_SET(x) (((uint32_t)(x) << LCDC_CTRL_FP_V_RANGE_MIN_SHIFT) & LCDC_CTRL_FP_V_RANGE_MIN_MASK)
+#define LCDC_CTRL_FP_V_RANGE_MIN_GET(x) (((uint32_t)(x) & LCDC_CTRL_FP_V_RANGE_MIN_MASK) >> LCDC_CTRL_FP_V_RANGE_MIN_SHIFT)
+
+/* Bitfield definition for register: CAM_SYNC_HCNT_MIN */
+/*
+ * VAL (RW)
+ *
+ * minimal acceptable HCNT Value
+ */
+#define LCDC_CAM_SYNC_HCNT_MIN_VAL_MASK (0xFFFFU)
+#define LCDC_CAM_SYNC_HCNT_MIN_VAL_SHIFT (0U)
+#define LCDC_CAM_SYNC_HCNT_MIN_VAL_SET(x) (((uint32_t)(x) << LCDC_CAM_SYNC_HCNT_MIN_VAL_SHIFT) & LCDC_CAM_SYNC_HCNT_MIN_VAL_MASK)
+#define LCDC_CAM_SYNC_HCNT_MIN_VAL_GET(x) (((uint32_t)(x) & LCDC_CAM_SYNC_HCNT_MIN_VAL_MASK) >> LCDC_CAM_SYNC_HCNT_MIN_VAL_SHIFT)
+
+/* Bitfield definition for register: CAM_SYNC_HCNT_BEST */
+/*
+ * HYST (RW)
+ *
+ * hysteresys of acceptable HCNT Value
+ */
+#define LCDC_CAM_SYNC_HCNT_BEST_HYST_MASK (0xFF0000UL)
+#define LCDC_CAM_SYNC_HCNT_BEST_HYST_SHIFT (16U)
+#define LCDC_CAM_SYNC_HCNT_BEST_HYST_SET(x) (((uint32_t)(x) << LCDC_CAM_SYNC_HCNT_BEST_HYST_SHIFT) & LCDC_CAM_SYNC_HCNT_BEST_HYST_MASK)
+#define LCDC_CAM_SYNC_HCNT_BEST_HYST_GET(x) (((uint32_t)(x) & LCDC_CAM_SYNC_HCNT_BEST_HYST_MASK) >> LCDC_CAM_SYNC_HCNT_BEST_HYST_SHIFT)
+
+/*
+ * VAL (RW)
+ *
+ * best acceptable HCNT Value
+ */
+#define LCDC_CAM_SYNC_HCNT_BEST_VAL_MASK (0xFFFFU)
+#define LCDC_CAM_SYNC_HCNT_BEST_VAL_SHIFT (0U)
+#define LCDC_CAM_SYNC_HCNT_BEST_VAL_SET(x) (((uint32_t)(x) << LCDC_CAM_SYNC_HCNT_BEST_VAL_SHIFT) & LCDC_CAM_SYNC_HCNT_BEST_VAL_MASK)
+#define LCDC_CAM_SYNC_HCNT_BEST_VAL_GET(x) (((uint32_t)(x) & LCDC_CAM_SYNC_HCNT_BEST_VAL_MASK) >> LCDC_CAM_SYNC_HCNT_BEST_VAL_SHIFT)
+
+/* Bitfield definition for register: CAM_SYNC_HCNT_MAX */
+/*
+ * VAL (RW)
+ *
+ * maximal acceptable HCNT Value
+ */
+#define LCDC_CAM_SYNC_HCNT_MAX_VAL_MASK (0xFFFFU)
+#define LCDC_CAM_SYNC_HCNT_MAX_VAL_SHIFT (0U)
+#define LCDC_CAM_SYNC_HCNT_MAX_VAL_SET(x) (((uint32_t)(x) << LCDC_CAM_SYNC_HCNT_MAX_VAL_SHIFT) & LCDC_CAM_SYNC_HCNT_MAX_VAL_MASK)
+#define LCDC_CAM_SYNC_HCNT_MAX_VAL_GET(x) (((uint32_t)(x) & LCDC_CAM_SYNC_HCNT_MAX_VAL_MASK) >> LCDC_CAM_SYNC_HCNT_MAX_VAL_SHIFT)
+
+/* Bitfield definition for register: CAM_SYNC_HCNT_ST */
+/*
+ * VAL (RO)
+ *
+ * current HCNT value
+ */
+#define LCDC_CAM_SYNC_HCNT_ST_VAL_MASK (0xFFFFU)
+#define LCDC_CAM_SYNC_HCNT_ST_VAL_SHIFT (0U)
+#define LCDC_CAM_SYNC_HCNT_ST_VAL_GET(x) (((uint32_t)(x) & LCDC_CAM_SYNC_HCNT_ST_VAL_MASK) >> LCDC_CAM_SYNC_HCNT_ST_VAL_SHIFT)
+
+/* Bitfield definition for register: SHADOW_DONE_ST */
+/*
+ * VAL (RO)
+ *
+ * current shadow_done value for plane 7,...,0 respectively
+ */
+#define LCDC_SHADOW_DONE_ST_VAL_MASK (0xFFU)
+#define LCDC_SHADOW_DONE_ST_VAL_SHIFT (0U)
+#define LCDC_SHADOW_DONE_ST_VAL_GET(x) (((uint32_t)(x) & LCDC_SHADOW_DONE_ST_VAL_MASK) >> LCDC_SHADOW_DONE_ST_VAL_SHIFT)
+
+/* Bitfield definition for register: SHADOW_DONE_INT_EN */
+/*
+ * VAL (RW)
+ *
+ * shadow_done interrupt enable for plane 7,...,0 respectively
+ */
+#define LCDC_SHADOW_DONE_INT_EN_VAL_MASK (0xFFU)
+#define LCDC_SHADOW_DONE_INT_EN_VAL_SHIFT (0U)
+#define LCDC_SHADOW_DONE_INT_EN_VAL_SET(x) (((uint32_t)(x) << LCDC_SHADOW_DONE_INT_EN_VAL_SHIFT) & LCDC_SHADOW_DONE_INT_EN_VAL_MASK)
+#define LCDC_SHADOW_DONE_INT_EN_VAL_GET(x) (((uint32_t)(x) & LCDC_SHADOW_DONE_INT_EN_VAL_MASK) >> LCDC_SHADOW_DONE_INT_EN_VAL_SHIFT)
+
 /* Bitfield definition for register of struct array LAYER: LAYCTRL */
+/*
+ * RESAMPLE_VRATIO (RW)
+ *
+ * Resample the input data stream in the verticle direction
+ * 0: don't resample
+ * positive n: upsample-by-n+1 (2 to 8)
+ * negtive n: downsample-by-n+1 (2 to 8)
+ */
+#define LCDC_LAYER_LAYCTRL_RESAMPLE_VRATIO_MASK (0xF0000000UL)
+#define LCDC_LAYER_LAYCTRL_RESAMPLE_VRATIO_SHIFT (28U)
+#define LCDC_LAYER_LAYCTRL_RESAMPLE_VRATIO_SET(x) (((uint32_t)(x) << LCDC_LAYER_LAYCTRL_RESAMPLE_VRATIO_SHIFT) & LCDC_LAYER_LAYCTRL_RESAMPLE_VRATIO_MASK)
+#define LCDC_LAYER_LAYCTRL_RESAMPLE_VRATIO_GET(x) (((uint32_t)(x) & LCDC_LAYER_LAYCTRL_RESAMPLE_VRATIO_MASK) >> LCDC_LAYER_LAYCTRL_RESAMPLE_VRATIO_SHIFT)
+
+/*
+ * RESAMPLE_HRATIO (RW)
+ *
+ * Resample the input data stream in the horizontal direction
+ * 0: don't resample
+ * positive n: upsample-by-n+1 (2 to 8)
+ * negtive n: downsample-by-n+1 (2 to 8)
+ */
+#define LCDC_LAYER_LAYCTRL_RESAMPLE_HRATIO_MASK (0xF000000UL)
+#define LCDC_LAYER_LAYCTRL_RESAMPLE_HRATIO_SHIFT (24U)
+#define LCDC_LAYER_LAYCTRL_RESAMPLE_HRATIO_SET(x) (((uint32_t)(x) << LCDC_LAYER_LAYCTRL_RESAMPLE_HRATIO_SHIFT) & LCDC_LAYER_LAYCTRL_RESAMPLE_HRATIO_MASK)
+#define LCDC_LAYER_LAYCTRL_RESAMPLE_HRATIO_GET(x) (((uint32_t)(x) & LCDC_LAYER_LAYCTRL_RESAMPLE_HRATIO_MASK) >> LCDC_LAYER_LAYCTRL_RESAMPLE_HRATIO_SHIFT)
+
+/*
+ * NORMLZ_OUT (RW)
+ *
+ * Normalize the pixel out for the not-overlapped pixels
+ */
+#define LCDC_LAYER_LAYCTRL_NORMLZ_OUT_MASK (0x800000UL)
+#define LCDC_LAYER_LAYCTRL_NORMLZ_OUT_SHIFT (23U)
+#define LCDC_LAYER_LAYCTRL_NORMLZ_OUT_SET(x) (((uint32_t)(x) << LCDC_LAYER_LAYCTRL_NORMLZ_OUT_SHIFT) & LCDC_LAYER_LAYCTRL_NORMLZ_OUT_MASK)
+#define LCDC_LAYER_LAYCTRL_NORMLZ_OUT_GET(x) (((uint32_t)(x) & LCDC_LAYER_LAYCTRL_NORMLZ_OUT_MASK) >> LCDC_LAYER_LAYCTRL_NORMLZ_OUT_SHIFT)
+
+/*
+ * HANDSHAKE_ABORT_INT_EN (RW)
+ *
+ * 1: Enable the handshake abort error interrupt.
+ * 0: don't Enable the handshake abort error interrupt.
+ * Abort is generated when the LCDC is going to switch bank to a new bank, and the new bank data is not ready yet.
+ * Abort is only useful when communicating with the offline calculator (such as PDMA as the active pixel generator mode).
+ * PDMA as the active generator mode, means it is the first pixel generator with data sources from offline memory, and not from on-the-fly streaming data (such as camera captured data).
+ * While with on-the-fly streaming data, error condition is indicated by display buffer underflow.
+ */
+#define LCDC_LAYER_LAYCTRL_HANDSHAKE_ABORT_INT_EN_MASK (0x400000UL)
+#define LCDC_LAYER_LAYCTRL_HANDSHAKE_ABORT_INT_EN_SHIFT (22U)
+#define LCDC_LAYER_LAYCTRL_HANDSHAKE_ABORT_INT_EN_SET(x) (((uint32_t)(x) << LCDC_LAYER_LAYCTRL_HANDSHAKE_ABORT_INT_EN_SHIFT) & LCDC_LAYER_LAYCTRL_HANDSHAKE_ABORT_INT_EN_MASK)
+#define LCDC_LAYER_LAYCTRL_HANDSHAKE_ABORT_INT_EN_GET(x) (((uint32_t)(x) & LCDC_LAYER_LAYCTRL_HANDSHAKE_ABORT_INT_EN_MASK) >> LCDC_LAYER_LAYCTRL_HANDSHAKE_ABORT_INT_EN_SHIFT)
+
+/*
+ * HANDSHAKE_BUFSIZE (RW)
+ *
+ * 1: handshake buffer is 16 rows hight per ping or pang buf.
+ * 0: handshake buffer is 8 rows hight per ping or pang buf.
+ */
+#define LCDC_LAYER_LAYCTRL_HANDSHAKE_BUFSIZE_MASK (0x200000UL)
+#define LCDC_LAYER_LAYCTRL_HANDSHAKE_BUFSIZE_SHIFT (21U)
+#define LCDC_LAYER_LAYCTRL_HANDSHAKE_BUFSIZE_SET(x) (((uint32_t)(x) << LCDC_LAYER_LAYCTRL_HANDSHAKE_BUFSIZE_SHIFT) & LCDC_LAYER_LAYCTRL_HANDSHAKE_BUFSIZE_MASK)
+#define LCDC_LAYER_LAYCTRL_HANDSHAKE_BUFSIZE_GET(x) (((uint32_t)(x) & LCDC_LAYER_LAYCTRL_HANDSHAKE_BUFSIZE_MASK) >> LCDC_LAYER_LAYCTRL_HANDSHAKE_BUFSIZE_SHIFT)
+
+/*
+ * ENABLE_HANDSHAKE (RW)
+ *
+ * Enable handshake with input pixel controller. When this is set, the LCDC will not process an entire framebuffer,
+ * but will instead process rows of NxN blocks in a double-buffer handshake with the input pixel controlller. This enables
+ * the use of the onboard SRAM for a partial frame buffer. Only valid for Plane 0 & 1.
+ * 1: handshake enabled
+ * 0: handshake disabled
+ */
+#define LCDC_LAYER_LAYCTRL_ENABLE_HANDSHAKE_MASK (0x100000UL)
+#define LCDC_LAYER_LAYCTRL_ENABLE_HANDSHAKE_SHIFT (20U)
+#define LCDC_LAYER_LAYCTRL_ENABLE_HANDSHAKE_SET(x) (((uint32_t)(x) << LCDC_LAYER_LAYCTRL_ENABLE_HANDSHAKE_SHIFT) & LCDC_LAYER_LAYCTRL_ENABLE_HANDSHAKE_MASK)
+#define LCDC_LAYER_LAYCTRL_ENABLE_HANDSHAKE_GET(x) (((uint32_t)(x) & LCDC_LAYER_LAYCTRL_ENABLE_HANDSHAKE_MASK) >> LCDC_LAYER_LAYCTRL_ENABLE_HANDSHAKE_SHIFT)
+
 /*
  * PACK_DIR (RW)
  *
@@ -787,6 +1187,17 @@ typedef struct {
 #define LCDC_LAYER_CSC_COEF2_C3_GET(x) (((uint32_t)(x) & LCDC_LAYER_CSC_COEF2_C3_MASK) >> LCDC_LAYER_CSC_COEF2_C3_SHIFT)
 
 /* Bitfield definition for register: CLUT_LOAD */
+/*
+ * STR_HIGH (RW)
+ *
+ * 1'b1: Store 8+ CLUT tables through APB
+ * 1'b0: Store 0-7 CLUT tables through APB
+ */
+#define LCDC_CLUT_LOAD_STR_HIGH_MASK (0x80000000UL)
+#define LCDC_CLUT_LOAD_STR_HIGH_SHIFT (31U)
+#define LCDC_CLUT_LOAD_STR_HIGH_SET(x) (((uint32_t)(x) << LCDC_CLUT_LOAD_STR_HIGH_SHIFT) & LCDC_CLUT_LOAD_STR_HIGH_MASK)
+#define LCDC_CLUT_LOAD_STR_HIGH_GET(x) (((uint32_t)(x) & LCDC_CLUT_LOAD_STR_HIGH_MASK) >> LCDC_CLUT_LOAD_STR_HIGH_SHIFT)
+
 /*
  * SEL_NUM (RW)
  *

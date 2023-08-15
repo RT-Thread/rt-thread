@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -456,12 +456,9 @@ static const ov5640_clock_config_t *ov5640_get_clock_config(const camera_config_
 {
     uint32_t i;
 
-    if (camera_interface_dvp == config->interface)
-    {
-        for (i = 0; i < ARRAY_SIZE(ov5640_dvp_clock_configs); i++)
-        {
-            if (HPM_CAMERA_RESOLUTION(config->width, config->height) == ov5640_dvp_clock_configs[i].resolution)
-            {
+    if (camera_interface_dvp == config->interface) {
+        for (i = 0; i < ARRAY_SIZE(ov5640_dvp_clock_configs); i++) {
+            if (HPM_CAMERA_RESOLUTION(config->width, config->height) == ov5640_dvp_clock_configs[i].resolution) {
                 return &ov5640_dvp_clock_configs[i];
             }
         }
@@ -475,7 +472,12 @@ hpm_stat_t ov5640_read_register(camera_context_t *context, uint16_t reg, uint8_t
     uint8_t r[2];
     r[0] = reg >> 8;
     r[1] = reg & 0xFF;
-    return i2c_master_address_read(context->ptr, OV5640_I2C_ADDR, r, sizeof(r), buf, 1);
+
+    hpm_stat_t stat = i2c_master_write(context->ptr, context->i2c_device_addr, r, 2);
+    if (stat != status_success) {
+        return stat;
+    }
+    return i2c_master_read(context->ptr, context->i2c_device_addr, buf, 1);
 }
 
 hpm_stat_t ov5640_write_register(camera_context_t *context, uint16_t reg, uint8_t val)
@@ -483,7 +485,7 @@ hpm_stat_t ov5640_write_register(camera_context_t *context, uint16_t reg, uint8_
     uint8_t r[2];
     r[0] = reg >> 8;
     r[1] = reg & 0xFF;
-    return i2c_master_address_write(context->ptr, OV5640_I2C_ADDR, r, sizeof(r), &val, 1);
+    return i2c_master_address_write(context->ptr, context->i2c_device_addr, r, sizeof(r), &val, 1);
 }
 
 hpm_stat_t ov5640_write_multi_registers(camera_context_t *context, const ov5640_reg_val_t regval[], uint32_t len)
@@ -491,8 +493,7 @@ hpm_stat_t ov5640_write_multi_registers(camera_context_t *context, const ov5640_
     uint32_t i;
     hpm_stat_t stat = status_success;
 
-    for (i = 0; i < len; i++)
-    {
+    for (i = 0; i < len; i++) {
         HPM_CHECK_RET(ov5640_write_register(context, regval[i].regaddr, regval[i].regval));
     }
 
@@ -513,19 +514,19 @@ hpm_stat_t ov5640_set_pixel_format(camera_context_t *context, display_pixel_form
 {
     hpm_stat_t stat = status_success;
 
-    switch (pixel_format)
-    {
-        case display_pixel_format_yuv422:
-            HPM_CHECK_RET(ov5640_write_register(context, 0x4300, 0x3F));
-            HPM_CHECK_RET(ov5640_write_register(context, 0x501f, 0x00));
-            break;
-        case display_pixel_format_rgb565:
-            HPM_CHECK_RET(ov5640_write_register(context, 0x4300, 0x6F));
-            HPM_CHECK_RET(ov5640_write_register(context, 0x501f, 0x01));
-            break;
-        default:
-            stat = status_invalid_argument;
-            break;
+    switch (pixel_format) {
+    case display_pixel_format_y8:
+    case display_pixel_format_yuv422:
+        HPM_CHECK_RET(ov5640_write_register(context, 0x4300, 0x30));
+        HPM_CHECK_RET(ov5640_write_register(context, 0x501f, 0x00));
+        break;
+    case display_pixel_format_rgb565:
+        HPM_CHECK_RET(ov5640_write_register(context, 0x4300, 0x6F));
+        HPM_CHECK_RET(ov5640_write_register(context, 0x501f, 0x01));
+        break;
+    default:
+        stat = status_invalid_argument;
+        break;
     }
 
     return stat;
@@ -555,29 +556,28 @@ hpm_stat_t ov5640_set_image_size(camera_context_t *context, camera_config_t *ov_
 {
     hpm_stat_t stat = status_success;
 
-    switch(HPM_CAMERA_RESOLUTION(ov_config->width, ov_config->height))
-    {
-        case video_resolution_800_480:
-            stat = ov5640_write_multi_registers(context, ov5640_resolution_800_480_param, ARRAY_SIZE(ov5640_resolution_800_480_param));
-            break;
-        case video_resolution_vga:
-            stat = ov5640_write_multi_registers(context, ov5640_resolution_vga_param, ARRAY_SIZE(ov5640_resolution_vga_param));
-            break;
-        case video_resolution_qvga:
-            stat = ov5640_write_multi_registers(context, ov5640_resolution_qvga_param, ARRAY_SIZE(ov5640_resolution_qvga_param));
-            break;
-        case video_resolution_480_272:
-            stat = ov5640_write_multi_registers(context, ov5640_resolution_480_272_param, ARRAY_SIZE(ov5640_resolution_480_272_param));
-            break;
-        case video_resolution_720p:
-            stat = ov5640_write_multi_registers(context, ov5640_resolution_720p_param, ARRAY_SIZE(ov5640_resolution_720p_param));
-            break;
-        case video_resolution_1080p:
-            stat = ov5640_write_multi_registers(context, ov5640_resolution_1080p_param, ARRAY_SIZE(ov5640_resolution_1080p_param));
-            break;
-        default:
-            stat = status_invalid_argument;
-            break;
+    switch (HPM_CAMERA_RESOLUTION(ov_config->width, ov_config->height)) {
+    case video_resolution_800_480:
+        stat = ov5640_write_multi_registers(context, ov5640_resolution_800_480_param, ARRAY_SIZE(ov5640_resolution_800_480_param));
+        break;
+    case video_resolution_vga:
+        stat = ov5640_write_multi_registers(context, ov5640_resolution_vga_param, ARRAY_SIZE(ov5640_resolution_vga_param));
+        break;
+    case video_resolution_qvga:
+        stat = ov5640_write_multi_registers(context, ov5640_resolution_qvga_param, ARRAY_SIZE(ov5640_resolution_qvga_param));
+        break;
+    case video_resolution_480_272:
+        stat = ov5640_write_multi_registers(context, ov5640_resolution_480_272_param, ARRAY_SIZE(ov5640_resolution_480_272_param));
+        break;
+    case video_resolution_720p:
+        stat = ov5640_write_multi_registers(context, ov5640_resolution_720p_param, ARRAY_SIZE(ov5640_resolution_720p_param));
+        break;
+    case video_resolution_1080p:
+        stat = ov5640_write_multi_registers(context, ov5640_resolution_1080p_param, ARRAY_SIZE(ov5640_resolution_1080p_param));
+        break;
+    default:
+        stat = status_invalid_argument;
+        break;
     }
 
     return stat;
@@ -588,8 +588,7 @@ hpm_stat_t ov5640_set_clock_config(camera_context_t *context, camera_config_t *o
     hpm_stat_t stat = status_success;
     const ov5640_clock_config_t *clock_config = ov5640_get_clock_config(ov_config);
 
-    if(NULL == clock_config)
-    {
+    if (NULL == clock_config) {
         return status_invalid_argument;
     }
 
@@ -606,8 +605,7 @@ hpm_stat_t ov5640_set_interface(camera_context_t *context, camera_config_t *ov_c
 {
     hpm_stat_t stat = status_success;
 
-    if (camera_interface_dvp == ov_config->interface)
-    {
+    if (camera_interface_dvp == ov_config->interface) {
         HPM_CHECK_RET(ov5640_write_register(context, 0x3034, 0x1a));
 
         /* Set Frex, Vsync, Href, PCLK, data, GPIO to output. */
@@ -643,18 +641,14 @@ hpm_stat_t ov5640_set_brightness(camera_context_t *context, int32_t brightness)
 {
      hpm_stat_t stat = status_success;
 
-    if ((brightness < -4) || (brightness > 4))
-    {
+    if ((brightness < -4) || (brightness > 4)) {
         return status_invalid_argument;
     }
 
     HPM_CHECK_RET(ov5640_write_register(context, 0x3212, 0x03));
-    if (brightness >= 0)
-    {
+    if (brightness >= 0) {
         HPM_CHECK_RET(ov5640_write_register(context, 0x5588, 0x01));
-    }
-    else
-    {
+    } else {
         brightness = -brightness;
         HPM_CHECK_RET(ov5640_write_register(context, 0x5588, 0x09));
     }
@@ -672,8 +666,7 @@ hpm_stat_t ov5640_set_contrast(camera_context_t *context, int32_t contrast)
     hpm_stat_t stat = status_success;
     uint8_t regval;
 
-    if ((-4 > contrast) || (4 < contrast))
-    {
+    if ((-4 > contrast) || (4 < contrast)) {
         return status_invalid_argument;
     }
 
@@ -697,8 +690,7 @@ hpm_stat_t ov5640_set_saturation(camera_context_t *context, int32_t saturation)
     hpm_stat_t stat = status_success;
     uint8_t regval;
 
-    if ((-4 > saturation) || (4 < saturation))
-    {
+    if ((-4 > saturation) || (4 < saturation)) {
         return status_invalid_argument;
     }
 
@@ -723,10 +715,8 @@ hpm_stat_t ov5640_set_light_mode(camera_context_t *context, int32_t lightmode)
     hpm_stat_t stat = status_success;
     uint8_t i;
 
-    for (i = 0; i < ARRAY_SIZE(ov5640_light_mode_configs); i++)
-    {
-        if (lightmode == (int32_t)ov5640_light_mode_configs[i].lightmode)
-        {
+    for (i = 0; i < ARRAY_SIZE(ov5640_light_mode_configs); i++) {
+        if (lightmode == (int32_t)ov5640_light_mode_configs[i].lightmode) {
             HPM_CHECK_RET(ov5640_write_register(context, 0x3212, 0x03));
 
             HPM_CHECK_RET(ov5640_write_register(context, 0x3406, ov5640_light_mode_configs[i].awbctrl));
@@ -753,10 +743,8 @@ hpm_stat_t ov5640_set_special_effect(camera_context_t *context, int32_t effect)
     hpm_stat_t stat = status_success;
     uint8_t i;
 
-    for (i = 0; i < ARRAY_SIZE(ov5640_special_effect_configs); i++)
-    {
-        if (effect == (int32_t)ov5640_special_effect_configs[i].effect)
-        {
+    for (i = 0; i < ARRAY_SIZE(ov5640_special_effect_configs); i++) {
+        if (effect == (int32_t)ov5640_special_effect_configs[i].effect) {
             HPM_CHECK_RET(ov5640_write_register(context, 0x3212, 0x03));
 
             HPM_CHECK_RET(ov5640_write_register(context, 0x5580, ov5640_special_effect_configs[i].sdectrl0));

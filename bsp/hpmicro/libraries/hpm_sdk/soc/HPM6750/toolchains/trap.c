@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -88,17 +88,17 @@ __attribute__((weak)) long exception_handler(long cause, long epc)
     return epc;
 }
 
-#ifndef CONFIG_FREERTOS
-void SW_handler(void) __attribute__ ((section(".isr_vector"), interrupt("machine"), aligned(4)));
+#if !defined(CONFIG_FREERTOS) && !defined(CONFIG_UCOS_III) && !defined(CONFIG_THREADX)
+void irq_handler_trap(void) __attribute__ ((section(".isr_vector"), interrupt("machine"), aligned(4)));
 #else
-void SW_handler(void) __attribute__ ((section(".isr_vector")));
+void irq_handler_trap(void) __attribute__ ((section(".isr_vector")));
 #endif
-void SW_handler(void)
+void irq_handler_trap(void)
 {
     long mcause = read_csr(CSR_MCAUSE);
     long mepc = read_csr(CSR_MEPC);
     long mstatus = read_csr(CSR_MSTATUS);
-#if SUPPORT_PFT_ARCH
+#if defined(SUPPORT_PFT_ARCH) && SUPPORT_PFT_ARCH
     long mxstatus = read_csr(CSR_MXSTATUS);
 #endif
 #ifdef __riscv_dsp
@@ -129,7 +129,7 @@ void SW_handler(void)
         uint32_t irq_index = __plic_claim_irq(HPM_PLIC_BASE, HPM_PLIC_TARGET_M_MODE);
         if (irq_index) {
         /* Workaround: irq number returned by __plic_claim_irq might be 0, which is caused by plic. So skip invalid irq_index as a workaround */
-#ifndef DISABLE_IRQ_PREEMPTIVE
+#if !defined(DISABLE_IRQ_PREEMPTIVE) || (DISABLE_IRQ_PREEMPTIVE == 0)
             enable_global_irq(CSR_MSTATUS_MIE_MASK);
 #endif
             ((isr_func_t)__vector_table[irq_index])();
@@ -167,7 +167,7 @@ void SW_handler(void)
     /* Restore CSR */
     write_csr(CSR_MSTATUS, mstatus);
     write_csr(CSR_MEPC, mepc);
-#if SUPPORT_PFT_ARCH
+#if defined(SUPPORT_PFT_ARCH) && SUPPORT_PFT_ARCH
     write_csr(CSR_MXSTATUS, mxstatus);
 #endif
 #ifdef __riscv_dsp
